@@ -83,7 +83,7 @@ Copyright (c) .NET Foundation. All rights reserved.
   <!-- Package pruning is enabled for all projects targeting .NET 10 or greater, including multi-targeted projects. -->
   <PropertyGroup>
     <!-- We only set the RestoreEnablePackagePruning default for single TFM projects. 
-    For multi-targeted projects that requires knowing the other inner builds, so we rely on _RestorePackagePruningDefault. -->
+    For multi-targeted projects that requires knowing the other inner builds, so we rely on RestorePackagePruningDefault. -->
     <RestoreEnablePackagePruning Condition="'$(RestoreEnablePackagePruning)' == ''
                     AND '$(UsingMicrosoftNETSdk)' == 'true'
                     AND '$(TargetFrameworks)' == ''
@@ -93,13 +93,13 @@ Copyright (c) .NET Foundation. All rights reserved.
                     AND ('$(TargetFrameworkIdentifier)' == '.NETCoreApp' AND '$(TargetFrameworkVersion)' != '' AND $([MSBuild]::VersionGreaterThanOrEquals('$(TargetFrameworkVersion)', '10.0')))"
                     >true</RestoreEnablePackagePruning>
     <RestoreEnablePackagePruning Condition="$(RestoreEnablePackagePruning) == '' AND '$(TargetFrameworks)' == ''">false</RestoreEnablePackagePruning>
-    <_RestorePackagePruningDefault Condition="'$(UsingMicrosoftNETSdk)' == 'true'
+    <RestorePackagePruningDefault Condition="'$(UsingMicrosoftNETSdk)' == 'true'
                     AND '$(NuGetExeSkipSdkAnalysisLevelCheck)' != 'true'
                     AND '$(SdkAnalysisLevel)' != ''
                     AND $([MSBuild]::VersionGreaterThanOrEquals('$(SdkAnalysisLevel)', '10.0.100'))
                     AND ('$(TargetFrameworkIdentifier)' == '.NETCoreApp' AND '$(TargetFrameworkVersion)' != '' AND $([MSBuild]::VersionGreaterThanOrEquals('$(TargetFrameworkVersion)', '10.0')))"
-                    >true</_RestorePackagePruningDefault>
-    <_RestorePackagePruningDefault Condition="'$(_RestorePackagePruningDefault)' == ''">false</_RestorePackagePruningDefault>
+                    >true</RestorePackagePruningDefault>
+    <RestorePackagePruningDefault Condition="'$(RestorePackagePruningDefault)' == ''">false</RestorePackagePruningDefault>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -158,7 +158,6 @@ Copyright (c) .NET Foundation. All rights reserved.
   <!-- Tasks -->
   <UsingTask TaskName="NuGet.Build.Tasks.RestoreTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
   <UsingTask TaskName="NuGet.Build.Tasks.WriteRestoreGraphTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
-  <UsingTask TaskName="NuGet.Build.Tasks.GetRestoreProjectJsonPathTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
   <UsingTask TaskName="NuGet.Build.Tasks.GetRestoreProjectReferencesTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
   <UsingTask TaskName="NuGet.Build.Tasks.GetRestorePackageReferencesTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
   <UsingTask TaskName="NuGet.Build.Tasks.GetCentralPackageVersionsTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
@@ -657,29 +656,12 @@ Copyright (c) .NET Foundation. All rights reserved.
 
   <!--
     ============================================================
-    _GetProjectJsonPath
-    Discover the project.json path if one exists for the project.
-    ============================================================
-  -->
-  <Target Name="_GetProjectJsonPath"
-    Returns="$(_CurrentProjectJsonPath)">
-    <!-- Get project.json path -->
-    <!-- Skip this if the project style is already set. -->
-    <GetRestoreProjectJsonPathTask
-      ProjectPath="$(MSBuildProjectFullPath)"
-      Condition=" '$(RestoreProjectStyle)' == 'ProjectJson' OR '$(RestoreProjectStyle)' == '' ">
-      <Output TaskParameter="ProjectJsonPath" PropertyName="_CurrentProjectJsonPath" />
-    </GetRestoreProjectJsonPathTask>
-  </Target>
-
-  <!--
-    ============================================================
     _GetRestoreProjectStyle
     Determine the project restore type.
     ============================================================
   -->
   <Target Name="_GetRestoreProjectStyle"
-    DependsOnTargets="_GetProjectJsonPath;CollectPackageReferences"
+    DependsOnTargets="CollectPackageReferences"
     Returns="$(RestoreProjectStyle);$(PackageReferenceCompatibleProjectStyle)">
 
     <!--
@@ -698,7 +680,6 @@ Copyright (c) .NET Foundation. All rights reserved.
       HasPackageReferenceItems="$(_HasPackageReferenceItems)"
       MSBuildProjectDirectory="$(MSBuildProjectDirectory)"
       MSBuildProjectName="$(MSBuildProjectName)"
-      ProjectJsonPath="$(_CurrentProjectJsonPath)"
       RestoreProjectStyle="$(RestoreProjectStyle)">
       <Output TaskParameter="ProjectStyle" PropertyName="RestoreProjectStyle" />
       <Output TaskParameter="IsPackageReferenceCompatibleProjectStyle" PropertyName="PackageReferenceCompatibleProjectStyle" />
@@ -744,7 +725,6 @@ Copyright (c) .NET Foundation. All rights reserved.
       <_TargetFrameworkToBeUsed Condition=" '$(_TargetFrameworkOverride)' == '' ">$(TargetFrameworks)</_TargetFrameworkToBeUsed>
     </PropertyGroup>
 
-    <!-- For project.json projects target frameworks will be read from project.json. -->
     <GetProjectTargetFrameworksTask
       Condition=" '$(RestoreProjectStyle)' != 'ProjectJson'"
       ProjectPath="$(MSBuildProjectFullPath)"
@@ -981,23 +961,6 @@ Copyright (c) .NET Foundation. All rights reserved.
       </_RestoreGraphEntry>
     </ItemGroup>
 
-    <!-- Use project.json -->
-    <ItemGroup Condition=" '$(RestoreProjectStyle)' == 'ProjectJson' ">
-      <_RestoreGraphEntry Include="$([System.Guid]::NewGuid())">
-        <Type>ProjectSpec</Type>
-        <ProjectUniqueName>$(MSBuildProjectFullPath)</ProjectUniqueName>
-        <ProjectPath>$(MSBuildProjectFullPath)</ProjectPath>
-        <ProjectName>$(_RestoreProjectName)</ProjectName>
-        <Sources>$(_OutputSources)</Sources>
-        <OutputPath>$(RestoreOutputAbsolutePath)</OutputPath>
-        <FallbackFolders>$(_OutputFallbackFolders)</FallbackFolders>
-        <PackagesPath>$(_OutputPackagesPath)</PackagesPath>
-        <ProjectJsonPath>$(_CurrentProjectJsonPath)</ProjectJsonPath>
-        <ProjectStyle>$(RestoreProjectStyle)</ProjectStyle>
-        <ConfigFilePaths>$(_OutputConfigFilePaths)</ConfigFilePaths>
-      </_RestoreGraphEntry>
-    </ItemGroup>
-
     <!-- Use packages.config -->
     <ItemGroup Condition=" '$(RestoreProjectStyle)' == 'PackagesConfig' ">
       <_RestoreGraphEntry Include="$([System.Guid]::NewGuid())">
@@ -1217,7 +1180,7 @@ Copyright (c) .NET Foundation. All rights reserved.
         <RuntimeIdentifierGraphPath>$(RuntimeIdentifierGraphPath)</RuntimeIdentifierGraphPath>
         <WindowsTargetPlatformMinVersion>$(WindowsTargetPlatformMinVersion)</WindowsTargetPlatformMinVersion>
         <RestoreEnablePackagePruning>$(RestoreEnablePackagePruning)</RestoreEnablePackagePruning>
-        <_RestorePackagePruningDefault>$(_RestorePackagePruningDefault)</_RestorePackagePruningDefault>
+        <RestorePackagePruningDefault>$(RestorePackagePruningDefault)</RestorePackagePruningDefault>
         <NuGetAuditMode>$(NuGetAuditMode)</NuGetAuditMode>
       </_RestoreGraphEntry>
     </ItemGroup>

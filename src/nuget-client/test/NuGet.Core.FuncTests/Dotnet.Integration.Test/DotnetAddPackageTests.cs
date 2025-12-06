@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -63,7 +65,7 @@ namespace Dotnet.Integration.Test
                 // Make sure source is replaced in generated dgSpec file.
                 PackageSpec packageSpec = projectA.AssetsFile.PackageSpec;
                 string[] sources = packageSpec.RestoreMetadata.Sources.Select(s => s.Name).ToArray();
-                Assert.Equal(sources.Count(), 1);
+                Assert.Equal(sources.Length, 1);
                 Assert.Equal(sources[0], customSourcePath);
 
                 var ridlessTarget = projectA.AssetsFile.Targets.Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));
@@ -136,7 +138,7 @@ namespace Dotnet.Integration.Test
                 // Make sure source is replaced in generated dgSpec file.
                 PackageSpec packageSpec = projectA.AssetsFile.PackageSpec;
                 string[] sources = packageSpec.RestoreMetadata.Sources.Select(s => s.Name).ToArray();
-                Assert.Equal(sources.Count(), 1);
+                Assert.Equal(sources.Length, 1);
                 Assert.Equal(sources[0], customSourcePath);
 
                 var ridlessTarget = projectA.AssetsFile.Targets.Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));
@@ -239,7 +241,7 @@ namespace Dotnet.Integration.Test
             packageX100.Dependencies.Add(packageZ100);
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var packageSource2 = new DirectoryInfo(Path.Combine(pathContext.WorkingDirectory, "source2"));
             packageSource2.Create();
@@ -299,7 +301,7 @@ namespace Dotnet.Integration.Test
             packageX100.Dependencies.Add(packageZ100);
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var packageSource2 = new DirectoryInfo(Path.Combine(pathContext.WorkingDirectory, "source2"));
             packageSource2.Create();
@@ -362,7 +364,7 @@ namespace Dotnet.Integration.Test
             packageX100.Dependencies.Add(packageZ100);
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var packageSource2 = new DirectoryInfo(Path.Combine(pathContext.WorkingDirectory, "source2"));
             packageSource2.Create();
@@ -427,7 +429,7 @@ namespace Dotnet.Integration.Test
             packageX100.Dependencies.Add(packageZ100);
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var packageSource2 = new DirectoryInfo(Path.Combine(pathContext.WorkingDirectory, "source2"));
             packageSource2.Create();
@@ -526,7 +528,7 @@ namespace Dotnet.Integration.Test
             projectA.Properties.Add("RestoreSources", $"{packageSource2.FullName}");
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
             File.WriteAllText(Path.Combine(projectADirectory, "NuGet.Config"), configFile);
@@ -589,7 +591,7 @@ namespace Dotnet.Integration.Test
             projectA.Properties.Add("RestoreSources", $"{packageSource2.FullName};{pathContext.PackageSource}");
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
             File.WriteAllText(Path.Combine(projectADirectory, "NuGet.Config"), configFile);
@@ -705,7 +707,7 @@ namespace Dotnet.Integration.Test
                             ";
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
 
@@ -753,7 +755,7 @@ namespace Dotnet.Integration.Test
                             ";
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
 
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
@@ -801,7 +803,7 @@ namespace Dotnet.Integration.Test
                             ";
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
             var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
@@ -852,7 +854,7 @@ namespace Dotnet.Integration.Test
                             ";
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
             var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
@@ -904,7 +906,7 @@ namespace Dotnet.Integration.Test
 </Project>";
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
             var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
@@ -957,7 +959,7 @@ namespace Dotnet.Integration.Test
                             ";
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
 
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
@@ -1019,7 +1021,7 @@ namespace Dotnet.Integration.Test
                             ";
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
 
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
@@ -1084,7 +1086,7 @@ namespace Dotnet.Integration.Test
 </Project>";
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
 
@@ -1151,7 +1153,7 @@ namespace Dotnet.Integration.Test
                             ";
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
 
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
@@ -1216,7 +1218,7 @@ namespace Dotnet.Integration.Test
                             ";
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
 
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
@@ -1274,7 +1276,7 @@ namespace Dotnet.Integration.Test
                             ";
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
 
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
@@ -1336,7 +1338,7 @@ namespace Dotnet.Integration.Test
                             ";
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
 
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
@@ -1400,7 +1402,7 @@ namespace Dotnet.Integration.Test
                             ";
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
 
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
@@ -1465,7 +1467,7 @@ namespace Dotnet.Integration.Test
                             ";
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
 
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
@@ -1529,7 +1531,7 @@ namespace Dotnet.Integration.Test
                             ";
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
 
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
@@ -1594,7 +1596,7 @@ namespace Dotnet.Integration.Test
                                 ";
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
 
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
@@ -1651,7 +1653,7 @@ namespace Dotnet.Integration.Test
                                 ";
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
 
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
@@ -1713,8 +1715,7 @@ namespace Dotnet.Integration.Test
                                 ";
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
-
+            solution.Create();
 
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
             var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);

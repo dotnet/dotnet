@@ -76,7 +76,7 @@
       </trans-unit>
       <trans-unit id="Error_Invalid_package_id">
         <source>Invalid package id : `{0}`.</source>
-        <target state="new">Invalid package id : `{0}`.</target>
+        <target state="translated">ID de package non valide : `{0}`.</target>
         <note>0 - package id.</note>
       </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">

@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="Argument_Must_Be_GreaterThanOrEqualTo">
         <source>Value must be greater than or equal to {0}.</source>
-        <target state="translated">{0} 以上の値を指定してください。</target>
+        <target state="translated">{0} 以上の値にする必要があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="ConfigErrorDialogBoxTitle">
@@ -93,7 +93,7 @@
       </trans-unit>
       <trans-unit id="Error_FailedToCreateParentFolder">
         <source>Failed to create parent folder for file '{0}' in project {1}.</source>
-        <target state="translated">ファイル '{0}' の親フォルダーをプロジェクト {1} に作成できませんでした。</target>
+        <target state="translated">プロジェクト {1} でファイル '{0}' の親フォルダーを作成できませんでした。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_FileNotExists">
@@ -117,8 +117,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSource_InvalidSource">
-        <source>The source specified is invalid.</source>
-        <target state="translated">指定されたソースは無効です。</target>
+        <source>A valid local or remote path must be specified.</source>
+        <target state="translated">有効なローカル パスまたはリモート パスを指定する必要があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSource_UniqueName">
@@ -159,12 +159,12 @@
       </trans-unit>
       <trans-unit id="FailedToAddReference">
         <source>Failed to add reference to '{0}'.</source>
-        <target state="translated">参照を '{0}' に追加できませんでした。</target>
+        <target state="translated">'{0}' に参照を追加できませんでした。</target>
         <note />
       </trans-unit>
       <trans-unit id="FailedToRemoveReference">
         <source>Case insensitive search for reference '{0}', to be removed, returned more than 1 match. Request could not be performed.</source>
-        <target state="translated">削除対象の参照 '{0}' の大文字と小文字を区別しないで検索で、複数の一致が返されました。要求を実行できませんでした。</target>
+        <target state="translated">削除対象の参照 '{0}' の大文字と小文字を区別しない検索で、複数の一致が返されました。要求を実行できませんでした。</target>
         <note />
       </trans-unit>
       <trans-unit id="FailedToUpdateBindingRedirects">
@@ -181,6 +181,16 @@
         <source>The {0} MSBuild property could not be found for project '{1}'.</source>
         <target state="translated">プロジェクト '{1}' の {0} MSBuild プロパティが見つかりませんでした。</target>
         <note>{0} is the name of the property that was not set.  {1} is the full path to the project.</note>
+      </trans-unit>
+      <trans-unit id="Migrating_ProjectJson_Started">
+        <source>Migrating project.json project...</source>
+        <target state="translated">project.json プロジェクトを移行しています...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrating_ProjectJson_Succeeded">
+        <source>Migration Succeeded</source>
+        <target state="translated">移行に成功しました</target>
+        <note />
       </trans-unit>
       <trans-unit id="PathToExistingFileNotPresent">
         <source>Path '{0}' to existing file is not found on disk. Cannot add to project '{1}'</source>
@@ -204,7 +214,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">'{0}' を NULL にすることはできません。</target>
+        <target state="translated">'{0}' を null 値にはできません。</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
@@ -256,32 +266,32 @@
       </trans-unit>
       <trans-unit id="Warning_DirectoryNotEmpty">
         <source>Directory '{0}' is not empty. Skipping...</source>
-        <target state="translated">ディレクトリ '{0}' は空ではありません。スキップしています...</target>
+        <target state="translated">ディレクトリ '{0}' が空ではありません。スキップ中...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectories">
         <source>Failed to remove package directories that were marked for deletion on Visual Studio restart: {0}</source>
-        <target state="translated">Visual Studio の再起動時に削除するように指定されていたパッケージ ディレクトリを削除できませんでした: {0}</target>
+        <target state="translated">Visual Studio の再起動時の削除対象としてマーキングされたパッケージ ディレクトリを削除できませんでした: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectory">
         <source>Failed to remove package directory '{0}' that was marked for deletion on Visual Studio restart.</source>
-        <target state="translated">Visual Studio の再起動時に削除するように指定されていたパッケージ ディレクトリ '{0}' を削除できませんでした。</target>
+        <target state="translated">Visual Studio の再起動時の削除対象としてマーキングされたパッケージ ディレクトリ '{0}' を削除できませんでした。</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToFindMatchForRemoveReference">
         <source>Failed to find match for removing reference '{0}'.</source>
-        <target state="translated">参照 '{0}' を削除するための一致が見つかりませんでした。</target>
+        <target state="translated">削除する参照 '{0}' に一致するものが見つかりませんでした。</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToMarkPackageDirectoryForDeletion">
         <source>Failed to mark package directory '{0}' for deletion on Visual Studio restart: {1}</source>
-        <target state="translated">Visual Studio の再起動時に削除するようにパッケージ ディレクトリ '{0}' を指定できませんでした: {1}</target>
+        <target state="translated">パッケージ ディレクトリ '{0}' を Visual Studio の再起動時の削除対象としてマーキングできませんでした: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FileAlreadyExists">
         <source>'{0}' already exists. Skipping...</source>
-        <target state="translated">'{0}' は既に存在します。スキップしています...</target>
+        <target state="translated">'{0}' は既に存在します。スキップ中...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_NoExactMatchForReference">

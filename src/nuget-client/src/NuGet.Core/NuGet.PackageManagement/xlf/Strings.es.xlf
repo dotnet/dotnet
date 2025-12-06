@@ -64,7 +64,7 @@
       </trans-unit>
       <trans-unit id="Debug_AddedFileToFolder">
         <source>Added file '{0}' to folder '{1}'.</source>
-        <target state="translated">Se agregó el archivo '{0}' a la carpeta '{1}'.</target>
+        <target state="translated">El archivo '{0}' se agregó a la carpeta '{1}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFile">
@@ -129,7 +129,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Está ejecutando la operación "{0}" con un origen "HTTP": {1}. NuGet requiere orígenes HTTPS. Para usar un origen HTTP, es necesario establecer explícitamente "allowInsecureConnections" en verdadero en el archivo NuGet.Config. Consulte https://aka.ms/nuget-https-everywhere para obtener más información.</target>
+        <target state="translated">Está ejecutando la operación "{0}" con un origen "HTTP" {1}. NuGet requiere orígenes HTTPS. Para usar un origen HTTP, es necesario establecer explícitamente "allowInsecureConnections" en verdadero en el archivo NuGet.Config. Consulte https://aka.ms/nuget-https-everywhere para obtener más información.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - server uri.</note>
       </trans-unit>
       <trans-unit id="Error_InvalidLockFileInput">
@@ -259,12 +259,12 @@
       </trans-unit>
       <trans-unit id="PackageHasDependent">
         <source>Unable to uninstall '{0}' because '{1}' depends on it.</source>
-        <target state="translated">No se puede desinstalar '{0}' porque '{1}' depende de él.</target>
+        <target state="translated">No se puede desinstalar '{0}' porque '{1}' depende de este.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageHasDependents">
         <source>Unable to uninstall '{0}' because '{1}' depend on it.</source>
-        <target state="translated">No se puede desinstalar '{0}' porque '{1}' dependen de él.</target>
+        <target state="translated">No se puede desinstalar '{0}' porque '{1}' dependen de este.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageNotFound">
@@ -331,7 +331,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">'{0}' no puede ser nulo.</target>
+        <target state="translated">'{0}' no puede ser null.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="RemovedPackageFromFolder">
@@ -386,7 +386,7 @@
       </trans-unit>
       <trans-unit id="RestoringPackage">
         <source>Restoring NuGet package {0}.</source>
-        <target state="translated">Restaurando el paquete de NuGet {0}.</target>
+        <target state="translated">Restaurando el paquete NuGet {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="RetrievingPackageStart">
@@ -476,7 +476,7 @@
       </trans-unit>
       <trans-unit id="Warning_AuditSourceWithoutData">
         <source>Audit source '{0}' did not provide any vulnerability data.</source>
-        <target state="translated">El origen de auditoría '{0}' no proporcionó ningún dato de vulnerabilidad.</target>
+        <target state="translated">El origen de auditoría ''{0}'' no proporcionó ningún dato de vulnerabilidad.</target>
         <note>{0} is the source name</note>
       </trans-unit>
       <trans-unit id="Warning_DirectoryNotEmpty">
@@ -497,7 +497,7 @@
       </trans-unit>
       <trans-unit id="Warning_FileModified">
         <source>Skipping '{0}' because it was modified.</source>
-        <target state="translated">Se va a omitir '{0}' porque se modificó.</target>
+        <target state="translated">Se está omitiendo '{0}' porque se modificó.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">

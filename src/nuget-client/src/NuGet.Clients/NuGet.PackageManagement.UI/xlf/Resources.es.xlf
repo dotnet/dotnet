@@ -119,12 +119,12 @@
       </trans-unit>
       <trans-unit id="AskForRestoreMessage">
         <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
-        <target state="translated">Faltan algunos paquetes NuGet en esta solución. Haga clic para restaurar desde los orígenes de los paquetes en línea.</target>
+        <target state="translated">Faltan algunos paquetes NuGet en esta solución. Haga clic para restaurar desde los orígenes del paquete en línea.</target>
         <note />
       </trans-unit>
       <trans-unit id="AskForUpdateMessage">
         <source>A new version of NuGet Package Manager is available.</source>
-        <target state="translated">Hay una nueva versión de NuGet Package Manager disponible.</target>
+        <target state="translated">Hay disponible una nueva versión del Administrador de paquetes NuGet.</target>
         <note />
       </trans-unit>
       <trans-unit id="AutoReferenced">
@@ -389,7 +389,7 @@
       </trans-unit>
       <trans-unit id="Error_ProjectNotInCache">
         <source>Project {0} does not exist in the project system cache.</source>
-        <target state="translated">El proyecto {0} no existe en la caché de sistema del proyecto.</target>
+        <target state="translated">El proyecto {0} no existe en la memoria caché del sistema del proyecto.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_SourceMapping_GPF_NotEnabled">
@@ -844,7 +844,7 @@
       </trans-unit>
       <trans-unit id="PackageRestoreErrorTryAgain">
         <source>An error occurred while trying to restore packages:</source>
-        <target state="translated">Se produjo un error al intentar restaurar los paquetes:</target>
+        <target state="translated">Error al intentar restaurar paquetes:</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreProgressMessage">
@@ -904,14 +904,17 @@
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandFailure">
         <source>NuGet storage clear failed at {0}. 
-Error: {1}
-Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
+Error: {1}</source>
         <target state="translated">Error al borrar el almacenamiento de NuGet en {0}. 
-Error: {1}
-Consulte https://aka.ms/troubleshoot_nuget_cache para obtener ayuda.</target>
+Error: {1}</target>
         <note>{0} :error message;
 {1}: date and time
 </note>
+      </trans-unit>
+      <trans-unit id="ShowMessage_LocalsCommandMoreInformation">
+        <source>For more information, see</source>
+        <target state="translated">Para obtener más información, consulte</target>
+        <note />
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandSuccess">
         <source>NuGet storage cleared at {0}</source>
@@ -1020,7 +1023,7 @@ Consulte https://aka.ms/troubleshoot_nuget_cache para obtener ayuda.</target>
       </trans-unit>
       <trans-unit id="Text_LoadingReadme">
         <source>Loading README...</source>
-        <target state="translated">Cargando LÉAME...</target>
+        <target state="translated">Cargando archivo README...</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ManageSettings">
@@ -1045,7 +1048,7 @@ Consulte https://aka.ms/troubleshoot_nuget_cache para obtener ayuda.</target>
       </trans-unit>
       <trans-unit id="Text_NoReadme">
         <source>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
-        <target state="translated">No hay ningún archivo LÉAME disponible para la versión del paquete seleccionada. Para obtener más información, visite [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
+        <target state="translated">No hay ningún archivo README disponible para la versión del paquete seleccionada. Para más información, visite [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
       <trans-unit id="Text_NotAvailableInSource">
@@ -1095,17 +1098,17 @@ Consulte https://aka.ms/troubleshoot_nuget_cache para obtener ayuda.</target>
       </trans-unit>
       <trans-unit id="Text_PackageMappingsDisabled">
         <source>Package source mapping is off.</source>
-        <target state="translated">La asignación de origen del paquete está desactivada.</target>
+        <target state="translated">La asignación del origen del paquete está desactivada.</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageMappingsFound">
         <source>Package source mapping found.</source>
-        <target state="translated">Se encontró la asignación de origen del paquete.</target>
+        <target state="translated">Se encontró la asignación del origen del paquete.</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageMappingsNotFound">
         <source>Requires a package source mapping.</source>
-        <target state="translated">Requiere una asignación de origen de paquete.</target>
+        <target state="translated">Requiere una asignación del origen del paquete.</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageRefSupport">
@@ -1130,7 +1133,7 @@ Consulte https://aka.ms/troubleshoot_nuget_cache para obtener ayuda.</target>
       </trans-unit>
       <trans-unit id="Text_ReadmeLoaded">
         <source>README loaded</source>
-        <target state="translated">Archivo LÉAME cargado</target>
+        <target state="translated">Archivo README cargado</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_SearchBoxText">
@@ -1315,7 +1318,7 @@ Consulte https://aka.ms/troubleshoot_nuget_cache para obtener ayuda.</target>
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">
         <source>Clear all local NuGet resources?</source>
-        <target state="translated">¿Quiere borrar todos los recursos de NuGet locales?</target>
+        <target state="translated">¿Borrar todos los recursos de NuGet locales?</target>
         <note />
       </trans-unit>
       <trans-unit id="Version_Blocked">

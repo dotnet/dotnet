@@ -4,8 +4,6 @@
 using System.Collections.Generic;
 using Xunit;
 
-#nullable enable
-
 namespace NuGet.DependencyResolver.Core.Tests;
 
 public class TrackerTests

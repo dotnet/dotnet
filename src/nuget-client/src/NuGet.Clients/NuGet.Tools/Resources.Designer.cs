@@ -286,7 +286,7 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Project is not eligible for migration as it&apos;s not project.json based..
+        ///   Looks up a localized string similar to Project is not eligible for migration. Either the project is not packages.config based or doesn&apos;t support PackageReference yet..
         /// </summary>
         internal static string ProjectMigrateErrorMessage {
             get {

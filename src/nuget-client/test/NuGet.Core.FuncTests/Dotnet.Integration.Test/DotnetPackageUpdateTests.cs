@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -91,6 +93,66 @@ namespace Dotnet.Integration.Test
             var packageReferenceA = csproj.XPathSelectElements("//PackageReference[@Include='NuGet.Internal.Test.a']").ToList();
             packageReferenceA.Count.Should().Be(1);
             packageReferenceA[0].Attribute("Version").Value.Should().Be("2.0.0");
+        }
+
+        [Fact]
+        public async Task SingleTfmCpmProject_PackageVersionUpdated()
+        {
+            // Arrange
+            using var testContext = new SimpleTestPathContext();
+            File.WriteAllText(testContext.NuGetConfig, string.Format(NugetConfigFormat, testContext.PackageSource));
+
+            var a1 = new SimpleTestPackageContext("NuGet.Internal.Test.a", "1.0.0");
+            var a2 = new SimpleTestPackageContext("NuGet.Internal.Test.a", "2.0.0");
+
+            SimpleTestPackageContext[] packages = [a1, a2];
+            await SimpleTestPackageUtility.CreatePackagesAsync(testContext.PackageSource, packages);
+
+            var csprojContents = """
+                <Project Sdk="Microsoft.NET.Sdk">
+                    <PropertyGroup>
+                        <TargetFramework>net9.0</TargetFramework>
+                    </PropertyGroup>
+                    <ItemGroup>
+                        <PackageReference Include="NuGet.Internal.Test.a" />
+                    </ItemGroup>
+                </Project>
+                """;
+            var csprojPath = Path.Combine(testContext.SolutionRoot, "my.csproj");
+            File.WriteAllText(csprojPath, csprojContents);
+
+            var packagesPropsContents = """
+                <Project>
+                    <PropertyGroup>
+                        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                    </PropertyGroup>
+                    <ItemGroup>
+                        <PackageVersion Include="NuGet.Internal.Test.a" Version="1.0.0" />
+                    </ItemGroup>
+                </Project>
+                """;
+            var packagesPropsPath = Path.Combine(testContext.SolutionRoot, "Directory.Packages.props");
+            File.WriteAllText(packagesPropsPath, packagesPropsContents);
+
+            // Act
+            var result = _testFixture.RunDotnetExpectSuccess(
+                workingDirectory: testContext.SolutionRoot,
+                args: $"package update NuGet.Internal.Test.a",
+                testOutputHelper: _testOutputHelper,
+                environmentVariables: _envVars);
+
+            // Assert
+            result.ExitCode.Should().Be(0);
+
+            XDocument csproj = XDocument.Load(csprojPath);
+            var packageReferenceA = csproj.XPathSelectElements("//PackageReference[@Include='NuGet.Internal.Test.a']").ToList();
+            packageReferenceA.Count.Should().Be(1);
+            packageReferenceA[0].Attribute("Version").Should().BeNull();
+
+            XDocument packagesProps = XDocument.Load(packagesPropsPath);
+            var packageVersionA = packagesProps.XPathSelectElements("//PackageVersion[@Include='NuGet.Internal.Test.a']").ToList();
+            packageVersionA.Count.Should().Be(1);
+            packageVersionA[0].Attribute("Version").Value.Should().Be("2.0.0");
         }
 
         [Fact]

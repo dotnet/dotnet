@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -106,8 +108,6 @@ namespace NuGet.Commands.Test
             }";
 
                 var configJson1 = @"{
-                ""dependencies"": {
-                },
                 ""frameworks"": {
                 ""net46"": {}
                 },
@@ -228,8 +228,6 @@ namespace NuGet.Commands.Test
             }";
 
                 var configJson1 = @"{
-                ""dependencies"": {
-                },
                 ""frameworks"": {
                 ""net46"": {}
                 },
@@ -299,8 +297,6 @@ namespace NuGet.Commands.Test
             }";
 
                 var configJson1 = @"{
-                ""dependencies"": {
-                },
                 ""frameworks"": {
                 ""net46"": {}
                 },
@@ -761,8 +757,6 @@ namespace NuGet.Commands.Test
                 }";
 
                 var configJson1 = @"{
-                ""dependencies"": {
-                },
                 ""frameworks"": {
                 ""net46"": {}
                 },
@@ -811,8 +805,6 @@ namespace NuGet.Commands.Test
                 }";
 
                 var configJson1 = @"{
-                    ""dependencies"": {
-                    },
                     ""frameworks"": {
                     ""net46"": {}
                     },
@@ -956,21 +948,20 @@ namespace NuGet.Commands.Test
             using (var pathContext = new SimpleTestPathContext())
             {
                 var configJson2 = @"{
-                    ""dependencies"": {
-                        ""packageX"": {
-                            ""version"": ""1.0.0"",
-                            ""suppressParent"": ""all""
-                        }
-                    },
                     ""frameworks"": {
-                    ""net46"": {}
+                    ""net46"": {
+                            ""dependencies"": {
+                                ""packageX"": {
+                                    ""version"": ""1.0.0"",
+                                    ""suppressParent"": ""all""
+                                }
+                            }
+                        }
                     },
                     ""runtimes"": { ""any"": { } }
                 }";
 
                 var configJson1 = @"{
-                    ""dependencies"": {
-                    },
                     ""frameworks"": {
                     ""net46"": {}
                     },
@@ -987,6 +978,7 @@ namespace NuGet.Commands.Test
                 Assert.Equal(0, logger.Warnings);
                 Assert.Equal(0, target.Libraries.Count(lib => lib.Type == LibraryType.Package));
                 Assert.Equal(0, result.LockFile.Libraries.Count(lib => lib.Type == LibraryType.Package));
+                Assert.Equal(1, result.LockFile.Libraries.Count);
             }
         }
 
@@ -1034,7 +1026,7 @@ namespace NuGet.Commands.Test
                 Assert.Equal(0, logger.Warnings);
                 Assert.Equal(3, target.Libraries.Count(lib => lib.Type == LibraryType.Package));
                 Assert.Equal(3, result.LockFile.Libraries.Count(lib => lib.Type == LibraryType.Package));
-                Assert.Equal(1, dependencies.Count());
+                Assert.Equal(1, dependencies.Count);
             }
         }
 
@@ -1062,8 +1054,6 @@ namespace NuGet.Commands.Test
                 }";
 
                 var configJson2 = @"{
-                    ""dependencies"": {
-                    },
                     ""frameworks"": {
                     ""net46"": {}
                     },
@@ -1243,14 +1233,15 @@ namespace NuGet.Commands.Test
             {
 
                 var projectJson = @"{
-                        ""dependencies"": {
-                            ""packageX"": {
-                                ""version"": ""1.0.0"",
-                                ""exclude"": ""build""
-                            }
-                        },
                         ""frameworks"": {
-                            ""net46"": {}
+                            ""net46"": {
+                                ""dependencies"": {
+                                    ""packageX"": {
+                                        ""version"": ""1.0.0"",
+                                        ""exclude"": ""build""
+                                    }
+                                }
+                            }
                         },
                     ""runtimes"": { ""any"": { } }
                  }";
@@ -1272,6 +1263,7 @@ namespace NuGet.Commands.Test
                 Assert.Equal(0, logger.Warnings);
 
                 Assert.Equal(0, msbuildTargets["TestProject"].Count);
+                Assert.Equal(3, result.LockFile.Libraries.Count);
             }
         }
 

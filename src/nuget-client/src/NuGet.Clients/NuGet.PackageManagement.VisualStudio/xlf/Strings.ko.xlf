@@ -73,17 +73,17 @@
       </trans-unit>
       <trans-unit id="Debug_RemoveReference">
         <source>Removed reference '{0}' from project '{1}'</source>
-        <target state="translated">'{1}' 프로젝트에서 '{0}' 참조가 제거되었습니다.</target>
+        <target state="translated">'{1}' 프로젝트에서 '{0}' 참조를 제거했습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFile">
         <source>Removed file '{0}'</source>
-        <target state="translated">'{0}' 파일이 제거되었습니다.</target>
+        <target state="translated">'{0}' 파일을 제거했습니다</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFileFromFolder">
         <source>Removed file '{0}' from folder '{1}'</source>
-        <target state="translated">'{1}' 폴더의 '{0}' 파일을 제거했습니다.</target>
+        <target state="translated">'{1}' 폴더에서 '{0}' 파일을 제거했습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFolder">
@@ -117,8 +117,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSource_InvalidSource">
-        <source>The source specified is invalid.</source>
-        <target state="translated">지정된 원본이 잘못되었습니다.</target>
+        <source>A valid local or remote path must be specified.</source>
+        <target state="translated">유효한 로컬 또는 원격 경로를 지정해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSource_UniqueName">
@@ -181,6 +181,16 @@
         <source>The {0} MSBuild property could not be found for project '{1}'.</source>
         <target state="translated">'{1}' 프로젝트에 대한 {0} MSBuild 속성을 찾을 수 없습니다.</target>
         <note>{0} is the name of the property that was not set.  {1} is the full path to the project.</note>
+      </trans-unit>
+      <trans-unit id="Migrating_ProjectJson_Started">
+        <source>Migrating project.json project...</source>
+        <target state="translated">project.json 프로젝트를 마이그레이션하는 중...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrating_ProjectJson_Succeeded">
+        <source>Migration Succeeded</source>
+        <target state="translated">마이그레이션 성공</target>
+        <note />
       </trans-unit>
       <trans-unit id="PathToExistingFileNotPresent">
         <source>Path '{0}' to existing file is not found on disk. Cannot add to project '{1}'</source>

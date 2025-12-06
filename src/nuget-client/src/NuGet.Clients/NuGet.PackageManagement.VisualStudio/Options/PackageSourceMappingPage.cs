@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -115,9 +113,6 @@ namespace NuGet.PackageManagement.VisualStudio.Options
 
                 var sourceNamesToPackagePatterns = new Dictionary<string, List<PackagePatternItem>>();
 
-                // Keep any existing source mappings for package sources that are not configured.
-                PackageSourceMappingUtility.PreserveInvalidPackageSourceMappings(sourceNamesToPackagePatterns, existingPackageSources, originalPackageSourceMappings);
-
                 List<PackageSourceMappingSourceItem> packageSourceMappingSourceItems =
                     PackageSourceMappingUtility.ConvertPackageIdAndSourcesToSourceMappingSourceItems(sourceNamesToPackagePatterns, packagePatternToSources);
 
@@ -171,7 +166,8 @@ namespace NuGet.PackageManagement.VisualStudio.Options
                 {
                     string packageIdOrPattern = packageSourceMapping.Key;
                     List<PackageSourceContextInfo> packageSources = packageSourceMapping.Value;
-                    IEnumerable<string> packageSourceNames = packageSources.Select(source => source.Name);
+                    List<string> packageSourceNames = new(packageSources.Count);
+                    packageSourceNames.AddRange(packageSources.Select(source => source.Name));
 
                     var dict = new Dictionary<string, object>(capacity: 2)
                     {

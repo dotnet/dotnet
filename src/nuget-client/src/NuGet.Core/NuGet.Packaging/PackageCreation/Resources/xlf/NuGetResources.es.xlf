@@ -84,7 +84,7 @@
       </trans-unit>
       <trans-unit id="Manifest_InvalidMinClientVersion">
         <source>The 'minClientVersion' attribute in the package manifest has invalid value. It must be a valid version string.</source>
-        <target state="translated">El atributo 'minClientVersion' del manifiesto del paquete tiene un valor no válido. Debe ser una cadena con versión válida.</target>
+        <target state="translated">El valor del atributo 'minClientVersion' del manifiesto del paquete no es válido. Debe ser una cadena de versión válida.</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_InvalidReference">
@@ -124,7 +124,7 @@
       </trans-unit>
       <trans-unit id="Manifest_ReferencesHasMixedElements">
         <source>&lt;references&gt; element must not contain both &lt;group&gt; and &lt;reference&gt; child elements.</source>
-        <target state="translated">El elemento &lt;references&gt; no debe contener ambos elementos secundarios &lt;group&gt; y &lt;reference&gt;.</target>
+        <target state="translated">El elemento &lt;references&gt; no puede contener los dos elementos secundarios &lt;group&gt; y &lt;reference&gt;.</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_ReferencesIsEmpty">
@@ -144,7 +144,7 @@
       </trans-unit>
       <trans-unit id="Manifest_RequiredElementMissing">
         <source>The required element '{0}' is missing from the manifest.</source>
-        <target state="translated">El elemento secundario '{0}' falta en el manifiesto.</target>
+        <target state="translated">Falta el elemento obligatorio '{0}' en el manifiesto.</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_RequiredMetadataMissing">

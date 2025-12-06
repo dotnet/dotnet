@@ -206,7 +206,7 @@
       </trans-unit>
       <trans-unit id="Console_DisclaimerText">
         <source>Each package is licensed to you by its owner. NuGet is not responsible for, nor does it grant any licenses to, third-party packages. Some packages may include dependencies which are governed by additional licenses. Follow the package source (feed) URL to determine any dependencies.</source>
-        <target state="translated">每個封裝均由其擁有者提供授權給您。NuGet 對於協力廠商封裝不負任何責任，也不提供相關的任何授權。某些封裝可能包含須由其他授權控管的相依項目。請遵循封裝來源 (摘要) URL 決定有無任何相依項目。</target>
+        <target state="translated">每個套件均由其擁有者提供授權給您。NuGet 對於協力廠商套件不負任何責任，也不提供相關的任何授權。某些套件可能包含須由其他授權控管的相依項目。請遵循套件來源 (摘要) URL 決定有無任何相依項目。</target>
         <note />
       </trans-unit>
       <trans-unit id="Console_HelpText">
@@ -227,12 +227,12 @@
       </trans-unit>
       <trans-unit id="Host_PSNotInstalled">
         <source>Error: The Package Manager Console requires PowerShell 2.0 runtime, which is not detected on this machine. Please install the PowerShell 2.0 from http://support.microsoft.com/kb/968929 and restart Visual Studio.</source>
-        <target state="translated">錯誤: Package Manager Console 需要 PowerShell 2.0 執行階段，但在這部電腦上偵測不到這個執行階段。請從 http://support.microsoft.com/kb/968929 安裝 PowerShell 2.0 並重新啟動 Visual Studio。</target>
+        <target state="translated">錯誤: 套件管理器主控台需要 PowerShell 2.0 執行階段，但在這部電腦上偵測不到這個執行階段。請從 http://support.microsoft.com/kb/968929 安裝 PowerShell 2.0 並重新啟動 Visual Studio。</target>
         <note />
       </trans-unit>
       <trans-unit id="PowerShellHostTitle">
         <source>Package Manager Console Host Version {0}</source>
-        <target state="translated">套件管理員主控台主機版本 {0}</target>
+        <target state="translated">套件管理器主控台主機版本 {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="PromptForChoiceSuffix">

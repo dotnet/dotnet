@@ -22,7 +22,7 @@ steps:
         } else {
           $targetMajorVersion = ((& dotnet msbuild $env:BUILD_REPOSITORY_LOCALPATH\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetMajorVersion) | Out-String).Trim()
         }
-        
+
         Write-Host "##vso[task.setvariable variable=VsTargetChannel;isOutput=true]$targetChannel"
         Write-Host "##vso[task.setvariable variable=VsTargetChannelForTests;isOutput=true]$targetChannelForTests"
         Write-Host "##vso[task.setvariable variable=VsTargetMajorVersion;isOutput=true]$targetMajorVersion"
@@ -33,14 +33,6 @@ steps:
         Write-Host "##vso[task.LogIssue type=error;]Unable to set build number"
         exit 1
       }
-
-- task: PowerShell@1
-  displayName: "Add Build Tags"
-  inputs:
-    scriptType: "inlineScript"
-    inlineScript: |
-      Write-Host "##vso[build.addbuildtag]${env:BUILD_SOURCEVERSIONAUTHOR}"
-      Write-Host "##vso[build.addbuildtag]${env:BUILD_SOURCEBRANCHNAME}"
 
 - task: ComponentGovernanceComponentDetection@0
   displayName: 'Component Detection'

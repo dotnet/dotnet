@@ -138,7 +138,7 @@
       </trans-unit>
       <trans-unit id="InvalidNullSettingsOperation">
         <source>"{0}" cannot be called on a NullSettings. This may be caused on account of insufficient permissions to read or write to "%AppData%\NuGet\NuGet.config".</source>
-        <target state="translated">"{0}" невозможно вызывать для NullSettings. Возможно, причина этого в том, что у учетной записи недостаточно разрешений на чтение и запись в "%AppData%\NuGet\NuGet.config".</target>
+        <target state="translated">«{0}» невозможно вызывать для NullSettings. Возможно, причина этого в том, что у учетной записи недостаточно разрешений на чтение и запись в %AppData%\NuGet\NuGet.config.</target>
         <note />
       </trans-unit>
       <trans-unit id="ItemDoesNotExist">

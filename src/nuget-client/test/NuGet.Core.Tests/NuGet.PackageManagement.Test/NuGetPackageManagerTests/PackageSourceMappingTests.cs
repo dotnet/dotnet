@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -193,7 +195,7 @@ namespace NuGet.PackageManagement.Test.NuGetPackageManagerTests
                     new ResolutionContext(), new TestNuGetProjectContext(), sourceRepositoryProvider.GetRepositories(), null, token)).ToList();
 
                 // Assert
-                Assert.Equal(1, packageActions.Count());
+                Assert.Equal(1, packageActions.Count);
                 Assert.True(contosoPackageIdentity.Equals(packageActions[0].PackageIdentity));
                 Assert.Equal(NuGetProjectActionType.Install, packageActions[0].NuGetProjectActionType);
                 Assert.Equal(privateRepositoryPath,
@@ -294,7 +296,7 @@ namespace NuGet.PackageManagement.Test.NuGetPackageManagerTests
                     new ResolutionContext(), new TestNuGetProjectContext(), sourceRepositoryProvider.GetRepositories(), null, token)).ToList();
 
                 // Assert
-                Assert.Equal(1, packageActions.Count());
+                Assert.Equal(1, packageActions.Count);
                 Assert.True(contosoPackageIdentity.Equals(packageActions[0].PackageIdentity));
                 Assert.Equal(NuGetProjectActionType.Install, packageActions[0].NuGetProjectActionType);
                 Assert.Equal(privateRepositoryPath,
@@ -516,7 +518,7 @@ namespace NuGet.PackageManagement.Test.NuGetPackageManagerTests
                     new ResolutionContext(), new TestNuGetProjectContext(), primarySourceRepositoryProvider.GetRepositories(), secondarySourceRepositoryProvider.GetRepositories(), token)).ToList();
 
                 // Assert
-                Assert.Equal(2, packageActions.Count());
+                Assert.Equal(2, packageActions.Count);
                 Assert.True(contosoPackageIdentity.Equals(packageActions[0].PackageIdentity));
                 Assert.Equal(NuGetProjectActionType.Install, packageActions[0].NuGetProjectActionType);
                 // Contoso.A comes from PrivateRepository due to package source mapping filtering even though same package Id exist in Externalrepository.

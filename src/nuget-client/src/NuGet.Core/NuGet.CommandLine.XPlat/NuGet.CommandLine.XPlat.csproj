@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>NuGet executable wrapper for the dotnet CLI nuget functionality.</Description>
     <TargetFramework>$(LatestNETCoreTargetFramework)</TargetFramework>
@@ -8,6 +8,8 @@
     <PackProject>true</PackProject>
     <XPLATProject>true</XPLATProject>
     <UseMSBuildLocator Condition=" '$(UseMSBuildLocator)' == '' And '$(Configuration)' == 'Debug' and '$(CI)' != 'true' ">true</UseMSBuildLocator>
+    <!-- Microsoft.Extensions.CommandLineUtils.Sources causes nullability warnings, so we have to disable it for the project and enable in each file until we can remove the package  -->
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +19,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.CommandLineUtils.Sources" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Build" ExcludeAssets="runtime" />
+    <PackageReference Include="Spectre.Console" />
     <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 

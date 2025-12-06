@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Buffers;
 using System.Collections.Generic;
@@ -15,6 +17,7 @@ using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
 using NuGet.RuntimeModel;
+using NuGet.Shared;
 using NuGet.Versioning;
 
 namespace NuGet.ProjectModel
@@ -44,6 +47,7 @@ namespace NuGet.ProjectModel
         private static readonly byte[] CentralPackageVersionsManagementEnabledPropertyName = Encoding.UTF8.GetBytes("centralPackageVersionsManagementEnabled");
         private static readonly byte[] CentralPackageVersionOverrideDisabledPropertyName = Encoding.UTF8.GetBytes("centralPackageVersionOverrideDisabled");
         private static readonly byte[] CentralPackageTransitivePinningEnabledPropertyName = Encoding.UTF8.GetBytes("CentralPackageTransitivePinningEnabled");
+        private static readonly byte[] CentralPackageFloatingVersionsEnabledPropertyName = Encoding.UTF8.GetBytes("centralPackageFloatingVersionsEnabled");
         private static readonly byte[] ConfigFilePathsPropertyName = Encoding.UTF8.GetBytes("configFilePaths");
         private static readonly byte[] CrossTargetingPropertyName = Encoding.UTF8.GetBytes("crossTargeting");
         private static readonly byte[] FallbackFoldersPropertyName = Encoding.UTF8.GetBytes("fallbackFolders");
@@ -120,14 +124,6 @@ namespace NuGet.ProjectModel
                     if (jsonReader.ValueTextEquals(EmptyStringPropertyName))
                     {
                         jsonReader.Skip();
-                    }
-                    else if (jsonReader.ValueTextEquals(DependenciesPropertyName))
-                    {
-                        ReadDependencies(
-                            ref jsonReader,
-                            packageSpec.Dependencies,
-                            filePath,
-                            isGacOrFrameworkReference: false);
                     }
                     else if (jsonReader.ValueTextEquals(FrameworksPropertyName))
                     {
@@ -755,6 +751,7 @@ namespace NuGet.ProjectModel
             var centralPackageVersionsManagementEnabled = false;
             var centralPackageVersionOverrideDisabled = false;
             var CentralPackageTransitivePinningEnabled = false;
+            var centralPackageFloatingVersionsEnabled = false;
             List<string> configFilePaths = null;
             var crossTargeting = false;
             List<string> fallbackFolders = null;
@@ -797,6 +794,10 @@ namespace NuGet.ProjectModel
                     else if (jsonReader.ValueTextEquals(CentralPackageTransitivePinningEnabledPropertyName))
                     {
                         CentralPackageTransitivePinningEnabled = jsonReader.ReadNextTokenAsBoolOrFalse();
+                    }
+                    else if (jsonReader.ValueTextEquals(CentralPackageFloatingVersionsEnabledPropertyName))
+                    {
+                        centralPackageFloatingVersionsEnabled = jsonReader.ReadNextTokenAsBoolOrFalse();
                     }
                     else if (jsonReader.ValueTextEquals(ConfigFilePathsPropertyName))
                     {
@@ -1007,7 +1008,7 @@ namespace NuGet.ProjectModel
                     }
                     else if (jsonReader.ValueTextEquals(UsingMicrosoftNETSdk))
                     {
-                        usingMicrosoftNetSdk = jsonReader.ReadNextTokenAsBoolOrThrowAnException(UsingMicrosoftNETSdk);
+                        usingMicrosoftNetSdk = jsonReader.ReadNextTokenAsBoolOrThrowAnException(UsingMicrosoftNETSdk, Strings.Invalid_AttributeValue);
                     }
                     else if (jsonReader.ValueTextEquals(SdkAnalysisLevel))
                     {
@@ -1033,7 +1034,7 @@ namespace NuGet.ProjectModel
                     }
                     else if (jsonReader.ValueTextEquals(UseLegacyDependencyResolverPropertyName))
                     {
-                        useLegacyDependencyResolver = jsonReader.ReadNextTokenAsBoolOrThrowAnException(UseLegacyDependencyResolverPropertyName);
+                        useLegacyDependencyResolver = jsonReader.ReadNextTokenAsBoolOrThrowAnException(UseLegacyDependencyResolverPropertyName, Strings.Invalid_AttributeValue);
                     }
                     else
                     {
@@ -1058,6 +1059,7 @@ namespace NuGet.ProjectModel
             msbuildMetadata.CentralPackageVersionsEnabled = centralPackageVersionsManagementEnabled;
             msbuildMetadata.CentralPackageVersionOverrideDisabled = centralPackageVersionOverrideDisabled;
             msbuildMetadata.CentralPackageTransitivePinningEnabled = CentralPackageTransitivePinningEnabled;
+            msbuildMetadata.CentralPackageFloatingVersionsEnabled = centralPackageFloatingVersionsEnabled;
             msbuildMetadata.RestoreAuditProperties = auditProperties;
             msbuildMetadata.SdkAnalysisLevel = sdkAnalysisLevel;
             msbuildMetadata.UsingMicrosoftNETSdk = usingMicrosoftNetSdk;
@@ -1511,9 +1513,7 @@ namespace NuGet.ProjectModel
                 Warn = warn
             };
 
-#pragma warning disable CS0612 // Type or member is obsolete
             AddTargetFramework(packageSpec, frameworkName, secondaryFramework, targetFrameworkInformation);
-#pragma warning restore CS0612 // Type or member is obsolete
         }
 
         private static HashSet<string> ReadSuppressedAdvisories(ref Utf8JsonStreamReader jsonReader)

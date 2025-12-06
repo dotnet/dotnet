@@ -59,7 +59,7 @@
       </trans-unit>
       <trans-unit id="NuGetSearchProvider_CategoryShortcut">
         <source>nuget</source>
-        <target state="translated">nuget</target>
+        <target state="translated">NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="NuGetSearchProvider_Description">
@@ -113,8 +113,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ProjectMigrateErrorMessage">
-        <source>Project is not eligible for migration as it's not project.json based.</source>
-        <target state="translated">專案不符合移轉資格，因為它不是以project.json為基礎。</target>
+        <source>Project is not eligible for migration. Either the project is not packages.config based or doesn't support PackageReference yet.</source>
+        <target state="translated">專案不符合移轉資格。可能是專案並非 packages.config 形式，或是尚未支援 PackageReference。</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">

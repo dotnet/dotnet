@@ -3,8 +3,6 @@
 
 #if !NET7_0_OR_GREATER
 
-#nullable enable
-
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Formats.Asn1;

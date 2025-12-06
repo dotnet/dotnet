@@ -172,8 +172,6 @@ NuGet.Frameworks.IFrameworkNameProvider.TryGetSubSetFrameworks(string! framework
 NuGet.Frameworks.IFrameworkNameProvider.TryGetVersion(string! versionString, out System.Version? version) -> bool
 NuGet.Frameworks.IFrameworkSpecific
 NuGet.Frameworks.IFrameworkSpecific.TargetFramework.get -> NuGet.Frameworks.NuGetFramework!
-NuGet.Frameworks.IFrameworkTargetable
-NuGet.Frameworks.IFrameworkTargetable.SupportedFrameworks.get -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>!
 NuGet.Frameworks.IPortableFrameworkMappings
 NuGet.Frameworks.IPortableFrameworkMappings.CompatibilityMappings.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, NuGet.Frameworks.FrameworkRange!>>!
 NuGet.Frameworks.IPortableFrameworkMappings.ProfileFrameworks.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, NuGet.Frameworks.NuGetFramework![]!>>!
@@ -284,7 +282,6 @@ static NuGet.Frameworks.FrameworkNameHelpers.GetPortableProfileNumberString(int 
 static NuGet.Frameworks.FrameworkNameHelpers.GetVersion(string? versionString) -> System.Version!
 static NuGet.Frameworks.FrameworkNameHelpers.GetVersionString(System.Version! version) -> string!
 static NuGet.Frameworks.FrameworkRangeComparer.Instance.get -> NuGet.Frameworks.FrameworkRangeComparer!
-static NuGet.Frameworks.FrameworkRuntimePair.GetName(NuGet.Frameworks.NuGetFramework! framework, string? runtimeIdentifier) -> string!
 static NuGet.Frameworks.FrameworkRuntimePair.GetTargetGraphName(NuGet.Frameworks.NuGetFramework! framework, string? runtimeIdentifier) -> string!
 static NuGet.Frameworks.NuGetFramework.Parse(string! folderName) -> NuGet.Frameworks.NuGetFramework!
 static NuGet.Frameworks.NuGetFramework.Parse(string! folderName, NuGet.Frameworks.IFrameworkNameProvider! mappings) -> NuGet.Frameworks.NuGetFramework!

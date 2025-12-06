@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -65,7 +63,7 @@ namespace NuGet.DependencyResolver
             if (libraryRange == default)
                 throw new ArgumentNullException(nameof(libraryRange));
 
-            // filter package patterns if enabled            
+            // filter package patterns if enabled
             if (PackageSourceMapping?.IsEnabled == true && libraryRange.TypeConstraintAllows(LibraryDependencyTarget.Package))
             {
                 IReadOnlyList<string> sources = PackageSourceMapping.GetConfiguredPackageSources(libraryRange.Name);

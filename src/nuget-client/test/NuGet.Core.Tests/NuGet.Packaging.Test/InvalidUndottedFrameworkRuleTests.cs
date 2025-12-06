@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -146,7 +148,7 @@ namespace NuGet.Packaging.Test
 
             };
             var results = new List<PackagingLogMessage>(InvalidUndottedFrameworkRule.ValidateFiles(files));
-            Assert.Equal(1, results.Count());
+            Assert.Equal(1, results.Count);
             Assert.Equal(NuGetLogCode.NU5501, results[0].Code);
             Assert.True(results[0].Message.Contains("contentFiles/any/net50/b.csv"));
             Assert.True(results[0].Message.Contains("lib/net50-windows7.0/d.dll"));

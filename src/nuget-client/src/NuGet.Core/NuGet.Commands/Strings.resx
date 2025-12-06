@@ -828,6 +828,9 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       Do not localize `VersionOverride`
     </comment>
   </data>
+  <data name="Error_CentralPackageManagement_MissingTransitivelyPinnedIncludeType" xml:space="preserve">
+    <value>The centrally pinned dependency '{0}' was not found in the resolved graph unexpectedly for node '{1}'. Please file an issue at https://github.com/NuGet/Home</value>
+  </data>
   <data name="Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping" xml:space="preserve">
     <value>There are {0} package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</value>
     <comment>0 - The number of package sources, 1 - The URL of the package sources, comma separated.</comment>

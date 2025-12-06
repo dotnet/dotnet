@@ -1,3 +1,5 @@
+#nullable disable
+
 extern alias CoreV2;
 
 using System;

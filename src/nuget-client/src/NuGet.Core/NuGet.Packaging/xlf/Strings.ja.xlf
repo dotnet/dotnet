@@ -253,7 +253,7 @@
       </trans-unit>
       <trans-unit id="Error_NotOnePrimarySignature">
         <source>The package signature file does not contain exactly one primary signature.</source>
-        <target state="translated">パッケージの署名ファイルに含まれているプライマリ署名が 1 つではありません。</target>
+        <target state="translated">パッケージ署名ファイルに含まれているプライマリ署名が 1 つではありません。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_NotOneRepositoryCounterSignature">
@@ -363,7 +363,7 @@
       </trans-unit>
       <trans-unit id="InvalidPackageSignatureFile">
         <source>The package contains an invalid package signature file.</source>
-        <target state="translated">パッケージに、無効なパッケージの署名ファイルが含まれています。</target>
+        <target state="translated">パッケージに、無効なパッケージ署名ファイルが含まれています。</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidPackageSignatureFileEntry">
@@ -484,7 +484,7 @@
       </trans-unit>
       <trans-unit id="MultiplePackageSignatureFiles">
         <source>The package contains multiple package signature files.</source>
-        <target state="translated">パッケージに、複数のパッケージの署名ファイルが含まれています。</target>
+        <target state="translated">パッケージに、複数のパッケージ署名ファイルが含まれています。</target>
         <note />
       </trans-unit>
       <trans-unit id="MustContainAbsolutePath">
@@ -494,7 +494,7 @@
       </trans-unit>
       <trans-unit id="NoPackageSignatureFile">
         <source>The package does not contain a valid package signature file.</source>
-        <target state="translated">パッケージに、有効なパッケージの署名ファイルが含まれていません。</target>
+        <target state="translated">パッケージに、有効なパッケージ署名ファイルが含まれていません。</target>
         <note />
       </trans-unit>
       <trans-unit id="NoRepositoryCountersignature">
@@ -666,7 +666,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">'{0}' を NULL にすることはできません。</target>
+        <target state="translated">'{0}' を null 値にはできません。</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="RangeOutOfBoundsForArray">
@@ -961,7 +961,7 @@
     Certificate (PEM):
 {3}</source>
         <target state="translated">次の X.509 ルート証明書は、{0} の証明書バンドルに存在しないため、信頼されていません。 詳細については、NU3042 のドキュメントを参照してください。
-    サブジェクト:  {1}
+    主題:  {1}
     指紋 (SHA-256):  {2}
     証明書 (PEM):
 {3}</target>
@@ -974,7 +974,7 @@
     Certificate (PEM):
 {2}</source>
         <target state="translated">次の X.509 ルート証明書は、証明書バンドルが見つからなかったため、信頼されていません。 詳細については、NU3042 のドキュメントを参照してください。
-    サブジェクト:  {0}
+    主題:  {0}
     指紋 (SHA-256):  {1}
     証明書 (PEM):
 {2}</target>

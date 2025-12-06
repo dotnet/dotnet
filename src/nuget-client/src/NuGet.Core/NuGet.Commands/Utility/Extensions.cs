@@ -19,16 +19,14 @@ namespace NuGet.Commands
         public static ISet<LibraryDependency> GetAllPackageDependencies(this PackageSpec project)
         {
             // Remove non-package dependencies such as framework assembly references.
-            return new HashSet<LibraryDependency>(
-                project.Dependencies.Concat(project.TargetFrameworks.SelectMany(e => e.Dependencies))
+            return new HashSet<LibraryDependency>(project.TargetFrameworks.SelectMany(e => e.Dependencies)
                                     .Where(e => e.LibraryRange.TypeConstraintAllows(LibraryDependencyTarget.Package)));
         }
 
         public static ISet<LibraryDependency> GetPackageDependenciesForFramework(this PackageSpec project, NuGetFramework framework)
         {
             // Remove non-package dependencies such as framework assembly references.
-            return new HashSet<LibraryDependency>(
-                project.Dependencies.Concat(project.GetTargetFramework(framework).Dependencies)
+            return new HashSet<LibraryDependency>(project.GetTargetFramework(framework).Dependencies
                                     .Where(e => e.LibraryRange.TypeConstraintAllows(LibraryDependencyTarget.Package)));
         }
 

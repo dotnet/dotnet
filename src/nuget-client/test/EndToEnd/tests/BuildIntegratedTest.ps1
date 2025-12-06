@@ -7,9 +7,9 @@ function Test-BuildIntegratedInstallPackage {
     Install-Package NuGet.Versioning -ProjectName $project.Name -version 1.0.7
 
     # Assert
-    Assert-ProjectJsonDependency $project NuGet.Versioning 1.0.7
-    Assert-ProjectJsonLockFilePackage $project NuGet.Versioning 1.0.7
-    Assert-ProjectJsonLockFileRuntimeAssembly $project lib/portable-net40+win/NuGet.Versioning.dll
+    Assert-PackageReferenceExists $project NuGet.Versioning 1.0.7
+    Assert-NetCorePackageInLockFile $project NuGet.Versioning 1.0.7
+    Assert-PackageReferenceAssetsFileRuntimeAssembly $project lib/portable-net40+win/NuGet.Versioning.dll
 }
 
 # install multiple packages into a project
@@ -22,15 +22,14 @@ function Test-BuildIntegratedInstallMultiplePackages {
     Install-Package DotNetRDF -version 1.0.8.3533
 
     # Assert
-    Assert-ProjectJsonDependency $project NuGet.Versioning 1.0.7
-    Assert-ProjectJsonDependency $project DotNetRDF 1.0.8.3533
-    Assert-ProjectJsonLockFilePackage $project NuGet.Versioning 1.0.7
-    Assert-ProjectJsonLockFilePackage $project DotNetRDF 1.0.8.3533
-    Assert-ProjectJsonLockFilePackage $project Newtonsoft.Json 6.0.8
-    Assert-ProjectJsonLockFileRuntimeAssembly $project lib/portable-net40+win/NuGet.Versioning.dll
-    Assert-ProjectJsonLockFileRuntimeAssembly $project lib/netcore45/Newtonsoft.Json.dll
-    Assert-ProjectJsonLockFileRuntimeAssembly $project lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/dotNetRDF.dll
-    Assert-ProjectJsonLockFileRuntimeAssembly $project lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Portable.Runtime.dll
+    Assert-PackageReferenceExists $project NuGet.Versioning 1.0.7
+    Assert-PackageReferenceExists $project DotNetRDF 1.0.8.3533
+    Assert-NetCorePackageInLockFile $project NuGet.Versioning 1.0.7
+    Assert-NetCorePackageInLockFile $project DotNetRDF 1.0.8.3533
+    Assert-NetCorePackageInLockFile $project Newtonsoft.Json 6.0.8
+    Assert-PackageReferenceAssetsFileRuntimeAssembly $project lib/portable-net40+win/NuGet.Versioning.dll
+    Assert-PackageReferenceAssetsFileRuntimeAssembly $project lib/net45/Newtonsoft.Json.dll
+    Assert-PackageReferenceAssetsFileRuntimeAssembly $project lib/net40/dotNetRDF.dll
 }
 
 # install and then uninstall multiple packages
@@ -45,11 +44,11 @@ function Test-BuildIntegratedInstallAndUninstallAll {
     Uninstall-Package DotNetRDF -ProjectName $project.Name
 
     # Assert
-    Assert-ProjectJsonDependencyNotFound $project NuGet.Versioning
-    Assert-ProjectJsonDependencyNotFound $project DotNetRDF
-    Assert-ProjectJsonLockFilePackageNotFound $project NuGet.Versioning
-    Assert-ProjectJsonLockFilePackageNotFound $project DotNetRDF
-    Assert-ProjectJsonLockFilePackageNotFound $project Newtonsoft.Json
+    Assert-NetCoreNoPackageReference $project NuGet.Versioning
+    Assert-NetCoreNoPackageReference $project DotNetRDF
+    Assert-NetCorePackageNotInLockFile $project NuGet.Versioning
+    Assert-NetCorePackageNotInLockFile $project DotNetRDF
+    Assert-NetCorePackageNotInLockFile $project Newtonsoft.Json
 }
 
 # install a package with dependencies
@@ -61,8 +60,8 @@ function Test-BuildIntegratedInstallAndVerifyLockFileContainsChildDependency {
     Install-Package AppSupport.Win81 -ProjectName $project.Name -version 0.0.3-alpha
 
     # Assert
-    Assert-ProjectJsonLockFilePackage $project WindowsAzure.MobileServices 1.0.2
-    Assert-ProjectJsonDependencyNotFound $project WindowsAzure.MobileServices
+    Assert-NetCorePackageInLockFile $project WindowsAzure.MobileServices 1.0.2
+    Assert-NetCoreNoPackageReference $project WindowsAzure.MobileServices
 } 
 
 # basic uninstall
@@ -75,8 +74,8 @@ function Test-BuildIntegratedUninstallPackage {
     Uninstall-Package NuGet.Versioning -ProjectName $project.Name
 
     # Assert
-    Assert-ProjectJsonDependencyNotFound $project NuGet.Versioning
-    Assert-ProjectJsonLockFilePackageNotFound $project NuGet.Versioning
+    Assert-NetCoreNoPackageReference $project NuGet.Versioning
+    Assert-NetCorePackageNotInLockFile $project NuGet.Versioning
 }
 
 # basic update package
@@ -89,9 +88,9 @@ function Test-BuildIntegratedUpdatePackage {
     Update-Package NuGet.Versioning -ProjectName $project.Name -version 1.0.6
 
     # Assert
-    Assert-ProjectJsonDependency $project NuGet.Versioning 1.0.6
-    Assert-ProjectJsonLockFilePackage $project NuGet.Versioning 1.0.6
-    Assert-ProjectJsonLockFileRuntimeAssembly $project lib/portable-net40+win/NuGet.Versioning.dll
+    Assert-PackageReferenceExists $project NuGet.Versioning 1.0.6
+    Assert-NetCorePackageInLockFile $project NuGet.Versioning 1.0.6
+    Assert-PackageReferenceAssetsFileRuntimeAssembly $project lib/portable-net40+win/NuGet.Versioning.dll
 }
 
 function Test-BuildIntegratedUpdateNonExistantPackage {
@@ -114,13 +113,13 @@ function Test-BuildIntegratedLockFileIsCreatedOnBuild {
     # Arrange
     $project = New-BuildIntegratedProj UAPApp
     Install-Package NuGet.Versioning -ProjectName $project.Name -version 1.0.7
-    Remove-ProjectJsonLockFile $project
+    Remove-AssetsFile $project
 
     # Act
     Build-Solution
 
     # Assert
-    Assert-ProjectJsonLockFilePackage $project NuGet.Versioning 1.0.7
+    Assert-NetCorePackageInLockFile $project NuGet.Versioning 1.0.7
 }
 
 function Test-BuildIntegratedPackageFailsIfDowngradeWasDetected {
@@ -133,7 +132,7 @@ function Test-BuildIntegratedPackageFailsIfDowngradeWasDetected {
 	# Assert
     # DotNetRDF requires json.net >= 6.0.8, but the direct dependency attempts to downgrade it.
 	Install-Package DotNetRDF  -ProjectName $project.Name -version 1.0.8.3533
-    Assert-ProjectJsonLockFilePackage $project Newtonsoft.Json 6.0.4
+    Assert-NetCorePackageInLockFile $project Newtonsoft.Json 6.0.4
 }
 
 function Test-BuildIntegratedDependencyUpdatedByInstall {
@@ -146,7 +145,7 @@ function Test-BuildIntegratedDependencyUpdatedByInstall {
 
     # Assert
     # DotNetRDF requires json.net 6.0.8
-    Assert-ProjectJsonLockFilePackage $project Newtonsoft.Json 7.0.1
+    Assert-NetCorePackageInLockFile $project Newtonsoft.Json 7.0.1
 }
 
 function Test-BuildIntegratedInstallPackageInvokeInitScript {
@@ -174,7 +173,7 @@ function Test-BuildIntegratedInstallPackageJsonNet701Beta3 {
     Install-Package newtonsoft.json -ProjectName $project.Name -version 7.0.1-beta3
 
     # Assert
-    Assert-ProjectJsonLockFileRuntimeAssembly $project "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll"
+    Assert-PackageReferenceAssetsFileRuntimeAssembly $project "lib/net45/Newtonsoft.Json.dll"
 }
 
 function Test-BuildIntegratedProjectClosure {
@@ -184,14 +183,14 @@ function Test-BuildIntegratedProjectClosure {
     Add-ProjectReference $project1 $project2
 
     Install-Package NuGet.Versioning -ProjectName $project2.Name -version 1.0.7
-    Remove-ProjectJsonLockFile $project2
+    Remove-AssetsFile $project2
 
     # Act
     Build-Solution
 
     # Assert
-    Assert-ProjectJsonLockFilePackage $project1 NuGet.Versioning 1.0.7
-    Assert-ProjectJsonLockFilePackage $project2 NuGet.Versioning 1.0.7
+    Assert-NetCorePackageInLockFile $project1 NuGet.Versioning 1.0.7
+    Assert-NetCorePackageInLockFile $project2 NuGet.Versioning 1.0.7
 }
 
 function Test-BuildIntegratedProjectClosureWithLegacyProjects {
@@ -209,7 +208,7 @@ function Test-BuildIntegratedProjectClosureWithLegacyProjects {
     Build-Solution
 
     # Assert
-    Assert-NotNull Get-ProjectJsonLockFile $project1
+    Assert-NotNull Get-NetCoreLockFile $project1
 }
 
 # Tests that packages are restored on build
@@ -227,7 +226,7 @@ function Test-BuildIntegratedMixedLegacyProjects {
     Assert-False (Test-Path $packagesDir)
 
     # delete the lock file
-    $lockFile = Get-ProjectJsonLockFilePath $project2
+    $lockFile = Get-NetCoreLockFilePath $project2
     Remove-Item $lockFile
     Assert-False (Test-Path $lockFile)
 
@@ -238,10 +237,10 @@ function Test-BuildIntegratedMixedLegacyProjects {
     Assert-True (Test-Path $packagesDir)
     Assert-Package $project1 Newtonsoft.Json
     Assert-True (Test-Path $lockFile)
-    Assert-ProjectJsonLockFilePackage $project2 NuGet.Versioning 1.0.7
+    Assert-NetCorePackageInLockFile $project2 NuGet.Versioning 1.0.7
 }
 
-function Test-BuildIntegratedMixedLegacyProjectsProjectJsonOnly {
+function Test-BuildIntegratedMixedLegacyProjectsPackageReferenceOnly {
     # Arrange
     $project1 = New-ClassLibrary
     $project1 | Install-Package Newtonsoft.Json -Version 13.0.1
@@ -250,7 +249,7 @@ function Test-BuildIntegratedMixedLegacyProjectsProjectJsonOnly {
     $project2 | Install-Package NuGet.Versioning -Version 1.0.7
 
     # delete the lock file
-    $lockFile = Get-ProjectJsonLockFilePath $project2
+    $lockFile = Get-NetCoreLockFilePath $project2
     Remove-Item $lockFile
     Assert-False (Test-Path $lockFile)
 
@@ -259,7 +258,7 @@ function Test-BuildIntegratedMixedLegacyProjectsProjectJsonOnly {
 
     # Assert
     Assert-True (Test-Path $lockFile)
-    Assert-ProjectJsonLockFilePackage $project2 NuGet.Versioning 1.0.7
+    Assert-NetCorePackageInLockFile $project2 NuGet.Versioning 1.0.7
 }
 
 function Test-BuildIntegratedMixedLegacyProjectsPackagesFolderOnly {
@@ -285,7 +284,7 @@ function Test-BuildIntegratedMixedLegacyProjectsPackagesFolderOnly {
 
 # Verifies that project.json that specified in project.json referenced transitively through a non-project.json project
 # are correctly pulled in.
-function Test-BuildIntegratedTransitiveProjectJsonRestores {
+function Test-BuildIntegratedTransitivePackageReferenceRestores {
     # Arrange
     $project1 = New-Project BuildIntegratedClassLibrary
     $project2 = New-ClassLibraryNET46
@@ -300,8 +299,8 @@ function Test-BuildIntegratedTransitiveProjectJsonRestores {
 
     # Assert
     Assert-NoPackage $project2 NuGet.Versioning 1.0.7
-    Assert-ProjectJsonLockFilePackage $project1 NuGet.Versioning 1.0.7
-    Assert-ProjectJsonLockFilePackage $project3 NuGet.Versioning 1.0.7
+    Assert-NetCorePackageInLockFile $project1 NuGet.Versioning 1.0.7
+    Assert-NetCorePackageInLockFile $project3 NuGet.Versioning 1.0.7
 }
 
 # Verifies that parent projects are restored after an install
@@ -320,12 +319,12 @@ function Test-BuildIntegratedParentProjectIsRestoredAfterInstall {
     $project3 | Install-Package NuGet.Versioning -Version 1.0.7
 
     # Assert
-    Assert-ProjectJsonLockFilePackage $project1 NuGet.Versioning 1.0.7
-    Assert-ProjectJsonLockFilePackage $project2 NuGet.Versioning 1.0.7
-    Assert-ProjectJsonLockFilePackage $project3 NuGet.Versioning 1.0.7
+    Assert-NetCorePackageInLockFile $project1 NuGet.Versioning 1.0.7
+    Assert-NetCorePackageInLockFile $project2 NuGet.Versioning 1.0.7
+    Assert-NetCorePackageInLockFile $project3 NuGet.Versioning 1.0.7
 
     # the child project should not be restored
-    Assert-ProjectJsonLockFileDoesNotExist $project4
+    Assert-AssetsFileDoesNotExist $project4
 }
 
 # Verifies that parent projects are restored after an uninstall
@@ -341,20 +340,20 @@ function Test-BuildIntegratedParentProjectIsRestoredAfterUnInstall {
     Add-ProjectReference $project3 $project4
 
     $project3 | Install-Package NuGet.Versioning -Version 1.0.7
-    Remove-ProjectJsonLockFile $project1
-    Remove-ProjectJsonLockFile $project2
-    Remove-ProjectJsonLockFile $project3
+    Remove-AssetsFile $project1
+    Remove-AssetsFile $project2
+    Remove-AssetsFile $project3
 
     # Act
     $project3 | Uninstall-Package NuGet.Versioning -Version 1.0.7
 
     # Assert
-    Assert-ProjectJsonLockFilePackageNotFound $project1 NuGet.Versioning
-    Assert-ProjectJsonLockFilePackageNotFound $project2 NuGet.Versioning
-    Assert-ProjectJsonLockFilePackageNotFound $project3 NuGet.Versioning
+    Assert-NetCorePackageNotInLockFile $project1 NuGet.Versioning
+    Assert-NetCorePackageNotInLockFile $project2 NuGet.Versioning
+    Assert-NetCorePackageNotInLockFile $project3 NuGet.Versioning
 
     # the child project should not be restored
-    Assert-ProjectJsonLockFileDoesNotExist $project4
+    Assert-AssetsFileDoesNotExist $project4
 }
 
 # Verifies that parent projects are restored after an update
@@ -370,20 +369,20 @@ function Test-BuildIntegratedParentProjectIsRestoredAfterUpdate {
     Add-ProjectReference $project3 $project4
 
     $project3 | Install-Package NuGet.Versioning -Version 1.0.5
-    Remove-ProjectJsonLockFile $project1
-    Remove-ProjectJsonLockFile $project2
-    Remove-ProjectJsonLockFile $project3
+    Remove-AssetsFile $project1
+    Remove-AssetsFile $project2
+    Remove-AssetsFile $project3
 
     # Act    
     $project3 | Update-Package NuGet.Versioning -Version 1.0.7
 
     # Assert
-    Assert-ProjectJsonLockFilePackage $project1 NuGet.Versioning 1.0.7    
-    Assert-ProjectJsonLockFilePackage $project2 NuGet.Versioning 1.0.7
-    Assert-ProjectJsonLockFilePackage $project3 NuGet.Versioning 1.0.7
+    Assert-NetCorePackageInLockFile $project1 NuGet.Versioning 1.0.7    
+    Assert-NetCorePackageInLockFile $project2 NuGet.Versioning 1.0.7
+    Assert-NetCorePackageInLockFile $project3 NuGet.Versioning 1.0.7
 
     # the child project should not be restored
-    Assert-ProjectJsonLockFileDoesNotExist $project4
+    Assert-AssetsFileDoesNotExist $project4
 }
 
 # Verify that all build integrated projects are included in the closure, even when a 
@@ -401,7 +400,7 @@ function Test-BuildIntegratedParentProjectIsRestoredAfterInstallWithClassLibInTr
     $project3 | Install-Package NuGet.Versioning -Version 1.0.7
 
     # Assert
-    Assert-ProjectJsonLockFilePackage $project1 NuGet.Versioning 1.0.7
+    Assert-NetCorePackageInLockFile $project1 NuGet.Versioning 1.0.7
 }
 
 function Test-BuildIntegratedCleanDeleteCacheFile {
@@ -565,7 +564,7 @@ function Test-BuildIntegratedProjectGetPackageTransitive {
     # Act (Restore)
     Build-Solution
 
-    Assert-ProjectJsonLockFilePackage $projectT NuGet.Versioning 1.0.7
+    Assert-NetCorePackageInLockFile $projectT NuGet.Versioning 1.0.7
 }
 
 function TestCases-BuildIntegratedProjectGetPackageTransitive{

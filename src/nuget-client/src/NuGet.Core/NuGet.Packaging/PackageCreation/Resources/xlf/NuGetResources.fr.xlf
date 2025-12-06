@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="DuplicateDependenciesDefined">
         <source>'{0}' already has a dependency defined for '{1}'.</source>
-        <target state="translated">« {0} » comporte déjà une dépendance définie pour « {1} ».</target>
+        <target state="translated">'{0}' comporte déjà une dépendance définie pour '{1}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="FoundDuplicateFile">
@@ -59,12 +59,12 @@
       </trans-unit>
       <trans-unit id="IncompatibleSchema">
         <source>The schema version of '{0}' is incompatible with version {1} of NuGet. Please upgrade NuGet to the latest version from http://go.microsoft.com/fwlink/?LinkId=213942.</source>
-        <target state="translated">La version de schéma de « {0} » n’est pas compatible avec la version {1} de NuGet. Mettez à niveau NuGet vers la dernière version via la page http://go.microsoft.com/fwlink/?LinkId=213942.</target>
+        <target state="translated">La version de schéma de '{0}' n’est pas compatible avec la version {1} de NuGet. Mettez à niveau NuGet vers la dernière version via la page http://go.microsoft.com/fwlink/?LinkId=213942.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidPackageId">
         <source>The package ID '{0}' contains invalid characters. Examples of valid package IDs include 'MyPackage' and 'MyPackage.Sample'.</source>
-        <target state="translated">L’ID de package « {0} » contient des caractères non valides. 'MyPackage' et 'MyPackage.Sample' sont des exemples d’ID de package valides.</target>
+        <target state="translated">L’ID de package '{0}' contient des caractères non valides. Exemples d'ID de package valides : 'MyPackage' et 'MyPackage.Sample'.</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_DependenciesHasMixedElements">
@@ -79,12 +79,12 @@
       </trans-unit>
       <trans-unit id="Manifest_IdMaxLengthExceeded">
         <source>Id must not exceed 100 characters.</source>
-        <target state="translated">L’Id ne doit pas inclure plus de 100 caractères.</target>
+        <target state="translated">L’ID ne doit pas inclure plus de 100 caractères.</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_InvalidMinClientVersion">
         <source>The 'minClientVersion' attribute in the package manifest has invalid value. It must be a valid version string.</source>
-        <target state="translated">L'attribut « minClientVersion » dans le manifeste du package a une valeur non valide. Il doit correspondre à une chaîne de version valide.</target>
+        <target state="translated">L’attribut « minClientVersion » dans le manifeste de package a une valeur non valide. La valeur doit être une chaîne de version valide.</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_InvalidReference">
@@ -124,12 +124,12 @@
       </trans-unit>
       <trans-unit id="Manifest_ReferencesHasMixedElements">
         <source>&lt;references&gt; element must not contain both &lt;group&gt; and &lt;reference&gt; child elements.</source>
-        <target state="translated">L'élément &lt;references&gt; ne doit pas contenir à la fois les éléments enfants &lt;group&gt; et &lt;reference&gt;.</target>
+        <target state="translated">L’élément &lt;references&gt; ne doit pas contenir les éléments enfants &lt;group&gt; et &lt;reference&gt; à la fois.</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_ReferencesIsEmpty">
         <source>The element package\metadata\references\group must contain at least one &lt;reference&gt; child element.</source>
-        <target state="translated">L'élément package\metadata\references\group doit contenir au moins un élément enfant &lt;reference&gt;.</target>
+        <target state="translated">L’élément package\metadata\references\group doit contenir au moins un élément enfant &lt;reference&gt;.</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_RequireLicenseAcceptanceRequiresEmit">
@@ -144,7 +144,7 @@
       </trans-unit>
       <trans-unit id="Manifest_RequiredElementMissing">
         <source>The required element '{0}' is missing from the manifest.</source>
-        <target state="translated">L'élément requis « {0} » est manquant dans le manifeste.</target>
+        <target state="translated">L’élément obligatoire « {0} » est manquant dans le manifeste.</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_RequiredMetadataMissing">
@@ -169,7 +169,7 @@
       </trans-unit>
       <trans-unit id="PackageAuthoring_FileNotFound">
         <source>File not found: '{0}'.</source>
-        <target state="translated">Fichier introuvable : « {0} ».</target>
+        <target state="translated">Fichier introuvable : '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReadmeCannotOpenFile">
@@ -199,7 +199,7 @@
       </trans-unit>
       <trans-unit id="UnknownSchemaVersion">
         <source>Unknown schema version '{0}'.</source>
-        <target state="translated">Version de schéma « {0} » inconnue.</target>
+        <target state="translated">Version de schéma '{0}' inconnue.</target>
         <note />
       </trans-unit>
     </body>

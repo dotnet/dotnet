@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
         <source>Value cannot be null or an empty string.</source>
-        <target state="translated">Der Wert darf nicht NULL und keine leere Zeichenfolge sein.</target>
+        <target state="translated">Der Wert darf nicht NULL oder eine leere Zeichenfolge sein.</target>
         <note />
       </trans-unit>
       <trans-unit id="CannotBeNullWhenParameterIsNotNull">

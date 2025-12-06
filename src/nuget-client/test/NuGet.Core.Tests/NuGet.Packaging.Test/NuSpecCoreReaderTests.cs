@@ -135,7 +135,7 @@ namespace NuGet.Packaging.Core.Test
             var packageTypes = reader.GetPackageTypes();
 
             // Assert
-            Assert.Equal(1, packageTypes.Count());
+            Assert.Equal(1, packageTypes.Count);
             var packageType = packageTypes.First();
             Assert.Equal(expectedType, packageType.Name);
             Assert.Equal(expectedVersion, packageType.Version.ToString());
@@ -205,7 +205,7 @@ namespace NuGet.Packaging.Core.Test
             var packageTypes = reader.GetPackageTypes();
 
             // Assert
-            Assert.Equal(2, packageTypes.Count());
+            Assert.Equal(2, packageTypes.Count);
 
             var first = packageTypes.ElementAt(0);
             Assert.Equal("Foo", first.Name);

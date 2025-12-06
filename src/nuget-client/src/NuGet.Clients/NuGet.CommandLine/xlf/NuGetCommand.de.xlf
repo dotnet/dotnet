@@ -703,7 +703,7 @@ nuget pack foo.nuspec -Version 2.1.0</target>
       </trans-unit>
       <trans-unit id="PushCommandAllowInsecureConnectionsDescription">
         <source>Allows pushing to HTTP sources (insecure).</source>
-        <target state="new">Allows pushing to HTTP sources (insecure).</target>
+        <target state="translated">Ermöglicht pushen an HTTP-Quellen (unsicher).</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandDescription">
@@ -784,7 +784,7 @@ nuget push foo.nupkg -Timeout 360</target>
       </trans-unit>
       <trans-unit id="RestoreCommandLockFilePath">
         <source>Output location where project lock file is written. By default, this is 'PROJECT_ROOT\packages.lock.json'.</source>
-        <target state="translated">Das Ausgabeverzeichnis, in das die Projektsperrdatei geschrieben werden soll. Standardmäßig ist dies "PROJECT_ROOT\packages.lock.json".</target>
+        <target state="translated">Ausgabespeicherort, an dem die Projektsperrdatei geschrieben wird. Standardmäßig ist dies „PROJECT_ROOT\packages.lock.json“.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandLockedMode">
@@ -912,7 +912,7 @@ nuget setapikey 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -Source http://example.com/
       <trans-unit id="SignCommandCertificateFingerprintDescription">
         <source>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a local certificate store for the certificate.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
-        <target state="translated">SHA-256-, SHA-384- oder SHA-512-Fingerabdruck des Zertifikats, das zum Durchsuchen eines lokalen Zertifikatspeichers nach dem Zertifikat verwendet wird.
+        <target state="translated">SHA-256-, SHA-384- oder SHA-512-Fingerabdruck des Zertifikats, der zum Durchsuchen eines lokalen Zertifikatspeichers nach dem Zertifikat verwendet wird.
 Der Zertifikatspeicher kann durch die Optionen „-CertificateStoreName“ und „-CertificateStoreLocation“ angegeben werden.</target>
         <note />
       </trans-unit>
@@ -931,15 +931,15 @@ Mit dieser Option kann das Kennwort für das Zertifikat angegeben werden. Wenn k
       <trans-unit id="SignCommandCertificateStoreLocationDescription">
         <source>Name of the X.509 certificate store use to search for the certificate. Defaults to "CurrentUser", the X.509 certificate store used by the current user.
 This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
-        <target state="translated">Name des X.509-Zertifikatspeichers, der für die Suche nach dem Zertifikat verwendet werden soll. Es wird standardmäßig der X.509-Zertifikatspeicher „CurrentUser“ verwendet, der vom aktuellen Benutzer verwendet wird.
-Diese Option sollte verwendet werden, wenn das Zertifikat über die Option -CertificateSubjectName oder -CertificateFingerprint angegeben wird.</target>
+        <target state="translated">Name des X.509-Zertifikatspeichers, der für die Suche nach dem Zertifikat verwendet werden soll. Es wird standardmäßig „CurrentUser“ geöffnet, der X.509-Zertifikatspeicher für Zertifikate der aktuellen benutzenden Person.
+Diese Option sollte beim Angeben des Zertifikats über die Optionen „-CertificateSubjectName“ oder „-CertificateFingerprint“ verwendet werden.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateStoreNameDescription">
         <source>Name of the X.509 certificate store to use to search for the certificate. Defaults to "My", the X.509 certificate store for personal certificates.
 This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
-        <target state="translated">Name des X.509-Zertifikatspeichers, der für die Suche nach dem Zertifikat verwendet werden soll. Es wird standardmäßig der X.509-Zertifikatspeicher für persönliche Zertifikate „My“ verwendet.
-Diese Option sollte verwendet werden, wenn das Zertifikat über die Option -CertificateSubjectName oder -CertificateFingerprint angegeben wird.</target>
+        <target state="translated">Name des X.509-Zertifikatspeichers, der für die Suche nach dem Zertifikat verwendet werden soll. Es wird standardmäßig „My“ geöffnet, der X.509-Zertifikatspeicher für persönliche Zertifikate.
+Diese Option sollte beim Angeben des Zertifikats über die Optionen „-CertificateSubjectName“ oder „-CertificateFingerprint“ verwendet werden.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateSubjectNameDescription">
@@ -947,8 +947,8 @@ Diese Option sollte verwendet werden, wenn das Zertifikat über die Option -Cert
 The search is a case-insensitive string comparison using the supplied value, which will find all certificates with the subject name containing that string, regardless of other subject values.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
         <target state="translated">Betreffname des Zertifikats, mit dem ein lokaler Zertifikatspeicher nach dem Zertifikat durchsucht wird. 
-Die Suche ist ein von der Groß- und Kleinschreibung unabhängiger Zeichenfolgenvergleich unter Verwendung des übergebenen Wertes, der alle Zertifikate findet, deren Betreffname diese Zeichenfolge enthält, unabhängig von anderen Betreffwerten.
-Der Zertifikatspeicher kann mit den Optionen -CertificateStoreName und -CertificateStoreLocation angegeben werden.</target>
+Bei der Suche handelt es sich um einen ungültigen Zeichenfolgenvergleich mit dem angegebenen Wert, der unabhängig von anderen Betreffwerten alle Zertifikate mit dem Antragstellernamen enthält, der diese Zeichenfolge enthält.
+Der Zertifikatspeicher kann durch die Optionen „-CertificateStoreName“ und „-CertificateStoreLocation“ angegeben werden.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandDescription">

@@ -9,7 +9,6 @@ param (
   [switch][Alias('nobl')]$excludeCIBinarylog,
   [switch][Alias('pb')]$productBuild,
   [switch]$fromVMR,
-  [bool]$warnAsError = $true,
   [bool]$nodeReuse = $true,
   [Parameter(ValueFromRemainingArguments = $true)][string[]]$properties
 )

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using Moq;
+using NuGet.Shared;
 using Xunit;
 
 namespace NuGet.ProjectModel.Test
@@ -805,7 +806,7 @@ namespace NuGet.ProjectModel.Test
             using (var stream = new MemoryStream(encodedBytes))
             using (var reader = new Utf8JsonStreamReader(stream))
             {
-                var results = reader.ReadObjectAsList(Utf8JsonReaderExtensions.LockFileItemConverter);
+                var results = reader.ReadObjectAsList(Utf8JsonStreamLockFileConverters.LockFileItemConverter);
                 Assert.Equal(3, results.Count);
             }
         }
@@ -819,7 +820,7 @@ namespace NuGet.ProjectModel.Test
             using (var stream = new MemoryStream(encodedBytes))
             using (var reader = new Utf8JsonStreamReader(stream))
             {
-                var results = reader.ReadObjectAsList(Utf8JsonReaderExtensions.LockFileItemConverter);
+                var results = reader.ReadObjectAsList(Utf8JsonStreamLockFileConverters.LockFileItemConverter);
                 Assert.Equal(0, results.Count);
                 Assert.IsType(Array.Empty<LockFileItem>().GetType(), results);
             }
@@ -836,7 +837,7 @@ namespace NuGet.ProjectModel.Test
                 using (var stream = new MemoryStream(encodedBytes))
                 using (var reader = new Utf8JsonStreamReader(stream))
                 {
-                    reader.ReadObjectAsList(Utf8JsonReaderExtensions.LockFileItemConverter);
+                    reader.ReadObjectAsList(Utf8JsonStreamLockFileConverters.LockFileItemConverter);
                 }
             });
         }

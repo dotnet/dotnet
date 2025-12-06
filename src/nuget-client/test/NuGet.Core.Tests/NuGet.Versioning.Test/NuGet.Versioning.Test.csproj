@@ -2,7 +2,6 @@
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworksUnitTest)</TargetFrameworks>
     <Description>Unit tests for NuGet.Versioning.</Description>
-    <nullable>enable</nullable>
   </PropertyGroup>
 
   <ItemGroup>

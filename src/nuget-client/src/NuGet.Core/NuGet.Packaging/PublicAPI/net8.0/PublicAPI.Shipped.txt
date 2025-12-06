@@ -324,6 +324,8 @@ NuGet.Packaging.IPackageResolver
 ~NuGet.Packaging.IPackageResolver.Resolve(System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity> targets, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependencyInfo> availablePackages, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity>
 ~NuGet.Packaging.IPackageResolver.Resolve(System.Collections.Generic.IEnumerable<string> targets, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependencyInfo> availablePackages, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference> installedPackages, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity>
 ~NuGet.Packaging.IPackageResolver.Resolve(System.Collections.Generic.IEnumerable<string> targets, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependencyInfo> availablePackages, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity>
+NuGet.Packaging.InvalidPackageIdException
+~NuGet.Packaging.InvalidPackageIdException.InvalidPackageIdException(string message) -> void
 NuGet.Packaging.LicenseMetadata
 ~NuGet.Packaging.LicenseMetadata.Equals(NuGet.Packaging.LicenseMetadata other) -> bool
 ~NuGet.Packaging.LicenseMetadata.License.get -> string
@@ -337,15 +339,15 @@ NuGet.Packaging.LicenseType
 NuGet.Packaging.LicenseType.Expression = 1 -> NuGet.Packaging.LicenseType
 NuGet.Packaging.LicenseType.File = 0 -> NuGet.Packaging.LicenseType
 NuGet.Packaging.Licenses.ExceptionData
-~NuGet.Packaging.Licenses.ExceptionData.ExceptionData(string licenseID, bool isDeprecatedLicenseId) -> void
+NuGet.Packaging.Licenses.ExceptionData.ExceptionData(string! licenseID, bool isDeprecatedLicenseId) -> void
 NuGet.Packaging.Licenses.ExceptionData.IsDeprecatedLicenseId.get -> bool
-~NuGet.Packaging.Licenses.ExceptionData.LicenseExceptionID.get -> string
+NuGet.Packaging.Licenses.ExceptionData.LicenseExceptionID.get -> string!
 NuGet.Packaging.Licenses.LicenseData
 NuGet.Packaging.Licenses.LicenseData.IsDeprecatedLicenseId.get -> bool
 NuGet.Packaging.Licenses.LicenseData.IsFsfLibre.get -> bool
 NuGet.Packaging.Licenses.LicenseData.IsOsiApproved.get -> bool
-~NuGet.Packaging.Licenses.LicenseData.LicenseData(string licenseID, bool isOsiApproved, bool isDeprecatedLicenseId, bool isFsfLibre) -> void
-~NuGet.Packaging.Licenses.LicenseData.LicenseID.get -> string
+NuGet.Packaging.Licenses.LicenseData.LicenseData(string! licenseID, bool isOsiApproved, bool isDeprecatedLicenseId, bool isFsfLibre) -> void
+NuGet.Packaging.Licenses.LicenseData.LicenseID.get -> string!
 NuGet.Packaging.Licenses.LicenseExpressionType
 NuGet.Packaging.Licenses.LicenseExpressionType.License = 0 -> NuGet.Packaging.Licenses.LicenseExpressionType
 NuGet.Packaging.Licenses.LicenseExpressionType.Operator = 1 -> NuGet.Packaging.Licenses.LicenseExpressionType
@@ -1511,7 +1513,7 @@ static NuGet.ContentModel.PatternDefinition.implicit operator NuGet.ContentModel
 ~static NuGet.Packaging.FrameworkNameUtility.ParseNuGetFrameworkFolderName(string path, bool strictParsing, out string effectivePath) -> NuGet.Frameworks.NuGetFramework
 ~static NuGet.Packaging.FrameworkNameUtility.ParseNuGetFrameworkFromFilePath(string filePath, out string effectivePath) -> NuGet.Frameworks.NuGetFramework
 ~static NuGet.Packaging.FrameworksExtensions.GetFrameworkString(this NuGet.Frameworks.NuGetFramework self) -> string
-~static NuGet.Packaging.Licenses.NuGetLicenseData.LicenseListVersion.get -> string
+static NuGet.Packaging.Licenses.NuGetLicenseData.LicenseListVersion.get -> string!
 ~static NuGet.Packaging.Licenses.NuGetLicenseExpression.Parse(string expression) -> NuGet.Packaging.Licenses.NuGetLicenseExpression
 ~static NuGet.Packaging.Licenses.NuGetLicenseExpressionExtensions.HasOnlyStandardIdentifiers(this NuGet.Packaging.Licenses.NuGetLicenseExpression expression) -> bool
 ~static NuGet.Packaging.Licenses.NuGetLicenseExpressionExtensions.IsUnlicensed(this NuGet.Packaging.Licenses.NuGetLicense license) -> bool
@@ -1771,8 +1773,8 @@ static NuGet.RuntimeModel.RuntimeGraph.Merge(NuGet.RuntimeModel.RuntimeGraph! le
 ~static readonly NuGet.Packaging.LicenseMetadata.EmptyVersion -> System.Version
 ~static readonly NuGet.Packaging.LicenseMetadata.LicenseFileDeprecationUrl -> System.Uri
 ~static readonly NuGet.Packaging.LicenseMetadata.LicenseServiceLinkTemplate -> string
-~static readonly NuGet.Packaging.Licenses.NuGetLicenseData.ExceptionList -> System.Collections.Generic.IReadOnlyDictionary<string, NuGet.Packaging.Licenses.ExceptionData>
-~static readonly NuGet.Packaging.Licenses.NuGetLicenseData.LicenseList -> System.Collections.Generic.IReadOnlyDictionary<string, NuGet.Packaging.Licenses.LicenseData>
+static readonly NuGet.Packaging.Licenses.NuGetLicenseData.ExceptionList -> System.Collections.Generic.IReadOnlyDictionary<string!, NuGet.Packaging.Licenses.ExceptionData!>!
+static readonly NuGet.Packaging.Licenses.NuGetLicenseData.LicenseList -> System.Collections.Generic.IReadOnlyDictionary<string!, NuGet.Packaging.Licenses.LicenseData!>!
 static readonly NuGet.Packaging.NupkgMetadataFileFormat.Version -> int
 ~static readonly NuGet.Packaging.PackagesConfig.IdAttributeName -> string
 ~static readonly NuGet.Packaging.PackagesConfig.MinClientAttributeName -> string

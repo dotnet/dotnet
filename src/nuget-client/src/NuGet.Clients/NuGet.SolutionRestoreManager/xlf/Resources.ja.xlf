@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="ErrorOccurredRestoringPackages">
         <source>Error occurred while restoring NuGet packages: {0}</source>
-        <target state="translated">NuGet パッケージの復元中にエラーが発生しました: {0}</target>
+        <target state="translated">次の NuGet パッケージを復元中にエラーが発生しました: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageDownload_NoVersion">
@@ -21,6 +21,11 @@
         <source>Package '{0} {1}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
         <target state="translated">パッケージ '{0}{1}' に '[1.0.0]' のような正確なバージョンがありません。PackageDownload では、正確なバージョンのみが許可されます。</target>
         <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
+      </trans-unit>
+      <trans-unit id="InfoBar_HyperlinkGHCopilotDocs">
+        <source>How to fix with GitHub Copilot</source>
+        <target state="translated">GitHub Copilot で修正する方法</target>
+        <note />
       </trans-unit>
       <trans-unit id="InfoBar_HyperlinkMessage">
         <source>Manage NuGet Packages</source>
@@ -45,7 +50,7 @@
       </trans-unit>
       <trans-unit id="NothingToRestore">
         <source>All packages are already installed and there is nothing to restore.</source>
-        <target state="translated">すべてのパッケージが既にインストールされており、復元するパッケージはありません。</target>
+        <target state="translated">すべてのパッケージは既にインストールされており、復元するものはありません。</target>
         <note />
       </trans-unit>
       <trans-unit id="Operation_Finished">
@@ -84,7 +89,7 @@ Missing packages: {0}</source>
       </trans-unit>
       <trans-unit id="PackageRestoreFinished">
         <source>NuGet package restore finished.</source>
-        <target state="translated">NuGet パッケージの復元が終了しました。</target>
+        <target state="translated">NuGet パッケージの復元が完了しました。</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFinishedForProject">

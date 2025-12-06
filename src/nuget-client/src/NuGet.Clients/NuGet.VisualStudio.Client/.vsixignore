@@ -105,6 +105,7 @@ Lucene.Net.dll
 Microsoft.Build.NuGetSdkResolver.xml
 Microsoft.VisualStudio.ExtensionEngineContract.xml
 NuGet.Build.Tasks.xml
+NuGet.Build.Tasks.Pack.xml
 NuGet.Commands.xml
 NuGet.Common.xml
 NuGet.Configuration.xml

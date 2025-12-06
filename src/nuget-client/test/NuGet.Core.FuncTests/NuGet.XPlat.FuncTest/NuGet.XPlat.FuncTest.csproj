@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>$(LatestNETCoreTargetFramework)</TargetFramework>
     <Description>Functional tests for nuget in dotnet CLI scenarios, using the NuGet.CommandLine.XPlat assembly.</Description>
@@ -11,6 +11,10 @@
     <ProjectReference Include="..\..\..\src\NuGet.Core\Microsoft.Build.NuGetSdkResolver\Microsoft.Build.NuGetSdkResolver.csproj" />
     <ProjectReference Include="..\..\NuGet.Core.Tests\NuGet.CommandLine.Xplat.Tests\NuGet.CommandLine.Xplat.Tests.csproj" />
     <ProjectReference Include="..\..\NuGet.Core.Tests\NuGet.Configuration.Test\NuGet.Configuration.Test.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Spectre.Console.Testing" />
   </ItemGroup>
 
   <ItemGroup>

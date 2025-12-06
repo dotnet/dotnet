@@ -1,6 +1,6 @@
 function Test-UpdatingPackageInProjectDoesntRemoveFromSolutionIfInUse {
     # Arrange
-    $p1 = New-WebApplication
+    $p1 = New-ConsoleApplication
     $p2 = New-ClassLibrary
 
     $oldReferences = @("Castle.Core",
@@ -498,7 +498,7 @@ function Test-UpdatePackageAcceptsRelativePathSource2 {
 
 function Test-UpdateProjectLevelPackageNotInstalledInAnyProject {
     # Arrange
-    $p1 = New-WebApplication
+    $p1 = New-ConsoleApplication
 
     # Act
     $p1 | Install-Package Ninject -Version 2.0.1.0
@@ -557,7 +557,7 @@ function Test-UpdatePackageMissingPackageNoConsent {
 function Test-UpdatePackageInAllProjects {
     # Arrange
     $p1 = New-ConsoleApplication
-    $p2 = New-WebApplication
+    $p2 = New-ClassLibrary
     $p3 = New-ClassLibrary
     $p4 = New-WebSite
 
@@ -596,7 +596,7 @@ function Test-UpdateAllPackagesInSolution {
     )
 
     # Arrange
-    $p1 = New-WebApplication
+    $p1 = New-ConsoleApplication
     $p2 = New-ClassLibrary
 
     # Act
@@ -656,7 +656,7 @@ function Test-UpdateScenariosWithConstraints {
     )
 
     # Arrange
-    $p1 = New-WebApplication
+    $p1 = New-ConsoleApplication
     $p2 = New-ClassLibrary
     $p3 = New-WebSite
 
@@ -696,7 +696,7 @@ function Test-UpdateAllPackagesInSolutionWithSafeFlag {
     )
 
     # Arrange
-    $p1 = New-WebApplication
+    $p1 = New-ConsoleApplication
     $p1 | Install-Package A -Version 1.0 -Source $context.RepositoryPath -IgnoreDependencies
     $p1 | Install-Package B -Version 1.0 -Source $context.RepositoryPath -IgnoreDependencies
     $p1 | Install-Package C -Version 1.0 -Source $context.RepositoryPath -IgnoreDependencies
@@ -719,7 +719,7 @@ function Test-UpdatePackageWithSafeFlag {
     )
 
     # Arrange
-    $p1 = New-WebApplication
+    $p1 = New-ConsoleApplication
     $p1 | Install-Package A -Version 1.0 -Source $context.RepositoryPath -IgnoreDependencies
     $p1 | Install-Package B -Version 1.0 -Source $context.RepositoryPath -IgnoreDependencies
     $p1 | Install-Package C -Version 1.0 -Source $context.RepositoryPath -IgnoreDependencies
@@ -742,7 +742,7 @@ function Test-UpdatePackageDiamondDependenciesBottomNodeConflictingPackages {
     )
 
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
     $p | Install-Package A -Version 1.0 -Source $context.RepositoryPath
 
     # Act
@@ -774,7 +774,7 @@ function Test-UpdatingDependentPackagesPicksLowestCompatiblePackages {
     )
 
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
     $p | Install-Package A -Version 1.0 -Source $context.RepositoryPath
 
     # Act
@@ -793,8 +793,8 @@ function Test-UpdateAllPackagesInASingleProjectWithMultipleProjects {
 
     )
     # Arrange
-    $p1 = New-WebApplication
-    $p2 = New-WebApplication
+    $p1 = New-ConsoleApplication
+    $p2 = New-ConsoleApplication
     $p1, $p2 | Install-Package jQuery -Version 1.5.1 -Source $context.RepositoryPath
     $p1, $p2 | Install-Package jQuery.UI.Combined  -Version 1.8.11 -Source $context.RepositoryPath
 
@@ -814,8 +814,8 @@ function Test-UpdateAllPackagesInASingleProjectWithMultipleProjects {
 
 function Test-UpdateAllPackagesInASingleProjectWithSafeFlagAndMultipleProjects {
     # Arrange
-    $p1 = New-WebApplication
-    $p2 = New-WebApplication
+    $p1 = New-ConsoleApplication
+    $p2 = New-ConsoleApplication
     $p1, $p2 | Install-Package jQuery -Version 1.5.1 -Source $context.RepositoryPath
     $p1, $p2 | Install-Package jQuery.UI.Combined  -Version 1.8.11 -Source $context.RepositoryPath
 
@@ -839,7 +839,7 @@ function Test-UpdatePackageWithDependentsThatHaveNoAvailableUpdatesThrows {
     )
 
     # Arrange
-    $p1 = New-WebApplication
+    $p1 = New-ConsoleApplication
     $p1 | Install-Package A -Version 1.0 -Source $context.RepositoryPath
 
     # Act
@@ -848,7 +848,7 @@ function Test-UpdatePackageWithDependentsThatHaveNoAvailableUpdatesThrows {
 
 function Test-UpdatePackageThrowsWhenSourceIsInvalid {
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
     $p | Install-Package jQuery -Version 1.5.1 -Source $context.RepositoryPath
 
     # Act & Assert

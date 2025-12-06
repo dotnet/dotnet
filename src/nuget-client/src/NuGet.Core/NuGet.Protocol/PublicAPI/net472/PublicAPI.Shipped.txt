@@ -531,6 +531,9 @@ NuGet.Protocol.HttpSourceCredentials
 NuGet.Protocol.HttpSourceCredentials.HttpSourceCredentials() -> void
 ~NuGet.Protocol.HttpSourceCredentials.HttpSourceCredentials(System.Net.ICredentials credentials = null) -> void
 NuGet.Protocol.HttpSourceCredentials.Version.get -> System.Guid
+NuGet.Protocol.HttpSourceException
+~NuGet.Protocol.HttpSourceException.HttpSourceException(string message) -> void
+~NuGet.Protocol.HttpSourceException.HttpSourceException(string message, System.Exception innerException) -> void
 NuGet.Protocol.HttpSourceRequest
 NuGet.Protocol.HttpSourceRequest.DownloadTimeout.get -> System.TimeSpan
 NuGet.Protocol.HttpSourceRequest.DownloadTimeout.set -> void

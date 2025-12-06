@@ -197,4 +197,7 @@ To prevent NuGet from restoring packages during build, open the Visual Studio Op
     <value>'{0}' items do not have the same value(s) across all target frameworks. Remove any condition from MSBuild files for '{0}' items.</value>
     <comment>{0} - MSBuild item type. For example, NuGetAuditSuppress</comment>
   </data>
+  <data name="InfoBar_HyperlinkGHCopilotDocs" xml:space="preserve">
+    <value>How to fix with GitHub Copilot</value>
+  </data>
 </root>

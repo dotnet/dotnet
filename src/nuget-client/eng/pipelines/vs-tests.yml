@@ -40,12 +40,13 @@ parameters:
   - delete
   - stop
 - name: ApexAgentCleanup
-  displayName: Delete or keep VS Apex test machine for debugging
+  displayName: Cleanup VS Apex test machine
   type: string
-  default: delete
+  default: Always
   values:
-  - delete
-  - stop
+    - Always
+    - Never
+    - OnSuccess
 
 resources:
   pipelines:
@@ -62,6 +63,7 @@ variables:
   DOTNET_NOLOGO: 1
   CI: true
   Codeql.Enabled: false
+  SourceBranch: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
 
 stages:
 - stage: Build
@@ -120,7 +122,7 @@ stages:
     baseBuildDrop: $(VsBaseBuildDrop)
     bootstrapperUrl: $(VsBootstrapperUrl)
     DartLabEnvironment: ${{parameters.DartLabEnvironment}}
-    part: "A-TopDownloadedPackages.ps1,BuildIntegratedTest.ps1,ExecuteInitScriptTest.ps1,FindPackageTest.ps1,GetPackageTest.ps1,GetProjectTest.ps1,LegacyPackageRefProjectTest.ps1,NativeProjectTest.ps1,NetCoreProjectTest.ps1,PackTest.ps1,ProjectRetargeting.ps1,ServicesTest.ps1,Settings.ps1,SyncPackageTest.ps1,TabExpansionTest.ps1,UniversalWindowsProjectTest.ps1"
+    part: "BuildIntegratedTest.ps1,ExecuteInitScriptTest.ps1,FindPackageTest.ps1,GetPackageTest.ps1,GetProjectTest.ps1,LegacyPackageRefProjectTest.ps1,NativeProjectTest.ps1,NetCoreProjectTest.ps1,PackTest.ps1,ProjectRetargeting.ps1,ServicesTest.ps1,Settings.ps1,SyncPackageTest.ps1,TabExpansionTest.ps1,UniversalWindowsProjectTest.ps1"
     QBuildSessionId: $(QBuildSessionId)
     runSettingsURI: https://vsdrop.corp.microsoft.com/file/v1/$(RunSettingsDrop);NuGet.Tests.Apex.runsettings
     testExecutionJobTimeoutInMinutes: 100
@@ -133,19 +135,14 @@ stages:
     dependsOn:
     - Build
     variables:
-    - name: VsBootstrapperUrl
+    - name: bootstrapperUrl
       value: $[stageDependencies.Build.Build.outputs['dartlab_variables.bootstrapperUrl']]
-    - name: VsBaseBuildDrop
-      value: $[stageDependencies.Build.Build.outputs['dartlab_variables.BaseBuildDrop']]
-    - name: QBuildSessionId
-      value: $[stageDependencies.Build.Build.outputs['dartlab_variables.QBuildSessionId']]
     - name: RunSettingsDrop
       value: $[stageDependencies.Build.Build.outputs['dartlab_variables.RunSettingsDrop']]
-    baseBuildDrop: $(VsBaseBuildDrop)
-    bootstrapperUrl: $(VsBootstrapperUrl)
-    dartLabEnvironment: ${{parameters.DartLabEnvironment}}
-    isOfficialBuild: false
-    QBuildSessionId: $(QBuildSessionId)
+    - name: VsBootstrapperBranch
+      value: $[stageDependencies.Build.Build.outputs['dartlab_variables.VsBootstrapperBranch']]
+    bootstrapperUrl: $(bootstrapperUrl)
     runSettingsURI: https://vsdrop.corp.microsoft.com/file/v1/$(RunSettingsDrop);NuGet.Tests.Apex.runsettings
-    testExecutionJobTimeoutInMinutes: 150
-    testMachineCleanUpStrategy: ${{parameters.ApexAgentCleanup}}
+    testExecutionJobTimeoutInMinutes: 380 # cloud test minimum
+    testDeploymentCleanupMode: ${{parameters.ApexAgentCleanup}}
+    VsBootstrapperBranch: $(VsBootstrapperBranch)

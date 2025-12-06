@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -11,7 +13,12 @@ namespace NuGet.Build
     /// <summary>
     /// TaskLoggingHelper -> ILogger
     /// </summary>
-    public class MSBuildLogger : LoggerBase, Common.ILogger
+#if PACK_TASKS
+    internal
+#else
+    public
+#endif
+    class MSBuildLogger : LoggerBase, Common.ILogger
     {
         private readonly TaskLoggingHelper _taskLogging;
 
@@ -143,7 +150,7 @@ namespace NuGet.Build
             return;
         }
 
-        private void LogMessage(INuGetLogMessage logMessage,
+        private static void LogMessage(INuGetLogMessage logMessage,
             MessageImportance importance,
             LogMessageWithDetails logWithDetails,
             LogMessageAsString logAsString)
@@ -168,7 +175,7 @@ namespace NuGet.Build
             }
         }
 
-        private void LogError(INuGetLogMessage logMessage,
+        private static void LogError(INuGetLogMessage logMessage,
             LogErrorWithDetails logWithDetails,
             LogErrorAsString logAsString)
         {

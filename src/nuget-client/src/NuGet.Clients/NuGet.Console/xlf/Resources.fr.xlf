@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="OutputConsolePaneName">
         <source>Package Manager</source>
-        <target state="translated">Gestionnaire de packages</target>
+        <target state="translated">Gestionnaire de package</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageManagerConsoleBusy">

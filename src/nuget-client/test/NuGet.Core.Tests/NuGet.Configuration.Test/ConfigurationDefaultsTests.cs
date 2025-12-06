@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -217,7 +215,7 @@ namespace NuGet.Configuration
 
                 // Assert
                 Assert.Equal("http://contoso.com/packages/", ConfigurationDefaults.DefaultPushSource);
-                Assert.Equal(2, packageSources.Count());
+                Assert.Equal(2, packageSources.Count);
                 Assert.Equal("v2", packageSources[0].Name);
                 Assert.Equal("Contoso Package Source", packageSources[1].Name);
             }
@@ -259,8 +257,8 @@ namespace NuGet.Configuration
                 List<PackageSource> packageSources = packageSourceProvider.LoadPackageSources().ToList();
 
                 // Assert
-                Assert.Equal(3, packageSources.Count());
-                Assert.Equal(2, defaultSources.Count());
+                Assert.Equal(3, packageSources.Count);
+                Assert.Equal(2, defaultSources.Count);
                 Assert.Equal("v2", packageSources[0].Name);
                 Assert.Equal("encyclopaedia", packageSources[1].Name);
                 Assert.Equal("encyclopaedia", defaultSources[0].Name);
@@ -302,7 +300,7 @@ namespace NuGet.Configuration
                 List<PackageSource> packageSources = packageSourceProvider.LoadPackageSources().ToList();
 
                 // Assert
-                Assert.Equal(1, packageSources.Count());
+                Assert.Equal(1, packageSources.Count);
                 Assert.Equal("Contoso Package Source", packageSources[0].Name);
                 Assert.Equal("http://www.nuget.org/api/v2/", packageSources[0].Source);
             }
@@ -341,7 +339,7 @@ namespace NuGet.Configuration
                 List<PackageSource> packageSources = packageSourceProvider.LoadPackageSources().ToList();
 
                 // Assert
-                Assert.Equal(1, packageSources.Count());
+                Assert.Equal(1, packageSources.Count);
                 Assert.Equal("v2", packageSources[0].Name);
                 Assert.Equal("http://www.nuget.org/api/v2/", packageSources[0].Source);
             }

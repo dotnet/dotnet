@@ -300,22 +300,22 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PreinstalledPackages_ExtensionManagerError">
         <source>Error accessing Extension Manager.</source>
-        <target state="translated">Uzantı Yöneticisi'ne erişim hatası.</target>
+        <target state="translated">Uzantı Yöneticisi'ne erişilirken hata oluştu.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_FailedToInstallPackage">
         <source>Could not add all required packages to the project. The following packages failed to install from '{0}':</source>
-        <target state="translated">Gerekli paketlerin tümü projeye eklenemedi. Şu paketler, '{0}' kaynağından yüklenemedi:</target>
+        <target state="translated">Gereken tüm paketler projeye eklenemedi. Şu paketler '{0}' kaynağından yüklenemedi:</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_InvalidExtensionId">
         <source>The preinstalled packages have a reference to a missing Extension. Could not find an Extension with ID '{0}'.</source>
-        <target state="translated">Önceden yüklenen paketler, eksik bir Uzantı'ya yönelik bir başvuru içeriyor. '{0}' kimlikli bir Uzantı bulunamadı.</target>
+        <target state="translated">Önceden yüklenen paketler eksik bir Uzantıya başvuru yapıyor. '{0}' kimliğine sahip bir Uzantı bulunamadı.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_InvalidRegistryValue">
         <source>The preinstalled packages have a reference to a missing Registry value. Could not find a Registry key with name '{0}' under '{1}'.</source>
-        <target state="translated">Önceden yüklenen paketler, eksik bir Kayıt defteri değerine yönelik bir başvuru içeriyor. '{1}' altında '{0}' adlı bir Kayıt defteri anahtarı bulunamadı.</target>
+        <target state="translated">Önceden yüklenen paketler eksik bir Kayıt Defteri değerine başvuru yapıyor. '{1}' altında '{0}' adlı bir Kayıt Defteri anahtarı bulunamadı.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_PackageInstallStatus">
@@ -325,12 +325,12 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PreinstalledPackages_RegistryKeyError">
         <source>The preinstalled packages are configured to use a Registry-provided package repository but there was an error accessing Registry key '{0}'.</source>
-        <target state="translated">Önceden yüklenen paketler, Kayıt defteri tarafından sağlanan bir paket deposu kullanacak biçimde yapılandırılmış ancak '{0}' adlı Kayıt defteri anahtarına erişim sırasında bir hata oluştu.</target>
+        <target state="translated">Önceden yüklenen paketler bir Registry-provided paket deposu kullanmak için yapılandırılmış ancak '{0}' Kayıt Defteri anahtarına erişilirken bir hata oluştu.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_VersionConflict">
         <source>Attempting to install version '{1}' of '{0}' but the project already includes a different version. Skipping...</source>
-        <target state="translated">'{0}' öğesinin '{1}' sürümü yüklenmeye çalışılıyor ancak projede zaten başka bir sürüm mevcut. Atlanıyor...</target>
+        <target state="translated">'{0}' için '{1}' sürümü yüklenmeye çalışılıyor ancak proje zaten farklı bir sürümü içeriyor. Atlanıyor...</target>
         <note />
       </trans-unit>
       <trans-unit id="ProjectReferenceBrowseObjectClassName">
@@ -350,7 +350,7 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">'{0}' boş olamaz.</target>
+        <target state="translated">'{0}' null olamaz.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="TemplateWizard_ErrorDialogTitle">
@@ -360,7 +360,7 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidPackageElementAttributes">
         <source>The project template lists one or more packages with missing, empty, or invalid values for the "id" or "version" attributes. Both attributes are required and must have valid values.</source>
-        <target state="translated">Proje şablonu, "id" veya "version" özniteliklerinde eksik, boş veya geçersiz değerlere sahip bir veya daha çok paket listeliyor. Her iki öznitelik de zorunludur ve geçerli değerlere sahip olmalıdır.</target>
+        <target state="translated">Proje şablonu, "id" veya "version" öznitelikleri eksik, boş veya geçersiz değerlere sahip bir veya daha fazla paket listeliyor. İki öznitelik de gereklidir ve geçerli değerlere sahip olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidRepositoryAttribute">
@@ -370,17 +370,17 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidWizardRunKind">
         <source>This template wizard can only be applied to single-project or project-item templates.</source>
-        <target state="translated">Bu şablon sihirbazı, yalnızca tek proje veya proje öğesi şablonlarına uygulanabilir.</target>
+        <target state="translated">Bu şablon sihirbazı yalnızca single-project veya project-item şablonlarına uygulanabilir.</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_MissingExtensionId">
         <source>The project template is configured to use an Extension-specific package repository but the Extension ID has not been specified. Use the "repositoryId" attribute to specify the Extension ID.</source>
-        <target state="translated">Proje şablonu, Uzantı'ya özel bir paket deposu kullanacak biçimde yapılandırılmış, ancak Uzantı Kimliği belirtilmemiş. Uzantı Kimliği'ni belirtmek için "repositoryId" özniteliğini kullanın.</target>
+        <target state="translated">Proje şablonu Uzantıya özgü bir paket deposu kullanmak için yapılandırıldı ancak Uzantı Kimliği belirtilmedi. Uzantı kimliğini belirtmek için "repositoryId" özniteliğini kullanın.</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_MissingRegistryKeyName">
         <source>The project template is configured to use a Registry-provided package repository but the Registry value name has not been specified. Use the "keyName" attribute to specify the Registry value.</source>
-        <target state="translated">Proje şablonu, Kayıt defteri tarafından sağlanan bir paket deposu kullanacak biçimde yapılandırılmış, ancak Kayıt defteri değerinin adı belirtilmemiş. Kayıt defteri değerini belirtmek için "keyName" özniteliğini kullanın.</target>
+        <target state="translated">Proje şablonu Kayıt Defteri tarafından sağlanan bir paket deposu kullanmak için yapılandırıldı ancak Kayıt Defteri değeri adı belirtilmedi. Kayıt Defteri değerini belirtmek için "keyName" özniteliğini kullanın.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnknownPackage">

@@ -77,7 +77,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
 
                 projectA.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var packagesConfigPath = Path.Combine(Directory.GetParent(projectA.ProjectPath).FullName, "packages.config");
 
@@ -123,7 +123,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
 
                 projectA.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var args = new string[]
                 {
@@ -196,7 +196,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
 
                 projectA.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var args = new string[]
                 {
@@ -271,7 +271,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
 
                 projectA.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var args = new string[]
                 {
@@ -350,7 +350,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
 
                 projectA.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var args = new string[]
                 {
