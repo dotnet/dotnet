@@ -1162,4 +1162,9 @@ Do not translate "PackageVersion"</comment>
     <comment>0 - package source name
 1 - package name</comment>
   </data>
+  <data name="PackageDownloadCommand_PackageSourceMapping_NoSourcesMapped" xml:space="preserve">
+    <value>Unable to download package '{0}'. PackageSourceMapping is enabled, but no mapped sources were found for this package. The following source(s) were not considered: {1}.</value>
+    <comment>{0} = package ID 
+{1} = comma-separated list of all configured sources </comment>
+  </data>
 </root>

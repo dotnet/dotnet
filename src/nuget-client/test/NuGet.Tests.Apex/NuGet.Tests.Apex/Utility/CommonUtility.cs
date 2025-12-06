@@ -31,6 +31,7 @@ namespace NuGet.Tests.Apex
     {
         private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
         private static readonly TimeSpan Interval = TimeSpan.FromSeconds(2);
+        internal static readonly ProjectTargetFramework DefaultTargetFramework = ProjectTargetFramework.V48;
 
         public static async Task CreatePackageInSourceAsync(string packageSource, string packageName, string packageVersion)
         {
@@ -509,7 +510,7 @@ namespace NuGet.Tests.Apex
             solutionService.CreateEmptySolution("TestSolution", pathContext.SolutionRoot);
 
             logger.WriteMessage("Adding project");
-            var project = solutionService.AddProject(ProjectLanguage.CSharp, projectTemplate, ProjectTargetFramework.V46, "TestProject");
+            var project = solutionService.AddProject(ProjectLanguage.CSharp, projectTemplate, DefaultTargetFramework, "TestProject");
 
             logger.WriteMessage("Saving solution");
             solutionService.Save();

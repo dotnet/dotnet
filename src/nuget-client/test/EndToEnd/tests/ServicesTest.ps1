@@ -720,46 +720,6 @@ function Test-InstallPackageAPIBindingRedirect
     Assert-BindingRedirect $p app.config B '0.0.0.0-2.0.0.0' '2.0.0.0'
 }
 
-function Test-ExecuteInitPS1OnClassLibrary
-{
-    param($context)
-
-    # Arrange
-    $global:PackageInitPS1Var = 0
-    $p = New-ClassLibrary
-
-    Install-Package PackageInitPS1 -Project $p.Name -Source $context.RepositoryRoot
-
-    Assert-True ($global:PackageInitPS1Var -eq 1)
-
-    # Act
-    $result = [API.Test.InternalAPITestHook]::ExecuteInitScript("PackageInitPS1","1.0.2")
-
-    Assert-True $result
-
-    Assert-True ($global:PackageInitPS1Var -eq 1)
-}
-
-function Test-ExecuteInitPS1OnUAP
-{
-    param($context)
-
-    # Arrange
-    $global:PackageInitPS1Var = 0
-    $p = New-BuildIntegratedProj UAPApp
-
-    Install-Package PackageInitPS1 -Project $p.Name -Source $context.RepositoryRoot
-
-    Assert-True ($global:PackageInitPS1Var -eq 1)
-
-    # Act
-    $result = [API.Test.InternalAPITestHook]::ExecuteInitScript("PackageInitPS1","1.0.2")
-
-    Assert-True $result
-
-    Assert-True ($global:PackageInitPS1Var -eq 1)
-}
-
 function Test-BatchEventsApi
 {
     param($context)

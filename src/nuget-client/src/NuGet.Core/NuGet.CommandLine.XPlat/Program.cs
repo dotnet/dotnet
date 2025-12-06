@@ -12,6 +12,7 @@ using System.Threading;
 using Microsoft.Extensions.CommandLineUtils;
 using NuGet.Commands;
 using NuGet.Common;
+
 #if DEBUG
 using NuGet.CommandLine.XPlat.Commands.Package.Update;
 using NuGet.CommandLine.XPlat.Commands.Package.PackageDownload;
@@ -116,8 +117,8 @@ namespace NuGet.CommandLine.XPlat
 
                     ConfigCommand.Register(nugetCommand, getHidePrefixLogger);
                     ConfigCommand.Register(rootCommand, getHidePrefixLogger);
-                    Commands.Why.WhyCommand.Register(nugetCommand, getHidePrefixLogger);
-                    Commands.Why.WhyCommand.Register(rootCommand, getHidePrefixLogger);
+                    Commands.Why.WhyCommand.Register(nugetCommand, Spectre.Console.AnsiConsole.Console);
+                    Commands.Why.WhyCommand.Register(rootCommand, Spectre.Console.AnsiConsole.Console);
                 }
 
                 CancellationTokenSource tokenSource = new CancellationTokenSource();

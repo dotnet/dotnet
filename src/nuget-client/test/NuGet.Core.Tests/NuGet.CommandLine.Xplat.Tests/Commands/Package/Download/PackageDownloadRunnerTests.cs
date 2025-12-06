@@ -3,7 +3,9 @@
 
 #nullable disable
 
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -201,5 +203,98 @@ public class PackageDownloadRunnerTests
             foundVersion.Should().BeNull();
             foundRepo.Should().BeNull();
         }
+    }
+
+    [Theory]
+    [InlineData("A", "a")]
+    [InlineData("a", "A")]
+    [InlineData("SourceA", "sourcea")]
+    [InlineData("SOURCEA", "sourcea")]
+    public void GetMappedRepositories_WithVariousSourceCasing_ReturnsOnlyApplicableSources(string sourceNameConfig, string sourceNameMapped)
+    {
+        // Arrange
+        var packageId = "Contoso.Package";
+        var packageSource = new PackageSource(sourceNameConfig, sourceNameConfig);
+        var repository = new SourceRepository(packageSource, Array.Empty<INuGetResourceProvider>());
+        var allRepos = new List<SourceRepository> { repository };
+        var mappedNames = new List<string> { sourceNameMapped };
+        var logger = new Mock<ILoggerWithColor>(MockBehavior.Loose);
+
+        // Act
+        var result = PackageDownloadRunner.GetMappedRepositories(
+            mappedNames,
+            allRepos,
+            packageId,
+            logger.Object);
+
+        // Assert
+        result.Should().HaveCount(1);
+        result[0].PackageSource.Name.Should().Be(sourceNameConfig);
+    }
+
+    [Fact]
+    public void GetMappedRepositories_WhenSourceMissing_LogsVerbose()
+    {
+        // Arrange
+        var packageId = "Contoso.Package";
+
+        var existingRepo = new SourceRepository(new PackageSource("A", "A"), Array.Empty<INuGetResourceProvider>());
+
+        var allRepos = new List<SourceRepository> { existingRepo };
+        string mappedName = "MissingSource";
+        var mappedNames = new List<string> { mappedName };
+
+        string captured = "";
+        var logger = new Mock<ILoggerWithColor>(MockBehavior.Loose);
+        logger.Setup(l => l.LogVerbose(It.IsAny<string>()))
+            .Callback<string>(msg => captured += msg);
+
+        string expectedLog = string.Format(
+            CultureInfo.CurrentCulture,
+            XPlat.Strings.PackageDownloadCommand_PackageSourceMapping_NoSuchSource,
+            mappedName,
+            packageId);
+
+        // Act
+        var result = PackageDownloadRunner.GetMappedRepositories(
+            mappedNames,
+            allRepos,
+            packageId,
+            logger.Object);
+
+        // Assert
+        result.Should().BeEmpty();
+        captured.Should().Contain(expectedLog);
+    }
+
+    [Fact]
+    public void GetMappedRepositories_WhenAllMappedSourcesExist_ReturnsAllMatchedRepositories()
+    {
+        // Arrange
+        var packageId = "Contoso.Package";
+
+        var packageSourceA = new PackageSource("Source1", "Source1");
+        var packageSourceB = new PackageSource("Source2", "Source2");
+
+        var repoA = new SourceRepository(packageSourceA, Array.Empty<INuGetResourceProvider>());
+        var repoB = new SourceRepository(packageSourceB, Array.Empty<INuGetResourceProvider>());
+
+        var allRepos = new List<SourceRepository> { repoA, repoB };
+        var mappedNames = new List<string> { "Source1", "source2" };
+
+        var logger = new Mock<ILoggerWithColor>(MockBehavior.Loose);
+
+        // Act
+        var result = PackageDownloadRunner.GetMappedRepositories(
+            mappedNames,
+            allRepos,
+            packageId,
+            logger.Object);
+
+        // Assert
+        Assert.Equal(2, result.Count);
+        Assert.Equal(packageSourceA.Name, result[0].PackageSource.Name);
+        Assert.Equal(packageSourceB.Name, result[1].PackageSource.Name);
+        logger.Verify(l => l.LogVerbose(It.IsAny<string>()), Times.Never);
     }
 }

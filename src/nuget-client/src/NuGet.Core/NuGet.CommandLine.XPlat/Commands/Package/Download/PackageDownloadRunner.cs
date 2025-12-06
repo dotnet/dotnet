@@ -91,15 +91,31 @@ namespace NuGet.CommandLine.XPlat.Commands.Package.PackageDownload
                 }
                 else
                 {
-                    if (!TryGetRepositoriesForPackage(
-                        package.Id,
-                        args,
-                        packageSourceMapping!,
-                        allRepositories,
-                        logger,
-                        out sourceRepositories))
+                    var mappedNames = packageSourceMapping!.GetConfiguredPackageSources(package.Id);
+
+                    if (mappedNames.Count == 0)
                     {
-                        return ExitCodeError;
+                        // fail, no sources mapped for this package
+                        var notConsideredSources = string.Join(
+                            ", ",
+                            allRepositories.Select(repository => repository.PackageSource));
+
+                        logger.LogError(string.Format(
+                            CultureInfo.CurrentCulture,
+                            Strings.PackageDownloadCommand_PackageSourceMapping_NoSourcesMapped,
+                            package.Id,
+                            notConsideredSources));
+
+                        downloadedAllSuccessfully &= false;
+                        continue;
+                    }
+
+                    sourceRepositories = GetMappedRepositories(mappedNames, allRepositories, package.Id, logger);
+
+                    if (DetectAndReportInsecureSources(args.AllowInsecureConnections, sourceRepositories.Select(r => r.PackageSource), logger))
+                    {
+                        downloadedAllSuccessfully &= false;
+                        continue;
                     }
                 }
 
@@ -224,67 +240,49 @@ namespace NuGet.CommandLine.XPlat.Commands.Package.PackageDownload
             return (versionToDownload, downloadSourceRepository);
         }
 
-        /// <summary>
-        /// Builds the set of SourceRepository objects to use for a given package,
-        /// applying package source mapping
-        /// validating HTTP usage only on the *effective* sources.
-        /// </summary>
-        private static bool TryGetRepositoriesForPackage(
-            string packageId,
-            PackageDownloadArgs args,
-            PackageSourceMapping packageSourceMapping,
+        internal static IReadOnlyList<SourceRepository> GetMappedRepositories(
+            IReadOnlyList<string> mappedNames,
             IReadOnlyList<SourceRepository> allRepos,
-            ILoggerWithColor logger,
-            out IReadOnlyList<SourceRepository> repositories)
+            string packageId,
+            ILoggerWithColor logger)
         {
-            var mappedNames = packageSourceMapping.GetConfiguredPackageSources(packageId);
+            var mappedRepos = new List<SourceRepository>(mappedNames.Count);
 
-            // Only validate insecure sources when mapping produced something
-            if (mappedNames.Count > 0)
+            foreach (var mappedName in mappedNames)
             {
-                var mappedRepos = new List<SourceRepository>(mappedNames.Count);
-                foreach (var mappedName in mappedNames)
+                SourceRepository? repo = FindRepositoryByName(mappedName, allRepos);
+
+                if (repo != null)
                 {
-                    SourceRepository? repo = null;
-                    for (int i = 0; i < allRepos.Count; i++)
-                    {
-                        if (string.Equals(allRepos[i].PackageSource.Name, mappedName, StringComparison.OrdinalIgnoreCase))
-                        {
-                            repo = allRepos[i];
-                            break;
-                        }
-                    }
-
-                    if (repo != null)
-                    {
-                        mappedRepos.Add(repo);
-                    }
-                    else
-                    {
-                        logger.LogVerbose(
-                            string.Format(
-                                CultureInfo.CurrentCulture,
-                                Strings.PackageDownloadCommand_PackageSourceMapping_NoSuchSource,
-                                mappedName,
-                                packageId));
-                    }
+                    mappedRepos.Add(repo);
                 }
-
-                if (DetectAndReportInsecureSources(args.AllowInsecureConnections, mappedRepos.Select(repo => repo.PackageSource), logger))
+                else
                 {
-                    repositories = [];
-                    return false;
+                    logger.LogVerbose(
+                        string.Format(
+                            CultureInfo.CurrentCulture,
+                            Strings.PackageDownloadCommand_PackageSourceMapping_NoSuchSource,
+                            mappedName,
+                            packageId));
                 }
-
-                repositories = mappedRepos;
-                return true;
             }
-            else
+
+            return mappedRepos;
+        }
+
+        private static SourceRepository? FindRepositoryByName(
+            string mappedName,
+            IReadOnlyList<SourceRepository> allRepos)
+        {
+            for (int i = 0; i < allRepos.Count; i++)
             {
-                // No mapping for this package: fall back to all sources
-                repositories = allRepos;
-                return true;
+                if (string.Equals(allRepos[i].PackageSource.Name, mappedName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return allRepos[i];
+                }
             }
+
+            return null;
         }
 
         private static async Task<bool> DownloadPackageAsync(

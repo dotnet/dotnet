@@ -24,7 +24,7 @@
       </trans-unit>
       <trans-unit id="InfoBar_HyperlinkGHCopilotDocs">
         <source>How to fix with GitHub Copilot</source>
-        <target state="new">How to fix with GitHub Copilot</target>
+        <target state="translated">Cómo corregir con GitHub Copilot</target>
         <note />
       </trans-unit>
       <trans-unit id="InfoBar_HyperlinkMessage">

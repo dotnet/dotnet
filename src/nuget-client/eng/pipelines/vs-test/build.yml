@@ -167,6 +167,12 @@ steps:
       Contents: "NuGet.exe"
       TargetFolder: "$(Build.StagingDirectory)\\E2ETests"
 
+  - task: CopyFiles@2
+    displayName: "Copy scripts for cloudbuild machines"
+    inputs:
+      SourceFolder: "$(Build.Repository.LocalPath)\\scripts"
+      TargetFolder: "$(Build.StagingDirectory)\\RunSettings\\scripts"
+
   - task: NuGetToolInstaller@1
 
   - task: NuGetCommand@2
@@ -218,6 +224,10 @@ steps:
           Write-Host "Run Settings Drop: $runSettingsDrop"
           Write-Host "##vso[task.setvariable variable=RunSettingsDrop]$runSettingsDrop"
           Write-Host "##vso[task.setvariable variable=RunSettingsDrop;isOutput=true]$runSettingsDrop"
+
+          $vsBootstrapperBranch = dotnet msbuild -getProperty:VsTargetBranch build\config.props
+          Write-Host "VS Bootstrapper Branch: $vsBootstrapperBranch"
+          Write-Host "##vso[task.setvariable variable=VsBootstrapperBranch;isOutput=true]$vsBootstrapperBranch"
         } catch {
           Write-Host "##vso[task.LogIssue type=error;]Unable to set variables for DartLab: $_"
           exit 1

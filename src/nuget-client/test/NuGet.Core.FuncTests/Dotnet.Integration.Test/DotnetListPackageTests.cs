@@ -1094,6 +1094,46 @@ namespace Dotnet.Integration.Test
             projects[0]["path"].ToString().Should().Be(PathUtility.GetPathWithForwardSlashes(projectA.ProjectPath));
         }
 
+        [PlatformFact(Platform.Windows)]
+        public async Task DotnetListPackage_PackageWithTargetsFileErrors_ReturnsCorrectResults()
+        {
+            // Arrange
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+            _fixture.CreateDotnetNewProject(pathContext.SolutionRoot, ProjectName, args: "classlib", _testOutputHelper);
+            string projectPath = Path.Combine(pathContext.SolutionRoot, ProjectName, $"{ProjectName}.csproj");
+
+            // Create a package with a .targets file that logs an error
+            var packageX = new SimpleTestPackageContext("PackageX", "1.0.0");
+            packageX.AddFile("lib/net5.0/_._");
+
+            var targetsContent = @"
+<Project InitialTargets=""ErrorToFailBuild"">
+  <Target Name=""ErrorToFailBuild"">
+    <Error Text=""This is a failure within a package targets, to ensure list package is able to handle it."" />
+  </Target>
+</Project>";
+            packageX.AddFile("build/PackageX.targets", targetsContent);
+
+            // Generate Package
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageX);
+
+            // Pre-Req
+            _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectPath).FullName,
+                $"add {projectPath} package PackageX --version 1.0.0",
+                testOutputHelper: _testOutputHelper);
+
+            // Act - dotnet list package should succeed despite the MSBuild error in the .targets file
+            CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectPath).FullName,
+                $"list {projectPath} package",
+                testOutputHelper: _testOutputHelper);
+
+            // Assert - Verify the package is listed correctly
+            Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, "PackageX1.0.01.0.0"));
+        }
+
         private static string CollapseSpaces(string input)
         {
             return Regex.Replace(input, " +", " ");

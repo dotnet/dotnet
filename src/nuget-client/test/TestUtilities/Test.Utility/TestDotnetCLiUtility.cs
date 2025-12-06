@@ -198,6 +198,63 @@ SDKs found: {string.Join(", ", Directory.EnumerateDirectories(SdkDirSource).Sele
             CopyPackSdkArtifacts(artifactsDirectory, pathToSdkInCli, configuration);
             CopyRestoreArtifacts(artifactsDirectory, pathToSdkInCli, configuration);
             CopyNuGetSdkResolverArtifacts(artifactsDirectory, pathToSdkInCli, configuration);
+            AddSpectreConsoleToDepsJson(pathToSdkInCli);
+        }
+
+        // Temporary. Can be removed once https://github.com/dotnet/dotnet/pull/3527 is merged and a new .NET SDK 
+        private static void AddSpectreConsoleToDepsJson(string pathToSdkInCli)
+        {
+            string[] depsFiles = ["NuGet.CommandLine.XPlat.deps.json", "dotnet.deps.json"];
+
+            foreach (var depsFile in depsFiles)
+            {
+                var depsFilePath = Path.Combine(pathToSdkInCli, depsFile);
+                JObject jObject = JObject.Parse(File.ReadAllText(depsFilePath));
+
+                var targetNode = (JObject)((JObject)jObject["targets"]).Properties().First().Value;
+                JProperty spectreConsoleProperty = targetNode.Properties()
+                    .FirstOrDefault(p => p.Name.StartsWith("Spectre.Console/"));
+
+                bool changed = false;
+
+                if (spectreConsoleProperty is null)
+                {
+                    spectreConsoleProperty = new JProperty("Spectre.Console/0.54.0", JObject.Parse("""{"runtime":{"lib/net9.0/Spectre.Console.dll":{"assemblyVersion":"0.0.0.0","fileVersion":"0.54.0.0"}}}"""));
+                    targetNode.Add(spectreConsoleProperty);
+                    changed = true;
+                }
+
+                JProperty library = (JProperty)((JObject)jObject["libraries"]).Properties()
+                    .FirstOrDefault(p => p.Name.StartsWith("Spectre.Console/"));
+                if (library is null)
+                {
+                    var value = JObject.Parse(
+                        """
+                        {
+                        "type": "package",
+                        "serviceable": true,
+                        "sha512": "sha512-StDXCFayfy0yB1xzUHT2tgEpV1/HFTiS4JgsAQS49EYTfMixSwwucaQs/bIOCwXjWwIQTMuxjUIxcB5XsJkFJA==",
+                        "path": "spectre.console/0.54.0",
+                        "hashPath": "spectre.console.0.54.0.nupkg.sha512"
+                        }
+                        """);
+                    library = new JProperty("Spectre.Console/0.54.0", value);
+                    ((JObject)jObject["libraries"]).Add(library);
+                    changed = true;
+                }
+
+                if (changed)
+                {
+                    using (StreamWriter streamWriter = File.CreateText(depsFilePath))
+                    using (JsonTextWriter writer = new JsonTextWriter(streamWriter)
+                    {
+                        Formatting = Formatting.Indented
+                    })
+                    {
+                        jObject.WriteTo(writer);
+                    }
+                }
+            }
         }
 
         private static void CopyRestoreArtifacts(string artifactsDirectory, string pathToSdkInCli, string configuration)

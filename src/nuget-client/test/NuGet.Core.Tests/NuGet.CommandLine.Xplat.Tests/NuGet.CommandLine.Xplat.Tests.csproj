@@ -13,6 +13,7 @@
     <PackageReference Include="Microsoft.Build" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Build.Locator" />
+    <PackageReference Include="Spectre.Console.Testing" />
     <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 
