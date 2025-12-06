@@ -206,6 +206,12 @@
     <Right>/sb/sdk/x.y.z/Microsoft.ApplicationInsights.dll</Right>
   </Suppression>
   <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>System.CommandLine, Version=x.y.z, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Target>
+    <Left>/msft/sdk/x.y.z/System.CommandLine.dll</Left>
+    <Right>/sb/sdk/x.y.z/System.CommandLine.dll</Right>
+  </Suppression>
+  <Suppression>
     <DiagnosticId>CP0008</DiagnosticId>
     <Target>T:Newtonsoft.Json.Bson.BsonReader</Target>
     <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
