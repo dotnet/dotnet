@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 293486,
+      "barId": 293546,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "1c09acb26525da819530dd2678a0b7f62c35cbfd"
+      "commitSha": "65e09c040143048211dcf6b2bd69336cbf27eec6"
     },
     {
       "barId": 292447,
