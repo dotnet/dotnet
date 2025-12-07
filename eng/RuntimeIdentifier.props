@@ -2,6 +2,7 @@
   <!-- TargetRid calculations should go in this file. -->
   <PropertyGroup Label="CalculateTargetOS">
     <BuildOS>linux</BuildOS>
+    <BuildOS Condition="$(NETCoreSdkPortableRuntimeIdentifier.StartsWith('linux-musl'))">linux-musl</BuildOS>
     <BuildOS Condition="$([MSBuild]::IsOSPlatform('OSX'))">osx</BuildOS>
     <BuildOS Condition="$([MSBuild]::IsOSPlatform('FREEBSD'))">freebsd</BuildOS>
     <BuildOS Condition="$([MSBuild]::IsOSPlatform('NETBSD'))">netbsd</BuildOS>
