@@ -379,7 +379,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file.</source>
-        <target state="translated">NuGet には HTTPS ソースが必要です。HTTP ソースを使用するには、NuGet.Config ファイルで 'allowInsecureConnections' を [true] に明示的に設定する必要があります。</target>
+        <target state="translated">NuGet には HTTPS ソースが必要です。HTTP ソースを使用するには、NuGet.Config ファイルで 'allowInsecureConnections' を true に明示的に設定する必要があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_MetadataNotFound">
@@ -454,7 +454,7 @@
       </trans-unit>
       <trans-unit id="Hyperlink_Readme">
         <source>Readme</source>
-        <target state="translated">Readme</target>
+        <target state="translated">お読みください</target>
         <note />
       </trans-unit>
       <trans-unit id="Hyperlink_ReportAbuse">
@@ -1238,7 +1238,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="ToolTip_TransitivePathHelp">
         <source>To learn more about transitive paths, see</source>
-        <target state="translated">推移的なパスの詳細については、次を参照してください</target>
+        <target state="translated">推移的なパスについて詳しくは、次を参照してください</target>
         <note />
       </trans-unit>
       <trans-unit id="ToolTip_UninstallButton">

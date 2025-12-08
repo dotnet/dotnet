@@ -215,7 +215,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Máte spuštěnu operaci {0} se zdrojem HTTP: {1}. NuGet vyžaduje zdroje HTTPS. Pokud chcete použít zdroj HTTP, musíte v souboru NuGet.Config explicitně nastavit možnost allowInsecureConnections na true. Další informace najdete na https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Máte spuštěnu operaci {0} se zdrojem HTTP: {1}. NuGet vyžaduje zdroje HTTPS. Pokud chcete použít zdroj HTTP, musíte v souboru NuGet.Config explicitně nastavit parametr allowInsecureConnections na true. Další informace najdete na https://aka.ms/nuget-https-everywhere.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - server URI.</note>
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single_Short">
@@ -225,7 +225,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSources_Multiple">
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Máte spuštěnu operaci {0} se zdroji HTTP: {1}. NuGet vyžaduje zdroje HTTPS. Pokud chcete používat zdroje HTTP, musíte v souboru NuGet.Config explicitně nastavit možnost allowInsecureConnections na true. Další informace najdete na https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Máte spuštěnu operaci {0} se zdroji HTTP: {1}. NuGet vyžaduje zdroje HTTPS. Pokud chcete používat zdroje HTTP, musíte v souboru NuGet.Config explicitně nastavit parametr allowInsecureConnections na true. Další informace najdete na https://aka.ms/nuget-https-everywhere.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Error_IncompatiblePackageType">

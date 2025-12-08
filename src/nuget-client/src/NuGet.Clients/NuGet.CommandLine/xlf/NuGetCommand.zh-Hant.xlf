@@ -912,8 +912,8 @@ nuget setapikey 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -Source http://example.com/
       <trans-unit id="SignCommandCertificateFingerprintDescription">
         <source>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a local certificate store for the certificate.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
-        <target state="translated">用於搜尋憑證之本機憑證存放區的憑證 SHA-256、SHA-384 或 SHA-512 指紋。
--CertificateStoreName 和 -CertificateStoreLocation 選項可指定憑證存放區。</target>
+        <target state="translated">在本機憑證存放區中用來搜尋憑證的憑證 SHA-256、SHA-384 或 SHA-512 指紋。
+憑證存放區可由 -CertificateStoreName 和 -CertificateStoreLocation 選項指定。</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificatePasswordDescription">
@@ -931,14 +931,14 @@ This option can be used to specify the password for the certificate. If no passw
       <trans-unit id="SignCommandCertificateStoreLocationDescription">
         <source>Name of the X.509 certificate store use to search for the certificate. Defaults to "CurrentUser", the X.509 certificate store used by the current user.
 This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
-        <target state="translated">要用來搜尋憑證的 X.509 憑證存放區名稱。預設為 "CurrentUser"，這是目前使用者使用的 X.509 憑證存放區。
+        <target state="translated">要用來搜尋憑證的 X.509 憑證存放區名稱。預設為 [CurrentUser] 之目前使用者使用的 X.509 憑證存放區。
 此選項應在透過 -CertificateSubjectName 或 -CertificateFingerprint 選項指定憑證時使用。</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateStoreNameDescription">
         <source>Name of the X.509 certificate store to use to search for the certificate. Defaults to "My", the X.509 certificate store for personal certificates.
 This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
-        <target state="translated">要用來搜尋憑證的 X.509 憑證存放區名稱。預設為 "My"，這是個人憑證的 X.509 憑證存放區。
+        <target state="translated">要用來搜尋憑證的 X.509 憑證存放區區名稱。預設為 [My] 之個人憑證的 X.509 憑證存放區。
 此選項應在透過 -CertificateSubjectName 或 -CertificateFingerprint 選項指定憑證時使用。</target>
         <note />
       </trans-unit>
@@ -946,9 +946,9 @@ This option should be used when specifying the certificate via -CertificateSubje
         <source>Subject name of the certificate used to search a local certificate store for the certificate. 
 The search is a case-insensitive string comparison using the supplied value, which will find all certificates with the subject name containing that string, regardless of other subject values.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
-        <target state="translated">要用來搜尋憑證的本機憑證存放區的憑證主體名稱。
+        <target state="translated">要用來在本機憑證存放區搜尋憑證的憑證主題名稱。
 搜尋是使用提供值之不區分大小寫的字串比較，它會尋找主體名稱包含該字串的所有憑證，無論其他的主體值為何。
--CertificateStoreName 和 -CertificateStoreLocation 選項可指定憑證存放區。</target>
+憑證存放區可由 -CertificateStoreName 和 -CertificateStoreLocation 選項指定。</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandDescription">
@@ -1054,7 +1054,7 @@ nuget sign .\..\MyPackage.nupkg -Timestamper https://foo.bar -OutputDirectory .\
       </trans-unit>
       <trans-unit id="SourcesCommandAllowInsecureConnectionsDescription">
         <source>Allows HTTP connections for adding or updating packages. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">允許 HTTP 連線用於新增或更新封裝。注意: 此方法不安全。如需安全選項，請參閱 https://aka.ms/nuget-https-everywhere 以取得詳細資訊。</target>
+        <target state="translated">允許使用 HTTP 連線新增或更新封裝。注意: 此方法不安全。如需安全選項，請參閱 https://aka.ms/nuget-https-everywhere 以取得詳細資訊。</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandDescription">

@@ -214,7 +214,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">‘{0}’ 不得为 null。</target>
+        <target state="translated">"{0}" 不能是 null。</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
@@ -229,7 +229,7 @@
       </trans-unit>
       <trans-unit id="Text_DeprecatedFramework_DocumentLink_After">
         <source>.</source>
-        <target state="translated">。</target>
+        <target state="translated">.</target>
         <note>This test goes immediately after the document link.</note>
       </trans-unit>
       <trans-unit id="Text_DeprecatedFramework_DocumentLink_Before">

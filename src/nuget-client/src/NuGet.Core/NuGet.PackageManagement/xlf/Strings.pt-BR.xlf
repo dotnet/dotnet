@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="AddedPackageToFolderFromSource">
         <source>Added package '{0}' to folder '{1}' from source '{2}'</source>
-        <target state="translated">O pacote '{0}' foi adicionado à pasta'{1}' da origem '{2}'</target>
+        <target state="translated">O pacote '{0}' foi adicionado à pasta '{1}' da origem '{2}'</target>
         <note />
       </trans-unit>
       <trans-unit id="AddedPackageToPackagesConfig">
@@ -34,7 +34,7 @@
       </trans-unit>
       <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
         <source>Argument cannot be null or empty</source>
-        <target state="translated">O argumento não pode ser nulo ou vazio</target>
+        <target state="translated">O argumento não pode ser nulo nem estar vazio</target>
         <note />
       </trans-unit>
       <trans-unit id="AttemptingToGatherDependencyInfo">
@@ -129,7 +129,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Você está executando a operação "{0}" com uma fonte "HTTP": {1}. O NuGet exige fontes HTTPS. Para usar uma fonte HTTP, você deve definir explicitamente "allowInsecureConnections" como true no arquivo NuGet.Config. Consulte https://aka.ms/nuget-https-everywhere para obter mais informações.</target>
+        <target state="translated">Você está executando a operação "{0}" com uma fonte "HTTP": {1}. O NuGet requer fontes HTTPS. Para usar uma fonte HTTP, você deve definir explicitamente 'allowInsecureConnections' como verdadeiro no seu arquivo NuGet.Config. Consulte https://aka.ms/nuget-https-everywhere para mais informações.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - server uri.</note>
       </trans-unit>
       <trans-unit id="Error_InvalidLockFileInput">
@@ -174,7 +174,7 @@
       </trans-unit>
       <trans-unit id="Info_OverwritingExistingFile">
         <source>Overwriting existing file '{0}'..</source>
-        <target state="translated">Substituindo arquivo existente '{0}'..</target>
+        <target state="translated">Substituindo arquivo existente '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidProjectName">

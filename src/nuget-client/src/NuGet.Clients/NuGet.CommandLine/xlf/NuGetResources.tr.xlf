@@ -180,7 +180,7 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
       </trans-unit>
       <trans-unit id="Error_HttpSources_Multiple">
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">'{0}' işlemini {1} 'HTTP' kaynakları ile çalıştırıyorsunuz. NuGet için HTTPS kaynakları gereklidir. HTTP kaynakları kullanmak için 'allowInsecureConnections' değerini NuGet.Config dosyanızda açıkça true olarak ayarlamalısınız. Daha fazla bilgi için şuraya başvurun: https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">'{0}' işlemini {1} 'HTTP' kaynağıyla çalıştırıyorsunuz. NuGet için HTTPS kaynakları gereklidir. HTTP kaynaklarını kullanmak için NuGet.Config dosyanızda 'allowInsecureConnections' ayarını açıkça “true” olarak ayarlamanız gerekir. Daha fazla bilgi için şuraya başvurun: https://aka.ms/nuget-https-everywhere.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_InvalidCharactersInPathSegment">

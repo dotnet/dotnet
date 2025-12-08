@@ -65,7 +65,7 @@
       <trans-unit id="Error_StaticGraphRestoreArgumentsParsingFailedExceptionReadingStream">
         <source>An error occurred parsing command-line arguments in static graph-based restore as an exception occurred reading the standard input stream, {0} Please file an issue at https://github.com/NuGet/Home
 {1}</source>
-        <target state="translated">표준 입력 스트림을 읽는 동안 예외가 발생하여 정적 그래프 기반 복원에서 명령줄 인수를 구문 분석하는 동안 오류가 발생했습니다. {0} https://github.com/NuGet/Home에서 문제를 보고해 주세요.
+        <target state="translated">표준 입력 스트림을 읽는 동안 예외가 발생하여 정적 그래프 기반 복원에서 명령줄 인수를 구문 분석하는 동안 오류가 발생했습니다. {0} https://github.com/NuGet/Home에서 문제를 제출하세요.
 {1}</target>
         <note>0 - The exception message
 1 - The string representation of the exception</note>

@@ -467,7 +467,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_MissingSearchService">
         <source>The source does not have a Search service!</source>
-        <target state="translated">Tenhle zdroj nemá vyhledávací službu.</target>
+        <target state="translated">Tento zdroj nemá službu Search.</target>
         <note />
       </trans-unit>
       <trans-unit id="Protocol_MissingVersion">

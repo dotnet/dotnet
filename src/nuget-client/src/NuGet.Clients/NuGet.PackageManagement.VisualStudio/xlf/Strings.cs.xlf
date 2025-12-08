@@ -88,7 +88,7 @@
       </trans-unit>
       <trans-unit id="Debug_RemovedFolder">
         <source>Removed folder '{0}'.</source>
-        <target state="translated">Byla odebraná složka {0}.</target>
+        <target state="translated">Odebrala se složka {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_FailedToCreateParentFolder">

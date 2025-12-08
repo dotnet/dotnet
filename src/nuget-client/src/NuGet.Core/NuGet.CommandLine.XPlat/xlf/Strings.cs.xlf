@@ -99,7 +99,7 @@
       </trans-unit>
       <trans-unit id="ArgumentNullOrEmpty">
         <source>Argument cannot be null or empty.</source>
-        <target state="new">Argument cannot be null or empty.</target>
+        <target state="translated">Argument nemůže být null ani prázdný.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConfigCommandKeyNotFound">
@@ -286,7 +286,7 @@
       </trans-unit>
       <trans-unit id="Error_CannotUpgradeAutoReferencedPackage">
         <source>{0}: Package {1} is implicitly added by the SDK and cannot be upgraded independently</source>
-        <target state="new">{0}: Package {1} is implicitly added by the SDK and cannot be upgraded independently</target>
+        <target state="translated">{0}: Balíček {1} je implicitně přidán sadou SDK a nelze jej samostatně upgradovat.</target>
         <note>{0} - project referencing the package
 {1} - package id</note>
       </trans-unit>
@@ -400,7 +400,7 @@ NuGet vyžaduje zdroje HTTPS. Pokud chcete používat zdroje HTTP, musíte v sou
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingNotFound">
         <source>Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</source>
-        <target state="new">Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</target>
+        <target state="translated">Mapování zdroje balíčku je povolené, ale pro balíček {0} nebylo nalezeno žádné mapování. Další informace najdete na https://aka.ms/nuget/audit.</target>
         <note>{0} - package id</note>
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
@@ -898,7 +898,7 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_VulnerableOptionDescription">
         <source>Upgrade packages with known vulnerabilities.</source>
-        <target state="new">Upgrade packages with known vulnerabilities.</target>
+        <target state="translated">Upgradujte balíčky se známými ohroženími zabezpečení.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_AllPackagesAlreadyUpToDate">
@@ -908,22 +908,22 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       </trans-unit>
       <trans-unit id="PackageUpdate_AllVersionsHaveAdvisories">
         <source>All versions of package {0} have security advisories. Unable to find a non-vulnerable version to update to.</source>
-        <target state="new">All versions of package {0} have security advisories. Unable to find a non-vulnerable version to update to.</target>
+        <target state="translated">Všechny verze balíčku {0} mají bezpečnostní upozornění. Nelze najít verzi bez ohrožení zabezpečení, na kterou by bylo možné aktualizovat.</target>
         <note>{0}: package id</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_AlreadyUpToDate">
         <source>All packages are up to date</source>
-        <target state="new">All packages are up to date</target>
+        <target state="translated">Všechny balíčky jsou aktuální.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_AuditDisabled">
         <source>This command requires NuGetAudit to be enabled at this time. See https://aka.ms/nuget/audit for more information.</source>
-        <target state="new">This command requires NuGetAudit to be enabled at this time. See https://aka.ms/nuget/audit for more information.</target>
+        <target state="translated">Tento příkaz vyžaduje, aby byl v tuto chvíli povolený NuGetAudit. Další informace najdete na https://aka.ms/nuget/audit.</target>
         <note>{Locked="NuGetAudit"}{Locked="dotnet package update"}</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_AuditModeIsDirect">
         <source>NuGetAuditMode is set to direct, which means that transitive packages with known vulnerabilities will not be updated. See https://aka.ms/nuget/audit for more information.</source>
-        <target state="new">NuGetAuditMode is set to direct, which means that transitive packages with known vulnerabilities will not be updated. See https://aka.ms/nuget/audit for more information.</target>
+        <target state="translated">NuGetAuditMode je nastaven na direct, což znamená, že transitivní (závislé) balíčky s ohroženími zabezpečení se nebudou aktualizovat. Další informace najdete na https://aka.ms/nuget/audit.</target>
         <note>{Locked="NuGetAuditMode"}</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_FinalSummary">
@@ -944,7 +944,7 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       </trans-unit>
       <trans-unit id="PackageUpdate_NoVulnerablePackages">
         <source>No upgradable packages have known vulnerabilities.</source>
-        <target state="new">No upgradable packages have known vulnerabilities.</target>
+        <target state="translated">Žádné upgradovatelné balíčky nemají známá ohrožení zabezpečení.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_PackageArgumentDescription">
@@ -964,7 +964,7 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatedMessage">
         <source>Updating {0} {1} to {2}.</source>
-        <target state="new">Updating {0} {1} to {2}.</target>
+        <target state="translated">Probíhá aktualizace {0}{1} na {2}.</target>
         <note>{0}: package id
 {1}: existing version
 {2}: new version</note>
@@ -976,7 +976,7 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatingVulnerablePackages">
         <source>Updating packages with security advisories in {0}</source>
-        <target state="new">Updating packages with security advisories in {0}</target>
+        <target state="translated">Aktualizují se balíčky s bezpečnostními upozorněními v {0}</target>
         <note>{0} - the project/solution being checked</note>
       </trans-unit>
       <trans-unit id="PrereleaseVersionsAvailable">
@@ -1051,7 +1051,7 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       </trans-unit>
       <trans-unit id="SignCommandCertificateFingerprintDescription">
         <source>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a local certificate store for the certificate. The certificate store can be specified by --certificate-store-name and --certificate-store-location options.</source>
-        <target state="translated">Otisk SHA-256, SHA-384 nebo SHA-512 certifikátu použitý k hledání místního úložiště certifikátů tohoto certifikátu Úložiště certifikátů lze zadat pomocí parametrů --certificate-store-name a --certificate-store-location.</target>
+        <target state="translated">Otisk SHA-256, SHA-384 nebo SHA-512 certifikátu použitý k hledání místního úložiště certifikátů tohoto certifikátu. Úložiště certifikátů lze zadat pomocí parametrů --certificate-store-name a --certificate-store-location.</target>
         <note>Please don't localize '--certificate-store-name' and '--certificate-store-location'</note>
       </trans-unit>
       <trans-unit id="SignCommandCertificatePasswordDescription">
