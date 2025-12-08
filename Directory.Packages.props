@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <!-- Arcade dependencies -->
+    <PackageVersion Include="Microsoft.DotNet.Baselines.Tasks" Version="$(MicrosoftDotNetBaselinesTasksVersion)" />
     <PackageVersion Include="Microsoft.DotNet.Build.Manifest" Version="$(MicrosoftDotNetBuildManifestVersion)" />
     <PackageVersion Include="Microsoft.DotNet.Build.Tasks.Installers" Version="$(MicrosoftDotNetBuildTasksInstallersVersion)" />
     <!-- Arcade-services dependencies -->

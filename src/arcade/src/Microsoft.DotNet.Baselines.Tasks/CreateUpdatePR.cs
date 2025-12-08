@@ -73,6 +73,8 @@ public class CreateUpdatePR : BuildTask
     /// </summary>
     public string? GitHubToken { get; set; } = Environment.GetEnvironmentVariable("GH_TOKEN");
 
+    private const string BranchRefPrefix = "refs/heads/";
+
     public override bool Execute()
     {
         return ExecuteAsync().GetAwaiter().GetResult();
@@ -108,7 +110,7 @@ public class CreateUpdatePR : BuildTask
                 UpdatedFiles.Select(file => file.ItemSpec).ToList(),
                 BuildId,
                 Title,
-                TargetBranch,
+                TargetBranch.StartsWith(BranchRefPrefix) ? TargetBranch.Substring(BranchRefPrefix.Length) : TargetBranch,
                 DefaultBaselineContent,
                 UnionExclusionsBaselines);
         }
