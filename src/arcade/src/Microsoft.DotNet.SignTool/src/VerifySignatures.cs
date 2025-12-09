@@ -174,7 +174,7 @@ namespace Microsoft.DotNet.SignTool
                 SigningStatus.Signed : SigningStatus.NotSigned;
         }
 
-        internal static SigningStatus IsSignedPkgOrAppBundle(TaskLoggingHelper log, string filePath, string dotNetPathTooling, string pkgToolPath)
+        internal static SigningStatus IsSignedPkgOrAppBundle(TaskLoggingHelper log, string filePath, string pkgToolPath)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
@@ -182,7 +182,7 @@ namespace Microsoft.DotNet.SignTool
                 return SigningStatus.Unknown;
             }
 
-            return ZipData.RunPkgProcess(filePath, null, "verify", dotNetPathTooling, pkgToolPath) ? SigningStatus.Signed : SigningStatus.NotSigned;
+            return ZipData.RunPkgProcess(filePath, null, "verify", pkgToolPath) ? SigningStatus.Signed : SigningStatus.NotSigned;
         }
 
         public static SigningStatus IsSignedPE(string filePath)
@@ -263,6 +263,7 @@ namespace Microsoft.DotNet.SignTool
             string[] keyUrls = new string[]
             {
                 "https://packages.microsoft.com/keys/microsoft.asc", // SHA-1 Microsoft public key
+                "https://packages.microsoft.com/keys/microsoft-2025.asc", // Microsoft public key for new repos not compatible with SHA-1
                 "https://packages.microsoft.com/keys/microsoft-rolling.asc", // Non-SHA1 Microsoft public keys for non-Azure Linux distributions
                 "https://raw.githubusercontent.com/microsoft/azurelinux/3.0/SPECS/azurelinux-repos/MICROSOFT-RPM-GPG-KEY" // Azure linux public key
             };
