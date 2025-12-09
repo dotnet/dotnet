@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -56,11 +57,44 @@ namespace Microsoft.DotNet.Helix.AzureDevOps
                 }
                 else
                 {
+                    // Configure the cert revocation check in a fail-open state to avoid intermittent failures
+                    // on Mac if the endpoint is not available. This is only available on .NET Core, but has only been
+                    // observed on Mac anyway.
+                    // https://github.com/dotnet/dnceng/issues/6410
+
+#if NET
+                    using SocketsHttpHandler handler = new SocketsHttpHandler
+                    {
+                        AllowAutoRedirect = false,
+                    };
+                    handler.SslOptions.CertificateChainPolicy = new X509ChainPolicy
+                    {
+                        // Yes, check revocation.
+                        // Yes, allow it to be downloaded if needed.
+                        // Online is the default, but it doesn't hurt to be explicit.
+                        RevocationMode = X509RevocationMode.Online,
+                        // Roots never bother with revocation.
+                        // ExcludeRoot is the default, but it doesn't hurt to be explicit.
+                        RevocationFlag = X509RevocationFlag.ExcludeRoot,
+                        // RevocationStatusUnknown at the EndEntity/Leaf certificate will not fail the chain build.
+                        // RevocationStatusUnknown for any intermediate CA will not fail the chain build.
+                        // IgnoreRootRevocationUnknown could also be specified, but it won't apply given ExcludeRoot above.
+                        // The default is that all status codes are bad, this is not the default.
+                        VerificationFlags =
+                            X509VerificationFlags.IgnoreCertificateAuthorityRevocationUnknown |
+                            X509VerificationFlags.IgnoreEndRevocationUnknown,
+                        // Always use the "now" when building the chain, rather than the "now" of when this policy object was constructed.
+                        VerificationTimeIgnored = true,
+                    };
+
+                    using (var client = new HttpClient(handler)
+#else
                     using (var client = new HttpClient(new HttpClientHandler
                     {
                         AllowAutoRedirect = false,
                         CheckCertificateRevocationList = true,
                     })
+#endif
                     {
                         DefaultRequestHeaders =
                         {
