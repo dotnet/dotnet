@@ -1,9 +1,6 @@
 Title: Creating Commands
 Order: 6
 Description: "How to create commands for *Spectre.Console.Cli*"
-Reference:
-    - T:Spectre.Console.Cli.AsyncCommand`1
-    - T:Spectre.Console.Cli.Command`1
 ---
 
 Commands in `Spectre.Console.Cli` are defined by creating a class that inherits from either `Command<TSettings>` or `AsyncCommand<TSettings>`. `Command<TSettings>` must implement an `Execute` method that returns an int where as `AsyncCommand<TSettings>` must implement `ExecuteAsync`  returning `Task<int>`.
@@ -18,7 +15,7 @@ public class HelloCommand : Command<HelloCommand.Settings>
     }
 
 
-    public override int Execute(CommandContext context, Settings settings)
+    public override int Execute(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         AnsiConsole.MarkupLine($"Hello, [blue]{settings.Name}[/]");
         return 0;

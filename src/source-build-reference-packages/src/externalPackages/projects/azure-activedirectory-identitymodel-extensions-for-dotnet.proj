@@ -21,37 +21,37 @@
       <PackCommandArgs>$(BuildCommandArgs) --output $(ProjectDirectory)pack</PackCommandArgs>
     </PropertyGroup>
 
-    <Exec Command="$(DotNetTool) restore /bl:$(ArtifactsLogRepoDir)restore.binlog $(SystemIdentityModelTokensJwtProject) $(BuildCommandArgs)"
+    <Exec Command="&quot;$(DotNetTool)&quot; restore /bl:$(ArtifactsLogRepoDir)restore.binlog $(SystemIdentityModelTokensJwtProject) $(BuildCommandArgs)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />
 
-    <Exec Command="$(DotNetTool) build /bl:$(ArtifactsLogRepoDir)build.binlog $(SystemIdentityModelTokensJwtProject) $(BuildCommandArgs)"
+    <Exec Command="&quot;$(DotNetTool)&quot; build /bl:$(ArtifactsLogRepoDir)build.binlog $(SystemIdentityModelTokensJwtProject) $(BuildCommandArgs)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />
 
-    <Exec Command="$(DotNetTool) pack /bl:$(ArtifactsLogRepoDir)pack_TokensJwt.binlog $(SystemIdentityModelTokensJwtProject) $(PackCommandArgs)"
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_TokensJwt.binlog $(SystemIdentityModelTokensJwtProject) $(PackCommandArgs)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />
 
-    <Exec Command="$(DotNetTool) pack /bl:$(ArtifactsLogRepoDir)pack_Tokens.binlog $(MicrosoftIdentityModelsTokenProject) $(PackCommandArgs)"
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_Tokens.binlog $(MicrosoftIdentityModelsTokenProject) $(PackCommandArgs)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />
 
-    <Exec Command="$(DotNetTool) pack /bl:$(ArtifactsLogRepoDir)pack_JsonWebTokens.binlog $(MicrosoftIdentityModelJsonWebTokensProject) $(PackCommandArgs)"
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_JsonWebTokens.binlog $(MicrosoftIdentityModelJsonWebTokensProject) $(PackCommandArgs)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />
 
-    <Exec Command="$(DotNetTool) pack /bl:$(ArtifactsLogRepoDir)pack_Abstractions.binlog $(MicrosoftIdentityModelAbstractionsProject) $(PackCommandArgs)"
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_Abstractions.binlog $(MicrosoftIdentityModelAbstractionsProject) $(PackCommandArgs)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />
 
-    <Exec Command="$(DotNetTool) pack /bl:$(ArtifactsLogRepoDir)pack_Logging.binlog $(MicrosoftIdentityModelLoggingProject) $(PackCommandArgs)"
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_Logging.binlog $(MicrosoftIdentityModelLoggingProject) $(PackCommandArgs)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />

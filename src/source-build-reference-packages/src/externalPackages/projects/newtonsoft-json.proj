@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <Target Name="RepoRestore" BeforeTargets="RepoBuild" DependsOnTargets="CreateNuGetConfig">
-    <Exec Command="$(DotNetTool) restore $(NewtonsoftJsonProjectPath) $(DotNetToolArgs) /v:$(LogVerbosity) /bl:$(ArtifactsLogRepoDir)restore.binlog $(RedirectRepoOutputToLog)"
+    <Exec Command="&quot;$(DotNetTool)&quot; restore $(NewtonsoftJsonProjectPath) $(DotNetToolArgs) /v:$(LogVerbosity) /bl:$(ArtifactsLogRepoDir)restore.binlog $(RedirectRepoOutputToLog)"
           WorkingDirectory="$(ProjectDirectory)"
           EnvironmentVariables="@(EnvironmentVariables)"
           IgnoreStandardErrorWarningFormat="true" />

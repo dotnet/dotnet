@@ -59,7 +59,10 @@ public class IntegrationTestBase
     {
         _testEnvironment = new IntegrationTestEnvironment();
         BuildConfiguration = IntegrationTestEnvironment.BuildConfiguration;
+
+        TempDirectory.NuGetConfigPath = Path.Combine(IntegrationTestEnvironment.RepoRootDirectory, "NuGet.config");
         TempDirectory = new TempDirectory();
+
 
         var drive = new DriveInfo(Directory.GetDirectoryRoot(TempDirectory.Path));
         Console.WriteLine($"Available space for TEMP: {drive.Name} {drive.AvailableFreeSpace / (1024 * 1024)} MB");
@@ -804,8 +807,6 @@ public class IntegrationTestBase
         Dictionary<string, string?>? environmentVariables = null, string? workingDirectory = null)
     {
         environmentVariables ??= new();
-
-        environmentVariables["DOTNET_MULTILEVEL_LOOKUP"] = "0";
 
         var executablePath = OSUtils.IsWindows ? @"dotnet.exe" : @"dotnet";
         var patchedDotnetPath = Path.GetFullPath(Path.Combine(IntegrationTestEnvironment.RepoRootDirectory, "artifacts", "tmp", ".dotnet", executablePath));

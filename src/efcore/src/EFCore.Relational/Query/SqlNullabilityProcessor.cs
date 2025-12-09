@@ -892,7 +892,7 @@ public class SqlNullabilityProcessor : ExpressionVisitor
                 if (translationMode is ParameterTranslationMode.MultipleParameters)
                 {
                     var padFactor = CalculateParameterBucketSize(values.Count, elementTypeMapping);
-                    var padding = (padFactor - (values.Count % padFactor)) % padFactor;
+                    var padding = CalculatePadding(values.Count, padFactor);
                     for (var i = 0; i < padding; i++)
                     {
                         // Create parameter for value if we didn't create it yet,
@@ -1553,6 +1553,15 @@ public class SqlNullabilityProcessor : ExpressionVisitor
             _ => 200,
         };
 
+    /// <summary>
+    /// Calculates the number of padding parameters needed to align the total count to the nearest bucket size.
+    /// </summary>
+    /// <param name="count">Number of value parameters.</param>
+    /// <param name="padFactor">Padding factor.</param>
+    [EntityFrameworkInternal]
+    protected virtual int CalculatePadding(int count, int padFactor)
+        => (padFactor - (count % padFactor)) % padFactor;
+
     // Note that we can check parameter values for null since we cache by the parameter nullability; but we cannot do the same for bool.
     private bool IsNull(SqlExpression? expression)
         => expression is SqlConstantExpression { Value: null }
@@ -1858,11 +1867,12 @@ public class SqlNullabilityProcessor : ExpressionVisitor
         {
             // We're looking at a parameter beyond its simple nullability, so we can't use the SQL cache for this query.
             var parameters = ParametersDecorator.GetAndDisableCaching();
-            if (parameters[collectionParameter.Name] is not IList values)
+            if (parameters[collectionParameter.Name] is not IEnumerable enumerable)
             {
-                throw new UnreachableException($"Parameter '{collectionParameter.Name}' is not an IList.");
+                throw new UnreachableException($"Parameter '{collectionParameter.Name}' is not an IEnumerable.");
             }
 
+            var values = enumerable.Cast<object?>().ToList();
             IList? processedValues = null;
 
             for (var i = 0; i < values.Count; i++)

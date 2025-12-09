@@ -49,6 +49,7 @@
       <ScenarioTestsAdditionalArgs Condition="'$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1'">$(ScenarioTestsAdditionalArgs) --no-traits Category=RequiresNonTargetRidPackages</ScenarioTestsAdditionalArgs>
       <ScenarioTestsAdditionalArgs Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetSkipTestsRequiringMicrosoftArtifacts)' == 'true'">$(ScenarioTestsAdditionalArgs) --no-traits Category=RequiresPortableAssets</ScenarioTestsAdditionalArgs>
       <ScenarioTestsAdditionalArgs Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(OfficialBuild)' != 'true'">$(ScenarioTestsAdditionalArgs) --no-traits SkipIfBuild=SourceOnlyUnofficialBuild</ScenarioTestsAdditionalArgs>
+      <ScenarioTestsAdditionalArgs Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(ScenarioTestsAdditionalArgs) --no-traits SkipIfBuild=SourceOnly</ScenarioTestsAdditionalArgs>
     </PropertyGroup>
 
     <!-- Needs to be set as an env var as the eng/common/tools parser can't handle this string. -->

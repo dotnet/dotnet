@@ -17,8 +17,8 @@ public class GenerateScriptTests
     {
         new object[] { "Microsoft.Build.NoTargets", "3.7.0", PackageType.Text }, // Text only package
         new object[] { "Microsoft.CodeAnalysis.PooledObjects", "5.0.0-1.25277.114", PackageType.Text }, // Text only package w/reference package dependencies
-        new object[] { "Microsoft.Extensions.Logging.Abstractions", "6.0.4", PackageType.Reference }, // Simple reference package w/o customizations
-        new object[] { "System.Threading.Channels", "7.0.0", PackageType.Reference }, // Reference package w/numerous TFMs
+        new object[] { "System.Memory", "4.6.3", PackageType.Reference }, // Simple reference package w/o customizations
+        new object[] { "System.Threading.Channels", "8.0.0", PackageType.Reference }, // Reference package w/numerous TFMs
         new object[] { "NuGet.Packaging", "6.13.2", PackageType.Reference }, // Package w/Customizations.props
         new object[] { "System.Collections.Immutable", "8.0.0", PackageType.Reference }, // Package w/Customizations.cs
     };
