@@ -6,7 +6,6 @@ schedules:
   branches:
     include:
     - main
-    - release/*.0.1xx*
     - internal/release/*.0.1xx*
 
 pr: none
