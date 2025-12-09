@@ -29,7 +29,7 @@ stages:
           version: 8.x
           installationPath: $(System.DefaultWorkingDirectory)/.dotnet
 
-      - script: $(System.DefaultWorkingDirectory)/.dotnet/dotnet.exe tool restore
+      - script: dotnet tool restore
         displayName: Restore dotnet tools
 
       - task: AzureCLI@2
