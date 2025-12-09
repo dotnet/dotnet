@@ -67,10 +67,10 @@
       "commitSha": "5514d935e3e77d90d931758cf9e2589735b905a3"
     },
     {
-      "barId": 287531,
+      "barId": 293785,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "967dc4f230a5eea690b563d1526c4c07b89ea897"
+      "commitSha": "8e9ecde56475ad2a4b87b64af6d6a9ea0fd05f02"
     },
     {
       "barId": 293461,
@@ -97,10 +97,10 @@
       "commitSha": "884397fe97bae0feb68fbe1a58207018c0465385"
     },
     {
-      "barId": 293338,
+      "barId": 293745,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "b73c3ef0856c34ccd8a50a1c8c2151cab1f469e0"
+      "commitSha": "cbaaa90cf3529b381226246036456e737c66dc13"
     },
     {
       "barId": 293466,
@@ -127,10 +127,10 @@
       "commitSha": "697c1270eebc92c531f27265dd0ff60211b088bb"
     },
     {
-      "barId": 293648,
+      "barId": 293860,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "32bceca01490873e0e38332f23383a7ba670dd70"
+      "commitSha": "8c1c98d7ea1e945411364602100862d896bec4c9"
     },
     {
       "barId": 292889,

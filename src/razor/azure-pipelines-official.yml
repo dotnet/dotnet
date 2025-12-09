@@ -170,6 +170,7 @@ extends:
                   /p:ManifestBuildNumber=$(Build.BuildNumber)
                   /p:VisualStudioDropName=Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)
                   /p:GenerateSbom=true
+                  /p:RestoreInternalTooling=true
 
             steps:
             - task: NuGetCommand@2
@@ -200,6 +201,7 @@ extends:
                 -prepareMachine
                 -restore
                 -nobl
+                $(_BuildArgs)
               name: Restore
               displayName: Restore
               condition: succeeded()
