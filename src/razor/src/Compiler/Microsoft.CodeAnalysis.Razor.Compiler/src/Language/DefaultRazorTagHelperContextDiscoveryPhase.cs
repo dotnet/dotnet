@@ -15,7 +15,7 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePhaseBase
 {
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
+    protected override RazorCodeDocument ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
         var syntaxTree = codeDocument.GetPreTagHelperSyntaxTree() ?? codeDocument.GetSyntaxTree();
         ThrowForMissingDocumentDependency(syntaxTree);
@@ -25,7 +25,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
             if (!Engine.TryGetFeature(out ITagHelperFeature? tagHelperFeature))
             {
                 // No feature, nothing to do.
-                return;
+                return codeDocument;
             }
 
             tagHelpers = tagHelperFeature.GetTagHelpers(cancellationToken);
@@ -52,8 +52,9 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
         var tagHelperPrefix = visitor.TagHelperPrefix;
 
         var context = TagHelperDocumentContext.GetOrCreate(tagHelperPrefix, visitor.GetResults());
-        codeDocument.SetTagHelperContext(context);
-        codeDocument.SetPreTagHelperSyntaxTree(syntaxTree);
+        return codeDocument
+            .WithTagHelperContext(context)
+            .WithPreTagHelperSyntaxTree(syntaxTree);
     }
 
     internal static ReadOnlyMemory<char> GetMemoryWithoutGlobalPrefix(string s)

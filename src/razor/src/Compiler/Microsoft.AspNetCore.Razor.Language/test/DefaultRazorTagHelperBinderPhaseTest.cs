@@ -36,7 +36,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var source = TestRazorSourceDocument.Create(content, filePath: null);
         var codeDocument = ProjectEngine.CreateCodeDocument(source);
         var originalTree = RazorSyntaxTree.Parse(source);
-        codeDocument.SetSyntaxTree(originalTree);
+        codeDocument = codeDocument.WithSyntaxTree(originalTree);
 
         // Act
         ProjectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
@@ -66,7 +66,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var source = TestRazorSourceDocument.Create(content, filePath: null);
         var codeDocument = ProjectEngine.CreateCodeDocument(source);
         var originalTree = RazorSyntaxTree.Parse(source);
-        codeDocument.SetSyntaxTree(originalTree);
+        codeDocument = codeDocument.WithSyntaxTree(originalTree);
 
         // Act
         ProjectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
@@ -96,7 +96,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var source = TestRazorSourceDocument.Create(content, filePath: null);
         var codeDocument = ProjectEngine.CreateCodeDocument(source);
         var originalTree = RazorSyntaxTree.Parse(source);
-        codeDocument.SetSyntaxTree(originalTree);
+        codeDocument = codeDocument.WithSyntaxTree(originalTree);
 
         // Act
         ProjectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
@@ -130,11 +130,11 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var source = CreateTestSourceDocument();
         var codeDocument = projectEngine.CreateCodeDocument(source);
         var originalTree = RazorSyntaxTree.Parse(source);
-        codeDocument.SetSyntaxTree(originalTree);
+        codeDocument = codeDocument.WithSyntaxTree(originalTree);
 
         // Act
-        projectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
-        projectEngine.ExecutePhase<DefaultRazorTagHelperRewritePhase>(codeDocument);
+        codeDocument = projectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
+        codeDocument = projectEngine.ExecutePhase<DefaultRazorTagHelperRewritePhase>(codeDocument);
 
         // Assert
         var rewrittenTree = codeDocument.GetSyntaxTree();
@@ -162,12 +162,12 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var sourceDocument = CreateTestSourceDocument();
         var codeDocument = ProjectEngine.CreateCodeDocument(sourceDocument);
         var originalTree = RazorSyntaxTree.Parse(sourceDocument);
-        codeDocument.SetSyntaxTree(originalTree);
-        codeDocument.SetTagHelpers([tagHelper1, tagHelper2]);
+        codeDocument = codeDocument.WithSyntaxTree(originalTree);
+        codeDocument = codeDocument.WithTagHelpers([tagHelper1, tagHelper2]);
 
         // Act
-        ProjectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
-        ProjectEngine.ExecutePhase<DefaultRazorTagHelperRewritePhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorTagHelperRewritePhase>(codeDocument);
 
         // Assert
         var rewrittenTree = codeDocument.GetSyntaxTree();
@@ -200,12 +200,12 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var source = CreateTestSourceDocument();
         var codeDocument = projectEngine.CreateCodeDocument(source);
         var originalTree = RazorSyntaxTree.Parse(source);
-        codeDocument.SetSyntaxTree(originalTree);
-        codeDocument.SetTagHelpers(value: null);
+        codeDocument = codeDocument.WithSyntaxTree(originalTree);
+        codeDocument = codeDocument.WithTagHelpers(value: null);
 
         // Act
-        projectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
-        projectEngine.ExecutePhase<DefaultRazorTagHelperRewritePhase>(codeDocument);
+        codeDocument = projectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
+        codeDocument = projectEngine.ExecutePhase<DefaultRazorTagHelperRewritePhase>(codeDocument);
 
         // Assert
         var rewrittenTree = codeDocument.GetSyntaxTree();
@@ -238,8 +238,8 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var source = CreateTestSourceDocument();
         var codeDocument = projectEngine.CreateCodeDocument(source);
         var originalTree = RazorSyntaxTree.Parse(source);
-        codeDocument.SetSyntaxTree(originalTree);
-        codeDocument.SetTagHelpers(value: []);
+        codeDocument = codeDocument.WithSyntaxTree(originalTree);
+        codeDocument = codeDocument.WithTagHelpers(value: []);
 
         // Act
         projectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
@@ -278,11 +278,11 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var source = TestRazorSourceDocument.Create(content);
         var codeDocument = ProjectEngine.CreateCodeDocument(source, [tagHelper]);
         var originalTree = RazorSyntaxTree.Parse(source);
-        codeDocument.SetSyntaxTree(originalTree);
+        codeDocument = codeDocument.WithSyntaxTree(originalTree);
 
         // Act
-        ProjectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
-        ProjectEngine.ExecutePhase<DefaultRazorTagHelperRewritePhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorTagHelperRewritePhase>(codeDocument);
 
         // Assert
         var rewrittenTree = codeDocument.GetSyntaxTree();
@@ -320,11 +320,11 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var source = TestRazorSourceDocument.Create(content);
         var codeDocument = ProjectEngine.CreateCodeDocument(source, [tagHelper]);
         var originalTree = RazorSyntaxTree.Parse(source);
-        codeDocument.SetSyntaxTree(originalTree);
+        codeDocument = codeDocument.WithSyntaxTree(originalTree);
 
         // Act
-        ProjectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
-        ProjectEngine.ExecutePhase<DefaultRazorTagHelperRewritePhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorTagHelperRewritePhase>(codeDocument);
 
         // Assert
         var rewrittenTree = codeDocument.GetSyntaxTree();
@@ -353,18 +353,18 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var source = CreateTestSourceDocument();
         var codeDocument = ProjectEngine.CreateCodeDocument(source);
         var originalTree = RazorSyntaxTree.Parse(source);
-        codeDocument.SetSyntaxTree(originalTree);
+        codeDocument = codeDocument.WithSyntaxTree(originalTree);
 
         var codeDocumentTagHelper = CreateTagHelperDescriptor(
             tagName: "form",
             typeName: "TestFormTagHelper",
             assemblyName: "TestAssembly");
 
-        codeDocument.SetTagHelpers([codeDocumentTagHelper]);
+        codeDocument = codeDocument.WithTagHelpers([codeDocumentTagHelper]);
 
         // Act
-        ProjectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
-        ProjectEngine.ExecutePhase<DefaultRazorTagHelperRewritePhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorTagHelperRewritePhase>(codeDocument);
 
         // Assert
         var rewrittenTree = codeDocument.GetSyntaxTree();
@@ -382,10 +382,10 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var source = CreateTestSourceDocument();
         var codeDocument = ProjectEngine.CreateCodeDocument(source);
         var originalTree = RazorSyntaxTree.Parse(source);
-        codeDocument.SetSyntaxTree(originalTree);
+        codeDocument = codeDocument.WithSyntaxTree(originalTree);
 
         // Act
-        ProjectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
 
         // Assert
         var outputTree = codeDocument.GetSyntaxTree();
@@ -402,10 +402,10 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var source = TestRazorSourceDocument.Create("Hello, world");
         var codeDocument = ProjectEngine.CreateCodeDocument(source);
         var originalTree = RazorSyntaxTree.Parse(source);
-        codeDocument.SetSyntaxTree(originalTree);
+        codeDocument = codeDocument.WithSyntaxTree(originalTree);
 
         // Act
-        ProjectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
 
         // Assert
         var outputTree = codeDocument.GetSyntaxTree();
@@ -426,10 +426,10 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var source = TestRazorSourceDocument.Create("Hello, world");
         var codeDocument = projectEngine.CreateCodeDocument(source);
         var originalTree = RazorSyntaxTree.Parse(source);
-        codeDocument.SetSyntaxTree(originalTree);
+        codeDocument = codeDocument.WithSyntaxTree(originalTree);
 
         // Act
-        projectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
+        codeDocument = projectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
 
         // Assert
         var context = codeDocument.GetTagHelperContext();
@@ -474,11 +474,11 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
             new SourceSpan(new SourceLocation((Environment.NewLine.Length * 2) + 30, 2, 1), contentLength: 4), "form");
 
         var erroredOriginalTree = new RazorSyntaxTree(originalTree.Root, originalTree.Source, [initialError], originalTree.Options);
-        codeDocument.SetSyntaxTree(erroredOriginalTree);
+        codeDocument = codeDocument.WithSyntaxTree(erroredOriginalTree);
 
         // Act
-        projectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
-        projectEngine.ExecutePhase<DefaultRazorTagHelperRewritePhase>(codeDocument);
+        codeDocument = projectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
+        codeDocument = projectEngine.ExecutePhase<DefaultRazorTagHelperRewritePhase>(codeDocument);
 
         // Assert
         var outputTree = codeDocument.GetSyntaxTree();

@@ -211,10 +211,12 @@ extends:
             - powershell: eng\SetupVSHive.ps1
               displayName: Setup VS Hive
 
+            # We additionally restore during the build because the Microsoft.DotNet.Build.Tasks.Feed package only restores when we pass `-publish`. See https://github.com/dotnet/arcade/blob/37ccfd66358af6a37a0ec385ec31d1d71bdd8723/src/Microsoft.DotNet.Arcade.Sdk/tools/Tools.proj#L61-L66
             - script: eng\cibuild.cmd
                 -configuration $(_BuildConfig)
                 -msbuildEngine vs
                 -prepareMachine
+                -restore
                 -build
                 -pack
                 -publish
@@ -333,7 +335,6 @@ extends:
                 --restore
                 --build
                 --pack
-                --publish
                 --configuration $(_BuildConfig)
                 --prepareMachine
                 --test
@@ -377,7 +378,6 @@ extends:
                 --restore
                 --build
                 --pack
-                --publish
                 --configuration $(_BuildConfig)
                 --prepareMachine
                 --test

@@ -48,7 +48,7 @@ internal sealed class RemoteDevToolsService(in ServiceArgs args) : RazorDocument
             async context =>
             {
                 var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-                return codeDocument.GetHtmlSourceText().ToString();
+                return codeDocument.GetHtmlSourceText(cancellationToken).ToString();
             },
             cancellationToken);
 
@@ -62,8 +62,10 @@ internal sealed class RemoteDevToolsService(in ServiceArgs args) : RazorDocument
             async context =>
             {
                 var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+                var csharpSyntaxTree = await context.Snapshot.GetCSharpSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+                var csharpSyntaxRoot = await csharpSyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
 #pragma warning disable CS0618 // Type or member is obsolete
-                return CSharpFormattingPass.GetFormattingDocumentContentsForSyntaxVisualizer(codeDocument);
+                return CSharpFormattingPass.GetFormattingDocumentContentsForSyntaxVisualizer(codeDocument, csharpSyntaxRoot, DocumentMappingService);
 #pragma warning restore CS0618 // Type or member is obsolete
             },
             cancellationToken);

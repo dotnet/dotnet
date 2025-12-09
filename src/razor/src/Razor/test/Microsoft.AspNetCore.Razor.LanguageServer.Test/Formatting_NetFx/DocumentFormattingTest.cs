@@ -28,6 +28,54 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
     }
 
     [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/vscode-csharp/issues/8333")]
+    public async Task MultilineStringLiterals()
+    {
+        // The single line string doesn't fail in this test, because Web Tools' formatter doesn't produce
+        // a bad edit. VS Code does, and tests in FormattingLogTest validate that scenario with VS Code edits.
+
+        await RunFormattingTestAsync(
+            input: """"
+                <div>
+                @{
+                var s1 = "    test    test    ";
+
+                var s2 = """
+                            this is
+                                async string
+                              that shouldn't move
+                          """;
+
+                var s3 = @"
+                            this is
+                                async string
+                              that shouldn't move
+                          ";
+                }
+                </div>
+                """",
+            expected: """"
+                <div>
+                    @{
+                        var s1 = "    test    test    ";
+
+                        var s2 = """
+                            this is
+                                async string
+                              that shouldn't move
+                          """;
+
+                        var s3 = @"
+                            this is
+                                async string
+                              that shouldn't move
+                          ";
+                    }
+                </div>
+                """");
+    }
+
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/12416")]
     public async Task MixedIndentation()
     {

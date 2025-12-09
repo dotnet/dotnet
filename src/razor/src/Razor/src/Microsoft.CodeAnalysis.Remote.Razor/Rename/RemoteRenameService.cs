@@ -3,12 +3,14 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Rename;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Text;
 using static Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<Roslyn.LanguageServer.Protocol.WorkspaceEdit?>;
 using ExternalHandlers = Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
 
@@ -45,10 +47,10 @@ internal sealed class RemoteRenameService(in ServiceArgs args) : RazorDocumentSe
     {
         var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
-        if (!TryGetDocumentPositionInfo(codeDocument, position, preferCSharpOverHtml: true, out var positionInfo))
-        {
-            return NoFurtherHandling;
-        }
+        var hostDocumentIndex = codeDocument.Source.Text.GetRequiredAbsoluteIndex(position);
+        hostDocumentIndex = codeDocument.AdjustPositionForComponentEndTag(hostDocumentIndex);
+
+        var positionInfo = GetPositionInfo(codeDocument, hostDocumentIndex, preferCSharpOverHtml: true);
 
         var generatedDocument = await context.Snapshot
             .GetGeneratedDocumentAsync(cancellationToken)
@@ -58,17 +60,12 @@ internal sealed class RemoteRenameService(in ServiceArgs args) : RazorDocumentSe
             .TryGetRazorRenameEditsAsync(context, positionInfo, newName, context.GetSolutionQueryOperations(), cancellationToken)
             .ConfigureAwait(false);
 
-        if (razorEdit.Edit is { } edit)
-        {
-            return Results(edit);
-        }
-
-        if (positionInfo.LanguageKind != CodeAnalysis.Razor.Protocol.RazorLanguageKind.CSharp)
+        if (razorEdit.Edit is null && positionInfo.LanguageKind != CodeAnalysis.Razor.Protocol.RazorLanguageKind.CSharp)
         {
             return CallHtml;
         }
 
-        if (!razorEdit.FallbackToCSharp)
+        if (razorEdit.Edit is null && !razorEdit.FallbackToCSharp)
         {
             return NoFurtherHandling;
         }
@@ -83,6 +80,13 @@ internal sealed class RemoteRenameService(in ServiceArgs args) : RazorDocumentSe
         }
 
         await _editMappingService.MapWorkspaceEditAsync(context.Snapshot, csharpEdit, cancellationToken).ConfigureAwait(false);
-        return Results(csharpEdit);
+
+        // Only Roslyn edits? just return them
+        if (razorEdit.Edit is null)
+        {
+            return Results(csharpEdit);
+        }
+
+        return Results(csharpEdit.Concat(razorEdit.Edit));
     }
 }

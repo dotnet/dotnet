@@ -23,4 +23,9 @@ internal partial class MarkupStartTagSyntax
     {
         return ParserHelpers.VoidElements.Contains(Name.Content);
     }
+
+    public override BaseMarkupEndTagSyntax? GetEndTag()
+    {
+        return (Parent as MarkupElementSyntax)?.EndTag;
+    }
 }

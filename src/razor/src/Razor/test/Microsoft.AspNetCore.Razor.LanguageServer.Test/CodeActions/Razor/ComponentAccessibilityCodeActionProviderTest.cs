@@ -487,7 +487,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var diagnosticDescriptor = new RazorDiagnosticDescriptor("RZ10012", "diagnostic", RazorDiagnosticSeverity.Error);
         var diagnostic = RazorDiagnostic.Create(diagnosticDescriptor, componentSourceSpan);
         var csharpDocumentWithDiagnostic = new RazorCSharpDocument(codeDocument, csharpDocument.Text, [diagnostic]);
-        codeDocument.SetCSharpDocument(csharpDocumentWithDiagnostic);
+        codeDocument = codeDocument.WithCSharpDocument(csharpDocumentWithDiagnostic);
 
         var documentSnapshotMock = new StrictMock<IDocumentSnapshot>();
         documentSnapshotMock

@@ -64,9 +64,7 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
             SourceMappings,
             linePragmas: []);
 
-        codeDocument.SetCSharpDocument(csharpDocument);
-
-        RazorCodeDocument = codeDocument;
+        RazorCodeDocument = codeDocument.WithCSharpDocument(csharpDocument);
 
         SourceText = RazorCodeDocument.Source.Text;
         var documentContext = new Mock<DocumentContext>(

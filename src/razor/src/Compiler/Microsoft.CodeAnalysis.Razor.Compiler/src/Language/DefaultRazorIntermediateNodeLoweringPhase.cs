@@ -22,7 +22,7 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase, IRazorIntermediateNodeLoweringPhase
 {
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
+    protected override RazorCodeDocument ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
         var syntaxTree = codeDocument.GetSyntaxTree();
         ThrowForMissingDocumentDependency(syntaxTree);
@@ -139,7 +139,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             }
         }
 
-        codeDocument.SetDocumentNode(documentNode);
+        return codeDocument.WithDocumentNode(documentNode);
 
         static bool TryRemoveGlobalPrefixFromDefaultUsing(in UsingReference usingReference, out ReadOnlySpan<char> trimmedNamespace)
         {

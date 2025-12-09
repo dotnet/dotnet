@@ -123,7 +123,7 @@ public sealed class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
             // We are going to do that by re-parsing the document until the very first line that is not Razor comment
             // or whitespace. We then make sure the page directive still exists in the re-parsed IR tree.
             var leadingDirectiveCodeDocument = LeadingDirectiveParsingEngine.CreateCodeDocument(codeDocument.Source);
-            LeadingDirectiveParsingEngine.Engine.Process(leadingDirectiveCodeDocument);
+            leadingDirectiveCodeDocument = LeadingDirectiveParsingEngine.Engine.Process(leadingDirectiveCodeDocument);
 
             var leadingDirectiveDocumentNode = leadingDirectiveCodeDocument.GetRequiredDocumentNode();
             if (!PageDirective.TryGetPageDirective(leadingDirectiveDocumentNode, out _))

@@ -49,25 +49,36 @@ public class FormattingLogTest(FormattingTestContext context, HtmlFormattingFixt
 
     [Fact]
     [WorkItem("https://github.com/dotnet/razor/issues/12416")]
-    public Task MixedIndentation()
+    public async Task MixedIndentation()
     {
         var contents = GetResource("InitialDocument.txt");
         var htmlChangesFile = GetResource("HtmlChanges.json");
 
-        return VerifyMixedIndentationAsync(contents, htmlChangesFile);
+        Assert.NotNull(await GetFormattingEditsAsync(contents, htmlChangesFile));
     }
 
     [Fact]
     [WorkItem("https://github.com/dotnet/razor/issues/12416")]
-    public Task RealWorldMixedIndentation()
+    public async Task RealWorldMixedIndentation()
     {
         var contents = GetResource("InitialDocument.txt");
         var htmlChangesFile = GetResource("HtmlChanges.json");
 
-        return VerifyMixedIndentationAsync(contents, htmlChangesFile);
+        Assert.NotNull(await GetFormattingEditsAsync(contents, htmlChangesFile));
     }
 
-    private async Task VerifyMixedIndentationAsync(string contents, string htmlChangesFile)
+    [Fact]
+    [WorkItem("https://github.com/dotnet/vscode-csharp/issues/8333")]
+    public async Task CSharpStringLiteral()
+    {
+        var contents = GetResource("InitialDocument.txt");
+        var htmlChangesFile = GetResource("HtmlChanges.json");
+
+        // All edits should have been filtered out
+        Assert.Null(await GetFormattingEditsAsync(contents, htmlChangesFile));
+    }
+
+    private async Task<TextEdit[]?> GetFormattingEditsAsync(string contents, string htmlChangesFile)
     {
         var document = CreateProjectAndRazorDocument(contents);
 
@@ -80,7 +91,7 @@ public class FormattingLogTest(FormattingTestContext context, HtmlFormattingFixt
         var sourceText = await document.GetTextAsync();
         var htmlEdits = htmlChanges.Select(c => sourceText.GetTextEdit(c.ToTextChange())).ToArray();
 
-        await GetFormattingEditsAsync(document, htmlEdits, span: default, options.CodeBlockBraceOnNextLine, options.InsertSpaces, options.TabSize, RazorCSharpSyntaxFormattingOptions.Default);
+        return await GetFormattingEditsAsync(document, htmlEdits, span: default, options.CodeBlockBraceOnNextLine, options.InsertSpaces, options.TabSize, RazorCSharpSyntaxFormattingOptions.Default);
     }
 
     private string GetResource(string name, [CallerMemberName] string? testName = null)

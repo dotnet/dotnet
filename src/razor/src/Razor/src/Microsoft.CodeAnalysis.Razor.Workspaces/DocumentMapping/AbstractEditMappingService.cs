@@ -7,30 +7,46 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.DocumentMapping;
 
 internal abstract class AbstractEditMappingService(
     IDocumentMappingService documentMappingService,
+    ITelemetryReporter telemetryReporter,
     IFilePathService filePathService) : IEditMappingService
 {
     private readonly IDocumentMappingService _documentMappingService = documentMappingService;
+    private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
     private readonly IFilePathService _filePathService = filePathService;
 
     public async Task MapWorkspaceEditAsync(IDocumentSnapshot contextDocumentSnapshot, WorkspaceEdit workspaceEdit, CancellationToken cancellationToken)
     {
-        // Handle DocumentChanges - iterate through TextDocumentEdits and modify them in-place.
-        // This preserves CreateFile, RenameFile, DeleteFile operations automatically since we don't create a new array.
         if (workspaceEdit.DocumentChanges is not null)
         {
-            foreach (var textDocumentEdit in workspaceEdit.EnumerateTextDocumentEdits())
+            using var builder = new PooledArrayBuilder<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>>();
+            foreach (var edit in workspaceEdit.EnumerateEdits())
             {
-                await MapTextDocumentEditAsync(contextDocumentSnapshot, textDocumentEdit, cancellationToken).ConfigureAwait(false);
+                if (edit.TryGetFirst(out var textDocumentEdit))
+                {
+                    await MapTextDocumentEditAsync(contextDocumentSnapshot, textDocumentEdit, cancellationToken).ConfigureAwait(false);
+                    if (textDocumentEdit.Edits.Length == 0)
+                    {
+                        continue;
+                    }
+                }
+
+                builder.Add(edit);
             }
+
+            workspaceEdit.DocumentChanges = builder.ToArrayAndClear();
         }
 
         if (workspaceEdit.Changes is { } changeMap)
@@ -72,10 +88,8 @@ internal abstract class AbstractEditMappingService(
             return;
         }
 
-        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-
         // entry.Edits is SumType<TextEdit, AnnotatedTextEdit> but AnnotatedTextEdit inherits from TextEdit, so we can just cast
-        var mappedEdits = GetMappedTextEdits(codeDocument.GetRequiredCSharpDocument(), [.. entry.Edits.Select(static e => (TextEdit)e)]);
+        var mappedEdits = await GetMappedTextEditsAsync(documentContext, [.. entry.Edits.Select(static e => (TextEdit)e)], cancellationToken).ConfigureAwait(false);
 
         // Update the entry in-place
         entry.TextDocument = new OptionalVersionedTextDocumentIdentifier()
@@ -118,8 +132,7 @@ internal abstract class AbstractEditMappingService(
                 continue;
             }
 
-            var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-            var mappedEdits = GetMappedTextEdits(codeDocument.GetRequiredCSharpDocument(), edits);
+            var mappedEdits = await GetMappedTextEditsAsync(documentContext, edits, cancellationToken).ConfigureAwait(false);
             if (mappedEdits.Length == 0)
             {
                 // Nothing to do.
@@ -132,23 +145,20 @@ internal abstract class AbstractEditMappingService(
         return mappedChanges;
     }
 
-    private TextEdit[] GetMappedTextEdits(RazorCSharpDocument csharpDocument, TextEdit[] edits)
+    private async Task<TextEdit[]> GetMappedTextEditsAsync(DocumentContext documentContext, TextEdit[] edits, CancellationToken cancellationToken)
     {
-        using var mappedEdits = new PooledArrayBuilder<TextEdit>(edits.Length);
+        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
-        foreach (var edit in edits)
+        var razorSourceText = codeDocument.Source.Text;
+        var csharpSourceText = codeDocument.GetCSharpSourceText();
+        var textChanges = edits.SelectAsArray(e => new RazorTextChange
         {
-            var generatedRange = edit.Range;
-            if (!_documentMappingService.TryMapToRazorDocumentRange(csharpDocument, generatedRange, MappingBehavior.Strict, out var hostDocumentRange))
-            {
-                // Can't map range. Discard this edit.
-                continue;
-            }
+            Span = csharpSourceText.GetTextSpan(e.Range).ToRazorTextSpan(),
+            NewText = e.NewText,
+        });
+        var mappedEdits = await RazorEditHelper.MapCSharpEditsAsync(textChanges, documentContext.Snapshot, _documentMappingService, _telemetryReporter, cancellationToken).ConfigureAwait(false);
 
-            mappedEdits.Add(LspFactory.CreateTextEdit(hostDocumentRange, edit.NewText));
-        }
-
-        return mappedEdits.ToArray();
+        return [.. mappedEdits.Select(e => LspFactory.CreateTextEdit(razorSourceText.GetLinePositionSpan(e.Span.ToTextSpan()), e.NewText.AssumeNotNull()))];
     }
 
     protected abstract bool TryGetDocumentContext(IDocumentSnapshot contextDocumentSnapshot, Uri razorDocumentUri, VSProjectContext? projectContext, [NotNullWhen(true)] out DocumentContext? documentContext);
