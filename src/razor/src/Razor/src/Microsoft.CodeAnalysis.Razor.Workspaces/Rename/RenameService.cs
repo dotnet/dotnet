@@ -72,23 +72,30 @@ internal class RenameService(
         var fileRename = GetRenameFileEdit(originComponentDocumentFilePath, newPath);
         documentChanges.Add(fileRename);
 
-        AddEditsForCodeDocument(ref documentChanges.AsRef(), originTagHelpers, newName, new(documentContext.Uri), codeDocument);
+        if (!_languageServerFeatureOptions.UseRazorCohostServer)
+        {
+            AddEditsForCodeDocument(ref documentChanges.AsRef(), originTagHelpers, newName, new(documentContext.Uri), codeDocument);
+        }
+
         AddAdditionalFileRenames(ref documentChanges.AsRef(), originComponentDocumentFilePath, newPath);
 
-        var documentSnapshots = GetAllDocumentSnapshots(documentContext.FilePath, solutionQueryOperations);
-
-        foreach (var documentSnapshot in documentSnapshots)
+        if (!_languageServerFeatureOptions.UseRazorCohostServer)
         {
-            if (!documentSnapshot.FileKind.IsComponent())
+            var documentSnapshots = GetAllDocumentSnapshots(documentContext.FilePath, solutionQueryOperations);
+
+            foreach (var documentSnapshot in documentSnapshots)
             {
-                continue;
+                if (!documentSnapshot.FileKind.IsComponent())
+                {
+                    continue;
+                }
+
+                // VS Code in Windows expects path to start with '/'
+                var uri = new DocumentUri(LspFactory.CreateFilePathUri(documentSnapshot.FilePath, _languageServerFeatureOptions));
+                var generatedOutput = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
+
+                AddEditsForCodeDocument(ref documentChanges.AsRef(), originTagHelpers, newName, uri, generatedOutput);
             }
-
-            // VS Code in Windows expects path to start with '/'
-            var uri = new DocumentUri(LspFactory.CreateFilePathUri(documentSnapshot.FilePath, _languageServerFeatureOptions));
-            var generatedOutput = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-
-            AddEditsForCodeDocument(ref documentChanges.AsRef(), originTagHelpers, newName, uri, generatedOutput);
         }
 
         foreach (var documentChange in documentChanges)
@@ -174,7 +181,7 @@ internal class RenameService(
         return Path.Combine(directoryName, newFileName);
     }
 
-    private static void AddEditsForCodeDocument(
+    private void AddEditsForCodeDocument(
         ref PooledArrayBuilder<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>> documentChanges,
         OriginTagHelpers originTagHelpers,
         string newName,
@@ -296,7 +303,7 @@ internal class RenameService(
 
     private readonly record struct OriginTagHelpers(TagHelperDescriptor Primary, TagHelperDescriptor Associated);
 
-    private static bool TryGetOriginTagHelpers(RazorCodeDocument codeDocument, int absoluteIndex, out OriginTagHelpers originTagHelpers)
+    private bool TryGetOriginTagHelpers(RazorCodeDocument codeDocument, int absoluteIndex, out OriginTagHelpers originTagHelpers)
     {
         var owner = codeDocument.GetRequiredSyntaxRoot().FindInnermostNode(absoluteIndex);
         if (owner is null)
@@ -331,7 +338,7 @@ internal class RenameService(
         return true;
     }
 
-    private static bool TryGetTagHelperBinding(RazorSyntaxNode owner, int absoluteIndex, [NotNullWhen(true)] out TagHelperBinding? binding)
+    private bool TryGetTagHelperBinding(RazorSyntaxNode owner, int absoluteIndex, [NotNullWhen(true)] out TagHelperBinding? binding)
     {
         // End tags are easy, because there is only one possible binding result
         if (owner is MarkupTagHelperEndTagSyntax { Parent: MarkupTagHelperElementSyntax { TagHelperInfo.BindingResult: var endTagBindingResult } })
@@ -360,6 +367,22 @@ internal class RenameService(
         if (tagHelperStartTag is { Parent: MarkupTagHelperElementSyntax { TagHelperInfo.BindingResult: var startTagBindingResult } })
         {
             binding = startTagBindingResult;
+
+            // If the component is fully qualified, we need to make sure that the caret is in the actual component name part
+            // not a namespace part. This only applies in cohosting, where we also get Roslyn edits for renames, and hence
+            // renaming a namespace part will actually rename the namespace.
+            if (_languageServerFeatureOptions.UseRazorCohostServer &&
+                binding.TagHelpers is [{ IsFullyQualifiedNameMatch: true }, ..])
+            {
+                var lastDotIndex = tagHelperStartTag.Name.Content.LastIndexOf('.');
+                Debug.Assert(lastDotIndex != -1, "Fully qualified component names should contain a dot.");
+                if (absoluteIndex < tagHelperStartTag.Name.SpanStart + lastDotIndex + 1)
+                {
+                    binding = null;
+                    return false;
+                }
+            }
+
             return true;
         }
 

@@ -238,7 +238,7 @@ public class RazorMapToDocumentRangesEndpointTest : LanguageServerTestBase
             codeDocument,
             projectedCSharpSource,
             sourceMappings);
-        codeDocument.SetCSharpDocument(csharpDocument);
+        codeDocument = codeDocument.WithCSharpDocument(csharpDocument);
         return codeDocument;
     }
 }

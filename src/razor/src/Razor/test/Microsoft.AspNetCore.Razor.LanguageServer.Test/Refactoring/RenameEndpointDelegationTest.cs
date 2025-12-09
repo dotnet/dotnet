@@ -91,7 +91,7 @@ public class RenameEndpointDelegationTest(ITestOutputHelper testOutput) : Single
         var result = await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
-        var edits = result.DocumentChanges.Value.First.FirstOrDefault().Edits.Select(e => codeDocument.Source.Text.GetTextChange(((TextEdit)e)));
+        var edits = result.EnumerateTextDocumentEdits().First().Edits.Select(e => codeDocument.Source.Text.GetTextChange(((TextEdit)e)));
         var newText = codeDocument.Source.Text.WithChanges(edits).ToString();
         Assert.Equal(expected, newText);
     }

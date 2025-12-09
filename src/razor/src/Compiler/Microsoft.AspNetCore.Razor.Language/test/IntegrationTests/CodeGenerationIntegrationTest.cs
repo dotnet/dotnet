@@ -346,7 +346,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(codeDocument.GetRequiredDocumentNode(), testName);
-        AssertHtmlDocumentMatchesBaseline(codeDocument.GetHtmlDocument(), testName);
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(codeDocument), testName);
         AssertCSharpDocumentMatchesBaseline(codeDocument.GetRequiredCSharpDocument(), testName);
         AssertSourceMappingsMatchBaseline(codeDocument, testName);
         AssertLinePragmas(codeDocument);
@@ -417,7 +417,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         // Assert
         AssertDocumentNodeMatchesBaseline(codeDocument.GetRequiredDocumentNode(), testName);
         AssertCSharpDocumentMatchesBaseline(codeDocument.GetRequiredCSharpDocument(), testName);
-        AssertHtmlDocumentMatchesBaseline(codeDocument.GetHtmlDocument(), testName);
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(codeDocument), testName);
         AssertSourceMappingsMatchBaseline(codeDocument, testName);
         AssertCSharpDiagnosticsMatchBaseline(codeDocument, testName);
     }

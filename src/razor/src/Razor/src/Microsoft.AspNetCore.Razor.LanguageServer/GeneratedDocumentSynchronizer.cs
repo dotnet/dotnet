@@ -31,7 +31,7 @@ internal class GeneratedDocumentSynchronizer(
             return;
         }
 
-        var htmlText = codeDocument.GetHtmlSourceText();
+        var htmlText = codeDocument.GetHtmlSourceText(cancellationToken: System.Threading.CancellationToken.None);
 
         _publisher.PublishHtml(document.Project.Key, filePath, htmlText, hostDocumentVersion);
 

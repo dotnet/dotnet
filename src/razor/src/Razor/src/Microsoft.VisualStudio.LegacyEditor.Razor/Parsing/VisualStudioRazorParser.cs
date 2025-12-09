@@ -332,11 +332,10 @@ internal class VisualStudioRazorParser : IVisualStudioRazorParser, IDisposable
             Assumed.NotNull(partialParseSyntaxTree, $"Expected new {nameof(RazorSyntaxTree)} when parser result is not '{result}'.");
 
 #pragma warning disable CS0618 // Type or member is obsolete
-            var newCodeDocument = currentCodeDocument.Clone();
+            var newCodeDocument = currentCodeDocument.WithSyntaxTree(partialParseSyntaxTree);
             currentCodeDocument.CloneCachedData(newCodeDocument);
 #pragma warning restore CS0618 // Type or member is obsolete
 
-            newCodeDocument.SetSyntaxTree(partialParseSyntaxTree);
             TryUpdateLatestParsedSyntaxTreeSnapshot(newCodeDocument, snapshot);
         }
 

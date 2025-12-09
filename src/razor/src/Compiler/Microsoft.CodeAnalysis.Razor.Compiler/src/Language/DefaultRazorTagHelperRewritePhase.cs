@@ -8,7 +8,7 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 internal sealed class DefaultRazorTagHelperRewritePhase : RazorEnginePhaseBase
 {
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
+    protected override RazorCodeDocument ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
         if (!codeDocument.TryGetPreTagHelperSyntaxTree(out var syntaxTree) ||
             !codeDocument.TryGetTagHelperContext(out var context) ||
@@ -16,15 +16,15 @@ internal sealed class DefaultRazorTagHelperRewritePhase : RazorEnginePhaseBase
         {
             // No descriptors, so no need to see if any are used. Without setting this though,
             // we trigger an Assert in the ProcessRemaining method in the source generator.
-            codeDocument.SetReferencedTagHelpers([]);
-            return;
+            return codeDocument.WithReferencedTagHelpers([]);
         }
 
         var binder = context.GetBinder();
         using var usedHelpers = new TagHelperCollection.Builder();
         var rewrittenSyntaxTree = TagHelperParseTreeRewriter.Rewrite(syntaxTree, binder, usedHelpers, cancellationToken);
 
-        codeDocument.SetReferencedTagHelpers(usedHelpers.ToCollection());
-        codeDocument.SetSyntaxTree(rewrittenSyntaxTree);
+        return codeDocument
+            .WithReferencedTagHelpers(usedHelpers.ToCollection())
+            .WithSyntaxTree(rewrittenSyntaxTree);
     }
 }

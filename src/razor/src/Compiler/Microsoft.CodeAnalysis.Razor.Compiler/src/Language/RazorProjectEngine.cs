@@ -63,8 +63,7 @@ public sealed class RazorProjectEngine
         ArgHelper.ThrowIfNull(projectItem);
 
         var codeDocument = CreateCodeDocumentCore(projectItem);
-        ProcessCore(codeDocument, cancellationToken);
-        return codeDocument;
+        return ProcessCore(codeDocument, cancellationToken);
     }
 
     public RazorCodeDocument Process(
@@ -78,8 +77,7 @@ public sealed class RazorProjectEngine
         ArgHelper.ThrowIfNull(fileKind);
 
         var codeDocument = CreateCodeDocumentCore(source, fileKind, importSources, tagHelpers, cssScope: null, configureParser: null, configureCodeGeneration: null);
-        ProcessCore(codeDocument, cancellationToken);
-        return codeDocument;
+        return ProcessCore(codeDocument, cancellationToken);
     }
 
     public RazorCodeDocument ProcessDeclarationOnly(RazorProjectItem projectItem, CancellationToken cancellationToken = default)
@@ -91,8 +89,7 @@ public sealed class RazorProjectEngine
             builder.SuppressPrimaryMethodBody = true;
         });
 
-        ProcessCore(codeDocument, cancellationToken);
-        return codeDocument;
+        return ProcessCore(codeDocument, cancellationToken);
     }
 
     public RazorCodeDocument ProcessDeclarationOnly(
@@ -110,8 +107,7 @@ public sealed class RazorProjectEngine
             builder.SuppressPrimaryMethodBody = true;
         });
 
-        ProcessCore(codeDocument, cancellationToken);
-        return codeDocument;
+        return ProcessCore(codeDocument, cancellationToken);
     }
 
     public RazorCodeDocument ProcessDesignTime(RazorProjectItem projectItem, CancellationToken cancellationToken = default)
@@ -119,8 +115,7 @@ public sealed class RazorProjectEngine
         ArgHelper.ThrowIfNull(projectItem);
 
         var codeDocument = CreateCodeDocumentDesignTimeCore(projectItem);
-        ProcessCore(codeDocument, cancellationToken);
-        return codeDocument;
+        return ProcessCore(codeDocument, cancellationToken);
     }
 
     public RazorCodeDocument ProcessDesignTime(
@@ -134,8 +129,7 @@ public sealed class RazorProjectEngine
         ArgHelper.ThrowIfNull(fileKind);
 
         var codeDocument = CreateCodeDocumentDesignTimeCore(source, fileKind, importSources, tagHelpers, configureParser: null, configureCodeGeneration: null);
-        ProcessCore(codeDocument, cancellationToken);
-        return codeDocument;
+        return ProcessCore(codeDocument, cancellationToken);
     }
 
     internal RazorCodeDocument CreateCodeDocument(RazorProjectItem projectItem, bool designTime)
@@ -196,9 +190,7 @@ public sealed class RazorProjectEngine
 
         var codeDocument = RazorCodeDocument.Create(source, importSources, parserOptions, codeGenerationOptions);
 
-        codeDocument.SetTagHelpers(tagHelpers);
-
-        return codeDocument;
+        return tagHelpers != null ? codeDocument.WithTagHelpers(tagHelpers) : codeDocument;
     }
 
     private RazorCodeDocument CreateCodeDocumentDesignTimeCore(
@@ -240,9 +232,7 @@ public sealed class RazorProjectEngine
 
         var codeDocument = RazorCodeDocument.Create(sourceDocument, importSources, parserOptions, codeGenerationOptions);
 
-        codeDocument.SetTagHelpers(tagHelpers);
-
-        return codeDocument;
+        return tagHelpers != null ? codeDocument.WithTagHelpers(tagHelpers) : codeDocument;
     }
 
     private RazorParserOptions ComputeParserOptions(RazorFileKind fileKind, Action<RazorParserOptions.Builder>? configure)
@@ -278,11 +268,11 @@ public sealed class RazorProjectEngine
         return builder.ToOptions();
     }
 
-    private void ProcessCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
+    private RazorCodeDocument ProcessCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
         ArgHelper.ThrowIfNull(codeDocument);
 
-        Engine.Process(codeDocument, cancellationToken);
+        return Engine.Process(codeDocument, cancellationToken);
     }
 
     internal static RazorProjectEngine CreateEmpty(Action<RazorProjectEngineBuilder>? configure = null)

@@ -226,31 +226,33 @@ public static class RazorProjectEngineExtensions
         return projectEngine.CreateDesignTimeCodeDocument(source, fileKind ?? DefaultFileKind, importSources, tagHelpers);
     }
 
-    public static void ExecutePhasesThrough<T>(
+    public static RazorCodeDocument ExecutePhasesThrough<T>(
         this RazorProjectEngine projectEngine,
         RazorCodeDocument codeDocument)
         where T : IRazorEnginePhase
     {
         foreach (var phase in projectEngine.Engine.Phases)
         {
-            phase.Execute(codeDocument);
+            codeDocument = phase.Execute(codeDocument);
 
             if (phase is T)
             {
                 break;
             }
         }
+        
+        return codeDocument;
     }
 
-    public static void ExecutePhase<T>(
+    public static RazorCodeDocument ExecutePhase<T>(
         this RazorProjectEngine projectEngine,
         RazorCodeDocument codeDocument)
         where T : IRazorEnginePhase, new()
     {
-        projectEngine.ExecutePhase<T>(codeDocument, () => new());
+        return projectEngine.ExecutePhase<T>(codeDocument, () => new());
     }
 
-    public static void ExecutePhase<T>(
+    public static RazorCodeDocument ExecutePhase<T>(
         this RazorProjectEngine projectEngine,
         RazorCodeDocument codeDocument,
         Func<T> phaseFactory)
@@ -259,7 +261,7 @@ public static class RazorProjectEngineExtensions
         var pass = phaseFactory();
         pass.Initialize(projectEngine.Engine);
 
-        pass.Execute(codeDocument);
+        return pass.Execute(codeDocument);
     }
 
     public static void ExecutePass<T>(

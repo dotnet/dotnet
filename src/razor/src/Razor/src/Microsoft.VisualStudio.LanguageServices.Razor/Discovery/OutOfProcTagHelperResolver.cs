@@ -37,7 +37,9 @@ internal class OutOfProcTagHelperResolver(
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<OutOfProcTagHelperResolver>();
+#pragma warning disable IDE0052 // Private member 'OutOfProcTagHelperResolver._telemetryReporter' can be removed as the value assigned to it is never read
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
+#pragma warning restore IDE0052 // Private member 'OutOfProcTagHelperResolver._telemetryReporter' can be removed as the value assigned to it is never read
     private readonly TagHelperResultCache _resultCache = new();
 
     public async ValueTask<TagHelperCollection?> GetTagHelpersAsync(

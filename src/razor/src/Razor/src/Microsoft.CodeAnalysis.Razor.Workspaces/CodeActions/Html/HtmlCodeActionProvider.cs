@@ -48,7 +48,7 @@ internal class HtmlCodeActionProvider(IEditMappingService editMappingService) : 
         await editMappingService.MapWorkspaceEditAsync(documentSnapshot, codeAction.Edit, cancellationToken).ConfigureAwait(false);
 
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-        var htmlSourceText = codeDocument.GetHtmlSourceText();
+        var htmlSourceText = codeDocument.GetHtmlSourceText(cancellationToken);
 
         // NOTE: We iterate over just the TextDocumentEdit objects and modify them in place.
         // We intentionally do NOT create a new WorkspaceEdit here to avoid losing any
