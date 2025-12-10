@@ -26,6 +26,7 @@ namespace Xunit
         private static readonly Lazy<bool> s_isReleaseRuntime = new Lazy<bool>(() => CoreClrConfigurationDetection.IsReleaseRuntime);
         private static readonly Lazy<bool> s_isDebugRuntime = new Lazy<bool>(() => CoreClrConfigurationDetection.IsDebugRuntime);
         private static readonly Lazy<bool> s_isStressTest = new Lazy<bool>(() => CoreClrConfigurationDetection.IsStressTest);
+        private static readonly Lazy<bool> s_isCoreClrInterpreter = new Lazy<bool>(() => CoreClrConfigurationDetection.IsCoreClrInterpreter);
 
         private readonly TestPlatforms _testPlatforms = TestPlatforms.Any;
         private readonly RuntimeTestModes _testMode = RuntimeTestModes.Any;
@@ -58,7 +59,8 @@ namespace Xunit
             (stressMode.HasFlag(RuntimeTestModes.TailcallStress) && s_isTailCallStress.Value) ||
             (stressMode.HasFlag(RuntimeTestModes.JitStressRegs) && s_isJitStressRegs.Value) ||
             (stressMode.HasFlag(RuntimeTestModes.JitStress) && s_isJitStress.Value) ||
-            (stressMode.HasFlag(RuntimeTestModes.JitMinOpts) && s_isJitMinOpts.Value);
+            (stressMode.HasFlag(RuntimeTestModes.JitMinOpts) && s_isJitMinOpts.Value) ||
+            (stressMode.HasFlag(RuntimeTestModes.InterpreterActive) && s_isCoreClrInterpreter.Value);
 #endif
         internal SkipOnCoreClrAttribute() { }
 
