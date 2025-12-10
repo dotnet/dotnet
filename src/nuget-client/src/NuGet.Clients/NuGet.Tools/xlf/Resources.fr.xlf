@@ -132,6 +132,21 @@
         <target state="translated">Autorisez les connexions non sécurisées</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_AuditSources_Description">
+        <source>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources and suppresses warning NU1905. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</source>
+        <target state="new">Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources and suppresses warning NU1905. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_HowToRemove">
+        <source>Remove all audit sources to revert to using package sources for vulnerability data.</source>
+        <target state="new">Remove all audit sources to revert to using package sources for vulnerability data.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Title">
+        <source>Audit sources</source>
+        <target state="new">Audit sources</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">
         <source>Common NuGet configurations: [How settings are applied](https://aka.ms/nuget/how-settings-are-applied/)</source>
         <target state="translated">Configurations NuGet courantes : [Comment sont appliqués les paramètres](https://aka.ms/nuget/how-settings-are-applied/)</target>
@@ -175,6 +190,11 @@
       <trans-unit id="Text_PackageSourceUrl_Header">
         <source>Source</source>
         <target state="translated">Source</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageSources_Description">
+        <source>Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</source>
+        <target state="new">Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageSources_MachineWide">
