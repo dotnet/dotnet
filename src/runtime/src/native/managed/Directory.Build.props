@@ -2,7 +2,7 @@
   <Import Project="..\..\..\Directory.Build.props" />
   <Import Project=".\native-library.props" Condition="'$(IsSourceProject)' == 'true' and '$(Language)' == 'C#'" />
 
-  <PropertyGroup Condition="'$(UseBootstrapLayout)' == 'true'">
+  <PropertyGroup Condition="'$(UseBootstrapLayout)' == 'true' and ('$(TargetOS)' == 'freebsd' or '$(TargetArchitecture)' == 'loongarch64' or '$(TargetArchitecture)' == 'riscv64')">
     <UseLocalTargetingRuntimePack>true</UseLocalTargetingRuntimePack>
   </PropertyGroup>
 </Project>
