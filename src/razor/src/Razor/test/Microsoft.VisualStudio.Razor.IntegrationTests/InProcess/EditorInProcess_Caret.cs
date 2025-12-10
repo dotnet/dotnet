@@ -27,6 +27,14 @@ internal partial class EditorInProcess
         view.Caret.MoveTo(point);
     }
 
+    public async Task PlaceCaretAsync(int position, CancellationToken cancellationToken)
+    {
+        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        var view = await GetActiveTextViewAsync(cancellationToken);
+        view.Caret.MoveTo(new SnapshotPoint(view.GetBufferContainingCaret()!.CurrentSnapshot, position));
+    }
+
     public Task PlaceCaretAsync(string marker, int charsOffset, CancellationToken cancellationToken)
         => PlaceCaretAsync(marker, charsOffset, occurrence: 0, extendSelection: false, selectBlock: false, cancellationToken);
 

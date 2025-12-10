@@ -1,6 +1,6 @@
 {
   "solution": {
-    "path": "Razor.sln",
+    "path": "Razor.slnx",
     "projects": [
       "src\\Analyzers\\Razor.Diagnostics.Analyzers.Test\\Razor.Diagnostics.Analyzers.Test.csproj",
       "src\\Analyzers\\Razor.Diagnostics.Analyzers\\Razor.Diagnostics.Analyzers.csproj",

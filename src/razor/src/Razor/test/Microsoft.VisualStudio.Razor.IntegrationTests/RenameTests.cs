@@ -164,7 +164,6 @@ public class RenameTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdit
             cancellationToken: ControlledHangMitigatingCancellationToken);
 
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
-        await TestServices.Editor.WaitForOutlineRegionsAsync(ControlledHangMitigatingCancellationToken);
 
         await TestServices.Editor.PlaceCaretAsync("Value=", charsOffset: -1, ControlledHangMitigatingCancellationToken);
 

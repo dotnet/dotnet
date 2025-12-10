@@ -3,7 +3,7 @@ Param(
     [Parameter(
         Position=0,
         Mandatory=$false,
-        HelpMessage="Solution file to open. The default is 'Razor.sln'.")]
+        HelpMessage="Solution file to open. The default is 'Razor.slnx'.")]
     [string]$solutionFile=$null,
 
     [Parameter(
@@ -28,7 +28,7 @@ Param(
 )
 
 if ($solutionFile -eq "") {
-    $solutionFile = "Razor.sln"
+    $solutionFile = "Razor.slnx"
 }
 
 if ($includeRoslynDeps) {
