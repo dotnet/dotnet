@@ -220,7 +220,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single_Short">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Sie führen den Vorgang „{0}“ mit einer „HTTP“-Quelle aus: {1}. NuGet erfordert HTTPS-Quellen. Weitere Informationen finden Sie unter https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Sie führen den Vorgang „{0}“ mit einer „HTTP“-Quelle, „{1}“, aus. NuGet erfordert HTTPS-Quellen. Weitere Informationen finden Sie unter „https://aka.ms/nuget-https-everywhere“.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - server URI.</note>
       </trans-unit>
       <trans-unit id="Error_HttpSources_Multiple">
@@ -1402,17 +1402,17 @@ Weitere Informationen finden Sie unter https://docs.nuget.org/docs/reference/com
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_Critical">
         <source>critical</source>
-        <target state="translated">kritisch</target>
+        <target state="translated">Kritisch</target>
         <note>As in "This package has a critical severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_High">
         <source>high</source>
-        <target state="translated">hoch</target>
+        <target state="translated">Hoch</target>
         <note>As in "This package has a high severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_Low">
         <source>low</source>
-        <target state="translated">niedrig</target>
+        <target state="translated">Niedrig</target>
         <note>As in "This package has a low severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_Moderate">
@@ -1458,7 +1458,7 @@ Weitere Informationen finden Sie unter https://docs.nuget.org/docs/reference/com
       <trans-unit id="Warning_List_HttpSource">
         <source>The following is a 'Non-HTTPS' source: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Die folgende Quelle ist „Nicht-HTTPS“: {0}
+        <target state="translated">Im Folgenden finden Sie eine „Nicht-HTTPS“-Quelle: {0}
 NuGet erfordert HTTPS-Quellen. Weitere Informationen finden Sie unter https://aka.ms/nuget-https-everywhere.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>

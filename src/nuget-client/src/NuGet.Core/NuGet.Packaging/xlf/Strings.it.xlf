@@ -113,7 +113,7 @@
       </trans-unit>
       <trans-unit id="DefaultError_NoMatchInAllowList">
         <source>The package signature certificate fingerprint does not match any certificate fingerprint in the allow list.</source>
-        <target state="translated">L'impronta digitale del certificato di firma del pacchetto non corrisponde ad alcuna impronta digitale di certificato nell'elenco Consenti.</target>
+        <target state="translated">L'impronta digitale del certificato di firma del pacchetto non corrisponde ad alcuna impronta digitale di certificato nell'elenco elementi consentiti.</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorAuthorTargetCannotBeACountersignature">
@@ -876,7 +876,7 @@
       </trans-unit>
       <trans-unit id="StringCannotBeNullOrEmpty">
         <source>String argument '{0}' cannot be null or empty</source>
-        <target state="translated">L'argomento stringa '{0}' non può essere null o vuoto</target>
+        <target state="translated">L'argomento di stringa '{0}' non può essere Null o vuoto</target>
         <note />
       </trans-unit>
       <trans-unit id="TimestampCertificateUnsupportedSignatureAlgorithm">

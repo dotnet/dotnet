@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="AddedPackageToFolder">
         <source>Added package '{0}' to folder '{1}'</source>
-        <target state="translated">Pacchetto '{0}' aggiunto alla cartella '{1}'</target>
+        <target state="translated">Il pacchetto '{0}' è stato aggiunto alla cartella '{1}'</target>
         <note />
       </trans-unit>
       <trans-unit id="AddedPackageToFolderFromSource">
         <source>Added package '{0}' to folder '{1}' from source '{2}'</source>
-        <target state="translated">È stato aggiunto il pacchetto '{0}' alla cartella '{1}' dall'origine '{2}'</target>
+        <target state="translated">Il pacchetto '{0}' è stato aggiunto alla cartella '{1}' dall'origine '{2}'</target>
         <note />
       </trans-unit>
       <trans-unit id="AddedPackageToPackagesConfig">
         <source>Added package '{0}' to '{1}'</source>
-        <target state="translated">Pacchetto '{0}' aggiunto a '{1}'</target>
+        <target state="translated">Il pacchetto '{0}' è stato aggiunto a '{1}'</target>
         <note />
       </trans-unit>
       <trans-unit id="AddingPackageToFolder">
@@ -64,12 +64,12 @@
       </trans-unit>
       <trans-unit id="Debug_AddedFileToFolder">
         <source>Added file '{0}' to folder '{1}'.</source>
-        <target state="translated">File '{0}' aggiunto alla cartella '{1}'.</target>
+        <target state="translated">Il file '{0}' è stato aggiunto alla cartella '{1}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFile">
         <source>Removed file '{0}'.</source>
-        <target state="translated">File '{0}' rimosso.</target>
+        <target state="translated">Il file '{0}' è stato rimosso.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFileFromFolder">
@@ -79,12 +79,12 @@
       </trans-unit>
       <trans-unit id="Debug_RemovedFolder">
         <source>Removed folder '{0}'.</source>
-        <target state="translated">Cartella '{0}' rimossa.</target>
+        <target state="translated">La cartella '{0}' è stata rimossa.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_TargetFrameworkInfo">
         <source>&gt;&gt; {0} are being added from '{1}'{2}</source>
-        <target state="translated">&gt;&gt; {0} vengono aggiunti da '{1}'{2}</target>
+        <target state="translated">&gt;&gt; {0} verranno aggiunti da '{1}'{2}</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_TargetFrameworkInfoPrefix">
@@ -94,7 +94,7 @@
       </trans-unit>
       <trans-unit id="DependencyDoesNotHaveValidVersion">
         <source>Dependency '{0}' has invalid version specification.</source>
-        <target state="translated">La dipendenza '{0}' ha una specifica di versione non valida.</target>
+        <target state="translated">La specifica della versione della dipendenza '{0}' non è valida.</target>
         <note />
       </trans-unit>
       <trans-unit id="DownloadResourceNotFound">
@@ -129,7 +129,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Si sta eseguendo l'operazione "{0}" con un'origine "HTTP": {1}. NuGet richiede origini HTTPS. Per usare un'origine HTTP, è necessario impostare in modo esplicito "allowInsecureConnections" su "true" nel file NuGet.Config. Per ulteriori informazioni, vedere https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Si sta eseguendo l'operazione '{0}' con un'origine 'HTTP': {1}. NuGet richiede origini HTTPS. Per usare un'origine HTTP, è necessario impostare in modo esplicito 'allowInsecureConnections' su true nel file NuGet.Config. Vedere https://aka.ms/nuget-https-everywhere per altre informazioni.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - server uri.</note>
       </trans-unit>
       <trans-unit id="Error_InvalidLockFileInput">
@@ -174,7 +174,7 @@
       </trans-unit>
       <trans-unit id="Info_OverwritingExistingFile">
         <source>Overwriting existing file '{0}'..</source>
-        <target state="translated">Sovrascrittura del file '{0}' esistente in corso...</target>
+        <target state="translated">Sovrascrittura del file '{0}' esistente...</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidProjectName">
@@ -336,12 +336,12 @@
       </trans-unit>
       <trans-unit id="RemovedPackageFromFolder">
         <source>Removed package '{0}' from folder '{1}'</source>
-        <target state="translated">Pacchetto '{0}' rimosso dalla cartella '{1}'</target>
+        <target state="translated">Il pacchetto '{0}' è stato rimosso dalla cartella '{1}'</target>
         <note />
       </trans-unit>
       <trans-unit id="RemovedPackageFromPackagesConfig">
         <source>Removed package '{0}' from '{1}'</source>
-        <target state="translated">Pacchetto '{0}' rimosso da '{1}'</target>
+        <target state="translated">Il pacchetto '{0}' è stato rimosso da '{1}'</target>
         <note />
       </trans-unit>
       <trans-unit id="RemovingPackageFromFolder">
@@ -481,7 +481,7 @@
       </trans-unit>
       <trans-unit id="Warning_DirectoryNotEmpty">
         <source>Directory '{0}' is not empty. Skipping...</source>
-        <target state="translated">La directory '{0}' non è vuota. Operazione ignorata...</target>
+        <target state="translated">La directory '{0}' non è vuota. L'operazione verrà ignorata...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_ErrorFindingRepository">
@@ -492,7 +492,7 @@
       </trans-unit>
       <trans-unit id="Warning_FileAlreadyExists">
         <source>'{0}' already exists. Skipping...</source>
-        <target state="translated">'{0}' esiste già. Operazione ignorata...</target>
+        <target state="translated">'{0}' esiste già. L'operazione verrà ignorata...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FileModified">

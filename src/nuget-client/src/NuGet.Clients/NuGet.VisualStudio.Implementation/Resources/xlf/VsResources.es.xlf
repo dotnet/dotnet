@@ -80,7 +80,7 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="InvalidNuGetVersionString">
         <source>The provided version string is not a valid nuget version.</source>
-        <target state="translated">La cadena de la versión proporcionada no es una versión nuget válida.</target>
+        <target state="translated">La cadena de la versión proporcionada no es una versión de nuget válida.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidSource">

@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
         <source>Argument cannot be null or empty</source>
-        <target state="translated">引數不能為 Null 或空白</target>
+        <target state="translated">引數不得為 Null 或空白</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorOccurredRestoringPackages">
@@ -21,6 +21,11 @@
         <source>Package '{0} {1}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
         <target state="translated">套件 '{0} {1}' 沒有如 '[1.0.0]' 的精確版本。只有精確版本才允許使用 PackageDownload。</target>
         <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
+      </trans-unit>
+      <trans-unit id="InfoBar_HyperlinkGHCopilotDocs">
+        <source>How to fix with GitHub Copilot</source>
+        <target state="translated">如何使用 GitHub Copilot 修正</target>
+        <note />
       </trans-unit>
       <trans-unit id="InfoBar_HyperlinkMessage">
         <source>Manage NuGet Packages</source>
@@ -69,7 +74,7 @@ Missing packages: {0}</source>
       </trans-unit>
       <trans-unit id="PackageRefNotRestoredBecauseOfNoConsent">
         <source>NuGet restore is currently disabled. To enable it, open the Visual Studio Options dialog, click on the NuGet Package Manager node and check 'Allow NuGet to download missing packages during build.' You can also enable it by setting the environment variable 'EnableNuGetPackageRestore' to 'true'.</source>
-        <target state="translated">NuGet 還原目前已停用。若要啟用，請開啟 [Visual Studio 選項] 對話方塊，按一下 [NuGet 套件管理員] 節點並選取 [允許 NuGet 在建置期間下載缺少的套件]。您也可以將環境變數 'EnableNuGetPackageRestore' 設定為 'true' 來加以啟用。</target>
+        <target state="translated">NuGet 還原目前已停用。若要啟用，請開啟 [Visual Studio 選項] 對話方塊，按一下 [NuGet 套件管理器] 節點並選取 [允許 NuGet 在建置期間下載缺少的套件]。您也可以將環境變數 'EnableNuGetPackageRestore' 設定為 'true' 來加以啟用。</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreCanceled">

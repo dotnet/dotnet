@@ -22,6 +22,11 @@
         <target state="translated">У пакета "{0}{1}" нет точной версии, такой как "[1.0.0]". С PackageDownload можно использовать только точные версии.</target>
         <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
       </trans-unit>
+      <trans-unit id="InfoBar_HyperlinkGHCopilotDocs">
+        <source>How to fix with GitHub Copilot</source>
+        <target state="translated">Исправление с помощью GitHub Copilot</target>
+        <note />
+      </trans-unit>
       <trans-unit id="InfoBar_HyperlinkMessage">
         <source>Manage NuGet Packages</source>
         <target state="translated">Управление пакетами NuGet</target>
