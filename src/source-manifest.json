@@ -37,10 +37,10 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 293903,
+      "barId": 294080,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "df9c217e21be95f9d0503e7aea7ef3f6e81f8a15"
+      "commitSha": "6d17975df47ba9c0418cc492481a59d4f1773327"
     },
     {
       "barId": 293042,
@@ -55,10 +55,10 @@
       "commitSha": "fdb422958deeb2aa06de8290328d57d0cf9e3fd2"
     },
     {
-      "barId": 291143,
+      "barId": 294028,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "43d976abfbe6c9169db5560913b38b5c3945181d"
+      "commitSha": "e66cb63557a6f978ba5e7ce88d153f33513fc0df"
     },
     {
       "barId": 293549,
@@ -127,10 +127,10 @@
       "commitSha": "697c1270eebc92c531f27265dd0ff60211b088bb"
     },
     {
-      "barId": 293860,
+      "barId": 294096,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "8c1c98d7ea1e945411364602100862d896bec4c9"
+      "commitSha": "d06e6537ec08ce435983cdf03dd419c25235e6c0"
     },
     {
       "barId": 294048,
