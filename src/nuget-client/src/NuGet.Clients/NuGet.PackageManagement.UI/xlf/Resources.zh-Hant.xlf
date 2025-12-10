@@ -109,7 +109,7 @@
       </trans-unit>
       <trans-unit id="ArgumentNullOrEmpty">
         <source>Argument cannot be null or empty.</source>
-        <target state="translated">引數不能為 Null 或空白。</target>
+        <target state="translated">引數不得為 Null 或空白。</target>
         <note />
       </trans-unit>
       <trans-unit id="AskForPRMigrator">
@@ -124,7 +124,7 @@
       </trans-unit>
       <trans-unit id="AskForUpdateMessage">
         <source>A new version of NuGet Package Manager is available.</source>
-        <target state="translated">已有新版 NuGet 套件管理員可供使用。</target>
+        <target state="translated">已有新版 NuGet 套件管理器可供使用。</target>
         <note />
       </trans-unit>
       <trans-unit id="AutoReferenced">
@@ -379,7 +379,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file.</source>
-        <target state="translated">NuGet 需要 HTTPS 來源。若要使用 HTTP 來源，您必須在 NuGet.Config 檔案中將 'allowInsecureConnections' 明確設定為 [true]。</target>
+        <target state="translated">NuGet 需要 HTTPS 來源。若要使用 HTTP 來源，您必須在 NuGet.Config 檔案中將 'allowInsecureConnections' 明確設定為 true。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_MetadataNotFound">
@@ -579,7 +579,7 @@
       </trans-unit>
       <trans-unit id="Label_InstalledVersionsCount">
         <source>Versions: {0}</source>
-        <target state="translated">版本：{0}</target>
+        <target state="translated">版本: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_Installed_DeprecatedWarning">
@@ -639,7 +639,7 @@
       </trans-unit>
       <trans-unit id="Label_PackageManager">
         <source>NuGet Package Manager: {0}</source>
-        <target state="translated">NuGet 套件管理員: {0}</target>
+        <target state="translated">NuGet 套件管理器: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_PackagePrerelease">
@@ -779,7 +779,7 @@
       </trans-unit>
       <trans-unit id="Link_configuration">
         <source>Common NuGet configurations; How settings are applied.</source>
-        <target state="translated">一般 NuGet 設定: 如何套用設定。</target>
+        <target state="translated">一般 NuGet 設定; 如何套用設定。</target>
         <note />
       </trans-unit>
       <trans-unit id="Migrator_PackageIdColumnHeader">
@@ -854,7 +854,7 @@
       </trans-unit>
       <trans-unit id="PackageVersionWithTransitiveOrigins">
         <source>{0} by {1}</source>
-        <target state="translated">{0}，由 {1} 修改</target>
+        <target state="translated">{0} 來自於 {1}</target>
         <note>{0} - Version of package, {1} - Packages that transitively reference the package</note>
       </trans-unit>
       <trans-unit id="Preview_PackageUpdate">
@@ -928,17 +928,17 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="ShowWarning_Title">
         <source>Package Manager Options</source>
-        <target state="translated">套件管理員選項</target>
+        <target state="translated">套件管理器選項</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueName">
         <source>The name specified has already been added to the list of available package sources. Please provide a unique name.</source>
-        <target state="translated">指定的名稱已加入至可用套件來源清單中。請提供唯一名稱。</target>
+        <target state="translated">已將指定的名稱新增到可用套件來源清單。請提供唯一的名稱。</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueSource">
         <source>The source specified has already been added to the list of available package sources. Please provide a unique source.</source>
-        <target state="translated">指定的來源已加入至可用套件來源清單中。請提供唯一來源。</target>
+        <target state="translated">已將指定的來源新增到可用套件來源清單。請提供唯一的來源。</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Canceled">
@@ -948,7 +948,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Status_ErrorOccurred">
         <source>An error occurred while loading packages</source>
-        <target state="translated">載入套件時發生錯誤</target>
+        <target state="translated">載入套件期間發生錯誤</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_NoMoreItems">
@@ -963,7 +963,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Text_By">
         <source>by</source>
-        <target state="translated">由</target>
+        <target state="translated">作者</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ByAuthor">
@@ -973,7 +973,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Text_ByOwner">
         <source>by {0}</source>
-        <target state="translated">由 {0}</target>
+        <target state="translated">作者 {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_Changes">
@@ -1078,7 +1078,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Text_PackageFormatApply">
         <source>The package manager format will apply to the following projects in this Solution</source>
-        <target state="translated">套件管理員格式會套用到此 Solution 中的下列專案</target>
+        <target state="translated">套件管理器格式會套用到此 Solution 中的下列專案</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageLevelTopLevel">
@@ -1308,7 +1308,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalResourcesTitle">
         <source>NuGet Package Manager</source>
-        <target state="translated">NuGet 套件管理員</target>
+        <target state="translated">NuGet 套件管理器</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
@@ -1373,7 +1373,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Warn_Adding_HttpSource">
         <source>You are attempting to add an HTTP source, which is insecure. Would you like to proceed with adding this insecure HTTP source?</source>
-        <target state="translated">您正在嘗試新增不安全的 HTTP 來源。您是否要繼續新增此不安全的 HTTP 來源?</target>
+        <target state="translated">您正在嘗試新增不安全的 HTTP 來源。您要繼續新增此不安全的 HTTP 來源嗎?</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_HTTPSource">
@@ -1413,7 +1413,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="WindowTitle_PackageFormatSelector">
         <source>Choose NuGet Package Manager Format</source>
-        <target state="translated">選擇 NuGet 套件管理員格式</target>
+        <target state="translated">選擇 NuGet 套件管理器格式</target>
         <note />
       </trans-unit>
       <trans-unit id="WindowTitle_PreviewChanges">

@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="AddPackage_PackageAlreadyExists">
         <source>Package '{0}' already exists at feed '{1}'.</source>
-        <target state="translated">パッケージ '{0}' がフィード '{1}' に既に存在します。</target>
+        <target state="translated">パッケージ '{0}' はフィード '{1}' に既に存在します。</target>
         <note />
       </trans-unit>
       <trans-unit id="AddPackage_SuccessfullyAdded">
@@ -39,7 +39,7 @@
       </trans-unit>
       <trans-unit id="DeleteCommandConfirm">
         <source>{0} {1} will be deleted from the {2}. Would you like to continue?</source>
-        <target state="translated">{0} {1} が {2} から削除されます。続行しますか。</target>
+        <target state="translated">{0} {1} が {2} から削除されます。続行しますか?</target>
         <note />
       </trans-unit>
       <trans-unit id="DeleteCommandDeletedPackage">
@@ -231,7 +231,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Log_RetryingFindPackagesById">
         <source>Retrying '{0}' for source '{1}'.</source>
-        <target state="translated">ソース '{1}' に関して '{0}' を再試行しています。</target>
+        <target state="translated">ソース '{1}' の '{0}' を再試行しています。</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_RetryingHttp">
@@ -467,7 +467,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_MissingSearchService">
         <source>The source does not have a Search service!</source>
-        <target state="translated">ソースに検索サービスが含まれていません。</target>
+        <target state="translated">ソースに Search Service が含まれていません。</target>
         <note />
       </trans-unit>
       <trans-unit id="Protocol_MissingVersion">

@@ -379,7 +379,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file.</source>
-        <target state="translated">NuGet 需要 HTTPS 源。若要使用 HTTP 源，必须在 NuGet.Config 文件中将 "allowInsecureConnections" 显式设置为 true。</target>
+        <target state="translated">NuGet 需要 HTTPS 源。要使用 HTTP 源，必须在 NuGet.Config 文件中将 "allowInsecureConnections" 显式设置为 true。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_MetadataNotFound">
@@ -928,42 +928,42 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="ShowWarning_Title">
         <source>Package Manager Options</source>
-        <target state="translated">程序包管理器选项</target>
+        <target state="translated">包管理器选项</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueName">
         <source>The name specified has already been added to the list of available package sources. Please provide a unique name.</source>
-        <target state="translated">指定的名称已添加到可用程序包名称的列表中。请提供唯一的名称。</target>
+        <target state="translated">指定的名称已添加到可用包名称的列表中。请提供唯一的名称。</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueSource">
         <source>The source specified has already been added to the list of available package sources. Please provide a unique source.</source>
-        <target state="translated">指定的源已添加到可用程序包源的列表中。请提供唯一的源。</target>
+        <target state="translated">指定的源已添加到可用包源的列表中。请提供唯一的源。</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Canceled">
         <source>Canceled loading packages</source>
-        <target state="translated">已取消包加载</target>
+        <target state="translated">已取消加载包</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_ErrorOccurred">
         <source>An error occurred while loading packages</source>
-        <target state="translated">加载包时出现错误</target>
+        <target state="translated">加载包时出错</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_NoMoreItems">
         <source>End of package list loaded</source>
-        <target state="translated">包列表加载结束</target>
+        <target state="translated">已加载到包列表的末尾</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Ready">
         <source>Package list loaded</source>
-        <target state="translated">包列表已加载</target>
+        <target state="translated">已加载包列表</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_By">
         <source>by</source>
-        <target state="translated">提供者</target>
+        <target state="translated">作者</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ByAuthor">
@@ -973,7 +973,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Text_ByOwner">
         <source>by {0}</source>
-        <target state="translated">提供者: {0}</target>
+        <target state="translated">作者 {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_Changes">
@@ -1088,7 +1088,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Text_PackageLevelTransitive">
         <source>Transitive</source>
-        <target state="translated">间接</target>
+        <target state="translated">可传递</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageMappingsAutoCreate">
@@ -1238,7 +1238,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="ToolTip_TransitivePathHelp">
         <source>To learn more about transitive paths, see</source>
-        <target state="translated">若要了解有关可传递路径的详细信息，请参阅</target>
+        <target state="translated">若要详细了解可传递路径，请参阅</target>
         <note />
       </trans-unit>
       <trans-unit id="ToolTip_UninstallButton">

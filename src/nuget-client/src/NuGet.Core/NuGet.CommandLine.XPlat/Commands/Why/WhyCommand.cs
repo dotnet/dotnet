@@ -9,6 +9,7 @@ using System.CommandLine.Parsing;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.CommandLineUtils;
+using Spectre.Console;
 
 namespace NuGet.CommandLine.XPlat.Commands.Why
 {
@@ -22,9 +23,9 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
             });
         }
 
-        internal static void Register(Command rootCommand, Func<ILoggerWithColor> getLogger)
+        internal static void Register(Command rootCommand, IAnsiConsole console)
         {
-            Register(rootCommand, getLogger, WhyCommandRunner.ExecuteCommand);
+            Register(rootCommand, console, WhyCommandRunner.ExecuteCommand);
         }
 
         /// <summary>
@@ -34,10 +35,12 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
         /// <param name="rootCommand">The <c>dotnet nuget</c> command handler, to add <c>why</c> to.</param>
         public static void GetWhyCommand(Command rootCommand)
         {
-            Register(rootCommand, CommandOutputLogger.Create, WhyCommandRunner.ExecuteCommand);
+            Register(rootCommand,
+                Spectre.Console.AnsiConsole.Console,
+                WhyCommandRunner.ExecuteCommand);
         }
 
-        internal static void Register(Command rootCommand, Func<ILoggerWithColor> getLogger, Func<WhyCommandArgs, Task<int>> action)
+        internal static void Register(Command rootCommand, IAnsiConsole console, Func<WhyCommandArgs, Task<int>> action)
         {
             var whyCommand = new DocumentedCommand("why", Strings.WhyCommand_Description, "https://aka.ms/dotnet/nuget/why");
 
@@ -100,15 +103,13 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
 
             whyCommand.SetAction(async (parseResult, cancellationToken) =>
             {
-                ILoggerWithColor logger = getLogger();
-
                 try
                 {
                     var whyCommandArgs = new WhyCommandArgs(
-                        parseResult.GetValue(path),
-                        parseResult.GetValue(package),
-                        parseResult.GetValue(frameworks),
-                        logger,
+                        parseResult.GetValue(path)!,
+                        parseResult.GetValue(package)!,
+                        parseResult.GetValue(frameworks)!,
+                        console,
                         cancellationToken);
 
                     int exitCode = await action(whyCommandArgs);
@@ -116,7 +117,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
                 }
                 catch (ArgumentException ex)
                 {
-                    logger.LogError(ex.Message);
+                    console.Markup($"[red]{ex.Message}[/]");
                     return ExitCodes.InvalidArguments;
                 }
             });

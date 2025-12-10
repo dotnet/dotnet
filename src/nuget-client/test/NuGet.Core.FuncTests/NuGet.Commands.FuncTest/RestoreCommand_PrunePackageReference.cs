@@ -2679,6 +2679,14 @@ namespace NuGet.Commands.FuncTest
                                 },
                         }
                     },
+                    ""net9.0"": {
+                        ""dependencies"": {
+                                ""A"": {
+                                    ""version"": ""[1.0.0,)"",
+                                    ""target"": ""Package"",
+                                },
+                        }
+                    },
                   }
                 }";
 
@@ -2692,7 +2700,7 @@ namespace NuGet.Commands.FuncTest
             RestoreCommand.PopulatePruningEnabledTelemetry(projectSpec, testEvent);
             testEvent["Pruning.FrameworksEnabled.Count"].Should().Be(1);
             testEvent["Pruning.DefaultEnabled"].Should().Be(false);
-            testEvent["Pruning.FrameworksUnsupported.Count"].Should().Be(1);
+            testEvent["Pruning.FrameworksUnsupported.Count"].Should().Be(2);
             testEvent["Pruning.FrameworksDisabled.Count"].Should().Be(1);
         }
 

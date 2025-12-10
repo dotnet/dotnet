@@ -37,10 +37,10 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 293903,
+      "barId": 294109,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "df9c217e21be95f9d0503e7aea7ef3f6e81f8a15"
+      "commitSha": "a7394d32aedc978cd44be206cab62dce61f6e2a2"
     },
     {
       "barId": 293042,
@@ -55,16 +55,16 @@
       "commitSha": "fdb422958deeb2aa06de8290328d57d0cf9e3fd2"
     },
     {
-      "barId": 291143,
+      "barId": 294028,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "43d976abfbe6c9169db5560913b38b5c3945181d"
+      "commitSha": "e66cb63557a6f978ba5e7ce88d153f33513fc0df"
     },
     {
-      "barId": 286446,
+      "barId": 293549,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "5514d935e3e77d90d931758cf9e2589735b905a3"
+      "commitSha": "fa2dec964199e620ce7acf82a70ba4060862767d"
     },
     {
       "barId": 293785,
@@ -73,10 +73,10 @@
       "commitSha": "8e9ecde56475ad2a4b87b64af6d6a9ea0fd05f02"
     },
     {
-      "barId": 293461,
+      "barId": 294098,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "f59d40346a8b5646a464cf7968a9493a338e08be"
+      "commitSha": "d66ff9f4c289c01ef49e7a49cd6b1c06f5a553c6"
     },
     {
       "barId": 294111,
@@ -91,10 +91,10 @@
       "commitSha": "f29ac531ec59b79ff12335835ae4a69cde51156a"
     },
     {
-      "barId": 293607,
+      "barId": 293873,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "884397fe97bae0feb68fbe1a58207018c0465385"
+      "commitSha": "da8cad22c210138ce45d472b35dfcc7449029b49"
     },
     {
       "barId": 293745,
@@ -103,10 +103,10 @@
       "commitSha": "cbaaa90cf3529b381226246036456e737c66dc13"
     },
     {
-      "barId": 293895,
+      "barId": 294127,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "20614787937dba7c2bfa8834e451d4a83fb5d40c"
+      "commitSha": "8a4c758485a7878d6ae31f54cc8c3128ba9d0a99"
     },
     {
       "barId": 291125,
@@ -127,10 +127,10 @@
       "commitSha": "697c1270eebc92c531f27265dd0ff60211b088bb"
     },
     {
-      "barId": 293860,
+      "barId": 294096,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "8c1c98d7ea1e945411364602100862d896bec4c9"
+      "commitSha": "d06e6537ec08ce435983cdf03dd419c25235e6c0"
     },
     {
       "barId": 294048,

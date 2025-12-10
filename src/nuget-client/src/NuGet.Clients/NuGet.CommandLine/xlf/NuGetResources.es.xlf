@@ -252,9 +252,9 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
         <source>`project.json` pack is disabled in the current NuGet version, and will be permanently removed in a future version.
 Please consider migrating '{0}' to `PackageReference` and using the pack targets.
 You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</source>
-        <target state="translated">El paquete `project.json` está deshabilitado en la versión actual de NuGet y se quitará permanentemente en una versión futura.
-Considere la posibilidad de migrar '{0}' a `PackageReference` y usar los destinos del paquete.
-Puede establecer la variable de entorno '{1}' en 'true' para volver a habilitar temporalmente esta funcionalidad.</target>
+        <target state="translated">El paquete "project.json" está deshabilitado en la versión actual de NuGet y se eliminará definitivamente en una versión futura. 
+Considere la posibilidad de migrar "{0}" a "PackageReference" y usar los destinos del paquete.
+Puede establecer la variable de entorno "{1}" en "true" para volver a habilitar temporalmente esta funcionalidad.</target>
         <note>Please do not localize `project.json` pack and `PackageReference`. 0 - path, 1 - env var name</note>
       </trans-unit>
       <trans-unit id="Error_ResponseFileDoesNotExist">
@@ -752,7 +752,7 @@ Puede establecer la variable de entorno '{1}' en 'true' para volver a habilitar 
         <source>Restoring NuGet packages...
 To prevent NuGet from downloading packages during build, open the Visual Studio Options dialog, click on the NuGet Package Manager node and uncheck '{0}'.</source>
         <target state="translated">Restaurando paquetes NuGet...
-Para evitar que NuGet restaure paquetes durante la compilación, abra el cuadro de diálogo de opciones de Visual Studio, haga clic en el nodo Administrador de paquetes NuGet y desactive la casilla '{0}'.</target>
+Para evitar que NuGet descargue paquetes durante la compilación, abra el cuadro de diálogo Opciones de Visual Studio, haga clic en el nodo Administrador de paquetes NuGet y desmarque "{0}".</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandProjectNotFound">

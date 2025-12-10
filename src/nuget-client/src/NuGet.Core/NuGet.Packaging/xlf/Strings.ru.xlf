@@ -961,7 +961,7 @@
 {3}</source>
         <target state="translated">Следующий корневой сертификат X.509 не является доверенным, так как он отсутствует в наборе сертификатов в {0}.  Дополнительные сведения см. в документации по NU3042.
     Тема: {1}
-    Отпечаток пальца (SHA-256): {2}
+    Отпечаток (SHA-256): {2}
     Сертификат (PEM):
 {3}</target>
         <note>0 is a file path, 1 is a certificate subject, 2 is a certificate fingerprint, and 3 is a PEM-encoded certificate.</note>
