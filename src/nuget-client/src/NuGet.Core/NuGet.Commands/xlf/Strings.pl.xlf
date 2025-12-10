@@ -1458,25 +1458,25 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
       <trans-unit id="Warning_List_HttpSource">
         <source>The following is a 'Non-HTTPS' source: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Poniżej przedstawiono źródło „Inne niż HTTPS”: {0}
+        <target state="translated">Poniżej podano źródło „Inne niż HTTPS”: {0}
 Menedżer NuGet wymaga źródeł HTTPS. Aby uzyskać więcej informacji, sprawdź witrynę https://aka.ms/nuget-https-everywhere.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_List_HttpSources">
         <source>The following are 'Non-HTTPS' sources: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Poniżej przedstawiono źródła „Inne niż HTTPS”: {0}
+        <target state="translated">Poniżej podano źródła „Inne niż HTTPS”: {0}
 Menedżer NuGet wymaga źródeł HTTPS. Aby uzyskać więcej informacji, sprawdź witrynę https://aka.ms/nuget-https-everywhere.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_MinVersionDoesNotExist">
         <source>{0} depends on {1} but {2} was not found. {3} was resolved instead.</source>
-        <target state="translated">{0} jest zależny od {1}, ale {2} nie został znaleziony. Zamiast tego {3} został rozwiązany.</target>
+        <target state="translated">Wersja {0} jest zależna od {1}, ale nie znaleziono {2}. Zamiast tego rozwiązano {3}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_MinVersionNonInclusive">
         <source>{0} does not provide an inclusive lower bound for dependency {1}. {2} was resolved instead.</source>
-        <target state="translated">{0} nie zapewnia łącznego dolnego ograniczenia dla zależności {1}. {2} został rozwiązany zamiast tego.</target>
+        <target state="translated">Wersja {0} nie zapewnia łącznego dolnego ograniczenia dla zależności {1}. Zamiast tego rozwiązano {2}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">

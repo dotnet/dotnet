@@ -59,7 +59,7 @@
       </trans-unit>
       <trans-unit id="cmdidSourceSettings|ButtonText">
         <source>&amp;Package Manager Settings</source>
-        <target state="translated">套件管理員設定(&amp;P)</target>
+        <target state="translated">套件管理器設定(&amp;P)</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidSources|ButtonText">
@@ -124,7 +124,7 @@
       </trans-unit>
       <trans-unit id="idGeneralSettings|ButtonText">
         <source>&amp;Package Manager Settings</source>
-        <target state="translated">套件管理員設定(&amp;P)</target>
+        <target state="translated">套件管理器設定(&amp;P)</target>
         <note />
       </trans-unit>
       <trans-unit id="idGeneralSettings|CommandName">

@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="AddCommand_PackageAlreadyExists">
         <source>Package '{0}' already exists at feed '{1}'.</source>
-        <target state="translated">套件 '{0}' 已存在於摘要 '{1}'。</target>
+        <target state="translated">摘要 '{1}' 中已有套件 '{0}'。</target>
         <note />
       </trans-unit>
       <trans-unit id="AddCommand_SourceNotProvided">
@@ -34,7 +34,7 @@
       </trans-unit>
       <trans-unit id="ArgumentNullOrEmpty">
         <source>Argument cannot be null or empty.</source>
-        <target state="translated">引數不能為 Null 或空白。</target>
+        <target state="translated">引數不得為 Null 或空白。</target>
         <note />
       </trans-unit>
       <trans-unit id="BuildingProjectTargetingFramework">
@@ -175,12 +175,12 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">您正在使用 'HTTP' 來源執行 '{0}' 作業: {1}。NuGet 需要 HTTPS 來源。若要使用 HTTP 來源，您必須在 NuGet.Config 檔案中將 'allowInsecureConnections' 明確設定為 true。參閱 https://aka.ms/nuget-https-everywhere 以取得更多資訊。</target>
+        <target state="translated">您正在使用 'HTTP' 來源 {1} 執行 '{0}' 作業。NuGet 需要 HTTPS 來源。您必須在 NuGet.Config 檔案中將 'allowInsecureConnections' 明確設定為 true，才能使用 HTTP 來源。參閱 https://aka.ms/nuget-https-everywhere 以取得更多資訊。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_HttpSources_Multiple">
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">您正在使用 'HTTP' 來源執行 '{0}' 作業: {1}。NuGet 需要 HTTPS 來源。若要使用 HTTP 來源，您必須在 NuGet.Config 檔案中將 'allowInsecureConnections' 明確設定為 true。參閱 https://aka.ms/nuget-https-everywhere 以取得更多資訊。</target>
+        <target state="translated">您正在使用 'HTTP' 來源 {1} 執行 '{0}' 作業。NuGet 需要 HTTPS 來源。您必須在 NuGet.Config 檔案中將 'allowInsecureConnections' 明確設定為 true，才能使用 HTTP 來源。參閱 https://aka.ms/nuget-https-everywhere 以取得更多資訊。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_InvalidCharactersInPathSegment">
@@ -414,7 +414,7 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="InstallCommandPackageRestoreConsentNotFound">
         <source>Package restore is disabled. To enable it, open the Visual Studio Options dialog, click on Package Manager node and check '{0}'. You can also enable package restore by setting the environment variable 'EnableNuGetPackageRestore' to 'true'.</source>
-        <target state="translated">封裝還原已停用。若要啟用，請開啟 [Visual Studio 選項] 對話方塊、按一下 [封裝管理員] 節點並核取 '{0}'。您也可以將環境變數 'EnableNuGetPackageRestore' 設定為 'true' 來啟用封裝還原。</target>
+        <target state="translated">封裝還原已停用。若要啟用，請開啟 [Visual Studio 選項] 對話方塊、按一下 [套件管理器] 節點並核取 '{0}'。您也可以將環境變數 'EnableNuGetPackageRestore' 設定為 'true' 來啟用封裝還原。</target>
         <note />
       </trans-unit>
       <trans-unit id="InstallCommandUnableToFindPackage">

@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="Console_InitializeHostFails">
         <source>Failed to initialize the PowerShell host. If your PowerShell execution policy setting is set to AllSigned, open the Package Manager Console to initialize the host first.</source>
-        <target state="translated">無法初始化 PowerShell 主機。若您的 PowerShell 執行原則設定設為 AllSigned，請先開啟 [套件管理員主控台] 初始化主機。</target>
+        <target state="translated">無法初始化 PowerShell 主機。若您的 PowerShell 執行原則設定設為 AllSigned，請先開啟 [套件管理器主控台] 初始化主機。</target>
         <note />
       </trans-unit>
       <trans-unit id="ExecutingScript">

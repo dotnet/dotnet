@@ -145,7 +145,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Log_CanceledNupkgDownload">
         <source>Downloading a package from '{0}' was canceled.</source>
-        <target state="translated">已取消从“{0}”下载程序包。</target>
+        <target state="translated">已取消从“{0}”下载包。</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_ErrorDownloading">
@@ -492,7 +492,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_duplicateUri">
         <source>'{0}' is a duplicate url which has already been downloaded and will lead to a cyclic dependency. Please correct from server.</source>
-        <target state="translated">“{0}”是已下载的重复 url，将导致循环依赖。请从服务器更正。</target>
+        <target state="translated">“{0}”是已下载的重复 URL，将导致循环依赖。请从服务器更正。</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandPackagePushed">

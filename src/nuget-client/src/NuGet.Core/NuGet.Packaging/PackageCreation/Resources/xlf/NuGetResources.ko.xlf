@@ -89,7 +89,7 @@
       </trans-unit>
       <trans-unit id="Manifest_InvalidReference">
         <source>Invalid assembly reference '{0}'. Ensure that a file named '{0}' exists in the lib directory.</source>
-        <target state="translated">어셈블리 참조 '{0}'이(가) 잘못되었습니다. lib 디렉터리에 이름이 '{0}'인 파일이 있는지 확인하십시오.</target>
+        <target state="translated">어셈블리 참조 '{0}'이(가) 잘못되었습니다. 라이브러리 디렉터리에 이름이 '{0}'인 파일이 있는지 확인하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_InvalidReferenceFile">

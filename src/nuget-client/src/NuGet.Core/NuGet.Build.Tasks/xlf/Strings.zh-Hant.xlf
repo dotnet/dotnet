@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
         <source>Argument cannot be null or empty</source>
-        <target state="translated">引數不能為 Null 或空白</target>
+        <target state="translated">引數不得為 Null 或空白</target>
         <note />
       </trans-unit>
       <trans-unit id="CreatedDependencyGraphSpec">
@@ -65,7 +65,8 @@
       <trans-unit id="Error_StaticGraphRestoreArgumentsParsingFailedExceptionReadingStream">
         <source>An error occurred parsing command-line arguments in static graph-based restore as an exception occurred reading the standard input stream, {0} Please file an issue at https://github.com/NuGet/Home
 {1}</source>
-        <target state="translated">剖析靜態圖形型還原中的命令列引數時發生錯誤，因為讀取標準輸入資料流時發生例外狀況，請在 {0}https://github.com/NuGet/Home 提出問題
+        <target state="translated">剖析靜態圖形型還原中的命令列引數時發生錯誤，因為讀取標準輸入資料流時發生例外狀況，請在 {0}https://github.com/NuGet/Home
+ 提出問題
 {1}</target>
         <note>0 - The exception message
 1 - The string representation of the exception</note>
@@ -83,7 +84,7 @@
       <trans-unit id="Error_StaticGraphUnhandledException">
         <source>Static graph-based restore encountered an unhandled exception. Please file an issue at https://github.com/NuGet/Home.  The exception was:
 {0}</source>
-        <target state="translated">靜態圖形式還原發生未處理的例外狀況。請在 https://github.com/NuGet/Home 提出問題。例外狀況為:
+        <target state="translated">靜態圖形式還原發生未處理的例外狀況。請在 https://github.com/NuGet/Home 提出問題。 例外狀況為:
 {0}</target>
         <note>0 - The exception as a string.</note>
       </trans-unit>

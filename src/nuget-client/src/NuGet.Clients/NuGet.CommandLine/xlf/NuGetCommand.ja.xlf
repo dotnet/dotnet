@@ -912,7 +912,7 @@ nuget setapikey 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -Source http://example.com/
       <trans-unit id="SignCommandCertificateFingerprintDescription">
         <source>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a local certificate store for the certificate.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
-        <target state="translated">ローカル証明書ストアで証明書を検索するのに使用される証明書の SHA-256、または SHA-384、または SHA-512 フィンガープリントです。
+        <target state="translated">証明書のローカル証明書ストアの検索に使用される証明書の SHA-256、SHA-384、または SHA-512 フィンガープリントです。
 証明書ストアは、-CertificateStoreName と -CertificateStoreLocation のオプションによって指定できます。</target>
         <note />
       </trans-unit>
@@ -946,9 +946,9 @@ This option should be used when specifying the certificate via -CertificateSubje
         <source>Subject name of the certificate used to search a local certificate store for the certificate. 
 The search is a case-insensitive string comparison using the supplied value, which will find all certificates with the subject name containing that string, regardless of other subject values.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
-        <target state="translated">ローカル証明書ストアで証明書を検索するために使用される証明書のサブジェクト名です。
-検索は、指定された値を使用した大文字と小文字を区別しない文字列比較であり、他のサブジェクト値に関係なく、その文字列を含むサブジェクト名を持つすべての証明書が検索されます。
--CertificateStoreName オプションと -CertificateStoreLocation オプションで証明書ストアを指定できます。</target>
+        <target state="translated">証明書のローカル証明書ストアの検索に使用される証明書のサブジェクト名です。
+検索では、指定された値を使用して、大文字と小文字を区別しない文字列比較を行います。これにより、その他のサブジェクトの値に関係なく、その文字列を含むサブジェクト名を持つすべての証明書が検索されます。
+証明書ストアは、-CertificateStoreName と -CertificateStoreLocation のオプションによって指定できます。</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandDescription">

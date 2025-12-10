@@ -144,7 +144,7 @@
       </trans-unit>
       <trans-unit id="Button_Cancel">
         <source>_Cancel</source>
-        <target state="translated">_Cancel</target>
+        <target state="translated">_Cancelar</target>
         <note>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_Apply must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
       </trans-unit>
       <trans-unit id="Button_Copy">
@@ -159,7 +159,7 @@
       </trans-unit>
       <trans-unit id="Button_IAccept">
         <source>I _Accept</source>
-        <target state="translated">Eu _Aceito</target>
+        <target state="translated">Eu _aceito</target>
         <note>Button_IAccept and Button_IDecline must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
       </trans-unit>
       <trans-unit id="Button_IDecline">
@@ -379,7 +379,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file.</source>
-        <target state="translated">O NuGet requer fontes HTTPS. Para usar uma fonte HTTP, você deve definir explicitamente "allowInsecureConnections" como true em seu arquivo NuGet.Config.</target>
+        <target state="translated">O NuGet requer fontes HTTPS. Para usar uma fonte HTTP, você deve definir explicitamente "allowInsecureConnections" como true no arquivo NuGet.Config.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_MetadataNotFound">
@@ -943,7 +943,7 @@ Erro: {1}</target>
       </trans-unit>
       <trans-unit id="Status_Canceled">
         <source>Canceled loading packages</source>
-        <target state="translated">O carregamento dos pacotes foi cancelado</target>
+        <target state="translated">Pacotes de carregamento cancelados</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_ErrorOccurred">
@@ -1238,7 +1238,7 @@ Erro: {1}</target>
       </trans-unit>
       <trans-unit id="ToolTip_TransitivePathHelp">
         <source>To learn more about transitive paths, see</source>
-        <target state="translated">Para saber mais sobre caminhos transitivos, consulte</target>
+        <target state="translated">Para saber mais sobre os caminhos transitivos, confira</target>
         <note />
       </trans-unit>
       <trans-unit id="ToolTip_UninstallButton">
@@ -1373,12 +1373,12 @@ Erro: {1}</target>
       </trans-unit>
       <trans-unit id="Warn_Adding_HttpSource">
         <source>You are attempting to add an HTTP source, which is insecure. Would you like to proceed with adding this insecure HTTP source?</source>
-        <target state="translated">Você está tentando adicionar uma fonte HTTP, que não é segura. Deseja prosseguir com a adição dessa fonte HTTP insegura?</target>
+        <target state="translated">Você está tentando adicionar uma fonte HTTP, que não é segura. Deseja prosseguir com a adição dessa fonte HTTP desprotegida?</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_HTTPSource">
         <source>AllowInsecureConnections is enabled and allows http access. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere.</source>
-        <target state="translated">AllowInsecureConnections está ativado e permite o acesso http. Observação: esse método não é seguro. Para opções seguras, consulte https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">AllowInsecureConnections está ativado e permite o acesso http. Observação: esse método não é seguro. Para obter as opções seguras, confira https://aka.ms/nuget-https-everywhere.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_ProjectJson">

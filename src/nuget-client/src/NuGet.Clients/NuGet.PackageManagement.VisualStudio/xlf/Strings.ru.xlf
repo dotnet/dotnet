@@ -88,7 +88,7 @@
       </trans-unit>
       <trans-unit id="Debug_RemovedFolder">
         <source>Removed folder '{0}'.</source>
-        <target state="translated">Папка «{0}» удалена.</target>
+        <target state="translated">Папка "{0}" удалена.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_FailedToCreateParentFolder">
@@ -224,7 +224,7 @@
       </trans-unit>
       <trans-unit id="Text_DeprecatedFramework_DocumentLink">
         <source>migration document</source>
-        <target state="translated">документе о миграции</target>
+        <target state="translated">документ по миграции</target>
         <note>The text has the document hyperlink applied to it.</note>
       </trans-unit>
       <trans-unit id="Text_DeprecatedFramework_DocumentLink_After">
@@ -241,7 +241,7 @@
       </trans-unit>
       <trans-unit id="Text_DeprecatedFramework_ProjectList">
         <source>The following project(s) target the deprecated framework:</source>
-        <target state="translated">Проекты, использующие устаревшую платформу:</target>
+        <target state="translated">Проекты, использующие нерекомендуемую платформу:</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToGetCPSPackageInstallationService">
@@ -266,7 +266,7 @@
       </trans-unit>
       <trans-unit id="Warning_DirectoryNotEmpty">
         <source>Directory '{0}' is not empty. Skipping...</source>
-        <target state="translated">Каталог «{0}» не пуст. Пропуск…</target>
+        <target state="translated">Каталог "{0}" не пуст. Пропуск…</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectories">

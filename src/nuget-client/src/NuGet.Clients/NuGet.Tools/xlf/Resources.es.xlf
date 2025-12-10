@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="CanNotCreateWindow">
         <source>Can not create tool window.</source>
-        <target state="translated">No se puede crear la ventana de herramientas.</target>
+        <target state="translated">No se puede crear la ventana de la herramienta.</target>
         <note />
       </trans-unit>
       <trans-unit id="DTE_ProjectUnsupported">

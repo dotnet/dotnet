@@ -859,7 +859,7 @@
       </trans-unit>
       <trans-unit id="Preview_PackageUpdate">
         <source>{0} version {1} to {2} version {3}</source>
-        <target state="translated">Von {0}, Version {1}, auf {2}, Version {3}</target>
+        <target state="translated">Von {0}, Version {1} auf {2}, Version {3}</target>
         <note>{0} = Old package ID, {1} = Old package version, {2} = New package ID, {3} = New package version</note>
       </trans-unit>
       <trans-unit id="Preview_UnknownProject">
@@ -943,12 +943,12 @@ Fehler: {1}</target>
       </trans-unit>
       <trans-unit id="Status_Canceled">
         <source>Canceled loading packages</source>
-        <target state="translated">Das Laden von Paketen wurde abgebrochen.</target>
+        <target state="translated">Laden von Paketen abgebrochen</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_ErrorOccurred">
         <source>An error occurred while loading packages</source>
-        <target state="translated">Fehler beim Laden von Paketen.</target>
+        <target state="translated">Fehler beim Laden der Pakete</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_NoMoreItems">
