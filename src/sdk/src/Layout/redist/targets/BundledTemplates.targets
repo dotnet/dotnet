@@ -3,7 +3,7 @@
   <!-- Set TemplateFrameworkVersion to a different value than '$(MajorMinorVersion)' during rebranding. -->
   <PropertyGroup>
     <TemplateFrameworkVersion>10.0</TemplateFrameworkVersion>
-  </PropertyGorup>
+  </PropertyGroup>
 
   <ItemGroup>
     <BundledTemplate Include="Microsoft.DotNet.Web.ItemTemplates.11.0" PackageVersion="$(MicrosoftDotNetWebItemTemplates110PackageVersion)" />
