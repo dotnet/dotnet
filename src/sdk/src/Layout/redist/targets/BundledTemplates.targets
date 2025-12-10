@@ -52,7 +52,10 @@
     <ItemGroup>
       <TemplatesComponents>
         <!-- <MSIInstallerFile>$(ArtifactsNonShippingPackagesDir)%(TemplatesComponents.TemplateBaseFilename)-$(FullNugetVersion)-$(ProductMonikerRid)$(InstallerExtension)</MSIInstallerFile> -->
+
+        <!-- TODO: Revert these two lines when templates got updated to 11.0. -->
         <MSIInstallerFile>$(ArtifactsNonShippingPackagesDir)%(TemplatesComponents.TemplateBaseFilename)-10.0.100-rtm-$(ProductMonikerRid)$(InstallerExtension)</MSIInstallerFile>
+        <TemplatesMajorMinorVersion>10.0</TemplatesMajorMinorVersion>
       </TemplatesComponents>
     </ItemGroup>
   </Target>
