@@ -200,6 +200,7 @@ namespace Microsoft.SignCheck
             string[] keyUrls = new string[]
             {
                 "https://packages.microsoft.com/keys/microsoft.asc", // Microsoft public key
+                "https://packages.microsoft.com/keys/microsoft-2025.asc", // Microsoft public key for distributions that do not allow SHA1
                 "https://packages.microsoft.com/keys/microsoft-rolling.asc", // Non-SHA1 Microsoft public keys for non-Azure Linux distributions
                 "https://raw.githubusercontent.com/microsoft/azurelinux/3.0/SPECS/azurelinux-repos/MICROSOFT-RPM-GPG-KEY" // Azure linux public key
             };
