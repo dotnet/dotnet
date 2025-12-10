@@ -23,6 +23,9 @@ public class SqlNullabilityProcessor : ExpressionVisitor
     private static readonly bool UseOldBehavior37204 =
         AppContext.TryGetSwitch("Microsoft.EntityFrameworkCore.Issue37204", out var enabled) && enabled;
 
+    private static readonly bool UseOldBehavior37152 =
+        AppContext.TryGetSwitch("Microsoft.EntityFrameworkCore.Issue37152", out var enabled) && enabled;
+
     private readonly List<ColumnExpression> _nonNullableColumns;
     private readonly List<ColumnExpression> _nullValueColumns;
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
@@ -926,7 +929,7 @@ public class SqlNullabilityProcessor : ExpressionVisitor
                 if (translationMode is ParameterTranslationMode.MultipleParameters)
                 {
                     var padFactor = CalculateParameterBucketSize(values.Count, elementTypeMapping);
-                    var padding = (padFactor - (values.Count % padFactor)) % padFactor;
+                    var padding = CalculatePadding(values.Count, padFactor);
                     for (var i = 0; i < padding; i++)
                     {
                         // Create parameter for value if we didn't create it yet,
@@ -1587,6 +1590,15 @@ public class SqlNullabilityProcessor : ExpressionVisitor
             _ => 200,
         };
 
+    /// <summary>
+    /// Calculates the number of padding parameters needed to align the total count to the nearest bucket size.
+    /// </summary>
+    /// <param name="count">Number of value parameters.</param>
+    /// <param name="padFactor">Padding factor.</param>
+    [EntityFrameworkInternal]
+    protected virtual int CalculatePadding(int count, int padFactor)
+        => (padFactor - (count % padFactor)) % padFactor;
+
     // Note that we can check parameter values for null since we cache by the parameter nullability; but we cannot do the same for bool.
     private bool IsNull(SqlExpression? expression)
         => expression is SqlConstantExpression { Value: null }
@@ -2241,7 +2253,11 @@ public class SqlNullabilityProcessor : ExpressionVisitor
     {
         if (expandedParameters.Count <= index)
         {
-            var parameterName = Uniquifier.Uniquify(valuesParameterName, parameters, int.MaxValue);
+            var parameterName = UseOldBehavior37152
+                ? Uniquifier.Uniquify(valuesParameterName, parameters, int.MaxValue)
+#pragma warning disable EF1001
+                : Uniquifier.Uniquify(valuesParameterName, parameters, maxLength: int.MaxValue, uniquifier: index + 1);
+#pragma warning restore EF1001
             parameters.Add(parameterName, value);
             var parameterExpression = new SqlParameterExpression(parameterName, value?.GetType() ?? typeof(object), typeMapping);
             expandedParameters.Add(parameterExpression);
