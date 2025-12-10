@@ -62,6 +62,10 @@ extends:
               image: $(MacImage)
               os: macOS
             steps:
+            - task: npmAuthenticate@0
+              displayName: Authenticate NPM Feed
+              inputs:
+                workingFile: $(Build.SourcesDirectory)/.npmrc
             - bash: |
                 ./build.sh --arch x64 --restore --build --pack --ci --configuration $(_BuildConfig) /p:PackageRID=osx-x64 /p:AssetManifestOS=osx /p:PlatformName=x64 $(_InternalBuildArgs) $(_NonWindowsInternalPublishArg)
               displayName: Build
@@ -83,6 +87,10 @@ extends:
               image: $(MacImage)
               os: macOS
             steps:
+            - task: npmAuthenticate@0
+              displayName: Authenticate NPM Feed
+              inputs:
+                workingFile: $(Build.SourcesDirectory)/.npmrc
             - bash: |
                 ./build.sh --arch arm64 --restore --build --pack --ci --configuration $(_BuildConfig) /p:PackageRID=osx-arm64 /p:AssetManifestOS=osx /p:PlatformName=arm64 $(_InternalBuildArgs) $(_NonWindowsInternalPublishArg)
               displayName: Build
@@ -105,6 +113,10 @@ extends:
               image: $(LinuxImage)
               os: linux
             steps:
+            - task: npmAuthenticate@0
+              displayName: Authenticate NPM Feed
+              inputs:
+                workingFile: $(Build.SourcesDirectory)/.npmrc
             - bash: |
                 ./build.sh --arch x64 --restore --build --pack --ci --configuration $(_BuildConfig) /p:PackageRID=linux-x64 /p:AssetManifestOS=linux /p:PlatformName=x64 $(_InternalBuildArgs) $(_NonWindowsInternalPublishArg)
               displayName: Build
@@ -126,6 +138,10 @@ extends:
               image: $(LinuxImage)
               os: linux
             steps:
+            - task: npmAuthenticate@0
+              displayName: Authenticate NPM Feed
+              inputs:
+                workingFile: $(Build.SourcesDirectory)/.npmrc
             - bash: |
                 ./build.sh --arch arm64 --restore --build --pack --ci --configuration $(_BuildConfig) /p:PackageRID=linux-arm64 /p:AssetManifestOS=linux /p:PlatformName=arm64 $(_InternalBuildArgs) $(_NonWindowsInternalPublishArg)
               displayName: Build
@@ -147,6 +163,10 @@ extends:
               image: $(LinuxImage)
               os: linux
             steps:
+            - task: npmAuthenticate@0
+              displayName: Authenticate NPM Feed
+              inputs:
+                workingFile: $(Build.SourcesDirectory)/.npmrc
             - bash: |
                 ./build.sh --arch x64 --restore --build --pack --ci --configuration $(_BuildConfig) /p:PackageRID=linux-musl-x64 /p:AssetManifestOS=linux-musl /p:PlatformName=x64 $(_InternalBuildArgs) $(_NonWindowsInternalPublishArg)
               displayName: Build
@@ -168,6 +188,10 @@ extends:
               image: $(LinuxImage)
               os: linux
             steps:
+            - task: npmAuthenticate@0
+              displayName: Authenticate NPM Feed
+              inputs:
+                workingFile: $(Build.SourcesDirectory)/.npmrc
             - bash: |
                 ./build.sh --arch arm64 --restore --build --pack --ci --configuration $(_BuildConfig) /p:PackageRID=linux-musl-arm64 /p:AssetManifestOS=linux-musl /p:PlatformName=arm64 $(_InternalBuildArgs) $(_NonWindowsInternalPublishArg)
               displayName: Build
@@ -190,6 +214,10 @@ extends:
               image: $(WindowsImage)
               os: windows
             steps:
+            - task: npmAuthenticate@0
+              displayName: Authenticate NPM Feed
+              inputs:
+                workingFile: $(Build.SourcesDirectory)/.npmrc
             - script: |
                 .\build.cmd -arch x64 -restore -build -pack -sign -publish -ci -configuration $(_BuildConfig) /p:SkipWorkloads=true /p:PackageRID=win-x64 /p:AssetManifestOS=win /p:PlatformName=x64 /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\$(_BuildConfig)\Shipping $(_InternalBuildArgs)
               displayName: Build
@@ -221,6 +249,10 @@ extends:
               image: $(WindowsImage)
               os: windows
             steps:
+            - task: npmAuthenticate@0
+              displayName: Authenticate NPM Feed
+              inputs:
+                workingFile: $(Build.SourcesDirectory)/.npmrc
             - script: |
                 .\build.cmd -arch arm64 -restore -build -pack -sign -publish -ci -configuration $(_BuildConfig) /p:SkipWorkloads=true /p:PackageRID=win-arm64 /p:AssetManifestOS=win /p:PlatformName=arm64 /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\$(_BuildConfig)\Shipping $(_InternalBuildArgs)
               displayName: Build

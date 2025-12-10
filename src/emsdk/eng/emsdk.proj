@@ -174,15 +174,6 @@
     <Message Importance="High" Text="Found LLVM directory: $(LLVMDir)" />
     <Message Importance="High" Text="Found emscripten directory: $(EmscriptenDir)" />
 
-    <Message Importance="High" Text="Pruning node modules in: $(EmscriptenDir)" />
-    <PropertyGroup>
-      <NpmPath>$(NodeDir)/bin:$(PATH)</NpmPath>
-      <NpmPath Condition="$([MSBuild]::IsOSPlatform(Windows))">$(NodeDir)\bin%3B$(PATH.Replace(';', '%3B'))</NpmPath>
-    </PropertyGroup>
-    <ItemGroup>
-      <NpmEnvironmentVariables Include="PATH=$(NpmPath)" />
-    </ItemGroup>
-
     <!-- Fix npm symlinks, which are caused by NuGet not supporting them -->
     <Exec WorkingDirectory="$(HostNodeDir)\bin"
       Command="ln -sf ../lib/node_modules/npm/bin/npm-cli.js npm"
@@ -201,8 +192,16 @@
       Condition="'$(PackageHostOS)' != 'win'"
       IgnoreStandardErrorWarningFormat="true" />
 
-    <Exec WorkingDirectory="$(RepoRoot)"
-      Command="$(PythonPath) eng/sanitize.py $(EmscriptenDir) $([System.IO.Directory]::GetParent($(HostNodeDir)))" />
+    <Message Importance="High" Text="Installing node modules in: $(EmscriptenDir)" />
+    <PropertyGroup>
+      <NpmPath>$(HostNodeDir)/bin:$(PATH)</NpmPath>
+      <NpmPath Condition="$([MSBuild]::IsOSPlatform(Windows))">$(HostNodeDir)\bin%3B$(PATH.Replace(';', '%3B'))</NpmPath>
+    </PropertyGroup>
+    <Exec WorkingDirectory="$(EmscriptenDir)"
+      Command="$(HostNodeDir)\bin\$(NpmFileName) ci"
+      IgnoreStandardErrorWarningFormat="true"
+      EnvironmentVariables="PATH=$(NpmPath);npm_config_userconfig=$(RepoRoot)\.npmrc" />
+
     <!-- clang-wrapper.sh hardcodes clang-19 at the moment so make sure it still exists -->
     <Error Text="Update clang-wrapper.sh to point at the correct clang-* version"
       Condition="!Exists('$(LLVMDir)\bin\clang-19') and !$([MSBuild]::IsOSPlatform(Windows))" />
