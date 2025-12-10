@@ -10,9 +10,9 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
       <Sha>b0f34d51fccc69fd334253924abd8d6853fad7aa</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.25578.3" SkipProperty="True">
+    <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.25609.2" SkipProperty="True">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>ce1f7d1f76626ee33ee5c2131440226d35d8e2e4</Sha>
+      <Sha>45ecf565e115a67c468d17c087f5353226ae7d7e</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
