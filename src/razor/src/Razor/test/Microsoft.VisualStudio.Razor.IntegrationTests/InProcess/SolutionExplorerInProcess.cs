@@ -8,6 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.Accessors;
 using Microsoft.VisualStudio.Razor.IntegrationTests;
 using Microsoft.VisualStudio.Razor.IntegrationTests.InProcess;
 using Microsoft.VisualStudio.Shell;
@@ -133,7 +135,7 @@ internal partial class SolutionExplorerInProcess
     /// <param name="contents">The contents of the file to overwrite. An empty file is create if null is passed.</param>
     /// <param name="open">Whether to open the file after it has been updated.</param>
     /// <param name="cancellationToken"></param>
-    public async Task AddFileAsync(string projectName, string fileName, string? contents = null, bool open = false, CancellationToken cancellationToken = default)
+    public async Task<int> AddFileAsync(string projectName, string fileName, TestCode? contents = null, bool open = false, CancellationToken cancellationToken = default)
     {
         await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
@@ -143,9 +145,9 @@ internal partial class SolutionExplorerInProcess
         var directoryPath = Path.GetDirectoryName(filePath);
         Directory.CreateDirectory(directoryPath);
 
-        if (contents is not null)
+        if (contents is { Text: var text })
         {
-            File.WriteAllText(filePath, contents);
+            File.WriteAllText(filePath, text);
         }
         else if (!File.Exists(filePath))
         {
@@ -164,6 +166,13 @@ internal partial class SolutionExplorerInProcess
         {
             await OpenFileAsync(projectName, fileName, cancellationToken);
         }
+
+        if (contents is { Positions: [var position] })
+        {
+            return position;
+        }
+
+        return 0;
     }
 
     /// <returns>
