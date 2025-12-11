@@ -1,7 +1,7 @@
 ### Supported Platforms
 
 --------------------------------------------------------------------------------------------------------------------------------
-| Platform | main<br>(10.0.x&nbsp;Runtime) | 10.0.2xx<br>(10.0.2xx&nbsp;Runtime) |
+| Platform | main<br>(11.0.x&nbsp;Runtime) | 10.0.2xx<br>(10.0.2xx&nbsp;Runtime) |
 | :--------- | :----------: | :----------: |
 | **Windows x64** | [![][win-x64-badge-main]][win-x64-version-main]<br>[Installer][win-x64-installer-main] - [Checksum][win-x64-installer-checksum-main]<br>[zip][win-x64-zip-main] - [Checksum][win-x64-zip-checksum-main] | [![][win-x64-badge-10.0.2XX]][win-x64-version-10.0.2XX]<br>[Installer][win-x64-installer-10.0.2XX] - [Checksum][win-x64-installer-checksum-10.0.2XX]<br>[zip][win-x64-zip-10.0.2XX] - [Checksum][win-x64-zip-checksum-10.0.2XX] |
 | **Windows x86** | [![][win-x86-badge-main]][win-x86-version-main]<br>[Installer][win-x86-installer-main] - [Checksum][win-x86-installer-checksum-main]<br>[zip][win-x86-zip-main] - [Checksum][win-x86-zip-checksum-main] | [![][win-x86-badge-10.0.2XX]][win-x86-version-10.0.2XX]<br>[Installer][win-x86-installer-10.0.2XX] - [Checksum][win-x86-installer-checksum-10.0.2XX]<br>[zip][win-x86-zip-10.0.2XX] - [Checksum][win-x86-zip-checksum-10.0.2XX] |
