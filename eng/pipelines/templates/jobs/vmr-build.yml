@@ -547,13 +547,13 @@ jobs:
 
           if [[ "$prepSdk" == "false" ]]; then
             customPrepArgs="${customPrepArgs} --no-sdk"
-            rm -rf $(sourcesPath)/.dotnet
-            mkdir $(sourcesPath)/.dotnet
+            
+            mkdir -p "$(Agent.TempDirectory)/previously-source-built-sdk"
             previousSdkPath="$(sourcesPath)/prereqs/packages/archive/dotnet-sdk-*.tar.gz"
-            eval tar -ozxf "$previousSdkPath" -C "$(sourcesPath)/.dotnet"
+            eval tar -ozxf "$previousSdkPath" -C "$(Agent.TempDirectory)/previously-source-built-sdk"
             eval rm -f "$previousSdkPath"
 
-            echo "##vso[task.setvariable variable=additionalBuildArgs]--with-sdk $(sourcesPath)/.dotnet"
+            echo "##vso[task.setvariable variable=additionalBuildArgs]--with-sdk $(Agent.TempDirectory)/previously-source-built-sdk"
           fi
 
           ./prep-source-build.sh $customPrepArgs
@@ -586,9 +586,9 @@ jobs:
 
             if [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
                # Extract the prebuilt packages to a temporary directory
-               mkdir -p "$(Agent.TempDirectory)/prebuilt-packages"
-               tar -xzf $(sourcesPath)/prereqs/packages/archive/Private.SourceBuilt.Artifacts.*.tar.gz -C "$(Agent.TempDirectory)/prebuilt-packages"
-               customBuildArgs="$customBuildArgs --with-packages $(Agent.TempDirectory)/prebuilt-packages/"
+               mkdir -p "$(Agent.TempDirectory)/previously-source-built"
+               tar -xzf $(sourcesPath)/prereqs/packages/archive/Private.SourceBuilt.Artifacts.*.tar.gz -C "$(Agent.TempDirectory)/previously-source-built"
+               customBuildArgs="$customBuildArgs --with-packages $(Agent.TempDirectory)/previously-source-built/"
             fi
 
             if [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
