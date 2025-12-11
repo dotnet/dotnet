@@ -47,7 +47,7 @@ param (
 function UpdatePipeline($id, $authHeaders)
 {
     $pipelineUri = "https://dev.azure.com/$Org/$Project/_apis/build/definitions/$($id)?api-version=6.1-preview.7"
-    $existingPipeline = Invoke-WebRequest -Headers $authHeaders -Method Get -Uri $pipelineUri -ContentType 'application/json' | ConvertFrom-Json
+    $existingPipeline = Invoke-WebRequest -UseBasicParsing -Headers $authHeaders -Method Get -Uri $pipelineUri -ContentType 'application/json' | ConvertFrom-Json
     Write-Host "Updating pipeline $Org/$Project/$($existingPipeline.name) (pipeline id: $id)"
     
     # Update the variables with the new one if not already done. If variable value is null, remove
@@ -72,7 +72,7 @@ function UpdatePipeline($id, $authHeaders)
     
     # Attempt the update
     $bodyJson = $existingPipeline | ConvertTo-Json -Depth 10
-    $updatedPipelineJson = Invoke-WebRequest -Headers $azdoAuthHeader -Method Put $pipelineUri -Body $bodyJson -ContentType 'application/json' | ConvertFrom-Json
+    $updatedPipelineJson = Invoke-WebRequest -UseBasicParsing -Headers $azdoAuthHeader -Method Put $pipelineUri -Body $bodyJson -ContentType 'application/json' | ConvertFrom-Json
 }
 
 $base64authinfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(":$AzDoPAT"))
@@ -81,7 +81,7 @@ $azdoAuthHeader = @{"Authorization"="Basic $base64authinfo"}
 if ($PipelineId) {
     UpdatePipeline $PipelineId $azdoAuthHeader
 } else {
-    $allPipelines = Invoke-WebRequest -ContentType 'application/json' -Method Get -Headers $azdoAuthHeader -Uri "https://dev.azure.com/$Org/$Project/_apis/build/definitions?api-version=6.1-preview.7" | ConvertFrom-Json
+    $allPipelines = Invoke-WebRequest -UseBasicParsing -ContentType 'application/json' -Method Get -Headers $azdoAuthHeader -Uri "https://dev.azure.com/$Org/$Project/_apis/build/definitions?api-version=6.1-preview.7" | ConvertFrom-Json
     Write-Host "Updating $($allPipelines.count) pipelines"
     foreach ($pipeline in $allPipelines.value) {
         UpdatePipeline $pipeline.Id $azdoAuthHeader
