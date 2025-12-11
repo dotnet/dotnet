@@ -237,24 +237,19 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
       <Sha>b0f34d51fccc69fd334253924abd8d6853fad7aa</Sha>
     </Dependency>
-    <!-- Do not use properties based on:
-         - Microsoft.WindowsDesktop.App.Ref
-         - Microsoft.WindowsDesktop.App.Internal
-         - Microsoft.NET.Sdk.WindowsDesktop
-         - Microsoft.Dotnet.WinForms.ProjectTemplates
-         - Microsoft.DotNet.Wpf.ProjectTemplates
-         In VMR builds on non-Windows, they aren't built. Instead, use the following:
-         - Microsoft.WindowsDesktop.App.Ref - Microsoft.NETCore.App.Ref
-         - Microsoft.WindowsDesktop.App.Internal - Microsoft.NETCore.Platforms
-         - Microsoft.NET.Sdk.WindowsDesktop - Microsoft.NETCore.App.Ref
-         - Microsoft.Dotnet.WinForms.ProjectTemplates - Microsoft.NETCore.Platforms
-         - Microsoft.DotNet.Wpf.ProjectTemplates - Microsoft.NETCore.Platforms
-    -->
     <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="10.0.0">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
       <Sha>b0f34d51fccc69fd334253924abd8d6853fad7aa</Sha>
     </Dependency>
     <Dependency Name="Microsoft.WindowsDesktop.App.Internal" Version="10.0.0-rtm.25523.111">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>b0f34d51fccc69fd334253924abd8d6853fad7aa</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="10.0.0-rtm.25523.111">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>b0f34d51fccc69fd334253924abd8d6853fad7aa</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.Dotnet.Wpf.ProjectTemplates" Version="10.0.0-rtm.25523.111">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
       <Sha>b0f34d51fccc69fd334253924abd8d6853fad7aa</Sha>
     </Dependency>
@@ -557,13 +552,13 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
       <Sha>b0f34d51fccc69fd334253924abd8d6853fad7aa</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Testing.Platform" Version="2.1.0-preview.25570.2">
+    <Dependency Name="Microsoft.Testing.Platform" Version="2.1.0-preview.25571.1">
       <Uri>https://github.com/microsoft/testfx</Uri>
-      <Sha>9cc0d132551162d48c8082e8fd16e751c1157207</Sha>
+      <Sha>43e592148ac1c7916908477bdffcf2a345affa6d</Sha>
     </Dependency>
-    <Dependency Name="MSTest" Version="4.1.0-preview.25570.2">
+    <Dependency Name="MSTest" Version="4.1.0-preview.25571.1">
       <Uri>https://github.com/microsoft/testfx</Uri>
-      <Sha>9cc0d132551162d48c8082e8fd16e751c1157207</Sha>
+      <Sha>43e592148ac1c7916908477bdffcf2a345affa6d</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Extensions.Configuration.Ini" Version="10.0.0">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
