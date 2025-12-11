@@ -69,6 +69,8 @@
     <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem" Version="17.4.221-pre" />
     <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem.Managed.VS" Version="17.2.0-beta1-20502-01" />
     <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem.VS" Version="17.4.221-pre" />
+    <PackageVersion Include="Microsoft.VisualStudio.Extensibility.Sdk" Version="17.14.40177" />
+    <PackageVersion Include="Microsoft.VisualStudio.Extensibility.Build" Version=" 17.14.40177" />
     <PackageVersion Include="Microsoft.VisualStudio.SDK" Version="18.0.2345-preview.1" />
     <PackageVersion Include="Microsoft.VisualStudio.Sdk.TestFramework.Xunit" Version="17.11.8" />
     <PackageVersion Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="3.4.2244" />

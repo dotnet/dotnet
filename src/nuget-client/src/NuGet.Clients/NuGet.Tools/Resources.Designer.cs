@@ -340,7 +340,7 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources and suppresses warning NU1905. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources).
+        ///   Looks up a localized string similar to Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources).
         /// </summary>
         internal static string Text_AuditSources_Description {
             get {
