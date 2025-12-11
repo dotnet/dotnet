@@ -213,6 +213,13 @@ jobs:
   - name: artifactsPrepublishDir
     value: $(Build.ArtifactStagingDirectory)/prepublish
 
+  - name: downloadedArtifactsDir
+    value: $(Agent.TempDirectory)/downloaded-artifacts
+  - name: previouslySourceBuiltSdkDir
+    value: $(Agent.TempDirectory)/previously-source-built-sdk
+  - name: previouslySourceBuiltArtifactsDir
+    value: $(Agent.TempDirectory)/previously-source-built-artifacts
+
   - name: successfulJobArtifactName
     value: $(Agent.JobName)_Artifacts
 
@@ -406,8 +413,8 @@ jobs:
             downloadFilePatterns: |
               assets/*/Private.SourceBuilt.Artifacts.*.tar.gz
               assets/*/dotnet-sdk-*.tar.gz
-            copyDestination: $(Agent.TempDirectory)/downloaded-artifacts/
-            flattenDirs: false
+            copyDestination: $(downloadedArtifactsDir)
+            flattenDirs: true
 
       - ${{ else }}:
         - task: DownloadPipelineArtifact@2
@@ -548,12 +555,12 @@ jobs:
           if [[ "$prepSdk" == "false" ]]; then
             customPrepArgs="${customPrepArgs} --no-sdk"
             
-            mkdir -p "$(Agent.TempDirectory)/previously-source-built-sdk"
-            previousSdkPath="$(Agent.TempDirectory)/downloaded-artifacts/assets/*/dotnet-sdk-*.tar.gz"
-            eval tar -ozxf "$previousSdkPath" -C "$(Agent.TempDirectory)/previously-source-built-sdk"
+            mkdir -p "$(previouslySourceBuiltSdkDir)"
+            previousSdkPath="$(downloadedArtifactsDir)/dotnet-sdk-*.tar.gz"
+            eval tar -ozxf "$previousSdkPath" -C "$(previouslySourceBuiltSdkDir)"
             eval rm -f "$previousSdkPath"
 
-            echo "##vso[task.setvariable variable=additionalBuildArgs]--with-sdk $(Agent.TempDirectory)/previously-source-built-sdk"
+            echo "##vso[task.setvariable variable=additionalBuildArgs]--with-sdk $(previouslySourceBuiltSdkDir)"
           fi
 
           ./prep-source-build.sh $customPrepArgs
@@ -586,9 +593,9 @@ jobs:
 
             if [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
                # Extract the prebuilt packages to a temporary directory
-               mkdir -p "$(Agent.TempDirectory)/previously-source-built"
-               tar -xzf $(Agent.TempDirectory)/downloaded-artifacts/assets/*/Private.SourceBuilt.Artifacts.*.tar.gz -C "$(Agent.TempDirectory)/previously-source-built"
-               customBuildArgs="$customBuildArgs --with-packages $(Agent.TempDirectory)/previously-source-built/"
+               mkdir -p "$(previouslySourceBuiltArtifactsDir)"
+               tar -xzf $(downloadedArtifactsDir)/Private.SourceBuilt.Artifacts.*.tar.gz -C "$(previouslySourceBuiltArtifactsDir)"
+               customBuildArgs="$customBuildArgs --with-packages $(previouslySourceBuiltArtifactsDir)/"
             fi
 
             if [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
