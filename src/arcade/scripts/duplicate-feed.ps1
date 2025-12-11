@@ -48,11 +48,11 @@ function Get-Package-List($vstsAuthHeader, $account, $visibility, $feed) {
     try {
         $packageListUri = "https://feeds.dev.azure.com/$account/${visibility}_apis/packaging/Feeds/$feed/packages?api-version=5.1-preview.1"
         Write-Host "Looking up packages on feed at: $packageListUri"
-        $result = Invoke-WebRequest -Headers $vstsAuthHeader $packageListUri
+        $result = Invoke-WebRequest -UseBasicParsing -Headers $vstsAuthHeader $packageListUri
         $resultJson = $result | ConvertFrom-Json
         Write-Host "Feed $SourceFeedUri has $($resultJson.count) packages"
         foreach ($package in $resultJson.value) {
-            $versionsResult = Invoke-WebRequest -Headers $vstsAuthHeader $package._links.versions.href
+            $versionsResult = Invoke-WebRequest -UseBasicParsing -Headers $vstsAuthHeader $package._links.versions.href
             $versionsResultJson = $versionsResult | ConvertFrom-Json
             foreach ($version in $versionsResultJson.value) {
                 if (-not $version.isDeleted) {
@@ -118,7 +118,7 @@ foreach ($packageToCopy in $listOfSourcePackages) {
         $packageContentUrl = "https://pkgs.dev.azure.com/$($sourceFeedInfo.account)/$($sourceFeedInfo.visibility)_apis/packaging/feeds/$($sourceFeedInfo.feed)/nuget/packages/$($packageToCopy.name)/versions/$($packageToCopy.version)/content";
         Write-Host "Downloading package $($packageToCopy.name) @ $($packageToCopy.version) from $packageContentUrl"
         $localPackagePath = Join-Path -Path $downloadRoot -ChildPath "$($packageToCopy.name).$($packageToCopy.version).nupkg"
-        Invoke-WebRequest -Headers $vstsAuthHeader $packageContentUrl -OutFile $localPackagePath
+        Invoke-WebRequest -UseBasicParsing -Headers $vstsAuthHeader $packageContentUrl -OutFile $localPackagePath
         & $NugetPath push -Source $TargetFeedUri -ApiKey AzureDevOps $localPackagePath -SkipDuplicate
     } catch {
         Write-Error $_

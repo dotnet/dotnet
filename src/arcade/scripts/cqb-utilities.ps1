@@ -48,7 +48,7 @@ Function Gen-Internal-Merge-PR
   }
   
   try {
-    $resp = Invoke-WebRequest -Method Post -Body $($prBody | ConvertTo-Json) -Headers $header -Uri "https://dev.azure.com/$Org/$Project/_apis/git/repositories/$RepoName/pullrequests?api-version=7.0" -ContentType application/json
+    $resp = Invoke-WebRequest -UseBasicParsing -Method Post -Body $($prBody | ConvertTo-Json) -Headers $header -Uri "https://dev.azure.com/$Org/$Project/_apis/git/repositories/$RepoName/pullrequests?api-version=7.0" -ContentType application/json
     $result = $resp | ConvertFrom-Json
     Write-Host https://dev.azure.com/$Org/$Project/_git/$RepoName/pullrequest/$($result.pullRequestId)
   } catch {
