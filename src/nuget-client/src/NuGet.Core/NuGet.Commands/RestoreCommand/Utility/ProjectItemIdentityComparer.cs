@@ -12,13 +12,15 @@ namespace NuGet.Commands.Restore.Utility
     {
         internal static ProjectItemIdentityComparer Default { get; } = new();
 
+        private IEqualityComparer<string> _identityComparer = StringComparer.OrdinalIgnoreCase;
+
         public bool Equals(IItem x, IItem y)
         {
-            return StringComparer.InvariantCultureIgnoreCase.Equals(x.Identity, y.Identity);
+            return _identityComparer.Equals(x.Identity, y.Identity);
         }
         public int GetHashCode(IItem obj)
         {
-            return obj.Identity.GetHashCode();
+            return _identityComparer.GetHashCode(obj.Identity);
         }
     }
 }

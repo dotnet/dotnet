@@ -256,7 +256,7 @@
     <value>Remove all audit sources to revert to using package sources for vulnerability data.</value>
   </data>
   <data name="Text_AuditSources_Description" xml:space="preserve">
-    <value>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources and suppresses warning NU1905. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</value>
+    <value>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</value>
   </data>
   <data name="Text_AuditSources_Title" xml:space="preserve">
     <value>Audit sources</value>
