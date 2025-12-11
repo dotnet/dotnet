@@ -204,7 +204,7 @@ internal class RenameService(
         using var allEdits = new PooledArrayBuilder<SumType<TextEdit, AnnotatedTextEdit>>();
 
         if (TryCollectEdits(originTagHelpers.Primary, newName, codeDocument.Source, in elements, ref allEdits.AsRef()) &&
-            TryCollectEdits(originTagHelpers.Associated, newName, codeDocument.Source, in elements, ref allEdits.AsRef()))
+            (originTagHelpers.Associated is null || TryCollectEdits(originTagHelpers.Associated, newName, codeDocument.Source, in elements, ref allEdits.AsRef())))
         {
             var uniqueEdits = GetUniqueEdits(ref allEdits.AsRef());
 
@@ -301,7 +301,7 @@ internal class RenameService(
         }
     }
 
-    private readonly record struct OriginTagHelpers(TagHelperDescriptor Primary, TagHelperDescriptor Associated);
+    private readonly record struct OriginTagHelpers(TagHelperDescriptor Primary, TagHelperDescriptor? Associated);
 
     private bool TryGetOriginTagHelpers(RazorCodeDocument codeDocument, int absoluteIndex, out OriginTagHelpers originTagHelpers)
     {
@@ -328,11 +328,7 @@ internal class RenameService(
         }
 
         var tagHelpers = codeDocument.GetRequiredTagHelpers();
-        if (!TryFindAssociatedTagHelper(primaryTagHelper, tagHelpers, out var associatedTagHelper))
-        {
-            originTagHelpers = default;
-            return false;
-        }
+        var associatedTagHelper = TryFindAssociatedTagHelper(primaryTagHelper, tagHelpers);
 
         originTagHelpers = new(primaryTagHelper, associatedTagHelper);
         return true;
@@ -390,10 +386,9 @@ internal class RenameService(
         return false;
     }
 
-    private static bool TryFindAssociatedTagHelper(
+    private static TagHelperDescriptor? TryFindAssociatedTagHelper(
         TagHelperDescriptor primary,
-        TagHelperCollection tagHelpers,
-        [NotNullWhen(true)] out TagHelperDescriptor? associated)
+        TagHelperCollection tagHelpers)
     {
         var typeName = primary.TypeName;
         var assemblyName = primary.AssemblyName;
@@ -404,15 +399,10 @@ internal class RenameService(
                 assemblyName == tagHelper.AssemblyName &&
                 !tagHelper.Equals(primary))
             {
-                // Found our associated TagHelper, there should only ever be
-                // one other associated TagHelper (fully qualified and non-fully qualified).
-                associated = tagHelper;
-                return true;
+                return tagHelper;
             }
         }
 
-        Debug.Fail("Components should always have an associated TagHelper.");
-        associated = null;
-        return false;
+        return null;
     }
 }
