@@ -585,6 +585,7 @@ jobs:
             fi
 
             if [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
+              mkdir -p "$(sourcesPath)/prebuilt-packages/"
               customBuildArgs="$customBuildArgs --with-packages $(sourcesPath)/prebuilt-packages/"
             fi
 
