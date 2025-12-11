@@ -27,6 +27,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>5.3.0-2.25601.4</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>5.3.0-2.25601.4</MicrosoftNetCompilersToolsetPackageVersion>
     <MicrosoftVisualStudioLanguageServicesPackageVersion>5.3.0-2.25601.4</MicrosoftVisualStudioLanguageServicesPackageVersion>
+    <RoslynDiagnosticsAnalyzersPackageVersion>5.3.0-2.25601.4</RoslynDiagnosticsAnalyzersPackageVersion>
     <!-- dotnet/arcade dependencies -->
     <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.25605.3</MicrosoftDotNetArcadeSdkPackageVersion>
     <!-- dotnet/aspnetcore dependencies -->
@@ -59,6 +60,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftCommonLanguageServerProtocolFrameworkVersion>$(MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion)</MicrosoftCommonLanguageServerProtocolFrameworkVersion>
     <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNetCompilersToolsetPackageVersion)</MicrosoftNetCompilersToolsetVersion>
     <MicrosoftVisualStudioLanguageServicesVersion>$(MicrosoftVisualStudioLanguageServicesPackageVersion)</MicrosoftVisualStudioLanguageServicesVersion>
+    <RoslynDiagnosticsAnalyzersVersion>$(RoslynDiagnosticsAnalyzersPackageVersion)</RoslynDiagnosticsAnalyzersVersion>
     <!-- dotnet/arcade dependencies -->
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
     <!-- dotnet/aspnetcore dependencies -->
