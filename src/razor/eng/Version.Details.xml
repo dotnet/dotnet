@@ -86,6 +86,10 @@
       <Uri>https://github.com/dotnet/roslyn</Uri>
       <Sha>a618d6246ead857f8c7de055bfde0f3438aa136a</Sha>
     </Dependency>
+    <Dependency Name="Roslyn.Diagnostics.Analyzers" Version="5.3.0-2.25601.4">
+      <Uri>https://github.com/dotnet/roslyn</Uri>
+      <Sha>a618d6246ead857f8c7de055bfde0f3438aa136a</Sha>
+    </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
     <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25605.3">
