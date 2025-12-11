@@ -406,7 +406,7 @@ jobs:
             downloadFilePatterns: |
               assets/*/Private.SourceBuilt.Artifacts.*.tar.gz
               assets/*/dotnet-sdk-*.tar.gz
-            copyDestination: $(sourcesPath)/prereqs/packages/archive/
+            copyDestination: $(Agent.TempDirectory)/downloaded-artifacts/
             flattenDirs: false
 
       - ${{ else }}:
@@ -549,7 +549,7 @@ jobs:
             customPrepArgs="${customPrepArgs} --no-sdk"
             
             mkdir -p "$(Agent.TempDirectory)/previously-source-built-sdk"
-            previousSdkPath="$(sourcesPath)/prereqs/packages/archive/dotnet-sdk-*.tar.gz"
+            previousSdkPath="$(Agent.TempDirectory)/downloaded-artifacts/assets/*/dotnet-sdk-*.tar.gz"
             eval tar -ozxf "$previousSdkPath" -C "$(Agent.TempDirectory)/previously-source-built-sdk"
             eval rm -f "$previousSdkPath"
 
@@ -587,7 +587,7 @@ jobs:
             if [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
                # Extract the prebuilt packages to a temporary directory
                mkdir -p "$(Agent.TempDirectory)/previously-source-built"
-               tar -xzf $(sourcesPath)/prereqs/packages/archive/Private.SourceBuilt.Artifacts.*.tar.gz -C "$(Agent.TempDirectory)/previously-source-built"
+               tar -xzf $(Agent.TempDirectory)/downloaded-artifacts/assets/*/Private.SourceBuilt.Artifacts.*.tar.gz -C "$(Agent.TempDirectory)/previously-source-built"
                customBuildArgs="$customBuildArgs --with-packages $(Agent.TempDirectory)/previously-source-built/"
             fi
 
