@@ -1103,6 +1103,120 @@ public class CohostRenameEndpointTest(ITestOutputHelper testOutputHelper) : Coho
             ]);
 
     [Fact]
+    public Task Component_WithNonRazorCSharpFile_FullyQualifiedAndNon()
+        => VerifyRenamesAsync(
+            input: $"""
+                @using My.Product
+
+                This is a Razor document.
+
+                <Comp$$onent></Component>
+                <My.Product.Component></My.Product.Component>
+
+                The end.
+                """,
+            additionalFiles: [
+                (FilePath("Component.cs"), """
+                    using Microsoft.AspNetCore.Components;
+
+                    namespace My.Product;
+
+                    public class Component : ComponentBase
+                    {
+                    }
+                    """),
+                (FilePath("OtherComponent.razor"), """
+                    @using My.Product
+
+                    <Component></Component>
+                    <My.Product.Component></My.Product.Component>
+                    """)
+            ],
+            newName: "DifferentName",
+            expected: """
+                @using My.Product
+
+                This is a Razor document.
+
+                <DifferentName></DifferentName>
+                <My.Product.DifferentName></My.Product.DifferentName>
+
+                The end.
+                """,
+            additionalExpectedFiles: [
+                (FileUri("Component.cs"), """
+                    using Microsoft.AspNetCore.Components;
+
+                    namespace My.Product;
+
+                    public class DifferentName : ComponentBase
+                    {
+                    }
+                    """),
+                (FileUri("OtherComponent.razor"), """
+                    @using My.Product
+
+                    <DifferentName></DifferentName>
+                    <My.Product.DifferentName></My.Product.DifferentName>
+                    """)
+            ]);
+
+    [Fact]
+    public Task Component_WithNonRazorCSharpFile_GlobalNamespace()
+        => VerifyRenamesAsync(
+            input: $"""
+                This is a Razor document.
+
+                <Comp$$onent />
+                <Component></Component>
+                <Component>
+                </Component>
+
+                The end.
+                """,
+            additionalFiles: [
+                (FilePath("Component.cs"), """
+                    using Microsoft.AspNetCore.Components;
+
+                    public class Component : ComponentBase
+                    {
+                    }
+                    """),
+                (FilePath("OtherComponent.razor"), """
+                    <Component />
+                    <Component></Component>
+                    <Component>
+                    </Component>
+                    """)
+            ],
+            newName: "DifferentName",
+            expected: """
+                This is a Razor document.
+
+                <DifferentName />
+                <DifferentName></DifferentName>
+                <DifferentName>
+                </DifferentName>
+
+                The end.
+                """,
+            additionalExpectedFiles: [
+                (FileUri("Component.cs"), """
+                    using Microsoft.AspNetCore.Components;
+
+                    public class DifferentName : ComponentBase
+                    {
+                    }
+                    """),
+                (FileUri("OtherComponent.razor"), """
+                    <DifferentName />
+                    <DifferentName></DifferentName>
+                    <DifferentName>
+                    </DifferentName>
+                    """)
+            ]);
+
+    [Fact]
     public Task Component_Namespace_WithNonRazorCSharpFile()
         => VerifyRenamesAsync(
             input: $"""

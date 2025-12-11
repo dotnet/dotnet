@@ -13,7 +13,6 @@
     <_BasicReferenceAssembliesVersion>1.7.2</_BasicReferenceAssembliesVersion>
     <_BenchmarkDotNetPackageVersion>0.13.5.2136</_BenchmarkDotNetPackageVersion>
     <_MicrosoftVisualStudioExtensibilityTestingVersion>0.1.800-beta</_MicrosoftVisualStudioExtensibilityTestingVersion>
-    <_RoslynDiagnosticAnalyzersPackageVersion>3.11.0-beta1.24508.2</_RoslynDiagnosticAnalyzersPackageVersion>
     <_MicrosoftVisualStudioLanguageServicesPackageVersion>$(MicrosoftVisualStudioLanguageServicesPackageVersion)</_MicrosoftVisualStudioLanguageServicesPackageVersion>
     <_XunitPackageVersion>2.9.2</_XunitPackageVersion>
     <_MicrosoftBuildPackageVersion>17.15.0-preview-25353-11</_MicrosoftBuildPackageVersion>
@@ -101,7 +100,7 @@
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="Nerdbank.Streams" Version="2.12.87" />
     <PackageVersion Include="NuGet.VisualStudio" Version="17.9.1" />
-    <PackageVersion Include="Roslyn.Diagnostics.Analyzers" Version="$(_RoslynDiagnosticAnalyzersPackageVersion)" />
+    <PackageVersion Include="Roslyn.Diagnostics.Analyzers" Version="$(RoslynDiagnosticAnalyzersPackageVersion)" />
     <PackageVersion Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutablePackageVersion)" />
     <PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="9.0.0" />
     <PackageVersion Include="System.Private.Uri" Version="4.3.2" />

@@ -177,7 +177,7 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
             testName += "_misc_file";
         }
 
-        var baselineFileName = $@"TestFiles\SemanticTokens\{testName}.txt";
+        var baselineFileName = Path.Combine("TestFiles", "SemanticTokens", $"{testName}.txt");
         if (GenerateBaselines.ShouldGenerate)
         {
             WriteBaselineFile(actualFileContents, baselineFileName);
