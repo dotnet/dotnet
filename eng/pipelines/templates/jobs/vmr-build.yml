@@ -406,8 +406,8 @@ jobs:
             downloadFilePatterns: |
               assets/*/Private.SourceBuilt.Artifacts.*.tar.gz
               assets/*/dotnet-sdk-*.tar.gz
-            copyDestination: $(sourcesPath)/prebuilt-packages/
-            flattenDirs: true
+            copyDestination: $(sourcesPath)/prereqs/packages/archive/
+            flattenDirs: false
 
       - ${{ else }}:
         - task: DownloadPipelineArtifact@2
@@ -585,8 +585,10 @@ jobs:
             fi
 
             if [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
-              mkdir -p "$(sourcesPath)/prebuilt-packages/"
-              customBuildArgs="$customBuildArgs --with-packages $(sourcesPath)/prebuilt-packages/"
+               # Extract the prebuilt packages to a temporary directory
+               mkdir -p "$(Agent.TempDirectory)/prebuilt-packages"
+               tar -xzf $(sourcesPath)/prereqs/packages/archive/Private.SourceBuilt.Artifacts.*.tar.gz -C "$(Agent.TempDirectory)/prebuilt-packages"
+               customBuildArgs="$customBuildArgs --with-packages $(Agent.TempDirectory)/prebuilt-packages/"
             fi
 
             if [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
