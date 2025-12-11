@@ -616,5 +616,11 @@ namespace Microsoft.CodeAnalysis.Internal.Log
         SuggestedAction_Application_Summary = 743,
         SuggestedAction_Preview_Delay = 744,
         SuggestedAction_Preview_Summary = 745,
+
+        // 750-760 for suppression of diagnostic/fix related ids
+        Suppression_Add = 750,
+        Suppression_Add_Hierarchy = 751,
+        Suppression_Remove = 752,
+        Suppression_Set_Severity = 753,
     }
 }
