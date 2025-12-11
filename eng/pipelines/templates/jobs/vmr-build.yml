@@ -406,7 +406,7 @@ jobs:
             downloadFilePatterns: |
               assets/*/Private.SourceBuilt.Artifacts.*.tar.gz
               assets/*/dotnet-sdk-*.tar.gz
-            copyDestination: $(sourcesPath)/prereqs/packages/archive/
+            copyDestination: $(sourcesPath)/prebuilt-packages/
             flattenDirs: true
 
       - ${{ else }}:
@@ -582,6 +582,10 @@ jobs:
             if [[ '${{ parameters.sign }}' == 'True' ]]; then
               # Set up for signing source-built artifacts post-build.
               extraBuildProperties="$extraBuildProperties /p:DotNetSourceOnlyPostBuildSign=true"
+            fi
+
+            if [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
+              customBuildArgs="$customBuildArgs --with-packages $(sourcesPath)/prebuilt-packages/"
             fi
 
             if [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
