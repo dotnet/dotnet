@@ -205,7 +205,7 @@ extends:
               inputs:
                 versionSpec: 10.x
 
-            - powershell: npm install -g yarn
+            - powershell: npm install -g yarn --registry=https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public-npm/npm/registry/
               displayName: Install yarn
               condition: succeeded()
 
@@ -395,10 +395,10 @@ extends:
             pool:
               ${{ if eq(variables['System.TeamProject'], 'public') }}:
                 name: NetCore-Public
-                demands: ImageOverride -equals Build.Ubuntu.2004.Amd64.Open
+                demands: ImageOverride -equals Build.Ubuntu.2204.Amd64.Open
               ${{ if eq(variables['System.TeamProject'], 'internal') }}:
                 name: $(DncEngInternalBuildPool)
-                demands: ImageOverride -equals 1es-ubuntu-2004
+                demands: ImageOverride -equals 1es-ubuntu-2204
               os: linux
 
             strategy:
