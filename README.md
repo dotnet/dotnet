@@ -32,7 +32,7 @@ You can download the .NET SDK either as an installer (MSI, PKG) or as an archive
 ```xml
 <configuration>
   <packageSources>
-    <add key="dotnet10" value="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet11/nuget/v3/index.json" />
+    <add key="dotnet11" value="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet11/nuget/v3/index.json" />
   </packageSources>
 </configuration>
 ```
