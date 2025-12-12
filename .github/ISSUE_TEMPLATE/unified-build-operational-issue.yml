@@ -34,7 +34,7 @@ body:
     attributes:
       label: Root Cause
       description: Current understanding of the root cause
-      value: known
+      value: unknown
     validations:
       required: false
   
