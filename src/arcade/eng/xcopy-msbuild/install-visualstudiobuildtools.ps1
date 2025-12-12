@@ -21,14 +21,14 @@ if(-Not (Test-Path $destinationDir))
     New-Item -ItemType 'Directory' -Path "$destinationDir" -Force | Out-Null
 }
 # Query the page to get the download link
-$response = Invoke-WebRequest $downloadUrl
+$response = Invoke-WebRequest $downloadUrl -UseBasicParsing
 
 $regex = "downloadUrl: '(?<downloadUrl>[^']+)'"
 $response.Content -Match $regex | Out-Null
 $downloadLink = $Matches['downloadUrl']
 
 Write-Host "download link: $downloadLink"
-$response = Invoke-WebRequest $downloadLink  -OutFile "$installerPath"
+$response = Invoke-WebRequest $downloadLink -UseBasicParsing -OutFile "$installerPath"
 
 if(-Not (Test-Path $outputDirectory))
 {
