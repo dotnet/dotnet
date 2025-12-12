@@ -150,6 +150,42 @@ public class CohostFindAllReferencesEndpointTest(ITestOutputHelper testOutputHel
             (FilePath("SurveyPrompt.cs"), surveyPrompt));
     }
 
+    [Fact]
+    public async Task Component_FromRazor()
+    {
+        TestCode input = """
+            <[|Sur$$veyPrompt|] Title="InputValue" />
+
+            @nameof([|SurveyPrompt|])
+            """;
+
+        TestCode surveyPrompt = """
+            [||]<div>
+            </div>
+            """;
+
+        await VerifyFindAllReferencesAsync(input,
+            (FilePath("SurveyPrompt.razor"), surveyPrompt));
+    }
+
+    [Fact]
+    public async Task Component_FromCSharp()
+    {
+        TestCode input = """
+            <[|SurveyPrompt|] Title="InputValue" />
+
+            @nameof([|Survey$$Prompt|])
+            """;
+
+        TestCode surveyPrompt = """
+            [||]<div>
+            </div>
+            """;
+
+        await VerifyFindAllReferencesAsync(input,
+            (FilePath("SurveyPrompt.razor"), surveyPrompt));
+    }
+
     private async Task VerifyFindAllReferencesAsync(TestCode input, params (string fileName, TestCode testCode)[] additionalFiles)
     {
         var document = CreateProjectAndRazorDocument(input.Text, additionalFiles: [.. additionalFiles.Select(f => (f.fileName, f.testCode.Text))]);

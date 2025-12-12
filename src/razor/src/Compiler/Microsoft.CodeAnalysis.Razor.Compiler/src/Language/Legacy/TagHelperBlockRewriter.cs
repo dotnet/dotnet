@@ -153,6 +153,13 @@ internal static class TagHelperBlockRewriter
 
                 result = null;
             }
+            else if (child is MarkupEphemeralTextLiteralSyntax ephemeralLiteral)
+            {
+                // Ephemeral literals (like escaped @@ in attribute names) should be preserved.
+                // Continue processing subsequent attributes.
+                attributeBuilder.Add(ephemeralLiteral);
+                continue;
+            }
             else
             {
                 result = null;
