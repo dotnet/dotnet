@@ -13,6 +13,16 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
     {
         public static readonly string ExpectedFeedUrlSuffix = "index.json";
 
+        /// <summary>
+        /// Mapping of Azure storage accounts to their corresponding CDN URLs.
+        /// Used to replace blob storage URLs with CDN URLs for both aka.ms links and asset locations.
+        /// </summary>
+        public static readonly Dictionary<string, string> AccountsWithCdns = new()
+        {
+            {"dotnetcli.blob.core.windows.net", "builds.dotnet.microsoft.com" },
+            {"dotnetbuilds.blob.core.windows.net", "ci.dot.net" }
+        };
+
         // Matches package feeds like
         // https://pkgs.dev.azure.com/dnceng/public/_packaging/public-feed-name/nuget/v3/index.json
         // or https://pkgs.dev.azure.com/dnceng/_packaging/internal-feed-name/nuget/v3/index.json
