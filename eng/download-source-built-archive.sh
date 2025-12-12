@@ -33,18 +33,12 @@ function DownloadWithRetries {
         return 0
       else
         local exitCode=$?
-        case $exitCode in
-          18)
-            sleep 3
-            ;;
-          22)
-            # HTTP error (including 404)
-            return 22
-            ;;
-          *)
-            return 1
-            ;;
-        esac
+        # HTTP error 404 - don't retry
+        if [[ $exitCode -eq 22 ]]; then
+          return 22
+        fi
+        # For all other errors (including partial transfers), sleep and retry
+        sleep 3
       fi
     done
     return 1
