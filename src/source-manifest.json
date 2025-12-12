@@ -1,16 +1,16 @@
 {
   "repositories": [
     {
-      "barId": 293804,
+      "barId": 294201,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "17c915fe8e3094d636fb256f2c2860f38ea7b121"
+      "commitSha": "27e190e2a8053738859c082e2f70df62e01ff524"
     },
     {
-      "barId": 294076,
+      "barId": 294246,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "73ce13e67ec6dbf004b0f85508ae9920e30e0cb6"
+      "commitSha": "c9d0750396e1d319301255ba61842721ab72ab10"
     },
     {
       "barId": 292148,
@@ -25,10 +25,10 @@
       "commitSha": "cf5fd8d696450a48d3cc75a7a1792d34b5303f88"
     },
     {
-      "barId": 292166,
+      "barId": 294179,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "56c3d96916e1b2bb065732ffedd6b9e0285a6ed4"
+      "commitSha": "6ebef72019b85958ae78d0da73ea49a161c7a28a"
     },
     {
       "barId": 288647,
@@ -37,10 +37,10 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 294084,
+      "barId": 294209,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "bdeac5b76b25f4e027e8043a39e0c637a9914d8a"
+      "commitSha": "25e60dc7aeaecb90172339831f6e114a1c28d848"
     },
     {
       "barId": 292157,
@@ -55,10 +55,10 @@
       "commitSha": "89d788641914c5d0b87fddfa11f4df0b5cfaa73d"
     },
     {
-      "barId": 294042,
+      "barId": 294184,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "60df124f65e3ad02433097bd7067f9c030fa1af1"
+      "commitSha": "2960e90f194e80f8f664ac573d456058bc4f5cd9"
     },
     {
       "barId": 279847,
