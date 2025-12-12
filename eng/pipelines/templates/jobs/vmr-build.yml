@@ -556,9 +556,18 @@ jobs:
             customPrepArgs="${customPrepArgs} --no-sdk"
             
             mkdir -p "$(previouslySourceBuiltSdkDir)"
-            previousSdkPath="$(downloadedArtifactsDir)/dotnet-sdk-*.tar.gz"
+            
+            echo "Listing downloaded artifacts:"
+            ls -R "$(downloadedArtifactsDir)" || true
+
+            previousSdkPath=$(find "$(downloadedArtifactsDir)" -name "dotnet-sdk-*.tar.gz" | head -n 1)
+            if [ -z "$previousSdkPath" ]; then
+              echo "Error: specific dotnet-sdk tarball not found in $(downloadedArtifactsDir)"
+              exit 1
+            fi
+
+            echo "Extracting SDK from $previousSdkPath"
             eval tar -ozxf "$previousSdkPath" -C "$(previouslySourceBuiltSdkDir)"
-            eval rm -f "$previousSdkPath"
 
             echo "##vso[task.setvariable variable=additionalBuildArgs]--with-sdk $(previouslySourceBuiltSdkDir)"
           fi
@@ -594,7 +603,16 @@ jobs:
             if [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
                # Extract the prebuilt packages to a temporary directory
                mkdir -p "$(previouslySourceBuiltArtifactsDir)"
-               tar -xzf $(downloadedArtifactsDir)/Private.SourceBuilt.Artifacts.*.tar.gz -C "$(previouslySourceBuiltArtifactsDir)"
+               
+               artifactsTarball=$(find "$(downloadedArtifactsDir)" -name "Private.SourceBuilt.Artifacts.*.tar.gz" | head -n 1)
+               if [ -z "$artifactsTarball" ]; then
+                 echo "Error: Private.SourceBuilt.Artifacts tarball not found in $(downloadedArtifactsDir)"
+                 ls -R "$(downloadedArtifactsDir)"
+                 exit 1
+               fi
+               
+               echo "Extracting artifacts from $artifactsTarball"
+               tar -xzf "$artifactsTarball" -C "$(previouslySourceBuiltArtifactsDir)"
                customBuildArgs="$customBuildArgs --with-packages $(previouslySourceBuiltArtifactsDir)/"
             fi
 
