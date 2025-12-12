@@ -161,7 +161,7 @@ variables:
 - name: fedoraContainerName
   value: fedoraContainer
 - name: fedoraContainerImage
-  value: mcr.microsoft.com/dotnet-buildtools/prereqs:fedora-43
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:fedora-43-amd64
 
 - name: ubuntuContainerName
   value: ubuntuContainer
@@ -291,3 +291,4 @@ variables:
     value: macos-latest-internal
   - name: poolImage_Windows
     value: windows.vs2022.amd64
+
