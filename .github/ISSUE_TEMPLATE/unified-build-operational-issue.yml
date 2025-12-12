@@ -46,13 +46,12 @@ body:
       options:
         - label: This issue is blocking
   
-  - type: textarea
+  - type: checkboxes
     id: affected-releases
     attributes:
       label: Affected Releases
-      description: List the releases affected by this operational issue
-      placeholder: |
-        - net10/net11
-        - net9
-    validations:
-      required: false
+      description: Select the releases affected by this operational issue
+      options:
+        - label: .NET 10
+        - label: .NET 10 (SDK band build)
+        - label: .NET 11
