@@ -1,0 +1,58 @@
+name: Unified Build Operational Issue
+description: Report operational issues related to unified build infrastructure
+title: "[Operational Issue]: "
+labels: ["area-unified-build-OperationalIssue"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to report operational issues with the unified build infrastructure.
+  
+  - type: textarea
+    id: error
+    attributes:
+      label: Error
+      description: Provide the error message or description of the operational issue
+      placeholder: |
+        Include stack traces, error messages, or detailed descriptions of the problem.
+    validations:
+      required: true
+  
+  - type: textarea
+    id: links
+    attributes:
+      label: Links
+      description: Provide relevant links (build logs, pipeline runs, etc.)
+      placeholder: |
+        - https://dev.azure.com/...
+        - https://github.com/...
+    validations:
+      required: false
+  
+  - type: input
+    id: root-cause
+    attributes:
+      label: Root Cause
+      description: Current understanding of the root cause
+      value: known
+    validations:
+      required: true
+  
+  - type: checkboxes
+    id: blocking
+    attributes:
+      label: Blocking
+      description: Is this issue blocking any releases or critical workflows?
+      options:
+        - label: This issue is blocking
+  
+  - type: textarea
+    id: affected-releases
+    attributes:
+      label: Affected Releases
+      description: List the releases affected by this operational issue
+      placeholder: |
+        - net10/net11
+        - net9
+    validations:
+      required: false
