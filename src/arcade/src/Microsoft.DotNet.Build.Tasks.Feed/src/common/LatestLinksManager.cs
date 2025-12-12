@@ -22,12 +22,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         private string _akaMSCreatedBy { get; }
         private string _akaMSGroupOwner { get; }
 
-        private static Dictionary<string, string> AccountsWithCdns { get; } = new()
-        {
-            {"dotnetcli.blob.core.windows.net", "builds.dotnet.microsoft.com" },
-            {"dotnetbuilds.blob.core.windows.net", "ci.dot.net" }
-        };
-
         public LatestLinksManager(
             string akaMSClientId,
             X509Certificate2 certificate,
@@ -105,14 +99,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             if (!feedBaseUrl.EndsWith("/", StringComparison.OrdinalIgnoreCase))
             {
                 feedBaseUrl += "/";
-            }
-            var authority = new Uri(feedBaseUrl).Authority;
-            if (AccountsWithCdns.TryGetValue(authority, out var replacementAuthority))
-            {
-                // The storage accounts are in a single datacenter in the US and thus download 
-                // times can be painful elsewhere. The CDN helps with this therefore we point the target 
-                // of the aka.ms links to the CDN.
-                feedBaseUrl = feedBaseUrl.Replace(authority, replacementAuthority);
             }
 
             return feedBaseUrl;
