@@ -39,21 +39,21 @@ public partial class LinuxInstallerTests : IDisposable
         { DotnetHostFxrPrefix, new List<string> { $"{DotnetHostPrefix.TrimEnd('-')}" } },
         { DotnetRuntimePrefix, new List<string>
             {
-                $"{DotnetHostFxrPrefix}{Config.TargetFrameworkVersion}",
-                $"{DotnetRuntimeDepsPrefix}{Config.TargetFrameworkVersion}"
+                $"{DotnetHostFxrPrefix}{Config.TargetProductVersion}",
+                $"{DotnetRuntimeDepsPrefix}{Config.TargetProductVersion}"
             }
         },
         { DotnetTargetingPackPrefix, new List<string> {  } },
-        { AspNetCoreRuntimePrefix, new List<string> { $"{DotnetRuntimePrefix}{Config.TargetFrameworkVersion}" } },
-        { AspNetCoreTargetingPackPrefix, new List<string> { $"{DotnetTargetingPackPrefix}{Config.TargetFrameworkVersion}" } },
+        { AspNetCoreRuntimePrefix, new List<string> { $"{DotnetRuntimePrefix}{Config.TargetProductVersion}" } },
+        { AspNetCoreTargetingPackPrefix, new List<string> { $"{DotnetTargetingPackPrefix}{Config.TargetProductVersion}" } },
         { DotnetApphostPackPrefix, new List<string> { } },
         { DotnetSdkPrefix, new List<string>
             {
-                $"{DotnetRuntimePrefix}{Config.TargetFrameworkVersion}",
-                $"{DotnetTargetingPackPrefix}{Config.TargetFrameworkVersion}",
-                $"{DotnetApphostPackPrefix}{Config.TargetFrameworkVersion}",
-                $"{AspNetCoreRuntimePrefix}{Config.TargetFrameworkVersion}",
-                $"{AspNetCoreTargetingPackPrefix}{Config.TargetFrameworkVersion}"
+                $"{DotnetRuntimePrefix}{Config.TargetProductVersion}",
+                $"{DotnetTargetingPackPrefix}{Config.TargetProductVersion}",
+                $"{DotnetApphostPackPrefix}{Config.TargetProductVersion}",
+                $"{AspNetCoreRuntimePrefix}{Config.TargetProductVersion}",
+                $"{AspNetCoreTargetingPackPrefix}{Config.TargetProductVersion}"
             }
         }
     };
