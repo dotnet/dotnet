@@ -74,7 +74,7 @@ public partial class LinuxInstallerTests : IDisposable
     private static partial Regex RemoveVersionConstraintRegex { get; }
 
     // Remove version numbers from package names: "dotnet-runtime-10.0.0-rc.1.25480.112-x64.rpm" -> "dotnet-runtime-*-x64.rpm"
-    [GeneratedRegex(@"\d+\.\d+\.\d+(?:-(?:rc|rtm|preview)(?:\.\d+)*)?", RegexOptions.CultureInvariant)]
+    [GeneratedRegex(@"\d+\.\d+\.\d+(?:-(?:alpha|rc|rtm|preview)(?:\.\d+)*)?", RegexOptions.CultureInvariant)]
     private static partial Regex RemoveVersionFromPackageNameRegex { get; }
 
     private const string RuntimeDepsRepo = "mcr.microsoft.com/dotnet/runtime-deps";
