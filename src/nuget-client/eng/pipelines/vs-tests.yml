@@ -62,6 +62,7 @@ variables:
   DOTNET_NOLOGO: 1
   CI: true
   Codeql.Enabled: false
+  SourceBranch: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
 
 stages:
 - stage: Build

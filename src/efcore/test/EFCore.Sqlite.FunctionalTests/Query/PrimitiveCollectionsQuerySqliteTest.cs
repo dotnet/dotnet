@@ -864,8 +864,48 @@ WHERE (
         => base.Parameter_collection_Count_with_huge_number_of_values();
 
     // nothing to test here
+    public override Task Parameter_collection_Count_with_huge_number_of_values_over_5_operations()
+        => base.Parameter_collection_Count_with_huge_number_of_values_over_5_operations();
+
+    // nothing to test here
+    public override Task Parameter_collection_Count_with_huge_number_of_values_over_5_operations_forced_constants()
+        => base.Parameter_collection_Count_with_huge_number_of_values_over_5_operations_forced_constants();
+
+    // nothing to test here
+    public override Task Parameter_collection_Count_with_huge_number_of_values_over_5_operations_same_parameter()
+        => base.Parameter_collection_Count_with_huge_number_of_values_over_5_operations_same_parameter();
+
+    // nothing to test here
+    public override Task Parameter_collection_Count_with_huge_number_of_values_over_2_operations_same_parameter_different_type_mapping()
+        => base.Parameter_collection_Count_with_huge_number_of_values_over_2_operations_same_parameter_different_type_mapping();
+
+    // nothing to test here
+    public override Task Parameter_collection_Count_with_huge_number_of_values_over_5_operations_mixed_parameters_constants()
+        => base.Parameter_collection_Count_with_huge_number_of_values_over_5_operations_mixed_parameters_constants();
+
+    // nothing to test here
     public override Task Parameter_collection_of_ints_Contains_int_with_huge_number_of_values()
         => base.Parameter_collection_of_ints_Contains_int_with_huge_number_of_values();
+
+    // nothing to test here
+    public override Task Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_5_operations()
+        => base.Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_5_operations();
+
+    // nothing to test here
+    public override Task Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_5_operations_same_parameter()
+        => base.Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_5_operations_same_parameter();
+
+    // nothing to test here
+    public override Task Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_2_operations_same_parameter_different_type_mapping()
+        => base.Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_2_operations_same_parameter_different_type_mapping();
+
+    // nothing to test here
+    public override Task Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_5_operations_forced_constants()
+        => base.Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_5_operations_forced_constants();
+
+    // nothing to test here
+    public override Task Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_5_operations_mixed_parameters_constants()
+        => base.Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_5_operations_mixed_parameters_constants();
 
     public override async Task Column_collection_of_ints_Contains()
     {
@@ -951,6 +991,43 @@ WHERE 1 IN (
     SELECT "b"."value"
     FROM json_each("p"."Bools") AS "b"
 )
+""");
+    }
+
+    public override async Task Contains_on_Enumerable()
+    {
+        await base.Contains_on_Enumerable();
+
+        AssertSql(
+            """
+SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
+FROM "PrimitiveCollectionsEntity" AS "p"
+WHERE "p"."Int" IN (10, 999)
+""");
+    }
+
+
+    public override async Task Contains_on_MemoryExtensions()
+    {
+        await base.Contains_on_MemoryExtensions();
+
+        AssertSql(
+            """
+SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
+FROM "PrimitiveCollectionsEntity" AS "p"
+WHERE "p"."Int" IN (10, 999)
+""");
+    }
+
+    public override async Task Contains_with_MemoryExtensions_with_null_comparer()
+    {
+        await base.Contains_with_MemoryExtensions_with_null_comparer();
+
+        AssertSql(
+            """
+SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
+FROM "PrimitiveCollectionsEntity" AS "p"
+WHERE "p"."Int" IN (10, 999)
 """);
     }
 

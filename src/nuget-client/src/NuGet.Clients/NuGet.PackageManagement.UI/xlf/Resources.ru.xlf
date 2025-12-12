@@ -549,7 +549,7 @@
       </trans-unit>
       <trans-unit id="Label_Details">
         <source>Details</source>
-        <target state="translated">Сведения</target>
+        <target state="translated">Подробности</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_Downloads">
@@ -943,22 +943,22 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Status_Canceled">
         <source>Canceled loading packages</source>
-        <target state="translated">Загрузка пакетов отменена.</target>
+        <target state="translated">Загрузка пакетов отменена</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_ErrorOccurred">
         <source>An error occurred while loading packages</source>
-        <target state="translated">При загрузке пакетов произошла ошибка.</target>
+        <target state="translated">Произошла ошибка при загрузке пакетов</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_NoMoreItems">
         <source>End of package list loaded</source>
-        <target state="translated">Загрузка достигла конца списка пакетов.</target>
+        <target state="translated">Конец загруженного списка пакетов</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Ready">
         <source>Package list loaded</source>
-        <target state="translated">Список пакетов загружен.</target>
+        <target state="translated">Список пакетов загружен</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_By">
@@ -1088,7 +1088,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Text_PackageLevelTransitive">
         <source>Transitive</source>
-        <target state="translated">Транзитивное</target>
+        <target state="translated">Транзитивный</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageMappingsAutoCreate">
@@ -1378,7 +1378,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Warning_HTTPSource">
         <source>AllowInsecureConnections is enabled and allows http access. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere.</source>
-        <target state="translated">AllowInsecureConnections включен и разрешает доступ по протоколу HTTP. Примечание. Этот метод небезопасен. Безопасные варианты см. на странице https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Параметр AllowInsecureConnections включен и разрешает доступ по протоколу HTTP. Примечание. Этот метод небезопасен. Безопасные варианты см. на странице https://aka.ms/nuget-https-everywhere.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_ProjectJson">

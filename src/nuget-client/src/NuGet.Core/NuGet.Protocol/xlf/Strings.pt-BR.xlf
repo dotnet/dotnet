@@ -19,12 +19,12 @@
       </trans-unit>
       <trans-unit id="ArgumentCannotBeNullOrEmpty">
         <source>Argument cannot be null or empty.</source>
-        <target state="translated">O argumento não pode ser nulo ou estar vazio.</target>
+        <target state="translated">O argumento não pode ser nulo nem estar vazio.</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
         <source>Argument can not be null or empty.</source>
-        <target state="translated">O argumento não pode ser nulo ou estar vazio.</target>
+        <target state="translated">O argumento não pode ser nulo nem estar vazio.</target>
         <note />
       </trans-unit>
       <trans-unit id="DefaultSymbolServer">
@@ -39,7 +39,7 @@
       </trans-unit>
       <trans-unit id="DeleteCommandConfirm">
         <source>{0} {1} will be deleted from the {2}. Would you like to continue?</source>
-        <target state="translated">{0} {1} será excluído do {2}. Gostaria de continuar?</target>
+        <target state="translated">{0} {1} será excluído do {2}. Quer continuar?</target>
         <note />
       </trans-unit>
       <trans-unit id="DeleteCommandDeletedPackage">
@@ -101,7 +101,7 @@
       </trans-unit>
       <trans-unit id="Http_ResponseLog">
         <source>{0} {1} {2}ms</source>
-        <target state="translated">{0} {1} {2}ms</target>
+        <target state="translated">{0} {1} {2} ms</target>
         <note>Parameters in order: non-localizable HTTP status, non-localizable HTTP request URI, request duration in milliseconds.
 The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
@@ -467,7 +467,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_MissingSearchService">
         <source>The source does not have a Search service!</source>
-        <target state="translated">A origem não tem um serviço de Pesquisa!</target>
+        <target state="translated">A origem não tem um serviço Pesquisa!</target>
         <note />
       </trans-unit>
       <trans-unit id="Protocol_MissingVersion">
@@ -492,7 +492,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_duplicateUri">
         <source>'{0}' is a duplicate url which has already been downloaded and will lead to a cyclic dependency. Please correct from server.</source>
-        <target state="translated">'{0}' é uma url duplicada que já foi baixada e levará a uma dependência cíclica. Corrija-a do servidor.</target>
+        <target state="translated">'{0}' é uma URL duplicada que já foi baixada e levará a uma dependência cíclica. Corrija-a no servidor.</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandPackagePushed">

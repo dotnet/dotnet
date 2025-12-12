@@ -113,7 +113,7 @@
       </trans-unit>
       <trans-unit id="DefaultError_NoMatchInAllowList">
         <source>The package signature certificate fingerprint does not match any certificate fingerprint in the allow list.</source>
-        <target state="translated">L'empreinte digitale de certificat de signature du package ne correspond à aucune empreinte digitale de certificat de la liste verte.</target>
+        <target state="translated">L'empreinte digitale de certificat de signature de package ne correspond à aucune empreinte digitale de certificat de la liste d'autorisation.</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorAuthorTargetCannotBeACountersignature">

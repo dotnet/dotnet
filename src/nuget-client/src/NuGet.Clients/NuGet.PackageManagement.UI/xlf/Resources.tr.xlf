@@ -604,7 +604,7 @@
       </trans-unit>
       <trans-unit id="Label_MultiplePackageVulnerableVersionToolTip">
         <source>These installed package versions contain vulnerabilities: {0}</source>
-        <target state="translated">Bu kurulu paket sürümleri şu güvenlik açıklarını içeriyor: {0}</target>
+        <target state="translated">Bu yüklü paket sürümleri güvenlik açıkları içeriyor: {0}</target>
         <note>{0} are package versions</note>
       </trans-unit>
       <trans-unit id="Label_NetworkError">
@@ -859,7 +859,7 @@
       </trans-unit>
       <trans-unit id="Preview_PackageUpdate">
         <source>{0} version {1} to {2} version {3}</source>
-        <target state="translated">{0} sürüm {1} - {2} sürüm {3}</target>
+        <target state="translated">{0} kimlikli {1} sürümünden {2} kimlikli {3} sürümüne</target>
         <note>{0} = Old package ID, {1} = Old package version, {2} = New package ID, {3} = New package version</note>
       </trans-unit>
       <trans-unit id="Preview_UnknownProject">
@@ -943,7 +943,7 @@ Hata: {1}</target>
       </trans-unit>
       <trans-unit id="Status_Canceled">
         <source>Canceled loading packages</source>
-        <target state="translated">Paketleri yükleme işlemi iptal edildi</target>
+        <target state="translated">Paket yükleme iptal edildi</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_ErrorOccurred">
@@ -953,7 +953,7 @@ Hata: {1}</target>
       </trans-unit>
       <trans-unit id="Status_NoMoreItems">
         <source>End of package list loaded</source>
-        <target state="translated">Yüklenen paket listesinin sonu</target>
+        <target state="translated">Paket listesinin sonu yüklendi</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Ready">
@@ -963,7 +963,7 @@ Hata: {1}</target>
       </trans-unit>
       <trans-unit id="Text_By">
         <source>by</source>
-        <target state="translated">yazar</target>
+        <target state="translated">hazırlayan</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ByAuthor">

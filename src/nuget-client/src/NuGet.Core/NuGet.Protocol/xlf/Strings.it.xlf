@@ -29,7 +29,7 @@
       </trans-unit>
       <trans-unit id="DefaultSymbolServer">
         <source>the symbol server</source>
-        <target state="translated">il server dei simboli</target>
+        <target state="translated">server dei simboli</target>
         <note />
       </trans-unit>
       <trans-unit id="DeleteCommandCanceled">
@@ -39,17 +39,17 @@
       </trans-unit>
       <trans-unit id="DeleteCommandConfirm">
         <source>{0} {1} will be deleted from the {2}. Would you like to continue?</source>
-        <target state="translated">Il pacchetto {0} {1} verrà eliminato da {2}. Continuare?</target>
+        <target state="translated">{0} {1} verrà eliminato da {2}. Continuare?</target>
         <note />
       </trans-unit>
       <trans-unit id="DeleteCommandDeletedPackage">
         <source>{0} {1} was deleted successfully.</source>
-        <target state="translated">L'eliminazione del pacchetto {0} {1} è riuscita.</target>
+        <target state="translated">L'eliminazione di {0} {1} è riuscita.</target>
         <note />
       </trans-unit>
       <trans-unit id="DeleteCommandDeletingPackage">
         <source>Deleting {0} {1} from the {2}.</source>
-        <target state="translated">Eliminazione del pacchetto {0} {1} da {2}.</target>
+        <target state="translated">Eliminazione di {0} {1} da {2}.</target>
         <note />
       </trans-unit>
       <trans-unit id="DeletePackage_NotFound">
@@ -125,7 +125,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="LiveFeed">
         <source>the NuGet gallery</source>
-        <target state="translated">la raccolta NuGet</target>
+        <target state="translated">raccolta NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="LoadFileFromNupkg_FileNotFound">
@@ -231,7 +231,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Log_RetryingFindPackagesById">
         <source>Retrying '{0}' for source '{1}'.</source>
-        <target state="translated">È in corso un nuovo tentativo dell'operazione '{0}' per l'origine '{1}'.</target>
+        <target state="translated">Nuovo tentativo dell'operazione '{0}' per l'origine '{1}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_RetryingHttp">
@@ -247,7 +247,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Log_RetryingServiceIndex">
         <source>Retrying service index request for source '{0}'.</source>
-        <target state="translated">Nuovo tentativo di invio della richiesta di indicizzazione del servizio per l'origine '{0}'.</target>
+        <target state="translated">Nuovo tentativo di invio della richiesta dell'indice del servizio per l'origine '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoApiKeyFound">
@@ -287,7 +287,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="PackageServerEndpoint_NotSupported">
         <source>ERROR: This version of nuget.exe does not support updating packages to package source '{0}'.</source>
-        <target state="translated">ERRORE: questa versione del file nuget.exe non supporta l'aggiornamento dei pacchetti nell'origine pacchetto '{0}'.</target>
+        <target state="translated">ERRORE: questa versione del file nuget.exe non supporta l'aggiornamento dei pacchetti nell'origine pacchetti '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="Path_Invalid">
@@ -457,7 +457,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_InvalidXml">
         <source>The content at '{0}' is not valid XML.</source>
-        <target state="translated">Il contenuto in '{0}' non presenta un formato XML valido.</target>
+        <target state="translated">Il contenuto in '{0}' non è in formato XML valido.</target>
         <note />
       </trans-unit>
       <trans-unit id="Protocol_MalformedMetadataError">
@@ -467,7 +467,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_MissingSearchService">
         <source>The source does not have a Search service!</source>
-        <target state="translated">Per l'origine non è definito un servizio di ricerca.</target>
+        <target state="translated">Non esiste alcun servizio di ricerca per l'origine.</target>
         <note />
       </trans-unit>
       <trans-unit id="Protocol_MissingVersion">
@@ -492,12 +492,12 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_duplicateUri">
         <source>'{0}' is a duplicate url which has already been downloaded and will lead to a cyclic dependency. Please correct from server.</source>
-        <target state="translated">'{0}' è un url duplicato già scaricato che genererà una dipendenza ciclica. Correggere dal server.</target>
+        <target state="translated">'{0}' è un URL duplicato già scaricato che genererà una dipendenza ciclica. Correggere dal server.</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandPackagePushed">
         <source>Your package was pushed.</source>
-        <target state="translated">È stato eseguito il push del pacchetto.</target>
+        <target state="translated">Il push del pacchetto è stato eseguito.</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandPushingPackage">
@@ -532,7 +532,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="StringCannotBeNullOrEmpty">
         <source>String argument '{0}' cannot be null or empty</source>
-        <target state="translated">L'argomento stringa '{0}' non può essere null o vuoto</target>
+        <target state="translated">L'argomento di stringa '{0}' non può essere Null o vuoto</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToFindFile">

@@ -1459,14 +1459,14 @@ Para obtener más información, visite https://docs.nuget.org/docs/reference/com
         <source>The following is a 'Non-HTTPS' source: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
         <target state="translated">El siguiente es un origen 'no HTTPS': {0}
-NuGet requiere orígenes HTTPS. Consulte https://aka.ms/nuget-https-everywhere para más información.</target>
+NuGet requiere orígenes HTTPS. Consulte https://aka.ms/nuget-https-everywhere para obtener más información.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_List_HttpSources">
         <source>The following are 'Non-HTTPS' sources: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
         <target state="translated">Los siguientes son orígenes 'no HTTPS': {0}
-NuGet requiere orígenes HTTPS. Consulte https://aka.ms/nuget-https-everywhere para más información.</target>
+NuGet requiere orígenes HTTPS. Consulte https://aka.ms/nuget-https-everywhere para obtener más información.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_MinVersionDoesNotExist">

@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="PackageManagementHeader.Text">
         <source>Package Management</source>
-        <target state="translated">Gestion des packages</target>
+        <target state="translated">Package Management</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreHeader.Text">

@@ -99,7 +99,7 @@
       </trans-unit>
       <trans-unit id="ArgumentNullOrEmpty">
         <source>Argument cannot be null or empty.</source>
-        <target state="new">Argument cannot be null or empty.</target>
+        <target state="translated">L'argomento non può essere Null o vuoto.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConfigCommandKeyNotFound">
@@ -286,7 +286,7 @@
       </trans-unit>
       <trans-unit id="Error_CannotUpgradeAutoReferencedPackage">
         <source>{0}: Package {1} is implicitly added by the SDK and cannot be upgraded independently</source>
-        <target state="new">{0}: Package {1} is implicitly added by the SDK and cannot be upgraded independently</target>
+        <target state="translated">{0}: il pacchetto {1} viene aggiunto implicitamente dall'SDK e non può essere aggiornato in modo indipendente</target>
         <note>{0} - project referencing the package
 {1} - package id</note>
       </trans-unit>
@@ -335,7 +335,7 @@ Do not translate "PackageVersion"</note>
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}
 NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
         <target state="translated">L'operazione '{0}' è in esecuzione con origini 'HTTP': {1}
-NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario impostare esplicitamente 'allowInsecureConnections' su true nel file NuGet.Config. Vedi https://aka.ms/nuget-https-everywhere per altre informazioni.</target>
+NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario impostare esplicitamente 'allowInsecureConnections' su true nel file NuGet.Config. Vedere https://aka.ms/nuget-https-everywhere per altre informazioni.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - list of server uris</note>
       </trans-unit>
       <trans-unit id="Error_InvalidCultureInfo">
@@ -400,7 +400,7 @@ NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario imposta
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingNotFound">
         <source>Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</source>
-        <target state="new">Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</target>
+        <target state="translated">Il mapping dell'origine del pacchetto è abilitato, ma non è stato trovato alcun mapping per il pacchetto {0}. Per altre informazioni, vedere https://aka.ms/nuget/psm.</target>
         <note>{0} - package id</note>
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
@@ -432,7 +432,7 @@ NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario imposta
       </trans-unit>
       <trans-unit id="Error_ProjectAssetsFilePropertyNotFound">
         <source>Project '{0}' does not have MSBuild property ProjectAssetsFile defined. This may indicate that this project does not support NuGet PackageReference, or that project customization has prevented the .NET SDK setting default values.</source>
-        <target state="translated">Non è stata definita la proprietà ProjectAssetsFile di MSBuild per il progetto ‘{0}’.. Ciò può significare che il progetto non supporta PackageReference di NuGet oppure che la personalizzazione del progetto ha impedito l'impostazione dei valori predefiniti di .NET SDK.</target>
+        <target state="translated">Non è stata definita la proprietà ProjectAssetsFile di MSBuild per il progetto ‘{0}'.. Ciò può significare che il progetto non supporta PackageReference di NuGet oppure che la personalizzazione del progetto ha impedito l'impostazione dei valori predefiniti di .NET SDK.</target>
         <note>{0} - Path to the project with the error</note>
       </trans-unit>
       <trans-unit id="Error_TrustFingerPrintAlreadyExist">
@@ -898,7 +898,7 @@ Per altre informazioni, vedere https://docs.nuget.org/docs/reference/command-lin
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_VulnerableOptionDescription">
         <source>Upgrade packages with known vulnerabilities.</source>
-        <target state="new">Upgrade packages with known vulnerabilities.</target>
+        <target state="translated">Aggiornare i pacchetti con vulnerabilità note.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_AllPackagesAlreadyUpToDate">
@@ -908,22 +908,22 @@ Per altre informazioni, vedere https://docs.nuget.org/docs/reference/command-lin
       </trans-unit>
       <trans-unit id="PackageUpdate_AllVersionsHaveAdvisories">
         <source>All versions of package {0} have security advisories. Unable to find a non-vulnerable version to update to.</source>
-        <target state="new">All versions of package {0} have security advisories. Unable to find a non-vulnerable version to update to.</target>
+        <target state="translated">Tutte le versioni del pacchetto {0} includono avvisi di sicurezza. Non è possibile trovare una versione non vulnerabile da usare per l'aggiornamento.</target>
         <note>{0}: package id</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_AlreadyUpToDate">
         <source>All packages are up to date</source>
-        <target state="new">All packages are up to date</target>
+        <target state="translated">Tutti i pacchetti sono aggiornati</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_AuditDisabled">
         <source>This command requires NuGetAudit to be enabled at this time. See https://aka.ms/nuget/audit for more information.</source>
-        <target state="new">This command requires NuGetAudit to be enabled at this time. See https://aka.ms/nuget/audit for more information.</target>
+        <target state="translated">Questo comando richiede che NuGetAudit sia abilitato in questo momento. Per altre informazioni, vedere https://aka.ms/nuget/audit.</target>
         <note>{Locked="NuGetAudit"}{Locked="dotnet package update"}</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_AuditModeIsDirect">
         <source>NuGetAuditMode is set to direct, which means that transitive packages with known vulnerabilities will not be updated. See https://aka.ms/nuget/audit for more information.</source>
-        <target state="new">NuGetAuditMode is set to direct, which means that transitive packages with known vulnerabilities will not be updated. See https://aka.ms/nuget/audit for more information.</target>
+        <target state="translated">NuGetAuditMode è impostato su Diretto, il che significa che i pacchetti transitivi con vulnerabilità note non verranno aggiornati. Per altre informazioni, vedere https://aka.ms/nuget/audit.</target>
         <note>{Locked="NuGetAuditMode"}</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_FinalSummary">
@@ -944,7 +944,7 @@ Per altre informazioni, vedere https://docs.nuget.org/docs/reference/command-lin
       </trans-unit>
       <trans-unit id="PackageUpdate_NoVulnerablePackages">
         <source>No upgradable packages have known vulnerabilities.</source>
-        <target state="new">No upgradable packages have known vulnerabilities.</target>
+        <target state="translated">Nessun pacchetto aggiornabile presenta vulnerabilità note.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_PackageArgumentDescription">
@@ -964,7 +964,7 @@ Per altre informazioni, vedere https://docs.nuget.org/docs/reference/command-lin
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatedMessage">
         <source>Updating {0} {1} to {2}.</source>
-        <target state="new">Updating {0} {1} to {2}.</target>
+        <target state="translated">È in corso il caricamento di {0} {1} in {2}.</target>
         <note>{0}: package id
 {1}: existing version
 {2}: new version</note>
@@ -976,7 +976,7 @@ Per altre informazioni, vedere https://docs.nuget.org/docs/reference/command-lin
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatingVulnerablePackages">
         <source>Updating packages with security advisories in {0}</source>
-        <target state="new">Updating packages with security advisories in {0}</target>
+        <target state="translated">È in corso l'aggiornamento dei pacchetti con avvisi di sicurezza in {0}</target>
         <note>{0} - the project/solution being checked</note>
       </trans-unit>
       <trans-unit id="PrereleaseVersionsAvailable">
@@ -1149,7 +1149,7 @@ La ricerca viene eseguita in un confronto di stringhe senza distinzione tra maiu
       </trans-unit>
       <trans-unit id="SourcesCommandAllowInsecureConnectionsDescription">
         <source>Allows HTTP connections for adding or updating packages. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Consente le connessioni HTTP per aggiungere o aggiornare i pacchetti. Nota: questo metodo non è sicuro. Per ulteriori informazioni sulle opzioni di sicurezza, vedere https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Consente connessioni HTTP per l'aggiunta o l'aggiornamento di pacchetti. Nota: questo metodo non è sicuro. Per le opzioni di sicurezza, vedere https://aka.ms/nuget-https-everywhere per altre informazioni.</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandFormatDescription">

@@ -454,7 +454,7 @@
       </trans-unit>
       <trans-unit id="Hyperlink_Readme">
         <source>Readme</source>
-        <target state="translated">Readme</target>
+        <target state="translated">Lisez-moi</target>
         <note />
       </trans-unit>
       <trans-unit id="Hyperlink_ReportAbuse">
@@ -943,7 +943,7 @@ Erreur : {1}</target>
       </trans-unit>
       <trans-unit id="Status_Canceled">
         <source>Canceled loading packages</source>
-        <target state="translated">Annulation effectuée du chargement des packages</target>
+        <target state="translated">Chargement des packages annulé</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_ErrorOccurred">
@@ -1238,7 +1238,7 @@ Erreur : {1}</target>
       </trans-unit>
       <trans-unit id="ToolTip_TransitivePathHelp">
         <source>To learn more about transitive paths, see</source>
-        <target state="translated">Pour en savoir plus sur les chemins transitifs, consultez</target>
+        <target state="translated">Pour découvrir plus d’informations sur les chemins transitifs, consultez</target>
         <note />
       </trans-unit>
       <trans-unit id="ToolTip_UninstallButton">

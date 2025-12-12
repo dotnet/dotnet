@@ -65,7 +65,7 @@
       <trans-unit id="Error_StaticGraphRestoreArgumentsParsingFailedExceptionReadingStream">
         <source>An error occurred parsing command-line arguments in static graph-based restore as an exception occurred reading the standard input stream, {0} Please file an issue at https://github.com/NuGet/Home
 {1}</source>
-        <target state="translated">分析基于静态图形的还原中的命令行参数时出错，因为读取标准输入流时出现异常。{0} 请通过 https://github.com/NuGet/Home 提交问题
+        <target state="translated">分析基于静态图形的还原中的命令行参数时出错，因为读取标准输入流时出现异常。{0}请在 https://github.com/NuGet/Home 上提交问题
 {1}</target>
         <note>0 - The exception message
 1 - The string representation of the exception</note>
@@ -83,7 +83,7 @@
       <trans-unit id="Error_StaticGraphUnhandledException">
         <source>Static graph-based restore encountered an unhandled exception. Please file an issue at https://github.com/NuGet/Home.  The exception was:
 {0}</source>
-        <target state="translated">基于静态图形的还原遇到未经处理的异常。请通过 https://github.com/NuGet/Home 提交问题。异常为:
+        <target state="translated">基于静态图形的还原遇到未经处理的异常。请通过 https://github.com/NuGet/Home 提交问题。 异常为:
 {0}</target>
         <note>0 - The exception as a string.</note>
       </trans-unit>

@@ -4,22 +4,22 @@
     <body>
       <trans-unit id="AddedPackageToFolder">
         <source>Added package '{0}' to folder '{1}'</source>
-        <target state="translated">已將套件 '{0}' 加入資料夾 '{1}'</target>
+        <target state="translated">已將套件 '{0}' 新增到資料夾 '{1}'</target>
         <note />
       </trans-unit>
       <trans-unit id="AddedPackageToFolderFromSource">
         <source>Added package '{0}' to folder '{1}' from source '{2}'</source>
-        <target state="translated">已從來源 '{2}' 將套件 '{0}' 新增到資料夾 '{1}'</target>
+        <target state="translated">已將來源 '{2}' 的套件 '{0}' 新增到資料夾 '{1}'</target>
         <note />
       </trans-unit>
       <trans-unit id="AddedPackageToPackagesConfig">
         <source>Added package '{0}' to '{1}'</source>
-        <target state="translated">已將套件 '{0}' 加入 '{1}'</target>
+        <target state="translated">已將套件 '{0}' 新增到 '{1}'</target>
         <note />
       </trans-unit>
       <trans-unit id="AddingPackageToFolder">
         <source>Adding package '{0}' to folder '{1}'</source>
-        <target state="translated">正在將套件 '{0}' 加入資料夾 '{1}'</target>
+        <target state="translated">正在將套件 '{0}' 新增到資料夾 '{1}'</target>
         <note />
       </trans-unit>
       <trans-unit id="AddingPackageWithOnlyDependencies">
@@ -34,7 +34,7 @@
       </trans-unit>
       <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
         <source>Argument cannot be null or empty</source>
-        <target state="translated">引數不能為 Null 或空白</target>
+        <target state="translated">引數不得為 Null 或空白</target>
         <note />
       </trans-unit>
       <trans-unit id="AttemptingToGatherDependencyInfo">
@@ -59,12 +59,12 @@
       </trans-unit>
       <trans-unit id="Debug_AddedFile">
         <source>Added file '{0}'.</source>
-        <target state="translated">已加入檔案 '{0}'。</target>
+        <target state="translated">已新增檔案 '{0}'。</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_AddedFileToFolder">
         <source>Added file '{0}' to folder '{1}'.</source>
-        <target state="translated">已將檔案 '{0}' 加入資料夾 '{1}'。</target>
+        <target state="translated">已將檔案 '{0}' 新增到資料夾 '{1}'。</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFile">
@@ -74,7 +74,7 @@
       </trans-unit>
       <trans-unit id="Debug_RemovedFileFromFolder">
         <source>Removed file '{0}' from folder '{1}'.</source>
-        <target state="translated">已將檔案 '{0}' 從資料夾 '{1}' 中移除。</target>
+        <target state="translated">已從資料夾 '{1}' 移除檔案 '{0}'。</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFolder">
@@ -84,7 +84,7 @@
       </trans-unit>
       <trans-unit id="Debug_TargetFrameworkInfo">
         <source>&gt;&gt; {0} are being added from '{1}'{2}</source>
-        <target state="translated">&gt;&gt; 正在從 '{1}'{2} 加入 {0}</target>
+        <target state="translated">&gt;&gt; 正在從 '{1}'{2} 新增 {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_TargetFrameworkInfoPrefix">
@@ -94,7 +94,7 @@
       </trans-unit>
       <trans-unit id="DependencyDoesNotHaveValidVersion">
         <source>Dependency '{0}' has invalid version specification.</source>
-        <target state="translated">相依性的 '{0}' 版本規格無效。</target>
+        <target state="translated">相依性 '{0}' 指定了無效的版本。</target>
         <note />
       </trans-unit>
       <trans-unit id="DownloadResourceNotFound">
@@ -129,7 +129,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">您正在使用 'HTTP' 來源執行 '{0}' 作業: {1}。NuGet 需要 HTTPS 來源。若要使用 HTTP 來源，您必須在 NuGet.Config 檔案中將 'allowInsecureConnections' 明確設定為 true。參閱 https://aka.ms/nuget-https-everywhere 以取得更多資訊。</target>
+        <target state="translated">您正在使用 'HTTP' 來源 {1} 執行 '{0}' 作業。NuGet 需要 HTTPS 來源。您必須在 NuGet.Config 檔案中將 'allowInsecureConnections' 明確設定為 true，才能使用 HTTP 來源。參閱 https://aka.ms/nuget-https-everywhere 以取得更多資訊。</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - server uri.</note>
       </trans-unit>
       <trans-unit id="Error_InvalidLockFileInput">
@@ -159,7 +159,7 @@
       </trans-unit>
       <trans-unit id="FileConflictMessage">
         <source>File '{0}' already exists in project '{1}'. Do you want to overwrite it?</source>
-        <target state="translated">檔案 '{0}' 已經存在於專案 '{1}'。您要覆寫該檔案嗎?</target>
+        <target state="translated">專案 '{1}' 中已有檔案 '{0}'。要加以覆寫嗎?</target>
         <note />
       </trans-unit>
       <trans-unit id="FoundPackageInPackagesFolder">
@@ -174,7 +174,7 @@
       </trans-unit>
       <trans-unit id="Info_OverwritingExistingFile">
         <source>Overwriting existing file '{0}'..</source>
-        <target state="translated">正在覆寫現有檔案 '{0}'。</target>
+        <target state="translated">正在覆寫現有的檔案 '{0}'...</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidProjectName">
@@ -219,17 +219,17 @@
       </trans-unit>
       <trans-unit id="PackageAlreadyExistsInFolder">
         <source>Package '{0}' already exists in folder '{1}'</source>
-        <target state="translated">封裝 '{0}' 已經存在於資料夾 '{1}'</target>
+        <target state="translated">資料夾 '{1}' 中已有套件 '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageAlreadyExistsInPackagesConfig">
         <source>Package '{0}' already exists in '{1}'</source>
-        <target state="translated">封裝 '{0}' 已經存在於 '{1}'</target>
+        <target state="translated">'{1}' 中已有套件 '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageAlreadyExistsInProject">
         <source>Package '{0}' already exists in project '{1}'</source>
-        <target state="translated">封裝 '{0}' 已經存在於專案 '{1}'</target>
+        <target state="translated">專案 '{1}' 中已有套件 '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageCancelledFromSource">
@@ -244,17 +244,17 @@
       </trans-unit>
       <trans-unit id="PackageDoesNotExistInFolder">
         <source>Package '{0}' does not exist in folder '{1}'</source>
-        <target state="translated">封裝 '{0}' 不存在於資料夾 '{1}'</target>
+        <target state="translated">資料夾 '{1}' 中沒有套件 '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageDoesNotExistInProject">
         <source>Package '{0}' does not exist in project '{1}'</source>
-        <target state="translated">封裝 '{0}' 不存在於專案 '{1}'</target>
+        <target state="translated">專案 '{1}' 中沒有套件 '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageDoesNotExisttInPackagesConfig">
         <source>Package '{0}' does not exists in '{1}'</source>
-        <target state="translated">封裝 '{0}' 不存在於 '{1}'</target>
+        <target state="translated">'{1}' 中沒有套件 '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageHasDependent">
@@ -336,17 +336,17 @@
       </trans-unit>
       <trans-unit id="RemovedPackageFromFolder">
         <source>Removed package '{0}' from folder '{1}'</source>
-        <target state="translated">已從資料夾 '{1}' 中移除套件 '{0}'</target>
+        <target state="translated">已從資料夾 '{1}' 移除套件 '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="RemovedPackageFromPackagesConfig">
         <source>Removed package '{0}' from '{1}'</source>
-        <target state="translated">已從 '{1}' 中移除套件 '{0}'</target>
+        <target state="translated">已從 '{1}' 移除套件 '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="RemovingPackageFromFolder">
         <source>Removing package '{0}' from folder '{1}'</source>
-        <target state="translated">正在從資料夾 '{1}' 中移除封裝 '{0}'</target>
+        <target state="translated">正在從資料夾 '{1}' 移除套件 '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="ResolutionSuccessfulNoAction">
@@ -481,7 +481,7 @@
       </trans-unit>
       <trans-unit id="Warning_DirectoryNotEmpty">
         <source>Directory '{0}' is not empty. Skipping...</source>
-        <target state="translated">目錄 '{0}' 不是空的。略過中...</target>
+        <target state="translated">目錄 '{0}' 不是空的。正在跳過...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_ErrorFindingRepository">
@@ -492,12 +492,12 @@
       </trans-unit>
       <trans-unit id="Warning_FileAlreadyExists">
         <source>'{0}' already exists. Skipping...</source>
-        <target state="translated">'{0}' 已存在。略過中...</target>
+        <target state="translated">已有 '{0}'。正在跳過...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FileModified">
         <source>Skipping '{0}' because it was modified.</source>
-        <target state="translated">正在略過 '{0}'，因為它已經過修改。</target>
+        <target state="translated">因為 '{0}' 已修改過，所以將予跳過。</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">

@@ -108,8 +108,8 @@ namespace NuGet.CommandLine.XPlat
 
                     ConfigCommand.Register(nugetCommand, getHidePrefixLogger);
                     ConfigCommand.Register(rootCommand, getHidePrefixLogger);
-                    Commands.Why.WhyCommand.Register(nugetCommand, getHidePrefixLogger);
-                    Commands.Why.WhyCommand.Register(rootCommand, getHidePrefixLogger);
+                    Commands.Why.WhyCommand.Register(nugetCommand, Spectre.Console.AnsiConsole.Console);
+                    Commands.Why.WhyCommand.Register(rootCommand, Spectre.Console.AnsiConsole.Console);
                 }
 
                 CancellationTokenSource tokenSource = new CancellationTokenSource();
