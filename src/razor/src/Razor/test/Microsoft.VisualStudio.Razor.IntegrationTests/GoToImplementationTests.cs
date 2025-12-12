@@ -40,4 +40,23 @@ public class GoToImplementationTests(ITestOutputHelper testOutputHelper) : Abstr
         // Assert
         await TestServices.Editor.WaitForActiveWindowAsync("Program.cs", ControlledHangMitigatingCancellationToken);
     }
+
+    [IdeFact]
+    public async Task GoToImplementation_FromCSharp()
+    {
+        // Open the file
+        await TestServices.SolutionExplorer.OpenFileAsync(RazorProjectConstants.BlazorProjectName, "Program.cs", ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.SetTextAsync("""
+            using BlazorProject.Shared;
+
+            typeof(Surv$$eyPrompt).ToString();
+            """, ControlledHangMitigatingCancellationToken);
+
+        // Act
+        await TestServices.Editor.InvokeGoToImplementationAsync(ControlledHangMitigatingCancellationToken);
+
+        // Assert
+        await TestServices.Editor.WaitForActiveWindowAsync("SurveyPrompt.razor", ControlledHangMitigatingCancellationToken);
+    }
 }

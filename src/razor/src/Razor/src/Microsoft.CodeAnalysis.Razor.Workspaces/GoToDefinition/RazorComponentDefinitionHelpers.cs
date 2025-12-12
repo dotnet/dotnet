@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -176,10 +175,7 @@ internal static class RazorComponentDefinitionHelpers
         var root = await csharpSyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
-        // Since we know how the compiler generates the C# source we can be a little specific here, and avoid
-        // long tree walks. If the compiler ever changes how they generate their code, the tests for this will break
-        // so we'll know about it.
-        if (TryGetClassDeclaration(root, out var classDeclaration))
+        if (root.TryGetClassDeclaration(out var classDeclaration))
         {
             var property = classDeclaration
                 .Members
@@ -207,21 +203,5 @@ internal static class RazorComponentDefinitionHelpers
         logger.LogInformation($"Generated C# was not in expected shape (CompilationUnit [-> Namespace] -> Class)");
 
         return null;
-
-        static bool TryGetClassDeclaration(SyntaxNode root, [NotNullWhen(true)] out ClassDeclarationSyntax? classDeclaration)
-        {
-            classDeclaration = root switch
-            {
-                CompilationUnitSyntax unit => unit switch
-                {
-                    { Members: [NamespaceDeclarationSyntax { Members: [ClassDeclarationSyntax c, ..] }, ..] } => c,
-                    { Members: [ClassDeclarationSyntax c, ..] } => c,
-                    _ => null,
-                },
-                _ => null,
-            };
-
-            return classDeclaration is not null;
-        }
     }
 }

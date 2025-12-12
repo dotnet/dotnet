@@ -15,6 +15,7 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 
@@ -55,7 +56,7 @@ internal sealed partial class RemoteSpanMappingService(in ServiceArgs args) : Ra
         var documentSnapshot = _snapshotManager.GetSnapshot(razorDocument);
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
-        var mappedSpans = MapSpans(codeDocument, [span]);
+        var mappedSpans = await MapSpansAsync(documentSnapshot, codeDocument, [span], cancellationToken).ConfigureAwait(false);
         if (mappedSpans is not [{ IsDefault: false } mappedSpan])
         {
             return null;
@@ -97,21 +98,36 @@ internal sealed partial class RemoteSpanMappingService(in ServiceArgs args) : Ra
         var documentSnapshot = _snapshotManager.GetSnapshot(razorDocument);
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
-        return MapSpans(codeDocument, spans);
+        return await MapSpansAsync(documentSnapshot, codeDocument, spans, cancellationToken).ConfigureAwait(false);
     }
 
-    private static ImmutableArray<RazorMappedSpanResult> MapSpans(RazorCodeDocument codeDocument, ImmutableArray<TextSpan> spans)
+    private static async Task<ImmutableArray<RazorMappedSpanResult>> MapSpansAsync(RemoteDocumentSnapshot documentSnapshot, RazorCodeDocument codeDocument, ImmutableArray<TextSpan> spans, CancellationToken cancellationToken)
     {
+        var csharpSyntaxTree = await documentSnapshot.GetCSharpSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+        var csharpSyntaxNode = await csharpSyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
+
         var source = codeDocument.Source.Text;
 
         var csharpDocument = codeDocument.GetRequiredCSharpDocument();
         var filePath = codeDocument.Source.FilePath.AssumeNotNull();
 
+        var classDeclSpan = csharpSyntaxNode.TryGetClassDeclaration(out var classDecl)
+            ? classDecl.Identifier.Span
+            : default;
+
         using var results = new PooledArrayBuilder<RazorMappedSpanResult>();
 
         foreach (var span in spans)
         {
-            if (RazorEditHelper.TryGetMappedSpans(span, source, csharpDocument, out var linePositionSpan, out var mappedSpan))
+            // If Roslyn is trying to navigate to, or show a reference to the class declaration, then we remap it to
+            // (0,0) in the Razor document.
+            if (span.Start == classDeclSpan.Start &&
+                (span.Length == 0 ||
+                span.Length == classDeclSpan.Length))
+            {
+                results.Add(new(filePath, new(LinePosition.Zero, LinePosition.Zero), new TextSpan()));
+            }
+            else if (RazorEditHelper.TryGetMappedSpan(span, source, csharpDocument, out var linePositionSpan, out var mappedSpan))
             {
                 results.Add(new(filePath, linePositionSpan, mappedSpan));
             }

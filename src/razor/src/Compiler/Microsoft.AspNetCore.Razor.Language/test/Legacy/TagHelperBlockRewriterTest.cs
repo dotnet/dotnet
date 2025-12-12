@@ -744,6 +744,86 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
             """);
     }
 
+    // Regression tests for SDK 9+ escaped @@ attribute bug
+    // Tests for attributes following escaped @@ attributes with unquoted expressions
+    
+    public static TagHelperCollection AttributeTargetingTagHelper_TagHelpers =
+    [
+        TagHelperDescriptorBuilder.CreateTagHelper("ControlIdTagHelper", "TestAssembly")
+            .TagMatchingRuleDescriptor(rule => rule
+                .RequireTagName("*")
+                .RequireAttributeDescriptor(attribute => attribute.Name("control-id")))
+            .BoundAttributeDescriptor(attribute => attribute
+                .Name("control-id")
+                .PropertyName("ControlId")
+                .TypeName(typeof(string).FullName))
+            .BoundAttributeDescriptor(attribute => attribute
+                .Name("is-confirm-redirect")
+                .PropertyName("IsConfirmRedirect")
+                .TypeName(typeof(string).FullName))
+            .Build()
+    ];
+
+    [Fact]
+    public void EscapedAttributeWithUnquotedExpression_DoesNotSwallowFollowingAttributes()
+    {
+        // Test the exact scenario from the issue: @@click with unquoted expression followed by other attributes
+        EvaluateData(AttributeTargetingTagHelper_TagHelpers, """
+            @{
+                var functionCode = 10;
+            }
+            <div @@click="switchFunction(@functionCode)" is-confirm-redirect="true" control-id="test">Content</div>
+            """);
+    }
+
+    [Fact]
+    public void EscapedAttributeWithUnquotedExpression_MultipleFollowingAttributes()
+    {
+        // Test with multiple attributes after the escaped @@ attribute
+        EvaluateData(AttributeTargetingTagHelper_TagHelpers, """
+            @{
+                var code = 20;
+            }
+            <span @@click="handler(@code)" is-confirm-redirect="true" control-id="myid" data-value="test">Text</span>
+            """);
+    }
+
+    [Fact]
+    public void EscapedAttributeWithUnquotedExpression_BoundAttributeFollows()
+    {
+        // Test specifically that bound attributes following escaped @@ are not swallowed
+        EvaluateData(AttributeTargetingTagHelper_TagHelpers, """
+            @{
+                var url = "Tasks";
+            }
+            <button @@click="navigate(@url)" control-id="nav-button">Navigate</button>
+            """);
+    }
+
+    [Fact]
+    public void EscapedAttributeWithUnquotedExpression_AtEnd()
+    {
+        // Test escaped @@ attribute at the end (should not affect previous attributes)
+        EvaluateData(AttributeTargetingTagHelper_TagHelpers, """
+            @{
+                var id = 5;
+            }
+            <div control-id="container" is-confirm-redirect="false" @@click="action(@id)">Content</div>
+            """);
+    }
+
+    [Fact]
+    public void EscapedAttributeWithUnquotedExpression_MiddlePosition()
+    {
+        // Test escaped @@ attribute in the middle
+        EvaluateData(AttributeTargetingTagHelper_TagHelpers, """
+            @{
+                var value = 42;
+            }
+            <section is-confirm-redirect="true" @@data-id="item_@value" control-id="section1">Text</section>
+            """);
+    }
+
     [Fact]
     public void TagHelperParseTreeRewriter_CreatesErrorForIncompleteTagHelper1()
     {

@@ -29,7 +29,7 @@
                     RazorCommentTransition;[@];
                 MarkupEphemeralTextLiteral - [41..43)::2 - [LF] - Gen<None>
                     NewLine;[LF];
-                MarkupMinimizedAttributeBlock - [43..56)::13 - [  not-visible]
+                MarkupMinimizedTagHelperAttribute - [43..56)::13 - not-visible - Minimized - Bound - [  not-visible]
                     MarkupTextLiteral - [43..45)::2 - [  ] - Gen<Markup>
                         Whitespace;[  ];
                     MarkupTextLiteral - [45..56)::11 - [not-visible] - Gen<Markup>

@@ -54,6 +54,85 @@ public class FindAllReferencesTests(ITestOutputHelper testOutputHelper) : Abstra
     }
 
     [IdeFact]
+    public async Task FindAllReferences_Component_FromRazor()
+    {
+        // Open the file
+        await TestServices.SolutionExplorer.OpenFileAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.IndexRazorFile, ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.PlaceCaretAsync("Prompt", charsOffset: 0, ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+
+        // Act
+        await TestServices.Editor.InvokeFindAllReferencesAsync(ControlledHangMitigatingCancellationToken);
+
+        // Assert
+        var results = await TestServices.FindReferencesWindow.WaitForContentsAsync(ControlledHangMitigatingCancellationToken, expected: 2);
+
+        // Don't care about order, but Assert.Collection does
+        var orderedResults = OrderResults(results);
+
+        Assert.Collection(
+            orderedResults,
+            reference =>
+            {
+                Assert.Equal("Index.razor", reference.DocumentName);
+                Assert.Equal("<SurveyPrompt Title=\"How is Blazor working for you?\" />", reference.Code);
+            },
+            reference =>
+            {
+                Assert.Equal("SurveyPrompt.razor", reference.DocumentName);
+                Assert.Equal("<div class=\"alert alert-secondary mt-4\">", reference.Code);
+            }
+        );
+
+        await TestServices.FindReferencesWindow.CloseToolWindowAsync(ControlledHangMitigatingCancellationToken);
+    }
+
+    [IdeFact]
+    public async Task FindAllReferences_Component_FromCSharp()
+    {
+        // Open the file
+        await TestServices.SolutionExplorer.OpenFileAsync(RazorProjectConstants.BlazorProjectName, "Program.cs", ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.SetTextAsync("""
+            using BlazorProject.Shared;
+
+            typeof(Surv$$eyPrompt).ToString();
+            """, ControlledHangMitigatingCancellationToken);
+
+        // Act
+        await TestServices.Editor.InvokeFindAllReferencesAsync(ControlledHangMitigatingCancellationToken);
+
+        // Assert
+        var results = await TestServices.FindReferencesWindow.WaitForContentsAsync(ControlledHangMitigatingCancellationToken, expected: 2);
+
+        // Don't care about order, but Assert.Collection does
+        var orderedResults = OrderResults(results);
+
+        Assert.Collection(
+            orderedResults,
+            reference =>
+            {
+                Assert.Equal("Index.razor", reference.DocumentName);
+                Assert.Equal("<SurveyPrompt Title=\"How is Blazor working for you?\" />", reference.Code);
+            },
+            reference =>
+            {
+                Assert.Equal("Program.cs", reference.DocumentName);
+                Assert.Equal("typeof(SurveyPrompt).ToString();", reference.Code);
+            },
+            reference =>
+            {
+                Assert.Equal("SurveyPrompt.razor", reference.DocumentName);
+                Assert.Equal("<div class=\"alert alert-secondary mt-4\">", reference.Code);
+            }
+        );
+
+        await TestServices.FindReferencesWindow.CloseToolWindowAsync(ControlledHangMitigatingCancellationToken);
+    }
+
+    [IdeFact]
     public async Task FindAllReferences_ComponentAttribute_FromRazor()
     {
         // Open the file
@@ -94,7 +173,7 @@ public class FindAllReferencesTests(ITestOutputHelper testOutputHelper) : Abstra
         await TestServices.FindReferencesWindow.CloseToolWindowAsync(ControlledHangMitigatingCancellationToken);
     }
 
-    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8036")]
+    [IdeFact]
     public async Task FindAllReferences_ComponentAttribute_FromCSharpInRazor()
     {
         // Open the file
@@ -118,24 +197,24 @@ public class FindAllReferencesTests(ITestOutputHelper testOutputHelper) : Abstra
             reference =>
             {
                 Assert.Equal(expected: "Index.razor", reference.DocumentName);
-                Assert.Equal(expected: "Title", reference.Code);
+                Assert.Equal(expected: "<SurveyPrompt Title=\"How is Blazor working for you?\" />", reference.Code);
+            },
+            reference =>
+            {
+                Assert.Equal(expected: "SurveyPrompt.razor", reference.DocumentName);
+                Assert.Equal(expected: "<strong>@Title</strong>", reference.Code);
             },
             reference =>
             {
                 Assert.Equal(expected: "SurveyPrompt.razor", reference.DocumentName);
                 Assert.Equal(expected: "public string? Title { get; set; }", reference.Code);
-            },
-            reference =>
-            {
-                Assert.Equal(expected: "SurveyPrompt.razor", reference.DocumentName);
-                Assert.Equal(expected: "Title", reference.Code);
             }
         );
 
         await TestServices.FindReferencesWindow.CloseToolWindowAsync(ControlledHangMitigatingCancellationToken);
     }
 
-    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8036")]
+    [IdeFact]
     public async Task FindAllReferences_ComponentAttribute_FromCSharpInCSharp()
     {
         // Create the file
@@ -189,23 +268,20 @@ public class FindAllReferencesTests(ITestOutputHelper testOutputHelper) : Abstra
 
         Assert.Collection(
             orderedResults,
-            new Action<TableEntry>[]
+            reference =>
             {
-                reference =>
-                {
-                    Assert.Equal(expected: "@MyProperty", actual: reference.Code);
-                    Assert.Equal(expected: "MyComponent.razor", Path.GetFileName(reference.DocumentName));
-                },
-                reference =>
-                {
-                    Assert.Equal(expected: "public string? MyProperty { get; set; }", actual: reference.Code);
-                    Assert.Equal(expected: "MyComponent.razor.cs", Path.GetFileName(reference.DocumentName));
-                },
-                reference =>
-                {
-                    Assert.Equal(expected: "<MyComponent MyProperty=\"123\" />", actual: reference.Code);
-                    Assert.Equal(expected: "MyPage.razor", Path.GetFileName(reference.DocumentName));
-                },
+                Assert.Equal(expected: "@MyProperty", actual: reference.Code);
+                Assert.Equal(expected: "MyComponent.razor", Path.GetFileName(reference.DocumentName));
+            },
+            reference =>
+            {
+                Assert.Equal(expected: "public string? MyProperty { get; set; }", actual: reference.Code);
+                Assert.Equal(expected: "MyComponent.razor.cs", Path.GetFileName(reference.DocumentName));
+            },
+            reference =>
+            {
+                Assert.Equal(expected: "<MyComponent MyProperty=\"123\" />", actual: reference.Code);
+                Assert.Equal(expected: "MyPage.razor", Path.GetFileName(reference.DocumentName));
             });
 
         await TestServices.FindReferencesWindow.CloseToolWindowAsync(ControlledHangMitigatingCancellationToken);
