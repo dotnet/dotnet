@@ -7,6 +7,7 @@ using NuGet.Configuration;
 using NuGet.DependencyResolver;
 using NuGet.Frameworks;
 using NuGet.Protocol.Core.Types;
+using NuGet.RuntimeModel;
 using NuGet.Test.Utility;
 using Xunit;
 
@@ -55,11 +56,12 @@ namespace NuGet.Commands.Test
 
             // Create a minimal RestoreTargetGraph with empty target alias
             var graph = RestoreTargetGraph.Create(
+                RuntimeGraph.Empty,
                 graphs: [],
                 context: context,
-                logger: logger,
                 targetAlias: targetAlias,
-                framework: framework);
+                framework: framework,
+                runtimeIdentifier: null);
 
             // Act
             string targetGraphName = graph.TargetGraphName;
@@ -84,7 +86,6 @@ namespace NuGet.Commands.Test
                 runtimeGraph: RuntimeModel.RuntimeGraph.Empty,
                 graphs: [],
                 context: context,
-                log: logger,
                 targetAlias: targetAlias,
                 framework: framework,
                 runtimeIdentifier: runtimeIdentifier);
@@ -112,7 +113,6 @@ namespace NuGet.Commands.Test
                 runtimeGraph: RuntimeModel.RuntimeGraph.Empty,
                 graphs: [],
                 context: context,
-                log: logger,
                 targetAlias: targetAlias,
                 framework: framework,
                 runtimeIdentifier: runtimeIdentifier);
@@ -136,10 +136,9 @@ namespace NuGet.Commands.Test
 
             // Create a minimal RestoreTargetGraph
             var graph = RestoreTargetGraph.Create(
-                runtimeGraph: RuntimeModel.RuntimeGraph.Empty,
+                runtimeGraph: RuntimeGraph.Empty,
                 graphs: [],
                 context: context,
-                log: logger,
                 targetAlias: targetAlias,
                 framework: framework,
                 runtimeIdentifier: runtimeIdentifier);

@@ -357,7 +357,7 @@
     The VSSDK creates a VsixSourceItems item for each file to be copied into the VSIX. In this target, we remove all
     the files listed in our .vsixignore file, and error if any file listed in .vsixinclude is missing from the vsix.
   -->
-  <Target Name="RemoveUnsolicitedVsixAssemblies" AfterTargets="GetVsixSourceItems" Condition="'$(IncludeCopyLocalReferencesInVSIXContainer)'=='true'" DependsOnTargets="ReadVsixIncludeListFromFile;ReadVsixIgnoreListFromFile">
+  <Target Name="RemoveUnsolicitedVsixAssemblies" AfterTargets="GetVsixSourceItems" Condition="'$(IncludeCopyLocalReferencesInVSIXContainer)'=='true' And '$(DesignTimeBuild)'!='true'" DependsOnTargets="ReadVsixIncludeListFromFile;ReadVsixIgnoreListFromFile">
     <Message Text="Filtering VSIX package files..." Importance="high" />
     <ItemGroup>
       <AllVsixSymbols Include="@(VSIXSourceItem->'%(FileName)%(Extension)')" Condition=" '%(Extension)' == '.pdb' ">
