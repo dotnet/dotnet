@@ -155,6 +155,14 @@ jobs:
     displayName: Run Tests
     workingDirectory: $(Build.SourcesDirectory)
 
+  - ${{ if and(eq(parameters.publishTestResultsPr, 'true'), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release'))) }}:
+    - template: /eng/pipelines/templates/steps/create-baseline-update-pr.yml@self
+      parameters:
+        targetDirectory: test/Microsoft.DotNet.SourceBuild.Tests/assets/SdkContentTests
+        updatedBaselineDirectory: $(Build.StagingDirectory)/BuildLogs
+        title: Update Source-Build SDK Diff Tests Baselines and Exclusions
+        unionExclusionsBaselines: true
+
   - script: |
       set -x
       targetFolder=$(Build.StagingDirectory)/BuildLogs/
@@ -182,13 +190,3 @@ jobs:
       mergeTestResults: true
       publishRunAttachments: true
       testRunTitle: $(Agent.JobName)
-
-  - ${{ if and(eq(parameters.publishTestResultsPr, 'true'), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release'))) }}:
-      - template: ../steps/create-baseline-update-pr.yml
-        parameters:
-          dotnetPath: $(DotNetPath)
-          pipeline: sdk
-          repo: dotnet/dotnet
-          originalFilesDirectory: test/Microsoft.DotNet.SourceBuild.Tests/assets/SdkContentTests
-          updatedFilesDirectory: $(Build.StagingDirectory)/BuildLogs
-          pullRequestTitle: Update Source-Build SDK Diff Tests Baselines and Exclusions

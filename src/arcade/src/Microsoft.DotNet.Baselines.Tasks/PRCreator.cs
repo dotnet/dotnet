@@ -24,6 +24,7 @@ internal class PRCreator
     private readonly string _gitHubRepoName;
     private readonly GitHubClient _client;
     private const string BuildLink = "https://dev.azure.com/dnceng/internal/_build/results?buildId=";
+    private const string UpdatedFilePrefix = "updated";
     private const string TreeMode = "040000";
     private const int MaxRetries = 10;
 
@@ -132,9 +133,18 @@ internal class PRCreator
     }
 
     // Return a dictionary using the filename without the
-    // "Updated" prefix (if present) and anything before the first '.' as the key
+    // "Updated" prefix and anything before the first '.' as the key
     private Dictionary<string, HashSet<string>> ParseAndGroupUpdatedFiles(List<string> updatedFiles) =>
         updatedFiles
+            .Where(file =>
+            {
+                bool hasPrefix = HasUpdatedPrefix(file);
+                if (!hasPrefix)
+                {
+                    _logger.LogMessage(MessageImportance.Low, $"Ignoring file not starting with '{UpdatedFilePrefix}': {file}");
+                }
+                return hasPrefix;
+            })
             .Select(updatedFile => {
                 if (!File.Exists(updatedFile))
                 {
@@ -303,14 +313,12 @@ internal class PRCreator
 
     private string ParseUpdatedFileName(string updatedFile)
     {
-        try
+        string fileName = Path.GetFileName(updatedFile);
+        if (HasUpdatedPrefix(fileName))
         {
-            return updatedFile.Split("Updated")[1];
+            return fileName.Substring(UpdatedFilePrefix.Length);
         }
-        catch
-        {
-            return updatedFile;
-        }
+        throw new ArgumentException($"File name '{fileName}' does not start with '{UpdatedFilePrefix}' prefix.", nameof(updatedFile));
     }
 
     private async Task<TreeResponse> CreateTreeFromItemsAsync(List<NewTreeItem> items, string path = "")
@@ -533,4 +541,7 @@ internal class PRCreator
             }
         }
     }
+
+    private bool HasUpdatedPrefix(string fileName)
+        => Path.GetFileName(fileName).StartsWith(UpdatedFilePrefix, StringComparison.OrdinalIgnoreCase);
 }
