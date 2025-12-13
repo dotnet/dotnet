@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 293600,
+      "barId": 294297,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "774a2ef8d2777c50d047d6776ced33260822cad6"
+      "commitSha": "9f286ddee40065ea225611cb43ab0415e48994c2"
     },
     {
       "barId": 288647,
@@ -19,10 +19,10 @@
       "commitSha": "89d788641914c5d0b87fddfa11f4df0b5cfaa73d"
     },
     {
-      "barId": 293516,
+      "barId": 294355,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "2b3cc4df3baca89a2c189c79bbe5f803e31694b9"
+      "commitSha": "2235ffd325c3926d0392fae9dcc2dcb6a623f1eb"
     },
     {
       "barId": 294408,
@@ -37,10 +37,10 @@
       "commitSha": "191feab170b690f6a4923072d1b6f6e00272d8a7"
     },
     {
-      "barId": 293844,
+      "barId": 294362,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "8102dd3ac35ed339f12dbc9b425d94159047828c"
+      "commitSha": "6afbfb45ccc9691167206bf29482a99b1d6d469c"
     },
     {
       "barId": 291014,
@@ -49,16 +49,16 @@
       "commitSha": "f29ac531ec59b79ff12335835ae4a69cde51156a"
     },
     {
-      "barId": 291910,
+      "barId": 294340,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "f779efc8c61a92528741de0210e46b47b8e71601"
+      "commitSha": "5fe802ba22faf842537d9d0282696604fd4845a5"
     },
     {
-      "barId": 293745,
+      "barId": 294163,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "cbaaa90cf3529b381226246036456e737c66dc13"
+      "commitSha": "9ff6bc38d3391c3b4bb2fe8b228b1f0a03076c7c"
     },
     {
       "barId": 292299,
@@ -73,10 +73,10 @@
       "commitSha": "069bda6132d6ac2134cc9b26d651ccb825ff212d"
     },
     {
-      "barId": 291277,
+      "barId": 293953,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "4524dcd1e91c0d09d6da6576952f8df05e666e9c"
+      "commitSha": "bbee830b0ef18eb5b4aa5daee65ae35a34f8c132"
     }
   ],
   "submodules": [
