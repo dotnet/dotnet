@@ -568,8 +568,32 @@ jobs:
 
             echo "Extracting SDK from $previousSdkPath"
             eval tar -ozxf "$previousSdkPath" -C "$(previouslySourceBuiltSdkDir)"
+            
+            customPrepArgs="${customPrepArgs} --with-sdk $(previouslySourceBuiltSdkDir)"
+            additionalBuildArgs="--with-sdk $(previouslySourceBuiltSdkDir)"
+          fi
 
-            echo "##vso[task.setvariable variable=additionalBuildArgs]--with-sdk $(previouslySourceBuiltSdkDir)"
+          if [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
+             # Extract the prebuilt packages to a temporary directory
+             mkdir -p "$(previouslySourceBuiltArtifactsDir)"
+             
+             artifactsTarball=$(find "$(downloadedArtifactsDir)" -name "Private.SourceBuilt.Artifacts.*.tar.gz" | head -n 1)
+             if [ -z "$artifactsTarball" ]; then
+               echo "Error: Private.SourceBuilt.Artifacts tarball not found in $(downloadedArtifactsDir)"
+               ls -R "$(downloadedArtifactsDir)"
+               exit 1
+             fi
+             
+             echo "Extracting artifacts from $artifactsTarball"
+             tar -xzf "$artifactsTarball" -C "$(previouslySourceBuiltArtifactsDir)"
+             
+             customPrepArgs="${customPrepArgs} --with-packages $(previouslySourceBuiltArtifactsDir)/"
+             additionalBuildArgs="${additionalBuildArgs} --with-packages $(previouslySourceBuiltArtifactsDir)/"
+          fi
+          
+          if [[ -n "$additionalBuildArgs" ]]; then
+            echo "##vso[task.setvariable variable=additionalBuildArgs]$additionalBuildArgs"
+          fi
           fi
 
           ./prep-source-build.sh $customPrepArgs
@@ -601,19 +625,8 @@ jobs:
             fi
 
             if [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
-               # Extract the prebuilt packages to a temporary directory
-               mkdir -p "$(previouslySourceBuiltArtifactsDir)"
-               
-               artifactsTarball=$(find "$(downloadedArtifactsDir)" -name "Private.SourceBuilt.Artifacts.*.tar.gz" | head -n 1)
-               if [ -z "$artifactsTarball" ]; then
-                 echo "Error: Private.SourceBuilt.Artifacts tarball not found in $(downloadedArtifactsDir)"
-                 ls -R "$(downloadedArtifactsDir)"
-                 exit 1
-               fi
-               
-               echo "Extracting artifacts from $artifactsTarball"
-               tar -xzf "$artifactsTarball" -C "$(previouslySourceBuiltArtifactsDir)"
-               customBuildArgs="$customBuildArgs --with-packages $(previouslySourceBuiltArtifactsDir)/"
+               # Prebuilt packages are extracted in the Prep step
+               :
             fi
 
             if [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
