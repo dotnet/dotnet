@@ -2,18 +2,16 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Build.Framework;
-using Microsoft.DotNet.UnifiedBuild.Tasks.Models;
 using Microsoft.DotNet.UnifiedBuild.Tasks.Services;
 using BuildTask = Microsoft.Build.Utilities.Task;
 
 namespace Microsoft.DotNet.UnifiedBuild.Tasks;
 
-public class CreateSourceArtifacts : BuildTask
+public class CreateSourceArtifact : BuildTask
 {
     /// <summary>
     /// Commit SHA of the VMR source to download
@@ -57,56 +55,38 @@ public class CreateSourceArtifacts : BuildTask
     private const string GitHubRepoName = "dotnet";
     private const string GitHubTimezone = "America/Los_Angeles"; // GitHub uses this timezone for commit timestamps in zip metadata
     private const int GitArchiveTimeout = 5 * 60 * 1000; // 5 minutes
+    private const string TarExtension = "tar.gz";
 
     public override bool Execute() => ExecuteAsync().GetAwaiter().GetResult();
 
     private async Task<bool> ExecuteAsync()
     {
         var processService = new ProcessService(Log, GitArchiveTimeout);
-        var errors = new ConcurrentQueue<string>();
 
-        await Parallel.ForEachAsync(Enum.GetValues<ArtifactType>(), async (artifactType, _) =>
-        {
-            await CreateArtifactAsync(artifactType, processService, errors);
-        });
+        string artifactFilePath = Path.Combine(OutputDirectory, $"{ArtifactName}-{SdkNonStableVersion}.{TarExtension}");
 
-        if (errors.IsEmpty)
-        {
-            Log.LogMessage(MessageImportance.High, "Source artifact creation succeeded.");
-            return true;
-        }
-
-        Log.LogError($"Source artifact creation failed with the following errors:");
-        foreach (var error in errors)
-        {
-            Log.LogError($" - {error}");
-        }
-        return false;
-    }
-
-    private async Task CreateArtifactAsync(ArtifactType artifactType, ProcessService processService, ConcurrentQueue<string> errors)
-    {
-        string artifactFilePath = Path.Combine(OutputDirectory, $"{ArtifactName}-{SdkNonStableVersion}.{artifactType.GetArtifactExtension()}");
-
-        Log.LogMessage(MessageImportance.High, $"Creating {artifactType} source artifact at: {artifactFilePath}");
+        Log.LogMessage(MessageImportance.High, $"Creating {TarExtension} source artifact at: {artifactFilePath}");
 
         try
         {
             ProcessResult result = await processService.RunProcessAsync(
                 "git",
-                artifactType.GetGitArchiveArgs(artifactFilePath, GitHubRepoName, SdkStableVersion, SourceCommit),
+                $"-c \"tar.tar.gz.command=gzip -cn\" archive --format={TarExtension} --output \"{artifactFilePath}\" --prefix \"{GitHubRepoName}-{SdkStableVersion}/\" {SourceCommit}",
                 environmentVariables: new List<ProcessEnvironmentVariable> { new ProcessEnvironmentVariable("TZ", GitHubTimezone) },
                 workingDirectory: RepoRoot
             );
 
             if (result.ExitCode != 0)
             {
-                errors.Enqueue($"[{artifactType}] Git exited with code {result.ExitCode}: {result.Error}");
+                Log.LogError($"[{TarExtension}] Git exited with code {result.ExitCode}: {result.Error}");
+                return false;
             }
         }
         catch (Exception ex)
         {
-            errors.Enqueue($"[{artifactType}] Exception during artifact creation: {ex.Message}");
+            Log.LogError($"[{TarExtension}] Exception during artifact creation: {ex.Message}");
+            return false;
         }
+        return true;
     }
 }

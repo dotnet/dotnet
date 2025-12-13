@@ -119,8 +119,8 @@ parameters:
   type: boolean
   default: false
 
-# Create and publish the source artifacts
-- name: createSourceArtifacts
+# Create and publish the source artifact
+- name: createSourceArtifact
   type: boolean
   default: false
 
@@ -634,17 +634,17 @@ jobs:
           if [[ '${{ parameters.buildFromArchive }}' == 'True' ]]; then
             customBuildArgs="$customBuildArgs --source-repository https://github.com/dotnet/dotnet"
             customBuildArgs="$customBuildArgs --source-version $(git -C "$(vmrPath)" rev-parse HEAD)"
-            if [[ '${{ parameters.createSourceArtifacts }}' == 'True' ]]; then
+            if [[ '${{ parameters.createSourceArtifact }}' == 'True' ]]; then
               # Do not enable source artifact creation when not building from a git repo.
               # We strip the .git/ directory when building from archive,
-              # so it's not possible to create the artifacts in that mode.
-              echo "Cannot create source artifacts when building from archive."
+              # so it's not possible to create the artifact in that mode.
+              echo "Cannot create source artifact when building from archive."
               exit 1
             fi
           fi
           
-          if [[ '${{ parameters.createSourceArtifacts }}' == 'True' ]]; then
-            extraBuildProperties="$extraBuildProperties /p:CreateSourceArtifacts=true"
+          if [[ '${{ parameters.createSourceArtifact }}' == 'True' ]]; then
+            extraBuildProperties="$extraBuildProperties /p:CreateSourceArtifact=true"
           fi
 
           if [[ '${{ parameters.useMonoRuntime }}' == 'True' ]]; then
