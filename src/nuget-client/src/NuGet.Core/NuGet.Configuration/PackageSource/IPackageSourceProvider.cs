@@ -83,6 +83,13 @@ namespace NuGet.Configuration
         void SavePackageSources(IEnumerable<PackageSource> sources);
 
         /// <summary>
+        /// Compares the given list of AuditSources with the current AuditSources in the configuration
+        /// and adds, removes or updates each source as needed.
+        /// </summary>
+        /// <param name="sources">PackageSources to be saved</param>
+        void SaveAuditSources(IEnumerable<PackageSource> sources);
+
+        /// <summary>
         /// Checks if a package source with a given name is part of the disabled sources configuration
         /// </summary>
         /// <param name="name">Name of the source to be queried</param>

@@ -142,6 +142,8 @@ namespace Test.Utility
         public void AddPackageSource(PackageSource source) => throw new NotImplementedException();
 
         public bool IsPackageSourceEnabled(string name) => throw new NotImplementedException();
+
+        public void SaveAuditSources(IEnumerable<PackageSource> sources) => throw new NotImplementedException();
     }
 
     public static class TestPackageSourceSettings

@@ -929,6 +929,12 @@ Per altre informazioni, vedere https://docs.nuget.org/docs/reference/command-lin
         <target state="translated">Identificatore del pacchetto ,ad esempio 'Newtonsoft.Json'.</target>
         <note />
       </trans-unit>
+      <trans-unit id="PackageDownloadCommand_PackageSourceMapping_NoSourcesMapped">
+        <source>Unable to download package '{0}'. PackageSourceMapping is enabled, but no mapped sources were found for this package. The following source(s) were not considered: {1}.</source>
+        <target state="translated">Non è possibile scaricare il pacchetto '{0}'. PackageSourceMapping è abilitato, ma non sono state trovate origini mappate per il pacchetto. Le seguenti origini non sono state considerate: {1}.</target>
+        <note>{0} = package ID 
+{1} = comma-separated list of all configured sources </note>
+      </trans-unit>
       <trans-unit id="PackageDownloadCommand_PackageSourceMapping_NoSuchSource">
         <source>The mapped source '{0}' for package '{1}' was not found among the configured sources.</source>
         <target state="translated">L'origine mappata '{0}' per il pacchetto '{1}' non è stata trovata tra le origini configurate.</target>
