@@ -11,14 +11,14 @@
 
   <PropertyGroup>
     <!-- The TFM of the major release of .NET that the Arcade SDK aligns with. -->
-    <NetCurrent>net10.0</NetCurrent>
+    <NetCurrent>net11.0</NetCurrent>
 
     <!-- The previously released version of .NET.
          Undefined when NetMinimum and NetPrevious are identical. -->
-    <NetPrevious>net9.0</NetPrevious>
+    <NetPrevious/>
 
     <!-- Lowest supported version of .NET at the time of the release of NetCurrent. -->
-    <NetMinimum>net8.0</NetMinimum>
+    <NetMinimum>net10.0</NetMinimum>
 
     <!-- The TFM of the latest version of .NET Framework. -->
     <NetFrameworkCurrent>net481</NetFrameworkCurrent>
