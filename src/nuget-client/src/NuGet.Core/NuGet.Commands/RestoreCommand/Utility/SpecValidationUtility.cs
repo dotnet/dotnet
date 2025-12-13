@@ -22,15 +22,7 @@ namespace NuGet.Commands
         /// </summary>
         public static void ValidateDependencySpec(DependencyGraphSpec spec)
         {
-            ValidateDependencySpec(spec, projectsToSkip: new HashSet<string>());
-        }
-
-        /// <summary>
-        /// Validate a dg file. This will throw a RestoreSpecException if there are errors.
-        /// </summary>
-        public static void ValidateDependencySpec(DependencyGraphSpec spec, HashSet<string> projectsToSkip)
-        {
-            ValidateDependencySpec(spec, projectsToSkip, NullLogger.Instance);
+            ValidateDependencySpec(spec, projectsToSkip: new HashSet<string>(), NullLogger.Instance);
         }
 
         public static void ValidateDependencySpec(DependencyGraphSpec spec, HashSet<string> projectsToSkip, ILogger logger)
@@ -40,6 +32,11 @@ namespace NuGet.Commands
             if (spec == null)
             {
                 throw new ArgumentNullException(nameof(spec));
+            }
+
+            if (projectsToSkip == null)
+            {
+                throw new ArgumentNullException(nameof(projectsToSkip));
             }
 
             try
@@ -135,10 +132,6 @@ namespace NuGet.Commands
                 {
                     case ProjectStyle.PackageReference:
                         ValidateProjectSpecPackageReference(spec, files, logger);
-                        break;
-
-                    case ProjectStyle.ProjectJson:
-                        ValidateProjectSpecUAP(spec, files, logger);
                         break;
 
                     default:
@@ -253,30 +246,6 @@ namespace NuGet.Commands
             }
         }
 
-        private static void ValidateProjectSpecUAP(PackageSpec spec, IEnumerable<string> files, ILogger logger)
-        {
-            // Verify frameworks
-            ValidateFrameworks(spec, files, logger);
-
-            // UAP may contain only 1 framework
-            if (spec.TargetFrameworks.Count != 1)
-            {
-                throw RestoreSpecException.Create(Strings.SpecValidationUAPSingleFramework, files);
-            }
-
-            // UAP must specify a project.json file
-            if (string.IsNullOrEmpty(spec.RestoreMetadata.ProjectJsonPath)
-                || spec.RestoreMetadata.ProjectJsonPath != spec.FilePath)
-            {
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    Strings.MissingRequiredPropertyForProjectType,
-                    nameof(spec.RestoreMetadata.ProjectJsonPath),
-                    ProjectStyle.ProjectJson.ToString());
-
-                throw RestoreSpecException.Create(message, files);
-            }
-        }
 
         private static void ValidateToolSpec(PackageSpec spec, IEnumerable<string> files)
         {
