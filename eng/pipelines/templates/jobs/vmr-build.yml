@@ -554,18 +554,24 @@ jobs:
 
           
           additionalBuildArgs=""
-
-          # Verify download directory exists
-          if [ ! -d "$(downloadedArtifactsDir)" ]; then
-            echo "Error: Downloaded artifacts directory '$(downloadedArtifactsDir)' does not exist."
-            echo "Checking Pipeline Workspace content:"
-            ls -R "$(Pipeline.Workspace)" || true
-            exit 1
-          fi
+          
+          echo "Debug Paths:"
+          echo "Pipeline Workspace: $(Pipeline.Workspace)"
+          echo "Build Sources Directory: $(Build.SourcesDirectory)"
+          echo "Agent Temp Directory: $(Agent.TempDirectory)"
+          echo "Downloaded Artifacts Directory: $(downloadedArtifactsDir)"
 
           if [[ "$prepSdk" == "false" ]]; then
             customPrepArgs="${customPrepArgs} --no-sdk"
             
+            # Verify download directory exists
+            if [ ! -d "$(downloadedArtifactsDir)" ]; then
+              echo "Error: SDK extraction required but '$(downloadedArtifactsDir)' does not exist."
+              echo "Checking Pipeline Workspace content:"
+              ls -R "$(Pipeline.Workspace)" || true
+              exit 1
+            fi
+
             mkdir -p "$(previouslySourceBuiltSdkDir)"
             
             echo "Searching for SDK tarball in $(downloadedArtifactsDir)..."
@@ -589,6 +595,14 @@ jobs:
           fi
 
           if [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
+             # Verify download directory exists
+             if [ ! -d "$(downloadedArtifactsDir)" ]; then
+               echo "Error: Package extraction required but '$(downloadedArtifactsDir)' does not exist."
+               echo "Checking Pipeline Workspace content:"
+               ls -R "$(Pipeline.Workspace)" || true
+               exit 1
+             fi
+
              mkdir -p "$(previouslySourceBuiltArtifactsDir)"
              
              echo "Searching for Artifacts tarball in $(downloadedArtifactsDir)..."
