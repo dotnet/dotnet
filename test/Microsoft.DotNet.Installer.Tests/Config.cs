@@ -49,8 +49,8 @@ public static class Config
     public static string MicrosoftNETCorePlatformsVersion1xx { get; } = TryGetRuntimeConfig(MicrosoftNETCorePlatformsVersion1xxSwitch, out string? value) ? value : string.Empty;
     const string MicrosoftNETCorePlatformsVersion1xxSwitch = RuntimeConfigSwitchPrefix + nameof(MicrosoftNETCorePlatformsVersion1xx);
 
-    public static string TargetFrameworkVersion { get; } = TryGetRuntimeConfig(TargetFrameworkVersionSwitch, out string? value) ? value : string.Empty;
-    const string TargetFrameworkVersionSwitch = RuntimeConfigSwitchPrefix + nameof(TargetFrameworkVersion);
+    public static string TargetProductVersion { get; } = TryGetRuntimeConfig(TargetProductVersionSwitch, out string? value) ? value : string.Empty;
+    const string TargetProductVersionSwitch = RuntimeConfigSwitchPrefix + nameof(TargetProductVersion);
 
     public const string RuntimeConfigSwitchPrefix = "Microsoft.DotNet.Installer.Tests.";
 
