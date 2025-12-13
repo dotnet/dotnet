@@ -552,45 +552,63 @@ jobs:
             prepSdk=false
           fi
 
+          
+          additionalBuildArgs=""
+
           if [[ "$prepSdk" == "false" ]]; then
             customPrepArgs="${customPrepArgs} --no-sdk"
             
             mkdir -p "$(previouslySourceBuiltSdkDir)"
             
-            echo "Listing downloaded artifacts:"
-            ls -R "$(downloadedArtifactsDir)" || true
+            echo "Searching for SDK tarball in $(downloadedArtifactsDir)..."
+            # List all tar.gz files to debug layout
+            find "$(downloadedArtifactsDir)" -name "*.tar.gz" || true
 
+            # Find dotnet-sdk-*.tar.gz
             previousSdkPath=$(find "$(downloadedArtifactsDir)" -name "dotnet-sdk-*.tar.gz" | head -n 1)
+            
             if [ -z "$previousSdkPath" ]; then
-              echo "Error: specific dotnet-sdk tarball not found in $(downloadedArtifactsDir)"
+              echo "Error: dotnet-sdk-*.tar.gz not found in $(downloadedArtifactsDir)"
+              echo "Contents of downloaded artifacts:"
+              ls -R "$(downloadedArtifactsDir)"
               exit 1
             fi
 
-            echo "Extracting SDK from $previousSdkPath"
-            eval tar -ozxf "$previousSdkPath" -C "$(previouslySourceBuiltSdkDir)"
+            echo "Found SDK tarball: $previousSdkPath"
+            echo "Extracting SDK..."
+            # Use -o (no-same-owner) and -x (extract) -z (gzip) -f (file)
+            eval tar -oxzf "$previousSdkPath" -C "$(previouslySourceBuiltSdkDir)"
             
             customPrepArgs="${customPrepArgs} --with-sdk $(previouslySourceBuiltSdkDir)"
             additionalBuildArgs="--with-sdk $(previouslySourceBuiltSdkDir)"
           fi
 
           if [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
-             # Extract the prebuilt packages to a temporary directory
              mkdir -p "$(previouslySourceBuiltArtifactsDir)"
              
+             echo "Searching for Artifacts tarball in $(downloadedArtifactsDir)..."
+             
+             # Case-insensitive find or less restrictive naming if needed
              artifactsTarball=$(find "$(downloadedArtifactsDir)" -name "Private.SourceBuilt.Artifacts.*.tar.gz" | head -n 1)
+             
              if [ -z "$artifactsTarball" ]; then
-               echo "Error: Private.SourceBuilt.Artifacts tarball not found in $(downloadedArtifactsDir)"
+               echo "Error: Private.SourceBuilt.Artifacts.*.tar.gz not found in $(downloadedArtifactsDir)"
+               echo "Contents of downloaded artifacts:"
                ls -R "$(downloadedArtifactsDir)"
                exit 1
              fi
              
-             echo "Extracting artifacts from $artifactsTarball"
-             tar -xzf "$artifactsTarball" -C "$(previouslySourceBuiltArtifactsDir)"
+             echo "Found Artifacts tarball: $artifactsTarball"
+             echo "Extracting artifacts..."
+             tar -oxzf "$artifactsTarball" -C "$(previouslySourceBuiltArtifactsDir)"
              
              customPrepArgs="${customPrepArgs} --with-packages $(previouslySourceBuiltArtifactsDir)/"
              additionalBuildArgs="${additionalBuildArgs} --with-packages $(previouslySourceBuiltArtifactsDir)/"
           fi
           
+          echo "Prep arguments: $customPrepArgs"
+          echo "Additional build arguments: $additionalBuildArgs"
+
           if [[ -n "$additionalBuildArgs" ]]; then
             echo "##vso[task.setvariable variable=additionalBuildArgs]$additionalBuildArgs"
           fi
