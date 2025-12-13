@@ -555,16 +555,22 @@ jobs:
           
           additionalBuildArgs=""
 
+          # Verify download directory exists
+          if [ ! -d "$(downloadedArtifactsDir)" ]; then
+            echo "Error: Downloaded artifacts directory '$(downloadedArtifactsDir)' does not exist."
+            echo "Checking Pipeline Workspace content:"
+            ls -R "$(Pipeline.Workspace)" || true
+            exit 1
+          fi
+
           if [[ "$prepSdk" == "false" ]]; then
             customPrepArgs="${customPrepArgs} --no-sdk"
             
             mkdir -p "$(previouslySourceBuiltSdkDir)"
             
             echo "Searching for SDK tarball in $(downloadedArtifactsDir)..."
-            # List all tar.gz files to debug layout
             find "$(downloadedArtifactsDir)" -name "*.tar.gz" || true
 
-            # Find dotnet-sdk-*.tar.gz
             previousSdkPath=$(find "$(downloadedArtifactsDir)" -name "dotnet-sdk-*.tar.gz" | head -n 1)
             
             if [ -z "$previousSdkPath" ]; then
@@ -576,7 +582,6 @@ jobs:
 
             echo "Found SDK tarball: $previousSdkPath"
             echo "Extracting SDK..."
-            # Use -o (no-same-owner) and -x (extract) -z (gzip) -f (file)
             eval tar -oxzf "$previousSdkPath" -C "$(previouslySourceBuiltSdkDir)"
             
             customPrepArgs="${customPrepArgs} --with-sdk $(previouslySourceBuiltSdkDir)"
@@ -587,8 +592,6 @@ jobs:
              mkdir -p "$(previouslySourceBuiltArtifactsDir)"
              
              echo "Searching for Artifacts tarball in $(downloadedArtifactsDir)..."
-             
-             # Case-insensitive find or less restrictive naming if needed
              artifactsTarball=$(find "$(downloadedArtifactsDir)" -name "Private.SourceBuilt.Artifacts.*.tar.gz" | head -n 1)
              
              if [ -z "$artifactsTarball" ]; then
