@@ -264,5 +264,28 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 
             actualResult.Should().BeFalse();
         }
+
+        [Theory]
+        [InlineData("https://dotnetcli.blob.core.windows.net/test", "https://builds.dotnet.microsoft.com/test")]
+        [InlineData("https://dotnetbuilds.blob.core.windows.net/internal", "https://ci.dot.net/internal")]
+        [InlineData("https://dotnetbuilds.blob.core.windows.net/public?sv=token", "https://ci.dot.net/public")]
+        [InlineData("https://unknown.blob.core.windows.net/test", "https://unknown.blob.core.windows.net/test")]
+        [InlineData("https://pkgs.dev.azure.com/dnceng/public/_packaging/feed/nuget/v3/index.json", "https://pkgs.dev.azure.com/dnceng/public/_packaging/feed/nuget/v3/index.json")]
+        public void TargetFeedConfig_SafeTargetURL_AppliesCdnSubstitution(string targetUrl, string expectedSafeUrl)
+        {
+            // Arrange
+            var feedConfig = new TargetFeedConfig(
+                contentType: TargetFeedContentType.Installer,
+                targetURL: targetUrl,
+                type: FeedType.AzureStorageContainer,
+                token: "dummyToken"
+            );
+
+            // Act
+            var actualSafeUrl = feedConfig.SafeTargetURL;
+
+            // Assert
+            actualSafeUrl.Should().Be(expectedSafeUrl);
+        }
     }
 }
