@@ -1,0 +1,13 @@
+diff --git a/msft_assemblyversions.txt b/sb_assemblyversions.txt
+index ------------
+--- a/msft_assemblyversions.txt
++++ b/sb_assemblyversions.txt
+@@ ------------ @@ sdk/x.y.z/Sdks/Microsoft.SourceLink.GitLab/tools/net/System.IO.Hashing.dll - 10.
+ sdk/x.y.z/Sdks/Microsoft.SourceLink.GitLab/tools/net/tr/Microsoft.SourceLink.GitLab.resources.dll - 10.0.13
+ sdk/x.y.z/Sdks/Microsoft.SourceLink.GitLab/tools/net/zh-Hans/Microsoft.SourceLink.GitLab.resources.dll - 10.0.13
+ sdk/x.y.z/Sdks/Microsoft.SourceLink.GitLab/tools/net/zh-Hant/Microsoft.SourceLink.GitLab.resources.dll - 10.0.13
+-sdk/x.y.z/Spectre.Console.dll - 0.0.0
++sdk/x.y.z/Spectre.Console.dll - 0.54.0
+ sdk/x.y.z/System.CodeDom.dll - 10.0.0
+ sdk/x.y.z/System.CommandLine.dll - 2.0.0
+ sdk/x.y.z/System.CommandLine.StaticCompletions.dll - 10.0.200
