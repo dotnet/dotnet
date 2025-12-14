@@ -1,11 +1,13 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 using Xunit;
@@ -19,6 +21,37 @@ public class ComputedTargetPathTest(ITestOutputHelper testOutputHelper) : Cohost
     private static readonly string s_hintNamePrefix = PlatformInformation.IsWindows
         ? "c_/users/example/src/SomeProject"
         : "_home/example/SomeProject";
+
+    [Fact]
+    public async Task DoubleSlashInUri()
+    {
+        // Directly from a real VS Code agent session: https://github.com/dotnet/razor/issues/12595
+        var uriString = "chat-editing-snapshot-text-model:/d:/HashR/src/HashR/Pages/LibraryUsage.razor?%7B%22session%22:%7B%22$mid%22:1,%22external%22:%22vscode-chat-session://local/MzczZWU3N2YtZTBmOS00ZWRhLThmYTktZWI0MjM3ZDE2NTIw%22,%22path%22:%22/MzczZWU3N2YtZTBmOS00ZWRhLThmYTktZWI0MjM3ZDE2NTIw%22,%22scheme%22:%22vscode-chat-session%22,%22authority%22:%22local%22%7D,%22requestId%22:%22request_8e668a63-5ac8-43fe-ad18-65e38621cce4%22,%22undoStop%22:%22__epoch_9007199254740991%22%7D.";
+
+        var uri = new Uri(uriString);
+        // This calls the same method that Roslyn calls when creating a misc file for unknown documents
+        var documentFilePath = RazorUri.GetDocumentFilePathFromUri(uri);
+
+        var builder = new RazorProjectBuilder
+        {
+            ProjectFilePath = null,
+            GenerateGlobalConfigFile = false,
+            GenerateAdditionalDocumentMetadata = false,
+            GenerateMSBuildProjectDirectory = false
+        };
+
+        var id = builder.AddAdditionalDocument(documentFilePath, SourceText.From("<div></div>"));
+
+        var solution = LocalWorkspace.CurrentSolution;
+        solution = builder.Build(solution);
+
+        var document = solution.GetAdditionalDocument(id).AssumeNotNull();
+
+        _ = await document.Project.GetCompilationAsync(DisposalToken);
+
+        var generatedDocument = await document.Project.TryGetSourceGeneratedDocumentForRazorDocumentAsync(document, DisposalToken);
+        Assert.NotNull(generatedDocument);
+    }
 
     [Theory]
     [InlineData(true, false)]
@@ -52,7 +85,7 @@ public class ComputedTargetPathTest(ITestOutputHelper testOutputHelper) : Cohost
     [CombinatorialData]
     public async Task TwoDocumentsWithTheSameBaseFileName(bool generateTargetPath)
     {
-        // This test just proves the "correct" behaviour, with the Razor SDL
+        // This test just proves the "correct" behaviour, with the Razor SDK
         var builder = new RazorProjectBuilder
         {
             ProjectFilePath = TestProjectData.SomeProject.FilePath,
