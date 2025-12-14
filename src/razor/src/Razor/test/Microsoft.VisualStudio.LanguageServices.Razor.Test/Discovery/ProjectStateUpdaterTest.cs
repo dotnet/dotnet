@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -36,7 +35,7 @@ public class ProjectStateUpdaterTest(ITestOutputHelper testOutput) : VisualStudi
         var solution = Workspace.CurrentSolution.AddProject(projectInfo);
         Workspace.TryApplyChanges(solution);
 
-        ImmutableArray<TagHelperDescriptor> tagHelpers = [
+        TagHelperCollection tagHelpers = [
             TagHelperDescriptorBuilder.CreateTagHelper("ResolvableTagHelper", "TestAssembly").Build()];
         _projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers);
         _tagHelperResolver = new TestTagHelperResolver(tagHelpers);
@@ -164,6 +163,6 @@ public class ProjectStateUpdaterTest(ITestOutputHelper testOutput) : VisualStudi
         // Assert
         var newProjectSnapshot = _projectManager.GetRequiredProject(s_hostProject.Key);
 
-        Assert.Equal<TagHelperDescriptor>(_tagHelperResolver.TagHelpers, await newProjectSnapshot.GetTagHelpersAsync(DisposalToken));
+        Assert.Equal(_tagHelperResolver.TagHelpers, await newProjectSnapshot.GetTagHelpersAsync(DisposalToken));
     }
 }

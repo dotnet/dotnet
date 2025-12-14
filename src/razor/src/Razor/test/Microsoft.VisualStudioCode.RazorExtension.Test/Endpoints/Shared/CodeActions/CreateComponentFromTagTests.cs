@@ -22,7 +22,7 @@ public class CreateComponentFromTagTests(ITestOutputHelper testOutputHelper) : C
             expected: """
                 <div></div>
 
-                <Hello><Hello>
+                <Hello></Hello>
                 """,
             codeActionName: LanguageServerConstants.CodeActions.CreateComponentFromTag,
             additionalExpectedFiles: [
@@ -40,8 +40,8 @@ public class CreateComponentFromTagTests(ITestOutputHelper testOutputHelper) : C
                 """,
             expected: """
                 <div></div>
-
-                <Hello><Hello>
+                
+                <Hello world="true"></Hello>
                 """,
             codeActionName: LanguageServerConstants.CodeActions.CreateComponentFromTag,
             additionalExpectedFiles: [

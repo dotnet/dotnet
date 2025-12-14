@@ -29,7 +29,6 @@ internal partial class OpenDocumentGenerator : IRazorStartupService, IDisposable
 
     private readonly ImmutableArray<IDocumentProcessedListener> _listeners;
     private readonly ProjectSnapshotManager _projectManager;
-    private readonly LanguageServerFeatureOptions _options;
     private readonly ILogger _logger;
 
     private readonly AsyncBatchingWorkQueue<DocumentKey> _workQueue;
@@ -45,12 +44,10 @@ internal partial class OpenDocumentGenerator : IRazorStartupService, IDisposable
     public OpenDocumentGenerator(
         IEnumerable<IDocumentProcessedListener> listeners,
         ProjectSnapshotManager projectManager,
-        LanguageServerFeatureOptions options,
         ILoggerFactory loggerFactory)
     {
         _listeners = [.. listeners];
         _projectManager = projectManager;
-        _options = options;
 
         _workerSet = [];
         _disposeTokenSource = new();
@@ -192,8 +189,7 @@ internal partial class OpenDocumentGenerator : IRazorStartupService, IDisposable
 
         void EnqueueIfNecessary(DocumentKey documentKey)
         {
-            if (!_options.UpdateBuffersForClosedDocuments &&
-                !_projectManager.IsDocumentOpen(documentKey.FilePath))
+            if (!_projectManager.IsDocumentOpen(documentKey.FilePath))
             {
                 return;
             }

@@ -4,7 +4,6 @@
 using Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Diagnostics;
 using Moq;
 using Xunit;
@@ -25,7 +24,6 @@ public sealed class VSDocumentDiagnosticsEndpointTest(ITestOutputHelper testOutp
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
         var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
         var endpoint = new VSDocumentDiagnosticsEndpoint(
-            TestLanguageServerFeatureOptions.Instance,
             razorTranslate.Object,
             optionsMonitor,
             clientConnection.Object,

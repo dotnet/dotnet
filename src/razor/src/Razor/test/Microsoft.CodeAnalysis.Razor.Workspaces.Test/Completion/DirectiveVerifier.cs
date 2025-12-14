@@ -3,8 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.CodeAnalysis.Razor.Completion;
 using Xunit;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;

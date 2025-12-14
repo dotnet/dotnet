@@ -20,24 +20,15 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentSymbols;
 [RazorLanguageServerEndpoint(Methods.TextDocumentDocumentSymbolName)]
 internal class DocumentSymbolEndpoint(
     IClientConnection clientConnection,
-    IDocumentSymbolService documentSymbolService,
-    LanguageServerFeatureOptions languageServerFeatureOptions) : IRazorRequestHandler<DocumentSymbolParams, SumType<DocumentSymbol[], SymbolInformation[]>?>, ICapabilitiesProvider
+    IDocumentSymbolService documentSymbolService) : IRazorRequestHandler<DocumentSymbolParams, SumType<DocumentSymbol[], SymbolInformation[]>?>, ICapabilitiesProvider
 {
     private readonly IClientConnection _clientConnection = clientConnection;
     private readonly IDocumentSymbolService _documentSymbolService = documentSymbolService;
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
 
     public bool MutatesSolutionState => false;
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        // TODO: Add an option for this that the client can configure. This turns this off for
-        // VS Code but keeps it on for VS by depending on SingleServerSupport signifying the client.
-        if (!_languageServerFeatureOptions.SingleServerSupport)
-        {
-            return;
-        }
-
         serverCapabilities.DocumentSymbolProvider = new DocumentSymbolOptions()
         {
             WorkDoneProgress = false

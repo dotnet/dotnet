@@ -53,7 +53,7 @@ internal class RazorFormattingService : IRazorFormattingService
         _documentFormattingPasses = [
                 new HtmlFormattingPass(documentMappingService),
                 new RazorFormattingPass(),
-                new CSharpFormattingPass(hostServicesProvider, loggerFactory),
+                new CSharpFormattingPass(hostServicesProvider, documentMappingService, loggerFactory),
             ];
         _formattingLoggerFactory = formattingLoggerFactory;
     }

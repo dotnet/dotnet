@@ -58,7 +58,7 @@ internal class FormattingLanguageServerClient(HtmlFormattingService htmlFormatti
     private string GetGeneratedHtml(Uri uri)
     {
         var codeDocument = _documents[uri.GetAbsoluteOrUNCPath()];
-        var generatedHtml = codeDocument.GetHtmlDocument().Text.ToString();
+        var generatedHtml = RazorHtmlWriter.GetHtmlDocument(codeDocument).Text.ToString();
         return generatedHtml.Replace("\r", "").Replace("\n", "\r\n");
     }
 

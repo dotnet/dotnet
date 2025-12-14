@@ -104,14 +104,14 @@ stages:
             command: custom
             arguments: 'locals all -clear'
 
-        # - powershell: ./eng/scripts/InstallProcDump.ps1
-        #   displayName: Install ProcDump
+        - powershell: ./eng/scripts/InstallProcDump.ps1
+          displayName: Install ProcDump
 
-        # - powershell: ./eng/scripts/StartDumpCollectionForHangingBuilds.ps1
-        #     $(ProcDumpPath)procdump.exe artifacts/log/$(_BuildConfig)
-        #     (Get-Date).AddMinutes(60)
-        #     devenv, xunit.console, xunit.console.x86
-        #   displayName: Start background dump collection
+        - powershell: ./eng/scripts/StartDumpCollectionForHangingBuilds.ps1
+            $(ProcDumpPath)procdump.exe artifacts/log/$(_BuildConfig)
+            (Get-Date).AddMinutes(60)
+            devenv, xunit.console, xunit.console.x86
+          displayName: Start background dump collection
 
         # Don't create a binary log until we can customize the name
         # https://github.com/dotnet/arcade/pull/12988
@@ -128,10 +128,12 @@ stages:
         - powershell: eng\SetupVSHive.ps1
           displayName: Setup VS Hive
 
+        # We additionally restore during the build because the Microsoft.DotNet.Build.Tasks.Feed package only restores when we pass `-publish`. See https://github.com/dotnet/arcade/blob/37ccfd66358af6a37a0ec385ec31d1d71bdd8723/src/Microsoft.DotNet.Arcade.Sdk/tools/Tools.proj#L61-L66
         - script: eng\cibuild.cmd
             -configuration $(_BuildConfig)
             -msbuildEngine vs
             -prepareMachine
+            -restore
             -build
             -pack
             -publish
@@ -160,10 +162,10 @@ stages:
           displayName: Run Integration Tests
           condition: and(eq(variables['RunIntegrationTests'], true), succeeded(), in(variables['Build.Reason'], 'PullRequest'))
 
-        # - powershell: ./eng/scripts/FinishDumpCollectionForHangingBuilds.ps1 artifacts/log/$(_BuildConfig)
-        #   displayName: Finish background dump collection
-        #   continueOnError: true
-        #   condition: always()
+        - powershell: ./eng/scripts/FinishDumpCollectionForHangingBuilds.ps1 artifacts/log/$(_BuildConfig)
+          displayName: Finish background dump collection
+          continueOnError: true
+          condition: always()
 
         - publish: artifacts/log/$(_BuildConfig)
           artifact: $(Agent.Os)_$(Agent.JobName) Attempt $(System.JobAttempt) Logs
@@ -214,7 +216,6 @@ stages:
             --restore
             --build
             --pack
-            --publish
             --configuration $(_BuildConfig)
             --prepareMachine
             --test
@@ -240,7 +241,7 @@ stages:
           options: --init # This ensures all the stray defunct processes are reaped.
         pool:
           name: NetCore-Public
-          demands: ImageOverride -equals Build.Ubuntu.2004.Amd64.Open
+          demands: ImageOverride -equals Build.Ubuntu.2204.Amd64.Open
 
         strategy:
           matrix:
@@ -260,7 +261,6 @@ stages:
             --restore
             --build
             --pack
-            --publish
             --configuration $(_BuildConfig)
             --prepareMachine
             --test

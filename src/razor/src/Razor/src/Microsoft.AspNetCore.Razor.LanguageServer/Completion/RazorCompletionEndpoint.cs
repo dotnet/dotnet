@@ -19,15 +19,13 @@ internal class RazorCompletionEndpoint(
     CompletionListProvider completionListProvider,
     CompletionTriggerAndCommitCharacters triggerAndCommitCharacters,
     ITelemetryReporter telemetryReporter,
-    RazorLSPOptionsMonitor optionsMonitor,
-    LanguageServerFeatureOptions featureOptions)
+    RazorLSPOptionsMonitor optionsMonitor)
     : IRazorRequestHandler<CompletionParams, RazorVSInternalCompletionList?>, ICapabilitiesProvider
 {
     private readonly CompletionListProvider _completionListProvider = completionListProvider;
     private readonly CompletionTriggerAndCommitCharacters _triggerAndCommitCharacters = triggerAndCommitCharacters;
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
     private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor;
-    private readonly LanguageServerFeatureOptions _featureOptions = featureOptions;
 
     private VSInternalClientCapabilities? _clientCapabilities;
 
@@ -40,8 +38,8 @@ internal class RazorCompletionEndpoint(
         serverCapabilities.CompletionProvider = new CompletionOptions()
         {
             ResolveProvider = true,
-            TriggerCharacters = [.. _triggerAndCommitCharacters.AllTriggerCharacters],
-            AllCommitCharacters = [.. _triggerAndCommitCharacters.AllCommitCharacters]
+            TriggerCharacters = _triggerAndCommitCharacters.AllTriggerCharacters,
+            AllCommitCharacters = _triggerAndCommitCharacters.AllCommitCharacters
         };
     }
 
@@ -78,7 +76,7 @@ internal class RazorCompletionEndpoint(
                 SnippetsSupported: true,
                 AutoInsertAttributeQuotes: options.AutoInsertAttributeQuotes,
                 CommitElementsWithSpace: options.CommitElementsWithSpace,
-                UseVsCodeCompletionCommitCharacters: _featureOptions.UseVsCodeCompletionCommitCharacters);
+                UseVsCodeCompletionCommitCharacters: !_clientCapabilities.AssumeNotNull().SupportsVisualStudioExtensions);
 
             var result = await _completionListProvider
                 .GetCompletionListAsync(

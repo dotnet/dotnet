@@ -1,9 +1,9 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using Microsoft.AspNetCore.Razor.Threading;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -15,7 +15,15 @@ internal sealed class TagHelperBinding
     public string? ParentTagName { get; }
     public ImmutableArray<KeyValuePair<string, string>> Attributes { get; }
 
-    private ImmutableArray<TagHelperDescriptor> _descriptors;
+    private LazyValue<ImmutableArray<TagHelperBoundRulesInfo>, TagHelperCollection> _lazyTagHelpers = new(static allBoundRules =>
+        TagHelperCollection.Build(allBoundRules, initialCapacity: allBoundRules.Length, static (ref builder, allBoundRules) =>
+        {
+            foreach (var boundRule in allBoundRules)
+            {
+                builder.Add(boundRule.Descriptor);
+            }
+        }));
+
     private bool? _isAttributeMatch;
 
     internal TagHelperBinding(
@@ -32,18 +40,7 @@ internal sealed class TagHelperBinding
         TagNamePrefix = tagNamePrefix;
     }
 
-    public ImmutableArray<TagHelperDescriptor> Descriptors
-    {
-        get
-        {
-            if (_descriptors.IsDefault)
-            {
-                ImmutableInterlocked.InterlockedInitialize(ref _descriptors, AllBoundRules.SelectAsArray(x => x.Descriptor));
-            }
-
-            return _descriptors;
-        }
-    }
+    public TagHelperCollection TagHelpers => _lazyTagHelpers.GetValue(AllBoundRules);
 
     public ImmutableArray<TagMatchingRuleDescriptor> GetBoundRules(TagHelperDescriptor descriptor)
         => AllBoundRules.First(descriptor, static (info, d) => info.Descriptor.Equals(d)).Rules;
@@ -62,13 +59,13 @@ internal sealed class TagHelperBinding
     {
         get
         {
-            return _isAttributeMatch ??= ComputeIsAttributeMatch(Descriptors);
+            return _isAttributeMatch ??= ComputeIsAttributeMatch(TagHelpers);
 
-            static bool ComputeIsAttributeMatch(ImmutableArray<TagHelperDescriptor> descriptors)
+            static bool ComputeIsAttributeMatch(TagHelperCollection tagHelpers)
             {
-                foreach (var descriptor in descriptors)
+                foreach (var tagHelper in tagHelpers)
                 {
-                    if (!descriptor.ClassifyAttributesOnly)
+                    if (!tagHelper.ClassifyAttributesOnly)
                     {
                         return false;
                     }
