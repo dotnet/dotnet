@@ -21,6 +21,10 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             {
                 switch (filePath[i])
                 {
+                    case '\\' or '/' when i + 1 < filePath.Length && filePath[i + 1] is '\\' or '/':
+                        // Roslyn will throw on '//', but some weird Uri's have them, so sanitize to '_/'
+                        builder.Append('_');
+                        break;
                     case '\\' or '/' when i > 0:
                         builder.Append('/');
                         break;
