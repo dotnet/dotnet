@@ -2745,6 +2745,54 @@ namespace NuGet.Commands.FuncTest
             result2.LockFile.Targets[0].Libraries[1].Version.Should().Be(new NuGetVersion("1.0.0"));
         }
 
+        // P -> A 1.0.0
+        //      -> B (no version)
+        // B is pinned to 1.0.0
+        [Fact]
+        public async Task RestoreCommand_WithTransitiveReferenceMissingVersion_VerifiesEquivalency()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+
+            var P = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec(
+                "P",
+                pathContext.SolutionRoot,
+                @"
+{
+  ""restore"": {
+    ""centralPackageVersionsManagementEnabled"": true,
+    ""CentralPackageTransitivePinningEnabled"": true,
+  },
+  ""frameworks"": {
+    ""net472"": {
+      ""centralPackageVersions"": {
+            ""B"": ""[1.0.0,)"",
+      }
+    }
+  }
+}")
+                .WithDependency(new LibraryDependency()
+                {
+                    LibraryRange = new LibraryRange("A", VersionRange.Parse("1.0.0"), LibraryDependencyTarget.Package),
+                    VersionCentrallyManaged = true,
+                });
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                new SimpleTestPackageContext("A", "1.0.0")
+                {
+                    Dependencies =
+                    [
+                        new SimpleTestPackageContext("B", "0.0.0"),
+                    ]
+                },
+                new SimpleTestPackageContext("B", "1.0.0"));
+
+            (var result, _) = await ValidateRestoreAlgorithmEquivalency(pathContext, P);
+            result.LockFile.Targets.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries.Should().HaveCount(2);
+        }
+
         // Here's why package driven dependencies should flow.
         // Say we have P1 -> P2 -> P3 -> A 1.0.0 -> B 2.0.0
         //                            -> B 1.5.0

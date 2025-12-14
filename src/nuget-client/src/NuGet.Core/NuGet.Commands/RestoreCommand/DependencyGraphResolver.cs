@@ -557,7 +557,12 @@ namespace NuGet.Commands
                         currentGraphNode.InnerNodes.Add(newGraphNode);
                     }
 
-                    if (!childResolvedDependencyGraphItem.IsRootPackageReference && isCentralPackageTransitivePinningEnabled && childLibraryDependency.SuppressParent != LibraryIncludeFlags.All && !downgrades.ContainsKey(childResolvedLibraryRangeIndex) && !RemoteDependencyWalker.IsGreaterThanOrEqualTo(childResolvedDependencyGraphItem.LibraryDependency.LibraryRange.VersionRange, childLibraryDependency.LibraryRange.VersionRange))
+                    if (!childResolvedDependencyGraphItem.IsRootPackageReference
+                        && isCentralPackageTransitivePinningEnabled
+                        && childLibraryDependency.SuppressParent != LibraryIncludeFlags.All
+                        && !downgrades.ContainsKey(childResolvedLibraryRangeIndex)
+                        && childLibraryDependency.LibraryRange.VersionRange != VersionRange.All
+                        && !RemoteDependencyWalker.IsGreaterThanOrEqualTo(childResolvedDependencyGraphItem.LibraryDependency.LibraryRange.VersionRange, childLibraryDependency.LibraryRange.VersionRange))
                     {
                         // This is a downgrade if:
                         // 1. This is not a direct dependency
@@ -905,8 +910,7 @@ namespace NuGet.Commands
             FrameworkRuntimeDefinition pair,
             TargetFrameworkInformation projectTargetFramework,
             RuntimeGraph? runtimeGraph,
-            Dictionary<LibraryDependencyIndex,
-            VersionRange>? pinnedPackageVersions,
+            Dictionary<LibraryDependencyIndex, VersionRange>? pinnedPackageVersions,
             DependencyGraphItem rootProjectDependencyGraphItem,
             RemoteWalkContext context,
             CancellationToken token)
