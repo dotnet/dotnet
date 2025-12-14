@@ -59,7 +59,7 @@ function LaunchMirrorBuild {
         $bodyStr = ConvertTo-Json $body
         $uri = "${AzDOInstance}/_apis/build/builds?api-version=5.1"
         Write-Host "Launching $mirrorType build for $repo @ $branch"
-        $queueResponse = Invoke-WebRequest -Method Post -ContentType "application/json" -Headers $AzDOAuthHeader -Uri "${AzDOInstance}/_apis/build/builds?api-version=5.1" -Body $bodyStr | ConvertFrom-Json
+        $queueResponse = Invoke-WebRequest -UseBasicParsing -Method Post -ContentType "application/json" -Headers $AzDOAuthHeader -Uri "${AzDOInstance}/_apis/build/builds?api-version=5.1" -Body $bodyStr | ConvertFrom-Json
         $buildId = $queueResponse.id
         Write-Host "Launched $AzDOInstance/_build/results?buildId=$buildId"
     }
