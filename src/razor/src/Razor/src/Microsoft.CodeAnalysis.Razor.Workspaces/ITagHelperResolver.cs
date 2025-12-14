@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -16,7 +15,7 @@ internal interface ITagHelperResolver
     ///  <see cref="Project"/> using the given <see cref="ProjectSnapshot"/> to provide a
     ///  <see cref="RazorProjectEngine"/>.
     /// </summary>
-    ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(
+    ValueTask<TagHelperCollection?> GetTagHelpersAsync(
         Project project,
         ProjectSnapshot projectSnapshot,
         CancellationToken cancellationToken);

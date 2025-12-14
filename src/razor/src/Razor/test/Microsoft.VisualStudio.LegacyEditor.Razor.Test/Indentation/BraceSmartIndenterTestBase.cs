@@ -90,7 +90,7 @@ public class BraceSmartIndenterTestBase(ITestOutputHelper testOutput) : VisualSt
                 .WithFlags(enableSpanEditHandlers: true));
 
         var codeDocument = TestRazorCodeDocument.Create(content);
-        codeDocument.SetSyntaxTree(syntaxTree);
+        codeDocument = codeDocument.WithSyntaxTree(syntaxTree);
 
         var parserMock = new StrictMock<IVisualStudioRazorParser>();
         parserMock

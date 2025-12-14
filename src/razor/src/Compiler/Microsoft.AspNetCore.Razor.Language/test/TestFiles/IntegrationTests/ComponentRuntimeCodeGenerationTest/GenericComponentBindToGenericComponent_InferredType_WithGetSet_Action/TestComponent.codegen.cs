@@ -64,15 +64,7 @@ namespace __Blazor.Test.TestComponent
     {
         public static void CreateMyComponent_0<TValue>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TValue __arg0, int __seq1, global::Microsoft.AspNetCore.Components.EventCallback<TValue> __arg1)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (2,2)-(2,13) "x:\dir\subdir\Test\TestComponent.cshtml"
-MyComponent
-
-#line default
-#line hidden
-#nullable disable
-        <TValue>>(seq);
+        __builder.OpenComponent<global::Test.MyComponent<TValue>>(seq);
         __builder.AddComponentParameter(__seq0, nameof(global::Test.MyComponent<TValue>.
 #nullable restore
 #line (2,20)-(2,25) "x:\dir\subdir\Test\TestComponent.cshtml"

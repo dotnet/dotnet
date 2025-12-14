@@ -67,7 +67,7 @@ public class DefaultRazorDocumentClassifierPhaseTest
         var originalNode = new DocumentIntermediateNode();
         var firstPassNode = new DocumentIntermediateNode();
         var secondPassNode = new DocumentIntermediateNode();
-        codeDocument.SetDocumentNode(originalNode);
+        codeDocument = codeDocument.WithDocumentNode(originalNode);
 
         var firstPass = new Mock<IRazorDocumentClassifierPass>(MockBehavior.Strict);
         firstPass.SetupGet(m => m.Order).Returns(0);

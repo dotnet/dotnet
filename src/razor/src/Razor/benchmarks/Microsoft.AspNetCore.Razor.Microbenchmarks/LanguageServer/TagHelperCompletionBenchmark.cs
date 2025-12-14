@@ -31,7 +31,7 @@ public class TagHelperCompletionBenchmark
     {
         var tagHelperCompletionService = new TagHelperCompletionService();
         var context = new AttributeCompletionContext(
-            TagHelperDocumentContext.Create(prefix: null, CommonResources.TelerikTagHelpers),
+            TagHelperDocumentContext.GetOrCreate([.. CommonResources.TelerikTagHelpers]),
             existingCompletions: [],
             currentTagName: "PageTitle",
             currentAttributeName: null,
@@ -48,7 +48,7 @@ public class TagHelperCompletionBenchmark
     {
         var tagHelperCompletionService = new TagHelperCompletionService();
         var context = new ElementCompletionContext(
-            TagHelperDocumentContext.Create(prefix: null, CommonResources.TelerikTagHelpers),
+            TagHelperDocumentContext.GetOrCreate([.. CommonResources.TelerikTagHelpers]),
             existingCompletions: s_existingElementCompletions,
             containingTagName: null,
             attributes: [],

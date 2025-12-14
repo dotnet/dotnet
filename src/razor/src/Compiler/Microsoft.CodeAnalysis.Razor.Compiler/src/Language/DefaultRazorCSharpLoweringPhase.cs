@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 internal class DefaultRazorCSharpLoweringPhase : RazorEnginePhaseBase, IRazorCSharpLoweringPhase
 {
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
+    protected override RazorCodeDocument ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
         var documentNode = codeDocument.GetDocumentNode();
         ThrowForMissingDocumentDependency(documentNode);
@@ -27,7 +27,7 @@ internal class DefaultRazorCSharpLoweringPhase : RazorEnginePhaseBase, IRazorCSh
         }
 
         var csharpDocument = WriteDocument(codeDocument, cancellationToken);
-        codeDocument.SetCSharpDocument(csharpDocument);
+        return codeDocument.WithCSharpDocument(csharpDocument);
     }
 
     private static RazorCSharpDocument WriteDocument(RazorCodeDocument codeDocument, CancellationToken cancellationToken = default)

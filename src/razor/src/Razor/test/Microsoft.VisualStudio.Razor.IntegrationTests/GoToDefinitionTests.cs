@@ -39,6 +39,8 @@ public class GoToDefinitionTests(ITestOutputHelper testOutputHelper) : AbstractR
 
         // Assert
         await TestServices.Editor.WaitForActiveWindowAsync("Program.cs", ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.CloseCodeFileAsync(RazorProjectConstants.BlazorProjectName, "Program.cs", saveFile: false, ControlledHangMitigatingCancellationToken);
     }
 
     [IdeFact]
@@ -132,7 +134,7 @@ public class GoToDefinitionTests(ITestOutputHelper testOutputHelper) : AbstractR
         await TestServices.Editor.WaitForCurrentLineTextAsync("public bool MyProperty { get; set; }", ControlledHangMitigatingCancellationToken);
     }
 
-    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8036")]
+    [IdeFact]
     public async Task GoToDefinition_ComponentAttribute_InCSharpFile()
     {
         // Create the files
@@ -176,7 +178,7 @@ public class GoToDefinitionTests(ITestOutputHelper testOutputHelper) : AbstractR
         await TestServices.Editor.WaitForCurrentLineTextAsync("[Parameter] public string? MyProperty { get; set; }", ControlledHangMitigatingCancellationToken);
     }
 
-    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8408")]
+    [IdeFact]
     public async Task GoToDefinition_ComponentAttribute_InReferencedAssembly()
     {
         // Open the file
@@ -191,7 +193,7 @@ public class GoToDefinitionTests(ITestOutputHelper testOutputHelper) : AbstractR
         await TestServices.Editor.WaitForActiveWindowByFileAsync("NavLink.cs", ControlledHangMitigatingCancellationToken);
     }
 
-    [ConditionalSkipIdeFact(Issue = "Blocked by https://github.com/dotnet/razor/issues/7966")]
+    [IdeFact]
     public async Task GoToDefinition_ComponentAttribute_GenericComponent()
     {
         // Create the files
@@ -210,17 +212,17 @@ public class GoToDefinitionTests(ITestOutputHelper testOutputHelper) : AbstractR
             """,
             cancellationToken: ControlledHangMitigatingCancellationToken);
 
-        await TestServices.SolutionExplorer.AddFileAsync(RazorProjectConstants.BlazorProjectName,
+        var position = await TestServices.SolutionExplorer.AddFileAsync(RazorProjectConstants.BlazorProjectName,
             "MyPage.razor",
             """
-            <MyComponent TItem=string Item="@("hi")"/>
+            <MyComponent TItem=string It$$em="@("hi")"/>
             """,
             open: true,
             cancellationToken: ControlledHangMitigatingCancellationToken);
 
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
 
-        await TestServices.Editor.PlaceCaretAsync(" Item=", charsOffset: -1, ControlledHangMitigatingCancellationToken);
+        await TestServices.Editor.PlaceCaretAsync(position, ControlledHangMitigatingCancellationToken);
 
         // Act
         await TestServices.Editor.InvokeGoToDefinitionAsync(ControlledHangMitigatingCancellationToken);
@@ -230,7 +232,7 @@ public class GoToDefinitionTests(ITestOutputHelper testOutputHelper) : AbstractR
         await TestServices.Editor.WaitForCurrentLineTextAsync("[Parameter] public TItem Item { get; set; }", ControlledHangMitigatingCancellationToken);
     }
 
-    [ConditionalSkipIdeFact(Issue = "Blocked by https://github.com/dotnet/razor/issues/7966")]
+    [IdeFact]
     public async Task GoToDefinition_ComponentAttribute_CascadingGenericComponentWithConstraints()
     {
         // Create the files
@@ -268,12 +270,12 @@ public class GoToDefinitionTests(ITestOutputHelper testOutputHelper) : AbstractR
             """,
             cancellationToken: ControlledHangMitigatingCancellationToken);
 
-        await TestServices.SolutionExplorer.AddFileAsync(RazorProjectConstants.BlazorProjectName,
+        var position = await TestServices.SolutionExplorer.AddFileAsync(RazorProjectConstants.BlazorProjectName,
             "MyPage.razor",
             """
             <Grid TItem="WeatherForecast" Items="@(Array.Empty<WeatherForecast>())">
                 <ColumnsTemplate>
-                    <Column Title="Date" FieldName="Date" Format="d" Width="10rem" />
+                    <Column Title="Date" Fie$$ldName="Date" Format="d" Width="10rem" />
                 </ColumnsTemplate>
             </Grid>
             """,
@@ -282,7 +284,7 @@ public class GoToDefinitionTests(ITestOutputHelper testOutputHelper) : AbstractR
 
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
 
-        await TestServices.Editor.PlaceCaretAsync(" FieldName=", charsOffset: -1, ControlledHangMitigatingCancellationToken);
+        await TestServices.Editor.PlaceCaretAsync(position, ControlledHangMitigatingCancellationToken);
 
         // Act
         await TestServices.Editor.InvokeGoToDefinitionAsync(ControlledHangMitigatingCancellationToken);
@@ -398,5 +400,43 @@ public class GoToDefinitionTests(ITestOutputHelper testOutputHelper) : AbstractR
         // Assert
         await TestServices.Editor.WaitForActiveWindowAsync("MyComponent.razor", ControlledHangMitigatingCancellationToken);
         await TestServices.Editor.WaitForCurrentLineTextAsync("public string? MyProperty { get; set; }", ControlledHangMitigatingCancellationToken);
+    }
+
+    [IdeFact]
+    public async Task GoToDefinition_ComponentFromCSharp()
+    {
+        // Open the file
+        await TestServices.SolutionExplorer.OpenFileAsync(RazorProjectConstants.BlazorProjectName, "Program.cs", ControlledHangMitigatingCancellationToken);
+
+        // Change text to refer back to Program class
+        await TestServices.Editor.SetTextAsync("""
+            using BlazorProject.Shared;
+
+            typeof(Surv$$eyPrompt).ToString();
+            """, ControlledHangMitigatingCancellationToken);
+
+        // Act
+        await TestServices.Editor.InvokeGoToDefinitionAsync(ControlledHangMitigatingCancellationToken);
+
+        // Assert
+        await TestServices.Editor.WaitForActiveWindowAsync("SurveyPrompt.razor", ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.CloseCodeFileAsync(RazorProjectConstants.BlazorProjectName, "Program.cs", saveFile: false, ControlledHangMitigatingCancellationToken);
+    }
+
+    [IdeFact]
+    public async Task GoToDefinition_ComponentFromCSharpInRazor()
+    {
+        // Open the file
+        await TestServices.SolutionExplorer.OpenFileAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.IndexRazorFile, ControlledHangMitigatingCancellationToken);
+
+        // Change text to refer back to Program class
+        await TestServices.Editor.SetTextAsync("@nameof(Surv$$eyPrompt)", ControlledHangMitigatingCancellationToken);
+
+        // Act
+        await TestServices.Editor.InvokeGoToDefinitionAsync(ControlledHangMitigatingCancellationToken);
+
+        // Assert
+        await TestServices.Editor.WaitForActiveWindowAsync("SurveyPrompt.razor", ControlledHangMitigatingCancellationToken);
     }
 }

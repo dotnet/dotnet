@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Moq;
@@ -56,14 +57,11 @@ public abstract partial class SingleServerDelegatingEndpointTestBase(ITestOutput
         DocumentContextFactory = new TestDocumentContextFactory(razorFilePath, codeDocument);
 
         LanguageServerFeatureOptions = Mock.Of<LanguageServerFeatureOptions>(options =>
-            options.SupportsFileManipulation == true &&
-            options.SingleServerSupport == true &&
-            options.CSharpVirtualDocumentSuffix == DefaultLanguageServerFeatureOptions.DefaultCSharpVirtualDocumentSuffix &&
-            options.HtmlVirtualDocumentSuffix == DefaultLanguageServerFeatureOptions.DefaultHtmlVirtualDocumentSuffix,
+            options.SupportsFileManipulation == true,
             MockBehavior.Strict);
 
         DocumentMappingService = new LspDocumentMappingService(FilePathService, DocumentContextFactory, LoggerFactory);
-        EditMappingService = new LspEditMappingService(DocumentMappingService, FilePathService, DocumentContextFactory);
+        EditMappingService = new LspEditMappingService(DocumentMappingService, NoOpTelemetryReporter.Instance, FilePathService, DocumentContextFactory);
 
         // Don't declare this with an 'await using'. TestLanguageServer will own the lifetime of this C# LSP server.
         var csharpServer = await CSharpTestLspServerHelpers.CreateCSharpLspServerAsync(

@@ -18,13 +18,11 @@ using StreamJsonRpc;
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse>(
-    LanguageServerFeatureOptions languageServerFeatureOptions,
     IDocumentMappingService documentMappingService,
     IClientConnection clientConnection,
     ILogger logger)
     : IRazorRequestHandler<TRequest, TResponse?> where TRequest : ITextDocumentPositionParams
 {
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     protected readonly IDocumentMappingService DocumentMappingService = documentMappingService;
     private readonly IClientConnection _clientConnection = clientConnection;
     protected readonly ILogger Logger = logger;
@@ -33,10 +31,6 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse>(
     /// The strategy to use to project the incoming caret position onto the generated C#/Html document
     /// </summary>
     protected virtual IDocumentPositionInfoStrategy DocumentPositionInfoStrategy { get; } = DefaultDocumentPositionInfoStrategy.Instance;
-
-    protected bool SingleServerSupport => _languageServerFeatureOptions.SingleServerSupport;
-
-    protected virtual bool OnlySingleServer { get; } = true;
 
     /// <summary>
     /// When <see langword="true" />, we'll try to map the cursor position to C# even when it is in a Html context, for example
@@ -77,8 +71,7 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse>(
 
     /// <summary>
     /// Returns true if the configuration supports this operation being handled, otherwise returns false. Use to
-    /// handle cases where <see cref="LanguageServerFeatureOptions"/> other than <see cref="LanguageServerFeatureOptions.SingleServerSupport"/>
-    /// need to be checked to validate that the operation can be done.
+    /// handle cases where <see cref="LanguageServerFeatureOptions"/> need to be checked to validate that the operation can be done.
     /// </summary>
     protected virtual bool IsSupported() => true;
 
@@ -115,11 +108,6 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse>(
         if (response is not null && response is not ISumType { Value: null })
         {
             return response;
-        }
-
-        if (OnlySingleServer && !_languageServerFeatureOptions.SingleServerSupport)
-        {
-            return default;
         }
 
         if (positionInfo.LanguageKind == RazorLanguageKind.Razor)

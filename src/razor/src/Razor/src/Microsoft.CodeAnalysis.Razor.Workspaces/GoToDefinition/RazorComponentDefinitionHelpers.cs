@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,8 +25,14 @@ internal sealed record BoundTagHelperResult(TagHelperDescriptor ElementDescripto
 
 internal static class RazorComponentDefinitionHelpers
 {
+    /// <summary>
+    /// Gets bound tag helpers that might apply to the specified index
+    /// </summary>
+    /// <remarks>
+    /// This method will not match component attribute tag helpers
+    /// </remarks>
     public static bool TryGetBoundTagHelpers(
-        RazorCodeDocument codeDocument, int absoluteIndex, bool ignoreComponentAttributes, ILogger logger,
+        RazorCodeDocument codeDocument, int absoluteIndex, ILogger logger,
         out ImmutableArray<BoundTagHelperResult> descriptors)
     {
         descriptors = default;
@@ -71,10 +76,10 @@ internal static class RazorComponentDefinitionHelpers
 
         using var descriptorsBuilder = new PooledArrayBuilder<BoundTagHelperResult>();
 
-        foreach (var boundTagHelper in binding.Descriptors.Where(d => !d.IsAttributeDescriptor()))
+        foreach (var boundTagHelper in binding.TagHelpers.Where(d => !d.IsAttributeDescriptor()))
         {
             var requireAttributeMatch = false;
-            if ((!ignoreComponentAttributes || boundTagHelper.Kind != TagHelperKind.Component) &&
+            if (boundTagHelper.Kind != TagHelperKind.Component &&
                 tagHelperNode is MarkupTagHelperStartTagSyntax startTag)
             {
                 // Include attributes where the end index also matches, since GetSyntaxNodeAsync will consider that the start tag but we behave
@@ -170,10 +175,7 @@ internal static class RazorComponentDefinitionHelpers
         var root = await csharpSyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
-        // Since we know how the compiler generates the C# source we can be a little specific here, and avoid
-        // long tree walks. If the compiler ever changes how they generate their code, the tests for this will break
-        // so we'll know about it.
-        if (TryGetClassDeclaration(root, out var classDeclaration))
+        if (root.TryGetClassDeclaration(out var classDeclaration))
         {
             var property = classDeclaration
                 .Members
@@ -201,21 +203,5 @@ internal static class RazorComponentDefinitionHelpers
         logger.LogInformation($"Generated C# was not in expected shape (CompilationUnit [-> Namespace] -> Class)");
 
         return null;
-
-        static bool TryGetClassDeclaration(SyntaxNode root, [NotNullWhen(true)] out ClassDeclarationSyntax? classDeclaration)
-        {
-            classDeclaration = root switch
-            {
-                CompilationUnitSyntax unit => unit switch
-                {
-                    { Members: [NamespaceDeclarationSyntax { Members: [ClassDeclarationSyntax c, ..] }, ..] } => c,
-                    { Members: [ClassDeclarationSyntax c, ..] } => c,
-                    _ => null,
-                },
-                _ => null,
-            };
-
-            return classDeclaration is not null;
-        }
     }
 }

@@ -39,7 +39,7 @@ Building Razor on macOS or Linux requires:
 
 ## Building in Visual Studio
 
-Before opening the `Razor.sln` file in Visual Studio or VS Code, you need to perform the following actions.
+Before opening the `Razor.slnx` file in Visual Studio or VS Code, you need to perform the following actions.
 
 1. Executing the following on command-line:
 

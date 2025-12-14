@@ -42,7 +42,7 @@ public class RazorMappingServiceTest(ITestOutputHelper testOutput) : WorkspaceTe
 
         // Act
         var text = await document.GetTextAsync(DisposalToken);
-        var result = RazorEditHelper.TryGetMappedSpans(span, text, generated, out var mappedLinePositionSpan, out var mappedSpan);
+        var result = RazorEditHelper.TryGetMappedSpan(span, text, generated, out var mappedLinePositionSpan, out var mappedSpan);
 
         // Assert
         Assert.True(result);
@@ -77,7 +77,7 @@ public class RazorMappingServiceTest(ITestOutputHelper testOutput) : WorkspaceTe
 
         // Act
         var text = await document.GetTextAsync(DisposalToken);
-        var result = RazorEditHelper.TryGetMappedSpans(span, text, generated, out var mappedLinePositionSpan, out var mappedSpan);
+        var result = RazorEditHelper.TryGetMappedSpan(span, text, generated, out var mappedLinePositionSpan, out var mappedSpan);
 
         // Assert
         Assert.True(result);
@@ -111,7 +111,7 @@ public class RazorMappingServiceTest(ITestOutputHelper testOutput) : WorkspaceTe
 
         // Act
         var text = await document.GetTextAsync(DisposalToken);
-        var result = RazorEditHelper.TryGetMappedSpans(span, text, generated, out var mappedLinePositionSpan, out var mappedSpan);
+        var result = RazorEditHelper.TryGetMappedSpan(span, text, generated, out var mappedLinePositionSpan, out var mappedSpan);
 
         // Assert
         Assert.True(result);
@@ -145,7 +145,7 @@ public class RazorMappingServiceTest(ITestOutputHelper testOutput) : WorkspaceTe
 
         // Act
         var text = await document.GetTextAsync(DisposalToken);
-        var result = RazorEditHelper.TryGetMappedSpans(span, text, generated, out _, out _);
+        var result = RazorEditHelper.TryGetMappedSpan(span, text, generated, out _, out _);
 
         // Assert
         Assert.False(result);
