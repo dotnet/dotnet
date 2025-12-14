@@ -16,9 +16,25 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
     public class TargetFeedConfig
     {
         /// <summary>
-        ///   Returns the TargetURL stripped of SAS token so it can be used for logging purposes.
+        ///   Returns the TargetURL stripped of SAS token and with CDN substitution applied
+        ///   for known blob storage accounts. This is used for both logging purposes and
+        ///   for storing asset locations in BAR that point to publicly accessible CDN URLs.
         /// </summary>
-        public string SafeTargetURL => new UriBuilder(TargetURL) {Query = "", Fragment = ""}.Uri.AbsoluteUri;
+        public string SafeTargetURL
+        {
+            get
+            {
+                var uriBuilder = new UriBuilder(TargetURL) { Query = "", Fragment = "" };
+                
+                // Apply CDN substitution for known storage accounts
+                if (PublishingConstants.AccountsWithCdns.TryGetValue(uriBuilder.Host, out var replacementHost))
+                {
+                    uriBuilder.Host = replacementHost;
+                }
+                
+                return uriBuilder.Uri.AbsoluteUri;
+            }
+        }
 
         public TargetFeedContentType ContentType { get; }
 
