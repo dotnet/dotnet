@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -1050,7 +1052,7 @@ namespace NuGet.Packaging
             var warningMessage = new StringBuilder();
 
             // Add files that might not come from expanding files on disk
-            foreach (IPackageFile file in new HashSet<IPackageFile>(Files))
+            foreach (IPackageFile file in new SortedSet<IPackageFile>(Files, new NormalizedPathComparer()))
             {
                 using (Stream stream = file.GetStream())
                 {
@@ -1374,6 +1376,16 @@ namespace NuGet.Packaging
                 var hash = hashFunc.GetHashBytes();
                 var hex = EncodeHexString(hash);
                 return "R" + hex.Substring(0, 16);
+            }
+        }
+
+        private class NormalizedPathComparer : IComparer<IPackageFile>
+        {
+            public int Compare(IPackageFile x, IPackageFile y)
+            {
+                string xPathNormalized = x.Path.Replace('\\', '/');
+                string yPathNormalized = y.Path.Replace('\\', '/');
+                return String.CompareOrdinal(xPathNormalized, yPathNormalized);
             }
         }
     }

@@ -72,7 +72,13 @@ Microsoft.TeamFoundation.WorkItemTracking.Proxy.dll
 Microsoft.TeamFoundation.WorkItemTracking.Proxy.resources.dll
 Microsoft.TeamFoundation.WorkItemTracking.WebApi.dll
 Microsoft.VisualStudio.Debugger.UI.Interfaces.dll
+Microsoft.VisualStudio.Extensibility.dll
+Microsoft.VisualStudio.Extensibility.resources.dll
+Microsoft.VisualStudio.Extensibility.Contracts.dll
+Microsoft.VisualStudio.Extensibility.Contracts.resources.dll
 Microsoft.VisualStudio.Extensibility.Editor.Contracts.dll
+Microsoft.VisualStudio.Extensibility.Framework.dll
+Microsoft.VisualStudio.Extensibility.Framework.resources.dll
 Microsoft.VisualStudio.ExtensionEngineContract.dll
 Microsoft.VisualStudio.HotReload.Components.dll
 Microsoft.VisualStudio.Linux.ConnectionManager.Store.dll
@@ -92,9 +98,11 @@ Microsoft.VisualStudio.Shell.Styles.dll
 Microsoft.VisualStudio.Shell.Styles.resources.dll
 System.Drawing.Common.dll
 System.IdentityModel.Tokens.Jwt.dll
+System.IO.FileSystem.AccessControl.dll
 System.Management.Automation.dll
 System.Memory.Data.dll
 System.Net.Http.Formatting.dll
+System.Security.Cryptography.ProtectedData.dll
 System.Text.Encodings.Web.dll
 System.Web.Http.dll
 
@@ -105,6 +113,7 @@ Lucene.Net.dll
 Microsoft.Build.NuGetSdkResolver.xml
 Microsoft.VisualStudio.ExtensionEngineContract.xml
 NuGet.Build.Tasks.xml
+NuGet.Build.Tasks.Pack.xml
 NuGet.Commands.xml
 NuGet.Common.xml
 NuGet.Configuration.xml

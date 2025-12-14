@@ -17,6 +17,10 @@ namespace NuGet.CommandLine.Xplat.Tests
         {
         }
 
+        public void LogInline(string data, ConsoleColor color)
+        {
+        }
+
         public LogLevel LogLevel
         {
             get => VerbosityLevel;

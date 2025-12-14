@@ -168,7 +168,7 @@ Function Install-DotnetCLI {
 
         Trace-Log "$DotNetInstall $CliBranch -InstallDir $CLIRoot -NoPath"
 
-        & powershell $DotNetInstall $CliBranch -InstallDir $CLIRoot -NoPath
+        & powershell -NoProfile $DotNetInstall $CliBranch -InstallDir $CLIRoot -NoPath
         if ($LASTEXITCODE -ne 0)
         {
             throw "dotnet-install.ps1 exited with non-zero exit code"
@@ -229,7 +229,7 @@ Function Install-DotNetSdksForTesting {
 
         Trace-Log "$DotNetInstall $SdkItem -InstallDir $SdkTestingRoot -Architecture $arch -NoPath"
 
-        & powershell $DotNetInstall $SdkItem -InstallDir $SdkTestingRoot -Architecture $arch -NoPath
+        & powershell -NoProfile $DotNetInstall $SdkItem -InstallDir $SdkTestingRoot -Architecture $arch -NoPath
         if ($LASTEXITCODE -ne 0)
         {
             throw "dotnet-install.ps1 exited with non-zero exit code"

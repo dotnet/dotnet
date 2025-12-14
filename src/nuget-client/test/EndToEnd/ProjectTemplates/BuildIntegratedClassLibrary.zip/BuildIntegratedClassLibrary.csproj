@@ -13,6 +13,7 @@
 		<AssemblyName>$safeprojectname$</AssemblyName>
 		<TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
 		<FileAlignment>512</FileAlignment>
+		<RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     <ResolveNuGetPackages>true</ResolveNuGetPackages>
     <PlatformTarget>AnyCPU</PlatformTarget>
 	</PropertyGroup>
@@ -48,7 +49,6 @@
 	<ItemGroup>
 		<Compile Include="Class1.cs" />
 		<Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="project.json" />
 	</ItemGroup>
 	<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

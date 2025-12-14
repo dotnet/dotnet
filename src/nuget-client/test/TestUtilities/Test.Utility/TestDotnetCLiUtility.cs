@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -196,6 +198,63 @@ SDKs found: {string.Join(", ", Directory.EnumerateDirectories(SdkDirSource).Sele
             CopyPackSdkArtifacts(artifactsDirectory, pathToSdkInCli, configuration);
             CopyRestoreArtifacts(artifactsDirectory, pathToSdkInCli, configuration);
             CopyNuGetSdkResolverArtifacts(artifactsDirectory, pathToSdkInCli, configuration);
+            AddSpectreConsoleToDepsJson(pathToSdkInCli);
+        }
+
+        // Temporary. Can be removed once https://github.com/dotnet/dotnet/pull/3527 is merged and a new .NET SDK 
+        private static void AddSpectreConsoleToDepsJson(string pathToSdkInCli)
+        {
+            string[] depsFiles = ["NuGet.CommandLine.XPlat.deps.json", "dotnet.deps.json"];
+
+            foreach (var depsFile in depsFiles)
+            {
+                var depsFilePath = Path.Combine(pathToSdkInCli, depsFile);
+                JObject jObject = JObject.Parse(File.ReadAllText(depsFilePath));
+
+                var targetNode = (JObject)((JObject)jObject["targets"]).Properties().First().Value;
+                JProperty spectreConsoleProperty = targetNode.Properties()
+                    .FirstOrDefault(p => p.Name.StartsWith("Spectre.Console/"));
+
+                bool changed = false;
+
+                if (spectreConsoleProperty is null)
+                {
+                    spectreConsoleProperty = new JProperty("Spectre.Console/0.54.0", JObject.Parse("""{"runtime":{"lib/net9.0/Spectre.Console.dll":{"assemblyVersion":"0.0.0.0","fileVersion":"0.54.0.0"}}}"""));
+                    targetNode.Add(spectreConsoleProperty);
+                    changed = true;
+                }
+
+                JProperty library = (JProperty)((JObject)jObject["libraries"]).Properties()
+                    .FirstOrDefault(p => p.Name.StartsWith("Spectre.Console/"));
+                if (library is null)
+                {
+                    var value = JObject.Parse(
+                        """
+                        {
+                        "type": "package",
+                        "serviceable": true,
+                        "sha512": "sha512-StDXCFayfy0yB1xzUHT2tgEpV1/HFTiS4JgsAQS49EYTfMixSwwucaQs/bIOCwXjWwIQTMuxjUIxcB5XsJkFJA==",
+                        "path": "spectre.console/0.54.0",
+                        "hashPath": "spectre.console.0.54.0.nupkg.sha512"
+                        }
+                        """);
+                    library = new JProperty("Spectre.Console/0.54.0", value);
+                    ((JObject)jObject["libraries"]).Add(library);
+                    changed = true;
+                }
+
+                if (changed)
+                {
+                    using (StreamWriter streamWriter = File.CreateText(depsFilePath))
+                    using (JsonTextWriter writer = new JsonTextWriter(streamWriter)
+                    {
+                        Formatting = Formatting.Indented
+                    })
+                    {
+                        jObject.WriteTo(writer);
+                    }
+                }
+            }
         }
 
         private static void CopyRestoreArtifacts(string artifactsDirectory, string pathToSdkInCli, string configuration)
@@ -301,36 +360,20 @@ project TFMs found: {string.Join(", ", compiledTfms.Keys.Select(k => k.ToString(
 
         private static void CopyPackSdkArtifacts(string artifactsDirectory, string pathToSdkInCli, string configuration)
         {
-            var pathToPackSdk = Path.Combine(pathToSdkInCli, "Sdks", "NuGet.Build.Tasks.Pack");
-
             const string packProjectName = "NuGet.Build.Tasks.Pack";
-            const string packTargetsName = "NuGet.Build.Tasks.Pack.targets";
 
             // Copy the pack SDK.
             var packProjectBinDirectory = Path.Combine(artifactsDirectory, packProjectName, "bin", configuration);
             var tfmToCopy = GetTfmToCopy(packProjectBinDirectory);
-
             var packProjectCoreArtifactsDirectory = new DirectoryInfo(Path.Combine(packProjectBinDirectory, tfmToCopy));
-
-            // We are only copying the CoreCLR assets, since, we're testing only them under Core MSBuild.
-            var targetRuntimeType = "CoreCLR";
-
-            var packAssemblyDestinationDirectory = Path.Combine(pathToPackSdk, targetRuntimeType);
 
             foreach (var assembly in packProjectCoreArtifactsDirectory.EnumerateFiles("*.dll"))
             {
                 File.Copy(
                     sourceFileName: assembly.FullName,
-                    destFileName: Path.Combine(packAssemblyDestinationDirectory, assembly.Name),
+                    destFileName: Path.Combine(pathToSdkInCli, assembly.Name),
                     overwrite: true);
             }
-
-            // Copy the pack targets
-            var packTargetsSource = Path.Combine(packProjectCoreArtifactsDirectory.FullName, packTargetsName);
-            var targetsDestination = Path.Combine(pathToPackSdk, "build", packTargetsName);
-            var targetsDestinationCrossTargeting = Path.Combine(pathToPackSdk, "buildCrossTargeting", packTargetsName);
-            File.Copy(packTargetsSource, targetsDestination, overwrite: true);
-            File.Copy(packTargetsSource, targetsDestinationCrossTargeting, overwrite: true);
         }
 
         public static void WriteGlobalJson(string path)

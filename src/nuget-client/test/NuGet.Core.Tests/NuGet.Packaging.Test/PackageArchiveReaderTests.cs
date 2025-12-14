@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.IO;
 using System.IO.Compression;
@@ -98,7 +100,7 @@ namespace NuGet.Packaging.Test
                 {
                     var groups = reader.GetReferenceItems().ToArray();
 
-                    Assert.Equal(4, groups.Count());
+                    Assert.Equal(4, groups.Length);
 
                     Assert.Equal(NuGetFramework.AnyFramework, groups[0].TargetFramework);
                     Assert.Equal("lib/a.dll", groups[0].Items.ToArray()[0]);
@@ -127,7 +129,7 @@ namespace NuGet.Packaging.Test
                 {
                     var groups = reader.GetReferenceItems().ToArray();
 
-                    Assert.Equal(3, groups.Count());
+                    Assert.Equal(3, groups.Length);
 
                     Assert.Equal(NuGetFramework.AnyFramework, groups[0].TargetFramework);
                     Assert.Equal(2, groups[0].Items.Count());
@@ -175,7 +177,7 @@ namespace NuGet.Packaging.Test
                 {
                     var groups = reader.GetReferenceItems().ToArray();
 
-                    Assert.Equal(1, groups.Count());
+                    Assert.Equal(1, groups.Length);
 
                     Assert.Equal(NuGetFramework.Parse("net40"), groups[0].TargetFramework);
                     Assert.Equal(2, groups[0].Items.Count());
@@ -215,7 +217,7 @@ namespace NuGet.Packaging.Test
                 {
                     var groups = reader.GetContentItems().ToArray();
 
-                    Assert.Equal(3, groups.Count());
+                    Assert.Equal(3, groups.Length);
                 }
             }
         }
@@ -231,7 +233,7 @@ namespace NuGet.Packaging.Test
                 {
                     var groups = reader.GetContentItems().ToArray();
 
-                    Assert.Equal(3, groups.Count());
+                    Assert.Equal(3, groups.Length);
                 }
             }
         }
@@ -247,7 +249,7 @@ namespace NuGet.Packaging.Test
                 {
                     var groups = reader.GetContentItems().ToArray();
 
-                    Assert.Equal(1, groups.Count());
+                    Assert.Equal(1, groups.Length);
 
                     Assert.Equal(NuGetFramework.AnyFramework, groups.Single().TargetFramework);
 
@@ -268,7 +270,7 @@ namespace NuGet.Packaging.Test
                 {
                     var groups = reader.GetReferenceItems().ToArray();
 
-                    Assert.Equal(3, groups.Count());
+                    Assert.Equal(3, groups.Length);
 
                     Assert.Equal(4, groups.SelectMany(e => e.Items).Count());
                 }
@@ -287,7 +289,7 @@ namespace NuGet.Packaging.Test
                 {
                     var groups = reader.GetReferenceItems().ToArray();
 
-                    Assert.Equal(2, groups.Count());
+                    Assert.Equal(2, groups.Length);
 
                     Assert.Equal(NuGetFramework.AnyFramework, groups[0].TargetFramework);
                     Assert.Equal(1, groups[0].Items.Count());
@@ -312,7 +314,7 @@ namespace NuGet.Packaging.Test
                 {
                     var groups = reader.GetReferenceItems().ToArray();
 
-                    Assert.Equal(3, groups.Count());
+                    Assert.Equal(3, groups.Length);
 
                     Assert.Equal(NuGetFramework.AnyFramework, groups[0].TargetFramework);
                     Assert.Equal(1, groups[0].Items.Count());

@@ -84,7 +84,7 @@
       </trans-unit>
       <trans-unit id="Debug_TargetFrameworkInfo">
         <source>&gt;&gt; {0} are being added from '{1}'{2}</source>
-        <target state="translated">&gt;&gt; {0} が '{1}'{2} から追加されています</target>
+        <target state="translated">&gt;&gt; {0} は '{1}'{2} から追加されています</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_TargetFrameworkInfoPrefix">
@@ -159,7 +159,7 @@
       </trans-unit>
       <trans-unit id="FileConflictMessage">
         <source>File '{0}' already exists in project '{1}'. Do you want to overwrite it?</source>
-        <target state="translated">ファイル '{0}' はプロジェクト '{1}' に既に存在します。上書きしますか?</target>
+        <target state="translated">ファイル '{0}' は既にプロジェクト '{1}' に存在します。上書きしますか?</target>
         <note />
       </trans-unit>
       <trans-unit id="FoundPackageInPackagesFolder">
@@ -331,7 +331,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">'{0}' を NULL にすることはできません。</target>
+        <target state="translated">'{0}' を null 値にはできません。</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="RemovedPackageFromFolder">
@@ -421,7 +421,7 @@
       </trans-unit>
       <trans-unit id="UnableToFindCompatibleItems">
         <source>Could not install package '{0}'. You are trying to install this package into a project that targets '{1}', but the package does not contain any assembly references or content files that are compatible with that framework. For more information, contact the package author.</source>
-        <target state="translated">パッケージ '{0}' をインストールできませんでした。'{1}' を対象とするプロジェクトにこのパッケージをインストールしようとしていますが、そのフレームワークと互換性があるアセンブリ参照またはコンテンツ ファイルがこのパッケージに含まれていません。詳細については、パッケージの作成者に問い合わせてください。</target>
+        <target state="translated">パッケージ '{0}' をインストールできませんでした。このパッケージを '{1}' を対象とするプロジェクトにインストールしようとしていますが、そのフレームワークと互換性があるアセンブリ参照またはコンテンツ ファイルがパッケージに含まれていません。詳細については、パッケージの作成者に問い合わせてください。</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToFindPathInLookupOrList">
@@ -481,7 +481,7 @@
       </trans-unit>
       <trans-unit id="Warning_DirectoryNotEmpty">
         <source>Directory '{0}' is not empty. Skipping...</source>
-        <target state="translated">ディレクトリ '{0}' は空ではありません。スキップしています...</target>
+        <target state="translated">ディレクトリ '{0}' が空ではありません。スキップ中...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_ErrorFindingRepository">
@@ -492,12 +492,12 @@
       </trans-unit>
       <trans-unit id="Warning_FileAlreadyExists">
         <source>'{0}' already exists. Skipping...</source>
-        <target state="translated">'{0}' は既に存在します。スキップしています...</target>
+        <target state="translated">'{0}' は既に存在します。スキップ中...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FileModified">
         <source>Skipping '{0}' because it was modified.</source>
-        <target state="translated">'{0}' は変更されたため、スキップしています。</target>
+        <target state="translated">'{0}' は変更されているため、スキップします。</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">
@@ -510,7 +510,7 @@
       </trans-unit>
       <trans-unit id="Warning_RollingBack">
         <source>Install failed. Rolling back...</source>
-        <target state="translated">インストールが失敗しました。ロールバックしています...</target>
+        <target state="translated">インストールに失敗しました。ロールバックします...</target>
         <note />
       </trans-unit>
       <trans-unit id="XdtError">

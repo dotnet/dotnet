@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +16,7 @@ namespace Test.Utility
         /// <summary>
         /// Creates a handler to override url requests to static content
         /// </summary>
-        public static TestHttpSourceProvider CreateHttpSource(Dictionary<string, string> responses, string errorContent = "", TestHttpSource httpSource = null, bool throwOperationCancelledException = false)
+        public static TestHttpSourceProvider CreateHttpSource(Dictionary<string, string> responses, TestHttpSource httpSource = null, bool throwOperationCancelledException = false)
         {
             return new TestHttpSourceProvider(responses, httpSource, throwOperationCancelledException);
         }

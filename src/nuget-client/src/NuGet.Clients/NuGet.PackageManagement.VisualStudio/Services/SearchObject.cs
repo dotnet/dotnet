@@ -1,12 +1,9 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Runtime.Caching;
 using System.Threading;
 using System.Threading.Tasks;
@@ -62,18 +59,12 @@ namespace NuGet.PackageManagement.VisualStudio
             _lastMainFeedSearchResult = feedResults; // Store this so we can ContinueSearch, we don't store recommended as we only do that on the first search
             _lastSearchFilter = filter;
 
-            var packageSearchMetadataContextInfoCollection = new List<PackageSearchMetadataContextInfo>(feedResults.Items.Count);
-            foreach (IPackageSearchMetadata packageSearchMetadata in feedResults.Items)
-            {
-                IPackageSearchMetadata? localPackageSearchMetadata = null;
-
-                // Attach local metadata in case we do not have an icon remotely, can try local metadata.
-                localPackageSearchMetadata = await _packageMetadataProvider.GetOnlyLocalPackageMetadataAsync(packageSearchMetadata.Identity, cancellationToken);
-
-                CacheBackgroundData(packageSearchMetadata, localPackageSearchMetadata, filter.IncludePrerelease);
-                var knownOwners = CreateKnownOwners(packageSearchMetadata);
-                packageSearchMetadataContextInfoCollection.Add(PackageSearchMetadataContextInfo.Create(packageSearchMetadata, knownOwners));
-            }
+            var packageSearchMetadataContextInfoCollection = await ProcessSearchResultsAsync(
+                feedResults.Items,
+                filter.IncludePrerelease,
+                includeLocalMetadata: true,
+                createKnownOwners: true,
+                cancellationToken);
 
             return new SearchResultContextInfo(
                 packageSearchMetadataContextInfoCollection,
@@ -92,13 +83,12 @@ namespace NuGet.PackageManagement.VisualStudio
                 cancellationToken);
             _lastMainFeedSearchResult = refreshSearchResult;
 
-            var packageItems = new List<PackageSearchMetadataContextInfo>(_lastMainFeedSearchResult.Items.Count);
-
-            foreach (IPackageSearchMetadata packageSearchMetadata in _lastMainFeedSearchResult.Items)
-            {
-                CacheBackgroundData(packageSearchMetadata, _lastSearchFilter.IncludePrerelease);
-                packageItems.Add(PackageSearchMetadataContextInfo.Create(packageSearchMetadata));
-            }
+            var packageItems = await ProcessSearchResultsAsync(
+                _lastMainFeedSearchResult.Items,
+                _lastSearchFilter.IncludePrerelease,
+                includeLocalMetadata: false,
+                createKnownOwners: false,
+                cancellationToken);
 
             return new SearchResultContextInfo(
                 packageItems,
@@ -142,14 +132,12 @@ namespace NuGet.PackageManagement.VisualStudio
                 cancellationToken);
             _lastMainFeedSearchResult = continueSearchResult;
 
-            var packageItems = new List<PackageSearchMetadataContextInfo>(_lastMainFeedSearchResult.Items.Count);
-
-            foreach (IPackageSearchMetadata packageSearchMetadata in _lastMainFeedSearchResult.Items)
-            {
-                CacheBackgroundData(packageSearchMetadata, _lastSearchFilter.IncludePrerelease);
-                var knownOwners = CreateKnownOwners(packageSearchMetadata);
-                packageItems.Add(PackageSearchMetadataContextInfo.Create(packageSearchMetadata, knownOwners));
-            }
+            var packageItems = await ProcessSearchResultsAsync(
+                _lastMainFeedSearchResult.Items,
+                _lastSearchFilter.IncludePrerelease,
+                includeLocalMetadata: false,
+                createKnownOwners: true,
+                cancellationToken);
 
             return new SearchResultContextInfo(
                 packageItems,
@@ -177,16 +165,48 @@ namespace NuGet.PackageManagement.VisualStudio
                 {
                     searchResult = await _packageFeed.RefreshSearchAsync(searchResult.RefreshToken, cancellationToken);
                 }
-                totalCount += searchResult.Items?.Count() ?? 0;
+                totalCount += searchResult.Items?.Count ?? 0;
                 nextToken = searchResult.NextToken;
             } while (nextToken != null && totalCount < maxCount);
 
             return totalCount;
         }
 
-        private void CacheBackgroundData(IPackageSearchMetadata packageSearchMetadata, bool includesPrerelease)
+        /// <summary>
+        /// Processes search results by caching background data and creating PackageSearchMetadataContextInfo objects.
+        /// This method consolidates the common logic used across SearchAsync, RefreshSearchAsync, and ContinueSearchAsync.
+        /// </summary>
+        /// <param name="searchResults">The search results to process</param>
+        /// <param name="includePrerelease">Whether prerelease packages are included in the search</param>
+        /// <param name="includeLocalMetadata">Whether to include local package metadata for icons</param>
+        /// <param name="createKnownOwners">Whether to create known owners for the packages</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>A list of processed PackageSearchMetadataContextInfo objects</returns>
+        private async ValueTask<List<PackageSearchMetadataContextInfo>> ProcessSearchResultsAsync(
+            IEnumerable<IPackageSearchMetadata> searchResults,
+            bool includePrerelease,
+            bool includeLocalMetadata,
+            bool createKnownOwners,
+            CancellationToken cancellationToken)
         {
-            CacheBackgroundData(packageSearchMetadata, localPackageSearchMetadata: null, includesPrerelease);
+            var packageSearchMetadataContextInfoCollection = new List<PackageSearchMetadataContextInfo>();
+
+            foreach (IPackageSearchMetadata packageSearchMetadata in searchResults)
+            {
+                IPackageSearchMetadata? localPackageSearchMetadata = null;
+
+                // Attach local metadata in case we do not have an icon remotely, can try local metadata.
+                if (includeLocalMetadata)
+                {
+                    localPackageSearchMetadata = await _packageMetadataProvider.GetOnlyLocalPackageMetadataAsync(packageSearchMetadata.Identity, cancellationToken);
+                }
+
+                CacheBackgroundData(packageSearchMetadata, localPackageSearchMetadata, includePrerelease);
+                IReadOnlyList<KnownOwner>? knownOwners = createKnownOwners ? CreateKnownOwners(packageSearchMetadata) : null;
+                packageSearchMetadataContextInfoCollection.Add(PackageSearchMetadataContextInfo.Create(packageSearchMetadata, knownOwners));
+            }
+
+            return packageSearchMetadataContextInfoCollection;
         }
 
         private void CacheBackgroundData(IPackageSearchMetadata packageSearchMetadata, IPackageSearchMetadata? localPackageSearchMetadata, bool includesPrerelease)

@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Globalization;
 using System.IO;
@@ -357,7 +359,7 @@ namespace Test.Utility
                     "zipEntries.Length should be equal to zipContents.Length");
             }
 
-            var fileInfo = GetFileInfo(path, packageId, packageVersion);
+            var fileInfo = GetFileInfo(path);
 
             using (var zip = new ZipArchive(File.Create(fileInfo.FullName), ZipArchiveMode.Create))
             {
@@ -372,12 +374,10 @@ namespace Test.Utility
             return fileInfo;
         }
 
-        private static FileInfo GetFileInfo(string path, string packageId, string packageVersion)
+        private static FileInfo GetFileInfo(string path)
         {
             var file = Path.Combine(path, Guid.NewGuid() + ".nupkg");
-            var fileInfo = new FileInfo(file);
-
-            return fileInfo;
+            return new FileInfo(file);
         }
 
         public static void SetSimpleNuspec(ZipArchive zip,

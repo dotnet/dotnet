@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,6 +29,8 @@ namespace NuGet.Test.Utility
 
     public static class SimpleTestPackageUtility
     {
+        private static NuGetVersion EmptyNuGetVersion = new NuGetVersion(0, 0, 0);
+
         public static async Task CreateFullPackagesAsync(string repositoryDir, IDictionary<string, IEnumerable<string>> packages)
         {
             if (packages == null)
@@ -220,7 +224,10 @@ namespace NuGet.Test.Utility
                             var node = new XElement(XName.Get("dependency"));
                             groupNode.Add(node);
                             node.Add(new XAttribute(XName.Get("id"), dependency.Id));
-                            node.Add(new XAttribute(XName.Get("version"), dependency.VersionRange.ToNormalizedString()));
+                            if (dependency.VersionRange.MinVersion != EmptyNuGetVersion)
+                            {
+                                node.Add(new XAttribute(XName.Get("version"), dependency.VersionRange.ToNormalizedString()));
+                            }
 
                             if (dependency.Include.Count > 0)
                             {

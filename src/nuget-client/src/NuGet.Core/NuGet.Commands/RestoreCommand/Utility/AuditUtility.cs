@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,7 +23,7 @@ namespace NuGet.Commands.Restore.Utility
     {
         private readonly RestoreAuditProperties? _restoreAuditProperties;
         private readonly string _projectFullPath;
-        private readonly IEnumerable<RestoreTargetGraph> _targetGraphs;
+        private readonly List<RestoreTargetGraph> _targetGraphs;
         private readonly IReadOnlyList<IVulnerabilityInformationProvider> _vulnerabilityInfoProviders;
         private readonly ILogger _logger;
         private readonly IList<TargetFrameworkInformation> _targetFrameworks;
@@ -64,7 +62,7 @@ namespace NuGet.Commands.Restore.Utility
         public AuditUtility(
             RestoreAuditProperties? restoreAuditProperties,
             string projectFullPath,
-            IEnumerable<RestoreTargetGraph> graphs,
+            List<RestoreTargetGraph> graphs,
             IReadOnlyList<IVulnerabilityInformationProvider> vulnerabilityInformationProviders,
             IList<TargetFrameworkInformation> targetFrameworks,
             ILogger logger)
@@ -513,7 +511,7 @@ namespace NuGet.Commands.Restore.Utility
 
         internal enum NuGetAuditMode { Unknown, Direct, All }
 
-        // Enum parsing and ToString are a magnitude of times slower than a naive implementation. 
+        // Enum parsing and ToString are a magnitude of times slower than a naive implementation.
         private NuGetAuditMode ParseAuditMode()
         {
             string? auditMode = _restoreAuditProperties?.AuditMode?.Trim();

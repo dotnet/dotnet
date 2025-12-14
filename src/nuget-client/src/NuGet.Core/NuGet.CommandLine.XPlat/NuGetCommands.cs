@@ -1,9 +1,12 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.CommandLine;
 using System.Linq;
+using NuGet.CommandLine.XPlat.Commands.Package.PackageDownload;
 using NuGet.CommandLine.XPlat.Commands.Package.Update;
 
 namespace NuGet.CommandLine.XPlat;
@@ -30,6 +33,7 @@ public static class NuGetCommands
         }
 
         PackageUpdateCommand.Register(packageCommand, interactiveOption);
+        PackageDownloadCommand.Register(packageCommand, interactiveOption);
     }
 
     // To delete once the SDK starts using the other overload. Joys of public APIs.

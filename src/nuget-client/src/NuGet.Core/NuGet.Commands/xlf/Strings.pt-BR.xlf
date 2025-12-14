@@ -129,6 +129,11 @@
       Do not localize `PackageVersion`
     </note>
       </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_MissingTransitivelyPinnedIncludeType">
+        <source>The centrally pinned dependency '{0}' was not found in the resolved graph unexpectedly for node '{1}'. Please file an issue at https://github.com/NuGet/Home</source>
+        <target state="translated">A dependência fixada centralmente "{0}" não foi encontrada no grafo resolvido inesperadamente para o nó "{1}". Registre um problema em https://github.com/NuGet/Home</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Error_CentralPackageManagement_PackageReferenceWithVersionNotAllowed">
         <source>The following PackageReference items cannot define a value for Version: {0}. Projects using Central Package Management must define a Version value on a PackageVersion item. For more information, visit https://aka.ms/nuget/cpm/gettingstarted</source>
         <target state="translated">Os seguintes itens PackageReference não podem definir um valor para Versão: {0}. Projetos que usam o Gerenciamento Central de Pacotes devem definir um valor para a versão em um item PackageVersion. Para obter mais informações, visite https://aka.ms/nuget/cpm/gettingstarted</target>
@@ -336,7 +341,7 @@
       </trans-unit>
       <trans-unit id="Error_NoMatchingCertificate">
         <source>The package signature did not match any of the allowed certificate fingerprints.</source>
-        <target state="translated">A assinatura de pacote não coincidiu com nenhuma das impressões digitais de certificado permitidas.</target>
+        <target state="translated">A assinatura do pacote não coincidiu com nenhuma das impressões digitais de certificado permitidas.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_NoMatchingClientCertificate">
@@ -461,12 +466,12 @@
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
         <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">A {0} PackageReference não será removida. Considere remover este pacote de suas dependências, pois provavelmente é desnecessário.</target>
+        <target state="translated">PackageReference {0} não será podado. Considere remover este pacote das dependências, pois ele provavelmente é desnecessário.</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
         <source>A ProjectReference cannot be pruned, {0}.</source>
-        <target state="translated">Uma ProjectReference não pode ser removida, {0}.</target>
+        <target state="translated">Uma ProjectReference não pode ser podada, {0}.</target>
         <note>0 - project reference</note>
       </trans-unit>
       <trans-unit id="Error_ServiceIndexShouldBeHttps">
@@ -1083,7 +1088,7 @@ Para obter mais informações, visite https://docs.nuget.org/docs/reference/comm
       </trans-unit>
       <trans-unit id="RestoreDebugPruningPackageReference">
         <source>Pruning the package '{0}' as a dependency of '{1}'. The maximum prunable version is '{2}'</source>
-        <target state="translated">Remover o pacote '{0}' como uma dependência de '{1}'. A versão máxima remoção é '{2}'</target>
+        <target state="translated">Podando o pacote '{0}' como dependência de '{1}'. A versão máxima que pode ser removida é '{2}'</target>
         <note>0 - package id and version, 1 - version</note>
       </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
@@ -1367,7 +1372,7 @@ Para obter mais informações, visite https://docs.nuget.org/docs/reference/comm
       </trans-unit>
       <trans-unit id="VerifyCommand_Failed">
         <source>Package signature validation failed.</source>
-        <target state="translated">Falha na validação da assinatura de pacote.</target>
+        <target state="translated">Falha na validação da assinatura do pacote.</target>
         <note />
       </trans-unit>
       <trans-unit id="VerifyCommand_FinishedWithErrors">
@@ -1458,20 +1463,20 @@ Para obter mais informações, visite https://docs.nuget.org/docs/reference/comm
       <trans-unit id="Warning_List_HttpSource">
         <source>The following is a 'Non-HTTPS' source: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">A seguir está uma fonte 'Não-HTTPS': {0}
+        <target state="translated">A seguir está uma fonte 'Não HTTPS': {0}
 O NuGet exige fontes HTTPS. Consulte https://aka.ms/nuget-https-everywhere para obter mais informações.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_List_HttpSources">
         <source>The following are 'Non-HTTPS' sources: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">As seguintes são fontes 'Não-HTTPS': {0}
+        <target state="translated">As seguintes são fontes 'Não HTTPS': {0}
 O NuGet exige fontes HTTPS. Consulte https://aka.ms/nuget-https-everywhere para obter mais informações.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_MinVersionDoesNotExist">
         <source>{0} depends on {1} but {2} was not found. {3} was resolved instead.</source>
-        <target state="translated">{0} depende de {1} mas {2} não foi encontrado. {3} foi resolvido.</target>
+        <target state="translated">{0} depende de {1}, mas {2} não foi encontrado. {3} foi resolvido em vez disso.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_MinVersionNonInclusive">

@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.IO;
 using System.Text;
@@ -144,6 +146,14 @@ namespace NuGet.CommandLine.XPlat
             var currentColor = Console.ForegroundColor;
             Console.ForegroundColor = color;
             LogInternal(LogLevel.Minimal, data);
+            Console.ForegroundColor = currentColor;
+        }
+
+        public void LogInline(string data, ConsoleColor color)
+        {
+            var currentColor = Console.ForegroundColor;
+            Console.ForegroundColor = color;
+            Console.Write(data);
             Console.ForegroundColor = currentColor;
         }
     }

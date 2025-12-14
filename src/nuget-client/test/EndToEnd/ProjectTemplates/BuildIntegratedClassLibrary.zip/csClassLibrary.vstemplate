@@ -17,7 +17,6 @@
     <Project File="BuildIntegratedClassLibrary.csproj" ReplaceParameters="true">
       <ProjectItem ReplaceParameters="true" TargetFileName="Properties\AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
       <ProjectItem ReplaceParameters="true">Class1.cs</ProjectItem>
-      <ProjectItem>project.json</ProjectItem>
     </Project>
   </TemplateContent>
 </VSTemplate>

@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="DTE_ProjectUnsupported">
         <source>The project '{0}' is unsupported</source>
-        <target state="translated">Projekt „{0}” jest nieobsługiwany</target>
+        <target state="translated">Projekt „{0}” nie jest obsługiwany</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorDialogBoxTitle">
@@ -113,13 +113,13 @@
         <note />
       </trans-unit>
       <trans-unit id="ProjectMigrateErrorMessage">
-        <source>Project is not eligible for migration as it's not project.json based.</source>
-        <target state="translated">Projekt nie kwalifikuje się do migracji, ponieważ nie jest oparty na project.json.</target>
+        <source>Project is not eligible for migration. Either the project is not packages.config based or doesn't support PackageReference yet.</source>
+        <target state="translated">Projekt nie kwalifikuje się do migracji. Projekt nie jest oparty na pliku packages.config lub nie obsługuje jeszcze elementu PackageReference.</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
         <source>These settings are stored in %NuGet.Config% files</source>
-        <target state="translated">Te ustawienia są przechowywane w %NuGet.Config% plikach</target>
+        <target state="translated">Te ustawienia są przechowywane w plikach %NuGet.Config%</target>
         <note>Do not translate % % or what is between them</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
@@ -130,6 +130,21 @@
       <trans-unit id="Text_AllowInsecureConnections_Header">
         <source>Allow Insecure Connections</source>
         <target state="translated">Zezwalaj na niezabezpieczone połączenia</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Description">
+        <source>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</source>
+        <target state="new">Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_HowToRemove">
+        <source>Remove all audit sources to revert to using package sources for vulnerability data.</source>
+        <target state="new">Remove all audit sources to revert to using package sources for vulnerability data.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Title">
+        <source>Audit sources</source>
+        <target state="new">Audit sources</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">
@@ -177,6 +192,11 @@
         <target state="translated">Źródło</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_PackageSources_Description">
+        <source>Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</source>
+        <target state="new">Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_PackageSources_MachineWide">
         <source>Machine-wide package sources</source>
         <target state="translated">Źródła pakietów na całym komputerze</target>
@@ -194,7 +214,7 @@
       </trans-unit>
       <trans-unit id="clearLocalResources">
         <source>Clear NuGet local resources</source>
-        <target state="translated">Wyczyść zasoby lokalne nuGet</target>
+        <target state="translated">Wyczyść zasoby lokalne menedżera pakietów NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="defaultPackageManagementFormat">

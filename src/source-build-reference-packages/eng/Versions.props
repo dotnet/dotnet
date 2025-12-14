@@ -19,7 +19,7 @@
     <HumanizerReleaseVersion>2.14.1</HumanizerReleaseVersion>
     <MSBuildLocatorReleaseVersion>1.10.2</MSBuildLocatorReleaseVersion>
     <SolutionPersistenceVersion>1.0.52</SolutionPersistenceVersion>
-    <SpectreConsoleReleaseVersion>0.52.0</SpectreConsoleReleaseVersion>
+    <SpectreConsoleReleaseVersion>0.54.0</SpectreConsoleReleaseVersion>
   </PropertyGroup>
 
   <PropertyGroup>

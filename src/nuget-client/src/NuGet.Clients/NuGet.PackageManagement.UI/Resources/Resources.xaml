@@ -173,11 +173,6 @@
 
   <Style x:Key="{x:Type ProgressBar}" TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource {x:Static vs:VsResourceKeys.ProgressBarStyleKey}}"/>
 
-  <Style x:Key="TooltipStyle" TargetType="{x:Type TextBlock}">
-    <Setter Property="TextWrapping" Value="Wrap" />
-    <Setter Property="MaxWidth" Value="300" />
-  </Style>
-
   <Style x:Key="ToolBarButtonStyle" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" TargetType="{x:Type Button}">
     <Setter Property="FocusVisualStyle" Value="{StaticResource ControlsFocusVisualStyle}" />
   </Style>

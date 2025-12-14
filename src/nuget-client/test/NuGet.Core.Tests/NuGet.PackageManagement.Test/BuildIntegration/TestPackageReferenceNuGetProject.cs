@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -85,11 +87,6 @@ namespace NuGet.Test
             }
 
             return Task.FromResult<IReadOnlyList<PackageSpec>>([_packageSpec]);
-        }
-
-        public T GetGlobalService<T>() where T : class
-        {
-            throw new NotImplementedException();
         }
 
         public Task ExecutePackageScriptAsync(PackageIdentity packageIdentity, string packageInstallPath, string scriptRelativePath, INuGetProjectContext projectContext, bool throwOnFailure, CancellationToken token)

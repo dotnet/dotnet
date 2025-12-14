@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -65,7 +67,7 @@ namespace Msbuild.Integration.Test
                 packageX.AddFile("lib/net472/a.dll");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config")))
                 {
@@ -119,7 +121,7 @@ namespace Msbuild.Integration.Test
                 packageX.AddFile("lib/net472/a.dll");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config")))
                 {
@@ -169,7 +171,7 @@ namespace Msbuild.Integration.Test
                 packageX.AddFile("lib/net472/a.dll");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config")))
                 {
@@ -225,7 +227,7 @@ namespace Msbuild.Integration.Test
                 packageX.AddFile("lib/net472/a.dll");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var configAPath = Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "NuGet.Config");
                 var configText =
@@ -284,7 +286,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 packageX.AddFile("lib/net472/a.dll");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var configAPath = Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "NuGet.Config");
                 var configText =
@@ -342,7 +344,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 packageX.AddFile("lib/net472/a.dll");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config")))
                 {
@@ -405,7 +407,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 packageX.AddFile("lib/net472/a.dll");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config")))
                 {
@@ -472,7 +474,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 packageX.AddFile("lib/net472/a.dll");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var configAPath = Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "NuGet.Config");
                 var configText =
@@ -567,7 +569,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 packageX.AddFile("lib/net472/a.dll");
 
                 solution.Projects.Add(project);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -654,7 +656,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 packageX.AddFile("lib/net472/a.dll");
 
                 solution.Projects.Add(project);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -703,7 +705,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 packageX.AddFile("lib/net472/a.dll");
 
                 solution.Projects.Add(project);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
                 var relativePath = "relativeSource";
                 var relativeSource = Path.Combine(pathContext.WorkingDirectory, relativePath);
 
@@ -754,7 +756,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     net461);
 
                 solution.Projects.Add(project);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot} /p:RestoreUseStaticGraphEvaluation=true",
                     ignoreExitCode: true,
@@ -784,7 +786,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     net461);
 
                 solution.Projects.Add(project);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 string newSlnFileContent = File.ReadAllText(solution.SolutionPath);
                 newSlnFileContent = newSlnFileContent.Replace("FAE04EC0-301F-11D3-BF4B-00C04F79EFBC", Guid.Empty.ToString());
@@ -831,7 +833,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 File.Delete(projectB.ProjectPath);
 
@@ -877,7 +879,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 projectA.AddPackageToAllFrameworks(packageX);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 File.WriteAllText(
                    projectB.ProjectPath,
@@ -911,7 +913,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 var project = new SimpleTestProjectContext("b", ProjectStyle.PackageReference, pathContext.SolutionRoot);
 
                 solution.Projects.Add(project);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 File.WriteAllText(
                    project.ProjectPath,
@@ -957,7 +959,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 projectA.ProjectPath = Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), projectA.ProjectName + ".vcxproj");
                 projectA.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 var environmentVariables = new Dictionary<string, string>();
                 environmentVariables.AddRange(_msbuildFixture.DefaultProcessEnvironmentVariables);
@@ -1004,7 +1006,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 projectA.ProjectPath = Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), projectA.ProjectName + ".vcxproj");
                 projectA.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
                 // Act
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot}", testOutputHelper: _testOutputHelper);
 
@@ -1069,7 +1071,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 projectA.AddPackageToAllFrameworks(packageNative);
                 projectA.AddPackageToAllFrameworks(packageManaged);
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
                 // Act
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot}", testOutputHelper: _testOutputHelper);
 
@@ -1122,7 +1124,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 projectA.AddPackageToAllFrameworks(packageNative);
                 projectA.AddPackageToAllFrameworks(packageManaged);
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
                 // Act
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot}", testOutputHelper: _testOutputHelper);
 
@@ -1162,7 +1164,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 cppCliProject.AddProjectToAllFrameworks(managedProject);
                 solution.Projects.Add(cppCliProject);
                 solution.Projects.Add(managedProject);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot}", testOutputHelper: _testOutputHelper);
@@ -1208,7 +1210,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 pathContext.Settings.AddSource("https-feed", "https://api.source/index.json");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config")))
                 {
@@ -1261,7 +1263,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 packageX.AddFile("lib/net472/a.dll");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config")))
                 {
@@ -1315,7 +1317,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 packageX.AddFile("lib/net472/a.dll");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config")))
                 {
@@ -1362,7 +1364,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             projectA.Properties.Add("TreatWarningsAsErrors", "true");
             projectA.Properties.Add("WarningsNotAsErrors", "NU1603");
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
             CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation={useStaticGraphRestore} {projectA.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
 
             // Assert
@@ -1442,7 +1444,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var directoryPackagesProps = $@"<Project>
     <PropertyGroup>
@@ -1487,7 +1489,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 Version = "1.0.0"
             });
             solution.Projects.Add(project);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                 pathContext.PackageSource,
@@ -1574,7 +1576,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
             solution.Projects.Add(projectA);
             solution.Projects.Add(projectB);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config")))
             {
@@ -1669,7 +1671,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
             solution.Projects.Add(projectA);
             solution.Projects.Add(projectB);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
 
             using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectB.ProjectPath), "packages.config")))
@@ -1742,7 +1744,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
             solution.Projects.Add(projectA);
             solution.Projects.Add(projectB);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var packageA1 = new SimpleTestPackageContext() { Id = "packageA", Version = "1.1.0" };
             var packageA2 = new SimpleTestPackageContext() { Id = "packageA", Version = "1.2.0" };
@@ -1854,7 +1856,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot, projectA);
 
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             // Act
             CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {projectA.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper);
@@ -1886,7 +1888,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
             project.AddPackageToAllFrameworks(packageX);
             solution.Projects.Add(project);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                 pathContext.PackageSource,
@@ -1926,7 +1928,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var directoryPackagesProps = $@"<Project>
     <PropertyGroup>
@@ -1974,7 +1976,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var directoryPackagesProps = $@"<Project>
     <PropertyGroup>
@@ -2021,7 +2023,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
             project.AddPackageToAllFrameworks(packageX);
             solution.Projects.Add(project);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             File.WriteAllText(
             Path.Combine(pathContext.SolutionRoot, "Directory.Build.props"),
@@ -2083,7 +2085,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
             project.AddPackageToAllFrameworks(packageX);
             solution.Projects.Add(project);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             File.WriteAllText(
             Path.Combine(pathContext.SolutionRoot, "Directory.Build.props"),
@@ -2137,7 +2139,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 NuGetFramework.Parse("net472"));
 
             solution.Projects.Add(project);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             // Act
             CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory,
@@ -2148,6 +2150,71 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             // Assert
             result.Success.Should().BeTrue(because: result.AllOutput);
             project.AssetsFile.Should().NotBeNull();
+        }
+
+        [PlatformTheory(Platform.Windows)]
+        [InlineData(true, true)]
+        [InlineData(true, false)]
+        [InlineData(false, true)]
+        [InlineData(false, false)]
+        public async Task MsbuildRestore_WithProjectJsonProject_Skips(bool useStaticGraphRestore, bool usePackageSpecFactory)
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                // Set up solution, project, and packages
+                var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+
+                var framework = NuGetFramework.Parse("net472");
+
+                var project = new SimpleTestProjectContext("a", ProjectStyle.ProjectJson, pathContext.SolutionRoot);
+                project.Frameworks.Add(new SimpleTestProjectFrameworkContext(framework));
+
+                solution.Projects.Add(project);
+                solution.Create();
+
+                File.WriteAllText(Path.Combine(Path.GetDirectoryName(project.ProjectPath), "project.json"), @"
+                {
+                    ""dependencies"": {
+                      ""x"": ""1.0.0""
+                    },
+                    ""frameworks"": {
+                      ""net472"": {}
+                    },
+                  ""runtimes"": {
+                    ""win-anycpu"": {},
+                    ""win"": {}
+                  }
+                }");
+
+                var packageX = new SimpleTestPackageContext()
+                {
+                    Id = "x",
+                    Version = "1.0.0"
+                };
+
+                await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    packageX);
+
+                var projectOutputPaths = new[]
+                {
+                    project.AssetsFileOutputPath
+                };
+
+                var environmentVariables = new Dictionary<string, string>();
+                environmentVariables.AddRange(_msbuildFixture.DefaultProcessEnvironmentVariables);
+                environmentVariables["NUGET_USE_NEW_PACKAGESPEC_FACTORY"] = usePackageSpecFactory.ToString();
+
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {project.ProjectPath}" + (useStaticGraphRestore ? " /p:RestoreUseStaticGraphEvaluation=\"true\"" : string.Empty), ignoreExitCode: true, testOutputHelper: _testOutputHelper, environmentVariables);
+                result.Success.Should().BeTrue(because: result.AllOutput);
+
+                foreach (var asset in projectOutputPaths)
+                {
+                    var fileInfo = new FileInfo(asset);
+                    fileInfo.Exists.Should().BeFalse(because: result.AllOutput);
+                }
+            }
         }
     }
 }

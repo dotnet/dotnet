@@ -1,7 +1,7 @@
 <VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
   <TemplateData>
     <Name>BuildIntegratedProj</Name>
-    <Description>A class library with project.json and netcore50 as the TxM</Description>
+    <Description>A PackageReference class library with</Description>
     <ProjectType>CSharp</ProjectType>
     <ProjectSubType>
     </ProjectSubType>
@@ -16,7 +16,6 @@
   <TemplateContent>
     <Project TargetFileName="BuildIntegratedProj.csproj" File="BuildIntegratedProj.csproj" ReplaceParameters="true">
       <ProjectItem ReplaceParameters="true" TargetFileName="Controller.cs">Controller.cs</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="project.json">project.json</ProjectItem>
       <Folder Name="Properties" TargetFolderName="Properties">
         <ProjectItem ReplaceParameters="true" TargetFileName="AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
       </Folder>

@@ -84,7 +84,7 @@
       </trans-unit>
       <trans-unit id="Manifest_InvalidMinClientVersion">
         <source>The 'minClientVersion' attribute in the package manifest has invalid value. It must be a valid version string.</source>
-        <target state="translated">パッケージ マニフェストの 'minClientVersion' 属性の値が無効です。有効なバージョン文字列でなければなりません。</target>
+        <target state="translated">パッケージ マニフェストの 'minClientVersion' 属性の値が無効です。有効なバージョン文字列である必要があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_InvalidReference">
@@ -129,7 +129,7 @@
       </trans-unit>
       <trans-unit id="Manifest_ReferencesIsEmpty">
         <source>The element package\metadata\references\group must contain at least one &lt;reference&gt; child element.</source>
-        <target state="translated">要素 package\metadata\references\group には、少なくとも 1 つの &lt;reference&gt; 子要素が含まれる必要があります。</target>
+        <target state="translated">要素 package\metadata\references\group には、少なくとも 1 つの &lt;reference&gt; 子要素を含める必要があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_RequireLicenseAcceptanceRequiresEmit">
@@ -144,7 +144,7 @@
       </trans-unit>
       <trans-unit id="Manifest_RequiredElementMissing">
         <source>The required element '{0}' is missing from the manifest.</source>
-        <target state="translated">必須の要素 '{0}' がマニフェストにありません。</target>
+        <target state="translated">マニフェストに必須の要素 '{0}' がありません。</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_RequiredMetadataMissing">

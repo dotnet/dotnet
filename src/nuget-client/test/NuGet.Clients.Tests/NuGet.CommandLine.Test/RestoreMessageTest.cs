@@ -47,7 +47,7 @@ namespace NuGet.CommandLine.Test
 
                 solution.Projects.Add(projectA);
                 solution.Projects.Add(projectB);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.Restore(pathContext, projectA.ProjectPath);
@@ -57,7 +57,7 @@ namespace NuGet.CommandLine.Test
 
                 // Assert
                 Assert.NotNull(lockFileObj);
-                Assert.Equal(0, lockFileObj.LogMessages.Count());
+                Assert.Equal(0, lockFileObj.LogMessages.Count);
                 Assert.DoesNotContain("downgrade", output, StringComparison.OrdinalIgnoreCase);
             }
         }
@@ -87,7 +87,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageI2);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.Restore(pathContext, projectA.ProjectPath);
@@ -97,7 +97,7 @@ namespace NuGet.CommandLine.Test
 
                 // Assert
                 Assert.NotNull(lockFileObj);
-                Assert.Equal(1, lockFileObj.LogMessages.Count());
+                Assert.Equal(1, lockFileObj.LogMessages.Count);
                 Assert.Contains("Detected package downgrade: i from 9.0.0 to 1.0.0",
                     lockFileObj.LogMessages.First().Message,
                     StringComparison.OrdinalIgnoreCase);
@@ -126,7 +126,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageB);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.Restore(pathContext, projectA.ProjectPath, expectedExitCode: 1);
@@ -136,7 +136,7 @@ namespace NuGet.CommandLine.Test
 
                 // Assert
                 Assert.NotNull(lockFileObj);
-                Assert.Equal(1, lockFileObj.LogMessages.Count());
+                Assert.Equal(1, lockFileObj.LogMessages.Count);
                 Assert.Contains("Unable to find package b. No packages exist with this id in source(s): source",
                     lockFileObj.LogMessages.First().Message,
                     StringComparison.OrdinalIgnoreCase);
@@ -170,7 +170,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddPackageToAllFrameworks(packageB);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = Util.Restore(pathContext, projectA.ProjectPath, expectedExitCode: 1);

@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -73,7 +75,7 @@ namespace NuGet.Test
                 _output.WriteLine("{0} {1}", entry.NuGetProjectActionType, entry.PackageIdentity.ToString());
             }
 
-            return (xyExcept.Count() == 0 && yxExcept.Count() == 0);
+            return (xyExcept.Count == 0 && yxExcept.Count == 0);
         }
 
         [Fact]

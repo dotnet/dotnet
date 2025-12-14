@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using NuGet.Configuration;
@@ -37,8 +39,6 @@ namespace NuGet.Commands.Test
 
         public void SaveActivePackageSource(PackageSource source) => throw new NotImplementedException();
 
-        public PackageSource GetPackageSource(string name) => throw new NotImplementedException();
-
         public void RemovePackageSource(string name) => throw new NotImplementedException();
 
         public PackageSource GetPackageSourceByName(string name) => throw new NotImplementedException();
@@ -55,8 +55,6 @@ namespace NuGet.Commands.Test
 
         public bool IsPackageSourceEnabled(string name) => throw new NotImplementedException();
 
-        public void DisablePackageSource(PackageSource source) => throw new NotImplementedException();
-
-        public bool IsPackageSourceEnabled(PackageSource source) => throw new NotImplementedException();
+        public void SaveAuditSources(IEnumerable<PackageSource> sources) => throw new NotImplementedException();
     }
 }

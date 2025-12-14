@@ -428,7 +428,7 @@
       </trans-unit>
       <trans-unit id="Message_Path">
         <source>Path: {0}</source>
-        <target state="translated">Ruta: {0}</target>
+        <target state="translated">Ruta de acceso: {0}</target>
         <note>0 - folder path</note>
       </trans-unit>
       <trans-unit id="MinClientVersionAlreadyExist">
@@ -665,7 +665,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">'{0}' no puede ser nulo.</target>
+        <target state="translated">'{0}' no puede ser null.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="RangeOutOfBoundsForArray">
@@ -925,7 +925,7 @@
       </trans-unit>
       <trans-unit id="UnableToReadPackageHashInformation">
         <source>Package hash information could not be read from the package signature.</source>
-        <target state="translated">No se pudo leer la información hash de la firma del paquete.</target>
+        <target state="translated">No se pudo leer la información hash del paquete de la firma de este.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnexpectedPackageSignatureVerificationError">
@@ -959,10 +959,10 @@
     Fingerprint (SHA-256):  {2}
     Certificate (PEM):
 {3}</source>
-        <target state="translated">El siguiente certificado raíz X.509 no es de confianza porque no está presente en la agrupación de certificados en {0}.  Para obtener más información, consulte la documentación de NU3042.
-    Asunto: huella digital  {1}
-    (SHA-256):  {2}
-    certificado (PEM):
+        <target state="translated">El siguiente certificado raíz X.509 no es de confianza porque no está presente en la agrupación de certificados en {0}.  Para más información, consulte la documentación de NU3042.
+    Asunto:  {1}
+    Huella digital (SHA-256):  {2}
+    Certificado (PEM):
 {3}</target>
         <note>0 is a file path, 1 is a certificate subject, 2 is a certificate fingerprint, and 3 is a PEM-encoded certificate.</note>
       </trans-unit>
@@ -972,10 +972,10 @@
     Fingerprint (SHA-256):  {1}
     Certificate (PEM):
 {2}</source>
-        <target state="translated">El siguiente certificado raíz X.509 no es de confianza porque no se encontró ninguna agrupación de certificados.  Para obtener más información, consulte la documentación de NU3042.
+        <target state="translated">El siguiente certificado raíz X.509 no es de confianza porque no se encontró ninguna agrupación de certificados.  Para más información, consulte la documentación de NU3042.
     Asunto:  {0}
     Huella digital (SHA-256):  {1}
-    certificado (PEM):
+    Certificado (PEM):
 {2}</target>
         <note>0 is a certificate subject, 1 is a certificate fingerprint, and 2 is a PEM-encoded certificate.</note>
       </trans-unit>

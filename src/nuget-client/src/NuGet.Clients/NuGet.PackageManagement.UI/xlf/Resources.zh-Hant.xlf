@@ -34,7 +34,7 @@
       </trans-unit>
       <trans-unit id="Accessibility_PackageIdentity">
         <source>{0} version {1}</source>
-        <target state="translated">{0} 版 {1} </target>
+        <target state="translated">{0} 版本 {1}</target>
         <note>{1} = Package ID, {2} = Package version</note>
       </trans-unit>
       <trans-unit id="Accessibility_PackageManager">
@@ -54,7 +54,7 @@
       </trans-unit>
       <trans-unit id="Accessibility_Packages">
         <source>Packages</source>
-        <target state="translated">Package</target>
+        <target state="translated">套件</target>
         <note />
       </trans-unit>
       <trans-unit id="Accessibility_PackagesDetails">
@@ -119,12 +119,12 @@
       </trans-unit>
       <trans-unit id="AskForRestoreMessage">
         <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
-        <target state="translated">這個方案中遺漏某些 NuGet 套件。請按一下以從您的線上套件來源還原。</target>
+        <target state="translated">此解決方案缺少某些 NuGet 套件。按一下可從您的線上套件來源進行還原。</target>
         <note />
       </trans-unit>
       <trans-unit id="AskForUpdateMessage">
         <source>A new version of NuGet Package Manager is available.</source>
-        <target state="translated">NuGet Package Manager 有新版本可用。</target>
+        <target state="translated">已有新版 NuGet 套件管理器可供使用。</target>
         <note />
       </trans-unit>
       <trans-unit id="AutoReferenced">
@@ -389,7 +389,7 @@
       </trans-unit>
       <trans-unit id="Error_ProjectNotInCache">
         <source>Project {0} does not exist in the project system cache.</source>
-        <target state="translated">專案系統快取中不存在專案 {0}。</target>
+        <target state="translated">專案系統快取中沒有專案 {0}。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_SourceMapping_GPF_NotEnabled">
@@ -464,7 +464,7 @@
       </trans-unit>
       <trans-unit id="IgnoreUpgrade">
         <source>Ignore for now</source>
-        <target state="translated">暫時忽略</target>
+        <target state="translated">暫時略過</target>
         <note />
       </trans-unit>
       <trans-unit id="ImageCaption_HelpIcon">
@@ -609,7 +609,7 @@
       </trans-unit>
       <trans-unit id="Label_NetworkError">
         <source>An error occurred while fetching additional information about the package. Refresh to try again.</source>
-        <target state="translated">擷取封裝的其他資訊時發生錯誤。重新整理以再試一次。</target>
+        <target state="translated">擷取套件的其他資訊時發生錯誤。請重新整理以再試一次。</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_NuGetWindowCaption">
@@ -639,7 +639,7 @@
       </trans-unit>
       <trans-unit id="Label_PackageManager">
         <source>NuGet Package Manager: {0}</source>
-        <target state="translated">NuGet 套件管理員: {0}</target>
+        <target state="translated">NuGet 套件管理器: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_PackagePrerelease">
@@ -844,17 +844,17 @@
       </trans-unit>
       <trans-unit id="PackageRestoreErrorTryAgain">
         <source>An error occurred while trying to restore packages:</source>
-        <target state="translated">嘗試還原套件時發生錯誤:</target>
+        <target state="translated">嘗試還原下列封裝時發生錯誤:</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreProgressMessage">
         <source>Downloading missing packages...</source>
-        <target state="translated">正在下載遺漏的套件...</target>
+        <target state="translated">正在下載缺少的封裝...</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageVersionWithTransitiveOrigins">
         <source>{0} by {1}</source>
-        <target state="translated">{0} 來自於 {1}</target>
+        <target state="translated">{0}，由 {1} 修改</target>
         <note>{0} - Version of package, {1} - Packages that transitively reference the package</note>
       </trans-unit>
       <trans-unit id="Preview_PackageUpdate">
@@ -904,14 +904,17 @@
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandFailure">
         <source>NuGet storage clear failed at {0}. 
-Error: {1}
-Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
+Error: {1}</source>
         <target state="translated">清除位於 {0} 的 NuGet 儲存體失敗。
-錯誤: {1}
-如需詳細說明，請參閱 https://aka.ms/troubleshoot_nuget_cache。</target>
+錯誤: {1}</target>
         <note>{0} :error message;
 {1}: date and time
 </note>
+      </trans-unit>
+      <trans-unit id="ShowMessage_LocalsCommandMoreInformation">
+        <source>For more information, see</source>
+        <target state="translated">如需詳細資訊，請參閱</target>
+        <note />
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandSuccess">
         <source>NuGet storage cleared at {0}</source>
@@ -925,7 +928,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="ShowWarning_Title">
         <source>Package Manager Options</source>
-        <target state="translated">套件管理員選項</target>
+        <target state="translated">套件管理器選項</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueName">
@@ -960,7 +963,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="Text_By">
         <source>by</source>
-        <target state="translated">作者</target>
+        <target state="translated">由</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ByAuthor">
@@ -970,7 +973,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="Text_ByOwner">
         <source>by {0}</source>
-        <target state="translated">作者 {0}</target>
+        <target state="translated">由 {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_Changes">
@@ -1020,7 +1023,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="Text_LoadingReadme">
         <source>Loading README...</source>
-        <target state="translated">載入自述檔案...</target>
+        <target state="translated">正在載入 README...</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ManageSettings">
@@ -1045,7 +1048,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="Text_NoReadme">
         <source>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
-        <target state="translated">選取的套件版本沒有可用的自述檔。如需詳細資訊，請流覽 [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
+        <target state="translated">所選套件版本沒有可用的 README。如需詳細資訊，請瀏覽 [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)。</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
       <trans-unit id="Text_NotAvailableInSource">
@@ -1075,7 +1078,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="Text_PackageFormatApply">
         <source>The package manager format will apply to the following projects in this Solution</source>
-        <target state="translated">套件管理員格式會套用到此 Solution 中的下列專案</target>
+        <target state="translated">套件管理器格式會套用到此 Solution 中的下列專案</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageLevelTopLevel">
@@ -1130,7 +1133,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="Text_ReadmeLoaded">
         <source>README loaded</source>
-        <target state="translated">已載入自述檔</target>
+        <target state="translated">已載入 README</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_SearchBoxText">
@@ -1305,17 +1308,17 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalResourcesTitle">
         <source>NuGet Package Manager</source>
-        <target state="translated">NuGet 套件管理員</target>
+        <target state="translated">NuGet 套件管理器</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
         <source>Once started, this action cannot be cancelled.</source>
-        <target state="translated">此動作一旦開始即無法取消。</target>
+        <target state="translated">一旦啟動，就無法取消此動作。</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">
         <source>Clear all local NuGet resources?</source>
-        <target state="translated">要清除所有本機 NuGet 資源嗎？</target>
+        <target state="translated">清除所有本機 NuGet 資源?</target>
         <note />
       </trans-unit>
       <trans-unit id="Version_Blocked">
@@ -1410,7 +1413,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="WindowTitle_PackageFormatSelector">
         <source>Choose NuGet Package Manager Format</source>
-        <target state="translated">選擇 NuGet 套件管理員格式</target>
+        <target state="translated">選擇 NuGet 套件管理器格式</target>
         <note />
       </trans-unit>
       <trans-unit id="WindowTitle_PreviewChanges">

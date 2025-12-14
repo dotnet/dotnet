@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -189,6 +191,7 @@ namespace NuGet.CommandLine
                 packageRestoredEvent: null,
                 packageRestoreFailedEvent: (sender, args) => { failedEvents.Enqueue(args); },
                 sourceRepositories: packageSources.Select(sourceRepositoryProvider.CreateRepository),
+                auditSources: RestoreCommand.GetAuditSources(SourceProvider),
                 maxNumberOfParallelTasks: DisableParallelProcessing ? 1 : PackageManagementConstants.DefaultMaxDegreeOfParallelism,
                 enableNuGetAudit: true,
                 restoreAuditProperties: new(),

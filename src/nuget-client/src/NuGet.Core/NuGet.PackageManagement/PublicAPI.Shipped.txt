@@ -704,6 +704,7 @@ NuGet.ProjectManagement.XmlUtility
 ~const NuGet.ProjectManagement.ProjectBuildProperties.RestoreEnablePackagePruning = "RestoreEnablePackagePruning" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.RestoreFallbackFolders = "RestoreFallbackFolders" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.RestoreLockedMode = "RestoreLockedMode" -> string
+~const NuGet.ProjectManagement.ProjectBuildProperties.RestorePackagePruningDefault = "RestorePackagePruningDefault" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.RestorePackagesPath = "RestorePackagesPath" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.RestorePackagesWithLockFile = "RestorePackagesWithLockFile" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.RestoreProjectStyle = "RestoreProjectStyle" -> string

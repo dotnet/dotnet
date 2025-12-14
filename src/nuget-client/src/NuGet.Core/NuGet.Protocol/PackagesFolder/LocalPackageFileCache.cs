@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -43,10 +45,6 @@ namespace NuGet.Protocol
         // Metadata file
         private readonly ConcurrentDictionary<string, bool> _metadataFileCache
             = new ConcurrentDictionary<string, bool>(PathUtility.GetStringComparerBasedOnOS());
-
-        public LocalPackageFileCache()
-        {
-        }
 
         /// <summary>
         /// Read a nuspec file from disk. The nuspec is expected to exist.

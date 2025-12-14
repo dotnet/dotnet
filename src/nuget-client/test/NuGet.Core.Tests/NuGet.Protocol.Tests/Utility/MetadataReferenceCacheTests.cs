@@ -205,7 +205,7 @@ namespace NuGet.Protocol.Tests
             // Assert
             Assert.True(ReferenceEquals(cachedObject, objectToCache));
             Assert.Equal(objectToCache.StringCachedBefore, ObjectCacheTest.TestStringCachedBefore);
-            Assert.Equal(cache.CachableMethodTypes.Count(), 1);
+            Assert.Equal(cache.CachableMethodTypes.Count, 1);
             Assert.Equal(cache.CachableMethodTypes.Single().Key.Name, "MetadataReferenceCache");
             Assert.Equal(cache.CachableMethodTypes.Single().Value.Name, "GetString");
         }

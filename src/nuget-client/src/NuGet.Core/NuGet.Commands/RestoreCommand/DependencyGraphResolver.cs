@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -134,8 +132,8 @@ namespace NuGet.Commands
             // Stores the list of all graphs
             List<RestoreTargetGraph> allGraphs = new();
 
-            // Stores the list of graphs without a runtime identifier by their target framework
-            Dictionary<NuGetFramework, RestoreTargetGraph> graphsByTargetFramework = new();
+            // Stores the list of graphs without a runtime identifier by their target alias
+            Dictionary<string, RestoreTargetGraph> graphsByTargetFramework = new();
 
             // Stores the list graphs that are runtime identifier specific
             List<RestoreTargetGraph> runtimeGraphs = new();
@@ -150,15 +148,15 @@ namespace NuGet.Commands
             DownloadDependencyResolutionResult[]? downloadDependencyResolutionResults = default;
 
             // Create the list of framework/runtime pairs to resolve graphs for.  This method returns the pairs in order with the target framework pairs without runtime identifiers come first
-            List<FrameworkRuntimePair> projectFrameworkRuntimePairs = RestoreCommand.CreateFrameworkRuntimePairs(_request.Project, runtimeIds: RequestRuntimeUtility.GetRestoreRuntimes(_request));
+            List<FrameworkRuntimeDefinition> frameworkRuntimeDefinitions = RestoreCommand.CreateFrameworkRuntimeDefinitions(_request.Project, runtimeIds: RequestRuntimeUtility.GetRestoreRuntimes(_request));
 
             // Loop through the target framework and runtime identifier pairs to resolve each graph.
             // The pairs are sorted with all of the RID-less framework pairs first
-            foreach (FrameworkRuntimePair frameworkRuntimePair in projectFrameworkRuntimePairs.NoAllocEnumerate())
+            foreach (FrameworkRuntimeDefinition frameworkRuntimeDefinition in frameworkRuntimeDefinitions.NoAllocEnumerate())
             {
-                // Since the FrameworkRuntimePair objects are sorted, the packages found so far need to be installed before resolving any runtime identifier specific graphs because
+                // Since the FrameworkRuntimeDefinition objects are sorted, the packages found so far need to be installed before resolving any runtime identifier specific graphs because
                 // the runtime.json is in the package which is used to determine what runtime packages to add
-                if (!string.IsNullOrWhiteSpace(frameworkRuntimePair.RuntimeIdentifier) && !hasInstallBeenCalledAlready)
+                if (!string.IsNullOrWhiteSpace(frameworkRuntimeDefinition.RuntimeIdentifier) && !hasInstallBeenCalledAlready)
                 {
                     downloadDependencyResolutionResults = await ProjectRestoreCommand.DownloadDependenciesAsync(_request.Project, context, _telemetryActivity, telemetryPrefix: string.Empty, token);
 
@@ -169,7 +167,7 @@ namespace NuGet.Commands
                 }
 
                 // Get the corresponding TargetFrameworkInformation from the restore request
-                TargetFrameworkInformation projectTargetFramework = _request.Project.GetTargetFramework(frameworkRuntimePair.Framework)!;
+                TargetFrameworkInformation projectTargetFramework = _request.Project.GetTargetFramework(frameworkRuntimeDefinition.TargetAlias)!;
 
                 // Keeps track of the unresolved packages
                 HashSet<LibraryRange> unresolvedPackages = new();
@@ -177,7 +175,7 @@ namespace NuGet.Commands
                 // Keeps track of the resolved packages
                 HashSet<ResolvedDependencyKey> resolvedPackages = new();
 
-                if (TryGetRuntimeGraph(localRepositories, graphsByTargetFramework, frameworkRuntimePair, projectTargetFramework, out RuntimeGraph? runtimeGraph))
+                if (TryGetRuntimeGraph(localRepositories, graphsByTargetFramework, frameworkRuntimeDefinition, projectTargetFramework, out RuntimeGraph? runtimeGraph))
                 {
                     // Merge all of the runtime graphs together
                     allRuntimes = RuntimeGraph.Merge(allRuntimes, runtimeGraph);
@@ -195,8 +193,8 @@ namespace NuGet.Commands
                     Suppressions = new HashSet<LibraryDependencyIndex>(),
                     FindLibraryTask = ResolverUtility.FindLibraryCachedAsync(
                         _rootProjectLibraryDependency.LibraryRange,
-                        frameworkRuntimePair.Framework,
-                        runtimeIdentifier: string.IsNullOrWhiteSpace(frameworkRuntimePair.RuntimeIdentifier) ? null : frameworkRuntimePair.RuntimeIdentifier,
+                        frameworkRuntimeDefinition.Framework,
+                        runtimeIdentifier: string.IsNullOrWhiteSpace(frameworkRuntimeDefinition.RuntimeIdentifier) ? null : frameworkRuntimeDefinition.RuntimeIdentifier,
                         context,
                         token),
                     Parent = LibraryRangeIndex.None
@@ -205,7 +203,7 @@ namespace NuGet.Commands
                 // Resolve the entire dependency graph
                 Dictionary<LibraryDependencyIndex, ResolvedDependencyGraphItem> resolvedDependencyGraphItems = await ResolveDependencyGraphItemsAsync(
                     isCentralPackageTransitivePinningEnabled,
-                    frameworkRuntimePair,
+                    frameworkRuntimeDefinition,
                     projectTargetFramework,
                     runtimeGraph,
                     pinnedPackageVersions,
@@ -215,16 +213,16 @@ namespace NuGet.Commands
 
                 if (NuGetEventSource.IsEnabled)
                 {
-                    TraceEvents.CreateRestoreTargetGraphStart(_request.Project.FilePath, frameworkRuntimePair);
+                    TraceEvents.CreateRestoreTargetGraphStart(_request.Project.FilePath, frameworkRuntimeDefinition);
                 }
 
                 // Now that the graph has been resolved, we need to create walk all of the defined dependencies again to detect any cycles and downgrades.  The RestoreTargetGraph stores all of the
                 // information about the graph including the nodes with their parent/child relationships, cycles, downgrades, and conflicts.
-                (bool wasRestoreTargetGraphCreationSuccessful, RestoreTargetGraph restoreTargetGraph) = await CreateRestoreTargetGraphAsync(frameworkRuntimePair, runtimeGraph, isCentralPackageTransitivePinningEnabled, unresolvedPackages, resolvedPackages, resolvedDependencyGraphItems, context);
+                (bool wasRestoreTargetGraphCreationSuccessful, RestoreTargetGraph restoreTargetGraph) = await CreateRestoreTargetGraphAsync(frameworkRuntimeDefinition, runtimeGraph, isCentralPackageTransitivePinningEnabled, unresolvedPackages, resolvedPackages, resolvedDependencyGraphItems, context);
 
                 if (NuGetEventSource.IsEnabled)
                 {
-                    TraceEvents.CreateRestoreTargetGraphStop(_request.Project.FilePath, frameworkRuntimePair, wasRestoreTargetGraphCreationSuccessful, resolvedPackages.Count, unresolvedPackages.Count);
+                    TraceEvents.CreateRestoreTargetGraphStop(_request.Project.FilePath, frameworkRuntimeDefinition, wasRestoreTargetGraphCreationSuccessful, resolvedPackages.Count, unresolvedPackages.Count);
                 }
 
                 success &= wasRestoreTargetGraphCreationSuccessful;
@@ -232,7 +230,7 @@ namespace NuGet.Commands
                 // Track all of the RestoreTargetGraph objects
                 allGraphs.Add(restoreTargetGraph);
 
-                if (!string.IsNullOrWhiteSpace(frameworkRuntimePair.RuntimeIdentifier))
+                if (!string.IsNullOrWhiteSpace(frameworkRuntimeDefinition.RuntimeIdentifier))
                 {
                     // Track all of the runtime specific graphs
                     runtimeGraphs.Add(restoreTargetGraph);
@@ -240,7 +238,7 @@ namespace NuGet.Commands
                 else
                 {
                     // Track all of the RID-less graphs by their target framework
-                    graphsByTargetFramework.Add(frameworkRuntimePair.Framework, restoreTargetGraph);
+                    graphsByTargetFramework.Add(frameworkRuntimeDefinition.TargetAlias, restoreTargetGraph);
                 }
             }
 
@@ -300,7 +298,7 @@ namespace NuGet.Commands
         /// <summary>
         /// Creates a <see cref="RestoreTargetGraph" /> from the resolved dependency graph items and analyzes the graph for cycles, downgrades, and conflicts.
         /// </summary>
-        /// <param name="frameworkRuntimePair">The <see cref="FrameworkRuntimePair" /> of the dependency graph.</param>
+        /// <param name="frameworkRuntimeDefinition">The <see cref="FrameworkRuntimeDefinition" /> of the dependency graph.</param>
         /// <param name="runtimeGraph">The <see cref="RuntimeGraph" /> of the dependency graph.</param>
         /// <param name="isCentralPackageTransitivePinningEnabled">A <see cref="bool" /> indicating whether or not central transitive pinning is enabled.</param>
         /// <param name="unresolvedPackages">A <see cref="HashSet{T}" /> containing <see cref="LibraryRange" /> objects representing packages that could not be resolved.</param>
@@ -313,7 +311,7 @@ namespace NuGet.Commands
         ///   </list>
         /// </returns>
         private static async Task<(bool Success, RestoreTargetGraph RestoreTargetGraph)> CreateRestoreTargetGraphAsync(
-            FrameworkRuntimePair frameworkRuntimePair,
+            FrameworkRuntimeDefinition frameworkRuntimeDefinition,
             RuntimeGraph? runtimeGraph,
             bool isCentralPackageTransitivePinningEnabled,
             HashSet<LibraryRange> unresolvedPackages,
@@ -559,7 +557,12 @@ namespace NuGet.Commands
                         currentGraphNode.InnerNodes.Add(newGraphNode);
                     }
 
-                    if (!childResolvedDependencyGraphItem.IsRootPackageReference && isCentralPackageTransitivePinningEnabled && childLibraryDependency.SuppressParent != LibraryIncludeFlags.All && !downgrades.ContainsKey(childResolvedLibraryRangeIndex) && !RemoteDependencyWalker.IsGreaterThanOrEqualTo(childResolvedDependencyGraphItem.LibraryDependency.LibraryRange.VersionRange, childLibraryDependency.LibraryRange.VersionRange))
+                    if (!childResolvedDependencyGraphItem.IsRootPackageReference
+                        && isCentralPackageTransitivePinningEnabled
+                        && childLibraryDependency.SuppressParent != LibraryIncludeFlags.All
+                        && !downgrades.ContainsKey(childResolvedLibraryRangeIndex)
+                        && childLibraryDependency.LibraryRange.VersionRange != VersionRange.All
+                        && !RemoteDependencyWalker.IsGreaterThanOrEqualTo(childResolvedDependencyGraphItem.LibraryDependency.LibraryRange.VersionRange, childLibraryDependency.LibraryRange.VersionRange))
                     {
                         // This is a downgrade if:
                         // 1. This is not a direct dependency
@@ -737,8 +740,9 @@ namespace NuGet.Commands
             // Create a RestoreTargetGraph with all of the information
             RestoreTargetGraph restoreTargetGraph = new(
                 Array.Empty<ResolverConflict>(),
-                frameworkRuntimePair.Framework,
-                string.IsNullOrWhiteSpace(frameworkRuntimePair.RuntimeIdentifier) ? null : frameworkRuntimePair.RuntimeIdentifier,
+                frameworkRuntimeDefinition.TargetAlias,
+                frameworkRuntimeDefinition.Framework,
+                string.IsNullOrWhiteSpace(frameworkRuntimeDefinition.RuntimeIdentifier) ? null : frameworkRuntimeDefinition.RuntimeIdentifier,
                 runtimeGraph,
                 graphNodes,
                 install: packagesToInstall,
@@ -903,11 +907,10 @@ namespace NuGet.Commands
 
         private async Task<Dictionary<LibraryDependencyIndex, ResolvedDependencyGraphItem>> ResolveDependencyGraphItemsAsync(
             bool isCentralPackageTransitivePinningEnabled,
-            FrameworkRuntimePair pair,
+            FrameworkRuntimeDefinition pair,
             TargetFrameworkInformation projectTargetFramework,
             RuntimeGraph? runtimeGraph,
-            Dictionary<LibraryDependencyIndex,
-            VersionRange>? pinnedPackageVersions,
+            Dictionary<LibraryDependencyIndex, VersionRange>? pinnedPackageVersions,
             DependencyGraphItem rootProjectDependencyGraphItem,
             RemoteWalkContext context,
             CancellationToken token)
@@ -936,7 +939,7 @@ namespace NuGet.Commands
             int totalQueuedItemCount = 0;
 
             // Used when logging package id specific messages, we need to know the target graph name
-            string targetGraphName = FrameworkRuntimePair.GetTargetGraphName(pair.Framework, pair.RuntimeIdentifier);
+            string targetGraphName = pair.Name;
 
         // Used to start over when a dependency has multiple descendants of an item to be evicted.
         //
@@ -1254,11 +1257,7 @@ namespace NuGet.Commands
                 if (isRootProject)
                 {
 
-#if NETSTANDARD
-                    directPackageReferences = new HashSet<LibraryDependencyIndex>();
-#else
                     directPackageReferences = new HashSet<LibraryDependencyIndex>(capacity: chosenResolvedItem.Item.Data.Dependencies.Count);
-#endif
 
                     for (int i = 0; i < chosenResolvedItem.Item.Data.Dependencies.Count; i++)
                     {
@@ -1292,7 +1291,7 @@ namespace NuGet.Commands
                         // Suppress this dependency if PrivateAssets is set to "All"
                         if (dependency.SuppressParent == LibraryIncludeFlags.All)
                         {
-                            suppressions ??= new HashSet<LibraryDependencyIndex>();
+                            suppressions ??= new HashSet<LibraryDependencyIndex>(capacity: chosenResolvedItem.Item.Data.Dependencies.Count - i);
 
                             suppressions.Add(chosenResolvedItemChildLibraryDependencyIndex);
                         }
@@ -1425,16 +1424,16 @@ namespace NuGet.Commands
         /// Attempts to get a runtime graph for the specified target framework.
         /// </summary>
         /// <param name="localRepositories">A <see cref="List{T}" /> containing <see cref="NuGetv3LocalRepository" /> objects to find local packages in.</param>
-        /// <param name="graphsByTargetFramework">A <see cref="Dictionary{TKey, TValue}" /> containing the dependency graphs by target framework.</param>
-        /// <param name="frameworkRuntimePair">The <see cref="FrameworkRuntimePair" /> representing the current target framework and runtime identifier for which to get a runtime graph.</param>
+        /// <param name="graphsByTargetAlias">A <see cref="Dictionary{TKey, TValue}" /> containing the dependency graphs by target alias.</param>
+        /// <param name="frameworkRuntimeDefinition">The <see cref="FrameworkRuntimeDefinition" /> representing the current target framework and runtime identifier for which to get a runtime graph.</param>
         /// <param name="projectTargetFramework">The <see cref="TargetFrameworkInformation" /> containing target framework information for the project.</param>
-        /// <param name="runtimeGraph">Receives the <see cref="RuntimeGraph" /> for the <see cref="FrameworkRuntimePair" /> if one was found, otherwise <see langword="null" />.</param>
+        /// <param name="runtimeGraph">Receives the <see cref="RuntimeGraph" /> for the <see cref="FrameworkRuntimeDefinition" /> if one was found, otherwise <see langword="null" />.</param>
         /// <returns><see langword="true" /> if a runtime was found, otherwise <see langword="false" />.</returns>
-        private bool TryGetRuntimeGraph(List<NuGetv3LocalRepository> localRepositories, Dictionary<NuGetFramework, RestoreTargetGraph> graphsByTargetFramework, FrameworkRuntimePair frameworkRuntimePair, TargetFrameworkInformation? projectTargetFramework, [NotNullWhen(true)] out RuntimeGraph? runtimeGraph)
+        private bool TryGetRuntimeGraph(List<NuGetv3LocalRepository> localRepositories, Dictionary<string, RestoreTargetGraph> graphsByTargetAlias, FrameworkRuntimeDefinition frameworkRuntimeDefinition, TargetFrameworkInformation? projectTargetFramework, [NotNullWhen(true)] out RuntimeGraph? runtimeGraph)
         {
             runtimeGraph = null;
 
-            if (string.IsNullOrEmpty(frameworkRuntimePair.RuntimeIdentifier) || !graphsByTargetFramework.TryGetValue(frameworkRuntimePair.Framework, out RestoreTargetGraph? restoreTargetGraphForTargetFramework))
+            if (string.IsNullOrEmpty(frameworkRuntimeDefinition.RuntimeIdentifier) || !graphsByTargetAlias.TryGetValue(frameworkRuntimeDefinition.TargetAlias, out RestoreTargetGraph? restoreTargetGraphForTargetFramework))
             {
                 // If this pair has no runtime or there is no corresponding RID-less dependency graph for the target framework, there is no runtime graph
                 return false;
@@ -1457,7 +1456,7 @@ namespace NuGet.Commands
             private const string EventNameCreateRestoreTargetGraph = "DependencyGraphResolver/CreateRestoreTargetGraph";
             private const string EventNameResolveDependencyGraphItems = "DependencyGraphResolver/ResolveDependencyGraphItems";
 
-            public static void CreateRestoreTargetGraphStart(string projectFullPath, FrameworkRuntimePair frameworkRuntimePair)
+            public static void CreateRestoreTargetGraphStart(string projectFullPath, FrameworkRuntimeDefinition frameworkRutimeDefinition)
             {
                 EventSourceOptions eventOptions = new()
                 {
@@ -1467,10 +1466,10 @@ namespace NuGet.Commands
                     Opcode = EventOpcode.Start
                 };
 
-                NuGetEventSource.Instance.Write(EventNameCreateRestoreTargetGraph, eventOptions, new CreateRestoreTargetGraphStartEventData(projectFullPath, frameworkRuntimePair.ToString()));
+                NuGetEventSource.Instance.Write(EventNameCreateRestoreTargetGraph, eventOptions, new CreateRestoreTargetGraphStartEventData(projectFullPath, frameworkRutimeDefinition.ToString()));
             }
 
-            public static void CreateRestoreTargetGraphStop(string projectFullPath, FrameworkRuntimePair frameworkRuntimePair, bool wasRestoreTargetGraphCreationSuccessful, int resolvedPackageCount, int unresolvedPackageCount)
+            public static void CreateRestoreTargetGraphStop(string projectFullPath, FrameworkRuntimeDefinition frameworkRuntimeDefinition, bool wasRestoreTargetGraphCreationSuccessful, int resolvedPackageCount, int unresolvedPackageCount)
             {
                 EventSourceOptions eventOptions = new()
                 {
@@ -1479,10 +1478,10 @@ namespace NuGet.Commands
                     Opcode = EventOpcode.Stop
                 };
 
-                NuGetEventSource.Instance.Write(EventNameCreateRestoreTargetGraph, eventOptions, new CreateRestoreTargetGraphStopEventData(projectFullPath, frameworkRuntimePair.ToString(), wasRestoreTargetGraphCreationSuccessful, resolvedPackageCount, unresolvedPackageCount));
+                NuGetEventSource.Instance.Write(EventNameCreateRestoreTargetGraph, eventOptions, new CreateRestoreTargetGraphStopEventData(projectFullPath, frameworkRuntimeDefinition.ToString(), wasRestoreTargetGraphCreationSuccessful, resolvedPackageCount, unresolvedPackageCount));
             }
 
-            public static void ResolveDependencyGraphItemsStart(string projectFullPath, FrameworkRuntimePair frameworkRuntimePair)
+            public static void ResolveDependencyGraphItemsStart(string projectFullPath, FrameworkRuntimeDefinition frameworkRuntimeDefinition)
             {
                 EventSourceOptions eventOptions = new()
                 {
@@ -1492,10 +1491,10 @@ namespace NuGet.Commands
                     Opcode = EventOpcode.Start
                 };
 
-                NuGetEventSource.Instance.Write(EventNameResolveDependencyGraphItems, eventOptions, new ResolveDependencyGraphItemsStartEventData(projectFullPath, frameworkRuntimePair.ToString()));
+                NuGetEventSource.Instance.Write(EventNameResolveDependencyGraphItems, eventOptions, new ResolveDependencyGraphItemsStartEventData(projectFullPath, frameworkRuntimeDefinition.ToString()));
             }
 
-            public static void ResolveDependencyGraphItemsStop(string projectFullPath, FrameworkRuntimePair frameworkRuntimePair, int resolvedPackagesCount, int restartCount, int totalQueuedItemCount)
+            public static void ResolveDependencyGraphItemsStop(string projectFullPath, FrameworkRuntimeDefinition frameworkRuntimeDefinition, int resolvedPackagesCount, int restartCount, int totalQueuedItemCount)
             {
                 EventSourceOptions eventOptions = new()
                 {
@@ -1504,20 +1503,20 @@ namespace NuGet.Commands
                     Opcode = EventOpcode.Stop
                 };
 
-                NuGetEventSource.Instance.Write(EventNameResolveDependencyGraphItems, eventOptions, new ResolveDependencyGraphItemsStopEventData(projectFullPath, frameworkRuntimePair.ToString(), resolvedPackagesCount, restartCount, totalQueuedItemCount));
+                NuGetEventSource.Instance.Write(EventNameResolveDependencyGraphItems, eventOptions, new ResolveDependencyGraphItemsStopEventData(projectFullPath, frameworkRuntimeDefinition.ToString(), resolvedPackagesCount, restartCount, totalQueuedItemCount));
             }
 
             [EventData]
-            private record struct CreateRestoreTargetGraphStartEventData(string FilePath, string FrameworkRuntimePair);
+            private record struct CreateRestoreTargetGraphStartEventData(string FilePath, string FrameworkRuntimeDefinition);
 
             [EventData]
-            private record struct CreateRestoreTargetGraphStopEventData(string FilePath, string FrameworkRuntimePair, bool Success, int ResolvedPackageCount, int UnresolvedPackageCount);
+            private record struct CreateRestoreTargetGraphStopEventData(string FilePath, string FrameworkRuntimeDefinition, bool Success, int ResolvedPackageCount, int UnresolvedPackageCount);
 
             [EventData]
-            private record struct ResolveDependencyGraphItemsStartEventData(string FilePath, string FrameworkRuntimePair);
+            private record struct ResolveDependencyGraphItemsStartEventData(string FilePath, string FrameworkRuntimeDefinition);
 
             [EventData]
-            private record struct ResolveDependencyGraphItemsStopEventData(string FilePath, string FrameworkRuntimePair, int ResolvedPackagesCount, int RestartCount, int TotalQueuedItemCount);
+            private record struct ResolveDependencyGraphItemsStopEventData(string FilePath, string FrameworkRuntimeDefinition, int ResolvedPackagesCount, int RestartCount, int TotalQueuedItemCount);
         }
     }
 }

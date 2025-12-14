@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,8 +33,7 @@ namespace NuGet.ProjectModel
             {
                 return assetsFile.Targets;
             }
-
-            return assetsFile.Targets.Where(target => message.TargetGraphs.Contains(target.Name, StringComparer.OrdinalIgnoreCase));
+            return assetsFile.Targets.Where(target => message.TargetGraphs.Contains(target.TargetAlias + (string.IsNullOrEmpty(target.RuntimeIdentifier) ? "" : "/" + target.RuntimeIdentifier), StringComparer.OrdinalIgnoreCase));
         }
 
         /// <summary>

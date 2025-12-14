@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="Argument_Must_Be_Enum_Member">
         <source>Value must be a value from the "{0}" enumeration.</source>
-        <target state="translated">La valeur doit provenir de l’énumération « {0} ».</target>
+        <target state="translated">La valeur doit provenir de l'énumération « {0} ».</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Must_Be_GreaterThan">

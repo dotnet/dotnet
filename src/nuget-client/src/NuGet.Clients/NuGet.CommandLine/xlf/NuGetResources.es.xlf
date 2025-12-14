@@ -175,12 +175,12 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Está ejecutando la operación "{0}" con un origen "HTTP": {1}. NuGet requiere orígenes HTTPS. Para usar un origen HTTP, es necesario establecer explícitamente "allowInsecureConnections" en verdadero en el archivo NuGet.Config. Consulte https://aka.ms/nuget-https-everywhere para obtener más información.</target>
+        <target state="translated">Está ejecutando la operación "{0}" con un origen "HTTP" {1}. NuGet requiere orígenes HTTPS. Para usar un origen HTTP, es necesario establecer explícitamente "allowInsecureConnections" en verdadero en el archivo NuGet.Config. Consulte https://aka.ms/nuget-https-everywhere para obtener más información.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_HttpSources_Multiple">
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Está ejecutando la operación "{0}" con orígenes "HTTP": {1}. NuGet requiere orígenes HTTPS. Para usar orígenes HTTP, es necesario establecer explícitamente "allowInsecureConnections" en verdadero en el archivo NuGet.Config. Consulte https://aka.ms/nuget-https-everywhere para obtener más información.</target>
+        <target state="translated">Está ejecutando la operación "{0}" con orígenes "HTTP" {1}. NuGet requiere orígenes HTTPS. Para usar orígenes HTTP, es necesario establecer explícitamente "allowInsecureConnections" en verdadero en el archivo NuGet.Config. Consulte https://aka.ms/nuget-https-everywhere para obtener más información.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_InvalidCharactersInPathSegment">
@@ -252,9 +252,9 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
         <source>`project.json` pack is disabled in the current NuGet version, and will be permanently removed in a future version.
 Please consider migrating '{0}' to `PackageReference` and using the pack targets.
 You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</source>
-        <target state="translated">El paquete "project.json" está deshabilitado en la versión actual de NuGet y se quitará permanentemente en una versión futura.
-Considere la posibilidad de migrar “{0}” a "PackageReference" y usar los destinos del paquete.
-Puede establecer la variable de entorno “{1}” en "true" para volver a habilitar temporalmente esta funcionalidad.</target>
+        <target state="translated">El paquete `project.json` está deshabilitado en la versión actual de NuGet y se quitará permanentemente en una versión futura.
+Considere la posibilidad de migrar '{0}' a `PackageReference` y usar los destinos del paquete.
+Puede establecer la variable de entorno '{1}' en 'true' para volver a habilitar temporalmente esta funcionalidad.</target>
         <note>Please do not localize `project.json` pack and `PackageReference`. 0 - path, 1 - env var name</note>
       </trans-unit>
       <trans-unit id="Error_ResponseFileDoesNotExist">
@@ -752,7 +752,7 @@ Puede establecer la variable de entorno “{1}” en "true" para volver a habili
         <source>Restoring NuGet packages...
 To prevent NuGet from downloading packages during build, open the Visual Studio Options dialog, click on the NuGet Package Manager node and uncheck '{0}'.</source>
         <target state="translated">Restaurando paquetes NuGet...
-Para evitar que NuGet restaure paquetes durante la compilación, abra el cuadro de diálogo de opciones de Visual Studio, haga clic en el nodo Administrador de paquetes NuGet y desactive la casilla "{0}".</target>
+Para evitar que NuGet restaure paquetes durante la compilación, abra el cuadro de diálogo de opciones de Visual Studio, haga clic en el nodo Administrador de paquetes NuGet y desactive la casilla '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandProjectNotFound">
@@ -792,7 +792,7 @@ Para evitar que NuGet restaure paquetes durante la compilación, abra el cuadro 
       </trans-unit>
       <trans-unit id="SettingsCredentials_UsingSavedCredentials">
         <source>Using credentials from config. UserName: {0}</source>
-        <target state="translated">Usando credenciales de configuración. UserName: {0}</target>
+        <target state="translated">Se están usando las credenciales de la configuración. Nombre de usuario: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="SolutionRestoreCommandNoPackagesConfigOrProjectJson">

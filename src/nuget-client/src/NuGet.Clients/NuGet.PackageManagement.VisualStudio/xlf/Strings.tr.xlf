@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="Argument_Must_Be_GreaterThanOrEqualTo">
         <source>Value must be greater than or equal to {0}.</source>
-        <target state="translated">Değer {0} değerinden büyük veya buna eşit olmalıdır.</target>
+        <target state="translated">Değer, {0} değerinden büyük veya buna eşit olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConfigErrorDialogBoxTitle">
@@ -93,7 +93,7 @@
       </trans-unit>
       <trans-unit id="Error_FailedToCreateParentFolder">
         <source>Failed to create parent folder for file '{0}' in project {1}.</source>
-        <target state="translated">{1} projesindeki '{0}' dosyası için üst klasör oluşturulamadı.</target>
+        <target state="translated">{1} projesinde '{0}' dosyası için üst klasör oluşturulamadı.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_FileNotExists">
@@ -117,8 +117,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSource_InvalidSource">
-        <source>The source specified is invalid.</source>
-        <target state="translated">Belirtilen kaynak geçersiz.</target>
+        <source>A valid local or remote path must be specified.</source>
+        <target state="translated">Geçerli bir yerel veya uzak yol belirtilmelidir.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSource_UniqueName">
@@ -159,12 +159,12 @@
       </trans-unit>
       <trans-unit id="FailedToAddReference">
         <source>Failed to add reference to '{0}'.</source>
-        <target state="translated">'{0}' hedefine başvuru eklenemedi.</target>
+        <target state="translated">'{0}' öğesine başvuru eklenemedi.</target>
         <note />
       </trans-unit>
       <trans-unit id="FailedToRemoveReference">
         <source>Case insensitive search for reference '{0}', to be removed, returned more than 1 match. Request could not be performed.</source>
-        <target state="translated">Kaldırılacak olan '{0}' başvurusu için büyük/küçük harfe duyarlı olmayan arama birden çok eşleşme döndürdü. İstek gerçekleştirilemedi.</target>
+        <target state="translated">Kaldırılacak olan '{0}' başvurusu için büyük/küçük harfe duyarsız arama 1'den fazla eşleşme döndürdü. İstek gerçekleştirilemedi.</target>
         <note />
       </trans-unit>
       <trans-unit id="FailedToUpdateBindingRedirects">
@@ -181,6 +181,16 @@
         <source>The {0} MSBuild property could not be found for project '{1}'.</source>
         <target state="translated">'{1}' projesi için {0} MSBuild özelliği bulunamadı.</target>
         <note>{0} is the name of the property that was not set.  {1} is the full path to the project.</note>
+      </trans-unit>
+      <trans-unit id="Migrating_ProjectJson_Started">
+        <source>Migrating project.json project...</source>
+        <target state="translated">project.json projesi geçiriliyor...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrating_ProjectJson_Succeeded">
+        <source>Migration Succeeded</source>
+        <target state="translated">Geçiş Başarılı Oldu</target>
+        <note />
       </trans-unit>
       <trans-unit id="PathToExistingFileNotPresent">
         <source>Path '{0}' to existing file is not found on disk. Cannot add to project '{1}'</source>
@@ -204,7 +214,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">'{0}' boş olamaz.</target>
+        <target state="translated">'{0}' null olamaz.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">

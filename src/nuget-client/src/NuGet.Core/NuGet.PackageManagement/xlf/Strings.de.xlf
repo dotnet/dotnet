@@ -124,12 +124,12 @@
       </trans-unit>
       <trans-unit id="Error_FileDoesNotExist">
         <source>File {0} does not exist.</source>
-        <target state="translated">Die Datei {0} ist nicht vorhanden.</target>
+        <target state="translated">Die Datei „{0}“ ist nicht vorhanden.</target>
         <note>{0} is the filename.</note>
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Sie führen den Vorgang „{0}“ mit einer „HTTP“-Quelle aus: {1}. NuGet erfordert HTTPS-Quellen. Um eine HTTP-Quelle zu verwenden, müssen Sie „allowInsecureConnections“ in Ihrer NuGet.Config-Datei explizit auf TRUE festlegen. Weitere Informationen finden Sie unter https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Sie führen den Vorgang „{0}“ mit einer „HTTP“-Quelle, „{1}“, aus. NuGet erfordert HTTPS-Quellen. Um eine HTTP-Quelle zu verwenden, müssen Sie „allowInsecureConnections“ in Ihrer NuGet.Config-Datei explizit auf TRUE festlegen. Weitere Informationen finden Sie unter „https://aka.ms/nuget-https-everywhere“.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - server uri.</note>
       </trans-unit>
       <trans-unit id="Error_InvalidLockFileInput">
@@ -259,12 +259,12 @@
       </trans-unit>
       <trans-unit id="PackageHasDependent">
         <source>Unable to uninstall '{0}' because '{1}' depends on it.</source>
-        <target state="translated">"{0}" kann nicht deinstalliert werden, da "{1}" davon abhängig ist.</target>
+        <target state="translated">"{0}" kann nicht deinstalliert werden, weil "{1}" davon abhängig ist.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageHasDependents">
         <source>Unable to uninstall '{0}' because '{1}' depend on it.</source>
-        <target state="translated">"{0}" kann nicht deinstalliert werden, da "{1}" davon abhängig sind.</target>
+        <target state="translated">"{0}" kann nicht deinstalliert werden, weil "{1}" davon abhängig sind.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageNotFound">
@@ -331,7 +331,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">"{0}" darf nicht Null sein.</target>
+        <target state="translated">„{0}“ darf nicht Null sein.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="RemovedPackageFromFolder">
@@ -421,7 +421,7 @@
       </trans-unit>
       <trans-unit id="UnableToFindCompatibleItems">
         <source>Could not install package '{0}'. You are trying to install this package into a project that targets '{1}', but the package does not contain any assembly references or content files that are compatible with that framework. For more information, contact the package author.</source>
-        <target state="translated">Das Paket "{0}" konnte nicht installiert werden. Sie versuchen, dieses Paket in ein Projekt zu installieren, das sich auf "{1}" bezieht, das Paket enthält jedoch keine Assemblyverweise oder Inhaltsdateien, die mit diesem Framework kompatibel sind. Wenden Sie sich an den Paketersteller, um weitere Informationen zu erhalten.</target>
+        <target state="translated">Das Paket "{0}" konnte nicht installiert werden. Sie versuchen, dieses Paket in ein Projekt zu installieren, das sich auf "{1}" bezieht, das Paket enthält aber keine Assemblyverweise oder Inhaltsdateien, die mit diesem Framework kompatibel sind. Wenden Sie sich an den Paketersteller, um weitere Informationen zu erhalten.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToFindPathInLookupOrList">
@@ -464,7 +464,7 @@
       </trans-unit>
       <trans-unit id="UnknownPackageSpecificVersion">
         <source>Unable to find version '{1}' of package '{0}'.</source>
-        <target state="translated">Die Version "{1}" des Pakets "{0}" kann nicht gefunden werden.</target>
+        <target state="translated">Die Version "{1}" des Pakets "{0}" wurde nicht gefunden.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnsupportedPackageType">
@@ -497,7 +497,7 @@
       </trans-unit>
       <trans-unit id="Warning_FileModified">
         <source>Skipping '{0}' because it was modified.</source>
-        <target state="translated">"{0}" wird übersprungen, da Änderungen vorgenommen wurden.</target>
+        <target state="translated">"{0}" wird übersprungen, weil Änderungen vorgenommen wurden.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">

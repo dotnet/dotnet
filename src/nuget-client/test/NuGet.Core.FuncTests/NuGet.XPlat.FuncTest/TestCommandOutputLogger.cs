@@ -70,8 +70,6 @@ namespace NuGet.XPlat.FuncTest
             }
         }
 
-        public ConcurrentQueue<string> WarningMessages => Logger.WarningMessages;
-
         public ConcurrentQueue<string> ErrorMessages
         {
             get
@@ -112,11 +110,6 @@ namespace NuGet.XPlat.FuncTest
         public string ShowErrors()
         {
             return string.Join(Environment.NewLine, ErrorMessages);
-        }
-
-        public string ShowVerboseMessages()
-        {
-            return string.Join(Environment.NewLine, VerboseMessages);
         }
     }
 }

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -56,7 +54,7 @@ namespace NuGet.DependencyResolver
             }
 
             // Try up to two times to get the package. The second
-            // retry will refresh the cache if a package is listed 
+            // retry will refresh the cache if a package is listed
             // but fails to download. This can happen if the feed prunes
             // the package.
             for (var i = 0; i < 2 && graphItem == null; i++)
@@ -285,7 +283,7 @@ namespace NuGet.DependencyResolver
                 if (remoteMatch != null)
                 {
                     // Try to see if the specific version found on the remote exists locally. This avoids any unnecessary
-                    // remote access incase we already have it in the cache/local packages folder. 
+                    // remote access incase we already have it in the cache/local packages folder.
                     var localMatch = await FindLibraryByVersionAsync(remoteMatch.Library, framework, localProviders, cacheContext, logger, cancellationToken);
 
                     if (localMatch != null
@@ -313,7 +311,7 @@ namespace NuGet.DependencyResolver
                     return localMatch;
                 }
 
-                // Either we found a local match but it wasn't the exact version, or 
+                // Either we found a local match but it wasn't the exact version, or
                 // we didn't find a local match.
                 var remoteMatch = await FindLibraryByVersionAsync(libraryRange, framework, remoteProviders, cacheContext, logger, cancellationToken);
 

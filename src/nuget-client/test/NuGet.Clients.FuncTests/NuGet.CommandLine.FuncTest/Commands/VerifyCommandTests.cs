@@ -26,7 +26,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
     {
         private readonly string _noTimestamperWarningCode = NuGetLogCode.NU3027.ToString();
         private readonly string _primarySignatureInvalidErrorCode = NuGetLogCode.NU3018.ToString();
-        private readonly string _signingDefaultErrorCode = NuGetLogCode.NU3000.ToString();
         private readonly string _noMatchingCertErrorCode = NuGetLogCode.NU3034.ToString();
 
         private SignCommandTestFixture _testFixture;

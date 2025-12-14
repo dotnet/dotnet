@@ -1,5 +1,7 @@
 // Based on https://github.com/xunit/samples.xunit/blob/main/UseCulture/UseCultureAttribute.cs
 
+#nullable disable
+
 using System;
 using System.Globalization;
 using System.Reflection;

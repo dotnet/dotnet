@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 
@@ -83,6 +81,13 @@ namespace NuGet.Configuration
         /// </summary>
         /// <param name="sources">PackageSources to be saved</param>
         void SavePackageSources(IEnumerable<PackageSource> sources);
+
+        /// <summary>
+        /// Compares the given list of AuditSources with the current AuditSources in the configuration
+        /// and adds, removes or updates each source as needed.
+        /// </summary>
+        /// <param name="sources">PackageSources to be saved</param>
+        void SaveAuditSources(IEnumerable<PackageSource> sources);
 
         /// <summary>
         /// Checks if a package source with a given name is part of the disabled sources configuration

@@ -19,15 +19,7 @@ function New-UwpClassLibraryProjectJson
         [string]$ProjectName,
         [string]$SolutionFolder
     )
-
-    if ((Get-VSVersion) -ge '15.0')
-    {
-        New-Project UwpClassLibraryProjectJson $ProjectName $SolutionFolder
-    }
-    else
-    {
-        throw "SKIP: $($_)"
-    }
+    New-Project UwpClassLibraryProjectJson $ProjectName $SolutionFolder
 }
 
 function New-UwpPackageRefClassLibrary
@@ -36,15 +28,7 @@ function New-UwpPackageRefClassLibrary
         [string]$ProjectName,
         [string]$SolutionFolder
     )
-
-    if ((Get-VSVersion) -ge '15.0')
-    {
-        New-Project UwpPackageRefClassLibrary $ProjectName $SolutionFolder
-    }
-    else
-    {
-        throw "SKIP: $($_)"
-    }
+    New-Project UwpPackageRefClassLibrary $ProjectName $SolutionFolder
 }
 
 function New-BuildIntegratedProj
@@ -53,15 +37,7 @@ function New-BuildIntegratedProj
         [string]$ProjectName,
         [string]$SolutionFolder
     )
-
-    if ((Get-VSVersion) -ge '15.0')
-    {
-        New-Project BuildIntegratedProj $ProjectName $SolutionFolder
-    }
-    else
-    {
-        throw "SKIP: $($_)"
-    }
+    New-Project BuildIntegratedProj $ProjectName $SolutionFolder
 }
 
 function Wait-OnNetCoreRestoreCompletion{
@@ -96,16 +72,9 @@ function New-NetCoreConsoleApp
         [string]$SolutionFolder
     )
 
-    if ((Get-VSVersion) -ge '15.0')
-    {
-        $project = New-Project NetCoreConsoleApp $ProjectName $SolutionFolder
-        Wait-OnNetCoreRestoreCompletion $project
-        return $project
-    }
-    else
-    {
-        throw "SKIP: $($_)"
-    }
+    $project = New-Project NetCoreConsoleApp $ProjectName $SolutionFolder
+    Wait-OnNetCoreRestoreCompletion $project
+    return $project
 }
 
 function New-NetCoreConsoleTargetFrameworksApp
@@ -114,17 +83,9 @@ function New-NetCoreConsoleTargetFrameworksApp
         [string]$ProjectName,
         [string]$SolutionFolder
     )
-
-    if ((Get-VSVersion) -ge '15.0')
-    {
-        $project = New-Project NetCoreConsoleTargetFrameworksApp $ProjectName $SolutionFolder
-        Wait-OnNetCoreRestoreCompletion $project
-        return $project
-    }
-    else
-    {
-        throw "SKIP: $($_)"
-    }
+    $project = New-Project NetCoreConsoleTargetFrameworksApp $ProjectName $SolutionFolder
+    Wait-OnNetCoreRestoreCompletion $project
+    return $project
 }
 
 
@@ -134,17 +95,9 @@ function New-NetCoreConsoleMultipleTargetFrameworksApp
         [string]$ProjectName,
         [string]$SolutionFolder
     )
-
-    if ((Get-VSVersion) -ge '15.0')
-    {
-        $project = New-Project NetCoreConsoleMultipleTargetFrameworksApp $ProjectName $SolutionFolder
-        Wait-OnNetCoreRestoreCompletion $project
-        return $project
-    }
-    else
-    {
-        throw "SKIP: $($_)"
-    }
+    $project = New-Project NetCoreConsoleMultipleTargetFrameworksApp $ProjectName $SolutionFolder
+    Wait-OnNetCoreRestoreCompletion $project
+    return $project
 }
 
 function New-NetCoreWebApp10
@@ -153,36 +106,9 @@ function New-NetCoreWebApp10
         [string]$ProjectName,
         [string]$SolutionFolder
     )
-
-    if ((Get-VSVersion) -ge '15.0')
-    {
-        $project = New-Project NetCoreWebApplication1.0 $ProjectName $SolutionFolder
-        Wait-OnNetCoreRestoreCompletion $project
-        return $project
-    }
-    else
-    {
-        throw "SKIP: $($_)"
-    }
-}
-
-function New-NetStandardClassLibrary
-{
-    param(
-        [string]$ProjectName,
-        [string]$SolutionFolder
-    )
-
-    if ((Get-VSVersion) -ge '15.0')
-    {
-        $project = New-Project NetStandardClassLibrary $ProjectName $SolutionFolder
-        Wait-OnNetCoreRestoreCompletion $project
-        return $project
-    }
-    else
-    {
-        throw "SKIP: $($_)"
-    }
+    $project = New-Project NetCoreWebApplication1.0 $ProjectName $SolutionFolder
+    Wait-OnNetCoreRestoreCompletion $project
+    return $project
 }
 
 function New-NetCoreConsoleAppWithCustomRestorePackagesPath
@@ -191,35 +117,9 @@ function New-NetCoreConsoleAppWithCustomRestorePackagesPath
         [string]$ProjectName,
         [string]$SolutionFolder
     )
-
-    if ((Get-VSVersion) -ge '15.0')
-    {
-        $project = New-Project NetCoreConsoleAppWithCustomRestorePackagesPath $ProjectName $SolutionFolder
-        Wait-OnNetCoreRestoreCompletion $project
-        return $project
-    }
-    else
-    {
-        throw "SKIP: $($_)"
-    }
-}
-
-
-function New-CpsApp
-{
-    param(
-        [string]$ProjectName,
-        [string]$SolutionFolder
-    )
-
-    if ($version -ge '15.0')
-    {
-        New-Project CpsApp $ProjectName $SolutionFolder
-    }
-    else
-    {
-        throw "SKIP: $($_)"
-    }
+    $project = New-Project NetCoreConsoleAppWithCustomRestorePackagesPath $ProjectName $SolutionFolder
+    Wait-OnNetCoreRestoreCompletion $project
+    return $project
 }
 
 function Get-SolutionDir {
@@ -351,24 +251,6 @@ function New-ClassLibraryNET46 {
     New-Project ClassLibrary46 $ProjectName $SolutionFolderName
 }
 
-function New-NativeWinStoreApplication
-{
-    param(
-        [string]$ProjectName,
-        [string]$SolutionFolder
-    )
-
-    try
-    {
-        New-Project CppWinStoreApplication $ProjectName $SolutionFolder
-    }
-    catch {
-        # If we're unable to create the project that means we probably don't have some SDK installed
-        # Signal to the runner that we want to skip this test
-        throw "SKIP: $($_)"
-    }
-}
-
 function New-ConsoleApplication {
     param(
         [string]$ProjectName,
@@ -385,15 +267,6 @@ function New-WebApplication {
     )
 
     New-Project EmptyWebApplicationProject40 $ProjectName $SolutionFolder
-}
-
-function New-VBConsoleApplication {
-    param(
-        [string]$ProjectName,
-        [string]$SolutionFolder
-    )
-
-    New-Project VBConsoleApplication $ProjectName $SolutionFolder
 }
 
 function New-MvcApplication {
@@ -434,17 +307,6 @@ function New-FSharpLibrary {
     return $project
 }
 
-function New-FSharpConsoleApplication {
-    param(
-        [string]$ProjectName,
-        [string]$SolutionFolder
-    )
-
-    $project = New-Project FSharpConsoleApplication $ProjectName $SolutionFolder
-    Wait-OnNetCoreRestoreCompletion $project
-    return $project
-}
-
 function New-WPFApplication {
     param(
         [string]$ProjectName,
@@ -452,92 +314,6 @@ function New-WPFApplication {
     )
 
     New-Project WPFApplication $ProjectName $SolutionFolder
-}
-
-function New-SilverlightClassLibrary {
-    param(
-        [string]$ProjectName,
-        [string]$SolutionFolder
-    )
-
-    try
-    {
-        New-Project SilverlightClassLibrary $ProjectName $SolutionFolder
-    }
-    catch {
-        # If we're unable to create the project that means we probably don't have some SDK installed
-        # Signal to the runner that we want to skip this test
-        throw "SKIP: $($_)"
-    }
-}
-
-function New-SilverlightApplication {
-    param(
-        [string]$ProjectName,
-        [string]$SolutionFolder
-    )
-
-    try
-    {
-        New-Project SilverlightProject $ProjectName $SolutionFolder
-    }
-    catch {
-        # If we're unable to create the project that means we probably don't have some SDK installed
-        # Signal to the runner that we want to skip this test
-        throw "SKIP: $($_)"
-    }
-}
-
-function New-WindowsPhoneClassLibrary {
-    param(
-        [string]$ProjectName,
-        [string]$SolutionFolder
-    )
-
-    try {
-        New-Project WindowsPhoneClassLibrary $ProjectName $SolutionFolder
-    }
-    catch {
-        # If we're unable to create the project that means we probably don't have some SDK installed
-        # Signal to the runner that we want to skip this test
-        throw "SKIP: $($_)"
-    }
-}
-
-function New-DNXClassLibrary
-{
-    param(
-        [string]$ProjectName,
-        [string]$SolutionFolder
-    )
-
-    try
-    {
-        New-Project DNXClassLibrary $ProjectName $SolutionFolder
-    }
-    catch {
-        # If we're unable to create the project that means we probably don't have some SDK installed
-        # Signal to the runner that we want to skip this test
-        throw "SKIP: $($_)"
-    }
-}
-
-function New-DNXConsoleApp
-{
-    param(
-        [string]$ProjectName,
-        [string]$SolutionFolder
-    )
-
-    try
-    {
-        New-Project DNXConsoleApp $ProjectName $SolutionFolder
-    }
-    catch {
-        # If we're unable to create the project that means we probably don't have some SDK installed
-        # Signal to the runner that we want to skip this test
-        throw "SKIP: $($_)"
-    }
 }
 
 function New-TextFile {

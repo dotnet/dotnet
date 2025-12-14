@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -56,7 +58,7 @@ namespace Dotnet.Integration.Test
 
             // Assert
             Assert.Equal(ExitCodes.Success, result.ExitCode);
-            Assert.Contains($"Project '{ProjectName}' has the following dependency graph(s) for '{packageY.Id}'", result.AllOutput);
+            Assert.Contains($"Project '{ProjectName}' has the following dependency graph(s) for '{packageY.Id}'", result.AllOutput.Replace("\n", "").Replace("\r", ""));
         }
 
         [Fact]
@@ -118,7 +120,7 @@ namespace Dotnet.Integration.Test
 
             // Assert
             Assert.Equal(ExitCodes.Success, result.ExitCode);
-            Assert.Contains($"Project '{ProjectName}' has the following dependency graph(s) for '{packageY.Id}'", result.AllOutput);
+            Assert.Contains($"Project '{ProjectName}' has the following dependency graph(s) for '{packageY.Id}'", result.AllOutput.Replace("\n", "").Replace("\r", ""));
         }
 
         [Fact]
@@ -150,7 +152,7 @@ namespace Dotnet.Integration.Test
 
             // Assert
             Assert.Equal(ExitCodes.Success, result.ExitCode);
-            Assert.Contains($"Project '{ProjectName}' has the following dependency graph(s) for '{packageY.Id}'", result.AllOutput);
+            Assert.Contains($"Project '{ProjectName}' has the following dependency graph(s) for '{packageY.Id}'", result.AllOutput.Replace("\n", "").Replace("\r", ""));
         }
 
         [Fact]
@@ -187,40 +189,6 @@ namespace Dotnet.Integration.Test
         }
 
         [Fact]
-        public async Task WhyCommand_InvalidFrameworksOption_WarnsCorrectly()
-        {
-            // Arrange
-            var pathContext = new SimpleTestPathContext();
-            var inputFrameworksOption = "invalidFrameworkAlias";
-            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, Constants.ProjectTargetFramework);
-
-            var packageX = XPlatTestUtils.CreatePackage("PackageX", "1.0.0", Constants.ProjectTargetFramework);
-            var packageY = XPlatTestUtils.CreatePackage("PackageY", "1.0.1", Constants.ProjectTargetFramework);
-
-            packageX.Dependencies.Add(packageY);
-
-            project.AddPackageToFramework(Constants.ProjectTargetFramework, packageX);
-
-            await SimpleTestPackageUtility.CreatePackagesAsync(
-                pathContext.PackageSource,
-                packageX,
-                packageY);
-
-            string addPackageCommandArgs = $"add {project.ProjectPath} package {packageX.Id}";
-            CommandRunnerResult addPackageResult = _testFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, addPackageCommandArgs, testOutputHelper: _testOutputHelper);
-
-            string whyCommandArgs = $"nuget why {project.ProjectPath} {packageY.Id} -f {inputFrameworksOption} -f {Constants.ProjectTargetFramework}";
-
-            // Act
-            CommandRunnerResult result = _testFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, whyCommandArgs, testOutputHelper: _testOutputHelper);
-
-            // Assert
-            Assert.Equal(ExitCodes.Success, result.ExitCode);
-            Assert.Contains($"warn : The assets file '{project.AssetsFileOutputPath}' for project '{ProjectName}' does not contain a target for the specified input framework '{inputFrameworksOption}'.", result.AllOutput);
-            Assert.Contains($"Project '{ProjectName}' has the following dependency graph(s) for '{packageY.Id}'", result.AllOutput);
-        }
-
-        [Fact]
         public async Task WhyCommand_DirectoryWithProject_HasTransitiveDependency_DependencyPathExists()
         {
             // Arrange
@@ -250,7 +218,7 @@ namespace Dotnet.Integration.Test
 
             // Assert
             Assert.Equal(ExitCodes.Success, result.ExitCode);
-            Assert.Contains($"Project '{ProjectName}' has the following dependency graph(s) for '{packageY.Id}'", result.AllOutput);
+            result.AllOutput.Replace("\n", "").Replace("\r", "").Should().Contain($"Project '{ProjectName}' has the following dependency graph(s) for '{packageY.Id}'");
         }
 
         [Fact]

@@ -48,7 +48,7 @@ namespace Msbuild.Integration.Test
                 projectA.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(projectA);
 
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,

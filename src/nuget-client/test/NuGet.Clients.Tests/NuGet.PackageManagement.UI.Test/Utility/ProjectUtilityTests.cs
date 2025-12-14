@@ -123,7 +123,7 @@ namespace NuGet.PackageManagement.UI.Test
                         It.IsAny<ServiceActivationOptions>(),
                         It.IsAny<CancellationToken>()))
 #pragma warning restore ISB001 // Dispose of proxies
-                .Returns(new ValueTask<INuGetProjectManagerService>(projectManagerService.Object));
+                .Returns(new ValueTask<INuGetProjectManagerService?>(projectManagerService.Object));
 
             return projectManagerService;
         }

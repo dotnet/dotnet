@@ -94,7 +94,6 @@
       </Button>
 
       <Button guid="guidClearNuGetLocalResourcesCmdSet" id="cmdidClearNuGetLocalResources" priority="0x0100" type="Button">
-        <CommandFlag>DefaultInvisible</CommandFlag>
         <Strings>
           <CommandName>cmdidClearNuGetLocalResources</CommandName>
           <!--This button text is not visible to the user as the command is invoked from Unified Settings-->

@@ -79,7 +79,7 @@ Draft pull requests are allowed but should have a clear plan for transitioning t
 
 ## Branching strategy
 
-The active development branch in our repo is `dev`. What we ship comes from the `release-major.minor.x` branches.
+The active development branch in our repo is `dev`. What we ship comes from the `release-major.minor.x` and `release/major.minor.x` branches.
 
 ### Adding fixes in release branches
 
