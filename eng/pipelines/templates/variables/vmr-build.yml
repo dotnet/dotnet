@@ -161,7 +161,7 @@ variables:
 - name: fedoraContainerName
   value: fedoraContainer
 - name: fedoraContainerImage
-  value: mcr.microsoft.com/dotnet-buildtools/prereqs:fedora-41
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:fedora-43-amd64
 
 - name: ubuntuContainerName
   value: ubuntuContainer
@@ -230,7 +230,7 @@ variables:
 - name: centOSStreamName
   value: CentOSStream10
 - name: fedoraName
-  value: Fedora41
+  value: Fedora43
 - name: ubuntuName
   value: Ubuntu2404
 
@@ -251,7 +251,7 @@ variables:
 - name: centOSStreamX64Rid
   value: centos.10-x64
 - name: fedoraX64Rid
-  value: fedora.41-x64
+  value: fedora.43-x64
 - name: ubuntux64Rid
   value: ubuntu.24.04-x64
 - name: ubuntuArm64Rid
@@ -291,3 +291,4 @@ variables:
     value: macos-latest-internal
   - name: poolImage_Windows
     value: windows.vs2022.amd64
+
