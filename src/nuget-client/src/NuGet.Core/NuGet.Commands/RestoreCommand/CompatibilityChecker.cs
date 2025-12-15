@@ -373,7 +373,8 @@ namespace NuGet.Commands
             for (int i = 0; i < _lockFile.Targets.Count; ++i)
             {
                 var target = _lockFile.Targets[i];
-                if (Equals(target.TargetFramework, graph.Framework) && string.Equals(target.RuntimeIdentifier, graph.RuntimeIdentifier, StringComparison.Ordinal))
+                // When comparing the target alias, a null targetAlias means that we have a support added and as such the alias won't be available.
+                if (Equals(target.TargetFramework, graph.Framework) && (target.TargetAlias == null || Equals(target.TargetAlias, graph.TargetAlias)) && string.Equals(target.RuntimeIdentifier, graph.RuntimeIdentifier, StringComparison.Ordinal))
                 {
                     for (int j = 0; j < target.Libraries.Count; ++j)
                     {

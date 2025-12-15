@@ -159,5 +159,19 @@ namespace API.Test
             var errorLevel = vsBuildErrorLevel.vsBuildErrorLevelHigh;
             return await GetErrorTasksAsync(errorLevel);
         }
+
+        public static string[] GetWarnings()
+        {
+            return ThreadHelper.JoinableTaskFactory.Run(() => GetWarningsAsync());
+        }
+
+        private static async Task<string[]> GetWarningsAsync()
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            var errorLevel = vsBuildErrorLevel.vsBuildErrorLevelMedium;
+            var warnings = await GetErrorTasksAsync(errorLevel);
+            return warnings;
+        }
     }
 }

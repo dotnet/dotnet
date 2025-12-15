@@ -612,7 +612,7 @@ namespace NuGet.Commands
                 graphs = new(frameworkRuntimePairs.Count);
                 for (var i = 0; i < frameworkRuntimePairs.Count; i++)
                 {
-                    var restoreTargetGraph = RestoreTargetGraph.Create(_request.Project.RuntimeGraph, Enumerable.Empty<GraphNode<RemoteResolveResult>>(), contextForProject, _logger, frameworkRuntimePairs[i].TargetAlias, frameworkRuntimePairs[i].Framework, frameworkRuntimePairs[i].RuntimeIdentifier);
+                    var restoreTargetGraph = RestoreTargetGraph.Create(_request.Project.RuntimeGraph, Enumerable.Empty<GraphNode<RemoteResolveResult>>(), contextForProject, frameworkRuntimePairs[i].TargetAlias, frameworkRuntimePairs[i].Framework, frameworkRuntimePairs[i].RuntimeIdentifier);
                     graphs.Add(restoreTargetGraph);
                 }
             }
@@ -1751,7 +1751,7 @@ namespace NuGet.Commands
                 // in order to avoid missing target errors from the SDK build tasks and ensure that NuGet errors don't get cleared.
                 foreach (FrameworkRuntimeDefinition frameworkRuntimePair in CreateFrameworkRuntimeDefinitions(_request.Project, RequestRuntimeUtility.GetRestoreRuntimes(_request)))
                 {
-                    allGraphs.Add(RestoreTargetGraph.Create(_request.Project.RuntimeGraph, Enumerable.Empty<GraphNode<RemoteResolveResult>>(), context, _logger, frameworkRuntimePair.TargetAlias, frameworkRuntimePair.Framework, frameworkRuntimePair.RuntimeIdentifier));
+                    allGraphs.Add(RestoreTargetGraph.Create(_request.Project.RuntimeGraph, Enumerable.Empty<GraphNode<RemoteResolveResult>>(), context, frameworkRuntimePair.TargetAlias, frameworkRuntimePair.Framework, frameworkRuntimePair.RuntimeIdentifier));
                 }
             }
 
@@ -1907,7 +1907,7 @@ namespace NuGet.Commands
                 // in order to avoid missing target errors from the SDK build tasks and ensure that NuGet errors don't get cleared.
                 foreach (FrameworkRuntimeDefinition frameworkRuntimePair in CreateFrameworkRuntimeDefinitions(_request.Project, RequestRuntimeUtility.GetRestoreRuntimes(_request)))
                 {
-                    graphs.Add(RestoreTargetGraph.Create(_request.Project.RuntimeGraph, Enumerable.Empty<GraphNode<RemoteResolveResult>>(), context, _logger, frameworkRuntimePair.TargetAlias, frameworkRuntimePair.Framework, frameworkRuntimePair.RuntimeIdentifier));
+                    graphs.Add(RestoreTargetGraph.Create(_request.Project.RuntimeGraph, Enumerable.Empty<GraphNode<RemoteResolveResult>>(), context, frameworkRuntimePair.TargetAlias, frameworkRuntimePair.Framework, frameworkRuntimePair.RuntimeIdentifier));
                 }
             }
 

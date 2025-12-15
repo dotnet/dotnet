@@ -10,6 +10,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Build.Evaluation;
 using NuGet.ProjectModel;
+using Spectre.Console;
 
 namespace NuGet.CommandLine.XPlat.Commands.Why
 {
@@ -38,11 +39,11 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
             }
             catch (ArgumentException ex)
             {
-                whyCommandArgs.Logger.LogError(
-                    string.Format(
-                        CultureInfo.CurrentCulture,
-                        Strings.WhyCommand_Error_ArgumentExceptionThrown,
-                        ex.Message));
+                string message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Strings.WhyCommand_Error_ArgumentExceptionThrown,
+                    ex.Message);
+                whyCommandArgs.Logger.MarkupLine($"[red]{message}[/]");
 
                 return Task.FromResult(ExitCodes.InvalidArguments);
             }
@@ -63,7 +64,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
 
                     if (dependencyGraphPerFramework != null)
                     {
-                        whyCommandArgs.Logger.LogMinimal(
+                        whyCommandArgs.Logger.WriteLine(
                             string.Format(CultureInfo.CurrentCulture,
                                 Strings.WhyCommand_Message_DependencyGraphsFoundInProject,
                                 assetsFile.PackageSpec.Name,
@@ -73,7 +74,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
                     }
                     else
                     {
-                        whyCommandArgs.Logger.LogMinimal(
+                        whyCommandArgs.Logger.WriteLine(
                             string.Format(CultureInfo.CurrentCulture,
                                 Strings.WhyCommand_Message_NoDependencyGraphsFoundInProject,
                                 assetsFile.PackageSpec.Name,
@@ -89,7 +90,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
             return Task.FromResult(anyErrors ? ExitCodes.Error : ExitCodes.Success);
         }
 
-        private static IEnumerable<(string assetsFilePath, string? projectPath)> FindAssetsFiles(string path, ILoggerWithColor logger)
+        private static IEnumerable<(string assetsFilePath, string? projectPath)> FindAssetsFiles(string path, IAnsiConsole logger)
         {
             if (XPlatUtility.IsJsonFile(path))
             {
@@ -108,23 +109,22 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
                     {
                         if (!MSBuildAPIUtility.IsPackageReferenceProject(project))
                         {
-                            logger.LogError(
-                                string.Format(
-                                    CultureInfo.CurrentCulture,
-                                    Strings.Error_NotPRProject,
-                                    project.FullPath));
-
+                            string message = string.Format(
+                                CultureInfo.CurrentCulture,
+                                Strings.Error_NotPRProject,
+                                project.FullPath);
+                            logger.MarkupLine($"[red]{message}[/]");
                             continue;
                         }
 
                         string? assetsFilePath = project.GetPropertyValue(ProjectAssetsFile);
                         if (string.IsNullOrEmpty(assetsFilePath) || !File.Exists(assetsFilePath))
                         {
-                            logger.LogError(
-                                string.Format(
-                                    CultureInfo.CurrentCulture,
-                                    Strings.Error_AssetsFileNotFound,
-                                    project.FullPath));
+                            string message = string.Format(
+                                CultureInfo.CurrentCulture,
+                                Strings.Error_AssetsFileNotFound,
+                                project.FullPath);
+                            logger.MarkupLine($"[red]{message}[/]");
                             continue;
                         }
 
@@ -132,7 +132,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
                     }
                     else
                     {
-                        logger.LogMinimal(
+                        logger.WriteLine(
                                 string.Format(
                                     CultureInfo.CurrentCulture,
                                     Strings.WhyCommand_Message_NonSDKStyleProjectsAreNotSupported,
@@ -149,15 +149,15 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
         /// <summary>
         /// Validates that the input 'path' argument is a valid path to a directory, solution file or project file.
         /// </summary>
-        private static bool ValidatePathArgument(string path, ILoggerWithColor logger)
+        private static bool ValidatePathArgument(string path, IAnsiConsole logger)
         {
             if (string.IsNullOrEmpty(path))
             {
-                logger.LogError(
-                    string.Format(
-                        CultureInfo.CurrentCulture,
-                        Strings.WhyCommand_Error_ArgumentCannotBeEmpty,
-                        "PROJECT|SOLUTION"));
+                string message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Strings.WhyCommand_Error_ArgumentCannotBeEmpty,
+                    "PROJECT|SOLUTION");
+                logger.MarkupLine($"[red]{message}[/]");
                 return false;
             }
 
@@ -169,11 +169,11 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
             }
             catch (ArgumentException)
             {
-                logger.LogError(
-                    string.Format(
-                        CultureInfo.CurrentCulture,
-                        Strings.WhyCommand_Error_ArgumentExceptionThrown,
-                        string.Format(CultureInfo.CurrentCulture, Strings.Error_PathIsMissingOrInvalid, path)));
+                string message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Strings.WhyCommand_Error_ArgumentExceptionThrown,
+                    string.Format(CultureInfo.CurrentCulture, Strings.Error_PathIsMissingOrInvalid, path));
+                logger.MarkupLine($"[red]{message}[/]");
                 return false;
             }
 
@@ -186,24 +186,24 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
             }
             else
             {
-                logger.LogError(
-                    string.Format(
-                        CultureInfo.CurrentCulture,
-                        Strings.WhyCommand_Error_ArgumentExceptionThrown,
-                        string.Format(CultureInfo.CurrentCulture, Strings.Error_PathIsMissingOrInvalid, path)));
+                string message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Strings.WhyCommand_Error_ArgumentExceptionThrown,
+                    string.Format(CultureInfo.CurrentCulture, Strings.Error_PathIsMissingOrInvalid, path));
+                logger.MarkupLine($"[red]{message}[/]");
                 return false;
             }
         }
 
-        private static bool ValidatePackageArgument(string package, ILoggerWithColor logger)
+        private static bool ValidatePackageArgument(string package, IAnsiConsole logger)
         {
             if (string.IsNullOrEmpty(package))
             {
-                logger.LogError(
-                    string.Format(
-                        CultureInfo.CurrentCulture,
-                        Strings.WhyCommand_Error_ArgumentCannotBeEmpty,
-                        "PACKAGE"));
+                string message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Strings.WhyCommand_Error_ArgumentCannotBeEmpty,
+                    "PACKAGE");
+                logger.MarkupLine($"[red]{message}[/]");
                 return false;
             }
 
@@ -213,19 +213,19 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
         /// <summary>
         /// Validates that the input frameworks options have corresponding targets in the assets file. Outputs a warning message if a framework does not exist.
         /// </summary>
-        private static void ValidateFrameworksOptionsExistInAssetsFile(LockFile assetsFile, List<string> inputFrameworks, ILoggerWithColor logger)
+        private static void ValidateFrameworksOptionsExistInAssetsFile(LockFile assetsFile, List<string> inputFrameworks, IAnsiConsole logger)
         {
             foreach (var frameworkAlias in inputFrameworks)
             {
                 if (assetsFile.GetTarget(frameworkAlias, runtimeIdentifier: null) == null)
                 {
-                    logger.LogWarning(
-                        string.Format(
-                            CultureInfo.CurrentCulture,
-                            Strings.WhyCommand_Warning_AssetsFileDoesNotContainSpecifiedTarget,
-                            assetsFile.Path,
-                            assetsFile.PackageSpec.Name,
-                            frameworkAlias));
+                    string message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Strings.WhyCommand_Warning_AssetsFileDoesNotContainSpecifiedTarget,
+                        assetsFile.Path,
+                        assetsFile.PackageSpec.Name,
+                        frameworkAlias);
+                    logger.MarkupLine($"[yellow]{message}[/]");
                 }
             }
         }
@@ -237,25 +237,25 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
         /// <param name="projectPath"></param>
         /// <param name="logger">Logger for the 'why' command</param>
         /// <returns>Assets file for the given project. Returns null if there was any issue finding or parsing the assets file.</returns>
-        private static LockFile? GetProjectAssetsFile(string assetsFilePath, string? projectPath, ILoggerWithColor logger)
+        private static LockFile? GetProjectAssetsFile(string assetsFilePath, string? projectPath, IAnsiConsole logger)
         {
             if (!File.Exists(assetsFilePath))
             {
                 if (!string.IsNullOrEmpty(projectPath))
                 {
-                    logger.LogError(
-                        string.Format(
-                            CultureInfo.CurrentCulture,
-                            Strings.Error_AssetsFileNotFound,
-                            projectPath));
+                    string message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Strings.Error_AssetsFileNotFound,
+                        projectPath);
+                    logger.MarkupLine($"[red]{message}[/]");
                 }
                 else
                 {
-                    logger.LogError(
-                        string.Format(
-                            CultureInfo.CurrentCulture,
-                            Strings.Error_PathIsMissingOrInvalid,
-                            assetsFilePath));
+                    string message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Strings.Error_PathIsMissingOrInvalid,
+                        assetsFilePath);
+                    logger.MarkupLine($"[red]{message}[/]");
                 }
 
                 return null;
@@ -271,20 +271,20 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
             {
                 if (string.IsNullOrEmpty(projectPath))
                 {
-                    logger.LogError(
-                        string.Format(
-                            CultureInfo.CurrentCulture,
-                            Strings.WhyCommand_Error_InvalidAssetsFile_WithoutProject,
-                            assetsFilePath));
+                    string message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Strings.WhyCommand_Error_InvalidAssetsFile_WithoutProject,
+                        assetsFilePath);
+                    logger.MarkupLine($"[red]{message}[/]");
                 }
                 else
                 {
-                    logger.LogError(
-                        string.Format(
-                            CultureInfo.CurrentCulture,
-                            Strings.WhyCommand_Error_InvalidAssetsFile_WithProject,
-                            assetsFilePath,
-                            projectPath));
+                    string message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Strings.WhyCommand_Error_InvalidAssetsFile_WithProject,
+                        assetsFilePath,
+                        projectPath);
+                    logger.MarkupLine($"[red]{message}[/]");
                 }
 
                 return null;

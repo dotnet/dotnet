@@ -877,6 +877,49 @@ namespace NuGet.ProjectModel.Test
             target.TargetFramework.Should().Be(nuGetFramework);
         }
 
+        [Fact]
+        public void LockFile_GetTarget_WithAliasAndSameFramework_ReturnsCorrectLockFileTarget()
+        {
+            // Arrange
+            NuGetFramework targetFramework = FrameworkConstants.CommonFrameworks.Net50;
+
+            LockFile lockFile = new LockFile()
+            {
+                Targets = new List<LockFileTarget>()
+                {
+                    new() {
+                        TargetFramework = FrameworkConstants.CommonFrameworks.Net50,
+                        TargetAlias = "net5.0"
+                    },
+                    new() {
+                        TargetFramework = FrameworkConstants.CommonFrameworks.Net50,
+                        TargetAlias = "net5.0-x64"
+                    },
+                    new() {
+                        TargetFramework = FrameworkConstants.CommonFrameworks.Net50,
+                        TargetAlias = "net5.0",
+                        RuntimeIdentifier = "win-x64"
+                    },
+                    new() {
+                        TargetFramework = FrameworkConstants.CommonFrameworks.Net50,
+                        TargetAlias = "net5.0-x64",
+                        RuntimeIdentifier = "win-x64"
+                    },
+                }
+            };
+
+            // Act && Assert
+            LockFileTarget target = lockFile.GetTarget("net5.0-x64", runtimeIdentifier: null);
+            target.TargetFramework.Should().Be(targetFramework);
+            target.RuntimeIdentifier.Should().BeNull();
+            target.TargetAlias.Should().Be("net5.0-x64");
+
+            LockFileTarget targetWithRid = lockFile.GetTarget("net5.0", runtimeIdentifier: "win-x64");
+            targetWithRid.TargetFramework.Should().Be(targetFramework);
+            targetWithRid.RuntimeIdentifier.Should().Be("win-x64");
+            targetWithRid.TargetAlias.Should().Be("net5.0");
+        }
+
         private LockFile Parse(string lockFileContent, string path)
         {
             var reader = new LockFileFormat();

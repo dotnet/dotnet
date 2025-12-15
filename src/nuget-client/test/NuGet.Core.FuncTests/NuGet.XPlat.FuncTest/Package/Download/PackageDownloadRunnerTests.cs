@@ -472,6 +472,30 @@ public class PackageDownloadRunnerTests
             false,
             null!
         };
+
+        // no --source, mapping -> A&B, package in both A and B. Latest version from A installed
+        yield return new object[]
+        {
+            new List<(string,string)> { ("Contoso.Mapped", "3.0.0") },                            // A
+            new List<(string,string)> { ("Contoso.Mapped", "2.0.0") },                           // B
+            new List<(string,string)> { ("A", "Contoso.*"), ("B", "Contoso.*") }, // mapped to A&B
+            null,
+            "Contoso.Mapped", null,
+            true,
+            ("Contoso.Mapped", "3.0.0")
+        };
+
+        // no --source, mapping -> A&B, package in both A and B. Latest version from B installed
+        yield return new object[]
+        {
+            new List<(string,string)> { ("Contoso.Mapped", "2.0.0") },                            // A
+            new List<(string,string)> { ("Contoso.Mapped", "3.0.0") },                           // B
+            new List<(string,string)> { ("A", "Contoso.*"), ("B", "Contoso.*") }, // mapped to A&B
+            null,
+            "Contoso.Mapped", null,
+            true,
+            ("Contoso.Mapped", "3.0.0")
+        };
     }
 
     [Theory]
@@ -570,10 +594,9 @@ public class PackageDownloadRunnerTests
     {
         // Arrange
         using var context = new SimpleTestPathContext();
-        var insecureSourceUrl = "http://contoso.test/v3/index.json";
-
-        context.Settings.AddSource("InsecureMapped", insecureSourceUrl);
-        context.Settings.AddPackageSourceMapping("InsecureMapped", "Contoso.*");
+        PackageSource source = new("http://contoso.test/v3/index.json", "InsecureMapped");
+        context.Settings.AddSource(source.Name, source.SourceUri.OriginalString);
+        context.Settings.AddPackageSourceMapping(source.Name, "Contoso.*");
 
         var settings = Settings.LoadSettingsGivenConfigPaths([context.Settings.ConfigPath]);
 
@@ -594,8 +617,14 @@ public class PackageDownloadRunnerTests
         var logger = new Mock<ILoggerWithColor>(MockBehavior.Loose);
         var packageSources = new List<PackageSource>
         {
-            new(insecureSourceUrl, "InsecureMapped")
+            source
         };
+
+        string expectedError = string.Format(
+            CultureInfo.CurrentCulture,
+            Strings.Error_HttpServerUsage,
+            "package download",
+            source);
 
         // Act
         var exit = await PackageDownloadRunner.RunAsync(
@@ -607,6 +636,10 @@ public class PackageDownloadRunnerTests
 
         // Assert
         exit.Should().Be(PackageDownloadRunner.ExitCodeError);
+        logger.Verify(
+            l => l.LogError(expectedError),
+            Times.Once);
+
     }
 
     [Fact]
@@ -661,6 +694,60 @@ public class PackageDownloadRunnerTests
         var installDir = Path.Combine(context.WorkingDirectory, id.ToLowerInvariant(), version);
         Directory.Exists(installDir).Should().BeTrue();
         File.Exists(Path.Combine(installDir, $"{id.ToLowerInvariant()}.{version}.nupkg")).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task RunAsync_WhenSourceMappingEnabled_PackageMapsToNoSource_Fails()
+    {
+        // Arrange
+        using var context = new SimpleTestPathContext();
+        PackageSource source = new(context.PackageSource, "source");
+        context.Settings.AddSource(source.Name, source.SourceUri.OriginalString);
+        context.Settings.AddPackageSourceMapping(source.Name, "Contoso.Not.*");
+        var settings = Settings.LoadSettingsGivenConfigPaths([context.Settings.ConfigPath]);
+
+        // package
+        var id = "Contoso.Package";
+        var version = "1.0.0";
+
+        string expectedError = string.Format(
+            CultureInfo.CurrentCulture,
+            Strings.PackageDownloadCommand_PackageSourceMapping_NoSourcesMapped,
+            id,
+            source);
+
+        // arguments
+        var logger = new Mock<ILoggerWithColor>(MockBehavior.Loose);
+        var packageSources = new List<PackageSource>
+        {
+            source
+        };
+        var args = new PackageDownloadArgs
+        {
+            Packages =
+            [
+                new PackageWithNuGetVersion
+                {
+                    Id = id,
+                    NuGetVersion = NuGetVersion.Parse(version)
+                }
+            ],
+            OutputDirectory = context.WorkingDirectory,
+        };
+
+        // Act
+        var exit = await PackageDownloadRunner.RunAsync(
+            args,
+            logger.Object,
+            packageSources,
+            settings,
+            CancellationToken.None);
+
+        // Assert
+        exit.Should().Be(PackageDownloadRunner.ExitCodeError);
+        logger.Verify(
+            l => l.LogError(expectedError),
+            Times.Once);
     }
 
     [Fact]

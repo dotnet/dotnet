@@ -20,6 +20,7 @@
     <ExtensionInstallationFolder>Microsoft\NuGet</ExtensionInstallationFolder>
     <NgenApplicationDefault>[INSTALLDIR]\Common7\IDE\vsn.exe</NgenApplicationDefault>
     <NgenPriorityDefault>3</NgenPriorityDefault>
+    <VssdkCompatibleExtension>true</VssdkCompatibleExtension>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(BuildingInsideVisualStudio)' == 'True'">
@@ -28,6 +29,7 @@
     <StartArguments>/rootsuffix Exp /log</StartArguments>
     <CreateVsixContainer>True</CreateVsixContainer>
     <DeployExtension>True</DeployExtension>
+    <VsixDeployOnDebug>True</VsixDeployOnDebug>
   </PropertyGroup>
 
   <ItemGroup>
@@ -289,6 +291,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Extensibility.Sdk" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.VisualStudio.Extensibility.Build" PrivateAssets="all" />
+
     <!-- This is important because otherwise the VSSDK will include the unsigned version coming from the global packages folder instead of the in-place signed one from the bootstrapped packages folder -->
     <PackageReference Include="Lucene.Net" ExcludeAssets="all" GeneratePathProperty="true" />
     <!-- dependency of Lucene.net. Can delete when Lucene.net has an update with a newer dependency on sharpziplib -->
@@ -352,7 +357,7 @@
     The VSSDK creates a VsixSourceItems item for each file to be copied into the VSIX. In this target, we remove all
     the files listed in our .vsixignore file, and error if any file listed in .vsixinclude is missing from the vsix.
   -->
-  <Target Name="RemoveUnsolicitedVsixAssemblies" AfterTargets="GetVsixSourceItems" Condition="'$(IncludeCopyLocalReferencesInVSIXContainer)'=='true'" DependsOnTargets="ReadVsixIncludeListFromFile;ReadVsixIgnoreListFromFile">
+  <Target Name="RemoveUnsolicitedVsixAssemblies" AfterTargets="GetVsixSourceItems" Condition="'$(IncludeCopyLocalReferencesInVSIXContainer)'=='true' And '$(DesignTimeBuild)'!='true'" DependsOnTargets="ReadVsixIncludeListFromFile;ReadVsixIgnoreListFromFile">
     <Message Text="Filtering VSIX package files..." Importance="high" />
     <ItemGroup>
       <AllVsixSymbols Include="@(VSIXSourceItem->'%(FileName)%(Extension)')" Condition=" '%(Extension)' == '.pdb' ">

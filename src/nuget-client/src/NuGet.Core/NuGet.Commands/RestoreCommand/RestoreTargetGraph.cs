@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using NuGet.Client;
-using NuGet.Common;
 using NuGet.DependencyResolver;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
@@ -110,16 +109,10 @@ namespace NuGet.Commands
             }
         }
 
-        internal static RestoreTargetGraph Create(IEnumerable<GraphNode<RemoteResolveResult>> graphs, RemoteWalkContext context, ILogger logger, string targetAlias, NuGetFramework framework)
-        {
-            return Create(RuntimeGraph.Empty, graphs, context, logger, targetAlias, framework, runtimeIdentifier: null);
-        }
-
         internal static RestoreTargetGraph Create(
             RuntimeGraph runtimeGraph,
             IEnumerable<GraphNode<RemoteResolveResult>> graphs,
             RemoteWalkContext context,
-            ILogger log,
             string targetAlias,
             NuGetFramework framework,
             string runtimeIdentifier)
