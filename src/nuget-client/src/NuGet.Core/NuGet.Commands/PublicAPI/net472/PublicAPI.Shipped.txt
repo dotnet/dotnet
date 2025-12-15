@@ -993,7 +993,6 @@ static NuGet.Commands.Restore.Utility.PackageSpecFactory.GetPackageSpec(NuGet.Co
 ~static NuGet.Commands.RestoreSpecException.Create(string message, System.Collections.Generic.IEnumerable<string> files, System.Exception innerException) -> NuGet.Commands.RestoreSpecException
 ~static NuGet.Commands.RestoreSummary.Log(NuGet.Common.ILogger logger, System.Collections.Generic.IReadOnlyList<NuGet.Commands.RestoreSummary> restoreSummaries, bool logErrors = false) -> void
 ~static NuGet.Commands.SpecValidationUtility.ValidateDependencySpec(NuGet.ProjectModel.DependencyGraphSpec spec) -> void
-~static NuGet.Commands.SpecValidationUtility.ValidateDependencySpec(NuGet.ProjectModel.DependencyGraphSpec spec, System.Collections.Generic.HashSet<string> projectsToSkip) -> void
 ~static NuGet.Commands.SpecValidationUtility.ValidateDependencySpec(NuGet.ProjectModel.DependencyGraphSpec spec, System.Collections.Generic.HashSet<string> projectsToSkip, NuGet.Common.ILogger logger) -> void
 ~static NuGet.Commands.SpecValidationUtility.ValidateProjectSpec(NuGet.ProjectModel.PackageSpec spec) -> void
 ~static NuGet.Commands.ToolRestoreUtility.GetSpec(string projectFilePath, string id, NuGet.Versioning.VersionRange versionRange, NuGet.Frameworks.NuGetFramework framework, string packagesPath, System.Collections.Generic.IList<string> fallbackFolders, System.Collections.Generic.IList<NuGet.Configuration.PackageSource> sources, NuGet.ProjectModel.WarningProperties projectWideWarningProperties) -> NuGet.ProjectModel.PackageSpec

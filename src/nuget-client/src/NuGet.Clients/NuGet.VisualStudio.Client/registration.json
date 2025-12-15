@@ -140,6 +140,7 @@
         "packageSources": {
           "type": "array",
           "title": "@Text_PackageSources_NotMachineWide;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "description": "@Text_PackageSources_Description;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
 
           // Metadata about items in this array
           "items": {
@@ -156,7 +157,7 @@
                 "type": "string",
                 "title": "@Text_PackageSourceName_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
                 "uniqueness": "caseInsensitive",
-                "default":  "",
+                "default": "",
                 "example": "Package source",
                 "messages": [
                   {
@@ -206,6 +207,63 @@
           "allowItemEditing": true,
           "allowAdditionsAndRemovals": true
         },
+        "auditSources": {
+          "type": "array",
+          "title": "@Text_AuditSources_Title;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "description": "@Text_AuditSources_Description;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "helpUri": "https://learn.microsoft.com/nuget/concepts/auditing-packages",
+
+          // Metadata about items in this array
+          "items": {
+            "type": "object",
+
+            // The properties of items in this array
+            "properties": {
+              "sourceName": {
+                "type": "string",
+                "title": "@Text_PackageSourceName_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                "uniqueness": "caseInsensitive",
+                "default": "",
+                "example": "Package source",
+                "messages": [
+                  {
+                    "text": "@Error_PackageSourceName_Missing;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                    "visibleWhen": "${config:sourceName} ~= '^\\\\s*$'",
+                    "severity": "error"
+                  }
+                ]
+              },
+              "sourceUrl": {
+                "type": "string",
+                "format": "path",
+                "pathKind": "folderOrUri",
+                "title": "@Text_PackageSourceUrl_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                "uniqueness": "caseInsensitive",
+                "default": "",
+                "example": "https://packagesource",
+                "messages": [
+                  {
+                    "text": "@Error_PackageSourceUri_Missing;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                    "visibleWhen": "${config:sourceUrl} ~= '^\\\\s*$'",
+                    "severity": "error"
+                  }
+                ]
+              }
+            }
+          },
+
+          // The actual items that appear by default; in most cases, you'd leave this array empty.
+          "default": [],
+          "allowItemEditing": true,
+          "allowAdditionsAndRemovals": true,
+          "messages": [
+            {
+              "text": "@Text_AuditSources_HowToRemove;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+              "visibleWhen": "${config:auditSources} != '[]'"
+            }
+          ]
+        },
+
         "machineWidePackageSources": {
           "type": "array",
           "title": "@Text_PackageSources_MachineWide;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",

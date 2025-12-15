@@ -54,5 +54,7 @@ namespace NuGet.Commands.Test
         public void AddPackageSource(PackageSource source) => throw new NotImplementedException();
 
         public bool IsPackageSourceEnabled(string name) => throw new NotImplementedException();
+
+        public void SaveAuditSources(IEnumerable<PackageSource> sources) => throw new NotImplementedException();
     }
 }
