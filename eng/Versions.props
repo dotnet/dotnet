@@ -6,8 +6,7 @@
     <VersionSDKMinor>1</VersionSDKMinor>
     <MajorVersion>11</MajorVersion>
     <MinorVersion>0</MinorVersion>
-    <MajorMinorVersion>$(MajorVersion).$(MinorVersion)</MajorMinorVersion>
-    <VersionPrefix>$(MajorMinorVersion).$(VersionSDKMinor)00</VersionPrefix>
+    <VersionPrefix>$(MajorVersion).$(MinorVersion).$(VersionSDKMinor)00</VersionPrefix>
     <PreReleaseVersionLabel>alpha</PreReleaseVersionLabel>
     <PreReleaseVersionIteration></PreReleaseVersionIteration>
 
