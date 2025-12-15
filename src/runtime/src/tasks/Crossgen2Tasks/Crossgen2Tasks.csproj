@@ -5,6 +5,8 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>$(NoWarn);CA1050;CA1852;CA1861;CA2249;IDE0059;IDE0060;IDE0074</NoWarn>
     <Nullable>annotations</Nullable>
+    <NuGetPackageTargetFramework>net8.0</NuGetPackageTargetFramework>
+    <NuGetPackageTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true'">net10.0</NuGetPackageTargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <!--
@@ -22,10 +24,10 @@
     <!-- Bring in references for these assemblies which are provided by the SDK.
          We do this to avoid bringing the package closure for assemblies we don't use here. -->
     <PackageDownloadAndReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" Folder="lib/netstandard2.0" />
-    <PackageDownloadAndReference Include="NuGet.Frameworks" Version="$(NugetFrameworksVersion)" Folder="lib/net8.0" />
-    <PackageDownloadAndReference Include="NuGet.Packaging" Version="$(NugetPackagingVersion)" Folder="lib/net8.0" />
-    <PackageDownloadAndReference Include="NuGet.ProjectModel" Version="$(NugetProjectModelVersion)" Folder="lib/net8.0" />
-    <PackageDownloadAndReference Include="NuGet.Versioning" Version="$(NugetVersioningVersion)" Folder="lib/net8.0" />
+    <PackageDownloadAndReference Include="NuGet.Frameworks" Version="$(NugetFrameworksVersion)" Folder="lib/$(NuGetPackageTargetFramework)" />
+    <PackageDownloadAndReference Include="NuGet.Packaging" Version="$(NugetPackagingVersion)" Folder="lib/$(NuGetPackageTargetFramework)" />
+    <PackageDownloadAndReference Include="NuGet.ProjectModel" Version="$(NugetProjectModelVersion)" Folder="lib/$(NuGetPackageTargetFramework)" />
+    <PackageDownloadAndReference Include="NuGet.Versioning" Version="$(NugetVersioningVersion)" Folder="lib/$(NuGetPackageTargetFramework)" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Microsoft.NET.CrossGen.targets">
