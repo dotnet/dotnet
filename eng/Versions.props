@@ -4,7 +4,10 @@
 
   <PropertyGroup>
     <VersionSDKMinor>1</VersionSDKMinor>
-    <VersionPrefix>11.0.$(VersionSDKMinor)00</VersionPrefix>
+    <MajorVersion>11</MajorVersion>
+    <MinorVersion>0</MinorVersion>
+    <MajorMinorVersion>$(MajorVersion).$(MinorVersion)</MajorMinorVersion>
+    <VersionPrefix>$(MajorMinorVersion).$(VersionSDKMinor)00</VersionPrefix>
     <PreReleaseVersionLabel>alpha</PreReleaseVersionLabel>
     <PreReleaseVersionIteration></PreReleaseVersionIteration>
 

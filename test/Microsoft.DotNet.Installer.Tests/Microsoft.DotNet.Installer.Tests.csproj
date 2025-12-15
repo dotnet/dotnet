@@ -69,10 +69,7 @@
         <Value>$(MicrosoftNETCoreAppRefVersion)</Value>
       </RuntimeHostConfigurationOption>
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).TargetProductVersion">
-        <!-- Temporarily code this to 11.0 while the TFM does not match the product version. 
-             https://github.com/dotnet/dotnet/issues/3741 -->
-        <!-- <Value>$(_TargetFrameworkVersionWithoutV)</Value> -->
-        <Value>11.0</Value>
+        <Value>$(MajorMinorVersion)</Value>
       </RuntimeHostConfigurationOption>
     </ItemGroup>
   </Target>
