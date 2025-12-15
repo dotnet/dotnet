@@ -7,10 +7,10 @@
       "commitSha": "8adf115288fa51feaa30d063b946478054c7f7b4"
     },
     {
-      "barId": 294379,
+      "barId": 294579,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "c5f8422073be4a98c9cf3f75c58f9a0d59fdf073"
+      "commitSha": "52230ffce8a948419c07d22e1e18e309767bb203"
     },
     {
       "barId": 292148,
@@ -43,22 +43,22 @@
       "commitSha": "25e60dc7aeaecb90172339831f6e114a1c28d848"
     },
     {
-      "barId": 292157,
+      "barId": 294516,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "f8b85873c9157f00b4951a78977fa87e3ab7c628"
+      "commitSha": "36e24b2207d929b79bb48c9429e8b797bd78e467"
     },
     {
-      "barId": 293499,
+      "barId": 294618,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "89d788641914c5d0b87fddfa11f4df0b5cfaa73d"
+      "commitSha": "c8ac0176fde838b930d07f23bc2c81ba585448c4"
     },
     {
-      "barId": 294355,
+      "barId": 294558,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "2235ffd325c3926d0392fae9dcc2dcb6a623f1eb"
+      "commitSha": "7df7cfd55686d73e70950a89e786b7c5b00bec99"
     },
     {
       "barId": 279847,
@@ -133,10 +133,10 @@
       "commitSha": "132afbade9e2ce626f26e27c136f34af73dde2f1"
     },
     {
-      "barId": 294066,
+      "barId": 294396,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "6b55842360e78bd1d7b15977694524fc092b7cc7"
+      "commitSha": "1d2f5fd0d08a42c115c994eef562401c32f08774"
     },
     {
       "barId": 293871,
@@ -155,7 +155,7 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "1b96fa13f549387b7549cc89e1a785cf143a1a50"
+      "commitSha": "065127f1e4b46c5f14fc73cf8d323c221f9dc68e"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
