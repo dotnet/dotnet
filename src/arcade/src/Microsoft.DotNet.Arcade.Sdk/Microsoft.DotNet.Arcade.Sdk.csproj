@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(BundledNETCoreAppTargetFramework);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
     <IsPackable>true</IsPackable>
@@ -26,11 +26,6 @@
     <PackageReference Include="NuGet.Versioning" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <PackageReference Include="System.Reflection.Metadata" />
-    <Reference Include="System.Net.Http" />
-  </ItemGroup>
-
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.DotNet.Arcade.Sdk.Tests" />
   </ItemGroup>
@@ -45,10 +40,6 @@
     <None Include="$(_GeneratedVersionFilePath)"
           Pack="true"
           PackagePath="tools\DefaultVersions.Generated.props" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="..\Common\Internal\AssemblyResolution.cs" Link="src\AssemblyResolution.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -9,17 +9,14 @@ using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-#if NET
 using System.Formats.Tar;
-#endif
 
 namespace Microsoft.SignCheck
 {
     public static class Utils
     {
-#if NET
         private static readonly HttpClient s_client = new(new SocketsHttpHandler { PooledConnectionLifetime = TimeSpan.FromMinutes(10) });
-#endif
+
         /// <summary>
         /// Generate a hash for a string value using a given hash algorithm.
         /// </summary>
@@ -191,7 +188,6 @@ namespace Microsoft.SignCheck
             }
         }
 
-#if NET
         /// <summary>
         /// Download the Microsoft and Azure Linux public keys and import them into the keyring.
         /// </summary>
@@ -239,7 +235,6 @@ namespace Microsoft.SignCheck
                 return null;
             }
         }
-#endif
 
         /// <summary>
         /// Parses a code signing timestamp string into a DateTime object.

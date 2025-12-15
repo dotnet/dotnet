@@ -2,8 +2,7 @@
 <Project>
 
   <PropertyGroup>
-    <MicrosoftDotNetBuildTasksInstallersTaskAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\net\Microsoft.DotNet.Build.Tasks.Installers.dll</MicrosoftDotNetBuildTasksInstallersTaskAssembly>
-    <MicrosoftDotNetBuildTasksInstallersTaskAssembly Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\netframework\Microsoft.DotNet.Build.Tasks.Installers.dll</MicrosoftDotNetBuildTasksInstallersTaskAssembly>
+    <MicrosoftDotNetBuildTasksInstallersTaskAssembly>$(MSBuildThisFileDirectory)..\tools\net\Microsoft.DotNet.Build.Tasks.Installers.dll</MicrosoftDotNetBuildTasksInstallersTaskAssembly>
     <MicrosoftDotNetBuildTasksInstallersMSBuildDir Condition="'$(MicrosoftDotNetBuildTasksInstallersMSBuildDir)' == ''">$(MSBuildThisFileDirectory)</MicrosoftDotNetBuildTasksInstallersMSBuildDir>
   </PropertyGroup>
 

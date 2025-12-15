@@ -2,11 +2,10 @@
 <Project>
 
   <PropertyGroup>
-    <MicrosoftDotNetBuildTasksWorkloadsAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\net\Microsoft.DotNet.Build.Tasks.Workloads.dll</MicrosoftDotNetBuildTasksWorkloadsAssembly>
-    <MicrosoftDotNetBuildTasksWorkloadsAssembly Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\netframework\Microsoft.DotNet.Build.Tasks.Workloads.dll</MicrosoftDotNetBuildTasksWorkloadsAssembly>
+    <MicrosoftDotNetBuildTasksWorkloadsAssembly>$(MSBuildThisFileDirectory)..\tools\net\Microsoft.DotNet.Build.Tasks.Workloads.dll</MicrosoftDotNetBuildTasksWorkloadsAssembly>
   </PropertyGroup>
 
-  <UsingTask TaskName="CreateVisualStudioWorkload" AssemblyFile="$(MicrosoftDotNetBuildTasksWorkloadsAssembly)" />
-  <UsingTask TaskName="CreateVisualStudioWorkloadSet" AssemblyFile="$(MicrosoftDotNetBuildTasksWorkloadsAssembly)" />
+  <UsingTask TaskName="CreateVisualStudioWorkload" AssemblyFile="$(MicrosoftDotNetBuildTasksWorkloadsAssembly)" Runtime="NET" />
+  <UsingTask TaskName="CreateVisualStudioWorkloadSet" AssemblyFile="$(MicrosoftDotNetBuildTasksWorkloadsAssembly)" Runtime="NET" />
 
 </Project>

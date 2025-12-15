@@ -24,11 +24,7 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links
             AkaMSLinkManager manager;
             if (!string.IsNullOrEmpty(ClientCertificate))
             {
-#if NET9_0_OR_GREATER
                 manager = new AkaMSLinkManager(ClientId, X509CertificateLoader.LoadPkcs12(Convert.FromBase64String(File.ReadAllText(ClientCertificate)), password: null), Tenant, Log);
-#else
-                manager = new AkaMSLinkManager(ClientId, new X509Certificate2(Convert.FromBase64String(File.ReadAllText(ClientCertificate))), Tenant, Log);
-#endif
             }
             else if (!string.IsNullOrEmpty(ClientSecret))
             {

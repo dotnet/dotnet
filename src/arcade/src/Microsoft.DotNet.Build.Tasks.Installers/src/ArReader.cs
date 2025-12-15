@@ -98,25 +98,9 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             }
         }
 
-#if !NET
-        private void ReadExactly(byte[] buffer, int offset, int count)
-        {
-            while (count > 0)
-            {
-                int read = stream.Read(buffer, offset, count);
-                if (read == 0)
-                {
-                    throw new InvalidOperationException("Unexpected end of stream");
-                }
-                offset += read;
-                count -= read;
-            }
-        }
-#else
         private void ReadExactly(byte[] buffer, int offset, int count)
         {
             stream.ReadExactly(buffer.AsSpan(offset, count));
         }
-#endif
     }
 }

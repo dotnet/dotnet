@@ -3,31 +3,21 @@
   <Import Project="$(MSBuildThisFileDirectory)..\Microsoft.SignCheck\ResxWorkaround.props" />
 
   <PropertyGroup>
-    <TargetFramework>$(NetFrameworkToolCurrent)</TargetFramework>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <OutputType>Exe</OutputType>
-    <IsTool>true</IsTool>
     <SignAssembly>false</SignAssembly>
     <IsPackable>true</IsPackable>
-    <!-- <NoWarn>$(NoWarn);NU5128</NoWarn> -->
-    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <Description>Build artifact signing validation tool</Description>
     <PackageTags>Arcade Signing Validation Tool</PackageTags>
     <RootNamespace>SignCheck</RootNamespace>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>signcheck</ToolCommandName>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommandLineParser" Publish="true" />
+    <PackageReference Include="CommandLineParser" />
     <ProjectReference Include="..\SignCheckTask\Microsoft.DotNet.SignCheckTask.csproj" />
   </ItemGroup>
-
-  <!-- This glob must run after the build and before _GetPackageFiles to ensure all dependencies end up in the .nupkg file. -->
-  <Target Name="CollectAllBuildOutputForPack" BeforeTargets="_GetPackageFiles" DependsOnTargets="CopyFilesToOutputDirectory">
-    <ItemGroup>
-      <!-- Exclude TargetPath to avoid NU5118: duplicate files -->
-      <Content Include="$(TargetDir)**\*"
-               Exclude="$(TargetPath)"
-               PackagePath="tools/" />
-    </ItemGroup>
-  </Target>
 
 </Project>

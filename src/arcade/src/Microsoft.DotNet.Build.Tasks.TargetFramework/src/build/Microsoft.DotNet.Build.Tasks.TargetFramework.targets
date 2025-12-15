@@ -1,7 +1,7 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
 
-  <UsingTask TaskName="ChooseBestP2PTargetFrameworkTask" AssemblyFile="$(DotNetBuildTasksTargetFrameworkAssembly)" />
+  <UsingTask TaskName="ChooseBestP2PTargetFrameworkTask" AssemblyFile="$(DotNetBuildTasksTargetFrameworkAssembly)" Runtime="NET" />
   
   <!--
     Runs in a leaf project (csproj) to determine best configuration for ProjectReferences.

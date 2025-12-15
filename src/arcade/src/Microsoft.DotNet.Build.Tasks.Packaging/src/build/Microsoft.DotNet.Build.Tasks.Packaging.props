@@ -1,6 +1,11 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
 
+  <!-- Import the BundledVersions.props file from SDK to light-up Runtime="NET" task support.
+       Only import when NETCoreSdkBundledVersionsProps is not defined (non SDK style projects).
+       Remove when https://github.com/dotnet/msbuild/issues/12895 is implemented. -->
+  <Sdk Import="Microsoft.NET.Sdk" Project="Sdk.BundledVersions.props" Condition="'$(NETCoreSdkBundledVersionsProps)' == ''" />
+
   <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.pkgproj'">
     <IsPackable>true</IsPackable>
     <!-- Additional property which no-ops the pkgproj entrypoint targets for more flexibility during servicing. -->

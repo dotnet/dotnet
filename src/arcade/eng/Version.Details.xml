@@ -62,10 +62,6 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>d3981726bc8b0e179db50301daf9f22d42393096</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Bcl.AsyncInterfaces" Version="9.0.0">
-      <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>d3981726bc8b0e179db50301daf9f22d42393096</Sha>
-    </Dependency>
     <!-- Necessary for source-build. This allows the live version of the dependency
          to flow in and eliminates related prebuilts. -->
     <Dependency Name="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0">
@@ -102,15 +98,7 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>d3981726bc8b0e179db50301daf9f22d42393096</Sha>
     </Dependency>
-    <Dependency Name="System.Text.Encodings.Web" Version="9.0.0">
-      <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>d3981726bc8b0e179db50301daf9f22d42393096</Sha>
-    </Dependency>
-    <Dependency Name="System.Text.Json" Version="9.0.0">
-      <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>d3981726bc8b0e179db50301daf9f22d42393096</Sha>
-    </Dependency>
-    <Dependency Name="Microsoft.Deployment.DotNet.Releases" Version="2.0.0-preview.1.24305.1" CoherentParentDependency="Microsoft.NET.Sdk.WorkloadManifestReader">
+    <Dependency Name="Microsoft.Deployment.DotNet.Releases" Version="2.0.0-preview.1.24305.1">
       <Uri>https://github.com/dotnet/deployment-tools</Uri>
       <Sha>d882ae4af9fb09a89e36487a9c8cb7dfde713927</Sha>
     </Dependency>
@@ -118,23 +106,9 @@
       <Uri>https://github.com/dotnet/sdk</Uri>
       <Sha>ef4c24166691977558e5312758df4313ab310dc0</Sha>
     </Dependency>
-    <!-- Transitive dependency needed for source build. -->
-    <Dependency Name="System.Collections.Immutable" Version="9.0.0">
-      <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>d3981726bc8b0e179db50301daf9f22d42393096</Sha>
-    </Dependency>
     <Dependency Name="System.CommandLine" Version="2.0.0-beta5.25210.1">
       <Uri>https://github.com/dotnet/command-line-api</Uri>
       <Sha>e9b0511d7f1128e2bc3be7a658a2a4ea977e602d</Sha>
-    </Dependency>
-    <!-- Transitive dependency needed for source build. -->
-    <Dependency Name="System.Reflection.Metadata" Version="9.0.0">
-      <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>d3981726bc8b0e179db50301daf9f22d42393096</Sha>
-    </Dependency>
-    <Dependency Name="System.Formats.Asn1" Version="9.0.0">
-      <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>d3981726bc8b0e179db50301daf9f22d42393096</Sha>
     </Dependency>
     <Dependency Name="System.Security.Cryptography.Pkcs" Version="9.0.0">
       <Uri>https://github.com/dotnet/runtime</Uri>

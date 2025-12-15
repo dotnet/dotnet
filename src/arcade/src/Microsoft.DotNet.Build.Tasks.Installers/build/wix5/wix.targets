@@ -1,7 +1,7 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
 
-  <UsingTask TaskName="WixToolset.HeatTasks.HeatDirectory" AssemblyFile="$(WixHeatBinDir)\WixToolset.HeatTasks.dll" />
+  <UsingTask TaskName="WixToolset.HeatTasks.HeatDirectory" AssemblyFile="$(WixHeatBinDir)\WixToolset.HeatTasks.dll" Runtime="NET" />
 
   <!--
     The following targets use MSBuild Exec tasks to invoke WiX 5 toolset commands directly.
