@@ -187,11 +187,11 @@ namespace NuGet.Tests.Apex
         {
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, addNetStandardFeeds: true))
             {
-                var project2 = testContext.SolutionService.AddProject(ProjectLanguage.CSharp, projectTemplate, ProjectTargetFramework.V46, "TestProject2");
+                var project2 = testContext.SolutionService.AddProject(ProjectLanguage.CSharp, projectTemplate, CommonUtility.DefaultTargetFramework, "TestProject2");
                 project2.Build();
-                var project3 = testContext.SolutionService.AddProject(ProjectLanguage.CSharp, projectTemplate, ProjectTargetFramework.V46, "TestProject3");
+                var project3 = testContext.SolutionService.AddProject(ProjectLanguage.CSharp, projectTemplate, CommonUtility.DefaultTargetFramework, "TestProject3");
                 project3.Build();
-                var projectX = testContext.SolutionService.AddProject(ProjectLanguage.CSharp, projectTemplate, ProjectTargetFramework.V46, "TestProjectX");
+                var projectX = testContext.SolutionService.AddProject(ProjectLanguage.CSharp, projectTemplate, CommonUtility.DefaultTargetFramework, "TestProjectX");
                 projectX.Build();
                 testContext.SolutionService.Build();
 

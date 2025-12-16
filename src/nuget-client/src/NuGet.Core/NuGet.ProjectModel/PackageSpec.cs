@@ -1,12 +1,12 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using NuGet.LibraryModel;
 using NuGet.RuntimeModel;
 using NuGet.Shared;
 using NuGet.Versioning;
@@ -22,7 +22,7 @@ namespace NuGet.ProjectModel
         public static readonly NuGetVersion DefaultVersion = new NuGetVersion(1, 0, 0);
 
         public PackageSpec(IList<TargetFrameworkInformation> frameworks)
-            : this(frameworks, dependencies: null, runtimeGraph: null, restoreSettings: null)
+            : this(frameworks, runtimeGraph: null, restoreSettings: null)
         {
         }
 
@@ -32,13 +32,11 @@ namespace NuGet.ProjectModel
 
         internal PackageSpec(
             IList<TargetFrameworkInformation> frameworks,
-            IList<LibraryDependency> dependencies,
             RuntimeGraph runtimeGraph,
             ProjectRestoreSettings restoreSettings
             )
         {
             TargetFrameworks = frameworks;
-            Dependencies = dependencies ?? new List<LibraryDependency>();
             RuntimeGraph = runtimeGraph ?? RuntimeGraph.Empty;
             RestoreSettings = restoreSettings ?? new ProjectRestoreSettings();
         }
@@ -61,12 +59,6 @@ namespace NuGet.ProjectModel
         }
 
         public bool IsDefaultVersion { get; private set; } = true;
-
-        /// <summary>
-        /// List of dependencies that apply to all frameworks.
-        /// <see cref="ProjectStyle.PackageReference"/> based projects must not use this list and instead use the one in the <see cref="TargetFrameworks"/> property which is a list of the <see cref="TargetFrameworkInformation"/> type.
-        /// </summary>
-        public IList<LibraryDependency> Dependencies { get; set; }
 
         public IList<TargetFrameworkInformation> TargetFrameworks { get; private set; }
 
@@ -92,7 +84,6 @@ namespace NuGet.ProjectModel
 
             hashCode.AddObject(Version);
             hashCode.AddObject(IsDefaultVersion);
-            hashCode.AddSequence(Dependencies);
             hashCode.AddSequence(TargetFrameworks);
             hashCode.AddObject(RuntimeGraph);
             hashCode.AddObject(RestoreMetadata);
@@ -121,7 +112,6 @@ namespace NuGet.ProjectModel
 
             return EqualityUtility.EqualsWithNullCheck(Version, other.Version) &&
                    IsDefaultVersion == other.IsDefaultVersion &&
-                   EqualityUtility.OrderedEquals(Dependencies, other.Dependencies, dep => dep.Name, StringComparer.OrdinalIgnoreCase) &&
                    EqualityUtility.OrderedEquals(TargetFrameworks, other.TargetFrameworks, tfm => tfm.TargetAlias, StringComparer.OrdinalIgnoreCase) &&
                    EqualityUtility.EqualsWithNullCheck(RuntimeGraph, other.RuntimeGraph) &&
                    EqualityUtility.EqualsWithNullCheck(RestoreMetadata, other.RestoreMetadata);
@@ -144,7 +134,6 @@ namespace NuGet.ProjectModel
 
             return new PackageSpec(
                 targetFrameworks,
-                Dependencies?.ToList(),
                 RuntimeGraph?.Clone(),
                 RestoreSettings?.Clone()
                 )

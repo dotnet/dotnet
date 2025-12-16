@@ -59,7 +59,7 @@
       </trans-unit>
       <trans-unit id="UnsupportedHashAlgorithm">
         <source>Hash algorithm '{0}' is unsupported. Supported algorithms include: SHA512 and SHA256.</source>
-        <target state="translated">Algoritmus hash {0} není podporován. Podporované algoritmy: SHA512 a SHA256.</target>
+        <target state="translated">Hashovací algoritmus {0} není podporován. Podporované algoritmy: SHA512 a SHA256.</target>
         <note>{0} is an algorithm identifier</note>
       </trans-unit>
       <trans-unit id="UnsupportedHashAlgorithmName">

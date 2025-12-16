@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -409,7 +407,7 @@ public class AuditUtilityTests
         }
         else
         {
-            context.Log.Messages.Count().Should().Be(0);
+            context.Log.Messages.Count.Should().Be(0);
         }
 
         auditUtility.DirectPackagesWithAdvisory.Should().BeNullOrEmpty();
@@ -440,11 +438,11 @@ public class AuditUtilityTests
 
         var vulnerabilityProviders = AuditTestContext.CreateVulnerabilityInformationProviders(vulnerabilityProviderContexts);
 
-        RestoreTargetGraph[] graphs =
-        {
+        List<RestoreTargetGraph> graphs =
+        [
             await createGraphTasks[0],
             await createGraphTasks[1]
-        };
+        ];
 
         var targetFrameworks = new List<TargetFrameworkInformation>
         {
@@ -492,7 +490,7 @@ public class AuditUtilityTests
 
             var walkResult = await walker.WalkAsync(restoreTarget, targetFramework, "", RuntimeGraph.Empty, true);
 
-            var graph = RestoreTargetGraph.Create(new[] { walkResult }, walkContext, NullLogger.Instance, targetFramework);
+            var graph = RestoreTargetGraph.Create(RuntimeGraph.Empty, new[] { walkResult }, walkContext, targetFramework.ToString(), targetFramework, runtimeIdentifier: null);
 
             return graph;
         }
@@ -623,7 +621,7 @@ public class AuditUtilityTests
 
             return audit;
 
-            async Task<RestoreTargetGraph[]> CreateGraphsAsync()
+            async Task<List<RestoreTargetGraph>> CreateGraphsAsync()
             {
                 var walkContext = new TestRemoteWalkContext();
                 walkContext.LocalLibraryProviders.Add(PackagesDependencyProvider);
@@ -632,10 +630,9 @@ public class AuditUtilityTests
 
                 var graph = await walker.WalkAsync(_walkTarget, _framework, "", RuntimeGraph.Empty, true);
 
-                RestoreTargetGraph[] graphs = new[]
-                {
-                    RestoreTargetGraph.Create(new[] { graph }, walkContext, NullLogger.Instance, _framework)
-                };
+                List<RestoreTargetGraph> graphs = [
+                    RestoreTargetGraph.Create(RuntimeGraph.Empty, new[] { graph }, walkContext, _framework.GetShortFolderName(), _framework, runtimeIdentifier : null)
+                ];
 
                 return graphs;
             }

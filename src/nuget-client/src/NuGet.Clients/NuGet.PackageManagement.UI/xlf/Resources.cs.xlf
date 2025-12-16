@@ -124,7 +124,7 @@
       </trans-unit>
       <trans-unit id="AskForUpdateMessage">
         <source>A new version of NuGet Package Manager is available.</source>
-        <target state="translated">Je dostupná nová verze správce NuGet Package Manager.</target>
+        <target state="translated">Je dostupná nová verze správce balíčků NuGet.</target>
         <note />
       </trans-unit>
       <trans-unit id="AutoReferenced">
@@ -904,14 +904,17 @@
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandFailure">
         <source>NuGet storage clear failed at {0}. 
-Error: {1}
-Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
+Error: {1}</source>
         <target state="translated">Vymazání úložiště NuGet selhalo v {0}. 
-Chyba: {1}
-Další nápovědu najdete na adrese https://aka.ms/troubleshoot_nuget_cache.</target>
+Chyba: {1}</target>
         <note>{0} :error message;
 {1}: date and time
 </note>
+      </trans-unit>
+      <trans-unit id="ShowMessage_LocalsCommandMoreInformation">
+        <source>For more information, see</source>
+        <target state="translated">Další informace viz</target>
+        <note />
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandSuccess">
         <source>NuGet storage cleared at {0}</source>
@@ -1020,7 +1023,7 @@ Další nápovědu najdete na adrese https://aka.ms/troubleshoot_nuget_cache.</t
       </trans-unit>
       <trans-unit id="Text_LoadingReadme">
         <source>Loading README...</source>
-        <target state="translated">Načítá se SOUBOR README...</target>
+        <target state="translated">Načítání souboru README...</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ManageSettings">
@@ -1310,7 +1313,7 @@ Další nápovědu najdete na adrese https://aka.ms/troubleshoot_nuget_cache.</t
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
         <source>Once started, this action cannot be cancelled.</source>
-        <target state="translated">Po spuštění se tato akce nedá zrušit.</target>
+        <target state="translated">Po zahájení se tato akce nedá zrušit.</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">

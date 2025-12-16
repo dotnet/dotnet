@@ -7,10 +7,10 @@
       "commitSha": "8adf115288fa51feaa30d063b946478054c7f7b4"
     },
     {
-      "barId": 294579,
+      "barId": 294778,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "52230ffce8a948419c07d22e1e18e309767bb203"
+      "commitSha": "fab9e0e4b7d44bf6b2967f7f197dccbf7dbde087"
     },
     {
       "barId": 292148,
@@ -37,10 +37,10 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 294537,
+      "barId": 294743,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "94b2ee91070174c06a1753b3121b8bda0db4f36a"
+      "commitSha": "ac3a0e9a66b690cea6d633275b4e2a6b21cb531f"
     },
     {
       "barId": 294516,
@@ -49,22 +49,22 @@
       "commitSha": "36e24b2207d929b79bb48c9429e8b797bd78e467"
     },
     {
-      "barId": 294618,
+      "barId": 294753,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "c8ac0176fde838b930d07f23bc2c81ba585448c4"
+      "commitSha": "7a09e87595c3b2107f754cd174743db80dfb5f78"
     },
     {
-      "barId": 294558,
+      "barId": 294781,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "7df7cfd55686d73e70950a89e786b7c5b00bec99"
+      "commitSha": "fe44b975b3015c68867544c4e3628f3ed322f2bd"
     },
     {
-      "barId": 279847,
+      "barId": 294557,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "56f4657d7585ec12b61c623756ca4b2b810c4863"
+      "commitSha": "cc8f616db8da1c2feb052c2d7eb5cd73071da290"
     },
     {
       "barId": 289390,
@@ -115,10 +115,10 @@
       "commitSha": "2255aa6d6c21541848933c33f72e60363041abaf"
     },
     {
-      "barId": 292030,
+      "barId": 294676,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "41ef93aacf72633b58372a9841d8940f6d87ae26"
+      "commitSha": "413680c51cc58fd29655bacf2a080bd0efe0db21"
     },
     {
       "barId": 293953,

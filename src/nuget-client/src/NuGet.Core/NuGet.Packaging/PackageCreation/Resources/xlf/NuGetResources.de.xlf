@@ -124,7 +124,7 @@
       </trans-unit>
       <trans-unit id="Manifest_ReferencesHasMixedElements">
         <source>&lt;references&gt; element must not contain both &lt;group&gt; and &lt;reference&gt; child elements.</source>
-        <target state="translated">Das Element &lt;references&gt; darf nicht gleichzeitig untergeordnete Elemente &lt;group&gt; und &lt;reference&gt; enthalten.</target>
+        <target state="translated">Das Element &lt;references&gt; darf keine untergeordneten Elemente &lt;group&gt; und &lt;reference&gt; enthalten.</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_ReferencesIsEmpty">

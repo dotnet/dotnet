@@ -1,10 +1,11 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using FluentAssertions;
 using Microsoft.Build.Framework;
 using Moq;
@@ -94,15 +95,15 @@ namespace NuGet.Build.Tasks.Test
                 var settings = RestoreSettingsUtils.ReadSettings(mockBaseDirectory, mockBaseDirectory, null, machineWideSettings);
                 var filePaths = settings.GetConfigFilePaths();
 
-                Assert.Equal(3, filePaths.Count()); // Solution, app data + machine wide
+                Assert.Equal(3, filePaths.Count); // Solution, app data + machine wide
                 Assert.True(filePaths.Contains(Path.Combine(solutionDirectoryConfig, baseConfigPath)));
                 Assert.True(filePaths.Contains(Path.Combine(machineWide, baseConfigPath)));
 
-                // Test 
+                // Test
                 settings = RestoreSettingsUtils.ReadSettings(mockBaseDirectory, mockBaseDirectory, Path.Combine(subFolder, baseConfigPath), machineWideSettings);
                 filePaths = settings.GetConfigFilePaths();
 
-                Assert.Equal(1, filePaths.Count());
+                Assert.Equal(1, filePaths.Count);
                 Assert.True(filePaths.Contains(Path.Combine(subFolder, baseConfigPath)));
             }
         }
@@ -442,7 +443,7 @@ namespace NuGet.Build.Tasks.Test
                 var settings = RestoreSettingsUtils.ReadSettings(null, probePath, null, machineWideSettings);
                 var filePaths = settings.GetConfigFilePaths();
 
-                Assert.Equal(4, filePaths.Count()); // base, parent, app data + machine wide
+                Assert.Equal(4, filePaths.Count); // base, parent, app data + machine wide
                 Assert.Contains(Path.Combine(basePath, configName), filePaths);
                 Assert.Contains(Path.Combine(mockParentDirectory, configName), filePaths);
                 Assert.DoesNotContain(Path.Combine(unreachablePath, configName), filePaths);
@@ -504,7 +505,7 @@ namespace NuGet.Build.Tasks.Test
                     var settings = RestoreSettingsUtils.ReadSettings(null, probePath, null, machineWideSettings, settingsLoadingContext);
                     var filePaths = settings.GetConfigFilePaths();
 
-                    Assert.Equal(4, filePaths.Count()); // base, parent, app data + machine wide
+                    Assert.Equal(4, filePaths.Count); // base, parent, app data + machine wide
                     Assert.Contains(Path.Combine(basePath, configName), filePaths);
                     Assert.Contains(Path.Combine(mockParentDirectory, configName), filePaths);
                     Assert.DoesNotContain(Path.Combine(unreachablePath, configName), filePaths);
@@ -514,7 +515,7 @@ namespace NuGet.Build.Tasks.Test
 
         /// <summary>
         /// This mimics the GetRestoreSettingsTask call when msbuild /t:restore is called.
-        /// MSBuild /t:restore behaves the same regardless whether it's invoked on the project or solution level. 
+        /// MSBuild /t:restore behaves the same regardless whether it's invoked on the project or solution level.
         /// </summary>
         [Fact]
         public void GetRestoreSettingsTask_RestoreTaskBased_PackageReference_ProjectLevelConfig()
@@ -553,7 +554,7 @@ namespace NuGet.Build.Tasks.Test
 
         /// <summary>
         /// This mimics the GetRestoreSettingsTask call when NuGet.exe on a solution is called.
-        /// MSBuild /t:restore behaves the same regardless whether it's invoked on the project or solution level. 
+        /// MSBuild /t:restore behaves the same regardless whether it's invoked on the project or solution level.
         /// </summary>
         [Fact]
         public void GetRestoreSettingsTask_NuGetExeBased_PackageReference_ProjectLevelConfig_IsIgnored()
@@ -598,7 +599,7 @@ namespace NuGet.Build.Tasks.Test
 
         /// <summary>
         /// This mimics the GetRestoreSettingsTask call when NuGet.exe on a solution is called.
-        /// MSBuild /t:restore behaves the same regardless whether it's invoked on the project or solution level. 
+        /// MSBuild /t:restore behaves the same regardless whether it's invoked on the project or solution level.
         /// </summary>
         [Fact]
         public void GetRestoreSettingsTask_WithRestoreRootDirectory_ProjectLevelConfigIsIgnored()
