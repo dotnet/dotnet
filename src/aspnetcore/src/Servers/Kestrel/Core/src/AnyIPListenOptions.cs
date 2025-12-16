@@ -3,7 +3,6 @@
 
 using System.Diagnostics;
 using System.Net;
-using System.Net.Sockets;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal;
 using Microsoft.Extensions.Logging;
 
@@ -12,7 +11,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core;
 internal sealed class AnyIPListenOptions : ListenOptions
 {
     internal AnyIPListenOptions(int port)
-        : base(new IPEndPoint(Socket.OSSupportsIPv6 ? IPAddress.IPv6Any : IPAddress.Any, port))
+        : base(new IPEndPoint(IPAddress.IPv6Any, port))
     {
     }
 
