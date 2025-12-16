@@ -15,9 +15,9 @@ namespace Microsoft.DotNet.Cli.Commands.Project.Convert;
 
 internal sealed class ProjectConvertCommand(ParseResult parseResult) : CommandBase(parseResult)
 {
-    private readonly string _file = parseResult.GetValue(ProjectConvertCommandParser.FileArgument) ?? string.Empty;
+    private readonly string _file = parseResult.GetValue(ProjectConvertCommandDefinition.FileArgument) ?? string.Empty;
     private readonly string? _outputDirectory = parseResult.GetValue(SharedOptions.OutputOption)?.FullName;
-    private readonly bool _force = parseResult.GetValue(ProjectConvertCommandParser.ForceOption);
+    private readonly bool _force = parseResult.GetValue(ProjectConvertCommandDefinition.ForceOption);
 
     public override int Execute()
     {
@@ -32,8 +32,7 @@ internal sealed class ProjectConvertCommand(ParseResult parseResult) : CommandBa
 
         // Find directives (this can fail, so do this before creating the target directory).
         var sourceFile = SourceFile.Load(file);
-        var diagnostics = DiagnosticBag.ThrowOnFirst();
-        var directives = FileLevelDirectiveHelpers.FindDirectives(sourceFile, reportAllErrors: !_force, diagnostics);
+        var directives = FileLevelDirectiveHelpers.FindDirectives(sourceFile, reportAllErrors: !_force, VirtualProjectBuildingCommand.ThrowingReporter);
 
         // Create a project instance for evaluation.
         var projectCollection = new ProjectCollection();
@@ -46,14 +45,14 @@ internal sealed class ProjectConvertCommand(ParseResult parseResult) : CommandBa
         var projectInstance = command.CreateProjectInstance(projectCollection);
 
         // Evaluate directives.
-        directives = FileLevelDirectiveHelpers.EvaluateDirectives(projectInstance, directives, sourceFile, diagnostics);
+        directives = VirtualProjectBuildingCommand.EvaluateDirectives(projectInstance, directives, sourceFile, VirtualProjectBuildingCommand.ThrowingReporter);
         command.Directives = directives;
         projectInstance = command.CreateProjectInstance(projectCollection);
 
         // Find other items to copy over, e.g., default Content items like JSON files in Web apps.
         var includeItems = FindIncludedItems().ToList();
 
-        bool dryRun = _parseResult.GetValue(ProjectConvertCommandParser.DryRunOption);
+        bool dryRun = _parseResult.GetValue(ProjectConvertCommandDefinition.DryRunOption);
 
         CreateDirectory(targetDirectory);
 

@@ -28,6 +28,7 @@ using NuGet.ProjectModel;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Protocol.Test;
+using NuGet.RuntimeModel;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
 using Test.Utility;
@@ -1857,7 +1858,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             // Act
             var rootNode = await DoWalkAsync(walker, "A", framework);
-            RestoreTargetGraph restoreTargetGraph = RestoreTargetGraph.Create(new List<GraphNode<RemoteResolveResult>>() { rootNode }, context, logger, framework.GetShortFolderName(), framework);
+            RestoreTargetGraph restoreTargetGraph = RestoreTargetGraph.Create(RuntimeGraph.Empty, new List<GraphNode<RemoteResolveResult>>() { rootNode }, context, framework.GetShortFolderName(), framework, runtimeIdentifier: null);
 
             await RestoreCommand.LogDowngradeWarningsOrErrorsAsync(new List<RestoreTargetGraph>() { restoreTargetGraph }, logger);
 

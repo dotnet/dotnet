@@ -490,7 +490,7 @@ public class AuditUtilityTests
 
             var walkResult = await walker.WalkAsync(restoreTarget, targetFramework, "", RuntimeGraph.Empty, true);
 
-            var graph = RestoreTargetGraph.Create(new[] { walkResult }, walkContext, NullLogger.Instance, targetFramework.ToString(), targetFramework);
+            var graph = RestoreTargetGraph.Create(RuntimeGraph.Empty, new[] { walkResult }, walkContext, targetFramework.ToString(), targetFramework, runtimeIdentifier: null);
 
             return graph;
         }
@@ -631,7 +631,7 @@ public class AuditUtilityTests
                 var graph = await walker.WalkAsync(_walkTarget, _framework, "", RuntimeGraph.Empty, true);
 
                 List<RestoreTargetGraph> graphs = [
-                    RestoreTargetGraph.Create(new[] { graph }, walkContext, NullLogger.Instance, _framework.GetShortFolderName(), _framework)
+                    RestoreTargetGraph.Create(RuntimeGraph.Empty, new[] { graph }, walkContext, _framework.GetShortFolderName(), _framework, runtimeIdentifier : null)
                 ];
 
                 return graphs;

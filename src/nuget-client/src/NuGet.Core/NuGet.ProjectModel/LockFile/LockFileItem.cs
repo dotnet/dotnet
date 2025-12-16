@@ -54,7 +54,21 @@ namespace NuGet.ProjectModel
 
             if (string.Equals(Path, other.Path, StringComparison.OrdinalIgnoreCase))
             {
-                return Properties.OrderedEquals(other.Properties, pair => pair.Key, StringComparer.Ordinal);
+                // Handle null/empty dictionaries (treat them as equal)
+                bool thisEmpty = _properties == null || _properties.Count == 0;
+                bool otherEmpty = other._properties == null || other._properties.Count == 0;
+
+                if (thisEmpty && otherEmpty)
+                {
+                    return true;
+                }
+
+                if (thisEmpty || otherEmpty)
+                {
+                    return false;
+                }
+
+                return _properties.OrderedEquals(other._properties, pair => pair.Key, StringComparer.Ordinal);
             }
 
             return false;

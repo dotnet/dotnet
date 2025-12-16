@@ -19,14 +19,16 @@ namespace NuGet.Tests.Apex.Daily
         private const string TestPackageVersionV1 = "1.0.0";
         private const string TestPackageVersionV2 = "2.0.0";
 
+        private const ProjectTargetFramework DefaultTargetFramework = ProjectTargetFramework.V48;
+
         private readonly SimpleTestPathContext _pathContext = new SimpleTestPathContext();
 
         [TestMethod]
-        [DataRow(ProjectTemplate.WebSiteEmpty, ProjectTargetFramework.V48)]
-        [DataRow(ProjectTemplate.WebSite, ProjectTargetFramework.V48)]
-        [DataRow(ProjectTemplate.WebSiteRazorV3, ProjectTargetFramework.V48)]
-        [DataRow(ProjectTemplate.WebSiteDynamicDataEntityFramework, ProjectTargetFramework.V48)]
-        [DataRow(ProjectTemplate.WebSiteDynamicDataLinqToSql, ProjectTargetFramework.V452)]
+        [DataRow(ProjectTemplate.WebSiteEmpty, DefaultTargetFramework)]
+        [DataRow(ProjectTemplate.WebSite, DefaultTargetFramework)]
+        [DataRow(ProjectTemplate.WebSiteRazorV3, DefaultTargetFramework)]
+        [DataRow(ProjectTemplate.WebSiteDynamicDataEntityFramework, DefaultTargetFramework)]
+        [DataRow(ProjectTemplate.WebSiteDynamicDataLinqToSql, DefaultTargetFramework)]
         [Timeout(DefaultTimeout)]
         public async Task InstallPackageToWebSiteProjectFromUI(ProjectTemplate projectTemplate, ProjectTargetFramework projectTargetFramework)
         {
@@ -52,11 +54,11 @@ namespace NuGet.Tests.Apex.Daily
         }
 
         [TestMethod]
-        [DataRow(ProjectTemplate.WebSiteEmpty, ProjectTargetFramework.V48)]
-        [DataRow(ProjectTemplate.WebSite, ProjectTargetFramework.V48)]
-        [DataRow(ProjectTemplate.WebSiteRazorV3, ProjectTargetFramework.V48)]
-        [DataRow(ProjectTemplate.WebSiteDynamicDataEntityFramework, ProjectTargetFramework.V48)]
-        [DataRow(ProjectTemplate.WebSiteDynamicDataLinqToSql, ProjectTargetFramework.V452)]
+        [DataRow(ProjectTemplate.WebSiteEmpty, DefaultTargetFramework)]
+        [DataRow(ProjectTemplate.WebSite, DefaultTargetFramework)]
+        [DataRow(ProjectTemplate.WebSiteRazorV3, DefaultTargetFramework)]
+        [DataRow(ProjectTemplate.WebSiteDynamicDataEntityFramework, DefaultTargetFramework)]
+        [DataRow(ProjectTemplate.WebSiteDynamicDataLinqToSql, DefaultTargetFramework)]
         [Timeout(DefaultTimeout)]
         public async Task UpdateWebSitePackageFromUI(ProjectTemplate projectTemplate, ProjectTargetFramework projectTargetFramework)
         {
@@ -85,11 +87,11 @@ namespace NuGet.Tests.Apex.Daily
         }
 
         [TestMethod]
-        [DataRow(ProjectTemplate.WebSiteEmpty, ProjectTargetFramework.V48)]
-        [DataRow(ProjectTemplate.WebSite, ProjectTargetFramework.V48)]
-        [DataRow(ProjectTemplate.WebSiteRazorV3, ProjectTargetFramework.V48)]
-        [DataRow(ProjectTemplate.WebSiteDynamicDataEntityFramework, ProjectTargetFramework.V48)]
-        [DataRow(ProjectTemplate.WebSiteDynamicDataLinqToSql, ProjectTargetFramework.V452)]
+        [DataRow(ProjectTemplate.WebSiteEmpty, DefaultTargetFramework)]
+        [DataRow(ProjectTemplate.WebSite, DefaultTargetFramework)]
+        [DataRow(ProjectTemplate.WebSiteRazorV3, DefaultTargetFramework)]
+        [DataRow(ProjectTemplate.WebSiteDynamicDataEntityFramework, DefaultTargetFramework)]
+        [DataRow(ProjectTemplate.WebSiteDynamicDataLinqToSql, DefaultTargetFramework)]
         [Timeout(DefaultTimeout)]
         public async Task UninstallWebSitePackageFromUI(ProjectTemplate projectTemplate, ProjectTargetFramework projectTargetFramework)
         {
@@ -128,7 +130,7 @@ namespace NuGet.Tests.Apex.Daily
 
             SolutionService solutionService = VisualStudio.Get<SolutionService>();
             solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
-            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V48, "TestProject");
+            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, DefaultTargetFramework, "TestProject");
             VisualStudio.ClearOutputWindow();
             solutionService.SaveAll();
 
@@ -159,7 +161,7 @@ namespace NuGet.Tests.Apex.Daily
 
             SolutionService solutionService = VisualStudio.Get<SolutionService>();
             solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
-            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V48, "TestProject");
+            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, DefaultTargetFramework, "TestProject");
             VisualStudio.ClearOutputWindow();
             solutionService.SaveAll();
 
@@ -189,7 +191,7 @@ namespace NuGet.Tests.Apex.Daily
 
             SolutionService solutionService = VisualStudio.Get<SolutionService>();
             solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
-            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V48, "TestProject");
+            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, DefaultTargetFramework, "TestProject");
             VisualStudio.ClearOutputWindow();
             solutionService.SaveAll();
 
@@ -731,7 +733,7 @@ namespace NuGet.Tests.Apex.Daily
             // Arrange
             SolutionService solutionService = VisualStudio.Get<SolutionService>();
             solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
-            solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.MauiClassLibrary, "TestProject");
+            solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.NetCoreClassLib, "TestProject");
             VisualStudio.ClearOutputWindow();
             solutionService.SaveAll();
 

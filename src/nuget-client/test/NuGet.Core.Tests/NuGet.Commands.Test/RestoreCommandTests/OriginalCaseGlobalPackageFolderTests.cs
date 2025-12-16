@@ -19,6 +19,7 @@ using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.ProjectModel;
 using NuGet.Protocol.Core.Types;
+using NuGet.RuntimeModel;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
 using Test.Utility;
@@ -310,6 +311,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 .Returns(() => Task.FromResult(packageDependency));
 
             var graph = RestoreTargetGraph.Create(
+                RuntimeGraph.Empty,
                 new[]
                 {
                     new GraphNode<RemoteResolveResult>(libraryRange)
@@ -328,9 +330,9 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                     }
                 },
                 new TestRemoteWalkContext(),
-                logger,
                 FrameworkConstants.CommonFrameworks.NetStandard16.GetShortFolderName(),
-                FrameworkConstants.CommonFrameworks.NetStandard16);
+                FrameworkConstants.CommonFrameworks.NetStandard16,
+                runtimeIdentifier: null);
 
             return graph;
         }

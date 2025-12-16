@@ -23,8 +23,6 @@
         x:Key="SummaryToStringConverter" />
       <nuget:StringFormatConverter
         x:Key="StringFormatConverter" />
-      <nuget:NullToBooleanConverter
-        x:Key="NullToBooleanConverter" />
 
       <!--Style for warning tooltip text-->
       <Style TargetType="TextBlock" x:Key="VulnerabilitiesCountText">
@@ -86,24 +84,6 @@
             <Setter Property="Background" Value="{DynamicResource {x:Static nuget:Brushes.ToolWindowButtonDownKey}}" />
             <Setter Property="BorderBrush" Value="{DynamicResource {x:Static nuget:Brushes.ToolWindowButtonDownBorderKey}}" />
           </Trigger>
-        </Style.Triggers>
-      </Style>
-
-      <Style x:Key="PackageDescriptionToolTipStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource TooltipStyle}">
-        <Setter Property="Visibility" Value="Collapsed" />
-        <Style.Triggers>
-          <DataTrigger Binding="{Binding Path=PackageLevel}" Value="TopLevel">
-            <Setter Property="Visibility" Value="Visible" />
-          </DataTrigger>
-        </Style.Triggers>
-      </Style>
-
-      <Style x:Key="TransitiveInfoToolTipStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource TooltipStyle}">
-        <Setter Property="Visibility" Value="Visible" />
-        <Style.Triggers>
-          <DataTrigger Binding="{Binding Path=TransitiveToolTipMessage, Converter={StaticResource NullToBooleanConverter}}" Value="True">
-            <Setter Property="Visibility" Value="Collapsed" />
-          </DataTrigger>
         </Style.Triggers>
       </Style>
     </ResourceDictionary>
@@ -250,59 +230,6 @@
                         FormatStringAlternative="{x:Static nuget:Resources.Deprecation_PackageItemMessageAlternative}"
                         DataContext="{Binding DeprecationMetadata}" />
         </Grid>
-
-        <Grid.ToolTip>
-          <StackPanel>
-            <TextBlock
-              Style="{StaticResource TooltipStyle}">
-              <Run
-                Text="{Binding Id, Mode=OneTime}"
-                FontWeight="Bold" /> <Run Text="{Binding ByOwnerOrAuthor, Mode=OneTime}"/>
-            </TextBlock>
-            <TextBlock Style="{StaticResource PackageDescriptionToolTipStyle}">
-              <Run Text="{Binding Summary, Mode=OneTime}" />
-            </TextBlock>
-            <TextBlock Style="{StaticResource TransitiveInfoToolTipStyle}">
-              <Run
-                Text="{x:Static nuget:Resources.ToolTip_TransitiveDependency}"
-                FontWeight="Bold" />
-              <Run Text="{Binding TransitiveToolTipMessage, Mode=OneTime}" />
-              <Run>
-                <Run.Style>
-                  <Style TargetType="Run">
-                    <Style.Triggers>
-                      <DataTrigger Binding="{Binding Path=PackageLevel}" Value="Transitive">
-                        <Setter Property="Text" Value="&#x0a;&#x0a;" />
-                      </DataTrigger>
-                    </Style.Triggers>
-                  </Style>
-                </Run.Style>
-              </Run><Run>
-                <Run.Style>
-                  <Style TargetType="Run">
-                    <Style.Triggers>
-                      <DataTrigger Binding="{Binding Path=PackageLevel}" Value="Transitive">
-                        <Setter Property="Text" Value="{x:Static nuget:Resources.ToolTip_TransitivePathHelp}" />
-                      </DataTrigger>
-                    </Style.Triggers>
-                  </Style>
-                </Run.Style>
-              </Run>
-              <Run>
-                <Run.Style>
-                  <Style TargetType="Run">
-                    <Style.Triggers>
-                      <DataTrigger Binding="{Binding Path=PackageLevel}" Value="Transitive">
-                        <Setter Property="Text" Value="aka.ms/dotnet/nuget/why"/>
-                        <Setter Property="FontWeight" Value="Bold"/>
-                      </DataTrigger>
-                    </Style.Triggers>
-                  </Style>
-                </Run.Style>
-              </Run>
-            </TextBlock>
-          </StackPanel>
-        </Grid.ToolTip>
       </Grid>
 
       <Grid

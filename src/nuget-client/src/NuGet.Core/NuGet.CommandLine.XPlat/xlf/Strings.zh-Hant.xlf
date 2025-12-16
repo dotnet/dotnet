@@ -929,6 +929,12 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <target state="translated">套件識別碼 (e.g. 'Newtonsoft.Json')。</target>
         <note />
       </trans-unit>
+      <trans-unit id="PackageDownloadCommand_PackageSourceMapping_NoSourcesMapped">
+        <source>Unable to download package '{0}'. PackageSourceMapping is enabled, but no mapped sources were found for this package. The following source(s) were not considered: {1}.</source>
+        <target state="translated">無法下載套件 '{0}'。已啟用 PackageSourceMapping，但找不到此套件的對應來源。未考慮以下來源: {1}。</target>
+        <note>{0} = package ID 
+{1} = comma-separated list of all configured sources </note>
+      </trans-unit>
       <trans-unit id="PackageDownloadCommand_PackageSourceMapping_NoSuchSource">
         <source>The mapped source '{0}' for package '{1}' was not found among the configured sources.</source>
         <target state="translated">在已設定的來源中找不到套件 '{1}' 的對應來源 '{0}'。</target>
