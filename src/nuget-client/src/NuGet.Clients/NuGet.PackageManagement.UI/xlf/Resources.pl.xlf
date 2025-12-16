@@ -34,7 +34,7 @@
       </trans-unit>
       <trans-unit id="Accessibility_PackageIdentity">
         <source>{0} version {1}</source>
-        <target state="translated">{0} w wersji {1}</target>
+        <target state="translated">Pakiet {0} w wersji {1}</target>
         <note>{1} = Package ID, {2} = Package version</note>
       </trans-unit>
       <trans-unit id="Accessibility_PackageManager">
@@ -119,12 +119,12 @@
       </trans-unit>
       <trans-unit id="AskForRestoreMessage">
         <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
-        <target state="translated">Niektórych pakietów NuGet brakuje w tym rozwiązaniu. Kliknij, aby przywrócić je ze źródeł pakietów online.</target>
+        <target state="translated">W tym rozwiązaniu brakuje niektórych pakietów NuGet. Kliknij, aby przywrócić je ze źródeł pakietów online.</target>
         <note />
       </trans-unit>
       <trans-unit id="AskForUpdateMessage">
         <source>A new version of NuGet Package Manager is available.</source>
-        <target state="translated">Dostępna jest nowa wersja narzędzia NuGet Package Manager.</target>
+        <target state="translated">Dostępna jest nowa wersja menedżera pakietów NuGet.</target>
         <note />
       </trans-unit>
       <trans-unit id="AutoReferenced">
@@ -509,7 +509,7 @@
       </trans-unit>
       <trans-unit id="Label_Deprecated">
         <source>Deprecated</source>
-        <target state="translated">Przestarzały</target>
+        <target state="translated">Przestarzałe</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_DeprecationAlternatePackage">
@@ -904,14 +904,17 @@
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandFailure">
         <source>NuGet storage clear failed at {0}. 
-Error: {1}
-Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
-        <target state="translated">Czyszczenie pamięci podręcznych narzędzia NuGet nie powiodło się: {0}. 
-Błąd: {1}
-Aby uzyskać dodatkową pomoc, zobacz https://aka.ms/troubleshoot_nuget_cache.</target>
+Error: {1}</source>
+        <target state="translated">Czyszczenie pamięci menedżera NuGet nie powiodło się: {0}. 
+Błąd: {1}</target>
         <note>{0} :error message;
 {1}: date and time
 </note>
+      </trans-unit>
+      <trans-unit id="ShowMessage_LocalsCommandMoreInformation">
+        <source>For more information, see</source>
+        <target state="translated">Aby uzyskać więcej informacji, zobacz</target>
+        <note />
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandSuccess">
         <source>NuGet storage cleared at {0}</source>
@@ -1045,7 +1048,7 @@ Aby uzyskać dodatkową pomoc, zobacz https://aka.ms/troubleshoot_nuget_cache.</
       </trans-unit>
       <trans-unit id="Text_NoReadme">
         <source>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
-        <target state="translated">Brak dostępnego pliku README dla wybranej wersji pakietu. Aby uzyskać więcej informacji, odwiedź stronę [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
+        <target state="translated">Brak dostępnego pliku README dla wybranej wersji pakietu. Aby uzyskać więcej informacji, odwiedź witrynę [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
       <trans-unit id="Text_NotAvailableInSource">
@@ -1310,12 +1313,12 @@ Aby uzyskać dodatkową pomoc, zobacz https://aka.ms/troubleshoot_nuget_cache.</
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
         <source>Once started, this action cannot be cancelled.</source>
-        <target state="translated">Po uruchomieniu tej akcji nie można anulować.</target>
+        <target state="translated">Po uruchomieniu, tej akcji nie można anulować.</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">
         <source>Clear all local NuGet resources?</source>
-        <target state="translated">Wyczyścić wszystkie lokalne zasoby NuGet?</target>
+        <target state="translated">Wyczyścić wszystkie lokalne zasoby menedżera NuGet?</target>
         <note />
       </trans-unit>
       <trans-unit id="Version_Blocked">

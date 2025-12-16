@@ -124,7 +124,7 @@
       </trans-unit>
       <trans-unit id="AskForUpdateMessage">
         <source>A new version of NuGet Package Manager is available.</source>
-        <target state="translated">Eine neue Version von NuGet Package Manager ist verfügbar.</target>
+        <target state="translated">Eine neue Version des NuGet-Paket-Managers ist verfügbar.</target>
         <note />
       </trans-unit>
       <trans-unit id="AutoReferenced">
@@ -904,14 +904,17 @@
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandFailure">
         <source>NuGet storage clear failed at {0}. 
-Error: {1}
-Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
-        <target state="translated">Fehler beim Löschen des NuGet-Speicher bei {0}. 
-Fehler: {1}
-Weitere Informationen finden Sie unter https://aka.ms/troubleshoot_nuget_cache.</target>
+Error: {1}</source>
+        <target state="translated">Fehler beim Löschen des NuGet-Speichers bei {0}. 
+Fehler: {1}</target>
         <note>{0} :error message;
 {1}: date and time
 </note>
+      </trans-unit>
+      <trans-unit id="ShowMessage_LocalsCommandMoreInformation">
+        <source>For more information, see</source>
+        <target state="translated">Weitere Informationen finden Sie unter</target>
+        <note />
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandSuccess">
         <source>NuGet storage cleared at {0}</source>
@@ -1020,7 +1023,7 @@ Weitere Informationen finden Sie unter https://aka.ms/troubleshoot_nuget_cache.<
       </trans-unit>
       <trans-unit id="Text_LoadingReadme">
         <source>Loading README...</source>
-        <target state="translated">INFODATEI wird geladen...</target>
+        <target state="translated">Infodatei wird geladen...</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ManageSettings">
@@ -1045,7 +1048,7 @@ Weitere Informationen finden Sie unter https://aka.ms/troubleshoot_nuget_cache.<
       </trans-unit>
       <trans-unit id="Text_NoReadme">
         <source>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
-        <target state="translated">Für die ausgewählte Paketversion ist keine INFODATEI verfügbar. Weitere Informationen finden Sie unter [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
+        <target state="translated">Für die ausgewählte Paketversion ist keine Infodatei verfügbar. Weitere Informationen finden Sie unter [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
       <trans-unit id="Text_NotAvailableInSource">
@@ -1130,7 +1133,7 @@ Weitere Informationen finden Sie unter https://aka.ms/troubleshoot_nuget_cache.<
       </trans-unit>
       <trans-unit id="Text_ReadmeLoaded">
         <source>README loaded</source>
-        <target state="translated">INFODATEI geladen</target>
+        <target state="translated">Infodatei geladen</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_SearchBoxText">
@@ -1310,7 +1313,7 @@ Weitere Informationen finden Sie unter https://aka.ms/troubleshoot_nuget_cache.<
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
         <source>Once started, this action cannot be cancelled.</source>
-        <target state="translated">Nach dem Start kann diese Aktion nicht abgebrochen werden.</target>
+        <target state="translated">Nach dem Starten kann diese Aktion nicht abgebrochen werden.</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">

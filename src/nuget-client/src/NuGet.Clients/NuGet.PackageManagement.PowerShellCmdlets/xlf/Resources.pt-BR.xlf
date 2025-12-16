@@ -227,7 +227,7 @@
       </trans-unit>
       <trans-unit id="Host_PSNotInstalled">
         <source>Error: The Package Manager Console requires PowerShell 2.0 runtime, which is not detected on this machine. Please install the PowerShell 2.0 from http://support.microsoft.com/kb/968929 and restart Visual Studio.</source>
-        <target state="translated">Erro: o Package Manager Console exige o tempo de execução do PowerShell 2.0, que não foi detectado nesta máquina. Instale o PowerShell 2.0 de http://support.microsoft.com/kb/968929 e reinicie o Visual Studio.</target>
+        <target state="translated">Erro: o Package Manager Console exige o runtime do PowerShell 2.0, que não foi detectado nesta máquina. Instale o PowerShell 2.0 de http://support.microsoft.com/kb/968929 e reinicie o Visual Studio.</target>
         <note />
       </trans-unit>
       <trans-unit id="PowerShellHostTitle">

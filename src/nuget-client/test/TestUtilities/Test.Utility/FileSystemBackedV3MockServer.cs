@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -99,9 +101,21 @@ namespace Test.Utility
             }
             else if (path.StartsWith("/flat/") && path.EndsWith(".nupkg"))
             {
-                var file = new FileInfo(Path.Combine(_packageDirectory, parts.Last()));
+                var requestedFileName = parts.Last();
+                var directory = new DirectoryInfo(_packageDirectory);
+                FileInfo file = null;
 
-                if (file.Exists)
+                // Scan for file and ignore case to make sure this works in linux too
+                foreach (var candidate in directory.EnumerateFiles("*.nupkg", SearchOption.TopDirectoryOnly))
+                {
+                    if (string.Equals(candidate.Name, requestedFileName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        file = candidate;
+                        break;
+                    }
+                }
+
+                if (file != null && file.Exists)
                 {
                     return new Action<HttpListenerResponse>(response =>
                     {

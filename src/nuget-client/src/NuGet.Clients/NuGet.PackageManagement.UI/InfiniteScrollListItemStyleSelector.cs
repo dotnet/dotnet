@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System.Windows;
 using System.Windows.Controls;
 
@@ -22,6 +24,7 @@ namespace NuGet.PackageManagement.UI
                 {
                     _packageItemStyle.Setters.Add(new Setter(InfiniteScrollList.FocusVisualStyleProperty, infiniteScrollList.FindResource("MarginFocusVisualStyle")));
                     _packageItemStyle.Setters.Add(new Setter(InfiniteScrollList.TemplateProperty, infiniteScrollList.FindResource("ListBoxItemTemplate")));
+                    _packageItemStyle.Setters.Add(new Setter(InfiniteScrollList.ToolTipProperty, infiniteScrollList.FindResource("PackageToolTipTemplate")));
                 }
             }
         }

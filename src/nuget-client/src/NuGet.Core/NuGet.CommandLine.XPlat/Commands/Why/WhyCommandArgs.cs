@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Spectre.Console;
 
 namespace NuGet.CommandLine.XPlat.Commands.Why
 {
@@ -14,7 +15,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
         public string Path { get; }
         public string Package { get; }
         public List<string> Frameworks { get; }
-        public ILoggerWithColor Logger { get; }
+        public IAnsiConsole Logger { get; }
         public CancellationToken CancellationToken { get; }
 
         /// <summary>
@@ -29,7 +30,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
             string path,
             string package,
             List<string> frameworks,
-            ILoggerWithColor logger,
+            IAnsiConsole logger,
             CancellationToken cancellationToken)
         {
             Path = path ?? throw new ArgumentNullException(nameof(path));

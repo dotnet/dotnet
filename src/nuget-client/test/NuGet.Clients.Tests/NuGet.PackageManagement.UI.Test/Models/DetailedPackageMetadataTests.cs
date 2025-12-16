@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
@@ -41,7 +43,7 @@ namespace NuGet.PackageManagement.UI
 
             var packageSearchMetadataContextInfo = PackageSearchMetadataContextInfo.Create(packageSearchMetadata);
 
-            var target = new DetailedPackageMetadata(packageSearchMetadataContextInfo, deprecationMetadata: null, knownOwnerViewModels: null, downloadCount: null);
+            var target = new DetailedPackageMetadata(packageSearchMetadataContextInfo, deprecationMetadata: null, knownOwnerViewModels: null, downloadCount: null, packageVulnerabilities: null);
 
             Assert.Equal(expected, target.PackageDetailsText);
         }

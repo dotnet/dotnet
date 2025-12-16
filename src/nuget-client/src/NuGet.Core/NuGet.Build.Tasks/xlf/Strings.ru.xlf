@@ -65,7 +65,7 @@
       <trans-unit id="Error_StaticGraphRestoreArgumentsParsingFailedExceptionReadingStream">
         <source>An error occurred parsing command-line arguments in static graph-based restore as an exception occurred reading the standard input stream, {0} Please file an issue at https://github.com/NuGet/Home
 {1}</source>
-        <target state="translated">Произошла ошибка при анализе аргументов командной строки при восстановлении на основе статического графа, так как возникло исключение при чтении стандартного входного потока. {0} Сообщите о проблеме по адресу https://github.com/NuGet/Home
+        <target state="translated">Произошла ошибка при анализе аргументов командной строки в ходе восстановления на основе статического графа, так как возникло исключение при чтении стандартного входного потока. {0} Сообщите о проблеме по адресу https://github.com/NuGet/Home
 {1}</target>
         <note>0 - The exception message
 1 - The string representation of the exception</note>
@@ -83,7 +83,7 @@
       <trans-unit id="Error_StaticGraphUnhandledException">
         <source>Static graph-based restore encountered an unhandled exception. Please file an issue at https://github.com/NuGet/Home.  The exception was:
 {0}</source>
-        <target state="translated">Статическое восстановление на базе Graph обнаружило необработанное исключение. Сообщите о проблеме на странице https://github.com/NuGet/Home. Исключение:
+        <target state="translated">Статическое восстановление на базе Graph обнаружило необработанное исключение. Сообщите о проблеме на странице https://github.com/NuGet/Home.  Исключение:
 {0}</target>
         <note>0 - The exception as a string.</note>
       </trans-unit>
@@ -112,7 +112,7 @@
       </trans-unit>
       <trans-unit id="Log_RestoreNoCacheInformation">
         <source>RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Please use RestoreNoHttpCache instead.</source>
-        <target state="translated">RestoreNoCache является неподготовленным и переименован в RestoreNoHttpCache. Вместо этого используйте RestoreNoHttpCache.</target>
+        <target state="translated">RestoreNoCache является больше не рекомендуется к использованию и переименован в RestoreNoHttpCache. Вместо него используйте RestoreNoHttpCache.</target>
         <note>Do not translate RestoreNoCache and RestoreNoHttpCache</note>
       </trans-unit>
       <trans-unit id="Log_RunningStaticGraphRestoreCommand">

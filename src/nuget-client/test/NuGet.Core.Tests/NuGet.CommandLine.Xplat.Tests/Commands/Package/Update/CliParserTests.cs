@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.CommandLine;
 using System.IO;
@@ -19,7 +17,7 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Package.Update;
 public class CliParserTests
 {
     [Fact]
-    public async Task NoArguments_ShouldUpdateAllPackages()
+    public async Task NoArguments_HasDefaultOptions()
     {
         // Arrange
         string args = "package update";
@@ -32,6 +30,7 @@ public class CliParserTests
         result.Packages.Should().BeEmpty();
         result.Interactive.Should().BeFalse();
         result.LogLevel.Should().Be(LogLevel.Information);
+        result.Vulnerable.Should().BeFalse();
     }
 
     [Fact]
@@ -261,6 +260,19 @@ public class CliParserTests
         result.Errors.Count.Should().BeGreaterThan(0);
     }
 
+    [Fact]
+    public async Task WithVulnerableOption_ShouldSetVulnerableFlag()
+    {
+        // Arrange
+        string args = $"package update --vulnerable";
+
+        // Act
+        var result = await RunAsync(args);
+
+        // Assert
+        result.Vulnerable.Should().BeTrue();
+    }
+
     private ParseResult Parse(string commandLine, Func<PackageUpdateArgs, CancellationToken, Task<int>>? action = null)
     {
         RootCommand rootCommand = new RootCommand();
@@ -303,7 +315,7 @@ public class CliParserTests
 
         if (commandArgs is null)
         {
-            throw new InvalidOperationException("Command arguments were not set during command execution.");
+            throw new InvalidOperationException("Command arguments were not set during command execution. Output:" + output.ToString());
         }
 
         return commandArgs;

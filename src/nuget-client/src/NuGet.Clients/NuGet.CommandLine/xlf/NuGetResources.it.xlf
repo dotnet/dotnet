@@ -104,7 +104,7 @@
       </trans-unit>
       <trans-unit id="DefaultSymbolServer">
         <source>the symbol server</source>
-        <target state="translated">server dei simboli</target>
+        <target state="translated">il server dei simboli</target>
         <note />
       </trans-unit>
       <trans-unit id="Error">
@@ -130,7 +130,7 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
       </trans-unit>
       <trans-unit id="Error_CannotFindNonArchitectureSpecificMsbuild">
         <source>The resolved MSBuild directory is `{0}` which is an architecture-specific directory. Could not find MSBuild in its parent directory (non-architecture specific).</source>
-        <target state="translated">La directory di MSBuild risolta è '{0}', che è una directory specifica dell'architettura. MsBuild non è stato trovato nella relativa directory padre (non specifico dell'architettura).</target>
+        <target state="translated">La directory MSBuild risolta è '{0}', che è una directory specifica per dell'architettura. Non è stato possibile trovare MSBuild nella sua directory padre (non specifica dell'architettura).</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_CannotGetGetAllProjectFileNamesMethod">
@@ -252,9 +252,9 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
         <source>`project.json` pack is disabled in the current NuGet version, and will be permanently removed in a future version.
 Please consider migrating '{0}' to `PackageReference` and using the pack targets.
 You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</source>
-        <target state="translated">Il pacchetto 'project.json' è disabilitato nella versione corrente di NuGet e verrà rimosso definitivamente nella versione futura.
-Provare a eseguire la migrazione di '{0}' a 'PackageReference' e usare le destinazioni del pacchetto.
-È possibile impostare la variabile di ambiente '{1}' su 'true' per riabilitare temporaneamente questa funzionalità.</target>
+        <target state="translated">Il pacchetto 'project.json' è disabilitato nella versione corrente di NuGet e verrà rimosso definitivamente in una versione futura.
+Prova a eseguire la migrazione di '{0}' in 'PackageReference' e usa le destinazioni del pacchetto.
+Puoi impostare la variabile di ambiente '{1}' su 'true' per riabilitare temporaneamente questa funzionalità.</target>
         <note>Please do not localize `project.json` pack and `PackageReference`. 0 - path, 1 - env var name</note>
       </trans-unit>
       <trans-unit id="Error_ResponseFileDoesNotExist">
@@ -469,7 +469,7 @@ Provare a eseguire la migrazione di '{0}' a 'PackageReference' e usare le destin
       </trans-unit>
       <trans-unit id="LiveFeed">
         <source>the NuGet gallery</source>
-        <target state="translated">raccolta NuGet</target>
+        <target state="translated">la raccolta NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="LocalsCommand_ClearFailed">
@@ -679,7 +679,7 @@ Provare a eseguire la migrazione di '{0}' a 'PackageReference' e usare le destin
       </trans-unit>
       <trans-unit id="PackageRestoreConsentCheckBoxText">
         <source>&amp;Allow NuGet to download missing packages</source>
-        <target state="translated">&amp;Consenti a NuGet di scaricare i pacchetti mancanti</target>
+        <target state="translated">Consenti a &amp;NuGet di scaricare i pacchetti mancanti</target>
         <note />
       </trans-unit>
       <trans-unit id="PackagingFilesFromOutputPath">
@@ -752,7 +752,7 @@ Provare a eseguire la migrazione di '{0}' a 'PackageReference' e usare le destin
         <source>Restoring NuGet packages...
 To prevent NuGet from downloading packages during build, open the Visual Studio Options dialog, click on the NuGet Package Manager node and uncheck '{0}'.</source>
         <target state="translated">Ripristino dei pacchetti NuGet in corso...
-Per evitare che NuGet scarichi i pacchetti durante la compilazione, aprire la finestra di dialogo Opzioni di Visual Studio, fare clic sul nodo Gestione pacchetti NuGet e deselezionare '{0}'.</target>
+Per evitare che NuGet scarichi i pacchetti durante la compilazione, apri la finestra di dialogo Opzioni di Visual Studio, fai clic sul nodo Gestione pacchetti NuGet e deseleziona '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandProjectNotFound">
@@ -792,7 +792,7 @@ Per evitare che NuGet scarichi i pacchetti durante la compilazione, aprire la fi
       </trans-unit>
       <trans-unit id="SettingsCredentials_UsingSavedCredentials">
         <source>Using credentials from config. UserName: {0}</source>
-        <target state="translated">Verranno usate le credenziali del file di configurazione. UserName: {0}</target>
+        <target state="translated">Utilizzo delle credenziali dalla configurazione. Nome utente: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="SolutionRestoreCommandNoPackagesConfigOrProjectJson">

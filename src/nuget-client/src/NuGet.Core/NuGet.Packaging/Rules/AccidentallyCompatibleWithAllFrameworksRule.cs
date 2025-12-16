@@ -12,8 +12,6 @@ using NuGet.Frameworks;
 using NuGet.Packaging.Core;
 using NuGet.RuntimeModel;
 
-#nullable enable
-
 namespace NuGet.Packaging.Rules
 {
     internal class AccidentallyCompatibleWithAllFrameworksRule : IPackageRule
