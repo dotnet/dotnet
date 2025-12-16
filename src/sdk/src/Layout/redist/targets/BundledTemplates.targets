@@ -32,19 +32,9 @@
       <_ArcadePatchNumber>$([MSBuild]::ValueOrDefault('$(_PatchNumber)', '000000'))</_ArcadePatchNumber>
     </PropertyGroup>
 
-    <!-- <CalculateTemplateVersions
-      BundledTemplates="@(BundledTemplate)"
-      FullNugetVersion="$(FullNugetVersion)"
-      ProductMonikerRid="$(ProductMonikerRid)"
-      InstallerExtension="$(InstallerExtension)"
-      CombinedBuildNumberAndRevision="$(_ArcadePatchNumber)">
-      <Output TaskParameter="BundledTemplatesWithInstallPaths" ItemName="BundledTemplatesWithInstallPaths" />
-      <Output TaskParameter="TemplatesComponents" ItemName="TemplatesComponents" />
-    </CalculateTemplateVersions> -->
-
     <CalculateTemplateVersions
       BundledTemplates="@(BundledTemplate)"
-      FullNugetVersion="10.0.100-rtm"
+      FullNugetVersion="$(FullNugetVersion)"
       ProductMonikerRid="$(ProductMonikerRid)"
       InstallerExtension="$(InstallerExtension)"
       CombinedBuildNumberAndRevision="$(_ArcadePatchNumber)">
@@ -54,11 +44,7 @@
 
     <ItemGroup>
       <TemplatesComponents>
-        <!-- <MSIInstallerFile>$(ArtifactsNonShippingPackagesDir)%(TemplatesComponents.TemplateBaseFilename)-$(FullNugetVersion)-$(ProductMonikerRid)$(InstallerExtension)</MSIInstallerFile> -->
-
-        <!-- TODO: Revert these two lines when templates got updated to 11.0. -->
-        <MSIInstallerFile>$(ArtifactsNonShippingPackagesDir)%(TemplatesComponents.TemplateBaseFilename)-10.0.100-rtm-$(ProductMonikerRid)$(InstallerExtension)</MSIInstallerFile>
-        <TemplatesMajorMinorVersion>10.0</TemplatesMajorMinorVersion>
+        <MSIInstallerFile>$(ArtifactsNonShippingPackagesDir)%(TemplatesComponents.TemplateBaseFilename)-$(FullNugetVersion)-$(ProductMonikerRid)$(InstallerExtension)</MSIInstallerFile>
       </TemplatesComponents>
     </ItemGroup>
   </Target>
