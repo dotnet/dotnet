@@ -11,13 +11,13 @@ using Microsoft.Build.Utilities;
 using NuGet.Common;
 using NuGet.Frameworks;
 
-#if NETFRAMEWORK || NETSTANDARD
+#if NETFRAMEWORK
 using System.Linq;
 #endif
 
 namespace NuGet.Build.Tasks
 {
-    public class GetReferenceNearestTargetFrameworkTask : Microsoft.Build.Utilities.Task
+    public class GetReferenceNearestTargetFrameworkTask : Task
     {
         private const string NEAREST_TARGET_FRAMEWORK = "NearestTargetFramework";
         private const string TARGET_FRAMEWORKS = "TargetFrameworks";
@@ -40,6 +40,11 @@ namespace NuGet.Build.Tasks
         /// Optional TargetPlatformMoniker
         /// </summary>
         public string CurrentProjectTargetPlatform { get; set; }
+
+        /// <summary>
+        /// The value of the current project's TargetFramework property.
+        /// </summary>
+        public string CurrentProjectTargetFrameworkProperty { get; set; }
 
         /// <summary>
         /// Optional list of target frameworks to be used as Fallback target frameworks.
@@ -147,7 +152,6 @@ namespace NuGet.Build.Tasks
                     useTargetMonikers ? referencedProjectTargetPlatformMonikers[i] : null));
             }
 
-            // try project framework
             var nearestNuGetFramework = NuGetFrameworkUtility.GetNearest(targetFrameworkInformations, projectNuGetFramework, GetNuGetFramework);
             if (nearestNuGetFramework != null)
             {
