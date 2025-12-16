@@ -71,7 +71,8 @@
 
     <!-- The minimum supported .NET version. -->
     <NetCoreAppMinimum>net10.0</NetCoreAppMinimum>
-    <NetCoreAppMinimum Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NetCoreAppCurrent)</NetCoreAppMinimum>
+    <!-- Until we have an SDK that can target net11.0 we need to continue targeting net10.0 in sourcebuild -->
+    <!-- <NetCoreAppMinimum Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NetCoreAppCurrent)</NetCoreAppMinimum> -->
 
     <!-- when this is updated, make sure to keep $(_NetCoreAppToolCurrent)
          in src/mono/wasm/build/WasmApp.LocalBuild.props
