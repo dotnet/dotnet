@@ -161,7 +161,7 @@ macOS SDK and Runtime installers are complete packages and do not require separa
 
 ## Version Information
 
-For the 1xx band, the runtime and SDK are built together in the same build. They will differ on patch version (e.g. SDK version 10.0.100 == runtime patch version 10.0.0). The build suffix (e.g. -rc2.1234.105) suffix will always match.
+For the 1xx band, the runtime and SDK are built together in the same build. They will differ on patch version (e.g. SDK version 10.0.100 == runtime patch version 10.0.0). The build suffix (e.g. -rc2.1234.105) will always match.
 
 For the 2xx and later bands, the 1xx runtime flows to 2xx+. The version of the runtime that will be used in the 2xx SDK can be found in sdk's `eng/Version.Details.xml` file. Look for the version of the `Microsoft.NETCore.App.Ref` dependency.
 
