@@ -40,13 +40,10 @@ namespace NuGet.ProjectModel
 
         public LockFileTarget GetTarget(string frameworkAlias, string runtimeIdentifier)
         {
-            var framework = PackageSpec.TargetFrameworks.FirstOrDefault(tfi => tfi.TargetAlias.Equals(frameworkAlias, StringComparison.OrdinalIgnoreCase))?.FrameworkName;
-
-            if (framework != null)
-            {
-                return GetTarget(framework, runtimeIdentifier);
-            }
-            return null;
+            return Targets.FirstOrDefault(t =>
+                t.TargetAlias.Equals(frameworkAlias) &&
+                (string.IsNullOrEmpty(runtimeIdentifier) && string.IsNullOrEmpty(t.RuntimeIdentifier) ||
+                 string.Equals(runtimeIdentifier, t.RuntimeIdentifier, StringComparison.OrdinalIgnoreCase)));
         }
 
         public LockFileLibrary GetLibrary(string name, NuGetVersion version)

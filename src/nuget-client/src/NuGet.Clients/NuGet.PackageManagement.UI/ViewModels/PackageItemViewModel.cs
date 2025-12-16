@@ -79,7 +79,7 @@ namespace NuGet.PackageManagement.UI
 
         public ImmutableList<KnownOwnerViewModel> KnownOwnerViewModels { get; internal set; }
 
-        public string Owner => string.Join(",", _packageModel.OwnersList ?? []);
+        public string Owner => string.Join(", ", _packageModel.OwnersList ?? []);
 
         public string Author => _packageModel.Authors;
 

@@ -340,6 +340,33 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources).
+        /// </summary>
+        internal static string Text_AuditSources_Description {
+            get {
+                return ResourceManager.GetString("Text_AuditSources_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove all audit sources to revert to using package sources for vulnerability data..
+        /// </summary>
+        internal static string Text_AuditSources_HowToRemove {
+            get {
+                return ResourceManager.GetString("Text_AuditSources_HowToRemove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Audit sources.
+        /// </summary>
+        internal static string Text_AuditSources_Title {
+            get {
+                return ResourceManager.GetString("Text_AuditSources_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Common NuGet configurations: [How settings are applied](https://aka.ms/nuget/how-settings-are-applied/).
         /// </summary>
         internal static string Text_ConfigurationFiles_CommonLink {
@@ -408,6 +435,15 @@ namespace NuGetVSExtension {
         internal static string Text_PackageSourceName_Header {
             get {
                 return ResourceManager.GetString("Text_PackageSourceName_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources).
+        /// </summary>
+        internal static string Text_PackageSources_Description {
+            get {
+                return ResourceManager.GetString("Text_PackageSources_Description", resourceCulture);
             }
         }
         

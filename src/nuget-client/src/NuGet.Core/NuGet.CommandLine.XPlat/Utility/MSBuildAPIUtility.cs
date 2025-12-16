@@ -907,7 +907,10 @@ namespace NuGet.CommandLine.XPlat
         private static IEnumerable<InstalledPackageReference> GetPackageReferencesFromTargets(string projectPath, string framework)
         {
             var globalProperties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                { { "TargetFramework", framework } };
+                {
+                    { "TargetFramework", framework },
+                    { "ExcludeRestorePackageImports", bool.TrueString }
+                };
             var newProject = new ProjectInstance(projectPath, globalProperties, null);
             newProject.Build(new[] { CollectPackageReferences, CollectCentralPackageVersions }, new List<Microsoft.Build.Framework.ILogger> { }, out var targetOutputs);
 

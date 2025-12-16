@@ -81,7 +81,6 @@ namespace NuGet.Packaging.Test
                     var files = archive.Entries
                         .Where(file => file.Name == "_._")
                         .Select(file => file.FullName)
-                        .OrderBy(s => s)
                         .ToArray();
 
                     // Assert
@@ -150,7 +149,6 @@ namespace NuGet.Packaging.Test
                     var files = archive.Entries
                         .Where(file => file.Name.StartsWith("foo"))
                         .Select(file => file.FullName)
-                        .OrderBy(s => s)
                         .ToArray();
 
                     // Assert
@@ -2776,21 +2774,20 @@ Enabling license acceptance requires a license or a licenseUrl to be specified. 
                 using (var archive = new ZipArchive(stream, ZipArchiveMode.Read, leaveOpen: true))
                 {
                     // Get raw filenames without un-escaping.
-                    var files = archive.Entries.Select(e => e.FullName).OrderBy(s => s).ToArray();
+                    var files = archive.Entries.Select(e => e.FullName).ToArray();
 
-                    // Linux sorts the first two in different order than Windows
-                    Assert.Contains<string>(@"[Content_Types].xml", files);
-                    Assert.Contains<string>(@"_rels/.rels", files);
+                    Assert.Equal(@"_rels/.rels", files[0]);
+                    Assert.Equal(@"test.nuspec", files[1]);
                     Assert.Equal(@"content/images/bread&butter.jpg", files[2]);
                     Assert.Equal(@"content/images/logo123?#78.png", files[3]);
                     Assert.Equal(@"lib/C#/test.dll", files[4]);
                     Assert.Equal(@"lib/name with spaces.dll", files[5]);
                     Assert.Equal(@"lib/regular.file.dll", files[6]);
 
-                    Assert.StartsWith(@"package/services/metadata/core-properties/", files[7]);
-                    Assert.EndsWith(@".psmdcp", files[7]);
+                    Assert.Equal(@"[Content_Types].xml", files[7]);
+                    Assert.StartsWith(@"package/services/metadata/core-properties/", files[8]);
+                    Assert.EndsWith(@".psmdcp", files[8]);
 
-                    Assert.Equal(@"test.nuspec", files[8]);
                 }
             }
         }
@@ -2818,17 +2815,14 @@ Enabling license acceptance requires a license or a licenseUrl to be specified. 
 
                 using (var archive = new ZipArchive(stream, ZipArchiveMode.Read, leaveOpen: true))
                 {
-                    var files = archive.GetFiles().OrderBy(s => s).ToArray();
+                    var files = archive.GetFiles().ToArray();
 
-                    // Linux sorts the first two in different order than Windows
-                    Assert.Contains<string>(@"[Content_Types].xml", files);
-                    Assert.Contains<string>(@"_rels/.rels", files);
+                    Assert.Equal(@"_rels/.rels", files[0]);
+                    Assert.Equal(@"test.nuspec", files[1]);
                     Assert.Equal(@"myfile", files[2]);
-
-                    Assert.StartsWith(@"package/services/metadata/core-properties/", files[3]);
-                    Assert.EndsWith(@".psmdcp", files[3]);
-
-                    Assert.Equal(@"test.nuspec", files[4]);
+                    Assert.Equal(@"[Content_Types].xml", files[3]);
+                    Assert.StartsWith(@"package/services/metadata/core-properties/", files[4]);
+                    Assert.EndsWith(@".psmdcp", files[4]);
 
                     using (var contentTypesReader = new StreamReader(archive.Entries.Single(file => file.FullName == @"[Content_Types].xml").Open()))
                     {
@@ -3028,14 +3022,13 @@ Enabling license acceptance requires a license or a licenseUrl to be specified. 
 
                 using (var archive = new ZipArchive(stream, ZipArchiveMode.Read, leaveOpen: true))
                 {
-                    var files = archive.GetFiles().OrderBy(s => s).ToArray();
+                    var files = archive.GetFiles().ToArray();
 
-                    // Linux sorts the first two in different order than Windows
-                    Assert.Contains<string>(@"[Content_Types].xml", files);
-                    Assert.Contains<string>(@"_rels/.rels", files);
-                    Assert.StartsWith(@"package/services/metadata/core-properties/", files[2]);
-                    Assert.Equal(@"test.nuspec", files[3]);
-                    Assert.Equal(outputFile, files[4]);
+                    Assert.Equal(@"_rels/.rels", files[0]);
+                    Assert.Equal(@"test.nuspec", files[1]);
+                    Assert.Equal(outputFile, files[2]);
+                    Assert.Equal(@"[Content_Types].xml", files[3]);
+                    Assert.StartsWith(@"package/services/metadata/core-properties/", files[4]);
                 }
             }
         }

@@ -27,6 +27,18 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Runtime.CompilerServices.IsExternalInit</Target>
+    <Left>/msft/sdk/x.y.z/Spectre.Console.dll</Left>
+    <Right>/sb/sdk/x.y.z/Spectre.Console.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Runtime.CompilerServices.RequiresLocationAttribute</Target>
+    <Left>/msft/sdk/x.y.z/Spectre.Console.dll</Left>
+    <Right>/sb/sdk/x.y.z/Spectre.Console.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Hosting.WebHostBuilderHttpSysExtensions</Target>
     <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
     <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
@@ -207,9 +219,9 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0003</DiagnosticId>
-    <Target>System.CommandLine, Version=x.y.z, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Target>
-    <Left>/msft/sdk/x.y.z/System.CommandLine.dll</Left>
-    <Right>/sb/sdk/x.y.z/System.CommandLine.dll</Right>
+    <Target>Spectre.Console, Version=x.y.z, Culture=neutral, PublicKeyToken=170fe27f8af98a30</Target>
+    <Left>/msft/sdk/x.y.z/Spectre.Console.dll</Left>
+    <Right>/sb/sdk/x.y.z/Spectre.Console.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0008</DiagnosticId>
