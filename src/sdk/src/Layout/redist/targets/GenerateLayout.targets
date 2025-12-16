@@ -565,10 +565,10 @@
                             RemoveResourcesFromDotnetDeps;
                             ChmodPublishDir" />
 
-  <!-- Deduplicate files after all layout work is complete -->
+  <!-- Deduplicate assemblies after all layout work is complete -->
   <Target Name="DeduplicateLayoutFiles"
           DependsOnTargets="GenerateSdkLayoutCore">
-    <DeduplicateFilesWithHardLinks LayoutDirectory="$(OutputPath)" />
+    <DeduplicateAssembliesWithHardLinks LayoutDirectory="$(OutputPath)" />
   </Target>
 
   <!-- Generates the complete SDK layout - everything in sdk/$(Version) -->

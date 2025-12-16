@@ -12,23 +12,18 @@ using System.Security.Cryptography;
 namespace Microsoft.DotNet.Build.Tasks
 {
     /// <summary>
-    /// Deduplicates files in a directory by replacing duplicates with hardlinks.
-    /// Files are grouped by content hash, and a deterministic "master" file is selected
+    /// Deduplicates assemblies (.dll and .exe files) in a directory by replacing duplicates with hardlinks.
+    /// Assemblies are grouped by content hash, and a deterministic "master" file is selected
     /// (closest to root, alphabetically first). All other duplicates are replaced with hardlinks.
+    /// Text-based files (config, json, xml, etc.) are not deduplicated to avoid issues with configuration files.
     /// </summary>
-    public sealed class DeduplicateFilesWithHardLinks : Task
+    public sealed class DeduplicateAssembliesWithHardLinks : Task
     {
         /// <summary>
-        /// The root directory to scan for duplicate files.
+        /// The root directory to scan for duplicate assemblies.
         /// </summary>
         [Required]
         public string LayoutDirectory { get; set; } = null!;
-
-        /// <summary>
-        /// Minimum file size in bytes to consider for deduplication (default: 1024).
-        /// Small files have minimal impact on archive size.
-        /// </summary>
-        public int MinimumFileSize { get; set; } = 1024;
 
         public override bool Execute()
         {
@@ -38,14 +33,14 @@ namespace Microsoft.DotNet.Build.Tasks
                 return false;
             }
 
-            Log.LogMessage(MessageImportance.High, $"Scanning for duplicate files in '{LayoutDirectory}'...");
+            Log.LogMessage(MessageImportance.High, $"Scanning for duplicate assemblies in '{LayoutDirectory}'...");
 
-            // Find all eligible files
+            // Find all eligible files - only assemblies
             var files = Directory.GetFiles(LayoutDirectory, "*", SearchOption.AllDirectories)
-                .Where(f => new FileInfo(f).Length >= MinimumFileSize)
+                .Where(f => IsAssembly(f))
                 .ToList();
 
-            Log.LogMessage(MessageImportance.Normal, $"Found {files.Count} files eligible for deduplication (>= {MinimumFileSize} bytes).");
+            Log.LogMessage(MessageImportance.Normal, $"Found {files.Count} assemblies eligible for deduplication.");
 
             if (files.Count == 0)
             {
@@ -55,7 +50,7 @@ namespace Microsoft.DotNet.Build.Tasks
             var filesByHash = HashAndGroupFiles(files);
             var duplicateGroups = filesByHash.Values.Where(g => g.Count > 1).ToList();
 
-            Log.LogMessage(MessageImportance.Normal, $"Found {duplicateGroups.Count} groups of duplicate files.");
+            Log.LogMessage(MessageImportance.Normal, $"Found {duplicateGroups.Count} groups of duplicate assemblies.");
 
             DeduplicateFileGroups(duplicateGroups);
 
@@ -146,6 +141,13 @@ namespace Microsoft.DotNet.Build.Tasks
         {
             var relativePath = Path.GetRelativePath(rootDirectory, filePath);
             return relativePath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).Length - 1;
+        }
+
+        private bool IsAssembly(string filePath)
+        {
+            var extension = Path.GetExtension(filePath);
+            return extension.Equals(".dll", StringComparison.OrdinalIgnoreCase) ||
+                   extension.Equals(".exe", StringComparison.OrdinalIgnoreCase);
         }
 
         private bool CreateHardLink(string duplicateFilePath, string masterFilePath)

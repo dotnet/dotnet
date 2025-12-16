@@ -34,7 +34,7 @@
   <UsingTask TaskName="UpdateRuntimeConfig" AssemblyFile="$(SdkTasksAssembly)" TaskFactory="TaskHostFactory" />
   <UsingTask TaskName="ZipFileCreateFromDirectory" AssemblyFile="$(SdkTasksAssembly)" TaskFactory="TaskHostFactory" />
 
-  <UsingTask TaskName="DeduplicateFilesWithHardLinks"
+  <UsingTask TaskName="DeduplicateAssembliesWithHardLinks"
              Condition="'$(MSBuildRuntimeType)' == 'Core'"
              AssemblyFile="$(SdkTasksAssembly)"
              TaskFactory="TaskHostFactory" />
