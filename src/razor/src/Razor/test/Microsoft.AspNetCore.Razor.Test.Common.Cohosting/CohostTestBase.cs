@@ -143,16 +143,17 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
         }
     }
 
-    protected abstract TextDocument CreateProjectAndRazorDocument(
+    private protected abstract TextDocument CreateProjectAndRazorDocument(
         string contents,
         RazorFileKind? fileKind = null,
         string? documentFilePath = null,
         (string fileName, string contents)[]? additionalFiles = null,
         bool inGlobalNamespace = false,
         bool miscellaneousFile = false,
-        bool addDefaultImports = true);
+        bool addDefaultImports = true,
+        Action<RazorProjectBuilder>? projectConfigure = null);
 
-    protected TextDocument CreateProjectAndRazorDocument(
+    private protected TextDocument CreateProjectAndRazorDocument(
         CodeAnalysis.Workspace remoteWorkspace,
         string contents,
         RazorFileKind? fileKind = null,
@@ -160,7 +161,8 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
         (string fileName, string contents)[]? additionalFiles = null,
         bool inGlobalNamespace = false,
         bool miscellaneousFile = false,
-        bool addDefaultImports = true)
+        bool addDefaultImports = true,
+        Action<RazorProjectBuilder>? projectConfigure = null)
     {
         // Using IsLegacy means null == component, so easier for test authors
         var isComponent = fileKind != RazorFileKind.Legacy;
@@ -172,17 +174,22 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
         var projectId = ProjectId.CreateNewId(debugName: TestProjectData.SomeProject.DisplayName);
         var documentId = DocumentId.CreateNewId(projectId, debugName: documentFilePath);
 
-        return CreateProjectAndRazorDocument(remoteWorkspace, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace, addDefaultImports);
+        return CreateProjectAndRazorDocument(remoteWorkspace, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace, addDefaultImports, projectConfigure);
     }
 
-    protected static TextDocument CreateProjectAndRazorDocument(CodeAnalysis.Workspace workspace, ProjectId projectId, bool miscellaneousFile, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace, bool addDefaultImports)
+    private protected static TextDocument CreateProjectAndRazorDocument(CodeAnalysis.Workspace workspace, ProjectId projectId, bool miscellaneousFile, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace, bool addDefaultImports, Action<RazorProjectBuilder>? projectConfigure)
     {
-        return AddProjectAndRazorDocument(workspace.CurrentSolution, TestProjectData.SomeProject.FilePath, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace, addDefaultImports);
+        return AddProjectAndRazorDocument(workspace.CurrentSolution, TestProjectData.SomeProject.FilePath, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace, addDefaultImports, projectConfigure);
     }
 
-    protected static TextDocument AddProjectAndRazorDocument(Solution solution, [DisallowNull] string? projectFilePath, ProjectId projectId, bool miscellaneousFile, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace, bool addDefaultImports)
+    private protected static TextDocument AddProjectAndRazorDocument(Solution solution, [DisallowNull] string? projectFilePath, ProjectId projectId, bool miscellaneousFile, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace, bool addDefaultImports, Action<RazorProjectBuilder>? projectConfigure)
     {
         var builder = new RazorProjectBuilder(projectId);
+
+        if (projectConfigure is not null)
+        {
+            projectConfigure(builder);
+        }
 
         builder.AddReferences(miscellaneousFile
             ? Net461.ReferenceInfos.All.Select(r => r.Reference) // This isn't quite what Roslyn does, but its close enough for our tests

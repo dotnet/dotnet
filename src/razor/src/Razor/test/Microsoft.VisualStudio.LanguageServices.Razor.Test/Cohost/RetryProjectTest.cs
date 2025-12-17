@@ -72,7 +72,7 @@ public class RetryProjectTest(ITestOutputHelper testOutputHelper) : CohostEndpoi
         var projectId = ProjectId.CreateNewId(debugName: TestProjectData.SomeProject.DisplayName);
         var documentFilePath = TestProjectData.AnotherProjectComponentFile1.FilePath;
         var documentId = DocumentId.CreateNewId(projectId, debugName: documentFilePath);
-        var otherDocument = AddProjectAndRazorDocument(document.Project.Solution, TestProjectData.AnotherProject.FilePath, projectId, miscellaneousFile: false, documentId, documentFilePath, otherInput.Text, additionalFiles: null, inGlobalNamespace: false, addDefaultImports: true);
+        var otherDocument = AddProjectAndRazorDocument(document.Project.Solution, TestProjectData.AnotherProject.FilePath, projectId, miscellaneousFile: false, documentId, documentFilePath, otherInput.Text, additionalFiles: null, inGlobalNamespace: false, addDefaultImports: true, projectConfigure: null);
 
         // Make sure we have the document from our new fork
         document = otherDocument.Project.Solution.GetAdditionalDocument(document.Id).AssumeNotNull();

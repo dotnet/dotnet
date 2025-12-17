@@ -320,6 +320,8 @@ extends:
             - ${{ if notin(variables['Build.Reason'], 'PullRequest') }}:
               - _BuildArgs: /p:DotNetPublishUsingPipelines=true
                   /p:OfficialBuildId=$(Build.BuildNumber)
+            - ${{ if in(variables['Build.Reason'], 'PullRequest') }}:
+              - _BuildArgs: -test
 
             steps:
             - task: Bash@3
@@ -337,7 +339,6 @@ extends:
                 --pack
                 --configuration $(_BuildConfig)
                 --prepareMachine
-                --test
                 $(_BuildArgs)
               name: Build
               displayName: Restore, Build and Test
@@ -348,7 +349,7 @@ extends:
                 targetPath: artifacts/TestResults/$(_BuildConfig)
                 artifact: $(Agent.Os)_$(Agent.JobName) Attempt $(System.JobAttempt) TestResults
               displayName: Publish Test Results
-              condition: always()
+              condition: in(variables['Build.Reason'], 'PullRequest')
 
           - job: Linux
             pool:
@@ -366,6 +367,8 @@ extends:
             - LANG: 'en_US.UTF-8'
             - LANGUAGE: 'en_US.UTF-8'
             - _BuildArgs: ''
+            - ${{ if in(variables['Build.Reason'], 'PullRequest') }}:
+              - _BuildArgs: -test
 
             # Variables for internal Official builds
             - ${{ if notin(variables['Build.Reason'], 'PullRequest') }}:
@@ -380,7 +383,6 @@ extends:
                 --pack
                 --configuration $(_BuildConfig)
                 --prepareMachine
-                --test
                 $(_BuildArgs)
               name: Build
               displayName: Restore, Build and Test
@@ -391,7 +393,7 @@ extends:
                 targetPath: artifacts/TestResults/$(_BuildConfig)/
                 artifact: $(Agent.Os)_$(Agent.JobName) Attempt $(System.JobAttempt) TestResults
               displayName: Publish Test Results
-              condition: always()
+              condition: in(variables['Build.Reason'], 'PullRequest')
 
     - ${{ if notin(variables['Build.Reason'], 'PullRequest') }}:
       - template: /eng/common/templates-official/post-build/post-build.yml@self
