@@ -2,6 +2,248 @@ diff --git a/msft_assemblyversions.txt b/sb_assemblyversions.txt
 index ------------
 --- a/msft_assemblyversions.txt
 +++ b/sb_assemblyversions.txt
+@@ ------------ @@ packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/ja/Microsoft.Extens
+ packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/ko/Microsoft.Extensions.Configuration.Binder.SourceGeneration.resources.dll - 10.0.13
+ packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/ko/Microsoft.Extensions.Logging.Generators.resources.dll - 10.0.13
+ packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/ko/Microsoft.Extensions.Options.SourceGeneration.resources.dll - 10.0.13
+-packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/Microsoft.AspNetCore.App.Analyzers.dll - 10.0.0
+-packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/Microsoft.AspNetCore.App.CodeFixes.dll - 10.0.0
+-packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/Microsoft.AspNetCore.App.SourceGenerators.dll - 10.0.0
+-packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/Microsoft.AspNetCore.Components.Analyzers.dll - 10.0.0
+-packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/Microsoft.AspNetCore.Http.RequestDelegateGenerator.dll - 10.0.0
++packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/Microsoft.AspNetCore.App.Analyzers.dll - 10.0.1
++packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/Microsoft.AspNetCore.App.CodeFixes.dll - 10.0.1
++packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/Microsoft.AspNetCore.App.SourceGenerators.dll - 10.0.1
++packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/Microsoft.AspNetCore.Components.Analyzers.dll - 10.0.1
++packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/Microsoft.AspNetCore.Http.RequestDelegateGenerator.dll - 10.0.1
+ packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/Microsoft.Extensions.Configuration.Binder.SourceGeneration.dll - 10.0.13
+ packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/Microsoft.Extensions.Logging.Generators.dll - 10.0.13
+ packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/Microsoft.Extensions.Options.SourceGeneration.dll - 10.0.13
+-packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/Microsoft.Extensions.Validation.ValidationsGenerator.dll - 10.0.0
++packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/Microsoft.Extensions.Validation.ValidationsGenerator.dll - 10.0.1
+ packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/pl/Microsoft.Extensions.Configuration.Binder.SourceGeneration.resources.dll - 10.0.13
+ packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/pl/Microsoft.Extensions.Logging.Generators.resources.dll - 10.0.13
+ packs/Microsoft.AspNetCore.App.Ref/x.y.z/analyzers/dotnet/cs/pl/Microsoft.Extensions.Options.SourceGeneration.resources.dll - 10.0.13
+@@ ------------ @@ sdk/x.y.z/cs/NuGet.Packaging.resources.dll - 7.3.0
+ sdk/x.y.z/cs/NuGet.ProjectModel.resources.dll - 7.3.0
+ sdk/x.y.z/cs/NuGet.Protocol.resources.dll - 7.3.0
+ sdk/x.y.z/cs/NuGet.Versioning.resources.dll - 7.3.0
+-sdk/x.y.z/cs/System.CommandLine.resources.dll - 2.0.0
++sdk/x.y.z/cs/System.CommandLine.resources.dll - 2.0.1
+ sdk/x.y.z/cs/System.CommandLine.StaticCompletions.resources.dll - 10.0.200
+ sdk/x.y.z/cs/vstest.console.resources.dll - 15.0.0
+ sdk/x.y.z/datacollector.dll - 15.0.0
+@@ ------------ @@ sdk/x.y.z/de/NuGet.Packaging.resources.dll - 7.3.0
+ sdk/x.y.z/de/NuGet.ProjectModel.resources.dll - 7.3.0
+ sdk/x.y.z/de/NuGet.Protocol.resources.dll - 7.3.0
+ sdk/x.y.z/de/NuGet.Versioning.resources.dll - 7.3.0
+-sdk/x.y.z/de/System.CommandLine.resources.dll - 2.0.0
++sdk/x.y.z/de/System.CommandLine.resources.dll - 2.0.1
+ sdk/x.y.z/de/System.CommandLine.StaticCompletions.resources.dll - 10.0.200
+ sdk/x.y.z/de/vstest.console.resources.dll - 15.0.0
+ sdk/x.y.z/dotnet.dll - 10.0.200
+-sdk/x.y.z/DotnetTools/dotnet-dev-certs/x.y.z/tools/netx.y/any/dotnet-dev-certs.dll - 10.0.0
+-sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/dotnet-user-jwts.dll - 10.0.0
++sdk/x.y.z/DotnetTools/dotnet-dev-certs/x.y.z/tools/netx.y/any/dotnet-dev-certs.dll - 10.0.1
++sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/dotnet-user-jwts.dll - 10.0.1
+ sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.Extensions.Configuration.Abstractions.dll - 10.0.0
+ sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.Extensions.Configuration.Binder.dll - 10.0.0
+ sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.Extensions.Configuration.dll - 10.0.0
+@@ ------------ @@ sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.Identity
+ sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Logging.dll - 8.0.1
+ sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll - 8.0.1
+ sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/System.IdentityModel.Tokens.Jwt.dll - 8.0.1
+-sdk/x.y.z/DotnetTools/dotnet-user-secrets/x.y.z/tools/netx.y/any/dotnet-user-secrets.dll - 10.0.0
++sdk/x.y.z/DotnetTools/dotnet-user-secrets/x.y.z/tools/netx.y/any/dotnet-user-secrets.dll - 10.0.1
+ sdk/x.y.z/DotnetTools/dotnet-user-secrets/x.y.z/tools/netx.y/any/Microsoft.Extensions.Configuration.Abstractions.dll - 10.0.0
+ sdk/x.y.z/DotnetTools/dotnet-user-secrets/x.y.z/tools/netx.y/any/Microsoft.Extensions.Configuration.dll - 10.0.0
+ sdk/x.y.z/DotnetTools/dotnet-user-secrets/x.y.z/tools/netx.y/any/Microsoft.Extensions.Configuration.FileExtensions.dll - 10.0.0
+@@ ------------ @@ sdk/x.y.z/es/NuGet.Packaging.resources.dll - 7.3.0
+ sdk/x.y.z/es/NuGet.ProjectModel.resources.dll - 7.3.0
+ sdk/x.y.z/es/NuGet.Protocol.resources.dll - 7.3.0
+ sdk/x.y.z/es/NuGet.Versioning.resources.dll - 7.3.0
+-sdk/x.y.z/es/System.CommandLine.resources.dll - 2.0.0
++sdk/x.y.z/es/System.CommandLine.resources.dll - 2.0.1
+ sdk/x.y.z/es/System.CommandLine.StaticCompletions.resources.dll - 10.0.200
+ sdk/x.y.z/es/vstest.console.resources.dll - 15.0.0
+ sdk/x.y.z/Extensions/cs/Microsoft.TestPlatform.Extensions.BlameDataCollector.resources.dll - 15.0.0
+@@ ------------ @@ sdk/x.y.z/fr/NuGet.Packaging.resources.dll - 7.3.0
+ sdk/x.y.z/fr/NuGet.ProjectModel.resources.dll - 7.3.0
+ sdk/x.y.z/fr/NuGet.Protocol.resources.dll - 7.3.0
+ sdk/x.y.z/fr/NuGet.Versioning.resources.dll - 7.3.0
+-sdk/x.y.z/fr/System.CommandLine.resources.dll - 2.0.0
++sdk/x.y.z/fr/System.CommandLine.resources.dll - 2.0.1
+ sdk/x.y.z/fr/System.CommandLine.StaticCompletions.resources.dll - 10.0.200
+ sdk/x.y.z/fr/vstest.console.resources.dll - 15.0.0
+ sdk/x.y.z/FSharp/cs/FSharp.Build.resources.dll - 15.1.200
+@@ ------------ @@ sdk/x.y.z/it/NuGet.Packaging.resources.dll - 7.3.0
+ sdk/x.y.z/it/NuGet.ProjectModel.resources.dll - 7.3.0
+ sdk/x.y.z/it/NuGet.Protocol.resources.dll - 7.3.0
+ sdk/x.y.z/it/NuGet.Versioning.resources.dll - 7.3.0
+-sdk/x.y.z/it/System.CommandLine.resources.dll - 2.0.0
++sdk/x.y.z/it/System.CommandLine.resources.dll - 2.0.1
+ sdk/x.y.z/it/System.CommandLine.StaticCompletions.resources.dll - 10.0.200
+ sdk/x.y.z/it/vstest.console.resources.dll - 15.0.0
+ sdk/x.y.z/ja/dotnet.resources.dll - 10.0.200
+@@ ------------ @@ sdk/x.y.z/ja/NuGet.Packaging.resources.dll - 7.3.0
+ sdk/x.y.z/ja/NuGet.ProjectModel.resources.dll - 7.3.0
+ sdk/x.y.z/ja/NuGet.Protocol.resources.dll - 7.3.0
+ sdk/x.y.z/ja/NuGet.Versioning.resources.dll - 7.3.0
+-sdk/x.y.z/ja/System.CommandLine.resources.dll - 2.0.0
++sdk/x.y.z/ja/System.CommandLine.resources.dll - 2.0.1
+ sdk/x.y.z/ja/System.CommandLine.StaticCompletions.resources.dll - 10.0.200
+ sdk/x.y.z/ja/vstest.console.resources.dll - 15.0.0
+ sdk/x.y.z/ko/dotnet.resources.dll - 10.0.200
+@@ ------------ @@ sdk/x.y.z/ko/NuGet.Packaging.resources.dll - 7.3.0
+ sdk/x.y.z/ko/NuGet.ProjectModel.resources.dll - 7.3.0
+ sdk/x.y.z/ko/NuGet.Protocol.resources.dll - 7.3.0
+ sdk/x.y.z/ko/NuGet.Versioning.resources.dll - 7.3.0
+-sdk/x.y.z/ko/System.CommandLine.resources.dll - 2.0.0
++sdk/x.y.z/ko/System.CommandLine.resources.dll - 2.0.1
+ sdk/x.y.z/ko/System.CommandLine.StaticCompletions.resources.dll - 10.0.200
+ sdk/x.y.z/ko/vstest.console.resources.dll - 15.0.0
+ sdk/x.y.z/Microsoft.ApplicationInsights.dll - 2.23.0
+-sdk/x.y.z/Microsoft.AspNetCore.DeveloperCertificates.XPlat.dll - 10.0.0
++sdk/x.y.z/Microsoft.AspNetCore.DeveloperCertificates.XPlat.dll - 10.0.1
+ sdk/x.y.z/Microsoft.Build.dll - 15.1.0
+ sdk/x.y.z/Microsoft.Build.Framework.dll - 15.1.0
+ sdk/x.y.z/Microsoft.Build.NuGetSdkResolver.dll - 7.3.0
+@@ ------------ @@ sdk/x.y.z/Microsoft.Extensions.Logging.dll - 10.0.0
+ sdk/x.y.z/Microsoft.Extensions.Options.ConfigurationExtensions.dll - 10.0.0
+ sdk/x.y.z/Microsoft.Extensions.Options.dll - 10.0.0
+ sdk/x.y.z/Microsoft.Extensions.Primitives.dll - 10.0.0
+-sdk/x.y.z/Microsoft.NET.HostModel.dll - 10.0.0
++sdk/x.y.z/Microsoft.NET.HostModel.dll - 10.0.1
+ sdk/x.y.z/Microsoft.NET.Sdk.WorkloadManifestReader.dll - 10.0.200
+ sdk/x.y.z/Microsoft.NET.Sdk.WorkloadMSBuildSdkResolver.dll - 10.0.200
+ sdk/x.y.z/Microsoft.NET.StringTools.dll - 1.0.0
+@@ ------------ @@ sdk/x.y.z/pl/NuGet.Packaging.resources.dll - 7.3.0
+ sdk/x.y.z/pl/NuGet.ProjectModel.resources.dll - 7.3.0
+ sdk/x.y.z/pl/NuGet.Protocol.resources.dll - 7.3.0
+ sdk/x.y.z/pl/NuGet.Versioning.resources.dll - 7.3.0
+-sdk/x.y.z/pl/System.CommandLine.resources.dll - 2.0.0
++sdk/x.y.z/pl/System.CommandLine.resources.dll - 2.0.1
+ sdk/x.y.z/pl/System.CommandLine.StaticCompletions.resources.dll - 10.0.200
+ sdk/x.y.z/pl/vstest.console.resources.dll - 15.0.0
+ sdk/x.y.z/pt-BR/dotnet.resources.dll - 10.0.200
+@@ ------------ @@ sdk/x.y.z/pt-BR/NuGet.Packaging.resources.dll - 7.3.0
+ sdk/x.y.z/pt-BR/NuGet.ProjectModel.resources.dll - 7.3.0
+ sdk/x.y.z/pt-BR/NuGet.Protocol.resources.dll - 7.3.0
+ sdk/x.y.z/pt-BR/NuGet.Versioning.resources.dll - 7.3.0
+-sdk/x.y.z/pt-BR/System.CommandLine.resources.dll - 2.0.0
++sdk/x.y.z/pt-BR/System.CommandLine.resources.dll - 2.0.1
+ sdk/x.y.z/pt-BR/System.CommandLine.StaticCompletions.resources.dll - 10.0.200
+ sdk/x.y.z/pt-BR/vstest.console.resources.dll - 15.0.0
+ sdk/x.y.z/ref/Microsoft.Build.Framework.dll - 15.1.0
+@@ ------------ @@ sdk/x.y.z/ru/NuGet.Packaging.resources.dll - 7.3.0
+ sdk/x.y.z/ru/NuGet.ProjectModel.resources.dll - 7.3.0
+ sdk/x.y.z/ru/NuGet.Protocol.resources.dll - 7.3.0
+ sdk/x.y.z/ru/NuGet.Versioning.resources.dll - 7.3.0
+-sdk/x.y.z/ru/System.CommandLine.resources.dll - 2.0.0
++sdk/x.y.z/ru/System.CommandLine.resources.dll - 2.0.1
+ sdk/x.y.z/ru/System.CommandLine.StaticCompletions.resources.dll - 10.0.200
+ sdk/x.y.z/ru/vstest.console.resources.dll - 15.0.0
+ sdk/x.y.z/runtimes/win/lib/netx.y/System.ServiceProcess.ServiceController.dll - 10.0.0
+@@ ------------ @@ sdk/x.y.z/Sdks/Microsoft.Build.Tasks.Git/tools/net/zh-Hans/Microsoft.Build.Tasks
+ sdk/x.y.z/Sdks/Microsoft.Build.Tasks.Git/tools/net/zh-Hant/Microsoft.Build.Tasks.Git.resources.dll - 10.0.13
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.BlazorWebAssembly/tools/netx.y/Microsoft.NET.Sdk.BlazorWebAssembly.Tasks.dll - 10.0.13
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.BlazorWebAssembly/tools/netx.y/Microsoft.NET.Sdk.BlazorWebAssembly.Tool.dll - 10.0.200
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.BlazorWebAssembly/tools/netx.y/System.CommandLine.dll - 2.0.0
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.BlazorWebAssembly/tools/netx.y/System.CommandLine.dll - 2.0.1
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.BlazorWebAssembly/tools/netx.y/System.IO.Hashing.dll - 10.0.0
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/cs/Microsoft.NET.Sdk.Publish.Tasks.resources.dll - 10.0.13
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/cs/Microsoft.Web.XmlTransform.resources.dll - 3.2.0
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/cs/Microsoft.Web.XmlTransform.resources.dll - 3.2.1
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/de/Microsoft.NET.Sdk.Publish.Tasks.resources.dll - 10.0.13
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/de/Microsoft.Web.XmlTransform.resources.dll - 3.2.0
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/de/Microsoft.Web.XmlTransform.resources.dll - 3.2.1
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/es/Microsoft.NET.Sdk.Publish.Tasks.resources.dll - 10.0.13
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/es/Microsoft.Web.XmlTransform.resources.dll - 3.2.0
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/es/Microsoft.Web.XmlTransform.resources.dll - 3.2.1
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/fr/Microsoft.NET.Sdk.Publish.Tasks.resources.dll - 10.0.13
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/fr/Microsoft.Web.XmlTransform.resources.dll - 3.2.0
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/fr/Microsoft.Web.XmlTransform.resources.dll - 3.2.1
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/it/Microsoft.NET.Sdk.Publish.Tasks.resources.dll - 10.0.13
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/it/Microsoft.Web.XmlTransform.resources.dll - 3.2.0
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/it/Microsoft.Web.XmlTransform.resources.dll - 3.2.1
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/ja/Microsoft.NET.Sdk.Publish.Tasks.resources.dll - 10.0.13
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/ja/Microsoft.Web.XmlTransform.resources.dll - 3.2.0
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/ja/Microsoft.Web.XmlTransform.resources.dll - 3.2.1
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/ko/Microsoft.NET.Sdk.Publish.Tasks.resources.dll - 10.0.13
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/ko/Microsoft.Web.XmlTransform.resources.dll - 3.2.0
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/ko/Microsoft.Web.XmlTransform.resources.dll - 3.2.1
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/Microsoft.NET.Sdk.Publish.Tasks.dll - 10.0.13
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/Microsoft.Web.XmlTransform.dll - 3.2.0
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/Microsoft.Web.XmlTransform.dll - 3.2.1
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/pl/Microsoft.NET.Sdk.Publish.Tasks.resources.dll - 10.0.13
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/pl/Microsoft.Web.XmlTransform.resources.dll - 3.2.0
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/pl/Microsoft.Web.XmlTransform.resources.dll - 3.2.1
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/pt-BR/Microsoft.NET.Sdk.Publish.Tasks.resources.dll - 10.0.13
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/pt-BR/Microsoft.Web.XmlTransform.resources.dll - 3.2.0
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/pt-BR/Microsoft.Web.XmlTransform.resources.dll - 3.2.1
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/ru/Microsoft.NET.Sdk.Publish.Tasks.resources.dll - 10.0.13
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/ru/Microsoft.Web.XmlTransform.resources.dll - 3.2.0
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/ru/Microsoft.Web.XmlTransform.resources.dll - 3.2.1
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/tr/Microsoft.NET.Sdk.Publish.Tasks.resources.dll - 10.0.13
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/tr/Microsoft.Web.XmlTransform.resources.dll - 3.2.0
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/tr/Microsoft.Web.XmlTransform.resources.dll - 3.2.1
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/zh-Hans/Microsoft.NET.Sdk.Publish.Tasks.resources.dll - 10.0.13
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/zh-Hans/Microsoft.Web.XmlTransform.resources.dll - 3.2.0
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/zh-Hans/Microsoft.Web.XmlTransform.resources.dll - 3.2.1
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/zh-Hant/Microsoft.NET.Sdk.Publish.Tasks.resources.dll - 10.0.13
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/zh-Hant/Microsoft.Web.XmlTransform.resources.dll - 3.2.0
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/zh-Hant/Microsoft.Web.XmlTransform.resources.dll - 3.2.1
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/source-generators/Microsoft.AspNetCore.Razor.Utilities.Shared.dll - 10.0.0
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/source-generators/Microsoft.CodeAnalysis.Razor.Compiler.dll - 10.0.0
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tasks/netx.y/Microsoft.Extensions.FileSystemGlobbing.dll - 10.0.0
+@@ ------------ @@ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.StaticWebAssets/tasks/netx.y/Microsoft.Css.Pars
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.StaticWebAssets/tasks/netx.y/Microsoft.Extensions.FileSystemGlobbing.dll - 10.0.0
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.StaticWebAssets/tasks/netx.y/Microsoft.NET.Sdk.StaticWebAssets.Tasks.dll - 10.0.13
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.StaticWebAssets/tools/netx.y/Microsoft.NET.Sdk.StaticWebAssets.Tool.dll - 10.0.200
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.StaticWebAssets/tools/netx.y/System.CommandLine.dll - 2.0.0
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.StaticWebAssets/tools/netx.y/System.CommandLine.dll - 2.0.1
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Web.ProjectSystem/tools/netx.y/Microsoft.NET.Sdk.Web.ProjectSystem.Tasks.dll - 10.0.13
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Web/analyzers/cs/Microsoft.AspNetCore.Analyzers.dll - 10.0.0
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Web/analyzers/cs/Microsoft.AspNetCore.Components.SdkAnalyzers.dll - 10.0.0
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Web/analyzers/cs/Microsoft.AspNetCore.Mvc.Analyzers.dll - 10.0.0
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Web/analyzers/cs/Microsoft.AspNetCore.Mvc.Api.Analyzers.dll - 10.0.0
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Web/analyzers/cs/Microsoft.AspNetCore.Analyzers.dll - 10.0.1
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Web/analyzers/cs/Microsoft.AspNetCore.Components.SdkAnalyzers.dll - 10.0.1
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Web/analyzers/cs/Microsoft.AspNetCore.Mvc.Analyzers.dll - 10.0.1
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Web/analyzers/cs/Microsoft.AspNetCore.Mvc.Api.Analyzers.dll - 10.0.1
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Web/tools/netx.y/Microsoft.NET.Sdk.Web.Tasks.dll - 10.0.13
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WebAssembly/tools/netx.y/Microsoft.NET.Sdk.WebAssembly.Tasks.dll - 10.0.13
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/cs/PresentationBuildTasks.resources.dll - 10.0.0
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/de/PresentationBuildTasks.resources.dll - 10.0.0
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/es/PresentationBuildTasks.resources.dll - 10.0.0
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/fr/PresentationBuildTasks.resources.dll - 10.0.0
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/it/PresentationBuildTasks.resources.dll - 10.0.0
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/ja/PresentationBuildTasks.resources.dll - 10.0.0
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/ko/PresentationBuildTasks.resources.dll - 10.0.0
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/pl/PresentationBuildTasks.resources.dll - 10.0.0
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/PresentationBuildTasks.dll - 10.0.0
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/pt-BR/PresentationBuildTasks.resources.dll - 10.0.0
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/ru/PresentationBuildTasks.resources.dll - 10.0.0
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/tr/PresentationBuildTasks.resources.dll - 10.0.0
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/zh-Hans/PresentationBuildTasks.resources.dll - 10.0.0
+-sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/zh-Hant/PresentationBuildTasks.resources.dll - 10.0.0
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/cs/PresentationBuildTasks.resources.dll - 10.0.1
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/de/PresentationBuildTasks.resources.dll - 10.0.1
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/es/PresentationBuildTasks.resources.dll - 10.0.1
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/fr/PresentationBuildTasks.resources.dll - 10.0.1
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/it/PresentationBuildTasks.resources.dll - 10.0.1
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/ja/PresentationBuildTasks.resources.dll - 10.0.1
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/ko/PresentationBuildTasks.resources.dll - 10.0.1
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/pl/PresentationBuildTasks.resources.dll - 10.0.1
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/PresentationBuildTasks.dll - 10.0.1
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/pt-BR/PresentationBuildTasks.resources.dll - 10.0.1
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/ru/PresentationBuildTasks.resources.dll - 10.0.1
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/tr/PresentationBuildTasks.resources.dll - 10.0.1
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/zh-Hans/PresentationBuildTasks.resources.dll - 10.0.1
++sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/zh-Hant/PresentationBuildTasks.resources.dll - 10.0.1
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Worker/tools/netx.y/Microsoft.NET.Sdk.Worker.Tasks.dll - 10.0.13
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk/analyzers/cs/Microsoft.CodeAnalysis.NetAnalyzers.resources.dll - 10.0.200
+ sdk/x.y.z/Sdks/Microsoft.NET.Sdk/analyzers/de/Microsoft.CodeAnalysis.NetAnalyzers.resources.dll - 10.0.200
 @@ ------------ @@ sdk/x.y.z/Sdks/Microsoft.SourceLink.GitLab/tools/net/System.IO.Hashing.dll - 10.
  sdk/x.y.z/Sdks/Microsoft.SourceLink.GitLab/tools/net/tr/Microsoft.SourceLink.GitLab.resources.dll - 10.0.13
  sdk/x.y.z/Sdks/Microsoft.SourceLink.GitLab/tools/net/zh-Hans/Microsoft.SourceLink.GitLab.resources.dll - 10.0.13
@@ -9,5 +251,35 @@ index ------------
 -sdk/x.y.z/Spectre.Console.dll - 0.0.0
 +sdk/x.y.z/Spectre.Console.dll - 0.54.0
  sdk/x.y.z/System.CodeDom.dll - 10.0.0
- sdk/x.y.z/System.CommandLine.dll - 2.0.0
+-sdk/x.y.z/System.CommandLine.dll - 2.0.0
++sdk/x.y.z/System.CommandLine.dll - 2.0.1
  sdk/x.y.z/System.CommandLine.StaticCompletions.dll - 10.0.200
+ sdk/x.y.z/System.Formats.Nrbf.dll - 10.0.0
+ sdk/x.y.z/System.IO.Hashing.dll - 10.0.0
+@@ ------------ @@ sdk/x.y.z/tr/NuGet.Packaging.resources.dll - 7.3.0
+ sdk/x.y.z/tr/NuGet.ProjectModel.resources.dll - 7.3.0
+ sdk/x.y.z/tr/NuGet.Protocol.resources.dll - 7.3.0
+ sdk/x.y.z/tr/NuGet.Versioning.resources.dll - 7.3.0
+-sdk/x.y.z/tr/System.CommandLine.resources.dll - 2.0.0
++sdk/x.y.z/tr/System.CommandLine.resources.dll - 2.0.1
+ sdk/x.y.z/tr/System.CommandLine.StaticCompletions.resources.dll - 10.0.200
+ sdk/x.y.z/tr/vstest.console.resources.dll - 15.0.0
+ sdk/x.y.z/vstest.console.dll - 15.0.0
+@@ ------------ @@ sdk/x.y.z/zh-Hans/NuGet.Packaging.resources.dll - 7.3.0
+ sdk/x.y.z/zh-Hans/NuGet.ProjectModel.resources.dll - 7.3.0
+ sdk/x.y.z/zh-Hans/NuGet.Protocol.resources.dll - 7.3.0
+ sdk/x.y.z/zh-Hans/NuGet.Versioning.resources.dll - 7.3.0
+-sdk/x.y.z/zh-Hans/System.CommandLine.resources.dll - 2.0.0
++sdk/x.y.z/zh-Hans/System.CommandLine.resources.dll - 2.0.1
+ sdk/x.y.z/zh-Hans/System.CommandLine.StaticCompletions.resources.dll - 10.0.200
+ sdk/x.y.z/zh-Hans/vstest.console.resources.dll - 15.0.0
+ sdk/x.y.z/zh-Hant/dotnet.resources.dll - 10.0.200
+@@ ------------ @@ sdk/x.y.z/zh-Hant/NuGet.Packaging.resources.dll - 7.3.0
+ sdk/x.y.z/zh-Hant/NuGet.ProjectModel.resources.dll - 7.3.0
+ sdk/x.y.z/zh-Hant/NuGet.Protocol.resources.dll - 7.3.0
+ sdk/x.y.z/zh-Hant/NuGet.Versioning.resources.dll - 7.3.0
+-sdk/x.y.z/zh-Hant/System.CommandLine.resources.dll - 2.0.0
++sdk/x.y.z/zh-Hant/System.CommandLine.resources.dll - 2.0.1
+ sdk/x.y.z/zh-Hant/System.CommandLine.StaticCompletions.resources.dll - 10.0.200
+ sdk/x.y.z/zh-Hant/vstest.console.resources.dll - 15.0.0
+ shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Antiforgery.dll - 10.0.0

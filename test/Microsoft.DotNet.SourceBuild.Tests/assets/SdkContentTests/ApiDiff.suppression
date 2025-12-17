@@ -3,195 +3,15 @@
 <Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.IdentityModel.Tokens.EcdhKeyExchangeProvider</Target>
-    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Left>
-    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:System.Runtime.CompilerServices.IsExternalInit</Target>
-    <Left>/msft/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Left>
-    <Right>/sb/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:System.Runtime.CompilerServices.RequiresLocationAttribute</Target>
-    <Left>/msft/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Left>
-    <Right>/sb/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Newtonsoft.Json.Serialization.DynamicValueProvider</Target>
     <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
     <Right>/sb/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
   </Suppression>
   <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:System.Runtime.CompilerServices.IsExternalInit</Target>
-    <Left>/msft/sdk/x.y.z/Spectre.Console.dll</Left>
-    <Right>/sb/sdk/x.y.z/Spectre.Console.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:System.Runtime.CompilerServices.RequiresLocationAttribute</Target>
-    <Left>/msft/sdk/x.y.z/Spectre.Console.dll</Left>
-    <Right>/sb/sdk/x.y.z/Spectre.Console.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Hosting.WebHostBuilderHttpSysExtensions</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.HttpSys.AuthenticationManager</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.HttpSys.AuthenticationSchemes</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.HttpSys.ClientCertificateMethod</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.HttpSys.DelegationRule</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.HttpSys.Http503VerbosityLevel</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.HttpSys.HttpSysDefaults</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.HttpSys.HttpSysException</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.HttpSys.HttpSysRequestTimingType</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.HttpSys.IHttpSysRequestDelegationFeature</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.HttpSys.IHttpSysRequestInfoFeature</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.HttpSys.IHttpSysRequestPropertyFeature</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.HttpSys.IHttpSysRequestTimingFeature</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.HttpSys.IServerDelegationFeature</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.HttpSys.RequestQueueMode</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.HttpSys.UrlPrefix</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.HttpSys.UrlPrefixCollection</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Builder.IISServerOptions</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Http.Features.IServerVariablesFeature</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.IIS.BadHttpRequestException</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.IIS.HttpContextExtensions</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.IIS.IIISEnvironmentFeature</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.AspNetCore.Server.IIS.IISServerDefaults</Target>
-    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Left>
-    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0002</DiagnosticId>
-    <Target>M:Microsoft.IdentityModel.Tokens.SignatureProvider.Sign(System.ReadOnlySpan{System.Byte},System.Span{System.Byte},System.Int32@)</Target>
-    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Left>
-    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Right>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>Microsoft.Bcl.AsyncInterfaces, Version=x.y.z, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51</Target>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-format/Microsoft.Bcl.AsyncInterfaces.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-format/Microsoft.Bcl.AsyncInterfaces.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0003</DiagnosticId>
@@ -207,6 +27,42 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0003</DiagnosticId>
+    <Target>Microsoft.DiaSymReader, Version=x.y.z, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Target>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Microsoft.DiaSymReader.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Microsoft.DiaSymReader.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>System.Composition.AttributedModel, Version=x.y.z, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</Target>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/System.Composition.AttributedModel.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/System.Composition.AttributedModel.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>System.Composition.Convention, Version=x.y.z, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</Target>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/System.Composition.Convention.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/System.Composition.Convention.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>System.Composition.Hosting, Version=x.y.z, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</Target>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/System.Composition.Hosting.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/System.Composition.Hosting.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>System.Composition.Runtime, Version=x.y.z, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</Target>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/System.Composition.Runtime.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/System.Composition.Runtime.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>System.Composition.TypedParts, Version=x.y.z, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</Target>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/System.Composition.TypedParts.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/System.Composition.TypedParts.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
     <Target>Microsoft.ApplicationInsights, Version=x.y.z, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Target>
     <Left>/msft/sdk/x.y.z/Microsoft.ApplicationInsights.dll</Left>
     <Right>/sb/sdk/x.y.z/Microsoft.ApplicationInsights.dll</Right>
@@ -219,9 +75,111 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0003</DiagnosticId>
+    <Target>Microsoft.AspNetCore.DeveloperCertificates.XPlat, Version=x.y.z, Culture=neutral, PublicKeyToken=adb9793829ddae60</Target>
+    <Left>/msft/sdk/x.y.z/Microsoft.AspNetCore.DeveloperCertificates.XPlat.dll</Left>
+    <Right>/sb/sdk/x.y.z/Microsoft.AspNetCore.DeveloperCertificates.XPlat.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>Microsoft.Extensions.DependencyModel, Version=x.y.z, Culture=neutral, PublicKeyToken=adb9793829ddae60</Target>
+    <Left>/msft/sdk/x.y.z/Microsoft.Extensions.DependencyModel.dll</Left>
+    <Right>/sb/sdk/x.y.z/Microsoft.Extensions.DependencyModel.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>Microsoft.NET.HostModel, Version=x.y.z, Culture=neutral, PublicKeyToken=adb9793829ddae60</Target>
+    <Left>/msft/sdk/x.y.z/Microsoft.NET.HostModel.dll</Left>
+    <Right>/sb/sdk/x.y.z/Microsoft.NET.HostModel.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>Microsoft.Web.XmlTransform, Version=x.y.z, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Target>
+    <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/Microsoft.Web.XmlTransform.dll</Left>
+    <Right>/sb/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/Microsoft.Web.XmlTransform.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>Microsoft.Web.XmlTransform.resources, Version=x.y.z, Culture=cs, PublicKeyToken=31bf3856ad364e35</Target>
+    <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/zh-Hant/Microsoft.Web.XmlTransform.resources.dll</Left>
+    <Right>/sb/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Publish/tools/netx.y/zh-Hant/Microsoft.Web.XmlTransform.resources.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>Microsoft.Extensions.ObjectPool, Version=x.y.z, Culture=neutral, PublicKeyToken=adb9793829ddae60</Target>
+    <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Microsoft.Extensions.ObjectPool.dll</Left>
+    <Right>/sb/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Microsoft.Extensions.ObjectPool.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>Microsoft.AspNetCore.Analyzers, Version=x.y.z, Culture=neutral, PublicKeyToken=adb9793829ddae60</Target>
+    <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Web/analyzers/cs/Microsoft.AspNetCore.Analyzers.dll</Left>
+    <Right>/sb/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Web/analyzers/cs/Microsoft.AspNetCore.Analyzers.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>Microsoft.AspNetCore.Components.SdkAnalyzers, Version=x.y.z, Culture=neutral, PublicKeyToken=adb9793829ddae60</Target>
+    <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Web/analyzers/cs/Microsoft.AspNetCore.Components.SdkAnalyzers.dll</Left>
+    <Right>/sb/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Web/analyzers/cs/Microsoft.AspNetCore.Components.SdkAnalyzers.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>Microsoft.AspNetCore.Mvc.Analyzers, Version=x.y.z, Culture=neutral, PublicKeyToken=adb9793829ddae60</Target>
+    <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Web/analyzers/cs/Microsoft.AspNetCore.Mvc.Analyzers.dll</Left>
+    <Right>/sb/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Web/analyzers/cs/Microsoft.AspNetCore.Mvc.Analyzers.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>Microsoft.AspNetCore.Mvc.Api.Analyzers, Version=x.y.z, Culture=neutral, PublicKeyToken=adb9793829ddae60</Target>
+    <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Web/analyzers/cs/Microsoft.AspNetCore.Mvc.Api.Analyzers.dll</Left>
+    <Right>/sb/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Web/analyzers/cs/Microsoft.AspNetCore.Mvc.Api.Analyzers.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>PresentationBuildTasks, Version=x.y.z, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Target>
+    <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/PresentationBuildTasks.dll</Left>
+    <Right>/sb/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/PresentationBuildTasks.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>PresentationBuildTasks.resources, Version=x.y.z, Culture=cs, PublicKeyToken=31bf3856ad364e35</Target>
+    <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/zh-Hant/PresentationBuildTasks.resources.dll</Left>
+    <Right>/sb/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/netx.y/zh-Hant/PresentationBuildTasks.resources.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
     <Target>Spectre.Console, Version=x.y.z, Culture=neutral, PublicKeyToken=170fe27f8af98a30</Target>
     <Left>/msft/sdk/x.y.z/Spectre.Console.dll</Left>
     <Right>/sb/sdk/x.y.z/Spectre.Console.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>System.CommandLine, Version=x.y.z, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Target>
+    <Left>/msft/sdk/x.y.z/System.CommandLine.dll</Left>
+    <Right>/sb/sdk/x.y.z/System.CommandLine.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>System.IO.Hashing, Version=x.y.z, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51</Target>
+    <Left>/msft/sdk/x.y.z/System.IO.Hashing.dll</Left>
+    <Right>/sb/sdk/x.y.z/System.IO.Hashing.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>System.Reflection.MetadataLoadContext, Version=x.y.z, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51</Target>
+    <Left>/msft/sdk/x.y.z/System.Reflection.MetadataLoadContext.dll</Left>
+    <Right>/sb/sdk/x.y.z/System.Reflection.MetadataLoadContext.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>System.ServiceProcess.ServiceController, Version=x.y.z, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</Target>
+    <Left>/msft/sdk/x.y.z/System.ServiceProcess.ServiceController.dll</Left>
+    <Right>/sb/sdk/x.y.z/System.ServiceProcess.ServiceController.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>System.CommandLine.resources, Version=x.y.z, Culture=cs, PublicKeyToken=31bf3856ad364e35</Target>
+    <Left>/msft/sdk/x.y.z/zh-Hant/System.CommandLine.resources.dll</Left>
+    <Right>/sb/sdk/x.y.z/zh-Hant/System.CommandLine.resources.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0008</DiagnosticId>
