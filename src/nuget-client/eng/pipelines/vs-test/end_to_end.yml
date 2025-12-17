@@ -66,11 +66,12 @@ stages:
 ## preTestMachineConfigurationStepList
 ##############################
     preTestMachineConfigurationStepList:
-    - task: PowerShell@2
-      displayName: Set 'VisualStudio.InstallationUnderTest.SetupParameters'
-      inputs:
+    - template: '\steps\powershell\execute-script.yml@DartLabTemplates'
+      parameters:
+        displayName: Set 'VisualStudio.InstallationUnderTest.SetupParameters'
         filePath: $(DartLab.Path)\Scripts\VisualStudio\Installation\Get-VisualStudioSetupParameters.ps1
-        arguments: -RunSettingsURI '$(runSettingsURI)' -InstallPath 'C:\Test\VisualStudio' -NoRestart -Quiet -Wait -OutVariableName 'VisualStudio.InstallationUnderTest.SetupParameters'
+        arguments: -RunSettingsURI '$(runSettingsURI)' -InstallPath 'C:\Test\VisualStudio' -NoRestart -Quiet -Wait -OutVariableName 'VisualStudio.InstallationUnderTest.SetupParameters' -ServiceConnectionTenantID $env:AZURESUBSCRIPTION_TENANT_ID -ServiceConnectionClientID $env:AZURESUBSCRIPTION_CLIENT_ID -ServiceConnectionID $env:AZURESUBSCRIPTION_SERVICE_CONNECTION_ID
+        serviceConnectionName: DartLab-TestMachine
 
     - template: '\steps\powershell\execute-script.yml@DartLabTemplates'
       parameters:

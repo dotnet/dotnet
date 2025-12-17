@@ -84,7 +84,7 @@
       </trans-unit>
       <trans-unit id="Manifest_InvalidMinClientVersion">
         <source>The 'minClientVersion' attribute in the package manifest has invalid value. It must be a valid version string.</source>
-        <target state="translated">L'attributo 'minClientVersion' nel manifesto del pacchetto presenta un valore non valido. Deve essere una stringa di versione valida.</target>
+        <target state="translated">Valore dell'attributo 'minClientVersion' nel manifesto di pacchetto non valido. Deve essere una stringa di versione valida.</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_InvalidReference">
@@ -144,7 +144,7 @@
       </trans-unit>
       <trans-unit id="Manifest_RequiredElementMissing">
         <source>The required element '{0}' is missing from the manifest.</source>
-        <target state="translated">Nel manifesto manca l'elemento '{0}' obbligatorio.</target>
+        <target state="translated">Elemento '{0}' obbligatorio mancante nel manifesto.</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_RequiredMetadataMissing">

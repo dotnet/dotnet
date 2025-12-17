@@ -192,8 +192,8 @@ nuget client-certs List</target>
       <trans-unit id="ConfigCommandExamples">
         <source>nuget config -Set HTTP_PROXY=http://127.0.0.1 -Set HTTP_PROXY.USER=domain\user
 nuget config HTTP_PROXY</source>
-        <target state="translated">nuget config -Set HTTP_PROXY=http://127.0.0.1 -Set HTTP_PROXY. USER=domain\user
-konfigurační HTTP_PROXY nuget</target>
+        <target state="translated">nuget config -Set HTTP_PROXY=http://127.0.0.1 -Set HTTP_PROXY.USER=domain\user
+nuget config HTTP_PROXY</target>
         <note>Please don't localize this string</note>
       </trans-unit>
       <trans-unit id="ConfigCommandSetDesc">
@@ -236,7 +236,7 @@ konfigurační HTTP_PROXY nuget</target>
     
 nuget delete MyPackage 1.0 -NoPrompt</source>
         <target state="translated">nuget delete MyPackage 1.0
- 
+    
 nuget delete MyPackage 1.0 -NoPrompt</target>
         <note>Please don't localize this string</note>
       </trans-unit>
@@ -329,7 +329,7 @@ nasdílet změny nuget –?</target>
       </trans-unit>
       <trans-unit id="HelpCommand_Suggestion">
         <source>Type '{0} help &lt;command&gt;' for help on a specific command.</source>
-        <target state="translated">Nápovědu ke konkrétnímu příkazu zobrazíte zadáním příkazu {0} help &lt;příkaz&gt;.</target>
+        <target state="translated">Nápovědu ke konkrétnímu příkazu zobrazíte zadáním příkazu {0} help &lt;command&gt;.</target>
         <note>{0} - executable name: nuget.exe; Don't localize text enclosed in single quotes: '{0} help command'</note>
       </trans-unit>
       <trans-unit id="HelpCommand_Title">
@@ -339,7 +339,7 @@ nasdílet změny nuget –?</target>
       </trans-unit>
       <trans-unit id="HelpCommand_Usage">
         <source>usage: {0} &lt;command&gt; [args] [options]</source>
-        <target state="translated">použití: {0} &lt;příkaz&gt; [argumenty] [možnosti]</target>
+        <target state="translated">použití: {0} &lt;command&gt; [argumenty] [možnosti]</target>
         <note>{0} - executable name: nuget.exe; Don't localize '&lt;command&gt; [args] [options]'</note>
       </trans-unit>
       <trans-unit id="HelpCommand_UsageDetail">
@@ -703,7 +703,7 @@ nuget pack foo.nuspec -Version 2.1.0</target>
       </trans-unit>
       <trans-unit id="PushCommandAllowInsecureConnectionsDescription">
         <source>Allows pushing to HTTP sources (insecure).</source>
-        <target state="new">Allows pushing to HTTP sources (insecure).</target>
+        <target state="translated">Umožňuje vkládání do HTTP zdrojů (nezabezpečené).</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandDescription">
@@ -784,7 +784,7 @@ nuget push foo.nupkg -Timeout 360</target>
       </trans-unit>
       <trans-unit id="RestoreCommandLockFilePath">
         <source>Output location where project lock file is written. By default, this is 'PROJECT_ROOT\packages.lock.json'.</source>
-        <target state="translated">Výstupní umístění, kde je zapsán soubor zámku projektu. Ve výchozím nastavení jde o PROJECT_ROOT\packages.lock.json.</target>
+        <target state="translated">Výstupní umístění, do kterého se zapisuje soubor zámku projektu. Ve výchozím nastavení je to PROJECT_ROOT\packages.lock.json.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandLockedMode">
@@ -912,8 +912,8 @@ nuget setapikey 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -Source http://example.com/
       <trans-unit id="SignCommandCertificateFingerprintDescription">
         <source>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a local certificate store for the certificate.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
-        <target state="translated">Otisk SHA-256, SHA-384 nebo SHA-512 certifikátu použitý k hledání místního úložiště certifikátů tohoto certifikátu
-Úložiště certifikátů lze zadat pomocí parametrů CertificateStoreName a CertificateStoreLocation.</target>
+        <target state="translated">Otisk SHA-256, SHA-384 nebo SHA-512 certifikátu použitý k hledání místního úložiště certifikátů pro tento certifikát
+Úložiště certifikátů lze zadat pomocí parametrů -CertificateStoreName a -CertificateStoreLocation.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificatePasswordDescription">
@@ -931,24 +931,24 @@ Tuto možnost lze použít k zadání hesla certifikátu. Pokud není zadáno ž
       <trans-unit id="SignCommandCertificateStoreLocationDescription">
         <source>Name of the X.509 certificate store use to search for the certificate. Defaults to "CurrentUser", the X.509 certificate store used by the current user.
 This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
-        <target state="translated">Název úložiště certifikátů X.509, který se používá k vyhledání certifikátu. Výchozí hodnota je CurrentUser, úložiště certifikátů X.509 používané aktuálním uživatelem.
-Tato možnost by se měla použít při zadávání certifikátu prostřednictvím možností -CertificateSubjectName nebo -CertificateFingerprint.</target>
+        <target state="translated">Název úložiště certifikátů X.509, který se používá k hledání certifikátu. Výchozí hodnota je CurrentUser, což je úložiště osobních certifikátů X.509 používané aktuálním uživatelem.
+Tento parametr se má použít při zadávání certifikátu pomocí parametrů -CertificateSubjectName nebo -CertificateFingerprint.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateStoreNameDescription">
         <source>Name of the X.509 certificate store to use to search for the certificate. Defaults to "My", the X.509 certificate store for personal certificates.
 This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
-        <target state="translated">Název úložiště certifikátů X.509, které se má použít k vyhledání certifikátu. Výchozí hodnota je „My“, úložiště certifikátů X.509 pro osobní certifikáty.
-Tato možnost by se měla použít při zadávání certifikátu prostřednictvím možností -CertificateSubjectName nebo -CertificateFingerprint.</target>
+        <target state="translated">Název úložiště certifikátů X.509, který se používá k hledání certifikátu. Výchozí hodnota je My, což je úložiště osobních certifikátů X.509.
+Tento parametr se má použít při zadávání certifikátu pomocí parametrů -CertificateSubjectName nebo -CertificateFingerprint.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateSubjectNameDescription">
         <source>Subject name of the certificate used to search a local certificate store for the certificate. 
 The search is a case-insensitive string comparison using the supplied value, which will find all certificates with the subject name containing that string, regardless of other subject values.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
-        <target state="translated">Název subjektu certifikátu použitého k vyhledání certifikátu v místním úložišti certifikátů 
-Hledání je porovnání řetězců bez rozlišování velkých a malých písmen pomocí zadané hodnoty, které najde všechny certifikáty s názvem subjektu obsahujícím tento řetězec bez ohledu na jiné hodnoty subjektu.
-Úložiště certifikátů lze zadat pomocí možností -CertificateStoreName a -CertificateStoreLocation.</target>
+        <target state="translated">Název subjektu certifikátu použitý k hledání místního úložiště certifikátů tohoto certifikátu. 
+Hledání porovnává řetězce bez rozlišování malých a velkých písmen pomocí zadané hodnoty, a najde všechny certifikáty s názvem subjektu obsahujícím tento řetězec bez ohledu na jiné hodnoty subjektu.
+Úložiště certifikátů lze zadat pomocí parametrů -CertificateStoreName a -CertificateStoreLocation.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandDescription">
@@ -1277,7 +1277,7 @@ nuget update -Safe
 
 nuget update -Self</source>
         <target state="translated">aktualizace nuget
- 
+    
 aktualizace nuget – bezpečné
 
 aktualizace nuget - self</target>

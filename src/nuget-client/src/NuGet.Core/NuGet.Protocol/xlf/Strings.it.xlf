@@ -29,7 +29,7 @@
       </trans-unit>
       <trans-unit id="DefaultSymbolServer">
         <source>the symbol server</source>
-        <target state="translated">server dei simboli</target>
+        <target state="translated">il server dei simboli</target>
         <note />
       </trans-unit>
       <trans-unit id="DeleteCommandCanceled">
@@ -76,7 +76,7 @@
       </trans-unit>
       <trans-unit id="Error_Invalid_package_id">
         <source>Invalid package id : `{0}`.</source>
-        <target state="new">Invalid package id : `{0}`.</target>
+        <target state="translated">ID pacchetto non valido: '{0}'.</target>
         <note>0 - package id.</note>
       </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">
@@ -125,7 +125,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="LiveFeed">
         <source>the NuGet gallery</source>
-        <target state="translated">raccolta NuGet</target>
+        <target state="translated">la raccolta NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="LoadFileFromNupkg_FileNotFound">
@@ -492,7 +492,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_duplicateUri">
         <source>'{0}' is a duplicate url which has already been downloaded and will lead to a cyclic dependency. Please correct from server.</source>
-        <target state="translated">'{0}' è un URL duplicato già scaricato che genererà una dipendenza ciclica. Correggere dal server.</target>
+        <target state="translated">'{0}' è un url duplicato già scaricato che genererà una dipendenza ciclica. Correggere dal server.</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandPackagePushed">

@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -121,7 +123,7 @@ namespace NuGet.Protocol.Tests
             }
             catch (AggregateException e)
             {
-                Assert.Equal(e.InnerExceptions.Count(), 1);
+                Assert.Equal(e.InnerExceptions.Count, 1);
                 Assert.Contains(e.InnerExceptions, item => item.GetType().Equals(typeof(TaskCanceledException)));
             }
             Assert.NotEqual(0, logger.Messages.Count);

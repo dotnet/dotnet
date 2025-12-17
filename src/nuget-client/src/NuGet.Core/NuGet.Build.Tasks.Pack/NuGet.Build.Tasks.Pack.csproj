@@ -2,30 +2,26 @@
 
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworksLibrary)</TargetFrameworks>
-    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <NoWarn>$(NoWarn);CS1591;NU5128</NoWarn>
     <AssemblyName>NuGet.Build.Tasks.Pack</AssemblyName>
     <RootNamespace>$(AssemblyName)</RootNamespace>
     <Shipping>true</Shipping>
     <PackProject>true</PackProject>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <XPLATProject>true</XPLATProject>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
     <IncludeSatelliteOutputInPack>true</IncludeSatelliteOutputInPack>
-    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);CreatePackNupkg</TargetsForTfmSpecificContentInPackage>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <DevelopmentDependency>true</DevelopmentDependency>
     <Description>NuGet tasks for MSBuild and dotnet pack.</Description>
     <NoWarn>$(NoWarn);NU5100</NoWarn>
     <DepsFileGenerationMode>old</DepsFileGenerationMode>
     <UsePublicApiAnalyzer>false</UsePublicApiAnalyzer>
+    <DefineConstants>$(DefineConstants);PACK_TASKS</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="..\NuGet.Build.Tasks\Common\MSBuildLogger.cs" />
     <Compile Include="..\NuGet.Build.Tasks\GetProjectTargetFrameworksTask.cs" />
-    <Content Include="NuGet.Build.Tasks.Pack.targets" Pack="true" PackagePath="build;buildCrossTargeting">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -35,10 +31,6 @@
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
     <Reference Include="Microsoft.Build.Utilities.v4.0" Pack="false" />
     <Reference Include="Microsoft.Build.Framework" Pack="false" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="$(BuildCommonDirectory)NOTICES.txt" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' != '$(NETFXTargetFramework)' ">
@@ -61,20 +53,5 @@
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
-  <Target Name="CreatePackNupkg">
-    <PropertyGroup>
-      <PackagePathDir Condition="'$(TargetFramework)' == '$(NETFXTargetFramework)'">Desktop/</PackagePathDir>
-      <PackagePathDir Condition="'$(TargetFramework)' == '$(NETCoreTargetFramework)'">CoreCLR/</PackagePathDir>
-    </PropertyGroup>
-    <ItemGroup>
-      <TfmSpecificPackageFile Include="$(OutputPath)**\NuGet*.resources.dll">
-        <PackagePath>$(PackagePathDir)</PackagePath>
-      </TfmSpecificPackageFile>
-      <TfmSpecificPackageFile Include="$(OutputPath)*.dll">
-        <PackagePath>$(PackagePathDir)</PackagePath>
-      </TfmSpecificPackageFile>
-    </ItemGroup>
-  </Target>
 
 </Project>
