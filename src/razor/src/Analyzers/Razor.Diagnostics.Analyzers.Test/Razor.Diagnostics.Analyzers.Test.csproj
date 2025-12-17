@@ -7,7 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" VersionOverride="5.0.0-2.25461.22" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" VersionOverride="5.0.0-2.25461.22" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" VersionOverride="5.0.0-2.25461.22" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="5.0.0-2.25461.22" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing" />
   </ItemGroup>
 
