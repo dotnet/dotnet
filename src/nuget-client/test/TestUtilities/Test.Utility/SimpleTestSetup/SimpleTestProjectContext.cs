@@ -267,6 +267,7 @@ namespace NuGet.Test.Utility
                 _packageSpec.RestoreMetadata.TargetFrameworks = Frameworks
                     .Select(f => new ProjectRestoreMetadataFrameworkInfo(f.Framework)
                     {
+                        TargetAlias = f.TargetAlias,
                         ProjectReferences = f.ProjectReferences.Select(p => new ProjectRestoreReference()
                         {
                             ProjectUniqueName = p.ProjectName,

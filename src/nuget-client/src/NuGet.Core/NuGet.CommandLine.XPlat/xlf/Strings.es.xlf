@@ -929,6 +929,12 @@ Para obtener más información, visite https://docs.nuget.org/docs/reference/com
         <target state="translated">Identificador del paquete (por ejemplo, 'Newtonsoft.Json').</target>
         <note />
       </trans-unit>
+      <trans-unit id="PackageDownloadCommand_PackageSourceMapping_NoSourcesMapped">
+        <source>Unable to download package '{0}'. PackageSourceMapping is enabled, but no mapped sources were found for this package. The following source(s) were not considered: {1}.</source>
+        <target state="translated">No se puede descargar el paquete “{0}”. PackageSourceMapping está habilitado, pero no se encontraron orígenes asignados para este paquete. No se consideraron los siguientes orígenes: {1}.</target>
+        <note>{0} = package ID 
+{1} = comma-separated list of all configured sources </note>
+      </trans-unit>
       <trans-unit id="PackageDownloadCommand_PackageSourceMapping_NoSuchSource">
         <source>The mapped source '{0}' for package '{1}' was not found among the configured sources.</source>
         <target state="translated">No se encontró el origen asignado '{0}' para el paquete '{1}' entre los orígenes configurados.</target>

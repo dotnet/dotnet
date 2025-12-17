@@ -24,6 +24,7 @@ namespace NuGet.PackageManagement.UI
                 {
                     _packageItemStyle.Setters.Add(new Setter(InfiniteScrollList.FocusVisualStyleProperty, infiniteScrollList.FindResource("MarginFocusVisualStyle")));
                     _packageItemStyle.Setters.Add(new Setter(InfiniteScrollList.TemplateProperty, infiniteScrollList.FindResource("ListBoxItemTemplate")));
+                    _packageItemStyle.Setters.Add(new Setter(InfiniteScrollList.ToolTipProperty, infiniteScrollList.FindResource("PackageToolTipTemplate")));
                 }
             }
         }

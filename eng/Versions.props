@@ -1,13 +1,10 @@
-<Project>
-
+﻿<Project>
   <Import Project="Version.Details.props" />
-
   <PropertyGroup>
     <VersionSDKMinor>2</VersionSDKMinor>
     <VersionPrefix>11.0.$(VersionSDKMinor)00</VersionPrefix>
     <PreReleaseVersionLabel>alpha</PreReleaseVersionLabel>
     <PreReleaseVersionIteration></PreReleaseVersionIteration>
-
     <!-- 
       Allowed values: 'repodefault', 'unstable', 'preview', 'release'
       'repodefault' uses the repo branding defaults.
@@ -20,7 +17,6 @@
     <!-- Arcade features -->
     <UseVSTestRunner>true</UseVSTestRunner>
   </PropertyGroup>
-
   <PropertyGroup>
     <!--
       Building .NET from source depends on several archives, depending on the branch's current
@@ -39,8 +35,8 @@
       of a .NET major or minor release, prebuilts may be needed. When the release is mature, prebuilts
       are not necessary, and this property is removed from the file.
     -->
-    <PrivateSourceBuiltSdkVersion>10.0.100-rtm.25523.111</PrivateSourceBuiltSdkVersion>
-    <PrivateSourceBuiltArtifactsVersion>10.0.100-rtm.25523.111</PrivateSourceBuiltArtifactsVersion>
+    <PrivateSourceBuiltSdkVersion>10.0.101-servicing.25569.105</PrivateSourceBuiltSdkVersion>
+    <PrivateSourceBuiltArtifactsVersion>10.0.101-servicing.25569.105</PrivateSourceBuiltArtifactsVersion>
     <!-- command-line-api dependencies -->
     <SystemCommandLineVersion>2.0.0-beta5.25208.1</SystemCommandLineVersion>
     <!-- msbuild dependencies -->
@@ -56,5 +52,4 @@
     <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
     <OctokitVersion>10.0.0</OctokitVersion>
   </PropertyGroup>
-
 </Project>

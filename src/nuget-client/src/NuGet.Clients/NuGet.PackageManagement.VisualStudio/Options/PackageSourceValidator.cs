@@ -22,7 +22,7 @@ namespace NuGet.PackageManagement.VisualStudio.Options
             string name,
             bool isEnabled,
             bool allowInsecureConnections,
-            List<PackageSource> packageSources)
+            IReadOnlyList<PackageSource> packageSources)
         {
             string trimmedLookupName = lookupName?.Trim() ?? string.Empty;
             if (string.IsNullOrEmpty(trimmedLookupName))
@@ -169,7 +169,7 @@ namespace NuGet.PackageManagement.VisualStudio.Options
             }
         }
 
-        private static PackageSource? FindByName(string packageSourceName, List<PackageSource> packageSources)
+        private static PackageSource? FindByName(string packageSourceName, IReadOnlyList<PackageSource> packageSources)
         {
             _ = packageSources ?? throw new ArgumentNullException(nameof(packageSources));
 

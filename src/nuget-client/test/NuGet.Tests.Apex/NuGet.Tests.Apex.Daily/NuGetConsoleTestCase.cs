@@ -101,6 +101,7 @@ namespace NuGet.Tests.Apex.Daily
             }
         }
 
+        [Ignore("MAUI projects cause UAC prompt for the remainder of the test run, blocking all tests video recordings")]
         [DataTestMethod]
         [DynamicData(nameof(GetMauiTemplates), DynamicDataSourceType.Method)]
         [Timeout(DefaultTimeout)]
@@ -135,6 +136,7 @@ namespace NuGet.Tests.Apex.Daily
             }
         }
 
+        [Ignore("MAUI projects cause UAC prompt for the remainder of the test run, blocking all tests video recordings")]
         [DataTestMethod]
         [DynamicData(nameof(GetMauiTemplates), DynamicDataSourceType.Method)]
         [Timeout(DefaultTimeout)]
@@ -176,6 +178,7 @@ namespace NuGet.Tests.Apex.Daily
             }
         }
 
+        [Ignore("MAUI projects cause UAC prompt for the remainder of the test run, blocking all tests video recordings")]
         [DataTestMethod]
         [DynamicData(nameof(GetMauiTemplates), DynamicDataSourceType.Method)]
         [Timeout(DefaultTimeout)]
