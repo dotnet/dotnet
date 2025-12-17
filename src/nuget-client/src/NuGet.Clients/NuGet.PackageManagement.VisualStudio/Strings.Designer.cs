@@ -259,7 +259,7 @@ namespace NuGet.PackageManagement.VisualStudio {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The source specified is invalid..
+        ///   Looks up a localized string similar to A valid local or remote path must be specified..
         /// </summary>
         public static string Error_PackageSource_InvalidSource {
             get {
@@ -363,6 +363,24 @@ namespace NuGet.PackageManagement.VisualStudio {
         public static string InstallingPackage {
             get {
                 return ResourceManager.GetString("InstallingPackage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Migrating project.json project....
+        /// </summary>
+        public static string Migrating_ProjectJson_Started {
+            get {
+                return ResourceManager.GetString("Migrating_ProjectJson_Started", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Migration Succeeded.
+        /// </summary>
+        public static string Migrating_ProjectJson_Succeeded {
+            get {
+                return ResourceManager.GetString("Migrating_ProjectJson_Succeeded", resourceCulture);
             }
         }
         

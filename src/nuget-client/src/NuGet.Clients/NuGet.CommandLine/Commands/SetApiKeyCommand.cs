@@ -1,3 +1,5 @@
+#nullable disable
+
 using System;
 using NuGet.Common;
 using NuGet.Configuration;

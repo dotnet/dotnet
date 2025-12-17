@@ -124,7 +124,7 @@
       </trans-unit>
       <trans-unit id="AskForUpdateMessage">
         <source>A new version of NuGet Package Manager is available.</source>
-        <target state="translated">새 버전의 NuGet Package Manager를 사용할 수 있습니다.</target>
+        <target state="translated">새 버전의 NuGet 패키지 관리자를 사용할 수 있습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="AutoReferenced">
@@ -249,7 +249,7 @@
       </trans-unit>
       <trans-unit id="CheckBox_Selected">
         <source>Selected</source>
-        <target state="translated">선택한 상태</target>
+        <target state="translated">선택됨</target>
         <note />
       </trans-unit>
       <trans-unit id="Checkbox_ForceRemove">
@@ -604,7 +604,7 @@
       </trans-unit>
       <trans-unit id="Label_MultiplePackageVulnerableVersionToolTip">
         <source>These installed package versions contain vulnerabilities: {0}</source>
-        <target state="translated">설치된 패키지 버전에 취약성이 포함되어 있습니다: {0}</target>
+        <target state="translated">설치된 패키지 버전에 취약성이 포함되어 있습니다. {0}</target>
         <note>{0} are package versions</note>
       </trans-unit>
       <trans-unit id="Label_NetworkError">
@@ -859,7 +859,7 @@
       </trans-unit>
       <trans-unit id="Preview_PackageUpdate">
         <source>{0} version {1} to {2} version {3}</source>
-        <target state="translated">{1} 버전 {0}~{3} 버전 {2}</target>
+        <target state="translated">{1} 버전 {0}~007E;{3} 버전 {2}</target>
         <note>{0} = Old package ID, {1} = Old package version, {2} = New package ID, {3} = New package version</note>
       </trans-unit>
       <trans-unit id="Preview_UnknownProject">
@@ -904,14 +904,17 @@
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandFailure">
         <source>NuGet storage clear failed at {0}. 
-Error: {1}
-Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
-        <target state="translated">{0}에서 NuGet 스토리지 지우기에 실패했습니다. 
-오류: {1}
-자세한 도움말은 https://aka.ms/troubleshoot_nuget_cache를 참조하세요.</target>
+Error: {1}</source>
+        <target state="translated">{0}에 NuGet 스토리지를 지우지 못했습니다. 
+오류: {1}</target>
         <note>{0} :error message;
 {1}: date and time
 </note>
+      </trans-unit>
+      <trans-unit id="ShowMessage_LocalsCommandMoreInformation">
+        <source>For more information, see</source>
+        <target state="translated">자세한 내용은 다음을 참조하세요.</target>
+        <note />
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandSuccess">
         <source>NuGet storage cleared at {0}</source>
@@ -1020,7 +1023,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="Text_LoadingReadme">
         <source>Loading README...</source>
-        <target state="translated">추가 정보 로드 중...</target>
+        <target state="translated">README를 로드하는 중...</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ManageSettings">
@@ -1045,7 +1048,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="Text_NoReadme">
         <source>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
-        <target state="translated">선택한 패키지 버전에 사용할 수 있는 추가 정보가 없습니다. 자세한 내용은 [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme). 참조하세요.</target>
+        <target state="translated">선택한 패키지 버전에 사용할 수 있는 README가 없습니다. 자세한 내용은 [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme) 를 방문하세요.</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
       <trans-unit id="Text_NotAvailableInSource">
@@ -1130,7 +1133,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="Text_ReadmeLoaded">
         <source>README loaded</source>
-        <target state="translated">추가 정보 로드됨</target>
+        <target state="translated">README가 로드되었습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_SearchBoxText">
@@ -1310,7 +1313,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
         <source>Once started, this action cannot be cancelled.</source>
-        <target state="translated">일단 시작하면 이 작업을 취소할 수 없습니다.</target>
+        <target state="translated">일단 시작하면 이 작업은 취소할 수 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">

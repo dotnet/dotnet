@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
@@ -18,10 +20,6 @@ namespace NuGet.PackageManagement.UI.TestContract
     [Export(typeof(NuGetApexUITestService))]
     public class NuGetApexUITestService
     {
-        public NuGetApexUITestService()
-        {
-        }
-
         public ApexTestUIProject GetApexTestUIProject(string project, TimeSpan timeout, TimeSpan interval)
         {
             PackageManagerControl packageManagerControl = null;

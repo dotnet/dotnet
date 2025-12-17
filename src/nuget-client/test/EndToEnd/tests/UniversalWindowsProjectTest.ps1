@@ -19,17 +19,3 @@ function Test-UwpNativeAppUninstallPackage {
 
     Assert-False ($projectT | Test-InstalledPackage -Id PackageWithNativeCustomControl) -Message 'Test package should be uninstalled'
 }
-
-function Test-UwpNativeProjectJsonBuild {
-    [SkipTest('https://github.com/NuGet/Home/issues/12185')]
-    param($context)
-
-    $projectT = New-Project UwpNativeProjectJson
-    
-    # Act
-    Build-Solution
-
-    # Assert
-    $errorlist = Get-Errors
-    Assert-AreEqual 0 $errorlist.Count
-}

@@ -1,3 +1,5 @@
+#nullable disable
+
 using NuGet.Versioning;
 
 namespace NuGet.PackageManagement

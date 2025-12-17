@@ -1682,12 +1682,20 @@ namespace NuGet.PackageManagement.UI {
         
         /// <summary>
         ///   Looks up a localized string similar to NuGet storage clear failed at {0}. 
-        ///Error: {1}
-        ///Please see https://aka.ms/troubleshoot_nuget_cache for more help..
+        ///Error: {1}.
         /// </summary>
         public static string ShowMessage_LocalsCommandFailure {
             get {
                 return ResourceManager.GetString("ShowMessage_LocalsCommandFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to For more information, see.
+        /// </summary>
+        public static string ShowMessage_LocalsCommandMoreInformation {
+            get {
+                return ResourceManager.GetString("ShowMessage_LocalsCommandMoreInformation", resourceCulture);
             }
         }
         

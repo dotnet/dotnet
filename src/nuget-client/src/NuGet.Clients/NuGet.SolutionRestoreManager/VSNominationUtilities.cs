@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -338,7 +336,7 @@ namespace NuGet.SolutionRestoreManager
 
         internal static bool IsPruningEnabledGlobally(IReadOnlyList<IVsTargetFrameworkInfo4> tfms)
         {
-            foreach (var value in GetNonEvaluatedPropertyOrNull(tfms, "_RestorePackagePruningDefault", s => s))
+            foreach (var value in GetNonEvaluatedPropertyOrNull(tfms, "RestorePackagePruningDefault", s => s))
             {
                 if (value is not null && MSBuildStringUtility.IsTrue(value))
                 {

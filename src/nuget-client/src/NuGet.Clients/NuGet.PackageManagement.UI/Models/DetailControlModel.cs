@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -271,7 +273,8 @@ namespace NuGet.PackageManagement.UI
                     packageSearchMetadata,
                     packageDeprecationMetadata,
                     searchResultPackage.KnownOwnerViewModels,
-                    searchResultPackage.DownloadCount);
+                    searchResultPackage.DownloadCount,
+                    PackageVulnerabilities);
 
                 _metadataDict[detailedPackageMetadata.Version] = detailedPackageMetadata;
 
@@ -649,7 +652,8 @@ namespace NuGet.PackageManagement.UI
                     packageSearchMetadata,
                     packageDeprecationMetadata,
                     packageItemViewModel.KnownOwnerViewModels,
-                    packageItemViewModel.DownloadCount);
+                    packageItemViewModel.DownloadCount,
+                    packageItemViewModel.Vulnerabilities);
             }
             else
             {
@@ -669,7 +673,8 @@ namespace NuGet.PackageManagement.UI
                         searchMetadata,
                         deprecationData,
                         knownOwnerViewModels: null,
-                        searchMetadata.DownloadCount);
+                        searchMetadata.DownloadCount,
+                        PackageVulnerabilities);
 
                     _metadataDict[detailedPackageMetadata.Version] = detailedPackageMetadata;
 

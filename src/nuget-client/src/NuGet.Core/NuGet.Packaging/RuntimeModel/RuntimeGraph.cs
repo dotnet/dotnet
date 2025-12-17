@@ -8,8 +8,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using NuGet.Shared;
 
-#nullable enable
-
 namespace NuGet.RuntimeModel
 {
     public sealed class RuntimeGraph : IEquatable<RuntimeGraph>

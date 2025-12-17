@@ -76,7 +76,7 @@
       </trans-unit>
       <trans-unit id="Error_Invalid_package_id">
         <source>Invalid package id : `{0}`.</source>
-        <target state="new">Invalid package id : `{0}`.</target>
+        <target state="translated">无效的包 ID: `{0}`。</target>
         <note>0 - package id.</note>
       </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">
@@ -492,7 +492,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_duplicateUri">
         <source>'{0}' is a duplicate url which has already been downloaded and will lead to a cyclic dependency. Please correct from server.</source>
-        <target state="translated">“{0}”是已下载的重复 URL，将导致循环依赖。请送服务器更正。</target>
+        <target state="translated">“{0}”是已下载的重复 url，将导致循环依赖。请从服务器更正。</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandPackagePushed">

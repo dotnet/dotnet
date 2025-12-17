@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -58,7 +60,7 @@ namespace NuGet.PackageManagement.UI.Test
                     partsWithLinks.Add(licenseText);
                 }
             }
-            Assert.Equal(linkedText.Count(), partsWithLinks.Count);
+            Assert.Equal(linkedText.Length, partsWithLinks.Count);
             for (var i = 0; i < partsWithLinks.Count; i++)
             {
                 Assert.Equal(linkedText[i], partsWithLinks[i].Text);
