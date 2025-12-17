@@ -6,7 +6,7 @@ function Test-SyncPackagesInSolutionUp {
     )
 
     # Arrange
-    $p1 = New-WebApplication
+    $p1 = New-ConsoleApplication
     $p2 = New-ClassLibrary
     
     # Act
@@ -36,7 +36,7 @@ function Test-SyncPackagesInSolutionDown {
     )
 
     # Arrange
-    $p1 = New-WebApplication
+    $p1 = New-ConsoleApplication
     $p2 = New-ClassLibrary
     
     # Act
@@ -65,7 +65,7 @@ function Test-SyncPackagesInSolutionPlural {
     )
 
     # Arrange
-    $p1 = New-WebApplication
+    $p1 = New-ConsoleApplication
     $p2 = New-ClassLibrary
     $p3 = New-ClassLibrary
     $p4 = New-ClassLibrary

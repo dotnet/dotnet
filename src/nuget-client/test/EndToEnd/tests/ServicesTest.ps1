@@ -62,7 +62,7 @@ function Test-VsPackageInstallerServices {
     )
 
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
     $cm = Get-VsComponentModel
     $installerServices = $cm.GetService([NuGet.VisualStudio.IVsPackageInstallerServices])
 
@@ -130,9 +130,9 @@ function Test-GetInstalledPackagesMultipleProjectsSameVersion {
     param($context)
 
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
     $p | Install-Package jquery -Version 1.5 -Source $context.RepositoryPath
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
     $p | Install-Package jquery -Version 1.5 -Source $context.RepositoryPath
 
     $cm = Get-VsComponentModel
@@ -152,9 +152,9 @@ function Test-GetInstalledPackagesMultipleProjectsDifferentVersion {
     param($context)
 
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
     $p | Install-Package jquery -Version 1.5 -Source $context.RepositoryPath
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
     $p | Install-Package jquery -Version 1.6 -Source $context.RepositoryPath
 
     $cm = Get-VsComponentModel
@@ -262,7 +262,7 @@ function VsPackageInstallerEvents {
 
     try {
         # Arrange
-        $p = New-WebApplication
+        $p = New-ConsoleApplication
         $cm = Get-VsComponentModel
         $installerEvents = $cm.GetService([NuGet.VisualStudio.IVsPackageInstallerEvents])
 
@@ -718,71 +718,6 @@ function Test-InstallPackageAPIBindingRedirect
 
     # Assert
     Assert-BindingRedirect $p app.config B '0.0.0.0-2.0.0.0' '2.0.0.0'
-}
-
-function Test-ExecuteInitPS1OnClassLibrary
-{
-    param($context)
-
-    # Arrange
-    $global:PackageInitPS1Var = 0
-    $p = New-ClassLibrary
-
-    Install-Package PackageInitPS1 -Project $p.Name -Source $context.RepositoryRoot
-
-    Assert-True ($global:PackageInitPS1Var -eq 1)
-
-    # Act
-    $result = [API.Test.InternalAPITestHook]::ExecuteInitScript("PackageInitPS1","1.0.2")
-
-    Assert-True $result
-
-    Assert-True ($global:PackageInitPS1Var -eq 1)
-}
-
-function Test-ExecuteInitPS1OnUAP
-{
-    param($context)
-
-    # Arrange
-    $global:PackageInitPS1Var = 0
-    $p = New-BuildIntegratedProj UAPApp
-
-    Install-Package PackageInitPS1 -Project $p.Name -Source $context.RepositoryRoot
-
-    Assert-True ($global:PackageInitPS1Var -eq 1)
-
-    # Act
-    $result = [API.Test.InternalAPITestHook]::ExecuteInitScript("PackageInitPS1","1.0.2")
-
-    Assert-True $result
-
-    Assert-True ($global:PackageInitPS1Var -eq 1)
-}
-
-# NOTE: The following test does not work since ExecuteInitScript needs the powershell pipeline to be free
-#       for it execute scripts. But, under Run-Test, the pipeline is already busy.
-function ExecuteInitPS1OnAspNetCore
-{
-    param($context)
-
-    # Set DNX packages folder to be NUGET global packages folder
-    $env:DNX_PACKAGES = "$env:USERPROFILE\.nuget\packages"
-
-    # Arrange
-    $global:PackageInitPS1Var = 0
-    $p = New-DNXClassLibrary
-
-    Install-Package PackageInitPS1 -Project $p.Name -Source $context.RepositoryRoot
-
-    Assert-True ($global:PackageInitPS1Var -eq 0)
-
-    # Act
-    $result = [API.Test.InternalAPITestHook]::ExecuteInitScript("PackageInitPS1","1.0.2")
-
-    Assert-True $result
-
-    Assert-True ($global:PackageInitPS1Var -eq 1)
 }
 
 function Test-BatchEventsApi

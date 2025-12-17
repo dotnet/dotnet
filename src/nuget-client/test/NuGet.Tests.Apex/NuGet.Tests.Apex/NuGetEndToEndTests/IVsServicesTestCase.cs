@@ -32,7 +32,7 @@ namespace NuGet.Tests.Apex
 
             SolutionService solutionService = VisualStudio.Get<SolutionService>();
             solutionService.CreateEmptySolution();
-            ProjectTestExtension projExt = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
+            ProjectTestExtension projExt = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, CommonUtility.DefaultTargetFramework, "TestProject");
             EnvDTE.Project project = VisualStudio.Dte.Solution.Projects.Item(1);
 
             // Act
@@ -51,7 +51,7 @@ namespace NuGet.Tests.Apex
 
             SolutionService solutionService = VisualStudio.Get<SolutionService>();
             solutionService.CreateEmptySolution();
-            ProjectTestExtension projExt = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
+            ProjectTestExtension projExt = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, CommonUtility.DefaultTargetFramework, "TestProject");
             string projectUniqueName = VisualStudio.Dte.Solution.Projects.Item(1).UniqueName;
 
             // Act
@@ -93,7 +93,7 @@ namespace NuGet.Tests.Apex
 
             SolutionService solutionService = VisualStudio.Get<SolutionService>();
             solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
-            ProjectTestExtension projExt = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
+            ProjectTestExtension projExt = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, CommonUtility.DefaultTargetFramework, "TestProject");
             solutionService.SaveAll();
             EnvDTE.Project project = VisualStudio.Dte.Solution.Projects.Item(1);
 
@@ -117,7 +117,7 @@ namespace NuGet.Tests.Apex
 
             SolutionService solutionService = VisualStudio.Get<SolutionService>();
             solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
-            ProjectTestExtension projExt = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
+            ProjectTestExtension projExt = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, CommonUtility.DefaultTargetFramework, "TestProject");
             solutionService.SaveAll();
             EnvDTE.Project project = VisualStudio.Dte.Solution.Projects.Item(1);
 
@@ -152,7 +152,7 @@ namespace NuGet.Tests.Apex
 
             SolutionService solutionService = VisualStudio.Get<SolutionService>();
             solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
-            ProjectTestExtension projExt = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
+            ProjectTestExtension projExt = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, CommonUtility.DefaultTargetFramework, "TestProject");
             solutionService.SaveAll();
             EnvDTE.Project project = VisualStudio.Dte.Solution.Projects.Item(1);
 
@@ -186,7 +186,7 @@ namespace NuGet.Tests.Apex
 
             SolutionService solutionService = VisualStudio.Get<SolutionService>();
             solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
-            ProjectTestExtension projExt = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
+            ProjectTestExtension projExt = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, CommonUtility.DefaultTargetFramework, "TestProject");
             solutionService.SaveAll();
             EnvDTE.Project project = VisualStudio.Dte.Solution.Projects.Item(1);
 

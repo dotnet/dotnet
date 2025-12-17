@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="ilmerge.props" />
 
   <PropertyGroup>
@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ILMerge" PrivateAssets="All" />
+    <PackageReference Include="ILRepack" PrivateAssets="All" />
     <None Include="$(BuildCommonDirectory)NOTICES.txt" Pack="true" PackagePath="\" />
   </ItemGroup>
 
@@ -42,7 +42,8 @@
       <PathToMergedNuGetExe>$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.Mssign.exe</PathToMergedNuGetExe>
     </PropertyGroup>
     <ItemGroup>
-      <BuildArtifacts Include="$(OutputPath)\*.dll" Exclude="@(MergeExclude)" />
+      <BuildArtifacts Include="$(OutputPath)\*.dll" Exclude="@(MergeExclude);$(OutputPath)\NuGet.Core.dll" />
+      <BuildArtifacts Include="$(OutputPath)\NuGet.Core.dll" />
     </ItemGroup>
     <Message Text="$(MSBuildProjectName) -&gt; $(PathToMergedNuGetExe)" Importance="High" />
   </Target>
@@ -55,9 +56,10 @@
           Condition="'$(BuildingInsideVisualStudio)' != 'true'">
     <Error Text="Build dependencies are inconsistent with mergeinclude specified in ilmerge.props" Condition="'@(BuildArtifacts-&gt;Count())' != '@(MergeInclude-&gt;Count())'" />
     <PropertyGroup>
-      <IlmergeCommand>$(ILMergeConsolePath) $(PathToBuiltNuGetExe) /lib:$(OutputPath) @(BuildArtifacts->'%(filename)%(extension)', ' ') /out:$(PathToMergedNuGetExe) @(MergeAllowDup -> '/allowdup:%(Identity)', ' ')</IlmergeCommand>
+      <IlmergeCommand>$(ILRepack) $(PathToBuiltNuGetExe) /lib:$(OutputPath) @(BuildArtifacts->'%(fullpath)', ' ') /out:$(PathToMergedNuGetExe) @(MergeAllowDup -> '/allowdup:%(Identity)', ' ') /log:$(OutputPath)IlMergeLog.txt /allowduplicateresources</IlmergeCommand>
       <IlmergeCommand Condition="'$(SkipSigning)' != 'true' And Exists($(AssemblyOriginatorKeyFile))">$(IlmergeCommand) /delaysign /keyfile:$(AssemblyOriginatorKeyFile)</IlmergeCommand>
     </PropertyGroup>
+    <Error Condition="'$(ILRepack)' == ''" Text="ILRepack not found" />
     <MakeDir Directories="$([System.IO.Path]::GetDirectoryName($(PathToMergedNuGetExe)))" />
     <Exec Command="$(IlmergeCommand)" ContinueOnError="false" />
   </Target>

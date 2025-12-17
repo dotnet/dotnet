@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -16,7 +18,6 @@ namespace NuGet.ProjectModel
     public class LockFileFormat
     {
         public static readonly int Version = 3;
-        public static readonly string LockFileName = "project.lock.json";
         // If this is ever renamed, you should also rename NoOpRestoreUtilities.NoOpCacheFileName to keep them in sync.
         public static readonly string AssetsFileName = "project.assets.json";
 
@@ -142,7 +143,7 @@ namespace NuGet.ProjectModel
         {
             try
             {
-                var lockFile = JsonUtility.LoadJson(stream, Utf8JsonReaderExtensions.LockFileConverter, flags);
+                var lockFile = JsonUtility.LoadJson(stream, Utf8JsonStreamLockFileConverters.LockFileConverter, flags);
                 lockFile.Path = path;
                 return lockFile;
             }

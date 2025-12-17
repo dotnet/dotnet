@@ -665,7 +665,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">Element „{0}” nie może mieć wartości null.</target>
+        <target state="translated">Właściwość „{0}” nie może mieć wartości null.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="RangeOutOfBoundsForArray">
@@ -959,9 +959,9 @@
     Fingerprint (SHA-256):  {2}
     Certificate (PEM):
 {3}</source>
-        <target state="translated">Następujący certyfikat główny X.509 nie jest zaufany, ponieważ nie występuje w pakiecie certyfikatów w {0}. Aby uzyskać więcej informacji, zobacz dokumentację dla NU3042.
-    Temat: {1}
-    Odcisk palca (SHA-256): {2}
+        <target state="translated">Następujący certyfikat główny X.509 nie jest zaufany, ponieważ nie występuje w pakiecie certyfikatów w {0}.  Aby uzyskać więcej informacji, zobacz dokumentację dla NU3042.
+    Temat:  {1}
+    Odcisk palca (SHA-256):  {2}
     Certyfikat (PEM):
 {3}</target>
         <note>0 is a file path, 1 is a certificate subject, 2 is a certificate fingerprint, and 3 is a PEM-encoded certificate.</note>
@@ -972,9 +972,9 @@
     Fingerprint (SHA-256):  {1}
     Certificate (PEM):
 {2}</source>
-        <target state="translated">Następujący certyfikat główny X.509 nie jest zaufany, ponieważ nie znaleziono żadnych pakietów certyfikatów. Aby uzyskać więcej informacji, zobacz dokumentację dla NU3042.
-    Temat: {0}
-    Odcisk palca (SHA-256): {1}
+        <target state="translated">Następujący certyfikat główny X.509 nie jest zaufany, ponieważ nie znaleziono żadnych pakietów certyfikatów.  Aby uzyskać więcej informacji, zobacz dokumentację dla NU3042.
+    Temat:  {0}
+    Odcisk palca (SHA-256):  {1}
     Certyfikat (PEM):
 {2}</target>
         <note>0 is a certificate subject, 1 is a certificate fingerprint, and 2 is a PEM-encoded certificate.</note>

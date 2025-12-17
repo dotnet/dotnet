@@ -113,7 +113,7 @@
       </trans-unit>
       <trans-unit id="DefaultError_NoMatchInAllowList">
         <source>The package signature certificate fingerprint does not match any certificate fingerprint in the allow list.</source>
-        <target state="translated">L'empreinte digitale de certificat de signature de package ne correspond à aucune empreinte digitale de certificat de la liste d'autorisation.</target>
+        <target state="translated">L'empreinte digitale de certificat de signature du package ne correspond à aucune empreinte digitale de certificat de la liste verte.</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorAuthorTargetCannotBeACountersignature">
@@ -190,7 +190,7 @@
       </trans-unit>
       <trans-unit id="ErrorPackageSignatureInvalid">
         <source>The package signature is invalid or cannot be verified on this platform.</source>
-        <target state="translated">La signature de package n'est pas valide ou ne peut pas être vérifiée sur cette plateforme.</target>
+        <target state="translated">La signature du package n'est pas valide ou ne peut pas être vérifiée sur cette plateforme.</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorUnableCheckPackageEntries">
@@ -257,7 +257,7 @@
       </trans-unit>
       <trans-unit id="Error_NotOneRepositoryCounterSignature">
         <source>The package signature contains multiple repository countersignatures.</source>
-        <target state="translated">La signature de package contient plusieurs contre-signatures de dépôt.</target>
+        <target state="translated">La signature du package contient plusieurs contre-signatures de dépôt.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_RepositorySettings_UnsignedPackage">
@@ -320,7 +320,7 @@
       </trans-unit>
       <trans-unit id="InvalidArgument">
         <source>The argument is invalid.</source>
-        <target state="translated">L'argument est non valide.</target>
+        <target state="translated">L'argument n'est pas valide.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidArgumentCombination">
@@ -399,7 +399,7 @@
       </trans-unit>
       <trans-unit id="InvalidSignatureContent">
         <source>The package signature content is invalid.</source>
-        <target state="translated">Le contenu de la signature de package n'est pas valide.</target>
+        <target state="translated">Le contenu de la signature du package n'est pas valide.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidTimestampSignature">
@@ -428,7 +428,7 @@
       </trans-unit>
       <trans-unit id="Message_Path">
         <source>Path: {0}</source>
-        <target state="translated">Chemin : {0}</target>
+        <target state="translated">Chemin d’accès : {0}</target>
         <note>0 - folder path</note>
       </trans-unit>
       <trans-unit id="MinClientVersionAlreadyExist">
@@ -665,7 +665,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">'{0}' ne peut pas avoir la valeur null.</target>
+        <target state="translated">« {0} » ne peut pas avoir la valeur nul.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="RangeOutOfBoundsForArray">
@@ -730,7 +730,7 @@
       </trans-unit>
       <trans-unit id="SignatureContainsInvalidAttribute">
         <source>Package signature contains an invalid attribute: {0}</source>
-        <target state="translated">La signature de package contient un attribut non valide : {0}</target>
+        <target state="translated">La signature du package contient un attribut non valide : {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="SignatureDebug_HashOidFound">
@@ -925,12 +925,12 @@
       </trans-unit>
       <trans-unit id="UnableToReadPackageHashInformation">
         <source>Package hash information could not be read from the package signature.</source>
-        <target state="translated">Impossible de lire les informations de hachage de package à partir de la signature de package.</target>
+        <target state="translated">Impossible de lire les informations de hachage de package à partir de la signature du package.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnexpectedPackageSignatureVerificationError">
         <source>An unexpected error occurred while verifying a package signature.</source>
-        <target state="translated">Une erreur inattendue s'est produite lors de la vérification de la signature de package.</target>
+        <target state="translated">Une erreur inattendue s'est produite lors de la vérification de la signature du package.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnrecognizedEnumValue">
@@ -959,10 +959,10 @@
     Fingerprint (SHA-256):  {2}
     Certificate (PEM):
 {3}</source>
-        <target state="translated">Le certificat racine X.509 suivant n’est pas approuvé, car il n’est pas présent dans le bundle de certificats à {0}. Pour plus d’informations, consultez la documentation relative à NU3042.
-    Objet : {1}
-    Empreinte digitale (SHA-256) : {2}
-    Certificat (PEM) :
+        <target state="translated">Le certificat racine X.509 suivant n’est pas approuvé, car il n’est pas présent dans le bundle de certificats dans {0}.  Pour plus d’informations, consultez la documentation relative à NU3042.
+    Objet :  {1}
+    Empreinte (SHA-256) :  {2}
+    Certificat (PEM) :
 {3}</target>
         <note>0 is a file path, 1 is a certificate subject, 2 is a certificate fingerprint, and 3 is a PEM-encoded certificate.</note>
       </trans-unit>
@@ -973,9 +973,9 @@
     Certificate (PEM):
 {2}</source>
         <target state="translated">Le certificat racine X.509 suivant n’est pas approuvé, car aucun bundle de certificats n’a été trouvé.  Pour plus d’informations, consultez la documentation relative à NU3042.
-    Objet :  {0}
-    Empreinte (SHA-256):  {1}
-    Certificat (PEM):
+    Objet :  {0}
+    Empreinte (SHA-256) :  {1}
+    Certificat (PEM) :
 {2}</target>
         <note>0 is a certificate subject, 1 is a certificate fingerprint, and 2 is a PEM-encoded certificate.</note>
       </trans-unit>

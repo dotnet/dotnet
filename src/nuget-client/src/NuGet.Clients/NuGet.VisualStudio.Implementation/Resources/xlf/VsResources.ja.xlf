@@ -70,7 +70,7 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="Error_ProjectNotInCache">
         <source>Project {0} does not exist in the project system cache.</source>
-        <target state="translated">プロジェクト {0} はプロジェクト システム キャッシュに存在しません。</target>
+        <target state="translated">プロジェクト {0} がプロジェクト システム キャッシュに存在しません。</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidNetStandardFramework">
@@ -305,17 +305,17 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PreinstalledPackages_FailedToInstallPackage">
         <source>Could not add all required packages to the project. The following packages failed to install from '{0}':</source>
-        <target state="translated">必要なすべてのパッケージをプロジェクトに追加できませんでした。'{0}' からの次のパッケージのインストールが失敗しました: </target>
+        <target state="translated">必要なすべてのパッケージをプロジェクトに追加できませんでした。次のパッケージを '{0}' からインストールできませんでした:</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_InvalidExtensionId">
         <source>The preinstalled packages have a reference to a missing Extension. Could not find an Extension with ID '{0}'.</source>
-        <target state="translated">プレインストールされているパッケージに、不足している拡張機能への参照があります。ID '{0}' の拡張機能が見つかりませんでした。</target>
+        <target state="translated">プレインストールされたパッケージに、見つからない拡張機能への参照が含まれています。ID '{0}' の拡張機能が見つかりませんでした。</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_InvalidRegistryValue">
         <source>The preinstalled packages have a reference to a missing Registry value. Could not find a Registry key with name '{0}' under '{1}'.</source>
-        <target state="translated">プレインストールされているパッケージに、不足しているレジストリ値への参照があります。'{0}' という名前のレジストリ キーが '{1}' に見つかりませんでした。</target>
+        <target state="translated">プレインストールされたパッケージに、見つからないレジストリ値への参照が含まれています。名前 '{0}' のレジストリ キーが '{1}' で見つかりませんでした。</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_PackageInstallStatus">
@@ -325,12 +325,12 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PreinstalledPackages_RegistryKeyError">
         <source>The preinstalled packages are configured to use a Registry-provided package repository but there was an error accessing Registry key '{0}'.</source>
-        <target state="translated">プレインストールされているパッケージがレジストリ提供のパッケージ リポジトリを使用するように構成されていますが、レジストリ キー '{0}' へのアクセスでエラーが発生しました。</target>
+        <target state="translated">プレインストールされたパッケージは、レジストリで指定されたパッケージ リポジトリを使用するように構成されていますが、レジストリ キー '{0}' へのアクセス中にエラーが発生しました。</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_VersionConflict">
         <source>Attempting to install version '{1}' of '{0}' but the project already includes a different version. Skipping...</source>
-        <target state="translated">'{0}' のバージョン '{1}' のインストールを試みましたが、プロジェクトには既に異なるバージョンが含まれています。スキップしています...</target>
+        <target state="translated">'{0}' のバージョン '{1}' をインストールしようとしていますが、プロジェクトには既に別のバージョンが含まれています。スキップしています...</target>
         <note />
       </trans-unit>
       <trans-unit id="ProjectReferenceBrowseObjectClassName">
@@ -350,37 +350,37 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">'{0}' を NULL にすることはできません。</target>
+        <target state="translated">'{0}' を null 値にはできません。</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="TemplateWizard_ErrorDialogTitle">
         <source>Package Installation Error</source>
-        <target state="translated">パッケージ インストール エラー</target>
+        <target state="translated">パッケージのインストール エラー</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidPackageElementAttributes">
         <source>The project template lists one or more packages with missing, empty, or invalid values for the "id" or "version" attributes. Both attributes are required and must have valid values.</source>
-        <target state="translated">プロジェクト テンプレートに列記されている 1 つ以上のパッケージの "id" または "version" 属性の値が、ないか、空か、または無効です。どちらの属性も必須であり、有効な値が必要です。</target>
+        <target state="translated">プロジェクト テンプレートの一覧に含まれる 1 つ以上のパッケージで、"id" または "version" 属性の値が見つからないか、空であるか、または無効です。両方の属性が必須で、有効な値を指定する必要があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidRepositoryAttribute">
         <source>The "repository" attribute of the package element has an invalid value: '{0}'. Valid values are: 'template' or 'extension'.</source>
-        <target state="translated">パッケージ要素の "repository" 属性の値が無効です: '{0}'。有効な値は、'template' または 'extension' です。</target>
+        <target state="translated">パッケージ要素の "repository" 属性に無効な値が含まれています: '{0}'。有効な値: 'template' または 'extension'。</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidWizardRunKind">
         <source>This template wizard can only be applied to single-project or project-item templates.</source>
-        <target state="translated">このテンプレート ウィザードは、単一のプロジェクト テンプレートまたはプロジェクト アイテム テンプレートにのみ適用できます。</target>
+        <target state="translated">このテンプレート ウィザードは、単一のプロジェクトまたはプロジェクトアイテム テンプレートにのみ適用できます。</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_MissingExtensionId">
         <source>The project template is configured to use an Extension-specific package repository but the Extension ID has not been specified. Use the "repositoryId" attribute to specify the Extension ID.</source>
-        <target state="translated">プロジェクト テンプレートは拡張機能固有のパッケージ リポジトリを使用するように構成されていますが、拡張機能 ID が指定されていません。"repositoryId" 属性を使用して拡張機能 ID を指定してください。</target>
+        <target state="translated">プロジェクト テンプレートは拡張機能に固有のパッケージ リポジトリを使用するように構成されていますが、拡張機能 ID が指定されていません。"repositoryId" 属性を使用して、拡張機能 ID を指定してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_MissingRegistryKeyName">
         <source>The project template is configured to use a Registry-provided package repository but the Registry value name has not been specified. Use the "keyName" attribute to specify the Registry value.</source>
-        <target state="translated">プロジェクト テンプレートはレジストリ提供のパッケージ リポジトリを使用するように構成されていますが、レジストリ値の名前が指定されていません。"keyName" 属性を使用してレジストリ値を指定してください。</target>
+        <target state="translated">プロジェクト テンプレートはレジストリで指定されたパッケージ リポジトリを使用するように構成されていますが、レジストリ値の名前が指定されていません。"keyName" 属性を使用して、レジストリ値を指定してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="UnknownPackage">

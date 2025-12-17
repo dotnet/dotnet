@@ -27,7 +27,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(SignWithNuGetKey)' == 'true' Or '$(SignWithMicrosoftKey)' == 'true'">
-    <PublicSign>true</PublicSign>
+    <PublicSign Condition="'$(DotNetBuildFromVMR)' == 'true' Or '$(IsXplat)' == 'true' ">true</PublicSign>
+    <DelaySign Condition="'$(DotNetBuildFromVMR)' != 'true' And '$(IsXplat)' != 'true' ">true</DelaySign>
   </PropertyGroup>
 
   <ItemGroup>
