@@ -45,7 +45,6 @@
 ./sdk/x.y.z/Extensions/*/Microsoft.TestPlatform.Extensions.EventLogCollector.resources.dll|msft
 
 # nuget has multiple copies and inconsistencies between MSFT and SB - https://github.com/dotnet/sdk/issues/50218
-./sdk/x.y.z/Sdks/NuGet.Build.Tasks.Pack/
 
 # MSFT build is missing nuget loc files - https://github.com/NuGet/Home/issues/14514
 ./sdk/x.y.z/*/NuGet.Build.Tasks.resources.dll|sb
