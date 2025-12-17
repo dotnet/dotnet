@@ -136,14 +136,70 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
         await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile, fileKind: RazorFileKind.Legacy);
     }
 
+    [Theory]
+    [CombinatorialData]
+    public async Task RenderMode(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
+
+            <!-- above and below should be classified the same -->
+
+            @{
+                var r = Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveAuto;
+            }
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task RenderMode_Razor9(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
+
+            <!-- above and below should NOT be classified the same in Razor 9.0 -->
+
+            @{
+                var r = Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveAuto;
+            }
+            """;
+
+        await VerifySemanticTokensAsync(
+            input,
+            colorBackground,
+            miscellaneousFile,
+            projectConfigure: p => p.RazorLanguageVersion = RazorLanguageVersion.Version_9_0);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task RenderMode_Expression(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @rendermode @(Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer)
+
+            <!-- above and below should be classified the same -->
+
+            @{
+                var r = Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveAuto;
+            }
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
     private async Task VerifySemanticTokensAsync(
         string input,
         bool colorBackground,
         bool miscellaneousFile,
         RazorFileKind? fileKind = null,
+        Action<RazorProjectBuilder>? projectConfigure = null,
         [CallerMemberName] string? testName = null)
     {
-        var document = CreateProjectAndRazorDocument(input, fileKind, miscellaneousFile: miscellaneousFile);
+        var document = CreateProjectAndRazorDocument(input, fileKind, miscellaneousFile: miscellaneousFile, projectConfigure: projectConfigure);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         // We need to manually initialize the OOP service so we can get semantic token info later

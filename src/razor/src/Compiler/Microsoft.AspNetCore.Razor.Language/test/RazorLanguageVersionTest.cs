@@ -166,6 +166,34 @@ public class RazorLanguageVersionTest
     }
 
     [Fact]
+    public void TryParse100()
+    {
+        // Arrange
+        var value = "10.0";
+
+        // Act
+        var result = RazorLanguageVersion.TryParse(value, out var version);
+
+        // Assert
+        Assert.True(result);
+        Assert.Same(RazorLanguageVersion.Version_10_0, version);
+    }
+
+    [Fact]
+    public void TryParse110()
+    {
+        // Arrange
+        var value = "11.0";
+
+        // Act
+        var result = RazorLanguageVersion.TryParse(value, out var version);
+
+        // Assert
+        Assert.True(result);
+        Assert.Same(RazorLanguageVersion.Version_11_0, version);
+    }
+
+    [Fact]
     public void TryParseLatest()
     {
         // Arrange
@@ -195,10 +223,10 @@ public class RazorLanguageVersionTest
     }
 
     [Fact]
-    public void LatestPointsToNewestVersion()
+    public void PreviewPointsToNewestVersion()
     {
         // Arrange
-        var v = RazorLanguageVersion.Parse("latest");
+        var v = RazorLanguageVersion.Parse("preview");
         var versions = typeof(RazorLanguageVersion).GetFields(BindingFlags.Public | BindingFlags.Static)
             .Where(f => f.Name.StartsWith("Version_", StringComparison.Ordinal))
             .Select(f => f.GetValue(obj: null))
@@ -208,7 +236,7 @@ public class RazorLanguageVersionTest
         Assert.NotEmpty(versions);
         foreach (var version in versions)
         {
-            Assert.True(version.CompareTo(v) <= 0, $"RazorLanguageVersion {version} has a higher version than RazorLanguageVersion.Latest");
+            Assert.True(version.CompareTo(v) <= 0, $"RazorLanguageVersion {version} has a higher version than RazorLanguageVersion.Preview");
         }
     }
 }

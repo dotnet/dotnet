@@ -22,7 +22,7 @@ public class DocumentSymbolEndpointTest(ITestOutputHelper testOutput) : SingleSe
     public Task DocumentSymbols_CSharpClassWithMethods(bool hierarchical)
         => VerifyDocumentSymbolsAsync(
             """
-            @functions {
+            {|ExecuteAsync():|}@functions {
                 class {|AspNetCoreGeneratedDocument.test.C:C|}
                 {
                     private void {|HandleString(string s):HandleString|}(string s)
@@ -49,7 +49,7 @@ public class DocumentSymbolEndpointTest(ITestOutputHelper testOutput) : SingleSe
     public Task DocumentSymbols_CSharpMethods(bool hierarchical)
         => VerifyDocumentSymbolsAsync(
             """
-            @functions {
+            {|ExecuteAsync():|}@functions {
                 private void {|HandleString(string s):HandleString|}(string s)
                 {
                     s += "Hello";
@@ -132,7 +132,7 @@ public class DocumentSymbolEndpointTest(ITestOutputHelper testOutput) : SingleSe
         foreach (var symbol in documentSymbols)
         {
             seen++;
-            Assert.True(spansDict.TryGetValue(symbol.Detail.AssumeNotNull(), out var spans), $"Expected {symbol.Name} to be in test provided markers");
+            Assert.True(spansDict.TryGetValue(symbol.Detail ?? symbol.Name, out var spans), $"Expected {symbol.Name} to be in test provided markers");
             var expectedRange = sourceText.GetRange(Assert.Single(spans));
             Assert.Equal(expectedRange, symbol.SelectionRange);
 
