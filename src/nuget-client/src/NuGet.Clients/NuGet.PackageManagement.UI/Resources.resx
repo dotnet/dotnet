@@ -551,8 +551,7 @@
   </data>
   <data name="ShowMessage_LocalsCommandFailure" xml:space="preserve">
     <value>NuGet storage clear failed at {0}. 
-Error: {1}
-Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
+Error: {1}</value>
     <comment>{0} :error message;
 {1}: date and time
 </comment>
@@ -1012,5 +1011,8 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
   </data>
   <data name="VSOptions_Text_ClearLocalsPromptTitle" xml:space="preserve">
     <value>Clear all local NuGet resources?</value>
+  </data>
+  <data name="ShowMessage_LocalsCommandMoreInformation" xml:space="preserve">
+    <value>For more information, see</value>
   </data>
 </root>

@@ -113,7 +113,7 @@
       </trans-unit>
       <trans-unit id="DefaultError_NoMatchInAllowList">
         <source>The package signature certificate fingerprint does not match any certificate fingerprint in the allow list.</source>
-        <target state="translated">Der Zertifikatfingerabdruck der Paketsignatur entspricht keinem Zertifikatfingerabdruck in der Positivliste.</target>
+        <target state="translated">Der Zertifikatfingerabdruck der Paketsignatur entspricht keinem Zertifikatfingerabdruck in der Zulassungsliste.</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorAuthorTargetCannotBeACountersignature">
@@ -665,7 +665,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">"{0}" darf nicht Null sein.</target>
+        <target state="translated">„{0}“ darf nicht Null sein.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="RangeOutOfBoundsForArray">
@@ -959,7 +959,7 @@
     Fingerprint (SHA-256):  {2}
     Certificate (PEM):
 {3}</source>
-        <target state="translated">Das folgende X.509-Stammzertifikat ist nicht vertrauenswürdig, da es nicht im Zertifikatbundle unter {0} vorhanden ist. Weitere Informationen finden Sie in der Dokumentation zu NU3042.
+        <target state="translated">Das folgende X.509-Stammzertifikat ist nicht vertrauenswürdig, da es nicht im Zertifikatbundle unter {0} vorhanden ist.  Weitere Informationen finden Sie in der Dokumentation zu NU3042.
     Betreff:  {1}
     Fingerabdruck (SHA-256):  {2}
     Zertifikat (PEM):
@@ -972,7 +972,7 @@
     Fingerprint (SHA-256):  {1}
     Certificate (PEM):
 {2}</source>
-        <target state="translated">Das folgende X.509-Stammzertifikat ist nicht vertrauenswürdig, da kein Zertifikatpaket gefunden wurde.  Weitere Informationen finden Sie in der Dokumentation zu NU3042.
+        <target state="translated">Das folgende X.509-Stammzertifikat ist nicht vertrauenswürdig, da kein Zertifikatbundle gefunden wurde.  Weitere Informationen finden Sie in der Dokumentation zu NU3042.
     Betreff:  {0}
     Fingerabdruck (SHA-256):  {1}
     Zertifikat (PEM):

@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -315,18 +317,8 @@ namespace NuGet.Commands
         private static string[] GetDependencyTargetGraphs(PackageSpec spec, LibraryDependency dependency)
         {
             var infos = new List<TargetFrameworkInformation>();
-
-            if (spec.Dependencies.Contains(dependency))
-            {
-                // If the dependency is top level add it for all tfms
-                infos.AddRange(spec.TargetFrameworks);
-            }
-            else
-            {
-                // Add all tfms where the dependency is found
-                infos.AddRange(spec.TargetFrameworks.Where(e => e.Dependencies.Contains(dependency)));
-            }
-
+            // Add all tfms where the dependency is found
+            infos.AddRange(spec.TargetFrameworks.Where(e => e.Dependencies.Contains(dependency)));
             // Convert framework to target graph name.
             return infos.Select(e => e.FrameworkName.ToString()).ToArray();
         }

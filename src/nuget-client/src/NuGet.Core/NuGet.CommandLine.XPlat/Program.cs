@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -8,9 +10,13 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using Microsoft.Extensions.CommandLineUtils;
-using NuGet.CommandLine.XPlat.Commands.Package.Update;
 using NuGet.Commands;
 using NuGet.Common;
+
+#if DEBUG
+using NuGet.CommandLine.XPlat.Commands.Package.Update;
+using NuGet.CommandLine.XPlat.Commands.Package.PackageDownload;
+#endif
 
 namespace NuGet.CommandLine.XPlat
 {
@@ -99,7 +105,10 @@ namespace NuGet.CommandLine.XPlat
                     rootCommand.Subcommands.Add(packageCommand);
 
                     PackageSearchCommand.Register(packageCommand, getHidePrefixLogger);
+#if DEBUG
                     PackageUpdateCommand.Register(packageCommand, interactiveOption);
+                    PackageDownloadCommand.Register(packageCommand, interactiveOption);
+#endif
                 }
                 else
                 {
@@ -108,8 +117,8 @@ namespace NuGet.CommandLine.XPlat
 
                     ConfigCommand.Register(nugetCommand, getHidePrefixLogger);
                     ConfigCommand.Register(rootCommand, getHidePrefixLogger);
-                    Commands.Why.WhyCommand.Register(nugetCommand, getHidePrefixLogger);
-                    Commands.Why.WhyCommand.Register(rootCommand, getHidePrefixLogger);
+                    Commands.Why.WhyCommand.Register(nugetCommand, Spectre.Console.AnsiConsole.Console);
+                    Commands.Why.WhyCommand.Register(rootCommand, Spectre.Console.AnsiConsole.Console);
                 }
 
                 CancellationTokenSource tokenSource = new CancellationTokenSource();
@@ -246,7 +255,13 @@ namespace NuGet.CommandLine.XPlat
             if (args.Length >= 2 && arg0 == "package")
             {
                 string arg1 = args[1];
-                if (arg1 == "search" || arg1 == "update")
+#if DEBUG
+                if (arg1 == "update" || arg1 == "download")
+                {
+                    return true;
+                }
+#endif
+                if (arg1 == "search")
                 {
                     return true;
                 }

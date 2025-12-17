@@ -36,25 +36,134 @@
 | **Linux-musl-arm** | [![][linux-musl-arm-badge-main]][linux-musl-arm-version-main]<br>[tar.gz][linux-musl-arm-targz-main] - [Checksum][linux-musl-arm-targz-checksum-main] | [![][linux-musl-arm-badge-10.0.2XX]][linux-musl-arm-version-10.0.2XX]<br>[tar.gz][linux-musl-arm-targz-10.0.2XX] - [Checksum][linux-musl-arm-targz-checksum-10.0.2XX] |
 | **Linux-musl-arm64** | [![][linux-musl-arm64-badge-main]][linux-musl-arm64-version-main]<br>[tar.gz][linux-musl-arm64-targz-main] - [Checksum][linux-musl-arm64-targz-checksum-main] | [![][linux-musl-arm64-badge-10.0.2XX]][linux-musl-arm64-version-10.0.2XX]<br>[tar.gz][linux-musl-arm64-targz-10.0.2XX] - [Checksum][linux-musl-arm64-targz-checksum-10.0.2XX] |
 
-Reference notes:
-> **1**: Our Debian packages are put together slightly differently than the other OS specific installers. Instead of combining everything, we have separate component packages that depend on each other. If you're installing the SDK from the .deb file (via dpkg or similar), then you'll need to install the corresponding dependencies first:
-> * [Host, Host FX Resolver, and Shared Framework](https://github.com/dotnet/runtime/blob/main/docs/project/dogfooding.md#nightly-builds-table)
-> * [ASP.NET Core Shared Framework](https://github.com/aspnet/AspNetCore/blob/main/docs/DailyBuilds.md)
+# .NET SDK Daily Builds
 
-#### Runtime and SDK Relationship
+## Installation Instructions
 
-- For the 1xx band, the runtime and SDK are built together in the same build. They will differ on patch version (e.g. SDK version 10.0.100 == runtime patch version 10.0.0). The build suffix (e.g. -rc2.1234.105) suffix will always match.
-- For the 2xx and later bands, the 1xx runtime flows to 2xx+. The version of the runtime that will be used in the 2xx SDK can be found in sdk's [eng/Version.Details.xml file](/src/sdk/eng/Version.Details.xml). Look for the version of the `Microsoft.NETCore.App.Ref` dependency.
+### Windows
 
-#### Manually construct download links:
+Download the latest SDK installer or binaries from the builds table above.
 
-**SDK example (for dotnet-sdk msi for win-x64):**
-> `https://ci.dot.net/public/Sdk/<version>/dotnet-sdk-<version>-win-x64.exe`
+Windows SDK and Runtime installers are complete packages and do not require separate dependency installation.
 
-**Runtime example (for dotnet-runtime msi for win-x64):**
-> `https://ci.dot.net/public/Runtime/<version>/dotnet-runtime-<version>-win-x64.exe`
+### Linux (DEB and RPM Packages)
 
-Where `<version>` is the same for both SDK and runtime. You can get the current version numbers from the version badge links or productCommit files in the table above.
+#### SDK Packages
+
+Download the appropriate SDK package for your distribution:
+- **Debian/Ubuntu:** `dotnet-sdk-<version>-x64.deb`
+- **Red Hat/Fedora/CentOS:** `dotnet-sdk-<version>-x64.rpm`
+
+#### Dependencies
+
+The following runtime packages are required dependencies and must be installed before installing the SDK:
+
+**For Debian/Ubuntu (.deb):**
+- `dotnet-host-<version>-x64.deb`
+- `dotnet-targeting-pack-<version>-x64.deb`
+- `dotnet-hostfxr-<version>-x64.deb`
+- `dotnet-apphost-pack-<version>-x64.deb`
+- `dotnet-runtime-deps-<version>-x64.deb`
+- `dotnet-runtime-<version>-x64.deb`
+
+**For Red Hat/Fedora/CentOS (.rpm):**
+- `dotnet-host-<version>-x64.rpm`
+- `dotnet-targeting-pack-<version>-x64.rpm`
+- `dotnet-hostfxr-<version>-x64.rpm`
+- `dotnet-apphost-pack-<version>-x64.rpm`
+- `dotnet-runtime-deps-<version>-x64.rpm`
+- `dotnet-runtime-<version>-x64.rpm`
+
+The following ASP.NET Core packages are required for ASP.NET Core development:
+
+**For Debian/Ubuntu (.deb):**
+- `aspnetcore-targeting-pack-<version>-x64.deb`
+- `aspnetcore-runtime-<version>-x64.deb`
+
+**For Red Hat/Fedora/CentOS (.rpm):**
+- `aspnetcore-targeting-pack-<version>-x64.rpm`
+- `aspnetcore-runtime-<version>-x64.rpm`
+
+These packages can be downloaded from:
+
+**Runtime packages:**
+```
+https://ci.dot.net/public/Runtime/<version>/dotnet-host-<version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<version>/dotnet-targeting-pack-<version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<version>/dotnet-hostfxr-<version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<version>/dotnet-apphost-pack-<version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<version>/dotnet-runtime-deps-<version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<version>/dotnet-runtime-<version>-x64.<ext>
+```
+
+**ASP.NET Core packages:**
+```
+https://ci.dot.net/public/aspnetcore/Runtime/<version>/aspnetcore-targeting-pack-<version>-x64.<ext>
+https://ci.dot.net/public/aspnetcore/Runtime/<version>/aspnetcore-runtime-<version>-x64.<ext>
+```
+
+Where:
+- `<version>` is the same for both SDK and runtime (can be obtained from the version badge links or productCommit files in the table above)
+- `<ext>` is either `deb` for Debian/Ubuntu or `rpm` for Red Hat/Fedora/CentOS
+
+#### Installation Order
+
+Install the packages in the following order:
+
+1. Runtime dependencies (in order):
+   - `dotnet-host-<version>-x64.<ext>`
+   - `dotnet-targeting-pack-<version>-x64.<ext>`
+   - `dotnet-hostfxr-<version>-x64.<ext>`
+   - `dotnet-apphost-pack-<version>-x64.<ext>`
+   - `dotnet-runtime-deps-<version>-x64.<ext>`
+   - `dotnet-runtime-<version>-x64.<ext>`
+
+2. ASP.NET Core dependencies (if needed):
+   - `aspnetcore-targeting-pack-<version>-x64.<ext>`
+   - `aspnetcore-runtime-<version>-x64.<ext>`
+
+3. Finally, install the SDK:
+   - `dotnet-sdk-<version>-x64.<ext>`
+
+**Example installation commands:**
+
+For Debian/Ubuntu:
+```bash
+sudo dpkg -i dotnet-host-<version>-x64.deb
+sudo dpkg -i dotnet-targeting-pack-<version>-x64.deb
+sudo dpkg -i dotnet-hostfxr-<version>-x64.deb
+sudo dpkg -i dotnet-apphost-pack-<version>-x64.deb
+sudo dpkg -i dotnet-runtime-deps-<version>-x64.deb
+sudo dpkg -i dotnet-runtime-<version>-x64.deb
+sudo dpkg -i aspnetcore-targeting-pack-<version>-x64.deb
+sudo dpkg -i aspnetcore-runtime-<version>-x64.deb
+sudo dpkg -i dotnet-sdk-<version>-x64.deb
+```
+
+For Red Hat/Fedora/CentOS:
+```bash
+sudo rpm -i dotnet-host-<version>-x64.rpm
+sudo rpm -i dotnet-targeting-pack-<version>-x64.rpm
+sudo rpm -i dotnet-hostfxr-<version>-x64.rpm
+sudo rpm -i dotnet-apphost-pack-<version>-x64.rpm
+sudo rpm -i dotnet-runtime-deps-<version>-x64.rpm
+sudo rpm -i dotnet-runtime-<version>-x64.rpm
+sudo rpm -i aspnetcore-targeting-pack-<version>-x64.rpm
+sudo rpm -i aspnetcore-runtime-<version>-x64.rpm
+sudo rpm -i dotnet-sdk-<version>-x64.rpm
+```
+
+### macOS
+
+Download the latest SDK installer or binaries from the builds table above.
+
+macOS SDK and Runtime installers are complete packages and do not require separate dependency installation.
+
+## Version Information
+
+For the 1xx band, the runtime and SDK are built together in the same build. They will differ on patch version (e.g. SDK version 10.0.100 == runtime patch version 10.0.0). The build suffix (e.g. -rc2.1234.105) will always match.
+
+For the 2xx and later bands, the 1xx runtime flows to 2xx+. The version of the runtime that will be used in the 2xx SDK can be found in sdk's `eng/Version.Details.xml` file. Look for the version of the `Microsoft.NETCore.App.Ref` dependency.
 
 [win-x64-badge-main]: https://aka.ms/dotnet/11.0.1xx/daily/win_x64_Release_version_badge.svg?no-cache
 [win-x64-version-main]: https://aka.ms/dotnet/11.0.1xx/daily/productCommit-win-x64.txt

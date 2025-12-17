@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -16,8 +15,6 @@ namespace NuGet.SolutionRestoreManager.Test
 {
     public class VSNominationUtilitiesTests
     {
-        private static readonly IReadOnlyDictionary<string, string> EmptyMetadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
         [Fact]
         public void GetRestoreAuditProperties_WithoutSuppressions_ReturnsNull()
         {

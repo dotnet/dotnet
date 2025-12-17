@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -3310,7 +3312,7 @@ EndProject";
                 pathContext.SolutionRoot);
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             Util.CreateFile(Path.GetDirectoryName(projectA.ProjectPath), "packages.config",
 @"<packages>
@@ -3364,7 +3366,7 @@ EndProject";
             projectA.Properties.Add("NuGetAudit", "false");
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             Util.CreateFile(Path.GetDirectoryName(projectA.ProjectPath), "packages.config",
 @"<packages>
@@ -3419,7 +3421,7 @@ EndProject";
             projectA.Properties.Add("NuGetAuditLevel", "critical");
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             Util.CreateFile(Path.GetDirectoryName(projectA.ProjectPath), "packages.config",
 @"<packages>
@@ -3483,7 +3485,7 @@ EndProject";
 
             solution.Projects.Add(projectA);
             solution.Projects.Add(projectB);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             Util.CreateFile(Path.GetDirectoryName(projectA.ProjectPath), "packages.config",
 @"<packages>
@@ -3557,7 +3559,7 @@ EndProject";
 
             solution.Projects.Add(projectA);
             solution.Projects.Add(projectB);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             Util.CreateFile(Path.GetDirectoryName(projectA.ProjectPath), "packages.config",
 @"<packages>
@@ -3631,7 +3633,7 @@ EndProject";
 
             solution.Projects.Add(projectA);
             solution.Projects.Add(projectB);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             Util.CreateFile(Path.GetDirectoryName(projectA.ProjectPath), "packages.config",
 @"<packages>
@@ -3683,6 +3685,66 @@ EndProject";
             r.AllOutput.Should().Contain($"Package 'packageB' 2.1.0 has a known critical severity vulnerability");
             r.AllOutput.Should().Contain($"Package 'packageA' 1.2.0 has a known high severity vulnerability");
             r.AllOutput.Should().NotContain($"Package 'packageB' 2.2.0 has a known critical severity vulnerability"); // suppressed
+        }
+
+        [SkipMono()]
+        public void RestoreCommand_WithAuditSource_AndPackageWithVulnerabilities_RaisesWarnings()
+        {
+            Command_WithAuditSource_AndPackageWithVulnerabilities_RaisesWarnings("restore");
+        }
+
+        internal static void Command_WithAuditSource_AndPackageWithVulnerabilities_RaisesWarnings(string command)
+        {
+            // Arrange
+            var nugetexe = Util.GetNuGetExePath();
+            using var pathContext = new SimpleTestPathContext();
+            // Very important that the mock server is using a different folder than the package source
+            using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackagesV2, sourceReportsVulnerabilities: true);
+
+            mockServer.Vulnerabilities.Add(
+                "packageA",
+                new List<(Uri, PackageVulnerabilitySeverity, VersionRange)> {
+            (new Uri("https://contoso.com/advisories/12345"), PackageVulnerabilitySeverity.High, VersionRange.Parse("[1.0.0, 2.0.0)"))
+                });
+
+            pathContext.Settings.AddAuditSource("source", mockServer.ServiceIndexUri, allowInsecureConnectionsValue: "True");
+
+            Util.CreateTestPackage("packageA", "1.1.0", pathContext.PackageSource);
+            Util.CreateTestPackage("packageB", "2.2.0", pathContext.PackageSource);
+
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var projectA = new SimpleTestProjectContext(
+                "a",
+                ProjectStyle.PackagesConfig,
+                pathContext.SolutionRoot);
+
+            solution.Projects.Add(projectA);
+            solution.Create();
+
+            Util.CreateFile(Path.GetDirectoryName(projectA.ProjectPath), "packages.config",
+@"<packages>
+  <package id=""packageA"" version=""1.1.0"" />
+  <package id=""packageB"" version=""2.2.0"" />
+</packages>");
+
+            mockServer.Start();
+
+            var installDirectory = Path.Combine(pathContext.WorkingDirectory, "install_output");
+
+            // Act
+            var r = CommandRunner.Run(
+                nugetexe,
+                pathContext.WorkingDirectory,
+                $"{command} {Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config")} -OutputDirectory {installDirectory}");
+
+            mockServer.Stop();
+
+            // Assert
+            r.Success.Should().BeTrue(because: r.AllOutput);
+            var installedPackage = Path.Combine(installDirectory, "packageA.1.1.0", "packageA.1.1.0.nupkg");
+            File.Exists(installedPackage).Should().BeTrue();
+            r.AllOutput.Should().Contain("Package 'packageA' 1.1.0 has a known high severity vulnerability");
+            r.AllOutput.Should().NotContain("Package 'packageB' 2.2.0 has a known high severity vulnerability");
         }
 
         private static byte[] GetResource(string name)

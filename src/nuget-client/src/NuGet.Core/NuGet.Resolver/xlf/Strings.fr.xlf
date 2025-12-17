@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="CircularDependencyDetected">
         <source>Circular dependency detected '{0}'.</source>
-        <target state="translated">Dépendance circulaire détectée « {0} ».</target>
+        <target state="translated">Dépendance circulaire détectée '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="DependencyConstraint">

@@ -126,7 +126,7 @@
       </trans-unit>
       <trans-unit id="Cmdlet_NoAll">
         <source>No to Al&amp;l</source>
-        <target state="translated">Нет для в&amp;сех</target>
+        <target state="translated">Нет для &amp;всех</target>
         <note />
       </trans-unit>
       <trans-unit id="Cmdlet_NoCompatibleProjects">

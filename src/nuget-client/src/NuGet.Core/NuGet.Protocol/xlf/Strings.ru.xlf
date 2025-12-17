@@ -76,7 +76,7 @@
       </trans-unit>
       <trans-unit id="Error_Invalid_package_id">
         <source>Invalid package id : `{0}`.</source>
-        <target state="new">Invalid package id : `{0}`.</target>
+        <target state="translated">Недопустимый ИД пакета: "{0}".</target>
         <note>0 - package id.</note>
       </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">
@@ -161,7 +161,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Log_FailedToFetchV2Feed">
         <source>The V2 feed at '{0}' returned an unexpected status code '{1} {2}'.</source>
-        <target state="translated">Веб-канал версии 2 в "{0}" вернул непредвиденный код состояния: "{1} {2}".</target>
+        <target state="translated">Веб-канал V2 в "{0}" вернул непредвиденный код состояния: "{1} {2}".</target>
         <note>{0} is the URL that failed.
 {1} is the HTTP status code (an integer).
 {2} is the HTTP reason phrase (a non-translated string).</note>
