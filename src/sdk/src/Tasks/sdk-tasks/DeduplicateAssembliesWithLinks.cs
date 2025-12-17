@@ -50,11 +50,6 @@ namespace Microsoft.DotNet.Build.Tasks
 
             Log.LogMessage(MessageImportance.Normal, $"Found {files.Count} assemblies eligible for deduplication.");
 
-            if (files.Count == 0)
-            {
-                return true;
-            }
-
             var (filesByHash, hashingSuccess) = HashAndGroupFiles(files);
             if (!hashingSuccess)
             {
@@ -120,8 +115,6 @@ namespace Microsoft.DotNet.Build.Tasks
                 // First file is the "master"
                 var master = sorted[0];
                 var duplicates = sorted.Skip(1).ToList();
-
-                Log.LogMessage(MessageImportance.Low, $"Master file: {master.Path}");
 
                 foreach (var duplicate in duplicates)
                 {
