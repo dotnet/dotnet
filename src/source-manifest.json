@@ -55,10 +55,10 @@
       "commitSha": "c4ccf58cd107213374237e3910288d4b6b183abb"
     },
     {
-      "barId": 294028,
+      "barId": 294823,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "e66cb63557a6f978ba5e7ce88d153f33513fc0df"
+      "commitSha": "7804582d3c25d0d9434537a9f247bc76bbda43d7"
     },
     {
       "barId": 293549,
@@ -115,10 +115,10 @@
       "commitSha": "1536a1ca256a4e9f804b2073464ca8e4f4794702"
     },
     {
-      "barId": 293365,
+      "barId": 294959,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "266f9e2da2f988305a842e83a4285e941b8f7ddb"
+      "commitSha": "b95fc02c82fc7cba813c182de1d1a7ad1376fd24"
     },
     {
       "barId": 287819,
@@ -133,10 +133,10 @@
       "commitSha": "1ee659cfe585de18bb6c20212d82bf5c17831280"
     },
     {
-      "barId": 294284,
+      "barId": 294909,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "2d65a99cbd65db6243f19f5018ede183f2437587"
+      "commitSha": "307f787256446ddb84168e96af69c59d6684b807"
     },
     {
       "barId": 293277,
