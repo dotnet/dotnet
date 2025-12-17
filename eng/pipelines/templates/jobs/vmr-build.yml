@@ -72,7 +72,7 @@ parameters:
 # The SDK from its artifacts is copied to $(sourcesPath)/.dotnet
 - name: reuseBuildArtifactsFrom
   type: object
-  default: ''
+  default: []
 
 # Enables usage of the system libraries when building.
 - name: useSystemLibraries
@@ -160,7 +160,7 @@ jobs:
         image: ${{ parameters.container.image }}
         options: $(defaultContainerOptions)
 
-  ${{ if ne(parameters.reuseBuildArtifactsFrom, '') }}:
+  ${{ if gt(length(parameters.reuseBuildArtifactsFrom), 0) }}:
     ${{ if eq(parameters.buildPass, '') }}:
       # For PR builds, skip the stage 2 build if the stage 1 build fails.
       # Otherwise, run the stage 2 build even if the stage 1 build fails so that we can get a complete assessment of the build status.
@@ -172,7 +172,7 @@ jobs:
     ${{ else }}:
       condition: succeeded()
     dependsOn:
-    - ${{ if ne(parameters.reuseBuildArtifactsFrom, '') }}:
+    - ${{ if gt(length(parameters.reuseBuildArtifactsFrom), 0) }}:
       - ${{ parameters.reuseBuildArtifactsFrom }}
   variables:
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
@@ -403,7 +403,7 @@ jobs:
       displayName: Export VMR sources
       workingDirectory: $(Build.ArtifactStagingDirectory)
 
-  - ${{ if ne(parameters.reuseBuildArtifactsFrom,'') }}:
+  - ${{ if gt(length(parameters.reuseBuildArtifactsFrom), 0) }}:
     - ${{ each reuseBuildArtifacts in parameters.reuseBuildArtifactsFrom }}:
       - ${{ if eq(parameters.buildSourceOnly, true) }}:
         - template: ../steps/download-artifacts.yml
@@ -431,7 +431,7 @@ jobs:
 
   - template: /eng/common/templates/steps/enable-internal-runtimes.yml
 
-  - ${{ if and(parameters.excludeRuntimeDependentJobs, eq(parameters.reuseBuildArtifactsFrom, ''), not(parameters.withPreviousSDK)) }}:
+  - ${{ if and(parameters.excludeRuntimeDependentJobs, eq(length(parameters.reuseBuildArtifactsFrom), 0), not(parameters.withPreviousSDK)) }}:
     - script: |
         source "$(sourcesPath)/eng/download-source-built-archive.sh"
         if [[ $SYSTEM_TEAMPROJECT == "internal" ]]; then
