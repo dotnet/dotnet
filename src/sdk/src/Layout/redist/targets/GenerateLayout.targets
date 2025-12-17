@@ -568,7 +568,12 @@
   <!-- Deduplicate assemblies after all layout work is complete -->
   <Target Name="DeduplicateLayoutFiles"
           DependsOnTargets="GenerateSdkLayoutCore">
-    <DeduplicateAssembliesWithHardLinks LayoutDirectory="$(OutputPath)" />
+    <PropertyGroup>
+      <!-- Use hard links on Windows, symbolic links on non-Windows -->
+      <_UseHardLinks Condition="'$(OSName)' == 'win'">true</_UseHardLinks>
+      <_UseHardLinks Condition="'$(OSName)' != 'win'">false</_UseHardLinks>
+    </PropertyGroup>
+    <DeduplicateAssembliesWithLinks LayoutDirectory="$(OutputPath)" UseHardLinks="$(_UseHardLinks)" />
   </Target>
 
   <!-- Generates the complete SDK layout - everything in sdk/$(Version) -->
