@@ -1,16 +1,16 @@
 {
   "repositories": [
     {
-      "barId": 294554,
+      "barId": 294992,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "8adf115288fa51feaa30d063b946478054c7f7b4"
+      "commitSha": "47a8a69721dfea57b82121ac1458d2f5bba6abd2"
     },
     {
-      "barId": 294919,
+      "barId": 295007,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "5f1f2ce6ece7ec84f68c848dc1a6f56209c1c0da"
+      "commitSha": "1b7269e1ec8b0b1103a3d2dffaa400aea347bf39"
     },
     {
       "barId": 292148,
@@ -37,10 +37,10 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 294880,
+      "barId": 295010,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "16c08a73c74fb68d521f6f3555b4fafd05122879"
+      "commitSha": "ffdf7785c76682f52f9a161a40879b7f9036500c"
     },
     {
       "barId": 294516,
@@ -49,16 +49,16 @@
       "commitSha": "36e24b2207d929b79bb48c9429e8b797bd78e467"
     },
     {
-      "barId": 294828,
+      "barId": 295006,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "efe3c9db371f6514fbaa09ff55b72da8b629f0ad"
+      "commitSha": "1112c72f1344f8a9c79e2f4c197b17016f8d6939"
     },
     {
-      "barId": 294781,
+      "barId": 294974,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "fe44b975b3015c68867544c4e3628f3ed322f2bd"
+      "commitSha": "79dc2dc4bdb14750afd47dcbfbf2204dcc3b9d79"
     },
     {
       "barId": 294557,
@@ -91,10 +91,10 @@
       "commitSha": "21ded7efec7463ab807b22a8e119b228d4039a1c"
     },
     {
-      "barId": 289294,
+      "barId": 295020,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "6a6992f5fc42dbd06cd24f3a7db40013035d3965"
+      "commitSha": "2e8fc8bacc1608c749d454c1de95760ba4ae8d2b"
     },
     {
       "barId": 293746,
