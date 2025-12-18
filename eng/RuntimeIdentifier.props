@@ -1,14 +1,7 @@
 <Project>
   <!-- TargetRid calculations should go in this file. -->
   <PropertyGroup Label="CalculateTargetOS">
-    <BuildOS>linux</BuildOS>
-    <BuildOS Condition="$(NETCoreSdkPortableRuntimeIdentifier.StartsWith('linux-musl'))">linux-musl</BuildOS>
-    <BuildOS Condition="$([MSBuild]::IsOSPlatform('OSX'))">osx</BuildOS>
-    <BuildOS Condition="$([MSBuild]::IsOSPlatform('FREEBSD'))">freebsd</BuildOS>
-    <BuildOS Condition="$([MSBuild]::IsOSPlatform('NETBSD'))">netbsd</BuildOS>
-    <BuildOS Condition="$([MSBuild]::IsOSPlatform('ILLUMOS'))">illumos</BuildOS>
-    <BuildOS Condition="$([MSBuild]::IsOSPlatform('SOLARIS'))">solaris</BuildOS>
-    <BuildOS Condition="$([MSBuild]::IsOSPlatform('HAIKU'))">haiku</BuildOS>
+    <BuildOS Condition="'$(BuildOS)' == ''">$(NETCoreSdkPortableRuntimeIdentifier.Substring(0, $(NETCoreSdkPortableRuntimeIdentifier.LastIndexOf('-'))))</BuildOS>
     <BuildOS Condition="$([MSBuild]::IsOSPlatform('WINDOWS'))">windows</BuildOS>
     <TargetOS Condition="'$(TargetOS)' == ''">$(BuildOS)</TargetOS>
     <HostOS Condition="'$(HostOS)' == ''">$(TargetOS)</HostOS>
