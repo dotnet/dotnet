@@ -42,7 +42,7 @@
     <ItemGroup>
       <TargetingPackToDownloadForPruneData Include="@(TargetingPackForPruneData)"
                                Condition="!Exists('%(RepoSourcePath)')" />
-    </ItemGroup>			       
+    </ItemGroup>
     <!-- TODO: Version metadata overwrite Workaround until a newer bootstrap SDK
                is picked up with the CollatePackageDowload "[]" trimming fix. -->
     <ItemGroup>
