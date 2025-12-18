@@ -3,7 +3,7 @@
 
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" NoWarn="NU1608" PrivateAssets="all" />
     <PackageReference Include="Roslyn.Diagnostics.Analyzers" PrivateAssets="all" />
 
