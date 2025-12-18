@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -1069,7 +1071,6 @@ namespace NuGet.Build.Tasks.Console
                 (ProjectStyle ProjectStyle, string PackagesConfigFilePath) projectStyleResult = BuildTasksUtility.GetProjectRestoreStyle(
                     restoreProjectStyle: projectStyleOrNull,
                     hasPackageReferenceItems: hasPackageReferenceItems,
-                    projectJsonPath: project.GetProperty("_CurrentProjectJsonPath"),
                     projectDirectory: project.Directory,
                     projectName: project.GetProperty("MSBuildProjectName"),
                     log: log);
@@ -1082,7 +1083,7 @@ namespace NuGet.Build.Tasks.Console
         {
             foreach (var item in innerBuilds.NoAllocEnumerate())
             {
-                if (item.IsPropertyTrue("_RestorePackagePruningDefault"))
+                if (item.IsPropertyTrue("RestorePackagePruningDefault"))
                 {
                     return true;
                 }

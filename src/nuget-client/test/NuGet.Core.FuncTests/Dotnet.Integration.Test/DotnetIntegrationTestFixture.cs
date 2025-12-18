@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -138,10 +140,10 @@ namespace Dotnet.Integration.Test
             => RestoreProjectOrSolution(workingDirectory, $"{projectName}.csproj", args, expectSuccess: true, testOutputHelper: testOutputHelper);
 
         internal CommandRunnerResult RestoreSolutionExpectFailure(string workingDirectory, string solutionName, string args = "", ITestOutputHelper testOutputHelper = null)
-            => RestoreProjectOrSolution(workingDirectory, $"{solutionName}.sln", args, expectSuccess: false, testOutputHelper: testOutputHelper);
+            => RestoreProjectOrSolution(workingDirectory, $"{solutionName}.slnx", args, expectSuccess: false, testOutputHelper: testOutputHelper);
 
         internal CommandRunnerResult RestoreSolutionExpectSuccess(string workingDirectory, string solutionName, string args = "", ITestOutputHelper testOutputHelper = null)
-            => RestoreProjectOrSolution(workingDirectory, $"{solutionName}.sln", args, expectSuccess: true, testOutputHelper: testOutputHelper);
+            => RestoreProjectOrSolution(workingDirectory, $"{solutionName}.slnx", args, expectSuccess: true, testOutputHelper: testOutputHelper);
 
         private CommandRunnerResult RestoreProjectOrSolution(string workingDirectory, string fileName, string args, bool expectSuccess, ITestOutputHelper testOutputHelper = null)
             => RunDotnet(workingDirectory, $"restore {fileName} {args ?? string.Empty} -nodereuse:false", expectSuccess, testOutputHelper: testOutputHelper);
@@ -173,7 +175,6 @@ namespace Dotnet.Integration.Test
             Dictionary<string, string> finalEnvironmentVariables = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 ["MSBuildSDKsPath"] = MsBuildSdksPath,
-                ["DOTNET_MULTILEVEL_LOOKUP"] = "0",
                 ["DOTNET_ROOT"] = _cliDirectory,
                 // We need to force-override this because otherwise the MSBuildExtensionsPath
                 // set from the _outer_ dotnet cli call (which could be any version) will override
@@ -310,10 +311,10 @@ namespace Dotnet.Integration.Test
             => PackProjectOrSolution(workingDirectory, $"{projectName}.csproj", args, expectSuccess: true, nuspecOutputPath, configuration, testOutputHelper);
 
         internal CommandRunnerResult PackSolutionExpectFailure(string workingDirectory, string solutionName, string args = "", string nuspecOutputPath = "obj", string configuration = "Debug", ITestOutputHelper testOutputHelper = null)
-            => PackProjectOrSolution(workingDirectory, $"{solutionName}.sln", args, expectSuccess: false, nuspecOutputPath, configuration, testOutputHelper);
+            => PackProjectOrSolution(workingDirectory, $"{solutionName}.slnx", args, expectSuccess: false, nuspecOutputPath, configuration, testOutputHelper);
 
         internal CommandRunnerResult PackSolutionExpectSuccess(string workingDirectory, string solutionName, string args = "", string nuspecOutputPath = "obj", string configuration = "Debug", ITestOutputHelper testOutputHelper = null)
-            => PackProjectOrSolution(workingDirectory, $"{solutionName}.sln", args, expectSuccess: true, nuspecOutputPath, configuration, testOutputHelper);
+            => PackProjectOrSolution(workingDirectory, $"{solutionName}.slnx", args, expectSuccess: true, nuspecOutputPath, configuration, testOutputHelper);
 
         private CommandRunnerResult PackProjectOrSolution(string workingDirectory, string file, string args, bool expectSuccess, string nuspecOutputPath = "obj", string configuration = "Debug", ITestOutputHelper testOutputHelper = null)
         {
@@ -337,10 +338,10 @@ namespace Dotnet.Integration.Test
         }
 
         internal void BuildSolutionExpectFailure(string workingDirectory, string solutionName, string args = "", bool? appendRidToOutputPath = false, ITestOutputHelper testOutputHelper = null)
-            => BuildProjectOrSolution(workingDirectory, $"{solutionName}.sln", args, expectSuccess: false, appendRidToOutputPath, testOutputHelper);
+            => BuildProjectOrSolution(workingDirectory, $"{solutionName}.slnx", args, expectSuccess: false, appendRidToOutputPath, testOutputHelper);
 
         internal void BuildSolutionExpectSuccess(string workingDirectory, string solutionName, string args = "", bool? appendRidToOutputPath = false, ITestOutputHelper testOutputHelper = null)
-            => BuildProjectOrSolution(workingDirectory, $"{solutionName}.sln", args, expectSuccess: true, appendRidToOutputPath, testOutputHelper);
+            => BuildProjectOrSolution(workingDirectory, $"{solutionName}.slnx", args, expectSuccess: true, appendRidToOutputPath, testOutputHelper);
 
         private CommandRunnerResult BuildProjectOrSolution(string workingDirectory, string file, string args, bool expectSuccess = true, bool? appendRidToOutputPath = false, ITestOutputHelper testOutputHelper = null)
         {

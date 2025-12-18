@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -240,7 +242,7 @@ namespace NuGet.ProjectModel
 
                                         if (p2pSpecProjectRestoreMetadataFrameworkInfo != null)
                                         {
-                                            (var hasChanged, var message) = HasP2PDependencyChanged(p2pSpecTargetFrameworkInformation.Dependencies, p2pSpecProjectRestoreMetadataFrameworkInfo.ProjectReferences, targetFrameworkInformation.PackagesToPrune, projectDependency, dgSpec);
+                                            (var hasChanged, var message) = HasP2PDependencyChanged(p2pSpecTargetFrameworkInformation.Dependencies, p2pSpecProjectRestoreMetadataFrameworkInfo.ProjectReferences, p2pSpecTargetFrameworkInformation.PackagesToPrune, targetFrameworkInformation.PackagesToPrune, projectDependency, dgSpec);
 
                                             if (hasChanged)
                                             {
@@ -443,13 +445,14 @@ namespace NuGet.ProjectModel
             return (false, string.Empty);
         }
 
-        private static (bool, string) HasP2PDependencyChanged(IEnumerable<LibraryDependency> newDependencies, IEnumerable<ProjectRestoreReference> projectRestoreReferences, IReadOnlyDictionary<string, PrunePackageReference> packagesToPrune, LockFileDependency projectDependency, DependencyGraphSpec dgSpec)
+        private static (bool, string) HasP2PDependencyChanged(IEnumerable<LibraryDependency> newDependencies, IEnumerable<ProjectRestoreReference> projectRestoreReferences, IReadOnlyDictionary<string, PrunePackageReference> dependentProjectPackagesToPrune, IReadOnlyDictionary<string, PrunePackageReference> packagesToPrune, LockFileDependency projectDependency, DependencyGraphSpec dgSpec)
         {
             // If the count is not the same, something has changed.
             // Otherwise we N^2 walk below determines whether anything has changed.
             var transitivelyFlowingDependencies = newDependencies.Where(
                 dep => dep.LibraryRange.TypeConstraint == LibraryDependencyTarget.Package
-                    && dep.SuppressParent != LibraryIncludeFlags.All);
+                    && dep.SuppressParent != LibraryIncludeFlags.All
+                    && !IsDependencyPruned(dep, dependentProjectPackagesToPrune));
 
             var transitivelyFlowingProjectReferences = projectRestoreReferences.Where(e => e.PrivateAssets != LibraryIncludeFlags.All);
 

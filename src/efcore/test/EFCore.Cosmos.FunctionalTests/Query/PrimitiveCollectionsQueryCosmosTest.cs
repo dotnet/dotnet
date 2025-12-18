@@ -467,6 +467,20 @@ WHERE ARRAY_CONTAINS(@p, c["Id"])
 """);
     }
 
+    public override async Task Inline_collection_Contains_with_IEnumerable_EF_Parameter()
+    {
+        await base.Inline_collection_Contains_with_IEnumerable_EF_Parameter();
+
+        AssertSql(
+            """
+@Select='["10","a","aa"]'
+
+SELECT VALUE c
+FROM root c
+WHERE ARRAY_CONTAINS(@Select, c["NullableString"])
+""");
+    }
+
     public override async Task Inline_collection_Count_with_column_predicate_with_EF_Parameter()
     {
         await base.Inline_collection_Count_with_column_predicate_with_EF_Parameter();
@@ -799,6 +813,28 @@ WHERE ARRAY_CONTAINS(@ints, c["Int"])
 """);
     }
 
+    public override async Task Parameter_collection_empty_Contains()
+    {
+        await base.Parameter_collection_empty_Contains();
+
+        AssertSql(
+            """
+@ints='[]'
+
+SELECT VALUE c
+FROM root c
+WHERE ARRAY_CONTAINS(@ints, c["Int"])
+""");
+    }
+
+    public override async Task Parameter_collection_empty_Join()
+    {
+        // Cosmos join support. Issue #16920.
+        await AssertTranslationFailed(base.Parameter_collection_empty_Join);
+
+        AssertSql();
+    }
+
     public override async Task Parameter_collection_Contains_with_EF_Constant()
     {
         // #34327
@@ -826,8 +862,48 @@ WHERE ARRAY_CONTAINS(@ints, c["Int"])
         => base.Parameter_collection_Count_with_huge_number_of_values();
 
     // nothing to test here
+    public override Task Parameter_collection_Count_with_huge_number_of_values_over_5_operations()
+        => base.Parameter_collection_Count_with_huge_number_of_values_over_5_operations();
+
+    // nothing to test here
+    public override Task Parameter_collection_Count_with_huge_number_of_values_over_5_operations_forced_constants()
+        => base.Parameter_collection_Count_with_huge_number_of_values_over_5_operations_forced_constants();
+
+    // nothing to test here
+    public override Task Parameter_collection_Count_with_huge_number_of_values_over_5_operations_same_parameter()
+        => base.Parameter_collection_Count_with_huge_number_of_values_over_5_operations_same_parameter();
+
+    // nothing to test here
+    public override Task Parameter_collection_Count_with_huge_number_of_values_over_2_operations_same_parameter_different_type_mapping()
+        => base.Parameter_collection_Count_with_huge_number_of_values_over_2_operations_same_parameter_different_type_mapping();
+
+    // nothing to test here
+    public override Task Parameter_collection_Count_with_huge_number_of_values_over_5_operations_mixed_parameters_constants()
+        => base.Parameter_collection_Count_with_huge_number_of_values_over_5_operations_mixed_parameters_constants();
+
+    // nothing to test here
     public override Task Parameter_collection_of_ints_Contains_int_with_huge_number_of_values()
         => base.Parameter_collection_of_ints_Contains_int_with_huge_number_of_values();
+
+    // nothing to test here
+    public override Task Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_5_operations()
+        => base.Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_5_operations();
+
+    // nothing to test here
+    public override Task Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_5_operations_same_parameter()
+        => base.Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_5_operations_same_parameter();
+
+    // nothing to test here
+    public override Task Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_2_operations_same_parameter_different_type_mapping()
+        => base.Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_2_operations_same_parameter_different_type_mapping();
+
+    // nothing to test here
+    public override Task Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_5_operations_forced_constants()
+        => base.Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_5_operations_forced_constants();
+
+    // nothing to test here
+    public override Task Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_5_operations_mixed_parameters_constants()
+        => base.Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_5_operations_mixed_parameters_constants();
 
     public override async Task Static_readonly_collection_List_of_ints_Contains_int()
     {
@@ -1446,11 +1522,11 @@ ORDER BY c["Id"]
 
         AssertSql(
             """
-@ints='[11,111]'
+@p='[11,111]'
 
 SELECT VALUE c
 FROM root c
-WHERE (ARRAY_LENGTH(ARRAY_CONCAT(@ints, c["Ints"])) = 2)
+WHERE (ARRAY_LENGTH(ARRAY_CONCAT(@p, c["Ints"])) = 2)
 """);
     }
 
@@ -1598,7 +1674,7 @@ WHERE (ARRAY(
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             base.Parameter_collection_in_subquery_Union_column_collection_as_compiled_query);
 
-        Assert.Equal(SyncNotSupportedMessage, exception.Message);
+        Assert.Equal(CosmosStrings.SyncNotSupported, exception.Message);
 
         AssertSql();
     }
@@ -1643,7 +1719,7 @@ WHERE (ARRAY_LENGTH(SetUnion(@Skip, c["Ints"])) = 3)
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             base.Parameter_collection_in_subquery_Count_as_compiled_query);
 
-        Assert.Equal(SyncNotSupportedMessage, exception.Message);
+        Assert.Equal(CosmosStrings.SyncNotSupported, exception.Message);
 
         AssertSql();
     }
@@ -1657,7 +1733,7 @@ WHERE (ARRAY_LENGTH(SetUnion(@Skip, c["Ints"])) = 3)
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             base.Parameter_collection_in_subquery_Union_another_parameter_collection_as_compiled_query);
 
-        Assert.Equal(SyncNotSupportedMessage, exception.Message);
+        Assert.Equal(CosmosStrings.SyncNotSupported, exception.Message);
 
         AssertSql();
     }
@@ -2026,6 +2102,42 @@ WHERE ((c["Ints"][2] ?? 999) = 999)
         AssertSql();
     }
 
+    public override async Task Contains_on_Enumerable()
+    {
+        await base.Contains_on_Enumerable();
+
+        AssertSql(
+            """
+SELECT VALUE c
+FROM root c
+WHERE c["Int"] IN (10, 999)
+""");
+    }
+
+    public override async Task Contains_on_MemoryExtensions()
+    {
+        await base.Contains_on_MemoryExtensions();
+
+        AssertSql(
+            """
+SELECT VALUE c
+FROM root c
+WHERE c["Int"] IN (10, 999)
+""");
+    }
+
+    public override async Task Contains_with_MemoryExtensions_with_null_comparer()
+    {
+        await base.Contains_with_MemoryExtensions_with_null_comparer();
+
+        AssertSql(
+            """
+SELECT VALUE c
+FROM root c
+WHERE c["Int"] IN (10, 999)
+""");
+    }
+
     [ConditionalFact]
     public virtual void Check_all_tests_overridden()
         => TestHelpers.AssertAllMethodsOverridden(GetType());
@@ -2053,10 +2165,4 @@ WHERE ((c["Ints"][2] ?? 999) = 999)
 
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
-
-    private static readonly string SyncNotSupportedMessage
-        = CoreStrings.WarningAsErrorTemplate(
-            CosmosEventId.SyncNotSupported.ToString(),
-            CosmosResources.LogSyncNotSupported(new TestLogger<CosmosLoggingDefinitions>()).GenerateMessage(),
-            "CosmosEventId.SyncNotSupported");
 }

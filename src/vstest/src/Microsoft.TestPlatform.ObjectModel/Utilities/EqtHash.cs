@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Security.Cryptography;
 
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities;
 
@@ -27,7 +28,8 @@ public static class EqtHash
         // Any algorithm or logic change must require a sign off from feature owners of above
         // Also, TPV2 and TPV1 must use same Algorithm until the time TPV1 is completely deleted to be on-par
         // If LUT or .Net core scenario uses TPV2 to discover, but if it uses TPV1 in Devenv, then there will be testcase matching issues
-        byte[] hash = Sha1Helper.ComputeSha1(System.Text.Encoding.Unicode.GetBytes(data));
+        using HashAlgorithm provider = SHA1.Create();
+        byte[] hash = provider.ComputeHash(System.Text.Encoding.Unicode.GetBytes(data));
 
         // Guid is always 16 bytes
         TPDebug.Assert(Guid.Empty.ToByteArray().Length == 16, "Expected Guid to be 16 bytes");

@@ -32,12 +32,15 @@ function DownloadWithRetries {
       if curl -fL --retry 5 -O "$url"; then
         return 0
       else
-        case $? in
-          18)
-            sleep 3
+        local exitCode=$?
+        case $exitCode in
+          22)
+            # HTTP error (including 404) - don't retry
+            return 22
             ;;
           *)
-            return 1
+            # For all other errors (including partial transfers), sleep and retry
+            sleep 3
             ;;
         esac
       fi
@@ -55,7 +58,7 @@ function DownloadArchive {
   local outputDir="$5"
   local destinationFileNamePrefix="${6:-}"
   local versionPropertyOverride="${7:-}"
-  local useCILocation="${8:-false}"
+  local storageKey="${8:-}"
 
   local notFoundMessage="No $label found to download..."
 
@@ -89,39 +92,85 @@ function DownloadArchive {
     versionDelimiter="-"
   fi
 
-  # Assets for the default RID are hosted in builds.dotnet.microsoft.com
-  if [[ $artifactsRid == $defaultArtifactsRid ]]; then
-    useCILocation=false
-  fi
-
   archiveVersion="${versionDelimiter}${archiveVersion}${versionDelimiter}"
 
-  baseUrl="https://builds.dotnet.microsoft.com/dotnet/source-build"
-  if [[ "$useCILocation" == true ]]; then
-    baseUrl="https://ci.dot.net/public/source-build"
+  # Build array of base URL entries to try in order
+  # Each entry is in the format "url" or "url=storageKey"
+  local baseUrls=()
+  
+  # Assets for the default RID are hosted in builds.dotnet.microsoft.com first
+  if [[ $artifactsRid == $defaultArtifactsRid ]]; then
+    baseUrls+=("https://builds.dotnet.microsoft.com/dotnet/source-build")
+  fi
+  
+  # Always try public CI location
+  baseUrls+=("https://ci.dot.net/public/source-build")
+  
+  # Try internal CI location if storage key is provided
+  if [[ -n "$storageKey" ]]; then
+    baseUrls+=("https://ci.dot.net/internal/source-build=$storageKey")
   fi
 
+  # Determine the archive filename based on property name
+  local archiveFileName
   if [[ "$propertyName" == "PrivateSourceBuiltPrebuiltsVersion" ]]; then
-    archiveUrl="${baseUrl}/${prebuiltsBaseFileName}${archiveVersion}${defaultArtifactsRid}.tar.gz"
+    archiveFileName="${prebuiltsBaseFileName}${archiveVersion}${defaultArtifactsRid}.tar.gz"
   elif [[ "$propertyName" == "PrivateSourceBuiltArtifactsVersion" ]]; then
-    archiveUrl="${baseUrl}/${artifactsBaseFileName}${archiveVersion}${artifactsRid}.tar.gz"
+    archiveFileName="${artifactsBaseFileName}${archiveVersion}${artifactsRid}.tar.gz"
   elif [[ "$propertyName" == "PrivateSourceBuiltSdkVersion" ]]; then
-    archiveUrl="${baseUrl}/${sdkBaseFileName}${archiveVersion}${artifactsRid}.tar.gz"
+    archiveFileName="${sdkBaseFileName}${archiveVersion}${artifactsRid}.tar.gz"
   else
     echo "  ERROR: Unknown archive property name: $propertyName"
     return 1
   fi
 
-  echo "  Downloading $label from $archiveUrl..."
-  if ! DownloadWithRetries "$archiveUrl" "$outputDir"; then
-    echo "  ERROR: Failed to download $archiveUrl"
+  local archiveUrl
+  local displayUrl
+  local downloadedFilename=$(basename "${archiveFileName}")
+  local downloadSucceeded=false
+
+  # Try each base URL in order
+  for entry in "${baseUrls[@]}"; do
+    # Parse the entry: "url" or "url=storageKey"
+    local baseUrl="${entry%%=*}"
+    local entryStorageKey=""
+    if [[ "$entry" == *"="* ]]; then
+      entryStorageKey="${entry#*=}"
+    fi
+    
+    archiveUrl="${baseUrl}/${archiveFileName}"
+    displayUrl="$archiveUrl"
+    
+    # Append storage key as query parameter if present
+    if [[ -n "$entryStorageKey" ]]; then
+      local decodedKey
+      decodedKey=$(echo "$entryStorageKey" | base64 -d)
+      archiveUrl="${archiveUrl}?${decodedKey}"
+      displayUrl="${displayUrl}?[redacted]"
+    fi
+    
+    echo "  Downloading $label from $displayUrl..."
+    if DownloadWithRetries "$archiveUrl" "$outputDir"; then
+      downloadSucceeded=true
+      break
+    else
+      local downloadResult=$?
+      # Only continue to next URL if it was a 404
+      if [[ $downloadResult -ne 22 ]]; then
+        echo "  ERROR: Failed to download $displayUrl"
+        return 1
+      fi
+      echo "  Not found, trying next location..."
+    fi
+  done
+
+  if [[ "$downloadSucceeded" == false ]]; then
+    echo "  ERROR: Failed to download from all available locations"
     return 1
   fi
 
   # Rename the file if a destination filename prefix is provided
   if [[ -n "$destinationFileNamePrefix" ]]; then
-    local downloadedFilename
-    downloadedFilename=$(basename "$archiveUrl")
     # Extract the suffix from the downloaded filename
     local baseFilenameForSuffix="$artifactsBaseFileName"
     if [[ "$propertyName" == *Prebuilts* ]]; then

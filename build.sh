@@ -15,7 +15,12 @@ usage()
   echo "  --rid, --target-rid <value>       Overrides the rid that is produced by the build. e.g. alpine.3.18-arm64, fedora.37-x64, freebsd.13-arm64, ubuntu.19.10-x64"
   echo "  --os, --target-os <value>         Target operating system: e.g. linux, osx, freebsd. Note: this is the base OS name, not the distro"
   echo "  --arch, --target-arch <value>     Target architecture: e.g. x64, x86, arm64, arm, riscv64"
-  echo "  --branding <preview|rtm|default>  Specify versioning for shipping packages/assets. 'preview' will produce assets suffixed with '.final', 'rtm' will not contain a pre-release suffix. Default or unspecified will use VMR repo defaults."
+  echo "  --branding                        Specify the branding suffix for shipping packages/assets. By default uses VMR branding defaults (RepoDotNetFinalVersionKind property in eng/Versions.props)"
+  echo "                                    for release branch builds or otherwise repo branding defaults."
+  echo "    <repodefault>                   'repodefault' uses the repo branding defaults."
+  echo "    <unstable>                      'unstable' produces assets with the repo specified branding suffix."
+  echo "    <preview>                       'preview' produces assets with a '.final' branding suffix."
+  echo "    <release>                       'release' produces assets without a branding suffix."
   echo "  --verbosity <value>               Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic] (short: -v)"
   echo "  --with-system-libs <libs>         Use system versions of these libraries. Combine with a plus. 'all' will use all supported libraries. e.g. brotli+libunwind+rapidjson+zlib"
   echo "  --official-build-id <YYYYMMDD.X>  Official build ID to use for the build. This is used to set the OfficialBuildId MSBuild property."
@@ -59,23 +64,6 @@ usage()
   echo "Arguments can also be passed in with a single hyphen."
 }
 
-function SetBranding()
-{
-  local brandingValue="$1"
-  
-  if [[ "$brandingValue" == "preview" ]]; then
-    properties+=( "/p:DotNetFinalVersionKind=prerelease" )
-  elif [[ "$brandingValue" == "rtm" ]]; then
-    properties+=( "/p:DotNetFinalVersionKind=release" )
-  elif [[ "$brandingValue" == "default" ]]; then
-    # default branding; no extra property needed
-    :
-  else
-    echo "ERROR: Invalid branding '$brandingValue'. Allowed values are 'preview', 'rtm', or 'default'."
-    exit 1
-  fi
-}
-
 function SetOfficialBuildId()
 {
   local officialBuildIdValue="$1"
@@ -103,13 +91,13 @@ binary_log=''
 configuration='Release'
 verbosity='minimal'
 officialBuildId=''
-branding=''
 
 # Actions
 clean=false
 test=false
 
 # Source-only settings
+prep=false
 sourceOnly=false
 releaseManifest=''
 sourceRepository=''
@@ -127,6 +115,8 @@ exclude_ci_binary_log=''
 node_reuse=''
 prepare_machine=''
 warn_as_error=''
+targetOS=''
+targetArch=''
 
 properties=()
 while [[ $# > 0 ]]; do
@@ -149,15 +139,32 @@ while [[ $# > 0 ]]; do
       ;;
     -os|-target-os)
       properties+=( "/p:TargetOS=$2" )
+      targetOS="$2"
       shift
       ;;
     -arch|-target-arch)
       properties+=( "/p:TargetArchitecture=$2" )
+      targetArch="$2"
       shift
       ;;
     -branding)
-      branding="$2"
-      SetBranding "$branding"
+      if [ -z ${2+x} ]; then
+        echo "No branding type supplied. See help (--help) for supported values." 1>&2
+        exit 1
+      fi
+      passedBrandingType="$(echo "$2" | tr "[:upper:]" "[:lower:]")"
+      case "$passedBrandingType" in
+        repodefault|unstable|preview|release)
+          ;;
+        *)
+          echo "Unsupported branding type '$2'."
+          echo "The allowed values are repodefault, unstable, preview or release."
+          echo ""
+          echo "IMPORTANT: If you previously passed in the '-branding rtm' argument for .NET 10, remove it entirely. The default is now set correctly (VMR branding defaults for release branch builds or otherwise repo branding defaults)."
+          exit 1
+          ;;
+      esac
+      properties+=( "/p:RepoDotNetFinalVersionKind=$passedBrandingType" )
       shift
       ;;
     -with-system-libs)
@@ -239,9 +246,8 @@ while [[ $# > 0 ]]; do
       shift
       ;;
     -prep)
-      "$scriptroot/prep-source-build.sh"
+      prep=true
       ;;
-
     # Advanced settings
     -build-repo-tests)
       properties+=( "/p:DotNetBuildTests=true" )
@@ -341,10 +347,28 @@ fi
 # Initialize __DistroRid and __PortableTargetOS
 source $scriptroot/eng/common/native/init-os-and-arch.sh
 source $scriptroot/eng/common/native/init-distro-rid.sh
+
 initDistroRidGlobal "$os" "$arch" ""
+
+if [[ -n "$__DistroRid" ]]; then
+  properties+=( "/p:BuildRid=$__DistroRid" )
+fi
+
+# if targetOS and targetArch were provided, recompute __PortableTargetOS
+if [[ -n "$targetOS" && -n "$targetArch" ]]; then
+  unset __PortableTargetOS
+  initDistroRidGlobal "$targetOS" "$targetArch" ""
+fi
+
+properties+=( "/p:PortableTargetOS=$__PortableTargetOS" )
 
 # Source-only settings
 if [[ "$sourceOnly" == "true" ]]; then
+  # Run prep if requested
+  if [[ "$prep" == true ]]; then
+    "$scriptroot/prep-source-build.sh" --configuration "$configuration"
+  fi
+
   # For build purposes, we need to make sure we have all the SourceLink information
   if [ "$test" != "true" ]; then
     get_property() {

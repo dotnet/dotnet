@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -414,7 +416,6 @@ xmlns=""http://www.w3.org/2007/app"" xmlns:atom=""http://www.w3.org/2005/Atom"">
             //Create an HTTP provider that will cancel the token.
             var httpProvider = StaticHttpSource.CreateHttpSource(
                 new Dictionary<string, string> { { source, content } },
-                errorContent: string.Empty,
                 httpSource: null,
                 throwOperationCancelledException: true);
             var provider = new ServiceIndexResourceV3Provider();

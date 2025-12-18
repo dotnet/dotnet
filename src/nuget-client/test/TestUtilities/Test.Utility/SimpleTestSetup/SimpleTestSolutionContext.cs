@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -124,7 +126,7 @@ namespace NuGet.Test.Utility
         /// <summary>
         /// Create an entire solution and projects, this will adjust the paths as needed
         /// </summary>
-        public void Create(string solutionFolder = null)
+        public void Create()
         {
             Save();
 

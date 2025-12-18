@@ -15,6 +15,10 @@ The current branch
 Create a PR even if the only commits are from dotnet-maestro[bot]
 .PARAMETER QuietComments
 Do not tag commiters, do not comment on PR updates. Reduces GitHub notifications
+.PARAMETER ResetToTargetPaths
+Semicolon-separated list of glob patterns for files to reset to the target branch version.
+After the merge branch is created, files matching these patterns will be checked out from
+the target branch and committed, resolving potential merge conflicts for these files.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
@@ -36,7 +40,10 @@ param(
 
     [switch]$AllowAutomatedCommits,
 
-    [switch]$QuietComments
+    [switch]$QuietComments,
+
+    [Alias('r')]
+    [string]$ResetToTargetPaths = ""
 )
 
 $ErrorActionPreference = 'stop'
@@ -105,6 +112,70 @@ function GetCommitterGitHubName($sha) {
     return $null
 }
 
+function ResetFilesToTargetBranch($patterns, $targetBranch) {
+    if (-not $patterns -or $patterns.Count -eq 0) {
+        return
+    }
+
+    Write-Host "Resetting files to $targetBranch for patterns: $($patterns -join ', ')"
+
+    # Verify the target branch exists
+    $branchExists = & git rev-parse --verify "origin/$targetBranch" 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning "Target branch 'origin/$targetBranch' does not exist. Skipping file reset."
+        return
+    }
+
+    # Configure git user for the commit
+    # Use GitHub Actions bot identity
+    Invoke-Block { & git config user.name "github-actions[bot]" }
+    Invoke-Block { & git config user.email "41898282+github-actions[bot]@users.noreply.github.com" }
+
+    # Track which patterns had changes
+    $processedPatterns = @()
+
+    foreach ($pattern in $patterns) {
+        $pattern = $pattern.Trim()
+        if (-not $pattern) {
+            continue
+        }
+
+        Write-Host "Processing pattern: $pattern"
+        
+        # Use git checkout to reset files matching the pattern to the target branch
+        # The -- is needed to separate the revision from the pathspec
+        # Just attempt to checkout the pattern directly - git will handle whether files exist
+        try {
+            & git checkout "origin/$targetBranch" -- $pattern 2>&1 | Write-Host
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host -f Green "Checked out pattern '$pattern' from $targetBranch"
+                $processedPatterns += $pattern
+            } else {
+                Write-Host -f Yellow "Pattern '$pattern' did not match any files in $targetBranch"
+            }
+        }
+        catch {
+            Write-Warning "Failed to checkout pattern '$pattern' from $targetBranch. Error: $_"
+        }
+    }
+
+    # Check if there are any changes to commit after processing all patterns
+    $status = & git status --porcelain
+    if ($status -and $processedPatterns.Count -gt 0) {
+        # Add all changes (the checkout already modified the specific files)
+        Invoke-Block { & git add -A }
+        
+        # Create a commit message listing all patterns that were reset
+        $patternsList = $processedPatterns -join "`n- "
+        $commitMessage = "Reset files to $targetBranch`n`nReset patterns:`n- $patternsList"
+        
+        Invoke-Block { & git commit -m $commitMessage }
+        Write-Host -f Green "Successfully reset files to $targetBranch for patterns: $patternsList"
+    } else {
+        Write-Host "No changes to commit after processing all patterns"
+    }
+}
+
 # see https://git-scm.com/docs/pretty-formats
 $formatString = '%h %cn <%ce>: %s (%cr)'
 
@@ -150,6 +221,12 @@ try {
 
     $mergeBranchName = "merge/$MergeFromBranch-to-$MergeToBranch"
     Invoke-Block { & git checkout -B $mergeBranchName  }
+
+    # Reset specified files to target branch if ResetToTargetPaths is configured
+    if ($ResetToTargetPaths) {
+        $patterns = $ResetToTargetPaths -split ";"
+        ResetFilesToTargetBranch $patterns $MergeToBranch
+    }
 
     $remoteName = 'origin'
     $prOwnerName = $RepoOwner

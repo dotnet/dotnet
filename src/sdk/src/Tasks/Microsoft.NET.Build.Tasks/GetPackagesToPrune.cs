@@ -235,12 +235,6 @@ namespace Microsoft.NET.Build.Tasks
         {
             var nugetFramework = new NuGetFramework(targetFrameworkIdentifier, Version.Parse(targetFrameworkVersion));
 
-            //  FrameworkPackages just has data for .NET Framework 4.6.1, so turn on fallback for anything greater than that so it will resolve to the .NET Framework 4.6.1 data
-            if (!acceptNearestMatch && nugetFramework.IsDesktop() && nugetFramework.Version > new Version(4,6,1))
-            {
-                acceptNearestMatch = true;
-            }
-
             var frameworkPackages = FrameworkPackages.GetFrameworkPackages(nugetFramework, [frameworkReference], acceptNearestMatch)
                 .SelectMany(packages => packages)
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
@@ -250,15 +244,12 @@ namespace Microsoft.NET.Build.Tasks
 
         static Dictionary<string, NuGetVersion> LoadPackagesToPruneFromPrunePackageData(string targetFrameworkIdentifier, string targetFrameworkVersion, string frameworkReference, string prunePackageDataRoot)
         {
-            if (frameworkReference.Equals("Microsoft.NETCore.App", StringComparison.OrdinalIgnoreCase))
+            string packageOverridesPath = Path.Combine(prunePackageDataRoot, targetFrameworkVersion, frameworkReference, "PackageOverrides.txt");
+            if (File.Exists(packageOverridesPath))
             {
-                string packageOverridesPath = Path.Combine(prunePackageDataRoot, targetFrameworkVersion, frameworkReference, "PackageOverrides.txt");
-                if (File.Exists(packageOverridesPath))
-                {
-                    var packageOverrideLines = File.ReadAllLines(packageOverridesPath);
-                    var overrides = PackageOverride.CreateOverriddenPackages(packageOverrideLines);
-                    return overrides.ToDictionary(o => o.id, o => o.version);
-                }
+                var packageOverrideLines = File.ReadAllLines(packageOverridesPath);
+                var overrides = PackageOverride.CreateOverriddenPackages(packageOverrideLines);
+                return overrides.ToDictionary(o => o.id, o => o.version);
             }
 
             return null;

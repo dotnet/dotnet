@@ -79,6 +79,10 @@
 #include "entrypoints.h"
 #endif // TARGET_BROWSER
 
+#ifdef FEATURE_INTERPRETER
+#include "interpexec.h"
+#endif // FEATURE_INTERPRETER
+
 static const Entry s_QCall[] =
 {
     DllImportEntry(ArgIterator_Init)
@@ -158,6 +162,7 @@ static const Entry s_QCall[] =
     DllImportEntry(RuntimeTypeHandle_InternalAlloc)
     DllImportEntry(RuntimeTypeHandle_InternalAllocNoChecks)
     DllImportEntry(RuntimeTypeHandle_AllocateTypeAssociatedMemory)
+    DllImportEntry(RuntimeTypeHandle_AllocateTypeAssociatedMemoryAligned)
     DllImportEntry(RuntimeTypeHandle_RegisterCollectibleTypeDependency)
     DllImportEntry(MethodBase_GetCurrentMethod)
     DllImportEntry(RuntimeMethodHandle_InvokeMethod)
@@ -398,10 +403,7 @@ static const Entry s_QCall[] =
     DllImportEntry(MngdSafeArrayMarshaler_ClearNative)
     DllImportEntry(Variant_ConvertValueTypeToRecord)
 #endif // FEATURE_COMINTEROP
-    DllImportEntry(NativeLibrary_LoadFromPath)
     DllImportEntry(NativeLibrary_LoadByName)
-    DllImportEntry(NativeLibrary_FreeLib)
-    DllImportEntry(NativeLibrary_GetSymbol)
     DllImportEntry(GetTypeLoadExceptionMessage)
     DllImportEntry(GetFileLoadExceptionMessage)
     DllImportEntry(FileLoadException_GetMessageForHR)
@@ -549,6 +551,9 @@ static const Entry s_QCall[] =
     DllImportEntry(SystemJS_ScheduleTimer)
     DllImportEntry(SystemJS_ScheduleBackgroundJob)
 #endif // TARGET_BROWSER
+#ifdef FEATURE_INTERPRETER
+    DllImportEntry(AsyncHelpers_ResumeInterpreterContinuation)
+#endif // FEATURE_INTERPRETER
 };
 
 const void* QCallResolveDllImport(const char* name)

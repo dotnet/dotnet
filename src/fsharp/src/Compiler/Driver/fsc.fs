@@ -74,10 +74,10 @@ type DiagnosticsLoggerUpToMaxErrors(tcConfigB: TcConfigBuilder, exiter: Exiter, 
 
     override _.ErrorCount = errors
 
-    override x.DiagnosticSink(diagnostic, severity) =
+    override x.DiagnosticSink(diagnostic) =
         let tcConfig = TcConfig.Create(tcConfigB, validate = false)
 
-        match diagnostic.AdjustSeverity(tcConfig.diagnosticsOptions, severity) with
+        match diagnostic.AdjustSeverity(tcConfig.diagnosticsOptions) with
         | FSharpDiagnosticSeverity.Error ->
             if errors >= tcConfig.maxErrors then
                 x.HandleTooManyErrors(FSComp.SR.fscTooManyErrors ())
@@ -89,9 +89,8 @@ type DiagnosticsLoggerUpToMaxErrors(tcConfigB: TcConfigBuilder, exiter: Exiter, 
 
             match diagnostic.Exception, tcConfigB.simulateException with
             | InternalError(msg, _), None
-            | Failure msg, None -> Debug.Assert(false, sprintf "Bug in compiler: %s\n%s" msg (diagnostic.Exception.ToString()))
-            | :? KeyNotFoundException, None ->
-                Debug.Assert(false, sprintf "Lookup exception in compiler: %s" (diagnostic.Exception.ToString()))
+            | Failure msg, None -> Debug.Assert(false, sprintf "Bug in compiler: %s\n%s" msg (diagnostic.ToString()))
+            | :? KeyNotFoundException, None -> Debug.Assert(false, sprintf "Lookup exception in compiler: %s" (diagnostic.ToString()))
             | _ -> ()
 
         | FSharpDiagnosticSeverity.Hidden -> ()
@@ -860,14 +859,14 @@ let main3
         AbortOnError(diagnosticsLogger, exiter)
 
         // Encode the optimization data
-        ReportTime tcConfig ("Encoding OptData")
+        ReportTime tcConfig "Encoding OptData"
 
         optimizedImpls, EncodeOptimizationData(tcGlobals, tcConfig, outfile, exportRemapping, (generatedCcu, optimizationData), false)
 
     if tcGlobals.langVersion.SupportsFeature LanguageFeature.WarningWhenTailRecAttributeButNonTailRecUsage then
         match optimizedImpls with
         | CheckedAssemblyAfterOptimization checkedImplFileAfterOptimizations ->
-            ReportTime tcConfig ("TailCall Checks")
+            ReportTime tcConfig "TailCall Checks"
 
             for f in checkedImplFileAfterOptimizations do
                 TailCallChecks.CheckImplFile(tcGlobals, tcImports.GetImportMap(), true, f.ImplFile.Contents)

@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -123,7 +125,7 @@ namespace NuGet.Packaging.Test.ContentModelTests
             collection.PopulateItemGroups(conventions.Patterns.MSBuildFiles, groups);
 
             // Assert
-            Assert.Equal(1, groups.Count());
+            Assert.Equal(1, groups.Count);
             Assert.Equal(NuGetFramework.Parse("net45"), groups.First().Properties["tfm"] as NuGetFramework);
         }
 
@@ -153,7 +155,7 @@ namespace NuGet.Packaging.Test.ContentModelTests
                 .ToList();
 
             // Assert
-            Assert.Equal(5, groups.Count());
+            Assert.Equal(5, groups.Count);
             Assert.Equal(NuGetFramework.Parse("net20"), groups[0].Properties["tfm"] as NuGetFramework);
             Assert.Equal(NuGetFramework.Parse("net35"), groups[1].Properties["tfm"] as NuGetFramework);
             Assert.Equal(NuGetFramework.Parse("net45"), groups[2].Properties["tfm"] as NuGetFramework);

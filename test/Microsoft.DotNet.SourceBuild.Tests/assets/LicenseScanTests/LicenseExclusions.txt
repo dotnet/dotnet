@@ -181,7 +181,6 @@ src/source-build-reference-packages/src/externalPackages/src/application-insight
 src/source-build-reference-packages/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/src/Microsoft.IdentityModel.Validators/AadIssuerValidator/AadIssuerValidatorConstants.cs|cpl-1.0
 src/source-build-reference-packages/src/externalPackages/src/humanizer/NuSpecs/*.nuspec*
 src/source-build-reference-packages/src/externalPackages/src/spectre-console/README.md|unknown-license-reference
-src/source-build-reference-packages/src/targetPacks/ILsrc/microsoft.aspnetcore.app.ref/8.0.0/THIRD-PARTY-NOTICES.TXT|unknown
 src/source-build-reference-packages/src/targetPacks/ILsrc/netstandard.library/2.0.*/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
 src/source-build-reference-packages/src/targetPacks/ILsrc/netstandard.library.ref/2.1.0/THIRD-PARTY-NOTICES.TXT|codesourcery-2004
 src/source-build-reference-packages/src/textOnlyPackages/src/microsoft.netcore.*/1.*/ThirdPartyNotices.txt|unknown-license-reference
