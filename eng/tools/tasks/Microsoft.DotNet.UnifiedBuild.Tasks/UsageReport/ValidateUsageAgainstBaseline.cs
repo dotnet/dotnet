@@ -58,7 +58,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
                 Log.LogError(
                     $"{diff.Added.Length} new packages used not in baseline! See report " +
                     $"at {OutputReportFile} for more information. " +
-                    $"See {PrebuiltsDocumentationUrl} for guidance on what pre-builts are and how to eliminate them. " +
+                    $"See {PrebuiltsDocumentationUrl} for guidance on what prebuilts are and how to eliminate them. " +
                     $"Package IDs are:\n" +
                     string.Join("\n", diff.Added.Select(u => u.ToString())));
 
