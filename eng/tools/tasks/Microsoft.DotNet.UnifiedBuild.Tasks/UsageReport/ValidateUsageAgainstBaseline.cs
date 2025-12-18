@@ -125,7 +125,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
                     "Prebuilt usages are different from the baseline. If detected changes are " +
                     "acceptable, update baseline with:\n" +
                     $"cp '{OutputBaselineFile}' '{BaselineDataFile}'\n" +
-                    $"See {PrebuiltsDocumentationUrl} for guidance on what pre-builts are and how to eliminate them.");
+                    $"See {PrebuiltsDocumentationUrl} for guidance on what prebuilts are and how to eliminate them.");
             }
 
             return !Log.HasLoggedErrors;
