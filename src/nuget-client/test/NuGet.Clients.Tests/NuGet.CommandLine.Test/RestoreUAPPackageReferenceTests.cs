@@ -39,7 +39,7 @@ namespace NuGet.CommandLine.Test
                 projectA.Properties.Add("TargetPlatformMinVersion", "10.0.10586.0");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -89,7 +89,7 @@ namespace NuGet.CommandLine.Test
                 projectA.Properties.Add("TargetPlatformMinVersion", "");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -141,7 +141,7 @@ namespace NuGet.CommandLine.Test
                 projectA.Properties.Add("TargetPlatformMinVersion", "10.0.10586.0");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,
@@ -185,7 +185,7 @@ namespace NuGet.CommandLine.Test
                 projectA.Properties.Add("TargetPlatformMinVersion", "10.0.10586.0");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 // Act
                 var r = RestoreSolution(pathContext);
@@ -240,7 +240,7 @@ namespace NuGet.CommandLine.Test
                 projectA.AddProjectToAllFrameworks(projectB);
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                     pathContext.PackageSource,

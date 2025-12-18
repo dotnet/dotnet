@@ -1655,9 +1655,9 @@ namespace NuGet.Commands.FuncTest
             result.LockFile.Targets[0].Libraries[2].Version.Should().Be(new NuGetVersion("1.0.0"));
         }
 
-        // Project1 -> Project2 -> X 1.0.0
-        //          -> Project3 -> (PrivateAssets) X 2.0.0 (project)
-        // Package is chosen, since project is suppressed
+        // Project1 -> Project2 -> a 1.0.0
+        //          -> Project3 -> (PrivateAssets) a 2.0.0 (project)
+        // This is an unintuitive scenario because we end up selecting a project that's actually suppressed, but the behavior is equivalent in both algorithms.
         [Fact]
         public async Task RestoreCommand_WithSameTransitiveProjectPackageId_SuppressedProject_ChoosesPackage_VerifiesEquivalency()
         {
@@ -1686,8 +1686,8 @@ namespace NuGet.Commands.FuncTest
             result.LockFile.Targets.Should().HaveCount(1);
             result.LockFile.Targets[0].Libraries.Should().HaveCount(3);
             result.LockFile.Targets[0].Libraries[0].Name.Should().Be("a");
-            //result.LockFile.Targets[0].Libraries[0].Version.Should().Be(new NuGetVersion("1.0.0")); // TODO NK - Unclear to me why suppressed project is getting selected.
-            //result.LockFile.Targets[0].Libraries[0].Type.Should().Be("package");
+            result.LockFile.Targets[0].Libraries[0].Version.Should().Be(new NuGetVersion("2.0.0"));
+            result.LockFile.Targets[0].Libraries[0].Type.Should().Be("project");
             result.LockFile.Targets[0].Libraries[1].Name.Should().Be("Project2");
             result.LockFile.Targets[0].Libraries[1].Version.Should().Be(new NuGetVersion("1.0.0"));
             result.LockFile.Targets[0].Libraries[2].Name.Should().Be("Project3");
@@ -2743,6 +2743,54 @@ namespace NuGet.Commands.FuncTest
             result2.LockFile.Targets[0].Libraries[0].Version.Should().Be(new NuGetVersion("1.0.0"));
             result2.LockFile.Targets[0].Libraries[1].Name.Should().Be("b");
             result2.LockFile.Targets[0].Libraries[1].Version.Should().Be(new NuGetVersion("1.0.0"));
+        }
+
+        // P -> A 1.0.0
+        //      -> B (no version)
+        // B is pinned to 1.0.0
+        [Fact]
+        public async Task RestoreCommand_WithTransitiveReferenceMissingVersion_VerifiesEquivalency()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+
+            var P = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec(
+                "P",
+                pathContext.SolutionRoot,
+                @"
+{
+  ""restore"": {
+    ""centralPackageVersionsManagementEnabled"": true,
+    ""CentralPackageTransitivePinningEnabled"": true,
+  },
+  ""frameworks"": {
+    ""net472"": {
+      ""centralPackageVersions"": {
+            ""B"": ""[1.0.0,)"",
+      }
+    }
+  }
+}")
+                .WithDependency(new LibraryDependency()
+                {
+                    LibraryRange = new LibraryRange("A", VersionRange.Parse("1.0.0"), LibraryDependencyTarget.Package),
+                    VersionCentrallyManaged = true,
+                });
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                new SimpleTestPackageContext("A", "1.0.0")
+                {
+                    Dependencies =
+                    [
+                        new SimpleTestPackageContext("B", "0.0.0"),
+                    ]
+                },
+                new SimpleTestPackageContext("B", "1.0.0"));
+
+            (var result, _) = await ValidateRestoreAlgorithmEquivalency(pathContext, P);
+            result.LockFile.Targets.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries.Should().HaveCount(2);
         }
 
         // Here's why package driven dependencies should flow.

@@ -54,12 +54,12 @@
       </trans-unit>
       <trans-unit id="ConsoleConfirmMessage">
         <source>{0} (y/N) </source>
-        <target state="translated">{0} (y/N) </target>
+        <target state="translated">{0} (t/N) </target>
         <note />
       </trans-unit>
       <trans-unit id="ConsoleConfirmMessageAccept">
         <source>y</source>
-        <target state="translated">y</target>
+        <target state="translated">t</target>
         <note />
       </trans-unit>
       <trans-unit id="ConsolePasswordProvider_DisplayFile">
@@ -180,7 +180,7 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
       </trans-unit>
       <trans-unit id="Error_HttpSources_Multiple">
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Uruchamiasz operację „{0}” ze źródłami „HTTP”: {1}. Narzędzie NuGet wymaga źródeł HTTPS. Aby użyć źródła HTTP, musisz wyraźnie ustawić właściwość „allowInsecureConnections” na wartość true w pliku NuGet.Config. Aby uzyskać więcej informacji, sprawdź witrynę https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Uruchamiasz operację „{0}” ze źródłami „HTTP”: {1}. Narzędzie NuGet wymaga źródeł HTTPS. Aby użyć źródeł HTTP, musisz wyraźnie ustawić właściwość „allowInsecureConnections” na wartość true w pliku NuGet.Config. Aby uzyskać więcej informacji, sprawdź witrynę https://aka.ms/nuget-https-everywhere.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_InvalidCharactersInPathSegment">
@@ -253,7 +253,7 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
 Please consider migrating '{0}' to `PackageReference` and using the pack targets.
 You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</source>
         <target state="translated">Pakiet „project.json” jest wyłączony w bieżącej wersji menedżera pakietów NuGet, i zostanie trwale usunięty w przyszłej wersji.
- Rozważ migrację „{0}” do elementu "PackageReference" i użycie elementów docelowych pakietu.
+Rozważ przeprowadzenie migracji „{0}” do elementu „PackageReference” i użycie elementów docelowych pakietu.
 Możesz ustawić zmienną środowiskową „{1}” na wartość „true”, aby tymczasowo ponownie włączyć tę funkcję.</target>
         <note>Please do not localize `project.json` pack and `PackageReference`. 0 - path, 1 - env var name</note>
       </trans-unit>
@@ -751,8 +751,8 @@ Możesz ustawić zmienną środowiskową „{1}” na wartość „true”, aby 
       <trans-unit id="RestoreCommandPackageRestoreOptOutMessage">
         <source>Restoring NuGet packages...
 To prevent NuGet from downloading packages during build, open the Visual Studio Options dialog, click on the NuGet Package Manager node and uncheck '{0}'.</source>
-        <target state="translated">Trwa przywracanie pakietów NuGet... 
-Aby uniemożliwić programowi NuGet pobieranie pakietów podczas kompilacji, otwórz okno dialogowe Opcje programu Visual Studio, kliknij węzeł Menedżera pakietów NuGet i usuń zaznaczenie pola wyboru „{0}”.</target>
+        <target state="translated">Trwa przywracanie pakietów menedżera NuGet...
+Aby uniemożliwić menedżerowi NuGet pobieranie pakietów podczas kompilacji, otwórz okno dialogowe Opcje programu Visual Studio, kliknij węzeł Menedżera pakietów NuGet i usuń zaznaczenie pola wyboru „{0}”.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandProjectNotFound">
@@ -792,7 +792,7 @@ Aby uniemożliwić programowi NuGet pobieranie pakietów podczas kompilacji, otw
       </trans-unit>
       <trans-unit id="SettingsCredentials_UsingSavedCredentials">
         <source>Using credentials from config. UserName: {0}</source>
-        <target state="translated">Używanie poświadczeń z konfiguracji. UserName: {0}</target>
+        <target state="translated">Używanie poświadczeń z konfiguracji. Nazwa użytkownika: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="SolutionRestoreCommandNoPackagesConfigOrProjectJson">
@@ -922,7 +922,7 @@ Aby uniemożliwić programowi NuGet pobieranie pakietów podczas kompilacji, otw
       </trans-unit>
       <trans-unit id="Warning_CommandDeprecated">
         <source>'{0} {1}' is deprecated. Use '{0} {2}' instead.</source>
-        <target state="translated">„{0} {1}” jest przestarzałe. Zamiast tego użyj „{0} {2}”.</target>
+        <target state="translated">Polecenie „{0} {1}” jest przestarzałe. Zamiast tego użyj polecenia „{0} {2}”.</target>
         <note>{0} - name of the assembly running the command, e.g., NuGet
 {1} - current command marked as deprecated, e.g., list
 {2} - replacement command. For example, search</note>

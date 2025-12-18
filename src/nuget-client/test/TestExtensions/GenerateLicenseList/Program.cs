@@ -12,7 +12,7 @@ namespace GenerateLicenseList
     {
         static int Main(string[] args)
         {
-            if (args.Count() != 3)
+            if (args.Length != 3)
             {
                 Console.WriteLine("This tool expects 3 arguments: licenses.json, exceptions.json, targetFileLocation.");
                 Console.WriteLine(@"This tool should be run only through .\scripts\utils\UpdateNuGetLicenseSPDXList.ps1");

@@ -129,6 +129,11 @@
       Do not localize `PackageVersion`
     </note>
       </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_MissingTransitivelyPinnedIncludeType">
+        <source>The centrally pinned dependency '{0}' was not found in the resolved graph unexpectedly for node '{1}'. Please file an issue at https://github.com/NuGet/Home</source>
+        <target state="translated">在节点 "{1}" 的解析图形中意外未找到集中固定的依赖项 "{0}"。请在 https://github.com/NuGet/Home 提交问题</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Error_CentralPackageManagement_PackageReferenceWithVersionNotAllowed">
         <source>The following PackageReference items cannot define a value for Version: {0}. Projects using Central Package Management must define a Version value on a PackageVersion item. For more information, visit https://aka.ms/nuget/cpm/gettingstarted</source>
         <target state="translated">以下 PackageReference 项无法定义版本的值: {0}。使用中央包管理的项目必须在 PackageVersion 项上定义版本值。有关详细信息，请访问 https://aka.ms/nuget/cpm/gettingstarted</target>
@@ -461,7 +466,7 @@
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
         <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">将不会删除 PackageReference {0}。请考虑从依赖项中删除此包，因为它可能不需要。</target>
+        <target state="translated">PackageReference {0} 将不会删除。请考虑从依赖项中移除此包，因为可能不需要它。</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
@@ -1083,7 +1088,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="RestoreDebugPruningPackageReference">
         <source>Pruning the package '{0}' as a dependency of '{1}'. The maximum prunable version is '{2}'</source>
-        <target state="translated">正在将包 '{0}' 作为 '{1}' 的依赖项进行修剪。最大可运行版本 '{2}'</target>
+        <target state="translated">正在将包 "{0}" 作为 "{1}" 的依赖项进行删除。最大可删除版本为 "{2}"</target>
         <note>0 - package id and version, 1 - version</note>
       </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">

@@ -11,6 +11,9 @@ set TestFullMSBuild=%1
 REM remove once the 11 runtime is in the SDK
 set NETCoreAppMaximumVersion=11.0
 
+REM Ensure Visual Studio instances allow preview SDKs
+PowerShell -ExecutionPolicy ByPass -NoProfile -File "%HELIX_CORRELATION_PAYLOAD%\t\eng\enable-preview-sdks.ps1"
+
 REM Use powershell to call partical Arcade logic to get full framework msbuild path and assign it
 if "%TestFullMSBuild%"=="true" (
     FOR /F "tokens=*" %%g IN ('PowerShell -ExecutionPolicy ByPass -File "%HELIX_CORRELATION_PAYLOAD%\t\eng\print-full-msbuild-path.ps1"') do (SET DOTNET_SDK_TEST_MSBUILD_PATH=%%g)

@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -142,8 +144,7 @@ namespace API.Test
                 }
             }
 
-            var items = errorTasks.Select(e => e.Description as string).ToArray();
-            return items;
+            return errorTasks.Select(e => e.Description as string).ToArray();
         }
 
         public static string[] GetErrors()
@@ -156,8 +157,7 @@ namespace API.Test
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
             var errorLevel = vsBuildErrorLevel.vsBuildErrorLevelHigh;
-            var errors = await GetErrorTasksAsync(errorLevel);
-            return errors;
+            return await GetErrorTasksAsync(errorLevel);
         }
 
         public static string[] GetWarnings()

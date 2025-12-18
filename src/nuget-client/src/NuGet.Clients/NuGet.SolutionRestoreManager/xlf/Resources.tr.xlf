@@ -22,6 +22,11 @@
         <target state="translated">'{0} {1}' paketinin '[1.0.0]' gibi tam bir sürümü yok. PackageDownload'da yalnızca tam sürümlere izin verilir.</target>
         <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
       </trans-unit>
+      <trans-unit id="InfoBar_HyperlinkGHCopilotDocs">
+        <source>How to fix with GitHub Copilot</source>
+        <target state="translated">GitHub Copilot ile nasıl düzeltilir?</target>
+        <note />
+      </trans-unit>
       <trans-unit id="InfoBar_HyperlinkMessage">
         <source>Manage NuGet Packages</source>
         <target state="translated">NuGet Paketlerini Yönet</target>
@@ -45,7 +50,7 @@
       </trans-unit>
       <trans-unit id="NothingToRestore">
         <source>All packages are already installed and there is nothing to restore.</source>
-        <target state="translated">Tüm paketler yüklü ve geri yüklenecek bir şey yok.</target>
+        <target state="translated">Tüm paketler zaten yüklendi ve geri yüklenecek bir şey yok.</target>
         <note />
       </trans-unit>
       <trans-unit id="Operation_Finished">
@@ -84,7 +89,7 @@ Eksik paketler: {0}</target>
       </trans-unit>
       <trans-unit id="PackageRestoreFinished">
         <source>NuGet package restore finished.</source>
-        <target state="translated">NuGet paketini geri yükleme tamamlandı.</target>
+        <target state="translated">NuGet paket geri yüklemesi tamamlandı.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFinishedForProject">

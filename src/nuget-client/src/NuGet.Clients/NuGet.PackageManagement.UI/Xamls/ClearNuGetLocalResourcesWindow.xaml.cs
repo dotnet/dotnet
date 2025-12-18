@@ -1,8 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
+using System.Windows.Documents;
+using System.Windows.Input;
 using Microsoft.VisualStudio.PlatformUI;
 using NuGet.PackageManagement.UI.ViewModels;
 using NuGet.VisualStudio.Telemetry;
@@ -29,6 +29,17 @@ namespace NuGet.PackageManagement.UI
         private void CloseButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void ExecuteOpenExternalLink(object sender, ExecutedRoutedEventArgs e)
+        {
+            var hyperlink = e.OriginalSource as Hyperlink;
+            if (hyperlink != null
+                && hyperlink.NavigateUri != null)
+            {
+                UIUtility.LaunchExternalLink(hyperlink.NavigateUri);
+                e.Handled = true;
+            }
         }
     }
 }

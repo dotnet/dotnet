@@ -37,14 +37,14 @@ namespace NuGet.PackageManagement.UI
             return value;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             // no op
             Debug.Fail("Not Implemented");
             return null;
         }
 
-        private static bool IsNullOrEmpty(IEnumerable list)
+        private static bool IsNullOrEmpty(IEnumerable? list)
         {
             if (list == null)
             {

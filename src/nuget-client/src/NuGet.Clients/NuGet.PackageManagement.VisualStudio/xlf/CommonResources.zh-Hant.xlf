@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
         <source>Value cannot be null or an empty string.</source>
-        <target state="translated">值不可為 null 或空字串。</target>
+        <target state="translated">值不能為 Null 或空字串。</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Must_Be_Between">
         <source>Value must be between {0} and {1}.</source>
-        <target state="translated">值必須介於 {0} 到 {1} 之間。</target>
+        <target state="translated">值必須介於 {0} 和 {1} 之間。</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Must_Be_Enum_Member">
         <source>Value must be a value from the "{0}" enumeration.</source>
-        <target state="translated">值必須是來自 "{0}" 列舉的值。</target>
+        <target state="translated">值必須是來自 "{0}" 列舉。</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Must_Be_GreaterThan">
@@ -39,7 +39,7 @@
       </trans-unit>
       <trans-unit id="Argument_Must_Be_Null_Or_Non_Empty">
         <source>Value cannot be an empty string. It must either be null or a non-empty string.</source>
-        <target state="translated">值不可為空字串。值必須是 null 或非空字串。</target>
+        <target state="translated">值不能為空字串。必須為 Null 或非空字串。</target>
         <note />
       </trans-unit>
       <trans-unit id="EnsureImportedMessage">

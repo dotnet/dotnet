@@ -49,7 +49,7 @@
       </trans-unit>
       <trans-unit id="UnableToSetNuGetTempFolderPermission">
         <source>User is unable to set permission to 700 while creating {0}, errno={1}.</source>
-        <target state="translated">Użytkownik nie może ustawić uprawnienia na 700 podczas tworzenia {0}, errno ={1}.</target>
+        <target state="translated">Użytkownik nie może ustawić uprawnienia na wartość 700 podczas tworzenia ścieżki {0}, błąd={1}.</target>
         <note>{0} is a file path; {1} is an error code.</note>
       </trans-unit>
       <trans-unit id="UnauthorizedLockFail">
@@ -59,7 +59,7 @@
       </trans-unit>
       <trans-unit id="UnsupportedHashAlgorithm">
         <source>Hash algorithm '{0}' is unsupported. Supported algorithms include: SHA512 and SHA256.</source>
-        <target state="translated">Algorytm wyznaczania wartości skrótu „{0}” nie jest obsługiwany. Do obsługiwanych algorytmów należą SHA512 i SHA256.</target>
+        <target state="translated">Algorytm wyznaczania wartości skrótu „{0}” jest nieobsługiwany. Obsługiwane algorytmy obejmują SHA512 i SHA256.</target>
         <note>{0} is an algorithm identifier</note>
       </trans-unit>
       <trans-unit id="UnsupportedHashAlgorithmName">
