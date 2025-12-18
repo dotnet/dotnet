@@ -96,17 +96,17 @@ nuget client-certs List</source>
 
 nuget client-certs Add -PackageSource Contoso -Path c:\MyCertificate.pfx -Password 42
 
-Agregar certificado de cliente de nuget -PackageSource Foo -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
+nuget client-certs Add -PackageSource Foo -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
 
-Agregar certificado de cliente de nuget -PackageSource Contoso -StoreLocation LocalMachine -StoreName My -FindBy Thumbprint -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
+nuget client-certs Add -PackageSource Contoso -StoreLocation LocalMachine -StoreName My -FindBy Thumbprint -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
 
-Actualizar certificado de cliente de nuget -PackageSource Foo -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
+nuget client-certs Update -PackageSource Foo -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
 
-Eliminar certificado de cliente de nuget -PackageSource certificateName
+nuget client-certs Remove -PackageSource certificateName
 
 nuget client-certs
 
-Lista de certificados de cliente de nuget</target>
+nuget client-certs List</target>
         <note />
       </trans-unit>
       <trans-unit id="ClientCertificatesCommandUsageSummary">
@@ -192,7 +192,7 @@ Lista de certificados de cliente de nuget</target>
       <trans-unit id="ConfigCommandExamples">
         <source>nuget config -Set HTTP_PROXY=http://127.0.0.1 -Set HTTP_PROXY.USER=domain\user
 nuget config HTTP_PROXY</source>
-        <target state="translated">nuget config -Set HTTP_PROXY=http://127.0.0.1 -Set HTTP_PROXY. USER=dominio\usuario
+        <target state="translated">nuget config -Set HTTP_PROXY=http://127.0.0.1 -Set HTTP_PROXY.USER=domain\user
 nuget config HTTP_PROXY</target>
         <note>Please don't localize this string</note>
       </trans-unit>
@@ -235,9 +235,9 @@ nuget config HTTP_PROXY</target>
         <source>nuget delete MyPackage 1.0
     
 nuget delete MyPackage 1.0 -NoPrompt</source>
-        <target state="translated">nuget borrar MyPackage 1.0
+        <target state="translated">nuget delete MyPackage 1.0
     
-nuget borrar MyPackage 1.0 -NoPrompt</target>
+nuget delete MyPackage 1.0 -NoPrompt</target>
         <note>Please don't localize this string</note>
       </trans-unit>
       <trans-unit id="DeleteCommandUsageSummary">
@@ -288,7 +288,7 @@ nuget help push
 nuget ?
 
 nuget push -?</source>
-        <target state="translated">ayuda de nuget
+        <target state="translated">nuget help
 
 nuget help push
 
@@ -329,7 +329,7 @@ nuget push -?</target>
       </trans-unit>
       <trans-unit id="HelpCommand_Suggestion">
         <source>Type '{0} help &lt;command&gt;' for help on a specific command.</source>
-        <target state="translated">Escriba “{0} help &lt;comando&gt;” para ver la ayuda de un comando en concreto.</target>
+        <target state="translated">Escriba '{0} help &lt;command&gt;' para ver la ayuda de un comando en concreto.</target>
         <note>{0} - executable name: nuget.exe; Don't localize text enclosed in single quotes: '{0} help command'</note>
       </trans-unit>
       <trans-unit id="HelpCommand_Title">
@@ -339,7 +339,7 @@ nuget push -?</target>
       </trans-unit>
       <trans-unit id="HelpCommand_Usage">
         <source>usage: {0} &lt;command&gt; [args] [options]</source>
-        <target state="translated">uso: {0} &lt;comando&gt; [argumentos] [opciones]</target>
+        <target state="translated">uso: {0} &lt;command&gt; [argumentos] [opciones]</target>
         <note>{0} - executable name: nuget.exe; Don't localize '&lt;command&gt; [args] [options]'</note>
       </trans-unit>
       <trans-unit id="HelpCommand_UsageDetail">
@@ -422,11 +422,11 @@ nuget init \\foo\packages \\bar\packages</target>
 nuget install packages.config
 
 nuget install ninject -o c:\foo</source>
-        <target state="translated">instalación de nuget elmah
+        <target state="translated">nuget install elmah
 
-nuget instalar packages.config
+nuget install packages.config
 
-nuget instalar ninject -o c:\foo</target>
+nuget install ninject -o c:\foo</target>
         <note>Please don't localize this string</note>
       </trans-unit>
       <trans-unit id="InstallCommandUsageSummary">
@@ -473,7 +473,7 @@ nuget instalar ninject -o c:\foo</target>
         <source>nuget list
 
 nuget list -verbose -allversions</source>
-        <target state="translated">lista de NuGet
+        <target state="translated">nuget list
 
 nuget list -verbose -allversions</target>
         <note>Please don't localize this string</note>
@@ -565,7 +565,7 @@ nuget pack foo.csproj
 nuget pack foo.csproj -Build -Symbols -Properties Configuration=Release
 
 nuget pack foo.nuspec -Version 2.1.0</source>
-        <target state="translated">paquete nuget
+        <target state="translated">nuget pack
 
 nuget pack foo.nuspec
 
@@ -703,7 +703,7 @@ nuget pack foo.nuspec -Version 2.1.0</target>
       </trans-unit>
       <trans-unit id="PushCommandAllowInsecureConnectionsDescription">
         <source>Allows pushing to HTTP sources (insecure).</source>
-        <target state="new">Allows pushing to HTTP sources (insecure).</target>
+        <target state="translated">Permite insertar en orígenes HTTP (no seguro).</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandDescription">
@@ -784,7 +784,7 @@ nuget push foo.nupkg -Timeout 360</target>
       </trans-unit>
       <trans-unit id="RestoreCommandLockFilePath">
         <source>Output location where project lock file is written. By default, this is 'PROJECT_ROOT\packages.lock.json'.</source>
-        <target state="translated">Destino de salida donde se escribe el archivo de bloqueo del proyecto. De forma predeterminada, esto es "PROJECT_ROOT\packages.lock.json".</target>
+        <target state="translated">Ubicación de salida donde se escribe el archivo de bloqueo del proyecto. De manera predeterminada, es 'PROJECT_ROOT\packages.lock.json'.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandLockedMode">
@@ -932,23 +932,23 @@ Esta opción se puede usar para especificar la contraseña del certificado. Si n
         <source>Name of the X.509 certificate store use to search for the certificate. Defaults to "CurrentUser", the X.509 certificate store used by the current user.
 This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
         <target state="translated">Nombre del almacén de certificados X.509 que se usa para buscar el certificado. El valor predeterminado es "CurrentUser", el almacén de certificados X.509 usado por el usuario actual.
-Esta opción tiene que usarse al especificar el certificado a través de las opciones de certificate-subject-name o --certificate-fingerprint.</target>
+Esta opción debe usarse al especificar el certificado a través de las opciones -CertificateSubjectName o -CertificateFingerprint.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateStoreNameDescription">
         <source>Name of the X.509 certificate store to use to search for the certificate. Defaults to "My", the X.509 certificate store for personal certificates.
 This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
-        <target state="translated">Nombre del almacén de certificados X.509 que se utilizará para buscar el certificado. El valor predeterminado es "Mi", el almacén de certificados X.509 para certificados personales.
- Esta opción debe usarse al especificar el certificado a través de las opciones --certificate-subject-name o --certificate-fingerprint.</target>
+        <target state="translated">Nombre del almacén de certificados X.509 que se utilizará para buscar el certificado. El valor predeterminado es "My", el almacén de certificados X.509 para certificados personales.
+Esta opción debe usarse al especificar el certificado a través de las opciones -CertificateSubjectName o -CertificateFingerprint.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateSubjectNameDescription">
         <source>Subject name of the certificate used to search a local certificate store for the certificate. 
 The search is a case-insensitive string comparison using the supplied value, which will find all certificates with the subject name containing that string, regardless of other subject values.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
-        <target state="translated">Nombre del asunto del certificado que se usa para buscar un almacén de certificados local para el certificado.
+        <target state="translated">Nombre del asunto del certificado que se usa para buscar un almacén de certificados local para el certificado. 
 La búsqueda es una comparación de cadenas que no diferencia mayúsculas de minúsculas con el valor proporcionado, que encontrará todos los certificados con el nombre del asunto que contienen esa cadena, independientemente de otros valores de asunto.
-El almacén de certificados se puede especificar por las opciones-CertificateStoreName y -CertificateStoreLocation.</target>
+El almacén de certificados se puede especificar mediante las opciones: CertificateStoreName y -CertificateStoreLocation.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandDescription">
@@ -993,7 +993,7 @@ nuget sign MyPackage.nupkg -CertificateFingerprint certificate_fingerprint -Outp
       </trans-unit>
       <trans-unit id="SignCommandNoCertificateException">
         <source>No certificate was provided. For a list of accepted ways to provide a certificate, please visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="translated">No se proporcionó ningún certificado. Para consultar las formas aceptadas de proporcionar un certificado, visite https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">No se encontró el archivo de certificado. Para obtener una lista de las formas aceptadas de proporcionar un certificado, visite https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandNoPackageException">
@@ -1043,7 +1043,7 @@ nuget sign .\..\MyPackage.nupkg -Timestamper https://foo.bar -OutputDirectory .\
 </source>
         <target state="translated">nuget sign MyPackage.nupkg -Timestamper https://foo.bar
 
-signo nuget .\.. \MyPackage.nupkg -Timestamper https://foo.bar -OutputDirectory .\.. \Firmado
+nuget sign .\..\MyPackage.nupkg -Timestamper https://foo.bar -OutputDirectory .\..\Signed
 </target>
         <note>Please don't localize this string</note>
       </trans-unit>
@@ -1207,7 +1207,7 @@ nuget trusted-signers Add -Name author1 -CertificateFingerprint CE40881FF5F0AD3E
 nuget trusted-signers Add -Repository .\..\MyRepositorySignedPackage.nupkg -Name TrustedRepo
 
 nuget trusted-signers Remove -Name TrustedRepo</source>
-        <target state="translated">firmantes de confianza de NuGet
+        <target state="translated">nuget trusted-signers
 
 nuget trusted-signers Add -Name existingSource
 
@@ -1215,7 +1215,7 @@ nuget trusted-signers Add -Name trustedRepo -ServiceIndex https://trustedRepo.te
 
 nuget trusted-signers Add -Name author1 -CertificateFingerprint CE40881FF5F0AD3E58965DA20A9F571EF1651A56933748E1BF1C99E537C4E039 -FingerprintAlgorithm SHA256
 
-nuget trusted-signers Add -Repository .\.. \MyRepositorySignedPackage.nupkg -Name TrustedRepo
+nuget trusted-signers Add -Repository .\..\MyRepositorySignedPackage.nupkg -Name TrustedRepo
 
 nuget trusted-signers Remove -Name TrustedRepo</target>
         <note />
@@ -1276,11 +1276,11 @@ nuget trusted-signers Remove -Name TrustedRepo</target>
 nuget update -Safe
 
 nuget update -Self</source>
-        <target state="translated">actualización de nuget
+        <target state="translated">nuget update
     
-actualización de nuget -Safe
+nuget update -Safe
 
-actualización de nuget -Self</target>
+nuget update -Self</target>
         <note>Please don't localize this string</note>
       </trans-unit>
       <trans-unit id="UpdateCommandVerboseDescription">
@@ -1321,7 +1321,7 @@ nuget verify -Signatures C:\packages\MyPackage.nupkg -CertificateFingerprint CE4
 nuget verify -Signatures MyPackage.nupkg -Verbosity quiet
 
 nuget verify -Signatures .\*.nupkg</source>
-        <target state="translated">nuget verify -Signatures .\.. \MyPackage.nupkg -CertificateFingerprint "CE40881FF5F0AD3E58965DA20A9F571EF1651A56933748E1BF1C99E537C4E039;5F874AAF47BCB268A19357364E7FBB09D6BF9E8A93E1229909AC5CAC865802E2" -Verbosity detailed
+        <target state="translated">nuget verify -Signatures .\..\MyPackage.nupkg -CertificateFingerprint 'CE40881FF5F0AD3E58965DA20A9F571EF1651A56933748E1BF1C99E537C4E039;5F874AAF47BCB268A19357364E7FBB09D6BF9E8A93E1229909AC5CAC865802E2' -Verbosity detailed
 
 nuget verify -Signatures C:\packages\MyPackage.nupkg -CertificateFingerprint CE40881FF5F0AD3E58965DA20A9F571EF1651A56933748E1BF1C99E537C4E039
 

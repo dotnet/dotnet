@@ -257,6 +257,7 @@ if ($DotNetInstallDir) {
     if (!(Test-Path $DotNetInstallDir)) { New-Item -ItemType Directory -Path $DotNetInstallDir }
     $DotNetInstallDir = Resolve-Path $DotNetInstallDir
     Write-Host "Installing .NET SDK and runtimes to $DotNetInstallDir" -ForegroundColor Blue
+    $envVars['DOTNET_MULTILEVEL_LOOKUP'] = '0'
     $envVars['DOTNET_ROOT'] = $DotNetInstallDir
 }
 

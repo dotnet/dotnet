@@ -20,8 +20,6 @@ using NuGet.ProjectManagement;
 using NuGet.ProjectModel;
 using NuGet.VisualStudio.Telemetry;
 
-#nullable enable
-
 namespace NuGet.VisualStudio.Common
 {
     [Export(typeof(IFeedbackDiagnosticFileProvider))]

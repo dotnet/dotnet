@@ -72,3 +72,6 @@ project.json text
 *.pem   binary
 *.png 	binary
 *.zip   binary
+
+# https://docs.github.com/en/search-github/searching-on-github/finding-files-on-github#customizing-excluded-files
+build/** linguist-generated=false

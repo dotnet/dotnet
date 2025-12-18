@@ -14,7 +14,6 @@ source_build=false
 product_build=false
 from_vmr=false
 ci=false
-warn_as_error=true
 node_reuse=true
 binary_log=false
 
@@ -57,10 +56,6 @@ while [[ $# > 0 ]]; do
       ;;
     --from-vmr|--fromvmr)
       from_vmr=true
-      ;;
-    --warnaserror)
-      warn_as_error=$2
-      shift
       ;;
     --nodereuse)
       node_reuse=$2
@@ -133,9 +128,4 @@ if [[ "$ci" == true ]]; then
   node_reuse=false
 fi
 
-local warnaserror_switch=""
-if [[ $warn_as_error == true ]]; then
-  warnaserror_switch="/warnaserror"
-fi
-
-"$DOTNET" msbuild /m /nologo /clp:Summary /v:$verbosity /nr:$node_reuse $warnaserror_switch /p:TreatWarningsAsErrors=$warn_as_error /p:ContinuousIntegrationBuild=$ci $bl ${dotnetArguments[@]+"${dotnetArguments[@]}"} ${args[@]+"${args[@]}"}
+"$DOTNET" msbuild /m /nologo /clp:Summary /v:$verbosity /nr:$node_reuse /p:ContinuousIntegrationBuild=$ci $bl ${dotnetArguments[@]+"${dotnetArguments[@]}"} ${args[@]+"${args[@]}"}

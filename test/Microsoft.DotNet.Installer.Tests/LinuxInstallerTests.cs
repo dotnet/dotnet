@@ -39,21 +39,21 @@ public partial class LinuxInstallerTests : IDisposable
         { DotnetHostFxrPrefix, new List<string> { $"{DotnetHostPrefix.TrimEnd('-')}" } },
         { DotnetRuntimePrefix, new List<string>
             {
-                $"{DotnetHostFxrPrefix}{Config.TargetFrameworkVersion}",
-                $"{DotnetRuntimeDepsPrefix}{Config.TargetFrameworkVersion}"
+                $"{DotnetHostFxrPrefix}{Config.TargetProductVersion}",
+                $"{DotnetRuntimeDepsPrefix}{Config.TargetProductVersion}"
             }
         },
         { DotnetTargetingPackPrefix, new List<string> {  } },
-        { AspNetCoreRuntimePrefix, new List<string> { $"{DotnetRuntimePrefix}{Config.TargetFrameworkVersion}" } },
-        { AspNetCoreTargetingPackPrefix, new List<string> { $"{DotnetTargetingPackPrefix}{Config.TargetFrameworkVersion}" } },
+        { AspNetCoreRuntimePrefix, new List<string> { $"{DotnetRuntimePrefix}{Config.TargetProductVersion}" } },
+        { AspNetCoreTargetingPackPrefix, new List<string> { $"{DotnetTargetingPackPrefix}{Config.TargetProductVersion}" } },
         { DotnetApphostPackPrefix, new List<string> { } },
         { DotnetSdkPrefix, new List<string>
             {
-                $"{DotnetRuntimePrefix}{Config.TargetFrameworkVersion}",
-                $"{DotnetTargetingPackPrefix}{Config.TargetFrameworkVersion}",
-                $"{DotnetApphostPackPrefix}{Config.TargetFrameworkVersion}",
-                $"{AspNetCoreRuntimePrefix}{Config.TargetFrameworkVersion}",
-                $"{AspNetCoreTargetingPackPrefix}{Config.TargetFrameworkVersion}"
+                $"{DotnetRuntimePrefix}{Config.TargetProductVersion}",
+                $"{DotnetTargetingPackPrefix}{Config.TargetProductVersion}",
+                $"{DotnetApphostPackPrefix}{Config.TargetProductVersion}",
+                $"{AspNetCoreRuntimePrefix}{Config.TargetProductVersion}",
+                $"{AspNetCoreTargetingPackPrefix}{Config.TargetProductVersion}"
             }
         }
     };
@@ -74,7 +74,7 @@ public partial class LinuxInstallerTests : IDisposable
     private static partial Regex RemoveVersionConstraintRegex { get; }
 
     // Remove version numbers from package names: "dotnet-runtime-10.0.0-rc.1.25480.112-x64.rpm" -> "dotnet-runtime-*-x64.rpm"
-    [GeneratedRegex(@"\d+\.\d+\.\d+(?:-(?:rc|rtm|preview)(?:\.\d+)*)?", RegexOptions.CultureInvariant)]
+    [GeneratedRegex(@"\d+\.\d+\.\d+(?:-(?:alpha|rc|rtm|preview)(?:\.\d+)*)?", RegexOptions.CultureInvariant)]
     private static partial Regex RemoveVersionFromPackageNameRegex { get; }
 
     private const string RuntimeDepsRepo = "mcr.microsoft.com/dotnet/runtime-deps";

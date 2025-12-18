@@ -17,17 +17,17 @@
       <BuildCommandArgs>$(BuildCommandArgs) /p:Version=$(MSBuildLocatorReleaseVersion)</BuildCommandArgs>
     </PropertyGroup>
 
-    <Exec Command="$(DotNetTool) restore /bl:$(ArtifactsLogRepoDir)restore.binlog $(BuildCommandArgs)"
+    <Exec Command="&quot;$(DotNetTool)&quot; restore /bl:$(ArtifactsLogRepoDir)restore.binlog $(BuildCommandArgs)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />
 
-    <Exec Command="$(DotNetTool) build --no-restore /bl:$(ArtifactsLogRepoDir)build.binlog $(BuildCommandArgs)"
+    <Exec Command="&quot;$(DotNetTool)&quot; build --no-restore /bl:$(ArtifactsLogRepoDir)build.binlog $(BuildCommandArgs)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />
 
-    <Exec Command="$(DotNetTool) pack --no-build /bl:$(ArtifactsLogRepoDir)pack.binlog $(BuildCommandArgs)"
+    <Exec Command="&quot;$(DotNetTool)&quot; pack --no-build /bl:$(ArtifactsLogRepoDir)pack.binlog $(BuildCommandArgs)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />

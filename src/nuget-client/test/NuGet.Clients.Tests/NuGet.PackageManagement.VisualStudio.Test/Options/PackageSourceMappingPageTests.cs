@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -306,23 +304,24 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
             string addNewPackageSourceName4 = "unitTestingSourceName4";
             string packageIdPattern = "Contoso.*";
 
-            var unitTestingSourceMapping1 = new PackageSourceMappingSourceItem("unitTestingSourceName1", [new PackagePatternItem(packageIdPattern)]);
-            var nonExistantSourceInSourceMapping2 = new PackageSourceMappingSourceItem("nonExistantSourceName2", [new PackagePatternItem(packageIdPattern)]);
-            var unitTestingSourceMapping3 = new PackageSourceMappingSourceItem("unitTestingSourceName3", [new PackagePatternItem(packageIdPattern)]);
+            string sourceName1 = "unitTestingSourceName1";
+            string sourceUrl1 = "https://testsource1.com";
+
+            string nonExistantSourceName2 = "nonExistantSourceName2";
+            // nonExistantSourceName2 doesn't have a URL as it will not be a configured package source.
+
+            string sourceName3 = "unitTestingSourceName3";
+            string sourceUrl3 = "https://testsource3.com";
+
+            var unitTestingSourceMapping1 = new PackageSourceMappingSourceItem(sourceName1, [new PackagePatternItem(packageIdPattern)]);
+            var nonExistantSourceInSourceMapping2 = new PackageSourceMappingSourceItem(nonExistantSourceName2, [new PackagePatternItem(packageIdPattern)]);
+            var unitTestingSourceMapping3 = new PackageSourceMappingSourceItem(sourceName3, [new PackagePatternItem(packageIdPattern)]);
 
             _vsSettings.AddOrUpdate(ConfigurationConstants.PackageSourceMapping, unitTestingSourceMapping1);
             _vsSettings.AddOrUpdate(ConfigurationConstants.PackageSourceMapping, nonExistantSourceInSourceMapping2);
             _vsSettings.AddOrUpdate(ConfigurationConstants.PackageSourceMapping, unitTestingSourceMapping3);
 
             PackageSourceMappingPage instance = CreateInstance(_vsSettings);
-
-            string sourceName1 = "unitTestingSourceName1";
-            string sourceUrl1 = "https://testsource1.com";
-
-            // nonExistantSourceName2 is not added here intentionally.
-
-            string sourceName3 = "unitTestingSourceName3";
-            string sourceUrl3 = "https://testsource3.com";
 
             _packageSources =
             [
@@ -338,7 +337,9 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
             sourceMappingDictionary1[PackageSourceMappingPage.MonikerPackageId] = unitTestingSourceMapping1.Patterns.Single().Pattern;
             sourceMappingDictionary1[PackageSourceMappingPage.MonikerSourceNames] = new List<string>() { unitTestingSourceMapping1.Key };
 
-            // nonExistantSourceName is not known to Unified Settings, so it is not part of the request to SetValue.
+            Dictionary<string, object> sourceMappingDictionary2 = new Dictionary<string, object>();
+            sourceMappingDictionary2[PackageSourceMappingPage.MonikerPackageId] = nonExistantSourceInSourceMapping2.Patterns.Single().Pattern;
+            sourceMappingDictionary2[PackageSourceMappingPage.MonikerSourceNames] = new List<string>() { nonExistantSourceInSourceMapping2.Key };
 
             // Unchanged package source mapping.
             Dictionary<string, object> sourceMappingDictionary3 = new Dictionary<string, object>();
@@ -354,25 +355,50 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
                 new List<IDictionary<string, object>>(capacity: 3)
                 {
                     sourceMappingDictionary1, // Pre-existing and unchanged.
-                    // No source mapping is sent by Unified Settings for nonExistantSourceName2.
+                    sourceMappingDictionary2, // Pre-existing and unchanged, with an unconfigured Package Source.
                     sourceMappingDictionary3, // Pre-existing and unchanged.
                     sourceMappingDictionary4 // A newly added source mapping.
                 };
 
             // Act
+            ExternalSettingOperationResult<IReadOnlyList<IDictionary<string, object>>> resultGetValueBeforeAddNew =
+                await instance.GetValueAsync<IReadOnlyList<IDictionary<string, object>>>(
+                    moniker: PackageSourceMappingPage.MonikerPackageSourceMapping,
+                    cancellationToken: CancellationToken.None);
+
             ExternalSettingOperationResult result = await instance.SetValueAsync(
                 PackageSourceMappingPage.MonikerPackageSourceMapping,
                 sourceMappingDictionaryList,
                 CancellationToken.None);
 
             // Assert
+
+            resultGetValueBeforeAddNew.Should().NotBeNull();
+            resultGetValueBeforeAddNew.Should().BeOfType<ExternalSettingOperationResult<IReadOnlyList<IDictionary<string, object>>>.Success>();
+            IReadOnlyList<IDictionary<string, object>> successResultGetValueBeforeAddNew =
+                ((ExternalSettingOperationResult<IReadOnlyList<IDictionary<string, object>>>.Success)resultGetValueBeforeAddNew)
+                .Value;
+
+            // Initially, 1 source mapping exists for 3 package sources.
+            // 1 of these package sources is not configured.
+            successResultGetValueBeforeAddNew.Should().HaveCount(1);
+            successResultGetValueBeforeAddNew[0].Should().ContainKey(PackageSourceMappingPage.MonikerPackageId);
+            successResultGetValueBeforeAddNew[0].TryGetValue(PackageSourceMappingPage.MonikerPackageId, out object? packageIdObject).Should().BeTrue();
+            ((string)packageIdObject).Should().Be(packageIdPattern);
+
+            successResultGetValueBeforeAddNew[0].Should().ContainKey(PackageSourceMappingPage.MonikerSourceNames);
+            successResultGetValueBeforeAddNew[0].TryGetValue(PackageSourceMappingPage.MonikerSourceNames, out object? sourceNamesObject).Should().BeTrue();
+            var sourceNamesBeforeAddNew = ((List<string>)sourceNamesObject);
+            sourceNamesBeforeAddNew.Should().HaveCount(3);
+            sourceNamesBeforeAddNew.Should().ContainEquivalentOf(sourceName1);
+            sourceNamesBeforeAddNew.Should().ContainEquivalentOf(nonExistantSourceName2);
+            sourceNamesBeforeAddNew.Should().ContainEquivalentOf(sourceName3);
+
+            // The customer added a new package source mapping, so now 4 total are expected.
             result.Should().NotBeNull();
             result.Should().BeOfType<ExternalSettingOperationResult.Success>();
-
             IReadOnlyList<PackageSourceMappingSourceItem> packageSourceMappingItems = instance._packageSourceMappingProvider.GetPackageSourceMappingItems();
-
             packageSourceMappingItems.Should().HaveCount(4);
-
             packageSourceMappingItems.Should().Contain(unitTestingSourceMapping1);
             packageSourceMappingItems.Should().Contain(nonExistantSourceInSourceMapping2);
             packageSourceMappingItems.Should().Contain(unitTestingSourceMapping3);

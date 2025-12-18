@@ -179,7 +179,6 @@ NuGet.Commands.IRestoreTargetGraph
 ~NuGet.Commands.IRestoreTargetGraph.Graphs.get -> System.Collections.Generic.IEnumerable<NuGet.DependencyResolver.GraphNode<NuGet.DependencyResolver.RemoteResolveResult>>
 NuGet.Commands.IRestoreTargetGraph.InConflict.get -> bool
 ~NuGet.Commands.IRestoreTargetGraph.Install.get -> System.Collections.Generic.ISet<NuGet.DependencyResolver.RemoteMatch>
-~NuGet.Commands.IRestoreTargetGraph.Name.get -> string
 ~NuGet.Commands.IRestoreTargetGraph.ResolvedDependencies.get -> System.Collections.Generic.ISet<NuGet.Commands.ResolvedDependencyKey>
 ~NuGet.Commands.IRestoreTargetGraph.RuntimeGraph.get -> NuGet.RuntimeModel.RuntimeGraph
 ~NuGet.Commands.IRestoreTargetGraph.RuntimeIdentifier.get -> string
@@ -452,6 +451,18 @@ NuGet.Commands.ResolverRequest
 ~NuGet.Commands.ResolverRequest.Request.get -> NuGet.LibraryModel.LibraryRange
 ~NuGet.Commands.ResolverRequest.Requestor.get -> NuGet.LibraryModel.LibraryIdentity
 ~NuGet.Commands.ResolverRequest.ResolverRequest(NuGet.LibraryModel.LibraryIdentity requestor, NuGet.LibraryModel.LibraryRange request) -> void
+NuGet.Commands.Restore.IItem
+NuGet.Commands.Restore.IItem.GetMetadata(string! name) -> string!
+NuGet.Commands.Restore.IItem.Identity.get -> string!
+NuGet.Commands.Restore.IProject
+NuGet.Commands.Restore.IProject.Directory.get -> string!
+NuGet.Commands.Restore.IProject.FullPath.get -> string!
+NuGet.Commands.Restore.IProject.OuterBuild.get -> NuGet.Commands.Restore.ITargetFramework!
+NuGet.Commands.Restore.IProject.TargetFrameworks.get -> System.Collections.Generic.IReadOnlyDictionary<string!, NuGet.Commands.Restore.ITargetFramework!>!
+NuGet.Commands.Restore.ITargetFramework
+NuGet.Commands.Restore.ITargetFramework.GetItems(string! itemType) -> System.Collections.Generic.IReadOnlyList<NuGet.Commands.Restore.IItem!>!
+NuGet.Commands.Restore.ITargetFramework.GetProperty(string! propertyName) -> string!
+NuGet.Commands.Restore.Utility.PackageSpecFactory
 NuGet.Commands.RestoreArgs
 ~NuGet.Commands.RestoreArgs.AdditionalMessages.get -> System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.IAssetsLogMessage>
 ~NuGet.Commands.RestoreArgs.AdditionalMessages.set -> void
@@ -477,12 +488,8 @@ NuGet.Commands.RestoreArgs.HideWarningsAndErrors.get -> bool
 NuGet.Commands.RestoreArgs.HideWarningsAndErrors.set -> void
 ~NuGet.Commands.RestoreArgs.Inputs.get -> System.Collections.Generic.List<string>
 ~NuGet.Commands.RestoreArgs.Inputs.set -> void
-NuGet.Commands.RestoreArgs.IsLowercaseGlobalPackagesFolder.get -> bool?
-NuGet.Commands.RestoreArgs.IsLowercaseGlobalPackagesFolder.set -> void
 NuGet.Commands.RestoreArgs.IsRestoreOriginalAction.get -> bool
 NuGet.Commands.RestoreArgs.IsRestoreOriginalAction.set -> void
-NuGet.Commands.RestoreArgs.LockFileVersion.get -> int?
-NuGet.Commands.RestoreArgs.LockFileVersion.set -> void
 ~NuGet.Commands.RestoreArgs.Log.get -> NuGet.Common.ILogger
 ~NuGet.Commands.RestoreArgs.Log.set -> void
 ~NuGet.Commands.RestoreArgs.MachineWideSettings.get -> NuGet.Configuration.IMachineWideSettings
@@ -642,7 +649,6 @@ NuGet.Commands.RestoreTargetGraph
 ~NuGet.Commands.RestoreTargetGraph.Graphs.get -> System.Collections.Generic.IEnumerable<NuGet.DependencyResolver.GraphNode<NuGet.DependencyResolver.RemoteResolveResult>>
 NuGet.Commands.RestoreTargetGraph.InConflict.get -> bool
 ~NuGet.Commands.RestoreTargetGraph.Install.get -> System.Collections.Generic.ISet<NuGet.DependencyResolver.RemoteMatch>
-~NuGet.Commands.RestoreTargetGraph.Name.get -> string
 ~NuGet.Commands.RestoreTargetGraph.ResolvedDependencies.get -> System.Collections.Generic.ISet<NuGet.Commands.ResolvedDependencyKey>
 ~NuGet.Commands.RestoreTargetGraph.RuntimeGraph.get -> NuGet.RuntimeModel.RuntimeGraph
 ~NuGet.Commands.RestoreTargetGraph.RuntimeIdentifier.get -> string
@@ -943,6 +949,7 @@ override NuGet.Commands.WarningPropertiesCollection.GetHashCode() -> int
 ~static NuGet.Commands.MSBuildRestoreUtility.GetLibraryDependencyIncludeFlags(string includeAssets, string excludeAssets, string privateAssets) -> (NuGet.LibraryModel.LibraryIncludeFlags includeType, NuGet.LibraryModel.LibraryIncludeFlags suppressParent)
 ~static NuGet.Commands.MSBuildRestoreUtility.GetMessageForUnsupportedProject(string path) -> NuGet.Common.RestoreLogMessage
 ~static NuGet.Commands.MSBuildRestoreUtility.GetPackageSpec(System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> items) -> NuGet.ProjectModel.PackageSpec
+~static NuGet.Commands.MSBuildRestoreUtility.GetRestoreAuditProperties(NuGet.Commands.IMSBuildItem specItem, System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> allItems, System.Collections.Generic.HashSet<string> suppressionItems) -> NuGet.ProjectModel.RestoreAuditProperties
 ~static NuGet.Commands.MSBuildRestoreUtility.GetSdkAnalysisLevel(string sdkAnalysisLevel) -> NuGet.Versioning.NuGetVersion
 ~static NuGet.Commands.MSBuildRestoreUtility.GetUsingMicrosoftNETSdk(string usingMicrosoftNETSdk) -> bool
 ~static NuGet.Commands.MSBuildRestoreUtility.GetWarningForUnsupportedProject(string path) -> NuGet.Common.RestoreLogMessage
@@ -967,24 +974,24 @@ override NuGet.Commands.WarningPropertiesCollection.GetHashCode() -> int
 ~static NuGet.Commands.PackageSourceProviderExtensions.ResolveSource(System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource> availableSources, string source) -> NuGet.Configuration.PackageSource
 ~static NuGet.Commands.PackageSpecificWarningProperties.CreatePackageSpecificWarningProperties(NuGet.ProjectModel.PackageSpec packageSpec) -> NuGet.Commands.PackageSpecificWarningProperties
 ~static NuGet.Commands.PackageSpecificWarningProperties.CreatePackageSpecificWarningProperties(NuGet.ProjectModel.PackageSpec packageSpec, NuGet.Frameworks.NuGetFramework framework) -> NuGet.Commands.PackageSpecificWarningProperties
+~static NuGet.Commands.PushRunner.Run(NuGet.Configuration.ISettings settings, NuGet.Configuration.IPackageSourceProvider sourceProvider, System.Collections.Generic.IList<string> packagePaths, string source, string apiKey, string symbolSource, string symbolApiKey, int timeoutSeconds, bool disableBuffering, bool noSymbols, bool noServiceEndpoint, bool skipDuplicate, bool allowInsecureConnections, NuGet.Common.ILogger logger) -> System.Threading.Tasks.Task
 ~static NuGet.Commands.RemoveClientCertRunner.Run(NuGet.Commands.RemoveClientCertArgs args, System.Func<NuGet.Common.ILogger> getLogger) -> void
 ~static NuGet.Commands.RemoveSourceRunner.Run(NuGet.Commands.RemoveSourceArgs args, System.Func<NuGet.Common.ILogger> getLogger) -> void
 ~static NuGet.Commands.RequestRuntimeUtility.GetDefaultRestoreRuntimes(string os, string runtimeOsName) -> System.Collections.Generic.IEnumerable<string>
 static NuGet.Commands.ResolvedDependencyKey.operator !=(NuGet.Commands.ResolvedDependencyKey left, NuGet.Commands.ResolvedDependencyKey right) -> bool
 static NuGet.Commands.ResolvedDependencyKey.operator ==(NuGet.Commands.ResolvedDependencyKey left, NuGet.Commands.ResolvedDependencyKey right) -> bool
+static NuGet.Commands.Restore.Utility.PackageSpecFactory.GetPackageSpec(NuGet.Commands.Restore.IProject! project, NuGet.Configuration.ISettings! settings) -> NuGet.ProjectModel.PackageSpec?
 ~static NuGet.Commands.RestoreRunner.CommitAsync(NuGet.Commands.RestoreResultPair restoreResult, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Commands.RestoreSummary>
 ~static NuGet.Commands.RestoreRunner.GetInvalidInputErrorMessage(string input) -> string
 ~static NuGet.Commands.RestoreRunner.GetRequests(NuGet.Commands.RestoreArgs restoreContext) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Commands.RestoreSummaryRequest>>
 ~static NuGet.Commands.RestoreRunner.RunAsync(NuGet.Commands.RestoreArgs restoreContext) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Commands.RestoreSummary>>
 ~static NuGet.Commands.RestoreRunner.RunAsync(NuGet.Commands.RestoreArgs restoreContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Commands.RestoreSummary>>
 ~static NuGet.Commands.RestoreRunner.RunWithoutCommit(System.Collections.Generic.IEnumerable<NuGet.Commands.RestoreSummaryRequest> restoreRequests, NuGet.Commands.RestoreArgs restoreContext) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Commands.RestoreResultPair>>
+~static NuGet.Commands.RestoreRunner.RunWithoutCommitAsync(System.Collections.Generic.IEnumerable<NuGet.Commands.RestoreSummaryRequest> restoreRequests, NuGet.Commands.RestoreArgs restoreContext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Commands.RestoreResultPair>>
 ~static NuGet.Commands.RestoreSpecException.Create(string message, System.Collections.Generic.IEnumerable<string> files) -> NuGet.Commands.RestoreSpecException
 ~static NuGet.Commands.RestoreSpecException.Create(string message, System.Collections.Generic.IEnumerable<string> files, System.Exception innerException) -> NuGet.Commands.RestoreSpecException
 ~static NuGet.Commands.RestoreSummary.Log(NuGet.Common.ILogger logger, System.Collections.Generic.IReadOnlyList<NuGet.Commands.RestoreSummary> restoreSummaries, bool logErrors = false) -> void
-~static NuGet.Commands.RestoreTargetGraph.Create(NuGet.RuntimeModel.RuntimeGraph runtimeGraph, System.Collections.Generic.IEnumerable<NuGet.DependencyResolver.GraphNode<NuGet.DependencyResolver.RemoteResolveResult>> graphs, NuGet.DependencyResolver.RemoteWalkContext context, NuGet.Common.ILogger log, NuGet.Frameworks.NuGetFramework framework, string runtimeIdentifier) -> NuGet.Commands.RestoreTargetGraph
-~static NuGet.Commands.RestoreTargetGraph.Create(System.Collections.Generic.IEnumerable<NuGet.DependencyResolver.GraphNode<NuGet.DependencyResolver.RemoteResolveResult>> graphs, NuGet.DependencyResolver.RemoteWalkContext context, NuGet.Common.ILogger logger, NuGet.Frameworks.NuGetFramework framework) -> NuGet.Commands.RestoreTargetGraph
 ~static NuGet.Commands.SpecValidationUtility.ValidateDependencySpec(NuGet.ProjectModel.DependencyGraphSpec spec) -> void
-~static NuGet.Commands.SpecValidationUtility.ValidateDependencySpec(NuGet.ProjectModel.DependencyGraphSpec spec, System.Collections.Generic.HashSet<string> projectsToSkip) -> void
 ~static NuGet.Commands.SpecValidationUtility.ValidateDependencySpec(NuGet.ProjectModel.DependencyGraphSpec spec, System.Collections.Generic.HashSet<string> projectsToSkip, NuGet.Common.ILogger logger) -> void
 ~static NuGet.Commands.SpecValidationUtility.ValidateProjectSpec(NuGet.ProjectModel.PackageSpec spec) -> void
 ~static NuGet.Commands.ToolRestoreUtility.GetSpec(string projectFilePath, string id, NuGet.Versioning.VersionRange versionRange, NuGet.Frameworks.NuGetFramework framework, string packagesPath, System.Collections.Generic.IList<string> fallbackFolders, System.Collections.Generic.IList<NuGet.Configuration.PackageSource> sources, NuGet.ProjectModel.WarningProperties projectWideWarningProperties) -> NuGet.ProjectModel.PackageSpec

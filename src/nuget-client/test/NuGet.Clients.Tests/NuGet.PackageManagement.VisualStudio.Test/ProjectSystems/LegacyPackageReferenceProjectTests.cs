@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -507,8 +506,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
                 var actualRestoreSpec = packageSpecs.Single();
                 SpecValidationUtility.ValidateProjectSpec(actualRestoreSpec);
-                //No top level dependencies
-                Assert.Equal(0, actualRestoreSpec.Dependencies.Count);
 
                 var actualDependency = actualRestoreSpec.TargetFrameworks.SingleOrDefault().Dependencies.Single();
                 Assert.NotNull(actualDependency);
