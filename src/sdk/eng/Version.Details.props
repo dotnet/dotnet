@@ -40,6 +40,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftCodeAnalysisCSharpCodeStylePackageVersion>5.3.0-1.25567.101</MicrosoftCodeAnalysisCSharpCodeStylePackageVersion>
     <MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>5.3.0-1.25567.101</MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>
     <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>5.3.0-1.25567.101</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
+    <MicrosoftCodeAnalysisContractsPackageVersion>5.3.0-1.25567.101</MicrosoftCodeAnalysisContractsPackageVersion>
     <MicrosoftCodeAnalysisExternalAccessHotReloadPackageVersion>5.3.0-1.25567.101</MicrosoftCodeAnalysisExternalAccessHotReloadPackageVersion>
     <MicrosoftCodeAnalysisPublicApiAnalyzersPackageVersion>5.3.0-1.25567.101</MicrosoftCodeAnalysisPublicApiAnalyzersPackageVersion>
     <MicrosoftCodeAnalysisRazorToolingInternalPackageVersion>10.0.0-preview.25567.101</MicrosoftCodeAnalysisRazorToolingInternalPackageVersion>
@@ -184,6 +185,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftCodeAnalysisCSharpCodeStyleVersion>$(MicrosoftCodeAnalysisCSharpCodeStylePackageVersion)</MicrosoftCodeAnalysisCSharpCodeStyleVersion>
     <MicrosoftCodeAnalysisCSharpFeaturesVersion>$(MicrosoftCodeAnalysisCSharpFeaturesPackageVersion)</MicrosoftCodeAnalysisCSharpFeaturesVersion>
     <MicrosoftCodeAnalysisCSharpWorkspacesVersion>$(MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion)</MicrosoftCodeAnalysisCSharpWorkspacesVersion>
+    <MicrosoftCodeAnalysisContractsVersion>$(MicrosoftCodeAnalysisContractsPackageVersion)</MicrosoftCodeAnalysisContractsVersion>
     <MicrosoftCodeAnalysisExternalAccessHotReloadVersion>$(MicrosoftCodeAnalysisExternalAccessHotReloadPackageVersion)</MicrosoftCodeAnalysisExternalAccessHotReloadVersion>
     <MicrosoftCodeAnalysisPublicApiAnalyzersVersion>$(MicrosoftCodeAnalysisPublicApiAnalyzersPackageVersion)</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
     <MicrosoftCodeAnalysisRazorToolingInternalVersion>$(MicrosoftCodeAnalysisRazorToolingInternalPackageVersion)</MicrosoftCodeAnalysisRazorToolingInternalVersion>

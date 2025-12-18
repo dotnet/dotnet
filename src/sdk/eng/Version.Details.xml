@@ -116,6 +116,10 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>f67b36f27be47c1fe753f85bfd86ba10fcdf4c4e</Sha>
     </Dependency>
+    <Dependency Name="Microsoft.CodeAnalysis.Contracts" Version="5.3.0-1.25567.101">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>f67b36f27be47c1fe753f85bfd86ba10fcdf4c4e</Sha>
+    </Dependency>
     <Dependency Name="Microsoft.CodeAnalysis.Workspaces.Common" Version="5.3.0-1.25567.101">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>f67b36f27be47c1fe753f85bfd86ba10fcdf4c4e</Sha>
