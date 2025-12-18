@@ -16,6 +16,8 @@
     <_MicrosoftVisualStudioLanguageServicesPackageVersion>$(MicrosoftVisualStudioLanguageServicesPackageVersion)</_MicrosoftVisualStudioLanguageServicesPackageVersion>
     <_XunitPackageVersion>2.9.2</_XunitPackageVersion>
     <_MicrosoftBuildPackageVersion>17.15.0-preview-25353-11</_MicrosoftBuildPackageVersion>
+
+    <MicrosoftCodeAnalysisVersionForAnalyzerTests>4.12.0</MicrosoftCodeAnalysisVersionForAnalyzerTests>
   </PropertyGroup>
 
   <ItemGroup>
