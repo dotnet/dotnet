@@ -8,6 +8,8 @@ set MicrosoftNETBuildExtensionsTargets=%HELIX_CORRELATION_PAYLOAD%\ex\msbuildExt
 set DOTNET_ROOT=%HELIX_CORRELATION_PAYLOAD%\d
 set PATH=%DOTNET_ROOT%;%PATH%
 set TestFullMSBuild=%1
+REM remove once the 11 runtime is in the SDK
+set NETCoreAppMaximumVersion=11.0
 
 REM Use powershell to call partical Arcade logic to get full framework msbuild path and assign it
 if "%TestFullMSBuild%"=="true" (
