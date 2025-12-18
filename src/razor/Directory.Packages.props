@@ -100,7 +100,7 @@
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="Nerdbank.Streams" Version="2.12.87" />
     <PackageVersion Include="NuGet.VisualStudio" Version="17.9.1" />
-    <PackageVersion Include="Roslyn.Diagnostics.Analyzers" Version="$(RoslynDiagnosticAnalyzersPackageVersion)" />
+    <PackageVersion Include="Roslyn.Diagnostics.Analyzers" Version="$(RoslynDiagnosticsAnalyzersPackageVersion)" />
     <PackageVersion Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutablePackageVersion)" />
     <PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="9.0.0" />
     <PackageVersion Include="System.Private.Uri" Version="4.3.2" />
