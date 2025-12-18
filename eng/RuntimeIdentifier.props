@@ -1,7 +1,12 @@
 <Project>
   <!-- TargetRid calculations should go in this file. -->
-  <PropertyGroup Label="CalculateTargetOS">
+  <PropertyGroup Label="CalculateOS">
+    <BuildRid Condition="'$(BuildRid)' == '' and '$(NETCoreSdkPortableRuntimeIdentifier)' != ''">$(NETCoreSdkPortableRuntimeIdentifier)</BuildRid>
+    <BuildRid Condition="'$(BuildRid)' == '' and '$(MSBuildRuntimeType)' == 'core'">$([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier)</BuildRid>
+    <BuildRid Condition="'$(BuildRid)' == '' and '$(MSBuildRuntimeType)' != 'core'">win-$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString().ToLowerInvariant)</BuildRid>
+
     <BuildOS Condition="'$(BuildOS)' == ''">$(BuildRid.Substring(0, $(BuildRid.LastIndexOf('-'))))</BuildOS>
+    <BuildOS Condition="'$(BuildOS)' == 'win'">windows</BuildOS>
     <TargetOS Condition="'$(TargetOS)' == ''">$(BuildOS)</TargetOS>
     <HostOS Condition="'$(HostOS)' == ''">$(TargetOS)</HostOS>
   </PropertyGroup>
@@ -35,10 +40,6 @@
   </PropertyGroup>
 
   <PropertyGroup Label="CalculateRID">
-    <!-- Use current machine distro RID if set. Otherwise, fall back to RuntimeInformation.RuntimeIdentifier -->
-    <BuildRid Condition="'$(BuildRid)' == '' and '$(MSBuildRuntimeType)' == 'core'">$([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier)</BuildRid>
-    <BuildRid Condition="'$(BuildRid)' == '' and '$(MSBuildRuntimeType)' != 'core'">win-$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString().ToLowerInvariant)</BuildRid>
-
     <TargetRid Condition="'$(TargetRid)' == ''">$(BuildRid.Substring(0, $(BuildRid.LastIndexOf('-'))))-$(TargetArchitecture)</TargetRid>
     <HostRid Condition="'$(HostRid)' == ''">$(TargetRid)</HostRid>
 

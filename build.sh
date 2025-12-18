@@ -352,6 +352,8 @@ initDistroRidGlobal "$os" "$arch" ""
 
 if [[ -n "$__DistroRid" ]]; then
   properties+=( "/p:BuildRid=$__DistroRid" )
+else
+  properties+=( "/p:BuildRid=$__PortableTargetOS-$arch" )
 fi
 
 # if targetOS and targetArch were provided, recompute __PortableTargetOS
