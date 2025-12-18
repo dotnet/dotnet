@@ -3204,15 +3204,19 @@ namespace System.Runtime.CompilerServices
 
         #region Runtime Async
 
-        internal static CSharpParseOptions WithRuntimeAsync(CSharpParseOptions options) => options.WithFeature("runtime-async", "on");
+        internal static CSharpParseOptions WithRuntimeAsync(CSharpParseOptions options) => options.WithFeature(Feature.RuntimeAsync, "on");
 
-        internal static CSharpCompilation CreateRuntimeAsyncCompilation(CSharpTestSource source, CSharpCompilationOptions? options = null, CSharpParseOptions? parseOptions = null)
+        internal static CSharpCompilation CreateRuntimeAsyncCompilation(CSharpTestSource source, CSharpCompilationOptions? options = null, CSharpParseOptions? parseOptions = null, bool includeSuppression = true)
         {
             parseOptions ??= WithRuntimeAsync(TestOptions.RegularPreview);
             var syntaxTrees = source.GetSyntaxTrees(parseOptions, sourceFileName: "");
             if (options == null)
             {
                 options = CheckForTopLevelStatements(syntaxTrees);
+            }
+
+            if (includeSuppression)
+            {
                 options = options.WithSpecificDiagnosticOptions("SYSLIB5007", ReportDiagnostic.Suppress);
             }
 
