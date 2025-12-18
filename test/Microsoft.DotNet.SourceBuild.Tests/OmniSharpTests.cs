@@ -58,8 +58,8 @@ public class OmniSharpTests : SdkTests
         Assert.NotEqual(0, executeResult.Process.ExitCode);
         Assert.DoesNotContain("ERROR", executeResult.StdOut);
         Assert.DoesNotContain("ERROR", executeResult.StdErr);
-        Assert.DoesNotContain("command not found", executeResult.StdErr);
-        Assert.DoesNotContain("No such file or directory", executeResult.StdErr);
+        Assert.DoesNotContain("command not found", executeResult.StdErr, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("No such file or directory", executeResult.StdErr, StringComparison.OrdinalIgnoreCase);
     }
 
     private async Task InitializeOmniSharp()
