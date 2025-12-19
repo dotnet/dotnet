@@ -352,14 +352,18 @@ initDistroRidGlobal "$os" "$arch" ""
 
 if [[ -n "$__DistroRid" ]]; then
   properties+=( "/p:BuildRid=$__DistroRid" )
+fi
+
+if "/usr/bin/ldd" --version 2>&1 | grep -q musl; then
+  properties+=( "/p:BuildOS=linux-musl-$arch" )
 else
-  properties+=( "/p:BuildRid=$__PortableTargetOS-$arch" )
+  properties+=( "/p:BuildOS=$os-$arch" )
 fi
 
 # if targetOS and targetArch were provided, recompute __PortableTargetOS
 if [[ -n "$targetOS" && -n "$targetArch" ]]; then
   unset __PortableTargetOS
-  initDistroRidGlobal "$targetOS" "$targetArch" ""
+  initDistroRidGlobal "$targetOS" "$targetArch" "${ROOTFS_DIR:-}"
 fi
 
 properties+=( "/p:PortableTargetOS=$__PortableTargetOS" )
