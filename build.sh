@@ -355,9 +355,9 @@ if [[ -n "$__DistroRid" ]]; then
 fi
 
 if "/usr/bin/ldd" --version 2>&1 | grep -q musl; then
-  properties+=( "/p:BuildOS=linux-musl-$arch" )
+  properties+=( "/p:BuildOS=linux-musl" )
 else
-  properties+=( "/p:BuildOS=$os-$arch" )
+  properties+=( "/p:BuildOS=$os" )
 fi
 
 # if targetOS and targetArch were provided, recompute __PortableTargetOS
