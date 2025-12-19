@@ -11,8 +11,6 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor.Remote;
 
-#pragma warning disable VSTHRD200
-
 public class RemoteMefCompositionTest(ITestOutputHelper testOutputHelper) : ToolingTestBase(testOutputHelper)
 {
     [Fact]
