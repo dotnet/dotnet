@@ -110,18 +110,18 @@ stages:
   - job: Publish_Test_Results_PR
     dependsOn: LicenseScan
     condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release'))
+    templateContext:
+      outputs:
+      - output: pipelineArtifact
+        displayName: 'Publish BuildLogs'
+        condition: succeededOrFailed()
+        targetPath: '$(Build.StagingDirectory)/BuildLogs'
+        artifactName: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
     variables:
     - template: /eng/pipelines/templates/variables/pipelines.yml@self
       # GH access token for SB bot - BotAccount-dotnet-sb-bot-pat
     - group: Dotnet-SourceBuild-Secrets
     steps:
-    - script: |
-        source ./eng/common/tools.sh
-        InitializeDotNetCli true
-        echo "##vso[task.setvariable variable=DotNetPath]$_InitializeDotNetCli"
-      displayName: Install .NET SDK
-      workingDirectory: $(Build.SourcesDirectory)
-
     - template: /eng/pipelines/templates/steps/download-pipeline-artifact.yml@self
       parameters:
         pipeline: $(SOURCE_BUILD_LICENSE_SCAN_PIPELINE_ID)
@@ -136,9 +136,7 @@ stages:
 
     - template: /eng/pipelines/templates/steps/create-baseline-update-pr.yml@self
       parameters:
-        dotnetPath: $(DotNetPath)
-        pipeline: license
-        repo: dotnet/dotnet
-        originalFilesDirectory: test/Microsoft.DotNet.SourceBuild.Tests/assets/LicenseScanTests
-        updatedFilesDirectory: $(Pipeline.Workspace)/Artifacts
-        pullRequestTitle: Update Source-Build License Scan Baselines and Exclusions
+        targetDirectory: test/Microsoft.DotNet.SourceBuild.Tests/assets/LicenseScanTests
+        updatedBaselineDirectory: $(Pipeline.Workspace)/Artifacts
+        title: Update Source-Build License Scan Baselines and Exclusions
+        defaultBaselineContent: "{\n  \"files\": []\n}"

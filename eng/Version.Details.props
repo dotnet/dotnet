@@ -7,6 +7,7 @@ This file should be imported by eng/Versions.props
   <PropertyGroup>
     <!-- _git/dotnet-dotnet dependencies -->
     <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.25523.111</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetBaselinesTasksPackageVersion>10.0.0-beta.25523.111</MicrosoftDotNetBaselinesTasksPackageVersion>
     <MicrosoftDotNetBuildManifestPackageVersion>10.0.0-beta.25523.111</MicrosoftDotNetBuildManifestPackageVersion>
     <!-- dotnet/arcade-services dependencies -->
     <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.25612.4</MicrosoftDotNetDarcLibPackageVersion>
@@ -15,6 +16,7 @@ This file should be imported by eng/Versions.props
   <PropertyGroup>
     <!-- _git/dotnet-dotnet dependencies -->
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
+    <MicrosoftDotNetBaselinesTasksVersion>$(MicrosoftDotNetBaselinesTasksPackageVersion)</MicrosoftDotNetBaselinesTasksVersion>
     <MicrosoftDotNetBuildManifestVersion>$(MicrosoftDotNetBuildManifestPackageVersion)</MicrosoftDotNetBuildManifestVersion>
     <!-- dotnet/arcade-services dependencies -->
     <MicrosoftDotNetDarcLibVersion>$(MicrosoftDotNetDarcLibPackageVersion)</MicrosoftDotNetDarcLibVersion>

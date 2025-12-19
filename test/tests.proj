@@ -18,6 +18,10 @@
 
     <!-- Skip BuildPass>1 verticals as the live built SDK already got validated in the BuildPass=1 vertical. -->
     <_RunScenarioTests Condition="'$(DotNetBuildPass)' != '' and '$(DotNetBuildPass)' != '1'">false</_RunScenarioTests>
+
+    <!-- Default baseline update PR properties -->
+    <GitHubOrg>dotnet</GitHubOrg>
+    <GitHubRepo>dotnet</GitHubRepo>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,6 +36,10 @@
                corresponding msft build. https://github.com/dotnet/source-build/issues/4763 -->
     <!-- <ProjectReference Include="Microsoft.DotNet.UnifiedBuild.Tests\Microsoft.DotNet.UnifiedBuild.Tests.csproj"
                       Condition="'$(ShortStack)' != 'true' and '$(PortableBuild)' == 'true' and '$(PgoInstrument)' != 'true'" /> -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.Baselines.Tasks" />
   </ItemGroup>
 
   <!-- Make sure that the sdk archive is extracted before running the scenario-tests. Need to do this here as it's hard
