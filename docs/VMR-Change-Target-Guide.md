@@ -11,23 +11,23 @@ See also:
 
 ## Table 1: vNext and vNext Preview Changes
 
-### Servicing branches have not been cut for vNext
+### Servicing branches have not been created for vNext
 
 | Condition(s)                                                                                                           | Where Can I Check In?                      | Do I need to port the change to avoid regression? |
 |------------------------------------------------------------------------------------------------------------------------|--------------------------------------------|-----------------------------------|
-| - Change is non-security **AND** <br/> - Preview branch has not been cut **OR** change is not targeted at next preview to ship | **main** in VMR or component repository | No |
-| - Change is non-security **AND** <br/> - Preview branch has been cut **AND** <br/> - Change is targeted at next preview to ship | **Preview branch** (e.g. `release/9.0.0-preview.3`) in VMR or component repository. | Yes. Port to main |
-| - Change is security **AND** <br/> - Preview branch has not been cut **OR** change is not targeted at next preview to ship | **Wait** for creation of internal preview branches (e.g. internal/release/11.0.0-rc.N branch) | **main**, **AFTER** public release. |
-| - Change is security **AND** <br/> - Preview branch has been cut **AND** <br/> - Change is targeted at next preview to ship | **internal/release/preview.N** (e.g. `internal/release/11.0.0-rc.1`) in VMR or component repository. | **main**, **AFTER** public release. |
+| - Change is non-security **AND** <br/> - Preview branch has not been created **OR** change is not targeted at next preview to ship | **main** in VMR or component repository | No |
+| - Change is non-security **AND** <br/> - Preview branch has been created **AND** <br/> - Change is targeted at next preview to ship | **Preview branch** (e.g. `release/9.0.0-preview.3`) in VMR or component repository. | Yes. Port to main |
+| - Change is security **AND** <br/> - Preview branch has not been created **OR** change is not targeted at next preview to ship | **Wait** for creation of internal preview branches (e.g. internal/release/11.0.0-rc.N branch) | **main**, **AFTER** public release. |
+| - Change is security **AND** <br/> - Preview branch has been created **AND** <br/> - Change is targeted at next preview to ship | **internal/release/preview.N** (e.g. `internal/release/11.0.0-rc.1`) in VMR or component repository. | **main**, **AFTER** public release. |
 
-### Servicing branches have been cut for vNext
+### Servicing branches have been created for vNext
 
 | Condition(s)                                                                                                           | Where Can I Check In?                      | Do I need to port the change to avoid regression? |
 |------------------------------------------------------------------------------------------------------------------------|--------------------------------------------|-----------------------------------|
-| - Change is non-security **AND** <br/> - Preview branch has not been cut **OR** change is not targeted at next preview to ship | **release/vNext** in VMR or component repository | No |
-| - Change is non-security **AND** <br/> - Preview branch has been cut **AND** <br/> - Change is targeted at next preview to ship | **Preview branch** (e.g. `release/9.0.0-preview.3`) in VMR or component repository. | Yes. Port to release/vNext |
-| - Change is security **AND** <br/> - Preview branch has not been cut **OR** change is not targeted at next preview to ship | **Wait** for creation of internal preview branches (e.g. internal/release/11.0.0-rc.N branch) | **release/vNext**, **AFTER** public release. |
-| - Change is security **AND** <br/> - Preview branch has been cut **AND** <br/> - Change is targeted at next preview to ship | **internal/release/preview.N** (e.g. `internal/release/11.0.0-rc.1`) in VMR or component repository. | **release/vNext**, **AFTER** public release. |
+| - Change is non-security **AND** <br/> - Preview branch has not been created **OR** change is not targeted at next preview to ship | **release/vNext** in VMR or component repository | No |
+| - Change is non-security **AND** <br/> - Preview branch has been created **AND** <br/> - Change is targeted at next preview to ship | **Preview branch** (e.g. `release/9.0.0-preview.3`) in VMR or component repository. | Yes. Port to release/vNext |
+| - Change is security **AND** <br/> - Preview branch has not been created **OR** change is not targeted at next preview to ship | **Wait** for creation of internal preview branches (e.g. internal/release/11.0.0-rc.N branch) | **release/vNext**, **AFTER** public release. |
+| - Change is security **AND** <br/> - Preview branch has been created **AND** <br/> - Change is targeted at next preview to ship | **internal/release/preview.N** (e.g. `internal/release/11.0.0-rc.1`) in VMR or component repository. | **release/vNext**, **AFTER** public release. |
 
 ---
 
@@ -35,17 +35,17 @@ See also:
 
 | Condition(s)                                                                                                                        | Where Can I Check In?                                 | Do I need to port the change to avoid regression? |
 |-------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------|-------------------------------|
-| Change is non-security **AND** <br/> - Change is approved for next calendar release **AND** <br/> - Release specific branches have not been cut (e.g. release/10.0.105)  |  **General Servicing branch** in VMR or component repository (e.g. release/10.0) | Port to main as necessary on disclosure day |
-| Change is not approved for release corresponding to any branch (usually approved for future month's release) | Hold change for branch opening  |  | N/A |
-| Change is non-security **AND** <br/> - Change is approved for next calendar release **AND** <br/> - Release specific branches have been cut (e.g. release/10.0.105) | **Release specific branch in VMR** (e.g. release/10.0.105) | Will merge to General Servicing branch on release day. Port to main as necessary on disclosure day. |
-| Change is security **AND** <br/> - Change is approved for next calendar release **AND** <br/> - Release specific branches have been cut (e.g. release/10.0.105) | **Internal specific branch in VMR** (e.g. internal/release/10.0.105) | Will merge to General Servicing branch on release day. Port to main as necessary on disclosure day.|
-| Change is security **AND** <br/> - Change is approved for next calendar release **AND** <br/> - Release specific branches have not been cut (e.g. release/10.0.105) | Internal release branch (e.g. `internal/release/10.0.1xx`) | Will merge to General Servicing branch on release day. Port to main as necessary on disclosure day. |
+| - Change is non-security **AND** <br/> - Change is approved for nearest upcoming servicing release **AND** <br/> - Release specific branches have not been created (e.g. release/10.0.105)  |  **General Servicing branch** in VMR or component repository (e.g. release/10.0) | Port to main as necessary on disclosure day |
+| - Change is not approved for release corresponding to any branch (usually approved for future month's release) | Hold change for branch opening  |  | N/A |
+| - Change is non-security **AND** <br/> - Change is approved for nearest upcoming servicing release **AND** <br/> - Release specific branches have been created (e.g. release/10.0.105) | **Release specific branch in VMR** (e.g. release/10.0.105) | Will merge to General Servicing branch on release day. Port to main as necessary on disclosure day. |
+| - Change is security **AND** <br/> - Change is approved for nearest upcoming servicing release **AND** <br/> - Release specific branches have been created (e.g. release/10.0.105) | **Internal specific branch in VMR** (e.g. internal/release/10.0.105) | Will merge to General Servicing branch on release day. Port to main as necessary on disclosure day.|
+| - Change is security **AND** <br/> - Change is approved for nearest upcoming servicing release **AND** <br/> - Release specific branches have not been created (e.g. release/10.0.105) | Internal release branch (e.g. `internal/release/10.0.1xx`) | Will merge to General Servicing branch on release day. Port to main as necessary on disclosure day. |
 
 ---
 
 ## Quick Reference Decision Diagrams
 
-**vNext/vNext Preview (servicing branches not cut):**
+**vNext/vNext Preview (servicing branches not created):**
 
 ```mermaid
 flowchart TD
@@ -55,9 +55,9 @@ flowchart TD
 
     start([Start])
     security{Is the change<br/>security-related?}
-    nonSecPreviewCut{Has the preview branch<br/>been cut?}
+    nonSecPreviewCut{Has the preview branch<br/>been created?}
     nonSecTargetNext{Is it targeted at the<br/>next preview to ship?}
-    secPreviewCut{Has the preview branch<br/>been cut?}
+    secPreviewCut{Has the preview branch<br/>been created?}
     secTargetNext{Is it targeted at the<br/>next preview to ship?}
 
     mainDev["main<br/>(VMR or component)"]
@@ -84,7 +84,7 @@ flowchart TD
     class waitInternalMain wait;
 ```
 
-**vNext/vNext Preview (servicing branches cut):**
+**vNext/vNext Preview (servicing branches created):**
 
 ```mermaid
 flowchart TD
@@ -94,9 +94,9 @@ flowchart TD
 
     start([Start])
     security{Is the change<br/>security-related?}
-    nonSecPreviewCut{Has the preview branch<br/>been cut?}
+    nonSecPreviewCut{Has the preview branch<br/>been created?}
     nonSecTargetNext{Is it targeted at the<br/>next preview to ship?}
-    secPreviewCut{Has the preview branch<br/>been cut?}
+    secPreviewCut{Has the preview branch<br/>been created?}
     secTargetNext{Is it targeted at the<br/>next preview to ship?}
 
     releaseVNext["release/vNext<br/>branch"]
@@ -134,8 +134,8 @@ flowchart TD
     start([Start])
     approved{Is the change<br/>approved for the next<br/>calendar release?}
     security{Is the change<br/>security-related?}
-    releaseCutNonSec{Have release-specific<br/>branches been cut?}
-    releaseCutSec{Have release-specific<br/>branches been cut?}
+    releaseCutNonSec{Have release-specific<br/>branches been created?}
+    releaseCutSec{Have release-specific<br/>branches been created?}
 
     generalServicing["General servicing<br/>branch<br/>(e.g. release/10.0)<br/><br/>Port to main as<br/>necessary on disclosure day"]
     releaseSpecific["Release-specific<br/>branch<br/>(e.g. release/10.0.105)<br/>Merges to general<br/>servicing on release day<br/><br/>Port to main as<br/>necessary on disclosure day"]
