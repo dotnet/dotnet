@@ -24,8 +24,8 @@ public class IsViewComponentTest
     {
         var assembly = typeof(IsViewComponentTest).GetTypeInfo().Assembly;
         Compilation = TestCompilation.Create(assembly);
-        TestViewComponentAttributeSymbol = Compilation.GetTypeByMetadataName(typeof(TestViewComponentAttribute).FullName).AssumeNotNull();
-        TestNonViewComponentAttributeSymbol = Compilation.GetTypeByMetadataName(typeof(TestNonViewComponentAttribute).FullName).AssumeNotNull();
+        TestViewComponentAttributeSymbol = Compilation.GetTypeByMetadataName(typeof(TestViewComponentAttribute).FullName.AssumeNotNull()).AssumeNotNull();
+        TestNonViewComponentAttributeSymbol = Compilation.GetTypeByMetadataName(typeof(TestNonViewComponentAttribute).FullName.AssumeNotNull()).AssumeNotNull();
     }
 
     [Fact]
