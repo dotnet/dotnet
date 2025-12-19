@@ -82,7 +82,7 @@ public sealed class ExtendedCriticalBuildMessageEventArgs : CriticalBuildMessage
         string? helpKeyword,
         string? senderName,
         DateTime eventTimestamp)
-        : this(type, subcategory, code, file, lineNumber, columnNumber, endLineNumber, endColumnNumber, message, helpKeyword, senderName, eventTimestamp, null!)
+        : this(type, subcategory, code, file, lineNumber, columnNumber, endLineNumber, endColumnNumber, message, helpKeyword, senderName, eventTimestamp, null)
     {
         // do nothing
     }

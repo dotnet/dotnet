@@ -217,8 +217,8 @@ namespace Microsoft.NET.StringTools
         {
             if (!string.IsNullOrEmpty(value))
             {
-                _spans.Add(value!.AsMemory());
-                Length += value!.Length;
+                _spans.Add(value.AsMemory());
+                Length += value.Length;
             }
         }
 

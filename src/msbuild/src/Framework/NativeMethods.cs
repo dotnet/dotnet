@@ -1521,7 +1521,7 @@ internal static class NativeMethods
     /// Internal, optimized GetCurrentDirectory implementation that simply delegates to the native method
     /// </summary>
     /// <returns></returns>
-    internal static unsafe string GetCurrentDirectory()
+    internal static string GetCurrentDirectory()
     {
 #if FEATURE_LEGACY_GETCURRENTDIRECTORY
         if (IsWindows)

@@ -298,7 +298,7 @@ namespace Microsoft.Build.Framework
             {
                 try
                 {
-                    path = Directory.GetParent(EnsureNoTrailingSlash(path!))?.FullName;
+                    path = Directory.GetParent(EnsureNoTrailingSlash(path))?.FullName;
 
                     if (!Directory.Exists(path))
                     {
