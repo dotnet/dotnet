@@ -14,7 +14,7 @@ using System.Xml.Linq;
 
 namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
 {
-    public class WriteUsageReports : Task
+    public class WriteAnnotatedUsageReport : Task
     {
         private const string SnapshotPrefix = "PackageVersions.";
         private const string SnapshotSuffix = ".Snapshot.props";
@@ -49,8 +49,11 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
         /// </summary>
         public string PoisonedReportFile { get; set; }
 
+        /// <summary>
+        /// Path to write the prebuilt annotated usage report file.
+        /// </summary>
         [Required]
-        public string OutputDirectory { get; set; }
+        public string PrebuiltAnnotatedUsageReportFile { get; set; }
 
         public override bool Execute()
         {
@@ -131,11 +134,8 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
 
             report.Add(annotatedUsages.Select(u => u.ToXml()));
 
-            Directory.CreateDirectory(OutputDirectory);
-
-            File.WriteAllText(
-                Path.Combine(OutputDirectory, "annotated-usage.xml"),
-                report.ToString());
+            Directory.CreateDirectory(Path.GetDirectoryName(PrebuiltAnnotatedUsageReportFile));
+            File.WriteAllText(PrebuiltAnnotatedUsageReportFile, report.ToString());
 
             return !Log.HasLoggedErrors;
         }
