@@ -30,6 +30,11 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
             <Microsoft.AspNetCore.Components.Forms.InputText Value="someValue" />
             <Microsoft.AspNetCore.Components.Forms.InputText Value="someValue"></Microsoft.AspNetCore.Components.Forms.InputText>
 
+            <InputText
+                Value="someValue"
+                CssClass="my-class"
+                DisplayName="My Input" />
+
             @typeof(InputText).ToString()
             @typeof(Microsoft.AspNetCore.Components.Forms.InputText).ToString()
             """;
