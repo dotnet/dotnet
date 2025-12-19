@@ -15,6 +15,8 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
 {
     public class ValidateUsageAgainstBaseline : Task
     {
+        private const string PrebuiltsDocumentationUrl = "https://aka.ms/dotnet/prebuilts";
+
         [Required]
         public string DataFile { get; set; }
 
@@ -55,7 +57,9 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
                 tellUserToUpdateBaseline = true;
                 Log.LogError(
                     $"{diff.Added.Length} new packages used not in baseline! See report " +
-                    $"at {OutputReportFile} for more information. Package IDs are:\n" +
+                    $"at {OutputReportFile} for more information. " +
+                    $"See {PrebuiltsDocumentationUrl} for guidance on what prebuilts are and how to eliminate them. " +
+                    $"Package IDs are:\n" +
                     string.Join("\n", diff.Added.Select(u => u.ToString())));
 
                 // In the report, list full usage info, not only identity.
@@ -117,10 +121,11 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
 
             if (tellUserToUpdateBaseline)
             {
-                Log.LogWarning(
+                Log.LogError(
                     "Prebuilt usages are different from the baseline. If detected changes are " +
                     "acceptable, update baseline with:\n" +
-                    $"cp '{OutputBaselineFile}' '{BaselineDataFile}'");
+                    $"cp '{OutputBaselineFile}' '{BaselineDataFile}'\n" +
+                    $"See {PrebuiltsDocumentationUrl} for guidance on what prebuilts are and how to eliminate them.");
             }
 
             return !Log.HasLoggedErrors;
