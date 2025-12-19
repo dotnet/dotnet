@@ -30,12 +30,12 @@ namespace Microsoft.TemplateSearch.Common
             {
                 throw new NotSupportedException(LocalizableStrings.TemplateSearchCache_Exception_NotSupported);
             }
-            if (version.StartsWith("1"))
+            if (version!.StartsWith("1"))
             {
 #pragma warning disable CS0612, CS0618 // Type or member is obsolete
                 if (LegacySearchCacheReader.TryReadDiscoveryMetadata(cacheObject, logger, additionalDataReaders, out TemplateDiscoveryMetadata? discoveryMetadata))
                 {
-                    return LegacySearchCacheReader.ConvertTemplateDiscoveryMetadata(discoveryMetadata, additionalDataReaders);
+                    return LegacySearchCacheReader.ConvertTemplateDiscoveryMetadata(discoveryMetadata!, additionalDataReaders);
                 }
                 else
                 {
@@ -64,7 +64,7 @@ namespace Microsoft.TemplateSearch.Common
                     logger.LogDebug($"Failed to read template package data {templatePackage}, details: {ex}");
                 }
             }
-            return new TemplateSearchCache(templatePackages, version);
+            return new TemplateSearchCache(templatePackages, version!);
         }
 
         internal static IDictionary<string, object> ReadAdditionalData(

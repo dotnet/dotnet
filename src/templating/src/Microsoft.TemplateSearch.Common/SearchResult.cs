@@ -28,7 +28,7 @@ namespace Microsoft.TemplateSearch.Common
             Provider = provider ?? throw new ArgumentNullException(nameof(provider));
             Success = success;
             ErrorMessage = errorMessage;
-            SearchHits = success ? hits : [];
+            SearchHits = success ? hits! : [];
         }
 
         /// <summary>

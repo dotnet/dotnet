@@ -23,7 +23,7 @@ namespace Microsoft.TemplateSearch.Common
                 throw new ArgumentNullException(nameof(logger));
             }
             string? name = jObject.ToString(nameof(Name));
-            Name = !string.IsNullOrWhiteSpace(name) ? name
+            Name = !string.IsNullOrWhiteSpace(name) ? name!
                 : throw new ArgumentException($"{nameof(jObject)} doesn't have {nameof(Name)} property or it is not a string.", nameof(jObject));
             Version = jObject.ToString(nameof(Version));
             TotalDownloads = jObject.ToInt32(nameof(TotalDownloads));
