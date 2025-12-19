@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.NET.Sdk.Maui.Manifest-10.0.100</id>
+    <version>10.0.0</version>
+    <authors>Microsoft</authors>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <projectUrl>https://github.com/dotnet/maui</projectUrl>
+    <description>.NET Multi-platform App UI (.NET MAUI) workload manifest. Please do not reference this package directly.</description>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <tags>dotnet-maui dotnet maui cross-platform ios android macos maccatalyst windows winui</tags>
+    <serviceable>true</serviceable>
+    <packageTypes>
+      <packageType name="DotnetPlatform" />
+    </packageTypes>
+    <repository type="git" url="https://github.com/dotnet/maui.git" commit="9d881e94b1c56692e40a16262897677a3bb46fcb" />
+  </metadata>
+</package>
