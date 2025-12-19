@@ -105,7 +105,7 @@
 
   <!-- After building, generate a prebuilt annotated usage report.
        Also, dev scenario: rewrite a prebuilt report. This makes it easy to add data to an existing
-       prebuilt report without performing another full build. This doesn't reevalutate which packages
+       prebuilt report without performing another full build. This doesn't reevaluate which packages
        are prebuilts or search the projects: it uses the existing usage.xml file to generate report
        XMLs based on the info put in artifacts/. -->
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport.WriteAnnotatedUsageReport" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
