@@ -37,10 +37,10 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 295010,
+      "barId": 295169,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "ffdf7785c76682f52f9a161a40879b7f9036500c"
+      "commitSha": "5a68c09c2c67b7f410f0972b193b42d5502367a7"
     },
     {
       "barId": 294516,
@@ -97,10 +97,10 @@
       "commitSha": "ec5f7d915a8597baba3dbf1ef3ece19accb4541b"
     },
     {
-      "barId": 293746,
+      "barId": 295188,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "1c0ba39805434d3be12679eb7fe5deb9a221e32c"
+      "commitSha": "a6113e0d389522d2f601b894340b30336441c82a"
     },
     {
       "barId": 293523,
@@ -133,10 +133,10 @@
       "commitSha": "132afbade9e2ce626f26e27c136f34af73dde2f1"
     },
     {
-      "barId": 294917,
+      "barId": 295043,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "599623ba0a798a0b5495dd365287c348bd1b01fe"
+      "commitSha": "01eefd447bf1de58c82bcd765bf85d1d7fb4e7ac"
     },
     {
       "barId": 293871,
