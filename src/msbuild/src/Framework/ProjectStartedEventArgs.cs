@@ -547,7 +547,7 @@ namespace Microsoft.Build.Framework
                     // default targets.
                     if (!string.IsNullOrEmpty(TargetNames))
                     {
-                        RawMessage = FormatResourceStringIgnoreCodeAndKeyword("ProjectStartedPrefixForTopLevelProjectWithTargetNames", projectFilePath, TargetNames);
+                        RawMessage = FormatResourceStringIgnoreCodeAndKeyword("ProjectStartedPrefixForTopLevelProjectWithTargetNames", projectFilePath, TargetNames!);
                     }
                     else
                     {
