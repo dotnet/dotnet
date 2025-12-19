@@ -88,6 +88,13 @@
     <FileSignInfo Condition="'$(TargetOS)' == 'osx'" Include="csc;vbc;VBCSCompiler" CertificateName="MacDeveloperHarden" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Sign the archives -->
+    <FileExtensionSignInfo Update=".tar.gz" CertificateName="LinuxSignTar" />
+    <!-- TODO: This is not a valide cert to sign zips w/detached sig -->
+    <!-- <FileExtensionSignInfo Update=".zip" CertificateName="Microsoft400" /> -->
+  </ItemGroup>
+
   <!-- Filter out any test packages from ItemsToSign -->
   <ItemGroup>
     <ItemsToSign Remove="$(ArtifactsPackagesDir)**\*tests*.nupkg" />
@@ -114,7 +121,9 @@
 
   <ItemGroup>
     <SdkArtifact Include="$(ArtifactsShippingPackagesDir)*.zip" Condition="'$(PublishBinariesAndBadge)' == 'true'" />
+    <SdkArtifact Include="$(ArtifactsShippingPackagesDir)*.zip.sig" Condition="'$(PublishBinariesAndBadge)' == 'true'" />
     <SdkArtifact Include="$(ArtifactsShippingPackagesDir)*.tar.gz" Condition="'$(PublishBinariesAndBadge)' == 'true'" />
+    <SdkArtifact Include="$(ArtifactsShippingPackagesDir)*.tar.gz.sig" Condition="'$(PublishBinariesAndBadge)' == 'true'" />
     <SdkArtifact Include="$(ArtifactsShippingPackagesDir)*.pkg" />
     <SdkArtifact Include="$(ArtifactsShippingPackagesDir)*.exe" />
     <SdkArtifact Include="$(ArtifactsShippingPackagesDir)*.deb" />
@@ -126,8 +135,6 @@
 
     <SdkArtifact Include="$(ArtifactsNonShippingPackagesDir)*.swr" IsShipping="false" />
     <SdkArtifact Include="$(ArtifactsNonShippingPackagesDir)*.msi" IsShipping="false" />
-    <SdkArtifact Include="$(ArtifactsNonShippingPackagesDir)*.tar.gz" IsShipping="false" Condition="'$(PublishBinariesAndBadge)' == 'true'" />
-    <SdkArtifact Include="$(ArtifactsNonShippingPackagesDir)*.zip" IsShipping="false" Condition="'$(PublishBinariesAndBadge)' == 'true'" />
     <SdkArtifact Include="$(ArtifactsNonShippingPackagesDir)*.pkg" IsShipping="false" />
   </ItemGroup>
 
