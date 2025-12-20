@@ -133,12 +133,12 @@ internal abstract partial class SyntaxSerializer(StringBuilder builder) : Syntax
         WriteValue($"{tagHelperInfo.TagName}[{tagHelperInfo.TagMode}]");
 
         // Write descriptors
-        foreach (var descriptor in tagHelperInfo.BindingResult.Descriptors)
+        foreach (var tagHelper in tagHelperInfo.BindingResult.TagHelpers)
         {
             WriteSeparator();
 
             // Get the type name without the namespace.
-            var typeName = descriptor.Name[(descriptor.Name.LastIndexOf('.') + 1)..];
+            var typeName = tagHelper.Name[(tagHelper.Name.LastIndexOf('.') + 1)..];
             WriteValue(typeName);
         }
     }

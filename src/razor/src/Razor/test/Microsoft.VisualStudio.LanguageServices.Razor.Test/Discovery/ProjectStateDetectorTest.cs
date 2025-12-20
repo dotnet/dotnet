@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
-using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -90,7 +89,7 @@ public class ProjectStateDetectorTest(ITestOutputHelper testOutput) : VisualStud
 
     private ProjectStateChangeDetector CreateDetector(IProjectStateUpdater generator, ProjectSnapshotManager projectManager)
     {
-        var detector = new ProjectStateChangeDetector(generator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, TimeSpan.FromMilliseconds(10));
+        var detector = new ProjectStateChangeDetector(generator, projectManager, WorkspaceProvider, TimeSpan.FromMilliseconds(10));
         AddDisposable(detector);
 
         return detector;

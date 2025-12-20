@@ -44,12 +44,6 @@
 "Title"="Show all C# code actions in Razor files (requires restart)"
 "PreviewPaneChannels"="IntPreview,int.main"
 
-[$RootKey$\FeatureFlags\Razor\LSP\IncludeProjectKeyInGeneratedFilePath]
-"Description"="Enables the experimental support for Razor projects to support multi-targeting, including allowing different C# code generation per-target."
-"Value"=dword:00000001
-"Title"="Experimental Razor project multi-targeting support (requires restart)"
-"PreviewPaneChannels"="*"
-
 [$RootKey$\FeatureFlags\Razor\LSP\UseRazorCohostServer]
 "Description"="Uses the Razor language server that is cohosted in Roslyn to provide some Razor tooling functionality."
 "Value"=dword:00000001

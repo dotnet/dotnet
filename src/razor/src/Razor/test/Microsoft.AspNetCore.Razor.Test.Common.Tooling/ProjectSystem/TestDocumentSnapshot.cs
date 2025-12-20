@@ -42,7 +42,7 @@ internal sealed class TestDocumentSnapshot : IDocumentSnapshot
     }
 
     public static TestDocumentSnapshot Create(string filePath, RazorCodeDocument codeDocument)
-        => Create(filePath, codeDocument, ProjectWorkspaceState.Create([.. codeDocument.GetTagHelpers() ?? []]));
+        => Create(filePath, codeDocument, ProjectWorkspaceState.Create(codeDocument.GetTagHelpers() ?? []));
 
     public static TestDocumentSnapshot Create(string filePath, RazorCodeDocument codeDocument, ProjectWorkspaceState projectWorkspaceState)
     {

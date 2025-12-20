@@ -9,25 +9,18 @@ namespace Microsoft.CodeAnalysis.Razor.Tooltip;
 
 internal record BoundAttributeDescriptionInfo(string ReturnTypeName, string TypeName, string PropertyName, string? Documentation = null)
 {
-    public static BoundAttributeDescriptionInfo From(BoundAttributeParameterDescriptor parameterAttribute, string parentTagHelperTypeName)
+    public static BoundAttributeDescriptionInfo From(BoundAttributeParameterDescriptor parameter)
     {
-        if (parameterAttribute is null)
-        {
-            throw new ArgumentNullException(nameof(parameterAttribute));
-        }
+        ArgHelper.ThrowIfNull(parameter);
 
-        if (parentTagHelperTypeName is null)
-        {
-            throw new ArgumentNullException(nameof(parentTagHelperTypeName));
-        }
-
-        var propertyName = parameterAttribute.PropertyName;
+        var parentTagHelperTypeName = parameter.Parent.Parent.TypeName;
+        var propertyName = parameter.PropertyName;
 
         return new BoundAttributeDescriptionInfo(
-            parameterAttribute.TypeName,
+            parameter.TypeName,
             parentTagHelperTypeName,
             propertyName,
-            parameterAttribute.Documentation);
+            parameter.Documentation);
     }
 
     public static BoundAttributeDescriptionInfo From(BoundAttributeDescriptor boundAttribute, bool isIndexer)

@@ -33,8 +33,7 @@ internal sealed class RemoteDocumentMappingService(
         // For Html we just map the Uri, the range will be the same
         if (_filePathService.IsVirtualHtmlFile(generatedDocumentUri))
         {
-            var razorDocumentUri = _filePathService.GetRazorDocumentUri(generatedDocumentUri);
-            return (razorDocumentUri, generatedDocumentRange);
+            return (_filePathService.GetRazorDocumentUri(generatedDocumentUri), generatedDocumentRange);
         }
 
         // We only map from C# files
@@ -50,12 +49,48 @@ internal sealed class RemoteDocumentMappingService(
             return (generatedDocumentUri, generatedDocumentRange);
         }
 
+        var razorDocumentUri = project.Solution.GetRazorDocumentUri(razorCodeDocument);
         if (TryMapToRazorDocumentRange(razorCodeDocument.GetRequiredCSharpDocument(), generatedDocumentRange, MappingBehavior.Strict, out var mappedRange))
         {
-            var razorDocumentUri = project.Solution.GetRazorDocumentUri(razorCodeDocument);
             return (razorDocumentUri, mappedRange);
         }
 
+        // If the position is unmappable, but was in a generated Razor, we have one last check to see if Roslyn wants to navigate
+        // to the class declaration, in which case we'll map to (0,0) in the Razor document itself.
+        if (await TryGetCSharpClassDeclarationSpanAsync(generatedDocumentUri, project, cancellationToken).ConfigureAwait(false) is { } classDeclSpan &&
+            generatedDocumentRange.Start == classDeclSpan.Start &&
+                (generatedDocumentRange.End == generatedDocumentRange.Start ||
+                generatedDocumentRange.End == classDeclSpan.End))
+        {
+            return (razorDocumentUri, new(LinePosition.Zero, LinePosition.Zero));
+        }
+
         return (generatedDocumentUri, generatedDocumentRange);
+    }
+
+    private static async Task<LinePositionSpan?> TryGetCSharpClassDeclarationSpanAsync(Uri generatedDocumentUri, Project project, CancellationToken cancellationToken)
+    {
+        var generatedDocument = await project.TryGetCSharpDocumentFromGeneratedDocumentUriAsync(generatedDocumentUri, cancellationToken).ConfigureAwait(false);
+        if (generatedDocument is null)
+        {
+            return null;
+        }
+
+        var csharpSyntaxTree = await generatedDocument.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+        if (csharpSyntaxTree is null)
+        {
+            return null;
+        }
+
+        var csharpSyntaxRoot = await csharpSyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
+        if (!csharpSyntaxRoot.TryGetClassDeclaration(out var classDecl))
+        {
+            return null;
+        }
+
+        var sourceText = await generatedDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
+        var classDeclSpan = sourceText.GetLinePositionSpan(classDecl.Identifier.Span);
+
+        return classDeclSpan;
     }
 }

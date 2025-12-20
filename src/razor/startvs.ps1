@@ -3,7 +3,7 @@ Param(
     [Parameter(
         Position=0,
         Mandatory=$false,
-        HelpMessage="Solution file to open. The default is 'Razor.sln'.")]
+        HelpMessage="Solution file to open. The default is 'Razor.slnx'.")]
     [string]$solutionFile=$null,
 
     [Parameter(
@@ -28,7 +28,7 @@ Param(
 )
 
 if ($solutionFile -eq "") {
-    $solutionFile = "Razor.sln"
+    $solutionFile = "Razor.slnx"
 }
 
 if ($includeRoslynDeps) {
@@ -70,8 +70,13 @@ if ($chooseVS) {
         $channelId = $vsInstall.installedChannelId
         $lastDotIndex = $channelId.LastIndexOf(".")
         $channelName = $channelId.Substring($lastDotIndex + 1);
+        $nickName = $vsInstall.properties.nickname
+        if ($nickName.Length -gt 0)
+        {
+            $nickName = " - '$nickName'"
+        }
 
-        Write-Host "    $($index) - $($vsInstall.displayName) ($($vsInstall.installationVersion) - $($channelName))"
+        Write-Host "    $($index) - $($vsInstall.displayName) ($($vsInstall.installationVersion) - $($channelName))$($nickName)"
         $index += 1
     }
 

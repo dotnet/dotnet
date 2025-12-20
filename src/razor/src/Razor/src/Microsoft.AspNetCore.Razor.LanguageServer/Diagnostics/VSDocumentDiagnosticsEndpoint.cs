@@ -20,13 +20,11 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 
 [RazorLanguageServerEndpoint(VSInternalMethods.DocumentPullDiagnosticName)]
 internal class VSDocumentDiagnosticsEndpoint(
-    LanguageServerFeatureOptions languageServerFeatureOptions,
     RazorTranslateDiagnosticsService translateDiagnosticsService,
     RazorLSPOptionsMonitor razorLSPOptionsMonitor,
     IClientConnection clientConnection,
     ITelemetryReporter? telemetryReporter) : IRazorRequestHandler<VSInternalDocumentDiagnosticsParams, IEnumerable<VSInternalDiagnosticReport>?>, ICapabilitiesProvider
 {
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly IClientConnection _clientConnection = clientConnection;
     private readonly RazorTranslateDiagnosticsService _translateDiagnosticsService = translateDiagnosticsService;
     private readonly RazorLSPOptionsMonitor _razorLSPOptionsMonitor = razorLSPOptionsMonitor;
@@ -56,11 +54,6 @@ internal class VSDocumentDiagnosticsEndpoint(
 
     public async Task<IEnumerable<VSInternalDiagnosticReport>?> HandleRequestAsync(VSInternalDocumentDiagnosticsParams request, RazorRequestContext context, CancellationToken cancellationToken)
     {
-        if (!_languageServerFeatureOptions.SingleServerSupport)
-        {
-            Debug.WriteLine("Pull diagnostics without single server");
-        }
-
         var documentContext = context.DocumentContext;
         if (documentContext is null)
         {

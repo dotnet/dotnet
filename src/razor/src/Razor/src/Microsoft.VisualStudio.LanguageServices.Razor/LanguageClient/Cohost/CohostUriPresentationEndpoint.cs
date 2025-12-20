@@ -101,14 +101,12 @@ internal sealed class CohostUriPresentationEndpoint(
             return null;
         }
 
-        if (!workspaceEdit.TryGetTextDocumentEdits(out var edits))
-        {
-            return null;
-        }
-
+        // NOTE: We iterate over just the TextDocumentEdit objects and modify them in place.
+        // We intentionally do NOT create a new WorkspaceEdit here to avoid losing any
+        // CreateFile, RenameFile, or DeleteFile operations that may be in DocumentChanges.
         // TODO: We could have a helper service for this, because RazorDocumentMappingService used to do it, but we can't use that in devenv,
         //       but if we move this all to OOP, per the above TODO, then that point is moot.
-        foreach (var edit in edits)
+        foreach (var edit in workspaceEdit.EnumerateTextDocumentEdits())
         {
             if (edit.TextDocument.DocumentUri.ParsedUri is { } uri &&
                 _filePathService.IsVirtualHtmlFile(uri))

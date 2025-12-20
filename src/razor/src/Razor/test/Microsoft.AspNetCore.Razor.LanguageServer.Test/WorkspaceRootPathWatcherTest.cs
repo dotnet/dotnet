@@ -3,14 +3,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
-using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -40,7 +36,7 @@ public class WorkspaceRootPathWatcherTest(ITestOutputHelper testOutput) : Toolin
         var started = false;
 
         using var watcher = new TestWorkspaceRootPathWatcher(
-            capabilitiesManager, StrictMock.Of<IRazorProjectService>(), StrictMock.Of<IFileSystem>(), LoggerFactory,
+            capabilitiesManager, StrictMock.Of<IRazorProjectService>(),
             onStartAsync: (workspaceDirectory, _) =>
             {
                 started = true;
@@ -53,39 +49,6 @@ public class WorkspaceRootPathWatcherTest(ITestOutputHelper testOutput) : Toolin
 
         // Assert
         Assert.True(started);
-    }
-
-    [Fact]
-    public async Task StartAsync_NotifiesProjectServiceOfExistingRazorFiles()
-    {
-        // Arrange
-        var actual = new List<string>();
-
-        var projectServiceMock = new StrictMock<IRazorProjectService>();
-        projectServiceMock
-            .Setup(x => x.AddDocumentsToMiscProjectAsync(It.IsAny<ImmutableArray<string>>(), It.IsAny<CancellationToken>()))
-            .Callback((ImmutableArray<string> filePaths, CancellationToken _) => actual.AddRange(filePaths))
-            .Returns(Task.CompletedTask);
-
-        var workspaceRootPathProviderMock = new StrictMock<IWorkspaceRootPathProvider>();
-        workspaceRootPathProviderMock
-            .Setup(x => x.GetRootPathAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync("/some/workspacedirectory");
-
-        ImmutableArray<string> existingRazorFiles = ["c:/path/to/index.razor", "c:/other/path/_Host.cshtml"];
-
-        using var watcher = new TestWorkspaceRootPathWatcher(
-            workspaceRootPathProviderMock.Object,
-            projectServiceMock.Object,
-            StrictMock.Of<IFileSystem>(),
-            LoggerFactory,
-            existingRazorFiles);
-
-        // Act
-        await watcher.OnInitializedAsync(DisposalToken);
-
-        // Assert
-        Assert.Equal(existingRazorFiles, actual);
     }
 
     [Theory]
@@ -111,9 +74,7 @@ public class WorkspaceRootPathWatcherTest(ITestOutputHelper testOutput) : Toolin
 
         using var watcher = new TestWorkspaceRootPathWatcher(
             workspaceRootPathProviderMock.Object,
-            projectServiceMock.Object,
-            StrictMock.Of<IFileSystem>(),
-            LoggerFactory);
+            projectServiceMock.Object);
 
         var watcherAccessor = watcher.GetTestAccessor();
 
@@ -150,11 +111,8 @@ public class WorkspaceRootPathWatcherTest(ITestOutputHelper testOutput) : Toolin
     private class TestWorkspaceRootPathWatcher(
         IWorkspaceRootPathProvider workspaceRootPathProvider,
         IRazorProjectService projectService,
-        IFileSystem fileSystem,
-        ILoggerFactory loggerFactory,
-        ImmutableArray<string> existingRazorFiles = default,
         Func<string, CancellationToken, Task>? onStartAsync = null)
-        : WorkspaceRootPathWatcher(workspaceRootPathProvider, projectService, TestLanguageServerFeatureOptions.Instance, fileSystem, loggerFactory, delay: TimeSpan.Zero)
+        : WorkspaceRootPathWatcher(workspaceRootPathProvider, projectService, delay: TimeSpan.Zero)
     {
         protected override Task StartAsync(string workspaceDirectory, CancellationToken cancellationToken)
         {
@@ -164,8 +122,5 @@ public class WorkspaceRootPathWatcherTest(ITestOutputHelper testOutput) : Toolin
         }
 
         protected override bool InitializeFileWatchers => false;
-
-        protected override ImmutableArray<string> GetExistingRazorFiles(string workspaceDirectory)
-            => existingRazorFiles.NullToEmpty();
     }
 }

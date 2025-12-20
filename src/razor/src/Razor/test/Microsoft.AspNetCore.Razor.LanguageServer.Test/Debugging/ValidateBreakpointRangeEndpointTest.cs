@@ -138,7 +138,7 @@ public class ValidateBreakpointRangeEndpointTest(ITestOutputHelper testOutput) :
     {
         await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
-        var endpoint = new ValidateBreakpointRangeEndpoint(DocumentMappingService, LanguageServerFeatureOptions, languageServer, LoggerFactory);
+        var endpoint = new ValidateBreakpointRangeEndpoint(DocumentMappingService, languageServer, LoggerFactory);
 
         var request = new ValidateBreakpointRangeParams
         {

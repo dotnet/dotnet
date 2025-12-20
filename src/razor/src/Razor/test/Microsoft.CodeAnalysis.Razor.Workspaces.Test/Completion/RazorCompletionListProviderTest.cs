@@ -1,13 +1,12 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Immutable;
 using System.Linq;
 using System.Text.Json;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
@@ -55,7 +54,6 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         => [
             new DirectiveCompletionItemProvider(),
             new DirectiveAttributeCompletionItemProvider(),
-            new DirectiveAttributeParameterCompletionItemProvider(),
             new TagHelperCompletionProvider(new TagHelperCompletionService())
         ];
 
@@ -105,7 +103,7 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
     public void TryConvert_DirectiveAttributeTransition_SerializationDoesNotThrow()
     {
         // Arrange
-        var directiveAttributeTransitionCompletionItemProvider = new DirectiveAttributeTransitionCompletionItemProvider(TestLanguageServerFeatureOptions.Instance);
+        var directiveAttributeTransitionCompletionItemProvider = new DirectiveAttributeTransitionCompletionItemProvider(new TestClientCapabilitiesService(new()));
         var completionItem = directiveAttributeTransitionCompletionItemProvider.TransitionCompletionItem;
         RazorCompletionListProvider.TryConvert(completionItem, _clientCapabilities, out var converted);
 
@@ -117,7 +115,7 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
     public void TryConvert_DirectiveAttributeTransition_ReturnsTrue()
     {
         // Arrange
-        var directiveAttributeTransitionCompletionItemProvider = new DirectiveAttributeTransitionCompletionItemProvider(TestLanguageServerFeatureOptions.Instance);
+        var directiveAttributeTransitionCompletionItemProvider = new DirectiveAttributeTransitionCompletionItemProvider(new TestClientCapabilitiesService(new()));
         var completionItem = directiveAttributeTransitionCompletionItemProvider.TransitionCompletionItem;
 
         // Act
@@ -193,7 +191,7 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
     public void TryConvert_DirectiveAttributeParameter_ReturnsTrue()
     {
         // Arrange
-        var completionItem = RazorCompletionItem.CreateDirectiveAttributeParameter(displayText: "format", insertText: "format", descriptionInfo: null!);
+        var completionItem = RazorCompletionItem.CreateDirectiveAttributeParameter(displayText: "format", insertText: "format", descriptionInfo: null!, commitCharacters: [], isSnippet: false);
 
         // Act
         Assert.True(RazorCompletionListProvider.TryConvert(completionItem, _clientCapabilities, out var converted));
@@ -532,14 +530,14 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         Assert.Contains(completionList.Items, item => item.InsertText == "testAttribute=$0");
     }
 
-    private static RazorCodeDocument CreateCodeDocument(string text, string documentFilePath, ImmutableArray<TagHelperDescriptor> tagHelpers = default)
+    private static RazorCodeDocument CreateCodeDocument(string text, string documentFilePath, TagHelperCollection? tagHelpers = null)
     {
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
         var sourceDocument = TestRazorSourceDocument.Create(text, filePath: documentFilePath);
         var syntaxTree = RazorSyntaxTree.Parse(sourceDocument);
-        codeDocument.SetSyntaxTree(syntaxTree);
-        var tagHelperDocumentContext = TagHelperDocumentContext.Create(prefix: null, tagHelpers.NullToEmpty());
-        codeDocument.SetTagHelperContext(tagHelperDocumentContext);
+        codeDocument = codeDocument.WithSyntaxTree(syntaxTree);
+        var tagHelperDocumentContext = TagHelperDocumentContext.GetOrCreate(tagHelpers ?? []);
+        codeDocument = codeDocument.WithTagHelperContext(tagHelperDocumentContext);
         return codeDocument;
     }
 }

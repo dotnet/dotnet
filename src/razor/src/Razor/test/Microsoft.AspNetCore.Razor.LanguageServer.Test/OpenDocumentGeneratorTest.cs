@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
@@ -174,7 +173,7 @@ public class OpenDocumentGeneratorTest(ITestOutputHelper testOutput) : LanguageS
         ProjectSnapshotManager projectManager,
         params IDocumentProcessedListener[] listeners)
     {
-        return new OpenDocumentGenerator(listeners, projectManager, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
+        return new OpenDocumentGenerator(listeners, projectManager, LoggerFactory);
     }
 
     private class TestDocumentProcessedListener : IDocumentProcessedListener

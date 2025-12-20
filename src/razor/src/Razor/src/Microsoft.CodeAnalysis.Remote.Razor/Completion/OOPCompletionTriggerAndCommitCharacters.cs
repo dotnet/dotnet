@@ -3,11 +3,11 @@
 
 using System.Composition;
 using Microsoft.CodeAnalysis.Razor.Completion;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.Completion;
 
 [Export(typeof(CompletionTriggerAndCommitCharacters)), Shared]
 [method: ImportingConstructor]
-internal sealed class OOPCompletionTriggerAndCommitCharacters(LanguageServerFeatureOptions options)
-    : CompletionTriggerAndCommitCharacters(options);
+internal sealed class OOPCompletionTriggerAndCommitCharacters(IClientCapabilitiesService clientCapabilitiesService)
+    : CompletionTriggerAndCommitCharacters(clientCapabilitiesService);

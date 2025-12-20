@@ -32,6 +32,6 @@ internal sealed class RemoteHtmlDocumentService(in ServiceArgs args) : RazorDocu
     {
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
-        return codeDocument.GetHtmlSourceText().ToString();
+        return codeDocument.GetHtmlSourceText(cancellationToken).ToString();
     }
 }
