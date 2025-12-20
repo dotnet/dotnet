@@ -19,7 +19,7 @@ public class ProjectTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdi
         await TestServices.SolutionExplorer.CloseSolutionAndWaitAsync(ControlledHangMitigatingCancellationToken);
     }
 
-    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/9200")]
+    [IdeFact(Skip = "https://github.com/dotnet/razor/issues/9200")]
     public async Task ChangeTargetFramework()
     {
         var solutionPath = await TestServices.SolutionExplorer.GetDirectoryNameAsync(ControlledHangMitigatingCancellationToken);
