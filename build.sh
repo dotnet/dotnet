@@ -360,10 +360,10 @@ else
   properties+=( "/p:BuildOS=$os" )
 fi
 
-# if targetOS and targetArch were provided, recompute __PortableTargetOS
-if [[ -n "$targetOS" && -n "$targetArch" ]]; then
+# if user specified targetOS, recompute __PortableTargetOS
+if [[ -n "$targetOS" ]]; then
   unset __PortableTargetOS
-  initDistroRidGlobal "$targetOS" "$targetArch" "${ROOTFS_DIR:-}"
+  initDistroRidGlobal "$targetOS" "${targetArch:-arch}" "${ROOTFS_DIR:-}"
 fi
 
 properties+=( "/p:PortableTargetOS=$__PortableTargetOS" )
