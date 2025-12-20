@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <Import Project="$(MSBuildThisFileDirectory)eng/RuntimeIdentifier.props$(NETCoreSdkPortableRuntimeIdentifier)" />
+  <Import Project="$(MSBuildThisFileDirectory)eng/RuntimeIdentifier.props-$(NETCoreSdkPortableRuntimeIdentifier)" />
 
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" Condition="'$(SkipArcadeSdkImport)' != 'true'" />
 
