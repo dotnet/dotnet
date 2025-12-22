@@ -1,0 +1,8 @@
+{
+  "files": [
+    {
+      "path": "src/VisualStudio/IntegrationTest/Harness/IntegrationTestServiceDev18/source.extension.vsixmanifest",
+      "detected_license_expression": "unknown-license-reference"
+    }
+  ]
+}
