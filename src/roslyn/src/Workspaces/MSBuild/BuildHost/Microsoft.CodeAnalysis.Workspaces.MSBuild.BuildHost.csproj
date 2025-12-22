@@ -22,7 +22,6 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
-
     <!--
       We specifically reference Microsoft.Build 17.11.48, since it's the oldest version still compatible $(NetRoslynBuildHostNetCoreVersion).
       The version targeted is only used for build time, since we use MSBuildLocator to discover the proper version at runtime.
@@ -44,11 +43,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Locator" PrivateAssets="All" />
-    <PackageReference Include="System.CommandLine" />
     <PackageReference Include="System.Collections.Immutable" />
-    <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="Microsoft.IO.Redist" Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'" />
+    <PackageReference Include="System.Text.Json" Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\Compilers\Core\Portable\InternalUtilities\*.cs" Link="InternalUtilities\%(FileName).cs" />
