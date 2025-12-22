@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(SdkTasksTargetFramework);net472</TargetFrameworks>
+    <TargetFrameworks>net10.0;net472</TargetFrameworks>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>

@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <SdkTasksTargetFramework Condition="'$(MSBuildRuntimeType)' == 'Core'">$(SdkTargetFramework)</SdkTasksTargetFramework>
+    <SdkTasksTargetFramework Condition="'$(MSBuildRuntimeType)' == 'Core'">net10.0</SdkTasksTargetFramework>
     <SdkTasksTargetFramework Condition="'$(MSBuildRuntimeType)' != 'Core'">net472</SdkTasksTargetFramework>
     <SdkTasksAssembly>$(ArtifactsBinDir)sdk-tasks\$(Configuration)\$(SdkTasksTargetFramework)\sdk-tasks.dll</SdkTasksAssembly>
   </PropertyGroup>
