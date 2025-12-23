@@ -619,8 +619,8 @@ jobs:
              echo "Extracting artifacts..."
              tar -oxzf "$artifactsTarball" -C "$(previouslySourceBuiltArtifactsDir)"
              
-             customPrepArgs="${customPrepArgs} --with-packages $(previouslySourceBuiltArtifactsDir)/"
-             additionalBuildArgs="${additionalBuildArgs} --with-packages $(previouslySourceBuiltArtifactsDir)/"
+             customPrepArgs="${customPrepArgs} --with-packages $(previouslySourceBuiltArtifactsDir)"
+             additionalBuildArgs="${additionalBuildArgs} --with-packages $(previouslySourceBuiltArtifactsDir)"
           fi
           
           echo "Prep arguments: $customPrepArgs"
