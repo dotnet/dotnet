@@ -629,7 +629,6 @@ jobs:
           if [[ -n "$additionalBuildArgs" ]]; then
             echo "##vso[task.setvariable variable=additionalBuildArgs]$additionalBuildArgs"
           fi
-          fi
 
           ./prep-source-build.sh $customPrepArgs
         displayName: Prep the Build
@@ -659,10 +658,7 @@ jobs:
               extraBuildProperties="$extraBuildProperties /p:DotNetSourceOnlyPostBuildSign=true"
             fi
 
-            if [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt 0 ]]; then
-               # Prebuilt packages are extracted in the Prep step
-               :
-            fi
+
 
             if [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
               customBuildArgs="$customBuildArgs --with-shared-components $(sharedComponentsDir)"
@@ -712,9 +708,11 @@ jobs:
 
           buildArgs="$(additionalBuildArgs) $customBuildArgs $extraBuildProperties"
 
-          for envVar in $customEnvVars; do
-            customEnvVarsWithBashSyntax="$customEnvVarsWithBashSyntax export $envVar;"
-          done
+          if [[ -n "$customEnvVars" ]]; then
+            for envVar in $customEnvVars; do
+              customEnvVarsWithBashSyntax="$customEnvVarsWithBashSyntax export $envVar;"
+            done
+          fi
 
           eval $customEnvVarsWithBashSyntax
           $customPreBuildArgs ./build.sh $buildArgs
