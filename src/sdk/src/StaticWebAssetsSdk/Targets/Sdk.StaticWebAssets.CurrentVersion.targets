@@ -31,7 +31,7 @@ Copyright (c) .NET Foundation. All rights reserved.
     <_StaticWebAssetsSdkTasksTFM Condition=" '$(MSBuildRuntimeType)' == 'Core'">net11.0</_StaticWebAssetsSdkTasksTFM>
     <_StaticWebAssetsSdkTasksTFM Condition=" '$(_StaticWebAssetsSdkTasksTFM)' == ''">net472</_StaticWebAssetsSdkTasksTFM>
     <StaticWebAssetsSdkBuildTasksAssembly>$(StaticWebAssetsSdkBuildTasksDirectoryRoot)$(_StaticWebAssetsSdkTasksTFM)\Microsoft.NET.Sdk.StaticWebAssets.Tasks.dll</StaticWebAssetsSdkBuildTasksAssembly>
-    <_StaticWebAssetsSdkToolAssembly>$(StaticWebAssetsSdkDirectoryRoot)tools\$(SdkTargetFramework)\Microsoft.NET.Sdk.StaticWebAssets.Tool.dll</_StaticWebAssetsSdkToolAssembly>
+    <_StaticWebAssetsSdkToolAssembly>$(StaticWebAssetsSdkDirectoryRoot)tools\net11.0\Microsoft.NET.Sdk.StaticWebAssets.Tool.dll</_StaticWebAssetsSdkToolAssembly>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(DOTNET_HOST_PATH)' == ''">
