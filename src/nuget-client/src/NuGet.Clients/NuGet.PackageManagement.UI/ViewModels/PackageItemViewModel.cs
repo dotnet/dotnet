@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -77,7 +79,7 @@ namespace NuGet.PackageManagement.UI
 
         public ImmutableList<KnownOwnerViewModel> KnownOwnerViewModels { get; internal set; }
 
-        public string Owner => string.Join(",", _packageModel.OwnersList ?? []);
+        public string Owner => string.Join(", ", _packageModel.OwnersList ?? []);
 
         public string Author => _packageModel.Authors;
 
@@ -524,7 +526,7 @@ namespace NuGet.PackageManagement.UI
 
         public AlternatePackageMetadataContextInfo AlternatePackage => (_packageModel as IDeprecationCapable)?.AlternatePackage;
 
-        public IEnumerable<PackageVulnerabilityMetadataContextInfo> Vulnerabilities => (_packageModel as IVulnerableCapable)?.Vulnerabilities ?? [];
+        public IReadOnlyCollection<PackageVulnerabilityMetadataContextInfo> Vulnerabilities => (_packageModel as IVulnerableCapable)?.Vulnerabilities ?? [];
 
         public void UpdateTransitiveInfo(PackageSearchMetadataContextInfo metadataContextInfo)
         {

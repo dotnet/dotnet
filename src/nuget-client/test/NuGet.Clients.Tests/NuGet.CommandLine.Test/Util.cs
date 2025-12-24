@@ -1,5 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -566,12 +568,11 @@ namespace NuGet.CommandLine.Test
             string[] references = null,
             string[] contentFiles = null)
         {
-            var project = CreateProjFileXmlContent(projectName, targetFrameworkVersion, references, contentFiles);
+            var project = CreateProjFileXmlContent(targetFrameworkVersion, references, contentFiles);
             return project.ToString();
         }
 
         public static XElement CreateProjFileXmlContent(
-            string projectName = "proj1",
             string targetFrameworkVersion = "v4.7.2",
             string[] references = null,
             string[] contentFiles = null)

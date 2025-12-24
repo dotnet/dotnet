@@ -19,6 +19,9 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 
 For how to contribute to this repo follow the [Contributing doc](CONTRIBUTING.md).
 
+This repo's official location is <https://github.com/NuGet/NuGet.Client>.
+The NuGet team does not accept pull requests in other locations, but security issues must follow the [security process](SECURITY.md).
+
 ## NuGet/Home repo
 
 The [NuGet/Home](https://github.com/nuget/Home) repo is the starting point for all things NuGet. It has the [issue tracker](https://github.com/nuget/home/issues) and [basic information](https://github.com/nuget/home) about all things NuGet. Make sure to consult it before beginning your journey through NuGet code.

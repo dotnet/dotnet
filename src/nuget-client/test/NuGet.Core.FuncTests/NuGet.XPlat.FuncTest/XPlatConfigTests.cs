@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Globalization;
 using System.IO;
@@ -271,6 +273,7 @@ namespace NuGet.XPlat.FuncTest
         [Theory]
         [InlineData("signatureValidationMode", "accept")]
         [InlineData("maxHttpRequestsPerSource", "64")]
+        [InlineData("updatePackageLastAccessTime", "true")]
         public void ConfigSetCommand_WithConfigFileArg_AddsSetting(string key, string value)
         {
             // Arrange & Act

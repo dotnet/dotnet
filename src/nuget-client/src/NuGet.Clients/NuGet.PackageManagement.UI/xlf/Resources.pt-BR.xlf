@@ -119,12 +119,12 @@
       </trans-unit>
       <trans-unit id="AskForRestoreMessage">
         <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
-        <target state="translated">Faltam alguns pacotes do NuGet nesta solução. Clique para restaurar a partir de suas fontes de pacote online.</target>
+        <target state="translated">Alguns pacotes do NuGet não estão presentes nesta solução. Clique para restaurar usando as origens do pacote online.</target>
         <note />
       </trans-unit>
       <trans-unit id="AskForUpdateMessage">
         <source>A new version of NuGet Package Manager is available.</source>
-        <target state="translated">Uma nova versão do NuGet Package Manager está disponível.</target>
+        <target state="translated">Uma nova versão do Gerenciador de Pacotes do NuGet está disponível.</target>
         <note />
       </trans-unit>
       <trans-unit id="AutoReferenced">
@@ -144,7 +144,7 @@
       </trans-unit>
       <trans-unit id="Button_Cancel">
         <source>_Cancel</source>
-        <target state="translated">_Cancelar</target>
+        <target state="translated">_Cancel</target>
         <note>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_Apply must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
       </trans-unit>
       <trans-unit id="Button_Copy">
@@ -844,12 +844,12 @@
       </trans-unit>
       <trans-unit id="PackageRestoreErrorTryAgain">
         <source>An error occurred while trying to restore packages:</source>
-        <target state="translated">Ocorreu um erro ao tentar restaurar os pacotes:</target>
+        <target state="translated">Erro ao tentar restaurar pacotes:</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreProgressMessage">
         <source>Downloading missing packages...</source>
-        <target state="translated">Baixando os pacotes ausentes...</target>
+        <target state="translated">Baixando pacotes ausentes...</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageVersionWithTransitiveOrigins">
@@ -899,19 +899,22 @@
       </trans-unit>
       <trans-unit id="ShowDetails">
         <source>Show Details</source>
-        <target state="translated">Mostrar detalhes</target>
+        <target state="translated">Mostrar Detalhes</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandFailure">
         <source>NuGet storage clear failed at {0}. 
-Error: {1}
-Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
-        <target state="translated">Falha ao limpar o armazenamento NuGet em {0}. 
-Erro: {1}
-Consulte https://aka.ms/troubleshoot_nuget_cache para obter mais ajuda.</target>
+Error: {1}</source>
+        <target state="translated">A limpeza do armazenamento NuGet falhou em {0}. 
+Erro: {1}</target>
         <note>{0} :error message;
 {1}: date and time
 </note>
+      </trans-unit>
+      <trans-unit id="ShowMessage_LocalsCommandMoreInformation">
+        <source>For more information, see</source>
+        <target state="translated">Para obter mais informações, confira</target>
+        <note />
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandSuccess">
         <source>NuGet storage cleared at {0}</source>
@@ -1310,12 +1313,12 @@ Consulte https://aka.ms/troubleshoot_nuget_cache para obter mais ajuda.</target>
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
         <source>Once started, this action cannot be cancelled.</source>
-        <target state="translated">Uma vez iniciada, esta ação não pode ser cancelada.</target>
+        <target state="translated">Depois de iniciada, esta ação não poderá ser cancelada.</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">
         <source>Clear all local NuGet resources?</source>
-        <target state="translated">Limpar todos os recursos locais do NuGet?</target>
+        <target state="translated">Limpar todos os recursos locais do NuGet?</target>
         <note />
       </trans-unit>
       <trans-unit id="Version_Blocked">

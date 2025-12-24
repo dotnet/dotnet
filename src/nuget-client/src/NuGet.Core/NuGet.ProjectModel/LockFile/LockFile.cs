@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,76 +30,6 @@ namespace NuGet.ProjectModel
         public PackageSpec PackageSpec { get; set; }
         public IList<CentralTransitiveDependencyGroup> CentralTransitiveDependencyGroups { get; set; } = new List<CentralTransitiveDependencyGroup>();
 
-        [Obsolete("Unused in PackageReference, will be removed in a future version.")]
-        public bool IsValidForPackageSpec(PackageSpec spec)
-        {
-            return IsValidForPackageSpec(spec, Version);
-        }
-
-        [Obsolete("Unused in PackageReference, will be removed in a future version.")]
-        public bool IsValidForPackageSpec(PackageSpec spec, int requestLockFileVersion)
-        {
-            if (Version != requestLockFileVersion)
-            {
-                return false;
-            }
-
-            if (!ValidateDependencies(spec))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private bool ValidateDependencies(PackageSpec spec)
-        {
-            var actualTargetFrameworks = spec.TargetFrameworks;
-
-            // The lock file should contain dependencies for each framework plus dependencies shared by all frameworks
-            if (ProjectFileDependencyGroups.Count != actualTargetFrameworks.Count() + 1)
-            {
-                return false;
-            }
-
-            foreach (var group in ProjectFileDependencyGroups)
-            {
-                IOrderedEnumerable<string> actualDependencies;
-                var expectedDependencies = @group.Dependencies.OrderBy(x => x, StringComparer.Ordinal);
-
-                // If the framework name is empty, the associated dependencies are shared by all frameworks
-                if (string.IsNullOrEmpty(@group.FrameworkName))
-                {
-                    actualDependencies = spec.Dependencies
-                        .Select(x => x.LibraryRange.ToLockFileDependencyGroupString())
-                        .OrderBy(x => x, StringComparer.Ordinal);
-                }
-                else
-                {
-                    var framework = actualTargetFrameworks.FirstOrDefault(f => string.Equals(
-                                f.FrameworkName.DotNetFrameworkName,
-                                @group.FrameworkName,
-                                StringComparison.OrdinalIgnoreCase));
-
-                    if (framework == null)
-                    {
-                        return false;
-                    }
-
-                    actualDependencies = framework
-                        .Dependencies
-                        .Select(d => d.LibraryRange.ToLockFileDependencyGroupString())
-                        .OrderBy(x => x, StringComparer.Ordinal);
-                }
-
-                if (!actualDependencies.SequenceEqual(expectedDependencies))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
         public LockFileTarget GetTarget(NuGetFramework framework, string runtimeIdentifier)
         {
             return Targets.FirstOrDefault(t =>
@@ -108,13 +40,10 @@ namespace NuGet.ProjectModel
 
         public LockFileTarget GetTarget(string frameworkAlias, string runtimeIdentifier)
         {
-            var framework = PackageSpec.TargetFrameworks.FirstOrDefault(tfi => tfi.TargetAlias.Equals(frameworkAlias, StringComparison.OrdinalIgnoreCase))?.FrameworkName;
-
-            if (framework != null)
-            {
-                return GetTarget(framework, runtimeIdentifier);
-            }
-            return null;
+            return Targets.FirstOrDefault(t =>
+                t.TargetAlias.Equals(frameworkAlias) &&
+                (string.IsNullOrEmpty(runtimeIdentifier) && string.IsNullOrEmpty(t.RuntimeIdentifier) ||
+                 string.Equals(runtimeIdentifier, t.RuntimeIdentifier, StringComparison.OrdinalIgnoreCase)));
         }
 
         public LockFileLibrary GetLibrary(string name, NuGetVersion version)

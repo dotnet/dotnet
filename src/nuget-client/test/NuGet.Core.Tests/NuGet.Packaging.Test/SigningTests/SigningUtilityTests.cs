@@ -1,11 +1,12 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
@@ -572,7 +573,7 @@ namespace NuGet.Packaging.Test
                 using (var zipArchive = new ZipArchive(packageStream, ZipArchiveMode.Read, leaveOpen: true))
                 {
                     // Sanity check before testing.
-                    Assert.Equal(desiredFileCount, zipArchive.Entries.Count());
+                    Assert.Equal(desiredFileCount, zipArchive.Entries.Count);
                 }
 
                 packageStream.Position = 0;

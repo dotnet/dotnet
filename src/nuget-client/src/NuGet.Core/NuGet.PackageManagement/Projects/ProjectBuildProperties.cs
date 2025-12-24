@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 namespace NuGet.ProjectManagement
 {
     /// <summary>
@@ -63,6 +65,6 @@ namespace NuGet.ProjectManagement
         public const string UsingMicrosoftNETSdk = nameof(UsingMicrosoftNETSdk);
         public const string RestoreUseLegacyDependencyResolver = nameof(RestoreUseLegacyDependencyResolver);
         public const string RestoreEnablePackagePruning = nameof(RestoreEnablePackagePruning);
-        public const string RestorePackagePruningDefault = "_" + nameof(RestorePackagePruningDefault);
+        public const string RestorePackagePruningDefault = nameof(RestorePackagePruningDefault);
     }
 }

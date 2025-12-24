@@ -2556,6 +2556,304 @@ namespace NuGet.Configuration.Test
             auditSource.Subject.IsEnabled.Should().BeTrue();
         }
 
+        [Fact]
+        public void SaveAuditSources_AddsNewAuditSources()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+
+            const string contents = @"<configuration />";
+            var path = Path.Combine(testDirectory.Path, Settings.DefaultSettingsFileName);
+            File.WriteAllText(path, contents);
+
+            Settings settings = new Settings(testDirectory.Path);
+            PackageSourceProvider psp = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+
+            var auditSources = new[]
+            {
+                new PackageSource("https://contoso.test/nuget/v3/index.json", "contoso"),
+                new PackageSource("https://test2.test/nuget/v3/index.json", "test2")
+            };
+
+            // Act
+            psp.SaveAuditSources(auditSources);
+
+            // Assert
+            IReadOnlyList<PackageSource> loadedSources = psp.LoadAuditSources();
+            loadedSources.Should().HaveCount(2);
+            loadedSources[0].Name.Should().Be("contoso");
+            loadedSources[0].Source.Should().Be("https://contoso.test/nuget/v3/index.json");
+            loadedSources[1].Name.Should().Be("test2");
+            loadedSources[1].Source.Should().Be("https://test2.test/nuget/v3/index.json");
+        }
+
+        [Fact]
+        public void SaveAuditSources_UpdatesExistingAuditSource()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+
+            const string contents = @"<configuration>
+    <auditSources>
+        <add key=""contoso"" value=""https://contoso.test/nuget/v2/index.json"" />
+    </auditSources>
+</configuration>";
+            var path = Path.Combine(testDirectory.Path, Settings.DefaultSettingsFileName);
+            File.WriteAllText(path, contents);
+
+            Settings settings = new Settings(testDirectory.Path);
+            PackageSourceProvider psp = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+
+            var auditSources = new[]
+            {
+                new PackageSource("https://contoso.test/nuget/v3/index.json", "contoso") { ProtocolVersion = 3 }
+            };
+
+            // Act
+            psp.SaveAuditSources(auditSources);
+
+            // Assert
+            IReadOnlyList<PackageSource> loadedSources = psp.LoadAuditSources();
+            loadedSources.Should().ContainSingle();
+            loadedSources[0].Name.Should().Be("contoso");
+            loadedSources[0].Source.Should().Be("https://contoso.test/nuget/v3/index.json");
+            loadedSources[0].ProtocolVersion.Should().Be(3);
+        }
+
+        [Fact]
+        public void SaveAuditSources_RemovesAuditSourcesNotInList()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+
+            const string contents = @"<configuration>
+    <auditSources>
+        <add key=""contoso"" value=""https://contoso.test/nuget/v3/index.json"" />
+        <add key=""test2"" value=""https://test2.test/nuget/v3/index.json"" />
+    </auditSources>
+</configuration>";
+            var path = Path.Combine(testDirectory.Path, Settings.DefaultSettingsFileName);
+            File.WriteAllText(path, contents);
+
+            Settings settings = new Settings(testDirectory.Path);
+            PackageSourceProvider psp = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+
+            // Only include contoso, test2 should be removed
+            var auditSources = new[]
+            {
+                new PackageSource("https://contoso.test/nuget/v3/index.json", "contoso")
+            };
+
+            // Act
+            psp.SaveAuditSources(auditSources);
+
+            // Assert
+            IReadOnlyList<PackageSource> loadedSources = psp.LoadAuditSources();
+            loadedSources.Should().ContainSingle();
+            loadedSources[0].Name.Should().Be("contoso");
+        }
+
+        [Fact]
+        public void SaveAuditSources_HandlesEmptyList()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+
+            const string contents = @"<configuration>
+    <auditSources>
+        <add key=""contoso"" value=""https://contoso.test/nuget/v3/index.json"" />
+    </auditSources>
+</configuration>";
+            var path = Path.Combine(testDirectory.Path, Settings.DefaultSettingsFileName);
+            File.WriteAllText(path, contents);
+
+            Settings settings = new Settings(testDirectory.Path);
+            PackageSourceProvider psp = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+
+            // Act
+            psp.SaveAuditSources(Array.Empty<PackageSource>());
+
+            // Assert
+            IReadOnlyList<PackageSource> loadedSources = psp.LoadAuditSources();
+            loadedSources.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void SaveAuditSources_PreservesClearStatement()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+
+            const string contents = @"<configuration>
+    <auditSources>
+        <clear />
+        <add key=""contoso"" value=""https://contoso.test/nuget/v3/index.json"" />
+    </auditSources>
+</configuration>";
+            var path = Path.Combine(testDirectory.Path, Settings.DefaultSettingsFileName);
+            File.WriteAllText(path, contents);
+
+            Settings settings = new Settings(testDirectory.Path);
+            PackageSourceProvider psp = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+
+            var auditSources = new[]
+            {
+                new PackageSource("https://contoso.test/nuget/v3/index.json", "contoso"),
+                new PackageSource("https://test2.test/nuget/v3/index.json", "test2")
+            };
+
+            // Act
+            psp.SaveAuditSources(auditSources);
+
+            // Assert
+            var configContent = File.ReadAllText(path);
+            configContent.Should().Contain("<clear />");
+
+            IReadOnlyList<PackageSource> loadedSources = psp.LoadAuditSources();
+            loadedSources.Should().HaveCount(2);
+        }
+
+        [Fact]
+        public void SaveAuditSources_WithProtocolVersion()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+
+            const string contents = @"<configuration />";
+            var path = Path.Combine(testDirectory.Path, Settings.DefaultSettingsFileName);
+            File.WriteAllText(path, contents);
+
+            Settings settings = new Settings(testDirectory.Path);
+            PackageSourceProvider psp = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+
+            var auditSources = new[]
+            {
+                new PackageSource("https://contoso.test/nuget/v3/index.json", "contoso") { ProtocolVersion = 3 }
+            };
+
+            // Act
+            psp.SaveAuditSources(auditSources);
+
+            // Assert
+            IReadOnlyList<PackageSource> loadedSources = psp.LoadAuditSources();
+            loadedSources.Should().ContainSingle();
+            loadedSources[0].Name.Should().Be("contoso");
+            loadedSources[0].ProtocolVersion.Should().Be(3);
+        }
+
+        [Fact]
+        public void SaveAuditSources_NonPersistableSourceNotSaved()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+
+            const string contents = @"<configuration />";
+            var path = Path.Combine(testDirectory.Path, Settings.DefaultSettingsFileName);
+            File.WriteAllText(path, contents);
+
+            Settings settings = new Settings(testDirectory.Path);
+            PackageSourceProvider psp = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+
+            var auditSources = new[]
+            {
+                new PackageSource("https://contoso.test/nuget/v3/index.json", "contoso", isEnabled: true, isOfficial: false, isPersistable: true),
+                new PackageSource("https://test2.test/nuget/v3/index.json", "test2", isEnabled: true, isOfficial: false, isPersistable: false)
+            };
+
+            // Act
+            psp.SaveAuditSources(auditSources);
+
+            // Assert
+            IReadOnlyList<PackageSource> loadedSources = psp.LoadAuditSources();
+            loadedSources.Should().ContainSingle();
+            loadedSources[0].Name.Should().Be("contoso");
+        }
+
+        [Fact]
+        public void SaveAuditSources_ThrowsOnNull()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+
+            const string contents = @"<configuration />";
+            var path = Path.Combine(testDirectory.Path, Settings.DefaultSettingsFileName);
+            File.WriteAllText(path, contents);
+
+            Settings settings = new Settings(testDirectory.Path);
+            PackageSourceProvider psp = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => psp.SaveAuditSources(null!));
+        }
+
+        [Fact]
+        public void SaveAuditSources_UpdatesProtocolVersion()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+
+            const string contents = @"<configuration>
+    <auditSources>
+        <add key=""contoso"" value=""https://contoso.test/nuget/v3/index.json"" protocolVersion=""2"" />
+    </auditSources>
+</configuration>";
+            var path = Path.Combine(testDirectory.Path, Settings.DefaultSettingsFileName);
+            File.WriteAllText(path, contents);
+
+            Settings settings = new Settings(testDirectory.Path);
+            PackageSourceProvider psp = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+
+            var auditSources = new[]
+            {
+                new PackageSource("https://contoso.test/nuget/v3/index.json", "contoso") { ProtocolVersion = 3 }
+            };
+
+            // Act
+            psp.SaveAuditSources(auditSources);
+
+            // Assert
+            IReadOnlyList<PackageSource> loadedSources = psp.LoadAuditSources();
+            loadedSources.Should().ContainSingle();
+            loadedSources[0].ProtocolVersion.Should().Be(3);
+        }
+
+        [Fact]
+        public void SaveAuditSources_DoesNotAffectPackageSources()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+
+            const string contents = @"<configuration>
+    <packageSources>
+        <add key=""nuget.org"" value=""https://api.nuget.org/v3/index.json"" />
+    </packageSources>
+</configuration>";
+            var path = Path.Combine(testDirectory.Path, Settings.DefaultSettingsFileName);
+            File.WriteAllText(path, contents);
+
+            Settings settings = new Settings(testDirectory.Path);
+            PackageSourceProvider psp = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+
+            var auditSources = new[]
+            {
+                new PackageSource("https://contoso.test/nuget/v3/index.json", "contoso")
+            };
+
+            // Act
+            psp.SaveAuditSources(auditSources);
+
+            // Assert
+            // Verify audit sources are saved
+            IReadOnlyList<PackageSource> loadedAuditSources = psp.LoadAuditSources();
+            loadedAuditSources.Should().ContainSingle();
+            loadedAuditSources[0].Name.Should().Be("contoso");
+
+            // Verify package sources are not affected
+            IReadOnlyList<PackageSource> loadedPackageSources = psp.LoadPackageSources().ToList();
+            loadedPackageSources.Should().ContainSingle();
+            loadedPackageSources[0].Name.Should().Be("nuget.org");
+        }
+
         private string CreateNuGetConfigContent(string enabledReplacement = "", string disabledReplacement = "", string activeSourceReplacement = "")
         {
             var nugetConfigBaseString = new StringBuilder();
