@@ -252,6 +252,15 @@
         android-x64;
         " />
 
+      <Net100AppHostRids Include="
+        @(Net90AppHostRids);
+        " />
+
+      <Net110AppHostRids Include="
+        @(Net100AppHostRids);
+        haiku-x64;
+        " />
+
       <Net110RuntimePackRids Include="
         @(Net100RuntimePackRids);
         ios-arm64;
@@ -264,7 +273,7 @@
         maccatalyst-arm64;
         " />
 
-      <NetCoreAppHostRids Include="@(Net90AppHostRids)" />
+      <NetCoreAppHostRids Include="@(Net110AppHostRids)" />
 
       <NetCoreRuntimePackRids Include="@(Net110RuntimePackRids)" />
 
