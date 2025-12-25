@@ -12,6 +12,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftNETSdkPackageVersion>10.0.101-servicing.25569.105</MicrosoftNETSdkPackageVersion>
     <MicrosoftNETCoreAppRefPackageVersion>10.0.1</MicrosoftNETCoreAppRefPackageVersion>
     <MicrosoftNETCorePlatformsPackageVersion>10.0.1-servicing.25569.105</MicrosoftNETCorePlatformsPackageVersion>
+    <MicrosoftNETWorkloadEmscriptenCurrentManifest100100PackageVersion>10.0.100</MicrosoftNETWorkloadEmscriptenCurrentManifest100100PackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
@@ -22,5 +23,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftNETSdkVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftNETSdkVersion>
     <MicrosoftNETCoreAppRefVersion>$(MicrosoftNETCoreAppRefPackageVersion)</MicrosoftNETCoreAppRefVersion>
     <MicrosoftNETCorePlatformsVersion>$(MicrosoftNETCorePlatformsPackageVersion)</MicrosoftNETCorePlatformsVersion>
+    <MicrosoftNETWorkloadEmscriptenCurrentManifest100100Version>$(MicrosoftNETWorkloadEmscriptenCurrentManifest100100PackageVersion)</MicrosoftNETWorkloadEmscriptenCurrentManifest100100Version>
   </PropertyGroup>
 </Project>

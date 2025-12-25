@@ -43,7 +43,7 @@
     <Artifact Remove="@(MsiPackages)" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(PublishingWorkloadMsiInternal)' == 'true'">
+  <ItemGroup Condition="'$(DotNetBuildSharedComponents)' != 'true'">
     <Artifact Update="$(ArtifactsShippingPackagesDir)*.Msi.*.nupkg" Visibility="Internal" />
   </ItemGroup>
 
