@@ -20,16 +20,16 @@ Generated Location: (1565:51,0 [2] )
 
 Source Location: (113:1,1 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 |MyComponent|
-Generated Location: (1753:60,0 [11] )
+Generated Location: (1670:57,49 [11] )
 |MyComponent|
 
 Source Location: (125:1,13 [8] x:\dir\subdir\Test\TestComponent.cshtml)
 |Template|
-Generated Location: (1998:69,0 [8] )
+Generated Location: (1851:61,0 [8] )
 |Template|
 
 Source Location: (136:1,24 [8] x:\dir\subdir\Test\TestComponent.cshtml)
 |template|
-Generated Location: (2236:77,0 [8] )
+Generated Location: (2089:69,0 [8] )
 |template|
 

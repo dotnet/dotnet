@@ -10,7 +10,6 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 
 internal interface IRazorProjectService
 {
-    Task AddDocumentsToMiscProjectAsync(ImmutableArray<string> filePaths, CancellationToken cancellationToken);
     Task AddDocumentToMiscProjectAsync(string filePath, CancellationToken cancellationToken);
     Task OpenDocumentAsync(string filePath, SourceText sourceText, CancellationToken cancellationToken);
     Task UpdateDocumentAsync(string filePath, SourceText sourceText, CancellationToken cancellationToken);

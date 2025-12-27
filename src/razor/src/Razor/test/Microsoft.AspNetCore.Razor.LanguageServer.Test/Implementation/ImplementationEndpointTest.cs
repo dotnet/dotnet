@@ -95,7 +95,7 @@ public class ImplementationEndpointTest(ITestOutputHelper testOutput) : SingleSe
         await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         var endpoint = new ImplementationEndpoint(
-            LanguageServerFeatureOptions, DocumentMappingService, languageServer, LoggerFactory);
+            DocumentMappingService, languageServer, LoggerFactory);
 
         var request = new TextDocumentPositionParams
         {

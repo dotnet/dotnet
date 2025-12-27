@@ -276,6 +276,23 @@ internal class RazorCompletionListProvider(
                     completionItem = attributeCompletionItem;
                     return true;
                 }
+            case RazorCompletionItemKind.CSharpRazorKeyword:
+                {
+                    var csharpRazorKeywordCompletionItem = new VSInternalCompletionItem()
+                    {
+                        Label = razorCompletionItem.DisplayText,
+                        InsertText = razorCompletionItem.InsertText,
+                        FilterText = razorCompletionItem.DisplayText,
+                        SortText = razorCompletionItem.SortText,
+                        InsertTextFormat = insertTextFormat,
+                        Kind = CompletionItemKind.Keyword,
+                    };
+
+                    csharpRazorKeywordCompletionItem.UseCommitCharactersFrom(razorCompletionItem, clientCapabilities);
+
+                    completionItem = csharpRazorKeywordCompletionItem;
+                    return true;
+                }
         }
 
         completionItem = null;

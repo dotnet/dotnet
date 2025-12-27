@@ -34,6 +34,10 @@ internal static class CommonModifiers
         GetText(CSharpSyntaxKind.PrivateKeyword),
         GetText(CSharpSyntaxKind.SealedKeyword)];
 
+    public static ImmutableArray<string> FileSealed { get; } = [
+        GetText(CSharpSyntaxKind.FileKeyword),
+        GetText(CSharpSyntaxKind.SealedKeyword)];
+
     public static ImmutableArray<string> Protected { get; } = [
         GetText(CSharpSyntaxKind.ProtectedKeyword)];
 

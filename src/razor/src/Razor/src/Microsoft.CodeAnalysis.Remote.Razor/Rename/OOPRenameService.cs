@@ -11,7 +11,8 @@ namespace Microsoft.CodeAnalysis.Remote.Razor.Rename;
 [method: ImportingConstructor]
 internal sealed class OOPRenameService(
     IRazorComponentSearchEngine componentSearchEngine,
+    IFileSystem fileSystem,
     LanguageServerFeatureOptions languageServerFeatureOptions)
-    : RenameService(componentSearchEngine, languageServerFeatureOptions)
+    : RenameService(componentSearchEngine, fileSystem, languageServerFeatureOptions)
 {
 }

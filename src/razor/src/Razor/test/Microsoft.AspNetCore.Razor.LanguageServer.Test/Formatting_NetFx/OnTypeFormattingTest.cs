@@ -19,6 +19,44 @@ public class OnTypeFormattingTest(FormattingTestContext context, HtmlFormattingF
     : FormattingTestBase(context, fixture.Service, testOutput), IClassFixture<FormattingTestContext>
 {
     [FormattingTestFact]
+    public async Task FormatsElseCloseBrace()
+    {
+        await RunOnTypeFormattingTestAsync(
+            input: """
+                    @page "/"
+
+                    @if (true)
+                    {
+                        <option value="@streetKind">@streetKind</option>
+                    }
+                    else {
+                        <input />
+                    }$$
+
+                    @code {
+                        private string? streetKind;
+                    }
+                    """,
+            expected: """
+                    @page "/"
+
+                    @if (true)
+                    {
+                        <option value="@streetKind">@streetKind</option>
+                    }
+                    else
+                    {
+                        <input />
+                    }
+
+                    @code {
+                        private string? streetKind;
+                    }
+                    """,
+            triggerCharacter: '}');
+    }
+
+    [FormattingTestFact]
     public async Task FormatsIfStatementInComponent()
     {
         await RunOnTypeFormattingTestAsync(

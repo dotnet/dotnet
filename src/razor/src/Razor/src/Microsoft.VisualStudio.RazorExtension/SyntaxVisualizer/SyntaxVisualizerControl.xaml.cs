@@ -11,7 +11,6 @@ using System.Windows.Controls;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Serialization.Json;
-using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Protocol.DevTools;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -140,17 +139,7 @@ internal partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTable
                 return;
             }
 
-            // Fall back to legacy method if cohosting is not enabled or failed
-            var codeDocument = GetCodeDocument();
-            if (codeDocument is null)
-            {
-                return;
-            }
-
-#pragma warning disable CS0618 // Type or member is obsolete
-            var formattingDocument = CSharpFormattingPass.GetFormattingDocumentContentsForSyntaxVisualizer(codeDocument);
-#pragma warning restore CS0618 // Type or member is obsolete
-            OpenGeneratedCode(hostDocumentUri.AbsoluteUri + ".formatting.cs", formattingDocument);
+            // Only supported with cohosting
         }
     }
 

@@ -81,14 +81,16 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         };
     }
 
-    protected override TextDocument CreateProjectAndRazorDocument(
+    private protected override TextDocument CreateProjectAndRazorDocument(
         string contents,
         RazorFileKind? fileKind = null,
         string? documentFilePath = null,
         (string fileName, string contents)[]? additionalFiles = null,
         bool inGlobalNamespace = false,
-        bool miscellaneousFile = false)
+        bool miscellaneousFile = false,
+        bool addDefaultImports = true,
+        Action<RazorProjectBuilder>? projectConfigure = null)
     {
-        return CreateProjectAndRazorDocument(LocalWorkspace, contents, fileKind, documentFilePath, additionalFiles, inGlobalNamespace, miscellaneousFile);
+        return CreateProjectAndRazorDocument(LocalWorkspace, contents, fileKind, documentFilePath, additionalFiles, inGlobalNamespace, miscellaneousFile, addDefaultImports, projectConfigure);
     }
 }

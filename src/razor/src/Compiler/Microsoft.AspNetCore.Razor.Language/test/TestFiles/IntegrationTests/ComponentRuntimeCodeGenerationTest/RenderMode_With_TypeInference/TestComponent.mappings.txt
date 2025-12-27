@@ -29,11 +29,11 @@ Generated Location: (1630:56,0 [67] )
 
 Source Location: (100:2,1 [13] x:\dir\subdir\Test\TestComponent.cshtml)
 |TestComponent|
-Generated Location: (2356:76,0 [13] )
+Generated Location: (2273:73,45 [13] )
 |TestComponent|
 
 Source Location: (144:2,45 [15] x:\dir\subdir\Test\TestComponent.cshtml)
 |RenderModeParam|
-Generated Location: (2630:85,0 [15] )
+Generated Location: (2487:77,0 [15] )
 |RenderModeParam|
 

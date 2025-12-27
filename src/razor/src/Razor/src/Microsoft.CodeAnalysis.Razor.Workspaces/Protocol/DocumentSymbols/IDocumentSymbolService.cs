@@ -8,5 +8,5 @@ namespace Microsoft.CodeAnalysis.Razor.Protocol.DocumentSymbols;
 
 internal interface IDocumentSymbolService
 {
-    SumType<DocumentSymbol[], SymbolInformation[]>? GetDocumentSymbols(Uri razorDocumentUri, RazorCSharpDocument csharpDocument, SumType<DocumentSymbol[], SymbolInformation[]> csharpSymbols);
+    SumType<DocumentSymbol[], SymbolInformation[]>? GetDocumentSymbols(RazorFileKind fileKind, Uri razorDocumentUri, RazorCSharpDocument csharpDocument, SumType<DocumentSymbol[], SymbolInformation[]> csharpSymbols);
 }

@@ -32,7 +32,6 @@ internal sealed partial class HtmlDocumentSynchronizer
         {
             _cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             var token = _cts.Token;
-            _cts.CancelAfter(TimeSpan.FromMilliseconds(500));
             _cts.Token.Register(Dispose);
             _ = syncFunction.Invoke(document, _requestedVersion, token).ContinueWith((t, state) =>
             {

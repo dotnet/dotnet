@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem.Legacy;
 using Microsoft.CodeAnalysis.Razor.Settings;
@@ -16,7 +15,7 @@ internal interface IVisualStudioDocumentTracker
 {
     RazorConfiguration? Configuration { get; }
     ClientSpaceSettings EditorSettings { get; }
-    ImmutableArray<TagHelperDescriptor> TagHelpers { get; }
+    TagHelperCollection TagHelpers { get; }
     bool IsSupportedProject { get; }
     string FilePath { get; }
     string ProjectPath { get; }

@@ -1,12 +1,11 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.CodeAnalysis.Razor.Serialization;
 
-internal sealed record FetchTagHelpersResult(ImmutableArray<TagHelperDescriptor> TagHelpers)
+internal sealed record FetchTagHelpersResult(TagHelperCollection TagHelpers)
 {
-    public static readonly FetchTagHelpersResult Empty = new(ImmutableArray<TagHelperDescriptor>.Empty);
+    public static readonly FetchTagHelpersResult Empty = new(TagHelperCollection.Empty);
 }

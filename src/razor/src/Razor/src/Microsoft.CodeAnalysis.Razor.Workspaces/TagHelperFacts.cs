@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -19,10 +20,7 @@ internal static class TagHelperFacts
         string? parentTag,
         bool parentIsTagHelper)
     {
-        if (documentContext is null)
-        {
-            throw new ArgumentNullException(nameof(documentContext));
-        }
+        ArgHelper.ThrowIfNull(documentContext);
 
         if (attributes.IsDefault)
         {
@@ -34,7 +32,7 @@ internal static class TagHelperFacts
             return null;
         }
 
-        if (documentContext.TagHelpers.Length == 0)
+        if (documentContext.TagHelpers.Count == 0)
         {
             return null;
         }
@@ -49,24 +47,13 @@ internal static class TagHelperFacts
         string attributeName,
         TagHelperBinding binding)
     {
-        if (documentContext is null)
-        {
-            throw new ArgumentNullException(nameof(documentContext));
-        }
-
-        if (attributeName is null)
-        {
-            throw new ArgumentNullException(nameof(attributeName));
-        }
-
-        if (binding is null)
-        {
-            throw new ArgumentNullException(nameof(binding));
-        }
+        ArgHelper.ThrowIfNull(documentContext);
+        ArgHelper.ThrowIfNull(attributeName);
+        ArgHelper.ThrowIfNull(binding);
 
         using var matchingBoundAttributes = new PooledArrayBuilder<BoundAttributeDescriptor>();
 
-        foreach (var tagHelper in binding.Descriptors)
+        foreach (var tagHelper in binding.TagHelpers)
         {
             foreach (var boundAttribute in tagHelper.BoundAttributes)
             {
@@ -83,85 +70,73 @@ internal static class TagHelperFacts
         return matchingBoundAttributes.ToImmutableAndClear();
     }
 
-    public static ImmutableArray<TagHelperDescriptor> GetTagHelpersGivenTag(
+    public static TagHelperCollection GetTagHelpersGivenTag(
         TagHelperDocumentContext documentContext,
         string tagName,
         string? parentTag)
     {
-        if (documentContext is null)
+        ArgHelper.ThrowIfNull(documentContext);
+        ArgHelper.ThrowIfNull(tagName);
+
+        if (documentContext.TagHelpers.IsEmpty)
         {
-            throw new ArgumentNullException(nameof(documentContext));
+            return [];
         }
 
-        if (tagName is null)
+        var tagNameWithoutPrefix = tagName.AsMemory();
+
+        if (documentContext.Prefix is { Length: > 0 } prefix)
         {
-            throw new ArgumentNullException(nameof(tagName));
+            if (!tagNameWithoutPrefix.Span.StartsWith(prefix.AsSpan(), StringComparison.OrdinalIgnoreCase))
+            {
+                // 'tagName' can't possibly match TagHelpers if it doesn't start with the provided prefix.
+                return [];
+            }
+
+            tagNameWithoutPrefix = tagNameWithoutPrefix[prefix.Length..];
         }
 
-        if (documentContext?.TagHelpers is not { Length: > 0 } tagHelpers)
-        {
-            return ImmutableArray<TagHelperDescriptor>.Empty;
-        }
-
-        var prefix = documentContext?.Prefix ?? string.Empty;
-        if (!tagName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
-        {
-            // Can't possibly match TagHelpers, it doesn't start with the TagHelperPrefix.
-            return ImmutableArray<TagHelperDescriptor>.Empty;
-        }
-
-        using var matchingDescriptors = new PooledArrayBuilder<TagHelperDescriptor>();
-
-        var tagNameWithoutPrefix = tagName.AsSpan()[prefix.Length..];
-
-        foreach (var tagHelper in tagHelpers)
+        return documentContext.TagHelpers.Where(state: (tagNameWithoutPrefix, parentTag), static (tagHelper, state) =>
         {
             foreach (var rule in tagHelper.TagMatchingRules)
             {
-                if (TagHelperMatchingConventions.SatisfiesTagName(rule, tagNameWithoutPrefix) &&
-                    TagHelperMatchingConventions.SatisfiesParentTag(rule, parentTag.AsSpanOrDefault()))
+                if (TagHelperMatchingConventions.SatisfiesTagName(rule, state.tagNameWithoutPrefix.Span) &&
+                    TagHelperMatchingConventions.SatisfiesParentTag(rule, state.parentTag.AsSpan()))
                 {
-                    matchingDescriptors.Add(tagHelper);
-                    break;
+                    return true;
                 }
             }
-        }
 
-        return matchingDescriptors.ToImmutableAndClear();
+            return false;
+        });
     }
 
-    public static ImmutableArray<TagHelperDescriptor> GetTagHelpersGivenParent(TagHelperDocumentContext documentContext, string? parentTag)
+    public static TagHelperCollection GetTagHelpersGivenParent(TagHelperDocumentContext documentContext, string? parentTag)
     {
-        if (documentContext is null)
+        ArgHelper.ThrowIfNull(documentContext);
+
+        if (documentContext.TagHelpers.IsEmpty)
         {
-            throw new ArgumentNullException(nameof(documentContext));
+            return [];
         }
 
-        if (documentContext?.TagHelpers is not { Length: > 0 } tagHelpers)
+        return documentContext.TagHelpers.Where(parentTag, static (tagHelper, parentTag) =>
         {
-            return ImmutableArray<TagHelperDescriptor>.Empty;
-        }
-
-        using var matchingDescriptors = new PooledArrayBuilder<TagHelperDescriptor>();
-
-        foreach (var descriptor in tagHelpers)
-        {
-            foreach (var rule in descriptor.TagMatchingRules)
+            foreach (var rule in tagHelper.TagMatchingRules)
             {
-                if (TagHelperMatchingConventions.SatisfiesParentTag(rule, parentTag.AsSpanOrDefault()))
+                if (TagHelperMatchingConventions.SatisfiesParentTag(rule, parentTag.AsSpan()))
                 {
-                    matchingDescriptors.Add(descriptor);
-                    break;
+                    return true;
                 }
             }
-        }
 
-        return matchingDescriptors.ToImmutableAndClear();
+            return false;
+        });
     }
 
     public static ImmutableArray<KeyValuePair<string, string>> StringifyAttributes(SyntaxList<RazorSyntaxNode> attributes)
     {
-        using var stringifiedAttributes = new PooledArrayBuilder<KeyValuePair<string, string>>();
+        using var builder = new PooledArrayBuilder<KeyValuePair<string, string>>();
 
         foreach (var attribute in attributes)
         {
@@ -171,14 +146,14 @@ internal static class TagHelperFacts
                     {
                         var name = tagHelperAttribute.Name.GetContent();
                         var value = tagHelperAttribute.Value?.GetContent() ?? string.Empty;
-                        stringifiedAttributes.Add(new KeyValuePair<string, string>(name, value));
+                        builder.Add(KeyValuePair.Create(name, value));
                         break;
                     }
 
                 case MarkupMinimizedTagHelperAttributeSyntax minimizedTagHelperAttribute:
                     {
                         var name = minimizedTagHelperAttribute.Name.GetContent();
-                        stringifiedAttributes.Add(new KeyValuePair<string, string>(name, string.Empty));
+                        builder.Add(KeyValuePair.Create(name, string.Empty));
                         break;
                     }
 
@@ -186,14 +161,14 @@ internal static class TagHelperFacts
                     {
                         var name = markupAttribute.Name.GetContent();
                         var value = markupAttribute.Value?.GetContent() ?? string.Empty;
-                        stringifiedAttributes.Add(new KeyValuePair<string, string>(name, value));
+                        builder.Add(KeyValuePair.Create(name, value));
                         break;
                     }
 
                 case MarkupMinimizedAttributeBlockSyntax minimizedMarkupAttribute:
                     {
                         var name = minimizedMarkupAttribute.Name.GetContent();
-                        stringifiedAttributes.Add(new KeyValuePair<string, string>(name, string.Empty));
+                        builder.Add(KeyValuePair.Create(name, string.Empty));
                         break;
                     }
 
@@ -201,20 +176,20 @@ internal static class TagHelperFacts
                     {
                         var name = directiveAttribute.FullName;
                         var value = directiveAttribute.Value?.GetContent() ?? string.Empty;
-                        stringifiedAttributes.Add(new KeyValuePair<string, string>(name, value));
+                        builder.Add(KeyValuePair.Create(name, value));
                         break;
                     }
 
                 case MarkupMinimizedTagHelperDirectiveAttributeSyntax minimizedDirectiveAttribute:
                     {
                         var name = minimizedDirectiveAttribute.FullName;
-                        stringifiedAttributes.Add(new KeyValuePair<string, string>(name, string.Empty));
+                        builder.Add(KeyValuePair.Create(name, string.Empty));
                         break;
                     }
             }
         }
 
-        return stringifiedAttributes.ToImmutableAndClear();
+        return builder.ToImmutableAndClear();
     }
 
     public static (string? ancestorTagName, bool ancestorIsTagHelper) GetNearestAncestorTagInfo(IEnumerable<SyntaxNode> ancestors)

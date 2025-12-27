@@ -15,7 +15,7 @@ internal sealed class DefaultRazorOptimizationPhase : RazorEnginePhaseBase, IRaz
         Passes = Engine.GetFeatures<IRazorOptimizationPass>().OrderByAsArray(static x => x.Order);
     }
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
+    protected override RazorCodeDocument ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
         var documentNode = codeDocument.GetDocumentNode();
         ThrowForMissingDocumentDependency(documentNode);
@@ -27,6 +27,6 @@ internal sealed class DefaultRazorOptimizationPhase : RazorEnginePhaseBase, IRaz
             pass.Execute(codeDocument, documentNode, cancellationToken);
         }
 
-        codeDocument.SetDocumentNode(documentNode);
+        return codeDocument.WithDocumentNode(documentNode);
     }
 }

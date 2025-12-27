@@ -26,7 +26,6 @@ internal sealed class RenameEndpoint(
     IClientConnection clientConnection,
     ILoggerFactory loggerFactory)
     : AbstractRazorDelegatingEndpoint<RenameParams, WorkspaceEdit?>(
-        languageServerFeatureOptions,
         documentMappingService,
         clientConnection,
         loggerFactory.GetOrCreateLogger<RenameEndpoint>()), ICapabilitiesProvider
@@ -48,15 +47,16 @@ internal sealed class RenameEndpoint(
 
     protected override string CustomMessageTarget => CustomMessageNames.RazorRenameEndpointName;
 
-    protected override Task<WorkspaceEdit?> TryHandleAsync(RenameParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
+    protected override async Task<WorkspaceEdit?> TryHandleAsync(RenameParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
         {
-            return SpecializedTasks.Null<WorkspaceEdit>();
+            return null;
         }
 
-        return _renameService.TryGetRazorRenameEditsAsync(documentContext, positionInfo, request.NewName, _projectManager.GetQueryOperations(), cancellationToken);
+        var result = await _renameService.TryGetRazorRenameEditsAsync(documentContext, positionInfo, request.NewName, _projectManager.GetQueryOperations(), cancellationToken).ConfigureAwait(false);
+        return result.Edit;
     }
 
     protected override bool IsSupported()
@@ -85,6 +85,8 @@ internal sealed class RenameEndpoint(
         }
 
         var documentContext = requestContext.DocumentContext.AssumeNotNull();
-        return await _editMappingService.RemapWorkspaceEditAsync(documentContext.Snapshot, response, cancellationToken).ConfigureAwait(false);
+        await _editMappingService.MapWorkspaceEditAsync(documentContext.Snapshot, response, cancellationToken).ConfigureAwait(false);
+
+        return response;
     }
 }

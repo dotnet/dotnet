@@ -19,7 +19,7 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
     {
         // Arrange
         var codeDocument = ProjectEngine.CreateEmptyCodeDocument();
-        codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source));
+        codeDocument = codeDocument.WithSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source));
 
         // Act & Assert
         var exception = Assert.Throws<InvalidOperationException>(() =>
@@ -36,14 +36,14 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
     {
         // Arrange
         var codeDocument = ProjectEngine.CreateEmptyCodeDocument();
-        codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source));
+        codeDocument = codeDocument.WithSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source));
 
         var documentNode = new DocumentIntermediateNode()
         {
             DocumentKind = "test",
         };
 
-        codeDocument.SetDocumentNode(documentNode);
+        codeDocument = codeDocument.WithDocumentNode(documentNode);
 
         // Act & Assert
         var exception = Assert.Throws<InvalidOperationException>(() =>
@@ -59,7 +59,7 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
     {
         // Arrange
         var codeDocument = ProjectEngine.CreateCodeDocument("<p class=@(");
-        codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source));
+        codeDocument = codeDocument.WithSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source));
 
         var documentNode = new DocumentIntermediateNode()
         {
@@ -73,10 +73,10 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
             new SourceSpan("SomeFile.cshtml", 11, 0, 11, 1));
 
         documentNode.AddDiagnostic(expectedDiagnostic);
-        codeDocument.SetDocumentNode(documentNode);
+        codeDocument = codeDocument.WithDocumentNode(documentNode);
 
         // Act
-        ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
 
         // Assert
         var csharpDocument = codeDocument.GetRequiredCSharpDocument();
@@ -95,10 +95,10 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
             Target = CodeTarget.CreateDefault(codeDocument)
         };
 
-        codeDocument.SetDocumentNode(documentNode);
+        codeDocument = codeDocument.WithDocumentNode(documentNode);
 
         // Act
-        ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
         var result = codeDocument.GetRequiredCSharpDocument();
 
         // Assert
@@ -127,10 +127,10 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
             Target = CodeTarget.CreateDefault(codeDocument)
         };
 
-        codeDocument.SetDocumentNode(documentNode);
+        codeDocument = codeDocument.WithDocumentNode(documentNode);
 
         // Act
-        ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
         var result = codeDocument.GetRequiredCSharpDocument();
 
         // Assert
@@ -159,10 +159,10 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
             Target = CodeTarget.CreateDefault(codeDocument)
         };
 
-        codeDocument.SetDocumentNode(documentNode);
+        codeDocument = codeDocument.WithDocumentNode(documentNode);
 
         // Act
-        ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
         var result = codeDocument.GetRequiredCSharpDocument();
 
         // Assert
@@ -197,10 +197,10 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
             Target = CodeTarget.CreateDefault(codeDocument)
         };
 
-        codeDocument.SetDocumentNode(documentNode);
+        codeDocument = codeDocument.WithDocumentNode(documentNode);
 
         // Act
-        projectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
         var result = codeDocument.GetRequiredCSharpDocument();
 
         // Assert
@@ -224,7 +224,7 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
             Target = CodeTarget.CreateDefault(codeDocument)
         };
 
-        codeDocument.SetDocumentNode(documentNode);
+        codeDocument = codeDocument.WithDocumentNode(documentNode);
 
         var builder = IntermediateNodeBuilder.Create(documentNode);
         builder.Add(new NamespaceDeclarationIntermediateNode()
@@ -233,7 +233,7 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
         });
 
         // Act
-        ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
         var result = codeDocument.GetRequiredCSharpDocument();
 
         // Assert
@@ -264,7 +264,7 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
             Target = CodeTarget.CreateDefault(codeDocument)
         };
 
-        codeDocument.SetDocumentNode(documentNode);
+        codeDocument = codeDocument.WithDocumentNode(documentNode);
 
         var builder = IntermediateNodeBuilder.Create(documentNode);
         builder.Add(new ClassDeclarationIntermediateNode()
@@ -280,7 +280,7 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
         });
 
         // Act
-        ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
         var result = codeDocument.GetRequiredCSharpDocument();
 
         // Assert
@@ -310,7 +310,7 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
             Target = CodeTarget.CreateDefault(codeDocument)
         };
 
-        codeDocument.SetDocumentNode(documentNode);
+        codeDocument = codeDocument.WithDocumentNode(documentNode);
 
         var builder = IntermediateNodeBuilder.Create(documentNode);
         builder.Add(new ClassDeclarationIntermediateNode()
@@ -327,7 +327,7 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
         });
 
         // Act
-        ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
         var result = codeDocument.GetRequiredCSharpDocument();
 
         // Assert
@@ -359,7 +359,7 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
             Target = CodeTarget.CreateDefault(codeDocument)
         };
 
-        codeDocument.SetDocumentNode(documentNode);
+        codeDocument = codeDocument.WithDocumentNode(documentNode);
 
         var builder = IntermediateNodeBuilder.Create(documentNode);
         builder.Add(new ClassDeclarationIntermediateNode()
@@ -375,7 +375,7 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
         });
 
         // Act
-        ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
         var result = codeDocument.GetRequiredCSharpDocument();
 
         // Assert
@@ -407,7 +407,7 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
             Target = CodeTarget.CreateDefault(codeDocument)
         };
 
-        codeDocument.SetDocumentNode(documentNode);
+        codeDocument = codeDocument.WithDocumentNode(documentNode);
 
         var builder = IntermediateNodeBuilder.Create(documentNode);
         builder.Add(new MethodDeclarationIntermediateNode()
@@ -422,7 +422,7 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
         });
 
         // Act
-        ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
         var result = codeDocument.GetRequiredCSharpDocument();
 
         // Assert
@@ -454,7 +454,7 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
             Target = CodeTarget.CreateDefault(codeDocument)
         };
 
-        codeDocument.SetDocumentNode(documentNode);
+        codeDocument = codeDocument.WithDocumentNode(documentNode);
 
         var builder = IntermediateNodeBuilder.Create(documentNode);
         builder.Add(new FieldDeclarationIntermediateNode()
@@ -465,7 +465,7 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
         });
 
         // Act
-        ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
         var result = codeDocument.GetRequiredCSharpDocument();
 
         // Assert
@@ -493,7 +493,7 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
             Target = CodeTarget.CreateDefault(codeDocument)
         };
 
-        codeDocument.SetDocumentNode(documentNode);
+        codeDocument = codeDocument.WithDocumentNode(documentNode);
 
         var builder = IntermediateNodeBuilder.Create(documentNode);
         builder.Add(new PropertyDeclarationIntermediateNode()
@@ -505,7 +505,7 @@ public class DefaultRazorCSharpLoweringPhaseTest : RazorProjectEngineTestBase
         });
 
         // Act
-        ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
+        codeDocument = ProjectEngine.ExecutePhase<DefaultRazorCSharpLoweringPhase>(codeDocument);
         var result = codeDocument.GetRequiredCSharpDocument();
 
         // Assert

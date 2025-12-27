@@ -104,6 +104,11 @@
         <target state="translated">無効なオフセットです。</target>
         <note />
       </trans-unit>
+      <trans-unit id="KeywordDescription">
+        <source>{0} Keyword</source>
+        <target state="translated">{0} キーワード</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Language_Services_Missing_Service">
         <source>Razor language services not configured properly, missing language service '{0}'.</source>
         <target state="translated">Razor 言語サービスが正しく構成されていません。言語サービス '{0}' がありません。</target>
@@ -131,7 +136,7 @@
       </trans-unit>
       <trans-unit id="Simplify_Fully_Qualified_Component_Title">
         <source>Simplify fully qualified component</source>
-        <target state="new">Simplify fully qualified component</target>
+        <target state="translated">完全修飾コンポーネントの簡略化</target>
         <note />
       </trans-unit>
       <trans-unit id="Simplify_Tag_To_SelfClosing_Title">

@@ -3,11 +3,13 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
+[DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 internal sealed class RazorCompletionItem
 {
     public RazorCompletionItemKind Kind { get; }
@@ -23,6 +25,9 @@ internal sealed class RazorCompletionItem
     public ImmutableArray<RazorCommitCharacter> CommitCharacters { get; }
     public bool IsSnippet { get; }
     public TextEdit[]? AdditionalTextEdits { get; }
+
+    private string GetDebuggerDisplay()
+        => $"{Kind}: {DisplayText}";
 
     /// <summary>
     /// Creates a new Razor completion item
@@ -74,8 +79,10 @@ internal sealed class RazorCompletionItem
 
     public static RazorCompletionItem CreateDirectiveAttributeParameter(
         string displayText, string insertText,
-        AggregateBoundAttributeDescription descriptionInfo)
-        => new(RazorCompletionItemKind.DirectiveAttributeParameter, displayText, insertText, sortText: null, descriptionInfo, commitCharacters: [], isSnippet: false);
+        AggregateBoundAttributeDescription descriptionInfo,
+        ImmutableArray<RazorCommitCharacter> commitCharacters,
+        bool isSnippet)
+        => new(RazorCompletionItemKind.DirectiveAttributeParameter, displayText, insertText, sortText: null, descriptionInfo, commitCharacters, isSnippet);
 
     public static RazorCompletionItem CreateMarkupTransition(
         string displayText, string insertText,
@@ -107,4 +114,9 @@ internal sealed class RazorCompletionItem
         AttributeDescriptionInfo descriptionInfo,
         ImmutableArray<RazorCommitCharacter> commitCharacters, bool isSnippet)
         => new(RazorCompletionItemKind.Attribute, displayText, insertText, sortText: null, descriptionInfo, commitCharacters, isSnippet);
+
+    public static RazorCompletionItem CreateKeyword(
+        string displayText, string insertText,
+        ImmutableArray<RazorCommitCharacter> commitCharacters)
+        => new(RazorCompletionItemKind.CSharpRazorKeyword, displayText, insertText, sortText: null, new CSharpRazorKeywordCompletionDescription(displayText), commitCharacters, isSnippet: false);
 }

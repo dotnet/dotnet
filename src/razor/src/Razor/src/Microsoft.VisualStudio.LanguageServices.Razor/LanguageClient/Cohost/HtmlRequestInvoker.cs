@@ -100,9 +100,6 @@ internal sealed class HtmlRequestInvoker(
             ITextDocumentParams textDocumentParams => textDocumentParams.TextDocument,
             // VSInternalDiagnosticParams doesn't implement the interface because the TextDocument property is nullable
             VSInternalDiagnosticParams vsInternalDiagnosticParams => vsInternalDiagnosticParams.TextDocument,
-            // We don't implement the endpoint that uses this, but it's the only other thing, at time of writing, in the LSP
-            // protocol library that isn't handled by the above two cases.
-            VSInternalRelatedDocumentParams vsInternalRelatedDocumentParams => vsInternalRelatedDocumentParams.TextDocument,
             VSCodeActionParams vsCodeActionParams => vsCodeActionParams.TextDocument,
             _ => null
         };

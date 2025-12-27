@@ -159,7 +159,7 @@ internal sealed partial class ProjectStateUpdater(
                 return;
             }
 
-            _logger.LogTrace($"Received {nameof(ProjectWorkspaceState)} with {workspaceState.TagHelpers.Length} tag helper(s) for '{key}'");
+            _logger.LogTrace($"Received {nameof(ProjectWorkspaceState)} with {workspaceState.TagHelpers.Count} tag helper(s) for '{key}'");
 
             await _projectManager
                 .UpdateAsync(
@@ -172,7 +172,7 @@ internal sealed partial class ProjectStateUpdater(
                             return;
                         }
 
-                        logger.LogTrace($"Updating project with {workspaceState.TagHelpers.Length} tag helper(s) for '{projectKey}'");
+                        logger.LogTrace($"Updating project with {workspaceState.TagHelpers.Count} tag helper(s) for '{projectKey}'");
 
                         var projectSnapshot = updater.GetRequiredProject(projectKey);
                         var hostProject = projectSnapshot.HostProject with { Configuration = configuration };
@@ -290,7 +290,7 @@ internal sealed partial class ProjectStateUpdater(
 
         _telemetryReporter.ReportEvent("taghelperresolve/begin", Severity.Normal,
             new("id", telemetryId),
-            new("tagHelperCount", projectSnapshot.ProjectWorkspaceState.TagHelpers.Length));
+            new("tagHelperCount", projectSnapshot.ProjectWorkspaceState.TagHelpers.Count));
 
         try
         {
@@ -317,7 +317,7 @@ internal sealed partial class ProjectStateUpdater(
             // Don't report success if the call failed.
             // If the ImmutableArray that was returned is default, then the call failed.
 
-            if (tagHelpers.IsDefault)
+            if (tagHelpers is null)
             {
                 _telemetryReporter.ReportEvent("taghelperresolve/end", Severity.Normal,
                 new("id", telemetryId),
@@ -335,14 +335,14 @@ internal sealed partial class ProjectStateUpdater(
                 new("id", telemetryId),
                 new("ellapsedms", watch.ElapsedMilliseconds),
                 new("result", "success"),
-                new("tagHelperCount", tagHelpers.Length));
+                new("tagHelperCount", tagHelpers.Count));
 
             _logger.LogInformation($"""
                 Resolved tag helpers for project in {watch.ElapsedMilliseconds} ms.
                 Project: {projectSnapshot.FilePath}
                 """);
 
-            return (ProjectWorkspaceState.Create(tagHelpers), configuration);
+            return (ProjectWorkspaceState.Create([.. tagHelpers]), configuration);
         }
         catch (OperationCanceledException)
         {

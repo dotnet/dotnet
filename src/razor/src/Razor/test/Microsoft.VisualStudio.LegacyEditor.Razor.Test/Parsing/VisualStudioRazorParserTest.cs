@@ -75,7 +75,7 @@ public class VisualStudioRazorParserTest : VisualStudioTestBase
         parser._latestChangeReference = new BackgroundParser.ChangeReference(latestChange, latestSnapshot);
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
         var syntaxTree = RazorSyntaxTree.Parse(TestRazorSourceDocument.Create());
-        codeDocument.SetSyntaxTree(syntaxTree);
+        codeDocument = codeDocument.WithSyntaxTree(syntaxTree);
         var args = new BackgroundParserResultsReadyEventArgs(
             parser._latestChangeReference,
             codeDocument);
@@ -110,7 +110,7 @@ public class VisualStudioRazorParserTest : VisualStudioTestBase
         parser._latestChangeReference = new BackgroundParser.ChangeReference(latestChange, latestSnapshot);
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
         var syntaxTree = RazorSyntaxTree.Parse(TestRazorSourceDocument.Create());
-        codeDocument.SetSyntaxTree(syntaxTree);
+        codeDocument = codeDocument.WithSyntaxTree(syntaxTree);
         var args = new BackgroundParserResultsReadyEventArgs(
             parser._latestChangeReference,
             codeDocument);
@@ -182,7 +182,7 @@ public class VisualStudioRazorParserTest : VisualStudioTestBase
         parser._latestChangeReference = new BackgroundParser.ChangeReference(latestChange, latestSnapshot);
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
         var syntaxTree = RazorSyntaxTree.Parse(TestRazorSourceDocument.Create());
-        codeDocument.SetSyntaxTree(syntaxTree);
+        codeDocument = codeDocument.WithSyntaxTree(syntaxTree);
         var args = new BackgroundParserResultsReadyEventArgs(
             parser._latestChangeReference,
             codeDocument);
@@ -211,7 +211,7 @@ public class VisualStudioRazorParserTest : VisualStudioTestBase
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
         var syntaxTree = RazorSyntaxTree.Parse(TestRazorSourceDocument.Create());
         VisualStudioRazorParser parser;
-        codeDocument.SetSyntaxTree(syntaxTree);
+        codeDocument = codeDocument.WithSyntaxTree(syntaxTree);
         using (parser = CreateParser(documentTracker))
         {
             var latestChange = new SourceChange(0, 0, string.Empty);
@@ -413,7 +413,7 @@ public class VisualStudioRazorParserTest : VisualStudioTestBase
         var latestSnapshot = documentTracker.TextBuffer.CurrentSnapshot;
         parser._latestChangeReference = new BackgroundParser.ChangeReference(latestChange, latestSnapshot);
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(TestRazorSourceDocument.Create()));
+        codeDocument = codeDocument.WithSyntaxTree(RazorSyntaxTree.Parse(TestRazorSourceDocument.Create()));
         var args = new BackgroundParserResultsReadyEventArgs(
             parser._latestChangeReference,
             codeDocument);
@@ -436,7 +436,7 @@ public class VisualStudioRazorParserTest : VisualStudioTestBase
         var latestSnapshot = documentTracker.TextBuffer.CurrentSnapshot;
         parser._latestChangeReference = new BackgroundParser.ChangeReference(null, latestSnapshot);
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(TestRazorSourceDocument.Create()));
+        codeDocument = codeDocument.WithSyntaxTree(RazorSyntaxTree.Parse(TestRazorSourceDocument.Create()));
         var badArgs = new BackgroundParserResultsReadyEventArgs(
             // This is a different reparse edit, shouldn't be fired for this call
             new BackgroundParser.ChangeReference(null, latestSnapshot),
