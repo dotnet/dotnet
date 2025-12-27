@@ -4,6 +4,10 @@
 
   <PropertyGroup>
     <TargetFramework>$(NetCurrent)</TargetFramework>
+    <!-- Target net11 until NetCurrent is updated https://github.com/dotnet/runtime/issues/122115 -->
+    <TargetFramework>net11.0</TargetFramework>    
+    <AllowMissingPrunePackageData>true</AllowMissingPrunePackageData>
+
     <ProductBrandPrefix>Microsoft Windows Desktop</ProductBrandPrefix>
     <!-- The Microsoft.WindowsDesktop.App shared framework composition depends on winforms, wpf and runtime transport packages
          which contain architecture agnostic assets. As the OS part of the RID is always the portable "win", we don't need to

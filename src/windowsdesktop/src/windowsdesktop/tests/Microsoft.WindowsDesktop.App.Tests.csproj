@@ -9,6 +9,7 @@
     <ProjectReference Include="..\src\sfx\Microsoft.WindowsDesktop.App.Ref.sfxproj;
                                ..\src\sfx\Microsoft.WindowsDesktop.App.Runtime.sfxproj"
                       ReferenceOutputAssembly="false"
+                      SkipGetTargetFrameworkProperties="true"
                       Condition="'$(SkipBuildingSharedFrameworkTestDependencies)' != 'true' and
                                  '$(BuildingInsideVisualStudio)' != 'true'" />
   </ItemGroup>
