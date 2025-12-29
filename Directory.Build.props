@@ -61,8 +61,11 @@
     <DotNetBuildWithOnlineFeeds Condition="'$(DotNetBuildWithOnlineFeeds)' == '' and '$(DotNetBuildSourceOnly)' != 'true'">true</DotNetBuildWithOnlineFeeds>
     <!-- Only build shared components in 1xx feature band. -->
     <DotNetBuildSharedComponents Condition="'$(DotNetBuildSharedComponents)' == '' and '$(VersionSDKMinor)' == '1'">true</DotNetBuildSharedComponents>
-    <!-- Don't use Arcade's ExcludeFrom* build infra in the VMR orchestrator. -->
+
+    <!-- Don't use Arcade's ExcludeFrom* or TFM filtering build infra in the VMR orchestrator. -->
     <DisableArcadeExcludeFromBuildSupport>true</DisableArcadeExcludeFromBuildSupport>
+    <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
+
     <LangVersion>latest</LangVersion>
     <!-- Don't run NuGetAudit on offline builds. -->
     <NuGetAudit Condition="'$(DotNetBuildWithOnlineFeeds)' != 'true'">false</NuGetAudit>
