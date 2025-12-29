@@ -63,6 +63,10 @@
     
     <!-- Disable restoring transitive aspnetcore and windowsdesktop targeting packs to avoid unnecessary dependencies. -->
     <EnvironmentVariables Include="DisableTransitiveFrameworkReferenceDownloads=true" />
+
+    <!-- Make sure that external projects use the KnownFrameworkReferences.targets to control targeting pack versions -->
+    <EnvironmentVariables Include="NetCurrent=$(NetCurrent)" />
+    <EnvironmentVariables Include="BeforeTargetFrameworkInferenceTargets=$(RepositoryEngineeringDir)KnownFrameworkReferences.targets" />
   </ItemGroup>
 
   <!-- repo-projects depend on the repo tasks project to invoke custom msbuild tasks -->
