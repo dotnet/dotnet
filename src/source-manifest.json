@@ -115,10 +115,10 @@
       "commitSha": "1536a1ca256a4e9f804b2073464ca8e4f4794702"
     },
     {
-      "barId": 295595,
+      "barId": 295687,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "ea32a7ec4f644cbc05d09abcaeb32441caffe203"
+      "commitSha": "e42afd92f17b9a14da759bb477d281e870977340"
     },
     {
       "barId": 287819,
@@ -127,10 +127,10 @@
       "commitSha": "697c1270eebc92c531f27265dd0ff60211b088bb"
     },
     {
-      "barId": 295553,
+      "barId": 295686,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "d6fcd6d3256f5e696d4880a26ff6c817af4cf3fa"
+      "commitSha": "f8ef9d6c9ccb515047188ff84a0fb82fe6fc3d04"
     },
     {
       "barId": 295561,
