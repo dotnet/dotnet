@@ -134,17 +134,17 @@
       </trans-unit>
       <trans-unit id="Text_AuditSources_Description">
         <source>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</source>
-        <target state="new">Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
+        <target state="translated">Les sources d’audit fournissent des données de vulnérabilité lors de la restauration sans agir comme sources de package. Si aucune source d’audit n’est configurée, NuGet Audit utilise les sources de package. [En savoir plus sur les sources d’audit](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_AuditSources_HowToRemove">
         <source>Remove all audit sources to revert to using package sources for vulnerability data.</source>
-        <target state="new">Remove all audit sources to revert to using package sources for vulnerability data.</target>
+        <target state="translated">Supprimez toutes les sources d’audit pour revenir à l’utilisation des sources de package pour les données de vulnérabilité</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_AuditSources_Title">
         <source>Audit sources</source>
-        <target state="new">Audit sources</target>
+        <target state="translated">Sources d’audit</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">
@@ -194,7 +194,7 @@
       </trans-unit>
       <trans-unit id="Text_PackageSources_Description">
         <source>Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</source>
-        <target state="new">Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</target>
+        <target state="translated">Les sources de package définissent où NuGet récupère les packages pour les opérations d’installation, de restauration, d’audit et de mise à jour. [En savoir plus sur les sources de packages](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageSources_MachineWide">
