@@ -134,7 +134,7 @@ internal class PackageUpdateIO : IPackageUpdateIO, IDisposable
                 new DependencyGraphSpecRequestProvider(providerCache, dgSpec)
             };
 
-        var globalPackagesFolder = dgSpec.GetProjectSpec(dgSpec.Restore.Single()).RestoreMetadata.PackagesPath;
+        var globalPackagesFolder = dgSpec.GetProjectSpec(dgSpec.Restore.First()).RestoreMetadata.PackagesPath;
 
         var restoreContext = new RestoreArgs()
         {
@@ -146,15 +146,12 @@ internal class PackageUpdateIO : IPackageUpdateIO, IDisposable
             // Sources : No need to pass it, because SourceRepositories contains the already built SourceRepository objects
         };
 
-        // Generate Restore Requests. There will always be 1 request here since we are restoring for 1 project.
         var restoreRequests = await RestoreRunner.GetRequests(restoreContext);
-
-        // Run restore without commit. This will always return 1 Result pair since we are restoring for 1 request.
         var restoreResult = await RestoreRunner.RunWithoutCommitAsync(restoreRequests, restoreContext, cancellationToken);
 
         var result = new RestoreResult
         {
-            RestoreResultPair = restoreResult.Single()
+            RestoreResultPairs = restoreResult
         };
         return result;
     }
@@ -162,7 +159,11 @@ internal class PackageUpdateIO : IPackageUpdateIO, IDisposable
     /// <inheritdoc cref="IPackageUpdateIO.CommitAsync(IPackageUpdateIO.RestoreResult, CancellationToken)"/>
     public async Task CommitAsync(IPackageUpdateIO.RestoreResult restorePreviewResult, CancellationToken none)
     {
-        await RestoreRunner.CommitAsync(((RestoreResult)restorePreviewResult).RestoreResultPair, CancellationToken.None);
+        var restoreResult = (RestoreResult)restorePreviewResult;
+        foreach (var restoreResultPair in restoreResult.RestoreResultPairs)
+        {
+            await RestoreRunner.CommitAsync(restoreResultPair, CancellationToken.None);
+        }
     }
 
     /// <inheritdoc cref="IPackageUpdateIO.UpdatePackageReference(PackageSpec, IPackageUpdateIO.RestoreResult, List{string}, PackageToUpdate, ILogger)"/>
@@ -177,9 +178,15 @@ internal class PackageUpdateIO : IPackageUpdateIO, IDisposable
             packageTfms.Add(targetFramework.FrameworkName);
         }
 
+        var restoreResult = (RestoreResult)restorePreviewResult;
+        var restoreResultPair = restoreResult.RestoreResultPairs.Single(pair =>
+            string.Equals(pair.SummaryRequest.Request.Project.FilePath, updatedPackageSpec.FilePath, StringComparison.OrdinalIgnoreCase));
+
         if (!AddPackageReferenceCommandRunner.TryFindResolvedVersion(packageTfms,
             packageDependency.Id,
-            ((RestoreResult)restorePreviewResult).RestoreResultPair.Result, logger, out NuGetVersion resolvedVersion))
+            restoreResultPair.Result,
+            logger,
+            out NuGetVersion resolvedVersion))
         {
             return;
         }
@@ -436,9 +443,10 @@ internal class PackageUpdateIO : IPackageUpdateIO, IDisposable
         return highestVersion;
     }
 
-    /// <inheritdoc cref="IPackageUpdateIO.GetProjectAssetsFileAsync(DependencyGraphSpec, ILogger, CancellationToken)"/>
+    /// <inheritdoc cref="IPackageUpdateIO.GetProjectAssetsFileAsync(DependencyGraphSpec, string, ILogger, CancellationToken)"/>
     public async Task<LockFile> GetProjectAssetsFileAsync(
         DependencyGraphSpec dgSpec,
+        string projectPath,
         ILogger logger,
         CancellationToken cancellationToken)
     {
@@ -449,10 +457,12 @@ internal class PackageUpdateIO : IPackageUpdateIO, IDisposable
             throw new NotSupportedException();
         }
 
-        LockFile? assetsFile = previewRestoreResult.RestoreResultPair.Result.LockFile;
+        var restoreResultPair = previewRestoreResult.RestoreResultPairs.Single(pair =>
+            string.Equals(pair.SummaryRequest.Request.Project.FilePath, projectPath, StringComparison.OrdinalIgnoreCase));
+        LockFile? assetsFile = restoreResultPair.Result.LockFile;
         if (assetsFile is null)
         {
-            var packageSpec = dgSpec.GetProjectSpec(dgSpec.Restore.Single());
+            var packageSpec = dgSpec.GetProjectSpec(projectPath);
             var assetsFilePath = Path.Combine(packageSpec.RestoreMetadata.OutputPath, LockFileFormat.AssetsFileName);
             assetsFile = new LockFileFormat().Read(assetsFilePath);
         }
@@ -460,10 +470,10 @@ internal class PackageUpdateIO : IPackageUpdateIO, IDisposable
         return assetsFile;
     }
 
-    private class RestoreResult : IPackageUpdateIO.RestoreResult
+    internal class RestoreResult : IPackageUpdateIO.RestoreResult
     {
-        internal required RestoreResultPair RestoreResultPair { get; init; }
+        internal required IReadOnlyList<RestoreResultPair> RestoreResultPairs { get; init; }
 
-        public override bool Success => RestoreResultPair.Result.Success;
+        public override bool Success => RestoreResultPairs.All(pair => pair.Result.Success);
     }
 }

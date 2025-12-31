@@ -18,7 +18,7 @@ using Xunit.Abstractions;
 
 namespace NuGet.XPlat.FuncTest
 {
-    [Collection("NuGet XPlat Test Collection")]
+    [Collection(XPlatCollection.Name)]
     public class XPlatClientCertTests
     {
         private readonly ITestOutputHelper _testOutputHelper;
