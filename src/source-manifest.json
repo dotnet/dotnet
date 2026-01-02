@@ -13,34 +13,34 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 295006,
+      "barId": 293499,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "1112c72f1344f8a9c79e2f4c197b17016f8d6939"
+      "commitSha": "89d788641914c5d0b87fddfa11f4df0b5cfaa73d"
     },
     {
-      "barId": 295164,
+      "barId": 294355,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "9263fe6534ccb8eec416ae83815d5566ffeaea3b"
+      "commitSha": "2235ffd325c3926d0392fae9dcc2dcb6a623f1eb"
     },
     {
-      "barId": 294557,
+      "barId": 288424,
       "path": "nuget-client",
-      "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "cc8f616db8da1c2feb052c2d7eb5cd73071da290"
+      "remoteUri": "https://github.com/NuGet/NuGet.Client",
+      "commitSha": "bf048eb714eb6b1912ba868edca4c7cfec454841"
     },
     {
-      "barId": 295379,
+      "barId": 295861,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "0440ae283c6976a75c6777a4ce4b7926d926a946"
+      "commitSha": "c636be2de2bce8d50eec1a35b40f818a04af795c"
     },
     {
-      "barId": 295182,
+      "barId": 294362,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "bf35fe58e593ac0ac74c05bfa6e4719b85772da0"
+      "commitSha": "6afbfb45ccc9691167206bf29482a99b1d6d469c"
     },
     {
       "barId": 291014,
@@ -49,16 +49,16 @@
       "commitSha": "f29ac531ec59b79ff12335835ae4a69cde51156a"
     },
     {
-      "barId": 295013,
+      "barId": 294340,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "eb80929b472550eee0e593017adff6773cff9859"
+      "commitSha": "5fe802ba22faf842537d9d0282696604fd4845a5"
     },
     {
-      "barId": 295104,
+      "barId": 294163,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "213702660b1e4645ae7ca846e8c681a7ba499d99"
+      "commitSha": "9ff6bc38d3391c3b4bb2fe8b228b1f0a03076c7c"
     },
     {
       "barId": 292299,
