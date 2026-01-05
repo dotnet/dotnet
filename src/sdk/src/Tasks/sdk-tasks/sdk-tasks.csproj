@@ -1,32 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net10.0;net472</TargetFrameworks>
+    <TargetFramework>$(NetToolCurrent)</TargetFramework>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="$(RepoRoot)\src\Resolvers\Microsoft.NET.Sdk.WorkloadManifestReader\SdkFeatureBand.cs" LinkBase="Common"/>
+    <Compile Include="$(RepoRoot)src\Resolvers\Microsoft.NET.Sdk.WorkloadManifestReader\SdkFeatureBand.cs" LinkBase="Common"/>
     <Compile Include="$(RepoRoot)src\Common\WorkloadSetVersion.cs" LinkBase="Common" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build" />
-    <PackageReference Include="Microsoft.Build.Tasks.Core" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" />
+    <PackageReference Include="Microsoft.Build" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Deployment.DotNet.Releases" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="NuGet.Packaging" />
     <PackageReference Include="NuGet.Versioning" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <PackageReference Include="System.Collections.Immutable" VersionOverride="$(SystemCollectionsImmutableToolsetPackageVersion)" />
-    <PackageReference Include="System.Reflection.Metadata" VersionOverride="$(SystemReflectionMetadataToolsetPackageVersion)" />
-    <PackageReference Include="System.Reflection.MetadataLoadContext" VersionOverride="$(SystemReflectionMetadataLoadContextToolsetPackageVersion)" />
-    <PackageReference Include="System.Resources.Extensions" VersionOverride="$(SystemResourcesExtensionsToolsetPackageVersion)" />
-    <Reference Include="System.Net.Http" />
   </ItemGroup>
 
   <!-- Global usings -->
@@ -36,11 +28,5 @@
      <!-- This causes conflicts with System.Threading.Tasks.Task. Giving it an alias to avoid the conflict. -->
     <Using Include="Microsoft.Build.Utilities.Task" Alias="Task" />
   </ItemGroup>
-
-  <!--
-    Encountered an error about this target being missing when rebuilding within VS.
-    See: https://github.com/dotnet/msbuild/issues/4303#issuecomment-482345617
-  -->
-  <Target Name="GetTargetPath" />
 
 </Project>
