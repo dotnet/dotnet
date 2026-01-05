@@ -14,9 +14,9 @@
     <SDKHelixCustomSdkTaskDll>$(ArtifactsBinDir)HelixTasks\$(Configuration)\$(NetToolCurrent)\HelixTasks.dll</SDKHelixCustomSdkTaskDll>
   </PropertyGroup>
 
-  <UsingTask TaskName="SDKCustomCreateXUnitWorkItemsWithTestExclusion" AssemblyFile="$(SDKHelixCustomSdkTaskDll)" Runtime="NET" TaskFactory="TaskHostFactory" />
-  <UsingTask TaskName="TarGzFileCreateFromDirectory" AssemblyFile="$(SDKHelixCustomSdkTaskDll)" Runtime="NET" TaskFactory="TaskHostFactory" />
-  <UsingTask TaskName="CreateLocalHelixTestLayout" AssemblyFile="$(SDKHelixCustomSdkTaskDll)" Runtime="NET" TaskFactory="TaskHostFactory" />
+  <UsingTask TaskName="SDKCustomCreateXUnitWorkItemsWithTestExclusion" AssemblyFile="$(SDKHelixCustomSdkTaskDll)" TaskFactory="TaskHostFactory" Runtime="NET" />
+  <UsingTask TaskName="TarGzFileCreateFromDirectory" AssemblyFile="$(SDKHelixCustomSdkTaskDll)" TaskFactory="TaskHostFactory" Runtime="NET" />
+  <UsingTask TaskName="CreateLocalHelixTestLayout" AssemblyFile="$(SDKHelixCustomSdkTaskDll)" TaskFactory="TaskHostFactory" Runtime="NET" />
 
   <Choose>
     <When Condition="$(HelixTargetQueue.ToLowerInvariant().Contains('windows'))">
