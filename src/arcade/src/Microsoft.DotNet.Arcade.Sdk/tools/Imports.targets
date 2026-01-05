@@ -10,9 +10,6 @@
   <Import Project="RepositoryInfo.targets"/>
   <Import Project="Version.targets"/>
 
-  <!-- Only import if the project uses the Microsoft.NET.Sdk. -->
-  <Import Project="TargetingPacks.targets" Condition="'$(NETCoreSdkRuntimeIdentifier)' != ''" />
-
   <Import Project="Tests.targets" Condition="'$(DisableArcadeTestFramework)' != 'true'" />
   <Import Project="Pack.targets" Condition="'$(__ImportPackTargets)' == 'true'" />
 
