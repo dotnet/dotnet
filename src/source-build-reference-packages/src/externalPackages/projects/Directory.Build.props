@@ -4,6 +4,10 @@
 
   <PropertyGroup>
     <TargetFramework>$(NetCurrent)</TargetFramework>
+
+    <!-- Temporarily downgrade NetCurrent to net10.0 for SBE packages. -->
+    <NetCurrent>net10.0</NetCurrent>
+
     <IsPackable>false</IsPackable>
     <InnerRepoName>$(MSBuildProjectName)</InnerRepoName>
 
