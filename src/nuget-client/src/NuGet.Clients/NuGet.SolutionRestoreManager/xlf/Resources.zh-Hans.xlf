@@ -22,6 +22,11 @@
         <target state="translated">包“{0} {1}”不是类似 "[1.0.0]" 的精确版本。仅可对 PackageDownload 使用精确版本。</target>
         <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
       </trans-unit>
+      <trans-unit id="InfoBar_HyperlinkGHCopilotDocs">
+        <source>How to fix with GitHub Copilot</source>
+        <target state="translated">如何使用 GitHub Copilot 进行修复</target>
+        <note />
+      </trans-unit>
       <trans-unit id="InfoBar_HyperlinkMessage">
         <source>Manage NuGet Packages</source>
         <target state="translated">管理 NuGet 程序包</target>

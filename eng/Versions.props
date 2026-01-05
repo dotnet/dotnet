@@ -1,12 +1,20 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project>
-  <Import Project="Version.Details.props" Condition="Exists('Version.Details.props')" />
-  <!-- Repo Version Information -->
+﻿<Project>
+  <Import Project="Version.Details.props" />
   <PropertyGroup>
-    <VersionPrefix>0.1.0</VersionPrefix>
-    <PreReleaseVersionLabel>alpha.1</PreReleaseVersionLabel>
-    <UseVSTestRunner>true</UseVSTestRunner>
     <VersionSDKMinor>1</VersionSDKMinor>
+    <VersionPrefix>10.0.$(VersionSDKMinor)00</VersionPrefix>
+    <PreReleaseVersionLabel>alpha</PreReleaseVersionLabel>
+    <PreReleaseVersionIteration></PreReleaseVersionIteration>
+    <!-- 
+      Allowed values: 'repodefault', 'unstable', 'preview', 'release'
+      'repodefault' uses the repo branding defaults.
+      'unstable' produces assets with the repo specified branding suffix.
+      'preview' produces assets with a '.final' branding suffix.
+      'release' produces assets without a branding suffix.
+    -->
+    <RepoDotNetFinalVersionKind>release</RepoDotNetFinalVersionKind>
+    <!-- Arcade features -->
+    <UseVSTestRunner>true</UseVSTestRunner>
   </PropertyGroup>
   <PropertyGroup>
     <!--
@@ -26,8 +34,8 @@
       of a .NET major or minor release, prebuilts may be needed. When the release is mature, prebuilts
       are not necessary, and this property is removed from the file.
     -->
-    <PrivateSourceBuiltSdkVersion>10.0.100-rc.2.25502.107</PrivateSourceBuiltSdkVersion>
-    <PrivateSourceBuiltArtifactsVersion>10.0.100-rc.2.25502.107</PrivateSourceBuiltArtifactsVersion>
+    <PrivateSourceBuiltSdkVersion>10.0.101-servicing.25569.105</PrivateSourceBuiltSdkVersion>
+    <PrivateSourceBuiltArtifactsVersion>10.0.101-servicing.25569.105</PrivateSourceBuiltArtifactsVersion>
     <!-- command-line-api dependencies -->
     <SystemCommandLineVersion>2.0.0-beta5.25208.1</SystemCommandLineVersion>
     <!-- msbuild dependencies -->

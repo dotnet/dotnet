@@ -69,6 +69,54 @@ namespace NuGet.PackageManagement.Test.Telemetry
         }
 
         [Fact]
+        public void CreateWithVulnerabilityInfoBarManagePackages_WithValidProperties_CreatedWithoutPiiData()
+        {
+            // Arrange
+            var nuGetTelemetryService = SetupTelemetryListener();
+
+            var navigationType = NavigationType.Button;
+            var navigationOrigin = NavigationOrigin.VulnerabilityInfoBar_ManagePackages;
+
+            var evt = NavigatedTelemetryEvent.CreateWithVulnerabilityInfoBarManagePackages();
+
+            // Act
+            nuGetTelemetryService.EmitTelemetryEvent(evt);
+
+            // Assert
+            Assert.NotNull(_lastTelemetryEvent);
+            Assert.Equal(navigationType, _lastTelemetryEvent[NavigatedTelemetryEvent.NavigationTypePropertyName]);
+            Assert.Equal(navigationOrigin, _lastTelemetryEvent[NavigatedTelemetryEvent.OriginPropertyName]);
+            Assert.Null(_lastTelemetryEvent[NavigatedTelemetryEvent.HyperLinkTypePropertyName]);
+            Assert.Null(_lastTelemetryEvent[NavigatedTelemetryEvent.CurrentTabPropertyName]);
+            Assert.Null(_lastTelemetryEvent[NavigatedTelemetryEvent.IsSolutionViewPropertyName]);
+            Assert.Empty(_lastTelemetryEvent.GetPiiData());
+        }
+
+        [Fact]
+        public void CreateWithExternalLink_VulnerabilityAdvisoryGHCopilotDocs_CreatedWithoutPiiData()
+        {
+            // Arrange
+            var nuGetTelemetryService = SetupTelemetryListener();
+
+            HyperlinkType hyperlinkType = HyperlinkType.VulnerabilityAdvisoryGHCopilotDocs;
+
+            var evt = NavigatedTelemetryEvent.CreateWithExternalLink(hyperlinkType);
+
+            // Act
+            nuGetTelemetryService.EmitTelemetryEvent(evt);
+
+            // Assert
+            Assert.NotNull(_lastTelemetryEvent);
+            Assert.Equal(3, _lastTelemetryEvent.Count);
+            Assert.Equal(NavigationType.Hyperlink, _lastTelemetryEvent[NavigatedTelemetryEvent.NavigationTypePropertyName]);
+            Assert.Equal(NavigationOrigin.PMUI_ExternalLink, _lastTelemetryEvent[NavigatedTelemetryEvent.OriginPropertyName]);
+            Assert.Equal(hyperlinkType, _lastTelemetryEvent[NavigatedTelemetryEvent.HyperLinkTypePropertyName]);
+            Assert.Null(_lastTelemetryEvent[NavigatedTelemetryEvent.CurrentTabPropertyName]);
+            Assert.Null(_lastTelemetryEvent[NavigatedTelemetryEvent.IsSolutionViewPropertyName]);
+            Assert.Empty(_lastTelemetryEvent.GetPiiData());
+        }
+
+        [Fact]
         public void CreateWithAddPackageSourceMapping_WithValidProperties_CreatedWithoutPiiData()
         {
             // Arrange

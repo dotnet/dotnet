@@ -72,7 +72,7 @@ function source_only_toolset_init() {
     elif [ -f "$sourceBuiltArchive" ]; then
       # Extract safely into a private temporary directory and ensure cleanup.
       tempDir="$(mktemp -d)"
-      trap 'rm -rf "${tempDir}"' EXIT
+      trap "rm -rf '${tempDir}'" EXIT # tempDir is local, use double quotes to expand.
       tar -xzf "$sourceBuiltArchive" -C "$tempDir" PackageVersions.props
       packageVersionsPath="$tempDir/PackageVersions.props"
     fi

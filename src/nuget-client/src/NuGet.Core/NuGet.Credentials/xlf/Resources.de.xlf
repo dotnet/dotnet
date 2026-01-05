@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="PluginException_InvalidResponse_Format">
         <source>Credential plugin {0} returned {1}, but the payload was not valid (username = {2}, password = {3}, authTypes = {4}, message = {5}).</source>
-        <target state="translated">Das Anmeldeinformations-Plug-In "{0}" hat "{1}" zurückgegeben, aber die Nutzlast war ungültig (Benutzername = {2}, Kennwort = {3}, authTypes = {4}, Meldung = {5}).</target>
+        <target state="translated">Das Anmeldeinformations-Plug-In "{0}" hat "{1}" zurückgegeben, aber die Nutzdaten waren ungültig (Benutzername = {2}, Kennwort = {3}, authTypes = {4}, Meldung = {5}).</target>
         <note />
       </trans-unit>
       <trans-unit id="PluginException_NotStarted_Format">
@@ -39,7 +39,7 @@
       </trans-unit>
       <trans-unit id="PluginException_UnreadableResponse_Format">
         <source>Credential plugin {0} returned {1} with an unreadable payload.</source>
-        <target state="translated">Das Anmeldeinformations-Plug-In "{0}" hat "{1}" mit einer nicht lesbaren Nutzlast zurückgegeben.</target>
+        <target state="translated">Das Anmeldeinformations-Plug-In "{0}" hat "{1}" mit nicht lesbaren Nutzdaten zurückgegeben.</target>
         <note />
       </trans-unit>
       <trans-unit id="PluginWarning_PluginIsBeingDeprecated">

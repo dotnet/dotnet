@@ -86,7 +86,7 @@ public partial class LinuxInstallerTests : IDisposable
     private static partial Regex RemoveVersionFromPackageNameRegex { get; }
 
     private const string RuntimeDepsRepo = "mcr.microsoft.com/dotnet/runtime-deps";
-    private const string RuntimeDepsVersion = "10.0-preview";
+    private const string RuntimeDepsVersion = "10.0";
     private const string DotnetRuntimeDepsPrefix = "dotnet-runtime-deps-";
     private const string DotnetHostPrefix = "dotnet-host-";
     private const string DotnetHostFxrPrefix = "dotnet-hostfxr-";
@@ -96,6 +96,7 @@ public partial class LinuxInstallerTests : IDisposable
     private const string AspNetCoreTargetingPackPrefix = "aspnetcore-targeting-pack-";
     private const string DotnetApphostPackPrefix = "dotnet-apphost-pack-";
     private const string DotnetSdkPrefix = "dotnet-sdk-";
+    private const string DowngradeFxVersionsScript = "downgrade-fx-versions.sh";
 
     public static bool IncludeRpmTests => Config.TestRpmPackages;
     public static bool IncludeDebTests => Config.TestDebPackages;
@@ -148,7 +149,7 @@ public partial class LinuxInstallerTests : IDisposable
     }
 
     [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
-    [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-trixie-slim")]
+    [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-noble")]
     public async Task DebScenarioTest(string repo, string tag)
     {
         await InitializeContextAsync(PackageType.Deb);
@@ -166,7 +167,7 @@ public partial class LinuxInstallerTests : IDisposable
     }
 
     [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
-    [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-trixie-slim")]
+    [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-noble")]
     public async Task DebPackageMetadataTest(string repo, string tag)
     {
         await InitializeContextAsync(PackageType.Deb, initializeSharedContext: false);
@@ -243,6 +244,15 @@ public partial class LinuxInstallerTests : IDisposable
             string newNuGetConfig = Path.Combine(_contextDir, "NuGet.config");
             File.Copy(Config.ScenarioTestsNuGetConfigPath, newNuGetConfig);
             InsertLocalPackagesPathToNuGetConfig(newNuGetConfig, "/packages");
+
+            // Copy downgrade-fx-versions.sh script
+            // This script is used to update the latest known 8.0 and 9.0 framework versions in SDK's
+            // Microsoft.NETCoreSdk.BundledVersions.props file to the versions 2 releases prior.
+            // This is needed as the SDK automatically picks up servicing versions not yet released, which
+            // is either one or two versions higher than publicly available versions, depending on
+            // when we run the tests.
+            string downgradeScript = Path.Combine(_contextDir, DowngradeFxVersionsScript);
+            File.Copy(Path.Combine(GetAssetsDirectory(), DowngradeFxVersionsScript), downgradeScript);
 
             // Find the scenario-tests package and unpack it to the context dir, subfolder "scenario-tests"
             string? scenarioTestsPackage = Directory.GetFiles(nugetPackagesDir, "Microsoft.DotNet.ScenarioTests.SdkTemplateTests*.nupkg", SearchOption.AllDirectories).FirstOrDefault();
@@ -456,6 +466,10 @@ public partial class LinuxInstallerTests : IDisposable
         sb.AppendLine($"COPY NuGet.config .");
 
         sb.AppendLine("");
+        sb.AppendLine($"# Copy {DowngradeFxVersionsScript}");
+        sb.AppendLine($"COPY {DowngradeFxVersionsScript} .");
+
+        sb.AppendLine("");
         sb.AppendLine("# Copy scenario-tests content");
         sb.AppendLine($"COPY scenario-tests scenario-tests");
 
@@ -490,6 +504,12 @@ public partial class LinuxInstallerTests : IDisposable
             useAndOperator = true;
         }
         sb.AppendLine("");
+
+        sb.AppendLine("");
+        sb.AppendLine("# Run the script to downgrade 8.0 and 9.0 framework versions");
+        sb.AppendLine("RUN \\");
+        sb.AppendLine($"    chmod +x {DowngradeFxVersionsScript} && \\");
+        sb.AppendLine($"    ./{DowngradeFxVersionsScript}");
 
         // Set environment for nuget.config
         sb.AppendLine("");
@@ -804,4 +824,6 @@ public partial class LinuxInstallerTests : IDisposable
 
         return patterns;
     }
+
+    private static string GetAssetsDirectory() => Path.Combine(Directory.GetCurrentDirectory(), "assets");
 }

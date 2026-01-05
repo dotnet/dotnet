@@ -4,22 +4,22 @@
     <body>
       <trans-unit id="AddedPackageToFolder">
         <source>Added package '{0}' to folder '{1}'</source>
-        <target state="translated">El paquete '{0}' se agregó a la carpeta '{1}'</target>
+        <target state="translated">Se agregó el paquete "{0}" a la carpeta "{1}"</target>
         <note />
       </trans-unit>
       <trans-unit id="AddedPackageToFolderFromSource">
         <source>Added package '{0}' to folder '{1}' from source '{2}'</source>
-        <target state="translated">Paquete agregado "{0}" a la carpeta "{1}" desde el origen "{2}"</target>
+        <target state="translated">Se agregó el paquete "{0}" a la carpeta "{1}" desde el origen "{2}"</target>
         <note />
       </trans-unit>
       <trans-unit id="AddedPackageToPackagesConfig">
         <source>Added package '{0}' to '{1}'</source>
-        <target state="translated">El paquete '{0}' se agregó a '{1}'</target>
+        <target state="translated">Se agregó el paquete "{0}" a "{1}"</target>
         <note />
       </trans-unit>
       <trans-unit id="AddingPackageToFolder">
         <source>Adding package '{0}' to folder '{1}'</source>
-        <target state="translated">Agregando el paquete '{0}' a la carpeta '{1}'</target>
+        <target state="translated">Agregando el paquete "{0}" a la carpeta "{1}"</target>
         <note />
       </trans-unit>
       <trans-unit id="AddingPackageWithOnlyDependencies">
@@ -59,32 +59,32 @@
       </trans-unit>
       <trans-unit id="Debug_AddedFile">
         <source>Added file '{0}'.</source>
-        <target state="translated">Se agregó el archivo '{0}'.</target>
+        <target state="translated">Se agregó el archivo "{0}".</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_AddedFileToFolder">
         <source>Added file '{0}' to folder '{1}'.</source>
-        <target state="translated">El archivo '{0}' se agregó a la carpeta '{1}'.</target>
+        <target state="translated">Se agregó el archivo "{0}" a la carpeta "{1}".</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFile">
         <source>Removed file '{0}'.</source>
-        <target state="translated">Se quitó el archivo '{0}'.</target>
+        <target state="translated">Se quitó el archivo "{0}".</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFileFromFolder">
         <source>Removed file '{0}' from folder '{1}'.</source>
-        <target state="translated">El archivo '{0}' se quitó de la carpeta '{1}'.</target>
+        <target state="translated">Se quitó el archivo "{0}" de la carpeta "{1}".</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFolder">
         <source>Removed folder '{0}'.</source>
-        <target state="translated">Se quitó la carpeta '{0}'.</target>
+        <target state="translated">Se quitó la carpeta "{0}".</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_TargetFrameworkInfo">
         <source>&gt;&gt; {0} are being added from '{1}'{2}</source>
-        <target state="translated">&gt;&gt; {0} se están agregando desde '{1}'{2}</target>
+        <target state="translated">&gt;&gt; {0} se están agregando desde "{1}"{2}</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_TargetFrameworkInfoPrefix">
@@ -94,7 +94,7 @@
       </trans-unit>
       <trans-unit id="DependencyDoesNotHaveValidVersion">
         <source>Dependency '{0}' has invalid version specification.</source>
-        <target state="translated">La dependencia '{0}' tiene una especificación de versión no válida.</target>
+        <target state="translated">La dependencia "{0}" tiene una especificación de versión no válida.</target>
         <note />
       </trans-unit>
       <trans-unit id="DownloadResourceNotFound">
@@ -109,12 +109,12 @@
       </trans-unit>
       <trans-unit id="ErrorLoadingPackagesConfig">
         <source>An error occurred while reading file '{0}': {1}</source>
-        <target state="translated">Error al leer el archivo '{0}': {1}</target>
+        <target state="translated">Error al leer el archivo "{0}": {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorWritingPackagesConfig">
         <source>An error occurred while writing file '{0}': {1}</source>
-        <target state="translated">Error al escribir el archivo '{0}': {1}</target>
+        <target state="translated">Error al escribir el archivo "{0}": {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_DirectoryDoesNotExist">
@@ -159,7 +159,7 @@
       </trans-unit>
       <trans-unit id="FileConflictMessage">
         <source>File '{0}' already exists in project '{1}'. Do you want to overwrite it?</source>
-        <target state="translated">El archivo '{0}' ya existe en el proyecto '{1}'. ¿Desea sobrescribirlo?</target>
+        <target state="translated">El archivo "{0}" ya existe en el proyecto "{1}". ¿Desea sobrescribirlo?</target>
         <note />
       </trans-unit>
       <trans-unit id="FoundPackageInPackagesFolder">
@@ -174,12 +174,12 @@
       </trans-unit>
       <trans-unit id="Info_OverwritingExistingFile">
         <source>Overwriting existing file '{0}'..</source>
-        <target state="translated">Sobrescribiendo el archivo '{0}' existente...</target>
+        <target state="translated">Sobrescribiendo el archivo "{0}" existente...</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidProjectName">
         <source>Unable to determine the project name for '{0}'.</source>
-        <target state="translated">No se puede determinar el nombre de proyecto de '{0}'.</target>
+        <target state="translated">No se puede determinar el nombre de proyecto para "{0}".</target>
         <note />
       </trans-unit>
       <trans-unit id="MultiplePackageTypesNotSupported">
@@ -219,17 +219,17 @@
       </trans-unit>
       <trans-unit id="PackageAlreadyExistsInFolder">
         <source>Package '{0}' already exists in folder '{1}'</source>
-        <target state="translated">El paquete '{0}' ya existe en la carpeta '{1}'</target>
+        <target state="translated">El paquete "{0}" ya existe en la carpeta "{1}"</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageAlreadyExistsInPackagesConfig">
         <source>Package '{0}' already exists in '{1}'</source>
-        <target state="translated">El paquete '{0}' ya existe en '{1}'</target>
+        <target state="translated">El paquete "{0}" ya existe en "{1}"</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageAlreadyExistsInProject">
         <source>Package '{0}' already exists in project '{1}'</source>
-        <target state="translated">El paquete '{0}' ya existe en el proyecto '{1}'</target>
+        <target state="translated">El paquete "{0}" ya existe en el proyecto "{1}"</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageCancelledFromSource">
@@ -244,17 +244,17 @@
       </trans-unit>
       <trans-unit id="PackageDoesNotExistInFolder">
         <source>Package '{0}' does not exist in folder '{1}'</source>
-        <target state="translated">El paquete '{0}' no existe en la carpeta '{1}'</target>
+        <target state="translated">El paquete "{0}" no existe en la carpeta "{1}"</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageDoesNotExistInProject">
         <source>Package '{0}' does not exist in project '{1}'</source>
-        <target state="translated">El paquete '{0}' no existe en el proyecto '{1}'</target>
+        <target state="translated">El paquete "{0}" no existe en el proyecto "{1}"</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageDoesNotExisttInPackagesConfig">
         <source>Package '{0}' does not exists in '{1}'</source>
-        <target state="translated">El paquete '{0}' no existe en '{1}'</target>
+        <target state="translated">El paquete "{0}" no existe en "{1}"</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageHasDependent">
@@ -336,17 +336,17 @@
       </trans-unit>
       <trans-unit id="RemovedPackageFromFolder">
         <source>Removed package '{0}' from folder '{1}'</source>
-        <target state="translated">El paquete '{0}' se quitó de la carpeta '{1}'</target>
+        <target state="translated">Se quitó el paquete "{0}" de la carpeta "{1}"</target>
         <note />
       </trans-unit>
       <trans-unit id="RemovedPackageFromPackagesConfig">
         <source>Removed package '{0}' from '{1}'</source>
-        <target state="translated">El paquete '{0}' se quitó de '{1}'</target>
+        <target state="translated">Se quitó el paquete "{0}" de "{1}"</target>
         <note />
       </trans-unit>
       <trans-unit id="RemovingPackageFromFolder">
         <source>Removing package '{0}' from folder '{1}'</source>
-        <target state="translated">Quitando el paquete '{0}' de la carpeta '{1}'</target>
+        <target state="translated">Quitando el paquete "{0}" de la carpeta "{1}"</target>
         <note />
       </trans-unit>
       <trans-unit id="ResolutionSuccessfulNoAction">
@@ -481,7 +481,7 @@
       </trans-unit>
       <trans-unit id="Warning_DirectoryNotEmpty">
         <source>Directory '{0}' is not empty. Skipping...</source>
-        <target state="translated">El directorio '{0}' no está vacío. Omitiendo...</target>
+        <target state="translated">El directorio "{0}" no está vacío. Omitiendo...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_ErrorFindingRepository">
@@ -497,7 +497,7 @@
       </trans-unit>
       <trans-unit id="Warning_FileModified">
         <source>Skipping '{0}' because it was modified.</source>
-        <target state="translated">Se está omitiendo '{0}' porque se modificó.</target>
+        <target state="translated">Se omitirá "{0}" porque se modificó.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">

@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
@@ -19,6 +20,12 @@ namespace Microsoft.EntityFrameworkCore.Query;
 /// </summary>
 public class SqlNullabilityProcessor : ExpressionVisitor
 {
+    private static readonly bool UseOldBehavior37204 =
+        AppContext.TryGetSwitch("Microsoft.EntityFrameworkCore.Issue37204", out var enabled) && enabled;
+
+    private static readonly bool UseOldBehavior37152 =
+        AppContext.TryGetSwitch("Microsoft.EntityFrameworkCore.Issue37152", out var enabled) && enabled;
+
     private readonly List<ColumnExpression> _nonNullableColumns;
     private readonly List<ColumnExpression> _nullValueColumns;
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
@@ -27,6 +34,9 @@ public class SqlNullabilityProcessor : ExpressionVisitor
     ///     Tracks parameters for collection expansion, allowing reuse.
     /// </summary>
     private readonly Dictionary<SqlParameterExpression, List<SqlParameterExpression>> _collectionParameterExpansionMap;
+
+    private static readonly bool UseOldBehavior37216 =
+        AppContext.TryGetSwitch("Microsoft.EntityFrameworkCore.Issue37216", out var enabled) && enabled;
 
     /// <summary>
     ///     Creates a new instance of the <see cref="SqlNullabilityProcessor" /> class.
@@ -183,6 +193,33 @@ public class SqlNullabilityProcessor : ExpressionVisitor
 
                     default:
                         throw new UnreachableException();
+                }
+
+                // We've inlined the user-provided collection from the values parameter into the SQL VALUES expression: (VALUES (1), (2)...).
+                // However, if the collection happens to be empty, this doesn't work as VALUES does not support empty sets. We convert it
+                // to a SELECT ... WHERE false to produce an empty result set instead.
+                if (!UseOldBehavior37216 && processedValues.Count == 0)
+                {
+                    var select = new SelectExpression(
+                        valuesExpression.Alias,
+                        tables: [],
+                        predicate: new SqlConstantExpression(false, Dependencies.TypeMappingSource.FindMapping(typeof(bool))),
+                        groupBy: [],
+                        having: null,
+                        projections: valuesExpression.ColumnNames
+                            .Select(n => new ProjectionExpression(
+                                new SqlConstantExpression(value: null, elementTypeMapping.ClrType, elementTypeMapping), n))
+                            .ToList(),
+                        distinct: false,
+                        orderings: [],
+                        offset: null,
+                        limit: null,
+                        tags: ReadOnlySet<string>.Empty,
+                        annotations: null,
+                        sqlAliasManager: null!,
+                        isMutable: false);
+
+                    return select;
                 }
 
                 return valuesExpression.Update(processedValues);
@@ -892,7 +929,7 @@ public class SqlNullabilityProcessor : ExpressionVisitor
                 if (translationMode is ParameterTranslationMode.MultipleParameters)
                 {
                     var padFactor = CalculateParameterBucketSize(values.Count, elementTypeMapping);
-                    var padding = (padFactor - (values.Count % padFactor)) % padFactor;
+                    var padding = CalculatePadding(values.Count, padFactor);
                     for (var i = 0; i < padding; i++)
                     {
                         // Create parameter for value if we didn't create it yet,
@@ -1553,6 +1590,15 @@ public class SqlNullabilityProcessor : ExpressionVisitor
             _ => 200,
         };
 
+    /// <summary>
+    /// Calculates the number of padding parameters needed to align the total count to the nearest bucket size.
+    /// </summary>
+    /// <param name="count">Number of value parameters.</param>
+    /// <param name="padFactor">Padding factor.</param>
+    [EntityFrameworkInternal]
+    protected virtual int CalculatePadding(int count, int padFactor)
+        => (padFactor - (count % padFactor)) % padFactor;
+
     // Note that we can check parameter values for null since we cache by the parameter nullability; but we cannot do the same for bool.
     private bool IsNull(SqlExpression? expression)
         => expression is SqlConstantExpression { Value: null }
@@ -1858,9 +1904,23 @@ public class SqlNullabilityProcessor : ExpressionVisitor
         {
             // We're looking at a parameter beyond its simple nullability, so we can't use the SQL cache for this query.
             var parameters = ParametersDecorator.GetAndDisableCaching();
-            if (parameters[collectionParameter.Name] is not IList values)
+
+            IList values;
+            if (UseOldBehavior37204)
             {
-                throw new UnreachableException($"Parameter '{collectionParameter.Name}' is not an IList.");
+                if (parameters[collectionParameter.Name] is not IList list)
+                {
+                    throw new UnreachableException($"Parameter '{collectionParameter.Name}' is not an IList.");
+                }
+                values = list;
+            }
+            else
+            {
+                if (parameters[collectionParameter.Name] is not IEnumerable enumerable)
+                {
+                    throw new UnreachableException($"Parameter '{collectionParameter.Name}' is not an IEnumerable.");
+                }
+                values = enumerable.Cast<object?>().ToList();
             }
 
             IList? processedValues = null;
@@ -2193,7 +2253,11 @@ public class SqlNullabilityProcessor : ExpressionVisitor
     {
         if (expandedParameters.Count <= index)
         {
-            var parameterName = Uniquifier.Uniquify(valuesParameterName, parameters, int.MaxValue);
+            var parameterName = UseOldBehavior37152
+                ? Uniquifier.Uniquify(valuesParameterName, parameters, int.MaxValue)
+#pragma warning disable EF1001
+                : Uniquifier.Uniquify(valuesParameterName, parameters, maxLength: int.MaxValue, uniquifier: index + 1);
+#pragma warning restore EF1001
             parameters.Add(parameterName, value);
             var parameterExpression = new SqlParameterExpression(parameterName, value?.GetType() ?? typeof(object), typeMapping);
             expandedParameters.Add(parameterExpression);

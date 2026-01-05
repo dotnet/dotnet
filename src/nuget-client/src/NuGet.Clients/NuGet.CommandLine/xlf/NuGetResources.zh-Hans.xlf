@@ -175,12 +175,12 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">正在通过 “HTTP” 源 {1} 运行“{0}”操作。NuGet 需要 HTTPS 源。要使用 HTTP 源，必须在 NuGet.Config 文件中将 'allowInsecureConnections' 显式设置为 true。有关详细信息，请参阅 https://aka.ms/nuget-https-everywhere。</target>
+        <target state="translated">正在通过 “HTTP” 源 {1} 运行“{0}”操作。NuGet 需要 HTTPS 源。要使用 HTTP 源，必须在 NuGet.Config 文件中将“allowInsecureConnections”显式设置为 true。有关详细信息，请参阅 https://aka.ms/nuget-https-everywhere。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_HttpSources_Multiple">
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">正在通过 “HTTP” 源 {1} 运行“{0}”操作。NuGet 需要 HTTPS 源。要使用 HTTP 源，必须在 NuGet.Config 文件中将 'allowInsecureConnections' 显式设置为 true。有关详细信息，请参阅 https://aka.ms/nuget-https-everywhere。</target>
+        <target state="translated">正在通过“HTTP”源 {1} 运行“{0}”操作。NuGet 需要 HTTPS 源。要使用 HTTP 源，必须在 NuGet.Config 文件中将“allowInsecureConnections”显式设置为 true。有关详细信息，请参阅 https://aka.ms/nuget-https-everywhere。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_InvalidCharactersInPathSegment">
@@ -252,8 +252,8 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
         <source>`project.json` pack is disabled in the current NuGet version, and will be permanently removed in a future version.
 Please consider migrating '{0}' to `PackageReference` and using the pack targets.
 You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</source>
-        <target state="translated">`project.json` 在当前 NuGet 版本中处于禁用状态，并将在将来的版本中永久移除。
-请考虑将 ‘{0}’ 迁移到 ‘PackageReference’ 并使用包目标。
+        <target state="translated">`project.json` pack 在当前 NuGet 版本中处于禁用状态，并将在将来的版本中永久移除。
+请考虑将 ‘{0}’ 迁移到 `PackageReference` 并使用包目标。
 可将 ‘{1}’ 环境变量设为 ‘true’ 以暂时重新启用此功能。</target>
         <note>Please do not localize `project.json` pack and `PackageReference`. 0 - path, 1 - env var name</note>
       </trans-unit>
@@ -752,7 +752,7 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
         <source>Restoring NuGet packages...
 To prevent NuGet from downloading packages during build, open the Visual Studio Options dialog, click on the NuGet Package Manager node and uncheck '{0}'.</source>
         <target state="translated">正在还原 NuGet 包...
-若要防止 NuGet 在生成期间下载包，请打开“Visual Studio 选项”对话框，单击 NuGet 程序包管理器节点，然后取消选中“{0}”。</target>
+要防止 NuGet 在生成期间下载包，请打开“Visual Studio 选项”对话框，单击 NuGet 程序包管理器节点，然后取消选中 ‘{0}’。</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandProjectNotFound">

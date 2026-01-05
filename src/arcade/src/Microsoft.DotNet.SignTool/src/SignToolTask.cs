@@ -336,7 +336,7 @@ namespace Microsoft.DotNet.SignTool
                     var macSigningOperation = certificateSignInfo.GetMetadata("MacCertificate");
                     var macNotarizationAppName = certificateSignInfo.GetMetadata("MacNotarizationAppName");
                     var collisionPriorityId = certificateSignInfo.GetMetadata(SignToolConstants.CollisionPriorityId);
-                    var detachedSignatureCertificate = certificateSignInfo.GetMetadata("DetachedSignature");
+                    var detachedSignatureCertificate = certificateSignInfo.GetMetadata("SupportsDetachedSignature");
                     bool detachedSignatureCertificateValue = false;
 
                     if (string.IsNullOrEmpty(macSigningOperation) != string.IsNullOrEmpty(macNotarizationAppName))

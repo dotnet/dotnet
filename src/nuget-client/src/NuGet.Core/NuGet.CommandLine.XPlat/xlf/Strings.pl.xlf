@@ -99,7 +99,7 @@
       </trans-unit>
       <trans-unit id="ArgumentNullOrEmpty">
         <source>Argument cannot be null or empty.</source>
-        <target state="new">Argument cannot be null or empty.</target>
+        <target state="translated">Argument nie może mieć wartości null ani być pusty.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConfigCommandKeyNotFound">
@@ -169,7 +169,7 @@
       </trans-unit>
       <trans-unit id="ConsoleConfirmMessage">
         <source>{0} (y/N)</source>
-        <target state="translated">{0} (y/N)</target>
+        <target state="translated">{0} (t/N)</target>
         <note />
       </trans-unit>
       <trans-unit id="ConsoleConfirmMessageAccept">
@@ -286,7 +286,7 @@
       </trans-unit>
       <trans-unit id="Error_CannotUpgradeAutoReferencedPackage">
         <source>{0}: Package {1} is implicitly added by the SDK and cannot be upgraded independently</source>
-        <target state="new">{0}: Package {1} is implicitly added by the SDK and cannot be upgraded independently</target>
+        <target state="translated">{0}: Pakiet {1} jest dodawany domyślnie przez zestaw SDK i nie można go uaktualnić niezależnie</target>
         <note>{0} - project referencing the package
 {1} - package id</note>
       </trans-unit>
@@ -400,7 +400,7 @@ Menedżer NuGet wymaga źródeł HTTPS. Aby użyć źródeł HTTP, musisz wyraź
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingNotFound">
         <source>Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</source>
-        <target state="new">Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</target>
+        <target state="translated">Mapowanie źródła pakietu jest włączone, ale nie znaleziono mapowania dla pakietu {0}. Aby uzyskać więcej informacji, zobacz https://aka.ms/nuget/psm.</target>
         <note>{0} - package id</note>
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
@@ -882,7 +882,7 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
       </trans-unit>
       <trans-unit id="OutputNuGetVersion">
         <source>{0} Version: {1}</source>
-        <target state="translated">wersja{0} : {1}</target>
+        <target state="translated">{0} wersja {1}</target>
         <note>{0}: App full name
 {1}: App version</note>
       </trans-unit>
@@ -898,7 +898,7 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_VulnerableOptionDescription">
         <source>Upgrade packages with known vulnerabilities.</source>
-        <target state="new">Upgrade packages with known vulnerabilities.</target>
+        <target state="translated">Uaktualnij pakiety z znanymi lukami w zabezpieczeniach.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_AllPackagesAlreadyUpToDate">
@@ -908,22 +908,22 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
       </trans-unit>
       <trans-unit id="PackageUpdate_AllVersionsHaveAdvisories">
         <source>All versions of package {0} have security advisories. Unable to find a non-vulnerable version to update to.</source>
-        <target state="new">All versions of package {0} have security advisories. Unable to find a non-vulnerable version to update to.</target>
+        <target state="translated">Wszystkie wersje pakietu {0} mają ostrzeżenia dotyczące zabezpieczeń. Nie znaleziono wersji pozbawionej luk w zabezpieczeniach do zaktualizowania.</target>
         <note>{0}: package id</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_AlreadyUpToDate">
         <source>All packages are up to date</source>
-        <target state="new">All packages are up to date</target>
+        <target state="translated">Wszystkie pakiety są aktualne</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_AuditDisabled">
         <source>This command requires NuGetAudit to be enabled at this time. See https://aka.ms/nuget/audit for more information.</source>
-        <target state="new">This command requires NuGetAudit to be enabled at this time. See https://aka.ms/nuget/audit for more information.</target>
+        <target state="translated">To polecenie wymaga tym razem włączenia pakietu NuGetAudit. Więcej informacji znajdziesz w witrynie https://aka.ms/nuget/audit.</target>
         <note>{Locked="NuGetAudit"}{Locked="dotnet package update"}</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_AuditModeIsDirect">
         <source>NuGetAuditMode is set to direct, which means that transitive packages with known vulnerabilities will not be updated. See https://aka.ms/nuget/audit for more information.</source>
-        <target state="new">NuGetAuditMode is set to direct, which means that transitive packages with known vulnerabilities will not be updated. See https://aka.ms/nuget/audit for more information.</target>
+        <target state="translated">NuGetAuditMode jest ustawiony na wartość direct, co oznacza, że pakiety pośrednie ze znanymi lukami w zabezpieczeniach nie będą aktualizowane. Więcej informacji znajdziesz w witrynie https://aka.ms/nuget/audit.</target>
         <note>{Locked="NuGetAuditMode"}</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_FinalSummary">
@@ -944,7 +944,7 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
       </trans-unit>
       <trans-unit id="PackageUpdate_NoVulnerablePackages">
         <source>No upgradable packages have known vulnerabilities.</source>
-        <target state="new">No upgradable packages have known vulnerabilities.</target>
+        <target state="translated">Żadne pakiety do uaktualnienia nie mają znanych luk w zabezpieczeniach.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_PackageArgumentDescription">
@@ -964,7 +964,7 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatedMessage">
         <source>Updating {0} {1} to {2}.</source>
-        <target state="new">Updating {0} {1} to {2}.</target>
+        <target state="translated">Aktualizowanie {0} {1} do {2}.</target>
         <note>{0}: package id
 {1}: existing version
 {2}: new version</note>
@@ -976,7 +976,7 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatingVulnerablePackages">
         <source>Updating packages with security advisories in {0}</source>
-        <target state="new">Updating packages with security advisories in {0}</target>
+        <target state="translated">Aktualizowanie pakietów z ostrzeżeniami dotyczącymi zabezpieczeń w {0}</target>
         <note>{0} - the project/solution being checked</note>
       </trans-unit>
       <trans-unit id="PrereleaseVersionsAvailable">
@@ -1149,7 +1149,7 @@ Wyszukiwanie polega na porównywaniu łańcuchów bez rozróżniania wielkości 
       </trans-unit>
       <trans-unit id="SourcesCommandAllowInsecureConnectionsDescription">
         <source>Allows HTTP connections for adding or updating packages. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Zezwala na połączenia HTTP na potrzeby dodawania lub aktualizowania pakietów. Uwaga: ta metoda nie jest bezpieczna. Aby uzyskać więcej informacji na temat bezpiecznych opcji, sprawdź witrynę https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Zezwala na połączenia HTTP na potrzeby dodawania lub aktualizowania pakietów. Uwaga: ta metoda nie jest bezpieczna. Aby uzyskać więcej informacji na temat opcji zabezpieczeń, sprawdź witrynę https://aka.ms/nuget-https-everywhere.</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandFormatDescription">
@@ -1269,7 +1269,7 @@ Wyszukiwanie polega na porównywaniu łańcuchów bez rozróżniania wielkości 
       </trans-unit>
       <trans-unit id="TrustSourceSignerName">
         <source>"The name of the trusted signer to add. If only &lt;NAME&gt; is provided without --&lt;source-url&gt;, the package source from your NuGet configuration files with the same name is added to the trusted list. If &lt;NAME&gt; already exists in the configuration, the package source is appended to it."</source>
-        <target state="translated">„Nazwa zaufanej osoby podpisującej do dodania. Jeśli podana jest tylko &lt;NAME&gt; bez --&lt;source-url&gt;, do listy zaufanych zostanie dodane źródło pakietu z plików konfiguracji NuGet o tej samej nazwie. Jeśli &lt;NAME&gt; już istnieje w konfiguracji, źródło pakietu zostanie do niej dołączone.”</target>
+        <target state="translated">„Nazwa zaufanej osoby składającej podpis do dodania. Jeśli tylko &lt;NAME&gt;oddano bez parametru --&lt;source-url&gt; źródło pakietu z plików konfiguracji NuGet o tej samej nazwie zostanie dodane do listy zaufanych. Jeśli w konfiguracji istnieje już &lt;NAME&gt;, źródło pakietu zostanie do niego dołączone”.</target>
         <note />
       </trans-unit>
       <trans-unit id="TrustSourceUrl">
@@ -1398,12 +1398,12 @@ Wyszukiwanie polega na porównywaniu łańcuchów bez rozróżniania wielkości 
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. Please run restore for project '{1}' before running this command.</source>
-        <target state="translated">Plik „{0}” prawdopodobnie nie jest plikiem zasobów NuGet. Przed uruchomieniem tego polecenia uruchom przywracanie projektu „{1}”.</target>
+        <target state="translated">Plik „{0}” prawdopodobnie nie jest plikiem zasobów NuGet. Przed uruchomieniem tego polecenia uruchom przywracanie w przypadku projektu „{1}”.</target>
         <note>{0} - Assets file path, {1} - Project name</note>
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithoutProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. For more information, see https://aka.ms/dotnet/nuget/why#older-project-format</source>
-        <target state="translated">Plik „{0}” prawdopodobnie nie jest plikiem zasobów NuGet. Aby uzyskać więcej informacji, zobacz https://aka.ms/dotnet/nuget/why#older-project-format</target>
+        <target state="translated">Plik „{0}” prawdopodobnie nie jest plikiem zasobów NuGet. Aby uzyskać więcej informacji, zobacz stronę https://aka.ms/dotnet/nuget/why#older-project-format</target>
         <note>{0} - Assets file path</note>
       </trans-unit>
       <trans-unit id="WhyCommand_FrameworksOption_Description">
@@ -1428,7 +1428,7 @@ Wyszukiwanie polega na porównywaniu łańcuchów bez rozróżniania wielkości 
       </trans-unit>
       <trans-unit id="WhyCommand_Message_NonSDKStyleProjectsAreNotSupported">
         <source>Unable to run 'dotnet nuget why' for project '{0}'. See https://aka.ms/dotnet/nuget/why#older-project-format</source>
-        <target state="translated">Nie można uruchomić polecenia „dotnet nuget why” dla projektu „{0}”. Zobacz https://aka.ms/dotnet/nuget/why#older-project-format</target>
+        <target state="translated">Nie można uruchomić polecenia „dotnet nuget why” dla projektu „{0}”. Zobacz stronę https://aka.ms/dotnet/nuget/why#older-project-format</target>
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_PackageArgument_Description">

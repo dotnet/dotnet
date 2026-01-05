@@ -15,32 +15,12 @@
     <FrameworkListFileClass Include="WindowsFormsIntegration.resources.dll" />
   </ItemGroup>
 
-  <!-- References that are common to both WinForms and WPF -->
+  <!-- Runtime only files that are common to both WinForms and WPF -->
   <ItemGroup>
     <FrameworkListFileClass Include="System.Diagnostics.EventLog.Messages.dll" Profile="WindowsForms;WPF" />
-    <FrameworkListFileClass Include="System.Private.Windows.Core.dll" Profile="WindowsForms;WPF" />
   </ItemGroup>
 
-  <!-- Windows Forms specific references -->
-  <ItemGroup>
-    <FrameworkListFileClass Include="Microsoft.VisualBasic.Forms.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="Microsoft.VisualBasic.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Design.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Drawing.Common.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Drawing.Design.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Drawing.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Windows.Forms.Design.Editors.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Windows.Forms.Design.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Windows.Forms.Primitives.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Windows.Forms.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="Microsoft.VisualBasic.Forms.resources.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Windows.Forms.Design.resources.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Windows.Forms.Primitives.resources.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Windows.Forms.resources.dll" Profile="WindowsForms" />
-    <FrameworkListFileClass Include="System.Private.Windows.GdiPlus.dll" Profile="WindowsForms" />
-  </ItemGroup>
-
-  <!-- WPF specific references -->
+  <!-- WPF specific runtime-only files -->
   <ItemGroup>
     <!-- Main WPF assemblies are already included in Directory.Build.props -->
     <!-- Only include assemblies that are NOT in Directory.Build.props -->

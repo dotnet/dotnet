@@ -29,7 +29,7 @@
       </trans-unit>
       <trans-unit id="MSSignCommandInvalidArgumentException">
         <source>Invalid value provided for '{0}'. For a list of accepted values, please visit https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign</source>
-        <target state="translated">'{0}' için geçersiz değer belirtildi. Kabul edilen değerlerin listesi için https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign sayfasını ziyaret edin</target>
+        <target state="translated">'{0}' için geçersiz değer belirtildi. Kabul edilen değerlerin listesi için lütfen https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign sayfasını ziyaret edin</target>
         <note>{0} - argument name</note>
       </trans-unit>
       <trans-unit id="MSSignCommandInvalidCertificateFingerprint">
@@ -137,7 +137,7 @@ nuget reposign MyPackage.nupkg -Timestamper http://timestamper.test -Certificate
       </trans-unit>
       <trans-unit id="RepoSignCommandUsageSummary">
         <source>&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; -CertificateFile &lt;p7b_file_path&gt; -CSPName &lt;cryptographic_service_provider_name&gt; -KeyContainer &lt;key_container_guid&gt; -CertificateFingerprint &lt;certificate_fingerprint&gt; -PackageOwners &lt;package_owners&gt; -V3ServiceIndexUrl &lt;v3_service_index_url&gt;</source>
-        <target state="translated">&lt;paket_yolu&gt; -Timestamper &lt;zaman_damgası_sunucusu_URL'si&gt; -CertificateFile &lt;p7b_dosyası_yolu&gt; -CSPName &lt;şifreleme_hizmeti_sağlayıcı_adı&gt; -KeyContainer &lt;anahtar_kapsayıcısı_GUID'si&gt; -CertificateFingerprint &lt;sertifika_parmak_izi&gt; -PackageOwners &lt;paket_sahipleri&gt; -V3ServiceIndexUrl &lt;v3_hizmeti_dizin_URL'si&gt;</target>
+        <target state="translated">&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; -CertificateFile &lt;p7b_file_path&gt; -CSPName &lt;cryptographic_service_provider_name&gt; -KeyContainer &lt;key_container_guid&gt; -CertificateFingerprint &lt;certificate_fingerprint&gt; -PackageOwners &lt;package_owners&gt; -V3ServiceIndexUrl &lt;v3_service_index_url&gt;</target>
         <note />
       </trans-unit>
       <trans-unit id="RepoSignCommandV3ServiceIndexUrlDescription">

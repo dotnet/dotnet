@@ -88,7 +88,7 @@
       </trans-unit>
       <trans-unit id="Debug_RemovedFolder">
         <source>Removed folder '{0}'.</source>
-        <target state="translated">Se quitó la carpeta '{0}'.</target>
+        <target state="translated">Se quitó la carpeta "{0}".</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_FailedToCreateParentFolder">
@@ -241,7 +241,7 @@
       </trans-unit>
       <trans-unit id="Text_DeprecatedFramework_ProjectList">
         <source>The following project(s) target the deprecated framework:</source>
-        <target state="translated">Los siguientes proyectos están destinados a un marco en desuso:</target>
+        <target state="translated">Los siguientes proyectos están destinados a una plataforma en desuso:</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToGetCPSPackageInstallationService">
@@ -266,7 +266,7 @@
       </trans-unit>
       <trans-unit id="Warning_DirectoryNotEmpty">
         <source>Directory '{0}' is not empty. Skipping...</source>
-        <target state="translated">El directorio '{0}' no está vacío. Omitiendo...</target>
+        <target state="translated">El directorio "{0}" no está vacío. Omitiendo...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectories">

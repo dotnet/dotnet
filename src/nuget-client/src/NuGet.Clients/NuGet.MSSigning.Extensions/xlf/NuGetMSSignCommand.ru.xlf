@@ -108,7 +108,7 @@ nuget mssign MyPackage.nupkg -Timestamper https://foo.bar -CertificateFile foo.p
       </trans-unit>
       <trans-unit id="MSSignCommandUsageSummary">
         <source>&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; -CertificateFile &lt;p7b_file_path&gt; -CSPName &lt;cryptographic_service _provider_name&gt;  -KeyContainer &lt;key_container_guid&gt;  -CertificateFingerprint &lt;certificate_fingerprint&gt;</source>
-        <target state="translated">&lt;путь_к_пакету&gt; -Timestamper &lt;URL-адрес_сервера_меток_времени&gt; - CertificateFile &lt;путь_к_P7B-файлу&gt; - CSPName &lt;имя_поставщика_служб_шифрования&gt; - KeyContianer &lt;guid_контейнера_ключей&gt; - CertificateFingerprint &lt;отпечаток_сертификата&gt;</target>
+        <target state="translated">&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; -CertificateFile &lt;p7b_file_path&gt; -CSPName &lt;cryptographic_service _provider_name&gt;  -KeyContainer &lt;key_container_guid&gt;  -CertificateFingerprint &lt;certificate_fingerprint&gt;</target>
         <note>Please don't localize this string</note>
       </trans-unit>
       <trans-unit id="RepoSignCommandDescription">
@@ -137,7 +137,7 @@ nuget reposign MyPackage.nupkg -Timestamper http://timestamper.test -Certificate
       </trans-unit>
       <trans-unit id="RepoSignCommandUsageSummary">
         <source>&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; -CertificateFile &lt;p7b_file_path&gt; -CSPName &lt;cryptographic_service_provider_name&gt; -KeyContainer &lt;key_container_guid&gt; -CertificateFingerprint &lt;certificate_fingerprint&gt; -PackageOwners &lt;package_owners&gt; -V3ServiceIndexUrl &lt;v3_service_index_url&gt;</source>
-        <target state="translated">&lt;путь_к_пакету&gt; -Timestamper &lt;url_сервера_метки_времени&gt; -CertificateFile &lt;путь_к_файлу_p7b&gt; -CSPName &lt;имя_поставщика_служб_шифрования&gt; -KeyContainer &lt;guid_контейнера_ключа&gt; -CertificateFingerprint &lt;отпечаток_сертификата&gt; -PackageOwners &lt;владельцы_пакета&gt; -V3ServiceIndexUrl &lt;url_индекса_службы_v3&gt;</target>
+        <target state="translated">&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; -CertificateFile &lt;p7b_file_path&gt; -CSPName &lt;cryptographic_service_provider_name&gt; -KeyContainer &lt;key_container_guid&gt; -CertificateFingerprint &lt;certificate_fingerprint&gt; -PackageOwners &lt;package_owners&gt; -V3ServiceIndexUrl &lt;v3_service_index_url&gt;</target>
         <note />
       </trans-unit>
       <trans-unit id="RepoSignCommandV3ServiceIndexUrlDescription">

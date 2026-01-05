@@ -19,7 +19,7 @@
       </trans-unit>
       <trans-unit id="ErrorDialogBoxTitle">
         <source>Operation failed</source>
-        <target state="translated">Сбой операции</target>
+        <target state="translated">Операция не выполнена</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingPattern_Missing">

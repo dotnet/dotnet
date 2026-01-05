@@ -104,7 +104,7 @@
       </trans-unit>
       <trans-unit id="DefaultSymbolServer">
         <source>the symbol server</source>
-        <target state="translated">il server dei simboli</target>
+        <target state="translated">server dei simboli</target>
         <note />
       </trans-unit>
       <trans-unit id="Error">
@@ -175,12 +175,12 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Si sta eseguendo l'operazione "{0}" con un'origine "HTTP": {1}. NuGet richiede origini HTTPS. Per usare un'origine HTTP, è necessario impostare in modo esplicito "allowInsecureConnections" su "true" nel file NuGet.Config. Per ulteriori informazioni, vedere https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Si sta eseguendo l'operazione '{0}' con un'origine 'HTTP': {1}. NuGet richiede origini HTTPS. Per usare un'origine HTTP, è necessario impostare in modo esplicito 'allowInsecureConnections' su true nel file NuGet.Config. Vedere https://aka.ms/nuget-https-everywhere per altre informazioni.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_HttpSources_Multiple">
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Si sta eseguendo l'operazione "{0}" con origini "HTTP": {1}. NuGet richiede origini HTTPS. Per usare le origini HTTP, è necessario impostare in modo esplicito "allowInsecureConnections" su "true" nel file NuGet.Config. Per ulteriori informazioni, vedere https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Si sta eseguendo l'operazione '{0}' con origini 'HTTP': {1}. NuGet richiede origini HTTPS. Per usare origini HTTP, è necessario impostare in modo esplicito 'allowInsecureConnections' su true nel file NuGet.Config. Vedere https://aka.ms/nuget-https-everywhere per altre informazioni.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_InvalidCharactersInPathSegment">
@@ -469,7 +469,7 @@ Puoi impostare la variabile di ambiente '{1}' su 'true' per riabilitare temporan
       </trans-unit>
       <trans-unit id="LiveFeed">
         <source>the NuGet gallery</source>
-        <target state="translated">la raccolta NuGet</target>
+        <target state="translated">raccolta NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="LocalsCommand_ClearFailed">

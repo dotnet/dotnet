@@ -481,7 +481,7 @@
       </trans-unit>
       <trans-unit id="Warning_DirectoryNotEmpty">
         <source>Directory '{0}' is not empty. Skipping...</source>
-        <target state="translated">Das Verzeichnis "{0}" ist nicht leer. Es wird übersprungen...</target>
+        <target state="translated">Das Verzeichnis "{0}" ist nicht leer und wird übersprungen...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_ErrorFindingRepository">

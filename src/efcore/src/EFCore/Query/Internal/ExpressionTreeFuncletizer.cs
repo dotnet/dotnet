@@ -22,6 +22,9 @@ namespace Microsoft.EntityFrameworkCore.Query.Internal;
 /// </remarks>
 public class ExpressionTreeFuncletizer : ExpressionVisitor
 {
+    private static readonly bool UseOldBehavior37152 =
+        AppContext.TryGetSwitch("Microsoft.EntityFrameworkCore.Issue37152", out var enabled) && enabled;
+
     // The general algorithm here is the following.
     // 1. First, for each node type, visit that node's children and get their states (evaluatable, contains evaluatable, no evaluatable).
     // 2. Calculate the parent node's aggregate state from its children; a container node whose children are all evaluatable is itself
@@ -995,20 +998,23 @@ public class ExpressionTreeFuncletizer : ExpressionVisitor
 
             static bool TryUnwrapSpanImplicitCast(Expression expression, [NotNullWhen(true)] out Expression? result)
             {
-                if (expression is MethodCallExpression
+                switch (expression)
+                {
+                    case MethodCallExpression
                     {
                         Method: { Name: "op_Implicit", DeclaringType: { IsGenericType: true } implicitCastDeclaringType },
                         Arguments: [var unwrapped]
+                    } when implicitCastDeclaringType.GetGenericTypeDefinition() is var genericTypeDefinition
+                        && (genericTypeDefinition == typeof(Span<>) || genericTypeDefinition == typeof(ReadOnlySpan<>)):
+                    {
+                        result = unwrapped;
+                        return true;
                     }
-                    && implicitCastDeclaringType.GetGenericTypeDefinition() is var genericTypeDefinition
-                    && (genericTypeDefinition == typeof(Span<>) || genericTypeDefinition == typeof(ReadOnlySpan<>)))
-                {
-                    result = unwrapped;
-                    return true;
-                }
 
-                result = null;
-                return false;
+                    default:
+                        result = null;
+                        return false;
+                }
             }
         }
 
@@ -2091,11 +2097,18 @@ public class ExpressionTreeFuncletizer : ExpressionVisitor
                 parameterName = parameterName.Substring("$VB$Local_".Length);
             }
 
-            // Uniquify the parameter name
-            var originalParameterName = parameterName;
-            for (var i = 0; _parameterNames.Contains(parameterName); i++)
+            if (UseOldBehavior37152)
             {
-                parameterName = originalParameterName + i;
+                // Uniquify the parameter name
+                var originalParameterName = parameterName;
+                for (var i = 0; _parameterNames.Contains(parameterName); i++)
+                {
+                    parameterName = originalParameterName + i;
+                }
+            }
+            else
+            {
+                parameterName = Uniquifier.Uniquify(parameterName, _parameterNames, maxLength: int.MaxValue, uniquifier: _parameterNames.Count);
             }
 
             _parameterNames.Add(parameterName);

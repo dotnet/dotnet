@@ -665,7 +665,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">'{0}' 不得為 Null。</target>
+        <target state="translated">「{0}」不得為 Null。</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="RangeOutOfBoundsForArray">
@@ -959,7 +959,7 @@
     Fingerprint (SHA-256):  {2}
     Certificate (PEM):
 {3}</source>
-        <target state="translated">下列 X.509 根憑證未受信任，因為它並不存在於 {0} 的憑證套件組合中。如需詳細資訊，請參閱 NU3042 的文件。
+        <target state="translated">下列 X.509 根憑證未受信任，因為它並不存在於 {0} 的憑證套件組合中。 如需詳細資訊，請參閱 NU3042 的文件。
     主旨:  {1}
     指紋 (SHA-256):  {2}
     憑證 (PEM):
@@ -972,7 +972,7 @@
     Fingerprint (SHA-256):  {1}
     Certificate (PEM):
 {2}</source>
-        <target state="translated">下列 X.509 根憑證未受信任，因為找不到任何憑證套件組合中。如需詳細資訊，請參閱 NU3042 的文件。
+        <target state="translated">下列 X.509 根憑證未受信任，因為找不到任何憑證套件組合中。 如需詳細資訊，請參閱 NU3042 的文件。
     主旨:  {0}
     指紋 (SHA-256):  {1}
     憑證 (PEM):

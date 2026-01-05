@@ -238,17 +238,18 @@
     <RemoveDir Directories="$(IntermediateSdkSymbolsLayout)" />
   </Target>
 
-  <!-- After building, generate the source tarball and zipball -->
-  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.CreateSourceArtifacts" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <Target Name="CreateSourceArtifacts"
+  <!-- After building, generate the source tarball -->
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.CreateSourceArtifact" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <Target Name="CreateSourceArtifact"
           BeforeTargets="Build"
           DependsOnTargets="WriteSourceBuiltSdkVersionFile"
-          Condition="'$(CreateSourceArtifacts)' == 'true'" >
+          Condition="'$(CreateSourceArtifact)' == 'true'" >
 
-    <CreateSourceArtifacts
+    <CreateSourceArtifact
         SourceCommit="$(RepositoryCommit)"
         ArtifactName="$(SourceBuiltSourceArtifactName)"
-        ArtifactVersion="$(SourceBuiltSdkNonStableVersion)"
+        SdkStableVersion="$(SourceBuiltSdkVersion)"
+        SdkNonStableVersion="$(SourceBuiltSdkNonStableVersion)"
         RepoRoot="$(RepoRoot)"
         OutputDirectory="$(ArtifactsAssetsDir)" />
   </Target>
