@@ -8,15 +8,16 @@ Subject: [PATCH] Fix assembly version calculation in 2026
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/source-build-reference-packages/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/build/common.props b/src/source-build-reference-packages/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/build/common.props
-index efd7e90e2f4..11ba2a6e49f 100644
+index efd7e90e2f4..4c8e9f8a5c8 100644
 --- a/src/source-build-reference-packages/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/build/common.props
 +++ b/src/source-build-reference-packages/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/build/common.props
-@@ -42,7 +42,7 @@
+@@ -42,8 +42,8 @@
      <VersionSuffix Condition="'$(WilsonVersion)' == ''">$(PreviewVersionSuffix)</VersionSuffix>
      <VersionPrefix Condition="'$(WilsonVersion)' == ''">$(WilsonCurrentVersion)</VersionPrefix>
-     <FileVersion Condition="'$(WilsonVersion)' != '' and '$(IsCustomPreview)' != 'true' ">$(WilsonVersion).$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.ToString("MMdd"))</FileVersion>
+-    <FileVersion Condition="'$(WilsonVersion)' != '' and '$(IsCustomPreview)' != 'true' ">$(WilsonVersion).$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.ToString("MMdd"))</FileVersion>
 -    <FileVersion Condition="'$(WilsonVersion)' == ''">$(WilsonCurrentVersion).$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.ToString("MMdd"))</FileVersion>
-+    <FileVersion Condition="'$(WilsonVersion)' == ''">$(WilsonCurrentVersion).$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.ToString("dd"))</FileVersion>
++    <FileVersion Condition="'$(WilsonVersion)' != '' and '$(IsCustomPreview)' != 'true' ">$(WilsonVersion).$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.DayOfYear)</FileVersion>
++    <FileVersion Condition="'$(WilsonVersion)' == ''">$(WilsonCurrentVersion).$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.DayOfYear)</FileVersion>
    </PropertyGroup>
  
    <PropertyGroup>
