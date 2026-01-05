@@ -17,14 +17,14 @@ index efd7e90e..e5f6f3ed 100644
      <FileVersion Condition="'$(WilsonVersion)' != '' and '$(IsCustomPreview)' != 'true' ">$(WilsonVersion).$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.ToString("MMdd"))</FileVersion>
 -    <FileVersion Condition="'$(WilsonVersion)' == ''">$(WilsonCurrentVersion).$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.ToString("MMdd"))</FileVersion>
 +    <!-- TODO: Makes sure that the revision is higher than what's in already shipped packages (> 61231).
-+         This will overflow in 2030 though and needs a long term fix. -->
++         This will overflow in 2029 though and needs a long term fix. -->
 +    <FileVersion Condition="'$(WilsonVersion)' == ''">$(WilsonCurrentVersion).$([MSBuild]::Add(
 +      61232,
 +      $([MSBuild]::Add(
 +        $([MSBuild]::Add(
 +          $([MSBuild]::Multiply(
 +            $([System.DateTime]::Now.AddYears(-2019).Year),
-+            385
++            416
 +          )),
 +          $([MSBuild]::Multiply(
 +            $([System.DateTime]::Now.ToString("MM")),
