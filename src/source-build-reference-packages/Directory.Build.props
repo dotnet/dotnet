@@ -22,6 +22,10 @@
 
     <!-- Only upgrade NuGetAudit warnings to errors for official builds. -->
     <WarningsNotAsErrors Condition="'$(OfficialBuild)' != 'true'">$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
+
+    <!-- Don't use Arcade's ExcludeFrom* or TFM filtering build infra -->
+    <DisableArcadeExcludeFromBuildSupport>true</DisableArcadeExcludeFromBuildSupport>
+    <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
   </PropertyGroup>
 
 </Project>
