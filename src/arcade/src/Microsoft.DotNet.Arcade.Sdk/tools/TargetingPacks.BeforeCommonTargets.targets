@@ -1,7 +1,7 @@
 <Project>
 
   <Choose>
-    <When Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(TargetFrameworkVersion)' != '' and $([MSBuild]::VersionLessThan('$(TargetFrameworkVersion)', '$(BundledNETCoreAppTargetFrameworkVersion)'))">
+    <When Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(TargetFrameworkIdentifier)' == '.NETCoreApp' and '$(TargetFrameworkVersion)' != '' and $([MSBuild]::VersionLessThan('$(TargetFrameworkVersion)', '$(BundledNETCoreAppTargetFrameworkVersion)'))">
       <!-- Disable restoring transitive aspnetcore and windowsdesktop targeting packs to avoid unnecessary dependencies. -->
       <PropertyGroup>
         <DisableTransitiveFrameworkReferenceDownloads>true</DisableTransitiveFrameworkReferenceDownloads>
