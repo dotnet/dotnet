@@ -549,6 +549,17 @@
 
   <Target Name="SetBuildProperties"
           DependsOnTargets="PrepareRepositoryReferences;SetRepoOriginalSourceRevisionId">
+    <!-- Make everything that depends on live runtime target current pack versions to avoid assembly version mismatches with the LKG SDK that uses 10.0.0.0 versions when targeting net11.0.
+         Experimental, therefore commented out. -->
+    <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '@(TransitiveRepositoryReference->AnyHaveMetadataValue('Identity', 'runtime'))' == 'true'">
+      <RuntimePackVersion>@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.NETCore.App.Ref')->Metadata('Version'))</RuntimePackVersion>
+      <!-- <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion=$(RuntimePackVersion)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:KnownRuntimePackMicrosoftNETCoreAppCurrentMonoLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:KnownRuntimePackMicrosoftNETCoreAppCurrentNativeAOTLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs> -->
+    </PropertyGroup>
+
     <PropertyGroup>
       <!-- Infer the projects runtime identifier as the vertical's RID when doing a vertical build
            and filter down RID lists to the target RID in such a scenario. This is necessary when the host (SDK) rid
