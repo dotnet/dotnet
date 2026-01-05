@@ -1,15 +1,5 @@
 <Project>
 
-  <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
-  <Import Project="$(RepositoryEngineeringDir)Microsoft.DotNet.SwaggerGenerator.MSBuild.InTree.targets" Condition="'$(UsingInTreeToolSwaggerGeneratorMSBuild)' == 'true'" />
-  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" Condition="'$(IsBuildTaskProject)' == 'true'" />
-
-  <!-- Turn on package pruning by default for every TFM except for .NET Framework. -->
-  <PropertyGroup>
-    <RestoreEnablePackagePruning Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'">true</RestoreEnablePackagePruning>
-  </PropertyGroup>
-
-  <!-- TODO: Remove when updated to a newer bootstrap SDK -->
   <Choose>
     <When Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(TargetFramework)' != 'net$(BundledNETCoreAppTargetFrameworkVersion)'">
       <!-- Disable restoring transitive aspnetcore and windowsdesktop targeting packs to avoid unnecessary dependencies. -->
