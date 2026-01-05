@@ -32,7 +32,7 @@ using Xunit.Abstractions;
 
 namespace NuGet.XPlat.FuncTest
 {
-    [Collection("NuGet XPlat Test Collection")]
+    [Collection(XPlatCollection.Name)]
     public class ListPackageTests
     {
         private readonly ITestOutputHelper _testOutputHelper;
