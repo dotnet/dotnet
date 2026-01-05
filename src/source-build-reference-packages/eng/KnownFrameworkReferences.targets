@@ -11,4 +11,11 @@
     </KnownFrameworkReference>
   </ItemGroup>
 
+  <!-- TODO: Make this more general purpose and consider moving into the Arcade SDK into TargetingPacks.targets. This is hacky as it uses newer analyzers from the current framework for downlevel TFMs. -->
+  <Target Name="AddAnalyzersForIncompleteTargetingPack" AfterTargets="ResolveTargetingPackAssets" Condition="'@(FrameworkReference)' != '' and '$(TargetFrameworkIdentifier)' == '.NETCoreApp' and '$(TargetFramework)' != '$(NetCurrent)'">
+    <ItemGroup>
+      <Analyzer Include="$(NetCoreTargetingPackRoot)\Microsoft.NETCore.App.Ref\$(BundledNETCoreAppPackageVersion)\analyzers\dotnet\cs\*.dll" />
+    </ItemGroup>
+  </Target>
+
 </Project>
