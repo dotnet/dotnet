@@ -340,7 +340,15 @@
         linux-musl-loongarch64;
         " />
 
-      <MonoRuntimePackRids Include="@(Net90MonoRuntimePackRids)" />
+      <Net100MonoRuntimePackRids Include="
+        @(Net90MonoRuntimePackRids);
+        linux-riscv64;
+        linux-musl-riscv64;
+        linux-loongarch64;
+        linux-musl-loongarch64;
+        " />
+
+      <MonoRuntimePackRids Include="@(Net100MonoRuntimePackRids)" />
 
       <AspNetCore30RuntimePackRids Include="
         win-x64;
@@ -470,8 +478,26 @@
         wasi-wasm;
         " />
 
-      <NativeAOTRuntimePackRids Include="
+      <Net100NativeAOTRuntimePackRids Include="
         @(Net90NativeAOTRuntimePackRids);
+        linux-x64;
+        linux-arm;
+        linux-arm64;
+        linux-loongarch64;
+        linux-bionic-arm;
+        linux-musl-x64;
+        linux-musl-arm;
+        linux-musl-arm64;
+        linux-musl-loongarch64;
+        win-x64;
+        win-x86;
+        win-arm64;
+        browser-wasm;
+        wasi-wasm;
+        " />
+
+      <NativeAOTRuntimePackRids Include="
+        @(Net100NativeAOTRuntimePackRids);
         linux-riscv64;
         linux-musl-riscv64;
         android-arm64;
