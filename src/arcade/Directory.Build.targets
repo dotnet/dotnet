@@ -11,13 +11,13 @@
 
   <!-- TODO: Remove when updated to a newer bootstrap SDK that includes the TargetingPack.targets file. -->
   <Choose>
-    <When Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(TargetFrameworkVersion)' != '$(BundledNETCoreAppTargetFrameworkVersion)'">
+    <When Condition="'$(DotNetBuildSourceOnly)' == 'true'">
       <!-- Disable restoring transitive aspnetcore and windowsdesktop targeting packs to avoid unnecessary dependencies. -->
       <PropertyGroup>
         <DisableTransitiveFrameworkReferenceDownloads>true</DisableTransitiveFrameworkReferenceDownloads>
       </PropertyGroup>
 
-      <ItemGroup>
+      <ItemGroup Condition="'$(TargetFrameworkVersion)' != '' and $([MSBuild]::VersionLessThan('$(TargetFrameworkVersion)', '$(BundledNETCoreAppTargetFrameworkVersion)'))">
         <!-- Downgrade targeting pack versions to X.0.0 as only those are provided by SBRP. -->
         <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.NETCore.App'))">
           <TargetingPackVersion Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(TargetFramework)', '^net\d+\.0$'))">$([System.Text.RegularExpressions.Regex]::Match('%(TargetFramework)', '\d+').Value).0.0</TargetingPackVersion>
