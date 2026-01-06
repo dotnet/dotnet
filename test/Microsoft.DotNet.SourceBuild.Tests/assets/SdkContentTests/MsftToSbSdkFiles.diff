@@ -45,10 +45,39 @@ index ------------
  ./packs/Microsoft.NETCore.App.Ref/x.y.z/
  ./packs/Microsoft.NETCore.App.Ref/x.y.z/analyzers/
 @@ ------------ @@
- ./packs/Microsoft.NETCore.App.Ref/x.y.z/ref/netx.y/WindowsBase.dll
  ./sdk-manifests/
  ./sdk-manifests/x.y.z/
--./sdk-manifests/x.y.z/
+ ./sdk-manifests/x.y.z/
++./sdk-manifests/x.y.z/microsoft.net.sdk.android/
++./sdk-manifests/x.y.z/microsoft.net.sdk.android/x.y.z/
++./sdk-manifests/x.y.z/microsoft.net.sdk.android/x.y.z/WorkloadDependencies.json
++./sdk-manifests/x.y.z/microsoft.net.sdk.android/x.y.z/WorkloadManifest.json
++./sdk-manifests/x.y.z/microsoft.net.sdk.android/x.y.z/WorkloadManifest.targets
++./sdk-manifests/x.y.z/microsoft.net.sdk.ios/
++./sdk-manifests/x.y.z/microsoft.net.sdk.ios/x.y.z/
++./sdk-manifests/x.y.z/microsoft.net.sdk.ios/x.y.z/WorkloadDependencies.json
++./sdk-manifests/x.y.z/microsoft.net.sdk.ios/x.y.z/WorkloadManifest.json
++./sdk-manifests/x.y.z/microsoft.net.sdk.ios/x.y.z/WorkloadManifest.targets
++./sdk-manifests/x.y.z/microsoft.net.sdk.maccatalyst/
++./sdk-manifests/x.y.z/microsoft.net.sdk.maccatalyst/x.y.z/
++./sdk-manifests/x.y.z/microsoft.net.sdk.maccatalyst/x.y.z/WorkloadDependencies.json
++./sdk-manifests/x.y.z/microsoft.net.sdk.maccatalyst/x.y.z/WorkloadManifest.json
++./sdk-manifests/x.y.z/microsoft.net.sdk.maccatalyst/x.y.z/WorkloadManifest.targets
++./sdk-manifests/x.y.z/microsoft.net.sdk.macos/
++./sdk-manifests/x.y.z/microsoft.net.sdk.macos/x.y.z/
++./sdk-manifests/x.y.z/microsoft.net.sdk.macos/x.y.z/WorkloadDependencies.json
++./sdk-manifests/x.y.z/microsoft.net.sdk.macos/x.y.z/WorkloadManifest.json
++./sdk-manifests/x.y.z/microsoft.net.sdk.macos/x.y.z/WorkloadManifest.targets
++./sdk-manifests/x.y.z/microsoft.net.sdk.maui/
++./sdk-manifests/x.y.z/microsoft.net.sdk.maui/x.y.z/
++./sdk-manifests/x.y.z/microsoft.net.sdk.maui/x.y.z/WorkloadDependencies.json
++./sdk-manifests/x.y.z/microsoft.net.sdk.maui/x.y.z/WorkloadManifest.json
++./sdk-manifests/x.y.z/microsoft.net.sdk.maui/x.y.z/WorkloadManifest.targets
++./sdk-manifests/x.y.z/microsoft.net.sdk.tvos/
++./sdk-manifests/x.y.z/microsoft.net.sdk.tvos/x.y.z/
++./sdk-manifests/x.y.z/microsoft.net.sdk.tvos/x.y.z/WorkloadDependencies.json
++./sdk-manifests/x.y.z/microsoft.net.sdk.tvos/x.y.z/WorkloadManifest.json
++./sdk-manifests/x.y.z/microsoft.net.sdk.tvos/x.y.z/WorkloadManifest.targets
  ./sdk-manifests/x.y.z/microsoft.net.workload.emscripten.current/
  ./sdk-manifests/x.y.z/microsoft.net.workload.emscripten.current/x.y.z/
  ./sdk-manifests/x.y.z/microsoft.net.workload.emscripten.current/x.y.z/WorkloadManifest.json
