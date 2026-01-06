@@ -1,0 +1,43 @@
+From 22c9a70c8e0fe6a30190430d93f12fa29a304288 Mon Sep 17 00:00:00 2001
+From: Viktor Hofer <viktor.hofer@microsoft.com>
+Date: Mon, 5 Jan 2026 11:43:26 +0100
+Subject: [PATCH] Fix FileVersion calculation in 2026
+
+Issue: https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/3388
+
+---
+ build/common.props | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/build/common.props b/build/common.props
+index efd7e90e..e5f6f3ed 100644
+--- a/build/common.props
++++ b/build/common.props
+@@ -42,7 +42,24 @@
+     <VersionSuffix Condition="'$(WilsonVersion)' == ''">$(PreviewVersionSuffix)</VersionSuffix>
+     <VersionPrefix Condition="'$(WilsonVersion)' == ''">$(WilsonCurrentVersion)</VersionPrefix>
+     <FileVersion Condition="'$(WilsonVersion)' != '' and '$(IsCustomPreview)' != 'true' ">$(WilsonVersion).$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.ToString("MMdd"))</FileVersion>
+-    <FileVersion Condition="'$(WilsonVersion)' == ''">$(WilsonCurrentVersion).$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.ToString("MMdd"))</FileVersion>
++    <!-- TODO: Makes sure that the revision is higher than what's in already shipped packages (> 61231).
++         This will overflow in 2029 though and needs a long term fix. -->
++    <FileVersion Condition="'$(WilsonVersion)' == ''">$(WilsonCurrentVersion).$([MSBuild]::Add(
++      61232,
++      $([MSBuild]::Add(
++        $([MSBuild]::Add(
++          $([MSBuild]::Multiply(
++            $([System.DateTime]::Now.AddYears(-2019).Year),
++            416
++          )),
++          $([MSBuild]::Multiply(
++            $([System.DateTime]::Now.ToString("MM")),
++            32
++          ))
++        )),
++        $([System.DateTime]::Now.ToString("dd"))
++      ))
++    ))</FileVersion>
+   </PropertyGroup>
+ 
+   <PropertyGroup>
+-- 
+2.52.0.windows.1
