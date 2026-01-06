@@ -9,9 +9,9 @@
     <BuildArgs>$(BuildArgs) /p:GenerateResourceUsePreserializedResources=true</BuildArgs>
 
     <!-- Pass properties in so that nuget-client doesn't need to hardcode them as the repo doesn't import the Arcade infra. -->
-    <BuildArgs>$(BuildArgs) /p:NetCurrent=$(NetCurrent)</BuildArgs>
-    <BuildArgs Condition="'$(NetPrevious)' != ''">$(BuildArgs) /p:NetPrevious=$(NetPrevious)</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:NetMinimum=$(NetMinimum)</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:NetCurrent=net10.0</BuildArgs>
+    <!-- <BuildArgs Condition="'$(NetPrevious)' != ''">$(BuildArgs) /p:NetPrevious=$(NetPrevious)</BuildArgs> -->
+    <!-- <BuildArgs>$(BuildArgs) /p:NetMinimum=$(NetMinimum)</BuildArgs> -->
   </PropertyGroup>
 
   <ItemGroup>
