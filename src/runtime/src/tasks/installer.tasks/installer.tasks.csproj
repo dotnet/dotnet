@@ -6,7 +6,7 @@
     <RunAnalyzers>false</RunAnalyzers>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <NuGetPackageTargetFramework>net8.0</NuGetPackageTargetFramework>
-    <NuGetPackageTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NetCurrent)</NuGetPackageTargetFramework>
+    <NuGetPackageTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true'">net10.0</NuGetPackageTargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
