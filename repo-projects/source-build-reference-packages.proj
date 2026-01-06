@@ -12,9 +12,9 @@
   </ItemGroup>
 
   <Target Name="GetProducedReferenceOnlyPackages"
-          Returns="@(_ReferenceOnlyPackages)">
+          Returns="@(ReferenceOnlyPackage)">
     <ItemGroup>
-      <_ReferenceOnlyPackages Include="$(RepoArtifactsDir)packages\$(Configuration)\ReferenceOnly\*" />
+      <ReferenceOnlyPackage Include="$(RepoArtifactsDir)packages\$(Configuration)\ReferenceOnly\*" />
     </ItemGroup>
   </Target>
 
@@ -22,18 +22,20 @@
   <Target Name="CopyReferenceOnlyPackages"
           DependsOnTargets="GetProducedReferenceOnlyPackages"
           AfterTargets="RepoBuild"
-          BeforeTargets="CleanupRepo" >
-    <Copy SourceFiles="@(_ReferenceOnlyPackages)"
+          BeforeTargets="CleanupRepo"
+          Inputs="@(ReferenceOnlyPackage)"
+          Outputs="$(BaseIntermediateOutputPath)CopyReferenceOnlyArtifacts.complete">
+    <Copy SourceFiles="@(ReferenceOnlyPackage)"
           DestinationFolder="$(ReferencePackagesDir)" />
-  </Target>
 
-  <!-- Log the new repo artifacts -->
-  <Target Name="LogReferenceOnlyPackages"
-          DependsOnTargets="GetProducedReferenceOnlyPackages"
-          AfterTargets="LogRepoArtifacts"
-          BeforeTargets="CleanupRepo" >
+    <!-- Log the new repo artifacts -->
     <Message Importance="High" Text="New reference package(s) after building $(RepositoryName):" />
-    <Message Importance="High" Text="  -> %(_ReferenceOnlyPackages.Filename)" />
+    <Message Importance="High" Text="  -> %(ReferenceOnlyPackage.Filename)" />
+
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <Touch Files="$(BaseIntermediateOutputPath)CopyReferenceOnlyArtifacts.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
   </Target>
 
 </Project>

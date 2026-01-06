@@ -33,17 +33,49 @@ usage() {
     echo "  -d|--destination                              A path to the root of the repo to copy source into."
     echo "  -t|--type                                     Type of the package to generate. Accepted values: ref (default) | text."
     echo "  -x|--excludeDependencies                      Determines if package dependencies should be excluded. Default is false."
+    echo "  -a|--regenerate-all                           Regenerate all packages of the specified type."
     echo "  -f|--feeds                                    A semicolon-separated list of additional NuGet feeds to use during restore."
     echo "  -h|--help                                     Print help and exit."
 }
 
+setup_package_regeneration() {
+    echo "Discovering packages for regeneration..."
+
+    tempCsv=$(mktemp "${TMPDIR:-/tmp}/packages.XXXXXX.csv")
+
+    trap "rm -f '$tempCsv'" EXIT INT TERM
+
+    if [ "$type" = "ref" ]; then
+        packagesDir="$scriptroot/src/referencePackages/src"
+    elif [ "$type" = "text" ]; then
+        packagesDir="$scriptroot/src/textOnlyPackages/src"
+    fi
+
+    if [ -d "$packagesDir" ]; then
+        find "$packagesDir" -mindepth 2 -maxdepth 2 -type d | \
+            awk -F'/' '{print $(NF-1)","$NF}' >> "$tempCsv"
+    fi
+
+    packageCount=$(wc -l < "$tempCsv")
+    if [ "$packageCount" -eq 0 ]; then
+        echo -e "${RED}ERROR: No packages found to regenerate${NC}"
+        exit 1
+    fi
+
+    echo "Found $packageCount package(s) to regenerate"
+
+    arguments="$arguments /p:PackageCSV=\"$tempCsv\" /p:ExcludePackageDependencies=true"
+}
+
 if [[ $# -le 0 ]]; then
-	usage
-	exit 0
+    usage
+    exit 0
 fi
 
 arguments=''
 extraArgs=''
+regenerateAll=false
+type='ref'
 
 while [[ $# > 0 ]]; do
     opt="$(echo "${1/#--/-}" | tr "[:upper:]" "[:lower:]")"
@@ -97,6 +129,10 @@ while [[ $# > 0 ]]; do
             arguments="$arguments /p:ExcludePackageDependencies=true"
             shift 1
             ;;
+        -a|-regenerate-all)
+            regenerateAll=true
+            shift 1
+            ;;
         -f|-feeds)
             if [ -z ${2+x} ]; then
                 echo -e "${RED}ERROR: No feed supplied.${NC}"
@@ -116,6 +152,10 @@ while [[ $# > 0 ]]; do
             ;;
     esac
 done
+
+if [ "$regenerateAll" = true ]; then
+    setup_package_regeneration
+fi
 
 # Build the projects to generate text only or reference package source
 "$scriptroot/eng/common/build.sh" --restore --build --warnaserror false /p:GeneratePackageSource=true $arguments $extraArgs

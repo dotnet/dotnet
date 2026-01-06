@@ -9,7 +9,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.25618.104</MicrosoftDotNetArcadeSdkPackageVersion>
     <MicrosoftDotNetBuildManifestPackageVersion>11.0.0-beta.25618.104</MicrosoftDotNetBuildManifestPackageVersion>
     <!-- dotnet/arcade-services dependencies -->
-    <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.25612.4</MicrosoftDotNetDarcLibPackageVersion>
+    <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.25619.4</MicrosoftDotNetDarcLibPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
