@@ -101,6 +101,25 @@ public class CohostOnTypeFormattingEndpointTest(HtmlFormattingFixture htmlFormat
             html: true);
     }
 
+    [Fact]
+    public async Task FormattingDisabled()
+    {
+        ClientSettingsManager.Update(ClientSettingsManager.GetClientSettings().AdvancedSettings with { FormatOnType = false });
+
+        await VerifyOnTypeFormattingAsync(
+            input: """
+                @{
+                    if(true){}$$
+                }
+                """,
+            expected: """
+                @{
+                    if(true){}
+                }
+                """,
+            triggerCharacter: '}');
+    }
+
     private async Task VerifyOnTypeFormattingAsync(TestCode input, string expected, char triggerCharacter, bool html = false)
     {
         var document = CreateProjectAndRazorDocument(input.Text);
@@ -126,9 +145,7 @@ public class CohostOnTypeFormattingEndpointTest(HtmlFormattingFixture htmlFormat
             requestInvoker = StrictMock.Of<IHtmlRequestInvoker>();
         }
 
-        var clientSettingsManager = new ClientSettingsManager(changeTriggers: []);
-
-        var endpoint = new CohostOnTypeFormattingEndpoint(IncompatibleProjectService, RemoteServiceInvoker, requestInvoker, clientSettingsManager, LoggerFactory);
+        var endpoint = new CohostOnTypeFormattingEndpoint(IncompatibleProjectService, RemoteServiceInvoker, requestInvoker, ClientSettingsManager, LoggerFactory);
 
         var request = new DocumentOnTypeFormattingParams()
         {

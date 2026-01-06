@@ -5,6 +5,7 @@ using System;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -42,8 +43,19 @@ internal sealed class RemoteDocumentMappingService(
             return (generatedDocumentUri, generatedDocumentRange);
         }
 
-        var project = originSnapshot.TextDocument.Project;
-        var razorCodeDocument = await _snapshotManager.GetSnapshot(project).TryGetCodeDocumentFromGeneratedDocumentUriAsync(generatedDocumentUri, cancellationToken).ConfigureAwait(false);
+        var solution = originSnapshot.TextDocument.Project.Solution;
+        if (!solution.TryGetSourceGeneratedDocumentIdentity(generatedDocumentUri, out var identity))
+        {
+            return (generatedDocumentUri, generatedDocumentRange);
+        }
+
+        var project = solution.GetProject(identity.DocumentId.ProjectId);
+        if (project is null)
+        {
+            return (generatedDocumentUri, generatedDocumentRange);
+        }
+
+        var razorCodeDocument = await _snapshotManager.GetSnapshot(project).TryGetCodeDocumentForGeneratedDocumentAsync(identity, cancellationToken).ConfigureAwait(false);
         if (razorCodeDocument is null)
         {
             return (generatedDocumentUri, generatedDocumentRange);
@@ -57,7 +69,7 @@ internal sealed class RemoteDocumentMappingService(
 
         // If the position is unmappable, but was in a generated Razor, we have one last check to see if Roslyn wants to navigate
         // to the class declaration, in which case we'll map to (0,0) in the Razor document itself.
-        if (await TryGetCSharpClassDeclarationSpanAsync(generatedDocumentUri, project, cancellationToken).ConfigureAwait(false) is { } classDeclSpan &&
+        if (await TryGetCSharpClassDeclarationSpanAsync(identity, project, cancellationToken).ConfigureAwait(false) is { } classDeclSpan &&
             generatedDocumentRange.Start == classDeclSpan.Start &&
                 (generatedDocumentRange.End == generatedDocumentRange.Start ||
                 generatedDocumentRange.End == classDeclSpan.End))
@@ -68,9 +80,9 @@ internal sealed class RemoteDocumentMappingService(
         return (generatedDocumentUri, generatedDocumentRange);
     }
 
-    private static async Task<LinePositionSpan?> TryGetCSharpClassDeclarationSpanAsync(Uri generatedDocumentUri, Project project, CancellationToken cancellationToken)
+    private static async Task<LinePositionSpan?> TryGetCSharpClassDeclarationSpanAsync(RazorGeneratedDocumentIdentity identity, Project project, CancellationToken cancellationToken)
     {
-        var generatedDocument = await project.TryGetCSharpDocumentFromGeneratedDocumentUriAsync(generatedDocumentUri, cancellationToken).ConfigureAwait(false);
+        var generatedDocument = await project.TryGetCSharpDocumentForGeneratedDocumentAsync(identity, cancellationToken).ConfigureAwait(false);
         if (generatedDocument is null)
         {
             return null;
