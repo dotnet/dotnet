@@ -26,7 +26,7 @@ param (
 $base64authinfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(":$AzDOPat"))
 $AzDOAuthHeader = @{"Authorization"="Basic $base64authinfo"}
 
-$allPipelines = Invoke-WebRequest -Uri "https://dev.azure.com/$Organization/$Project/_apis/build/definitions?api-version=6.0" -Headers $AzDOAuthHeader | ConvertFrom-Json
+$allPipelines = Invoke-WebRequest -UseBasicParsing -Uri "https://dev.azure.com/$Organization/$Project/_apis/build/definitions?api-version=6.0" -Headers $AzDOAuthHeader | ConvertFrom-Json
 
 $queueStatusString = $null
 $uxString = $null
@@ -48,13 +48,13 @@ foreach ($pipeline in $allPipelines.value) {
         Write-Host -NoNewLine "  $uxString '$($pipeline.name)' (id: $pipelineId)..."
         
         $pipelineUri = "https://dev.azure.com/$Organization/$Project/_apis/build/definitions/$($pipelineId)?api-version=6.0"
-        $pipelineInfo = Invoke-WebRequest -Uri $pipelineUri -Headers $AzDOAuthHeader | ConvertFrom-Json
+        $pipelineInfo = Invoke-WebRequest -UseBasicParsing -Uri $pipelineUri -Headers $AzDOAuthHeader | ConvertFrom-Json
         
         # Update the pipeline
         $pipelineInfo.queueStatus = $queueStatusString
         
         #update the definition
-        $result = Invoke-WebRequest -Uri $pipelineUri -Headers $AzDOAuthHeader -Method Put -Body (ConvertTo-Json $pipelineInfo -Depth 100) -ContentType "application/json"
+        $result = Invoke-WebRequest -UseBasicParsing -Uri $pipelineUri -Headers $AzDOAuthHeader -Method Put -Body (ConvertTo-Json $pipelineInfo -Depth 100) -ContentType "application/json"
         
         if ($result.StatusCode -eq 200) {
             Write-Host "done"

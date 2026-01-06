@@ -32,12 +32,15 @@ function DownloadWithRetries {
       if curl -fL --retry 5 -O "$url"; then
         return 0
       else
-        case $? in
-          18)
-            sleep 3
+        local exitCode=$?
+        case $exitCode in
+          22)
+            # HTTP error (including 404) - don't retry
+            return 22
             ;;
           *)
-            return 1
+            # For all other errors (including partial transfers), sleep and retry
+            sleep 3
             ;;
         esac
       fi
