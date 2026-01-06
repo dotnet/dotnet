@@ -3,6 +3,7 @@
 <Project TreatAsLocalProperty="Platform">
 
   <PropertyGroup>
+    <DotNetBuildSharedComponents Condition="'$(DotNetBuildSharedComponents)' == ''">true</DotNetBuildSharedComponents>
     <BuildArchitecture Condition="'$(BuildArchitecture)' == ''">$([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString().ToLowerInvariant())</BuildArchitecture>
     <TargetArchitecture Condition="'$(TargetArchitecture)' == '' AND ('$(BuildArchitecture)' == 'arm64')">$(BuildArchitecture)</TargetArchitecture>
     <TargetArchitecture Condition="'$(TargetArchitecture)' == '' AND '$(BuildArchitecture)' == 's390x'">$(BuildArchitecture)</TargetArchitecture>

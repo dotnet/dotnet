@@ -15,7 +15,7 @@
 
     <BuildArgs>$(BuildArgs) /p:PublicBaseURL=file:%2F%2F$(ArtifactsAssetsDir)</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:UsePortableLinuxSharedFramework=false</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:DotNetBuildSharedComponents=$(DotNetBuildSharedComponents)</BuildArgs>
+    <BuildArgs Condition="'$(DotNetBuildSharedComponents)' == 'false'">$(BuildArgs) /p:DotNetBuildSharedComponents=false</BuildArgs>
 
     <BuildArgs Condition="'$(PgoInstrument)' == 'true'">$(BuildArgs) /p:PgoInstrument=true</BuildArgs>
     <BuildArgs Condition="'$(EnablePoison)' == 'true' or '$(SkipUsingCrossgen)' == 'true'">$(BuildArgs) /p:SkipUsingCrossgen=true</BuildArgs>
