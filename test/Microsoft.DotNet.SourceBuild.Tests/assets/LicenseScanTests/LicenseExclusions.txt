@@ -121,6 +121,7 @@ src/roslyn/THIRD-PARTY-NOTICES.txt
 src/roslyn/src/Analyzers/CSharp/Tests/FileHeaders/FileHeaderTests.cs|unknown-license-reference
 src/roslyn/src/Analyzers/VisualBasic/Tests/FileHeaders/FileHeaderTests.vb|unknown-license-reference
 src/roslyn/src/EditorFeatures/CSharpTest2/EmbeddedLanguages/RegularExpressions/Regex_RealWorldPatterns.json
+src/roslyn/src/VisualStudio/IntegrationTest/Harness/IntegrationTestServiceDev18/source.extension.vsixmanifest|unknown-license-reference
 
 # Applicable to installer, not source
 src/roslyn/src/RoslynAnalyzers/Assets/EULA.txt|ms-net-library
