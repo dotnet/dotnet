@@ -64,4 +64,6 @@
   </Target>
   
   <Import Project="eng\dotnet-build\ExcludeFromDotNetBuild.AfterCommonTargets.targets" Condition="'$(DotNetBuild)' == 'true'" />
+  <Import Project="eng\dotnet-build\TargetingPacks.targets" Condition="'$(DotNetBuild)' == 'true'" />
+
 </Project>
