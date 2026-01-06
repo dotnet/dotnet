@@ -13,16 +13,16 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 295497,
+      "barId": 296012,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "9c5cb4980215a3286c0bf5034e02fc74124b459d"
+      "commitSha": "95d597122c8ace890da82c59f2433433325a1b13"
     },
     {
-      "barId": 295708,
+      "barId": 295979,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "0784a9116ea762117c4cc19194364f97d2b1b2cd"
+      "commitSha": "fb775842a00d534aaf25466ff76e0d8fe86d2e7d"
     },
     {
       "barId": 295751,
@@ -37,10 +37,10 @@
       "commitSha": "153e938871d0ce897bad283fbf51bac21df23645"
     },
     {
-      "barId": 295790,
+      "barId": 296041,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "17cf6f59858f6a771a5e060347520b062e38e544"
+      "commitSha": "9147db3e7773e57bee0ac7cd9f4da701558569ba"
     },
     {
       "barId": 291014,
@@ -49,16 +49,16 @@
       "commitSha": "f29ac531ec59b79ff12335835ae4a69cde51156a"
     },
     {
-      "barId": 295555,
+      "barId": 296039,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "054aa3adc2cc95c666c48137f26b2baacc8ed620"
+      "commitSha": "54ce3d7f811e6e815285ec7577f0a17e6b2ca57c"
     },
     {
-      "barId": 295238,
+      "barId": 296022,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "b6d54ea87b06df738acebf45389a685f5af99df7"
+      "commitSha": "2779bb2f66c47eb62b28d78d29b225d850f45238"
     },
     {
       "barId": 292299,
@@ -73,10 +73,10 @@
       "commitSha": "069bda6132d6ac2134cc9b26d651ccb825ff212d"
     },
     {
-      "barId": 293953,
+      "barId": 295978,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "bbee830b0ef18eb5b4aa5daee65ae35a34f8c132"
+      "commitSha": "41f7799afd5767945acc16071ab64fa984bca274"
     }
   ],
   "submodules": [
