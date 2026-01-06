@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.AutoInsert;
@@ -38,6 +39,295 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
 
                 The end.
                 """,
+            triggerCharacter: ">");
+    }
+
+    [Theory]
+    [InlineData("PageTitle")]
+    [InlineData("div")]
+    [InlineData("text")]
+    public async Task EndTag_InCSharp(string startTag)
+    {
+        await VerifyOnAutoInsertAsync(
+            input: $$"""
+                <div>
+                    @if (true)
+                    {
+                        <{{startTag}}>$$
+                    }
+                </div>
+                """,
+            output: $$"""
+                <div>
+                    @if (true)
+                    {
+                        <{{startTag}}>$0</{{startTag}}>
+                    }
+                </div>
+                """,
+            triggerCharacter: ">");
+    }
+
+    [Fact]
+    public async Task EndTag_AlreadyExists()
+    {
+        await VerifyOnAutoInsertAsync(
+            input: """
+                This is a Razor document.
+
+                <test>$$<test></test></test>
+
+                The end.
+                """,
+            output: null,
+            triggerCharacter: ">");
+    }
+
+    [Fact]
+    public async Task EndTag_TagStructure_WithoutEndTag()
+    {
+        await VerifyOnAutoInsertAsync(
+            input: """
+                This is a Razor document.
+
+                <area href="~/foo">$$
+
+                The end.
+                """,
+            output: """
+                This is a Razor document.
+
+                <area href="~/foo" />
+
+                The end.
+                """,
+            triggerCharacter: ">",
+            fileKind: RazorFileKind.Legacy);
+    }
+
+    [Fact]
+    public async Task EndTag_TagStructure_WithoutEndTag_AlreadyExists()
+    {
+        await VerifyOnAutoInsertAsync(
+            input: """
+                This is a Razor document.
+
+                <area href="~/foo">$$</area>
+
+                The end.
+                """,
+            output: """
+                This is a Razor document.
+
+                <area href="~/foo" /></area>
+
+                The end.
+                """,
+            triggerCharacter: ">",
+            fileKind: RazorFileKind.Legacy);
+    }
+
+    [Fact]
+    public async Task EndTag_CloseOutOfScope()
+    {
+        await VerifyOnAutoInsertAsync(
+            input: """
+                <div>
+                    @if (true)
+                    {
+                        <div>$$</div>
+                    }
+                """,
+            output: """
+                <div>
+                    @if (true)
+                    {
+                        <div>$0</div></div>
+                    }
+                """,
+            triggerCharacter: ">");
+    }
+
+    [Fact]
+    public async Task EndTag_VoidElement()
+    {
+        await VerifyOnAutoInsertAsync(
+            input: """
+                This is a Razor document.
+
+                <input>$$
+
+                The end.
+                """,
+            output: """
+                This is a Razor document.
+
+                <input />
+
+                The end.
+                """,
+            triggerCharacter: ">");
+    }
+
+    [Fact]
+    public async Task EndTag_VoidElement_CaseInsensitive()
+    {
+        await VerifyOnAutoInsertAsync(
+            input: """
+                This is a Razor document.
+
+                <Input>$$
+
+                The end.
+                """,
+            output: """
+                This is a Razor document.
+
+                <Input />
+
+                The end.
+                """,
+            triggerCharacter: ">");
+    }
+
+    [Fact]
+    public async Task EndTag_Nested()
+    {
+        await VerifyOnAutoInsertAsync(
+            input: """
+                This is a Razor document.
+
+                <div><test>$$</div>
+
+                The end.
+                """,
+            output: """
+                This is a Razor document.
+
+                <div><test>$0</test></div>
+
+                The end.
+                """,
+            triggerCharacter: ">");
+    }
+
+    [Fact]
+    public async Task EndTag_Nested_WithAttribute()
+    {
+        await VerifyOnAutoInsertAsync(
+            input: """
+                This is a Razor document.
+
+                <div><a target="_blank">$$</div>
+
+                The end.
+                """,
+            output: """
+                This is a Razor document.
+
+                <div><a target="_blank">$0</a></div>
+
+                The end.
+                """,
+            triggerCharacter: ">");
+    }
+
+    [Fact]
+    public async Task EndTag_Nested_WithAttribute_WithSpace()
+    {
+        await VerifyOnAutoInsertAsync(
+            input: """
+                This is a Razor document.
+
+                <div><a target="_blank" >$$</div>
+
+                The end.
+                """,
+            output: """
+                This is a Razor document.
+
+                <div><a target="_blank" >$0</a></div>
+
+                The end.
+                """,
+            triggerCharacter: ">");
+    }
+
+    [Fact]
+    public async Task EndTag_Nested_WithMinimizedAttribute()
+    {
+        await VerifyOnAutoInsertAsync(
+            input: """
+                This is a Razor document.
+
+                <div><form novalidate>$$</div>
+
+                The end.
+                """,
+            output: """
+                This is a Razor document.
+
+                <div><form novalidate>$0</form></div>
+
+                The end.
+                """,
+            triggerCharacter: ">");
+    }
+
+    [Fact]
+    public async Task EndTag_Nested_WithMinimizedAttribute_WithSpace()
+    {
+        await VerifyOnAutoInsertAsync(
+            input: """
+                This is a Razor document.
+
+                <div><form novalidate >$$</div>
+
+                The end.
+                """,
+            output: """
+                This is a Razor document.
+
+                <div><form novalidate >$0</form></div>
+
+                The end.
+                """,
+            triggerCharacter: ">");
+    }
+
+    [Fact]
+    public async Task EndTag_Nested_VoidElement()
+    {
+        await VerifyOnAutoInsertAsync(
+            input: """
+                This is a Razor document.
+
+                <test><input>$$</test>
+
+                The end.
+                """,
+            output: """
+                This is a Razor document.
+
+                <test><input /></test>
+
+                The end.
+                """,
+            triggerCharacter: ">");
+    }
+
+    [Fact]
+    public async Task EndTag_VoidElement_AlreadyClosed()
+    {
+        await VerifyOnAutoInsertAsync(
+            input: """
+                This is a Razor document.
+
+                <input />$$
+
+                The end.
+                """,
+            output: null,
             triggerCharacter: ">");
     }
 
@@ -122,6 +412,31 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
                 }
                 """,
             triggerCharacter: "/");
+    }
+
+    [Fact]
+    public async Task CSharp_DocComment_OnEnter()
+    {
+        await VerifyOnAutoInsertAsync(
+            input: """
+                @code {
+                    /// <summary>
+                    /// This is some text
+                    $$
+                    /// </summary>
+                    void TestMethod() {}
+                }
+                """,
+            output: """
+                @code {
+                    /// <summary>
+                    /// This is some text
+                    /// $0
+                    /// </summary>
+                    void TestMethod() {}
+                }
+                """,
+            triggerCharacter: "\n");
     }
 
     [Fact]
@@ -231,9 +546,11 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
         bool insertSpaces = true,
         int tabSize = 4,
         bool formatOnType = true,
-        bool autoClosingTags = true)
+        bool autoClosingTags = true,
+        RazorFileKind? fileKind = null)
     {
-        var document = CreateProjectAndRazorDocument(input.Text);
+        fileKind ??= RazorFileKind.Component;
+        var document = CreateProjectAndRazorDocument(input.Text, fileKind: fileKind);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         ClientSettingsManager.Update(ClientAdvancedSettings.Default with { FormatOnType = formatOnType, AutoClosingTags = autoClosingTags });

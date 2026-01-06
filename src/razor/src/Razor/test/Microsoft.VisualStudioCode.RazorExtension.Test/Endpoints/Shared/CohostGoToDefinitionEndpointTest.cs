@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -957,6 +958,57 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         // the user would see.
         var line = File.ReadLines(location.DocumentUri.GetRequiredParsedUri().LocalPath).ElementAt(location.Range.Start.Line);
         Assert.Contains("public sealed class String", line);
+    }
+
+    [Fact]
+    public async Task ComponentAttribute_CrossProject()
+    {
+        // Note: This test doesn't simulate syncing solutions to the remote workspace, so strictly speaking is running in the "wrong" MEF composition
+        // but thats not an important aspect of this scenario.
+
+        var someProjectId = ProjectId.CreateNewId();
+        var surveyPromptId = DocumentId.CreateNewId(someProjectId);
+        TestCode surveyPrompt = """
+            @namespace SomeProject
+
+            <div></div>
+
+            @code
+            {
+                [Parameter]
+                public string [|Title|] { get; set; }
+            }
+            """;
+
+        var anotherProjectId = ProjectId.CreateNewId();
+        var componentId = DocumentId.CreateNewId(anotherProjectId);
+        TestCode component = """
+            @using SomeProject
+
+            <File1 Ti$$tle="InputValue" />
+            """;
+
+        var solution = LocalWorkspace.CurrentSolution;
+        var project1 = AddProjectAndRazorDocument(solution, TestProjectData.SomeProject.FilePath, someProjectId, surveyPromptId, TestProjectData.SomeProjectComponentFile1.FilePath, surveyPrompt.Text).Project;
+        var project2 = AddProjectAndRazorDocument(project1.Solution, TestProjectData.AnotherProject.FilePath, anotherProjectId, componentId, TestProjectData.AnotherProjectComponentFile2.FilePath, component.Text).Project;
+        project2 = project2.AddProjectReference(new ProjectReference(project1.Id));
+        project1 = project2.Solution.GetRequiredProject(project1.Id);
+
+        var surveyPromptDocument = project1.GetAdditionalDocument(surveyPromptId);
+        Assert.NotNull(surveyPromptDocument);
+        var componentDocument = project2.GetAdditionalDocument(componentId);
+        Assert.NotNull(componentDocument);
+
+        var result = await GetGoToDefinitionResultCoreAsync(componentDocument, component, htmlResponse: null);
+
+        Assert.NotNull(result.Value.Second);
+        var locations = result.Value.Second;
+        var location = Assert.Single(locations);
+
+        Assert.Equal(surveyPromptDocument.CreateUri(), location.DocumentUri.GetRequiredParsedUri());
+        var text = SourceText.From(surveyPrompt.Text);
+        var range = text.GetRange(surveyPrompt.Span);
+        Assert.Equal(range, location.Range);
     }
 
     private async Task VerifyGoToDefinitionAsync(

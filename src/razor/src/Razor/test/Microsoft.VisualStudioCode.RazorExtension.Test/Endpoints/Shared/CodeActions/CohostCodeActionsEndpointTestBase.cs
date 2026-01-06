@@ -3,9 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -19,7 +17,6 @@ using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
-using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor;
 using Roslyn.Test.Utilities;
@@ -34,6 +31,7 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
         TestCode input,
         string? expected,
         string codeActionName,
+        int? codeActionIndex = null,
         int childActionIndex = 0,
         RazorFileKind? fileKind = null,
         string? documentFilePath = null,
@@ -43,7 +41,7 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
     {
         var document = CreateRazorDocument(input, fileKind, documentFilePath, additionalFiles, addDefaultImports: addDefaultImports);
 
-        var codeAction = await VerifyCodeActionRequestAsync(document, input, codeActionName, childActionIndex, expectOffer: expected is not null);
+        var codeAction = await VerifyCodeActionRequestAsync(document, input, codeActionName, codeActionIndex, childActionIndex, expectOffer: expected is not null);
 
         if (codeAction is null)
         {
@@ -82,7 +80,7 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
         return CreateProjectAndRazorDocument(input.Text, fileKind, documentFilePath, additionalFiles: additionalFiles, addDefaultImports: addDefaultImports);
     }
 
-    private async Task<CodeAction?> VerifyCodeActionRequestAsync(TextDocument document, TestCode input, string codeActionName, int childActionIndex, bool expectOffer)
+    private async Task<CodeAction?> VerifyCodeActionRequestAsync(TextDocument document, TestCode input, string codeActionName, int? codeActionIndex, int childActionIndex, bool expectOffer)
     {
         var result = await GetCodeActionsAsync(document, input);
         if (result is null)
@@ -90,7 +88,18 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
             return null;
         }
 
-        var codeActionToRun = (VSInternalCodeAction?)result.SingleOrDefault(e => ((RazorVSInternalCodeAction)e.Value!).Name == codeActionName).Value;
+        var codeActions = result.Where(e => ((RazorVSInternalCodeAction)e.Value!).Name == codeActionName).ToArray();
+
+        if (codeActions.Length > 1 && !codeActionIndex.HasValue)
+        {
+            Assert.Fail($"Multiple code actions with name '{codeActionName}' were found. Specify a codeActionIndex to disambiguate.");
+            return null;
+        }
+
+        var index = codeActionIndex ?? 0;
+        var codeActionToRun = codeActions.Length > index
+            ? (VSInternalCodeAction?)codeActions[index]
+            : null;
 
         if (!expectOffer)
         {
@@ -99,7 +108,7 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
         }
 
         AssertEx.NotNull(codeActionToRun, $"""
-            Could not find code action with name '{codeActionName}'.
+            Could not find {(codeActionIndex is null ? "single" : $"index {codeActionIndex}")} code action with name '{codeActionName}'.
 
             Available:
                 {string.Join(Environment.NewLine + "    ", result.Select(e => ((RazorVSInternalCodeAction)e.Value!).Name))}

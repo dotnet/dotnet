@@ -3,13 +3,12 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.NET.Sdk.Razor.SourceGenerators;
@@ -44,12 +43,10 @@ internal static class ProjectExtensions
         return discoveryService.GetTagHelpers(compilation, Options, cancellationToken);
     }
 
-    public static Task<SourceGeneratedDocument?> TryGetCSharpDocumentFromGeneratedDocumentUriAsync(this Project project, Uri generatedDocumentUri, CancellationToken cancellationToken)
+    public static Task<SourceGeneratedDocument?> TryGetCSharpDocumentForGeneratedDocumentAsync(this Project project, RazorGeneratedDocumentIdentity identity, CancellationToken cancellationToken)
     {
-        if (!TryGetHintNameFromGeneratedDocumentUri(project, generatedDocumentUri, out var hintName))
-        {
-            return SpecializedTasks.Null<SourceGeneratedDocument>();
-        }
+        Debug.Assert(identity.DocumentId.ProjectId == project.Id, "Generated document URI does not belong to this project.");
+        var hintName = identity.HintName;
 
         return TryGetSourceGeneratedDocumentFromHintNameAsync(project, hintName, cancellationToken);
     }
@@ -137,29 +134,5 @@ internal static class ProjectExtensions
 
             return RazorSourceGenerator.GetIdentifierFromPath(relativeDocumentPath);
         }
-    }
-
-    /// <summary>
-    /// Finds source generated documents by iterating through all of them. In OOP there are better options!
-    /// </summary>
-    public static bool TryGetHintNameFromGeneratedDocumentUri(this Project project, Uri generatedDocumentUri, [NotNullWhen(true)] out string? hintName)
-    {
-        if (!RazorUri.IsGeneratedDocumentUri(generatedDocumentUri))
-        {
-            hintName = null;
-            return false;
-        }
-
-        var identity = RazorUri.GetIdentityOfGeneratedDocument(project.Solution, generatedDocumentUri);
-
-        if (!identity.IsRazorSourceGeneratedDocument())
-        {
-            // This is not a Razor source generated document, so we don't know the hint name.
-            hintName = null;
-            return false;
-        }
-
-        hintName = identity.HintName;
-        return true;
     }
 }

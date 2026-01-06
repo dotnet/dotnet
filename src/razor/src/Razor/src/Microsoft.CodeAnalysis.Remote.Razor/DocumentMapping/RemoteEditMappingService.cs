@@ -51,8 +51,14 @@ internal sealed class RemoteEditMappingService(
             throw new InvalidOperationException("RemoteEditMappingService can only be used with RemoteDocumentSnapshot instances.");
         }
 
-        var project = originSnapshot.TextDocument.Project;
-        var razorCodeDocument = await _snapshotManager.GetSnapshot(project).TryGetCodeDocumentFromGeneratedDocumentUriAsync(generatedDocumentUri, cancellationToken).ConfigureAwait(false);
+        var solution = originSnapshot.TextDocument.Project.Solution;
+        if (!solution.TryGetSourceGeneratedDocumentIdentity(generatedDocumentUri, out var identity) ||
+            !solution.TryGetProject(identity.DocumentId.ProjectId, out var project))
+        {
+            return null;
+        }
+
+        var razorCodeDocument = await _snapshotManager.GetSnapshot(project).TryGetCodeDocumentForGeneratedDocumentAsync(identity, cancellationToken).ConfigureAwait(false);
         if (razorCodeDocument is null)
         {
             return null;

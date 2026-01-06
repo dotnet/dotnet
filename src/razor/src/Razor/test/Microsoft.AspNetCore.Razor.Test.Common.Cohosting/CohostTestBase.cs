@@ -179,10 +179,21 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
 
     private protected static TextDocument CreateProjectAndRazorDocument(CodeAnalysis.Workspace workspace, ProjectId projectId, bool miscellaneousFile, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace, bool addDefaultImports, Action<RazorProjectBuilder>? projectConfigure)
     {
-        return AddProjectAndRazorDocument(workspace.CurrentSolution, TestProjectData.SomeProject.FilePath, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace, addDefaultImports, projectConfigure);
+        return AddProjectAndRazorDocument(workspace.CurrentSolution, TestProjectData.SomeProject.FilePath, projectId, documentId, documentFilePath, contents, miscellaneousFile, additionalFiles, inGlobalNamespace, addDefaultImports, projectConfigure);
     }
 
-    private protected static TextDocument AddProjectAndRazorDocument(Solution solution, [DisallowNull] string? projectFilePath, ProjectId projectId, bool miscellaneousFile, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace, bool addDefaultImports, Action<RazorProjectBuilder>? projectConfigure)
+    private protected static TextDocument AddProjectAndRazorDocument(
+        Solution solution,
+        [DisallowNull] string? projectFilePath,
+        ProjectId projectId,
+        DocumentId documentId,
+        string documentFilePath,
+        string contents,
+        bool miscellaneousFile = false,
+        (string fileName, string contents)[]? additionalFiles = null,
+        bool inGlobalNamespace = false,
+        bool addDefaultImports = true,
+        Action<RazorProjectBuilder>? projectConfigure = null)
     {
         var builder = new RazorProjectBuilder(projectId);
 

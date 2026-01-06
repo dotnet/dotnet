@@ -27,7 +27,6 @@ internal partial class EditorInProcess
         await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
         var view = await GetActiveTextViewAsync(cancellationToken);
-        var textSnapshot = view.TextSnapshot;
 
         var position = await GetCaretPositionAsync(cancellationToken);
 
@@ -100,6 +99,21 @@ internal partial class EditorInProcess
             cancellationToken).ConfigureAwait(false);
 
         return result!;
+    }
+
+    public async Task<bool> WaitForTextContainsAsync(string text, CancellationToken cancellationToken)
+    {
+        var result = await Helper.RetryAsync(async ct =>
+            {
+                var view = await GetActiveTextViewAsync(ct);
+                var content = view.TextBuffer.CurrentSnapshot.GetText();
+
+                return content.Contains(text);
+            },
+            TimeSpan.FromMilliseconds(50),
+            cancellationToken).ConfigureAwait(false);
+
+        return result;
     }
 
     public async Task VerifyTextContainsAsync(string text, CancellationToken cancellationToken)

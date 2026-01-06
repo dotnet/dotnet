@@ -196,6 +196,181 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
         await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
     }
 
+    [Theory]
+    [CombinatorialData]
+    public async Task RenderFragment(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            <div>This is some HTML</div>
+            @code
+            {
+                public void M()
+                {
+                    RenderFragment x = @<div>This is some HTML</div>;
+                }
+            }
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task Expressions(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @DateTime.Now
+            
+            @("hello" + "\\n" + "world" + Environment.NewLine + "how are you?")
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+
+    [Theory]
+    [CombinatorialData]
+    public async Task GetSemanticTokens_Razor_NestedTextDirectives(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @using System
+            @functions {
+                private void BidsByShipment(string generatedId, int bids)
+                {
+                    if (bids > 0)
+                    {
+                        <a class=""Thing"">
+                            @if(bids > 0)
+                            {
+                                <text>@DateTime.Now</text>
+                            }
+                        </a>
+                    }
+                }
+            }
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task GetSemanticTokens_Razor_NestedTransitions(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @using System
+            @code {
+                Action<object> abc = @<span></span>;
+            }
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task GetSemanticTokens_Razor_CommentAsync(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @* A comment *@
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task GetSemanticTokens_Razor_MultiLineCommentMidlineAsync(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            <a />@* kdl
+            skd
+            slf*@
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task GetSemanticTokens_Razor_MultiLineCommentWithBlankLines(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @* kdl
+
+            skd
+                
+                    sdfasdfasdf
+            slf*@
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    [WorkItem("https://github.com/dotnet/razor/issues/8176")]
+    public async Task GetSemanticTokens_Razor_MultiLineCommentWithBlankLines_LF(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = "@* kdl\n\nskd\n    \n        sdfasdfasdf\nslf*@";
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task GetSemanticTokens_Razor_MultiLineCommentAsync(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @*stuff
+            things *@
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task GetSemanticTokens_CSharp_Static(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @using System
+            @code
+            {
+                private static bool _isStatic;
+
+                public void M()
+                {
+                    if (_isStatic)
+                    {
+                    }
+                }
+            }
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task GetSemanticTokens_Legacy_Model(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @using System
+            @model SampleApp.Pages.ErrorModel
+
+            <div>
+
+                @{
+                    @Model.ToString();
+                }
+
+            </div>
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile, fileKind: RazorFileKind.Legacy);
+    }
+
     private async Task VerifySemanticTokensAsync(
         string input,
         bool colorBackground,

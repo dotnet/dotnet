@@ -45,11 +45,12 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         int tabSize = 4,
         bool allowDiagnostics = false,
         bool debugAssertsEnabled = true,
-        RazorCSharpSyntaxFormattingOptions? csharpSyntaxFormattingOptions = null)
+        RazorCSharpSyntaxFormattingOptions? csharpSyntaxFormattingOptions = null,
+        (string fileName, string contents)[]? additionalFiles = null)
     {
         (input, expected) = ProcessFormattingContext(input, expected);
 
-        var document = CreateProjectAndRazorDocument(input.Text, fileKind, inGlobalNamespace: inGlobalNamespace);
+        var document = CreateProjectAndRazorDocument(input.Text, fileKind, inGlobalNamespace: inGlobalNamespace, additionalFiles: additionalFiles);
         if (!allowDiagnostics)
         {
             //TODO: Tests in LanguageServer have extra components that are not present in this project, like Counter, etc.

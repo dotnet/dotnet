@@ -202,6 +202,6 @@ internal sealed partial class RemoteSpanMappingService(in ServiceArgs args) : Ra
 
         var projectSnapshot = _snapshotManager.GetSnapshot(generatedDocument.Project);
 
-        return await projectSnapshot.TryGetRazorDocumentFromGeneratedHintNameAsync(identity.HintName, cancellationToken).ConfigureAwait(false);
+        return await projectSnapshot.TryGetRazorDocumentForGeneratedDocumentAsync(identity, cancellationToken).ConfigureAwait(false);
     }
 }

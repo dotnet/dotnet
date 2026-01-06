@@ -6,8 +6,8 @@
   -->
   <PropertyGroup>
     <_MicrosoftWebToolsPackageVersion>17.11.11-preview-0001</_MicrosoftWebToolsPackageVersion>
-    <_MicrosoftVisualStudioShellPackagesVersion>18.0.2101-preview.1</_MicrosoftVisualStudioShellPackagesVersion>
-    <_MicrosoftVisualStudioPackagesVersion>18.0.332-preview</_MicrosoftVisualStudioPackagesVersion>
+    <_MicrosoftVisualStudioShellPackagesVersion>18.0.2188-preview.1</_MicrosoftVisualStudioShellPackagesVersion>
+    <_MicrosoftVisualStudioPackagesVersion>18.0.404-preview</_MicrosoftVisualStudioPackagesVersion>
     <_VisualStudioLanguageServerProtocolVersion>17.12.1-preview</_VisualStudioLanguageServerProtocolVersion>
     <_MicrosoftExtensionsPackageVersion>9.0.0</_MicrosoftExtensionsPackageVersion>
     <_BasicReferenceAssembliesVersion>1.7.2</_BasicReferenceAssembliesVersion>
@@ -15,7 +15,7 @@
     <_MicrosoftVisualStudioExtensibilityTestingVersion>0.1.800-beta</_MicrosoftVisualStudioExtensibilityTestingVersion>
     <_MicrosoftVisualStudioLanguageServicesPackageVersion>$(MicrosoftVisualStudioLanguageServicesPackageVersion)</_MicrosoftVisualStudioLanguageServicesPackageVersion>
     <_XunitPackageVersion>2.9.2</_XunitPackageVersion>
-    <_MicrosoftBuildPackageVersion>17.15.0-preview-25353-11</_MicrosoftBuildPackageVersion>
+    <_MicrosoftBuildPackageVersion>17.15.0-preview-25357-08</_MicrosoftBuildPackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -86,7 +86,7 @@
     <PackageVersion Include="Microsoft.VisualStudio.Text.Data" Version="$(_MicrosoftVisualStudioPackagesVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Text.Implementation" Version="$(_MicrosoftVisualStudioPackagesVersion)" NoWarn="NU1701" />
     <PackageVersion Include="Microsoft.VisualStudio.Text.Logic" Version="$(_MicrosoftVisualStudioPackagesVersion)" />
-    <PackageVersion Include="Microsoft.VisualStudio.Threading" Version="17.15.20-alpha" />
+    <PackageVersion Include="Microsoft.VisualStudio.Threading" Version="17.15.22-alpha" />
     <PackageVersion Include="Microsoft.VisualStudio.Validation" Version="17.8.8" />
     <PackageVersion Include="Microsoft.VisualStudio.Web" Version="16.10.0-preview-1-31008-014" />
     <PackageVersion Include="Microsoft.WebTools.Languages.Html" Version="$(_MicrosoftWebToolsPackageVersion)" />
