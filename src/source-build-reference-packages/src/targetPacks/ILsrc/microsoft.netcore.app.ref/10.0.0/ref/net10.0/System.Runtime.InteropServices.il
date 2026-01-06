@@ -1,5 +1,5 @@
 
-//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
+//  .NET IL Disassembler.  Version 11.0.0-alpha.1.26055.101
 
 
 // ----- DOS Header:
@@ -3050,8 +3050,8 @@
   } // end of method CollectionsMarshal::GetValueRefOrNullRef
 
   .method /*0600009E*/ public hidebysig static 
-          !!TValue&  GetValueRefOrNullRef<TKey,TValue,TAlternateKey>(valuetype [System.Collections/*23000002*/]System.Collections.Generic.Dictionary`2/*0100003F*//AlternateLookup`1/*01000040*/<!!TKey,!!TValue,!!TAlternateKey> dictionary,
-                                                                     !!TAlternateKey key) cil managed
+          !!TValue&  GetValueRefOrNullRef<TKey,TValue,byreflike TAlternateKey>(valuetype [System.Collections/*23000002*/]System.Collections.Generic.Dictionary`2/*0100003F*//AlternateLookup`1/*01000040*/<!!TKey,!!TValue,!!TAlternateKey> dictionary,
+                                                                               !!TAlternateKey key) cil managed
   // SIG: 10 03 02 10 1E 01 15 11 81 01 03 1E 00 1E 01 1E 02 1E 02
   {
     .param type TValue /*2A000018*/ 
@@ -3083,9 +3083,9 @@
   } // end of method CollectionsMarshal::GetValueRefOrAddDefault
 
   .method /*060000A0*/ public hidebysig static 
-          !!TValue&  GetValueRefOrAddDefault<TKey,TValue,TAlternateKey>(valuetype [System.Collections/*23000002*/]System.Collections.Generic.Dictionary`2/*0100003F*//AlternateLookup`1/*01000040*/<!!TKey,!!TValue,!!TAlternateKey> dictionary,
-                                                                        !!TAlternateKey key,
-                                                                        [out] bool& exists) cil managed
+          !!TValue&  GetValueRefOrAddDefault<TKey,TValue,byreflike TAlternateKey>(valuetype [System.Collections/*23000002*/]System.Collections.Generic.Dictionary`2/*0100003F*//AlternateLookup`1/*01000040*/<!!TKey,!!TValue,!!TAlternateKey> dictionary,
+                                                                                  !!TAlternateKey key,
+                                                                                  [out] bool& exists) cil managed
   // SIG: 10 03 03 10 1E 01 15 11 81 01 03 1E 00 1E 01 1E 02 1E 02 10 02
   {
     .param type TValue /*2A00001D*/ 

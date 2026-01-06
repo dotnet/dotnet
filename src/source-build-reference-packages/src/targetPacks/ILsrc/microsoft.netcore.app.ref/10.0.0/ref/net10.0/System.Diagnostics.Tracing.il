@@ -1,5 +1,5 @@
 
-//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
+//  .NET IL Disassembler.  Version 11.0.0-alpha.1.26055.101
 
 
 // ----- DOS Header:
@@ -3328,7 +3328,7 @@
           Increment([opt] float64 increment) cil managed
   // SIG: 20 01 01 0D
   {
-    .param [1]/*080000AB*/  = float64(1)
+    .param [1]/*080000AB*/  = float64(1.0000000000000000)
     // Method begins at RVA 0x228d
     // Code size       1 (0x1)
     .maxstack  8
