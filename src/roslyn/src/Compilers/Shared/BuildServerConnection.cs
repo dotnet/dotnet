@@ -212,6 +212,7 @@ namespace Microsoft.CodeAnalysis.CommandLine
                     try
                     {
                         var clientMutexName = GetClientMutexName(pipeName);
+                        logger.Log($"Opening client mutex '{clientMutexName}' on thread {originalThreadId}");
                         clientMutex = OpenOrCreateMutex(clientMutexName, out holdsMutex);
                     }
                     catch
@@ -228,6 +229,7 @@ namespace Microsoft.CodeAnalysis.CommandLine
                     {
                         try
                         {
+                            logger.Log($"Trying to acquire client mutex on thread {originalThreadId}");
                             holdsMutex = clientMutex.TryLock(timeoutNewProcess);
 
                             if (!holdsMutex)
@@ -237,6 +239,7 @@ namespace Microsoft.CodeAnalysis.CommandLine
                         }
                         catch (AbandonedMutexException)
                         {
+                            logger.Log($"AbandonedMutexException caught, assuming ownership on thread {originalThreadId}");
                             holdsMutex = true;
                         }
                     }
@@ -261,11 +264,10 @@ namespace Microsoft.CodeAnalysis.CommandLine
                     {
                         clientMutex?.Dispose();
                     }
-                    catch (ApplicationException e)
+                    catch (Exception e)
                     {
-                        var releaseThreadId = Environment.CurrentManagedThreadId;
-                        var message = $"ReleaseMutex failed. WaitOne Id: {originalThreadId} Release Id: {releaseThreadId}";
-                        throw new Exception(message, e);
+                        var releaseThreadId = Environment.CurrentManagedThreadId;                        
+                        logger.Log($"ReleaseMutex failed. WaitOne Id: {originalThreadId} Release Id: {releaseThreadId}. {e}");
                     }
                 }
             }
