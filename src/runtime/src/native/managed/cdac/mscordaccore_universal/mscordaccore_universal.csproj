@@ -6,7 +6,7 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
   <PropertyGroup>
     <AssemblyName>$(LibPrefix)$(MSBuildProjectName)</AssemblyName>
-    <TargetFramework>$(NetCoreAppToolCurrent)</TargetFramework>
+    <TargetFramework>net$(BundledNETCoreAppTargetFrameworkVersion)</TargetFramework>
     <RootNamespace>Microsoft.Diagnostics.DataContractReader</RootNamespace>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
