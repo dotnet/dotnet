@@ -107,9 +107,6 @@
     <KnownCrossgen2Pack Update="@(KnownCrossgen2Pack->WithMetadataValue('Identity', 'Microsoft.NETCore.App.Crossgen2'))">
       <Crossgen2RuntimeIdentifiers>%(Crossgen2RuntimeIdentifiers);$(NETCoreSdkRuntimeIdentifier)</Crossgen2RuntimeIdentifiers>
     </KnownCrossgen2Pack>
-    <KnownILCompilerPack Update="@(KnownILCompilerPack->WithMetadataValue('Identity', 'Microsoft.DotNet.ILCompiler'))">
-      <ILCompilerRuntimeIdentifiers>%(ILCompilerRuntimeIdentifiers);$(NETCoreSdkRuntimeIdentifier)</ILCompilerRuntimeIdentifiers>
-    </KnownILCompilerPack>
   </ItemGroup>
 
   <!--
