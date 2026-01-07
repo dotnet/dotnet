@@ -20,6 +20,7 @@ parameters:
   artifacts: ''
   enableMicrobuild: false
   enablePreviewMicrobuild: false
+  microbuildPluginVersion: 'latest'
   enableMicrobuildForMacAndLinux: false
   microbuildUseESRP: true
   enablePublishBuildArtifacts: false
@@ -72,6 +73,8 @@ jobs:
     templateContext: ${{ parameters.templateContext }}
 
   variables:
+  - name: AllowPtrToDetectTestRunRetryFiles
+    value: true
   - ${{ if ne(parameters.enableTelemetry, 'false') }}:
     - name: DOTNET_CLI_TELEMETRY_PROFILE
       value: '$(Build.Repository.Uri)'
@@ -130,6 +133,7 @@ jobs:
       parameters:
         enableMicrobuild: ${{ parameters.enableMicrobuild }}
         enablePreviewMicrobuild: ${{ parameters.enablePreviewMicrobuild }}
+        microbuildPluginVersion: ${{ parameters.microbuildPluginVersion }}
         enableMicrobuildForMacAndLinux: ${{ parameters.enableMicrobuildForMacAndLinux }}
         microbuildUseESRP: ${{ parameters.microbuildUseESRP }}
         continueOnError: ${{ parameters.continueOnError }}
@@ -156,6 +160,7 @@ jobs:
       parameters:
         enableMicrobuild: ${{ parameters.enableMicrobuild }}
         enablePreviewMicrobuild: ${{ parameters.enablePreviewMicrobuild }}
+        microbuildPluginVersion: ${{ parameters.microbuildPluginVersion }}
         enableMicrobuildForMacAndLinux: ${{ parameters.enableMicrobuildForMacAndLinux }}
         continueOnError: ${{ parameters.continueOnError }}
 
