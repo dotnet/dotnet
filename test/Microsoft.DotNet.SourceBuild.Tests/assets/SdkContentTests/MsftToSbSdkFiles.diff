@@ -45,14 +45,6 @@ index ------------
  ./packs/Microsoft.NETCore.App.Ref/x.y.z/
  ./packs/Microsoft.NETCore.App.Ref/x.y.z/analyzers/
 @@ ------------ @@
- ./packs/Microsoft.NETCore.App.Ref/x.y.z/ref/netx.y/WindowsBase.dll
- ./sdk-manifests/
- ./sdk-manifests/x.y.z/
--./sdk-manifests/x.y.z/
- ./sdk-manifests/x.y.z/microsoft.net.workload.emscripten.current/
- ./sdk-manifests/x.y.z/microsoft.net.workload.emscripten.current/x.y.z/
- ./sdk-manifests/x.y.z/microsoft.net.workload.emscripten.current/x.y.z/WorkloadManifest.json
-@@ ------------ @@
  ./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/rzc.deps.json
  ./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/rzc.dll
  ./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/rzc.runtimeconfig.json
