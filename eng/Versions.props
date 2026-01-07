@@ -61,7 +61,6 @@
     <MicrosoftDotNetApiCompatTaskVersion>10.0.100</MicrosoftDotNetApiCompatTaskVersion>
     <!-- external dependencies -->
     <NewtonsoftJsonVersion>13.0.4</NewtonsoftJsonVersion>
-    <OctokitVersion>14.0.0</OctokitVersion>
   </PropertyGroup>
 
 </Project>

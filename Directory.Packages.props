@@ -1,5 +1,8 @@
 <Project>
 
+  <!-- Anything that should get updated via dependabot should go into this file. -->
+  <Import Project="eng/dependabot/Directory.Packages.props" />
+
   <PropertyGroup>
     <ManagePackageVersionsCentrally Condition="'$(ManagePackageVersionsCentrally)' == ''">true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
@@ -37,7 +40,6 @@
     <PackageVersion Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
     <PackageVersion Include="xunit.extensibility.core" Version="$(XUnitVersion)" />
     <PackageVersion Include="xunit.extensibility.execution" Version="$(XUnitVersion)" />
-    <PackageVersion Include="Octokit" Version="$(OctokitVersion)" />
   </ItemGroup>
 
 </Project>
