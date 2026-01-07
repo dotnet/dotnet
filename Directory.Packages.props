@@ -1,6 +1,6 @@
 <Project>
 
-  <!-- Anything that should get updated via dependabot should go into this file. -->
+  <!-- Anything that should get updated via dependabot should go into eng/dependabot/Directory.Packages.props. -->
   <Import Project="eng/dependabot/Directory.Packages.props" />
 
   <PropertyGroup>
