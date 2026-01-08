@@ -31,7 +31,7 @@
     <ProjectReference Include="$(RepoRoot)\src\Workloads\Manifests\manifest-packages.csproj" ReferenceOutputAssembly="false" Condition="'$(DotNetBuild)' != 'true'" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(OutputWorkloads)' == 'true'">
+  <ItemGroup Condition="'$(BuildWorkloads)' == 'true'">
     <PackageReference Include="Microsoft.DotNet.Build.Tasks.Installers" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.DotNet.Build.Tasks.Workloads" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Signed.WiX" GeneratePathProperty="true" />
@@ -102,7 +102,7 @@
     <ManifestPackagesToDownload Include="@(_ManifestProjectFiles->'%(Filename)')" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(OutputWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' != 'true'">
+  <ItemGroup Condition="'$(BuildWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' != 'true'">
     <!-- we use MicrosoftNETCoreAppRuntimePackageVersion for both runtime and emsdk packages since they're aligned in VMR builds -->
     <PackageDownload Include="@(RuntimeWorkloadPacksToDownload)" Version="[$(MicrosoftNETCoreAppRuntimePackageVersion)]" />
     <PackageDownload Include="@(EmsdkWorkloadPacksToDownload)" Version="[$(MicrosoftNETCoreAppRuntimePackageVersion)]" />
@@ -110,7 +110,7 @@
 
   <Target Name="_AddMsiPackageDownloads"
           BeforeTargets="CollectPackageDownloads"
-          Condition="'$(OutputWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' == 'true'">
+          Condition="'$(BuildWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' == 'true'">
     <ItemGroup>
       <!-- MSI packages for RuntimeWorkloadPacksToDownload -->
       <!-- For RID-specific packages, add single MSI with matching architecture -->
@@ -170,7 +170,7 @@
   </Target>
 
   <Target Name="_CollectDownloadedWorkloadPacks"
-          Condition="'$(OutputWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' != 'true'">
+          Condition="'$(BuildWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' != 'true'">
     <ItemGroup>
       <DownloadedWorkloadPacks Include="$(NuGetPackageRoot)\%(RuntimeWorkloadPacksToDownload.Identity)\$(MicrosoftNETCoreAppRuntimePackageVersion)\*.nupkg" />
       <DownloadedWorkloadPacks Include="$(NuGetPackageRoot)\%(EmsdkWorkloadPacksToDownload.Identity)\$(MicrosoftNETCoreAppRuntimePackageVersion)\*.nupkg" />
@@ -190,11 +190,11 @@
             _CollectDownloadedWorkloadPacks;
             _CollectDownloadedWorkloadMsis;
             BuildWorkloadMsis"
-          Condition="'$(OutputWorkloads)' == 'true'">
+          Condition="'$(BuildWorkloads)' == 'true'">
   </Target>
 
   <Target Name="_CollectDownloadedWorkloadMsis"
-          Condition="'$(OutputWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' == 'true'">
+          Condition="'$(BuildWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' == 'true'">
     <ItemGroup>
       <DownloadedWorkloadMsis Include="$(NuGetPackageRoot)\%(RuntimeWorkloadPacksToDownload.Identity).Msi.*\$(DotNet1xxRuntimeVersion)\*.nupkg" 
                               Condition="'%(RuntimeWorkloadPacksToDownload.ExcludeAsMsi)' != 'true'" />
@@ -209,7 +209,7 @@
   </Target>
 
   <Target Name="BuildWorkloadMsis"
-          Condition="'$(OutputWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' != 'true'">
+          Condition="'$(BuildWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' != 'true'">
     <ItemGroup>
       <!-- Overrides for Visual Studio setup generation. If the workload definition IDs change,
             these must be updated. -->
