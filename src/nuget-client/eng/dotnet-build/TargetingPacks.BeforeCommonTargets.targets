@@ -1,16 +1,52 @@
 <Project>
-  <!--
-    The following properties can be set to update known pack versions for the current TargetFramework:
-    - KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion
-    - KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion
-    - KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion
-    - KnownRuntimePackMicrosoftNETCoreAppCurrentMonoLatestRuntimeFrameworkVersion
-    - KnownRuntimePackMicrosoftNETCoreAppCurrentNativeAOTLatestRuntimeFrameworkVersion
-    - KnownILCompilerPackCurrentVersion
-    - KnownCrossgen2PackCurrentVersion
-    - KnownAppHostPackCurrentVersion
-    - KnownILLinkPackCurrentVersion
-  -->
+
+  <PropertyGroup>
+    <UpdateDownlevelKnownPacks Condition="'$(UpdateDownlevelKnownPacks)' == '' and
+      '$(DotNetBuildSourceOnly)' == 'true' and
+      '$(TargetFrameworkIdentifier)' == '.NETCoreApp' and
+      '$(TargetFrameworkVersion)' != '' and
+      $([MSBuild]::VersionLessThan('$(TargetFrameworkVersion)', '$(BundledNETCoreAppTargetFrameworkVersion)'))">true</UpdateDownlevelKnownPacks>
+
+    <!-- Disable restoring transitive aspnetcore and windowsdesktop targeting packs to avoid unnecessary dependencies. -->
+    <DisableTransitiveFrameworkReferenceDownloads Condition="'$(UpdateDownlevelKnownPacks)' == 'true'">true</DisableTransitiveFrameworkReferenceDownloads>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(UpdateDownlevelKnownPacks)' == 'true'">
+    <!-- Downgrade targeting pack versions to X.0.0 as only those are provided by SBRP. -->
+    <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.NETCore.App'))">
+      <TargetingPackVersion Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(TargetFramework)', '^net\d+\.0$'))">$([System.Text.RegularExpressions.Regex]::Match('%(TargetFramework)', '\d+').Value).0.0</TargetingPackVersion>
+    </KnownFrameworkReference>
+    <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.AspNetCore.App'))">
+      <TargetingPackVersion Condition="'%(TargetFramework)' == 'net6.0'">6.0.2</TargetingPackVersion>
+    </KnownFrameworkReference>
+
+    <!-- This is a bit hacky as it uses the newer host pack from the current framework for downlevel TFMs. But given that the host interface is stable, this should be fine. -->
+    <KnownAppHostPack Update="@(KnownAppHostPack)"
+      AppHostPackVersion="@(KnownAppHostPack->WithMetadataValue('TargetFramework', 'net$(BundledNETCoreAppTargetFrameworkVersion)')->Metadata('AppHostPackVersion'))"
+      AppHostRuntimeIdentifiers="@(KnownAppHostPack->WithMetadataValue('TargetFramework', 'net$(BundledNETCoreAppTargetFrameworkVersion)')->Metadata('AppHostRuntimeIdentifiers'))" />
+
+    <!-- This is a bit hacky as it uses the newer ILLinkPack from the current framework for downlevel TFMs. -->
+    <KnownILLinkPack Update="@(KnownILLinkPack)" ILLinkPackVersion="@(KnownILLinkPack->WithMetadataValue('TargetFramework', 'net$(BundledNETCoreAppTargetFrameworkVersion)')->Metadata('ILLinkPackVersion'))" />
+  </ItemGroup>
+
+  <!-- This is a bit hacky as it uses newer analyzers from the current framework for downlevel TFMs.
+       Necessary as the non-current targeting packs are missing analyzers which result in compiler errors when using i.e. Regex or LibraryImport attributes.
+       This should be fine though as the analyzers target netstandard2.0 and aren't specific to the framework version in general. -->
+  <Target Name="AddAnalyzersFromBundledNETCoreAppTargetingPack"
+          BeforeTargets="CoreCompile"
+          AfterTargets="ResolveTargetingPackAssets;ResolveProjectReferences"
+          Condition="'$(UpdateDownlevelKnownPacks)' == 'true' and '$(Language)' == 'C#'">
+    <ItemGroup>
+      <_BundledAnalyzer Include="$(NetCoreTargetingPackRoot)\Microsoft.NETCore.App.Ref\$(BundledNETCoreAppPackageVersion)\analyzers\dotnet\cs\*.dll" />
+
+      <!-- Filter out analyzers that are already present (i.e. live built and referenced). -->
+      <_BundledAnalyzerByName Include="@(_BundledAnalyzer->Metadata('FileName'))" OriginalIdentity="%(Identity)" />
+      <_AnalyzerByName Include="@(Analyzer->Metadata('FileName'))" />
+      <_BundledAnalyzerByName Remove="@(_AnalyzerByName)" />
+
+      <Analyzer Include="@(_BundledAnalyzerByName->Metadata('OriginalIdentity'))" />
+    </ItemGroup>
+  </Target>
 
   <PropertyGroup>
     <!-- These switches control whether known pack items and version updates are enabled for unknown target frameworks. On by default. -->
@@ -60,7 +96,31 @@
       Condition="'@(KnownILLinkPack->AnyHaveMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))' != 'true'" />
   </ItemGroup>
 
-  <!-- Allow updating Known* items for the current TargetFramework to newer versions via properties. -->
+  <!--
+    When .NET gets built from source, make the SDK aware there are bootstrap packages
+    for Microsoft.NETCore.App.Runtime.<rid> and Microsoft.NETCore.App.Crossgen2.<rid>.
+  -->
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <KnownRuntimePack Update="@(KnownRuntimePack->WithMetadataValue('Identity', 'Microsoft.NETCore.App'))">
+      <RuntimePackRuntimeIdentifiers>%(RuntimePackRuntimeIdentifiers);$(NETCoreSdkRuntimeIdentifier)</RuntimePackRuntimeIdentifiers>
+    </KnownRuntimePack>
+    <KnownCrossgen2Pack Update="@(KnownCrossgen2Pack->WithMetadataValue('Identity', 'Microsoft.NETCore.App.Crossgen2'))">
+      <Crossgen2RuntimeIdentifiers>%(Crossgen2RuntimeIdentifiers);$(NETCoreSdkRuntimeIdentifier)</Crossgen2RuntimeIdentifiers>
+    </KnownCrossgen2Pack>
+  </ItemGroup>
+
+  <!--
+    The following properties can be set to update known pack versions for the current TargetFramework:
+    - KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion
+    - KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion
+    - KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion
+    - KnownRuntimePackMicrosoftNETCoreAppCurrentMonoLatestRuntimeFrameworkVersion
+    - KnownRuntimePackMicrosoftNETCoreAppCurrentNativeAOTLatestRuntimeFrameworkVersion
+    - KnownILCompilerPackCurrentVersion
+    - KnownCrossgen2PackCurrentVersion
+    - KnownAppHostPackCurrentVersion
+    - KnownILLinkPackCurrentVersion
+  -->
   <ItemGroup Condition="'$(EnableKnownPackVersionUpdatesForCurrentTargetFramework)' == 'true'">
     <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.NETCore.App')->WithMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))">
       <DefaultRuntimeFrameworkVersion Condition="'$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion)' != ''">$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion)</DefaultRuntimeFrameworkVersion>
@@ -91,19 +151,6 @@
     <KnownILLinkPack Update="@(KnownILLinkPack->WithMetadataValue('Identity', 'Microsoft.NET.ILLink.Tasks')->WithMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))">
       <ILLinkPackVersion Condition="'$(KnownILLinkPackCurrentVersion)' != ''">$(KnownILLinkPackCurrentVersion)</ILLinkPackVersion>
     </KnownILLinkPack>
-  </ItemGroup>
-
-  <!--
-    When .NET gets built from source, make the SDK aware there are bootstrap packages
-    for Microsoft.NETCore.App.Runtime.<rid> and Microsoft.NETCore.App.Crossgen2.<rid>.
-  -->
-  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <KnownRuntimePack Update="@(KnownRuntimePack->WithMetadataValue('Identity', 'Microsoft.NETCore.App')->WithMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))">
-      <RuntimePackRuntimeIdentifiers>%(RuntimePackRuntimeIdentifiers);$(NETCoreSdkRuntimeIdentifier)</RuntimePackRuntimeIdentifiers>
-    </KnownRuntimePack>
-    <KnownCrossgen2Pack Update="@(KnownCrossgen2Pack->WithMetadataValue('Identity', 'Microsoft.NETCore.App.Crossgen2')->WithMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))">
-      <Crossgen2RuntimeIdentifiers>%(Crossgen2RuntimeIdentifiers);$(NETCoreSdkRuntimeIdentifier)</Crossgen2RuntimeIdentifiers>
-    </KnownCrossgen2Pack>
   </ItemGroup>
 
 </Project>
