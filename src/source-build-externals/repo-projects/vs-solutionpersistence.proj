@@ -11,6 +11,7 @@
 
   <PropertyGroup>
     <!-- Project Paths -->
+    <SlnPersistenceKeyFilePath>$(KeysDir)vs-solutionpersistence.snk</SlnPersistenceKeyFilePath>
     <SlnPersistenceDirectory>$(ProjectDirectory)/src/Microsoft.VisualStudio.SolutionPersistence/</SlnPersistenceDirectory>
     <SlnPersistenceProjectPath>$(SlnPersistenceDirectory)Microsoft.VisualStudio.SolutionPersistence.csproj</SlnPersistenceProjectPath>
     <PackagesOutput>$(ProjectDirectory)bin/Packages/$(Configuration)/NuGet/</PackagesOutput>
@@ -20,6 +21,9 @@
 
     <DotnetToolCommandArgs>$(DotnetToolCommandArgs) /p:Configuration=$(Configuration)</DotnetToolCommandArgs>
     <DotnetToolCommandArgs>$(DotnetToolCommandArgs) /p:TreatWarningsAsErrors=false</DotnetToolCommandArgs>
+    <DotnetToolCommandArgs>$(DotnetToolCommandArgs) /p:AssemblyOriginatorKeyFile=$(SlnPersistenceKeyFilePath)</DotnetToolCommandArgs>
+    <DotnetToolCommandArgs>$(DotnetToolCommandArgs) /p:SignAssembly=true</DotnetToolCommandArgs>
+    <DotnetToolCommandArgs>$(DotnetToolCommandArgs) /p:PublicSign=true</DotnetToolCommandArgs>
     <DotnetToolCommandArgs>$(DotnetToolCommandArgs) /p:FileVersion=$(SolutionPersistenceVersion)</DotnetToolCommandArgs>
     <DotnetToolCommandArgs>$(DotnetToolCommandArgs) /p:PackageVersion=$(SolutionPersistenceVersion)</DotnetToolCommandArgs>
 
