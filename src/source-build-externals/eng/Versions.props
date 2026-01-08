@@ -19,6 +19,6 @@
     <XunitReleaseVersion>2.4.2</XunitReleaseVersion>
   </PropertyGroup>
   <PropertyGroup>
-    <MicrosoftBuildVersion>17.12.18</MicrosoftBuildVersion>
+    <MicrosoftBuildVersion>17.12.50</MicrosoftBuildVersion>
   </PropertyGroup>
 </Project>

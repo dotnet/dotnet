@@ -14,7 +14,7 @@ done
 
 scriptroot="$( cd -P "$( dirname "$source" )" && pwd )"
 
-sdkLine=$(grep -m 1 'dotnet' "$scriptroot/global.json")
+sdkLine=$(grep -m 1 '"dotnet"' "$scriptroot/global.json")
 sdkPattern="\"dotnet\" *: *\"(.*)\""
 if [[ $sdkLine =~ $sdkPattern ]]; then
   export SDK_VERSION=${BASH_REMATCH[1]}

@@ -106,13 +106,13 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "dcde617155bb11628e2466f5689b7f8ca4062da9"
+      "commitSha": "1d4725a8e28ec597e356921f6b2d6d079020102e"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.25157.1",
+      "packageVersion": "9.0.0-alpha.1.26055.1",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "71dbdccd13f28cfd1a35649263b55ebbeab26ee7"
+      "commitSha": "16c380d1ce5fa0b24e232251c31cb013bbf3365f"
     },
     {
       "packageVersion": "9.0.0-alpha.1.25564.5",
@@ -236,11 +236,6 @@
       "path": "source-build-externals/src/newtonsoft-json",
       "remoteUri": "https://github.com/JamesNK/Newtonsoft.Json.git",
       "commitSha": "0a2e291c0d9c0c7675d445703e51750363a549ef"
-    },
-    {
-      "path": "source-build-externals/src/spectre-console",
-      "remoteUri": "https://github.com/spectreconsole/spectre.console",
-      "commitSha": "7397169a2757dc3657598bdea4ac222c0f283425"
     },
     {
       "path": "source-build-externals/src/vs-solutionpersistence",
