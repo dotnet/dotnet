@@ -43,9 +43,9 @@
     <Artifact Remove="@(MsiPackages)" />
   </ItemGroup>
 
-  <!-- When not building shared components (e.g., 2xx builds), MSI packages are downloaded from
-       the 1xx build rather than built locally. Mark them as Internal to avoid republishing. -->
-  <ItemGroup Condition="'$(DotNetBuildSharedComponents)' != 'true'">
+  <!-- In 2xx+ bands, MSI packages are downloaded from the 1xx build rather than built locally.
+       Mark them as Internal to avoid republishing. -->
+  <ItemGroup Condition="'$(DownloadWorkloadMsis)' == 'true'">
     <Artifact Update="$(ArtifactsShippingPackagesDir)*.Msi.*.nupkg" Visibility="Internal" />
   </ItemGroup>
 
