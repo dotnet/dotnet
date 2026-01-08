@@ -21,7 +21,7 @@
     
     <BuildArgs Condition="'$(OutputWorkloads)' == 'true'">$(BuildArgs) /p:OutputWorkloads=true</BuildArgs>
     <BuildArgs Condition="'$(OutputWorkloads)' == 'true' and '$(DotNetBuildSharedComponents)' != 'true'">$(BuildArgs) /p:DownloadWorkloadMsis=true</BuildArgs>
-    <BuildArgs Condition="'$(DotNetBuildSharedComponents)' != 'true'">$(BuildArgs) /p:DotNet1xxSdkVersion=$(MicrosoftNETSdkVersion) /p:DotNet1xxRuntimeVersion=$(MicrosoftNETCoreAppRefVersion) /p:DotNet1xxWorkloadManifestVersion=$(DotNet1xxWorkloadManifestVersion)</BuildArgs>
+    <BuildArgs Condition="'$(DotNetBuildSharedComponents)' != 'true'">$(BuildArgs) /p:DotNet1xxRuntimeVersion=$(MicrosoftNETCoreAppRefVersion) /p:DotNet1xxWorkloadManifestVersion=$(DotNet1xxWorkloadManifestVersion)</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
