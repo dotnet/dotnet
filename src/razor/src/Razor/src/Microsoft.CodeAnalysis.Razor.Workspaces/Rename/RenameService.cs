@@ -113,6 +113,31 @@ internal class RenameService(
         });
     }
 
+    public bool TryGetRazorFileRenameEdit(
+        DocumentContext documentContext,
+        string newName,
+        [NotNullWhen(true)] out WorkspaceEdit? workspaceEdit)
+    {
+        var oldPath = documentContext.FilePath;
+        var newPath = MakeNewPath(oldPath, newName);
+
+        using var documentChanges = new PooledArrayBuilder<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>>();
+
+        AddAdditionalFileRenames(ref documentChanges.AsRef(), oldPath, newPath);
+
+        if (documentChanges.Count == 0)
+        {
+            workspaceEdit = null;
+            return false;
+        }
+
+        workspaceEdit = new()
+        {
+            DocumentChanges = documentChanges.ToArrayAndClear()
+        };
+        return true;
+    }
+
     private static ImmutableArray<IDocumentSnapshot> GetAllDocumentSnapshots(string filePath, ISolutionQueryOperations solutionQueryOperations)
     {
         using var documentSnapshots = new PooledArrayBuilder<IDocumentSnapshot>();

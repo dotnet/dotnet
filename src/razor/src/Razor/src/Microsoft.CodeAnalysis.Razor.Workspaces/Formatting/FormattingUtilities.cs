@@ -152,9 +152,7 @@ internal static class FormattingUtilities
         var currentIndentationWidth = firstNonWhitespaceCharacterPosition - line.Start;
         if (insertSpaces)
         {
-            var indentationLevel = currentIndentationWidth / tabSize;
-            additionalIndentation = new string(' ', currentIndentationWidth % tabSize);
-            return indentationLevel;
+            return GetIndentationLevel(currentIndentationWidth, tabSize, out additionalIndentation);
         }
 
         // For tabs, we just count the tabs, and additional is any spaces at the end.
@@ -176,6 +174,16 @@ internal static class FormattingUtilities
 
         additionalIndentation = "";
         return tabCount;
+    }
+
+    public static int GetIndentationLevel(int length, int tabSize, out string additionalIndentation)
+    {
+        var indentationLevel = length / tabSize;
+        var additionalIndentationLength = length % tabSize;
+        additionalIndentation = additionalIndentationLength == 0
+            ? ""
+            : new string(' ', additionalIndentationLength);
+        return indentationLevel;
     }
 
     /// <summary>

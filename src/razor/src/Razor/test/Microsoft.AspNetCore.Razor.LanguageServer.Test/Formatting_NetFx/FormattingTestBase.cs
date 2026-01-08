@@ -24,7 +24,7 @@ using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.CodeAnalysis.Razor.Telemetry;
+using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Moq;
@@ -59,13 +59,18 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
         TagHelperCollection? tagHelpers = null,
         bool allowDiagnostics = false,
         bool codeBlockBraceOnNextLine = false,
+        AttributeIndentStyle attributeIndentStyle = AttributeIndentStyle.AlignWithFirst,
         bool inGlobalNamespace = false,
         bool debugAssertsEnabled = true,
         RazorCSharpSyntaxFormattingOptions? csharpSyntaxFormattingOptions = null)
     {
         (input, expected) = ProcessFormattingContext(input, expected);
 
-        var razorLSPOptions = RazorLSPOptions.Default with { CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine };
+        var razorLSPOptions = RazorLSPOptions.Default with
+        {
+            CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine,
+            AttributeIndentStyle = attributeIndentStyle,
+        };
 
         csharpSyntaxFormattingOptions ??= RazorCSharpSyntaxFormattingOptions.Default;
 
@@ -106,7 +111,7 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
             TabSize = tabSize,
             InsertSpaces = insertSpaces,
         };
-        var razorOptions = RazorFormattingOptions.From(options, codeBlockBraceOnNextLine: razorLSPOptions?.CodeBlockBraceOnNextLine ?? false, csharpSyntaxFormattingOptions);
+        var razorOptions = RazorFormattingOptions.From(options, codeBlockBraceOnNextLine: razorLSPOptions?.CodeBlockBraceOnNextLine ?? false, razorLSPOptions?.AttributeIndentStyle ?? AttributeIndentStyle.AlignWithFirst, csharpSyntaxFormattingOptions);
 
         var languageServerFeatureOptions = new TestLanguageServerFeatureOptions();
 
@@ -172,7 +177,7 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
             TabSize = tabSize,
             InsertSpaces = insertSpaces,
         };
-        var razorOptions = RazorFormattingOptions.From(options, codeBlockBraceOnNextLine: razorLSPOptions?.CodeBlockBraceOnNextLine ?? false);
+        var razorOptions = RazorFormattingOptions.From(options, codeBlockBraceOnNextLine: razorLSPOptions?.CodeBlockBraceOnNextLine ?? false, razorLSPOptions?.AttributeIndentStyle ?? AttributeIndentStyle.AlignWithFirst);
 
         var documentContext = new DocumentContext(uri, documentSnapshot, projectContext: null);
 

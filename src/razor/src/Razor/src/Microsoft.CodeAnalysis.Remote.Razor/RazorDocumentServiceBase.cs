@@ -80,7 +80,7 @@ internal abstract class RazorDocumentServiceBase(in ServiceArgs args) : RazorBro
             cancellationToken);
     }
 
-    private RemoteDocumentContext? CreateRazorDocumentContext(Solution solution, DocumentId razorDocumentId)
+    protected RemoteDocumentContext? CreateRazorDocumentContext(Solution solution, DocumentId razorDocumentId)
     {
         var razorDocument = solution.GetAdditionalDocument(razorDocumentId);
         if (razorDocument is null)

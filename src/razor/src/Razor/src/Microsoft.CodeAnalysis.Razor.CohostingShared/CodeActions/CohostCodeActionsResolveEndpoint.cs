@@ -86,7 +86,8 @@ internal sealed class CohostCodeActionsResolveEndpoint(
         {
             InsertSpaces = !clientSettings.ClientSpaceSettings.IndentWithTabs,
             TabSize = clientSettings.ClientSpaceSettings.IndentSize,
-            CodeBlockBraceOnNextLine = clientSettings.AdvancedSettings.CodeBlockBraceOnNextLine
+            CodeBlockBraceOnNextLine = clientSettings.AdvancedSettings.CodeBlockBraceOnNextLine,
+            AttributeIndentStyle = clientSettings.AdvancedSettings.AttributeIndentStyle,
         };
 
         return await _remoteServiceInvoker.TryInvokeAsync<IRemoteCodeActionsService, CodeAction>(

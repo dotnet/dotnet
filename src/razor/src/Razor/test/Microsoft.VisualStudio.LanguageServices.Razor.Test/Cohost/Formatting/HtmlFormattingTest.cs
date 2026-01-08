@@ -1,13 +1,17 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Formatting;
+using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 using Microsoft.VisualStudio.Razor.LanguageClient.Cohost.Formatting;
 using Xunit;
 using Xunit.Abstractions;
+using AssertEx = Roslyn.Test.Utilities.AssertEx;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor.Test.Cohost.Formatting;
 
@@ -293,7 +297,7 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         @{
                             RenderFragment fragment =
                             @<Component1 Id="Comp1"
-                                             Caption="Title">
+                                         Caption="Title">
                             </Component1>;
                         }
                     </Component1>
@@ -408,11 +412,11 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                     <div Model="SomeModel">
                         <div />
                         @{
-                        #if DEBUG
-                            }
-                        <div />
-                        @{
-                        #endif
+                    #if DEBUG
+                    }
+                    <div />
+                    @{
+                    #endif
                         }
                     </div>
 
@@ -421,6 +425,56 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                     }
                     """,
             allowDiagnostics: true);
+    }
+
+    [FormattingTestTheory]
+    [CombinatorialData]
+    internal async Task HtmlAttributes_FirstNotOnSameLine(AttributeIndentStyle attributeIndentStyle)
+    {
+        // This test looks different because it explicitly doesn't call the html formatter, because we don't
+        // want it to "fix" the first attribute placement, and put it on the same line as the start tag.
+
+        var contents = """
+            <div
+                            class="my-class"
+                id="my-id">
+                Content
+                </div>
+                    <div
+            class="my-class"
+                id="my-id">
+                Content
+                </div>
+            """;
+        var expected = """
+            <div
+                class="my-class"
+                id="my-id">
+                Content
+            </div>
+            <div
+                class="my-class"
+                id="my-id">
+                Content
+            </div>
+            """;
+
+        var document = CreateProjectAndRazorDocument(contents);
+        var options = new RazorFormattingOptions();
+
+        var formattingService = (RazorFormattingService)OOPExportProvider.GetExportedValue<IRazorFormattingService>();
+        formattingService.GetTestAccessor().SetFormattingLoggerFactory(new TestFormattingLoggerFactory(TestOutputHelper));
+
+        var htmlEdits = new TextEdit[0];
+        var edits = await GetFormattingEditsAsync(document, htmlEdits, span: default, options.CodeBlockBraceOnNextLine, attributeIndentStyle, options.InsertSpaces, options.TabSize, RazorCSharpSyntaxFormattingOptions.Default);
+
+        Assert.NotNull(edits);
+
+        var inputText = await document.GetTextAsync(DisposalToken);
+        var changes = edits.Select(inputText.GetTextChange);
+        var finalText = inputText.WithChanges(changes);
+
+        AssertEx.EqualOrDiff(expected, finalText.ToString());
     }
 
     private Task RunFormattingTestAsync(
@@ -492,5 +546,6 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         protected string StringValue => Value?.ToString();
                     }
                     """)]);
+
     }
 }

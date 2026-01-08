@@ -1,6 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Composition;
 using System.Text.Json.Nodes;
 using System.Threading;
@@ -47,6 +48,7 @@ internal sealed class CohostConfigurationChangedService(
             Items = [
                 //TODO: new ConfigurationItem { Section = "razor.format.enable" },
                 new ConfigurationItem { Section = "razor.format.code_block_brace_on_next_line" },
+                new ConfigurationItem { Section = "razor.format.attribute_indent_style" },
                 new ConfigurationItem { Section = "razor.completion.commit_elements_with_space" },
             ]
         };
@@ -60,7 +62,8 @@ internal sealed class CohostConfigurationChangedService(
         var settings = current with
         {
             CodeBlockBraceOnNextLine = GetBooleanOptionValue(options[0], current.CodeBlockBraceOnNextLine),
-            CommitElementsWithSpace = GetBooleanOptionValue(options[1], current.CommitElementsWithSpace),
+            AttributeIndentStyle = GetEnumOptionValue(options[1], current.AttributeIndentStyle),
+            CommitElementsWithSpace = GetBooleanOptionValue(options[2], current.CommitElementsWithSpace),
         };
 
         _clientSettingsManager.Update(settings);
@@ -74,5 +77,20 @@ internal sealed class CohostConfigurationChangedService(
         }
 
         return jsonNode.ToString() == "true";
+    }
+
+    private static T GetEnumOptionValue<T>(JsonNode? jsonNode, T defaultValue) where T : struct
+    {
+        if (jsonNode is null)
+        {
+            return defaultValue;
+        }
+
+        if (Enum.TryParse<T>(jsonNode.GetValue<string>(), out var value))
+        {
+            return value;
+        }
+
+        return defaultValue;
     }
 }

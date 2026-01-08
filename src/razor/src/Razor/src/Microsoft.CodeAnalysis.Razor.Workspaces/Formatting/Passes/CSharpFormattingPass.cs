@@ -73,6 +73,8 @@ internal sealed partial class CSharpFormattingPass(
                 break;
             }
 
+            string? indentationString = null;
+
             var formattedLine = formattedCSharpText.Lines[iFormatted];
             if (lineInfo.ProcessIndentation &&
                 formattedLine.GetFirstNonWhitespaceOffset() is { } formattedIndentation)
@@ -85,7 +87,7 @@ internal sealed partial class CSharpFormattingPass(
                 // First up, we take the indentation from the formatted file, and add on the Html indentation level from the line info, and
                 // replace whatever was in the original file with it.
                 var htmlIndentString = context.GetIndentationLevelString(lineInfo.HtmlIndentLevel);
-                var indentationString = formattedCSharpText.ToString(new TextSpan(formattedLine.Start, formattedIndentation))
+                indentationString = formattedCSharpText.ToString(new TextSpan(formattedLine.Start, formattedIndentation))
                     + htmlIndentString
                     + lineInfo.AdditionalIndentation;
                 formattingChanges.Add(new TextChange(new TextSpan(originalLine.Start, originalLineOffset), indentationString));
@@ -173,6 +175,20 @@ internal sealed partial class CSharpFormattingPass(
                 if (NextLineIsOnlyAnOpenBrace(changedText, iOriginal))
                 {
                     iOriginal++;
+
+                    // We're skipping a line in the original document, because Roslyn brought it up to the previous
+                    // line, but the fact is the opening brace was in the original document, and might need its indentation
+                    // adjusted. Since we can't reason about this line in any way, because Roslyn has changed it, we just
+                    // apply the indentation from the previous line.
+                    //
+                    // If we didn't adjust the indentation of the previous line, then we really have no information to go
+                    // on at all, so hopefully the user is happy with where their open brace is.
+                    if (indentationString is not null)
+                    {
+                        var originalLine = changedText.Lines[iOriginal];
+                        var originalLineOffset = originalLine.GetFirstNonWhitespaceOffset().GetValueOrDefault();
+                        formattingChanges.Add(new TextChange(new TextSpan(originalLine.Start, originalLineOffset), indentationString));
+                    }
                 }
             }
         }

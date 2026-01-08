@@ -44,7 +44,7 @@ public class FormattingLogTest(FormattingTestContext context, HtmlFormattingFixt
         var sourceText = await document.GetTextAsync();
         var htmlEdits = htmlChanges.Select(c => sourceText.GetTextEdit(c.ToTextChange())).ToArray();
 
-        await GetFormattingEditsAsync(document, htmlEdits, span: default, options.CodeBlockBraceOnNextLine, options.InsertSpaces, options.TabSize, options.CSharpSyntaxFormattingOptions.AssumeNotNull());
+        await GetFormattingEditsAsync(document, htmlEdits, span: default, options.CodeBlockBraceOnNextLine, options.AttributeIndentStyle, options.InsertSpaces, options.TabSize, options.CSharpSyntaxFormattingOptions.AssumeNotNull());
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public class FormattingLogTest(FormattingTestContext context, HtmlFormattingFixt
         var sourceText = await document.GetTextAsync();
         var htmlEdits = htmlChanges.Select(c => sourceText.GetTextEdit(c.ToTextChange())).ToArray();
 
-        return await GetFormattingEditsAsync(document, htmlEdits, span: default, options.CodeBlockBraceOnNextLine, options.InsertSpaces, options.TabSize, RazorCSharpSyntaxFormattingOptions.Default);
+        return await GetFormattingEditsAsync(document, htmlEdits, span: default, options.CodeBlockBraceOnNextLine, options.AttributeIndentStyle, options.InsertSpaces, options.TabSize, RazorCSharpSyntaxFormattingOptions.Default);
     }
 
     private string GetResource(string name, [CallerMemberName] string? testName = null)
