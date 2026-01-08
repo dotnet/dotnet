@@ -1,0 +1,29 @@
+diff --git a/updateAssemblyInfo.sh b/updateAssemblyInfo.sh
+index c5117975..e71b6c45 100755
+--- a/updateAssemblyInfo.sh
++++ b/updateAssemblyInfo.sh
+@@ -5,12 +5,23 @@ scriptroot=$(cd -P "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+ 
+ packageType=${1:-preview}
+ 
++# Get current date components
++year=$(date '+%Y')
++year_offset=$((year - 2019))
++month=$(date '+%m')
++day=$(date '+%d')
++
++# Calculate revision using the new formula that prevents overflow
++# Base: 61232 (ensures revision is higher than already shipped packages)
++# This will overflow in 2029 and needs a long term fix
++revision=$((61232 + (year_offset * 416) + (10#$month * 32) + 10#$day))
++
+ date=$(date '+%y%m%d%H%M%S')
+ # Formats the date by replacing the 4-digit year with a 2-digit value and then subtract 19
+ dateTimeStamp=$(echo $((10#${date:0:2}-19)))${date:2}
+ 
+ assemblyVersion=$(sed -n 's/.*<assemblyVersion>\([^<]*\)<.*/\1/p' ${scriptroot}/buildConfiguration.xml)
+-assemblyFileVersion="$assemblyVersion.${dateTimeStamp::$((${#dateTimeStamp} - 6))}" # Trim minutes/seconds
++assemblyFileVersion="$assemblyVersion.$revision"
+ assemblyInformationalVersion="$assemblyVersion.$dateTimeStamp"
+ 
+ echo "assemblyVersion: $assemblyVersion"
