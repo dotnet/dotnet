@@ -8,7 +8,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@f922da0](https://github.com/dotnet/arcade/tree/f922da012fe84ec4bd6e78ed483de7d6b9f2f564)*
+*[dotnet/arcade@4b01306](https://github.com/dotnet/arcade/tree/4b01306353c43c151d713d152f48a4d523c41960)*
 - `src/aspire`  
 *[_git/dotnet-aspire@48e42f5](https://dev.azure.com/dnceng/internal/_git/dotnet-aspire/?version=GC48e42f59d64d84b404e904996a9ed61f2a17a569)*
 - `src/aspnetcore`  
@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@fc5e9ed](https://github.com/dotnet/fsharp/tree/fc5e9eda234e2b69aa479f4f83faddc31fdd4da7)*
 - `src/installer`  
-*[dotnet/installer@0f79ef5](https://github.com/dotnet/installer/tree/0f79ef5fb927599b49cd4c3887c4357c9087dd55)*
+*[dotnet/installer@06d5866](https://github.com/dotnet/installer/tree/06d58668bd9eb3e7ffa1a3846f09abf8d538a98e)*
 - `src/msbuild`  
 *[dotnet/msbuild@f0cbb13](https://github.com/dotnet/msbuild/tree/f0cbb13971c30ad15a3f252a8d0171898a01ec11)*
 - `src/nuget-client`  
@@ -50,7 +50,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/sdk`  
 *[_git/dotnet-sdk@2fa9bee](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GC2fa9beee6233beabbd7d2b212fc8f850c96a5629)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@16bcad1](https://github.com/dotnet/source-build-externals/tree/16bcad1c13be082bd52ce178896d1119a73081a9)*
+*[dotnet/source-build-externals@5f4a123](https://github.com/dotnet/source-build-externals/tree/5f4a123a49dd5480065c8d6182536cf86b4f4410)*
     - `src/source-build-externals/src/abstractions-xunit`  
     *[xunit/abstractions.xunit@b75d54d](https://github.com/xunit/abstractions.xunit/tree/b75d54d73b141709f805c2001b16f3dd4d71539d)*
     - `src/source-build-externals/src/application-insights`  
@@ -76,7 +76,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/xunit/tools/media`  
     *[xunit/media@5738b6e](https://github.com/xunit/media/tree/5738b6e86f08e0389c4392b939c20e3eca2d9822)*
 - `src/source-build-reference-packages`  
-*[dotnet/source-build-reference-packages@1bffa52](https://github.com/dotnet/source-build-reference-packages/tree/1bffa52c9f78c19618fa929eea4916b0c6d27403)*
+*[dotnet/source-build-reference-packages@44b5b62](https://github.com/dotnet/source-build-reference-packages/tree/44b5b62182b48c34c4b6aef28943ec3f3e82f214)*
 - `src/sourcelink`  
 *[dotnet/sourcelink@94eaac3](https://github.com/dotnet/sourcelink/tree/94eaac3385cafff41094454966e1af1d1cf60f00)*
 - `src/symreader`  
