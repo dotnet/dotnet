@@ -325,7 +325,7 @@ namespace System.IO
 
         private void Close()
         {
-            SharedMemoryManager<NamedMutexProcessDataBase>.Instance.VerifyCreationDeletionProcessLockIsLocked();
+            SharedMemoryManager<TSharedMemoryProcessData>.Instance.VerifyCreationDeletionProcessLockIsLocked();
             SharedMemoryManager<TSharedMemoryProcessData>.Instance.RemoveProcessDataHeader(this);
 
             using AutoReleaseFileLock autoReleaseFileLock = SharedMemoryManager<TSharedMemoryProcessData>.Instance.AcquireCreationDeletionLockForId(_id);
@@ -787,7 +787,7 @@ namespace System.IO
                 }
             }
 
-            bool acquired = SharedMemoryHelpers.TryAcquireFileLock(fd, nonBlocking: true, exclusive: true);
+            bool acquired = SharedMemoryHelpers.TryAcquireFileLock(fd, nonBlocking: false, exclusive: true);
             Debug.Assert(acquired);
             return new AutoReleaseFileLock(fd);
 
