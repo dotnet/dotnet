@@ -20,7 +20,7 @@
     <BuildArgs Condition="'$(PgoInstrument)' == 'true'">$(BuildArgs) /p:PgoInstrument=true</BuildArgs>
     <BuildArgs Condition="'$(EnablePoison)' == 'true' or '$(SkipUsingCrossgen)' == 'true'">$(BuildArgs) /p:SkipUsingCrossgen=true</BuildArgs>
     
-    <BuildArgs Condition="'$(BuildWorkloads)' == 'true'">$(BuildArgs) /p:BuildWorkloads=true</BuildArgs>
+    <BuildArgs Condition="'$(OutputWorkloads)' == 'true'">$(BuildArgs) /p:OutputWorkloads=true</BuildArgs>
     <BuildArgs Condition="'$(DotNetBuildSharedComponents)' != 'true'">$(BuildArgs) /p:DotNet1xxSdkVersion=$(MicrosoftNETSdkVersion) /p:DotNet1xxRuntimeVersion=$(MicrosoftNETCoreAppRefVersion) /p:DotNet1xxWorkloadManifestVersion=$(DotNet1xxWorkloadManifestVersion)</BuildArgs>
   </PropertyGroup>
 
