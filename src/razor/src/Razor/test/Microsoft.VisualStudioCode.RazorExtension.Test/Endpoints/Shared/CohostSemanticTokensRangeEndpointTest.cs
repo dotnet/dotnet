@@ -475,7 +475,7 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
 
             var type = tokenTypes[data[i + 3]];
             var modifier = GetTokenModifierString(data[i + 4], legend);
-            var text = sourceText.GetSubTextString(new TextSpan(sourceText.Lines[lineIndex].Start + lineOffset, length));
+            var text = sourceText.ToString(new TextSpan(sourceText.Lines[lineIndex].Start + lineOffset, length));
             builder.AppendLine($"{lineDelta} {charDelta} {length} {type} {modifier} [{text}]");
 
             prevLength = length;

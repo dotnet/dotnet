@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Formatting;
+using Microsoft.CodeAnalysis.Razor.Settings;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -7186,6 +7187,35 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             input: code,
             expected: code);
     }
+
+    [FormattingTestFact]
+    internal Task TextArea_WithAttributes()
+        => RunFormattingTestAsync(
+            input: """
+                <textarea name="foo"
+                                    id="foo">@("Foo")
+                     test</textarea>
+                """,
+            expected: """
+                <textarea name="foo"
+                          id="foo">@("Foo")
+                     test</textarea>
+                """);
+
+    [FormattingTestFact]
+    internal Task TextArea_WithAttributes_IndentByOne()
+        => RunFormattingTestAsync(
+            input: """
+                <textarea name="foo"
+                                    id="foo">@("Foo")
+                     test</textarea>
+                """,
+            expected: """
+                <textarea name="foo"
+                    id="foo">@("Foo")
+                     test</textarea>
+                """,
+            attributeIndentStyle: AttributeIndentStyle.IndentByOne);
 
     [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/11777")]

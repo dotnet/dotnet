@@ -453,13 +453,19 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
 
         if (markupAttributeValue is not null)
         {
-            if (!processedAttributes.TryGetValue(markupAttributeValue.Span, out var doesAttributeContainNonMarkup))
+            if (!processedAttributes.TryGetValue(markupAttributeValue.Span, out var shouldFilterDiagnostic))
             {
-                doesAttributeContainNonMarkup = CheckIfAttributeContainsNonMarkupNodes(markupAttributeValue);
-                processedAttributes.Add(markupAttributeValue.Span, doesAttributeContainNonMarkup);
+                // If a component attribute is spread across multiple lines, it's not valid Html so the Html server can't be expected to reason
+                // about the contents correctly
+                shouldFilterDiagnostic = markupAttributeValue is MarkupTagHelperAttributeValueSyntax &&
+                    markupAttributeValue.GetLinePositionSpan(syntaxTree.Source).SpansMultipleLines();
+
+                // Similarly, if the attribute value contains non-markup, the Html could report false positives
+                shouldFilterDiagnostic |= CheckIfAttributeContainsNonMarkupNodes(markupAttributeValue);
+                processedAttributes.Add(markupAttributeValue.Span, shouldFilterDiagnostic);
             }
 
-            return doesAttributeContainNonMarkup;
+            return shouldFilterDiagnostic;
         }
 
         return false;

@@ -254,7 +254,7 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                     """);
     }
 
-    [FormattingTestFact(Skip = "Requires fix")]
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/8228")]
     public async Task FormatNestedComponents4()
     {
@@ -270,9 +270,9 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
             expected: """
                     @{
                         RenderFragment fragment =
-                        @<Component1 Id="Comp1"
-                                     Caption="Title">
-                        </Component1>;
+                          @<Component1 Id="Comp1"
+                                       Caption="Title">
+                          </Component1>;
                     }
                     """);
     }

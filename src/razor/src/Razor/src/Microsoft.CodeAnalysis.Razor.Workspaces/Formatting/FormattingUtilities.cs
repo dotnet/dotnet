@@ -167,7 +167,7 @@ internal static class FormattingUtilities
             else
             {
                 Debug.Assert(text[i] == ' ');
-                additionalIndentation = text.GetSubTextString(TextSpan.FromBounds(i, firstNonWhitespaceCharacterPosition));
+                additionalIndentation = text.ToString(TextSpan.FromBounds(i, firstNonWhitespaceCharacterPosition));
                 return tabCount;
             }
         }
@@ -222,7 +222,7 @@ internal static class FormattingUtilities
     /// </summary>
     public static void NaivelyUnindentSubstring(SourceText text, TextSpan extractionSpan, System.Text.StringBuilder builder)
     {
-        var extractedText = text.GetSubTextString(extractionSpan);
+        var extractedText = text.ToString(extractionSpan);
         var range = text.GetRange(extractionSpan);
         if (range.Start.Line == range.End.Line)
         {

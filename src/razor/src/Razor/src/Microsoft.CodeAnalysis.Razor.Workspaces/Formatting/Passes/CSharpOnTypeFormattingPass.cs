@@ -587,7 +587,7 @@ internal sealed class CSharpOnTypeFormattingPass(
         {
             var mappingSpan = new TextSpan(mapping.OriginalSpan.AbsoluteIndex, mapping.OriginalSpan.Length);
 #if DEBUG
-            var spanText = context.SourceText.GetSubTextString(mappingSpan);
+            var spanText = context.SourceText.ToString(mappingSpan);
 #endif
 
             var options = new ShouldFormatOptions(

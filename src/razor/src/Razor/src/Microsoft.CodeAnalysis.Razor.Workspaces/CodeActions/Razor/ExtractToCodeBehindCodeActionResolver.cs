@@ -46,7 +46,7 @@ internal class ExtractToCodeBehindCodeActionResolver(
         var text = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
 
         var className = Path.GetFileNameWithoutExtension(path);
-        var codeBlockContent = text.GetSubTextString(new TextSpan(actionParams.ExtractStart, actionParams.ExtractEnd - actionParams.ExtractStart)).Trim();
+        var codeBlockContent = text.ToString(new TextSpan(actionParams.ExtractStart, actionParams.ExtractEnd - actionParams.ExtractStart)).Trim();
         var codeBehindContent = GenerateCodeBehindClass(className, actionParams.Namespace, codeBlockContent, codeDocument);
 
         codeBehindContent = await _roslynCodeActionHelpers.GetFormattedNewFileContentsAsync(documentContext.Project, codeBehindUri, codeBehindContent, cancellationToken).ConfigureAwait(false);

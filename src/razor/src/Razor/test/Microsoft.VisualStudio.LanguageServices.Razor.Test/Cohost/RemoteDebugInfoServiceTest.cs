@@ -381,7 +381,7 @@ public class RemoteDebugInfoServiceTest(ITestOutputHelper testOutputHelper) : Co
 
         Assert.NotNull(result);
 
-        var expected = input.Spans.Select(inputText.GetSubTextString).Concat(extraExpressions).OrderAsArray();
+        var expected = input.Spans.Select(inputText.ToString).Concat(extraExpressions).OrderAsArray();
         AssertEx.SequenceEqual(expected, result.OrderAsArray());
     }
 
