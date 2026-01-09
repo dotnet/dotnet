@@ -149,7 +149,7 @@
   <Target Name="RestoreAspNetFrameworkLayout" 
           Condition="'$(DotNetBuildPass)' == '2' AND !Exists('$(TargetingPackLayoutRoot)packs\Microsoft.AspNetCore.App.Ref\${MicrosoftAspNetCoreAppRefVersion}\data\FrameworkList.xml') " 
           AfterTargets="ResolveFrameworkReferences" 
-          BeforeTargets="ResolveLiveBuiltAspnetCoreKnownFramework">
+          BeforeTargets="ResolveLiveBuiltAspnetCoreKnownFramework;ResolveReferenceItemsForPackage">
     <PropertyGroup>
       <CrossArchitectureInstallerBasePathNormalized>$([MSBuild]::NormalizeDirectory('$(CrossArchitectureInstallerBasePath)', 'aspnetcore', 'Runtime'))</CrossArchitectureInstallerBasePathNormalized>
     </PropertyGroup>
