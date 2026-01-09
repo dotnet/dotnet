@@ -1,5 +1,5 @@
 
-//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
+//  .NET IL Disassembler.  Version 11.0.0-alpha.1.26055.101
 
 
 // ----- DOS Header:
@@ -1800,9 +1800,9 @@
 
   .method /*06000061*/ public hidebysig static 
           valuetype System.Collections.Immutable.ImmutableArray`1/*0200000A*/<!!TResult> 
-          CreateRange<TSource,TArg,TResult>(valuetype System.Collections.Immutable.ImmutableArray`1/*0200000A*/<!!TSource> items,
-                                            class [System.Runtime/*23000001*/]System.Func`3/*01000018*/<!!TSource,!!TArg,!!TResult> selector,
-                                            !!TArg arg) cil managed
+          CreateRange<TSource,byreflike TArg,TResult>(valuetype System.Collections.Immutable.ImmutableArray`1/*0200000A*/<!!TSource> items,
+                                                      class [System.Runtime/*23000001*/]System.Func`3/*01000018*/<!!TSource,!!TArg,!!TResult> selector,
+                                                      !!TArg arg) cil managed
   // SIG: 10 03 03 15 11 28 01 1E 02 15 11 28 01 1E 00 15 12 61 03 1E 00 1E 01 1E 02 1E 01
   {
     .custom /*0C0001A4:0A000013*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableContextAttribute/*01000014*/::.ctor(uint8) /* 0A000013 */ = ( 01 00 02 00 00 ) 
@@ -1823,11 +1823,11 @@
 
   .method /*06000062*/ public hidebysig static 
           valuetype System.Collections.Immutable.ImmutableArray`1/*0200000A*/<!!TResult> 
-          CreateRange<TSource,TArg,TResult>(valuetype System.Collections.Immutable.ImmutableArray`1/*0200000A*/<!!TSource> items,
-                                            int32 start,
-                                            int32 length,
-                                            class [System.Runtime/*23000001*/]System.Func`3/*01000018*/<!!TSource,!!TArg,!!TResult> selector,
-                                            !!TArg arg) cil managed
+          CreateRange<TSource,byreflike TArg,TResult>(valuetype System.Collections.Immutable.ImmutableArray`1/*0200000A*/<!!TSource> items,
+                                                      int32 start,
+                                                      int32 length,
+                                                      class [System.Runtime/*23000001*/]System.Func`3/*01000018*/<!!TSource,!!TArg,!!TResult> selector,
+                                                      !!TArg arg) cil managed
   // SIG: 10 03 05 15 11 28 01 1E 02 15 11 28 01 1E 00 08 08 15 12 61 03 1E 00 1E 01 1E 02 1E 01
   {
     .custom /*0C0001A7:0A000013*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableContextAttribute/*01000014*/::.ctor(uint8) /* 0A000013 */ = ( 01 00 02 00 00 ) 
@@ -7971,10 +7971,10 @@
   } // end of method ImmutableInterlocked::GetOrAdd
 
   .method /*06000175*/ public hidebysig static 
-          !!TValue  GetOrAdd<TKey,TValue,TArg>(class System.Collections.Immutable.ImmutableDictionary`2/*0200000C*/<!!TKey,!!TValue>& location,
-                                               !!TKey key,
-                                               class [System.Runtime/*23000001*/]System.Func`3/*01000018*/<!!TKey,!!TArg,!!TValue> valueFactory,
-                                               !!TArg factoryArgument) cil managed
+          !!TValue  GetOrAdd<TKey,TValue,byreflike TArg>(class System.Collections.Immutable.ImmutableDictionary`2/*0200000C*/<!!TKey,!!TValue>& location,
+                                                         !!TKey key,
+                                                         class [System.Runtime/*23000001*/]System.Func`3/*01000018*/<!!TKey,!!TArg,!!TValue> valueFactory,
+                                                         !!TArg factoryArgument) cil managed
   // SIG: 10 03 04 1E 01 10 15 12 30 02 1E 00 1E 01 1E 00 15 12 61 03 1E 00 1E 02 1E 01 1E 02
   {
     .param type TValue /*2A0000D3*/ 
@@ -8156,9 +8156,9 @@
   } // end of method ImmutableInterlocked::Update
 
   .method /*06000180*/ public hidebysig static 
-          bool  Update<class T,TArg>(!!T& location,
-                                     class [System.Runtime/*23000001*/]System.Func`3/*01000018*/<!!T,!!TArg,!!T> transformer,
-                                     !!TArg transformerArgument) cil managed
+          bool  Update<class T,byreflike TArg>(!!T& location,
+                                               class [System.Runtime/*23000001*/]System.Func`3/*01000018*/<!!T,!!TArg,!!T> transformer,
+                                               !!TArg transformerArgument) cil managed
   // SIG: 10 02 03 02 10 1E 00 15 12 61 03 1E 00 1E 01 1E 00 1E 01
   {
     .param type T /*2A0000E2*/ 
@@ -8190,9 +8190,9 @@
   } // end of method ImmutableInterlocked::Update
 
   .method /*06000182*/ public hidebysig static 
-          bool  Update<T,TArg>(valuetype System.Collections.Immutable.ImmutableArray`1/*0200000A*/<!!T>& location,
-                               class [System.Runtime/*23000001*/]System.Func`3/*01000018*/<valuetype System.Collections.Immutable.ImmutableArray`1/*0200000A*/<!!T>,!!TArg,valuetype System.Collections.Immutable.ImmutableArray`1/*0200000A*/<!!T>> transformer,
-                               !!TArg transformerArgument) cil managed
+          bool  Update<T,byreflike TArg>(valuetype System.Collections.Immutable.ImmutableArray`1/*0200000A*/<!!T>& location,
+                                         class [System.Runtime/*23000001*/]System.Func`3/*01000018*/<valuetype System.Collections.Immutable.ImmutableArray`1/*0200000A*/<!!T>,!!TArg,valuetype System.Collections.Immutable.ImmutableArray`1/*0200000A*/<!!T>> transformer,
+                                         !!TArg transformerArgument) cil managed
   // SIG: 10 02 03 02 10 15 11 28 01 1E 00 15 12 61 03 15 11 28 01 1E 00 1E 01 15 11 28 01 1E 00 1E 01
   {
     .custom /*0C000329:0A000013*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableContextAttribute/*01000014*/::.ctor(uint8) /* 0A000013 */ = ( 01 00 02 00 00 ) 
@@ -15287,7 +15287,7 @@
     } // end of property Enumerator::System.Collections.IEnumerator.Current
   } // end of class Enumerator
 
-  .class /*0200002D*/ sequential ansi sealed nested public beforefieldinit AlternateLookup`1<TKey,TValue,TAlternateKey>
+  .class /*0200002D*/ sequential ansi sealed nested public beforefieldinit AlternateLookup`1<TKey,TValue,byreflike TAlternateKey>
          extends [System.Runtime/*23000001*/]System.ValueType/*0100002E*/
   {
     .custom /*0C00011F:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableAttribute/*01000015*/::.ctor(uint8) /* 0A000014 */ = ( 01 00 00 00 00 ) 
@@ -15890,7 +15890,7 @@
   } // end of method FrozenDictionary`2::TryGetValue
 
   .method /*060002E3*/ public hidebysig instance valuetype System.Collections.Frozen.FrozenDictionary`2/*0200001B*//AlternateLookup`1/*0200002D*/<!TKey,!TValue,!!TAlternateKey> 
-          GetAlternateLookup<TAlternateKey>() cil managed
+          GetAlternateLookup<byreflike TAlternateKey>() cil managed
   // SIG: 30 01 00 15 11 80 B4 03 13 00 13 01 1E 00
   {
     .param [0]/*080003C8*/ 
@@ -15903,7 +15903,7 @@
   } // end of method FrozenDictionary`2::GetAlternateLookup
 
   .method /*060002E4*/ public hidebysig instance bool 
-          TryGetAlternateLookup<TAlternateKey>([out] valuetype System.Collections.Frozen.FrozenDictionary`2/*0200001B*//AlternateLookup`1/*0200002D*/<!TKey,!TValue,!!TAlternateKey>& lookup) cil managed
+          TryGetAlternateLookup<byreflike TAlternateKey>([out] valuetype System.Collections.Frozen.FrozenDictionary`2/*0200001B*//AlternateLookup`1/*0200002D*/<!TKey,!TValue,!!TAlternateKey>& lookup) cil managed
   // SIG: 30 01 01 02 10 15 11 80 B4 03 13 00 13 01 1E 00
   {
     .param [1]/*080003C9*/ 
@@ -16208,7 +16208,7 @@
     } // end of property Enumerator::System.Collections.IEnumerator.Current
   } // end of class Enumerator
 
-  .class /*0200002F*/ sequential ansi sealed nested public beforefieldinit AlternateLookup`1<T,TAlternate>
+  .class /*0200002F*/ sequential ansi sealed nested public beforefieldinit AlternateLookup`1<T,byreflike TAlternate>
          extends [System.Runtime/*23000001*/]System.ValueType/*0100002E*/
   {
     .custom /*0C000128:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableAttribute/*01000015*/::.ctor(uint8) /* 0A000014 */ = ( 01 00 00 00 00 ) 
@@ -16616,7 +16616,7 @@
   } // end of method FrozenSet`1::TryGetValue
 
   .method /*06000306*/ public hidebysig instance valuetype System.Collections.Frozen.FrozenSet`1/*0200001D*//AlternateLookup`1/*0200002F*/<!T,!!TAlternate> 
-          GetAlternateLookup<TAlternate>() cil managed
+          GetAlternateLookup<byreflike TAlternate>() cil managed
   // SIG: 30 01 00 15 11 80 BC 02 13 00 1E 00
   {
     .custom /*0C0003B8:0A000013*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableContextAttribute/*01000014*/::.ctor(uint8) /* 0A000013 */ = ( 01 00 02 00 00 ) 
@@ -16630,7 +16630,7 @@
   } // end of method FrozenSet`1::GetAlternateLookup
 
   .method /*06000307*/ public hidebysig instance bool 
-          TryGetAlternateLookup<TAlternate>([out] valuetype System.Collections.Frozen.FrozenSet`1/*0200001D*//AlternateLookup`1/*0200002F*/<!T,!!TAlternate>& lookup) cil managed
+          TryGetAlternateLookup<byreflike TAlternate>([out] valuetype System.Collections.Frozen.FrozenSet`1/*0200001D*//AlternateLookup`1/*0200002F*/<!T,!!TAlternate>& lookup) cil managed
   // SIG: 30 01 01 02 10 15 11 80 BC 02 13 00 1E 00
   {
     .custom /*0C0003BA:0A000013*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableContextAttribute/*01000014*/::.ctor(uint8) /* 0A000013 */ = ( 01 00 02 00 00 ) 

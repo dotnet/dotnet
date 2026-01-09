@@ -1,5 +1,5 @@
 
-//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
+//  .NET IL Disassembler.  Version 11.0.0-alpha.1.26055.101
 
 
 // ----- DOS Header:
@@ -662,7 +662,7 @@
   .method /*06000013*/ public hidebysig newslot abstract virtual 
           instance void  Abort(native int reason,
                                int32 retaining,
-                               int32 async) cil managed
+                               int32 'async') cil managed
   // SIG: 20 03 01 18 08 08
   {
     // Method begins at RVA 0x0

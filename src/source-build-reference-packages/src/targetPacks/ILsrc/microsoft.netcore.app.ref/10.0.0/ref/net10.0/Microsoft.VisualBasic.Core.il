@@ -1,5 +1,5 @@
 
-//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
+//  .NET IL Disassembler.  Version 11.0.0-alpha.1.26055.101
 
 
 // ----- DOS Header:
@@ -3469,7 +3469,7 @@
                        [opt] float64 Factor) cil managed
   // SIG: 00 05 0D 0D 0D 0D 0D 0D
   {
-    .param [5]/*08000138*/  = float64(2)
+    .param [5]/*08000138*/  = float64(2.0000000000000000)
     // Method begins at RVA 0x22ab
     // Code size       2 (0x2)
     .maxstack  8
@@ -3485,7 +3485,7 @@
                       [opt] valuetype Microsoft.VisualBasic.DueDate/*0200000D*/ Due) cil managed
   // SIG: 00 05 0D 0D 0D 0D 0D 11 34
   {
-    .param [4]/*0800013C*/  = float64(0)
+    .param [4]/*0800013C*/  = float64(0.0000000000000000)
     .param [5]/*0800013D*/  = int32(0x00000000)
     // Method begins at RVA 0x22ae
     // Code size       2 (0x2)
@@ -3503,7 +3503,7 @@
                         [opt] valuetype Microsoft.VisualBasic.DueDate/*0200000D*/ Due) cil managed
   // SIG: 00 06 0D 0D 0D 0D 0D 0D 11 34
   {
-    .param [5]/*08000142*/  = float64(0)
+    .param [5]/*08000142*/  = float64(0.0000000000000000)
     .param [6]/*08000143*/  = int32(0x00000000)
     // Method begins at RVA 0x22b1
     // Code size       2 (0x2)
@@ -3546,7 +3546,7 @@
                         [opt] valuetype Microsoft.VisualBasic.DueDate/*0200000D*/ Due) cil managed
   // SIG: 00 05 0D 0D 0D 0D 0D 11 34
   {
-    .param [4]/*0800014C*/  = float64(0)
+    .param [4]/*0800014C*/  = float64(0.0000000000000000)
     .param [5]/*0800014D*/  = int32(0x00000000)
     // Method begins at RVA 0x22ba
     // Code size       2 (0x2)
@@ -3575,7 +3575,7 @@
                        [opt] valuetype Microsoft.VisualBasic.DueDate/*0200000D*/ Due) cil managed
   // SIG: 00 05 0D 0D 0D 0D 0D 11 34
   {
-    .param [4]/*08000153*/  = float64(0)
+    .param [4]/*08000153*/  = float64(0.0000000000000000)
     .param [5]/*08000154*/  = int32(0x00000000)
     // Method begins at RVA 0x22c0
     // Code size       2 (0x2)
@@ -3593,7 +3593,7 @@
                         [opt] valuetype Microsoft.VisualBasic.DueDate/*0200000D*/ Due) cil managed
   // SIG: 00 06 0D 0D 0D 0D 0D 0D 11 34
   {
-    .param [5]/*08000159*/  = float64(0)
+    .param [5]/*08000159*/  = float64(0.0000000000000000)
     .param [6]/*0800015A*/  = int32(0x00000000)
     // Method begins at RVA 0x22c3
     // Code size       2 (0x2)
@@ -3610,7 +3610,7 @@
                       [opt] valuetype Microsoft.VisualBasic.DueDate/*0200000D*/ Due) cil managed
   // SIG: 00 05 0D 0D 0D 0D 0D 11 34
   {
-    .param [4]/*0800015E*/  = float64(0)
+    .param [4]/*0800015E*/  = float64(0.0000000000000000)
     .param [5]/*0800015F*/  = int32(0x00000000)
     // Method begins at RVA 0x22c6
     // Code size       2 (0x2)
@@ -3628,7 +3628,7 @@
                         [opt] float64 Guess) cil managed
   // SIG: 00 06 0D 0D 0D 0D 0D 11 34 0D
   {
-    .param [4]/*08000163*/  = float64(0)
+    .param [4]/*08000163*/  = float64(0.0000000000000000)
     .param [5]/*08000164*/  = int32(0x00000000)
     .param [6]/*08000165*/  = float64(0.10000000000000001)
     // Method begins at RVA 0x22c9

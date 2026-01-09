@@ -1,5 +1,5 @@
 
-//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
+//  .NET IL Disassembler.  Version 11.0.0-alpha.1.26055.101
 
 
 // ----- DOS Header:
@@ -7865,7 +7865,7 @@
   .custom /*0C0000D2:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableAttribute/*01000015*/::.ctor(uint8) /* 0A000014 */ = ( 01 00 00 00 00 ) 
   .param type TValue /*2A00000F*/ 
     .custom /*0C000056:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableAttribute/*01000015*/::.ctor(uint8) /* 0A000014 */ = ( 01 00 02 00 00 ) 
-  .class /*0200001E*/ sequential ansi sealed nested public beforefieldinit AlternateLookup`1<TKey,TValue,TAlternateKey>
+  .class /*0200001E*/ sequential ansi sealed nested public beforefieldinit AlternateLookup`1<TKey,TValue,byreflike TAlternateKey>
          extends [System.Runtime/*23000001*/]System.ValueType/*0100002A*/
   {
     .pack 0
@@ -9165,7 +9165,7 @@
   } // end of method Dictionary`2::EnsureCapacity
 
   .method /*06000178*/ public hidebysig instance valuetype System.Collections.Generic.Dictionary`2/*0200000E*//AlternateLookup`1/*0200001E*/<!TKey,!TValue,!!TAlternateKey> 
-          GetAlternateLookup<TAlternateKey>() cil managed
+          GetAlternateLookup<byreflike TAlternateKey>() cil managed
   // SIG: 30 01 00 15 11 78 03 13 00 13 01 1E 00
   {
     .param [0]/*0800014E*/ 
@@ -9417,7 +9417,7 @@
   } // end of method Dictionary`2::TryAdd
 
   .method /*0600018C*/ public hidebysig instance bool 
-          TryGetAlternateLookup<TAlternateKey>([out] valuetype System.Collections.Generic.Dictionary`2/*0200000E*//AlternateLookup`1/*0200001E*/<!TKey,!TValue,!!TAlternateKey>& lookup) cil managed
+          TryGetAlternateLookup<byreflike TAlternateKey>([out] valuetype System.Collections.Generic.Dictionary`2/*0200000E*//AlternateLookup`1/*0200001E*/<!TKey,!TValue,!!TAlternateKey>& lookup) cil managed
   // SIG: 30 01 01 02 10 15 11 78 03 13 00 13 01 1E 00
   {
     .param [1]/*08000164*/ 
@@ -9675,7 +9675,7 @@
   .custom /*0C0000E9:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableAttribute/*01000015*/::.ctor(uint8) /* 0A000014 */ = ( 01 00 00 00 00 ) 
   .param type T /*2A000011*/ 
     .custom /*0C000060:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableAttribute/*01000015*/::.ctor(uint8) /* 0A000014 */ = ( 01 00 02 00 00 ) 
-  .class /*02000022*/ sequential ansi sealed nested public beforefieldinit AlternateLookup`1<T,TAlternate>
+  .class /*02000022*/ sequential ansi sealed nested public beforefieldinit AlternateLookup`1<T,byreflike TAlternate>
          extends [System.Runtime/*23000001*/]System.ValueType/*0100002A*/
   {
     .pack 0
@@ -10087,7 +10087,7 @@
   } // end of method HashSet`1::ExceptWith
 
   .method /*060001A9*/ public hidebysig instance valuetype System.Collections.Generic.HashSet`1/*02000010*//AlternateLookup`1/*02000022*/<!T,!!TAlternate> 
-          GetAlternateLookup<TAlternate>() cil managed
+          GetAlternateLookup<byreflike TAlternate>() cil managed
   // SIG: 30 01 00 15 11 80 88 02 13 00 1E 00
   {
     .custom /*0C0001C9:0A000013*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableContextAttribute/*01000014*/::.ctor(uint8) /* 0A000013 */ = ( 01 00 02 00 00 ) 
@@ -10314,7 +10314,7 @@
   } // end of method HashSet`1::TrimExcess
 
   .method /*060001BC*/ public hidebysig instance bool 
-          TryGetAlternateLookup<TAlternate>([out] valuetype System.Collections.Generic.HashSet`1/*02000010*//AlternateLookup`1/*02000022*/<!T,!!TAlternate>& lookup) cil managed
+          TryGetAlternateLookup<byreflike TAlternate>([out] valuetype System.Collections.Generic.HashSet`1/*02000010*//AlternateLookup`1/*02000022*/<!T,!!TAlternate>& lookup) cil managed
   // SIG: 30 01 01 02 10 15 11 80 88 02 13 00 1E 00
   {
     .custom /*0C0001CE:0A000013*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableContextAttribute/*01000014*/::.ctor(uint8) /* 0A000013 */ = ( 01 00 02 00 00 ) 
