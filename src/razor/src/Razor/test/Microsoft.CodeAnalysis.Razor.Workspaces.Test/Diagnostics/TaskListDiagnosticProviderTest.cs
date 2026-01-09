@@ -60,7 +60,7 @@ public class TaskListDiagnosticProviderTest(ITestOutputHelper testOutputHelper) 
     private static void VerifyTODOComments(TestCode input)
     {
         var codeDocument = TestRazorCodeDocument.Create(input.Text);
-        codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source));
+        codeDocument = codeDocument.WithSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source));
         var inputText = codeDocument.Source.Text;
 
         var diagnostics = TaskListDiagnosticProvider.GetTaskListDiagnostics(codeDocument, ["TODO", "ReallyLongPrefix"]);

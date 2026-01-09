@@ -55,9 +55,40 @@ public class CohostDocumentSpellCheckEndpointTest(ITestOutputHelper testOutputHe
         await VerifySpellCheckableRangesAsync(input);
     }
 
-    private async Task VerifySpellCheckableRangesAsync(TestCode input)
+    [Fact]
+    public async Task ComponentAttributes()
     {
-        var document = CreateProjectAndRazorDocument(input.Text);
+        await VerifySpellCheckableRangesAsync(
+            input: """
+                <SurveyPrompt Title="[|Hello|][| there|]" />
+                <SurveyPrompt @bind-Title="InputValue" />
+            
+                <form @onsubmit="DoSubmit" required></form>
+            
+                <input type="[|checkbox|]" checked></input>
+            
+                @code
+                {
+                    private string? [|InputValue|] { get; set; }
+                }
+            """,
+            additionalFiles: [
+                (FilePath("SurveyPrompt.razor"), """
+                    @namespace SomeProject
+                    
+                    <div></div>
+                    
+                    @code
+                    {
+                        [Parameter]
+                        public string Title { get; set; }
+                    }
+                    """)]);
+    }
+
+    private async Task VerifySpellCheckableRangesAsync(TestCode input, (string file, string contents)[]? additionalFiles = null)
+    {
+        var document = CreateProjectAndRazorDocument(input.Text, additionalFiles: additionalFiles);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         var endpoint = new CohostDocumentSpellCheckEndpoint(IncompatibleProjectService, RemoteServiceInvoker);

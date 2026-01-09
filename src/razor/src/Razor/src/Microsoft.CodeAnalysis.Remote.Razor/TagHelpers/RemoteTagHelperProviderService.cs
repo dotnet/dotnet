@@ -2,10 +2,10 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Remote;
@@ -76,23 +76,23 @@ internal sealed partial class RemoteTagHelperProviderService(in ServiceArgs args
 
         return new FetchTagHelpersResult(tagHelpers);
 
-        static bool TryGetCachedTagHelpers(ImmutableArray<Checksum> checksums, out ImmutableArray<TagHelperDescriptor> tagHelpers)
+        static bool TryGetCachedTagHelpers(ImmutableArray<Checksum> checksums, out TagHelperCollection tagHelpers)
         {
-            using var builder = new PooledArrayBuilder<TagHelperDescriptor>(capacity: checksums.Length);
+            using var builder = new TagHelperCollection.RefBuilder(initialCapacity: checksums.Length);
             var cache = TagHelperCache.Default;
 
             foreach (var checksum in checksums)
             {
                 if (!cache.TryGet(checksum, out var tagHelper))
                 {
-                    tagHelpers = ImmutableArray<TagHelperDescriptor>.Empty;
+                    tagHelpers = [];
                     return false;
                 }
 
                 builder.Add(tagHelper);
             }
 
-            tagHelpers = builder.ToImmutableAndClear();
+            tagHelpers = builder.ToCollection();
             return true;
         }
     }
@@ -117,7 +117,7 @@ internal sealed partial class RemoteTagHelperProviderService(in ServiceArgs args
 
         if (solution.GetProject(projectHandle.ProjectId) is not Project workspaceProject)
         {
-            checksums = ImmutableArray<Checksum>.Empty;
+            checksums = [];
         }
         else
         {
@@ -130,21 +130,22 @@ internal sealed partial class RemoteTagHelperProviderService(in ServiceArgs args
 
         return _tagHelperDeltaProvider.GetTagHelpersDelta(projectHandle.ProjectId, lastResultId, checksums);
 
-        static ImmutableArray<Checksum> GetChecksums(ImmutableArray<TagHelperDescriptor> tagHelpers)
+        static ImmutableArray<Checksum> GetChecksums(TagHelperCollection tagHelpers)
         {
-            using var builder = new PooledArrayBuilder<Checksum>(capacity: tagHelpers.Length);
+            var array = new Checksum[tagHelpers.Count];
 
             // Add each tag helpers to the cache so that we can retrieve them later if needed.
             var cache = TagHelperCache.Default;
+            var index = 0;
 
             foreach (var tagHelper in tagHelpers)
             {
                 var checksum = tagHelper.Checksum;
-                builder.Add(checksum);
+                array[index++] = checksum;
                 cache.TryAdd(checksum, tagHelper);
             }
 
-            return builder.ToImmutableAndClear();
+            return ImmutableCollectionsMarshal.AsImmutableArray(array);
         }
     }
 }

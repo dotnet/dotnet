@@ -2,12 +2,14 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Formatting;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.VisualStudio.Razor.Settings;
 using Roslyn.Test.Utilities;
@@ -98,7 +100,33 @@ public class CohostRangeFormattingEndpointTest(HtmlFormattingFixture htmlFormatt
             }
             """);
 
-    private async Task VerifyRangeFormattingAsync(TestCode input, string expected)
+    [Fact]
+    public async Task FormatOnPasteDisabled()
+    {
+        ClientSettingsManager.Update(ClientSettingsManager.GetClientSettings().AdvancedSettings with { FormatOnPaste = false });
+
+        await VerifyRangeFormattingAsync(
+            input: """
+                <div>
+                [|hello
+                <div>
+                </div>|]
+                </div>
+                """,
+            expected: """
+                <div>
+                hello
+                <div>
+                </div>
+                </div>
+                """,
+            otherOptions: new()
+                {
+                    { "fromPaste", true }
+                });
+    }
+
+    private async Task VerifyRangeFormattingAsync(TestCode input, string expected, Dictionary<string, SumType<bool, int, string>>? otherOptions = null)
     {
         var document = CreateProjectAndRazorDocument(input.Text);
         var inputText = await document.GetTextAsync(DisposalToken);
@@ -108,14 +136,12 @@ public class CohostRangeFormattingEndpointTest(HtmlFormattingFixture htmlFormatt
             DisposalToken).ConfigureAwait(false);
         Assert.NotNull(generatedHtml);
 
-        var uri = new Uri(document.CreateUri(), $"{document.FilePath}{FeatureOptions.HtmlVirtualDocumentSuffix}");
+        var uri = new Uri(document.CreateUri(), $"{document.FilePath}{LanguageServerConstants.HtmlVirtualDocumentSuffix}");
         var htmlEdits = await htmlFormattingFixture.Service.GetDocumentFormattingEditsAsync(LoggerFactory, uri, generatedHtml, insertSpaces: true, tabSize: 4);
 
         var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentFormattingName, htmlEdits)]);
 
-        var clientSettingsManager = new ClientSettingsManager(changeTriggers: []);
-
-        var endpoint = new CohostRangeFormattingEndpoint(IncompatibleProjectService, RemoteServiceInvoker, requestInvoker, clientSettingsManager, LoggerFactory);
+        var endpoint = new CohostRangeFormattingEndpoint(IncompatibleProjectService, RemoteServiceInvoker, requestInvoker, ClientSettingsManager, LoggerFactory);
 
         var request = new DocumentRangeFormattingParams()
         {
@@ -123,12 +149,19 @@ public class CohostRangeFormattingEndpointTest(HtmlFormattingFixture htmlFormatt
             Options = new FormattingOptions()
             {
                 TabSize = 4,
-                InsertSpaces = true
+                InsertSpaces = true,
+                OtherOptions = otherOptions
             },
             Range = inputText.GetRange(input.Span)
         };
 
         var edits = await endpoint.GetTestAccessor().HandleRequestAsync(request, document, DisposalToken);
+
+        if (edits is null or [])
+        {
+            Assert.Equal(input.Text, expected);
+            return;
+        }
 
         var changes = edits.Select(inputText.GetTextChange);
         var finalText = inputText.WithChanges(changes);

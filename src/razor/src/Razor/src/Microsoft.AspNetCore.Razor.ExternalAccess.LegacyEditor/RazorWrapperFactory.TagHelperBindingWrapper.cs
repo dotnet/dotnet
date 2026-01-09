@@ -10,10 +10,10 @@ internal static partial class RazorWrapperFactory
 {
     private class TagHelperBindingWrapper(TagHelperBinding obj) : Wrapper<TagHelperBinding>(obj), IRazorTagHelperBinding
     {
-        private ImmutableArray<IRazorTagHelperDescriptor> _descriptors;
+        private ImmutableArray<IRazorTagHelperDescriptor> _tagHelpers;
 
         public ImmutableArray<IRazorTagHelperDescriptor> Descriptors
-            => InitializeArrayWithWrappedItems(ref _descriptors, Object.Descriptors, Wrap);
+            => InitializeArrayWithWrappedItems(ref _tagHelpers, Object.TagHelpers, Wrap);
 
         public ImmutableArray<IRazorTagMatchingRuleDescriptor> GetBoundRules(IRazorTagHelperDescriptor descriptor)
         {

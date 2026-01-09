@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Xunit;
 using Xunit.Abstractions;
@@ -98,7 +97,7 @@ public class RazorSyntaxFactsServiceTest(ITestOutputHelper testOutput) : RazorTo
         var sourceDocument = TestRazorSourceDocument.Create(source, normalizeNewLines: true);
         var importDocument = TestRazorSourceDocument.Create("@addTagHelper *, TestAssembly", filePath: "import.cshtml", relativePath: "import.cshtml");
 
-        var codeDocument = engine.ProcessDesignTime(sourceDocument, RazorFileKind.Legacy, importSources: ImmutableArray.Create(importDocument), new[] { taghelper });
+        var codeDocument = engine.ProcessDesignTime(sourceDocument, RazorFileKind.Legacy, importSources: [importDocument], [taghelper]);
 
         return RazorWrapperFactory.WrapCodeDocument(codeDocument);
     }

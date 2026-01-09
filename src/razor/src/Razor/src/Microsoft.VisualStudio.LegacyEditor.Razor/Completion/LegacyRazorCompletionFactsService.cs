@@ -13,7 +13,6 @@ internal sealed class LegacyRazorCompletionFactsService : AbstractRazorCompletio
     private static readonly ImmutableArray<IRazorCompletionItemProvider> s_providers =
     [
         new DirectiveAttributeCompletionItemProvider(),
-        new DirectiveAttributeParameterCompletionItemProvider(),
         new DirectiveCompletionItemProvider()
     ];
 

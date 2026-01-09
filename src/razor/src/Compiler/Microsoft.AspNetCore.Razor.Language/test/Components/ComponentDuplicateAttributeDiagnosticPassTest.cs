@@ -174,7 +174,7 @@ public class ComponentDuplicateAttributeDiagnosticPassTest
                 break;
             }
 
-            phase.Execute(codeDocument);
+            codeDocument = phase.Execute(codeDocument);
         }
 
         var document = codeDocument.GetRequiredDocumentNode();

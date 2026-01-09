@@ -6,11 +6,9 @@ using System.Diagnostics.Tracing;
 namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 {
     [EventSource(Name = "Microsoft-DotNet-SDK-Razor-SourceGenerator")]
-    internal sealed class RazorSourceGeneratorEventSource : EventSource
+    internal sealed partial class RazorSourceGeneratorEventSource : EventSource
     {
         public static readonly RazorSourceGeneratorEventSource Log = new();
-
-        private RazorSourceGeneratorEventSource() { }
 
         private const int ComputeRazorSourceGeneratorOptionsId = 1;
         [Event(ComputeRazorSourceGeneratorOptionsId, Level = EventLevel.Informational)]

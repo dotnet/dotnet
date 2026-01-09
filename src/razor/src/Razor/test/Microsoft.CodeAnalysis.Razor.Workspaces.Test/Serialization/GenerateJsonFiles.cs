@@ -107,7 +107,7 @@ public class GenerateJsonFiles(ITestOutputHelper testOutput) : ToolingTestBase(t
     private static string GetSharedFilesRoot()
     {
         var current = new DirectoryInfo(AppContext.BaseDirectory);
-        while (current != null && !File.Exists(Path.Combine(current.FullName, "Razor.sln")))
+        while (current != null && !File.Exists(Path.Combine(current.FullName, "Razor.slnx")))
         {
             current = current.Parent;
         }

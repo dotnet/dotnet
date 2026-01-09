@@ -85,13 +85,10 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
 
         _clientInitializationOptions = new()
         {
-            HtmlVirtualDocumentSuffix = ".g.html",
             UseRazorCohostServer = true,
             ReturnCodeActionAndRenamePathsWithPrefixedSlash = false,
             SupportsFileManipulation = true,
             ShowAllCSharpCodeActions = false,
-            SupportsSoftSelectionInCompletion = true,
-            UseVsCodeCompletionCommitCharacters = false,
         };
         UpdateClientInitializationOptions(c => c);
 
@@ -146,22 +143,26 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
         }
     }
 
-    protected abstract TextDocument CreateProjectAndRazorDocument(
+    private protected abstract TextDocument CreateProjectAndRazorDocument(
         string contents,
         RazorFileKind? fileKind = null,
         string? documentFilePath = null,
         (string fileName, string contents)[]? additionalFiles = null,
         bool inGlobalNamespace = false,
-        bool miscellaneousFile = false);
+        bool miscellaneousFile = false,
+        bool addDefaultImports = true,
+        Action<RazorProjectBuilder>? projectConfigure = null);
 
-    protected TextDocument CreateProjectAndRazorDocument(
+    private protected TextDocument CreateProjectAndRazorDocument(
         CodeAnalysis.Workspace remoteWorkspace,
         string contents,
         RazorFileKind? fileKind = null,
         string? documentFilePath = null,
         (string fileName, string contents)[]? additionalFiles = null,
         bool inGlobalNamespace = false,
-        bool miscellaneousFile = false)
+        bool miscellaneousFile = false,
+        bool addDefaultImports = true,
+        Action<RazorProjectBuilder>? projectConfigure = null)
     {
         // Using IsLegacy means null == component, so easier for test authors
         var isComponent = fileKind != RazorFileKind.Legacy;
@@ -173,17 +174,33 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
         var projectId = ProjectId.CreateNewId(debugName: TestProjectData.SomeProject.DisplayName);
         var documentId = DocumentId.CreateNewId(projectId, debugName: documentFilePath);
 
-        return CreateProjectAndRazorDocument(remoteWorkspace, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace);
+        return CreateProjectAndRazorDocument(remoteWorkspace, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace, addDefaultImports, projectConfigure);
     }
 
-    protected static TextDocument CreateProjectAndRazorDocument(CodeAnalysis.Workspace workspace, ProjectId projectId, bool miscellaneousFile, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace)
+    private protected static TextDocument CreateProjectAndRazorDocument(CodeAnalysis.Workspace workspace, ProjectId projectId, bool miscellaneousFile, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace, bool addDefaultImports, Action<RazorProjectBuilder>? projectConfigure)
     {
-        return AddProjectAndRazorDocument(workspace.CurrentSolution, TestProjectData.SomeProject.FilePath, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace);
+        return AddProjectAndRazorDocument(workspace.CurrentSolution, TestProjectData.SomeProject.FilePath, projectId, documentId, documentFilePath, contents, miscellaneousFile, additionalFiles, inGlobalNamespace, addDefaultImports, projectConfigure);
     }
 
-    protected static TextDocument AddProjectAndRazorDocument(Solution solution, [DisallowNull] string? projectFilePath, ProjectId projectId, bool miscellaneousFile, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace)
+    private protected static TextDocument AddProjectAndRazorDocument(
+        Solution solution,
+        [DisallowNull] string? projectFilePath,
+        ProjectId projectId,
+        DocumentId documentId,
+        string documentFilePath,
+        string contents,
+        bool miscellaneousFile = false,
+        (string fileName, string contents)[]? additionalFiles = null,
+        bool inGlobalNamespace = false,
+        bool addDefaultImports = true,
+        Action<RazorProjectBuilder>? projectConfigure = null)
     {
         var builder = new RazorProjectBuilder(projectId);
+
+        if (projectConfigure is not null)
+        {
+            projectConfigure(builder);
+        }
 
         builder.AddReferences(miscellaneousFile
             ? Net461.ReferenceInfos.All.Select(r => r.Reference) // This isn't quite what Roslyn does, but its close enough for our tests
@@ -202,7 +219,9 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
                 builder.RootNamespace = TestProjectData.SomeProject.RootNamespace;
             }
 
-            builder.AddAdditionalDocument(
+            if (addDefaultImports)
+            {
+                builder.AddAdditionalDocument(
                     filePath: TestProjectData.SomeProjectComponentImportFile1.FilePath,
                     text: SourceText.From("""
                         @using Microsoft.AspNetCore.Components
@@ -211,11 +230,12 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
                         @using Microsoft.AspNetCore.Components.Routing
                         @using Microsoft.AspNetCore.Components.Web
                         """));
-            builder.AddAdditionalDocument(
+                builder.AddAdditionalDocument(
                     filePath: TestProjectData.SomeProjectImportFile.FilePath,
                     text: SourceText.From("""
                         @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
                         """));
+            }
 
             if (additionalFiles is not null)
             {

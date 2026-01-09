@@ -46,14 +46,7 @@
     <!-- Need to make sure ObjectPool is in the bin folder for local development scenarios -->
     <None Include="$(PkgMicrosoft_Extensions_ObjectPool)\lib\net8.0\Microsoft.Extensions.ObjectPool.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
 
-    <Content Include="..\rzls\Targets\**\*.*">
-      <LinkBase>Targets</LinkBase>
-      <Pack>true</Pack>
-      <PackagePath>content\Targets</PackagePath>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-
-    <Content Include=".\Targets\**\*.targets">
+    <Content Include=".\Targets\**\*.*">
       <Pack>true</Pack>
       <PackagePath>content\Targets</PackagePath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

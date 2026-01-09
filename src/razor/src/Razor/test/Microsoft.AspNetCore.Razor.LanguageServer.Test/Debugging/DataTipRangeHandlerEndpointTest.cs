@@ -2,11 +2,10 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
-using Microsoft.CodeAnalysis.Testing;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -19,10 +18,10 @@ public sealed class DataTipRangeHandlerEndpointTest(ITestOutputHelper testOutput
     public async Task Handle_CSharpInHtml_DataTipRange_FirstExpression()
     {
         var input = """
-                @{
-                    {|expression:{|hover:a$$aa|}|}.bbb.ccc;
-                }
-                """;
+            @{
+                {|expression:{|hover:a$$aa|}|}.bbb.ccc;
+            }
+            """;
 
         await VerifyDataTipRangeAsync(input);
     }
@@ -31,10 +30,10 @@ public sealed class DataTipRangeHandlerEndpointTest(ITestOutputHelper testOutput
     public async Task Handle_CSharpInHtml_DataTipRange_SecondExpression()
     {
         var input = """
-                @{
-                    {|expression:{|hover:aaa.b$$bb|}|}.ccc;
-                }
-                """;
+            @{
+                {|expression:{|hover:aaa.b$$bb|}|}.ccc;
+            }
+            """;
 
         await VerifyDataTipRangeAsync(input);
     }
@@ -43,10 +42,10 @@ public sealed class DataTipRangeHandlerEndpointTest(ITestOutputHelper testOutput
     public async Task Handle_CSharpInHtml_DataTipRange_LastExpression()
     {
         var input = """
-                @{
-                    {|expression:{|hover:aaa.bbb.c$$cc|}|};
-                }
-                """;
+            @{
+                {|expression:{|hover:aaa.bbb.c$$cc|}|};
+            }
+            """;
 
         await VerifyDataTipRangeAsync(input);
     }
@@ -55,48 +54,43 @@ public sealed class DataTipRangeHandlerEndpointTest(ITestOutputHelper testOutput
     public async Task Handle_CSharpInHtml_DataTipRange_LinqExpression()
     {
         var input = """
-                @using System.Linq;
+            @using System.Linq;
 
-                @{
-                    int[] args;
-                    var v = {|expression:{|hover:args.Se$$lect|}(a => a.ToString())|}.Where(a => a.Length >= 0);
-                }
-                """;
+            @{
+                int[] args;
+                var v = {|expression:{|hover:args.Se$$lect|}(a => a.ToString())|}.Where(a => a.Length >= 0);
+            }
+            """;
 
         await VerifyDataTipRangeAsync(input, VSInternalDataTipTags.LinqExpression);
     }
 
-    private async Task VerifyDataTipRangeAsync(string input, VSInternalDataTipTags dataTipTags = 0)
+    private async Task VerifyDataTipRangeAsync(TestCode input, VSInternalDataTipTags dataTipTags = 0)
     {
         // Arrange
-        TestFileMarkupParser.GetPositionAndSpans(input, out var output, out int position, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spans);
-
-        Assert.True(spans.TryGetValue("expression", out var expressionSpans), "Test authoring failure: Expected at least one span named 'expression'.");
-        Assert.True(expressionSpans.Length == 1, "Test authoring failure: Expected only one 'expression' span.");
-        Assert.True(spans.TryGetValue("hover", out var hoverSpans), "Test authoring failure: Expected at least one span named 'hover'.");
-        Assert.True(hoverSpans.Length == 1, "Test authoring failure: Expected only one 'hover' span.");
-
-        var codeDocument = CreateCodeDocument(output);
+        var codeDocument = CreateCodeDocument(input.Text);
         var razorFilePath = "C:/path/to/file.razor";
 
         // Act
-        var result = await GetDataTipRangeAsync(codeDocument, razorFilePath, position);
+        var result = await GetDataTipRangeAsync(codeDocument, razorFilePath, input.Position);
 
         // Assert
-        var expectedExpressionRange = codeDocument.Source.Text.GetRange(expressionSpans[0]);
+        var expectedExpressionSpan = input.GetNamedSpans("expression")[0];
+        var expectedExpressionRange = codeDocument.Source.Text.GetRange(expectedExpressionSpan);
         Assert.Equal(expectedExpressionRange, result!.ExpressionRange);
 
-        var expectedHoverRange = codeDocument.Source.Text.GetRange(hoverSpans[0]);
-        Assert.Equal(expectedHoverRange, result!.HoverRange);
+        var expectedHoverSpan = input.GetNamedSpans("hover")[0];
+        var expectedHoverRange = codeDocument.Source.Text.GetRange(expectedHoverSpan);
+        Assert.Equal(expectedHoverRange, result.HoverRange);
 
-        Assert.Equal(dataTipTags, result!.DataTipTags);
+        Assert.Equal(dataTipTags, result.DataTipTags);
     }
 
     private async Task<VSInternalDataTip?> GetDataTipRangeAsync(RazorCodeDocument codeDocument, string razorFilePath, int position)
     {
         await using var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
-        var endpoint = new DataTipRangeHandlerEndpoint(DocumentMappingService, LanguageServerFeatureOptions, languageServer, LoggerFactory);
+        var endpoint = new DataTipRangeHandlerEndpoint(DocumentMappingService, languageServer, LoggerFactory);
 
         var request = new TextDocumentPositionParams
         {

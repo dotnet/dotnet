@@ -4,32 +4,18 @@
   },
   "packages": {
     "default": {
-      "rzls": "vs-impl",
-      "rzls.alpine-arm64": "vs-impl",
-      "rzls.alpine-x64": "vs-impl",
-      "rzls.linux-arm64": "vs-impl",
-      "rzls.linux-x64": "vs-impl",
-      "rzls.linux-musl-x64": "vs-impl",
-      "rzls.linux-musl-arm64": "vs-impl",
-      "rzls.neutral": "vs-impl",
-      "rzls.osx-arm64": "vs-impl",
-      "rzls.osx-x64": "vs-impl",
-      "rzls.win-arm64": "vs-impl",
-      "rzls.win-x64": "vs-impl",
-      "rzls.win-x86": "vs-impl",
-      "Microsoft.VisualStudio.DevKit.Razor": "vs-impl",
       "Microsoft.VisualStudioCode.RazorExtension": "vs-impl"
     }
   },
   "branches": {
-    "main": {
+    "release/dev18.3": {
       "nugetKind": [
         "Shipping",
         "NonShipping"
       ],
-      "vsBranch": "main",
+      "vsBranch": "rel/d18.3",
       "insertionCreateDraftPR": false,
-      "insertionTitlePrefix": "[InsidersVNext]"
+      "insertionTitlePrefix": "[d18.3]"
     }
   }
 }

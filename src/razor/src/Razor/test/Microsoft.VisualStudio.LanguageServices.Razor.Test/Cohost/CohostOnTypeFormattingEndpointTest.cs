@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Formatting;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.VisualStudio.Razor.Settings;
 using Roslyn.Test.Utilities;
@@ -100,6 +101,25 @@ public class CohostOnTypeFormattingEndpointTest(HtmlFormattingFixture htmlFormat
             html: true);
     }
 
+    [Fact]
+    public async Task FormattingDisabled()
+    {
+        ClientSettingsManager.Update(ClientSettingsManager.GetClientSettings().AdvancedSettings with { FormatOnType = false });
+
+        await VerifyOnTypeFormattingAsync(
+            input: """
+                @{
+                    if(true){}$$
+                }
+                """,
+            expected: """
+                @{
+                    if(true){}
+                }
+                """,
+            triggerCharacter: '}');
+    }
+
     private async Task VerifyOnTypeFormattingAsync(TestCode input, string expected, char triggerCharacter, bool html = false)
     {
         var document = CreateProjectAndRazorDocument(input.Text);
@@ -114,7 +134,7 @@ public class CohostOnTypeFormattingEndpointTest(HtmlFormattingFixture htmlFormat
                 DisposalToken).ConfigureAwait(false);
             Assert.NotNull(generatedHtml);
 
-            var uri = new Uri(document.CreateUri(), $"{document.FilePath}{FeatureOptions.HtmlVirtualDocumentSuffix}");
+            var uri = new Uri(document.CreateUri(), $"{document.FilePath}{LanguageServerConstants.HtmlVirtualDocumentSuffix}");
             var htmlEdits = await htmlFormattingFixture.Service.GetOnTypeFormattingEditsAsync(LoggerFactory, uri, generatedHtml, position, insertSpaces: true, tabSize: 4);
 
             requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentOnTypeFormattingName, htmlEdits)]);
@@ -125,9 +145,7 @@ public class CohostOnTypeFormattingEndpointTest(HtmlFormattingFixture htmlFormat
             requestInvoker = StrictMock.Of<IHtmlRequestInvoker>();
         }
 
-        var clientSettingsManager = new ClientSettingsManager(changeTriggers: []);
-
-        var endpoint = new CohostOnTypeFormattingEndpoint(IncompatibleProjectService, RemoteServiceInvoker, requestInvoker, clientSettingsManager, LoggerFactory);
+        var endpoint = new CohostOnTypeFormattingEndpoint(IncompatibleProjectService, RemoteServiceInvoker, requestInvoker, ClientSettingsManager, LoggerFactory);
 
         var request = new DocumentOnTypeFormattingParams()
         {

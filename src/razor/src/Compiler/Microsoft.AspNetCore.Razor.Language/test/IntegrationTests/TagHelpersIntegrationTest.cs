@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using Xunit;
+using static Microsoft.AspNetCore.Mvc.Razor.Extensions.ViewComponentsApi;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
@@ -13,15 +14,15 @@ public class TagHelpersIntegrationTest() : IntegrationTestBase(layer: TestProjec
     public void SimpleTagHelpers()
     {
         // Arrange
-        var descriptors = new[]
-        {
+        TagHelperCollection tagHelpers =
+        [
             CreateTagHelperDescriptor(
                 tagName: "input",
                 typeName: "InputTagHelper",
                 assemblyName: "TestAssembly")
-        };
+        ];
 
-        var projectEngine = CreateProjectEngine(builder => builder.AddTagHelpers(descriptors));
+        var projectEngine = CreateProjectEngine(builder => builder.SetTagHelpers(tagHelpers));
         var projectItem = CreateProjectItemFromFile();
 
         // Act
@@ -35,22 +36,22 @@ public class TagHelpersIntegrationTest() : IntegrationTestBase(layer: TestProjec
     public void TagHelpersWithBoundAttributes()
     {
         // Arrange
-        var descriptors = new[]
-        {
+        TagHelperCollection tagHelpers =
+        [
             CreateTagHelperDescriptor(
                 tagName: "input",
                 typeName: "InputTagHelper",
                 assemblyName: "TestAssembly",
-                attributes: new Action<BoundAttributeDescriptorBuilder>[]
-                {
+                attributes:
+                [
                     builder => builder
                         .Name("bound")
                         .PropertyName("FooProp")
                         .TypeName("System.String"),
-                })
-        };
+                ])
+        ];
 
-        var projectEngine = CreateProjectEngine(builder => builder.AddTagHelpers(descriptors));
+        var projectEngine = CreateProjectEngine(builder => builder.SetTagHelpers(tagHelpers));
         var projectItem = CreateProjectItemFromFile();
 
         // Act
@@ -64,8 +65,8 @@ public class TagHelpersIntegrationTest() : IntegrationTestBase(layer: TestProjec
     public void NestedTagHelpers()
     {
         // Arrange
-        var descriptors = new[]
-        {
+        TagHelperCollection tagHelpers =
+        [
             CreateTagHelperDescriptor(
                 tagName: "p",
                 typeName: "PTagHelper",
@@ -78,16 +79,16 @@ public class TagHelpersIntegrationTest() : IntegrationTestBase(layer: TestProjec
                 tagName: "input",
                 typeName: "InputTagHelper",
                 assemblyName: "TestAssembly",
-                attributes: new Action<BoundAttributeDescriptorBuilder>[]
-                {
+                attributes:
+                [
                     builder => builder
                         .Name("value")
                         .PropertyName("FooProp")
                         .TypeName("System.String"),
-                })
-        };
+                ])
+        ];
 
-        var projectEngine = CreateProjectEngine(builder => builder.AddTagHelpers(descriptors));
+        var projectEngine = CreateProjectEngine(builder => builder.SetTagHelpers(tagHelpers));
         var projectItem = CreateProjectItemFromFile();
 
         // Act

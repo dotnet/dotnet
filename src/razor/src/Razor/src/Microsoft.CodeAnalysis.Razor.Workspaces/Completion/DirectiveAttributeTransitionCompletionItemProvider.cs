@@ -7,12 +7,12 @@ using System;
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
-internal class DirectiveAttributeTransitionCompletionItemProvider(LanguageServerFeatureOptions languageServerFeatureOptions) : DirectiveAttributeCompletionItemProviderBase
+internal class DirectiveAttributeTransitionCompletionItemProvider(IClientCapabilitiesService clientCapabilitiesService) : DirectiveAttributeCompletionItemProviderBase
 {
     private const string DisplayText = "@...";
     private static readonly DirectiveCompletionDescription s_descriptionInfo = new(SR.Blazor_directive_attributes);
@@ -35,7 +35,7 @@ internal class DirectiveAttributeTransitionCompletionItemProvider(LanguageServer
             // However, in VS Code explicit commit characters like these cause issues, e.g. "@..." gets committed when trying to type "/" in a
             // self-closing tag. So in VS Code we have SupportSoftSelectionInCompletion set to false and we will
             // use empty commit character set in that case.
-            commitCharacters: _languageServerFeatureOptions.SupportsSoftSelectionInCompletion ? RazorCommitCharacter.CreateArray(["@", "/", ">"]) : [],
+            commitCharacters: _clientCapabilitiesService.ClientCapabilities.SupportsVisualStudioExtensions ? RazorCommitCharacter.CreateArray(["@", "/", ">"]) : [],
             isSnippet: false);
 
     public static bool IsTransitionCompletionItem(RazorCompletionItem completionItem)
@@ -47,7 +47,7 @@ internal class DirectiveAttributeTransitionCompletionItemProvider(LanguageServer
 
     private ImmutableArray<RazorCompletionItem> Completions => _completions ??= [TransitionCompletionItem];
 
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
+    private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
 
     public override ImmutableArray<RazorCompletionItem> GetCompletionItems(RazorCompletionContext context)
     {

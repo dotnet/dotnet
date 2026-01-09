@@ -24,18 +24,15 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
     private readonly Dictionary<string, PublishData> _publishedHtmlData;
     private readonly ProjectSnapshotManager _projectManager;
     private readonly IClientConnection _clientConnection;
-    private readonly LanguageServerFeatureOptions _options;
     private readonly ILogger _logger;
 
     public GeneratedDocumentPublisher(
         ProjectSnapshotManager projectManager,
         IClientConnection clientConnection,
-        LanguageServerFeatureOptions options,
         ILoggerFactory loggerFactory)
     {
         _projectManager = projectManager;
         _clientConnection = clientConnection;
-        _options = options;
         _logger = loggerFactory.GetOrCreateLogger<GeneratedDocumentPublisher>();
         _publishedCSharpData = [];
 
@@ -54,9 +51,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
         // For example, when a document moves from the Misc Project to a real project, we will update it here, and each version would
         // have a different project key. On the receiving end however, there is only one file path, therefore one version of the contents,
         // so we must ensure we only have a single document to compute diffs from, or things get out of sync.
-        var documentKey = _options.IncludeProjectKeyInGeneratedFilePath
-            ? new DocumentKey(projectKey, filePath)
-            : new DocumentKey(ProjectKey.Unknown, filePath);
+        var documentKey = new DocumentKey(projectKey, filePath);
 
         PublishData? previouslyPublishedData;
         ImmutableArray<TextChange> textChanges;
@@ -166,11 +161,6 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
         {
             case ProjectChangeKind.DocumentRemoved:
                 {
-                    if (!_options.IncludeProjectKeyInGeneratedFilePath)
-                    {
-                        break;
-                    }
-
                     // When a C# document is removed we remove it from the publishing, because it could come back with the same name
                     var key = new DocumentKey(args.ProjectKey, args.DocumentFilePath.AssumeNotNull());
 
@@ -190,17 +180,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
 
                 if (!_projectManager.IsDocumentOpen(documentFilePath))
                 {
-                    // Document closed, evict published source text, unless the server doesn't want us to.
-                    if (_options.UpdateBuffersForClosedDocuments)
-                    {
-                        // Some clients want us to keep generating code even if the document is closed, so if we evict our data,
-                        // even though we don't send a didChange for it, the next didChange will be wrong.
-                        return;
-                    }
-
-                    var documentKey = _options.IncludeProjectKeyInGeneratedFilePath
-                        ? new DocumentKey(args.ProjectKey, documentFilePath)
-                        : new DocumentKey(ProjectKey.Unknown, documentFilePath);
+                    var documentKey = new DocumentKey(args.ProjectKey, documentFilePath);
 
                     lock (_publishedCSharpData)
                     {
@@ -226,11 +206,6 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
                     // When a project is removed, we have to remove all published C# source for files in the project because if it comes back,
                     // or a new one comes back with the same name, we want it to start with a clean slate. We only do this if the project key
                     // is part of the generated file name though, because otherwise a project with the same name is effectively the same project.
-                    if (!_options.IncludeProjectKeyInGeneratedFilePath)
-                    {
-                        break;
-                    }
-
                     lock (_publishedCSharpData)
                     {
                         using var keysToRemove = new PooledArrayBuilder<DocumentKey>();

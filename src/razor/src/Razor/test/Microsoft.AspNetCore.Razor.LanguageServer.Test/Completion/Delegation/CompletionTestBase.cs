@@ -5,8 +5,8 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
+using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
@@ -62,7 +62,7 @@ public abstract class CompletionTestBase(ITestOutputHelper testOutput) : Languag
             documentMappingService ?? DocumentMappingService,
             clientConnection,
             completionListCache ?? new(),
-            completionCharacters ?? new(TestLanguageServerFeatureOptions.Instance));
+            completionCharacters ?? new(new TestClientCapabilitiesService(new VSInternalClientCapabilities())));
     }
 
     private protected static IClientConnection CreateClientConnectionForCompletion(
