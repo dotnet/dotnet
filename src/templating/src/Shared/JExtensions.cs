@@ -72,7 +72,7 @@ namespace Microsoft.TemplateEngine
                 return defaultValue;
             }
 
-            if (!checkToken!.TryParseBool(out bool result))
+            if (!checkToken.TryParseBool(out bool result))
             {
                 result = defaultValue;
             }
