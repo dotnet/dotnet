@@ -62,7 +62,7 @@ $productVersions += $queries | ForEach-Object -Parallel {
         }
 
         try {
-            $response = Invoke-WebRequest $versionStringUrl
+            $response = Invoke-WebRequest $versionStringUrl -UseBasicParsing
 
             # It's difficult to tell whether the aka.ms link 404s or not, since it redirects in case of
             # a not found.

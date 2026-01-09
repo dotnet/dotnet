@@ -239,7 +239,7 @@ namespace NuGet.Commands.Test
     </metadata>
     <files>
         <file src=""{pattern}"" target="""" />
-    </files>   
+    </files>
 </package>");
 
                 var nupkgFile = new FileInfo(Path.Combine(currentDirectory.FullName, $"{packageId}.{packageVersion}.nupkg"));
@@ -256,47 +256,6 @@ namespace NuGet.Commands.Test
             public void Dispose()
             {
                 _testDirectory.Dispose();
-            }
-
-
-            internal static void ValidNuspec(string nuspecPath, string packageId, string packageVersion, string pattern)
-            {
-                File.WriteAllText(nuspecPath,
-                    $@"<?xml version=""1.0""?>
-                    <package>
-                        <metadata>
-                            <id>{packageId}</id>
-                            <version>{packageVersion}</version>
-                            <title>title</title>
-                            <description>description</description>
-                            <authors>author</authors>
-                            <requireLicenseAcceptance>false</requireLicenseAcceptance>
-                            <dependencies />
-                        </metadata>
-                        <files>
-                            <file src=""{pattern}"" target="""" />
-                        </files>   
-                    </package>");
-            }
-
-            internal static void InvalidNuspecNoVersion(string nuspecPath, string packageId, string pattern)
-            {
-                File.WriteAllText(nuspecPath,
-                    $@"<?xml version=""1.0""?>
-                    <package>
-                        <metadata>
-                            <id>{packageId}</id>
-                            <version></version>
-                            <title>title</title>
-                            <description>description</description>
-                            <authors>author</authors>
-                            <requireLicenseAcceptance>false</requireLicenseAcceptance>
-                            <dependencies />
-                        </metadata>
-                        <files>
-                            <file src=""{pattern}"" target="""" />
-                        </files>   
-                    </package>");
             }
         }
     }

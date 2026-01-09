@@ -126,6 +126,14 @@ function ResetFilesToTargetBranch($patterns, $targetBranch) {
         return
     }
 
+    # Configure git user for the commit
+    # Use GitHub Actions bot identity
+    Invoke-Block { & git config user.name "github-actions[bot]" }
+    Invoke-Block { & git config user.email "41898282+github-actions[bot]@users.noreply.github.com" }
+
+    # Track which patterns had changes
+    $processedPatterns = @()
+
     foreach ($pattern in $patterns) {
         $pattern = $pattern.Trim()
         if (-not $pattern) {
@@ -136,35 +144,35 @@ function ResetFilesToTargetBranch($patterns, $targetBranch) {
         
         # Use git checkout to reset files matching the pattern to the target branch
         # The -- is needed to separate the revision from the pathspec
+        # Just attempt to checkout the pattern directly - git will handle whether files exist
         try {
-            # First check if there are any files matching the pattern in the target branch
-            $matchingFiles = & git ls-tree -r --name-only "origin/$targetBranch" -- $pattern 2>&1
-            if ($LASTEXITCODE -ne 0) {
-                Write-Warning "Failed to list files for pattern '$pattern': $matchingFiles"
-                continue
-            }
-            
-            if ($matchingFiles) {
-                Write-Host "Found files matching pattern '$pattern': $($matchingFiles -join ', ')"
-                Invoke-Block { & git checkout "origin/$targetBranch" -- $pattern }
-                
-                # Check if there are any changes to commit
-                $status = & git status --porcelain
-                if ($status) {
-                    # Add all changes (the checkout already modified the specific files)
-                    Invoke-Block { & git add -A }
-                    Invoke-Block { & git commit -m "Reset '$pattern' to $targetBranch" }
-                    Write-Host -f Green "Successfully reset '$pattern' to $targetBranch"
-                } else {
-                    Write-Host "No changes to commit for pattern '$pattern'"
-                }
+            & git checkout "origin/$targetBranch" -- $pattern 2>&1 | Write-Host
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host -f Green "Checked out pattern '$pattern' from $targetBranch"
+                $processedPatterns += $pattern
             } else {
-                Write-Host -f Yellow "No files found matching pattern '$pattern' in $targetBranch"
+                Write-Host -f Yellow "Pattern '$pattern' did not match any files in $targetBranch"
             }
         }
         catch {
-            Write-Warning "Failed to reset pattern '$pattern' to $targetBranch. Error: $_"
+            Write-Warning "Failed to checkout pattern '$pattern' from $targetBranch. Error: $_"
         }
+    }
+
+    # Check if there are any changes to commit after processing all patterns
+    $status = & git status --porcelain
+    if ($status -and $processedPatterns.Count -gt 0) {
+        # Add all changes (the checkout already modified the specific files)
+        Invoke-Block { & git add -A }
+        
+        # Create a commit message listing all patterns that were reset
+        $patternsList = $processedPatterns -join "`n- "
+        $commitMessage = "Reset files to $targetBranch`n`nReset patterns:`n- $patternsList"
+        
+        Invoke-Block { & git commit -m $commitMessage }
+        Write-Host -f Green "Successfully reset files to $targetBranch for patterns: $patternsList"
+    } else {
+        Write-Host "No changes to commit after processing all patterns"
     }
 }
 

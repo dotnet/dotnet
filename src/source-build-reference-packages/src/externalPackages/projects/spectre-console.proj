@@ -15,22 +15,22 @@
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:Version=$(SpectreConsoleReleaseVersion)</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:TargetFrameworks=$(NetCurrent)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:TargetFrameworks=$(NetCurrentForSubmodule)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:UseBuildTimeTools=false</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:IsAotCompatible=false</BuildCommandArgs>
     </PropertyGroup>
 
-    <Exec Command="$(DotNetTool) restore /bl:$(ArtifactsLogRepoDir)restore.binlog $(BuildCommandArgs)"
+    <Exec Command="&quot;$(DotNetTool)&quot; restore /bl:$(ArtifactsLogRepoDir)restore.binlog $(BuildCommandArgs)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />
 
-    <Exec Command="$(DotNetTool) build /bl:$(ArtifactsLogRepoDir)build.binlog $(BuildCommandArgs)"
+    <Exec Command="&quot;$(DotNetTool)&quot; build /bl:$(ArtifactsLogRepoDir)build.binlog $(BuildCommandArgs)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />
 
-    <Exec Command="$(DotNetTool) pack /bl:$(ArtifactsLogRepoDir)pack.binlog $(BuildCommandArgs)"
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack.binlog $(BuildCommandArgs)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />

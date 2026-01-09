@@ -108,7 +108,7 @@ namespace NuGet.Commands.Test
             Assert.True(File.Exists(outputFileName), "The package file should exist after the push operation.");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/NuGet/Home/issues/14492")]
         public async Task Run_WhenPushingToAnHttpServerWithAllowInsecureConnectionsOptionFalse_Throws()
         {
             // Arrange

@@ -129,7 +129,7 @@ stages:
         useMonoRuntime: ${{ leg.useMonoRuntime }}
         useSystemLibraries: ${{ leg.useSystemLibraries }}
         withPreviousSDK: ${{ leg.withPreviousSDK }}
-        createSourceArtifacts: ${{ leg.createSourceArtifacts }}
+        createSourceArtifact: ${{ leg.createSourceArtifact }}
         ${{ if eq(leg.disableSigning, false) }}:
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}

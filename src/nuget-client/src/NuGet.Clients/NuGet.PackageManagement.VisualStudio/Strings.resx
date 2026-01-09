@@ -293,7 +293,7 @@
     <value>_Open</value>
   </data>
   <data name="Error_PackageSource_InvalidSource" xml:space="preserve">
-    <value>The source specified is invalid.</value>
+    <value>A valid local or remote path must be specified.</value>
   </data>
   <data name="Error_PackageSource_UniqueName" xml:space="preserve">
     <value>The name specified has already been added to the list of available package sources.</value>
@@ -303,5 +303,11 @@
   </data>
   <data name="Error_NuGetConfig_InvalidState" xml:space="preserve">
     <value>One or more NuGet.Config files contain an error.</value>
+  </data>
+  <data name="Migrating_ProjectJson_Started" xml:space="preserve">
+    <value>Migrating project.json project...</value>
+  </data>
+  <data name="Migrating_ProjectJson_Succeeded" xml:space="preserve">
+    <value>Migration Succeeded</value>
   </data>
 </root>

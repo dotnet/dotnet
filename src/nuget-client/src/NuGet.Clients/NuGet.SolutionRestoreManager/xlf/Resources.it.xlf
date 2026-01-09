@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="ErrorOccurredRestoringPackages">
         <source>Error occurred while restoring NuGet packages: {0}</source>
-        <target state="translated">Errore durante il ripristino dei pacchetti NuGet: {0}</target>
+        <target state="translated">Errore durante il ripristino di pacchetti NuGet: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageDownload_NoVersion">
@@ -21,6 +21,11 @@
         <source>Package '{0} {1}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
         <target state="translated">Il pacchetto '{0} {1}' non è una versione esatta come '[1.0.0]'. Con PackageDownload sono consentite solo versioni esatte.</target>
         <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
+      </trans-unit>
+      <trans-unit id="InfoBar_HyperlinkGHCopilotDocs">
+        <source>How to fix with GitHub Copilot</source>
+        <target state="translated">Come risolvere un problema con GitHub Copilot</target>
+        <note />
       </trans-unit>
       <trans-unit id="InfoBar_HyperlinkMessage">
         <source>Manage NuGet Packages</source>

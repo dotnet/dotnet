@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="Argument_Must_Be_GreaterThanOrEqualTo">
         <source>Value must be greater than or equal to {0}.</source>
-        <target state="translated">Değer {0} değerinden büyük veya buna eşit olmalıdır.</target>
+        <target state="translated">Değer, {0} değerinden büyük veya buna eşit olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="ExperimentVariableOverrideLogText">

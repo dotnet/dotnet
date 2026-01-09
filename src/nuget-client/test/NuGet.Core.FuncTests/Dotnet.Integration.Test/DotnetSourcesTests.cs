@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -346,7 +348,7 @@ namespace Dotnet.Integration.Test
                 List<PackageSource> httpPackageSources = new List<PackageSource>();
                 string expectedError = "";
 
-                for (int i = 0; i < httpSources.Count(); i++)
+                for (int i = 0; i < httpSources.Length; i++)
                 {
                     var source = httpSources[i];
                     httpPackageSources.Add(new PackageSource(source, $"source{i}"));

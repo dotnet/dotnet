@@ -33,8 +33,8 @@ function Test-UninstallPackageWhatIf {
 
 function Test-RemovingPackageWithDependencyFromProjectDoesNotRemoveIfInUse {
     # Arrange
-    $p1 = New-WebApplication
-    $p2 = New-WebApplication
+    $p1 = New-ConsoleApplication
+    $p2 = New-ConsoleApplication
 
     $p1 | Install-Package jquery.Validation
     Assert-Package $p1 jquery.Validation
@@ -55,7 +55,7 @@ function Test-RemovingPackageWithDependencyFromProjectDoesNotRemoveIfInUse {
 
 function Test-RemovePackageRemovesPackageFromSolutionIfNotInUse {
     # Arrange
-    $p1 = New-WebApplication
+    $p1 = New-ConsoleApplication
 
     Install-Package elmah -ProjectName $p1.Name -Version 1.1
     Assert-Reference $p1 elmah
@@ -69,7 +69,7 @@ function Test-RemovePackageRemovesPackageFromSolutionIfNotInUse {
 
 function Test-UninstallingPackageWithConfigTransformWhenConfigReadOnly {
     # Arrange
-    $p1 = New-WebApplication
+    $p1 = New-ConsoleApplication
 
     Install-Package elmah -ProjectName $p1.Name -Version 1.1
     Assert-Reference $p1 elmah
@@ -106,7 +106,7 @@ function Test-UninstallPackageWithNestedContentFiles {
     )
 
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
     Install-Package NestedFolders -ProjectName $p.Name -Source $context.RepositoryPath
 
     # Act
@@ -348,7 +348,7 @@ function Test-UninstallDoesNotRemoveFolderIfNotEmpty {
         $context
     )
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
     $p | Install-Package PackageWithFolder -Source $context.RepositoryRoot
 
     # Get the path to the foo folder

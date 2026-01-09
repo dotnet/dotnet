@@ -9,8 +9,8 @@
   <Import Project="Workarounds.targets"/>
   <Import Project="RepositoryInfo.targets"/>
   <Import Project="Version.targets"/>
-  <Import Project="Tests.targets" Condition="'$(DisableArcadeTestFramework)' != 'true'" />
 
+  <Import Project="Tests.targets" Condition="'$(DisableArcadeTestFramework)' != 'true'" />
   <Import Project="Pack.targets" Condition="'$(__ImportPackTargets)' == 'true'" />
 
   <Import Project="Performance.targets" Condition="'$(DisableArcadeTestFramework)' != 'true'" />

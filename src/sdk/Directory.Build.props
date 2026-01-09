@@ -20,6 +20,7 @@
     <HostOSName Condition="'$(HostOSName)' == '' AND $([MSBuild]::IsOSPlatform('OSX'))">osx</HostOSName>
     <HostOSName Condition="'$(HostOSName)' == '' AND $([MSBuild]::IsOSPlatform('FREEBSD'))">freebsd</HostOSName>
     <HostOSName Condition="'$(HostOSName)' == '' AND $([MSBuild]::IsOSPlatform('ILLUMOS'))">illumos</HostOSName>
+    <HostOSName Condition="'$(HostOSName)' == '' AND $([MSBuild]::IsOSPlatform('HAIKU'))">haiku</HostOSName>
     <HostOSName Condition="'$(HostOSName)' == '' AND '$(IsLinux)' == 'true'">linux</HostOSName>
 
     <OSName Condition="'$(OSName)' == '' AND $(PortableTargetRid) != ''">$(PortableTargetRid.Substring(0, $(PortableTargetRid.LastIndexOf('-'))))</OSName>
@@ -43,14 +44,13 @@
     <!-- Default to all packages generating a corresponding symbol package -->
     <IncludeSymbols>true</IncludeSymbols>
     <IsShippingPackage>false</IsShippingPackage>
-    <SdkTargetFramework>net10.0</SdkTargetFramework>
-    <!-- TODO: Remove when Arcade updated NetCurrent to net10.0. -->
-    <NetCurrent>net10.0</NetCurrent>
+    <!-- remove this once arcade current is net11 -->
+    <NetCurrent>net11.0</NetCurrent>
+    <SdkTargetFramework>$(NetCurrent)</SdkTargetFramework>
     <NetToolMinimum Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NetCurrent)</NetToolMinimum>
     <ToolsetTargetFramework>$(SdkTargetFramework)</ToolsetTargetFramework>
     <VisualStudioServiceTargetFramework>net9.0</VisualStudioServiceTargetFramework>
-    <VisualStudioTargetFramework>net472</VisualStudioTargetFramework>
-
+    <VisualStudioTargetFramework>$(NetFrameworkToolCurrent)</VisualStudioTargetFramework>
     <!-- We used to have scenarios where the MSBuild host (VSMac) had an older .NET, but don't any more. -->
     <ResolverTargetFramework>$(SdkTargetFramework)</ResolverTargetFramework>
 

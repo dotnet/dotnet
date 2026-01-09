@@ -82,7 +82,7 @@ public class Build : IntegrationTestBase
         var nugetCache = Path.GetFullPath(Path.Combine(Root, ".packages"));
 
         var generated = Path.GetFullPath(Path.Combine(Root, "artifacts", "tmp", "GeneratedTestAssets"));
-        var generatedSln = Path.Combine(generated, "CompatibilityTestAssets.sln");
+        var generatedSln = Path.Combine(generated, "CompatibilityTestAssets.slnx");
 
         var dependenciesPath = Path.Combine(Root, "eng", "Versions.props");
         var dependenciesXml = XDocument.Load(dependenciesPath);

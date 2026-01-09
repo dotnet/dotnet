@@ -34,7 +34,7 @@
       </trans-unit>
       <trans-unit id="Error_PackageSourceName_Missing">
         <source>A name must be provided.</source>
-        <target state="translated">Bir ad sağlanmalı.</target>
+        <target state="translated">Bir ad sağlanmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSourceUriHostname_Missing">
@@ -64,7 +64,7 @@
       </trans-unit>
       <trans-unit id="NuGetSearchProvider_Description">
         <source>Search NuGet packages</source>
-        <target state="translated">NuGet paketlerinde ara</target>
+        <target state="translated">NuGet paketlerini ara</target>
         <note />
       </trans-unit>
       <trans-unit id="NuGetSearchProvider_DisplayText">
@@ -74,7 +74,7 @@
       </trans-unit>
       <trans-unit id="NuGetStaticResult_DisplayText">
         <source>Search Online for NuGet Packages matching '{0}'</source>
-        <target state="translated">'{0}' ile eşleşen NuGet Paketlerini Çevrimiçi Ara</target>
+        <target state="translated">'{0}' ile eşleşen NuGet Paketlerini Çevrimiçi ara</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageManagement">
@@ -113,13 +113,13 @@
         <note />
       </trans-unit>
       <trans-unit id="ProjectMigrateErrorMessage">
-        <source>Project is not eligible for migration as it's not project.json based.</source>
-        <target state="translated">Proje, proje tabanlı olmadığından geçiş için project.json değil.</target>
+        <source>Project is not eligible for migration. Either the project is not packages.config based or doesn't support PackageReference yet.</source>
+        <target state="translated">Proje geçiş için uygun değil. Proje packages.config tabanlı değil veya henüz PackageReference'ı desteklemiyor.</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
         <source>These settings are stored in %NuGet.Config% files</source>
-        <target state="translated">Bu ayarlar %NuGet.Config% dosyada depolanır</target>
+        <target state="translated">Bu ayarlar %NuGet.Config% dosyalarında depolanır</target>
         <note>Do not translate % % or what is between them</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
@@ -130,6 +130,21 @@
       <trans-unit id="Text_AllowInsecureConnections_Header">
         <source>Allow Insecure Connections</source>
         <target state="translated">Güvenli Olmayan Bağlantılara İzin Ver</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Description">
+        <source>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</source>
+        <target state="new">Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_HowToRemove">
+        <source>Remove all audit sources to revert to using package sources for vulnerability data.</source>
+        <target state="new">Remove all audit sources to revert to using package sources for vulnerability data.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Title">
+        <source>Audit sources</source>
+        <target state="new">Audit sources</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">
@@ -175,6 +190,11 @@
       <trans-unit id="Text_PackageSourceUrl_Header">
         <source>Source</source>
         <target state="translated">Kaynak</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageSources_Description">
+        <source>Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</source>
+        <target state="new">Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageSources_MachineWide">

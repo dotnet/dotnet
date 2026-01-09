@@ -146,15 +146,11 @@ public abstract partial class CompletionService : ILanguageService
             return false;
 
         // Enter does not trigger completion.
-        if (trigger.Kind == CompletionTriggerKind.Insertion && trigger.Character == '\n')
-        {
+        if (trigger is { Kind: CompletionTriggerKind.Insertion, Character: '\n' })
             return false;
-        }
 
         if (trigger.Kind == CompletionTriggerKind.Deletion && SupportsTriggerOnDeletion(options))
-        {
             return char.IsLetterOrDigit(trigger.Character) || trigger.Character == '.';
-        }
 
         var extensionManager = languageServices.SolutionServices.GetRequiredService<IExtensionManager>();
 
@@ -373,6 +369,11 @@ public abstract partial class CompletionService : ILanguageService
         }
 
         return true;
+    }
+
+    internal virtual Task<bool> IsSpeculativeTypeParameterContextAsync(Document document, int position, CancellationToken cancellationToken)
+    {
+        return SpecializedTasks.False;
     }
 
     /// <summary>

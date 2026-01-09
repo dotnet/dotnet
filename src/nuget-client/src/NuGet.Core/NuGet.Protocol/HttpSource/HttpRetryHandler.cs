@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -116,10 +114,10 @@ namespace NuGet.Protocol
 
                     try
                     {
-                        // The only time that we will be disposing this existing response is if we have 
+                        // The only time that we will be disposing this existing response is if we have
                         // successfully fetched an HTTP response but the response has an status code indicating
                         // failure (i.e. HTTP status code >= 500).
-                        // 
+                        //
                         // If we don't even get an HTTP response message because an exception is thrown, then there
                         // is no response instance to dispose. Additionally, we cannot use a finally here because
                         // the caller needs the response instance returned in a non-disposed state.

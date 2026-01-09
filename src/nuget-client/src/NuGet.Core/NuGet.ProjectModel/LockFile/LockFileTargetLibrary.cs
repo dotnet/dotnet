@@ -7,8 +7,6 @@ using NuGet.Packaging.Core;
 using NuGet.Shared;
 using NuGet.Versioning;
 
-#nullable enable
-
 namespace NuGet.ProjectModel
 {
     public class LockFileTargetLibrary : IEquatable<LockFileTargetLibrary>

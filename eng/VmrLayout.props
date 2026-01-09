@@ -51,7 +51,6 @@
     <SourceBuiltSymbolsAllTarballName>dotnet-symbols-all</SourceBuiltSymbolsAllTarballName>
     <SourceBuiltSymbolsSdkTarballName>dotnet-symbols-sdk</SourceBuiltSymbolsSdkTarballName>
 
-    <BaselineDataFile>$(ToolsDir)prebuilt-baseline.xml</BaselineDataFile>
     <PackageVersionsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', 'PackageVersions'))</PackageVersionsDir>
 
     <!-- Binary detection -->

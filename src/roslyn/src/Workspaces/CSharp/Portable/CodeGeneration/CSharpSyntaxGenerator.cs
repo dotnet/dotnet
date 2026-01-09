@@ -655,7 +655,7 @@ internal sealed class CSharpSyntaxGenerator() : SyntaxGenerator
             case SyntaxKind.ConversionOperatorDeclaration:
             case SyntaxKind.OperatorDeclaration:
                 var method = (BaseMethodDeclarationSyntax)declaration;
-                return (method.Body == null && method.ExpressionBody == null) ? method.WithSemicolonToken(default).WithBody(CreateBlock()) : method;
+                return method is { Body: null, ExpressionBody: null } ? method.WithSemicolonToken(default).WithBody(CreateBlock()) : method;
 
             case SyntaxKind.PropertyDeclaration:
                 var prop = (PropertyDeclarationSyntax)declaration;
@@ -677,16 +677,9 @@ internal sealed class CSharpSyntaxGenerator() : SyntaxGenerator
         => accessorList.WithAccessors([.. accessorList.Accessors.Select(WithBody)]);
 
     private static AccessorDeclarationSyntax WithBody(AccessorDeclarationSyntax accessor)
-    {
-        if (accessor.Body == null && accessor.ExpressionBody == null)
-        {
-            return accessor.WithSemicolonToken(default).WithBody(CreateBlock(null));
-        }
-        else
-        {
-            return accessor;
-        }
-    }
+        => accessor is { Body: null, ExpressionBody: null }
+            ? accessor.WithSemicolonToken(default).WithBody(CreateBlock(null))
+            : accessor;
 
     private static AccessorListSyntax? WithoutBodies(AccessorListSyntax? accessorList)
         => accessorList?.WithAccessors([.. accessorList.Accessors.Select(WithoutBody)]);
@@ -809,11 +802,8 @@ internal sealed class CSharpSyntaxGenerator() : SyntaxGenerator
     {
         return Isolate(m, member =>
         {
-            Accessibility acc;
-            DeclarationModifiers modifiers;
-
             // return any nested member "as is" without any additional changes
-            if (member is BaseTypeDeclarationSyntax)
+            if (member is BaseTypeDeclarationSyntax or DelegateDeclarationSyntax)
                 return member;
 
             switch (member.Kind())
@@ -866,13 +856,10 @@ internal sealed class CSharpSyntaxGenerator() : SyntaxGenerator
                 // convert field into property
                 case SyntaxKind.FieldDeclaration:
                     var f = (FieldDeclarationSyntax)member;
-                    GetAccessibilityAndModifiers(f.Modifiers, out acc, out modifiers, out _);
-
-                    var type = GetType(f);
-                    Contract.ThrowIfNull(type);
+                    GetAccessibilityAndModifiers(f.Modifiers, out var acc, out var modifiers, out _);
 
                     return AsInterfaceMember(
-                        PropertyDeclaration(GetName(f), ClearTrivia(type), acc, modifiers, getAccessorStatements: null, setAccessorStatements: null));
+                        PropertyDeclaration(GetName(f), ClearTrivia(f.Declaration.Type), acc, modifiers, getAccessorStatements: null, setAccessorStatements: null));
 
                 default:
                     throw ExceptionUtilities.UnexpectedValue(member.Kind());
@@ -1468,6 +1455,7 @@ internal sealed class CSharpSyntaxGenerator() : SyntaxGenerator
 
     private static readonly DeclarationModifiers s_constructorModifiers =
         DeclarationModifiers.Extern |
+        DeclarationModifiers.Partial |
         DeclarationModifiers.Static |
         DeclarationModifiers.Unsafe;
 
@@ -1477,6 +1465,7 @@ internal sealed class CSharpSyntaxGenerator() : SyntaxGenerator
         DeclarationModifiers.Extern |
         DeclarationModifiers.New |
         DeclarationModifiers.Override |
+        DeclarationModifiers.Partial |
         DeclarationModifiers.ReadOnly |
         DeclarationModifiers.Required |
         DeclarationModifiers.Sealed |
@@ -1489,6 +1478,7 @@ internal sealed class CSharpSyntaxGenerator() : SyntaxGenerator
         DeclarationModifiers.Extern |
         DeclarationModifiers.New |
         DeclarationModifiers.Override |
+        DeclarationModifiers.Partial |
         DeclarationModifiers.ReadOnly |
         DeclarationModifiers.Sealed |
         DeclarationModifiers.Static |
@@ -3436,7 +3426,9 @@ internal sealed class CSharpSyntaxGenerator() : SyntaxGenerator
         => CreateBinaryExpression(SyntaxKind.LogicalOrExpression, left, right);
 
     public override SyntaxNode LogicalNotExpression(SyntaxNode expression)
-        => SyntaxFactory.PrefixUnaryExpression(SyntaxKind.LogicalNotExpression, (ExpressionSyntax)ParenthesizeNonSimple(expression));
+        => SyntaxFactory.PrefixUnaryExpression(
+            SyntaxKind.LogicalNotExpression,
+            (ExpressionSyntax)ParenthesizeNonSimple(expression.WithoutLeadingTrivia())).WithLeadingTrivia(expression.GetLeadingTrivia());
 
     public override SyntaxNode ConditionalExpression(SyntaxNode condition, SyntaxNode whenTrue, SyntaxNode whenFalse)
         => SyntaxFactory.ConditionalExpression((ExpressionSyntax)ParenthesizeNonSimple(condition), (ExpressionSyntax)ParenthesizeNonSimple(whenTrue), (ExpressionSyntax)ParenthesizeNonSimple(whenFalse));

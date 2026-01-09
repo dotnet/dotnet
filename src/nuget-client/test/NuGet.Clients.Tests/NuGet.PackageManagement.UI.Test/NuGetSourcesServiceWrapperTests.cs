@@ -1,10 +1,13 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using NuGet.Protocol.Core.Types;
 using NuGet.VisualStudio.Internal.Contracts;
 using Xunit;
 
@@ -128,6 +131,11 @@ namespace NuGet.PackageManagement.UI.Test
             public ValueTask<IReadOnlyList<PackageSourceContextInfo>> GetPackageSourcesAsync(CancellationToken cancellationToken)
             {
                 return new ValueTask<IReadOnlyList<PackageSourceContextInfo>>(PackageSources);
+            }
+
+            public IReadOnlyList<SourceRepository> GetEnabledAuditSources()
+            {
+                throw new NotImplementedException();
             }
         }
     }
