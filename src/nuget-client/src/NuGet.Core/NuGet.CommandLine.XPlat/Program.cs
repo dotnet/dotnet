@@ -115,10 +115,12 @@ namespace NuGet.CommandLine.XPlat
                     var nugetCommand = new Command("nuget");
                     rootCommand.Subcommands.Add(nugetCommand);
 
+                    var lazyConsole = new Lazy<Spectre.Console.IAnsiConsole>(() => Spectre.Console.AnsiConsole.Console);
+
                     ConfigCommand.Register(nugetCommand, getHidePrefixLogger);
                     ConfigCommand.Register(rootCommand, getHidePrefixLogger);
-                    Commands.Why.WhyCommand.Register(nugetCommand, Spectre.Console.AnsiConsole.Console);
-                    Commands.Why.WhyCommand.Register(rootCommand, Spectre.Console.AnsiConsole.Console);
+                    Commands.Why.WhyCommand.Register(nugetCommand, lazyConsole);
+                    Commands.Why.WhyCommand.Register(rootCommand, lazyConsole);
                 }
 
                 CancellationTokenSource tokenSource = new CancellationTokenSource();
