@@ -55,10 +55,10 @@
       "commitSha": "bcec9ad2e7a77bb9f9dec4e6aaf9a09d009caba3"
     },
     {
-      "barId": 296022,
+      "barId": 296473,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "2779bb2f66c47eb62b28d78d29b225d850f45238"
+      "commitSha": "ad86fd75a9bf8400b4156c70d984c4d997995472"
     },
     {
       "barId": 292299,
