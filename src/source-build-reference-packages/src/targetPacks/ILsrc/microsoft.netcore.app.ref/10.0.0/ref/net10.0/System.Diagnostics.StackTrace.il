@@ -1,5 +1,4 @@
 
-//  .NET IL Disassembler.  Version 11.0.0-alpha.1.26055.101
 
 
 // ----- DOS Header:
@@ -365,7 +364,6 @@
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000009    //  ILONLY
-// Image base: 0x00007FA565C44000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
