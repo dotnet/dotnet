@@ -7,10 +7,10 @@
       "commitSha": "13323fc374efc77953ec0ac9a0927da69f14a584"
     },
     {
-      "barId": 296165,
+      "barId": 296488,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "991f0cb924194b68191438b7d469c86ccba829cf"
+      "commitSha": "8b982fbfa4cb9a3c4ca9adb15ffa4c29c130e1dd"
     },
     {
       "barId": 279211,
@@ -79,10 +79,10 @@
       "commitSha": "ec501e4c6f2689c9c71e38ce72d892675965c392"
     },
     {
-      "barId": 295983,
+      "barId": 296459,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "df5d2d2a52b07ab5578e4ae212f213aca2d8d695"
+      "commitSha": "4591393ea269cd79520204d0945de840c30042fd"
     },
     {
       "barId": 291014,
@@ -115,10 +115,10 @@
       "commitSha": "1536a1ca256a4e9f804b2073464ca8e4f4794702"
     },
     {
-      "barId": 296247,
+      "barId": 296527,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "0cac1aa3a0df20f07742c2179dbda805a50f6049"
+      "commitSha": "bcb12afa91df5118cdc411e88ea6b7eaf603f1f6"
     },
     {
       "barId": 287819,
