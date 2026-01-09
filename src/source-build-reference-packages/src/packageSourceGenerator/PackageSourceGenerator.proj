@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.Build.NoTargets" InitialTargets="ValidateRestoreCsvContentProperties">
 
   <PropertyGroup>
-    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <PackageSourceGeneratorTaskAssembly>$(ArtifactsBinDir)PackageSourceGeneratorTask\$(Configuration)\$(NetCurrent)\PackageSourceGeneratorTask.dll</PackageSourceGeneratorTaskAssembly>
+    <PackageSourceGeneratorTaskAssembly>$(ArtifactsBinDir)PackageSourceGeneratorTask\$(Configuration)\PackageSourceGeneratorTask.dll</PackageSourceGeneratorTaskAssembly>
     <PackagesSrcDirectory Condition="'$(PackagesSrcDirectory)' == ''">$(RepoRoot)src\</PackagesSrcDirectory>
     <ReferencePackagesSrcDirectory>$([MSBuild]::NormalizeDirectory('$(PackagesSrcDirectory)', 'referencePackages', 'src'))</ReferencePackagesSrcDirectory>
     <TextOnlyPackagesSrcDirectory>$([MSBuild]::NormalizeDirectory('$(PackagesSrcDirectory)', 'textOnlyPackages', 'src'))</TextOnlyPackagesSrcDirectory>

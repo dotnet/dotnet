@@ -14,7 +14,7 @@
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:Version=$(DockerCredsProviderReleaseVersion)</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:TargetFrameworks=$(NetCurrentForSubmodule)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:TargetFrameworks=$(NetCurrent)</BuildCommandArgs>
     </PropertyGroup>
 
     <Exec Command="&quot;$(DotNetTool)&quot; restore /bl:$(ArtifactsLogRepoDir)restore.binlog $(BuildCommandArgs)"
