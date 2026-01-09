@@ -33,13 +33,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Microsoft.NET.CrossGen.targets">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ShimFilesSimulatingLogicInSdkRepo/Microsoft.NET.CrossGen.props">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>Microsoft.NET.CrossGen.props</Link>
-    </Content>
+    <Content Include="Microsoft.NET.CrossGen.targets" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="ShimFilesSimulatingLogicInSdkRepo/Microsoft.NET.CrossGen.props"
+      Link="Microsoft.NET.CrossGen.props"
+      CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
