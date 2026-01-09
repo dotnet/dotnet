@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NuGet.CommandLine.XPlat.Commands;
 using NuGet.CommandLine.XPlat.Commands.Why;
+using Spectre.Console;
 using Spectre.Console.Testing;
 using Xunit;
 

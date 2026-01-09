@@ -40,6 +40,8 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
                 WhyCommandRunner.ExecuteCommand);
         }
 
+        // console must be lazy, because Spectre.Console's AnsiConsole will send VT sequences to the output
+        // as soon as it's created, which causes problems with the dotnet CLI's C++ output, like dotnet --info
         internal static void Register(Command rootCommand, Lazy<IAnsiConsole> console, Func<WhyCommandArgs, Task<int>> action)
         {
             var whyCommand = new DocumentedCommand("why", Strings.WhyCommand_Description, "https://aka.ms/dotnet/nuget/why");
