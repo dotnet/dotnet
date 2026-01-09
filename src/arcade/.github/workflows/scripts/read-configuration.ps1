@@ -53,7 +53,7 @@ function GetConfiguration {
     Write-Host "Fetching configuration file from $urlToConfigurationFile"
 
     try{
-        $response = Invoke-WebRequest -Method GET -MaximumRetryCount 3 -Headers $headers `
+        $response = Invoke-WebRequest -UseBasicParsing -Method GET -MaximumRetryCount 3 -Headers $headers `
                 $urlToConfigurationFile
         
         $mergeFlowConfig = ConvertFrom-Json -InputObject $response.Content -AsHashTable
