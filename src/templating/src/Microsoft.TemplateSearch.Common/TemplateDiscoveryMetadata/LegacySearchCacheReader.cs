@@ -69,7 +69,7 @@ namespace Microsoft.TemplateSearch.Common
                 && TryReadPackToTemplateMap(logger, cacheObject, out IReadOnlyDictionary<string, PackToTemplateEntry>? packToTemplateMap)
                 && TryReadAdditionalData(logger, cacheObject, additionalDataReaders, out IReadOnlyDictionary<string, object>? additionalDta))
             {
-                discoveryMetadata = new TemplateDiscoveryMetadata(version!, templateList!, packToTemplateMap!, additionalDta!);
+                discoveryMetadata = new TemplateDiscoveryMetadata(version, templateList, packToTemplateMap, additionalDta);
                 return true;
             }
             discoveryMetadata = null;
