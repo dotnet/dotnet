@@ -43,6 +43,8 @@
     -->
     <PrivateSourceBuiltSdkVersion>11.0.100-alpha.1.26060.102</PrivateSourceBuiltSdkVersion>
     <PrivateSourceBuiltArtifactsVersion>11.0.100-alpha.1.26060.102</PrivateSourceBuiltArtifactsVersion>
+    <!-- workload manifest version for 1xx SDK feature band, used by 2xx+ branches to include 1xx workloads -->
+    <DotNet1xxWorkloadManifestVersion>$(MicrosoftNETWorkloadEmscriptenCurrentManifest100100Version)</DotNet1xxWorkloadManifestVersion>
     <!-- command-line-api dependencies -->
     <SystemCommandLineVersion>2.0.0-beta5.25208.1</SystemCommandLineVersion>
     <!-- msbuild dependencies -->
