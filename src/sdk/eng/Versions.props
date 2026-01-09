@@ -117,6 +117,11 @@
     <MicrosoftBuildMinimumVersion Condition="'$(DotNetBuildSourceOnly)' != 'true'">17.14.28</MicrosoftBuildMinimumVersion>
     <MinimumVSVersion>18.0</MinimumVSVersion>
   </PropertyGroup>
+  <PropertyGroup>
+    <!-- Dependencies for project templates are no longer in version.details.xml due to the head of the VMR https://github.com/dotnet/arcade-services/issues/5637 -->
+    <MicrosoftDotnetWinFormsProjectTemplatesPackageVersion>10.0.2-servicing.25601.110</MicrosoftDotnetWinFormsProjectTemplatesPackageVersion>
+    <MicrosoftDotNetWpfProjectTemplatesPackageVersion>10.0.2-servicing.25601.110</MicrosoftDotNetWpfProjectTemplatesPackageVersion>
+  </PropertyGroup>
 
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/emsdk -->
