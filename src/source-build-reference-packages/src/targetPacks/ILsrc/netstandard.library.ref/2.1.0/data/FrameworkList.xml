@@ -1,4 +1,4 @@
-<FileList Name=".NET Standard 2.1" TargetFrameworkIdentifier=".NETStandard" TargetFrameworkVersion="2.1" FrameworkName="NETStandard.Library">
+﻿<FileList Name=".NET Standard 2.1" TargetFrameworkIdentifier=".NETStandard" TargetFrameworkVersion="2.1" FrameworkName="NETStandard.Library">
   <File Type="Managed" Path="ref/netstandard2.1/Microsoft.Win32.Primitives.dll" AssemblyName="Microsoft.Win32.Primitives" PublicKeyToken="b03f5f7f11d50a3a" AssemblyVersion="4.0.3.0" FileVersion="4.700.19.46205" />
   <File Type="Managed" Path="ref/netstandard2.1/System.AppContext.dll" AssemblyName="System.AppContext" PublicKeyToken="b03f5f7f11d50a3a" AssemblyVersion="4.1.2.0" FileVersion="4.700.19.46205" />
   <File Type="Managed" Path="ref/netstandard2.1/System.Buffers.dll" AssemblyName="System.Buffers" PublicKeyToken="cc7b13ffcd2ddd51" AssemblyVersion="4.0.3.0" FileVersion="4.700.19.46205" />
