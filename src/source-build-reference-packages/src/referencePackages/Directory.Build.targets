@@ -48,21 +48,7 @@
 
   <!-- Customization extension point -->
   <Import Project="$(CustomizationsPropsPath)" Condition="Exists('$(CustomizationsPropsPath)')" />
-
-  <!-- Keep in sync with available targeting packs under src/targetPacks/ILsrc. -->
-  <ItemGroup>
-    <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.NETCore.App'))">
-      <TargetingPackVersion Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(TargetFramework)', '^net\d+\.0$'))">$([System.Text.RegularExpressions.Regex]::Match('%(TargetFramework)', '\d+').Value).0.0</TargetingPackVersion>
-    </KnownFrameworkReference>
-
-    <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.AspNetCore.App'))">
-      <TargetingPackVersion Condition="'%(TargetFramework)' == 'net6.0'">6.0.2</TargetingPackVersion>
-    </KnownFrameworkReference>
-
-    <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'NETStandard.Library'))">
-      <TargetingPackVersion Condition="'%(TargetFramework)' == 'netstandard2.1'">2.1.0</TargetingPackVersion>
-    </KnownFrameworkReference>
-  </ItemGroup>
+  <Import Project="$(RepositoryEngineeringDir)KnownFrameworkReferences.targets" />
 
   <!-- Conflict resolution doesn't see P2Ps: https://github.com/dotnet/sdk/issues/2674. -->
   <Target Name="PassProjectReferencesToConflictResolution"

@@ -1,8 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <!-- Keep TFM in sync with sdk-tasks.csproj -->
-    <SdkTasksAssembly>$(ArtifactsBinDir)sdk-tasks\$(Configuration)\$(NetToolCurrent)\sdk-tasks.dll</SdkTasksAssembly>
+    <SdkTasksAssembly>$(ArtifactsBinDir)sdk-tasks\$(Configuration)\sdk-tasks.dll</SdkTasksAssembly>
   </PropertyGroup>
 
   <ItemGroup>
