@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
   </PropertyGroup>
 
   <Target Name="GenerateRootFs"
-          BeforeTargets="Build">
+          AfterTargets="Build">
     <PropertyGroup>
       <ArmEnvironmentVariables Condition="'$(ArmEnvironmentVariables)' == ''">ROOTFS_DIR=$(ArtifactsObjDir)crossrootfs/arm</ArmEnvironmentVariables>
       <ArmEnvironmentVariables Condition="'$(Platform)' == 'armel'">ROOTFS_DIR=$(ArtifactsObjDir)crossrootfs/armel</ArmEnvironmentVariables>
