@@ -72,7 +72,7 @@ parameters:
 # The SDK from its artifacts is copied to $(sourcesPath)/.dotnet
 - name: reuseBuildArtifactsFrom
   type: object
-  default: ''
+  default: []
 
 # Enables usage of the system libraries when building.
 - name: useSystemLibraries
@@ -160,7 +160,7 @@ jobs:
         image: ${{ parameters.container.image }}
         options: $(defaultContainerOptions)
 
-  ${{ if ne(parameters.reuseBuildArtifactsFrom, '') }}:
+  ${{ if gt(length(parameters.reuseBuildArtifactsFrom), 0) }}:
     ${{ if eq(parameters.buildPass, '') }}:
       # For PR builds, skip the stage 2 build if the stage 1 build fails.
       # Otherwise, run the stage 2 build even if the stage 1 build fails so that we can get a complete assessment of the build status.
@@ -172,7 +172,7 @@ jobs:
     ${{ else }}:
       condition: succeeded()
     dependsOn:
-    - ${{ if ne(parameters.reuseBuildArtifactsFrom, '') }}:
+    - ${{ if gt(length(parameters.reuseBuildArtifactsFrom), 0) }}:
       - ${{ parameters.reuseBuildArtifactsFrom }}
   variables:
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
@@ -212,6 +212,13 @@ jobs:
 
   - name: artifactsPrepublishDir
     value: $(Build.ArtifactStagingDirectory)/prepublish
+
+  - name: downloadedArtifactsDir
+    value: $(Agent.TempDirectory)/downloaded-artifacts
+  - name: previouslySourceBuiltSdkDir
+    value: $(Agent.TempDirectory)/previously-source-built-sdk
+  - name: previouslySourceBuiltArtifactsDir
+    value: $(Agent.TempDirectory)/previously-source-built-artifacts
 
   - name: successfulJobArtifactName
     value: $(Agent.JobName)_Artifacts
@@ -396,7 +403,7 @@ jobs:
       displayName: Export VMR sources
       workingDirectory: $(Build.ArtifactStagingDirectory)
 
-  - ${{ if ne(parameters.reuseBuildArtifactsFrom,'') }}:
+  - ${{ if gt(length(parameters.reuseBuildArtifactsFrom), 0) }}:
     - ${{ each reuseBuildArtifacts in parameters.reuseBuildArtifactsFrom }}:
       - ${{ if eq(parameters.buildSourceOnly, true) }}:
         - template: ../steps/download-artifacts.yml
@@ -406,7 +413,7 @@ jobs:
             downloadFilePatterns: |
               assets/*/Private.SourceBuilt.Artifacts.*.tar.gz
               assets/*/dotnet-sdk-*.tar.gz
-            copyDestination: $(sourcesPath)/prereqs/packages/archive/
+            copyDestination: $(downloadedArtifactsDir)
             flattenDirs: true
 
       - ${{ else }}:
@@ -424,7 +431,7 @@ jobs:
 
   - template: /eng/common/templates/steps/enable-internal-runtimes.yml
 
-  - ${{ if and(parameters.excludeRuntimeDependentJobs, eq(parameters.reuseBuildArtifactsFrom, ''), not(parameters.withPreviousSDK)) }}:
+  - ${{ if and(parameters.excludeRuntimeDependentJobs, eq(length(parameters.reuseBuildArtifactsFrom), 0), not(parameters.withPreviousSDK)) }}:
     - script: |
         source "$(sourcesPath)/eng/download-source-built-archive.sh"
         if [[ $SYSTEM_TEAMPROJECT == "internal" ]]; then
@@ -545,15 +552,82 @@ jobs:
             prepSdk=false
           fi
 
+          
+          additionalBuildArgs=""
+          
+          echo "Debug Paths:"
+          echo "Pipeline Workspace: $(Pipeline.Workspace)"
+          echo "Build Sources Directory: $(Build.SourcesDirectory)"
+          echo "Agent Temp Directory: $(Agent.TempDirectory)"
+          echo "Downloaded Artifacts Directory: $(downloadedArtifactsDir)"
+
           if [[ "$prepSdk" == "false" ]]; then
             customPrepArgs="${customPrepArgs} --no-sdk"
-            rm -rf $(sourcesPath)/.dotnet
-            mkdir $(sourcesPath)/.dotnet
-            previousSdkPath="$(sourcesPath)/prereqs/packages/archive/dotnet-sdk-*.tar.gz"
-            eval tar -ozxf "$previousSdkPath" -C "$(sourcesPath)/.dotnet"
-            eval rm -f "$previousSdkPath"
+            
+            # Verify download directory exists
+            if [ ! -d "$(downloadedArtifactsDir)" ]; then
+              echo "Error: SDK extraction required but '$(downloadedArtifactsDir)' does not exist."
+              echo "Checking Pipeline Workspace content:"
+              ls -R "$(Pipeline.Workspace)" || true
+              exit 1
+            fi
 
-            echo "##vso[task.setvariable variable=additionalBuildArgs]--with-sdk $(sourcesPath)/.dotnet"
+            mkdir -p "$(previouslySourceBuiltSdkDir)"
+            
+            echo "Searching for SDK tarball in $(downloadedArtifactsDir)..."
+            find "$(downloadedArtifactsDir)" -name "*.tar.gz" || true
+
+            previousSdkPath=$(find "$(downloadedArtifactsDir)" -name "dotnet-sdk-*.tar.gz" | head -n 1)
+            
+            if [ -z "$previousSdkPath" ]; then
+              echo "Error: dotnet-sdk-*.tar.gz not found in $(downloadedArtifactsDir)"
+              echo "Contents of downloaded artifacts:"
+              ls -R "$(downloadedArtifactsDir)"
+              exit 1
+            fi
+
+            echo "Found SDK tarball: $previousSdkPath"
+            echo "Extracting SDK..."
+            eval tar -oxzf "$previousSdkPath" -C "$(previouslySourceBuiltSdkDir)"
+            
+            customPrepArgs="${customPrepArgs} --with-sdk $(previouslySourceBuiltSdkDir)"
+            additionalBuildArgs="--with-sdk $(previouslySourceBuiltSdkDir)"
+          fi
+
+          if [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
+             # Verify download directory exists
+             if [ ! -d "$(downloadedArtifactsDir)" ]; then
+               echo "Error: Package extraction required but '$(downloadedArtifactsDir)' does not exist."
+               echo "Checking Pipeline Workspace content:"
+               ls -R "$(Pipeline.Workspace)" || true
+               exit 1
+             fi
+
+             mkdir -p "$(previouslySourceBuiltArtifactsDir)"
+             
+             echo "Searching for Artifacts tarball in $(downloadedArtifactsDir)..."
+             artifactsTarball=$(find "$(downloadedArtifactsDir)" -name "Private.SourceBuilt.Artifacts.*.tar.gz" | head -n 1)
+             
+             if [ -z "$artifactsTarball" ]; then
+               echo "Error: Private.SourceBuilt.Artifacts.*.tar.gz not found in $(downloadedArtifactsDir)"
+               echo "Contents of downloaded artifacts:"
+               ls -R "$(downloadedArtifactsDir)"
+               exit 1
+             fi
+             
+             echo "Found Artifacts tarball: $artifactsTarball"
+             echo "Extracting artifacts..."
+             tar -oxzf "$artifactsTarball" -C "$(previouslySourceBuiltArtifactsDir)"
+             
+             customPrepArgs="${customPrepArgs} --with-packages $(previouslySourceBuiltArtifactsDir)"
+             additionalBuildArgs="${additionalBuildArgs} --with-packages $(previouslySourceBuiltArtifactsDir)"
+          fi
+          
+          echo "Prep arguments: $customPrepArgs"
+          echo "Additional build arguments: $additionalBuildArgs"
+
+          if [[ -n "$additionalBuildArgs" ]]; then
+            echo "##vso[task.setvariable variable=additionalBuildArgs]$additionalBuildArgs"
           fi
 
           ./prep-source-build.sh $customPrepArgs
@@ -583,6 +657,8 @@ jobs:
               # Set up for signing source-built artifacts post-build.
               extraBuildProperties="$extraBuildProperties /p:DotNetSourceOnlyPostBuildSign=true"
             fi
+
+
 
             if [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
               customBuildArgs="$customBuildArgs --with-shared-components $(sharedComponentsDir)"
@@ -632,9 +708,11 @@ jobs:
 
           buildArgs="$(additionalBuildArgs) $customBuildArgs $extraBuildProperties"
 
-          for envVar in $customEnvVars; do
-            customEnvVarsWithBashSyntax="$customEnvVarsWithBashSyntax export $envVar;"
-          done
+          if [[ -n "$customEnvVars" ]]; then
+            for envVar in $customEnvVars; do
+              customEnvVarsWithBashSyntax="$customEnvVarsWithBashSyntax export $envVar;"
+            done
+          fi
 
           eval $customEnvVarsWithBashSyntax
           $customPreBuildArgs ./build.sh $buildArgs
