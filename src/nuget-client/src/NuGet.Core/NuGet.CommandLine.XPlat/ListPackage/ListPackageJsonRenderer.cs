@@ -102,11 +102,6 @@ namespace NuGet.CommandLine.XPlat.ListPackage
             writer.WritePropertyName(ParametersProperty);
             writer.WriteValue(PathUtility.GetPathWithForwardSlashes(listPackageArgs.ArgumentText));
 
-            if (listPackageReportModel.Projects.Any(p => p.AutoReferenceFound))
-            {
-                _problems.Add(new ReportProblem(ProblemType.Warning, string.Empty, Strings.ListPkg_AutoReferenceDescription));
-            }
-
             if (_problems?.Count > 0)
             {
                 WriteProblems(writer, _problems);

@@ -6,8 +6,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using NuGet.Configuration;
 using NuGet.Common;
+using NuGet.Configuration;
 using NuGet.ProjectModel;
 using NuGet.Protocol.Model;
 using NuGet.Versioning;
@@ -112,10 +112,11 @@ internal interface IPackageUpdateIO
 
     /// <summary>Gets the assets file for a project.</summary>
     /// <param name="dgSpec">The restore inputs for the project.</param>
+    /// <param name="projectPath">The path to the project to get the assets file for.</param>
     /// <param name="logger">The output logger</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The assets file for the project.</returns>
-    Task<LockFile> GetProjectAssetsFileAsync(DependencyGraphSpec dgSpec, ILogger logger, CancellationToken cancellationToken);
+    Task<LockFile> GetProjectAssetsFileAsync(DependencyGraphSpec dgSpec, string projectPath, ILogger logger, CancellationToken cancellationToken);
 
     /// <summary>Gets the package source mapping configuration for the current settins context.</summary>
     /// <returns>The package source mapping settings.</returns>

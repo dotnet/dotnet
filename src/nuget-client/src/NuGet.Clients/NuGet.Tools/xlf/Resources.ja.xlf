@@ -134,17 +134,17 @@
       </trans-unit>
       <trans-unit id="Text_AuditSources_Description">
         <source>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</source>
-        <target state="new">Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
+        <target state="translated">監査ソースは、パッケージ ソースとして機能することなく、復元中に脆弱性データを提供します。監査ソースが構成されていない場合、NuGet Audit はパッケージ ソースを使用します。[監査ソースに関する詳細情報](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_AuditSources_HowToRemove">
         <source>Remove all audit sources to revert to using package sources for vulnerability data.</source>
-        <target state="new">Remove all audit sources to revert to using package sources for vulnerability data.</target>
+        <target state="translated">すべての監査ソースを削除して、脆弱性データのパッケージ ソースの使用に戻します。</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_AuditSources_Title">
         <source>Audit sources</source>
-        <target state="new">Audit sources</target>
+        <target state="translated">監査対象</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">
@@ -194,7 +194,7 @@
       </trans-unit>
       <trans-unit id="Text_PackageSources_Description">
         <source>Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</source>
-        <target state="new">Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</target>
+        <target state="translated">パッケージ ソースは、NuGet がインストール、復元、監査、および更新操作用のパッケージを取得する場所を定義します。[パッケージ ソースに関する詳細情報](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageSources_MachineWide">

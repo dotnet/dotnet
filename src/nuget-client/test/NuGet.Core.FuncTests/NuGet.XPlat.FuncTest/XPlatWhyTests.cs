@@ -14,7 +14,7 @@ using Xunit.Abstractions;
 
 namespace NuGet.XPlat.FuncTest
 {
-    [Collection("NuGet XPlat Test Collection")]
+    [Collection(XPlatCollection.Name)]
     public class XPlatWhyTests
     {
         private static readonly string ProjectName = "Test.Project.DotnetNugetWhy";
