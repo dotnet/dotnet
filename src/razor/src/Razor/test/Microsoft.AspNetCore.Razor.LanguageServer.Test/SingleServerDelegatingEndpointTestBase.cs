@@ -57,7 +57,8 @@ public abstract partial class SingleServerDelegatingEndpointTestBase(ITestOutput
         DocumentContextFactory = new TestDocumentContextFactory(razorFilePath, codeDocument);
 
         LanguageServerFeatureOptions = Mock.Of<LanguageServerFeatureOptions>(options =>
-            options.SupportsFileManipulation == true,
+            options.SupportsFileManipulation == true &&
+            options.UseRazorCohostServer == false,
             MockBehavior.Strict);
 
         DocumentMappingService = new LspDocumentMappingService(FilePathService, DocumentContextFactory, LoggerFactory);
