@@ -147,10 +147,7 @@
   </PropertyGroup>
 
   <Target Name="RestoreAspNetFrameworkLayout" 
-          Condition="'$(DotNetBuildPass)' == '2' 
-              AND (!Exists('$(TargetingPackLayoutRoot)packs\Microsoft.AspNetCore.App.Ref\${MicrosoftAspNetCoreAppRefVersion}\data\FrameworkList.xml') 
-              OR !Exists('$(RedistSharedFrameworkLayoutRoot)LICENSE.txt') 
-              OR !Exists('$(SharedFrameworkLayoutRoot)LICENSE.txt')) " 
+          Condition="'$(DotNetBuildPass)' == '2'"
           AfterTargets="ResolveFrameworkReferences" 
           BeforeTargets="ResolveLiveBuiltAspnetCoreKnownFramework;ResolveReferenceItemsForPackage">
     <PropertyGroup>
@@ -169,17 +166,20 @@
     <Unzip
         SourceFiles="@(AspNetRuntimeArchive)"
         DestinationFolder="$(RedistSharedFrameworkLayoutRoot)"
-        OverwriteReadOnlyFiles="true" />
+        OverwriteReadOnlyFiles="true"
+        Condition="!Exists('$(RedistSharedFrameworkLayoutRoot)LICENSE.txt')" />
 
     <Unzip
         SourceFiles="@(AspNetRuntimeArchive)"
         DestinationFolder="$(SharedFrameworkLayoutRoot)"
-        OverwriteReadOnlyFiles="true" />
+        OverwriteReadOnlyFiles="true" 
+        Condition="!Exists('$(SharedFrameworkLayoutRoot)LICENSE.txt')"/>
 
     <Unzip
         SourceFiles="@(AspNetTargetingPackArchive)"
         DestinationFolder="$(TargetingPackLayoutRoot)"
-        OverwriteReadOnlyFiles="true" />
+        OverwriteReadOnlyFiles="true"
+        Condition="!Exists('$(TargetingPackLayoutRoot)packs\Microsoft.AspNetCore.App.Ref\${MicrosoftAspNetCoreAppRefVersion}\data\FrameworkList.xml')" />
   </Target>
 
   <Target Name="ResolveLiveBuiltAspnetCoreKnownFramework" Condition="'$(UpdateAspNetCoreKnownFramework)' == 'true' AND '$(HELIX_CORRELATION_PAYLOAD)' == ''" AfterTargets="ResolveFrameworkReferences">
