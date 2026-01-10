@@ -147,7 +147,10 @@
   </PropertyGroup>
 
   <Target Name="RestoreAspNetFrameworkLayout" 
-          Condition="'$(DotNetBuildPass)' == '2' AND !Exists('$(TargetingPackLayoutRoot)packs\Microsoft.AspNetCore.App.Ref\${MicrosoftAspNetCoreAppRefVersion}\data\FrameworkList.xml') " 
+          Condition="'$(DotNetBuildPass)' == '2' 
+              AND (!Exists('$(TargetingPackLayoutRoot)packs\Microsoft.AspNetCore.App.Ref\${MicrosoftAspNetCoreAppRefVersion}\data\FrameworkList.xml') 
+              OR !Exists('$(RedistSharedFrameworkLayoutRoot)LICENSE.txt') 
+              OR !Exists('$(SharedFrameworkLayoutRoot)LICENSE.txt')) " 
           AfterTargets="ResolveFrameworkReferences" 
           BeforeTargets="ResolveLiveBuiltAspnetCoreKnownFramework;ResolveReferenceItemsForPackage">
     <PropertyGroup>
