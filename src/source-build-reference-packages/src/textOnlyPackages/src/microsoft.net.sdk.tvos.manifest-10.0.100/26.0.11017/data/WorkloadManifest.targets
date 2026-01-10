@@ -1,0 +1,34 @@
+<Project>
+	<!-- Load the correct workload depending on the TargetPlatformVersion -->
+	<ImportGroup Condition=" '$(TargetPlatformIdentifier)' == 'tvOS' And '$(UsingAppleNETSdk)' != 'true' And $([MSBuild]::VersionEquals($(TargetFrameworkVersion), '10.0')) And '$(TargetPlatformVersion)' == '26.0'">
+		<Import Project="Sdk.props" Sdk="Microsoft.tvOS.Sdk.net10.0_26.0" />
+	</ImportGroup>
+
+	<ImportGroup Condition=" '$(TargetPlatformIdentifier)' == 'tvOS' And '$(UsingAppleNETSdk)' != 'true' And $([MSBuild]::VersionEquals($(TargetFrameworkVersion), '9.0')) And '$(TargetPlatformVersion)' == '18.0'">
+		<Import Project="Sdk.props" Sdk="Microsoft.tvOS.Sdk.net9.0_18.0" />
+	</ImportGroup>
+
+	<ImportGroup Condition=" '$(TargetPlatformIdentifier)' == 'tvOS' And '$(UsingAppleNETSdk)' != 'true' And $([MSBuild]::VersionEquals($(TargetFrameworkVersion), '9.0')) And '$(TargetPlatformVersion)' == '26.0'">
+		<Import Project="Sdk.props" Sdk="Microsoft.tvOS.Sdk.net9.0_26.0" />
+	</ImportGroup>
+
+	<!-- If no TargetPlatformVersion is specified, load a default workload depending on the target framework version, and that workload will validate the TargetPlatformVersion value and show an error if applicable -->
+	<ImportGroup Condition=" '$(TargetPlatformIdentifier)' == 'tvOS' And '$(UsingAppleNETSdk)' != 'true' And $([MSBuild]::VersionEquals($(TargetFrameworkVersion), '10.0'))">
+		<Import Project="Sdk.props" Sdk="Microsoft.tvOS.Sdk.net10.0_26.0" />
+	</ImportGroup>
+
+	<ImportGroup Condition=" '$(TargetPlatformIdentifier)' == 'tvOS' And '$(UsingAppleNETSdk)' != 'true' And $([MSBuild]::VersionEquals($(TargetFrameworkVersion), '9.0'))">
+		<Import Project="Sdk.props" Sdk="Microsoft.tvOS.Sdk.net9.0_26.0" />
+	</ImportGroup>
+
+	<!-- Detect if the target framework version is outside our supported range, and show the corresponding error -->
+	<ImportGroup Condition=" '$(TargetPlatformIdentifier)' == 'tvOS' And '$(UsingAppleNETSdk)' != 'true'">
+		<Import Project="Sdk-eol.props" Sdk="Microsoft.tvOS.Sdk.net10.0_26.0" Condition=" $([MSBuild]::VersionLessThan($(TargetFrameworkVersion), '9.0'))" />
+		<Import Project="Sdk.props" Sdk="Microsoft.tvOS.Sdk.net10.0_26.0" Condition=" $([MSBuild]::VersionGreaterThan($(TargetFrameworkVersion), '10.0'))" />
+	</ImportGroup>
+
+	<ItemGroup Condition=" '$(TargetFrameworkIdentifier)' == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '6.0')) ">
+		<SdkSupportedTargetPlatformIdentifier Include="tvos" DisplayName="tvOS" />
+	</ItemGroup>
+</Project>
+

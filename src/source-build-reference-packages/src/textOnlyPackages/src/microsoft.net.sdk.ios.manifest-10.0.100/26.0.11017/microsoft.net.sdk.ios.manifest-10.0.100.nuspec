@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.NET.Sdk.iOS.Manifest-10.0.100</id>
+    <version>26.0.11017</version>
+    <authors>Microsoft</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="file">LICENSE</license>
+    <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
+    <projectUrl>https://dot.net/</projectUrl>
+    <description>.NET Workload for iOS platforms</description>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <packageTypes>
+      <packageType name="DotnetPlatform" />
+    </packageTypes>
+    <repository type="git" url="https://github.com/dotnet/macios" branch="release/10.0.1xx" commit="23eb1c2c9465fe76c810c8a69982c1254161f4b0" />
+  </metadata>
+</package>
