@@ -16,5 +16,7 @@
   <PropertyGroup>
     <UsingToolXliff>true</UsingToolXliff>
     <UpdateXlfOnBuild Condition="'$(CI)' != 'true'">true</UpdateXlfOnBuild>
+    <CustomBeforeMicrosoftCommonTargets Condition="'$(DotNetBuild)' == 'true'">$(CustomBeforeMicrosoftCommonTargets);$(MSBuildThisFileDirectory)eng\dotnet-build\TargetingPacks.BeforeCommonTargets.targets</CustomBeforeMicrosoftCommonTargets>
   </PropertyGroup>
+
 </Project>

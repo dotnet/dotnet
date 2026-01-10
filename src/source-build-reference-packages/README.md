@@ -213,8 +213,14 @@ regenerate the existing packages. The following command will regenerate all of t
 
 ### Targeting
 
-Generating new targeting packages is not supported.
-If you feel a new targeting pack is needed, please [open a new issue](#filing-issues) to discuss.
+The [generate script](https://github.com/dotnet/source-build-reference-packages/blob/main/generate.sh) supports generating targeting packages.
+Run `generate.sh --help` for usage details.
+
+``` bash
+./generate.sh --type target --package Microsoft.NetCore.App.Ref,10.0.0
+```
+
+> **Note:** Generating targeting packages uses ILDasm to disassemble reference assemblies.
 
 ### Text Only
 

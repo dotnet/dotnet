@@ -1,5 +1,4 @@
 
-//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
 
 
 // ----- DOS Header:
@@ -352,7 +351,6 @@
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000009    //  ILONLY
-// Image base: 0x00007F6089650000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================

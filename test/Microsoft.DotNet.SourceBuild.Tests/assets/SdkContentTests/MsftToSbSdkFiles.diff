@@ -44,28 +44,3 @@ index ------------
  ./packs/Microsoft.NETCore.App.Ref/
  ./packs/Microsoft.NETCore.App.Ref/x.y.z/
  ./packs/Microsoft.NETCore.App.Ref/x.y.z/analyzers/
-@@ ------------ @@
- ./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/rzc.deps.json
- ./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/rzc.dll
- ./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/rzc.runtimeconfig.json
-+./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/System.Collections.Immutable.dll
-+./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/System.Reflection.Metadata.dll
- ./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.StaticWebAssets/
- ./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.StaticWebAssets/Sdk/
- ./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.StaticWebAssets/Sdk/Sdk.props
-@@ ------------ @@
- ./sdk/x.y.z/Sdks/Microsoft.SourceLink.GitLab/tools/net/zh-Hant/Microsoft.SourceLink.GitLab.resources.dll
- ./sdk/x.y.z/Spectre.Console.dll
- ./sdk/x.y.z/System.CodeDom.dll
-+./sdk/x.y.z/System.Collections.Immutable.dll
- ./sdk/x.y.z/System.CommandLine.dll
- ./sdk/x.y.z/System.CommandLine.StaticCompletions.dll
- ./sdk/x.y.z/System.CommandLine.StaticCompletions.xml
-@@ ------------ @@
- ./sdk/x.y.z/System.Diagnostics.EventLog.dll
- ./sdk/x.y.z/System.Formats.Nrbf.dll
- ./sdk/x.y.z/System.IO.Hashing.dll
-+./sdk/x.y.z/System.Reflection.Metadata.dll
- ./sdk/x.y.z/System.Reflection.MetadataLoadContext.dll
- ./sdk/x.y.z/System.Resources.Extensions.dll
- ./sdk/x.y.z/System.Security.Cryptography.Pkcs.dll
