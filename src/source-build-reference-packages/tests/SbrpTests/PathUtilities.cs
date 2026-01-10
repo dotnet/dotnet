@@ -21,6 +21,27 @@ internal static class PathUtilities
         {
             PackageType.Reference => "referencePackages",
             PackageType.Text      => "textOnlyPackages",
+            PackageType.Target    => "targetPacks/ILsrc",
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, $"Unknown package type '{type}'")
         };
+
+    /// <summary>
+    /// Recursively copies a directory and all its contents.
+    /// </summary>
+    public static void CopyDirectory(string sourceDir, string destDir)
+    {
+        Directory.CreateDirectory(destDir);
+
+        foreach (var file in Directory.GetFiles(sourceDir))
+        {
+            var destFile = Path.Combine(destDir, Path.GetFileName(file));
+            File.Copy(file, destFile);
+        }
+
+        foreach (var dir in Directory.GetDirectories(sourceDir))
+        {
+            var destSubDir = Path.Combine(destDir, Path.GetFileName(dir));
+            CopyDirectory(dir, destSubDir);
+        }
+    }
 }
