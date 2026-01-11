@@ -66,7 +66,7 @@
     <EnvironmentVariables Include="DisableTransitiveFrameworkReferenceDownloads=true" />
 
     <!-- Make sure that external projects use updated KnownFrameworkReferences -->
-    <EnvironmentVariables Include="CustomBeforeMicrosoftCommonTargets=$(CustomBeforeMicrosoftCommonTargets)" />
+    <EnvironmentVariables Include="CustomBeforeMicrosoftCommonTargets=$([System.IO.Path]::GetDirectoryName('$(ArcadeSdkBuildTasksAssembly)'))\..\TargetingPacks.BeforeCommonTargets.targets" />
   </ItemGroup>
 
   <!-- repo-projects depend on the repo tasks project to invoke custom msbuild tasks -->
