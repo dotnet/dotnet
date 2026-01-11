@@ -199,7 +199,7 @@ public abstract class OperationTaskBase : ToolTask
         }
 
 #if NET472
-#elif NET10_0
+#elif NET11_0
 #else
 #error Target framework needs to be updated here
 #endif

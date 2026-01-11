@@ -2,31 +2,19 @@
 
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory).., Directory.Build.targets))\Directory.Build.targets" />
 
-  <!-- If the SDK doesn't support targeting the version we target, copy the known items from NetCurrent -->
-  <ItemGroup Condition="$([MSBuild]::VersionGreaterThan('$(TargetFrameworkVersion)', '$(BundledNETCoreAppTargetFrameworkVersion)'))">
-    <KnownFrameworkReference Include="@(KnownFrameworkReference->WithMetadataValue('TargetFramework', '$(NetCurrent)'))" TargetFramework="$(TargetFramework)" />
-    <KnownRuntimePack Include="@(KnownRuntimePack->WithMetadataValue('TargetFramework', '$(NetCurrent)'))" TargetFramework="$(TargetFramework)" />
-    <KnownAppHostPack Include="@(KnownAppHostPack->WithMetadataValue('TargetFramework', '$(NetCurrent)'))" TargetFramework="$(TargetFramework)" />
-    <KnownCrossgen2Pack Include="@(KnownCrossgen2Pack->WithMetadataValue('TargetFramework', '$(NetCurrent)'))" TargetFramework="$(TargetFramework)" />
-  </ItemGroup>
+  <!-- Update to use the referenced Microsoft.NetCore.App from runtime. This uses the Arcade TargetingPacks support. -->
+  <PropertyGroup>
+    <KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion>$(MicrosoftNETCoreAppRefVersion)</KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion>
+    <KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion>$(MicrosoftNETCoreAppRefVersion)</KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion>
+    <KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion>$(MicrosoftNETCoreAppRefVersion)</KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion>
+    <KnownCrossgen2PackCurrentVersion>$(MicrosoftNETCoreAppRefVersion)</KnownCrossgen2PackCurrentVersion>
+  </PropertyGroup>
 
-  <!-- Update to use the referenced Microsoft.NetCore.App from runtime -->
   <ItemGroup>
-    <KnownFrameworkReference 
-      Update="Microsoft.NETCore.App">
-      <DefaultRuntimeFrameworkVersion Condition="'%(TargetFramework)' == '$(TargetFramework)'">$(MicrosoftNETCoreAppRefVersion)</DefaultRuntimeFrameworkVersion>
-      <LatestRuntimeFrameworkVersion Condition="'%(TargetFramework)' == '$(TargetFramework)'">$(MicrosoftNETCoreAppRefVersion)</LatestRuntimeFrameworkVersion>
-      <TargetingPackVersion Condition="'%(TargetFramework)' == '$(TargetFramework)'">$(MicrosoftNETCoreAppRefVersion)</TargetingPackVersion>
-    </KnownFrameworkReference>
-    <KnownCrossgen2Pack 
-      Update="Microsoft.NETCore.App.Crossgen2">
-      <Crossgen2PackVersion Condition="'%(TargetFramework)' == '$(TargetFramework)'">$(MicrosoftNETCoreAppRefVersion)</Crossgen2PackVersion>
-    </KnownCrossgen2Pack>
     <KnownFrameworkReference Remove="Microsoft.AspNetCore.App" />
     <KnownFrameworkReference Remove="Microsoft.WindowsDesktop.App" />
     <KnownFrameworkReference Remove="Microsoft.WindowsDesktop.App.WindowsForms" />
     <KnownFrameworkReference Remove="Microsoft.WindowsDesktop.App.WPF" />
-
   </ItemGroup>
 
   <!-- Redistribute package content from other nuget packages. -->

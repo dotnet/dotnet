@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="CheckCustomPackageVersionsProps">
 
   <PropertyGroup>
-    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <CustomPackageVersionsProps Condition="'$(BinariesPackagesDir)' != ''">$(BinariesPackagesDir)/PackageVersions.props</CustomPackageVersionsProps>
     <RestoreSources Condition="'$(BinariesPackagesDir)' != ''">$(BinariesPackagesDir)</RestoreSources>

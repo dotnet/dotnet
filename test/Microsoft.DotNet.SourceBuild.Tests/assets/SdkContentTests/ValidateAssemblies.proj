@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <UpdatedSuppressionFilePath>$(ArtifactsTestResultsDir)generated_ApiDiff.suppression</UpdatedSuppressionFilePath>
     <BaselineSuppressionFilePath>$(MSBuildThisFileDirectory)ApiDiff.suppression</BaselineSuppressionFilePath>
     <TestRoot>$([System.IO.Path]::GetTempPath())$([System.IO.Path]::GetRandomFileName())</TestRoot>

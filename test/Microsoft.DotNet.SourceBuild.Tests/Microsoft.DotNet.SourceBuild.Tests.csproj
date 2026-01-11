@@ -3,7 +3,7 @@
   <!-- This project is built and run as part of the VMR and by sdk-diff-tests.yml and vmr-license-scan.yml. -->
 
   <PropertyGroup>
-    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <DefaultExcludesInProjectFolder>$(DefaultExcludesInProjectFolder);assets/**/*</DefaultExcludesInProjectFolder>
     <SourceBuildTestsConsoleVerbosity Condition="'$(SourceBuildTestsConsoleVerbosity)' == ''">normal</SourceBuildTestsConsoleVerbosity>
     <VSTestLogger>console%3bverbosity=$(SourceBuildTestsConsoleVerbosity);trx%3bLogFileName=$(MSBuildProjectName).trx</VSTestLogger>

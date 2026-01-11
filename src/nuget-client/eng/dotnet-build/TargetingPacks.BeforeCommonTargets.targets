@@ -22,11 +22,11 @@
 
     <!-- This is a bit hacky as it uses the newer host pack from the current framework for downlevel TFMs. But given that the host interface is stable, this should be fine. -->
     <KnownAppHostPack Update="@(KnownAppHostPack)"
-      AppHostPackVersion="@(KnownAppHostPack->WithMetadataValue('TargetFramework', 'net$(BundledNETCoreAppTargetFrameworkVersion)')->Metadata('AppHostPackVersion'))"
-      AppHostRuntimeIdentifiers="@(KnownAppHostPack->WithMetadataValue('TargetFramework', 'net$(BundledNETCoreAppTargetFrameworkVersion)')->Metadata('AppHostRuntimeIdentifiers'))" />
+      AppHostPackVersion="@(KnownAppHostPack->WithMetadataValue('TargetFramework', '$(BundledNETCoreAppTargetFramework)')->Metadata('AppHostPackVersion'))"
+      AppHostRuntimeIdentifiers="@(KnownAppHostPack->WithMetadataValue('TargetFramework', '$(BundledNETCoreAppTargetFramework)')->Metadata('AppHostRuntimeIdentifiers'))" />
 
     <!-- This is a bit hacky as it uses the newer ILLinkPack from the current framework for downlevel TFMs. -->
-    <KnownILLinkPack Update="@(KnownILLinkPack)" ILLinkPackVersion="@(KnownILLinkPack->WithMetadataValue('TargetFramework', 'net$(BundledNETCoreAppTargetFrameworkVersion)')->Metadata('ILLinkPackVersion'))" />
+    <KnownILLinkPack Update="@(KnownILLinkPack)" ILLinkPackVersion="@(KnownILLinkPack->WithMetadataValue('TargetFramework', '$(BundledNETCoreAppTargetFramework)')->Metadata('ILLinkPackVersion'))" />
   </ItemGroup>
 
   <!-- This is a bit hacky as it uses newer analyzers from the current framework for downlevel TFMs.

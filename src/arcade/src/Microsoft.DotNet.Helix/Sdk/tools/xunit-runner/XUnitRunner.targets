@@ -2,7 +2,7 @@
 <Project>
 
   <PropertyGroup>
-    <XUnitPublishTargetFramework Condition="'$(XUnitPublishTargetFramework)' == ''">net10.0</XUnitPublishTargetFramework>
+    <XUnitPublishTargetFramework Condition="'$(XUnitPublishTargetFramework)' == ''">net11.0</XUnitPublishTargetFramework>
     <XUnitRuntimeTargetFramework Condition="'$(XUnitRuntimeTargetFramework)' == ''">netcoreapp2.0</XUnitRuntimeTargetFramework>
 
     <XUnitRunnerVersion Condition="'$(XUnitRunnerVersion)' == ''">2.9.3</XUnitRunnerVersion>

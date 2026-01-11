@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <!-- Override default TargetFrameworks to skip building net framework. -->
-    <EnvironmentVariables Include="TargetFrameworks=$(NetCurrentForSubmodule)" />
+    <EnvironmentVariables Include="TargetFrameworks=$(NetCurrent)" />
 
     <!-- Flag to remove analyzers -->
     <EnvironmentVariables Include="SourceBuild=true" />

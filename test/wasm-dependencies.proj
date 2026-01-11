@@ -1,12 +1,15 @@
 <Project Sdk="Microsoft.Build.NoTargets">
+
   <PropertyGroup>
-    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <!-- Calculate runtime version from SDK version (convert from 1xx to 0xx format) -->
     <_RuntimeVersion1xx>$([System.Text.RegularExpressions.Regex]::Replace('$(MicrosoftNETSdkVersion)', '^(\d+\.\d+\.)1(0)?(\d+)(-.*)?$', '$1$3$4'))</_RuntimeVersion1xx>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageDownload Include="Microsoft.NET.Runtime.WebAssembly.Sdk" Version="[$(_RuntimeVersion1xx)]" />
     <PackageDownload Include="Microsoft.NET.Runtime.wasm.Sample.Mono" Version="[$(_RuntimeVersion1xx)]" />
     <PackageDownload Include="Microsoft.NET.Sdk.WebAssembly.Pack" Version="[$(_RuntimeVersion1xx)]" />
   </ItemGroup>
+
 </Project>

@@ -27,7 +27,7 @@
     <DisableArcadeExcludeFromBuildSupport>true</DisableArcadeExcludeFromBuildSupport>
     <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
 
-    <!-- TODO: Remove when the NetCurrent property in the Arcade SDK got updated to net11.0. -->
+    <!-- TODO: Remove when the NetCurrent property in the bootstrap Arcade SDK got updated to net11.0. -->
     <NetCurrent>net11.0</NetCurrent>
   </PropertyGroup>
 

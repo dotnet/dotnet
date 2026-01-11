@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.Build.Traversal">
+<Project Sdk="Microsoft.Build.NoTargets">
 
     <PropertyGroup>
-      <TargetFramework>$(NetCurrent)</TargetFramework>
+      <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
@@ -11,7 +11,7 @@
     <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.SigningValidation" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
     <Target Name="SigningValidation"
             DependsOnTargets="ResolveProjectReferences"
-            BeforeTargets="Build">
+            AfterTargets="Build">
       <Error Condition="'$(ArtifactDownloadDirectory)' == ''" Text="ArtifactDownloadDirectory is not set." />
       <Error Condition="'$(SourceBranch)' == ''" Text="SourceBranch is not set." />
       <Error Condition="'$(DotNetRootDirectory)' == ''" Text="DotNetRootDirectory is not set." />

@@ -11,7 +11,7 @@
 
   <PropertyGroup>
     <!-- The TFM of the major release of .NET that the Arcade SDK aligns with. -->
-    <NetCurrent>net10.0</NetCurrent>
+    <NetCurrent>net11.0</NetCurrent>
 
     <!-- The previously released version of .NET.
          Undefined when NetMinimum and NetPrevious are identical. -->
@@ -31,13 +31,13 @@
     <!-- The current version of .NET that tools (i.e. msbuild) target.
          MSBuild tasks and tools should use this version to target the latest TFM that is supported by tooling.
          Identical with NetCurrent when building from source. -->
-    <NetToolCurrent Condition="'$(DotNetBuildSourceOnly)' != 'true'">net10.0</NetToolCurrent>
+    <NetToolCurrent Condition="'$(DotNetBuildSourceOnly)' != 'true'">net11.0</NetToolCurrent>
     <NetToolCurrent Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NetCurrent)</NetToolCurrent>
 
     <!-- Lowest version of .NET at the time of the release of NetCurrent that is supported by tooling.
          Identical with NetToolCurrent when building from source. -->
-    <NetToolMinimum Condition="'$(DotNetBuildFromSource)' != 'true' and '$(DotNetBuildSourceOnly)' != 'true'">net10.0</NetToolMinimum>
-    <NetToolMinimum Condition="'$(DotNetBuildFromSource)' == 'true' or '$(DotNetBuildSourceOnly)' == 'true'">$(NetToolCurrent)</NetToolMinimum>
+    <NetToolMinimum Condition="'$(DotNetBuildSourceOnly)' != 'true'">net10.0</NetToolMinimum>
+    <NetToolMinimum Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NetToolCurrent)</NetToolMinimum>
 
     <!-- The version of .NET Framework that tools (i.e. msbuild tasks) should target. -->
     <NetFrameworkToolCurrent>net472</NetFrameworkToolCurrent>

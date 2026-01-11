@@ -15,7 +15,7 @@
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:Version=$(SpectreConsoleReleaseVersion)</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:TargetFrameworks=$(NetCurrentForSubmodule)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:TargetFrameworks=$(NetCurrent)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:UseBuildTimeTools=false</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:IsAotCompatible=false</BuildCommandArgs>
     </PropertyGroup>

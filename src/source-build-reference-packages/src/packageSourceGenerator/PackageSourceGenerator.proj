@@ -3,9 +3,9 @@
   <Import Project="$(RepositoryEngineeringDir)ILTooling.targets" />
 
   <PropertyGroup>
-    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <PackageSourceGeneratorTaskAssembly>$(ArtifactsBinDir)PackageSourceGeneratorTask\$(Configuration)\$(NetCurrent)\PackageSourceGeneratorTask.dll</PackageSourceGeneratorTaskAssembly>
+    <PackageSourceGeneratorTaskAssembly>$(ArtifactsBinDir)PackageSourceGeneratorTask\$(Configuration)\PackageSourceGeneratorTask.dll</PackageSourceGeneratorTaskAssembly>
     <PackagesSrcDirectory Condition="'$(PackagesSrcDirectory)' == ''">$(RepoRoot)src\</PackagesSrcDirectory>
     <PackageType Condition="'$(PackageType)' == ''">ref</PackageType>
     <RestoreIlTooling Condition="'$(PackageType)' == 'target'">true</RestoreIlTooling>

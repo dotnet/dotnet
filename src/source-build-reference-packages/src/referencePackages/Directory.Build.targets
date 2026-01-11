@@ -48,7 +48,6 @@
 
   <!-- Customization extension point -->
   <Import Project="$(CustomizationsPropsPath)" Condition="Exists('$(CustomizationsPropsPath)')" />
-  <Import Project="$(RepositoryEngineeringDir)KnownFrameworkReferences.targets" />
 
   <!-- Conflict resolution doesn't see P2Ps: https://github.com/dotnet/sdk/issues/2674. -->
   <Target Name="PassProjectReferencesToConflictResolution"

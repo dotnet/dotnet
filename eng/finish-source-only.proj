@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
 
     <!-- Need to set to false to calculate RepositoryCommit. -->
     <EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
@@ -21,7 +21,8 @@
 
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport.WritePackageUsageData" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="WritePrebuiltUsageData"
-          BeforeTargets="Build"
+          AfterTargets="Build"
+          DependsOnTargets="ResolveProjectReferences"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(BaseIntermediateOutputPath)WritePrebuiltUsageData.complete">
     <ItemGroup>
@@ -112,8 +113,8 @@
   <Target Name="ReportPrebuiltUsage"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(BaseIntermediateOutputPath)ReportPrebuiltUsage.complete"
-          DependsOnTargets="WritePrebuiltUsageData"
-          BeforeTargets="Build">
+          DependsOnTargets="ResolveProjectReferences;WritePrebuiltUsageData"
+          AfterTargets="Build">
     <ItemGroup>
       <PackageVersionPropsSavedSnapshotFile Include="$(PackageVersionsDir)PackageVersions.*.Snapshot.props" />
     </ItemGroup>
@@ -144,7 +145,8 @@
 
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.WriteSBRPUsageReport" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="ReportSbrpUsage"
-          BeforeTargets="Build"
+          AfterTargets="Build"
+          DependsOnTargets="ResolveProjectReferences"
           Condition="'$(ReportSbrpUsage)' == 'true'">
     <ItemGroup>
       <ProjectAssetsJsonFile Include="$(ArtifactsDir)**/project.assets.json" />
@@ -197,11 +199,10 @@
 
   <!-- After building, repackage symbols into a single tarball. -->
   <Target Name="RepackageSymbols"
-          BeforeTargets="Build"
+          AfterTargets="Build"
           DependsOnTargets="DetermineSymbolsTargetsInputsAndOutputs"
           Inputs="@(IntermediateSymbol)"
           Outputs="$(UnifiedSymbolsTarball)">
-
     <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(UnifiedSymbolsTarball)'))" />
     <Exec Command="tar --numeric-owner -czf $(UnifiedSymbolsTarball) *"
           WorkingDirectory="$(IntermediateSymbolsRootDir)" />
@@ -212,8 +213,8 @@
   <!-- After building, create the sdk symbols tarball. -->
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.CreateSdkSymbolsLayout" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="CreateSdkSymbolsTarball"
-          BeforeTargets="Build"
-          DependsOnTargets="RepackageSymbols"
+          AfterTargets="Build"
+          DependsOnTargets="ResolveProjectReferences;RepackageSymbols"
           Inputs="@(IntermediateSymbol);$(SdkTarballPath)"
           Outputs="$(SdkSymbolsTarball)">
     <PropertyGroup>
@@ -236,10 +237,9 @@
   <!-- After building, generate the source tarball -->
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.CreateSourceArtifact" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="CreateSourceArtifact"
-          BeforeTargets="Build"
-          DependsOnTargets="WriteSourceBuiltSdkVersionFile"
+          AfterTargets="Build"
+          DependsOnTargets="ResolveProjectReferences;WriteSourceBuiltSdkVersionFile"
           Condition="'$(CreateSourceArtifact)' == 'true'" >
-
     <CreateSourceArtifact
         SourceCommit="$(RepositoryCommit)"
         ArtifactName="$(SourceBuiltSourceArtifactName)"
@@ -250,7 +250,7 @@
   </Target>
 
   <Target Name="CreatePrebuiltsTarball"
-          BeforeTargets="Build"
+          AfterTargets="Build"
           DependsOnTargets="
             CheckIfPrebuiltsExistToPack;
             CreatePrebuiltsTarballIfPrebuiltsExist"/>
@@ -279,4 +279,5 @@
 
     <Error Text="@(PrebuiltFile->Count()) Prebuilts Exist" Condition="'$(SkipErrorOnPrebuilts)' != 'true'" />
   </Target>
+
 </Project>
