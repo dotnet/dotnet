@@ -44,22 +44,22 @@
       </trans-unit>
       <trans-unit id="Setting_AttributeIndentStyleAlignWithFirst">
         <source>Align with first attribute</source>
-        <target state="new">Align with first attribute</target>
+        <target state="translated">Alinear con el primer atributo</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_AttributeIndentStyleDescription">
         <source>Defines how Html and component tag attributes should be indented</source>
-        <target state="new">Defines how Html and component tag attributes should be indented</target>
+        <target state="translated">Define cómo se deben insertar las sangrías en los atributos de las etiquetas HTML y de los componentes</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_AttributeIndentStyleDisplayName">
         <source>Attribute Indent Style</source>
-        <target state="new">Attribute Indent Style</target>
+        <target state="translated">Estilo de sangría de los atributos</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_AttributeIndentStyleIndentByOne">
         <source>Indent by one level</source>
-        <target state="new">Indent by one level</target>
+        <target state="translated">Insertar sangría en un nivel</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoClosingTagsDescription">

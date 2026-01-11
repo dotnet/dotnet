@@ -44,22 +44,22 @@
       </trans-unit>
       <trans-unit id="Setting_AttributeIndentStyleAlignWithFirst">
         <source>Align with first attribute</source>
-        <target state="new">Align with first attribute</target>
+        <target state="translated">첫 번째 특성에 맞춤</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_AttributeIndentStyleDescription">
         <source>Defines how Html and component tag attributes should be indented</source>
-        <target state="new">Defines how Html and component tag attributes should be indented</target>
+        <target state="translated">HTML과 구성 요소 태그 특성을 어떻게 들여 쓸지 정의합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_AttributeIndentStyleDisplayName">
         <source>Attribute Indent Style</source>
-        <target state="new">Attribute Indent Style</target>
+        <target state="translated">특성 들여쓰기 스타일</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_AttributeIndentStyleIndentByOne">
         <source>Indent by one level</source>
-        <target state="new">Indent by one level</target>
+        <target state="translated">한 단계 들여쓰기</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoClosingTagsDescription">

@@ -24,12 +24,12 @@
       </trans-unit>
       <trans-unit id="Renaming_0_to_1">
         <source>Renaming {0} to {1}</source>
-        <target state="new">Renaming {0} to {1}</target>
+        <target state="translated">{0} se přejmenovává na {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Renaming_Razor_Component">
         <source>Renaming Razor Component</source>
-        <target state="new">Renaming Razor Component</target>
+        <target state="translated">Přejmenování komponenty Razor</target>
         <note />
       </trans-unit>
       <trans-unit id="View Code">
