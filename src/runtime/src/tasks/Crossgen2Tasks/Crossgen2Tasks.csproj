@@ -6,7 +6,7 @@
     <Nullable>annotations</Nullable>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <!-- TODO: Remove when a newer SDK with that property exposed is available. -->
-    <NetCoreSdkRoot Condition="'$(NetCoreSdkRoot)' == ''">$([System.IO.Path]::GetDirectoryName('$(BundledRuntimeIdentifierGraphFile)'))</NetCoreSdkRoot>
+    <NetCoreSdkRoot Condition="'$(NetCoreSdkRoot)' == ''">$([System.IO.Path]::GetDirectoryName('$(BundledRuntimeIdentifierGraphFile)'))\</NetCoreSdkRoot>
   </PropertyGroup>
 
   <ItemGroup>

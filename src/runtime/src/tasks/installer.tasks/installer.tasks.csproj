@@ -6,7 +6,7 @@
     <RunAnalyzers>false</RunAnalyzers>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <!-- TODO: Remove when a newer SDK with that property exposed is available. -->
-    <NetCoreSdkRoot Condition="'$(NetCoreSdkRoot)' == ''">$([System.IO.Path]::GetDirectoryName('$(BundledRuntimeIdentifierGraphFile)'))</NetCoreSdkRoot>
+    <NetCoreSdkRoot Condition="'$(NetCoreSdkRoot)' == ''">$([System.IO.Path]::GetDirectoryName('$(BundledRuntimeIdentifierGraphFile)'))\</NetCoreSdkRoot>
   </PropertyGroup>
 
   <!-- Reference these assemblies from the SDK directly. We do this to avoid bringing the package closure for assemblies we don't use here. -->
