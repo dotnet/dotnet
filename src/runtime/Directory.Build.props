@@ -88,7 +88,7 @@
     <!-- TODO: Replace NetCoreAppToolCurrent with NetToolCurrent in this repo -->
     <NetToolCurrent>$(NetCoreAppToolCurrent)</NetToolCurrent>
 
-    <AspNetCoreAppCurrentVersion>10.0</AspNetCoreAppCurrentVersion>
+    <AspNetCoreAppCurrentVersion>11.0</AspNetCoreAppCurrentVersion>
     <AspNetCoreAppCurrent>net$(AspNetCoreAppCurrentVersion)</AspNetCoreAppCurrent>
 
     <!-- Don't build for NETFramework during source-build. -->
