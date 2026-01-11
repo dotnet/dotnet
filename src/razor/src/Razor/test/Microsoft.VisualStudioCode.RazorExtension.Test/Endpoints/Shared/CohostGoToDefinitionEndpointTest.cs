@@ -7,8 +7,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -129,6 +131,40 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
     {
         TestCode input = """
             <Surv$$eyPrompt Title="InputValue" />
+            """;
+
+        TestCode surveyPrompt = """
+            [||]@namespace SomeProject
+
+            <div></div>
+
+            @code
+            {
+                [Parameter]
+                public string Title { get; set; }
+            }
+            """;
+
+        var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
+            additionalFiles: (FilePath("SurveyPrompt.razor"), surveyPrompt.Text));
+
+        Assert.NotNull(result.Value.Second);
+        var locations = result.Value.Second;
+        var location = Assert.Single(locations);
+
+        Assert.Equal(FileUri("SurveyPrompt.razor"), location.DocumentUri.GetRequiredParsedUri());
+        var text = SourceText.From(surveyPrompt.Text);
+        var range = text.GetRange(surveyPrompt.Span);
+        Assert.Equal(range, location.Range);
+    }
+
+    [Fact]
+    public async Task Component_FromCSharp()
+    {
+        TestCode input = """
+            <SurveyPrompt Title="InputValue" />
+
+            @typeof(Surv$$eyPrompt).ToString()
             """;
 
         TestCode surveyPrompt = """
@@ -406,7 +442,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var htmlResponse = new SumType<LspLocation, LspLocation[], DocumentLink[]>?(new LspLocation[]
         {
             new() {
-                DocumentUri = new(new Uri(document.CreateUri(), document.Name + FeatureOptions.HtmlVirtualDocumentSuffix)),
+                DocumentUri = new(new Uri(document.CreateUri(), document.Name + LanguageServerConstants.HtmlVirtualDocumentSuffix)),
                 Range = inputText.GetRange(input.Span),
             },
         });
@@ -821,28 +857,6 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         Assert.Equal(expected.Spans[1], SourceText.From(expected.Text).GetTextSpan(location.Range));
     }
 
-    private async Task VerifyGoToDefinitionAsync(
-        TestCode input,
-        RazorFileKind? fileKind = null,
-        SumType<LspLocation, LspLocation[], DocumentLink[]>? htmlResponse = null,
-        TextDocument? razorDocument = null)
-    {
-        var document = razorDocument ?? CreateProjectAndRazorDocument(input.Text, fileKind);
-        var result = await GetGoToDefinitionResultCoreAsync(document, input, htmlResponse);
-
-        Assumes.NotNull(result);
-
-        Assert.NotNull(result.Value.Second);
-        var locations = result.Value.Second;
-        var location = Assert.Single(locations);
-
-        var text = SourceText.From(input.Text);
-        var range = text.GetRange(input.Span);
-        Assert.Equal(range, location.Range);
-
-        Assert.Equal(document.CreateUri(), location.DocumentUri.GetRequiredParsedUri());
-    }
-
     [Fact, WorkItem("https://github.com/dotnet/razor/issues/4325")]
     public async Task StringLiteral_TildePath()
     {
@@ -944,6 +958,79 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         // the user would see.
         var line = File.ReadLines(location.DocumentUri.GetRequiredParsedUri().LocalPath).ElementAt(location.Range.Start.Line);
         Assert.Contains("public sealed class String", line);
+    }
+
+    [Fact]
+    public async Task ComponentAttribute_CrossProject()
+    {
+        // Note: This test doesn't simulate syncing solutions to the remote workspace, so strictly speaking is running in the "wrong" MEF composition
+        // but thats not an important aspect of this scenario.
+
+        var someProjectId = ProjectId.CreateNewId();
+        var surveyPromptId = DocumentId.CreateNewId(someProjectId);
+        TestCode surveyPrompt = """
+            @namespace SomeProject
+
+            <div></div>
+
+            @code
+            {
+                [Parameter]
+                public string [|Title|] { get; set; }
+            }
+            """;
+
+        var anotherProjectId = ProjectId.CreateNewId();
+        var componentId = DocumentId.CreateNewId(anotherProjectId);
+        TestCode component = """
+            @using SomeProject
+
+            <File1 Ti$$tle="InputValue" />
+            """;
+
+        var solution = LocalWorkspace.CurrentSolution;
+        var project1 = AddProjectAndRazorDocument(solution, TestProjectData.SomeProject.FilePath, someProjectId, surveyPromptId, TestProjectData.SomeProjectComponentFile1.FilePath, surveyPrompt.Text).Project;
+        var project2 = AddProjectAndRazorDocument(project1.Solution, TestProjectData.AnotherProject.FilePath, anotherProjectId, componentId, TestProjectData.AnotherProjectComponentFile2.FilePath, component.Text).Project;
+        project2 = project2.AddProjectReference(new ProjectReference(project1.Id));
+        project1 = project2.Solution.GetRequiredProject(project1.Id);
+
+        var surveyPromptDocument = project1.GetAdditionalDocument(surveyPromptId);
+        Assert.NotNull(surveyPromptDocument);
+        var componentDocument = project2.GetAdditionalDocument(componentId);
+        Assert.NotNull(componentDocument);
+
+        var result = await GetGoToDefinitionResultCoreAsync(componentDocument, component, htmlResponse: null);
+
+        Assert.NotNull(result.Value.Second);
+        var locations = result.Value.Second;
+        var location = Assert.Single(locations);
+
+        Assert.Equal(surveyPromptDocument.CreateUri(), location.DocumentUri.GetRequiredParsedUri());
+        var text = SourceText.From(surveyPrompt.Text);
+        var range = text.GetRange(surveyPrompt.Span);
+        Assert.Equal(range, location.Range);
+    }
+
+    private async Task VerifyGoToDefinitionAsync(
+        TestCode input,
+        RazorFileKind? fileKind = null,
+        SumType<LspLocation, LspLocation[], DocumentLink[]>? htmlResponse = null,
+        TextDocument? razorDocument = null)
+    {
+        var document = razorDocument ?? CreateProjectAndRazorDocument(input.Text, fileKind);
+        var result = await GetGoToDefinitionResultCoreAsync(document, input, htmlResponse);
+
+        Assumes.NotNull(result);
+
+        Assert.NotNull(result.Value.Second);
+        var locations = result.Value.Second;
+        var location = Assert.Single(locations);
+
+        var text = SourceText.From(input.Text);
+        var range = text.GetRange(input.Span);
+        Assert.Equal(range, location.Range);
+
+        Assert.Equal(document.CreateUri(), location.DocumentUri.GetRequiredParsedUri());
     }
 
     private async Task<SumType<LspLocation, LspLocation[], DocumentLink[]>?> GetGoToDefinitionResultAsync(

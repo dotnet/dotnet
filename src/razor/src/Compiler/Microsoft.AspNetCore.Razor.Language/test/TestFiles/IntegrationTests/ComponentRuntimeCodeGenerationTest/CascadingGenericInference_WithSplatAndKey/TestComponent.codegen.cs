@@ -78,15 +78,7 @@ namespace __Blazor.Test.TestComponent
     {
         public static void CreateGrid_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Collections.Generic.IEnumerable<TItem> __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment __arg1, int __seq2, object __arg2)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (2,2)-(2,6) "x:\dir\subdir\Test\TestComponent.cshtml"
-Grid
-
-#line default
-#line hidden
-#nullable disable
-        <TItem>>(seq);
+        __builder.OpenComponent<global::Test.Grid<TItem>>(seq);
         __builder.AddComponentParameter(__seq0, nameof(global::Test.Grid<TItem>.
 #nullable restore
 #line (2,25)-(2,30) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -107,15 +99,7 @@ Items
         }
         public static void CreateColumn_1<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, global::System.Collections.Generic.IEnumerable<TItem> __syntheticArg0, int __seq0, global::System.Object __arg0, int __seq1, global::System.Object __arg1, int __seq2, object __arg2)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (3,6)-(3,12) "x:\dir\subdir\Test\TestComponent.cshtml"
-Column
-
-#line default
-#line hidden
-#nullable disable
-        <TItem>>(seq);
+        __builder.OpenComponent<global::Test.Column<TItem>>(seq);
         __builder.AddComponentParameter(__seq0, "Title", __arg0);
         __builder.AddComponentParameter(__seq1, "Another", __arg1);
         __builder.SetKey(__arg2);

@@ -1,8 +1,10 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -11,7 +13,6 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Completion;
@@ -19,11 +20,11 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Resources;
+using Microsoft.CodeAnalysis.Text;
 using Roslyn.Test.Utilities;
 using Roslyn.Text.Adornments;
 using Xunit;
 using Xunit.Abstractions;
-using Microsoft.CodeAnalysis.Text;
 using WorkItemAttribute = Roslyn.Test.Utilities.WorkItemAttribute;
 
 #if !VSCODE
@@ -33,8 +34,31 @@ using Microsoft.VisualStudio.Razor.Snippets;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
+public partial class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
+    [Fact]
+    public async Task NotWhenAutoShowCompletionIsOff()
+    {
+        var settings = ClientSettingsManager.GetClientSettings();
+        ClientSettingsManager.Update(settings.ClientCompletionSettings with { AutoShowCompletion = false });
+
+        await VerifyCompletionListAsync(
+            input: """
+                This is a Razor document.
+
+                @$$
+
+                The end.
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
+                TriggerCharacter = "@",
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
+            },
+            expectedItemLabels: null);
+    }
+
     [Fact]
     public async Task CSharpInEmptyExplicitStatement()
     {
@@ -524,109 +548,6 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             commitElementsWithSpace: false);
     }
 
-#if !VSCODE
-    [Fact]
-    public async Task HtmlSnippetsCompletion()
-    {
-        await VerifyCompletionListAsync(
-            input: """
-                This is a Razor document.
-
-                $$
-
-                The end.
-                """,
-            completionContext: new VSInternalCompletionContext()
-            {
-                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
-                TriggerCharacter = null,
-                TriggerKind = CompletionTriggerKind.Invoked
-            },
-            expectedItemLabels: ["snippet1", "snippet2"],
-            htmlItemLabels: [],
-            snippetLabels: ["snippet1", "snippet2"]);
-    }
-
-    [Fact]
-    public async Task HtmlSnippetsCompletion_EmptyDocument()
-    {
-        await VerifyCompletionListAsync(
-            input: """
-                $$
-                """,
-            completionContext: new VSInternalCompletionContext()
-            {
-                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
-                TriggerCharacter = null,
-                TriggerKind = CompletionTriggerKind.Invoked
-            },
-            expectedItemLabels: ["snippet1", "snippet2"],
-            htmlItemLabels: [],
-            snippetLabels: ["snippet1", "snippet2"]);
-    }
-
-    [Fact]
-    public async Task HtmlSnippetsCompletion_WhitespaceOnlyDocument1()
-    {
-        await VerifyCompletionListAsync(
-            input: """
-
-                $$
-                """,
-            completionContext: new VSInternalCompletionContext()
-            {
-                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
-                TriggerCharacter = null,
-                TriggerKind = CompletionTriggerKind.Invoked
-            },
-            expectedItemLabels: ["snippet1", "snippet2"],
-            htmlItemLabels: [],
-            snippetLabels: ["snippet1", "snippet2"]);
-    }
-
-    [Fact]
-    public async Task HtmlSnippetsCompletion_WhitespaceOnlyDocument2()
-    {
-        await VerifyCompletionListAsync(
-            input: """
-                $$
-
-                """,
-            completionContext: new VSInternalCompletionContext()
-            {
-                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
-                TriggerCharacter = null,
-                TriggerKind = CompletionTriggerKind.Invoked
-            },
-            expectedItemLabels: ["snippet1", "snippet2"],
-            htmlItemLabels: [],
-            snippetLabels: ["snippet1", "snippet2"]);
-    }
-
-    [Fact]
-    public async Task HtmlSnippetsCompletion_NotInStartTag()
-    {
-        await VerifyCompletionListAsync(
-            input: """
-                This is a Razor document.
-
-                <div $$></div>
-
-                The end.
-                """,
-            completionContext: new VSInternalCompletionContext()
-            {
-                InvokeKind = VSInternalCompletionInvokeKind.Typing,
-                TriggerCharacter = " ",
-                TriggerKind = CompletionTriggerKind.TriggerCharacter
-            },
-            expectedItemLabels: ["style", "dir"],
-            unexpectedItemLabels: ["snippet1", "snippet2"],
-            htmlItemLabels: ["style", "dir"],
-            snippetLabels: ["snippet1", "snippet2"]);
-    }
-#endif
-
     // Tests HTML attributes and DirectiveAttributeTransitionCompletionItemProvider
     [Fact]
     public async Task HtmlAndDirectiveAttributeTransitionNamesCompletion()
@@ -641,9 +562,9 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 """,
             completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = VSInternalCompletionInvokeKind.Typing,
-                TriggerCharacter = " ",
-                TriggerKind = CompletionTriggerKind.TriggerCharacter
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
+                TriggerCharacter = null,
+                TriggerKind = CompletionTriggerKind.Invoked
             },
             expectedItemLabels: ["style", "dir", "@..."],
             htmlItemLabels: ["style", "dir"]);
@@ -797,9 +718,36 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 """,
             completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = VSInternalCompletionInvokeKind.Typing,
-                TriggerCharacter = " ",
-                TriggerKind = CompletionTriggerKind.TriggerCharacter
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
+                TriggerCharacter = null,
+                TriggerKind = CompletionTriggerKind.Invoked
+            },
+            expectedItemLabels: ["style", "dir", "FormName", "OnValidSubmit", "@..."],
+            htmlItemLabels: ["style", "dir"],
+            itemToResolve: "FormName",
+#if VSCODE
+            expectedResolvedItemDescription: "string EditForm.FormName");
+#else
+            expectedResolvedItemDescription: "string Microsoft.AspNetCore.Components.Forms.EditForm.FormName");
+#endif
+    }
+
+    [Fact]
+    public async Task HtmlAttributeNamesAndTagHelpersCompletion_SelfClosing()
+    {
+        await VerifyCompletionListAsync(
+            input: """
+                This is a Razor document.
+
+                <EditForm $$/>
+
+                The end.
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
+                TriggerCharacter = null,
+                TriggerKind = CompletionTriggerKind.Invoked
             },
             expectedItemLabels: ["style", "dir", "FormName", "OnValidSubmit", "@..."],
             htmlItemLabels: ["style", "dir"],
@@ -843,24 +791,19 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 """,
             completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = VSInternalCompletionInvokeKind.Typing,
-                TriggerCharacter = " ",
-                TriggerKind = CompletionTriggerKind.TriggerCharacter
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
+                TriggerCharacter = null,
+                TriggerKind = CompletionTriggerKind.Invoked
             },
             expectedItemLabels: ["FormName", "OnValidSubmit", "@...", "style"],
             htmlItemLabels: ["style"],
             autoInsertAttributeQuotes: false);
     }
 
+#if VSCODE
     [Fact]
     public async Task TagHelperAttributes_NoCommitChars_VSCode()
     {
-        UpdateClientInitializationOptions(c =>
-        {
-            c.UseVsCodeCompletionCommitCharacters = true;
-            return c;
-        });
-
         var list = await VerifyCompletionListAsync(
             input: """
                 This is a Razor document.
@@ -876,11 +819,48 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             },
             expectedItemLabels: ["FormName", "OnValidSubmit", "@...", "style"],
             htmlItemLabels: ["style"],
-            autoInsertAttributeQuotes: false,
-            useVsCodeCompletionCommitCharacters: true);
+            autoInsertAttributeQuotes: false);
 
+        Assert.NotNull(list);
         Assert.All(list.Items, item => Assert.DoesNotContain("=", item.CommitCharacters ?? []));
     }
+
+    [Fact]
+    public async Task CSharp_WithUsing()
+    {
+        // Roslyn won't send unimported types if SupportsVisualStudioExtensions is true
+
+        await VerifyCompletionListAsync(
+            input: """
+                @{
+                    void Foo()
+                    {
+                        String$$
+                    }
+                }
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
+                TriggerCharacter = null,
+                TriggerKind = CompletionTriggerKind.Invoked
+            },
+            expectedItemLabels: ["char", "DateTime", "StringBuilder"],
+            itemToResolve: "StringBuilder",
+            expectedResolvedItemDescription: "class System.Text.StringBuilder",
+            expected: """
+                @using System.Text
+                @{
+                    void Foo()
+                    {
+                        StringBuilder
+                    }
+                }
+                """,
+            // Completion from unimported types is computed in the background
+            retryTimeout: TimeSpan.FromSeconds(5));
+    }
+#endif
 
     [Fact]
     public async Task ComponentWithEditorRequiredAttributes()
@@ -926,9 +906,9 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 """,
             completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = VSInternalCompletionInvokeKind.Typing,
-                TriggerCharacter = " ",
-                TriggerKind = CompletionTriggerKind.TriggerCharacter
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
+                TriggerCharacter = null,
+                TriggerKind = CompletionTriggerKind.Invoked
             },
             expectedItemLabels: ["data-enhance", "data-enhance-nav", "data-permanent", "dir", "@..."],
             htmlItemLabels: ["dir"]);
@@ -948,9 +928,9 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 """,
             completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = VSInternalCompletionInvokeKind.Typing,
-                TriggerCharacter = " ",
-                TriggerKind = CompletionTriggerKind.TriggerCharacter
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
+                TriggerCharacter = null,
+                TriggerKind = CompletionTriggerKind.Invoked
             },
             expectedItemLabels: ["data-enhance-nav", "data-permanent", "dir", "@..."],
             unexpectedItemLabels: ["data-enhance"],
@@ -971,9 +951,9 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 """,
             completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = VSInternalCompletionInvokeKind.Typing,
-                TriggerCharacter = " ",
-                TriggerKind = CompletionTriggerKind.TriggerCharacter
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
+                TriggerCharacter = null,
+                TriggerKind = CompletionTriggerKind.Invoked
             },
             expectedItemLabels: ["data-enhance-nav", "data-permanent", "dir", "@..."],
             unexpectedItemLabels: ["data-enhance"],
@@ -994,19 +974,178 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 """,
             completionContext: new VSInternalCompletionContext()
             {
-                InvokeKind = VSInternalCompletionInvokeKind.Typing,
-                TriggerCharacter = " ",
-                TriggerKind = CompletionTriggerKind.TriggerCharacter
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
+                TriggerCharacter = null,
+                TriggerKind = CompletionTriggerKind.Invoked
             },
             expectedItemLabels: ["data-enhance-nav", "data-permanent", "dir", "@..."],
             unexpectedItemLabels: ["data-enhance"],
             htmlItemLabels: ["dir"]);
     }
 
-    private async Task<RazorVSInternalCompletionList> VerifyCompletionListAsync(
+    [Fact]
+    public async Task RazorCSharpKeywordCompletion_ReturnsKeywords()
+    {
+        await VerifyCompletionListAsync(
+            input: """
+                This is a Razor document.
+
+                @$$
+
+                The end.
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
+                TriggerCharacter = "@",
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
+            },
+            expectedItemLabels: [.. CSharpRazorKeywordCompletionItemProvider.CSharpRazorKeywords]);
+    }
+
+    [Fact]
+    public async Task CSharp_AwaitKeyword()
+    {
+        await VerifyCompletionListAsync(
+            input: """
+                @{
+                    Task FooAsync()
+                    {
+                    awai$$
+                    }
+                }
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
+                TriggerCharacter = null,
+                TriggerKind = CompletionTriggerKind.Invoked
+            },
+            expectedItemLabels: ["char", "DateTime", "await"],
+            itemToResolve: "await",
+            expectedResolvedItemDescription: "await Keyword\r\nAsynchronously waits for the task to finish.",
+            expected: """
+                @{
+                    async Task FooAsync()
+                    {
+                        await
+                    }
+                }
+                """);
+    }
+
+    [Fact]
+    public async Task RazorHelpersFilteredOut()
+    {
+        await VerifyCompletionListAsync(
+            input: """
+                This is a Razor document.
+
+                @{ var __helper = 3; }
+
+                @$$
+
+                The end.
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
+                TriggerCharacter = null,
+                TriggerKind = CompletionTriggerKind.Invoked,
+            },
+            expectedItemLabels: ["char", "DateTime", "Exception"],
+            unexpectedItemLabels: ["__builder", "__helper"]);
+    }
+
+    [Fact]
+    public async Task RazorHelpersNotFilteredIfTyping()
+    {
+        await VerifyCompletionListAsync(
+            input: """
+                This is a Razor document.
+
+                @{ var __helper = 3; }
+
+                @__$$
+
+                The end.
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
+                TriggerCharacter = null,
+                TriggerKind = CompletionTriggerKind.Invoked,
+            },
+            expectedItemLabels: ["char", "DateTime", "Exception", "__helper"],
+            unexpectedItemLabels: ["__builder"]);
+    }
+
+    [Fact]
+    public async Task IndexerAttributes1()
+    {
+        await VerifyCompletionListAsync(
+            input: """
+                This is a Razor document.
+
+                <a $$
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
+                TriggerCharacter = null,
+                TriggerKind = CompletionTriggerKind.Invoked
+            },
+            expected: """
+                This is a Razor document.
+
+                <a asp-route="$0"
+                """,
+            expectedItemLabels: ["asp-route", "asp-route-..."],
+            htmlItemLabels: ["style", "dir"],
+            itemToResolve: "asp-route",
+#if VSCODE
+            expectedResolvedItemDescription: "string AnchorTagHelper.Route",
+#else
+            expectedResolvedItemDescription: "string Microsoft.AspNetCore.Mvc.TagHelpers.AnchorTagHelper.Route",
+#endif
+            fileKind: RazorFileKind.Legacy);
+    }
+
+    [Fact]
+    public async Task IndexerAttributes2()
+    {
+        await VerifyCompletionListAsync(
+            input: """
+                This is a Razor document.
+
+                <a $$
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
+                TriggerCharacter = null,
+                TriggerKind = CompletionTriggerKind.Invoked
+            },
+            expected: """
+                This is a Razor document.
+
+                <a asp-route-
+                """,
+            expectedItemLabels: ["asp-route", "asp-route-..."],
+            htmlItemLabels: ["style", "dir"],
+            itemToResolve: "asp-route-...",
+#if VSCODE
+            expectedResolvedItemDescription: "string AnchorTagHelper.RouteValues",
+#else
+            expectedResolvedItemDescription: "string System.String> Microsoft.AspNetCore.Mvc.TagHelpers.AnchorTagHelper.RouteValues",
+#endif
+            fileKind: RazorFileKind.Legacy);
+    }
+
+    private async Task<RazorVSInternalCompletionList?> VerifyCompletionListAsync(
         TestCode input,
         VSInternalCompletionContext completionContext,
-        string[] expectedItemLabels,
+        string[]? expectedItemLabels,
         string[]? unexpectedItemLabels = null,
         string[]? htmlItemLabels = null,
         string[]? htmlItemCommitCharacters = null,
@@ -1016,8 +1155,8 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
         string? expectedResolvedItemDescription = null,
         bool autoInsertAttributeQuotes = true,
         bool commitElementsWithSpace = true,
-        bool useVsCodeCompletionCommitCharacters = false,
-        RazorFileKind? fileKind = null)
+        RazorFileKind? fileKind = null,
+        TimeSpan? retryTimeout = null)
     {
         var document = CreateProjectAndRazorDocument(input.Text, fileKind);
         var sourceText = await document.GetTextAsync(DisposalToken);
@@ -1053,8 +1192,6 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
         snippetCompletionItemProvider.SnippetCache.Update(SnippetLanguage.Html, snippetInfos);
 #endif
 
-        var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(useVsCodeCompletionCommitCharacters: useVsCodeCompletionCommitCharacters);
-
         var completionListCache = new CompletionListCache();
         var endpoint = new CohostDocumentCompletionEndpoint(
             IncompatibleProjectService,
@@ -1062,7 +1199,6 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             ClientSettingsManager,
             ClientCapabilitiesService,
             snippetCompletionItemProvider,
-            languageServerFeatureOptions,
             requestInvoker,
             completionListCache,
             NoOpTelemetryReporter.Instance,
@@ -1080,7 +1216,28 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
 
         var result = await endpoint.GetTestAccessor().HandleRequestAsync(request, document, DisposalToken);
 
-        Assert.NotNull(result);
+        if (result is null)
+        {
+            Assert.Null(expectedItemLabels);
+            return null;
+        }
+
+        Assert.NotNull(expectedItemLabels);
+
+        if (retryTimeout is not null && itemToResolve is not null)
+        {
+            var sw = Stopwatch.StartNew();
+            while (result.Items.FirstOrDefault(i => i.Label == itemToResolve) == null)
+            {
+                Assert.True(sw.Elapsed < TimeSpan.FromSeconds(5), "Failed to resolve unimported completion item after 5 second.");
+
+                // Roslyn only computes unimported types in the background, and we have no access to its internal workings to wait for it to be
+                // finished, so we just have to delay and ask for completion items again.
+                await Task.Delay(100, DisposalToken);
+                result = await endpoint.GetTestAccessor().HandleRequestAsync(request, document, DisposalToken);
+                Assert.NotNull(result);
+            }
+        }
 
         using var _ = HashSetPool<string>.GetPooledObject(out var labelSet);
         labelSet.AddRange(result.Items.SelectAsArray((item) => item.Label));
@@ -1142,8 +1299,6 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
         // Assert the request invoker is passed a RazorVSInternalCompletionParams
         var requestInvoker = new TestHtmlRequestInvoker((Methods.TextDocumentCompletionName, ValidateArgType));
 
-        var languageServerFeatureOptions = new TestLanguageServerFeatureOptions();
-
         var completionListCache = new CompletionListCache();
         var endpoint = new CohostDocumentCompletionEndpoint(
             IncompatibleProjectService,
@@ -1151,7 +1306,6 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             ClientSettingsManager,
             ClientCapabilitiesService,
             new ThrowingSnippetCompletionItemResolveProvider(),
-            languageServerFeatureOptions,
             requestInvoker,
             completionListCache,
             NoOpTelemetryReporter.Instance,
@@ -1228,7 +1382,18 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
 
             var text = await document.GetTextAsync(DisposalToken).ConfigureAwait(false);
             var insertIndex = text.GetRequiredAbsoluteIndex(position);
-            changedText = text.WithChanges(new TextChange(new TextSpan(insertIndex, 0), label));
+            var startIndex = insertIndex;
+            // If there is already a word in the document, replace it
+            for (var i = insertIndex - 1; i > 0; i--)
+            {
+                if (!char.IsLetter(text[i]))
+                {
+                    startIndex = i + 1;
+                    break;
+                }
+            }
+
+            changedText = text.WithChanges(new TextChange(TextSpan.FromBounds(startIndex, insertIndex), label));
         }
         else if (expected is not null)
         {

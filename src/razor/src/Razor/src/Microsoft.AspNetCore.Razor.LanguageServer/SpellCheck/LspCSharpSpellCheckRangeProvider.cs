@@ -19,19 +19,12 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.SpellCheck;
 
 internal sealed class LspCSharpSpellCheckRangeProvider(
-    LanguageServerFeatureOptions languageServerFeatureOptions,
     IClientConnection clientConnection) : ICSharpSpellCheckRangeProvider
 {
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly IClientConnection _clientConnection = clientConnection;
 
     public async Task<ImmutableArray<SpellCheckRange>> GetCSharpSpellCheckRangesAsync(DocumentContext documentContext, CancellationToken cancellationToken)
     {
-        if (!_languageServerFeatureOptions.SingleServerSupport)
-        {
-            return [];
-        }
-
         var delegatedParams = new DelegatedSpellCheckParams(documentContext.GetTextDocumentIdentifierAndVersion());
         var delegatedResponse = await _clientConnection.SendRequestAsync<DelegatedSpellCheckParams, VSInternalSpellCheckableRangeReport[]?>(
             CustomMessageNames.RazorSpellCheckEndpoint,

@@ -6,6 +6,7 @@ using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
@@ -79,8 +80,7 @@ internal sealed class CohostDocumentPullDiagnosticsEndpoint(
                 cancellationToken).ConfigureAwait(false);
         }
 
-        var results = await GetDiagnosticsAsync(razorDocument, cancellationToken).ConfigureAwait(false);
-
+        var results = await GetVSDiagnosticsAsync(razorDocument, cancellationToken).ConfigureAwait(false);
         if (results is null)
         {
             return null;
@@ -91,6 +91,37 @@ internal sealed class CohostDocumentPullDiagnosticsEndpoint(
             Diagnostics = results,
             ResultId = Guid.NewGuid().ToString()
         }];
+    }
+
+    private async Task<LspDiagnostic[]?> GetVSDiagnosticsAsync(TextDocument razorDocument, CancellationToken cancellationToken)
+    {
+        var diagnostics = await GetDiagnosticsAsync(razorDocument, cancellationToken).ConfigureAwait(false);
+        if (diagnostics is null)
+        {
+            return null;
+        }
+
+        // We always use Roslyn's project understanding, and in VS the project Id is not necessarily the Id that is reported by Roslyn
+        // for diagnostics. Rather than try to replicate any of this behaviour directly, we just take Roslyn as the source of truth,
+        // and force the project information to match what it would produce, regardless of where it comes from or how we might have
+        // filtered or converted it.
+        var projectInfo = new[] { ExternalHandlers.Diagnostics.GetProjectInformation(razorDocument.Project) };
+
+        var results = new VSDiagnostic[diagnostics.Length];
+        for (var i = 0; i < diagnostics.Length; i++)
+        {
+            var vsDiagnostic = JsonHelpers.Convert<LspDiagnostic, VSDiagnostic>(diagnostics[i]).AssumeNotNull();
+            vsDiagnostic.Projects = projectInfo;
+
+            // Setting a unique identifier ensures that VS will show project info in the error list, and things like the "Current Project"
+            // filter will work. Putting the Razor file path in the identifier ensures that files in multiple projects get their diagnostics
+            // de-duped.
+            vsDiagnostic.Identifier = (vsDiagnostic.Code, razorDocument.FilePath, vsDiagnostic.Range, vsDiagnostic.Message).GetHashCode().ToString();
+
+            results[i] = vsDiagnostic;
+        }
+
+        return results;
     }
 
     protected override VSInternalDocumentDiagnosticsParams CreateHtmlParams(Uri uri)
@@ -157,7 +188,7 @@ internal sealed class CohostDocumentPullDiagnosticsEndpoint(
     internal readonly struct TestAccessor(CohostDocumentPullDiagnosticsEndpoint instance)
     {
         public Task<LspDiagnostic[]?> HandleRequestAsync(TextDocument razorDocument, CancellationToken cancellationToken)
-            => instance.GetDiagnosticsAsync(razorDocument, cancellationToken);
+            => instance.GetVSDiagnosticsAsync(razorDocument, cancellationToken);
 
         public Task<VSInternalDiagnosticReport[]> HandleTaskListItemRequestAsync(TextDocument razorDocument, ImmutableArray<string> taskListDescriptors, CancellationToken cancellationToken)
             => instance.HandleTaskListItemRequestAsync(razorDocument, taskListDescriptors, cancellationToken);

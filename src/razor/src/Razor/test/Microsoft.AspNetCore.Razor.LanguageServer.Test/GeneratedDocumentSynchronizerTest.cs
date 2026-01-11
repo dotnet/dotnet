@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
@@ -28,7 +27,7 @@ public class GeneratedDocumentSynchronizerTest : LanguageServerTestBase
     {
         _publisher = new TestGeneratedDocumentPublisher();
         _projectManager = CreateProjectSnapshotManager();
-        _synchronizer = new GeneratedDocumentSynchronizer(_publisher, TestLanguageServerFeatureOptions.Instance, _projectManager);
+        _synchronizer = new GeneratedDocumentSynchronizer(_publisher, _projectManager);
     }
 
     protected override async Task InitializeAsync()
@@ -54,23 +53,6 @@ public class GeneratedDocumentSynchronizerTest : LanguageServerTestBase
 
         // Act
         _synchronizer.DocumentProcessed(codeDocument, document);
-
-        // Assert
-        Assert.True(_publisher.PublishedCSharp);
-        Assert.True(_publisher.PublishedHtml);
-    }
-
-    [Fact]
-    public async Task DocumentProcessed_CloseDocument_WithOption_Publishes()
-    {
-        var options = new TestLanguageServerFeatureOptions(updateBuffersForClosedDocuments: true);
-        var synchronizer = new GeneratedDocumentSynchronizer(_publisher, options, _projectManager);
-
-        var document = _projectManager.GetRequiredDocument(s_hostProject.Key, s_hostDocument.FilePath);
-        var codeDocument = await document.GetGeneratedOutputAsync(DisposalToken);
-
-        // Act
-        synchronizer.DocumentProcessed(codeDocument, document);
 
         // Assert
         Assert.True(_publisher.PublishedCSharp);

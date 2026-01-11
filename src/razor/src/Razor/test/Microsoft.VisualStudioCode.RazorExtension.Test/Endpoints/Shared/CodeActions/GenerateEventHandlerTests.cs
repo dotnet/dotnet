@@ -57,6 +57,38 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
     }
 
     [Fact]
+    public async Task CodeBlock_WithExistingCode()
+    {
+        var input = """
+            <button @onclick="{|CS0103:Does[||]NotExist|}"></button>
+
+            @code
+            {
+                public void M()
+                {
+                }
+            }
+            """;
+
+        var expected = """
+            <button @onclick="DoesNotExist"></button>
+
+            @code
+            {
+                public void M()
+                {
+                }
+                private void DoesNotExist(MouseEventArgs args)
+                {
+                    throw new NotImplementedException();
+                }
+            }
+            """;
+
+        await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.GenerateEventHandler);
+    }
+
+    [Fact]
     public async Task CodeBlock_Indented()
     {
         var input = """
@@ -80,7 +112,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
         await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.GenerateEventHandler);
     }
 
-    [Fact(Skip = "@bind- attribute tag helper is not being found")]
+    [Fact(Skip = "https://github.com/dotnet/razor/issues/11801")]
     public async Task BindSet()
     {
         var input = """
@@ -108,7 +140,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
         await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.GenerateEventHandler);
     }
 
-    [Fact(Skip = "@bind- attribute tag helper is not being found")]
+    [Fact(Skip = "https://github.com/dotnet/razor/issues/11801")]
     public async Task BindAfter()
     {
         var input = """
@@ -256,6 +288,47 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
     }
 
     [Fact]
+    public async Task CodeBehind_BlockBodiedNamespace()
+    {
+        await VerifyCodeActionAsync(
+            input: """
+                <button @onclick="{|CS0103:Does[||]NotExist|}"></button>
+                """,
+            expected: """
+                <button @onclick="DoesNotExist"></button>
+                """,
+            additionalFiles: [
+                (FilePath("File1.razor.cs"), """
+                    namespace SomeProject
+                    {
+                        public partial class File1
+                        {
+                            public void M()
+                            {
+                            }
+                        }
+                    }
+                    """)],
+            additionalExpectedFiles: [
+                (FileUri("File1.razor.cs"), """
+                    namespace SomeProject
+                    {
+                        public partial class File1
+                        {
+                            public void M()
+                            {
+                            }
+                            private void DoesNotExist(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
+                            {
+                                throw new System.NotImplementedException();
+                            }
+                        }
+                    }
+                    """)],
+            codeActionName: LanguageServerConstants.CodeActions.GenerateEventHandler);
+    }
+
+    [Fact]
     public async Task EmptyCodeBehind()
     {
         await VerifyCodeActionAsync(
@@ -332,5 +405,19 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
             """;
 
         await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.GenerateAsyncEventHandler);
+    }
+
+    [Fact]
+    public async Task NotInRefAttribute()
+    {
+        var input = """
+            <button @ref="{|CS0103:Does[||]NotExist|}"></button>
+
+            @code
+            {
+            }
+            """;
+
+        await VerifyCodeActionAsync(input, expected: null, LanguageServerConstants.CodeActions.GenerateAsyncEventHandler);
     }
 }

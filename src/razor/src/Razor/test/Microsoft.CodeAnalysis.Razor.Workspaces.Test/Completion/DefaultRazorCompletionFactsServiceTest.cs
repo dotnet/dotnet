@@ -18,7 +18,7 @@ public class DefaultRazorCompletionFactsServiceTest(ITestOutputHelper testOutput
         var sourceDocument = RazorSourceDocument.Create("", RazorSourceDocumentProperties.Default);
         var codeDocument = RazorCodeDocument.Create(sourceDocument);
         var syntaxTree = RazorSyntaxTree.Parse(TestRazorSourceDocument.Create());
-        var tagHelperDocumentContext = TagHelperDocumentContext.Create(prefix: null, tagHelpers: []);
+        var tagHelperDocumentContext = TagHelperDocumentContext.GetOrCreate(tagHelpers: []);
 
         var completionItem1 = RazorCompletionItem.CreateDirective(
             displayText: "displayText1",

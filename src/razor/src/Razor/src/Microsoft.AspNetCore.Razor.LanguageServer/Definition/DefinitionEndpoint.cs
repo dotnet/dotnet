@@ -29,11 +29,9 @@ internal sealed class DefinitionEndpoint(
     IDefinitionService definitionService,
     IDocumentMappingService documentMappingService,
     ProjectSnapshotManager projectManager,
-    LanguageServerFeatureOptions languageServerFeatureOptions,
     IClientConnection clientConnection,
     ILoggerFactory loggerFactory)
     : AbstractRazorDelegatingEndpoint<TextDocumentPositionParams, DefinitionResult?>(
-        languageServerFeatureOptions,
         documentMappingService,
         clientConnection,
         loggerFactory.GetOrCreateLogger<DefinitionEndpoint>()), ICapabilitiesProvider
@@ -67,9 +65,8 @@ internal sealed class DefinitionEndpoint(
             return null;
         }
 
-        // If single server support is on, then we ignore attributes, as they are better handled by delegating to Roslyn
         var results = await _definitionService
-            .GetDefinitionAsync(documentContext.Snapshot, positionInfo, _projectManager.GetQueryOperations(), ignoreComponentAttributes: SingleServerSupport, includeMvcTagHelpers: false, cancellationToken)
+            .GetDefinitionAsync(documentContext.Snapshot, positionInfo, _projectManager.GetQueryOperations(), includeMvcTagHelpers: false, cancellationToken)
             .ConfigureAwait(false);
 
         // We know there will only be one result, because without tag helper support there can't be anything else

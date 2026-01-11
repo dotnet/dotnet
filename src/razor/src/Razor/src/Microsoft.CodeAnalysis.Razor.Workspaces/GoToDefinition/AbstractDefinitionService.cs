@@ -30,7 +30,6 @@ internal abstract class AbstractDefinitionService(
         IDocumentSnapshot documentSnapshot,
         DocumentPositionInfo positionInfo,
         ISolutionQueryOperations solutionQueryOperations,
-        bool ignoreComponentAttributes,
         bool includeMvcTagHelpers,
         CancellationToken cancellationToken)
     {
@@ -42,7 +41,7 @@ internal abstract class AbstractDefinitionService(
 
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
-        if (!RazorComponentDefinitionHelpers.TryGetBoundTagHelpers(codeDocument, positionInfo.HostDocumentIndex, ignoreComponentAttributes, _logger, out var boundTagHelperResults))
+        if (!RazorComponentDefinitionHelpers.TryGetBoundTagHelpers(codeDocument, positionInfo.HostDocumentIndex, _logger, out var boundTagHelperResults))
         {
             _logger.LogInformation($"Could not retrieve bound tag helper information.");
             return null;

@@ -5,6 +5,7 @@ using System.Composition;
 using Microsoft.CodeAnalysis.Razor.Diagnostics;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.Diagnostics;
 
@@ -12,6 +13,7 @@ namespace Microsoft.CodeAnalysis.Remote.Razor.Diagnostics;
 [method: ImportingConstructor]
 internal sealed class RemoteRazorTranslateDiagnosticsService(
     IDocumentMappingService documentMappingService,
-    ILoggerFactory loggerFactory) : RazorTranslateDiagnosticsService(documentMappingService, loggerFactory)
+    LanguageServerFeatureOptions featureOptions,
+    ILoggerFactory loggerFactory) : RazorTranslateDiagnosticsService(documentMappingService, featureOptions, loggerFactory)
 {
 }

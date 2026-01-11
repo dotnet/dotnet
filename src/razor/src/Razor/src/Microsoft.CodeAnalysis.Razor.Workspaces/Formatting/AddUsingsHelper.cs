@@ -140,7 +140,7 @@ internal static class AddUsingsHelper
             // as trivia to the using keyword.
             var start = usingDirectiveSyntax.UsingKeyword.FullSpan.End;
 
-            return sourceText.GetSubTextString(TextSpan.FromBounds(start, end));
+            return sourceText.ToString(TextSpan.FromBounds(start, end));
         }
     }
 

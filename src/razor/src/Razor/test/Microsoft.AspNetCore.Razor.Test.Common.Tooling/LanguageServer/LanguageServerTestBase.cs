@@ -21,6 +21,7 @@ using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Xunit.Abstractions;
@@ -47,16 +48,20 @@ public abstract class LanguageServerTestBase(ITestOutputHelper testOutput) : Too
         LspServices? lspServices = null)
         => new(documentContext, lspServices ?? LspServices.Empty, "lsp/method", uri: null);
 
-    protected static RazorCodeDocument CreateCodeDocument(string text, ImmutableArray<TagHelperDescriptor> tagHelpers = default, string? filePath = null, string? rootNamespace = null)
+    protected static RazorCodeDocument CreateCodeDocument(
+        string text,
+        TagHelperCollection? tagHelpers = null,
+        string? filePath = null,
+        string? rootNamespace = null)
     {
         filePath ??= "test.cshtml";
 
         var fileKind = FileKinds.GetFileKindFromPath(filePath);
-        tagHelpers = tagHelpers.NullToEmpty();
+        tagHelpers ??= [];
 
         if (fileKind == RazorFileKind.Component)
         {
-            tagHelpers = tagHelpers.AddRange(RazorTestResources.BlazorServerAppTagHelpers);
+            tagHelpers = TagHelperCollection.Merge(tagHelpers, [.. RazorTestResources.BlazorServerAppTagHelpers]);
         }
 
         var sourceDocument = TestRazorSourceDocument.Create(text, filePath: filePath, relativePath: filePath);
@@ -134,6 +139,7 @@ public abstract class LanguageServerTestBase(ITestOutputHelper testOutput) : Too
         bool autoInsertAttributeQuotes = true,
         bool colorBackground = false,
         bool codeBlockBraceOnNextLine = false,
+        AttributeIndentStyle attributeIndentStyle = AttributeIndentStyle.AlignWithFirst,
         bool commitElementsWithSpace = true,
         bool formatOnPaste = true)
     {
@@ -149,6 +155,7 @@ public abstract class LanguageServerTestBase(ITestOutputHelper testOutput) : Too
             autoInsertAttributeQuotes,
             colorBackground,
             codeBlockBraceOnNextLine,
+            attributeIndentStyle,
             commitElementsWithSpace,
             TaskListDescriptors: []);
         var optionsMonitor = new RazorLSPOptionsMonitor(configService, options);

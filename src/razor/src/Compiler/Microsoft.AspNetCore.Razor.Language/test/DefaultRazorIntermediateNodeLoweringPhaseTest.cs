@@ -35,11 +35,11 @@ public class DefaultRazorIntermediateNodeLoweringPhaseTest
 
         var importSource = TestRazorSourceDocument.Create("@custom \"hello\"", filePath: "import.cshtml");
         var codeDocument = TestRazorCodeDocument.Create("<p>NonDirective</p>");
-        codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, options));
-        codeDocument.SetImportSyntaxTrees([RazorSyntaxTree.Parse(importSource, options)]);
+        codeDocument = codeDocument.WithSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, options));
+        codeDocument = codeDocument.WithImportSyntaxTrees([RazorSyntaxTree.Parse(importSource, options)]);
 
         // Act
-        phase.Execute(codeDocument);
+        codeDocument = phase.Execute(codeDocument);
 
         // Assert
         var documentNode = codeDocument.GetRequiredDocumentNode();
@@ -73,11 +73,11 @@ public class DefaultRazorIntermediateNodeLoweringPhaseTest
 
         var importSource = TestRazorSourceDocument.Create("@custom \"hello\"", filePath: "import.cshtml");
         var codeDocument = TestRazorCodeDocument.Create("@custom \"world\"");
-        codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, options));
-        codeDocument.SetImportSyntaxTrees([RazorSyntaxTree.Parse(importSource, options)]);
+        codeDocument = codeDocument.WithSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, options));
+        codeDocument = codeDocument.WithImportSyntaxTrees([RazorSyntaxTree.Parse(importSource, options)]);
 
         // Act
-        phase.Execute(codeDocument);
+        codeDocument = phase.Execute(codeDocument);
 
         // Assert
         var documentNode = codeDocument.GetRequiredDocumentNode();
@@ -112,11 +112,11 @@ public class DefaultRazorIntermediateNodeLoweringPhaseTest
         var importSource1 = TestRazorSourceDocument.Create("@custom \"hello\"", filePath: "import1.cshtml");
         var importSource2 = TestRazorSourceDocument.Create("@custom \"world\"", filePath: "import2.cshtml");
         var codeDocument = TestRazorCodeDocument.Create("<p>NonDirective</p>");
-        codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, options));
-        codeDocument.SetImportSyntaxTrees([RazorSyntaxTree.Parse(importSource1, options), RazorSyntaxTree.Parse(importSource2, options)]);
+        codeDocument = codeDocument.WithSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, options));
+        codeDocument = codeDocument.WithImportSyntaxTrees([RazorSyntaxTree.Parse(importSource1, options), RazorSyntaxTree.Parse(importSource2, options)]);
 
         // Act
-        phase.Execute(codeDocument);
+        codeDocument = phase.Execute(codeDocument);
 
         // Assert
         var documentNode = codeDocument.GetRequiredDocumentNode();
@@ -149,11 +149,11 @@ public class DefaultRazorIntermediateNodeLoweringPhaseTest
 @razor ""razor block"" { }",
             filePath: "testImports.cshtml");
         var codeDocument = TestRazorCodeDocument.Create("<p>NonDirective</p>");
-        codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, options));
-        codeDocument.SetImportSyntaxTrees([RazorSyntaxTree.Parse(importSource, options)]);
+        codeDocument = codeDocument.WithSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, options));
+        codeDocument = codeDocument.WithImportSyntaxTrees([RazorSyntaxTree.Parse(importSource, options)]);
 
         // Act
-        phase.Execute(codeDocument);
+        codeDocument = phase.Execute(codeDocument);
 
         // Assert
         var documentNode = codeDocument.GetRequiredDocumentNode();
@@ -179,12 +179,12 @@ public class DefaultRazorIntermediateNodeLoweringPhaseTest
 
         var importSource = TestRazorSourceDocument.Create("@custom { }", filePath: "import.cshtml");
         var codeDocument = TestRazorCodeDocument.Create("<p>NonDirective</p>");
-        codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, options));
-        codeDocument.SetImportSyntaxTrees([RazorSyntaxTree.Parse(importSource, options)]);
+        codeDocument = codeDocument.WithSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, options));
+        codeDocument = codeDocument.WithImportSyntaxTrees([RazorSyntaxTree.Parse(importSource, options)]);
         var expectedDiagnostic = RazorDiagnosticFactory.CreateDirective_BlockDirectiveCannotBeImported("custom");
 
         // Act
-        phase.Execute(codeDocument);
+        codeDocument = phase.Execute(codeDocument);
 
         // Assert
         var documentNode = codeDocument.GetRequiredDocumentNode();
@@ -212,12 +212,12 @@ public class DefaultRazorIntermediateNodeLoweringPhaseTest
 
         var importSource = TestRazorSourceDocument.Create("@custom { }", filePath: "import.cshtml");
         var codeDocument = TestRazorCodeDocument.Create("<p>NonDirective</p>");
-        codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, options));
-        codeDocument.SetImportSyntaxTrees([RazorSyntaxTree.Parse(importSource, options)]);
+        codeDocument = codeDocument.WithSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, options));
+        codeDocument = codeDocument.WithImportSyntaxTrees([RazorSyntaxTree.Parse(importSource, options)]);
         var expectedDiagnostic = RazorDiagnosticFactory.CreateDirective_BlockDirectiveCannotBeImported("custom");
 
         // Act
-        phase.Execute(codeDocument);
+        codeDocument = phase.Execute(codeDocument);
 
         // Assert
         var documentNode = codeDocument.GetRequiredDocumentNode();
@@ -263,10 +263,10 @@ public class DefaultRazorIntermediateNodeLoweringPhaseTest
             .WithFlags(useRoslynTokenizer: true);
 
         var codeDocument = TestRazorCodeDocument.Create("<p class=@(");
-        codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, options));
+        codeDocument = codeDocument.WithSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, options));
 
         // Act
-        phase.Execute(codeDocument);
+        codeDocument = phase.Execute(codeDocument);
 
         // Assert
         var documentNode = codeDocument.GetRequiredDocumentNode();
@@ -289,8 +289,8 @@ public class DefaultRazorIntermediateNodeLoweringPhaseTest
             .WithFlags(useRoslynTokenizer: true);
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, parseOptions));
-        codeDocument.SetImportSyntaxTrees(
+        codeDocument = codeDocument.WithSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source, parseOptions));
+        codeDocument = codeDocument.WithImportSyntaxTrees(
         [
             RazorSyntaxTree.Parse(TestRazorSourceDocument.Create("@ "), parseOptions),
             RazorSyntaxTree.Parse(TestRazorSourceDocument.Create("<p @("), parseOptions),
@@ -298,7 +298,7 @@ public class DefaultRazorIntermediateNodeLoweringPhaseTest
         var options = RazorCodeGenerationOptions.Default;
 
         // Act
-        phase.Execute(codeDocument);
+        codeDocument = phase.Execute(codeDocument);
 
         // Assert
         var documentNode = codeDocument.GetRequiredDocumentNode();

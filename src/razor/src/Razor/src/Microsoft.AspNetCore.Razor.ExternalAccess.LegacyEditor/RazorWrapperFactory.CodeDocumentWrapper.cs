@@ -47,7 +47,7 @@ internal static partial class RazorWrapperFactory
             {
                 builder.Add(new TagHelperSpan(
                     ConvertSourceSpan(item.Span),
-                    WrapAll(item.Binding.Descriptors, Wrap)));
+                    WrapAll(item.Binding.TagHelpers, Wrap)));
             }
 
             return builder.ToImmutableAndClear();

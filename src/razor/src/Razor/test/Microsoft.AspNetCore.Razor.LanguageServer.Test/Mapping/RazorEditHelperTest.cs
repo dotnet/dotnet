@@ -738,7 +738,7 @@ public class RazorEditHelperTest : LanguageServerTestBase
             csharpSource.Text,
             sourceMappings.OrderByAsArray(s => s.GeneratedSpan.AbsoluteIndex));
 
-        codeDocument.SetCSharpDocument(csharpDocument);
+        codeDocument = codeDocument.WithCSharpDocument(csharpDocument);
         var snapshot = TestDocumentSnapshot.Create(razorPath, codeDocument);
 
         var mappedChanges = await RazorEditHelper.MapCSharpEditsAsync(

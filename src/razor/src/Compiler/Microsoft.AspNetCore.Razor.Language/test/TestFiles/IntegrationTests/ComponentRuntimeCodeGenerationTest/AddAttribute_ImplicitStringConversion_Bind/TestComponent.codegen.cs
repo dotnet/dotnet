@@ -70,15 +70,7 @@ namespace __Blazor.Test.TestComponent
     {
         public static void CreateMyComponent_0<T>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Boolean __arg0, int __seq1, global::System.String __arg1, int __seq2, global::System.Delegate __arg2, int __seq3, global::System.Object __arg3, int __seq4, global::Test.MyClass<T> __arg4, int __seq5, global::Microsoft.AspNetCore.Components.EventCallback<global::Test.MyClass<T>> __arg5)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (1,2)-(1,13) "x:\dir\subdir\Test\TestComponent.cshtml"
-MyComponent
-
-#line default
-#line hidden
-#nullable disable
-        <T>>(seq);
+        __builder.OpenComponent<global::Test.MyComponent<T>>(seq);
         __builder.AddAttribute(__seq0, nameof(global::Test.MyComponent<T>.
 #nullable restore
 #line (2,5)-(2,18) "x:\dir\subdir\Test\TestComponent.cshtml"

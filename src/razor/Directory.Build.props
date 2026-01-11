@@ -40,8 +40,11 @@
     <!-- Embed source files that are not tracked by the source control manager in the PDB. -->
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
 
-    <!-- Working around https://github.com/dotnet/sdk/issues/24747 -->
-    <NoWarn>$(NoWarn);NU1505</NoWarn>
+    <!--
+      NU1505: Working around https://github.com/dotnet/sdk/issues/24747
+      NETSDK1233: Working around https://github.com/dotnet/sdk/issues/51678 until we move our Windows CI to VS2026 images.
+    -->
+    <NoWarn>$(NoWarn);NU1505;NETSDK1233</NoWarn>
 
     <!-- Working around https://github.com/microsoft/msbuild/pull/4764 -->
     <EmbeddedResourceUseDependentUponConvention>false</EmbeddedResourceUseDependentUponConvention>
@@ -51,7 +54,7 @@
 
     <NetFxVS>net472</NetFxVS>
     <NetVS>net8.0</NetVS>
-    <NetVSCode>net9.0</NetVSCode>
+    <NetVSCode>net10.0</NetVSCode>
     <NetVSAndVSCode>$(NetVS);$(NetVSCode)</NetVSAndVSCode>
   </PropertyGroup>
 

@@ -197,11 +197,11 @@ public class RazorComponentDefinitionHelpersTest(ITestOutputHelper testOutput) :
             }
             """;
 
-        VerifyTryGetBoundTagHelpers(content, ignoreComponentAttributes: true);
+        VerifyTryGetBoundTagHelpers(content);
     }
 
     [Fact]
-    public void TryGetBoundTagHelpers_TagHelper_PropertyAttribute()
+    public void TryGetBoundTagHelpers_TagHelper_NotOnPropertyAttribute()
     {
         var content = """
             @addTagHelper *, TestAssembly
@@ -213,11 +213,11 @@ public class RazorComponentDefinitionHelpersTest(ITestOutputHelper testOutput) :
             }
             """;
 
-        VerifyTryGetBoundTagHelpers(content, "Component1TagHelper", "BoolVal");
+        VerifyTryGetBoundTagHelpers(content);
     }
 
     [Fact]
-    public void TryGetBoundTagHelpers_TagHelper_MinimizedPropertyAttribute()
+    public void TryGetBoundTagHelpers_TagHelper_NotOnMinimizedPropertyAttribute()
     {
         var content = """
             @addTagHelper *, TestAssembly
@@ -229,11 +229,11 @@ public class RazorComponentDefinitionHelpersTest(ITestOutputHelper testOutput) :
             }
             """;
 
-        VerifyTryGetBoundTagHelpers(content, "Component1TagHelper", "BoolVal");
+        VerifyTryGetBoundTagHelpers(content);
     }
 
     [Fact]
-    public void TryGetBoundTagHelpers_TagHelper_MinimizedPropertyAttributeEdge1()
+    public void TryGetBoundTagHelpers_TagHelper_NotOnMinimizedPropertyAttributeEdge1()
     {
         var content = """
             @addTagHelper *, TestAssembly
@@ -245,11 +245,11 @@ public class RazorComponentDefinitionHelpersTest(ITestOutputHelper testOutput) :
             }
             """;
 
-        VerifyTryGetBoundTagHelpers(content, "Component1TagHelper", "BoolVal");
+        VerifyTryGetBoundTagHelpers(content);
     }
 
     [Fact]
-    public void TryGetBoundTagHelpers_TagHelper_MinimizedPropertyAttributeEdge2()
+    public void TryGetBoundTagHelpers_TagHelper_NotOnMinimizedPropertyAttributeEdge2()
     {
         var content = """
             @addTagHelper *, TestAssembly
@@ -261,11 +261,11 @@ public class RazorComponentDefinitionHelpersTest(ITestOutputHelper testOutput) :
             }
             """;
 
-        VerifyTryGetBoundTagHelpers(content, "Component1TagHelper", "BoolVal");
+        VerifyTryGetBoundTagHelpers(content);
     }
 
     [Fact, WorkItem("https://github.com/dotnet/razor-tooling/issues/6775")]
-    public void TryGetBoundTagHelpers_TagHelper_PropertyAttributeEdge()
+    public void TryGetBoundTagHelpers_TagHelper_NotOnPropertyAttributeEdge()
     {
         var content = """
             @addTagHelper *, TestAssembly
@@ -277,7 +277,7 @@ public class RazorComponentDefinitionHelpersTest(ITestOutputHelper testOutput) :
             }
             """;
 
-        VerifyTryGetBoundTagHelpers(content, "Component1TagHelper", "BoolVal");
+        VerifyTryGetBoundTagHelpers(content);
     }
 
     [Fact]
@@ -354,15 +354,13 @@ public class RazorComponentDefinitionHelpersTest(ITestOutputHelper testOutput) :
     private void VerifyTryGetBoundTagHelpers(
         string content,
         string? tagHelperDescriptorName = null,
-        string? attributeDescriptorPropertyName = null,
-        bool isRazorFile = true,
-        bool ignoreComponentAttributes = false)
+        bool isRazorFile = true)
     {
         TestFileMarkupParser.GetPosition(content, out content, out var position);
 
         var codeDocument = CreateCodeDocument(content, isRazorFile);
 
-        var result = RazorComponentDefinitionHelpers.TryGetBoundTagHelpers(codeDocument, position, ignoreComponentAttributes, Logger, out var boundTagHelperResults);
+        var result = RazorComponentDefinitionHelpers.TryGetBoundTagHelpers(codeDocument, position, Logger, out var boundTagHelperResults);
 
         if (tagHelperDescriptorName is null)
         {
@@ -374,14 +372,9 @@ public class RazorComponentDefinitionHelpersTest(ITestOutputHelper testOutput) :
             var boundTagHelper = Assert.Single(boundTagHelperResults).ElementDescriptor;
             Assert.NotNull(boundTagHelper);
             Assert.Equal(tagHelperDescriptorName, boundTagHelper.Name);
-        }
 
-        if (attributeDescriptorPropertyName is not null)
-        {
-            Assert.True(result);
-            var boundAttribute = Assert.Single(boundTagHelperResults).AttributeDescriptor;
-            Assert.NotNull(boundAttribute);
-            Assert.Equal(attributeDescriptorPropertyName, boundAttribute.PropertyName);
+            Assert.All(boundTagHelperResults,
+                t => Assert.Null(t.AttributeDescriptor));
         }
     }
 

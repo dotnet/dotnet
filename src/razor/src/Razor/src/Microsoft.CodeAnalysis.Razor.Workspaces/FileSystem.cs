@@ -22,4 +22,7 @@ internal sealed class FileSystem : IFileSystem
 
     public Stream OpenReadStream(string filePath)
         => new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+
+    public void Move(string sourceFilePath, string destinationFilePath)
+        => File.Move(sourceFilePath, destinationFilePath);
 }

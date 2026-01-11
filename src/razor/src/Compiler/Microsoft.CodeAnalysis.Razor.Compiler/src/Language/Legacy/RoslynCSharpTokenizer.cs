@@ -630,6 +630,11 @@ internal sealed class RoslynCSharpTokenizer : CSharpTokenizer
                     }
                 }
                 break;
+            case CSharpSyntaxKind.ConflictMarkerTrivia:
+                tokenType = SyntaxKind.ConflictMarkerTrivia;
+                // conflict markers are only parsed by Roslyn if they start the line, and everything on that line is considered part of the marker
+                _isOnlyWhitespaceOnLine = true; 
+                break;
             case var kind:
                 throw new InvalidOperationException($"Unexpected trivia kind: {kind}.");
         };

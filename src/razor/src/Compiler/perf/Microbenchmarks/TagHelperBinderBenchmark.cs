@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Razor.Language;
 
-namespace Microsoft.AspNetCore.Razor.Microbenchmarks;
+namespace Microsoft.AspNetCore.Razor.Microbenchmarks.Compiler;
 
 public class TagHelperBinderBenchmark
 {
@@ -17,15 +17,16 @@ public class TagHelperBinderBenchmark
     private ImmutableArray<TagHelperDescriptor> _tagHelpers;
 
     [ParamsAllValues]
-    public TagHelpers TagHelpers { get; set; }
+    public TagHelperSet TagHelpers { get; set; }
 
     [IterationSetup]
     public void IterationSetup()
     {
         _tagHelpers = TagHelpers switch
         {
-            TagHelpers.BlazorServerApp => TagHelperResources.BlazorServerApp,
-            TagHelpers.TelerikMvc => TagHelperResources.TelerikMvc,
+            TagHelperSet.BlazorServerApp => Resources.Tooling.BlazorServerApp,
+            TagHelperSet.TelerikMvc => Resources.Tooling.TelerikMvc,
+            TagHelperSet.Legacy => Resources.Tooling.Legacy,
             _ => Assumed.Unreachable<ImmutableArray<TagHelperDescriptor>>()
         };
     }
@@ -41,7 +42,7 @@ public class TagHelperBinderBenchmark
     {
         for (var i = 0; i < Count; i++)
         {
-            _binders[i] = new TagHelperBinder(tagNamePrefix: null, _tagHelpers);
+            _binders[i] = new TagHelperBinder(tagNamePrefix: null, [.. _tagHelpers]);
         }
     }
 
@@ -50,7 +51,7 @@ public class TagHelperBinderBenchmark
     {
         for (var i = 0; i < Count; i++)
         {
-            _binders[i] = new TagHelperBinder(tagNamePrefix: "abc", _tagHelpers);
+            _binders[i] = new TagHelperBinder(tagNamePrefix: "abc", [.. _tagHelpers]);
         }
     }
 }

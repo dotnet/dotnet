@@ -3,26 +3,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
-using Microsoft.CodeAnalysis.Razor.Telemetry;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 [Export(typeof(RemoteTagHelperResolver)), Shared]
-[method: ImportingConstructor]
-internal class RemoteTagHelperResolver(ITelemetryReporter telemetryReporter)
+internal class RemoteTagHelperResolver
 {
     /// <summary>
     /// A map of configuration names to <see cref="IProjectEngineFactory"/> instances.
     /// </summary>
     private static readonly Dictionary<string, IProjectEngineFactory> s_configurationNameToFactoryMap = CreateConfigurationNameToFactoryMap();
-
-    private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
 
     private static Dictionary<string, IProjectEngineFactory> CreateConfigurationNameToFactoryMap()
     {
@@ -36,15 +31,15 @@ internal class RemoteTagHelperResolver(ITelemetryReporter telemetryReporter)
         return map;
     }
 
-    public ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(
+    public ValueTask<TagHelperCollection> GetTagHelpersAsync(
         Project workspaceProject,
         RazorConfiguration? configuration,
         CancellationToken cancellationToken)
         => configuration is not null
-            ? workspaceProject.GetTagHelpersAsync(CreateProjectEngine(configuration), _telemetryReporter, cancellationToken)
+            ? workspaceProject.GetTagHelpersAsync(CreateProjectEngine(configuration), cancellationToken)
             : new([]);
 
-    private RazorProjectEngine CreateProjectEngine(RazorConfiguration configuration)
+    private static RazorProjectEngine CreateProjectEngine(RazorConfiguration configuration)
     {
         // If there's no factory to handle the configuration then fall back to a very basic configuration.
         //

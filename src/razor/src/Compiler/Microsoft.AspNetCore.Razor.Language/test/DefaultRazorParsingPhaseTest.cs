@@ -22,7 +22,7 @@ public class DefaultRazorParsingPhaseTest
         var codeDocument = projectEngine.CreateEmptyCodeDocument();
 
         // Act
-        phase.Execute(codeDocument);
+        codeDocument = phase.Execute(codeDocument);
 
         // Assert
         Assert.NotNull(codeDocument.GetSyntaxTree());
@@ -43,7 +43,7 @@ public class DefaultRazorParsingPhaseTest
         var codeDocument = projectEngine.CreateEmptyCodeDocument();
 
         // Act
-        phase.Execute(codeDocument);
+        codeDocument = phase.Execute(codeDocument);
 
         // Assert
         Assert.True(codeDocument.TryGetSyntaxTree(out var syntaxTree));
@@ -71,7 +71,7 @@ public class DefaultRazorParsingPhaseTest
         var codeDocument = projectEngine.CreateCodeDocument(source, importSources);
 
         // Act
-        phase.Execute(codeDocument);
+        codeDocument = phase.Execute(codeDocument);
 
         // Assert
         Assert.True(codeDocument.TryGetImportSyntaxTrees(out var importSyntaxTrees));

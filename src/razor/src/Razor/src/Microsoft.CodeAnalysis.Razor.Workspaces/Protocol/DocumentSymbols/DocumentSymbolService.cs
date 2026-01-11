@@ -13,11 +13,11 @@ internal class DocumentSymbolService(IDocumentMappingService documentMappingServ
 {
     private readonly IDocumentMappingService _documentMappingService = documentMappingService;
 
-    public SumType<DocumentSymbol[], SymbolInformation[]>? GetDocumentSymbols(Uri razorDocumentUri, RazorCSharpDocument csharpDocument, SumType<DocumentSymbol[], SymbolInformation[]> csharpSymbols)
+    public SumType<DocumentSymbol[], SymbolInformation[]>? GetDocumentSymbols(RazorFileKind fileKind, Uri razorDocumentUri, RazorCSharpDocument csharpDocument, SumType<DocumentSymbol[], SymbolInformation[]> csharpSymbols)
     {
         if (csharpSymbols.TryGetFirst(out var documentSymbols))
         {
-            return RemapDocumentSymbols(csharpDocument, documentSymbols);
+            return RemapDocumentSymbols(fileKind, csharpDocument, documentSymbols);
         }
         else if (csharpSymbols.TryGetSecond(out var symbolInformations))
         {
@@ -25,9 +25,16 @@ internal class DocumentSymbolService(IDocumentMappingService documentMappingServ
 
             foreach (var symbolInformation in symbolInformations)
             {
-#pragma warning disable CS0618 // Type or member is obsolete
                 // SymbolInformation is obsolete, but things still return it so we have to handle it
-                if (_documentMappingService.TryMapToRazorDocumentRange(csharpDocument, symbolInformation.Location.Range, out var newRange))
+#pragma warning disable CS0618 // Type or member is obsolete
+                if (symbolInformation.Name == RenderMethodSignature(fileKind))
+                {
+                    symbolInformation.Name = RenderMethodDisplay(fileKind);
+                    symbolInformation.Location.Range = LspFactory.DefaultRange;
+                    symbolInformation.Location.Uri = razorDocumentUri;
+                    mappedSymbols.Add(symbolInformation);
+                }
+                else if (_documentMappingService.TryMapToRazorDocumentRange(csharpDocument, symbolInformation.Location.Range, out var newRange))
                 {
                     symbolInformation.Location.Range = newRange;
                     symbolInformation.Location.Uri = razorDocumentUri;
@@ -45,7 +52,7 @@ internal class DocumentSymbolService(IDocumentMappingService documentMappingServ
         }
     }
 
-    private DocumentSymbol[]? RemapDocumentSymbols(RazorCSharpDocument csharpDocument, DocumentSymbol[]? documentSymbols)
+    private DocumentSymbol[]? RemapDocumentSymbols(RazorFileKind fileKind, RazorCSharpDocument csharpDocument, DocumentSymbol[]? documentSymbols)
     {
         if (documentSymbols is null)
         {
@@ -58,12 +65,12 @@ internal class DocumentSymbolService(IDocumentMappingService documentMappingServ
         {
             if (TryRemapRanges(csharpDocument, documentSymbol))
             {
-                documentSymbol.Children = RemapDocumentSymbols(csharpDocument, documentSymbol.Children);
+                documentSymbol.Children = RemapDocumentSymbols(fileKind, csharpDocument, documentSymbol.Children);
 
                 mappedSymbols.Add(documentSymbol);
             }
             else if (documentSymbol.Children is [_, ..] &&
-                RemapDocumentSymbols(csharpDocument, documentSymbol.Children) is [_, ..] mappedChildren)
+                RemapDocumentSymbols(fileKind, csharpDocument, documentSymbol.Children) is [_, ..] mappedChildren)
             {
                 // This range didn't map, but some/all of its children did, so we promote them to this level so we don't
                 // lose any information.
@@ -75,7 +82,16 @@ internal class DocumentSymbolService(IDocumentMappingService documentMappingServ
 
         bool TryRemapRanges(RazorCSharpDocument csharpDocument, DocumentSymbol documentSymbol)
         {
-            if (_documentMappingService.TryMapToRazorDocumentRange(csharpDocument, documentSymbol.Range, out var newRange) &&
+            if (documentSymbol.Detail == RenderMethodSignature(fileKind))
+            {
+                // Special case BuildRenderTree to always map to the top of the document
+                documentSymbol.Detail = RenderMethodDisplay(fileKind);
+                documentSymbol.Range = LspFactory.DefaultRange;
+                documentSymbol.SelectionRange = LspFactory.DefaultRange;
+
+                return true;
+            }
+            else if (_documentMappingService.TryMapToRazorDocumentRange(csharpDocument, documentSymbol.Range, out var newRange) &&
                 _documentMappingService.TryMapToRazorDocumentRange(csharpDocument, documentSymbol.SelectionRange, out var newSelectionRange))
             {
                 documentSymbol.Range = newRange;
@@ -87,4 +103,15 @@ internal class DocumentSymbolService(IDocumentMappingService documentMappingServ
             return false;
         }
     }
+
+    private static string RenderMethodSignature(RazorFileKind fileKind)
+        => fileKind == RazorFileKind.Legacy
+            ? "ExecuteAsync()"
+            : "BuildRenderTree(RenderTreeBuilder __builder)";
+
+    private static string RenderMethodDisplay(RazorFileKind fileKind)
+        => fileKind == RazorFileKind.Legacy
+            ? "ExecuteAsync()"
+            : "BuildRenderTree()"; // We hide __builder because it can be misleading to users: https://github.com/dotnet/razor/issues/11960
+
 }

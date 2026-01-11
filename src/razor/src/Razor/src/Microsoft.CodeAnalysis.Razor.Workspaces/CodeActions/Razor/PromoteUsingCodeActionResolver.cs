@@ -43,7 +43,7 @@ internal class PromoteUsingCodeActionResolver(IFileSystem fileSystem) : IRazorCo
 
         using var edits = new PooledArrayBuilder<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>>();
 
-        var textToInsert = sourceText.GetSubTextString(TextSpan.FromBounds(actionParams.UsingStart, actionParams.UsingEnd));
+        var textToInsert = sourceText.ToString(TextSpan.FromBounds(actionParams.UsingStart, actionParams.UsingEnd));
         var insertLocation = new LinePosition(0, 0);
         if (!_fileSystem.FileExists(importsFile))
         {

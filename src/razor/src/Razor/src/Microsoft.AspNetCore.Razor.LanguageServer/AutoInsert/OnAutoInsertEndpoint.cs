@@ -25,16 +25,14 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.AutoInsert;
 
 [RazorLanguageServerEndpoint(VSInternalMethods.OnAutoInsertName)]
 internal class OnAutoInsertEndpoint(
-    LanguageServerFeatureOptions languageServerFeatureOptions,
     IDocumentMappingService documentMappingService,
     IClientConnection clientConnection,
     IAutoInsertService autoInsertService,
     RazorLSPOptionsMonitor optionsMonitor,
     IRazorFormattingService razorFormattingService,
     ILoggerFactory loggerFactory)
-    : AbstractRazorDelegatingEndpoint<VSInternalDocumentOnAutoInsertParams, VSInternalDocumentOnAutoInsertResponseItem?>(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.GetOrCreateLogger<OnAutoInsertEndpoint>()), ICapabilitiesProvider
+    : AbstractRazorDelegatingEndpoint<VSInternalDocumentOnAutoInsertParams, VSInternalDocumentOnAutoInsertResponseItem?>(documentMappingService, clientConnection, loggerFactory.GetOrCreateLogger<OnAutoInsertEndpoint>()), ICapabilitiesProvider
 {
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor;
     private readonly IRazorFormattingService _razorFormattingService = razorFormattingService;
     private readonly IAutoInsertService _autoInsertService = autoInsertService;
@@ -50,17 +48,10 @@ internal class OnAutoInsertEndpoint(
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        var triggerCharacters = _autoInsertService.TriggerCharacters;
-
-        if (_languageServerFeatureOptions.SingleServerSupport)
-        {
-            triggerCharacters = [
-                .. triggerCharacters,
-                .. AutoInsertService.HtmlAllowedAutoInsertTriggerCharacters,
-                .. AutoInsertService.CSharpAllowedAutoInsertTriggerCharacters];
-        }
-
-        serverCapabilities.EnableOnAutoInsert(triggerCharacters);
+        serverCapabilities.EnableOnAutoInsert([
+            .. _autoInsertService.TriggerCharacters,
+            .. AutoInsertService.HtmlAllowedAutoInsertTriggerCharacters,
+            .. AutoInsertService.CSharpAllowedAutoInsertTriggerCharacters]);
     }
 
     protected override async Task<VSInternalDocumentOnAutoInsertResponseItem?> TryHandleAsync(VSInternalDocumentOnAutoInsertParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
@@ -180,7 +171,7 @@ internal class OnAutoInsertEndpoint(
         // For C# we run the edit through our formatting engine
         Debug.Assert(positionInfo.LanguageKind == RazorLanguageKind.CSharp);
 
-        var options = RazorFormattingOptions.From(originalRequest.Options, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine);
+        var options = RazorFormattingOptions.From(originalRequest.Options, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine, _optionsMonitor.CurrentValue.AttributeIndentStyle);
 
         var csharpSourceText = await documentContext.GetCSharpSourceTextAsync(cancellationToken).ConfigureAwait(false);
         var textChange = csharpSourceText.GetTextChange(delegatedResponse.TextEdit);

@@ -5,5 +5,5 @@ internal static class RazorCohostingOptions
     /// <summary>
     /// True if razor is running in the cohosting mode
     /// </summary>
-    internal static bool UseRazorCohostServer { get; set; } = false;
+    internal static bool UseRazorCohostServer { get; set; } = true;
 }

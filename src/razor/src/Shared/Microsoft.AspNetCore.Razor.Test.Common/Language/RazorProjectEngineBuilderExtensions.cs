@@ -30,12 +30,7 @@ public static class RazorProjectEngineBuilderExtensions
         return builder;
     }
 
-    public static RazorProjectEngineBuilder AddTagHelpers(this RazorProjectEngineBuilder builder, params TagHelperDescriptor[] tagHelpers)
-    {
-        return AddTagHelpers(builder, (IEnumerable<TagHelperDescriptor>)tagHelpers);
-    }
-
-    public static RazorProjectEngineBuilder AddTagHelpers(this RazorProjectEngineBuilder builder, IEnumerable<TagHelperDescriptor> tagHelpers)
+    public static RazorProjectEngineBuilder SetTagHelpers(this RazorProjectEngineBuilder builder, params TagHelperCollection tagHelpers)
     {
         var feature = (TestTagHelperFeature)builder.Features.OfType<ITagHelperFeature>().FirstOrDefault();
         if (feature == null)
@@ -44,7 +39,7 @@ public static class RazorProjectEngineBuilderExtensions
             builder.Features.Add(feature);
         }
 
-        feature.TagHelpers.AddRange(tagHelpers);
+        feature.SetTagHelpers(tagHelpers);
         return builder;
     }
 

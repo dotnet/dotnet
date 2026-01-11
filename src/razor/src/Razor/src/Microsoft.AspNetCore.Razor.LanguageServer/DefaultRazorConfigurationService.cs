@@ -8,6 +8,7 @@ using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Settings;
 
@@ -95,13 +96,14 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
         }
         else
         {
-            ExtractVSCodeOptions(result, out var formatting, out var autoClosingTags, out var commitElementsWithSpace, out var codeBlockBraceOnNextLine);
+            ExtractVSCodeOptions(result, out var formatting, out var autoClosingTags, out var commitElementsWithSpace, out var codeBlockBraceOnNextLine, out var attributeIndentStyle);
             return RazorLSPOptions.Default with
             {
                 Formatting = formatting,
                 AutoClosingTags = autoClosingTags,
                 CommitElementsWithSpace = commitElementsWithSpace,
-                CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine
+                CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine,
+                AttributeIndentStyle = attributeIndentStyle,
             };
         }
     }
@@ -111,7 +113,8 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
         out FormattingFlags formatting,
         out bool autoClosingTags,
         out bool commitElementsWithSpace,
-        out bool codeBlockBraceOnNextLine)
+        out bool codeBlockBraceOnNextLine,
+        out AttributeIndentStyle attributeIndentStyle)
     {
         var razor = result[0];
         var html = result[1];
@@ -122,6 +125,7 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
         // Deliberately not using the "default" here because we want a different default for VS Code, as
         // this matches VS Code's html servers commit behaviour
         commitElementsWithSpace = false;
+        attributeIndentStyle = RazorLSPOptions.Default.AttributeIndentStyle;
 
         if (razor.TryGetPropertyValue("format", out var parsedFormatNode) &&
             parsedFormatNode?.AsObject() is { } parsedFormat)
@@ -144,6 +148,12 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
                 parsedCodeBlockBraceOnNextLine is not null)
             {
                 codeBlockBraceOnNextLine = GetObjectOrDefault(parsedCodeBlockBraceOnNextLine, codeBlockBraceOnNextLine);
+            }
+
+            if (parsedFormat.TryGetPropertyValue("attributeIndentStyle", out var parsedAttributeIndentStyle) &&
+                parsedAttributeIndentStyle is not null)
+            {
+                attributeIndentStyle = GetEnumValue(parsedAttributeIndentStyle, AttributeIndentStyle.AlignWithFirst);
             }
         }
 
@@ -205,6 +215,28 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
             // GetValue could potentially throw here if the user provides malformed options.
             // If this occurs, catch the exception and return the default value.
             return token.GetValue<T>() ?? defaultValue;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Malformed option: Token {token} cannot be converted to type {typeof(T)} for {expression}.");
+            return defaultValue;
+        }
+    }
+
+    private T GetEnumValue<T>(JsonNode token, T defaultValue, [CallerArgumentExpression(nameof(defaultValue))] string? expression = null)
+        where T : struct
+    {
+        try
+        {
+            // GetValue could potentially throw here if the user provides malformed options.
+            // If this occurs, catch the exception and return the default value.
+            if (token.GetValue<string>() is { } stringValue &&
+                Enum.TryParse<T>(stringValue, ignoreCase: true, out var parsed))
+            {
+                return parsed;
+            }
+
+            return defaultValue;
         }
         catch (Exception ex)
         {

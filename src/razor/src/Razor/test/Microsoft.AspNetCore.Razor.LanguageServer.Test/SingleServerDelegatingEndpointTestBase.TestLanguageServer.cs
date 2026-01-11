@@ -252,6 +252,9 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
                 },
                 Position = delegatedParams.ProjectedPosition,
                 Context = new ReferenceContext()
+                {
+                    IncludeDeclaration = true
+                },
             };
 
             return _csharpServer.ExecuteRequestAsync<ReferenceParams, VSInternalReferenceItem[]>(

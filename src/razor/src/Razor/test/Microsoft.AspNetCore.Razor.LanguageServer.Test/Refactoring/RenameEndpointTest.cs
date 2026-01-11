@@ -25,6 +25,7 @@ using Microsoft.CodeAnalysis.Text;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
+using static Nerdbank.Streams.MultiplexingStream;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Refactoring;
 
@@ -106,6 +107,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         // Arrange
         var options = StrictMock.Of<LanguageServerFeatureOptions>(static o =>
             o.SupportsFileManipulation == false &&
+            o.UseRazorCohostServer == false &&
             o.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false);
         var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync(options);
         var uri = TestPathUtilities.GetUri(s_componentFilePath1);
@@ -130,7 +132,11 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
     public async Task Handle_Rename_WithNamespaceDirective()
     {
         // Arrange
-        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync();
+        var options = StrictMock.Of<LanguageServerFeatureOptions>(static o =>
+            o.SupportsFileManipulation == true &&
+            o.UseRazorCohostServer == false &&
+            o.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false);
+        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync(options);
         var uri = TestPathUtilities.GetUri(s_componentFilePath1);
         var request = new RenameParams
         {
@@ -171,7 +177,36 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
     public async Task Handle_Rename_OnComponentParameter_ReturnsNull()
     {
         // Arrange
-        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync();
+        var options = StrictMock.Of<LanguageServerFeatureOptions>(static o =>
+           o.SupportsFileManipulation == true &&
+           o.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false);
+
+        var delegatedEdit = new WorkspaceEdit();
+
+        var clientConnection = TestMocks.CreateClientConnection(builder =>
+        {
+            builder.SetupSendRequest<IDelegatedParams, WorkspaceEdit>(CustomMessageNames.RazorRenameEndpointName, response: delegatedEdit);
+        });
+
+        var documentMappingServiceMock = new StrictMock<IDocumentMappingService>();
+
+        var projectedPosition = new LinePosition(1, 1);
+        var projectedIndex = 1;
+        documentMappingServiceMock
+            .Setup(x => x.TryMapToCSharpDocumentPosition(It.IsAny<RazorCSharpDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex))
+            .Returns(true);
+
+        var editMappingServiceMock = new StrictMock<IEditMappingService>();
+        editMappingServiceMock
+            .Setup(x => x.MapWorkspaceEditAsync(It.IsAny<IDocumentSnapshot>(), It.IsAny<WorkspaceEdit>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync(
+            options,
+            documentMappingServiceMock.Object,
+            editMappingServiceMock.Object,
+            clientConnection);
+
         var uri = TestPathUtilities.GetUri(s_componentWithParamFilePath);
         var request = new RenameParams
         {
@@ -187,14 +222,43 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var result = await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
-        Assert.Null(result);
+        Assert.Same(delegatedEdit, result);
     }
 
     [Fact]
     public async Task Handle_Rename_OnOpeningBrace_ReturnsNull()
     {
         // Arrange
-        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync();
+        var options = StrictMock.Of<LanguageServerFeatureOptions>(static o =>
+           o.SupportsFileManipulation == true &&
+           o.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false);
+
+        var delegatedEdit = new WorkspaceEdit();
+
+        var clientConnection = TestMocks.CreateClientConnection(builder =>
+        {
+            builder.SetupSendRequest<IDelegatedParams, WorkspaceEdit>(CustomMessageNames.RazorRenameEndpointName, response: delegatedEdit);
+        });
+
+        var documentMappingServiceMock = new StrictMock<IDocumentMappingService>();
+
+        var projectedPosition = new LinePosition(1, 1);
+        var projectedIndex = 1;
+        documentMappingServiceMock
+            .Setup(x => x.TryMapToCSharpDocumentPosition(It.IsAny<RazorCSharpDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex))
+            .Returns(true);
+
+        var editMappingServiceMock = new StrictMock<IEditMappingService>();
+        editMappingServiceMock
+            .Setup(x => x.MapWorkspaceEditAsync(It.IsAny<IDocumentSnapshot>(), It.IsAny<WorkspaceEdit>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync(
+            options,
+            documentMappingServiceMock.Object,
+            editMappingServiceMock.Object,
+            clientConnection);
+
         var uri = TestPathUtilities.GetUri(s_componentWithParamFilePath);
         var request = new RenameParams
         {
@@ -210,14 +274,18 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var result = await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
 
         // Assert
-        Assert.Null(result);
+        Assert.Same(delegatedEdit, result);
     }
 
     [Fact]
     public async Task Handle_Rename_OnComponentNameLeadingEdge_ReturnsResult()
     {
         // Arrange
-        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync();
+        var options = StrictMock.Of<LanguageServerFeatureOptions>(static o =>
+            o.SupportsFileManipulation == true &&
+            o.UseRazorCohostServer == false &&
+            o.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false);
+        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync(options);
         var uri = TestPathUtilities.GetUri(s_componentWithParamFilePath);
         var request = new RenameParams
         {
@@ -240,7 +308,11 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
     public async Task Handle_Rename_OnComponentName_ReturnsResult()
     {
         // Arrange
-        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync();
+        var options = StrictMock.Of<LanguageServerFeatureOptions>(static o =>
+            o.SupportsFileManipulation == true &&
+            o.UseRazorCohostServer == false &&
+            o.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false);
+        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync(options);
         var uri = TestPathUtilities.GetUri(s_componentWithParamFilePath);
         var request = new RenameParams
         {
@@ -263,7 +335,11 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
     public async Task Handle_Rename_OnComponentEndTag_ReturnsResult()
     {
         // Arrange
-        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync();
+        var options = StrictMock.Of<LanguageServerFeatureOptions>(static o =>
+            o.SupportsFileManipulation == true &&
+            o.UseRazorCohostServer == false &&
+            o.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false);
+        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync(options);
         var uri = TestPathUtilities.GetUri(s_componentWithParamFilePath);
         var request = new RenameParams
         {
@@ -286,7 +362,11 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
     public async Task Handle_Rename_OnComponentNameTrailingEdge_ReturnsResult()
     {
         // Arrange
-        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync();
+        var options = StrictMock.Of<LanguageServerFeatureOptions>(static o =>
+            o.SupportsFileManipulation == true &&
+            o.UseRazorCohostServer == false &&
+            o.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false);
+        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync(options);
         var uri = TestPathUtilities.GetUri(s_componentWithParamFilePath);
         var request = new RenameParams
         {
@@ -309,7 +389,11 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
     public async Task Handle_Rename_ComponentInSameFile()
     {
         // Arrange
-        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync();
+        var options = StrictMock.Of<LanguageServerFeatureOptions>(static o =>
+            o.SupportsFileManipulation == true &&
+            o.UseRazorCohostServer == false &&
+            o.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false);
+        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync(options);
         var uri = TestPathUtilities.GetUri(s_componentFilePath4);
         var request = new RenameParams
         {
@@ -327,7 +411,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         // Assert
         Assert.NotNull(result);
         var documentChanges = result.DocumentChanges.AssumeNotNull();
-        Assert.Equal(5, documentChanges.Count());
+        Assert.Equal(4, documentChanges.Count());
 
         // We renamed Component3 to Component5, so we should expect file rename.
         var renameChange = documentChanges.ElementAt(0);
@@ -335,20 +419,14 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath3), renameFile.OldDocumentUri.GetRequiredParsedUri());
         Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath5), renameFile.NewDocumentUri.GetRequiredParsedUri());
 
-        Assert.Collection(GetTextDocumentEdits(result, startIndex: 1, endIndex: 4),
+        Assert.Collection(GetTextDocumentEdits(result, startIndex: 1, endIndex: 3),
             textDocumentEdit =>
             {
                 Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath4), textDocumentEdit.TextDocument.DocumentUri.GetRequiredParsedUri());
                 Assert.Collection(
                     textDocumentEdit.Edits,
                     AssertTextEdit("Component5", startLine: 1, startCharacter: 1, endLine: 1, endCharacter: 11),
-                    AssertTextEdit("Component5", startLine: 1, startCharacter: 14, endLine: 1, endCharacter: 24));
-            },
-            textDocumentEdit =>
-            {
-                Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath4), textDocumentEdit.TextDocument.DocumentUri.GetRequiredParsedUri());
-                Assert.Collection(
-                    textDocumentEdit.Edits,
+                    AssertTextEdit("Component5", startLine: 1, startCharacter: 14, endLine: 1, endCharacter: 24),
                     AssertTextEdit("Component5", startLine: 2, startCharacter: 1, endLine: 2, endCharacter: 11),
                     AssertTextEdit("Component5", startLine: 2, startCharacter: 14, endLine: 2, endCharacter: 24));
             },
@@ -395,7 +473,11 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
     public async Task Handle_Rename_FullyQualifiedAndNot()
     {
         // Arrange
-        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync();
+        var options = StrictMock.Of<LanguageServerFeatureOptions>(static o =>
+            o.SupportsFileManipulation == true &&
+            o.UseRazorCohostServer == false &&
+            o.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false);
+        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync(options);
         var uri = TestPathUtilities.GetUri(s_indexFilePath1);
         var request = new RenameParams
         {
@@ -413,7 +495,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         // Assert
         Assert.NotNull(result);
         var documentChanges = result.DocumentChanges.AssumeNotNull();
-        Assert.Equal(3, documentChanges.Count());
+        Assert.Equal(2, documentChanges.Count());
 
         var renameChange = documentChanges.ElementAt(0);
         Assert.True(renameChange.TryGetThird(out var renameFile));
@@ -426,13 +508,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         Assert.Collection(
             textDocumentEdit.Edits,
             AssertTextEdit("Component5", startLine: 2, startCharacter: 1, endLine: 2, endCharacter: 14),
-            AssertTextEdit("Component5", startLine: 2, startCharacter: 17, endLine: 2, endCharacter: 30));
-
-        var editChange2 = result.DocumentChanges.Value.ElementAt(2);
-        Assert.True(editChange2.TryGetFirst(out var textDocumentEdit2));
-        Assert.Equal(TestPathUtilities.GetUri(s_indexFilePath1), textDocumentEdit2.TextDocument.DocumentUri.GetRequiredParsedUri());
-        Assert.Collection(
-            textDocumentEdit2.Edits,
+            AssertTextEdit("Component5", startLine: 2, startCharacter: 17, endLine: 2, endCharacter: 30),
             AssertTextEdit("Test.Component5", startLine: 3, startCharacter: 1, endLine: 3, endCharacter: 19),
             AssertTextEdit("Test.Component5", startLine: 3, startCharacter: 22, endLine: 3, endCharacter: 40));
     }
@@ -441,7 +517,11 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
     public async Task Handle_Rename_MultipleFileUsages()
     {
         // Arrange
-        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync();
+        var options = StrictMock.Of<LanguageServerFeatureOptions>(static o =>
+            o.SupportsFileManipulation == true &&
+            o.UseRazorCohostServer == false &&
+            o.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false);
+        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync(options);
         var uri = TestPathUtilities.GetUri(s_componentFilePath3);
         var request = new RenameParams
         {
@@ -459,7 +539,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         // Assert
         Assert.NotNull(result);
         var documentChanges = result.DocumentChanges.AssumeNotNull();
-        Assert.Equal(5, documentChanges.Count());
+        Assert.Equal(4, documentChanges.Count());
 
         var renameChange = documentChanges.ElementAt(0);
         Assert.True(renameChange.TryGetThird(out var renameFile));
@@ -477,24 +557,29 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var editChange2 = documentChanges.ElementAt(2);
         Assert.True(editChange2.TryGetFirst(out var textDocumentEdit2));
         Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath4), textDocumentEdit2.TextDocument.DocumentUri.GetRequiredParsedUri());
-        Assert.Equal(2, textDocumentEdit2.Edits.Length);
+        Assert.Collection(
+            textDocumentEdit.Edits,
+            AssertTextEdit("Component5", 1, 1, 1, 11),
+            AssertTextEdit("Component5", 1, 14, 1, 24));
 
         var editChange3 = documentChanges.ElementAt(3);
         Assert.True(editChange3.TryGetFirst(out var textDocumentEdit3));
-        Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath4), textDocumentEdit3.TextDocument.DocumentUri.GetRequiredParsedUri());
-        Assert.Equal(2, textDocumentEdit3.Edits.Length);
-
-        var editChange4 = documentChanges.ElementAt(4);
-        Assert.True(editChange4.TryGetFirst(out var textDocumentEdit4));
-        Assert.Equal(TestPathUtilities.GetUri(s_componentWithParamFilePath), textDocumentEdit4.TextDocument.DocumentUri.GetRequiredParsedUri());
-        Assert.Equal(2, textDocumentEdit4.Edits.Length);
+        Assert.Equal(TestPathUtilities.GetUri(s_componentWithParamFilePath), textDocumentEdit3.TextDocument.DocumentUri.GetRequiredParsedUri());
+        Assert.Collection(
+            textDocumentEdit.Edits,
+            AssertTextEdit("Component5", 1, 1, 1, 11),
+            AssertTextEdit("Component5", 1, 14, 1, 24));
     }
 
     [Fact]
     public async Task Handle_Rename_DifferentDirectories()
     {
         // Arrange
-        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync();
+        var options = StrictMock.Of<LanguageServerFeatureOptions>(static o =>
+            o.SupportsFileManipulation == true &&
+            o.UseRazorCohostServer == false &&
+            o.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false);
+        var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync(options);
         var uri = TestPathUtilities.GetUri(s_directoryFilePath1);
         var request = new RenameParams
         {
@@ -534,7 +619,6 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         // Arrange
         var options = StrictMock.Of<LanguageServerFeatureOptions>(static o =>
             o.SupportsFileManipulation == true &&
-            o.SingleServerSupport == true &&
             o.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false);
 
         var delegatedEdit = new WorkspaceEdit();
@@ -554,8 +638,8 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
 
         var editMappingServiceMock = new StrictMock<IEditMappingService>();
         editMappingServiceMock
-            .Setup(x => x.RemapWorkspaceEditAsync(It.IsAny<IDocumentSnapshot>(), It.IsAny<WorkspaceEdit>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(delegatedEdit);
+            .Setup(x => x.MapWorkspaceEditAsync(It.IsAny<IDocumentSnapshot>(), It.IsAny<WorkspaceEdit>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
 
         var (endpoint, documentContextFactory) = await CreateEndpointAndDocumentContextFactoryAsync(
             options,
@@ -587,7 +671,6 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         // Arrange
         var options = StrictMock.Of<LanguageServerFeatureOptions>(static o =>
             o.SupportsFileManipulation == true &&
-            o.SingleServerSupport == true &&
             o.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false);
 
         var documentMappingService = StrictMock.Of<IDocumentMappingService>();
@@ -617,16 +700,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         IEditMappingService? editMappingService = null,
         IClientConnection? clientConnection = null)
     {
-        using PooledArrayBuilder<TagHelperDescriptor> builder = [];
-        builder.AddRange(CreateRazorComponentTagHelperDescriptors("First", RootNamespace1, "Component1"));
-        builder.AddRange(CreateRazorComponentTagHelperDescriptors("First", "Test", "Component2"));
-        builder.AddRange(CreateRazorComponentTagHelperDescriptors("Second", RootNamespace2, "Component3"));
-        builder.AddRange(CreateRazorComponentTagHelperDescriptors("Second", RootNamespace2, "Component4"));
-        builder.AddRange(CreateRazorComponentTagHelperDescriptors("First", "Test", "Component1337"));
-        builder.AddRange(CreateRazorComponentTagHelperDescriptors("First", "Test.Components", "Directory1"));
-        builder.AddRange(CreateRazorComponentTagHelperDescriptors("First", "Test.Components", "Directory2"));
-        var tagHelpers = builder.ToImmutable();
-
+        var tagHelpers = CreateRazorComponentTagHelpers();
         var projectManager = CreateProjectSnapshotManager();
 
         var documentContextFactory = new DocumentContextFactory(projectManager, LoggerFactory);
@@ -691,7 +765,6 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var searchEngine = new RazorComponentSearchEngine(LoggerFactory);
         options ??= StrictMock.Of<LanguageServerFeatureOptions>(static o =>
             o.SupportsFileManipulation == true &&
-            o.SingleServerSupport == false &&
             o.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false);
 
         if (documentMappingService == null)
@@ -710,7 +783,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
 
         clientConnection ??= StrictMock.Of<IClientConnection>();
 
-        var renameService = new RenameService(searchEngine, options);
+        var renameService = new RenameService(searchEngine, new FileSystem(), options);
         var endpoint = new RenameEndpoint(
             renameService,
             options,
@@ -723,21 +796,36 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         return (endpoint, documentContextFactory);
     }
 
-    private static IEnumerable<TagHelperDescriptor> CreateRazorComponentTagHelperDescriptors(string assemblyName, string namespaceName, string tagName)
+    private static TagHelperCollection CreateRazorComponentTagHelpers()
     {
-        var fullyQualifiedName = $"{namespaceName}.{tagName}";
-        var builder = TagHelperDescriptorBuilder.CreateComponent(fullyQualifiedName, assemblyName);
-        builder.SetTypeName(fullyQualifiedName, namespaceName, tagName);
-        builder.TagMatchingRule(rule => rule.TagName = tagName);
+        using var builder = new TagHelperCollection.RefBuilder();
+        builder.AddRange(CreateRazorComponentTagHelpersCore("First", RootNamespace1, "Component1"));
+        builder.AddRange(CreateRazorComponentTagHelpersCore("First", "Test", "Component2"));
+        builder.AddRange(CreateRazorComponentTagHelpersCore("Second", RootNamespace2, "Component3"));
+        builder.AddRange(CreateRazorComponentTagHelpersCore("Second", RootNamespace2, "Component4"));
+        builder.AddRange(CreateRazorComponentTagHelpersCore("First", "Test", "Component1337"));
+        builder.AddRange(CreateRazorComponentTagHelpersCore("First", "Test.Components", "Directory1"));
+        builder.AddRange(CreateRazorComponentTagHelpersCore("First", "Test.Components", "Directory2"));
 
-        yield return builder.Build();
+        return builder.ToCollection();
 
-        var fullyQualifiedBuilder = TagHelperDescriptorBuilder.CreateComponent(fullyQualifiedName, assemblyName);
-        fullyQualifiedBuilder.SetTypeName(fullyQualifiedName, namespaceName, tagName);
-        fullyQualifiedBuilder.TagMatchingRule(rule => rule.TagName = fullyQualifiedName);
-        fullyQualifiedBuilder.IsFullyQualifiedNameMatch = true;
+        static IEnumerable<TagHelperDescriptor> CreateRazorComponentTagHelpersCore(
+            string assemblyName, string namespaceName, string tagName)
+        {
+            var fullyQualifiedName = $"{namespaceName}.{tagName}";
+            var builder = TagHelperDescriptorBuilder.CreateComponent(fullyQualifiedName, assemblyName);
+            builder.SetTypeName(fullyQualifiedName, namespaceName, tagName);
+            builder.TagMatchingRule(rule => rule.TagName = tagName);
 
-        yield return fullyQualifiedBuilder.Build();
+            yield return builder.Build();
+
+            var fullyQualifiedBuilder = TagHelperDescriptorBuilder.CreateComponent(fullyQualifiedName, assemblyName);
+            fullyQualifiedBuilder.SetTypeName(fullyQualifiedName, namespaceName, tagName);
+            fullyQualifiedBuilder.TagMatchingRule(rule => rule.TagName = fullyQualifiedName);
+            fullyQualifiedBuilder.IsFullyQualifiedNameMatch = true;
+
+            yield return fullyQualifiedBuilder.Build();
+        }
     }
 
     private static Action<SumType<TextEdit, AnnotatedTextEdit>> AssertTextEdit(string fileName, int startLine, int startCharacter, int endLine, int endCharacter)

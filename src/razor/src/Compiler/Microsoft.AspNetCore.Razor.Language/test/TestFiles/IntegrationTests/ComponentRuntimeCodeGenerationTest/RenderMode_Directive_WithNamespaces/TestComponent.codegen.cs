@@ -29,7 +29,15 @@ Custom.Namespace
         #pragma warning restore 1998
         private sealed class __PrivateComponentRenderModeAttribute : global::Microsoft.AspNetCore.Components.RenderModeAttribute
         {
-            private static global::Microsoft.AspNetCore.Components.IComponentRenderMode ModeImpl => Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
+            private static global::Microsoft.AspNetCore.Components.IComponentRenderMode ModeImpl => 
+#nullable restore
+#line (3,13)-(3,77) "x:\dir\subdir\Test\TestComponent.cshtml"
+Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
+
+#line default
+#line hidden
+#nullable disable
+
             ;
             public override global::Microsoft.AspNetCore.Components.IComponentRenderMode Mode => ModeImpl;
         }

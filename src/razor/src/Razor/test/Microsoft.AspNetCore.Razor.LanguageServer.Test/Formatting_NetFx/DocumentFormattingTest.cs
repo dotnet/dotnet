@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Formatting;
+using Microsoft.CodeAnalysis.Razor.Settings;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -25,6 +26,54 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
         await RunFormattingTestAsync(
             input: "",
             expected: "");
+    }
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/vscode-csharp/issues/8333")]
+    public async Task MultilineStringLiterals()
+    {
+        // The single line string doesn't fail in this test, because Web Tools' formatter doesn't produce
+        // a bad edit. VS Code does, and tests in FormattingLogTest validate that scenario with VS Code edits.
+
+        await RunFormattingTestAsync(
+            input: """"
+                <div>
+                @{
+                var s1 = "    test    test    ";
+
+                var s2 = """
+                            this is
+                                async string
+                              that shouldn't move
+                          """;
+
+                var s3 = @"
+                            this is
+                                async string
+                              that shouldn't move
+                          ";
+                }
+                </div>
+                """",
+            expected: """"
+                <div>
+                    @{
+                        var s1 = "    test    test    ";
+
+                        var s2 = """
+                            this is
+                                async string
+                              that shouldn't move
+                          """;
+
+                        var s3 = @"
+                            this is
+                                async string
+                              that shouldn't move
+                          ";
+                    }
+                </div>
+                """");
     }
 
     [FormattingTestFact]
@@ -424,14 +473,14 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                 """,
             expected: """
                 <div>
-                    @code
+                @code
+                {
+                    private bool IconMenuActive { get; set; } = false;
+                    protected void ToggleIconMenu(bool iconMenuActive)
                     {
-                        private bool IconMenuActive { get; set; } = false;
-                        protected void ToggleIconMenu(bool iconMenuActive)
-                        {
-                            IconMenuActive = iconMenuActive;
-                        }
+                        IconMenuActive = iconMenuActive;
                     }
+                }
                 </div>
                 """,
             csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
@@ -605,15 +654,15 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     """,
             expected: """
                     <boo>
-                        @code
-                        {
-                            private int currentCount = 0;
+                    @code
+                    {
+                        private int currentCount = 0;
 
-                            private void IncrementCount()
-                            {
-                                currentCount++;
-                            }
+                        private void IncrementCount()
+                        {
+                            currentCount++;
                         }
+                    }
                     </boo>
                     """,
             inGlobalNamespace: inGlobalNamespace);
@@ -638,15 +687,15 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     """,
             expected: """
                     <boo>
-                        @code
-                        {
-                            private int currentCount = 0;
+                    @code
+                    {
+                        private int currentCount = 0;
 
-                            private void IncrementCount()
-                            {
-                                currentCount++;
-                            }
+                        private void IncrementCount()
+                        {
+                            currentCount++;
                         }
+                    }
                     </boo>
                     """);
     }
@@ -670,15 +719,15 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     """,
             expected: """
                     <boo>
-                        @code
-                        {
-                            private int currentCount = 0;
+                    @code
+                    {
+                        private int currentCount = 0;
 
-                            private void IncrementCount()
-                            {
-                                currentCount++;
-                            }
+                        private void IncrementCount()
+                        {
+                            currentCount++;
                         }
+                    }
                     </boo>
                     """);
     }
@@ -1848,7 +1897,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
 
                     <h1>Hello, world!</h1>
 
-                            Welcome to your new app.
+                    Welcome to your new app.
 
                     <PageTitle Title="How is Blazor working for you?" />
 
@@ -2446,6 +2495,31 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     </div>
                     """);
     }
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12635")]
+    public Task TwoRenderFragmentsAfterEachOther()
+     => RunFormattingTestAsync(
+         input: """
+                @{
+                Func<(bool b1, bool b2), object> o1 = @<text>
+                <div></div>
+                </text>;
+                Func<(bool b1, bool b2), object> o2 = @<text>
+                <div></div>
+                </text>;
+                }
+                """,
+         expected: """
+                @{
+                    Func<(bool b1, bool b2), object> o1 = @<text>
+                        <div></div>
+                    </text>;
+                    Func<(bool b1, bool b2), object> o2 = @<text>
+                        <div></div>
+                    </text>;
+                }
+                """);
 
     [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/6090")]
@@ -3344,7 +3418,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
 
                     <div>
                         @(new C()
-                            .M("Hello")
+                                .M("Hello")
                             .M("World")
                             .M(source =>
                             {
@@ -3357,15 +3431,15 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                         @(DateTime.Now)
 
                         @(DateTime
-                            .Now
-                            .ToString())
+                    .Now
+                    .ToString())
 
                         @(Html.DisplayNameFor(@<text>
                             <p>
                                 <h2></h2>
                             </p>
                         </text>)
-                            .ToString())
+                    .ToString())
 
                         @{
                             var x = @<p>Hi there!</p>;
@@ -3429,29 +3503,81 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                                 <h2></h2>
                             </p>
                         </text>)
+                           .ToString())
+
+                        @(Html.DisplayNameFor(@<div></div>,
+                           1, 3, 4))
+                    
+                        @(Html.DisplayNameFor(@<div></div>,
+                           1, 3, @<div></div>,
+                           2, 4))
+
+                        @(Html.DisplayNameFor(
+                           1, 3, @<div></div>,
+                           2, 4))
+
+                        @(Html.DisplayNameFor(
+                           1, 3,
+                           2, 4))
+                    
+                        @(Html.DisplayNameFor(
+                           2, 4,
+                           1, 3, @<div></div>,
+                           2, 4,
+                           1, 3, @<div></div>,
+                           4))
+                    </div>
+                    """,
+            fileKind: RazorFileKind.Legacy);
+    }
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/6110")]
+    public async Task FormatExplicitCSharpInsideHtml3()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @using System.Text;
+
+                    <div>
+                        @(new C()
+                            .M("Hello")
+                            .M("World")
+                            .M(source =>
+                            {
+                                if (source.Length > 0)
+                                {
+                                    source.ToString();
+                                }
+                            }))
+
+                        @(DateTime.Now)
+
+                        @(DateTime
+                            .Now
                             .ToString())
+                    </div>
+                    """,
+            expected: """
+                    @using System.Text;
 
-                        @(Html.DisplayNameFor(@<div></div>,
-                            1, 3, 4))
-                    
-                        @(Html.DisplayNameFor(@<div></div>,
-                            1, 3, @<div></div>,
-                            2, 4))
+                    <div>
+                        @(new C()
+                            .M("Hello")
+                            .M("World")
+                            .M(source =>
+                            {
+                                if (source.Length > 0)
+                                {
+                                    source.ToString();
+                                }
+                            }))
 
-                        @(Html.DisplayNameFor(
-                            1, 3, @<div></div>,
-                            2, 4))
+                        @(DateTime.Now)
 
-                        @(Html.DisplayNameFor(
-                            1, 3,
-                            2, 4))
-                    
-                        @(Html.DisplayNameFor(
-                            2, 4,
-                            1, 3, @<div></div>,
-                            2, 4,
-                            1, 3, @<div></div>,
-                            4))
+                        @(DateTime
+                            .Now
+                            .ToString())
                     </div>
                     """,
             fileKind: RazorFileKind.Legacy);
@@ -3498,8 +3624,8 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     """,
             expected: """
                     <button @functions {
-                            void M() { }
-                            }
+                        void M() { }
+                        }
                     """,
             allowDiagnostics: true);
     }
@@ -3724,6 +3850,8 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
     [FormattingTestFact]
     public async Task Format_DocumentWithDiagnostics()
     {
+        // The malformed closing div in the foreach block causes confusing results in the formatter,
+        // but the test validates that we don't crash at least.
         await RunFormattingTestAsync(
             input: """
                     @page
@@ -3760,13 +3888,13 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     </section>
                     <section class="section">
                         <div class="container">
-                    @foreach (var item in Model.Images)
-                    {
+                            @foreach (var item in Model.Images)
+                            {
                                 <div>
                                     <div>
                                         }
                                     </div>
-                        </section>
+                                </section>
                     """,
             fileKind: RazorFileKind.Legacy,
             allowDiagnostics: true);
@@ -6302,18 +6430,18 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                         @<text>
                             @if (true)
                             {
-                                    <div class="test"
-                                         accesskey="k">
-                                        Hello
-                                        @if (true)
-                                        {
-                                            <span>World</span>
-                                        }
-                                        else
-                                        {
-                                            <span>Not World</span>
-                                        }
-                                    </div>
+                                <div class="test"
+                                     accesskey="k">
+                                    Hello
+                                    @if (true)
+                                    {
+                                        <span>World</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Not World</span>
+                                    }
+                                </div>
                             }
                         </text>;
                 }
@@ -6364,18 +6492,18 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                         @<PageTitle>
                             @if (true)
                             {
-                                    <div class="test"
-                                         accesskey="k">
-                                        Hello
-                                        @if (true)
-                                        {
-                                            <span>World</span>
-                                        }
-                                        else
-                                        {
-                                            <span>Not World</span>
-                                        }
-                                    </div>
+                                <div class="test"
+                                     accesskey="k">
+                                    Hello
+                                    @if (true)
+                                    {
+                                        <span>World</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Not World</span>
+                                    }
+                                </div>
                             }
                         </PageTitle>;
                 }
@@ -6424,18 +6552,18 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     protected RenderFragment RootFragment() => @<text>
                         @if (true)
                         {
-                                <div class="test"
-                                     accesskey="k">
-                                    Hello
-                                    @if (true)
-                                    {
-                                        <span>World</span>
-                                    }
-                                    else
-                                    {
-                                        <span>Not World</span>
-                                    }
-                                </div>
+                            <div class="test"
+                                 accesskey="k">
+                                Hello
+                                @if (true)
+                                {
+                                    <span>World</span>
+                                }
+                                else
+                                {
+                                    <span>Not World</span>
+                                }
+                            </div>
                         }
                     </text>;
                 }
@@ -6484,18 +6612,18 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     protected RenderFragment RootFragment() => @<text>
                         @if (true)
                         {
-                                <div class="test"
-                                     accesskey="k">
-                                    Hello
-                                    @if (true)
-                                    {
-                                        <span>World</span>
-                                    }
-                                    else
-                                    {
-                                        <span>Not World</span>
-                                    }
-                                </div>
+                            <div class="test"
+                                 accesskey="k">
+                                Hello
+                                @if (true)
+                                {
+                                    <span>World</span>
+                                }
+                                else
+                                {
+                                    <span>Not World</span>
+                                }
+                            </div>
                         }
                     </text>;
                 }
@@ -6544,18 +6672,18 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     protected RenderFragment RootFragment() => @<text>
                         @if (true)
                         {
-                                <div class="test"
-                                     accesskey="k">
-                                    Hello
-                                    @if (true)
-                                    {
-                                        <span>World</span>
-                                    }
-                                    else
-                                    {
-                                        <span>Not World</span>
-                                    }
-                                </div>
+                            <div class="test"
+                                 accesskey="k">
+                                Hello
+                                @if (true)
+                                {
+                                    <span>World</span>
+                                }
+                                else
+                                {
+                                    <span>Not World</span>
+                                }
+                            </div>
                         }
                     </text>;
                 }
@@ -6607,21 +6735,21 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                         @<text>
                             @if (true)
                             {
-                                    <div class="test"
-                                         accesskey="k">
-                                        Hello
-                                        @if (true)
-                                        {
-                                            <span>World</span>
-                                        }
-                                        else
-                                        {
-                                            <span>Not World</span>
-                                        }
-                                    </div>
+                                <div class="test"
+                                     accesskey="k">
+                                    Hello
+                                    @if (true)
+                                    {
+                                        <span>World</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Not World</span>
+                                    }
+                                </div>
                             }
-                            </text>
-                        ;
+                        </text>
+                ;
                 }
                 """,
             csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
@@ -6661,15 +6789,15 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                 @code {
                     protected RenderFragment RootFragment() =>
                         @<div>
-                                <div class="test"
-                                     accesskey="k">
-                                    Hello
-                                    <div>
-                                        <span>World</span>
-                                    </div>
+                            <div class="test"
+                                 accesskey="k">
+                                Hello
+                                <div>
+                                    <span>World</span>
                                 </div>
                             </div>
-                        ;
+                        </div>
+                ;
                 }
                 """,
             csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
@@ -6907,11 +7035,11 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                 <div>
                     <partial name="~/Views/Shared/_TestimonialRow.cshtml"
                              model="new DefaultTitleContentAreaViewModel
-                             {
-                                 Title = Model.CurrentPage.TestimonialsTitle,
-                                 ContentArea = Model.CurrentPage.TestimonialsContentArea,
-                                 ChildCssClass = string.Empty
-                             }" />
+                        {
+                            Title = Model.CurrentPage.TestimonialsTitle,
+                            ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                            ChildCssClass = string.Empty
+                        }" />
                 </div>
                 """,
             fileKind: RazorFileKind.Legacy);
@@ -6954,11 +7082,11 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
 
                 <partial name="~/Views/Shared/_TestimonialRow.cshtml"
                          model="@(new DefaultTitleContentAreaViewModel
-                         {
-                             Title = Model.CurrentPage.TestimonialsTitle,
-                             ContentArea = Model.CurrentPage.TestimonialsContentArea,
-                             ChildCssClass = string.Empty
-                         })" />
+                    {
+                        Title = Model.CurrentPage.TestimonialsTitle,
+                        ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                        ChildCssClass = string.Empty
+                    })" />
 
                 <partial model="@(new DefaultTitleContentAreaViewModel
                          {
@@ -6970,11 +7098,11 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                 <div>
                     <partial name="~/Views/Shared/_TestimonialRow.cshtml"
                              model="@(new DefaultTitleContentAreaViewModel
-                             {
-                                 Title = Model.CurrentPage.TestimonialsTitle,
-                                 ContentArea = Model.CurrentPage.TestimonialsContentArea,
-                                 ChildCssClass = string.Empty
-                             })" />
+                        {
+                            Title = Model.CurrentPage.TestimonialsTitle,
+                            ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                            ChildCssClass = string.Empty
+                        })" />
                 </div>
                 """);
     }
@@ -7004,11 +7132,11 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                 <div>
                     <partial name="~/Views/Shared/_TestimonialRow.cshtml"
                              model="@(new DefaultTitleContentAreaViewModel
-                             {
-                                 Title = Model.CurrentPage.TestimonialsTitle,
-                                 ContentArea = Model.CurrentPage.TestimonialsContentArea,
-                                 ChildCssClass = string.Empty
-                             })" />
+                                 {
+                                     Title = Model.CurrentPage.TestimonialsTitle,
+                                     ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                                     ChildCssClass = string.Empty
+                                 })" />
                 </div>
                 """;
         await RunFormattingTestAsync(
@@ -7059,6 +7187,35 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             input: code,
             expected: code);
     }
+
+    [FormattingTestFact]
+    internal Task TextArea_WithAttributes()
+        => RunFormattingTestAsync(
+            input: """
+                <textarea name="foo"
+                                    id="foo">@("Foo")
+                     test</textarea>
+                """,
+            expected: """
+                <textarea name="foo"
+                          id="foo">@("Foo")
+                     test</textarea>
+                """);
+
+    [FormattingTestFact]
+    internal Task TextArea_WithAttributes_IndentByOne()
+        => RunFormattingTestAsync(
+            input: """
+                <textarea name="foo"
+                                    id="foo">@("Foo")
+                     test</textarea>
+                """,
+            expected: """
+                <textarea name="foo"
+                    id="foo">@("Foo")
+                     test</textarea>
+                """,
+            attributeIndentStyle: AttributeIndentStyle.IndentByOne);
 
     [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/11777")]
@@ -7131,15 +7288,15 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                             {
                                 <span>
                                     @((((true) ? 123d : 0d) +
-                                                (true ? 123d : 0d)
-                                                ).ToString("F2", CultureInfo.InvariantCulture)) €
+                                        (true ? 123d : 0d)
+                                        ).ToString("F2", CultureInfo.InvariantCulture)) €
                                 </span>
                                 <hr class="my-1" />
                                 <span>
                                     @((123d +
-                                                ((true) ? 123d : 0d) +
-                                                (true ? 123d : 0d)
-                                                ).ToString("F2", CultureInfo.InvariantCulture)) €
+                                        ((true) ? 123d : 0d) +
+                                        (true ? 123d : 0d)
+                                        ).ToString("F2", CultureInfo.InvariantCulture)) €
                                 </span>
                             }
                         </div>
@@ -7248,7 +7405,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                         @((((true) ? 123d : 0d) +
                             (true ? 123d : 0d)
                             ).ToString("F2", CultureInfo.InvariantCulture)
-                            ) €
+                        ) €
                     </span>
                     <hr class="my-1" />
                     <span>
@@ -7256,7 +7413,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                             ((true) ? 123d : 0d) +
                             (true ? 123d : 0d)
                             ).ToString("F2", CultureInfo.InvariantCulture)
-                            ) €
+                        ) €
                     </span>
                 }
                 """);
@@ -7291,7 +7448,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                         @((((true) ? 123d : 0d) +
                             (true ? 123d : 0d)
                             ).ToString("F2", CultureInfo.InvariantCulture)
-                            ) €
+                ) €
                     </span>
                     <hr class="my-1" />
                     <span>
@@ -7299,8 +7456,529 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                             ((true) ? 123d : 0d) +
                             (true ? 123d : 0d)
                             ).ToString("F2", CultureInfo.InvariantCulture)
-                            ) €
+                ) €
                     </span>
                 }
                 """);
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12445")]
+    public Task TypeParameterAttribute()
+     => RunFormattingTestAsync(
+         input: """
+                <div>
+                <InputSelect TValue="Guid?">
+                </InputSelect>
+                </div>
+                """,
+         expected: """
+                <div>
+                    <InputSelect TValue="Guid?">
+                    </InputSelect>
+                </div>
+                """);
+
+    [FormattingTestFact]
+    public Task HtmlAttributes()
+        => RunFormattingTestAsync(
+            input: """
+                    <div class="foo"
+                                disabled
+                            style="hello"
+                      @onclick="foo()">
+                    <InputSelect @onclick="foo()"
+                    TValue="Guid?"
+                     disabled
+                     style="hello">
+                     <p></p><a href="#"
+                     disabled
+                     style="hello"
+                    @onclick="foo()"/>
+                     <br class="a"
+                     style="b"
+                     disabled>
+                     <br />
+                    </InputSelect>
+                    </div>
+                    """,
+            expected: """
+                    <div class="foo"
+                         disabled
+                         style="hello"
+                         @onclick="foo()">
+                        <InputSelect @onclick="foo()"
+                                     TValue="Guid?"
+                                     disabled
+                                     style="hello">
+                            <p></p><a href="#"
+                                      disabled
+                                      style="hello"
+                                      @onclick="foo()" />
+                            <br class="a"
+                                style="b"
+                                disabled>
+                            <br />
+                        </InputSelect>
+                    </div>
+                    """);
+
+    [FormattingTestFact]
+    public Task HtmlAttributes_FirstAttributeOnNextLine()
+        => RunFormattingTestAsync(
+            input: """
+                    <div
+                      class="foo"
+                      disabled
+                      style="hello"
+                      @onclick="foo()">
+                    </div>
+                    """,
+            expected: """
+                    <div class="foo"
+                         disabled
+                         style="hello"
+                         @onclick="foo()">
+                    </div>
+                    """);
+
+    [FormattingTestFact]
+    public Task HtmlAttributes_IndentByOne()
+        => RunFormattingTestAsync(
+            input: """
+                    <div class="foo"
+                                disabled
+                            style="hello"
+                      @onclick="foo()">
+                    <InputSelect @onclick="foo()"
+                    TValue="Guid?"
+                     disabled
+                     style="hello">
+                     <p></p><a href="#"
+                     disabled
+                     style="hello"
+                    @onclick="foo()"/>
+                     <br class="a"
+                     style="b"
+                     disabled>
+                     <br />
+                    </InputSelect>
+                    </div>
+                    """,
+            expected: """
+                    <div class="foo"
+                        disabled
+                        style="hello"
+                        @onclick="foo()">
+                        <InputSelect @onclick="foo()"
+                            TValue="Guid?"
+                            disabled
+                            style="hello">
+                            <p></p><a href="#"
+                                disabled
+                                style="hello"
+                                @onclick="foo()" />
+                            <br class="a"
+                                style="b"
+                                disabled>
+                            <br />
+                        </InputSelect>
+                    </div>
+                    """,
+            attributeIndentStyle: CodeAnalysis.Razor.Settings.AttributeIndentStyle.IndentByOne);
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12223")]
+    public Task ExplicitExpression_InIf()
+        => RunFormattingTestAsync(
+            input: """
+                    @if (true)
+                    {
+                        @(Html.Grid()
+                            .Render())
+                    }
+                    """,
+            expected: """
+                    @if (true)
+                    {
+                        @(Html.Grid()
+                            .Render())
+                    }
+                    """);
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12554")]
+    public Task ObjectInitializers1()
+        => RunFormattingTestAsync(
+            input: """
+                    @{
+                        Func<Test, IHtmlContent> RenderTest = @<div>Test X: @item.X, Y: @item.Y</div>;
+                    }
+
+                    @RenderTest(new Test()
+                    {
+                        X = 10,
+                        Y = 20,
+                    })
+
+                    <div>
+                        @RenderTest(new Test()
+                        {
+                            X = 1,
+                            Y = 2,
+                        })
+                    </div>
+                    """,
+            expected: """
+                    @{
+                        Func<Test, IHtmlContent> RenderTest = @<div>Test X: @item.X, Y: @item.Y</div>;
+                    }
+
+                    @RenderTest(new Test()
+                    {
+                        X = 10,
+                        Y = 20,
+                    })
+
+                    <div>
+                        @RenderTest(new Test()
+                        {
+                            X = 1,
+                            Y = 2,
+                        })
+                    </div>
+                    """);
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12554")]
+    public Task ObjectInitializers2()
+        => RunFormattingTestAsync(
+            input: """
+                    <div>
+                        @if (true)
+                        {
+                            @Html.TextBox(new Test()
+                            {
+                                test = 5
+                            })
+                        }
+                    </div>
+                    """,
+            expected: """
+                    <div>
+                        @if (true)
+                        {
+                            @Html.TextBox(new Test()
+                            {
+                                test = 5
+                            })
+                        }
+                    </div>
+                    """);
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12554")]
+    public Task ObjectInitializers3()
+        => RunFormattingTestAsync(
+            input: """
+                    <div>
+                        @{
+                            var a = new int[] { 1, 2, 3 }
+                                .Where(i => i % 2 == 0)
+                                .ToArray();
+                        }
+                    </div>
+                    """,
+            expected: """
+                    <div>
+                        @{
+                            var a = new int[] { 1, 2, 3 }
+                                .Where(i => i % 2 == 0)
+                                .ToArray();
+                        }
+                    </div>
+                    """);
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12622")]
+    public Task ObjectInitializers4()
+        => RunFormattingTestAsync(
+            input: """
+                <div>
+                    @if (true)
+                    {
+                        @Html.TextBox(new Test()
+                        {
+                            test = 5
+                        })
+                        <div></div>
+                    }
+                </div>
+                """,
+            expected: """
+                <div>
+                    @if (true)
+                    {
+                        @Html.TextBox(new Test()
+                        {
+                            test = 5
+                        })
+                        <div></div>
+                    }
+                </div>
+                """);
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12622")]
+    public Task ObjectInitializers5()
+        => RunFormattingTestAsync(
+            input: """
+                <div>
+                    @if (true)
+                    {
+                        @Html.TextBox(new Test() { test = 5 })
+                        <div></div>
+                    }
+                </div>
+                """,
+            expected: """
+                <div>
+                    @if (true)
+                    {
+                        @Html.TextBox(new Test() { test = 5 })
+                        <div></div>
+                    }
+                </div>
+                """);
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12622")]
+    public Task ObjectInitializers6()
+        => RunFormattingTestAsync(
+            input: """
+                @if (true)
+                {
+                    @Html.TextBox(new Test()
+                    {
+                        test = 5
+                    })
+                    <div></div>
+                }
+                """,
+            expected: """
+                @if (true)
+                {
+                    @Html.TextBox(new Test()
+                    {
+                        test = 5
+                    })
+                    <div></div>
+                }
+                """);
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12622")]
+    public Task ObjectInitializers7()
+        => RunFormattingTestAsync(
+            input: """
+                <div>
+                    <div>
+                        @Html.TextBox(new 
+                        {
+                            test = 5,
+                        })
+                    </div>
+                    <div>
+                        @Html.TextBox(new 
+                        {
+                            test = 5,
+                        })
+                    </div>
+                </div>
+                """,
+            expected: """
+                <div>
+                    <div>
+                        @Html.TextBox(new
+                        {
+                            test = 5,
+                        })
+                    </div>
+                    <div>
+                        @Html.TextBox(new
+                        {
+                            test = 5,
+                        })
+                    </div>
+                </div>
+                """);
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12622")]
+    public Task ObjectInitializers8()
+        => RunFormattingTestAsync(
+            input: """
+                @if (true)
+                {
+                    @Html.TextBox(new Test() {
+                        test = 5
+                    })
+                    <div></div>
+                }
+                """,
+            expected: """
+                @if (true)
+                {
+                    @Html.TextBox(new Test()
+                    {
+                        test = 5
+                    })
+                    <div></div>
+                }
+                """);
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12622")]
+    public Task ObjectInitializers9()
+        => RunFormattingTestAsync(
+            input: """
+                @if (true)
+                {
+                    @Html.TextBox(new Test() {
+                        test = 5
+                    })
+                    <div></div>
+                }
+                """,
+            expected: """
+                @if (true)
+                {
+                    @Html.TextBox(new Test() {
+                        test = 5
+                    })
+                    <div></div>
+                }
+                """,
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
+            {
+                NewLines = RazorCSharpSyntaxFormattingOptions.Default.NewLines & ~RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers
+            });
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12622")]
+    public Task ObjectInitializers10()
+        => RunFormattingTestAsync(
+            input: """
+                    @if (true)
+                {
+                    @Html.TextBox(new Test()
+                    {
+                        test = 5
+                    })
+                    <div></div>
+                }
+                """,
+            expected: """
+                @if (true)
+                {
+                    @Html.TextBox(new Test() {
+                        test = 5
+                    })
+                    <div></div>
+                }
+                """,
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
+            {
+                NewLines = RazorCSharpSyntaxFormattingOptions.Default.NewLines & ~RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers
+            });
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12622")]
+    public Task ObjectInitializers11()
+        => RunFormattingTestAsync(
+            input: """
+                <div>
+                    <div>
+                        <div>
+                            @if (true)
+                            {
+                                <div>
+                                    @Html.TextBox(new
+                                    {
+                                        test = 6
+                                    })
+                                </div>
+
+                                <div></div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                """,
+            expected: """
+                <div>
+                    <div>
+                        <div>
+                            @if (true)
+                            {
+                                <div>
+                                    @Html.TextBox(new
+                                    {
+                                        test = 6
+                                    })
+                                </div>
+
+                                <div></div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                """);
+
+    [FormattingTestFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12631")]
+    public Task ObjectInitializers12()
+        => RunFormattingTestAsync(
+            input: """
+                @await Component.InvokeAsync("ReviewAndPublishModal", 
+                    new { 
+                        id = "ReviewPublishModal", 
+                        title = "Review and publish",
+                        text = Model.ReviewNotes, 
+                        state = Model.State, 
+                        allowSave = allowSaveReview, 
+                        allowPublish = allowPublish, 
+                        isPublished =isCurrentPublished     
+                    }
+                )
+                """,
+            expected: """
+                @await Component.InvokeAsync("ReviewAndPublishModal",
+                    new
+                    {
+                        id = "ReviewPublishModal",
+                        title = "Review and publish",
+                        text = Model.ReviewNotes,
+                        state = Model.State,
+                        allowSave = allowSaveReview,
+                        allowPublish = allowPublish,
+                        isPublished = isCurrentPublished
+                    }
+                )
+                """);
+
+    [FormattingTestFact]
+    public Task PartialDocument()
+        => RunFormattingTestAsync(
+            input: """
+                    <table>
+                    <tr>
+                    <td>
+                    """,
+            expected: """
+                    <table>
+                        <tr>
+                            <td>
+
+                    """,
+            allowDiagnostics: true);
 }

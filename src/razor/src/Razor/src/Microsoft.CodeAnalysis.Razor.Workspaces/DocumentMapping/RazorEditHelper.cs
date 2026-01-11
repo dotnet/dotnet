@@ -20,7 +20,7 @@ namespace Microsoft.CodeAnalysis.Razor.DocumentMapping;
 
 internal static partial class RazorEditHelper
 {
-    internal static bool TryGetMappedSpans(TextSpan span, SourceText source, RazorCSharpDocument output, out LinePositionSpan linePositionSpan, out TextSpan mappedSpan)
+    internal static bool TryGetMappedSpan(TextSpan span, SourceText source, RazorCSharpDocument output, out LinePositionSpan linePositionSpan, out TextSpan mappedSpan)
     {
         foreach (var mapping in output.SourceMappings)
         {

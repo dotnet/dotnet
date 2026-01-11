@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -32,8 +31,7 @@ public class ProjectAvailabilityTests(ITestOutputHelper testOutput) : ToolingTes
         builder.TagMatchingRule(rule => rule.TagName = "Test");
         var tagHelperTypeName = "TestNamespace.TestTagHelper";
         builder.TypeName = tagHelperTypeName;
-        var tagHelpers = ImmutableArray.Create(builder.Build());
-        var projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers);
+        var projectWorkspaceState = ProjectWorkspaceState.Create([builder.Build()]);
 
         var hostProject = new HostProject(
             "C:/path/to/project.csproj",
@@ -70,8 +68,7 @@ public class ProjectAvailabilityTests(ITestOutputHelper testOutput) : ToolingTes
         builder.TagMatchingRule(rule => rule.TagName = "Test");
         var tagHelperTypeName = "TestNamespace.TestTagHelper";
         builder.TypeName = tagHelperTypeName;
-        var tagHelpers = ImmutableArray.Create(builder.Build());
-        var projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers);
+        var projectWorkspaceState = ProjectWorkspaceState.Create([builder.Build()]);
 
         var hostProject1 = new HostProject(
             "C:/path/to/project.csproj",
@@ -119,8 +116,7 @@ public class ProjectAvailabilityTests(ITestOutputHelper testOutput) : ToolingTes
         builder.TagMatchingRule(rule => rule.TagName = "Test");
         var tagHelperTypeName = "TestNamespace.TestTagHelper";
         builder.TypeName = tagHelperTypeName;
-        var tagHelpers = ImmutableArray.Create(builder.Build());
-        var projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers);
+        var projectWorkspaceState = ProjectWorkspaceState.Create([builder.Build()]);
 
         var hostProject1 = new HostProject(
             "C:/path/to/project.csproj",

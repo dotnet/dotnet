@@ -70,9 +70,10 @@ public class RazorEngineTest
     {
         public int CallCount;
 
-        protected override void ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
+        protected override RazorCodeDocument ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
         {
             Interlocked.Increment(ref CallCount);
+            return codeDocument;
         }
     }
 }

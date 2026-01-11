@@ -48,10 +48,10 @@ internal static class RazorSyntaxTreeExtensions
                 yield return directive;
             }
         }
+    }
 
-        static bool MayContainDirectives(SyntaxNode node)
-        {
-            return node is RazorDocumentSyntax or MarkupBlockSyntax or CSharpCodeBlockSyntax;
-        }
+    public static bool MayContainDirectives(this SyntaxNode node)
+    {
+        return node is RazorDocumentSyntax or MarkupBlockSyntax or CSharpCodeBlockSyntax;
     }
 }

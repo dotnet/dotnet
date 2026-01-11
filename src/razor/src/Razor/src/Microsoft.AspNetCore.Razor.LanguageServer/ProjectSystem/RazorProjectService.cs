@@ -137,48 +137,6 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
             .ConfigureAwait(false);
     }
 
-    public async Task AddDocumentsToMiscProjectAsync(ImmutableArray<string> filePaths, CancellationToken cancellationToken)
-    {
-        await WaitForInitializationAsync().ConfigureAwait(false);
-
-        await _projectManager
-            .UpdateAsync(
-                (updater, cancellationToken) =>
-                {
-                    var projects = _projectManager.GetProjects();
-
-                    // For each file, check to see if it's already in a project.
-                    // If it is, we don't want to add it to the misc project.
-                    foreach (var filePath in filePaths)
-                    {
-                        var add = true;
-
-                        foreach (var project in projects)
-                        {
-                            if (project.ContainsDocument(filePath))
-                            {
-                                // The file is already in a project, so we shouldn't add it to the misc project.
-                                add = false;
-                                break;
-                            }
-                        }
-
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            break;
-                        }
-
-                        if (add)
-                        {
-                            AddDocumentToMiscProjectCore(updater, filePath);
-                        }
-                    }
-                },
-                state: cancellationToken,
-                cancellationToken)
-            .ConfigureAwait(false);
-    }
-
     public async Task AddDocumentToMiscProjectAsync(string filePath, CancellationToken cancellationToken)
     {
         await WaitForInitializationAsync().ConfigureAwait(false);
@@ -400,9 +358,9 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
 
                 UpdateProjectDocuments(updater, documents, project.Key);
 
-                if (!projectWorkspaceState.Equals(ProjectWorkspaceState.Default))
+                if (!projectWorkspaceState.IsDefault)
                 {
-                    _logger.LogInformation($"Updating project '{project.Key}' TagHelpers ({projectWorkspaceState.TagHelpers.Length}).");
+                    _logger.LogInformation($"Updating project '{project.Key}' TagHelpers ({projectWorkspaceState.TagHelpers.Count}).");
                 }
 
                 updater.UpdateProjectWorkspaceState(project.Key, projectWorkspaceState);

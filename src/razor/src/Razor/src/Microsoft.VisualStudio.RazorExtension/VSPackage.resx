@@ -237,4 +237,16 @@
   <data name="Typing" xml:space="preserve">
     <value>Typing</value>
   </data>
+  <data name="Setting_AttributeIndentStyleDisplayName" xml:space="preserve">
+    <value>Attribute Indent Style</value>
+  </data>
+  <data name="Setting_AttributeIndentStyleDescription" xml:space="preserve">
+    <value>Defines how Html and component tag attributes should be indented</value>
+  </data>
+  <data name="Setting_AttributeIndentStyleAlignWithFirst" xml:space="preserve">
+    <value>Align with first attribute</value>
+  </data>
+  <data name="Setting_AttributeIndentStyleIndentByOne" xml:space="preserve">
+    <value>Indent by one level</value>
+  </data>
 </root>

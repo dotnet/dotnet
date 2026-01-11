@@ -10,9 +10,6 @@ internal struct RemoteClientInitializationOptions
     [JsonPropertyName("useRazorCohostServer")]
     public required bool UseRazorCohostServer { get; set; }
 
-    [JsonPropertyName("htmlVirtualDocumentSuffix")]
-    public required string HtmlVirtualDocumentSuffix { get; set; }
-
     [JsonPropertyName("returnCodeActionAndRenamePathsWithPrefixedSlash")]
     public required bool ReturnCodeActionAndRenamePathsWithPrefixedSlash { get; set; }
 
@@ -21,10 +18,4 @@ internal struct RemoteClientInitializationOptions
 
     [JsonPropertyName("showAllCSharpCodeActions")]
     public required bool ShowAllCSharpCodeActions { get; set; }
-
-    [JsonPropertyName("supportsSoftSelectionInCompletion")]
-    public required bool SupportsSoftSelectionInCompletion { get; set; }
-
-    [JsonPropertyName("useVsCodeCompletionCommitCharacters")]
-    public required bool UseVsCodeCompletionCommitCharacters { get; set; }
 }

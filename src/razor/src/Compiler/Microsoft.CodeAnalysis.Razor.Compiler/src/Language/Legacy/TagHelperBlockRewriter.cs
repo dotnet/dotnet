@@ -61,7 +61,7 @@ internal static class TagHelperBlockRewriter
         string tagName,
         RazorParserOptions options,
         MarkupStartTagSyntax startTag,
-        TagHelperBinding bindingResult,
+        TagHelperBinding binding,
         ErrorSink errorSink,
         RazorSourceDocument source)
     {
@@ -83,7 +83,7 @@ internal static class TagHelperBlockRewriter
                 result = TryParseAttribute(
                     tagName,
                     attributeBlock,
-                    bindingResult.Descriptors,
+                    binding.TagHelpers,
                     errorSink,
                     processedBoundAttributeNames,
                     options);
@@ -96,7 +96,7 @@ internal static class TagHelperBlockRewriter
                 result = TryParseMinimizedAttribute(
                     tagName,
                     minimizedAttributeBlock,
-                    bindingResult.Descriptors,
+                    binding.TagHelpers,
                     errorSink,
                     processedBoundAttributeNames);
                 attributeBuilder.Add(result.RewrittenAttribute);
@@ -153,6 +153,13 @@ internal static class TagHelperBlockRewriter
 
                 result = null;
             }
+            else if (child is MarkupEphemeralTextLiteralSyntax ephemeralLiteral)
+            {
+                // Ephemeral literals (like escaped @@ in attribute names) should be preserved.
+                // Continue processing subsequent attributes.
+                attributeBuilder.Add(ephemeralLiteral);
+                continue;
+            }
             else
             {
                 result = null;
@@ -181,7 +188,7 @@ internal static class TagHelperBlockRewriter
                  string.IsNullOrWhiteSpace(GetAttributeValueContent(result.RewrittenAttribute))))
             {
                 var errorLocation = new SourceSpan(attributeNameLocation, result.AttributeName.Length);
-                var propertyTypeName = GetPropertyType(result.AttributeName, bindingResult.Descriptors);
+                var propertyTypeName = GetPropertyType(result.AttributeName, binding.TagHelpers);
                 var diagnostic = RazorDiagnosticFactory.CreateTagHelper_EmptyBoundAttribute(errorLocation, result.AttributeName, tagName, propertyTypeName);
                 errorSink.OnError(diagnostic);
             }
@@ -216,12 +223,12 @@ internal static class TagHelperBlockRewriter
     private static TryParseResult TryParseMinimizedAttribute(
         string tagName,
         MarkupMinimizedAttributeBlockSyntax attributeBlock,
-        IEnumerable<TagHelperDescriptor> descriptors,
+        TagHelperCollection tagHelpers,
         ErrorSink errorSink,
         HashSet<string> processedBoundAttributeNames)
     {
         // Have a name now. Able to determine correct isBoundNonStringAttribute value.
-        var result = CreateTryParseResult(attributeBlock.Name.GetContent(), descriptors, processedBoundAttributeNames);
+        var result = CreateTryParseResult(attributeBlock.Name.GetContent(), tagHelpers, processedBoundAttributeNames);
 
         result.AttributeStructure = AttributeStructure.Minimized;
 
@@ -253,13 +260,13 @@ internal static class TagHelperBlockRewriter
     private static TryParseResult TryParseAttribute(
         string tagName,
         MarkupAttributeBlockSyntax attributeBlock,
-        IEnumerable<TagHelperDescriptor> descriptors,
+        TagHelperCollection tagHelpers,
         ErrorSink errorSink,
         HashSet<string> processedBoundAttributeNames,
         RazorParserOptions options)
     {
         // Have a name now. Able to determine correct isBoundNonStringAttribute value.
-        var result = CreateTryParseResult(attributeBlock.Name.GetContent(), descriptors, processedBoundAttributeNames);
+        var result = CreateTryParseResult(attributeBlock.Name.GetContent(), tagHelpers, processedBoundAttributeNames);
 
         if (attributeBlock.ValuePrefix == null)
         {
@@ -465,11 +472,11 @@ internal static class TagHelperBlockRewriter
     }
 
     // Determines the full name of the Type of the property corresponding to an attribute with the given name.
-    private static string GetPropertyType(string name, IEnumerable<TagHelperDescriptor> descriptors)
+    private static string GetPropertyType(string name, TagHelperCollection tagHelpers)
     {
-        foreach (var descriptor in descriptors)
+        foreach (var tagHelper in tagHelpers)
         {
-            if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(descriptor, name, out var match))
+            if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(tagHelper, name, out var match))
             {
                 return match.IsIndexerMatch
                     ? match.Attribute.IndexerTypeName
@@ -483,7 +490,7 @@ internal static class TagHelperBlockRewriter
     // Create a TryParseResult for given name, filling in binding details.
     private static TryParseResult CreateTryParseResult(
         string name,
-        IEnumerable<TagHelperDescriptor> descriptors,
+        TagHelperCollection tagHelpers,
         HashSet<string> processedBoundAttributeNames)
     {
         var isBoundAttribute = false;
@@ -493,9 +500,9 @@ internal static class TagHelperBlockRewriter
         var isDirectiveAttribute = false;
         var isDuplicateAttribute = false;
 
-        foreach (var descriptor in descriptors)
+        foreach (var tagHelper in tagHelpers)
         {
-            if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(descriptor, name, out var match))
+            if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(tagHelper, name, out var match))
             {
                 isBoundAttribute = true;
                 isBoundNonStringAttribute = !match.ExpectsStringValue;

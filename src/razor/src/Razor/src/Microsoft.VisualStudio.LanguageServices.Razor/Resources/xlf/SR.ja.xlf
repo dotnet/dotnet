@@ -22,6 +22,16 @@
         <target state="translated">近接式を判別しています...</target>
         <note />
       </trans-unit>
+      <trans-unit id="Renaming_0_to_1">
+        <source>Renaming {0} to {1}</source>
+        <target state="translated">{0} の名前を {1} に変更しています</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Renaming_Razor_Component">
+        <source>Renaming Razor Component</source>
+        <target state="translated">Razor コンポーネントの名前を変更しています</target>
+        <note />
+      </trans-unit>
       <trans-unit id="View Code">
         <source>View Code</source>
         <target state="translated">コードの表示</target>

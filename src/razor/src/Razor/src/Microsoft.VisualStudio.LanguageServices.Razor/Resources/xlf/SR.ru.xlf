@@ -22,6 +22,16 @@
         <target state="translated">Идет определение выражений близкого взаимодействия…</target>
         <note />
       </trans-unit>
+      <trans-unit id="Renaming_0_to_1">
+        <source>Renaming {0} to {1}</source>
+        <target state="translated">Переименование {0} в {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Renaming_Razor_Component">
+        <source>Renaming Razor Component</source>
+        <target state="translated">Переименование компонента Razor</target>
+        <note />
+      </trans-unit>
       <trans-unit id="View Code">
         <source>View Code</source>
         <target state="translated">Просмотреть код</target>

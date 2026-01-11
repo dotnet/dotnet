@@ -114,9 +114,9 @@ internal class TagHelperCompletionProvider(ITagHelperCompletionService tagHelper
         RazorCompletionOptions options)
     {
         var ancestors = containingAttribute.Parent.Ancestors();
-        var nonDirectiveAttributeTagHelpers = tagHelperDocumentContext.TagHelpers.WhereAsArray(
+        var nonDirectiveAttributeTagHelpers = tagHelperDocumentContext.TagHelpers.Where(
             static tagHelper => !tagHelper.BoundAttributes.Any(static attribute => attribute.IsDirectiveAttribute));
-        var filteredContext = TagHelperDocumentContext.Create(tagHelperDocumentContext.Prefix, nonDirectiveAttributeTagHelpers);
+        var filteredContext = TagHelperDocumentContext.GetOrCreate(tagHelperDocumentContext.Prefix, nonDirectiveAttributeTagHelpers);
         var (ancestorTagName, ancestorIsTagHelper) = TagHelperFacts.GetNearestAncestorTagInfo(ancestors);
         var attributeCompletionContext = new AttributeCompletionContext(
             filteredContext,

@@ -91,16 +91,18 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         return this.CreateProjectAndRazorDocument(contents);
     }
 
-    protected override TextDocument CreateProjectAndRazorDocument(
+    private protected override TextDocument CreateProjectAndRazorDocument(
         string contents,
         RazorFileKind? fileKind = null,
         string? documentFilePath = null,
         (string fileName, string contents)[]? additionalFiles = null,
         bool inGlobalNamespace = false,
-        bool miscellaneousFile = false)
+        bool miscellaneousFile = false,
+        bool addDefaultImports = true,
+        Action<RazorProjectBuilder>? projectConfigure = null)
     {
         var remoteWorkspace = RemoteWorkspaceProvider.Instance.GetWorkspace();
-        var remoteDocument = base.CreateProjectAndRazorDocument(remoteWorkspace, contents, fileKind, documentFilePath, additionalFiles, inGlobalNamespace, miscellaneousFile);
+        var remoteDocument = base.CreateProjectAndRazorDocument(remoteWorkspace, contents, fileKind, documentFilePath, additionalFiles, inGlobalNamespace, miscellaneousFile, addDefaultImports, projectConfigure);
 
         // In this project we simulate remote services running OOP by creating a different workspace with a different
         // set of services to represent the devenv Roslyn side of things. We don't have any actual solution syncing set
@@ -114,7 +116,9 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
             remoteDocument.FilePath.AssumeNotNull(),
             contents,
             additionalFiles,
-            inGlobalNamespace);
+            inGlobalNamespace,
+            addDefaultImports,
+            projectConfigure);
     }
 
     private TextDocument CreateLocalProjectAndRazorDocument(
@@ -125,9 +129,11 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         string documentFilePath,
         string contents,
         (string fileName, string contents)[]? additionalFiles,
-        bool inGlobalNamespace)
+        bool inGlobalNamespace,
+        bool addDefaultImports,
+        Action<RazorProjectBuilder>? projectConfigure)
     {
-        var razorDocument = CreateProjectAndRazorDocument(LocalWorkspace, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace);
+        var razorDocument = CreateProjectAndRazorDocument(LocalWorkspace, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace, addDefaultImports, projectConfigure);
 
         // If we're creating remote and local workspaces, then we'll return the local document, and have to allow
         // the remote service invoker to map from the local solution to the remote one.

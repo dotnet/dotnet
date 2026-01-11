@@ -84,10 +84,21 @@
         "pass": {
           "input": {
             "store": "VsUserSettingsRegistry",
-            "path": "Razor\\CodeBlockBraceOnNextLined"
+            "path": "Razor\\CodeBlockBraceOnNextLine"
           }
         }
       }
+    },
+    "languages.razor.advanced.attributeIndentStyle": {
+      "type": "string",
+      "default": "alignWithFirst",
+      "enum": [ "alignWithFirst", "indentByOne" ],
+      "enumItemLabels": [
+        "@Setting_AttributeIndentStyleAlignWithFirst;{13b72f58-279e-49e0-a56d-296be02f0805}",
+        "@Setting_AttributeIndentStyleIndentByOne;{13b72f58-279e-49e0-a56d-296be02f0805}"
+      ],
+      "title": "@Setting_AttributeIndentStyleDisplayName;{13b72f58-279e-49e0-a56d-296be02f0805}",
+      "description": "@Setting_AttributeIndentStyleDescription;{13b72f58-279e-49e0-a56d-296be02f0805}"
     },
     "languages.razor.advanced.commitElementsWithSpace": {
       "type": "boolean",
@@ -106,7 +117,7 @@
     "languages.razor.advanced.snippets": {
       "type": "string",
       "default": "all",
-      "enum": ["all", "custom", "none"],
+      "enum": [ "all", "custom", "none" ],
       "enumItemLabels": [
         "@Setting_SnippetsAll;{13b72f58-279e-49e0-a56d-296be02f0805}",
         "@Setting_SnippetsCustom;{13b72f58-279e-49e0-a56d-296be02f0805}",
