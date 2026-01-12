@@ -97,13 +97,7 @@ internal class WindowSubclassHandler : IDisposable
         _originalWindowProc = (void*)PInvokeCore.SetWindowLong(
             _handle,
             WINDOW_LONG_PTR_INDEX.GWL_WNDPROC,
-            (nint)_windowProcDelegatePtr);
-
-        if (_originalWindowProc is null)
-        {
-            throw new Win32Exception();
-        }
-
+            (nint)_windowProcDelegatePtr) ?? throw new Win32Exception();
         Debug.Assert(_originalWindowProc != _windowProcDelegatePtr);
 
         _opened = true;
