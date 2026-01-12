@@ -4,6 +4,10 @@
 
   <PropertyGroup>
     <TargetFramework>$(NetCurrent)</TargetFramework>
+    <!-- Temporarily downgrade NetCurrent to net10.0 for SBE packages. -->
+    <!-- <NetCurrentForSubmodule>$(NetCurrent)</NetCurrentForSubmodule> -->
+    <NetCurrentForSubmodule>net10.0</NetCurrentForSubmodule>
+
     <IsPackable>false</IsPackable>
     <InnerRepoName>$(MSBuildProjectName)</InnerRepoName>
 
@@ -63,6 +67,10 @@
     
     <!-- Disable restoring transitive aspnetcore and windowsdesktop targeting packs to avoid unnecessary dependencies. -->
     <EnvironmentVariables Include="DisableTransitiveFrameworkReferenceDownloads=true" />
+
+    <!-- Make sure that external projects use the KnownFrameworkReferences.targets to control targeting pack versions -->
+    <EnvironmentVariables Include="NetCurrent=$(NetCurrent)" />
+    <EnvironmentVariables Include="BeforeTargetFrameworkInferenceTargets=$(RepositoryEngineeringDir)KnownFrameworkReferences.targets" />
   </ItemGroup>
 
   <!-- repo-projects depend on the repo tasks project to invoke custom msbuild tasks -->

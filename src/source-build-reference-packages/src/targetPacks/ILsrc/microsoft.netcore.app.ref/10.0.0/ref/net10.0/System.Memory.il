@@ -1,5 +1,4 @@
 
-//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
 
 
 // ----- DOS Header:
@@ -425,7 +424,6 @@
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000009    //  ILONLY
-// Image base: 0x00007F704904B000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -1383,9 +1381,9 @@
   } // end of method MemoryExtensions::BinarySearch
 
   .method /*06000025*/ public hidebysig static 
-          int32  BinarySearch<T,(class [System.Runtime/*23000001*/]System.Collections.Generic.IComparer`1/*01000029*/<!!T>/*1B000002*/) TComparer>(valuetype [System.Runtime/*23000001*/]System.ReadOnlySpan`1/*01000025*/<!!T> span,
-                                                                                                                                                   !!T 'value',
-                                                                                                                                                   !!TComparer comparer) cil managed
+          int32  BinarySearch<T,byreflike (class [System.Runtime/*23000001*/]System.Collections.Generic.IComparer`1/*01000029*/<!!T>/*1B000002*/) TComparer>(valuetype [System.Runtime/*23000001*/]System.ReadOnlySpan`1/*01000025*/<!!T> span,
+                                                                                                                                                             !!T 'value',
+                                                                                                                                                             !!TComparer comparer) cil managed
   // SIG: 10 02 03 08 15 11 80 95 01 1E 00 1E 00 1E 01
   {
     .custom /*0C0000BF:0A000015*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableContextAttribute/*01000017*/::.ctor(uint8) /* 0A000015 */ = ( 01 00 01 00 00 ) 
@@ -1404,8 +1402,8 @@
   } // end of method MemoryExtensions::BinarySearch
 
   .method /*06000026*/ public hidebysig static 
-          int32  BinarySearch<T,(class [System.Runtime/*23000001*/]System.IComparable`1/*01000027*/<!!T>/*1B000003*/) TComparable>(valuetype [System.Runtime/*23000001*/]System.ReadOnlySpan`1/*01000025*/<!!T> span,
-                                                                                                                                   !!TComparable comparable) cil managed
+          int32  BinarySearch<T,byreflike (class [System.Runtime/*23000001*/]System.IComparable`1/*01000027*/<!!T>/*1B000003*/) TComparable>(valuetype [System.Runtime/*23000001*/]System.ReadOnlySpan`1/*01000025*/<!!T> span,
+                                                                                                                                             !!TComparable comparable) cil managed
   // SIG: 10 02 02 08 15 11 80 95 01 1E 00 1E 01
   {
     .custom /*0C0000C4:0A000015*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableContextAttribute/*01000017*/::.ctor(uint8) /* 0A000015 */ = ( 01 00 01 00 00 ) 
@@ -1424,9 +1422,9 @@
   } // end of method MemoryExtensions::BinarySearch
 
   .method /*06000027*/ public hidebysig static 
-          int32  BinarySearch<T,(class [System.Runtime/*23000001*/]System.Collections.Generic.IComparer`1/*01000029*/<!!T>/*1B000002*/) TComparer>(valuetype [System.Runtime/*23000001*/]System.Span`1/*01000026*/<!!T> span,
-                                                                                                                                                   !!T 'value',
-                                                                                                                                                   !!TComparer comparer) cil managed
+          int32  BinarySearch<T,byreflike (class [System.Runtime/*23000001*/]System.Collections.Generic.IComparer`1/*01000029*/<!!T>/*1B000002*/) TComparer>(valuetype [System.Runtime/*23000001*/]System.Span`1/*01000026*/<!!T> span,
+                                                                                                                                                             !!T 'value',
+                                                                                                                                                             !!TComparer comparer) cil managed
   // SIG: 10 02 03 08 15 11 80 99 01 1E 00 1E 00 1E 01
   {
     .custom /*0C0000C8:0A000015*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableContextAttribute/*01000017*/::.ctor(uint8) /* 0A000015 */ = ( 01 00 01 00 00 ) 
@@ -1446,8 +1444,8 @@
   } // end of method MemoryExtensions::BinarySearch
 
   .method /*06000028*/ public hidebysig static 
-          int32  BinarySearch<T,(class [System.Runtime/*23000001*/]System.IComparable`1/*01000027*/<!!T>/*1B000003*/) TComparable>(valuetype [System.Runtime/*23000001*/]System.Span`1/*01000026*/<!!T> span,
-                                                                                                                                   !!TComparable comparable) cil managed
+          int32  BinarySearch<T,byreflike (class [System.Runtime/*23000001*/]System.IComparable`1/*01000027*/<!!T>/*1B000003*/) TComparable>(valuetype [System.Runtime/*23000001*/]System.Span`1/*01000026*/<!!T> span,
+                                                                                                                                             !!TComparable comparable) cil managed
   // SIG: 10 02 02 08 15 11 80 99 01 1E 00 1E 01
   {
     .custom /*0C0000CE:0A000015*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableContextAttribute/*01000017*/::.ctor(uint8) /* 0A000015 */ = ( 01 00 01 00 00 ) 
