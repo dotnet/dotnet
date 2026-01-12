@@ -73,6 +73,17 @@ public class OmniSharpTests : SdkTests
 
             Directory.CreateDirectory(OmniSharpDirectory);
             Utilities.ExtractTarball(omniSharpTarballFile, OmniSharpDirectory, OutputHelper);
+
+            // Enable OmniSharp to use prerelease .NET SDK
+            string omniSharpConfigPath = Path.Combine(OmniSharpDirectory, "omnisharp.json");
+            string omniSharpConfig = """
+                {
+                    "SDK": {
+                        "includePrereleases": true
+                    }
+                }
+                """;
+            File.WriteAllText(omniSharpConfigPath, omniSharpConfig);
         }
     }
 }
