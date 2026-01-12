@@ -21,11 +21,12 @@ pr:
       - '*.md'
 
 schedules:
-  - cron: "0 14 * * *" # run at 14:00 (UTC)
-    branches:
-      include:
-      - main
-    always: false # run only if there were changes since the last successful scheduled run.
+  - ${{ if not(contains(variables['Build.DefinitionName'], '-full')) }}:
+    - cron: "0 14 * * *" # run at 14:00 (UTC)
+      branches:
+        include:
+        - main
+      always: false # run only if there were changes since the last successful scheduled run.
 
 parameters:
 - name: buildScope
