@@ -22,6 +22,7 @@ public class OmniSharpTests : SdkTests
     private const string OmniSharpReleaseVersion = "1.39.13";
 
     private string OmniSharpDirectory { get; } = Path.Combine(Directory.GetCurrentDirectory(), nameof(OmniSharpTests));
+    private string OmniSharpRunScript => Path.Combine(OmniSharpDirectory, "OmniSharp");
 
     public static bool IncludeOmniSharpTests => Config.TargetArchitecture != "ppc64le" && Config.TargetArchitecture != "s390x";
 
@@ -48,7 +49,7 @@ public class OmniSharpTests : SdkTests
         string projectDirectory = DotNetHelper.ExecuteNew(templateName, projectName);
 
         (Process Process, string StdOut, string StdErr) executeResult = ExecuteHelper.ExecuteProcess(
-            Path.Combine(OmniSharpDirectory, "run"),
+            OmniSharpRunScript,
             $"-s {projectDirectory}",
             OutputHelper,
             logOutput: true,
@@ -67,15 +68,12 @@ public class OmniSharpTests : SdkTests
         if (!Directory.Exists(OmniSharpDirectory))
         {
             using HttpClient client = new();
-            string omniSharpTarballFile = $"omnisharp-linux-{Config.TargetArchitecture}.tar.gz";
+            string omniSharpTarballFile = $"omnisharp-linux-{Config.TargetArchitecture}-net6.0.tar.gz";
             Uri omniSharpTarballUrl = new($"https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{OmniSharpReleaseVersion}/{omniSharpTarballFile}");
             await client.DownloadFileAsync(omniSharpTarballUrl, omniSharpTarballFile, OutputHelper);
 
             Directory.CreateDirectory(OmniSharpDirectory);
             Utilities.ExtractTarball(omniSharpTarballFile, OmniSharpDirectory, OutputHelper);
-
-            // Ensure the run script is executable (see https://github.com/OmniSharp/omnisharp-roslyn/issues/2547)
-            File.SetUnixFileMode($"{OmniSharpDirectory}/run", UnixFileMode.UserRead | UnixFileMode.UserExecute);
         }
     }
 }
