@@ -489,6 +489,11 @@
         <target state="translated">Lire la variable d'environnement "{0}"</target>
         <note />
       </trans-unit>
+      <trans-unit id="ErrorCopyingBinaryLog">
+        <source>MSB4279: Failed to copy binary log from "{0}" to "{1}". {2}</source>
+        <target state="new">MSB4279: Failed to copy binary log from "{0}" to "{1}". {2}</target>
+        <note>{StrBegin="MSB4279: "}UE: This is shown when the Binary Logger fails to copy the log file to one of the specified output locations.</note>
+      </trans-unit>
       <trans-unit id="ErrorReadingCacheFile">
         <source>MSB4256: Reading input result cache files from path "{0}" encountered an error: {1}</source>
         <target state="translated">MSB4256: La lecture des fichiers cache des résultats d'entrée à partir du chemin "{0}" a rencontré une erreur : {1}</target>
@@ -903,12 +908,12 @@ Erreurs : {3}</target>
       </trans-unit>
       <trans-unit id="SdkEnvironmentVariableAlreadySet">
         <source>An SDK attempted to set the environment variable "{0}" to "{1}" but it was already set to "{2}" as an environment variable.</source>
-        <target state="new">An SDK attempted to set the environment variable "{0}" to "{1}" but it was already set to "{2}" as an environment variable.</target>
+        <target state="translated">Un Kit de développement logiciel (SDK) a tenté de définir la variable d’environnement « {0} » à « {1} », alors qu'elle était déjà définie sur « {2} » en tant que variable d'environnement.</target>
         <note />
       </trans-unit>
       <trans-unit id="SdkEnvironmentVariableAlreadySetBySdk">
         <source>An SDK attempted to set the environment variable "{0}" to "{1}" but it was already set to "{2}" by another SDK.</source>
-        <target state="new">An SDK attempted to set the environment variable "{0}" to "{1}" but it was already set to "{2}" by another SDK.</target>
+        <target state="translated">Un Kit de développement logiciel (SDK) a tenté de définir la variable d’environnement « {0} » à « {1} », mais elle était déjà définie sur « {2} » par un autre SDK.</target>
         <note />
       </trans-unit>
       <trans-unit id="SingleResolverFailedToResolveSDK">
