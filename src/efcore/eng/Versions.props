@@ -10,7 +10,6 @@
     <DotNetFinalVersionKind></DotNetFinalVersionKind>
 
     <IncludeSourceRevisionInInformationalVersion>False</IncludeSourceRevisionInInformationalVersion>
-    <DefaultNetCoreTargetFramework>$(NetCurrent)</DefaultNetCoreTargetFramework>
 
     <!-- Arcade features -->
     <UsingToolXliff>false</UsingToolXliff>
