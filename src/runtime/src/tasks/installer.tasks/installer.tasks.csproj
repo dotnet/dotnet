@@ -11,9 +11,9 @@
 
   <!-- Reference these assemblies from the SDK directly. We do this to avoid bringing the package closure for assemblies we don't use here. -->
   <ItemGroup>
-    <Reference Include="$(NetCoreSdkRoot)Microsoft.Extensions.DependencyModel.dll" />
-    <Reference Include="$(NetCoreSdkRoot)Newtonsoft.Json.dll" />
-    <Reference Include="$(NetCoreSdkRoot)NuGet.Packaging.dll" />
+    <Reference Include="$(NetCoreSdkRoot)Microsoft.Extensions.DependencyModel.dll" Private="false" />
+    <Reference Include="$(NetCoreSdkRoot)Newtonsoft.Json.dll" Private="false" />
+    <Reference Include="$(NetCoreSdkRoot)NuGet.Packaging.dll" Private="false" />
   </ItemGroup>
 
 </Project>
