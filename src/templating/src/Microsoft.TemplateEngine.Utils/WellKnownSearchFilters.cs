@@ -172,7 +172,7 @@ namespace Microsoft.TemplateEngine.Utils
                     return null;
                 }
 
-                if (template.BaselineInfo != null && template.BaselineInfo.ContainsKey(baselineName))
+                if (template.BaselineInfo != null && template.BaselineInfo.ContainsKey(baselineName!))
                 {
                     return new MatchInfo(MatchInfo.BuiltIn.Baseline, baselineName, MatchKind.Exact);
                 }
@@ -206,9 +206,9 @@ namespace Microsoft.TemplateEngine.Utils
                     return new MatchInfo(MatchInfo.BuiltIn.Author, author, MatchKind.Mismatch);
                 }
 
-                int authorIndex = template.Author.IndexOf(author, StringComparison.CurrentCultureIgnoreCase);
+                int authorIndex = template.Author!.IndexOf(author, StringComparison.CurrentCultureIgnoreCase);
 
-                if (authorIndex == 0 && template.Author.Length == author.Length)
+                if (authorIndex == 0 && template.Author.Length == author!.Length)
                 {
                     return new MatchInfo(MatchInfo.BuiltIn.Author, author, MatchKind.Exact);
                 }

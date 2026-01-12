@@ -94,9 +94,9 @@ namespace Microsoft.TemplateSearch.Common.Providers
             if (!string.IsNullOrEmpty(localOverridePath))
             {
                 _logger.LogDebug("{0} is set to {1}, the search file will be loaded from this location instead.", LocalSourceSearchFileOverrideEnvVar, localOverridePath);
-                if (_environmentSettings.Host.FileSystem.FileExists(localOverridePath))
+                if (_environmentSettings.Host.FileSystem.FileExists(localOverridePath!))
                 {
-                    return localOverridePath;
+                    return localOverridePath!;
                 }
                 _logger.LogDebug("Failed to load search cache from defined location: file {0} does not exist.", localOverridePath);
                 throw new Exception(string.Format(LocalizableStrings.BlobStoreSourceFileProvider_Exception_LocalCacheDoesNotExist, localOverridePath));

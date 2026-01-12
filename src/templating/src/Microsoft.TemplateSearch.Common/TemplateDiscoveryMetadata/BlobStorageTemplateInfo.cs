@@ -370,7 +370,7 @@ namespace Microsoft.TemplateSearch.Common
                     throw new ArgumentException($"{nameof(Name)} property should not be null or whitespace", nameof(jObject));
                 }
 
-                Name = name;
+                Name = name!;
                 DataType = jObject.ToString(nameof(DataType)) ?? "string";
 
                 if (DataType.Equals("choice", StringComparison.OrdinalIgnoreCase))
