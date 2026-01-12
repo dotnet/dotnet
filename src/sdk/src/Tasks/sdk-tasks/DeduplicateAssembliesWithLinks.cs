@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Hashing;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Microsoft.DotNet.Build.Tasks
 {
@@ -137,7 +138,10 @@ namespace Microsoft.DotNet.Build.Tasks
 
             if (UseHardLinks)
             {
-                File.CreateHardLink(duplicateFilePath, masterFilePath);
+                // TODO: Replace P/Invoke with File.CreateHardLink(duplicateFilePath, masterFilePath); when SDK targets .NET 11+
+                // See: https://github.com/dotnet/runtime/issues/69030
+                // We only use hard links on Windows currently, so this is acceptable.
+                CreateHardLinkWindows(duplicateFilePath, masterFilePath);
             }
             else
             {
@@ -167,6 +171,22 @@ namespace Microsoft.DotNet.Build.Tasks
             return extension.Equals(".dll", StringComparison.OrdinalIgnoreCase) ||
                    extension.Equals(".exe", StringComparison.OrdinalIgnoreCase);
         }
+
+        private void CreateHardLinkWindows(string linkPath, string targetPath)
+        {
+            bool result = CreateHardLinkWin32(linkPath, targetPath, IntPtr.Zero);
+            if (!result)
+            {
+                int errorCode = Marshal.GetLastWin32Error();
+                throw new InvalidOperationException($"CreateHardLink failed with error code {errorCode}");
+            }
+        }
+
+        [DllImport("kernel32.dll", EntryPoint = "CreateHardLinkW", CharSet = CharSet.Unicode, SetLastError = true)]
+        private static extern bool CreateHardLinkWin32(
+            string lpFileName,
+            string lpExistingFileName,
+            IntPtr lpSecurityAttributes);
 
         private record FileEntry(string Path, string Hash, long Size, int Depth);
     }
