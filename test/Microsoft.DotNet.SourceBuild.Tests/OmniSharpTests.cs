@@ -22,7 +22,6 @@ public class OmniSharpTests : SdkTests
     private const string OmniSharpReleaseVersion = "1.39.13";
 
     private string OmniSharpDirectory { get; } = Path.Combine(Directory.GetCurrentDirectory(), nameof(OmniSharpTests));
-    private string OmniSharpRunScript => Path.Combine(OmniSharpDirectory, "OmniSharp");
 
     public static bool IncludeOmniSharpTests => Config.TargetArchitecture != "ppc64le" && Config.TargetArchitecture != "s390x";
 
@@ -49,8 +48,8 @@ public class OmniSharpTests : SdkTests
         string projectDirectory = DotNetHelper.ExecuteNew(templateName, projectName);
 
         (Process Process, string StdOut, string StdErr) executeResult = ExecuteHelper.ExecuteProcess(
-            OmniSharpRunScript,
-            $"-s {projectDirectory}",
+            DotNetHelper.DotNetPath,
+            $"{Path.Combine(OmniSharpDirectory, "OmniSharp.dll")} -- -s {projectDirectory}",
             OutputHelper,
             logOutput: true,
             millisecondTimeout: 5000,
