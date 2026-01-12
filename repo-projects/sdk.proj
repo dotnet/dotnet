@@ -21,6 +21,7 @@
     
     <BuildArgs Condition="'$(BuildWorkloads)' == 'true'">$(BuildArgs) /p:BuildWorkloads=true</BuildArgs>
     <BuildArgs Condition="'$(BuildWorkloads)' == 'true' and '$(DotNetBuildSharedComponents)' != 'true'">$(BuildArgs) /p:DownloadWorkloadMsis=true</BuildArgs>
+    <BuildArgs Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(DotNetBuildSharedComponents)' != 'true'">$(BuildArgs) /p:SkipManifestBuild=true</BuildArgs>
     <BuildArgs Condition="'$(DotNetBuildSharedComponents)' != 'true'">$(BuildArgs) /p:DotNet1xxRuntimeVersion=$(MicrosoftNETCoreAppRefVersion) /p:DotNet1xxWorkloadManifestVersion=$(DotNet1xxWorkloadManifestVersion)</BuildArgs>
   </PropertyGroup>
 
