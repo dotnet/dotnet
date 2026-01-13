@@ -9,4 +9,37 @@
     <RestoreEnablePackagePruning Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'">true</RestoreEnablePackagePruning>
   </PropertyGroup>
 
+  <!-- TODO: Remove when updated to a newer bootstrap SDK that includes the TargetingPack.targets file. -->
+  <Choose>
+    <When Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+      <!-- Disable restoring transitive aspnetcore and windowsdesktop targeting packs to avoid unnecessary dependencies. -->
+      <PropertyGroup>
+        <DisableTransitiveFrameworkReferenceDownloads>true</DisableTransitiveFrameworkReferenceDownloads>
+      </PropertyGroup>
+
+      <ItemGroup Condition="'$(TargetFrameworkVersion)' != '' and $([MSBuild]::VersionLessThan('$(TargetFrameworkVersion)', '$(BundledNETCoreAppTargetFrameworkVersion)'))">
+        <!-- Downgrade targeting pack versions to X.0.0 as only those are provided by SBRP. -->
+        <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.NETCore.App'))">
+          <TargetingPackVersion Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(TargetFramework)', '^net\d+\.0$'))">$([System.Text.RegularExpressions.Regex]::Match('%(TargetFramework)', '\d+').Value).0.0</TargetingPackVersion>
+        </KnownFrameworkReference>
+        <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.AspNetCore.App'))">
+          <TargetingPackVersion Condition="'%(TargetFramework)' == 'net6.0'">6.0.2</TargetingPackVersion>
+        </KnownFrameworkReference>
+
+        <!-- This is a bit hacky as it uses newer analyzers from the current framework for downlevel TFMs.
+             Necessary as the non-current targeting packs are missing analyzers which result in compiler errors when using i.e. Regex or LibraryImport attributes.
+             This should be fine though as the analyzers target netstandard2.0 and aren't specific to the framework version in general. -->
+        <Analyzer Include="$(NetCoreTargetingPackRoot)\Microsoft.NETCore.App.Ref\$(BundledNETCoreAppPackageVersion)\analyzers\dotnet\cs\*.dll" Condition="'$(Language)' == 'C#'" />
+
+        <!-- This is also a bit hacky as it uses the newer host pack from the current framework for downlevel TFMs. But given that the host interface is stable, this should be fine. -->
+        <KnownAppHostPack Update="@(KnownAppHostPack)"
+          AppHostPackVersion="@(KnownAppHostPack->WithMetadataValue('TargetFramework', 'net$(BundledNETCoreAppTargetFrameworkVersion)')->Metadata('AppHostPackVersion'))"
+          AppHostRuntimeIdentifiers="@(KnownAppHostPack->WithMetadataValue('TargetFramework', 'net$(BundledNETCoreAppTargetFrameworkVersion)')->Metadata('AppHostRuntimeIdentifiers'))" />
+
+        <!-- This is also a bit hacky as it uses the newer ILLinkPack from the current framework for downlevel TFMs. -->
+        <KnownILLinkPack Update="@(KnownILLinkPack)" ILLinkPackVersion="@(KnownILLinkPack->WithMetadataValue('TargetFramework', 'net$(BundledNETCoreAppTargetFrameworkVersion)')->Metadata('ILLinkPackVersion'))" />
+      </ItemGroup>
+    </When>
+  </Choose>
+
 </Project>

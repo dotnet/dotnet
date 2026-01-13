@@ -10,6 +10,7 @@
     <Description>The MacOsPkg CLI tool is used for unpacking, packing, and validating MacOS .pkg files and nested .app bundles.</Description>
     <PackageTags>Arcade Build Tool MacOS Pkg</PackageTags>
     <DevelopmentDependency>false</DevelopmentDependency>
+    <UseAppHost>false</UseAppHost>
   </PropertyGroup>
 
   <ItemGroup>

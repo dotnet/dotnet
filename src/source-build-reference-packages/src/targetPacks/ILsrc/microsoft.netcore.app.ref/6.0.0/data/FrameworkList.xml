@@ -1,4 +1,4 @@
-<FileList TargetFrameworkIdentifier=".NETCoreApp" TargetFrameworkVersion="6.0" FrameworkName="Microsoft.NETCore.App" Name=".NET Runtime">
+﻿<FileList TargetFrameworkIdentifier=".NETCoreApp" TargetFrameworkVersion="6.0" FrameworkName="Microsoft.NETCore.App" Name=".NET Runtime">
   <File Type="Managed" Path="ref/net6.0/Microsoft.CSharp.dll" AssemblyName="Microsoft.CSharp" PublicKeyToken="b03f5f7f11d50a3a" AssemblyVersion="6.0.0.0" FileVersion="6.0.21.52210" />
   <File Type="Managed" Path="ref/net6.0/Microsoft.VisualBasic.Core.dll" AssemblyName="Microsoft.VisualBasic.Core" PublicKeyToken="b03f5f7f11d50a3a" AssemblyVersion="11.0.0.0" FileVersion="6.0.21.52210" />
   <File Type="Managed" Path="ref/net6.0/Microsoft.VisualBasic.dll" AssemblyName="Microsoft.VisualBasic" PublicKeyToken="b03f5f7f11d50a3a" AssemblyVersion="10.0.0.0" FileVersion="6.0.21.52210" />

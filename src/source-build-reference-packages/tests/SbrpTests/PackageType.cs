@@ -6,5 +6,6 @@ namespace SbrpTests;
 public enum PackageType
 {
     Reference,
-    Text
+    Text,
+    Target
 }

@@ -83,6 +83,13 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
         /// </summary>
         public string ProjectAssetsJsonArchiveFile { get; set; }
 
+        /// <summary>
+        /// Output: List of prebuilt packages detected.
+        /// Each item has PackageId and PackageVersion metadata.
+        /// </summary>
+        [Output]
+        public ITaskItem[] PrebuiltPackages { get; set; }
+
         public override bool Execute()
         {
             DateTime startTime = DateTime.Now;
@@ -255,6 +262,16 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
 
             Directory.CreateDirectory(Path.GetDirectoryName(DataFile));
             File.WriteAllText(DataFile, data.ToXml().ToString());
+
+            PrebuiltPackages = prebuilt
+                .Select(p => new Microsoft.Build.Utilities.TaskItem(
+                    p.ToString(),
+                    new Dictionary<string, string>
+                    {
+                        { "PackageId", p.Id },
+                        { "PackageVersion", p.Version.ToNormalizedString() }
+                    }))
+                .ToArray();
 
             Log.LogMessage(MessageImportance.Normal, $"Writing package usage data... done. Took {DateTime.Now - startTime}");
 

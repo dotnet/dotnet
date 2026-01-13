@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <!-- MSBuild dependencies -->
-    <PackageVersion Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
+    <PackageVersion Include="Microsoft.Build.Tasks.Core" Version="17.10.46" />
 
     <!-- Runtime dependencies -->
     <PackageVersion Include="System.Security.Cryptography.Xml" Version="8.0.0" />

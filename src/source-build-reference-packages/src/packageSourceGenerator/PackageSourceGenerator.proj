@@ -1,15 +1,21 @@
 <Project Sdk="Microsoft.Build.NoTargets" InitialTargets="ValidateRestoreCsvContentProperties">
 
+  <Import Project="$(RepositoryEngineeringDir)ILTooling.targets" />
+
   <PropertyGroup>
     <TargetFramework>$(NetCurrent)</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <PackageSourceGeneratorTaskAssembly>$(ArtifactsBinDir)PackageSourceGeneratorTask\$(Configuration)\$(NetCurrent)\PackageSourceGeneratorTask.dll</PackageSourceGeneratorTaskAssembly>
     <PackagesSrcDirectory Condition="'$(PackagesSrcDirectory)' == ''">$(RepoRoot)src\</PackagesSrcDirectory>
+    <PackageType Condition="'$(PackageType)' == ''">ref</PackageType>
+    <RestoreIlTooling Condition="'$(PackageType)' == 'target'">true</RestoreIlTooling>
     <ReferencePackagesSrcDirectory>$([MSBuild]::NormalizeDirectory('$(PackagesSrcDirectory)', 'referencePackages', 'src'))</ReferencePackagesSrcDirectory>
     <TextOnlyPackagesSrcDirectory>$([MSBuild]::NormalizeDirectory('$(PackagesSrcDirectory)', 'textOnlyPackages', 'src'))</TextOnlyPackagesSrcDirectory>
+    <TargetPacksILSrcDirectory>$([MSBuild]::NormalizeDirectory('$(PackagesSrcDirectory)', 'targetPacks', 'ILsrc'))</TargetPacksILSrcDirectory>
     <!-- The packages output directory. -->
-    <PackagesTargetDirectory Condition="'$(PackageType)' != 'text'">$(ReferencePackagesSrcDirectory)</PackagesTargetDirectory>
+    <PackagesTargetDirectory Condition="'$(PackageType)' == 'ref'">$(ReferencePackagesSrcDirectory)</PackagesTargetDirectory>
     <PackagesTargetDirectory Condition="'$(PackageType)' == 'text'">$(TextOnlyPackagesSrcDirectory)</PackagesTargetDirectory>
+    <PackagesTargetDirectory Condition="'$(PackageType)' == 'target'">$(TargetPacksILSrcDirectory)</PackagesTargetDirectory>
     <!-- The following target frameworks aren't buildable with the current SDK and as they don't contribute to the set of
          source build target verticals, can be safely excluded. -->
     <ExcludeTargetFrameworks>monoandroid*;monotouch*;net20;net35;net4*;net5.0;netcore50;netcoreapp2.*;netcoreapp3.0;portable*;uap*;win8;win81;wp8;wpa81;xamarin*</ExcludeTargetFrameworks>
@@ -95,6 +101,7 @@
                             GetPackageItems;
                             GenerateReferencePackageSource;
                             GenerateTextOnlyPackageSource;
+                            GenerateTargetPackageSource;
                             GeneratePackageProject;
                             RewriteNuspec;
                             EndGeneratePackageSource;
@@ -138,7 +145,7 @@
 
   <!-- The entry point for generating reference package source. -->
   <Target Name="GenerateReferencePackageSource"
-          Condition="'@(PackageCompileItem)' != '' and '$(PackageType)' != 'text'"
+          Condition="'@(PackageCompileItem)' != '' and '$(PackageType)' == 'ref'"
           DependsOnTargets="GenerateAndInvokeGenerateSourceProject;
                             CopyPlaceholderFiles" />
 
@@ -286,13 +293,87 @@
              Condition="'@(TextOnlyPackageContent)' != ''" />
   </Target>
 
+  <!-- The entry point for generating target package source using ILDasm. -->
+  <UsingTask TaskName="NormalizeIL" AssemblyFile="$(PackageSourceGeneratorTaskAssembly)" TaskFactory="TaskHostFactory" />
+  <UsingTask TaskName="AddSbrpAttribute" AssemblyFile="$(PackageSourceGeneratorTaskAssembly)" TaskFactory="TaskHostFactory" />
+  <UsingTask TaskName="UpdateFrameworkList" AssemblyFile="$(PackageSourceGeneratorTaskAssembly)" TaskFactory="TaskHostFactory" />
+  <Target Name="GenerateTargetPackageSource"
+          DependsOnTargets="GetPackageItems;ResolveIlToolPaths"
+          Condition="'$(PackageType)' == 'target' and '@(PackageCompileItem)' != ''">
+
+    <!-- Identify DLLs to disassemble (ref/**/*.dll, excluding analyzers and Thunk.dll) -->
+    <ItemGroup>
+      <DllToDisassemble Include="@(PackageCompileItem)"
+                        Condition="!$([System.String]::Copy('%(Identity)').Contains('analyzer')) and
+                                   !$([System.String]::Copy('%(Identity)').EndsWith('Thunk.dll'))">
+        <SourceDir>$([System.IO.Path]::GetDirectoryName('%(Identity)'))</SourceDir>
+      </DllToDisassemble>
+    </ItemGroup>
+
+    <!-- Create the directory structure in the target directory -->
+    <MakeDir Directories="@(DllToDisassemble->'$(PackageTargetDirectory)%(SourceDir)')" />
+
+    <!-- Disassemble each DLL to IL using ILDasm -->
+    <Exec Command="&quot;$(IldasmPath)&quot; &quot;$(RestoredPackageDirectory)%(DllToDisassemble.Identity)&quot; -all -out=&quot;$(PackageTargetDirectory)%(DllToDisassemble.SourceDir)/%(DllToDisassemble.Filename).il&quot;"
+          WorkingDirectory="$(PackageTargetDirectory)"
+          Condition="'@(DllToDisassemble)' != ''" />
+
+    <!-- Get all generated IL files -->
+    <ItemGroup>
+      <GeneratedILFile Include="$(PackageTargetDirectory)**\*.il" />
+      <!-- ILDasm on Windows creates .res (Win32 resource) files which we don't want to check in -->
+      <GeneratedResFile Include="$(PackageTargetDirectory)**\*.res" />
+    </ItemGroup>
+
+    <!-- Delete .res files created by ILDasm on Windows to ensure consistent output across platforms -->
+    <Delete Files="@(GeneratedResFile)" Condition="'@(GeneratedResFile)' != ''" />
+
+    <NormalizeIL ILFileNames="@(GeneratedILFile)" Condition="'@(GeneratedILFile)' != ''" />
+    <AddSbrpAttribute ILFileNames="@(GeneratedILFile)" Condition="'@(GeneratedILFile)' != ''" />
+
+    <Message Text="$(MSBuildProjectName) -> $([MSBuild]::NormalizePath('%(GeneratedILFile.Identity)'))"
+             Importance="high"
+             Condition="'@(GeneratedILFile)' != ''" />
+
+    <!-- Copy non-DLL package content (lib/, data/, etc.) -->
+    <ItemGroup>
+      <PackageContentToCopy Include="$(RestoredPackageDirectory)**\*.*"
+                            Exclude="$(RestoredPackageDirectory)**\*.dll;
+                                     @(DllToDisassemble->'$(RestoredPackageDirectory)%(SourceDir)/%(Filename).xml');
+                                     $(RestoredPackageDirectory)**\*.nupkg;
+                                     $(RestoredPackageDirectory)**\*.nupkg.sha512;
+                                     $(RestoredPackageDirectory)**\_rels\**;
+                                     $(RestoredPackageDirectory)**\package\**;
+                                     $(RestoredPackageDirectory)**\.signature.p7s;
+                                     $(RestoredPackageDirectory)**\.nupkg.metadata;
+                                     $(RestoredPackageNuspec)" />
+    </ItemGroup>
+    <Copy SourceFiles="@(PackageContentToCopy)"
+          DestinationFiles="@(PackageContentToCopy->'$(PackageTargetDirectory)%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true"
+          Condition="'@(PackageContentToCopy)' != ''" />
+
+    <!-- Update FrameworkList.xml if present -->
+    <ItemGroup>
+      <FrameworkListFile Include="$(PackageTargetDirectory)**\FrameworkList.xml" />
+    </ItemGroup>
+    <UpdateFrameworkList Files="@(FrameworkListFile)" Condition="'@(FrameworkListFile)' != ''" />
+
+    <!-- Copy placeholder files if present -->
+    <Copy SourceFiles="@(PackagePlaceholderFile->'$(RestoredPackageDirectory)%(Identity)')"
+          DestinationFiles="@(PackagePlaceholderFile->'$(PackageTargetDirectory)%(Identity)')"
+          SkipUnchangedFiles="true"
+          Condition="'@(PackagePlaceholderFile)' != ''" />
+  </Target>
+
   <!-- Generate the final reference package project and write it to the package target directory. -->
   <UsingTask TaskName="GenerateProject" AssemblyFile="$(PackageSourceGeneratorTaskAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="GeneratePackageProject"
           DependsOnTargets="GetPackageItems"
-          Condition="'@(PackageCompileItem)' != '' or '$(PackageType)' == 'text'">
+          Condition="'@(PackageCompileItem)' != '' or '$(PackageType)' == 'text' or '$(PackageType)' == 'target'">
     <PropertyGroup>
-      <PackageProjectTemplate>PackageProjectTemplate.xml</PackageProjectTemplate>
+      <PackageProjectTemplate Condition="'$(PackageType)' != 'target'">PackageProjectTemplate.xml</PackageProjectTemplate>
+      <PackageProjectTemplate Condition="'$(PackageType)' == 'target'">TargetPackProjectTemplate.xml</PackageProjectTemplate>
       <PackageProjectTargetPath>$(PackageTargetDirectory)$(RealPackageId).$(PackageVersion).csproj</PackageProjectTargetPath>
     </PropertyGroup>
 
@@ -313,29 +394,40 @@
 
   <!-- Rewrite nuspec and copy to target directory. -->
   <UsingTask TaskName="RewriteNuspec" AssemblyFile="$(PackageSourceGeneratorTaskAssembly)" TaskFactory="TaskHostFactory" />
+  <UsingTask TaskName="AddFileListToNuspecs" AssemblyFile="$(PackageSourceGeneratorTaskAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="RewriteNuspec"
-          Condition="'@(PackageCompileItem)' != '' or '$(PackageType)' == 'text'">
+          Condition="'@(PackageCompileItem)' != '' or '$(PackageType)' == 'text' or '$(PackageType)' == 'target'">
     <PropertyGroup>
       <NuspecTargetPath>$(PackageTargetDirectory)$([System.IO.Path]::GetFileName('$(RestoredPackageNuspec)'))</NuspecTargetPath>
+      <!-- Target packs should keep icon and readme, other types should remove them -->
+      <_RemoveIconAndReadme Condition="'$(PackageType)' != 'target'">true</_RemoveIconAndReadme>
+      <_RemoveIconAndReadme Condition="'$(PackageType)' == 'target'">false</_RemoveIconAndReadme>
     </PropertyGroup>
 
     <RewriteNuspec NuspecPath="$(RestoredPackageNuspec)"
                    TargetPath="$(NuspecTargetPath)"
                    IncludeTargetFrameworks="$(PackageTargetFrameworks)"
                    ExcludeTargetFrameworks="$(ExcludeTargetFrameworks)"
-                   RemoveIcon="true"
-                   RemoveReadMe="true"
+                   RemoveIcon="$(_RemoveIconAndReadme)"
+                   RemoveReadMe="$(_RemoveIconAndReadme)"
                    RemoveRuntimeSpecificDependencies="true" />
 
     <Message Text="$(MSBuildProjectName) -> $(NuspecTargetPath)"
              Importance="high" />
+
+    <!-- Add file list to nuspecs for target packages -->
+    <ItemGroup Condition="'$(PackageType)' == 'target'">
+      <_NuspecFileForTargetPack Include="$(NuspecTargetPath)" />
+    </ItemGroup>
+    <AddFileListToNuspecs NuspecFileNames="@(_NuspecFileForTargetPack)"
+                          Condition="'$(PackageType)' == 'target'" />
   </Target>
 
   <!-- Emit a log message that indicates the end of the reference package source generation. -->
   <Target Name="EndGeneratePackageSource"
           DependsOnTargets="BeginGeneratePackageSource">
     <PropertyGroup>
-      <EndGeneratePackageSourceMessage Condition="'@(PackageCompileItem)' != '' or '$(PackageType)' == 'text'">Package source successfully generated for $(PackageName) (v$(PackageVersion)$(PackageTargetFrameworksMessage)).</EndGeneratePackageSourceMessage>
+      <EndGeneratePackageSourceMessage Condition="'@(PackageCompileItem)' != '' or '$(PackageType)' == 'text' or '$(PackageType)' == 'target'">Package source successfully generated for $(PackageName) (v$(PackageVersion)$(PackageTargetFrameworksMessage)).</EndGeneratePackageSourceMessage>
       <EndGeneratePackageSourceMessage Condition="'$(EndGeneratePackageSourceMessage)' == ''">Package source generation skipped for $(PackageName) (v$(PackageVersion)$(PackageTargetFrameworksMessage)) as it doesn't contain any compile items.</EndGeneratePackageSourceMessage>
     </PropertyGroup>
 
