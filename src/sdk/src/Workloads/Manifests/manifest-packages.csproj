@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.Build.Traversal" DefaultTargets="Pack">
 
   <ItemGroup>
-    <ProjectReference Include="**\*.Manifest.proj" />
+    <ProjectReference Include="**\*.Manifest.proj" Condition="'$(SkipManifestBuild)' != 'true'" />
   </ItemGroup>
 
   <Target Name="LayoutBuiltinManifests">
