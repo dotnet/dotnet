@@ -61,8 +61,8 @@ public class DataGridViewBand : DataGridViewElement, ICloneable, IDisposable
             ContextMenuStrip? oldValue = Properties.AddOrRemoveValue(s_propContextMenuStrip, value);
             if (oldValue != value)
             {
-                oldValue.Disposed -= DetachContextMenuStrip;
-                value.Disposed += DetachContextMenuStrip;
+                oldValue?.Disposed -= DetachContextMenuStrip;
+                value?.Disposed += DetachContextMenuStrip;
                 DataGridView?.OnBandContextMenuStripChanged(this);
             }
         }

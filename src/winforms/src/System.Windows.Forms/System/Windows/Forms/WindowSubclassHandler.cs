@@ -97,7 +97,15 @@ internal class WindowSubclassHandler : IDisposable
         _originalWindowProc = (void*)PInvokeCore.SetWindowLong(
             _handle,
             WINDOW_LONG_PTR_INDEX.GWL_WNDPROC,
-            (nint)_windowProcDelegatePtr) ?? throw new Win32Exception();
+            (nint)_windowProcDelegatePtr);
+
+#pragma warning disable IDE0270 // Null check can be simplified
+        if (_originalWindowProc is null)
+        {
+            throw new Win32Exception();
+        }
+#pragma warning restore IDE0270 // Null check can be simplified
+
         Debug.Assert(_originalWindowProc != _windowProcDelegatePtr);
 
         _opened = true;

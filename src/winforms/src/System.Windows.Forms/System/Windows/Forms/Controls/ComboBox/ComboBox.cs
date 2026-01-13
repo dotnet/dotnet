@@ -235,7 +235,7 @@ public partial class ComboBox : ListControl
 
             _autoCompleteCustomSource?.CollectionChanged -= OnAutoCompleteCustomSourceChanged;
             _autoCompleteCustomSource = value;
-            _autoCompleteCustomSource.CollectionChanged += OnAutoCompleteCustomSourceChanged;
+            _autoCompleteCustomSource?.CollectionChanged += OnAutoCompleteCustomSourceChanged;
             SetAutoComplete(false, true);
         }
     }
