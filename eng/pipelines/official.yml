@@ -110,6 +110,8 @@ extends:
         enabled: true
       credscan:
         suppressionsFile: $(Build.SourcesDirectory)/.config/CredScanSuppressions.json
+      componentgovernance:
+        useExecutionTargetAsUserSteps: true
 
     containers:
       ${{ variables.almaLinuxContainerName }}:
