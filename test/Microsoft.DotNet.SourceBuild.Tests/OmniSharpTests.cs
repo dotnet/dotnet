@@ -53,7 +53,8 @@ public class OmniSharpTests : SdkTests
             OutputHelper,
             logOutput: true,
             millisecondTimeout: 5000,
-            configureCallback: (process) => DotNetHelper.ConfigureProcess(process, projectDirectory));
+            // Set the working directory to the OmniSharp directory to allow OmniSharp to find the custom config file
+            configureCallback: (process) => DotNetHelper.ConfigureProcess(process, OmniSharpDirectory));
 
         Assert.NotEqual(0, executeResult.Process.ExitCode);
         Assert.DoesNotContain("ERROR", executeResult.StdOut);
