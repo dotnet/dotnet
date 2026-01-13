@@ -1629,11 +1629,8 @@ internal class ToolStripKeyboardHandlingService
             _selectionService = null;
         }
 
-        if (_componentChangeService is not null)
-        {
-            _componentChangeService.ComponentRemoved -= OnComponentRemoved;
-            _componentChangeService = null;
-        }
+        _componentChangeService?.ComponentRemoved -= OnComponentRemoved;
+        _componentChangeService = null;
 
         _currentSelection = null;
         _shiftPrimary = null;

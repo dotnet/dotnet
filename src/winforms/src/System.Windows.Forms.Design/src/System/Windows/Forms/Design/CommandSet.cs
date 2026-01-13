@@ -358,11 +358,8 @@ internal partial class CommandSet : IDisposable
             _menuService = null;
         }
 
-        if (SelectionService is not null)
-        {
-            SelectionService.SelectionChanged -= OnSelectionChanged;
-            SelectionService = null;
-        }
+        SelectionService?.SelectionChanged -= OnSelectionChanged;
+        SelectionService = null;
 
         if (_eventService is not null)
         {

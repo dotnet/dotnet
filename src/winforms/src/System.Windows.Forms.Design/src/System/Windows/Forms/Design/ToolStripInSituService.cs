@@ -48,11 +48,8 @@ internal class ToolStripInSituService : ISupportInSituService, IDisposable
         _toolItemDesigner?.Dispose();
         _toolItemDesigner = null;
 
-        if (_componentChangeService is not null)
-        {
-            _componentChangeService.ComponentRemoved -= OnComponentRemoved;
-            _componentChangeService = null;
-        }
+        _componentChangeService?.ComponentRemoved -= OnComponentRemoved;
+        _componentChangeService = null;
     }
 
     private ToolStripKeyboardHandlingService ToolStripKeyBoardService
