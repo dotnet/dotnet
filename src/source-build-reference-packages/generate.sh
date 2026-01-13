@@ -31,7 +31,7 @@ usage() {
     echo "  --csv                                         A path to a csv file of packages to generate. Format is the same as the --package"
     echo "                                                option above, one per line.  If specified, the --package option is ignored."
     echo "  -d|--destination                              A path to the root of the repo to copy source into."
-    echo "  -t|--type                                     Type of the package to generate. Accepted values: ref (default) | text."
+    echo "  -t|--type                                     Type of the package to generate. Accepted values: ref (default) | text | target."
     echo "  -x|--excludeDependencies                      Determines if package dependencies should be excluded. Default is false."
     echo "  -a|--regenerate-all                           Regenerate all packages of the specified type."
     echo "  -f|--feeds                                    A semicolon-separated list of additional NuGet feeds to use during restore."
@@ -49,6 +49,8 @@ setup_package_regeneration() {
         packagesDir="$scriptroot/src/referencePackages/src"
     elif [ "$type" = "text" ]; then
         packagesDir="$scriptroot/src/textOnlyPackages/src"
+    elif [ "$type" = "target" ]; then
+        packagesDir="$scriptroot/src/targetPacks/ILsrc"
     fi
 
     if [ -d "$packagesDir" ]; then
@@ -118,7 +120,7 @@ while [[ $# > 0 ]]; do
             ;;
         -t|-type)
             type="$2"
-            if [[ ! "$type" =~ ^(text|ref)$ ]]; then
+            if [[ ! "$type" =~ ^(text|ref|target)$ ]]; then
                 echo -e "${RED}ERROR: Unknown package type: '$type'${NC}"
                 exit 1
             fi

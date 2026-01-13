@@ -1,5 +1,4 @@
 
-//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
 
 
 // ----- DOS Header:
@@ -365,7 +364,6 @@
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000009    //  ILONLY
-// Image base: 0x00007F1C3FCEA000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -1999,8 +1997,8 @@
   } // end of method AsnWriter::Encode
 
   .method /*0600006E*/ public hidebysig instance void 
-          Encode<TState>(!!TState state,
-                         class [System.Runtime/*23000001*/]System.Action`2/*0100002A*/<!!TState,valuetype [System.Runtime/*23000001*/]System.ReadOnlySpan`1/*01000016*/<uint8>> encodeCallback) cil managed
+          Encode<byreflike TState>(!!TState state,
+                                   class [System.Runtime/*23000001*/]System.Action`2/*0100002A*/<!!TState,valuetype [System.Runtime/*23000001*/]System.ReadOnlySpan`1/*01000016*/<uint8>> encodeCallback) cil managed
   // SIG: 30 01 02 01 1E 00 15 12 80 A9 02 1E 00 15 11 59 01 05
   {
     .param type TState /*2A000006*/ 
@@ -2014,8 +2012,8 @@
   } // end of method AsnWriter::Encode
 
   .method /*0600006F*/ public hidebysig instance !!TReturn 
-          Encode<TState,TReturn>(!!TState state,
-                                 class [System.Runtime/*23000001*/]System.Func`3/*0100002B*/<!!TState,valuetype [System.Runtime/*23000001*/]System.ReadOnlySpan`1/*01000016*/<uint8>,!!TReturn> encodeCallback) cil managed
+          Encode<byreflike TState,TReturn>(!!TState state,
+                                           class [System.Runtime/*23000001*/]System.Func`3/*0100002B*/<!!TState,valuetype [System.Runtime/*23000001*/]System.ReadOnlySpan`1/*01000016*/<uint8>,!!TReturn> encodeCallback) cil managed
   // SIG: 30 02 02 1E 01 1E 00 15 12 80 AD 03 1E 00 15 11 59 01 05 1E 01
   {
     .param type TState /*2A000007*/ 
