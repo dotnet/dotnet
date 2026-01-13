@@ -58,7 +58,7 @@ extends:
       os: linux
     containers:
       azurelinuxSourceBuildTestContainer:
-        image: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-source-build-test-amd64
+        image: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-source-build-test-amd64
         options: '--memory=6g'
     sdl:
       sourceAnalysisPool:
