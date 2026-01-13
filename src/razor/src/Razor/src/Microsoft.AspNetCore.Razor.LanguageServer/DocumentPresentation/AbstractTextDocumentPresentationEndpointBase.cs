@@ -109,14 +109,14 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams>(
 
         // The responses we get back will be for virtual documents, so we have to map them back to the real
         // document, and in the case of C#, map the returned ranges too
-        var edit = MapWorkspaceEdit(response, mapRanges: languageKind == RazorLanguageKind.CSharp, codeDocument);
+        MapWorkspaceEdit(response, mapRanges: languageKind == RazorLanguageKind.CSharp, codeDocument);
 
-        return edit;
+        return response;
     }
 
-    private Dictionary<string, TextEdit[]> MapChanges(Dictionary<string, TextEdit[]> changes, bool mapRanges, RazorCodeDocument codeDocument)
+    private Dictionary<string, TextEdit[]> MapDocumentEdits(Dictionary<string, TextEdit[]> changes, bool mapRanges, RazorCodeDocument codeDocument)
     {
-        var remappedChanges = new Dictionary<string, TextEdit[]>();
+        var mappedChanges = new Dictionary<string, TextEdit[]>();
         foreach (var entry in changes)
         {
             var uri = new Uri(entry.Key);
@@ -124,61 +124,26 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams>(
 
             if (!_filePathService.IsVirtualDocumentUri(uri))
             {
-                // This location doesn't point to a background razor file. No need to remap.
-                remappedChanges[entry.Key] = entry.Value;
+                // This location doesn't point to a background razor file. No need to map.
+                mappedChanges[entry.Key] = entry.Value;
                 continue;
             }
 
-            var remappedEdits = MapTextEdits(mapRanges, codeDocument, edits.Select(e => (SumType<TextEdit, AnnotatedTextEdit>)e));
-            if (remappedEdits.Length == 0)
+            var mappedEdits = GetMappedTextEdits(mapRanges, codeDocument, edits.Select(e => (SumType<TextEdit, AnnotatedTextEdit>)e));
+            if (mappedEdits.Length == 0)
             {
                 // Nothing to do.
                 continue;
             }
 
             var razorDocumentUri = _filePathService.GetRazorDocumentUri(uri);
-            remappedChanges[razorDocumentUri.AbsoluteUri] = remappedEdits;
+            mappedChanges[razorDocumentUri.AbsoluteUri] = mappedEdits;
         }
 
-        return remappedChanges;
+        return mappedChanges;
     }
 
-    private TextDocumentEdit[] MapDocumentChanges(TextDocumentEdit[] documentEdits, bool mapRanges, RazorCodeDocument codeDocument)
-    {
-        using var remappedDocumentEdits = new PooledArrayBuilder<TextDocumentEdit>(documentEdits.Length);
-        foreach (var entry in documentEdits)
-        {
-            var uri = entry.TextDocument.DocumentUri.GetRequiredParsedUri();
-            if (!_filePathService.IsVirtualDocumentUri(uri))
-            {
-                // This location doesn't point to a background razor file. No need to remap.
-                remappedDocumentEdits.Add(entry);
-                continue;
-            }
-
-            var edits = entry.Edits;
-            var remappedEdits = MapTextEdits(mapRanges, codeDocument, edits);
-            if (remappedEdits is null || remappedEdits.Length == 0)
-            {
-                // Nothing to do.
-                continue;
-            }
-
-            var razorDocumentUri = _filePathService.GetRazorDocumentUri(uri);
-            remappedDocumentEdits.Add(new TextDocumentEdit()
-            {
-                TextDocument = new OptionalVersionedTextDocumentIdentifier()
-                {
-                    DocumentUri = new(razorDocumentUri),
-                },
-                Edits = [.. remappedEdits]
-            });
-        }
-
-        return remappedDocumentEdits.ToArray();
-    }
-
-    private TextEdit[] MapTextEdits(bool mapRanges, RazorCodeDocument codeDocument, IEnumerable<SumType<TextEdit, AnnotatedTextEdit>> edits)
+    private TextEdit[] GetMappedTextEdits(bool mapRanges, RazorCodeDocument codeDocument, IEnumerable<SumType<TextEdit, AnnotatedTextEdit>> edits)
     {
         using var mappedEdits = new PooledArrayBuilder<TextEdit>();
         if (!mapRanges)
@@ -202,27 +167,44 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams>(
         return mappedEdits.ToArray();
     }
 
-    private WorkspaceEdit? MapWorkspaceEdit(WorkspaceEdit workspaceEdit, bool mapRanges, RazorCodeDocument codeDocument)
+    private void MapWorkspaceEdit(WorkspaceEdit workspaceEdit, bool mapRanges, RazorCodeDocument codeDocument)
     {
-        if (workspaceEdit.TryGetTextDocumentEdits(out var documentEdits))
+        // Handle DocumentChanges - iterate through TextDocumentEdits and modify them in-place.
+        // This preserves CreateFile, RenameFile, DeleteFile operations automatically since we don't create a new array.
+        if (workspaceEdit.DocumentChanges is not null)
         {
-            // The LSP spec says, we should prefer `DocumentChanges` property over `Changes` if available.
-            var remappedEdits = MapDocumentChanges(documentEdits, mapRanges, codeDocument);
-            return new WorkspaceEdit()
+            foreach (var textDocumentEdit in workspaceEdit.EnumerateTextDocumentEdits())
             {
-                DocumentChanges = remappedEdits
-            };
-        }
-        else if (workspaceEdit.Changes != null)
-        {
-            var remappedEdits = MapChanges(workspaceEdit.Changes, mapRanges, codeDocument);
-            return new WorkspaceEdit()
-            {
-                Changes = remappedEdits
-            };
+                MapTextDocumentEditInPlace(textDocumentEdit, mapRanges, codeDocument);
+            }
         }
 
-        return workspaceEdit;
+        if (workspaceEdit.Changes is not null)
+        {
+            workspaceEdit.Changes = MapDocumentEdits(workspaceEdit.Changes, mapRanges, codeDocument);
+        }
+    }
+
+    private void MapTextDocumentEditInPlace(TextDocumentEdit entry, bool mapRanges, RazorCodeDocument codeDocument)
+    {
+        var uri = entry.TextDocument.DocumentUri.GetRequiredParsedUri();
+        if (!_filePathService.IsVirtualDocumentUri(uri))
+        {
+            // This location doesn't point to a background razor file. No need to map.
+            return;
+        }
+
+        var edits = entry.Edits;
+        var mappedEdits = GetMappedTextEdits(mapRanges, codeDocument, edits);
+
+        var razorDocumentUri = _filePathService.GetRazorDocumentUri(uri);
+
+        // Update the entry in-place
+        entry.TextDocument = new OptionalVersionedTextDocumentIdentifier()
+        {
+            DocumentUri = new(razorDocumentUri),
+        };
+        entry.Edits = [.. mappedEdits];
     }
 
     protected record DocumentSnapshotAndVersion(IDocumentSnapshot Snapshot, int Version);

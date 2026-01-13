@@ -22,15 +22,7 @@ using Microsoft.AspNetCore.Components
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __builder.OpenComponent<global::
-#nullable restore
-#line (3,2)-(3,10) "x:\dir\subdir\Test\TestComponent.cshtml"
-Test.Col
-
-#line default
-#line hidden
-#nullable disable
-            >(0);
+            __builder.OpenComponent<global::Test.Col>(0);
             __builder.AddAttribute(1, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
                 __builder2.AddContent(2, "in markup");
             }
@@ -44,15 +36,7 @@ Test.Col
 #line hidden
 #nullable disable
 
-            __builder.OpenComponent<global::
-#nullable restore
-#line (5,6)-(5,14) "x:\dir\subdir\Test\TestComponent.cshtml"
-Test.Col
-
-#line default
-#line hidden
-#nullable disable
-            >(3);
+            __builder.OpenComponent<global::Test.Col>(3);
             __builder.AddAttribute(4, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
                 __builder2.AddContent(5, "in code block");
             }
@@ -67,15 +51,7 @@ Test.Col
 #nullable disable
 
             (__builder2) => {
-                __builder2.OpenComponent<global::
-#nullable restore
-#line (6,33)-(6,41) "x:\dir\subdir\Test\TestComponent.cshtml"
-Test.Col
-
-#line default
-#line hidden
-#nullable disable
-                >(6);
+                __builder2.OpenComponent<global::Test.Col>(6);
                 __builder2.AddAttribute(7, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder3) => {
                     __builder3.AddContent(8, "in template");
                 }

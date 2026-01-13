@@ -239,8 +239,79 @@ public class CohostFoldingRangeEndpointTest(ITestOutputHelper testOutputHelper) 
             }|]
             """);
 
-    private async Task VerifyFoldingRangesAsync(string input, RazorFileKind? fileKind = null, bool miscellaneousFile = false, string? razorFilePath = null)
+    [Fact]
+    public Task CSharp_LineFoldingOnly()
+        => VerifyFoldingRangesAsync("""
+            <div>{|html:
+              Hello @_name
+            </div>|}
+
+            @code {[|
+                class C { public void M1() {[|
+                        var x = 1;
+            |]        }
+                }
+            }|]
+            """,
+            lineFoldingOnly: true);
+
+    [Fact]
+    public Task CSharp_NotLineFoldingOnly()
+    => VerifyFoldingRangesAsync("""
+            <div>{|html:
+              Hello @_name
+            </div>|}
+
+            @code {[|
+                class C { public void M1() {[|
+                        var x = 1;
+                    }
+                }|]
+            }|]
+            """,
+        lineFoldingOnly: false);
+
+    [Fact]
+    public Task IfElseStatements_LineFoldingOnly()
+      => VerifyFoldingRangesAsync("""
+            <div>
+              @if (true) {[|
+                <div>
+                  Hello World
+                </div>
+                } else {[|
+                <div>
+                    Goodbye World
+                </div>
+            |]    }
+            |]  }
+            </div>
+
+            @code[|
+            {
+                void M()[|
+                {
+                    if (true) {[|
+            |]            var x = 1;
+                    } else {[|
+                        var y = 2;
+            |]        }
+            |]    }
+            }|]
+            """,
+            lineFoldingOnly: true);
+
+    private async Task VerifyFoldingRangesAsync(string input, RazorFileKind? fileKind = null, bool miscellaneousFile = false, string? razorFilePath = null, bool lineFoldingOnly = false)
     {
+        UpdateClientLSPInitializationOptions(c =>
+        {
+            c.ClientCapabilities.TextDocument!.FoldingRange = new FoldingRangeSetting()
+            {
+                LineFoldingOnly = lineFoldingOnly,
+            };
+            return c;
+        });
+
         TestFileMarkupParser.GetSpans(input, out var source, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spans);
         var document = CreateProjectAndRazorDocument(source, fileKind, miscellaneousFile: miscellaneousFile, documentFilePath: razorFilePath);
         var inputText = await document.GetTextAsync(DisposalToken);

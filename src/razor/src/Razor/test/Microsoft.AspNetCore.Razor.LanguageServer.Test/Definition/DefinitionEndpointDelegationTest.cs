@@ -194,7 +194,10 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
 
         // Our tests don't currently support mapping multiple documents, so we just need to verify Roslyn sent back the right info.
         // Other tests verify mapping behavior
-        Assert.EndsWith("SurveyPrompt.razor.ide.g.cs", location.DocumentUri.UriString);
+
+        Assert.NotNull(DocumentContextFactory);
+        Assert.True(DocumentContextFactory.TryCreate(new Uri(razorFilePath), out var docContext));
+        Assert.EndsWith(FilePathService.GetRazorCSharpFilePath(docContext.Snapshot.Project.Key, "SurveyPrompt.razor"), location.DocumentUri.UriString);
 
         // We can still expect the character to be correct, even if the line won't match
         var surveyPromptSourceText = SourceText.From(surveyPrompt);
@@ -245,7 +248,7 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
         Assert.True(DocumentContextFactory.TryCreate(razorUri, out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
-        var endpoint = new DefinitionEndpoint(definitionService, DocumentMappingService, projectManager, LanguageServerFeatureOptions, languageServer, LoggerFactory);
+        var endpoint = new DefinitionEndpoint(definitionService, DocumentMappingService, projectManager, languageServer, LoggerFactory);
 
         var request = new TextDocumentPositionParams
         {

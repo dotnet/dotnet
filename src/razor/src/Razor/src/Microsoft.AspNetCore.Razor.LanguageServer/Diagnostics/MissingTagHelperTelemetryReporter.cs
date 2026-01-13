@@ -32,7 +32,7 @@ internal sealed class MissingTagHelperTelemetryReporter(ITelemetryReporter telem
         }
 
         var tagHelpers = await documentContext.Project.GetTagHelpersAsync(cancellationToken).ConfigureAwait(false);
-        var tagHelperCount = tagHelpers.Length;
+        var tagHelperCount = tagHelpers.Count;
         var shouldReport = false;
 
         ImmutableInterlocked.AddOrUpdate(

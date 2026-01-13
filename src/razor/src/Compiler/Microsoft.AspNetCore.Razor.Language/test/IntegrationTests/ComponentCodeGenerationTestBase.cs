@@ -2242,9 +2242,9 @@ namespace Test
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
         CompileToAssembly(generated, designTime ? [] : [
-                    // (29,55): error CS0120: An object reference is required for the non-static field, method, or property 'MyComponent.Value'
+                    // (21,55): error CS0120: An object reference is required for the non-static field, method, or property 'MyComponent.Value'
                     //             __builder.AddComponentParameter(1, nameof(global::Test.MyComponent.
-                    Diagnostic(ErrorCode.ERR_ObjectRequired, "global::Test.MyComponent.\r\n#nullable restore\r\n#line (1,14)-(1,19) \"x:\\dir\\subdir\\Test\\TestComponent.cshtml\"\r\nValue").WithArguments("Test.MyComponent.Value").WithLocation(29, 55)
+                    Diagnostic(ErrorCode.ERR_ObjectRequired, "global::Test.MyComponent.\r\n#nullable restore\r\n#line (1,14)-(1,19) \"x:\\dir\\subdir\\Test\\TestComponent.cshtml\"\r\nValue").WithArguments("Test.MyComponent.Value").WithLocation(21, 55)
             ]);
     }
 
@@ -2462,12 +2462,12 @@ namespace Test
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
         CompileToAssembly(generated, designTime ? [] : [
-                // (29,55): error CS0120: An object reference is required for the non-static field, method, or property 'MyComponent.Value'
+                // (21,55): error CS0120: An object reference is required for the non-static field, method, or property 'MyComponent.Value'
                 //             __builder.AddComponentParameter(1, nameof(global::Test.MyComponent.
-                Diagnostic(ErrorCode.ERR_ObjectRequired, "global::Test.MyComponent.\r\n#nullable restore\r\n#line (1,20)-(1,25) \"x:\\dir\\subdir\\Test\\TestComponent.cshtml\"\r\nValue").WithArguments("Test.MyComponent.Value").WithLocation(29, 55),
-                // (46,55): error CS0120: An object reference is required for the non-static field, method, or property 'MyComponent.ValueChanged'
+                Diagnostic(ErrorCode.ERR_ObjectRequired, "global::Test.MyComponent.\r\n#nullable restore\r\n#line (1,20)-(1,25) \"x:\\dir\\subdir\\Test\\TestComponent.cshtml\"\r\nValue").WithArguments("Test.MyComponent.Value").WithLocation(21, 55),
+                // (38,55): error CS0120: An object reference is required for the non-static field, method, or property 'MyComponent.ValueChanged'
                 //             __builder.AddComponentParameter(2, nameof(global::Test.MyComponent.ValueChanged), (global::System.Action<System.Int32>)(__value => ParentValue = __value));
-                Diagnostic(ErrorCode.ERR_ObjectRequired, "global::Test.MyComponent.ValueChanged").WithArguments("Test.MyComponent.ValueChanged").WithLocation(46, 55)
+                Diagnostic(ErrorCode.ERR_ObjectRequired, "global::Test.MyComponent.ValueChanged").WithArguments("Test.MyComponent.ValueChanged").WithLocation(38, 55)
             ]);
     }
 
@@ -2625,9 +2625,9 @@ namespace Test
             : [// x:\dir\subdir\Test\TestComponent.cshtml(1,27): error CS1503: Argument 1: cannot convert from 'string' to 'int'
                // ParentValue
                Diagnostic(ErrorCode.ERR_BadArgType, "ParentValue").WithArguments("1", "string", "int").WithLocation(1, 27),
-               // (46,166): error CS0029: Cannot implicitly convert type 'int' to 'string'
+               // (38,166): error CS0029: Cannot implicitly convert type 'int' to 'string'
                //             __builder.AddComponentParameter(2, nameof(global::Test.MyComponent.ValueChanged), (global::System.Action<global::System.Int32>)(__value => ParentValue = __value));
-               Diagnostic(ErrorCode.ERR_NoImplicitConv, "__value").WithArguments("int", "string").WithLocation(46, 166)]);
+               Diagnostic(ErrorCode.ERR_NoImplicitConv, "__value").WithArguments("int", "string").WithLocation(38, 166)]);
     }
 
     [IntegrationTestFact]
@@ -2704,9 +2704,9 @@ namespace Test
             : [// x:\dir\subdir\Test\TestComponent.cshtml(1,27): error CS1503: Argument 1: cannot convert from 'string' to 'int'
                //                           ParentValue
                Diagnostic(ErrorCode.ERR_BadArgType, "ParentValue").WithArguments("1", "string", "int").WithLocation(1, 27),
-               // (46,351): error CS1503: Argument 2: cannot convert from 'Microsoft.AspNetCore.Components.EventCallback<string>' to 'Microsoft.AspNetCore.Components.EventCallback'
+               // (38,351): error CS1503: Argument 2: cannot convert from 'Microsoft.AspNetCore.Components.EventCallback<string>' to 'Microsoft.AspNetCore.Components.EventCallback'
                //             global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, __value => ParentValue = __value, ParentValue)));
-               Diagnostic(ErrorCode.ERR_BadArgType, "global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, __value => ParentValue = __value, ParentValue)").WithArguments("2", "Microsoft.AspNetCore.Components.EventCallback<string>", "Microsoft.AspNetCore.Components.EventCallback").WithLocation(46, 351)
+               Diagnostic(ErrorCode.ERR_BadArgType, "global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, __value => ParentValue = __value, ParentValue)").WithArguments("2", "Microsoft.AspNetCore.Components.EventCallback<string>", "Microsoft.AspNetCore.Components.EventCallback").WithLocation(38, 351)
             ]
         );
     }
@@ -2911,12 +2911,12 @@ namespace Test
                // (38,195): error CS1662: Cannot convert lambda expression to intended delegate type because some of the return types in the block are not implicitly convertible to the delegate return type
                //             __o = global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Linq.Expressions.Expression<global::System.Func<global::System.String>>>(() => ParentValue);
                Diagnostic(ErrorCode.ERR_CantConvAnonMethReturns, "ParentValue").WithArguments("lambda expression").WithLocation(38, 195)]
-            : [// (47,274): error CS0029: Cannot implicitly convert type 'int' to 'string'
+            : [// (39,274): error CS0029: Cannot implicitly convert type 'int' to 'string'
                //             __builder.AddComponentParameter(3, nameof(global::Test.MyComponent.ValueExpression), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Linq.Expressions.Expression<global::System.Func<global::System.String>>>(() => ParentValue));
-               Diagnostic(ErrorCode.ERR_NoImplicitConv, "ParentValue").WithArguments("int", "string").WithLocation(47, 274),
-               // (47,274): error CS1662: Cannot convert lambda expression to intended delegate type because some of the return types in the block are not implicitly convertible to the delegate return type
+               Diagnostic(ErrorCode.ERR_NoImplicitConv, "ParentValue").WithArguments("int", "string").WithLocation(39, 274),
+               // (39,274): error CS1662: Cannot convert lambda expression to intended delegate type because some of the return types in the block are not implicitly convertible to the delegate return type
                //             __builder.AddComponentParameter(3, nameof(global::Test.MyComponent.ValueExpression), global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Linq.Expressions.Expression<global::System.Func<global::System.String>>>(() => ParentValue));
-               Diagnostic(ErrorCode.ERR_CantConvAnonMethReturns, "ParentValue").WithArguments("lambda expression").WithLocation(47, 274)
+               Diagnostic(ErrorCode.ERR_CantConvAnonMethReturns, "ParentValue").WithArguments("lambda expression").WithLocation(39, 274)
             ]);
     }
 
@@ -10909,7 +10909,7 @@ namespace Test
         // Assert
         CompileToAssembly(generated);
         Assert.DoesNotContain("<Counter", generated.Code);
-        Assert.Contains("global::MyComponents.", generated.Code);
+        Assert.Contains("global::MyComponents.Counter", generated.Code);
     }
 
     [IntegrationTestFact]
@@ -11811,9 +11811,9 @@ namespace Test
             : [// x:\dir\subdir\Test\TestComponent.cshtml(1,32): error CS1003: Syntax error, ',' expected
               //                               x
               Diagnostic(ErrorCode.ERR_SyntaxError, "").WithArguments(",").WithLocation(1, 32),
-              // (37,88): error CS1501: No overload for method 'TypeCheck' takes 2 arguments
+              // (29,88): error CS1501: No overload for method 'TypeCheck' takes 2 arguments
               //             __o = global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.String>(
-              Diagnostic(ErrorCode.ERR_BadArgCount, "TypeCheck<global::System.String>").WithArguments("TypeCheck", "2").WithLocation(37, 88)]
+              Diagnostic(ErrorCode.ERR_BadArgCount, "TypeCheck<global::System.String>").WithArguments("TypeCheck", "2").WithLocation(29, 88)]
             );
         Assert.NotEmpty(generated.RazorDiagnostics);
     }
@@ -12148,6 +12148,56 @@ Time: @DateTime.Now
     #endregion
 
     #region RenderMode
+
+    [IntegrationTestFact]
+    public void RenderMode_Directive_WithTypeParam()
+    {
+        var generated = CompileToCSharp("""
+                @typeparam T
+                @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
+                """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact]
+    public void RenderMode_Directive_WithTypeParam_Razor9()
+    {
+        var generated = CompileToCSharp("""
+                @typeparam T
+                @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
+                """,
+                configuration: Configuration with { LanguageVersion = RazorLanguageVersion.Version_9_0 },
+                expectedCSharpDiagnostics:
+                    // (17,19): error CS0305: Using the generic type 'TestComponent<T>' requires 1 type arguments
+                    //     [global::Test.TestComponent.__PrivateComponentRenderModeAttribute]
+                    Diagnostic(ErrorCode.ERR_BadArity, "TestComponent").WithArguments("Test.TestComponent<T>", "type", "1").WithLocation(17, 19));
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated,
+            // (13,19): error CS0305: Using the generic type 'TestComponent<T>' requires 1 type arguments
+            //     [global::Test.TestComponent.__PrivateComponentRenderModeAttribute]
+            Diagnostic(ErrorCode.ERR_BadArity, "TestComponent").WithArguments("Test.TestComponent<T>", "type", "1").WithLocation(13, 19));
+    }
+
+    [IntegrationTestFact]
+    public void RenderMode_Directive_WithTypeParam_First()
+    {
+        var generated = CompileToCSharp("""
+                @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
+                @typeparam T
+                """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
 
     [IntegrationTestFact]
     public void RenderMode_Directive_FullyQualified()

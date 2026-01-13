@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
+using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -19,10 +20,14 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
-internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostServicesProvider, ILoggerFactory loggerFactory) : IFormattingPass
+internal sealed partial class CSharpFormattingPass(
+    IHostServicesProvider hostServicesProvider,
+    IDocumentMappingService documentMappingService,
+    ILoggerFactory loggerFactory) : IFormattingPass
 {
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CSharpFormattingPass>();
     private readonly IHostServicesProvider _hostServicesProvider = hostServicesProvider;
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService;
 
     public async Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
@@ -31,9 +36,12 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
         var changedContext = await context.WithTextAsync(changedText, cancellationToken).ConfigureAwait(false);
         context.Logger?.LogObject("SourceMappings", changedContext.CodeDocument.GetRequiredCSharpDocument().SourceMappings);
 
+        var csharpSyntaxTrue = await changedContext.CurrentSnapshot.GetCSharpSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+        var csharpSyntaxRoot = await csharpSyntaxTrue.GetRootAsync(cancellationToken).ConfigureAwait(false);
+
         // To format C# code we generate a C# document that represents the indentation semantics the user would be
         // expecting in their Razor file. See the doc comments on CSharpDocumentGenerator for more info
-        var generatedDocument = CSharpDocumentGenerator.Generate(changedContext.CodeDocument, context.Options);
+        var generatedDocument = CSharpDocumentGenerator.Generate(changedContext.CodeDocument, csharpSyntaxRoot, context.Options, _documentMappingService);
 
         var generatedCSharpText = generatedDocument.SourceText;
         context.Logger?.LogSourceText("FormattingDocument", generatedCSharpText);
@@ -266,6 +274,6 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
     }
 
     [Obsolete("Only for the syntax visualizer, do not call")]
-    internal static string GetFormattingDocumentContentsForSyntaxVisualizer(RazorCodeDocument codeDocument)
-        => CSharpDocumentGenerator.Generate(codeDocument, new()).SourceText.ToString();
+    internal static string GetFormattingDocumentContentsForSyntaxVisualizer(RazorCodeDocument codeDocument, SyntaxNode csharpSyntaxRoot, IDocumentMappingService documentMappingService)
+        => CSharpDocumentGenerator.Generate(codeDocument, csharpSyntaxRoot, new(), documentMappingService).SourceText.ToString();
 }

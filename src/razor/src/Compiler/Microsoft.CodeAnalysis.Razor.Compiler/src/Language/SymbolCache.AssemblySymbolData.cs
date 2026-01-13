@@ -2,6 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
@@ -12,6 +15,14 @@ internal partial class SymbolCache
 {
     public sealed partial class AssemblySymbolData(IAssemblySymbol symbol)
     {
+        private readonly ConcurrentDictionary<int, TagHelperCollection> _tagHelpers = [];
+
+        public bool TryGetTagHelpers(int key, [NotNullWhen(true)] out TagHelperCollection? value)
+            => _tagHelpers.TryGetValue(key, out value);
+
+        public TagHelperCollection AddTagHelpers(int key, TagHelperCollection value)
+            => _tagHelpers.GetOrAdd(key, value);
+
         public bool MightContainTagHelpers { get; } = CalculateMightContainTagHelpers(symbol);
 
         private static bool CalculateMightContainTagHelpers(IAssemblySymbol assembly)

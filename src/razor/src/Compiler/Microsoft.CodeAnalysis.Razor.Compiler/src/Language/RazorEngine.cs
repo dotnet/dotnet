@@ -32,15 +32,18 @@ public sealed class RazorEngine
         }
     }
 
-    public void Process(RazorCodeDocument codeDocument, CancellationToken cancellationToken = default)
+    public RazorCodeDocument Process(RazorCodeDocument codeDocument, CancellationToken cancellationToken = default)
     {
         ArgHelper.ThrowIfNull(codeDocument);
 
+        var currentDocument = codeDocument;
         foreach (var phase in Phases)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            phase.Execute(codeDocument, cancellationToken);
+            currentDocument = phase.Execute(currentDocument, cancellationToken);
         }
+
+        return currentDocument;
     }
 
     public ImmutableArray<TFeature> GetFeatures<TFeature>()

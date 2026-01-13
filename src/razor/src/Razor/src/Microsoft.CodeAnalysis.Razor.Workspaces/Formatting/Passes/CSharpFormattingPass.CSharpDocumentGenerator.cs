@@ -8,9 +8,11 @@ using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
+using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
@@ -78,13 +80,13 @@ internal partial class CSharpFormattingPass
     /// </remarks>
     private sealed class CSharpDocumentGenerator
     {
-        public static CSharpFormattingDocument Generate(RazorCodeDocument codeDocument, RazorFormattingOptions options)
+        public static CSharpFormattingDocument Generate(RazorCodeDocument codeDocument, SyntaxNode csharpSyntaxRoot, RazorFormattingOptions options, IDocumentMappingService documentMappingService)
         {
             using var _1 = StringBuilderPool.GetPooledObject(out var builder);
             using var _2 = ArrayBuilderPool<LineInfo>.GetPooledObject(out var lineInfoBuilder);
             lineInfoBuilder.SetCapacityIfLarger(codeDocument.Source.Text.Lines.Count);
 
-            var generator = new Generator(codeDocument, options, builder, lineInfoBuilder);
+            var generator = new Generator(codeDocument, csharpSyntaxRoot, options, builder, lineInfoBuilder, documentMappingService);
 
             generator.Generate();
 
@@ -141,17 +143,22 @@ internal partial class CSharpFormattingPass
 
         private sealed class Generator(
             RazorCodeDocument codeDocument,
+            SyntaxNode csharpSyntaxRoot,
             RazorFormattingOptions options,
             StringBuilder builder,
-            ImmutableArray<LineInfo>.Builder lineInfoBuilder) : SyntaxVisitor<LineInfo>
+            ImmutableArray<LineInfo>.Builder lineInfoBuilder,
+            IDocumentMappingService documentMappingService) : SyntaxVisitor<LineInfo>
         {
             private readonly SourceText _sourceText = codeDocument.Source.Text;
             private readonly RazorCodeDocument _codeDocument = codeDocument;
+            private readonly SyntaxNode _csharpSyntaxRoot = csharpSyntaxRoot;
             private readonly bool _insertSpaces = options.InsertSpaces;
             private readonly int _tabSize = options.TabSize;
             private readonly RazorCSharpSyntaxFormattingOptions? _csharpSyntaxFormattingOptions = options.CSharpSyntaxFormattingOptions;
             private readonly StringBuilder _builder = builder;
             private readonly ImmutableArray<LineInfo>.Builder _lineInfoBuilder = lineInfoBuilder;
+            private readonly IDocumentMappingService _documentMappingService = documentMappingService;
+            private readonly RazorCSharpDocument _csharpDocument = codeDocument.GetCSharpDocument().AssumeNotNull();
 
             private TextLine _currentLine;
             private int _currentFirstNonWhitespacePosition;
@@ -214,12 +221,7 @@ internal partial class CSharpFormattingPass
                                 var node = root.FindInnermostNode(originalSpan.AbsoluteIndex);
                                 if (node is CSharpExpressionLiteralSyntax)
                                 {
-                                    // Rather than bother to store more data about the formatted file, since we don't actually know where
-                                    // these will end up in that file once it's all said and done, we are just going to use a simple comment
-                                    // format that we can easily parse.
-                                    additionalLinesBuilder.AppendLine(GetAdditionalLineComment(originalSpan));
-                                    additionalLinesBuilder.AppendLine(_sourceText.GetSubTextString(originalSpan.ToTextSpan()));
-                                    additionalLinesBuilder.AppendLine(";");
+                                    AddAdditionalLineFormattingContent(additionalLinesBuilder, node, originalSpan);
                                 }
 
                                 iMapping++;
@@ -252,6 +254,34 @@ internal partial class CSharpFormattingPass
 
                 _builder.AppendLine();
                 _builder.AppendLine(additionalLinesBuilder.ToString());
+            }
+
+            private void AddAdditionalLineFormattingContent(StringBuilder additionalLinesBuilder, RazorSyntaxNode node, SourceSpan originalSpan)
+            {
+                // Rather than bother to store more data about the formatted file, since we don't actually know where
+                // these will end up in that file once it's all said and done, we are just going to use a simple comment
+                // format that we can easily parse.
+
+                // Special case, for attributes that represent generic type parameters, we want to output something such
+                // that Roslyn knows to format it as a type. For example, the meaning and spacing around "?"s should be
+                // what the user expects.
+                if (node is { Parent.Parent: MarkupTagHelperAttributeSyntax attribute } &&
+                    attribute is { Parent.Parent: MarkupTagHelperElementSyntax element } &&
+                    element.TagHelperInfo.BindingResult.TagHelpers is [{ } descriptor] &&
+                    descriptor.IsGenericTypedComponent() &&
+                    descriptor.BoundAttributes.FirstOrDefault(d => d.Name == attribute.TagHelperAttributeInfo.Name) is { } boundAttribute &&
+                    boundAttribute.IsTypeParameterProperty())
+                {
+                    additionalLinesBuilder.AppendLine("F<");
+                    additionalLinesBuilder.AppendLine(GetAdditionalLineComment(originalSpan));
+                    additionalLinesBuilder.AppendLine(_sourceText.GetSubTextString(originalSpan.ToTextSpan()));
+                    additionalLinesBuilder.AppendLine("> x;");
+                    return;
+                }
+
+                additionalLinesBuilder.AppendLine(GetAdditionalLineComment(originalSpan));
+                additionalLinesBuilder.AppendLine(_sourceText.GetSubTextString(originalSpan.ToTextSpan()));
+                additionalLinesBuilder.AppendLine(";");
             }
 
             public override LineInfo Visit(RazorSyntaxNode? node)
@@ -472,6 +502,17 @@ internal partial class CSharpFormattingPass
                         // We turn off check for new lines because that only works if the content doesn't change from the original,
                         // but we're deliberately leaving out a bunch of the original file because it would confuse the Roslyn formatter.
                         checkForNewLines: false);
+                }
+
+                // If we're here, it means this is a "normal" line of C#, so we can just emit it as is. The exception to this is
+                // when we're inside a string literal. We still want to emit it as is, but we need to make sure we tell the formatter
+                // to ignore any existing indentation too.
+                if (_documentMappingService.TryMapToCSharpDocumentPosition(_csharpDocument, _currentToken.SpanStart, out _, out var csharpIndex) &&
+                    _csharpSyntaxRoot.FindNode(new TextSpan(csharpIndex, 0), getInnermostNodeForTie: true) is { } csharpNode &&
+                    csharpNode.IsStringLiteral(multilineOnly: true))
+                {
+                    _builder.AppendLine(_currentLine.ToString());
+                    return CreateLineInfo(processIndentation: false, processFormatting: true, checkForNewLines: true);
                 }
 
                 return EmitCurrentLineAsCSharp();

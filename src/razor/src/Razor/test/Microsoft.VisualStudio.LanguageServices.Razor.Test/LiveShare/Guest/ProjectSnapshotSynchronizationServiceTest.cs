@@ -66,11 +66,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         Assert.Same(RazorConfiguration.Default, project.Configuration);
 
         var tagHelpers = await project.GetTagHelpersAsync(DisposalToken);
-        Assert.Equal(_projectWorkspaceStateWithTagHelpers.TagHelpers.Length, tagHelpers.Length);
-        for (var i = 0; i < _projectWorkspaceStateWithTagHelpers.TagHelpers.Length; i++)
-        {
-            Assert.Same(_projectWorkspaceStateWithTagHelpers.TagHelpers[i], tagHelpers[i]);
-        }
+        Assert.SameItems(_projectWorkspaceStateWithTagHelpers.TagHelpers, tagHelpers);
     }
 
     [UIFact]
@@ -101,11 +97,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         Assert.Same(RazorConfiguration.Default, project.Configuration);
 
         var tagHelpers = await project.GetTagHelpersAsync(DisposalToken);
-        Assert.Equal(_projectWorkspaceStateWithTagHelpers.TagHelpers.Length, tagHelpers.Length);
-        for (var i = 0; i < _projectWorkspaceStateWithTagHelpers.TagHelpers.Length; i++)
-        {
-            Assert.Same(_projectWorkspaceStateWithTagHelpers.TagHelpers[i], tagHelpers[i]);
-        }
+        Assert.SameItems(_projectWorkspaceStateWithTagHelpers.TagHelpers, tagHelpers);
     }
 
     [UIFact]
@@ -228,10 +220,6 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         Assert.Same(RazorConfiguration.Default, project.Configuration);
 
         var tagHelpers = await project.GetTagHelpersAsync(DisposalToken);
-        Assert.Equal(_projectWorkspaceStateWithTagHelpers.TagHelpers.Length, tagHelpers.Length);
-        for (var i = 0; i < _projectWorkspaceStateWithTagHelpers.TagHelpers.Length; i++)
-        {
-            Assert.Same(_projectWorkspaceStateWithTagHelpers.TagHelpers[i], tagHelpers[i]);
-        }
+        Assert.SameItems(_projectWorkspaceStateWithTagHelpers.TagHelpers, tagHelpers);
     }
 }

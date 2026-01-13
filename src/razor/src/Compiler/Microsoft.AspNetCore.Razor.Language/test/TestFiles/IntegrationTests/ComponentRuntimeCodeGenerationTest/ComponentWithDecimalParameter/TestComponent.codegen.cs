@@ -28,15 +28,7 @@ __builder.AddContent(1, TestDecimal
             );
             __builder.CloseElement();
             __builder.AddMarkupContent(2, "\r\n\r\n");
-            __builder.OpenComponent<global::Test.
-#nullable restore
-#line (3,2)-(3,15) "x:\dir\subdir\Test\TestComponent.cshtml"
-TestComponent
-
-#line default
-#line hidden
-#nullable disable
-            >(3);
+            __builder.OpenComponent<global::Test.TestComponent>(3);
             __builder.AddComponentParameter(4, nameof(global::Test.TestComponent.
 #nullable restore
 #line (3,16)-(3,27) "x:\dir\subdir\Test\TestComponent.cshtml"

@@ -42,6 +42,7 @@ internal static partial class RazorCodeDocumentExtensions
         private SyntaxTree? _syntaxTree;
         private ImmutableArray<ClassifiedSpan>? _classifiedSpans;
         private ImmutableArray<SourceSpan>? _tagHelperSpans;
+        private RazorHtmlDocument? _htmlDocument;
 
         public SyntaxTree GetOrParseCSharpSyntaxTree(CancellationToken cancellationToken)
         {
@@ -106,12 +107,26 @@ internal static partial class RazorCodeDocumentExtensions
             }
         }
 
+        public RazorHtmlDocument GetOrComputeHtmlDocument(CancellationToken cancellationToken)
+        {
+            if (_htmlDocument is not null)
+            {
+                return _htmlDocument;
+            }
+
+            using (_stateLock.DisposableWait(cancellationToken))
+            {
+                return _htmlDocument ??= RazorHtmlWriter.GetHtmlDocument(_codeDocument);
+            }
+        }
+
         public CachedData Clone()
             => new(_codeDocument)
             {
                 _syntaxTree = _syntaxTree,
                 _classifiedSpans = _classifiedSpans,
                 _tagHelperSpans = _tagHelperSpans,
+                _htmlDocument = _htmlDocument
             };
     }
 }

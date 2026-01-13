@@ -17,15 +17,7 @@ namespace Test
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __builder.OpenComponent<global::Test.
-#nullable restore
-#line (1,2)-(1,6) "x:\dir\subdir\Test\TestComponent.cshtml"
-Grid
-
-#line default
-#line hidden
-#nullable disable
-            <
+            __builder.OpenComponent<global::Test.Grid<
 #nullable restore
 #line (1,14)-(1,22) "x:\dir\subdir\Test\TestComponent.cshtml"
 DateTime
@@ -66,15 +58,7 @@ namespace __Blazor.Test.TestComponent
     {
         public static void CreateColumn_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (1,60)-(1,66) "x:\dir\subdir\Test\TestComponent.cshtml"
-Column
-
-#line default
-#line hidden
-#nullable disable
-        <object>>(seq);
+        __builder.OpenComponent<global::Test.Column<object>>(seq);
         __builder.CloseComponent();
         }
     }

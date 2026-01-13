@@ -187,7 +187,7 @@ internal static class TagHelperMatchingConventions
     ///  for the specified attribute name. Each successful match is added to the provided matches collection.
     /// </remarks>
     public static void GetAttributeMatches(
-        ImmutableArray<TagHelperDescriptor> tagHelpers,
+        TagHelperCollection tagHelpers,
         string name,
         ref PooledArrayBuilder<TagHelperAttributeMatch> matches)
     {
