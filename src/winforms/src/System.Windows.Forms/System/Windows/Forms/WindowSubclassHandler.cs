@@ -99,6 +99,7 @@ internal class WindowSubclassHandler : IDisposable
             WINDOW_LONG_PTR_INDEX.GWL_WNDPROC,
             (nint)_windowProcDelegatePtr);
 
+// Tracking issue: https://github.com/dotnet/roslyn/issues/81987
 #pragma warning disable IDE0270 // Null check can be simplified
         if (_originalWindowProc is null)
         {

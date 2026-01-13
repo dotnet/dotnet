@@ -12,6 +12,7 @@ namespace System;
 /// </remarks>
 public static partial class TestAccessors
 {
+// Tracking issue: https://github.com/dotnet/roslyn/issues/81986
 #pragma warning disable IDE0052 // IDE0052: Private member 'TestAccessors.s_nullObjectParam' can be removed as the value assigned to it is never read
     // Need to pass a null parameter when constructing a static instance
     // of TestAccessor. As this is pretty common and never changes, caching

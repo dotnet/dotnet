@@ -99,7 +99,7 @@
 
   <Target Name="SplitTargetFramework">
     <PropertyGroup>
-      <!-- Split out the target framework. "net11.0-windows" is an example. -->
+      <!-- Split out the target framework. "net10.0-windows" is an example. -->
       <_targetFrameworkIdentifier>$([MSBuild]::GetTargetFrameworkIdentifier($(TargetFramework)))</_targetFrameworkIdentifier>
       <_targetFrameworkIdentifier Condition="'$(_targetFrameworkIdentifier)' == '.NETCoreApp'">net</_targetFrameworkIdentifier>
       <_targetFrameworkVersion>$([MSBuild]::GetTargetFrameworkVersion($(TargetFramework)))</_targetFrameworkVersion>
