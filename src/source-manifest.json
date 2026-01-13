@@ -7,10 +7,10 @@
       "commitSha": "a4691bde931c20dfe44f556357cb450c83df360c"
     },
     {
-      "barId": 296453,
+      "barId": 296495,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "6b29463bc5fe65408939b69718adfd54fd0abb99"
+      "commitSha": "30d4d50bbf806a8c45de78ac0fcff1b4c3f78842"
     },
     {
       "barId": 292148,
@@ -25,10 +25,10 @@
       "commitSha": "cf5fd8d696450a48d3cc75a7a1792d34b5303f88"
     },
     {
-      "barId": 294179,
+      "barId": 296671,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "6ebef72019b85958ae78d0da73ea49a161c7a28a"
+      "commitSha": "c3dd1602b13a207262859890e45a73dfc827e886"
     },
     {
       "barId": 288647,
@@ -37,10 +37,10 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 296342,
+      "barId": 296707,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "08538477d4f237a4cff28ec7d0808cb3c8715840"
+      "commitSha": "347ab472b565c2be643b2c8bfabfd24a2acdee21"
     },
     {
       "barId": 294516,
@@ -49,10 +49,10 @@
       "commitSha": "36e24b2207d929b79bb48c9429e8b797bd78e467"
     },
     {
-      "barId": 296012,
+      "barId": 296625,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "95d597122c8ace890da82c59f2433433325a1b13"
+      "commitSha": "841308307dc2233bc0fa6a364d35a1d4c169f1c5"
     },
     {
       "barId": 296161,
@@ -73,10 +73,10 @@
       "commitSha": "2d8783f051d7f5d31fc1b2014de263ded199eb3f"
     },
     {
-      "barId": 295182,
+      "barId": 296337,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "bf35fe58e593ac0ac74c05bfa6e4719b85772da0"
+      "commitSha": "e97b493ee82ea61d794f966c2476bb6808a58b5c"
     },
     {
       "barId": 294629,
@@ -97,10 +97,10 @@
       "commitSha": "ec5f7d915a8597baba3dbf1ef3ece19accb4541b"
     },
     {
-      "barId": 296032,
+      "barId": 296484,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "cdd1ce5b784d2d01917a7eda352f20bf0a3ca690"
+      "commitSha": "70e51c1c54cdc4d101d251b20a38185d9f87e58f"
     },
     {
       "barId": 295480,

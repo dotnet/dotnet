@@ -1,5 +1,4 @@
 
-//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
 
 
 // ----- DOS Header:
@@ -315,9 +314,9 @@
 .assembly /*20000001*/ noplatform System.Collections
 {
   .custom instance void [System.Runtime/*23000001*/]System.Reflection.AssemblyMetadataAttribute::.ctor(string,
-                                                                                        string) = ( 01 00 06 73 6F 75 72 63 65 1F 73 6F 75 72 63 65   // ...source.source
-                                                                                                    2D 62 75 69 6C 64 2D 72 65 66 65 72 65 6E 63 65   // -build-reference
-                                                                                                    2D 70 61 63 6B 61 67 65 73 00 00 )                // -packages..
+                                                                                                       string) = ( 01 00 06 73 6F 75 72 63 65 1F 73 6F 75 72 63 65   // ...source.source
+                                                                                                                   2D 62 75 69 6C 64 2D 72 65 66 65 72 65 6E 63 65   // -build-reference
+                                                                                                                   2D 70 61 63 6B 61 67 65 73 00 00 )                // -packages..
   .custom /*0C000004:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
   .custom /*0C000005:0A000002*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilationRelaxationsAttribute/*01000002*/::.ctor(int32) /* 0A000002 */ = ( 01 00 08 00 00 00 00 00 ) 
   .custom /*0C000006:0A000003*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.RuntimeCompatibilityAttribute/*01000003*/::.ctor() /* 0A000003 */ = ( 01 00 01 00 54 02 16 57 72 61 70 4E 6F 6E 45 78   // ....T..WrapNonEx
@@ -385,7 +384,6 @@
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000009    //  ILONLY
-// Image base: 0x00007FD8B0E0C000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -8156,7 +8154,7 @@
   .custom /*0C0000DA:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableAttribute/*01000015*/::.ctor(uint8) /* 0A000014 */ = ( 01 00 00 00 00 ) 
   .param type TValue /*2A000010*/ 
     .custom /*0C000056:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableAttribute/*01000015*/::.ctor(uint8) /* 0A000014 */ = ( 01 00 02 00 00 ) 
-  .class /*0200001F*/ sequential ansi sealed nested public beforefieldinit AlternateLookup`1<TKey,TValue,TAlternateKey>
+  .class /*0200001F*/ sequential ansi sealed nested public beforefieldinit AlternateLookup`1<TKey,TValue,byreflike TAlternateKey>
          extends [System.Runtime/*23000001*/]System.ValueType/*0100002C*/
   {
     .pack 0
@@ -9456,7 +9454,7 @@
   } // end of method Dictionary`2::EnsureCapacity
 
   .method /*0600018E*/ public hidebysig instance valuetype System.Collections.Generic.Dictionary`2/*0200000F*//AlternateLookup`1/*0200001F*/<!TKey,!TValue,!!TAlternateKey> 
-          GetAlternateLookup<TAlternateKey>() cil managed
+          GetAlternateLookup<byreflike TAlternateKey>() cil managed
   // SIG: 30 01 00 15 11 7C 03 13 00 13 01 1E 00
   {
     .param [0]/*0800015A*/ 
@@ -9708,7 +9706,7 @@
   } // end of method Dictionary`2::TryAdd
 
   .method /*060001A2*/ public hidebysig instance bool 
-          TryGetAlternateLookup<TAlternateKey>([out] valuetype System.Collections.Generic.Dictionary`2/*0200000F*//AlternateLookup`1/*0200001F*/<!TKey,!TValue,!!TAlternateKey>& lookup) cil managed
+          TryGetAlternateLookup<byreflike TAlternateKey>([out] valuetype System.Collections.Generic.Dictionary`2/*0200000F*//AlternateLookup`1/*0200001F*/<!TKey,!TValue,!!TAlternateKey>& lookup) cil managed
   // SIG: 30 01 01 02 10 15 11 7C 03 13 00 13 01 1E 00
   {
     .param [1]/*08000170*/ 
@@ -9966,7 +9964,7 @@
   .custom /*0C0000ED:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableAttribute/*01000015*/::.ctor(uint8) /* 0A000014 */ = ( 01 00 00 00 00 ) 
   .param type T /*2A000012*/ 
     .custom /*0C000060:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableAttribute/*01000015*/::.ctor(uint8) /* 0A000014 */ = ( 01 00 02 00 00 ) 
-  .class /*02000023*/ sequential ansi sealed nested public beforefieldinit AlternateLookup`1<T,TAlternate>
+  .class /*02000023*/ sequential ansi sealed nested public beforefieldinit AlternateLookup`1<T,byreflike TAlternate>
          extends [System.Runtime/*23000001*/]System.ValueType/*0100002C*/
   {
     .pack 0
@@ -10378,7 +10376,7 @@
   } // end of method HashSet`1::ExceptWith
 
   .method /*060001BF*/ public hidebysig instance valuetype System.Collections.Generic.HashSet`1/*02000011*//AlternateLookup`1/*02000023*/<!T,!!TAlternate> 
-          GetAlternateLookup<TAlternate>() cil managed
+          GetAlternateLookup<byreflike TAlternate>() cil managed
   // SIG: 30 01 00 15 11 80 8C 02 13 00 1E 00
   {
     .custom /*0C0001CE:0A000013*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableContextAttribute/*01000014*/::.ctor(uint8) /* 0A000013 */ = ( 01 00 02 00 00 ) 
@@ -10605,7 +10603,7 @@
   } // end of method HashSet`1::TrimExcess
 
   .method /*060001D2*/ public hidebysig instance bool 
-          TryGetAlternateLookup<TAlternate>([out] valuetype System.Collections.Generic.HashSet`1/*02000011*//AlternateLookup`1/*02000023*/<!T,!!TAlternate>& lookup) cil managed
+          TryGetAlternateLookup<byreflike TAlternate>([out] valuetype System.Collections.Generic.HashSet`1/*02000011*//AlternateLookup`1/*02000023*/<!T,!!TAlternate>& lookup) cil managed
   // SIG: 30 01 01 02 10 15 11 80 8C 02 13 00 1E 00
   {
     .custom /*0C0001D4:0A000013*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableContextAttribute/*01000014*/::.ctor(uint8) /* 0A000013 */ = ( 01 00 02 00 00 ) 
