@@ -199,10 +199,7 @@ internal partial class CommandSet : IDisposable
 
         SelectionService = site.GetService<ISelectionService>();
         Debug.Assert(SelectionService is not null, "CommandSet relies on the selection service, which is unavailable.");
-        if (SelectionService is not null)
-        {
-            SelectionService.SelectionChanged += OnSelectionChanged;
-        }
+        SelectionService?.SelectionChanged += OnSelectionChanged;
 
         IMenuCommandService? menuService = MenuService;
         if (menuService is not null)
