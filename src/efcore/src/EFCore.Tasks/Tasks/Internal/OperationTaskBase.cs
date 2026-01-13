@@ -209,7 +209,7 @@ public abstract class OperationTaskBase : ToolTask
                 "..",
                 "..",
                 "tools",
-                "net10.0",
+                "net11.0",
                 "ef.dll"));
 
         args.AddRange(AdditionalArguments);
