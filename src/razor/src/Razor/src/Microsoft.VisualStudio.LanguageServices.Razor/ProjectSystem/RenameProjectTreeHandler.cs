@@ -21,18 +21,18 @@ namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 
 [Order(RazorConstants.AboveManagedProjectSystemOrder)]
 [Export(typeof(IProjectTreeActionHandler))]
-[AppliesTo(WellKnownProjectCapabilities.DotNetCoreCSharp)]
+[AppliesTo(WellKnownProjectCapabilities.DotNetCoreRazor)]
 [method: ImportingConstructor]
 internal sealed partial class RenameProjectTreeHandler(
     [Import(ExportContractNames.Scopes.UnconfiguredProject)] IProjectAsynchronousTasksService projectAsynchronousTasksService,
     SVsServiceProvider serviceProvider,
-    LSPRequestInvoker requestInvoker,
+    Lazy<LSPRequestInvoker> requestInvoker,
     LanguageServerFeatureOptions featureOptions,
     ILoggerFactory loggerFactory) : ProjectTreeActionHandlerBase
 {
     private readonly IProjectAsynchronousTasksService _projectAsynchronousTasksService = projectAsynchronousTasksService;
     private readonly SVsServiceProvider _serviceProvider = serviceProvider;
-    private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
+    private readonly Lazy<LSPRequestInvoker> _requestInvoker = requestInvoker;
     private readonly LanguageServerFeatureOptions _featureOptions = featureOptions;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RenameProjectTreeHandler>();
 
@@ -62,7 +62,7 @@ internal sealed partial class RenameProjectTreeHandler(
                 return;
             }
 
-            var response = await _projectAsynchronousTasksService.LoadedProjectAsync(() => _requestInvoker.ReinvokeRequestOnServerAsync<RenameFilesParams, WorkspaceEdit?>(
+            var response = await _projectAsynchronousTasksService.LoadedProjectAsync(() => _requestInvoker.Value.ReinvokeRequestOnServerAsync<RenameFilesParams, WorkspaceEdit?>(
                 Methods.WorkspaceWillRenameFilesName,
                 RazorLSPConstants.RoslynLanguageServerName,
                 new RenameFilesParams()
@@ -123,7 +123,7 @@ internal sealed partial class RenameProjectTreeHandler(
             var dialogFactory = (IVsThreadedWaitDialogFactory)_serviceProvider.GetService(typeof(SVsThreadedWaitDialogFactory));
             using var _ = new WaitIndicator(dialogFactory, SR.Renaming_Razor_Component, SR.FormatRenaming_0_to_1(fromComponentName, toComponentName));
 
-            await _requestInvoker.ReinvokeRequestOnServerAsync<ApplyRenameEditParams, VoidResult>(
+            await _requestInvoker.Value.ReinvokeRequestOnServerAsync<ApplyRenameEditParams, VoidResult>(
                  RazorLSPConstants.ApplyRenameEditName,
                  RazorLSPConstants.RoslynLanguageServerName,
                  request,

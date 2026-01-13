@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -59,14 +60,19 @@ internal sealed class CohostConfigurationChangedService(
             cancellationToken).ConfigureAwait(false);
 
         var current = _clientSettingsManager.GetClientSettings().AdvancedSettings;
-        var settings = current with
-        {
-            CodeBlockBraceOnNextLine = GetBooleanOptionValue(options[0], current.CodeBlockBraceOnNextLine),
-            AttributeIndentStyle = GetEnumOptionValue(options[1], current.AttributeIndentStyle),
-            CommitElementsWithSpace = GetBooleanOptionValue(options[2], current.CommitElementsWithSpace),
-        };
+        var settings = UpdateSettingsFromJson(current, options);
 
         _clientSettingsManager.Update(settings);
+    }
+
+    private static ClientAdvancedSettings UpdateSettingsFromJson(ClientAdvancedSettings settings, JsonArray jsonArray)
+    {
+        return settings with
+        {
+            CodeBlockBraceOnNextLine = GetBooleanOptionValue(jsonArray[0], settings.CodeBlockBraceOnNextLine),
+            AttributeIndentStyle = GetEnumOptionValue(jsonArray[1], settings.AttributeIndentStyle),
+            CommitElementsWithSpace = GetBooleanOptionValue(jsonArray[2], settings.CommitElementsWithSpace),
+        };
     }
 
     private static bool GetBooleanOptionValue(JsonNode? jsonNode, bool defaultValue)
@@ -86,11 +92,17 @@ internal sealed class CohostConfigurationChangedService(
             return defaultValue;
         }
 
-        if (Enum.TryParse<T>(jsonNode.GetValue<string>(), out var value))
+        if (Enum.TryParse<T>(jsonNode.GetValue<string>(), ignoreCase: true, out var value))
         {
             return value;
         }
 
         return defaultValue;
+    }
+
+    public static class TestAccessor
+    {
+        public static ClientAdvancedSettings UpdateSettingsFromJson(ClientAdvancedSettings settigns, JsonArray jsonArray)
+            => CohostConfigurationChangedService.UpdateSettingsFromJson(settigns, jsonArray);
     }
 }
