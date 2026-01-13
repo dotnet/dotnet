@@ -29,72 +29,40 @@ released.
 
 ## Steps to re-bootstrap
 
+> [!IMPORTANT] 
+> Eligible builds must have published artifacts to a public channel.
+> For this reason, re-bootstrapping is only allowed with official builds
+> from the main branch and non-internal release branches.
+
 ### Automated
 
-> [!IMPORTANT]  
-> The re-bootstrap pipeline uploads the artifacts to the official blob storage,
-> so do not use this pipeline for testing of any kind. To test stage 2 failures,
-> please refer to [this
-> documentation](bootstrapping-guidelines.md#building-on-a-supported-platform-using-rid-known-to-net).
-
 You can re-bootstrap the VMR using [this
-pipeline](https://dev.azure.com/dnceng/internal/_build?definitionId=1371). The
-pipeline will upload the artifacts & open the corresponding re-bootstrap PR.
+pipeline](https://dev.azure.com/dnceng/internal/_build?definitionId=1571). The
+pipeline will open the corresponding re-bootstrap PRs.
 
 ### Manual
 
 In case the automated re-bootstrapping pipeline is unavailable, you can manually
 re-bootstrap the VMR:
 
-1. Update previous source-build artifacts
-    1. Find a
-    [dotnet-source-build](https://dev.azure.com/dnceng/internal/_build?definitionId=1219)
+1. Find a
+    [dotnet-unified-build](https://dev.azure.com/dnceng/internal/_build?definitionId=1330)
     run with the desired changes.
-        1. If a rebootstrap is needed quickly and it is not feasibly to wait for
-           a
-           [dotnet-source-build](https://dev.azure.com/dnceng/internal/_build?definitionId=1219)
-           run, you can also use the artifacts from a
-           [dotnet-source-build-lite](https://dev.azure.com/dnceng/internal/_build?definitionId=1299)
-           run.
-    1. Retrieve the built SDKs and private source-built artifacts archives, from
-       the following legs:
-        1. Alpine\<nnn\>_Online_MsftSdk_x64
-        1. CentOSStream\<n\>_Online_MsftSdk_x64
-    1. Upload the SDKs to the [source build sdk blob
-       storage](https://dotnetcli.blob.core.windows.net/source-built-artifacts/sdks/)
-    1. Upload the private source-built artifacts archives to the [source build
-       assets blob
-       storage](https://dotnetcli.blob.core.windows.net/source-built-artifacts/assets/)
+    1. Retrieve the stable and non-stable SDK versions:
+        1. Download the MergedManifest.xml from Artifacts -> AssetManifests
+        1. In the MergedManifest.xml, locate a blob entry for an SDK tarball,
+           e.g. IDs ending with `dotnet-sdk-*-linux-x64.tar.gz`.
+        1. Read the version values from the blob ID to identify both variants:
+           `Sdk/<non-stable-sdk-version>/dotnet-sdk-<stable-sdk-version>-linux-x64.tar.gz`
+    1. Retrieve the bar ID from the `BAR ID - <id>` tag in the pipeline run
 1. Update .NET SDK
-    1. Find the
-    [dotnet-sdk-official-ci](https://dev.azure.com/dnceng/internal/_build?definitionId=140)
-    build that best matches the dotnet-source-build. The following is the
-    suggested order of precedence for finding the best match.
-        1. A build from the same commit.
-            1. From the
-            [dotnet-source-build](https://dev.azure.com/dnceng/internal/_build?definitionId=1219),
-            look at the build's installer tag.
-            1. From a VMR commit, you can find the corresponding installer
-            commit by looking at the
-            [source-manifest.json](https://github.com/dotnet/dotnet/blob/main/src/source-manifest.json).
-        1. The next passing build after the same commit.
-        1. In the odd case where the are no passing builds after the commit, you
-        can try using an earlier passing build.
-    1. Retrieve the built SDK version from the build.
-    1. Update the dotnet version in the
-       [global.json](https://github.com/dotnet/dotnet/blob/main/global.json).
-1. Update arcade
-    1. Lookup the arcade commit and version. From a VMR commit, you can find the
-    corresponding arcade commit/version by looking at the
-    [source-manifest.json](https://github.com/dotnet/dotnet/blob/main/src/source-manifest.json).
-    1. Update the arcade SDK version in the
-       [global.json](https://github.com/dotnet/dotnet/blob/main/global.json).
-    1. Update the arcade dependency commit and version in the
-       [Version.Details.xml](https://github.com/dotnet/dotnet/blob/main/eng/Version.Details.xml).
+    1. Update the tools.dotnet version in the
+       [global.json](https://github.com/dotnet/dotnet/blob/main/global.json)
+       with the stable SDK version.
 1. Update private source-built SDK and artifacts versions
     1. Update `PrivateSourceBuiltSdkVersion` and
        `PrivateSourceBuiltArtifactsVersion` in the
-       [Versions.props](https://github.com/dotnet/dotnet/blob/main/eng/Versions.props).
-
-[Tracking issue for automating this
-process.](https://github.com/dotnet/source-build/issues/4246)
+       [Versions.props](https://github.com/dotnet/dotnet/blob/main/eng/Versions.props)
+       with the non-stable SDK version.
+1. Update arcade
+    1. Run `darc update-dependencies --id <bar_id>` from the root of the VMR
