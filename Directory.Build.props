@@ -49,7 +49,7 @@
   <Import Project="$(PreviouslySourceBuiltPackageVersionsPropsFile)" Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(IsTestRun)' != 'true' and Exists('$(PreviouslySourceBuiltPackageVersionsPropsFile)')" />
 
   <PropertyGroup>
-    <!-- TODO: Remove when Arcade updated NetCurrent to net11.0. -->
+    <!-- TODO: Remove when bootstrap Arcade updated NetCurrent to net11.0. -->
     <NetCurrent>net11.0</NetCurrent>
     <!-- We have no projects targeting multiple frameworks, so don't include in output path. -->
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

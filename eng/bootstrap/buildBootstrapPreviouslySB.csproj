@@ -3,7 +3,7 @@
   <Import Project="$(MSBuildProjectDirectory)/PackageVersions.props" />
 
   <PropertyGroup>
-    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <BaseOutputPath>$(MSBuildProjectDirectory)/artifacts/</BaseOutputPath>
     <RestorePackagesPath>$(MSBuildProjectDirectory)/artifacts/restoredPkgs/</RestorePackagesPath>
     <UnpackedTarPath>$(MSBuildProjectDirectory)/artifacts/unpacked/</UnpackedTarPath>
