@@ -931,6 +931,157 @@ catch(bar) { baz(); }");
             """);
     }
 
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 switch
+                {
+                    0 => "value",
+                    _ => "no value"
+                };
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_WithLessThan()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 switch
+                {
+                    < 9 => "less than 10"
+                };
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_WithGreaterThan()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 switch
+                {
+                    > 10 => "greater than 10"
+                };
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_WithMultipleComparisons()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 switch
+                {
+                    < 9 => "less than 10",
+                    10 => "equal to 10",
+                    > 10 => "greater than 10"
+                };
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_Incomplete()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 switch
+                {
+                    0 => "value"
+
+                var val2 = "value2";
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_WithLessThan_Incomplete()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 switch
+                {
+                    < 9 => "less than 10"
+
+                var val2 = "value2";
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_WithWrongKeyword()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 using
+                {
+                    0 => "value"
+                };
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_WithWrongKeyword_AndLessThan()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 using
+                {
+                     < 9 => "less than 10"
+                };
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_WithMarkupInside()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 switch
+                {
+                    0 => <span>some <i>html</i></span>,
+                    _ => "value"
+                };
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_WithMarkupInside_ViaAtSymbol()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 switch
+                {
+                    0 => @<span>zero</span>,
+                    _ => @<span>one</span>
+                };
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_WithMarkupInside_WithLessThan()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 switch
+                {
+                    < 10 => @<span>less than 10</span>,
+                    _ => @<span>other</span>
+                };
+            }
+            """);
+    }
+
     private void RunRazorCommentBetweenClausesTest(string preComment, string postComment, AcceptedCharactersInternal acceptedCharacters = AcceptedCharactersInternal.Any)
     {
         ParseDocumentTest(preComment + "@* Foo *@ @* Bar *@" + postComment);

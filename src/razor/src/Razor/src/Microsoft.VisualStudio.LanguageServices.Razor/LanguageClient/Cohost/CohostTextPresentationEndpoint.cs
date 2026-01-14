@@ -62,12 +62,10 @@ internal sealed class CohostTextPresentationEndpoint(
             return null;
         }
 
-        if (!workspaceEdit.TryGetTextDocumentEdits(out var edits))
-        {
-            return null;
-        }
-
-        foreach (var edit in edits)
+        // NOTE: We iterate over just the TextDocumentEdit objects and modify them in place.
+        // We intentionally do NOT create a new WorkspaceEdit here to avoid losing any
+        // CreateFile, RenameFile, or DeleteFile operations that may be in DocumentChanges.
+        foreach (var edit in workspaceEdit.EnumerateTextDocumentEdits())
         {
             if (edit.TextDocument.DocumentUri.ParsedUri is { } uri &&
                 _filePathService.IsVirtualHtmlFile(uri))

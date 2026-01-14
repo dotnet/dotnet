@@ -10,10 +10,12 @@ namespace Microsoft.CodeAnalysis.Razor.Rename;
 
 internal interface IRenameService
 {
-    Task<WorkspaceEdit?> TryGetRazorRenameEditsAsync(
+    Task<RenameResult> TryGetRazorRenameEditsAsync(
         DocumentContext documentContext,
         DocumentPositionInfo positionInfo,
         string newName,
         ISolutionQueryOperations solutionQueryOperations,
         CancellationToken cancellationToken);
 }
+
+internal readonly record struct RenameResult(WorkspaceEdit? Edit, bool FallbackToCSharp = true);

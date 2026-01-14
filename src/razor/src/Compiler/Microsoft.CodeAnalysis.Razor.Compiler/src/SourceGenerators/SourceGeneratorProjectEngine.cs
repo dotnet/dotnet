@@ -1,12 +1,10 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
 using Microsoft.AspNetCore.Razor.Language;
+using System;
+using System.Diagnostics;
+using System.Threading;
 
 namespace Microsoft.NET.Sdk.Razor.SourceGenerators;
 
@@ -58,14 +56,18 @@ internal sealed class SourceGeneratorProjectEngine
     {
         var codeDocument = _projectEngine.CreateCodeDocument(projectItem, designTime);
 
-        ExecutePhases(Phases[.._discoveryPhaseIndex], codeDocument, cancellationToken);
+        codeDocument = ExecutePhases(Phases[.._discoveryPhaseIndex], codeDocument, cancellationToken);
 
         // record the syntax tree, before the tag helper re-writing occurs
-        codeDocument.SetPreTagHelperSyntaxTree(codeDocument.GetSyntaxTree());
+        codeDocument = codeDocument.WithPreTagHelperSyntaxTree(codeDocument.GetSyntaxTree());
         return new SourceGeneratorRazorCodeDocument(codeDocument);
     }
 
-    public SourceGeneratorRazorCodeDocument ProcessTagHelpers(SourceGeneratorRazorCodeDocument sgDocument, IReadOnlyList<TagHelperDescriptor> tagHelpers, bool checkForIdempotency, CancellationToken cancellationToken)
+    public SourceGeneratorRazorCodeDocument ProcessTagHelpers(
+        SourceGeneratorRazorCodeDocument sgDocument, 
+        TagHelperCollection tagHelpers, 
+        bool checkForIdempotency, 
+        CancellationToken cancellationToken)
     {
         Debug.Assert(sgDocument.CodeDocument.GetPreTagHelperSyntaxTree() is not null);
 
@@ -75,43 +77,90 @@ internal sealed class SourceGeneratorProjectEngine
         if (checkForIdempotency && codeDocument.TryGetTagHelpers(out var previousTagHelpers))
         {
             // compare the tag helpers with the ones the document last used
-            if (Enumerable.SequenceEqual(tagHelpers, previousTagHelpers))
+            if (tagHelpers.Equals(previousTagHelpers))
             {
                 // tag helpers are the same, nothing to do!
                 return sgDocument;
             }
-            else
+
+            // tag helpers have changed, figure out if we need to re-write
+            var previousTagHelpersInScope = codeDocument.GetRequiredTagHelperContext().TagHelpers;
+            var previousUsedTagHelpers = codeDocument.GetRequiredReferencedTagHelpers();
+
+            // re-run discovery to figure out which tag helpers are now in scope for this document
+            codeDocument = codeDocument.WithTagHelpers(tagHelpers);
+            codeDocument = _discoveryPhase.Execute(codeDocument, cancellationToken);
+
+            var newTagHelpersInScope = codeDocument.GetRequiredTagHelperContext().TagHelpers;
+
+            // Check if any new tag helpers were added or ones we previously used were removed
+            if (!RequiresRewrite(newTagHelpersInScope, previousTagHelpersInScope, previousUsedTagHelpers))
             {
-                // tag helpers have changed, figure out if we need to re-write
-                var previousTagHelpersInScope = codeDocument.GetRequiredTagHelperContext().TagHelpers;
-                var previousUsedTagHelpers = codeDocument.GetRequiredReferencedTagHelpers();
-
-                // re-run discovery to figure out which tag helpers are now in scope for this document
-                codeDocument.SetTagHelpers(tagHelpers);
-                _discoveryPhase.Execute(codeDocument, cancellationToken);
-                var tagHelpersInScope = codeDocument.GetRequiredTagHelperContext().TagHelpers;
-
-                // Check if any new tag helpers were added or ones we previously used were removed
-                var newVisibleTagHelpers = tagHelpersInScope.Except(previousTagHelpersInScope);
-                var newUnusedTagHelpers = previousUsedTagHelpers.Except(tagHelpersInScope);
-                if (!newVisibleTagHelpers.Any() && !newUnusedTagHelpers.Any())
-                {
-                    // No newly visible tag helpers, and any that got removed weren't used by this document anyway
-                    return sgDocument;
-                }
-
-                // We need to re-write the document, but can skip the scoping as we just performed it
-                startIndex = _rewritePhaseIndex;
+                // No newly visible tag helpers, and any that got removed weren't used by this document anyway
+                return sgDocument;
             }
+
+            // We need to re-write the document, but can skip the scoping as we just performed it
+            startIndex = _rewritePhaseIndex;
         }
         else
         {
-            codeDocument.SetTagHelpers(tagHelpers);
+            codeDocument = codeDocument.WithTagHelpers(tagHelpers);
         }
 
-        ExecutePhases(Phases[startIndex..(_rewritePhaseIndex + 1)], codeDocument, cancellationToken);
+        codeDocument = ExecutePhases(Phases[startIndex..(_rewritePhaseIndex + 1)], codeDocument, cancellationToken);
 
         return new SourceGeneratorRazorCodeDocument(codeDocument);
+    }
+
+    private static bool RequiresRewrite(
+        TagHelperCollection newTagHelpers,
+        TagHelperCollection previousTagHelpers,
+        TagHelperCollection previousUsedTagHelpers)
+    {
+        // Check if any new tag helpers were added (that weren't in scope before)
+        // Check if any previously used tag helpers were removed (no longer in scope)
+        return HasAnyNotIn(newTagHelpers, previousTagHelpers) ||
+               HasAnyNotIn(previousUsedTagHelpers, newTagHelpers);
+    }
+
+    /// <summary>
+    ///  Determines whether the first collection contains any tag helper descriptors that are not present
+    ///  in the second collection.
+    /// </summary>
+    /// <param name="first">The collection to check for unique items.</param>
+    /// <param name="second">The collection to compare against.</param>
+    /// <returns>
+    ///  <see langword="true"/> if <paramref name="first"/> contains any descriptors not present in 
+    ///  <paramref name="second"/>; otherwise, <see langword="false"/>.
+    /// </returns>
+    private static bool HasAnyNotIn(TagHelperCollection first, TagHelperCollection second)
+    {
+        if (first.IsEmpty)
+        {
+            return false;
+        }
+
+        if (second.IsEmpty)
+        {
+            return true;
+        }
+
+        if (first.Equals(second))
+        {
+            return false;
+        }
+
+        // For each item in the first collection, check if it exists in the second collection
+        foreach (var item in first)
+        {
+            if (!second.Contains(item))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public SourceGeneratorRazorCodeDocument ProcessRemaining(SourceGeneratorRazorCodeDocument sgDocument, CancellationToken cancellationToken)
@@ -119,16 +168,18 @@ internal sealed class SourceGeneratorProjectEngine
         var codeDocument = sgDocument.CodeDocument;
         Debug.Assert(codeDocument.GetReferencedTagHelpers() is not null);
 
-        ExecutePhases(Phases[_rewritePhaseIndex..], codeDocument, cancellationToken);
+        codeDocument = ExecutePhases(Phases[_rewritePhaseIndex..], codeDocument, cancellationToken);
 
         return new SourceGeneratorRazorCodeDocument(codeDocument);
     }
 
-    private static void ExecutePhases(ReadOnlySpan<IRazorEnginePhase> phases, RazorCodeDocument codeDocument, CancellationToken cancellationToken)
+    private static RazorCodeDocument ExecutePhases(ReadOnlySpan<IRazorEnginePhase> phases, RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
+        var currentDocument = codeDocument;
         foreach (var phase in phases)
         {
-            phase.Execute(codeDocument, cancellationToken);
+            currentDocument = phase.Execute(currentDocument, cancellationToken);
         }
+        return currentDocument;
     }
 }

@@ -30,6 +30,11 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
             <Microsoft.AspNetCore.Components.Forms.InputText Value="someValue" />
             <Microsoft.AspNetCore.Components.Forms.InputText Value="someValue"></Microsoft.AspNetCore.Components.Forms.InputText>
 
+            <InputText
+                Value="someValue"
+                CssClass="my-class"
+                DisplayName="My Input" />
+
             @typeof(InputText).ToString()
             @typeof(Microsoft.AspNetCore.Components.Forms.InputText).ToString()
             """;
@@ -136,14 +141,245 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
         await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile, fileKind: RazorFileKind.Legacy);
     }
 
+    [Theory]
+    [CombinatorialData]
+    public async Task RenderMode(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
+
+            <!-- above and below should be classified the same -->
+
+            @{
+                var r = Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveAuto;
+            }
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task RenderMode_Razor9(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
+
+            <!-- above and below should NOT be classified the same in Razor 9.0 -->
+
+            @{
+                var r = Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveAuto;
+            }
+            """;
+
+        await VerifySemanticTokensAsync(
+            input,
+            colorBackground,
+            miscellaneousFile,
+            projectConfigure: p => p.RazorLanguageVersion = RazorLanguageVersion.Version_9_0);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task RenderMode_Expression(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @rendermode @(Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer)
+
+            <!-- above and below should be classified the same -->
+
+            @{
+                var r = Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveAuto;
+            }
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task RenderFragment(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            <div>This is some HTML</div>
+            @code
+            {
+                public void M()
+                {
+                    RenderFragment x = @<div>This is some HTML</div>;
+                }
+            }
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task Expressions(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @DateTime.Now
+            
+            @("hello" + "\\n" + "world" + Environment.NewLine + "how are you?")
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+
+    [Theory]
+    [CombinatorialData]
+    public async Task GetSemanticTokens_Razor_NestedTextDirectives(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @using System
+            @functions {
+                private void BidsByShipment(string generatedId, int bids)
+                {
+                    if (bids > 0)
+                    {
+                        <a class=""Thing"">
+                            @if(bids > 0)
+                            {
+                                <text>@DateTime.Now</text>
+                            }
+                        </a>
+                    }
+                }
+            }
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task GetSemanticTokens_Razor_NestedTransitions(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @using System
+            @code {
+                Action<object> abc = @<span></span>;
+            }
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task GetSemanticTokens_Razor_CommentAsync(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @* A comment *@
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task GetSemanticTokens_Razor_MultiLineCommentMidlineAsync(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            <a />@* kdl
+            skd
+            slf*@
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task GetSemanticTokens_Razor_MultiLineCommentWithBlankLines(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @* kdl
+
+            skd
+                
+                    sdfasdfasdf
+            slf*@
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    [WorkItem("https://github.com/dotnet/razor/issues/8176")]
+    public async Task GetSemanticTokens_Razor_MultiLineCommentWithBlankLines_LF(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = "@* kdl\n\nskd\n    \n        sdfasdfasdf\nslf*@";
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task GetSemanticTokens_Razor_MultiLineCommentAsync(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @*stuff
+            things *@
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task GetSemanticTokens_CSharp_Static(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @using System
+            @code
+            {
+                private static bool _isStatic;
+
+                public void M()
+                {
+                    if (_isStatic)
+                    {
+                    }
+                }
+            }
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task GetSemanticTokens_Legacy_Model(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @using System
+            @model SampleApp.Pages.ErrorModel
+
+            <div>
+
+                @{
+                    @Model.ToString();
+                }
+
+            </div>
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile, fileKind: RazorFileKind.Legacy);
+    }
+
     private async Task VerifySemanticTokensAsync(
         string input,
         bool colorBackground,
         bool miscellaneousFile,
         RazorFileKind? fileKind = null,
+        Action<RazorProjectBuilder>? projectConfigure = null,
         [CallerMemberName] string? testName = null)
     {
-        var document = CreateProjectAndRazorDocument(input, fileKind, miscellaneousFile: miscellaneousFile);
+        var document = CreateProjectAndRazorDocument(input, fileKind, miscellaneousFile: miscellaneousFile, projectConfigure: projectConfigure);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         // We need to manually initialize the OOP service so we can get semantic token info later
@@ -177,7 +413,7 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
             testName += "_misc_file";
         }
 
-        var baselineFileName = $@"TestFiles\SemanticTokens\{testName}.txt";
+        var baselineFileName = Path.Combine("TestFiles", "SemanticTokens", $"{testName}.txt");
         if (GenerateBaselines.ShouldGenerate)
         {
             WriteBaselineFile(actualFileContents, baselineFileName);

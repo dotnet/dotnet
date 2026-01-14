@@ -9,8 +9,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
+using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -42,7 +42,7 @@ public class CompletionListProviderTest : LanguageServerTestBase
         _documentContext = TestDocumentContext.Create("C:/path/to/file.cshtml");
         _clientCapabilities = new VSInternalClientCapabilities();
         _razorCompletionOptions = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: true, UseVsCodeCompletionCommitCharacters: false);
-        _triggerAndCommitCharacters = new(TestLanguageServerFeatureOptions.Instance);
+        _triggerAndCommitCharacters = new(new TestClientCapabilitiesService(_clientCapabilities));
     }
 
     [Fact]

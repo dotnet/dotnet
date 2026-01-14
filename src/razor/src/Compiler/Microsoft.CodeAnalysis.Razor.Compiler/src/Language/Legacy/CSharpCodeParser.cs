@@ -997,7 +997,8 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                                   not SyntaxKind.LeftBrace and
                                   not SyntaxKind.LeftParenthesis and
                                   not SyntaxKind.LeftBracket and
-                                  not SyntaxKind.RightBrace,
+                                  not SyntaxKind.RightBrace and
+                                  not SyntaxKind.Keyword,
                 ref read.AsRef());
 
             if ((!Context.Options.AllowRazorInAllCodeBlocks && At(SyntaxKind.LeftBrace)) ||
@@ -1005,14 +1006,8 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                 At(SyntaxKind.LeftBracket))
             {
                 Accept(in read);
-                if (Balance(builder, BalancingModes.AllowCommentsAndTemplates | BalancingModes.BacktrackOnFailure))
+                if (!TryBalanceBlock(builder))
                 {
-                    TryAccept(SyntaxKind.RightBrace);
-                }
-                else
-                {
-                    // Recovery
-                    AcceptUntil(SyntaxKind.LessThan, SyntaxKind.RightBrace);
                     return;
                 }
             }
@@ -1106,6 +1101,23 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                 Accept(in read);
                 return;
             }
+            else if (At(SyntaxKind.Keyword))
+            {
+                Accept(in read);
+                if (CurrentToken.Content == "switch")
+                {
+                    AcceptUntil(SyntaxKind.LeftBrace); // TODO: how do we do error recovery at this point?
+                    if (!TryBalanceBlock(builder))
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    // unknown keyword, continue parsing
+                    AcceptAndMoveNext();
+                }
+            }
             else
             {
                 _tokenizer.Reset(bookmark);
@@ -1113,6 +1125,22 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                 AcceptUntil(SyntaxKind.LessThan, SyntaxKind.LeftBrace, SyntaxKind.RightBrace);
                 return;
             }
+        }
+
+        bool TryBalanceBlock(SyntaxListBuilder<RazorSyntaxNode> builder)
+        {
+            if (Balance(builder, BalancingModes.AllowCommentsAndTemplates | BalancingModes.BacktrackOnFailure))
+            {
+                TryAccept(SyntaxKind.RightBrace);
+            }
+            else
+            {
+                // Recovery
+                AcceptUntil(SyntaxKind.LessThan, SyntaxKind.RightBrace);
+                return false;
+            }
+
+            return true;
         }
     }
 

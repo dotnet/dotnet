@@ -15,26 +15,26 @@ Generated Location: (1680:41,0 [23] )
 
 Source Location: (1:0,1 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |Parent|
-Generated Location: (2585:66,0 [6] )
+Generated Location: (2503:63,45 [6] )
 |Parent|
 
 Source Location: (8:0,8 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Data|
-Generated Location: (2862:75,0 [4] )
+Generated Location: (2720:67,0 [4] )
 |Data|
 
 Source Location: (75:0,75 [5] x:\dir\subdir\Test\TestComponent.cshtml)
 |Other|
-Generated Location: (3120:84,0 [5] )
+Generated Location: (2978:76,0 [5] )
 |Other|
 
 Source Location: (109:1,5 [5] x:\dir\subdir\Test\TestComponent.cshtml)
 |Child|
-Generated Location: (4237:104,0 [5] )
+Generated Location: (4012:93,45 [5] )
 |Child|
 
 Source Location: (115:1,11 [14] x:\dir\subdir\Test\TestComponent.cshtml)
 |ChildOnlyItems|
-Generated Location: (4537:113,0 [14] )
+Generated Location: (4252:97,0 [14] )
 |ChildOnlyItems|
 

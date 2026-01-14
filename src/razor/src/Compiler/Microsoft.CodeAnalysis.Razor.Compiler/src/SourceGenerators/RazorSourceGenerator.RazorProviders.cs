@@ -41,7 +41,8 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 diagnostic = Diagnostic.Create(
                     RazorDiagnostics.InvalidRazorLangVersionDescriptor,
                     Location.None,
-                    razorLanguageVersionString);
+                    razorLanguageVersionString,
+                    RazorLanguageVersion.Preview.ToString());
                 razorLanguageVersion = RazorLanguageVersion.Latest;
             }
 

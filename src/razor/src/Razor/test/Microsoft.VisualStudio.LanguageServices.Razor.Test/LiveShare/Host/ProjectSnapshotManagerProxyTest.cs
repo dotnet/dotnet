@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
@@ -244,10 +243,10 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
 
     private static Action<ProjectSnapshotHandleProxy> AssertProjectSnapshotHandle(
         string expectedFilePath,
-        ImmutableArray<TagHelperDescriptor> expectedTagHelpers)
+        TagHelperCollection expectedTagHelpers)
         => handle =>
         {
             Assert.Equal(expectedFilePath, handle.FilePath.ToString());
-            Assert.Equal<TagHelperDescriptor>(expectedTagHelpers, handle.ProjectWorkspaceState.TagHelpers);
+            Assert.Equal(expectedTagHelpers, handle.ProjectWorkspaceState.TagHelpers);
         };
 }

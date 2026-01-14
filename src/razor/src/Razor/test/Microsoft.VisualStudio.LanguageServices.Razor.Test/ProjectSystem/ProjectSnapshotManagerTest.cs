@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -51,12 +50,10 @@ public class ProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
     public ProjectSnapshotManagerTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        var someTagHelpers = ImmutableArray.Create(
-            TagHelperDescriptorBuilder.CreateTagHelper("Test1", "TestAssembly").Build());
-
         _projectManager = CreateProjectSnapshotManager();
 
-        _projectWorkspaceStateWithTagHelpers = ProjectWorkspaceState.Create(someTagHelpers);
+        _projectWorkspaceStateWithTagHelpers = ProjectWorkspaceState.Create([
+            TagHelperDescriptorBuilder.CreateTagHelper("Test1", "TestAssembly").Build()]);
 
         _sourceText = SourceText.From("Hello world");
     }
@@ -282,11 +279,7 @@ public class ProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             .GetRequiredProject(s_hostProject.Key)
             .GetTagHelpersAsync(DisposalToken);
 
-        Assert.Equal(originalTagHelpers.Length, newTagHelpers.Length);
-        for (var i = 0; i < originalTagHelpers.Length; i++)
-        {
-            Assert.Same(originalTagHelpers[i], newTagHelpers[i]);
-        }
+        Assert.SameItems(originalTagHelpers, newTagHelpers);
     }
 
     [UIFact]
@@ -412,11 +405,7 @@ public class ProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             .GetRequiredProject(s_hostProject.Key)
             .GetTagHelpersAsync(DisposalToken);
 
-        Assert.Equal(originalTagHelpers.Length, newTagHelpers.Length);
-        for (var i = 0; i < originalTagHelpers.Length; i++)
-        {
-            Assert.Same(originalTagHelpers[i], newTagHelpers[i]);
-        }
+        Assert.SameItems(originalTagHelpers, newTagHelpers);
     }
 
     [UIFact]

@@ -31,16 +31,16 @@ Generated Location: (1553:54,0 [138] )
 
 Source Location: (33:2,1 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 |MyComponent|
-Generated Location: (2250:74,0 [11] )
+Generated Location: (2167:71,45 [11] )
 |MyComponent|
 
 Source Location: (45:2,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Item|
-Generated Location: (2508:83,0 [4] )
+Generated Location: (2365:75,0 [4] )
 |Item|
 
 Source Location: (62:2,30 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |MyEvent|
-Generated Location: (2756:92,0 [7] )
+Generated Location: (2613:84,0 [7] )
 |MyEvent|
 

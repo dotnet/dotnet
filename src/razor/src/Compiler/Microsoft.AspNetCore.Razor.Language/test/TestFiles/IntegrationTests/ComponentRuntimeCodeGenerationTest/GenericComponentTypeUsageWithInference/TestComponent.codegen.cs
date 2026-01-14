@@ -55,15 +55,7 @@ namespace __Blazor.Test.TestComponent
     {
         public static void CreateTestComponent_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TItem __arg0)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (7,2)-(7,15) "x:\dir\subdir\Test\TestComponent.cshtml"
-TestComponent
-
-#line default
-#line hidden
-#nullable disable
-        <TItem>>(seq);
+        __builder.OpenComponent<global::Test.TestComponent<TItem>>(seq);
         __builder.AddComponentParameter(__seq0, nameof(global::Test.TestComponent<TItem>.
 #nullable restore
 #line (7,16)-(7,22) "x:\dir\subdir\Test\TestComponent.cshtml"

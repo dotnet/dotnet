@@ -17,6 +17,74 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 public partial class CohostDocumentPullDiagnosticsTest
 {
     [Fact]
+    public Task OneOfEachDiagnostic()
+    {
+        TestCode input = """
+            <div>
+
+            {|HTM1337:<not_a_tag />|}
+
+            {|RZ10012:<NonExistentComponent />|}
+
+            </div>
+
+            <script>
+                {|TS2304:let foo: string = 42;|}
+            </script>
+
+            <style>
+                {|CSS002:f|}oo
+                {
+                    bar: baz;
+                }
+            </style>
+
+            @code
+            {
+                public void IJustMetYou()
+                {
+                    {|CS0103:CallMeMaybe|}();
+                }
+            }
+            """;
+
+        return VerifyDiagnosticsAsync(input,
+           htmlResponse: [new VSInternalDiagnosticReport
+            {
+                Diagnostics =
+                [
+                    new VSDiagnostic
+                    {
+                        Code = "HTM1337",
+                        Range = SourceText.From(input.Text).GetRange(input.NamedSpans["HTM1337"].First()),
+                        Projects = [new VSDiagnosticProjectInformation()
+                        {
+                            ProjectIdentifier = "Html"
+                        }]
+                    },
+                    new VSDiagnostic
+                    {
+                        Code = "TS2304",
+                        Range = SourceText.From(input.Text).GetRange(input.NamedSpans["TS2304"].First()),
+                        Projects = [new VSDiagnosticProjectInformation()
+                        {
+                            ProjectIdentifier = "TypeScript"
+                        }]
+                    },
+                    new VSDiagnostic
+                    {
+                        Code = "CSS002",
+                        Range = SourceText.From(input.Text).GetRange(input.NamedSpans["CSS002"].First()),
+                        Projects = [new VSDiagnosticProjectInformation()
+                        {
+                            ProjectIdentifier = "CSS"
+                        }]
+                    },
+                ]
+            }]);
+    }
+
+    [Fact]
     public Task Html()
     {
         TestCode input = """
@@ -451,5 +519,21 @@ public partial class CohostDocumentPullDiagnosticsTest
         }
 
         AssertEx.EqualOrDiff(input.OriginalInput, testOutput);
+
+        if (!taskListRequest)
+        {
+            Assert.NotNull(report.Diagnostics);
+            Assert.All(report.Diagnostics,
+                d =>
+                {
+                    var vsDiagnostic = Assert.IsType<VSDiagnostic>(d);
+                    Assert.NotNull(vsDiagnostic.Identifier);
+                    Assert.NotNull(vsDiagnostic.Projects);
+                    var project = Assert.Single(vsDiagnostic.Projects);
+                    Assert.NotNull(project.ProjectIdentifier);
+                    // We always report the same project info for all diagnostics
+                    Assert.Same(project, ((VSDiagnostic)report.Diagnostics.First()).Projects.Single());
+                });
+        }
     }
 }

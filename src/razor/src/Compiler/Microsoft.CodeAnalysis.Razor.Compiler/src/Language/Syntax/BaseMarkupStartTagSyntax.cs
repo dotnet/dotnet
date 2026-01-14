@@ -117,4 +117,6 @@ internal abstract partial class BaseMarkupStartTagSyntax
             return false;
         }
     }
+
+    public abstract BaseMarkupEndTagSyntax? GetEndTag();
 }
