@@ -744,21 +744,19 @@ namespace Microsoft.CodeAnalysis.Text
                 }
             });
 #else
-            unsafe
+            var builder = PooledStringBuilder.GetInstance();
+            builder.Builder.EnsureCapacity(length);
+
+            while (position < this.Length && length > 0)
             {
-                result = new('\0', length);
-                fixed (char* pointer = result)
-                {
-                    while (position < this.Length && length > 0)
-                    {
-                        int copyLength = Math.Min(tempBuffer.Length, length);
-                        this.CopyTo(position, tempBuffer, 0, copyLength);
-                        tempBuffer.AsSpan(0, copyLength).CopyTo(new Span<char>(pointer + (position - span.Start), copyLength));
-                        length -= copyLength;
-                        position += copyLength;
-                    }
-                }
+                int copyLength = Math.Min(tempBuffer.Length, length);
+                this.CopyTo(position, tempBuffer, 0, copyLength);
+                builder.Builder.Append(tempBuffer, 0, copyLength);
+                length -= copyLength;
+                position += copyLength;
             }
+
+            result = builder.ToStringAndFree();
 #endif
 
             s_charArrayPool.Free(tempBuffer);
@@ -1321,6 +1319,37 @@ namespace Microsoft.CodeAnalysis.Text
             }
 
             throw new IOException(CodeAnalysisResources.StreamIsTooLong);
+        }
+
+        internal SourceText WithChecksumAlgorithm(SourceHashAlgorithm checksumAlgorithm)
+        {
+            if (checksumAlgorithm == SourceHashAlgorithm.None || checksumAlgorithm == ChecksumAlgorithm)
+                return this;
+
+            return new SourceTextWithAlgorithm(this, checksumAlgorithm);
+        }
+
+        private sealed class SourceTextWithAlgorithm : SourceText
+        {
+            private readonly SourceText _underlying;
+
+            public SourceTextWithAlgorithm(SourceText underlying, SourceHashAlgorithm checksumAlgorithm) : base(checksumAlgorithm: checksumAlgorithm)
+            {
+                Debug.Assert(checksumAlgorithm != SourceHashAlgorithm.None);
+                Debug.Assert(checksumAlgorithm != underlying.ChecksumAlgorithm);
+                _underlying = underlying;
+            }
+
+            public override char this[int position] => _underlying[position];
+
+            public override Encoding? Encoding => _underlying.Encoding;
+
+            public override int Length => _underlying.Length;
+
+            public override void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count)
+            {
+                _underlying.CopyTo(sourceIndex, destination, destinationIndex, count);
+            }
         }
     }
 }
