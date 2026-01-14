@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "9.0.0-beta.26062.2",
+      "packageVersion": "9.0.0-beta.26063.2",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "7d6bcdd1e851735273e4eed39e40366d48f335c9"
+      "commitSha": "c85f9aceddaf85296e3efbc463daaa34fef5a375"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "b8e811b9dc070de6c35617c9f0bbb2173558c40e"
+      "commitSha": "4e3ee1e6fe34bdb8407446133eaef761a0412e8e"
     },
     {
       "packageVersion": "9.0.0-alpha.1.26055.1",
@@ -151,10 +151,10 @@
       "commitSha": "bc9161306b23641b0364b8f93d546da4d48da1eb"
     },
     {
-      "packageVersion": "9.0.12",
+      "packageVersion": "9.0.13",
       "path": "windowsdesktop",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-windowsdesktop",
-      "commitSha": "9b9a26408ddd07dc51c232082af1ca6863af7bc9"
+      "commitSha": "76c6ef06082a87d17f0ea2a17c8af6f259f745dd"
     },
     {
       "packageVersion": "9.0.12-servicing.25608.3",
