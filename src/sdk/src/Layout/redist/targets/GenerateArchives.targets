@@ -13,6 +13,14 @@
     <!-- Ensure output directories are created -->
     <MakeDir Directories="$(ArtifactsShippingPackagesDir);$(ArtifactsNonShippingPackagesDir)" />
 
+    <!-- Debug: List directory structure before archiving -->
+    <Message Text="=== Checking for files with 11.0.100-ci not under sdk\ ===" Importance="High" Condition="'$(OSName)' == 'win'" />
+    <Exec Command="cmd /c &quot;dir /s /b &quot;$(RedistInstallerLayoutPath)&quot; | findstr /i &quot;11.0.100-ci&quot; | findstr /v /i &quot;\\sdk\\&quot;&quot;"
+          Condition="'$(OSName)' == 'win'"
+          ContinueOnError="true"
+          IgnoreExitCode="true" />
+    <Message Text="=== End directory listing ===" Importance="High" Condition="'$(OSName)' == 'win'" />
+
     <!-- Create .zip files on Windows -->
     <ZipFileCreateFromDirectory
         Condition=" '$(OSName)' == 'win' "
