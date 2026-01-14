@@ -1803,7 +1803,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
  </Target>
 </Project>
 ");
-
             Project project = CreateProject(contents, MSBuildDefaultToolsVersion, _projectCollection, true);
             ProjectInstance instance = _buildManager.GetProjectInstanceForBuild(project);
             _buildManager.BeginBuild(_parameters);
