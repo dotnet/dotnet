@@ -5,11 +5,13 @@ using Xunit;
 
 namespace NuGet.XPlat.FuncTest
 {
-    [CollectionDefinition("NuGet XPlat Test Collection")]
+    [CollectionDefinition(Name)]
     public class XPlatCollection : ICollectionFixture<XPlatMsbuildTestFixture>
     {
         // This class has no code, and is never created. Its purpose is simply
         // to be the place to apply [CollectionDefinition] and all the
         // ICollectionFixture<> interfaces.
+
+        public const string Name = "NuGet XPlat Test Collection";
     }
 }

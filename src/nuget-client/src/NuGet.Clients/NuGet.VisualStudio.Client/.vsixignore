@@ -7,6 +7,8 @@ Azure.Core.dll
 Ben.Demystifier.dll
 Markdig.Signed.dll
 Microsoft.DataAI.NuGetRecommender.Contracts.dll
+Microsoft.Extensions.DependencyInjection.dll
+Microsoft.Extensions.DependencyInjection.Abstractions.dll
 Microsoft.IdentityModel.Clients.ActiveDirectory.dll
 Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.dll
 Microsoft.IdentityModel.JsonWebTokens.dll
