@@ -55,10 +55,7 @@
       <SdkOutputFileDestination Include="@(SdkOutputFile->'$(RedistInstallerLayoutPath)sdk\$(Version)\%(RecursiveDir)%(Filename)%(Extension)')" />
     </ItemGroup>
 
-    <Copy SourceFiles="@(SdkOutputFile)"
-          DestinationFiles="@(SdkOutputFileDestination)"
-          SkipUnchangedFiles="true"
-          UseHardLinksIfPossible="true" />
+    <Copy SourceFiles="@(SdkOutputFile)" DestinationFiles="@(SdkOutputFileDestination)" SkipUnchangedFiles="true" />
   </Target>
 
   <Target Name="LayoutWorkloadUserLocalMarker"
@@ -98,7 +95,15 @@
                             LayoutDnxShim;
                             CrossgenLayout;
                             ReplaceBundledRuntimePackFilesWithSymbolicLinks"
-          AfterTargets="AfterBuild" />
+          AfterTargets="AfterBuild">
+    <PropertyGroup>
+      <!-- Use hard links on Windows, symbolic links on non-Windows -->
+      <_UseHardLinks Condition="'$(OSName)' == 'win'">true</_UseHardLinks>
+      <_UseHardLinks Condition="'$(OSName)' != 'win'">false</_UseHardLinks>
+    </PropertyGroup>
+
+    <DeduplicateAssembliesWithLinks LayoutDirectory="$(RedistInstallerLayoutPath)" UseHardLinks="$(_UseHardLinks)" />
+  </Target>
 
   <!-- Copy the sdk layout into a temporary folder so that it's nested under "sdk\$(Version)\" which is
        necessary for the msi/pkg to install correctly and put the content under that sub path. -->
