@@ -7,22 +7,22 @@ This file should be imported by eng/Versions.props
   <PropertyGroup>
     <!-- _git/dotnet-dotnet dependencies -->
     <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.25569.105</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetBuildManifestPackageVersion>10.0.0-beta.25569.105</MicrosoftDotNetBuildManifestPackageVersion>
     <!-- dotnet/dotnet dependencies -->
-    <MicrosoftNETSdkPackageVersion>10.0.101-servicing.25569.105</MicrosoftNETSdkPackageVersion>
-    <MicrosoftNETCoreAppRefPackageVersion>10.0.1</MicrosoftNETCoreAppRefPackageVersion>
-    <MicrosoftNETCorePlatformsPackageVersion>10.0.1-servicing.25569.105</MicrosoftNETCorePlatformsPackageVersion>
-    <MicrosoftNETWorkloadEmscriptenCurrentManifest100100PackageVersion>10.0.100</MicrosoftNETWorkloadEmscriptenCurrentManifest100100PackageVersion>
+    <MicrosoftDotNetBuildManifestPackageVersion>10.0.0-beta.26064.103</MicrosoftDotNetBuildManifestPackageVersion>
+    <MicrosoftNETSdkPackageVersion>10.0.103-servicing.26064.103</MicrosoftNETSdkPackageVersion>
+    <MicrosoftNETWorkloadEmscriptenCurrentManifest100100PackageVersion>10.0.103</MicrosoftNETWorkloadEmscriptenCurrentManifest100100PackageVersion>
+    <MicrosoftNETCoreAppRefPackageVersion>10.0.3</MicrosoftNETCoreAppRefPackageVersion>
+    <MicrosoftNETCorePlatformsPackageVersion>10.0.3-servicing.26064.103</MicrosoftNETCorePlatformsPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
     <!-- _git/dotnet-dotnet dependencies -->
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
-    <MicrosoftDotNetBuildManifestVersion>$(MicrosoftDotNetBuildManifestPackageVersion)</MicrosoftDotNetBuildManifestVersion>
     <!-- dotnet/dotnet dependencies -->
+    <MicrosoftDotNetBuildManifestVersion>$(MicrosoftDotNetBuildManifestPackageVersion)</MicrosoftDotNetBuildManifestVersion>
     <MicrosoftNETSdkVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftNETSdkVersion>
+    <MicrosoftNETWorkloadEmscriptenCurrentManifest100100Version>$(MicrosoftNETWorkloadEmscriptenCurrentManifest100100PackageVersion)</MicrosoftNETWorkloadEmscriptenCurrentManifest100100Version>
     <MicrosoftNETCoreAppRefVersion>$(MicrosoftNETCoreAppRefPackageVersion)</MicrosoftNETCoreAppRefVersion>
     <MicrosoftNETCorePlatformsVersion>$(MicrosoftNETCorePlatformsPackageVersion)</MicrosoftNETCorePlatformsVersion>
-    <MicrosoftNETWorkloadEmscriptenCurrentManifest100100Version>$(MicrosoftNETWorkloadEmscriptenCurrentManifest100100PackageVersion)</MicrosoftNETWorkloadEmscriptenCurrentManifest100100Version>
   </PropertyGroup>
 </Project>
