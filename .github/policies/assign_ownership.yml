@@ -112,7 +112,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: roslyn-infrastructure-current-swat
+          teamReviewer: mlinfraswat
     - description: 
       if:
       - payloadType: Pull_Request
@@ -121,7 +121,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: roslyn-infrastructure-current-swat
+          teamReviewer: roslyn-mlinfraswat
     - description: 
       if:
       - payloadType: Pull_Request
