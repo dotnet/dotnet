@@ -16,7 +16,7 @@ index 7308e50..5ade71c 100644
    <PropertyGroup>
      <OutputType>Library</OutputType>
 -    <TargetFrameworks>net46;net8.0</TargetFrameworks>
-+    <TargetFrameworks>net10.0</TargetFrameworks>
++    <TargetFrameworks>net11.0</TargetFrameworks>
      <DebugType>full</DebugType>
      <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
      <AssemblyName>Microsoft.Build.Locator</AssemblyName>

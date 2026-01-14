@@ -41,8 +41,8 @@
       of a .NET major or minor release, prebuilts may be needed. When the release is mature, prebuilts
       are not necessary, and this property is removed from the file.
     -->
-    <PrivateSourceBuiltSdkVersion>11.0.100-alpha.1.25618.104</PrivateSourceBuiltSdkVersion>
-    <PrivateSourceBuiltArtifactsVersion>11.0.100-alpha.1.25618.104</PrivateSourceBuiltArtifactsVersion>
+    <PrivateSourceBuiltSdkVersion>11.0.100-alpha.1.26060.102</PrivateSourceBuiltSdkVersion>
+    <PrivateSourceBuiltArtifactsVersion>11.0.100-alpha.1.26060.102</PrivateSourceBuiltArtifactsVersion>
     <!-- command-line-api dependencies -->
     <SystemCommandLineVersion>2.0.0-beta5.25208.1</SystemCommandLineVersion>
     <!-- msbuild dependencies -->

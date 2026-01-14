@@ -17,6 +17,11 @@
     <RepositoryUrl>https://github.com/dotnet/arcade</RepositoryUrl>
     <!-- Only upgrade NuGetAudit warnings to errors for official builds. -->
     <WarningsNotAsErrors Condition="'$(OfficialBuild)' != 'true'">$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
+
+    <!-- TODO: Remove when the NetCurrent property in the bootstrap Arcade SDK got updated to net11.0. -->
+    <NetCurrent>net11.0</NetCurrent>
+    <NetToolCurrent>net11.0</NetToolCurrent>
+    <NetToolMinimum Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NetToolCurrent)</NetToolMinimum>
   </PropertyGroup>
 
 </Project>
