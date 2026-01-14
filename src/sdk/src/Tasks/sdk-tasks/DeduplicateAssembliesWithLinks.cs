@@ -141,14 +141,7 @@ namespace Microsoft.DotNet.Build.Tasks
                 // TODO: Replace P/Invoke with File.CreateHardLink(duplicateFilePath, masterFilePath); when SDK targets .NET 11+
                 // See: https://github.com/dotnet/runtime/issues/69030
                 // We only use hard links on Windows currently, so this is acceptable.
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    CreateHardLinkWindows(duplicateFilePath, masterFilePath);
-                }
-                else
-                {
-                    CreateHardLinkUnix(duplicateFilePath, masterFilePath);
-                }
+                CreateHardLinkWindows(duplicateFilePath, masterFilePath);
             }
             else
             {
@@ -189,24 +182,11 @@ namespace Microsoft.DotNet.Build.Tasks
             }
         }
 
-        private void CreateHardLinkUnix(string linkPath, string targetPath)
-        {
-            int result = link(targetPath, linkPath);
-            if (result != 0)
-            {
-                int errorCode = Marshal.GetLastWin32Error();
-                throw new InvalidOperationException($"link() failed with error code {errorCode}");
-            }
-        }
-
         [DllImport("kernel32.dll", EntryPoint = "CreateHardLinkW", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern bool CreateHardLinkWin32(
             string lpFileName,
             string lpExistingFileName,
             IntPtr lpSecurityAttributes);
-
-        [DllImport("libc", SetLastError = true)]
-        private static extern int link(string oldpath, string newpath);
 
         private record FileEntry(string Path, string Hash, long Size, int Depth);
     }
