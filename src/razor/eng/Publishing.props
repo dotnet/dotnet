@@ -10,7 +10,7 @@
     <_ItemsToPublish Include="$(ArtifactsDir)LanguageServer\**\*.zip" />
     <_ItemsToPublish Include="$(ArtifactsDir)DevKitTelemetry\**\*.zip" />
   </ItemGroup>
-  
+
   <!-- Update Artifacts with Kind=Package to have additional metadata item Category="ToolingPackage".
        Depending on channel configuration, this means that these assets could be pushed to a different feed. -->
   <ItemGroup>

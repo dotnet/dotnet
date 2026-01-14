@@ -17,7 +17,6 @@ internal interface IDefinitionService
         IDocumentSnapshot documentSnapshot,
         DocumentPositionInfo positionInfo,
         ISolutionQueryOperations solutionQueryOperations,
-        bool ignoreComponentAttributes,
         bool includeMvcTagHelpers,
         CancellationToken cancellationToken);
 

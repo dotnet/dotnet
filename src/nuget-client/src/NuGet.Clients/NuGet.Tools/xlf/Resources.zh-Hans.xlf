@@ -134,17 +134,17 @@
       </trans-unit>
       <trans-unit id="Text_AuditSources_Description">
         <source>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</source>
-        <target state="new">Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
+        <target state="translated">审核源在还原期间提供漏洞数据，但不充当包源。如果未配置审核源，则 NuGet 审核使用包源。[了解有关审核源的更多信息](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_AuditSources_HowToRemove">
         <source>Remove all audit sources to revert to using package sources for vulnerability data.</source>
-        <target state="new">Remove all audit sources to revert to using package sources for vulnerability data.</target>
+        <target state="translated">删除所有审核源，以恢复使用包源获取漏洞数据。</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_AuditSources_Title">
         <source>Audit sources</source>
-        <target state="new">Audit sources</target>
+        <target state="translated">审核源</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">
@@ -194,7 +194,7 @@
       </trans-unit>
       <trans-unit id="Text_PackageSources_Description">
         <source>Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</source>
-        <target state="new">Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</target>
+        <target state="translated">包源定义了 NuGet 在安装、还原、审核和更新操作中检索包的位置。[了解有关审核源的更多信息](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageSources_MachineWide">

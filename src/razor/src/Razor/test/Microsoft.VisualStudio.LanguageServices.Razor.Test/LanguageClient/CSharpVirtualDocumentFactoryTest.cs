@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Text;
@@ -156,7 +157,7 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
 
         // Assert
         using var virtualDocument = Assert.Single(virtualDocuments);
-        Assert.EndsWith(TestLanguageServerFeatureOptions.Instance.CSharpVirtualDocumentSuffix, virtualDocument.Uri.OriginalString, StringComparison.Ordinal);
+        Assert.EndsWith(LanguageServerConstants.CSharpVirtualDocumentSuffix, virtualDocument.Uri.OriginalString, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -193,7 +194,7 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
             updater.AddDocument(hostProject2.Key, hostDocument2, EmptyTextLoader.Instance);
         });
 
-        var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true);
+        var languageServerFeatureOptions = new TestLanguageServerFeatureOptions();
         var filePathService = new VisualStudioFilePathService(languageServerFeatureOptions);
         var factory = new CSharpVirtualDocumentFactory(
             _contentTypeRegistryService,

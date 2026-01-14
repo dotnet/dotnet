@@ -4,7 +4,6 @@
 #nullable disable
 
 using System;
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
@@ -20,7 +19,7 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
     public void StringifyAttributes_DirectiveAttribute()
     {
         // Arrange
-        var codeDocument = CreateComponentDocument($"<TestElement @test='abc' />", DefaultTagHelpers);
+        var codeDocument = CreateComponentDocument($"<TestElement @test='abc' />", [.. DefaultTagHelpers]);
         var root = codeDocument.GetRequiredSyntaxRoot();
         var startTag = (MarkupTagHelperStartTagSyntax)root.FindInnermostNode(3);
 
@@ -41,7 +40,7 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
     public void StringifyAttributes_DirectiveAttributeWithParameter()
     {
         // Arrange
-        var codeDocument = CreateComponentDocument($"<TestElement @test:something='abc' />", DefaultTagHelpers);
+        var codeDocument = CreateComponentDocument($"<TestElement @test:something='abc' />", [.. DefaultTagHelpers]);
         var root = codeDocument.GetRequiredSyntaxRoot();
         var startTag = (MarkupTagHelperStartTagSyntax)root.FindInnermostNode(3);
 
@@ -62,7 +61,7 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
     public void StringifyAttributes_MinimizedDirectiveAttribute()
     {
         // Arrange
-        var codeDocument = CreateComponentDocument($"<TestElement @minimized />", DefaultTagHelpers);
+        var codeDocument = CreateComponentDocument($"<TestElement @minimized />", [.. DefaultTagHelpers]);
         var root = codeDocument.GetRequiredSyntaxRoot();
         var startTag = (MarkupTagHelperStartTagSyntax)root.FindInnermostNode(3);
 
@@ -83,7 +82,7 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
     public void StringifyAttributes_MinimizedDirectiveAttributeWithParameter()
     {
         // Arrange
-        var codeDocument = CreateComponentDocument($"<TestElement @minimized:something />", DefaultTagHelpers);
+        var codeDocument = CreateComponentDocument($"<TestElement @minimized:something />", [.. DefaultTagHelpers]);
         var root = codeDocument.GetRequiredSyntaxRoot();
         var startTag = (MarkupTagHelperStartTagSyntax)root.FindInnermostNode(3);
 
@@ -238,9 +237,9 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
             });
     }
 
-    private static RazorCodeDocument CreateComponentDocument(string text, ImmutableArray<TagHelperDescriptor> tagHelpers)
+    private static RazorCodeDocument CreateComponentDocument(string text, TagHelperCollection tagHelpers)
     {
-        tagHelpers = tagHelpers.NullToEmpty();
+        tagHelpers ??= [];
         var sourceDocument = TestRazorSourceDocument.Create(text);
         var projectEngine = RazorProjectEngine.Create(builder =>
         {

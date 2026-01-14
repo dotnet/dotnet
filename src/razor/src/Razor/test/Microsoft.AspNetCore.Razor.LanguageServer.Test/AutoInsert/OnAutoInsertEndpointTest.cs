@@ -27,7 +27,6 @@ public partial class OnAutoInsertEndpointTest(ITestOutputHelper testOutput) : Si
         var insertProvider2 = new TestOnAutoInsertProvider("<", canResolve: true);
         var autoInsertService = new AutoInsertService([insertProvider1, insertProvider2]);
         var endpoint = new OnAutoInsertEndpoint(
-            LanguageServerFeatureOptions,
             DocumentMappingService,
             languageServer,
             autoInsertService,
@@ -68,7 +67,6 @@ public partial class OnAutoInsertEndpointTest(ITestOutputHelper testOutput) : Si
         var optionsMonitor = GetOptionsMonitor();
         var insertProvider = new TestOnAutoInsertProvider(">", canResolve: true);
         var endpoint = new OnAutoInsertEndpoint(
-            LanguageServerFeatureOptions,
             DocumentMappingService,
             languageServer,
             new AutoInsertService([insertProvider]),
@@ -110,7 +108,6 @@ public partial class OnAutoInsertEndpointTest(ITestOutputHelper testOutput) : Si
         var optionsMonitor = GetOptionsMonitor(formatOnType: false);
         var insertProvider = new TestOnAutoInsertProvider(">", canResolve: false);
         var endpoint = new OnAutoInsertEndpoint(
-            LanguageServerFeatureOptions,
             DocumentMappingService,
             languageServer,
             new AutoInsertService([insertProvider]),

@@ -38,15 +38,7 @@ using Microsoft.AspNetCore.Components.Web
             __builder.AddNamedEvent("onsubmit", __formName);
             __builder.CloseElement();
             __builder.AddMarkupContent(3, "\r\n");
-            __builder.OpenComponent<global::Test.
-#nullable restore
-#line (3,2)-(3,15) "x:\dir\subdir\Test\TestComponent.cshtml"
-TestComponent
-
-#line default
-#line hidden
-#nullable disable
-            >(4);
+            __builder.OpenComponent<global::Test.TestComponent>(4);
             __builder.AddAttribute(5, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
                 __builder2.OpenElement(6, "form");
                 __builder2.AddAttribute(7, "method", "post");
@@ -63,15 +55,7 @@ TestComponent
                 __builder2.AddNamedEvent("onsubmit", __formName2_0);
                 __builder2.CloseElement();
                 __builder2.AddMarkupContent(9, "\r\n    ");
-                __builder2.OpenComponent<global::Test.
-#nullable restore
-#line (5,6)-(5,19) "x:\dir\subdir\Test\TestComponent.cshtml"
-TestComponent
-
-#line default
-#line hidden
-#nullable disable
-                >(10);
+                __builder2.OpenComponent<global::Test.TestComponent>(10);
                 __builder2.AddAttribute(11, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder3) => {
                     __builder3.OpenElement(12, "form");
                     __builder3.AddAttribute(13, "method", "post");

@@ -22,7 +22,7 @@ public sealed class RazorDiagnostic : IEquatable<RazorDiagnostic>, IFormattable
     {
         _descriptor = descriptor ?? throw new ArgumentNullException(nameof(descriptor));
         Span = span ?? SourceSpan.Undefined;
-        _args = args ?? Array.Empty<object>();
+        _args = args ?? [];
     }
 
     public static RazorDiagnostic Create(RazorDiagnosticDescriptor descriptor)
@@ -38,29 +38,29 @@ public sealed class RazorDiagnostic : IEquatable<RazorDiagnostic>, IFormattable
         => new(descriptor, span, args);
 
     internal Checksum Checksum
-        => _checksum ?? InterlockedOperations.Initialize(ref _checksum, ComputeChecksum());
+        => _checksum ??= ComputeChecksum();
 
     private Checksum ComputeChecksum()
     {
         var builder = new Checksum.Builder();
 
-        builder.AppendData(_descriptor.Id);
-        builder.AppendData((int)_descriptor.Severity);
-        builder.AppendData(_descriptor.MessageFormat);
+        builder.Append(_descriptor.Id);
+        builder.Append((int)_descriptor.Severity);
+        builder.Append(_descriptor.MessageFormat);
 
         foreach (var arg in _args)
         {
-            builder.AppendData(ConvertEnumIfNeeded(arg));
+            builder.Append(ConvertEnumIfNeeded(arg));
         }
 
         var span = Span;
-        builder.AppendData(span.FilePath);
-        builder.AppendData(span.AbsoluteIndex);
-        builder.AppendData(span.LineIndex);
-        builder.AppendData(span.CharacterIndex);
-        builder.AppendData(span.Length);
-        builder.AppendData(span.LineCount);
-        builder.AppendData(span.EndCharacterIndex);
+        builder.Append(span.FilePath);
+        builder.Append(span.AbsoluteIndex);
+        builder.Append(span.LineIndex);
+        builder.Append(span.CharacterIndex);
+        builder.Append(span.Length);
+        builder.Append(span.LineCount);
+        builder.Append(span.EndCharacterIndex);
 
         return builder.FreeAndGetChecksum();
 

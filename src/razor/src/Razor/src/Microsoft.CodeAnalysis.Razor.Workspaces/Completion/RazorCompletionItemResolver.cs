@@ -144,6 +144,15 @@ internal class RazorCompletionItemResolver : CompletionItemResolver
 
                     break;
                 }
+            case RazorCompletionItemKind.CSharpRazorKeyword:
+                {
+                    if (associatedRazorCompletion.DescriptionInfo is CSharpRazorKeywordCompletionDescription descriptionInfo)
+                    {
+                        completionItem.Documentation = descriptionInfo.Description;
+                    }
+
+                    break;
+                }
         }
 
         if (tagHelperMarkupTooltip != null)

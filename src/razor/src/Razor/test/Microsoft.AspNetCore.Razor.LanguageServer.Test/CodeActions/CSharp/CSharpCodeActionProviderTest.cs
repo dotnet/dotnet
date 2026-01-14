@@ -242,7 +242,7 @@ $$Path;
 
         var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents, new SourceSpan(8, 4));
 
-        var options = new ConfigurableLanguageServerFeatureOptions(new[] { $"--{nameof(ConfigurableLanguageServerFeatureOptions.ShowAllCSharpCodeActions)}" });
+        var options = new TestLanguageServerFeatureOptions(showAllCSharpCodeActions: true);
         var provider = new CSharpCodeActionProvider(options);
 
         ImmutableArray<RazorVSInternalCodeAction> codeActions =
@@ -307,11 +307,11 @@ $$Path;
         bool supportsFileCreation = true,
         bool supportsCodeActionResolve = true)
     {
-        var tagHelpers = ImmutableArray<TagHelperDescriptor>.Empty;
+        var tagHelpers = TagHelperCollection.Empty;
         var sourceDocument = TestRazorSourceDocument.Create(text, filePath: filePath, relativePath: filePath);
         var projectEngine = RazorProjectEngine.Create(builder =>
         {
-            builder.AddTagHelpers(tagHelpers);
+            builder.SetTagHelpers(tagHelpers);
 
             builder.ConfigureParserOptions(builder =>
             {
@@ -325,7 +325,7 @@ $$Path;
         var diagnosticDescriptor = new RazorDiagnosticDescriptor("RZ10012", "diagnostic", RazorDiagnosticSeverity.Error);
         var diagnostic = RazorDiagnostic.Create(diagnosticDescriptor, componentSourceSpan);
         var csharpDocumentWithDiagnostic = new RazorCSharpDocument(codeDocument, csharpDocument.Text, [diagnostic]);
-        codeDocument.SetCSharpDocument(csharpDocumentWithDiagnostic);
+        codeDocument = codeDocument.WithCSharpDocument(csharpDocumentWithDiagnostic);
 
         var documentSnapshotMock = new StrictMock<IDocumentSnapshot>();
         documentSnapshotMock

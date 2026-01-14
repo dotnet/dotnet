@@ -4,7 +4,6 @@
 #nullable disable
 
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -561,7 +560,7 @@ public class TagHelperCompletionProviderTest(ITestOutputHelper testOutput) : Tag
                 <test $$/>
                 """,
             isRazorFile: false,
-            tagHelpers: ImmutableArray.Create(tagHelper.Build()));
+            tagHelpers: [tagHelper.Build()]);
 
         // Act
         var completions = service.GetCompletionItems(context);
@@ -604,7 +603,7 @@ public class TagHelperCompletionProviderTest(ITestOutputHelper testOutput) : Tag
                 <test $$/>
                 """,
             isRazorFile: false,
-            tagHelpers: ImmutableArray.Create(tagHelper.Build()));
+            tagHelpers: [tagHelper.Build()]);
 
         // Act
         var completions = service.GetCompletionItems(context);
@@ -971,17 +970,17 @@ public class TagHelperCompletionProviderTest(ITestOutputHelper testOutput) : Tag
                 """,
             isRazorFile: true,
             options,
-            tagHelpers: ImmutableArray.Create(componentBuilder.Build()));
+            tagHelpers: [componentBuilder.Build()]);
 
         // Act
         var completions = service.GetCompletionItems(context);
 
         // Assert - should have two completions: regular and snippet
         Assert.Equal(2, completions.Length);
-        
+
         RazorCompletionItem regularCompletion = null;
         RazorCompletionItem snippetCompletion = null;
-        
+
         foreach (var completion in completions)
         {
             if (completion.DisplayText == "ComponentWithRequiredParams")
@@ -993,11 +992,11 @@ public class TagHelperCompletionProviderTest(ITestOutputHelper testOutput) : Tag
                 snippetCompletion = completion;
             }
         }
-        
+
         Assert.NotNull(regularCompletion);
         Assert.False(regularCompletion.IsSnippet);
         Assert.Equal("ComponentWithRequiredParams", regularCompletion.InsertText);
-        
+
         Assert.NotNull(snippetCompletion);
         Assert.True(snippetCompletion.IsSnippet);
         Assert.Contains("RequiredParam1", snippetCompletion.InsertText);
@@ -1036,7 +1035,7 @@ public class TagHelperCompletionProviderTest(ITestOutputHelper testOutput) : Tag
                 """,
             isRazorFile: true,
             options,
-            tagHelpers: ImmutableArray.Create(componentBuilder.Build()));
+            tagHelpers: [componentBuilder.Build()]);
 
         // Act
         var completions = service.GetCompletionItems(context);
@@ -1074,7 +1073,7 @@ public class TagHelperCompletionProviderTest(ITestOutputHelper testOutput) : Tag
                 """,
             isRazorFile: true,
             options,
-            tagHelpers: ImmutableArray.Create(componentBuilder.Build()));
+            tagHelpers: [componentBuilder.Build()]);
 
         // Act
         var completions = service.GetCompletionItems(context);
@@ -1086,9 +1085,13 @@ public class TagHelperCompletionProviderTest(ITestOutputHelper testOutput) : Tag
         Assert.Equal("ComponentWithoutRequired", completion.InsertText);
     }
 
-    private static RazorCompletionContext CreateRazorCompletionContext(string markup, bool isRazorFile, RazorCompletionOptions options = default, ImmutableArray<TagHelperDescriptor> tagHelpers = default)
+    private static RazorCompletionContext CreateRazorCompletionContext(
+        string markup,
+        bool isRazorFile,
+        RazorCompletionOptions options = default,
+        TagHelperCollection tagHelpers = null)
     {
-        tagHelpers = tagHelpers.NullToEmpty();
+        tagHelpers ??= [];
 
         TestFileMarkupParser.GetPosition(markup, out var documentContent, out var position);
         var codeDocument = CreateCodeDocument(documentContent, isRazorFile, tagHelpers);

@@ -18,7 +18,7 @@ internal class AutoInsertService(IEnumerable<IOnAutoInsertProvider> onAutoInsert
     public static FrozenSet<string> HtmlAllowedAutoInsertTriggerCharacters { get; }
         = new string[] { "=" }.ToFrozenSet(StringComparer.Ordinal);
     public static FrozenSet<string> CSharpAllowedAutoInsertTriggerCharacters { get; }
-        = new string[] { "'", "/", "\n" }.ToFrozenSet(StringComparer.Ordinal);
+        = new string[] { "'", "/", "\n", "\"" }.ToFrozenSet(StringComparer.Ordinal);
 
     private readonly ImmutableArray<string> _triggerCharacters = CalculateTriggerCharacters(onAutoInsertProviders);
 

@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 
@@ -15,14 +14,14 @@ internal static class RazorCodeDocumentFactory
     public static string GetFileName(bool isRazorFile)
         => isRazorFile ? RazorFile : CSHtmlFile;
 
-    public static RazorCodeDocument CreateCodeDocument(string text, bool isRazorFile, params ImmutableArray<TagHelperDescriptor> tagHelpers)
+    public static RazorCodeDocument CreateCodeDocument(string text, bool isRazorFile, params TagHelperCollection tagHelpers)
     {
         return CreateCodeDocument(text, GetFileName(isRazorFile), tagHelpers);
     }
 
-    public static RazorCodeDocument CreateCodeDocument(string text, string filePath, params ImmutableArray<TagHelperDescriptor> tagHelpers)
+    public static RazorCodeDocument CreateCodeDocument(string text, string filePath, params TagHelperCollection tagHelpers)
     {
-        tagHelpers = tagHelpers.NullToEmpty();
+        tagHelpers ??= [];
 
         var sourceDocument = TestRazorSourceDocument.Create(text, filePath: filePath, relativePath: filePath);
         var projectEngine = RazorProjectEngine.Create(builder =>

@@ -931,6 +931,287 @@ catch(bar) { baz(); }");
             """);
     }
 
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 switch
+                {
+                    0 => "value",
+                    _ => "no value"
+                };
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_WithLessThan()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 switch
+                {
+                    < 9 => "less than 10"
+                };
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_WithGreaterThan()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 switch
+                {
+                    > 10 => "greater than 10"
+                };
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_WithMultipleComparisons()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 switch
+                {
+                    < 9 => "less than 10",
+                    10 => "equal to 10",
+                    > 10 => "greater than 10"
+                };
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_Incomplete()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 switch
+                {
+                    0 => "value"
+
+                var val2 = "value2";
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_WithLessThan_Incomplete()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 switch
+                {
+                    < 9 => "less than 10"
+
+                var val2 = "value2";
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_WithWrongKeyword()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 using
+                {
+                    0 => "value"
+                };
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_WithWrongKeyword_AndLessThan()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 using
+                {
+                     < 9 => "less than 10"
+                };
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_WithMarkupInside()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 switch
+                {
+                    0 => <span>some <i>html</i></span>,
+                    _ => "value"
+                };
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_WithMarkupInside_ViaAtSymbol()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 switch
+                {
+                    0 => @<span>zero</span>,
+                    _ => @<span>one</span>
+                };
+            }
+            """);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7230")]
+    public void SwitchExpression_WithMarkupInside_WithLessThan()
+    {
+        ParseDocumentTest("""
+            @{
+                var val = 0 switch
+                {
+                    < 10 => @<span>less than 10</span>,
+                    _ => @<span>other</span>
+                };
+            }
+            """);
+    }
+
+    [Fact]
+    public void GitConflictMarker_InMarkup()
+    {
+        ParseDocumentTest("""
+            <div>
+            <<<<<<< HEAD
+            <p>Current changes</p>
+            =======
+            <p>Incoming changes</p>
+            >>>>>>> feature-branch
+            </div>
+            """);
+    }
+
+    [Fact]
+    public void GitConflictMarker_InCodeBlock()
+    {
+        ParseDocumentTest("""
+            @{
+            <<<<<<< HEAD
+                var x = 1;
+            =======
+                var x = 2;
+            >>>>>>> feature-branch
+            }
+            """);
+    }
+
+    [Fact]
+    public void GitConflictMarker_InExpression()
+    {
+        ParseDocumentTest("""
+            @(
+            <<<<<<< HEAD
+            someValue
+            =======
+            otherValue
+            >>>>>>> feature-branch
+            )
+            """);
+    }
+
+    [Fact]
+    public void GitConflictMarker_MixedWithRazor()
+    {
+        ParseDocumentTest("""
+            @if (true)
+            {
+            <<<<<<< HEAD
+                <p>@currentValue</p>
+            =======
+                <p>@incomingValue</p>
+            >>>>>>> feature-branch
+            }
+            """);
+    }
+
+    [Fact]
+    public void GitConflictMarker_StartMarkerOnly()
+    {
+        ParseDocumentTest("""
+            <div>
+            <<<<<<< HEAD
+            <p>Unresolved conflict</p>
+            </div>
+            """);
+    }
+
+    [Fact]
+    public void GitConflictMarker_WithDividerOnly()
+    {
+        ParseDocumentTest("""
+            <div>
+            <<<<<<< HEAD
+            <p>Current changes</p>
+            =======
+            <p>Missing end marker</p>
+            </div>
+            """);
+    }
+
+    [Fact]
+    public void GitConflictMarker_AtDocumentStart()
+    {
+        ParseDocumentTest("""
+            <<<<<<< HEAD
+            <p>Current</p>
+            =======
+            <p>Incoming</p>
+            >>>>>>> main
+            """);
+    }
+
+    [Fact]
+    public void GitConflictMarker_InImplicitExpression()
+    {
+        ParseDocumentTest("""
+            <p>@<<<<<<< HEAD</p>
+            """);
+    }
+
+
+    [Fact]
+    public void GitConflictMarker_Malformed_Trailing()
+    {
+        ParseDocumentTest("""
+            @{
+            <<<<<<< HEAD var x = 0;
+                var x = 1;
+            ======= var x = 3;
+                var x = 2;
+            >>>>>>> feature-branch var x = 4;
+            }
+            """);
+    }
+
+    [Fact]
+    public void GitConflictMarker_Malformed_Leading()
+    {
+        ParseDocumentTest("""
+            @{
+            var x = 0; <<<<<<< HEAD 
+                var x = 1;
+            var x = 3; ======= 
+                var x = 2;
+            var x = 4; >>>>>>> feature-branch 
+            }
+            """);
+    }
+
     private void RunRazorCommentBetweenClausesTest(string preComment, string postComment, AcceptedCharactersInternal acceptedCharacters = AcceptedCharactersInternal.Any)
     {
         ParseDocumentTest(preComment + "@* Foo *@ @* Bar *@" + postComment);
