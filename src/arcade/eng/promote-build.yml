@@ -69,7 +69,7 @@ extends:
         os: windows
       ${{ else }}:
         name: NetCore1ESPool-Publishing-Internal
-        image: windows.vs2019.amd64
+        image: windows.vs2022.amd64
         os: windows
 
     stages:
