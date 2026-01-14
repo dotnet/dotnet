@@ -46,8 +46,8 @@ public class OmniSharpTests : SdkTests
         string projectDirectory = DotNetHelper.ExecuteNew(templateName, projectName);
 
         (Process Process, string StdOut, string StdErr) executeResult = ExecuteHelper.ExecuteProcess(
-            Path.Combine(OmniSharpDirectory, "run"),
-            $"-s {projectDirectory}",
+            DotNetHelper.DotNetPath,
+            $"{Path.Combine(OmniSharpDirectory, "OmniSharp.dll")} -- -s {projectDirectory}",
             OutputHelper,
             logOutput: true,
             millisecondTimeout: 5000,
@@ -56,6 +56,8 @@ public class OmniSharpTests : SdkTests
         Assert.NotEqual(0, executeResult.Process.ExitCode);
         Assert.DoesNotContain("ERROR", executeResult.StdOut);
         Assert.DoesNotContain("ERROR", executeResult.StdErr);
+        Assert.DoesNotContain("command not found", executeResult.StdErr, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("No such file or directory", executeResult.StdErr, StringComparison.OrdinalIgnoreCase);
     }
 
     private async Task InitializeOmniSharp()
@@ -63,7 +65,7 @@ public class OmniSharpTests : SdkTests
         if (!Directory.Exists(OmniSharpDirectory))
         {
             using HttpClient client = new();
-            string omniSharpTarballFile = $"omnisharp-linux-{Config.TargetArchitecture}.tar.gz";
+            string omniSharpTarballFile = $"omnisharp-linux-{Config.TargetArchitecture}-net6.0.tar.gz";
             Uri omniSharpTarballUrl = new($"https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{OmniSharpReleaseVersion}/{omniSharpTarballFile}");
             await client.DownloadFileAsync(omniSharpTarballUrl, omniSharpTarballFile, OutputHelper);
 
