@@ -230,4 +230,7 @@
     <value>{0} (and req'd attributes...)</value>
     <comment>The term "req'd" is an abbreviation for "required"</comment>
   </data>
+  <data name="KeywordDescription" xml:space="preserve">
+    <value>{0} Keyword</value>
+  </data>
 </root>

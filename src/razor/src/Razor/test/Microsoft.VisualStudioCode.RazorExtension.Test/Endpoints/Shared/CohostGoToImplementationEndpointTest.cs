@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
-using Microsoft.CodeAnalysis.Razor.Cohost;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Remote.Razor;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
@@ -37,7 +37,7 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
             }
             """;
 
-        await VerifyCSharpGoToImplementationAsync(input);
+        await VerifyGoToImplementationAsync(input);
     }
 
     [Fact]
@@ -61,7 +61,7 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
             }
             """;
 
-        await VerifyCSharpGoToImplementationAsync(input);
+        await VerifyGoToImplementationAsync(input);
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
             }
             """;
 
-        await VerifyCSharpGoToImplementationAsync(input);
+        await VerifyGoToImplementationAsync(input);
     }
 
     [Fact]
@@ -103,50 +103,57 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
         var document = CreateProjectAndRazorDocument(input.Text);
         var inputText = await document.GetTextAsync(DisposalToken);
 
-        var htmlResponse = new SumType<LspLocation[], VSInternalReferenceItem[]>?(new LspLocation[]
+        var htmlResponse = new LspLocation
         {
-            new LspLocation
-            {
-                DocumentUri = new(new Uri(document.CreateUri(), document.Name + FeatureOptions.HtmlVirtualDocumentSuffix)),
-                Range = inputText.GetRange(input.Span),
-            },
-        });
-
-        var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentImplementationName, htmlResponse)]);
-
-        await VerifyGoToImplementationResultAsync(input, document, requestInvoker);
-    }
-
-    private async Task VerifyCSharpGoToImplementationAsync(TestCode input)
-    {
-        var document = CreateProjectAndRazorDocument(input.Text);
-
-        var requestInvoker = new TestHtmlRequestInvoker();
-
-        await VerifyGoToImplementationResultCoreAsync(input, document, requestInvoker);
-    }
-
-    private async Task VerifyGoToImplementationResultAsync(TestCode input, TextDocument document, IHtmlRequestInvoker requestInvoker)
-    {
-        await VerifyGoToImplementationResultCoreAsync(input, document, requestInvoker);
-    }
-
-    private async Task VerifyGoToImplementationResultCoreAsync(TestCode input, TextDocument document, IHtmlRequestInvoker requestInvoker)
-    {
-        var inputText = await document.GetTextAsync(DisposalToken);
-
-        var filePathService = new RemoteFilePathService(FeatureOptions);
-        var endpoint = new CohostGoToImplementationEndpoint(IncompatibleProjectService, RemoteServiceInvoker, requestInvoker, filePathService);
-
-        var position = inputText.GetPosition(input.Position);
-        var textDocumentPositionParams = new TextDocumentPositionParams
-        {
-            Position = position,
-            TextDocument = new TextDocumentIdentifier { DocumentUri = document.CreateDocumentUri() },
+            DocumentUri = new(new Uri(document.CreateUri(), document.Name + LanguageServerConstants.HtmlVirtualDocumentSuffix)),
+            Range = inputText.GetRange(input.Span),
         };
 
-        var result = await endpoint.GetTestAccessor().HandleRequestAsync(textDocumentPositionParams, document, DisposalToken);
+        await VerifyGoToImplementationAsync(input, document, htmlResponse);
+    }
 
+    [Fact]
+    public async Task Component_FromCSharp()
+    {
+        TestCode input = """
+            <SurveyPrompt Title="InputValue" />
+
+            @typeof(Surv$$eyPrompt).ToString()
+            """;
+
+        TestCode surveyPrompt = """
+            [||]@namespace SomeProject
+
+            <div></div>
+
+            @code
+            {
+                [Parameter]
+                public string Title { get; set; }
+            }
+            """;
+
+        var result = await GetGoToImplementationResultAsync(input,
+            additionalFiles: (FilePath("SurveyPrompt.razor"), surveyPrompt.Text));
+
+        Assert.NotNull(result);
+        var locations = result.Value.First;
+        var location = Assert.Single(locations);
+
+        Assert.Equal(FileUri("SurveyPrompt.razor"), location.DocumentUri.GetRequiredParsedUri());
+        var text = SourceText.From(surveyPrompt.Text);
+        var range = text.GetRange(surveyPrompt.Span);
+        Assert.Equal(range, location.Range);
+    }
+
+    private async Task VerifyGoToImplementationAsync(TestCode input, TextDocument? document = null, LspLocation? htmlResponse = null)
+    {
+        document ??= CreateProjectAndRazorDocument(input.Text);
+        var result = await GetGoToImplementationResultCoreAsync(input, document, htmlResponse);
+
+        Assert.NotNull(result);
+
+        var inputText = SourceText.From(input.Text);
         if (result.Value.TryGetFirst(out var roslynLocations))
         {
             var expected = input.Spans.Select(s => inputText.GetRange(s).ToLinePositionSpan()).OrderBy(r => r.Start.Line).ToArray();
@@ -159,5 +166,35 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
         {
             Assert.Fail($"Unsupported result type: {result.Value.GetType()}");
         }
+    }
+
+    private async Task<SumType<LspLocation[], VSInternalReferenceItem[]>?> GetGoToImplementationResultAsync(
+        TestCode input,
+        LspLocation? htmlResponse = null,
+        params (string fileName, string contents)[]? additionalFiles)
+    {
+        var document = CreateProjectAndRazorDocument(input.Text, additionalFiles: additionalFiles);
+        return await GetGoToImplementationResultCoreAsync(input, document, htmlResponse);
+    }
+
+    private async Task<SumType<LspLocation[], VSInternalReferenceItem[]>?> GetGoToImplementationResultCoreAsync(TestCode input, TextDocument document, LspLocation? htmlResponse)
+    {
+        var requestInvoker = htmlResponse is null
+            ? new TestHtmlRequestInvoker()
+            : new TestHtmlRequestInvoker([(Methods.TextDocumentImplementationName, new SumType<LspLocation[], VSInternalReferenceItem[]>?(new LspLocation[] { htmlResponse }))]);
+
+        var inputText = await document.GetTextAsync(DisposalToken);
+
+        var filePathService = new RemoteFilePathService(FeatureOptions);
+        var endpoint = new CohostGoToImplementationEndpoint(IncompatibleProjectService, RemoteServiceInvoker, requestInvoker, filePathService);
+
+        var position = inputText.GetPosition(input.Position);
+        var textDocumentPositionParams = new TextDocumentPositionParams
+        {
+            Position = position,
+            TextDocument = new TextDocumentIdentifier { DocumentUri = document.CreateDocumentUri() },
+        };
+
+        return await endpoint.GetTestAccessor().HandleRequestAsync(textDocumentPositionParams, document, DisposalToken);
     }
 }

@@ -130,7 +130,7 @@ public class WrapWithTagTests(ITestOutputHelper testOutputHelper) : AbstractRazo
             """, ControlledHangMitigatingCancellationToken);
     }
 
-    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8856")]
+    [IdeFact(Skip = "https://github.com/dotnet/razor/issues/8856")]
     public async Task WrapWithTag_SelfClosingTag()
     {
         // Open the file

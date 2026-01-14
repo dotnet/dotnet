@@ -30,9 +30,6 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
     public async Task Handle_Hover_SingleServer_CallsDelegatedLanguageServer()
     {
         // Arrange
-        var languageServerFeatureOptions = StrictMock.Of<LanguageServerFeatureOptions>(options =>
-            options.SingleServerSupport == true);
-
         var delegatedHover = new LspHover();
 
         var clientConnection = TestMocks.CreateClientConnection(builder =>
@@ -53,7 +50,7 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
             .Setup(x => x.TryMapToCSharpDocumentPosition(It.IsAny<RazorCSharpDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex))
             .Returns(true);
 
-        var endpoint = CreateEndpoint(languageServerFeatureOptions, documentMappingServiceMock.Object, clientConnection);
+        var endpoint = CreateEndpoint(documentMappingServiceMock.Object, clientConnection);
 
         var (documentContext, position) = CreateDefaultDocumentContext();
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -153,10 +150,7 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
         var razorFilePath = "C:/path/to/file.razor";
         var documentContextFactory = new TestDocumentContextFactory(razorFilePath, codeDocument);
         var languageServerFeatureOptions = StrictMock.Of<LanguageServerFeatureOptions>(options =>
-            options.SupportsFileManipulation == true &&
-            options.SingleServerSupport == true &&
-            options.CSharpVirtualDocumentSuffix == ".g.cs" &&
-            options.HtmlVirtualDocumentSuffix == ".g.html");
+            options.SupportsFileManipulation == true);
         var languageServer = new HoverLanguageServer(csharpServer, csharpDocumentUri);
         var documentMappingService = new LspDocumentMappingService(FilePathService, documentContextFactory, LoggerFactory);
 
@@ -174,7 +168,6 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
         var endpoint = new HoverEndpoint(
             componentAvailabilityService,
             clientCapabilitiesService,
-            languageServerFeatureOptions,
             documentMappingService,
             languageServer,
             LoggerFactory);
@@ -241,14 +234,9 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
     }
 
     private HoverEndpoint CreateEndpoint(
-        LanguageServerFeatureOptions? languageServerFeatureOptions = null,
         IDocumentMappingService? documentMappingService = null,
         IClientConnection? clientConnection = null)
     {
-        languageServerFeatureOptions ??= StrictMock.Of<LanguageServerFeatureOptions>(options =>
-            options.SupportsFileManipulation == true &&
-            options.SingleServerSupport == false);
-
         documentMappingService ??= StrictMock.Of<IDocumentMappingService>();
 
         clientConnection ??= StrictMock.Of<IClientConnection>();
@@ -267,7 +255,6 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
         var endpoint = new HoverEndpoint(
             componentAvailabilityService,
             clientCapabilitiesService,
-            languageServerFeatureOptions,
             documentMappingService,
             clientConnection,
             LoggerFactory);

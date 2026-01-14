@@ -36,8 +36,8 @@ internal static partial class RazorCodeDocumentExtensions
     public static SourceText GetCSharpSourceText(this RazorCodeDocument document)
         => document.GetRequiredCSharpDocument().Text;
 
-    public static SourceText GetHtmlSourceText(this RazorCodeDocument document)
-        => document.GetHtmlDocument().Text;
+    public static SourceText GetHtmlSourceText(this RazorCodeDocument document, CancellationToken cancellationToken)
+        => GetCachedData(document).GetOrComputeHtmlDocument(cancellationToken).Text;
 
     /// <summary>
     ///  Retrieves a cached Roslyn <see cref="SyntaxTree"/> from the generated C# document.

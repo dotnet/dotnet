@@ -93,7 +93,7 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
 
                 Assert.Same(projectSnapshot, p);
 
-                return new([]);
+                return [];
             },
         };
 
@@ -101,6 +101,7 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
 
         // Assert
         Assert.True(calledOutOfProcess);
+        Assert.NotNull(result);
         Assert.Empty(result);
     }
 
@@ -125,14 +126,14 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
                 calledOutOfProcess = true;
 
                 Assert.Same(projectSnapshot, p);
-                return new([]);
+                return [];
             },
             OnResolveInProcess = (p) =>
             {
                 calledInProcess = true;
 
                 Assert.Same(projectSnapshot, p);
-                return new([]);
+                return [];
             },
         };
 
@@ -141,6 +142,7 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
         // Assert
         Assert.True(calledOutOfProcess);
         Assert.False(calledInProcess);
+        Assert.NotNull(result);
         Assert.Empty(result);
     }
 
@@ -172,7 +174,7 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
                 calledInProcess = true;
 
                 Assert.Same(projectSnapshot, p);
-                return new([]);
+                return [];
             },
         };
 
@@ -181,6 +183,7 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
         // Assert
         Assert.True(calledOutOfProcess);
         Assert.True(calledInProcess);
+        Assert.NotNull(result);
         Assert.Empty(result);
     }
 
@@ -205,7 +208,7 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
 
                 Assert.Same(projectSnapshot, p);
 
-                return new([]);
+                return [];
             },
         };
 
@@ -213,6 +216,7 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
 
         // Assert
         Assert.True(calledInProcess);
+        Assert.NotNull(result);
         Assert.Empty(result);
     }
 
@@ -238,7 +242,7 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
                 calledInProcess = true;
                 Assert.Same(projectSnapshot, p);
 
-                return new([]);
+                return [];
             },
             OnResolveOutOfProcess = (p) =>
             {

@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Text;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
@@ -13,7 +14,7 @@ internal abstract class AbstractFilePathService(LanguageServerFeatureOptions lan
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
 
     public string GetRazorCSharpFilePath(ProjectKey projectKey, string razorFilePath)
-        => GetGeneratedFilePath(projectKey, razorFilePath, _languageServerFeatureOptions.CSharpVirtualDocumentSuffix);
+        => GetGeneratedFilePath(projectKey, razorFilePath, LanguageServerConstants.CSharpVirtualDocumentSuffix);
 
     public virtual Uri GetRazorDocumentUri(Uri virtualDocumentUri)
     {
@@ -24,10 +25,10 @@ internal abstract class AbstractFilePathService(LanguageServerFeatureOptions lan
     }
 
     public virtual bool IsVirtualCSharpFile(Uri uri)
-        => CheckIfFileUriAndExtensionMatch(uri, _languageServerFeatureOptions.CSharpVirtualDocumentSuffix);
+        => CheckIfFileUriAndExtensionMatch(uri, LanguageServerConstants.CSharpVirtualDocumentSuffix);
 
     public bool IsVirtualHtmlFile(Uri uri)
-        => CheckIfFileUriAndExtensionMatch(uri, _languageServerFeatureOptions.HtmlVirtualDocumentSuffix);
+        => CheckIfFileUriAndExtensionMatch(uri, LanguageServerConstants.HtmlVirtualDocumentSuffix);
 
     public bool IsVirtualDocumentUri(Uri uri)
         => IsVirtualCSharpFile(uri) || IsVirtualHtmlFile(uri);
@@ -37,13 +38,13 @@ internal abstract class AbstractFilePathService(LanguageServerFeatureOptions lan
 
     private string GetRazorFilePath(string filePath)
     {
-        var trimIndex = filePath.LastIndexOf(_languageServerFeatureOptions.HtmlVirtualDocumentSuffix);
+        var trimIndex = filePath.LastIndexOf(LanguageServerConstants.HtmlVirtualDocumentSuffix);
 
         // We don't check for C# in cohosting, as it will throw, and people might call this method on any
         // random path.
         if (trimIndex == -1 && !_languageServerFeatureOptions.UseRazorCohostServer)
         {
-            trimIndex = filePath.LastIndexOf(_languageServerFeatureOptions.CSharpVirtualDocumentSuffix);
+            trimIndex = filePath.LastIndexOf(LanguageServerConstants.CSharpVirtualDocumentSuffix);
 
             if (trimIndex == -1)
             {
@@ -51,15 +52,11 @@ internal abstract class AbstractFilePathService(LanguageServerFeatureOptions lan
                 return filePath;
             }
 
-            // If this is a C# generated file, and we're including the project suffix, then filename will be
-            // <Page>.razor.<project slug><c# suffix>
-            if (_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath)
-            {
-                // We can remove the project key easily, by just looking for the last '.'. The project
-                // slug itself cannot a '.', enforced by the assert below in GetProjectSuffix
-                trimIndex = filePath.LastIndexOf('.', trimIndex - 1);
-                Debug.Assert(trimIndex != -1, "There was no project element to the generated file name?");
-            }
+            // If this is a C# generated file, then filename will be <Page>.razor.<project slug><c# suffix>
+            // We can remove the project key easily, by just looking for the last '.'. The project
+            // slug itself cannot a '.', enforced by the assert below in GetProjectSuffix
+            trimIndex = filePath.LastIndexOf('.', trimIndex - 1);
+            Debug.Assert(trimIndex != -1, "There was no project element to the generated file name?");
         }
 
         if (trimIndex != -1)
@@ -79,11 +76,6 @@ internal abstract class AbstractFilePathService(LanguageServerFeatureOptions lan
 
     private string GetProjectSuffix(ProjectKey projectKey)
     {
-        if (!_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath)
-        {
-            return string.Empty;
-        }
-
         // If there is no project key, we still want to generate something as otherwise the GetRazorFilePath method
         // would end up unnecessarily overcomplicated
         if (projectKey.IsUnknown)

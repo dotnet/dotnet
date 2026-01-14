@@ -16,7 +16,6 @@ using Microsoft.CodeAnalysis.Razor.Compiler.CSharp;
 using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Serialization;
-using Microsoft.CodeAnalysis.Razor.Telemetry;
 
 namespace Microsoft.CodeAnalysis.Razor.Utilities;
 
@@ -88,7 +87,7 @@ internal static class RazorProjectInfoFactory
             fileSystem,
             configure: defaultConfigure);
 
-        var tagHelpers = await project.GetTagHelpersAsync(engine, NoOpTelemetryReporter.Instance, cancellationToken).ConfigureAwait(false);
+        var tagHelpers = await project.GetTagHelpersAsync(engine, cancellationToken).ConfigureAwait(false);
 
         var projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers);
 

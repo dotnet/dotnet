@@ -172,6 +172,11 @@ internal sealed class FormattingContext
     /// <returns>A whitespace string representing the indentation level based on the configuration.</returns>
     public string GetIndentationLevelString(int indentationLevel)
     {
+        if (indentationLevel == 0)
+        {
+            return "";
+        }
+
         var indentation = GetIndentationOffsetForLevel(indentationLevel);
         var indentationString = FormattingUtilities.GetIndentationString(indentation, Options.InsertSpaces, Options.TabSize);
         return indentationString;

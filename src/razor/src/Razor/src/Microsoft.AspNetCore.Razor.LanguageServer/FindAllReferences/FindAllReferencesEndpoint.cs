@@ -30,13 +30,12 @@ internal sealed class FindAllReferencesEndpoint : AbstractRazorDelegatingEndpoin
     private readonly IDocumentMappingService _documentMappingService;
 
     public FindAllReferencesEndpoint(
-        LanguageServerFeatureOptions languageServerFeatureOptions,
         IDocumentMappingService documentMappingService,
         IClientConnection clientConnection,
         ILoggerFactory loggerFactory,
         IFilePathService filePathService,
         ProjectSnapshotManager projectSnapshotManager)
-        : base(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.GetOrCreateLogger<FindAllReferencesEndpoint>())
+        : base(documentMappingService, clientConnection, loggerFactory.GetOrCreateLogger<FindAllReferencesEndpoint>())
     {
         _filePathService = filePathService ?? throw new ArgumentNullException(nameof(filePathService));
         _projectSnapshotManager = projectSnapshotManager;

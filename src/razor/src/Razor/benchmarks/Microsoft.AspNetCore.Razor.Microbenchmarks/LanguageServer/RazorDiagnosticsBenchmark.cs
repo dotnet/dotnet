@@ -64,9 +64,7 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
             SourceMappings,
             linePragmas: []);
 
-        codeDocument.SetCSharpDocument(csharpDocument);
-
-        RazorCodeDocument = codeDocument;
+        RazorCodeDocument = codeDocument.WithCSharpDocument(csharpDocument);
 
         SourceText = RazorCodeDocument.Source.Text;
         var documentContext = new Mock<DocumentContext>(
@@ -87,8 +85,8 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
         var documentMappingService = BuildRazorDocumentMappingService();
 
         var optionsMonitor = Mock.Of<RazorLSPOptionsMonitor>(MockBehavior.Strict);
-        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(documentMappingService, loggerFactory);
-        DocumentPullDiagnosticsEndpoint = new VSDocumentDiagnosticsEndpoint(languageServerFeatureOptions, translateDiagnosticsService, optionsMonitor, languageServer, telemetryReporter: null);
+        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(documentMappingService, languageServerFeatureOptions, loggerFactory);
+        DocumentPullDiagnosticsEndpoint = new VSDocumentDiagnosticsEndpoint(translateDiagnosticsService, optionsMonitor, languageServer, telemetryReporter: null);
     }
 
     private object BuildDiagnostics()
@@ -104,10 +102,7 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
     private protected override LanguageServerFeatureOptions BuildFeatureOptions()
     {
         return Mock.Of<LanguageServerFeatureOptions>(options =>
-            options.SupportsFileManipulation == true &&
-            options.SingleServerSupport == true &&
-            options.CSharpVirtualDocumentSuffix == ".ide.g.cs" &&
-            options.HtmlVirtualDocumentSuffix == "__virtual.html",
+            options.SupportsFileManipulation == true,
             MockBehavior.Strict);
     }
 

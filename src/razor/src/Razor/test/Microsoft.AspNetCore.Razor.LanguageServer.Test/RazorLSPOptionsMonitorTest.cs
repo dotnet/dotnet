@@ -6,6 +6,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.CodeAnalysis.Razor.Settings;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -24,6 +25,7 @@ public class RazorLSPOptionsMonitorTest(ITestOutputHelper testOutput) : ToolingT
         AutoInsertAttributeQuotes: true,
         ColorBackground: false,
         CodeBlockBraceOnNextLine: false,
+        AttributeIndentStyle: AttributeIndentStyle.AlignWithFirst,
         CommitElementsWithSpace: true,
         TaskListDescriptors: []);
 
