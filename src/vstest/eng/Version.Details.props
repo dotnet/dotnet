@@ -8,13 +8,10 @@ This file should be imported by eng/Versions.props
     <!-- _git/vs-code-coverage dependencies -->
     <MicrosoftInternalCodeCoveragePackageVersion>18.3.1</MicrosoftInternalCodeCoveragePackageVersion>
     <!-- dotnet/dotnet dependencies -->
-    <MicrosoftDiagnosticsNETCoreClientPackageVersion>0.2.0-preview.25567.106</MicrosoftDiagnosticsNETCoreClientPackageVersion>
-    <!-- dotnet/runtime dependencies -->
-    <MicrosoftExtensionsDependencyModelPackageVersion>6.0.2</MicrosoftExtensionsDependencyModelPackageVersion>
-    <!-- dotnet/core-setup dependencies -->
-    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
-    <!-- dotnet/arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.25612.6</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDiagnosticsNETCoreClientPackageVersion>0.2.0-preview.26065.102</MicrosoftDiagnosticsNETCoreClientPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26065.102</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftExtensionsDependencyModelPackageVersion>10.0.3</MicrosoftExtensionsDependencyModelPackageVersion>
+    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>10.0.3</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
     <!-- dotnet/symreader-converter dependencies -->
     <MicrosoftDiaSymReaderConverterPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderConverterPackageVersion>
     <MicrosoftDiaSymReaderPdb2PdbPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderPdb2PdbPackageVersion>
@@ -25,12 +22,9 @@ This file should be imported by eng/Versions.props
     <MicrosoftInternalCodeCoverageVersion>$(MicrosoftInternalCodeCoveragePackageVersion)</MicrosoftInternalCodeCoverageVersion>
     <!-- dotnet/dotnet dependencies -->
     <MicrosoftDiagnosticsNETCoreClientVersion>$(MicrosoftDiagnosticsNETCoreClientPackageVersion)</MicrosoftDiagnosticsNETCoreClientVersion>
-    <!-- dotnet/runtime dependencies -->
-    <MicrosoftExtensionsDependencyModelVersion>$(MicrosoftExtensionsDependencyModelPackageVersion)</MicrosoftExtensionsDependencyModelVersion>
-    <!-- dotnet/core-setup dependencies -->
-    <MicrosoftExtensionsFileSystemGlobbingVersion>$(MicrosoftExtensionsFileSystemGlobbingPackageVersion)</MicrosoftExtensionsFileSystemGlobbingVersion>
-    <!-- dotnet/arcade dependencies -->
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
+    <MicrosoftExtensionsDependencyModelVersion>$(MicrosoftExtensionsDependencyModelPackageVersion)</MicrosoftExtensionsDependencyModelVersion>
+    <MicrosoftExtensionsFileSystemGlobbingVersion>$(MicrosoftExtensionsFileSystemGlobbingPackageVersion)</MicrosoftExtensionsFileSystemGlobbingVersion>
     <!-- dotnet/symreader-converter dependencies -->
     <MicrosoftDiaSymReaderConverterVersion>$(MicrosoftDiaSymReaderConverterPackageVersion)</MicrosoftDiaSymReaderConverterVersion>
     <MicrosoftDiaSymReaderPdb2PdbVersion>$(MicrosoftDiaSymReaderPdb2PdbPackageVersion)</MicrosoftDiaSymReaderPdb2PdbVersion>

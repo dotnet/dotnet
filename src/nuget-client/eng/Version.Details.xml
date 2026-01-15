@@ -14,55 +14,55 @@
     Arcade flow and versions do not necessarily match what is currently consumed by repo build.
   -->
   <ProductDependencies>
-    <Dependency Name="Microsoft.Build" Version="17.3.1">
-      <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>80f618ad45d38475773fd1a6eaa059f118a0ad5a</Sha>
+    <Dependency Name="Microsoft.Build" Version="18.0.10">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>99f9e99f92d73ade5453ba8edba5d72247f3cd11</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Extensions.FileProviders.Abstractions" Version="6.0.0">
-      <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>8470979eb44c2218025515234d3e01138bd74afb</Sha>
+    <Dependency Name="Microsoft.Extensions.FileProviders.Abstractions" Version="10.0.3">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>99f9e99f92d73ade5453ba8edba5d72247f3cd11</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Extensions.FileSystemGlobbing" Version="6.0.0">
-      <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>8470979eb44c2218025515234d3e01138bd74afb</Sha>
+    <Dependency Name="Microsoft.Extensions.FileSystemGlobbing" Version="10.0.3">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>99f9e99f92d73ade5453ba8edba5d72247f3cd11</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Web.Xdt" Version="3.2.0">
-      <Uri>https://github.com/dotnet/xdt</Uri>
-      <Sha>dea0a90f9a8f54babf081db780922a00a1ecc32c</Sha>
+    <Dependency Name="Microsoft.Web.Xdt" Version="3.2.3">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>99f9e99f92d73ade5453ba8edba5d72247f3cd11</Sha>
     </Dependency>
-    <Dependency Name="System.CommandLine" Version="2.0.0-beta5.25208.1">
-      <Uri>https://github.com/dotnet/command-line-api</Uri>
-      <Sha>48bd86bdcd926a194e1581a60d820d12a64ef3c6</Sha>
+    <Dependency Name="System.CommandLine" Version="2.0.3">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>99f9e99f92d73ade5453ba8edba5d72247f3cd11</Sha>
     </Dependency>
-    <Dependency Name="System.ComponentModel.Composition" Version="4.5.0">
-      <Uri>https://github.com/dotnet/corefx</Uri>
-      <Sha>30ab651fcb4354552bd4891619a0bdd81e0ebdbf</Sha>
+    <Dependency Name="System.ComponentModel.Composition" Version="10.0.3">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>99f9e99f92d73ade5453ba8edba5d72247f3cd11</Sha>
     </Dependency>
-    <Dependency Name="System.Security.Cryptography.Pkcs" Version="6.0.4">
-      <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>e37fab9fc9f7bce120a7165491ed392a73f8ab51</Sha>
+    <Dependency Name="System.Security.Cryptography.Pkcs" Version="10.0.3">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>99f9e99f92d73ade5453ba8edba5d72247f3cd11</Sha>
     </Dependency>
-    <Dependency Name="System.Security.Cryptography.ProtectedData" Version="9.0.6">
-      <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>2aade6beb02ea367fd97c4070a4198802fe61c03</Sha>
+    <Dependency Name="System.Security.Cryptography.ProtectedData" Version="10.0.3">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>99f9e99f92d73ade5453ba8edba5d72247f3cd11</Sha>
     </Dependency>
-    <Dependency Name="System.Security.Cryptography.Xml" Version="6.0.1">
-      <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>55fb7ef977e7d120dc12f0960edcff0739d7ee0e</Sha>
+    <Dependency Name="System.Security.Cryptography.Xml" Version="10.0.3">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>99f9e99f92d73ade5453ba8edba5d72247f3cd11</Sha>
     </Dependency>
-    <Dependency Name="System.Formats.Asn1" Version="8.0.1">
-      <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>2aade6beb02ea367fd97c4070a4198802fe61c03</Sha>
+    <Dependency Name="System.Formats.Asn1" Version="10.0.3">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>99f9e99f92d73ade5453ba8edba5d72247f3cd11</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.25565.104">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.26065.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>88c87899e74aebbd27371d84597630ba3c25d4fd</Sha>
+      <Sha>99f9e99f92d73ade5453ba8edba5d72247f3cd11</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="11.0.0-beta.25565.104">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="10.0.0-beta.26065.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>88c87899e74aebbd27371d84597630ba3c25d4fd</Sha>
+      <Sha>99f9e99f92d73ade5453ba8edba5d72247f3cd11</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
