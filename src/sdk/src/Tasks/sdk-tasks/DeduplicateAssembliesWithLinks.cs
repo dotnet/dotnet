@@ -59,48 +59,7 @@ namespace Microsoft.DotNet.Build.Tasks
 
             bool success = DeduplicateFileGroups(duplicateGroups);
 
-            // Diagnostic: Log filesystem state after deduplication
-            LogFilesystemState();
-
             return success;
-        }
-
-        private void LogFilesystemState()
-        {
-            try
-            {
-                Log.LogMessage(MessageImportance.High, "=== POST-DEDUPLICATION FILESYSTEM STATE ===");
-
-                // Log top-level directories
-                var topLevelDirs = Directory.GetDirectories(LayoutDirectory)
-                    .Select(d => Path.GetFileName(d))
-                    .OrderBy(d => d)
-                    .ToList();
-
-                Log.LogMessage(MessageImportance.High, $"Top-level directories in {LayoutDirectory}:");
-                foreach (var dir in topLevelDirs)
-                {
-                    Log.LogMessage(MessageImportance.High, $"  - {dir}");
-                }
-
-                // Log sample assembly files
-                Log.LogMessage(MessageImportance.High, "Sample assembly files:");
-                var sampleFiles = Directory.GetFiles(LayoutDirectory, "*.dll", SearchOption.AllDirectories)
-                    .Take(20)
-                    .Select(f => f.Substring(LayoutDirectory.Length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
-                    .ToList();
-
-                foreach (var file in sampleFiles)
-                {
-                    Log.LogMessage(MessageImportance.High, $"  - {file}");
-                }
-
-                Log.LogMessage(MessageImportance.High, "=== END POST-DEDUPLICATION STATE ===");
-            }
-            catch (Exception ex)
-            {
-                Log.LogMessage(MessageImportance.Normal, $"Failed to log filesystem state: {ex.Message}");
-            }
         }
 
         private (Dictionary<string, List<FileEntry>> filesByHash, bool success) HashAndGroupFiles(List<string> files)
@@ -185,7 +144,14 @@ namespace Microsoft.DotNet.Build.Tasks
                 // TODO: Replace P/Invoke with File.CreateHardLink(duplicateFilePath, masterFilePath); when SDK targets .NET 11+
                 // See: https://github.com/dotnet/runtime/issues/69030
                 // We only use hard links on Windows currently, so this is acceptable.
-                CreateHardLinkWindows(duplicateFilePath, masterFilePath);
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    CreateHardLinkWindows(duplicateFilePath, masterFilePath);
+                }
+                else
+                {
+                    CreateHardLinkUnix(duplicateFilePath, masterFilePath);
+                }
             }
             else
             {
@@ -226,11 +192,24 @@ namespace Microsoft.DotNet.Build.Tasks
             }
         }
 
+        private void CreateHardLinkUnix(string linkPath, string targetPath)
+        {
+            int result = link(targetPath, linkPath);
+            if (result != 0)
+            {
+                int errorCode = Marshal.GetLastWin32Error();
+                throw new InvalidOperationException($"link() failed with error code {errorCode}");
+            }
+        }
+
         [DllImport("kernel32.dll", EntryPoint = "CreateHardLinkW", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern bool CreateHardLinkWin32(
             string lpFileName,
             string lpExistingFileName,
             IntPtr lpSecurityAttributes);
+
+        [DllImport("libc", SetLastError = true)]
+        private static extern int link(string oldpath, string newpath);
 
         private record FileEntry(string Path, string Hash, long Size, int Depth);
     }

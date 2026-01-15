@@ -99,7 +99,7 @@
     <PropertyGroup>
       <!-- Use hard links on Windows, symbolic links on non-Windows -->
       <_UseHardLinks Condition="'$(OSName)' == 'win'">true</_UseHardLinks>
-      <_UseHardLinks Condition="'$(OSName)' != 'win'">false</_UseHardLinks>
+      <_UseHardLinks Condition="'$(OSName)' != 'win'">true</_UseHardLinks>
     </PropertyGroup>
 
     <DeduplicateAssembliesWithLinks LayoutDirectory="$(RedistInstallerLayoutPath)" UseHardLinks="$(_UseHardLinks)" />
