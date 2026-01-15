@@ -978,6 +978,45 @@ WHERE CAST(1 AS bit) IN (
                 .SingleAsync());
     }
 
+    public override async Task Contains_on_Enumerable(bool async)
+    {
+        await base.Contains_on_Enumerable(async);
+
+        AssertSql(
+            """
+SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[String], [p].[Strings]
+FROM [PrimitiveCollectionsEntity] AS [p]
+WHERE [p].[Int] IN (10, 999)
+""");
+    }
+
+
+    public override async Task Contains_on_MemoryExtensions(bool async)
+    {
+        await base.Contains_on_MemoryExtensions(async);
+
+        AssertSql(
+            """
+SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[String], [p].[Strings]
+FROM [PrimitiveCollectionsEntity] AS [p]
+WHERE [p].[Int] IN (10, 999)
+""");
+    }
+
+#if NET10_0_OR_GREATER
+    public override async Task Contains_with_MemoryExtensions_with_null_comparer(bool async)
+    {
+        await base.Contains_with_MemoryExtensions_with_null_comparer(async);
+
+        AssertSql(
+            """
+SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[String], [p].[Strings]
+FROM [PrimitiveCollectionsEntity] AS [p]
+WHERE [p].[Int] IN (10, 999)
+""");
+    }
+#endif
+
     public override async Task Column_collection_Count_method(bool async)
     {
         await base.Column_collection_Count_method(async);
@@ -1542,7 +1581,7 @@ WHERE (
 
         AssertSql(
             """
-@__ints_0='[11,111]' (Size = 4000)
+@__p_0='[11,111]' (Size = 4000)
 
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[String], [p].[Strings]
 FROM [PrimitiveCollectionsEntity] AS [p]
@@ -1550,10 +1589,10 @@ WHERE (
     SELECT COUNT(*)
     FROM (
         SELECT 1 AS empty
-        FROM OPENJSON(@__ints_0) AS [i]
+        FROM OPENJSON(@__p_0) AS [p0]
         UNION ALL
         SELECT 1 AS empty
-        FROM OPENJSON([p].[Ints]) AS [i0]
+        FROM OPENJSON([p].[Ints]) AS [i]
     ) AS [u]) = 2
 """);
     }
