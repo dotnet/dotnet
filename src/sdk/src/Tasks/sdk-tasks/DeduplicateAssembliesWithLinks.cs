@@ -56,7 +56,51 @@ namespace Microsoft.DotNet.Build.Tasks
 
             var duplicateGroups = filesByHash.Values.Where(g => g.Count > 1).ToList();
             Log.LogMessage(MessageImportance.Normal, $"Found {duplicateGroups.Count} groups of duplicate assemblies.");
-            return DeduplicateFileGroups(duplicateGroups);
+
+            bool success = DeduplicateFileGroups(duplicateGroups);
+
+            // Diagnostic: Log filesystem state after deduplication
+            LogFilesystemState();
+
+            return success;
+        }
+
+        private void LogFilesystemState()
+        {
+            try
+            {
+                Log.LogMessage(MessageImportance.High, "=== POST-DEDUPLICATION FILESYSTEM STATE ===");
+
+                // Log top-level directories
+                var topLevelDirs = Directory.GetDirectories(LayoutDirectory)
+                    .Select(d => Path.GetFileName(d))
+                    .OrderBy(d => d)
+                    .ToList();
+
+                Log.LogMessage(MessageImportance.High, $"Top-level directories in {LayoutDirectory}:");
+                foreach (var dir in topLevelDirs)
+                {
+                    Log.LogMessage(MessageImportance.High, $"  - {dir}");
+                }
+
+                // Log sample assembly files
+                Log.LogMessage(MessageImportance.High, "Sample assembly files:");
+                var sampleFiles = Directory.GetFiles(LayoutDirectory, "*.dll", SearchOption.AllDirectories)
+                    .Take(20)
+                    .Select(f => f.Substring(LayoutDirectory.Length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
+                    .ToList();
+
+                foreach (var file in sampleFiles)
+                {
+                    Log.LogMessage(MessageImportance.High, $"  - {file}");
+                }
+
+                Log.LogMessage(MessageImportance.High, "=== END POST-DEDUPLICATION STATE ===");
+            }
+            catch (Exception ex)
+            {
+                Log.LogMessage(MessageImportance.Normal, $"Failed to log filesystem state: {ex.Message}");
+            }
         }
 
         private (Dictionary<string, List<FileEntry>> filesByHash, bool success) HashAndGroupFiles(List<string> files)

@@ -102,16 +102,7 @@
       <_UseHardLinks Condition="'$(OSName)' != 'win'">false</_UseHardLinks>
     </PropertyGroup>
 
-    <Message Text="Deduplicating layout directory: $(RedistInstallerLayoutPath)" Importance="High" />
     <DeduplicateAssembliesWithLinks LayoutDirectory="$(RedistInstallerLayoutPath)" UseHardLinks="$(_UseHardLinks)" />
-
-    <!-- Debug: List directory structure after deduplication -->
-    <Message Text="=== Checking for files with 11.0.100-ci not under sdk\ (after deduplication) ===" Importance="High" Condition="'$(OSName)' == 'win'" />
-    <Exec Command="cmd /c &quot;dir /s /b &quot;$(RedistInstallerLayoutPath)&quot; | findstr /i &quot;11.0.100-ci&quot; | findstr /v /i &quot;\\sdk\\&quot;&quot;"
-          Condition="'$(OSName)' == 'win'"
-          ContinueOnError="true"
-          IgnoreExitCode="true" />
-    <Message Text="=== End post-deduplication directory listing ===" Importance="High" Condition="'$(OSName)' == 'win'" />
   </Target>
 
   <!-- Copy the sdk layout into a temporary folder so that it's nested under "sdk\$(Version)\" which is
