@@ -7,7 +7,6 @@
     <!-- We need to modify the version here manually everytime the version changes from the upstream branch jbevain/cecil -->
     <VersionPrefix>0.11.5.0</VersionPrefix>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
-    <PreReleaseVersionIteration>1</PreReleaseVersionIteration>
 
     <!-- Arcade features -->
     <!-- Use VSTestRunner instead of allowing Arcade to use xunit, since Cecil tests are nunit based -->
