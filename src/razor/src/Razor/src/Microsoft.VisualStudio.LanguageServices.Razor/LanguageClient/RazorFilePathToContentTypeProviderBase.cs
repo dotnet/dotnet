@@ -41,8 +41,7 @@ internal abstract class RazorFilePathToContentTypeProviderBase(
         }
 
         // Otherwise, we just check for the lack of feature flag feature or project capability.
-        if (_lspEditorFeatureDetector.IsLspEditorEnabled() &&
-            _lspEditorFeatureDetector.IsLspEditorSupported(filePath))
+        if (_lspEditorFeatureDetector.IsLspEditorSupported(filePath))
         {
             return true;
         }
