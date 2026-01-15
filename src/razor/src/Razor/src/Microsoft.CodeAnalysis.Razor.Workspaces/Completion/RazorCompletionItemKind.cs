@@ -5,6 +5,7 @@ namespace Microsoft.CodeAnalysis.Razor.Completion;
 
 internal enum RazorCompletionItemKind
 {
+    CSharpRazorKeyword,
     Directive,
     DirectiveAttribute,
     DirectiveAttributeParameter,

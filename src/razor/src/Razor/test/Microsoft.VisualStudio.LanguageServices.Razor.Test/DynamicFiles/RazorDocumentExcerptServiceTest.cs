@@ -34,7 +34,7 @@ public class RazorDocumentExcerptServiceTest(ITestOutputHelper testOutput) : Doc
 
         // Act
         var options = RazorClassificationOptionsWrapper.Default;
-        var result = await service.TryGetExcerptInternalAsync(secondary, secondarySpan, ExcerptModeInternal.SingleLine, options, DisposalToken);
+        var result = await service.TryGetExcerptInternalAsync(secondary, secondarySpan, RazorExcerptMode.SingleLine, options, DisposalToken);
 
         // Assert
         Assert.NotNull(result);
@@ -112,7 +112,7 @@ public class RazorDocumentExcerptServiceTest(ITestOutputHelper testOutput) : Doc
 
         // Act
         var options = RazorClassificationOptionsWrapper.Default;
-        var result = await service.TryGetExcerptInternalAsync(secondary, secondarySpan, ExcerptModeInternal.SingleLine, options, DisposalToken);
+        var result = await service.TryGetExcerptInternalAsync(secondary, secondarySpan, RazorExcerptMode.SingleLine, options, DisposalToken);
 
         // Assert
         Assert.NotNull(result);
@@ -165,7 +165,7 @@ public class RazorDocumentExcerptServiceTest(ITestOutputHelper testOutput) : Doc
 
         // Act
         var options = RazorClassificationOptionsWrapper.Default;
-        var result = await service.TryGetExcerptInternalAsync(secondary, secondarySpan, ExcerptModeInternal.SingleLine, options, DisposalToken);
+        var result = await service.TryGetExcerptInternalAsync(secondary, secondarySpan, RazorExcerptMode.SingleLine, options, DisposalToken);
 
         // Assert
         Assert.NotNull(result);
@@ -272,7 +272,7 @@ public class RazorDocumentExcerptServiceTest(ITestOutputHelper testOutput) : Doc
 
         // Act
         var options = RazorClassificationOptionsWrapper.Default;
-        var result = await service.TryGetExcerptInternalAsync(secondary, secondarySpan, ExcerptModeInternal.Tooltip, options, DisposalToken);
+        var result = await service.TryGetExcerptInternalAsync(secondary, secondarySpan, RazorExcerptMode.Tooltip, options, DisposalToken);
 
         // Assert
         Assert.NotNull(result);
@@ -376,7 +376,7 @@ public class RazorDocumentExcerptServiceTest(ITestOutputHelper testOutput) : Doc
 
         // Act
         var options = RazorClassificationOptionsWrapper.Default;
-        var result = await service.TryGetExcerptInternalAsync(secondary, secondarySpan, ExcerptModeInternal.SingleLine, options, DisposalToken);
+        var result = await service.TryGetExcerptInternalAsync(secondary, secondarySpan, RazorExcerptMode.SingleLine, options, DisposalToken);
 
         // Assert
         Assert.NotNull(result);
@@ -450,7 +450,7 @@ public class RazorDocumentExcerptServiceTest(ITestOutputHelper testOutput) : Doc
 
         // Act
         var options = RazorClassificationOptionsWrapper.Default;
-        var result = await service.TryGetExcerptInternalAsync(secondary, secondarySpan, ExcerptModeInternal.Tooltip, options, DisposalToken);
+        var result = await service.TryGetExcerptInternalAsync(secondary, secondarySpan, RazorExcerptMode.Tooltip, options, DisposalToken);
 
         // Assert
         Assert.NotNull(result);
@@ -559,7 +559,7 @@ public class RazorDocumentExcerptServiceTest(ITestOutputHelper testOutput) : Doc
 
         // Act
         var options = RazorClassificationOptionsWrapper.Default;
-        var result = await service.TryGetExcerptInternalAsync(secondary, secondarySpan, ExcerptModeInternal.Tooltip, options, DisposalToken);
+        var result = await service.TryGetExcerptInternalAsync(secondary, secondarySpan, RazorExcerptMode.Tooltip, options, DisposalToken);
 
         // Assert
         // Verifies that the right part of the primary document will be highlighted.

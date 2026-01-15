@@ -627,7 +627,7 @@ public class ExtractToComponentCodeActionProviderTest(ITestOutputHelper testOutp
 
         var syntaxTree = RazorSyntaxTree.Parse(source, codeDocument.ParserOptions);
 
-        codeDocument.SetSyntaxTree(syntaxTree);
+        codeDocument = codeDocument.WithSyntaxTree(syntaxTree);
 
         var documentSnapshot = new StrictMock<IDocumentSnapshot>();
         documentSnapshot
@@ -698,8 +698,8 @@ public class ExtractToComponentCodeActionProviderTest(ITestOutputHelper testOutp
 
         if (resultSpan.Start != actionParams.Start || resultSpan.End != actionParams.End)
         {
-            var resultText = context.SourceText.GetSubTextString(resultSpan);
-            var actualText = context.SourceText.GetSubTextString(TextSpan.FromBounds(actionParams.Start, actionParams.End));
+            var resultText = context.SourceText.ToString(resultSpan);
+            var actualText = context.SourceText.ToString(TextSpan.FromBounds(actionParams.Start, actionParams.End));
             AssertEx.EqualOrDiff(resultText, actualText, "Code action span does not match expected");
         }
     }

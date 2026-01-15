@@ -3,9 +3,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
@@ -13,11 +13,10 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
-using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor;
 using Roslyn.Test.Utilities;
@@ -32,15 +31,17 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
         TestCode input,
         string? expected,
         string codeActionName,
+        int? codeActionIndex = null,
         int childActionIndex = 0,
         RazorFileKind? fileKind = null,
         string? documentFilePath = null,
         (string filePath, string contents)[]? additionalFiles = null,
-        (Uri fileUri, string contents)[]? additionalExpectedFiles = null)
+        (Uri fileUri, string contents)[]? additionalExpectedFiles = null,
+        bool addDefaultImports = true)
     {
-        var document = CreateRazorDocument(input, fileKind, documentFilePath, additionalFiles);
+        var document = CreateRazorDocument(input, fileKind, documentFilePath, additionalFiles, addDefaultImports: addDefaultImports);
 
-        var codeAction = await VerifyCodeActionRequestAsync(document, input, codeActionName, childActionIndex, expectOffer: expected is not null);
+        var codeAction = await VerifyCodeActionRequestAsync(document, input, codeActionName, codeActionIndex, childActionIndex, expectOffer: expected is not null);
 
         if (codeAction is null)
         {
@@ -48,14 +49,17 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
             return;
         }
 
+        Assert.NotNull(expected);
+
         var workspaceEdit = codeAction.Data is null
             ? codeAction.Edit.AssumeNotNull()
             : await ResolveCodeActionAsync(document, codeAction);
 
-        await VerifyCodeActionResultAsync(document, workspaceEdit, expected, additionalExpectedFiles);
+        var expectedChanges = (additionalExpectedFiles ?? []).Concat([(document.CreateUri(), expected)]);
+        await workspaceEdit.AssertWorkspaceEditAsync(document.Project.Solution, expectedChanges, DisposalToken);
     }
 
-    private protected TextDocument CreateRazorDocument(TestCode input, RazorFileKind? fileKind = null, string? documentFilePath = null, (string filePath, string contents)[]? additionalFiles = null)
+    private protected TextDocument CreateRazorDocument(TestCode input, RazorFileKind? fileKind = null, string? documentFilePath = null, (string filePath, string contents)[]? additionalFiles = null, bool addDefaultImports = true)
     {
         var fileSystem = (RemoteFileSystem)OOPExportProvider.GetExportedValue<IFileSystem>();
         fileSystem.GetTestAccessor().SetFileSystem(new TestFileSystem(additionalFiles));
@@ -73,10 +77,10 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
             return options;
         });
 
-        return CreateProjectAndRazorDocument(input.Text, fileKind, documentFilePath, additionalFiles: additionalFiles);
+        return CreateProjectAndRazorDocument(input.Text, fileKind, documentFilePath, additionalFiles: additionalFiles, addDefaultImports: addDefaultImports);
     }
 
-    private async Task<CodeAction?> VerifyCodeActionRequestAsync(TextDocument document, TestCode input, string codeActionName, int childActionIndex, bool expectOffer)
+    private async Task<CodeAction?> VerifyCodeActionRequestAsync(TextDocument document, TestCode input, string codeActionName, int? codeActionIndex, int childActionIndex, bool expectOffer)
     {
         var result = await GetCodeActionsAsync(document, input);
         if (result is null)
@@ -84,7 +88,18 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
             return null;
         }
 
-        var codeActionToRun = (VSInternalCodeAction?)result.SingleOrDefault(e => ((RazorVSInternalCodeAction)e.Value!).Name == codeActionName).Value;
+        var codeActions = result.Where(e => ((RazorVSInternalCodeAction)e.Value!).Name == codeActionName).ToArray();
+
+        if (codeActions.Length > 1 && !codeActionIndex.HasValue)
+        {
+            Assert.Fail($"Multiple code actions with name '{codeActionName}' were found. Specify a codeActionIndex to disambiguate.");
+            return null;
+        }
+
+        var index = codeActionIndex ?? 0;
+        var codeActionToRun = codeActions.Length > index
+            ? (VSInternalCodeAction?)codeActions[index]
+            : null;
 
         if (!expectOffer)
         {
@@ -93,15 +108,23 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
         }
 
         AssertEx.NotNull(codeActionToRun, $"""
-            Could not find code action with name '{codeActionName}'.
+            Could not find {(codeActionIndex is null ? "single" : $"index {codeActionIndex}")} code action with name '{codeActionName}'.
 
             Available:
                 {string.Join(Environment.NewLine + "    ", result.Select(e => ((RazorVSInternalCodeAction)e.Value!).Name))}
             """);
 
+        // In VS, child code actions use the children property, and are easy
         if (codeActionToRun.Children?.Length > 0)
         {
             codeActionToRun = codeActionToRun.Children[childActionIndex];
+        }
+
+        // In VS Code, the C# extension has some custom code to handle child code actions, which we mimic here
+        if (codeActionToRun.Command is { CommandIdentifier: "roslyn.client.nestedCodeAction", Arguments: [JsonObject data] })
+        {
+            var nestedCodeAction = data["NestedCodeActions"].AssumeNotNull().AsArray()[childActionIndex];
+            codeActionToRun = JsonSerializer.Deserialize<VSInternalCodeAction>(nestedCodeAction, JsonHelpers.JsonSerializerOptions);
         }
 
         Assert.NotNull(codeActionToRun);
@@ -152,62 +175,6 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
         return await endpoint.GetTestAccessor().HandleRequestAsync(document, request, DisposalToken);
     }
 
-    private async Task VerifyCodeActionResultAsync(TextDocument document, WorkspaceEdit workspaceEdit, string? expected, (Uri fileUri, string contents)[]? additionalExpectedFiles = null)
-    {
-        var solution = document.Project.Solution;
-        var validated = false;
-
-        if (workspaceEdit.DocumentChanges?.Value is SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>[] sumTypeArray)
-        {
-            using var builder = new PooledArrayBuilder<TextDocumentEdit>();
-            foreach (var sumType in sumTypeArray)
-            {
-                if (sumType.Value is CreateFile createFile)
-                {
-                    validated = true;
-                    Assert.Single(additionalExpectedFiles.AssumeNotNull(), f => f.fileUri == createFile.DocumentUri.GetRequiredParsedUri());
-                    var documentId = DocumentId.CreateNewId(document.Project.Id);
-                    var filePath = createFile.DocumentUri.GetRequiredParsedUri().GetDocumentFilePath();
-                    var documentInfo = DocumentInfo.Create(documentId, filePath, filePath: filePath);
-                    solution = solution.AddDocument(documentInfo);
-                }
-            }
-        }
-
-        if (workspaceEdit.TryGetTextDocumentEdits(out var documentEdits))
-        {
-            foreach (var edit in documentEdits)
-            {
-                var textDocument = solution.GetTextDocuments(edit.TextDocument.DocumentUri.GetRequiredParsedUri()).First();
-                var text = await textDocument.GetTextAsync(DisposalToken).ConfigureAwait(false);
-                if (textDocument is Document)
-                {
-                    solution = solution.WithDocumentText(textDocument.Id, text.WithChanges(edit.Edits.Select(e => text.GetTextChange((TextEdit)e))));
-                }
-                else
-                {
-                    solution = solution.WithAdditionalDocumentText(textDocument.Id, text.WithChanges(edit.Edits.Select(e => text.GetTextChange((TextEdit)e))));
-                }
-            }
-
-            if (additionalExpectedFiles is not null)
-            {
-                foreach (var (uri, contents) in additionalExpectedFiles)
-                {
-                    var additionalDocument = solution.GetTextDocuments(uri).First();
-                    var text = await additionalDocument.GetTextAsync(DisposalToken).ConfigureAwait(false);
-                    AssertEx.EqualOrDiff(contents, text.ToString());
-                }
-            }
-
-            validated = true;
-            var actual = await solution.GetAdditionalDocument(document.Id).AssumeNotNull().GetTextAsync(DisposalToken).ConfigureAwait(false);
-            AssertEx.EqualOrDiff(expected, actual.ToString());
-        }
-
-        Assert.True(validated, "Test did not validate anything. Code action response type is presumably not supported.");
-    }
-
     private async Task<WorkspaceEdit> ResolveCodeActionAsync(CodeAnalysis.TextDocument document, CodeAction codeAction)
     {
         var requestInvoker = new TestHtmlRequestInvoker();
@@ -217,23 +184,5 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
 
         Assert.NotNull(result?.Edit);
         return result.Edit;
-    }
-
-    private class TestFileSystem((string filePath, string contents)[]? files) : IFileSystem
-    {
-        public bool FileExists(string filePath)
-            => files?.Any(f => FilePathNormalizingComparer.Instance.Equals(f.filePath, filePath)) ?? false;
-
-        public string ReadFile(string filePath)
-            => files.AssumeNotNull().Single(f => FilePathNormalizingComparer.Instance.Equals(f.filePath, filePath)).contents;
-
-        public Stream OpenReadStream(string filePath)
-            => new MemoryStream(Encoding.UTF8.GetBytes(ReadFile(filePath)));
-
-        public IEnumerable<string> GetDirectories(string workspaceDirectory)
-            => throw new NotImplementedException();
-
-        public IEnumerable<string> GetFiles(string workspaceDirectory, string searchPattern, SearchOption searchOption)
-            => throw new NotImplementedException();
     }
 }

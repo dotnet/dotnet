@@ -32,15 +32,7 @@ using Microsoft.AspNetCore.Components.RenderTree;
 #line hidden
 #nullable disable
 
-            __builder.OpenComponent<global::Test.
-#nullable restore
-#line (5,10)-(5,21) "x:\dir\subdir\Test\TestComponent.cshtml"
-MyComponent
-
-#line default
-#line hidden
-#nullable disable
-            >(0);
+            __builder.OpenComponent<global::Test.MyComponent>(0);
             __builder.CloseComponent();
 #nullable restore
 #line (6,1)-(7,1) "x:\dir\subdir\Test\TestComponent.cshtml"

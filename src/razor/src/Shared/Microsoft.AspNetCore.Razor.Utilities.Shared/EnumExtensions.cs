@@ -14,26 +14,24 @@ internal static class EnumExtensions
     public static unsafe void SetFlag<T>(ref this T value, T flag)
         where T : unmanaged, Enum
     {
-        var v = (T*)Unsafe.AsPointer(ref value);
-
         if (sizeof(T) == sizeof(byte))
         {
-            *(byte*)v |= *(byte*)&flag;
+            Unsafe.As<T, byte>(ref value) |= *(byte*)&flag;
             return;
         }
         else if (sizeof(T) == sizeof(ushort))
         {
-            *(ushort*)v |= *(ushort*)&flag;
+            Unsafe.As<T, ushort>(ref value) |= *(ushort*)&flag;
             return;
         }
         else if (sizeof(T) == sizeof(uint))
         {
-            *(uint*)v |= *(uint*)&flag;
+            Unsafe.As<T, uint>(ref value) |= *(uint*)&flag;
             return;
         }
         else if (sizeof(T) == sizeof(ulong))
         {
-            *(ulong*)v |= *(ulong*)&flag;
+            Unsafe.As<T, ulong>(ref value) |= *(ulong*)&flag;
             return;
         }
 
@@ -45,26 +43,24 @@ internal static class EnumExtensions
     public static unsafe void ClearFlag<T>(ref this T value, T flag)
         where T : unmanaged, Enum
     {
-        var v = (T*)Unsafe.AsPointer(ref value);
-
         if (sizeof(T) == sizeof(byte))
         {
-            *(byte*)v &= (byte)~*(byte*)&flag;
+            Unsafe.As<T, byte>(ref value) &= (byte)~*(byte*)&flag;
             return;
         }
         else if (sizeof(T) == sizeof(ushort))
         {
-            *(ushort*)v &= (ushort)~*(ushort*)&flag;
+            Unsafe.As<T, ushort>(ref value) &= (ushort)~*(ushort*)&flag;
             return;
         }
         else if (sizeof(T) == sizeof(uint))
         {
-            *(uint*)v &= ~*(uint*)&flag;
+            Unsafe.As<T, uint>(ref value) &= ~*(uint*)&flag;
             return;
         }
         else if (sizeof(T) == sizeof(ulong))
         {
-            *(ulong*)v &= ~*(ulong*)&flag;
+            Unsafe.As<T, ulong>(ref value) &= ~*(ulong*)&flag;
             return;
         }
 

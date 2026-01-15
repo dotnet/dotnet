@@ -17,26 +17,10 @@
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.AddMarkupContent(0, "<h1>Generated</h1>\r\n");
-            __builder.OpenComponent<global::
-#nullable restore
-#line (2,2)-(2,12) "x:\dir\subdir\Test\TestComponent.cshtml"
-Component1
-
-#line default
-#line hidden
-#nullable disable
-            >(1);
+            __builder.OpenComponent<global::Component1>(1);
             __builder.CloseComponent();
             __builder.AddMarkupContent(2, "\r\n");
-            __builder.OpenComponent<global::
-#nullable restore
-#line (3,2)-(3,19) "x:\dir\subdir\Test\TestComponent.cshtml"
-Shared.Component2
-
-#line default
-#line hidden
-#nullable disable
-            >(3);
+            __builder.OpenComponent<global::Shared.Component2>(3);
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

@@ -79,7 +79,7 @@ internal sealed class ProjectState
         IProjectEngineFactoryProvider projectEngineFactoryProvider)
         => new(hostProject, projectEngineFactoryProvider);
 
-    public ImmutableArray<TagHelperDescriptor> TagHelpers => ProjectWorkspaceState.TagHelpers;
+    public TagHelperCollection TagHelpers => ProjectWorkspaceState.TagHelpers;
 
     public LanguageVersion CSharpLanguageVersion => HostProject.Configuration.CSharpLanguageVersion;
 

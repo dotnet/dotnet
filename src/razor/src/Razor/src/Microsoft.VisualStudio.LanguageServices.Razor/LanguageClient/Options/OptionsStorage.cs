@@ -104,6 +104,7 @@ internal class OptionsStorage : IAdvancedSettingsStorage, IDisposable
             GetBool(SettingsNames.AutoInsertAttributeQuotes, defaultValue: true),
             GetBool(SettingsNames.ColorBackground, defaultValue: false),
             GetBool(SettingsNames.CodeBlockBraceOnNextLine, defaultValue: false),
+            GetEnum(SettingsNames.AttributeIndentStyle, AttributeIndentStyle.AlignWithFirst),
             GetBool(SettingsNames.CommitElementsWithSpace, defaultValue: true),
             GetEnum(SettingsNames.Snippets, SnippetSetting.All),
             GetEnum(SettingsNames.LogLevel, LogLevel.Warning),

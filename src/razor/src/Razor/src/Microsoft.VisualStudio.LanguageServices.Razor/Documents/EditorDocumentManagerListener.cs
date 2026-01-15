@@ -256,7 +256,7 @@ internal partial class EditorDocumentManagerListener : IRazorStartupService, IDi
                             "fallbackproject/documentopen",
                             Severity.Normal,
                             new Property("document.count", project.DocumentCount),
-                            new Property("taghelper.count", project.ProjectWorkspaceState.TagHelpers.Length));
+                            new Property("taghelper.count", project.ProjectWorkspaceState.TagHelpers.Count));
                     }
 
                     updater.OpenDocument(document.ProjectKey, document.DocumentFilePath, document.EditorTextContainer!.CurrentText);

@@ -104,6 +104,11 @@
         <target state="translated">Offset non valido.</target>
         <note />
       </trans-unit>
+      <trans-unit id="KeywordDescription">
+        <source>{0} Keyword</source>
+        <target state="translated">Parola chiave di {0}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Language_Services_Missing_Service">
         <source>Razor language services not configured properly, missing language service '{0}'.</source>
         <target state="translated">I servizi di linguaggio Razor non sono configurati correttamente. Manca il servizio di linguaggio '{0}'.</target>
@@ -131,7 +136,7 @@
       </trans-unit>
       <trans-unit id="Simplify_Fully_Qualified_Component_Title">
         <source>Simplify fully qualified component</source>
-        <target state="new">Simplify fully qualified component</target>
+        <target state="translated">Semplifica il componente completamente qualificato</target>
         <note />
       </trans-unit>
       <trans-unit id="Simplify_Tag_To_SelfClosing_Title">

@@ -99,7 +99,7 @@ internal class DelegatedCompletionItemResolver(
             return resolvedCompletionItem;
         }
 
-        var options = RazorFormattingOptions.From(formattingOptions, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine);
+        var options = RazorFormattingOptions.From(formattingOptions, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine, _optionsMonitor.CurrentValue.AttributeIndentStyle);
 
         return await DelegatedCompletionHelper.FormatCSharpCompletionItemAsync(
             resolvedCompletionItem,

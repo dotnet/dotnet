@@ -17,17 +17,13 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 [RazorLanguageServerEndpoint(VSInternalMethods.TextDocumentDataTipRangeName)]
 internal sealed class DataTipRangeHandlerEndpoint(
     IDocumentMappingService documentMappingService,
-    LanguageServerFeatureOptions languageServerFeatureOptions,
     IClientConnection clientConnection,
     ILoggerFactory loggerFactory)
     : AbstractRazorDelegatingEndpoint<TextDocumentPositionParams, VSInternalDataTip?>(
-        languageServerFeatureOptions,
         documentMappingService,
         clientConnection,
         loggerFactory.GetOrCreateLogger<DataTipRangeHandlerEndpoint>()), ICapabilitiesProvider
 {
-    protected override bool OnlySingleServer => false;
-
     protected override string CustomMessageTarget => CustomMessageNames.RazorDataTipRangeName;
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)

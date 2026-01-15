@@ -56,8 +56,7 @@ internal partial class RazorCustomMessageTarget
         _logger.LogDebug($"UpdateCSharpBuffer for {request.HostDocumentVersion} of {hostDocumentUri} in {request.ProjectKeyId}");
 
         // If we're generating unique file paths for virtual documents, then we have to take a different path here, and do more work
-        if (_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath &&
-            request.ProjectKeyId is not null &&
+        if (request.ProjectKeyId is not null &&
             _documentManager.TryGetDocument(hostDocumentUri, out var documentSnapshot) &&
             documentSnapshot.TryGetAllVirtualDocuments<CSharpVirtualDocumentSnapshot>(out var virtualDocuments))
         {
