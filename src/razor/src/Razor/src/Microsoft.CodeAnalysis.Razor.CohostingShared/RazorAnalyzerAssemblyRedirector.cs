@@ -14,29 +14,35 @@ namespace Microsoft.VisualStudio.Razor;
 #pragma warning disable RS0030 // Do not use banned APIs
 [Shared]
 [Export(typeof(IRazorAnalyzerAssemblyRedirector))]
-[method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
-internal sealed class RazorAnalyzerAssemblyRedirector() : IRazorAnalyzerAssemblyRedirector
+internal sealed class RazorAnalyzerAssemblyRedirector : IRazorAnalyzerAssemblyRedirector
 {
-    private static readonly ImmutableArray<(string name, string path)> s_compilerAssemblyTypes = [
+    private readonly FrozenDictionary<string, string> _compilerAssemblyMap;
 
-        GetRedirectEntry(typeof(CodeAnalysis.Razor.CompilerFeatures)), // Microsoft.CodeAnalysis.Razor.Compiler
-        GetRedirectEntry(typeof(CodeAnalysis.Razor.CompilerFeatures), "Microsoft.NET.Sdk.Razor.SourceGenerators"),
-        GetRedirectEntry(typeof(AspNetCore.Razor.ArgHelper)), // Microsoft.AspNetCore.Razor.Utilities.Shared
+#pragma warning disable RS0030 // Do not use banned APIs
+    [ImportingConstructor]
+#pragma warning restore RS0030 // Do not use banned APIs
+    public RazorAnalyzerAssemblyRedirector()
+    {
+        ImmutableArray<(string name, string path)> compilerAssemblyTypes = [
+            GetRedirectEntry(typeof(CodeAnalysis.Razor.CompilerFeatures)), // Microsoft.CodeAnalysis.Razor.Compiler
+            GetRedirectEntry(typeof(CodeAnalysis.Razor.CompilerFeatures), "Microsoft.NET.Sdk.Razor.SourceGenerators"),
+            GetRedirectEntry(typeof(AspNetCore.Razor.ArgHelper)), // Microsoft.AspNetCore.Razor.Utilities.Shared
 
-        // The following dependencies will be provided by the Compiler ALC so its not strictly required to redirect them, but we do so for completeness. 
-        GetRedirectEntry(typeof(ImmutableArray)), // System.Collections.Immutable
+            // The following dependencies will be provided by the Compiler ALC so its not strictly required to redirect them, but we do so for completeness. 
+            GetRedirectEntry(typeof(ImmutableArray)), // System.Collections.Immutable
 
-        // ObjectPool is special
-        GetObjectPoolRedirect() // Microsoft.Extensions.ObjectPool
-    ];
+            // ObjectPool is special
+            GetObjectPoolRedirect() // Microsoft.Extensions.ObjectPool
+        ];
 
-    private static readonly FrozenDictionary<string, string> s_compilerAssemblyMap = s_compilerAssemblyTypes.ToFrozenDictionary(t => t.name, t => t.path);
+        _compilerAssemblyMap = compilerAssemblyTypes.ToFrozenDictionary(t => t.name, t => t.path);
+    }
 
     public string? RedirectPath(string fullPath)
     {
         var name = Path.GetFileNameWithoutExtension(fullPath);
-        return s_compilerAssemblyMap.TryGetValue(name, out var path) ? path : null;
+        return _compilerAssemblyMap.TryGetValue(name, out var path) ? path : null;
     }
 
     private static (string name, string path) GetObjectPoolRedirect()

@@ -11,8 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.Internal.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
 using Xunit;
 using Xunit.Abstractions;
@@ -67,7 +65,6 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutput) : Ab
         // Razor extension doesn't launch until a razor file is opened, so wait for it to equalize
         await TestServices.Workspace.WaitForProjectSystemAsync(ControlledHangMitigatingCancellationToken);
 
-        EnsureLSPEditorEnabled();
         await EnsureTextViewRolesAsync(ControlledHangMitigatingCancellationToken);
         await EnsureExtensionInstalledAsync(ControlledHangMitigatingCancellationToken);
 
@@ -148,15 +145,6 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutput) : Ab
         TestServices.Output.ClearIntegrationTestLogger();
 
         await base.DisposeAsync();
-    }
-
-    private static void EnsureLSPEditorEnabled()
-    {
-        var settingsManager = (ISettingsManager)ServiceProvider.GlobalProvider.GetService(typeof(SVsSettingsPersistenceManager));
-        Assumes.Present(settingsManager);
-
-        var useLegacyEditor = settingsManager.GetValueOrDefault<bool>(WellKnownSettingNames.UseLegacyASPNETCoreEditor);
-        Assert.False(useLegacyEditor, "Expected the Legacy Razor Editor to be disabled, but it was enabled");
     }
 
     private async Task EnsureTextViewRolesAsync(CancellationToken cancellationToken)
