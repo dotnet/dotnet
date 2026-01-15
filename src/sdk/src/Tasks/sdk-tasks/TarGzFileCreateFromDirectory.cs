@@ -4,10 +4,12 @@
 #nullable disable
 
 using System.Runtime.InteropServices;
+using System.IO.Compression;
+using System.Formats.Tar;
 
 namespace Microsoft.DotNet.Build.Tasks
 {
-    public sealed class TarGzFileCreateFromDirectory : ToolTask
+    public sealed class TarGzFileCreateFromDirectory : Task
     {
         /// <summary>
         /// The path to the directory to be archived.
@@ -36,24 +38,8 @@ namespace Microsoft.DotNet.Build.Tasks
         /// </summary>
         public ITaskItem[] ExcludePatterns { get; set; }
 
-        public bool IgnoreExitCode { get; set; }
-
-        protected override int ExecuteTool(string pathToTool, string responseFileCommands, string commandLineCommands)
+        private bool ValidateParameters()
         {
-            int returnCode = base.ExecuteTool(pathToTool, responseFileCommands, commandLineCommands);
-
-            if (IgnoreExitCode)
-            {
-                returnCode = 0;
-            }
-
-            return returnCode;
-        }
-
-        protected override bool ValidateParameters()
-        {
-            base.ValidateParameters();
-
             var retVal = true;
 
             if (File.Exists(DestinationArchive))
@@ -92,7 +78,41 @@ namespace Microsoft.DotNet.Build.Tasks
             return retVal;
         }
 
-        public override bool Execute() => base.Execute();
+        public override bool Execute()
+        {
+            if (!ValidateParameters())
+            {
+                return false;
+            }
+
+            // Use .NET's System.Formats.Tar API on all platforms for consistency and to avoid tar bugs
+            return ExecuteWithDotNetTarApi();
+        }
+
+        private bool ExecuteWithDotNetTarApi()
+        {
+            try
+            {
+                Log.LogMessage(MessageImportance.High, $"Creating tar.gz archive using .NET API: {DestinationArchive}");
+
+                using (var fileStream = new FileStream(DestinationArchive, FileMode.Create, FileAccess.Write))
+                using (var gzipStream = new System.IO.Compression.GZipStream(fileStream, System.IO.Compression.CompressionLevel.Optimal))
+                {
+                    System.Formats.Tar.TarFile.CreateFromDirectory(
+                        SourceDirectory,
+                        gzipStream,
+                        includeBaseDirectory: false);
+                }
+
+                Log.LogMessage(MessageImportance.High, $"Successfully created archive: {DestinationArchive}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.LogError($"Failed to create tar.gz archive: {ex.Message}");
+                return false;
+            }
+        }
 
         private void LogFilesystemState()
         {
@@ -231,46 +251,5 @@ namespace Microsoft.DotNet.Build.Tasks
                 CloseHandle(handle);
             }
         }
-
-        protected override string ToolName => "tar";
-
-        protected override MessageImportance StandardOutputLoggingImportance => MessageImportance.High;
-
-        protected override string GenerateFullPathToTool() => "tar";
-
-        protected override string GenerateCommandLineCommands() => $"{GetDestinationArchive()} {GetSourceSpecification()}";
-
-        private string GetSourceSpecification()
-        {
-            if (IncludeBaseDirectory)
-            {
-                var parentDirectory = Directory.GetParent(SourceDirectory).Parent.FullName;
-                var sourceDirectoryName = Path.GetFileName(Path.GetDirectoryName(SourceDirectory));
-                return $"--directory {parentDirectory} {sourceDirectoryName}  {GetExcludes()}";
-            }
-            else
-            {
-                return $"--directory {SourceDirectory}  {GetExcludes()} \".\"";
-            }
-        }
-
-        private string GetDestinationArchive() => $"-czf {DestinationArchive}";
-
-        private string GetExcludes()
-        {
-            var excludes = string.Empty;
-
-            if (ExcludePatterns != null)
-            {
-                foreach (var excludeTaskItem in ExcludePatterns)
-                {
-                    excludes += $" --exclude {excludeTaskItem.ItemSpec}";
-                }
-            }
-            
-            return excludes;
-        }
-
-        protected override void LogToolCommand(string message) => base.LogToolCommand($"{GetWorkingDirectory()}> {message}");
     }
 }
