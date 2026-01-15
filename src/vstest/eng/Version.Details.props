@@ -8,11 +8,9 @@ This file should be imported by eng/Versions.props
     <!-- _git/vs-code-coverage dependencies -->
     <MicrosoftInternalCodeCoveragePackageVersion>18.3.1</MicrosoftInternalCodeCoveragePackageVersion>
     <!-- dotnet/dotnet dependencies -->
-    <MicrosoftDiagnosticsNETCoreClientPackageVersion>0.2.0-preview.25567.106</MicrosoftDiagnosticsNETCoreClientPackageVersion>
-    <!-- dotnet/runtime dependencies -->
-    <MicrosoftExtensionsDependencyModelPackageVersion>6.0.2</MicrosoftExtensionsDependencyModelPackageVersion>
-    <!-- dotnet/core-setup dependencies -->
-    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
+    <MicrosoftDiagnosticsNETCoreClientPackageVersion>0.2.0-preview.26065.102</MicrosoftDiagnosticsNETCoreClientPackageVersion>
+    <MicrosoftExtensionsDependencyModelPackageVersion>10.0.3</MicrosoftExtensionsDependencyModelPackageVersion>
+    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>10.0.3</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
     <!-- dotnet/arcade dependencies -->
     <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.25612.6</MicrosoftDotNetArcadeSdkPackageVersion>
     <!-- dotnet/symreader-converter dependencies -->
@@ -25,9 +23,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftInternalCodeCoverageVersion>$(MicrosoftInternalCodeCoveragePackageVersion)</MicrosoftInternalCodeCoverageVersion>
     <!-- dotnet/dotnet dependencies -->
     <MicrosoftDiagnosticsNETCoreClientVersion>$(MicrosoftDiagnosticsNETCoreClientPackageVersion)</MicrosoftDiagnosticsNETCoreClientVersion>
-    <!-- dotnet/runtime dependencies -->
     <MicrosoftExtensionsDependencyModelVersion>$(MicrosoftExtensionsDependencyModelPackageVersion)</MicrosoftExtensionsDependencyModelVersion>
-    <!-- dotnet/core-setup dependencies -->
     <MicrosoftExtensionsFileSystemGlobbingVersion>$(MicrosoftExtensionsFileSystemGlobbingPackageVersion)</MicrosoftExtensionsFileSystemGlobbingVersion>
     <!-- dotnet/arcade dependencies -->
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
