@@ -16,8 +16,7 @@
       "dotnet": [
         "$(MicrosoftInternalRuntimeAspNetCoreTransportVersion)"
       ]
-    },
-    "vs": {}
+    }
   },
   "native-tools": {
     "jdk": "latest"
