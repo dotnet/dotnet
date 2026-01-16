@@ -64,8 +64,8 @@
 
     <ItemGroup>
       <!-- .pkgs and .app bundle tooling is only available on MacOS -->
-      <MacOSPkgCliItem Condition="$([MSBuild]::IsOSPlatform('OSX'))" Include="$(NuGetPackageRoot)microsoft.dotnet.macospkg.cli\$(MicrosoftDotNetMacOsPkgVersion)\tools\net1*\any\Microsoft.Dotnet.MacOsPkg.Cli.dll" />
-      <TarToolItem Include="$(NuGetPackageRoot)microsoft.dotnet.tar\$(MicrosoftDotNetTarVersion)\tools\net1*\any\Microsoft.Dotnet.Tar.dll" />
+      <MacOSPkgCliItem Condition="$([MSBuild]::IsOSPlatform('OSX'))" Include="$(NuGetPackageRoot)microsoft.dotnet.macospkg.cli\$(MicrosoftDotNetMacOsPkgVersion)\tools\net*\any\Microsoft.Dotnet.MacOsPkg.Cli.dll" />
+      <TarToolItem Include="$(NuGetPackageRoot)microsoft.dotnet.tar\$(MicrosoftDotNetTarVersion)\tools\net*\any\Microsoft.Dotnet.Tar.dll" />
     </ItemGroup>
 
     <Error Condition="'$(AllowEmptySignList)' != 'true' AND '@(ItemsToSign)' == ''" 
