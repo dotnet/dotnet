@@ -52,8 +52,9 @@ parameters:
 - name: pool_Windows
   type: object
   default:
-    name: Docker-2025-Public
-    image: Server2025-NESDockerBuilds
+    name: $(defaultPoolName)
+    image: $(poolImage_Windows)
+    demands: ImageOverride -equals $(poolImage_Windows)
     os: windows
 
 - name: pool_LinuxArm64

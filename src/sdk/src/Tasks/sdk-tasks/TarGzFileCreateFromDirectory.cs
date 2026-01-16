@@ -27,6 +27,11 @@ namespace Microsoft.DotNet.Build.Tasks
         public bool OverwriteDestination { get; set; }
 
         /// <summary>
+        /// Optional path to the tar executable. If not specified, uses 'tar' from PATH.
+        /// </summary>
+        public string TarToolPath { get; set; }
+
+        /// <summary>
         /// If zipping an entire folder without exclusion patterns, whether to include the folder in the archive.
         /// </summary>
         public bool IncludeBaseDirectory { get; set; }
@@ -149,9 +154,11 @@ namespace Microsoft.DotNet.Build.Tasks
         {
             try
             {
+                string tarPath = !string.IsNullOrEmpty(TarToolPath) ? TarToolPath : "tar";
+
                 var startInfo = new System.Diagnostics.ProcessStartInfo
                 {
-                    FileName = "tar",
+                    FileName = tarPath,
                     Arguments = "--version",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -171,6 +178,7 @@ namespace Microsoft.DotNet.Build.Tasks
                         {
                             // Only log the first line which typically contains the version
                             var firstLine = output.Split('\n')[0].Trim();
+                            Log.LogMessage(MessageImportance.High, $"Tar Path: {tarPath}");
                             Log.LogMessage(MessageImportance.High, $"Tar Version: {firstLine}");
                         }
                         else
@@ -192,7 +200,15 @@ namespace Microsoft.DotNet.Build.Tasks
 
         protected override MessageImportance StandardOutputLoggingImportance => MessageImportance.High;
 
-        protected override string GenerateFullPathToTool() => "tar";
+        protected override string GenerateFullPathToTool()
+        {
+            // Use custom tar path if provided, otherwise fall back to 'tar' from PATH
+            if (!string.IsNullOrEmpty(TarToolPath))
+            {
+                return TarToolPath;
+            }
+            return "tar";
+        }
 
         protected override string GenerateCommandLineCommands() => $"{GetDestinationArchive()} {GetSourceSpecification()}";
 
