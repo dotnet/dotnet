@@ -3,7 +3,9 @@
 
 #nullable disable
 
+#if NET
 using System.Diagnostics.CodeAnalysis;
+#endif
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Tasks

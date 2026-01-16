@@ -8,6 +8,5 @@ namespace Microsoft.Build.Framework.Telemetry;
 internal interface IWorkerNodeTelemetryData
 {
     Dictionary<TaskOrTargetTelemetryKey, TaskExecutionStats> TasksExecutionData { get; }
-
     Dictionary<TaskOrTargetTelemetryKey, bool> TargetsExecutionData { get; }
 }

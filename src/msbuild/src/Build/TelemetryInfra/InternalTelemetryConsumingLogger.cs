@@ -11,9 +11,7 @@ namespace Microsoft.Build.TelemetryInfra;
 internal sealed class InternalTelemetryConsumingLogger : ILogger
 {
     public LoggerVerbosity Verbosity { get; set; }
-
     public string? Parameters { get; set; }
-
     internal static event Action<WorkerNodeTelemetryData>? TestOnly_InternalTelemetryAggregted;
 
     public void Initialize(IEventSource eventSource)
@@ -53,7 +51,6 @@ internal sealed class InternalTelemetryConsumingLogger : ILogger
         {
             Console.WriteLine($"{target.Key} : {target.Value}");
         }
-
         Console.WriteLine("==========================================");
         Console.WriteLine($"Tasks: ({_workerNodeTelemetryData.TasksExecutionData.Count})");
         Console.WriteLine("Custom tasks:");
@@ -61,28 +58,24 @@ internal sealed class InternalTelemetryConsumingLogger : ILogger
         {
             Console.WriteLine($"{task.Key}");
         }
-
         Console.WriteLine("==========================================");
         Console.WriteLine("Tasks by time:");
         foreach (var task in _workerNodeTelemetryData.TasksExecutionData.OrderByDescending(t => t.Value.CumulativeExecutionTime))
         {
             Console.WriteLine($"{task.Key} - {task.Value.CumulativeExecutionTime}");
         }
-
         Console.WriteLine("==========================================");
         Console.WriteLine("Tasks by memory consumption:");
         foreach (var task in _workerNodeTelemetryData.TasksExecutionData.OrderByDescending(t => t.Value.TotalMemoryBytes))
         {
             Console.WriteLine($"{task.Key} - {task.Value.TotalMemoryBytes / 1024.0:0.00}kB");
         }
-
         Console.WriteLine("==========================================");
         Console.WriteLine("Tasks by Executions count:");
         foreach (var task in _workerNodeTelemetryData.TasksExecutionData.OrderByDescending(t => t.Value.ExecutionsCount))
         {
             Console.WriteLine($"{task.Key} - {task.Value.ExecutionsCount}");
         }
-
         Console.WriteLine("==========================================");
     }
 

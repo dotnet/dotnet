@@ -27,8 +27,6 @@ internal sealed class WorkerNodeTelemetryEventArgs(IWorkerNodeTelemetryData work
             writer.Write(entry.Value.CumulativeExecutionTime.Ticks);
             writer.Write(entry.Value.ExecutionsCount);
             writer.Write(entry.Value.TotalMemoryBytes);
-            writer.Write(entry.Value.TaskFactoryName ?? string.Empty);
-            writer.Write(entry.Value.TaskHostRuntime ?? string.Empty);
         }
 
         writer.Write7BitEncodedInt(WorkerNodeTelemetryData.TargetsExecutionData.Count);
@@ -45,21 +43,11 @@ internal sealed class WorkerNodeTelemetryEventArgs(IWorkerNodeTelemetryData work
         Dictionary<TaskOrTargetTelemetryKey, TaskExecutionStats> tasksExecutionData = new();
         for (int i = 0; i < count; i++)
         {
-            var key = ReadFromStream(reader);
-            var cumulativeExecutionTime = TimeSpan.FromTicks(reader.ReadInt64());
-            var executionsCount = reader.ReadInt32();
-            var totalMemoryBytes = reader.ReadInt64();
-            var taskFactoryName = reader.ReadString();
-            var taskHostRuntime = reader.ReadString();
-
-            tasksExecutionData.Add(
-                key,
+            tasksExecutionData.Add(ReadFromStream(reader),
                 new TaskExecutionStats(
-                    cumulativeExecutionTime,
-                    executionsCount,
-                    totalMemoryBytes,
-                    string.IsNullOrEmpty(taskFactoryName) ? null : taskFactoryName,
-                    string.IsNullOrEmpty(taskHostRuntime) ? null : taskHostRuntime));
+                    TimeSpan.FromTicks(reader.ReadInt64()),
+                    reader.ReadInt32(),
+                    reader.ReadInt64()));
         }
 
         count = reader.Read7BitEncodedInt();

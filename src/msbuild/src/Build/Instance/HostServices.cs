@@ -76,7 +76,8 @@ namespace Microsoft.Build.Execution
                 return null;
             }
 
-            var monikerNameOrITaskHost = hostObjects.GetAnyMatchingMonikerNameOrITaskHost(targetName, taskName);
+            var monikerNameOrITaskHost =
+                hostObjects.GetAnyMatchingMonikerNameOrITaskHost(targetName, taskName);
 
             if (monikerNameOrITaskHost == null)
             {
@@ -470,15 +471,7 @@ namespace Microsoft.Build.Execution
                     return hostObject;
                 }
 
-                // For out-of-proc hosts, tasks might have a fully qualified name,
-                // while the host object registration might use a short name.
-                // We'll try to find a match using the short name.
-                string taskShortName = taskName.Split('.').LastOrDefault();
-
-                // If we got a short name and it's different from the original task name, try looking up with it.
-                return !taskName.Equals(taskShortName, StringComparison.OrdinalIgnoreCase) && _hostObjects.TryGetValue(new TargetTaskKey(targetName, taskShortName), out hostObject)
-                    ? hostObject
-                    : null;
+                return null;
             }
 
             /// <summary>
