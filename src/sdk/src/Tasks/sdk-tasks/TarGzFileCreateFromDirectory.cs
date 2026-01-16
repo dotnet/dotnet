@@ -3,6 +3,8 @@
 
 #nullable disable
 
+using System.Runtime.InteropServices;
+
 namespace Microsoft.DotNet.Build.Tasks
 {
     public sealed class TarGzFileCreateFromDirectory : ToolTask
@@ -81,7 +83,107 @@ namespace Microsoft.DotNet.Build.Tasks
                 retVal = false;
             }
 
+            // Log diagnostic information about tar and OS
+            if (retVal)
+            {
+                LogEnvironmentInfo();
+            }
+
             return retVal;
+        }
+
+        private void LogEnvironmentInfo()
+        {
+            try
+            {
+                Log.LogMessage(MessageImportance.High, "=== TAR ENVIRONMENT INFO ===");
+
+                // OS Information
+                Log.LogMessage(MessageImportance.High, $"OS: {RuntimeInformation.OSDescription}");
+                Log.LogMessage(MessageImportance.High, $"OS Platform: {(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Windows" : RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? "Linux" : RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "macOS" : "Unknown")}");
+                Log.LogMessage(MessageImportance.High, $"OS Architecture: {RuntimeInformation.OSArchitecture}");
+                Log.LogMessage(MessageImportance.High, $"OS Version: {Environment.OSVersion}");
+
+                // Windows-specific information
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    LogWindowsInfo();
+                }
+
+                // Try to get tar version
+                LogTarVersion();
+
+                Log.LogMessage(MessageImportance.High, "=== END TAR ENVIRONMENT INFO ===");
+            }
+            catch (Exception ex)
+            {
+                Log.LogMessage(MessageImportance.Normal, $"Failed to log environment info: {ex.Message}");
+            }
+        }
+
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        private void LogWindowsInfo()
+        {
+            try
+            {
+                // Get Windows edition/SKU from registry
+                var productName = Microsoft.Win32.Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName", "Unknown");
+                var editionId = Microsoft.Win32.Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "EditionID", "Unknown");
+                var currentBuild = Microsoft.Win32.Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentBuild", "Unknown");
+                var releaseId = Microsoft.Win32.Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ReleaseId", "Unknown");
+                var displayVersion = Microsoft.Win32.Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "DisplayVersion", "Unknown");
+
+                Log.LogMessage(MessageImportance.High, $"Windows Product: {productName}");
+                Log.LogMessage(MessageImportance.High, $"Windows Edition: {editionId}");
+                Log.LogMessage(MessageImportance.High, $"Windows Build: {currentBuild}");
+                Log.LogMessage(MessageImportance.High, $"Windows Release: {releaseId}");
+                Log.LogMessage(MessageImportance.High, $"Windows Display Version: {displayVersion}");
+            }
+            catch (Exception ex)
+            {
+                Log.LogMessage(MessageImportance.Normal, $"Failed to get Windows info: {ex.Message}");
+            }
+        }
+
+        private void LogTarVersion()
+        {
+            try
+            {
+                var startInfo = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "tar",
+                    Arguments = "--version",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                using (var process = System.Diagnostics.Process.Start(startInfo))
+                {
+                    if (process != null)
+                    {
+                        var output = process.StandardOutput.ReadToEnd();
+                        var error = process.StandardError.ReadToEnd();
+                        process.WaitForExit();
+
+                        if (process.ExitCode == 0 && !string.IsNullOrWhiteSpace(output))
+                        {
+                            // Only log the first line which typically contains the version
+                            var firstLine = output.Split('\n')[0].Trim();
+                            Log.LogMessage(MessageImportance.High, $"Tar Version: {firstLine}");
+                        }
+                        else
+                        {
+                            Log.LogMessage(MessageImportance.Normal, $"Could not determine tar version. Exit code: {process.ExitCode}");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.LogMessage(MessageImportance.Normal, $"Failed to get tar version: {ex.Message}");
+            }
         }
 
         public override bool Execute() => base.Execute();
