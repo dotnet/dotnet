@@ -1521,18 +1521,15 @@ internal static class NativeMethods
     /// Internal, optimized GetCurrentDirectory implementation that simply delegates to the native method
     /// </summary>
     /// <returns></returns>
-    internal static string GetCurrentDirectory()
+    internal static unsafe string GetCurrentDirectory()
     {
 #if FEATURE_LEGACY_GETCURRENTDIRECTORY
         if (IsWindows)
         {
-            unsafe
-            {
-                int bufferSize = GetCurrentDirectoryWin32(0, null);
-                char* buffer = stackalloc char[bufferSize];
-                int pathLength = GetCurrentDirectoryWin32(bufferSize, buffer);
-                return new string(buffer, startIndex: 0, length: pathLength);
-            }
+            int bufferSize = GetCurrentDirectoryWin32(0, null);
+            char* buffer = stackalloc char[bufferSize];
+            int pathLength = GetCurrentDirectoryWin32(bufferSize, buffer);
+            return new string(buffer, startIndex: 0, length: pathLength);
         }
 #endif
         return Directory.GetCurrentDirectory();

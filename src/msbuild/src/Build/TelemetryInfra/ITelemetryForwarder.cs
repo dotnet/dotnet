@@ -14,15 +14,8 @@ internal interface ITelemetryForwarder
 {
     bool IsTelemetryCollected { get; }
 
-    void AddTask(
-        string name,
-        TimeSpan cumulativeExecutionTime,
-        short executionsCount,
-        long totalMemoryConsumed,
-        bool isCustom,
-        bool isFromNugetCache,
-        string? taskFactoryName,
-        string? taskHostRuntime);
+    void AddTask(string name, TimeSpan cumulativeExecutionTime, short executionsCount, long totalMemoryConsumed, bool isCustom,
+        bool isFromNugetCache);
 
     /// <summary>
     /// Add info about target execution to the telemetry.

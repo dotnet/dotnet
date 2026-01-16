@@ -43,9 +43,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                     buildProcessEnvironment: null,
                     culture: Thread.CurrentThread.CurrentCulture,
                     uiCulture: Thread.CurrentThread.CurrentUICulture,
-#if !NET35
-                    null,
-#endif
 #if FEATURE_APPDOMAIN
                     appDomainSetup:
 #if FEATURE_APPDOMAIN
@@ -56,8 +53,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                     1,
                     columnNumberOfTask: 1,
                     projectFileOfTask: @"c:\my project\myproj.proj",
-                    targetName: "",
-                    projectFile: "proj.proj",
                     continueOnError: _continueOnErrorDefault,
                     taskName: null,
                     taskLocation: @"c:\my tasks\mytask.dll",
@@ -83,9 +78,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                     buildProcessEnvironment: null,
                     culture: Thread.CurrentThread.CurrentCulture,
                     uiCulture: Thread.CurrentThread.CurrentUICulture,
-#if !NET35
-                    null,
-#endif
 #if FEATURE_APPDOMAIN
                     appDomainSetup:
 #if FEATURE_APPDOMAIN
@@ -96,8 +88,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                     1,
                     columnNumberOfTask: 1,
                     projectFileOfTask: @"c:\my project\myproj.proj",
-                    targetName: "",
-                    projectFile: "proj.proj",
                     continueOnError: _continueOnErrorDefault,
                     taskName: String.Empty,
                     taskLocation: @"c:\my tasks\mytask.dll",
@@ -123,9 +113,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                     buildProcessEnvironment: null,
                     culture: Thread.CurrentThread.CurrentCulture,
                     uiCulture: Thread.CurrentThread.CurrentUICulture,
-#if !NET35
-                    null,
-#endif
 #if FEATURE_APPDOMAIN
                     appDomainSetup:
 #if FEATURE_APPDOMAIN
@@ -136,8 +123,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                     1,
                     columnNumberOfTask: 1,
                     projectFileOfTask: @"c:\my project\myproj.proj",
-                    targetName: "",
-                    projectFile: "proj.proj",
                     continueOnError: _continueOnErrorDefault,
                     taskName: "TaskName",
                     taskLocation: null,
@@ -165,9 +150,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                     buildProcessEnvironment: null,
                     culture: Thread.CurrentThread.CurrentCulture,
                     uiCulture: Thread.CurrentThread.CurrentUICulture,
-#if !NET35
-                    null,
-#endif
 #if FEATURE_APPDOMAIN
                     appDomainSetup:
 #if FEATURE_APPDOMAIN
@@ -178,8 +160,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                     1,
                     columnNumberOfTask: 1,
                     projectFileOfTask: @"c:\my project\myproj.proj",
-                    targetName: "",
-                    projectFile: "proj.proj",
                     continueOnError: _continueOnErrorDefault,
                     taskName: "TaskName",
                     taskLocation: String.Empty,
@@ -205,9 +185,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 buildProcessEnvironment: null,
                 culture: Thread.CurrentThread.CurrentCulture,
                 uiCulture: Thread.CurrentThread.CurrentUICulture,
-#if !NET35
-                    null,
-#endif
 #if FEATURE_APPDOMAIN
                 appDomainSetup:
 #if FEATURE_APPDOMAIN
@@ -218,8 +195,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 1,
                 columnNumberOfTask: 1,
                 projectFileOfTask: @"c:\my project\myproj.proj",
-                targetName: "TargetName",
-                projectFile: "proj.proj",
                 continueOnError: _continueOnErrorDefault,
                 taskName: "TaskName",
                 taskLocation: @"c:\MyTasks\MyTask.dll",
@@ -236,9 +211,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 buildProcessEnvironment: null,
                 culture: Thread.CurrentThread.CurrentCulture,
                 uiCulture: Thread.CurrentThread.CurrentUICulture,
-#if !NET35
-                null,
-#endif
 #if FEATURE_APPDOMAIN
                 appDomainSetup:
 #if FEATURE_APPDOMAIN
@@ -249,8 +221,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 1,
                 columnNumberOfTask: 1,
                 projectFileOfTask: @"c:\my project\myproj.proj",
-                targetName: "TargetName",
-                projectFile: "proj.proj",
                 continueOnError: _continueOnErrorDefault,
                 taskName: "TaskName",
                 taskLocation: @"c:\MyTasks\MyTask.dll",
@@ -268,9 +238,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 buildProcessEnvironment: null,
                 culture: Thread.CurrentThread.CurrentCulture,
                 uiCulture: Thread.CurrentThread.CurrentUICulture,
-#if !NET35
-                null,
-#endif
 #if FEATURE_APPDOMAIN
                 appDomainSetup:
 #if FEATURE_APPDOMAIN
@@ -281,8 +248,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 1,
                 columnNumberOfTask: 1,
                 projectFileOfTask: @"c:\my project\myproj.proj",
-                targetName: "TargetName",
-                projectFile: "proj.proj",
                 continueOnError: _continueOnErrorDefault,
                 taskName: "TaskName",
                 taskLocation: @"c:\MyTasks\MyTask.dll",
@@ -305,9 +270,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 buildProcessEnvironment: null,
                 culture: Thread.CurrentThread.CurrentCulture,
                 uiCulture: Thread.CurrentThread.CurrentUICulture,
-#if !NET35
-                null,
-#endif
 #if FEATURE_APPDOMAIN
                 appDomainSetup:
 #if FEATURE_APPDOMAIN
@@ -318,8 +280,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 1,
                 columnNumberOfTask: 1,
                 projectFileOfTask: @"c:\my project\myproj.proj",
-                targetName: "TargetName",
-                projectFile: "proj.proj",
                 continueOnError: _continueOnErrorDefault,
                 taskName: "TaskName",
                 taskLocation: @"c:\MyTasks\MyTask.dll",
@@ -342,9 +302,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 buildProcessEnvironment: null,
                 culture: Thread.CurrentThread.CurrentCulture,
                 uiCulture: Thread.CurrentThread.CurrentUICulture,
-#if !NET35
-                null,
-#endif
 #if FEATURE_APPDOMAIN
                 appDomainSetup:
 #if FEATURE_APPDOMAIN
@@ -355,8 +312,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 1,
                 columnNumberOfTask: 1,
                 projectFileOfTask: @"c:\my project\myproj.proj",
-                targetName: "TargetName",
-                projectFile: "proj.proj",
                 continueOnError: _continueOnErrorDefault,
                 taskName: "TaskName",
                 taskLocation: @"c:\MyTasks\MyTask.dll",
@@ -386,9 +341,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 buildProcessEnvironment: null,
                 culture: Thread.CurrentThread.CurrentCulture,
                 uiCulture: Thread.CurrentThread.CurrentUICulture,
-#if !NET35
-                null,
-#endif
 #if FEATURE_APPDOMAIN
                 appDomainSetup:
 #if FEATURE_APPDOMAIN
@@ -399,8 +351,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 1,
                 columnNumberOfTask: 1,
                 projectFileOfTask: @"c:\my project\myproj.proj",
-                targetName: "TargetName",
-                projectFile: "proj.proj",
                 continueOnError: _continueOnErrorDefault,
                 taskName: "TaskName",
                 taskLocation: @"c:\MyTasks\MyTask.dll",
@@ -442,15 +392,10 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 buildProcessEnvironment: null,
                 culture: Thread.CurrentThread.CurrentCulture,
                 uiCulture: Thread.CurrentThread.CurrentUICulture,
-#if !NET35
-                null,
-#endif
                 appDomainSetup: setup,
                 lineNumberOfTask: 1,
                 columnNumberOfTask: 1,
                 projectFileOfTask: @"c:\my project\myproj.proj",
-                targetName: "TargetName",
-                projectFile: "proj.proj",
                 continueOnError: _continueOnErrorDefault,
                 taskName: "TaskName",
                 taskLocation: @"c:\MyTasks\MyTask.dll",
@@ -493,9 +438,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 buildProcessEnvironment: null,
                 culture: Thread.CurrentThread.CurrentCulture,
                 uiCulture: Thread.CurrentThread.CurrentUICulture,
-#if !NET35
-                null,
-#endif
 #if FEATURE_APPDOMAIN
                 appDomainSetup:
 #if FEATURE_APPDOMAIN
@@ -506,8 +448,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 1,
                 columnNumberOfTask: 1,
                 projectFileOfTask: @"c:\my project\myproj.proj",
-                targetName: "TargetName",
-                projectFile: "proj.proj",
                 continueOnError: _continueOnErrorDefault,
                 taskName: "TaskName",
                 taskLocation: @"c:\MyTasks\MyTask.dll",
@@ -549,9 +489,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 buildProcessEnvironment: null,
                 culture: Thread.CurrentThread.CurrentCulture,
                 uiCulture: Thread.CurrentThread.CurrentUICulture,
-#if !NET35
-                null,
-#endif
 #if FEATURE_APPDOMAIN
                 appDomainSetup:
 #if FEATURE_APPDOMAIN
@@ -562,8 +499,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 1,
                 columnNumberOfTask: 1,
                 projectFileOfTask: @"c:\my project\myproj.proj",
-                targetName: "TargetName",
-                projectFile: "proj.proj",
                 continueOnError: _continueOnErrorDefault,
                 taskName: "TaskName",
                 taskLocation: @"c:\MyTasks\MyTask.dll",
@@ -603,9 +538,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 buildProcessEnvironment: null,
                 culture: Thread.CurrentThread.CurrentCulture,
                 uiCulture: Thread.CurrentThread.CurrentUICulture,
-#if !NET35
-                null,
-#endif
 #if FEATURE_APPDOMAIN
                 appDomainSetup:
 #if FEATURE_APPDOMAIN
@@ -616,8 +548,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 1,
                 columnNumberOfTask: 1,
                 projectFileOfTask: @"c:\my project\myproj.proj",
-                targetName: "TargetName",
-                projectFile: "proj.proj",
                 continueOnError: _continueOnErrorDefault,
                 taskName: "TaskName",
                 taskLocation: @"c:\MyTasks\MyTask.dll",
@@ -656,9 +586,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 buildProcessEnvironment: null,
                 culture: Thread.CurrentThread.CurrentCulture,
                 uiCulture: Thread.CurrentThread.CurrentUICulture,
-#if !NET35
-                null,
-#endif
 #if FEATURE_APPDOMAIN
                 appDomainSetup:
 #if FEATURE_APPDOMAIN
@@ -669,8 +596,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 1,
                 columnNumberOfTask: 1,
                 projectFileOfTask: @"c:\my project\myproj.proj",
-                targetName: "TargetName",
-                projectFile: "proj.proj",
                 continueOnError: _continueOnErrorDefault,
                 taskName: "TaskName",
                 taskLocation: @"c:\MyTasks\MyTask.dll",
@@ -716,9 +641,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 buildProcessEnvironment: null,
                 culture: Thread.CurrentThread.CurrentCulture,
                 uiCulture: Thread.CurrentThread.CurrentUICulture,
-#if !NET35
-                null,
-#endif
 #if FEATURE_APPDOMAIN
                 appDomainSetup:
 #if FEATURE_APPDOMAIN
@@ -729,8 +651,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 1,
                 columnNumberOfTask: 1,
                 projectFileOfTask: @"c:\my project\myproj.proj",
-                targetName: "TargetName",
-                projectFile: "proj.proj",
                 continueOnError: _continueOnErrorDefault,
                 taskName: "TaskName",
                 taskLocation: @"c:\MyTasks\MyTask.dll",
@@ -771,9 +691,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 buildProcessEnvironment: null,
                 culture: Thread.CurrentThread.CurrentCulture,
                 uiCulture: Thread.CurrentThread.CurrentUICulture,
-#if !NET35
-                null,
-#endif
 #if FEATURE_APPDOMAIN
                 appDomainSetup:
 #if FEATURE_APPDOMAIN
@@ -784,8 +701,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
                 1,
                 columnNumberOfTask: 1,
                 projectFileOfTask: @"c:\my project\myproj.proj",
-                targetName: "TargetName",
-                projectFile: "proj.proj",
                 continueOnError: _continueOnErrorDefault,
                 taskName: "TaskName",
                 taskLocation: @"c:\MyTasks\MyTask.dll",

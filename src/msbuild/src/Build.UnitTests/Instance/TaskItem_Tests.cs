@@ -332,7 +332,6 @@ namespace Microsoft.Build.UnitTests.OM.Instance
             ProjectRootElement xml = projectRootElementFromString.Project;
 
             Project project = new Project(xml);
-            project.FullPath = "test.proj";
             MockLogger logger = new MockLogger();
             project.Build("Build", new ILogger[] { logger }).ShouldBeTrue();
 

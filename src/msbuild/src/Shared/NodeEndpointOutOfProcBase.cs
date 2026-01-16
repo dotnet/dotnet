@@ -121,11 +121,6 @@ namespace Microsoft.Build.BackEnd
         /// </summary>
         private BinaryWriter _binaryWriter;
 
-        /// <summary>
-        /// Represents the version of the parent packet associated with the node instantiation.
-        /// </summary>
-        private byte _parentPacketVersion;
-
 #if NET
         /// <summary>
         /// The set of property names from handshake responsible for node version.
@@ -222,9 +217,9 @@ namespace Microsoft.Build.BackEnd
         #region Construction
 
         /// <summary>
-        /// Instantiates an endpoint to act as a client.
+        /// Instantiates an endpoint to act as a client
         /// </summary>
-        internal void InternalConstruct(string pipeName = null, byte parentPacketVersion = 1)
+        internal void InternalConstruct(string pipeName = null)
         {
             _status = LinkStatus.Inactive;
             _asyncDataMonitor = new object();
@@ -232,7 +227,6 @@ namespace Microsoft.Build.BackEnd
 
             _packetStream = new MemoryStream();
             _binaryWriter = new BinaryWriter(_packetStream);
-            _parentPacketVersion = parentPacketVersion;
 
             pipeName ??= NamedPipeUtil.GetPlatformSpecificPipeName();
 
@@ -458,17 +452,9 @@ namespace Microsoft.Build.BackEnd
                             _pipeServer.TryReadEndOfHandshakeSignal(false, out HandshakeResult _))
 #endif
                             {
-                                // Send supported PacketVersion after EndOfHandshakeSignal
-                                // Based on this parent node decides how to communicate with the child.
-                                if (_parentPacketVersion >= 2)
-                                {
-                                    _pipeServer.WriteIntForHandshake(Handshake.PacketVersionFromChildMarker);  // Marker: PacketVersion follows
-                                    _pipeServer.WriteIntForHandshake(NodePacketTypeExtensions.PacketVersion);
-                                    CommunicationsUtilities.Trace("Sent PacketVersion: {0}", NodePacketTypeExtensions.PacketVersion);
-                                }
-
                                 CommunicationsUtilities.Trace("Successfully connected to parent.");
                                 _pipeServer.WriteEndOfHandshakeSignal();
+
 #if FEATURE_SECURITY_PERMISSIONS
                                 // We will only talk to a host that was started by the same user as us.  Even though the pipe access is set to only allow this user, we want to ensure they
                                 // haven't attempted to change those permissions out from under us.  This ensures that the only way they can truly gain access is to be impersonating the
@@ -710,18 +696,16 @@ namespace Microsoft.Build.BackEnd
                             bool hasExtendedHeader = NodePacketTypeExtensions.HasExtendedHeader(rawType);
                             NodePacketType packetType = hasExtendedHeader ? NodePacketTypeExtensions.GetNodePacketType(rawType) : (NodePacketType)rawType;
 
-                            byte parentVersion = 0;
+                            byte version = 0;
                             if (hasExtendedHeader)
                             {
-                                parentVersion = NodePacketTypeExtensions.ReadVersion(localReadPipe);
+                                version = NodePacketTypeExtensions.ReadVersion(localReadPipe);
                             }
 
                             try
                             {
                                 ITranslator readTranslator = BinaryTranslator.GetReadTranslator(localReadPipe, _sharedReadBuffer);
-
-                                // parent sends a packet version that is already negotiated during handshake.
-                                readTranslator.NegotiatedPacketVersion = parentVersion;
+                                readTranslator.PacketVersion = version;
                                 _packetFactory.DeserializeAndRoutePacket(0, packetType, readTranslator);
                             }
                             catch (Exception e)

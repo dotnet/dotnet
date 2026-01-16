@@ -9,7 +9,6 @@ using System.Reflection;
 using System.Threading;
 using Microsoft.Build.BackEnd.Logging;
 using Microsoft.Build.Exceptions;
-using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Internal;
 using Microsoft.Build.Shared;
@@ -144,15 +143,6 @@ namespace Microsoft.Build.BackEnd
         /// </summary>
         private bool _useSidecarTaskHost = false;
 
-#if !NET35
-        private readonly HostServices _hostServices;
-#endif
-
-        /// <summary>
-        /// The project file path that requests task execution.
-        /// </summary>
-        private string _projectFile;
-
         /// <summary>
         /// The task environment for virtualized environment operations.
         /// </summary>
@@ -168,12 +158,8 @@ namespace Microsoft.Build.BackEnd
             TaskHostParameters taskHostParameters,
             LoadedType taskType,
             bool useSidecarTaskHost,
-            string projectFile,
 #if FEATURE_APPDOMAIN
             AppDomainSetup appDomainSetup,
-#endif
-#if !NET35
-            HostServices hostServices,
 #endif
             int scheduledNodeId,
             TaskEnvironment taskEnvironment)
@@ -190,10 +176,6 @@ namespace Microsoft.Build.BackEnd
 #if FEATURE_APPDOMAIN
             _appDomainSetup = appDomainSetup;
 #endif
-#if !NET35
-            _hostServices = hostServices;
-#endif
-            _projectFile = projectFile;
             _taskHostParameters = taskHostParameters;
             _useSidecarTaskHost = useSidecarTaskHost;
             _taskEnvironment = taskEnvironment;
@@ -332,9 +314,6 @@ namespace Microsoft.Build.BackEnd
                         (IDictionary<string, string>)_taskEnvironment.GetEnvironmentVariables(),
                         _buildComponentHost.BuildParameters.Culture,
                         _buildComponentHost.BuildParameters.UICulture,
-#if !NET35
-                        _hostServices,
-#endif
 #if FEATURE_APPDOMAIN
                         _appDomainSetup,
 #endif
@@ -344,8 +323,6 @@ namespace Microsoft.Build.BackEnd
                         BuildEngine.ContinueOnError,
                         _taskType.Type.FullName,
                         taskLocation,
-                        _taskLoggingContext?.TargetLoggingContext?.Target?.Name,
-                        _projectFile,
                         _buildComponentHost.BuildParameters.LogTaskInputs,
                         _setParameters,
                         new Dictionary<string, string>(_buildComponentHost.BuildParameters.GlobalProperties),

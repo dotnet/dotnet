@@ -95,7 +95,7 @@ namespace Microsoft.Build.UnitTests
 #endif
 
         [Theory]
-        [MemberData(nameof(GetFilesComplexGlobbingMatchingInfo.GetTestData), MemberType = typeof(GetFilesComplexGlobbingMatchingInfo), DisableDiscoveryEnumeration = true)]
+        [MemberData(nameof(GetFilesComplexGlobbingMatchingInfo.GetTestData), MemberType = typeof(GetFilesComplexGlobbingMatchingInfo))]
         public void GetFilesComplexGlobbingMatching(GetFilesComplexGlobbingMatchingInfo info)
         {
             TransientTestFolder testFolder = _env.CreateFolder();

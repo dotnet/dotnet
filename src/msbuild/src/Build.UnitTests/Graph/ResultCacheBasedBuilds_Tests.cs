@@ -282,7 +282,7 @@ namespace Microsoft.Build.Graph.UnitTests
         }
 
         [Theory]
-        [MemberData(nameof(BuildGraphData), DisableDiscoveryEnumeration = true)]
+        [MemberData(nameof(BuildGraphData))]
         public void BuildProjectGraphUsingCaches(Dictionary<int, int[]> edges)
         {
             var topoSortedNodes =

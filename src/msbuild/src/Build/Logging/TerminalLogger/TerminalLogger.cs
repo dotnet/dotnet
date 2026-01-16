@@ -754,23 +754,18 @@ public sealed partial class TerminalLogger : INodeLogger
             UpdateNodeStatus(buildEventContext, null);
         }
 
+        // Continue execution and add project summary to the static part of the Console only if verbosity is higher than Quiet.
+        if (Verbosity <= LoggerVerbosity.Quiet)
+        {
+            return;
+        }
+
         ProjectContext c = new(buildEventContext);
 
         if (_projects.TryGetValue(c, out TerminalProjectInfo? project))
         {
             project.Succeeded = e.Succeeded;
             project.Stopwatch.Stop();
-
-            // In quiet mode, only show projects with errors or warnings.
-            // In higher verbosity modes, show projects based on other criteria.
-            if (Verbosity == LoggerVerbosity.Quiet && !project.HasErrorsOrWarnings)
-            {
-                // Still need to update counts even if not displaying
-                _buildErrorsCount += project.ErrorCount;
-                _buildWarningsCount += project.WarningCount;
-                return;
-            }
-
             lock (_lock)
             {
                 Terminal.BeginUpdate();
@@ -814,7 +809,6 @@ public sealed partial class TerminalLogger : INodeLogger
                     // If this was a notable project build, we print it as completed only if it's produced an output or warnings/error.
                     // If this is a test project, print it always, so user can see either a success or failure, otherwise success is hidden
                     // and it is hard to see if project finished, or did not run at all.
-                    // In quiet mode, we show the project header if there are errors/warnings (already checked above).
                     else if (project.OutputPath is not null || project.BuildMessages is not null || project.IsTestProject)
                     {
                         // Show project build complete and its output
@@ -845,7 +839,7 @@ public sealed partial class TerminalLogger : INodeLogger
                     _buildErrorsCount += project.ErrorCount;
                     _buildWarningsCount += project.WarningCount;
 
-                    if (_showNodesDisplay && Verbosity > LoggerVerbosity.Quiet)
+                    if (_showNodesDisplay)
                     {
                         DisplayNodes();
                     }
@@ -1306,24 +1300,27 @@ public sealed partial class TerminalLogger : INodeLogger
         }
 
         if (buildEventContext is not null
-            && _projects.TryGetValue(new ProjectContext(buildEventContext), out TerminalProjectInfo? project))
+            && _projects.TryGetValue(new ProjectContext(buildEventContext), out TerminalProjectInfo? project)
+            && Verbosity > LoggerVerbosity.Quiet)
         {
             // If the warning is not a 'global' auth provider message, but is immediate, we render it immediately
             // but we don't early return so that the project also tracks it.
-            if (IsImmediateWarning(e.Code) && Verbosity > LoggerVerbosity.Quiet)
+            if (IsImmediateWarning(e.Code))
             {
                 RenderImmediateMessage(FormatWarningMessage(e, Indentation));
             }
 
             // This is the general case - _most_ warnings are not immediate, so we add them to the project summary
             // and display them in the per-project and final summary.
-            // In quiet mode, we still accumulate so they can be shown in project-grouped form later.
             project.AddBuildMessage(TerminalMessageSeverity.Warning, FormatWarningMessage(e, TripleIndentation));
         }
         else
         {
             // It is necessary to display warning messages reported by MSBuild,
-            // even if it's not tracked in _projects collection.
+            // even if it's not tracked in _projects collection or the verbosity is Quiet.
+            // The idea here (similar to the implementation in ErrorRaised) is that
+            // even in Quiet scenarios we need to show warnings/errors, even if not in
+            // full project-tree view
             RenderImmediateMessage(FormatWarningMessage(e, Indentation));
             _buildWarningsCount++;
         }
@@ -1388,15 +1385,14 @@ public sealed partial class TerminalLogger : INodeLogger
         BuildEventContext? buildEventContext = e.BuildEventContext;
 
         if (buildEventContext is not null
-            && _projects.TryGetValue(new ProjectContext(buildEventContext), out TerminalProjectInfo? project))
+            && _projects.TryGetValue(new ProjectContext(buildEventContext), out TerminalProjectInfo? project)
+            && Verbosity > LoggerVerbosity.Quiet)
         {
-            // Always accumulate errors in the project, even in quiet mode, so they can be shown
-            // in project-grouped form later.
             project.AddBuildMessage(TerminalMessageSeverity.Error, FormatErrorMessage(e, TripleIndentation));
         }
         else
         {
-            // It is necessary to display error messages reported by MSBuild, even if it's not tracked in _projects collection.
+            // It is necessary to display error messages reported by MSBuild, even if it's not tracked in _projects collection or the verbosity is Quiet.
             // For nicer formatting, any messages from the engine we strip the file portion from.
             bool hasMSBuildPlaceholderLocation = e.File.Equals("MSBUILD", StringComparison.Ordinal);
             RenderImmediateMessage(FormatErrorMessage(e, Indentation, requireFileAndLinePortion: !hasMSBuildPlaceholderLocation));

@@ -104,7 +104,7 @@ namespace Microsoft.Build.BackEnd
         private TargetLoggingContext _targetLoggingContext;
 
         /// <summary>
-        /// Full path to the project.
+        /// Full path to the project, for errors
         /// </summary>
         private string _projectFullPath;
 
@@ -320,24 +320,11 @@ namespace Microsoft.Build.BackEnd
                 if (_taskNode != null)
                 {
                     taskHost = new TaskHost(_componentHost, _buildRequestEntry, _targetChildInstance.Location, _targetBuilderCallback);
-                    _taskExecutionHost.InitializeForTask(
-                        taskHost,
-                        _targetLoggingContext,
-                        _buildRequestEntry.RequestConfiguration.Project,
-                        _taskNode.Name,
-                        _taskNode.Location,
-                        _taskHostObject,
-                        _continueOnError != ContinueOnError.ErrorAndStop,
-                        _projectFullPath,
+                    _taskExecutionHost.InitializeForTask(taskHost, _targetLoggingContext, _buildRequestEntry.RequestConfiguration.Project, _taskNode.Name, _taskNode.Location, _taskHostObject, _continueOnError != ContinueOnError.ErrorAndStop,
 #if FEATURE_APPDOMAIN
                         taskHost.AppDomainSetup,
 #endif
-#if !NET35
-                        _buildRequestEntry.Request.HostServices,
-#endif
-                        taskHost.IsOutOfProc,
-                        _cancellationToken,
-                        _buildRequestEntry.TaskEnvironment);
+                        taskHost.IsOutOfProc, _cancellationToken, _buildRequestEntry.TaskEnvironment);
                 }
 
                 List<string> taskParameterValues = CreateListOfParameterValues();
