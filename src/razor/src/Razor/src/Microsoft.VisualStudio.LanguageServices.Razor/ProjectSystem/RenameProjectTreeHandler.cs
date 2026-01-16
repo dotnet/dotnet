@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.Razor.LanguageClient;
 using Microsoft.VisualStudio.Shell;
@@ -26,13 +25,13 @@ namespace Microsoft.VisualStudio.Razor.ProjectSystem;
 internal sealed partial class RenameProjectTreeHandler(
     [Import(ExportContractNames.Scopes.UnconfiguredProject)] IProjectAsynchronousTasksService projectAsynchronousTasksService,
     SVsServiceProvider serviceProvider,
-    Lazy<LSPRequestInvoker> requestInvoker,
+    Lazy<LSPRequestInvokerWrapper> requestInvoker,
     LanguageServerFeatureOptions featureOptions,
     ILoggerFactory loggerFactory) : ProjectTreeActionHandlerBase
 {
     private readonly IProjectAsynchronousTasksService _projectAsynchronousTasksService = projectAsynchronousTasksService;
     private readonly SVsServiceProvider _serviceProvider = serviceProvider;
-    private readonly Lazy<LSPRequestInvoker> _requestInvoker = requestInvoker;
+    private readonly Lazy<LSPRequestInvokerWrapper> _requestInvoker = requestInvoker;
     private readonly LanguageServerFeatureOptions _featureOptions = featureOptions;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RenameProjectTreeHandler>();
 
