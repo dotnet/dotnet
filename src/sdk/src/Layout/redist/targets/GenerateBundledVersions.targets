@@ -84,7 +84,6 @@
       <_NETStandardLibraryPackageVersion>$(NETStandardLibraryRefPackageVersion)</_NETStandardLibraryPackageVersion>
       <_NETCorePlatformsPackageVersion>$(MicrosoftNETCorePlatformsPackageVersion)</_NETCorePlatformsPackageVersion>
 
-      <!-- TODO: Once .NET 10.0.X has released, update these version numbers to 10.0.$(VersionFeature100) -->
       <_NET100RuntimePackVersion>10.0.$(VersionFeature100)</_NET100RuntimePackVersion>
       <_NET100TargetingPackVersion>10.0.$(VersionFeature100)</_NET100TargetingPackVersion>
       <_WindowsDesktop100RuntimePackVersion>10.0.$(VersionFeature100)</_WindowsDesktop100RuntimePackVersion>
@@ -271,6 +270,8 @@
         tvossimulator-x64;
         maccatalyst-x64;
         maccatalyst-arm64;
+        haiku-x64;
+        browser-wasm;
         " />
 
       <NetCoreAppHostRids Include="@(Net110AppHostRids)" />
