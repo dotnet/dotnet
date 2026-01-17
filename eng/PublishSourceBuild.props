@@ -92,7 +92,7 @@
 
   <PropertyGroup>
     <SharedComponentFilterMode>$(SharedComponentFilter_NonToolingOnly)</SharedComponentFilterMode>
-    <CreatePrivateSourceBuiltArtifactsArchiveDependsOn>DiscoverArtifacts;GetOutputsForCreatePrivateSourceBuiltArtifactsArchive</CreatePrivateSourceBuiltArtifactsArchiveDependsOn>
+    <CreatePrivateSourceBuiltArtifactsArchiveDependsOn>DiscoverArtifacts;GetOutputsForCreatePrivateSourceBuiltArtifactsArchive;PublishToAzureDevOpsArtifacts</CreatePrivateSourceBuiltArtifactsArchiveDependsOn>
     <CreatePrivateSourceBuiltArtifactsArchiveDependsOn Condition="Exists('$(SharedComponentsArtifactsPath)')">
       $(CreatePrivateSourceBuiltArtifactsArchiveDependsOn);GetFilteredSharedComponentPackages
     </CreatePrivateSourceBuiltArtifactsArchiveDependsOn>
