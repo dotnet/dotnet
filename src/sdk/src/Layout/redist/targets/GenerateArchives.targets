@@ -10,21 +10,27 @@
       <IgnoreTarExitCode Condition="'$(DOTNET_CORESDK_IGNORE_TAR_EXIT_CODE)' == '1'">true</IgnoreTarExitCode>
     </PropertyGroup>
 
+    <!-- On Windows, use the bundled tar.exe from eng folder to ensure consistent version -->
+    <PropertyGroup>
+      <TarToolPath Condition="'$(OSName)' == 'win'">$(RepoRoot)eng\tar.exe</TarToolPath>
+    </PropertyGroup>
+
     <!-- Ensure output directories are created -->
     <MakeDir Directories="$(ArtifactsShippingPackagesDir);$(ArtifactsNonShippingPackagesDir)" />
 
-    <!-- Create .tar.gz files on Linux/MacOS, and .zip files on Windows -->
+    <!-- Create .zip files on Windows -->
     <ZipFileCreateFromDirectory
         Condition=" '$(OSName)' == 'win' "
         SourceDirectory="$(RedistInstallerLayoutPath)"
         DestinationArchive="$(ArtifactsShippingPackagesDir)$(ArtifactNameWithVersionCombinedHostHostFxrFrameworkSdk).zip"
         OverwriteDestination="true" />
 
+    <!-- Create .tar.gz files on all platforms -->
     <TarGzFileCreateFromDirectory
-        Condition=" '$(OSName)' != 'win' "
         SourceDirectory="$(RedistInstallerLayoutPath)"
         DestinationArchive="$(ArtifactsShippingPackagesDir)$(ArtifactNameWithVersionCombinedHostHostFxrFrameworkSdk).tar.gz"
         OverwriteDestination="true"
+        TarToolPath="$(TarToolPath)"
         IgnoreExitCode="$(IgnoreTarExitCode)" />
   </Target>
 
