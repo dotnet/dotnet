@@ -19,7 +19,7 @@
   <Import Condition="Exists('$(BuildManifestFile)')" Project="$(BuildManifestFile)" />
 
   <PropertyGroup>
-    <TargetFramework>$(NetToolCurrent)</TargetFramework>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <NETCORE_ENGINEERING_TELEMETRY>Build</NETCORE_ENGINEERING_TELEMETRY>
   </PropertyGroup>
 

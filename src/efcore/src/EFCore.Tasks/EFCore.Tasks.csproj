@@ -76,7 +76,7 @@
       <NuspecProperty Include="OutputPath=$(OutputPath)" />
       <NuspecProperty Include="NetCurrent=$(NetCurrent)" />
       <NuspecProperty Include="NetFrameworkToolCurrent=$(NetFrameworkToolCurrent)" />
-      <NuspecProperty Include="EFOutputPath=$(ArtifactsBinDir)ef\$(Configuration)\$(NetToolMinimum)" />
+      <NuspecProperty Include="EFOutputPath=$(ArtifactsBinDir)ef\$(Configuration)\$(NetMinimum)" />
     </ItemGroup>
   </Target>
 
