@@ -31,10 +31,10 @@
       "commitSha": "a99b70cf718ff7842466a7eaeefa99b471cad517"
     },
     {
-      "barId": 296200,
+      "barId": 297559,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "a8b3ccb884e497811fa31ef385f9486211bf88c5"
+      "commitSha": "43c97a1b8d5e97dd1dcc1e467079268f483ed903"
     },
     {
       "barId": 297000,
@@ -67,10 +67,10 @@
       "commitSha": "494565b6d10cc9e39bcad37143fd7e35fc469d50"
     },
     {
-      "barId": 296120,
+      "barId": 297555,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "2d85261a76299716e1e56ec93600de1dfbdccf5b"
+      "commitSha": "d6f7f02c99e67973be3af508da3dde7012b370ee"
     },
     {
       "barId": 295978,
