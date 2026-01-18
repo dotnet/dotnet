@@ -63,7 +63,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase, IDisposa
         {
             if (_tokenBuilder == null)
             {
-                var result = _pool.Allocate<SyntaxToken>();
+                var result = Pool.Allocate<SyntaxToken>();
                 _tokenBuilder = result.Builder;
             }
 
@@ -735,5 +735,11 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase, IDisposa
     public void Dispose()
     {
         _tokenizer.Dispose();
+
+        if (_tokenBuilder != null)
+        {
+            Pool.Free(_tokenBuilder);
+            _tokenBuilder = null;
+        }
     }
 }
