@@ -167,7 +167,6 @@ src/runtime/src/libraries/System.Text.Json/roadmap/images/higher-level-component
 
 # False positive
 src/sdk/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
-src/sdk/template_feed/Microsoft.DotNet.Common.ProjectTemplates.10.0/content/*/.template.config/localize/templatestrings.fr.json|proprietary-license
 
 # Build asset, not applicable to source
 src/sdk/src/Microsoft.CodeAnalysis.NetAnalyzers/src/assets/EULA.txt|ms-net-library
