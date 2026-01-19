@@ -1,5 +1,4 @@
 <Project>
-  <!-- Workaround https://github.com/dependabot/dependabot-core/issues/8490 -->
   <!-- This file gets imported for out-of-tree test runs also where eng/Versions.props isn't
        available -->
   <Import Project="eng/Versions.props" Condition="'$(VersionPrefix)' == '' and Exists('eng/Versions.props')" />
@@ -27,11 +26,10 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="$(MicrosoftCodeAnalysisWorkspacesMSBuildVersion)" />
 
     <!-- analyzer dependencies-->
-    <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.1.118" />
-    <PackageVersion Include="DotNetAnalyzers.DocumentationAnalyzers" Version="1.0.0-beta.59" />
+    <GlobalPackageReference Include="StyleCop.Analyzers" Version="$(StyleCopAnalyzersVersion)" />
+    <PackageVersion Include="DotNetAnalyzers.DocumentationAnalyzers" Version="$(DotNetAnalyzersDocumentationAnalyzersVersion)" />
 
     <!-- build dependencies-->
-    <PackageVersion Include="Microsoft.Build.Locator" Version="1.10.2" />
     <PackageVersion Include="Microsoft.Build.Framework" Version="$(MicrosoftBuildFrameworkVersion)" />
     <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" />
     <PackageVersion Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />

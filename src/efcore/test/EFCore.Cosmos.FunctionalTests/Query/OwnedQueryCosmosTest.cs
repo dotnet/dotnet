@@ -424,17 +424,25 @@ WHERE c["Terminator"] IN ("OwnedPerson", "Branch", "LeafB", "LeafA")
 
     public override async Task Client_method_skip_loads_owned_navigations(bool async)
     {
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => base.Client_method_skip_loads_owned_navigations(async));
+        // Always throws for sync.
+        if (async)
+        {
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => base.Client_method_skip_loads_owned_navigations(async));
 
-        Assert.Equal(CosmosStrings.OffsetRequiresLimit, exception.Message);
+            Assert.Equal(CosmosStrings.OffsetRequiresLimit, exception.Message);
+        }
     }
 
     public override async Task Client_method_skip_loads_owned_navigations_variation_2(bool async)
     {
-        var exception =
-            await Assert.ThrowsAsync<InvalidOperationException>(() => base.Client_method_skip_loads_owned_navigations_variation_2(async));
+        // Always throws for sync.
+        if (async)
+        {
+            var exception =
+                await Assert.ThrowsAsync<InvalidOperationException>(() => base.Client_method_skip_loads_owned_navigations_variation_2(async));
 
-        Assert.Equal(CosmosStrings.OffsetRequiresLimit, exception.Message);
+            Assert.Equal(CosmosStrings.OffsetRequiresLimit, exception.Message);
+        }
     }
 
     public override Task Where_owned_collection_navigation_ToList_Count(bool async)
@@ -979,13 +987,13 @@ WHERE c["Terminator"] IN ("HeliumBalloon", "HydrogenBalloon")
                 AssertSql(
                     """
 @p='1'
-@p0='2'
+@p1='2'
 
 SELECT VALUE c
 FROM root c
 WHERE c["Terminator"] IN ("OwnedPerson", "Branch", "LeafB", "LeafA")
 ORDER BY c["Id"]
-OFFSET @p LIMIT @p0
+OFFSET @p LIMIT @p1
 """);
             });
 
@@ -998,13 +1006,13 @@ OFFSET @p LIMIT @p0
                 AssertSql(
                     """
 @p='1'
-@p0='2'
+@p1='2'
 
 SELECT VALUE c
 FROM root c
 WHERE c["Terminator"] IN ("OwnedPerson", "Branch", "LeafB", "LeafA")
 ORDER BY c["Id"]
-OFFSET @p LIMIT @p0
+OFFSET @p LIMIT @p1
 """);
             });
 

@@ -1,12 +1,28 @@
 <Project>
-  <Import Project="Version.Details.props" Condition="Exists('Version.Details.props')" />
-  <!-- Repo Version Information -->
+
+  <Import Project="Version.Details.props" />
+
   <PropertyGroup>
-    <VersionPrefix>0.1.0</VersionPrefix>
-    <PreReleaseVersionLabel>alpha.1</PreReleaseVersionLabel>
-    <UseVSTestRunner>true</UseVSTestRunner>
     <VersionSDKMinor>1</VersionSDKMinor>
+    <MajorVersion>11</MajorVersion>
+    <MinorVersion>0</MinorVersion>
+    <VersionPrefix>$(MajorVersion).$(MinorVersion).$(VersionSDKMinor)00</VersionPrefix>
+    <PreReleaseVersionLabel>alpha</PreReleaseVersionLabel>
+    <PreReleaseVersionIteration></PreReleaseVersionIteration>
+
+    <!-- 
+      Allowed values: 'repodefault', 'unstable', 'preview', 'release'
+      'repodefault' uses the repo branding defaults.
+      'unstable' produces assets with the repo specified branding suffix.
+      'preview' produces assets with a '.final' branding suffix.
+      'release' produces assets without a branding suffix.
+    -->
+    <RepoDotNetFinalVersionKind>repodefault</RepoDotNetFinalVersionKind>
+
+    <!-- Arcade features -->
+    <UseVSTestRunner>true</UseVSTestRunner>
   </PropertyGroup>
+
   <PropertyGroup>
     <!--
       Building .NET from source depends on several archives, depending on the branch's current
@@ -25,8 +41,8 @@
       of a .NET major or minor release, prebuilts may be needed. When the release is mature, prebuilts
       are not necessary, and this property is removed from the file.
     -->
-    <PrivateSourceBuiltSdkVersion>10.0.100-rc.1.25420.111</PrivateSourceBuiltSdkVersion>
-    <PrivateSourceBuiltArtifactsVersion>10.0.100-rc.1.25420.111</PrivateSourceBuiltArtifactsVersion>
+    <PrivateSourceBuiltSdkVersion>11.0.100-alpha.1.26064.118</PrivateSourceBuiltSdkVersion>
+    <PrivateSourceBuiltArtifactsVersion>11.0.100-alpha.1.26064.118</PrivateSourceBuiltArtifactsVersion>
     <!-- command-line-api dependencies -->
     <SystemCommandLineVersion>2.0.0-beta5.25208.1</SystemCommandLineVersion>
     <!-- msbuild dependencies -->
@@ -34,12 +50,17 @@
     <!-- nuget dependencies -->
     <NuGetProtocolVersion>6.13.1</NuGetProtocolVersion>
     <NuGetProjectModelVersion>6.13.1</NuGetProjectModelVersion>
+    <!-- roslyn dependencies -->
+    <MicrosoftCodeAnalysisVersion>4.4.0</MicrosoftCodeAnalysisVersion>
     <!-- runtime dependencies -->
-    <MicrosoftExtensionsFileSystemGlobbingVersion>9.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
-    <MicrosoftExtensionsLoggingConsoleVersion>9.0.0</MicrosoftExtensionsLoggingConsoleVersion>
-    <MicrosoftExtensionsLoggingVersion>9.0.0</MicrosoftExtensionsLoggingVersion>
+    <MicrosoftExtensionsFileSystemGlobbingVersion>10.0.2</MicrosoftExtensionsFileSystemGlobbingVersion>
+    <MicrosoftExtensionsLoggingConsoleVersion>10.0.2</MicrosoftExtensionsLoggingConsoleVersion>
+    <MicrosoftExtensionsLoggingVersion>10.0.2</MicrosoftExtensionsLoggingVersion>
+    <MicrosoftExtensionsHostingVersion>10.0.2</MicrosoftExtensionsHostingVersion>
+    <!-- sdk dependencies -->
+    <MicrosoftDotNetApiCompatTaskVersion>10.0.100</MicrosoftDotNetApiCompatTaskVersion>
     <!-- external dependencies -->
-    <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
-    <OctokitVersion>13.0.1</OctokitVersion>
+    <NewtonsoftJsonVersion>13.0.4</NewtonsoftJsonVersion>
   </PropertyGroup>
+
 </Project>

@@ -59,7 +59,7 @@
       </trans-unit>
       <trans-unit id="NuGetSearchProvider_CategoryShortcut">
         <source>nuget</source>
-        <target state="translated">nuget</target>
+        <target state="translated">NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="NuGetSearchProvider_Description">
@@ -113,13 +113,13 @@
         <note />
       </trans-unit>
       <trans-unit id="ProjectMigrateErrorMessage">
-        <source>Project is not eligible for migration as it's not project.json based.</source>
-        <target state="translated">Das Projekt ist nicht für die Migration qualifiziert, weil es nicht project.json basiert.</target>
+        <source>Project is not eligible for migration. Either the project is not packages.config based or doesn't support PackageReference yet.</source>
+        <target state="translated">Das Projekt ist für die Migration nicht geeignet. Entweder basiert das Projekt nicht auf „packages.config“, oder PackageReference wird noch nicht unterstützt.</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
         <source>These settings are stored in %NuGet.Config% files</source>
-        <target state="translated">Diese Einstellungen werden in %NuGet.Config% Dateien gespeichert.</target>
+        <target state="translated">Diese Einstellungen werden in %NuGet.Config%-Dateien gespeichert.</target>
         <note>Do not translate % % or what is between them</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
@@ -130,6 +130,21 @@
       <trans-unit id="Text_AllowInsecureConnections_Header">
         <source>Allow Insecure Connections</source>
         <target state="translated">Unsichere Verbindungen zulassen</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Description">
+        <source>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</source>
+        <target state="translated">Überwachungsquellen liefern während der Wiederherstellung Sicherheitsrisikodaten, ohne als Paketquellen zu fungieren. Wenn keine Überwachungsquellen konfiguriert sind, verwendet NuGet Audit Paketquellen. [Weitere Informationen zu Überwachungsquellen](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_HowToRemove">
+        <source>Remove all audit sources to revert to using package sources for vulnerability data.</source>
+        <target state="translated">Entfernen Sie alle Auditquellen, um wieder Paketquellen für Sicherheitsrisikodaten zu verwenden.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Title">
+        <source>Audit sources</source>
+        <target state="translated">Überwachungsquellen</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">
@@ -175,6 +190,11 @@
       <trans-unit id="Text_PackageSourceUrl_Header">
         <source>Source</source>
         <target state="translated">Quelle</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageSources_Description">
+        <source>Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</source>
+        <target state="translated">Paketquellen legen fest, von wo NuGet Pakete für Installations-, Wiederherstellungs-, Audit- und Aktualisierungsvorgänge bezieht. [Weitere Informationen zu Paketquellen](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageSources_MachineWide">

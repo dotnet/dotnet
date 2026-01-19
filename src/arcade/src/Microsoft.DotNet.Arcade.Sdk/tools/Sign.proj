@@ -1,5 +1,5 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
-<Project DefaultTargets="Sign" InitialTargets="InitializeSignProperties;FindDotNetPathForMicroBuild">
+<Project DefaultTargets="Sign">
 
   <!--
     Documentation for publishing is available here:
@@ -43,7 +43,7 @@
     <FileSignInfo Update="@(FileSignInfo->WithMetadataValue('CertificateName','Microsoft400'))" CertificateName="$(DotNetCertificateName)" />
   </ItemGroup>
 
-  <Target Name="InitializeSignProperties">
+  <Target Name="Sign">
     <Error Text="The value of DotNetSignType is invalid: '$(DotNetSignType)'"
            Condition="'$(DotNetSignType)' != 'real' and '$(DotNetSignType)' != 'test' and '$(DotNetSignType)' != ''" />
 
@@ -55,53 +55,25 @@
       <_TestSign>false</_TestSign>
       <_TestSign Condition="'$(DotNetSignType)' == 'test'">true</_TestSign>
 
-      <_MicroBuildRequired>false</_MicroBuildRequired>
-      <_MicroBuildRequired Condition="'$(_DryRun)' != 'true'">true</_MicroBuildRequired>
+      <_DotNetCoreRequired>false</_DotNetCoreRequired>
+      <_DotNetCoreRequired Condition="'$(_DryRun)' != 'true'">true</_DotNetCoreRequired>
 
       <!-- SN is only available on Windows -->
       <SNBinaryPath Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(NuGetPackageRoot)sn\$(SNVersion)\sn.exe</SNBinaryPath>
-      
+    </PropertyGroup>
+
+    <ItemGroup>
       <!-- .pkgs and .app bundle tooling is only available on MacOS -->
-      <PkgToolPath Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(NuGetPackageRoot)microsoft.dotnet.macospkg.cli\$(MicrosoftDotNetMacOsPkgVersion)\tools\$(NetToolCurrent)\any\Microsoft.Dotnet.MacOsPkg.Cli.dll</PkgToolPath>
-    </PropertyGroup>
-  </Target>
-
-  <Target Name="FindDotNetPathForMicroBuild" Condition="'$(_MicroBuildRequired)' == 'true'">
-    <!--
-      On non-Windows platforms, MicroBuild needs the .NET 8 SDK for signing.
-      Non-windows signed (real or test) builds will install this SDK into a */.dotnet-microbuild/* directory
-      and add it to the PATH.
-    -->
-    <PropertyGroup>
-      <UseDotNetToolPathForMicroBuild>false</UseDotNetToolPathForMicroBuild>
-      <UseDotNetToolPathForMicroBuild Condition="$([MSBuild]::IsOSPlatform('Windows'))">true</UseDotNetToolPathForMicroBuild>
-
-      <!-- Default for Windows. Default fallback for non-windows. -->
-      <_DotNetPathMicroBuild>$(DotNetTool)</_DotNetPathMicroBuild>
-    </PropertyGroup>
-
-    <ItemGroup Condition="'$(UseDotNetToolPathForMicroBuild)' == 'false'">
-      <_ItemInPath Include="$([System.Text.RegularExpressions.Regex]::Split('$(PATH)', '$([System.Convert]::ToString($([System.IO.Path]::PathSeparator)))'))" />
-
-      <_DotNetPathMicroBuildCandidate
-        Include="@(_ItemInPath->'%(Identity)/dotnet')"
-        Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(Identity)', '.dotnet-microbuild')) and Exists('%(Identity)/dotnet')" />
+      <MacOSPkgCliItem Condition="$([MSBuild]::IsOSPlatform('OSX'))" Include="$(NuGetPackageRoot)microsoft.dotnet.macospkg.cli\$(MicrosoftDotNetMacOsPkgVersion)\tools\net*\any\Microsoft.Dotnet.MacOsPkg.Cli.dll" />
+      <TarToolItem Include="$(NuGetPackageRoot)microsoft.dotnet.tar\$(MicrosoftDotNetTarVersion)\tools\net*\any\Microsoft.Dotnet.Tar.dll" />
     </ItemGroup>
 
-    <PropertyGroup Condition="'@(_DotNetPathMicroBuildCandidate)' != ''">
-      <!-- This gets overwritten for each item, so the last one wins -->
-      <_DotNetPathMicroBuild>%(_DotNetPathMicroBuildCandidate.Identity)</_DotNetPathMicroBuild>
-    </PropertyGroup>
-
-    <Message
-      Importance="High"
-      Condition="'$(UseDotNetToolPathForMicroBuild)' == 'false' and '$(_DotNetPathMicroBuild)' == '$(DotNetTool)'"
-      Text="Did not find a dotnet executable in a MicroBuild directory on PATH. Using $(DotNetTool) instead, which may cause signing errors." />
-  </Target>
-
-  <Target Name="Sign">
     <Error Condition="'$(AllowEmptySignList)' != 'true' AND '@(ItemsToSign)' == ''" 
            Text="List of files to sign is empty. Make sure that ItemsToSign is configured correctly." />
+
+    <PropertyGroup Condition="$(_DotNetCoreRequired)">
+      <_DotNetCorePath>$(DotNetTool)</_DotNetCorePath>
+    </PropertyGroup>
 
     <!-- Keep TarToolPath TFM in sync with TarTool project TFM. -->
     <Microsoft.DotNet.SignTool.SignToolTask
@@ -117,17 +89,17 @@
         FileExtensionSignInfo="@(FileExtensionSignInfo)"
         TempDir="$(ArtifactsTmpDir)"
         LogDir="$(ArtifactsLogDir)"
-        DotNetPathMicroBuild="$(_DotNetPathMicroBuild)"
-        DotNetPathTooling="$(DotNetTool)"
+        DotNetPath="$(_DotNetCorePath)"
         SNBinaryPath="$(SNBinaryPath)"
         MicroBuildCorePath="$(NuGetPackageRoot)microsoft.visualstudioeng.microbuild.core\$(MicrosoftVisualStudioEngMicroBuildCoreVersion)"
         Wix3ToolsPath="$(WixInstallPath)"
         WixToolsPath="$(NuGetPackageRoot)microsoft.wixtoolset.sdk\$(MicrosoftWixToolsetSdkVersion)\tools\net472\x64"
-        TarToolPath="$(NuGetPackageRoot)microsoft.dotnet.tar\$(MicrosoftDotNetTarVersion)\tools\$(NetToolCurrent)\any\Microsoft.Dotnet.Tar.dll"
-        PkgToolPath="$(PkgToolPath)"
+        TarToolPath="@(TarToolItem)"
+        PkgToolPath="@(MacOSPkgCliItem)"
         RepackParallelism="$(SignToolRepackParallelism)"
         MaximumParallelFileSize="$(SignToolRepackMaximumParallelFileSize)"
         DotNetTimeout="$(SignToolDotNetTimeout)"
         MSBuildVerbosity="$(SignToolMSBuildVerbosity)" />
   </Target>
+
 </Project>

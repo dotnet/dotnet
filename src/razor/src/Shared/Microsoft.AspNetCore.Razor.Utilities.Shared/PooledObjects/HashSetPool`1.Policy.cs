@@ -2,32 +2,51 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
-using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.PooledObjects;
 
-internal static partial class HashSetPool<T>
+internal partial class HashSetPool<T>
 {
-    private class Policy : IPooledObjectPolicy<HashSet<T>>
+    private sealed class Policy : PooledObjectPolicy
     {
-        public static readonly Policy Instance = new();
+        public static readonly Policy Default = new(comparer: EqualityComparer<T>.Default, DefaultMaximumObjectSize);
 
-        private readonly IEqualityComparer<T>? _comparer;
+        public IEqualityComparer<T> Comparer { get; }
 
-        public Policy(IEqualityComparer<T>? comparer = null)
+        private readonly int _maximumObjectSize;
+
+        private Policy(IEqualityComparer<T>? comparer, int maximumObjectSize)
         {
-            _comparer = comparer;
+            ArgHelper.ThrowIfNegative(maximumObjectSize);
+
+            Comparer = comparer ?? EqualityComparer<T>.Default;
+            _maximumObjectSize = maximumObjectSize;
         }
 
-        public HashSet<T> Create() => new(_comparer);
+        public static Policy Create(
+            Optional<IEqualityComparer<T>?> comparer = default,
+            Optional<int> maximumObjectSize = default)
+        {
+            if ((!comparer.HasValue || comparer.Value is null || comparer.Value == Default.Comparer) &&
+                (!maximumObjectSize.HasValue || maximumObjectSize.Value == Default._maximumObjectSize))
+            {
+                return Default;
+            }
 
-        public bool Return(HashSet<T> set)
+            return new(
+                comparer.GetValueOrDefault(EqualityComparer<T>.Default) ?? EqualityComparer<T>.Default,
+                maximumObjectSize.GetValueOrDefault(DefaultMaximumObjectSize));
+        }
+
+        public override HashSet<T> Create() => new(Comparer);
+
+        public override bool Return(HashSet<T> set)
         {
             var count = set.Count;
 
             set.Clear();
 
-            if (count > DefaultPool.MaximumObjectSize)
+            if (count > _maximumObjectSize)
             {
                 set.TrimExcess();
             }

@@ -252,9 +252,9 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
         <source>`project.json` pack is disabled in the current NuGet version, and will be permanently removed in a future version.
 Please consider migrating '{0}' to `PackageReference` and using the pack targets.
 You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</source>
-        <target state="translated">'project.json' パックは現在の NuGet バージョンでは無効になっており、今後のバージョンでは完全に削除されます。
-'{0}' を 'PackageReference' に移行し、パック ターゲットを使用することを検討してください。
-'{1}' 環境変数を 'true' に設定して、この機能を再有効化することができます。</target>
+        <target state="translated">`project.json` パックは現在の NuGet バージョンでは無効になっており、今後のバージョンでは完全に削除されます。
+'{0}' を `PackageReference` に移行し、パック ターゲットを使用することを検討してください。
+'{1}' 環境変数を 'true' に設定して、この機能を一時的に再有効化することができます。</target>
         <note>Please do not localize `project.json` pack and `PackageReference`. 0 - path, 1 - env var name</note>
       </trans-unit>
       <trans-unit id="Error_ResponseFileDoesNotExist">
@@ -679,7 +679,7 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="PackageRestoreConsentCheckBoxText">
         <source>&amp;Allow NuGet to download missing packages</source>
-        <target state="translated">足りないパッケージをダウンロードすることを NuGet に許可(&amp;A)</target>
+        <target state="translated">見つからないパッケージのダウンロードを NuGet に許可(&amp;A)</target>
         <note />
       </trans-unit>
       <trans-unit id="PackagingFilesFromOutputPath">
@@ -752,7 +752,7 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
         <source>Restoring NuGet packages...
 To prevent NuGet from downloading packages during build, open the Visual Studio Options dialog, click on the NuGet Package Manager node and uncheck '{0}'.</source>
         <target state="translated">NuGet パッケージを復元しています...
-NuGet がビルド中にパッケージを復元しないようにするには、Visual Studio の [オプション] ダイアログ ボックスを開き、NuGet の [パッケージ マネージャー] ノードをクリックして、['{0}'] をオフにします。</target>
+NuGet がビルド中にパッケージを復元しないようにするには、Visual Studio の [オプション] ダイアログ ボックスを開き、NuGet の [パッケージ マネージャー] ノードをクリックして、[{0}] をオフにします。</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandProjectNotFound">
@@ -792,7 +792,7 @@ NuGet がビルド中にパッケージを復元しないようにするには�
       </trans-unit>
       <trans-unit id="SettingsCredentials_UsingSavedCredentials">
         <source>Using credentials from config. UserName: {0}</source>
-        <target state="translated">構成からの資格情報を使用しています。UserName: {0}</target>
+        <target state="translated">構成からの資格情報を使用しています。ユーザー名: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="SolutionRestoreCommandNoPackagesConfigOrProjectJson">

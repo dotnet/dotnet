@@ -26,6 +26,8 @@ NuGet.VisualStudio.resources.dll
 Microsoft.Build.NuGetSdkResolver.dll
 Microsoft.Build.NuGetSdkResolver.resources.dll
 NuGet.Build.Tasks.dll
+NuGet.Build.Tasks.Pack.dll
+NuGet.Build.Tasks.Pack.resources.dll
 NuGet.Build.Tasks.resources.dll
 NuGet.Commands.dll
 NuGet.Commands.resources.dll

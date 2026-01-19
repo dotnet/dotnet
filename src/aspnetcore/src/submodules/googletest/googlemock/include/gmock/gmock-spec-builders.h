@@ -1467,7 +1467,7 @@ class FunctionMocker<R(Args...)> final : public UntypedFunctionMockerBase {
   // function have been satisfied.  If not, it will report Google Test
   // non-fatal failures for the violations.
   ~FunctionMocker() override GTEST_LOCK_EXCLUDED_(g_gmock_mutex) {
-    MutexLock l(&g_gmock_mutex);
+    MutexLock l(g_gmock_mutex);
     VerifyAndClearExpectationsLocked();
     Mock::UnregisterLocked(this);
     ClearDefaultActionsLocked();
@@ -1646,7 +1646,7 @@ class FunctionMocker<R(Args...)> final : public UntypedFunctionMockerBase {
       GTEST_LOCK_EXCLUDED_(g_gmock_mutex) {
     const ArgumentTuple& args =
         *static_cast<const ArgumentTuple*>(untyped_args);
-    MutexLock l(&g_gmock_mutex);
+    MutexLock l(g_gmock_mutex);
     TypedExpectation<F>* exp = this->FindMatchingExpectationLocked(args);
     if (exp == nullptr) {  // A match wasn't found.
       this->FormatUnexpectedCallMessageLocked(args, what, why);
@@ -2132,9 +2132,9 @@ GTEST_DISABLE_MSC_WARNINGS_POP_()  //  4251
 // second argument is an internal type derived from the method signature. The
 // failure to disambiguate two overloads of this method in the ON_CALL statement
 // is how we block callers from setting expectations on overloaded methods.
-#define GMOCK_ON_CALL_IMPL_(mock_expr, Setter, call)                    \
-  ((mock_expr).gmock_##call)(::testing::internal::GetWithoutMatchers(), \
-                             nullptr)                                   \
+#define GMOCK_ON_CALL_IMPL_(mock_expr, Setter, call)                      \
+  ((mock_expr).gmock_##call)(::testing::internal::WithoutMatchers::Get(), \
+                             nullptr)                                     \
       .Setter(__FILE__, __LINE__, #mock_expr, #call)
 
 #define ON_CALL(obj, call) \

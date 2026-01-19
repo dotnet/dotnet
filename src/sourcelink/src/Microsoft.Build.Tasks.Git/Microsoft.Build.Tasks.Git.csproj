@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(NetToolMinimum);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFrameworks>$(NetMinimum);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <PackageDescription>MSBuild tasks providing git repository information.</PackageDescription>
     <PackageTags>MSBuild Tasks source control git</PackageTags>
     <IsBuildTaskProject>true</IsBuildTaskProject>
@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" />
+    <PackageReference Include="System.IO.Hashing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Common\Utilities\*.cs" Link="Common\%(FileName).cs" />

@@ -132,10 +132,15 @@ internal sealed class CSharpOnTypeFormattingPass(
 
         // We make an optimistic attempt at fixing corner cases.
         var cleanupChanges = CleanupDocument(changedContext, linePositionSpanAfterFormatting);
-        var cleanedText = formattedText.WithChanges(cleanupChanges);
-        context.Logger?.LogSourceText("AfterCleanupDocument", cleanedText);
+        var cleanedText = formattedText;
 
-        changedContext = await changedContext.WithTextAsync(cleanedText, cancellationToken).ConfigureAwait(false);
+        if (!cleanupChanges.IsEmpty)
+        {
+            cleanedText = formattedText.WithChanges(cleanupChanges);
+            context.Logger?.LogSourceText("AfterCleanupDocument", cleanedText);
+
+            changedContext = await changedContext.WithTextAsync(cleanedText, cancellationToken).ConfigureAwait(false);
+        }
 
         // At this point we should have applied all edits that adds/removes newlines.
         // Let's now ensure the indentation of each of those lines is correct.
@@ -207,7 +212,7 @@ internal sealed class CSharpOnTypeFormattingPass(
             // Because we need to parse the C# code twice for this operation, lets do a quick check to see if its even necessary
             if (changes.Any(static e => e.NewText is not null && e.NewText.IndexOf("using") != -1))
             {
-                var usingStatementEdits = await AddUsingsHelper.GetUsingStatementEditsAsync(context.CodeDocument, originalTextWithChanges, cancellationToken).ConfigureAwait(false);
+                var usingStatementEdits = await AddUsingsHelper.GetUsingStatementEditsAsync(context.CurrentSnapshot, originalTextWithChanges, cancellationToken).ConfigureAwait(false);
                 var usingStatementChanges = usingStatementEdits.Select(context.CodeDocument.Source.Text.GetTextChange);
                 finalChanges = [.. usingStatementChanges, .. finalChanges];
             }
@@ -334,7 +339,14 @@ internal sealed class CSharpOnTypeFormattingPass(
 
         var text = context.SourceText;
         var sourceMappingSpan = text.GetTextSpan(sourceMappingRange);
-        if (!ShouldFormat(context, sourceMappingSpan, allowImplicitStatements: false, out var owner))
+        if (!ShouldFormat(context,
+            sourceMappingSpan,
+            new ShouldFormatOptions(
+                AllowImplicitStatements: false,
+                AllowImplicitExpressions: false,
+                AllowSingleLineExplicitExpressions: true,
+                IsLineRequest: false),
+            out var owner))
         {
             // We don't want to run cleanup on this range.
             return;
@@ -575,7 +587,7 @@ internal sealed class CSharpOnTypeFormattingPass(
         {
             var mappingSpan = new TextSpan(mapping.OriginalSpan.AbsoluteIndex, mapping.OriginalSpan.Length);
 #if DEBUG
-            var spanText = context.SourceText.GetSubTextString(mappingSpan);
+            var spanText = context.SourceText.ToString(mappingSpan);
 #endif
 
             var options = new ShouldFormatOptions(

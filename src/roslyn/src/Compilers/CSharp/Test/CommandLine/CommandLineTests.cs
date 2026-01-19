@@ -5791,6 +5791,10 @@ C:\*.cs(100,7): error CS0103: The name 'Goo' does not exist in the current conte
             parsedArgs.Errors.Verify();
             Assert.Equal("Unicode (UTF-8)", parsedArgs.Encoding.EncodingName);
 
+            parsedArgs = DefaultParse(new[] { "/CodePage:1252", "a.cs" }, WorkingDirectory);
+            parsedArgs.Errors.Verify();
+            Assert.Equal(1252, parsedArgs.Encoding.CodePage);
+
             //  error
             parsedArgs = DefaultParse(new[] { "/codepage:0", "a.cs" }, WorkingDirectory);
             parsedArgs.Errors.Verify(Diagnostic(ErrorCode.FTL_BadCodepage).WithArguments("0"));
@@ -7052,19 +7056,6 @@ Copyright (C) Microsoft Corporation. All rights reserved.".Trim(),
             return Regex.Replace(s, "(\\((<developer build>|[a-fA-F0-9]{8})\\))", "(HASH)");
         }
 
-        [Fact]
-        public void ExtractShortCommitHash()
-        {
-            Assert.Null(CommonCompiler.ExtractShortCommitHash(null));
-            Assert.Equal("", CommonCompiler.ExtractShortCommitHash(""));
-            Assert.Equal("<", CommonCompiler.ExtractShortCommitHash("<"));
-            Assert.Equal("<developer build>", CommonCompiler.ExtractShortCommitHash("<developer build>"));
-            Assert.Equal("1", CommonCompiler.ExtractShortCommitHash("1"));
-            Assert.Equal("1234567", CommonCompiler.ExtractShortCommitHash("1234567"));
-            Assert.Equal("12345678", CommonCompiler.ExtractShortCommitHash("12345678"));
-            Assert.Equal("12345678", CommonCompiler.ExtractShortCommitHash("123456789"));
-        }
-
         private void CheckOutputFileName(string source1, string source2, string inputName1, string inputName2, string[] commandLineArguments, string expectedOutputName)
         {
             var dir = Temp.CreateDirectory();
@@ -7405,6 +7396,7 @@ public class C
             var file = dir.CreateFile(fileName);
             file.WriteAllText(source);
 
+            Assert.Equal("UseLegacyStrongNameProvider", Feature.UseLegacyStrongNameProvider);
             var cmd = CreateCSharpCompiler(null, dir.Path, new[] { "/nologo", "a.cs", "/keyFile:key.snk", "/features:UseLegacyStrongNameProvider" });
             var comp = cmd.CreateCompilation(TextWriter.Null, new TouchedFileLogger(), NullErrorLogger.Instance);
 
@@ -8158,6 +8150,7 @@ namespace System
             var src = Temp.CreateFile("NoStdLib02.cs");
             src.WriteAllText(source + mslib);
 
+            Assert.Equal("noRefSafetyRulesAttribute", Feature.NoRefSafetyRulesAttribute);
             var outWriter = new StringWriter(CultureInfo.InvariantCulture);
             int exitCode = CreateCSharpCompiler(null, WorkingDirectory, new[] { "/nologo", "/noconfig", "/nostdlib", "/runtimemetadataversion:v4.0.30319", "/nowarn:8625", "/features:noRefSafetyRulesAttribute", src.ToString() }).Run(outWriter);
             Assert.Equal(0, exitCode);
@@ -9863,8 +9856,8 @@ using System.Diagnostics; // Unused.
             args = DefaultParse(new[] { "/features:Test", "a.vb", "/Features:Experiment" }, WorkingDirectory);
             args.Errors.Verify();
             Assert.Equal(2, args.ParseOptions.Features.Count);
-            Assert.True(args.ParseOptions.Features.ContainsKey("Test"));
-            Assert.True(args.ParseOptions.Features.ContainsKey("Experiment"));
+            Assert.True(args.ParseOptions.HasFeature("Test"));
+            Assert.True(args.ParseOptions.HasFeature("Experiment"));
 
             args = DefaultParse(new[] { "/features:Test=false,Key=value", "a.vb" }, WorkingDirectory);
             args.Errors.Verify();
@@ -11666,6 +11659,7 @@ class C {
             // Legacy feature flag
             using (var dir = new DisposableDirectory(Temp))
             {
+                Assert.Equal("pdb-path-determinism", Feature.PdbPathDeterminism);
                 var pdbPath = Path.Combine(dir.Path, "a.pdb");
                 AssertPdbEmit(dir, pdbPath, @"a.pdb", $@"/features:pdb-path-determinism");
             }
@@ -12326,6 +12320,7 @@ public class TestAnalyzer : DiagnosticAnalyzer
         [InlineData(@"/features:""InterceptorsNamespaces=NS1.NS2;NS3.NS4""")]
         public void FeaturesInterceptorsNamespaces_OptionParsing(string features)
         {
+            Assert.Equal("InterceptorsNamespaces", Feature.InterceptorsNamespaces);
             var tempDir = Temp.CreateDirectory();
             var workingDir = Temp.CreateDirectory();
             workingDir.CreateFile("a.cs");
@@ -12335,7 +12330,7 @@ public class TestAnalyzer : DiagnosticAnalyzer
             var comp = (CSharpCompilation)csc.CreateCompilation(new StringWriter(), new TouchedFileLogger(), errorLogger: null);
             var options = comp.SyntaxTrees[0].Options;
             Assert.Equal(1, options.Features.Count);
-            Assert.Equal("NS1.NS2;NS3.NS4", options.Features["InterceptorsNamespaces"]);
+            Assert.Equal("NS1.NS2;NS3.NS4", options.Features[Feature.InterceptorsNamespaces]);
 
             var previewNamespaces = ((CSharpParseOptions)options).InterceptorsNamespaces;
             Assert.Equal(2, previewNamespaces.Length);
@@ -12355,7 +12350,7 @@ public class TestAnalyzer : DiagnosticAnalyzer
             var comp = (CSharpCompilation)csc.CreateCompilation(new StringWriter(), new TouchedFileLogger(), errorLogger: null);
             var options = comp.SyntaxTrees[0].Options;
             Assert.Equal(1, options.Features.Count);
-            Assert.Equal("NS3.NS4", options.Features["InterceptorsNamespaces"]);
+            Assert.Equal("NS3.NS4", options.Features[Feature.InterceptorsNamespaces]);
 
             var previewNamespaces = ((CSharpParseOptions)options).InterceptorsNamespaces;
             Assert.Equal(1, previewNamespaces.Length);
@@ -12379,7 +12374,7 @@ public class TestAnalyzer : DiagnosticAnalyzer
             Assert.Equal(1, options.Features.Count);
             Assert.Equal("NS1.NS2", options.Features["InterceptorsPreviewNamespaces"]);
 
-            Assert.False(options.Features.ContainsKey("InterceptorsNamespaces"));
+            Assert.False(options.HasFeature(Feature.InterceptorsNamespaces));
             Assert.Empty(((CSharpParseOptions)options).InterceptorsNamespaces);
         }
 
@@ -14022,8 +14017,10 @@ class C
             Directory.Delete(dir.Path, true);
         }
 
-        [Fact]
-        public void SourceGenerators_ChecksumAlgorithm()
+        [Theory]
+        [InlineData([new[] { "/langversion:preview", "/out:checksum.exe", "/pdb:checksum.pdb", "/debug:portable", "/checksumAlgorithm:SHA256" }])]
+        [InlineData([new[] { "/langversion:preview", "/out:checksum.exe", "/pdb:checksum.pdb", "/debug:portable" }])]
+        public void SourceGenerators_ChecksumAlgorithm(string[] additionalFlags)
         {
             var dir = Temp.CreateDirectory();
             var src = dir.CreateFile("temp.cs");
@@ -14045,17 +14042,58 @@ class C
                 dir,
                 src,
                 includeCurrentAssemblyAsAnalyzerReference: false,
-                additionalFlags: new[] { "/langversion:preview", "/out:checksum.exe", "/pdb:checksum.pdb", "/debug:portable", "/checksumAlgorithm:SHA256" },
+                additionalFlags,
                 generators: new[] { generator },
                 analyzers: null);
 
             using (Stream peStream = File.OpenRead(Path.Combine(dir.Path, "checksum.exe")), pdbStream = File.OpenRead(Path.Combine(dir.Path, "checksum.pdb")))
             {
-                // TOOD: /checksumAlgorithm setting should override any checksum algorithms set by the generators:
                 PdbValidation.VerifyPdb(peStream, pdbStream, $@"
 <symbols>
   <files>
     <file id=""1"" name=""{src.Path}"" language=""C#"" checksumAlgorithm=""SHA256"" checksum=""A0-78-BB-A8-E8-B1-E1-3B-E8-63-80-7D-CE-CC-4B-0D-14-EF-06-D3-9B-14-52-E1-95-C6-64-D1-36-EC-7C-25"" />
+    <file id=""2"" name=""{genPath1}"" language=""C#"" checksumAlgorithm=""SHA256"" checksum=""FC-9C-F6-B3-BB-61-93-0E-1E-03-A2-62-0B-B5-D9-CE-1D-C9-40-79-72-4F-3A-6A-C6-5D-F3-84-69-5F-62-10""><![CDATA[﻿class G1 {{ void F() {{}} }}]]></file>
+    <file id=""3"" name=""{genPath2}"" language=""C#"" checksumAlgorithm=""SHA256"" checksum=""64-A9-4B-81-04-84-18-CD-73-F7-F8-3B-06-32-4B-9C-F9-36-D4-7A-7B-D0-2F-34-ED-8C-B7-AA-48-43-55-35""><![CDATA[﻿class G2 {{ void F() {{}} }}]]></file>
+  </files>
+</symbols>", PdbValidationOptions.ExcludeMethods);
+            }
+
+            Directory.Delete(dir.Path, true);
+        }
+
+        [Fact]
+        public void SourceGenerators_ChecksumAlgorithm_Sha1()
+        {
+            var dir = Temp.CreateDirectory();
+            var src = dir.CreateFile("temp.cs");
+            src.WriteAllText("class C { }");
+
+            var genPath1 = Path.Combine(dir.Path, "Microsoft.CodeAnalysis.Test.Utilities", "Roslyn.Test.Utilities.TestGenerators.TestSourceGenerator", "hint1.cs");
+            var genPath2 = Path.Combine(dir.Path, "Microsoft.CodeAnalysis.Test.Utilities", "Roslyn.Test.Utilities.TestGenerators.TestSourceGenerator", "hint2.cs");
+
+            var generator = new TestSourceGenerator()
+            {
+                ExecuteImpl = context =>
+                {
+                    context.AddSource("hint1", "class G1 { void F() {} }");
+                    context.AddSource("hint2", SourceText.From("class G2 { void F() {} }", Encoding.UTF8, checksumAlgorithm: SourceHashAlgorithm.Sha256));
+                }
+            };
+
+            VerifyOutput(
+                dir,
+                src,
+                includeCurrentAssemblyAsAnalyzerReference: false,
+                additionalFlags: new[] { "/langversion:preview", "/out:checksum.exe", "/pdb:checksum.pdb", "/debug:portable", "/checksumAlgorithm:SHA1" },
+                generators: new[] { generator },
+                analyzers: null);
+
+            using (Stream peStream = File.OpenRead(Path.Combine(dir.Path, "checksum.exe")), pdbStream = File.OpenRead(Path.Combine(dir.Path, "checksum.pdb")))
+            {
+                PdbValidation.VerifyPdb(peStream, pdbStream, $@"
+<symbols>
+  <files>
+    <file id=""1"" name=""{src.Path}"" language=""C#"" checksumAlgorithm=""SHA1"" checksum=""8A-B8-FF-37-76-5D-12-10-93-F1-CF-51-3E-51-1B-76-2B-90-15-C4"" />
     <file id=""2"" name=""{genPath1}"" language=""C#"" checksumAlgorithm=""SHA1"" checksum=""D8-87-89-A3-FE-EA-FD-AB-49-31-5A-25-B0-05-6B-6F-00-00-C2-DD""><![CDATA[﻿class G1 {{ void F() {{}} }}]]></file>
     <file id=""3"" name=""{genPath2}"" language=""C#"" checksumAlgorithm=""SHA1"" checksum=""F1-D0-FD-F0-08-9F-1B-32-9F-EF-41-A1-58-A3-14-FF-E8-06-A8-38""><![CDATA[﻿class G2 {{ void F() {{}} }}]]></file>
   </files>

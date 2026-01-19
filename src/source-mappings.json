@@ -87,7 +87,13 @@
         },
         {
             "name": "source-build-reference-packages",
-            "defaultRemote": "https://github.com/dotnet/source-build-reference-packages"
+            "defaultRemote": "https://github.com/dotnet/source-build-reference-packages",
+            "exclude": [
+                // Contains disallowed binaries
+                // 1ES Secret Scanning does not allow any PFX files
+                "src/source-build-reference-packages/src/externalPackages/spectre-console/docs/**/*",
+                "src/source-build-reference-packages/src/externalPackages/**/*.pfx"
+            ]
         },
         {
             "name": "sourcelink",

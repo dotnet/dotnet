@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Xunit;
 using Xunit.Abstractions;
@@ -17,10 +18,11 @@ public class GenerateScriptTests
     {
         new object[] { "Microsoft.Build.NoTargets", "3.7.0", PackageType.Text }, // Text only package
         new object[] { "Microsoft.CodeAnalysis.PooledObjects", "5.0.0-1.25277.114", PackageType.Text }, // Text only package w/reference package dependencies
-        new object[] { "Microsoft.Extensions.Logging.Abstractions", "6.0.4", PackageType.Reference }, // Simple reference package w/o customizations
-        new object[] { "System.Threading.Channels", "7.0.0", PackageType.Reference }, // Reference package w/numerous TFMs
+        new object[] { "System.Memory", "4.6.3", PackageType.Reference }, // Simple reference package w/o customizations
+        new object[] { "System.Threading.Channels", "8.0.0", PackageType.Reference }, // Reference package w/numerous TFMs
         new object[] { "NuGet.Packaging", "6.13.2", PackageType.Reference }, // Package w/Customizations.props
         new object[] { "System.Collections.Immutable", "8.0.0", PackageType.Reference }, // Package w/Customizations.cs
+        new object[] { "Microsoft.NETCore.App.Ref", "10.0.0", PackageType.Target }, // Target pack
     };
 
     public string SandboxDirectory { get; set; }
@@ -38,9 +40,16 @@ public class GenerateScriptTests
     public void VerifyGenerateScript(string package, string version, PackageType type)
     {
         string command = Path.Combine(PathUtilities.GetRepoRoot(), RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "generate.cmd" : "generate.sh");
-        string arguments = $"-p {package},{version} -x -d {SandboxDirectory}"
-            + (type == PackageType.Text ? " -t text" : string.Empty);
-        string pkgDirectory = Path.Combine(PathUtilities.GetPackageTypeDir(type), "src", package.ToLower(), version);
+        string typeArg = type switch
+        {
+            PackageType.Text => " -t text",
+            PackageType.Target => " -t target",
+            _ => string.Empty
+        };
+        string arguments = $"-p {package},{version} -x -d {SandboxDirectory}{typeArg}";
+        string pkgDirectory = type == PackageType.Target
+            ? Path.Combine(PathUtilities.GetPackageTypeDir(type), package.ToLower(), version)
+            : Path.Combine(PathUtilities.GetPackageTypeDir(type), "src", package.ToLower(), version);
         string pkgSrcDirectory = Path.Combine(PathUtilities.GetRepoRoot(), "src", pkgDirectory);
         string pkgSandboxDirectory = Path.Combine(SandboxDirectory, pkgDirectory);
 

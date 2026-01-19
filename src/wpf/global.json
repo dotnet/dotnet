@@ -1,6 +1,6 @@
 {
   "sdk": {
-    "version": "10.0.100-rc.1.25420.111",
+    "version": "10.0.100-rc.2.25502.107",
     "allowPrerelease": true,
     "rollForward": "latestFeature",
     "paths": [
@@ -10,7 +10,7 @@
     "errorMessage": "The required .NET SDK wasn't found. Please run ./eng/common/dotnet.cmd/sh to install it."
   },
   "tools": {
-    "dotnet": "10.0.100-rc.1.25420.111",
+    "dotnet": "10.0.100-rc.2.25502.107",
     "runtimes": {
       "dotnet/x64": [
         "$(MicrosoftNETCorePlatformsVersion)"
@@ -24,13 +24,16 @@
     }
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "11.0.0-beta.25465.103",
-    "Microsoft.DotNet.Helix.Sdk": "11.0.0-beta.25465.103",
+    "Microsoft.DotNet.Arcade.Sdk": "11.0.0-beta.25574.108",
+    "Microsoft.DotNet.Helix.Sdk": "11.0.0-beta.25574.108",
     "Microsoft.Build.NoTargets": "3.7.56"
   },
   "native-tools": {
     "strawberry-perl": "5.38.0.1",
     "net-framework-48-ref-assemblies": "0.0.0.1",
     "windows-sdk-d3d-redist": "1.0.0"
+  },
+  "test": {
+    "runner": "Microsoft.Testing.Platform"
   }
 }

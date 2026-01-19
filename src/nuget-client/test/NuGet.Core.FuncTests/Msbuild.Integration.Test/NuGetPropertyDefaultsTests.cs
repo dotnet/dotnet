@@ -134,7 +134,7 @@ namespace Msbuild.Integration.Test
         [InlineData("9.0.100", "net8.0", "false")]
         [InlineData("9.0.100", "netstandard2.1", "false")]
         [InlineData("9.0.100", "netstandard2.0", "false")]
-        public void PackagePruningDefaults__RestorePackagePruningDefault(string SdkAnalysisLevel, string targetFramework, string expected)
+        public void PackagePruningDefaults_RestorePackagePruningDefault(string SdkAnalysisLevel, string targetFramework, string expected)
         {
             // Arrange
             using var testDirectory = TestDirectory.Create();
@@ -145,7 +145,7 @@ namespace Msbuild.Integration.Test
             var projectFilePath = Path.Combine(testDirectory, "my.proj");
             File.WriteAllText(projectFilePath, projectText);
 
-            string args = $"{projectFilePath} -getProperty:_RestorePackagePruningDefault";
+            string args = $"{projectFilePath} -getProperty:RestorePackagePruningDefault";
             if (!string.IsNullOrEmpty(SdkAnalysisLevel)) args += $" -p:SdkAnalysisLevel={SdkAnalysisLevel}";
 
             var framework = NuGetFramework.Parse(targetFramework);

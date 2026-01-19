@@ -175,7 +175,7 @@ public class ComponentWhitespacePassTest
                 break;
             }
 
-            phase.Execute(codeDocument);
+            codeDocument = phase.Execute(codeDocument);
         }
 
         return codeDocument.GetRequiredDocumentNode();

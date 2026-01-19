@@ -66,7 +66,8 @@ public class CohostDocumentCompletionResolveEndpointTest(ITestOutputHelper testO
         var context = new DelegatedCompletionResolutionContext(
             textDocumentIdentifier,
             OriginalCompletionListData: null,
-            ProjectedKind: RazorLanguageKind.Html);
+            ProjectedKind: RazorLanguageKind.Html,
+            ProvisionalTextEdit: null);
 
         var list = new RazorVSInternalCompletionList
         {

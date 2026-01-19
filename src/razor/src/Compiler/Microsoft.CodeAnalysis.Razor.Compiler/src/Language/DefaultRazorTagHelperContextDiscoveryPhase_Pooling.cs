@@ -10,27 +10,8 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 internal partial class DefaultRazorTagHelperContextDiscoveryPhase
 {
-    private static readonly ObjectPool<TagHelperDirectiveVisitor> s_tagHelperDirectiveVisitorPool = DefaultPool.Create(DirectiveVisitorPolicy<TagHelperDirectiveVisitor>.Instance);
-    private static readonly ObjectPool<ComponentDirectiveVisitor> s_componentDirectiveVisitorPool = DefaultPool.Create(DirectiveVisitorPolicy<ComponentDirectiveVisitor>.Instance);
-
-    private sealed class DirectiveVisitorPolicy<T> : IPooledObjectPolicy<T>
-        where T : DirectiveVisitor, new()
-    {
-        public static readonly DirectiveVisitorPolicy<T> Instance = new();
-
-        private DirectiveVisitorPolicy()
-        {
-        }
-
-        public T Create() => new();
-
-        public bool Return(T visitor)
-        {
-            visitor.Reset();
-
-            return true;
-        }
-    }
+    private static readonly ObjectPool<TagHelperDirectiveVisitor> s_tagHelperDirectiveVisitorPool = DefaultPool.Create<TagHelperDirectiveVisitor>();
+    private static readonly ObjectPool<ComponentDirectiveVisitor> s_componentDirectiveVisitorPool = DefaultPool.Create<ComponentDirectiveVisitor>();
 
     internal readonly ref struct PooledDirectiveVisitor(DirectiveVisitor visitor, bool isComponentDirectiveVisitor)
     {
@@ -49,7 +30,7 @@ internal partial class DefaultRazorTagHelperContextDiscoveryPhase
 
     internal static PooledDirectiveVisitor GetPooledVisitor(
         RazorCodeDocument codeDocument,
-        IReadOnlyList<TagHelperDescriptor> tagHelpers,
+        TagHelperCollection tagHelpers,
         CancellationToken cancellationToken,
         out DirectiveVisitor visitor)
     {

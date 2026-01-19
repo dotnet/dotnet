@@ -2994,6 +2994,23 @@ public abstract class NorthwindMiscellaneousQueryTestBase<TFixture>(TFixture fix
     }
 
     [ConditionalTheory, MemberData(nameof(IsAsyncData))]
+    public virtual async Task Captured_variable_from_switch_case_pattern_matching(bool async)
+    {
+        object customerIdAsObject = "ALFKI";
+
+        switch (customerIdAsObject)
+        {
+            case string customerId:
+            {
+                await AssertQuery(
+                    async,
+                    ss => ss.Set<Customer>().Where(c => c.CustomerID == customerId));
+                break;
+            }
+        }
+    }
+
+    [ConditionalTheory, MemberData(nameof(IsAsyncData))]
     public virtual Task Subquery_member_pushdown_does_not_change_original_subquery_model(bool async)
         => AssertQuery(
             async,
@@ -5122,7 +5139,7 @@ public abstract class NorthwindMiscellaneousQueryTestBase<TFixture>(TFixture fix
 
         return AssertQuery(
             async,
-            ss => ss.Set<Customer>().Where(c => data.Contains(someVariable + "SomeConstant")));
+            ss => ss.Set<Customer>().Where(c => ((IEnumerable<string>)data).Contains(someVariable + "SomeConstant")));
     }
 
     [ConditionalTheory, MemberData(nameof(IsAsyncData))]

@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.CodeAnalysis.Razor.DocumentMapping;
 
@@ -24,7 +23,7 @@ internal static partial class RazorEditHelper
 {
     private sealed class TextChangeBuilder : IDisposable
     {
-        private ObjectPool<ImmutableArray<RazorTextChange>.Builder> Pool => ArrayBuilderPool<RazorTextChange>.Default;
+        private static ArrayBuilderPool<RazorTextChange> Pool => ArrayBuilderPool<RazorTextChange>.Default;
         private readonly ImmutableArray<RazorTextChange>.Builder _builder;
         private readonly IDocumentMappingService _documentMappingService;
 
@@ -86,6 +85,23 @@ internal static partial class RazorEditHelper
                     NewText = edit.NewText
                 };
                 _builder.Add(mappedEdit);
+
+                if (node is BaseMarkupStartTagSyntax startTagSyntax &&
+                    startTagSyntax.GetEndTag() is { } endTag)
+                {
+                    // We are changing a start tag, and so we have a matching end tag. We have to translate the edit over there too
+                    // as we only map the start tag, but if they got out of sync that would be bad.
+                    var endTagEdit = new RazorTextChange()
+                    {
+                        Span = new RazorTextSpan()
+                        {
+                            Start = mappedSpan.Start + (endTag.Name.SpanStart - startTagSyntax.Name.SpanStart),
+                            Length = mappedSpan.Length
+                        },
+                        NewText = edit.NewText
+                    };
+                    _builder.Add(endTagEdit);
+                }
             }
         }
 

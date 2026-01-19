@@ -7,6 +7,8 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
 {
     public sealed class ArEntry
     {
+        public const uint FilePermissionMask = 0xFFF;
+
         public ArEntry(string name, ulong timestamp, ulong ownerID, ulong groupID, uint mode, Stream dataStream)
         {
             Name = name;

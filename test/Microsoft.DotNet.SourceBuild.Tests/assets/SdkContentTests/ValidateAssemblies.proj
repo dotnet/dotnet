@@ -1,18 +1,13 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <UpdatedSuppressionFilePath>$(ArtifactsTestResultsDir)generated_ApiDiff.suppression</UpdatedSuppressionFilePath>
     <BaselineSuppressionFilePath>$(MSBuildThisFileDirectory)ApiDiff.suppression</BaselineSuppressionFilePath>
     <TestRoot>$([System.IO.Path]::GetTempPath())$([System.IO.Path]::GetRandomFileName())</TestRoot>
     <MsftPath>$(TestRoot)/msft</MsftPath>
     <SbPath>$(TestRoot)/sb</SbPath>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageVersion Include="Microsoft.DotNet.ApiCompat.Task" Version="10.0.100-rc.1.25451.107" />
-    <PackageVersion Include="Microsoft.CodeAnalysis" Version="4.4.0" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.DotNet.ApiCompat.Task" />

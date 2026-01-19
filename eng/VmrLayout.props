@@ -43,6 +43,7 @@
 
     <SbrpRepoSrcDir>$([MSBuild]::NormalizeDirectory('$(SrcDir)', 'source-build-reference-packages', 'src'))</SbrpRepoSrcDir>
     <ReferencePackagesDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'reference'))</ReferencePackagesDir>
+    <ExternalTarballsDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'archive'))</ExternalTarballsDir>
     <SourceBuiltArtifactsTarballName>Private.SourceBuilt.Artifacts</SourceBuiltArtifactsTarballName>
     <SourceBuiltSharedComponentsTarballName>Private.SourceBuilt.SharedComponents</SourceBuiltSharedComponentsTarballName>
     <SourceBuiltPrebuiltsTarballName>Private.SourceBuilt.Prebuilts</SourceBuiltPrebuiltsTarballName>
@@ -50,7 +51,6 @@
     <SourceBuiltSymbolsAllTarballName>dotnet-symbols-all</SourceBuiltSymbolsAllTarballName>
     <SourceBuiltSymbolsSdkTarballName>dotnet-symbols-sdk</SourceBuiltSymbolsSdkTarballName>
 
-    <BaselineDataFile>$(ToolsDir)prebuilt-baseline.xml</BaselineDataFile>
     <PackageVersionsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', 'PackageVersions'))</PackageVersionsDir>
 
     <!-- Binary detection -->
@@ -98,6 +98,13 @@
     <PreviousPackageVersionPropertySuffixes Include="@(DefaultPackageVersionPropertySuffixes);$(PackagePreviousVersionPropertySuffix)" />
   </ItemGroup>
 
+  <ItemGroup>
+    <SharedComponentsPrereqsArchivePathItem Include="$(ExternalTarballsDir)$(SourceBuiltSharedComponentsTarballName).*$(ArchiveExtension)" />
+  </ItemGroup>
+  <PropertyGroup>
+    <SharedComponentsPrereqsArchiveFile>@(SharedComponentsPrereqsArchivePathItem)</SharedComponentsPrereqsArchiveFile>
+  </PropertyGroup>
+
   <!-- Shared repository references. These repositories are excluded from the build when we're not building shared components. -->
   <ItemGroup>
     <SharedRepositoryReference Include="aspnetcore" />
@@ -108,7 +115,6 @@
     <SharedRepositoryReference Include="efcore" />
     <SharedRepositoryReference Include="emsdk" />
     <SharedRepositoryReference Include="runtime" />
-    <SharedRepositoryReference Include="sourcelink" />
     <SharedRepositoryReference Include="symreader" />
     <SharedRepositoryReference Include="windowsdesktop" />
     <SharedRepositoryReference Include="winforms" />

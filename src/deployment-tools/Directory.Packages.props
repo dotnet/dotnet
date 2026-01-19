@@ -24,7 +24,6 @@
 
   <!-- Overrides needed until https://github.com/dotnet/source-build/issues/4467 is implemented. -->
   <ItemGroup>
-    <PackageVersion Update="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" Condition="'$(MicrosoftBuildTasksCoreVersion)' != ''" />
     <PackageVersion Update="System.Security.Cryptography.Xml" Version="$(SystemSecurityCryptographyXmlVersion)" Condition="'$(SystemSecurityCryptographyXmlVersion)' != ''" />
     <PackageVersion Update="System.Text.Json" Version="$(SystemTextJsonVersion)" Condition="'$(SystemTextJsonVersion)' != ''" />
   </ItemGroup>

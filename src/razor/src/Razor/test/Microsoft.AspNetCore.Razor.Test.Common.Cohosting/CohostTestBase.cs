@@ -6,16 +6,14 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Basic.Reference.Assemblies;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.Mef;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -23,7 +21,6 @@ using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.CodeAnalysis.Remote.Razor;
 using Microsoft.CodeAnalysis.Remote.Razor.Logging;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.NET.Sdk.Razor.SourceGenerators;
 using Microsoft.VisualStudio.Composition;
 using Roslyn.Test.Utilities;
 using Xunit;
@@ -37,14 +34,23 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
     private TestIncompatibleProjectService _incompatibleProjectService = null!;
     private RemoteClientInitializationOptions _clientInitializationOptions;
     private RemoteClientLSPInitializationOptions _clientLSPInitializationOptions;
+    private CodeAnalysis.Workspace? _localWorkspace;
+    private ExportProvider? _localExportProvider;
 
     private protected abstract IRemoteServiceInvoker RemoteServiceInvoker { get; }
     private protected abstract IClientSettingsManager ClientSettingsManager { get; }
     private protected abstract IFilePathService FilePathService { get; }
+    private protected abstract TestComposition LocalComposition { get; }
 
     private protected TestIncompatibleProjectService IncompatibleProjectService => _incompatibleProjectService.AssumeNotNull();
     private protected RemoteLanguageServerFeatureOptions FeatureOptions => OOPExportProvider.GetExportedValue<RemoteLanguageServerFeatureOptions>();
     private protected RemoteClientCapabilitiesService ClientCapabilitiesService => (RemoteClientCapabilitiesService)OOPExportProvider.GetExportedValue<IClientCapabilitiesService>();
+    private protected CodeAnalysis.Workspace LocalWorkspace => _localWorkspace.AssumeNotNull();
+
+    /// <summary>
+    /// The export provider for client services (Roslyn)
+    /// </summary>
+    private protected ExportProvider LocalExportProvider => _localExportProvider.AssumeNotNull();
 
     /// <summary>
     /// The export provider for Razor OOP services (not Roslyn)
@@ -79,13 +85,10 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
 
         _clientInitializationOptions = new()
         {
-            HtmlVirtualDocumentSuffix = ".g.html",
             UseRazorCohostServer = true,
             ReturnCodeActionAndRenamePathsWithPrefixedSlash = false,
             SupportsFileManipulation = true,
             ShowAllCSharpCodeActions = false,
-            SupportsSoftSelectionInCompletion = true,
-            UseVsCodeCompletionCommitCharacters = false,
         };
         UpdateClientInitializationOptions(c => c);
 
@@ -97,7 +100,29 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
         traceSource.Listeners.Add(new XunitTraceListener(TestOutputHelper));
         await RemoteWorkspaceProvider.TestAccessor.InitializeRemoteExportProviderBuilderAsync(Path.GetTempPath(), traceSource, DisposalToken);
         _ = RemoteWorkspaceProvider.Instance.GetWorkspace();
+
+        _localWorkspace = CreateLocalWorkspace();
     }
+
+    private AdhocWorkspace CreateLocalWorkspace()
+    {
+        var composition = ConfigureLocalComposition(LocalComposition);
+
+        // We can't enforce that the composition is entirely valid, because we don't have a full MEF catalog, but we
+        // can assume there should be no errors related to Razor, and having this array makes debugging failures a lot
+        // easier.
+        var errors = composition.GetCompositionErrors().ToArray();
+        Assert.Empty(errors.Where(e => e.Contains("Razor")));
+
+        _localExportProvider = composition.ExportProviderFactory.CreateExportProvider();
+        AddDisposable(_localExportProvider);
+        var workspace = TestWorkspace.CreateWithDiagnosticAnalyzers(_localExportProvider);
+        AddDisposable(workspace);
+        return workspace;
+    }
+
+    private protected virtual TestComposition ConfigureLocalComposition(TestComposition composition)
+        => composition;
 
     private protected abstract RemoteClientLSPInitializationOptions GetRemoteClientLSPInitializationOptions();
 
@@ -118,22 +143,26 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
         }
     }
 
-    protected abstract TextDocument CreateProjectAndRazorDocument(
+    private protected abstract TextDocument CreateProjectAndRazorDocument(
         string contents,
         RazorFileKind? fileKind = null,
         string? documentFilePath = null,
         (string fileName, string contents)[]? additionalFiles = null,
         bool inGlobalNamespace = false,
-        bool miscellaneousFile = false);
+        bool miscellaneousFile = false,
+        bool addDefaultImports = true,
+        Action<RazorProjectBuilder>? projectConfigure = null);
 
-    protected TextDocument CreateProjectAndRazorDocument(
+    private protected TextDocument CreateProjectAndRazorDocument(
         CodeAnalysis.Workspace remoteWorkspace,
         string contents,
         RazorFileKind? fileKind = null,
         string? documentFilePath = null,
         (string fileName, string contents)[]? additionalFiles = null,
         bool inGlobalNamespace = false,
-        bool miscellaneousFile = false)
+        bool miscellaneousFile = false,
+        bool addDefaultImports = true,
+        Action<RazorProjectBuilder>? projectConfigure = null)
     {
         // Using IsLegacy means null == component, so easier for test authors
         var isComponent = fileKind != RazorFileKind.Legacy;
@@ -145,118 +174,86 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
         var projectId = ProjectId.CreateNewId(debugName: TestProjectData.SomeProject.DisplayName);
         var documentId = DocumentId.CreateNewId(projectId, debugName: documentFilePath);
 
-        return CreateProjectAndRazorDocument(remoteWorkspace, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace);
+        return CreateProjectAndRazorDocument(remoteWorkspace, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace, addDefaultImports, projectConfigure);
     }
 
-    protected static TextDocument CreateProjectAndRazorDocument(CodeAnalysis.Workspace workspace, ProjectId projectId, bool miscellaneousFile, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace)
+    private protected static TextDocument CreateProjectAndRazorDocument(CodeAnalysis.Workspace workspace, ProjectId projectId, bool miscellaneousFile, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace, bool addDefaultImports, Action<RazorProjectBuilder>? projectConfigure)
     {
-        return AddProjectAndRazorDocument(workspace.CurrentSolution, TestProjectData.SomeProject.FilePath, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace);
+        return AddProjectAndRazorDocument(workspace.CurrentSolution, TestProjectData.SomeProject.FilePath, projectId, documentId, documentFilePath, contents, miscellaneousFile, additionalFiles, inGlobalNamespace, addDefaultImports, projectConfigure);
     }
 
-    protected static TextDocument AddProjectAndRazorDocument(Solution solution, [DisallowNull] string? projectFilePath, ProjectId projectId, bool miscellaneousFile, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace)
+    private protected static TextDocument AddProjectAndRazorDocument(
+        Solution solution,
+        [DisallowNull] string? projectFilePath,
+        ProjectId projectId,
+        DocumentId documentId,
+        string documentFilePath,
+        string contents,
+        bool miscellaneousFile = false,
+        (string fileName, string contents)[]? additionalFiles = null,
+        bool inGlobalNamespace = false,
+        bool addDefaultImports = true,
+        Action<RazorProjectBuilder>? projectConfigure = null)
     {
-        // We simulate a miscellaneous file project by not having a project file path.
-        projectFilePath = miscellaneousFile ? null : projectFilePath;
-        var projectName = miscellaneousFile ? "" : Path.GetFileNameWithoutExtension(projectFilePath).AssumeNotNull();
+        var builder = new RazorProjectBuilder(projectId);
 
-        var sgAssembly = typeof(RazorSourceGenerator).Assembly;
-
-        var projectInfo = ProjectInfo
-            .Create(
-                projectId,
-                VersionStamp.Create(),
-                name: projectName,
-                assemblyName: projectName,
-                LanguageNames.CSharp,
-                projectFilePath,
-                compilationOptions: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
-            .WithMetadataReferences(
-                miscellaneousFile
-                    ? Net461.ReferenceInfos.All.Select(r => r.Reference) // This isn't quite what Roslyn does, but its close enough for our tests
-                    : AspNet80.ReferenceInfos.All.Select(r => r.Reference))
-            .WithAnalyzerReferences([new AnalyzerFileReference(sgAssembly.Location, TestAnalyzerAssemblyLoader.LoadFromFile)]);
-
-        if (!miscellaneousFile && !inGlobalNamespace)
+        if (projectConfigure is not null)
         {
-            projectInfo = projectInfo.WithDefaultNamespace(TestProjectData.SomeProject.RootNamespace);
+            projectConfigure(builder);
         }
 
-        solution = solution.AddProject(projectInfo);
+        builder.AddReferences(miscellaneousFile
+            ? Net461.ReferenceInfos.All.Select(r => r.Reference) // This isn't quite what Roslyn does, but its close enough for our tests
+            : AspNet80.ReferenceInfos.All.Select(r => r.Reference));
+        builder.GenerateGlobalConfigFile = !miscellaneousFile;
+        builder.RootNamespace = null;
 
-        solution = solution
-            .AddAdditionalDocument(
-                documentId,
-                documentFilePath,
-                SourceText.From(contents),
-                filePath: documentFilePath);
+        builder.AddAdditionalDocument(documentId, documentFilePath, SourceText.From(contents));
 
         if (!miscellaneousFile)
         {
-            solution = solution.AddAdditionalDocument(
-                    DocumentId.CreateNewId(projectId),
-                    name: TestProjectData.SomeProjectComponentImportFile1.FilePath,
+            builder.ProjectFilePath = projectFilePath;
+
+            if (!inGlobalNamespace)
+            {
+                builder.RootNamespace = TestProjectData.SomeProject.RootNamespace;
+            }
+
+            if (addDefaultImports)
+            {
+                builder.AddAdditionalDocument(
+                    filePath: TestProjectData.SomeProjectComponentImportFile1.FilePath,
                     text: SourceText.From("""
-                    @using Microsoft.AspNetCore.Components
-                    @using Microsoft.AspNetCore.Components.Authorization
-                    @using Microsoft.AspNetCore.Components.Forms
-                    @using Microsoft.AspNetCore.Components.Routing
-                    @using Microsoft.AspNetCore.Components.Web
-                    """),
-                    filePath: TestProjectData.SomeProjectComponentImportFile1.FilePath)
-                .AddAdditionalDocument(
-                    DocumentId.CreateNewId(projectId),
-                    name: "_ViewImports.cshtml",
+                        @using Microsoft.AspNetCore.Components
+                        @using Microsoft.AspNetCore.Components.Authorization
+                        @using Microsoft.AspNetCore.Components.Forms
+                        @using Microsoft.AspNetCore.Components.Routing
+                        @using Microsoft.AspNetCore.Components.Web
+                        """));
+                builder.AddAdditionalDocument(
+                    filePath: TestProjectData.SomeProjectImportFile.FilePath,
                     text: SourceText.From("""
-                    @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-                    """),
-                    filePath: TestProjectData.SomeProjectImportFile.FilePath);
+                        @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+                        """));
+            }
 
             if (additionalFiles is not null)
             {
                 foreach (var file in additionalFiles)
                 {
-                    solution = Path.GetExtension(file.fileName) == ".cs"
-                        ? solution.AddDocument(DocumentId.CreateNewId(projectId), name: file.fileName, text: SourceText.From(file.contents), filePath: file.fileName)
-                        : solution.AddAdditionalDocument(DocumentId.CreateNewId(projectId), name: file.fileName, text: SourceText.From(file.contents), filePath: file.fileName);
+                    if (Path.GetExtension(file.fileName) == ".cs")
+                    {
+                        builder.AddDocument(filePath: file.fileName, text: SourceText.From(file.contents));
+                    }
+                    else
+                    {
+                        builder.AddAdditionalDocument(filePath: file.fileName, text: SourceText.From(file.contents));
+                    }
                 }
             }
-
-            var globalConfigContent = new StringBuilder();
-            globalConfigContent.AppendLine($"""
-                    is_global = true
-
-                    build_property.RazorLangVersion = {FallbackRazorConfiguration.Latest.LanguageVersion}
-                    build_property.RazorConfiguration = {FallbackRazorConfiguration.Latest.ConfigurationName}
-                    build_property.RootNamespace = {TestProjectData.SomeProject.RootNamespace}
-
-                    # This might suprise you, but by suppressing the source generator here, we're mirroring what happens in the Razor SDK
-                    build_property.SuppressRazorSourceGenerator = true
-                    """);
-
-            var projectBasePath = Path.GetDirectoryName(projectFilePath).AssumeNotNull();
-            // Normally MS Build targets do this for us, but we're on our own!
-            foreach (var razorDocument in solution.GetRequiredProject(projectId).AdditionalDocuments)
-            {
-                if (razorDocument.FilePath is not null &&
-                    razorDocument.FilePath.StartsWith(projectBasePath))
-                {
-                    var relativePath = razorDocument.FilePath[(projectBasePath.Length + 1)..];
-                    globalConfigContent.AppendLine($"""
-
-                [{razorDocument.FilePath.AssumeNotNull().Replace('\\', '/')}]
-                build_metadata.AdditionalFiles.TargetPath = {Convert.ToBase64String(Encoding.UTF8.GetBytes(relativePath))}
-                """);
-                }
-            }
-
-            solution = solution.AddAnalyzerConfigDocument(
-                    DocumentId.CreateNewId(projectId),
-                    name: ".globalconfig",
-                    text: SourceText.From(globalConfigContent.ToString()),
-                    filePath: Path.Combine(TestProjectData.SomeProjectPath, ".globalconfig"));
         }
 
-        return solution.GetAdditionalDocument(documentId).AssumeNotNull();
+        return builder.Build(solution).GetAdditionalDocument(documentId).AssumeNotNull();
     }
 
     protected static Uri FileUri(string projectRelativeFileName)

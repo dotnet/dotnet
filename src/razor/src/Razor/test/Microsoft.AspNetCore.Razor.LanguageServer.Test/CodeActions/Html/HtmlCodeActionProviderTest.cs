@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.CodeAnalysis.Text;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -73,24 +75,16 @@ public class HtmlCodeActionProviderTest(ITestOutputHelper testOutput) : Language
 
         var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents);
 
-        var remappedEdit = new WorkspaceEdit
-        {
-            DocumentChanges = new TextDocumentEdit[]
-            {
-                new() {
-                    TextDocument = new OptionalVersionedTextDocumentIdentifier
-                    {
-                        DocumentUri = new(new Uri(documentPath)),
-                    },
-                    Edits = [LspFactory.CreateTextEdit(context.SourceText.GetRange(span), "Goo /*~~~~~~~~~~~*/ Bar")]
-                }
-            }
-        };
-
         var editMappingServiceMock = new StrictMock<IEditMappingService>();
         editMappingServiceMock
-            .Setup(x => x.RemapWorkspaceEditAsync(It.IsAny<IDocumentSnapshot>(), It.IsAny<WorkspaceEdit>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(remappedEdit);
+            .Setup(x => x.MapWorkspaceEditAsync(It.IsAny<IDocumentSnapshot>(), It.IsAny<WorkspaceEdit>(), It.IsAny<CancellationToken>()))
+            .Callback<IDocumentSnapshot, WorkspaceEdit, CancellationToken>((_, edit, _) =>
+            {
+                var textDocumentEdit = edit.EnumerateTextDocumentEdits().First();
+                textDocumentEdit.TextDocument.DocumentUri = new(documentPath);
+                textDocumentEdit.Edits = [LspFactory.CreateTextEdit(context.SourceText.GetRange(span), "Goo /*~~~~~~~~~~~*/ Bar")];
+            })
+            .Returns(Task.CompletedTask);
 
         var provider = new HtmlCodeActionProvider(editMappingServiceMock.Object);
 
@@ -121,18 +115,13 @@ public class HtmlCodeActionProviderTest(ITestOutputHelper testOutput) : Language
         // Assert
         var action = Assert.Single(providedCodeActions);
         Assert.NotNull(action.Edit);
-        Assert.True(action.Edit.TryGetTextDocumentEdits(out var documentEdits));
+        var documentEdits = action.Edit.EnumerateTextDocumentEdits().ToArray();
+        Assert.NotEmpty(documentEdits);
         Assert.Equal(documentPath, documentEdits[0].TextDocument.DocumentUri.GetRequiredParsedUri().AbsolutePath);
-        // Edit should be converted to 2 edits, to remove the tags
-        Assert.Collection(documentEdits[0].Edits,
-            e =>
-            {
-                Assert.Equal("", ((TextEdit)e).NewText);
-            },
-            e =>
-            {
-                Assert.Equal("", ((TextEdit)e).NewText);
-            });
+
+        var text = SourceText.From(contents);
+        var changed = text.WithChanges(documentEdits[0].Edits.Select(e => text.GetTextChange((TextEdit)e)));
+        Assert.Equal("Goo @(DateTime.Now) Bar", changed.ToString());
     }
 
     private static RazorCodeActionContext CreateRazorCodeActionContext(
@@ -143,11 +132,11 @@ public class HtmlCodeActionProviderTest(ITestOutputHelper testOutput) : Language
         bool supportsFileCreation = true,
         bool supportsCodeActionResolve = true)
     {
-        var tagHelpers = ImmutableArray<TagHelperDescriptor>.Empty;
+        var tagHelpers = TagHelperCollection.Empty;
         var sourceDocument = TestRazorSourceDocument.Create(text, filePath: filePath, relativePath: filePath);
         var projectEngine = RazorProjectEngine.Create(builder =>
         {
-            builder.AddTagHelpers(tagHelpers);
+            builder.SetTagHelpers(tagHelpers);
 
             builder.ConfigureParserOptions(builder =>
             {

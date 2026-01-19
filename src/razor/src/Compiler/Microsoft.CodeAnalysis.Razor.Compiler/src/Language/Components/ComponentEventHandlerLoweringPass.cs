@@ -36,7 +36,7 @@ internal sealed class ComponentEventHandlerLoweringPass : ComponentIntermediateN
         // For each event handler *usage* we need to rewrite the tag helper node to map to basic constructs.
         // Each usage will be represented by a tag helper property that is a descendant of either
         // a component or element.
-        using var _ = ReferenceEqualityHashSetPool<IntermediateNode>.GetPooledObject(out var parents);
+        using var _ = SpecializedPools.GetPooledReferenceEqualityHashSet<IntermediateNode>(out var parents);
         var references = documentNode.FindDescendantReferences<TagHelperDirectiveAttributeIntermediateNode>();
 
         foreach (var reference in references)

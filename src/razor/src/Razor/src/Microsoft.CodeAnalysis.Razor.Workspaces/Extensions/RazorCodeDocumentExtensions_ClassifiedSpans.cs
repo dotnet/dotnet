@@ -28,7 +28,7 @@ internal static partial class RazorCodeDocumentExtensions
 
     private record struct ClassifiedSpan(SourceSpan Span, SpanKind Kind);
 
-    private sealed class ClassifiedSpanVisitor : SyntaxWalker
+    private sealed class ClassifiedSpanVisitor : SyntaxWalker, IPoolableObject
     {
         private enum BlockKind
         {
@@ -47,7 +47,11 @@ internal static partial class RazorCodeDocumentExtensions
             HtmlComment
         }
 
-        private static readonly ObjectPool<ClassifiedSpanVisitor> s_pool = DefaultPool.Create(Policy.Instance, size: 5);
+        // Significantly larger than DefaultPool.MaximumObjectSize as there shouldn't be much concurrency
+        // of these arrays (we limit the number of pooled items to 5) and they are commonly large
+        public const int MaximumObjectSize = DefaultPool.DefaultMaximumObjectSize * 32;
+
+        private static readonly ObjectPool<ClassifiedSpanVisitor> s_pool = DefaultPool.Create(static () => new ClassifiedSpanVisitor(), poolSize: 5);
 
         private readonly ImmutableArray<ClassifiedSpan>.Builder _spans;
 
@@ -447,11 +451,11 @@ internal static partial class RazorCodeDocumentExtensions
         private void AddSpan(SourceSpan span, SpanKind kind)
             => _spans.Add(new(span, kind));
 
-        private void Reset()
+        void IPoolableObject.Reset()
         {
             _spans.Clear();
 
-            if (_spans.Capacity > Policy.MaximumObjectSize)
+            if (_spans.Capacity > MaximumObjectSize)
             {
                 // Differs from ArrayBuilderPool.Policy's behavior as we allow our array to grow significantly larger
                 _spans.Capacity = 0;
@@ -459,28 +463,6 @@ internal static partial class RazorCodeDocumentExtensions
 
             _source = null!;
             _currentBlockKind = BlockKind.Markup;
-        }
-
-        private sealed class Policy : IPooledObjectPolicy<ClassifiedSpanVisitor>
-        {
-            public static readonly Policy Instance = new();
-
-            // Significantly larger than DefaultPool.MaximumObjectSize as there shouldn't be much concurrency
-            // of these arrays (we limit the number of pooled items to 5) and they are commonly large
-            public const int MaximumObjectSize = DefaultPool.MaximumObjectSize * 32;
-
-            private Policy()
-            {
-            }
-
-            public ClassifiedSpanVisitor Create() => new();
-
-            public bool Return(ClassifiedSpanVisitor visitor)
-            {
-                visitor.Reset();
-
-                return true;
-            }
         }
     }
 }

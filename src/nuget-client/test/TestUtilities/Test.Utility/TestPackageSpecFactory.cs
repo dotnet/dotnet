@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -290,7 +288,7 @@ public class TestPackageSpecFactory
 
         internal TestTargetFramework ToTargetFramework()
         {
-            SimulateDotnetSdk(_properties, _items);
+            SimulateDotnetSdk(_properties);
 
             // Create a new TestTargetFramework with the accumulated properties and items
             return new TestTargetFramework
@@ -299,7 +297,7 @@ public class TestPackageSpecFactory
                 Items = _items ?? new Dictionary<string, List<IItem>>(StringComparer.OrdinalIgnoreCase)
             };
 
-            void SimulateDotnetSdk(Dictionary<string, string> properties, Dictionary<string, List<IItem>>? items)
+            void SimulateDotnetSdk(Dictionary<string, string> properties)
             {
                 if (!properties.TryGetValue("TargetFramework", out var targetFramework) || string.IsNullOrWhiteSpace(targetFramework))
                 {

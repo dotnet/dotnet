@@ -51,9 +51,9 @@ internal class RazorFormattingService : IRazorFormattingService
         ];
 
         _documentFormattingPasses = [
-                new HtmlFormattingPass(),
+                new HtmlFormattingPass(documentMappingService),
                 new RazorFormattingPass(),
-                new CSharpFormattingPass(hostServicesProvider, loggerFactory),
+                new CSharpFormattingPass(hostServicesProvider, documentMappingService, loggerFactory),
             ];
         _formattingLoggerFactory = formattingLoggerFactory;
     }
@@ -92,7 +92,7 @@ internal class RazorFormattingService : IRazorFormattingService
 
         var logger = _formattingLoggerFactory.CreateLogger(documentContext.FilePath, range is null ? "Full" : "Range");
         logger?.LogObject("Options", options);
-        logger?.LogObject("HtmlChanges", htmlChanges);
+        logger?.LogObject("HtmlChanges", htmlChanges.SelectAsArray(e => e.ToRazorTextChange()));
         logger?.LogObject("Range", range);
         logger?.LogSourceText("InitialDocument", sourceText);
 
@@ -300,6 +300,7 @@ internal class RazorFormattingService : IRazorFormattingService
 
         var result = await formattingPass.ExecuteAsync(context, generatedDocumentChanges, cancellationToken).ConfigureAwait(false);
         var originalText = context.SourceText;
+        result = NormalizeLineEndings(originalText, result);
         var razorChanges = originalText.MinimizeTextChanges(result);
 
         if (validate)
@@ -341,7 +342,7 @@ internal class RazorFormattingService : IRazorFormattingService
         var affectedRange = changedText.GetEncompassingTextChangeRange(sourceText);
         var spanBeforeChange = affectedRange.Span;
         var spanAfterChange = new TextSpan(spanBeforeChange.Start, affectedRange.NewLength);
-        var newText = changedText.GetSubTextString(spanAfterChange);
+        var newText = changedText.ToString(spanAfterChange);
 
         return new TextChange(spanBeforeChange, newText);
     }

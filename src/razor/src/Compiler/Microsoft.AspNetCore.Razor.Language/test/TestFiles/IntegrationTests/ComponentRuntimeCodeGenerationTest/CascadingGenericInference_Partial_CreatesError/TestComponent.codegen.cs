@@ -28,15 +28,7 @@ Array.Empty<DateTime>()
 #nullable disable
                 , out var __typeInferenceArg_0___arg0);
                 global::__Blazor.Test.TestComponent.TypeInference.CreateGrid_0(__builder, 0, 1, __typeInferenceArg_0___arg0, 2, (__builder2) => {
-                    __builder2.OpenComponent<global::Test.
-#nullable restore
-#line (1,43)-(1,49) "x:\dir\subdir\Test\TestComponent.cshtml"
-Column
-
-#line default
-#line hidden
-#nullable disable
-                    >(3);
+                    __builder2.OpenComponent<global::Test.Column>(3);
                     __builder2.CloseComponent();
                 }
                 );
@@ -53,15 +45,7 @@ namespace __Blazor.Test.TestComponent
     {
         public static void CreateGrid_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Collections.Generic.IEnumerable<TItem> __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment __arg1)
         {
-        __builder.OpenComponent<global::Test.
-#nullable restore
-#line (1,2)-(1,6) "x:\dir\subdir\Test\TestComponent.cshtml"
-Grid
-
-#line default
-#line hidden
-#nullable disable
-        <TItem>>(seq);
+        __builder.OpenComponent<global::Test.Grid<TItem>>(seq);
         __builder.AddComponentParameter(__seq0, nameof(global::Test.Grid<TItem>.
 #nullable restore
 #line (1,7)-(1,12) "x:\dir\subdir\Test\TestComponent.cshtml"

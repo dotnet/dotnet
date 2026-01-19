@@ -73,7 +73,7 @@
       </trans-unit>
       <trans-unit id="Debug_RemoveReference">
         <source>Removed reference '{0}' from project '{1}'</source>
-        <target state="translated">已從專案 '{1}' 移除參考 '{0}'</target>
+        <target state="translated">已從專案 '{1}' 中移除參考 '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFile">
@@ -83,7 +83,7 @@
       </trans-unit>
       <trans-unit id="Debug_RemovedFileFromFolder">
         <source>Removed file '{0}' from folder '{1}'</source>
-        <target state="translated">已從資料夾 '{1}' 移除檔案 '{0}'</target>
+        <target state="translated">已從資料夾 '{1}' 中移除檔案 '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFolder">
@@ -93,7 +93,7 @@
       </trans-unit>
       <trans-unit id="Error_FailedToCreateParentFolder">
         <source>Failed to create parent folder for file '{0}' in project {1}.</source>
-        <target state="translated">無法為專案 '{1}' 中的檔案 {0} 建立上層資料夾。</target>
+        <target state="translated">無法在專案 {1} 中建立檔案 '{0}' 的父資料夾。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_FileNotExists">
@@ -117,8 +117,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSource_InvalidSource">
-        <source>The source specified is invalid.</source>
-        <target state="translated">指定的來源無效。</target>
+        <source>A valid local or remote path must be specified.</source>
+        <target state="translated">必須指定有效的本地或遠端路徑。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSource_UniqueName">
@@ -159,12 +159,12 @@
       </trans-unit>
       <trans-unit id="FailedToAddReference">
         <source>Failed to add reference to '{0}'.</source>
-        <target state="translated">無法將參考加入到 '{0}'。</target>
+        <target state="translated">無法將參考加入 '{0}' 中。</target>
         <note />
       </trans-unit>
       <trans-unit id="FailedToRemoveReference">
         <source>Case insensitive search for reference '{0}', to be removed, returned more than 1 match. Request could not be performed.</source>
-        <target state="translated">以不區分大小寫的方式搜尋要移除的參考 '{0}' 時，傳回了不止一筆相符項目。無法執行要求。</target>
+        <target state="translated">對要移除之參考 '{0}' 的不區分大小寫搜尋傳回了多個相符項目。無法執行要求。</target>
         <note />
       </trans-unit>
       <trans-unit id="FailedToUpdateBindingRedirects">
@@ -181,6 +181,16 @@
         <source>The {0} MSBuild property could not be found for project '{1}'.</source>
         <target state="translated">找不到專案 '{1}' 的 {0} MSBuild 屬性。</target>
         <note>{0} is the name of the property that was not set.  {1} is the full path to the project.</note>
+      </trans-unit>
+      <trans-unit id="Migrating_ProjectJson_Started">
+        <source>Migrating project.json project...</source>
+        <target state="translated">正在移轉 project.json 專案...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrating_ProjectJson_Succeeded">
+        <source>Migration Succeeded</source>
+        <target state="translated">移轉成功</target>
+        <note />
       </trans-unit>
       <trans-unit id="PathToExistingFileNotPresent">
         <source>Path '{0}' to existing file is not found on disk. Cannot add to project '{1}'</source>
@@ -204,7 +214,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">'{0}' 不能是空值。</target>
+        <target state="translated">「{0}」不得為 Null。</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
@@ -256,27 +266,27 @@
       </trans-unit>
       <trans-unit id="Warning_DirectoryNotEmpty">
         <source>Directory '{0}' is not empty. Skipping...</source>
-        <target state="translated">目錄 '{0}' 不是空的。正在略過...</target>
+        <target state="translated">目錄 '{0}' 不是空的。略過中...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectories">
         <source>Failed to remove package directories that were marked for deletion on Visual Studio restart: {0}</source>
-        <target state="translated">無法移除已標記成在 Visual Studio 重新啟動時刪除的套件目錄: {0}</target>
+        <target state="translated">無法移除已標記為要在 Visual Studio 重新啟動時刪除的封裝目錄: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectory">
         <source>Failed to remove package directory '{0}' that was marked for deletion on Visual Studio restart.</source>
-        <target state="translated">無法移除已標記成在 Visual Studio 重新啟動時刪除的套件目錄 '{0}'。</target>
+        <target state="translated">無法移除已標記為要在 Visual Studio 重新啟動時刪除的封裝目錄 '{0}'。</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToFindMatchForRemoveReference">
         <source>Failed to find match for removing reference '{0}'.</source>
-        <target state="translated">找不到相符項目來移除參考 '{0}'。</target>
+        <target state="translated">找不到相符的項目可移除參考 '{0}'。</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToMarkPackageDirectoryForDeletion">
         <source>Failed to mark package directory '{0}' for deletion on Visual Studio restart: {1}</source>
-        <target state="translated">無法將套件目錄 '{0}' 標記成在 Visual Studio 重新啟動時刪除: {1}</target>
+        <target state="translated">無法將封裝目錄 '{0}' 標記為要在 Visual Studio 重新啟動時刪除: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FileAlreadyExists">

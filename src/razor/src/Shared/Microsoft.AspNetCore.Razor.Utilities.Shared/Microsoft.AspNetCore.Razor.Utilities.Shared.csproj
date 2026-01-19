@@ -53,7 +53,6 @@
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.Razor.Workspaces.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.Remote.Razor" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.Remote.Razor.Test" Key="$(RazorKey)" />
-    <InternalsVisibleTo Include="Microsoft.VisualStudio.DevKit.Razor" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.VisualStudio.LanguageServer.ContainedLanguage" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.VisualStudio.LanguageServer.ContainedLanguage.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.VisualStudio.LanguageServices.Razor" Key="$(RazorKey)" />
@@ -63,7 +62,6 @@
     <InternalsVisibleTo Include="Microsoft.VisualStudio.Razor.IntegrationTests" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.VisualStudio.RazorExtension" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.VisualStudioCode.RazorExtension.Test" Key="$(RazorKey)" />
-    <InternalsVisibleTo Include="rzls" Key="$(RazorKey)" />
   </ItemGroup>
 
 </Project>

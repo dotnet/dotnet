@@ -84,7 +84,7 @@
       </trans-unit>
       <trans-unit id="Manifest_InvalidMinClientVersion">
         <source>The 'minClientVersion' attribute in the package manifest has invalid value. It must be a valid version string.</source>
-        <target state="translated">O atributo 'minClientVersion' no manifesto do pacote tem um valor inválido. Ele deve ser uma cadeia de caracteres de versão válida.</target>
+        <target state="translated">O atributo 'minClientVersion' no manifesto do pacote tem um valor inválido. Ele deve ser uma cadeia de versão válida.</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_InvalidReference">
@@ -124,12 +124,12 @@
       </trans-unit>
       <trans-unit id="Manifest_ReferencesHasMixedElements">
         <source>&lt;references&gt; element must not contain both &lt;group&gt; and &lt;reference&gt; child elements.</source>
-        <target state="translated">O elemento &lt;references&gt; não deve conter os elementos filho &lt;group&gt; e &lt;reference&gt;.</target>
+        <target state="translated">&lt;references&gt; o elemento não deve conter ambos os elementos filho &lt;group&gt; e &lt;reference&gt;.</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_ReferencesIsEmpty">
         <source>The element package\metadata\references\group must contain at least one &lt;reference&gt; child element.</source>
-        <target state="translated">O elemento package\metadata\references\group deve conter pelo menos um elemento filho &lt;reference&gt;.</target>
+        <target state="translated">O elemento package\metadata\references\group devem conter pelo menos um elemento filho &lt;reference&gt;.</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_RequireLicenseAcceptanceRequiresEmit">
@@ -144,7 +144,7 @@
       </trans-unit>
       <trans-unit id="Manifest_RequiredElementMissing">
         <source>The required element '{0}' is missing from the manifest.</source>
-        <target state="translated">Falta o elemento exigido '{0}' no manifesto.</target>
+        <target state="translated">O elemento necessário '{0}' está faltando no manifesto.</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_RequiredMetadataMissing">

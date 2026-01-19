@@ -2,29 +2,41 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
-using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.PooledObjects;
 
-internal static partial class StackPool<T>
+internal partial class StackPool<T>
 {
-    private class Policy : IPooledObjectPolicy<Stack<T>>
+    private sealed class Policy : PooledObjectPolicy
     {
-        public static readonly Policy Instance = new();
+        public static readonly Policy Default = new(DefaultMaximumObjectSize);
 
-        private Policy()
+        private readonly int _maximumObjectSize;
+
+        private Policy(int maximumObjectSize)
         {
+            _maximumObjectSize = maximumObjectSize;
         }
 
-        public Stack<T> Create() => new();
+        public static Policy Create(Optional<int> maximumObjectSize = default)
+        {
+            if (!maximumObjectSize.HasValue || maximumObjectSize.Value == Default._maximumObjectSize)
+            {
+                return Default;
+            }
 
-        public bool Return(Stack<T> stack)
+            return new(maximumObjectSize.GetValueOrDefault(DefaultMaximumObjectSize));
+        }
+
+        public override Stack<T> Create() => new();
+
+        public override bool Return(Stack<T> stack)
         {
             var count = stack.Count;
 
             stack.Clear();
 
-            if (count > DefaultPool.MaximumObjectSize)
+            if (count > _maximumObjectSize)
             {
                 stack.TrimExcess();
             }

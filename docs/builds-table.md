@@ -1,244 +1,304 @@
+> [!NOTE]
+> When acquiring installers from the .NET SDK latest builds table, be aware that the installers are the **latest bits**. With development builds, internal NuGet feeds are necessary for some scenarios (for example, to acquire the runtime pack for self-contained apps). You can use the following NuGet.config to configure these feeds. See the following document [Configuring NuGet behavior](https://docs.microsoft.com/nuget/consume-packages/configuring-nuget-behavior) for more information on where to modify your NuGet.config to apply the changes.
+
+### For .NET 11 builds
+```xml
+<configuration>
+  <packageSources>
+    <add key="dotnet11" value="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet11/nuget/v3/index.json" />
+  </packageSources>
+</configuration>
+```
+
+### For .NET 10 builds
+```xml
+<configuration>
+  <packageSources>
+    <add key="dotnet10" value="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet10/nuget/v3/index.json" />
+  </packageSources>
+</configuration>
+```
+
 ### Supported Platforms
 
 --------------------------------------------------------------------------------------------------------------------------------
-| Platform | main<br>(10.0.x&nbsp;Runtime) | 10.0.1xx-rc1<br>(10.0-rc1&nbsp;Runtime) | 10.0.1xx-rc2<br>(10.0.1xx&nbsp;Runtime) |
-| :--------- | :----------: | :----------: | :----------: |
-| **Windows x64** | [![][win-x64-badge-main]][win-x64-version-main]<br>[Installer][win-x64-installer-main] - [Checksum][win-x64-installer-checksum-main]<br>[zip][win-x64-zip-main] - [Checksum][win-x64-zip-checksum-main] | [![][win-x64-badge-10.0.1XX-rc1]][win-x64-version-10.0.1XX-rc1]<br>[Installer][win-x64-installer-10.0.1XX-rc1] - [Checksum][win-x64-installer-checksum-10.0.1XX-rc1]<br>[zip][win-x64-zip-10.0.1XX-rc1] - [Checksum][win-x64-zip-checksum-10.0.1XX-rc1] | [![][win-x64-badge-10.0.1XX-rc2]][win-x64-version-10.0.1XX]<br>[Installer][win-x64-installer-10.0.1XX] - [Checksum][win-x64-installer-checksum-10.0.1XX]<br>[zip][win-x64-zip-10.0.1XX] - [Checksum][win-x64-zip-checksum-10.0.1XX] |
-| **Windows x86** | [![][win-x86-badge-main]][win-x86-version-main]<br>[Installer][win-x86-installer-main] - [Checksum][win-x86-installer-checksum-main]<br>[zip][win-x86-zip-main] - [Checksum][win-x86-zip-checksum-main] | [![][win-x86-badge-10.0.1XX-rc1]][win-x86-version-10.0.1XX-rc1]<br>[Installer][win-x86-installer-10.0.1XX-rc1] - [Checksum][win-x86-installer-checksum-10.0.1XX-rc1]<br>[zip][win-x86-zip-10.0.1XX-rc1] - [Checksum][win-x86-zip-checksum-10.0.1XX-rc1] | [![][win-x86-badge-10.0.1XX-rc2]][win-x86-version-10.0.1XX]<br>[Installer][win-x86-installer-10.0.1XX] - [Checksum][win-x86-installer-checksum-10.0.1XX]<br>[zip][win-x86-zip-10.0.1XX] - [Checksum][win-x86-zip-checksum-10.0.1XX] |
-| **Windows arm64** | [![][win-arm64-badge-main]][win-arm64-version-main]<br>[Installer][win-arm64-installer-main] - [Checksum][win-arm64-installer-checksum-main]<br>[zip][win-arm64-zip-main] - [Checksum][win-arm64-zip-checksum-main] | [![][win-arm64-badge-10.0.1XX-rc1]][win-arm64-version-10.0.1XX-rc1]<br>[Installer][win-arm64-installer-10.0.1XX-rc1] - [Checksum][win-arm64-installer-checksum-10.0.1XX-rc1]<br>[zip][win-arm64-zip-10.0.1XX-rc1] | [![][win-arm64-badge-10.0.1XX-rc2]][win-arm64-version-10.0.1XX]<br>[Installer][win-arm64-installer-10.0.1XX] - [Checksum][win-arm64-installer-checksum-10.0.1XX]<br>[zip][win-arm64-zip-10.0.1XX] |
-| **macOS arm64**</br>(M-series CPUs) | [![][osx-arm64-badge-main]][osx-arm64-version-main]<br>[Installer][osx-arm64-installer-main] - [Checksum][osx-arm64-installer-checksum-main]<br>[tar.gz][osx-arm64-targz-main] - [Checksum][osx-arm64-targz-checksum-main] | [![][osx-arm64-badge-10.0.1XX-rc1]][osx-arm64-version-10.0.1XX-rc1]<br>[Installer][osx-arm64-installer-10.0.1XX-rc1] - [Checksum][osx-arm64-installer-checksum-10.0.1XX-rc1]<br>[tar.gz][osx-arm64-targz-10.0.1XX-rc1] - [Checksum][osx-arm64-targz-checksum-10.0.1XX-rc1] | [![][osx-arm64-badge-10.0.1XX-rc2]][osx-arm64-version-10.0.1XX]<br>[Installer][osx-arm64-installer-10.0.1XX] - [Checksum][osx-arm64-installer-checksum-10.0.1XX]<br>[tar.gz][osx-arm64-targz-10.0.1XX] - [Checksum][osx-arm64-targz-checksum-10.0.1XX] |
-| **macOS x64**</br>(Intel CPUs) | [![][osx-x64-badge-main]][osx-x64-version-main]<br>[Installer][osx-x64-installer-main] - [Checksum][osx-x64-installer-checksum-main]<br>[tar.gz][osx-x64-targz-main] - [Checksum][osx-x64-targz-checksum-main] | [![][osx-x64-badge-10.0.1XX-rc1]][osx-x64-version-10.0.1XX-rc1]<br>[Installer][osx-x64-installer-10.0.1XX-rc1] - [Checksum][osx-x64-installer-checksum-10.0.1XX-rc1]<br>[tar.gz][osx-x64-targz-10.0.1XX-rc1] - [Checksum][osx-x64-targz-checksum-10.0.1XX-rc1] | [![][osx-x64-badge-10.0.1XX-rc2]][osx-x64-version-10.0.1XX]<br>[Installer][osx-x64-installer-10.0.1XX] - [Checksum][osx-x64-installer-checksum-10.0.1XX]<br>[tar.gz][osx-x64-targz-10.0.1XX] - [Checksum][osx-x64-targz-checksum-10.0.1XX] |
-| **Linux x64** | [![][linux-badge-main]][linux-version-main]<br>[DEB Installer][linux-DEB-installer-main] - [Checksum][linux-DEB-installer-checksum-main]<br>[RPM Installer][linux-RPM-installer-main] - [Checksum][linux-RPM-installer-checksum-main]<br>_see installer note below_<sup>1</sup><br>[tar.gz][linux-targz-main] - [Checksum][linux-targz-checksum-main] | [![][linux-badge-10.0.1XX-rc1]][linux-version-10.0.1XX-rc1]<br>[DEB Installer][linux-DEB-installer-10.0.1XX-rc1] - [Checksum][linux-DEB-installer-checksum-10.0.1XX-rc1]<br>[RPM Installer][linux-RPM-installer-10.0.1XX-rc1] - [Checksum][linux-RPM-installer-checksum-10.0.1XX-rc1]<br>_see installer note below_<sup>1</sup><br>[tar.gz][linux-targz-10.0.1XX-rc1] - [Checksum][linux-targz-checksum-10.0.1XX-rc1] | [![][linux-badge-10.0.1XX-rc2]][linux-version-10.0.1XX]<br>[DEB Installer][linux-DEB-installer-10.0.1XX] - [Checksum][linux-DEB-installer-checksum-10.0.1XX]<br>[RPM Installer][linux-RPM-installer-10.0.1XX] - [Checksum][linux-RPM-installer-checksum-10.0.1XX]<br>_see installer note below_<sup>1</sup><br>[tar.gz][linux-targz-10.0.1XX] - [Checksum][linux-targz-checksum-10.0.1XX] |
-| **Linux arm** | [![][linux-arm-badge-main]][linux-arm-version-main]<br>[tar.gz][linux-arm-targz-main] - [Checksum][linux-arm-targz-checksum-main] | [![][linux-arm-badge-10.0.1XX-rc1]][linux-arm-version-10.0.1XX-rc1]<br>[tar.gz][linux-arm-targz-10.0.1XX-rc1] - [Checksum][linux-arm-targz-checksum-10.0.1XX-rc1] | [![][linux-arm-badge-10.0.1XX-rc2]][linux-arm-version-10.0.1XX]<br>[tar.gz][linux-arm-targz-10.0.1XX] - [Checksum][linux-arm-targz-checksum-10.0.1XX] |
-| **Linux arm64** | [![][linux-arm64-badge-main]][linux-arm64-version-main]<br>[tar.gz][linux-arm64-targz-main] - [Checksum][linux-arm64-targz-checksum-main] | [![][linux-arm64-badge-10.0.1XX-rc1]][linux-arm64-version-10.0.1XX-rc1]<br>[tar.gz][linux-arm64-targz-10.0.1XX-rc1] - [Checksum][linux-arm64-targz-checksum-10.0.1XX-rc1] | [![][linux-arm64-badge-10.0.1XX-rc2]][linux-arm64-version-10.0.1XX]<br>[tar.gz][linux-arm64-targz-10.0.1XX] - [Checksum][linux-arm64-targz-checksum-10.0.1XX] |
-| **Linux-musl-x64** | [![][linux-musl-x64-badge-main]][linux-musl-x64-version-main]<br>[tar.gz][linux-musl-x64-targz-main] - [Checksum][linux-musl-x64-targz-checksum-main] | [![][linux-musl-x64-badge-10.0.1XX-rc1]][linux-musl-x64-version-10.0.1XX-rc1]<br>[tar.gz][linux-musl-x64-targz-10.0.1XX-rc1] - [Checksum][linux-musl-x64-targz-checksum-10.0.1XX-rc1] | [![][linux-musl-x64-badge-10.0.1XX-rc2]][linux-musl-x64-version-10.0.1XX]<br>[tar.gz][linux-musl-x64-targz-10.0.1XX] - [Checksum][linux-musl-x64-targz-checksum-10.0.1XX] |
-| **Linux-musl-arm** | [![][linux-musl-arm-badge-main]][linux-musl-arm-version-main]<br>[tar.gz][linux-musl-arm-targz-main] - [Checksum][linux-musl-arm-targz-checksum-main] | [![][linux-musl-arm-badge-10.0.1XX-rc1]][linux-musl-arm-version-10.0.1XX-rc1]<br>[tar.gz][linux-musl-arm-targz-10.0.1XX-rc1] - [Checksum][linux-musl-arm-targz-checksum-10.0.1XX-rc1] | [![][linux-musl-arm-badge-10.0.1XX-rc2]][linux-musl-arm-version-10.0.1XX]<br>[tar.gz][linux-musl-arm-targz-10.0.1XX] - [Checksum][linux-musl-arm-targz-checksum-10.0.1XX] |
-| **Linux-musl-arm64** | [![][linux-musl-arm64-badge-main]][linux-musl-arm64-version-main]<br>[tar.gz][linux-musl-arm64-targz-main] - [Checksum][linux-musl-arm64-targz-checksum-main] | [![][linux-musl-arm64-badge-10.0.1XX-rc1]][linux-musl-arm64-version-10.0.1XX-rc1]<br>[tar.gz][linux-musl-arm64-targz-10.0.1XX-rc1] - [Checksum][linux-musl-arm64-targz-checksum-10.0.1XX-rc1] | [![][linux-musl-arm64-badge-10.0.1XX-rc2]][linux-musl-arm64-version-10.0.1XX]<br>[tar.gz][linux-musl-arm64-targz-10.0.1XX] - [Checksum][linux-musl-arm64-targz-checksum-10.0.1XX] |
+| Platform | main<br>(11.0.x&nbsp;Runtime) | 10.0.2xx<br>(10.0.2xx&nbsp;Runtime) |
+| :--------- | :----------: | :----------: |
+| **Windows x64** | [![][win-x64-badge-main]][win-x64-version-main]<br>[Installer][win-x64-installer-main] - [Checksum][win-x64-installer-checksum-main]<br>[zip][win-x64-zip-main] - [Checksum][win-x64-zip-checksum-main] | [![][win-x64-badge-10.0.2XX]][win-x64-version-10.0.2XX]<br>[Installer][win-x64-installer-10.0.2XX] - [Checksum][win-x64-installer-checksum-10.0.2XX]<br>[zip][win-x64-zip-10.0.2XX] - [Checksum][win-x64-zip-checksum-10.0.2XX] |
+| **Windows x86** | [![][win-x86-badge-main]][win-x86-version-main]<br>[Installer][win-x86-installer-main] - [Checksum][win-x86-installer-checksum-main]<br>[zip][win-x86-zip-main] - [Checksum][win-x86-zip-checksum-main] | [![][win-x86-badge-10.0.2XX]][win-x86-version-10.0.2XX]<br>[Installer][win-x86-installer-10.0.2XX] - [Checksum][win-x86-installer-checksum-10.0.2XX]<br>[zip][win-x86-zip-10.0.2XX] - [Checksum][win-x86-zip-checksum-10.0.2XX] |
+| **Windows arm64** | [![][win-arm64-badge-main]][win-arm64-version-main]<br>[Installer][win-arm64-installer-main] - [Checksum][win-arm64-installer-checksum-main]<br>[zip][win-arm64-zip-main] - [Checksum][win-arm64-zip-checksum-main] | [![][win-arm64-badge-10.0.2XX]][win-arm64-version-10.0.2XX]<br>[Installer][win-arm64-installer-10.0.2XX] - [Checksum][win-arm64-installer-checksum-10.0.2XX]<br>[zip][win-arm64-zip-10.0.2XX] |
+| **macOS arm64**</br>(M-series CPUs) | [![][osx-arm64-badge-main]][osx-arm64-version-main]<br>[Installer][osx-arm64-installer-main] - [Checksum][osx-arm64-installer-checksum-main]<br>[tar.gz][osx-arm64-targz-main] - [Checksum][osx-arm64-targz-checksum-main] | [![][osx-arm64-badge-10.0.2XX]][osx-arm64-version-10.0.2XX]<br>[Installer][osx-arm64-installer-10.0.2XX] - [Checksum][osx-arm64-installer-checksum-10.0.2XX]<br>[tar.gz][osx-arm64-targz-10.0.2XX] - [Checksum][osx-arm64-targz-checksum-10.0.2XX] |
+| **macOS x64**</br>(Intel CPUs) | [![][osx-x64-badge-main]][osx-x64-version-main]<br>[Installer][osx-x64-installer-main] - [Checksum][osx-x64-installer-checksum-main]<br>[tar.gz][osx-x64-targz-main] - [Checksum][osx-x64-targz-checksum-main] | [![][osx-x64-badge-10.0.2XX]][osx-x64-version-10.0.2XX]<br>[Installer][osx-x64-installer-10.0.2XX] - [Checksum][osx-x64-installer-checksum-10.0.2XX]<br>[tar.gz][osx-x64-targz-10.0.2XX] - [Checksum][osx-x64-targz-checksum-10.0.2XX] |
+| **Linux x64** | [![][linux-badge-main]][linux-version-main]<br>[DEB Installer][linux-DEB-installer-main] - [Checksum][linux-DEB-installer-checksum-main]<br>[RPM Installer][linux-RPM-installer-main] - [Checksum][linux-RPM-installer-checksum-main]<br>_see installer note below_<sup>1</sup><br>[tar.gz][linux-targz-main] - [Checksum][linux-targz-checksum-main] | [![][linux-badge-10.0.2XX]][linux-version-10.0.2XX]<br>[DEB Installer][linux-DEB-installer-10.0.2XX] - [Checksum][linux-DEB-installer-checksum-10.0.2XX]<br>[RPM Installer][linux-RPM-installer-10.0.2XX] - [Checksum][linux-RPM-installer-checksum-10.0.2XX]<br>_see installer note below_<sup>1</sup><br>[tar.gz][linux-targz-10.0.2XX] - [Checksum][linux-targz-checksum-10.0.2XX] |
+| **Linux arm** | [![][linux-arm-badge-main]][linux-arm-version-main]<br>[tar.gz][linux-arm-targz-main] - [Checksum][linux-arm-targz-checksum-main] | [![][linux-arm-badge-10.0.2XX]][linux-arm-version-10.0.2XX]<br>[tar.gz][linux-arm-targz-10.0.2XX] - [Checksum][linux-arm-targz-checksum-10.0.2XX] |
+| **Linux arm64** | [![][linux-arm64-badge-main]][linux-arm64-version-main]<br>[tar.gz][linux-arm64-targz-main] - [Checksum][linux-arm64-targz-checksum-main] | [![][linux-arm64-badge-10.0.2XX]][linux-arm64-version-10.0.2XX]<br>[tar.gz][linux-arm64-targz-10.0.2XX] - [Checksum][linux-arm64-targz-checksum-10.0.2XX] |
+| **Linux-musl-x64** | [![][linux-musl-x64-badge-main]][linux-musl-x64-version-main]<br>[tar.gz][linux-musl-x64-targz-main] - [Checksum][linux-musl-x64-targz-checksum-main] | [![][linux-musl-x64-badge-10.0.2XX]][linux-musl-x64-version-10.0.2XX]<br>[tar.gz][linux-musl-x64-targz-10.0.2XX] - [Checksum][linux-musl-x64-targz-checksum-10.0.2XX] |
+| **Linux-musl-arm** | [![][linux-musl-arm-badge-main]][linux-musl-arm-version-main]<br>[tar.gz][linux-musl-arm-targz-main] - [Checksum][linux-musl-arm-targz-checksum-main] | [![][linux-musl-arm-badge-10.0.2XX]][linux-musl-arm-version-10.0.2XX]<br>[tar.gz][linux-musl-arm-targz-10.0.2XX] - [Checksum][linux-musl-arm-targz-checksum-10.0.2XX] |
+| **Linux-musl-arm64** | [![][linux-musl-arm64-badge-main]][linux-musl-arm64-version-main]<br>[tar.gz][linux-musl-arm64-targz-main] - [Checksum][linux-musl-arm64-targz-checksum-main] | [![][linux-musl-arm64-badge-10.0.2XX]][linux-musl-arm64-version-10.0.2XX]<br>[tar.gz][linux-musl-arm64-targz-10.0.2XX] - [Checksum][linux-musl-arm64-targz-checksum-10.0.2XX] |
 
-Reference notes:
-> **1**: Our Debian packages are put together slightly differently than the other OS specific installers. Instead of combining everything, we have separate component packages that depend on each other. If you're installing the SDK from the .deb file (via dpkg or similar), then you'll need to install the corresponding dependencies first:
-> * [Host, Host FX Resolver, and Shared Framework](https://github.com/dotnet/runtime/blob/main/docs/project/dogfooding.md#nightly-builds-table)
-> * [ASP.NET Core Shared Framework](https://github.com/aspnet/AspNetCore/blob/main/docs/DailyBuilds.md)
+# .NET SDK Daily Builds
 
-#### Runtime and SDK Relationship
+## Installation Instructions
 
-- For the 1xx band, the runtime and SDK are built together in the same build. They will differ on patch version (e.g. SDK version 10.0.100 == runtime patch version 10.0.0). The build suffix (e.g. -rc2.1234.105) suffix will always match.
-- For the 2xx and later bands, the 1xx runtime flows to 2xx+. The version of the runtime that will be used in the 2xx SDK can be found in sdk's [eng/Version.Details.xml file](/src/sdk/eng/Version.Details.xml). Look for the version of the `Microsoft.NETCore.App.Ref` dependency.
+### Windows
 
-#### Manually construct download links:
+Download the latest SDK installer or binaries from the builds table above.
 
-**SDK example (for dotnet-sdk msi for win-x64):**
-> `https://ci.dot.net/public/Sdk/<version>/dotnet-sdk-<version>-win-x64.exe`
+Windows SDK and Runtime installers are complete packages and do not require separate dependency installation.
 
-**Runtime example (for dotnet-runtime msi for win-x64):**
-> `https://ci.dot.net/public/Runtime/<version>/dotnet-runtime-<version>-win-x64.exe`
+### Linux (DEB and RPM Packages)
 
-Where `<version>` is the same for both SDK and runtime. You can get the current version numbers from the version badge links or productCommit files in the table above.
+#### SDK Packages
 
-[win-x64-badge-main]: https://aka.ms/dotnet/10.0.1xx/daily/win_x64_Release_version_badge.svg?no-cache
-[win-x64-version-main]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-win-x64.txt
-[win-x64-installer-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-x64.exe
-[win-x64-installer-checksum-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-x64.exe.sha512
-[win-x64-zip-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-x64.zip
-[win-x64-zip-checksum-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-x64.zip.sha512
+Download the appropriate SDK package for your distribution:
+- **Debian/Ubuntu:** `dotnet-sdk-<version>-x64.deb`
+- **Red Hat/Fedora/CentOS:** `dotnet-sdk-<version>-x64.rpm`
 
-[win-x64-badge-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/win_x64_Release_version_badge.svg?no-cache
-[win-x64-version-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/productCommit-win-x64.txt
-[win-x64-installer-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-win-x64.exe
-[win-x64-installer-checksum-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-win-x64.exe.sha512
-[win-x64-zip-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-win-x64.zip
-[win-x64-zip-checksum-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-win-x64.zip.sha512
+#### Dependencies
 
-[win-x64-badge-10.0.1XX-rc2]: https://aka.ms/dotnet/10.0.1xx/daily/win_x64_Release_version_badge.svg?no-cache
-[win-x64-version-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-win-x64.txt
-[win-x64-installer-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-x64.exe
-[win-x64-installer-checksum-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-x64.exe.sha512
-[win-x64-zip-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-x64.zip
-[win-x64-zip-checksum-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-x64.zip.sha512
+The following runtime packages are required dependencies and must be installed before installing the SDK:
 
-[win-x86-badge-main]: https://aka.ms/dotnet/10.0.1xx/daily/win_x86_Release_version_badge.svg?no-cache
-[win-x86-version-main]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-win-x86.txt
-[win-x86-installer-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-x86.exe
-[win-x86-installer-checksum-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-x86.exe.sha512
-[win-x86-zip-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-x86.zip
-[win-x86-zip-checksum-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-x86.zip.sha512
+**For Debian/Ubuntu (.deb):**
+- `dotnet-host-<version>-x64.deb`
+- `dotnet-targeting-pack-<version>-x64.deb`
+- `dotnet-hostfxr-<version>-x64.deb`
+- `dotnet-apphost-pack-<version>-x64.deb`
+- `dotnet-runtime-deps-<version>-x64.deb`
+- `dotnet-runtime-<version>-x64.deb`
 
-[win-x86-badge-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/win_x86_Release_version_badge.svg?no-cache
-[win-x86-version-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/productCommit-win-x86.txt
-[win-x86-installer-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-win-x86.exe
-[win-x86-installer-checksum-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-win-x86.exe.sha512
-[win-x86-zip-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-win-x86.zip
-[win-x86-zip-checksum-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-win-x86.zip.sha512
+**For Red Hat/Fedora/CentOS (.rpm):**
+- `dotnet-host-<version>-x64.rpm`
+- `dotnet-targeting-pack-<version>-x64.rpm`
+- `dotnet-hostfxr-<version>-x64.rpm`
+- `dotnet-apphost-pack-<version>-x64.rpm`
+- `dotnet-runtime-deps-<version>-x64.rpm`
+- `dotnet-runtime-<version>-x64.rpm`
 
-[win-x86-badge-10.0.1XX-rc2]: https://aka.ms/dotnet/10.0.1xx/daily/win_x86_Release_version_badge.svg?no-cache
-[win-x86-version-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-win-x86.txt
-[win-x86-installer-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-x86.exe
-[win-x86-installer-checksum-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-x86.exe.sha512
-[win-x86-zip-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-x86.zip
-[win-x86-zip-checksum-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-x86.zip.sha512
+The following ASP.NET Core packages are required for ASP.NET Core development:
 
-[osx-x64-badge-main]: https://aka.ms/dotnet/10.0.1xx/daily/osx_x64_Release_version_badge.svg?no-cache
-[osx-x64-version-main]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-osx-x64.txt
-[osx-x64-installer-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-osx-x64.pkg
-[osx-x64-installer-checksum-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-osx-x64.pkg.sha512
-[osx-x64-targz-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-osx-x64.tar.gz
-[osx-x64-targz-checksum-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-osx-x64.pkg.tar.gz.sha512
+**For Debian/Ubuntu (.deb):**
+- `aspnetcore-targeting-pack-<version>-x64.deb`
+- `aspnetcore-runtime-<version>-x64.deb`
 
-[osx-x64-badge-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/osx_x64_Release_version_badge.svg?no-cache
-[osx-x64-version-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/productCommit-osx-x64.txt
-[osx-x64-installer-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-osx-x64.pkg
-[osx-x64-installer-checksum-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-osx-x64.pkg.sha512
-[osx-x64-targz-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-osx-x64.tar.gz
-[osx-x64-targz-checksum-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-osx-x64.pkg.tar.gz.sha512
+**For Red Hat/Fedora/CentOS (.rpm):**
+- `aspnetcore-targeting-pack-<version>-x64.rpm`
+- `aspnetcore-runtime-<version>-x64.rpm`
 
-[osx-x64-badge-10.0.1XX-rc2]: https://aka.ms/dotnet/10.0.1xx/daily/osx_x64_Release_version_badge.svg?no-cache
-[osx-x64-version-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-osx-x64.txt
-[osx-x64-installer-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-osx-x64.pkg
-[osx-x64-installer-checksum-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-osx-x64.pkg.sha512
-[osx-x64-targz-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-osx-x64.tar.gz
-[osx-x64-targz-checksum-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-osx-x64.pkg.tar.gz.sha512
+These packages can be downloaded from:
 
-[osx-arm64-badge-main]: https://aka.ms/dotnet/10.0.1xx/daily/osx_arm64_Release_version_badge.svg?no-cache
-[osx-arm64-version-main]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-osx-arm64.txt
-[osx-arm64-installer-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-osx-arm64.pkg
-[osx-arm64-installer-checksum-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-osx-arm64.pkg.sha512
-[osx-arm64-targz-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-osx-arm64.tar.gz
-[osx-arm64-targz-checksum-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-osx-arm64.pkg.tar.gz.sha512
+**Runtime packages:**
+```
+https://ci.dot.net/public/Runtime/<version>/dotnet-host-<version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<version>/dotnet-targeting-pack-<version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<version>/dotnet-hostfxr-<version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<version>/dotnet-apphost-pack-<version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<version>/dotnet-runtime-deps-<version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<version>/dotnet-runtime-<version>-x64.<ext>
+```
 
-[osx-arm64-badge-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/osx_arm64_Release_version_badge.svg?no-cache
-[osx-arm64-version-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/productCommit-osx-arm64.txt
-[osx-arm64-installer-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-osx-arm64.pkg
-[osx-arm64-installer-checksum-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-osx-arm64.pkg.sha512
-[osx-arm64-targz-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-osx-arm64.tar.gz
-[osx-arm64-targz-checksum-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-osx-arm64.pkg.tar.gz.sha512
+**ASP.NET Core packages:**
+```
+https://ci.dot.net/public/aspnetcore/Runtime/<version>/aspnetcore-targeting-pack-<version>-x64.<ext>
+https://ci.dot.net/public/aspnetcore/Runtime/<version>/aspnetcore-runtime-<version>-x64.<ext>
+```
 
-[osx-arm64-badge-10.0.1XX-rc2]: https://aka.ms/dotnet/10.0.1xx/daily/osx_arm64_Release_version_badge.svg?no-cache
-[osx-arm64-version-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-osx-arm64.txt
-[osx-arm64-installer-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-osx-arm64.pkg
-[osx-arm64-installer-checksum-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-osx-arm64.pkg.sha512
-[osx-arm64-targz-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-osx-arm64.tar.gz
-[osx-arm64-targz-checksum-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-osx-arm64.pkg.tar.gz.sha512
+Where:
+- `<version>` is the same for both SDK and runtime (can be obtained from the version badge links or productCommit files in the table above)
+- `<ext>` is either `deb` for Debian/Ubuntu or `rpm` for Red Hat/Fedora/CentOS
 
-[linux-badge-main]: https://aka.ms/dotnet/10.0.1xx/daily/linux_x64_Release_version_badge.svg?no-cache
-[linux-version-main]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-linux-x64.txt
-[linux-DEB-installer-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-x64.deb
-[linux-DEB-installer-checksum-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-x64.deb.sha512
-[linux-RPM-installer-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-x64.rpm
-[linux-RPM-installer-checksum-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-x64.rpm.sha512
-[linux-targz-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-x64.tar.gz
-[linux-targz-checksum-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-x64.tar.gz.sha512
+#### Installation Order
 
-[linux-badge-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/linux_x64_Release_version_badge.svg?no-cache
-[linux-version-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/productCommit-linux-x64.txt
-[linux-DEB-installer-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-x64.deb
-[linux-DEB-installer-checksum-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-x64.deb.sha512
-[linux-RPM-installer-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-x64.rpm
-[linux-RPM-installer-checksum-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-x64.rpm.sha512
-[linux-targz-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-linux-x64.tar.gz
-[linux-targz-checksum-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-linux-x64.tar.gz.sha512
+Install the packages in the following order:
 
-[linux-badge-10.0.1XX-rc2]: https://aka.ms/dotnet/10.0.1xx/daily/linux_x64_Release_version_badge.svg?no-cache
-[linux-version-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-linux-x64.txt
-[linux-DEB-installer-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-x64.deb
-[linux-DEB-installer-checksum-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-x64.deb.sha512
-[linux-RPM-installer-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-x64.rpm
-[linux-RPM-installer-checksum-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-x64.rpm.sha512
-[linux-targz-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-x64.tar.gz
-[linux-targz-checksum-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-x64.tar.gz.sha512
+1. Runtime dependencies (in order):
+   - `dotnet-host-<version>-x64.<ext>`
+   - `dotnet-targeting-pack-<version>-x64.<ext>`
+   - `dotnet-hostfxr-<version>-x64.<ext>`
+   - `dotnet-apphost-pack-<version>-x64.<ext>`
+   - `dotnet-runtime-deps-<version>-x64.<ext>`
+   - `dotnet-runtime-<version>-x64.<ext>`
 
-[linux-arm-badge-main]: https://aka.ms/dotnet/10.0.1xx/daily/linux_arm_Release_version_badge.svg?no-cache
-[linux-arm-version-main]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-linux-arm.txt
-[linux-arm-targz-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-arm.tar.gz
-[linux-arm-targz-checksum-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-arm.tar.gz.sha512
+2. ASP.NET Core dependencies (if needed):
+   - `aspnetcore-targeting-pack-<version>-x64.<ext>`
+   - `aspnetcore-runtime-<version>-x64.<ext>`
 
-[linux-arm-badge-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/linux_arm_Release_version_badge.svg?no-cache
-[linux-arm-version-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/productCommit-linux-arm.txt
-[linux-arm-targz-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-linux-arm.tar.gz
-[linux-arm-targz-checksum-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-linux-arm.tar.gz.sha512
+3. Finally, install the SDK:
+   - `dotnet-sdk-<version>-x64.<ext>`
 
-[linux-arm-badge-10.0.1XX-rc2]: https://aka.ms/dotnet/10.0.1xx/daily/linux_arm_Release_version_badge.svg?no-cache
-[linux-arm-version-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-linux-arm.txt
-[linux-arm-targz-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-arm.tar.gz
-[linux-arm-targz-checksum-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-arm.tar.gz.sha512
+**Example installation commands:**
 
+For Debian/Ubuntu:
+```bash
+sudo dpkg -i dotnet-host-<version>-x64.deb
+sudo dpkg -i dotnet-targeting-pack-<version>-x64.deb
+sudo dpkg -i dotnet-hostfxr-<version>-x64.deb
+sudo dpkg -i dotnet-apphost-pack-<version>-x64.deb
+sudo dpkg -i dotnet-runtime-deps-<version>-x64.deb
+sudo dpkg -i dotnet-runtime-<version>-x64.deb
+sudo dpkg -i aspnetcore-targeting-pack-<version>-x64.deb
+sudo dpkg -i aspnetcore-runtime-<version>-x64.deb
+sudo dpkg -i dotnet-sdk-<version>-x64.deb
+```
 
-[linux-arm64-badge-main]: https://aka.ms/dotnet/10.0.1xx/daily/linux_arm64_Release_version_badge.svg?no-cache
-[linux-arm64-version-main]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-linux-arm64.txt
-[linux-arm64-targz-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-arm64.tar.gz
-[linux-arm64-targz-checksum-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-arm64.tar.gz.sha512
+For Red Hat/Fedora/CentOS:
+```bash
+sudo rpm -i dotnet-host-<version>-x64.rpm
+sudo rpm -i dotnet-targeting-pack-<version>-x64.rpm
+sudo rpm -i dotnet-hostfxr-<version>-x64.rpm
+sudo rpm -i dotnet-apphost-pack-<version>-x64.rpm
+sudo rpm -i dotnet-runtime-deps-<version>-x64.rpm
+sudo rpm -i dotnet-runtime-<version>-x64.rpm
+sudo rpm -i aspnetcore-targeting-pack-<version>-x64.rpm
+sudo rpm -i aspnetcore-runtime-<version>-x64.rpm
+sudo rpm -i dotnet-sdk-<version>-x64.rpm
+```
 
-[linux-arm64-badge-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/linux_arm64_Release_version_badge.svg?no-cache
-[linux-arm64-version-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/productCommit-linux-arm64.txt
-[linux-arm64-targz-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-linux-arm64.tar.gz
-[linux-arm64-targz-checksum-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-linux-arm64.tar.gz.sha512
+### macOS
 
-[linux-arm64-badge-10.0.1XX-rc2]: https://aka.ms/dotnet/10.0.1xx/daily/linux_arm64_Release_version_badge.svg?no-cache
-[linux-arm64-version-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-linux-arm64.txt
-[linux-arm64-targz-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-arm64.tar.gz
-[linux-arm64-targz-checksum-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-arm64.tar.gz.sha512
+Download the latest SDK installer or binaries from the builds table above.
 
-[linux-musl-x64-badge-main]: https://aka.ms/dotnet/10.0.1xx/daily/linux_musl_x64_Release_version_badge.svg?no-cache
-[linux-musl-x64-version-main]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-linux-musl-x64.txt
-[linux-musl-x64-targz-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-musl-x64.tar.gz
-[linux-musl-x64-targz-checksum-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-musl-x64.tar.gz.sha512
+macOS SDK and Runtime installers are complete packages and do not require separate dependency installation.
 
-[linux-musl-x64-badge-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/linux_musl_x64_Release_version_badge.svg?no-cache
-[linux-musl-x64-version-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/productCommit-linux-musl-x64.txt
-[linux-musl-x64-targz-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-linux-musl-x64.tar.gz
-[linux-musl-x64-targz-checksum-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-linux-musl-x64.tar.gz.sha512
+## Version Information
 
-[linux-musl-x64-badge-10.0.1XX-rc2]: https://aka.ms/dotnet/10.0.1xx/daily/linux_musl_x64_Release_version_badge.svg?no-cache
-[linux-musl-x64-version-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-linux-musl-x64.txt
-[linux-musl-x64-targz-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-musl-x64.tar.gz
-[linux-musl-x64-targz-checksum-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-musl-x64.tar.gz.sha512
+For the 1xx band, the runtime and SDK are built together in the same build. They will differ on patch version (e.g. SDK version 10.0.100 == runtime patch version 10.0.0). The build suffix (e.g. -rc2.1234.105) will always match.
 
-[linux-musl-arm-badge-main]: https://aka.ms/dotnet/10.0.1xx/daily/linux_musl_arm_Release_version_badge.svg?no-cache
-[linux-musl-arm-version-main]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-linux-musl-arm.txt
-[linux-musl-arm-targz-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-musl-arm.tar.gz
-[linux-musl-arm-targz-checksum-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-musl-arm.tar.gz.sha512
+For the 2xx and later bands, the 1xx runtime flows to 2xx+. The version of the runtime that will be used in the 2xx SDK can be found in sdk's `eng/Version.Details.xml` file. Look for the version of the `Microsoft.NETCore.App.Ref` dependency.
 
-[linux-musl-arm-badge-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/linux_musl_arm_Release_version_badge.svg?no-cache
-[linux-musl-arm-version-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/productCommit-linux-musl-arm.txt
-[linux-musl-arm-targz-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-linux-musl-arm.tar.gz
-[linux-musl-arm-targz-checksum-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-linux-musl-arm.tar.gz.sha512
+[win-x64-badge-main]: https://aka.ms/dotnet/11.0.1xx/daily/win_x64_Release_version_badge.svg?no-cache
+[win-x64-version-main]: https://aka.ms/dotnet/11.0.1xx/daily/productCommit-win-x64.txt
+[win-x64-installer-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-win-x64.exe
+[win-x64-installer-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-win-x64.exe.sha512
+[win-x64-zip-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-win-x64.zip
+[win-x64-zip-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-win-x64.zip.sha512
 
-[linux-musl-arm-badge-10.0.1XX-rc2]: https://aka.ms/dotnet/10.0.1xx/daily/linux_musl_arm_Release_version_badge.svg?no-cache
-[linux-musl-arm-version-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-linux-musl-arm.txt
-[linux-musl-arm-targz-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-musl-arm.tar.gz
-[linux-musl-arm-targz-checksum-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-musl-arm.tar.gz.sha512
+[win-x64-badge-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/win_x64_Release_version_badge.svg?no-cache
+[win-x64-version-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/productCommit-win-x64.txt
+[win-x64-installer-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-win-x64.exe
+[win-x64-installer-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-win-x64.exe.sha512
+[win-x64-zip-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-win-x64.zip
+[win-x64-zip-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-win-x64.zip.sha512
 
-[linux-musl-arm64-badge-main]: https://aka.ms/dotnet/10.0.1xx/daily/linux_musl_arm64_Release_version_badge.svg?no-cache
-[linux-musl-arm64-version-main]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-linux-musl-arm64.txt
-[linux-musl-arm64-targz-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-musl-arm64.tar.gz
-[linux-musl-arm64-targz-checksum-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-musl-arm64.tar.gz.sha512
+[win-x86-badge-main]: https://aka.ms/dotnet/11.0.1xx/daily/win_x86_Release_version_badge.svg?no-cache
+[win-x86-version-main]: https://aka.ms/dotnet/11.0.1xx/daily/productCommit-win-x86.txt
+[win-x86-installer-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-win-x86.exe
+[win-x86-installer-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-win-x86.exe.sha512
+[win-x86-zip-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-win-x86.zip
+[win-x86-zip-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-win-x86.zip.sha512
 
-[linux-musl-arm64-badge-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/linux_musl_arm64_Release_version_badge.svg?no-cache
-[linux-musl-arm64-version-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/productCommit-linux-musl-arm64.txt
-[linux-musl-arm64-targz-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-linux-musl-arm64.tar.gz
-[linux-musl-arm64-targz-checksum-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-linux-musl-arm64.tar.gz.sha512
+[win-x86-badge-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/win_x86_Release_version_badge.svg?no-cache
+[win-x86-version-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/productCommit-win-x86.txt
+[win-x86-installer-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-win-x86.exe
+[win-x86-installer-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-win-x86.exe.sha512
+[win-x86-zip-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-win-x86.zip
+[win-x86-zip-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-win-x86.zip.sha512
 
-[linux-musl-arm64-badge-10.0.1XX-rc2]: https://aka.ms/dotnet/10.0.1xx/daily/linux_musl_arm64_Release_version_badge.svg?no-cache
-[linux-musl-arm64-version-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-linux-musl-arm64.txt
-[linux-musl-arm64-targz-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-musl-arm64.tar.gz
-[linux-musl-arm64-targz-checksum-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-linux-musl-arm64.tar.gz.sha512
+[osx-x64-badge-main]: https://aka.ms/dotnet/11.0.1xx/daily/osx_x64_Release_version_badge.svg?no-cache
+[osx-x64-version-main]: https://aka.ms/dotnet/11.0.1xx/daily/productCommit-osx-x64.txt
+[osx-x64-installer-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-osx-x64.pkg
+[osx-x64-installer-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-osx-x64.pkg.sha512
+[osx-x64-targz-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-osx-x64.tar.gz
+[osx-x64-targz-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-osx-x64.pkg.tar.gz.sha512
 
-[win-arm64-badge-main]: https://aka.ms/dotnet/10.0.1xx/daily/win_arm64_Release_version_badge.svg?no-cache
-[win-arm64-version-main]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-win-arm64.txt
-[win-arm64-installer-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-arm64.exe
-[win-arm64-installer-checksum-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-arm64.exe.sha512
-[win-arm64-zip-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-arm64.zip
-[win-arm64-zip-checksum-main]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-arm64.zip.sha512
+[osx-x64-badge-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/osx_x64_Release_version_badge.svg?no-cache
+[osx-x64-version-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/productCommit-osx-x64.txt
+[osx-x64-installer-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-osx-x64.pkg
+[osx-x64-installer-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-osx-x64.pkg.sha512
+[osx-x64-targz-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-osx-x64.tar.gz
+[osx-x64-targz-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-osx-x64.pkg.tar.gz.sha512
 
-[win-arm64-badge-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/win_arm64_Release_version_badge.svg?no-cache
-[win-arm64-version-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/productCommit-win-arm64.txt
-[win-arm64-installer-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-win-arm64.exe
-[win-arm64-installer-checksum-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-win-arm64.exe.sha512
-[win-arm64-zip-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-win-arm64.zip
-[win-arm64-zip-checksum-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx-rc1/daily/dotnet-sdk-win-arm64.zip.sha512
+[osx-arm64-badge-main]: https://aka.ms/dotnet/11.0.1xx/daily/osx_arm64_Release_version_badge.svg?no-cache
+[osx-arm64-version-main]: https://aka.ms/dotnet/11.0.1xx/daily/productCommit-osx-arm64.txt
+[osx-arm64-installer-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-osx-arm64.pkg
+[osx-arm64-installer-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-osx-arm64.pkg.sha512
+[osx-arm64-targz-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-osx-arm64.tar.gz
+[osx-arm64-targz-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-osx-arm64.pkg.tar.gz.sha512
 
-[win-arm64-badge-10.0.1XX-rc2]: https://aka.ms/dotnet/10.0.1xx/daily/win_arm64_Release_version_badge.svg?no-cache
-[win-arm64-version-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-win-arm64.txt
-[win-arm64-installer-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-arm64.exe
-[win-arm64-installer-checksum-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-arm64.exe.sha512
-[win-arm64-zip-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-arm64.zip
-[win-arm64-zip-checksum-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-win-arm64.zip.sha512
+[osx-arm64-badge-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/osx_arm64_Release_version_badge.svg?no-cache
+[osx-arm64-version-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/productCommit-osx-arm64.txt
+[osx-arm64-installer-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-osx-arm64.pkg
+[osx-arm64-installer-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-osx-arm64.pkg.sha512
+[osx-arm64-targz-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-osx-arm64.tar.gz
+[osx-arm64-targz-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-osx-arm64.pkg.tar.gz.sha512
+
+[linux-badge-main]: https://aka.ms/dotnet/11.0.1xx/daily/linux_x64_Release_version_badge.svg?no-cache
+[linux-version-main]: https://aka.ms/dotnet/11.0.1xx/daily/productCommit-linux-x64.txt
+[linux-DEB-installer-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-x64.deb
+[linux-DEB-installer-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-x64.deb.sha512
+[linux-RPM-installer-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-x64.rpm
+[linux-RPM-installer-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-x64.rpm.sha512
+[linux-targz-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-linux-x64.tar.gz
+[linux-targz-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-linux-x64.tar.gz.sha512
+
+[linux-badge-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/linux_x64_Release_version_badge.svg?no-cache
+[linux-version-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/productCommit-linux-x64.txt
+[linux-DEB-installer-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-x64.deb
+[linux-DEB-installer-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-x64.deb.sha512
+[linux-RPM-installer-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-x64.rpm
+[linux-RPM-installer-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-x64.rpm.sha512
+[linux-targz-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-linux-x64.tar.gz
+[linux-targz-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-linux-x64.tar.gz.sha512
+
+[linux-arm-badge-main]: https://aka.ms/dotnet/11.0.1xx/daily/linux_arm_Release_version_badge.svg?no-cache
+[linux-arm-version-main]: https://aka.ms/dotnet/11.0.1xx/daily/productCommit-linux-arm.txt
+[linux-arm-targz-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-linux-arm.tar.gz
+[linux-arm-targz-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-linux-arm.tar.gz.sha512
+
+[linux-arm-badge-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/linux_arm_Release_version_badge.svg?no-cache
+[linux-arm-version-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/productCommit-linux-arm.txt
+[linux-arm-targz-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-linux-arm.tar.gz
+[linux-arm-targz-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-linux-arm.tar.gz.sha512
+
+[linux-arm64-badge-main]: https://aka.ms/dotnet/11.0.1xx/daily/linux_arm64_Release_version_badge.svg?no-cache
+[linux-arm64-version-main]: https://aka.ms/dotnet/11.0.1xx/daily/productCommit-linux-arm64.txt
+[linux-arm64-targz-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-linux-arm64.tar.gz
+[linux-arm64-targz-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-linux-arm64.tar.gz.sha512
+
+[linux-arm64-badge-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/linux_arm64_Release_version_badge.svg?no-cache
+[linux-arm64-version-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/productCommit-linux-arm64.txt
+[linux-arm64-targz-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-linux-arm64.tar.gz
+[linux-arm64-targz-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-linux-arm64.tar.gz.sha512
+
+[linux-musl-x64-badge-main]: https://aka.ms/dotnet/11.0.1xx/daily/linux_musl_x64_Release_version_badge.svg?no-cache
+[linux-musl-x64-version-main]: https://aka.ms/dotnet/11.0.1xx/daily/productCommit-linux-musl-x64.txt
+[linux-musl-x64-targz-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-linux-musl-x64.tar.gz
+[linux-musl-x64-targz-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-linux-musl-x64.tar.gz.sha512
+
+[linux-musl-x64-badge-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/linux_musl_x64_Release_version_badge.svg?no-cache
+[linux-musl-x64-version-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/productCommit-linux-musl-x64.txt
+[linux-musl-x64-targz-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-linux-musl-x64.tar.gz
+[linux-musl-x64-targz-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-linux-musl-x64.tar.gz.sha512
+
+[linux-musl-arm-badge-main]: https://aka.ms/dotnet/11.0.1xx/daily/linux_musl_arm_Release_version_badge.svg?no-cache
+[linux-musl-arm-version-main]: https://aka.ms/dotnet/11.0.1xx/daily/productCommit-linux-musl-arm.txt
+[linux-musl-arm-targz-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-linux-musl-arm.tar.gz
+[linux-musl-arm-targz-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-linux-musl-arm.tar.gz.sha512
+
+[linux-musl-arm-badge-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/linux_musl_arm_Release_version_badge.svg?no-cache
+[linux-musl-arm-version-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/productCommit-linux-musl-arm.txt
+[linux-musl-arm-targz-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-linux-musl-arm.tar.gz
+[linux-musl-arm-targz-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-linux-musl-arm.tar.gz.sha512
+
+[linux-musl-arm64-badge-main]: https://aka.ms/dotnet/11.0.1xx/daily/linux_musl_arm64_Release_version_badge.svg?no-cache
+[linux-musl-arm64-version-main]: https://aka.ms/dotnet/11.0.1xx/daily/productCommit-linux-musl-arm64.txt
+[linux-musl-arm64-targz-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-linux-musl-arm64.tar.gz
+[linux-musl-arm64-targz-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-linux-musl-arm64.tar.gz.sha512
+
+[linux-musl-arm64-badge-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/linux_musl_arm64_Release_version_badge.svg?no-cache
+[linux-musl-arm64-version-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/productCommit-linux-musl-arm64.txt
+[linux-musl-arm64-targz-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-linux-musl-arm64.tar.gz
+[linux-musl-arm64-targz-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-linux-musl-arm64.tar.gz.sha512
+
+[win-arm64-badge-main]: https://aka.ms/dotnet/11.0.1xx/daily/win_arm64_Release_version_badge.svg?no-cache
+[win-arm64-version-main]: https://aka.ms/dotnet/11.0.1xx/daily/productCommit-win-arm64.txt
+[win-arm64-installer-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-win-arm64.exe
+[win-arm64-installer-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-win-arm64.exe.sha512
+[win-arm64-zip-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-win-arm64.zip
+[win-arm64-zip-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-win-arm64.zip.sha512
+
+[win-arm64-badge-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/win_arm64_Release_version_badge.svg?no-cache
+[win-arm64-version-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/productCommit-win-arm64.txt
+[win-arm64-installer-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-win-arm64.exe
+[win-arm64-installer-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-win-arm64.exe.sha512
+[win-arm64-zip-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-win-arm64.zip
+[win-arm64-zip-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-win-arm64.zip.sha512

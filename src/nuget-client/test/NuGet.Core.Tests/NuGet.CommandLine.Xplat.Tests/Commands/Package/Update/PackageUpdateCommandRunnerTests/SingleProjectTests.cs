@@ -7,19 +7,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
+using NuGet.Configuration;
 using NuGet.CommandLine.XPlat;
 using NuGet.CommandLine.XPlat.Commands.Package.Update;
 using NuGet.Common;
-using NuGet.Configuration;
 using NuGet.ProjectModel;
-using NuGet.Protocol.Core.Types;
+using NuGet.Protocol;
+using NuGet.Protocol.Model;
 using NuGet.Versioning;
 using Test.Utility;
 using Xunit;
 
 namespace NuGet.CommandLine.Xplat.Tests.Commands.Package.Update.PackageUpdateCommandRunnerTests;
 
-using Pkg = XPlat.Commands.Package.Update.Package;
+using Pkg = XPlat.Commands.Package.PackageWithVersionRange;
+using Strings = NuGet.CommandLine.XPlat.Strings;
 
 public class SingleProjectTests
 {
@@ -195,7 +197,7 @@ public class SingleProjectTests
     }
 
     [Fact]
-    public async Task PackageNotReferenced_ReturnsErrorExitCode()
+    public async Task PackageNotReferenced_ReturnsNothingToUpdateExitCode()
     {
         // Arrange
         var packageSpec = new TestPackageSpecFactory(builder =>
@@ -213,11 +215,10 @@ public class SingleProjectTests
         int exitCode = await RunCommand(testData, CancellationToken.None);
 
         // Assert
-        exitCode.Should().Be(3);
+        exitCode.Should().Be(PackageUpdateCommandRunner.ExitCodes.NoPackagesNeedUpdating);
 
         testData.IoMock.Verify(x => x.PreviewUpdatePackageReferenceAsync(
             It.IsAny<DependencyGraphSpec>(),
-            It.IsAny<SourceCacheContext>(),
             It.IsAny<ILogger>(),
             It.IsAny<CancellationToken>()), Times.Never);
 
@@ -252,7 +253,6 @@ public class SingleProjectTests
 
         testData.IoMock.Verify(x => x.PreviewUpdatePackageReferenceAsync(
             It.IsAny<DependencyGraphSpec>(),
-            It.IsAny<SourceCacheContext>(),
             It.IsAny<ILogger>(),
             It.IsAny<CancellationToken>()), Times.Once);
 
@@ -276,7 +276,8 @@ public class SingleProjectTests
                 new Pkg { Id = "Test.Package", VersionRange = new VersionRange(new NuGetVersion("1.2.3")) }
             },
             Interactive = false,
-            LogLevel = LogLevel.Information
+            LogLevel = LogLevel.Information,
+            Vulnerable = false,
         };
         var loggerMock = new Mock<ILoggerWithColor>();
         ILoggerWithColor logger = loggerMock.Object;
@@ -298,14 +299,413 @@ public class SingleProjectTests
         exitCode.Should().Be(3);
     }
 
-    private TestData InitTest(IReadOnlyList<Pkg> packagesToUpdate, PackageSpec project, bool restoreSuccessful = true)
+    [Fact]
+    public async Task ProjectWithAuditDisabled_UpdateVulnerableShowsErrorMessage()
+    {
+        // Arrange
+        var packageSpec = new TestPackageSpecFactory(builder =>
+        {
+            builder.WithProperty("TargetFramework", "net9.0")
+                   .WithProperty("NuGetAudit", "false");
+        }).Build();
+        var packagesToUpdate = new List<Pkg>();
+
+        TestData testData = InitTest(packagesToUpdate, packageSpec);
+        testData = testData with
+        {
+            CommandArgs = testData.CommandArgs with { Vulnerable = true }
+        };
+
+        // Act
+        int exitCode = await RunCommand(testData, CancellationToken.None);
+
+        // Assert
+        exitCode.Should().Be(PackageUpdateCommandRunner.ExitCodes.InvalidArgs);
+        testData.LoggerMock.Verify(x => x.LogError(It.Is<string>(s => s.Contains(Strings.PackageUpdate_AuditDisabled))),
+            Times.Once);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task ProjectWithPackageSourceMapping_ErrorWhenPackageNameIsNotMapped(bool omitPackageName)
+    {
+        // Arrange
+        var packageSpec = new TestPackageSpecFactory(builder =>
+        {
+            builder.WithProperty("TargetFramework", "net9.0")
+                   .WithItem("PackageReference", "Test.Package", [new("Version", "1.0.0")]);
+        }).Build();
+        var packagesToUpdate = new List<Pkg>();
+
+        TestData testData = InitTest(packagesToUpdate, packageSpec, disablePackageSourceMapping: false);
+        if (!omitPackageName)
+        {
+            testData = testData with
+            {
+                CommandArgs = testData.CommandArgs with
+                {
+                    Packages = new List<Pkg>
+                    {
+                        new Pkg { Id = "Test.Package", VersionRange = null }
+                    }
+                }
+            };
+        }
+
+        testData.IoMock.Setup(io => io.GetPackageSourceMapping())
+            .Returns(new PackageSourceMapping(new Dictionary<string, IReadOnlyList<string>>(StringComparer.OrdinalIgnoreCase)
+            {
+                { "contoso.*", new List<string> { "contoso-packages" } }
+            }));
+
+        // Act
+        int exitCode = await RunCommand(testData, CancellationToken.None);
+
+        // Assert
+        exitCode.Should().Be(PackageUpdateCommandRunner.ExitCodes.Error);
+        testData.LoggerMock.Verify(x => x.LogError(Messages.Error_PackageSourceMappingNotFound("Test.Package")),
+            Times.Once);
+        testData.IoMock.Verify(x => x.UpdatePackageReference(
+            It.IsAny<PackageSpec>(),
+            It.IsAny<IPackageUpdateIO.RestoreResult>(),
+            It.IsAny<List<string>>(),
+            It.IsAny<PackageUpdateCommandRunner.PackageToUpdate>(),
+            It.IsAny<ILogger>()),
+            Times.Never);
+    }
+
+    [Theory]
+    [InlineData("all")]
+    [InlineData("direct")]
+    public async Task VulnerablePackage_UpdatesToNonVulnerableVersion(string auditMode)
+    {
+        // Arrange
+        var packageSpec = new TestPackageSpecFactory(builder =>
+        {
+            builder.WithProperty("TargetFrameworks", "net9.0;net8.0")
+                   .WithProperty("NuGetAudit", "true")
+                   .WithProperty("NuGetAuditMode", auditMode);
+        })
+            .WithInnerBuild(builder =>
+            {
+                builder.WithProperty("TargetFramework", "net9.0")
+                       .WithProperty("RuntimeIdentifiers", "winx64;linux-x64")
+                       .WithItem("PackageReference", "Test.Package", [new("Version", "1.0.0")]);
+            })
+            .WithInnerBuild(builder =>
+            {
+                builder.WithProperty("TargetFramework", "net8.0")
+                       .WithProperty("RuntimeIdentifiers", "winx64;linux-x64")
+                       .WithItem("PackageReference", "Second.Package", [new("Version", "1.0.0")]);
+            }).Build();
+
+        var packagesToUpdate = new List<Pkg>();
+
+        TestData testData = InitTest(packagesToUpdate, packageSpec);
+        testData = testData with
+        {
+            CommandArgs = testData.CommandArgs with { Vulnerable = true }
+        };
+
+        // Mock the GetProjectAssetsFileAsync to return a LockFile with vulnerability log messages
+        var lockFile = new LockFile
+        {
+            Version = 3,
+            PackageSpec = packageSpec
+        };
+
+        // Add libraries to the lock file
+        lockFile.Libraries.Add(new LockFileLibrary
+        {
+            Name = "Test.Package",
+            Version = new NuGetVersion("1.0.0"),
+            Type = "package"
+        });
+
+        lockFile.Libraries.Add(new LockFileLibrary
+        {
+            Name = "Second.Package",
+            Version = new NuGetVersion("1.0.0"),
+            Type = "package"
+        });
+
+        // Add a transitive package
+        lockFile.Libraries.Add(new LockFileLibrary
+        {
+            Name = "Transitive.Package",
+            Version = new NuGetVersion("1.0.0"),
+            Type = "package"
+        });
+
+        // Add target for net9.0 with Test.Package
+        var targetNet9 = new LockFileTarget
+        {
+            TargetFramework = packageSpec.TargetFrameworks[0].FrameworkName
+        };
+        targetNet9.Libraries.Add(new LockFileTargetLibrary
+        {
+            Name = "Test.Package",
+            Version = new NuGetVersion("1.0.0"),
+            Type = "package"
+        });
+        targetNet9.Libraries.Add(new LockFileTargetLibrary
+        {
+            Name = "Transitive.Package",
+            Version = new NuGetVersion("1.0.0"),
+            Type = "package"
+        });
+        lockFile.Targets.Add(targetNet9);
+
+        // Add target for net8.0 with Second.Package
+        var targetNet8 = new LockFileTarget
+        {
+            TargetFramework = packageSpec.TargetFrameworks[1].FrameworkName
+        };
+        targetNet8.Libraries.Add(new LockFileTargetLibrary
+        {
+            Name = "Second.Package",
+            Version = new NuGetVersion("1.0.0"),
+            Type = "package"
+        });
+        targetNet8.Libraries.Add(new LockFileTargetLibrary
+        {
+            Name = "Transitive.Package",
+            Version = new NuGetVersion("1.0.0"),
+            Type = "package"
+        });
+        lockFile.Targets.Add(targetNet8);
+
+        // Add vulnerability log messages
+        lockFile.LogMessages.Add(new AssetsLogMessage(
+            LogLevel.Warning,
+            NuGetLogCode.NU1903,
+            "Test.Package has a known high severity vulnerability")
+        {
+            LibraryId = "Test.Package"
+        });
+
+        lockFile.LogMessages.Add(new AssetsLogMessage(
+            LogLevel.Warning,
+            NuGetLogCode.NU1903,
+            "Second.Package has a known high severity vulnerability")
+        {
+            LibraryId = "Second.Package"
+        });
+
+        if (auditMode.Equals("all", StringComparison.OrdinalIgnoreCase))
+        {
+            lockFile.LogMessages.Add(new AssetsLogMessage(
+                LogLevel.Warning,
+                NuGetLogCode.NU1903,
+                "Transitive.Package has a known high severity vulnerability")
+            {
+                LibraryId = "Transitive.Package"
+            });
+        }
+
+        testData.IoMock.Setup(x => x.GetProjectAssetsFileAsync(
+            It.IsAny<DependencyGraphSpec>(),
+            It.IsAny<string>(),
+            It.IsAny<ILogger>(),
+            It.IsAny<CancellationToken>()))
+            .ReturnsAsync(lockFile);
+
+        // Mock GetKnownVulnerabilitiesAsync to return vulnerability data
+        var vulnerabilityInfo = new PackageVulnerabilityInfo(
+            new Uri("https://example.com/advisory"),
+            PackageVulnerabilitySeverity.High,
+            VersionRange.Parse("[1.0.0]"));
+
+        var knownVulnerabilities = new List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>
+        {
+            new Dictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>(StringComparer.OrdinalIgnoreCase)
+            {
+                { "Test.Package", new List<PackageVulnerabilityInfo> { vulnerabilityInfo } },
+                { "Second.Package", new List<PackageVulnerabilityInfo> { vulnerabilityInfo } },
+                { "Transitive.Package", new List<PackageVulnerabilityInfo> { vulnerabilityInfo } }
+            }
+        };
+
+        testData.IoMock.Setup(x => x.GetKnownVulnerabilitiesAsync(
+            It.IsAny<ILogger>(),
+            It.IsAny<CancellationToken>()))
+            .ReturnsAsync(knownVulnerabilities);
+
+        testData.IoMock.Setup(x => x.GetNonVulnerableAsync(
+            "Test.Package",
+            It.IsAny<IReadOnlyList<string>>(),
+            new NuGetVersion("1.0.0"),
+            It.IsAny<ILogger>(),
+            It.IsAny<IReadOnlyList<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>>(),
+            It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new NuGetVersion("1.2.3"));
+        testData.IoMock.Setup(x => x.GetNonVulnerableAsync(
+            "Second.Package",
+            It.IsAny<IReadOnlyList<string>>(),
+            new NuGetVersion("1.0.0"),
+            It.IsAny<ILogger>(),
+            It.IsAny<IReadOnlyList<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>>(),
+            It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new NuGetVersion("2.1.0"));
+        testData.IoMock.Setup(x => x.GetNonVulnerableAsync(
+            "Transitive.Package",
+            It.IsAny<IReadOnlyList<string>>(),
+            new NuGetVersion("1.0.0"),
+            It.IsAny<ILogger>(),
+            It.IsAny<IReadOnlyList<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>>(),
+            It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new NuGetVersion("2.0.0"));
+
+        // Act
+        int exitCode = await RunCommand(testData, CancellationToken.None);
+
+        // Assert
+        exitCode.Should().Be(0);
+
+        testData.IoMock.Verify(x => x.GetKnownVulnerabilitiesAsync(
+            It.IsAny<ILogger>(),
+            It.IsAny<CancellationToken>()),
+            Times.Once);
+
+        testData.IoMock.Verify(x => x.GetNonVulnerableAsync(
+            "Test.Package",
+            It.IsAny<IReadOnlyList<string>>(),
+            new NuGetVersion("1.0.0"),
+            It.IsAny<ILogger>(),
+            It.IsAny<IReadOnlyList<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>>(),
+            It.IsAny<CancellationToken>()),
+            Times.Once);
+
+        testData.IoMock.Verify(x => x.GetNonVulnerableAsync(
+            "Second.Package",
+            It.IsAny<IReadOnlyList<string>>(),
+            new NuGetVersion("1.0.0"),
+            It.IsAny<ILogger>(),
+            It.IsAny<IReadOnlyList<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>>(),
+            It.IsAny<CancellationToken>()),
+            Times.Once);
+
+        if (auditMode.Equals("all", StringComparison.OrdinalIgnoreCase))
+        {
+            testData.IoMock.Verify(x => x.GetNonVulnerableAsync(
+                "Transitive.Package",
+                It.IsAny<IReadOnlyList<string>>(),
+                new NuGetVersion("1.0.0"),
+                It.IsAny<ILogger>(),
+                It.IsAny<IReadOnlyList<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>>(),
+                It.IsAny<CancellationToken>()),
+                Times.Once);
+        }
+
+        testData.IoMock.Verify(x => x.UpdatePackageReference(
+            It.IsAny<PackageSpec>(),
+            It.IsAny<IPackageUpdateIO.RestoreResult>(),
+            It.IsAny<List<string>>(),
+            It.Is<PackageUpdateCommandRunner.PackageToUpdate>(p => p.Id == "Test.Package" && p.NewVersion.ToString() == "[1.2.3, )"),
+            It.IsAny<ILogger>()),
+            Times.Once);
+
+        testData.IoMock.Verify(x => x.UpdatePackageReference(
+            It.IsAny<PackageSpec>(),
+            It.IsAny<IPackageUpdateIO.RestoreResult>(),
+            It.IsAny<List<string>>(),
+            It.Is<PackageUpdateCommandRunner.PackageToUpdate>(p => p.Id == "Second.Package" && p.NewVersion.ToString() == "[2.1.0, )"),
+            It.IsAny<ILogger>()),
+            Times.Once);
+
+        if (auditMode.Equals("all", StringComparison.OrdinalIgnoreCase))
+        {
+            testData.IoMock.Verify(x => x.UpdatePackageReference(
+                It.IsAny<PackageSpec>(),
+                It.IsAny<IPackageUpdateIO.RestoreResult>(),
+                It.IsAny<List<string>>(),
+                It.Is<PackageUpdateCommandRunner.PackageToUpdate>(p => p.Id == "Transitive.Package" && p.NewVersion.ToString() == "[2.0.0, )"),
+                It.IsAny<ILogger>()),
+                Times.Once);
+        }
+
+        int packageCount =
+            auditMode.Equals("all", StringComparison.OrdinalIgnoreCase)
+            ? 3
+            : 2;
+        testData.LoggerMock.Verify(x => x.LogMinimal(
+            It.Is<string>(s => s.Contains(string.Format(Strings.PackageUpdate_FinalSummary, packageCount, packageCount))),
+            It.IsAny<ConsoleColor>()),
+            Times.Once);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task ProjectWithPackageSourceMapping_PassesMappedSourcesToGetLatestVersion(bool omitPackageName)
+    {
+        // Arrange
+        var packageSpec = new TestPackageSpecFactory(builder =>
+        {
+            builder.WithProperty("TargetFramework", "net9.0")
+                   .WithItem("PackageReference", "Test.Package", [new("Version", "1.0.0")]);
+        }).Build();
+        var packagesToUpdate = new List<Pkg>();
+
+        TestData testData = InitTest(packagesToUpdate, packageSpec, disablePackageSourceMapping: false);
+        if (!omitPackageName)
+        {
+            testData = testData with
+            {
+                CommandArgs = testData.CommandArgs with
+                {
+                    Packages = new List<Pkg>
+                    {
+                        new Pkg { Id = "Test.Package", VersionRange = null }
+                    }
+                }
+            };
+        }
+
+        List<string> mappedSources = ["package-feed"];
+        testData.IoMock.Setup(io => io.GetPackageSourceMapping())
+            .Returns(new PackageSourceMapping(new Dictionary<string, IReadOnlyList<string>>(StringComparer.OrdinalIgnoreCase)
+            {
+                { "package-feed", ["test.package"]}
+            }));
+
+        testData.IoMock.Setup(x => x.GetLatestVersionAsync("Test.Package",
+            It.IsAny<bool>(),
+            It.IsAny<IReadOnlyList<string>>(),
+            It.IsAny<ILogger>(),
+            It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new NuGetVersion("1.2.3"));
+
+        // Act
+        int exitCode = await RunCommand(testData, CancellationToken.None);
+
+        // Assert
+        exitCode.Should().Be(PackageUpdateCommandRunner.ExitCodes.Success);
+
+        // Make sure the mapped source was passed to GetLatestVersionAsync
+        testData.IoMock.Verify(x => x.GetLatestVersionAsync(
+            "Test.Package",
+            false,
+            It.Is<IReadOnlyList<string>>(sources => sources.Count == 1 && sources[0] == "package-feed"),
+            It.IsAny<ILogger>(),
+            It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    private TestData InitTest(
+        IReadOnlyList<Pkg> packagesToUpdate,
+        PackageSpec project,
+        bool restoreSuccessful = true,
+        bool disablePackageSourceMapping = true)
     {
         var commandArgs = new PackageUpdateArgs
         {
             Project = project.FilePath,
             Packages = packagesToUpdate,
             Interactive = false,
-            LogLevel = LogLevel.Information
+            LogLevel = LogLevel.Information,
+            Vulnerable = false,
         };
 
         var loggerMock = new Mock<ILoggerWithColor>();
@@ -322,14 +722,10 @@ public class SingleProjectTests
 
         var ioMock = new Mock<IPackageUpdateIO>();
 
-        ioMock.Setup(x => x.LoadSettings(It.IsAny<string>()))
-            .Returns(NullSettings.Instance);
-
         ioMock.Setup(x => x.GetDependencyGraphSpec(commandArgs.Project)).Returns(dgSpec);
 
         ioMock.Setup(x => x.PreviewUpdatePackageReferenceAsync(
             It.IsAny<DependencyGraphSpec>(),
-            It.IsAny<SourceCacheContext>(),
             It.IsAny<ILogger>(),
             It.IsAny<CancellationToken>()))
             .ReturnsAsync(restoreResult);
@@ -345,6 +741,13 @@ public class SingleProjectTests
             It.IsAny<IPackageUpdateIO.RestoreResult>(),
             It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
+
+        if (disablePackageSourceMapping)
+        {
+            var noMappings = new Dictionary<string, IReadOnlyList<string>>(StringComparer.OrdinalIgnoreCase);
+            var packageSourceMapping = new PackageSourceMapping(noMappings);
+            ioMock.Setup(x => x.GetPackageSourceMapping()).Returns(packageSourceMapping);
+        }
 
         var testData = new TestData
         {

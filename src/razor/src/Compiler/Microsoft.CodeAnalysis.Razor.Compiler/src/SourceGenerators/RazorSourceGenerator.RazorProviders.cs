@@ -41,7 +41,8 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 diagnostic = Diagnostic.Create(
                     RazorDiagnostics.InvalidRazorLangVersionDescriptor,
                     Location.None,
-                    razorLanguageVersionString);
+                    razorLanguageVersionString,
+                    RazorLanguageVersion.Preview.ToString());
                 razorLanguageVersion = RazorLanguageVersion.Latest;
             }
 
@@ -77,25 +78,37 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             var (additionalText, globalOptions) = pair;
             var options = globalOptions.GetOptions(additionalText);
 
-            string relativePath;
-            if (options.TryGetValue("build_metadata.AdditionalFiles.TargetPath", out var encodedRelativePath))
+            string? relativePath = null;
+            var hasTargetPath = options.TryGetValue("build_metadata.AdditionalFiles.TargetPath", out var encodedRelativePath);
+            if (hasTargetPath && !string.IsNullOrWhiteSpace(encodedRelativePath))
             {
-                // TargetPath is optional, but must have a value if provided.
-                if (string.IsNullOrWhiteSpace(encodedRelativePath))
-                {
-                    var diagnostic = Diagnostic.Create(
-                        RazorDiagnostics.TargetPathNotProvided,
-                        Location.None,
-                        additionalText.Path);
-                    return (null, diagnostic);
-                }
-
                 relativePath = Encoding.UTF8.GetString(Convert.FromBase64String(encodedRelativePath));
             }
-            else
+            else if (globalOptions.GlobalOptions.TryGetValue("build_property.MSBuildProjectDirectory", out var projectPath) &&
+                projectPath is { Length: > 0 } &&
+                additionalText.Path.StartsWith(projectPath, StringComparison.OrdinalIgnoreCase))
             {
-                // If the TargetPath is not provided, we effectively assume its in the root of the project.
-                relativePath = Path.GetFileName(additionalText.Path);
+                // Fallback, when TargetPath isn't specified but we know about the project directory, we can do our own calulation of
+                // the project relative path, and use that as the target path. This is an easy way for a project that isn't using the
+                // Razor SDK to still get TargetPath functionality without the complexity of specifying metadata on every item.
+                relativePath = additionalText.Path[projectPath.Length..].TrimStart(['/', '\\']);
+            }
+            else if (!hasTargetPath)
+            {
+                // If the TargetPath is not provided, it could be a Misc Files situation, or just a project that isn't using the
+                // Web or Razor SDK. In this case, we just use the physical path.
+                relativePath = additionalText.Path;
+            }
+
+            if (relativePath is null)
+            {
+                // If we had a TargetPath but it was empty or whitespace, and we couldn't fall back to computing it from the project path
+                // that's an error.
+                var diagnostic = Diagnostic.Create(
+                    RazorDiagnostics.TargetPathNotProvided,
+                    Location.None,
+                    additionalText.Path);
+                return (null, diagnostic);
             }
 
             options.TryGetValue("build_metadata.AdditionalFiles.CssScope", out var cssScope);

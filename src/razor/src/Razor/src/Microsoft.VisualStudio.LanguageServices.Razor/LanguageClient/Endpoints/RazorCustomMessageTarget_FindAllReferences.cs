@@ -27,7 +27,10 @@ internal partial class RazorCustomMessageTarget
                 ProjectContext = null,
             },
             Position = request.ProjectedPosition,
-            Context = new ReferenceContext(),
+            Context = new ReferenceContext()
+            {
+                IncludeDeclaration = true
+            },
         };
 
         var response = await _requestInvoker.ReinvokeRequestOnServerAsync<ReferenceParams, VSInternalReferenceItem[]?>(

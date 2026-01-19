@@ -12,7 +12,9 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Formatting;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
+using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Razor.Settings;
@@ -40,15 +42,17 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         RazorFileKind? fileKind = null,
         bool inGlobalNamespace = false,
         bool codeBlockBraceOnNextLine = false,
+        AttributeIndentStyle attributeIndentStyle = AttributeIndentStyle.AlignWithFirst,
         bool insertSpaces = true,
         int tabSize = 4,
         bool allowDiagnostics = false,
         bool debugAssertsEnabled = true,
-        RazorCSharpSyntaxFormattingOptions? csharpSyntaxFormattingOptions = null)
+        RazorCSharpSyntaxFormattingOptions? csharpSyntaxFormattingOptions = null,
+        (string fileName, string contents)[]? additionalFiles = null)
     {
         (input, expected) = ProcessFormattingContext(input, expected);
 
-        var document = CreateProjectAndRazorDocument(input.Text, fileKind, inGlobalNamespace: inGlobalNamespace);
+        var document = CreateProjectAndRazorDocument(input.Text, fileKind, inGlobalNamespace: inGlobalNamespace, additionalFiles: additionalFiles);
         if (!allowDiagnostics)
         {
             //TODO: Tests in LanguageServer have extra components that are not present in this project, like Counter, etc.
@@ -73,18 +77,14 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
             DisposalToken).ConfigureAwait(false);
         Assert.NotNull(generatedHtml);
 
-        var uri = new Uri(document.CreateUri(), $"{document.FilePath}{FeatureOptions.HtmlVirtualDocumentSuffix}");
+        var uri = new Uri(document.CreateUri(), $"{document.FilePath}{LanguageServerConstants.HtmlVirtualDocumentSuffix}");
         var htmlEdits = await _htmlFormattingService.GetDocumentFormattingEditsAsync(LoggerFactory, uri, generatedHtml, insertSpaces, tabSize);
-
-        var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentFormattingName, htmlEdits)]);
-
-        var clientSettingsManager = new ClientSettingsManager(changeTriggers: []);
-        clientSettingsManager.Update(clientSettingsManager.GetClientSettings().AdvancedSettings with { CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine });
 
         var span = input.TryGetNamedSpans(string.Empty, out var spans)
             ? spans.First()
             : default;
-        var edits = await GetFormattingEditsAsync(span, insertSpaces, tabSize, document, requestInvoker, clientSettingsManager, csharpSyntaxFormattingOptions);
+
+        var edits = await GetFormattingEditsAsync(document, htmlEdits, span, codeBlockBraceOnNextLine, attributeIndentStyle, insertSpaces, tabSize, csharpSyntaxFormattingOptions);
 
         if (edits is null)
         {
@@ -97,6 +97,21 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         var finalText = inputText.WithChanges(changes);
 
         AssertEx.EqualOrDiff(expected, finalText.ToString());
+    }
+
+    private protected async Task<TextEdit[]?> GetFormattingEditsAsync(TextDocument document, TextEdit[]? htmlEdits, TextSpan span, bool codeBlockBraceOnNextLine, AttributeIndentStyle attributeIndentStyle, bool insertSpaces, int tabSize, RazorCSharpSyntaxFormattingOptions csharpSyntaxFormattingOptions)
+    {
+        var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentFormattingName, htmlEdits)]);
+
+        var clientSettingsManager = new ClientSettingsManager(changeTriggers: []);
+        clientSettingsManager.Update(clientSettingsManager.GetClientSettings().AdvancedSettings with
+        {
+            CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine,
+            AttributeIndentStyle = attributeIndentStyle,
+        });
+
+        var edits = await GetFormattingEditsAsync(span, insertSpaces, tabSize, document, requestInvoker, clientSettingsManager, csharpSyntaxFormattingOptions);
+        return edits;
     }
 
     private protected async Task RunOnTypeFormattingTestAsync(
@@ -116,14 +131,16 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         var position = inputText.GetPosition(input.Position);
 
         var formattingService = (RazorFormattingService)OOPExportProvider.GetExportedValue<IRazorFormattingService>();
-        formattingService.GetTestAccessor().SetFormattingLoggerFactory(new TestFormattingLoggerFactory(TestOutputHelper));
+        var accessor = formattingService.GetTestAccessor();
+        accessor.SetDebugAssertsEnabled(debugAssertsEnabled: true);
+        accessor.SetFormattingLoggerFactory(new TestFormattingLoggerFactory(TestOutputHelper));
 
         var generatedHtml = await RemoteServiceInvoker.TryInvokeAsync<IRemoteHtmlDocumentService, string?>(document.Project.Solution,
             (service, solutionInfo, ct) => service.GetHtmlDocumentTextAsync(solutionInfo, document.Id, ct),
             DisposalToken).ConfigureAwait(false);
         Assert.NotNull(generatedHtml);
 
-        var uri = new Uri(document.CreateUri(), $"{document.FilePath}{FeatureOptions.HtmlVirtualDocumentSuffix}");
+        var uri = new Uri(document.CreateUri(), $"{document.FilePath}{LanguageServerConstants.HtmlVirtualDocumentSuffix}");
         var htmlEdits = await _htmlFormattingService.GetOnTypeFormattingEditsAsync(LoggerFactory, uri, generatedHtml, position, insertSpaces: true, tabSize: 4);
 
         var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentOnTypeFormattingName, htmlEdits)]);

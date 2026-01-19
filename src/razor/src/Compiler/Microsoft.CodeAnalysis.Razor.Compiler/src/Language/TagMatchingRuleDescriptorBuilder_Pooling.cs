@@ -8,7 +8,8 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 public partial class TagMatchingRuleDescriptorBuilder
 {
-    internal static readonly ObjectPool<TagMatchingRuleDescriptorBuilder> Pool = DefaultPool.Create(Policy.Instance);
+    internal static readonly ObjectPool<TagMatchingRuleDescriptorBuilder> Pool =
+        DefaultPool.Create(static () => new TagMatchingRuleDescriptorBuilder());
 
     internal static TagMatchingRuleDescriptorBuilder GetInstance(TagHelperDescriptorBuilder parent)
     {
@@ -27,16 +28,5 @@ public partial class TagMatchingRuleDescriptorBuilder
         ParentTag = null;
         TagStructure = default;
         Attributes.Clear();
-    }
-
-    private sealed class Policy : PooledBuilderPolicy<TagMatchingRuleDescriptorBuilder>
-    {
-        public static readonly Policy Instance = new();
-
-        private Policy()
-        {
-        }
-
-        public override TagMatchingRuleDescriptorBuilder Create() => new();
     }
 }

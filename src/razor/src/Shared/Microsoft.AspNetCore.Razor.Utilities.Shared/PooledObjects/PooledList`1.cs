@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.PooledObjects;
 
@@ -15,7 +14,7 @@ namespace Microsoft.AspNetCore.Razor.PooledObjects;
 /// </summary>
 internal ref partial struct PooledList<T>
 {
-    private readonly ObjectPool<List<T>> _pool;
+    private readonly ListPool<T> _pool;
     private List<T>? _list;
 
     public PooledList()
@@ -23,7 +22,7 @@ internal ref partial struct PooledList<T>
     {
     }
 
-    public PooledList(ObjectPool<List<T>> pool)
+    public PooledList(ListPool<T> pool)
     {
         _pool = pool;
     }

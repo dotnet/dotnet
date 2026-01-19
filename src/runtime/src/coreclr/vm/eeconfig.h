@@ -64,7 +64,6 @@ public:
     DWORD         SpinLimitProcFactor(void)       const {LIMITED_METHOD_CONTRACT;  return dwSpinLimitProcFactor; }
     DWORD         SpinLimitConstant(void)         const {LIMITED_METHOD_CONTRACT;  return dwSpinLimitConstant; }
     DWORD         SpinRetryCount(void)            const {LIMITED_METHOD_CONTRACT;  return dwSpinRetryCount; }
-    DWORD         MonitorSpinCount(void)          const {LIMITED_METHOD_CONTRACT;  return dwMonitorSpinCount; }
 
     // Jit-config
 
@@ -270,9 +269,7 @@ public:
 
     bool IsJitVerificationDisabled(void)    const {LIMITED_METHOD_CONTRACT;  return fJitVerificationDisable; }
 
-#ifdef FEATURE_EH_FUNCLETS
     bool SuppressLockViolationsOnReentryFromOS() const {LIMITED_METHOD_CONTRACT;  return fSuppressLockViolationsOnReentryFromOS; }
-#endif
 
 #endif // _DEBUG
 
@@ -521,9 +518,7 @@ private: //----------------------------------------------------------------
                                         // at load time.
     bool fJitVerificationDisable;       // Turn off jit verification (for testing purposes only)
 
-#ifdef FEATURE_EH_FUNCLETS
     bool fSuppressLockViolationsOnReentryFromOS;
-#endif
 
 #endif // _DEBUG
 #ifdef ENABLE_STARTUP_DELAY
@@ -537,7 +532,6 @@ private: //----------------------------------------------------------------
     DWORD dwSpinLimitProcFactor;
     DWORD dwSpinLimitConstant;
     DWORD dwSpinRetryCount;
-    DWORD dwMonitorSpinCount;
 
 #ifdef VERIFY_HEAP
     int  iGCHeapVerify;

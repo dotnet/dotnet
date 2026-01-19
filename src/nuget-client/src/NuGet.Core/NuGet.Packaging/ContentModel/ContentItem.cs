@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System.Collections.Generic;
 
 namespace NuGet.ContentModel
@@ -153,7 +151,7 @@ namespace NuGet.ContentModel
         private Dictionary<string, object> CreateDictionary()
         {
             var properties = new Dictionary<string, object>();
-            if (_assembly != null) // We always initialize the dictionary with the packed values. 
+            if (_assembly != null) // We always initialize the dictionary with the packed values.
             {
                 properties.Add(ManagedAssembly, _assembly);
             }

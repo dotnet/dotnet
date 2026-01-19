@@ -930,7 +930,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
     private static DocumentContext CreateDocumentContext(
         string documentText,
         bool isRazorFile,
-        ImmutableArray<TagHelperDescriptor> tagHelpers,
+        TagHelperCollection tagHelpers,
         int version)
     {
         var document = CreateCodeDocument(documentText, isRazorFile, tagHelpers);
@@ -1042,7 +1042,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             testName += "_VSCode";
         }
 
-        var fileName = $"Semantic\\TestFiles\\{testName}";
+        var fileName = Path.Combine("Semantic", "TestFiles", testName);
 
         var baselineFileName = Path.ChangeExtension(fileName, ".semantic.txt");
 
@@ -1132,7 +1132,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             builder.Append(length).Append(' ');
             builder.Append(typeString).Append(' ');
             builder.Append(data[i + 4]).Append(' ');
-            builder.Append('[').Append(sourceText.GetSubTextString(new TextSpan(sourceText.Lines[lineIndex].Start + lineOffset, length))).Append(']');
+            builder.Append('[').Append(sourceText.ToString(new TextSpan(sourceText.Lines[lineIndex].Start + lineOffset, length))).Append(']');
             builder.AppendLine();
 
             prevLength = length;

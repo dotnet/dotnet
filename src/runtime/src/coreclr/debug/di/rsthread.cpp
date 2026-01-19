@@ -1,11 +1,10 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-//*****************************************************************************
 
 //
 // File: rsthread.cpp
 //
-//*****************************************************************************
+
 #include "stdafx.h"
 #include "primitives.h"
 #include <float.h>
@@ -2682,22 +2681,10 @@ void CordbThread::ClearStackFrameCache()
     m_stackFrames.Clear();
 }
 
-// ----------------------------------------------------------------------------
-// EnumerateBlockingObjectsCallback
-//
-// Description:
-//    A small helper used by CordbThread::GetBlockingObjects. This callback adds the enumerated items
-//    to a list
-//
-// Arguments:
-//    blockingObject - the object to add to the list
-//    pUserData - the list to add it to
-
-VOID EnumerateBlockingObjectsCallback(DacBlockingObject blockingObject, CALLBACK_DATA pUserData)
-{
-    CQuickArrayList<DacBlockingObject>* pDacBlockingObjs = (CQuickArrayList<DacBlockingObject>*)pUserData;
-    pDacBlockingObjs->Push(blockingObject);
-}
+typedef CordbEnumerator<CorDebugBlockingObject,
+                        CorDebugBlockingObject,
+                        ICorDebugBlockingObjectEnum, IID_ICorDebugBlockingObjectEnum,
+                        IdentityConvert<CorDebugBlockingObject> > CordbBlockingObjectEnumerator;
 
 // ----------------------------------------------------------------------------
 // CordbThread::GetBlockingObjects
@@ -2720,51 +2707,21 @@ HRESULT CordbThread::GetBlockingObjects(ICorDebugBlockingObjectEnum **ppBlocking
     VALIDATE_POINTER_TO_OBJECT(ppBlockingObjectEnum, ICorDebugBlockingObjectEnum **);
 
     HRESULT hr = S_OK;
-    CorDebugBlockingObject* blockingObjs = NULL;
+    *ppBlockingObjectEnum = NULL;
+
     EX_TRY
     {
-        CQuickArrayList<DacBlockingObject> dacBlockingObjects;
-        IDacDbiInterface* pDac = GetProcess()->GetDAC();
-        pDac->EnumerateBlockingObjects(m_vmThreadToken,
-            (IDacDbiInterface::FP_BLOCKINGOBJECT_ENUMERATION_CALLBACK) EnumerateBlockingObjectsCallback,
-            (CALLBACK_DATA) &dacBlockingObjects);
-        blockingObjs = new CorDebugBlockingObject[dacBlockingObjects.Size()];
-        for(SIZE_T i = 0 ; i < dacBlockingObjects.Size(); i++)
-        {
-            // ICorDebug API needs to flip the direction of the list from the way DAC stores it
-            SIZE_T dacObjIndex = dacBlockingObjects.Size()-i-1;
-            switch(dacBlockingObjects[dacObjIndex].blockingReason)
-            {
-                case DacBlockReason_MonitorCriticalSection:
-                    blockingObjs[i].blockingReason = BLOCKING_MONITOR_CRITICAL_SECTION;
-                    break;
-                case DacBlockReason_MonitorEvent:
-                    blockingObjs[i].blockingReason = BLOCKING_MONITOR_EVENT;
-                    break;
-                default:
-                    _ASSERTE(!"Should not get here");
-                    ThrowHR(E_FAIL);
-                    break;
-            }
-            blockingObjs[i].dwTimeout = dacBlockingObjects[dacObjIndex].dwTimeout;
-            CordbAppDomain* pAppDomain;
-            {
-                RSLockHolder holder(GetProcess()->GetProcessLock());
-                pAppDomain = GetProcess()->LookupOrCreateAppDomain(dacBlockingObjects[dacObjIndex].vmAppDomain);
-            }
-            blockingObjs[i].pBlockingObject = CordbValue::CreateHeapValue(pAppDomain,
-                dacBlockingObjects[dacObjIndex].vmBlockingObject);
-        }
-
-        CordbBlockingObjectEnumerator* objEnum = new CordbBlockingObjectEnumerator(GetProcess(),
-                                                                                  blockingObjs,
-                                                                                  (DWORD)dacBlockingObjects.Size());
+        // We don't have any blocking objects to enumerate from the native side,
+        // so we create an empty enumerator.
+        CordbBlockingObjectEnumerator* objEnum = new CordbBlockingObjectEnumerator(
+            GetProcess(),
+            new CorDebugBlockingObject[0],
+            0);
         GetProcess()->GetContinueNeuterList()->Add(GetProcess(), objEnum);
         hr = objEnum->QueryInterface(__uuidof(ICorDebugBlockingObjectEnum), (void**)ppBlockingObjectEnum);
-        _ASSERTE(SUCCEEDED(hr));
     }
     EX_CATCH_HRESULT(hr);
-    delete [] blockingObjs;
+
     return hr;
 }
 
@@ -5580,21 +5537,17 @@ const DT_CONTEXT * CordbRuntimeUnwindableFrame::GetContext() const
 // default constructor to make the compiler happy
 CordbMiscFrame::CordbMiscFrame()
 {
-#ifdef FEATURE_EH_FUNCLETS
     this->parentIP       = 0;
     this->fpParentOrSelf = LEAF_MOST_FRAME;
     this->fIsFilterFunclet = false;
-#endif // FEATURE_EH_FUNCLETS
 }
 
 // the real constructor which stores the funclet-related information in the CordbMiscFrame
 CordbMiscFrame::CordbMiscFrame(DebuggerIPCE_JITFuncData * pJITFuncData)
 {
-#ifdef FEATURE_EH_FUNCLETS
     this->parentIP       = pJITFuncData->parentNativeOffset;
     this->fpParentOrSelf = pJITFuncData->fpParentOrSelf;
     this->fIsFilterFunclet = (pJITFuncData->fIsFilterFrame == TRUE);
-#endif // FEATURE_EH_FUNCLETS
 }
 
 /* ------------------------------------------------------------------------- *
@@ -6054,7 +6007,6 @@ HRESULT CordbNativeFrame::IsMatchingParentFrame(ICorDebugNativeFrame2 * pPotenti
             ThrowHR(CORDBG_E_NOT_CHILD_FRAME);
         }
 
-#ifdef FEATURE_EH_FUNCLETS
         CordbNativeFrame * pFrameToCheck = static_cast<CordbNativeFrame *>(pPotentialParentFrame);
         if (pFrameToCheck->IsFunclet())
         {
@@ -6068,7 +6020,6 @@ HRESULT CordbNativeFrame::IsMatchingParentFrame(ICorDebugNativeFrame2 * pPotenti
             IDacDbiInterface * pDAC = GetProcess()->GetDAC();
             *pIsParent = pDAC->IsMatchingParentFrame(fpToCheck, fpParent);
         }
-#endif // FEATURE_EH_FUNCLETS
     }
     EX_CATCH_HRESULT(hr);
 
@@ -7405,14 +7356,9 @@ bool CordbNativeFrame::IsLeafFrame() const
 
 SIZE_T CordbNativeFrame::GetInspectionIP()
 {
-#ifdef FEATURE_EH_FUNCLETS
     // On 64-bit, if this is a funclet, then return the offset of the parent method frame at which
     // the exception occurs.  Otherwise just return the normal offset.
     return (IsFunclet() ? GetParentIP() : m_ip);
-#else
-    // Always return the normal offset on all other platforms.
-    return m_ip;
-#endif // FEATURE_EH_FUNCLETS
 }
 
 //---------------------------------------------------------------------------------------
@@ -7425,11 +7371,7 @@ SIZE_T CordbNativeFrame::GetInspectionIP()
 
 bool CordbNativeFrame::IsFunclet()
 {
-#ifdef FEATURE_EH_FUNCLETS
     return (m_misc.parentIP != (SIZE_T)NULL);
-#else
-    return false;
-#endif // FEATURE_EH_FUNCLETS
 }
 
 //---------------------------------------------------------------------------------------
@@ -7442,15 +7384,10 @@ bool CordbNativeFrame::IsFunclet()
 
 bool CordbNativeFrame::IsFilterFunclet()
 {
-#ifdef FEATURE_EH_FUNCLETS
     return (IsFunclet() && m_misc.fIsFilterFunclet);
-#else
-    return false;
-#endif // FEATURE_EH_FUNCLETS
 }
 
 
-#ifdef FEATURE_EH_FUNCLETS
 //---------------------------------------------------------------------------------------
 //
 // Return the offset of the parent method frame at which the exception occurs.
@@ -7463,7 +7400,6 @@ SIZE_T CordbNativeFrame::GetParentIP()
 {
     return m_misc.parentIP;
 }
-#endif // FEATURE_EH_FUNCLETS
 
 // Accessor for the shim private hook code:CordbThread::ConvertFrameForILMethodWithoutMetadata.
 // Refer to that function for comments on the return value, the argument, etc.
@@ -8501,7 +8437,6 @@ HRESULT CordbJITILFrame::GetNativeVariable(CordbType *type,
 
     HRESULT hr = S_OK;
 
-#ifdef FEATURE_EH_FUNCLETS
     if (m_nativeFrame->IsFunclet())
     {
         if ( (pNativeVarInfo->loc.vlType != ICorDebugInfo::VLT_STK) &&
@@ -8513,7 +8448,6 @@ HRESULT CordbJITILFrame::GetNativeVariable(CordbType *type,
             return E_FAIL;
         }
     }
-#endif // FEATURE_EH_FUNCLETS
 
     switch (pNativeVarInfo->loc.vlType)
     {

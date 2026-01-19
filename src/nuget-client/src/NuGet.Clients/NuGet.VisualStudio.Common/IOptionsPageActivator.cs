@@ -8,6 +8,6 @@ namespace NuGet.PackageManagement.VisualStudio
     public interface IOptionsPageActivator
     {
         void NotifyOptionsDialogClosed();
-        void ActivatePage(OptionsPage page, Action closeCallback);
+        void ActivatePage(OptionsPage page, Action? closeCallback);
     }
 }

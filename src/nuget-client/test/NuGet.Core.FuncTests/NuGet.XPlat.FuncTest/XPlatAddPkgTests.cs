@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -26,7 +24,7 @@ using Xunit.Abstractions;
 
 namespace NuGet.XPlat.FuncTest
 {
-    [Collection("NuGet XPlat Test Collection")]
+    [Collection(XPlatCollection.Name)]
     public class XPlatAddPkgTests
     {
         private static readonly string ProjectName = "test_project_addpkg";
@@ -802,7 +800,7 @@ namespace NuGet.XPlat.FuncTest
                 // Make sure source is replaced in generated dgSpec file.
                 PackageSpec packageSpec = projectA.AssetsFile.PackageSpec;
                 string[] sources = packageSpec.RestoreMetadata.Sources.Select(s => s.Name).ToArray();
-                Assert.Equal(sources.Count(), 1);
+                Assert.Equal(sources.Length, 1);
                 Assert.Equal(sources[0], customSourcePath);
 
                 var ridlessTarget = projectA.AssetsFile.Targets.Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));
@@ -889,7 +887,7 @@ namespace NuGet.XPlat.FuncTest
                 // Make sure source is replaced in generated dgSpec file.
                 PackageSpec packageSpec = projectA.AssetsFile.PackageSpec;
                 string[] sources = packageSpec.RestoreMetadata.Sources.Select(s => s.Name).ToArray();
-                Assert.Equal(sources.Count(), 1);
+                Assert.Equal(sources.Length, 1);
                 Assert.Equal(sources[0], customSourcePath);
 
                 var ridlessTarget = projectA.AssetsFile.Targets.Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));

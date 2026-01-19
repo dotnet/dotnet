@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -297,17 +295,6 @@ namespace NuGet.Shared
             }
 
             return true;
-        }
-
-        internal static bool DictionaryOfSequenceEquals<TKey, TValue>(
-            IDictionary<TKey, IEnumerable<TValue>> self,
-            IDictionary<TKey, IEnumerable<TValue>> other)
-            where TKey : notnull
-        {
-            return DictionaryEquals(
-                self,
-                other,
-                (selfValue, otherValue) => SequenceEqualWithNullCheck(selfValue, otherValue));
         }
 
         internal static bool EqualsWithNullCheck<T>(T self, T other)

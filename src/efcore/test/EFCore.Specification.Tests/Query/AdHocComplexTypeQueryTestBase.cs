@@ -1,8 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace Microsoft.EntityFrameworkCore.Query;
 
 // ReSharper disable ClassNeverInstantiated.Local
@@ -177,48 +175,112 @@ public abstract class AdHocComplexTypeQueryTestBase(NonSharedFixture fixture)
 
     #endregion ShadowDiscriminator
 
-    #region 36837
+    #region 37162
 
     [ConditionalFact]
-    public virtual async Task Complex_type_equality_with_non_default_type_mapping()
+    public virtual async Task Non_optional_complex_type_with_all_nullable_properties()
     {
-        var contextFactory = await InitializeAsync<Context36837>(
+        var contextFactory = await InitializeAsync<Context37162>(
             seed: context =>
             {
-                context.AddRange(
-                    new Context36837.EntityType
+                context.Add(
+                    new Context37162.EntityType
                     {
-                        ComplexThing = new Context36837.ComplexThing { DateTime = new DateTime(2020, 1, 1) }
+                        NonOptionalComplexType = new Context37162.ComplexTypeWithAllNulls
+                        {
+                            // All properties are null
+                        }
                     });
                 return context.SaveChangesAsync();
             });
 
         await using var context = contextFactory.CreateContext();
 
-        var count = await context.Set<Context36837.EntityType>()
-            .CountAsync(b => b.ComplexThing == new Context36837.ComplexThing { DateTime = new DateTime(2020, 1, 1, 1, 1, 1, 999, 999) });
-        Assert.Equal(0, count);
+        var entity = await context.Set<Context37162.EntityType>().SingleAsync();
+
+        Assert.NotNull(entity.NonOptionalComplexType);
+        Assert.Null(entity.NonOptionalComplexType.NullableString);
+        Assert.Null(entity.NonOptionalComplexType.NullableDateTime);
     }
 
-    private class Context36837(DbContextOptions options) : DbContext(options)
+    private class Context37162(DbContextOptions options) : DbContext(options)
     {
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-            => modelBuilder.Entity<EntityType>().ComplexProperty(b => b.ComplexThing);
+            => modelBuilder.Entity<EntityType>().ComplexProperty(b => b.NonOptionalComplexType);
 
         public class EntityType
         {
             public int Id { get; set; }
-            public ComplexThing ComplexThing { get; set; } = null!;
+            public ComplexTypeWithAllNulls NonOptionalComplexType { get; set; } = null!;
         }
 
-        public class ComplexThing
+        public class ComplexTypeWithAllNulls
         {
-            [Column(TypeName = "datetime")] // Non-default type mapping
-            public DateTime DateTime { get; set; }
+            public string? NullableString { get; set; }
+            public DateTime? NullableDateTime { get; set; }
         }
     }
 
-    #endregion 36837
+    #endregion 37162
+
+    #region Issue37337
+
+    [ConditionalFact]
+    public virtual async Task Nullable_complex_type_with_discriminator_and_shadow_property()
+    {
+        var contextFactory = await InitializeAsync<Context37337>(
+            seed: context =>
+            {
+                context.Add(
+                    new Context37337.EntityType
+                    {
+                        Prop = new Context37337.OptionalComplexProperty
+                        {
+                            OptionalValue = true
+                        }
+                    });
+                return context.SaveChangesAsync();
+            });
+
+        await using var context = contextFactory.CreateContext();
+
+        var entities = await context.Set<Context37337.EntityType>().ToArrayAsync();
+
+        Assert.Single(entities);
+        var entity = entities[0];
+        Assert.NotNull(entity.Prop);
+        Assert.True(entity.Prop.OptionalValue);
+    }
+
+    private class Context37337(DbContextOptions options) : DbContext(options)
+    {
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            var entity = modelBuilder.Entity<EntityType>();
+            entity.Property(p => p.Id);
+            entity.HasKey(p => p.Id);
+
+            var compl = entity.ComplexProperty(p => p.Prop);
+            compl.Property(p => p.OptionalValue);
+            compl.HasDiscriminator();
+
+            // Shadow property added via convention (e.g., audit field)
+            entity.Property<string>("CreatedBy").IsRequired(false);
+        }
+
+        public class EntityType
+        {
+            public Guid Id { get; set; }
+            public OptionalComplexProperty? Prop { get; set; }
+        }
+
+        public class OptionalComplexProperty
+        {
+            public bool? OptionalValue { get; set; }
+        }
+    }
+
+    #endregion Issue37337
 
     protected override string StoreName
         => "AdHocComplexTypeQueryTest";

@@ -9,11 +9,9 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal class GeneratedDocumentSynchronizer(
     IGeneratedDocumentPublisher publisher,
-    LanguageServerFeatureOptions languageServerFeatureOptions,
     ProjectSnapshotManager projectManager) : IDocumentProcessedListener
 {
     private readonly IGeneratedDocumentPublisher _publisher = publisher;
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly ProjectSnapshotManager _projectManager = projectManager;
 
     public void DocumentProcessed(RazorCodeDocument codeDocument, DocumentSnapshot document)
@@ -21,9 +19,8 @@ internal class GeneratedDocumentSynchronizer(
         var hostDocumentVersion = document.Version;
         var filePath = document.FilePath;
 
-        // If the document isn't open, and we're not updating buffers for closed documents, then we don't need to do anything.
-        if (!_projectManager.IsDocumentOpen(filePath) &&
-            !_languageServerFeatureOptions.UpdateBuffersForClosedDocuments)
+        // If the document isn't open then we don't need to do anything.
+        if (!_projectManager.IsDocumentOpen(filePath))
         {
             return;
         }
@@ -34,7 +31,7 @@ internal class GeneratedDocumentSynchronizer(
             return;
         }
 
-        var htmlText = codeDocument.GetHtmlSourceText();
+        var htmlText = codeDocument.GetHtmlSourceText(cancellationToken: System.Threading.CancellationToken.None);
 
         _publisher.PublishHtml(document.Project.Key, filePath, htmlText, hostDocumentVersion);
 

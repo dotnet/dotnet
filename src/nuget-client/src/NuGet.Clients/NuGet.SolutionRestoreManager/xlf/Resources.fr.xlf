@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="ErrorOccurredRestoringPackages">
         <source>Error occurred while restoring NuGet packages: {0}</source>
-        <target state="translated">Une erreur s’est produite lors de la restauration des packages NuGet : {0}</target>
+        <target state="translated">Une erreur s'est produite lors de la restauration des packages NuGet : {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageDownload_NoVersion">
@@ -19,8 +19,13 @@
       </trans-unit>
       <trans-unit id="Error_PackageDownload_OnlyExactVersionsAreAllowed">
         <source>Package '{0} {1}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
-        <target state="translated">Le paquet '{0}' {1} n'a pas de version exacte comme '[1.0.0]'. Seules les versions exactes sont autorisées avec PackageDownload.</target>
+        <target state="translated">Le paquet '{0}' {1} n’a pas de version exacte comme '[1.0.0]'. Seules les versions exactes sont autorisées avec PackageDownload.</target>
         <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
+      </trans-unit>
+      <trans-unit id="InfoBar_HyperlinkGHCopilotDocs">
+        <source>How to fix with GitHub Copilot</source>
+        <target state="translated">Comment résoudre un problème avec GitHub Copilot</target>
+        <note />
       </trans-unit>
       <trans-unit id="InfoBar_HyperlinkMessage">
         <source>Manage NuGet Packages</source>
@@ -45,7 +50,7 @@
       </trans-unit>
       <trans-unit id="NothingToRestore">
         <source>All packages are already installed and there is nothing to restore.</source>
-        <target state="translated">Tous les packages sont déjà installés et il n’y a rien à restaurer.</target>
+        <target state="translated">Tous les packages sont déjà installés et il n'y a aucun élément à restaurer.</target>
         <note />
       </trans-unit>
       <trans-unit id="Operation_Finished">
@@ -74,7 +79,7 @@ Packages manquants : {0}</target>
       </trans-unit>
       <trans-unit id="PackageRestoreCanceled">
         <source>NuGet package restore canceled.</source>
-        <target state="translated">Annulation de la restauration des packages NuGet.</target>
+        <target state="translated">Restauration des packages NuGet annulée.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFailedForProject">
@@ -84,7 +89,7 @@ Packages manquants : {0}</target>
       </trans-unit>
       <trans-unit id="PackageRestoreFinished">
         <source>NuGet package restore finished.</source>
-        <target state="translated">Fin de la restauration du package NuGet.</target>
+        <target state="translated">Restauration des packages NuGet terminée.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFinishedForProject">

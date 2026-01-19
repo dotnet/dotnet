@@ -5,6 +5,9 @@ namespace Microsoft.CodeAnalysis.Razor.Protocol;
 
 internal static class LanguageServerConstants
 {
+    public const string HtmlVirtualDocumentSuffix = "__virtual.html";
+    public const string CSharpVirtualDocumentSuffix = ".ide.g.cs";
+
     public const string RazorLanguageQueryEndpoint = "razor/languageQuery";
 
     public const string RazorBreakpointSpanEndpoint = "razor/breakpointSpan";
@@ -58,6 +61,8 @@ internal static class LanguageServerConstants
         public const string CodeActionFromVSCode = nameof(CodeActionFromVSCode);
 
         public const string WrapAttributes = nameof(WrapAttributes);
+
+        public const string SimplifyFullyQualifiedComponent = nameof(SimplifyFullyQualifiedComponent);
 
         /// <summary>
         /// Remaps without formatting the resolved code action edit

@@ -455,6 +455,9 @@ module rec Compiler =
     let FsSource source =
         SourceCodeFileKind.Fs({FileName="test.fs"; SourceText=Some source })
 
+    let FsSourceWithFileName name source =
+        SourceCodeFileKind.Fs({FileName=name; SourceText=Some source })
+
     let CsSource source =
         SourceCodeFileKind.Cs({FileName="test.cs"; SourceText=Some source })
 
@@ -581,9 +584,6 @@ module rec Compiler =
 
     let withNoDebug (cUnit: CompilationUnit) : CompilationUnit =
         withOptionsHelper [ "--debug-" ] "debug- is only supported on F#" cUnit
-
-    let withOcamlCompat (cUnit: CompilationUnit) : CompilationUnit =
-        withOptionsHelper [ "--mlcompatibility" ] "withOcamlCompat is only supported on F#" cUnit
 
     let withOptions (options: string list) (cUnit: CompilationUnit) : CompilationUnit =
         withOptionsHelper options "withOptions is only supported for F#" cUnit

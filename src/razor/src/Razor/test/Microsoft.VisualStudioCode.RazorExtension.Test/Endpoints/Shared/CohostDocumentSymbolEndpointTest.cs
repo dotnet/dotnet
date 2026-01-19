@@ -6,8 +6,10 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -21,7 +23,7 @@ public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : Co
     public Task DocumentSymbols_CSharpClassWithMethods(bool hierarchical)
         => VerifyDocumentSymbolsAsync(
             """
-            @functions {
+            {|BuildRenderTree():|}@code {
                 class {|SomeProject.File1.C:C|}
                 {
                     private void {|HandleString(string s):HandleString|}(string s)
@@ -41,15 +43,21 @@ public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : Co
                 }
             }
             
-            """, hierarchical);
+            """,
+            hierarchical);
 
     [Theory]
     [CombinatorialData]
     public Task DocumentSymbols_CSharpClassWithMethods_MiscFile(bool hierarchical)
-        => VerifyDocumentSymbolsAsync(
-            """
-            @functions {
-                class {|ASP.File1.C:C|}
+    {
+        // What the source generator would product for TestProjectData.SomeProjectPath
+        var generatedNamespace = PlatformInformation.IsWindows
+            ? "c_.users.example.src.SomeProject"
+            : "home.example.SomeProject";
+        return VerifyDocumentSymbolsAsync(
+            $$"""
+            {|BuildRenderTree():|}@code {
+                class {|ASP.{{generatedNamespace}}.File1.C:C|}
                 {
                     private void {|HandleString(string s):HandleString|}(string s)
                     {
@@ -68,14 +76,17 @@ public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : Co
                 }
             }
             
-            """, hierarchical, miscellaneousFile: true);
+            """,
+            hierarchical,
+            miscellaneousFile: true);
+    }
 
     [Theory]
     [CombinatorialData]
     public Task DocumentSymbols_CSharpMethods(bool hierarchical)
         => VerifyDocumentSymbolsAsync(
             """
-            @functions {
+            {|BuildRenderTree():|}@code {
                 private void {|HandleString(string s):HandleString|}(string s)
                 {
                     s += "Hello";
@@ -92,12 +103,40 @@ public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : Co
                 }
             }
             
-            """, hierarchical);
+            """,
+            hierarchical);
 
-    private async Task VerifyDocumentSymbolsAsync(string input, bool hierarchical = false, bool miscellaneousFile = false)
+    [Theory]
+    [CombinatorialData]
+    public Task DocumentSymbols_CSharpMethods_Legacy(bool hierarchical)
+        => VerifyDocumentSymbolsAsync(
+            """
+                {|ExecuteAsync():|}@functions {
+                    private void {|HandleString(string s):HandleString|}(string s)
+                    {
+                        s += "Hello";
+                    }
+
+                    private void {|M(int i):M|}(int i)
+                    {
+                        i++;
+                    }
+
+                    private string {|ObjToString(object o):ObjToString|}(object o)
+                    {
+                        return o.ToString();
+                    }
+                }
+            
+                """,
+            hierarchical,
+            fileKind: RazorFileKind.Legacy);
+
+    private async Task VerifyDocumentSymbolsAsync(TestCode input, bool hierarchical = false, bool miscellaneousFile = false, RazorFileKind? fileKind = null)
     {
-        TestFileMarkupParser.GetSpans(input, out input, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spansDict);
-        var document = CreateProjectAndRazorDocument(input, miscellaneousFile: miscellaneousFile);
+        fileKind ??= RazorFileKind.Component;
+
+        var document = CreateProjectAndRazorDocument(input.Text, fileKind, miscellaneousFile: miscellaneousFile);
 
         var endpoint = new CohostDocumentSymbolEndpoint(IncompatibleProjectService, RemoteServiceInvoker);
 
@@ -106,10 +145,12 @@ public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : Co
         // Roslyn's DocumentSymbol type has an annoying property that makes it hard to serialize
         Assert.NotNull(JsonSerializer.SerializeToDocument(result, JsonHelpers.JsonSerializerOptions));
 
+        var spansDict = input.NamedSpans;
+        var sourceText = SourceText.From(input.Text);
+
         if (hierarchical)
         {
             var documentSymbols = result.Value.First;
-            var sourceText = SourceText.From(input);
             var seen = 0;
 
             VerifyDocumentSymbols(spansDict, documentSymbols, sourceText, ref seen);
@@ -121,7 +162,6 @@ public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : Co
             var symbolsInformations = result.Value.Second;
             Assert.Equal(spansDict.Values.Count(), symbolsInformations.Length);
 
-            var sourceText = SourceText.From(input);
 #pragma warning disable CS0618 // Type or member is obsolete
             // SymbolInformation is obsolete, but things still return it so we have to handle it
             foreach (var symbolInformation in symbolsInformations)
@@ -139,7 +179,7 @@ public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : Co
         foreach (var symbol in documentSymbols)
         {
             seen++;
-            Assert.True(spansDict.TryGetValue(symbol.Detail.AssumeNotNull(), out var spans), $"Expected {symbol.Detail} to be in test provided markers");
+            Assert.True(spansDict.TryGetValue(symbol.Detail ?? symbol.Name, out var spans), $"Expected {symbol.Detail} to be in test provided markers");
             var expectedRange = sourceText.GetRange(Assert.Single(spans));
             Assert.Equal(expectedRange, symbol.SelectionRange);
 

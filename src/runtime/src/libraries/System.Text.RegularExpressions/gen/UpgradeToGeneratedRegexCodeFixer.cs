@@ -45,7 +45,15 @@ namespace System.Text.RegularExpressions.Generator
         {
             // Fetch the node to fix, and register the codefix by invoking the ConvertToSourceGenerator method.
             if (await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false) is not SyntaxNode root ||
-                root.FindNode(context.Span, getInnermostNodeForTie: true) is not SyntaxNode nodeToFix)
+                root.FindNode(context.Span, getInnermostNodeForTie: true) is not SyntaxNode node)
+            {
+                return;
+            }
+
+            // The diagnostic span covers just the method/constructor name (e.g., "Regex.IsMatch" or "new Regex" or "new"),
+            // so we need to find the containing invocation or object creation expression.
+            SyntaxNode? nodeToFix = node.AncestorsAndSelf().FirstOrDefault(n => n is InvocationExpressionSyntax or ObjectCreationExpressionSyntax or ImplicitObjectCreationExpressionSyntax);
+            if (nodeToFix is null)
             {
                 return;
             }
@@ -382,9 +390,9 @@ namespace System.Text.RegularExpressions.Generator
                         return SyntaxFactory.ParseExpression(optionsLiteral);
 
                     case UpgradeToGeneratedRegexAnalyzer.PatternArgumentName:
-                        if (argument.Value.ConstantValue.Value is string str && str.Contains('\\'))
+                        if (argument.Value.ConstantValue.Value is string str && ShouldUseVerbatimString(str))
                         {
-                            // Special handling for string patterns with escaped characters
+                            // Special handling for string patterns with escaped characters or newlines
                             string escapedVerbatimText = str.Replace("\"", "\"\"");
                             return SyntaxFactory.ParseExpression($"@\"{escapedVerbatimText}\"");
                         }
@@ -399,6 +407,13 @@ namespace System.Text.RegularExpressions.Generator
             }
 
             return null;
+        }
+
+        private static bool ShouldUseVerbatimString(string str)
+        {
+            // Use verbatim string syntax if the string contains backslashes or newlines
+            // to preserve readability, especially for patterns with RegexOptions.IgnorePatternWhitespace
+            return str.IndexOfAny(['\\', '\n', '\r']) >= 0;
         }
 
         private static string Literal(string stringifiedRegexOptions)

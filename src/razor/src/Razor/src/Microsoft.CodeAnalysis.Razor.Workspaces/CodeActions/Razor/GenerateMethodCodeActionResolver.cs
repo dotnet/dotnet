@@ -131,7 +131,8 @@ internal class GenerateMethodCodeActionResolver(
         if (edits.Length == 3
             && razorClassName is not null
             && (razorNamespace is not null || code.TryGetNamespace(fallbackToRootNamespace: true, out razorNamespace))
-            && GetCSharpClassDeclarationSyntax(code.GetOrParseCSharpSyntaxTree(cancellationToken), razorNamespace, razorClassName) is { } @class)
+            && await documentContext.Snapshot.GetCSharpSyntaxTreeAsync(cancellationToken).ConfigureAwait(false) is { } csharpSyntaxTree
+            && GetCSharpClassDeclarationSyntax(csharpSyntaxTree, razorNamespace, razorClassName) is { } @class)
         {
             // There is no existing @code block. This means that there is no code block source mapping in the generated C# document
             // to place the code, so we cannot utilize the document mapping service and the formatting service.
@@ -175,7 +176,8 @@ internal class GenerateMethodCodeActionResolver(
                 {
                     TabSize = options.TabSize,
                     InsertSpaces = options.InsertSpaces,
-                    CodeBlockBraceOnNextLine = options.CodeBlockBraceOnNextLine
+                    CodeBlockBraceOnNextLine = options.CodeBlockBraceOnNextLine,
+                    AttributeIndentStyle = options.AttributeIndentStyle,
                 };
 
                 var formattedChange = await _razorFormattingService.TryGetCSharpCodeActionEditAsync(

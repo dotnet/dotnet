@@ -4,6 +4,7 @@
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using Xunit.Abstractions;
@@ -34,7 +35,7 @@ public class CohostTextPresentationEndpointTest(ITestOutputHelper testOutputHelp
                     {
                         TextDocument = new()
                         {
-                            DocumentUri = new(FileUri("File1.razor.g.html"))
+                            DocumentUri = new(FileUri($"File1.razor{LanguageServerConstants.HtmlVirtualDocumentSuffix}"))
                         },
                         Edits = [LspFactory.CreateTextEdit(position: (0, 0), "Hello World")]
                     }

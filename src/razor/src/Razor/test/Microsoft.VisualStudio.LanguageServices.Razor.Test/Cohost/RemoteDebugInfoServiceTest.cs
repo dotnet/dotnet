@@ -33,6 +33,16 @@ public class RemoteDebugInfoServiceTest(ITestOutputHelper testOutputHelper) : Co
     }
 
     [Fact]
+    public async Task ResolveProximityExpressionsAsync_OnlyHtml()
+    {
+        var input = """
+                $$<div></div>
+                """;
+
+        await VerifyProximityExpressionsAsync(input, []);
+    }
+
+    [Fact]
     public async Task ResolveProximityExpressionsAsync_ExplicitExpression()
     {
         var input = """
@@ -59,6 +69,30 @@ public class RemoteDebugInfoServiceTest(ITestOutputHelper testOutputHelper) : Co
                 }
 
                 $$<p>@currentCount</p>
+                """;
+
+        await VerifyProximityExpressionsAsync(input, ["__builder", "this"]);
+    }
+
+    [Fact]
+    public async Task ResolveProximityExpressionsAsync_OutsideExplicitStatement()
+    {
+        var input = """
+                <div></div>
+
+                $$<p>@{var [|abc|] = 123;}</p>
+                """;
+
+        await VerifyProximityExpressionsAsync(input, ["__builder", "this"]);
+    }
+
+    [Fact]
+    public async Task ResolveProximityExpressionsAsync_InsideExplicitStatement()
+    {
+        var input = """
+                <div></div>
+
+                <p>@{var$$ [|abc|] = 123;}</p>
                 """;
 
         await VerifyProximityExpressionsAsync(input, ["__builder", "this"]);
@@ -174,6 +208,157 @@ public class RemoteDebugInfoServiceTest(ITestOutputHelper testOutputHelper) : Co
         await VerifyBreakpointRangeAsync(input);
     }
 
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_OutsideExplicitStatement()
+    {
+        var input = """
+                <div></div>
+
+                $$<p>@{ [|var abc = 123;|] }</p>
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_OutsideExplicitStatement_NoCSharpOnLine()
+    {
+        var input = """
+                <div></div>
+
+                $$<p>@{
+                    var abc = 123;
+                }</p>
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_InsideExplicitStatement_NoCSharpOnLine()
+    {
+        var input = """
+                <div></div>
+
+                <p>@{
+                $$
+                    var abc = 123;
+                }</p>
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_OutsideExplicitStatement_InvalidLocation()
+    {
+        var input = """
+                <div></div>
+
+                $$<p>@{ var abc; }</p>
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_ComponentStartTag()
+    {
+        var input = """
+                <div></div>
+
+                <Page$$Title>Hello</PageTitle>
+
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_ComponentAttribute()
+    {
+        var input = """
+                <div></div>
+
+                @{
+                    var caption = "Hello";
+                }
+
+                <InputText Val$$ue="@caption" />
+
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_ComponentContent()
+    {
+        var input = """
+                <div></div>
+
+                @{
+                    var caption = "Hello";
+                }
+
+                <PageTitle>@[|cap$$tion|]</PageTitle>
+
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_ComponentContent_FromStartOfLine()
+    {
+        var input = """
+                <div></div>
+
+                @{
+                    var caption = "Hello";
+                }
+
+                $$<PageTitle>@[|caption|]</PageTitle>
+
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_ComponentContent_FromStartOfLine_WithAttribute()
+    {
+        var input = """
+                <div></div>
+
+                @{
+                    var caption = "Hello";
+                }
+
+                $$<InputText Value="@caption" />@[|caption|]
+
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_ComponentContent_FromStartTag()
+    {
+        var input = """
+                <div></div>
+
+                @{
+                    var caption = "Hello";
+                }
+
+                <PageT$$itle>@[|caption|]</PageTitle>
+
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
     private async Task VerifyProximityExpressionsAsync(TestCode input, string[] extraExpressions)
     {
         var document = CreateProjectAndRazorDocument(input.Text);
@@ -196,7 +381,7 @@ public class RemoteDebugInfoServiceTest(ITestOutputHelper testOutputHelper) : Co
 
         Assert.NotNull(result);
 
-        var expected = input.Spans.Select(inputText.GetSubTextString).Concat(extraExpressions).OrderAsArray();
+        var expected = input.Spans.Select(inputText.ToString).Concat(extraExpressions).OrderAsArray();
         AssertEx.SequenceEqual(expected, result.OrderAsArray());
     }
 

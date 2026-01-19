@@ -6,7 +6,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -46,7 +45,7 @@ internal sealed class CSharpFormatter
             return [];
         }
 
-        var (indentationMap, syntaxTree) = InitializeIndentationData(context, projectedDocumentLocations, cancellationToken);
+        var (indentationMap, syntaxTree) = await InitializeIndentationDataAsync(context, projectedDocumentLocations, cancellationToken).ConfigureAwait(false);
 
         var root = await syntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
 
@@ -244,7 +243,7 @@ internal sealed class CSharpFormatter
         }
     }
 
-    private static (Dictionary<int, IndentationMapData>, SyntaxTree) InitializeIndentationData(
+    private static async Task<(Dictionary<int, IndentationMapData>, SyntaxTree)> InitializeIndentationDataAsync(
         FormattingContext context,
         IEnumerable<int> projectedDocumentLocations,
         CancellationToken cancellationToken)
@@ -258,8 +257,8 @@ internal sealed class CSharpFormatter
 
         using var changes = new PooledArrayBuilder<TextChange>();
 
-        var syntaxTree = context.CodeDocument.GetOrParseCSharpSyntaxTree(cancellationToken);
-        var root = syntaxTree.GetRoot(cancellationToken);
+        var syntaxTree = await context.CurrentSnapshot.GetCSharpSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+        var root = await syntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
 
         var previousMarkerOffset = 0;
         foreach (var projectedDocumentIndex in projectedDocumentLocations)

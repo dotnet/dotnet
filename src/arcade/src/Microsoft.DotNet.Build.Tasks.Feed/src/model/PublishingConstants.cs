@@ -13,6 +13,16 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
     {
         public static readonly string ExpectedFeedUrlSuffix = "index.json";
 
+        /// <summary>
+        /// Mapping of Azure storage accounts to their corresponding CDN URLs.
+        /// Used to replace blob storage URLs with CDN URLs for both aka.ms links and asset locations.
+        /// </summary>
+        public static readonly Dictionary<string, string> AccountsWithCdns = new()
+        {
+            {"dotnetcli.blob.core.windows.net", "builds.dotnet.microsoft.com" },
+            {"dotnetbuilds.blob.core.windows.net", "ci.dot.net" }
+        };
+
         // Matches package feeds like
         // https://pkgs.dev.azure.com/dnceng/public/_packaging/public-feed-name/nuget/v3/index.json
         // or https://pkgs.dev.azure.com/dnceng/_packaging/internal-feed-name/nuget/v3/index.json
@@ -93,6 +103,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
         private const string FeedDotNetExperimentalInternal = "https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet-experimental-internal/nuget/v3/index.json";
 
         public const string FeedDotNetEng = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json";
+
+        private const string FeedDotNetEngInternal = "https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet-eng-internal/nuget/v3/index.json";
 
         private const string FeedDotNetTools = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json";
 
@@ -225,8 +237,16 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
 
         private static TargetFeedSpecification[] DotNet10InternalFeeds =
         {
-            (Packages, FeedDotNet10InternalShipping, AssetSelection.ShippingOnly),
-            (Packages, FeedDotNet10InternalTransport, AssetSelection.NonShippingOnly),
+            (TargetFeedContentType.Package, FeedDotNet10InternalShipping, AssetSelection.ShippingOnly),
+            (TargetFeedContentType.Package, FeedDotNet10InternalTransport, AssetSelection.NonShippingOnly),
+            (TargetFeedContentType.InfrastructurePackage, FeedDotNetEngInternal, AssetSelection.ShippingOnly),
+            (TargetFeedContentType.InfrastructurePackage, FeedDotNetEngInternal, AssetSelection.NonShippingOnly),
+            (TargetFeedContentType.CorePackage, FeedDotNet10InternalShipping, AssetSelection.ShippingOnly),
+            (TargetFeedContentType.CorePackage, FeedDotNet10InternalTransport, AssetSelection.NonShippingOnly),
+            (TargetFeedContentType.LibraryPackage, FeedDotNetLibrariesInternalShipping, AssetSelection.ShippingOnly),
+            (TargetFeedContentType.LibraryPackage, FeedDotNetLibrariesInternalTransport, AssetSelection.NonShippingOnly),
+            (TargetFeedContentType.ToolingPackage, FeedDotNetToolsInternal, AssetSelection.ShippingOnly),
+            (TargetFeedContentType.ToolingPackage, FeedDotNetToolsInternal, AssetSelection.NonShippingOnly),
             (InstallersAndSymbols, FeedStagingInternalForInstallers),
             (TargetFeedContentType.Checksum, FeedStagingInternalForChecksums),
         };

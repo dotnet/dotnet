@@ -8,26 +8,21 @@ using Microsoft.EntityFrameworkCore.Cosmos.Internal;
 
 namespace Microsoft.EntityFrameworkCore;
 
-public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedModelTestBase(fixture), IClassFixture<NonSharedFixture>
+public class CosmosTransactionalBatchTest(CosmosTransactionalBatchTest.CosmosFixture fixture) : IClassFixture<CosmosTransactionalBatchTest.CosmosFixture>, IAsyncLifetime
 {
-    protected override string StoreName
-        => "CosmosTransactionalBatchTest";
+    private const string DatabaseName = nameof(CosmosTransactionalBatchTest);
 
-    protected override ITestStoreFactory TestStoreFactory
-        => CosmosTestStoreFactory.Instance;
-
+    protected CosmosFixture Fixture { get; } = fixture;
     [ConditionalFact]
     public virtual async Task SaveChanges_fails_for_duplicate_key_in_same_partition_prevents_other_inserts_in_same_partition_even_if_staged_before_add()
     {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-
-        using (var arrangeContext = contextFactory.CreateContext())
+        using (var arrangeContext = Fixture.CreateContext())
         {
             arrangeContext.Customers.Add(new Customer { Id = "1", PartitionKey = "1" });
             await arrangeContext.SaveChangesAsync();
         }
 
-        using var context = contextFactory.CreateContext();
+        using var context = Fixture.CreateContext();
 
         context.Customers.Add(new Customer { Id = "2", PartitionKey = "1" });
         context.Customers.Add(new Customer { Id = "1", PartitionKey = "1" });
@@ -38,7 +33,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
         Assert.Equal(1, updateException.Entries.Count);
         Assert.IsAssignableFrom<Customer>(updateException.Entries.First().Entity);
 
-        using var assertContext = contextFactory.CreateContext();
+        using var assertContext = Fixture.CreateContext();
         var customersCount = await assertContext.Customers.CountAsync();
         Assert.Equal(1, customersCount);
     }
@@ -46,16 +41,14 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
     [ConditionalFact]
     public virtual async Task SaveChanges_fails_for_duplicate_key_in_same_partition_writes_only_partition_staged_before_error()
     {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-
-        using (var arrangeContext = contextFactory.CreateContext())
+        using (var arrangeContext = Fixture.CreateContext())
         {
             arrangeContext.Customers.Add(new Customer { Id = "1", PartitionKey = "1" });
             arrangeContext.Customers.Add(new Customer { Id = "2", PartitionKey = "1" });
             await arrangeContext.SaveChangesAsync();
         }
 
-        using var context = contextFactory.CreateContext();
+        using var context = Fixture.CreateContext();
 
         context.Customers.Add(new Customer { Id = "4", PartitionKey = "2" });
         context.Customers.Add(new Customer { Id = "3", PartitionKey = "1" });
@@ -71,7 +64,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
         Assert.IsAssignableFrom<Customer>(updateException.Entries.First().Entity);
         Assert.IsAssignableFrom<Customer>(updateException.Entries.Last().Entity);
 
-        using var assertContext = contextFactory.CreateContext();
+        using var assertContext = Fixture.CreateContext();
         var customersCount = await assertContext.Customers.CountAsync();
         // The batch from the first partition found should have executed (partition 2, ids: 4,5)
         // No other batches after (and including) batch for partition 1 should have executed
@@ -81,16 +74,14 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
     [ConditionalFact]
     public virtual async Task SaveChanges_transactionbehavior_never_fails_for_duplicate_key_in_same_partition_writes_all_staged_before_error()
     {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-
-        using (var arrangeContext = contextFactory.CreateContext())
+        using (var arrangeContext = Fixture.CreateContext())
         {
             arrangeContext.Customers.Add(new Customer { Id = "1", PartitionKey = "1" });
             arrangeContext.Customers.Add(new Customer { Id = "2", PartitionKey = "1" });
             await arrangeContext.SaveChangesAsync();
         }
 
-        using var context = contextFactory.CreateContext();
+        using var context = Fixture.CreateContext();
         context.Database.AutoTransactionBehavior = AutoTransactionBehavior.Never;
 
         context.Customers.Add(new Customer { Id = "4", PartitionKey = "2" });
@@ -107,7 +98,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
         Assert.IsAssignableFrom<Customer>(updateException.Entries.First().Entity);
         Assert.IsAssignableFrom<Customer>(updateException.Entries.Last().Entity);
 
-        using var assertContext = contextFactory.CreateContext();
+        using var assertContext = Fixture.CreateContext();
         var customersCount = await assertContext.Customers.CountAsync();
         // The batch from the first partition found should have executed (partition 2, ids: 4,5)
         // No other batches after (and including) batch for partition 1 should have executed
@@ -117,9 +108,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
     [ConditionalFact]
     public virtual async Task SaveChanges_transactionbehavior_always_fails_for_multiple_partitionkeys()
     {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-
-        using var context = contextFactory.CreateContext();
+        using var context = Fixture.CreateContext();
         context.Database.AutoTransactionBehavior = AutoTransactionBehavior.Always;
 
         context.Customers.Add(new Customer { Id = "4", PartitionKey = "2" });
@@ -128,7 +117,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
         var exception = await Assert.ThrowsAnyAsync<InvalidOperationException>(() => context.SaveChangesAsync());
         Assert.Equal(CosmosStrings.SaveChangesAutoTransactionBehaviorAlwaysAtomicity, exception.Message);
 
-        using var assertContext = contextFactory.CreateContext();
+        using var assertContext = Fixture.CreateContext();
         var customersCount = await assertContext.Customers.CountAsync();
         Assert.Equal(0, customersCount);
     }
@@ -136,15 +125,13 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
     [ConditionalFact]
     public virtual async Task SaveChanges_succeeds_for_101_entities_in_same_partition()
     {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-
-        using var context = contextFactory.CreateContext();
+        using var context = Fixture.CreateContext();
 
         context.Customers.AddRange(Enumerable.Range(0, 101).Select(x => new Customer { Id = x.ToString(), PartitionKey = "1" }));
 
         await context.SaveChangesAsync();
 
-        using var assertContext = contextFactory.CreateContext();
+        using var assertContext = Fixture.CreateContext();
         var customersCount = await assertContext.Customers.CountAsync();
         Assert.Equal(101, customersCount);
     }
@@ -152,9 +139,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
     [ConditionalFact]
     public virtual async Task SaveChanges_transactionbehavior_always_fails_for_101_entities_in_same_partition()
     {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-
-        using var context = contextFactory.CreateContext();
+        using var context = Fixture.CreateContext();
         context.Database.AutoTransactionBehavior = AutoTransactionBehavior.Always;
 
         context.Customers.AddRange(Enumerable.Range(0, 101).Select(x => new Customer { Id = x.ToString(), PartitionKey = "1" }));
@@ -162,7 +147,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
         var exception = await Assert.ThrowsAnyAsync<InvalidOperationException>(() => context.SaveChangesAsync());
         Assert.Equal(CosmosStrings.SaveChangesAutoTransactionBehaviorAlwaysAtomicity, exception.Message);
 
-        using var assertContext = contextFactory.CreateContext();
+        using var assertContext = Fixture.CreateContext();
         var customersCount = await assertContext.Customers.CountAsync();
         Assert.Equal(0, customersCount);
     }
@@ -170,16 +155,14 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
     [ConditionalFact]
     public virtual async Task SaveChanges_transactionbehavior_always_succeeds_for_100_entities_in_same_partition()
     {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-
-        using var context = contextFactory.CreateContext();
+        using var context = Fixture.CreateContext();
         context.Database.AutoTransactionBehavior = AutoTransactionBehavior.Always;
 
         context.Customers.AddRange(Enumerable.Range(0, 100).Select(x => new Customer { Id = x.ToString(), PartitionKey = "1" }));
 
         await context.SaveChangesAsync();
 
-        using var assertContext = contextFactory.CreateContext();
+        using var assertContext = Fixture.CreateContext();
         var customersCount = await assertContext.Customers.CountAsync();
         Assert.Equal(100, customersCount);
     }
@@ -187,9 +170,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
     [ConditionalFact]
     public virtual async Task SaveChanges_transactionbehavior_always_fails_for_multiple_entities_with_triggers()
     {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-
-        using var context = contextFactory.CreateContext();
+        using var context = Fixture.CreateContext();
         context.Database.AutoTransactionBehavior = AutoTransactionBehavior.Always;
 
         context.CustomersWithTrigger.Add(new CustomerWithTrigger { Id = "4", PartitionKey = "2" });
@@ -198,7 +179,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
         var exception = await Assert.ThrowsAnyAsync<InvalidOperationException>(() => context.SaveChangesAsync());
         Assert.Equal(CosmosStrings.SaveChangesAutoTransactionBehaviorAlwaysTriggerAtomicity, exception.Message);
 
-        using var assertContext = contextFactory.CreateContext();
+        using var assertContext = Fixture.CreateContext();
         var customersCount = await assertContext.CustomersWithTrigger.CountAsync();
         Assert.Equal(0, customersCount);
     }
@@ -206,9 +187,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
     [ConditionalFact]
     public virtual async Task SaveChanges_transactionbehavior_always_succeeds_for_single_entity_with_trigger()
     {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-
-        using var context = contextFactory.CreateContext();
+        using var context = Fixture.CreateContext();
 
         var cosmosClient = context.Database.GetCosmosClient();
         var databaseId = context.Database.GetCosmosDatabaseId();
@@ -243,7 +222,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
 
         await context.SaveChangesAsync();
 
-        using var assertContext = contextFactory.CreateContext();
+        using var assertContext = Fixture.CreateContext();
         var customersCount = await assertContext.CustomersWithTrigger.CountAsync();
         Assert.Equal(1, customersCount);
     }
@@ -251,9 +230,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
     [ConditionalFact]
     public virtual async Task SaveChanges_transactionbehavior_always_fails_for_single_entity_with_trigger_and_entity_without_trigger()
     {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-
-        using var context = contextFactory.CreateContext();
+        using var context = Fixture.CreateContext();
         context.Database.AutoTransactionBehavior = AutoTransactionBehavior.Always;
 
         context.Customers.Add(new Customer { Id = "4", PartitionKey = "2" });
@@ -262,7 +239,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
         var exception = await Assert.ThrowsAnyAsync<InvalidOperationException>(() => context.SaveChangesAsync());
         Assert.Equal(CosmosStrings.SaveChangesAutoTransactionBehaviorAlwaysTriggerAtomicity, exception.Message);
 
-        using var assertContext = contextFactory.CreateContext();
+        using var assertContext = Fixture.CreateContext();
         var customersCount = await assertContext.CustomersWithTrigger.CountAsync();
         Assert.Equal(0, customersCount);
     }
@@ -270,9 +247,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
     [ConditionalFact]
     public virtual async Task SaveChanges_three_1mb_entries_succeeds()
     {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-
-        using var context = contextFactory.CreateContext();
+        using var context = Fixture.CreateContext();
 
         context.Customers.Add(new Customer { Id = "1", Name = new string('x', 1_000_000), PartitionKey = "1" });
         context.Customers.Add(new Customer { Id = "2", Name = new string('x', 1_000_000), PartitionKey = "1" });
@@ -280,7 +255,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
 
         await context.SaveChangesAsync();
 
-        using var assertContext = contextFactory.CreateContext();
+        using var assertContext = Fixture.CreateContext();
         var customersCount = await assertContext.Customers.CountAsync();
         Assert.Equal(3, customersCount);
     }
@@ -288,9 +263,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
     [ConditionalFact]
     public virtual async Task SaveChanges_entity_too_large_throws()
     {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-
-        using var context = contextFactory.CreateContext();
+        using var context = Fixture.CreateContext();
 
         context.Customers.Add(new Customer { Id = "1", Name = new string('x', 50_000_000), PartitionKey = "1" });
 
@@ -299,7 +272,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
         var cosmosException = Assert.IsAssignableFrom<CosmosException>(exception.InnerException);
         Assert.Equal(HttpStatusCode.RequestEntityTooLarge, cosmosException.StatusCode);
 
-        using var assertContext = contextFactory.CreateContext();
+        using var assertContext = Fixture.CreateContext();
         var customersCount = await assertContext.Customers.CountAsync();
         Assert.Equal(0, customersCount);
     }
@@ -307,9 +280,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
     [ConditionalTheory, InlineData(true), InlineData(false)]
     public virtual async Task SaveChanges_exactly_2_mib_does_not_split_and_one_byte_over_splits(bool oneByteOver)
     {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-        
-        using var context = contextFactory.CreateContext();
+        using var context = Fixture.CreateContext();
 
         var customer1 = new Customer { Id = new string('x', 1023), PartitionKey = new string('x', 1023) };
         var customer2 = new Customer { Id = new string('y', 1023), PartitionKey = new string('x', 1023) };
@@ -318,7 +289,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
         context.Customers.Add(customer2);
 
         await context.SaveChangesAsync();
-        ListLoggerFactory.Clear();
+        Fixture.ListLoggerFactory.Clear();
 
         customer1.Name = new string('x', 1044994);
         customer2.Name = new string('x', 1044994);
@@ -329,43 +300,55 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
         }
 
         await context.SaveChangesAsync();
-        using var assertContext = contextFactory.CreateContext();
+        using var assertContext = Fixture.CreateContext();
         Assert.Equal(2, (await context.Customers.ToListAsync()).Count);
 
         if (oneByteOver)
         {
-            Assert.Equal(2, ListLoggerFactory.Log.Count(x => x.Id == CosmosEventId.ExecutedTransactionalBatch));
+            Assert.Equal(2, Fixture.ListLoggerFactory.Log.Count(x => x.Id == CosmosEventId.ExecutedTransactionalBatch));
         }
         else
         {
-            Assert.Equal(1, ListLoggerFactory.Log.Count(x => x.Id == CosmosEventId.ExecutedTransactionalBatch));
+            Assert.Equal(1, Fixture.ListLoggerFactory.Log.Count(x => x.Id == CosmosEventId.ExecutedTransactionalBatch));
         }
     }
 
     [ConditionalFact]
     public virtual async Task SaveChanges_too_large_entry_after_smaller_throws_after_saving_smaller()
     {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-
-        using var context = contextFactory.CreateContext();
+        using var context = Fixture.CreateContext();
 
         context.Customers.Add(new Customer { Id = "1", Name = new string('x', 1_000_000), PartitionKey = "1" });
         context.Customers.Add(new Customer { Id = "2", Name = new string('x', 50_000_000), PartitionKey = "1" });
 
         await Assert.ThrowsAsync<DbUpdateException>(() => context.SaveChangesAsync());
 
-        using var assertContext = contextFactory.CreateContext();
+        using var assertContext = Fixture.CreateContext();
         var customersCount = await assertContext.Customers.CountAsync();
         Assert.Equal(1, customersCount);
         Assert.Equal("1", (await assertContext.Customers.FirstAsync()).Id);
     }
 
     [ConditionalFact]
+    public virtual async Task SaveChanges_transaction_behaviour_always_payload_exactly_2_mib()
+    {
+        using var context = Fixture.CreateContext();
+        context.Database.AutoTransactionBehavior = AutoTransactionBehavior.Always;
+
+        context.Customers.Add(new Customer { Id = "1", Name = new string('x', 1048291), PartitionKey = "1" });
+        context.Customers.Add(new Customer { Id = "2", Name = new string('x', 1048291), PartitionKey = "1" });
+
+        await context.SaveChangesAsync();
+
+        using var assertContext = Fixture.CreateContext();
+        var customersCount = await assertContext.Customers.CountAsync();
+        Assert.Equal(2, customersCount);
+    }
+
+    [ConditionalFact]
     public virtual async Task SaveChanges_transaction_behaviour_always_payload_larger_than_cosmos_limit_throws()
     {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-
-        using var context = contextFactory.CreateContext();
+        using var context = Fixture.CreateContext();
         context.Database.AutoTransactionBehavior = AutoTransactionBehavior.Always;
 
         context.Customers.Add(new Customer { Id = "1", Name = new string('x', 50_000_000 / 2), PartitionKey = "1" });
@@ -376,19 +359,76 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
         var cosmosException = Assert.IsAssignableFrom<CosmosException>(exception.InnerException);
         Assert.Equal(HttpStatusCode.RequestEntityTooLarge, cosmosException.StatusCode);
 
-        using var assertContext = contextFactory.CreateContext();
+        using var assertContext = Fixture.CreateContext();
         var customersCount = await assertContext.Customers.CountAsync();
         Assert.Equal(0, customersCount);
     }
 
-    // The tests below will fail if the cosmos db sdk is updated and the serialization logic for transactional batches has changed
+    private const int nameLengthToExceed2MiBWithSpecialCharIdOnUpdate = 1046358;
 
     [ConditionalTheory, InlineData(true), InlineData(false)]
+    public virtual async Task SaveChanges_update_id_contains_special_chars_which_makes_request_larger_than_2_mib_splits_into_2_batches(bool isIdSpecialChar)
+    {
+        using var context = Fixture.CreateContext();
+
+        var id1 = isIdSpecialChar ? new string('€', 341) : new string('x', 341);
+        var id2 = isIdSpecialChar ? new string('Ω', 341) : new string('y', 341);
+
+        var customer1 = new Customer { Id = id1, PartitionKey = new string('€', 341) };
+        var customer2 = new Customer { Id = id2, PartitionKey = new string('€', 341) };
+
+        context.Customers.Add(customer1);
+        context.Customers.Add(customer2);
+
+        await context.SaveChangesAsync();
+        Fixture.ListLoggerFactory.Clear();
+
+        customer1.Name = new string('x', nameLengthToExceed2MiBWithSpecialCharIdOnUpdate);
+        customer2.Name = new string('x', nameLengthToExceed2MiBWithSpecialCharIdOnUpdate);
+
+        await context.SaveChangesAsync();
+        using var assertContext = Fixture.CreateContext();
+        Assert.Equal(2, (await context.Customers.ToListAsync()).Count);
+
+        // The id being a special character should make the difference whether this fits in 1 batch.
+        if (isIdSpecialChar)
+        {
+            Assert.Equal(2, Fixture.ListLoggerFactory.Log.Count(x => x.Id == CosmosEventId.ExecutedTransactionalBatch));
+        }
+        else
+        {
+            Assert.Equal(1, Fixture.ListLoggerFactory.Log.Count(x => x.Id == CosmosEventId.ExecutedTransactionalBatch));
+        }
+    }
+
+    [ConditionalTheory, InlineData(true), InlineData(false)]
+    public virtual async Task SaveChanges_create_id_contains_special_chars_which_would_make_request_larger_than_2_mib_on_update_does_not_split_into_2_batches_for_create(bool isIdSpecialChar)
+    {
+        Fixture.ListLoggerFactory.Clear();
+        using var context = Fixture.CreateContext();
+
+        var id1 = isIdSpecialChar ? new string('€', 341) : new string('x', 341);
+        var id2 = isIdSpecialChar ? new string('Ω', 341) : new string('y', 341);
+
+        var customer1 = new Customer { Id = id1, Name = new string('x', nameLengthToExceed2MiBWithSpecialCharIdOnUpdate), PartitionKey = new string('€', 341) };
+        var customer2 = new Customer { Id = id2, Name = new string('x', nameLengthToExceed2MiBWithSpecialCharIdOnUpdate), PartitionKey = new string('€', 341) };
+
+        context.Customers.Add(customer1);
+        context.Customers.Add(customer2);
+
+        await context.SaveChangesAsync();
+        using var assertContext = Fixture.CreateContext();
+        Assert.Equal(2, (await context.Customers.ToListAsync()).Count);
+
+        // The id being a special character should not make the difference whether this fits in 1 batch, as id is duplicated in the payload on create.
+        Assert.Equal(1, Fixture.ListLoggerFactory.Log.Count(x => x.Id == CosmosEventId.ExecutedTransactionalBatch));
+    }
+
+    [ConditionalTheory, InlineData(true), InlineData(false)]
+    [CosmosCondition(CosmosCondition.IsNotEmulator)]
     public virtual async Task SaveChanges_transaction_behaviour_always_single_entity_payload_can_be_exactly_cosmos_limit_and_throws_when_1byte_over(bool oneByteOver)
     {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-        
-        using var context = contextFactory.CreateContext();
+        using var context = Fixture.CreateContext();
         context.Database.AutoTransactionBehavior = AutoTransactionBehavior.Always;
 
         var customer = new Customer { Id = new string('x', 1_000), PartitionKey = new string('x', 1_000) };
@@ -396,10 +436,10 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
         context.Customers.Add(customer);
         await context.SaveChangesAsync();
 
-        // Total document size will be: 2_097_503. Total request size will be: 2_098_541
-        // Normally 2MiB is 2_097_152, but cosmos appears to allow ~1Kib (1389 bytes) extra
-        var str = new string('x', 2_095_228);
-        customer.Name = str; 
+        // Total document size will be: 2_097_510. Total request size will be: 2_098_548
+        // Normally, the limit is 2MiB (2_097_152), but Cosmos appears to allow ~1Kib (1396 bytes) extra
+        var str = new string('x', 2_095_234);
+        customer.Name = str;
 
         if (oneByteOver)
         {
@@ -411,55 +451,16 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
         {
             await context.SaveChangesAsync();
 
-            using var assertContext = contextFactory.CreateContext();
+            using var assertContext = Fixture.CreateContext();
             var dbCustomer = await assertContext.Customers.FirstAsync();
             Assert.Equal(dbCustomer.Name, str);
         }
     }
 
     [ConditionalTheory, InlineData(true), InlineData(false)]
-    public virtual async Task SaveChanges_update_id_contains_special_chars_which_makes_request_larger_than_2_mib_splits_into_2_batches(bool isIdSpecialChar)
-    {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-
-        using var context = contextFactory.CreateContext();
-
-        string id1 = isIdSpecialChar ? new string('€', 341) : new string('x', 341);
-        string id2 = isIdSpecialChar ? new string('Ω', 341) : new string('y', 341);
-
-        var customer1 = new Customer { Id = id1, PartitionKey = new string('€', 341) };
-        var customer2 = new Customer { Id = id2, PartitionKey = new string('€', 341) };
-
-        context.Customers.Add(customer1);
-        context.Customers.Add(customer2);
-
-        await context.SaveChangesAsync();
-        ListLoggerFactory.Clear();
-
-        customer1.Name = new string('x', 1046358);
-        customer2.Name = new string('x', 1046358);
-
-        await context.SaveChangesAsync();
-        using var assertContext = contextFactory.CreateContext();
-        Assert.Equal(2, (await context.Customers.ToListAsync()).Count);
-
-        // The id being a special character should make the difference whether this fits in 1 batch.
-        if (isIdSpecialChar)
-        {
-            Assert.Equal(2, ListLoggerFactory.Log.Count(x => x.Id == CosmosEventId.ExecutedTransactionalBatch));
-        }
-        else
-        {
-            Assert.Equal(1, ListLoggerFactory.Log.Count(x => x.Id == CosmosEventId.ExecutedTransactionalBatch));
-        }
-    }
-
-    [ConditionalTheory, InlineData(true), InlineData(false)]
     public virtual async Task SaveChanges_transaction_behaviour_always_update_entities_payload_can_be_exactly_cosmos_limit_and_throws_when_1byte_over(bool oneByteOver)
     {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-
-        using var context = contextFactory.CreateContext();
+        using var context = Fixture.CreateContext();
         context.Database.AutoTransactionBehavior = AutoTransactionBehavior.Always;
 
         var customer1 = new Customer { Id = new string('x', 1_023), PartitionKey = new string('x', 1_023) };
@@ -488,21 +489,19 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
     [ConditionalTheory, InlineData(true), InlineData(false)]
     public virtual async Task SaveChanges_id_counts_double_toward_request_size_on_update(bool oneByteOver)
     {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-
-        using var context = contextFactory.CreateContext();
+        using var context = Fixture.CreateContext();
         context.Database.AutoTransactionBehavior = AutoTransactionBehavior.Always;
 
         var customer1 = new Customer { Id = new string('x', 1), PartitionKey = new string('x', 1_023) };
         var customer2 = new Customer { Id = new string('y', 1_023), PartitionKey = new string('x', 1_023) };
-        
+
         context.Customers.Add(customer1);
         context.Customers.Add(customer2);
 
         await context.SaveChangesAsync();
 
-        customer1.Name = new string('x', 1097582 + 1_022 * 2 + 1);
-        customer2.Name = new string('x', 1097583);
+        customer1.Name = new string('x', 1097581 + (1_024 - customer1.Id.Length) * 2);
+        customer2.Name = new string('x', 1097581 + (1_024 - customer2.Id.Length) * 2);
 
         if (oneByteOver)
         {
@@ -519,9 +518,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
     [ConditionalTheory, InlineData(true), InlineData(false)]
     public virtual async Task SaveChanges_transaction_behaviour_always_create_entities_payload_can_be_exactly_cosmos_limit_and_throws_when_1byte_over(bool oneByteOver)
     {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-
-        using var context = contextFactory.CreateContext();
+        using var context = Fixture.CreateContext();
         context.Database.AutoTransactionBehavior = AutoTransactionBehavior.Always;
 
         var customer1 = new Customer { Id = new string('x', 1_023), Name = new string('x', 1098841), PartitionKey = new string('x', 1_023) };
@@ -547,9 +544,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
     [ConditionalTheory, InlineData(true), InlineData(false)]
     public virtual async Task SaveChanges_id_does_not_count_double_toward_request_size_on_create(bool oneByteOver)
     {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-
-        using var context = contextFactory.CreateContext();
+        using var context = Fixture.CreateContext();
         context.Database.AutoTransactionBehavior = AutoTransactionBehavior.Always;
 
         var customer1 = new Customer { Id = new string('x', 1), Name = new string('x', 1098841 + 1_022), PartitionKey = new string('x', 1_023) };
@@ -575,11 +570,9 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
     [ConditionalFact]
     public async Task SaveChanges_transaction_behaviour_never_does_not_use_transactions()
     {
-        var contextFactory = await InitializeAsync<TransactionalBatchContext>();
-
         TransactionalBatchContext CreateContext()
         {
-            var context = contextFactory.CreateContext();
+            var context = Fixture.CreateContext();
             context.Database.AutoTransactionBehavior = AutoTransactionBehavior.Never;
             return context;
         }
@@ -588,13 +581,13 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
 
         using (var context = CreateContext())
         {
-            ListLoggerFactory.Clear();
+            Fixture.ListLoggerFactory.Clear();
 
             context.AddRange(customers);
 
             await context.SaveChangesAsync();
             
-            var logEntries = ListLoggerFactory.Log.Where(e => e.Id == CosmosEventId.ExecutedCreateItem).ToList();
+            var logEntries = Fixture.ListLoggerFactory.Log.Where(e => e.Id == CosmosEventId.ExecutedCreateItem).ToList();
             Assert.Equal(2, logEntries.Count);
             foreach (var logEntry in logEntries)
             {
@@ -605,7 +598,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
 
         using (var context = CreateContext())
         {
-            ListLoggerFactory.Clear();
+            Fixture.ListLoggerFactory.Clear();
             var customerFromStore1 = await context.Set<Customer>().FirstAsync(x => x.Id == "42");
             var customerFromStore2 = await context.Set<Customer>().LastAsync(x => x.Id == "43");
 
@@ -614,7 +607,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
 
             await context.SaveChangesAsync();
 
-            var logEntries = ListLoggerFactory.Log.Where(e => e.Id == CosmosEventId.ExecutedReplaceItem).ToList();
+            var logEntries = Fixture.ListLoggerFactory.Log.Where(e => e.Id == CosmosEventId.ExecutedReplaceItem).ToList();
             Assert.Equal(2, logEntries.Count);
             foreach (var logEntry in logEntries)
             {
@@ -625,7 +618,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
 
         using (var context = CreateContext())
         {
-            ListLoggerFactory.Clear();
+            Fixture.ListLoggerFactory.Clear();
             var customerFromStore1 = await context.Set<Customer>().FirstAsync(x => x.Id == "42");
             var customerFromStore2 = await context.Set<Customer>().LastAsync(x => x.Id == "43");
 
@@ -640,7 +633,7 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
 
             await context.SaveChangesAsync();
 
-            var logEntries = ListLoggerFactory.Log.Where(e => e.Id == CosmosEventId.ExecutedDeleteItem).ToList();
+            var logEntries = Fixture.ListLoggerFactory.Log.Where(e => e.Id == CosmosEventId.ExecutedDeleteItem).ToList();
             Assert.Equal(2, logEntries.Count);
             foreach (var logEntry in logEntries)
             {
@@ -651,9 +644,29 @@ public class CosmosTransactionalBatchTest(NonSharedFixture fixture) : NonSharedM
 
         using (var context = CreateContext())
         {
-            ListLoggerFactory.Clear();
+            Fixture.ListLoggerFactory.Clear();
             Assert.Empty(await context.Set<Customer>().ToListAsync());
         }
+    }
+
+    public async Task InitializeAsync()
+    {
+        using var context = Fixture.CreateContext();
+        context.RemoveRange(await context.Set<Customer>().Select(x => new Customer { Id = x.Id, PartitionKey = x.PartitionKey }).ToListAsync());
+        context.RemoveRange(await context.Set<CustomerWithTrigger>().Select(x => new CustomerWithTrigger { Id = x.Id, PartitionKey = x.PartitionKey }).ToListAsync());
+        await context.SaveChangesAsync();
+    }
+    public async Task DisposeAsync()
+    {
+    }
+
+    public class CosmosFixture : SharedStoreFixtureBase<TransactionalBatchContext>
+    {
+        protected override string StoreName
+            => DatabaseName;
+
+        protected override ITestStoreFactory TestStoreFactory
+            => CosmosTestStoreFactory.Instance;
     }
 
     public class TransactionalBatchContext(DbContextOptions options) : PoolableDbContext(options)

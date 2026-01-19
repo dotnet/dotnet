@@ -1333,15 +1333,8 @@ public unsafe partial class Control :
                 return;
             }
 
-            if (oldValue is not null)
-            {
-                oldValue.Disposed -= DetachContextMenuStrip;
-            }
-
-            if (value is not null)
-            {
-                value.Disposed += DetachContextMenuStrip;
-            }
+            oldValue?.Disposed -= DetachContextMenuStrip;
+            value?.Disposed += DetachContextMenuStrip;
 
             OnContextMenuStripChanged(EventArgs.Empty);
         }
@@ -2823,7 +2816,7 @@ public unsafe partial class Control :
     {
         Region? oldRegion = Properties.AddOrRemoveValue(s_regionProperty, region);
 
-        if (oldRegion == region || !IsHandleCreated)
+        if (!IsHandleCreated)
         {
             // We'll get called when OnHandleCreated runs.
             return oldRegion;

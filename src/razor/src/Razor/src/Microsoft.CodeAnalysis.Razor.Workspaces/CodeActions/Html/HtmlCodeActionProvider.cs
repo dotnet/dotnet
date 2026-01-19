@@ -28,7 +28,7 @@ internal class HtmlCodeActionProvider(IEditMappingService editMappingService) : 
         {
             if (codeAction.Edit is not null)
             {
-                await RemapAndFixHtmlCodeActionEditAsync(_editMappingService, context.DocumentSnapshot, codeAction, cancellationToken).ConfigureAwait(false);
+                await MapAndFixHtmlCodeActionEditAsync(_editMappingService, context.DocumentSnapshot, codeAction, cancellationToken).ConfigureAwait(false);
 
                 results.Add(codeAction);
             }
@@ -41,26 +41,21 @@ internal class HtmlCodeActionProvider(IEditMappingService editMappingService) : 
         return results.ToImmutable();
     }
 
-    public static async Task RemapAndFixHtmlCodeActionEditAsync(IEditMappingService editMappingService, IDocumentSnapshot documentSnapshot, CodeAction codeAction, CancellationToken cancellationToken)
+    public static async Task MapAndFixHtmlCodeActionEditAsync(IEditMappingService editMappingService, IDocumentSnapshot documentSnapshot, CodeAction codeAction, CancellationToken cancellationToken)
     {
         Assumes.NotNull(codeAction.Edit);
 
-        codeAction.Edit = await editMappingService.RemapWorkspaceEditAsync(documentSnapshot, codeAction.Edit, cancellationToken).ConfigureAwait(false);
+        await editMappingService.MapWorkspaceEditAsync(documentSnapshot, codeAction.Edit, cancellationToken).ConfigureAwait(false);
 
-        if (codeAction.Edit.TryGetTextDocumentEdits(out var documentEdits))
+        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
+        var htmlSourceText = codeDocument.GetHtmlSourceText(cancellationToken);
+
+        // NOTE: We iterate over just the TextDocumentEdit objects and modify them in place.
+        // We intentionally do NOT create a new WorkspaceEdit here to avoid losing any
+        // CreateFile, RenameFile, or DeleteFile operations that may be in DocumentChanges.
+        foreach (var edit in codeAction.Edit.EnumerateTextDocumentEdits())
         {
-            var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-            var htmlSourceText = codeDocument.GetHtmlSourceText();
-
-            foreach (var edit in documentEdits)
-            {
-                edit.Edits = FormattingUtilities.FixHtmlTextEdits(htmlSourceText, edit.Edits);
-            }
-
-            codeAction.Edit = new WorkspaceEdit
-            {
-                DocumentChanges = documentEdits
-            };
+            edit.Edits = FormattingUtilities.FixHtmlTextEdits(htmlSourceText, edit.Edits);
         }
     }
 }

@@ -22,6 +22,11 @@
         <target state="translated">Balíček {0} {1} nemá přesnou verzi, například [1.0.0]. S PackageDownload se povolují jenom přesné verze.</target>
         <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
       </trans-unit>
+      <trans-unit id="InfoBar_HyperlinkGHCopilotDocs">
+        <source>How to fix with GitHub Copilot</source>
+        <target state="translated">Postup opravy pomocí GitHub Copilotu</target>
+        <note />
+      </trans-unit>
       <trans-unit id="InfoBar_HyperlinkMessage">
         <source>Manage NuGet Packages</source>
         <target state="translated">Spravovat balíčky NuGet</target>
@@ -45,7 +50,7 @@
       </trans-unit>
       <trans-unit id="NothingToRestore">
         <source>All packages are already installed and there is nothing to restore.</source>
-        <target state="translated">Všechny balíčky jsou již nainstalovány a nejsou k dispozici žádné položky k obnovení.</target>
+        <target state="translated">Všechny balíčky jsou už nainstalované a nejsou k dispozici žádné položky k obnovení.</target>
         <note />
       </trans-unit>
       <trans-unit id="Operation_Finished">
@@ -84,7 +89,7 @@ Chybějící balíčky: {0}</target>
       </trans-unit>
       <trans-unit id="PackageRestoreFinished">
         <source>NuGet package restore finished.</source>
-        <target state="translated">Obnovení balíčku NuGet bylo dokončeno.</target>
+        <target state="translated">Obnovení balíčku NuGet se dokončilo.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFinishedForProject">
@@ -121,7 +126,7 @@ Když nechcete, aby aplikace NuGet obnovovala balíčky během vytváření sest
       </trans-unit>
       <trans-unit id="RestoringPackages">
         <source>Restoring NuGet packages...</source>
-        <target state="translated">Obnovování balíčků NuGet...</target>
+        <target state="translated">Obnovují se balíčky NuGet...</target>
         <note />
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">

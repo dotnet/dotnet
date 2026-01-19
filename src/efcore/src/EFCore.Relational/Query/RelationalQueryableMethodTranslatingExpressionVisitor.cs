@@ -242,7 +242,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
             && method.GetGenericMethodDefinition() == _fakeDefaultIfEmptyMethodInfo.Value
             && Visit(methodCallExpression.Arguments[0]) is ShapedQueryExpression source)
         {
-            ((SelectExpression)source.QueryExpression).MakeProjectionNullable(_sqlExpressionFactory);
+            ((SelectExpression)source.QueryExpression).MakeProjectionNullable(_sqlExpressionFactory, source.ShaperExpression.Type.IsNullableType());
             return source.UpdateShaperExpression(MarkShaperNullable(source.ShaperExpression));
         }
 
@@ -642,7 +642,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
     {
         if (defaultValue == null)
         {
-            ((SelectExpression)source.QueryExpression).ApplyDefaultIfEmpty(_sqlExpressionFactory);
+            ((SelectExpression)source.QueryExpression).ApplyDefaultIfEmpty(_sqlExpressionFactory, source.ShaperExpression.Type.IsNullableType());
             return source.UpdateShaperExpression(MarkShaperNullable(source.ShaperExpression));
         }
 
@@ -951,6 +951,20 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
                 : _sqlExpressionFactory.AndAlso(result, joinPredicate);
         }
 
+        // In LINQ equijoins, null is not equal null, just like in SQL
+        // (https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/join-clause#the-equals-operator)
+        // As a result, in SqlNullabilityProcessor.ProcessJoinPredicate(), we have special handling for an equality
+        // immediately inside a join predicate - we bypass null compensation for that, to make sure the SQL behavior
+        // matches the LINQ behavior.
+        // However, when two anonymous types are being compared, the LINQ behavior *does* treat nulls as equal; as a result, in
+        // SqlNullabilityProcessor.ProcessJoinPredicate() we differentiate between a single top-level comparison
+        // and multiple comparisons with ANDs.
+        // Unfortunately, when we have a an anonymous type with a single property (on new { Foo = x } equals new { Foo = y }),
+        // we produce the same predicate as the single comparison case (without an anonymous type), bypassing the null
+        // compensation and generating incorrect results.
+        // To work around this, we add an always-true predicate here, and the AND will cause
+        // SqlNullabilityProcessor.ProcessJoinPredicate() to go into the multiple-property anonymous type logic,
+        // and not bypass null compensation.
         if (outerNew.Arguments.Count == 1)
         {
             result = _sqlExpressionFactory.AndAlso(
@@ -958,11 +972,11 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
                 CreateJoinPredicate(Expression.Constant(true), Expression.Constant(true)));
         }
 
-        return result!;
-    }
+        return result ?? _sqlExpressionFactory.Constant(true);
 
-    private SqlExpression CreateJoinPredicate(Expression outerKey, Expression innerKey)
-        => TranslateExpression(Infrastructure.ExpressionExtensions.CreateEqualsExpression(outerKey, innerKey))!;
+        SqlExpression CreateJoinPredicate(Expression outerKey, Expression innerKey)
+            => TranslateExpression(Infrastructure.ExpressionExtensions.CreateEqualsExpression(outerKey, innerKey))!;
+    }
 
     /// <inheritdoc />
     protected override ShapedQueryExpression? TranslateLastOrDefault(
@@ -1945,12 +1959,19 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
             }
 
             source = source.UnwrapTypeConversion(out var convertedType);
-            if (source is not StructuralTypeShaperExpression shaper)
+
+            var type = source switch
+            {
+                StructuralTypeShaperExpression shaper => shaper.StructuralType,
+                JsonQueryExpression jsonQuery => jsonQuery.StructuralType,
+                _ => null
+            };
+
+            if (type is null)
             {
                 return null;
             }
 
-            var type = shaper.StructuralType;
             if (convertedType != null)
             {
                 Check.DebugAssert(
@@ -1969,22 +1990,50 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
             var property = type.FindProperty(memberName);
             if (property?.IsPrimitiveCollection is true)
             {
-                return source.CreateEFPropertyExpression(property);
+                return source!.CreateEFPropertyExpression(property);
             }
 
             // See comments on indexing-related hacks in VisitMethodCall above
-            if (_bindComplexProperties
-                && type.FindComplexProperty(memberName) is { IsCollection: true } complexProperty)
+            if (_bindComplexProperties && type.FindComplexProperty(memberName) is IComplexProperty complexProperty)
             {
-                Check.DebugAssert(complexProperty.ComplexType.IsMappedToJson());
+                Expression? translatedExpression;
 
-                if (queryableTranslator._sqlTranslator.TryBindMember(
-                        queryableTranslator._sqlTranslator.Visit(source), MemberIdentity.Create(memberName),
-                        out var translatedExpression, out _)
-                    && translatedExpression is CollectionResultExpression { QueryExpression: JsonQueryExpression jsonQuery })
+                if (source is JsonQueryExpression jsonSource)
                 {
-                    return jsonQuery;
+                    translatedExpression = jsonSource.BindStructuralProperty(complexProperty);
                 }
+                else if (!queryableTranslator._sqlTranslator.TryBindMember(
+                    queryableTranslator._sqlTranslator.Visit(source), MemberIdentity.Create(memberName),
+                    out translatedExpression, out _))
+                {
+                    return null;
+                }
+
+                // Hack: when returning a StructuralTypeShaperExpression, _sqlTranslator returns it wrapped by a
+                // StructuralTypeReferenceExpression, which is supposed to be a private wrapper only within the SQL translator.
+                // Call TranslateProjection to unwrap it (need to look into getting rid StructuralTypeReferenceExpression altogether).
+                if (translatedExpression is not JsonQueryExpression and not CollectionResultExpression)
+                {
+                    if (queryableTranslator._sqlTranslator.TranslateProjection(translatedExpression) is { } unwrappedTarget)
+                    {
+                        translatedExpression = unwrappedTarget;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+
+                return complexProperty switch
+                {
+                    { IsCollection: false } when translatedExpression is StructuralTypeShaperExpression { ValueBufferExpression: JsonQueryExpression jsonQuery }
+                        => jsonQuery,
+                    { IsCollection: true } when translatedExpression is CollectionResultExpression { QueryExpression: JsonQueryExpression jsonQuery }
+                        => jsonQuery,
+                    { IsCollection: true } when translatedExpression is JsonQueryExpression jsonQuery
+                        => jsonQuery,
+                    _ => null
+                };
             }
 
             return null;

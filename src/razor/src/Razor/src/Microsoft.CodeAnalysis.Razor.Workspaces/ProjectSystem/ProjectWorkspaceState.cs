@@ -2,8 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Immutable;
-using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.Extensions.Internal;
 
@@ -11,18 +9,18 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 internal sealed class ProjectWorkspaceState : IEquatable<ProjectWorkspaceState>
 {
-    public static readonly ProjectWorkspaceState Default = new(ImmutableArray<TagHelperDescriptor>.Empty);
+    public static readonly ProjectWorkspaceState Default = new(TagHelperCollection.Empty);
 
-    public ImmutableArray<TagHelperDescriptor> TagHelpers { get; }
+    public TagHelperCollection TagHelpers { get; }
 
-    private ProjectWorkspaceState(
-        ImmutableArray<TagHelperDescriptor> tagHelpers)
+    public bool IsDefault => TagHelpers.IsEmpty;
+
+    private ProjectWorkspaceState(TagHelperCollection tagHelpers)
     {
         TagHelpers = tagHelpers;
     }
 
-    public static ProjectWorkspaceState Create(
-        ImmutableArray<TagHelperDescriptor> tagHelpers)
+    public static ProjectWorkspaceState Create(TagHelperCollection tagHelpers)
         => tagHelpers.IsEmpty
             ? Default
             : new(tagHelpers);
@@ -32,7 +30,7 @@ internal sealed class ProjectWorkspaceState : IEquatable<ProjectWorkspaceState>
 
     public bool Equals(ProjectWorkspaceState? other)
         => other is not null &&
-           TagHelpers.SequenceEqual(other.TagHelpers);
+           TagHelpers.Equals(other.TagHelpers);
 
     public override int GetHashCode()
     {

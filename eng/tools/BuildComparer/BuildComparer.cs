@@ -3,54 +3,60 @@
 
 using Microsoft.Arcade.Common;
 using Microsoft.DotNet.Build.Manifest;
-using NuGet.Packaging;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
-using System.CommandLine;
-using System.Formats.Tar;
-using System.IO.Compression;
-using System.Reflection;
-using System.Reflection.Metadata;
-using System.Reflection.PortableExecutable;
 using System.Xml.Linq;
 
 public abstract class BuildComparer
 {
+    private readonly HashSet<string> _includedRepositories =
+    [
+        "arcade",
+        "deployment-tools",
+        "diagnostics",
+        "fsharp",
+        "msbuild",
+        "nuget-client",
+        "razor",
+        "roslyn",
+        "vstest"
+    ];
+
     /// <summary>
     /// Type of asset being processed in the build comparison tool.
     /// </summary>
     protected AssetType? _assetType;
-    
+
     /// <summary>
     /// Base path for VMR build assets.
     /// </summary>
     protected string _vmrBuildAssetBasePath;
-    
+
     /// <summary>
     /// Base path for Microsoft build assets.
     /// </summary>
     protected string _baseBuildAssetBasePath;
-    
+
     /// <summary>
     /// Path where the comparison report for issues will be saved.
     /// </summary>
     private string _issuesReportPath;
-    
+
     /// <summary>
     /// Path where the comparison report for no issues will be saved.
     /// </summary>
     private string _noIssuesReportPath;
-    
+
     /// <summary>
     /// Semaphore used to control parallel processing.
     /// </summary>
     protected SemaphoreSlim _throttle;
-    
+
     /// <summary>
     /// Report containing the results of the comparison.
     /// </summary>
     protected ComparisonReport _comparisonReport = new ComparisonReport();
-    
+
     /// <summary>
     /// List of all asset mappings between base and VMR builds.
     /// </summary>
@@ -168,33 +174,19 @@ public abstract class BuildComparer
 
         // Walk the top-level directories of the asset base path, and find the MergedManifest under each
         // one. The MergedManifest.xml contains the list of outputs produced by the repo.
-
-        foreach (var baseDirectory in Directory.GetDirectories(_baseBuildAssetBasePath, "*", SearchOption.TopDirectoryOnly))
+        foreach (string includedRepository in _includedRepositories)
         {
             // Find the merged manifest underneath this directory
-            // (e.g. <assetBasePath>/arcade/nonshipping/<version>>/MergedManifest.xml)
+            // (e.g. <assetBasePath>/arcade/nonshipping/<version>/MergedManifest.xml)
+            string repoBaseAssetsDirectory = Path.Combine(_baseBuildAssetBasePath, includedRepository);
 
-            string repoMergedManifestPath = Directory.GetFiles(baseDirectory,
+            string repoMergedManifestPath = Directory.GetFiles(repoBaseAssetsDirectory,
                 "MergedManifest.xml", SearchOption.AllDirectories)
-                .FirstOrDefault();
-
-            if (repoMergedManifestPath == null)
-            {
-                // These repos don't publish assets, so we skip them
-                if (baseDirectory.EndsWith("scenario-tests")
-                    || baseDirectory.EndsWith("source-build-reference-packages")
-                    || baseDirectory.EndsWith("runtime")
-                    || baseDirectory.EndsWith("sdk"))
-                {
-                    continue;
-                }
-
-                throw new FileNotFoundException($"MergedManifest.xml not found in {baseDirectory}");
-            }
+                .FirstOrDefault() ?? throw new FileNotFoundException($"MergedManifest.xml not found in {repoBaseAssetsDirectory}");
 
             _assetMappings.AddRange(MapFilesForRepoManifest(
                 vmrManifests,
-                baseDirectory,
+                repoBaseAssetsDirectory,
                 _vmrBuildAssetBasePath,
                 repoMergedManifestPath));
         }

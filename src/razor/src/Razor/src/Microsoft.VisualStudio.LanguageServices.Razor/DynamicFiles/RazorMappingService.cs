@@ -45,7 +45,7 @@ internal class RazorMappingService(IDocumentSnapshot document, ITelemetryReporte
 
         foreach (var span in spans)
         {
-            if (RazorEditHelper.TryGetMappedSpans(span, source, csharpDocument, out var linePositionSpan, out var mappedSpan))
+            if (RazorEditHelper.TryGetMappedSpan(span, source, csharpDocument, out var linePositionSpan, out var mappedSpan))
             {
                 results.Add(new(filePath, linePositionSpan, mappedSpan));
             }

@@ -133,7 +133,7 @@ public sealed class EditAndContinueLanguageServiceTests : EditAndContinueWorkspa
 
         // StartDebuggingSession
 
-        var debuggingSession = mockEncService.StartDebuggingSessionImpl = (_, _, _, _, _, _) => new DebuggingSessionId(1);
+        var debuggingSession = mockEncService.StartDebuggingSessionImpl = (_, _, _, _) => new DebuggingSessionId(1);
 
         Assert.False(sessionState.IsSessionActive);
         Assert.Empty(sessionState.ApplyChangesDiagnostics);
@@ -218,7 +218,7 @@ public sealed class EditAndContinueLanguageServiceTests : EditAndContinueWorkspa
 
         var runningProjectInfo = new DebuggerContracts.RunningProjectInfo()
         {
-            ProjectInstanceId = new DebuggerContracts.ProjectInstanceId(project.FilePath, "net9.0"),
+            ProjectInstanceId = new DebuggerContracts.ProjectInstanceId(project.FilePath, "net10.0"),
             RestartAutomatically = false,
         };
 

@@ -431,12 +431,12 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         var fullyQualifiedComponent = TagHelperDescriptorBuilder.CreateComponent("Fully.Qualified.Component", "TestAssembly");
         fullyQualifiedComponent.TagMatchingRule(rule => rule.TagName = "Fully.Qualified.Component");
 
-        var tagHelpers = ImmutableArray.Create(shortComponent.Build(), fullyQualifiedComponent.Build());
+        TagHelperCollection tagHelpers = [shortComponent.Build(), fullyQualifiedComponent.Build()];
 
         var sourceDocument = TestRazorSourceDocument.Create(text, filePath: filePath, relativePath: filePath);
         var projectEngine = RazorProjectEngine.Create(builder =>
         {
-            builder.AddTagHelpers(tagHelpers);
+            builder.SetTagHelpers(tagHelpers);
             builder.AddDirective(InjectDirective.Directive);
 
             builder.ConfigureParserOptions(builder =>
@@ -451,7 +451,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
         var diagnosticDescriptor = new RazorDiagnosticDescriptor("RZ10012", "diagnostic", RazorDiagnosticSeverity.Error);
         var diagnostic = RazorDiagnostic.Create(diagnosticDescriptor, componentSourceSpan);
         var csharpDocumentWithDiagnostic = new RazorCSharpDocument(codeDocument, csharpDocument.Text, [diagnostic]);
-        codeDocument.SetCSharpDocument(csharpDocumentWithDiagnostic);
+        codeDocument = codeDocument.WithCSharpDocument(csharpDocumentWithDiagnostic);
 
         var documentSnapshotMock = new StrictMock<IDocumentSnapshot>();
         documentSnapshotMock

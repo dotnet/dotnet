@@ -87,9 +87,9 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<CompletionItemResolver, DelegatedCompletionItemResolver>();
         services.AddSingleton<ITagHelperCompletionService, TagHelperCompletionService>();
         services.AddSingleton<IRazorCompletionFactsService, LspRazorCompletionFactsService>();
+        services.AddSingleton<IRazorCompletionItemProvider, CSharpRazorKeywordCompletionItemProvider>();
         services.AddSingleton<IRazorCompletionItemProvider, DirectiveCompletionItemProvider>();
         services.AddSingleton<IRazorCompletionItemProvider, DirectiveAttributeCompletionItemProvider>();
-        services.AddSingleton<IRazorCompletionItemProvider, DirectiveAttributeParameterCompletionItemProvider>();
         services.AddSingleton<IRazorCompletionItemProvider, DirectiveAttributeEventParameterCompletionItemProvider>();
         services.AddSingleton<IRazorCompletionItemProvider, DirectiveAttributeTransitionCompletionItemProvider>();
         services.AddSingleton<IRazorCompletionItemProvider, MarkupTransitionCompletionItemProvider>();
@@ -153,6 +153,7 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IRazorCodeActionResolver, ExtractToComponentCodeActionResolver>();
         services.AddSingleton<IRazorCodeActionProvider, ComponentAccessibilityCodeActionProvider>();
         services.AddSingleton<IRazorCodeActionResolver, CreateComponentCodeActionResolver>();
+        services.AddSingleton<IRazorCodeActionProvider, UnboundDirectiveAttributeAddUsingCodeActionProvider>();
         services.AddSingleton<IRazorCodeActionResolver, AddUsingsCodeActionResolver>();
         services.AddSingleton<IRazorCodeActionProvider, GenerateMethodCodeActionProvider>();
         services.AddSingleton<IRazorCodeActionResolver, GenerateMethodCodeActionResolver>();
@@ -162,6 +163,8 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IRazorCodeActionResolver, WrapAttributesCodeActionResolver>();
         services.AddSingleton<IRazorCodeActionProvider, SimplifyTagToSelfClosingCodeActionProvider>();
         services.AddSingleton<IRazorCodeActionResolver, SimplifyTagToSelfClosingCodeActionResolver>();
+        services.AddSingleton<IRazorCodeActionProvider, SimplifyFullyQualifiedComponentCodeActionProvider>();
+        services.AddSingleton<IRazorCodeActionResolver, SimplifyFullyQualifiedComponentCodeActionResolver>();
 
         // Html Code actions
         services.AddSingleton<IHtmlCodeActionProvider, HtmlCodeActionProvider>();

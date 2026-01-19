@@ -2,22 +2,18 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
-using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.CodeAnalysis.Remote.Razor;
-using Microsoft.VisualStudio.Composition;
 using Microsoft.VisualStudio.Razor.Settings;
-using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -35,10 +31,7 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
     private protected override IFilePathService FilePathService => _filePathService.AssumeNotNull();
     private protected ISemanticTokensLegendService SemanticTokensLegendService => _semanticTokensLegendService.AssumeNotNull();
 
-    /// <summary>
-    /// The export provider for Roslyn "devenv" services, if tests opt-in to using them
-    /// </summary>
-    private protected ExportProvider? RoslynDevenvExportProvider { get; private set; }
+    private protected override TestComposition LocalComposition => TestComposition.Roslyn;
 
     protected override async Task InitializeAsync()
     {
@@ -85,9 +78,6 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         };
     }
 
-    private protected virtual TestComposition ConfigureRoslynDevenvComposition(TestComposition composition)
-        => composition;
-
     protected TextDocument CreateProjectAndRazorDocument(
         string contents,
         bool remoteOnly)
@@ -101,16 +91,18 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         return this.CreateProjectAndRazorDocument(contents);
     }
 
-    protected override TextDocument CreateProjectAndRazorDocument(
+    private protected override TextDocument CreateProjectAndRazorDocument(
         string contents,
         RazorFileKind? fileKind = null,
         string? documentFilePath = null,
         (string fileName, string contents)[]? additionalFiles = null,
         bool inGlobalNamespace = false,
-        bool miscellaneousFile = false)
+        bool miscellaneousFile = false,
+        bool addDefaultImports = true,
+        Action<RazorProjectBuilder>? projectConfigure = null)
     {
         var remoteWorkspace = RemoteWorkspaceProvider.Instance.GetWorkspace();
-        var remoteDocument = base.CreateProjectAndRazorDocument(remoteWorkspace, contents, fileKind, documentFilePath, additionalFiles, inGlobalNamespace, miscellaneousFile);
+        var remoteDocument = base.CreateProjectAndRazorDocument(remoteWorkspace, contents, fileKind, documentFilePath, additionalFiles, inGlobalNamespace, miscellaneousFile, addDefaultImports, projectConfigure);
 
         // In this project we simulate remote services running OOP by creating a different workspace with a different
         // set of services to represent the devenv Roslyn side of things. We don't have any actual solution syncing set
@@ -124,7 +116,9 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
             remoteDocument.FilePath.AssumeNotNull(),
             contents,
             additionalFiles,
-            inGlobalNamespace);
+            inGlobalNamespace,
+            addDefaultImports,
+            projectConfigure);
     }
 
     private TextDocument CreateLocalProjectAndRazorDocument(
@@ -135,22 +129,11 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         string documentFilePath,
         string contents,
         (string fileName, string contents)[]? additionalFiles,
-        bool inGlobalNamespace)
+        bool inGlobalNamespace,
+        bool addDefaultImports,
+        Action<RazorProjectBuilder>? projectConfigure)
     {
-        var composition = ConfigureRoslynDevenvComposition(TestComposition.Roslyn);
-
-        // We can't enforce that the composition is entirely valid, because we don't have a full MEF catalog, but we
-        // can assume there should be no errors related to Razor, and having this array makes debugging failures a lot
-        // easier.
-        var errors = composition.GetCompositionErrors().ToArray();
-        Assert.Empty(errors.Where(e => e.Contains("Razor")));
-
-        RoslynDevenvExportProvider = composition.ExportProviderFactory.CreateExportProvider();
-        AddDisposable(RoslynDevenvExportProvider);
-        var workspace = TestWorkspace.CreateWithDiagnosticAnalyzers(RoslynDevenvExportProvider);
-        AddDisposable(workspace);
-
-        var razorDocument = CreateProjectAndRazorDocument(workspace, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace);
+        var razorDocument = CreateProjectAndRazorDocument(LocalWorkspace, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace, addDefaultImports, projectConfigure);
 
         // If we're creating remote and local workspaces, then we'll return the local document, and have to allow
         // the remote service invoker to map from the local solution to the remote one.

@@ -13,10 +13,6 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
-  <PropertyGroup>
-    <ExternalTarballsDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'archive'))</ExternalTarballsDir>
-  </PropertyGroup>
-
   <Target Name="Build"
           DependsOnTargets="
       ValidateSourceOnlySigning;
@@ -46,7 +42,8 @@
            Text="Source-only signing requires publishing artifacts through Arcade. Please set 'DotNetSourceOnlyPublishArtifacts' to 'true', or disable signing by setting 'DotNetSourceOnlyPostBuildSign' to 'false'." />
   </Target>
 
-  <Target Name="ValidateSharedComponents">
+  <Target Name="ValidateSharedComponents"
+          Condition="'$(DisableSharedComponentValidation)' != 'true'">
     <Error Condition="'$(DotNetBuildSharedComponents)' == 'true' and ('$(CustomSharedComponentsArtifactsPath)' != '' or '$(SharedComponentsPrereqsArchiveFile)' != '')"
            Text="Shared components cannot be provided as input to a build which produces shared components." />
 
@@ -84,6 +81,13 @@
     <Exec Command="tar -xzf $(SharedComponentsPrereqsArchiveFile) assets"
           WorkingDirectory="$(ArtifactsDir)" />
 
+    <Touch Files="$(BaseIntermediateOutputPath)UnpackSharedComponentsPrereqsArchive.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
+  </Target>
+
+  <Target Name="ExtractSharedComponentsSymbols"
+          Condition="'$(SharedComponentsPrereqsArchiveFile)' != '' or '$(CustomSharedComponentsArtifactsPath)' != ''">
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
 
     <ItemGroup>
@@ -104,7 +108,6 @@
     <!-- Extract all symbols from the symbols tarball to the intermediate symbols root directory -->
     <Exec Command="tar -xzf $(BaseIntermediateOutputPath)/$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)"
           WorkingDirectory="$(_SharedComponentsSymbolsDir)" />
-
     <!-- Remove all directories except those from shared components. We also want to keep those from the Arcade bootstrap
          repos, specifically SBRP, because SBRP is built in each feature band branch and so there may be differences between 
          the packages between those branches. Each SBRP assembly would have its own PDB so these are kept separated. -->
@@ -115,10 +118,6 @@
     </ItemGroup>
 
     <RemoveDir Directories="@(_SymbolDirsToDelete)" Condition="'@(_SymbolDirsToDelete)' != ''" />
-    
-    <Touch Files="$(BaseIntermediateOutputPath)UnpackSharedComponentsPrereqsArchive.complete" AlwaysCreate="true">
-      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
-    </Touch>
   </Target>
 
   <!--
@@ -135,7 +134,8 @@
   <Target Name="PrepareSharedComponents"
           DependsOnTargets="ValidateSharedComponents;
                             CopyCustomSharedComponentAssets;
-                            UnpackSharedComponentsPrereqsArchive" />
+                            UnpackSharedComponentsPrereqsArchive;
+                            ExtractSharedComponentsSymbols" />
 
   <!-- Check for a prebuilt dependency tarball and extract if exists. If there isn't one, we expect
        the build to be working without prebuilts. -->

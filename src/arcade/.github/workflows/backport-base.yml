@@ -19,6 +19,19 @@ on:
         required: false
         type: string
         default: 'dotnet,microsoft'
+      additional_git_am_switches:
+        description: 'Additional switches to pass to git am command (e.g., "--exclude=docs/release-notes/* --whitespace=fix"). Useful for excluding files that differ between branches or fixing whitespace conflicts.'
+        required: false
+        type: string
+        default: ''
+      conflict_resolution_command:
+        description: >-
+          Optional shell command to attempt automatic conflict resolution after a failed git am.
+          If the command eliminates merge conflicts, the backport proceeds automatically.
+          Do not run git commands from this parameter as they might have unintended side effects.
+          DO NOT PASS UNTRUSTED INPUT TO THIS PARAMETER.
+        required: false
+        type: string
 
 jobs:
   cleanup:
@@ -64,7 +77,8 @@ jobs:
       with:
         script: |
           const target_branch = '${{ steps.target-branch-extractor.outputs.result }}';
-          const backport_start_body = `Started backporting to _${target_branch}_: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+          const workflow_run_url = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+          const backport_start_body = `Started backporting to \`${target_branch}\` ([link to workflow run](${workflow_run_url}))`;
           await github.rest.issues.createComment({
             issue_number: context.issue.number,
             owner: context.repo.owner,
@@ -80,6 +94,8 @@ jobs:
       env:
         BACKPORT_PR_TITLE_TEMPLATE: ${{ inputs.pr_title_template }}
         BACKPORT_PR_DESCRIPTION_TEMPLATE: ${{ inputs.pr_description_template }}
+        ADDITIONAL_GIT_AM_SWITCHES: ${{ inputs.additional_git_am_switches }}
+        CONFLICT_RESOLUTION_COMMAND: ${{ inputs.conflict_resolution_command }}
       with:
         script: |
           const target_branch = '${{ steps.target-branch-extractor.outputs.result }}';
@@ -87,19 +103,40 @@ jobs:
           const repo_name = context.payload.repository.name;
           const pr_number = context.payload.issue.number;
           const comment_user = context.payload.comment.user.login;
+          const workflow_run_url = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+
+          const wrap_in_code_block = (language, content) => `\`\`\`${language}\n${content}\n\`\`\``;
+          const wrap_in_details_block = (summary, content) => `<details>\n<summary>${summary}</summary>\n\n${content}\n</details>`;
+
+          // Post a comment on the PR and return the comment URL
+          async function postComment(body) {
+            const { data: comment } = await github.rest.issues.createComment({
+              owner: repo_owner,
+              repo: repo_name,
+              issue_number: pr_number,
+              body
+            });
+            return comment.html_url;
+          }
 
           try {
-            // verify the comment user is a repo collaborator
+            // verify the comment user has write access to the repo
             try {
-              await github.rest.repos.checkCollaborator({
+              const { data: permission } = await github.rest.repos.getCollaboratorPermissionLevel({
                 owner: repo_owner,
                 repo: repo_name,
                 username: comment_user
               });
-              console.log(`Verified ${comment_user} is a repo collaborator.`);
+
+              const writePermissions = ['admin', 'write'];
+              if (!writePermissions.includes(permission.permission)) {
+                throw new Error(`Insufficient permissions: ${permission.permission}`);
+              }
+
+              console.log(`Verified ${comment_user} has ${permission.permission} access to the repo.`);
             } catch (error) {
               console.log(error);
-              throw new Error(`Error: @${comment_user} is not a repo collaborator, backporting is not allowed. If you're a collaborator please make sure your ${repo_owner} team membership visibility is set to Public on https://github.com/orgs/${repo_owner}/people?query=${comment_user}`);
+              throw new Error(`Error: @${comment_user} does not have write access to this repo, backporting is not allowed. Required permissions: write or admin.`);
             }
 
             try { await exec.exec(`git ls-remote --exit-code --heads origin ${target_branch}`) } catch { throw new Error(`Error: The specified backport target branch "${target_branch}" wasn't found in the repo.`); }
@@ -127,9 +164,14 @@ jobs:
             } catch { }
 
             // download and apply patch
-            await exec.exec(`curl -sSL "${context.payload.issue.pull_request.patch_url}" --output changes.patch`);
+            const patch_file = 'changes.patch';
+            await exec.exec(`curl -sSL "${context.payload.issue.pull_request.patch_url}" --output ${patch_file}`);
 
-            const git_am_command = "git am --3way --empty=keep --ignore-whitespace --keep-non-patch changes.patch";
+            const additional_switches = process.env.ADDITIONAL_GIT_AM_SWITCHES?.trim() || '';
+            const base_switches = '--3way --empty=keep --ignore-whitespace --keep-non-patch';
+            const git_am_command = additional_switches
+              ? `git am ${base_switches} ${additional_switches} ${patch_file}`
+              : `git am ${base_switches} ${patch_file}`;
             let git_am_output = `$ ${git_am_command}\n\n`;
             let git_am_failed = false;
             try {
@@ -145,20 +187,51 @@ jobs:
             }
 
             if (git_am_failed) {
-              const git_am_failed_body = `@${context.payload.comment.user.login} backporting to "${target_branch}" failed, the patch most likely resulted in conflicts:\n\n\`\`\`shell\n${git_am_output}\n\`\`\`\n\nPlease backport manually!`;
-              await github.rest.issues.createComment({
-                owner: repo_owner,
-                repo: repo_name,
-                issue_number: pr_number,
-                body: git_am_failed_body
-              });
-              core.setFailed("Error: git am failed, most likely due to a merge conflict.");
-              return;
+              const resolution_command = process.env.CONFLICT_RESOLUTION_COMMAND || '';
+
+              // If no resolution command supplied, fail immediately
+              if (resolution_command.trim().length === 0) {
+                const details = `${wrap_in_code_block('console', git_am_output)}\n[Link to workflow output](${workflow_run_url})`;
+                const git_am_failed_body = `@${comment_user} backporting to \`${target_branch}\` failed, the patch most likely resulted in conflicts. Please backport manually!\n${wrap_in_details_block('git am output', details)}`;
+                postComment(git_am_failed_body);
+                core.setFailed("git am failed, most likely due to a merge conflict.");
+                return;
+              }
+
+              console.log(`git am failed; attempting in-session conflict resolution via provided command: ${resolution_command}`);
+
+              // Run user-provided resolution command
+              // Ignore return code to capture stdout/stderr
+              const resolution_result = await exec.getExecOutput(`bash -c "${resolution_command}"`, [], { ignoreReturnCode: true });
+              if (resolution_result.exitCode !== 0) {
+                const details = `\`${resolution_command}\` stderr:\n${wrap_in_code_block('console', resolution_result.stderr)}\n[Link to workflow output](${workflow_run_url})`;
+                const resolution_failed_body = `@${comment_user} backporting to \`${target_branch}\` failed during automated conflict resolution. Please backport manually!\n${wrap_in_details_block('Error details', details)}`;
+                postComment(resolution_failed_body);
+                core.setFailed(`Automated conflict resolution command exited with code ${resolution_result.exitCode}`);
+                return;
+              }
+
+              // Stage changes (excluding patch file)
+              await exec.exec(`git add -A`);
+              await exec.exec(`git reset HEAD ${patch_file}`);
+
+              // Check for remaining conflicts
+              const diff_command = 'git diff --name-only --diff-filter=U';
+              const diff_result = await exec.getExecOutput(diff_command);
+              if (diff_result.stdout.trim().length !== 0) {
+                const details = `${wrap_in_code_block('console', diff_result.stdout)}\n[Link to workflow output](${workflow_run_url})`;
+                const conflicts_body = `@${comment_user} backporting to \`${target_branch}\` failed. Automated conflict resolution did not resolve all conflicts. Please backport manually!\n${wrap_in_details_block(`${diff_command} output`, details)}`;
+                postComment(conflicts_body);
+                core.setFailed(`Automated conflict resolution did not resolve all conflicts.`);
+                return;
+              }
+
+              console.log('Automated conflict resolution resolved all merge conflicts. Continuing.');
+              await exec.exec('git am --continue');
             }
-            else {
-              // push the temp branch to the repository
-              await exec.exec(`git push --force --set-upstream origin HEAD:${temp_branch}`);
-            }
+
+            // push the temp branch to the repository
+            await exec.exec(`git push --force --set-upstream origin HEAD:${temp_branch}`);
 
             if (!should_open_pull_request) {
               console.log("Backport temp branch already exists, skipping opening a PR.");
@@ -200,19 +273,12 @@ jobs:
 
             console.log("Successfully opened the GitHub PR.");
           } catch (error) {
-
+            const body = `@${comment_user} an error occurred while backporting to \`${target_branch}\`. See the [workflow output](${workflow_run_url}) for details.`;
+            const comment_url = await postComment(body);
+            console.log(`Posted comment: ${comment_url}`);
             core.setFailed(error);
-
-            // post failure to GitHub comment
-            const unknown_error_body = `@${comment_user} an error occurred while backporting to "${target_branch}", please check the run log for details!\n\n${error.message}`;
-            await github.rest.issues.createComment({
-              owner: repo_owner,
-              repo: repo_name,
-              issue_number: pr_number,
-              body: unknown_error_body
-            });
           }
- 
+
     - name: Re-lock PR comments
       uses: actions/github-script@v7
       if: ${{ github.event.issue.locked == true && (success() || failure()) }}

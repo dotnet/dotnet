@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
@@ -29,7 +30,7 @@ internal static class AddUsingsHelper
 
     private readonly record struct RazorUsingDirective(RazorDirectiveSyntax Node, AddImportChunkGenerator Statement);
 
-    public static async Task<TextEdit[]> GetUsingStatementEditsAsync(RazorCodeDocument codeDocument, SourceText changedCSharpText, CancellationToken cancellationToken)
+    public static async Task<TextEdit[]> GetUsingStatementEditsAsync(IDocumentSnapshot documentSnapshot, SourceText changedCSharpText, CancellationToken cancellationToken)
     {
         // Now that we're done with everything, lets see if there are any using statements to fix up
         // We do this by comparing the original generated C# code, and the changed C# code, and look for a difference
@@ -44,7 +45,8 @@ internal static class AddUsingsHelper
         // So because of the above, we look for a difference in C# using directive nodes directly from the C# syntax tree, and apply them manually
         // to the Razor document.
 
-        var originalCSharpSyntaxTree = codeDocument.GetOrParseCSharpSyntaxTree(cancellationToken);
+        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
+        var originalCSharpSyntaxTree = await documentSnapshot.GetCSharpSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
         var changedCSharpSyntaxTree = originalCSharpSyntaxTree.WithChangedText(changedCSharpText);
         var oldUsings = await FindUsingDirectiveStringsAsync(originalCSharpSyntaxTree, cancellationToken).ConfigureAwait(false);
         var newUsings = await FindUsingDirectiveStringsAsync(changedCSharpSyntaxTree, cancellationToken).ConfigureAwait(false);
@@ -138,7 +140,7 @@ internal static class AddUsingsHelper
             // as trivia to the using keyword.
             var start = usingDirectiveSyntax.UsingKeyword.FullSpan.End;
 
-            return sourceText.GetSubTextString(TextSpan.FromBounds(start, end));
+            return sourceText.ToString(TextSpan.FromBounds(start, end));
         }
     }
 

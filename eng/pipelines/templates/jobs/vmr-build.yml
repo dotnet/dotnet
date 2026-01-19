@@ -119,8 +119,8 @@ parameters:
   type: boolean
   default: false
 
-# Create and publish the source artifacts
-- name: createSourceArtifacts
+# Create and publish the source artifact
+- name: createSourceArtifact
   type: boolean
   default: false
 
@@ -147,7 +147,7 @@ jobs:
   # 1ES pipeline template requires that the container is specified in the job level.
   # If we are using a container image, we set the container to correct name.
   # Otherwise, we set the container to host so that the job runs on the host agent.
-  ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+  ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
     ${{ if ne(parameters.container.name, '') }}:
       container: ${{ parameters.container.name }}
     ${{ else }}:
@@ -186,6 +186,10 @@ jobs:
     value: ''
   - name: runTestsTimeout
     value: 30
+  
+  - ${{ if parameters.buildSourceOnly }}:
+    - name: sharedComponentsDir
+      value: $(Agent.TempDirectory)/shared-components
 
   - ${{ if parameters.isBuiltFromVmr }}:
     - name: vmrPath
@@ -245,7 +249,10 @@ jobs:
         value: $(commandPrefix)clean-while-building
 
   - name: brandingArgument
-    value: $(commandPrefix)branding $(brandingType)
+    ${{ if ne(variables['brandingType'], '') }}:
+      value: $(commandPrefix)branding $(brandingType)
+    ${{ else }}:
+      value: ''
 
   - ${{ if and(eq(variables['System.TeamProject'], 'internal'), notin(variables['Build.Reason'], 'PullRequest')) }}:
     - name: officialBuildArgument
@@ -397,8 +404,8 @@ jobs:
             artifactDescription: Previous Build (${{ reuseBuildArtifacts }} - Source Build artifacts)
             artifactName: ${{ reuseBuildArtifacts }}_Artifacts
             downloadFilePatterns: |
-              **/Private.SourceBuilt.Artifacts.*.tar.gz
-              **/dotnet-sdk-*.tar.gz
+              assets/*/Private.SourceBuilt.Artifacts.*.tar.gz
+              assets/*/dotnet-sdk-*.tar.gz
             copyDestination: $(sourcesPath)/prereqs/packages/archive/
             flattenDirs: true
 
@@ -415,17 +422,32 @@ jobs:
         DownloadArchive "source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/"
       displayName: Download Previously Source-Built SDK
 
+  - template: /eng/common/templates/steps/enable-internal-runtimes.yml
+
   - ${{ if and(parameters.excludeRuntimeDependentJobs, eq(parameters.reuseBuildArtifactsFrom, ''), not(parameters.withPreviousSDK)) }}:
     - script: |
         source "$(sourcesPath)/eng/download-source-built-archive.sh"
+        if [[ $SYSTEM_TEAMPROJECT == "internal" ]]; then
+          storageKey="$(dotnetbuilds-internal-container-read-token-base64)"
+        else
+          storageKey=""
+        fi
         # Download the 1xx source-built SDK
-        DownloadArchive "1xx source-built SDK" "MicrosoftNETSdkPackageVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "" "dotnet-sdk"
+        DownloadArchive "1xx source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "" "" $storageKey
       displayName: Download 1xx SDK
 
   - ${{ if parameters.excludeRuntimeDependentJobs }}:
     - script: |
         source "$(sourcesPath)/eng/download-source-built-archive.sh"
-        DownloadArchive "shared component artifacts" "MicrosoftNETSdkPackageVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "Private.SourceBuilt.SharedComponents"
+        if [[ $SYSTEM_TEAMPROJECT == "internal" ]]; then
+          storageKey="$(dotnetbuilds-internal-container-read-token-base64)"
+        else
+          storageKey=""
+        fi
+        mkdir -p "$(sharedComponentsDir)"
+        DownloadArchive "shared component artifacts" "PrivateSourceBuiltArtifactsVersion" false "${{ parameters.artifactsRid }}" "$(sharedComponentsDir)" "Private.SourceBuilt.SharedComponents" "MicrosoftNETSdkPackageVersion" $storageKey
+        tar -xzf $(sharedComponentsDir)/Private.SourceBuilt.SharedComponents.*.tar.gz -C "$(sharedComponentsDir)"
+        rm -f $(sharedComponentsDir)/Private.SourceBuilt.SharedComponents.*.tar.gz
       displayName: Download Shared Component Artifacts
 
   - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
@@ -507,7 +529,7 @@ jobs:
       - script: |
           set -ex
 
-          customPrepArgs=""
+          customPrepArgs="-c ${{ parameters.configuration }}"
           prepSdk=true
 
           if [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
@@ -525,8 +547,7 @@ jobs:
 
           if [[ "$prepSdk" == "false" ]]; then
             customPrepArgs="${customPrepArgs} --no-sdk"
-            rm -rf $(sourcesPath)/.dotnet
-            mkdir $(sourcesPath)/.dotnet
+            mkdir -p $(sourcesPath)/.dotnet
             previousSdkPath="$(sourcesPath)/prereqs/packages/archive/dotnet-sdk-*.tar.gz"
             eval tar -ozxf "$previousSdkPath" -C "$(sourcesPath)/.dotnet"
             eval rm -f "$previousSdkPath"
@@ -561,6 +582,10 @@ jobs:
               # Set up for signing source-built artifacts post-build.
               extraBuildProperties="$extraBuildProperties /p:DotNetSourceOnlyPostBuildSign=true"
             fi
+
+            if [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
+              customBuildArgs="$customBuildArgs --with-shared-components $(sharedComponentsDir)"
+            fi
           fi
 
           if [[ '${{ parameters.runOnline }}' == 'True' ]]; then
@@ -576,17 +601,17 @@ jobs:
           if [[ '${{ parameters.buildFromArchive }}' == 'True' ]]; then
             customBuildArgs="$customBuildArgs --source-repository https://github.com/dotnet/dotnet"
             customBuildArgs="$customBuildArgs --source-version $(git -C "$(vmrPath)" rev-parse HEAD)"
-            if [[ '${{ parameters.createSourceArtifacts }}' == 'True' ]]; then
+            if [[ '${{ parameters.createSourceArtifact }}' == 'True' ]]; then
               # Do not enable source artifact creation when not building from a git repo.
               # We strip the .git/ directory when building from archive,
-              # so it's not possible to create the artifacts in that mode.
-              echo "Cannot create source artifacts when building from archive."
+              # so it's not possible to create the artifact in that mode.
+              echo "Cannot create source artifact when building from archive."
               exit 1
             fi
           fi
           
-          if [[ '${{ parameters.createSourceArtifacts }}' == 'True' ]]; then
-            extraBuildProperties="$extraBuildProperties /p:CreateSourceArtifacts=true"
+          if [[ '${{ parameters.createSourceArtifact }}' == 'True' ]]; then
+            extraBuildProperties="$extraBuildProperties /p:CreateSourceArtifact=true"
           fi
 
           if [[ '${{ parameters.useMonoRuntime }}' == 'True' ]]; then

@@ -5857,6 +5857,9 @@ class Program
 
             var comp = CreateCompilation(source);
             comp.VerifyDiagnostics(
+                // (5,20): warning CS0649: Field 'var.o' is never assigned to, and will always have its default value null
+                //     internal other o;
+                Diagnostic(ErrorCode.WRN_UnassignedInternalField, "o").WithArguments("var.o", "null").WithLocation(5, 20),
                 // (11,11): error CS8975: The contextual keyword 'var' cannot be used as an explicit lambda return type
                 //         F(var () => default);
                 Diagnostic(ErrorCode.ERR_LambdaExplicitReturnTypeVar, "var").WithLocation(11, 11),
@@ -9392,6 +9395,74 @@ Convert(x" + (ExecutionConditionUtil.IsMonoOrCoreClr ? ", IWithIntProperty" : ""
 Parameter
 x.IntProperty
 ");
+        }
+
+        [Fact]
+        public void TestMultipleScopedModifiers()
+        {
+            CreateCompilation("""
+                using System;
+                var v = (scoped scoped Span<int> s) => { };
+                """,
+                targetFramework: TargetFramework.Net90).VerifyDiagnostics(
+                // (2,17): error CS1107: A parameter can only have one 'scoped' modifier
+                // var v = (scoped scoped Span<int> s) => { };
+                Diagnostic(ErrorCode.ERR_DupParamMod, "scoped").WithArguments("scoped").WithLocation(2, 17));
+        }
+
+        [Fact]
+        public void TestMultipleRefModifiers()
+        {
+            CreateCompilation("""
+                using System;
+                var v = (ref ref Span<int> s) => { };
+                """,
+                targetFramework: TargetFramework.Net90).VerifyDiagnostics(
+                // (2,14): error CS1107: A parameter can only have one 'ref' modifier
+                // var v = (ref ref Span<int> s) => { };
+                Diagnostic(ErrorCode.ERR_DupParamMod, "ref").WithArguments("ref").WithLocation(2, 14));
+        }
+
+        [Fact]
+        public void TestMultipleOutModifiers()
+        {
+            CreateCompilation("""
+                using System;
+                var v = (out out Span<int> s) => { s = default; };
+                """,
+                targetFramework: TargetFramework.Net90).VerifyDiagnostics(
+                // (2,14): error CS1107: A parameter can only have one 'out' modifier
+                // var v = (out out Span<int> s) => { s = default; };
+                Diagnostic(ErrorCode.ERR_DupParamMod, "out").WithArguments("out").WithLocation(2, 14));
+        }
+
+        [Fact]
+        public void TestMultipleInModifiers()
+        {
+            CreateCompilation("""
+                using System;
+                var v = (in in Span<int> s) => { };
+                """,
+                targetFramework: TargetFramework.Net90).VerifyDiagnostics(
+                // (2,13): error CS1107: A parameter can only have one 'in' modifier
+                // var v = (in in Span<int> s) => { };
+                Diagnostic(ErrorCode.ERR_DupParamMod, "in").WithArguments("in").WithLocation(2, 13));
+        }
+
+        [Fact]
+        public void TestMultipleReadonlyModifiers()
+        {
+            CreateCompilation("""
+                using System;
+                var v = (readonly readonly Span<int> s) => { };
+                """,
+                targetFramework: TargetFramework.Net90).VerifyDiagnostics(
+                // (2,10): error CS9190: 'readonly' modifier must be specified after 'ref'.
+                // var v = (readonly readonly Span<int> s) => { };
+                Diagnostic(ErrorCode.ERR_RefReadOnlyWrongOrdering, "readonly").WithLocation(2, 10),
+                // (2,19): error CS9190: 'readonly' modifier must be specified after 'ref'.
+                // var v = (readonly readonly Span<int> s) => { };
+                Diagnostic(ErrorCode.ERR_RefReadOnlyWrongOrdering, "readonly").WithLocation(2, 19));
         }
     }
 }

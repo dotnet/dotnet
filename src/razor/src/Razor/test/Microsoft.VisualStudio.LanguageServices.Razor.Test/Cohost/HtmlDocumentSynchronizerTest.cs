@@ -331,6 +331,31 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
         Assert.Equal(1, remoteInvocations);
     }
 
+    [Fact]
+    public async Task TrySynchronize_RequestSameVersion_NoTimeout()
+    {
+        var document = Workspace.CurrentSolution.GetAdditionalDocument(_documentId).AssumeNotNull();
+
+        var tcs = new TaskCompletionSource<bool>();
+        var publisher = new TestHtmlDocumentPublisher();
+        var remoteServiceInvoker = new RemoteServiceInvoker(document, () => tcs.Task);
+        var synchronizer = new HtmlDocumentSynchronizer(remoteServiceInvoker, publisher, LoggerFactory);
+
+        var task1 = synchronizer.TrySynchronizeAsync(document, DisposalToken);
+        await Task.Delay(2000);
+
+        tcs.SetResult(true);
+
+        await task1;
+
+        Assert.Collection(publisher.Publishes,
+            i =>
+            {
+                Assert.Equal(_documentId, i.Document.Id);
+                Assert.Equal("<div></div>", i.Text);
+            });
+    }
+
     private class RemoteServiceInvoker(TextDocument document, Func<Task>? generateTask = null) : IRemoteServiceInvoker
     {
         private readonly DocumentId _documentId = document.Id;

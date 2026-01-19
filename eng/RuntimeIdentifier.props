@@ -2,6 +2,7 @@
   <!-- TargetRid calculations should go in this file. -->
   <PropertyGroup Label="CalculateTargetOS">
     <BuildOS>linux</BuildOS>
+    <BuildOS Condition="$(NETCoreSdkPortableRuntimeIdentifier.StartsWith('linux-musl'))">linux-musl</BuildOS>
     <BuildOS Condition="$([MSBuild]::IsOSPlatform('OSX'))">osx</BuildOS>
     <BuildOS Condition="$([MSBuild]::IsOSPlatform('FREEBSD'))">freebsd</BuildOS>
     <BuildOS Condition="$([MSBuild]::IsOSPlatform('NETBSD'))">netbsd</BuildOS>
@@ -43,7 +44,6 @@
 
   <PropertyGroup Label="CalculateRID">
     <!-- Use current machine distro RID if set. Otherwise, fall back to RuntimeInformation.RuntimeIdentifier -->
-    <BuildRid>$(__DistroRid)</BuildRid>
     <BuildRid Condition="'$(BuildRid)' == '' and '$(MSBuildRuntimeType)' == 'core'">$([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier)</BuildRid>
     <BuildRid Condition="'$(BuildRid)' == '' and '$(MSBuildRuntimeType)' != 'core'">win-$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString().ToLowerInvariant)</BuildRid>
 
@@ -52,10 +52,10 @@
 
     <!-- Source-only builds are non portable, except for cross-builds.
          Source-only cross-builds default to the portable configuration so the resulting SDK works on a wider range of distros. -->
-    <PortableBuild Condition="'$(PortableBuild)' == '' and '$(DotNetBuildSourceOnly)' == 'true' and '$(BuildArchitecture)' == '$(TargetArchitecture)'">false</PortableBuild>
+    <PortableBuild Condition="'$(PortableBuild)' == '' and '$(DotNetBuildSourceOnly)' == 'true' and '$(BuildOS)-$(BuildArchitecture)' == '$(TargetOS)-$(TargetArchitecture)'">false</PortableBuild>
     <PortableBuild Condition="'$(PortableBuild)' == ''">true</PortableBuild>
 
-    <PortableTargetRid Condition="'$(__PortableTargetOS)' != ''">$(__PortableTargetOS)-$(TargetArchitecture)</PortableTargetRid>
+    <PortableTargetRid Condition="'$(PortableTargetOS)' != ''">$(PortableTargetOS)-$(TargetArchitecture)</PortableTargetRid>
     <PortableTargetRid Condition="'$(PortableTargetRid)' == '' and '$(TargetOS)' == 'freebsd'">freebsd-$(TargetArchitecture)</PortableTargetRid>
     <PortableTargetRid Condition="'$(PortableTargetRid)' == '' and '$(TargetOS)' == 'osx'">osx-$(TargetArchitecture)</PortableTargetRid>
     <PortableTargetRid Condition="'$(PortableTargetRid)' == '' and '$(TargetOS)' == 'linux'">linux-$(TargetArchitecture)</PortableTargetRid>

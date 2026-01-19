@@ -25,6 +25,7 @@ internal sealed class FormattingContext
     private FormattingContext(
         IDocumentSnapshot originalSnapshot,
         RazorCodeDocument codeDocument,
+        IDocumentSnapshot currentSnapshot,
         RazorFormattingOptions options,
         IFormattingLogger? logger,
         bool automaticallyAddUsings,
@@ -33,6 +34,7 @@ internal sealed class FormattingContext
     {
         OriginalSnapshot = originalSnapshot;
         CodeDocument = codeDocument;
+        CurrentSnapshot = currentSnapshot;
         Options = options;
         Logger = logger;
         AutomaticallyAddUsings = automaticallyAddUsings;
@@ -44,6 +46,7 @@ internal sealed class FormattingContext
 
     public IDocumentSnapshot OriginalSnapshot { get; }
     public RazorCodeDocument CodeDocument { get; }
+    public IDocumentSnapshot CurrentSnapshot { get; }
     public RazorFormattingOptions Options { get; }
     public IFormattingLogger? Logger { get; }
     public bool AutomaticallyAddUsings { get; }
@@ -169,6 +172,11 @@ internal sealed class FormattingContext
     /// <returns>A whitespace string representing the indentation level based on the configuration.</returns>
     public string GetIndentationLevelString(int indentationLevel)
     {
+        if (indentationLevel == 0)
+        {
+            return "";
+        }
+
         var indentation = GetIndentationOffsetForLevel(indentationLevel);
         var indentationString = FormattingUtilities.GetIndentationString(indentation, Options.InsertSpaces, Options.TabSize);
         return indentationString;
@@ -232,6 +240,7 @@ internal sealed class FormattingContext
         var newContext = new FormattingContext(
             OriginalSnapshot,
             codeDocument,
+            currentSnapshot: changedSnapshot,
             Options,
             Logger,
             AutomaticallyAddUsings,
@@ -271,6 +280,7 @@ internal sealed class FormattingContext
         return new FormattingContext(
             originalSnapshot,
             codeDocument,
+            currentSnapshot: originalSnapshot,
             options,
             logger,
             automaticallyAddUsings,
@@ -287,6 +297,7 @@ internal sealed class FormattingContext
         return new FormattingContext(
             originalSnapshot,
             codeDocument,
+            currentSnapshot: originalSnapshot,
             options,
             logger,
             automaticallyAddUsings: false,

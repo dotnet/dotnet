@@ -104,6 +104,11 @@
         <target state="translated">오프셋이 유효하지 않습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="KeywordDescription">
+        <source>{0} Keyword</source>
+        <target state="translated">{0} 키워드</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Language_Services_Missing_Service">
         <source>Razor language services not configured properly, missing language service '{0}'.</source>
         <target state="translated">Razor 언어 서비스가 제대로 구성되지 않았습니다. 언어 서비스 '{0}'이(가) 없습니다.</target>
@@ -127,6 +132,11 @@
       <trans-unit id="Promote_using_directive_to">
         <source>Promote using directive to {0}</source>
         <target state="translated">using 지시문을 {0} 수준 올리기</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Simplify_Fully_Qualified_Component_Title">
+        <source>Simplify fully qualified component</source>
+        <target state="translated">정규화된 구성 요소 간소화</target>
         <note />
       </trans-unit>
       <trans-unit id="Simplify_Tag_To_SelfClosing_Title">

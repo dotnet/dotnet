@@ -1,8 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(NetToolCurrent)</TargetFrameworks>
-    <OutputType>Library</OutputType>
+    <TargetFrameworks>$(BundledNETCoreAppTargetFramework)</TargetFrameworks>
     <Nullable>enable</Nullable>
     <IsPackable>true</IsPackable>
     <Description>The MacOsPkg Library is used for unpacking, packing, and validating MacOS .pkg files and nested .app bundles.</Description>

@@ -46,6 +46,8 @@
     <PackageProjectUrl>https://docs.microsoft.com/ef/core/</PackageProjectUrl>
     <PackageIconFullPath>$(MSBuildThisFileDirectory)logo\ef-logo.png</PackageIconFullPath>
     <PublishWindowsPdb>false</PublishWindowsPdb>
+
+    <DefaultNetCoreTargetFramework>$(NetCurrent)</DefaultNetCoreTargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(DeveloperBuild)' == 'true'">
@@ -55,6 +57,10 @@
   <!-- HACK: Work around #15093 -->
   <PropertyGroup>
     <NoWarn>$(NoWarn.Replace(';1591', ''))</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NuGetAuditLevel>moderate</NuGetAuditLevel>
   </PropertyGroup>
 
   <ItemGroup>

@@ -21,49 +21,36 @@ internal partial class WorkspaceRootPathWatcher : IOnInitialized, IDisposable
 {
     private static readonly TimeSpan s_delay = TimeSpan.FromSeconds(1);
     private static readonly ImmutableArray<string> s_filters = ["*.razor", "*.cshtml"];
-    private static readonly string[] s_ignoredDirectories = ["node_modules"];
 
     private readonly IWorkspaceRootPathProvider _workspaceRootPathProvider;
     private readonly IRazorProjectService _projectService;
-    private readonly LanguageServerFeatureOptions _options;
 
     private readonly CancellationTokenSource _disposeTokenSource;
     private readonly AsyncBatchingWorkQueue<(string, RazorFileChangeKind)> _workQueue;
     private readonly Dictionary<string, (RazorFileChangeKind kind, int index)> _filePathToChangeMap;
     private readonly HashSet<int> _indicesToSkip;
     private readonly List<FileSystemWatcher> _watchers;
-    private readonly IFileSystem _fileSystem;
-    private readonly ILogger _logger;
 
     public WorkspaceRootPathWatcher(
         IWorkspaceRootPathProvider workspaceRootPathProvider,
-        IRazorProjectService projectService,
-        LanguageServerFeatureOptions options,
-        IFileSystem fileSystem,
-        ILoggerFactory loggerFactory)
-        : this(workspaceRootPathProvider, projectService, options, fileSystem, loggerFactory, s_delay)
+        IRazorProjectService projectService)
+        : this(workspaceRootPathProvider, projectService, s_delay)
     {
     }
 
     protected WorkspaceRootPathWatcher(
         IWorkspaceRootPathProvider workspaceRootPathProvider,
         IRazorProjectService projectService,
-        LanguageServerFeatureOptions options,
-        IFileSystem fileSystem,
-        ILoggerFactory loggerFactory,
         TimeSpan delay)
     {
         _workspaceRootPathProvider = workspaceRootPathProvider;
         _projectService = projectService;
-        _options = options;
 
         _disposeTokenSource = new();
         _workQueue = new AsyncBatchingWorkQueue<(string, RazorFileChangeKind)>(delay, ProcessBatchAsync, _disposeTokenSource.Token);
         _filePathToChangeMap = new(PathUtilities.OSSpecificPathComparer);
         _indicesToSkip = [];
         _watchers = [];
-        _fileSystem = fileSystem;
-        _logger = loggerFactory.GetOrCreateLogger<WorkspaceRootPathWatcher>();
     }
 
     public void Dispose()
@@ -181,18 +168,6 @@ internal partial class WorkspaceRootPathWatcher : IOnInitialized, IDisposable
 
         workspaceDirectory = FilePathNormalizer.Normalize(workspaceDirectory);
 
-        // There's a double negative below because we want to initialize the misc project unless the option is set to *not* initialize it.
-        // This is slightly awkward but is more convenient for command-line configuration.
-        //
-        // https://github.com/dotnet/razor/issues/11594 tracks removing this option and the code to support it.
-
-        if (!_options.DoNotInitializeMiscFilesProjectFromWorkspace)
-        {
-            var existingRazorFiles = GetExistingRazorFiles(workspaceDirectory);
-
-            await _projectService.AddDocumentsToMiscProjectAsync(existingRazorFiles, cancellationToken).ConfigureAwait(false);
-        }
-
         if (cancellationToken.IsCancellationRequested || !InitializeFileWatchers)
         {
             return;
@@ -248,18 +223,4 @@ internal partial class WorkspaceRootPathWatcher : IOnInitialized, IDisposable
 
     // Protected virtual for testing
     protected virtual bool InitializeFileWatchers => true;
-
-    // Protected virtual for testing
-    protected virtual ImmutableArray<string> GetExistingRazorFiles(string workspaceDirectory)
-    {
-        using var result = new PooledArrayBuilder<string>();
-
-        foreach (var filter in s_filters)
-        {
-            var existingFiles = _fileSystem.GetFilteredFiles(workspaceDirectory, filter, s_ignoredDirectories, _logger);
-            result.AddRange(existingFiles);
-        }
-
-        return result.ToImmutableAndClear();
-    }
 }

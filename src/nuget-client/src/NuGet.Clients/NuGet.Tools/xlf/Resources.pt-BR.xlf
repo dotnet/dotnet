@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="DTE_ProjectUnsupported">
         <source>The project '{0}' is unsupported</source>
-        <target state="translated">O projeto '{0}' não é compatível</target>
+        <target state="translated">O projeto '{0}' não tem suporte</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorDialogBoxTitle">
@@ -74,7 +74,7 @@
       </trans-unit>
       <trans-unit id="NuGetStaticResult_DisplayText">
         <source>Search Online for NuGet Packages matching '{0}'</source>
-        <target state="translated">Pesquisa online por pacotes do NuGet com correspondência '{0}'</target>
+        <target state="translated">Pesquisar Online pela correspondência '{0}' dos Pacotes do NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageManagement">
@@ -113,13 +113,13 @@
         <note />
       </trans-unit>
       <trans-unit id="ProjectMigrateErrorMessage">
-        <source>Project is not eligible for migration as it's not project.json based.</source>
-        <target state="translated">O projeto não está qualificado para migração, pois não é project.json baseada.</target>
+        <source>Project is not eligible for migration. Either the project is not packages.config based or doesn't support PackageReference yet.</source>
+        <target state="translated">O projeto não é elegível para migração. Ou o projeto não é baseado em packages.config ou ainda não oferece suporte a PackageReference.</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
         <source>These settings are stored in %NuGet.Config% files</source>
-        <target state="translated">Estas configurações são armazenadas em %NuGet.Config% arquivos</target>
+        <target state="translated">Estas configurações são armazenadas em arquivos %NuGet.Config%</target>
         <note>Do not translate % % or what is between them</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
@@ -130,6 +130,21 @@
       <trans-unit id="Text_AllowInsecureConnections_Header">
         <source>Allow Insecure Connections</source>
         <target state="translated">Permitir Conexões Inseguras</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Description">
+        <source>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</source>
+        <target state="translated">As fontes de auditoria fornecem dados de vulnerabilidade durante a restauração sem atuar como fontes de pacote. Se nenhuma fonte de auditoria estiver configurada, a Auditoria do NuGet usará fontes de pacote. [Saiba mais sobre fontes de auditoria](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_HowToRemove">
+        <source>Remove all audit sources to revert to using package sources for vulnerability data.</source>
+        <target state="translated">Remova todas as fontes de auditoria para reverter o uso de fontes de pacote para dados de vulnerabilidade.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Title">
+        <source>Audit sources</source>
+        <target state="translated">Fontes de auditoria</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">
@@ -177,6 +192,11 @@
         <target state="translated">Origem</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_PackageSources_Description">
+        <source>Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</source>
+        <target state="translated">As fontes de pacote definem onde o NuGet recupera pacotes para operações de instalação, restauração, auditoria e atualização. [Saiba mais sobre as fontes de pacote](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_PackageSources_MachineWide">
         <source>Machine-wide package sources</source>
         <target state="translated">Fontes de pacote em toda a máquina</target>
@@ -194,7 +214,7 @@
       </trans-unit>
       <trans-unit id="clearLocalResources">
         <source>Clear NuGet local resources</source>
-        <target state="translated">Limpar recursos locais do NuGet</target>
+        <target state="translated">Limpar recursos locais do NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="defaultPackageManagementFormat">

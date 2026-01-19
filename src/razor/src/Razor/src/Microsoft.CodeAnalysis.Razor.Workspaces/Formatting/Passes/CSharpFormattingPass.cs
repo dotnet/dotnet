@@ -1,4 +1,5 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+﻿
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
+using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -18,20 +20,28 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
-internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostServicesProvider, ILoggerFactory loggerFactory) : IFormattingPass
+internal sealed partial class CSharpFormattingPass(
+    IHostServicesProvider hostServicesProvider,
+    IDocumentMappingService documentMappingService,
+    ILoggerFactory loggerFactory) : IFormattingPass
 {
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CSharpFormattingPass>();
     private readonly IHostServicesProvider _hostServicesProvider = hostServicesProvider;
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService;
 
     public async Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
         // Process changes from previous passes
         var changedText = context.SourceText.WithChanges(changes);
         var changedContext = await context.WithTextAsync(changedText, cancellationToken).ConfigureAwait(false);
+        context.Logger?.LogObject("SourceMappings", changedContext.CodeDocument.GetRequiredCSharpDocument().SourceMappings);
+
+        var csharpSyntaxTrue = await changedContext.CurrentSnapshot.GetCSharpSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+        var csharpSyntaxRoot = await csharpSyntaxTrue.GetRootAsync(cancellationToken).ConfigureAwait(false);
 
         // To format C# code we generate a C# document that represents the indentation semantics the user would be
         // expecting in their Razor file. See the doc comments on CSharpDocumentGenerator for more info
-        var generatedDocument = CSharpDocumentGenerator.Generate(changedContext.CodeDocument, context.Options);
+        var generatedDocument = CSharpDocumentGenerator.Generate(changedContext.CodeDocument, csharpSyntaxRoot, context.Options, _documentMappingService);
 
         var generatedCSharpText = generatedDocument.SourceText;
         context.Logger?.LogSourceText("FormattingDocument", generatedCSharpText);
@@ -63,6 +73,8 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
                 break;
             }
 
+            string? indentationString = null;
+
             var formattedLine = formattedCSharpText.Lines[iFormatted];
             if (lineInfo.ProcessIndentation &&
                 formattedLine.GetFirstNonWhitespaceOffset() is { } formattedIndentation)
@@ -75,7 +87,7 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
                 // First up, we take the indentation from the formatted file, and add on the Html indentation level from the line info, and
                 // replace whatever was in the original file with it.
                 var htmlIndentString = context.GetIndentationLevelString(lineInfo.HtmlIndentLevel);
-                var indentationString = formattedCSharpText.ToString(new TextSpan(formattedLine.Start, formattedIndentation))
+                indentationString = formattedCSharpText.ToString(new TextSpan(formattedLine.Start, formattedIndentation))
                     + htmlIndentString
                     + lineInfo.AdditionalIndentation;
                 formattingChanges.Add(new TextChange(new TextSpan(originalLine.Start, originalLineOffset), indentationString));
@@ -147,10 +159,11 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
             else if (lineInfo.SkipNextLineIfBrace)
             {
                 // If the next line is a brace, we skip it. This is used to skip the opening brace of a class
-                // that we insert, but Roslyn settings might place on the same like as the class declaration.
-                if (iFormatted + 1 < formattedCSharpText.Lines.Count &&
-                    formattedCSharpText.Lines[iFormatted + 1] is { Span.Length: > 0 } nextLine &&
-                    nextLine.CharAt(0) == '{')
+                // that we insert, but Roslyn settings might place on the same line as the class declaration,
+                // or skip the opening brace of a lambda definition we insert, but Roslyn might place it on the
+                // next line. In that case, we can't place it on the next line ourselves because Roslyn doesn't
+                // adjust the indentation of opening braces of lambdas in that scenario.
+                if (NextLineIsOnlyAnOpenBrace(formattedCSharpText, iFormatted))
                 {
                     iFormatted++;
                 }
@@ -159,12 +172,23 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
                 // it up to the previous line, so we would want to skip the next line in the original document
                 // in that case. Fortunately its illegal to have `@code {\r\n {` in a Razor file, so there can't
                 // be false positives here.
-                if (iOriginal + 1 < changedText.Lines.Count &&
-                    changedText.Lines[iOriginal + 1] is { } nextOriginalLine &&
-                    nextOriginalLine.GetFirstNonWhitespaceOffset() is { } firstChar &&
-                    nextOriginalLine.CharAt(firstChar) == '{')
+                if (NextLineIsOnlyAnOpenBrace(changedText, iOriginal))
                 {
                     iOriginal++;
+
+                    // We're skipping a line in the original document, because Roslyn brought it up to the previous
+                    // line, but the fact is the opening brace was in the original document, and might need its indentation
+                    // adjusted. Since we can't reason about this line in any way, because Roslyn has changed it, we just
+                    // apply the indentation from the previous line.
+                    //
+                    // If we didn't adjust the indentation of the previous line, then we really have no information to go
+                    // on at all, so hopefully the user is happy with where their open brace is.
+                    if (indentationString is not null)
+                    {
+                        var originalLine = changedText.Lines[iOriginal];
+                        var originalLineOffset = originalLine.GetFirstNonWhitespaceOffset().GetValueOrDefault();
+                        formattingChanges.Add(new TextChange(new TextSpan(originalLine.Start, originalLineOffset), indentationString));
+                    }
                 }
             }
         }
@@ -221,6 +245,13 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
         return SourceTextDiffer.GetMinimalTextChanges(context.SourceText, changedText, DiffKind.Char);
     }
 
+    private static bool NextLineIsOnlyAnOpenBrace(SourceText text, int lineNumber)
+        => lineNumber + 1 < text.Lines.Count &&
+            text.Lines[lineNumber + 1] is { Span.Length: > 0 } nextLine &&
+            nextLine.GetFirstNonWhitespaceOffset() is { } firstNonWhitespace &&
+            nextLine.Start + firstNonWhitespace == nextLine.End - 1 &&
+            nextLine.CharAt(firstNonWhitespace) == '{';
+
     private async Task<SourceText> FormatCSharpAsync(SourceText generatedCSharpText, RazorFormattingOptions options, CancellationToken cancellationToken)
     {
         using var helper = new RoslynWorkspaceHelper(_hostServicesProvider);
@@ -259,6 +290,6 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
     }
 
     [Obsolete("Only for the syntax visualizer, do not call")]
-    internal static string GetFormattingDocumentContentsForSyntaxVisualizer(RazorCodeDocument codeDocument)
-        => CSharpDocumentGenerator.Generate(codeDocument, new()).SourceText.ToString();
+    internal static string GetFormattingDocumentContentsForSyntaxVisualizer(RazorCodeDocument codeDocument, SyntaxNode csharpSyntaxRoot, IDocumentMappingService documentMappingService)
+        => CSharpDocumentGenerator.Generate(codeDocument, csharpSyntaxRoot, new(), documentMappingService).SourceText.ToString();
 }

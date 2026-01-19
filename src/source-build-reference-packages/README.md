@@ -66,6 +66,12 @@ to .NET. The following sections describe how to add/upgrade the various types of
 
 1. If the original binaries have strong name signatures, validate the source built ones have them as well.
 
+1. Open a PR.
+
+1. Trigger a full source build within the VMR from your PR by adding a `/azp run source-build-reference-packages-unified-build` comment.
+   This will validate the new external will build without adding prebuilts.
+   It will also ensure the external does not contain prohibited checked-in binaries.
+
 #### Updating an External Component to a Newer Version
 
 1. Update the `./src/externalPackages/src/<external_repo_dir>` to the desired sha
@@ -93,6 +99,12 @@ to .NET. The following sections describe how to add/upgrade the various types of
 
 1. Validate the version of the NuGet packages and binaries produced by the build.
    See the contents of `./artifacts/packages/<build_configuration>/Shipping`.
+
+1. Open a PR.
+
+1. Trigger a full source build within the VMR from your PR by adding a `/azp run source-build-reference-packages-unified-build` comment.
+   This will validate the new version will build without adding prebuilts.
+   It will also ensure the new version does not contain prohibited checked-in binaries.
 
 1. After the PR is merged to update a component, coordination is often needed in the darc dependency flows.
    The source-build-reference-packages source may need to flow in at the same time as the cooresponding changes in product repos which take a dependency on the new component version.
@@ -193,17 +205,22 @@ See the workflow documented in the servicing branch readmes for additional requi
 #### Regenerating all Reference Packages
 
 As bugs are fixed or enhancements are made to the generate tooling, it may be desirable or necessary to
-regenerate the existing packages. The following commands can be used to generate all of the reference packages.
+regenerate the existing packages. The following command will regenerate all of the reference packages.
 
 ``` bash
-find src/referencePackages/src -mindepth 2 -maxdepth 2 -type d | awk -F'/' '{print $(NF-1)","$NF}' > packages.csv
-./generate.sh -x -c packages.csv
+./generate.sh -a
 ```
 
 ### Targeting
 
-Generating new targeting packages is not supported.
-If you feel a new targeting pack is needed, please [open a new issue](#filing-issues) to discuss.
+The [generate script](https://github.com/dotnet/source-build-reference-packages/blob/main/generate.sh) supports generating targeting packages.
+Run `generate.sh --help` for usage details.
+
+``` bash
+./generate.sh --type target --package Microsoft.NetCore.App.Ref,10.0.0
+```
+
+> **Note:** Generating targeting packages uses ILDasm to disassemble reference assemblies.
 
 ### Text Only
 

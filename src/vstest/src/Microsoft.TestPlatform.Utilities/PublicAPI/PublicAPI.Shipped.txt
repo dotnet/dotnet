@@ -39,4 +39,6 @@ static Microsoft.VisualStudio.TestPlatform.Utilities.MSTestSettingsUtilities.IsL
 static Microsoft.VisualStudio.TestPlatform.Utilities.ParallelRunSettingsUtilities.UpdateRunSettingsWithParallelSettingIfNotConfigured(System.Xml.XPath.XPathNavigator! navigator) -> void
 static Microsoft.VisualStudio.TestPlatform.Utilities.StringExtensions.Tokenize(this string? input, char separator, char escape) -> System.Collections.Generic.IEnumerable<string!>!
 static Microsoft.VisualStudio.TestPlatform.Utilities.InferRunSettingsHelper.UpdateBatchSize(System.Xml.XmlDocument! runSettingsDocument, long batchSizeValue) -> void
+static Microsoft.VisualStudio.TestPlatform.Utilities.InferRunSettingsHelper.UpdateCollectCoverageSettings(System.Xml.XmlDocument! xmlDocument) -> bool
+
 

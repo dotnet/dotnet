@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test;
@@ -12,29 +11,33 @@ using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Razor.Settings;
 using Roslyn.Test.Utilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
+public partial class CohostDocumentPullDiagnosticsTest
 {
     [Fact]
-    public Task NoDiagnostics()
-        => VerifyDiagnosticsAsync("""
-            <div></div>
+    public Task OneOfEachDiagnostic()
+    {
+        TestCode input = """
+            <div>
 
-            @code
-            {
-                public void IJustMetYou()
+            {|HTM1337:<not_a_tag />|}
+
+            {|RZ10012:<NonExistentComponent />|}
+
+            </div>
+
+            <script>
+                {|TS2304:let foo: string = 42;|}
+            </script>
+
+            <style>
+                {|CSS002:f|}oo
                 {
+                    bar: baz;
                 }
-            }
-            """);
-
-    [Fact]
-    public Task CSharp()
-        => VerifyDiagnosticsAsync("""
-            <div></div>
+            </style>
 
             @code
             {
@@ -43,36 +46,43 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
                     {|CS0103:CallMeMaybe|}();
                 }
             }
-            """);
+            """;
 
-    [Fact]
-    public Task Razor()
-        => VerifyDiagnosticsAsync("""
-            <div>
-
-            {|RZ10012:<NonExistentComponent />|}
-
-            </div>
-            """);
-
-    [Fact]
-    public Task CSharpAndRazor_MiscellaneousFile()
-        => VerifyDiagnosticsAsync("""
-            <div>
-
-            {|RZ10012:<NonExistentComponent />|}
-
-            </div>
-
-            @code
+        return VerifyDiagnosticsAsync(input,
+           htmlResponse: [new VSInternalDiagnosticReport
             {
-                public void IJustMetYou()
-                {
-                    {|CS0103:CallMeMaybe|}();
-                }
-            }
-            """,
-            miscellaneousFile: true);
+                Diagnostics =
+                [
+                    new VSDiagnostic
+                    {
+                        Code = "HTM1337",
+                        Range = SourceText.From(input.Text).GetRange(input.NamedSpans["HTM1337"].First()),
+                        Projects = [new VSDiagnosticProjectInformation()
+                        {
+                            ProjectIdentifier = "Html"
+                        }]
+                    },
+                    new VSDiagnostic
+                    {
+                        Code = "TS2304",
+                        Range = SourceText.From(input.Text).GetRange(input.NamedSpans["TS2304"].First()),
+                        Projects = [new VSDiagnosticProjectInformation()
+                        {
+                            ProjectIdentifier = "TypeScript"
+                        }]
+                    },
+                    new VSDiagnostic
+                    {
+                        Code = "CSS002",
+                        Range = SourceText.From(input.Text).GetRange(input.NamedSpans["CSS002"].First()),
+                        Projects = [new VSDiagnosticProjectInformation()
+                        {
+                            ProjectIdentifier = "CSS"
+                        }]
+                    },
+                ]
+            }]);
+    }
 
     [Fact]
     public Task Html()
@@ -410,6 +420,58 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
             }]);
     }
 
+    [Fact]
+    public Task FilterFromMultilineComponentAttributes()
+    {
+        var firstLine = "Hello this is a";
+        TestCode input = $$"""
+            <File1 Title="{{firstLine}}
+                          multiline attribute" />
+
+            @code
+            {
+                [Parameter]
+                public string Title { get; set; }
+            }
+            """;
+
+        return VerifyDiagnosticsAsync(input,
+            htmlResponse: [new VSInternalDiagnosticReport
+            {
+                Diagnostics =
+                [
+                    new LspDiagnostic
+                    {
+                        Code = HtmlErrorCodes.MismatchedAttributeQuotesErrorCode,
+                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf(firstLine), firstLine.Length))
+                    },
+                ]
+            }]);
+    }
+
+    [Fact]
+    public Task DontFilterFromMultilineHtmlAttributes()
+    {
+        var firstLine = "Hello this is a";
+        TestCode input = $$"""
+            <div class="{|HTML0005:{{firstLine}}|}
+                        multiline attribute" />
+            """;
+
+        return VerifyDiagnosticsAsync(input,
+            htmlResponse: [new VSInternalDiagnosticReport
+            {
+                Diagnostics =
+                [
+                    new LspDiagnostic
+                    {
+                        Code = HtmlErrorCodes.MismatchedAttributeQuotesErrorCode,
+                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf(firstLine), firstLine.Length))
+                    },
+                ]
+            }]);
+    }
+
     [Theory]
     [InlineData("", "\"")]
     [InlineData("", "'")]
@@ -448,34 +510,6 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
                 ]
             }]);
     }
-
-    [Fact]
-    public Task CombinedAndNestedDiagnostics()
-        => VerifyDiagnosticsAsync("""
-            @using System.Threading.Tasks;
-
-            <div>
-
-            {|RZ10012:<NonExistentComponent />|}
-
-            @code
-            {
-                public void IJustMetYou()
-                {
-                    {|CS0103:CallMeMaybe|}();
-                }
-            }
-
-            <div>
-                @{
-                    {|CS4033:await Task.{|CS1501:Delay|}()|};
-                }
-
-                {|RZ9980:<p>|}
-            </div>
-
-            </div>
-            """);
 
     [Fact]
     public Task TODOComments()
@@ -537,5 +571,21 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
         }
 
         AssertEx.EqualOrDiff(input.OriginalInput, testOutput);
+
+        if (!taskListRequest)
+        {
+            Assert.NotNull(report.Diagnostics);
+            Assert.All(report.Diagnostics,
+                d =>
+                {
+                    var vsDiagnostic = Assert.IsType<VSDiagnostic>(d);
+                    Assert.NotNull(vsDiagnostic.Identifier);
+                    Assert.NotNull(vsDiagnostic.Projects);
+                    var project = Assert.Single(vsDiagnostic.Projects);
+                    Assert.NotNull(project.ProjectIdentifier);
+                    // We always report the same project info for all diagnostics
+                    Assert.Same(project, ((VSDiagnostic)report.Diagnostics.First()).Projects.Single());
+                });
+        }
     }
 }
