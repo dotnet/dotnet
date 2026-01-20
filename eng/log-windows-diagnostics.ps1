@@ -64,12 +64,24 @@ if ($IsWindows -or $env:OS -eq "Windows_NT") {
     }
 }
 
-# Display tar version
+# Display tar version and location
 Write-Host ""
-Write-Host "Tar version:" -ForegroundColor Yellow
+Write-Host "Tar information:" -ForegroundColor Yellow
+try {
+    $tarCommand = Get-Command tar -ErrorAction SilentlyContinue
+    if ($tarCommand) {
+        Write-Host "  Path: $($tarCommand.Source)" -ForegroundColor Green
+    } else {
+        Write-Host "  Tar command not found in PATH" -ForegroundColor Red
+    }
+}
+catch {
+    Write-Host "  Could not retrieve tar location: $_" -ForegroundColor Yellow
+}
+
 try {
     $tarVersion = & tar --version 2>&1 | Select-Object -First 1
-    Write-Host "  $tarVersion"
+    Write-Host "  Version: $tarVersion"
 }
 catch {
     Write-Host "  Could not retrieve tar version: $_" -ForegroundColor Yellow
