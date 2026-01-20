@@ -1,10 +1,6 @@
 {
   "files": [
     {
-      "path": "THIRD-PARTY-NOTICES.TXT",
-      "detected_license_expression": "apache-2.0 AND bsd-new AND unicode AND zlib AND mit AND iso-8879 AND bsd-simplified AND w3c-software-doc-20150513 AND public-domain AND ietf AND osf-1990 AND uoi-ncsa AND cc0-1.0 AND warranty-disclaimer AND bsd-original-uc AND clear-bsd AND (mit AND object-form-exception-to-mit) AND nist-software"
-    },
-    {
       "path": "src/tests/GC/Scenarios/GCBench/THIRD-PARTY-NOTICES",
       "detected_license_expression": "unknown-license-reference"
     },
