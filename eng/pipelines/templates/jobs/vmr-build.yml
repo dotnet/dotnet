@@ -381,6 +381,13 @@ jobs:
   - checkout: self
     fetchDepth: 1
 
+  # Log Windows diagnostic information for troubleshooting
+  - ${{ if eq(parameters.targetOS, 'windows') }}:
+    - powershell: |
+        & "$(Build.SourcesDirectory)/eng/log-windows-diagnostics.ps1"
+      displayName: Log Windows Build Environment Diagnostics
+      continueOnError: true
+
   - ${{ if not(parameters.isBuiltFromVmr) }}:
     # Synchronize new content in the VMR during PRs
     - template: /eng/common/templates/steps/vmr-sync.yml@self
