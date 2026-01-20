@@ -49,22 +49,10 @@ internal sealed class RemoteFoldingRangeService(in ServiceArgs args) : RazorDocu
         var lineFoldingOnly = _clientCapabilitiesService.ClientCapabilities.TextDocument?.FoldingRange?.LineFoldingOnly ?? false;
         var csharpRanges = await ExternalHandlers.FoldingRanges.GetFoldingRangesAsync(generatedDocument, lineFoldingOnly, cancellationToken).ConfigureAwait(false);
 
-        var convertedCSharp = csharpRanges.SelectAsArray(ToFoldingRange);
-        var convertedHtml = htmlRanges.SelectAsArray(RemoteFoldingRange.ToVsFoldingRange);
+        var convertedHtml = htmlRanges.SelectAsArray(RemoteFoldingRange.ToLspFoldingRange);
 
         var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        return _foldingRangeService.GetFoldingRanges(codeDocument, convertedCSharp, convertedHtml, cancellationToken)
-            .SelectAsArray(RemoteFoldingRange.FromVsFoldingRange);
+        return _foldingRangeService.GetFoldingRanges(codeDocument, csharpRanges, convertedHtml, cancellationToken)
+            .SelectAsArray(RemoteFoldingRange.FromLspFoldingRange);
     }
-
-    public static FoldingRange ToFoldingRange(FoldingRange r)
-        => new()
-        {
-            StartLine = r.StartLine,
-            StartCharacter = r.StartCharacter,
-            EndLine = r.EndLine,
-            EndCharacter = r.EndCharacter,
-            Kind = r.Kind is { } kind ? new FoldingRangeKind(kind.Value) : null,
-            CollapsedText = r.CollapsedText
-        };
 }
