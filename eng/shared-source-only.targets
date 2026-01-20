@@ -13,7 +13,6 @@
 
   <Target Name="GetFilteredSharedComponentPackages"
           Outputs="@(SharedComponentFilteredPackages)">
-
     <PropertyGroup>
       <_VersionDetailsXml Condition="'$(PackageVersionPropsFlowType)' == 'DependenciesOnly'">$(ProjectDirectory)eng/Version.Details.xml</_VersionDetailsXml>
     </PropertyGroup>
@@ -70,15 +69,14 @@
 
     <ItemGroup>
       <SharedComponentFilteredPackages Remove="@(SharedComponentFilteredPackages)" 
-                                        Condition="'@(_ItemsToRemove)' != '' and 
-                                                   '$(_ItemsToRemoveString)' != '' and
-                                                   $(_ItemsToRemoveString.Contains($([System.String]::Concat('%(Identity)', '::', '%(Version)'))))" />
+                                       Condition="'@(_ItemsToRemove)' != '' and 
+                                                  '$(_ItemsToRemoveString)' != '' and
+                                                  $(_ItemsToRemoveString.Contains($([System.String]::Concat('%(Identity)', '::', '%(Version)'))))" />
 
       <SharedComponentFilteredPackages Update="@(SharedComponentFilteredPackages)">
         <PackagePath>$(SharedComponentsArtifactsPath)$([System.IO.Path]::GetFileName('%(PipelineArtifactPath)'))</PackagePath>
       </SharedComponentFilteredPackages>
     </ItemGroup>
-
   </Target>
 
 </Project>

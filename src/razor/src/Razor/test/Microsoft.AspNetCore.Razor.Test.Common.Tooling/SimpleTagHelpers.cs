@@ -9,7 +9,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Common;
 
 internal static class SimpleTagHelpers
 {
-    public static ImmutableArray<TagHelperDescriptor> Default { get; }
+    public static TagHelperCollection Default { get; }
 
     static SimpleTagHelpers()
     {

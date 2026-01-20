@@ -10,7 +10,7 @@ namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
 public class SynchronizationTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
-    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8114")]
+    [IdeFact(Skip = "https://github.com/dotnet/razor/issues/8114")]
     public async Task CSharpComponentBacking_UpdatesComponents()
     {
         // Create the file
@@ -55,7 +55,7 @@ public class SynchronizationTests(ITestOutputHelper testOutputHelper) : Abstract
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
     }
 
-    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8114")]
+    [IdeFact(Skip = "https://github.com/dotnet/razor/issues/8114")]
     public async Task BlindDocumentCreation_InitializesComponents()
     {
         // Create the file

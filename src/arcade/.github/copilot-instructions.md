@@ -104,7 +104,7 @@ timeout 6000 ./build.sh --restore --build --configuration Release --test
 4. Validate packaging via: `./build.sh --pack --configuration Release`
 
 ### Helix Test Development
-1. Create test projects targeting `$(NetToolCurrent)` framework
+1. Create test projects targeting `$(BundledNETCoreAppTargetFramework)` framework
 2. Configure in `tests/UnitTests.proj` for Helix execution
 3. Use XUnit with `Microsoft.DotNet.XUnitExtensions` for enhanced capabilities
 4. Test timeout default: 300 seconds (override with XUnitWorkitemTimeout)

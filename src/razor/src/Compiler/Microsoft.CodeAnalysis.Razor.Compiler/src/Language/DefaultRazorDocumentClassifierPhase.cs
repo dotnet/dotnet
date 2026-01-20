@@ -15,7 +15,7 @@ internal sealed class DefaultRazorDocumentClassifierPhase : RazorEnginePhaseBase
         Passes = Engine.GetFeatures<IRazorDocumentClassifierPass>().OrderByAsArray(p => p.Order);
     }
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
+    protected override RazorCodeDocument ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
         var documentNode = codeDocument.GetDocumentNode();
         ThrowForMissingDocumentDependency(documentNode);
@@ -27,6 +27,6 @@ internal sealed class DefaultRazorDocumentClassifierPhase : RazorEnginePhaseBase
             pass.Execute(codeDocument, documentNode, cancellationToken);
         }
 
-        codeDocument.SetDocumentNode(documentNode);
+        return codeDocument.WithDocumentNode(documentNode);
     }
 }

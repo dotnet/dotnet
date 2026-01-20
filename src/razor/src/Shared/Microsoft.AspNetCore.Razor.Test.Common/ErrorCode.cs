@@ -18,6 +18,7 @@ public enum ErrorCode
     WRN_UnreferencedVarAssg = 219,
     ERR_DottedTypeNameNotFoundInNS = 234,
     ERR_SingleTypeNameNotFound = 246,
+    ERR_BadArity = 305,
     ERR_CantInferMethTypeArgs = 411,
     WRN_UnreferencedFieldAssg = 414,
     WRN_InvalidAttributeLocation = 658,
@@ -45,5 +46,6 @@ public enum ErrorCode
     WRN_NullReferenceReceiver = 8602,
     WRN_UninitializedNonNullableField = 8618,
     WRN_MissingNonNullTypesContextForAnnotationInGeneratedCode = 8669,
+    ERR_FeatureNotAvailableInVersion10 = 8936,
     ERR_IllegalAtSequence = 9008,
 }

@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Immutable;
 using System.Linq;
 
 namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
@@ -16,7 +15,7 @@ public sealed class TagHelperIntermediateNode : IntermediateNode
     /// </summary>
     public SourceSpan? StartTagSpan { get; init; }
 
-    public ImmutableArray<TagHelperDescriptor> TagHelpers { get; init => field = value.NullToEmpty(); } = [];
+    public TagHelperCollection TagHelpers { get; init => field = value ?? []; } = [];
 
     public override IntermediateNodeCollection Children { get => field ??= []; }
 

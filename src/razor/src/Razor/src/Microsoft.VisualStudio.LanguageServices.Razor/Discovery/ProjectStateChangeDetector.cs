@@ -14,6 +14,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
@@ -35,7 +36,6 @@ internal partial class ProjectStateChangeDetector : IRazorStartupService, IDispo
 
     private readonly IProjectStateUpdater _updater;
     private readonly ProjectSnapshotManager _projectManager;
-    private readonly LanguageServerFeatureOptions _options;
     private readonly CodeAnalysis.Workspace _workspace;
     private readonly WorkspaceEventRegistration _changeRegistration;
     private readonly CancellationTokenSource _disposeTokenSource;
@@ -53,22 +53,19 @@ internal partial class ProjectStateChangeDetector : IRazorStartupService, IDispo
     public ProjectStateChangeDetector(
         IProjectStateUpdater generator,
         ProjectSnapshotManager projectManager,
-        LanguageServerFeatureOptions options,
         IWorkspaceProvider workspaceProvider)
-        : this(generator, projectManager, options, workspaceProvider, s_delay)
+        : this(generator, projectManager, workspaceProvider, s_delay)
     {
     }
 
     public ProjectStateChangeDetector(
         IProjectStateUpdater updater,
         ProjectSnapshotManager projectManager,
-        LanguageServerFeatureOptions options,
         IWorkspaceProvider workspaceProvider,
         TimeSpan delay)
     {
         _updater = updater;
         _projectManager = projectManager;
-        _options = options;
 
         _workerSet = [];
         _disposeTokenSource = new();
@@ -245,7 +242,7 @@ internal partial class ProjectStateChangeDetector : IRazorStartupService, IDispo
         }
 
         // Using EndsWith because Path.GetExtension will ignore everything before .cs
-        return filePath.EndsWith(_options.CSharpVirtualDocumentSuffix, PathUtilities.OSSpecificPathComparison) ||
+        return filePath.EndsWith(LanguageServerConstants.CSharpVirtualDocumentSuffix, PathUtilities.OSSpecificPathComparison) ||
                // Still have .cshtml.g.cs and .razor.g.cs for Razor.VSCode scenarios.
                filePath.EndsWith(".cshtml.g.cs", PathUtilities.OSSpecificPathComparison) ||
                filePath.EndsWith(".razor.g.cs", PathUtilities.OSSpecificPathComparison) ||

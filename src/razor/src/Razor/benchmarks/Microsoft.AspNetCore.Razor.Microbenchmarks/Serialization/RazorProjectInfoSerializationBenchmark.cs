@@ -67,7 +67,7 @@ public class RazorProjectInfoSerializationBenchmark
         var projectInfo = DeserializeProjectInfo_Json(reader);
 
         if (projectInfo.ProjectWorkspaceState is null ||
-            projectInfo.ProjectWorkspaceState.TagHelpers.Length != ProjectInfo.ProjectWorkspaceState?.TagHelpers.Length)
+            projectInfo.ProjectWorkspaceState.TagHelpers.Count != ProjectInfo.ProjectWorkspaceState.TagHelpers.Count)
         {
             throw new InvalidDataException();
         }
@@ -89,7 +89,7 @@ public class RazorProjectInfoSerializationBenchmark
         var projectInfo = DeserializeProjectInfo_Json(reader);
 
         if (projectInfo.ProjectWorkspaceState is null ||
-            projectInfo.ProjectWorkspaceState.TagHelpers.Length != ProjectInfo.ProjectWorkspaceState?.TagHelpers.Length)
+            projectInfo.ProjectWorkspaceState.TagHelpers.Count != ProjectInfo.ProjectWorkspaceState.TagHelpers.Count)
         {
             throw new InvalidDataException();
         }
@@ -128,7 +128,7 @@ public class RazorProjectInfoSerializationBenchmark
         var projectInfo = DeserializeProjectInfo_MessagePack(_projectInfoMessagePackBytes);
 
         if (projectInfo.ProjectWorkspaceState is null ||
-            projectInfo.ProjectWorkspaceState.TagHelpers.Length != ProjectInfo.ProjectWorkspaceState?.TagHelpers.Length)
+            projectInfo.ProjectWorkspaceState.TagHelpers.Count != ProjectInfo.ProjectWorkspaceState.TagHelpers.Count)
         {
             throw new InvalidDataException();
         }
@@ -142,7 +142,7 @@ public class RazorProjectInfoSerializationBenchmark
         _buffer.Clear();
 
         if (projectInfo.ProjectWorkspaceState is null ||
-            projectInfo.ProjectWorkspaceState.TagHelpers.Length != ProjectInfo.ProjectWorkspaceState?.TagHelpers.Length)
+            projectInfo.ProjectWorkspaceState.TagHelpers.Count != ProjectInfo.ProjectWorkspaceState.TagHelpers.Count)
         {
             throw new InvalidDataException();
         }

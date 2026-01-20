@@ -24,7 +24,7 @@ public class HoverTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdito
         var hoverString = await TestServices.Editor.GetHoverStringAsync(position, ControlledHangMitigatingCancellationToken);
 
         // Assert
-        const string ExpectedResult = "Microsoft.AspNetCore.Components.Web.PageTitleEnables rendering an HTML <title> to a HeadOutlet component.";
+        const string ExpectedResult = "class Microsoft.AspNetCore.Components.Web.PageTitleEnables rendering an HTML <title> to a HeadOutlet component.";
         AssertEx.EqualOrDiff(ExpectedResult, hoverString);
     }
 

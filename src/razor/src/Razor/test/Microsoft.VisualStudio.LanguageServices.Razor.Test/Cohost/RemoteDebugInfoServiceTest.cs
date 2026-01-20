@@ -33,6 +33,16 @@ public class RemoteDebugInfoServiceTest(ITestOutputHelper testOutputHelper) : Co
     }
 
     [Fact]
+    public async Task ResolveProximityExpressionsAsync_OnlyHtml()
+    {
+        var input = """
+                $$<div></div>
+                """;
+
+        await VerifyProximityExpressionsAsync(input, []);
+    }
+
+    [Fact]
     public async Task ResolveProximityExpressionsAsync_ExplicitExpression()
     {
         var input = """
@@ -59,6 +69,30 @@ public class RemoteDebugInfoServiceTest(ITestOutputHelper testOutputHelper) : Co
                 }
 
                 $$<p>@currentCount</p>
+                """;
+
+        await VerifyProximityExpressionsAsync(input, ["__builder", "this"]);
+    }
+
+    [Fact]
+    public async Task ResolveProximityExpressionsAsync_OutsideExplicitStatement()
+    {
+        var input = """
+                <div></div>
+
+                $$<p>@{var [|abc|] = 123;}</p>
+                """;
+
+        await VerifyProximityExpressionsAsync(input, ["__builder", "this"]);
+    }
+
+    [Fact]
+    public async Task ResolveProximityExpressionsAsync_InsideExplicitStatement()
+    {
+        var input = """
+                <div></div>
+
+                <p>@{var$$ [|abc|] = 123;}</p>
                 """;
 
         await VerifyProximityExpressionsAsync(input, ["__builder", "this"]);
@@ -169,6 +203,59 @@ public class RemoteDebugInfoServiceTest(ITestOutputHelper testOutputHelper) : Co
                 }
 
                 $$<p>@[|currentCount|]</p>
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_OutsideExplicitStatement()
+    {
+        var input = """
+                <div></div>
+
+                $$<p>@{ [|var abc = 123;|] }</p>
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_OutsideExplicitStatement_NoCSharpOnLine()
+    {
+        var input = """
+                <div></div>
+
+                $$<p>@{
+                    var abc = 123;
+                }</p>
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_InsideExplicitStatement_NoCSharpOnLine()
+    {
+        var input = """
+                <div></div>
+
+                <p>@{
+                $$
+                    var abc = 123;
+                }</p>
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_OutsideExplicitStatement_InvalidLocation()
+    {
+        var input = """
+                <div></div>
+
+                $$<p>@{ var abc; }</p>
                 """;
 
         await VerifyBreakpointRangeAsync(input);
@@ -294,7 +381,7 @@ public class RemoteDebugInfoServiceTest(ITestOutputHelper testOutputHelper) : Co
 
         Assert.NotNull(result);
 
-        var expected = input.Spans.Select(inputText.GetSubTextString).Concat(extraExpressions).OrderAsArray();
+        var expected = input.Spans.Select(inputText.ToString).Concat(extraExpressions).OrderAsArray();
         AssertEx.SequenceEqual(expected, result.OrderAsArray());
     }
 

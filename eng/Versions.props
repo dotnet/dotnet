@@ -41,8 +41,8 @@
       of a .NET major or minor release, prebuilts may be needed. When the release is mature, prebuilts
       are not necessary, and this property is removed from the file.
     -->
-    <PrivateSourceBuiltSdkVersion>11.0.100-alpha.1.25618.104</PrivateSourceBuiltSdkVersion>
-    <PrivateSourceBuiltArtifactsVersion>11.0.100-alpha.1.25618.104</PrivateSourceBuiltArtifactsVersion>
+    <PrivateSourceBuiltSdkVersion>11.0.100-alpha.1.26064.118</PrivateSourceBuiltSdkVersion>
+    <PrivateSourceBuiltArtifactsVersion>11.0.100-alpha.1.26064.118</PrivateSourceBuiltArtifactsVersion>
     <!-- command-line-api dependencies -->
     <SystemCommandLineVersion>2.0.0-beta5.25208.1</SystemCommandLineVersion>
     <!-- msbuild dependencies -->
@@ -53,15 +53,14 @@
     <!-- roslyn dependencies -->
     <MicrosoftCodeAnalysisVersion>4.4.0</MicrosoftCodeAnalysisVersion>
     <!-- runtime dependencies -->
-    <MicrosoftExtensionsFileSystemGlobbingVersion>10.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
-    <MicrosoftExtensionsLoggingConsoleVersion>10.0.0</MicrosoftExtensionsLoggingConsoleVersion>
-    <MicrosoftExtensionsLoggingVersion>10.0.0</MicrosoftExtensionsLoggingVersion>
-    <MicrosoftExtensionsHostingVersion>10.0.0</MicrosoftExtensionsHostingVersion>
+    <MicrosoftExtensionsFileSystemGlobbingVersion>10.0.2</MicrosoftExtensionsFileSystemGlobbingVersion>
+    <MicrosoftExtensionsLoggingConsoleVersion>10.0.2</MicrosoftExtensionsLoggingConsoleVersion>
+    <MicrosoftExtensionsLoggingVersion>10.0.2</MicrosoftExtensionsLoggingVersion>
+    <MicrosoftExtensionsHostingVersion>10.0.2</MicrosoftExtensionsHostingVersion>
     <!-- sdk dependencies -->
     <MicrosoftDotNetApiCompatTaskVersion>10.0.100</MicrosoftDotNetApiCompatTaskVersion>
     <!-- external dependencies -->
     <NewtonsoftJsonVersion>13.0.4</NewtonsoftJsonVersion>
-    <OctokitVersion>14.0.0</OctokitVersion>
   </PropertyGroup>
 
 </Project>

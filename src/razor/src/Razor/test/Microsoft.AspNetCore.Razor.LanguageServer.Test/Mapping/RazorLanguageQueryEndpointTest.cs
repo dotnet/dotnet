@@ -143,7 +143,7 @@ public class RazorLanguageQueryEndpointTest : LanguageServerTestBase
             codeDocument,
             projectedCSharpSource,
             sourceMappings);
-        codeDocument.SetCSharpDocument(csharpDocument);
+        codeDocument = codeDocument.WithCSharpDocument(csharpDocument);
         return codeDocument;
     }
 }

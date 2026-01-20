@@ -71,7 +71,7 @@ internal static class DelegatedCompletionHelper
 
         if (languageKind == RazorLanguageKind.Html)
         {
-            // For HTML we don't want to delegate to HTML language server is completion is due to a trigger characters that is not
+            // For HTML we don't want to delegate to HTML language server if completion is due to a trigger characters that is not
             // HTML trigger character. Doing so causes bad side effects in VSCode HTML client as we will end up with non-matching
             // completion entries
             return triggerAndCommitCharacters.IsHtmlTriggerCharacter(triggerCharacter) ? context : null;
@@ -255,7 +255,7 @@ internal static class DelegatedCompletionHelper
             {
                 if (node is MarkupElementSyntax elementNode)
                 {
-                    if (RazorSyntaxFacts.IsStyleBlock(elementNode) || RazorSyntaxFacts.IsScriptBlock(elementNode))
+                    if (RazorSyntaxFacts.IsScriptOrStyleBlock(elementNode))
                     {
                         return true;
                     }

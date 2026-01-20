@@ -1,9 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Intent;
-using FluentAssertions;
-using vstest.ProgrammerTests.Fakes;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
@@ -11,8 +10,12 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
-using System.Reflection;
-using System.Diagnostics.CodeAnalysis;
+
+using FluentAssertions;
+
+using Intent;
+
+using vstest.ProgrammerTests.Fakes;
 
 namespace vstest.ProgrammerTests;
 

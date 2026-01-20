@@ -56,7 +56,7 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         }
                     </GridTable>
                     """,
-            tagHelpers: tagHelpers);
+            tagHelpers: [.. tagHelpers]);
     }
 
     [FormattingTestFact]
@@ -80,7 +80,7 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         </GridRow>
                     </GridTable>
                     """,
-            tagHelpers: tagHelpers);
+            tagHelpers: [.. tagHelpers]);
     }
 
     [FormattingTestFact]
@@ -102,7 +102,7 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         </GridRow>
                     </GridTable>
                     """,
-            tagHelpers: tagHelpers);
+            tagHelpers: [.. tagHelpers]);
     }
 
     [FormattingTestFact]
@@ -124,7 +124,7 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         </GridRow>
                     </GridTable>
                     """,
-            tagHelpers: tagHelpers);
+            tagHelpers: [.. tagHelpers]);
     }
 
     [FormattingTestFact]
@@ -150,7 +150,7 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         </GridRow>
                     </GridTable>
                     """,
-            tagHelpers: tagHelpers);
+            tagHelpers: [.. tagHelpers]);
     }
 
     [FormattingTestFact]
@@ -198,7 +198,7 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         </ChildContent>
                     </GridTable>
                     """,
-            tagHelpers: GetComponents());
+            tagHelpers: [.. GetComponents()]);
     }
 
     [FormattingTestFact]
@@ -260,10 +260,10 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         </a_really_long_tag_name>
                     }
                     """,
-            tagHelpers: GetComponents());
+            tagHelpers: [.. GetComponents()]);
     }
 
-    [FormattingTestFact(Skip = "Requires fix")]
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/8228")]
     public async Task FormatNestedComponents4()
     {
@@ -279,12 +279,12 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
             expected: """
                     @{
                         RenderFragment fragment =
-                        @<Component1 Id="Comp1"
-                                     Caption="Title">
-                        </Component1>;
+                          @<Component1 Id="Comp1"
+                                       Caption="Title">
+                          </Component1>;
                     }
                     """,
-            tagHelpers: GetComponents());
+            tagHelpers: [.. GetComponents()]);
     }
 
     [FormattingTestFact]
@@ -307,12 +307,12 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         @{
                             RenderFragment fragment =
                             @<Component1 Id="Comp1"
-                                             Caption="Title">
+                                         Caption="Title">
                             </Component1>;
                         }
                     </Component1>
                     """,
-            tagHelpers: GetComponents());
+            tagHelpers: [.. GetComponents()]);
     }
 
     [FormattingTestFact]
@@ -360,7 +360,7 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                     </ChildContent>
                     </GridTable>
                     """,
-            tagHelpers: GetComponents());
+            tagHelpers: [.. GetComponents()]);
     }
 
     [FormattingTestFact]
@@ -398,7 +398,7 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         }
                     </Select>
                     """,
-            tagHelpers: CreateTagHelpers());
+            tagHelpers: [.. CreateTagHelpers()]);
 
         ImmutableArray<TagHelperDescriptor> CreateTagHelpers()
         {
@@ -464,11 +464,11 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                     <div Model="SomeModel">
                         <div />
                         @{
-                        #if DEBUG
-                            }
-                            <div />
-                            @{
-                        #endif
+                    #if DEBUG
+                    }
+                     <div />
+                    @{
+                    #endif
 
                         }
                     </div>
@@ -480,7 +480,7 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
             allowDiagnostics: true);
     }
 
-    private ImmutableArray<TagHelperDescriptor> GetComponents()
+    private TagHelperCollection GetComponents()
     {
         AdditionalSyntaxTrees.Add(Parse("""
                 using Microsoft.AspNetCore.Components;

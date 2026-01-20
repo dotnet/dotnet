@@ -603,7 +603,7 @@ public class ProjectStateTest(ITestOutputHelper testOutput) : ToolingTestBase(te
 
         // The configuration didn't change, but the tag helpers did
         Assert.Same(state.ProjectEngine, newState.ProjectEngine);
-        Assert.NotEqual<TagHelperDescriptor>(state.TagHelpers, newState.TagHelpers);
+        Assert.NotEqual(state.TagHelpers, newState.TagHelpers);
         Assert.NotSame(state.Documents[SomeProjectFile2.FilePath], newState.Documents[SomeProjectFile2.FilePath]);
         Assert.NotSame(state.Documents[AnotherProjectNestedFile3.FilePath], newState.Documents[AnotherProjectNestedFile3.FilePath]);
     }
@@ -856,11 +856,11 @@ public class ProjectStateTest(ITestOutputHelper testOutput) : ToolingTestBase(te
         Assert.Empty(documentPathSet);
     }
 
-    private static void AssertSameTagHelpers(ImmutableArray<TagHelperDescriptor> expected, ImmutableArray<TagHelperDescriptor> actual)
+    private static void AssertSameTagHelpers(TagHelperCollection expected, TagHelperCollection actual)
     {
-        Assert.Equal(expected.Length, actual.Length);
+        Assert.Equal(expected.Count, actual.Count);
 
-        for (var i = 0; i < expected.Length; i++)
+        for (var i = 0; i < expected.Count; i++)
         {
             Assert.Same(expected[i], actual[i]);
         }

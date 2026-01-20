@@ -1,8 +1,9 @@
 <Project Sdk="Microsoft.Build.NoTargets">
+
   <Import Project="$(RepositoryEngineeringDir)shared-source-only.targets" />
 
   <PropertyGroup>
-    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <SkipSharedSourceOnlyImport>true</SkipSharedSourceOnlyImport>
     <SharedComponentFilterMode>$(SharedComponentFilter_BootstrapOnly)</SharedComponentFilterMode>
   </PropertyGroup>
@@ -12,11 +13,10 @@
   </ItemGroup>
 
   <Target Name="CleanSharedComponentsArtifacts"
-          BeforeTargets="Build"
+          AfterTargets="Build"
           DependsOnTargets="GetFilteredSharedComponentPackages"
           Condition="'$(DotNetBuildSourceOnly)' == 'true' and ('$(SharedComponentsPrereqsArchiveFile)' != '' or '$(CustomSharedComponentsArtifactsPath)' != '')"
           Outputs="$(BaseIntermediateOutputPath)UpdateSharedComponentsArtifacts.complete">
-
     <ItemGroup>
       <_BootstrapPackagesToDelete Include="@(SharedComponentFilteredPackages->'%(PackagePath)')" />
     </ItemGroup>
@@ -27,7 +27,6 @@
         shared-components sources.
      -->
     <Delete Files="@(_BootstrapPackagesToDelete)" Condition="'@(_BootstrapPackagesToDelete)' != ''" />
-
   </Target>
 
 </Project>

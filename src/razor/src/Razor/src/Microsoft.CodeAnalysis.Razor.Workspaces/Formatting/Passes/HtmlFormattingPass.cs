@@ -1,8 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Linq;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.TextDifferencing;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
@@ -24,6 +25,8 @@ internal sealed class HtmlFormattingPass(IDocumentMappingService documentMapping
 
         if (changes.Length > 0)
         {
+            context.Logger?.LogSourceText("HtmlSourceText", context.CodeDocument.GetHtmlSourceText(cancellationToken));
+
             // There is a lot of uncertainty when we're dealing with edits that come from the Html formatter
             // because we are not responsible for it. It could make all sorts of strange edits, and it could
             // structure those edits is all sorts of ways. eg, it could have individual character edits, or
@@ -49,8 +52,7 @@ internal sealed class HtmlFormattingPass(IDocumentMappingService documentMapping
             // doing the work to convert edits to changes).
             if (changes.Any(static e => e.NewText?.Contains('~') ?? false))
             {
-                var htmlSourceText = context.CodeDocument.GetHtmlSourceText();
-                context.Logger?.LogSourceText("HtmlSourceText", htmlSourceText);
+                var htmlSourceText = context.CodeDocument.GetHtmlSourceText(cancellationToken);
                 var htmlWithChanges = htmlSourceText.WithChanges(changes);
 
                 changes = SourceTextDiffer.GetMinimalTextChanges(htmlSourceText, htmlWithChanges, DiffKind.Word);
@@ -85,13 +87,25 @@ internal sealed class HtmlFormattingPass(IDocumentMappingService documentMapping
         var syntaxRoot = codeDocument.GetRequiredSyntaxRoot();
         var sourceText = codeDocument.Source.Text;
         SyntaxNode? csharpSyntaxRoot = null;
+        ImmutableArray<TextSpan> scriptAndStyleElementContentSpans = default;
 
         using var changesToKeep = new PooledArrayBuilder<TextChange>(capacity: changes.Length);
 
         foreach (var change in changes)
         {
-            // We don't keep changes that start inside of a razor comment block.
+            // We don't keep indentation changes that aren't in a script or style block
+            // As a quick check, we only care about dropping edits that affect indentation - ie, are before the first
+            // whitespace char on a line
+            var line = sourceText.Lines.GetLineFromPosition(change.Span.Start);
+            if (change.Span.Start <= line.GetFirstNonWhitespacePosition() &&
+                !ChangeIsInsideScriptOrStyleElement(change))
+            {
+                context.Logger?.LogMessage($"Dropping change {change} because it's a change to line indentation, but not in a script or style block");
+                continue;
+            }
+
             var node = syntaxRoot.FindInnermostNode(change.Span.Start);
+            // We don't keep changes that start inside of a razor comment block.
             var comment = node?.FirstAncestorOrSelf<RazorCommentBlockSyntax>();
             if (comment is not null && change.Span.Start > comment.SpanStart)
             {
@@ -105,7 +119,7 @@ internal sealed class HtmlFormattingPass(IDocumentMappingService documentMapping
             //      void Foo()
             //      {
             //          Render(@<SurveyPrompt />);
-            //      {
+            //      }
             // }
             //
             // This is popular in some libraries, like bUnit. The issue here is that
@@ -148,25 +162,103 @@ internal sealed class HtmlFormattingPass(IDocumentMappingService documentMapping
                 // for any literal, as the only literals that can contain spaces, which is what the Html formatter
                 // will wrap on, are strings. And if it did decide to insert a newline into a number, or the 'null'
                 // keyword, that would be pretty bad too.
-                if (csharpSyntaxRoot is null)
+                if (await ChangeIsInStringLiteralAsync(context, csharpDocument, change, cancellationToken).ConfigureAwait(false))
                 {
-                    var csharpSyntaxTree = await context.OriginalSnapshot.GetCSharpSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
-                    csharpSyntaxRoot = await csharpSyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
-                }
-
-                if (_documentMappingService.TryMapToCSharpDocumentPosition(csharpDocument, change.Span.Start, out _, out var csharpIndex) &&
-                    csharpSyntaxRoot.FindNode(new TextSpan(csharpIndex, 0), getInnermostNodeForTie: true) is { } csharpNode &&
-                    csharpNode is CSharp.Syntax.LiteralExpressionSyntax or CSharp.Syntax.InterpolatedStringTextSyntax)
-                {
-                    context.Logger?.LogMessage($"Dropping change {change} because it breaks a C# string literal");
                     continue;
                 }
+            }
+
+            // As well as breaking long string literals, above, in VS Code the formatter will also potentially remove spaces
+            // within a string literal, and in both VS and VS Code, they will happily remove indentation inside a multi-line
+            // verbatim string, or raw string literal. Simply dropping any edit that is removing content from a string literal
+            // fixes this. Strictly speaking we only need to care about removing whitespace, not removing anything else, but
+            // we never want the formatter to remove anything else anyway.
+            if (change.NewText?.Length == 0 &&
+                await ChangeIsInStringLiteralAsync(context, csharpDocument, change, cancellationToken).ConfigureAwait(false))
+            {
+                continue;
             }
 
             changesToKeep.Add(change);
         }
 
         return changesToKeep.ToImmutableAndClear();
+
+        async Task<bool> ChangeIsInStringLiteralAsync(FormattingContext context, RazorCSharpDocument csharpDocument, TextChange change, CancellationToken cancellationToken)
+        {
+            if (csharpSyntaxRoot is null)
+            {
+                var csharpSyntaxTree = await context.OriginalSnapshot.GetCSharpSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+                csharpSyntaxRoot = await csharpSyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
+            }
+
+            if (_documentMappingService.TryMapToCSharpDocumentPosition(csharpDocument, change.Span.Start, out _, out var csharpIndex) &&
+                csharpSyntaxRoot.FindNode(new TextSpan(csharpIndex, 0), getInnermostNodeForTie: true) is { } csharpNode &&
+                csharpNode.IsStringLiteral())
+            {
+                context.Logger?.LogMessage($"Dropping change {change} because it breaks a C# string literal");
+                return true;
+            }
+
+            return false;
+        }
+
+        bool ChangeIsInsideScriptOrStyleElement(TextChange change)
+        {
+            // Rather than ascend up the tree for every change, and look for script/style elements, we build up an index
+            // first and just reuse it for every subsequent edit.
+            InitializeElementContentSpanArray();
+
+            // If there aren't any elements we're interested in, we don't need to do anything
+            if (scriptAndStyleElementContentSpans.Length == 0)
+            {
+                return false;
+            }
+
+            var index = scriptAndStyleElementContentSpans.BinarySearchBy(change.Span.Start, static (span, pos) =>
+            {
+                if (span.Contains(pos))
+                {
+                    return 0;
+                }
+
+                return span.Start.CompareTo(pos);
+            });
+
+            // If we got a hit, then we're inside a tag we care about
+            return index >= 0;
+        }
+
+        void InitializeElementContentSpanArray()
+        {
+            if (!scriptAndStyleElementContentSpans.IsDefault)
+            {
+                return;
+            }
+
+            using var boundsBuilder = new PooledArrayBuilder<TextSpan>();
+
+            // We only care about "top level" block type structures (ie, a script tag isn't going to appear in the middle of a C# expression) so
+            // we only need to descend into the document itself, or nodes that might contain directives, or other elements in case of nesting.
+            foreach (var element in syntaxRoot.DescendantNodes(static node => node is MarkupElementSyntax || node.MayContainDirectives()).OfType<MarkupElementSyntax>())
+            {
+                if (RazorSyntaxFacts.IsScriptOrStyleBlock(element) &&
+                    element.GetLinePositionSpan(codeDocument.Source).SpansMultipleLines())
+                {
+
+                    // We only want the contents of the script tag to be included, but not whitespace before the end tag if
+                    // there is only whitespace before the tag, so the calculation of the end is a little annoying.
+                    var endTagline = sourceText.Lines.GetLineFromPosition(element.EndTag.SpanStart);
+                    var firstNonWhitespace = endTagline.GetFirstNonWhitespacePosition();
+                    var end = firstNonWhitespace == element.EndTag.SpanStart
+                        ? endTagline.Start
+                        : firstNonWhitespace.GetValueOrDefault() + 1; // Add one to the end, because we want end to be inclusive, and the parameter is exclusive
+                    boundsBuilder.Add(TextSpan.FromBounds(element.StartTag.EndPosition, end));
+                }
+            }
+
+            scriptAndStyleElementContentSpans = boundsBuilder.ToImmutableAndClear();
+        }
     }
 
     internal TestAccessor GetTestAccessor() => new(this);

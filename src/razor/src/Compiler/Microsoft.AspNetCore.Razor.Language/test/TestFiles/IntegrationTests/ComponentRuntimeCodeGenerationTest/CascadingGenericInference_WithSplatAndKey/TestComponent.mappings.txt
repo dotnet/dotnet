@@ -25,16 +25,16 @@ Generated Location: (1940:60,0 [9] )
 
 Source Location: (66:1,1 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Grid|
-Generated Location: (2711:83,0 [4] )
+Generated Location: (2629:80,45 [4] )
 |Grid|
 
 Source Location: (89:1,24 [5] x:\dir\subdir\Test\TestComponent.cshtml)
 |Items|
-Generated Location: (2955:92,0 [5] )
+Generated Location: (2813:84,0 [5] )
 |Items|
 
 Source Location: (131:2,5 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |Column|
-Generated Location: (3905:112,0 [6] )
+Generated Location: (3680:101,45 [6] )
 |Column|
 

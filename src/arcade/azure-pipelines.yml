@@ -40,7 +40,7 @@ extends:
   parameters:
     pool:
       name: $(DncEngInternalBuildPool)
-      image: windows.vs2019.amd64
+      image: windows.vs2022.amd64
       os: windows
     sdl:
       policheck:

@@ -16,11 +16,10 @@ internal class DefaultRazorParsingPhase : RazorEnginePhaseBase, IRazorParsingPha
     private static readonly object s_importTreesLock = new();
 #endif
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
+    protected override RazorCodeDocument ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
         var options = codeDocument.ParserOptions;
         var syntaxTree = RazorSyntaxTree.Parse(codeDocument.Source, options, cancellationToken);
-        codeDocument.SetSyntaxTree(syntaxTree);
 
         using var importSyntaxTrees = new PooledArrayBuilder<RazorSyntaxTree>(codeDocument.Imports.Length);
 
@@ -62,7 +61,9 @@ internal class DefaultRazorParsingPhase : RazorEnginePhaseBase, IRazorParsingPha
             importSyntaxTrees.Add(tree);
         }
 
-        codeDocument.SetImportSyntaxTrees(importSyntaxTrees.ToImmutableAndClear());
+        return codeDocument
+            .WithSyntaxTree(syntaxTree)
+            .WithImportSyntaxTrees(importSyntaxTrees.ToImmutableAndClear());
 
         static bool TryGetCachedImportTree(RazorSourceDocument import, RazorParserOptions options, [NotNullWhen(true)] out RazorSyntaxTree? tree)
             => s_importTrees.TryGetValue(import, out tree) && tree.Options.Equals(options);

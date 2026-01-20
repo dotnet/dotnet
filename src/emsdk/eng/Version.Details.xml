@@ -50,101 +50,101 @@
       <Uri>https://github.com/dotnet/cpython</Uri>
       <Sha>4aa3d0654cbc3113e06633d7230d62db3214d9f3</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.25607.1">
+    <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26061.1">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>fbf55e071a07059e86b5b7e259c200d889701170</Sha>
+      <Sha>7a708d1adab0930c09ef65586d354aafb2ab27cf</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-musl-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.25607.1">
+    <Dependency Name="runtime.linux-musl-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26061.1">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>fbf55e071a07059e86b5b7e259c200d889701170</Sha>
+      <Sha>7a708d1adab0930c09ef65586d354aafb2ab27cf</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.25607.1">
+    <Dependency Name="runtime.linux-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26061.1">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>fbf55e071a07059e86b5b7e259c200d889701170</Sha>
+      <Sha>7a708d1adab0930c09ef65586d354aafb2ab27cf</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-musl-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.25607.1">
+    <Dependency Name="runtime.linux-musl-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26061.1">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>fbf55e071a07059e86b5b7e259c200d889701170</Sha>
+      <Sha>7a708d1adab0930c09ef65586d354aafb2ab27cf</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.25607.1">
+    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26061.1">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>fbf55e071a07059e86b5b7e259c200d889701170</Sha>
+      <Sha>7a708d1adab0930c09ef65586d354aafb2ab27cf</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.25607.1">
+    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26061.1">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>fbf55e071a07059e86b5b7e259c200d889701170</Sha>
+      <Sha>7a708d1adab0930c09ef65586d354aafb2ab27cf</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.25607.1">
+    <Dependency Name="runtime.win-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26061.1">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>fbf55e071a07059e86b5b7e259c200d889701170</Sha>
+      <Sha>7a708d1adab0930c09ef65586d354aafb2ab27cf</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.25607.1">
+    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26061.1">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>fbf55e071a07059e86b5b7e259c200d889701170</Sha>
+      <Sha>7a708d1adab0930c09ef65586d354aafb2ab27cf</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.Wasm.LLVM.Transport" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.Wasm.LLVM.Transport" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-musl-arm64.Microsoft.NETCore.Runtime.Wasm.LLVM.Transport" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.linux-musl-arm64.Microsoft.NETCore.Runtime.Wasm.LLVM.Transport" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-x64.Microsoft.NETCore.Runtime.Wasm.LLVM.Transport" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.linux-x64.Microsoft.NETCore.Runtime.Wasm.LLVM.Transport" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-musl-x64.Microsoft.NETCore.Runtime.Wasm.LLVM.Transport" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.linux-musl-x64.Microsoft.NETCore.Runtime.Wasm.LLVM.Transport" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.Wasm.LLVM.Transport" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.Wasm.LLVM.Transport" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.Wasm.LLVM.Transport" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.Wasm.LLVM.Transport" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-arm64.Microsoft.NETCore.Runtime.Wasm.LLVM.Transport" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.win-arm64.Microsoft.NETCore.Runtime.Wasm.LLVM.Transport" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.Wasm.LLVM.Transport" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.Wasm.LLVM.Transport" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.JIT.Tools" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.JIT.Tools" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-x64.Microsoft.NETCore.Runtime.JIT.Tools" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.linux-x64.Microsoft.NETCore.Runtime.JIT.Tools" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-musl-arm64.Microsoft.NETCore.Runtime.JIT.Tools" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.linux-musl-arm64.Microsoft.NETCore.Runtime.JIT.Tools" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-musl-x64.Microsoft.NETCore.Runtime.JIT.Tools" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.linux-musl-x64.Microsoft.NETCore.Runtime.JIT.Tools" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-arm64.Microsoft.NETCore.Runtime.JIT.Tools" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.win-arm64.Microsoft.NETCore.Runtime.JIT.Tools" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.JIT.Tools" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.JIT.Tools" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.JIT.Tools" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.JIT.Tools" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.JIT.Tools" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.JIT.Tools" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NETCore.Runtime.Wasm.Emscripten.Transport" Version="11.0.0-alpha.1.25607.1">
       <Uri>https://github.com/dotnet/emscripten</Uri>
@@ -152,89 +152,89 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.Mono.LLVM.Libclang" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.Mono.LLVM.Libclang" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.Mono.LLVM.Sdk" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.Mono.LLVM.Sdk" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.Mono.LLVM.Tools" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.Mono.LLVM.Tools" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-musl-arm64.Microsoft.NETCore.Runtime.Mono.LLVM.Libclang" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.linux-musl-arm64.Microsoft.NETCore.Runtime.Mono.LLVM.Libclang" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-musl-arm64.Microsoft.NETCore.Runtime.Mono.LLVM.Sdk" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.linux-musl-arm64.Microsoft.NETCore.Runtime.Mono.LLVM.Sdk" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-musl-arm64.Microsoft.NETCore.Runtime.Mono.LLVM.Tools" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.linux-musl-arm64.Microsoft.NETCore.Runtime.Mono.LLVM.Tools" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Libclang" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.linux-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Libclang" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Sdk" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.linux-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Sdk" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Tools" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.linux-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Tools" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-musl-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Libclang" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.linux-musl-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Libclang" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-musl-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Sdk" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.linux-musl-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Sdk" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-musl-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Tools" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.linux-musl-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Tools" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Libclang" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Libclang" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Sdk" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Sdk" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Tools" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Tools" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.Mono.LLVM.Libclang" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.Mono.LLVM.Libclang" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.Mono.LLVM.Sdk" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.Mono.LLVM.Sdk" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.Mono.LLVM.Tools" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.Mono.LLVM.Tools" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Libclang" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Libclang" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Sdk" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Sdk" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Tools" Version="19.1.0-alpha.1.25574.1">
+    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.Mono.LLVM.Tools" Version="19.1.0-alpha.1.25625.2">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
-      <Sha>a504aeb8ef551dbd01b94df9af22f4cfa2bf90d9</Sha>
+      <Sha>90a3b767fd10543cbaed7308406e0059dec0ffb7</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.25611.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
