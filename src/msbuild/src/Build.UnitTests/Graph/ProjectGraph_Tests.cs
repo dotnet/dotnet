@@ -1804,7 +1804,7 @@ $@"
         }
 
         [Theory]
-        [MemberData(nameof(Graphs), DisableDiscoveryEnumeration = true)]
+        [MemberData(nameof(Graphs))]
         public void TopologicalSortShouldTopologicallySort(Dictionary<int, int[]> edges)
         {
             using (var env = TestEnvironment.Create())
@@ -1827,7 +1827,7 @@ $@"
         }
 
         [Theory]
-        [MemberData(nameof(Graphs), DisableDiscoveryEnumeration = true)]
+        [MemberData(nameof(Graphs))]
         public void DotNotationShouldRepresentGraph(Dictionary<int, int[]> edges)
         {
             var graph = Helpers.CreateProjectGraph(
@@ -2320,7 +2320,7 @@ $@"
         }
 
         [Theory]
-        [MemberData(nameof(AllNodesShouldHaveGraphBuildGlobalPropertyData), DisableDiscoveryEnumeration = true)]
+        [MemberData(nameof(AllNodesShouldHaveGraphBuildGlobalPropertyData))]
         public void AllNodesShouldHaveGraphBuildGlobalProperty(Dictionary<int, int[]> edges, int[] entryPoints, Dictionary<string, string> globalProperties)
         {
             using (var env = TestEnvironment.Create())
@@ -2354,7 +2354,7 @@ $@"
         }
 
         [Theory]
-        [MemberData(nameof(Graphs), DisableDiscoveryEnumeration = true)]
+        [MemberData(nameof(Graphs))]
         public void GraphShouldSupportTransitiveReferences(Dictionary<int, int[]> edges)
         {
             var graph = Helpers.CreateProjectGraph(
@@ -2479,7 +2479,7 @@ $@"
         }
 
         [Theory]
-        [MemberData(nameof(TransitiveReferencesAreDefinedPerProjectTestData), DisableDiscoveryEnumeration = true)]
+        [MemberData(nameof(TransitiveReferencesAreDefinedPerProjectTestData))]
         public void TransitiveReferencesAreDefinedPerProject(
             Dictionary<int, int[]> edges,
             Dictionary<int, string> extraContentPerProjectNumber,

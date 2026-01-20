@@ -109,11 +109,6 @@ namespace Microsoft.Build.BackEnd
         private string _taskName;
 
         /// <summary>
-        /// The project file path that runs the task.
-        /// </summary>
-        private string _projectFile;
-
-        /// <summary>
         /// The XML location of the task element.
         /// </summary>
         private ElementLocation _taskLocation;
@@ -231,10 +226,6 @@ namespace Microsoft.Build.BackEnd
             set => _taskFactoryWrapper = value;
         }
 
-#if !NET35
-        private HostServices _hostServices;
-#endif
-
 #if FEATURE_APPDOMAIN
         /// <summary>
         /// App domain configuration.
@@ -261,39 +252,22 @@ namespace Microsoft.Build.BackEnd
         /// <summary>
         /// Initialize to run a specific task.
         /// </summary>
-        public void InitializeForTask(
-            IBuildEngine2 buildEngine,
-            TargetLoggingContext loggingContext,
-            ProjectInstance projectInstance,
-            string taskName,
-            ElementLocation taskLocation,
-            ITaskHost taskHost,
-            bool continueOnError,
-            string projectFile,
+        public void InitializeForTask(IBuildEngine2 buildEngine, TargetLoggingContext loggingContext, ProjectInstance projectInstance, string taskName, ElementLocation taskLocation, ITaskHost taskHost, bool continueOnError,
 #if FEATURE_APPDOMAIN
             AppDomainSetup appDomainSetup,
 #endif
-#if !NET35
-            HostServices hostServices,
-#endif
-            bool isOutOfProc,
-            CancellationToken cancellationToken,
-            TaskEnvironment taskEnvironment)
+            bool isOutOfProc, CancellationToken cancellationToken, TaskEnvironment taskEnvironment)
         {
             _buildEngine = buildEngine;
             _projectInstance = projectInstance;
             _targetLoggingContext = loggingContext;
             _taskName = taskName;
-            _projectFile = projectFile;
             _taskLocation = taskLocation;
             _cancellationTokenRegistration = cancellationToken.Register(Cancel);
             _taskHost = taskHost;
             _taskExecutionIdle.Set();
 #if FEATURE_APPDOMAIN
             AppDomainSetup = appDomainSetup;
-#endif
-#if !NET35
-            _hostServices = hostServices;
 #endif
             IsOutOfProc = isOutOfProc;
             TaskEnvironment = taskEnvironment;
@@ -996,15 +970,7 @@ namespace Microsoft.Build.BackEnd
             {
                 if (_taskFactoryWrapper.TaskFactory is AssemblyTaskFactory assemblyTaskFactory)
                 {
-                    task = assemblyTaskFactory.CreateTaskInstance(
-                        _taskLocation,
-                        _taskLoggingContext,
-                        _buildComponentHost,
-                        taskIdentityParameters,
-                        _projectFile,
-#if !NET35
-                        _hostServices,
-#endif
+                    task = assemblyTaskFactory.CreateTaskInstance(_taskLocation, _taskLoggingContext, _buildComponentHost, taskIdentityParameters,
 #if FEATURE_APPDOMAIN
                         AppDomainSetup,
 #endif
@@ -1848,12 +1814,8 @@ namespace Microsoft.Build.BackEnd
                 taskHostParameters,
                 taskLoadedType,
                 useSidecarTaskHost: true,
-                _projectFile,
 #if FEATURE_APPDOMAIN
                 AppDomainSetup,
-#endif
-#if !NET35
-                _hostServices,
 #endif
                 scheduledNodeId,
                 TaskEnvironment);

@@ -43,7 +43,6 @@ namespace Microsoft.Build.Framework
                 writer.WriteOptionalString(kvp.Value);
             }
         }
-
         internal override void CreateFromStream(BinaryReader reader, int version)
         {
             base.CreateFromStream(reader, version);

@@ -3065,7 +3065,7 @@ namespace Microsoft.Build.UnitTests.OM.Definition
         }
 
         [Theory]
-        [MemberData(nameof(GetItemProvenanceByProjectItemTestData), DisableDiscoveryEnumeration = true)]
+        [MemberData(nameof(GetItemProvenanceByProjectItemTestData))]
         public void GetItemProvenanceByProjectItem(string items, string itemValue, int itemPosition, ProvenanceResultTupleList expected)
         {
             var formattedProject = string.Format(ProjectWithItemGroup, items);
@@ -3486,7 +3486,7 @@ namespace Microsoft.Build.UnitTests.OM.Definition
             }
         }
         [Theory]
-        [MemberData(nameof(GetItemProvenanceShouldWorkWithEscapedCharactersTestData), DisableDiscoveryEnumeration = true)]
+        [MemberData(nameof(GetItemProvenanceShouldWorkWithEscapedCharactersTestData))]
         public void GetItemProvenanceShouldWorkWithEscapedCharacters(string project, string provenanceArgument, ProvenanceResultTupleList expectedProvenance)
         {
             AssertProvenanceResult(expectedProvenance, project, provenanceArgument);

@@ -55,10 +55,10 @@ internal class TelemetryForwarderProvider : IBuildComponent
         // in future, this might be per event type
         public bool IsTelemetryCollected => true;
 
-        public void AddTask(string name, TimeSpan cumulativeExecutionTime, short executionsCount, long totalMemoryConsumed, bool isCustom, bool isFromNugetCache, string? taskFactoryName, string? taskHostRuntime)
+        public void AddTask(string name, TimeSpan cumulativeExecutionTime, short executionsCount, long totalMemoryConsumed, bool isCustom, bool isFromNugetCache)
         {
             var key = GetKey(name, isCustom, false, isFromNugetCache);
-            _workerNodeTelemetryData.AddTask(key, cumulativeExecutionTime, executionsCount, totalMemoryConsumed, taskFactoryName, taskHostRuntime);
+            _workerNodeTelemetryData.AddTask(key, cumulativeExecutionTime, executionsCount, totalMemoryConsumed);
         }
 
         public void AddTarget(string name, bool wasExecuted, bool isCustom, bool isMetaproj, bool isFromNugetCache)
@@ -83,8 +83,7 @@ internal class TelemetryForwarderProvider : IBuildComponent
     {
         public bool IsTelemetryCollected => false;
 
-        public void AddTask(string name, TimeSpan cumulativeExecutionTime, short executionsCount, long totalMemoryConsumed, bool isCustom, bool isFromNugetCache, string? taskFactoryName, string? taskHostRuntime) { }
-
+        public void AddTask(string name, TimeSpan cumulativeExecutionTime, short executionsCount, long totalMemoryConsumed, bool isCustom, bool isFromNugetCache) { }
         public void AddTarget(string name, bool wasExecuted, bool isCustom, bool isMetaproj, bool isFromNugetCache) { }
 
         public void FinalizeProcessing(LoggingContext loggingContext) { }
