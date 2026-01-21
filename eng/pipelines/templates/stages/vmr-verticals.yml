@@ -271,6 +271,21 @@ stages:
 
         - template: ../jobs/vmr-build.yml
           parameters:
+            buildName: Browser_CoreCLR_Shortstack_wasm
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Linux_Shortstack }}
+            container:
+              name: ${{ variables.browserCrossContainerName }}
+              image: ${{ variables.browserCrossContainerImage }}
+            crossRootFs: '/crossrootfs/x64'
+            targetOS: browser
+            targetArchitecture: wasm
+            extraProperties: /p:RuntimeFlavor=CoreCLR
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
             buildName: LinuxBionic_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             sign: ${{ variables.signEnabled }}
@@ -678,6 +693,7 @@ stages:
           - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
             - Browser_Shortstack_wasm
             - Browser_Multithreaded_Shortstack_wasm
+            - Browser_CoreCLR_Shortstack_wasm
             - Wasi_Shortstack_wasm
             - Android_Shortstack_arm64
             - Android_Shortstack_arm
