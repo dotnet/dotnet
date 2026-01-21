@@ -1168,7 +1168,7 @@ namespace Microsoft.Deployment.MageCLI
                     {
                         try
                         {
-                            X509Certificate2 cert = new X509Certificate2(certPath, certPassword);
+                            X509Certificate2 cert = X509CertificateLoader.LoadPkcs12FromFile(certPath, certPassword);
                             result = Utilities.Certificate.CanSignWith(cert);
                             if (!result)
                             {

@@ -685,7 +685,7 @@ namespace Microsoft.Deployment.CommandLineParser
             
             public Type Type
             {
-                get { return field.FieldType; }
+                get { return this.field.FieldType; }
             }
             
             public bool IsCollection
