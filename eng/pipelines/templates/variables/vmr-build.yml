@@ -265,7 +265,7 @@ variables:
   - name: poolImage_Linux
     value: build.ubuntu.2204.amd64.open
   - name: poolImage_LinuxArm64
-    value: Mariner-2-Docker-ARM64
+    value: azure-linux-3-arm64-public
   - name: poolName_LinuxArm64
     value: Docker-Linux-Arm-Public
   - name: poolImage_Mac
