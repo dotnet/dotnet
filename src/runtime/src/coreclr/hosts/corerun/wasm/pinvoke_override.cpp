@@ -13,4 +13,13 @@ void add_pinvoke_override()
     PInvokeOverride::SetPInvokeOverride(callhelpers_pinvoke_override, PInvokeOverride::Source::RuntimeConfiguration);
 }
 
-// Putting in some content that will conflict with the repository
+// fake implementations to satisfy the linker
+// to avoid linking corerun against libSystem.Runtime.InteropServices.JavaScript.Native
+extern "C" {
+    void * SystemInteropJS_BindJSImportST (void *) { _ASSERTE(!"Should not be reached"); return nullptr; }
+    void SystemInteropJS_CancelPromise (void *) { _ASSERTE(!"Should not be reached"); }
+    void SystemInteropJS_InvokeJSFunction (void *, void *) { _ASSERTE(!"Should not be reached"); }
+    void SystemInteropJS_InvokeJSImportST (int32_t, void *) { _ASSERTE(!"Should not be reached"); }
+    void SystemInteropJS_ReleaseCSOwnedObject (void *) { _ASSERTE(!"Should not be reached"); }
+    void SystemInteropJS_ResolveOrRejectPromise (void *) { _ASSERTE(!"Should not be reached"); }
+}
