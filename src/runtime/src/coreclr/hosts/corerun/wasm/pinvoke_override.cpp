@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <sal.h>
+#include <stdmacros.h>
 #include "pinvokeoverride.h"
 
 const void* callhelpers_pinvoke_override(const char* library_name, const char* entry_point_name);
@@ -11,3 +12,5 @@ void add_pinvoke_override()
 {
     PInvokeOverride::SetPInvokeOverride(callhelpers_pinvoke_override, PInvokeOverride::Source::RuntimeConfiguration);
 }
+
+// Putting in some content that will conflict with the repository
