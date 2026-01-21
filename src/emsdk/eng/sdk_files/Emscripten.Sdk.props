@@ -4,8 +4,8 @@
     <EmscriptenUpstreamBinPath>$(EmscriptenSdkToolsPath)bin\</EmscriptenUpstreamBinPath>
     <EmscriptenUpstreamEmscriptenPath>$(EmscriptenSdkToolsPath)emscripten\</EmscriptenUpstreamEmscriptenPath>
 
-    <EmscriptenVersion>$([System.IO.File]::ReadAllText('$(EmscriptenUpstreamEmscriptenPath)\emscripten-version.txt').Replace('&quot;', ''))</EmscriptenVersion>
-    <EmscriptenRevision>$([System.IO.File]::ReadAllText('$(EmscriptenUpstreamEmscriptenPath)\emscripten-revision.txt'))</EmscriptenRevision>
+    <EmscriptenVersion>$([System.IO.File]::ReadAllText('$(EmscriptenUpstreamEmscriptenPath)\emscripten-version.txt').Replace('&quot;', '').Trim())</EmscriptenVersion>
+    <EmscriptenRevision>$([System.IO.File]::ReadAllText('$(EmscriptenUpstreamEmscriptenPath)\emscripten-revision.txt').Trim())</EmscriptenRevision>
   </PropertyGroup>
 
   <ItemGroup>
