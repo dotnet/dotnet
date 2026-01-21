@@ -53,7 +53,7 @@
     </PropertyGroup>
     
     <Exec
-        Command="&quot;$(DOTNET_HOST_PATH)&quot; restore &quot;$(MSBuildThisFileDirectory)wasm-dependencies.proj&quot; -bl:$(ArtifactsLogDir)/wasm-test-dependencies.binlog"
+        Command="&quot;$(DOTNET_HOST_PATH)&quot; restore &quot;$(MSBuildThisFileDirectory)wasm-dependencies.proj&quot; --configfile &quot;$(MSBuildThisFileDirectory)Microsoft.DotNet.SourceBuild.Tests/assets/online.NuGet.Config&quot; -bl:$(ArtifactsLogDir)/wasm-test-dependencies.binlog"
         EnvironmentVariables="NUGET_PACKAGES=$(_TmpPackagesRoot)"
     />
     
