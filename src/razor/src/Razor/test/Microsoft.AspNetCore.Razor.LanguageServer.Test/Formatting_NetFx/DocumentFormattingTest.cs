@@ -7218,6 +7218,21 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             attributeIndentStyle: AttributeIndentStyle.IndentByOne);
 
     [FormattingTestFact]
+    internal Task TextArea_WithAttributes_IndentByTwo()
+        => RunFormattingTestAsync(
+            input: """
+                <textarea name="foo"
+                                    id="foo">@("Foo")
+                     test</textarea>
+                """,
+            expected: """
+                <textarea name="foo"
+                        id="foo">@("Foo")
+                     test</textarea>
+                """,
+            attributeIndentStyle: AttributeIndentStyle.IndentByTwo);
+
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/11777")]
     public Task RangeFormat_AfterProperty()
         => RunFormattingTestAsync(
@@ -7585,6 +7600,51 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     </div>
                     """,
             attributeIndentStyle: CodeAnalysis.Razor.Settings.AttributeIndentStyle.IndentByOne);
+
+    [FormattingTestFact]
+    public Task HtmlAttributes_IndentByTwo()
+        => RunFormattingTestAsync(
+            input: """
+                    <div class="foo"
+                                disabled
+                            style="hello"
+                      @onclick="foo()">
+                    <InputSelect @onclick="foo()"
+                    TValue="Guid?"
+                     disabled
+                     style="hello">
+                     <p></p><a href="#"
+                     disabled
+                     style="hello"
+                    @onclick="foo()"/>
+                     <br class="a"
+                     style="b"
+                     disabled>
+                     <br />
+                    </InputSelect>
+                    </div>
+                    """,
+            expected: """
+                    <div class="foo"
+                            disabled
+                            style="hello"
+                            @onclick="foo()">
+                        <InputSelect @onclick="foo()"
+                                TValue="Guid?"
+                                disabled
+                                style="hello">
+                            <p></p><a href="#"
+                                    disabled
+                                    style="hello"
+                                    @onclick="foo()" />
+                            <br class="a"
+                                    style="b"
+                                    disabled>
+                            <br />
+                        </InputSelect>
+                    </div>
+                    """,
+            attributeIndentStyle: CodeAnalysis.Razor.Settings.AttributeIndentStyle.IndentByTwo);
 
     [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/12223")]

@@ -62,6 +62,11 @@
         <target state="translated">한 단계 들여쓰기</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_AttributeIndentStyleIndentByTwo">
+        <source>Indent by two levels</source>
+        <target state="new">Indent by two levels</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_AutoClosingTagsDescription">
         <source>If true, closing tags will be automatically inserted</source>
         <target state="translated">true이면 닫는 태그가 자동으로 삽입됩니다.</target>

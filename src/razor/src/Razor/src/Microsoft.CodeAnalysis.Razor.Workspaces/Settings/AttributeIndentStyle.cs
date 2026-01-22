@@ -13,5 +13,10 @@ internal enum AttributeIndentStyle
     /// <summary>
     /// Indents attributes on subsequent lines by one more level than the indentation level of the line the tag starts on
     /// </summary>
-    IndentByOne
+    IndentByOne,
+    /// <summary>
+    /// Indents attributes on subsequent lines by two more levels than the indentation level of the line the tag starts on.
+    /// This differentiates attributes from child elements, which are indented by one level.
+    /// </summary>
+    IndentByTwo
 }

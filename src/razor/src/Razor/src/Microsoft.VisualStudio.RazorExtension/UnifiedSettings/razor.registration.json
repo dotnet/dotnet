@@ -92,10 +92,11 @@
     "languages.razor.advanced.attributeIndentStyle": {
       "type": "string",
       "default": "alignWithFirst",
-      "enum": [ "alignWithFirst", "indentByOne" ],
+      "enum": [ "alignWithFirst", "indentByOne", "indentByTwo" ],
       "enumItemLabels": [
         "@Setting_AttributeIndentStyleAlignWithFirst;{13b72f58-279e-49e0-a56d-296be02f0805}",
-        "@Setting_AttributeIndentStyleIndentByOne;{13b72f58-279e-49e0-a56d-296be02f0805}"
+        "@Setting_AttributeIndentStyleIndentByOne;{13b72f58-279e-49e0-a56d-296be02f0805}",
+        "@Setting_AttributeIndentStyleIndentByTwo;{13b72f58-279e-49e0-a56d-296be02f0805}"
       ],
       "title": "@Setting_AttributeIndentStyleDisplayName;{13b72f58-279e-49e0-a56d-296be02f0805}",
       "description": "@Setting_AttributeIndentStyleDescription;{13b72f58-279e-49e0-a56d-296be02f0805}"
