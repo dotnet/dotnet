@@ -26,7 +26,7 @@
 
     <!-- BEGIN - SPECIFIC OVERRIDES for 10.0.2xx. Those are overrides instead of updates to reduce risk of git conflicts in codeflow -->
     <FSharpPreReleaseIteration></FSharpPreReleaseIteration>
-    <PreReleaseVersionLabel>$(FSharpPreReleaseIteration)</PreReleaseVersionLabel>
+    <PreReleaseVersionLabel>servicing$(FSharpPreReleaseIteration)</PreReleaseVersionLabel>
     <FSMajorVersion>10</FSMajorVersion>
     <FSMinorVersion>0</FSMinorVersion>
     <FSBuildVersion>200</FSBuildVersion>
