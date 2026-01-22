@@ -4,7 +4,7 @@
     <MicrosoftDotNetSwaggerGeneratorMSBuildProjectDirectory>$([MSBuild]::NormalizeDirectory('$(RepoRoot)', 'src', 'Microsoft.DotNet.SwaggerGenerator', 'Microsoft.DotNet.SwaggerGenerator.MSBuild'))</MicrosoftDotNetSwaggerGeneratorMSBuildProjectDirectory>
     <MicrosoftDotNetSwaggerGeneratorMSBuildBaseOutputDirectory>$(ArtifactsBinDir)Microsoft.DotNet.SwaggerGenerator.MSBuild\$(Configuration)\</MicrosoftDotNetSwaggerGeneratorMSBuildBaseOutputDirectory>
     <!-- Keep TFMs in sync with Microsoft.DotNet.SwaggerGenerator.MSBuild.csproj -->
-    <MicrosoftDotNetSwaggerGeneratorMSBuildDirectory Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MicrosoftDotNetSwaggerGeneratorMSBuildBaseOutputDirectory)$(NetToolCurrent)\</MicrosoftDotNetSwaggerGeneratorMSBuildDirectory>
+    <MicrosoftDotNetSwaggerGeneratorMSBuildDirectory Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MicrosoftDotNetSwaggerGeneratorMSBuildBaseOutputDirectory)$(BundledNETCoreAppTargetFramework)\</MicrosoftDotNetSwaggerGeneratorMSBuildDirectory>
     <MicrosoftDotNetSwaggerGeneratorMSBuildDirectory Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MicrosoftDotNetSwaggerGeneratorMSBuildBaseOutputDirectory)$(NetFrameworkToolCurrent)\</MicrosoftDotNetSwaggerGeneratorMSBuildDirectory>
     <!-- Swagger generator msbuild tasks should be invoked out-of-proc in this repository to avoid assembly lock issues. -->
     <MicrosoftDotNetSwaggerGeneratorMSBuildTaskFactory>TaskHostFactory</MicrosoftDotNetSwaggerGeneratorMSBuildTaskFactory>
@@ -26,7 +26,7 @@
                       PrivateAssets="all"
                       Private="false">
       <!-- Keep TFMs in sync with Microsoft.DotNet.SwaggerGenerator.MSBuild.csproj -->
-      <SetTargetFramework Condition="'$(MSBuildRuntimeType)' == 'Core'">TargetFramework=$(NetToolCurrent)</SetTargetFramework>
+      <SetTargetFramework Condition="'$(MSBuildRuntimeType)' == 'Core'">TargetFramework=$(BundledNETCoreAppTargetFramework)</SetTargetFramework>
       <SetTargetFramework Condition="'$(MSBuildRuntimeType)' != 'Core'">TargetFramework=$(NetFrameworkToolCurrent)</SetTargetFramework>
     </ProjectReference>
   </ItemGroup>

@@ -428,38 +428,71 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
     }
 
     [FormattingTestTheory]
-    [CombinatorialData]
-    internal async Task HtmlAttributes_FirstNotOnSameLine(AttributeIndentStyle attributeIndentStyle)
+    [InlineData(AttributeIndentStyle.AlignWithFirst)]
+    [InlineData(AttributeIndentStyle.IndentByOne)]
+    internal Task HtmlAttributes_FirstNotOnSameLine(AttributeIndentStyle attributeIndentStyle)
+        => RunAttributeIndentStyleTestAsync(
+            input: """
+                <div
+                                class="my-class"
+                    id="my-id">
+                    Content
+                    </div>
+                        <div
+                class="my-class"
+                    id="my-id">
+                    Content
+                    </div>
+                """,
+            expected: """
+                <div
+                    class="my-class"
+                    id="my-id">
+                    Content
+                </div>
+                <div
+                    class="my-class"
+                    id="my-id">
+                    Content
+                </div>
+                """,
+            attributeIndentStyle);
+
+    [FormattingTestFact]
+    internal Task HtmlAttributes_FirstNotOnSameLine_IndentByTwo()
+    => RunAttributeIndentStyleTestAsync(
+        input: """
+                <div
+                                class="my-class"
+                    id="my-id">
+                    Content
+                    </div>
+                        <div
+                class="my-class"
+                    id="my-id">
+                    Content
+                    </div>
+                """,
+        expected: """
+                <div
+                        class="my-class"
+                        id="my-id">
+                    Content
+                </div>
+                <div
+                        class="my-class"
+                        id="my-id">
+                    Content
+                </div>
+                """,
+        AttributeIndentStyle.IndentByTwo);
+
+    private async Task RunAttributeIndentStyleTestAsync(string input, string expected, AttributeIndentStyle attributeIndentStyle)
     {
-        // This test looks different because it explicitly doesn't call the html formatter, because we don't
-        // want it to "fix" the first attribute placement, and put it on the same line as the start tag.
+        // This helper method specifically doesn't call the Html formatter, to validate behaviour when it
+        // doesn't "fix" the first attribute placement, and put it on the same line as the start tag.
 
-        var contents = """
-            <div
-                            class="my-class"
-                id="my-id">
-                Content
-                </div>
-                    <div
-            class="my-class"
-                id="my-id">
-                Content
-                </div>
-            """;
-        var expected = """
-            <div
-                class="my-class"
-                id="my-id">
-                Content
-            </div>
-            <div
-                class="my-class"
-                id="my-id">
-                Content
-            </div>
-            """;
-
-        var document = CreateProjectAndRazorDocument(contents);
+        var document = CreateProjectAndRazorDocument(input);
         var options = new RazorFormattingOptions();
 
         var formattingService = (RazorFormattingService)OOPExportProvider.GetExportedValue<IRazorFormattingService>();

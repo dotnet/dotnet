@@ -249,4 +249,7 @@
   <data name="Setting_AttributeIndentStyleIndentByOne" xml:space="preserve">
     <value>Indent by one level</value>
   </data>
+  <data name="Setting_AttributeIndentStyleIndentByTwo" xml:space="preserve">
+    <value>Indent by two levels</value>
+  </data>
 </root>
