@@ -22,6 +22,18 @@
     <FSBuildVersion>100</FSBuildVersion>
     <FSRevisionVersion>0</FSRevisionVersion>
     <!-- -->
+
+
+    <!-- BEGIN - SPECIFIC OVERRIDES for 10.0.3xx. Those are overrides instead of updates to reduce risk of git conflicts in codeflow -->
+    <FSharpPreReleaseIteration></FSharpPreReleaseIteration>
+    <PreReleaseVersionLabel>servicing$(FSharpPreReleaseIteration)</PreReleaseVersionLabel>
+    <FSMajorVersion>10</FSMajorVersion>
+    <FSMinorVersion>0</FSMinorVersion>
+    <FSBuildVersion>300</FSBuildVersion>
+    <FSRevisionVersion>0</FSRevisionVersion>    
+    <!-- END - SPECIFIC OVERRIDES for 10.0.3xx -->
+
+
     <!-- F# Language version -->
     <FSLanguageVersion>$(FSMajorVersion).$(FSMinorVersion)</FSLanguageVersion>
     <!-- -->
@@ -34,7 +46,7 @@
     <!-- -->
     <!-- FSharp.Compiler.Service version -->
     <FCSMajorVersion>43</FCSMajorVersion>
-    <FCSMinorVersion>12</FCSMinorVersion>
+    <FCSMinorVersion>11</FCSMinorVersion>
     <FCSBuildVersion>$(FSBuildVersion)</FCSBuildVersion>
     <FCSRevisionVersion>$(FSRevisionVersion)</FCSRevisionVersion>
     <FSharpCompilerServicePackageVersion>$(FCSMajorVersion).$(FCSMinorVersion).$(FCSBuildVersion)</FSharpCompilerServicePackageVersion>
