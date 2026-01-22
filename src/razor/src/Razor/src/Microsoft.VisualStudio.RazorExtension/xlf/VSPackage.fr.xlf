@@ -62,6 +62,11 @@
         <target state="translated">Mettre en retrait d’un niveau</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_AttributeIndentStyleIndentByTwo">
+        <source>Indent by two levels</source>
+        <target state="new">Indent by two levels</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_AutoClosingTagsDescription">
         <source>If true, closing tags will be automatically inserted</source>
         <target state="translated">Si la valeur est true, les balises de fermeture sont automatiquement insérées</target>
