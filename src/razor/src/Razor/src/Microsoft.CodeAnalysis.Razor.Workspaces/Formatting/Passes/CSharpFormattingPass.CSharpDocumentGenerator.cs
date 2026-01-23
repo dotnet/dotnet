@@ -727,13 +727,22 @@ internal partial class CSharpFormattingPass
             {
                 if (RazorSyntaxFacts.IsAttributeName(node, out var startTag))
                 {
-                    // If we're just indenting attributes by one level, then we don't need to do anything special here.
-                    var htmlIndentLevel = 1;
+                    int htmlIndentLevel;
                     var additionalIndentation = "";
 
-                    // Otherwise, attributes can be configured to align with the first attribute in their tag.
-                    if (_attributeIndentStyle == AttributeIndentStyle.AlignWithFirst)
+                    if (_attributeIndentStyle == AttributeIndentStyle.IndentByOne)
                     {
+                        // Indent attributes by one level to match child elements.
+                        htmlIndentLevel = 1;
+                    }
+                    else if (_attributeIndentStyle == AttributeIndentStyle.IndentByTwo)
+                    {
+                        // Indent attributes by two levels to differentiate them from child elements.
+                        htmlIndentLevel = 2;
+                    }
+                    else if (_attributeIndentStyle == AttributeIndentStyle.AlignWithFirst)
+                    {
+                        // Align attributes with the first attribute in their tag.
                         var firstAttribute = startTag.Attributes[0];
                         var nameSpan = RazorSyntaxFacts.GetFullAttributeNameSpan(firstAttribute);
 
@@ -742,6 +751,10 @@ internal partial class CSharpFormattingPass
                         // is on, just in case its not on the same line as the start tag.
                         var lineStart = _sourceText.Lines[GetLineNumber(nameSpan)].GetFirstNonWhitespacePosition().GetValueOrDefault();
                         htmlIndentLevel = FormattingUtilities.GetIndentationLevel(nameSpan.Start - lineStart, _tabSize, out additionalIndentation);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"Unknown attribute indentation style '{_attributeIndentStyle}'.");
                     }
 
                     if (ElementContentsShouldNotBeIndented(startTag) &&
