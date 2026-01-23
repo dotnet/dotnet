@@ -71,12 +71,6 @@ namespace NuGet.Protocol
             int count,
             CancellationToken cancellationToken)
         {
-            var timeoutMessage = string.Format(
-                CultureInfo.CurrentCulture,
-                Strings.Error_DownloadTimeout,
-                _downloadName,
-                _timeout.TotalMilliseconds);
-
             try
             {
                 var result = await TimeoutUtility.StartWithTimeout(
@@ -89,6 +83,12 @@ namespace NuGet.Protocol
             }
             catch (TimeoutException e)
             {
+                var timeoutMessage = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Strings.Error_DownloadTimeout,
+                    _downloadName,
+                    _timeout.TotalMilliseconds);
+
                 // Failed stream operations should throw an IOException.
                 throw new IOException(timeoutMessage, e);
             }

@@ -11,6 +11,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Threading;
 using NuGet.Common;
 using NuGet.PackageManagement;
 using NuGet.PackageManagement.Telemetry;
@@ -23,27 +24,25 @@ namespace NuGet.SolutionRestoreManager
     [PartCreationPolicy(CreationPolicy.Shared)]
     public class VulnerablePackagesInfoBar : IVulnerabilitiesNotificationService, IVsInfoBarUIEvents
     {
-        private const string LogEntrySource = "NuGet Package Manager";
-
         private IAsyncServiceProvider _asyncServiceProvider = AsyncServiceProvider.GlobalProvider;
         internal IVsInfoBarUIElement? _infoBarUIElement;
         internal bool _infoBarVisible = false; // InfoBar is currently being displayed in the Solution Explorer
         internal bool _wasInfoBarClosed = false; // InfoBar was closed by the user, using the 'x'(close) in the InfoBar
         internal bool _wasInfoBarHidden = false; // InfoBar was hid, this is caused because there are no more vulnerabilities to address
         private uint? _eventCookie; // To hold the connection cookie
-        private InfoBarHyperlink _hyperlinkPmui;
-        private InfoBarHyperlink _hyperlinkGHCopilotDocs;
+        private IVsInfoBarActionItem? _launchPackageManagerActionItem;
+        private IVsInfoBarActionItem? _fixVulnerabilitiesActionItem;
 
         private Lazy<IPackageManagerLaunchService>? PackageManagerLaunchService { get; }
+        private Lazy<IFixVulnerabilitiesService>? FixVulnerabilitiesService { get; }
         private ISolutionManager? SolutionManager { get; }
 
         [ImportingConstructor]
-        public VulnerablePackagesInfoBar(ISolutionManager solutionManager, Lazy<IPackageManagerLaunchService> packageManagerLaunchService)
+        public VulnerablePackagesInfoBar(ISolutionManager solutionManager, Lazy<IPackageManagerLaunchService> packageManagerLaunchService, Lazy<IFixVulnerabilitiesService> fixVulnerabilitiesService)
         {
-            _hyperlinkPmui = new InfoBarHyperlink(Resources.InfoBar_HyperlinkMessage);
-            _hyperlinkGHCopilotDocs = new InfoBarHyperlink(Resources.InfoBar_HyperlinkGHCopilotDocs, "https://aka.ms/nugetmcp/auditFix");
             SolutionManager = solutionManager;
             PackageManagerLaunchService = packageManagerLaunchService;
+            FixVulnerabilitiesService = fixVulnerabilitiesService;
             SolutionManager.SolutionClosed += OnSolutionClosed;
         }
 
@@ -163,44 +162,38 @@ namespace NuGet.SolutionRestoreManager
         public void OnActionItemClicked(IVsInfoBarUIElement infoBarUIElement, IVsInfoBarActionItem actionItem)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            if (actionItem != null)
+            if (actionItem == _launchPackageManagerActionItem)
             {
-                if (actionItem.ActionContext == _hyperlinkGHCopilotDocs.ActionContext)
-                {
-                    LaunchGitHubCopilotDocs();
-                }
-                else
-                {
-                    PackageManagerLaunchService?.Value.LaunchSolutionPackageManager();
-                    var evt = NavigatedTelemetryEvent.CreateWithVulnerabilityInfoBarManagePackages();
-                    TelemetryActivity.EmitTelemetryEvent(evt);
-                }
-            }
-        }
-
-        private void LaunchGitHubCopilotDocs()
-        {
-            try
-            {
-                System.Diagnostics.Process.Start(_hyperlinkGHCopilotDocs.ActionContext);
-                var evt = NavigatedTelemetryEvent.CreateWithExternalLink(HyperlinkType.VulnerabilityAdvisoryGHCopilotDocs);
+                PackageManagerLaunchService?.Value.LaunchSolutionPackageManager();
+                var evt = NavigatedTelemetryEvent.CreateWithVulnerabilityInfoBarManagePackages();
                 TelemetryActivity.EmitTelemetryEvent(evt);
             }
-            catch (System.ComponentModel.Win32Exception ex)
+            else if (actionItem == _fixVulnerabilitiesActionItem)
             {
-                ActivityLog.LogError(LogEntrySource, ex.ToString());
+                NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(async () =>
+                {
+                    if (FixVulnerabilitiesService == null)
+                    {
+                        return;
+                    }
+
+                    await FixVulnerabilitiesService.Value.LaunchFixVulnerabilitiesAsync(CancellationToken.None);
+                }).PostOnFailure(nameof(VulnerablePackagesInfoBar));
             }
         }
 
         protected InfoBarModel GetInfoBarModel()
         {
-            IEnumerable<IVsInfoBarTextSpan> textSpans = new IVsInfoBarTextSpan[]
-            {
+            _launchPackageManagerActionItem = new InfoBarHyperlink(Resources.InfoBar_HyperlinkMessage);
+            _fixVulnerabilitiesActionItem = new InfoBarHyperlink(Resources.InfoBar_HyperlinkFixVulnerabilitiesWithCopilot);
+
+            IEnumerable<IVsInfoBarTextSpan> textSpans =
+            [
                 new InfoBarTextSpan(Resources.InfoBar_TextMessage + " "),
-                _hyperlinkPmui,
+                _launchPackageManagerActionItem,
                 new InfoBarTextSpan(" | "),
-                _hyperlinkGHCopilotDocs
-            };
+                _fixVulnerabilitiesActionItem
+            ];
 
             return new InfoBarModel(
                 textSpans,

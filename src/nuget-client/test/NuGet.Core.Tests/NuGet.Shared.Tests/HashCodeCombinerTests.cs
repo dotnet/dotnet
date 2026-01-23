@@ -27,9 +27,9 @@ public class HashCodeCombinerTests
             new KeyValuePair<int, string>(200, "BBB")
        };
 
-        Assert.Equal(Compute(pairs1), Compute(pairs1.Reverse()));
+        Assert.Equal(Compute(pairs1), Compute(pairs1.AsEnumerable().Reverse()));
 
-        Assert.Equal(Compute(pairs2), Compute(pairs2.Reverse()));
+        Assert.Equal(Compute(pairs2), Compute(pairs2.AsEnumerable().Reverse()));
 
         Assert.NotEqual(Compute(pairs1), Compute(pairs2));
 
@@ -47,9 +47,9 @@ public class HashCodeCombinerTests
         var values1 = new[] { 1, 2, 3, 4 };
         var values2 = new[] { 100, 200, 300, 400 };
 
-        Assert.Equal(Compute(values1), Compute(values1.Reverse()));
+        Assert.Equal(Compute(values1), Compute(values1.AsEnumerable().Reverse()));
 
-        Assert.Equal(Compute(values2), Compute(values2.Reverse()));
+        Assert.Equal(Compute(values2), Compute(values2.AsEnumerable().Reverse()));
 
         Assert.NotEqual(Compute(values1), Compute(values2));
 
@@ -98,15 +98,15 @@ public class HashCodeCombinerTests
 
         Assert.Equal(
             Compute(valuesUpper, StringComparer.Ordinal),
-            Compute(valuesUpper.Reverse(), StringComparer.Ordinal));
+            Compute(valuesUpper.AsEnumerable().Reverse(), StringComparer.Ordinal));
 
         Assert.Equal(
             Compute(valuesUpper, StringComparer.OrdinalIgnoreCase),
-            Compute(valuesUpper.Reverse(), StringComparer.OrdinalIgnoreCase));
+            Compute(valuesUpper.AsEnumerable().Reverse(), StringComparer.OrdinalIgnoreCase));
 
         Assert.Equal(
             Compute(valuesLower, StringComparer.OrdinalIgnoreCase),
-            Compute(valuesUpper.Reverse(), StringComparer.OrdinalIgnoreCase));
+            Compute(valuesUpper.AsEnumerable().Reverse(), StringComparer.OrdinalIgnoreCase));
 
         Assert.NotEqual(
             Compute(valuesUpper, StringComparer.Ordinal),
