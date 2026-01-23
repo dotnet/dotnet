@@ -10,4 +10,4 @@ index ------------
 +sdk/x.y.z/Spectre.Console.dll - 0.54.0
  sdk/x.y.z/System.CodeDom.dll - 10.0.0
  sdk/x.y.z/System.CommandLine.dll - 2.0.1
- sdk/x.y.z/System.CommandLine.StaticCompletions.dll - 10.0.200
+ sdk/x.y.z/System.CommandLine.StaticCompletions.dll - 10.0.300
