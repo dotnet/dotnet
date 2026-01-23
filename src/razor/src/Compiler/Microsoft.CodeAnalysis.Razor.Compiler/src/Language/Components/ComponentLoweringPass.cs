@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
@@ -55,13 +56,8 @@ internal sealed class ComponentLoweringPass : ComponentIntermediateNodePassBase,
             {
                 if (tagHelper.Kind == TagHelperKind.Component)
                 {
-                    // Only allow a single component tag helper per element. If there are multiple, we'll just consider
-                    // the first one and ignore the others.
-                    if (++count > 1)
-                    {
-                        node.AddDiagnostic(ComponentDiagnosticFactory.Create_MultipleComponents(node.Source, node.TagName, node.TagHelpers));
-                        break;
-                    }
+                    // Count component tag helpers
+                    count++;
                 }
             }
 
@@ -121,23 +117,228 @@ internal sealed class ComponentLoweringPass : ComponentIntermediateNodePassBase,
 
             if (matched != null)
             {
-                matched.Add(candidate);
+                // Insert candidate at the beginning to maintain the original order
+                matched.Insert(0, candidate);
+
+                // Before reporting an ambiguity error, try to disambiguate based on whether
+                // type parameters are provided. This handles the case where both a generic
+                // and non-generic version of a component exist with the same name.
+                var resolvedCandidate = TryDisambiguateByTypeParameters(node, matched);
+                if (resolvedCandidate != null)
+                {
+                    return resolvedCandidate;
+                }
 
                 // Iterate over existing diagnostics to avoid adding multiple diagnostics when we find an ambiguous tag.
                 foreach (var diagnostic in node.Diagnostics)
                 {
-                    if (diagnostic.Id == ComponentDiagnosticFactory.MultipleComponents.Id)
+                    if (diagnostic.Id == ComponentDiagnosticFactory.MultipleComponents.Id ||
+                        diagnostic.Id == ComponentDiagnosticFactory.AmbiguousComponentSelection.Id)
                     {
                         return null;
                     }
                 }
 
-                node.AddDiagnostic(ComponentDiagnosticFactory.Create_MultipleComponents(node.Source, candidate.Name, matched));
+                node.AddDiagnostic(ComponentDiagnosticFactory.Create_MultipleComponents(node.Source, node.TagName, matched));
 
                 return null;
             }
 
             return candidate;
+        }
+
+        // Try to disambiguate between multiple components with the same name by checking if
+        // type parameters are provided. The logic handles:
+        // 1. One generic and one non-generic component
+        // 2. Multiple generic components with different type parameter counts
+        //
+        // Disambiguation is based on matching the provided type parameters in the markup
+        // with the type parameters defined by each candidate component.
+        static TagHelperDescriptor TryDisambiguateByTypeParameters(TagHelperIntermediateNode node, List<TagHelperDescriptor> candidates)
+        {
+            // Separate candidates into generic and non-generic
+            var genericCandidates = candidates.Where(c => c.IsGenericTypedComponent()).ToList();
+            var nonGenericCandidates = candidates.Where(c => !c.IsGenericTypedComponent()).ToList();
+
+            // Get all type parameter attributes provided in the markup
+            using var providedTypeParameters = GetProvidedTypeParameters(node);
+
+            // If no type parameters are provided
+            if (providedTypeParameters.Count == 0)
+            {
+                // If there's exactly one non-generic component, prefer it
+                if (nonGenericCandidates.Count == 1 && genericCandidates.Count >= 1)
+                {
+                    var nonGenericComponent = nonGenericCandidates[0];
+                    
+                    // Check for ambiguity with any generic component
+                    foreach (var genericComponent in genericCandidates)
+                    {
+                        if (HasAmbiguousParameters(node, genericComponent, nonGenericComponent))
+                        {
+                            // Report an ambiguity error and return null
+                            node.AddDiagnostic(ComponentDiagnosticFactory.Create_AmbiguousComponentSelection(
+                                node.Source, 
+                                node.TagName, 
+                                genericComponent, 
+                                nonGenericComponent));
+                            return null;
+                        }
+                    }
+                    
+                    // No ambiguity with any generic variant, use the non-generic component
+                    return nonGenericComponent;
+                }
+                
+                // Can't disambiguate - either no non-generic or multiple non-generic components
+                return null;
+            }
+
+            // Type parameters are provided - find the generic component that matches
+            TagHelperDescriptor bestMatch = null;
+            var providedTypeParametersArray = providedTypeParameters.ToArray();
+            
+            foreach (var candidate in genericCandidates)
+            {
+                using var candidateTypeParams = GetTypeParameterNames(candidate);
+                
+                // Check if all provided type parameters exist in this candidate's type parameters
+                var allProvidedMatch = true;
+                foreach (var provided in providedTypeParametersArray)
+                {
+                    if (!candidateTypeParams.Contains(provided))
+                    {
+                        allProvidedMatch = false;
+                        break;
+                    }
+                }
+                
+                if (!allProvidedMatch)
+                {
+                    continue;
+                }
+                
+                // All provided type parameters match this candidate
+                // Check if this is a complete match (all type parameters provided)
+                if (providedTypeParameters.Count == candidateTypeParams.Count)
+                {
+                    // Exact match - this is the component to use
+                    return candidate;
+                }
+                
+                // Partial match - could be this component (type inference will handle the rest)
+                // Keep track of it as a potential match
+                if (bestMatch == null)
+                {
+                    bestMatch = candidate;
+                }
+                else
+                {
+                    // Multiple components match the provided type parameters - ambiguous
+                    return null;
+                }
+            }
+
+            // Return the best match if we found one, otherwise null (ambiguous or no match)
+            return bestMatch;
+        }
+
+        // Get all type parameter names provided in the markup
+        static PooledHashSet<string> GetProvidedTypeParameters(TagHelperIntermediateNode node)
+        {
+            var result = new PooledHashSet<string>(StringComparer.Ordinal);
+            
+            foreach (var child in node.Children)
+            {
+                if (child is TagHelperPropertyIntermediateNode property)
+                {
+                    // Check if this property matches any type parameter from any candidate
+                    // We'll check this by seeing if it's a type parameter for any of the tag helpers
+                    foreach (var tagHelper in node.TagHelpers)
+                    {
+                        if (tagHelper.IsGenericTypedComponent())
+                        {
+                            foreach (var typeParam in tagHelper.GetTypeParameters())
+                            {
+                                if (string.Equals(property.AttributeName, typeParam.Name, StringComparison.Ordinal))
+                                {
+                                    result.Add(property.AttributeName);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            return result;
+        }
+
+        // Get the set of type parameter names for a component
+        static PooledHashSet<string> GetTypeParameterNames(TagHelperDescriptor component)
+        {
+            var result = new PooledHashSet<string>(StringComparer.Ordinal);
+            foreach (var typeParam in component.GetTypeParameters())
+            {
+                result.Add(typeParam.Name);
+            }
+            return result;
+        }
+
+        // Check if both components have parameters with the same names as those used in the markup,
+        // which would make selection ambiguous when no type parameters are provided
+        static bool HasAmbiguousParameters(TagHelperIntermediateNode node, TagHelperDescriptor genericComponent, TagHelperDescriptor nonGenericComponent)
+        {
+            // Get all the attribute names used in the markup (excluding type parameters)
+            using var typeParameterNames = GetTypeParameterNames(genericComponent);
+
+            using var markupAttributeNames = new PooledHashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var child in node.Children)
+            {
+                if (child is TagHelperPropertyIntermediateNode property)
+                {
+                    // Skip type parameters
+                    if (!typeParameterNames.Contains(property.AttributeName))
+                    {
+                        markupAttributeNames.Add(property.AttributeName);
+                    }
+                }
+            }
+
+            // If no non-type-parameter attributes are used, there's no ambiguity
+            if (markupAttributeNames.Count == 0)
+            {
+                return false;
+            }
+
+            // Check if both components have bound attributes with the same names
+            using var genericParamNames = new PooledHashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var attr in genericComponent.BoundAttributes)
+            {
+                if (!attr.IsTypeParameterProperty())
+                {
+                    genericParamNames.Add(attr.Name);
+                }
+            }
+
+            using var nonGenericParamNames = new PooledHashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var attr in nonGenericComponent.BoundAttributes)
+            {
+                nonGenericParamNames.Add(attr.Name);
+            }
+
+            // Check if any of the used attributes exist in both components
+            var markupAttributesArray = markupAttributeNames.ToArray();
+            foreach (var attrName in markupAttributesArray)
+            {
+                if (genericParamNames.Contains(attrName) && nonGenericParamNames.Contains(attrName))
+                {
+                    // Found a parameter that exists in both components - this is ambiguous
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 
