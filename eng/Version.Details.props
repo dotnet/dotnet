@@ -9,9 +9,9 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.25569.105</MicrosoftDotNetArcadeSdkPackageVersion>
     <MicrosoftDotNetBuildManifestPackageVersion>10.0.0-beta.25569.105</MicrosoftDotNetBuildManifestPackageVersion>
     <!-- dotnet/dotnet dependencies -->
-    <MicrosoftNETSdkPackageVersion>10.0.101-servicing.25569.105</MicrosoftNETSdkPackageVersion>
-    <MicrosoftNETCoreAppRefPackageVersion>10.0.1</MicrosoftNETCoreAppRefPackageVersion>
-    <MicrosoftNETCorePlatformsPackageVersion>10.0.1-servicing.25569.105</MicrosoftNETCorePlatformsPackageVersion>
+    <MicrosoftNETSdkPackageVersion>10.0.102-servicing.25612.105</MicrosoftNETSdkPackageVersion>
+    <MicrosoftNETCoreAppRefPackageVersion>10.0.2</MicrosoftNETCoreAppRefPackageVersion>
+    <MicrosoftNETCorePlatformsPackageVersion>10.0.2-servicing.25612.105</MicrosoftNETCorePlatformsPackageVersion>
     <MicrosoftNETWorkloadEmscriptenCurrentManifest100100PackageVersion>10.0.100</MicrosoftNETWorkloadEmscriptenCurrentManifest100100PackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
