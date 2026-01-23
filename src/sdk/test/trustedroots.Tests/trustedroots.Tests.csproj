@@ -5,6 +5,7 @@
     <TargetFramework>$(ToolsetTargetFramework)</TargetFramework>
     <OutputType>Exe</OutputType>
     <CanRunTestAsTool>false</CanRunTestAsTool>
+    <OutputPath>$(TestHostFolder)</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
