@@ -136,6 +136,7 @@ src/roslyn/src/Setup/Roslyn.VsixLicense/EULA.rtf
 src/runtime/src/installer/pkg/LICENSE-MSFT.TXT
 
 # False positive
+src/runtime/THIRD-PARTY-NOTICES.TXT|clear-bsd
 src/runtime/src/libraries/System.ComponentModel.TypeConverter/src/System/ComponentModel/LicFileLicenseProvider.cs|proprietary-license
 src/runtime/src/libraries/System.Net.Sockets/tests/FunctionalTests/Connect.cs|other-permissive
 src/runtime/src/libraries/System.Net.Sockets/tests/FunctionalTests/SendReceive/SendReceive.cs|other-permissive
