@@ -22,6 +22,26 @@
         <target state="translated">작업이 실패했습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_CopilotAccessDenied">
+        <source>Access denied. Please ensure you are signed in to GitHub Copilot.</source>
+        <target state="new">Access denied. Please ensure you are signed in to GitHub Copilot.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_CopilotNotReady">
+        <source>GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in.</source>
+        <target state="new">GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_CopilotServiceNotAvailable">
+        <source>GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
+        <target state="new">GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_McpToolServiceNotAvailable">
+        <source>MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
+        <target state="new">MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
       <trans-unit id="Error_PackageSourceMappingPattern_Missing">
         <source>A package pattern must be provided.</source>
         <target state="translated">패키지 패턴을 제공해야 합니다.</target>
@@ -45,6 +65,11 @@
       <trans-unit id="Error_PackageSourceUri_Missing">
         <source>A source must be provided.</source>
         <target state="translated">원본을 제공해야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ServiceBrokerNotAvailable">
+        <source>Service Broker is not available. Please ensure Visual Studio is running correctly.</source>
+        <target state="new">Service Broker is not available. Please ensure Visual Studio is running correctly.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoProjectSelected">
@@ -117,6 +142,11 @@
         <target state="translated">프로젝트가 마이그레이션에 적합하지 않습니다. 프로젝트가 packages.config 기반이 아니거나 아직 PackageReference를 지원하지 않습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Prompt_FixNuGetPackageVulnerabilities">
+        <source>Fix my NuGet package vulnerabilities</source>
+        <target state="new">Fix my NuGet package vulnerabilities</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
         <source>These settings are stored in %NuGet.Config% files</source>
         <target state="translated">이러한 설정은 %NuGet.Config% 파일에 저장됩니다.</target>
@@ -130,6 +160,11 @@
       <trans-unit id="Text_AllowInsecureConnections_Header">
         <source>Allow Insecure Connections</source>
         <target state="translated">안전하지 않은 연결 허용</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Checkbox">
+        <source>Use separate sources for vulnerability audit</source>
+        <target state="translated">취약성 감사에 별도의 원본 사용</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_AuditSources_Description">
@@ -172,6 +207,11 @@
         <target state="translated">HTTP 원본은 안전하지 않습니다. 대신 HTTPS를 사용하는 것이 좋습니다. 'AllowInsecureConnections'가 활성화되어 HTTP 액세스를 허용합니다. 더 안전한 옵션은 [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere)에서 확인하세요.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_MachineWidePackageSource_Description">
+        <source>Machine‑wide package sources are provisioned by Visual Studio workloads and can only be enabled or disabled.</source>
+        <target state="translated">컴퓨터 전체 패키지 원본은 Visual Studio 워크로드를 통해 프로비전되며, 활성화하거나 비활성화할 수만 있습니다.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_PackageSourceEnabled_Header">
         <source>Enabled</source>
         <target state="translated">사용</target>
@@ -211,6 +251,11 @@
         <source>Contoso.Contracts or System.*</source>
         <target state="translated">Contoso.Contracts 또는 System.*</target>
         <note>"Contoso.Contracts" and "System.*" are examples of a package ID pattern and a package prefix pattern, respectively, so these two specific examples should not be translated.</note>
+      </trans-unit>
+      <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
+        <source>Fix Vulnerabilities with GitHub Copilot</source>
+        <target state="new">Fix Vulnerabilities with GitHub Copilot</target>
+        <note />
       </trans-unit>
       <trans-unit id="clearLocalResources">
         <source>Clear NuGet local resources</source>

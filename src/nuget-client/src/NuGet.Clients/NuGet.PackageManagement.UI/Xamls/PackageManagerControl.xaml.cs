@@ -52,12 +52,13 @@ namespace NuGet.PackageManagement.UI
         private bool _initialized;
         private IVsWindowSearchHost _windowSearchHost;
         private IVsWindowSearchHostFactory _windowSearchHostFactory;
+        private ISourceRepositoryProvider _sourceRepositoryProvider;
         private INuGetUILogger _uiLogger;
         private readonly Guid _sessionGuid = Guid.NewGuid();
         private Stopwatch _sinceLastRefresh;
         private CancellationTokenSource _refreshCts;
         // used to prevent starting new search when we update the package sources
-        // list in response to PackageSourcesChanged event.
+        // list in response to Package Sources changing events.
         private bool _dontStartNewSearch;
         // When executing a UI operation, we disable the PM UI and ignore any refresh requests.
         // This tells the operation execution part that it needs to trigger a refresh when done.
@@ -115,7 +116,7 @@ namespace NuGet.PackageManagement.UI
             var nuGetFeatureFlagService = await ServiceLocator.GetComponentModelServiceAsync<INuGetFeatureFlagService>();
             var editorOptionsFactoryService = await ServiceLocator.GetComponentModelServiceAsync<IEditorOptionsFactoryService>();
             NuGetExperimentationService = await ServiceLocator.GetComponentModelServiceAsync<INuGetExperimentationService>();
-            ISourceRepositoryProvider sourceRepositoryProvider = await ServiceLocator.GetComponentModelServiceAsync<ISourceRepositoryProvider>();
+            _sourceRepositoryProvider = await ServiceLocator.GetComponentModelServiceAsync<ISourceRepositoryProvider>();
             await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
             _serviceBroker = model.Context.ServiceBroker;
@@ -199,10 +200,7 @@ namespace NuGet.PackageManagement.UI
                 controller.PackageManagerControl = this;
             }
 
-            List<SourceRepository> sourceRepositories = sourceRepositoryProvider.GetRepositories().ToList();
-
-            var auditSourceRepositories = Model.Context.SourceService.GetEnabledAuditSources();
-            _packageVulnerabilityService = new PackageVulnerabilityService(sourceRepositories, auditSourceRepositories, _uiLogger);
+            await SetVulnerabilityService(_sourceRepositoryProvider);
 
             var solutionManager = Model.Context.SolutionManagerService;
             solutionManager.ProjectAdded += OnProjectChanged;
@@ -212,8 +210,6 @@ namespace NuGet.PackageManagement.UI
             solutionManager.AfterNuGetCacheUpdated += OnNuGetCacheUpdated;
 
             Model.Context.ProjectActionsExecuted += OnProjectActionsExecuted;
-
-            Model.Context.SourceService.PackageSourcesChanged += PackageSourcesChanged;
 
             Unloaded += PackageManagerUnloaded;
 
@@ -227,10 +223,35 @@ namespace NuGet.PackageManagement.UI
             Settings.SettingsChanged += Settings_SettingsChanged;
         }
 
+        private async Task SetVulnerabilityService(ISourceRepositoryProvider sourceRepositoryProvider)
+        {
+            await TaskScheduler.Default;
+            List<SourceRepository> sourceRepositories = sourceRepositoryProvider.GetRepositories().ToList();
+            var auditSourceRepositories = Model.Context.SourceService.GetEnabledAuditSources();
+            var vulnerabilityService = new PackageVulnerabilityService(sourceRepositories, auditSourceRepositories, _uiLogger);
+
+            // Avoid concurrency issues by using the UI thread to synchronize reading and changing _packageVulnerabilityService.
+            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            _packageVulnerabilityService = vulnerabilityService;
+        }
+
         private void Settings_SettingsChanged(object sender, EventArgs e)
         {
-            _detailModel.PackageSourceMappingViewModel.SettingsChanged();
-            _detailModel.SetInstalledOrUpdateButtonIsEnabled();
+            // Set _dontStartNewSearch to true to prevent a new search started in
+            // _sourceRepoList_SelectionChanged(). This method will start the new
+            // search when needed by itself.
+            _dontStartNewSearch = true;
+
+            try
+            {
+                _detailModel.PackageSourceMappingViewModel.SettingsChanged();
+                _detailModel.SetInstalledOrUpdateButtonIsEnabled();
+                RefreshAfterSettingsChanged(sender, e);
+            }
+            finally
+            {
+                _dontStartNewSearch = false;
+            }
         }
 
         public PackageRestoreBar RestoreBar { get; private set; }
@@ -604,50 +625,22 @@ namespace NuGet.PackageManagement.UI
             }
         }
 
-        private void PackageSourcesChanged(object sender, IReadOnlyCollection<PackageSourceContextInfo> e)
+        private void RefreshAfterSettingsChanged(object sender, EventArgs e)
         {
-            // Set _dontStartNewSearch to true to prevent a new search started in
-            // _sourceRepoList_SelectionChanged(). This method will start the new
-            // search when needed by itself.
-            _dontStartNewSearch = true;
-            TimeSpan timeSpan = GetTimeSinceLastRefreshAndRestart();
-
-            NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(() => PackageSourcesChangedAsync(e, timeSpan))
-                .PostOnFailure(nameof(PackageManagerControl), nameof(PackageSourcesChanged));
-        }
-
-        private async Task PackageSourcesChangedAsync(IReadOnlyCollection<PackageSourceContextInfo> packageSources, TimeSpan timeSpan)
-        {
-            try
+            NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(async () =>
             {
-                var sw = Stopwatch.StartNew();
-                IReadOnlyCollection<PackageSourceMoniker> list = await PackageSourceMoniker.PopulateListAsync(packageSources, CancellationToken.None);
+                await SetVulnerabilityService(_sourceRepositoryProvider);
 
                 await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                // We access UI components in these calls
-                PackageSourceMoniker prevSelectedItem = SelectedSource;
+                var settings = SaveSettings();
 
-                await PopulatePackageSourcesAsync(list, optionalSelectSourceName: null, cancellationToken: CancellationToken.None);
+                // Re-initialize package sources first, since a change to them will affect package search results.
+                await InitPackageSourcesAsync(settings, CancellationToken.None);
 
-                // force a new search explicitly only if active source has changed
-                if (prevSelectedItem == SelectedSource)
-                {
-                    sw.Stop();
-                    EmitRefreshEvent(timeSpan, RefreshOperationSource.PackageSourcesChanged, RefreshOperationStatus.NotApplicable, isUIFiltering: false, duration: sw.Elapsed.TotalMilliseconds);
-                }
-                else
-                {
-                    await RunAndEmitRefreshAsync(async () =>
-                    {
-                        SaveSettings();
-                        await SearchPackagesAndRefreshUpdateCountAsync(useCacheForUpdates: false);
-                    }, RefreshOperationSource.PackageSourcesChanged, timeSpan, sw);
-                }
-            }
-            finally
-            {
-                _dontStartNewSearch = false;
-            }
+                // Refresh package search results, which will also reflect any NuGet Audit settings changes.
+                await SearchPackagesAndRefreshUpdateCountAsync(useCacheForUpdates: false);
+            })
+            .PostOnFailure(nameof(PackageManagerControl), nameof(RefreshAfterSettingsChanged));
         }
 
         private async Task IsCentralPackageManagementEnabledAsync(CancellationToken cancellationToken)
@@ -703,7 +696,7 @@ namespace NuGet.PackageManagement.UI
         // Save the settings of this doc window in the UIContext. Note that the settings
         // are not guaranteed to be persisted. We need to call Model.Context.SaveSettings()
         // to persist the settings.
-        public void SaveSettings()
+        public UserSettings SaveSettings()
         {
             Assumes.NotNullOrEmpty(_settingsKey);
 
@@ -724,6 +717,8 @@ namespace NuGet.PackageManagement.UI
             _packageDetail._solutionView.SaveSettings(settings);
 
             Model.Context.UserSettingsManager.AddSettings(_settingsKey, settings);
+
+            return settings;
         }
 
         private UserSettings LoadSettings()
@@ -1033,7 +1028,7 @@ namespace NuGet.PackageManagement.UI
             Interlocked.Exchange(ref _refreshCts, refreshCts)?.Cancel();
 
             // Update installed tab warning icon
-            (int vulnerablePackages, int deprecatedPackages) = await GetInstalledVulnerableAndDeprecatedPackagesCountAsync(loadContext, SelectedSource.PackageSources, refreshCts.Token);
+            (int vulnerablePackages, int deprecatedPackages) = await GetInstalledVulnerableAndDeprecatedPackagesCountAsync(loadContext, SelectedSource.PackageSources, _packageVulnerabilityService, refreshCts.Token);
             _topPanel.UpdateWarningStatusOnInstalledTab(vulnerablePackages, deprecatedPackages);
 
             // Update updates tab count
@@ -1047,7 +1042,7 @@ namespace NuGet.PackageManagement.UI
             _topPanel.UpdateCountOnUpdatesTab(Model.CachedUpdates.Packages.Count);
         }
 
-        private async Task<(int, int)> GetInstalledVulnerableAndDeprecatedPackagesCountAsync(PackageLoadContext loadContext, IReadOnlyCollection<PackageSourceContextInfo> packageSources, CancellationToken token)
+        private async Task<(int, int)> GetInstalledVulnerableAndDeprecatedPackagesCountAsync(PackageLoadContext loadContext, IReadOnlyCollection<PackageSourceContextInfo> packageSources, IPackageVulnerabilityService vulnerabilityService, CancellationToken token)
         {
             // Switch off the UI thread before fetching installed packages and deprecation metadata.
             await TaskScheduler.Default;
@@ -1060,7 +1055,7 @@ namespace NuGet.PackageManagement.UI
             installedPackageCollection = PackageCollection.FromPackageReferences(installedAndTransitivePackages.InstalledPackages);
             PackageCollection transitivePackageCollection = PackageCollection.FromPackageReferences(installedAndTransitivePackages.TransitivePackages.Where(p => p.TransitiveOrigins.Any()));
             //Use ShutdownToken to ensure the operation is canceled if it's still running when VS shuts down.
-            IEnumerable<PackageVulnerabilityMetadataContextInfo>[] transitivePackageVulnerabilities = await Task.WhenAll(transitivePackageCollection.Select(p => _packageVulnerabilityService.GetVulnerabilityInfoAsync(p, VsShellUtilities.ShutdownToken)));
+            IEnumerable<PackageVulnerabilityMetadataContextInfo>[] transitivePackageVulnerabilities = await Task.WhenAll(transitivePackageCollection.Select(p => vulnerabilityService.GetVulnerabilityInfoAsync(p, VsShellUtilities.ShutdownToken)));
 
             foreach (IEnumerable<PackageVulnerabilityMetadataContextInfo> vulnerabilityInfo in transitivePackageVulnerabilities)
             {
@@ -1612,8 +1607,6 @@ namespace NuGet.PackageManagement.UI
 
             Model.Context.ProjectActionsExecuted -= OnProjectActionsExecuted;
 
-            Model.Context.SourceService.PackageSourcesChanged -= PackageSourcesChanged;
-
             Settings.SettingsChanged -= Settings_SettingsChanged;
 
             Model.Dispose();
@@ -1806,6 +1799,7 @@ namespace NuGet.PackageManagement.UI
 
         private async Task ExecuteRestartSearchCommandAsync()
         {
+            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             _packageVulnerabilityService?.ResetVulnerabilityData();
             await SearchPackagesAndRefreshUpdateCountAsync(useCacheForUpdates: false);
             await RefreshConsolidatablePackagesCountAsync();

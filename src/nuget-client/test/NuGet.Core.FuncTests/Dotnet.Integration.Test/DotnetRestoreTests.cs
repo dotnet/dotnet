@@ -1045,7 +1045,7 @@ EndGlobal";
             using (SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext())
             {
                 // Arrange
-                string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
+                string tfm = TestConstants.DefaultTargetFramework.GetShortFolderName();
                 string projectFileContents =
 @$"<Project Sdk=""Microsoft.NET.Sdk"">
     <PropertyGroup>
@@ -1065,7 +1065,7 @@ EndGlobal";
                 // Assert
                 PackagesLockFile lockFile = PackagesLockFileFormat.Read(lockFilePath);
                 Assert.Equal(2, lockFile.Targets.Count);
-                Assert.Contains(lockFile.Targets, target => target.TargetFramework == Constants.DefaultTargetFramework);
+                Assert.Contains(lockFile.Targets, target => target.TargetFramework == TestConstants.DefaultTargetFramework);
                 NuGetFramework targetFramework = NuGetFramework.Parse($"{tfm}-windows7.0");
                 Assert.Contains(lockFile.Targets, target => target.TargetFramework == targetFramework);
             }
@@ -2654,7 +2654,7 @@ EndGlobal";
                 using (var stream = File.Open(projectFile1, FileMode.Open, FileAccess.ReadWrite))
                 {
                     var xml = XDocument.Load(stream);
-                    ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", Constants.DefaultTargetFramework.GetShortFolderName());
+                    ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", TestConstants.DefaultTargetFramework.GetShortFolderName());
                     ProjectFileUtils.AddProperty(xml, "ManagePackageVersionsCentrally", "true");
 
                     ProjectFileUtils.AddItem(
@@ -2692,7 +2692,7 @@ EndGlobal";
                 var assetsFilePath = Path.Combine(workingDirectory1, "obj", "project.assets.json");
                 File.Exists(assetsFilePath).Should().BeTrue(because: "The assets file needs to exist");
                 var assetsFile = new LockFileFormat().Read(assetsFilePath);
-                LockFileTarget target = assetsFile.Targets.Single(e => e.TargetFramework.Equals(Constants.DefaultTargetFramework) && string.IsNullOrEmpty(e.RuntimeIdentifier));
+                LockFileTarget target = assetsFile.Targets.Single(e => e.TargetFramework.Equals(TestConstants.DefaultTargetFramework) && string.IsNullOrEmpty(e.RuntimeIdentifier));
                 target.Libraries.Should().ContainSingle(e => e.Name.Equals("x"));
 
                 // Act another restore
@@ -2711,7 +2711,7 @@ EndGlobal";
             // Arrange
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, new SimpleTestPackageContext("x", "1.0.0"));
-            string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
+            string tfm = TestConstants.DefaultTargetFramework.GetShortFolderName();
             string projectFileContents =
 @$"<Project Sdk=""Microsoft.NET.Sdk"">
     <PropertyGroup>
@@ -2755,7 +2755,7 @@ EndGlobal";
             Directory.CreateDirectory(projectBWorkingDirectory);
             var projectAPath = Path.Combine(projectAWorkingDirectory, "a.csproj");
             var projectBPath = Path.Combine(projectBWorkingDirectory, "b.csproj");
-            string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
+            string tfm = TestConstants.DefaultTargetFramework.GetShortFolderName();
             string projectAFileContents =
 @$"<Project Sdk=""Microsoft.NET.Sdk"">
     <PropertyGroup>
@@ -2800,7 +2800,7 @@ EndGlobal";
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
             var additionalSource = Path.Combine(pathContext.SolutionRoot, "additionalSource");
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(additionalSource, new SimpleTestPackageContext("x", "1.0.0"));
-            string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
+            string tfm = TestConstants.DefaultTargetFramework.GetShortFolderName();
             string projectFileContents =
 @$"<Project Sdk=""Microsoft.NET.Sdk"">
     <PropertyGroup>
@@ -2863,7 +2863,7 @@ EndGlobal";
                 pathContext.PackageSource,
                 packageA1);
 
-            var targetFramework = Constants.DefaultTargetFramework.GetShortFolderName();
+            var targetFramework = TestConstants.DefaultTargetFramework.GetShortFolderName();
             string csprojContents = GetProjectFileForRestoreTaskOutputTests(targetFramework);
             var csprojPath = Path.Combine(pathContext.SolutionRoot, "test.csproj");
             File.WriteAllText(csprojPath, csprojContents);
@@ -2892,7 +2892,7 @@ EndGlobal";
             using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource);
             pathContext.Settings.RemoveSource("source");
             pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri, allowInsecureConnectionsValue: "true");
-            var targetFramework = Constants.DefaultTargetFramework.GetShortFolderName();
+            var targetFramework = TestConstants.DefaultTargetFramework.GetShortFolderName();
             string csprojContents = GetProjectFileForRestoreTaskOutputTestsFromPackageId(targetFramework, id);
             var csprojPath = Path.Combine(pathContext.SolutionRoot, "test.csproj");
             File.WriteAllText(csprojPath, csprojContents);
@@ -2925,7 +2925,7 @@ EndGlobal";
                 pathContext.PackageSource,
                 packageA1);
 
-            var targetFramework = Constants.DefaultTargetFramework.GetShortFolderName();
+            var targetFramework = TestConstants.DefaultTargetFramework.GetShortFolderName();
             string csprojContents = GetProjectFileForRestoreTaskOutputTestsFromPackageId(targetFramework, packageid);
             var csprojPath = Path.Combine(pathContext.SolutionRoot, "test.csproj");
             File.WriteAllText(csprojPath, csprojContents);
@@ -2954,7 +2954,7 @@ EndGlobal";
                 pathContext.PackageSource,
                 packageA1);
 
-            var targetFramework = Constants.DefaultTargetFramework.GetShortFolderName();
+            var targetFramework = TestConstants.DefaultTargetFramework.GetShortFolderName();
             string csprojContents = GetProjectFileForRestoreTaskOutputTests(targetFramework);
             var csprojPath = Path.Combine(pathContext.SolutionRoot, "test.csproj");
             File.WriteAllText(csprojPath, csprojContents);
@@ -3012,7 +3012,7 @@ EndGlobal";
             var projectName = "ClassLibrary1";
             var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
             var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
-            string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
+            string tfm = TestConstants.DefaultTargetFramework.GetShortFolderName();
             await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, new SimpleTestPackageContext("X", "1.0.0") { Dependencies = [new SimpleTestPackageContext("Y", "1.0.0")] });
 
             _dotnetFixture.CreateDotnetNewProject(pathContext.SolutionRoot, projectName, "classlib -f netstandard2.1", testOutputHelper: _testOutputHelper);
@@ -3076,7 +3076,7 @@ EndGlobal";
         [InlineData("9.0.100", "true", false)]
         public async Task DotnetRestore_SDKAnalysisLevelAndRestoreEnablePackagePruning_EnablesPruning(string sdkAnalysisLevel, string restoreEnablePackagePruning, bool useStaticGraphRestore)
         {
-            string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
+            string tfm = TestConstants.DefaultTargetFramework.GetShortFolderName();
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
             var projectName = "ClassLibrary1";
             var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
@@ -3130,7 +3130,7 @@ EndGlobal";
         [InlineData("10.0.100", "false")]
         public async Task DotnetRestore_SDKAnalysisLevelAndRestoreEnablePackagePruning_DisablesPruning(string sdkAnalysisLevel, string restoreEnablePackagePruning)
         {
-            string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
+            string tfm = TestConstants.DefaultTargetFramework.GetShortFolderName();
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
             var projectName = "ClassLibrary1";
             var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
@@ -3216,7 +3216,7 @@ EndGlobal";
 
         private async Task<LockFile> DotnetRestore_MultiTargetedProjectWithSDKAnalysisLevel(SimpleTestPathContext pathContext, string sdkAnalysisLevel, bool useStaticGraphRestore)
         {
-            string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
+            string tfm = TestConstants.DefaultTargetFramework.GetShortFolderName();
             var projectName = "ClassLibrary1";
             var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
             var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
@@ -3298,7 +3298,7 @@ EndGlobal";
 
         private async Task<LockFile> DotnetRestore_MultiTargetedProjectWithRestoreEnablePackagePruning(SimpleTestPathContext pathContext, string restoreEnablePackagePruning, string condition, bool useStaticGraphRestore)
         {
-            string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
+            string tfm = TestConstants.DefaultTargetFramework.GetShortFolderName();
             var projectName = "ClassLibrary1";
             var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
             var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");

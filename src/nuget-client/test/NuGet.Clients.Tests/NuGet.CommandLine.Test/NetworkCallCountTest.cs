@@ -1664,7 +1664,7 @@ namespace NuGet.CommandLine.Test
                 {
                     v2DownloadWait.Wait();
 
-                    var id = parts.Reverse().Skip(1).First();
+                    var id = parts.AsEnumerable().Reverse().Skip(1).First();
                     var version = parts.Last();
 
                     var file = new FileInfo(Path.Combine(repositoryPath, $"{id}.{version}.nupkg"));
@@ -1691,7 +1691,7 @@ namespace NuGet.CommandLine.Test
                 }
                 else if (path.StartsWith("/reg/") && path.EndsWith("/index.json"))
                 {
-                    var id = parts.Reverse().Skip(1).First();
+                    var id = parts.AsEnumerable().Reverse().Skip(1).First();
                     var version = "1.0.0";
 
                     return new Action<HttpListenerResponse>(response =>

@@ -76,6 +76,19 @@ internal static class ComponentDiagnosticFactory
         return RazorDiagnostic.Create(MultipleComponents, span, tagName, componentNames);
     }
 
+    public static readonly RazorDiagnosticDescriptor AmbiguousComponentSelection =
+        new($"{DiagnosticPrefix}10012",
+            "The component '{0}' cannot be disambiguated between generic and non-generic versions. " +
+            "Provide a type parameter (e.g., TItem=\"...\") to use the generic component, or use different parameter names to avoid ambiguity. " +
+            "Components: {1}",
+            RazorDiagnosticSeverity.Error);
+
+    public static RazorDiagnostic Create_AmbiguousComponentSelection(SourceSpan? span, string tagName, TagHelperDescriptor genericComponent, TagHelperDescriptor nonGenericComponent)
+    {
+        var componentNames = $"{genericComponent.DisplayName}, {nonGenericComponent.DisplayName}";
+        return RazorDiagnostic.Create(AmbiguousComponentSelection, span, tagName, componentNames);
+    }
+
     public static readonly RazorDiagnosticDescriptor UnsupportedComplexContent =
         new($"{DiagnosticPrefix}9986",
             "Component attributes do not support complex content (mixed C# and markup). Attribute: '{0}', text: '{1}'",
