@@ -64,7 +64,7 @@
       </trans-unit>
       <trans-unit id="Setting_AttributeIndentStyleIndentByTwo">
         <source>Indent by two levels</source>
-        <target state="new">Indent by two levels</target>
+        <target state="translated">Aplicar sangría por dos niveles</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoClosingTagsDescription">
