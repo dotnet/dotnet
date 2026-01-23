@@ -25,9 +25,9 @@ See also:
 | Condition(s)                                                                                                           | Where Can I Check In?                      | Do I need to port the change to avoid regression? |
 |------------------------------------------------------------------------------------------------------------------------|--------------------------------------------|-----------------------------------|
 | - Change is non-security **AND** <br/> - Preview branch has not been created **OR** change is not targeted at next preview to ship | **release/vNext** in VMR or component repository | No |
-| - Change is non-security **AND** <br/> - Preview branch has been created **AND** <br/> - Change is targeted at next preview to ship | **Preview branch** (e.g. `release/9.0.0-preview.3`) in VMR or component repository. | Yes. Port to release/vNext |
-| - Change is security **AND** <br/> - Preview branch has not been created **OR** change is not targeted at next preview to ship | **Wait** for creation of internal preview branches (e.g. internal/release/11.0.0-rc.N branch) | **release/vNext**, **AFTER** public release. |
-| - Change is security **AND** <br/> - Preview branch has been created **AND** <br/> - Change is targeted at next preview to ship | **internal/release/preview.N** (e.g. `internal/release/11.0.0-rc.1`) in VMR or component repository. | **release/vNext**, **AFTER** public release. |
+| - Change is non-security **AND** <br/> - Preview branch has been created **AND** <br/> - Change is targeted at next preview to ship | **Preview branch** (e.g. `release/9.0.1xx-preview3`) in VMR or component repository. | Yes. Port to release/vNext |
+| - Change is security **AND** <br/> - Preview branch has not been created **OR** change is not targeted at next preview to ship | **Wait** for creation of internal preview branches (e.g. internal/release/11.0.1xx-rcN branch) | **release/vNext**, **AFTER** public release. |
+| - Change is security **AND** <br/> - Preview branch has been created **AND** <br/> - Change is targeted at next preview to ship | **internal/release/preview.N** (e.g. `internal/release/11.0.1xx-rc1`) in VMR or component repository. | **release/vNext**, **AFTER** public release. |
 
 ---
 
