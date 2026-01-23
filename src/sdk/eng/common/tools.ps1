@@ -277,7 +277,7 @@ function GetDotNetInstallScript([string] $dotnetRoot) {
 
     Retry({
       Write-Host "GET $uri"
-      Invoke-WebRequest $uri -OutFile $installScript
+      Invoke-WebRequest $uri -UseBasicParsing -OutFile $installScript
     })
   }
 
@@ -306,7 +306,7 @@ function InstallDotNet([string] $dotnetRoot,
     if ($runtime -eq "aspnetcore") { $runtimePath = $runtimePath + "\Microsoft.AspNetCore.App" }
     if ($runtime -eq "windowsdesktop") { $runtimePath = $runtimePath + "\Microsoft.WindowsDesktop.App" }
     $runtimePath = $runtimePath + "\" + $version
-
+  
     $dotnetVersionLabel = "runtime toolset '$runtime/$architecture v$version'"
 
     if (Test-Path $runtimePath) {
@@ -510,7 +510,7 @@ function InitializeXCopyMSBuild([string]$packageVersion, [bool]$install) {
     Write-Host "Downloading $packageName $packageVersion"
     $ProgressPreference = 'SilentlyContinue' # Don't display the console progress UI - it's a huge perf hit
     Retry({
-      Invoke-WebRequest "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/flat2/$packageName/$packageVersion/$packageName.$packageVersion.nupkg" -OutFile $packagePath
+      Invoke-WebRequest "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/flat2/$packageName/$packageVersion/$packageName.$packageVersion.nupkg" -UseBasicParsing -OutFile $packagePath
     })
 
     if (!(Test-Path $packagePath)) {
@@ -556,29 +556,23 @@ function LocateVisualStudio([object]$vsRequirements = $null){
     Write-Host "Downloading vswhere $vswhereVersion"
     $ProgressPreference = 'SilentlyContinue' # Don't display the console progress UI - it's a huge perf hit
     Retry({
-      Invoke-WebRequest "https://netcorenativeassets.blob.core.windows.net/resource-packages/external/windows/vswhere/$vswhereVersion/vswhere.exe" -OutFile $vswhereExe
+      Invoke-WebRequest "https://netcorenativeassets.blob.core.windows.net/resource-packages/external/windows/vswhere/$vswhereVersion/vswhere.exe" -UseBasicParsing -OutFile $vswhereExe
     })
   }
 
-  if (!$vsRequirements) {
-    if (Get-Member -InputObject $GlobalJson.tools -Name 'vs' -ErrorAction SilentlyContinue) {
-      $vsRequirements = $GlobalJson.tools.vs
-    } else {
-      $vsRequirements = $null
-    }
-  }
+  if (!$vsRequirements) { $vsRequirements = $GlobalJson.tools.vs }
   $args = @('-latest', '-format', 'json', '-requires', 'Microsoft.Component.MSBuild', '-products', '*')
 
   if (!$excludePrereleaseVS) {
     $args += '-prerelease'
   }
 
-  if ($vsRequirements -and (Get-Member -InputObject $vsRequirements -Name 'version' -ErrorAction SilentlyContinue)) {
+  if (Get-Member -InputObject $vsRequirements -Name 'version') {
     $args += '-version'
     $args += $vsRequirements.version
   }
 
-  if ($vsRequirements -and (Get-Member -InputObject $vsRequirements -Name 'components' -ErrorAction SilentlyContinue)) {
+  if (Get-Member -InputObject $vsRequirements -Name 'components') {
     foreach ($component in $vsRequirements.components) {
       $args += '-requires'
       $args += $component
