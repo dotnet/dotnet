@@ -42,13 +42,16 @@
     <PropertyGroup>
       <_CurrentRemoteAsset>%(RemoteAsset.Identity)</_CurrentRemoteAsset>
       <_CurrentDestination>%(RemoteAsset.DownloadDestination)</_CurrentDestination>
+      <_CurrentCrossArchPath>$(CrossArchitectureInstallerBasePath)\%(RemoteAsset.Identity)</_CurrentCrossArchPath>
     </PropertyGroup>
 
     <ItemGroup>
       <UrisToDownload Include="@(RemoteAssetBaseURL->'%(Identity)Runtime/$(MicrosoftNETCorePlatformsVersion)/$(_CurrentRemoteAsset)')" />
     </ItemGroup>
 
-    <DownloadFile Uris="@(UrisToDownload)" DestinationPath="$(_CurrentDestination)" />
+    <!-- If the file exists in the CrossArchitectureInstallerBasePath, copy it. otherwise download it. -->
+    <Copy SourceFiles="$(_CurrentCrossArchPath)" DestinationFiles="$(_CurrentDestination)" Condition="Exists('$(_CurrentCrossArchPath)')" />
+    <DownloadFile Uris="@(UrisToDownload)" DestinationPath="$(_CurrentDestination)" Condition="!Exists('$(_CurrentCrossArchPath)')" />
   </Target>
 
   <Target Name="SetInstallerInfo" BeforeTargets="BeforeBuild" DependsOnTargets="FetchRuntimePrereqDependencies">
