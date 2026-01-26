@@ -263,6 +263,7 @@
     <Compile Include="Language\Nullness\NullableCsharpImportTests.fs" />
     <Compile Include="Language\Nullness\NullableRegressionTests.fs" />
     <Compile Include="Language\Nullness\NullableReferenceTypesTests.fs" />
+    <Compile Include="Language\Nullness\EventNullnessTests.fs" />
     <Compile Include="Language\IndexedSetTests.fs" />
     <Compile Include="ConstraintSolver\PrimitiveConstraints.fs" />
     <Compile Include="ConstraintSolver\MemberConstraints.fs" />
@@ -327,7 +328,6 @@
     <Compile Include="Diagnostics\General.fs" />
     <Compile Include="Diagnostics\Records.fs" />
     <Compile Include="Globalization\GlobalizationTestCases.fs" />
-    <Compile Include="OCamlCompat\OCamlCompat.fs" />
     <Compile Include="Miscellaneous\ListLiterals.fs" />
     <Compile Include="Miscellaneous\SemanticClassificationKeyBuilder.fs" />
     <Compile Include="Miscellaneous\XmlDoc.fs" />

@@ -8,11 +8,18 @@ using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.PooledObjects;
+using Microsoft.CodeAnalysis.Shared.Extensions;
 
 namespace Microsoft.CodeAnalysis.FindSymbols.Finders;
 
 internal sealed class OrdinaryMethodReferenceFinder : AbstractMethodOrPropertyOrEventSymbolReferenceFinder<IMethodSymbol>
 {
+    public static readonly OrdinaryMethodReferenceFinder Instance = new();
+
+    private OrdinaryMethodReferenceFinder()
+    {
+    }
+
     protected override bool CanFind(IMethodSymbol symbol)
         => symbol.MethodKind is MethodKind.Ordinary or
                                 MethodKind.DelegateInvoke or
@@ -20,7 +27,7 @@ internal sealed class OrdinaryMethodReferenceFinder : AbstractMethodOrPropertyOr
                                 MethodKind.ReducedExtension or
                                 MethodKind.LocalFunction;
 
-    protected override ValueTask<ImmutableArray<ISymbol>> DetermineCascadedSymbolsAsync(
+    protected override async ValueTask<ImmutableArray<ISymbol>> DetermineCascadedSymbolsAsync(
         IMethodSymbol symbol,
         Solution solution,
         FindReferencesSearchOptions options,
@@ -29,7 +36,7 @@ internal sealed class OrdinaryMethodReferenceFinder : AbstractMethodOrPropertyOr
         // If it's a delegate method, then cascade to the type as well.  These guys are
         // practically equivalent for users.
         if (symbol.ContainingType.TypeKind == TypeKind.Delegate)
-            return new([symbol.ContainingType]);
+            return [symbol.ContainingType];
 
         using var _ = ArrayBuilder<ISymbol>.GetInstance(out var result);
 
@@ -38,41 +45,11 @@ internal sealed class OrdinaryMethodReferenceFinder : AbstractMethodOrPropertyOr
         // If the given symbol is an extension member, cascade to its implementation method
         result.AddIfNotNull(symbol.AssociatedExtensionImplementation);
 
-        CascadeFromExtensionImplementation(symbol, result);
-
-        return new(result.ToImmutableAndClear());
-    }
-
-    private static void CascadeFromExtensionImplementation(IMethodSymbol symbol, ArrayBuilder<ISymbol> result)
-    {
         // If the given symbol is an implementation method of an extension member, cascade to the extension member itself
-        var containingType = symbol.ContainingType;
-        if (symbol is not { IsStatic: true, IsImplicitlyDeclared: true, ContainingType.MightContainExtensionMethods: true })
-            return;
+        if (symbol.TryGetCorrespondingExtensionBlockMethod() is IMethodSymbol method)
+            result.Add(method);
 
-        // Having a compiler API to go from implementation method back to its corresponding extension member would be useful
-        // Tracked by https://github.com/dotnet/roslyn/issues/81686
-
-        foreach (var nestedType in containingType.GetTypeMembers())
-        {
-            if (!nestedType.IsExtension || nestedType.ExtensionParameter is null)
-                continue;
-
-            foreach (var member in nestedType.GetMembers())
-            {
-                if (member is IMethodSymbol method)
-                {
-                    var associated = method.AssociatedExtensionImplementation;
-                    if (associated is null)
-                        continue;
-                    if (!Equals(associated, symbol))
-                        continue;
-
-                    result.Add(method);
-                    return;
-                }
-            }
-        }
+        return result.ToImmutableAndClear();
     }
 
     private static ImmutableArray<ISymbol> GetOtherPartsOfPartial(IMethodSymbol symbol)
@@ -111,8 +88,8 @@ internal sealed class OrdinaryMethodReferenceFinder : AbstractMethodOrPropertyOr
         // TODO(cyrusn): Handle searching for Monitor.Enter and Monitor.Exit.  If a user
         // searches for these, then we should find usages of 'lock(goo)' or 'synclock(goo)'
         // since they implicitly call those methods.
-
         await FindDocumentsAsync(project, documents, processResult, processResultData, cancellationToken, methodSymbol.Name).ConfigureAwait(false);
+        await FindDocumentsWithGlobalSuppressMessageAttributeAsync(project, documents, processResult, processResultData, cancellationToken).ConfigureAwait(false);
 
         if (IsForEachMethod(methodSymbol))
             await FindDocumentsWithForEachStatementsAsync(project, documents, processResult, processResultData, cancellationToken).ConfigureAwait(false);
@@ -123,14 +100,14 @@ internal sealed class OrdinaryMethodReferenceFinder : AbstractMethodOrPropertyOr
         if (IsGetAwaiterMethod(methodSymbol))
             await FindDocumentsWithAwaitExpressionAsync(project, documents, processResult, processResultData, cancellationToken).ConfigureAwait(false);
 
-        await FindDocumentsWithGlobalSuppressMessageAttributeAsync(
-            project, documents, processResult, processResultData, cancellationToken).ConfigureAwait(false);
-
         if (IsAddMethod(methodSymbol))
             await FindDocumentsWithCollectionInitializersAsync(project, documents, processResult, processResultData, cancellationToken).ConfigureAwait(false);
 
         if (IsDisposeMethod(methodSymbol))
             await FindDocumentsWithUsingStatementsAsync(project, documents, processResult, processResultData, cancellationToken).ConfigureAwait(false);
+
+        if (IsCollectionBuilderFactoryMethod(methodSymbol))
+            await FindDocumentsWithCollectionExpressionsAsync(project, documents, processResult, processResultData, cancellationToken).ConfigureAwait(false);
     }
 
     private static Task FindDocumentsWithDeconstructionAsync<TData>(Project project, IImmutableSet<Document>? documents, Action<Document, TData> processResult, TData processResultData, CancellationToken cancellationToken)
@@ -158,6 +135,30 @@ internal sealed class OrdinaryMethodReferenceFinder : AbstractMethodOrPropertyOr
     private static bool IsDisposeMethod(IMethodSymbol methodSymbol)
         => methodSymbol.Name == nameof(IDisposable.Dispose);
 
+    private static bool IsCollectionBuilderFactoryMethod(IMethodSymbol methodSymbol)
+    {
+        // Has to be a method of the form `static ReturnType MethodName(..., ReadOnlySpan<T>)`
+        if (methodSymbol is { IsStatic: true, Parameters: [.., var lastParameter], ReturnType: INamedTypeSymbol returnType } &&
+            lastParameter.Type.IsReadOnlySpan())
+        {
+            // Now look at the attributes on ReturnType.
+            foreach (var attribute in returnType.GetAttributes())
+            {
+                // See if it has the `[CollectionBuilder(typeof(BuilderType), "FactoryMethodName")]` attribute. And, if
+                // so, that the BuilderType and FactoryMethodName match the method we're looking at.
+                if (attribute.AttributeClass.IsCollectionBuilderAttribute() &&
+                    attribute.ConstructorArguments is [{ Value: INamedTypeSymbol builderType }, { Value: string factoryName }] &&
+                    Equals(methodSymbol.ContainingType, builderType) &&
+                    methodSymbol.Name == factoryName)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     protected sealed override void FindReferencesInDocument<TData>(
         IMethodSymbol symbol,
         FindReferencesDocumentState state,
@@ -169,6 +170,9 @@ internal sealed class OrdinaryMethodReferenceFinder : AbstractMethodOrPropertyOr
         FindReferencesInDocumentUsingSymbolName(
             symbol, state, processResult, processResultData, cancellationToken);
 
+        FindReferencesInDocumentInsideGlobalSuppressions(
+            symbol, state, processResult, processResultData, cancellationToken);
+
         if (IsForEachMethod(symbol))
             FindReferencesInForEachStatements(symbol, state, processResult, processResultData, cancellationToken);
 
@@ -178,14 +182,14 @@ internal sealed class OrdinaryMethodReferenceFinder : AbstractMethodOrPropertyOr
         if (IsGetAwaiterMethod(symbol))
             FindReferencesInAwaitExpression(symbol, state, processResult, processResultData, cancellationToken);
 
-        FindReferencesInDocumentInsideGlobalSuppressions(
-            symbol, state, processResult, processResultData, cancellationToken);
-
         if (IsAddMethod(symbol))
             FindReferencesInCollectionInitializer(symbol, state, processResult, processResultData, cancellationToken);
 
         if (IsDisposeMethod(symbol))
             FindReferencesInUsingStatements(symbol, state, processResult, processResultData, cancellationToken);
+
+        if (IsCollectionBuilderFactoryMethod(symbol))
+            FindReferencesInCollectionExpressions(symbol, state, processResult, processResultData, cancellationToken);
     }
 
     private void FindReferencesInUsingStatements<TData>(

@@ -95,27 +95,51 @@ namespace NuGet.PackageManagement.Test.Telemetry
         }
 
         [Fact]
-        public void CreateWithExternalLink_VulnerabilityAdvisoryGHCopilotDocs_CreatedWithoutPiiData()
+        public void CreateWithVulnerabilityInfoBarFixWithCopilot_WithValidProperties_CreatedWithoutPiiData()
         {
             // Arrange
             var nuGetTelemetryService = SetupTelemetryListener();
 
-            HyperlinkType hyperlinkType = HyperlinkType.VulnerabilityAdvisoryGHCopilotDocs;
+            var navigationType = NavigationType.Button;
+            var navigationOrigin = NavigationOrigin.VulnerabilityInfoBar_FixVulnerabilitiesWithCopilot;
 
-            var evt = NavigatedTelemetryEvent.CreateWithExternalLink(hyperlinkType);
+            var evt = NavigatedTelemetryEvent.CreateWithVulnerabilityInfoBarFixWithCopilot(FixVulnerabilitiesWithCopilotErrorType.None);
 
             // Act
             nuGetTelemetryService.EmitTelemetryEvent(evt);
 
             // Assert
             Assert.NotNull(_lastTelemetryEvent);
-            Assert.Equal(3, _lastTelemetryEvent.Count);
-            Assert.Equal(NavigationType.Hyperlink, _lastTelemetryEvent[NavigatedTelemetryEvent.NavigationTypePropertyName]);
-            Assert.Equal(NavigationOrigin.PMUI_ExternalLink, _lastTelemetryEvent[NavigatedTelemetryEvent.OriginPropertyName]);
-            Assert.Equal(hyperlinkType, _lastTelemetryEvent[NavigatedTelemetryEvent.HyperLinkTypePropertyName]);
+            Assert.Equal(navigationType, _lastTelemetryEvent[NavigatedTelemetryEvent.NavigationTypePropertyName]);
+            Assert.Equal(navigationOrigin, _lastTelemetryEvent[NavigatedTelemetryEvent.OriginPropertyName]);
+            Assert.Null(_lastTelemetryEvent[NavigatedTelemetryEvent.HyperLinkTypePropertyName]);
             Assert.Null(_lastTelemetryEvent[NavigatedTelemetryEvent.CurrentTabPropertyName]);
             Assert.Null(_lastTelemetryEvent[NavigatedTelemetryEvent.IsSolutionViewPropertyName]);
             Assert.Empty(_lastTelemetryEvent.GetPiiData());
+        }
+
+        [Theory]
+        [InlineData(FixVulnerabilitiesWithCopilotErrorType.None)]
+        [InlineData(FixVulnerabilitiesWithCopilotErrorType.CopilotNotReady)]
+        [InlineData(FixVulnerabilitiesWithCopilotErrorType.ServiceBrokerNotAvailable)]
+        [InlineData(FixVulnerabilitiesWithCopilotErrorType.CopilotServiceNotAvailable)]
+        [InlineData(FixVulnerabilitiesWithCopilotErrorType.McpToolServiceNotAvailable)]
+        [InlineData(FixVulnerabilitiesWithCopilotErrorType.CopilotAccessDenied)]
+        public void CreateWithVulnerabilityInfoBarFixWithCopilot_WithAllErrorTypes_CreatesEventWithCorrectProperties(FixVulnerabilitiesWithCopilotErrorType errorType)
+        {
+            // Arrange
+            var nuGetTelemetryService = SetupTelemetryListener();
+
+            // Act
+            var evt = NavigatedTelemetryEvent.CreateWithVulnerabilityInfoBarFixWithCopilot(errorType);
+            nuGetTelemetryService.EmitTelemetryEvent(evt);
+
+            // Assert
+            Assert.NotNull(_lastTelemetryEvent);
+            Assert.Equal(3, _lastTelemetryEvent.Count);
+            Assert.Equal(NavigationType.Button, _lastTelemetryEvent[NavigatedTelemetryEvent.NavigationTypePropertyName]);
+            Assert.Equal(NavigationOrigin.VulnerabilityInfoBar_FixVulnerabilitiesWithCopilot, _lastTelemetryEvent[NavigatedTelemetryEvent.OriginPropertyName]);
+            Assert.Equal(errorType, _lastTelemetryEvent[NavigatedTelemetryEvent.ErrorTypePropertyName]);
         }
 
         [Fact]

@@ -31,17 +31,17 @@ internal class DotNetSdkHelper
         _binlogDir = binlogDir;
     }
 
-    private void ExecuteCmd(string args, string workingDirectory, Action<Process>? additionalProcessConfigCallback = null, int expectedExitCode = 0, int millisecondTimeout = -1)
+    private void ExecuteCmd(string args, string workingDirectory, Action<Process>? additionalProcessConfigCallback = null, int expectedExitCode = 0, int millisecondTimeout = -1, string? culture = null)
     {
         if (!string.IsNullOrEmpty(SdkVersion) && !File.Exists(Path.Combine(workingDirectory, "global.json")))
         {
             ExecuteCmdImpl($"new globaljson --sdk-version {SdkVersion}", workingDirectory);
         }
 
-        ExecuteCmdImpl(args, workingDirectory, additionalProcessConfigCallback, expectedExitCode, millisecondTimeout);
+        ExecuteCmdImpl(args, workingDirectory, additionalProcessConfigCallback, expectedExitCode, millisecondTimeout, culture);
     }
 
-    private void ExecuteCmdImpl(string args, string workingDirectory, Action<Process>? additionalProcessConfigCallback = null, int expectedExitCode = 0, int millisecondTimeout = -1)
+    private void ExecuteCmdImpl(string args, string workingDirectory, Action<Process>? additionalProcessConfigCallback = null, int expectedExitCode = 0, int millisecondTimeout = -1, string? culture = null)
     {
         (Process Process, string StdOut, string StdErr) executeResult = ExecuteHelper.ExecuteProcess(
             DotNetExecutablePath,
@@ -54,13 +54,13 @@ internal class DotNetSdkHelper
 
         void configureProcess(Process process, string workingDirectory)
         {
-            ConfigureProcess(process, workingDirectory, DotNetRoot, nugetPackagesDirectory: null, setPath: false);
+            ConfigureProcess(process, workingDirectory, DotNetRoot, nugetPackagesDirectory: null, setPath: false, culture: culture);
 
             additionalProcessConfigCallback?.Invoke(process);
         }
     }
 
-    private static void ConfigureProcess(Process process, string workingDirectory, string dotnetRoot, string? nugetPackagesDirectory = null, bool setPath = false, bool clearEnv = false)
+    private static void ConfigureProcess(Process process, string workingDirectory, string dotnetRoot, string? nugetPackagesDirectory = null, bool setPath = false, bool clearEnv = false, string? culture = null)
     {
         process.StartInfo.WorkingDirectory = workingDirectory;
 
@@ -81,6 +81,11 @@ internal class DotNetSdkHelper
         process.StartInfo.EnvironmentVariables["ImportDirectoryBuildTargets"] = "false";
         process.StartInfo.EnvironmentVariables["ImportDirectoryPackagesProps"] = "false";
 
+        if (!string.IsNullOrEmpty(culture))
+        {
+            process.StartInfo.EnvironmentVariables["DOTNET_CLI_UI_LANGUAGE"] = culture;
+        }
+
         if (!string.IsNullOrEmpty(nugetPackagesDirectory))
         {
             process.StartInfo.EnvironmentVariables["NUGET_PACKAGES"] = nugetPackagesDirectory;
@@ -92,13 +97,13 @@ internal class DotNetSdkHelper
         }
     }
 
-    public void ExecuteBuild(string projectDirectory) =>
-        ExecuteCmd($"build {GetBinLogOption(projectDirectory, "build")}", projectDirectory);
+    public void ExecuteBuild(string projectDirectory, string? culture = null) =>
+        ExecuteCmd($"build {GetBinLogOption(projectDirectory, "build")}", projectDirectory, culture: culture);
 
     /// <summary>
     /// Create a new .NET project and return the path to the created project folder.
     /// </summary>
-    public string ExecuteNew(string projectType, string projectName, string projectDirectory, string? language = null, string? customArgs = null)
+    public string ExecuteNew(string projectType, string projectName, string projectDirectory, string? language = null, string? customArgs = null, string? culture = null)
     {
         string options = $"--name {projectName} --output {projectDirectory}";
         if (language != null)
@@ -110,7 +115,7 @@ internal class DotNetSdkHelper
             options += $" {customArgs}";
         }
 
-        ExecuteCmd($"new {projectType} {options}", projectDirectory);
+        ExecuteCmd($"new {projectType} {options}", projectDirectory, culture: culture);
 
         return projectDirectory;
     }
@@ -171,18 +176,18 @@ internal class DotNetSdkHelper
         }
     }
 
-    public void ExecuteRun(string projectDirectory, string[]? frameworks = null)
+    public void ExecuteRun(string projectDirectory, string[]? frameworks = null, string? culture = null)
     {
         if (frameworks != null)
         {
             foreach (var item in frameworks)
             {
-                ExecuteCmd($"run {GetBinLogOption(projectDirectory, "run")} --framework " + item, projectDirectory);
+                ExecuteCmd($"run {GetBinLogOption(projectDirectory, "run")} --framework " + item, projectDirectory, culture: culture);
             }
         }
         else
         {
-            ExecuteCmd($"run {GetBinLogOption(projectDirectory, "run")}", projectDirectory);
+            ExecuteCmd($"run {GetBinLogOption(projectDirectory, "run")}", projectDirectory, culture: culture);
         }
     }
 

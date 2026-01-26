@@ -164,7 +164,7 @@ namespace NuGet.Indexing.Test
             //  pair-wise merging - but now in a different order - should be the same result
 
             var result2 = Enumerable.Empty<string>();
-            foreach (var l in data.Reverse())
+            foreach (var l in data.AsEnumerable().Reverse())
             {
                 result2 = result2.Merge(l.Select(ch => ch.ToString()), comparer);
             }

@@ -22,10 +22,10 @@
         <target state="translated">'{0} {1}' paketinin '[1.0.0]' gibi tam bir sürümü yok. PackageDownload'da yalnızca tam sürümlere izin verilir.</target>
         <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
       </trans-unit>
-      <trans-unit id="InfoBar_HyperlinkGHCopilotDocs">
-        <source>How to fix with GitHub Copilot</source>
-        <target state="translated">GitHub Copilot ile nasıl düzeltilir?</target>
-        <note />
+      <trans-unit id="InfoBar_HyperlinkFixVulnerabilitiesWithCopilot">
+        <source>Fix with GitHub Copilot</source>
+        <target state="new">Fix with GitHub Copilot</target>
+        <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="InfoBar_HyperlinkMessage">
         <source>Manage NuGet Packages</source>

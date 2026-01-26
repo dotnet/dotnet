@@ -120,10 +120,11 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     return
                         (node is ExpressionSyntax && (isSpeculative || allowNamedArgumentName || !SyntaxFacts.IsNamedArgumentName(node))) ||
-                        (node is ConstructorInitializerSyntax) ||
-                        (node is PrimaryConstructorBaseTypeSyntax) ||
-                        (node is AttributeSyntax) ||
-                        (node is CrefSyntax);
+                        (node is ConstructorInitializerSyntax
+                              or PrimaryConstructorBaseTypeSyntax
+                              or WithElementSyntax
+                              or AttributeSyntax
+                              or CrefSyntax);
             }
         }
 
@@ -650,6 +651,18 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             return CanGetSemanticInfo(constructorInitializer)
                 ? GetSymbolInfoWorker(constructorInitializer, SymbolInfoOptions.DefaultOptions, cancellationToken)
+                : SymbolInfo.None;
+        }
+
+        /// <summary>
+        /// Returns what symbol(s), if any, the given 'with(...)' element syntax bound to in the program.
+        /// </summary>
+        internal SymbolInfo GetSymbolInfo(WithElementSyntax withElement, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            CheckSyntaxNode(withElement);
+
+            return CanGetSemanticInfo(withElement)
+                ? GetSymbolInfoWorker(withElement, SymbolInfoOptions.DefaultOptions, cancellationToken)
                 : SymbolInfo.None;
         }
 
@@ -2035,10 +2048,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             var boundExpr = lowestBoundNode as BoundExpression;
             var highestBoundExpr = highestBoundNode as BoundExpression;
 
-            if (boundExpr != null &&
-                !(boundNodeForSyntacticParent != null &&
-                  boundNodeForSyntacticParent.Syntax.Kind() == SyntaxKind.ObjectCreationExpression &&
-                  ((ObjectCreationExpressionSyntax)boundNodeForSyntacticParent.Syntax).Type == boundExpr.Syntax)) // Do not return any type information for a ObjectCreationExpressionSyntax.Type node.
+            if (boundExpr != null)
             {
                 // TODO: Should parenthesized expression really not have symbols? At least for C#, I'm not sure that 
                 // is right. For example, C# allows the assignment statement:
@@ -5011,6 +5021,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return this.GetSymbolInfo(orderingSyntax, cancellationToken);
                 case PositionalPatternClauseSyntax ppcSyntax:
                     return this.GetSymbolInfo(ppcSyntax, cancellationToken);
+                case WithElementSyntax withElement:
+                    return this.GetSymbolInfo(withElement, cancellationToken);
             }
 
             return SymbolInfo.None;

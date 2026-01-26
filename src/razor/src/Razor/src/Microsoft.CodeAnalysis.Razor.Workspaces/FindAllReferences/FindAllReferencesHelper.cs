@@ -45,7 +45,7 @@ internal static class FindAllReferencesHelper
                 !documentMappingService.TryMapToCSharpDocumentPosition(csharpDocument, line.End, out _, out _))
             {
                 var start = line.GetFirstNonWhitespacePosition() ?? line.Start;
-                return codeDoc.Source.Text.GetSubTextString(TextSpan.FromBounds(start, line.End));
+                return codeDoc.Source.Text.ToString(TextSpan.FromBounds(start, line.End));
             }
         }
 

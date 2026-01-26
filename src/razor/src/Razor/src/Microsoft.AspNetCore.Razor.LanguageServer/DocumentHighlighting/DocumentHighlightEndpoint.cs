@@ -21,11 +21,10 @@ internal class DocumentHighlightEndpoint : AbstractRazorDelegatingEndpoint<Docum
     private readonly IDocumentMappingService _documentMappingService;
 
     public DocumentHighlightEndpoint(
-        LanguageServerFeatureOptions languageServerFeatureOptions,
         IDocumentMappingService documentMappingService,
         IClientConnection clientConnection,
         ILoggerFactory loggerFactory)
-        : base(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.GetOrCreateLogger<DocumentHighlightEndpoint>())
+        : base(documentMappingService, clientConnection, loggerFactory.GetOrCreateLogger<DocumentHighlightEndpoint>())
     {
         _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
     }

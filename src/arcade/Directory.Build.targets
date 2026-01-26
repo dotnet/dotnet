@@ -4,9 +4,4 @@
   <Import Project="$(RepositoryEngineeringDir)Microsoft.DotNet.SwaggerGenerator.MSBuild.InTree.targets" Condition="'$(UsingInTreeToolSwaggerGeneratorMSBuild)' == 'true'" />
   <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" Condition="'$(IsBuildTaskProject)' == 'true'" />
 
-  <!-- Turn on package pruning by default for every TFM except for .NET Framework. -->
-  <PropertyGroup>
-    <RestoreEnablePackagePruning Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'">true</RestoreEnablePackagePruning>
-  </PropertyGroup>
-
 </Project>

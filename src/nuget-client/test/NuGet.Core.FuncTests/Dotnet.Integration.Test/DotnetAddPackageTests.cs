@@ -15,6 +15,7 @@ using NuGet.ProjectModel;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
 using NuGet.XPlat.FuncTest;
+using Test.Utility;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -610,7 +611,7 @@ namespace Dotnet.Integration.Test
             using (SimpleTestPathContext pathContext = new())
             {
                 var projectName = "project";
-                string targetFrameworks = Constants.DefaultTargetFramework.GetShortFolderName();
+                string targetFrameworks = TestConstants.DefaultTargetFramework.GetShortFolderName();
                 SimpleTestProjectContext projectA = XPlatTestUtils.CreateProject(projectName, pathContext, targetFrameworks);
 
                 // This package is important because:

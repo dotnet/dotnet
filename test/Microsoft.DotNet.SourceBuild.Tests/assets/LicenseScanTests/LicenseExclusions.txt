@@ -121,6 +121,7 @@ src/roslyn/THIRD-PARTY-NOTICES.txt
 src/roslyn/src/Analyzers/CSharp/Tests/FileHeaders/FileHeaderTests.cs|unknown-license-reference
 src/roslyn/src/Analyzers/VisualBasic/Tests/FileHeaders/FileHeaderTests.vb|unknown-license-reference
 src/roslyn/src/EditorFeatures/CSharpTest2/EmbeddedLanguages/RegularExpressions/Regex_RealWorldPatterns.json
+src/roslyn/src/VisualStudio/IntegrationTest/Harness/IntegrationTestServiceDev18/source.extension.vsixmanifest|unknown-license-reference
 
 # Applicable to installer, not source
 src/roslyn/src/RoslynAnalyzers/Assets/EULA.txt|ms-net-library
@@ -135,6 +136,7 @@ src/roslyn/src/Setup/Roslyn.VsixLicense/EULA.rtf
 src/runtime/src/installer/pkg/LICENSE-MSFT.TXT
 
 # False positive
+src/runtime/THIRD-PARTY-NOTICES.TXT|clear-bsd
 src/runtime/src/libraries/System.ComponentModel.TypeConverter/src/System/ComponentModel/LicFileLicenseProvider.cs|proprietary-license
 src/runtime/src/libraries/System.Net.Sockets/tests/FunctionalTests/Connect.cs|other-permissive
 src/runtime/src/libraries/System.Net.Sockets/tests/FunctionalTests/SendReceive/SendReceive.cs|other-permissive
@@ -166,7 +168,7 @@ src/runtime/src/libraries/System.Text.Json/roadmap/images/higher-level-component
 
 # False positive
 src/sdk/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
-src/sdk/template_feed/Microsoft.DotNet.Common.ProjectTemplates.10.0/content/*/.template.config/localize/templatestrings.fr.json|proprietary-license
+src/sdk/template_feed/Microsoft.DotNet.Common.ProjectTemplates.11.0/content/*/.template.config/localize/templatestrings.fr.json|proprietary-license
 
 # Build asset, not applicable to source
 src/sdk/src/Microsoft.CodeAnalysis.NetAnalyzers/src/assets/EULA.txt|ms-net-library
@@ -218,9 +220,6 @@ src/wpf/eng/WpfArcadeSdk/tools/GenXmlStringTable.pl|proprietary-license
 
 # False positive
 src/wpf/src/Microsoft.DotNet.Wpf/src/PresentationUI/MS/Internal/Documents/RMPublishingDialog.RightsTable.cs|unknown-license-reference
-src/wpf/src/Microsoft.DotNet.Wpf/src/Themes/PresentationFramework.Fluent/Resources/*.xaml|bsd-2-clause-views
-src/wpf/src/Microsoft.DotNet.Wpf/src/Themes/PresentationFramework.Fluent/Resources/Theme/*.xaml|bsd-2-clause-views
-src/wpf/src/Microsoft.DotNet.Wpf/src/Themes/PresentationFramework.Fluent/Styles/*.xaml|bsd-2-clause-views
 src/wpf/src/Microsoft.DotNet.Wpf/src/Themes/PresentationFramework.Fluent/Styles/*.xaml|mpl-2.0
 src/wpf/src/Microsoft.DotNet.Wpf/src/WindowsBase/MS/Internal/IO/Packaging/CompoundFile/RightsManagementEncryptionTransform.cs|proprietary-license
 src/wpf/src/Microsoft.DotNet.Wpf/src/WindowsBase/MS/Internal/IO/Packaging/CompoundFile/UserUseLicenseDictionaryLoader.cs|proprietary-license

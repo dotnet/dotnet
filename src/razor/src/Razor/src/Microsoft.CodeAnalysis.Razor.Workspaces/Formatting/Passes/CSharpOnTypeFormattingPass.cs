@@ -339,7 +339,14 @@ internal sealed class CSharpOnTypeFormattingPass(
 
         var text = context.SourceText;
         var sourceMappingSpan = text.GetTextSpan(sourceMappingRange);
-        if (!ShouldFormat(context, sourceMappingSpan, allowImplicitStatements: false, out var owner))
+        if (!ShouldFormat(context,
+            sourceMappingSpan,
+            new ShouldFormatOptions(
+                AllowImplicitStatements: false,
+                AllowImplicitExpressions: false,
+                AllowSingleLineExplicitExpressions: true,
+                IsLineRequest: false),
+            out var owner))
         {
             // We don't want to run cleanup on this range.
             return;
@@ -580,7 +587,7 @@ internal sealed class CSharpOnTypeFormattingPass(
         {
             var mappingSpan = new TextSpan(mapping.OriginalSpan.AbsoluteIndex, mapping.OriginalSpan.Length);
 #if DEBUG
-            var spanText = context.SourceText.GetSubTextString(mappingSpan);
+            var spanText = context.SourceText.ToString(mappingSpan);
 #endif
 
             var options = new ShouldFormatOptions(

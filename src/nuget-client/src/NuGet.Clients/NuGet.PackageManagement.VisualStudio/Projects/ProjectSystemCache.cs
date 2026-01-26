@@ -182,9 +182,13 @@ namespace NuGet.PackageManagement.VisualStudio
 
             try
             {
-                return _primaryCache
-                    .Select(kv => kv.Value.NuGetProject)
-                    .ToList();
+                List<NuGetProject> result = new List<NuGetProject>(_primaryCache.Count);
+                foreach (var kv in _primaryCache)
+                {
+                    result.Add(kv.Value.NuGetProject);
+                }
+
+                return result;
             }
             finally
             {

@@ -44,9 +44,9 @@
     <!-- Default to all packages generating a corresponding symbol package -->
     <IncludeSymbols>true</IncludeSymbols>
     <IsShippingPackage>false</IsShippingPackage>
-  
+
+    <!-- TFMs -->
     <SdkTargetFramework>$(NetCurrent)</SdkTargetFramework>
-    <NetToolMinimum Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NetCurrent)</NetToolMinimum>
     <ToolsetTargetFramework>$(SdkTargetFramework)</ToolsetTargetFramework>
     <VisualStudioServiceTargetFramework>net9.0</VisualStudioServiceTargetFramework>
     <VisualStudioTargetFramework>$(NetFrameworkToolCurrent)</VisualStudioTargetFramework>

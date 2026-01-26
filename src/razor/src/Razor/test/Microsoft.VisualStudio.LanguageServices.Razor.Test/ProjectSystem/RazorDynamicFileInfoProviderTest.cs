@@ -58,7 +58,7 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
         _document1 = _project.GetRequiredDocument(hostDocument1.FilePath);
         _document2 = _project.GetRequiredDocument(hostDocument2.FilePath);
 
-        var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true);
+        var languageServerFeatureOptions = new TestLanguageServerFeatureOptions();
         var filePathService = new VisualStudioFilePathService(languageServerFeatureOptions);
 
         var serviceProvider = VsMocks.CreateServiceProvider(static b =>

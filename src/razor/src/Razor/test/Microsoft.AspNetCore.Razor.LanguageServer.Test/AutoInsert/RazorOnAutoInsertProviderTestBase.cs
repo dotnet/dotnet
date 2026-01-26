@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.AutoInsert;
@@ -22,7 +21,7 @@ public abstract class RazorOnAutoInsertProviderTestBase(ITestOutputHelper testOu
         string expected,
         bool enableAutoClosingTags = true,
         RazorFileKind? fileKind = null,
-        ImmutableArray<TagHelperDescriptor> tagHelpers = default)
+        TagHelperCollection? tagHelpers = null)
     {
         // Arrange
         TestFileMarkupParser.GetPosition(input, out input, out var location);
@@ -54,11 +53,11 @@ public abstract class RazorOnAutoInsertProviderTestBase(ITestOutputHelper testOu
     private static RazorCodeDocument CreateCodeDocument(
         SourceText text,
         string path,
-        ImmutableArray<TagHelperDescriptor> tagHelpers,
+        TagHelperCollection? tagHelpers,
         RazorFileKind? fileKind = null)
     {
         var fileKindValue = fileKind ?? RazorFileKind.Component;
-        tagHelpers = tagHelpers.NullToEmpty();
+        tagHelpers ??= [];
 
         var sourceDocument = RazorSourceDocument.Create(text, RazorSourceDocumentProperties.Create(path, path));
         var projectEngine = RazorProjectEngine.Create(builder =>

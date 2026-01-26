@@ -22,6 +22,26 @@
         <target state="translated">作業失敗</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_CopilotAccessDenied">
+        <source>Access denied. Please ensure you are signed in to GitHub Copilot.</source>
+        <target state="new">Access denied. Please ensure you are signed in to GitHub Copilot.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_CopilotNotReady">
+        <source>GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in.</source>
+        <target state="new">GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_CopilotServiceNotAvailable">
+        <source>GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
+        <target state="new">GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_McpToolServiceNotAvailable">
+        <source>MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
+        <target state="new">MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
       <trans-unit id="Error_PackageSourceMappingPattern_Missing">
         <source>A package pattern must be provided.</source>
         <target state="translated">必須提供套件模式。</target>
@@ -45,6 +65,11 @@
       <trans-unit id="Error_PackageSourceUri_Missing">
         <source>A source must be provided.</source>
         <target state="translated">必須提供來源。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ServiceBrokerNotAvailable">
+        <source>Service Broker is not available. Please ensure Visual Studio is running correctly.</source>
+        <target state="new">Service Broker is not available. Please ensure Visual Studio is running correctly.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoProjectSelected">
@@ -117,6 +142,11 @@
         <target state="translated">專案不符合移轉資格。可能是專案並非 packages.config 形式，或是尚未支援 PackageReference。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Prompt_FixNuGetPackageVulnerabilities">
+        <source>Fix my NuGet package vulnerabilities</source>
+        <target state="new">Fix my NuGet package vulnerabilities</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
         <source>These settings are stored in %NuGet.Config% files</source>
         <target state="translated">這些設定儲存在 %NuGet.Config% 檔案中</target>
@@ -132,19 +162,24 @@
         <target state="translated">允許不安全連線</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_AuditSources_Checkbox">
+        <source>Use separate sources for vulnerability audit</source>
+        <target state="translated">使用個別來源進行弱點稽核</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_AuditSources_Description">
         <source>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</source>
-        <target state="new">Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
+        <target state="translated">稽核來源在還原過程中提供漏洞資料，但不作為套件來源。若未設定稽核來源，NuGet 稽核會使用套件來源。[深入了解稽核來源](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_AuditSources_HowToRemove">
         <source>Remove all audit sources to revert to using package sources for vulnerability data.</source>
-        <target state="new">Remove all audit sources to revert to using package sources for vulnerability data.</target>
+        <target state="translated">移除所有稽核來源，以恢復使用套件來源來取得漏洞資料。</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_AuditSources_Title">
         <source>Audit sources</source>
-        <target state="new">Audit sources</target>
+        <target state="translated">稽核來源</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">
@@ -172,6 +207,11 @@
         <target state="translated">HTTP 來源不安全。請考慮改用 HTTPS。已啟用 'AllowInsecureConnections' 並允許 HTTP 存取。若要獲得更安全的選項，請參閱 [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere)。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_MachineWidePackageSource_Description">
+        <source>Machine‑wide package sources are provisioned by Visual Studio workloads and can only be enabled or disabled.</source>
+        <target state="translated">全機套件來源由 Visual Studio 工作負載提供，僅能啟用或停用。</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_PackageSourceEnabled_Header">
         <source>Enabled</source>
         <target state="translated">已啟用</target>
@@ -194,7 +234,7 @@
       </trans-unit>
       <trans-unit id="Text_PackageSources_Description">
         <source>Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</source>
-        <target state="new">Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</target>
+        <target state="translated">套件來源定義 NuGet 用於安裝、還原、稽核及更新作業時取得套件的位置。[深入了解套件來源](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageSources_MachineWide">
@@ -211,6 +251,11 @@
         <source>Contoso.Contracts or System.*</source>
         <target state="translated">Contoso.Contracts 或 System.*</target>
         <note>"Contoso.Contracts" and "System.*" are examples of a package ID pattern and a package prefix pattern, respectively, so these two specific examples should not be translated.</note>
+      </trans-unit>
+      <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
+        <source>Fix Vulnerabilities with GitHub Copilot</source>
+        <target state="new">Fix Vulnerabilities with GitHub Copilot</target>
+        <note />
       </trans-unit>
       <trans-unit id="clearLocalResources">
         <source>Clear NuGet local resources</source>

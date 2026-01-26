@@ -1,6 +1,6 @@
 {
   "sdk": {
-    "version": "10.0.100",
+    "version": "11.0.100-alpha.1.26064.118",
     "allowPrerelease": true,
     "rollForward": "latestFeature",
     "paths": [
@@ -10,7 +10,7 @@
     "errorMessage": "The required .NET SDK wasn't found. Please run ./eng/common/dotnet.cmd/sh to install it."
   },
   "tools": {
-    "dotnet": "10.0.100",
+    "dotnet": "11.0.100-alpha.1.26064.118",
     "runtimes": {
       "dotnet": [
         "$(MicrosoftNETCorePlatformsVersion)"
@@ -18,9 +18,10 @@
     }
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "11.0.0-beta.25578.104",
-    "Microsoft.DotNet.SharedFramework.Sdk": "11.0.0-beta.25578.104",
+    "Microsoft.DotNet.Arcade.Sdk": "11.0.0-beta.26071.101",
+    "Microsoft.DotNet.SharedFramework.Sdk": "11.0.0-beta.26071.101",
     "Microsoft.Build.NoTargets": "3.7.0",
-    "Microsoft.Build.Traversal": "3.4.0"
+    "Microsoft.Build.Traversal": "3.4.0",
+    "Microsoft.WixToolset.Sdk": "5.0.2-dotnet.2811440"
   }
 }

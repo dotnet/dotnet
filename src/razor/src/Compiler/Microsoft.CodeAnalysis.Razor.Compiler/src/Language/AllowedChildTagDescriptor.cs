@@ -23,8 +23,8 @@ public sealed class AllowedChildTagDescriptor : TagHelperObject<AllowedChildTagD
 
     private protected override void BuildChecksum(in Checksum.Builder builder)
     {
-        builder.AppendData(Name);
-        builder.AppendData(DisplayName);
+        builder.Append(Name);
+        builder.Append(DisplayName);
     }
 
     public TagHelperDescriptor Parent

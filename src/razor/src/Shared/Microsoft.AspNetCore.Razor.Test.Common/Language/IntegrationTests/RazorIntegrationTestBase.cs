@@ -49,7 +49,7 @@ public class RazorIntegrationTestBase
         ImportItems = ImmutableArray.CreateBuilder<RazorProjectItem>();
 
         BaseCompilation = DefaultBaseCompilation;
-        Configuration = RazorConfiguration.Default;
+        Configuration = RazorConfiguration.Default with { LanguageVersion = RazorLanguageVersion.Preview };
         FileSystem = new VirtualRazorProjectFileSystem();
         PathSeparator = Path.DirectorySeparatorChar.ToString();
         WorkingDirectory = PlatformInformation.IsWindows ? ArbitraryWindowsPath : ArbitraryMacLinuxPath;
@@ -384,11 +384,17 @@ public class RazorIntegrationTestBase
         return peStream;
     }
 
-    protected INamedTypeSymbol CompileToComponent(string cshtmlSource)
+    protected INamedTypeSymbol CompileToComponent(string cshtmlSource, int genericArity = 0)
     {
         var assemblyResult = CompileToAssembly(DefaultFileName, cshtmlSource);
 
         var componentFullTypeName = $"{DefaultRootNamespace}.{Path.GetFileNameWithoutExtension(DefaultFileName)}";
+
+        if (genericArity > 0)
+        {
+            componentFullTypeName += "`" + genericArity;
+        }
+
         return CompileToComponent(assemblyResult, componentFullTypeName);
     }
 

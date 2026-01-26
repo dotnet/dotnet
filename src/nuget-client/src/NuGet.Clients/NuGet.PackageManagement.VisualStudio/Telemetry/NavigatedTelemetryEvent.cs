@@ -26,6 +26,8 @@ namespace NuGet.PackageManagement.Telemetry
 
         internal const string AlternativePackageIdPropertyName = "AlternativePackageId";
 
+        internal const string ErrorTypePropertyName = "ErrorType";
+
         /// <summary>
         /// General Navigation event with an origin specified.
         /// </summary>
@@ -78,6 +80,16 @@ namespace NuGet.PackageManagement.Telemetry
         public static NavigatedTelemetryEvent CreateWithVulnerabilityInfoBarManagePackages()
         {
             NavigatedTelemetryEvent navigatedTelemetryEvent = new(NavigationType.Button, NavigationOrigin.VulnerabilityInfoBar_ManagePackages);
+            return navigatedTelemetryEvent;
+        }
+
+        /// <summary>
+        /// Navigating from the Vulnerability InfoBar to Fix Vulnerabilities with GitHub Copilot.
+        /// </summary>
+        public static NavigatedTelemetryEvent CreateWithVulnerabilityInfoBarFixWithCopilot(FixVulnerabilitiesWithCopilotErrorType errorType)
+        {
+            NavigatedTelemetryEvent navigatedTelemetryEvent = new(NavigationType.Button, NavigationOrigin.VulnerabilityInfoBar_FixVulnerabilitiesWithCopilot);
+            navigatedTelemetryEvent[ErrorTypePropertyName] = errorType;
             return navigatedTelemetryEvent;
         }
 

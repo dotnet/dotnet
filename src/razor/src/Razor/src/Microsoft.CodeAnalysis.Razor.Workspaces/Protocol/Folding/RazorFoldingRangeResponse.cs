@@ -8,7 +8,7 @@ namespace Microsoft.CodeAnalysis.Razor.Protocol.Folding;
 
 internal sealed record RazorFoldingRangeResponse(
     [property: JsonPropertyName("htmlRanges")] ImmutableArray<FoldingRange> HtmlRanges,
-    [property: JsonPropertyName("csharpRanges")] ImmutableArray<FoldingRange> CSharpRanges)
+    [property: JsonPropertyName("csharpRanges")] FoldingRange[] CSharpRanges)
 {
-    public static readonly RazorFoldingRangeResponse Empty = new(ImmutableArray<FoldingRange>.Empty, ImmutableArray<FoldingRange>.Empty);
+    public static readonly RazorFoldingRangeResponse Empty = new([], []);
 }

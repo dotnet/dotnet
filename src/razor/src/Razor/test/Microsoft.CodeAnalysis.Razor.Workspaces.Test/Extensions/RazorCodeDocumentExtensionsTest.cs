@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -350,9 +349,9 @@ public class RazorCodeDocumentExtensionsTest(ITestOutputHelper testOutput) : Too
         Assert.Equal(RazorLanguageKind.Html, languageKind);
     }
 
-    private static RazorCodeDocument CreateCodeDocument(TestCode code, params ImmutableArray<TagHelperDescriptor> tagHelpers)
+    private static RazorCodeDocument CreateCodeDocument(TestCode code, params TagHelperCollection tagHelpers)
     {
-        tagHelpers = tagHelpers.NullToEmpty();
+        tagHelpers ??= [];
 
         var sourceDocument = TestRazorSourceDocument.Create(code.Text);
         var projectEngine = RazorProjectEngine.Create(builder =>

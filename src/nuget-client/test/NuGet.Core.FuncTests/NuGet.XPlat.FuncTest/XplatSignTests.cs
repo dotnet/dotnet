@@ -19,7 +19,7 @@ using Xunit.Abstractions;
 
 namespace NuGet.XPlat.FuncTest
 {
-    [Collection("NuGet XPlat Test Collection")]
+    [Collection(XPlatCollection.Name)]
     public class XplatSignTests
     {
         private const string _invalidArgException = "Invalid value provided for '{0}'. The accepted values are {1}.";

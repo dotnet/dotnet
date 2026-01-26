@@ -1,10 +1,8 @@
 stages:
-- stage: Tag_n_Scan
-  displayName: Tag & Scan
+- stage: Scan
   dependsOn: []
   jobs:
-  - job: Tag_n_Scan
-    displayName: Tag & Scan
+  - job: Scan
     pool:
       name: $(DncEngInternalBuildPool)
       image: 1es-ubuntu-2204

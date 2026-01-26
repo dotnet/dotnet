@@ -12,9 +12,6 @@ namespace NuGet.VisualStudio.Internal.Contracts
     public interface INuGetSourcesService : IDisposable
     {
         /// <remarks> First available in version 1.0.1 </remarks>
-        event EventHandler<IReadOnlyList<PackageSourceContextInfo>>? PackageSourcesChanged;
-
-        /// <remarks> First available in version 1.0.1 </remarks>
         ValueTask<string?> GetActivePackageSourceNameAsync(CancellationToken cancellationToken);
 
         /// <remarks> First available in version 1.0.1 </remarks>

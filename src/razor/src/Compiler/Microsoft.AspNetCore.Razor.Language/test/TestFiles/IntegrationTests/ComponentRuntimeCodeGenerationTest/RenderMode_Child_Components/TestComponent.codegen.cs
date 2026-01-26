@@ -17,15 +17,7 @@ namespace Test
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __builder.OpenComponent<global::Test.
-#nullable restore
-#line (1,2)-(1,15) "x:\dir\subdir\Test\TestComponent.cshtml"
-TestComponent
-
-#line default
-#line hidden
-#nullable disable
-            >(0);
+            __builder.OpenComponent<global::Test.TestComponent>(0);
             global::Microsoft.AspNetCore.Components.IComponentRenderMode __renderMode = 
 #nullable restore
 #line (1,29)-(1,93) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -37,15 +29,7 @@ Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
 
             ;
             __builder.AddAttribute(1, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
-                __builder2.OpenComponent<global::Test.
-#nullable restore
-#line (2,6)-(2,19) "x:\dir\subdir\Test\TestComponent.cshtml"
-TestComponent
-
-#line default
-#line hidden
-#nullable disable
-                >(2);
+                __builder2.OpenComponent<global::Test.TestComponent>(2);
                 global::Microsoft.AspNetCore.Components.IComponentRenderMode __renderMode2_0 = 
 #nullable restore
 #line (2,33)-(2,97) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -57,15 +41,7 @@ Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
 
                 ;
                 __builder2.AddAttribute(3, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder3) => {
-                    __builder3.OpenComponent<global::Test.
-#nullable restore
-#line (3,10)-(3,23) "x:\dir\subdir\Test\TestComponent.cshtml"
-TestComponent
-
-#line default
-#line hidden
-#nullable disable
-                    >(4);
+                    __builder3.OpenComponent<global::Test.TestComponent>(4);
                     global::Microsoft.AspNetCore.Components.IComponentRenderMode __renderMode3_0 = 
 #nullable restore
 #line (3,37)-(3,101) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -83,15 +59,7 @@ Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
                 __builder2.AddComponentRenderMode(__renderMode2_0);
                 __builder2.CloseComponent();
                 __builder2.AddMarkupContent(5, "\r\n ");
-                __builder2.OpenComponent<global::Test.
-#nullable restore
-#line (5,3)-(5,16) "x:\dir\subdir\Test\TestComponent.cshtml"
-TestComponent
-
-#line default
-#line hidden
-#nullable disable
-                >(6);
+                __builder2.OpenComponent<global::Test.TestComponent>(6);
                 global::Microsoft.AspNetCore.Components.IComponentRenderMode __renderMode2_1 = 
 #nullable restore
 #line (5,30)-(5,94) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -103,15 +71,7 @@ Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
 
                 ;
                 __builder2.AddAttribute(7, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder3) => {
-                    __builder3.OpenComponent<global::Test.
-#nullable restore
-#line (6,10)-(6,23) "x:\dir\subdir\Test\TestComponent.cshtml"
-TestComponent
-
-#line default
-#line hidden
-#nullable disable
-                    >(8);
+                    __builder3.OpenComponent<global::Test.TestComponent>(8);
                     global::Microsoft.AspNetCore.Components.IComponentRenderMode __renderMode3_0 = 
 #nullable restore
 #line (6,37)-(6,101) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -125,15 +85,7 @@ Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
                     __builder3.AddComponentRenderMode(__renderMode3_0);
                     __builder3.CloseComponent();
                     __builder3.AddMarkupContent(9, "\r\n        ");
-                    __builder3.OpenComponent<global::Test.
-#nullable restore
-#line (7,10)-(7,23) "x:\dir\subdir\Test\TestComponent.cshtml"
-TestComponent
-
-#line default
-#line hidden
-#nullable disable
-                    >(10);
+                    __builder3.OpenComponent<global::Test.TestComponent>(10);
                     global::Microsoft.AspNetCore.Components.IComponentRenderMode __renderMode3_1 = 
 #nullable restore
 #line (7,37)-(7,101) "x:\dir\subdir\Test\TestComponent.cshtml"

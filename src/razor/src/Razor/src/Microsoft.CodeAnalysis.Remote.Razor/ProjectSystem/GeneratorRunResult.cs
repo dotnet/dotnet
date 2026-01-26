@@ -20,7 +20,7 @@ internal readonly record struct GeneratorRunResult(RazorGeneratorResult Generato
 {
     public bool IsDefault => GeneratorResult is null && Project is null;
 
-    public IReadOnlyList<TagHelperDescriptor> TagHelpers => GeneratorResult.TagHelpers;
+    public TagHelperCollection TagHelpers => GeneratorResult.TagHelpers;
 
     public RazorCodeDocument? GetCodeDocument(string filePath)
         => GeneratorResult.GetCodeDocument(filePath);
