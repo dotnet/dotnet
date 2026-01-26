@@ -25,7 +25,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
             });
         }
 
-        internal static void Register(Command rootCommand, IAnsiConsole console)
+        internal static void Register(Command rootCommand, Lazy<IAnsiConsole> console)
         {
             Register(rootCommand, console, WhyCommandRunner.ExecuteCommand);
         }
@@ -38,11 +38,13 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
         public static void GetWhyCommand(Command rootCommand)
         {
             Register(rootCommand,
-                Spectre.Console.AnsiConsole.Console,
+                new Lazy<IAnsiConsole>(() => Spectre.Console.AnsiConsole.Console),
                 WhyCommandRunner.ExecuteCommand);
         }
 
-        internal static void Register(Command rootCommand, IAnsiConsole console, Func<WhyCommandArgs, Task<int>> action)
+        // console must be lazy, because Spectre.Console's AnsiConsole will send VT sequences to the output
+        // as soon as it's created, which causes problems with the dotnet CLI's C++ output, like dotnet --info
+        internal static void Register(Command rootCommand, Lazy<IAnsiConsole> console, Func<WhyCommandArgs, Task<int>> action)
         {
             var whyCommand = new DocumentedCommand("why", Strings.WhyCommand_Description, "https://aka.ms/dotnet/nuget/why");
 
@@ -111,7 +113,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
                         parseResult.GetValue(path)!,
                         parseResult.GetValue(package)!,
                         parseResult.GetValue(frameworks)!,
-                        console,
+                        console.Value,
                         cancellationToken);
 
                     int exitCode = await action(whyCommandArgs);
@@ -119,7 +121,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
                 }
                 catch (ArgumentException ex)
                 {
-                    console.Markup($"[red]{ex.Message}[/]");
+                    console.Value.Markup($"[red]{ex.Message}[/]");
                     return ExitCodes.InvalidArguments;
                 }
             });
