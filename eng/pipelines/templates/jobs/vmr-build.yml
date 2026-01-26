@@ -388,6 +388,15 @@ jobs:
   - checkout: self
     fetchDepth: 1
 
+  # Create artifact staging directories upfront to satisfy 1ES templateContext.outputs validation
+  # These directories are referenced in templateContext.outputs which validates paths at job start
+  - script: |
+      mkdir -p "$(Build.ArtifactStagingDirectory)/BuildLogs"
+      mkdir -p "$(Build.ArtifactStagingDirectory)/prepublish"
+      mkdir -p "$(Build.ArtifactStagingDirectory)/artifacts"
+    displayName: Create artifact staging directories
+    condition: always()
+
   - ${{ if not(parameters.isBuiltFromVmr) }}:
     # Synchronize new content in the VMR during PRs
     - template: /eng/common/templates/steps/vmr-sync.yml@self
