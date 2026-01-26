@@ -686,6 +686,7 @@ jobs:
 
       # Setup the NuGet sources used by the tests to use private feeds. This is necessary when testing internal-only product
       # builds where the packages are only available in the private feeds. This allows the tests to restore from those feeds.
+      # The sdk repo's NuGet.config is configured earilier in the pipeline to use internal feeds.
       - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
         - script: cp "$(sourcesPath)/src/sdk/NuGet.config" "$(sourcesPath)/test/Microsoft.DotNet.SourceBuild.Tests/assets/online.NuGet.Config"
           displayName: Copy Test NuGet Config for Smoke Tests
