@@ -46,15 +46,13 @@
       <SignableSourceBuiltAsset Include="@(SignableSourceBuiltArtifactsTarball)" />
 
       <!-- Source tarball -->
-      <!-- Uncomment once https://github.com/dotnet/arcade/issues/16370 has been resolved. -->
-      <!-- <SignableSourceBuiltSourceArtifact Include="$(SourceBuiltPublishAssetsDir)/$(SourceBuiltSourceArtifactName)-*$(ArchiveExtension)" /> -->
-      <!-- <SignableSourceBuiltAsset Include="@(SignableSourceBuiltSourceArtifact)" /> -->
+      <SignableSourceBuiltSourceArtifact Include="$(SourceBuiltPublishAssetsDir)/$(SourceBuiltSourceArtifactName)-*$(ArchiveExtension)" />
+      <SignableSourceBuiltAsset Include="@(SignableSourceBuiltSourceArtifact)" />
     </ItemGroup>
 
     <Error Text="$(SourceBuiltSdkTarballName) artifact count is @(SignableSourceBuiltSdkTarball->Count()) and should be 1" Condition="@(SignableSourceBuiltSdkTarball->Count()) != 1"/>
     <Error Text="$(SourceBuiltArtifactsTarballName) artifact count is @(SignableSourceBuiltArtifactsTarball->Count()) and should be 1" Condition="@(SignableSourceBuiltArtifactsTarball->Count()) != 1"/>
-    <!-- Enable once https://github.com/dotnet/arcade/issues/16370 has been resolved. -->
-    <!-- <Error Text="$(SourceBuiltSourceArtifactName) artifact count is @(SignableSourceBuiltSourceArtifact->Count()) and should be 1" Condition="@(SignableSourceBuiltSourceArtifact->Count()) != 1"/> -->
+    <Error Text="$(SourceBuiltSourceArtifactName) artifact count is @(SignableSourceBuiltSourceArtifact->Count()) and should be 1" Condition="@(SignableSourceBuiltSourceArtifact->Count()) != 1"/>
   </Target>
 
 </Project>

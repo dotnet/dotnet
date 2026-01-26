@@ -1,6 +1,9 @@
 <Project>
 
+  <Import Project="$(RepositoryEngineeringDir)VmrLayout.props" />
+
   <PropertyGroup>
+    <SourceAssetCertificateId>LinuxSign500180PGP</SourceAssetCertificateId>
     <ExternalCertificateId>3PartySHA2</ExternalCertificateId>
     <UseDotNetCertificate>true</UseDotNetCertificate>
   </PropertyGroup>
@@ -10,10 +13,33 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ItemsToSign Include="$(SignableSourceBuiltAssets)" />
+    <!-- Materialize an item list from the property so transforms work -->
+    <SignableSourceBuiltAsset Include="$(SignableSourceBuiltAssets)" />
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Sign all of the source built assets -->
+    <ItemsToSign Include="@(SignableSourceBuiltAsset)" />
+  </ItemGroup>
+
+  <Target Name="SetFileSignInfoForSourceAsset" BeforeTargets="Sign">
+    <ItemGroup>
+      <SourceBuiltSourceAsset Include="@(SignableSourceBuiltAsset)" Condition="$([System.String]::new('%(Filename)').StartsWith('$(SourceBuiltSourceArtifactName)'))"/>
+    </ItemGroup>
+
+    <!-- Don't unpack the source asset and sign it with a detached signature -->
+    <ItemGroup>
+      <FileSignInfo Include="@(SourceBuiltSourceAsset->'%(Filename)%(Extension)')">
+        <CertificateName>$(SourceAssetCertificateId)</CertificateName>
+        <DoNotUnpack>true</DoNotUnpack>
+      </FileSignInfo>
+    </ItemGroup>
+  </Target>
+
+  <ItemGroup>
+    <!-- Remove after we have rebootstrapped with an arcade change that includes https://github.com/dotnet/arcade/pull/16479 -->
+    <CertificatesSignInfo Include="$(SourceAssetCertificateId)" SupportsDetachedSignature="true" />
+
     <!-- We don't need to code sign .js files because they are not used in Windows Script Host -->
     <FileExtensionSignInfo Update=".js" CertificateName="None" />
 
