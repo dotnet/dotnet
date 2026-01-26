@@ -320,6 +320,20 @@ public sealed class SolutionTests : TestBase
         Assert.Throws<InvalidOperationException>(() => solution.WithDocumentSyntaxRoot(s_unrelatedDocumentId, root));
     }
 
+    [Fact]
+    public void GetRequiredDocument_ThrowsWithDocumentPath()
+    {
+        using var workspace = CreateWorkspaceWithProjectAndDocuments();
+        var solution = workspace.CurrentSolution;
+
+        // Create a document ID with a debug name to verify it appears in the exception message
+        var projectId = solution.Projects.Single().Id;
+        var documentId = DocumentId.CreateNewId(projectId, debugName: "MyTestDocument.cs");
+
+        var exception = Assert.Throws<InvalidOperationException>(() => solution.GetRequiredDocument(documentId));
+        Assert.Contains("MyTestDocument.cs", exception.Message);
+    }
+
     [Fact, WorkItem(37125, "https://github.com/dotnet/roslyn/issues/41940")]
     public async Task WithDocumentSyntaxRoot_AnalyzerConfigWithoutFilePath()
     {
@@ -1086,7 +1100,7 @@ public sealed class SolutionTests : TestBase
         var c3 = DocumentId.CreateNewId(projectId);
 
         var solution = workspace.CurrentSolution
-            .AddProject(ProjectInfo.Create(projectId, VersionStamp.Default, "proj1", "proj1", LanguageNames.CSharp, Path.Combine(s_projectDir, "proj1.dll")))
+            .AddProject(ProjectInfo.Create(projectId, VersionStamp.Default, "proj1", "proj1", LanguageNames.CSharp, Path.Combine(s_projectDir, "proj1.dll")).WithChecksumAlgorithm(SourceHashAlgorithm.Sha1))
             .AddProject(ProjectInfo.Create(projectId2, VersionStamp.Default, "proj2", "proj2", LanguageNames.CSharp, Path.Combine(s_projectDir, "proj2.dll")))
             .AddDocument(d1, "d1.cs", SourceText.From("class D1;", Encoding.UTF8, SourceHashAlgorithms.Default), filePath: Path.Combine(s_projectDir, "d1.cs"))
             .AddDocument(d2, "d2.cs", SourceText.From("class D2;", Encoding.UTF8, SourceHashAlgorithms.Default), filePath: Path.Combine(s_projectDir, "d2.cs"))
@@ -1193,6 +1207,7 @@ public sealed class SolutionTests : TestBase
             analyzerReferences: [analyzerReference],
             isSubmission: false,
             hostObjectType: null)
+            .WithChecksumAlgorithm(SourceHashAlgorithm.Sha256)
             .WithAnalyzerConfigDocuments(
             [
                 // update existing document:
@@ -1218,6 +1233,7 @@ public sealed class SolutionTests : TestBase
         Assert.Equal(newInfo.CompilationOptions!.ModuleName, newProject.CompilationOptions!.ModuleName);
         Assert.Equal(newInfo.ParseOptions!.LanguageVersion, newProject.ParseOptions!.LanguageVersion);
         Assert.Equal(newInfo.OutputRefFilePath, newProject.OutputRefFilePath);
+        Assert.Equal(newInfo.ChecksumAlgorithm, newProject.State.ChecksumAlgorithm);
 
         AssertEx.AreEqual([projectReference], newProject.ProjectReferences);
         AssertEx.AreEqual([metadataReference], newProject.MetadataReferences);
