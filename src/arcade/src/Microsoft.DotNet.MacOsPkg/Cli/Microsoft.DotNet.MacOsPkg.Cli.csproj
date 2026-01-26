@@ -3,7 +3,7 @@
   <PropertyGroup>
     <!-- We include both netframework and netcore in the target frameworks because Arcade's Tools.proj
          'targets' via net472. -->
-    <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFrameworks>$(BundledNETCoreAppTargetFramework);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <Nullable>enable</Nullable>
     <IsPackable>true</IsPackable>
@@ -13,14 +13,14 @@
     <UseAppHost>false</UseAppHost>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Core\Microsoft.DotNet.MacOsPkg.Core.csproj" Condition="'$(TargetFramework)' == '$(NetToolCurrent)'"/>
-    <PackageReference Include="System.CommandLine" Condition="'$(TargetFramework)' == '$(NetToolCurrent)'"/>
-  </ItemGroup>
-
-  <PropertyGroup Condition="'$(TargetFramework)' == '$(NetToolCurrent)'">
+  <PropertyGroup Condition="'$(TargetFramework)' == '$(BundledNETCoreAppTargetFramework)'">
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dotnet-macos-pkg</ToolCommandName>
   </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
+    <ProjectReference Include="..\Core\Microsoft.DotNet.MacOsPkg.Core.csproj" />
+    <PackageReference Include="System.CommandLine" />
+  </ItemGroup>
 
 </Project>

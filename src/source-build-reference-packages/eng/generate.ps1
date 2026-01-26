@@ -3,7 +3,7 @@ Param(
   [string[]][Alias('p')]$package,
   [string][Alias('c')]$csv,
   [string][Alias('d')]$destination,
-  [ValidateSet('ref','text')][string][Alias('t')]$type = 'ref',
+  [ValidateSet('ref','text','target')][string][Alias('t')]$type = 'ref',
   [switch][Alias('x')]$excludeDependencies,
   [switch][Alias('a')]$regenerateAll,
   [string][Alias('f')]$feeds,
@@ -32,7 +32,7 @@ function Get-Help() {
   Write-Host "  -c|-csv                                      A path to a csv file of packages to generate. Format is the same as the -package"
   Write-Host "                                               option above, one per line. If specified, the -package option is ignored."
   Write-Host "  -d|-destination                              A path to the root of the repo to copy source into."
-  Write-Host "  -t|-type                                     Type of the package to generate. Accepted values: ref (default) | text."
+  Write-Host "  -t|-type                                     Type of the package to generate. Accepted values: ref (default) | text | target."
   Write-Host "  -x|-excludeDependencies                      Determines if package dependencies should be excluded. Default is false."
   Write-Host "  -a|-regenerateAll                            Regenerate all packages of the specified type."
   Write-Host "  -f|-feeds                                    A semicolon-separated list of additional NuGet feeds to use during restore."
@@ -49,6 +49,8 @@ function Initialize-PackageRegeneration {
     $packagesDir = Join-Path $PSScriptRoot "..\src\referencePackages\src"
   } elseif ($type -eq "text") {
     $packagesDir = Join-Path $PSScriptRoot "..\src\textOnlyPackages\src"
+  } elseif ($type -eq "target") {
+    $packagesDir = Join-Path $PSScriptRoot "..\src\targetPacks\ILsrc"
   }
 
   if (Test-Path $packagesDir) {

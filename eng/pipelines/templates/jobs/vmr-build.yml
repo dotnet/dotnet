@@ -554,8 +554,7 @@ jobs:
 
           if [[ "$prepSdk" == "false" ]]; then
             customPrepArgs="${customPrepArgs} --no-sdk"
-            rm -rf $(sourcesPath)/.dotnet
-            mkdir $(sourcesPath)/.dotnet
+            mkdir -p $(sourcesPath)/.dotnet
             previousSdkPath="$(sourcesPath)/prereqs/packages/archive/dotnet-sdk-*.tar.gz"
             eval tar -ozxf "$previousSdkPath" -C "$(sourcesPath)/.dotnet"
             eval rm -f "$previousSdkPath"

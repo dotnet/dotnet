@@ -1,11 +1,6 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
 
-  <!-- Explicitly turn off package pruning for .NET Framework which isn't supported. -->
-  <PropertyGroup>
-    <RestoreEnablePackagePruning Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">false</RestoreEnablePackagePruning>
-  </PropertyGroup>
-
   <PropertyGroup>
     <DeployProjectOutput Condition="'$(DeployProjectOutput)' == ''">$(__DeployProjectOutput)</DeployProjectOutput>
     

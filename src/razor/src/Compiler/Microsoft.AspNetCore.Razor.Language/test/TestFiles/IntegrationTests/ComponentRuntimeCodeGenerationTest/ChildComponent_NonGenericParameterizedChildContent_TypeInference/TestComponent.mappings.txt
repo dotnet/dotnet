@@ -15,11 +15,11 @@ Generated Location: (1315:40,25 [7] )
 
 Source Location: (1:0,1 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 |MyComponent|
-Generated Location: (2079:62,0 [11] )
+Generated Location: (1996:59,45 [11] )
 |MyComponent|
 
 Source Location: (13:0,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Item|
-Generated Location: (2337:71,0 [4] )
+Generated Location: (2194:63,0 [4] )
 |Item|
 

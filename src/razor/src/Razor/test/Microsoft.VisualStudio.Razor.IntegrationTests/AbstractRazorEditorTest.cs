@@ -11,8 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.Internal.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
 using Xunit;
 using Xunit.Abstractions;
@@ -48,8 +46,7 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutput) : Ab
 
         VisualStudioLogging.AddCustomLoggers();
 
-        // Our expected test results have spaces not tabs
-        await TestServices.Shell.SetInsertSpacesAsync(ControlledHangMitigatingCancellationToken);
+        await TestServices.Shell.ResetEnvironmentAsync(ControlledHangMitigatingCancellationToken);
 
         _projectFilePath = await CreateAndOpenBlazorProjectAsync(ControlledHangMitigatingCancellationToken);
 
@@ -68,7 +65,6 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutput) : Ab
         // Razor extension doesn't launch until a razor file is opened, so wait for it to equalize
         await TestServices.Workspace.WaitForProjectSystemAsync(ControlledHangMitigatingCancellationToken);
 
-        EnsureLSPEditorEnabled();
         await EnsureTextViewRolesAsync(ControlledHangMitigatingCancellationToken);
         await EnsureExtensionInstalledAsync(ControlledHangMitigatingCancellationToken);
 
@@ -84,8 +80,6 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutput) : Ab
         // fast pace of running integration tests, it's worth taking a slight delay at the start for a more reliable run.
         TestServices.Input.Send("{ENTER}");
 
-        await Task.Delay(2500);
-
         // Close the file we opened, just in case, so the test can start with a clean slate
         await TestServices.Editor.CloseCodeFileAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.IndexRazorFile, saveFile: false, ControlledHangMitigatingCancellationToken);
 
@@ -96,7 +90,7 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutput) : Ab
     {
         await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
-        await TestServices.SolutionExplorer.CloseSolutionAsync(ControlledHangMitigatingCancellationToken);
+        await TestServices.SolutionExplorer.CloseSolutionAndWaitAsync(cancellationToken);
 
         var solutionPath = CreateTemporaryPath();
 
@@ -141,23 +135,16 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutput) : Ab
 
     public override async Task DisposeAsync()
     {
-        // TODO: Would be good to have this as a last ditch check, but need to improve the detection and reporting here to be more robust
-        //await TestServices.Editor.ValidateNoDiscoColorsAsync(HangMitigatingCancellationToken);
-
         _testLogger!.LogInformation($"#### Razor integration test dispose.");
+
+        using (var disposeSource = new CancellationTokenSource(TimeSpan.FromMinutes(5)))
+        {
+            await TestServices.Shell.CloseEverythingAsync(disposeSource.Token);
+        }
 
         TestServices.Output.ClearIntegrationTestLogger();
 
         await base.DisposeAsync();
-    }
-
-    private static void EnsureLSPEditorEnabled()
-    {
-        var settingsManager = (ISettingsManager)ServiceProvider.GlobalProvider.GetService(typeof(SVsSettingsPersistenceManager));
-        Assumes.Present(settingsManager);
-
-        var useLegacyEditor = settingsManager.GetValueOrDefault<bool>(WellKnownSettingNames.UseLegacyASPNETCoreEditor);
-        Assert.False(useLegacyEditor, "Expected the Legacy Razor Editor to be disabled, but it was enabled");
     }
 
     private async Task EnsureTextViewRolesAsync(CancellationToken cancellationToken)

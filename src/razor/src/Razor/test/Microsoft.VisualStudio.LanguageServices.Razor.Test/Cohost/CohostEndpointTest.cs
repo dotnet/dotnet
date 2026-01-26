@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Cohost;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Client;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
@@ -102,6 +103,9 @@ public class CohostEndpointTest(ITestOutputHelper testOutputHelper) : ToolingTes
                 TypeDefinition = new() { DynamicRegistration = true }
             },
         };
+
+        var clientCapabilitiesService = (RazorCohostClientCapabilitiesService)exportProvider.GetExportedValue<IClientCapabilitiesService>();
+        clientCapabilitiesService.SetCapabilities(clientCapabilities);
 
         foreach (var endpoint in providers)
         {

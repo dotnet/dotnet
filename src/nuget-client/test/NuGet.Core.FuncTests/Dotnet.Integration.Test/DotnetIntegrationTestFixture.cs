@@ -181,7 +181,8 @@ namespace Dotnet.Integration.Test
                 // the one set by the _inner_ (test environment-specific) dotnet cli call we're about to make.
                 // We need to ensure that this points to the correct SDK directory because this value
                 // is used to locate many Tasks - especially those located by relative path or name.
-                ["MSBuildExtensionsPath"] = SdkDirectory.FullName
+                ["MSBuildExtensionsPath"] = SdkDirectory.FullName,
+                ["PATH"] = $"{_cliDirectory}{Path.PathSeparator}{Environment.GetEnvironmentVariable("PATH")}"
             };
 
             if (enableDiagnostics)

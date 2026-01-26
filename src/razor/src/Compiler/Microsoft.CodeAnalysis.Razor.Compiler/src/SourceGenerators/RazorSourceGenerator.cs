@@ -125,21 +125,19 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 .Select(static (pair, cancellationToken) =>
                 {
                     var ((compilation, razorSourceGeneratorOptions), isGeneratorSuppressed) = pair;
-                    var results = new List<TagHelperDescriptor>();
-
                     if (isGeneratorSuppressed)
                     {
-                        return results;
+                        return [];
                     }
 
                     RazorSourceGeneratorEventSource.Log.DiscoverTagHelpersFromCompilationStart();
                     var tagHelperFeature = GetStaticTagHelperFeature(compilation);
 
-                    tagHelperFeature.CollectDescriptors(compilation.Assembly, results, cancellationToken);
+                    var collection = tagHelperFeature.GetTagHelpers(compilation.Assembly, cancellationToken);
 
                     RazorSourceGeneratorEventSource.Log.DiscoverTagHelpersFromCompilationStop();
 
-                    return results;
+                    return collection;
                 })
                 .WithLambdaComparer(static (a, b) => a!.SequenceEqual(b!));
 
@@ -173,16 +171,37 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                             return true;
                         }
 
-                        if (oldSymbol is IAssemblySymbol oldAssembly && newSymbol is IAssemblySymbol newAssembly)
+                        if (oldSymbol is not IAssemblySymbol oldAssembly || newSymbol is not IAssemblySymbol newAssembly)
                         {
-                            var oldModuleMVIDs = oldAssembly.Modules.Select(GetMVID);
-                            var newModuleMVIDs = newAssembly.Modules.Select(GetMVID);
-                            return oldModuleMVIDs.SequenceEqual(newModuleMVIDs);
-
-                            static Guid GetMVID(IModuleSymbol m) => m.GetMetadata()?.GetModuleVersionId() ?? Guid.Empty;
+                            return false;
                         }
 
-                        return false;
+                        // Compare the MVIDs of the modules in each assembly. If they aren't present or don't match we don't consider them equal
+                        var oldModules = oldAssembly.Modules.ToArray();
+                        var newModules = newAssembly.Modules.ToArray();
+                        if (oldModules.Length != newModules.Length)
+                        {
+                            return false;
+                        }
+
+                        for (int i = 0; i < oldModules.Length; i++)
+                        {
+                            var oldMetadata = oldModules[i].GetMetadata();
+                            var newMetadata = newModules[i].GetMetadata();
+
+                            if (oldMetadata is null || newMetadata is null)
+                            {
+                                return false;
+                            }
+
+                            if (oldMetadata.GetModuleVersionId() != newMetadata.GetModuleVersionId())
+                            {
+                                return false;
+                            }
+                        }
+
+                        // All module MVIDs matched.
+                        return true;
                     })))
                     {
                         return false;
@@ -201,34 +220,36 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                     if (!hasRazorFiles)
                     {
                         // If there's no razor code in this app, don't do anything.
-                        return null;
+                        return [];
                     }
 
                     RazorSourceGeneratorEventSource.Log.DiscoverTagHelpersFromReferencesStart();
                     var tagHelperFeature = GetStaticTagHelperFeature(compilation);
 
-                    // Typically a project with Razor files will have many tag helpers in references.
-                    // So, we start with a larger capacity to avoid extra array copies.
-                    var results = new List<TagHelperDescriptor>(capacity: 128);
+                    using var collections = new MemoryBuilder<TagHelperCollection>(initialCapacity: 512, clearArray: true);
 
                     foreach (var reference in compilation.References)
                     {
                         if (compilation.GetAssemblyOrModuleSymbol(reference) is IAssemblySymbol assembly)
                         {
-                            tagHelperFeature.CollectDescriptors(assembly, results, cancellationToken);
+                            var collection = tagHelperFeature.GetTagHelpers(assembly, cancellationToken);
+                            if (!collection.IsEmpty)
+                            {
+                                collections.Append(collection);
+                            }
                         }
                     }
 
                     RazorSourceGeneratorEventSource.Log.DiscoverTagHelpersFromReferencesStop();
 
-                    return results;
+                    return TagHelperCollection.Merge(collections.AsMemory().Span);
                 });
 
             var allTagHelpers = tagHelpersFromCompilation
                 .Combine(tagHelpersFromReferences)
                 .Select(static (pair, _) =>
                 {
-                    return AllTagHelpers.Create(tagHelpersFromCompilation: pair.Left, tagHelpersFromReferences: pair.Right);
+                    return TagHelperCollection.Merge(pair.Left, pair.Right);
                 });
 
             var withOptions = sourceItems

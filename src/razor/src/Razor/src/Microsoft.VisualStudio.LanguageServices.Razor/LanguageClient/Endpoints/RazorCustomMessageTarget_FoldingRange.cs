@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -118,6 +117,6 @@ internal partial class RazorCustomMessageTarget
             return null;
         }
 
-        return new(htmlRanges.ToImmutableArray(), csharpRanges.ToImmutableArray());
+        return new([.. htmlRanges], [.. csharpRanges]);
     }
 }

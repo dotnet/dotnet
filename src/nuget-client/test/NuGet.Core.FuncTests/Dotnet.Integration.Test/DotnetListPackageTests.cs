@@ -18,7 +18,9 @@ using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.Packaging;
+using NuGet.Protocol;
 using NuGet.Test.Utility;
+using NuGet.Versioning;
 using NuGet.XPlat.FuncTest;
 using Test.Utility;
 using Xunit;
@@ -692,6 +694,38 @@ namespace Dotnet.Integration.Test
             }
         }
 
+        [Fact]
+        public async Task DotnetListPackage_Outdated_WithHighestVersionUnlisted_ReportsHighestListedVersion()
+        {
+            // Arrange
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+            var projectA = XPlatTestUtils.CreateProject("ProjectA", pathContext, TestConstants.ProjectTargetFramework);
+
+            var packageA100 = new SimpleTestPackageContext("PackageA", "1.0.0");
+            var packageA200 = new SimpleTestPackageContext("PackageA", "2.0.0");
+            var packageA300 = new SimpleTestPackageContext("PackageA", "3.0.0");
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, packageA100, packageA200, packageA300);
+
+            using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource);
+            var packageSource = new PackageSource(mockServer.ServiceIndexUri, "source");
+            pathContext.Settings.RemoveSource(packageSource.Name);
+            pathContext.Settings.AddSource(packageSource.Name, packageSource.Source, allowInsecureConnectionsValue: "true");
+            mockServer.Start();
+
+            // Mark the highest version as unlisted
+            mockServer.UnlistedPackages.Add(packageA300.Identity);
+
+            _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"add package PackageA --version 1.0.0", testOutputHelper: _testOutputHelper);
+
+            // Act
+            var result = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, "list package --outdated", testOutputHelper: _testOutputHelper);
+
+            // Assert
+            // Should show 2.0.0 as the latest version, not 3.0.0 (which is unlisted)
+            Assert.True(ContainsIgnoringSpaces(result.AllOutput, "PackageA1.0.01.0.02.0.0"));
+            Assert.False(ContainsIgnoringSpaces(result.AllOutput, "3.0.0"));
+        }
+
         [PlatformTheory(Platform.Windows)]
         [InlineData("1.1.0-beta", "")]
         [InlineData("2.0.0-beta", "--highest-patch")]
@@ -1132,6 +1166,208 @@ namespace Dotnet.Integration.Test
 
             // Assert - Verify the package is listed correctly
             Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, "PackageX1.0.01.0.0"));
+        }
+
+        [Fact]
+        public async Task DeprecatedOption_WithUnlistedPackage_Succeeds()
+        {
+            // Arrange
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+            var projectA = XPlatTestUtils.CreateProject("ProjectA", pathContext, TestConstants.ProjectTargetFramework);
+
+            var packageA100 = new SimpleTestPackageContext("PackageA", "1.0.0");
+            var packageB100 = new SimpleTestPackageContext("PackageB", "1.0.0");
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, packageA100, packageB100);
+
+            using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource);
+            var packageSource = new PackageSource(mockServer.ServiceIndexUri, "source");
+            pathContext.Settings.RemoveSource(packageSource.Name);
+            pathContext.Settings.AddSource(packageSource.Name, packageSource.Source, allowInsecureConnectionsValue: "true");
+            mockServer.Start();
+
+            mockServer.UnlistedPackages.Add(packageA100.Identity);
+            mockServer.UnlistedPackages.Add(packageB100.Identity);
+
+            // Only PackageA is deprecated
+            mockServer.DeprecatedPackages.Add(packageA100.Identity);
+
+            _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"add package PackageA --version 1.0.0", testOutputHelper: _testOutputHelper);
+            _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"add package PackageB --version 1.0.0", testOutputHelper: _testOutputHelper);
+
+            // Act
+            var result = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, "list package --deprecated --format json", testOutputHelper: _testOutputHelper);
+
+            // Assert
+            var json = JObject.Parse(result.AllOutput);
+            var projects = (JArray)json.SelectToken("$.projects");
+            projects.Should().NotBeNull();
+            projects.Count.Should().Be(1);
+
+            var frameworks = (JArray)projects[0].SelectToken("$.frameworks");
+            frameworks.Should().NotBeNull();
+            frameworks.Count.Should().Be(1);
+
+            var topLevelPackages = (JArray)frameworks[0].SelectToken("$.topLevelPackages");
+            topLevelPackages.Should().NotBeNull();
+            topLevelPackages.Count.Should().Be(1, "only PackageA should be listed as it's deprecated");
+
+            var package = topLevelPackages[0];
+            package["id"].ToString().Should().Be("PackageA");
+            package["resolvedVersion"].ToString().Should().Be("1.0.0");
+            package["deprecationReasons"].Should().NotBeNull();
+            ((JArray)package["deprecationReasons"]).Select(t => t.ToString()).Should().Contain("CriticalBugs");
+        }
+
+        [Fact]
+        public async Task DeprecatedOption_WithPrereleasePackage_Succeeds()
+        {
+            // Arrange
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+            var projectA = XPlatTestUtils.CreateProject("ProjectA", pathContext, TestConstants.ProjectTargetFramework);
+
+            var packageA100 = new SimpleTestPackageContext("PackageA", "1.0.0-alpha");
+            var packageB100 = new SimpleTestPackageContext("PackageB", "1.0.0-alpha");
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, packageA100, packageB100);
+
+            using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource);
+            var packageSource = new PackageSource(mockServer.ServiceIndexUri, "source");
+            pathContext.Settings.RemoveSource(packageSource.Name);
+            pathContext.Settings.AddSource(packageSource.Name, packageSource.Source, allowInsecureConnectionsValue: "true");
+            mockServer.Start();
+
+            // Only PackageA is deprecated
+            mockServer.DeprecatedPackages.Add(packageA100.Identity);
+
+            _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"add package PackageA --version 1.0.0-alpha", testOutputHelper: _testOutputHelper);
+            _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"add package PackageB --version 1.0.0-alpha", testOutputHelper: _testOutputHelper);
+
+            // Act
+            // Do not pass --prerelease argument. Since the project is already referencing the prerelease version, the command should still work.
+            var result = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, "list package --deprecated --format json", testOutputHelper: _testOutputHelper);
+
+            // Assert
+            var json = JObject.Parse(result.AllOutput);
+            var projects = (JArray)json.SelectToken("$.projects");
+            projects.Should().NotBeNull();
+            projects.Count.Should().Be(1);
+
+            var frameworks = (JArray)projects[0].SelectToken("$.frameworks");
+            frameworks.Should().NotBeNull();
+            frameworks.Count.Should().Be(1);
+
+            var topLevelPackages = (JArray)frameworks[0].SelectToken("$.topLevelPackages");
+            topLevelPackages.Should().NotBeNull();
+            topLevelPackages.Count.Should().Be(1, "only PackageA should be listed as it's deprecated");
+
+            var package = topLevelPackages[0];
+            package["id"].ToString().Should().Be("PackageA");
+            package["resolvedVersion"].ToString().Should().Be("1.0.0-alpha");
+            package["deprecationReasons"].Should().NotBeNull();
+            ((JArray)package["deprecationReasons"]).Select(t => t.ToString()).Should().Contain("CriticalBugs");
+        }
+
+        [Fact]
+        public async Task VulnerableOption_WithUnlistedPackage_Succeeds()
+        {
+            // Arrange
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+            var projectA = XPlatTestUtils.CreateProject("ProjectA", pathContext, TestConstants.ProjectTargetFramework);
+
+            var packageA100 = new SimpleTestPackageContext("PackageA", "1.0.0");
+            var packageB100 = new SimpleTestPackageContext("PackageB", "1.0.0");
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, packageA100, packageB100);
+
+            using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource, sourceReportsVulnerabilities: true);
+            var packageSource = new PackageSource(mockServer.ServiceIndexUri, "source");
+            pathContext.Settings.RemoveSource(packageSource.Name);
+            pathContext.Settings.AddSource(packageSource.Name, packageSource.Source, allowInsecureConnectionsValue: "true");
+            mockServer.Start();
+
+            mockServer.UnlistedPackages.Add(packageA100.Identity);
+            mockServer.UnlistedPackages.Add(packageB100.Identity);
+
+            // Only PackageA is vulnerable
+            mockServer.Vulnerabilities.Add("PackageA", new List<(Uri, PackageVulnerabilitySeverity, VersionRange)>
+            {
+                (new Uri("https://contoso.com/advisory"), PackageVulnerabilitySeverity.Moderate, VersionRange.Parse("[1.0.0]"))
+            });
+
+            _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"add package PackageA --version 1.0.0", testOutputHelper: _testOutputHelper);
+            _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"add package PackageB --version 1.0.0", testOutputHelper: _testOutputHelper);
+
+            // Act
+            var result = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, "list package --vulnerable --format json", testOutputHelper: _testOutputHelper);
+
+            // Assert
+            var json = JObject.Parse(result.AllOutput);
+            var projects = (JArray)json.SelectToken("$.projects");
+            projects.Should().NotBeNull();
+            projects.Count.Should().Be(1);
+
+            var frameworks = (JArray)projects[0].SelectToken("$.frameworks");
+            frameworks.Should().NotBeNull();
+            frameworks.Count.Should().Be(1);
+
+            var topLevelPackages = (JArray)frameworks[0].SelectToken("$.topLevelPackages");
+            topLevelPackages.Should().NotBeNull();
+            topLevelPackages.Count.Should().Be(1, "only PackageA should be listed as it's vulnerable");
+
+            var package = topLevelPackages[0];
+            package["id"].ToString().Should().Be("PackageA");
+            package["resolvedVersion"].ToString().Should().Be("1.0.0");
+            package["vulnerabilities"].Should().NotBeNull();
+            ((JArray)package["vulnerabilities"]).Count.Should().BeGreaterThan(0);
+        }
+
+        [Fact]
+        public async Task VulnerableOption_WithPrereleasePackage_Succeeds()
+        {
+            // Arrange
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+            var projectA = XPlatTestUtils.CreateProject("ProjectA", pathContext, TestConstants.ProjectTargetFramework);
+
+            var packageA100 = new SimpleTestPackageContext("PackageA", "1.0.0-alpha");
+            var packageB100 = new SimpleTestPackageContext("PackageB", "1.0.0-alpha");
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, packageA100, packageB100);
+
+            using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource, sourceReportsVulnerabilities: true);
+            var packageSource = new PackageSource(mockServer.ServiceIndexUri, "source");
+            pathContext.Settings.RemoveSource(packageSource.Name);
+            pathContext.Settings.AddSource(packageSource.Name, packageSource.Source, allowInsecureConnectionsValue: "true");
+            mockServer.Start();
+
+            // Only PackageA is vulnerable
+            mockServer.Vulnerabilities.Add("PackageA", new List<(Uri, PackageVulnerabilitySeverity, VersionRange)>
+            {
+                (new Uri("https://contoso.com/advisory"), PackageVulnerabilitySeverity.Moderate, VersionRange.Parse("[1.0.0-alpha]"))
+            });
+
+            _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"add package PackageA --version 1.0.0-alpha", testOutputHelper: _testOutputHelper);
+            _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"add package PackageB --version 1.0.0-alpha", testOutputHelper: _testOutputHelper);
+
+            // Act
+            // Do not pass --prerelease argument. Since the project is already referencing the prerelease version, the command should still work.
+            var result = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, "list package --vulnerable --format json", testOutputHelper: _testOutputHelper);
+
+            // Assert
+            var json = JObject.Parse(result.AllOutput);
+            var projects = (JArray)json.SelectToken("$.projects");
+            projects.Should().NotBeNull();
+            projects.Count.Should().Be(1);
+
+            var frameworks = (JArray)projects[0].SelectToken("$.frameworks");
+            frameworks.Should().NotBeNull();
+            frameworks.Count.Should().Be(1);
+
+            var topLevelPackages = (JArray)frameworks[0].SelectToken("$.topLevelPackages");
+            topLevelPackages.Should().NotBeNull();
+            topLevelPackages.Count.Should().Be(1, "only PackageA should be listed as it's vulnerable");
+
+            var package = topLevelPackages[0];
+            package["id"].ToString().Should().Be("PackageA");
+            package["resolvedVersion"].ToString().Should().Be("1.0.0-alpha");
+            package["vulnerabilities"].Should().NotBeNull();
+            ((JArray)package["vulnerabilities"]).Count.Should().BeGreaterThan(0);
         }
 
         private static string CollapseSpaces(string input)

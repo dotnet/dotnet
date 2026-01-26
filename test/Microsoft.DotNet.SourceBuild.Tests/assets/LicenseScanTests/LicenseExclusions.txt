@@ -136,6 +136,7 @@ src/roslyn/src/Setup/Roslyn.VsixLicense/EULA.rtf
 src/runtime/src/installer/pkg/LICENSE-MSFT.TXT
 
 # False positive
+src/runtime/THIRD-PARTY-NOTICES.TXT|clear-bsd
 src/runtime/src/libraries/System.ComponentModel.TypeConverter/src/System/ComponentModel/LicFileLicenseProvider.cs|proprietary-license
 src/runtime/src/libraries/System.Net.Sockets/tests/FunctionalTests/Connect.cs|other-permissive
 src/runtime/src/libraries/System.Net.Sockets/tests/FunctionalTests/SendReceive/SendReceive.cs|other-permissive
@@ -167,7 +168,7 @@ src/runtime/src/libraries/System.Text.Json/roadmap/images/higher-level-component
 
 # False positive
 src/sdk/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
-src/sdk/template_feed/Microsoft.DotNet.Common.ProjectTemplates.10.0/content/*/.template.config/localize/templatestrings.fr.json|proprietary-license
+src/sdk/template_feed/Microsoft.DotNet.Common.ProjectTemplates.11.0/content/*/.template.config/localize/templatestrings.fr.json|proprietary-license
 
 # Build asset, not applicable to source
 src/sdk/src/Microsoft.CodeAnalysis.NetAnalyzers/src/assets/EULA.txt|ms-net-library

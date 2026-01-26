@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Utilities;
@@ -56,13 +58,13 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
 
     public LanguageVersion CSharpLanguageVersion => ((CSharpParseOptions)_project.ParseOptions.AssumeNotNull()).LanguageVersion;
 
-    public async ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(CancellationToken cancellationToken)
+    public async ValueTask<TagHelperCollection> GetTagHelpersAsync(CancellationToken cancellationToken)
     {
         var generatorResult = await GeneratorRunResult.CreateAsync(throwIfNotFound: false, _project, SolutionSnapshot.SnapshotManager, cancellationToken).ConfigureAwait(false);
-        if (generatorResult.IsDefault)
-            return [];
 
-        return [.. generatorResult.TagHelpers];
+        return !generatorResult.IsDefault
+            ? generatorResult.TagHelpers
+            : [];
     }
 
     public RemoteDocumentSnapshot GetDocument(TextDocument document)
@@ -163,17 +165,15 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
         return await generatorResult.GetRequiredSourceGeneratedDocumentForRazorFilePathAsync(documentSnapshot.FilePath, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<RazorCodeDocument?> TryGetCodeDocumentFromGeneratedDocumentUriAsync(Uri generatedDocumentUri, CancellationToken cancellationToken)
+    public async Task<RazorCodeDocument?> TryGetCodeDocumentForGeneratedDocumentAsync(RazorGeneratedDocumentIdentity identity, CancellationToken cancellationToken)
     {
-        if (!_project.TryGetHintNameFromGeneratedDocumentUri(generatedDocumentUri, out var hintName))
-        {
-            return null;
-        }
+        Debug.Assert(identity.DocumentId.ProjectId == _project.Id, "Generated document does not belong to this project.");
+        var hintName = identity.HintName;
 
         return await TryGetCodeDocumentFromGeneratedHintNameAsync(hintName, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<RazorCodeDocument?> TryGetCodeDocumentFromGeneratedHintNameAsync(string generatedDocumentHintName, CancellationToken cancellationToken)
+    private async Task<RazorCodeDocument?> TryGetCodeDocumentFromGeneratedHintNameAsync(string generatedDocumentHintName, CancellationToken cancellationToken)
     {
         var generatorResult = await GeneratorRunResult.CreateAsync(throwIfNotFound: false, _project, SolutionSnapshot.SnapshotManager, cancellationToken).ConfigureAwait(false);
         if (generatorResult.IsDefault)
@@ -186,15 +186,18 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
             : null;
     }
 
-    public async Task<TextDocument?> TryGetRazorDocumentFromGeneratedHintNameAsync(string generatedDocumentHintName, CancellationToken cancellationToken)
+    public async Task<TextDocument?> TryGetRazorDocumentForGeneratedDocumentAsync(RazorGeneratedDocumentIdentity identity, CancellationToken cancellationToken)
     {
+        Debug.Assert(identity.DocumentId.ProjectId == _project.Id, "Generated document does not belong to this project.");
+        var hintName = identity.HintName;
+
         var generatorResult = await GeneratorRunResult.CreateAsync(throwIfNotFound: false, _project, SolutionSnapshot.SnapshotManager, cancellationToken).ConfigureAwait(false);
         if (generatorResult.IsDefault)
         {
             return null;
         }
 
-        return generatorResult.GetRazorFilePathFromHintName(generatedDocumentHintName) is { } razorFilePath &&
+        return generatorResult.GetRazorFilePathFromHintName(hintName) is { } razorFilePath &&
             generatorResult.TryGetRazorDocument(razorFilePath, out var razorDocument)
                 ? razorDocument
                 : null;

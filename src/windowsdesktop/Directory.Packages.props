@@ -15,6 +15,7 @@
 
     <!-- CoreFx dependencies -->
     <PackageVersion Include="System.Data.DataSetExtensions" Version="$(SystemDataDataSetExtensionsVersion)" />
+    <PackageVersion Include="System.Data.SqlClient" Version="$(SystemDataSqlClientVersion)" />
     <PackageVersion Include="System.Reflection.Emit.ILGeneration" Version="$(SystemReflectionEmitILGenerationVersion)" />
     <PackageVersion Include="System.Reflection.Emit.Lightweight" Version="$(SystemReflectionEmitLightweightVersion)" />
     <PackageVersion Include="System.Reflection.Emit" Version="$(SystemReflectionEmitVersion)" />
@@ -70,6 +71,15 @@
     <!-- WPF dependencies-->
     <PackageVersion Include="Microsoft.DotNet.Wpf.GitHub" Version="$(MicrosoftDotNetWpfGitHubVersion)" />
     <PackageVersion Include="Microsoft.Internal.Runtime.WindowsDesktop.Transport" Version="$(MicrosoftInternalRuntimeWindowsDesktopTransportVersion)" />
+
+    <!-- WiX dependencies -->
+    <PackageVersion Include="Microsoft.Wix" Version="$(MicrosoftWixToolsetSdkVersion)" />
+    <PackageVersion Include="Microsoft.WixToolset.Bal.wixext" Version="$(MicrosoftWixToolsetSdkVersion)" />
+    <PackageVersion Include="Microsoft.WixToolset.Dependency.wixext" Version="$(MicrosoftWixToolsetSdkVersion)" />
+    <PackageVersion Include="Microsoft.WixToolset.Heat" Version="$(MicrosoftWixToolsetSdkVersion)" />
+    <PackageVersion Include="Microsoft.WixToolset.UI.wixext" Version="$(MicrosoftWixToolsetSdkVersion)" />
+    <PackageVersion Include="Microsoft.WixToolset.Util.wixext" Version="$(MicrosoftWixToolsetSdkVersion)" />
+    
   </ItemGroup>
 
 </Project>

@@ -101,30 +101,30 @@ public sealed class TagHelperDescriptor : TagHelperObject<TagHelperDescriptor>
 
     private protected override void BuildChecksum(in Checksum.Builder builder)
     {
-        builder.AppendData((byte)Flags);
-        builder.AppendData((byte)Kind);
-        builder.AppendData((byte)RuntimeKind);
-        builder.AppendData(Name);
-        builder.AppendData(AssemblyName);
-        builder.AppendData(DisplayName);
-        builder.AppendData(TagOutputHint);
+        builder.Append((byte)Flags);
+        builder.Append((byte)Kind);
+        builder.Append((byte)RuntimeKind);
+        builder.Append(Name);
+        builder.Append(AssemblyName);
+        builder.Append(DisplayName);
+        builder.Append(TagOutputHint);
 
         TypeNameObject.AppendToChecksum(in builder);
         DocumentationObject.AppendToChecksum(in builder);
 
         foreach (var descriptor in AllowedChildTags)
         {
-            builder.AppendData(descriptor.Checksum);
+            builder.Append(descriptor.Checksum);
         }
 
         foreach (var descriptor in BoundAttributes)
         {
-            builder.AppendData(descriptor.Checksum);
+            builder.Append(descriptor.Checksum);
         }
 
         foreach (var descriptor in TagMatchingRules)
         {
-            builder.AppendData(descriptor.Checksum);
+            builder.Append(descriptor.Checksum);
         }
 
         Metadata.AppendToChecksum(in builder);

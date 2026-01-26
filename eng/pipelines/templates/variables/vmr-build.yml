@@ -265,17 +265,17 @@ variables:
   - name: poolImage_Linux
     value: build.ubuntu.2204.amd64.open
   - name: poolImage_LinuxArm64
-    value: Mariner-2-Docker-ARM64
+    value: azure-linux-3-arm64-public
   - name: poolName_LinuxArm64
     value: Docker-Linux-Arm-Public
   - name: poolImage_Mac
     value: macos-14
   - ${{ if eq(parameters.isScoutingJob, true) }}:
     - name: poolImage_Windows
-      value: windows.vs2022.scout.amd64.open
+      value: windows.vs2026preview.scout.amd64.open
   - ${{ else }}:
     - name: poolImage_Windows
-      value: windows.vs2022.amd64.open
+      value: windows.vs2026preview.scout.amd64.open  # TODO: use the GA image once it's available
 - ${{ else }}:
   - name: defaultPoolName
     value: NetCore1ESPool-Internal
@@ -290,4 +290,4 @@ variables:
   - name: poolImage_Mac
     value: macos-latest-internal
   - name: poolImage_Windows
-    value: windows.vs2022.amd64
+    value: windows.vs2026preview.scout.amd64   # TODO: use the GA image once it's available

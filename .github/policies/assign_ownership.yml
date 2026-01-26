@@ -112,7 +112,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: roslyn-infrastructure-current-swat
+          teamReviewer: roslyn-infrastructure
     - description: 
       if:
       - payloadType: Pull_Request
@@ -121,7 +121,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: roslyn-infrastructure-current-swat
+          teamReviewer: roslyn-infrastructure
     - description: 
       if:
       - payloadType: Pull_Request
@@ -193,7 +193,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: testing-admin
+          teamReviewer: dotnet-testing-admin
     - description: 
       if:
       - payloadType: Pull_Request

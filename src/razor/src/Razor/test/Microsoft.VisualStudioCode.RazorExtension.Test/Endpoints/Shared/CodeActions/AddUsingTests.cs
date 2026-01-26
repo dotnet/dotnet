@@ -61,7 +61,95 @@ public class AddUsingTests(ITestOutputHelper testOutputHelper) : CohostCodeActio
             codeActionName: LanguageServerConstants.CodeActions.FullyQualify,
             childActionIndex: 0);
     }
+
+    // This uses a nested code action in Roslyn which we don't support in VS Code
+    // https://github.com/dotnet/razor/issues/11832
+    [Fact]
+    public async Task FullyQualify_Multiple2()
+    {
+        await VerifyCodeActionAsync(
+            input: """
+                @code
+                {
+                    private [||]StringBuilder _x = new StringBuilder();
+                }
+                """,
+            expected: """
+                @code
+                {
+                    private Not.Built.In.StringBuilder _x = new StringBuilder();
+                }
+                """,
+            additionalFiles: [
+                (FilePath("StringBuilder.cs"), """
+                    namespace Not.Built.In;
+
+                    public class StringBuilder
+                    {
+                    }
+                    """)],
+            codeActionName: LanguageServerConstants.CodeActions.FullyQualify,
+            childActionIndex: 1);
+    }
 #endif
+
+    [Fact]
+    public async Task AddUsing_Multiple()
+    {
+        await VerifyCodeActionAsync(
+            input: """
+                @code
+                {
+                    private [||]StringBuilder _x = new StringBuilder();
+                }
+                """,
+            expected: """
+                @using Not.Built.In
+                @code
+                {
+                    private StringBuilder _x = new StringBuilder();
+                }
+                """,
+            additionalFiles: [
+                (FilePath("StringBuilder.cs"), """
+                    namespace Not.Built.In;
+
+                    public class StringBuilder
+                    {
+                    }
+                    """)],
+            codeActionName: RazorPredefinedCodeFixProviderNames.AddImport,
+            codeActionIndex: 0);
+    }
+
+    [Fact]
+    public async Task AddUsing_Multiple2()
+    {
+        await VerifyCodeActionAsync(
+            input: """
+                @code
+                {
+                    private [||]StringBuilder _x = new StringBuilder();
+                }
+                """,
+            expected: """
+                @using System.Text
+                @code
+                {
+                    private StringBuilder _x = new StringBuilder();
+                }
+                """,
+            additionalFiles: [
+                (FilePath("StringBuilder.cs"), """
+                    namespace Not.Built.In;
+
+                    public class StringBuilder
+                    {
+                    }
+                    """)],
+            codeActionName: RazorPredefinedCodeFixProviderNames.AddImport,
+            codeActionIndex: 1);
+    }
 
     [Fact]
     public async Task AddUsing()

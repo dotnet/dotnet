@@ -17,18 +17,14 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 [RazorLanguageServerEndpoint(VSInternalMethods.TextDocumentValidateBreakableRangeName)]
 internal class ValidateBreakpointRangeEndpoint(
     IDocumentMappingService documentMappingService,
-    LanguageServerFeatureOptions languageServerFeatureOptions,
     IClientConnection clientConnection,
     ILoggerFactory loggerFactory)
     : AbstractRazorDelegatingEndpoint<ValidateBreakpointRangeParams, LspRange?>(
-        languageServerFeatureOptions,
         documentMappingService,
         clientConnection,
         loggerFactory.GetOrCreateLogger<ValidateBreakpointRangeEndpoint>()), ICapabilitiesProvider
 {
     private readonly IDocumentMappingService _documentMappingService = documentMappingService;
-
-    protected override bool OnlySingleServer => false;
 
     protected override string CustomMessageTarget => CustomMessageNames.RazorValidateBreakpointRangeName;
 

@@ -106,6 +106,42 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Access denied. Please ensure you are signed in to GitHub Copilot..
+        /// </summary>
+        internal static string Error_CopilotAccessDenied {
+            get {
+                return ResourceManager.GetString("Error_CopilotAccessDenied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in..
+        /// </summary>
+        internal static string Error_CopilotNotReady {
+            get {
+                return ResourceManager.GetString("Error_CopilotNotReady", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in..
+        /// </summary>
+        internal static string Error_CopilotServiceNotAvailable {
+            get {
+                return ResourceManager.GetString("Error_CopilotServiceNotAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in..
+        /// </summary>
+        internal static string Error_McpToolServiceNotAvailable {
+            get {
+                return ResourceManager.GetString("Error_McpToolServiceNotAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A package pattern must be provided..
         /// </summary>
         internal static string Error_PackageSourceMappingPattern_Missing {
@@ -147,6 +183,15 @@ namespace NuGetVSExtension {
         internal static string Error_PackageSourceUriHostname_Missing {
             get {
                 return ResourceManager.GetString("Error_PackageSourceUriHostname_Missing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Service Broker is not available. Please ensure Visual Studio is running correctly..
+        /// </summary>
+        internal static string Error_ServiceBrokerNotAvailable {
+            get {
+                return ResourceManager.GetString("Error_ServiceBrokerNotAvailable", resourceCulture);
             }
         }
         
@@ -295,6 +340,15 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fix my NuGet package vulnerabilities.
+        /// </summary>
+        internal static string Prompt_FixNuGetPackageVulnerabilities {
+            get {
+                return ResourceManager.GetString("Prompt_FixNuGetPackageVulnerabilities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to These settings are stored in %NuGet.Config% files.
         /// </summary>
         internal static string SettingsStoredInNuGetConfiguration {
@@ -336,6 +390,15 @@ namespace NuGetVSExtension {
         internal static string Text_AllowInsecureConnections_Header {
             get {
                 return ResourceManager.GetString("Text_AllowInsecureConnections_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use separate sources for vulnerability audit.
+        /// </summary>
+        internal static string Text_AuditSources_Checkbox {
+            get {
+                return ResourceManager.GetString("Text_AuditSources_Checkbox", resourceCulture);
             }
         }
         
@@ -412,6 +475,15 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Machine‑wide package sources are provisioned by Visual Studio workloads and can only be enabled or disabled..
+        /// </summary>
+        internal static string Text_MachineWidePackageSource_Description {
+            get {
+                return ResourceManager.GetString("Text_MachineWidePackageSource_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enabled.
         /// </summary>
         internal static string Text_PackageSourceEnabled_Header {
@@ -480,6 +552,15 @@ namespace NuGetVSExtension {
         internal static string Text_Watermark_ExamplePackageIdPattern {
             get {
                 return ResourceManager.GetString("Text_Watermark_ExamplePackageIdPattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fix Vulnerabilities with GitHub Copilot.
+        /// </summary>
+        internal static string Title_FixVulnerabilitiesWithCopilot {
+            get {
+                return ResourceManager.GetString("Title_FixVulnerabilitiesWithCopilot", resourceCulture);
             }
         }
     }

@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="it-IT" Language="1040" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="Programma di installazione di [WixBundleName]" />
+  <String Id="Title" Value="[BUNDLEMONIKER]" />
+  <String Id="ConfirmCancelMessage" Value="Annullare?" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Versione precedente" />
+  <String Id="HelpHeader" Value="Guida all'installazione" />
+  <String Id="HelpText" Value="/install | /repair | /uninstall | /layout [directory] - Consente di installare, riparare, disinstallare o creare una copia locale del pacchetto nella directory. Install è l'opzione predefinita.  /passive | /quiet - Consente di visualizzare un'interfaccia utente minima senza richieste o di non visualizzare alcuna interfaccia utente e alcuna richiesta. Per impostazione predefinita, vengono visualizzate l'interfaccia utente e tutte le richieste.  /norestart - Consente di impedire qualsiasi tentativo di riavvio. Per impostazione predefinita, prima del riavvio verrà visualizzata una richiesta nell'interfaccia utente.  /log log.txt - Consente di eseguire la registrazione in un file specifico. Per impostazione predefinita, viene creato un file di log in %TEMP%." />
+  <String Id="HelpCloseButton" Value="&amp;Chiudi" />
+  <String Id="InstallAcceptCheckbox" Value="A&amp;ccetto i termini e le condizioni di licenza" />
+  <String Id="InstallOptionsButton" Value="&amp;Opzioni" />
+  <String Id="InstallInstallButton" Value="&amp;Installa" />
+  <String Id="InstallCloseButton" Value="&amp;Chiudi" />
+  <String Id="ProgressHeader" Value="Stato dell'installazione" />
+  <String Id="ProgressLabel" Value="Elaborazione:" />
+  <String Id="OverallProgressPackageText" Value="Inizializzazione in corso..." />
+  <String Id="ProgressCancelButton" Value="&amp;Annulla" />
+  <String Id="ModifyHeader" Value="Modifica installazione" />
+  <String Id="ModifyText" Value="Selezionare Ripara per reinstallare il prodotto o Disinstalla per rimuoverlo." />
+  <String Id="ModifyRepairButton" Value="&amp;Ripristina" />
+  <String Id="ModifyUninstallButton" Value="&amp;Disinstalla" />
+  <String Id="ModifyCloseButton" Value="&amp;Chiudi" />
+  <String Id="SuccessRepairHeader" Value="Riparazione completata" />
+  <String Id="SuccessUninstallHeader" Value="Disinstallazione completata" />
+  <String Id="SuccessInstallHeader" Value="Installazione completata correttamente" />
+  <String Id="SuccessHeader" Value="Configurazione completata" />
+  <String Id="SuccessLaunchButton" Value="&amp;Avvio" />
+  <String Id="SuccessRestartText" Value="Per poter usare il software, è necessario riavviare il computer." />
+  <String Id="SuccessRestartButton" Value="&amp;Riavvia" />
+  <String Id="SuccessCloseButton" Value="&amp;Chiudi" />
+  <String Id="FailureHeader" Value="Configurazione non riuscita" />
+  <String Id="FailureInstallHeader" Value="Configurazione non riuscita" />
+  <String Id="FailureUninstallHeader" Value="Disinstallazione non riuscita" />
+  <String Id="FailureRepairHeader" Value="Riparazione non riuscita" />
+  <String Id="FailureHyperlinkLogText" Value="L'installazione non è stata completata a causa di uno o più problemi. Risolvere i problemi e quindi riprovare a eseguire l'installazione. Per altre informazioni, vedere il &lt;a href=&quot;#&quot;&gt;file di log&lt;/a&gt;." />
+  <String Id="FailureRestartText" Value="Per completare il rollback del software, è necessario riavviare il computer." />
+  <String Id="FailureRestartButton" Value="&amp;Riavvia" />
+  <String Id="FailureCloseButton" Value="&amp;Chiudi" />
+  <String Id="FailureNotSupportedCurrentOperatingSystem" Value="[PRODUCT_NAME] non è supportato in questo sistema operativo. Per altre informazioni, vedere [LINK_PREREQ_PAGE]." />
+  <String Id="FailureNotSupportedX86OperatingSystem" Value="[PRODUCT_NAME] non è supportato in sistemi operativi x86. Eseguire l'installazione usando il programma di installazione x86 corrispondente." />
+  <String Id="FilesInUseTitle" Value="File in uso" />
+  <String Id="FilesInUseLabel" Value="Le applicazioni seguenti usano file che necessitano di aggiornamento:" />
+  <String Id="FilesInUseCloseRadioButton" Value="&amp;Chiudi tutte le applicazioni e tenta di riavviarle." />
+  <String Id="FilesInUseDontCloseRadioButton" Value="&amp;Non chiudere le applicazioni. Sarà necessario riavviare il sistema." />
+  <String Id="FilesInUseRetryButton" Value="&amp;Riprova" />
+  <String Id="FilesInUseCancelButton" Value="&amp;Annulla" />
+  <String Id="WelcomeHeader" Value="Runtime di Windows Desktop" />
+  <String Id="WelcomeDescription" Value=".NET Windows Desktop Runtime consente di eseguire applicazioni Windows Forms e WPF nel computer. .NET è open source, multipiattaforma e supportato da Microsoft. Microsoft si augura che venga apprezzato." />
+  <String Id="LearnMoreTitle" Value="Altre informazioni su .NET" />
+  <String Id="SuccessInstallLocation" Value="I componenti seguenti sono stati installati in [DOTNETHOME]" />
+  <String Id="SuccessInstallProductName" Value=" - [BUNDLEMONIKER] " />
+  <String Id="ResourcesHeader" Value="Risorse" />
+  <String Id="DocumentationLink" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-docs&quot;&gt;Documentazione&lt;/A&gt;" />
+  <String Id="ReleaseNotesLink" Value="&lt;A HREF=&quot;https://aka.ms/20-p2-rel-notes&quot;&gt;Note sulla versione&lt;/A&gt;" />
+  <String Id="TutorialLink" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-tutorials&quot;&gt;Esercitazioni&lt;/A&gt;" />
+  <String Id="TelemetryLink" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-cli-telemetry&quot;&gt;Telemetria .NET&lt;/A&gt;" />
+  <String Id="PrivacyStatementLink" Value="&lt;A HREF=&quot;https://aka.ms/dev-privacy&quot;&gt;Informativa sulla privacy&lt;/A&gt;" />
+  <String Id="EulaLink" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-license-windows&quot;&gt;Informazioni sulle licenze per .NET&lt;/A&gt;" />
+  <String Id="LicenseAssent" Value="Facendo clic su Installa, si accettano le condizioni seguenti." />
+  <String Id="VisualStudioWarning" Value="Se si prevede di usare .NET [VERSIONMAJOR]. [VERSIONMINOR] con Visual Studio, è necessario Visual Studio 2026 18.0 o versione successiva. &lt;A HREF=&quot;https://aka.ms/dotnet[VERSIONMAJOR]-release-notes&quot;&gt;Altre informazioni&lt;/A&gt;." />
+  <!-- Success page strings -->
+  <String Id="FirstTimeWelcomeMessage" Value="Grazie per aver installato [BUNDLEMONIKER]! Ora è possibile eseguire applicazioni che richiedono .NET Windows Desktop Runtime." />
+  <String Id="NetDocumentationLinkText" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-docs&quot;&gt;Documentazione .NET&lt;/A&gt;" />
+  <String Id="WindowsDesktopDocumentationLinkText" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-desktop-docs&quot;&gt;Documentazione di Windows Desktop&lt;/A&gt;" />
+  <String Id="ReleaseNotesLinkText" Value="&lt;A HREF=&quot;https://aka.ms/dotnet[VERSIONMAJOR]-release-notes&quot;&gt;Note sulla versione&lt;/A&gt;" />
+  <String Id="TutorialsLinkText" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-tutorials&quot;&gt;Esercitazioni su .NET&lt;/A&gt;" />
+  <!-- Additional success headers -->
+  <String Id="SuccessLayoutHeader" Value="Layout completato" />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Disinstallazione non sicura completata" />
+  <String Id="SuccessCacheHeader" Value="Memorizzazione nella cache completata" />
+  <String Id="SuccessModifyHeader" Value="Modifica completata" />
+  <String Id="SuccessUninstallRestartText" Value="Per completare la disinstallazione, è necessario riavviare il computer." />
+  <!-- Additional failure headers -->
+  <String Id="FailureLayoutHeader" Value="Layout non riuscito" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Disinstallazione non sicura non riuscita" />
+  <String Id="FailureCacheHeader" Value="Memorizzazione nella cache non riuscita" />
+  <String Id="FailureModifyHeader" Value="Modifica non riuscita" />
+</WixLocalization>

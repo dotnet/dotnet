@@ -60,10 +60,13 @@
 
       <!-- SN is only available on Windows -->
       <SNBinaryPath Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(NuGetPackageRoot)sn\$(SNVersion)\sn.exe</SNBinaryPath>
-      
-      <!-- .pkgs and .app bundle tooling is only available on MacOS -->
-      <PkgToolPath Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(NuGetPackageRoot)microsoft.dotnet.macospkg.cli\$(MicrosoftDotNetMacOsPkgVersion)\tools\$(NetToolCurrent)\any\Microsoft.Dotnet.MacOsPkg.Cli.dll</PkgToolPath>
     </PropertyGroup>
+
+    <ItemGroup>
+      <!-- .pkgs and .app bundle tooling is only available on MacOS -->
+      <MacOSPkgCliItem Condition="$([MSBuild]::IsOSPlatform('OSX'))" Include="$(NuGetPackageRoot)microsoft.dotnet.macospkg.cli\$(MicrosoftDotNetMacOsPkgVersion)\tools\net*\any\Microsoft.Dotnet.MacOsPkg.Cli.dll" />
+      <TarToolItem Include="$(NuGetPackageRoot)microsoft.dotnet.tar\$(MicrosoftDotNetTarVersion)\tools\net*\any\Microsoft.Dotnet.Tar.dll" />
+    </ItemGroup>
 
     <Error Condition="'$(AllowEmptySignList)' != 'true' AND '@(ItemsToSign)' == ''" 
            Text="List of files to sign is empty. Make sure that ItemsToSign is configured correctly." />
@@ -91,8 +94,8 @@
         MicroBuildCorePath="$(NuGetPackageRoot)microsoft.visualstudioeng.microbuild.core\$(MicrosoftVisualStudioEngMicroBuildCoreVersion)"
         Wix3ToolsPath="$(WixInstallPath)"
         WixToolsPath="$(NuGetPackageRoot)microsoft.wixtoolset.sdk\$(MicrosoftWixToolsetSdkVersion)\tools\net472\x64"
-        TarToolPath="$(NuGetPackageRoot)microsoft.dotnet.tar\$(MicrosoftDotNetTarVersion)\tools\$(NetToolCurrent)\any\Microsoft.Dotnet.Tar.dll"
-        PkgToolPath="$(PkgToolPath)"
+        TarToolPath="@(TarToolItem)"
+        PkgToolPath="@(MacOSPkgCliItem)"
         RepackParallelism="$(SignToolRepackParallelism)"
         MaximumParallelFileSize="$(SignToolRepackMaximumParallelFileSize)"
         DotNetTimeout="$(SignToolDotNetTimeout)"

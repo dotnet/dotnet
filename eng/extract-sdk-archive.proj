@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
   </PropertyGroup>
 
   <Target Name="ExtractSdkArchive"
-          BeforeTargets="Build"
+          AfterTargets="Build"
           DependsOnTargets="DetermineSourceBuiltSdkVersion"
           Inputs="$(SdkTarballPath)"
           Outputs="$(BaseIntermediateOutputPath)ExtractSdkArchive.complete">

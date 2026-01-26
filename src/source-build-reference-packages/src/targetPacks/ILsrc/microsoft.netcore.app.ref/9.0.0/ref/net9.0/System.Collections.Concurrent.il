@@ -1,5 +1,4 @@
 
-//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
 
 
 // ----- DOS Header:
@@ -282,9 +281,9 @@
 .assembly /*20000001*/ noplatform System.Collections.Concurrent
 {
   .custom instance void [System.Runtime/*23000001*/]System.Reflection.AssemblyMetadataAttribute::.ctor(string,
-                                                                                        string) = ( 01 00 06 73 6F 75 72 63 65 1F 73 6F 75 72 63 65   // ...source.source
-                                                                                                    2D 62 75 69 6C 64 2D 72 65 66 65 72 65 6E 63 65   // -build-reference
-                                                                                                    2D 70 61 63 6B 61 67 65 73 00 00 )                // -packages..
+                                                                                                       string) = ( 01 00 06 73 6F 75 72 63 65 1F 73 6F 75 72 63 65   // ...source.source
+                                                                                                                   2D 62 75 69 6C 64 2D 72 65 66 65 72 65 6E 63 65   // -build-reference
+                                                                                                                   2D 70 61 63 6B 61 67 65 73 00 00 )                // -packages..
   .custom /*0C000004:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilationRelaxationsAttribute/*01000001*/::.ctor(int32) /* 0A000001 */ = ( 01 00 08 00 00 00 00 00 ) 
   .custom /*0C000005:0A000002*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.RuntimeCompatibilityAttribute/*01000002*/::.ctor() /* 0A000002 */ = ( 01 00 01 00 54 02 16 57 72 61 70 4E 6F 6E 45 78   // ....T..WrapNonEx
                                                                                                                                                                                 63 65 70 74 69 6F 6E 54 68 72 6F 77 73 01 )       // ceptionThrows.
@@ -354,7 +353,6 @@
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000009    //  ILONLY
-// Image base: 0x00007F72D44D2000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -1219,7 +1217,7 @@
   .custom /*0C000048:0A000013*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableAttribute/*01000014*/::.ctor(uint8) /* 0A000013 */ = ( 01 00 00 00 00 ) 
   .param type TValue /*2A000004*/ 
     .custom /*0C000022:0A000013*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.NullableAttribute/*01000014*/::.ctor(uint8) /* 0A000013 */ = ( 01 00 02 00 00 ) 
-  .class /*0200000C*/ sequential ansi sealed nested public beforefieldinit AlternateLookup`1<TKey,TValue,TAlternateKey>
+  .class /*0200000C*/ sequential ansi sealed nested public beforefieldinit AlternateLookup`1<TKey,TValue,byreflike TAlternateKey>
          extends [System.Runtime/*23000001*/]System.ValueType/*0100002E*/
   {
     .pack 0
@@ -1709,10 +1707,10 @@
   } // end of method ConcurrentDictionary`2::AddOrUpdate
 
   .method /*06000058*/ public hidebysig instance !TValue 
-          AddOrUpdate<TArg>(!TKey key,
-                            class [System.Runtime/*23000001*/]System.Func`3/*0100002B*/<!TKey,!!TArg,!TValue> addValueFactory,
-                            class [System.Runtime/*23000001*/]System.Func`4/*0100002C*/<!TKey,!TValue,!!TArg,!TValue> updateValueFactory,
-                            !!TArg factoryArgument) cil managed
+          AddOrUpdate<byreflike TArg>(!TKey key,
+                                      class [System.Runtime/*23000001*/]System.Func`3/*0100002B*/<!TKey,!!TArg,!TValue> addValueFactory,
+                                      class [System.Runtime/*23000001*/]System.Func`4/*0100002C*/<!TKey,!TValue,!!TArg,!TValue> updateValueFactory,
+                                      !!TArg factoryArgument) cil managed
   // SIG: 30 01 04 13 01 13 00 15 12 80 AD 03 13 00 1E 00 13 01 15 12 80 B1 04 13 00 13 01 1E 00 13 01 1E
   //      00
   {
@@ -1747,7 +1745,7 @@
   } // end of method ConcurrentDictionary`2::ContainsKey
 
   .method /*0600005B*/ public hidebysig instance valuetype System.Collections.Concurrent.ConcurrentDictionary`2/*02000004*//AlternateLookup`1/*0200000C*/<!TKey,!TValue,!!TAlternateKey> 
-          GetAlternateLookup<TAlternateKey>() cil managed
+          GetAlternateLookup<byreflike TAlternateKey>() cil managed
   // SIG: 30 01 00 15 11 30 03 13 00 13 01 1E 00
   {
     .param [0]/*08000067*/ 
@@ -1798,9 +1796,9 @@
   } // end of method ConcurrentDictionary`2::GetOrAdd
 
   .method /*0600005F*/ public hidebysig instance !TValue 
-          GetOrAdd<TArg>(!TKey key,
-                         class [System.Runtime/*23000001*/]System.Func`3/*0100002B*/<!TKey,!!TArg,!TValue> valueFactory,
-                         !!TArg factoryArgument) cil managed
+          GetOrAdd<byreflike TArg>(!TKey key,
+                                   class [System.Runtime/*23000001*/]System.Func`3/*0100002B*/<!TKey,!!TArg,!TValue> valueFactory,
+                                   !!TArg factoryArgument) cil managed
   // SIG: 30 01 03 13 01 13 00 15 12 80 AD 03 13 00 1E 00 13 01 1E 00
   {
     .param type TArg /*2A00000F*/ 
@@ -1984,7 +1982,7 @@
   } // end of method ConcurrentDictionary`2::TryAdd
 
   .method /*0600006E*/ public hidebysig instance bool 
-          TryGetAlternateLookup<TAlternateKey>([out] valuetype System.Collections.Concurrent.ConcurrentDictionary`2/*02000004*//AlternateLookup`1/*0200000C*/<!TKey,!TValue,!!TAlternateKey>& lookup) cil managed
+          TryGetAlternateLookup<byreflike TAlternateKey>([out] valuetype System.Collections.Concurrent.ConcurrentDictionary`2/*02000004*//AlternateLookup`1/*0200000C*/<!TKey,!TValue,!!TAlternateKey>& lookup) cil managed
   // SIG: 30 01 01 02 10 15 11 30 03 13 00 13 01 1E 00
   {
     .param [1]/*08000081*/ 
