@@ -18,6 +18,7 @@
 param (
   [string][Alias('c')]$configuration = "Debug",
   [string][Alias('v')]$verbosity = "m",
+  [string]$loggerParameters = "Summary",
   [string]$msbuildEngine = "vs",
 
   # Actions
@@ -78,11 +79,12 @@ $ErrorActionPreference = "Stop"
 
 function Print-Usage() {
   Write-Host "Common settings:"
-  Write-Host "  -configuration <value>    Build configuration: 'Debug' or 'Release' (short: -c)"
-  Write-Host "  -verbosity <value>        Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic]"
-  Write-Host "  -deployExtensions         Deploy built vsixes (short: -d)"
-  Write-Host "  -binaryLog                Create MSBuild binary log (short: -bl)"
-  Write-Host "  -binaryLogName            Name of the binary log (default Build.binlog)"
+  Write-Host "  -configuration <value>      Build configuration: 'Debug' or 'Release' (short: -c)"
+  Write-Host "  -verbosity <value>          Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic] (short: -v)"
+  Write-Host "  -loggerParameters <value>   Msbuild console logger parameters. Defaults to 'Summary'"
+  Write-Host "  -deployExtensions           Deploy built vsixes (short: -d)"
+  Write-Host "  -binaryLog                  Create MSBuild binary log (short: -bl)"
+  Write-Host "  -binaryLogName              Name of the binary log (default Build.binlog)"
   Write-Host ""
   Write-Host "Actions:"
   Write-Host "  -restore                  Restore packages (short: -r)"

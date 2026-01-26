@@ -4,6 +4,7 @@ Param(
   [string]$platform = $null,
   [string] $projects,
   [string][Alias('v')]$verbosity = "minimal",
+  [string]$loggerParameters = "Summary",
   [string] $msbuildEngine = $null,
   [bool] $warnAsError = $true,
   [bool] $nodeReuse = $true,
@@ -41,11 +42,12 @@ if($env:Platform) {
 }
 function Print-Usage() {
   Write-Host "Common settings:"
-  Write-Host "  -configuration <value>  Build configuration: 'Debug' or 'Release' (short: -c)"
-  Write-Host "  -platform <value>       Platform configuration: 'x86', 'x64' or any valid Platform value to pass to msbuild"
-  Write-Host "  -verbosity <value>      Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic] (short: -v)"
-  Write-Host "  -binaryLog              Output binary log (short: -bl)"
-  Write-Host "  -help                   Print help and exit"
+  Write-Host "  -configuration <value>     Build configuration: 'Debug' or 'Release' (short: -c)"
+  Write-Host "  -platform <value>          Platform configuration: 'x86', 'x64' or any valid Platform value to pass to msbuild"
+  Write-Host "  -verbosity <value>         Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic] (short: -v)"
+  Write-Host "  -loggerParameters <value>  Msbuild console logger parameters. Defaults to 'Summary'"
+  Write-Host "  -binaryLog                 Output binary log (short: -bl)"
+  Write-Host "  -help                      Print help and exit"
   Write-Host ""
 
   Write-Host "Actions:"

@@ -18,6 +18,7 @@
 param (
     [string][Alias('c')]$configuration = "Debug",
     [string][Alias('v')]$verbosity = "m",
+    [string]$loggerParameters = "Summary",
     [string]$msbuildEngine = "vs",
 
     # Actions
@@ -89,6 +90,7 @@ function Print-Usage() {
     Write-Host "Common settings:"
     Write-Host "  -configuration <value>        Build configuration: 'Debug' or 'Release' (short: -c)"
     Write-Host "  -verbosity <value>            Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic]"
+    Write-Host "  -loggerParameters <value>     Msbuild console logger parameters. Defaults to 'Summary'"
     Write-Host "  -deployExtensions             Deploy built vsixes"
     Write-Host "  -binaryLog                    Create MSBuild binary log (short: -bl)"
     Write-Host "  -noLog                        Turn off logging (short: -nolog)"
@@ -317,7 +319,6 @@ function BuildSolution([string] $solutionName, $packSolution) {
         /p:TestTargetFrameworks=$testTargetFrameworks `
         /p:CompressAllMetadata=$CompressAllMetadata `
         /p:BuildNoRealsig=$buildnorealsig `
-        /v:$verbosity `
         $suppressExtensionDeployment `
         @properties
 

@@ -42,6 +42,9 @@ restore=${restore:-true}
 # Adjusts msbuild verbosity level.
 verbosity=${verbosity:-'minimal'}
 
+# Parameters to pass to the msbuild console logger.
+logger_parameters=${logger_parameters:-'Summary'}
+
 # Set to true to reuse msbuild nodes. Recommended to not reuse on CI.
 if [[ "$ci" == true ]]; then
   node_reuse=${node_reuse:-false}
@@ -522,7 +525,7 @@ function MSBuild-Core {
     }
   }
 
-  RunBuildTool "$_InitializeBuildToolCommand" /m /nologo /clp:Summary /v:$verbosity /nr:$node_reuse $warnaserror_switch /p:TreatWarningsAsErrors=$warn_as_error /p:ContinuousIntegrationBuild=$ci "$@"
+  RunBuildTool "$_InitializeBuildToolCommand" /m /nologo /clp:$logger_parameters /v:$verbosity /nr:$node_reuse $warnaserror_switch /p:TreatWarningsAsErrors=$warn_as_error /p:ContinuousIntegrationBuild=$ci "$@"
 }
 
 function GetDarc {

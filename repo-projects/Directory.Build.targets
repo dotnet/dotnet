@@ -905,7 +905,6 @@
 
     <PropertyGroup>
       <FullTestCommand>$(TestCommand)</FullTestCommand>
-      <FullTestCommand Condition="'$(LogVerbosityOptOut)' != 'true'">$(FullTestCommand) /v:$(LogVerbosity)</FullTestCommand>
     </PropertyGroup>
 
     <Exec Command="$(FullTestCommand)"

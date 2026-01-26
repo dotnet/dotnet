@@ -10,6 +10,7 @@ args=()
 
 configuration='Release'
 verbosity='minimal'
+logger_parameters='Summary'
 source_build=false
 product_build=false
 from_vmr=false
@@ -35,6 +36,10 @@ while [[ $# > 0 ]]; do
   case $lowerI in
     --verbosity|-v)
       verbosity=$2
+      shift
+      ;;
+    --loggerparameters|-v)
+      logger_parameters=$2
       shift
       ;;
     --binarylog|-bl)
@@ -128,4 +133,4 @@ if [[ "$ci" == true ]]; then
   node_reuse=false
 fi
 
-"$DOTNET" msbuild /m /nologo /clp:Summary /v:$verbosity /nr:$node_reuse /p:ContinuousIntegrationBuild=$ci $bl ${dotnetArguments[@]+"${dotnetArguments[@]}"} ${args[@]+"${args[@]}"}
+"$DOTNET" msbuild /m /nologo /clp:$logger_parameters /v:$verbosity /nr:$node_reuse /p:ContinuousIntegrationBuild=$ci $bl ${dotnetArguments[@]+"${dotnetArguments[@]}"} ${args[@]+"${args[@]}"}
