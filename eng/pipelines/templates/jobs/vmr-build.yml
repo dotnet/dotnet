@@ -388,14 +388,25 @@ jobs:
   - checkout: self
     fetchDepth: 1
 
+
   # Create artifact staging directories upfront to satisfy 1ES templateContext.outputs validation
   # These directories are referenced in templateContext.outputs which validates paths at job start
-  - script: |
-      mkdir -p "$(Build.ArtifactStagingDirectory)/BuildLogs"
-      mkdir -p "$(Build.ArtifactStagingDirectory)/prepublish"
-      mkdir -p "$(Build.ArtifactStagingDirectory)/artifacts"
-    displayName: Create artifact staging directories
-    condition: always()
+  - ${{ if eq(parameters.targetOS, 'windows') }}:
+    - script: |
+        if not exist "$(Build.ArtifactStagingDirectory)\BuildLogs" mkdir "$(Build.ArtifactStagingDirectory)\BuildLogs"
+        if not exist "$(Build.ArtifactStagingDirectory)\prepublish" mkdir "$(Build.ArtifactStagingDirectory)\prepublish"
+        if not exist "$(Build.ArtifactStagingDirectory)\artifacts" mkdir "$(Build.ArtifactStagingDirectory)\artifacts"
+      displayName: Create artifact staging directories
+      condition: always()
+  
+  - ${{ if ne(parameters.targetOS, 'windows') }}:
+    - script: |
+        mkdir -p "$(Build.ArtifactStagingDirectory)/BuildLogs"
+        mkdir -p "$(Build.ArtifactStagingDirectory)/prepublish"
+        mkdir -p "$(Build.ArtifactStagingDirectory)/artifacts"
+      displayName: Create artifact staging directories
+      condition: always()
+
 
   - ${{ if not(parameters.isBuiltFromVmr) }}:
     # Synchronize new content in the VMR during PRs
