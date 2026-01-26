@@ -3,8 +3,6 @@
 
 #nullable disable
 
-using System.Runtime.InteropServices;
-
 namespace Microsoft.DotNet.Build.Tasks
 {
     public sealed class TarGzFileCreateFromDirectory : ToolTask
@@ -86,183 +84,13 @@ namespace Microsoft.DotNet.Build.Tasks
             return retVal;
         }
 
-        public override bool Execute()
-        {
-            // Validate parameters first
-            if (!ValidateParameters())
-            {
-                return false;
-            }
-
-            // On Windows, use Docker to run tar in a container to work around old tar versions
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                return ExecuteInDockerContainer();
-            }
-
-            return base.Execute();
-        }
-
-        private bool ExecuteInDockerContainer()
-        {
-            try
-            {
-                Log.LogMessage(MessageImportance.High, "Running tar in Windows Server Core container to work around tar version issues");
-
-                // Ensure destination directory exists
-                var destDir = Path.GetDirectoryName(Path.GetFullPath(DestinationArchive));
-                if (!Directory.Exists(destDir))
-                {
-                    Directory.CreateDirectory(destDir);
-                }
-
-                // Normalize paths
-                var fullDestPath = Path.GetFullPath(DestinationArchive);
-                var destDirectory = Path.GetDirectoryName(fullDestPath);
-                var destFileName = Path.GetFileName(fullDestPath);
-
-                // Container paths
-                var containerSourcePath = "C:\\source";
-                var containerOutputPath = "C:\\output";
-                var containerDestFile = $"{containerOutputPath}\\{destFileName}";
-
-                // Determine source path and tar command based on IncludeBaseDirectory
-                string mountSourcePath;
-                string tarArgs;
-
-                if (IncludeBaseDirectory)
-                {
-                    // Mount the parent directory so we can include the base directory name
-                    var parentDirectory = Directory.GetParent(SourceDirectory).Parent.FullName;
-                    var sourceDirectoryName = Path.GetFileName(Path.GetDirectoryName(SourceDirectory));
-                    mountSourcePath = parentDirectory;
-                    tarArgs = $"-czf {containerDestFile} --directory {containerSourcePath} {sourceDirectoryName} {GetExcludes()}";
-
-                    Log.LogMessage(MessageImportance.High, $"Including base directory '{sourceDirectoryName}' in archive");
-                    Log.LogMessage(MessageImportance.High, $"Mounting parent directory: {mountSourcePath}");
-                }
-                else
-                {
-                    // Mount the source directory directly
-                    mountSourcePath = Path.GetFullPath(SourceDirectory);
-                    tarArgs = $"-czf {containerDestFile} --directory {containerSourcePath} {GetExcludes()} .";
-
-                    Log.LogMessage(MessageImportance.High, $"Archiving contents of: {mountSourcePath}");
-                }
-
-                // Pull the Docker image first
-                var imageName = "mcr.microsoft.com/windows/servercore:ltsc2022";
-                Log.LogMessage(MessageImportance.High, $"Pulling Docker image: {imageName}");
-
-                var pullStartInfo = new System.Diagnostics.ProcessStartInfo
-                {
-                    FileName = "docker",
-                    Arguments = $"pull {imageName}",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-
-                using (var pullProcess = System.Diagnostics.Process.Start(pullStartInfo))
-                {
-                    if (pullProcess == null)
-                    {
-                        Log.LogError("Failed to start docker pull process");
-                        return false;
-                    }
-
-                    var pullOutput = pullProcess.StandardOutput.ReadToEnd();
-                    var pullError = pullProcess.StandardError.ReadToEnd();
-
-                    pullProcess.WaitForExit();
-
-                    if (!string.IsNullOrWhiteSpace(pullOutput))
-                    {
-                        Log.LogMessage(MessageImportance.High, $"Docker pull output: {pullOutput}");
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(pullError))
-                    {
-                        Log.LogMessage(MessageImportance.High, $"Docker pull stderr: {pullError}");
-                    }
-
-                    if (pullProcess.ExitCode != 0)
-                    {
-                        Log.LogError($"Docker pull failed with exit code {pullProcess.ExitCode}");
-                        return false;
-                    }
-                }
-
-                // Build docker command
-                var dockerArgs = $"run --rm " +
-                    $"-v \"{mountSourcePath}:{containerSourcePath}\" " +
-                    $"-v \"{destDirectory}:{containerOutputPath}\" " +
-                    $"{imageName} " +
-                    $"tar {tarArgs}";
-
-                Log.LogMessage(MessageImportance.High, $"Docker command: docker {dockerArgs}");
-
-                // Execute docker
-                var startInfo = new System.Diagnostics.ProcessStartInfo
-                {
-                    FileName = "docker",
-                    Arguments = dockerArgs,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-
-                using (var process = System.Diagnostics.Process.Start(startInfo))
-                {
-                    if (process == null)
-                    {
-                        Log.LogError("Failed to start docker process");
-                        return false;
-                    }
-
-                    var output = process.StandardOutput.ReadToEnd();
-                    var error = process.StandardError.ReadToEnd();
-
-                    process.WaitForExit();
-
-                    if (!string.IsNullOrWhiteSpace(output))
-                    {
-                        Log.LogMessage(MessageImportance.High, $"Docker output: {output}");
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(error))
-                    {
-                        Log.LogMessage(MessageImportance.High, $"Docker stderr: {error}");
-                    }
-
-                    if (process.ExitCode != 0 && !IgnoreExitCode)
-                    {
-                        Log.LogError($"Docker command failed with exit code {process.ExitCode}");
-                        return false;
-                    }
-
-                    Log.LogMessage(MessageImportance.High, $"Successfully created archive: {fullDestPath}");
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.LogError($"Failed to execute tar in Docker container: {ex.Message}");
-                Log.LogMessage(MessageImportance.High, $"Exception details: {ex}");
-                return false;
-            }
-        }
+        public override bool Execute() => base.Execute();
 
         protected override string ToolName => "tar";
 
         protected override MessageImportance StandardOutputLoggingImportance => MessageImportance.High;
 
-        protected override string GenerateFullPathToTool()
-        {
-            return "tar";
-        }
+        protected override string GenerateFullPathToTool() => "tar";
 
         protected override string GenerateCommandLineCommands() => $"{GetDestinationArchive()} {GetSourceSpecification()}";
 
