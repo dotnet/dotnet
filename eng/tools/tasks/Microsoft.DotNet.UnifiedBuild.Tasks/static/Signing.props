@@ -14,13 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Some of the artifacts need to be strong-named with the AspNetCore snk -->
-    <!-- Remove once https://github.com/dotnet/arcade/issues/16105 has been addressed -->
-    <StrongNameSignInfo
-      Include="$(NuGetPackageRoot)microsoft.dotnet.arcade.sdk/$(MicrosoftDotNetArcadeSdkPackageVersion)/tools/snk/AspNetCore.snk"
-      PublicKeyToken="adb9793829ddae60"
-      CertificateName="MicrosoftDotNet500" />
-
     <!-- We don't need to code sign .js files because they are not used in Windows Script Host -->
     <FileExtensionSignInfo Update=".js" CertificateName="None" />
 
