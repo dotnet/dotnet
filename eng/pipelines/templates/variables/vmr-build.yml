@@ -226,7 +226,8 @@ variables:
 - name: windowsContainerName
   value: windowsContainer
 - name: windowsContainerImage
-  value: mcr.microsoft.com/dotnet-buildtools/prereqs:windowsservercore-ltsc2022-net11.0-build-amd64
+  # value: mcr.microsoft.com/dotnet-buildtools/prereqs:windowsservercore-ltsc2022-net11.0-build-amd64
+  value: msimons/sandbox:windows-vmr
 
 - name: almaLinuxName
   value: AlmaLinux8
