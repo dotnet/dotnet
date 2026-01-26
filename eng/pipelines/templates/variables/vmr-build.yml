@@ -223,6 +223,11 @@ variables:
 - name: wasiCrossContainerImage
   value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-webassembly-amd64
 
+- name: windowsContainerName
+  value: windowsContainer
+- name: windowsContainerImage
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:windowsservercore-ltsc2022-net11.0-build-amd64
+
 - name: almaLinuxName
   value: AlmaLinux8
 - name: alpineName

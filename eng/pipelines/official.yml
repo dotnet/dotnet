@@ -162,6 +162,9 @@ extends:
       ${{ variables.wasiCrossContainerName }}:
         image: ${{ variables.wasiCrossContainerImage }}
         options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.windowsContainerName }}:
+        image: ${{ variables.windowsContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
 
     stages:
     - template: /eng/pipelines/templates/stages/vmr-scan.yml@self
