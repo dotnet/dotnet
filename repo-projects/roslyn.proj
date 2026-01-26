@@ -9,9 +9,6 @@
     <BuildActions Condition="'$(BuildOS)' == 'windows'">$(BuildActions) $(FlagParameterPrefix)pack</BuildActions>
     <BuildActions Condition="'$(BuildOS)' == 'windows'">$(BuildActions) $(FlagParameterPrefix)publish</BuildActions>
     <BuildActions Condition="'$(BuildOS)' == 'windows' and '$(DotNetBuildSign)' == 'true'">$(BuildActions) $(FlagParameterPrefix)sign</BuildActions>
-
-    <!-- TODO: Remove warnaserror=false, https://github.com/dotnet/dotnet/issues/1848 -->
-    <BuildArgs>$(BuildArgs) /p:TreatWarningsAsErrors=false</BuildArgs>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(BuildOS)' == 'windows' and '$(OfficialBuildId)' != ''">
