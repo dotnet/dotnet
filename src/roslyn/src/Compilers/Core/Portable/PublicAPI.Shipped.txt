@@ -1695,9 +1695,11 @@ Microsoft.CodeAnalysis.ITypeParameterSymbol.Variance.get -> Microsoft.CodeAnalys
 Microsoft.CodeAnalysis.ITypeSymbol
 Microsoft.CodeAnalysis.ITypeSymbol.AllInterfaces.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.INamedTypeSymbol!>
 Microsoft.CodeAnalysis.ITypeSymbol.BaseType.get -> Microsoft.CodeAnalysis.INamedTypeSymbol?
+Microsoft.CodeAnalysis.ITypeSymbol.ExtensionParameter.get -> Microsoft.CodeAnalysis.IParameterSymbol?
 Microsoft.CodeAnalysis.ITypeSymbol.FindImplementationForInterfaceMember(Microsoft.CodeAnalysis.ISymbol! interfaceMember) -> Microsoft.CodeAnalysis.ISymbol?
 Microsoft.CodeAnalysis.ITypeSymbol.Interfaces.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.INamedTypeSymbol!>
 Microsoft.CodeAnalysis.ITypeSymbol.IsAnonymousType.get -> bool
+Microsoft.CodeAnalysis.ITypeSymbol.IsExtension.get -> bool
 Microsoft.CodeAnalysis.ITypeSymbol.IsNativeIntegerType.get -> bool
 Microsoft.CodeAnalysis.ITypeSymbol.IsReadOnly.get -> bool
 Microsoft.CodeAnalysis.ITypeSymbol.IsRecord.get -> bool
