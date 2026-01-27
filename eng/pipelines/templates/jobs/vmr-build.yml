@@ -575,40 +575,48 @@ jobs:
           
           additionalBuildArgs=""
           
-          echo "Debug Paths:"
-          echo "Pipeline Workspace: $(Pipeline.Workspace)"
-          echo "Build Sources Directory: $(Build.SourcesDirectory)"
-          echo "Agent Temp Directory: $(Agent.TempDirectory)"
-          echo "Downloaded Artifacts Directory: $(downloadedArtifactsDir)"
+
 
           if [[ "$prepSdk" == "false" ]]; then
             customPrepArgs="${customPrepArgs} --no-sdk"
             
-            # Verify download directory exists
-            if [ ! -d "$(downloadedArtifactsDir)" ]; then
-              echo "Error: SDK extraction required but '$(downloadedArtifactsDir)' does not exist."
+            # Determine where to find the SDK tarball.
+            # Prefer downloadedArtifactsDir (used when reuseBuildArtifactsFrom has items),
+            # but fall back to prereqs/packages/archive when it is not available.
+            sdkSearchDir="$(downloadedArtifactsDir)"
+            fallbackSdkDir="$(Build.SourcesDirectory)/prereqs/packages/archive"
+            
+            # If the primary directory does not exist or does not contain an SDK tarball,
+            # fall back to the prereqs/packages/archive location.
+            if [ ! -d "$sdkSearchDir" ] || ! find "$sdkSearchDir" -name "dotnet-sdk-*.tar.gz" -print -quit >/dev/null 2>&1; then
+              echo "Primary SDK directory '$sdkSearchDir' is not usable. Falling back to '$fallbackSdkDir'."
+              sdkSearchDir="$fallbackSdkDir"
+            fi
+            
+            # After fallback, ensure we have a directory to search.
+            if [ ! -d "$sdkSearchDir" ]; then
+              echo "##vso[task.logissue type=error]SDK extraction required but neither '$(downloadedArtifactsDir)' nor '$fallbackSdkDir' exists."
               echo "Checking Pipeline Workspace content:"
               ls -R "$(Pipeline.Workspace)" || true
               exit 1
             fi
-
-            mkdir -p "$(previouslySourceBuiltSdkDir)"
             
-            echo "Searching for SDK tarball in $(downloadedArtifactsDir)..."
-            find "$(downloadedArtifactsDir)" -name "*.tar.gz" || true
-
-            previousSdkPath=$(find "$(downloadedArtifactsDir)" -name "dotnet-sdk-*.tar.gz" | head -n 1)
+            mkdir -p "$(previouslySourceBuiltSdkDir)"
+            echo "Searching for SDK tarball in $sdkSearchDir..."
+            find "$sdkSearchDir" -name "*.tar.gz" || true
+            
+            previousSdkPath=$(find "$sdkSearchDir" -name "dotnet-sdk-*.tar.gz" | head -n 1)
             
             if [ -z "$previousSdkPath" ]; then
-              echo "Error: dotnet-sdk-*.tar.gz not found in $(downloadedArtifactsDir)"
-              echo "Contents of downloaded artifacts:"
-              ls -R "$(downloadedArtifactsDir)"
+              echo "##vso[task.logissue type=error]dotnet-sdk-*.tar.gz not found in '$sdkSearchDir'."
+              echo "Contents of '$sdkSearchDir':"
+              ls -R "$sdkSearchDir" || true
               exit 1
             fi
-
+            
             echo "Found SDK tarball: $previousSdkPath"
             echo "Extracting SDK..."
-            eval tar -oxzf "$previousSdkPath" -C "$(previouslySourceBuiltSdkDir)"
+            eval tar -xzf "$previousSdkPath" -C "$(previouslySourceBuiltSdkDir)"
             
             customPrepArgs="${customPrepArgs} --with-sdk $(previouslySourceBuiltSdkDir)"
             additionalBuildArgs="--with-sdk $(previouslySourceBuiltSdkDir)"
@@ -617,7 +625,7 @@ jobs:
           if [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
              # Verify download directory exists
              if [ ! -d "$(downloadedArtifactsDir)" ]; then
-               echo "Error: Package extraction required but '$(downloadedArtifactsDir)' does not exist."
+               echo "##vso[task.logissue type=error]Package extraction required but '$(downloadedArtifactsDir)' does not exist."
                echo "Checking Pipeline Workspace content:"
                ls -R "$(Pipeline.Workspace)" || true
                exit 1
@@ -629,7 +637,7 @@ jobs:
              artifactsTarball=$(find "$(downloadedArtifactsDir)" -name "Private.SourceBuilt.Artifacts.*.tar.gz" | head -n 1)
              
              if [ -z "$artifactsTarball" ]; then
-               echo "Error: Private.SourceBuilt.Artifacts.*.tar.gz not found in $(downloadedArtifactsDir)"
+               echo "##vso[task.logissue type=error]Private.SourceBuilt.Artifacts.*.tar.gz not found in $(downloadedArtifactsDir)"
                echo "Contents of downloaded artifacts:"
                ls -R "$(downloadedArtifactsDir)"
                exit 1
@@ -637,7 +645,7 @@ jobs:
              
              echo "Found Artifacts tarball: $artifactsTarball"
              echo "Extracting artifacts..."
-             tar -oxzf "$artifactsTarball" -C "$(previouslySourceBuiltArtifactsDir)"
+             tar -xzf "$artifactsTarball" -C "$(previouslySourceBuiltArtifactsDir)"
              
              customPrepArgs="${customPrepArgs} --with-packages $(previouslySourceBuiltArtifactsDir)"
              additionalBuildArgs="${additionalBuildArgs} --with-packages $(previouslySourceBuiltArtifactsDir)"
@@ -651,8 +659,7 @@ jobs:
           fi
 
           ./prep-source-build.sh $customPrepArgs
-        displayName: Prep the Build
-        workingDirectory: $(sourcesPath)
+
 
 
     - ${{ if ne(parameters.skipBuild, 'true') }}:
@@ -678,9 +685,6 @@ jobs:
               # Set up for signing source-built artifacts post-build.
               extraBuildProperties="$extraBuildProperties /p:DotNetSourceOnlyPostBuildSign=true"
             fi
-
-
-
             if [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
               customBuildArgs="$customBuildArgs --with-shared-components $(sharedComponentsDir)"
             fi
