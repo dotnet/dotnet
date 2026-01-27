@@ -941,25 +941,25 @@ namespace NuGet.Commands
             // Used when logging package id specific messages, we need to know the target graph name
             string targetGraphName = pair.Name;
 
-        // Used to start over when a dependency has multiple descendants of an item to be evicted.
-        //
-        // Project
-        // ├── A 1.0.0
-        // │   └── B 1.0.0
-        // │       └── C 1.0.0
-        // │           └── D 1.0.0
-        // └── X 2.0.0
-        //     └── Y 2.0.0
-        //         └── G 2.0.0
-        //             └── B 2.0.0
-        // The items are processed in the following order:
-        // Chose A 1.0.0 and X 1.0.0
-        // Chose B 1.0.0 and Y 2.0.0
-        // Chose C 1.0.0 and G 2.0.0
-        // Chose D 1.0.0 and B 2.0.0, but B 2.0.0 should evict C 1.0.0 and D 1.0.0
-        //
-        // In this case, the entire walk is started over and B 1.0.0 is left out of the graph, leading to C 1.0.0 and D 1.0.0 also being left out.
-        //
+            // Used to start over when a dependency has multiple descendants of an item to be evicted.
+            //
+            // Project
+            // ├── A 1.0.0
+            // │   └── B 1.0.0
+            // │       └── C 1.0.0
+            // │           └── D 1.0.0
+            // └── X 2.0.0
+            //     └── Y 2.0.0
+            //         └── G 2.0.0
+            //             └── B 2.0.0
+            // The items are processed in the following order:
+            // Chose A 1.0.0 and X 1.0.0
+            // Chose B 1.0.0 and Y 2.0.0
+            // Chose C 1.0.0 and G 2.0.0
+            // Chose D 1.0.0 and B 2.0.0, but B 2.0.0 should evict C 1.0.0 and D 1.0.0
+            //
+            // In this case, the entire walk is started over and B 1.0.0 is left out of the graph, leading to C 1.0.0 and D 1.0.0 also being left out.
+            //
         StartOver:
             restartCount++;
 
