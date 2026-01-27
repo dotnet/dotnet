@@ -18,7 +18,6 @@ using Internal.Text;
 using Internal.TypeSystem.Ecma;
 using Internal.CorConstants;
 using Internal.ReadyToRunConstants;
-using ILCompiler.ReadyToRun.TypeSystem;
 
 namespace ILCompiler.DependencyAnalysis
 {
@@ -331,7 +330,7 @@ namespace ILCompiler.DependencyAnalysis
 
             _debugDirectoryEntries = new NodeCache<ModuleAndIntValueKey, DebugDirectoryEntryNode>(key =>
             {
-                return new CopiedDebugDirectoryEntryNode(key.Module, key.IntValue);
+                    return new CopiedDebugDirectoryEntryNode(key.Module, key.IntValue);
             });
 
             _copiedMetadataBlobs = new NodeCache<EcmaModule, CopiedMetadataBlobNode>(module =>
@@ -478,7 +477,7 @@ namespace ILCompiler.DependencyAnalysis
                 MethodDesc method = methodNode.Method;
                 MethodWithGCInfo methodCodeNode = methodNode as MethodWithGCInfo;
 #if DEBUG
-                if ((!methodCodeNode.IsEmpty || CompilationModuleGroup.VersionsWithMethodBody(method)) && method.IsPrimaryMethodDesc())
+                if (!methodCodeNode.IsEmpty || CompilationModuleGroup.VersionsWithMethodBody(method))
                 {
                     EcmaModule module = ((EcmaMethod)method.GetTypicalMethodDefinition()).Module;
                     ModuleToken moduleToken = Resolver.GetModuleTokenForMethod(method, allowDynamicallyCreatedReference: true, throwIfNotFound: true);

@@ -204,7 +204,9 @@ namespace System.Runtime.InteropServices
             do
             {
                 wrappers = _delegateWrappers;
-                newWrappers = Array.FindAll(wrappers, w => !condition(w.Delegate));
+                List<DelegateWrapper> tmp = new(wrappers);
+                tmp.RemoveAll(w => condition(w.Delegate));
+                newWrappers = tmp.ToArray();
             }
             while (!PublishNewWrappers(newWrappers, wrappers));
         }

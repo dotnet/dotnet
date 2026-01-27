@@ -83,17 +83,5 @@ namespace ILCompiler
         {
             return method.IsAsyncVariant() ^ method.IsAsync;
         }
-
-        public static MethodDesc GetAsyncVariant(this MethodDesc method)
-        {
-            Debug.Assert(!method.IsAsyncVariant());
-            return ((CompilerTypeSystemContext)method.Context).GetAsyncVariantMethod(method);
-        }
-
-        public static MethodDesc GetTargetOfAsyncVariant(this MethodDesc method)
-        {
-            Debug.Assert(method.IsAsyncVariant());
-            return ((CompilerTypeSystemContext)method.Context).GetTargetOfAsyncVariantMethod(method);
-        }
     }
 }

@@ -32965,7 +32965,7 @@ GenTree* Compiler::gtFoldExprHWIntrinsic(GenTreeHWIntrinsic* tree)
                         // Handle `x & 0 == 0` and `0 & x == 0`
                         if (cnsNode->IsMaskZero())
                         {
-                            resultNode = gtWrapWithSideEffects(cnsNode, otherNode, GTF_ALL_EFFECT);
+                            resultNode = otherNode;
                             break;
                         }
 

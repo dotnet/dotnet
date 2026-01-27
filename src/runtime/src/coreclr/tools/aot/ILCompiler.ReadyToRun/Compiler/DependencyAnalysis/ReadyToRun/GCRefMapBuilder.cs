@@ -96,10 +96,6 @@ namespace ILCompiler.DependencyAnalysis.ReadyToRun
                 hasParamType = true;
             }
 
-            bool hasAsyncContinuation = method.IsAsyncCall();
-            // We shouldn't be compiling unboxing stubs for async methods yet.
-            Debug.Assert(hasAsyncContinuation ? !isUnboxingStub : true);
-
             bool extraFunctionPointerArg = false;
             bool[] forcedByRefParams = new bool[parameterTypes.Length];
             bool skipFirstArg = false;
@@ -111,7 +107,6 @@ namespace ILCompiler.DependencyAnalysis.ReadyToRun
                 argIteratorData,
                 callingConventions,
                 hasParamType,
-                hasAsyncContinuation,
                 extraFunctionPointerArg,
                 forcedByRefParams,
                 skipFirstArg,
@@ -169,12 +164,6 @@ namespace ILCompiler.DependencyAnalysis.ReadyToRun
                 {
                     frame[argit.GetParamTypeArgOffset()] = CORCOMPILE_GCREFMAP_TOKENS.GCREFMAP_TYPE_PARAM;
                 }
-            }
-
-            // Encode async continuation arg (it's a GC reference)
-            if (argit.HasAsyncContinuation)
-            {
-                frame[argit.GetAsyncContinuationArgOffset()] = CORCOMPILE_GCREFMAP_TOKENS.GCREFMAP_REF;
             }
 
             // If the function has a this pointer, add it to the mask
