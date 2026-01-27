@@ -9,7 +9,6 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 using Microsoft.VisualStudio.Razor.LanguageClient.Cohost.Formatting;
 using Xunit;
 using Xunit.Abstractions;
@@ -17,32 +16,54 @@ using AssertEx = Roslyn.Test.Utilities.AssertEx;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor.Test.Cohost.Formatting;
 
-[Collection(HtmlFormattingCollection.Name)]
-public class HtmlFormattingPassTest(FormattingTestContext context, HtmlFormattingFixture fixture, ITestOutputHelper testOutput)
-    : FormattingTestBase(context, fixture.Service, testOutput), IClassFixture<FormattingTestContext>
+public class HtmlFormattingPassTest(ITestOutputHelper testOutput) : DocumentFormattingTestBase(testOutput)
 {
+    public static TheoryData<string, string> StringLiteralSplitTestData => new()
+    {
+        { "", "" },
+        { "$", "" },
+        { "", "u8" },
+        { "$", "u8" },
+        { "@", "" },
+        { "@$", "" },
+        { @"""""""", @"""""""""" },
+        { @"$""""""", @"""""""""" },
+        { @"""""""\r\n", @"\r\n""""""" },
+        { @"$""""""\r\n", @"\r\n""""""" },
+        { @"""""""", @"""""""u8" },
+        { @"$""""""", @"""""""u8" },
+        { @"""""""\r\n", @"\r\n""""""u8" },
+        { @"$""""""\r\n", @"\r\n""""""u8" },
+    };
+
     [Theory]
     [WorkItem("https://github.com/dotnet/razor/issues/11846")]
-    [InlineData("", "")]
-    [InlineData("$", "")]
-    [InlineData("", "u8")]
-    [InlineData("$", "u8")]
-    [InlineData("@", "")]
-    [InlineData("@$", "")]
-    [InlineData(@"""""""", @"""""""")]
-    [InlineData(@"$""""""", @"""""""")]
-    [InlineData(@"""""""\r\n", @"\r\n""""""")]
-    [InlineData(@"$""""""\r\n", @"\r\n""""""")]
-    [InlineData(@"""""""", @"""""""u8")]
-    [InlineData(@"$""""""", @"""""""u8")]
-    [InlineData(@"""""""\r\n", @"\r\n""""""u8")]
-    [InlineData(@"$""""""\r\n", @"\r\n""""""u8")]
+    [MemberData(nameof(StringLiteralSplitTestData))]
     public async Task RemoveEditThatSplitsStringLiteral(string prefix, string suffix)
     {
-        var document = CreateProjectAndRazorDocument($"""
-            @({prefix}"this is a line that is 46 characters long"{suffix})
-            """);
-        var change = new TextChange(new TextSpan(24, 0), "\r\n");
+        TestCode input = $"""
+            @({prefix}"this is a line that i$$s 46 characters long"{suffix})
+            """;
+        var document = CreateProjectAndRazorDocument(input.Text);
+        var change = new TextChange(new TextSpan(input.Position, 0), "\r\n");
+        var edits = await GetHtmlFormattingEditsAsync(document, change);
+        Assert.Empty(edits);
+    }
+
+    [Theory]
+    [WorkItem("https://github.com/dotnet/razor/issues/11846")]
+    [MemberData(nameof(StringLiteralSplitTestData))]
+    public async Task RemoveEditThatSplitsStringLiteral_MultiLineDocument(string prefix, string suffix)
+    {
+        TestCode input = $"""
+            <div>
+
+                @({prefix}"this is a line that i$$s 46 characters long"{suffix})
+
+            </div>
+            """;
+        var document = CreateProjectAndRazorDocument(input.Text);
+        var change = new TextChange(new TextSpan(input.Position, 0), "\r\n");
         var edits = await GetHtmlFormattingEditsAsync(document, change);
         Assert.Empty(edits);
     }
@@ -82,28 +103,38 @@ public class HtmlFormattingPassTest(FormattingTestContext context, HtmlFormattin
             $$hello</script></div>
             <script>
             </script>
+            @{
+                var x = @<div>
+                    <script>
+            $$            function foo() { }
+                    </script>
+                </div>;
+            }
+            
             """;
 
         var document = CreateProjectAndRazorDocument(input.Text);
         var sourceText = SourceText.From(input.Text);
         var changes = ImmutableArray.CreateBuilder<TextChange>();
 
-        // Create an edit to "indent" every line. Using $$ makes test assertions easier.
+        // Create an edit to indent every line. The actual size doesn't matter for this test.
+        var indent = "      ";
         foreach (var line in sourceText.Lines)
         {
-            changes.Add(new TextChange(new TextSpan(line.Start, 0), "$$"));
+            changes.Add(new TextChange(new TextSpan(line.Start, 0), indent));
         }
 
         var edits = await GetHtmlFormattingEditsAsync(document, changes.ToImmutable());
 
         var newDoc = sourceText.WithChanges(edits);
-        AssertEx.EqualOrDiff(input.OriginalInput, newDoc.ToString());
+        // The only places the indent should have been kept is places that we marked with dollar signs
+        AssertEx.EqualOrDiff(input.OriginalInput.Replace("$$", indent), newDoc.ToString());
     }
 
     private async Task<ImmutableArray<TextChange>> GetHtmlFormattingEditsAsync(CodeAnalysis.TextDocument document, params ImmutableArray<TextChange> changes)
     {
         var documentMappingService = OOPExportProvider.GetExportedValue<IDocumentMappingService>();
-        var pass = new HtmlFormattingPass(documentMappingService);
+        var pass = new HtmlFormattingPass(documentMappingService, LoggerFactory);
 
         var snapshotManager = OOPExportProvider.GetExportedValue<RemoteSnapshotManager>();
         var snapshot = snapshotManager.GetSnapshot(document);

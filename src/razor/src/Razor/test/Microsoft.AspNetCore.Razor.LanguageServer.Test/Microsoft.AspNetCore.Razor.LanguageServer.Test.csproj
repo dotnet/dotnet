@@ -8,6 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Formatting\CodeDirectiveFormattingTest.cs" />
+    <None Include="Formatting\DocumentFormattingTest.cs" />
+    <None Include="Formatting\HtmlFormattingTest.cs" />
     <None Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
     <Compile Include="..\..\src\Microsoft.CodeAnalysis.Razor.Workspaces\GlobalUsings.cs" Link="GlobalUsings.cs" />
   </ItemGroup>

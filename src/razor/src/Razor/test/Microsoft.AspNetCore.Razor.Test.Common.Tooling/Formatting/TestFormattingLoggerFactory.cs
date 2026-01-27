@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Text.Json;
-using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
@@ -24,9 +23,9 @@ internal class TestFormattingLoggerFactory(ITestOutputHelper testOutputHelper) :
 
     private class TestFormattingLogger(ITestOutputHelper testOutputHelper) : IFormattingLogger
     {
-        private readonly HashSet<string> _loggedNames = new();
+        private readonly HashSet<string> _loggedNames = [];
 
-        private ITestOutputHelper _testOutputHelper = testOutputHelper;
+        private readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
 
         public void LogMessage(string message)
         {
