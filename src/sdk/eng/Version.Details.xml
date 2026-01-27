@@ -116,6 +116,10 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>ec846aee7f12180381c444dfeeba0c5022e1d110</Sha>
     </Dependency>
+    <Dependency Name="Microsoft.CodeAnalysis.ExternalAccess.HotReload" Version="5.4.0-2.26069.105">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>ec846aee7f12180381c444dfeeba0c5022e1d110</Sha>
+    </Dependency>
     <Dependency Name="Microsoft.CodeAnalysis.Workspaces.Common" Version="5.4.0-2.26069.105">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>ec846aee7f12180381c444dfeeba0c5022e1d110</Sha>
@@ -233,19 +237,24 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>ec846aee7f12180381c444dfeeba0c5022e1d110</Sha>
     </Dependency>
+    <!-- Do not use properties based on:
+         - Microsoft.WindowsDesktop.App.Ref
+         - Microsoft.WindowsDesktop.App.Internal
+         - Microsoft.NET.Sdk.WindowsDesktop
+         - Microsoft.Dotnet.WinForms.ProjectTemplates
+         - Microsoft.DotNet.Wpf.ProjectTemplates
+         In VMR builds on non-Windows, they aren't built. Instead, use the following:
+         - Microsoft.WindowsDesktop.App.Ref - Microsoft.NETCore.App.Ref
+         - Microsoft.WindowsDesktop.App.Internal - Microsoft.NETCore.Platforms
+         - Microsoft.NET.Sdk.WindowsDesktop - Microsoft.NETCore.App.Ref
+         - Microsoft.Dotnet.WinForms.ProjectTemplates - Microsoft.NETCore.Platforms
+         - Microsoft.DotNet.Wpf.ProjectTemplates - Microsoft.NETCore.Platforms
+    -->
     <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="11.0.0-preview.1.26069.105">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>ec846aee7f12180381c444dfeeba0c5022e1d110</Sha>
     </Dependency>
     <Dependency Name="Microsoft.WindowsDesktop.App.Internal" Version="11.0.0-preview.1.26069.105">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>ec846aee7f12180381c444dfeeba0c5022e1d110</Sha>
-    </Dependency>
-    <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="11.0.0-preview.1.26069.105">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>ec846aee7f12180381c444dfeeba0c5022e1d110</Sha>
-    </Dependency>
-    <Dependency Name="Microsoft.DotNet.Wpf.ProjectTemplates" Version="11.0.0-preview.1.26069.105">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>ec846aee7f12180381c444dfeeba0c5022e1d110</Sha>
     </Dependency>
@@ -355,14 +364,6 @@
       <Sha>ec846aee7f12180381c444dfeeba0c5022e1d110</Sha>
     </Dependency>
     <Dependency Name="Microsoft.AspNetCore.TestHost" Version="11.0.0-preview.1.26069.105">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>ec846aee7f12180381c444dfeeba0c5022e1d110</Sha>
-    </Dependency>
-    <Dependency Name="Microsoft.DotNet.Web.ItemTemplates.11.0" Version="11.0.0-preview.1.26069.105">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>ec846aee7f12180381c444dfeeba0c5022e1d110</Sha>
-    </Dependency>
-    <Dependency Name="Microsoft.DotNet.Web.ProjectTemplates.11.0" Version="11.0.0-preview.1.26069.105">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>ec846aee7f12180381c444dfeeba0c5022e1d110</Sha>
     </Dependency>
@@ -510,7 +511,19 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>ec846aee7f12180381c444dfeeba0c5022e1d110</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.ExternalAccess.HotReload" Version="5.4.0-2.26069.105">
+    <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="11.0.0-preview.1.26069.105">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>ec846aee7f12180381c444dfeeba0c5022e1d110</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.DotNet.Wpf.ProjectTemplates" Version="11.0.0-preview.1.26069.105">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>ec846aee7f12180381c444dfeeba0c5022e1d110</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.DotNet.Web.ItemTemplates.11.0" Version="11.0.0-preview.1.26069.105">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>ec846aee7f12180381c444dfeeba0c5022e1d110</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.DotNet.Web.ProjectTemplates.11.0" Version="11.0.0-preview.1.26069.105">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>ec846aee7f12180381c444dfeeba0c5022e1d110</Sha>
     </Dependency>
