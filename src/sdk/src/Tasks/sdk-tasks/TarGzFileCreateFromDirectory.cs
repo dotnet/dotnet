@@ -239,6 +239,31 @@ namespace Microsoft.DotNet.Build.Tasks
                 returnCode = 0;
             }
 
+            // Immediately after tar completes, capture its hash to detect later modification
+            if (returnCode == 0 && File.Exists(DestinationArchive))
+            {
+                try
+                {
+                    using (var stream = File.OpenRead(DestinationArchive))
+                    using (var sha = System.Security.Cryptography.SHA256.Create())
+                    {
+                        var hash = sha.ComputeHash(stream);
+                        var hashString = BitConverter.ToString(hash).Replace("-", "");
+                        Log.LogMessage(MessageImportance.High, "");
+                        Log.LogMessage(MessageImportance.High, $"TARBALL CREATED - IMMEDIATE POST-TAR STATE:");
+                        Log.LogMessage(MessageImportance.High, $"  Path: {DestinationArchive}");
+                        Log.LogMessage(MessageImportance.High, $"  Size: {new FileInfo(DestinationArchive).Length} bytes");
+                        Log.LogMessage(MessageImportance.High, $"  SHA256: {hashString}");
+                        Log.LogMessage(MessageImportance.High, $"  Timestamp: {DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}");
+                        Log.LogMessage(MessageImportance.High, "");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.LogWarning($"Could not compute tarball hash: {ex.Message}");
+                }
+            }
+
             return returnCode;
         }
 
@@ -281,11 +306,14 @@ namespace Microsoft.DotNet.Build.Tasks
         public override bool Execute()
         {
             // Log source directory structure before creating tarball
+            // This happens AFTER zip creation on Windows, so it will show if zip had side effects
             Log.LogMessage(MessageImportance.High, "");
             Log.LogMessage(MessageImportance.High, "##############################################################");
             Log.LogMessage(MessageImportance.High, "## DIAGNOSTIC LOGGING: PRE-TAR CREATION");
+            Log.LogMessage(MessageImportance.High, $"## NOTE: On Windows, zip creation has already completed");
+            Log.LogMessage(MessageImportance.High, $"## This logging occurs immediately before tar execution");
             Log.LogMessage(MessageImportance.High, "##############################################################");
-            LogDirectoryStructure(SourceDirectory, "SOURCE DIRECTORY STRUCTURE");
+            LogDirectoryStructure(SourceDirectory, "SOURCE DIRECTORY STRUCTURE (IMMEDIATE PRE-TAR)");
 
             // Execute the tar command
             bool result = base.Execute();
@@ -298,6 +326,42 @@ namespace Microsoft.DotNet.Build.Tasks
                 Log.LogMessage(MessageImportance.High, "## DIAGNOSTIC LOGGING: POST-TAR CREATION");
                 Log.LogMessage(MessageImportance.High, "##############################################################");
                 LogTarballContents(DestinationArchive);
+
+                // Log source directory AGAIN after tar to see if tar had side effects
+                Log.LogMessage(MessageImportance.High, "");
+                Log.LogMessage(MessageImportance.High, "##############################################################");
+                Log.LogMessage(MessageImportance.High, "## DIAGNOSTIC LOGGING: POST-TAR SOURCE VERIFICATION");
+                Log.LogMessage(MessageImportance.High, "##############################################################");
+                LogDirectoryStructure(SourceDirectory, "SOURCE DIRECTORY STRUCTURE (POST-TAR VERIFICATION)");
+
+                // Final hash capture before returning - to detect any modifications after logging
+                try
+                {
+                    using (var stream = File.OpenRead(DestinationArchive))
+                    using (var sha = System.Security.Cryptography.SHA256.Create())
+                    {
+                        var hash = sha.ComputeHash(stream);
+                        var hashString = BitConverter.ToString(hash).Replace("-", "");
+                        Log.LogMessage(MessageImportance.High, "");
+                        Log.LogMessage(MessageImportance.High, "##############################################################");
+                        Log.LogMessage(MessageImportance.High, "## FINAL TARBALL STATE - END OF TASK EXECUTION");
+                        Log.LogMessage(MessageImportance.High, "##############################################################");
+                        Log.LogMessage(MessageImportance.High, $"  Path: {DestinationArchive}");
+                        Log.LogMessage(MessageImportance.High, $"  Size: {new FileInfo(DestinationArchive).Length} bytes");
+                        Log.LogMessage(MessageImportance.High, $"  SHA256: {hashString}");
+                        Log.LogMessage(MessageImportance.High, $"  Timestamp: {DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}");
+                        Log.LogMessage(MessageImportance.High, "");
+                        Log.LogMessage(MessageImportance.High, "NOTE: If this hash differs from the 'IMMEDIATE POST-TAR STATE' hash above,");
+                        Log.LogMessage(MessageImportance.High, "      something modified the tarball during the logging operations.");
+                        Log.LogMessage(MessageImportance.High, "NOTE: If a later build step shows a different hash, the tarball was modified");
+                        Log.LogMessage(MessageImportance.High, "      AFTER this task completed (e.g., by signing infrastructure).");
+                        Log.LogMessage(MessageImportance.High, "##############################################################");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.LogWarning($"Could not compute final tarball hash: {ex.Message}");
+                }
             }
 
             return result;
