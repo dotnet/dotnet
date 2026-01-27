@@ -18,6 +18,9 @@ public class ScenarioTestFixture
     public const string TargetRidEnvironmentVariable = "SCENARIO_TESTS_TARGETRID";
     public const string PortableRidEnvironmentVariable = "SCENARIO_TESTS_PORTABLERID";
     public const string BinlogDirEnvironmentVariable = "SCENARIO_TESTS_BINLOG_DIR";
+    public const string ExcludedTraitsEnvironmentVariable = "SCENARIO_TESTS_EXCLUDED_TRAITS";
+
+    private static HashSet<string>? s_excludedTraits;
 
     public string? SdkVersion { get; }
 
@@ -32,6 +35,37 @@ public class ScenarioTestFixture
     public string? PortableRid { get; }
 
     public string? BinlogDir { get; }
+
+    /// <summary>
+    /// Gets the set of excluded trait values (from --no-traits arguments).
+    /// Format: "Key=Value" entries separated by semicolons.
+    /// </summary>
+    public static HashSet<string> ExcludedTraits
+    {
+        get
+        {
+            if (s_excludedTraits is null)
+            {
+                string? value = Environment.GetEnvironmentVariable(ExcludedTraitsEnvironmentVariable);
+                s_excludedTraits = string.IsNullOrEmpty(value)
+                    ? new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                    : new HashSet<string>(value.Split(';', StringSplitOptions.RemoveEmptyEntries), StringComparer.OrdinalIgnoreCase);
+            }
+            return s_excludedTraits;
+        }
+    }
+
+    /// <summary>
+    /// Checks if a specific trait key=value pair is excluded.
+    /// </summary>
+    public static bool IsTraitExcluded(string key, string value) =>
+        ExcludedTraits.Contains($"{key}={value}");
+
+    /// <summary>
+    /// Checks if a specific category is excluded.
+    /// </summary>
+    public static bool IsCategoryExcluded(string category) =>
+        IsTraitExcluded("Category", category);
 
     public ScenarioTestFixture()
     {
