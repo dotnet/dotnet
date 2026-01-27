@@ -11,11 +11,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.Formatting;
 
-[Collection(HtmlFormattingCollection.Name)]
-public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, HtmlFormattingFixture fixture, ITestOutputHelper testOutput)
-    : FormattingTestBase(context, fixture.Service, testOutput), IClassFixture<FormattingTestContext>
+public class CSharpSyntaxFormattingOptionsTest(ITestOutputHelper testOutput) : DocumentFormattingTestBase(testOutput)
 {
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeMembersInObjectInitializers_SingleLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -29,6 +27,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -47,7 +55,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeMembersInObjectInitializers_SingleLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -61,6 +69,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -79,7 +97,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeMembersInObjectInitializers_MultiLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -93,6 +111,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -111,7 +139,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeMembersInObjectInitializers_MultiLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -125,6 +153,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -143,7 +181,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeMembersInAnonymousTypes_SingleLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -157,6 +195,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -175,7 +223,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeMembersInAnonymousTypes_SingleLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -189,6 +237,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -207,7 +265,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeMembersInAnonymousTypes_MultiLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -221,6 +279,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -239,7 +307,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeMembersInAnonymousTypes_MultiLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -253,6 +321,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -271,7 +349,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeElse_SingleLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -285,6 +363,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -303,7 +391,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeElse_SingleLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -317,6 +405,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -335,7 +433,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeElse_MultiLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -349,6 +447,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -367,7 +475,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeElse_MultiLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -381,6 +489,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -399,7 +517,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeCatch_SingleLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -413,6 +531,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -431,7 +559,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeCatch_SingleLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -445,6 +573,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -463,7 +601,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeCatch_MultiLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -477,6 +615,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -495,7 +643,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeCatch_MultiLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -509,6 +657,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -527,7 +685,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeFinally_SingleLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -541,6 +699,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -559,7 +727,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeFinally_SingleLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -573,6 +741,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -591,7 +769,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeFinally_MultiLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -605,6 +783,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -623,7 +811,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeFinally_MultiLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -637,6 +825,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -655,7 +853,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInTypes_SingleLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -669,6 +867,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -687,7 +895,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInTypes_SingleLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -701,6 +909,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -719,7 +937,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInTypes_MultiLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -733,6 +951,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -751,7 +979,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInTypes_MultiLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -765,6 +993,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -783,7 +1021,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInAnonymousTypes_SingleLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -797,6 +1035,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -815,7 +1063,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInAnonymousTypes_SingleLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -829,6 +1077,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -847,7 +1105,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInAnonymousTypes_MultiLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -861,6 +1119,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -879,7 +1147,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInAnonymousTypes_MultiLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -893,6 +1161,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -911,7 +1189,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInObjectCollectionArrayInitializers_SingleLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -925,6 +1203,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -943,7 +1231,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInObjectCollectionArrayInitializers_SingleLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -957,6 +1245,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -975,7 +1273,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInObjectCollectionArrayInitializers_MultiLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -989,6 +1287,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1007,7 +1315,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInObjectCollectionArrayInitializers_MultiLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -1021,6 +1329,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1039,7 +1357,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInProperties_SingleLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -1053,6 +1371,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1071,7 +1399,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInProperties_SingleLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -1085,6 +1413,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1103,7 +1441,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInProperties_MultiLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -1117,6 +1455,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1135,7 +1483,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInProperties_MultiLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -1149,6 +1497,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1167,7 +1525,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInMethods_SingleLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -1181,6 +1539,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1198,7 +1566,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInMethods_SingleLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -1212,6 +1580,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1229,7 +1607,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInMethods_MultiLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -1243,6 +1621,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1260,7 +1648,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInMethods_MultiLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -1274,6 +1662,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1291,7 +1689,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInAccessors_SingleLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -1305,6 +1703,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1323,7 +1731,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInAccessors_SingleLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -1337,6 +1745,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1355,7 +1773,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInAccessors_MultiLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -1369,6 +1787,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1387,7 +1815,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInAccessors_MultiLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -1401,6 +1829,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1419,7 +1857,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInAnonymousMethods_SingleLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -1433,6 +1871,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1451,7 +1899,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInAnonymousMethods_SingleLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -1465,6 +1913,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1483,7 +1941,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInAnonymousMethods_MultiLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -1497,6 +1955,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1515,7 +1983,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInAnonymousMethods_MultiLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -1529,6 +1997,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1547,7 +2025,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInLambdaExpressionBody_SingleLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -1561,6 +2039,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1579,7 +2067,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInLambdaExpressionBody_SingleLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -1593,6 +2081,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1611,7 +2109,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInLambdaExpressionBody_MultiLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -1625,6 +2123,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1643,7 +2151,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInLambdaExpressionBody_MultiLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -1657,6 +2165,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1675,7 +2193,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInControlBlocks_SingleLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -1689,6 +2207,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1707,7 +2235,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInControlBlocks_SingleLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -1721,6 +2249,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1739,7 +2277,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInControlBlocks_MultiLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
@@ -1753,6 +2291,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1771,7 +2319,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBeforeOpenBraceInControlBlocks_MultiLine_DontPreserve()
     {
         await RunFormattingTestAsync(
@@ -1785,6 +2333,16 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                 }
                 }
                 """,
+            htmlFormatted: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
             expected: """
                 @code
                 {
@@ -1803,11 +2361,21 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBetweenQueryExpressionClauses_SingleLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
             input: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
+            htmlFormatted: """
                 @code
                 {
                 private bool IconMenuActive { get; set; } = false;
@@ -1835,11 +2403,21 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBetweenQueryExpressionClauses_SingleLine_DontPreserve()
     {
         await RunFormattingTestAsync(
             input: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
+            htmlFormatted: """
                 @code
                 {
                 private bool IconMenuActive { get; set; } = false;
@@ -1867,11 +2445,21 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBetweenQueryExpressionClauses_MultiLine_PreserveSingle()
     {
         await RunFormattingTestAsync(
             input: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
+            htmlFormatted: """
                 @code
                 {
                 private bool IconMenuActive { get; set; } = false;
@@ -1899,11 +2487,21 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
             });
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task CSharpSyntaxFormattingOptions_WithoutBetweenQueryExpressionClauses_MultiLine_DontPreserve()
     {
         await RunFormattingTestAsync(
             input: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
+            htmlFormatted: """
                 @code
                 {
                 private bool IconMenuActive { get; set; } = false;

@@ -39,9 +39,7 @@ public class CSharpSyntaxFormattingOptionsTest_Generator
 
             namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.Formatting;
 
-            [Collection(HtmlFormattingCollection.Name)]
-            public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, HtmlFormattingFixture fixture, ITestOutputHelper testOutput)
-                : FormattingTestBase(context, fixture.Service, testOutput), IClassFixture<FormattingTestContext>
+            public class CSharpSyntaxFormattingOptionsTest(ITestOutputHelper testOutput) : DocumentFormattingTestBase(testOutput)
             {
             """;
 
@@ -52,11 +50,21 @@ public class CSharpSyntaxFormattingOptionsTest_Generator
 
         //lang=C#-test
         var testTemplate = """"
-            [FormattingTestFact]
+            [Fact]
             public async Task {TestName}()
             {
                 await RunFormattingTestAsync(
                     input: """
+                        @code
+                        {
+                        private bool IconMenuActive { get; set; } = false;
+                        protected void ToggleIconMenu(bool iconMenuActive)
+                        {
+                        IconMenuActive = iconMenuActive;
+                        }
+                        }
+                        """,
+                    htmlFormatted: """
                         @code
                         {
                         private bool IconMenuActive { get; set; } = false;
@@ -88,7 +96,7 @@ public class CSharpSyntaxFormattingOptionsTest_Generator
         bool[] booleanOptions = [true, false];
 
         var projectPath = TestProject.GetProjectDirectory(typeof(CSharpSyntaxFormattingOptionsTest_Generator), layer: TestProject.Layer.Tooling);
-        var testFileName = Path.Combine(projectPath, """Cohost\Formatting\CSharpSyntaxFormattingOptionsTest.cs""");
+        var testFileName = Path.Combine(projectPath, """Endpoints\Shared\Formatting\Formatting\CSharpSyntaxFormattingOptionsTest.cs""");
 
         var addExtraLine = false;
 
