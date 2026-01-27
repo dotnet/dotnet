@@ -261,4 +261,35 @@
   <data name="Text_AuditSources_Title" xml:space="preserve">
     <value>Audit sources</value>
   </data>
+  <data name="Text_AuditSources_Checkbox" xml:space="preserve">
+    <value>Use separate sources for vulnerability audit</value>
+  </data>
+  <data name="Text_MachineWidePackageSource_Description" xml:space="preserve">
+    <value>Machine‑wide package sources are provisioned by Visual Studio workloads and can only be enabled or disabled.</value>
+  </data>
+  <data name="Title_FixVulnerabilitiesWithCopilot" xml:space="preserve">
+    <value>Fix Vulnerabilities with GitHub Copilot</value>
+  </data>
+  <data name="Prompt_FixNuGetPackageVulnerabilities" xml:space="preserve">
+    <value>Fix my NuGet package vulnerabilities</value>
+  </data>
+  <data name="Error_CopilotNotReady" xml:space="preserve">
+    <value>GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in.</value>
+    <comment>Do not translate GitHub or Copilot</comment>
+  </data>
+  <data name="Error_ServiceBrokerNotAvailable" xml:space="preserve">
+    <value>Service Broker is not available. Please ensure Visual Studio is running correctly.</value>
+  </data>
+  <data name="Error_CopilotServiceNotAvailable" xml:space="preserve">
+    <value>GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in.</value>
+    <comment>Do not translate GitHub or Copilot</comment>
+  </data>
+  <data name="Error_McpToolServiceNotAvailable" xml:space="preserve">
+    <value>MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in.</value>
+    <comment>Do not translate GitHub or Copilot</comment>
+  </data>
+  <data name="Error_CopilotAccessDenied" xml:space="preserve">
+    <value>Access denied. Please ensure you are signed in to GitHub Copilot.</value>
+    <comment>Do not translate GitHub or Copilot</comment>
+  </data>
 </root>

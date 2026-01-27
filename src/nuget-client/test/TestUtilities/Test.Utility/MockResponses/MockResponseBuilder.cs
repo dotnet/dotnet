@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
+using NuGet.Protocol;
 using NuGet.Versioning;
 
 namespace Test.Utility
@@ -183,17 +184,28 @@ namespace Test.Utility
                     new KeyValuePair<PackageIdentity, bool>(
                         e,
                         true)).ToArray(),
-                new HashSet<PackageIdentity>());
+                new HashSet<PackageIdentity>(),
+                null);
         }
 
-        public MockResponse BuildRegistrationIndexResponse(string serverUri, KeyValuePair<PackageIdentity, bool>[] packageIdentityToListed, ISet<PackageIdentity> deprecatedPackages)
+        public MockResponse BuildRegistrationIndexResponse(
+            string serverUri,
+            KeyValuePair<PackageIdentity, bool>[] packageIdentityToListed,
+            ISet<PackageIdentity> deprecatedPackages,
+            IReadOnlyDictionary<string, List<(Uri, PackageVulnerabilitySeverity, VersionRange)>> allVulnerabilities)
         {
             var id = packageIdentityToListed[0].Key.Id.ToLowerInvariant();
             var versions = packageIdentityToListed.Select(
                 e => new KeyValuePair<string, bool>(
                     e.Key.Version.ToNormalizedString().ToLowerInvariant(),
                     e.Value));
-            var registrationIndex = FeedUtilities.CreatePackageRegistrationBlob(serverUri, id, versions, deprecatedPackages);
+            List<(Uri, PackageVulnerabilitySeverity, VersionRange)> packageVulnerabilities = null;
+            if (allVulnerabilities != null && !allVulnerabilities.TryGetValue(id, out packageVulnerabilities))
+            {
+                packageVulnerabilities = null;
+            }
+
+            var registrationIndex = FeedUtilities.CreatePackageRegistrationBlob(serverUri, id, versions, deprecatedPackages, packageVulnerabilities);
 
             return new MockResponse
             {

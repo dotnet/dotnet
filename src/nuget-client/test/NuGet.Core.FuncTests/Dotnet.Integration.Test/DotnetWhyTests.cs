@@ -10,6 +10,7 @@ using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using NuGet.CommandLine.XPlat;
 using NuGet.Test.Utility;
 using NuGet.XPlat.FuncTest;
+using Test.Utility;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -34,14 +35,14 @@ namespace Dotnet.Integration.Test
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
-            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, Constants.ProjectTargetFramework);
+            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, TestConstants.ProjectTargetFramework);
 
-            var packageX = XPlatTestUtils.CreatePackage("PackageX", "1.0.0", Constants.ProjectTargetFramework);
-            var packageY = XPlatTestUtils.CreatePackage("PackageY", "1.0.1", Constants.ProjectTargetFramework);
+            var packageX = XPlatTestUtils.CreatePackage("PackageX", "1.0.0", TestConstants.ProjectTargetFramework);
+            var packageY = XPlatTestUtils.CreatePackage("PackageY", "1.0.1", TestConstants.ProjectTargetFramework);
 
             packageX.Dependencies.Add(packageY);
 
-            project.AddPackageToFramework(Constants.ProjectTargetFramework, packageX);
+            project.AddPackageToFramework(TestConstants.ProjectTargetFramework, packageX);
 
             await SimpleTestPackageUtility.CreatePackagesAsync(
                 pathContext.PackageSource,
@@ -66,12 +67,12 @@ namespace Dotnet.Integration.Test
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
-            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, Constants.ProjectTargetFramework);
+            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, TestConstants.ProjectTargetFramework);
 
-            var packageX = XPlatTestUtils.CreatePackage("PackageX", "1.0.0", Constants.ProjectTargetFramework);
-            project.AddPackageToFramework(Constants.ProjectTargetFramework, packageX);
+            var packageX = XPlatTestUtils.CreatePackage("PackageX", "1.0.0", TestConstants.ProjectTargetFramework);
+            project.AddPackageToFramework(TestConstants.ProjectTargetFramework, packageX);
 
-            var packageZ = XPlatTestUtils.CreatePackage("PackageZ", "1.0.0", Constants.ProjectTargetFramework);
+            var packageZ = XPlatTestUtils.CreatePackage("PackageZ", "1.0.0", TestConstants.ProjectTargetFramework);
 
             await SimpleTestPackageUtility.CreatePackagesAsync(
                 pathContext.PackageSource,
@@ -96,14 +97,14 @@ namespace Dotnet.Integration.Test
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
-            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, Constants.ProjectTargetFramework);
+            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, TestConstants.ProjectTargetFramework);
 
-            var packageX = XPlatTestUtils.CreatePackage("PackageX", "1.0.0", Constants.ProjectTargetFramework);
-            var packageY = XPlatTestUtils.CreatePackage("PackageY", "1.0.1", Constants.ProjectTargetFramework);
+            var packageX = XPlatTestUtils.CreatePackage("PackageX", "1.0.0", TestConstants.ProjectTargetFramework);
+            var packageY = XPlatTestUtils.CreatePackage("PackageY", "1.0.1", TestConstants.ProjectTargetFramework);
 
             packageX.Dependencies.Add(packageY);
 
-            project.AddPackageToFramework(Constants.ProjectTargetFramework, packageX);
+            project.AddPackageToFramework(TestConstants.ProjectTargetFramework, packageX);
 
             await SimpleTestPackageUtility.CreatePackagesAsync(
                 pathContext.PackageSource,
@@ -113,7 +114,7 @@ namespace Dotnet.Integration.Test
             string addPackageCommandArgs = $"add {project.ProjectPath} package {packageX.Id}";
             CommandRunnerResult addPackageResult = _testFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, addPackageCommandArgs, testOutputHelper: _testOutputHelper);
 
-            string whyCommandArgs = $"nuget why {project.ProjectPath} {packageY.Id} --framework {Constants.ProjectTargetFramework}";
+            string whyCommandArgs = $"nuget why {project.ProjectPath} {packageY.Id} --framework {TestConstants.ProjectTargetFramework}";
 
             // Act
             CommandRunnerResult result = _testFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, whyCommandArgs, testOutputHelper: _testOutputHelper);
@@ -128,14 +129,14 @@ namespace Dotnet.Integration.Test
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
-            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, Constants.ProjectTargetFramework);
+            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, TestConstants.ProjectTargetFramework);
 
-            var packageX = XPlatTestUtils.CreatePackage("PackageX", "1.0.0", Constants.ProjectTargetFramework);
-            var packageY = XPlatTestUtils.CreatePackage("PackageY", "1.0.1", Constants.ProjectTargetFramework);
+            var packageX = XPlatTestUtils.CreatePackage("PackageX", "1.0.0", TestConstants.ProjectTargetFramework);
+            var packageY = XPlatTestUtils.CreatePackage("PackageY", "1.0.1", TestConstants.ProjectTargetFramework);
 
             packageX.Dependencies.Add(packageY);
 
-            project.AddPackageToFramework(Constants.ProjectTargetFramework, packageX);
+            project.AddPackageToFramework(TestConstants.ProjectTargetFramework, packageX);
 
             await SimpleTestPackageUtility.CreatePackagesAsync(
                 pathContext.PackageSource,
@@ -145,7 +146,7 @@ namespace Dotnet.Integration.Test
             string addPackageCommandArgs = $"add {project.ProjectPath} package {packageX.Id}";
             CommandRunnerResult addPackageResult = _testFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, addPackageCommandArgs, testOutputHelper: _testOutputHelper);
 
-            string whyCommandArgs = $"nuget why {project.ProjectPath} {packageY.Id} -f {Constants.ProjectTargetFramework}";
+            string whyCommandArgs = $"nuget why {project.ProjectPath} {packageY.Id} -f {TestConstants.ProjectTargetFramework}";
 
             // Act
             CommandRunnerResult result = _testFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, whyCommandArgs, testOutputHelper: _testOutputHelper);
@@ -176,7 +177,7 @@ namespace Dotnet.Integration.Test
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
-            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, Constants.ProjectTargetFramework);
+            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, TestConstants.ProjectTargetFramework);
 
             string whyCommandArgs = $"nuget why {project.ProjectPath}";
 
@@ -193,14 +194,14 @@ namespace Dotnet.Integration.Test
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
-            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, Constants.ProjectTargetFramework);
+            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, TestConstants.ProjectTargetFramework);
 
-            var packageX = XPlatTestUtils.CreatePackage("PackageX", "1.0.0", Constants.ProjectTargetFramework);
-            var packageY = XPlatTestUtils.CreatePackage("PackageY", "1.0.1", Constants.ProjectTargetFramework);
+            var packageX = XPlatTestUtils.CreatePackage("PackageX", "1.0.0", TestConstants.ProjectTargetFramework);
+            var packageY = XPlatTestUtils.CreatePackage("PackageY", "1.0.1", TestConstants.ProjectTargetFramework);
 
             packageX.Dependencies.Add(packageY);
 
-            project.AddPackageToFramework(Constants.ProjectTargetFramework, packageX);
+            project.AddPackageToFramework(TestConstants.ProjectTargetFramework, packageX);
 
             await SimpleTestPackageUtility.CreatePackagesAsync(
                 pathContext.PackageSource,
@@ -226,14 +227,14 @@ namespace Dotnet.Integration.Test
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
-            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, Constants.ProjectTargetFramework);
+            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, TestConstants.ProjectTargetFramework);
 
-            var packageX = XPlatTestUtils.CreatePackage("PackageX", "1.0.0", Constants.ProjectTargetFramework);
-            var packageY = XPlatTestUtils.CreatePackage("PackageY", "1.0.1", Constants.ProjectTargetFramework);
+            var packageX = XPlatTestUtils.CreatePackage("PackageX", "1.0.0", TestConstants.ProjectTargetFramework);
+            var packageY = XPlatTestUtils.CreatePackage("PackageY", "1.0.1", TestConstants.ProjectTargetFramework);
 
             packageX.Dependencies.Add(packageY);
 
-            project.AddPackageToFramework(Constants.ProjectTargetFramework, packageX);
+            project.AddPackageToFramework(TestConstants.ProjectTargetFramework, packageX);
 
             await SimpleTestPackageUtility.CreatePackagesAsync(
                 pathContext.PackageSource,

@@ -15,8 +15,6 @@ namespace NuGet.PackageManagement.UI
         private INuGetSourcesService _service = NullNuGetSourcesService.Instance;
         private readonly object _syncObject = new object();
 
-        public event EventHandler<IReadOnlyList<PackageSourceContextInfo>>? PackageSourcesChanged;
-
         internal INuGetSourcesService Service
         {
             get
@@ -32,21 +30,12 @@ namespace NuGet.PackageManagement.UI
         {
             lock (_syncObject)
             {
-                Service.PackageSourcesChanged -= OnPackageSourcesChanged;
-
                 INuGetSourcesService oldService = _service;
 
                 _service = newService ?? NullNuGetSourcesService.Instance;
 
-                Service.PackageSourcesChanged += OnPackageSourcesChanged;
-
                 return oldService;
             }
-        }
-
-        private void OnPackageSourcesChanged(object sender, IReadOnlyList<PackageSourceContextInfo> e)
-        {
-            PackageSourcesChanged?.Invoke(sender, e);
         }
 
         public void Dispose()
@@ -84,8 +73,6 @@ namespace NuGet.PackageManagement.UI
 
         private sealed class NullNuGetSourcesService : INuGetSourcesService
         {
-            public event EventHandler<IReadOnlyList<PackageSourceContextInfo>>? PackageSourcesChanged { add { } remove { } }
-
             internal static NullNuGetSourcesService Instance { get; } = new NullNuGetSourcesService();
 
             public void Dispose() { }
