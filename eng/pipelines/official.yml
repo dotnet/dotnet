@@ -60,6 +60,9 @@ variables:
 - name: GDN_EXTRACT_FILTER
   value: 'f|**/*.zip;f|**/*.nupkg;f|**/*.vsix;f|**/*.cspkg;f|**/*.sfpkg;f|**/*.package'
 
+- name: Codeql.DoNotStartTimes
+  value: 'Mon;Tue;Wed;Thu;Fri;Sat' # run only on the scheduled build on Sunday
+
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:
   - name: skipComponentGovernanceDetection  # we run CG on internal builds only
     value: true

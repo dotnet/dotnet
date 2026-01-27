@@ -121,7 +121,16 @@ public sealed class CodeRenderingContext : IDisposable
             CharacterIndex = CodeWriter.Location.CharacterIndex + offset
         };
 
-        var generatedLocation = new SourceSpan(currentLocation, source.Length);
+        var endCharacterIndex = (source.LineCount == 0) ? currentLocation.CharacterIndex + source.Length : source.EndCharacterIndex;
+
+        var generatedLocation = new SourceSpan(
+            currentLocation.FilePath,
+            currentLocation.AbsoluteIndex,
+            currentLocation.LineIndex,
+            currentLocation.CharacterIndex,
+            source.Length,
+            lineCount: source.LineCount,
+            endCharacterIndex: endCharacterIndex);
         var sourceMapping = new SourceMapping(source, generatedLocation);
 
         _sourceMappings.Add(sourceMapping);

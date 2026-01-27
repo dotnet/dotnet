@@ -10,4 +10,12 @@ internal static class SourceSpanExtensions
 {
     public static TextSpan ToTextSpan(this SourceSpan span)
         => new(span.AbsoluteIndex, span.Length);
+
+    public static LinePositionSpan ToLinePositionSpan(this SourceSpan span)
+    {
+        var start = new LinePosition(span.LineIndex, span.CharacterIndex);
+        var end = new LinePosition(span.LineIndex + span.LineCount, span.EndCharacterIndex);
+
+        return new LinePositionSpan(start, end);
+    }
 }
