@@ -215,6 +215,12 @@ jobs:
   - name: failedJobArtifactName
     value: $(successfulJobArtifactName)_Attempt$(System.JobAttempt)
 
+  - name: failedSDKOSXJobArtifactName
+    value: $(Agent.JobName)_SDK_OSXDebug_Artifacts_Attempt$(System.JobAttempt)
+
+  - name: failedRuntimeOSXJobArtifactName
+    value: $(Agent.JobName)_Runtime_OSXDebug_Artifacts_Attempt$(System.JobAttempt)
+
   # manually disable CodeQL until https://dev.azure.com/mseng/1ES/_workitems/edit/2211548 is implemented
   # CodeQL doesn't work on arm64 macOS, see https://portal.microsofticm.com/imp/v5/incidents/details/532165079/summary
   - ${{ if eq(parameters.pool.os, 'macOS') }}:
@@ -357,6 +363,22 @@ jobs:
       path: $(artifactsPrepublishDir)
       artifact: $(failedJobArtifactName)
       displayName: Publish Artifacts (On Failure)
+      condition: failed()
+      continueOnError: true
+      sbomEnabled: true
+
+    - output: pipelineArtifact
+      path: $(sourcesPath)/src/sdk/artifacts/packages/Release/Shipping
+      artifact: $(failedSDKOSXJobArtifactName)
+      displayName: Publish OSX Artifacts (On Failure)
+      condition: failed()
+      continueOnError: true
+      sbomEnabled: true
+
+    - output: pipelineArtifact
+      path: $(sourcesPath)/src/runtime/artifacts/packages/Release/Shipping
+      artifact: $(failedRuntimeOSXJobArtifactName)
+      displayName: Publish OSX Artifacts (On Failure)
       condition: failed()
       continueOnError: true
       sbomEnabled: true
