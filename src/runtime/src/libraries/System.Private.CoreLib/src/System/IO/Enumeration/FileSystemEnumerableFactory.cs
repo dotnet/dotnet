@@ -118,9 +118,7 @@ namespace System.IO.Enumeration
             return new FileSystemEnumerable<string>(
                 directory,
                 (ref FileSystemEntry entry) => entry.ToSpecifiedFullPath(),
-                options,
-                isNormalized: false,
-                expression)
+                options)
             {
                 ShouldIncludePredicate = (ref FileSystemEntry entry) =>
                     !entry.IsDirectory && MatchesPattern(expression, entry.FileName, options)
@@ -134,9 +132,7 @@ namespace System.IO.Enumeration
             return new FileSystemEnumerable<string>(
                 directory,
                 (ref FileSystemEntry entry) => entry.ToSpecifiedFullPath(),
-                options,
-                isNormalized: false,
-                expression)
+                options)
             {
                 ShouldIncludePredicate = (ref FileSystemEntry entry) =>
                     entry.IsDirectory && MatchesPattern(expression, entry.FileName, options)
@@ -150,9 +146,7 @@ namespace System.IO.Enumeration
             return new FileSystemEnumerable<string>(
                 directory,
                 (ref FileSystemEntry entry) => entry.ToSpecifiedFullPath(),
-                options,
-                isNormalized: false,
-                expression)
+                options)
             {
                 ShouldIncludePredicate = (ref FileSystemEntry entry) =>
                     MatchesPattern(expression, entry.FileName, options)
@@ -169,8 +163,7 @@ namespace System.IO.Enumeration
                directory,
                (ref FileSystemEntry entry) => (FileInfo)entry.ToFileSystemInfo(),
                options,
-               isNormalized,
-               expression)
+               isNormalized)
             {
                 ShouldIncludePredicate = (ref FileSystemEntry entry) =>
                     !entry.IsDirectory && MatchesPattern(expression, entry.FileName, options)
@@ -187,8 +180,7 @@ namespace System.IO.Enumeration
                directory,
                (ref FileSystemEntry entry) => (DirectoryInfo)entry.ToFileSystemInfo(),
                options,
-               isNormalized,
-               expression)
+               isNormalized)
             {
                 ShouldIncludePredicate = (ref FileSystemEntry entry) =>
                     entry.IsDirectory && MatchesPattern(expression, entry.FileName, options)
@@ -205,8 +197,7 @@ namespace System.IO.Enumeration
                directory,
                (ref FileSystemEntry entry) => entry.ToFileSystemInfo(),
                options,
-               isNormalized,
-               expression)
+               isNormalized)
             {
                 ShouldIncludePredicate = (ref FileSystemEntry entry) =>
                     MatchesPattern(expression, entry.FileName, options)

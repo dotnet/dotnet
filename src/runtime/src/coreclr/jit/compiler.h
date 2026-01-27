@@ -8129,7 +8129,6 @@ public:
         Continue,
         Abort,
     };
-
     template <typename TAssertVisitor>
     AssertVisit optVisitReachingAssertions(ValueNum vn, TAssertVisitor argVisitor);
 
