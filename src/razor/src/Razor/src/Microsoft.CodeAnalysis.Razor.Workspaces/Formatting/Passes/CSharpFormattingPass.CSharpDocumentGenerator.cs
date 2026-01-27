@@ -83,7 +83,7 @@ internal partial class CSharpFormattingPass
     /// </remarks>
     private sealed class CSharpDocumentGenerator
     {
-        public static CSharpFormattingDocument Generate(RazorCodeDocument codeDocument, SyntaxNode csharpSyntaxRoot, RazorFormattingOptions options, IDocumentMappingService documentMappingService)
+        public static FormattedDocument Generate(RazorCodeDocument codeDocument, SyntaxNode csharpSyntaxRoot, RazorFormattingOptions options, IDocumentMappingService documentMappingService)
         {
             using var _1 = StringBuilderPool.GetPooledObject(out var builder);
             using var _2 = ArrayBuilderPool<LineInfo>.GetPooledObject(out var lineInfoBuilder);
@@ -1137,7 +1137,7 @@ internal partial class CSharpFormattingPass
                     SkipPreviousLine: skipPreviousLine,
                     SkipNextLine: skipNextLine,
                     SkipNextLineIfBrace: skipNextLineIfBrace,
-                    HtmlIndentLevel: htmlIndentLevel,
+                    FixedIndentLevel: htmlIndentLevel,
                     OriginOffset: originOffset,
                     FormattedLength: formattedLength,
                     FormattedOffset: formattedOffset,

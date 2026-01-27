@@ -6,17 +6,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.CodeAnalysis.Razor.Formatting;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
-[Collection(HtmlFormattingCollection.Name)]
-public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFixture fixture, ITestOutputHelper testOutput)
-    : FormattingTestBase(context, fixture.Service, testOutput), IClassFixture<FormattingTestContext>
+public class HtmlFormattingTest(ITestOutputHelper testOutput) : DocumentFormattingTestBase(testOutput)
 {
-    [FormattingTestFact]
+    [Fact]
     public async Task FormatsComponentTags()
     {
         var tagHelpers = GetComponents();
@@ -56,10 +53,26 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         }
                     </GridTable>
                     """,
+            htmlFormatted: """
+                    <PageTitle>
+                        @if(true){
+                        <p>@DateTime.Now</p>
+                        }
+                    </PageTitle>
+
+                    <GridTable>
+                        @foreach (var row in rows){
+                        <GridRow @onclick="SelectRow(row)">
+                            @foreach (var cell in row){
+                            <GridCell>@cell</GridCell>}
+                        </GridRow>
+                        }
+                    </GridTable>
+                    """,
             tagHelpers: [.. tagHelpers]);
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task FormatsComponentTag_WithImplicitExpression()
     {
         var tagHelpers = GetComponents();
@@ -80,10 +93,18 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         </GridRow>
                     </GridTable>
                     """,
+            htmlFormatted: """
+                    <GridTable>
+                        <GridRow>
+                            <GridCell>@cell</GridCell>
+                            <GridCell>cell</GridCell>
+                        </GridRow>
+                    </GridTable>
+                    """,
             tagHelpers: [.. tagHelpers]);
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task FormatsComponentTag_WithExplicitExpression()
     {
         var tagHelpers = GetComponents();
@@ -102,10 +123,17 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         </GridRow>
                     </GridTable>
                     """,
+            htmlFormatted: """
+                    <GridTable>
+                        <GridRow>
+                            <GridCell>@(cell)</GridCell>
+                        </GridRow>
+                    </GridTable>
+                    """,
             tagHelpers: [.. tagHelpers]);
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task FormatsComponentTag_WithExplicitExpression_FormatsInside()
     {
         var tagHelpers = GetComponents();
@@ -124,10 +152,17 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         </GridRow>
                     </GridTable>
                     """,
+            htmlFormatted: """
+                    <GridTable>
+                        <GridRow>
+                            <GridCell>@(""  +    "")</GridCell>
+                        </GridRow>
+                    </GridTable>
+                    """,
             tagHelpers: [.. tagHelpers]);
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task FormatsComponentTag_WithExplicitExpression_MovesStart()
     {
         var tagHelpers = GetComponents();
@@ -150,10 +185,19 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         </GridRow>
                     </GridTable>
                     """,
+            htmlFormatted: """
+                    <GridTable>
+                        <GridRow>
+                            <GridCell>
+                                @(""  +    "")
+                            </GridCell>
+                        </GridRow>
+                    </GridTable>
+                    """,
             tagHelpers: [.. tagHelpers]);
     }
 
-    [FormattingTestFact]
+    [Fact]
     [WorkItem("https://github.com/dotnet/aspnetcore/issues/30382")]
     public async Task FormatNestedComponents2()
     {
@@ -198,10 +242,30 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         </ChildContent>
                     </GridTable>
                     """,
+            htmlFormatted: """
+                    <GridTable>
+                        <ChildContent>
+                            <GridRow>
+                                <ChildContent>
+                                    <GridCell>
+                                        <ChildContent>
+                                            <strong></strong>
+                                            @if (true)
+                                            {
+                                            <strong></strong>
+                                            }
+                                            <strong></strong>
+                                        </ChildContent>
+                                    </GridCell>
+                                </ChildContent>
+                            </GridRow>
+                        </ChildContent>
+                    </GridTable>
+                    """,
             tagHelpers: [.. GetComponents()]);
     }
 
-    [FormattingTestFact]
+    [Fact]
     [WorkItem("https://github.com/dotnet/razor/issues/8227")]
     public async Task FormatNestedComponents3()
     {
@@ -260,10 +324,37 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         </a_really_long_tag_name>
                     }
                     """,
+            htmlFormatted: """
+                    @if (true)
+                    {
+                    <Component1 Id="comp1"
+                                Caption="Title" />
+                    <Component1 Id="comp2"
+                                Caption="Title">
+                        <Frag>
+                            <Component1 Id="comp3"
+                                        Caption="Title" />
+                        </Frag>
+                    </Component1>
+                    }
+
+                    @if (true)
+                    {
+                    <a_really_long_tag_name Id="comp1"
+                                            Caption="Title" />
+                    <a_really_long_tag_name Id="comp2"
+                                            Caption="Title">
+                        <a_really_long_tag_name>
+                            <a_really_long_tag_name Id="comp3"
+                                                    Caption="Title" />
+                        </a_really_long_tag_name>
+                    </a_really_long_tag_name>
+                    }
+                    """,
             tagHelpers: [.. GetComponents()]);
     }
 
-    [FormattingTestFact]
+    [Fact]
     [WorkItem("https://github.com/dotnet/razor/issues/8228")]
     public async Task FormatNestedComponents4()
     {
@@ -284,10 +375,18 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                           </Component1>;
                     }
                     """,
+            htmlFormatted: """
+                    @{
+                        RenderFragment fragment =
+                          @<Component1 Id="Comp1"
+                                       Caption="Title">
+                    </Component1>;
+                    }
+                    """,
             tagHelpers: [.. GetComponents()]);
     }
 
-    [FormattingTestFact]
+    [Fact]
     [WorkItem("https://github.com/dotnet/razor/issues/8229")]
     public async Task FormatNestedComponents5()
     {
@@ -312,10 +411,20 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         }
                     </Component1>
                     """,
+            htmlFormatted: """
+                    <Component1>
+                        @{
+                        RenderFragment fragment =
+                        @<Component1 Id="Comp1"
+                                     Caption="Title">
+                        </Component1>;
+                        }
+                    </Component1>
+                    """,
             tagHelpers: [.. GetComponents()]);
     }
 
-    [FormattingTestFact]
+    [Fact]
     [WorkItem("https://github.com/dotnet/aspnetcore/issues/30382")]
     public async Task FormatNestedComponents2_Range()
     {
@@ -360,10 +469,30 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                     </ChildContent>
                     </GridTable>
                     """,
+            htmlFormatted: """
+                    <GridTable>
+                        <ChildContent>
+                            <GridRow>
+                                <ChildContent>
+                                    <GridCell>
+                                        <ChildContent>
+                                            <strong></strong>
+                                            @if (true)
+                                            {
+                                            <strong></strong>
+                                            }
+                                            <strong></strong>
+                                        </ChildContent>
+                                    </GridCell>
+                                </ChildContent>
+                            </GridRow>
+                        </ChildContent>
+                    </GridTable>
+                    """,
             tagHelpers: [.. GetComponents()]);
     }
 
-    [FormattingTestFact]
+    [Fact]
     [WorkItem("https://github.com/dotnet/razor/issues/6211")]
     public async Task FormatCascadingValueWithCascadingTypeParameter()
     {
@@ -395,6 +524,21 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         @foreach (var i in new int[] { 1, 23 })
                         {
                             <SelectItem Value="@i">@i</SelectItem>
+                        }
+                    </Select>
+                    """,
+            htmlFormatted: """
+
+                    <div>
+                        @foreach ( var i in new int[] { 1, 23 } )
+                        {
+                        <div></div>
+                        }
+                    </div>
+                    <Select TValue="string">
+                        @foreach ( var i in new int[] { 1, 23 } )
+                        {
+                        <SelectItem Value="@i">@i</SelectItem>
                         }
                     </Select>
                     """,
@@ -440,7 +584,7 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
         }
     }
 
-    [FormattingTestFact]
+    [Fact]
     public async Task PreprocessorDirectives()
     {
         await RunFormattingTestAsync(
@@ -477,6 +621,22 @@ public class HtmlFormattingTest(FormattingTestContext context, HtmlFormattingFix
                         private object SomeModel { get; set; }
                     }
                     """,
+            htmlFormatted: """
+                <div Model="SomeModel">
+                    <div />
+                    @{
+                    #if DEBUG
+                    }
+                    <div />
+                    @{
+                    #endif
+                    }
+                </div>
+
+                @code {
+                    private object SomeModel {get;set;}
+                }
+                """,
             allowDiagnostics: true);
     }
 
