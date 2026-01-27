@@ -456,14 +456,6 @@ jobs:
         rm -f $(sharedComponentsDir)/Private.SourceBuilt.SharedComponents.*.tar.gz
       displayName: Download Shared Component Artifacts
 
-  - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
-    - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/install-microbuild.yml
-      parameters:
-        enableMicrobuild: true
-        enableMicrobuildForMacAndLinux: true
-        ${{ if ne(parameters.signType, 'Real') }}:
-          microbuildUseESRP: false
-
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - task: PowerShell@2
       displayName: Setup Internal Feeds
@@ -476,7 +468,10 @@ jobs:
           Get-ChildItem -Path "$sourcesPath/src" -Directory | ForEach-Object {
             $repoDir = $_.FullName
             $setupScript = Join-Path $repoDir "eng/common/SetupNugetSources.ps1"
-            $nugetConfig = Join-Path $repoDir "NuGet.config"
+            
+            # Search for nuget.config using "Filter" to allow for case-insensitive matching.
+            $nugetConfigFile = Get-ChildItem -Path $repoDir -Filter "nuget.config" -File | Select-Object -First 1
+            $nugetConfig = if ($nugetConfigFile) { $nugetConfigFile.FullName } else { Join-Path $repoDir "NuGet.config" }
             
             Write-Host "Setting up internal NuGet feeds for $($_.Name)"
             & $setupScript $nugetConfig $token
@@ -492,6 +487,14 @@ jobs:
     - task: NuGetAuthenticate@1
       inputs:
         nuGetServiceConnections: devdiv/engineering, devdiv/dotnet-core-internal-tooling
+
+  - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
+    - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/install-microbuild.yml
+      parameters:
+        enableMicrobuild: true
+        enableMicrobuildForMacAndLinux: true
+        ${{ if ne(parameters.signType, 'Real') }}:
+          microbuildUseESRP: false
 
   - ${{ if eq(parameters.targetOS, 'windows') }}:
     # Node 20.x is a toolset dependency to build aspnetcore
