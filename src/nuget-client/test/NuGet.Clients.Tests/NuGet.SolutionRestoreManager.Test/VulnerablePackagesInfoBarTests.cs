@@ -34,7 +34,7 @@ namespace NuGet.SolutionRestoreManager.Test
             TestSolutionManager solutionManager = new TestSolutionManager(string.Empty);
 
             // Act
-            VulnerablePackagesInfoBar infoBar = new VulnerablePackagesInfoBar(solutionManager, new Lazy<IPackageManagerLaunchService>());
+            VulnerablePackagesInfoBar infoBar = new VulnerablePackagesInfoBar(solutionManager, new Lazy<IPackageManagerLaunchService>(), new Lazy<IFixVulnerabilitiesService>());
 
             EventHandler e = typeof(TestSolutionManager)
                 .GetField(nameof(TestSolutionManager.SolutionClosed), BindingFlags.Instance | BindingFlags.NonPublic)
@@ -53,7 +53,7 @@ namespace NuGet.SolutionRestoreManager.Test
         {
             // Arrange
             TestSolutionManager solutionManager = new TestSolutionManager(string.Empty);
-            VulnerablePackagesInfoBar infoBar = new VulnerablePackagesInfoBar(solutionManager, new Lazy<IPackageManagerLaunchService>());
+            VulnerablePackagesInfoBar infoBar = new VulnerablePackagesInfoBar(solutionManager, new Lazy<IPackageManagerLaunchService>(), new Lazy<IFixVulnerabilitiesService>());
 
             // Act
             await infoBar.ReportVulnerabilitiesAsync(hasVulnerabilitiesInSolution: false, CancellationToken.None);
@@ -69,7 +69,7 @@ namespace NuGet.SolutionRestoreManager.Test
         {
             // Arrange
             TestSolutionManager solutionManager = new TestSolutionManager(string.Empty);
-            VulnerablePackagesInfoBar infoBar = new VulnerablePackagesInfoBar(solutionManager, new Lazy<IPackageManagerLaunchService>());
+            VulnerablePackagesInfoBar infoBar = new VulnerablePackagesInfoBar(solutionManager, new Lazy<IPackageManagerLaunchService>(), new Lazy<IFixVulnerabilitiesService>());
 
             infoBar._infoBarVisible = true;
             infoBar._wasInfoBarHidden = true;
@@ -89,7 +89,7 @@ namespace NuGet.SolutionRestoreManager.Test
         {
             // Arrange
             TestSolutionManager solutionManager = new TestSolutionManager(string.Empty);
-            VulnerablePackagesInfoBar infoBar = new VulnerablePackagesInfoBar(solutionManager, new Lazy<IPackageManagerLaunchService>());
+            VulnerablePackagesInfoBar infoBar = new VulnerablePackagesInfoBar(solutionManager, new Lazy<IPackageManagerLaunchService>(), new Lazy<IFixVulnerabilitiesService>());
 
             infoBar._infoBarVisible = true;
             infoBar._wasInfoBarHidden = true;
@@ -115,7 +115,7 @@ namespace NuGet.SolutionRestoreManager.Test
         {
             // Arrange
             TestSolutionManager solutionManager = new TestSolutionManager(string.Empty);
-            VulnerablePackagesInfoBar infoBar = new VulnerablePackagesInfoBar(solutionManager, new Lazy<IPackageManagerLaunchService>());
+            VulnerablePackagesInfoBar infoBar = new VulnerablePackagesInfoBar(solutionManager, new Lazy<IPackageManagerLaunchService>(), new Lazy<IFixVulnerabilitiesService>());
 
             infoBar._infoBarVisible = false;
             infoBar._wasInfoBarHidden = true;

@@ -8,101 +8,96 @@ resources:
       trigger:
         branches:
           - dev
+  repositories:
+  - repository: MicroBuildTemplate
+    type: git
+    name: 1ESPipelineTemplates/MicroBuildTemplate
+    ref: refs/tags/release
 
-jobs:
-  - job: Static_Analysis
-    displayName: "Static Analysis"
-    timeoutInMinutes: 180
+variables:
+- group: NuGet.Client Build Variables
+
+extends:
+  template: azure-pipelines/MicroBuild.1ES.Unofficial.yml@MicroBuildTemplate
+  parameters:
+    sdl:
+      sourceAnalysisPool: VSEngSS-MicroBuild2022-1ES
+      binskim:
+        enabled: true
+        scanOutputDirectoryOnly: true
+      policheck:
+        enabled: true
+      suppression:
+        suppressionFile: $(Build.SourcesDirectory)\.gdn\.gdnsuppress
+      tsa:
+        enabled: true
+        config:
+          codebaseName: "NuGet.Client_Trusted_dev"
+          instanceUrl: https://dev.azure.com/devdiv/
+          projectName: DevDiv
+          areaPath: "DevDiv\\NuGet\\NuGet Clients"
+          notificationAliases: $(TsaNotificationAliases)
     pool:
-      name: VSEngSS-MicroBuild2022-1ES
+      name: AzurePipelines-EO
+      image: VSEngSS-MicroBuild2022-1ES
+      os: windows
+    stages:
+    - stage: compliance
+      displayName: "Run Compliance Tasks"
+      jobs:
+      - job: Static_Analysis
+        displayName: "Static Analysis"
+        timeoutInMinutes: 180
+        pool:
+          name: VSEngSS-MicroBuild2022-1ES
+        templateContext:
+          inputs:
+            - input: pipelineArtifact
+              pipeline: nugetclientofficial
+              artifactName: symbols - NonRTM
+              targetPath: $(Pipeline.Workspace)\symbols\NonRTM
 
-    steps:
-      - task: CredScan@2
-        inputs:
-          toolMajorVersion: "V2"
+        steps:
+        - pwsh: "Get-ChildItem Env: | Sort-Object Name | Format-Table -Wrap -AutoSize"
+          displayName: 'Print Environment Variables'
 
-      - task: PoliCheck@1
-        inputs:
-          inputType: "Basic"
-          targetType: "F"
-          targetArgument: "$(Build.SourcesDirectory)"
-          result: "PoliCheck.xml"
+        - task: APIScan@2
+          displayName: Run APIScan
+          inputs:
+            softwareFolder: $(Pipeline.Workspace)\symbols
+            softwareName: "NuGet.Client"
+            softwareVersionNum: "$(Resources.Pipeline.nugetclientofficial.RunName)"
+            isLargeApp: false
+            toolVersion: "Latest"
+            azureSubscription: 'VSEng-APIScanSC'
+            preserveLogsFolder: true
+          env:
+            AzureServicesAuthConnectionString: RunAs=App;AppId=d318cba7-db4d-4fb3-99e1-01879cb74e91;TenantId=72f988bf-86f1-41af-91ab-2d7cd011db47;ServiceConnectionId=93e24264-c5e6-4681-8175-ec8a41668480;
+            SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
-      - task: DownloadPipelineArtifact@2
-        displayName: "Download symbols - NonRTM artifact"
-        inputs:
-          source: specific
-          project: "devdiv"
-          pipeline: NuGet.Client-Official
-          artifact: "symbols - NonRTM"
-          path: $(Pipeline.Workspace)\symbols\NonRTM
+        - pwsh: |
+            $tsaOptionsPath = Join-Path $env:AGENT_TEMPDIRECTORY 'TSAOptions.json'
+            Write-Host "TsaNotificationAliases: $env:TSA_NOTIFICATION_ALIASES"
+            $notificationAliases = @($env:TSA_NOTIFICATION_ALIASES | ConvertFrom-Json)
+            $tsaOptions = [ordered]@{
+              tsaVersion = 'TsaV2'
+              codebaseName = 'NuGet.Client_Trusted_dev'
+              instanceUrl = 'https://dev.azure.com/devdiv/'
+              projectName = 'DevDiv'
+              areaPath = 'DevDiv\\NuGet\\NuGet Clients'
+              notificationAliases = $notificationAliases
+            }
 
-      ## Run latest version of APIScan listed at https://www.1eswiki.com/wiki/APIScan_Build_Task
-      - task: APIScan@2
-        displayName: Run APIScan
-        inputs:
-          softwareFolder: $(Pipeline.Workspace)\symbols
-          softwareName: "NuGet.Client"
-          softwareVersionNum: "$(Build.BuildId)"
-          isLargeApp: true
-          toolVersion: "Latest"
-          azureSubscription: 'VSEng-APIScanSC'
-        env:
-          AzureServicesAuthConnectionString: RunAs=App;AppId=d318cba7-db4d-4fb3-99e1-01879cb74e91;TenantId=72f988bf-86f1-41af-91ab-2d7cd011db47;ServiceConnectionId=93e24264-c5e6-4681-8175-ec8a41668480;
-          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+            $json = $tsaOptions | ConvertTo-Json -Depth 5
+            Write-Host $json
+            Write-Host "Writing TSA options to $tsaOptionsPath"
+            $json| Out-File -FilePath $tsaOptionsPath -Encoding utf8 -Force
+          displayName: Write TSAOptions.json
+          env:
+            TSA_NOTIFICATION_ALIASES: $(TsaNotificationAliases)
 
-      - task: SdtReport@1
-        displayName: "Generate Analysis Report"
-        inputs:
-          CredScan: true
-          PoliCheck: true
-          APIScan: true
-          ToolLogsNotFoundAction: "Standard"
-
-      - task: TSAUpload@1
-        displayName: "Upload to TSA"
-        inputs:
-          tsaVersion: "TsaV2"
-          codebase: "$(TsaCodebase)"
-          tsaEnvironment: "PROD"
-          codeBaseName: "$(TsaCodebaseName)"
-          notificationAlias: "$(TsaNotificationEmail)"
-          codeBaseAdmins: "$(TsaCodebaseAdmins)"
-          instanceUrlForTsaV2: "$(TsaInstanceUrl)"
-          projectNameDEVDIV: "$(TsaProjectName)"
-          areaPath: "$(TsaBugAreaPath)"
-          iterationPath: "$(TsaIterationPath)"
-          uploadAPIScan: false
-          uploadBinSkim: false
-          uploadCredScan: true
-          uploadFortifySCA: false
-          uploadFxCop: false
-          uploadModernCop: false
-          uploadPoliCheck: true
-          uploadPREfast: false
-          uploadRoslyn: false
-          uploadTSLint: false
-          uploadAsync: true
-
-      - task: PublishSecurityAnalysisLogs@2
-        displayName: "Publish CodeAnalysis Logs"
-        inputs:
-          ArtifactName: "CodeAnalysisLogs"
-          ArtifactType: "Container"
-          AllTools: false
-          AntiMalware: false
-          APIScan: true
-          BinSkim: false
-          CodesignValidation: false
-          CredScan: true
-          FortifySCA: false
-          FxCop: false
-          ModernCop: false
-          MSRD: false
-          PoliCheck: true
-          RoslynAnalyzers: false
-          SDLNativeRules: false
-          Semmle: false
-          TSLint: false
-          WebScout: false
-          ToolLogsNotFoundAction: "Standard"
+        - task: TSAUpload@2
+          displayName: TSA upload
+          inputs:
+            GdnPublishTsaOnboard: True
+            GdnPublishTsaConfigFile: $(Agent.TempDirectory)\TSAOptions.json
