@@ -250,7 +250,8 @@
         SdkStableVersion="$(SourceBuiltSdkVersion)"
         SdkNonStableVersion="$(SourceBuiltSdkNonStableVersion)"
         RepoRoot="$(RepoRoot)"
-        OutputDirectory="$(ArtifactsAssetsDir)" />
+        OutputDirectory="$(ArtifactsAssetsDir)"
+        CreateEmptyDetachedSignature="$(DotNetSourceOnlyPostBuildSign)" />
   </Target>
 
   <Target Name="CreatePrebuiltsTarball"
