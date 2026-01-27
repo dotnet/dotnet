@@ -121,3 +121,4 @@ static Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformEqtTrace.ErrorOnI
 static Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformAssemblyExtensions.GetAssemblyLocation(this System.Reflection.Assembly! assembly) -> string!
 virtual Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformAssemblyResolver.Dispose(bool disposing) -> void
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture.RiscV64 = 6 -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture
+Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture.LoongArch64 = 7 -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture

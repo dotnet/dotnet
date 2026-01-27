@@ -888,6 +888,8 @@ internal class TestRequestManager : ITestRequestManager
                     return Architecture.Ppc64le;
                 case PlatformArchitecture.RiscV64:
                     return Architecture.RiscV64;
+                case PlatformArchitecture.LoongArch64:
+                    return Architecture.LoongArch64;
                 default:
                     EqtTrace.Error($"TestRequestManager.TranslateToArchitecture: Unhandled architecture '{targetArchitecture}'.");
                     break;
