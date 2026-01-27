@@ -477,7 +477,10 @@ jobs:
           Get-ChildItem -Path "$sourcesPath/src" -Directory | ForEach-Object {
             $repoDir = $_.FullName
             $setupScript = Join-Path $repoDir "eng/common/SetupNugetSources.ps1"
-            $nugetConfig = Join-Path $repoDir "NuGet.config"
+
+            # Search for nuget.config using "Filter" to allow for case-insensitive matching.
+            $nugetConfigFile = Get-ChildItem -Path $repoDir -Filter "nuget.config" -File | Select-Object -First 1
+            $nugetConfig = if ($nugetConfigFile) { $nugetConfigFile.FullName } else { Join-Path $repoDir "NuGet.config" }
             
             Write-Host "Setting up internal NuGet feeds for $($_.Name)"
             & $setupScript $nugetConfig $token
