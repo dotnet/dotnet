@@ -553,7 +553,9 @@ jobs:
           $(sourcesPath)/eng/common/native/install-dependencies.sh osx
         displayName: Install dependencies
     - ${{ if eq(parameters.buildSourceOnly, 'true') }}:
-      - script: |
+      - displayName: Prep the Build
+        workingDirectory: $(sourcesPath)
+        script: |
           set -ex
 
           customPrepArgs="-c ${{ parameters.configuration }}"
