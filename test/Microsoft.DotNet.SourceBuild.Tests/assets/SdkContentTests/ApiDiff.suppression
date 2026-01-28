@@ -194,6 +194,12 @@
     <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Right>
   </Suppression>
   <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:System.ComponentModel.Composition.Primitives.ComposablePartException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)</Target>
+    <Left>/msft/sdk/x.y.z/System.ComponentModel.Composition.dll</Left>
+    <Right>/sb/sdk/x.y.z/System.ComponentModel.Composition.dll</Right>
+  </Suppression>
+  <Suppression>
     <DiagnosticId>CP0003</DiagnosticId>
     <Target>Humanizer, Version=x.y.z, Culture=neutral, PublicKeyToken=979442b78dfc278e</Target>
     <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Humanizer.dll</Left>
@@ -276,5 +282,11 @@
     <Target>T:Newtonsoft.Json.Linq.JTokenWriter</Target>
     <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
     <Right>/sb/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0008</DiagnosticId>
+    <Target>T:System.ComponentModel.Composition.ReflectionModel.LazyMemberInfo</Target>
+    <Left>/msft/sdk/x.y.z/System.ComponentModel.Composition.dll</Left>
+    <Right>/sb/sdk/x.y.z/System.ComponentModel.Composition.dll</Right>
   </Suppression>
 </Suppressions>
