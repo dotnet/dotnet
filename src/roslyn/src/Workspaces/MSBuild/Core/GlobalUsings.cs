@@ -2,11 +2,5 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace Microsoft.CodeAnalysis.Editor.Xaml;
-
-internal static class StringConstants
-{
-    public const string XamlLanguageName = "Xaml";
-
-    public const string XamlFileExtension = ".xaml";
-}
+extern alias Contracts;
+global using Contracts::Microsoft.CodeAnalysis.MSBuild;
