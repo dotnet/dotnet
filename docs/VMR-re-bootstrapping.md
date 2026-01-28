@@ -29,7 +29,7 @@ released.
 
 ## Steps to re-bootstrap
 
-> [!IMPORTANT] 
+> [!IMPORTANT]
 > Eligible builds must have published artifacts to a public channel.
 > For this reason, re-bootstrapping is only allowed with official builds
 > from the main branch and non-internal release branches.
