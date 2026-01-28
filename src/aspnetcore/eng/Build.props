@@ -72,7 +72,9 @@
 
   <!-- Build the RepoTasks before anything else -->
   <ItemGroup>
-    <ProjectToBuild Include="$(RepoRoot)eng\tools\RepoTasks\RepoTasks.csproj" BuildStep="repotasks" SkipProjectList="true" DotNetBuildPass="$(DotNetBuildPass)" />
+    <ProjectToBuild Include="$(RepoRoot)eng\tools\RepoTasks\RepoTasks.csproj" BuildStep="repotasks" SkipProjectList="true">
+      <DotNetBuildPass Condition="'$(DotNetBuildPass)' != ''">$(DotNetBuildPass)</DotNetBuildPass>
+    </ProjectToBuild>
   </ItemGroup>
 
   <Choose>
