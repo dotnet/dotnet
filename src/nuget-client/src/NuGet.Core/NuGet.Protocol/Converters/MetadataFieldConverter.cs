@@ -25,7 +25,7 @@ namespace NuGet.Protocol
 
             if (reader.TokenType == JsonToken.StartArray)
             {
-                var array = JArray.Load(reader);
+                var array = JArray.Load(reader, JsonUtility.DefaultLoadSettings);
                 return string.Join(", ", array.Values<string>().Where(s => !string.IsNullOrWhiteSpace(s)));
             }
 
