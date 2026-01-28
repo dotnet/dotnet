@@ -33,8 +33,6 @@ steps:
       xcrun simctl runtime delete all
     displayName: Reclaim disk space from unused simulator runtimes
 
-# Include "**SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/dotnet-source-*"
-# once https://github.com/dotnet/arcade/issues/16034 has been resolved.
 - task: DownloadPipelineArtifact@2
   displayName: Download Vertical Build Artifacts
   continueOnError: ${{ parameters.continueOnError }}
@@ -47,6 +45,7 @@ steps:
       **Windows_*_Artifacts/**
       **SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/dotnet-sdk-*.tar.gz
       **SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/Private.SourceBuilt.Artifacts.*.tar.gz
+      **SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/dotnet-source-*.tar.gz
     downloadPath: '${{ parameters.signCheckFilesDirectory }}'
 
 # This is necessary whenever we want to publish/restore to an AzDO private feed
