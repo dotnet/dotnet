@@ -80,7 +80,8 @@
     <When Condition="'$(ProjectToBuild)' != '' and '$(DotNetBuildPass)' != '2'">
       <ItemGroup>
         <ProjectToBuild Include="$(ProjectToBuild)"
-            Exclude="@(ProjectToExclude);$(RepoRoot)**\bin\**\*;$(RepoRoot)**\obj\**\*">
+            Exclude="@(ProjectToExclude);$(RepoRoot)**\bin\**\*;$(RepoRoot)**\obj\**\*"
+            BuildStep="manual">
           <BuildInParallel Condition=" '%(Extension)' == '.nodeproj' OR '%(Extension)' == '.vcxproj' ">false</BuildInParallel>
           <RestoreInParallel Condition=" '%(Extension)' == '.nodeproj' ">false</RestoreInParallel>
           <!-- Also do not build in parallel w/in npm projects. -->
@@ -92,23 +93,23 @@
     <When Condition="'$(DotNetBuildPass)' == '2'">
       <ItemGroup Condition=" '$(DotNetBuild)' == 'true' AND '$(TargetOsName)' == 'win' AND '$(TargetArchitecture)' == 'x64' ">
         <!-- Build Hosting Bundle -->
-        <ProjectToBuild Include="$(RepoRoot)src\Installers\Windows\WindowsHostingBundle\WindowsHostingBundle.wixproj">
+        <ProjectToBuild Include="$(RepoRoot)src\Installers\Windows\WindowsHostingBundle\WindowsHostingBundle.wixproj" BuildStep="bp2">
           <AdditionalProperties>Platform=x86</AdditionalProperties>
           <DotNetBuildPass>$(DotNetBuildPass)</DotNetBuildPass>
         </ProjectToBuild>
-        <ProjectToBuild Include="$(RepoRoot)src\Servers\IIS/IntegrationTesting.IIS\src\Microsoft.AspNetCore.Server.IntegrationTesting.IIS.csproj" >
+        <ProjectToBuild Include="$(RepoRoot)src\Servers\IIS\IntegrationTesting.IIS\src\Microsoft.AspNetCore.Server.IntegrationTesting.IIS.csproj" BuildStep="bp2">
           <DotNetBuildPass>$(DotNetBuildPass)</DotNetBuildPass>
         </ProjectToBuild>
         <!-- Build SiteExtensions -->
-        <ProjectToBuild Include="$(RepoRoot)src\SiteExtensions\LoggingAggregate\src\Microsoft.AspNetCore.AzureAppServices.SiteExtension\Microsoft.AspNetCore.AzureAppServices.SiteExtension.csproj">
+        <ProjectToBuild Include="$(RepoRoot)src\SiteExtensions\LoggingAggregate\src\Microsoft.AspNetCore.AzureAppServices.SiteExtension\Microsoft.AspNetCore.AzureAppServices.SiteExtension.csproj" BuildStep="bp2">
           <DotNetBuildPass>$(DotNetBuildPass)</DotNetBuildPass>
         </ProjectToBuild>
         <!-- Build Grpc Transcoding -->
-        <ProjectToBuild Include="$(RepoRoot)src\Grpc\JsonTranscoding\**\*.csproj">
+        <ProjectToBuild Include="$(RepoRoot)src\Grpc\JsonTranscoding\**\*.csproj" BuildStep="bp2">
           <DotNetBuildPass>$(DotNetBuildPass)</DotNetBuildPass>
         </ProjectToBuild>
         <!-- Build DotNetApiDocs.Transport -->
-        <ProjectToBuild Include="$(RepoRoot)src\Framework\Microsoft.Internal.Aspnetcore.DotNetApiDocs.Transport\**\*.csproj">
+        <ProjectToBuild Include="$(RepoRoot)src\Framework\Microsoft.Internal.Aspnetcore.DotNetApiDocs.Transport\**\*.csproj" BuildStep="bp2">
           <DotNetBuildPass>$(DotNetBuildPass)</DotNetBuildPass>
         </ProjectToBuild>
       </ItemGroup>
