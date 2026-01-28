@@ -23,3 +23,6 @@
 ./sdk/**/System.Security.Cryptography.Pkcs.dll
 ./sdk/**/System.Security.Cryptography.ProtectedData.dll
 ./sdk/x.y.z/System.Security.Cryptography.Xml.dll
+
+# https://github.com/dotnet/source-build/issues/5466
+./sdk/x.y.z/Spectre.Console.dll
