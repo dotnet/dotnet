@@ -110,14 +110,21 @@ public class LocalizedTemplateTests : IClassFixture<ScenarioTestFixture>
     /// </summary>
     public static IEnumerable<object[]> GetLocaleAndTemplateData()
     {
-        var coreTemplates = new[] { 
+        var coreTemplates = new List<DotNetSdkTemplate>
+        {
             DotNetSdkTemplate.Console, 
             DotNetSdkTemplate.ClassLib,
             DotNetSdkTemplate.Web,
             DotNetSdkTemplate.Mvc,
-            DotNetSdkTemplate.WebApi,
             DotNetSdkTemplate.Razor
         };
+
+        // WebApi requires portable assets
+        if (!ScenarioTestFixture.IsCategoryExcluded("RequiresPortableAssets"))
+        {
+            coreTemplates.Add(DotNetSdkTemplate.WebApi);
+        }
+
         var languages = new[] { DotNetLanguage.CSharp }; // Start with C# for broad locale coverage
 
         foreach (var culture in SupportedCultures)

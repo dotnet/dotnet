@@ -213,7 +213,7 @@ namespace ScenarioTests
                 return 0;
             }
 
-            SetupTestEnvironment(dotnetRoot, testRoot, sdkVersion, targetRid, portableRid, binlogDir);
+            SetupTestEnvironment(dotnetRoot, testRoot, sdkVersion, targetRid, portableRid, binlogDir, noTraits);
 
             var executor = xunitTestFx.CreateExecutor(asmName);
             executor.RunTests(filteredTestCases, resultsSink, TestFrameworkOptions.ForExecution(assemblyConfig));
@@ -234,7 +234,7 @@ namespace ScenarioTests
             return failed ? 1 : 0;
         }
 
-        private static void SetupTestEnvironment(string dotnetRoot, string testRoot, string? sdkVersion, string targetRid, string? portableRid, string? binlogDir)
+        private static void SetupTestEnvironment(string dotnetRoot, string testRoot, string? sdkVersion, string targetRid, string? portableRid, string? binlogDir, IList<string> excludedTraits)
         {
             // Verify that the input parameters 
             // Create any directories as necessary
@@ -247,6 +247,7 @@ namespace ScenarioTests
             Environment.SetEnvironmentVariable(ScenarioTestFixture.TargetRidEnvironmentVariable, targetRid);
             Environment.SetEnvironmentVariable(ScenarioTestFixture.PortableRidEnvironmentVariable, portableRid);
             Environment.SetEnvironmentVariable(ScenarioTestFixture.BinlogDirEnvironmentVariable, binlogDir);
+            Environment.SetEnvironmentVariable(ScenarioTestFixture.ExcludedTraitsEnvironmentVariable, string.Join(";", excludedTraits));
         }
 
         private static XunitFilters CreateFilters(IList<string> excludedTraits, IList<string> includedTraits, bool offlineOnly, OSPlatform platform, string dotnetRoot, string targetRid)
