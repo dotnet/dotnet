@@ -110,7 +110,8 @@ public class LocalizedTemplateTests : IClassFixture<ScenarioTestFixture>
     /// </summary>
     public static IEnumerable<object[]> GetLocaleAndTemplateData()
     {
-        var coreTemplates = new[] {
+        var coreTemplates = new List<DotNetSdkTemplate>
+        {
             DotNetSdkTemplate.Console, 
             DotNetSdkTemplate.ClassLib,
             DotNetSdkTemplate.Web,

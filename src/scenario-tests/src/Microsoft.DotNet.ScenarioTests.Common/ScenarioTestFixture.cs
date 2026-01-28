@@ -20,7 +20,13 @@ public class ScenarioTestFixture
     public const string BinlogDirEnvironmentVariable = "SCENARIO_TESTS_BINLOG_DIR";
     public const string ExcludedTraitsEnvironmentVariable = "SCENARIO_TESTS_EXCLUDED_TRAITS";
 
-    private static HashSet<string>? s_excludedTraits;
+    private static readonly Lazy<HashSet<string>> s_excludedTraits = new(() =>
+    {
+        string? value = Environment.GetEnvironmentVariable(ExcludedTraitsEnvironmentVariable);
+        return string.IsNullOrEmpty(value)
+            ? new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            : new HashSet<string>(value.Split(';', StringSplitOptions.RemoveEmptyEntries), StringComparer.OrdinalIgnoreCase);
+    });
 
     public string? SdkVersion { get; }
 
@@ -40,20 +46,7 @@ public class ScenarioTestFixture
     /// Gets the set of excluded trait values (from --no-traits arguments).
     /// Format: "Key=Value" entries separated by semicolons.
     /// </summary>
-    public static HashSet<string> ExcludedTraits
-    {
-        get
-        {
-            if (s_excludedTraits is null)
-            {
-                string? value = Environment.GetEnvironmentVariable(ExcludedTraitsEnvironmentVariable);
-                s_excludedTraits = string.IsNullOrEmpty(value)
-                    ? new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                    : new HashSet<string>(value.Split(';', StringSplitOptions.RemoveEmptyEntries), StringComparer.OrdinalIgnoreCase);
-            }
-            return s_excludedTraits;
-        }
-    }
+    public static HashSet<string> ExcludedTraits => s_excludedTraits.Value;
 
     /// <summary>
     /// Checks if a specific trait key=value pair is excluded.
