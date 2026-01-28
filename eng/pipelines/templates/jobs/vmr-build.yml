@@ -328,6 +328,12 @@ jobs:
     - name: ibcProperties
       value: ''
 
+  - name: runtimeSourceFeedKeyProperties
+    value: ''
+  - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+    - name: runtimeSourceFeedKeyProperties
+      value: '/p:DotNetRuntimeSourceFeedKey=$(dotnetbuilds-internal-container-read-token-base64)'
+
   # Timeout
   ## Real signing takes a while - increase the timeout to allow for that
   ${{ if eq(variables['_SignType'], 'real') }}:
@@ -450,13 +456,29 @@ jobs:
         rm -f $(sharedComponentsDir)/Private.SourceBuilt.SharedComponents.*.tar.gz
       displayName: Download Shared Component Artifacts
 
-  - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
-    - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/install-microbuild.yml
-      parameters:
-        enableMicrobuild: true
-        enableMicrobuildForMacAndLinux: true
-        ${{ if ne(parameters.signType, 'Real') }}:
-          microbuildUseESRP: false
+  - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+    - task: PowerShell@2
+      displayName: Setup Internal Feeds
+      inputs:
+        targetType: 'inline'
+        script: |
+          $sourcesPath = "$(sourcesPath)"
+          $token = $env:Token
+          
+          Get-ChildItem -Path "$sourcesPath/src" -Directory | ForEach-Object {
+            $repoDir = $_.FullName
+            $setupScript = Join-Path $repoDir "eng/common/SetupNugetSources.ps1"
+            
+            # Search for nuget.config using "Filter" to allow for case-insensitive matching.
+            $nugetConfigFile = Get-ChildItem -Path $repoDir -Filter "nuget.config" -File | Select-Object -First 1
+            $nugetConfig = if ($nugetConfigFile) { $nugetConfigFile.FullName } else { Join-Path $repoDir "NuGet.config" }
+            
+            Write-Host "Setting up internal NuGet feeds for $($_.Name)"
+            & $setupScript $nugetConfig $token
+            Write-Host ""
+          }
+      env:
+        Token: $(dn-bot-dnceng-artifact-feeds-rw)
 
   # When building internal, authenticate to internal feeds that may be in use
   # We do not need these for source-only builds
@@ -465,6 +487,14 @@ jobs:
     - task: NuGetAuthenticate@1
       inputs:
         nuGetServiceConnections: devdiv/engineering, devdiv/dotnet-core-internal-tooling
+
+  - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
+    - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/install-microbuild.yml
+      parameters:
+        enableMicrobuild: true
+        enableMicrobuildForMacAndLinux: true
+        ${{ if ne(parameters.signType, 'Real') }}:
+          microbuildUseESRP: false
 
   - ${{ if eq(parameters.targetOS, 'windows') }}:
     # Node 20.x is a toolset dependency to build aspnetcore
@@ -493,6 +523,7 @@ jobs:
         $(signProperties)
         $(buildPassProperties)
         $(ibcProperties)
+        $(runtimeSourceFeedKeyProperties)
         $(_SignDiagnosticFilesArgs)
         ${{ parameters.extraProperties }}
       displayName: Build
@@ -614,6 +645,8 @@ jobs:
             extraBuildProperties="$extraBuildProperties /p:CreateSourceArtifact=true"
           fi
 
+          extraBuildProperties="$extraBuildProperties $(runtimeSourceFeedKeyProperties)"
+
           if [[ '${{ parameters.useMonoRuntime }}' == 'True' ]]; then
             customBuildArgs="$customBuildArgs --use-mono-runtime"
           fi
@@ -656,15 +689,8 @@ jobs:
 
       # Setup the NuGet sources used by the tests to use private feeds. This is necessary when testing internal-only product
       # builds where the packages are only available in the private feeds. This allows the tests to restore from those feeds.
+      # The sdk repo's NuGet.config is configured earilier in the pipeline to use internal feeds.
       - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-        - task: Bash@3
-          displayName: Setup Private Feeds Credentials
-          inputs:
-            filePath: $(sourcesPath)/src/sdk/eng/common/SetupNugetSources.sh
-            arguments: $(sourcesPath)/src/sdk/NuGet.config $Token
-          env:
-            Token: $(dn-bot-dnceng-artifact-feeds-rw)
-
         - script: cp "$(sourcesPath)/src/sdk/NuGet.config" "$(sourcesPath)/test/Microsoft.DotNet.SourceBuild.Tests/assets/online.NuGet.Config"
           displayName: Copy Test NuGet Config for Smoke Tests
 
