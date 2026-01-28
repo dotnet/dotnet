@@ -7,6 +7,9 @@
     <RepositoryName>$(MSBuildProjectName)</RepositoryName>
     <UseBootstrapArcade Condition="$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">true</UseBootstrapArcade>
 
+    <!-- Enable MSBuild -mt mode for this repository. Set to false in repo-specific .proj files to opt-out. -->
+    <UseMSBuildMT Condition="'$(UseMSBuildMT)' == ''">true</UseMSBuildMT>
+
     <BuildInParallel Condition="'$(BuildInParallel)' == ''">true</BuildInParallel>
     <RunEachTargetSeparately>false</RunEachTargetSeparately>
     <!-- If this is a dev build with parallelism enabled, ensure that RunEachTargetSeparately is true so that StopOnFirstFailure will be honored.
@@ -188,6 +191,11 @@
     <!-- Need to be passed in here so that repo builds don't restore into the orchestrator package cache (CI builds)
          or the user package cache (local dev builds). -->
     <EnvironmentVariables Include="NUGET_PACKAGES=$(RepoArtifactsPackageCache)" />
+  </ItemGroup>
+
+  <!-- Enable MSBuild -mt mode when DotNetBuildMT is set and the repository hasn't opted out -->
+  <ItemGroup Condition="'$(DotNetBuildMT)' == 'true' and '$(UseMSBuildMT)' != 'false'">
+    <EnvironmentVariables Include="MSBUILD_MT_ENABLED=1" />
   </ItemGroup>
 
   <ItemGroup  Condition="'$(DotNetBuildSourceOnly)' == 'true'">

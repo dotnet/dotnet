@@ -810,3 +810,25 @@ stages:
         - Windows_x64
         - Windows_x86
         - Windows_arm64
+
+#### MSBuild MT Validation ####
+# This stage validates MSBuild's multithreaded (-mt) mode on PRs
+# See: https://github.com/dotnet/msbuild/issues/13124
+- ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+  - stage: VMR_MSBuild_MT_Validation
+    displayName: MSBuild MT Validation
+    dependsOn: []
+    variables:
+    - template: ../variables/vmr-build.yml
+      parameters:
+        desiredSigning: ${{ parameters.desiredSigning }}
+        isOfficialBuild: ${{ parameters.isOfficialBuild }}
+    jobs:
+    - template: ../jobs/vmr-build.yml
+      parameters:
+        buildName: Windows_MSBuildMT
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        pool: ${{ parameters.pool_Windows }}
+        targetOS: windows
+        targetArchitecture: x64
+        extraProperties: '/p:DotNetBuildMT=true'
