@@ -3,7 +3,7 @@
 .NET utilizes itself to build. Therefore, in order to build the .NET SDK,
 you first need to acquire or build a bootstrapping .NET SDK and other tooling
 such as [Arcade](https://github.com/dotnet/arcade). Re-bootstrapping is the term
-used to describe when the bootstrapped toolset need to be updated. This document
+used to describe when the bootstrapped toolset needs to be updated. This document
 describes the steps to re-bootstrap the VMR.
 
 ## When is it appropriate to re-bootstrap?
