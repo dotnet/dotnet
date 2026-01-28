@@ -104,12 +104,11 @@ stages:
   jobs:
   - template: ../jobs/vmr-build.yml
     parameters:
-      buildName: OSX_Shortstack_Mono_LLVMAOT
+      buildName: OSX
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-      sign: ${{ variables.signEnabled }}
-      signType: ${{ variables.signType }}
+      sign: true
+      signType: dryrun
       pool: ${{ parameters.pool_Mac }}
-      useMonoRuntime: true
       targetOS: osx
       targetArchitecture: x64
-      extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
+
