@@ -13,7 +13,7 @@ the release automation). Outside of a release, re-bootstrapping is only
 permitted during preview releases. It is not allowed during RC, GA, or servicing
 releases. The reason it is not allowed during non-preview releases is because of
 the negative impact it has on Linux distro maintainers who source build .NET. It
-is often a long and time consuming process for them to re-bootstrap. It is
+is often a long and time-consuming process for them to re-bootstrap. It is
 likely to cause significant delays in the release/availability of .NET within
 the distros that are source built.
 
