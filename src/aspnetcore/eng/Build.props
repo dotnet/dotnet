@@ -72,7 +72,7 @@
 
   <!-- Build the RepoTasks before anything else -->
   <ItemGroup>
-    <ProjectToBuild Include="$(RepoRoot)eng\tools\RepoTasks\RepoTasks.csproj" BuildStep="repotasks" SkipProjectList="true" Condition="'$(DotNetBuildPass)' != '2'" />
+    <ProjectToBuild Include="$(RepoRoot)eng\tools\RepoTasks\RepoTasks.csproj" BuildStep="repotasks" SkipProjectList="true" DotNetBuildPass="$(DotNetBuildPass)" />
   </ItemGroup>
 
   <Choose>
@@ -92,8 +92,6 @@
     <!-- Projects to build in .NET product build pass 2 -->
     <When Condition="'$(DotNetBuildPass)' == '2'">
       <ItemGroup Condition=" '$(DotNetBuild)' == 'true' AND '$(TargetOsName)' == 'win' AND '$(TargetArchitecture)' == 'x64' ">
-        <ProjectToBuild Include="$(RepoRoot)eng\tools\RepoTasks\RepoTasks.csproj" BuildStep="repotasks" DotNetBuildPass="$(DotNetBuildPass)" />
-
         <ProjectToBuild Include="$(RepoRoot)src\Installers\Windows\WindowsHostingBundle\WindowsHostingBundle.wixproj" BuildStep="bp2" DotNetBuildPass="$(DotNetBuildPass)" AdditionalProperties="Platform=x86" />
         <ProjectToBuild Include="$(RepoRoot)src\Servers\IIS\IntegrationTesting.IIS\src\Microsoft.AspNetCore.Server.IntegrationTesting.IIS.csproj" BuildStep="bp2" DotNetBuildPass="$(DotNetBuildPass)" />
         <ProjectToBuild Include="$(RepoRoot)src\SiteExtensions\LoggingAggregate\src\Microsoft.AspNetCore.AzureAppServices.SiteExtension\Microsoft.AspNetCore.AzureAppServices.SiteExtension.csproj" BuildStep="bp2" DotNetBuildPass="$(DotNetBuildPass)" />
