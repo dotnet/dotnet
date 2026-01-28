@@ -975,3 +975,4 @@ Microsoft.VisualStudio.TestPlatform.ObjectModel.RunConfiguration.CaptureStandard
 Microsoft.VisualStudio.TestPlatform.ObjectModel.RunConfiguration.ForwardStandardOutput.get -> bool
 Microsoft.VisualStudio.TestPlatform.ObjectModel.RunConfiguration.DisableSharedTestHost.get -> bool
 Microsoft.VisualStudio.TestPlatform.ObjectModel.RunConfiguration.SkipDefaultAdapters.get -> bool
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture.LoongArch64 = 9 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture
