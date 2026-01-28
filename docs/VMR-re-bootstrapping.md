@@ -20,7 +20,7 @@ the distros that are source built.
 ## Why is re-bootstrap necessary?
 
 Re-bootstrapping is necessary when .NET takes a dependency on new functionality
-added within the bootstrap toolset. For example suppose a new compiler feature
+added within the bootstrap toolset. For example, suppose a new compiler feature
 is added. In order for a repo to take a dependency on the new feature, a
 re-bootstrap would be necessary. The implication of this, and the restrictions
 of when re-bootstrapping is allowed, means that repos should, in general, wait
