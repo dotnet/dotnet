@@ -1,0 +1,26 @@
+From 569496cfdffe9e045db5fc736878411e4b71eb4a Mon Sep 17 00:00:00 2001
+From: Viktor Hofer <viktor.hofer@microsoft.com>
+Date: Wed, 28 Jan 2026 15:18:38 +0100
+Subject: [PATCH] Only build .NET Standard TFM
+
+---
+ build/common.props | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/build/common.props b/build/common.props
+index efd7e90e..a898ab58 100644
+--- a/build/common.props
++++ b/build/common.props
+@@ -24,8 +24,7 @@
+     <!-- Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
+     <IncludeSymbols>true</IncludeSymbols>
+     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+-    <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(SrcTargets)</TargetFrameworks>
+-    <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">$(SrcStandardTargets)</TargetFrameworks>
++    <TargetFrameworks>$(SrcStandardTargets)</TargetFrameworks>
+     <NetStandardImplicitPackageVersion>$(NetStandardVersion)</NetStandardImplicitPackageVersion>
+     <LangVersion>12</LangVersion>
+   </PropertyGroup>
+-- 
+2.52.0.windows.1
+

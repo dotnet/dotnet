@@ -37,6 +37,9 @@
 
     <IsShippingPackage>false</IsShippingPackage>
     <ArtifactsNonShippingPackagesDir>$(ArtifactsReferenceOnlyPackagesDir)</ArtifactsNonShippingPackagesDir>
+
+     <!-- Knob for TargetingPacks.BeforeCommonTargets.targets in Arcade to update TargetingPackVersion metadata. -->
+    <UpdateDownlevelKnownPacks>true</UpdateDownlevelKnownPacks>
   </PropertyGroup>
 
   <PropertyGroup>

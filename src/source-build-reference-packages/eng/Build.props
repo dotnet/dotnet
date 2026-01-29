@@ -4,32 +4,16 @@
     <ProjectToBuild Include="$(RepoRoot)src\packageSourceGenerator\PackageSourceGenerator.proj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(Test)' == 'true'">
-    <ProjectToBuild Include="$(RepoRoot)tests\SbrpTests\Sbrp.Tests.csproj" Test="$(Test)" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(GeneratePackageSource)' != 'true' and '$(Test)' != 'true'">
+  <ItemGroup Condition="'$(GeneratePackageSource)' != 'true'">
     <!-- The ordering ensures the correct dependency order between package types. -->
-    <ProjectToBuild Include="$(RepoRoot)src\targetPacks\targetPacks.proj" BuildInParallel="false"/>
+    <ProjectToBuild Include="$(RepoRoot)src\targetPacks\targetPacks.proj" BuildInParallel="false" />
     <ProjectToBuild Include="$(RepoRoot)src\textOnlyPackages\textOnlyPackages.proj" BuildInParallel="false" />
     <ProjectToBuild Include="$(RepoRoot)src\referencePackages\referencePackages.proj" BuildInParallel="false" />
     <ProjectToBuild Include="$(RepoRoot)src\externalPackages\externalPackages.proj" BuildInParallel="false" />
   </ItemGroup>
 
-  <!--
-    Adding new projects is somewhat copy-paste heavy and may result in project name overlaps. Catch
-    that early, as it may cause binclash otherwise.
-  -->
-  <Target Name="EnsureUniqueProjectNames"
-          BeforeTargets="Execute">
-    <ItemGroup>
-      <ProjectToBuildName Include="@(ProjectToBuild -> '%(Filename)%(Extension)')" />
-      <DistinctProjectToBuildName Include="@(ProjectToBuildName->Distinct())" />
-    </ItemGroup>
-
-    <Error
-      Condition="@(ProjectToBuildName->Count()) != @(DistinctProjectToBuildName->Count())"
-      Text="A project name is duplicated. Every project name must be distinct to have separate output directories." />
-  </Target>
+  <ItemGroup Condition="'$(Test)' == 'true'">
+    <ProjectToBuild Include="$(RepoRoot)tests\SbrpTests\Sbrp.Tests.csproj" Test="$(Test)" />
+  </ItemGroup>
 
 </Project>

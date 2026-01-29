@@ -1,0 +1,69 @@
+From 5566d286b2925736a573e8c4ea20f0cfa214da85 Mon Sep 17 00:00:00 2001
+From: Viktor Hofer <viktor.hofer@microsoft.com>
+Date: Wed, 28 Jan 2026 16:34:42 +0100
+Subject: [PATCH] Remove prebuilts and don't build .NET Framework TFMs
+
+---
+ .props/Product.props                          | 21 -------------------
+ .../Microsoft.ApplicationInsights.csproj      |  6 +-----
+ 2 files changed, 1 insertion(+), 26 deletions(-)
+
+diff --git a/.props/Product.props b/.props/Product.props
+index e97b6eff..1c748a35 100644
+--- a/.props/Product.props
++++ b/.props/Product.props
+@@ -11,27 +11,6 @@
+   <Import Project=".\_GlobalStaticVersion.props" />
+   <Import Project=".\_Nupkg.props"  Condition="'$(IsExamplesSolution)' != 'true'"/>
+ 
+-  <ItemGroup Condition=" $(OS) == 'Windows_NT'">
+-    <!--Analyzers-->
+-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+-      <PrivateAssets>All</PrivateAssets>
+-    </PackageReference>
+-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.2">
+-      <PrivateAssets>All</PrivateAssets>
+-    </PackageReference>
+-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+-    </PackageReference>
+-    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4">
+-      <PrivateAssets>All</PrivateAssets>
+-    </PackageReference>
+-  </ItemGroup>
+-
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+-  </ItemGroup>
+-
+   <PropertyGroup>
+     <!-- Enable all the latest CA rules from 'Microsoft.CodeAnalysis.NetAnalyzers' as build warnings by default -->
+ 
+diff --git a/BASE/src/Microsoft.ApplicationInsights/Microsoft.ApplicationInsights.csproj b/BASE/src/Microsoft.ApplicationInsights/Microsoft.ApplicationInsights.csproj
+index 2f3fa9ec..37c9d13c 100644
+--- a/BASE/src/Microsoft.ApplicationInsights/Microsoft.ApplicationInsights.csproj
++++ b/BASE/src/Microsoft.ApplicationInsights/Microsoft.ApplicationInsights.csproj
+@@ -4,8 +4,7 @@
+   <PropertyGroup>
+     <RootNamespace>Microsoft.ApplicationInsights</RootNamespace>
+     <AssemblyName>Microsoft.ApplicationInsights</AssemblyName>
+-    <TargetFrameworks>net452;net46;netstandard2.0</TargetFrameworks>
+-    <TargetFrameworks Condition="$(OS) != 'Windows_NT'">netstandard2.0</TargetFrameworks>
++    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+   </PropertyGroup>
+ 
+   <PropertyGroup>
+@@ -20,9 +19,6 @@
+   </PropertyGroup>
+ 
+   <ItemGroup>
+-    <PackageReference Include="Microsoft.Diagnostics.Tracing.EventRegister" Version="1.1.28" Condition="$(OS) == 'Windows_NT'">
+-      <PrivateAssets>All</PrivateAssets>
+-    </PackageReference>
+     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="$(SystemDiagnosticsDiagnosticSourcePkgVer)" />
+   </ItemGroup>
+ 
+-- 
+2.52.0.windows.1
+
