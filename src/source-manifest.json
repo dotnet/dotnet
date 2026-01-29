@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 298648,
+      "barId": 299009,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "5353d03e27329df35a68fedf3da1fbb26cdd8057"
+      "commitSha": "77d1bb3f18b62e179cedf7d8beadd9599def3b5f"
     },
     {
       "barId": 298915,
@@ -61,34 +61,34 @@
       "commitSha": "b7952333b2a7f444cb9f3b1b1651c9072ea5dd36"
     },
     {
-      "barId": 298743,
+      "barId": 298965,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "4f7d030dc559f6334fc859e459b7e4023cbc59b3"
+      "commitSha": "36922e8d5a8915cbb819a33c0cb5e246b1a5f91f"
     },
     {
-      "barId": 298923,
+      "barId": 298948,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "184510cd7911b081b30428c740be2dd0aabbff58"
+      "commitSha": "2b4639820313afeff383d59261a0ba4643236b25"
     },
     {
-      "barId": 298910,
+      "barId": 299028,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "8b77cf29e61476ce184687949c3c6bba3d33dcc0"
+      "commitSha": "0cc7353161d26a12922108120be9ba37649f0749"
     },
     {
-      "barId": 298926,
+      "barId": 299026,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "b37f7ad8869bde05cc0e1f6e0faba2245006a0a0"
+      "commitSha": "5097397670bb0d461d939644f66256258c0f1186"
     },
     {
-      "barId": 298691,
+      "barId": 298986,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "2c0dd466fa060a772a87b9c433495ec0c559d19c"
+      "commitSha": "5745f7404c4a3ae7f1b08117bc6092a96224a985"
     },
     {
       "barId": 299213,
@@ -121,10 +121,10 @@
       "commitSha": "b5199e1d3b6c74830c09c76ee05f8d44f5de4908"
     },
     {
-      "barId": 295963,
+      "barId": 298997,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "dc8416c848534f8fb180dd57bbae0fceababae3a"
+      "commitSha": "a10ef3a84bae273a2fbe67486665319b6f4b9d03"
     },
     {
       "barId": 298363,
