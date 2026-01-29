@@ -33,6 +33,11 @@ released.
 > Eligible builds must have published artifacts to a public channel.
 > For this reason, re-bootstrapping is only allowed with official builds
 > from the main branch and non-internal release branches.
+>
+> Additionally, re-bootstrapping should only be done with signed builds.
+> In exceptional cases (e.g., during early development), re-bootstrapping
+> with an unsigned build may be necessary, but this should be avoided
+> unless absolutely required.
 
 ### Automated
 
