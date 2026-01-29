@@ -592,10 +592,14 @@ namespace Microsoft.Build.BackEnd
                     // it requires the original wildcard pattern. When crossing process boundaries (e.g., to TaskHost),
                     // this information is lost. Copy it to custom metadata so it survives serialization.
                     // See https://github.com/Microsoft/msbuild/issues/3121
-                    string recursiveDir = copyFromAsITaskItem2.GetMetadataValueEscaped(FileUtilities.ItemSpecModifiers.RecursiveDir);
-                    if (!string.IsNullOrEmpty(recursiveDir) && !_customEscapedMetadata.ContainsKey(FileUtilities.ItemSpecModifiers.RecursiveDir))
+                    // Check ContainsKey first to avoid expensive FileMatcher call when not needed.
+                    if (!_customEscapedMetadata.ContainsKey(FileUtilities.ItemSpecModifiers.RecursiveDir))
                     {
-                        _customEscapedMetadata[FileUtilities.ItemSpecModifiers.RecursiveDir] = recursiveDir;
+                        string recursiveDir = copyFromAsITaskItem2.GetMetadataValueEscaped(FileUtilities.ItemSpecModifiers.RecursiveDir);
+                        if (!string.IsNullOrEmpty(recursiveDir))
+                        {
+                            _customEscapedMetadata[FileUtilities.ItemSpecModifiers.RecursiveDir] = recursiveDir;
+                        }
                     }
                 }
                 else
@@ -620,10 +624,14 @@ namespace Microsoft.Build.BackEnd
 
                     // RecursiveDir is a built-in metadata that cannot be derived from the item spec alone.
                     // Copy it to custom metadata so it survives serialization.
-                    string recursiveDir = copyFrom.GetMetadata(FileUtilities.ItemSpecModifiers.RecursiveDir);
-                    if (!string.IsNullOrEmpty(recursiveDir) && !_customEscapedMetadata.ContainsKey(FileUtilities.ItemSpecModifiers.RecursiveDir))
+                    // Check ContainsKey first to avoid expensive FileMatcher call when not needed.
+                    if (!_customEscapedMetadata.ContainsKey(FileUtilities.ItemSpecModifiers.RecursiveDir))
                     {
-                        _customEscapedMetadata[FileUtilities.ItemSpecModifiers.RecursiveDir] = EscapingUtilities.Escape(recursiveDir);
+                        string recursiveDir = copyFrom.GetMetadata(FileUtilities.ItemSpecModifiers.RecursiveDir);
+                        if (!string.IsNullOrEmpty(recursiveDir))
+                        {
+                            _customEscapedMetadata[FileUtilities.ItemSpecModifiers.RecursiveDir] = EscapingUtilities.Escape(recursiveDir);
+                        }
                     }
                 }
 

@@ -2459,12 +2459,19 @@ namespace Microsoft.Build.Execution
                 /// </summary>
                 public TaskItem CreateItem(string includeEscaped, string includeBeforeWildcardExpansionEscaped, string definingProject)
                 {
+                    // Derive projectDirectory from definingProject if available, as it's needed for RecursiveDir computation.
+                    string projectDirectory = null;
+                    if (!string.IsNullOrEmpty(definingProject))
+                    {
+                        projectDirectory = Path.GetDirectoryName(definingProject);
+                    }
+
                     return new TaskItem(
                         includeEscaped,
                         includeBeforeWildcardExpansionEscaped,
                         null,  // directMetadata
                         null,  // itemDefinitions
-                        null,  // projectDirectory - will need to be fixed separately
+                        projectDirectory,
                         false, // immutable
                         definingProject);
                 }
