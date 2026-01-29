@@ -4,6 +4,9 @@
     <!-- Use the repo root build script -->
     <BuildScript>$(ProjectDirectory)build$(ShellExtension)</BuildScript>
 
+    <!-- Roslyn has MSBuild tasks that are not yet compatible with -mt mode -->
+    <UseMSBuildMT>false</UseMSBuildMT>
+
     <!-- Roslyn's build.cmd adds -build automatically. On non-windows, use the default -->
     <BuildActions Condition="'$(BuildOS)' == 'windows'">$(FlagParameterPrefix)restore</BuildActions>
     <BuildActions Condition="'$(BuildOS)' == 'windows'">$(BuildActions) $(FlagParameterPrefix)pack</BuildActions>
