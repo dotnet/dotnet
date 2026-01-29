@@ -92,7 +92,9 @@
     <!-- The .NET SDK will try to restore for all specified RIDs. Change the list of RIDs to only our inferred RID to ensure that restore only restores assets that could be available. -->
     <RuntimeIdentifiers>$(RuntimeIdentifier)</RuntimeIdentifiers>
 
+    <!-- Similarly, limit PublishRuntimeIdentifier to the inferred RID. -->
     <PublishRuntimeIdentifier>$(RuntimeIdentifier)</PublishRuntimeIdentifier>
+    <UseDefaultPublishRuntimeIdentifier>false</UseDefaultPublishRuntimeIdentifier>
   </PropertyGroup>
 
 </Project>
