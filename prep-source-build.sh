@@ -183,10 +183,10 @@ function BootstrapArtifacts {
   rm -rf "$workingDir"
 }
 
-# Attempting to bootstrap without an SDK will fail. So either the --no-sdk flag must be passed
-# or a pre-existing .dotnet SDK directory must exist.
-if [ "$buildBootstrap" == true ] && [ "$installDotnet" == false ] && [ ! -d "$REPO_ROOT/.dotnet" ]; then
-  echo "  ERROR: --no-sdk requires --no-bootstrap or a pre-existing .dotnet SDK directory.  Exiting..."
+# Attempting to bootstrap without an SDK will fail. So either the --no-sdk flag must be passed,
+# a pre-existing .dotnet SDK directory must exist, or a custom SDK must be provided via --with-sdk.
+if [ "$buildBootstrap" == true ] && [ "$installDotnet" == false ] && [ ! -d "$REPO_ROOT/.dotnet" ] && [ -z "$customSdkDir" ]; then
+  echo "  ERROR: --no-sdk requires --no-bootstrap, a pre-existing .dotnet SDK directory, or --with-sdk.  Exiting..."
   exit 1
 fi
 
