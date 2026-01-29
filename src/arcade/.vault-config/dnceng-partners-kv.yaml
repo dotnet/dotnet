@@ -71,6 +71,20 @@ secrets:
         location: EngKeyVault
       gitHubBotAccountName: dotnet-bot
 
+  BotAccount-dotnet-renovate-bot:
+    type: github-account
+    parameters:
+      Name: dotnet-renovate-bot
+
+  # repo, workflow scopes (classic token)
+  BotAccount-dotnet-renovate-bot-PAT:
+    type: github-access-token
+    parameters:
+      gitHubBotAccountSecret:
+        name: BotAccount-dotnet-renovate-bot
+        location: EngKeyVault
+      gitHubBotAccountName: dotnet-renovate-bot
+
   roslyn-dn-bot-devdiv-build-r-release-r-code-r:
     type: azure-devops-access-token
     parameters:
