@@ -54,6 +54,13 @@
       To preserve expected behavior for projects that don't specify a RID in a non-vertical build, we won't append the RID to the output path if the user hasn't explicitly requested it.
     -->
     <_EnableArcadeRuntimeIdentifierInference Condition="'$(_EnableArcadeRuntimeIdentifierInference)' == '' and '$(DotNetBuildTargetRidOnly)' == 'true'">true</_EnableArcadeRuntimeIdentifierInference>
+
+    <_EnableArcadeRuntimeIdentifierFilters Condition="'$(EnableArcadeRuntimeIdentifierFilters)' != ''">$(EnableArcadeRuntimeIdentifierFilters)</_EnableArcadeRuntimeIdentifierFilters>
+
+    <!--
+      If we infer a RID for the project, default to filtering down the list of RIDs the project specifies and automatically excluding projects that don't build for this RID.
+    -->
+    <_EnableArcadeRuntimeIdentifierFilters Condition="'$(_EnableArcadeRuntimeIdentifierFilters)' == '' and '$(_EnableArcadeRuntimeIdentifierInference)' == 'true'">true</_EnableArcadeRuntimeIdentifierFilters>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(_EnableArcadeRuntimeIdentifierInference)' == 'true'">
@@ -63,6 +70,29 @@
 
     <!-- If this project would have been inferred as "RID agnostic", preserve that as well. -->
     <IsRidAgnostic Condition="'$(_RidAgnosticProject)' == 'true'">true</IsRidAgnostic>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(_EnableArcadeRuntimeIdentifierFilters)' == 'true' and ('$(RuntimeIdentifiers)' != '' or '$(PublishRuntimeIdentifier)' != '')">
+    <!-- Prepend and append with semicolons to make the Contains call below simpler. -->
+    <_ExplicitlySpecifiedRuntimeIdentifiers>;$(RuntimeIdentifiers);$(PublishRuntimeIdentifier);</_ExplicitlySpecifiedRuntimeIdentifiers>
+
+    <!--
+      Sometimes we may need to filter the RuntimeIdentifiers list by a RID that is not TargetRid.
+      Determine which RID to filter on here.
+
+      We can't actually use the RID graph here as RID graph filtering is only possible in a task, and we need to do this during property evaluation.
+    -->
+    <_FilterRuntimeIdentifier>$(TargetRid)</_FilterRuntimeIdentifier>
+    <!-- If we're building non-portable, filter instead on PortableTargetRid. -->
+    <_FilterRuntimeIdentifier Condition="'$(PortableTargetRid)' != ''">$(PortableTargetRid)</_FilterRuntimeIdentifier>
+
+    <!-- If a project builds for a set of RIDs specified in the project file and this vertical isn't in the list, suppress building this project. -->
+    <_SuppressAllTargets Condition="'$(DisableArcadeExcludeFromBuildSupport)' != 'true' and $(_ExplicitlySpecifiedRuntimeIdentifiers).Contains(';$(_FilterRuntimeIdentifier);')) == 'false'">true</_SuppressAllTargets>
+
+    <!-- The .NET SDK will try to restore for all specified RIDs. Change the list of RIDs to only our inferred RID to ensure that restore only restores assets that could be available. -->
+    <RuntimeIdentifiers>$(RuntimeIdentifier)</RuntimeIdentifiers>
+
+    <PublishRuntimeIdentifier>$(RuntimeIdentifier)</PublishRuntimeIdentifier>
   </PropertyGroup>
 
 </Project>
