@@ -24,22 +24,22 @@
       </trans-unit>
       <trans-unit id="Error_CopilotAccessDenied">
         <source>Access denied. Please ensure you are signed in to GitHub Copilot.</source>
-        <target state="new">Access denied. Please ensure you are signed in to GitHub Copilot.</target>
+        <target state="translated">アクセスが拒否されました。GitHub Copilot にサインインしていることを確認してください。</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_CopilotNotReady">
         <source>GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in.</source>
-        <target state="new">GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in.</target>
+        <target state="translated">GitHub Copilot の準備ができていません。GitHub Copilot がインストールされ、サインインしていることを確認してください。</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_CopilotServiceNotAvailable">
         <source>GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
-        <target state="new">GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in.</target>
+        <target state="translated">GitHub Copilot サービスを利用できません。GitHub Copilot がインストールされ、サインインしていることを確認してください。</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_McpToolServiceNotAvailable">
         <source>MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
-        <target state="new">MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in.</target>
+        <target state="translated">MCP ツール サービスは使用できません。GitHub Copilot がインストールされ、サインインしていることを確認してください。</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingPattern_Missing">
@@ -69,7 +69,7 @@
       </trans-unit>
       <trans-unit id="Error_ServiceBrokerNotAvailable">
         <source>Service Broker is not available. Please ensure Visual Studio is running correctly.</source>
-        <target state="new">Service Broker is not available. Please ensure Visual Studio is running correctly.</target>
+        <target state="translated">Service Broker は利用できません。Visual Studio が正しく起動していることを確認してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="NoProjectSelected">
@@ -144,7 +144,7 @@
       </trans-unit>
       <trans-unit id="Prompt_FixNuGetPackageVulnerabilities">
         <source>Fix my NuGet package vulnerabilities</source>
-        <target state="new">Fix my NuGet package vulnerabilities</target>
+        <target state="translated">NuGet パッケージの脆弱性を修正してください</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
@@ -254,7 +254,7 @@
       </trans-unit>
       <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
         <source>Fix Vulnerabilities with GitHub Copilot</source>
-        <target state="new">Fix Vulnerabilities with GitHub Copilot</target>
+        <target state="translated">GitHub Copilot を使用して脆弱性を修正する</target>
         <note />
       </trans-unit>
       <trans-unit id="clearLocalResources">
