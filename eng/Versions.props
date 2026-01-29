@@ -2,7 +2,7 @@
   <Import Project="Version.Details.props" />
   <PropertyGroup>
     <VersionSDKMinor>2</VersionSDKMinor>
-    <VersionPrefix>11.0.$(VersionSDKMinor)00</VersionPrefix>
+    <VersionPrefix>10.0.$(VersionSDKMinor)00</VersionPrefix>
     <PreReleaseVersionLabel>alpha</PreReleaseVersionLabel>
     <PreReleaseVersionIteration></PreReleaseVersionIteration>
     <!-- 
