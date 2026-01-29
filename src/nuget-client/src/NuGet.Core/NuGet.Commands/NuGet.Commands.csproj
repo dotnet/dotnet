@@ -10,7 +10,6 @@
     <Shipping>true</Shipping>
     <XPLATProject>true</XPLATProject>
     <UsePublicApiAnalyzer>perTfm</UsePublicApiAnalyzer>
-    <WarningsNotAsErrors>$(WarningsNotAsErrors);IDE0055</WarningsNotAsErrors>
   </PropertyGroup>
 
   <ItemGroup>

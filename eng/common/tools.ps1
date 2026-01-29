@@ -28,6 +28,9 @@
 # Adjusts msbuild verbosity level.
 [string]$verbosity = if (Test-Path variable:verbosity) { $verbosity } else { 'minimal' }
 
+# Parameters to pass to the msbuild console logger.
+[string]$loggerParameters = if (Test-Path variable:loggerParameters) { $loggerParameters } else { 'Summary' }
+
 # Set to true to reuse msbuild nodes. Recommended to not reuse on CI.
 [bool]$nodeReuse = if (Test-Path variable:nodeReuse) { $nodeReuse } else { !$ci }
 
@@ -818,7 +821,7 @@ function MSBuild-Core() {
 
   $buildTool = InitializeBuildTool
 
-  $cmdArgs = "$($buildTool.Command) /m /nologo /clp:Summary /v:$verbosity /nr:$nodeReuse /p:ContinuousIntegrationBuild=$ci"
+  $cmdArgs = "$($buildTool.Command) /m /nologo /clp:$loggerParameters /v:$verbosity /nr:$nodeReuse /p:ContinuousIntegrationBuild=$ci"
 
   if ($warnAsError) {
     $cmdArgs += ' /warnaserror /p:TreatWarningsAsErrors=true'

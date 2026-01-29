@@ -10,6 +10,7 @@ usage()
   echo "Common settings:"
   echo "  --configuration <value>        Build configuration: 'Debug' or 'Release' (short: -c)"
   echo "  --verbosity <value>            Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic] (short: -v)"
+  echo "  --loggerParameters <value>     Msbuild console logger parameters. Defaults to 'Summary'"
   echo "  --binaryLog                    Create MSBuild binary log (short: -bl)"
   echo ""
   echo "Actions:"
@@ -68,6 +69,7 @@ test_benchmarks=false
 test_scripting=false
 configuration="Debug"
 verbosity='minimal'
+logger_parameters='Summary'
 binary_log=false
 force_bootstrap=false
 ci=false
@@ -113,6 +115,11 @@ while [[ $# > 0 ]]; do
       ;;
     --verbosity|-v)
       verbosity=$2
+      args="$args $1"
+      shift
+      ;;
+    --loggerparameters)
+      logger_parameters=$2
       args="$args $1"
       shift
       ;;
