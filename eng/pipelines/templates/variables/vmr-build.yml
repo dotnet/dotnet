@@ -269,7 +269,7 @@ variables:
   - name: poolName_LinuxArm64
     value: Docker-Linux-Arm-Public
   - name: poolImage_Mac
-    value: macos-14
+    value: macos-15
   - ${{ if eq(parameters.isScoutingJob, true) }}:
     - name: poolImage_Windows
       value: windows.vs2022.scout.amd64.open
