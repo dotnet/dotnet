@@ -632,10 +632,6 @@ jobs:
               exit 1
             fi
             
-            mkdir -p "$(previouslySourceBuiltSdkDir)"
-            echo "Searching for SDK tarball in $sdkSearchDir..."
-            find "$sdkSearchDir" -name "*.tar.gz" || true
-            
             previousSdkPath=$(find "$sdkSearchDir" -name "dotnet-sdk-*.tar.gz" | head -n 1)
             
             if [ -z "$previousSdkPath" ]; then
@@ -647,6 +643,7 @@ jobs:
             
             echo "Found SDK tarball: $previousSdkPath"
             echo "Extracting SDK..."
+            mkdir -p "$(previouslySourceBuiltSdkDir)"
             eval tar -xzf "$previousSdkPath" -C "$(previouslySourceBuiltSdkDir)"
             
             customPrepArgs="${customPrepArgs} --with-sdk $(previouslySourceBuiltSdkDir)"
@@ -662,9 +659,6 @@ jobs:
                exit 1
              fi
 
-             mkdir -p "$(previouslySourceBuiltArtifactsDir)"
-             
-             echo "Searching for Artifacts tarball in $(downloadedArtifactsDir)..."
              artifactsTarball=$(find "$(downloadedArtifactsDir)" -name "Private.SourceBuilt.Artifacts.*.tar.gz" | head -n 1)
              
              if [ -z "$artifactsTarball" ]; then
@@ -676,6 +670,7 @@ jobs:
              
              echo "Found Artifacts tarball: $artifactsTarball"
              echo "Extracting artifacts..."
+             mkdir -p "$(previouslySourceBuiltArtifactsDir)"
              tar -xzf "$artifactsTarball" -C "$(previouslySourceBuiltArtifactsDir)"
              
              customPrepArgs="${customPrepArgs} --with-packages $(previouslySourceBuiltArtifactsDir)"
