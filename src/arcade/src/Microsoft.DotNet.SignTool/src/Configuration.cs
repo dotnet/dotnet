@@ -235,11 +235,9 @@ namespace Microsoft.DotNet.SignTool
                 return fileSignInfo;
             }
 
-            // Skip unpacking if DoNotUnpack is set on the SignInfo (from FileSignInfo or FileExtensionSignInfo)
-            bool doNotUnpack = fileSignInfo.SignInfo.DoNotUnpack;
             if (fileSignInfo.IsUnpackableContainer())
             {
-                if (doNotUnpack)
+                if (fileSignInfo.SignInfo.DoNotUnpack)
                 {
                     _log.LogMessage(MessageImportance.Normal, "Skipping container unpacking for '{0}' due to DoNotUnpack flag", file.FullPath);
                 }
@@ -259,9 +257,9 @@ namespace Microsoft.DotNet.SignTool
                     }
                     else
                     {
-                        if (TryBuildZipData(fileSignInfo, out var zipData))
+                        if (TryBuildZipData(fileSignInfo, out var builtZipData))
                         {
-                            _zipDataMap[fileSignInfo.FileContentKey] = zipData;
+                            _zipDataMap[fileSignInfo.FileContentKey] = builtZipData;
                         }
                         else
                         {
@@ -275,11 +273,11 @@ namespace Microsoft.DotNet.SignTool
             _filesByContentKey.Add(fileSignInfo.FileContentKey, fileSignInfo);
 
             bool hasSignableParts = false;
-            if (fileSignInfo.IsUnpackableContainer() && !doNotUnpack)
+            if (_zipDataMap.TryGetValue(fileSignInfo.FileContentKey, out var cachedZipData))
             {
                 // Only sign containers if the file itself is unsigned, or 
                 // an item in the container is unsigned.
-                hasSignableParts = _zipDataMap[fileSignInfo.FileContentKey].NestedParts.Values.Any(b => b.FileSignInfo.SignInfo.ShouldSign || b.FileSignInfo.HasSignableParts);
+                hasSignableParts = cachedZipData.NestedParts.Values.Any(b => b.FileSignInfo.SignInfo.ShouldSign || (b.FileSignInfo.HasSignableParts && !b.FileSignInfo.SignInfo.DoNotUnpack));
                 if (hasSignableParts)
                 {
                     // If the file has contents that need to be signed, then re-evaluate the signing info
@@ -824,7 +822,7 @@ namespace Microsoft.DotNet.SignTool
             }
             else
             {
-                Debug.Assert(zipFileSignInfo.IsUnpackableContainer());
+                Debug.Assert(zipFileSignInfo.IsUnpackableContainer() && !zipFileSignInfo.SignInfo.DoNotUnpack);
             }
 
             try
