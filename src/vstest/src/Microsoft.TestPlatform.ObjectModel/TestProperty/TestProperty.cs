@@ -135,7 +135,7 @@ public class TestProperty : IEquatable<TestProperty>
     /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
-        return base.Equals(obj as TestProperty);
+        return Equals(obj as TestProperty);
     }
 
     /// <inheritdoc/>

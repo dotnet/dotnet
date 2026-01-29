@@ -65,7 +65,7 @@ public class TraitCollection : IEnumerable<Trait>
 
     private IEnumerable<Trait> GetTraits()
     {
-        if (!_testObject.Properties.Contains(TraitsProperty))
+        if (!_testObject.Properties.Contains(TraitsProperty, EqualityComparer<TestProperty>.Default))
         {
             return Array.Empty<Trait>();
         }
