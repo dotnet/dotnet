@@ -24,22 +24,22 @@
       </trans-unit>
       <trans-unit id="Error_CopilotAccessDenied">
         <source>Access denied. Please ensure you are signed in to GitHub Copilot.</source>
-        <target state="new">Access denied. Please ensure you are signed in to GitHub Copilot.</target>
+        <target state="translated">액세스가 거부되었습니다. GitHub Copilot에 로그인되어 있는지 확인하세요.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_CopilotNotReady">
         <source>GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in.</source>
-        <target state="new">GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in.</target>
+        <target state="translated">GitHub Copilot이 준비되지 않았습니다. GitHub Copilot이 설치되어 있고 로그인되어 있는지 확인하세요.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_CopilotServiceNotAvailable">
         <source>GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
-        <target state="new">GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in.</target>
+        <target state="translated">GitHub Copilot 서비스를 사용할 수 없습니다. GitHub Copilot이 설치되어 있고 로그인되어 있는지 확인하세요.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_McpToolServiceNotAvailable">
         <source>MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
-        <target state="new">MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in.</target>
+        <target state="translated">MCP 도구 서비스를 사용할 수 없습니다. GitHub Copilot이 설치되어 있고 로그인되어 있는지 확인하세요.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingPattern_Missing">
@@ -69,7 +69,7 @@
       </trans-unit>
       <trans-unit id="Error_ServiceBrokerNotAvailable">
         <source>Service Broker is not available. Please ensure Visual Studio is running correctly.</source>
-        <target state="new">Service Broker is not available. Please ensure Visual Studio is running correctly.</target>
+        <target state="translated">Service Broker를 사용할 수 없습니다. Visual Studio가 올바르게 실행되고 있는지 확인하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoProjectSelected">
@@ -144,7 +144,7 @@
       </trans-unit>
       <trans-unit id="Prompt_FixNuGetPackageVulnerabilities">
         <source>Fix my NuGet package vulnerabilities</source>
-        <target state="new">Fix my NuGet package vulnerabilities</target>
+        <target state="translated">NuGet 패키지 취약성 수정</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
@@ -254,7 +254,7 @@
       </trans-unit>
       <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
         <source>Fix Vulnerabilities with GitHub Copilot</source>
-        <target state="new">Fix Vulnerabilities with GitHub Copilot</target>
+        <target state="translated">GitHub Copilot으로 취약성 수정</target>
         <note />
       </trans-unit>
       <trans-unit id="clearLocalResources">
