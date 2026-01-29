@@ -243,6 +243,8 @@ extends:
                     --performanceTest
                   name: Test
                   displayName: Test
+                  env:
+                    DOTNET_ROOT: $(Build.SourcesDirectory)/.dotnet
 
                 # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
                 # through the console or trx

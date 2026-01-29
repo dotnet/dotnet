@@ -50,10 +50,11 @@
 
     <PropertyGroup>
       <_TmpPackagesRoot>$(ArtifactsTmpDir)wasm-dependencies/</_TmpPackagesRoot>
+      <_WasmRestoreConfigFileArg Condition="'$(SYSTEM_TEAMPROJECT)' == 'internal'">--configfile &quot;$(MSBuildThisFileDirectory)Microsoft.DotNet.SourceBuild.Tests/assets/online.NuGet.Config&quot;</_WasmRestoreConfigFileArg>
     </PropertyGroup>
     
     <Exec
-        Command="&quot;$(DOTNET_HOST_PATH)&quot; restore &quot;$(MSBuildThisFileDirectory)wasm-dependencies.proj&quot; -bl:$(ArtifactsLogDir)/wasm-test-dependencies.binlog"
+        Command="&quot;$(DOTNET_HOST_PATH)&quot; restore &quot;$(MSBuildThisFileDirectory)wasm-dependencies.proj&quot; $(_WasmRestoreConfigFileArg) -bl:$(ArtifactsLogDir)/wasm-test-dependencies.binlog"
         EnvironmentVariables="NUGET_PACKAGES=$(_TmpPackagesRoot)"
     />
     
