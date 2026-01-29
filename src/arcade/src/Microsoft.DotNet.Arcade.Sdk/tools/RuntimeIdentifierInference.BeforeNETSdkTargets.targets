@@ -87,7 +87,7 @@
     <_FilterRuntimeIdentifier Condition="'$(PortableTargetRid)' != ''">$(PortableTargetRid)</_FilterRuntimeIdentifier>
 
     <!-- If a project builds for a set of RIDs specified in the project file and this vertical isn't in the list, suppress building this project. -->
-    <_SuppressAllTargets Condition="'$(DisableArcadeExcludeFromBuildSupport)' != 'true' and $(_ExplicitlySpecifiedRuntimeIdentifiers).Contains(';$(_FilterRuntimeIdentifier);')) == 'false'">true</_SuppressAllTargets>
+    <_SuppressAllTargets Condition="'$(DisableArcadeExcludeFromBuildSupport)' != 'true' and $(_ExplicitlySpecifiedRuntimeIdentifiers.Contains(';$(_FilterRuntimeIdentifier);')) == 'false'">true</_SuppressAllTargets>
 
     <!-- The .NET SDK will try to restore for all specified RIDs. Change the list of RIDs to only our inferred RID to ensure that restore only restores assets that could be available. -->
     <RuntimeIdentifiers>$(RuntimeIdentifier)</RuntimeIdentifiers>
