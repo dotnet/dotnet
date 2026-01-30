@@ -2,11 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
-    <IsPackable>true</IsPackable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <IsBuildTaskProject>true</IsBuildTaskProject>
     <Description>Strong name signing and verification</Description>
-    <PackageTags>Arcade Build Library Strong Name</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
