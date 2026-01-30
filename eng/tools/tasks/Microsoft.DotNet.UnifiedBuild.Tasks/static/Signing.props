@@ -19,7 +19,7 @@
     <StrongNameSignInfo
       Include="$(NuGetPackageRoot)microsoft.dotnet.arcade.sdk/$(MicrosoftDotNetArcadeSdkPackageVersion)/tools/snk/AspNetCore.snk"
       PublicKeyToken="adb9793829ddae60"
-      CertificateName="MicrosoftDotNet500" />
+      CertificateName="MicrosoftDotNet500" Condition="'$(FullAssemblySigningSupported)' != 'false'"/>
 
     <!-- We don't need to code sign .js files because they are not used in Windows Script Host -->
     <FileExtensionSignInfo Update=".js" CertificateName="None" />
