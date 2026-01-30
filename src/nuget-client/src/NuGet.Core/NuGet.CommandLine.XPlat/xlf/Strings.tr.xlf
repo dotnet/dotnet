@@ -83,8 +83,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ApiKey_Description">
-        <source>The API key for the server.</source>
-        <target state="translated">Sunucunun API anahtarı.</target>
+        <source>The API key for the server. If not set, the NUGET_API_KEY environment variable is read.</source>
+        <target state="needs-review-translation">Sunucunun API anahtarı.</target>
         <note />
       </trans-unit>
       <trans-unit id="App_FullName">
@@ -1289,8 +1289,8 @@ Arama, sağlanan değeri kullanan büyük/küçük harfe duyarsız bir dize kar�
         <note />
       </trans-unit>
       <trans-unit id="SymbolApiKey_Description">
-        <source>The API key for the symbol server.</source>
-        <target state="translated">Sembol sunucusunun API anahtarı.</target>
+        <source>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</source>
+        <target state="needs-review-translation">Sembol sunucusunun API anahtarı.</target>
         <note />
       </trans-unit>
       <trans-unit id="SymbolSource_Description">

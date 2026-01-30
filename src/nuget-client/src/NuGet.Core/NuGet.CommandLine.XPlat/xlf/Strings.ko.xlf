@@ -83,8 +83,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ApiKey_Description">
-        <source>The API key for the server.</source>
-        <target state="translated">서버의 API 키입니다.</target>
+        <source>The API key for the server. If not set, the NUGET_API_KEY environment variable is read.</source>
+        <target state="needs-review-translation">서버의 API 키입니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="App_FullName">
@@ -1289,8 +1289,8 @@ The search is a case-insensitive string comparison using the supplied value, whi
         <note />
       </trans-unit>
       <trans-unit id="SymbolApiKey_Description">
-        <source>The API key for the symbol server.</source>
-        <target state="translated">기호 서버의 API 키입니다.</target>
+        <source>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</source>
+        <target state="needs-review-translation">기호 서버의 API 키입니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="SymbolSource_Description">
