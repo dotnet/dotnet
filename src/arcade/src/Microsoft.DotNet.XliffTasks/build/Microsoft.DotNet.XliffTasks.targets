@@ -6,13 +6,13 @@
     <XliffTasksAssembly>$(XliffTasksDirectory)Microsoft.DotNet.XliffTasks.dll</XliffTasksAssembly>
   </PropertyGroup>
 
-  <UsingTask TaskName="GatherXlf" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" Condition="'$(XliffTasksAssembly)' != ''" />
-  <UsingTask TaskName="GatherTranslatedSource" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" Condition="'$(XliffTasksAssembly)' != ''" />
-  <UsingTask TaskName="TransformTemplates" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" Condition="'$(XliffTasksAssembly)' != ''" />
-  <UsingTask TaskName="TranslateSource" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" Condition="'$(XliffTasksAssembly)' != ''" />
-  <UsingTask TaskName="UpdateXlf" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" Condition="'$(XliffTasksAssembly)' != ''" />
-  <UsingTask TaskName="SortXlf" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" Condition="'$(XliffTasksAssembly)' != ''" />
-  <UsingTask TaskName="EnsureAllResourcesTranslated" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" Condition="'$(XliffTasksAssembly)' != ''" />
+  <UsingTask TaskName="GatherXlf" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" />
+  <UsingTask TaskName="GatherTranslatedSource" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" />
+  <UsingTask TaskName="TransformTemplates" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" />
+  <UsingTask TaskName="TranslateSource" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" />
+  <UsingTask TaskName="UpdateXlf" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" />
+  <UsingTask TaskName="SortXlf" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" />
+  <UsingTask TaskName="EnsureAllResourcesTranslated" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" />
 
   <!--
     Note that .xlf files are source files, not build outputs. We therefore cannot use their modification time

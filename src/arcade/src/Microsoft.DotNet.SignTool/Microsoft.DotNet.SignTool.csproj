@@ -29,7 +29,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.DotNet.Build.Tasks.Installers\Microsoft.DotNet.Build.Tasks.Installers.csproj" />
-    <ProjectReference Include="..\Microsoft.DotNet.StrongName\Microsoft.DotNet.StrongName.csproj" />
   </ItemGroup>
 
 </Project>

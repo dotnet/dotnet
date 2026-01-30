@@ -13,15 +13,10 @@
   <UsingTask TaskName="GenerateGuidFromName" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
   <UsingTask TaskName="GenerateMsiVersion" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
   <UsingTask TaskName="StabilizeWixFileId" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
-  <UsingTask TaskName="CreateChangelogFile"
-   AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
-  <UsingTask TaskName="CreateMD5SumsFile"
-   AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
-  <UsingTask TaskName="CreateControlFile"
-   AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
-  <UsingTask TaskName="CreateDebPackage"
-  AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
-  <UsingTask TaskName="CreateRpmPackage"
-    AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
+  <UsingTask TaskName="CreateChangelogFile" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
+  <UsingTask TaskName="CreateMD5SumsFile" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
+  <UsingTask TaskName="CreateControlFile" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
+  <UsingTask TaskName="CreateDebPackage" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
+  <UsingTask TaskName="CreateRpmPackage" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
 
 </Project>
