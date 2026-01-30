@@ -1,6 +1,13 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
+    <!--
+      Runtime is built before msbuild is bootstrapped, so it uses the base SDK which doesn't have
+      the RecursiveDir metadata fix for -mt mode. Disable -mt for runtime until the fix is available
+      in the bootstrap SDK. See https://github.com/dotnet/msbuild/issues/3121
+    -->
+    <UseMSBuildMT>false</UseMSBuildMT>
+
     <!-- Temporarily disable building tests until the next runtime codeflow with an updated SDK. -->
     <DotNetBuildTestsOptOut>true</DotNetBuildTestsOptOut>
 
