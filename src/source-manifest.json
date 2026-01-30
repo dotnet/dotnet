@@ -121,10 +121,10 @@
       "commitSha": "b5199e1d3b6c74830c09c76ee05f8d44f5de4908"
     },
     {
-      "barId": 299297,
+      "barId": 299487,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "6ef97f6c6494fbdbe039aa4757c0192337a1d243"
+      "commitSha": "670b1b9f22bef32153ea9be50e9ecdb652af7b5c"
     },
     {
       "barId": 298363,
