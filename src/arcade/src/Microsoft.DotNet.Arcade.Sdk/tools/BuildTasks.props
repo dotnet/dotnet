@@ -4,7 +4,7 @@
   <!-- Import the BundledVersions.props file from SDK to light-up Runtime="NET" task support.
        Only import when NETCoreSdkBundledVersionsProps is not defined (non SDK style projects).
        Remove when https://github.com/dotnet/msbuild/issues/12895 is implemented. -->
-  <Sdk Import="Microsoft.NET.Sdk" Project="Sdk.BundledVersions.props" Condition="'$(NETCoreSdkBundledVersionsProps)' == ''" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.BundledVersions.props" Condition="'$(NETCoreSdkBundledVersionsProps)' == ''" />
 
   <PropertyGroup>
     <ArcadeSdkBuildTasksAssembly>$(MSBuildThisFileDirectory)net\Microsoft.DotNet.Arcade.Sdk.dll</ArcadeSdkBuildTasksAssembly>
