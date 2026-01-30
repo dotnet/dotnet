@@ -70,6 +70,7 @@
   <Project Path="src/Microsoft.DotNet.SharedFramework.Sdk/Microsoft.DotNet.SharedFramework.Sdk.csproj" />
   <Project Path="src/Microsoft.DotNet.SignTool/Microsoft.DotNet.SignTool.csproj" />
   <Project Path="src/Microsoft.DotNet.SourceBuild/tasks/Microsoft.DotNet.SourceBuild.Tasks.csproj" />
+  <Project Path="src/Microsoft.DotNet.StrongName/Microsoft.DotNet.StrongName.csproj" />
   <Project Path="src/Microsoft.DotNet.XliffTasks/Microsoft.DotNet.XliffTasks.csproj" />
   <Project Path="src/Microsoft.DotNet.XUnitAssert/src/Microsoft.DotNet.XUnitAssert.csproj" />
   <Project Path="src/Microsoft.DotNet.XUnitConsoleRunner/src/Microsoft.DotNet.XUnitConsoleRunner.csproj" />
