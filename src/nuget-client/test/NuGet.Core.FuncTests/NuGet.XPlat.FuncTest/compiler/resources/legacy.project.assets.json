@@ -1,0 +1,292 @@
+{
+  "version": 3,
+  "targets": {
+    ".NETFramework,Version=v4.8.1": {
+      "PackageA/1.0.0": {
+        "type": "package",
+        "dependencies": {
+          "PackageB": "1.0.0",
+          "PackageC": "2.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/PackageA.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/PackageA.dll": {}
+        }
+      },
+      "PackageB/1.0.0": {
+        "type": "package",
+        "dependencies": {
+          "PackageC": "1.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/PackageB.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/PackageB.dll": {}
+        }
+      },
+      "PackageC/2.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/PackageC.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/PackageC.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.8.1/win": {
+      "PackageA/1.0.0": {
+        "type": "package",
+        "dependencies": {
+          "PackageB": "1.0.0",
+          "PackageC": "2.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/PackageA.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/PackageA.dll": {}
+        }
+      },
+      "PackageB/1.0.0": {
+        "type": "package",
+        "dependencies": {
+          "PackageC": "1.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/PackageB.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/PackageB.dll": {}
+        }
+      },
+      "PackageC/2.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/PackageC.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/PackageC.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.8.1/win-arm64": {
+      "PackageA/1.0.0": {
+        "type": "package",
+        "dependencies": {
+          "PackageB": "1.0.0",
+          "PackageC": "2.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/PackageA.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/PackageA.dll": {}
+        }
+      },
+      "PackageB/1.0.0": {
+        "type": "package",
+        "dependencies": {
+          "PackageC": "1.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/PackageB.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/PackageB.dll": {}
+        }
+      },
+      "PackageC/2.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/PackageC.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/PackageC.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.8.1/win-x64": {
+      "PackageA/1.0.0": {
+        "type": "package",
+        "dependencies": {
+          "PackageB": "1.0.0",
+          "PackageC": "2.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/PackageA.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/PackageA.dll": {}
+        }
+      },
+      "PackageB/1.0.0": {
+        "type": "package",
+        "dependencies": {
+          "PackageC": "1.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/PackageB.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/PackageB.dll": {}
+        }
+      },
+      "PackageC/2.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/PackageC.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/PackageC.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.8.1/win-x86": {
+      "PackageA/1.0.0": {
+        "type": "package",
+        "dependencies": {
+          "PackageB": "1.0.0",
+          "PackageC": "2.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/PackageA.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/PackageA.dll": {}
+        }
+      },
+      "PackageB/1.0.0": {
+        "type": "package",
+        "dependencies": {
+          "PackageC": "1.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/PackageB.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/PackageB.dll": {}
+        }
+      },
+      "PackageC/2.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/PackageC.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/PackageC.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "PackageA/1.0.0": {
+      "sha512": "nI4cMmy8lhizEC8GSl+HwGh30kdZV7wYOZNEquh1D6xw/0atQmdrYPJrkdNLb/3Js5bMKPyc9jz3SRlIe/n9iw==",
+      "type": "package",
+      "path": "packagea/1.0.0",
+      "files": [
+        ".nupkg.metadata",
+        "lib/netstandard2.0/PackageA.dll",
+        "packagea.1.0.0.nupkg.sha512",
+        "packagea.nuspec"
+      ]
+    },
+    "PackageB/1.0.0": {
+      "sha512": "cC4JM8LiJesFeZFbcmGDhc+auVNm0OfDs8JT2nGeRsBBZjUlaVPJNJ7OSzdB9eEXnTHMP4gVa96YRQp7ZjBRmg==",
+      "type": "package",
+      "path": "packageb/1.0.0",
+      "files": [
+        ".nupkg.metadata",
+        "lib/netstandard2.0/PackageB.dll",
+        "packageb.1.0.0.nupkg.sha512",
+        "packageb.nuspec"
+      ]
+    },
+    "PackageC/2.0.0": {
+      "sha512": "qhGzUU579eOtASztvDRFFpLloJSSRWObkYU9TMhvru1VwziZ9GJnVen4ZaTO/xO4RC5USTCGdfGsV8FoqTNDsA==",
+      "type": "package",
+      "path": "packagec/2.0.0",
+      "files": [
+        ".nupkg.metadata",
+        "lib/netstandard2.0/PackageC.dll",
+        "packagec.2.0.0.nupkg.sha512",
+        "packagec.nuspec"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    ".NETFramework,Version=v4.8.1": [
+      "PackageA >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\developer\\source\\repos\\ConsoleApp17\\gpf": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Users\\developer\\source\\repos\\ConsoleApp17\\ConsoleApp17\\ConsoleApp17.csproj",
+      "projectName": "ConsoleApp17",
+      "projectPath": "C:\\Users\\developer\\source\\repos\\ConsoleApp17\\ConsoleApp17\\ConsoleApp17.csproj",
+      "packagesPath": "C:\\Users\\developer\\source\\repos\\ConsoleApp17\\gpf",
+      "outputPath": "C:\\Users\\developer\\source\\repos\\ConsoleApp17\\ConsoleApp17\\obj\\",
+      "projectStyle": "PackageReference",
+      "skipContentFileWrite": true,
+      "UsingMicrosoftNETSdk": false,
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\developer\\source\\repos\\ConsoleApp17\\NuGet.Config",
+        "C:\\Users\\developer\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net481"
+      ],
+      "sources": {
+        "C:\\Users\\developer\\source\\repos\\ConsoleApp17\\nupkgs\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net481": {
+          "projectReferences": {}
+        }
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
+      }
+    },
+    "frameworks": {
+      "net481": {
+        "dependencies": {
+          "PackageA": {
+            "target": "Package",
+            "version": "[1.0.0, )"
+          }
+        }
+      }
+    },
+    "runtimes": {
+      "win": {
+        "#import": []
+      },
+      "win-arm64": {
+        "#import": []
+      },
+      "win-x64": {
+        "#import": []
+      },
+      "win-x86": {
+        "#import": []
+      }
+    }
+  }
+}

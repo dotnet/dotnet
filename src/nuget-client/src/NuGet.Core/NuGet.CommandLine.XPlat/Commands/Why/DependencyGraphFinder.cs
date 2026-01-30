@@ -5,9 +5,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using NuGet.LibraryModel;
+using NuGet.Packaging.Core;
 using NuGet.ProjectModel;
+using NuGet.Versioning;
 
 namespace NuGet.CommandLine.XPlat.Commands.Why
 {
@@ -28,279 +32,172 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
             string targetPackage,
             List<string> userInputFrameworks)
         {
-            var dependencyGraphPerFramework = new Dictionary<string, List<DependencyNode>?>(assetsFile.Targets.Count);
-            bool doesProjectHaveDependencyOnPackage = false;
-
-            // add null to the list of runtime identifiers to account for projects that do not have a runtime identifier
-            var runtimeIdentifiers = assetsFile.PackageSpec.RuntimeGraph.Runtimes.Keys
-                .Append(null)
-                .ToList();
-            // get all top-level package and project references for the project, categorized by target framework alias
-            Dictionary<string, List<string>> topLevelReferencesByFramework = GetTopLevelPackageAndProjectReferences(assetsFile, userInputFrameworks);
-
-            if (topLevelReferencesByFramework.Count > 0)
+            var result = new Dictionary<string, List<DependencyNode>?>(StringComparer.OrdinalIgnoreCase);
+            bool foundPackage = false;
+            bool useTargetAlias = assetsFile.PackageSpec.TargetFrameworks.All(tf => !string.IsNullOrEmpty(tf.TargetAlias));
+            if (!useTargetAlias
+                && (assetsFile.PackageSpec.RestoreMetadata.OriginalTargetFrameworks.Count != 1
+                    || assetsFile.PackageSpec.TargetFrameworks.Count != 1
+                    || assetsFile.PackageSpec.RestoreMetadata.TargetFrameworks.Count != 1
+                ))
             {
-                foreach (var (targetFrameworkAlias, topLevelReferences) in topLevelReferencesByFramework)
-                {
-                    foreach (var runtimeIdentifier in runtimeIdentifiers)
-                    {
-                        var targetFrameworkDisplayName = runtimeIdentifier == null ? targetFrameworkAlias : $"{targetFrameworkAlias}/{runtimeIdentifier}";
-
-                        LockFileTarget target = assetsFile.GetTarget(targetFrameworkAlias, runtimeIdentifier: runtimeIdentifier);
-
-                        // get all package libraries for the framework
-                        IList<LockFileTargetLibrary>? packageLibraries = target.Libraries;
-
-                        // if the project has a dependency on the target package, get the dependency graph
-                        if (packageLibraries?.Any(l => l?.Name?.Equals(targetPackage, StringComparison.OrdinalIgnoreCase) == true) == true)
-                        {
-                            doesProjectHaveDependencyOnPackage = true;
-                            dependencyGraphPerFramework.Add(targetFrameworkDisplayName,
-                                GetDependencyGraphForTargetPerFramework(topLevelReferences, packageLibraries, targetPackage));
-                        }
-                        else
-                        {
-                            dependencyGraphPerFramework.Add(targetFrameworkDisplayName, null);
-                        }
-                    }
-                }
+                throw new FileFormatException(Strings.WhyCommand_Error_InconsistentAssetsFile);
             }
 
-            return doesProjectHaveDependencyOnPackage
-                ? dependencyGraphPerFramework
-                : null;
-        }
-
-        /// <summary>
-        /// Finds all dependency paths from the top-level packages to the target package for a given framework.
-        /// </summary>
-        /// <param name="topLevelReferences">All top-level package and project references for the framework.</param>
-        /// <param name="packageLibraries">All package libraries for the framework.</param>
-        /// <param name="targetPackage">The package we want the dependency paths for.</param>
-        /// <returns>
-        /// List of all top-level package nodes in the dependency graph.
-        /// </returns>
-        private static List<DependencyNode>? GetDependencyGraphForTargetPerFramework(
-            List<string> topLevelReferences,
-            IList<LockFileTargetLibrary> packageLibraries,
-            string targetPackage)
-        {
-            List<DependencyNode>? dependencyGraph = null;
-
-            // hashset tracking every package node that we've traversed
-            var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            // dictionary tracking all package nodes that have been added to the graph, mapped to their DependencyNode objects
-            var dependencyNodes = new Dictionary<string, DependencyNode>(StringComparer.OrdinalIgnoreCase);
-            // dictionary mapping all packageIds to their resolved version
-            Dictionary<string, string> versions = GetAllResolvedVersions(packageLibraries);
-
-            foreach (var topLevelReference in topLevelReferences)
+            foreach (var target in assetsFile.Targets)
             {
-                // use depth-first search to find dependency paths from the top-level package to the target package
-                DependencyNode? topLevelNode = FindDependencyPathForTarget(topLevelReference, packageLibraries, visited, dependencyNodes, versions, targetPackage);
+                (string targetAlias,
+                    ImmutableArray<LibraryDependency> directPackages,
+                    IList<ProjectRestoreReference> directProjectReferences)
+                    = GetTargetFrameworkData(useTargetAlias, target, assetsFile.PackageSpec);
 
-                if (topLevelNode != null)
-                {
-                    dependencyGraph ??= [];
-                    dependencyGraph.Add(topLevelNode);
-                }
-            }
-
-            return dependencyGraph;
-        }
-
-        /// <summary>
-        /// Traverses the dependency graph for a given top-level package, looking for a path to the target package.
-        /// </summary>
-        /// <param name="topLevelPackage">Top-level package.</param>
-        /// <param name="packageLibraries">All package libraries for a given framework.</param>
-        /// <param name="visited">HashSet tracking every package node that we've traversed.</param>
-        /// <param name="dependencyNodes">Dictionary tracking all packageIds that were added to the graph, mapped to their DependencyNode objects.</param>
-        /// <param name="versions">Dictionary mapping packageIds to their resolved versions.</param>
-        /// <param name="targetPackage">The package we want the dependency paths for.</param>
-        /// <returns>
-        /// The top-level package node in the dependency graph (if a path was found), or null (if no path was found).
-        /// </returns>
-        private static DependencyNode? FindDependencyPathForTarget(
-            string topLevelPackage,
-            IList<LockFileTargetLibrary> packageLibraries,
-            HashSet<string> visited,
-            Dictionary<string, DependencyNode> dependencyNodes,
-            Dictionary<string, string> versions,
-            string targetPackage)
-        {
-            var stack = new Stack<StackDependencyData>();
-            stack.Push(new StackDependencyData(topLevelPackage, null));
-
-            while (stack.Count > 0)
-            {
-                var currentPackageData = stack.Pop();
-                var currentPackageId = currentPackageData.Id;
-
-                // if we reach the target node, or if we've already traversed this node and found dependency paths, add it to the graph
-                if (currentPackageId.Equals(targetPackage, StringComparison.OrdinalIgnoreCase)
-                    || dependencyNodes.ContainsKey(currentPackageId))
-                {
-                    AddToGraph(currentPackageData, dependencyNodes, versions);
-                    continue;
-                }
-
-                // if we have already traversed this node's children, continue
-                if (visited.Contains(currentPackageId))
+                if (userInputFrameworks.Count > 0
+                    && !userInputFrameworks.Any(f => string.Equals(targetAlias, f, StringComparison.OrdinalIgnoreCase)))
                 {
                     continue;
                 }
 
-                visited.Add(currentPackageId);
+                LockFileTargetLibrary projectAsLibrary = ConvertToLibrary(directPackages, directProjectReferences, assetsFile, target);
 
-                // get all dependencies for the current package
-                var dependencies = packageLibraries?.FirstOrDefault(i => i?.Name?.Equals(currentPackageId, StringComparison.OrdinalIgnoreCase) == true)?.Dependencies;
+                DependencyNode? projectNode = CreateNode(target, targetPackage, projectAsLibrary, VersionRange.All);
 
-                if (dependencies?.Count > 0)
-                {
-                    // push all the dependencies onto the stack
-                    foreach (var dependency in dependencies)
-                    {
-                        stack.Push(new StackDependencyData(dependency.Id, currentPackageData));
-                    }
-                }
+                string displayName = string.IsNullOrEmpty(target.RuntimeIdentifier)
+                    ? targetAlias
+                    : $"{targetAlias}/{target.RuntimeIdentifier}";
+                result[displayName] = projectNode?.Children.ToList();
+
+                foundPackage |= projectNode != null;
             }
 
-            return dependencyNodes.GetValueOrDefault(topLevelPackage);
-        }
+            return foundPackage ? result : null;
 
-        /// <summary>
-        /// Adds a dependency path to the graph, starting from the target package and traversing up to the top-level package.
-        /// </summary>
-        /// <param name="targetPackageData">Target node data. This stores parent references, so it can be used to construct the dependency graph
-        /// up to the top-level package.</param>
-        /// <param name="dependencyNodes">Dictionary tracking all packageIds that were added to the graph, mapped to their DependencyNode objects.</param>
-        /// <param name="versions">Dictionary mapping packageIds to their resolved versions.</param>
-        private static void AddToGraph(
-            StackDependencyData targetPackageData,
-            Dictionary<string, DependencyNode> dependencyNodes,
-            Dictionary<string, string> versions)
-        {
-            // first, we traverse the target's parents, listing the packages in the path from the target to the top-level package
-            var dependencyPath = new List<string> { targetPackageData.Id };
-            StackDependencyData? current = targetPackageData.Parent;
-
-            while (current != null)
+            static (string targetAlias, ImmutableArray<LibraryDependency> directPackages, IList<ProjectRestoreReference> directProjectReferences)
+                GetTargetFrameworkData(bool useTargetAlias, LockFileTarget target, PackageSpec packageSpec)
             {
-                dependencyPath.Add(current.Id);
-                current = current.Parent;
-            }
-
-            // then, we traverse this list from the target package to the top-level package, initializing/updating their dependency nodes as needed
-            for (int i = 0; i < dependencyPath.Count; i++)
-            {
-                string currentPackageId = dependencyPath[i];
-
-                if (!dependencyNodes.ContainsKey(currentPackageId))
+                string targetAlias;
+                ImmutableArray<LibraryDependency> directPackages;
+                IList<ProjectRestoreReference> directProjectReferences;
+                if (useTargetAlias)
                 {
-                    dependencyNodes.Add(currentPackageId, new DependencyNode(currentPackageId, versions[currentPackageId]));
+                    targetAlias = target.TargetAlias;
+                    directPackages = packageSpec.GetTargetFramework(targetAlias).Dependencies;
+                    directProjectReferences = packageSpec.GetRestoreMetadataFramework(targetAlias).ProjectReferences;
                 }
-
-                if (i > 0)
+                else
                 {
-                    var childNode = dependencyNodes[dependencyPath[i - 1]];
-                    dependencyNodes[currentPackageId].Children.Add(childNode);
+                    targetAlias = packageSpec.RestoreMetadata.OriginalTargetFrameworks[0];
+                    directPackages = packageSpec.TargetFrameworks[0].Dependencies;
+                    directProjectReferences = packageSpec.RestoreMetadata.TargetFrameworks[0].ProjectReferences;
                 }
+                return (targetAlias, directPackages, directProjectReferences);
             }
         }
 
-        /// <summary>
-        /// Get all top-level package and project references for the given project.
-        /// </summary>
-        /// <param name="assetsFile">Assets file for the project.</param>
-        /// <param name="userInputFrameworks">List of target framework aliases.</param>
-        /// <returns>
-        /// Dictionary mapping the project's target framework aliases to their respective top-level package and project references.
-        /// </returns>
-        private static Dictionary<string, List<string>> GetTopLevelPackageAndProjectReferences(
+        private static LockFileTargetLibrary ConvertToLibrary(
+            ImmutableArray<LibraryDependency> directPackages,
+            IList<ProjectRestoreReference> directProjectReferences,
             LockFile assetsFile,
-            List<string> userInputFrameworks)
+            LockFileTarget target)
         {
-            var topLevelReferences = new Dictionary<string, List<string>>();
+            List<PackageDependency> dependencies = new List<PackageDependency>(directPackages.Length + directProjectReferences.Count);
 
-            var targetAliases = assetsFile.PackageSpec.RestoreMetadata.OriginalTargetFrameworks;
+            dependencies.AddRange(directPackages.Select(p => new PackageDependency(p.Name, p.LibraryRange.VersionRange ?? VersionRange.All)));
 
-            // filter the targets to the set of targets that the user has specified
-            if (userInputFrameworks?.Count > 0)
-            {
-                targetAliases = targetAliases.Where(f => userInputFrameworks.Contains(f)).ToList();
-            }
-
-            // we need to match top-level project references to their target library entries using their paths,
-            // so we will store all project reference paths in a dictionary here
-            var projectLibraries = assetsFile.Libraries.Where(l => l.Type == "project");
-            var projectLibraryPathToName = new Dictionary<string, string>(projectLibraries.Count());
-            var projectDirectoryPath = Path.GetDirectoryName(assetsFile.PackageSpec.FilePath);
-
-            if (projectDirectoryPath != null)
-            {
-                foreach (var library in projectLibraries)
+            string projectDirectory = Path.GetDirectoryName(assetsFile.PackageSpec.FilePath)!;
+            var projectsByPath = assetsFile
+                .Libraries
+                .Where(l => string.Equals(l.Type, "project", StringComparison.OrdinalIgnoreCase))
+                .ToDictionary(l => Path.GetFullPath(Path.Combine(projectDirectory, l.Path)), l => l, StringComparer.OrdinalIgnoreCase);
+            dependencies.AddRange(directProjectReferences
+                .Select(p =>
                 {
-                    projectLibraryPathToName.Add(Path.GetFullPath(library.Path, projectDirectoryPath), library.Name);
-                }
-            }
+                    LockFileLibrary projectLibrary = projectsByPath[p.ProjectPath];
+                    LibraryRange libraryRange = new LibraryRange(
+                        projectLibrary.Name,
+                        VersionRange.Parse(projectLibrary.Version.ToString()),
+                        LibraryDependencyTarget.Project);
+                    var dependency = new PackageDependency(
+                        libraryRange.Name,
+                        VersionRange.Parse(projectLibrary.Version.OriginalVersion ?? projectLibrary.Version.ToString()));
+                    return dependency;
+                }));
 
-            // get all top-level references for each target alias
-            foreach (string targetAlias in targetAliases)
+            LockFileTargetLibrary project = new LockFileTargetLibrary
             {
-                topLevelReferences.Add(targetAlias, []);
+                Name = assetsFile.PackageSpec.Name,
+                Type = LibraryType.Project,
+                Dependencies = dependencies
+            };
 
-                // top-level packages
-                TargetFrameworkInformation? targetFrameworkInformation = assetsFile.PackageSpec.TargetFrameworks.FirstOrDefault(tfi => tfi.TargetAlias.Equals(targetAlias, StringComparison.OrdinalIgnoreCase));
-                if (targetFrameworkInformation != default)
-                {
-                    var topLevelPackages = targetFrameworkInformation.Dependencies.Select(d => d.Name);
-                    topLevelReferences[targetAlias].AddRange(topLevelPackages);
-                }
-
-                // top-level projects
-                ProjectRestoreMetadataFrameworkInfo? restoreMetadataFrameworkInfo = assetsFile.PackageSpec.RestoreMetadata.TargetFrameworks.FirstOrDefault(tfi => tfi.TargetAlias.Equals(targetAlias, StringComparison.OrdinalIgnoreCase));
-                if (restoreMetadataFrameworkInfo != default)
-                {
-                    var topLevelProjectPaths = restoreMetadataFrameworkInfo.ProjectReferences.Select(p => p.ProjectPath);
-                    foreach (var projectPath in topLevelProjectPaths)
-                    {
-                        topLevelReferences[targetAlias].Add(projectLibraryPathToName[projectPath]);
-                    }
-                }
-            }
-
-            return topLevelReferences;
+            return project;
         }
 
         /// <summary>
-        /// Adds all resolved versions of packages to a dictionary.
+        /// Convert the flat list of LockFileTargetLibrary into a display graph.
         /// </summary>
-        /// <param name="packageLibraries">All package libraries for a given framework.</param>
-        private static Dictionary<string, string> GetAllResolvedVersions(IList<LockFileTargetLibrary> packageLibraries)
+        /// <param name="target">The assets file target for the current target framework, used to look up the resolved version and dependencies.</param>
+        /// <param name="filterPackage">The package that needs to be displayed</param>
+        /// <param name="library"> The current node in the package graph to convert</param>
+        /// <param name="requestedVersion">The requested version of the current node.</param>
+        /// <returns>If the current node's package id matches the filter package id, or the filter package is a dependency of the current node, then
+        /// a graph node instance is returned. Otherwise null is returned to signal that this part of the package graph does not contribute
+        /// to the output display.</returns>
+        public static DependencyNode? CreateNode(LockFileTarget target, string filterPackage, LockFileTargetLibrary library, VersionRange requestedVersion)
         {
-            var versions = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-            foreach (var package in packageLibraries)
+            if (filterPackage.Equals(library.Name, StringComparison.OrdinalIgnoreCase))
             {
-                if (package?.Name != null && package?.Version != null)
+                // NuGet doesn't allow circular dependencies, and why only shows the graph up to the filter package,
+                // so there's no point checking dependencies.
+                return new PackageNode(
+                    library.Name!,
+                    library.Version!,
+                    requestedVersion,
+                    []);
+            }
+
+            HashSet<DependencyNode>? children = null;
+
+            foreach (var dependency in library.Dependencies)
+            {
+                LockFileTargetLibrary? dependencyLibrary = target.Libraries.FirstOrDefault(l => l.Name!.Equals(dependency.Id, StringComparison.OrdinalIgnoreCase));
+                if (dependencyLibrary is null)
                 {
-                    versions.Add(package.Name, package.Version.ToNormalizedString());
+                    // When a package reference suppresses a package with PrivateAssets, but the same package is also a dependency of another
+                    // package, the assets file will list the suppressed package as a dependency of a library node, but will not create a library node
+                    // for the package itself.  See https://github.com/NuGet/Home/issues/14698
+                    continue;
+                }
+                DependencyNode? childNode = CreateNode(target, filterPackage, dependencyLibrary, dependency.VersionRange);
+                if (childNode is not null)
+                {
+                    if (children is null)
+                    {
+                        children = new HashSet<DependencyNode>();
+                    }
+                    children.Add(childNode);
                 }
             }
 
-            return versions;
-        }
-
-        private class StackDependencyData
-        {
-            public string Id { get; set; }
-            public StackDependencyData? Parent { get; set; }
-
-            public StackDependencyData(string currentId, StackDependencyData? parentDependencyData)
+            // Why only show the parts of the graph that lead to the target package.
+            if (children is null)
             {
-                Id = currentId;
-                Parent = parentDependencyData;
+                return null;
+            }
+
+            if (library.Type!.Equals(LibraryType.Package, StringComparison.OrdinalIgnoreCase))
+            {
+                NuGetVersion resolvedVersion = library.Version!;
+                var newNode = new PackageNode(
+                    library.Name!,
+                    resolvedVersion,
+                    requestedVersion,
+                    children ?? []);
+                return newNode;
+            }
+            else
+            {
+                var newNode = new ProjectNode(library.Name!, children ?? []);
+                return newNode;
             }
         }
     }

@@ -115,6 +115,13 @@ namespace NuGet.ContentModel
 
                 if (groupAssets != null)
                 {
+                    // Pre-size the list to avoid repeated array allocations during Add operations.
+                    // Callers typically pass a List but check just to be safe.
+                    if (contentItemGroupList is List<ContentItemGroup> list)
+                    {
+                        list.Capacity = Math.Max(list.Capacity, contentItemGroupList.Count + groupAssets.Count);
+                    }
+
                     foreach (var (item, assets) in groupAssets)
                     {
                         contentItemGroupList.Add(new ContentItemGroup(
