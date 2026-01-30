@@ -84,6 +84,9 @@ Don't output binary log by default in CI builds (short: -nobl).
 .PARAMETER Verbosity
 MSBuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic]
 
+.PARAMETER LoggerParameters
+MSbuild console logger parameters. Defaults to 'Summary'
+
 .PARAMETER MSBuildArguments
 Additional MSBuild arguments to be passed through.
 
@@ -180,6 +183,7 @@ param(
     [switch]$ExcludeCIBinarylog,
     [Alias('v')]
     [string]$Verbosity = 'minimal',
+    [string]$loggerParameters = 'Summary',
     [switch]$DumpProcesses, # Capture all running processes and dump them to a file.
     [string]$msbuildEngine = 'dotnet',
 

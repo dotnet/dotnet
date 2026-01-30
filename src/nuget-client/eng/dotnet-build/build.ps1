@@ -2,6 +2,7 @@
 param (
   [string][Alias('c')]$configuration = "Release",
   [string][Alias('v')]$verbosity = "minimal",
+  [string]$loggerParameters = "Summary",
   [switch]$ci,
   [switch]$prepareMachine,
   [string]$msbuildEngine = $null,
