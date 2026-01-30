@@ -1,5 +1,14 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
+  <PropertyGroup>
+    <!--
+      Razor is built before msbuild is bootstrapped, so it uses the base SDK which doesn't have
+      the RecursiveDir metadata fix for -mt mode. Disable -mt for razor until the fix is available
+      in the bootstrap SDK. See https://github.com/dotnet/msbuild/issues/3121
+    -->
+    <UseMSBuildMT>false</UseMSBuildMT>
+  </PropertyGroup>
+
   <ItemGroup>
     <RepositoryReference Include="arcade" />
   </ItemGroup>

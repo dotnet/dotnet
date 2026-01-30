@@ -1,6 +1,9 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
+    <!-- Disable -mt mode due to static graph restore incompatibility -->
+    <UseMSBuildMT>false</UseMSBuildMT>
+
     <!-- May stabilize. -->
     <AllowDotNetFinalVersionKindOverride>true</AllowDotNetFinalVersionKindOverride>
   </PropertyGroup>

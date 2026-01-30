@@ -1,6 +1,15 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
+    <!--
+      Runtime uses RestoreUseStaticGraphEvaluation=true for faster restores. However, this feature
+      has a bug when combined with MSBuild -mt mode: conditional ProjectReferences with
+      Condition="'$(MSBuildRestoreSessionId)' != ''" are not properly evaluated during graph
+      construction, causing projects like externals.csproj to not be restored.
+      Disable -mt for runtime until NuGet fixes the static graph restore behavior with -mt mode.
+    -->
+    <UseMSBuildMT>false</UseMSBuildMT>
+
     <!-- Temporarily disable building tests until the next runtime codeflow with an updated SDK. -->
     <DotNetBuildTestsOptOut>true</DotNetBuildTestsOptOut>
 

@@ -1,6 +1,9 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
+    <!-- Disable -mt mode due to static graph restore incompatibility -->
+    <UseMSBuildMT>false</UseMSBuildMT>
+
     <BuildArgs Condition="'$(BuildOS)' == 'windows'">$(BuildArgs) $(FlagParameterPrefix)NativeToolsOnMachine</BuildArgs>
 
     <!-- May stabilize. -->

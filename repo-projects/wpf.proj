@@ -3,6 +3,9 @@
   <PropertyGroup>
     <ForceDotNetMSBuildEngine>false</ForceDotNetMSBuildEngine>
 
+    <!-- WPF has MSBuild tasks that are not yet compatible with -mt mode -->
+    <UseMSBuildMT>false</UseMSBuildMT>
+
     <!-- TODO setting Platform shouldn't be necesary: https://github.com/dotnet/source-build/issues/4314 -->
     <BuildArgs>$(BuildArgs) /p:Platform=$(TargetArchitecture)</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:BuildWithNetFrameworkHostedCompiler=true</BuildArgs>
