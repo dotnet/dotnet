@@ -34,7 +34,7 @@ stages:
         - checkout: self
           clean: true
           submodules: recursive
-        - script: ./build.sh --ci && ./test.sh
+        - script: ./build.sh --ci --test
           displayName: Build and Test
 
       - job: windows
@@ -53,8 +53,5 @@ stages:
         - checkout: self
           clean: true
           submodules: recursive
-
-        ## The source-build-reference-packages repository does not support building on Windows, but it is capable of running the generate tooling tests on Windows.
-        ## The creation of an empty file in artifacts\packages is to workaround an arcade limitation with enabling artifact publishing.
-        - script: test.cmd && mkdir artifacts\packages\ && echo . > artifacts\packages\_
-          displayName: Run Tests
+        - script: .\build.cmd -ci -test
+          displayName: Build and Test

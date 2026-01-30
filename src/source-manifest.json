@@ -1,16 +1,16 @@
 {
   "repositories": [
     {
-      "barId": 299009,
+      "barId": 299105,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "77d1bb3f18b62e179cedf7d8beadd9599def3b5f"
+      "commitSha": "256383efbf27fbaf41c28ec9909cb3c44733d3d5"
     },
     {
-      "barId": 298915,
+      "barId": 299200,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "59d9051d2d057b055718968a77388e9b71f5aa5f"
+      "commitSha": "44c0e73ca9649d81ed2b9aee2af81663fffa11e2"
     },
     {
       "barId": 292148,
@@ -37,10 +37,10 @@
       "commitSha": "970c803abb1ed5657b056cdaf01f1693f437c242"
     },
     {
-      "barId": 298200,
+      "barId": 299101,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "f9dad29dcf12e79c16123ba71583210e93e3864c"
+      "commitSha": "71384a4413c660e375a11502264505ab06f21520"
     },
     {
       "barId": 298250,
@@ -55,10 +55,10 @@
       "commitSha": "f40f00d7d9b8dcc0fb55288029b5e1742b65650f"
     },
     {
-      "barId": 298867,
+      "barId": 299172,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "b7952333b2a7f444cb9f3b1b1651c9072ea5dd36"
+      "commitSha": "211a2e16732bc787fcb8f1c0e2b4f5de897b597c"
     },
     {
       "barId": 298965,
@@ -79,10 +79,10 @@
       "commitSha": "0cc7353161d26a12922108120be9ba37649f0749"
     },
     {
-      "barId": 299026,
+      "barId": 299225,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "5097397670bb0d461d939644f66256258c0f1186"
+      "commitSha": "5c2326596dc0b21583dbba5db9298c025eacbf64"
     },
     {
       "barId": 298986,
@@ -97,10 +97,10 @@
       "commitSha": "d97428fd4cff41ca381b487a97bfe14cde2efd76"
     },
     {
-      "barId": 298520,
+      "barId": 299184,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "ed69460b01b309a944e0f06824f7c46346b3133e"
+      "commitSha": "df3705e5bd9efd32d0ecbafeebbde7503951a536"
     },
     {
       "barId": 297170,
