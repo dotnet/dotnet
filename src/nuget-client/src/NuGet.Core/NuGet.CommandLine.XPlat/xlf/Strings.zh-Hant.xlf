@@ -1481,6 +1481,11 @@ The search is a case-insensitive string comparison using the supplied value, whi
         <target state="translated">無法執行 'dotnet nuget why'。{0}</target>
         <note>{0} - Exception mssage</note>
       </trans-unit>
+      <trans-unit id="WhyCommand_Error_InconsistentAssetsFile">
+        <source>Internal error: Assets file is inconsistent</source>
+        <target state="new">Internal error: Assets file is inconsistent</target>
+        <note />
+      </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. Please run restore for project '{1}' before running this command.</source>
         <target state="translated">檔案 '{0}' 似乎不是 NuGet 資產檔案。執行此命令之前，請先執行專案 '{1}' 的還原。</target>

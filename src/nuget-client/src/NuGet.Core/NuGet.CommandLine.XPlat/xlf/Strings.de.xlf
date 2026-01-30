@@ -1481,6 +1481,11 @@ Bei der Suche handelt es sich um einen ungültigen Zeichenfolgenvergleich mit de
         <target state="translated">"dotnet nuget why" kann nicht ausgeführt werden. {0}</target>
         <note>{0} - Exception mssage</note>
       </trans-unit>
+      <trans-unit id="WhyCommand_Error_InconsistentAssetsFile">
+        <source>Internal error: Assets file is inconsistent</source>
+        <target state="new">Internal error: Assets file is inconsistent</target>
+        <note />
+      </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. Please run restore for project '{1}' before running this command.</source>
         <target state="translated">Die Datei „{0}“ scheint keine NuGet-Ressourcendatei zu sein. Führen Sie die Wiederherstellung für das Projekt „{1}“ aus, bevor Sie diesen Befehl ausführen.</target>

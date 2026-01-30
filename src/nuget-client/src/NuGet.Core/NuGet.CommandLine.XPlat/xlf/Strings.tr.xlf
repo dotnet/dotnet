@@ -1482,6 +1482,11 @@ Arama, sağlanan değeri kullanan büyük/küçük harfe duyarsız bir dize kar�
         <target state="translated">'Dotnet nuget why' çalıştırılamıyor. {0}</target>
         <note>{0} - Exception mssage</note>
       </trans-unit>
+      <trans-unit id="WhyCommand_Error_InconsistentAssetsFile">
+        <source>Internal error: Assets file is inconsistent</source>
+        <target state="new">Internal error: Assets file is inconsistent</target>
+        <note />
+      </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. Please run restore for project '{1}' before running this command.</source>
         <target state="translated">'{0}' dosyası NuGet varlıkları dosyası gibi görünmüyor. Lütfen bu komutu çalıştırmadan önce '{1}' projesi için geri yüklemeyi çalıştırın.</target>
