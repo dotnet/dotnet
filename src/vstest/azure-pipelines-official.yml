@@ -47,6 +47,10 @@ parameters:
   displayName: "Skip tests"
   type: boolean
   default: False
+- name: codeQLForce
+  displayName: "Try collecting CodeQL before default CodeQL cadence"
+  type: boolean
+  default: False
 
 - name: otherOsPools
   type: object
@@ -84,6 +88,13 @@ variables:
   - ${{ if eq(parameters.isRTM, True) }}:
     - name: _ReleaseVersionKind
       value: release
+
+  # Set to 0 to force CodeQL scan without waiting 72 from last attempt (even if it failed).
+  # This is only a hint for the tool, it might reject to run it if it already has up to date data.
+  # See the Starting Code QL step for details.
+  - ${{ if eq(parameters.codeQLForce, True) }}:
+    - name: Codeql.Cadence 
+      value: 0
 
   # Group gives access to $microsoft-symbol-server-pat and $symweb-symbol-server-pat
   - group: DotNet-Symbol-Server-Pats
