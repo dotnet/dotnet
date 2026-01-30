@@ -2,9 +2,11 @@
 
   <PropertyGroup>
     <!--
-      Runtime is built before msbuild is bootstrapped, so it uses the base SDK which doesn't have
-      the RecursiveDir metadata fix for -mt mode. Disable -mt for runtime until the fix is available
-      in the bootstrap SDK. See https://github.com/dotnet/msbuild/issues/3121
+      Runtime uses RestoreUseStaticGraphEvaluation=true for faster restores. However, this feature
+      has a bug when combined with MSBuild -mt mode: conditional ProjectReferences with
+      Condition="'$(MSBuildRestoreSessionId)' != ''" are not properly evaluated during graph
+      construction, causing projects like externals.csproj to not be restored.
+      Disable -mt for runtime until NuGet fixes the static graph restore behavior with -mt mode.
     -->
     <UseMSBuildMT>false</UseMSBuildMT>
 
