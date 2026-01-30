@@ -1481,6 +1481,11 @@ A pesquisa é uma comparação de cadeia de caracteres que não faz distinção 
         <target state="translated">Não é possível executar "dotnet nuget why". {0}</target>
         <note>{0} - Exception mssage</note>
       </trans-unit>
+      <trans-unit id="WhyCommand_Error_InconsistentAssetsFile">
+        <source>Internal error: Assets file is inconsistent</source>
+        <target state="new">Internal error: Assets file is inconsistent</target>
+        <note />
+      </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. Please run restore for project '{1}' before running this command.</source>
         <target state="translated">O arquivo "{0}"não parece ser um arquivo de ativos do NuGet. Execute a restauração do projeto "{1}" antes de executar este comando.</target>

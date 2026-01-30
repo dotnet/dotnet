@@ -1481,6 +1481,11 @@ Wyszukiwanie polega na porównywaniu łańcuchów bez rozróżniania wielkości 
         <target state="translated">Nie można uruchomić „dotnet nuget why”. {0}</target>
         <note>{0} - Exception mssage</note>
       </trans-unit>
+      <trans-unit id="WhyCommand_Error_InconsistentAssetsFile">
+        <source>Internal error: Assets file is inconsistent</source>
+        <target state="new">Internal error: Assets file is inconsistent</target>
+        <note />
+      </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. Please run restore for project '{1}' before running this command.</source>
         <target state="translated">Plik „{0}” prawdopodobnie nie jest plikiem zasobów NuGet. Przed uruchomieniem tego polecenia uruchom przywracanie projektu „{1}”.</target>
