@@ -3,11 +3,13 @@
   <Import Project="Version.Details.props" />
 
   <PropertyGroup>
+    <VersionMajor>11</VersionMajor>
+    <VersionMinor>0</VersionMinor>
     <VersionSDKMinor>1</VersionSDKMinor>
-    <MajorVersion>11</MajorVersion>
-    <MinorVersion>0</MinorVersion>
-    <VersionPrefix>$(MajorVersion).$(MinorVersion).$(VersionSDKMinor)00</VersionPrefix>
-    <PreReleaseVersionLabel>alpha</PreReleaseVersionLabel>
+    <VersionSDKMinorPatch>0</VersionSDKMinorPatch>
+    <VersionFeature>$([System.String]::Copy('$(VersionSDKMinorPatch)').PadLeft(2, '0'))</VersionFeature>
+    <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionSDKMinor)$(VersionFeature)</VersionPrefix>
+    <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
     <PreReleaseVersionIteration></PreReleaseVersionIteration>
 
     <!-- 
@@ -64,5 +66,8 @@
     <!-- external dependencies -->
     <NewtonsoftJsonVersion>13.0.4</NewtonsoftJsonVersion>
   </PropertyGroup>
+<<<<<<< HEAD
 
+=======
+>>>>>>> ae7c9f193e2 (Align branding across VMR and SDK branches)
 </Project>
