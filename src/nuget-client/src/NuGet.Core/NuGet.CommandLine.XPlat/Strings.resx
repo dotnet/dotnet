@@ -1167,4 +1167,7 @@ Do not translate "PackageVersion"</comment>
     <comment>{0} = package ID 
 {1} = comma-separated list of all configured sources </comment>
   </data>
+  <data name="WhyCommand_Error_InconsistentAssetsFile" xml:space="preserve">
+    <value>Internal error: Assets file is inconsistent</value>
+  </data>
 </root>
