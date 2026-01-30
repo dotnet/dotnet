@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -52,6 +52,7 @@ public class SdkTemplateTest
             {
                 PreMadeName = PreMadeSolution;
             }
+            projectName = PreMadeName;
             projectDirectory = Path.Combine(testRoot, PreMadeName);
             string fullPreMadePath = Path.Combine(AppContext.BaseDirectory, PreMadeSolution);
             dotNetHelper.CopyHelper(projectDirectory, fullPreMadePath, true);

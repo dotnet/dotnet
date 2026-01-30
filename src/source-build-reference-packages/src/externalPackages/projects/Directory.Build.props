@@ -13,7 +13,7 @@
     <SubmoduleDirectory>$([MSBuild]::NormalizeDirectory('$(ExternalPackagesDir)', 'src'))</SubmoduleDirectory>
     <PatchesDir>$([MSBuild]::NormalizeDirectory('$(ExternalPackagesDir)', 'patches'))</PatchesDir>
     <OriginalProjectDirectory>$([MSBuild]::NormalizeDirectory('$(SubmoduleDirectory)', '$(InnerRepoName)'))</OriginalProjectDirectory>
-    <ProjectDirectory>$([MSBuild]::NormalizeDirectory('$(OriginalProjectDirectory)', 'artifacts', 'clone'))</ProjectDirectory>
+    <ProjectDirectory>$([MSBuild]::NormalizeDirectory('$(BaseIntermediateOutputPath)', 'clone'))</ProjectDirectory>
     <ArtifactsLogRepoDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsLogDir)', '$(InnerRepoName)'))</ArtifactsLogRepoDir>
 
     <MinimalConsoleLogOutput Condition="'$(MinimalConsoleLogOutput)' == ''">true</MinimalConsoleLogOutput>

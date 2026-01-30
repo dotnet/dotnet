@@ -4,69 +4,31 @@
   <Import Project="$(ManualNuspecTargets)" />
   <Import Project="$(RepositoryEngineeringDir)ILTooling.targets" />
 
-  <Target Name="PatchIl"
-          Condition="'@(TargetingPackSrcRequiringConstraintPatch)' != ''">
-    <ItemGroup>
-      <TargetingPackSrcRequiringConstraintPatch
-        DestinationFile="$(IntermediateOutputPath)%(RecursiveDir)%(Filename).patched%(Extension)"
-        RelativeOutputAssemblyFile="%(RecursiveDir)%(Filename).dll" />
-    </ItemGroup>
-
-    <!--
-      Wrap constraint in single quotes in certain circumstances to avoid using reserved token.
-      Function param:
-        " constraint," => " 'constraint',"
-        " constraint)" => " 'constraint')"
-        " constraint"(eol) => " 'constraint'"(eol) (%24 is $ escaped in hex)
-    -->
-    <Exec Command="
-      set -e
-      destination=&quot;%(TargetingPackSrcRequiringConstraintPatch.DestinationFile)&quot;
-      mkdir -p &quot;${destination%/*}&quot;
-      sed -E &quot;s/ constraint(([,)])|%24)/ 'constraint'\2/g&quot; &quot;%(TargetingPackSrcRequiringConstraintPatch.FullPath)&quot; > &quot;$destination&quot;" />
-
-    <ItemGroup>
-      <TargetingPackSrc
-        Include="@(TargetingPackSrcRequiringConstraintPatch->'%(DestinationFile)')" />
-    </ItemGroup>
-  </Target>
-
-  <Target Name="BuildTargetingPackIlSrc"
-          DependsOnTargets="PatchIl"
-          Condition="'@(TargetingPackSrc)' != ''">
+  <Target Name="BuildTargetingPackIlSrc" DependsOnTargets="ResolveIlToolPaths">
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Begin $(MSBuildProjectName) -> $(TFMPackTempOutputDir)..." />
     <MakeDir Directories="@(TargetingPackSrc->'$(TFMPackTempOutputDir)%(RecursiveDir)')" />
 
     <ItemGroup>
-      <IndividualFileProject
-        Include="$(MSBuildProjectFullPath)"
-        Properties="
-          IlFile=%(TargetingPackSrc.Identity);
-          OutputFile=$(TFMPackTempOutputDir)%(TargetingPackSrc.RelativeOutputAssemblyFile)" />
+      <IndividualFileProject Include="$(MSBuildProjectFullPath)"
+        Properties="IlFile=%(TargetingPackSrc.Identity);OutputFile=$(TFMPackTempOutputDir)%(TargetingPackSrc.RelativeOutputAssemblyFile)" />
     </ItemGroup>
 
-    <MSBuild
-      Projects="@(IndividualFileProject)"
-      Targets="BuildIlFile"
-      BuildInParallel="true"
-      StopOnFirstFailure="true" />
+    <MSBuild Projects="@(IndividualFileProject)"
+             Targets="BuildIlFile"
+             BuildInParallel="true"
+             StopOnFirstFailure="true" />
 
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] $(MSBuildProjectName) -> $(TFMPackTempOutputDir) DONE" />
   </Target>
 
-  <Target Name="BuildIlFile"
-          DependsOnTargets="ResolveIlToolPaths">
-    <Exec
-      Command="$(MSBuildThisFileDirectory)build-il.sh $(IlasmDir) $(IlFile) $(OutputFile)"
-      IgnoreStandardErrorWarningFormat="true"
-      CustomErrorRegularExpression=": error : " />
-  </Target>
+  <Target Name="BuildIlFile" DependsOnTargets="ResolveIlToolPaths">
+    <Error Condition="'$(IlasmPath)' == ''" Text="The 'IlasmPath' property must be set." />
 
+    <Exec Command="$(IlasmPath) $(IlFile) -dll -quiet -nologo &quot;-output=$(OutputFile)&quot;"
+          IgnoreStandardErrorWarningFormat="true"
+          CustomErrorRegularExpression=": error : " />
+    </Target>
 
-  <Target Name="Build"
-          Condition="'$(SkipTargetingPacks)' != 'true'"
-          DependsOnTargets="
-            GetProjectSrc;
-            BuildTargetingPackIlSrc" />
+  <Target Name="Build" DependsOnTargets="GetProjectSrc;BuildTargetingPackIlSrc" />
 
 </Project>
