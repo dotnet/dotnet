@@ -249,10 +249,7 @@ jobs:
         value: $(commandPrefix)clean-while-building
 
   - name: brandingArgument
-    ${{ if ne(variables['brandingType'], '') }}:
-      value: $(commandPrefix)branding $(brandingType)
-    ${{ else }}:
-      value: ''
+    value: $(commandPrefix)branding $(brandingType)
 
   - ${{ if and(eq(variables['System.TeamProject'], 'internal'), notin(variables['Build.Reason'], 'PullRequest')) }}:
     - name: officialBuildArgument

@@ -67,7 +67,7 @@ variables:
     value: 'release'
 - ${{ else }}:
   - name: brandingType
-    value: ''
+    value: 'repodefault'
 
 ## Do not set this when building source only to avoid including telemetry in the bootstrap artifacts
 ## handed off to distro partners.
