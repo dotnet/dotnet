@@ -130,7 +130,8 @@ public partial class WriteSbrpUsageReport : Task
     {
         try
         {
-            using var archive = new ZipArchive(File.OpenRead(nupkgFilePath), ZipArchiveMode.Read);
+            using var fileStream = File.OpenRead(nupkgFilePath);
+            using var archive = new ZipArchive(fileStream, ZipArchiveMode.Read);
             var nuspecEntry = archive.Entries.FirstOrDefault(e => e.Name.EndsWith(".nuspec"));
             
             if (nuspecEntry == null)
