@@ -66,8 +66,4 @@
     <!-- external dependencies -->
     <NewtonsoftJsonVersion>13.0.4</NewtonsoftJsonVersion>
   </PropertyGroup>
-<<<<<<< HEAD
-
-=======
->>>>>>> ae7c9f193e2 (Align branding across VMR and SDK branches)
 </Project>
