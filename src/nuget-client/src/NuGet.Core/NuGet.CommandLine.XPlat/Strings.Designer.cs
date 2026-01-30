@@ -205,7 +205,7 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The API key for the server..
+        ///   Looks up a localized string similar to The API key for the server. If not set, the NUGET_API_KEY environment variable is read..
         /// </summary>
         internal static string ApiKey_Description {
             get {
@@ -2368,7 +2368,7 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The API key for the symbol server..
+        ///   Looks up a localized string similar to The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read..
         /// </summary>
         internal static string SymbolApiKey_Description {
             get {

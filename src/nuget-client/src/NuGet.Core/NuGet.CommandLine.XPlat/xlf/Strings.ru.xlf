@@ -83,8 +83,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ApiKey_Description">
-        <source>The API key for the server.</source>
-        <target state="translated">Ключ API сервера.</target>
+        <source>The API key for the server. If not set, the NUGET_API_KEY environment variable is read.</source>
+        <target state="needs-review-translation">Ключ API сервера.</target>
         <note />
       </trans-unit>
       <trans-unit id="App_FullName">
@@ -1288,8 +1288,8 @@ The search is a case-insensitive string comparison using the supplied value, whi
         <note />
       </trans-unit>
       <trans-unit id="SymbolApiKey_Description">
-        <source>The API key for the symbol server.</source>
-        <target state="translated">Ключ API сервера символов.</target>
+        <source>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</source>
+        <target state="needs-review-translation">Ключ API сервера символов.</target>
         <note />
       </trans-unit>
       <trans-unit id="SymbolSource_Description">
