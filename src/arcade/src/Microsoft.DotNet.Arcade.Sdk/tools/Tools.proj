@@ -48,10 +48,10 @@
 
   <ItemGroup Condition="'$(_ImportOrUseTooling)' == 'true'">
     <!-- Copy of 'sn.exe' in form of NuGet package. -->
-    <PackageDownload Include="sn" Version="$(SNVersion)" />
+    <PackageDownload Include="sn" Version="[$(SNVersion)]" />
     <PackageDownload Include="Microsoft.VisualStudioEng.MicroBuild.Core" Version="[$(MicrosoftVisualStudioEngMicroBuildCoreVersion)]" />
     <PackageDownload Include="MicroBuild.Core.Sentinel" Version="[1.0.0]" />
-    <PackageDownload Include="vswhere" Version="$(VSWhereVersion)" />
+    <PackageDownload Include="vswhere" Version="[$(VSWhereVersion)]" />
     <PackageDownload Include="Microsoft.Signed.Wix" Version="[$(MicrosoftSignedWixVersion)]" />
     <PackageDownload Include="Microsoft.WixToolset.Sdk" Version="[$(MicrosoftWixToolsetSdkVersion)]" />
     <PackageDownload Include="Microsoft.DotNet.SignTool" Version="[$(MicrosoftDotNetSignToolVersion)]" />
