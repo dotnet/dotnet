@@ -64,7 +64,7 @@ public class IntegrationTestEnvironment
         // Need to remove this assumption when we move to a CDP.
         PackageDirectory = Path.Combine(RepoRootDirectory, @".packages");
         TestArtifactsDirectory = Path.Combine(RepoRootDirectory, "artifacts", "testArtifacts");
-        RunnerFramework = "net462";
+        RunnerFramework = "net48";
     }
 
     /// <summary>
@@ -143,7 +143,7 @@ public class IntegrationTestEnvironment
 
     /// <summary>
     /// Gets the application type.
-    /// Supported values = <c>net462</c>, <c>net8.0</c>.
+    /// Supported values = <c>net48</c>, <c>net10.0</c>.
     /// </summary>
     public string RunnerFramework { get; set; }
 
@@ -206,7 +206,7 @@ public class IntegrationTestEnvironment
             assetPath = Path.Combine(RepoRootDirectory, "artifacts", "bin", "TestAssets", $"{simpleAssetName}--{versionsHash}", BuildConfiguration, targetFramework, $"{simpleAssetName}--{versionsHash}.dll");
         }
 
-        Assert.IsTrue(File.Exists(assetPath), "GetTestAsset: Path not found: \"{0}\". Most likely you need to build using build.cmd -s PrepareAcceptanceTests.", assetPath);
+        Assert.IsTrue(File.Exists(assetPath), "GetTestAsset: Path not found: \"{0}\". Most likely changed the name or target framework of the project.", assetPath);
 
         // If you are thinking about wrapping the path in double quotes here,
         // then don't. File.Exist cannot handle quoted paths, and we use it in a lot of places.
