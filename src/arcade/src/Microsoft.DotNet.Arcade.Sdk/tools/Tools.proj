@@ -3,7 +3,7 @@
 
   <Import Project="BuildStep.props" />
 
-  <!-- Properties requires by NuGet.targets to restore PackageReferences -->
+  <!-- Properties requires by NuGet.targets to restore packages -->
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <!-- Workaround changes from newer MSBuild requiring additional properties --> 
@@ -11,6 +11,9 @@
     <TargetFrameworkIdentifier  Condition="'$(TargetFrameworkIdentifier)' == ''">.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkMoniker Condition="'$(TargetFrameworkMoniker)' == ''">.NETFramework,Version=v4.7.2</TargetFrameworkMoniker>   
     <MSBuildProjectExtensionsPath>$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
+
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
 
     <!-- Internal tool restore settings -->
     <!-- VisualStudio.InsertionManifests.targets: Keep condition in sync with import in AfterSigning.proj. -->
@@ -34,7 +37,7 @@
   <Import Project="$(_NuGetRestoreTargets)" />
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.DotNet.NuGetRepack.Tasks" Version="$(MicrosoftDotnetNuGetRepackTasksVersion)" Condition="'$(UsingToolNuGetRepack)' == 'true'" IsImplicitlyDefined="true" />
+    <PackageDownload Include="Microsoft.DotNet.NuGetRepack.Tasks" Version="[$(MicrosoftDotnetNuGetRepackTasksVersion)]" Condition="'$(UsingToolNuGetRepack)' == 'true'" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -45,24 +48,23 @@
 
   <ItemGroup Condition="'$(_ImportOrUseTooling)' == 'true'">
     <!-- Copy of 'sn.exe' in form of NuGet package. -->
-    <PackageReference Include="sn" Version="$(SNVersion)" IsImplicitlyDefined="true" />
-    <PackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Core" Version="$(MicrosoftVisualStudioEngMicroBuildCoreVersion)" IsImplicitlyDefined="true" />
-    <PackageReference Include="MicroBuild.Core.Sentinel" Version="1.0.0" IsImplicitlyDefined="true" />
-    <PackageReference Include="vswhere" Version="$(VSWhereVersion)" IsImplicitlyDefined="true" />
-    <PackageReference Include="Microsoft.Signed.Wix" Version="$(MicrosoftSignedWixVersion)" IsImplicitlyDefined="true" />
-    <PackageReference Include="Microsoft.WixToolset.Sdk" Version="$(MicrosoftWixToolsetSdkVersion)" IsImplicitlyDefined="true" />
-    <PackageReference Include="Microsoft.DotNet.SignTool" Version="$(MicrosoftDotNetSignToolVersion)" IsImplicitlyDefined="true" />
-    <PackageReference Include="Microsoft.DotNet.Tar" Version="$(MicrosoftDotNetTarVersion)" IsImplicitlyDefined="true" />
-    <PackageReference Include="Microsoft.DotNet.MacOsPkg.Cli" Version="$(MicrosoftDotNetMacOsPkgVersion)" IsImplicitlyDefined="true" />
-    <PackageReference Include="Microsoft.SymbolUploader.Build.Task" Version="$(MicrosoftSymbolUploaderBuildTaskVersion)" Condition="'$(PublishToSymbolServer)' == 'true'" IsImplicitlyDefined="true" />
-    <PackageReference Include="Microsoft.DotNet.Build.Tasks.VisualStudio" Version="$(MicrosoftDotNetBuildTasksVisualStudioVersion)" Condition="'$(UsingToolVSSDK)' == 'true'" IsImplicitlyDefined="true" />
+    <PackageDownload Include="sn" Version="[$(SNVersion)]" />
+    <PackageDownload Include="Microsoft.VisualStudioEng.MicroBuild.Core" Version="[$(MicrosoftVisualStudioEngMicroBuildCoreVersion)]" />
+    <PackageDownload Include="MicroBuild.Core.Sentinel" Version="[1.0.0]" />
+    <PackageDownload Include="vswhere" Version="[$(VSWhereVersion)]" />
+    <PackageDownload Include="Microsoft.Signed.Wix" Version="[$(MicrosoftSignedWixVersion)]" />
+    <PackageDownload Include="Microsoft.WixToolset.Sdk" Version="[$(MicrosoftWixToolsetSdkVersion)]" />
+    <PackageDownload Include="Microsoft.DotNet.SignTool" Version="[$(MicrosoftDotNetSignToolVersion)]" />
+    <PackageDownload Include="Microsoft.DotNet.MacOsPkg.Cli" Version="[$(MicrosoftDotNetMacOsPkgVersion)]" />
+    <PackageDownload Include="Microsoft.SymbolUploader.Build.Task" Version="[$(MicrosoftSymbolUploaderBuildTaskVersion)]" Condition="'$(PublishToSymbolServer)' == 'true'" />
+    <PackageDownload Include="Microsoft.DotNet.Build.Tasks.VisualStudio" Version="[$(MicrosoftDotNetBuildTasksVisualStudioVersion)]" Condition="'$(UsingToolVSSDK)' == 'true'" />
   </ItemGroup>
 
   <!-- Unlike the items above, we should restore M.D.B.T.F in source build scenarios.
       Only reference this if publishing is enabled as that is the only scenario where the targets file which this package
       provides is being imported (from Publish.proj). -->
   <ItemGroup Condition="'$(RestoreBuildTaskFeed)' == 'true'">
-    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Feed" Version="$(MicrosoftDotNetBuildTasksFeedVersion)" IsImplicitlyDefined="true" />
+    <PackageDownload Include="Microsoft.DotNet.Build.Tasks.Feed" Version="[$(MicrosoftDotNetBuildTasksFeedVersion)]" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -97,10 +99,10 @@
   </Target>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.DotNet.SourceBuild.Tasks"
-                      Version="$(MicrosoftDotNetSourceBuildTasksVersion)"
-                      IsImplicitlyDefined="true"
-                      Condition="'$(TrackPrebuiltUsage)' == 'true'" />
+    <PackageDownload Include="Microsoft.DotNet.SourceBuild.Tasks"
+      Version="[$(MicrosoftDotNetSourceBuildTasksVersion)]"
+      IsImplicitlyDefined="true"
+      Condition="'$(TrackPrebuiltUsage)' == 'true'" />
   </ItemGroup>
 
   <!-- Repository extensibility point -->

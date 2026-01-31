@@ -62,7 +62,6 @@ namespace Microsoft.DotNet.Helix.AzureDevOps
                     // observed on Mac anyway.
                     // https://github.com/dotnet/dnceng/issues/6410
 
-#if NET
                     using SocketsHttpHandler handler = new SocketsHttpHandler
                     {
                         AllowAutoRedirect = false,
@@ -88,13 +87,6 @@ namespace Microsoft.DotNet.Helix.AzureDevOps
                     };
 
                     using (var client = new HttpClient(handler)
-#else
-                    using (var client = new HttpClient(new HttpClientHandler
-                    {
-                        AllowAutoRedirect = false,
-                        CheckCertificateRevocationList = true,
-                    })
-#endif
                     {
                         DefaultRequestHeaders =
                         {

@@ -130,7 +130,7 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests
             }
         }
 
-        [Fact]
+        [WindowsOnlyFact]
         public void Execute()
         {
             var temp = Path.GetTempPath();
@@ -182,7 +182,7 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests
   ""RelativeInstallationPath"": ""Common7\\IDE\\PrivateAssemblies\\System.Collections.Immutable.dll"",
   ""InstrumentationArguments"": ""/ExeConfig:\""%VisualStudio.InstallationUnderTest.Path%\\Common7\\IDE\\vsn.exe\""""
 }
-", json);
+", json, ignoreLineEndingDifferences: true);
 
             JObject.Parse(json);
 
@@ -193,7 +193,7 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests
   ""RelativeInstallationPath"": ""MSBuild\\15.0\\Bin\\Roslyn\\System.Collections.Immutable.dll"",
   ""InstrumentationArguments"": ""/ExeConfig:\""%VisualStudio.InstallationUnderTest.Path%\\Common7\\IDE\\zzz.exe\""""
 }
-", json);
+", json, ignoreLineEndingDifferences: true);
 
             JObject.Parse(json);
 
@@ -204,7 +204,7 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests
   ""RelativeInstallationPath"": ""Common7\\IDE\\CommonExtensions\\Microsoft\\ManagedLanguages\\VBCSharp\\LanguageServices\\x\\y\\z\\Microsoft.CodeAnalysis.CSharp.dll"",
   ""InstrumentationArguments"": ""/ExeConfig:\""%VisualStudio.InstallationUnderTest.Path%\\Common7\\IDE\\vsn.exe\""""
 }
-", json);
+", json, ignoreLineEndingDifferences: true);
             JObject.Parse(json);
 
             json = File.ReadAllText(Path.Combine(outputDir, @"TeamEng\Configurations\TeamEng.OptProfTest.vs_debugger_start_no_build_cs_scribble\xyzMicrosoft.CodeAnalysis.VisualBasic.0.IBC.json"));
@@ -214,7 +214,7 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests
   ""RelativeInstallationPath"": ""Common7\\IDE\\CommonExtensions\\Microsoft\\ManagedLanguages\\VBCSharp\\LanguageServices\\x\\y\\z\\Microsoft.CodeAnalysis.VisualBasic.dll"",
   ""InstrumentationArguments"": ""/ExeConfig:\""%VisualStudio.InstallationUnderTest.Path%\\Common7\\IDE\\vsn.exe\""""
 }
-", json);
+", json, ignoreLineEndingDifferences: true);
             JObject.Parse(json);
 
             Assert.True(result);

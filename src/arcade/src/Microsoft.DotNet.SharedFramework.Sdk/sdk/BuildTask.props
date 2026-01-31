@@ -4,13 +4,17 @@
   <!-- This file exists so that consumers can import only this part of the Shared Framework SDK infrastructure
        without importing all the props and targets definitions. This is useful when a task should be invoked.
        Example: <Import Project="BuildTask.props" Sdk="Microsoft.DotNet.SharedFramework.Sdk" />  -->
-  <PropertyGroup Condition="'$(DotNetSharedFrameworkTaskDir)' == ''">
-    <DotNetSharedFrameworkTaskDir Condition="'$(MSBuildRuntimeType)' == 'core'">$(MSBuildThisFileDirectory)../tools/net/</DotNetSharedFrameworkTaskDir>
-    <DotNetSharedFrameworkTaskDir Condition="'$(MSBuildRuntimeType)' != 'core'">$(MSBuildThisFileDirectory)../tools/netframework/</DotNetSharedFrameworkTaskDir>
-  </PropertyGroup>
-
   <PropertyGroup>
+    <DotNetSharedFrameworkTaskDir Condition="'$(DotNetSharedFrameworkTaskDir)' == ''">$(MSBuildThisFileDirectory)../tools/net/</DotNetSharedFrameworkTaskDir>
     <DotNetSharedFrameworkTaskFile>$(DotNetSharedFrameworkTaskDir)Microsoft.DotNet.SharedFramework.Sdk.dll</DotNetSharedFrameworkTaskFile>
   </PropertyGroup>
+
+  <UsingTask TaskName="GenerateSharedFrameworkDepsFile" AssemblyFile="$(DotNetSharedFrameworkTaskFile)" Runtime="NET" />
+  <UsingTask TaskName="GeneratePlatformManifestEntriesFromTemplate" AssemblyFile="$(DotNetSharedFrameworkTaskFile)" Runtime="NET" />
+  <UsingTask TaskName="GeneratePlatformManifestEntriesFromFileList" AssemblyFile="$(DotNetSharedFrameworkTaskFile)" Runtime="NET" />
+  <UsingTask TaskName="CreateFrameworkListFile" AssemblyFile="$(DotNetSharedFrameworkTaskFile)" Runtime="NET" />
+  <UsingTask TaskName="VerifyClosure" AssemblyFile="$(DotNetSharedFrameworkTaskFile)" Runtime="NET" />
+  <UsingTask TaskName="VerifyTypes" AssemblyFile="$(DotNetSharedFrameworkTaskFile)" Runtime="NET" />
+  <UsingTask TaskName="ValidateFileVersions" AssemblyFile="$(DotNetSharedFrameworkTaskFile)" Runtime="NET" />
 
 </Project>

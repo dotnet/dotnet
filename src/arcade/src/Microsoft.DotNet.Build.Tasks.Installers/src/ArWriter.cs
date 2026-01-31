@@ -19,12 +19,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
         {
             _stream = output;
             _leaveOpen = leaveOpen;
-#if NET
             _stream.Write("!<arch>\n"u8);
-#else
-            byte[] magic = Encoding.ASCII.GetBytes("!<arch>\n");
-            _stream.Write(magic, 0, magic.Length);
-#endif
         }
 
         public void AddEntry(ArEntry entry)
@@ -50,11 +45,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
 
         private void Write(byte[] data)
         {
-#if NET
             _stream.Write(data);
-#else
-            _stream.Write(data, 0, data.Length);
-#endif
         }
 
         public void Dispose()

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(BundledNETCoreAppTargetFramework);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <IsPackable>true</IsPackable>
     <SignAssembly>false</SignAssembly>
     <IsBuildTaskProject>true</IsBuildTaskProject>
@@ -19,11 +19,6 @@
     <PackageReference Include="Microsoft.Build.Utilities.Core" />
     <PackageReference Include="CommandLineParser" />
     <ProjectReference Include="..\Microsoft.SignCheck\Microsoft.DotNet.SignCheckLibrary.csproj" Publish="true" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <Reference Include="System.Net.Http" />
-    <Compile Include="..\..\Common\Internal\AssemblyResolution.cs" Link="src\AssemblyResolution.cs" />
   </ItemGroup>
 
   <ItemGroup>

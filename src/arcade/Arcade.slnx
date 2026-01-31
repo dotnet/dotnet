@@ -60,7 +60,6 @@
   <Project Path="src/Microsoft.DotNet.Deployment.Tasks.Links/Microsoft.DotNet.Deployment.Tasks.Links.csproj" />
   <Project Path="src/Microsoft.DotNet.GenAPI/Microsoft.DotNet.GenAPI.csproj" />
   <Project Path="src/Microsoft.DotNet.GenFacades/Microsoft.DotNet.GenFacades.csproj" />
-  <Project Path="src/Microsoft.DotNet.Git.IssueManager/src/Microsoft.DotNet.Git.IssueManager.csproj" />
   <Project Path="src/Microsoft.DotNet.Internal.DependencyInjection.Testing/Microsoft.DotNet.Internal.DependencyInjection.Testing.csproj" />
   <Project Path="src/Microsoft.DotNet.Internal.SymbolHelper/Microsoft.DotNet.Internal.SymbolHelper.csproj" />
   <Project Path="src/Microsoft.DotNet.MacOsPkg/Cli/Microsoft.DotNet.MacOsPkg.Cli.csproj" />
@@ -72,7 +71,6 @@
   <Project Path="src/Microsoft.DotNet.SignTool/Microsoft.DotNet.SignTool.csproj" />
   <Project Path="src/Microsoft.DotNet.SourceBuild/tasks/Microsoft.DotNet.SourceBuild.Tasks.csproj" />
   <Project Path="src/Microsoft.DotNet.StrongName/Microsoft.DotNet.StrongName.csproj" />
-  <Project Path="src/Microsoft.DotNet.Tar/Microsoft.DotNet.Tar.csproj" />
   <Project Path="src/Microsoft.DotNet.XliffTasks/Microsoft.DotNet.XliffTasks.csproj" />
   <Project Path="src/Microsoft.DotNet.XUnitAssert/src/Microsoft.DotNet.XUnitAssert.csproj" />
   <Project Path="src/Microsoft.DotNet.XUnitConsoleRunner/src/Microsoft.DotNet.XUnitConsoleRunner.csproj" />

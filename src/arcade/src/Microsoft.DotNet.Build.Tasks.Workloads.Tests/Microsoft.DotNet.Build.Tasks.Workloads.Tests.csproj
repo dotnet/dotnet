@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(BundledNETCoreAppTargetFramework);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,10 +14,6 @@
     <PackageReference Include="Microsoft.NET.Sdk.WorkloadManifestReader" />
     <PackageReference Include="Microsoft.Signed.Wix" />
     <PackageReference Include="FluentAssertions" />
-  </ItemGroup>
-
-  <!-- The tests reference the MSBuild task assembly directly and therefore we need to add references that would normally be provided by MSBuild. -->
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
     <PackageReference Include="NuGet.Packaging" />
   </ItemGroup>
 
@@ -34,10 +30,6 @@
     <PackageDownload Include="Microsoft.NET.Runtime.Emscripten.2.0.23.Python.win-x64" Version="[$(MicrosoftNETRuntimeEmscripten2023Pythonwin_x64)]" />
     <PackageDownload Include="Microsoft.NET.Runtime.Emscripten.2.0.23.Sdk.win-x64" Version="[$(MicrosoftNETRuntimeEmscripten2023Sdkwin_x64)]" />
     <PackageDownload Include="Microsoft.NET.Workloads.9.0.100" Version="[$(MicrosoftNETWorkloadBaselineVersion)]" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <PackageReference Include="System.Text.Json"  />
   </ItemGroup>
 
   <ItemGroup>

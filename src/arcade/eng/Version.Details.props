@@ -27,7 +27,6 @@ This file should be imported by eng/Versions.props
     <!-- dotnet/diagnostics dependencies -->
     <MicrosoftSymbolManifestGeneratorPackageVersion>8.0.0-preview.24461.2</MicrosoftSymbolManifestGeneratorPackageVersion>
     <!-- dotnet/runtime dependencies -->
-    <MicrosoftBclAsyncInterfacesPackageVersion>9.0.0</MicrosoftBclAsyncInterfacesPackageVersion>
     <MicrosoftExtensionsDependencyInjectionPackageVersion>9.0.0</MicrosoftExtensionsDependencyInjectionPackageVersion>
     <MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>9.0.0</MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>
     <MicrosoftExtensionsDependencyModelPackageVersion>9.0.0</MicrosoftExtensionsDependencyModelPackageVersion>
@@ -35,14 +34,9 @@ This file should be imported by eng/Versions.props
     <MicrosoftExtensionsFileSystemGlobbingPackageVersion>9.0.0</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
     <MicrosoftExtensionsHttpPackageVersion>9.0.0</MicrosoftExtensionsHttpPackageVersion>
     <MicrosoftExtensionsLoggingConsolePackageVersion>9.0.0</MicrosoftExtensionsLoggingConsolePackageVersion>
-    <SystemCollectionsImmutablePackageVersion>9.0.0</SystemCollectionsImmutablePackageVersion>
-    <SystemFormatsAsn1PackageVersion>9.0.0</SystemFormatsAsn1PackageVersion>
     <SystemIOPackagingPackageVersion>9.0.0</SystemIOPackagingPackageVersion>
-    <SystemReflectionMetadataPackageVersion>9.0.0</SystemReflectionMetadataPackageVersion>
     <SystemSecurityCryptographyPkcsPackageVersion>9.0.0</SystemSecurityCryptographyPkcsPackageVersion>
     <SystemSecurityCryptographyXmlPackageVersion>9.0.0</SystemSecurityCryptographyXmlPackageVersion>
-    <SystemTextEncodingsWebPackageVersion>9.0.0</SystemTextEncodingsWebPackageVersion>
-    <SystemTextJsonPackageVersion>9.0.0</SystemTextJsonPackageVersion>
     <!-- dotnet/deployment-tools dependencies -->
     <MicrosoftDeploymentDotNetReleasesPackageVersion>2.0.0-preview.1.24305.1</MicrosoftDeploymentDotNetReleasesPackageVersion>
     <!-- dotnet/sdk dependencies -->
@@ -81,7 +75,6 @@ This file should be imported by eng/Versions.props
     <!-- dotnet/diagnostics dependencies -->
     <MicrosoftSymbolManifestGeneratorVersion>$(MicrosoftSymbolManifestGeneratorPackageVersion)</MicrosoftSymbolManifestGeneratorVersion>
     <!-- dotnet/runtime dependencies -->
-    <MicrosoftBclAsyncInterfacesVersion>$(MicrosoftBclAsyncInterfacesPackageVersion)</MicrosoftBclAsyncInterfacesVersion>
     <MicrosoftExtensionsDependencyInjectionVersion>$(MicrosoftExtensionsDependencyInjectionPackageVersion)</MicrosoftExtensionsDependencyInjectionVersion>
     <MicrosoftExtensionsDependencyInjectionAbstractionsVersion>$(MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion)</MicrosoftExtensionsDependencyInjectionAbstractionsVersion>
     <MicrosoftExtensionsDependencyModelVersion>$(MicrosoftExtensionsDependencyModelPackageVersion)</MicrosoftExtensionsDependencyModelVersion>
@@ -89,14 +82,9 @@ This file should be imported by eng/Versions.props
     <MicrosoftExtensionsFileSystemGlobbingVersion>$(MicrosoftExtensionsFileSystemGlobbingPackageVersion)</MicrosoftExtensionsFileSystemGlobbingVersion>
     <MicrosoftExtensionsHttpVersion>$(MicrosoftExtensionsHttpPackageVersion)</MicrosoftExtensionsHttpVersion>
     <MicrosoftExtensionsLoggingConsoleVersion>$(MicrosoftExtensionsLoggingConsolePackageVersion)</MicrosoftExtensionsLoggingConsoleVersion>
-    <SystemCollectionsImmutableVersion>$(SystemCollectionsImmutablePackageVersion)</SystemCollectionsImmutableVersion>
-    <SystemFormatsAsn1Version>$(SystemFormatsAsn1PackageVersion)</SystemFormatsAsn1Version>
     <SystemIOPackagingVersion>$(SystemIOPackagingPackageVersion)</SystemIOPackagingVersion>
-    <SystemReflectionMetadataVersion>$(SystemReflectionMetadataPackageVersion)</SystemReflectionMetadataVersion>
     <SystemSecurityCryptographyPkcsVersion>$(SystemSecurityCryptographyPkcsPackageVersion)</SystemSecurityCryptographyPkcsVersion>
     <SystemSecurityCryptographyXmlVersion>$(SystemSecurityCryptographyXmlPackageVersion)</SystemSecurityCryptographyXmlVersion>
-    <SystemTextEncodingsWebVersion>$(SystemTextEncodingsWebPackageVersion)</SystemTextEncodingsWebVersion>
-    <SystemTextJsonVersion>$(SystemTextJsonPackageVersion)</SystemTextJsonVersion>
     <!-- dotnet/deployment-tools dependencies -->
     <MicrosoftDeploymentDotNetReleasesVersion>$(MicrosoftDeploymentDotNetReleasesPackageVersion)</MicrosoftDeploymentDotNetReleasesVersion>
     <!-- dotnet/sdk dependencies -->

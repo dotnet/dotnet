@@ -37,15 +37,6 @@ namespace Microsoft.DotNet.Arcade.Sdk
         {
             const string fileName = "license";
 
-#if NET472
-            IEnumerable<string> enumerateFiles(string extension)
-            {
-                var fileNameWithExtension = fileName + extension;
-                return System.IO.Directory.EnumerateFiles(Directory, "*", SearchOption.TopDirectoryOnly)
-                        .Where(path => string.Equals(fileNameWithExtension, System.IO.Path.GetFileName(path), System.StringComparison.OrdinalIgnoreCase));
-            }
-
-#else
             var options = new EnumerationOptions
             {
                 MatchCasing = MatchCasing.CaseInsensitive,
@@ -57,7 +48,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
 
             IEnumerable<string> enumerateFiles(string extension) =>
                 System.IO.Directory.EnumerateFileSystemEntries(Directory, fileName + extension, options);
-#endif
+
             var matches = 
                 (from extension in new[] { ".txt", ".md", "" }
                  from path in enumerateFiles(extension)

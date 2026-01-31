@@ -37,10 +37,10 @@ The CLI tool is maintained for legacy purposes and is only recommended for repos
 
 - **Supported Frameworks**: .NET Framework only
 - **Invocation**:
-  - `Microsoft.DotNet.SignCheck.exe`
+  - `dnx Microsoft.DotNet.SignCheck`
 - **CLI Options**:
 ```
-Microsoft.DotNet.SignCheck.exe [options]
+Microsoft.DotNet.SignCheck [options]
 
 Options:
 

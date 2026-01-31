@@ -19,7 +19,7 @@
   <Import Project="..\Version.BeforeCommonTargets.targets" />
 
   <PropertyGroup>
-    <TargetFramework>$(NetFrameworkToolCurrent)</TargetFramework>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <NETCORE_ENGINEERING_TELEMETRY>Publish</NETCORE_ENGINEERING_TELEMETRY>
   </PropertyGroup>
 

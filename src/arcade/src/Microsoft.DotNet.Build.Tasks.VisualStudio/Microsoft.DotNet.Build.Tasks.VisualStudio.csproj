@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>$(NetFrameworkToolCurrent)</TargetFramework>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <IsPackable>true</IsPackable>
     <IsBuildTaskProject>true</IsBuildTaskProject>
     <PackageDescription>Arcade SDK build tasks for Visual Studio profile guided optimization training</PackageDescription>
@@ -12,9 +12,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Tasks.Core" />
     <PackageReference Include="Newtonsoft.Json" />
-
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="WindowsBase" />
+    <PackageReference Include="System.IO.Packaging" />
   </ItemGroup>
 
   <ItemGroup>

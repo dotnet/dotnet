@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(BundledNETCoreAppTargetFramework);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <PackageType>MSBuildSdk</PackageType>
     <IsPackable>true</IsPackable>
     <IsBuildTaskProject>true</IsBuildTaskProject>
@@ -14,11 +14,6 @@
 
   <ItemGroup>
     <Compile Include="..\Common\Internal\BuildTask.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <Compile Include="..\Common\Internal\AssemblyResolver.cs" />
-    <Compile Include="..\Common\Internal\BuildTask.Desktop.cs" />
   </ItemGroup>
 
 </Project>

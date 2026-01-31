@@ -16,15 +16,8 @@ using System.Text.Json;
 
 namespace Microsoft.DotNet.Arcade.Sdk
 {
-#if NET472
-    [LoadInSeparateAppDomain]
-    public class InstallDotNetCore : AppDomainIsolatedTask
-    {
-        static InstallDotNetCore() => AssemblyResolution.Initialize();
-#else
     public class InstallDotNetCore : Microsoft.Build.Utilities.Task
     {
-#endif
         private static readonly char[] s_keyTrimChars = [ '$', '(', ')' ];
 
         public string VersionsPropsPath { get; set; }

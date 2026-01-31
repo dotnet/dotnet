@@ -40,11 +40,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 byte[] hash = md5.ComputeHash(fileStream);
                 string relativePath = file.ItemSpec.Substring(RootDirectory.Length).TrimStart(Path.DirectorySeparatorChar).Replace('\\', '/');
                 // Always use Linux line-endings
-#if NET
                 writer.Write($"{Convert.ToHexString(hash)} {relativePath}\n");
-#else
-                writer.Write($"{BitConverter.ToString(hash).Replace("-", "")} {relativePath}\n");
-#endif
             }
 
             InstalledSize = (installedSize / 1024).ToString();

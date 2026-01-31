@@ -60,7 +60,6 @@ namespace Microsoft.DotNet.Helix.Sdk
 
         public override void ConfigureServices(IServiceCollection collection)
         {
-#if NET
             var socketsHandler = new SocketsHttpHandler
             {
                 AllowAutoRedirect = true,
@@ -85,9 +84,7 @@ namespace Microsoft.DotNet.Helix.Sdk
                 VerificationTimeIgnored = true,
             };
             _httpMessageHandler = socketsHandler;
-#else
-            _httpMessageHandler = new HttpClientHandler { CheckCertificateRevocationList = true };
-#endif
+
             collection.TryAddSingleton(_httpMessageHandler);
             collection.TryAddSingleton(Log);
         }

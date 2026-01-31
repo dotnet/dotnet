@@ -26,7 +26,6 @@ namespace Microsoft.DotNet.SignTool
 
         internal string Wix3ToolsPath => _args.Wix3ToolsPath;
         internal string WixToolsPath => _args.WixToolsPath;
-        internal string TarToolPath => _args.TarToolPath;
         internal string PkgToolPath => _args.PkgToolPath;
 
         internal SignTool(SignToolArgs args, TaskLoggingHelper log)
@@ -126,14 +125,7 @@ namespace Microsoft.DotNet.SignTool
                 }
                 else
                 {
-                    // Delete the file first so that we can overwrite it. ExtractToDirectory's overwrite is not
-                    // available on framework.
-#if NETFRAMEWORK
-                    File.Delete(item.Key);
-                    ZipFile.ExtractToDirectory(item.Value, Path.GetDirectoryName(item.Key));
-#else
                     ZipFile.ExtractToDirectory(item.Value, Path.GetDirectoryName(item.Key), true);
-#endif
                 }
 
                 File.Delete(item.Value);
