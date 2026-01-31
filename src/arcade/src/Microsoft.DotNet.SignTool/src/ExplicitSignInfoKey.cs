@@ -6,7 +6,12 @@ using System.Diagnostics;
 
 namespace Microsoft.DotNet.SignTool
 {
-    internal readonly struct ExplicitCertificateKey : IEquatable<ExplicitCertificateKey>
+    /// <summary>
+    /// Key used to identify file-specific signing information in FileSignInfo.
+    /// Represents the entity being signed (file name, path, attributes) rather than just certificate correlation.
+    /// Can be used to specify signing properties like DoNotUnpack independently of certificates.
+    /// </summary>
+    internal readonly struct ExplicitSignInfoKey : IEquatable<ExplicitSignInfoKey>
     {
         public readonly string FileName;
         public readonly string PublicKeyToken;
@@ -14,7 +19,7 @@ namespace Microsoft.DotNet.SignTool
         public readonly string CollisionPriorityId;
         public readonly ExecutableType ExecutableType;
 
-        public ExplicitCertificateKey(string fileName, string publicKeyToken = null, string targetFramework = null, string collisionPriorityId = null, ExecutableType executableType = ExecutableType.None)
+        public ExplicitSignInfoKey(string fileName, string publicKeyToken = null, string targetFramework = null, string collisionPriorityId = null, ExecutableType executableType = ExecutableType.None)
         {
             Debug.Assert(fileName != null);
 
@@ -26,22 +31,22 @@ namespace Microsoft.DotNet.SignTool
         }
 
         public override bool Equals(object obj)
-            => obj is ExplicitCertificateKey key && Equals(key);
+            => obj is ExplicitSignInfoKey key && Equals(key);
 
         public override int GetHashCode()
             => Hash.Combine(Hash.Combine(FileName.GetHashCode(), PublicKeyToken.GetHashCode()), Hash.Combine(TargetFramework.GetHashCode(), ExecutableType.GetHashCode()));
 
-        bool IEquatable<ExplicitCertificateKey>.Equals(ExplicitCertificateKey other)
+        bool IEquatable<ExplicitSignInfoKey>.Equals(ExplicitSignInfoKey other)
             => FileName == other.FileName && 
             CollisionPriorityId == other.CollisionPriorityId &&
             string.Equals(PublicKeyToken, other.PublicKeyToken, StringComparison.OrdinalIgnoreCase) && 
             TargetFramework == other.TargetFramework &&
             ExecutableType == other.ExecutableType;
 
-        public static bool operator ==(ExplicitCertificateKey key1, ExplicitCertificateKey key2) 
+        public static bool operator ==(ExplicitSignInfoKey key1, ExplicitSignInfoKey key2) 
             => key1.Equals(key2);
 
-        public static bool operator !=(ExplicitCertificateKey key1, ExplicitCertificateKey key2)
+        public static bool operator !=(ExplicitSignInfoKey key1, ExplicitSignInfoKey key2)
             => !(key1 == key2);
     }
 }

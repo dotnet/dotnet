@@ -137,6 +137,12 @@ namespace Microsoft.DotNet.SignTool
         public const string CollisionPriorityId = "CollisionPriorityId";
         
         /// <summary>
+        /// Attribute to indicate that a container should be signed without unpacking.
+        /// When set to true, only the top-level container is signed and nested contents are not extracted or signed.
+        /// </summary>
+        public const string DoNotUnpack = "DoNotUnpack";
+        
+        /// <summary>
         /// Notarization operation microbuild ID. Microbuild does not currently support the friendly name, MacNotarize
         /// </summary>
         public const string MacNotarizationOperation = "8020";
