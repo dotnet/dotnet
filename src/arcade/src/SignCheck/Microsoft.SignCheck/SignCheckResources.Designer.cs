@@ -374,6 +374,15 @@ namespace Microsoft.SignCheck {
                 return ResourceManager.GetString("DiagSectionHeader", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Skipping archive extraction on {0}.
+        /// </summary>
+        internal static string DiagSkippingArchiveExtraction {
+            get {
+                return ResourceManager.GetString("DiagSkippingArchiveExtraction", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Skipping strong name signature check..
