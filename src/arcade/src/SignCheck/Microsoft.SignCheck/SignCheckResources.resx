@@ -222,6 +222,9 @@
   <data name="DiagSectionHeader" xml:space="preserve">
     <value>Found section header '{0}'.</value>
   </data>
+  <data name="DiagSkippingArchiveExtraction" xml:space="preserve">
+    <value>Skipping archive extraction on {0}.</value>
+  </data>
   <data name="DiagSkippingStrongName" xml:space="preserve">
     <value>Skipping strong name signature check.</value>
   </data>

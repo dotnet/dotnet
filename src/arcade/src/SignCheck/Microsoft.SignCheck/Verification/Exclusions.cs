@@ -22,6 +22,7 @@ namespace Microsoft.SignCheck.Verification
         private const string DoNotSign = "DO-NOT-SIGN";
         private const string General = "GENERAL";
         private const string IgnoreStrongName = "IGNORE-STRONG-NAME";
+        private const string DoNotUnpack = "DO-NOT-UNPACK";
 
         public int Count
         {
@@ -113,7 +114,7 @@ namespace Microsoft.SignCheck.Verification
         /// <returns></returns>
         public bool IsExcluded(string path, string parent, string virtualPath, string containerPath)
         {
-            IEnumerable<Exclusion> exclusions = _exclusions.Where(e => !e.Comment.Contains(IgnoreStrongName));
+            IEnumerable<Exclusion> exclusions = _exclusions.Where(e => !e.Comment.Contains(IgnoreStrongName) && !e.Comment.Contains(DoNotUnpack));
             return IsExcluded(path, parent, virtualPath, containerPath, General, exclusions);
         }
 
@@ -136,6 +137,14 @@ namespace Microsoft.SignCheck.Verification
             IEnumerable<Exclusion> noStrongNameExclusions = _exclusions.Where(e => e.Comment.Contains(IgnoreStrongName));
 
             return (noStrongNameExclusions.Count() > 0) && (IsExcluded(path, parent, virtualPath, containerPath, IgnoreStrongName, noStrongNameExclusions));
+        }
+
+        public bool IsDoNotUnpack(string path, string parent, string virtualPath, string containerPath)
+        {
+            // Get all the exclusions with DO-NOT-UNPACK markers and check only against those
+            IEnumerable<Exclusion> doNotUnpackExclusions = _exclusions.Where(e => e.Comment.Contains(DoNotUnpack));
+
+            return (doNotUnpackExclusions.Count() > 0) && (IsExcluded(path, parent, virtualPath, containerPath, DoNotUnpack, doNotUnpackExclusions));
         }
 
         /// <summary>
