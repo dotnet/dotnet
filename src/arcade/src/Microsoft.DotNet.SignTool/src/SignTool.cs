@@ -208,7 +208,7 @@ namespace Microsoft.DotNet.SignTool
             foreach (var fileInfo in detachedSignatureFiles)
             {
                 // Copy the signed content to .sig file
-                File.Copy(fileInfo.FullPath, fileInfo.DetachedSignatureFullPath);
+                File.Copy(fileInfo.FullPath, fileInfo.DetachedSignatureFullPath, overwrite: true);
                 _log.LogMessage($"Created detached signature file: {fileInfo.DetachedSignatureFullPath}");
 
                 // Restore the original file

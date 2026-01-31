@@ -154,7 +154,7 @@
     <value>Signing issues found</value>
   </data>
   <data name="scStats" xml:space="preserve">
-    <value>Total Files: {0}, Signed: {1}, Unsigned: {2}, Skipped: {3}, Excluded: {4}, Skipped &amp; Excluded: {5}</value>
+    <value>Total Files: {0}, Signed: {1}, Unsigned: {2}, Skipped: {3}, Excluded: {4}, Skipped &amp; Excluded: {5}, Not Unpacked: {6}</value>
   </data>
   <data name="scSummary" xml:space="preserve">
     <value />
