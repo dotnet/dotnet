@@ -76,7 +76,8 @@ stages:
               eq(variables['isPRTrigger'], 'true'),
               and(
                   not(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/darc-')),
-                  not(startsWith(variables['System.PullRequest.SourceBranch'], 'darc-'))
+                  not(startsWith(variables['System.PullRequest.SourceBranch'], 'darc-')),
+                  not(eq(variables['Build.RequestedFor'], 'dotnet-bot'))
               )
           )
   jobs:

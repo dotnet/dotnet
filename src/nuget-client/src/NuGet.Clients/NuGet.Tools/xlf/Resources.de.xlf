@@ -24,22 +24,22 @@
       </trans-unit>
       <trans-unit id="Error_CopilotAccessDenied">
         <source>Access denied. Please ensure you are signed in to GitHub Copilot.</source>
-        <target state="new">Access denied. Please ensure you are signed in to GitHub Copilot.</target>
+        <target state="translated">Zugriff verweigert. Bitte stellen Sie sicher, dass Sie bei GitHub Copilot angemeldet sind.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_CopilotNotReady">
         <source>GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in.</source>
-        <target state="new">GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in.</target>
+        <target state="translated">GitHub Copilot ist nicht verfügbar. Bitte stellen Sie sicher, dass GitHub Copilot installiert ist und eine Anmeldung erfolgt ist.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_CopilotServiceNotAvailable">
         <source>GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
-        <target state="new">GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in.</target>
+        <target state="translated">Der GitHub Copilot-Dienst ist nicht verfügbar. Bitte stellen Sie sicher, dass GitHub Copilot installiert ist und eine Anmeldung erfolgt ist.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_McpToolServiceNotAvailable">
         <source>MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
-        <target state="new">MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in.</target>
+        <target state="translated">Der MCP-Tooldienst ist nicht verfügbar. Bitte stellen Sie sicher, dass GitHub Copilot installiert ist und eine Anmeldung erfolgt ist.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingPattern_Missing">
@@ -69,7 +69,7 @@
       </trans-unit>
       <trans-unit id="Error_ServiceBrokerNotAvailable">
         <source>Service Broker is not available. Please ensure Visual Studio is running correctly.</source>
-        <target state="new">Service Broker is not available. Please ensure Visual Studio is running correctly.</target>
+        <target state="translated">Service Broker ist nicht verfügbar. Bitte stellen Sie sicher, dass Visual Studio ordnungsgemäß ausgeführt wird.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoProjectSelected">
@@ -144,7 +144,7 @@
       </trans-unit>
       <trans-unit id="Prompt_FixNuGetPackageVulnerabilities">
         <source>Fix my NuGet package vulnerabilities</source>
-        <target state="new">Fix my NuGet package vulnerabilities</target>
+        <target state="translated">Meine NuGet-Paketsicherheitsrisiken beheben</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
@@ -254,7 +254,7 @@
       </trans-unit>
       <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
         <source>Fix Vulnerabilities with GitHub Copilot</source>
-        <target state="new">Fix Vulnerabilities with GitHub Copilot</target>
+        <target state="translated">Sicherheitsrisiken mit GitHub Copilot beheben</target>
         <note />
       </trans-unit>
       <trans-unit id="clearLocalResources">

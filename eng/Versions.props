@@ -1,14 +1,16 @@
-<Project>
+﻿<Project>
 
   <Import Project="Version.Details.props" />
 
   <PropertyGroup>
+    <VersionMajor>11</VersionMajor>
+    <VersionMinor>0</VersionMinor>
     <VersionSDKMinor>1</VersionSDKMinor>
-    <MajorVersion>11</MajorVersion>
-    <MinorVersion>0</MinorVersion>
-    <VersionPrefix>$(MajorVersion).$(MinorVersion).$(VersionSDKMinor)00</VersionPrefix>
-    <PreReleaseVersionLabel>alpha</PreReleaseVersionLabel>
-    <PreReleaseVersionIteration></PreReleaseVersionIteration>
+    <VersionSDKMinorPatch>0</VersionSDKMinorPatch>
+    <VersionFeature>$([System.String]::Copy('$(VersionSDKMinorPatch)').PadLeft(2, '0'))</VersionFeature>
+    <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionSDKMinor)$(VersionFeature)</VersionPrefix>
+    <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
+    <PreReleaseVersionIteration>2</PreReleaseVersionIteration>
 
     <!-- 
       Allowed values: 'repodefault', 'unstable', 'preview', 'release'
@@ -41,8 +43,8 @@
       of a .NET major or minor release, prebuilts may be needed. When the release is mature, prebuilts
       are not necessary, and this property is removed from the file.
     -->
-    <PrivateSourceBuiltSdkVersion>11.0.100-alpha.1.26064.118</PrivateSourceBuiltSdkVersion>
-    <PrivateSourceBuiltArtifactsVersion>11.0.100-alpha.1.26064.118</PrivateSourceBuiltArtifactsVersion>
+    <PrivateSourceBuiltSdkVersion>11.0.100-preview.1.26078.121</PrivateSourceBuiltSdkVersion>
+    <PrivateSourceBuiltArtifactsVersion>11.0.100-preview.1.26078.121</PrivateSourceBuiltArtifactsVersion>
     <!-- workload manifest version for 1xx SDK feature band, used by 2xx+ branches to include 1xx workloads -->
     <DotNet1xxWorkloadManifestVersion>$([System.Text.RegularExpressions.Regex]::Match($(MicrosoftNETSdkVersion), '^(\d+\.\d+\.\d+)').Value)</DotNet1xxWorkloadManifestVersion>
     <!-- command-line-api dependencies -->
@@ -64,5 +66,4 @@
     <!-- external dependencies -->
     <NewtonsoftJsonVersion>13.0.4</NewtonsoftJsonVersion>
   </PropertyGroup>
-
 </Project>
