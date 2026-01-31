@@ -36,5 +36,8 @@ libbootstrapper*.o;; Not executables, https://github.com/dotnet/runtime/issues/1
 *.exe;*.whl;The .whl files are not supported by ESRP, https://github.com/dotnet/emsdk/commit/3ac196ac425223d11490e759c2641256ce746f21
 libbinaryen.dylib;; fails to sign via ESRP, https://github.com/dotnet/emsdk/commit/3ac196ac425223d11490e759c2641256ce746f21
 
+;; ## Do Not Unpack ##
+dotnet-source-*.tar.gz;; DO-NOT-UNPACK
+
 ;; ## DAC Signed Files ##
 ;; Exclusions for these files are added dynamically when running the VMR Signing Validation task on a non-release branch.
