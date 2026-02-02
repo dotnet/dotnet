@@ -1,9 +1,13 @@
 ﻿<Project>
   <Import Project="Version.Details.props" />
   <PropertyGroup>
-    <VersionSDKMinor>2</VersionSDKMinor>
-    <VersionPrefix>10.0.$(VersionSDKMinor)00</VersionPrefix>
-    <PreReleaseVersionLabel>alpha</PreReleaseVersionLabel>
+    <VersionMajor>10</VersionMajor>
+    <VersionMinor>0</VersionMinor>
+    <VersionSDKMinor>3</VersionSDKMinor>
+    <VersionSDKMinorPatch>0</VersionSDKMinorPatch>
+    <VersionFeature>$([System.String]::Copy('$(VersionSDKMinorPatch)').PadLeft(2, '0'))</VersionFeature>
+    <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionSDKMinor)$(VersionFeature)</VersionPrefix>
+    <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
     <PreReleaseVersionIteration></PreReleaseVersionIteration>
     <!-- 
       Allowed values: 'repodefault', 'unstable', 'preview', 'release'
