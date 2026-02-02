@@ -5,6 +5,11 @@
        Only import when NETCoreSdkBundledVersionsProps is not defined (non SDK style projects).
        Remove when https://github.com/dotnet/msbuild/issues/12895 is implemented. -->
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.BundledVersions.props" Condition="'$(NETCoreSdkBundledVersionsProps)' == ''" />
+  <!-- Set required RuntimeIdentifierGraphPath property for Runtime="NET" support. Remove when
+       a desktop msbuild (via VS) with https://github.com/dotnet/msbuild/pull/13176 is consued. -->
+  <PropertyGroup Condition="'$(UsingMicrosoftNETSdk)' != 'true'">
+    <RuntimeIdentifierGraphPath>$(BundledRuntimeIdentifierGraphFile)</RuntimeIdentifierGraphPath>
+  </PropertyGroup>
 
   <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.pkgproj'">
     <IsPackable>true</IsPackable>
