@@ -32,6 +32,7 @@
     <CertificatesSignInfo Include="MacDeveloperVNextHardenWithNotarization" MacCertificate="MacDeveloperVNextHarden" MacNotarizationAppName="dotnet" />
     <!-- Certificates Which support detached signatures -->
     <CertificatesSignInfo Include="LinuxSignTar" SupportsDetachedSignature="true" />
+    <CertificatesSignInfo Include="LinuxSign500180PGP" SupportsDetachedSignature="true" />
   </ItemGroup>
 
   <!-- Only publish packages that contain this build's Target RID in the name.

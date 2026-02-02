@@ -106,6 +106,12 @@ namespace SignCheckTask
             set;
         }
 
+        public int TotalDoNotUnpackFiles
+        {
+            get;
+            set;
+        }
+
         public int TotalExcludedFiles
         {
             get;
@@ -299,7 +305,7 @@ namespace SignCheckTask
 
         private void ProcessExclusions(string exclusionsFile)
         {
-            Log.WriteMessage(LogVerbosity.Diagnostic, SignCheckResources.scProcessExclusions);
+            Log.WriteMessage(LogVerbosity.Diagnostic, SignCheckResources.scProcessExclusions, exclusionsFile);
             Exclusions = new Exclusions(exclusionsFile);
         }
 
@@ -337,6 +343,11 @@ namespace SignCheckTask
                 {
                     TotalSkippedExcludedFiles++;
                     outcome = "SkippedExcluded";
+                }
+
+                if (result.IsDoNotUnpack)
+                {
+                    TotalDoNotUnpackFiles++;
                 }
 
                 // Regardless of the file status reporting settings, a container file like an MSI or NuGet package
@@ -443,7 +454,7 @@ namespace SignCheckTask
                     TimeSpan totalTime = endTime - startTime;
                     Log.WriteMessage(LogVerbosity.Minimum, String.Format(SignCheckResources.scTime, totalTime));
                     Log.WriteMessage(LogVerbosity.Minimum, String.Format(SignCheckResources.scStats,
-                        TotalFiles, TotalSignedFiles, TotalUnsignedFiles, TotalSkippedFiles, TotalExcludedFiles, TotalSkippedExcludedFiles));
+                        TotalFiles, TotalSignedFiles, TotalUnsignedFiles, TotalSkippedFiles, TotalExcludedFiles, TotalSkippedExcludedFiles, TotalDoNotUnpackFiles));
                 }
                 else
                 {
