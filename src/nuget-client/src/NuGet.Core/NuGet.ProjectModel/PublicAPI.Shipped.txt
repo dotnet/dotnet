@@ -620,10 +620,10 @@ static NuGet.ProjectModel.BuildAction.operator ==(NuGet.ProjectModel.BuildAction
 ~static NuGet.ProjectModel.LockFileItem.implicit operator NuGet.ProjectModel.LockFileItem(string path) -> NuGet.ProjectModel.LockFileItem
 ~static NuGet.ProjectModel.LockFileUtilities.GetLockFile(string lockFilePath, NuGet.Common.ILogger logger) -> NuGet.ProjectModel.LockFile
 ~static NuGet.ProjectModel.LockFileUtilities.GetLockFile(string lockFilePath, NuGet.Common.ILogger logger, NuGet.ProjectModel.LockFileReadFlags flags) -> NuGet.ProjectModel.LockFile
-~static NuGet.ProjectModel.PackageSpecExtensions.GetRestoreMetadataFramework(this NuGet.ProjectModel.PackageSpec project, NuGet.Frameworks.NuGetFramework targetFramework) -> NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo
-~static NuGet.ProjectModel.PackageSpecExtensions.GetRestoreMetadataFramework(this NuGet.ProjectModel.PackageSpec project, string targetAlias) -> NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo
-~static NuGet.ProjectModel.PackageSpecExtensions.GetTargetFramework(this NuGet.ProjectModel.PackageSpec project, NuGet.Frameworks.NuGetFramework targetFramework) -> NuGet.ProjectModel.TargetFrameworkInformation
-~static NuGet.ProjectModel.PackageSpecExtensions.GetTargetFramework(this NuGet.ProjectModel.PackageSpec project, string targetAlias) -> NuGet.ProjectModel.TargetFrameworkInformation
+static NuGet.ProjectModel.PackageSpecExtensions.GetRestoreMetadataFramework(this NuGet.ProjectModel.PackageSpec! project, NuGet.Frameworks.NuGetFramework! targetFramework) -> NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo!
+static NuGet.ProjectModel.PackageSpecExtensions.GetRestoreMetadataFramework(this NuGet.ProjectModel.PackageSpec! project, string? targetAlias) -> NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo?
+static NuGet.ProjectModel.PackageSpecExtensions.GetTargetFramework(this NuGet.ProjectModel.PackageSpec! project, NuGet.Frameworks.NuGetFramework! targetFramework) -> NuGet.ProjectModel.TargetFrameworkInformation!
+static NuGet.ProjectModel.PackageSpecExtensions.GetTargetFramework(this NuGet.ProjectModel.PackageSpec! project, string? targetAlias) -> NuGet.ProjectModel.TargetFrameworkInformation?
 ~static NuGet.ProjectModel.PackageSpecOperations.AddOrUpdateDependency(NuGet.ProjectModel.PackageSpec spec, NuGet.Packaging.Core.PackageDependency dependency) -> void
 ~static NuGet.ProjectModel.PackageSpecOperations.AddOrUpdateDependency(NuGet.ProjectModel.PackageSpec spec, NuGet.Packaging.Core.PackageDependency dependency, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> frameworksToAdd) -> void
 ~static NuGet.ProjectModel.PackageSpecOperations.AddOrUpdateDependency(NuGet.ProjectModel.PackageSpec spec, NuGet.Packaging.Core.PackageIdentity identity) -> void
@@ -633,7 +633,6 @@ static NuGet.ProjectModel.BuildAction.operator ==(NuGet.ProjectModel.BuildAction
 ~static NuGet.ProjectModel.PackageSpecUtility.IsSnapshotVersion(string version) -> bool
 ~static NuGet.ProjectModel.PackageSpecUtility.SpecifySnapshot(string version, string snapshotValue) -> NuGet.Versioning.NuGetVersion
 ~static NuGet.ProjectModel.PackageSpecWriter.Write(NuGet.ProjectModel.PackageSpec packageSpec, NuGet.RuntimeModel.IObjectWriter writer) -> void
-~static NuGet.ProjectModel.PackageSpecWriter.WriteToFile(NuGet.ProjectModel.PackageSpec packageSpec, string filePath) -> void
 ~static NuGet.ProjectModel.PackagesLockFileFormat.Parse(string lockFileContent, NuGet.Common.ILogger log, string path) -> NuGet.ProjectModel.PackagesLockFile
 ~static NuGet.ProjectModel.PackagesLockFileFormat.Parse(string lockFileContent, string path) -> NuGet.ProjectModel.PackagesLockFile
 ~static NuGet.ProjectModel.PackagesLockFileFormat.Read(System.IO.Stream stream, NuGet.Common.ILogger log, string path) -> NuGet.ProjectModel.PackagesLockFile
@@ -668,10 +667,7 @@ static readonly NuGet.ProjectModel.BuildAction.None -> NuGet.ProjectModel.BuildA
 static readonly NuGet.ProjectModel.BuildAction.Page -> NuGet.ProjectModel.BuildAction
 static readonly NuGet.ProjectModel.BuildAction.Resource -> NuGet.ProjectModel.BuildAction
 static readonly NuGet.ProjectModel.BuildAction.SplashScreen -> NuGet.ProjectModel.BuildAction
-~static readonly NuGet.ProjectModel.JsonPackageSpecReader.Files -> string
 ~static readonly NuGet.ProjectModel.JsonPackageSpecReader.HideWarningsAndErrors -> string
-~static readonly NuGet.ProjectModel.JsonPackageSpecReader.PackOptions -> string
-~static readonly NuGet.ProjectModel.JsonPackageSpecReader.PackageType -> string
 ~static readonly NuGet.ProjectModel.JsonPackageSpecReader.RestoreOptions -> string
 ~static readonly NuGet.ProjectModel.JsonPackageSpecReader.RestoreSettings -> string
 static readonly NuGet.ProjectModel.LockFile.DirectorySeparatorChar -> char
