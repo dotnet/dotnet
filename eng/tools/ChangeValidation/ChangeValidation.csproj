@@ -7,6 +7,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <!-- Suppress CS8002 because DarcLib assemblies are not signed -->
     <NoWarn>$(NoWarn);CS8002</NoWarn>
+    <!-- Suppress NU1109 because of conflicting package versions from DarcLib -->
+    <NoWarn>$(NoWarn);NU1109</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
