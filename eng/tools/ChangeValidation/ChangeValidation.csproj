@@ -16,7 +16,7 @@
     <PackageReference Include="Microsoft.DotNet.DarcLib" />
     
     <!-- Version override Newtonsoft.Json version to match what's used by DarcLib -->
-    <PackageVersion Update="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="Newtonsoft.Json" VersionOverride="13.0.4" />
   </ItemGroup>
 
 </Project>
