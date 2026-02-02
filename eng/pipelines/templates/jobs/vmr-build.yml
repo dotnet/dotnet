@@ -268,8 +268,7 @@ jobs:
       ${{ else }}:
         value: $(commandPrefix)clean-while-building
 
-  # If the branding argument is 'empty', then we
-# allow the VMR's versions.props to set the default.
+  # If the branding argument is 'empty', then we allow the VMR's versions.props to set the default.
   - name: brandingArgument
     ${{ if ne(parameters.brandingType, 'empty') }}:
       value: $(commandPrefix)branding ${{ parameters.brandingType }}
