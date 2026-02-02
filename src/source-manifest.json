@@ -139,10 +139,10 @@
       "commitSha": "4e97eb7fea1536620baecafd46ab8bf49fe20e6a"
     },
     {
-      "barId": 296096,
+      "barId": 299791,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "23f6b498216d7c1b5f4d2551d802338f2fd95675"
+      "commitSha": "493de48dd11ac1468da3fd82c66b49f12057dbf0"
     },
     {
       "barId": 291267,
