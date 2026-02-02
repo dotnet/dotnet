@@ -35,12 +35,17 @@ jobs:
       - ${{ if eq(variables['System.TeamProject'], 'public') }}:
         - name: MsbuildSigningArguments
           value: /p:DotNetSignType=Test
+        - name: InternalRuntimeDownloadArgs
+          value: ''
       - ${{ if ne(variables['System.TeamProject'], 'public') }}:
         - name: MsbuildSigningArguments
           value: /p:DotNetSignType=Real
+        - name: InternalRuntimeDownloadArgs
+          value: /p:RuntimeSourceFeed=https://ci.dot.net/internal /p:RuntimeSourceFeedKey=$(dotnetbuilds-internal-container-read-token-base64)
 
     steps:
     - template: /eng/common/templates/steps/enable-internal-sources.yml
+    - template: /eng/common/templates/steps/enable-internal-runtimes.yml
 
     - ${{ if ne(variables['System.TeamProject'], 'public') }}:
       - task: MicroBuildSigningPlugin@4
@@ -56,6 +61,7 @@ jobs:
         eng/common/cibuild.cmd
         $(CommonMSBuildArgs)
         $(MsbuildSigningArguments)
+        $(InternalRuntimeDownloadArgs)
       displayName: Build
 
     - ${{ if ne(parameters.skipTests, 'true') }}:
