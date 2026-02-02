@@ -58,7 +58,9 @@ parameters:
   type: boolean
   default: false
 
-# Because branding affects quite a lot of value
+# Because branding affects quite a lot of places,
+# this is intentionally left without a default so that 
+# we don't accidentally miss a pass.
 - name: brandingType
   displayName: Type of branding to use
   type: string
@@ -270,7 +272,7 @@ jobs:
 # allow the VMR's versions.props to set the default.
   - name: brandingArgument
     ${{ if ne(parameters.brandingType, 'empty') }}:
-      value: $(commandPrefix)branding $(brandingType)
+      value: $(commandPrefix)branding ${{ parameters.brandingType }}
     ${{ else }}:
       value: ''
 
