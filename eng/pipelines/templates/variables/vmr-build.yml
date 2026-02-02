@@ -263,9 +263,9 @@ variables:
   - name: shortStackPoolName
     value: NetCore-Public
   - name: poolImage_Linux
-    value: build.ubuntu.2204.amd64.open
+    value: Azure-Linux-3-Amd64-Public
   - name: poolImage_LinuxArm64
-    value: azure-linux-3-arm64-public
+    value: Azure-Linux-3-Arm64-Public
   - name: poolName_LinuxArm64
     value: Docker-Linux-Arm-Public
   - name: poolImage_Mac
@@ -282,7 +282,7 @@ variables:
   - name: shortStackPoolName
     value: NetCore1ESPool-Internal
   - name: poolImage_Linux
-    value: build.ubuntu.2204.amd64
+    value: Azure-Linux-3-Amd64
   - name: poolImage_LinuxArm64
     value: Azure-Linux-3-Arm64
   - name: poolName_LinuxArm64
@@ -291,3 +291,4 @@ variables:
     value: macos-latest-internal
   - name: poolImage_Windows
     value: windows.vs2026preview.scout.amd64   # TODO: use the GA image once it's available
+
