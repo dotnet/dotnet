@@ -111,8 +111,7 @@
 
     <!-- Dispatcher: invokes _CreateSingleArchive for each archive format in @(ArchiveFormat). -->
     <MSBuild Projects="@(_ArchiveBuildProject)"
-             Targets="_CreateSingleArchive"
-             BuildInParallel="false" />
+             Targets="_CreateSingleArchive" />
   </Target>
 
   <Target Name="_CreateSingleArchive"
@@ -159,14 +158,17 @@
 
     <ItemGroup>
       <_SymbolsArchiveBuildProject Include="$(MSBuildProjectFile)">
-        <AdditionalProperties>_CurrentArchiveFormat=%(ArchiveFormat.Identity);_IsIndividualArchiveBuild=true;_SymbolsOutputPathRoot=$(_SymbolsOutputPathRoot)</AdditionalProperties>
+        <AdditionalProperties>
+          _CurrentArchiveFormat=%(ArchiveFormat.Identity);
+          _IsIndividualArchiveBuild=true;
+          _SymbolsOutputPathRoot=$(_SymbolsOutputPathRoot)
+        </AdditionalProperties>
       </_SymbolsArchiveBuildProject>
     </ItemGroup>
 
     <!-- Dispatcher: invokes _CreateSingleSymbolsArchive for each archive format in @(ArchiveFormat). -->
     <MSBuild Projects="@(_SymbolsArchiveBuildProject)"
-             Targets="_CreateSingleSymbolsArchive"
-             BuildInParallel="false" />
+             Targets="_CreateSingleSymbolsArchive" />
   </Target>
 
   <Target Name="_CreateSingleSymbolsArchive"
