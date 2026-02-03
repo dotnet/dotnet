@@ -4,118 +4,18 @@
   },
   "packages": {
     "default": {
-      "rzls": "vs-impl",
-      "rzls.alpine-arm64": "vs-impl",
-      "rzls.alpine-x64": "vs-impl",
-      "rzls.linux-arm64": "vs-impl",
-      "rzls.linux-x64": "vs-impl",
-      "rzls.linux-musl-x64": "vs-impl",
-      "rzls.linux-musl-arm64": "vs-impl",
-      "rzls.neutral": "vs-impl",
-      "rzls.osx-arm64": "vs-impl",
-      "rzls.osx-x64": "vs-impl",
-      "rzls.win-arm64": "vs-impl",
-      "rzls.win-x64": "vs-impl",
-      "rzls.win-x86": "vs-impl",
-      "Microsoft.VisualStudio.DevKit.Razor": "vs-impl",
       "Microsoft.VisualStudioCode.RazorExtension": "vs-impl"
     }
   },
   "branches": {
-    "main": {
+    "release/dev18.3": {
       "nugetKind": [
         "Shipping",
         "NonShipping"
       ],
-      "vsBranch": "main",
-      "insertionCreateDraftPR": true,
-      "insertionTitlePrefix": "[d18.1 P1]"
-    },
-    "release/dev17.6": {
-      "nugetKind": [
-        "Shipping",
-        "NonShipping"
-      ],
-      "vsBranch": "rel/d17.6",
-      "insertionTitlePrefix": "[17.6]"
-    },
-    "release/dev17.7": {
-      "nugetKind": [
-        "Shipping",
-        "NonShipping"
-      ],
-      "vsBranch": "rel/d17.7",
-      "insertionTitlePrefix": "[17.7]"
-    },
-    "release/dev17.8": {
-      "nugetKind": [
-        "Shipping",
-        "NonShipping"
-      ],
-      "vsBranch": "rel/d17.8",
-      "insertionTitlePrefix": "[17.8]"
-    },
-    "release/dev17.9": {
-      "nugetKind": [
-        "Shipping",
-        "NonShipping"
-      ],
-      "vsBranch": "rel/d17.9",
-      "insertionTitlePrefix": "[17.9]"
-    },
-    "release/dev17.10": {
-      "nugetKind": [
-        "Shipping",
-        "NonShipping"
-      ],
-      "vsBranch": "rel/d17.10",
+      "vsBranch": "rel/d18.3",
       "insertionCreateDraftPR": false,
-      "insertionTitlePrefix": "[17.10]"
-    },
-    "release/dev17.11": {
-      "nugetKind": [
-        "Shipping",
-        "NonShipping"
-      ],
-      "vsBranch": "rel/d17.11",
-      "insertionCreateDraftPR": false,
-      "insertionTitlePrefix": "[17.11]"
-    },
-    "release/dev17.12": {
-      "nugetKind": [
-        "Shipping",
-        "NonShipping"
-      ],
-      "vsBranch": "rel/d17.12",
-      "insertionCreateDraftPR": false,
-      "insertionTitlePrefix": "[d17.12]"
-    },
-    "release/dev17.13": {
-      "nugetKind": [
-        "Shipping",
-        "NonShipping"
-      ],
-      "vsBranch": "rel/d17.13",
-      "insertionCreateDraftPR": false,
-      "insertionTitlePrefix": "[d17.13]"
-    },
-    "release/dev17.14": {
-      "nugetKind": [
-        "Shipping",
-        "NonShipping"
-      ],
-      "vsBranch": "rel/d17.14",
-      "insertionCreateDraftPR": false,
-      "insertionTitlePrefix": "[d17.14 P3]"
-    },
-    "release/dev18.0": {
-      "nugetKind": [
-        "Shipping",
-        "NonShipping"
-      ],
-      "vsBranch": "main",
-      "insertionCreateDraftPR": false,
-      "insertionTitlePrefix": "[d18.0 P2]"
+      "insertionTitlePrefix": "[d18.3]"
     }
   }
 }

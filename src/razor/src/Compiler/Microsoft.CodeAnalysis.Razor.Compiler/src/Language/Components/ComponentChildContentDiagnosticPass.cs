@@ -1,17 +1,21 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
-internal class ComponentChildContentDiagnosticPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
+internal sealed class ComponentChildContentDiagnosticPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
 {
     // Runs after components/eventhandlers/ref/bind/templates. We want to validate every component
     // and it's usage of ChildContent.
     public override int Order => 160;
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         if (!IsComponentDocument(documentNode))
         {

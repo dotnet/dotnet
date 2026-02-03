@@ -11,15 +11,8 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
-internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
+internal sealed class ComponentDocumentClassifierPass : DocumentClassifierPassBase
 {
-    private readonly RazorLanguageVersion _version;
-
-    public ComponentDocumentClassifierPass(RazorLanguageVersion version)
-    {
-        _version = version;
-    }
-
     public const string ComponentDocumentKind = "component.1.0";
 
     /// <summary>
@@ -50,10 +43,8 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
         return codeDocument.FileKind.IsComponent();
     }
 
-    protected override CodeTarget CreateTarget(RazorCodeDocument codeDocument, RazorCodeGenerationOptions options)
-    {
-        return new ComponentCodeTarget(options, _version, TargetExtensions);
-    }
+    protected override CodeTarget CreateTarget(RazorCodeDocument codeDocument)
+        => new ComponentCodeTarget(codeDocument, TargetExtensions);
 
     /// <inheritdoc />
     protected override void OnDocumentStructureCreated(

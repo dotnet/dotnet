@@ -2,16 +2,20 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Extensions;
 
-internal class ViewCssScopePass : IntermediateNodePassBase, IRazorOptimizationPass
+internal sealed class ViewCssScopePass : IntermediateNodePassBase, IRazorOptimizationPass
 {
     // Runs after taghelpers are bound
     public override int Order => 110;
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         var cssScope = codeDocument.CodeGenerationOptions.CssScope;
         if (string.IsNullOrEmpty(cssScope))

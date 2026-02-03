@@ -5,7 +5,7 @@
 
 using System;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
@@ -53,7 +53,7 @@ public class HtmlVirtualDocumentFactoryTest : ToolingTestBase
         // Arrange
         var uri = new Uri("C:/path/to/file.razor");
         var uriProvider = Mock.Of<FileUriProvider>(provider => provider.GetOrCreate(It.IsAny<ITextBuffer>()) == uri, MockBehavior.Strict);
-        var factory = new HtmlVirtualDocumentFactory(_contentTypeRegistryService, _textBufferFactoryService, _textDocumentFactoryService, uriProvider, TestLanguageServerFeatureOptions.Instance, telemetryReporter: null);
+        var factory = new HtmlVirtualDocumentFactory(_contentTypeRegistryService, _textBufferFactoryService, _textDocumentFactoryService, uriProvider, telemetryReporter: null);
 
         // Act
         var result = factory.TryCreateFor(_nonRazorLSPBuffer, out var virtualDocument);
@@ -73,7 +73,7 @@ public class HtmlVirtualDocumentFactoryTest : ToolingTestBase
         var uri = new Uri("C:/path/to/file.razor");
         var uriProvider = Mock.Of<FileUriProvider>(provider => provider.GetOrCreate(_razorLSPBuffer) == uri, MockBehavior.Strict);
         Mock.Get(uriProvider).Setup(p => p.AddOrUpdate(It.IsAny<ITextBuffer>(), It.IsAny<Uri>())).Verifiable();
-        var factory = new HtmlVirtualDocumentFactory(_contentTypeRegistryService, _textBufferFactoryService, _textDocumentFactoryService, uriProvider, TestLanguageServerFeatureOptions.Instance, telemetryReporter: null);
+        var factory = new HtmlVirtualDocumentFactory(_contentTypeRegistryService, _textBufferFactoryService, _textDocumentFactoryService, uriProvider, telemetryReporter: null);
 
         // Act
         var result = factory.TryCreateFor(_razorLSPBuffer, out var virtualDocument);
@@ -83,7 +83,7 @@ public class HtmlVirtualDocumentFactoryTest : ToolingTestBase
             // Assert
             Assert.True(result);
             Assert.NotNull(virtualDocument);
-            Assert.EndsWith(TestLanguageServerFeatureOptions.Instance.HtmlVirtualDocumentSuffix, virtualDocument.Uri.OriginalString, StringComparison.Ordinal);
+            Assert.EndsWith(LanguageServerConstants.HtmlVirtualDocumentSuffix, virtualDocument.Uri.OriginalString, StringComparison.Ordinal);
         }
     }
 }

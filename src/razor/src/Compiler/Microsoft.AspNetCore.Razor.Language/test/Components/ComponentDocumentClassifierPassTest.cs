@@ -24,7 +24,7 @@ public class ComponentDocumentClassifierPassTest : RazorProjectEngineTestBase
         var processor = CreateCodeDocumentProcessor(codeDocument);
 
         // Act
-        processor.ExecutePass<ComponentDocumentClassifierPass>(() => new(Version));
+        processor.ExecutePass<ComponentDocumentClassifierPass>();
 
         // Assert
         var documentNode = processor.GetDocumentNode();
@@ -46,7 +46,7 @@ public class ComponentDocumentClassifierPassTest : RazorProjectEngineTestBase
         var processor = CreateCodeDocumentProcessor(projectEngine, codeDocument);
 
         // Act
-        processor.ExecutePass<ComponentDocumentClassifierPass>(() => new(Version));
+        processor.ExecutePass<ComponentDocumentClassifierPass>();
 
         // Assert
         var documentNode = processor.GetDocumentNode();
@@ -69,7 +69,7 @@ public class ComponentDocumentClassifierPassTest : RazorProjectEngineTestBase
         var processor = CreateCodeDocumentProcessor(projectEngine, codeDocument);
 
         // Act
-        processor.ExecutePass<ComponentDocumentClassifierPass>(() => new(Version));
+        processor.ExecutePass<ComponentDocumentClassifierPass>();
 
         // Assert
         var documentNode = processor.GetDocumentNode();
@@ -95,7 +95,7 @@ public class ComponentDocumentClassifierPassTest : RazorProjectEngineTestBase
         var processor = CreateCodeDocumentProcessor(projectEngine, codeDocument);
 
         // Act
-        processor.ExecutePass<ComponentDocumentClassifierPass>(() => new(Version));
+        processor.ExecutePass<ComponentDocumentClassifierPass>();
 
         // Assert
         var documentNode = processor.GetDocumentNode();
@@ -120,7 +120,7 @@ public class ComponentDocumentClassifierPassTest : RazorProjectEngineTestBase
         var processor = CreateCodeDocumentProcessor(projectEngine, codeDocument);
 
         // Act
-        processor.ExecutePass<ComponentDocumentClassifierPass>(() => new(Version));
+        processor.ExecutePass<ComponentDocumentClassifierPass>();
 
         // Assert
         var documentNode = processor.GetDocumentNode();
@@ -140,7 +140,7 @@ public class ComponentDocumentClassifierPassTest : RazorProjectEngineTestBase
         var processor = CreateCodeDocumentProcessor(codeDocument);
 
         // Act
-        processor.ExecutePass<ComponentDocumentClassifierPass>(() => new(Version));
+        processor.ExecutePass<ComponentDocumentClassifierPass>();
 
         // Assert
         var documentNode = processor.GetDocumentNode();

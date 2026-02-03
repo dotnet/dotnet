@@ -6,9 +6,13 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
+using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
@@ -76,13 +80,13 @@ internal partial class CSharpFormattingPass
     /// </remarks>
     private sealed class CSharpDocumentGenerator
     {
-        public static CSharpFormattingDocument Generate(RazorCodeDocument codeDocument, RazorFormattingOptions options)
+        public static CSharpFormattingDocument Generate(RazorCodeDocument codeDocument, SyntaxNode csharpSyntaxRoot, RazorFormattingOptions options, IDocumentMappingService documentMappingService)
         {
             using var _1 = StringBuilderPool.GetPooledObject(out var builder);
             using var _2 = ArrayBuilderPool<LineInfo>.GetPooledObject(out var lineInfoBuilder);
             lineInfoBuilder.SetCapacityIfLarger(codeDocument.Source.Text.Lines.Count);
 
-            var generator = new Generator(codeDocument, options, builder, lineInfoBuilder);
+            var generator = new Generator(codeDocument, csharpSyntaxRoot, options, builder, lineInfoBuilder, documentMappingService);
 
             generator.Generate();
 
@@ -139,16 +143,22 @@ internal partial class CSharpFormattingPass
 
         private sealed class Generator(
             RazorCodeDocument codeDocument,
+            SyntaxNode csharpSyntaxRoot,
             RazorFormattingOptions options,
             StringBuilder builder,
-            ImmutableArray<LineInfo>.Builder lineInfoBuilder) : SyntaxVisitor<LineInfo>
+            ImmutableArray<LineInfo>.Builder lineInfoBuilder,
+            IDocumentMappingService documentMappingService) : SyntaxVisitor<LineInfo>
         {
             private readonly SourceText _sourceText = codeDocument.Source.Text;
             private readonly RazorCodeDocument _codeDocument = codeDocument;
+            private readonly SyntaxNode _csharpSyntaxRoot = csharpSyntaxRoot;
             private readonly bool _insertSpaces = options.InsertSpaces;
             private readonly int _tabSize = options.TabSize;
+            private readonly RazorCSharpSyntaxFormattingOptions? _csharpSyntaxFormattingOptions = options.CSharpSyntaxFormattingOptions;
             private readonly StringBuilder _builder = builder;
             private readonly ImmutableArray<LineInfo>.Builder _lineInfoBuilder = lineInfoBuilder;
+            private readonly IDocumentMappingService _documentMappingService = documentMappingService;
+            private readonly RazorCSharpDocument _csharpDocument = codeDocument.GetCSharpDocument().AssumeNotNull();
 
             private TextLine _currentLine;
             private int _currentFirstNonWhitespacePosition;
@@ -211,12 +221,7 @@ internal partial class CSharpFormattingPass
                                 var node = root.FindInnermostNode(originalSpan.AbsoluteIndex);
                                 if (node is CSharpExpressionLiteralSyntax)
                                 {
-                                    // Rather than bother to store more data about the formatted file, since we don't actually know where
-                                    // these will end up in that file once it's all said and done, we are just going to use a simple comment
-                                    // format that we can easily parse.
-                                    additionalLinesBuilder.AppendLine(GetAdditionalLineComment(originalSpan));
-                                    additionalLinesBuilder.AppendLine(_sourceText.GetSubTextString(originalSpan.ToTextSpan()));
-                                    additionalLinesBuilder.AppendLine(";");
+                                    AddAdditionalLineFormattingContent(additionalLinesBuilder, node, originalSpan);
                                 }
 
                                 iMapping++;
@@ -249,6 +254,34 @@ internal partial class CSharpFormattingPass
 
                 _builder.AppendLine();
                 _builder.AppendLine(additionalLinesBuilder.ToString());
+            }
+
+            private void AddAdditionalLineFormattingContent(StringBuilder additionalLinesBuilder, RazorSyntaxNode node, SourceSpan originalSpan)
+            {
+                // Rather than bother to store more data about the formatted file, since we don't actually know where
+                // these will end up in that file once it's all said and done, we are just going to use a simple comment
+                // format that we can easily parse.
+
+                // Special case, for attributes that represent generic type parameters, we want to output something such
+                // that Roslyn knows to format it as a type. For example, the meaning and spacing around "?"s should be
+                // what the user expects.
+                if (node is { Parent.Parent: MarkupTagHelperAttributeSyntax attribute } &&
+                    attribute is { Parent.Parent: MarkupTagHelperElementSyntax element } &&
+                    element.TagHelperInfo.BindingResult.TagHelpers is [{ } descriptor] &&
+                    descriptor.IsGenericTypedComponent() &&
+                    descriptor.BoundAttributes.FirstOrDefault(d => d.Name == attribute.TagHelperAttributeInfo.Name) is { } boundAttribute &&
+                    boundAttribute.IsTypeParameterProperty())
+                {
+                    additionalLinesBuilder.AppendLine("F<");
+                    additionalLinesBuilder.AppendLine(GetAdditionalLineComment(originalSpan));
+                    additionalLinesBuilder.AppendLine(_sourceText.GetSubTextString(originalSpan.ToTextSpan()));
+                    additionalLinesBuilder.AppendLine("> x;");
+                    return;
+                }
+
+                additionalLinesBuilder.AppendLine(GetAdditionalLineComment(originalSpan));
+                additionalLinesBuilder.AppendLine(_sourceText.GetSubTextString(originalSpan.ToTextSpan()));
+                additionalLinesBuilder.AppendLine(";");
             }
 
             public override LineInfo Visit(RazorSyntaxNode? node)
@@ -386,6 +419,18 @@ internal partial class CSharpFormattingPass
             public override LineInfo VisitCSharpStatementLiteral(CSharpStatementLiteralSyntax node)
             {
                 Debug.Assert(node.LiteralTokens.Count > 0);
+
+                // If this is the end of a multi-line CSharp template (ie, RenderFragment) then we need to close
+                // out the lambda expression that we started when we opened it.
+                if (node.LiteralTokens.Where(static t => !t.IsWhitespace()).FirstOrDefault() is { Content: ";" } &&
+                    node.TryGetPreviousSibling(out var previousSibling) &&
+                    previousSibling is CSharpTemplateBlockSyntax &&
+                    GetLineNumber(previousSibling.GetFirstToken()) != GetLineNumber(previousSibling.GetLastToken()))
+                {
+                    _builder.AppendLine("};");
+                    return CreateLineInfo();
+                }
+
                 return VisitCSharpLiteral(node, node.LiteralTokens[^1]);
             }
 
@@ -412,13 +457,37 @@ internal partial class CSharpFormattingPass
                     // Now emit the contents
                     var span = TextSpan.FromBounds(_currentFirstNonWhitespacePosition, node.EndPosition);
                     _builder.Append(_sourceText.ToString(span));
-                    // Append a comment at the end so whitespace isn't removed, as Roslyn thinks its the end of the line, but we know it isn't.
-                    _builder.AppendLine(" //");
 
                     // Putting a semi-colon on the end might make for invalid C#, but it means this line won't cause indentation,
                     // which is all we need. If we're in an explicit expression body though, we don't want to do this, as the
                     // close paren of the expression will do the same job (and the semi-colon would confuse that).
                     var emitSemiColon = node.Parent.Parent is not CSharpExplicitExpressionBodySyntax;
+
+                    var skipNextLineIfBrace = false;
+                    int formattedOffsetFromEndOfLine;
+
+                    // If the template is multiline we emit a lambda expression, otherwise just a null statement so there
+                    // is something there. See VisitMarkupTransition for more info
+                    if (token.Parent?.Parent.Parent is CSharpTemplateBlockSyntax template &&
+                        _sourceText.GetLinePositionSpan(template.Span).SpansMultipleLines())
+                    {
+                        emitSemiColon = false;
+                        skipNextLineIfBrace = true;
+                        _builder.AppendLine("() => {");
+
+                        // We only want to format up to the text we added, but if Roslyn inserted a newline before the brace
+                        // then that position will be different. If we're not given the options then we assume the default behaviour of
+                        // Roslyn which is to insert the newline.
+                        formattedOffsetFromEndOfLine = _csharpSyntaxFormattingOptions?.NewLines.IsFlagSet(RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody) ?? true
+                            ? 5
+                            : 7;
+                    }
+                    else
+                    {
+                        _builder.AppendLine("null");
+                        formattedOffsetFromEndOfLine = 4;
+                    }
+
                     if (emitSemiColon)
                     {
                         _builder.AppendLine(";");
@@ -426,12 +495,24 @@ internal partial class CSharpFormattingPass
 
                     return CreateLineInfo(
                         skipNextLine: emitSemiColon,
+                        skipNextLineIfBrace: skipNextLineIfBrace,
                         formattedLength: span.Length,
-                        formattedOffsetFromEndOfLine: 3,
+                        formattedOffsetFromEndOfLine: formattedOffsetFromEndOfLine,
                         processFormatting: true,
                         // We turn off check for new lines because that only works if the content doesn't change from the original,
                         // but we're deliberately leaving out a bunch of the original file because it would confuse the Roslyn formatter.
                         checkForNewLines: false);
+                }
+
+                // If we're here, it means this is a "normal" line of C#, so we can just emit it as is. The exception to this is
+                // when we're inside a string literal. We still want to emit it as is, but we need to make sure we tell the formatter
+                // to ignore any existing indentation too.
+                if (_documentMappingService.TryMapToCSharpDocumentPosition(_csharpDocument, _currentToken.SpanStart, out _, out var csharpIndex) &&
+                    _csharpSyntaxRoot.FindNode(new TextSpan(csharpIndex, 0), getInnermostNodeForTie: true) is { } csharpNode &&
+                    csharpNode.IsStringLiteral(multilineOnly: true))
+                {
+                    _builder.AppendLine(_currentLine.ToString());
+                    return CreateLineInfo(processIndentation: false, processFormatting: true, checkForNewLines: true);
                 }
 
                 return EmitCurrentLineAsCSharp();
@@ -458,8 +539,25 @@ internal partial class CSharpFormattingPass
 
             public override LineInfo VisitMarkupEndTag(MarkupEndTagSyntax node)
             {
-                // Since this visitor only sees nodes at the start of a line, an end tag always means de-dent.
-                //return new("}");
+                return VisitEndTag(node);
+            }
+
+            private LineInfo VisitEndTag(BaseMarkupEndTagSyntax node)
+            {
+                // If this is the last line of a multi-line CSharp template (ie, RenderFragment), and the semicolon that ends
+                // if is on the same line, then we need to close out the lambda expression that we started when we opened it.
+                // If the semicolon is on the next line, then we'll take care of that when we get to it.
+                if (node.Parent.Parent.Parent is CSharpTemplateBlockSyntax template &&
+                    GetLineNumber(template.GetLastToken()) == GetLineNumber(_currentToken) &&
+                    GetLineNumber(template.GetFirstToken()) != GetLineNumber(template.GetLastToken()) &&
+                    template.GetLastToken().GetNextToken() is { } semiColonToken &&
+                    semiColonToken.Content == ";" &&
+                    GetLineNumber(semiColonToken) == GetLineNumber(_currentToken))
+                {
+                    _builder.AppendLine("};");
+                    return CreateLineInfo();
+                }
+
                 return EmitCurrentLineAsComment();
             }
 
@@ -537,29 +635,45 @@ internal partial class CSharpFormattingPass
 
             public override LineInfo VisitMarkupTagHelperEndTag(MarkupTagHelperEndTagSyntax node)
             {
-                // Since this visitor only sees nodes at the start of a line, an end tag always means de-dent.
-                //return new("}");
-                return EmitCurrentLineAsComment();
+                return VisitEndTag(node);
             }
 
             public override LineInfo VisitMarkupTransition(MarkupTransitionSyntax node)
             {
-                // A transition to Html is treated the same as Html, which is to say nothing interesting.
-                // We could emit as a comment, so C# indentation is handled, but it is often that a markup transition
-                // appears after assigning a RenderFragment, eg
+                // A transition to Html means the start of a RenderFragment. These are challenging because conceptually
+                // they are like a Write() call, because their contents are sent to the output, but they can also contain
+                // statements. eg:
                 //
                 // RenderFragment f =
                 //     @<div>
-                //          <p>Some text</p>
+                //          @if (true)
+                //          {
+                //              <p>Some text</p>
+                //          }
                 //     </div>;
                 //
-                // If we just emit a comment there, the C# formatter will not indent it, and it will leave a hanging
-                // expression which affects future indentation. So instead we emit some fake C# just to make sure
-                // nothing is left open. A single semi-colon will suffice.
+                // If we convert that to C# the way we normally do, we end up with statements in a C# context where only
+                // expressions are valid. To avoid that, we need to emit C# such that we can be sure we're in a context
+                // where statements are valid. To do this we emit a block bodied lambda expression. Ironically this whole
+                // formatting engine arguably exists because the compiler loves to emit lambda expressions, but they're
+                // really annoying to format. This just happens to be the one case where a lambda is the right choice.
+
                 // Emit the whitespace, so user spacing is honoured if possible
                 _builder.Append(_sourceText.ToString(TextSpan.FromBounds(_currentLine.Start, _currentFirstNonWhitespacePosition)));
-                _builder.AppendLine(";");
-                return CreateLineInfo();
+
+                // If its a one-line render fragment, then we don't need to worry.
+                if (GetLineNumber(node.Parent.GetLastToken()) == GetLineNumber(_currentToken))
+                {
+                    _builder.AppendLine("null;");
+                    return CreateLineInfo();
+                }
+
+                // Roslyn may move the opening brace to the next line, depending on its options. Unlike with code block
+                // formatting where we put the opening brace on the next line ourselves (and Roslyn might bring it back)
+                // if we do that for lambdas, Roslyn won't adjust the opening brace position at all. See, told you lambdas
+                // were annoying to format.
+                _builder.AppendLine("() => {");
+                return CreateLineInfo(skipNextLineIfBrace: true);
             }
 
             public override LineInfo VisitRazorCommentBlock(RazorCommentBlockSyntax node)

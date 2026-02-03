@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Text;
 
@@ -37,28 +38,38 @@ internal sealed class FormattingDiagnosticValidationPass(ILoggerFactory loggerFa
         // at all possible). Also worth noting the order has to be maintained in that case.
         if (!originalDiagnostics.SequenceEqual(changedDiagnostics, LocationIgnoringDiagnosticComparer.Instance))
         {
-            _logger.LogWarning($"{SR.Format_operation_changed_diagnostics}");
-            _logger.LogWarning($"{SR.Diagnostics_before}");
-            foreach (var diagnostic in originalDiagnostics)
-            {
-                _logger.LogWarning($"{diagnostic}");
-            }
-
-            _logger.LogWarning($"{SR.Diagnostics_after}");
-            foreach (var diagnostic in changedDiagnostics)
-            {
-                _logger.LogWarning($"{diagnostic}");
-            }
+            var message = GetLogMessage(originalDiagnostics, changedDiagnostics);
+            _logger.LogError(message);
 
             if (DebugAssertsEnabled)
             {
-                Debug.Fail("A formatting result was rejected because the formatted text produced different diagnostics compared to the original text.");
+                Debug.Fail(message);
             }
 
             return false;
         }
 
         return true;
+    }
+
+    private static string GetLogMessage(ImmutableArray<RazorDiagnostic> originalDiagnostics, ImmutableArray<RazorDiagnostic> changedDiagnostics)
+    {
+        using var _ = StringBuilderPool.GetPooledObject(out var builder);
+
+        builder.AppendLine(SR.Format_operation_changed_diagnostics);
+        builder.AppendLine(SR.Diagnostics_before);
+        foreach (var diagnostic in originalDiagnostics)
+        {
+            builder.AppendLine(diagnostic.ToString());
+        }
+
+        builder.AppendLine(SR.Diagnostics_after);
+        foreach (var diagnostic in changedDiagnostics)
+        {
+            builder.AppendLine(diagnostic.ToString());
+        }
+
+        return builder.ToString();
     }
 
     private class LocationIgnoringDiagnosticComparer : IEqualityComparer<RazorDiagnostic>

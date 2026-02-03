@@ -51,6 +51,7 @@
     <NoWarn Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NoWarn);CS1998;CA1416;CS0618;CS1574</NoWarn>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <!-- Defaults -->
@@ -142,8 +143,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <AssemblyVersion>$(SemanticVersion).$(PreReleaseVersion)</AssemblyVersion>
-    <AssemblyVersion Condition="'$(TargetFramework)' == '$(NETCoreTargetFramework)'">$(SemanticVersion).0</AssemblyVersion>
     <FileVersion>$(SemanticVersion).$(PreReleaseVersion)</FileVersion>
     <InformationalVersion Condition="'$(BUILD_SOURCEVERSION)' == ''">$(SemanticVersion)$(PreReleaseInformationVersion)</InformationalVersion>
     <InformationalVersion Condition="'$(BUILD_SOURCEVERSION)' != ''">$(SemanticVersion)$(PreReleaseInformationVersion)+$(BUILD_SOURCEVERSION)</InformationalVersion>

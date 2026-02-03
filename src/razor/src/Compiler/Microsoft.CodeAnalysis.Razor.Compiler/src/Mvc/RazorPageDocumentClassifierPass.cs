@@ -1,16 +1,15 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.Diagnostics;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
 
-public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
+public sealed class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
 {
     private readonly bool _useConsolidatedMvcViews;
 
@@ -51,7 +50,7 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
 
     protected override bool IsMatch(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
     {
-        return PageDirective.TryGetPageDirective(documentNode, out var _);
+        return PageDirective.TryGetPageDirective(documentNode, out _);
     }
 
     protected override void OnDocumentStructureCreated(
@@ -134,7 +133,7 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
         if (pageDirective.DirectiveNode.IsImported)
         {
             pageDirective.DirectiveNode.AddDiagnostic(
-                RazorExtensionsDiagnosticFactory.CreatePageDirective_CannotBeImported(pageDirective.DirectiveNode.Source.Value));
+                RazorExtensionsDiagnosticFactory.CreatePageDirective_CannotBeImported(pageDirective.DirectiveNode.Source.AssumeNotNull()));
         }
         else
         {
@@ -143,14 +142,14 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
             // We are going to do that by re-parsing the document until the very first line that is not Razor comment
             // or whitespace. We then make sure the page directive still exists in the re-parsed IR tree.
             var leadingDirectiveCodeDocument = LeadingDirectiveParsingEngine.CreateCodeDocument(codeDocument.Source);
-            LeadingDirectiveParsingEngine.Engine.Process(leadingDirectiveCodeDocument);
+            leadingDirectiveCodeDocument = LeadingDirectiveParsingEngine.Engine.Process(leadingDirectiveCodeDocument);
 
             var leadingDirectiveDocumentNode = leadingDirectiveCodeDocument.GetRequiredDocumentNode();
-            if (!PageDirective.TryGetPageDirective(leadingDirectiveDocumentNode, out var _))
+            if (!PageDirective.TryGetPageDirective(leadingDirectiveDocumentNode, out _))
             {
                 // The page directive is not the leading directive. Add an error.
                 pageDirective.DirectiveNode.AddDiagnostic(
-                    RazorExtensionsDiagnosticFactory.CreatePageDirective_MustExistAtTheTopOfFile(pageDirective.DirectiveNode.Source.Value));
+                    RazorExtensionsDiagnosticFactory.CreatePageDirective_MustExistAtTheTopOfFile(pageDirective.DirectiveNode.Source.AssumeNotNull()));
             }
         }
     }

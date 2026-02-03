@@ -34,14 +34,14 @@ function GetPublishData() {
   return $global:_PublishData = ConvertFrom-Json $content
 }
 
-function GetBranchPublishData([string]$branchName) {
+function GetBranchPublishData() {
   $data = GetPublishData
 
-  if (Get-Member -InputObject $data.branches -Name $branchName) {
-    return $data.branches.$branchName
-  } else {
-    return $null
+  if ($data.branchInfo -eq $null) {
+    throw "No branchInfo entry found in PublishData.json"
   }
+
+  return $data.branchInfo
 }
 
 function GetFeedPublishData() {
@@ -49,13 +49,14 @@ function GetFeedPublishData() {
   return $data.feeds
 }
 
-function GetPackagesPublishData([string]$packageFeeds) {
+function GetPackagesPublishData() {
   $data = GetPublishData
-  if (Get-Member -InputObject $data.packages -Name $packageFeeds) {
-    return $data.packages.$packageFeeds
-  } else {
-    return $null
+
+  if ($data.packages -eq $null) {
+    throw "No packages entry found in PublishData.json"
   }
+
+  return $data.packages
 }
 
 function GetReleasePublishData([string]$releaseName) {
@@ -267,4 +268,22 @@ function Unsubst-TempDir() {
     $env:TEMP=$originalTemp
     $env:TMP=$originalTemp
   }
+}
+
+function EnablePreviewSdks() {
+  $vsInfo = LocateVisualStudio
+  if ($vsInfo -eq $null) {
+    # Preview SDKs are allowed when no Visual Studio instance is installed
+    Write-Host "No Visual Studio installation found; skipping enabling preview SDKs"
+    return
+  }
+
+  $vsId = $vsInfo.instanceId
+  $vsMajorVersion = $vsInfo.installationVersion.Split('.')[0]
+
+  $instanceDir = Join-Path ${env:USERPROFILE} "AppData\Local\Microsoft\VisualStudio\$vsMajorVersion.0_$vsId"
+  Create-Directory $instanceDir
+  $sdkFile = Join-Path $instanceDir "sdk.txt"
+  Write-Host "Enabling preview SDKs by writing to $sdkFile"
+  'UsePreviews=True' | Set-Content $sdkFile
 }

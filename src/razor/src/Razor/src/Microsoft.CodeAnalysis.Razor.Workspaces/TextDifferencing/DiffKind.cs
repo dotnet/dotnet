@@ -5,6 +5,19 @@ namespace Microsoft.CodeAnalysis.Razor.TextDifferencing;
 
 internal enum DiffKind : byte
 {
+    /// <summary>
+    /// Diff by character.
+    /// </summary>
     Char,
+    /// <summary>
+    /// Diff by line
+    /// </summary>
     Line,
+    /// <summary>
+    /// Diff by word
+    /// </summary>
+    /// <remarks>
+    /// Word break characters are: whitespace, '/' and '"'. Contiguous word breaks are treated as a single word.
+    /// </remarks>
+    Word,
 }

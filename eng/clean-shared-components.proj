@@ -4,26 +4,17 @@
   <PropertyGroup>
     <TargetFramework>$(NetCurrent)</TargetFramework>
     <SkipSharedSourceOnlyImport>true</SkipSharedSourceOnlyImport>
+    <SharedComponentFilterMode>$(SharedComponentFilter_BootstrapOnly)</SharedComponentFilterMode>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="$(TasksDir)Microsoft.DotNet.UnifiedBuild.Tasks\Microsoft.DotNet.UnifiedBuild.Tasks.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <SharedComponentsPrereqsArchivePathItem Include="$(ExternalTarballsDir)$(SourceBuiltSharedComponentsTarballName).*$(ArchiveExtension)" />
-  </ItemGroup>
-  <PropertyGroup>
-    <SharedComponentsPrereqsArchiveFile>@(SharedComponentsPrereqsArchivePathItem)</SharedComponentsPrereqsArchiveFile>
-    <HasSharedComponents>false</HasSharedComponents>
-    <HasSharedComponents Condition="'$(SharedComponentsPrereqsArchiveFile)' != '' or '$(CustomSharedComponentsArtifactsPath)' != ''">true</HasSharedComponents>
-    <SharedComponentFilterMode>$(SharedComponentFilter_BootstrapOnly)</SharedComponentFilterMode>
-  </PropertyGroup>
-
   <Target Name="CleanSharedComponentsArtifacts"
           BeforeTargets="Build"
           DependsOnTargets="GetFilteredSharedComponentPackages"
-          Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(HasSharedComponents)' == 'true'"
+          Condition="'$(DotNetBuildSourceOnly)' == 'true' and ('$(SharedComponentsPrereqsArchiveFile)' != '' or '$(CustomSharedComponentsArtifactsPath)' != '')"
           Outputs="$(BaseIntermediateOutputPath)UpdateSharedComponentsArtifacts.complete">
 
     <ItemGroup>

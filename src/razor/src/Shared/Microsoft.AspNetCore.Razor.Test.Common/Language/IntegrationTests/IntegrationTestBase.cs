@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
@@ -493,7 +494,8 @@ public abstract class IntegrationTestBase
             }
 
             // See https://github.com/dotnet/razor/issues/10062
-            if (expectedSpan.Contains("<TModel>") || span.FirstAncestorOrSelf<RazorDirectiveSyntax>()?.DirectiveDescriptor?.Directive == "model")
+            if (expectedSpan.Contains("<TModel>") ||
+                span.FirstAncestorOrSelf<RazorDirectiveSyntax>()?.IsDirective(ModelDirective.Directive) is true)
             {
                 // Inject directives in MVC replace the TModel with a user defined model type, so we aren't able to find
                 // the matching text in the generated document

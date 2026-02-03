@@ -1,9 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Roslyn.Test.Utilities;
 using Xunit;
@@ -118,7 +115,7 @@ public class HtmlToCodeSwitchTest() : ParserTestBase(layer: TestProject.Layer.Co
                 </ul>
             }}
             """,
-            new[] { SectionDirective.Directive, });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -164,7 +161,7 @@ public class HtmlToCodeSwitchTest() : ParserTestBase(layer: TestProject.Layer.Co
     {
         ParseDocumentTest(
             "@section Foo { <foo>@@bar</foo> }",
-            new[] { SectionDirective.Directive, });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -172,6 +169,6 @@ public class HtmlToCodeSwitchTest() : ParserTestBase(layer: TestProject.Layer.Co
     {
         ParseDocumentTest(
             "@section Foo { <foo>@@@@@bar</foo> }",
-            new[] { SectionDirective.Directive, });
+            [SectionDirective.Directive]);
     }
 }

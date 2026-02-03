@@ -1,9 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -24,7 +21,7 @@ public class WhiteSpaceRewriterTest() : ParserTestBase(layer: TestProject.Layer.
         var parsed = ParseDocument(
             RazorLanguageVersion.Latest,
             content,
-            Array.Empty<DirectiveDescriptor>());
+            directives: []);
 
         var rewriter = new WhitespaceRewriter();
 

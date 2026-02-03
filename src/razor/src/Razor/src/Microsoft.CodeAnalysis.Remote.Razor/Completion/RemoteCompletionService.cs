@@ -149,6 +149,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
                 completionContext,
                 razorCompletionOptions,
                 correlationId,
+                positionInfo.ProvisionalTextEdit,
                 cancellationToken)
                 .ConfigureAwait(false);
 
@@ -191,6 +192,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
         CompletionContext completionContext,
         RazorCompletionOptions razorCompletionOptions,
         Guid correlationId,
+        TextEdit? provisionalTextEdit,
         CancellationToken cancellationToken)
     {
         var clientCapabilities = _clientCapabilitiesService.ClientCapabilities;
@@ -236,7 +238,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
             mappedPosition,
             razorCompletionOptions);
 
-        var resolutionContext = new DelegatedCompletionResolutionContext(identifier, RazorLanguageKind.CSharp, rewrittenResponse.Data ?? rewrittenResponse.ItemDefaults?.Data);
+        var resolutionContext = new DelegatedCompletionResolutionContext(identifier, RazorLanguageKind.CSharp, rewrittenResponse.Data ?? rewrittenResponse.ItemDefaults?.Data, provisionalTextEdit);
         var resultId = _completionListCache.Add(rewrittenResponse, resolutionContext);
         rewrittenResponse.SetResultId(resultId, clientCapabilities);
 
@@ -326,7 +328,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
             }
 
             var documentSnapshot = context.Snapshot;
-            var generatedDocument = await documentSnapshot.GetGeneratedDocumentAsync(cancellationToken).ConfigureAwait(false);
+            var generatedDocument = await GetCSharpGeneratedDocumentAsync(documentSnapshot, resolutionContext.ProvisionalTextEdit, cancellationToken).ConfigureAwait(false);
 
             var clientCapabilities = _clientCapabilitiesService.ClientCapabilities;
             var completionListSetting = clientCapabilities.TextDocument?.Completion;

@@ -1,0 +1,8 @@
+schemaVersion: 0.0.1
+isProduction: true
+accountableOwners:
+  service: 8d20dc36-68f2-41f9-94fe-c3cd15ce04bd
+routing:
+  defaultAreaPath:
+    org: devdiv
+    path: DevDiv\.NET Shared\VMR

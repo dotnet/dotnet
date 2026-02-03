@@ -269,7 +269,7 @@ public class HtmlAttributeTest() : ParserTestBase(layer: TestProject.Layer.Compi
     [Fact]
     public void ConditionalAttributesAreEnabledForDataAttributesWithExperimentalFlag()
     {
-        ParseDocumentTest(RazorLanguageVersion.Experimental, "@{<span data-foo='@foo'></span>}", directives: null, designTime: false);
+        ParseDocumentTest(RazorLanguageVersion.Experimental, "@{<span data-foo='@foo'></span>}", directives: default, designTime: false);
     }
 
     [Fact]
@@ -342,6 +342,12 @@ public class HtmlAttributeTest() : ParserTestBase(layer: TestProject.Layer.Compi
     public void ConditionalAttribute_CommentBefore()
     {
         ParseDocumentTest("""<p @* comment *@ class="@c" />""");
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/12261")]
+    public void AttributeAfterComment()
+    {
+        ParseDocumentTest("""<p class="first" @* comment *@ data-value="second" />""");
     }
 
     [Fact]

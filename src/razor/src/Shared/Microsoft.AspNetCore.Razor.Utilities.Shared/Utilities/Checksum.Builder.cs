@@ -2,36 +2,21 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-#if !NET5_0_OR_GREATER
-using System.Buffers;
-#endif
 using System.Buffers.Binary;
 using System.Diagnostics;
+using System.IO.Hashing;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.Extensions.ObjectPool;
-
-// PERFORMANCE: Care has been taken to avoid using IncrementalHash on .NET Framework, which can cause
-// threadpool starvation. Essentially, on .NET Framework, IncrementalHash ends up using the OS implementation
-// of SHA-256, which creates several finalizable objects in the form of safe handles. By creating instances
-// of SHA256 for .NET Framework (and netstandard2.0), we get the managed code version of SHA-256, which
-// doesn't have the overhead of using the OS implementations.
-//
-// See https://github.com/dotnet/roslyn/issues/67995 for more detail.
-
-#if NET5_0_OR_GREATER
-using HashingType = System.Security.Cryptography.IncrementalHash;
-#else
-using HashingType = System.Security.Cryptography.SHA256;
-#endif
 
 namespace Microsoft.AspNetCore.Razor.Utilities;
 
-internal sealed partial record Checksum
+internal readonly partial record struct Checksum
 {
     internal readonly ref partial struct Builder
     {
-        private static readonly ObjectPool<HashingType> s_hashPool = DefaultPool.Create(Policy.Instance);
+        private const int XxHash128SizeBytes = 128 / 8;
+
+        private static readonly XxHash128Pool s_hashPool = XxHash128Pool.Default;
 
         private enum TypeKind : byte
         {
@@ -45,34 +30,31 @@ internal sealed partial record Checksum
             Char,
         }
 
-        // Small, per-thread array to use as a buffer for appending primitive values to the hash.
+        // Small (8 byte), per-thread byte array to use as a buffer for appending primitive values to the hash.
         [ThreadStatic]
         private static byte[]? s_buffer;
 
-        private readonly HashingType _hash;
+        private readonly XxHash128 _hash;
 
         public Builder()
         {
             _hash = s_hashPool.Get();
-
-#if !NET5_0_OR_GREATER
-            _hash.Initialize();
-#endif
         }
 
-        static byte[] GetBuffer()
-            => s_buffer ??= new byte[8];
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static Span<byte> GetBuffer(int length = 8)
+        {
+            Debug.Assert(length <= 8, $"length should never be greater than 8.");
+
+            var buffer = s_buffer ??= new byte[8];
+            return buffer.AsSpan(0, length);
+        }
 
         public Checksum FreeAndGetChecksum()
         {
-#if NET5_0_OR_GREATER
-            Span<byte> hash = stackalloc byte[HashSize];
+            Span<byte> hash = stackalloc byte[XxHash128SizeBytes];
             _hash.GetHashAndReset(hash);
             var result = From(hash);
-#else
-            _hash.TransformFinalBlock(inputBuffer: [], inputOffset: 0, inputCount: 0);
-            var result = From(_hash.Hash);
-#endif
 
             s_hashPool.Return(_hash);
             return result;
@@ -82,18 +64,12 @@ internal sealed partial record Checksum
         {
             Debug.Assert(s_buffer is not null);
 
-#if NET5_0_OR_GREATER
-            _hash.AppendData(s_buffer, offset: 0, count);
-#else
-            _hash.TransformBlock(s_buffer, inputOffset: 0, inputCount: count, outputBuffer: null, outputOffset: 0);
-#endif
+            _hash.Append(s_buffer.AsSpan(0, count));
         }
 
         private void AppendTypeKind(TypeKind kind)
         {
-            var buffer = GetBuffer();
-            buffer[0] = (byte)kind;
-            AppendBuffer(count: 1);
+            AppendByteValue((byte)kind);
         }
 
         private void AppendBoolValue(bool value)
@@ -103,68 +79,41 @@ internal sealed partial record Checksum
 
         private void AppendByteValue(byte value)
         {
-            var buffer = GetBuffer();
+            var buffer = GetBuffer(length: sizeof(byte));
             buffer[0] = value;
-            AppendBuffer(count: sizeof(byte));
+            _hash.Append(buffer);
         }
 
         private void AppendCharValue(char value)
         {
-            var buffer = GetBuffer();
-            BinaryPrimitives.WriteUInt16LittleEndian(buffer.AsSpan(0, sizeof(char)), value);
-            AppendBuffer(count: sizeof(char));
+            var buffer = GetBuffer(length: sizeof(char));
+            BinaryPrimitives.WriteUInt16LittleEndian(buffer, value);
+            _hash.Append(buffer);
         }
 
         private void AppendInt32Value(int value)
         {
-            var buffer = GetBuffer();
-            BinaryPrimitives.WriteInt32LittleEndian(buffer.AsSpan(0, sizeof(int)), value);
-            AppendBuffer(count: sizeof(int));
+            var buffer = GetBuffer(length: sizeof(int));
+            BinaryPrimitives.WriteInt32LittleEndian(buffer, value);
+            _hash.Append(buffer);
         }
 
         private void AppendInt64Value(long value)
         {
-            var buffer = GetBuffer();
-            BinaryPrimitives.WriteInt64LittleEndian(buffer.AsSpan(0, sizeof(long)), value);
-            AppendBuffer(count: sizeof(long));
+            var buffer = GetBuffer(length: sizeof(long));
+            BinaryPrimitives.WriteInt64LittleEndian(buffer, value);
+            _hash.Append(buffer);
         }
 
         private void AppendStringValue(string value)
         {
-#if NET5_0_OR_GREATER
-            _hash.AppendData(MemoryMarshal.AsBytes(value.AsSpan()));
-            _hash.AppendData(MemoryMarshal.AsBytes("\0".AsSpan()));
-#else
-            using var _ = ArrayPool<byte>.Shared.GetPooledArray(4 * 1024, out var buffer);
-
-            AppendData(_hash, buffer, value);
-            AppendData(_hash, buffer, "\0");
-
-            static void AppendData(HashingType hash, byte[] buffer, string value)
-            {
-                var stringBytes = MemoryMarshal.AsBytes(value.AsSpan());
-                Debug.Assert(stringBytes.Length == value.Length * 2);
-
-                var index = 0;
-                while (index < stringBytes.Length)
-                {
-                    var remaining = stringBytes.Length - index;
-                    var toCopy = Math.Min(remaining, buffer.Length);
-
-                    stringBytes.Slice(index, toCopy).CopyTo(buffer);
-                    hash.TransformBlock(buffer, inputOffset: 0, inputCount: toCopy, outputBuffer: null, outputOffset: 0);
-
-                    index += toCopy;
-                }
-            }
-#endif
+            _hash.Append(MemoryMarshal.AsBytes(value.AsSpan()));
+            _hash.Append(MemoryMarshal.AsBytes("\0".AsSpan()));
         }
-        private void AppendHashDataValue(HashData value)
+        private void AppendChecksumValue(Checksum value)
         {
             AppendInt64Value(value.Data1);
             AppendInt64Value(value.Data2);
-            AppendInt64Value(value.Data3);
-            AppendInt64Value(value.Data4);
         }
 
         public void AppendNull()
@@ -172,37 +121,37 @@ internal sealed partial record Checksum
             AppendTypeKind(TypeKind.Null);
         }
 
-        public void AppendData(bool value)
+        public void Append(bool value)
         {
             AppendTypeKind(TypeKind.Bool);
             AppendBoolValue(value);
         }
 
-        public void AppendData(byte value)
+        public void Append(byte value)
         {
             AppendTypeKind(TypeKind.Byte);
             AppendByteValue(value);
         }
 
-        public void AppendData(char value)
+        public void Append(char value)
         {
             AppendTypeKind(TypeKind.Char);
             AppendCharValue(value);
         }
 
-        public void AppendData(int value)
+        public void Append(int value)
         {
             AppendTypeKind(TypeKind.Int32);
             AppendInt32Value(value);
         }
 
-        public void AppendData(long value)
+        public void Append(long value)
         {
             AppendTypeKind(TypeKind.Int64);
             AppendInt64Value(value);
         }
 
-        public void AppendData(string? value)
+        public void Append(string? value)
         {
             if (value is null)
             {
@@ -214,13 +163,13 @@ internal sealed partial record Checksum
             AppendStringValue(value);
         }
 
-        public void AppendData(Checksum value)
+        public void Append(Checksum value)
         {
             AppendTypeKind(TypeKind.Checksum);
-            AppendHashDataValue(value.Data);
+            AppendChecksumValue(value);
         }
 
-        public void AppendData(object? value)
+        public void Append(object? value)
         {
             switch (value)
             {
@@ -229,31 +178,31 @@ internal sealed partial record Checksum
                     break;
 
                 case string s:
-                    AppendData(s);
+                    Append(s);
                     break;
 
                 case Checksum c:
-                    AppendData(c);
+                    Append(c);
                     break;
 
                 case bool b:
-                    AppendData(b);
+                    Append(b);
                     break;
 
                 case int i:
-                    AppendData(i);
+                    Append(i);
                     break;
 
                 case long l:
-                    AppendData(l);
+                    Append(l);
                     break;
 
                 case byte b:
-                    AppendData(b);
+                    Append(b);
                     break;
 
                 case char c:
-                    AppendData(c);
+                    Append(c);
                     break;
 
                 default:

@@ -60,16 +60,14 @@ internal sealed class TestExampleLanguageServer : ExampleLanguageServer
             _exitingSource = exitingSource;
         }
 
-        public Task ExitAsync()
+        public async Task ExitAsync()
         {
             _exitingSource.SetResult(0);
-            return Task.CompletedTask;
         }
 
-        public Task ShutdownAsync(string message = "Shutting down")
+        public async Task ShutdownAsync(string message = "Shutting down")
         {
             _shuttingDownSource.SetResult(0);
-            return Task.CompletedTask;
         }
     }
 
@@ -81,7 +79,7 @@ internal sealed class TestExampleLanguageServer : ExampleLanguageServer
         return base.ConstructLspServices();
     }
 
-    private void _clientRpc_Disconnected(object sender, JsonRpcDisconnectedEventArgs e)
+    private void _clientRpc_Disconnected(object? sender, JsonRpcDisconnectedEventArgs e)
     {
         throw new NotImplementedException();
     }

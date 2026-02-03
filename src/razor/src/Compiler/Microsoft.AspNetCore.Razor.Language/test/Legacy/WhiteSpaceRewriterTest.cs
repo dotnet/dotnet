@@ -24,7 +24,7 @@ public class WhiteSpaceRewriterTest() : ParserTestBase(layer: TestProject.Layer.
         var parsed = ParseDocument(
             RazorLanguageVersion.Latest,
             content,
-            Array.Empty<DirectiveDescriptor>());
+            directives: default);
 
         var rewriter = new WhitespaceRewriter();
 

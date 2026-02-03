@@ -94,6 +94,35 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
                 }
             }
 
+            // The opposite case of the above: for the last line of a code block, the C# formatter might
+            // return an edit that starts within our mapping, but ends after. In those cases, when the edit
+            // spans multiple lines we just take the first line and try to use that.
+            //
+            // This can happen with code actions that remove content, where the edit starts inside the mapped
+            // region but extends beyond it. For example, when removing an unused variable in a single-line
+            // explicit statement block like `@{ var x = 1; }`, Roslyn may generate edits that span beyond
+            // the mapped C# region.
+            if (mappedStart && !mappedEnd && startLine != endLine)
+            {
+                // Construct a theoretical edit that is just for the first line of the edit that the C# formatter
+                // gave us, and see if we can map that.
+
+                // Get the end of the start line
+                if (!csharpSourceText.TryGetAbsoluteIndex(startLine, csharpSourceText.Lines[startLine].Span.Length, out var endIndex))
+                {
+                    break;
+                }
+
+                if (this.TryMapToRazorDocumentPosition(csharpDocument, endIndex, out _, out hostEndIndex))
+                {
+                    // If there's a newline in the new text, only take the part before it
+                    var firstNewLine = change.NewText.AssumeNotNull().IndexOfAny(['\n', '\r']);
+                    var newText = firstNewLine >= 0 ? change.NewText[..firstNewLine] : change.NewText;
+                    yield return new TextChange(TextSpan.FromBounds(hostStartIndex, hostEndIndex), newText);
+                    continue;
+                }
+            }
+
             // If we couldn't map either the start or the end then we still might want to do something tricky.
             // When we have a block like this:
             //
@@ -197,13 +226,13 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
         }
 
         if (!sourceText.TryGetAbsoluteIndex(range.Start, out var startIndex) ||
-            !TryMapToCSharpDocumentPosition(csharpDocument, startIndex, out var generatedRangeStart, out var _))
+            !TryMapToCSharpDocumentPosition(csharpDocument, startIndex, out var generatedRangeStart, out _))
         {
             return false;
         }
 
         if (!sourceText.TryGetAbsoluteIndex(range.End, out var endIndex) ||
-            !TryMapToCSharpDocumentPosition(csharpDocument, endIndex, out var generatedRangeEnd, out var _))
+            !TryMapToCSharpDocumentPosition(csharpDocument, endIndex, out var generatedRangeEnd, out _))
         {
             return false;
         }

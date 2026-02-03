@@ -2,7 +2,7 @@
 <Project ToolsVersion="15.0">
 
   <!-- Set AssemblyVersion in targets as it is TFM dependent. -->
-  <PropertyGroup Condition="'$(AssemblyVersion)' == '' and '$(SemanticVersion)' != ''">
+  <PropertyGroup Condition="'$(AssemblyVersion)' == ''">
     <AssemblyVersion Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">$(SemanticVersion).$(PreReleaseVersion)</AssemblyVersion>
     <AssemblyVersion Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">$(SemanticVersion).0</AssemblyVersion>
   </PropertyGroup>

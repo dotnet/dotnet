@@ -216,6 +216,7 @@ namespace Microsoft.Build.BackEnd
                 }
             }
 
+            bool nodeReuseRequested = Handshake.IsHandshakeOptionEnabled(hostHandshake.HandshakeOptions, HandshakeOptions.NodeReuse);
             // Get all process of possible running node processes for reuse and put them into ConcurrentQueue.
             // Processes from this queue will be concurrently consumed by TryReusePossibleRunningNodes while
             //    trying to connect to them and reuse them. When queue is empty, no process to reuse left
@@ -224,7 +225,7 @@ namespace Microsoft.Build.BackEnd
             ConcurrentQueue<Process> possibleRunningNodes = null;
 #if FEATURE_NODE_REUSE
             // Try to connect to idle nodes if node reuse is enabled.
-            if (_componentHost.BuildParameters.EnableNodeReuse)
+            if (nodeReuseRequested)
             {
                 IList<Process> possibleRunningNodesList;
                 (expectedProcessName, possibleRunningNodesList) = GetPossibleRunningNodes(msbuildLocation);
@@ -236,6 +237,7 @@ namespace Microsoft.Build.BackEnd
                 }
             }
 #endif
+
             ConcurrentQueue<NodeContext> nodeContexts = new();
             ConcurrentQueue<Exception> exceptions = new();
             int currentProcessId = EnvironmentUtilities.CurrentProcessId;
@@ -243,7 +245,12 @@ namespace Microsoft.Build.BackEnd
             {
                 try
                 {
-                    if (!TryReuseAnyFromPossibleRunningNodes(currentProcessId, nodeId) && !StartNewNode(nodeId))
+                    if (nodeReuseRequested && TryReuseAnyFromPossibleRunningNodes(currentProcessId, nodeId))
+                    {
+                        return;
+                    }
+
+                    if (!StartNewNode(nodeId))
                     {
                         // We were unable to reuse or launch a node.
                         CommunicationsUtilities.Trace("FAILED TO CONNECT TO A CHILD NODE");
@@ -683,6 +690,7 @@ namespace Microsoft.Build.BackEnd
                 // We select a thread size empirically - for debug builds the minimum possible stack size was too small.
                 // The current size is reported to not have the issue.
                 _drainPacketQueueThread = new Thread(DrainPacketQueue, 0x30000);
+                _drainPacketQueueThread.Name = "DrainPacketQueueThread";
                 _drainPacketQueueThread.IsBackground = true;
                 _drainPacketQueueThread.Start(this);
             }
@@ -850,10 +858,13 @@ namespace Microsoft.Build.BackEnd
                                 serverToClientStream.Write(writeStreamBuffer, i, lengthToWrite);
                             }
 
-                            if (IsExitPacket(packet))
+                            if (packet is NodeBuildComplete)
                             {
-                                context._exitPacketState = ExitPacketState.ExitPacketSent;
-                                context._packetQueueDrainDelayCancellation.Cancel();
+                                if (IsExitPacket(packet))
+                                {
+                                    context._exitPacketState = ExitPacketState.ExitPacketSent;
+                                    context._packetQueueDrainDelayCancellation.Cancel();
+                                }
 
                                 return;
                             }

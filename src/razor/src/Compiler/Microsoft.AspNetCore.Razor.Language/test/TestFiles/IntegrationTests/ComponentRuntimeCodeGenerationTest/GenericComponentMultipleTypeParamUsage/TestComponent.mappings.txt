@@ -8,6 +8,11 @@ Source Location: (29:1,11 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (620:24,0 [6] )
 |TItem2|
 
+Source Location: (168:10,1 [13] x:\dir\subdir\Test\TestComponent.cshtml)
+|TestComponent|
+Generated Location: (997:35,49 [13] )
+|TestComponent|
+
 Source Location: (202:10,35 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |string|
 Generated Location: (1097:38,0 [6] )

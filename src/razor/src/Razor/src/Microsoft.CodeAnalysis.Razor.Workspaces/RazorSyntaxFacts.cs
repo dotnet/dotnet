@@ -174,7 +174,7 @@ internal static class RazorSyntaxFacts
         => n.Kind is SyntaxKind.MarkupEndTag or SyntaxKind.MarkupTagHelperEndTag;
 
     public static bool IsInCodeBlock(RazorSyntaxNode n)
-        => n.FirstAncestorOrSelf<RazorSyntaxNode>(n => n is RazorDirectiveSyntax { DirectiveDescriptor.Directive: "code" }) is not null;
+        => n.FirstAncestorOrSelf<RazorSyntaxNode>(static n => n is RazorDirectiveSyntax { DirectiveDescriptor.Directive: "code" }) is not null;
 
     internal static bool TryGetNamespaceFromDirective(RazorDirectiveSyntax directiveNode, [NotNullWhen(true)] out string? @namespace)
     {

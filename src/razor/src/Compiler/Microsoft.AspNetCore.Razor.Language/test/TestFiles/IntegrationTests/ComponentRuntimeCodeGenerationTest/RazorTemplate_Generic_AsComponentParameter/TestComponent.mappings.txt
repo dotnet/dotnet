@@ -13,6 +13,11 @@ Source Location: (73:0,73 [2] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1252:41,0 [2] )
 |; |
 
+Source Location: (79:1,1 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|MyComponent|
+Generated Location: (1357:47,49 [11] )
+|MyComponent|
+
 Source Location: (91:1,13 [14] x:\dir\subdir\Test\TestComponent.cshtml)
 |PersonTemplate|
 Generated Location: (1538:51,0 [14] )

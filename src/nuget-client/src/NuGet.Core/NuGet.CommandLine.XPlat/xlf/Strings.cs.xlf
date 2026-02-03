@@ -47,11 +47,6 @@
         <target state="translated">ID balíčku, který se má přidat</target>
         <note />
       </trans-unit>
-      <trans-unit id="AddPkg_PackagePrerelease">
-        <source>Allows prerelease packages to be installed.</source>
-        <target state="translated">Umožňuje instalaci předběžných verzí balíčků.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="AddPkg_PackageVersionDescription">
         <source>Version of the package to be added.</source>
         <target state="translated">Verze balíčku, který se má přidat</target>
@@ -99,7 +94,7 @@
       </trans-unit>
       <trans-unit id="ArgumentNullOrEmpty">
         <source>Argument cannot be null or empty.</source>
-        <target state="new">Argument cannot be null or empty.</target>
+        <target state="translated">Argument nemůže být null ani prázdný.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConfigCommandKeyNotFound">
@@ -286,7 +281,7 @@
       </trans-unit>
       <trans-unit id="Error_CannotUpgradeAutoReferencedPackage">
         <source>{0}: Package {1} is implicitly added by the SDK and cannot be upgraded independently</source>
-        <target state="new">{0}: Package {1} is implicitly added by the SDK and cannot be upgraded independently</target>
+        <target state="translated">{0}: Balíček {1} je implicitně přidán sadou SDK a nelze jej samostatně upgradovat.</target>
         <note>{0} - project referencing the package
 {1} - package id</note>
       </trans-unit>
@@ -353,6 +348,11 @@ NuGet vyžaduje zdroje HTTPS. Pokud chcete používat zdroje HTTP, musíte v sou
         <target state="translated">Zadaný zdroj {0} není platný. Zadejte platný zdroj.</target>
         <note>0 - The invalid source.</note>
       </trans-unit>
+      <trans-unit id="Error_InvalidVersion">
+        <source>Invalid version value '{0}'.</source>
+        <target state="translated">Neplatná hodnota verze {0}</target>
+        <note>0 - package version</note>
+      </trans-unit>
       <trans-unit id="Error_InvalidVersionRange">
         <source>Invalid version range '{0}'</source>
         <target state="translated">Neplatný rozsah verzí {0}</target>
@@ -398,9 +398,14 @@ NuGet vyžaduje zdroje HTTPS. Pokud chcete používat zdroje HTTP, musíte v sou
         <target state="translated">Projekt {0} používá pro balíčky NuGet package.config, ale daný příkaz funguje jen s projekty odkazů na balíčky.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_PackageDownload_VersionNotFound">
+        <source>Unable to find a valid package version</source>
+        <target state="translated">Nepovedlo se najít platnou verzi balíčku.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Error_PackageSourceMappingNotFound">
         <source>Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</source>
-        <target state="new">Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</target>
+        <target state="translated">Mapování zdroje balíčku je povolené, ale pro balíček {0} nebylo nalezeno žádné mapování. Další informace najdete na https://aka.ms/nuget/audit.</target>
         <note>{0} - package id</note>
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
@@ -886,6 +891,81 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
         <note>{0}: App full name
 {1}: App version</note>
       </trans-unit>
+      <trans-unit id="PackageDownloadCommand_AllowInsecureConnectionsDescription">
+        <source>Allows downloading from HTTP (non-HTTPS) package sources.</source>
+        <target state="translated">Umožňuje stahování ze zdrojů balíčků HTTP (jiné než HTTPS).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_AlreadyInstalled">
+        <source>Skipping download. Package '{0}' version {1} already exists at '{2}'.</source>
+        <target state="translated">Přeskakuje se stahování. Verze {1} balíčku {0} již existuje v {2}.</target>
+        <note>0 - package id
+1 - version
+2 - directory path where the package was downloaded</note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_Description">
+        <source>Downloads a NuGet package to a local folder without requiring a project file.</source>
+        <target state="translated">Stáhne balíček NuGet do místní složky, aniž by to vyžadovalo soubor projektu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_Failed">
+        <source>Package '{0}' ({1}) failed to download.</source>
+        <target state="translated">Stažení balíčku {0} ({1}) se nezdařilo.</target>
+        <note>0 - package id
+1 - package version</note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_LatestVersion">
+        <source>latest version</source>
+        <target state="translated">nejnovější verze</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_OutputDirectoryDescription">
+        <source>Directory where the package will be placed. Defaults to the current working directory.</source>
+        <target state="translated">Adresář, do kterého se balíček umístí. Výchozí hodnota je aktuální pracovní adresář.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_PackageIdDescription">
+        <source>Package identifier (e.g. 'Newtonsoft.Json').</source>
+        <target state="translated">Identifikátor balíčku (např. Newtonsoft.Json)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_PackageSourceMapping_NoSourcesMapped">
+        <source>Unable to download package '{0}'. PackageSourceMapping is enabled, but no mapped sources were found for this package. The following source(s) were not considered: {1}.</source>
+        <target state="translated">Balíček {0} nelze stáhnout. Funkce PackageSourceMapping je povolená, ale pro tento balíček se nenašly žádné namapované zdroje. Následující zdroje nebyly zohledněny: {1}.</target>
+        <note>{0} = package ID 
+{1} = comma-separated list of all configured sources </note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_PackageSourceMapping_NoSuchSource">
+        <source>The mapped source '{0}' for package '{1}' was not found among the configured sources.</source>
+        <target state="translated">Mapovaný zdroj {0} pro balíček {1} nebyl nalezen mezi nakonfigurovanými zdroji.</target>
+        <note>0 - package source name
+1 - package name</note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_SourcesDescription">
+        <source>Specifies one or more NuGet package sources to use.</source>
+        <target state="translated">Určuje jeden nebo více zdrojů balíčků NuGet, které se mají použít.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_Starting">
+        <source>Downloading package {0}, version {1}.</source>
+        <target state="translated">Stahuje se balíček {0} verze {1}.</target>
+        <note>0- package id
+1- package version</note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_Succeeded">
+        <source>Package '{0}' ({1}) successfully downloaded to '{2}'.</source>
+        <target state="translated">Balíček {0} ({1}) se úspěšně stáhl do {2}.</target>
+        <note>0 - package id
+1 - package version
+2 - package download location</note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_UnableToDownload">
+        <source>Package download failed for `{0} {1}` from source `{2}`.</source>
+        <target state="translated">Stažení balíčku pro {0}{1} ze zdroje {2} se nezdařilo.</target>
+        <note>0 package id
+1 package version
+2 package source</note>
+      </trans-unit>
       <trans-unit id="PackageUpdateCommand_Description">
         <source>Update referenced packages in a project or solution.</source>
         <target state="translated">Aktualizujte odkazované balíčky v projektu nebo řešení.</target>
@@ -898,7 +978,7 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_VulnerableOptionDescription">
         <source>Upgrade packages with known vulnerabilities.</source>
-        <target state="new">Upgrade packages with known vulnerabilities.</target>
+        <target state="translated">Upgradujte balíčky se známými ohroženími zabezpečení.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_AllPackagesAlreadyUpToDate">
@@ -908,22 +988,22 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       </trans-unit>
       <trans-unit id="PackageUpdate_AllVersionsHaveAdvisories">
         <source>All versions of package {0} have security advisories. Unable to find a non-vulnerable version to update to.</source>
-        <target state="new">All versions of package {0} have security advisories. Unable to find a non-vulnerable version to update to.</target>
+        <target state="translated">Všechny verze balíčku {0} mají bezpečnostní upozornění. Nelze najít verzi bez ohrožení zabezpečení, na kterou by bylo možné aktualizovat.</target>
         <note>{0}: package id</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_AlreadyUpToDate">
         <source>All packages are up to date</source>
-        <target state="new">All packages are up to date</target>
+        <target state="translated">Všechny balíčky jsou aktuální.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_AuditDisabled">
         <source>This command requires NuGetAudit to be enabled at this time. See https://aka.ms/nuget/audit for more information.</source>
-        <target state="new">This command requires NuGetAudit to be enabled at this time. See https://aka.ms/nuget/audit for more information.</target>
+        <target state="translated">Tento příkaz vyžaduje, aby byl v tuto chvíli povolený NuGetAudit. Další informace najdete na https://aka.ms/nuget/audit.</target>
         <note>{Locked="NuGetAudit"}{Locked="dotnet package update"}</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_AuditModeIsDirect">
         <source>NuGetAuditMode is set to direct, which means that transitive packages with known vulnerabilities will not be updated. See https://aka.ms/nuget/audit for more information.</source>
-        <target state="new">NuGetAuditMode is set to direct, which means that transitive packages with known vulnerabilities will not be updated. See https://aka.ms/nuget/audit for more information.</target>
+        <target state="translated">NuGetAuditMode je nastaven na direct, což znamená, že transitivní (závislé) balíčky s ohroženími zabezpečení se nebudou aktualizovat. Další informace najdete na https://aka.ms/nuget/audit.</target>
         <note>{Locked="NuGetAuditMode"}</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_FinalSummary">
@@ -944,7 +1024,7 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       </trans-unit>
       <trans-unit id="PackageUpdate_NoVulnerablePackages">
         <source>No upgradable packages have known vulnerabilities.</source>
-        <target state="new">No upgradable packages have known vulnerabilities.</target>
+        <target state="translated">Žádné upgradovatelné balíčky nemají známá ohrožení zabezpečení.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_PackageArgumentDescription">
@@ -964,7 +1044,7 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatedMessage">
         <source>Updating {0} {1} to {2}.</source>
-        <target state="new">Updating {0} {1} to {2}.</target>
+        <target state="translated">Probíhá aktualizace {0}{1} na {2}.</target>
         <note>{0}: package id
 {1}: existing version
 {2}: new version</note>
@@ -976,13 +1056,18 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatingVulnerablePackages">
         <source>Updating packages with security advisories in {0}</source>
-        <target state="new">Updating packages with security advisories in {0}</target>
+        <target state="translated">Aktualizují se balíčky s bezpečnostními upozorněními v {0}</target>
         <note>{0} - the project/solution being checked</note>
       </trans-unit>
       <trans-unit id="PrereleaseVersionsAvailable">
         <source>There are no stable versions available, {0} is the best available. Consider adding the --prerelease option</source>
         <target state="translated">Nejsou k dispozici žádné stabilní verze, nejlepší dostupná verze je {0}. Zvažte možnost přidat --prerelease.</target>
         <note>{0} - Package Version</note>
+      </trans-unit>
+      <trans-unit id="Prerelease_Description">
+        <source>Allows prerelease packages to be installed.</source>
+        <target state="translated">Umožňuje instalaci předběžných verzí balíčků.</target>
+        <note />
       </trans-unit>
       <trans-unit id="PushCommandSkipDuplicateDescription">
         <source>If a package and version already exists, skip it and continue with the next package in the push, if any.</source>

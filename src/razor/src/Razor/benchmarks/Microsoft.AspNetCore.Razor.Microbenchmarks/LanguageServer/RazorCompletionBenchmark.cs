@@ -18,7 +18,6 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
@@ -42,13 +41,12 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
         var completionListCache = RazorLanguageServerHost.GetRequiredService<CompletionListCache>();
         var triggerAndCommitCharacters = RazorLanguageServerHost.GetRequiredService<CompletionTriggerAndCommitCharacters>();
         var loggerFactory = RazorLanguageServerHost.GetRequiredService<ILoggerFactory>();
-        var languageServerFeatureOptions = RazorLanguageServerHost.GetRequiredService<LanguageServerFeatureOptions>();
 
         var delegatedCompletionListProvider = new TestDelegatedCompletionListProvider(documentMappingService, clientConnection, completionListCache, triggerAndCommitCharacters);
         var completionListProvider = new CompletionListProvider(razorCompletionListProvider, delegatedCompletionListProvider, triggerAndCommitCharacters);
         var configurationService = new DefaultRazorConfigurationService(clientConnection, loggerFactory);
         var optionsMonitor = new RazorLSPOptionsMonitor(configurationService, RazorLSPOptions.Default);
-        CompletionEndpoint = new RazorCompletionEndpoint(completionListProvider, triggerAndCommitCharacters, NoOpTelemetryReporter.Instance, optionsMonitor, languageServerFeatureOptions);
+        CompletionEndpoint = new RazorCompletionEndpoint(completionListProvider, triggerAndCommitCharacters, NoOpTelemetryReporter.Instance, optionsMonitor);
 
         var clientCapabilities = new VSInternalClientCapabilities
         {

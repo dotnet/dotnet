@@ -4,7 +4,6 @@
 #nullable disable
 
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -561,7 +560,7 @@ public class TagHelperCompletionProviderTest(ITestOutputHelper testOutput) : Tag
                 <test $$/>
                 """,
             isRazorFile: false,
-            tagHelpers: ImmutableArray.Create(tagHelper.Build()));
+            tagHelpers: [tagHelper.Build()]);
 
         // Act
         var completions = service.GetCompletionItems(context);
@@ -604,7 +603,7 @@ public class TagHelperCompletionProviderTest(ITestOutputHelper testOutput) : Tag
                 <test $$/>
                 """,
             isRazorFile: false,
-            tagHelpers: ImmutableArray.Create(tagHelper.Build()));
+            tagHelpers: [tagHelper.Build()]);
 
         // Act
         var completions = service.GetCompletionItems(context);
@@ -931,9 +930,168 @@ public class TagHelperCompletionProviderTest(ITestOutputHelper testOutput) : Tag
         );
     }
 
-    private static RazorCompletionContext CreateRazorCompletionContext(string markup, bool isRazorFile, RazorCompletionOptions options = default, ImmutableArray<TagHelperDescriptor> tagHelpers = default)
+    [Fact]
+    public void GetCompletionAt_ComponentWithEditorRequiredAttributes_SnippetsSupported_ReturnsSnippet()
     {
-        tagHelpers = tagHelpers.NullToEmpty();
+        // Arrange
+        var componentBuilder = TagHelperDescriptorBuilder.CreateComponent("ComponentWithRequiredParams", "TestAssembly");
+        componentBuilder.SetTypeName(
+            fullName: "TestNamespace.ComponentWithRequiredParams",
+            typeNamespace: "TestNamespace",
+            typeNameIdentifier: "ComponentWithRequiredParams");
+        componentBuilder.TagMatchingRule(rule => rule.TagName = "ComponentWithRequiredParams");
+        componentBuilder.IsFullyQualifiedNameMatch = true;
+        componentBuilder.BindAttribute(attribute =>
+        {
+            attribute.Name = "RequiredParam1";
+            attribute.PropertyName = "RequiredParam1";
+            attribute.TypeName = typeof(string).FullName;
+            attribute.IsEditorRequired = true;
+        });
+        componentBuilder.BindAttribute(attribute =>
+        {
+            attribute.Name = "RequiredParam2";
+            attribute.PropertyName = "RequiredParam2";
+            attribute.TypeName = typeof(int).FullName;
+            attribute.IsEditorRequired = true;
+        });
+        componentBuilder.BindAttribute(attribute =>
+        {
+            attribute.Name = "OptionalParam";
+            attribute.PropertyName = "OptionalParam";
+            attribute.TypeName = typeof(string).FullName;
+        });
+
+        var service = CreateTagHelperCompletionProvider();
+        var options = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: true, UseVsCodeCompletionCommitCharacters: false);
+        var context = CreateRazorCompletionContext(
+            """
+                <$$
+                """,
+            isRazorFile: true,
+            options,
+            tagHelpers: [componentBuilder.Build()]);
+
+        // Act
+        var completions = service.GetCompletionItems(context);
+
+        // Assert - should have two completions: regular and snippet
+        Assert.Equal(2, completions.Length);
+
+        RazorCompletionItem regularCompletion = null;
+        RazorCompletionItem snippetCompletion = null;
+
+        foreach (var completion in completions)
+        {
+            if (completion.DisplayText == "ComponentWithRequiredParams")
+            {
+                regularCompletion = completion;
+            }
+            else if (completion.DisplayText == "ComponentWithRequiredParams (and req'd attributes...)")
+            {
+                snippetCompletion = completion;
+            }
+        }
+
+        Assert.NotNull(regularCompletion);
+        Assert.False(regularCompletion.IsSnippet);
+        Assert.Equal("ComponentWithRequiredParams", regularCompletion.InsertText);
+
+        Assert.NotNull(snippetCompletion);
+        Assert.True(snippetCompletion.IsSnippet);
+        Assert.Contains("RequiredParam1", snippetCompletion.InsertText);
+        Assert.Contains("RequiredParam2", snippetCompletion.InsertText);
+        Assert.Contains("$1", snippetCompletion.InsertText);
+        Assert.Contains("$2", snippetCompletion.InsertText);
+        Assert.Contains("$0", snippetCompletion.InsertText);
+        // Verify quotes are always added in snippets
+        Assert.Contains("=\"$1\"", snippetCompletion.InsertText);
+    }
+
+    [Fact]
+    public void GetCompletionAt_ComponentWithEditorRequiredAttributes_SnippetsNotSupported_ReturnsNonSnippet()
+    {
+        // Arrange
+        var componentBuilder = TagHelperDescriptorBuilder.CreateComponent("ComponentWithRequiredParams", "TestAssembly");
+        componentBuilder.SetTypeName(
+            fullName: "TestNamespace.ComponentWithRequiredParams",
+            typeNamespace: "TestNamespace",
+            typeNameIdentifier: "ComponentWithRequiredParams");
+        componentBuilder.TagMatchingRule(rule => rule.TagName = "ComponentWithRequiredParams");
+        componentBuilder.IsFullyQualifiedNameMatch = true;
+        componentBuilder.BindAttribute(attribute =>
+        {
+            attribute.Name = "RequiredParam1";
+            attribute.PropertyName = "RequiredParam1";
+            attribute.TypeName = typeof(string).FullName;
+            attribute.IsEditorRequired = true;
+        });
+
+        var service = CreateTagHelperCompletionProvider();
+        var options = new RazorCompletionOptions(SnippetsSupported: false, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: true, UseVsCodeCompletionCommitCharacters: false);
+        var context = CreateRazorCompletionContext(
+            """
+                <$$
+                """,
+            isRazorFile: true,
+            options,
+            tagHelpers: [componentBuilder.Build()]);
+
+        // Act
+        var completions = service.GetCompletionItems(context);
+
+        // Assert
+        var completion = Assert.Single(completions);
+        Assert.Equal("ComponentWithRequiredParams", completion.DisplayText);
+        Assert.False(completion.IsSnippet);
+        Assert.Equal("ComponentWithRequiredParams", completion.InsertText);
+    }
+
+    [Fact]
+    public void GetCompletionAt_ComponentWithNoEditorRequiredAttributes_SnippetsSupported_ReturnsNonSnippet()
+    {
+        // Arrange
+        var componentBuilder = TagHelperDescriptorBuilder.CreateComponent("ComponentWithoutRequired", "TestAssembly");
+        componentBuilder.SetTypeName(
+            fullName: "TestNamespace.ComponentWithoutRequired",
+            typeNamespace: "TestNamespace",
+            typeNameIdentifier: "ComponentWithoutRequired");
+        componentBuilder.TagMatchingRule(rule => rule.TagName = "ComponentWithoutRequired");
+        componentBuilder.IsFullyQualifiedNameMatch = true;
+        componentBuilder.BindAttribute(attribute =>
+        {
+            attribute.Name = "OptionalParam";
+            attribute.PropertyName = "OptionalParam";
+            attribute.TypeName = typeof(string).FullName;
+        });
+
+        var service = CreateTagHelperCompletionProvider();
+        var options = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: true, UseVsCodeCompletionCommitCharacters: false);
+        var context = CreateRazorCompletionContext(
+            """
+                <$$
+                """,
+            isRazorFile: true,
+            options,
+            tagHelpers: [componentBuilder.Build()]);
+
+        // Act
+        var completions = service.GetCompletionItems(context);
+
+        // Assert
+        var completion = Assert.Single(completions);
+        Assert.Equal("ComponentWithoutRequired", completion.DisplayText);
+        Assert.False(completion.IsSnippet);
+        Assert.Equal("ComponentWithoutRequired", completion.InsertText);
+    }
+
+    private static RazorCompletionContext CreateRazorCompletionContext(
+        string markup,
+        bool isRazorFile,
+        RazorCompletionOptions options = default,
+        TagHelperCollection tagHelpers = null)
+    {
+        tagHelpers ??= [];
 
         TestFileMarkupParser.GetPosition(markup, out var documentContent, out var position);
         var codeDocument = CreateCodeDocument(documentContent, isRazorFile, tagHelpers);
@@ -942,6 +1100,6 @@ public class TagHelperCompletionProviderTest(ITestOutputHelper testOutput) : Tag
 
         var owner = syntaxTree.Root.FindInnermostNode(position, includeWhitespace: true, walkMarkersBack: true);
         owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, position);
-        return new RazorCompletionContext(position, owner, syntaxTree, context, Options: options);
+        return new RazorCompletionContext(codeDocument, position, owner, syntaxTree, context, Options: options);
     }
 }

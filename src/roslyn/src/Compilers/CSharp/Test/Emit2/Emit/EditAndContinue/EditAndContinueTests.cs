@@ -14,6 +14,7 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeGen;
 using Microsoft.CodeAnalysis.CSharp.Symbols;
 using Microsoft.CodeAnalysis.CSharp.Test.Utilities;
@@ -83,14 +84,17 @@ namespace Microsoft.CodeAnalysis.CSharp.EditAndContinue.UnitTests
                             (".ctor", MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName),
                             (".ctor", MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName));
 
-                        g.VerifyTypeRefNames("Object", "CompilerGeneratedAttribute", "Exception");
-                        g.VerifyMemberRefNames(".ctor", ".ctor");
+                        g.VerifyTypeRefNames("Object", "CompilerGeneratedAttribute", "Exception", "Action`1");
+                        g.VerifyMemberRefNames(".ctor", ".ctor", "Invoke");
 
                         g.VerifyEncLogDefinitions(new[]
                         {
+                            Row(1, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(1, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(2, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(2, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
                             Row(3, TableIndex.MethodDef, EditAndContinueOperation.Default),
@@ -101,9 +105,11 @@ namespace Microsoft.CodeAnalysis.CSharp.EditAndContinue.UnitTests
                         {
                             Handle(3, TableIndex.TypeDef),
                             Handle(1, TableIndex.Field),
+                            Handle(2, TableIndex.Field),
                             Handle(2, TableIndex.MethodDef),
                             Handle(3, TableIndex.MethodDef),
-                            Handle(4, TableIndex.CustomAttribute)
+                            Handle(4, TableIndex.CustomAttribute),
+                            Handle(1, TableIndex.StandAloneSig)
                         });
 
                         g.VerifyIL("""
@@ -118,8 +124,8 @@ namespace Microsoft.CodeAnalysis.CSharp.EditAndContinue.UnitTests
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A000006
@@ -127,7 +133,15 @@ namespace Microsoft.CodeAnalysis.CSharp.EditAndContinue.UnitTests
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000001
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000002
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A000007
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -164,15 +178,20 @@ namespace Microsoft.CodeAnalysis.CSharp.EditAndContinue.UnitTests
                     },
                     validator: g =>
                     {
+                        g.VerifyTypeDefNames("HotReloadException");
+
                         // The default constructor is added and the deleted constructor is updated to throw:
                         g.VerifyMethodDefNames(".ctor", ".ctor", ".ctor");
-                        g.VerifyTypeRefNames("Object", "CompilerGeneratedAttribute", "Exception");
+                        g.VerifyTypeRefNames("Object", "CompilerGeneratedAttribute", "Exception", "Action`1");
 
                         g.VerifyEncLogDefinitions(new[]
                         {
+                            Row(1, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(1, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(2, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
                             Row(2, TableIndex.MethodDef, EditAndContinueOperation.Default),
@@ -180,14 +199,17 @@ namespace Microsoft.CodeAnalysis.CSharp.EditAndContinue.UnitTests
                             Row(3, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(4, TableIndex.CustomAttribute, EditAndContinueOperation.Default)
                         });
+
                         g.VerifyEncMapDefinitions(new[]
                         {
                             Handle(3, TableIndex.TypeDef),
                             Handle(1, TableIndex.Field),
+                            Handle(2, TableIndex.Field),
                             Handle(1, TableIndex.MethodDef),
                             Handle(2, TableIndex.MethodDef),
                             Handle(3, TableIndex.MethodDef),
-                            Handle(4, TableIndex.CustomAttribute)
+                            Handle(4, TableIndex.CustomAttribute),
+                            Handle(1, TableIndex.StandAloneSig)
                         });
 
                         g.VerifyIL("""
@@ -211,8 +233,8 @@ namespace Microsoft.CodeAnalysis.CSharp.EditAndContinue.UnitTests
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A000007
@@ -220,7 +242,15 @@ namespace Microsoft.CodeAnalysis.CSharp.EditAndContinue.UnitTests
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000001
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000002
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A000008
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -2541,16 +2571,20 @@ class C
                             "System.Runtime.CompilerServices.HotReloadException",
                             "C: {<>c}",
                             "C.<>c: {<>9__0_1, <F>b__0_1}");
+
                         g.VerifyTypeDefNames("HotReloadException");
                         g.VerifyMethodDefNames("F", "<F>b__0_0", "<F>b__0_1", ".ctor");
-                        g.VerifyTypeRefNames("Object", "CompilerGeneratedAttribute", "Exception", "Action", "Console");
-                        g.VerifyMemberRefNames(".ctor", ".ctor", "WriteLine", ".ctor");
+                        g.VerifyTypeRefNames("Object", "CompilerGeneratedAttribute", "Exception", "Action`1", "Action", "Console");
+                        g.VerifyMemberRefNames(".ctor", ".ctor", "WriteLine", ".ctor", "Invoke");
 
                         g.VerifyEncLogDefinitions(new[]
                         {
+                            Row(1, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(4, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(5, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(5, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(6, TableIndex.MethodDef, EditAndContinueOperation.Default),
@@ -2562,11 +2596,13 @@ class C
                         {
                             Handle(4, TableIndex.TypeDef),
                             Handle(4, TableIndex.Field),
+                            Handle(5, TableIndex.Field),
                             Handle(1, TableIndex.MethodDef),
                             Handle(5, TableIndex.MethodDef),
                             Handle(6, TableIndex.MethodDef),
                             Handle(7, TableIndex.MethodDef),
-                            Handle(5, TableIndex.CustomAttribute)
+                            Handle(5, TableIndex.CustomAttribute),
+                            Handle(1, TableIndex.StandAloneSig)
                         });
 
                         g.VerifyIL("""
@@ -2603,8 +2639,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A00000B
@@ -2612,7 +2648,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000004
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000005
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A00000C
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -2923,7 +2967,7 @@ partial class C
                               IL_0006:  nop
                               IL_0007:  ldloc.0
                               IL_0008:  ldc.i4.5
-                              IL_0009:  stfld      0x04000003
+                              IL_0009:  stfld      0x04000004
                               IL_000e:  ldloc.0
                               IL_000f:  ldftn      0x06000007
                               IL_0015:  newobj     0x0A000008
@@ -2941,8 +2985,8 @@ partial class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A000009
@@ -2950,14 +2994,22 @@ partial class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000002
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000003
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A00000A
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             .ctor
                             {
                               // Code size        8 (0x8)
                               .maxstack  8
                               IL_0000:  ldarg.0
-                              IL_0001:  call       0x0A00000A
+                              IL_0001:  call       0x0A00000B
                               IL_0006:  nop
                               IL_0007:  ret
                             }
@@ -2966,7 +3018,7 @@ partial class C
                               // Code size        9 (0x9)
                               .maxstack  8
                               IL_0000:  ldarg.0
-                              IL_0001:  ldfld      0x04000003
+                              IL_0001:  ldfld      0x04000004
                               IL_0006:  ldc.i4.4
                               IL_0007:  add
                               IL_0008:  ret
@@ -4260,6 +4312,7 @@ class C
                     validator: g =>
                     {
                         g.VerifyTypeDefNames("HotReloadException");
+
                         g.VerifyMethodDefNames("get_P", "set_P", ".ctor");
                         g.VerifyPropertyDefNames("P");
 
@@ -4271,9 +4324,12 @@ class C
 
                         g.VerifyEncLogDefinitions(new[]
                         {
+                            Row(1, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(2, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(3, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
@@ -4289,6 +4345,7 @@ class C
                         {
                             Handle(4, TableIndex.TypeDef),
                             Handle(2, TableIndex.Field),
+                            Handle(3, TableIndex.Field),
                             Handle(1, TableIndex.MethodDef),
                             Handle(2, TableIndex.MethodDef),
                             Handle(5, TableIndex.MethodDef),
@@ -4296,6 +4353,7 @@ class C
                             Handle(7, TableIndex.CustomAttribute),
                             Handle(9, TableIndex.CustomAttribute),
                             Handle(10, TableIndex.CustomAttribute),
+                            Handle(1, TableIndex.StandAloneSig),
                             Handle(1, TableIndex.Property)
                         });
 
@@ -4311,8 +4369,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A00000A
@@ -4320,7 +4378,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000002
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000003
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A00000B
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -4362,7 +4428,7 @@ class C
                             Handle(10, TableIndex.CustomAttribute),
                             Handle(1, TableIndex.Property),
                             Handle(3, TableIndex.MethodSemantics),
-                            Handle(4, TableIndex.MethodSemantics),
+                            Handle(4, TableIndex.MethodSemantics)
                         });
 
                         g.VerifyCustomAttributes(
@@ -4426,15 +4492,18 @@ class C
                     validator: g =>
                     {
                         g.VerifyTypeDefNames("HotReloadException");
-                        g.VerifyFieldDefNames("Code");
+                        g.VerifyFieldDefNames("Code", "Created");
                         g.VerifyMethodDefNames("get_P", "set_P", ".ctor");
                         g.VerifyPropertyDefNames("P");
 
                         g.VerifyEncLogDefinitions(
                         [
+                            Row(2, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(1, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(2, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
@@ -4447,10 +4516,12 @@ class C
                         [
                             Handle(3, TableIndex.TypeDef),
                             Handle(1, TableIndex.Field),
+                            Handle(2, TableIndex.Field),
                             Handle(1, TableIndex.MethodDef),
                             Handle(2, TableIndex.MethodDef),
                             Handle(4, TableIndex.MethodDef),
                             Handle(4, TableIndex.CustomAttribute),
+                            Handle(2, TableIndex.StandAloneSig),
                             Handle(1, TableIndex.Property)
                         ]);
 
@@ -4466,8 +4537,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A000006
@@ -4475,7 +4546,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000001
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000002
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A000007
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -4499,7 +4578,7 @@ class C
                         g.VerifyEncLogDefinitions(
                         [
                             Row(2, TableIndex.TypeDef, EditAndContinueOperation.AddField),
-                            Row(2, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(3, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(1, TableIndex.Property, EditAndContinueOperation.Default),
@@ -4513,7 +4592,7 @@ class C
                         ]);
                         g.VerifyEncMapDefinitions(
                         [
-                            Handle(2, TableIndex.Field),
+                            Handle(3, TableIndex.Field),
                             Handle(1, TableIndex.MethodDef),
                             Handle(2, TableIndex.MethodDef),
                             Handle(1, TableIndex.Param),
@@ -4532,7 +4611,7 @@ class C
                               // Code size        7 (0x7)
                               .maxstack  8
                               IL_0000:  ldarg.0
-                              IL_0001:  ldfld      0x04000002
+                              IL_0001:  ldfld      0x04000003
                               IL_0006:  ret
                             }
                             set_P
@@ -4541,7 +4620,7 @@ class C
                               .maxstack  8
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
-                              IL_0002:  stfld      0x04000002
+                              IL_0002:  stfld      0x04000003
                               IL_0007:  ret
                             }
                             """);
@@ -4585,9 +4664,12 @@ class C
 
                         g.VerifyEncLogDefinitions(new[]
                         {
+                            Row(2, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(1, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(2, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
@@ -4595,14 +4677,17 @@ class C
                             Row(1, TableIndex.Property, EditAndContinueOperation.Default),
                             Row(4, TableIndex.CustomAttribute, EditAndContinueOperation.Default)
                         });
+
                         g.VerifyEncMapDefinitions(new[]
                         {
                             Handle(3, TableIndex.TypeDef),
                             Handle(1, TableIndex.Field),
+                            Handle(2, TableIndex.Field),
                             Handle(1, TableIndex.MethodDef),
                             Handle(2, TableIndex.MethodDef),
                             Handle(4, TableIndex.MethodDef),
                             Handle(4, TableIndex.CustomAttribute),
+                            Handle(2, TableIndex.StandAloneSig),
                             Handle(1, TableIndex.Property)
                         });
 
@@ -4618,8 +4703,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A000006
@@ -4627,7 +4712,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000001
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000002
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A000007
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -4651,7 +4744,7 @@ class C
                         g.VerifyMemberRefNames();
                         g.VerifyEncLogDefinitions(new[]
                         {
-                            Row(2, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
+                            Row(3, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(1, TableIndex.Property, EditAndContinueOperation.Default),
@@ -4664,7 +4757,7 @@ class C
                             Handle(1, TableIndex.MethodDef),
                             Handle(2, TableIndex.MethodDef),
                             Handle(1, TableIndex.Param),
-                            Handle(2, TableIndex.StandAloneSig),
+                            Handle(3, TableIndex.StandAloneSig),
                             Handle(1, TableIndex.Property),
                             Handle(3, TableIndex.MethodSemantics),
                             Handle(4, TableIndex.MethodSemantics),
@@ -4726,24 +4819,31 @@ class C
                     {
                         g.VerifyTypeDefNames("HotReloadException");
                         g.VerifyMethodDefNames("set_P", ".ctor");
-                        g.VerifyMemberRefNames(/* Exception */ ".ctor", /* CompilerGeneratedAttribute */ ".ctor");
+                        g.VerifyMemberRefNames(/* Exception */ ".ctor", /* CompilerGeneratedAttribute */ ".ctor", "Invoke");
+
                         g.VerifyEncLogDefinitions(new[]
                         {
+                            Row(2, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(1, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(2, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(2, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
                             Row(4, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(4, TableIndex.CustomAttribute, EditAndContinueOperation.Default)
                         });
+
                         g.VerifyEncMapDefinitions(new[]
                         {
                             Handle(3, TableIndex.TypeDef),
                             Handle(1, TableIndex.Field),
+                            Handle(2, TableIndex.Field),
                             Handle(2, TableIndex.MethodDef),
                             Handle(4, TableIndex.MethodDef),
-                            Handle(4, TableIndex.CustomAttribute)
+                            Handle(4, TableIndex.CustomAttribute),
+                            Handle(2, TableIndex.StandAloneSig)
                         });
 
                         g.VerifyIL("""
@@ -4758,8 +4858,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A000006
@@ -4767,7 +4867,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000001
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000002
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A000007
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -4790,7 +4898,7 @@ class C
                         g.VerifyMethodDefNames("get_P", "set_P");
                         g.VerifyEncLogDefinitions(new[]
                         {
-                            Row(2, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
+                            Row(3, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(1, TableIndex.Property, EditAndContinueOperation.Default),
@@ -4803,7 +4911,7 @@ class C
                             Handle(1, TableIndex.MethodDef),
                             Handle(2, TableIndex.MethodDef),
                             Handle(1, TableIndex.Param),
-                            Handle(2, TableIndex.StandAloneSig),
+                            Handle(3, TableIndex.StandAloneSig),
                             Handle(1, TableIndex.Property),
                             Handle(3, TableIndex.MethodSemantics),
                             Handle(4, TableIndex.MethodSemantics),
@@ -5133,11 +5241,14 @@ class C
 
                         g.VerifyEncLogDefinitions(new[]
                         {
+                            Row(1, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(2, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(3, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(4, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
@@ -5162,11 +5273,13 @@ class C
                             Row(3, TableIndex.MethodSemantics, EditAndContinueOperation.Default),
                             Row(4, TableIndex.MethodSemantics, EditAndContinueOperation.Default)
                         });
+
                         g.VerifyEncMapDefinitions(new[]
                         {
                             Handle(4, TableIndex.TypeDef),
                             Handle(2, TableIndex.Field),
                             Handle(3, TableIndex.Field),
+                            Handle(4, TableIndex.Field),
                             Handle(1, TableIndex.MethodDef),
                             Handle(2, TableIndex.MethodDef),
                             Handle(5, TableIndex.MethodDef),
@@ -5181,6 +5294,7 @@ class C
                             Handle(12, TableIndex.CustomAttribute),
                             Handle(13, TableIndex.CustomAttribute),
                             Handle(14, TableIndex.CustomAttribute),
+                            Handle(1, TableIndex.StandAloneSig),
                             Handle(1, TableIndex.Property),
                             Handle(2, TableIndex.Property),
                             Handle(3, TableIndex.MethodSemantics),
@@ -5216,8 +5330,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A00000B
@@ -5225,7 +5339,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000003
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000004
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A00000C
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -5371,11 +5493,14 @@ class C
 
                         g.VerifyEncLogDefinitions(new[]
                         {
+                            Row(1, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(2, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(3, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(4, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
@@ -5405,6 +5530,7 @@ class C
                             Handle(4, TableIndex.TypeDef),
                             Handle(2, TableIndex.Field),
                             Handle(3, TableIndex.Field),
+                            Handle(4, TableIndex.Field),
                             Handle(1, TableIndex.MethodDef),
                             Handle(2, TableIndex.MethodDef),
                             Handle(5, TableIndex.MethodDef),
@@ -5419,6 +5545,7 @@ class C
                             Handle(12, TableIndex.CustomAttribute),
                             Handle(13, TableIndex.CustomAttribute),
                             Handle(14, TableIndex.CustomAttribute),
+                            Handle(1, TableIndex.StandAloneSig),
                             Handle(1, TableIndex.Property),
                             Handle(2, TableIndex.Property),
                             Handle(3, TableIndex.MethodSemantics),
@@ -5454,8 +5581,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A00000B
@@ -5463,7 +5590,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000003
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000004
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A00000C
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -5608,9 +5743,12 @@ class C
 
                         g.VerifyEncLogDefinitions(new[]
                         {
+                            Row(2, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(1, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(2, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
@@ -5626,6 +5764,7 @@ class C
                         {
                             Handle(4, TableIndex.TypeDef),
                             Handle(1, TableIndex.Field),
+                            Handle(2, TableIndex.Field),
                             Handle(1, TableIndex.MethodDef),
                             Handle(2, TableIndex.MethodDef),
                             Handle(5, TableIndex.MethodDef),
@@ -5633,6 +5772,7 @@ class C
                             Handle(7, TableIndex.CustomAttribute),
                             Handle(8, TableIndex.CustomAttribute),
                             Handle(9, TableIndex.CustomAttribute),
+                            Handle(2, TableIndex.StandAloneSig),
                             Handle(1, TableIndex.Property)
                         });
 
@@ -5648,8 +5788,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A000009
@@ -5657,7 +5797,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000001
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000002
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A00000A
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -5703,9 +5851,12 @@ class C
                         g.VerifyEncLogDefinitions(new[]
                         {
                             Row(2, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
+                            Row(3, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(1, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(2, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
                             Row(3, TableIndex.MethodDef, EditAndContinueOperation.Default),
@@ -5723,12 +5874,14 @@ class C
                         {
                             Handle(3, TableIndex.TypeDef),
                             Handle(1, TableIndex.Field),
+                            Handle(2, TableIndex.Field),
                             Handle(1, TableIndex.MethodDef),
                             Handle(3, TableIndex.MethodDef),
                             Handle(4, TableIndex.MethodDef),
                             Handle(2, TableIndex.Param),
                             Handle(5, TableIndex.CustomAttribute),
                             Handle(2, TableIndex.StandAloneSig),
+                            Handle(3, TableIndex.StandAloneSig),
                             Handle(1, TableIndex.Property),
                             Handle(2, TableIndex.Property),
                             Handle(2, TableIndex.MethodSemantics)
@@ -5756,9 +5909,9 @@ class C
                               IL_0006:  ret
                             }
                             .ctor
-                            {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                             {
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A000008
@@ -5766,7 +5919,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000001
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000002
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A000009
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -5792,7 +5953,7 @@ class C
 
                         g.VerifyEncLogDefinitions(new[]
                         {
-                            Row(3, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
+                            Row(4, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(1, TableIndex.Property, EditAndContinueOperation.Default),
@@ -5800,12 +5961,13 @@ class C
                             Row(1, TableIndex.Param, EditAndContinueOperation.Default),
                             Row(3, TableIndex.MethodSemantics, EditAndContinueOperation.Default)
                         });
+
                         g.VerifyEncMapDefinitions(new[]
                         {
                             Handle(1, TableIndex.MethodDef),
                             Handle(3, TableIndex.MethodDef),
                             Handle(1, TableIndex.Param),
-                            Handle(3, TableIndex.StandAloneSig),
+                            Handle(4, TableIndex.StandAloneSig),
                             Handle(1, TableIndex.Property),
                             Handle(2, TableIndex.Property),
                             Handle(3, TableIndex.MethodSemantics),
@@ -5857,17 +6019,18 @@ class C
                         // existing property and getter are updated:
                         g.VerifyEncLogDefinitions(new[]
                         {
-                            Row(4, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
+                            Row(5, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(3, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.Property, EditAndContinueOperation.Default),
                             Row(2, TableIndex.Param, EditAndContinueOperation.Default),
                             Row(4, TableIndex.MethodSemantics, EditAndContinueOperation.Default)
                         });
+
                         g.VerifyEncMapDefinitions(new[]
                         {
                             Handle(3, TableIndex.MethodDef),
                             Handle(2, TableIndex.Param),
-                            Handle(4, TableIndex.StandAloneSig),
+                            Handle(5, TableIndex.StandAloneSig),
                             Handle(2, TableIndex.Property),
                             Handle(4, TableIndex.MethodSemantics)
                         });
@@ -6132,7 +6295,7 @@ class C
                     {
                         g.VerifyTypeDefNames("HotReloadException");
                         g.VerifyMethodDefNames("add_E", "remove_E", ".ctor");
-                        g.VerifyTypeRefNames("Object", "EventHandler", "CompilerGeneratedAttribute", "Exception");
+                        g.VerifyTypeRefNames("Object", "EventHandler", "CompilerGeneratedAttribute", "Exception", "Action`1");
                         g.VerifyEventDefNames("E");
 
                         g.VerifyCustomAttributes(
@@ -6143,10 +6306,13 @@ class C
 
                         g.VerifyEncLogDefinitions(new[]
                         {
+                            Row(2, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(1, TableIndex.Event, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(2, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(3, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
@@ -6161,6 +6327,7 @@ class C
                         {
                             Handle(4, TableIndex.TypeDef),
                             Handle(2, TableIndex.Field),
+                            Handle(3, TableIndex.Field),
                             Handle(1, TableIndex.MethodDef),
                             Handle(2, TableIndex.MethodDef),
                             Handle(5, TableIndex.MethodDef),
@@ -6168,6 +6335,7 @@ class C
                             Handle(7, TableIndex.CustomAttribute),
                             Handle(9, TableIndex.CustomAttribute),
                             Handle(10, TableIndex.CustomAttribute),
+                            Handle(2, TableIndex.StandAloneSig),
                             Handle(1, TableIndex.Event)
                         });
 
@@ -6183,8 +6351,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A00000D
@@ -6192,7 +6360,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000002
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000003
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A00000E
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -6240,7 +6416,7 @@ class C
                     {
                         g.VerifyTypeDefNames("HotReloadException");
                         g.VerifyMethodDefNames("add_E", "remove_E", ".ctor");
-                        g.VerifyTypeRefNames("Object", "EventHandler", "CompilerGeneratedAttribute", "Exception");
+                        g.VerifyTypeRefNames("Object", "EventHandler", "CompilerGeneratedAttribute", "Exception", "Action`1");
 
                         g.VerifyCustomAttributes(
                             [
@@ -6252,10 +6428,13 @@ class C
 
                         g.VerifyEncLogDefinitions(new[]
                         {
+                            Row(2, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(1, TableIndex.Event, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(2, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(3, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
@@ -6269,12 +6448,14 @@ class C
                         {
                             Handle(3, TableIndex.TypeDef),
                             Handle(2, TableIndex.Field),
+                            Handle(3, TableIndex.Field),
                             Handle(1, TableIndex.MethodDef),
                             Handle(2, TableIndex.MethodDef),
                             Handle(4, TableIndex.MethodDef),
                             Handle(1, TableIndex.CustomAttribute),
                             Handle(7, TableIndex.CustomAttribute),
                             Handle(8, TableIndex.CustomAttribute),
+                            Handle(2, TableIndex.StandAloneSig),
                             Handle(1, TableIndex.Event)
                         });
 
@@ -6290,8 +6471,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A00000B
@@ -6299,7 +6480,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000002
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000003
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A00000C
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -6358,6 +6547,7 @@ class C
                         g.VerifyEncLogDefinitions(new[]
                         {
                             Row(2, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
+                            Row(3, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(1, TableIndex.Event, EditAndContinueOperation.Default),
                             Row(1, TableIndex.EventMap, EditAndContinueOperation.AddEvent),
@@ -6366,6 +6556,8 @@ class C
                             Row(2, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(3, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(4, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
@@ -6395,6 +6587,7 @@ class C
                             Handle(4, TableIndex.TypeDef),
                             Handle(2, TableIndex.Field),
                             Handle(3, TableIndex.Field),
+                            Handle(4, TableIndex.Field),
                             Handle(1, TableIndex.MethodDef),
                             Handle(2, TableIndex.MethodDef),
                             Handle(5, TableIndex.MethodDef),
@@ -6411,6 +6604,7 @@ class C
                             Handle(13, TableIndex.CustomAttribute),
                             Handle(14, TableIndex.CustomAttribute),
                             Handle(2, TableIndex.StandAloneSig),
+                            Handle(3, TableIndex.StandAloneSig),
                             Handle(1, TableIndex.Event),
                             Handle(2, TableIndex.Event),
                             Handle(3, TableIndex.MethodSemantics),
@@ -6479,8 +6673,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A000011
@@ -6488,7 +6682,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000003
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000004
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A000012
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -6524,7 +6726,7 @@ class C
 
                         g.VerifyEncLogDefinitions(new[]
                         {
-                            Row(3, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
+                            Row(4, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(1, TableIndex.Event, EditAndContinueOperation.Default),
                             Row(2, TableIndex.Event, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
@@ -6557,7 +6759,7 @@ class C
                             Handle(13, TableIndex.CustomAttribute),
                             Handle(14, TableIndex.CustomAttribute),
                             Handle(15, TableIndex.CustomAttribute),
-                            Handle(3, TableIndex.StandAloneSig),
+                            Handle(4, TableIndex.StandAloneSig),
                             Handle(1, TableIndex.Event),
                             Handle(2, TableIndex.Event),
                             Handle(5, TableIndex.MethodSemantics),
@@ -6576,8 +6778,8 @@ class C
                               IL_0008:  stloc.1
                               IL_0009:  ldloc.1
                               IL_000a:  ldarg.1
-                              IL_000b:  call       0x0A000014
-                              IL_0010:  castclass  0x01000018
+                              IL_000b:  call       0x0A000015
+                              IL_0010:  castclass  0x01000019
                               IL_0015:  stloc.2
                               IL_0016:  ldarg.0
                               IL_0017:  ldflda     0x04000001
@@ -6601,8 +6803,8 @@ class C
                               IL_0008:  stloc.1
                               IL_0009:  ldloc.1
                               IL_000a:  ldarg.1
-                              IL_000b:  call       0x0A000016
-                              IL_0010:  castclass  0x01000018
+                              IL_000b:  call       0x0A000017
+                              IL_0010:  castclass  0x01000019
                               IL_0015:  stloc.2
                               IL_0016:  ldarg.0
                               IL_0017:  ldflda     0x04000001
@@ -12798,13 +13000,16 @@ public interface IB
                     {
                         g.VerifyTypeDefNames("HotReloadException");
                         g.VerifyMethodDefNames("op_LogicalNot", ".ctor");
-                        g.VerifyMemberRefNames(/* Exception */ ".ctor", /* CompilerGeneratedAttribute */ ".ctor");
+                        g.VerifyMemberRefNames(/* Exception */ ".ctor", /* CompilerGeneratedAttribute */ ".ctor", "Invoke");
 
                         g.VerifyEncLogDefinitions(
                         [
+                            Row(1, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(1, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(2, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
                             Row(3, TableIndex.MethodDef, EditAndContinueOperation.Default),
@@ -12815,9 +13020,11 @@ public interface IB
                         [
                             Handle(3, TableIndex.TypeDef),
                             Handle(1, TableIndex.Field),
+                            Handle(2, TableIndex.Field),
                             Handle(1, TableIndex.MethodDef),
                             Handle(3, TableIndex.MethodDef),
-                            Handle(4, TableIndex.CustomAttribute)
+                            Handle(4, TableIndex.CustomAttribute),
+                            Handle(1, TableIndex.StandAloneSig)
                         ]);
 
                         g.VerifyIL("""
@@ -12832,8 +13039,8 @@ public interface IB
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A000006
@@ -12841,7 +13048,15 @@ public interface IB
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000001
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000002
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A000007
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -16499,11 +16714,14 @@ namespace N
 
                         g.VerifyEncLogDefinitions(new[]
                         {
+                            Row(2, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(7, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(5, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(3, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(7, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(4, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(7, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(5, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(15, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(5, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
                             Row(16, TableIndex.MethodDef, EditAndContinueOperation.Default),
@@ -16949,6 +17167,57 @@ class C
                 .Verify();
         }
 
+        [Theory]
+        [InlineData("")]
+        [InlineData("public delegate void Action(System.Exception arg);")]
+        [InlineData("public delegate void Action<S,T>(T arg);")]
+        [InlineData("public delegate int Action<T>(T arg);")]
+        [InlineData("public delegate void Action<T>(int arg);")]
+        [InlineData("public delegate void Action<T>(in T arg);")]
+        [InlineData("public delegate void Action<T>(ref T arg);")]
+        [InlineData("public delegate void Action<T>(out T arg);")]
+        [InlineData("public delegate void Action<T>(T arg, int x);")]
+        public void Method_Delete_SynthesizedHotReloadException_MissingOrBadActionType(string actionDef)
+        {
+            var libs = $$"""
+                namespace System
+                {
+                    public class Exception(string message);
+                    {{actionDef}}
+                }
+                namespace System.Runtime.InteropServices
+                {
+                    public class InAttribute;
+                }
+                """;
+
+            using var _ = new EditAndContinueTest(targetFramework: TargetFramework.Minimal, verification: Verification.Skipped)
+                .AddBaseline(
+                    source: """
+                        class C
+                        {
+                            void F() {}
+                        }
+                        """ + libs)
+                .AddGeneration(
+                    // 1
+                    source: """
+                        class C
+                        {
+                        }
+                        """ + libs,
+                    edits:
+                    [
+                        Edit(SemanticEditKind.Delete, symbolProvider: c => c.GetMember("C.F"), newSymbolProvider: c => c.GetMember("C")),
+                    ],
+                    expectedErrors:
+                    [
+                        // error CS7043: Cannot emit update; method 'void System.Action<T>.Invoke(T arg)' is missing.
+                        Diagnostic(ErrorCode.ERR_EncUpdateFailedMissingSymbol).WithArguments("method", "void System.Action<T>.Invoke(T arg)").WithLocation(1, 1)
+                    ])
+                .Verify();
+        }
+
         [Fact]
         public void Method_Delete_SynthesizedHotReloadException_MissingCompilerGeneratedAttribute()
         {
@@ -16959,6 +17228,8 @@ class C
                     {
                         public Exception(string message) {}
                     }
+
+                    public delegate void Action<T>(T arg);
                 }
                 """;
 
@@ -16996,13 +17267,13 @@ class C
                               .maxstack  8
                               IL_0000:  ldstr      0x70000005
                               IL_0005:  ldc.i4.s   -2
-                              IL_0007:  newobj     0x06000004
+                              IL_0007:  newobj     0x06000008
                               IL_000c:  throw
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x06000003
@@ -17010,7 +17281,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000001
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000002
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A000002
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -17243,7 +17522,7 @@ class C
         [Fact]
         public void Method_Delete_PredefinedHotReloadException_DataSectionLiterals()
         {
-            var parseOptions = TestOptions.Regular.WithFeature("experimental-data-section-string-literals", "0");
+            var parseOptions = TestOptions.Regular.WithFeature(Feature.ExperimentalDataSectionStringLiterals, "0");
 
             var exceptionSource = """
                 namespace System.Runtime.CompilerServices
@@ -17319,19 +17598,13 @@ class C
         }
 
         [Theory]
-        [InlineData("void M1() { }")]
-        [InlineData("void M1(string s) { }")]
-        [InlineData("void M1(C c) { }")]
+        [InlineData("int M1(C c) { return 0; }")]
         [InlineData("C M1(C c) { return default; }")]
-        [InlineData("void M1(N n) { }")]
         [InlineData("C M1() { return default; }")]
         [InlineData("N M1() { return default; }")]
-        [InlineData("int M1(C c) { return 0; }")]
-        [InlineData("void M1<T>(T t) { }")]
-        [InlineData("void M1<T>(T t) where T : C { }")]
         [InlineData("T M1<T>() { return default; }")]
         [InlineData("T M1<T>() where T : C { return default; }")]
-        public void Method_Delete(string methodDef)
+        public void Method_Delete_ReturnValue(string methodDef)
         {
             using var _ = new EditAndContinueTest()
                 .AddBaseline(
@@ -17351,7 +17624,7 @@ class C
                         g.VerifyMethodDefNames("M1", ".ctor", ".ctor");
                     })
 
-                .AddGeneration(
+                .AddGeneration(// 1
                     source: """
                         class C
                         {
@@ -17368,12 +17641,16 @@ class C
                     {
                         g.VerifyTypeDefNames("HotReloadException");
                         g.VerifyMethodDefNames("M1", ".ctor");
-                        g.VerifyMemberRefNames(".ctor", ".ctor");
+                        g.VerifyMemberRefNames(".ctor", ".ctor", "Invoke");
+
                         g.VerifyEncLogDefinitions(
                         [
+                            Row(2, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(1, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(2, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
                             Row(4, TableIndex.MethodDef, EditAndContinueOperation.Default),
@@ -17384,9 +17661,11 @@ class C
                         [
                             Handle(4, TableIndex.TypeDef),
                             Handle(1, TableIndex.Field),
+                            Handle(2, TableIndex.Field),
                             Handle(1, TableIndex.MethodDef),
                             Handle(4, TableIndex.MethodDef),
-                            Handle(4, TableIndex.CustomAttribute)
+                            Handle(4, TableIndex.CustomAttribute),
+                            Handle(2, TableIndex.StandAloneSig)
                         ]);
 
                         g.VerifyIL("""
@@ -17401,8 +17680,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A000006
@@ -17410,7 +17689,122 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000001
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000002
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A000007
+                              IL_001f:  nop
+                              IL_0020:  ret
+                            }
+                            """);
+                    })
+                .Verify();
+        }
+
+        [Theory]
+        [InlineData("void M1() { }")]
+        [InlineData("void M1(string s) { }")]
+        [InlineData("void M1(C c) { }")]
+        [InlineData("void M1(N n) { }")]
+        [InlineData("void M1<T>(T t) { }")]
+        [InlineData("void M1<T>(T t) where T : C { }")]
+        public void Method_Delete_Void(string methodDef)
+        {
+            using var _ = new EditAndContinueTest()
+                .AddBaseline(
+                    source: $$"""
+                        class C
+                        {
+                            {{methodDef}}
+                        }
+
+                        class N
+                        {
+                        }
+                        """,
+                    validator: g =>
+                    {
+                        g.VerifyTypeDefNames("<Module>", "C", "N");
+                        g.VerifyMethodDefNames("M1", ".ctor", ".ctor");
+                    })
+
+                .AddGeneration(// 1
+                    source: """
+                        class C
+                        {
+                        }
+
+                        class N
+                        {
+                        }
+                        """,
+                    edits: new[] {
+                        Edit(SemanticEditKind.Delete, symbolProvider: c => c.GetMember("C.M1"), newSymbolProvider: c => c.GetMember("C")),
+                    },
+                    validator: g =>
+                    {
+                        g.VerifyTypeDefNames("HotReloadException");
+                        g.VerifyMethodDefNames("M1", ".ctor");
+                        g.VerifyMemberRefNames(".ctor", ".ctor", "Invoke");
+
+                        g.VerifyEncLogDefinitions(
+                        [
+                            Row(1, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
+                            Row(4, TableIndex.TypeDef, EditAndContinueOperation.Default),
+                            Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(1, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(2, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
+                            Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
+                            Row(4, TableIndex.MethodDef, EditAndContinueOperation.Default),
+                            Row(4, TableIndex.CustomAttribute, EditAndContinueOperation.Default)
+                        ]);
+
+                        g.VerifyEncMapDefinitions(
+                        [
+                            Handle(4, TableIndex.TypeDef),
+                            Handle(1, TableIndex.Field),
+                            Handle(2, TableIndex.Field),
+                            Handle(1, TableIndex.MethodDef),
+                            Handle(4, TableIndex.MethodDef),
+                            Handle(4, TableIndex.CustomAttribute),
+                            Handle(1, TableIndex.StandAloneSig)
+                        ]);
+
+                        g.VerifyIL("""
+                            M1
+                            {
+                              // Code size       13 (0xd)
+                              .maxstack  8
+                              IL_0000:  ldstr      0x70000005
+                              IL_0005:  ldc.i4.s   -2
+                              IL_0007:  newobj     0x06000004
+                              IL_000c:  throw
+                            }
+                            .ctor
+                            {
+                              // Code size       33 (0x21)
+                              .maxstack  2
+                              IL_0000:  ldarg.0
+                              IL_0001:  ldarg.1
+                              IL_0002:  call       0x0A000006
+                              IL_0007:  nop
+                              IL_0008:  ldarg.0
+                              IL_0009:  ldarg.2
+                              IL_000a:  stfld      0x04000001
+                              IL_000f:  ldsfld     0x04000002
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A000007
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -17489,9 +17883,12 @@ class C
                         g.VerifyMethodDefNames("M2", ".ctor");
                         g.VerifyEncLogDefinitions(new[]
                         {
+                            Row(1, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(1, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(2, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(3, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
                             Row(4, TableIndex.MethodDef, EditAndContinueOperation.Default),
@@ -17502,9 +17899,11 @@ class C
                         {
                             Handle(3, TableIndex.TypeDef),
                             Handle(1, TableIndex.Field),
+                            Handle(2, TableIndex.Field),
                             Handle(3, TableIndex.MethodDef),
                             Handle(4, TableIndex.MethodDef),
-                            Handle(4, TableIndex.CustomAttribute)
+                            Handle(4, TableIndex.CustomAttribute),
+                            Handle(1, TableIndex.StandAloneSig)
                         });
 
                         g.VerifyIL("""
@@ -17519,8 +17918,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A000006
@@ -17528,7 +17927,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000001
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000002
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A000007
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -17568,9 +17975,12 @@ class C
                         g.VerifyMethodDefNames("M1", ".ctor");
                         g.VerifyEncLogDefinitions(new[]
                         {
+                            Row(1, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(1, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(2, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
                             Row(3, TableIndex.MethodDef, EditAndContinueOperation.Default),
@@ -17580,9 +17990,11 @@ class C
                         {
                             Handle(3, TableIndex.TypeDef),
                             Handle(1, TableIndex.Field),
+                            Handle(2, TableIndex.Field),
                             Handle(1, TableIndex.MethodDef),
                             Handle(3, TableIndex.MethodDef),
-                            Handle(4, TableIndex.CustomAttribute)
+                            Handle(4, TableIndex.CustomAttribute),
+                            Handle(1, TableIndex.StandAloneSig)
                         });
 
                         g.VerifyIL("""
@@ -17597,8 +18009,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A000006
@@ -17606,7 +18018,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000001
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000002
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A000007
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -17641,7 +18061,7 @@ class C
                               .maxstack  8
                               IL_0000:  nop
                               IL_0001:  ldc.i4.1
-                              IL_0002:  call       0x0A000007
+                              IL_0002:  call       0x0A000008
                               IL_0007:  nop
                               IL_0008:  ret
                             }
@@ -17691,9 +18111,12 @@ class C
                         g.VerifyMethodDefNames("M1", ".ctor");
                         g.VerifyEncLogDefinitions(
                         [
+                            Row(1, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(6, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(6, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(1, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(6, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(2, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(3, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(6, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
                             Row(6, TableIndex.MethodDef, EditAndContinueOperation.Default),
@@ -17705,10 +18128,12 @@ class C
                         [
                             Handle(6, TableIndex.TypeDef),
                             Handle(1, TableIndex.Field),
+                            Handle(2, TableIndex.Field),
                             Handle(3, TableIndex.MethodDef),
                             Handle(6, TableIndex.MethodDef),
                             Handle(6, TableIndex.CustomAttribute),
-                            Handle(8, TableIndex.CustomAttribute)
+                            Handle(8, TableIndex.CustomAttribute),
+                            Handle(1, TableIndex.StandAloneSig)
                         ]);
 
                         g.VerifyCustomAttributes(
@@ -17729,8 +18154,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A000008
@@ -17738,7 +18163,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000001
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000002
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A000009
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -17885,9 +18318,12 @@ class C
 
                         g.VerifyEncLogDefinitions(new[]
                         {
+                            Row(2, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(1, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(2, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(4, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
                             Row(5, TableIndex.MethodDef, EditAndContinueOperation.Default),
@@ -17899,10 +18335,12 @@ class C
                         {
                             Handle(4, TableIndex.TypeDef),
                             Handle(1, TableIndex.Field),
+                            Handle(2, TableIndex.Field),
                             Handle(4, TableIndex.MethodDef),
                             Handle(5, TableIndex.MethodDef),
                             Handle(5, TableIndex.CustomAttribute),
-                            Handle(6, TableIndex.CustomAttribute)
+                            Handle(6, TableIndex.CustomAttribute),
+                            Handle(2, TableIndex.StandAloneSig)
                         });
 
                         g.VerifyIL("""
@@ -17917,8 +18355,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A000008
@@ -17926,7 +18364,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000001
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000002
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A000009
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
 
@@ -17951,7 +18397,7 @@ class C
 
                         g.VerifyEncLogDefinitions(new[]
                         {
-                            Row(2, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
+                            Row(3, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(4, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(1, TableIndex.Param, EditAndContinueOperation.Default),
                             Row(6, TableIndex.CustomAttribute, EditAndContinueOperation.Default)
@@ -17962,7 +18408,7 @@ class C
                             Handle(4, TableIndex.MethodDef),
                             Handle(1, TableIndex.Param),
                             Handle(6, TableIndex.CustomAttribute),
-                            Handle(2, TableIndex.StandAloneSig)
+                            Handle(3, TableIndex.StandAloneSig)
                         });
 
                         g.VerifyIL("""
@@ -17972,7 +18418,7 @@ class C
                               .maxstack  1
                               IL_0000:  nop
                               IL_0001:  ldc.i4.1
-                              IL_0002:  call       0x0A000009
+                              IL_0002:  call       0x0A00000A
                               IL_0007:  nop
                               IL_0008:  ldnull
                               IL_0009:  stloc.0
@@ -18023,14 +18469,17 @@ class C
 
                         g.VerifyTypeDefNames("HotReloadException");
                         g.VerifyMethodDefNames("F", "<F>b__0_0", ".ctor");
-                        g.VerifyTypeRefNames("Object", "CompilerGeneratedAttribute", "Exception");
-                        g.VerifyMemberRefNames(".ctor", ".ctor");
+                        g.VerifyTypeRefNames("Object", "CompilerGeneratedAttribute", "Exception", "Action`1");
+                        g.VerifyMemberRefNames(".ctor", ".ctor", "Invoke");
 
                         g.VerifyEncLogDefinitions(new[]
                         {
+                            Row(1, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(3, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(4, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(5, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
@@ -18042,10 +18491,12 @@ class C
                         {
                             Handle(4, TableIndex.TypeDef),
                             Handle(3, TableIndex.Field),
+                            Handle(4, TableIndex.Field),
                             Handle(1, TableIndex.MethodDef),
                             Handle(5, TableIndex.MethodDef),
                             Handle(6, TableIndex.MethodDef),
-                            Handle(5, TableIndex.CustomAttribute)
+                            Handle(5, TableIndex.CustomAttribute),
+                            Handle(1, TableIndex.StandAloneSig)
                         });
 
                         g.VerifyIL("""
@@ -18069,8 +18520,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A000009
@@ -18078,7 +18529,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000003
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000004
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A00000A
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -18110,7 +18569,7 @@ class C
                         g.VerifyEncLogDefinitions(new[]
                         {
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
-                            Row(4, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(5, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(4, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
@@ -18119,7 +18578,7 @@ class C
 
                         g.VerifyEncMapDefinitions(new[]
                         {
-                            Handle(4, TableIndex.Field),
+                            Handle(5, TableIndex.Field),
                             Handle(1, TableIndex.MethodDef),
                             Handle(4, TableIndex.MethodDef),
                             Handle(7, TableIndex.MethodDef)
@@ -18131,12 +18590,12 @@ class C
                               // Code size       30 (0x1e)
                               .maxstack  8
                               IL_0000:  nop
-                              IL_0001:  ldsfld     0x04000004
+                              IL_0001:  ldsfld     0x04000005
                               IL_0006:  brtrue.s   IL_001d
                               IL_0008:  ldsfld     0x04000001
                               IL_000d:  ldftn      0x06000007
-                              IL_0013:  newobj     0x0A00000B
-                              IL_0018:  stsfld     0x04000004
+                              IL_0013:  newobj     0x0A00000C
+                              IL_0018:  stsfld     0x04000005
                               IL_001d:  ret
                             }
                             .ctor
@@ -18144,7 +18603,7 @@ class C
                               // Code size        8 (0x8)
                               .maxstack  8
                               IL_0000:  ldarg.0
-                              IL_0001:  call       0x0A00000C
+                              IL_0001:  call       0x0A00000D
                               IL_0006:  nop
                               IL_0007:  ret
                             }
@@ -18153,7 +18612,7 @@ class C
                               // Code size        8 (0x8)
                               .maxstack  8
                               IL_0000:  ldc.i4.2
-                              IL_0001:  call       0x0A00000D
+                              IL_0001:  call       0x0A00000E
                               IL_0006:  nop
                               IL_0007:  ret
                             }
@@ -18283,14 +18742,17 @@ class C
 
                         g.VerifyTypeDefNames("HotReloadException");
                         g.VerifyMethodDefNames("F", "<F>b__0#1_0#1", ".ctor");
-                        g.VerifyTypeRefNames("Object", "CompilerGeneratedAttribute", "Exception");
-                        g.VerifyMemberRefNames(".ctor", ".ctor");
+                        g.VerifyTypeRefNames("Object", "CompilerGeneratedAttribute", "Exception", "Action`1");
+                        g.VerifyMemberRefNames(".ctor", ".ctor", "Invoke");
 
                         g.VerifyEncLogDefinitions(new[]
                         {
+                            Row(1, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(3, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(4, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(2, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(5, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(4, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
@@ -18302,10 +18764,12 @@ class C
                         {
                             Handle(4, TableIndex.TypeDef),
                             Handle(3, TableIndex.Field),
+                            Handle(4, TableIndex.Field),
                             Handle(2, TableIndex.MethodDef),
                             Handle(5, TableIndex.MethodDef),
                             Handle(6, TableIndex.MethodDef),
-                            Handle(5, TableIndex.CustomAttribute)
+                            Handle(5, TableIndex.CustomAttribute),
+                            Handle(1, TableIndex.StandAloneSig)
                         });
 
                         g.VerifyIL("""
@@ -18329,8 +18793,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A00000A
@@ -18338,7 +18802,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000003
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000004
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A00000B
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -18459,15 +18931,18 @@ class C
                         g.VerifyMethodDefNames("F", "<F>b__0_0", "<F>b__0_1#1", "<F>b__0_2#2", ".ctor");
 
                         // Note: InAttribute is a custom modifier included in the signature
-                        g.VerifyTypeRefNames("Object", "InAttribute", "CompilerGeneratedAttribute", "Exception");
+                        g.VerifyTypeRefNames("Object", "InAttribute", "CompilerGeneratedAttribute", "Exception", "Action`1");
 
-                        g.VerifyMemberRefNames(".ctor", ".ctor");
+                        g.VerifyMemberRefNames(".ctor", ".ctor", "Invoke");
 
                         g.VerifyEncLogDefinitions(new[]
                         {
+                            Row(4, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(8, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(8, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(5, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(8, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(6, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(5, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(9, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(10, TableIndex.MethodDef, EditAndContinueOperation.Default),
@@ -18481,12 +18956,14 @@ class C
                         {
                             Handle(8, TableIndex.TypeDef),
                             Handle(5, TableIndex.Field),
+                            Handle(6, TableIndex.Field),
                             Handle(5, TableIndex.MethodDef),
                             Handle(9, TableIndex.MethodDef),
                             Handle(10, TableIndex.MethodDef),
                             Handle(11, TableIndex.MethodDef),
                             Handle(12, TableIndex.MethodDef),
-                            Handle(15, TableIndex.CustomAttribute)
+                            Handle(15, TableIndex.CustomAttribute),
+                            Handle(4, TableIndex.StandAloneSig)
                         });
 
                         g.VerifyIL("""
@@ -18510,8 +18987,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A000024
@@ -18519,7 +18996,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000005
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000006
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A000025
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -18560,20 +19045,20 @@ class C
                               // Code size       30 (0x1e)
                               .maxstack  8
                               IL_0000:  nop
-                              IL_0001:  ldsfld     0x0A000026
+                              IL_0001:  ldsfld     0x0A000027
                               IL_0006:  brtrue.s   IL_001d
-                              IL_0008:  ldsfld     0x0A000027
-                              IL_000d:  ldftn      0x0A000028
-                              IL_0013:  newobj     0x0A000029
-                              IL_0018:  stsfld     0x0A000026
+                              IL_0008:  ldsfld     0x0A000028
+                              IL_000d:  ldftn      0x0A000029
+                              IL_0013:  newobj     0x0A00002A
+                              IL_0018:  stsfld     0x0A000027
                               IL_001d:  ret
                             }
                             .cctor
                             {
                               // Code size       11 (0xb)
                               .maxstack  8
-                              IL_0000:  newobj     0x0A00002A
-                              IL_0005:  stsfld     0x0A00002B
+                              IL_0000:  newobj     0x0A00002B
+                              IL_0005:  stsfld     0x0A00002C
                               IL_000a:  ret
                             }
                             .ctor
@@ -18581,7 +19066,7 @@ class C
                               // Code size        8 (0x8)
                               .maxstack  8
                               IL_0000:  ldarg.0
-                              IL_0001:  call       0x0A00002C
+                              IL_0001:  call       0x0A00002D
                               IL_0006:  nop
                               IL_0007:  ret
                             }
@@ -18590,7 +19075,7 @@ class C
                               // Code size        8 (0x8)
                               .maxstack  8
                               IL_0000:  ldc.i4.4
-                              IL_0001:  call       0x0A00002D
+                              IL_0001:  call       0x0A00002E
                               IL_0006:  nop
                               IL_0007:  ret
                             }
@@ -18754,9 +19239,9 @@ class C
 
                         g.VerifyTypeDefNames("HotReloadException");
                         g.VerifyMethodDefNames("F", "<F>g__L|0_0", "<F>g__M|0_1#1", ".ctor");
-                        g.VerifyTypeRefNames("Object", "CompilerGeneratedAttribute", "Exception");
+                        g.VerifyTypeRefNames("Object", "InAttribute", "CompilerGeneratedAttribute", "Exception", "Action`1");
 
-                        g.VerifyMemberRefNames(".ctor", ".ctor");
+                        g.VerifyMemberRefNames(".ctor", ".ctor", "Invoke");
 
                         g.VerifyCustomAttributes(
                             "[System.Runtime.CompilerServices.MetadataUpdateDeletedAttribute..ctor] C`1.F",
@@ -18764,9 +19249,12 @@ class C
 
                         g.VerifyEncLogDefinitions(new[]
                         {
+                            Row(1, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(8, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(8, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(1, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(8, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(2, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(5, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(7, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(9, TableIndex.MethodDef, EditAndContinueOperation.Default),
@@ -18782,6 +19270,7 @@ class C
                         {
                             Handle(8, TableIndex.TypeDef),
                             Handle(1, TableIndex.Field),
+                            Handle(2, TableIndex.Field),
                             Handle(5, TableIndex.MethodDef),
                             Handle(7, TableIndex.MethodDef),
                             Handle(9, TableIndex.MethodDef),
@@ -18789,7 +19278,8 @@ class C
                             Handle(15, TableIndex.CustomAttribute),
                             Handle(17, TableIndex.CustomAttribute),
                             Handle(19, TableIndex.CustomAttribute),
-                            Handle(20, TableIndex.CustomAttribute)
+                            Handle(20, TableIndex.CustomAttribute),
+                            Handle(1, TableIndex.StandAloneSig)
                         });
 
                         g.VerifyIL("""
@@ -18813,8 +19303,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A00000E
@@ -18822,7 +19312,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000001
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000002
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A00000F
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -18859,7 +19357,7 @@ class C
 
                         g.VerifyTypeDefNames("<>c__DisplayClass0#3_0#3");
                         g.VerifyMethodDefNames("F", "<F>g__N|0#3_1#3", ".ctor", "<F>g__O|0#3", "<F>b__2#3");
-                        g.VerifyTypeRefNames("Object", "CompilerGeneratedAttribute");
+                        g.VerifyTypeRefNames("Object", "CompilerGeneratedAttribute", "InAttribute");
                         g.VerifyMemberRefNames(".ctor", ".ctor", "x", "<F>g__O|0#3", ".ctor", "<F>g__N|0#3_1#3");
 
                         g.VerifyCustomAttributes(
@@ -18874,17 +19372,17 @@ class C
                             {
                               // Code size       29 (0x1d)
                               .maxstack  2
-                              IL_0000:  newobj     0x0A000010
+                              IL_0000:  newobj     0x0A000011
                               IL_0005:  stloc.0
                               IL_0006:  ldloc.0
                               IL_0007:  ldarg.1
-                              IL_0008:  stfld      0x0A000011
+                              IL_0008:  stfld      0x0A000012
                               IL_000d:  nop
                               IL_000e:  nop
                               IL_000f:  ldloc.0
                               IL_0010:  ldloc.0
-                              IL_0011:  ldflda     0x0A000011
-                              IL_0016:  callvirt   0x0A000012
+                              IL_0011:  ldflda     0x0A000012
+                              IL_0016:  callvirt   0x0A000013
                               IL_001b:  pop
                               IL_001c:  ret
                             }
@@ -18900,7 +19398,7 @@ class C
                               // Code size        8 (0x8)
                               .maxstack  8
                               IL_0000:  ldarg.0
-                              IL_0001:  call       0x0A000013
+                              IL_0001:  call       0x0A000014
                               IL_0006:  nop
                               IL_0007:  ret
                             }
@@ -18922,8 +19420,8 @@ class C
                               // Code size       12 (0xc)
                               .maxstack  8
                               IL_0000:  ldarg.0
-                              IL_0001:  ldfld      0x0A000011
-                              IL_0006:  call       0x0A000014
+                              IL_0001:  ldfld      0x0A000012
+                              IL_0006:  call       0x0A000015
                               IL_000b:  ret
                             }
                             """);
@@ -18954,7 +19452,7 @@ class C
                         // Only lambdas that were not deleted before are updated:
                         g.VerifyMethodDefNames("F", "<F>g__N|0#3_1#3", "<F>g__O|0#3", "<F>b__2#3");
 
-                        g.VerifyTypeRefNames("Object");
+                        g.VerifyTypeRefNames("Object", "InAttribute");
                         g.VerifyMemberRefNames();
 
                         g.VerifyCustomAttributes("[System.Runtime.CompilerServices.MetadataUpdateDeletedAttribute..ctor] C`1.F");
@@ -19095,9 +19593,12 @@ class C
 
                         g.VerifyEncLogDefinitions(new[]
                         {
+                            Row(1, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(1, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(2, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
                             Row(3, TableIndex.MethodDef, EditAndContinueOperation.Default),
@@ -19111,11 +19612,13 @@ class C
                         {
                             Handle(3, TableIndex.TypeDef),
                             Handle(1, TableIndex.Field),
+                            Handle(2, TableIndex.Field),
                             Handle(1, TableIndex.MethodDef),
                             Handle(3, TableIndex.MethodDef),
                             Handle(4, TableIndex.MethodDef),
                             Handle(2, TableIndex.Param),
-                            Handle(4, TableIndex.CustomAttribute)
+                            Handle(4, TableIndex.CustomAttribute),
+                            Handle(1, TableIndex.StandAloneSig)
                         });
 
                         g.VerifyIL("""
@@ -19140,8 +19643,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A000008
@@ -19149,7 +19652,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000001
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000002
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A000009
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -19192,7 +19703,7 @@ class C
                               .maxstack  8
                               IL_0000:  nop
                               IL_0001:  ldarga.s   V_1
-                              IL_0003:  call       0x0A000009
+                              IL_0003:  call       0x0A00000A
                               IL_0008:  pop
                               IL_0009:  ret
                             }
@@ -19247,9 +19758,12 @@ class C
                         g.VerifyEncLogDefinitions(new[]
                         {
                             Row(2, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
+                            Row(3, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(1, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(2, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
                             Row(3, TableIndex.MethodDef, EditAndContinueOperation.Default),
@@ -19264,12 +19778,14 @@ class C
                         {
                             Handle(3, TableIndex.TypeDef),
                             Handle(1, TableIndex.Field),
+                            Handle(2, TableIndex.Field),
                             Handle(1, TableIndex.MethodDef),
                             Handle(3, TableIndex.MethodDef),
                             Handle(4, TableIndex.MethodDef),
                             Handle(2, TableIndex.Param),
                             Handle(4, TableIndex.CustomAttribute),
-                            Handle(2, TableIndex.StandAloneSig)
+                            Handle(2, TableIndex.StandAloneSig),
+                            Handle(3, TableIndex.StandAloneSig)
                         });
 
                         g.VerifyIL("""
@@ -19295,8 +19811,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A000007
@@ -19304,7 +19820,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000001
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000002
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A000008
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -19328,17 +19852,18 @@ class C
 
                         g.VerifyEncLogDefinitions(new[]
                         {
-                            Row(3, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
+                            Row(4, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(1, TableIndex.Param, EditAndContinueOperation.Default),
                         });
+
                         g.VerifyEncMapDefinitions(new[]
                         {
                             Handle(1, TableIndex.MethodDef),
                             Handle(3, TableIndex.MethodDef),
                             Handle(1, TableIndex.Param),
-                            Handle(3, TableIndex.StandAloneSig)
+                            Handle(4, TableIndex.StandAloneSig)
                         });
 
                         g.VerifyIL("""
@@ -19348,7 +19873,7 @@ class C
                               .maxstack  1
                               IL_0000:  nop
                               IL_0001:  ldarga.s   V_1
-                              IL_0003:  call       0x0A000008
+                              IL_0003:  call       0x0A000009
                               IL_0008:  stloc.0
                               IL_0009:  br.s       IL_000b
                               IL_000b:  ldloc.0
@@ -19404,9 +19929,12 @@ class C
 
                         g.VerifyEncLogDefinitions(new[]
                         {
+                            Row(1, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(1, TableIndex.Field, EditAndContinueOperation.Default),
+                            Row(3, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(2, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(1, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(2, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
                             Row(3, TableIndex.MethodDef, EditAndContinueOperation.Default),
@@ -19423,12 +19951,14 @@ class C
                         {
                             Handle(3, TableIndex.TypeDef),
                             Handle(1, TableIndex.Field),
+                            Handle(2, TableIndex.Field),
                             Handle(1, TableIndex.MethodDef),
                             Handle(3, TableIndex.MethodDef),
                             Handle(4, TableIndex.MethodDef),
                             Handle(2, TableIndex.Param),
                             Handle(3, TableIndex.Param),
-                            Handle(4, TableIndex.CustomAttribute)
+                            Handle(4, TableIndex.CustomAttribute),
+                            Handle(1, TableIndex.StandAloneSig)
                         });
 
                         g.VerifyIL("""
@@ -19453,8 +19983,8 @@ class C
                             }
                             .ctor
                             {
-                              // Code size       16 (0x10)
-                              .maxstack  8
+                              // Code size       33 (0x21)
+                              .maxstack  2
                               IL_0000:  ldarg.0
                               IL_0001:  ldarg.1
                               IL_0002:  call       0x0A000008
@@ -19462,7 +19992,15 @@ class C
                               IL_0008:  ldarg.0
                               IL_0009:  ldarg.2
                               IL_000a:  stfld      0x04000001
-                              IL_000f:  ret
+                              IL_000f:  ldsfld     0x04000002
+                              IL_0014:  dup
+                              IL_0015:  stloc.0
+                              IL_0016:  brfalse.s  IL_0020
+                              IL_0018:  ldloc.0
+                              IL_0019:  ldarg.0
+                              IL_001a:  callvirt   0x0A000009
+                              IL_001f:  nop
+                              IL_0020:  ret
                             }
                             """);
                     })
@@ -19504,7 +20042,7 @@ class C
                               .maxstack  8
                               IL_0000:  nop
                               IL_0001:  ldarga.s   V_1
-                              IL_0003:  call       0x0A000009
+                              IL_0003:  call       0x0A00000A
                               IL_0008:  pop
                               IL_0009:  ret
                             }
@@ -20510,7 +21048,7 @@ file class C
         [WorkItem("https://github.com/dotnet/roslyn/issues/69480")]
         public void PrivateImplDetails_DataSectionStringLiterals_FieldRvaSupported()
         {
-            var parseOptions = TestOptions.Regular.WithFeature("experimental-data-section-string-literals", "0");
+            var parseOptions = TestOptions.Regular.WithFeature(Feature.ExperimentalDataSectionStringLiterals, "0");
 
             using var _ = new EditAndContinueTest(targetFramework: TargetFramework.Net90, verification: Verification.Skipped, parseOptions: parseOptions)
                 .AddBaseline(
@@ -20609,7 +21147,7 @@ file class C
         [WorkItem("https://github.com/dotnet/roslyn/issues/69480")]
         public void PrivateImplDetails_DataSectionStringLiterals_FieldRvaNotSupported()
         {
-            var parseOptions = TestOptions.Regular.WithFeature("experimental-data-section-string-literals", "0");
+            var parseOptions = TestOptions.Regular.WithFeature(Feature.ExperimentalDataSectionStringLiterals, "0");
 
             using var _ = new EditAndContinueTest(targetFramework: TargetFramework.Net90, verification: Verification.Skipped, parseOptions: parseOptions)
                 .AddBaseline(
@@ -21211,12 +21749,12 @@ file class C
                     {
                         g.VerifyTypeDefNames(
                             "<Module>",
+                            "<>y__InlineArray3`1",
                             "MyCollection`1",
                             "MyCollectionBuilder",
                             "C",
                             "CollectionBuilderAttribute",
-                            "<PrivateImplementationDetails>",
-                            "<>y__InlineArray3`1");
+                            "<PrivateImplementationDetails>");
 
                         g.VerifyMethodDefNames(
                             ".ctor",
@@ -21244,7 +21782,7 @@ file class C
                     },
                     validator: g =>
                     {
-                        g.VerifyTypeDefNames("<PrivateImplementationDetails>#1", "<>y__InlineArray4#1`1");
+                        g.VerifyTypeDefNames("<>y__InlineArray4#1`1", "<PrivateImplementationDetails>#1");
                         g.VerifyMethodDefNames("F", "InlineArrayAsReadOnlySpan", "InlineArrayElementRef");
 
                         g.VerifyEncLogDefinitions(new[]
@@ -21252,12 +21790,12 @@ file class C
                             Row(3, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(8, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(9, TableIndex.TypeDef, EditAndContinueOperation.Default),
-                            Row(9, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(8, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(3, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(6, TableIndex.MethodDef, EditAndContinueOperation.Default),
-                            Row(8, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
+                            Row(9, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
                             Row(11, TableIndex.MethodDef, EditAndContinueOperation.Default),
-                            Row(8, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
+                            Row(9, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
                             Row(12, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(11, TableIndex.MethodDef, EditAndContinueOperation.AddParameter),
                             Row(9, TableIndex.Param, EditAndContinueOperation.Default),
@@ -21315,7 +21853,7 @@ file class C
                     },
                     validator: g =>
                     {
-                        g.VerifyTypeDefNames("<PrivateImplementationDetails>#2", "<>y__InlineArray4#2`1");
+                        g.VerifyTypeDefNames("<>y__InlineArray4#2`1", "<PrivateImplementationDetails>#2");
                         g.VerifyMethodDefNames("F", "InlineArrayAsReadOnlySpan", "InlineArrayElementRef");
 
                         g.VerifyEncLogDefinitions(new[]
@@ -21323,12 +21861,12 @@ file class C
                             Row(4, TableIndex.StandAloneSig, EditAndContinueOperation.Default),
                             Row(10, TableIndex.TypeDef, EditAndContinueOperation.Default),
                             Row(11, TableIndex.TypeDef, EditAndContinueOperation.Default),
-                            Row(11, TableIndex.TypeDef, EditAndContinueOperation.AddField),
+                            Row(10, TableIndex.TypeDef, EditAndContinueOperation.AddField),
                             Row(4, TableIndex.Field, EditAndContinueOperation.Default),
                             Row(6, TableIndex.MethodDef, EditAndContinueOperation.Default),
-                            Row(10, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
+                            Row(11, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
                             Row(13, TableIndex.MethodDef, EditAndContinueOperation.Default),
-                            Row(10, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
+                            Row(11, TableIndex.TypeDef, EditAndContinueOperation.AddMethod),
                             Row(14, TableIndex.MethodDef, EditAndContinueOperation.Default),
                             Row(13, TableIndex.MethodDef, EditAndContinueOperation.AddParameter),
                             Row(13, TableIndex.Param, EditAndContinueOperation.Default),
@@ -21376,8 +21914,8 @@ file class C
                 .Verify();
         }
 
-        [ConditionalFact(typeof(CoreClrOnly))]
-        public void PrivateImplDetails_CollectionExpressions_ReadOnlyListTypes()
+        [Fact]
+        public void PrivateImplDetails_CollectionExpressions_ReadOnlyListTypes_MethodImplSupported()
         {
             using var _ = new EditAndContinueTest(targetFramework: TargetFramework.Net80, verification: Verification.Skipped)
                 .AddBaseline(
@@ -21392,13 +21930,10 @@ file class C
                     {
                         g.VerifyTypeDefNames(
                             "<Module>",
-                            "C",
-                            "<PrivateImplementationDetails>",
-                            "<>z__ReadOnlyArray`1");
+                            "<>z__ReadOnlyArray`1",
+                            "C");
 
                         g.VerifyMethodDefNames(
-                            "F",
-                            ".ctor",
                             ".ctor",
                             "System.Collections.IEnumerable.GetEnumerator",
                             "System.Collections.ICollection.get_Count",
@@ -21430,7 +21965,10 @@ file class C
                             "System.Collections.Generic.IList<T>.set_Item",
                             "System.Collections.Generic.IList<T>.IndexOf",
                             "System.Collections.Generic.IList<T>.Insert",
-                            "System.Collections.Generic.IList<T>.RemoveAt");
+                            "System.Collections.Generic.IList<T>.RemoveAt",
+                            "F",
+                            ".ctor"
+                            );
                     })
 
                 .AddGeneration(
@@ -21447,7 +21985,7 @@ file class C
                     },
                     validator: g =>
                     {
-                        g.VerifyTypeDefNames("<PrivateImplementationDetails>#1", "<>z__ReadOnlyArray#1`1");
+                        g.VerifyTypeDefNames("<>z__ReadOnlyArray#1`1");
                         g.VerifyMethodDefNames(
                             "F",
                             ".ctor",
@@ -21499,7 +22037,7 @@ file class C
                     },
                     validator: g =>
                     {
-                        g.VerifyTypeDefNames("<PrivateImplementationDetails>#2", "<>z__ReadOnlyList#2`1");
+                        g.VerifyTypeDefNames("<>z__ReadOnlyList#2`1");
                         g.VerifyMethodDefNames(
                             "F",
                             ".ctor",
@@ -21537,6 +22075,82 @@ file class C
 
                         // Many EncLog and EncMap entries added.
                     })
+                .Verify();
+        }
+
+        [Fact]
+        [WorkItem("https://devdiv.visualstudio.com/DefaultCollection/DevDiv/_workitems/edit/2631743")]
+        public void PrivateImplDetails_CollectionExpressions_ReadOnlyListTypes_MethodImplNotSupported()
+        {
+            using var _ = new EditAndContinueTest(targetFramework: TargetFramework.NetFramework, verification: Verification.Skipped)
+                .AddBaseline(
+                    source: """
+                        using System.Collections.Generic;
+                        class C
+                        {
+                            static IEnumerable<int> F(int x, int y, IEnumerable<int> e) => [x, y];
+                        }
+                        """)
+
+                .AddGeneration(
+                    """
+                    using System.Collections.Generic;
+                    class C
+                    {
+                        static IEnumerable<int> F(int x, int y, IEnumerable<int> e) => [x, y, default];
+                    }
+                    """,
+                    edits:
+                    [
+                        Edit(SemanticEditKind.Update, symbolProvider: c => c.GetMember("C.F")),
+                    ],
+                    options: new EmitDifferenceOptions()
+                    {
+                        MethodImplEntriesSupported = false
+                    },
+                    expectedErrors:
+                    [
+                        Diagnostic(ErrorCode.ERR_EncUpdateRequiresEmittingExplicitInterfaceImplementationNotSupportedByTheRuntime)
+                    ])
+                .Verify();
+        }
+
+        [Fact]
+        [WorkItem("https://devdiv.visualstudio.com/DefaultCollection/DevDiv/_workitems/edit/2631743")]
+        public void ExplicitInterfaceImplementation_MethodImplNotSupported()
+        {
+            using var _ = new EditAndContinueTest(targetFramework: TargetFramework.NetFramework, verification: Verification.Skipped)
+                .AddBaseline(
+                    source: """
+                    interface I 
+                    {
+                        void M();
+                    }
+                    """)
+
+                .AddGeneration(
+                    """
+                    interface I 
+                    {
+                        void M();
+                    }
+                    class C : I
+                    {
+                        void I.M() { }
+                    }
+                    """,
+                    edits:
+                    [
+                        Edit(SemanticEditKind.Insert, symbolProvider: c => c.GetMember("C")),
+                    ],
+                    options: new EmitDifferenceOptions()
+                    {
+                        MethodImplEntriesSupported = false
+                    },
+                    expectedErrors:
+                    [
+                        Diagnostic(ErrorCode.ERR_EncUpdateRequiresEmittingExplicitInterfaceImplementationNotSupportedByTheRuntime)
+                    ])
                 .Verify();
         }
     }

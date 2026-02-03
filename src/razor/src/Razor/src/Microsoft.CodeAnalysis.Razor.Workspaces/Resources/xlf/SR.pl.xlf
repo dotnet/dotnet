@@ -7,6 +7,11 @@
         <target state="translated">Wartość nie może być wartością null ani pustym ciągiem.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ComponentCompletionWithRequiredAttributesLabel">
+        <source>{0} (and req'd attributes...)</source>
+        <target state="translated">{0} (i atrybuty req'd...)</target>
+        <note>The term "req'd" is an abbreviation for "required"</note>
+      </trans-unit>
       <trans-unit id="Create_Component_FromTag_Title">
         <source>Create component from tag</source>
         <target state="translated">Utwórz składnik z tagu</target>
@@ -99,6 +104,11 @@
         <target state="translated">Nieprawidłowe przesunięcie.</target>
         <note />
       </trans-unit>
+      <trans-unit id="KeywordDescription">
+        <source>{0} Keyword</source>
+        <target state="translated">Słowo kluczowe {0}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Language_Services_Missing_Service">
         <source>Razor language services not configured properly, missing language service '{0}'.</source>
         <target state="translated">Usługi języka dla składni Razor nie zostały prawidłowo skonfigurowane — brak usługi językowej "{0}".</target>
@@ -122,6 +132,11 @@
       <trans-unit id="Promote_using_directive_to">
         <source>Promote using directive to {0}</source>
         <target state="translated">Podwyższ poziom dyrektywy using do {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Simplify_Fully_Qualified_Component_Title">
+        <source>Simplify fully qualified component</source>
+        <target state="translated">Upraszczanie w pełni kwalifikowanego składnika</target>
         <note />
       </trans-unit>
       <trans-unit id="Simplify_Tag_To_SelfClosing_Title">

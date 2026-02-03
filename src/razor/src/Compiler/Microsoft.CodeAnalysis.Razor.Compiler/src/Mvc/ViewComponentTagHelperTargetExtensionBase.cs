@@ -12,16 +12,16 @@ namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
 
 internal abstract class ViewComponentTagHelperTargetExtensionBase : IViewComponentTagHelperTargetExtension
 {
-    private static readonly ImmutableArray<(string Type, string Name)> s_constructorParameters =
+    private static readonly ImmutableArray<MethodParameter> s_constructorParameters =
     [
-        (ViewComponentsApi.IViewComponentHelper.GloballyQualifiedTypeName, "helper")
+        new("helper", ViewComponentsApi.IViewComponentHelper.GloballyQualifiedTypeName)
     ];
 
     private static readonly string s_taskTypeName = $"global::{typeof(Task).FullName}";
 
-    private ImmutableArray<(string Type, string Name)> _processMethodParameters;
+    private ImmutableArray<MethodParameter> _processMethodParameters;
 
-    public ImmutableArray<(string Type, string Name)> ProcessMethodParameters
+    public ImmutableArray<MethodParameter> ProcessMethodParameters
     {
         get
         {
@@ -29,8 +29,8 @@ internal abstract class ViewComponentTagHelperTargetExtensionBase : IViewCompone
             {
                 ImmutableInterlocked.InterlockedInitialize(ref _processMethodParameters,
                     [
-                        (ViewComponentsApi.TagHelperContext.FullTypeName, TagHelperContextVariableName),
-                        (ViewComponentsApi.TagHelperOutput.FullTypeName, TagHelperOutputVariableName)
+                        new(TagHelperContextVariableName, ViewComponentsApi.TagHelperContext.FullTypeName),
+                        new(TagHelperOutputVariableName, ViewComponentsApi.TagHelperOutput.FullTypeName)
                     ]);
             }
 

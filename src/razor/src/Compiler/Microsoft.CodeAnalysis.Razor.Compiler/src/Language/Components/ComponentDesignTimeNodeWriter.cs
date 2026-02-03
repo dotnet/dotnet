@@ -563,7 +563,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
     public override void WriteComponentTypeInferenceMethod(CodeRenderingContext context, ComponentTypeInferenceMethodIntermediateNode node)
     {
-        base.WriteComponentTypeInferenceMethod(context, node, returnComponentType: true, allowNameof: false);
+        base.WriteComponentTypeInferenceMethod(context, node, returnComponentType: true, allowNameof: false, mapComponentStartTag: false);
     }
 
     private void WriteTypeInferenceMethodParameterInnards(CodeRenderingContext context, TypeInferenceMethodParameter parameter)

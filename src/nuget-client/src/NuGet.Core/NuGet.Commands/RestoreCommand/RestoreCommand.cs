@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -64,6 +66,7 @@ namespace NuGet.Commands
         private const string UpdatedAssetsFile = nameof(UpdatedAssetsFile);
         private const string UpdatedMSBuildFiles = nameof(UpdatedMSBuildFiles);
         private const string IsPackageInstallationTrigger = nameof(IsPackageInstallationTrigger);
+        private const string UsesLegacyPackagesDirectory = nameof(UsesLegacyPackagesDirectory);
 
         // no-op data names
         private const string NoOpDuration = nameof(NoOpDuration);
@@ -151,7 +154,7 @@ namespace NuGet.Commands
             _lockFileBuilderCache = request.LockFileBuilderCache;
 
             // Validate the lock file version requested
-            if (_request.LockFileVersion < 1 || _request.LockFileVersion > LockFileFormat.Version)
+            if (_request.LockFileVersion < 3 || _request.LockFileVersion > LockFileFormat.Version)
             {
                 throw new ArgumentOutOfRangeException(
                     paramName: nameof(request),
@@ -246,7 +249,7 @@ namespace NuGet.Commands
 
                 // if success == false, it generates an empty restore graph suitable to create an assets file with errors.
                 // Since the graph is empty, any code that analyzes the graph (like audit) will have nothing to do.
-                (successfulResult, var graphs) = await GenerateRestoreGraphsAsync(telemetry, contextForProject, success, token);
+                (successfulResult, List<RestoreTargetGraph> graphs) = await GenerateRestoreGraphsAsync(telemetry, contextForProject, success, token);
                 success &= successfulResult;
 
                 bool auditRan = false;
@@ -380,6 +383,7 @@ namespace NuGet.Commands
             telemetry.TelemetryEvent[UsingMicrosoftNETSdk] = _request.Project.RestoreMetadata.UsingMicrosoftNETSdk;
             telemetry.TelemetryEvent[NETSdkVersion] = _request.Project.RestoreSettings.SdkVersion;
             telemetry.TelemetryEvent[IsPackageInstallationTrigger] = !_request.IsRestoreOriginalAction;
+            telemetry.TelemetryEvent[UsesLegacyPackagesDirectory] = !_request.IsLowercasePackagesDirectory;
             _operationId = telemetry.OperationId;
 
             var isCpvmEnabled = _request.Project.RestoreMetadata?.CentralPackageVersionsEnabled ?? false;
@@ -407,13 +411,10 @@ namespace NuGet.Commands
             {
                 bool isPruningEnabled = framework.PackagesToPrune.Count > 0;
                 bool isNetCoreAppFramework = StringComparer.OrdinalIgnoreCase.Equals(framework.FrameworkName.Framework, FrameworkConstants.FrameworkIdentifiers.NetCoreApp);
-                // All .NETCoreApp, .NET Standard >= 2.0 , and .NET Framework >= 4.6.1 projects are compatible with package pruning.
-                bool isPruningCompatibleFramework = isNetCoreAppFramework ||
+                // .NETCoreApp >= 2.0, .NET Standard >= 2.0 are compatible with package pruning.
+                bool isPruningCompatibleFramework = (isNetCoreAppFramework && framework.FrameworkName.Version.Major >= 2) ||
                     (StringComparer.OrdinalIgnoreCase.Equals(framework.FrameworkName.Framework, FrameworkConstants.FrameworkIdentifiers.NetStandard) &&
-                        framework.FrameworkName.Version.Major >= 2) ||
-                    (project.RestoreMetadata.UsingMicrosoftNETSdk &&
-                        StringComparer.OrdinalIgnoreCase.Equals(framework.FrameworkName.Framework, FrameworkConstants.FrameworkIdentifiers.Net) &&
-                        framework.FrameworkName.Version >= FrameworkConstants.CommonFrameworks.Net461.Version);
+                        framework.FrameworkName.Version.Major >= 2);
 
                 pruningDefault |= isNetCoreAppFramework && framework.FrameworkName.Version.Major >= 10;
 
@@ -570,9 +571,9 @@ namespace NuGet.Commands
             return new EvaluateLockFileResult(success, isLockFileValid, regenerateLockFile, packagesLockFilePath, packagesLockFile);
         }
 
-        private async Task<(bool, IEnumerable<RestoreTargetGraph>)> GenerateRestoreGraphsAsync(TelemetryActivity telemetry, RemoteWalkContext contextForProject, bool success, CancellationToken token)
+        private async Task<(bool, List<RestoreTargetGraph>)> GenerateRestoreGraphsAsync(TelemetryActivity telemetry, RemoteWalkContext contextForProject, bool success, CancellationToken token)
         {
-            IEnumerable<RestoreTargetGraph> graphs = null;
+            List<RestoreTargetGraph> graphs = null;
             if (success)
             {
                 using (telemetry.StartIndependentInterval(GenerateRestoreGraphDuration))
@@ -607,23 +608,25 @@ namespace NuGet.Commands
                 // caller of RestoreCommand to have provided at least one AdditionalMessage in RestoreArgs.
                 // The other scenario is when the lock file is not up to date and we're running locked mode.
                 // In that case we want to write a `target` for each target framework to avoid missing target errors from the SDK build tasks.
-                var frameworkRuntimePair = CreateFrameworkRuntimePairs(_request.Project, RequestRuntimeUtility.GetRestoreRuntimes(_request));
-                graphs = frameworkRuntimePair.Select(e =>
+                var frameworkRuntimePairs = CreateFrameworkRuntimeDefinitions(_request.Project, RequestRuntimeUtility.GetRestoreRuntimes(_request));
+                graphs = new(frameworkRuntimePairs.Count);
+                for (var i = 0; i < frameworkRuntimePairs.Count; i++)
                 {
-                    return RestoreTargetGraph.Create(_request.Project.RuntimeGraph, Enumerable.Empty<GraphNode<RemoteResolveResult>>(), contextForProject, _logger, e.Framework, e.RuntimeIdentifier);
-                });
+                    var restoreTargetGraph = RestoreTargetGraph.Create(_request.Project.RuntimeGraph, Enumerable.Empty<GraphNode<RemoteResolveResult>>(), contextForProject, frameworkRuntimePairs[i].TargetAlias, frameworkRuntimePairs[i].Framework, frameworkRuntimePairs[i].RuntimeIdentifier);
+                    graphs.Add(restoreTargetGraph);
+                }
             }
 
             return (success, graphs);
         }
 
-        private async Task<(bool, IEnumerable<MSBuildOutputFile>, string, string, LockFile, IEnumerable<RestoreTargetGraph>, PackagesLockFile, string, CacheFile)> ProcessRestoreResultAsync(TelemetryActivity telemetry,
+        private async Task<(bool, IEnumerable<MSBuildOutputFile>, string, string, LockFile, List<RestoreTargetGraph>, PackagesLockFile, string, CacheFile)> ProcessRestoreResultAsync(TelemetryActivity telemetry,
             List<NuGetv3LocalRepository> localRepositories,
             RemoteWalkContext contextForProject,
             bool isLockFileValid,
             bool regenerateLockFile,
             LockFile assetsFile,
-            IEnumerable<RestoreTargetGraph> graphs,
+            List<RestoreTargetGraph> graphs,
             PackagesLockFile packagesLockFile,
             string packagesLockFilePath,
             CacheFile cacheFile,
@@ -661,9 +664,6 @@ namespace NuGet.Commands
                         success,
                         _logger);
                 }
-
-                // If the request is for a lower lock file version, downgrade it appropriately
-                DowngradeLockFileIfNeeded(assetsFile);
 
                 // Revert to the original case if needed
                 await FixCaseForLegacyReaders(graphs, assetsFile, token);
@@ -757,7 +757,7 @@ namespace NuGet.Commands
         /// <param name="telemetry">The <see cref="TelemetryActivity"/> to log NuGetAudit telemetry to.</param>
         /// <param name="token">A <see cref="CancellationToken"/> to cancel obtaining a vulnerability database. Once the database is downloaded, audit is quick to complete.</param>
         /// <returns>False if no vulnerability database could be found (so packages were not scanned for vulnerabilities), true otherwise.</returns>
-        private async Task<bool> PerformAuditAsync(IEnumerable<RestoreTargetGraph> graphs, TelemetryActivity telemetry, CancellationToken token)
+        private async Task<bool> PerformAuditAsync(List<RestoreTargetGraph> graphs, TelemetryActivity telemetry, CancellationToken token)
         {
             var audit = new AuditUtility(
                 _request.Project.RestoreMetadata.RestoreAuditProperties,
@@ -1435,14 +1435,6 @@ namespace NuGet.Commands
             return Path.GetFullPath(projectLockFilePath);
         }
 
-        private void DowngradeLockFileIfNeeded(LockFile lockFile)
-        {
-            if (_request.LockFileVersion <= 1)
-            {
-                DowngradeLockFileToV1(lockFile);
-            }
-        }
-
         private async Task FixCaseForLegacyReaders(
             IEnumerable<RestoreTargetGraph> graphs,
             LockFile lockFile,
@@ -1466,7 +1458,7 @@ namespace NuGet.Commands
         private LockFile BuildAssetsFile(
             LockFile existingLockFile,
             PackageSpec project,
-            IEnumerable<RestoreTargetGraph> graphs,
+            List<RestoreTargetGraph> graphs,
             IReadOnlyList<NuGetv3LocalRepository> localRepositories,
             RemoteWalkContext contextForProject)
         {
@@ -1660,7 +1652,7 @@ namespace NuGet.Commands
             return checkResults;
         }
 
-        private async Task<(bool, IEnumerable<RestoreTargetGraph>)> ExecuteLegacyRestoreAsync(
+        private async Task<(bool, List<RestoreTargetGraph>)> ExecuteLegacyRestoreAsync(
             NuGetv3LocalRepository userPackageFolder,
             IReadOnlyList<NuGetv3LocalRepository> fallbackPackageFolders,
             RemoteWalkContext context,
@@ -1674,7 +1666,7 @@ namespace NuGet.Commands
                 await _logger.LogAsync(RestoreLogMessage.CreateError(NuGetLogCode.NU1001, message));
 
                 success = false;
-                return (success, Enumerable.Empty<RestoreTargetGraph>());
+                return (success, []);
             }
             _logger.LogInformation(string.Format(CultureInfo.CurrentCulture, Strings.Log_RestoringPackages, _request.Project.FilePath));
 
@@ -1700,7 +1692,7 @@ namespace NuGet.Commands
             // Resolve dependency graphs
             var allGraphs = new List<RestoreTargetGraph>();
             var runtimeIds = RequestRuntimeUtility.GetRestoreRuntimes(_request);
-            var projectFrameworkRuntimePairs = CreateFrameworkRuntimePairs(_request.Project, runtimeIds);
+            var projectFrameworkRuntimePairs = CreateFrameworkRuntimeDefinitions(_request.Project, runtimeIds);
             var hasSupports = _request.Project.RuntimeGraph.Supports.Count > 0;
 
             var projectRestoreRequest = new ProjectRestoreRequest(_request, _request.Project, _request.ExistingLockFile, _logger)
@@ -1712,13 +1704,26 @@ namespace NuGet.Commands
 
             Tuple<bool, List<RestoreTargetGraph>, RuntimeGraph> result = null;
             bool failed = false;
+
+            Dictionary<NuGetFramework, string> targetFrameworkToAlias = new(NuGetFramework.Comparer);
+            List<FrameworkRuntimePair> frameworkRuntimePairs = new();
+            foreach (var frameworkRuntimeDefinition in projectFrameworkRuntimePairs)
+            {
+                if (string.IsNullOrEmpty(frameworkRuntimeDefinition.RuntimeIdentifier))
+                {
+                    targetFrameworkToAlias.Add(frameworkRuntimeDefinition.Framework, frameworkRuntimeDefinition.TargetAlias);
+                }
+                frameworkRuntimePairs.Add(new FrameworkRuntimePair(frameworkRuntimeDefinition.Framework, frameworkRuntimeDefinition.RuntimeIdentifier));
+            }
+
             using (telemetryActivity.StartIndependentInterval(CreateRestoreTargetGraphDuration))
             {
                 try
                 {
                     result = await projectRestoreCommand.TryRestoreAsync(
                         projectRange,
-                        projectFrameworkRuntimePairs,
+                        frameworkRuntimePairs,
+                        targetFrameworkToAlias,
                         userPackageFolder,
                         fallbackPackageFolders,
                         remoteWalker,
@@ -1744,9 +1749,9 @@ namespace NuGet.Commands
                 success = false;
                 // When we fail to create the graphs, we want to write a `target` for each target framework
                 // in order to avoid missing target errors from the SDK build tasks and ensure that NuGet errors don't get cleared.
-                foreach (FrameworkRuntimePair frameworkRuntimePair in CreateFrameworkRuntimePairs(_request.Project, RequestRuntimeUtility.GetRestoreRuntimes(_request)))
+                foreach (FrameworkRuntimeDefinition frameworkRuntimePair in CreateFrameworkRuntimeDefinitions(_request.Project, RequestRuntimeUtility.GetRestoreRuntimes(_request)))
                 {
-                    allGraphs.Add(RestoreTargetGraph.Create(_request.Project.RuntimeGraph, Enumerable.Empty<GraphNode<RemoteResolveResult>>(), context, _logger, frameworkRuntimePair.Framework, frameworkRuntimePair.RuntimeIdentifier));
+                    allGraphs.Add(RestoreTargetGraph.Create(_request.Project.RuntimeGraph, Enumerable.Empty<GraphNode<RemoteResolveResult>>(), context, frameworkRuntimePair.TargetAlias, frameworkRuntimePair.Framework, frameworkRuntimePair.RuntimeIdentifier));
                 }
             }
 
@@ -1786,6 +1791,7 @@ namespace NuGet.Commands
                     compatibilityResult = await projectRestoreCommand.TryRestoreAsync(
                     projectRange,
                     _request.CompatibilityProfiles,
+                    targetFrameworkToAlias,
                     userPackageFolder,
                     fallbackPackageFolders,
                     remoteWalker,
@@ -1823,7 +1829,7 @@ namespace NuGet.Commands
             return (success, allGraphs);
         }
 
-        private async Task<(bool, IEnumerable<RestoreTargetGraph>)> ExecuteRestoreAsync(
+        private async Task<(bool, List<RestoreTargetGraph>)> ExecuteRestoreAsync(
             NuGetv3LocalRepository userPackageFolder,
             IReadOnlyList<NuGetv3LocalRepository> fallbackPackageFolders,
             RemoteWalkContext context,
@@ -1838,7 +1844,7 @@ namespace NuGet.Commands
 
                 success = false;
 
-                return (success, Enumerable.Empty<RestoreTargetGraph>());
+                return (success, []);
             }
 
             var projectRestoreRequest = new ProjectRestoreRequest(_request, _request.Project, _request.ExistingLockFile, _logger)
@@ -1899,9 +1905,9 @@ namespace NuGet.Commands
 
                 // When we fail to create the graphs, we want to write a `target` for each target framework
                 // in order to avoid missing target errors from the SDK build tasks and ensure that NuGet errors don't get cleared.
-                foreach (FrameworkRuntimePair frameworkRuntimePair in CreateFrameworkRuntimePairs(_request.Project, RequestRuntimeUtility.GetRestoreRuntimes(_request)))
+                foreach (FrameworkRuntimeDefinition frameworkRuntimePair in CreateFrameworkRuntimeDefinitions(_request.Project, RequestRuntimeUtility.GetRestoreRuntimes(_request)))
                 {
-                    graphs.Add(RestoreTargetGraph.Create(_request.Project.RuntimeGraph, Enumerable.Empty<GraphNode<RemoteResolveResult>>(), context, _logger, frameworkRuntimePair.Framework, frameworkRuntimePair.RuntimeIdentifier));
+                    graphs.Add(RestoreTargetGraph.Create(_request.Project.RuntimeGraph, Enumerable.Empty<GraphNode<RemoteResolveResult>>(), context, frameworkRuntimePair.TargetAlias, frameworkRuntimePair.Framework, frameworkRuntimePair.RuntimeIdentifier));
                 }
             }
 
@@ -1992,27 +1998,27 @@ namespace NuGet.Commands
         }
 
         /// <summary>
-        /// Gets the list of framework/runtime pairs to restore for the project.  The list is sorted by frameworks first, then frameworks with runtimes.
+        /// Gets the list of framework runtime definition to restore for the project.  The list is sorted by frameworks first, then frameworks with runtimes.
         /// </summary>
         /// <param name="packageSpec">The <see cref="PackageSpec" /> with information about the project.</param>
         /// <param name="runtimeIds">An <see cref="ISet{T}" /> containing the list of runtime identifiers.</param>
-        /// <returns>A <see cref="List{T}" /> containing <see cref="FrameworkRuntimePair" /> objects with the frameworks with empty runtime identifiers followed by frameworks with the specified runtime identifiers.</returns>
-        internal static List<FrameworkRuntimePair> CreateFrameworkRuntimePairs(PackageSpec packageSpec, ISet<string> runtimeIds)
+        /// <returns>A <see cref="List{T}" /> containing <see cref="FrameworkRuntimeDefinition" /> objects with the frameworks with empty runtime identifiers followed by frameworks with the specified runtime identifiers.</returns>
+        internal static List<FrameworkRuntimeDefinition> CreateFrameworkRuntimeDefinitions(PackageSpec packageSpec, ISet<string> runtimeIds)
         {
             // Create a list with capacity for each framework with no runtime and each framework/runtime
-            List<FrameworkRuntimePair> projectFrameworkRuntimePairs = new(capacity: packageSpec.TargetFrameworks.Count * (runtimeIds.Count + 1));
+            List<FrameworkRuntimeDefinition> projectFrameworkRuntimePairs = new(capacity: packageSpec.TargetFrameworks.Count * (runtimeIds.Count + 1));
 
             foreach (TargetFrameworkInformation framework in packageSpec.TargetFrameworks.NoAllocEnumerate())
             {
                 // We care about TFM only and null RID for compilation purposes
-                projectFrameworkRuntimePairs.Add(new FrameworkRuntimePair(framework.FrameworkName, null));
+                projectFrameworkRuntimePairs.Add(new FrameworkRuntimeDefinition(framework.TargetAlias, framework.FrameworkName, null));
             }
 
             foreach (TargetFrameworkInformation framework in packageSpec.TargetFrameworks.NoAllocEnumerate())
             {
                 foreach (string runtimeId in runtimeIds.NoAllocEnumerate())
                 {
-                    projectFrameworkRuntimePairs.Add(new FrameworkRuntimePair(framework.FrameworkName, runtimeId));
+                    projectFrameworkRuntimePairs.Add(new FrameworkRuntimeDefinition(framework.TargetAlias, framework.FrameworkName, runtimeId));
                 }
             }
 
@@ -2040,37 +2046,6 @@ namespace NuGet.Commands
             context.IsMsBuildBased = request.ProjectStyle != ProjectStyle.DotnetCliTool;
 
             return context;
-        }
-
-        private static void DowngradeLockFileToV1(LockFile lockFile)
-        {
-            // Remove projects from the library section
-            var libraryProjects = lockFile.Libraries.Where(lib => lib.Type == LibraryType.Project).ToArray();
-
-            foreach (var library in libraryProjects)
-            {
-                lockFile.Libraries.Remove(library);
-            }
-
-            // Remove projects from the targets section
-            foreach (var target in lockFile.Targets)
-            {
-                var targetProjects = target.Libraries.Where(lib => lib.Type == LibraryType.Project).ToArray();
-
-                foreach (var library in targetProjects)
-                {
-                    target.Libraries.Remove(library);
-                }
-            }
-
-            foreach (var library in lockFile.Targets.SelectMany(target => target.Libraries))
-            {
-                // Null out all target types, these did not exist in v1
-                library.Type = null;
-            }
-
-            // Remove the package spec
-            lockFile.PackageSpec = null;
         }
 
         private static ExternalProjectReference ToExternalProjectReference(PackageSpec project)

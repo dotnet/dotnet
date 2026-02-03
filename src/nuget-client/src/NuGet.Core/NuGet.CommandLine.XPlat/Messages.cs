@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System.Globalization;
 
 namespace NuGet.CommandLine.XPlat
@@ -47,6 +49,12 @@ namespace NuGet.CommandLine.XPlat
         internal static string Error_InvalidVersionRange(string input)
         {
             return string.Format(CultureInfo.CurrentCulture, Strings.Error_InvalidVersionRange, input);
+        }
+
+        /// <inheritdoc cref="Strings.Error_InvalidVersion"/>
+        internal static string Error_InvalidVersion(string input)
+        {
+            return string.Format(CultureInfo.CurrentCulture, Strings.Error_InvalidVersion, input);
         }
 
         /// <inheritdoc cref="Strings.Error_PackageSourceMappingNotFound"/>

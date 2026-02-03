@@ -113,8 +113,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ProjectMigrateErrorMessage">
-        <source>Project is not eligible for migration as it's not project.json based.</source>
-        <target state="translated">项目不符合迁移条件，因为它不基于 project.json。</target>
+        <source>Project is not eligible for migration. Either the project is not packages.config based or doesn't support PackageReference yet.</source>
+        <target state="translated">项目不符合迁移条件。项目不是基于 packages.config 或者尚不支持 PackageReference。</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
@@ -130,6 +130,21 @@
       <trans-unit id="Text_AllowInsecureConnections_Header">
         <source>Allow Insecure Connections</source>
         <target state="translated">允许不安全的连接</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Description">
+        <source>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</source>
+        <target state="translated">审核源在还原期间提供漏洞数据，但不充当包源。如果未配置审核源，则 NuGet 审核使用包源。[了解有关审核源的更多信息](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_HowToRemove">
+        <source>Remove all audit sources to revert to using package sources for vulnerability data.</source>
+        <target state="translated">删除所有审核源，以恢复使用包源获取漏洞数据。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Title">
+        <source>Audit sources</source>
+        <target state="translated">审核源</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">
@@ -175,6 +190,11 @@
       <trans-unit id="Text_PackageSourceUrl_Header">
         <source>Source</source>
         <target state="translated">源</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageSources_Description">
+        <source>Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</source>
+        <target state="translated">包源定义了 NuGet 在安装、还原、审核和更新操作中检索包的位置。[了解有关审核源的更多信息](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageSources_MachineWide">

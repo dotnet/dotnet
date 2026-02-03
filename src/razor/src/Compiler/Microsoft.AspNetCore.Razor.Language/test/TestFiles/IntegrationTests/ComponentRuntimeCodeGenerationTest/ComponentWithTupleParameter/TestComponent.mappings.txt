@@ -1,4 +1,9 @@
-﻿Source Location: (105:4,15 [6] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (91:4,1 [13] x:\dir\subdir\Test\TestComponent.cshtml)
+|TestComponent|
+Generated Location: (703:19,49 [13] )
+|TestComponent|
+
+Source Location: (105:4,15 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |Gutter|
 Generated Location: (888:23,0 [6] )
 |Gutter|

@@ -13,16 +13,10 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.TextDifferencing;
 
-internal abstract partial class SourceTextDiffer : TextDiffer, IDisposable
+internal abstract partial class SourceTextDiffer(SourceText oldText, SourceText newText) : TextDiffer, IDisposable
 {
-    protected readonly SourceText OldText;
-    protected readonly SourceText NewText;
-
-    protected SourceTextDiffer(SourceText oldText, SourceText newText)
-    {
-        OldText = oldText ?? throw new ArgumentNullException(nameof(oldText));
-        NewText = newText ?? throw new ArgumentNullException(nameof(newText));
-    }
+    protected readonly SourceText OldText = oldText;
+    protected readonly SourceText NewText = newText;
 
     public abstract void Dispose();
 
@@ -30,21 +24,21 @@ internal abstract partial class SourceTextDiffer : TextDiffer, IDisposable
     protected abstract int AppendEdit(DiffEdit edit, StringBuilder builder);
 
     /// <summary>
-    ///  Rents a char array of at least <paramref name="minimumLength"/> from the shared array pool.
+    /// Rents a char array of at least <paramref name="minimumLength"/> from the shared array pool.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected static char[] RentArray(int minimumLength)
         => ArrayPool<char>.Shared.Rent(minimumLength);
 
     /// <summary>
-    ///  Returns a char array to the shared array pool.
+    /// Returns a char array to the shared array pool.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected static void ReturnArray(char[] array, bool clearArray = false)
         => ArrayPool<char>.Shared.Return(array, clearArray);
 
     /// <summary>
-    ///  Ensures that <paramref name="array"/> references a char array of at least <paramref name="minimumLength"/>.
+    /// Ensures that <paramref name="array"/> references a char array of at least <paramref name="minimumLength"/>.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected static char[] EnsureBuffer(ref char[] array, int minimumLength)
@@ -114,9 +108,13 @@ internal abstract partial class SourceTextDiffer : TextDiffer, IDisposable
             return newText.GetTextChangesArray(oldText);
         }
 
-        using SourceTextDiffer differ = kind == DiffKind.Line
-            ? new LineDiffer(oldText, newText)
-            : new CharDiffer(oldText, newText);
+        using SourceTextDiffer differ = kind switch
+        {
+            DiffKind.Line => new LineDiffer(oldText, newText),
+            DiffKind.Char => new CharDiffer(oldText, newText),
+            DiffKind.Word => new WordDiffer(oldText, newText),
+            _ => throw new ArgumentOutOfRangeException(nameof(kind)),
+        };
 
         var edits = differ.ComputeDiff();
 

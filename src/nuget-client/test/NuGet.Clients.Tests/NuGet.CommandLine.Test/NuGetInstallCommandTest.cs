@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -2070,7 +2069,7 @@ namespace NuGet.CommandLine.Test
 </packages>");
 
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var config = Path.Combine(Path.GetDirectoryName(projectA.ProjectPath)!, "packages.config");
             var args = new string[]
@@ -2116,7 +2115,7 @@ namespace NuGet.CommandLine.Test
 </packages>");
 
             solution.Projects.Add(projectB);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var config = Path.Combine(Path.GetDirectoryName(projectB.ProjectPath)!, "packages.config");
             var args = new string[]
@@ -2165,7 +2164,7 @@ namespace NuGet.CommandLine.Test
 </packages>");
 
             solution.Projects.Add(projectB);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             var config = Path.Combine(Path.GetDirectoryName(projectB.ProjectPath)!, "packages.config");
             var args = new string[]

@@ -11,5 +11,4 @@ namespace Microsoft.AspNetCore.Razor.Test.Common;
 [XunitTestCaseDiscoverer($"Microsoft.AspNetCore.Razor.Test.Common.{nameof(FormattingFactDiscoverer)}", "Microsoft.AspNetCore.Razor.Test.Common")]
 internal sealed class FormattingTestFactAttribute : FactAttribute
 {
-    public bool SkipFlipLineEnding { get; set; }
 }

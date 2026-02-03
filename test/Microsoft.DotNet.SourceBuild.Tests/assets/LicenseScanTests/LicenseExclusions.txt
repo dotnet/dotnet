@@ -13,7 +13,7 @@
 #
 
 # False positive
-src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/wix/bundle/bundle.wxs|unknown-license-reference
+src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/wix*/bundle/bundle.wxs|unknown-license-reference
 src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/deb-package-tool/templates/debian/copyright|unknown-license-reference
 src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/rpm_templates/copyright|unknown-license-reference
 
@@ -22,7 +22,7 @@ src/arcade/eng/xcopy-msbuild/msbuild.nuspec|ms-visual-2015-sdk
 src/arcade/src/Microsoft.DotNet.Arcade.Sdk/tools/Licenses/*
 
 # Applies to installer, not source
-src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/wix/eula.rtf
+src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/wix*/eula.rtf
 
 #
 # aspnetcore
@@ -114,10 +114,14 @@ src/nuget-client/test/TestUtilities/Test.Utility/JsonData.cs
 # roslyn
 #
 
+# Reference to a license, not applicable to source
+src/roslyn/THIRD-PARTY-NOTICES.txt
+
 # Test data
 src/roslyn/src/Analyzers/CSharp/Tests/FileHeaders/FileHeaderTests.cs|unknown-license-reference
 src/roslyn/src/Analyzers/VisualBasic/Tests/FileHeaders/FileHeaderTests.vb|unknown-license-reference
 src/roslyn/src/EditorFeatures/CSharpTest2/EmbeddedLanguages/RegularExpressions/Regex_RealWorldPatterns.json
+src/roslyn/src/VisualStudio/IntegrationTest/Harness/IntegrationTestServiceDev18/source.extension.vsixmanifest|unknown-license-reference
 
 # Applicable to installer, not source
 src/roslyn/src/RoslynAnalyzers/Assets/EULA.txt|ms-net-library
@@ -178,6 +182,7 @@ src/source-build-reference-packages/src/externalPackages/src/application-insight
 src/source-build-reference-packages/src/externalPackages/src/application-insights/WEB/ThirdPartyNotices.txt|unknown-license-reference
 src/source-build-reference-packages/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/src/Microsoft.IdentityModel.Validators/AadIssuerValidator/AadIssuerValidatorConstants.cs|cpl-1.0
 src/source-build-reference-packages/src/externalPackages/src/humanizer/NuSpecs/*.nuspec*
+src/source-build-reference-packages/src/externalPackages/src/spectre-console/README.md|unknown-license-reference
 src/source-build-reference-packages/src/targetPacks/ILsrc/microsoft.aspnetcore.app.ref/8.0.0/THIRD-PARTY-NOTICES.TXT|unknown
 src/source-build-reference-packages/src/targetPacks/ILsrc/netstandard.library/2.0.*/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
 src/source-build-reference-packages/src/targetPacks/ILsrc/netstandard.library.ref/2.1.0/THIRD-PARTY-NOTICES.TXT|codesourcery-2004

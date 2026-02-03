@@ -186,6 +186,15 @@ internal class CodeActionsService(
                 continue;
             }
 
+            // In VS Code, Roslyn adds duplicate code actions for every code action, to implement Fix All functionality.
+            // Until we implement support for that in the C# Extension, we want to filter them out.
+            // https://github.com/dotnet/razor/issues/11832
+            if (jsonData.TryGetProperty("FixAllFlavors", out var fixAllFlavours) &&
+                fixAllFlavours.GetArrayLength() > 0)
+            {
+                continue;
+            }
+
             actions.Add(codeAction);
         }
 

@@ -12,5 +12,4 @@ namespace Microsoft.AspNetCore.Razor.Test.Common;
 internal sealed class FormattingTestTheoryAttribute : TheoryAttribute
 {
     // NOTE: Property names need to match FormattingTestFactAttribute
-    public bool SkipFlipLineEnding { get; set; }
 }

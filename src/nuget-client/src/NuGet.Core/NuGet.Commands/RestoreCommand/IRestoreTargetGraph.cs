@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System.Collections.Generic;
 using NuGet.Client;
 using NuGet.DependencyResolver;
@@ -12,7 +14,17 @@ namespace NuGet.Commands
 {
     public interface IRestoreTargetGraph
     {
+        /// <summary>
+        /// Gets the target graph name.
+        /// The target graph name is two parts; the first part, when there is an alias this is the alias name; otherwise, it's the framework name
+        /// For the second part, when there is a runtime identifier, this is a `/` followed by the runtime identifier; otherwise, it's empty.
+        /// </summary>
         string TargetGraphName { get; }
+
+        /// <summary>
+        /// Gets the target alias used during the restore operation on this graph
+        /// </summary>
+        public string TargetAlias { get; }
 
         /// <summary>
         /// Gets the runtime identifier used during the restore operation on this graph

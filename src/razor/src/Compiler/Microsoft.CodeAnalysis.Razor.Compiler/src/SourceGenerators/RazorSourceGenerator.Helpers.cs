@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -21,7 +21,13 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             {
                 switch (filePath[i])
                 {
-                    case ':' or '\\' or '/':
+                    case '\\' or '/' when i + 1 < filePath.Length && filePath[i + 1] is '\\' or '/':
+                        // Roslyn will throw on '//', but some weird Uri's have them, so sanitize to '_/'
+                        builder.Append('_');
+                        break;
+                    case '\\' or '/' when i > 0:
+                        builder.Append('/');
+                        break;
                     case char ch when !char.IsLetterOrDigit(ch):
                         builder.Append('_');
                         break;
@@ -38,7 +44,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
         private static RazorProjectEngine GetDeclarationProjectEngine(
             SourceGeneratorProjectItem item,
-            IEnumerable<SourceGeneratorProjectItem> imports,
+            ImmutableArray<SourceGeneratorProjectItem> imports,
             RazorSourceGenerationOptions razorSourceGeneratorOptions)
         {
             var fileSystem = new VirtualRazorProjectFileSystem();
@@ -78,11 +84,11 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
         {
             var tagHelperFeature = new StaticCompilationTagHelperFeature(compilation);
 
-            // the tagHelperFeature will have its Engine property set as part of adding it to the engine, which is used later when doing the actual discovery
+            // the tagHelperFeature will have its Engine property set as part of adding it to the engine,
+            // which is used later when doing the actual discovery
             var discoveryProjectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, new VirtualRazorProjectFileSystem(), b =>
             {
                 b.Features.Add(tagHelperFeature);
-                b.Features.Add(new DefaultTagHelperDescriptorProvider());
 
                 CompilerFeatures.Register(b);
                 RazorExtensions.Register(b);
@@ -93,7 +99,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
         private static SourceGeneratorProjectEngine GetGenerationProjectEngine(
             SourceGeneratorProjectItem item,
-            IEnumerable<SourceGeneratorProjectItem> imports,
+            ImmutableArray<SourceGeneratorProjectItem> imports,
             RazorSourceGenerationOptions razorSourceGeneratorOptions)
         {
             var fileSystem = new VirtualRazorProjectFileSystem();

@@ -3,8 +3,10 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Remote.Razor.Resources;
@@ -29,7 +31,6 @@ public class RetryProjectTest(ITestOutputHelper testOutputHelper) : CohostEndpoi
         var document = CreateProjectAndRazorDocument(input.Text, RazorFileKind.Component);
 
         // Make sure the source generator has been run while cohosting is off, to simular Roslyn winning the initialization race
-        //var compilation = await document.Project.GetCompilationAsync(DisposalToken);
         Assert.Empty(await document.Project.GetSourceGeneratedDocumentsAsync(DisposalToken));
 
         // Now turn the source generator on, to simulate Razor starting up and initializing OOP
@@ -52,6 +53,62 @@ public class RetryProjectTest(ITestOutputHelper testOutputHelper) : CohostEndpoi
     }
 
     [Fact]
+    public async Task HoverRequest_MultipleProjects_ReturnsResults()
+    {
+        RazorCohostingOptions.UseRazorCohostServer = false;
+
+        TestCode input = """
+            <div></div>
+            @System.DateTi$$me.Now
+            """;
+        // Specify remoteOnly because our test infrastructure isn't set up to mutate solutions otherwise
+        var document = CreateProjectAndRazorDocument(input.Text, remoteOnly: true);
+
+        // Now we create another document, in another project
+        TestCode otherInput = """
+            @System.DateTi$$me.Now
+            <div></div>
+            """;
+        var projectId = ProjectId.CreateNewId(debugName: TestProjectData.SomeProject.DisplayName);
+        var documentFilePath = TestProjectData.AnotherProjectComponentFile1.FilePath;
+        var documentId = DocumentId.CreateNewId(projectId, debugName: documentFilePath);
+        var otherDocument = AddProjectAndRazorDocument(document.Project.Solution, TestProjectData.AnotherProject.FilePath, projectId, documentId, documentFilePath, otherInput.Text);
+
+        // Make sure we have the document from our new fork
+        document = otherDocument.Project.Solution.GetAdditionalDocument(document.Id).AssumeNotNull();
+
+        // Make sure the source generator has been run while cohosting is off, to simular Roslyn winning the initialization race
+        Assert.Empty(await document.Project.GetSourceGeneratedDocumentsAsync(DisposalToken));
+        Assert.Empty(await otherDocument.Project.GetSourceGeneratedDocumentsAsync(DisposalToken));
+
+        // Now turn the source generator on, to simulate Razor starting up and initializing OOP
+        RazorCohostingOptions.UseRazorCohostServer = true;
+
+        var requestInvoker = new TestHtmlRequestInvoker();
+        var endpoint = new CohostHoverEndpoint(IncompatibleProjectService, RemoteServiceInvoker, requestInvoker);
+
+        // Making this request will cause our solution to be redirected, and project 1 to be a retry project
+        await MakeHoverRequestAsync(input, document);
+
+        // Making this request will use our redirect solution, but project 2 is not a retry project, so would fail normally
+        await MakeHoverRequestAsync(otherInput, otherDocument);
+
+        async Task MakeHoverRequestAsync(TestCode input, TextDocument document)
+        {
+            var inputText = await document.GetTextAsync(DisposalToken);
+            var linePosition = inputText.GetLinePosition(input.Position);
+            var textDocumentPositionParams = new TextDocumentPositionParams
+            {
+                Position = LspFactory.CreatePosition(linePosition),
+                TextDocument = new TextDocumentIdentifier { DocumentUri = document.CreateDocumentUri() },
+            };
+
+            var hoverResult = await endpoint.GetTestAccessor().HandleRequestAsync(textDocumentPositionParams, document, DisposalToken);
+            Assert.NotNull(hoverResult);
+        }
+    }
+
+    [Fact]
     public async Task GetRequiredCodeDocument_SucceedsAndReturnsRetryProject()
     {
         RazorCohostingOptions.UseRazorCohostServer = false;
@@ -62,7 +119,6 @@ public class RetryProjectTest(ITestOutputHelper testOutputHelper) : CohostEndpoi
         var document = CreateProjectAndRazorDocument(input.Text, RazorFileKind.Component);
 
         // Make sure the source generator has been run while cohosting is off, to simulate Roslyn winning the initialization race
-        //var compilation = await document.Project.GetCompilationAsync(DisposalToken);
         Assert.Empty(await document.Project.GetSourceGeneratedDocumentsAsync(DisposalToken));
 
         // Now turn the source generator on, to simulate Razor starting up and initializing OOP
@@ -89,7 +145,6 @@ public class RetryProjectTest(ITestOutputHelper testOutputHelper) : CohostEndpoi
         var document = CreateProjectAndRazorDocument(input.Text, RazorFileKind.Component);
 
         // Make sure the source generator has been run while cohosting is off, to simular Roslyn winning the initialization race
-        //var compilation = await document.Project.GetCompilationAsync(DisposalToken);
         Assert.Empty(await document.Project.GetSourceGeneratedDocumentsAsync(DisposalToken));
 
         var snapshotManager = OOPExportProvider.GetExportedValue<RemoteSnapshotManager>();
@@ -119,7 +174,6 @@ public class RetryProjectTest(ITestOutputHelper testOutputHelper) : CohostEndpoi
         var document = CreateProjectAndRazorDocument(input.Text, RazorFileKind.Component);
 
         // Make sure the source generator has been run while cohosting is off, to simular Roslyn winning the initialization race
-        //var compilation = await document.Project.GetCompilationAsync(DisposalToken);
         Assert.Empty(await document.Project.GetSourceGeneratedDocumentsAsync(DisposalToken));
 
         var snapshotManager = OOPExportProvider.GetExportedValue<RemoteSnapshotManager>();
@@ -143,7 +197,6 @@ public class RetryProjectTest(ITestOutputHelper testOutputHelper) : CohostEndpoi
         var document = CreateProjectAndRazorDocument(input.Text, RazorFileKind.Component);
 
         // Make sure the source generator has been run while cohosting is off, to simular Roslyn winning the initialization race
-        //var compilation = await document.Project.GetCompilationAsync(DisposalToken);
         Assert.Empty(await document.Project.GetSourceGeneratedDocumentsAsync(DisposalToken));
 
         var snapshotManager = OOPExportProvider.GetExportedValue<RemoteSnapshotManager>();

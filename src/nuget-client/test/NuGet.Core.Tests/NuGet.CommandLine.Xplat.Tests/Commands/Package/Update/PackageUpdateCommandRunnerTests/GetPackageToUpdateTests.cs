@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -22,7 +20,7 @@ using Xunit.Abstractions;
 
 namespace NuGet.CommandLine.Xplat.Tests.Commands.Package.Update.PackageUpdateCommandRunnerTests;
 
-using Pkg = NuGet.CommandLine.XPlat.Commands.Package.Update.Package;
+using Pkg = NuGet.CommandLine.XPlat.Commands.Package.PackageWithVersionRange;
 
 public class GetPackageToUpdateTests
 {
@@ -59,7 +57,7 @@ public class GetPackageToUpdateTests
         var logger = new Mock<ILoggerWithColor>();
 
         // Act
-        var packagesToUpdate = await PackageUpdateCommandRunner.SelectPackagesToUpdateAsync(
+        var (packagesToUpdate, scannedPackages) = await PackageUpdateCommandRunner.SelectSpecificPackagesToUpdateAsync(
             [package],
             packageSpec,
             logger.Object,
@@ -68,6 +66,7 @@ public class GetPackageToUpdateTests
 
         // Assert
         packagesToUpdate.Should().HaveCount(1);
+        scannedPackages.Should().ContainSingle().Which.Should().Be("Contoso.Utils");
         var packageToUpdate = packagesToUpdate.First().Package;
         packageToUpdate.Should().NotBeNull();
         packageToUpdate.Id.Should().Be("Contoso.Utils");
@@ -103,7 +102,7 @@ public class GetPackageToUpdateTests
         var logger = new Mock<ILoggerWithColor>();
 
         // Act
-        var packagesToUpdate = await PackageUpdateCommandRunner.SelectPackagesToUpdateAsync(
+        var (packagesToUpdate, scannedPackages) = await PackageUpdateCommandRunner.SelectSpecificPackagesToUpdateAsync(
             [package],
             packageSpec,
             logger.Object,
@@ -112,6 +111,7 @@ public class GetPackageToUpdateTests
 
         // Assert
         packagesToUpdate.Should().HaveCount(1);
+        scannedPackages.Should().ContainSingle().Which.Should().Be("Contoso.Utils");
         var packageToUpdate = packagesToUpdate.First().Package;
         packageToUpdate.Should().NotBeNull();
         packageToUpdate.Id.Should().Be("Contoso.Utils");
@@ -143,7 +143,7 @@ public class GetPackageToUpdateTests
         var logger = new Mock<ILoggerWithColor>();
 
         // Act
-        var packagesToUpdate = await PackageUpdateCommandRunner.SelectPackagesToUpdateAsync(
+        var (packagesToUpdate, scannedPackages) = await PackageUpdateCommandRunner.SelectSpecificPackagesToUpdateAsync(
             [package],
             packageSpec,
             logger.Object,
@@ -152,6 +152,7 @@ public class GetPackageToUpdateTests
 
         // Assert
         packagesToUpdate.Should().HaveCount(1);
+        scannedPackages.Should().ContainSingle().Which.Should().Be("Contoso.Utils");
         var packageToUpdate = packagesToUpdate.First().Package;
         packageToUpdate.Should().NotBeNull();
         packageToUpdate.Id.Should().Be("Contoso.Utils");
@@ -186,7 +187,7 @@ public class GetPackageToUpdateTests
         var logger = new Mock<ILoggerWithColor>();
 
         // Act
-        var packagesToUpdate = await PackageUpdateCommandRunner.SelectPackagesToUpdateAsync(
+        var (packagesToUpdate, scannedPackages) = await PackageUpdateCommandRunner.SelectSpecificPackagesToUpdateAsync(
             [package],
             packageSpec,
             logger.Object,
@@ -194,7 +195,8 @@ public class GetPackageToUpdateTests
             CancellationToken.None);
 
         // Assert
-        packagesToUpdate.Should().BeEmpty();
+        packagesToUpdate.Should().BeNull();
+        scannedPackages.Should().ContainSingle().Which.Should().Be("Contoso.Utils");
         logger.Invocations.Count.Should().BeGreaterThan(0);
     }
 
@@ -231,7 +233,7 @@ public class GetPackageToUpdateTests
         var logger = new Mock<ILoggerWithColor>();
 
         // Act
-        var packagesToUpdate = await PackageUpdateCommandRunner.SelectPackagesToUpdateAsync(
+        var (packagesToUpdate, scannedPackages) = await PackageUpdateCommandRunner.SelectSpecificPackagesToUpdateAsync(
             [package1, package2],
             packageSpec,
             logger.Object,
@@ -240,6 +242,7 @@ public class GetPackageToUpdateTests
 
         // Assert
         packagesToUpdate.Should().HaveCount(2);
+        scannedPackages.Should().HaveCount(2);
 
         var contosoUpdate = packagesToUpdate.First(p => p.Package.Id == "Contoso.Utils");
         contosoUpdate.Package.CurrentVersion.ToString().Should().Be("[1.0.0, )");
@@ -275,7 +278,7 @@ public class GetPackageToUpdateTests
         var logger = new Mock<ILoggerWithColor>();
 
         // Act
-        var packagesToUpdate = await PackageUpdateCommandRunner.SelectPackagesToUpdateAsync(
+        var (packagesToUpdate, scannedPackages) = await PackageUpdateCommandRunner.SelectSpecificPackagesToUpdateAsync(
             [package],
             packageSpec,
             logger.Object,
@@ -284,6 +287,7 @@ public class GetPackageToUpdateTests
 
         // Assert
         packagesToUpdate.Should().BeEmpty();
+        scannedPackages.Should().BeEmpty();
     }
 
     [Fact]
@@ -310,21 +314,21 @@ public class GetPackageToUpdateTests
         var logger = new Mock<ILoggerWithColor>();
 
         // Act
-        var result = await PackageUpdateCommandRunner.SelectAllPackagesWithUpdatesAsync(
+        var (packagesToUpdate, scannedPackages) = await PackageUpdateCommandRunner.SelectAllPackagesWithUpdatesAsync(
             packageSpec,
             logger.Object,
             packageUpdateIO.Object,
             CancellationToken.None);
 
         // Assert
-        result.packagesInProject.Should().Be(2);
-        result.packagesToUpdate.Should().HaveCount(2);
+        scannedPackages.Should().HaveCount(2);
+        packagesToUpdate.Should().HaveCount(2);
 
-        var package1Update = result.packagesToUpdate.First(p => p.Package.Id == "Test.Package1");
+        var package1Update = packagesToUpdate.First(p => p.Package.Id == "Test.Package1");
         package1Update.Package.CurrentVersion.ToString().Should().Be("[1.0.0, )");
         package1Update.Package.NewVersion.ToString().Should().Be("[1.2.3, )");
 
-        var package2Update = result.packagesToUpdate.First(p => p.Package.Id == "Test.Package2");
+        var package2Update = packagesToUpdate.First(p => p.Package.Id == "Test.Package2");
         package2Update.Package.CurrentVersion.ToString().Should().Be("[2.0.0, )");
         package2Update.Package.NewVersion.ToString().Should().Be("[2.1.0, )");
 
@@ -355,17 +359,17 @@ public class GetPackageToUpdateTests
         var logger = new Mock<ILoggerWithColor>();
 
         // Act
-        var result = await PackageUpdateCommandRunner.SelectAllPackagesWithUpdatesAsync(
+        var (packagesToUpdate, scannedPackages) = await PackageUpdateCommandRunner.SelectAllPackagesWithUpdatesAsync(
             packageSpec,
             logger.Object,
             packageUpdateIO.Object,
             CancellationToken.None);
 
         // Assert
-        result.packagesInProject.Should().Be(2);
-        result.packagesToUpdate.Should().HaveCount(1);
+        scannedPackages.Should().HaveCount(2);
+        packagesToUpdate.Should().HaveCount(1);
 
-        var packageUpdate = result.packagesToUpdate.First();
+        var packageUpdate = packagesToUpdate.First();
         packageUpdate.Package.Id.Should().Be("Test.Package1");
         packageUpdate.Package.CurrentVersion.ToString().Should().Be("[1.0.0, )");
         packageUpdate.Package.NewVersion.ToString().Should().Be("[1.2.3, )");
@@ -397,15 +401,15 @@ public class GetPackageToUpdateTests
         var logger = new Mock<ILoggerWithColor>();
 
         // Act
-        var result = await PackageUpdateCommandRunner.SelectAllPackagesWithUpdatesAsync(
+        var (packagesToUpdate, scannedPackages) = await PackageUpdateCommandRunner.SelectAllPackagesWithUpdatesAsync(
             packageSpec,
             logger.Object,
             packageUpdateIO.Object,
             CancellationToken.None);
 
         // Assert
-        result.packagesInProject.Should().Be(2);
-        result.packagesToUpdate.Should().BeEmpty();
+        scannedPackages.Should().HaveCount(2);
+        packagesToUpdate.Should().BeEmpty();
         logger.Invocations.Count.Should().Be(0);
     }
 }

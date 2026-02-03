@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
@@ -12,6 +10,12 @@ namespace Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 
 public class DesignTimeNodeWriter : IntermediateNodeWriter
 {
+    public static readonly DesignTimeNodeWriter Instance = new DesignTimeNodeWriter();
+
+    private DesignTimeNodeWriter()
+    {
+    }
+
     public override void WriteUsingDirective(CodeRenderingContext context, UsingDirectiveIntermediateNode node)
     {
         if (node.Source is { FilePath: not null } sourceSpan)

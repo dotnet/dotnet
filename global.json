@@ -1,10 +1,10 @@
 {
   "tools": {
-    "dotnet": "10.0.100-rc.1.25451.107"
+    "dotnet": "10.0.102"
   },
   "msbuild-sdks": {
     "Microsoft.Build.NoTargets": "3.7.0",
     "Microsoft.Build.Traversal": "3.4.0",
-    "Microsoft.DotNet.Arcade.Sdk": "10.0.0-beta.25451.107"
+    "Microsoft.DotNet.Arcade.Sdk": "10.0.0-beta.25612.105"
   }
 }

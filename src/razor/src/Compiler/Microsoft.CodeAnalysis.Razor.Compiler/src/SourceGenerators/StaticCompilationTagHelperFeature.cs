@@ -4,42 +4,46 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
 
 namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 {
-    internal sealed class StaticCompilationTagHelperFeature(Compilation compilation)
-        : RazorEngineFeatureBase, ITagHelperFeature
+    internal sealed class StaticCompilationTagHelperFeature(Compilation compilation) : RazorEngineFeatureBase, ITagHelperFeature
     {
-        private ImmutableArray<ITagHelperDescriptorProvider> _providers;
+        private ITagHelperDiscoveryService? _discoveryService;
+        private TagHelperDiscoverer? _discoverer;
 
-        public void CollectDescriptors(ISymbol? targetSymbol, List<TagHelperDescriptor> results)
+        public TagHelperCollection GetTagHelpers(IAssemblySymbol assembly, CancellationToken cancellationToken)
         {
-            if (_providers.IsDefault)
+            if (_discoveryService is null)
             {
-                return;
+                return [];
             }
 
-            var context = new TagHelperDescriptorProviderContext(compilation, targetSymbol, results);
-
-            foreach (var provider in _providers)
+            if (_discoverer is null &&
+                !_discoveryService.TryGetDiscoverer(compilation, out _discoverer))
             {
-                provider.Execute(context);
+                return [];
             }
+
+            return _discoverer.GetTagHelpers(assembly, cancellationToken);
         }
 
-        IReadOnlyList<TagHelperDescriptor> ITagHelperFeature.GetDescriptors()
+        TagHelperCollection ITagHelperFeature.GetTagHelpers(CancellationToken cancellationToken)
         {
-            var results = new List<TagHelperDescriptor>();
-            CollectDescriptors(targetSymbol: null, results);
+            if (_discoveryService is null)
+            {
+                return [];
+            }
 
-            return results;
+            return _discoveryService.GetTagHelpers(compilation, cancellationToken);
         }
 
         protected override void OnInitialized()
         {
-            _providers = Engine.GetFeatures<ITagHelperDescriptorProvider>().OrderByAsArray(static x => x.Order);
+            _discoveryService = Engine.GetFeatures<ITagHelperDiscoveryService>().FirstOrDefault();
         }
     }
 }

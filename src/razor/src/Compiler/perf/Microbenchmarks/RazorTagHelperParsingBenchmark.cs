@@ -2,9 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
+using System.Threading;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
@@ -40,7 +39,7 @@ public class RazorTagHelperParsingBenchmark
         BlazorServerTagHelpersDemoFile = fileSystem.GetItem(Path.Combine(blazorServerTagHelpersFilePath), RazorFileKind.Component);
 
         ComponentDirectiveVisitor = new ComponentDirectiveVisitor();
-        ComponentDirectiveVisitor.Initialize(blazorServerTagHelpersFilePath, tagHelpers, currentNamespace: null);
+        ComponentDirectiveVisitor.Initialize(tagHelpers, blazorServerTagHelpersFilePath, currentNamespace: null);
         var codeDocument = ProjectEngine.ProcessDesignTime(BlazorServerTagHelpersDemoFile);
         SyntaxTree = codeDocument.GetRequiredSyntaxTree();
     }
@@ -62,18 +61,18 @@ public class RazorTagHelperParsingBenchmark
         ComponentDirectiveVisitor.Visit(SyntaxTree);
     }
 
-    private static ImmutableArray<TagHelperDescriptor> ReadTagHelpers(string filePath)
+    private static TagHelperCollection ReadTagHelpers(string filePath)
     {
         using var reader = new StreamReader(filePath);
-        return JsonDataConvert.DeserializeTagHelperArray(reader);
+        var array = JsonDataConvert.DeserializeTagHelperArray(reader);
+
+        return TagHelperCollection.Create(array);
     }
 
-    private sealed class StaticTagHelperFeature : RazorEngineFeatureBase, ITagHelperFeature
+    private sealed class StaticTagHelperFeature(TagHelperCollection tagHelpers)
+        : RazorEngineFeatureBase, ITagHelperFeature
     {
-        public StaticTagHelperFeature(IReadOnlyList<TagHelperDescriptor> descriptors) => Descriptors = descriptors;
-
-        public IReadOnlyList<TagHelperDescriptor> Descriptors { get; }
-
-        public IReadOnlyList<TagHelperDescriptor> GetDescriptors() => Descriptors;
+        public TagHelperCollection GetTagHelpers(CancellationToken cancellationToken = default)
+            => tagHelpers;
     }
 }

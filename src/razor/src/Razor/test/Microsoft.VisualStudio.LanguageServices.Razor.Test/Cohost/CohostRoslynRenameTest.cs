@@ -2,11 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -18,7 +15,6 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.CohostingShared;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
-using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Rename;
 using Microsoft.CodeAnalysis.Text;
@@ -32,12 +28,12 @@ public class CohostRoslynRenameTest(ITestOutputHelper testOutputHelper) : Cohost
 {
     [Theory]
     [CombinatorialData]
-    public Task CSharp_Method(bool useLsp)
+    public Task CSharp_Method(bool useLsp, bool fromRazor)
         => VerifyRenamesAsync(
             csharpFile: """
                 public class MyClass
                 {
-                    public string MyMethod()
+                    public string MyMe$$thod()
                     {
                         return $"Hi from {nameof(MyMethod)}";
                     }
@@ -87,7 +83,54 @@ public class CohostRoslynRenameTest(ITestOutputHelper testOutputHelper) : Cohost
                 
                 The end.
                 """,
-            useLsp);
+            useLsp,
+            fromRazor);
+
+    [Theory]
+    [CombinatorialData]
+    public Task Component(bool useLsp, bool fromRazor)
+        => VerifyRenamesAsync(
+            csharpFile: """
+                using Microsoft.AspNetCore.Components;
+
+                public class MyComp$$onent : ComponentBase
+                {
+                }
+                """,
+            razorFile: """
+                This is a Razor document.
+
+                <MyComponent></MyComponent>
+
+                @code
+                {
+                    private string componentnName = nameof(MyCompo$$nent);
+                }
+
+                The end.
+                """,
+            newName: "YetAnotherComponent",
+            expectedCSharpFile: """
+                using Microsoft.AspNetCore.Components;
+                
+                public class YetAnotherComponent : ComponentBase
+                {
+                }
+                """,
+            expectedRazorFile: """
+                This is a Razor document.
+                
+                <YetAnotherComponent></YetAnotherComponent>
+                
+                @code
+                {
+                    private string componentnName = nameof(YetAnotherComponent);
+                }
+                
+                The end.
+                """,
+            useLsp,
+            fromRazor);
 
     [Theory]
     [CombinatorialData]
@@ -148,7 +191,7 @@ public class CohostRoslynRenameTest(ITestOutputHelper testOutputHelper) : Cohost
                 """,
            useLsp);
 
-    private protected override TestComposition ConfigureRoslynDevenvComposition(TestComposition composition)
+    private protected override TestComposition ConfigureLocalComposition(TestComposition composition)
     {
         return composition
             .AddParts(typeof(RazorSourceGeneratedDocumentSpanMappingService))
@@ -156,30 +199,37 @@ public class CohostRoslynRenameTest(ITestOutputHelper testOutputHelper) : Cohost
     }
 
     private async Task VerifyRenamesAsync(
-        string csharpFile,
+        TestCode csharpFile,
         TestCode razorFile,
         string newName,
         string expectedCSharpFile,
         string expectedRazorFile,
-        bool useLsp)
+        bool useLsp,
+        bool fromRazor = true)
     {
-        var razorDocument = CreateProjectAndRazorDocument(razorFile.Text, additionalFiles: [(Path.Combine(TestProjectData.SomeProjectPath, "File.cs"), csharpFile)]);
+        var razorDocument = CreateProjectAndRazorDocument(razorFile.Text, additionalFiles: [(Path.Combine(TestProjectData.SomeProjectPath, "File.cs"), csharpFile.Text)]);
         var project = razorDocument.Project;
         var csharpDocument = project.Documents.First();
 
         var compilation = await project.GetCompilationAsync(DisposalToken);
 
-        Assert.True(razorDocument.TryComputeHintNameFromRazorDocument(out var hintName));
-        var generatedDocument = await project.TryGetSourceGeneratedDocumentFromHintNameAsync(hintName, DisposalToken);
+        var generatedDocument = await project.TryGetSourceGeneratedDocumentForRazorDocumentAsync(razorDocument, DisposalToken);
 
-        var node = await GetSyntaxNodeAsync(generatedDocument.AssumeNotNull(), razorFile.Position, razorDocument);
+        var originDocument = fromRazor
+            ? generatedDocument.AssumeNotNull()
+            : csharpDocument;
+        var originPosition = fromRazor
+            ? razorFile.Position
+            : csharpFile.Position;
 
         if (useLsp)
         {
-            await VerifyLspRenameAsync(newName, expectedCSharpFile, expectedRazorFile, razorDocument, csharpDocument, node);
+            var (_, csharpPosition) = await GetCSharpPositionAsync(originDocument, originPosition, razorDocument);
+            await VerifyLspRenameAsync(newName, expectedCSharpFile, expectedRazorFile, originDocument, csharpPosition, razorDocument, csharpDocument);
         }
         else
         {
+            var node = await GetSyntaxNodeAsync(originDocument, originPosition, razorDocument);
             var symbol = FindSymbolToRename(compilation.AssumeNotNull(), node);
             await VerifyVSRenameAsync(newName, expectedCSharpFile, expectedRazorFile, razorDocument, project, csharpDocument, symbol);
         }
@@ -200,19 +250,35 @@ public class CohostRoslynRenameTest(ITestOutputHelper testOutputHelper) : Cohost
 
     private async Task<SyntaxNode> GetSyntaxNodeAsync(Document document, int position, TextDocument razorDocument)
     {
-        var snapshotManager = OOPExportProvider.GetExportedValue<RemoteSnapshotManager>();
-        var documentMappingService = OOPExportProvider.GetExportedValue<IDocumentMappingService>();
-        var snapshot = snapshotManager.GetSnapshot(razorDocument);
-        var codeDocument = await snapshot.GetGeneratedOutputAsync(DisposalToken);
+        var (sourceText, csharpPosition) = await GetCSharpPositionAsync(document, position, razorDocument);
 
-        Assert.True(documentMappingService.TryMapToCSharpDocumentPosition(codeDocument.GetCSharpDocument().AssumeNotNull(), position, out var csharpPosition, out _));
-
-        var sourceText = await document.GetTextAsync(DisposalToken);
         var span = sourceText.GetTextSpan(csharpPosition, csharpPosition);
         var tree = await document.AssumeNotNull().GetSyntaxTreeAsync(DisposalToken);
         var root = await tree.AssumeNotNull().GetRootAsync(DisposalToken);
 
-        return root.FindNode(span);
+        return root.FindNode(span, getInnermostNodeForTie: true);
+    }
+
+    private async Task<(SourceText sourceText, LinePosition csharpPosition)> GetCSharpPositionAsync(Document document, int position, TextDocument razorDocument)
+    {
+        var sourceText = await document.GetTextAsync(DisposalToken);
+
+        LinePosition csharpPosition;
+        if (document is SourceGeneratedDocument)
+        {
+            var snapshotManager = OOPExportProvider.GetExportedValue<RemoteSnapshotManager>();
+            var documentMappingService = OOPExportProvider.GetExportedValue<IDocumentMappingService>();
+            var snapshot = snapshotManager.GetSnapshot(razorDocument);
+            var codeDocument = await snapshot.GetGeneratedOutputAsync(DisposalToken);
+
+            Assert.True(documentMappingService.TryMapToCSharpDocumentPosition(codeDocument.GetCSharpDocument().AssumeNotNull(), position, out csharpPosition, out _));
+        }
+        else
+        {
+            csharpPosition = sourceText.GetLinePosition(position);
+        }
+
+        return (sourceText, csharpPosition);
     }
 
     private async Task VerifyVSRenameAsync(string newName, string expectedCSharpFile, string expectedRazorFile, TextDocument razorDocument, Project project, Document csharpDocument, ISymbol symbol)
@@ -227,10 +293,9 @@ public class CohostRoslynRenameTest(ITestOutputHelper testOutputHelper) : Cohost
         AssertEx.EqualOrDiff(expectedCSharpFile, csharpText.ToString());
 
         // Normally in VS, TryApplyChanges would be called, and that calls into our edit mapping service.
-        Assert.True(razorDocument.TryComputeHintNameFromRazorDocument(out var hintName));
-        var generatedDoc = await project.TryGetSourceGeneratedDocumentFromHintNameAsync(hintName, DisposalToken);
+        var generatedDoc = await project.TryGetSourceGeneratedDocumentForRazorDocumentAsync(razorDocument, DisposalToken);
         Assert.NotNull(generatedDoc);
-        var renamedGeneratedDoc = await solution.GetRequiredProject(project.Id).TryGetSourceGeneratedDocumentFromHintNameAsync(hintName, DisposalToken);
+        var renamedGeneratedDoc = await solution.GetRequiredProject(project.Id).TryGetSourceGeneratedDocumentForRazorDocumentAsync(razorDocument, DisposalToken);
         Assert.NotNull(renamedGeneratedDoc);
 
         // It could be argued this class is really a RazorSourceGeneratedDocumentSpanMappingService test :)
@@ -249,17 +314,14 @@ public class CohostRoslynRenameTest(ITestOutputHelper testOutputHelper) : Cohost
         AssertEx.EqualOrDiff(expectedRazorFile, razorText.ToString());
     }
 
-    private async Task VerifyLspRenameAsync(string newName, string expectedCSharpFile, string expectedRazorFile, TextDocument razorDocument, Document csharpDocument, SyntaxNode node)
+    private async Task VerifyLspRenameAsync(string newName, string expectedCSharpFile, string expectedRazorFile, Document renameDocument, LinePosition renamePosition, TextDocument razorDocument, Document csharpDocument)
     {
         // Normally in cohosting tests we directly construct and invoke the endpoints, but in this scenario Roslyn is going to do it
         // using a service in their MEF composition, so we have to jump through an extra hook to hook up our test invoker.
-        var invoker = RoslynDevenvExportProvider.AssumeNotNull().GetExportedValue<ExportableRemoteServiceInvoker>();
+        var invoker = LocalExportProvider.AssumeNotNull().GetExportedValue<ExportableRemoteServiceInvoker>();
         invoker.SetInvoker(RemoteServiceInvoker);
 
-        var tree = node.SyntaxTree;
-        var documentToRename = razorDocument.Project.Solution.GetDocument(tree).AssumeNotNull();
-        var linePosition = node.SyntaxTree.GetText().GetLinePosition(node.SpanStart);
-        var workspaceEdit = await Rename.GetRenameEditAsync(documentToRename, linePosition, newName, DisposalToken);
+        var workspaceEdit = await Rename.GetRenameEditAsync(renameDocument, renamePosition, newName, DisposalToken);
         Assert.NotNull(workspaceEdit);
 
         var csharpSourceText = await csharpDocument.GetTextAsync(DisposalToken);
@@ -273,7 +335,8 @@ public class CohostRoslynRenameTest(ITestOutputHelper testOutputHelper) : Cohost
 
     private static string ApplyDocumentEdits(SourceText inputText, Uri documentUri, WorkspaceEdit result)
     {
-        Assert.True(result.TryGetTextDocumentEdits(out var textDocumentEdits));
+        var textDocumentEdits = result.EnumerateTextDocumentEdits().ToArray();
+        Assert.NotEmpty(textDocumentEdits);
         var changes = textDocumentEdits
             .Where(e => e.TextDocument.DocumentUri.GetRequiredParsedUri() == documentUri)
             .SelectMany(e => e.Edits)
@@ -281,21 +344,5 @@ public class CohostRoslynRenameTest(ITestOutputHelper testOutputHelper) : Cohost
         inputText = inputText.WithChanges(changes);
 
         return inputText.ToString();
-    }
-
-    [Export(typeof(ExportableRemoteServiceInvoker))]
-    [Export(typeof(IRemoteServiceInvoker))]
-    [PartNotDiscoverable]
-    private class ExportableRemoteServiceInvoker : IRemoteServiceInvoker
-    {
-        private IRemoteServiceInvoker? _remoteServiceInvoker;
-
-        internal void SetInvoker(IRemoteServiceInvoker remoteServiceInvoker)
-        {
-            _remoteServiceInvoker = remoteServiceInvoker;
-        }
-
-        public ValueTask<TResult?> TryInvokeAsync<TService, TResult>(Solution solution, Func<TService, RazorPinnedSolutionInfoWrapper, CancellationToken, ValueTask<TResult>> invocation, CancellationToken cancellationToken, [CallerFilePath] string? callerFilePath = null, [CallerMemberName] string? callerMemberName = null) where TService : class
-            => _remoteServiceInvoker.AssumeNotNull().TryInvokeAsync(solution, invocation, cancellationToken, callerFilePath, callerMemberName);
     }
 }

@@ -1,10 +1,14 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using NuGet.Client;
-using NuGet.Common;
 using NuGet.DependencyResolver;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
@@ -12,6 +16,7 @@ using NuGet.RuntimeModel;
 
 namespace NuGet.Commands
 {
+    [DebuggerDisplay("{TargetAlias} {Framework} {RuntimeIdentifier}")]
     public class RestoreTargetGraph : IRestoreTargetGraph
     {
         /// <summary>
@@ -23,6 +28,8 @@ namespace NuGet.Commands
         /// Gets the <see cref="NuGetFramework" /> used during the restore operation on this graph
         /// </summary>
         public NuGetFramework Framework { get; }
+
+        public string TargetAlias { get; }
 
         /// <summary>
         /// Gets the <see cref="ManagedCodeConventions" /> used to resolve assets from packages in this graph
@@ -57,6 +64,7 @@ namespace NuGet.Commands
         public ISet<ResolvedDependencyKey> ResolvedDependencies { get; }
 
         internal RestoreTargetGraph(IEnumerable<ResolverConflict> conflicts,
+                                   string targetAlias,
                                    NuGetFramework framework,
                                    string runtimeIdentifier,
                                    RuntimeGraph runtimeGraph,
@@ -69,12 +77,11 @@ namespace NuGet.Commands
         {
             Conflicts = conflicts.ToArray();
             RuntimeIdentifier = runtimeIdentifier;
+            TargetAlias = targetAlias;
             RuntimeGraph = runtimeGraph;
             Framework = framework;
             Graphs = graphs;
-            TargetGraphName = FrameworkRuntimePair.GetTargetGraphName(Framework, RuntimeIdentifier);
-
-
+            TargetGraphName = string.IsNullOrEmpty(TargetAlias) ? FrameworkRuntimePair.GetTargetGraphName(Framework, RuntimeIdentifier) : GetTargetGraphName(TargetAlias, RuntimeIdentifier);
             Conventions = new ManagedCodeConventions(runtimeGraph);
 
             Install = install;
@@ -84,16 +91,29 @@ namespace NuGet.Commands
             ResolvedDependencies = resolvedDependencies;
         }
 
-        public static RestoreTargetGraph Create(IEnumerable<GraphNode<RemoteResolveResult>> graphs, RemoteWalkContext context, ILogger logger, NuGetFramework framework)
+        internal static string GetTargetGraphName(string targetAlias, string runtimeIdentifier)
         {
-            return Create(RuntimeGraph.Empty, graphs, context, logger, framework, runtimeIdentifier: null);
+            if (string.IsNullOrEmpty(targetAlias)) throw new ArgumentNullException(nameof(targetAlias));
+
+            if (string.IsNullOrEmpty(runtimeIdentifier))
+            {
+                return targetAlias;
+            }
+            else
+            {
+                return string.Format(
+                    CultureInfo.InvariantCulture,
+                    "{0}/{1}",
+                    targetAlias,
+                    runtimeIdentifier);
+            }
         }
 
-        public static RestoreTargetGraph Create(
+        internal static RestoreTargetGraph Create(
             RuntimeGraph runtimeGraph,
             IEnumerable<GraphNode<RemoteResolveResult>> graphs,
             RemoteWalkContext context,
-            ILogger log,
+            string targetAlias,
             NuGetFramework framework,
             string runtimeIdentifier)
         {
@@ -174,6 +194,7 @@ namespace NuGet.Commands
 
             return new RestoreTargetGraph(
                 conflicts.Select(p => new ResolverConflict(p.Key, p.Value)),
+                targetAlias,
                 framework,
                 runtimeIdentifier,
                 runtimeGraph,

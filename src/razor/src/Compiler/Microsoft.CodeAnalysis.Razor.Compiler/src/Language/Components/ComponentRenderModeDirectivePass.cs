@@ -3,6 +3,7 @@
 
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
@@ -11,7 +12,10 @@ internal sealed class ComponentRenderModeDirectivePass : IntermediateNodePassBas
 {
     private const string GeneratedRenderModeAttributeName = "__PrivateComponentRenderModeAttribute";
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         var @namespace = documentNode.FindPrimaryNamespace();
         var @class = documentNode.FindPrimaryClass();
@@ -35,12 +39,20 @@ internal sealed class ComponentRenderModeDirectivePass : IntermediateNodePassBas
             return;
         }
 
+        // If the user is Razor 10 or higher, C# 11 or higher, and has a generic compoment, then we can use a file-scoped class for the generated attribute
+        // so everything compiles correctly.
+        var useFileScopedClass = codeDocument.ParserOptions.CSharpParseOptions.LanguageVersion >= CodeAnalysis.CSharp.LanguageVersion.CSharp11 &&
+            codeDocument.ParserOptions.LanguageVersion >= RazorLanguageVersion.Version_11_0 &&
+            @class.TypeParameters.Length > 0;
+
         // generate the inner attribute class
         var classDecl = new ClassDeclarationIntermediateNode
         {
             Name = GeneratedRenderModeAttributeName,
             BaseType = new BaseTypeWithModel($"global::{ComponentsApi.RenderModeAttribute.FullTypeName}"),
-            Modifiers = CommonModifiers.PrivateSealed
+            Modifiers = useFileScopedClass
+                ? CommonModifiers.FileSealed
+                : CommonModifiers.PrivateSealed
         };
 
         classDecl.Children.Add(new CSharpCodeIntermediateNode()
@@ -55,7 +67,12 @@ internal sealed class ComponentRenderModeDirectivePass : IntermediateNodePassBas
                     {
                          child is not DirectiveTokenIntermediateNode directiveToken
                              ? child
-                             : IntermediateNodeFactory.CSharpToken(directiveToken.Content)
+                             : IntermediateNodeFactory.CSharpToken(
+                                 content: directiveToken.Content,
+                                 // To avoid breaking hot reload, we don't map the content back to the source unless we're on Razor 11 or higher
+                                 source: codeDocument.ParserOptions.LanguageVersion >= RazorLanguageVersion.Version_11_0
+                                    ? directiveToken.Source
+                                    : null)
                     }
                 },
                 IntermediateNodeFactory.CSharpToken(";")
@@ -70,13 +87,23 @@ internal sealed class ComponentRenderModeDirectivePass : IntermediateNodePassBas
             }
         });
 
-        @class.Children.Add(classDecl);
+        if (useFileScopedClass)
+        {
+            @namespace.Children.Add(classDecl);
+        }
+        else
+        {
+            @class.Children.Add(classDecl);
+        }
 
         // generate the attribute usage on top of the class
         var attributeNode = new CSharpCodeIntermediateNode();
         var namespaceSeparator = string.IsNullOrEmpty(@namespace.Name) ? string.Empty : ".";
+        var attributeContents = useFileScopedClass
+            ? GeneratedRenderModeAttributeName
+            : $"global::{@namespace.Name}{namespaceSeparator}{@class.Name}.{GeneratedRenderModeAttributeName}";
         attributeNode.Children.Add(
-            IntermediateNodeFactory.CSharpToken($"[global::{@namespace.Name}{namespaceSeparator}{@class.Name}.{GeneratedRenderModeAttributeName}]"));
+            IntermediateNodeFactory.CSharpToken($"[{attributeContents}]"));
 
         // Insert the new attribute on top of the class
         var childCount = @namespace.Children.Count;

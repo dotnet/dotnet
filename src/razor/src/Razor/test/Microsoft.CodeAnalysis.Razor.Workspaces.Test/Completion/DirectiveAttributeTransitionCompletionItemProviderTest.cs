@@ -3,25 +3,18 @@
 
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
-public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTestBase
+public class DirectiveAttributeTransitionCompletionItemProviderTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    private readonly TagHelperDocumentContext _tagHelperDocumentContext;
-    private readonly DirectiveAttributeTransitionCompletionItemProvider _provider;
-
-    public DirectiveAttributeTransitionCompletionItemProviderTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-        _tagHelperDocumentContext = TagHelperDocumentContext.Create(prefix: string.Empty, tagHelpers: []);
-        _provider = new DirectiveAttributeTransitionCompletionItemProvider(TestLanguageServerFeatureOptions.Instance);
-    }
+    private readonly TagHelperDocumentContext _tagHelperDocumentContext = TagHelperDocumentContext.GetOrCreate(tagHelpers: []);
+    private readonly DirectiveAttributeTransitionCompletionItemProvider _provider = new(new TestClientCapabilitiesService(new VSInternalClientCapabilities()));
 
     [Fact]
     public void IsValidCompletionPoint_AtPrefixLeadingEdge_ReturnsFalse()
@@ -129,7 +122,7 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
     public void GetCompletionItems_AttributeAreaInNonComponentFile_ReturnsEmptyList()
     {
         // Arrange
-        var context = CreateContext(absoluteIndex: 7, "<input  />", RazorFileKind.Legacy);
+        var context = CreateContext("<input $$ />", RazorFileKind.Legacy);
 
         // Act
         var result = _provider.GetCompletionItems(context);
@@ -142,7 +135,7 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
     public void GetCompletionItems_NonAttribute_ReturnsEmptyList()
     {
         // Arrange
-        var context = CreateContext(absoluteIndex: 2, "<input  />");
+        var context = CreateContext("<i$$nput  />");
 
         // Act
         var result = _provider.GetCompletionItems(context);
@@ -155,7 +148,7 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
     public void GetCompletionItems_ExistingAttribute_ReturnsEmptyList()
     {
         // Arrange
-        var context = CreateContext(absoluteIndex: 8, "<input @ />");
+        var context = CreateContext("<input @$$ />");
 
         // Act
         var result = _provider.GetCompletionItems(context);
@@ -168,8 +161,8 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
     public void GetCompletionItems_InbetweenSelfClosingEnd_ReturnsEmptyList()
     {
         // Arrange
-        var context = CreateContext(absoluteIndex: 8, """
-            <input /
+        var context = CreateContext("""
+            <input /$$
             
             """);
 
@@ -184,7 +177,7 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
     public void GetCompletionItems_AttributeAreaInComponentFile_ReturnsTransitionCompletionItem()
     {
         // Arrange
-        var context = CreateContext(absoluteIndex: 7, "<input  />");
+        var context = CreateContext("<input $$ />");
 
         // Act
         var result = _provider.GetCompletionItems(context);
@@ -198,7 +191,7 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
     public void GetCompletionItems_AttributeAreaEndOfSelfClosingTag_ReturnsTransitionCompletionItem()
     {
         // Arrange
-        var context = CreateContext(absoluteIndex: 7, "<input />");
+        var context = CreateContext("<input $$/>");
 
         // Act
         var result = _provider.GetCompletionItems(context);
@@ -212,7 +205,7 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
     public void GetCompletionItems_AttributeAreaEndOfOpeningTag_ReturnsTransitionCompletionItem()
     {
         // Arrange
-        var context = CreateContext(absoluteIndex: 7, "<input ></input>");
+        var context = CreateContext("<input $$></input>");
 
         // Act
         var result = _provider.GetCompletionItems(context);
@@ -226,7 +219,7 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
     public void GetCompletionItems_ExistingAttribute_LeadingEdge_ReturnsEmptyList()
     {
         // Arrange
-        var context = CreateContext(absoluteIndex: 7, "<input src=\"xyz\" />");
+        var context = CreateContext("<input $$src=\"xyz\" />");
 
         // Act
         var result = _provider.GetCompletionItems(context);
@@ -239,7 +232,7 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
     public void GetCompletionItems_ExistingAttribute_TrailingEdge_ReturnsEmptyList()
     {
         // Arrange
-        var context = CreateContext(absoluteIndex: 16, "<input src=\"xyz\" />");
+        var context = CreateContext("<input src=\"xyz\"$$ />");
 
         // Act
         var result = _provider.GetCompletionItems(context);
@@ -252,7 +245,7 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
     public void GetCompletionItems_ExistingAttribute_TrailingEdgeOnSpace_ReturnsEmptyList()
     {
         // Arrange
-        var context = CreateContext(absoluteIndex: 16, "<input src=\"xyz\"   />");
+        var context = CreateContext("<input src=\"xyz\"$$   />");
 
         // Act
         var result = _provider.GetCompletionItems(context);
@@ -265,7 +258,7 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
     public void GetCompletionItems_ExistingAttribute_Partial_ReturnsEmptyList()
     {
         // Arrange
-        var context = CreateContext(absoluteIndex: 9, "<svg xml: ></svg>");
+        var context = CreateContext("<svg xml:$$ ></svg>");
 
         // Act
         var result = _provider.GetCompletionItems(context);
@@ -278,7 +271,7 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
     public void GetCompletionItems_AttributeAreaInIncompleteAttributeTransition_ReturnsTransitionCompletionItem()
     {
         // Arrange
-        var context = CreateContext(absoluteIndex: 7, "<input   @{");
+        var context = CreateContext("<input $$  @{");
 
         // Act
         var result = _provider.GetCompletionItems(context);
@@ -292,7 +285,7 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
     public void GetCompletionItems_AttributeAreaInIncompleteComponent_ReturnsTransitionCompletionItem()
     {
         // Arrange
-        var context = CreateContext(absoluteIndex: 5, "<svg  xml:base=\"d\"></svg>");
+        var context = CreateContext("<svg $$ xml:base=\"d\"></svg>");
 
         // Act
         var result = _provider.GetCompletionItems(context);
@@ -307,9 +300,14 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
     [InlineData(false)]
     public void GetCompletionItems_WithAvoidExplicitCommitOption_ReturnsAppropriateCommitCharacters(bool supportsSoftSelection)
     {
+        var clientCapabilities = new VSInternalClientCapabilities()
+        {
+            SupportsVisualStudioExtensions = supportsSoftSelection
+        };
+
         // Arrange
-        var context = CreateContext(absoluteIndex: 7, "<input  />");
-        var provider = new DirectiveAttributeTransitionCompletionItemProvider(new TestLanguageServerFeatureOptions(supportsSoftSelectionInCompletion: supportsSoftSelection));
+        var context = CreateContext("<input $$ />");
+        var provider = new DirectiveAttributeTransitionCompletionItemProvider(new TestClientCapabilitiesService(clientCapabilities));
 
         // Act
         var result = provider.GetCompletionItems(context);
@@ -327,11 +325,11 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
         }
     }
 
-    private static RazorSyntaxTree GetSyntaxTree(string text, RazorFileKind? fileKind = null)
+    private static RazorCodeDocument GetCodeDocument(TestCode text, RazorFileKind? fileKind = null)
     {
         var fileKindValue = fileKind ?? RazorFileKind.Component;
 
-        var sourceDocument = TestRazorSourceDocument.Create(text);
+        var sourceDocument = TestRazorSourceDocument.Create(text.Text);
         var projectEngine = RazorProjectEngine.Create(builder =>
         {
             builder.ConfigureParserOptions(builder =>
@@ -340,17 +338,17 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
             });
         });
 
-        var codeDocument = projectEngine.Process(sourceDocument, fileKindValue, importSources: default, tagHelpers: []);
-
-        return codeDocument.GetRequiredSyntaxTree();
+        return projectEngine.Process(sourceDocument, fileKindValue, importSources: default, tagHelpers: []);
     }
 
-    private RazorCompletionContext CreateContext(int absoluteIndex, string documentContent, RazorFileKind? fileKind = null)
+    private RazorCompletionContext CreateContext(TestCode text, RazorFileKind? fileKind = null)
     {
-        var syntaxTree = GetSyntaxTree(documentContent, fileKind);
+        var absoluteIndex = text.Position;
+        var codeDocument = GetCodeDocument(text.Text, fileKind);
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
         var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex, includeWhitespace: true, walkMarkersBack: true);
         owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, absoluteIndex);
 
-        return new RazorCompletionContext(absoluteIndex, owner, syntaxTree, _tagHelperDocumentContext);
+        return new RazorCompletionContext(codeDocument, absoluteIndex, owner, syntaxTree, _tagHelperDocumentContext);
     }
 }

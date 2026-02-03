@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>Generates Razor syntax nodes from xml. For internal use only.</Description>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <AssemblyName>dotnet-razorsyntaxgenerator</AssemblyName>
     <PackageId>RazorSyntaxGenerator</PackageId>
     <OutputType>Exe</OutputType>

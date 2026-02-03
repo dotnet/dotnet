@@ -289,8 +289,7 @@ public class CodeBlockEditHandlerTest
         {
             builder.Add(new SyntaxToken(token));
         }
-        var node = SyntaxFactory.CSharpStatementLiteral(builder.ToList(), SpanChunkGenerator.Null);
 
-        return node;
+        return SyntaxFactory.CSharpStatementLiteral(builder.ToList(), SpanChunkGenerator.Null, editHandler: null);
     }
 }

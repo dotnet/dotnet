@@ -27,6 +27,10 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="assets\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <Target Name="SetRuntimeConfigOptions"
           BeforeTargets="_GenerateRuntimeConfigurationFilesInputCache">
     <ItemGroup>
@@ -58,8 +62,11 @@
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).DotNetBuildSharedComponents">
         <Value>$(DotNetBuildSharedComponents)</Value>
       </RuntimeHostConfigurationOption>
-      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).Sdk1xxVersion">
-        <Value>$(MicrosoftNETSdkVersion)</Value>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).MicrosoftNETCorePlatformsVersion1xx">
+        <Value>$(MicrosoftNETCorePlatformsVersion)</Value>
+      </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).MicrosoftNETCoreAppRefVersion1xx">
+        <Value>$(MicrosoftNETCoreAppRefVersion)</Value>
       </RuntimeHostConfigurationOption>
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).TargetFrameworkVersion">
         <Value>$(_TargetFrameworkVersionWithoutV)</Value>

@@ -15,13 +15,12 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 internal sealed class ProjectState
 {
-    private static readonly ObjectPool<Dictionary<string, ImmutableHashSet<string>.Builder>> s_importMapBuilderPool =
+    private static readonly DictionaryPool<string, ImmutableHashSet<string>.Builder> s_importMapBuilderPool =
         DictionaryPool<string, ImmutableHashSet<string>.Builder>.Create(FilePathNormalizingComparer.Instance);
 
     private static readonly ImmutableDictionary<string, DocumentState> s_emptyDocuments
@@ -80,7 +79,7 @@ internal sealed class ProjectState
         IProjectEngineFactoryProvider projectEngineFactoryProvider)
         => new(hostProject, projectEngineFactoryProvider);
 
-    public ImmutableArray<TagHelperDescriptor> TagHelpers => ProjectWorkspaceState.TagHelpers;
+    public TagHelperCollection TagHelpers => ProjectWorkspaceState.TagHelpers;
 
     public LanguageVersion CSharpLanguageVersion => HostProject.Configuration.CSharpLanguageVersion;
 

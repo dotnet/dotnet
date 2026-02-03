@@ -3,8 +3,6 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Globalization;
-using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -17,15 +15,22 @@ internal static class ChecksumUtilities
             throw new ArgumentNullException(nameof(bytes));
         }
 
-        using var _ = StringBuilderPool.GetPooledObject(out var builder);
-        builder.EnsureCapacity(bytes.Length);
-
-        foreach (var b in bytes)
+#if NET9_0_OR_GREATER
+        return Convert.ToHexStringLower(bytes.AsSpan());
+#else
+        return string.Create(bytes.Length * 2, bytes, static (span, bytes) =>
         {
-            // The x2 format means lowercase hex, where each byte is a 2-character string.
-            builder.Append(b.ToString("x2", CultureInfo.InvariantCulture));
-        }
+             foreach (var b in bytes)
+             {
+                 // Write hex chars directly
+                 span[0] = GetHexChar(b >> 4);
+                 span[1] = GetHexChar(b & 0xf);
+                 span = span[2..];
+             }
+        });
 
-        return builder.ToString();
+        static char GetHexChar(int value)
+            => (char)(value < 10 ? '0' + value : 'a' + (value - 10));
+#endif
     }
 }

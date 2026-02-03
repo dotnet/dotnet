@@ -2,11 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Extensions;
 
-internal class DesignTimeDirectivePass : IntermediateNodePassBase, IRazorDirectiveClassifierPass
+internal sealed class DesignTimeDirectivePass : IntermediateNodePassBase, IRazorDirectiveClassifierPass
 {
     internal const string DesignTimeVariable = "__o";
 
@@ -14,7 +15,10 @@ internal class DesignTimeDirectivePass : IntermediateNodePassBase, IRazorDirecti
     // by the previous classifiers will have auto-generated design time support.
     public override int Order => DefaultFeatureOrder;
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         // Only supports design time. This pass rewrites directives so they will have the right design time
         // behavior and would break things if it ran for runtime.

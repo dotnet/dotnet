@@ -18,14 +18,14 @@ internal class AutoInsertService(IEnumerable<IOnAutoInsertProvider> onAutoInsert
     public static FrozenSet<string> HtmlAllowedAutoInsertTriggerCharacters { get; }
         = new string[] { "=" }.ToFrozenSet(StringComparer.Ordinal);
     public static FrozenSet<string> CSharpAllowedAutoInsertTriggerCharacters { get; }
-        = new string[] { "'", "/", "\n" }.ToFrozenSet(StringComparer.Ordinal);
+        = new string[] { "'", "/", "\n", "\"" }.ToFrozenSet(StringComparer.Ordinal);
 
     private readonly ImmutableArray<string> _triggerCharacters = CalculateTriggerCharacters(onAutoInsertProviders);
 
     private static ImmutableArray<string> CalculateTriggerCharacters(IEnumerable<IOnAutoInsertProvider> onAutoInsertProviders)
     {
         using var builder = new PooledArrayBuilder<string>();
-        using var _ = StringHashSetPool.Ordinal.GetPooledObject(out var set);
+        using var _ = SpecializedPools.GetPooledStringHashSet(out var set);
         foreach (var provider in onAutoInsertProviders)
         {
             var triggerCharacter = provider.TriggerCharacter;

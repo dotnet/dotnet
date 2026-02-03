@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -24,6 +22,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
     {
         private IEnumerable<PackageSource> _packageSources;
         private IEnumerable<PackageSource> _savedPackageSources;
+        private IEnumerable<PackageSource> _auditSources;
         private int _countEnablePackageSourceCalled = 0;
         private int _countDisablePackageSourceCalled = 0;
 
@@ -32,6 +31,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
             sp.Reset();
             NuGetUIThreadHelper.SetCustomJoinableTaskFactory(ThreadHelper.JoinableTaskFactory);
             _packageSources = Enumerable.Empty<PackageSource>();
+            _auditSources = Enumerable.Empty<PackageSource>();
             _savedPackageSources = Enumerable.Empty<PackageSource>();
         }
 
@@ -40,6 +40,9 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
             Mock<IPackageSourceProvider> mockedPackageSourceProvider = new Mock<IPackageSourceProvider>();
             mockedPackageSourceProvider.Setup(packageSourceProvider => packageSourceProvider.LoadPackageSources())
                 .Returns(_packageSources);
+
+            mockedPackageSourceProvider.Setup(packageSourceProvider => packageSourceProvider.LoadAuditSources())
+                .Returns(_auditSources.ToList().AsReadOnly());
 
             mockedPackageSourceProvider.Setup(packageSourceProvider =>
                 packageSourceProvider.SavePackageSources(It.IsAny<IEnumerable<PackageSource>>()))
@@ -63,6 +66,134 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
                 });
 
             return new PackageSourcesPage(vsSettings!, mockedPackageSourceProvider.Object);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task SetValueAsync_AuditSources_WhenNameChanging_RaisesSettingValuesChangedAsync(bool isNameChanging)
+        {
+            // Arrange
+            string originalSourceName = "auditTestingSourceName";
+            string originalSourceUrl = "https://auditTestingSource";
+            string newSourceName = isNameChanging ? "auditTestingSourceNameEdited" : originalSourceName;
+            string newSourceUrl = isNameChanging ? originalSourceUrl : "https://auditTestingSourceEdited";
+
+            bool wasVsSettingsSettingsChangedCalled = false;
+
+            PackageSourcesPage instance = CreateInstance(_vsSettings);
+            instance.SettingValuesChanged += (sender, e) =>
+            {
+                wasVsSettingsSettingsChangedCalled = true;
+            };
+
+            Dictionary<string, object> auditSourceDictionary = new Dictionary<string, object>();
+            auditSourceDictionary[PackageSourcesPage.MonikerSourceName] = newSourceName;
+            auditSourceDictionary[PackageSourcesPage.MonikerSourceUrl] = newSourceUrl;
+
+            IList<IDictionary<string, object>> auditSourceDictionaryList =
+                new List<IDictionary<string, object>>(capacity: 1)
+                {
+                    auditSourceDictionary
+                };
+
+            // Act
+            ExternalSettingOperationResult result = await instance.SetValueAsync(
+                PackageSourcesPage.MonikerAuditSources,
+                auditSourceDictionaryList,
+                CancellationToken.None);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<ExternalSettingOperationResult.Success>();
+            // VS refresh event isn't needed for audit sources name changes.
+            wasVsSettingsSettingsChangedCalled.Should().Be(false);
+        }
+
+        [Theory]
+        [InlineData(@"http://")]
+        [InlineData(@"https://")]
+        [InlineData(@"https:// ")]
+        [InlineData(@" https://")]
+        [InlineData(@"ftp://")]
+        [InlineData(@"http:/")]
+        public async Task SetValueAsync_AuditSources_WithInvalidRemoteSource_ReturnsFailureResultTaskAsync(string invalidSource)
+        {
+            // Arrange
+            PackageSourcesPage instance = CreateInstance(_vsSettings);
+            Dictionary<string, object> auditSourceDictionary = new Dictionary<string, object>();
+
+            auditSourceDictionary[PackageSourcesPage.MonikerSourceName] = "auditTestingSourceName";
+            auditSourceDictionary[PackageSourcesPage.MonikerSourceUrl] = invalidSource;
+            auditSourceDictionary[PackageSourcesPage.MonikerIsEnabled] = true;
+            auditSourceDictionary[PackageSourcesPage.MonikerAllowInsecureConnections] = false;
+
+            IList<IDictionary<string, object>> auditSourceDictionaryList =
+                new List<IDictionary<string, object>>(capacity: 1)
+                {
+                    auditSourceDictionary
+                };
+
+            // Act
+            ExternalSettingOperationResult result = await instance.SetValueAsync(
+                PackageSourcesPage.MonikerAuditSources,
+                auditSourceDictionaryList,
+                CancellationToken.None);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<ExternalSettingOperationResult.Failure>();
+
+            var failure = result as ExternalSettingOperationResult.Failure;
+            failure.Should().NotBeNull();
+            failure.IsTransient.Should().BeTrue();
+            failure.Scope.Should().Be(ExternalSettingsErrorScope.SingleSettingOnly);
+            failure.ErrorMessage.Should().StartWith(Strings.Error_PackageSource_InvalidSource);
+        }
+
+        [Theory]
+        [InlineData(@"C")]
+        [InlineData(@"http")] // Missing :// causes this to be treated as a file path.
+        [InlineData(@"http:")]
+        [InlineData(@"ftp")] // Missing :// causes this to be treated as a file path.
+        [InlineData(@"C:")]
+        [InlineData(@"C:\\invalid\\*\\'\\chars")]
+        [InlineData(@"\\\\server\\invalid\\*\\")]
+        [InlineData(@"..\\packages")]
+        [InlineData(@"./configs/source.config")]
+        [InlineData(@"../local-packages/")]
+        public async Task SetValueAsync_AuditSources_WithInvalidUncPath_ReturnsFailureResultTaskAsync(string invalidSource)
+        {
+            // Arrange
+            PackageSourcesPage instance = CreateInstance(_vsSettings);
+            Dictionary<string, object> auditSourceDictionary = new Dictionary<string, object>();
+
+            auditSourceDictionary[PackageSourcesPage.MonikerSourceName] = "auditTestingSourceName";
+            auditSourceDictionary[PackageSourcesPage.MonikerSourceUrl] = invalidSource;
+            auditSourceDictionary[PackageSourcesPage.MonikerIsEnabled] = true;
+            auditSourceDictionary[PackageSourcesPage.MonikerAllowInsecureConnections] = false;
+
+            IList<IDictionary<string, object>> auditSourceDictionaryList =
+                new List<IDictionary<string, object>>(capacity: 1)
+                {
+                    auditSourceDictionary
+                };
+
+            // Act
+            ExternalSettingOperationResult result = await instance.SetValueAsync(
+                PackageSourcesPage.MonikerAuditSources,
+                auditSourceDictionaryList,
+                CancellationToken.None);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<ExternalSettingOperationResult.Failure>();
+
+            var failure = result as ExternalSettingOperationResult.Failure;
+            failure.Should().NotBeNull();
+            failure.IsTransient.Should().BeTrue();
+            failure.Scope.Should().Be(ExternalSettingsErrorScope.SingleSettingOnly);
+            failure.ErrorMessage.Should().StartWith(Strings.Error_PackageSource_InvalidSource);
         }
 
         [Fact]

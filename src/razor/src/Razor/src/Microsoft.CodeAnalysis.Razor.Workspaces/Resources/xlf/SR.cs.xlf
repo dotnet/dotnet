@@ -7,6 +7,11 @@
         <target state="translated">Hodnota nesmí být null ani prázdný řetězec.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ComponentCompletionWithRequiredAttributesLabel">
+        <source>{0} (and req'd attributes...)</source>
+        <target state="translated">{0} (a požadované atributy...)</target>
+        <note>The term "req'd" is an abbreviation for "required"</note>
+      </trans-unit>
       <trans-unit id="Create_Component_FromTag_Title">
         <source>Create component from tag</source>
         <target state="translated">Vytvořit komponentu ze značky</target>
@@ -99,6 +104,11 @@
         <target state="translated">Neplatný posun</target>
         <note />
       </trans-unit>
+      <trans-unit id="KeywordDescription">
+        <source>{0} Keyword</source>
+        <target state="translated">Klíčové slovo {0}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Language_Services_Missing_Service">
         <source>Razor language services not configured properly, missing language service '{0}'.</source>
         <target state="translated">Služby jazyka Razor nejsou správně nakonfigurované, chybí služba jazyka {0}.</target>
@@ -122,6 +132,11 @@
       <trans-unit id="Promote_using_directive_to">
         <source>Promote using directive to {0}</source>
         <target state="translated">Zvýšit úroveň direktivy using na {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Simplify_Fully_Qualified_Component_Title">
+        <source>Simplify fully qualified component</source>
+        <target state="translated">Zjednodušení plně kvalifikované komponenty</target>
         <note />
       </trans-unit>
       <trans-unit id="Simplify_Tag_To_SelfClosing_Title">

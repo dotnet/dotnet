@@ -14,8 +14,8 @@
       from appending +<commitId>, which breaks DTAAgent.
     -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-    <VersionPrefix>18.1.0</VersionPrefix>
-    <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
+    <VersionPrefix>18.3.0</VersionPrefix>
+    <PreReleaseVersionLabel>release</PreReleaseVersionLabel>
   </PropertyGroup>
   <PropertyGroup Label="Arcade settings">
     <!-- Ensure we use xliff task tool - true is the default but we make it explicit here -->
@@ -29,7 +29,7 @@
     <CoverletCoverageVersion>1.2.0</CoverletCoverageVersion>
     <!--
         When updating the version of Microsoft.Build.Utilities.Core, go check on nuget.org which TFMs it targets.
-        Because you will need to update Microsoft.TestPlatform.Build.UnitTests to build using that concrete .NET TFM, e.g. net8.0 for 17.8.3.
+        Because you will need to update Microsoft.TestPlatform.Build.UnitTests to build using that concrete .NET TFM, e.g. net8.0 for 17.11.48.
         Otherwise it will restore the netstandard2.0 *reference* library into test project bin, and the test project will fail
         with File not found error.
 
@@ -39,7 +39,7 @@
       Lot of these versions are not the latest present on nuget.org, we need to use versions that are present in SourceBuild to
       avoid introducing pre-builts. https://github.com/dotnet/source-build-reference-packages/tree/main/src/referencePackages/src
     -->
-    <MicrosoftBuildFrameworkPackageVersion>17.8.3</MicrosoftBuildFrameworkPackageVersion>
+    <MicrosoftBuildFrameworkPackageVersion>17.11.48</MicrosoftBuildFrameworkPackageVersion>
     <MicrosoftBuildPackageVersion>$(MicrosoftBuildFrameworkPackageVersion)</MicrosoftBuildPackageVersion>
     <MicrosoftBuildUtilitiesCorePackageVersion>$(MicrosoftBuildFrameworkPackageVersion)</MicrosoftBuildUtilitiesCorePackageVersion>
     <MicrosoftBuildFrameworkReferenceOnly>$(MicrosoftBuildFrameworkPackageVersion)</MicrosoftBuildFrameworkReferenceOnly>
@@ -54,7 +54,7 @@
       Make sure you are taking a version from a release branch (rel/d*) in VS. Otherwise there won't be symbols for the dlls in package,
       a and it will create a symcheck bug on re-insertion into VS.
     -->
-    <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>18.0.0-preview-1-10830-229</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
+    <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>18.3.11401.5</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
     <MicrosoftVisualStudioEnterpriseAspNetHelper>$(MicrosoftVisualStudioDiagnosticsUtilitiesVersion)</MicrosoftVisualStudioEnterpriseAspNetHelper>
     <MicrosoftVisualStudioInteropVersion>17.13.39960</MicrosoftVisualStudioInteropVersion>
     <MicrosoftVSTelemetryVersion>17.13.24</MicrosoftVSTelemetryVersion>

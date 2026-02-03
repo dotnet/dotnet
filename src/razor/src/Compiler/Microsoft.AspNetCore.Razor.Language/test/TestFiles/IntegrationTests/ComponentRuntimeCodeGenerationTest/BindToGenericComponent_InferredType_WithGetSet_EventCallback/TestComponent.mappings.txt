@@ -19,6 +19,11 @@ Generated Location: (1405:40,0 [138] )
     public EventCallback<CustomValue> UpdateValue { get; set; }
 |
 
+Source Location: (1:0,1 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|MyComponent|
+Generated Location: (2022:57,45 [11] )
+|MyComponent|
+
 Source Location: (19:0,19 [5] x:\dir\subdir\Test\TestComponent.cshtml)
 |Value|
 Generated Location: (2222:61,0 [5] )

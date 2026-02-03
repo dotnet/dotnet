@@ -29,9 +29,6 @@ function DownloadTmLanguageJson {
 
     # Copy to razor extension
     $content.content | Out-File -FilePath "../../src/Razor/src/Microsoft.VisualStudio.RazorExtension/EmbeddedGrammars/$fileName" -Encoding ascii
-
-    # Copy to grammar tests
-    $content.content | Out-File -FilePath "../../src/Razor/test/Microsoft.AspNetCore.Razor.VSCode.Grammar.Test/embeddedGrammars/$fileName" -Encoding ascii
 }
 
 # Find the current main branch SHA to download from

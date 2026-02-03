@@ -1,14 +1,11 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-internal class DefaultDocumentClassifierPass : DocumentClassifierPassBase
+internal sealed class DefaultDocumentClassifierPass : DocumentClassifierPassBase
 {
     public override int Order => DefaultFeatureOrder;
 
@@ -25,7 +22,7 @@ internal class DefaultDocumentClassifierPass : DocumentClassifierPassBase
         ClassDeclarationIntermediateNode @class,
         MethodDeclarationIntermediateNode method)
     {
-        if (Engine.TryGetFeature(out DefaultDocumentClassifierPassFeature configuration))
+        if (Engine.TryGetFeature(out DefaultDocumentClassifierPassFeature? configuration))
         {
             for (var i = 0; i < configuration.ConfigureClass.Count; i++)
             {

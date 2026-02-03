@@ -5,6 +5,7 @@
 
 using System.Collections.Concurrent;
 using System.Text.Json;
+using Microsoft.DotNet.Cli.Commands.Workload;
 using Microsoft.DotNet.Cli.Commands.Workload.Config;
 using Microsoft.DotNet.Cli.Commands.Workload.Install.WorkloadInstallRecords;
 using Microsoft.DotNet.Cli.Extensions;
@@ -580,7 +581,7 @@ internal class FileBasedInstaller : IInstaller
     {
         UpdateInstallState(sdkFeatureBand, contents => contents.UseWorkloadSets = newMode);
 
-        var newModeString = newMode == null ? "<null>" : newMode.Value ? WorkloadConfigCommandParser.UpdateMode_WorkloadSet : WorkloadConfigCommandParser.UpdateMode_Manifests;
+        var newModeString = newMode == null ? "<null>" : newMode.Value ? WorkloadConfigCommandDefinition.UpdateMode_WorkloadSet : WorkloadConfigCommandDefinition.UpdateMode_Manifests;
         _reporter.WriteLine(string.Format(CliCommandStrings.UpdatedWorkloadMode, newModeString));
     }
 
@@ -642,7 +643,7 @@ internal class FileBasedInstaller : IInstaller
     public void Shutdown()
     {
         // Perform any additional cleanup here that's intended to run at the end of the command, regardless
-        // of success or failure. For file based installs, there shouldn't be any additional work to 
+        // of success or failure. For file based installs, there shouldn't be any additional work to
         // perform.
     }
 

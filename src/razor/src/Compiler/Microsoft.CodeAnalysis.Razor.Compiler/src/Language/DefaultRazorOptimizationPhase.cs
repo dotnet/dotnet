@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-internal class DefaultRazorOptimizationPhase : RazorEnginePhaseBase, IRazorOptimizationPhase
+internal sealed class DefaultRazorOptimizationPhase : RazorEnginePhaseBase, IRazorOptimizationPhase
 {
     public ImmutableArray<IRazorOptimizationPass> Passes { get; private set; }
 
@@ -15,16 +15,18 @@ internal class DefaultRazorOptimizationPhase : RazorEnginePhaseBase, IRazorOptim
         Passes = Engine.GetFeatures<IRazorOptimizationPass>().OrderByAsArray(static x => x.Order);
     }
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
+    protected override RazorCodeDocument ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
         var documentNode = codeDocument.GetDocumentNode();
         ThrowForMissingDocumentDependency(documentNode);
 
         foreach (var pass in Passes)
         {
-            pass.Execute(codeDocument, documentNode);
+            cancellationToken.ThrowIfCancellationRequested();
+
+            pass.Execute(codeDocument, documentNode, cancellationToken);
         }
 
-        codeDocument.SetDocumentNode(documentNode);
+        return codeDocument.WithDocumentNode(documentNode);
     }
 }

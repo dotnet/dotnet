@@ -120,6 +120,8 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
     //
     public MarkupBlockSyntax? ParseBlock()
     {
+        CancellationToken.ThrowIfCancellationRequested();
+
         if (Context == null)
         {
             throw new InvalidOperationException(Resources.Parser_Context_Not_Set);
@@ -183,6 +185,8 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
     //
     public MarkupBlockSyntax ParseRazorBlock(Tuple<string, string> nestingSequences, bool caseSensitive)
     {
+        CancellationToken.ThrowIfCancellationRequested();
+
         if (Context == null)
         {
             throw new InvalidOperationException(Resources.Parser_Context_Not_Set);
@@ -219,6 +223,8 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         ParseMode mode,
         Func<SyntaxToken, bool>? stopCondition = null)
     {
+        CancellationToken.ThrowIfCancellationRequested();
+
         stopCondition = stopCondition ?? (token => false);
         while (!EndOfFile && !stopCondition(CurrentToken))
         {
@@ -228,6 +234,8 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
 
     private void ParseMarkupNode(in SyntaxListBuilder<RazorSyntaxNode> builder, ParseMode mode)
     {
+        CancellationToken.ThrowIfCancellationRequested();
+
         switch (GetParserState(mode))
         {
             case ParserState.MarkupText:
@@ -278,6 +286,8 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
     {
         do
         {
+            CancellationToken.ThrowIfCancellationRequested();
+
             switch (GetParserState(ParseMode.MarkupInCodeBlock))
             {
                 case ParserState.EOF:
@@ -297,7 +307,8 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                     ParseMarkupNode(builder, ParseMode.Text);
                     break;
             }
-        } while (!EndOfFile && _tagTracker.Count > 0);
+        }
+        while (!EndOfFile && _tagTracker.Count > 0);
 
         CompleteMarkupInCodeBlock(builder);
     }
@@ -398,7 +409,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         AcceptAndMoveNext();
         SetAcceptedCharacters(AcceptedCharactersInternal.None);
         chunkGenerator = SpanChunkGenerator.Null;
-        var transition = GetNodeWithEditHandler(SyntaxFactory.MarkupTransition(Output(), chunkGenerator));
+        var transition = SyntaxFactory.MarkupTransition(Output(), chunkGenerator, GetEditHandler());
         builder.Add(transition);
 
         // "@:" => Explicit Single Line Block
@@ -465,6 +476,8 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
 
     private void ParseMarkupElement(in SyntaxListBuilder<RazorSyntaxNode> builder, ParseMode mode)
     {
+        CancellationToken.ThrowIfCancellationRequested();
+
         Assert(SyntaxKind.OpenAngle);
 
         // Output already accepted tokens if any.
@@ -501,7 +514,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         {
             // Parsing an end tag.
             var endTagStart = CurrentStart;
-            var endTag = ParseEndTag(mode, out var endTagName, out var _);
+            var endTag = ParseEndTag(mode, out var endTagName, out _);
 
             if (string.Equals(CurrentStartTagName, endTagName, StringComparison.OrdinalIgnoreCase))
             {
@@ -738,7 +751,17 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         }
 
         // End tag block
-        var startTag = SyntaxFactory.MarkupStartTag(openAngleToken, bangToken, tagNameToken, attributes, forwardSlashToken, closeAngleToken, chunkGenerator);
+        var startTag = SyntaxFactory.MarkupStartTag(
+            openAngleToken,
+            bangToken,
+            tagNameToken,
+            attributes,
+            forwardSlashToken,
+            closeAngleToken,
+            isMarkupTransition: false,
+            chunkGenerator,
+            GetEditHandler());
+
         if (string.Equals(tagName, ScriptTagName, StringComparison.OrdinalIgnoreCase))
         {
             // If the script tag expects javascript content then we should do minimal parsing until we reach
@@ -758,7 +781,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             tagMode = MarkupTagMode.Invalid;
         }
 
-        return GetNodeWithEditHandler(startTag);
+        return startTag;
     }
 
     private MarkupStartTagSyntax ParseStartTextTag(SyntaxToken openAngleToken, out MarkupTagMode tagMode, out bool isWellFormed)
@@ -803,16 +826,16 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
 
             isWellFormed = true;
             chunkGenerator = SpanChunkGenerator.Null;
-            var startTextTag = SyntaxFactory.MarkupStartTag(
+            return SyntaxFactory.MarkupStartTag(
                 openAngleToken,
                 bang: null,
                 name: tagNameToken,
                 attributes: miscAttributeContentBuilder.ToList(),
                 forwardSlash: forwardSlashToken,
                 closeAngle: closeAngleToken,
-                chunkGenerator);
-
-            return GetNodeWithEditHandler(startTextTag).AsMarkupTransition();
+                isMarkupTransition: true,
+                chunkGenerator,
+                GetEditHandler());
         }
     }
 
@@ -920,8 +943,16 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         }
 
         // End tag block
-        var endTag = SyntaxFactory.MarkupEndTag(openAngleToken, forwardSlashToken, bangToken, tagNameToken, miscAttributeContent, closeAngleToken, chunkGenerator);
-        return GetNodeWithEditHandler(endTag);
+        return SyntaxFactory.MarkupEndTag(
+            openAngleToken,
+            forwardSlashToken,
+            bangToken,
+            tagNameToken,
+            miscAttributeContent,
+            closeAngleToken,
+            isMarkupTransition: false,
+            chunkGenerator,
+            GetEditHandler());
     }
 
     private MarkupEndTagSyntax ParseEndTextTag(SyntaxToken openAngleToken, SyntaxToken forwardSlashToken, out bool isWellFormed)
@@ -961,15 +992,16 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         }
 
         chunkGenerator = SpanChunkGenerator.Null;
-        var endTextTag = SyntaxFactory.MarkupEndTag(
+        return SyntaxFactory.MarkupEndTag(
             openAngleToken,
             forwardSlashToken,
             bang: null,
             name: tagNameToken,
             miscAttributeContent: miscAttributeContent,
             closeAngle: closeAngleToken,
-            chunkGenerator);
-        return GetNodeWithEditHandler(endTextTag).AsMarkupTransition();
+            isMarkupTransition: true,
+            chunkGenerator,
+            GetEditHandler());
     }
 
     private void ParseAttributes(in SyntaxListBuilder<RazorSyntaxNode> builder)
@@ -1537,8 +1569,9 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 name: tagNameToken,
                 miscAttributeContent: miscContent,
                 closeAngle: closeAngleToken,
-                chunkGenerator);
-            endTag = GetNodeWithEditHandler(endTag);
+                isMarkupTransition: false,
+                chunkGenerator,
+                GetEditHandler());
         }
 
         var element = SyntaxFactory.MarkupElement(startTag, builder.Consume(), endTag);
@@ -2014,14 +2047,14 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
 
             // Check condition 2.2
             var isValidComment = false;
-            LookaheadUntil((token, prevTokens) =>
+            LookaheadUntil((token, ref readonly prevTokens) =>
             {
                 if (token.Kind == SyntaxKind.DoubleHyphen)
                 {
                     if (NextIs(SyntaxKind.CloseAngle))
                     {
                         // Check condition 2.3: We're at the end of a comment. Check to make sure the text ending is allowed.
-                        isValidComment = !IsCommentContentEndingInvalid(prevTokens);
+                        isValidComment = !IsCommentContentEndingInvalid(in prevTokens);
                         return true;
                     }
                     else if (NextIs(ns => IsHyphen(ns) && NextIs(SyntaxKind.CloseAngle)))
@@ -2208,13 +2241,13 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
     /// <summary>
     /// Verifies, that the sequence doesn't end with the "&lt;!-" HtmlTokens. Note, the first token is an opening bracket token
     /// </summary>
-    internal static bool IsCommentContentEndingInvalid(IEnumerable<SyntaxToken> sequence)
+    internal static bool IsCommentContentEndingInvalid(ref readonly PooledArrayBuilder<SyntaxToken> tokens)
     {
-        var reversedSequence = sequence.Reverse();
         var index = 0;
-        foreach (var item in reversedSequence)
+
+        for (var i = tokens.Count - 1; i >= 0; i--)
         {
-            if (!item.IsEquivalentTo(nonAllowedHtmlCommentEnding[index++]))
+            if (!tokens[i].IsEquivalentTo(nonAllowedHtmlCommentEnding[index++]))
             {
                 return false;
             }

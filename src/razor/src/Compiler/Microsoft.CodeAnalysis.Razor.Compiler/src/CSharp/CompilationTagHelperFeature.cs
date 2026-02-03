@@ -4,6 +4,8 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -11,10 +13,10 @@ namespace Microsoft.CodeAnalysis.Razor;
 
 public sealed class CompilationTagHelperFeature : RazorEngineFeatureBase, ITagHelperFeature
 {
-    private ImmutableArray<ITagHelperDescriptorProvider> _providers;
+    private ITagHelperDiscoveryService? _discoveryService;
     private IMetadataReferenceFeature? _referenceFeature;
 
-    public IReadOnlyList<TagHelperDescriptor> GetDescriptors()
+    public TagHelperCollection GetTagHelpers(CancellationToken cancellationToken = default)
     {
         var compilation = CSharpCompilation.Create("__TagHelpers", references: _referenceFeature?.References);
         if (!IsValidCompilation(compilation))
@@ -22,21 +24,15 @@ public sealed class CompilationTagHelperFeature : RazorEngineFeatureBase, ITagHe
             return [];
         }
 
-        var results = new List<TagHelperDescriptor>();
-        var context = new TagHelperDescriptorProviderContext(compilation, results);
+        Assumed.NotNull(_discoveryService);
 
-        for (var i = 0; i < _providers.Length; i++)
-        {
-            _providers[i].Execute(context);
-        }
-
-        return results;
+        return _discoveryService.GetTagHelpers(compilation, cancellationToken);
     }
 
     protected override void OnInitialized()
     {
         _referenceFeature = Engine.GetFeatures<IMetadataReferenceFeature>().FirstOrDefault();
-        _providers = Engine.GetFeatures<ITagHelperDescriptorProvider>().OrderByAsArray(static f => f.Order);
+        _discoveryService = GetRequiredFeature<ITagHelperDiscoveryService>();
     }
 
     internal static bool IsValidCompilation(Compilation compilation)

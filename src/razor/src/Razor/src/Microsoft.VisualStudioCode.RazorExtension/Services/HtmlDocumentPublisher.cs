@@ -20,14 +20,13 @@ internal sealed class HtmlDocumentPublisher(
 {
     private readonly RazorClientServerManagerProvider _razorClientServerManagerProvider = razorClientServerManagerProvider;
 
-    public async Task PublishAsync(TextDocument document, SynchronizationResult synchronizationResult, string htmlText, CancellationToken cancellationToken)
+    public async Task<bool> TryPublishAsync(TextDocument document, ChecksumWrapper checksum, string htmlText, CancellationToken cancellationToken)
     {
-        Assumed.True(synchronizationResult.Synchronized);
-
-        var request = new HtmlUpdateParameters(new TextDocumentIdentifier { DocumentUri = document.CreateDocumentUri() }, synchronizationResult.Checksum.ToString(), htmlText);
+        var request = new HtmlUpdateParameters(new TextDocumentIdentifier { DocumentUri = document.CreateDocumentUri() }, checksum.ToString(), htmlText);
 
         var clientConnection = _razorClientServerManagerProvider.ClientLanguageServerManager.AssumeNotNull();
         await clientConnection.SendRequestAsync("razor/updateHtml", request, cancellationToken).ConfigureAwait(false);
+        return true;
     }
 
     private record HtmlUpdateParameters(

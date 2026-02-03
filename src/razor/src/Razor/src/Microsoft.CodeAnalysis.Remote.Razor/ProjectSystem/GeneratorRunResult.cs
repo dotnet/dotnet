@@ -20,7 +20,7 @@ internal readonly record struct GeneratorRunResult(RazorGeneratorResult Generato
 {
     public bool IsDefault => GeneratorResult is null && Project is null;
 
-    public IReadOnlyList<TagHelperDescriptor> TagHelpers => GeneratorResult.TagHelpers;
+    public TagHelperCollection TagHelpers => GeneratorResult.TagHelpers;
 
     public RazorCodeDocument? GetCodeDocument(string filePath)
         => GeneratorResult.GetCodeDocument(filePath);
@@ -63,7 +63,7 @@ internal readonly record struct GeneratorRunResult(RazorGeneratorResult Generato
         {
             if (throwIfNotFound)
             {
-                if (result.Results.SingleOrDefault(r => r.Generator.GetGeneratorType().Name == "Microsoft.NET.Sdk.Razor.SourceGenerators.RazorSourceGenerator").Generator is { } wrongGenerator)
+                if (result.Results.SingleOrDefault(r => r.Generator.GetGeneratorType().FullName == "Microsoft.NET.Sdk.Razor.SourceGenerators.RazorSourceGenerator").Generator is { } wrongGenerator)
                 {
                     // Wrong ALC?
                     throw new InvalidOperationException(SR.FormatRazor_source_generator_reference_incorrect(wrongGenerator.GetGeneratorType().Assembly.Location, typeof(RazorSourceGenerator).Assembly.Location, project.Name));

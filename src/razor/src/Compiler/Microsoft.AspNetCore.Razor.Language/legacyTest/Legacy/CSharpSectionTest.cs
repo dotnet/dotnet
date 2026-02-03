@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
@@ -19,7 +17,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
             @section
 
             """,
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -29,7 +27,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
             @section Foo         
                 
             """,
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -39,7 +37,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
             @section         
                 
             """,
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -47,7 +45,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
     {
         ParseDocumentTest(
             "@Section foo",
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -56,7 +54,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
         // ParseSectionBlockReportsErrorAndTerminatesSectionBlockIfKeywordNotFollowedByIdentifierStartCharacter
         ParseDocumentTest(
             "@section 9 { <p>Foo</p> }",
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -65,7 +63,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
         // ParseSectionBlockReportsErrorAndTerminatesSectionBlockIfNameNotFollowedByOpenBrace
         ParseDocumentTest(
             "@section foo-bar { <p>Foo</p> }",
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -73,7 +71,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
     {
         ParseDocumentTest(
             "@section foo { @section bar { <p>Foo</p> } }",
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -81,7 +79,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
     {
         ParseDocumentTest(
             "@section foo { @section bar { <p>Foo</p> @section baz { } } }",
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -90,7 +88,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
         // This isn't a real scenario but we just want to verify we don't show misleading errors.
         ParseDocumentTest(
             "@section foo { @inherits Bar }",
-            new[] { SectionDirective.Directive, InheritsDirective.Directive });
+            [SectionDirective.Directive, InheritsDirective.Directive]);
     }
 
     [Fact]
@@ -98,16 +96,15 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
     {
         ParseDocumentTest(
             "@section foo {",
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
     public void HandlesEOFAfterOpenContent1()
     {
-
         ParseDocumentTest(
             "@section foo { ",
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -116,25 +113,23 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
 
         ParseDocumentTest(
             "@section foo {\n",
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
     public void HandlesEOFAfterOpenContent3()
     {
-
         ParseDocumentTest(
             "@section foo {abc",
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
     public void HandlesEOFAfterOpenContent4()
     {
-
         ParseDocumentTest(
             "@section foo {\n abc",
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -142,7 +137,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
     {
         ParseDocumentTest(
             "@section foo { <p>Foo{}</p>",
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -159,7 +154,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
                 "@section Test{0}{{{0}{1}@if(true){0}{1}{{{0}{1}{1}<p>Hello World</p>{0}{1}}}",
                 newLine,
                 spaces),
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -170,7 +165,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
             @section foo      
 
             """,
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -187,7 +182,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
             <p>Foo</p>
             }
             """,
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -195,7 +190,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
     {
         ParseDocumentTest(
             "@section foo { <p>Foo</p> }",
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -203,7 +198,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
     {
         ParseDocumentTest(
             "@section foo{ <p>Foo</p> }",
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -211,7 +206,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
     {
         ParseDocumentTest(
             "@section foo { <script>(function foo() { return 1; })();</script> }",
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -219,7 +214,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
     {
         ParseDocumentTest(
             "@section foo { I really want to render a close brace, so here I go: @(\"}\") }",
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -231,7 +226,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
             }
             }
             """,
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -243,7 +238,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
             @if(true) {
             }}
             """,
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -251,7 +246,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
     {
         ParseDocumentTest(
             "@section foo {something}",
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -259,7 +254,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
     {
         ParseDocumentTest(
             "@section s {<!-- -->}",
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     // This was a user reported bug (codeplex #710), the section parser wasn't handling
@@ -269,7 +264,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
     {
         ParseDocumentTest(
             "@section s {<!-- > \" '-->}",
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -280,7 +275,7 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
             <a
             <!--  > " '-->}
             """,
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
@@ -288,19 +283,18 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
     {
         ParseDocumentTest(
             "@section s { <? xml bleh ?>}",
-            new[] { SectionDirective.Directive });
+            [SectionDirective.Directive]);
     }
 
     [Fact]
     public void _WithDoubleTransition1()
     {
-        ParseDocumentTest("@section s {<span foo='@@' />}", new[] { SectionDirective.Directive });
+        ParseDocumentTest("@section s {<span foo='@@' />}", [SectionDirective.Directive]);
     }
 
     [Fact]
     public void _WithDoubleTransition2()
     {
-        ParseDocumentTest("@section s {<span foo='@DateTime.Now @@' />}", new[] { SectionDirective.Directive });
+        ParseDocumentTest("@section s {<span foo='@DateTime.Now @@' />}", [SectionDirective.Directive]);
     }
-
 }

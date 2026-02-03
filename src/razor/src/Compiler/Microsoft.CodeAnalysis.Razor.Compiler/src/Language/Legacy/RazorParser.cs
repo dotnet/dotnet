@@ -1,6 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Threading;
+
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
 internal class RazorParser
@@ -19,11 +21,11 @@ internal class RazorParser
 
     public RazorParserOptions Options { get; }
 
-    public virtual RazorSyntaxTree Parse(RazorSourceDocument source)
+    public virtual RazorSyntaxTree Parse(RazorSourceDocument source, CancellationToken cancellationToken = default)
     {
         ArgHelper.ThrowIfNull(source);
 
-        using var context = new ParserContext(source, Options);
+        using var context = new ParserContext(source, Options, cancellationToken);
         using var codeParser = new CSharpCodeParser(Options.Directives, context);
         using var markupParser = new HtmlMarkupParser(context);
 

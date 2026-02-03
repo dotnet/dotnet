@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -15,7 +14,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 public class CodeDirectiveFormattingTest(FormattingTestContext context, HtmlFormattingFixture fixture, ITestOutputHelper testOutput)
     : FormattingTestBase(context, fixture.Service, testOutput), IClassFixture<FormattingTestContext>
 {
-    [FormattingTestFact(SkipFlipLineEnding = true)]
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor-tooling/issues/5648")]
     public async Task GenericComponentWithCascadingTypeParameter()
     {
@@ -70,7 +69,7 @@ public class CodeDirectiveFormattingTest(FormattingTestContext context, HtmlForm
                         private IEnumerable<int> _items = new[] { 1, 2, 3, 4, 5 };
                     }
                     """,
-            tagHelpers: GetComponentWithCascadingTypeParameter());
+            tagHelpers: [.. GetComponentWithCascadingTypeParameter()]);
     }
 
     [FormattingTestFact]
@@ -120,10 +119,10 @@ public class CodeDirectiveFormattingTest(FormattingTestContext context, HtmlForm
                         private IEnumerable<int> _items = new[] { 1, 2, 3, 4, 5 };
                     }
                     """,
-            tagHelpers: GetComponentWithCascadingTypeParameter());
+            tagHelpers: [.. GetComponentWithCascadingTypeParameter()]);
     }
 
-    [FormattingTestFact(SkipFlipLineEnding = true)] // tracked by https://github.com/dotnet/razor/issues/10836
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor-tooling/issues/5648")]
     public async Task GenericComponentWithCascadingTypeParameter_MultipleParameters()
     {
@@ -160,10 +159,10 @@ public class CodeDirectiveFormattingTest(FormattingTestContext context, HtmlForm
                         private IEnumerable<long> _items2 = new long[] { 1, 2, 3, 4, 5 };
                     }
                     """,
-            tagHelpers: GetComponentWithTwoCascadingTypeParameter());
+            tagHelpers: [.. GetComponentWithTwoCascadingTypeParameter()]);
     }
 
-    private ImmutableArray<TagHelperDescriptor> GetComponentWithCascadingTypeParameter()
+    private TagHelperCollection GetComponentWithCascadingTypeParameter()
     {
         var input = """
                 @using System.Collections.Generic
@@ -185,7 +184,7 @@ public class CodeDirectiveFormattingTest(FormattingTestContext context, HtmlForm
         return generated.CodeDocument.GetRequiredTagHelperContext().TagHelpers;
     }
 
-    private ImmutableArray<TagHelperDescriptor> GetComponentWithTwoCascadingTypeParameter()
+    private TagHelperCollection GetComponentWithTwoCascadingTypeParameter()
     {
         var input = """
                 @using System.Collections.Generic

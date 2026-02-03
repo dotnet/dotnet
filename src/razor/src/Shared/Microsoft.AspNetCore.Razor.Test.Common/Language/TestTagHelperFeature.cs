@@ -1,28 +1,19 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System.Collections.Generic;
+using System.Threading;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 public class TestTagHelperFeature : RazorEngineFeatureBase, ITagHelperFeature
 {
-    public TestTagHelperFeature()
+    private TagHelperCollection? _tagHelpers;
+
+    public void SetTagHelpers(TagHelperCollection tagHelpers)
     {
-        TagHelpers = new List<TagHelperDescriptor>();
+        _tagHelpers = tagHelpers;
     }
 
-    public TestTagHelperFeature(IEnumerable<TagHelperDescriptor> tagHelpers)
-    {
-        TagHelpers = new List<TagHelperDescriptor>(tagHelpers);
-    }
-
-    public List<TagHelperDescriptor> TagHelpers { get; }
-
-    public IReadOnlyList<TagHelperDescriptor> GetDescriptors()
-    {
-        return TagHelpers.ToArray();
-    }
+    public TagHelperCollection GetTagHelpers(CancellationToken cancellationToken = default)
+        => _tagHelpers ?? [];
 }

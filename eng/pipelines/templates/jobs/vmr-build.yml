@@ -119,8 +119,8 @@ parameters:
   type: boolean
   default: false
 
-# Create and publish the source artifacts
-- name: createSourceArtifacts
+# Create and publish the source artifact
+- name: createSourceArtifact
   type: boolean
   default: false
 
@@ -186,6 +186,10 @@ jobs:
     value: ''
   - name: runTestsTimeout
     value: 30
+  
+  - ${{ if parameters.buildSourceOnly }}:
+    - name: sharedComponentsDir
+      value: $(Agent.TempDirectory)/shared-components
 
   - ${{ if parameters.isBuiltFromVmr }}:
     - name: vmrPath
@@ -245,7 +249,10 @@ jobs:
         value: $(commandPrefix)clean-while-building
 
   - name: brandingArgument
-    value: $(commandPrefix)branding $(brandingType)
+    ${{ if ne(variables['brandingType'], '') }}:
+      value: $(commandPrefix)branding $(brandingType)
+    ${{ else }}:
+      value: ''
 
   - ${{ if and(eq(variables['System.TeamProject'], 'internal'), notin(variables['Build.Reason'], 'PullRequest')) }}:
     - name: officialBuildArgument
@@ -318,6 +325,12 @@ jobs:
   - ${{ else }}:
     - name: ibcProperties
       value: ''
+
+  - name: runtimeSourceFeedKeyProperties
+    value: ''
+  - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+    - name: runtimeSourceFeedKeyProperties
+      value: '/p:DotNetRuntimeSourceFeedKey=$(dotnetbuilds-internal-container-read-token-base64)'
 
   # Timeout
   ## Real signing takes a while - increase the timeout to allow for that
@@ -393,8 +406,8 @@ jobs:
             artifactDescription: Previous Build (${{ reuseBuildArtifacts }} - Source Build artifacts)
             artifactName: ${{ reuseBuildArtifacts }}_Artifacts
             downloadFilePatterns: |
-              **/Private.SourceBuilt.Artifacts.*.tar.gz
-              **/dotnet-sdk-*.tar.gz
+              assets/*/Private.SourceBuilt.Artifacts.*.tar.gz
+              assets/*/dotnet-sdk-*.tar.gz
             copyDestination: $(sourcesPath)/prereqs/packages/archive/
             flattenDirs: true
 
@@ -411,18 +424,65 @@ jobs:
         DownloadArchive "source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/"
       displayName: Download Previously Source-Built SDK
 
+  - template: /eng/common/templates/steps/enable-internal-runtimes.yml
+
   - ${{ if and(parameters.excludeRuntimeDependentJobs, eq(parameters.reuseBuildArtifactsFrom, ''), not(parameters.withPreviousSDK)) }}:
     - script: |
         source "$(sourcesPath)/eng/download-source-built-archive.sh"
+        if [[ $SYSTEM_TEAMPROJECT == "internal" ]]; then
+          storageKey="$(dotnetbuilds-internal-container-read-token-base64)"
+        else
+          storageKey=""
+        fi
         # Download the 1xx source-built SDK
-        DownloadArchive "1xx source-built SDK" "MicrosoftNETSdkPackageVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "" "dotnet-sdk"
+        DownloadArchive "1xx source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "" "" $storageKey
       displayName: Download 1xx SDK
 
   - ${{ if parameters.excludeRuntimeDependentJobs }}:
     - script: |
         source "$(sourcesPath)/eng/download-source-built-archive.sh"
-        DownloadArchive "shared component artifacts" "MicrosoftNETSdkPackageVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "Private.SourceBuilt.SharedComponents"
+        if [[ $SYSTEM_TEAMPROJECT == "internal" ]]; then
+          storageKey="$(dotnetbuilds-internal-container-read-token-base64)"
+        else
+          storageKey=""
+        fi
+        mkdir -p "$(sharedComponentsDir)"
+        DownloadArchive "shared component artifacts" "PrivateSourceBuiltArtifactsVersion" false "${{ parameters.artifactsRid }}" "$(sharedComponentsDir)" "Private.SourceBuilt.SharedComponents" "MicrosoftNETSdkPackageVersion" $storageKey
+        tar -xzf $(sharedComponentsDir)/Private.SourceBuilt.SharedComponents.*.tar.gz -C "$(sharedComponentsDir)"
+        rm -f $(sharedComponentsDir)/Private.SourceBuilt.SharedComponents.*.tar.gz
       displayName: Download Shared Component Artifacts
+
+  - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+    - task: PowerShell@2
+      displayName: Setup Internal Feeds
+      inputs:
+        targetType: 'inline'
+        script: |
+          $sourcesPath = "$(sourcesPath)"
+          $token = $env:Token
+          
+          Get-ChildItem -Path "$sourcesPath/src" -Directory | ForEach-Object {
+            $repoDir = $_.FullName
+            $setupScript = Join-Path $repoDir "eng/common/SetupNugetSources.ps1"
+
+            # Search for nuget.config using "Filter" to allow for case-insensitive matching.
+            $nugetConfigFile = Get-ChildItem -Path $repoDir -Filter "nuget.config" -File | Select-Object -First 1
+            $nugetConfig = if ($nugetConfigFile) { $nugetConfigFile.FullName } else { Join-Path $repoDir "NuGet.config" }
+            
+            Write-Host "Setting up internal NuGet feeds for $($_.Name)"
+            & $setupScript $nugetConfig $token
+            Write-Host ""
+          }
+      env:
+        Token: $(dn-bot-dnceng-artifact-feeds-rw)
+
+  # When building internal, authenticate to internal feeds that may be in use
+  # We do not need these for source-only builds
+  - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(parameters.buildSourceOnly, 'True')) }}:
+    # Authenticate with service connections to be able to pull packages to external nuget feeds.
+    - task: NuGetAuthenticate@1
+      inputs:
+        nuGetServiceConnections: devdiv/engineering, devdiv/dotnet-core-internal-tooling
 
   # https://github.com/dotnet/dotnet/issues/1758
   # After a re-boostrap:
@@ -437,13 +497,6 @@ jobs:
         # ${{ if ne(parameters.signType, 'Real') }}:
         #   microbuildUseESRP: false
 
-  # When building internal, authenticate to internal feeds that may be in use
-  # We do not need these for source-only builds
-  - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(parameters.buildSourceOnly, 'True')) }}:
-    # Authenticate with service connections to be able to pull packages to external nuget feeds.
-    - task: NuGetAuthenticate@1
-      inputs:
-        nuGetServiceConnections: devdiv/engineering, devdiv/dotnet-core-internal-tooling
 
   - ${{ if eq(parameters.targetOS, 'windows') }}:
     # Node 20.x is a toolset dependency to build aspnetcore
@@ -471,6 +524,7 @@ jobs:
         $(signProperties)
         $(buildPassProperties)
         $(ibcProperties)
+        $(runtimeSourceFeedKeyProperties)
         $(_SignDiagnosticFilesArgs)
         ${{ parameters.extraProperties }}
       displayName: Build
@@ -525,8 +579,7 @@ jobs:
 
           if [[ "$prepSdk" == "false" ]]; then
             customPrepArgs="${customPrepArgs} --no-sdk"
-            rm -rf $(sourcesPath)/.dotnet
-            mkdir $(sourcesPath)/.dotnet
+            mkdir -p $(sourcesPath)/.dotnet
             previousSdkPath="$(sourcesPath)/prereqs/packages/archive/dotnet-sdk-*.tar.gz"
             eval tar -ozxf "$previousSdkPath" -C "$(sourcesPath)/.dotnet"
             eval rm -f "$previousSdkPath"
@@ -561,6 +614,10 @@ jobs:
               # Set up for signing source-built artifacts post-build.
               extraBuildProperties="$extraBuildProperties /p:DotNetSourceOnlyPostBuildSign=true"
             fi
+
+            if [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
+              customBuildArgs="$customBuildArgs --with-shared-components $(sharedComponentsDir)"
+            fi
           fi
 
           if [[ '${{ parameters.runOnline }}' == 'True' ]]; then
@@ -576,18 +633,20 @@ jobs:
           if [[ '${{ parameters.buildFromArchive }}' == 'True' ]]; then
             customBuildArgs="$customBuildArgs --source-repository https://github.com/dotnet/dotnet"
             customBuildArgs="$customBuildArgs --source-version $(git -C "$(vmrPath)" rev-parse HEAD)"
-            if [[ '${{ parameters.createSourceArtifacts }}' == 'True' ]]; then
+            if [[ '${{ parameters.createSourceArtifact }}' == 'True' ]]; then
               # Do not enable source artifact creation when not building from a git repo.
               # We strip the .git/ directory when building from archive,
-              # so it's not possible to create the artifacts in that mode.
-              echo "Cannot create source artifacts when building from archive."
+              # so it's not possible to create the artifact in that mode.
+              echo "Cannot create source artifact when building from archive."
               exit 1
             fi
           fi
           
-          if [[ '${{ parameters.createSourceArtifacts }}' == 'True' ]]; then
-            extraBuildProperties="$extraBuildProperties /p:CreateSourceArtifacts=true"
+          if [[ '${{ parameters.createSourceArtifact }}' == 'True' ]]; then
+            extraBuildProperties="$extraBuildProperties /p:CreateSourceArtifact=true"
           fi
+
+          extraBuildProperties="$extraBuildProperties $(runtimeSourceFeedKeyProperties)"
 
           if [[ '${{ parameters.useMonoRuntime }}' == 'True' ]]; then
             customBuildArgs="$customBuildArgs --use-mono-runtime"
@@ -631,15 +690,8 @@ jobs:
 
       # Setup the NuGet sources used by the tests to use private feeds. This is necessary when testing internal-only product
       # builds where the packages are only available in the private feeds. This allows the tests to restore from those feeds.
+      # The sdk repo's NuGet.config is configured earilier in the pipeline to use internal feeds.
       - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-        - task: Bash@3
-          displayName: Setup Private Feeds Credentials
-          inputs:
-            filePath: $(sourcesPath)/src/sdk/eng/common/SetupNugetSources.sh
-            arguments: $(sourcesPath)/src/sdk/NuGet.config $Token
-          env:
-            Token: $(dn-bot-dnceng-artifact-feeds-rw)
-
         - script: cp "$(sourcesPath)/src/sdk/NuGet.config" "$(sourcesPath)/test/Microsoft.DotNet.SourceBuild.Tests/assets/online.NuGet.Config"
           displayName: Copy Test NuGet Config for Smoke Tests
 

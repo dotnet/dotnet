@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
@@ -13,6 +14,7 @@ using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.CodeAnalysis.Text;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -33,29 +35,17 @@ public class HtmlCodeActionResolverTest(ITestOutputHelper testOutput) : Language
         var documentContextFactory = CreateDocumentContextFactory(documentUri, contents);
         Assert.True(documentContextFactory.TryCreate(documentUri, out var context));
         var sourceText = await context.GetSourceTextAsync(DisposalToken);
-        var remappedEdit = new WorkspaceEdit
-        {
-            DocumentChanges = new TextDocumentEdit[]
-            {
-                new() {
-                    TextDocument = new OptionalVersionedTextDocumentIdentifier
-                    {
-                        DocumentUri = new(documentUri),
-                    },
-                    Edits = [LspFactory.CreateTextEdit(sourceText.GetRange(span), "Goo /*~~~~~~~~~~~*/ Bar")]
-                }
-           }
-        };
-
-        var resolvedCodeAction = new RazorVSInternalCodeAction
-        {
-            Edit = remappedEdit
-        };
 
         var editMappingServiceMock = new StrictMock<IEditMappingService>();
         editMappingServiceMock
-            .Setup(x => x.RemapWorkspaceEditAsync(It.IsAny<IDocumentSnapshot>(), It.IsAny<WorkspaceEdit>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(remappedEdit);
+            .Setup(x => x.MapWorkspaceEditAsync(It.IsAny<IDocumentSnapshot>(), It.IsAny<WorkspaceEdit>(), It.IsAny<CancellationToken>()))
+                        .Callback<IDocumentSnapshot, WorkspaceEdit, CancellationToken>((_, edit, _) =>
+                        {
+                            var textDocumentEdit = edit.EnumerateTextDocumentEdits().First();
+                            textDocumentEdit.TextDocument.DocumentUri = new(documentPath);
+                            textDocumentEdit.Edits = [LspFactory.CreateTextEdit(sourceText.GetRange(span), "Goo /*~~~~~~~~~~~*/ Bar")];
+                        })
+            .Returns(Task.CompletedTask);
 
         var resolver = new HtmlCodeActionResolver(editMappingServiceMock.Object);
 
@@ -65,16 +55,16 @@ public class HtmlCodeActionResolverTest(ITestOutputHelper testOutput) : Language
             Edit = new WorkspaceEdit
             {
                 DocumentChanges = new TextDocumentEdit[]
+                {
+                    new()
+                    {
+                        TextDocument = new OptionalVersionedTextDocumentIdentifier
                         {
-                            new()
-                            {
-                                TextDocument = new OptionalVersionedTextDocumentIdentifier
-                                {
                                     DocumentUri = new(new Uri("c:/Test.razor.html")),
-                                },
-                                Edits = [LspFactory.CreateTextEdit(position: (0, 0), "Goo")]
-                            }
-                        }
+                        },
+                        Edits = [LspFactory.CreateTextEdit(position: (0, 0), "Goo")]
+                    }
+                }
             }
         };
 
@@ -83,17 +73,12 @@ public class HtmlCodeActionResolverTest(ITestOutputHelper testOutput) : Language
 
         // Assert
         Assert.NotNull(action.Edit);
-        Assert.True(action.Edit.TryGetTextDocumentEdits(out var documentEdits));
+        var documentEdits = action.Edit.EnumerateTextDocumentEdits().ToArray();
+        Assert.NotEmpty(documentEdits);
         Assert.Equal(documentPath, documentEdits[0].TextDocument.DocumentUri.GetRequiredParsedUri().AbsolutePath);
-        // Edit should be converted to 2 edits, to remove the tags
-        Assert.Collection(documentEdits[0].Edits,
-            e =>
-            {
-                Assert.Equal("", ((TextEdit)e).NewText);
-            },
-            e =>
-            {
-                Assert.Equal("", ((TextEdit)e).NewText);
-            });
+
+        var text = SourceText.From(contents);
+        var changed = text.WithChanges(documentEdits[0].Edits.Select(e => text.GetTextChange((TextEdit)e)));
+        Assert.Equal("Goo @(DateTime.Now) Bar", changed.ToString());
     }
 }

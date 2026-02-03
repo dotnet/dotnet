@@ -71,7 +71,8 @@ internal record DelegatedMapCodeParams(
 internal record DelegatedCompletionResolutionContext(
     [property: JsonPropertyName("identifier")] TextDocumentIdentifierAndVersion Identifier,
     [property: JsonPropertyName("projectedKind")] RazorLanguageKind ProjectedKind,
-    [property: JsonPropertyName("originalCompletionListData")] object? OriginalCompletionListData) : ICompletionResolveContext;
+    [property: JsonPropertyName("originalCompletionListData")] object? OriginalCompletionListData,
+    [property: JsonPropertyName("provisionalTextEdit")] TextEdit? ProvisionalTextEdit) : ICompletionResolveContext;
 
 internal record DelegatedCompletionItemResolveParams(
     [property: JsonPropertyName("identifier")] TextDocumentIdentifierAndVersion Identifier,

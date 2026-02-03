@@ -3,17 +3,21 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Extensions;
 
-internal class DefaultTagHelperOptimizationPass : IntermediateNodePassBase, IRazorOptimizationPass
+internal sealed class DefaultTagHelperOptimizationPass : IntermediateNodePassBase, IRazorOptimizationPass
 {
     // Run later than default order for user code so other passes have a chance to modify the
     // tag helper nodes.
     public override int Order => DefaultFeatureOrder + 1000;
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         var @class = documentNode.FindPrimaryClass();
         if (@class == null)

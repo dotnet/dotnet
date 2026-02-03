@@ -4,17 +4,21 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X;
 
-public class AssemblyAttributeInjectionPass : IntermediateNodePassBase, IRazorOptimizationPass
+public sealed class AssemblyAttributeInjectionPass : IntermediateNodePassBase, IRazorOptimizationPass
 {
     private const string RazorViewAttribute = "global::Microsoft.AspNetCore.Mvc.Razor.Compilation.RazorViewAttribute";
     private const string RazorPageAttribute = "global::Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure.RazorPageAttribute";
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         if (documentNode.Options.DesignTime)
         {

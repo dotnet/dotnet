@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -26,6 +28,7 @@ using NuGet.ProjectModel;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Protocol.Test;
+using NuGet.RuntimeModel;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
 using Test.Utility;
@@ -1855,7 +1858,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             // Act
             var rootNode = await DoWalkAsync(walker, "A", framework);
-            RestoreTargetGraph restoreTargetGraph = RestoreTargetGraph.Create(new List<GraphNode<RemoteResolveResult>>() { rootNode }, context, logger, framework);
+            RestoreTargetGraph restoreTargetGraph = RestoreTargetGraph.Create(RuntimeGraph.Empty, new List<GraphNode<RemoteResolveResult>>() { rootNode }, context, framework.GetShortFolderName(), framework, runtimeIdentifier: null);
 
             await RestoreCommand.LogDowngradeWarningsOrErrorsAsync(new List<RestoreTargetGraph>() { restoreTargetGraph }, logger);
 
@@ -2751,6 +2754,71 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             }
         }
 
+        [Fact]
+        public async Task RestoreCommand_CentralVersion_AssetsFile_UnresolvedTransitivelyPinnedPackage()
+        {
+            // Arrange
+            var framework = new NuGetFramework("net46");
+
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var projectDirectory = new DirectoryInfo(Path.Combine(pathContext.SolutionRoot, "Project1"));
+
+                // PackageA 1.0.0 -> PackageB 1.0.0
+                var packageA = new SimpleTestPackageContext { Id = "PackageA", Version = "1.0.0", };
+                var packageB = new SimpleTestPackageContext { Id = "PackageB", Version = "1.0.0", };
+
+                packageA.Dependencies.Add(packageB);
+
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, packageA);
+
+                var projectSpec = PackageReferenceSpecBuilder.Create("Project1", projectDirectory.FullName)
+                    .WithTargetFrameworks(
+                    [
+                        new TargetFrameworkInformation
+                        {
+                            FrameworkName = NuGetFramework.Parse("net46"),
+                            Dependencies =
+                            [
+                                new LibraryDependency
+                                {
+                                    LibraryRange = new LibraryRange(packageA.PackageName, VersionRange.Parse(packageA.Version), LibraryDependencyTarget.All),
+                                    VersionCentrallyManaged = true,
+                                },
+                            ],
+                            CentralPackageVersions = new Dictionary<string, CentralPackageVersion>(StringComparer.OrdinalIgnoreCase)
+                            {
+                                { packageA.PackageName, new CentralPackageVersion(packageA.PackageName, VersionRange.Parse(packageA.Version)) },
+                                { packageB.PackageName, new CentralPackageVersion(packageB.PackageName, VersionRange.Parse(packageB.Version)) }
+                            }
+                        }
+                    ])
+                    .WithCentralPackageVersionsEnabled()
+                    .WithCentralPackageTransitivePinningEnabled()
+                    .Build()
+                    .WithTestRestoreMetadata();
+
+                // Act
+                var restoreContext = new RestoreArgs()
+                {
+                    Sources = new List<string> { pathContext.PackageSource },
+                    GlobalPackagesFolder = pathContext.UserPackagesFolder,
+                    Log = NullLogger.Instance,
+                    CacheContext = new TestSourceCacheContext(),
+                };
+                var request = await ProjectTestHelpers.GetRequestAsync(restoreContext, projectSpec);
+                var restoreCommand = new RestoreCommand(request);
+                var result = await restoreCommand.ExecuteAsync();
+                var lockFile = result.LockFile;
+
+                var targetLib = lockFile.Targets.First().Libraries.FirstOrDefault(l => l.Name == packageA.Id);
+
+                // Assert
+                Assert.False(result.Success);
+                Assert.Equal(0, lockFile.CentralTransitiveDependencyGroups.Count);
+            }
+        }
+
         /// <summary>
         /// Verifies an error is logged when a user attempts to specify a VersionOverride but the feature is disabled and that restore succeeds if the feature is enabled.
         /// </summary>
@@ -2953,6 +3021,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 ["Pruning.DefaultEnabled"] = value => value.Should().BeOfType<bool>(),
                 ["Pruning.RemovablePackages.Count"] = value => value.Should().BeOfType<int>(),
                 ["Pruning.Pruned.Direct.Count"] = value => value.Should().BeOfType<int>(),
+                ["UsesLegacyPackagesDirectory"] = value => value.Should().Be(false),
             };
 
             HashSet<string> actualProperties = new();
@@ -3065,7 +3134,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
 
-            projectInformationEvent.Count.Should().Be(39);
+            projectInformationEvent.Count.Should().Be(40);
 
             projectInformationEvent["RestoreSuccess"].Should().Be(true);
             projectInformationEvent["NoOpResult"].Should().Be(true);
@@ -3103,9 +3172,10 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             projectInformationEvent["UpdatedMSBuildFiles"].Should().Be(false);
             projectInformationEvent["NETSdkVersion"].Should().Be(NuGetVersion.Parse("10.0.100"));
             projectInformationEvent["Pruning.FrameworksEnabled.Count"].Should().Be(0);
-            projectInformationEvent["Pruning.FrameworksDisabled.Count"].Should().Be(1);
-            projectInformationEvent["Pruning.FrameworksUnsupported.Count"].Should().Be(0);
+            projectInformationEvent["Pruning.FrameworksDisabled.Count"].Should().Be(0);
+            projectInformationEvent["Pruning.FrameworksUnsupported.Count"].Should().Be(1);
             projectInformationEvent["Pruning.DefaultEnabled"].Should().Be(false);
+            projectInformationEvent["UsesLegacyPackagesDirectory"].Should().Be(false);
         }
 
         [Fact]
@@ -3163,7 +3233,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
 
-            projectInformationEvent.Count.Should().Be(47);
+            projectInformationEvent.Count.Should().Be(48);
             projectInformationEvent["RestoreSuccess"].Should().Be(true);
             projectInformationEvent["NoOpResult"].Should().Be(false);
             projectInformationEvent["TotalUniquePackagesCount"].Should().Be(2);
@@ -3458,10 +3528,10 @@ namespace NuGet.Commands.Test.RestoreCommandTests
         }
 
         /// <summary>
-        /// Verifies that the <see cref="RestoreCommand.CreateFrameworkRuntimePairs(PackageSpec, ISet{string})" /> method returns pairs with frameworks with no runtimes first, then pairs with frameworks and runtimes after.
+        /// Verifies that the <see cref="RestoreCommand.CreateFrameworkRuntimeDefinitions(PackageSpec, ISet{string})" /> method returns pairs with frameworks with no runtimes first, then pairs with frameworks and runtimes after.
         /// </summary>
         [Fact]
-        public void CreateFrameworkRuntimePairs_ReturnsPairsInExpectedOrder()
+        public void CreateFrameworkRuntimeDefinitions_ReturnsPairsInExpectedOrder()
         {
             // Arrange
             using var pathContext = new SimpleTestPathContext();
@@ -3475,7 +3545,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             // Act
             var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
-            var pairs = RestoreCommand.CreateFrameworkRuntimePairs(request.Project, runtimeIds).ToList();
+            var pairs = RestoreCommand.CreateFrameworkRuntimeDefinitions(request.Project, runtimeIds).ToList();
 
             // Assert
             pairs[0].Framework.Should().Be(FrameworkConstants.CommonFrameworks.Net472);

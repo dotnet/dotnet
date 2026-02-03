@@ -57,6 +57,6 @@ internal sealed class TestSyntaxSerializer : SyntaxSerializer
         }
 
         // If we don't allow SpanEditHandlers, assert that there aren't any.
-        Assert.All(node.GetAnnotations(), a => Assert.IsNotType<SpanEditHandler>(a.Data));
+        Assert.Null(node.GetEditHandler());
     }
 }

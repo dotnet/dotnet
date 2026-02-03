@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis.Text;
 
@@ -17,10 +16,8 @@ namespace Microsoft.CodeAnalysis.Razor.Formatting;
 /// <summary>
 /// Gets edits in Html files, and returns edits to Razor files, with nicely formatted Html
 /// </summary>
-internal sealed class HtmlOnTypeFormattingPass(ILoggerFactory loggerFactory) : IFormattingPass
+internal sealed class HtmlOnTypeFormattingPass : IFormattingPass
 {
-    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<HtmlOnTypeFormattingPass>();
-
     public async Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
         if (changes.Length == 0)
@@ -34,7 +31,7 @@ internal sealed class HtmlOnTypeFormattingPass(ILoggerFactory loggerFactory) : I
         var changedText = originalText;
         var changedContext = context;
 
-        _logger.LogTestOnly($"Before HTML formatter:\r\n{changedText}");
+        context.Logger?.LogSourceText("BeforeHtmlFormatter", changedText);
 
         if (changes.Length > 0)
         {
@@ -44,7 +41,7 @@ internal sealed class HtmlOnTypeFormattingPass(ILoggerFactory loggerFactory) : I
             // Create a new formatting context for the changed razor document.
             changedContext = await context.WithTextAsync(changedText, cancellationToken).ConfigureAwait(false);
 
-            _logger.LogTestOnly($"After normalizedEdits:\r\n{changedText}");
+            context.Logger?.LogSourceText("AfterNormalizedEdits", changedText);
         }
 
         var indentationChanges = AdjustRazorIndentation(changedContext);
@@ -52,7 +49,7 @@ internal sealed class HtmlOnTypeFormattingPass(ILoggerFactory loggerFactory) : I
         {
             // Apply the edits that adjust indentation.
             changedText = changedText.WithChanges(indentationChanges);
-            _logger.LogTestOnly($"After AdjustRazorIndentation:\r\n{changedText}");
+            context.Logger?.LogSourceText("AfterAdjustRazorIndentation", changedText);
         }
 
         return SourceTextDiffer.GetMinimalTextChanges(originalText, changedText, DiffKind.Char);

@@ -303,7 +303,7 @@ function Test-PackageWithIncompatibleAssembliesRollsInstallBack {
         $context
     )
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
 
     # Act & Assert
     Assert-Throws { Install-Package BingMapAppSDK -Project $p.Name -Source $context.RepositoryPath } "Could not install package 'BingMapAppSDK 1.0.1011.1716'. You are trying to install this package into a project that targets '.NETFramework,Version=v4.7.2', but the package does not contain any assembly references or content files that are compatible with that framework. For more information, contact the package author."
@@ -473,7 +473,7 @@ function Test-InstallCanPipeToFSharpProjects {
 
 function Test-PipingMultipleProjectsToInstall {
     # Arrange
-    $projects = @((New-WebSite), (New-ClassLibrary), (New-WebApplication))
+    $projects = @((New-WebSite), (New-ClassLibrary), (New-ConsoleApplication))
 
 Write-Host 'proejct creation successful'
     # Act
@@ -533,7 +533,7 @@ function Test-InstallPackageWithNestedReferences {
     )
 
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
 
     # Act
     Install-Package PackageWithNestedReferenceFolders -Source $context.RepositoryRoot
@@ -1170,7 +1170,7 @@ function Test-InstallingPackageDoesNotOverwriteFileIfExistsOnDiskButNotInProject
     )
 
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
     $projectPath = Get-ProjectDir $p
     $fooPath = Join-Path $projectPath foo
     "file content" > $fooPath
@@ -1229,7 +1229,7 @@ function Test-InstallingPackageWithDependencyThatFailsShouldRollbackSuccessfully
         $context
     )
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
 
     # Act
     Assert-Throws { $p | Install-Package GoodPackageWithBadDependency -Source $context.RepositoryPath } "NOT #WINNING"
@@ -1461,7 +1461,7 @@ function Test-InstallPackageTargetingNetClientAndNet {
         $context
     )
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
 
     # Act
     $p | Install-Package PackageTargetingNetClientAndNet -Source $context.RepositoryRoot
@@ -1479,7 +1479,7 @@ function Test-InstallWithFailingInitPs1RollsBack {
         $context
     )
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
 
     # Act
     Assert-Throws { $p | Install-Package PackageWithFailingInitPs1 -Source $context.RepositoryRoot } "This is an exception"
@@ -1489,25 +1489,9 @@ function Test-InstallWithFailingInitPs1RollsBack {
     Assert-Null (Get-SolutionPackage PackageWithFailingInitPs1)
 }
 
-<#
-function Test-InstallPackageWithBadFileInMachineCache {
-    # Arrange
-    # Write a bad package file to the machine cache
-    "foo" > "$($env:LocalAppData)\NuGet\Cache\Ninject.2.2.1.0.nupkg"
-
-    # Act
-    $p = New-WebApplication
-    $p | Install-Package Ninject -Version 2.2.1.0
-
-    # Assert
-    Assert-Package $p Ninject
-    Assert-SolutionPackage Ninject
-}
-#>
-
 function Test-InstallPackageThrowsWhenSourceIsInvalid {
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
 
     # Act & Assert
     Assert-Throws { Install-Package jQuery -source "d:package" } "Unsupported type of source 'd:package'. Please provide an HTTP or local source."
@@ -2226,27 +2210,6 @@ function Test-InstallFailCleansUpSatellitePackageFiles
     Assert-NoSolutionPackage A.fr -Version 1.0.0
 }
 
-function FileTransformWorksOnDependentFile
-{
-    param($context)
-
-    # Arrange
-    $p = New-WebApplication
-    Install-Package TTFile -Source $context.RepositoryPath
-
-    # Act
-    Install-Package test -Source $context.RepositoryPath
-
-    # Assert
-	Assert-Package $p TTFile
-	Assert-Package $p test
-
-	$projectDir = Split-Path -parent -path $p.FullName
-    $configFilePath = Join-Path -path $projectDir -childpath "one.config"
-	$content = [xml](Get-Content $configFilePath)
-    Assert-AreEqual "bar" $content.configuration["system.web"].compilation.foo
-}
-
 # Solution level package used
 function Test-InstallMetaPackageWorksAsExpected
 {
@@ -2464,7 +2427,7 @@ function Test-SpecifyDifferentVersionThenServerVersion
     # checks for all variations of "2.0" (2.0, 2.0.0 and 2.0.0.0)
 
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
 
     # Act
     Install-Package jQuery -version 2.0
@@ -2476,7 +2439,7 @@ function Test-SpecifyDifferentVersionThenServerVersion
 function Test-InstallLatestVersionWorksCorrectly
 {
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
 
     # Act
     Install-Package A -ProjectName $p.Name -Source $context.RepositoryPath
@@ -2488,7 +2451,7 @@ function Test-InstallLatestVersionWorksCorrectly
 function Test-InstallLatestVersionWorksCorrectlyWithPrerelease
 {
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
 
     # Act
     Install-Package A -IncludePrerelease -ProjectName $p.Name -Source $context.RepositoryPath
@@ -2784,9 +2747,8 @@ function Test-InstallPackagesConfigLocal
     $p | Install-Package $pathToPackagesConfig
 
     # Assert
-    Assert-Package $p jQuery.validation 1.13.1
-    Assert-Package $p jQuery 2.1.3
-    Assert-Package $p EntityFramework 6.1.3-beta1
+    Assert-Package $p A 1.0.0
+    Assert-Package $p B 1.0.0
 }
 
 # Tests that passing in online path to a .nupkg file to

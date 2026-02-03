@@ -16,13 +16,13 @@ internal abstract partial class RazorSyntaxNode : GreenNode
     {
     }
 
-    protected RazorSyntaxNode(SyntaxKind kind, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
-        : base(kind, diagnostics, annotations)
+    protected RazorSyntaxNode(SyntaxKind kind, RazorDiagnostic[] diagnostics)
+        : base(kind, diagnostics)
     {
     }
 
-    protected RazorSyntaxNode(SyntaxKind kind, int width, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
-        : base(kind, width, diagnostics, annotations)
+    protected RazorSyntaxNode(SyntaxKind kind, int width, RazorDiagnostic[] diagnostics)
+        : base(kind, width, diagnostics)
     {
     }
 }

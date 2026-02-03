@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +22,7 @@ namespace NuGet.PackageManagement.VisualStudio.Options
             string name,
             bool isEnabled,
             bool allowInsecureConnections,
-            List<PackageSource> packageSources)
+            IReadOnlyList<PackageSource> packageSources)
         {
             string trimmedLookupName = lookupName?.Trim() ?? string.Empty;
             if (string.IsNullOrEmpty(trimmedLookupName))
@@ -171,7 +169,7 @@ namespace NuGet.PackageManagement.VisualStudio.Options
             }
         }
 
-        private static PackageSource? FindByName(string packageSourceName, List<PackageSource> packageSources)
+        private static PackageSource? FindByName(string packageSourceName, IReadOnlyList<PackageSource> packageSources)
         {
             _ = packageSources ?? throw new ArgumentNullException(nameof(packageSources));
 

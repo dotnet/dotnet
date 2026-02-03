@@ -67,7 +67,7 @@ internal class RazorBreakpointSpanEndpoint(
         }
 
         // Now ask Roslyn to adjust the breakpoint to a valid location in the code
-        var syntaxTree = codeDocument.GetOrParseCSharpSyntaxTree(cancellationToken);
+        var syntaxTree = await documentContext.Snapshot.GetCSharpSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
         if (!RazorBreakpointSpans.TryGetBreakpointSpan(syntaxTree, projectedIndex, cancellationToken, out var csharpBreakpointSpan))
         {
             return null;

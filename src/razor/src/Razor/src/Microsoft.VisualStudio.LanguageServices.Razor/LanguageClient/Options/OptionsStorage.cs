@@ -2,21 +2,18 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.Composition;
-using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.Internal.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Razor.Settings;
-using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Shell.Settings;
 using Microsoft.VisualStudio.Threading;
 using Microsoft.VisualStudio.Utilities.UnifiedSettings;
 
@@ -26,72 +23,11 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Options;
 [Export(typeof(IAdvancedSettingsStorage))]
 internal class OptionsStorage : IAdvancedSettingsStorage, IDisposable
 {
-    private readonly WritableSettingsStore _writableSettingsStore;
-    private readonly Lazy<ITelemetryReporter> _telemetryReporter;
     private readonly JoinableTask _initializeTask;
     private ImmutableArray<string> _taskListDescriptors = [];
     private ISettingsReader? _unifiedSettingsReader;
     private IDisposable? _unifiedSettingsSubscription;
     private bool _changedBeforeSubscription;
-
-    public bool FormatOnType
-    {
-        get => GetBool(SettingsNames.FormatOnType.LegacyName, defaultValue: true);
-        set => SetBool(SettingsNames.FormatOnType.LegacyName, value);
-    }
-
-    public bool AutoClosingTags
-    {
-        get => GetBool(SettingsNames.AutoClosingTags.LegacyName, defaultValue: true);
-        set => SetBool(SettingsNames.AutoClosingTags.LegacyName, value);
-    }
-
-    public bool AutoInsertAttributeQuotes
-    {
-        get => GetBool(SettingsNames.AutoInsertAttributeQuotes.LegacyName, defaultValue: true);
-        set => SetBool(SettingsNames.AutoInsertAttributeQuotes.LegacyName, value);
-    }
-
-    public bool ColorBackground
-    {
-        get => GetBool(SettingsNames.ColorBackground.LegacyName, defaultValue: false);
-        set => SetBool(SettingsNames.ColorBackground.LegacyName, value);
-    }
-
-    public bool CodeBlockBraceOnNextLine
-    {
-        get => GetBool(SettingsNames.CodeBlockBraceOnNextLine.LegacyName, defaultValue: false);
-        set => SetBool(SettingsNames.CodeBlockBraceOnNextLine.LegacyName, value);
-    }
-
-    public bool CommitElementsWithSpace
-    {
-        get => GetBool(SettingsNames.CommitElementsWithSpace.LegacyName, defaultValue: true);
-        set => SetBool(SettingsNames.CommitElementsWithSpace.LegacyName, value);
-    }
-
-    public SnippetSetting Snippets
-    {
-        get => (SnippetSetting)GetInt(SettingsNames.Snippets.LegacyName, (int)SnippetSetting.All);
-        set => SetInt(SettingsNames.Snippets.LegacyName, (int)value);
-    }
-
-    public LogLevel LogLevel
-    {
-        get => (LogLevel)GetInt(SettingsNames.LogLevel.LegacyName, (int)LogLevel.Warning);
-        set => SetInt(SettingsNames.LogLevel.LegacyName, (int)value);
-    }
-
-    public bool FormatOnPaste
-    {
-        get => GetBool(SettingsNames.FormatOnPaste.LegacyName, defaultValue: true);
-        set => SetBool(SettingsNames.FormatOnPaste.LegacyName, value);
-    }
-
-    public ImmutableArray<string> TaskListDescriptors
-    {
-        get { return _taskListDescriptors; }
-    }
 
     [ImportingConstructor]
     public OptionsStorage(
@@ -100,17 +36,11 @@ internal class OptionsStorage : IAdvancedSettingsStorage, IDisposable
         Lazy<ITelemetryReporter> telemetryReporter,
         JoinableTaskContext joinableTaskContext)
     {
-        var shellSettingsManager = new ShellSettingsManager(synchronousServiceProvider);
-        _writableSettingsStore = shellSettingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
-
-        _writableSettingsStore.CreateCollection(SettingsNames.LegacyCollection);
-        _telemetryReporter = telemetryReporter;
-
         _initializeTask = joinableTaskContext.Factory.RunAsync(async () =>
         {
-            var unifiedSettingsManager = await serviceProvider.GetServiceAsync<SVsUnifiedSettingsManager, Utilities.UnifiedSettings.ISettingsManager>();
+            var unifiedSettingsManager = await serviceProvider.GetServiceAsync<SVsUnifiedSettingsManager, ISettingsManager>();
             _unifiedSettingsReader = unifiedSettingsManager.GetReader();
-            _unifiedSettingsSubscription = _unifiedSettingsReader.SubscribeToChanges(OnUnifiedSettingsChanged, SettingsNames.AllSettings.Select(s => s.UnifiedName).ToArray());
+            _unifiedSettingsSubscription = _unifiedSettingsReader.SubscribeToChanges(OnUnifiedSettingsChanged, SettingsNames.AllSettings);
 
             await GetTaskListDescriptorsAsync(joinableTaskContext.Factory, serviceProvider);
         });
@@ -168,42 +98,39 @@ internal class OptionsStorage : IAdvancedSettingsStorage, IDisposable
     private EventHandler<ClientAdvancedSettingsChangedEventArgs>? _changed;
 
     public ClientAdvancedSettings GetAdvancedSettings()
-        => new(FormatOnType, AutoClosingTags, AutoInsertAttributeQuotes, ColorBackground, CodeBlockBraceOnNextLine, CommitElementsWithSpace, Snippets, LogLevel, FormatOnPaste, TaskListDescriptors);
+        => new(
+            GetBool(SettingsNames.FormatOnType, defaultValue: true),
+            GetBool(SettingsNames.AutoClosingTags, defaultValue: true),
+            GetBool(SettingsNames.AutoInsertAttributeQuotes, defaultValue: true),
+            GetBool(SettingsNames.ColorBackground, defaultValue: false),
+            GetBool(SettingsNames.CodeBlockBraceOnNextLine, defaultValue: false),
+            GetBool(SettingsNames.CommitElementsWithSpace, defaultValue: true),
+            GetEnum(SettingsNames.Snippets, SnippetSetting.All),
+            GetEnum(SettingsNames.LogLevel, LogLevel.Warning),
+            GetBool(SettingsNames.FormatOnPaste, defaultValue: true),
+            _taskListDescriptors);
 
     public bool GetBool(string name, bool defaultValue)
     {
-        if (_writableSettingsStore.PropertyExists(SettingsNames.LegacyCollection, name))
+        if (_unifiedSettingsReader.AssumeNotNull().GetValue<bool>(name) is { Outcome: SettingRetrievalOutcome.Success, Value: { } unifiedValue })
         {
-            return _writableSettingsStore.GetBoolean(SettingsNames.LegacyCollection, name);
+            return unifiedValue;
         }
 
         return defaultValue;
     }
 
-    public void SetBool(string name, bool value)
+    public T GetEnum<T>(string name, T defaultValue) where T : struct, Enum
     {
-        _writableSettingsStore.SetBoolean(SettingsNames.LegacyCollection, name, value);
-        _telemetryReporter.Value.ReportEvent("OptionChanged", Severity.Normal, new Property(name, value));
-
-        NotifyChange();
-    }
-
-    public int GetInt(string name, int defaultValue)
-    {
-        if (_writableSettingsStore.PropertyExists(SettingsNames.LegacyCollection, name))
+        if (_unifiedSettingsReader.AssumeNotNull().GetValue<string>(name) is { Outcome: SettingRetrievalOutcome.Success, Value: { } unifiedValue })
         {
-            return _writableSettingsStore.GetInt32(SettingsNames.LegacyCollection, name);
+            if (Enum.TryParse<T>(unifiedValue, ignoreCase: true, out var parsed))
+            {
+                return parsed;
+            }
         }
 
         return defaultValue;
-    }
-
-    public void SetInt(string name, int value)
-    {
-        _writableSettingsStore.SetInt32(SettingsNames.LegacyCollection, name, value);
-        _telemetryReporter.Value.ReportEvent("OptionChanged", Severity.Normal, new Property(name, value));
-
-        NotifyChange();
     }
 
     private void NotifyChange()

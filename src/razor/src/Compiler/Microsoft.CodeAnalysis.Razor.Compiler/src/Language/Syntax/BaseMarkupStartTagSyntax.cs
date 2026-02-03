@@ -39,7 +39,7 @@ internal abstract partial class BaseMarkupStartTagSyntax
 
         var containsAttributesContent = false;
 
-        var editHandler = this.GetEditHandler();
+        var editHandler = EditHandler;
         if (editHandler != null)
         {
             acceptsAnyHandler = SpanEditHandler.GetDefault(AcceptedCharactersInternal.Any);
@@ -71,10 +71,10 @@ internal abstract partial class BaseMarkupStartTagSyntax
 
         if (IsValidToken(Bang, out var bang))
         {
-            builder.Add(MarkupTextLiteral(tokens.ToListAndClear(), chunkGenerator, acceptsAnyHandler));
+            builder.Add(SyntaxFactory.MarkupTextLiteral(tokens.ToListAndClear(), chunkGenerator, acceptsAnyHandler));
 
             // We can skip adding bang to the tokens builder, since we just cleared it.
-            builder.Add(RazorMetaCode(bang, chunkGenerator, acceptsNoneHandler));
+            builder.Add(SyntaxFactory.RazorMetaCode(bang, chunkGenerator, acceptsNoneHandler));
         }
 
         if (IsValidToken(Name, out var name))
@@ -82,7 +82,7 @@ internal abstract partial class BaseMarkupStartTagSyntax
             tokens.Add(name);
         }
 
-        builder.Add(MarkupTextLiteral(
+        builder.Add(SyntaxFactory.MarkupTextLiteral(
             tokens.ToListAndClear(), chunkGenerator, containsAttributesContent ? acceptsAnyHandler : editHandler));
 
         builder.AddRange(Attributes);
@@ -99,7 +99,7 @@ internal abstract partial class BaseMarkupStartTagSyntax
 
         if (tokens.Count > 0)
         {
-            builder.Add(MarkupTextLiteral(tokens.ToListAndClear(), chunkGenerator, editHandler));
+            builder.Add(SyntaxFactory.MarkupTextLiteral(tokens.ToListAndClear(), chunkGenerator, editHandler));
         }
 
         return builder.ToListNode(parent: this, Position)
@@ -116,31 +116,7 @@ internal abstract partial class BaseMarkupStartTagSyntax
             validToken = default;
             return false;
         }
-
-        static MarkupTextLiteralSyntax MarkupTextLiteral(
-            SyntaxTokenList tokens, ISpanChunkGenerator? chunkGenerator, SpanEditHandler? editHandler)
-        {
-            var node = SyntaxFactory.MarkupTextLiteral(tokens, chunkGenerator);
-
-            if (editHandler != null)
-            {
-                node = node.WithEditHandler(editHandler);
-            }
-
-            return node;
-        }
-
-        static RazorMetaCodeSyntax RazorMetaCode(
-            SyntaxToken token, ISpanChunkGenerator? chunkGenerator, SpanEditHandler? editHandler)
-        {
-            var node = SyntaxFactory.RazorMetaCode(token, chunkGenerator);
-
-            if (editHandler != null)
-            {
-                node = node.WithEditHandler(editHandler);
-            }
-
-            return node;
-        }
     }
+
+    public abstract BaseMarkupEndTagSyntax? GetEndTag();
 }

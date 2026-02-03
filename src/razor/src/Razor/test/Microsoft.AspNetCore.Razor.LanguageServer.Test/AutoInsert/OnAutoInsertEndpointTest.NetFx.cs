@@ -25,9 +25,8 @@ public partial class OnAutoInsertEndpointTest
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var optionsMonitor = GetOptionsMonitor();
         var insertProvider = new TestOnAutoInsertProvider(">", canResolve: true);
-        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory);
+        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, TestOutputHelper);
         var endpoint = new OnAutoInsertEndpoint(
-            LanguageServerFeatureOptions,
             DocumentMappingService,
             languageServer,
             new AutoInsertService([insertProvider]),
@@ -74,9 +73,8 @@ public partial class OnAutoInsertEndpointTest
         {
             ResolvedTextEdit = LspFactory.CreateTextEdit(position: (0, 0), string.Empty)
         };
-        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory);
+        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, TestOutputHelper);
         var endpoint = new OnAutoInsertEndpoint(
-            LanguageServerFeatureOptions,
             DocumentMappingService,
             languageServer,
             new AutoInsertService([insertProvider1, insertProvider2]),
@@ -126,9 +124,8 @@ public partial class OnAutoInsertEndpointTest
         {
             ResolvedTextEdit = LspFactory.CreateTextEdit(position: (0, 0), string.Empty)
         };
-        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory);
+        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, TestOutputHelper);
         var endpoint = new OnAutoInsertEndpoint(
-            LanguageServerFeatureOptions,
             DocumentMappingService,
             languageServer,
             new AutoInsertService([insertProvider1, insertProvider2]),
@@ -170,9 +167,8 @@ public partial class OnAutoInsertEndpointTest
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var optionsMonitor = GetOptionsMonitor();
         var insertProvider = new TestOnAutoInsertProvider(">", canResolve: false);
-        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory);
+        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, TestOutputHelper);
         var endpoint = new OnAutoInsertEndpoint(
-            LanguageServerFeatureOptions,
             DocumentMappingService,
             languageServer,
             new AutoInsertService([insertProvider]),
@@ -212,9 +208,8 @@ public partial class OnAutoInsertEndpointTest
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var optionsMonitor = GetOptionsMonitor(formatOnType: false);
         var insertProvider = new TestOnAutoInsertProvider("<", canResolve: false);
-        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory);
+        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, TestOutputHelper);
         var endpoint = new OnAutoInsertEndpoint(
-            LanguageServerFeatureOptions,
             DocumentMappingService,
             languageServer,
             new AutoInsertService([insertProvider]),
@@ -252,9 +247,8 @@ public partial class OnAutoInsertEndpointTest
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var optionsMonitor = GetOptionsMonitor(autoInsertAttributeQuotes: false);
         var insertProvider = new TestOnAutoInsertProvider("<", canResolve: false);
-        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory);
+        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, TestOutputHelper);
         var endpoint = new OnAutoInsertEndpoint(
-            LanguageServerFeatureOptions,
             DocumentMappingService,
             languageServer,
             new AutoInsertService([insertProvider]),
@@ -397,9 +391,8 @@ public partial class OnAutoInsertEndpointTest
 
         var optionsMonitor = GetOptionsMonitor();
         var insertProvider = new TestOnAutoInsertProvider("!!!", canResolve: false);
-        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory);
+        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, TestOutputHelper);
         var endpoint = new OnAutoInsertEndpoint(
-            LanguageServerFeatureOptions,
             DocumentMappingService,
             languageServer,
             new AutoInsertService([insertProvider]),

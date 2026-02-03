@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -744,7 +746,7 @@ namespace NuGet.CommandLine.XPlat
                     var splitFrameworkAndRID = frameworkAndRID.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToArray();
                     // If a / is not present in the string, we get all of the targets that
                     // have matching framework regardless of RID.
-                    if (splitFrameworkAndRID.Count() == 1)
+                    if (splitFrameworkAndRID.Length == 1)
                     {
                         filteredTargets.AddRange(requestedTargets.Where(target => target.TargetFramework.Equals(NuGetFramework.Parse(splitFrameworkAndRID[0]))));
                     }
@@ -905,7 +907,10 @@ namespace NuGet.CommandLine.XPlat
         private static IEnumerable<InstalledPackageReference> GetPackageReferencesFromTargets(string projectPath, string framework)
         {
             var globalProperties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                { { "TargetFramework", framework } };
+                {
+                    { "TargetFramework", framework },
+                    { "ExcludeRestorePackageImports", bool.TrueString }
+                };
             var newProject = new ProjectInstance(projectPath, globalProperties, null);
             newProject.Build(new[] { CollectPackageReferences, CollectCentralPackageVersions }, new List<Microsoft.Build.Framework.ILogger> { }, out var targetOutputs);
 

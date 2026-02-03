@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 
@@ -11,6 +12,7 @@ internal class RazorCodeBlockFoldingProvider : AbstractSyntaxNodeFoldingProvider
 {
     protected override string GetCollapsedText(RazorDirectiveSyntax node)
     {
+        Debug.Assert(node.HasDirectiveDescriptor);
         return "@" + node.DirectiveDescriptor.Directive;
     }
 

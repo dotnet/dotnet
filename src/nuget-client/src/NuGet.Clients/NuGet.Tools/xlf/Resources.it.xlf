@@ -113,8 +113,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ProjectMigrateErrorMessage">
-        <source>Project is not eligible for migration as it's not project.json based.</source>
-        <target state="translated">Il progetto non è idoneo per la migrazione perché non è basato su project.json.</target>
+        <source>Project is not eligible for migration. Either the project is not packages.config based or doesn't support PackageReference yet.</source>
+        <target state="translated">Il progetto non è idoneo per la migrazione. Il progetto non è basato su packages.config o non supporta ancora PackageReference.</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
@@ -130,6 +130,21 @@
       <trans-unit id="Text_AllowInsecureConnections_Header">
         <source>Allow Insecure Connections</source>
         <target state="translated">Consentire connessioni non sicure</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Description">
+        <source>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</source>
+        <target state="translated">Le origini di controllo forniscono dati sulle vulnerabilità durante il ripristino senza svolgere la funzione di origini di pacchetti. Se non sono configurate origini di controllo, NuGet Audit usa origini di pacchetti. [Altre informazioni sulle origini di controllo](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_HowToRemove">
+        <source>Remove all audit sources to revert to using package sources for vulnerability data.</source>
+        <target state="translated">Rimuovere tutte le origini di controllo per tornare a usare le origini pacchetto per i dati sulle vulnerabilità</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Title">
+        <source>Audit sources</source>
+        <target state="translated">Origini di controllo</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">
@@ -175,6 +190,11 @@
       <trans-unit id="Text_PackageSourceUrl_Header">
         <source>Source</source>
         <target state="translated">Origine</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageSources_Description">
+        <source>Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</source>
+        <target state="translated">Le origini pacchetto definiscono da dove NuGet recupera i pacchetti per le operazioni di installazione, ripristino, controllo e aggiornamento. [Altre informazioni sulle origini di controllo](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageSources_MachineWide">

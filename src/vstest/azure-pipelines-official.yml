@@ -127,8 +127,10 @@ extends:
         enabled: true
     pool:
       name: $(DncEngInternalBuildPool)
-      image: windows.vs2022preview.amd64
+      image: windows.vs2026preview.scout.amd64
       os: windows
+    settings:
+      networkIsolationPolicy: Permissive,CFSClean
     customBuildTags:
     - ES365AIMigrationTooling
     stages:
@@ -151,7 +153,7 @@ extends:
             timeoutInMinutes: 120
             pool:
               name: $(DncEngInternalBuildPool)
-              image: windows.vs2022preview.amd64
+              image: windows.vs2026preview.scout.amd64
               os: windows
             steps:
             # This steps help to understand versions of .NET runtime installed on the machine,
@@ -185,6 +187,8 @@ extends:
                   -performanceTest
                 name: Test
                 displayName: Test
+                env:
+                  DOTNET_ROOT: $(Build.SourcesDirectory)/.dotnet
 
               # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
               # through the console or trx
@@ -248,14 +252,14 @@ extends:
                     PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
                     ArtifactName: TestResults
                   condition: failed()
-
+          
           - job: Publish
             dependsOn:
               - ${{ each pool in parameters.otherOsPools }}:
                 - ${{ pool.os }}
             pool:
                 name: $(DncEngInternalBuildPool)
-                image: windows.vs2022preview.amd64
+                image: windows.vs2026preview.scout.amd64
                 os: windows
             steps:
               # The template job needs a log, otherwise it writes a warning. We can disable log uploading only for
@@ -275,22 +279,23 @@ extends:
                   artifactName: VSSetupArtifacts
                   targetPath: '$(Build.SourcesDirectory)/artifacts/VSSetup/Release'
 
-              - task: NuGetAuthenticate@1
-                displayName: 'NuGet Authenticate to dotnet-tools and test-tools feeds'
+              - ${{ if eq(parameters.isRTM, False) }}:
+                - task: NuGetAuthenticate@1
+                  displayName: 'NuGet Authenticate to dotnet-tools and test-tools feeds'
 
-              - task:  1ES.PublishNuget@1
-                displayName: 'Publish NuGet packages to dotnet-tools feed'
-                inputs:
-                  packageParentPath: '$(Build.SourcesDirectory)/artifacts/packages/Release'
-                  packagesToPush: '$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.nupkg;!$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.symbols.nupkg'
-                  publishVstsFeed: 'public/dotnet-tools'
-
-              - task:  1ES.PublishNuget@1
-                displayName: 'Publish NuGet packages to test-tools feed'
-                inputs:
-                  packageParentPath: '$(Build.SourcesDirectory)/artifacts/packages/Release'
-                  packagesToPush: '$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.nupkg;!$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.symbols.nupkg'
-                  publishVstsFeed: 'public/test-tools'
+                - task:  1ES.PublishNuget@1
+                  displayName: 'Publish NuGet packages to dotnet-tools feed'
+                  inputs:
+                    packageParentPath: '$(Build.SourcesDirectory)/artifacts/packages/Release'
+                    packagesToPush: '$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.nupkg;!$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.symbols.nupkg'
+                    publishVstsFeed: 'public/dotnet-tools'
+                
+                - task:  1ES.PublishNuget@1
+                  displayName: 'Publish NuGet packages to test-tools feed'
+                  inputs:
+                    packageParentPath: '$(Build.SourcesDirectory)/artifacts/packages/Release'
+                    packagesToPush: '$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.nupkg;!$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.symbols.nupkg'
+                    publishVstsFeed: 'public/test-tools'
 
               # Publishes setup VSIXes to a drop.
               # Note: The insertion tool looks for the display name of this task in the logs.

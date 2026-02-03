@@ -99,7 +99,7 @@ public static class ExecuteHelper
                 outputHelper.WriteLine(output);
             }
 
-            if (string.IsNullOrWhiteSpace(error))
+            if (!string.IsNullOrWhiteSpace(error))
             {
                 outputHelper.WriteLine(error);
             }

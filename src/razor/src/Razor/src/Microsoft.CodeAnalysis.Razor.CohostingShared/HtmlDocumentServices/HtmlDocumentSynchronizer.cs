@@ -162,8 +162,8 @@ internal sealed partial class HtmlDocumentSynchronizer(
 
         try
         {
-            var result = new SynchronizationResult(true, requestedVersion.Checksum);
-            await _htmlDocumentPublisher.PublishAsync(document, result, htmlText, cancellationToken).ConfigureAwait(false);
+            var synchronized = await _htmlDocumentPublisher.TryPublishAsync(document, requestedVersion.Checksum, htmlText, cancellationToken).ConfigureAwait(false);
+            var result = new SynchronizationResult(Synchronized: synchronized, requestedVersion.Checksum);
 
             // If we were cancelled, we can't trust that the publish worked.
             if (cancellationToken.IsCancellationRequested)
@@ -173,6 +173,11 @@ internal sealed partial class HtmlDocumentSynchronizer(
             }
 
             return result;
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogDebug($"Not publishing Html text for {document.FilePath} as the request was cancelled.");
+            return default;
         }
         catch (Exception ex)
         {

@@ -9,13 +9,15 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-internal sealed class TestHtmlDocumentPublisher : IHtmlDocumentPublisher
+internal sealed class TestHtmlDocumentPublisher(bool publishResult = true) : IHtmlDocumentPublisher
 {
+    private readonly bool _publishResult = publishResult;
+
     public List<(TextDocument Document, string Text, ChecksumWrapper Checksum)> Publishes { get; } = [];
 
-    public Task PublishAsync(TextDocument document, SynchronizationResult synchronizationResult, string htmlText, CancellationToken cancellationToken)
+    public Task<bool> TryPublishAsync(TextDocument document, ChecksumWrapper checksum, string htmlText, CancellationToken cancellationToken)
     {
-        Publishes.Add((document, htmlText, synchronizationResult.Checksum));
-        return Task.CompletedTask;
+        Publishes.Add((document, htmlText, checksum));
+        return Task.FromResult(_publishResult);
     }
 }

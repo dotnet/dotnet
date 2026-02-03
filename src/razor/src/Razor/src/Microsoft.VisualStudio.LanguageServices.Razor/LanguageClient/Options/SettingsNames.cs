@@ -5,22 +5,19 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Options;
 
 internal static class SettingsNames
 {
-    public record Setting(string LegacyName, string UnifiedName);
+    public const string UnifiedCollection = "languages.razor.advanced";
 
-    public const string LegacyCollection = "Razor";
-    public const string UnifiedCollection = "textEditor.razor.advanced";
+    public static readonly string FormatOnType = UnifiedCollection + ".formatOnType";
+    public static readonly string AutoClosingTags = UnifiedCollection + ".autoClosingTags";
+    public static readonly string AutoInsertAttributeQuotes = UnifiedCollection + ".autoInsertAttributeQuotes";
+    public static readonly string ColorBackground = UnifiedCollection + ".colorBackground";
+    public static readonly string CodeBlockBraceOnNextLine = UnifiedCollection + ".codeBlockBraceOnNextLine";
+    public static readonly string CommitElementsWithSpace = UnifiedCollection + ".commitElementsWithSpace";
+    public static readonly string Snippets = UnifiedCollection + ".snippets";
+    public static readonly string LogLevel = UnifiedCollection + ".logLevel";
+    public static readonly string FormatOnPaste = UnifiedCollection + ".formatOnPaste";
 
-    public static readonly Setting FormatOnType = new("FormatOnType", UnifiedCollection + ".formatOnType");
-    public static readonly Setting AutoClosingTags = new("AutoClosingTags", UnifiedCollection + ".autoClosingTags");
-    public static readonly Setting AutoInsertAttributeQuotes = new("AutoInsertAttributeQuotes", UnifiedCollection + ".autoInsertAttributeQuotes");
-    public static readonly Setting ColorBackground = new("ColorBackground", UnifiedCollection + ".colorBackground");
-    public static readonly Setting CodeBlockBraceOnNextLine = new("CodeBlockBraceOnNextLine", UnifiedCollection + ".codeBlockBraceOnNextLine");
-    public static readonly Setting CommitElementsWithSpace = new("CommitElementsWithSpace", UnifiedCollection + ".commitCharactersWithSpace");
-    public static readonly Setting Snippets = new("Snippets", UnifiedCollection + ".snippets");
-    public static readonly Setting LogLevel = new("LogLevel", UnifiedCollection + ".logLevel");
-    public static readonly Setting FormatOnPaste = new("FormatOnPaste", UnifiedCollection + ".formatOnPaste");
-
-    public static readonly Setting[] AllSettings =
+    public static readonly string[] AllSettings =
     [
         FormatOnType,
         AutoClosingTags,

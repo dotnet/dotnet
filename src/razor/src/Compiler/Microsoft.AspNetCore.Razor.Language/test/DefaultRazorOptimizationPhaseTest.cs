@@ -1,9 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Moq;
 using Xunit;
@@ -66,20 +65,20 @@ public class DefaultRazorOptimizationPhaseTest
         var originalNode = new DocumentIntermediateNode();
         var firstPassNode = new DocumentIntermediateNode();
         var secondPassNode = new DocumentIntermediateNode();
-        codeDocument.SetDocumentNode(originalNode);
+        codeDocument = codeDocument.WithDocumentNode(originalNode);
 
         var firstPass = new Mock<IRazorOptimizationPass>(MockBehavior.Strict);
         firstPass.SetupGet(m => m.Order).Returns(0);
 
-        RazorEngine firstPassEngine = null;
+        RazorEngine? firstPassEngine = null;
         firstPass
             .SetupGet(m => m.Engine)
-            .Returns(() => firstPassEngine);
+            .Returns(() => firstPassEngine!);
         firstPass
             .Setup(m => m.Initialize(It.IsAny<RazorEngine>()))
             .Callback((RazorEngine engine) => firstPassEngine = engine);
 
-        firstPass.Setup(m => m.Execute(codeDocument, originalNode)).Callback(() =>
+        firstPass.Setup(m => m.Execute(codeDocument, originalNode, CancellationToken.None)).Callback(() =>
         {
             originalNode.Children.Add(firstPassNode);
         });
@@ -87,15 +86,15 @@ public class DefaultRazorOptimizationPhaseTest
         var secondPass = new Mock<IRazorOptimizationPass>(MockBehavior.Strict);
         secondPass.SetupGet(m => m.Order).Returns(1);
 
-        RazorEngine secondPassEngine = null;
+        RazorEngine? secondPassEngine = null;
         secondPass
             .SetupGet(m => m.Engine)
-            .Returns(() => secondPassEngine);
+            .Returns(() => secondPassEngine!);
         secondPass
             .Setup(m => m.Initialize(It.IsAny<RazorEngine>()))
             .Callback((RazorEngine engine) => secondPassEngine = engine);
 
-        secondPass.Setup(m => m.Execute(codeDocument, originalNode)).Callback(() =>
+        secondPass.Setup(m => m.Execute(codeDocument, originalNode, CancellationToken.None)).Callback(() =>
         {
             // Works only when the first pass has run before this.
             originalNode.Children[0].Children.Add(secondPassNode);

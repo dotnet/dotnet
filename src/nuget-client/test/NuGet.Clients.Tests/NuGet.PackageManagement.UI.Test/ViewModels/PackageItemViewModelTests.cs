@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -93,7 +92,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             Assert.Same(initialResult, Images.DefaultPackageIcon);
 
             BitmapSource result = await GetFinalIconBitmapAsync(packageItemViewModel, addIconToCache: false);
-            VerifyImageResult(result, packageItemViewModel.BitmapStatus);
+            VerifyImageResult(result);
             Assert.Equal(IconBitmapStatus.DefaultIconDueToNullStream, packageItemViewModel.BitmapStatus);
         }
 
@@ -110,7 +109,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             BitmapSource result = await GetFinalIconBitmapAsync(packageItemViewModel);
 
             // Assert
-            VerifyImageResult(result, packageItemViewModel.BitmapStatus);
+            VerifyImageResult(result);
             Assert.Equal(IconBitmapStatus.DefaultIconDueToNullStream, packageItemViewModel.BitmapStatus);
         }
 
@@ -128,7 +127,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             BitmapSource result = await GetFinalIconBitmapAsync(packageItemViewModel);
 
             // Assert
-            VerifyImageResult(result, packageItemViewModel.BitmapStatus);
+            VerifyImageResult(result);
             Assert.Equal(IconBitmapStatus.DefaultIconDueToRelativeUri, packageItemViewModel.BitmapStatus);
         }
 
@@ -157,7 +156,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             BitmapSource result = await GetFinalIconBitmapAsync(packageItemViewModel);
 
             // Assert
-            VerifyImageResult(result, packageItemViewModel.BitmapStatus);
+            VerifyImageResult(result);
             Assert.Equal(IconBitmapStatus.DefaultIconDueToNullStream, packageItemViewModel.BitmapStatus);
         }
 
@@ -203,7 +202,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
                 // Assert
                 _output.WriteLine($"result {result}");
                 Assert.Equal(IconBitmapStatus.FetchedIcon, packageItemViewModel.BitmapStatus);
-                VerifyImageResult(result, packageItemViewModel.BitmapStatus);
+                VerifyImageResult(result);
             }
         }
 
@@ -223,7 +222,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
                 BitmapSource result = await GetFinalIconBitmapAsync(packageItemViewModel);
 
                 // Assert
-                VerifyImageResult(result, packageItemViewModel.BitmapStatus);
+                VerifyImageResult(result);
                 Assert.Equal(IconBitmapStatus.FetchedIcon, packageItemViewModel.BitmapStatus);
             }
         }
@@ -253,7 +252,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
                 BitmapSource result = await GetFinalIconBitmapAsync(packageItemViewModel);
 
                 // Assert
-                VerifyImageResult(result, packageItemViewModel.BitmapStatus);
+                VerifyImageResult(result);
                 Assert.Equal(IconBitmapStatus.DefaultIconDueToNullStream, packageItemViewModel.BitmapStatus);
             }
         }
@@ -363,7 +362,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
                     Fragment = iconElement
                 };
 
-                var packageModel = CreateLocalPackageModel(packagePath: zipPath, iconUrl: builder.Uri);
+                var packageModel = CreateLocalPackageModel(iconUrl: builder.Uri);
                 var packageItemViewModel = new PackageItemViewModel(_searchService.Object, packageModel: packageModel);
 
                 _output.WriteLine($"ZipPath {zipPath}");
@@ -373,7 +372,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
                 // Act
                 BitmapSource result = await GetFinalIconBitmapAsync(packageItemViewModel);
 
-                VerifyImageResult(result, packageItemViewModel.BitmapStatus);
+                VerifyImageResult(result);
 
                 _output.WriteLine($"result {result}");
                 var resultFormat = result != null ? result.Format.ToString() : "";
@@ -491,7 +490,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
                 .And.Contain("owner2");
         }
 
-        private LocalPackageModel CreateLocalPackageModel(string? packagePath = null, string? authors = null, IReadOnlyList<string>? owners = null, Uri? iconUrl = null)
+        private LocalPackageModel CreateLocalPackageModel(string? authors = null, IReadOnlyList<string>? owners = null, Uri? iconUrl = null)
         {
             var identity = new PackageIdentity("package", new NuGetVersion("1.0.0"));
             var embeddedCapability = new EmbeddedResourcesCapability(_packageFileService, identity, null);
@@ -499,7 +498,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             return PackageModelCreationTestHelper.CreateLocalPackageModel(identity, _testData.TestData.PackagePath, embeddedCapability, authors: authors, ownersList: owners, iconUrl: iconUrl);
         }
 
-        private static void VerifyImageResult(object result, IconBitmapStatus bitmapStatus)
+        private static void VerifyImageResult(object result)
         {
             Assert.NotNull(result);
             Assert.True(result is BitmapImage || result is CachedBitmap);
@@ -628,7 +627,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
                 BitmapSource result = await GetFinalIconBitmapAsync(packageItemViewModel);
 
                 // Assert
-                VerifyImageResult(result, packageItemViewModel.BitmapStatus);
+                VerifyImageResult(result);
                 Assert.Equal(IconBitmapStatus.FetchedIcon, packageItemViewModel.BitmapStatus);
             }
         }

@@ -4,13 +4,15 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test;
+using Microsoft.AspNetCore.Razor.Test.Common.Mef;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.CodeAnalysis.Remote.Razor;
-using Microsoft.VisualStudio.Composition;
 using Microsoft.VisualStudioCode.RazorExtension.Configuration;
 using Microsoft.VisualStudioCode.RazorExtension.Services;
 using Xunit.Abstractions;
@@ -29,10 +31,7 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
     private protected override IFilePathService FilePathService => _filePathService.AssumeNotNull();
     private protected ISemanticTokensLegendService SemanticTokensLegendService => _semanticTokensLegendService.AssumeNotNull();
 
-    /// <summary>
-    /// The export provider for Roslyn "devenv" services, if tests opt-in to using them
-    /// </summary>
-    private protected ExportProvider? RoslynDevenvExportProvider { get; private set; }
+    private protected override TestComposition LocalComposition => TestComposition.RoslynFeatures;
 
     protected override async Task InitializeAsync()
     {
@@ -41,8 +40,7 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         InProcServiceFactory.TestAccessor.SetExportProvider(OOPExportProvider);
 
         var workspaceProvider = new VSCodeWorkspaceProvider();
-        var remoteWorkspace = RemoteWorkspaceProvider.Instance.GetWorkspace();
-        workspaceProvider.SetWorkspace(remoteWorkspace);
+        workspaceProvider.SetWorkspace(LocalWorkspace);
 
         _remoteServiceInvoker = new VSCodeRemoteServiceInvoker(workspaceProvider, LoggerFactory);
         AddDisposable(_remoteServiceInvoker);
@@ -67,7 +65,7 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
                         CompletionItem = new CompletionItemSetting(),
                         CompletionItemKind = new CompletionItemKindSetting()
                         {
-                            ValueSet = (CompletionItemKind[])Enum.GetValues(typeof(CompletionItemKind)),
+                            ValueSet = Enum.GetValues<CompletionItemKind>(),
                         },
                         CompletionListSetting = new CompletionListSetting()
                         {
@@ -81,5 +79,18 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
             TokenModifiers = [],
             TokenTypes = []
         };
+    }
+
+    private protected override TextDocument CreateProjectAndRazorDocument(
+        string contents,
+        RazorFileKind? fileKind = null,
+        string? documentFilePath = null,
+        (string fileName, string contents)[]? additionalFiles = null,
+        bool inGlobalNamespace = false,
+        bool miscellaneousFile = false,
+        bool addDefaultImports = true,
+        Action<RazorProjectBuilder>? projectConfigure = null)
+    {
+        return CreateProjectAndRazorDocument(LocalWorkspace, contents, fileKind, documentFilePath, additionalFiles, inGlobalNamespace, miscellaneousFile, addDefaultImports, projectConfigure);
     }
 }

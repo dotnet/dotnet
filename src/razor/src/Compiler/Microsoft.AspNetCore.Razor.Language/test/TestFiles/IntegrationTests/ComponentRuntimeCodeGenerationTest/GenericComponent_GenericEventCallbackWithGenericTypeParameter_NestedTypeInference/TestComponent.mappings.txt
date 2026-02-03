@@ -29,6 +29,11 @@ Generated Location: (1553:54,0 [138] )
         [Parameter] public EventCallback<TChild> MyChildEvent { get; set; }
 |
 
+Source Location: (33:2,1 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|MyComponent|
+Generated Location: (2167:71,45 [11] )
+|MyComponent|
+
 Source Location: (45:2,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Item|
 Generated Location: (2365:75,0 [4] )

@@ -133,12 +133,12 @@ internal abstract partial class SyntaxSerializer(StringBuilder builder) : Syntax
         WriteValue($"{tagHelperInfo.TagName}[{tagHelperInfo.TagMode}]");
 
         // Write descriptors
-        foreach (var descriptor in tagHelperInfo.BindingResult.Descriptors)
+        foreach (var tagHelper in tagHelperInfo.BindingResult.TagHelpers)
         {
             WriteSeparator();
 
             // Get the type name without the namespace.
-            var typeName = descriptor.Name[(descriptor.Name.LastIndexOf('.') + 1)..];
+            var typeName = tagHelper.Name[(tagHelper.Name.LastIndexOf('.') + 1)..];
             WriteValue(typeName);
         }
     }
@@ -178,8 +178,7 @@ internal abstract partial class SyntaxSerializer(StringBuilder builder) : Syntax
 
     protected virtual void WriteSpanEditHandlers(SyntaxNode node)
     {
-        var annotation = node.GetAnnotations().FirstOrDefault(a => a.Kind == SyntaxConstants.EditHandlerKind);
-        if (annotation?.Data is SpanEditHandler handler)
+        if (node.GetEditHandler() is SpanEditHandler handler)
         {
             WriteSeparator();
             WriteValue(handler);

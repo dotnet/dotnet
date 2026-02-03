@@ -828,11 +828,12 @@ namespace Microsoft.DotNet.SignTool
 
                         // if we already encountered file that has the same content we can reuse its signed version when repackaging the container.
                         var fileName = Path.GetFileName(entry.RelativePath);
+                        string entryPerms = entry.UnixFileMode.HasValue ? Convert.ToString((uint)entry.UnixFileMode.Value, 8) : "default perms";
                         if (!_filesByContentKey.TryGetValue(fileUniqueKey, out var fileSignInfo))
                         {
                             string extractPathRoot = _useHashInExtractionPath ? fileUniqueKey.StringHash : _filesByContentKey.Count().ToString();
                             string tempPath = Path.Combine(_pathToContainerUnpackingDirectory, extractPathRoot, entry.RelativePath);
-                            _log.LogMessage($"Extracting file '{fileName}' from '{archivePath}' to '{tempPath}'.");
+                            _log.LogMessage($"Extracting file '{fileName}' from '{archivePath}' to '{tempPath}'. (Caching with perms: {entryPerms})");
 
                             Directory.CreateDirectory(Path.GetDirectoryName(tempPath));
 
@@ -842,6 +843,10 @@ namespace Microsoft.DotNet.SignTool
                             _hashToCollisionIdMap.TryGetValue(fileUniqueKey, out string collisionPriorityId);
                             PathWithHash nestedFile = new PathWithHash(tempPath, entry.ContentHash);
                             fileSignInfo = TrackFile(nestedFile, zipFileSignInfo.File, collisionPriorityId);
+                        }
+                        else
+                        {
+                            _log.LogMessage($"Reusing previously extracted file '{fileName}' for '{archivePath}'. (Archival perms: {entryPerms})");
                         }
 
                         if (fileSignInfo.ShouldTrack)

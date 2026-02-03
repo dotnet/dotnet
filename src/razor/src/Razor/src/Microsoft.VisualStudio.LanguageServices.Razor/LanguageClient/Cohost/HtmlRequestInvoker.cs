@@ -68,7 +68,7 @@ internal sealed class HtmlRequestInvoker(
             _logger.LogDebug($"Making LSP request for {method} from {htmlDocument.Uri}{(request is ITextDocumentPositionParams positionParams ? $" at {positionParams.Position}" : "")}, checksum {syncResult.Checksum}.");
 
             // Passing Guid.Empty to this method will mean no tracking
-            using var _ = _telemetryReporter.TrackLspRequest(Methods.TextDocumentCodeActionName, RazorLSPConstants.HtmlLanguageServerName, threshold, correlationId);
+            using var _ = _telemetryReporter.TrackLspRequest(method, RazorLSPConstants.HtmlLanguageServerName, threshold, correlationId);
 
             var result = await _requestInvoker.ReinvokeRequestOnServerAsync<TRequest, TResponse?>(
                 htmlDocument.Snapshot.TextBuffer,
@@ -100,9 +100,6 @@ internal sealed class HtmlRequestInvoker(
             ITextDocumentParams textDocumentParams => textDocumentParams.TextDocument,
             // VSInternalDiagnosticParams doesn't implement the interface because the TextDocument property is nullable
             VSInternalDiagnosticParams vsInternalDiagnosticParams => vsInternalDiagnosticParams.TextDocument,
-            // We don't implement the endpoint that uses this, but it's the only other thing, at time of writing, in the LSP
-            // protocol library that isn't handled by the above two cases.
-            VSInternalRelatedDocumentParams vsInternalRelatedDocumentParams => vsInternalRelatedDocumentParams.TextDocument,
             VSCodeActionParams vsCodeActionParams => vsCodeActionParams.TextDocument,
             _ => null
         };

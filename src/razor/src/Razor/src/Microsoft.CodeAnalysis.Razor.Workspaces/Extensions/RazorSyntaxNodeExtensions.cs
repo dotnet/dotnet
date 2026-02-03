@@ -16,8 +16,8 @@ internal static class RazorSyntaxNodeExtensions
 {
     private static bool IsDirective(SyntaxNode node, DirectiveDescriptor directive, [NotNullWhen(true)] out RazorDirectiveBodySyntax? body)
     {
-        if (node is RazorDirectiveSyntax { DirectiveDescriptor: { } descriptor, Body: RazorDirectiveBodySyntax directiveBody } &&
-            descriptor == directive)
+        if (node is RazorDirectiveSyntax { HasDirectiveDescriptor: true, Body: RazorDirectiveBodySyntax directiveBody } directiveNode &&
+            directiveNode.IsDirective(directive))
         {
             body = directiveBody;
             return true;
@@ -28,10 +28,10 @@ internal static class RazorSyntaxNodeExtensions
     }
 
     internal static bool IsSectionDirective(this SyntaxNode node)
-        => (node as RazorDirectiveSyntax)?.DirectiveDescriptor?.Directive == SectionDirective.Directive.Directive;
+        => (node as RazorDirectiveSyntax)?.IsDirective(SectionDirective.Directive) is true;
 
     internal static bool IsCodeBlockDirective(this SyntaxNode node)
-        => (node as RazorDirectiveSyntax)?.DirectiveDescriptor?.Kind == DirectiveKind.CodeBlock;
+        => (node as RazorDirectiveSyntax)?.IsDirectiveKind(DirectiveKind.CodeBlock) is true;
 
     internal static bool IsUsingDirective(this SyntaxNode node)
         => node.IsUsingDirective(out _);
@@ -39,7 +39,7 @@ internal static class RazorSyntaxNodeExtensions
     internal static bool IsUsingDirective(this SyntaxNode node, out SyntaxTokenList tokens)
     {
         // Using directives are weird, because the directive keyword ("using") is part of the C# statement it represents
-        if (node is RazorDirectiveSyntax { DirectiveDescriptor: null, Body: RazorDirectiveBodySyntax body } &&
+        if (node is RazorDirectiveSyntax { HasDirectiveDescriptor: false, Body: RazorDirectiveBodySyntax body } &&
             body.Keyword is CSharpStatementLiteralSyntax
             {
                 LiteralTokens: [{ Kind: SyntaxKind.Keyword, Content: "using" }, ..] literalTokens

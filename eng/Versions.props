@@ -1,11 +1,25 @@
 <Project>
-  <Import Project="Version.Details.props" Condition="Exists('Version.Details.props')" />
-  <!-- Repo Version Information -->
+  <Import Project="Version.Details.props" />
   <PropertyGroup>
-    <VersionPrefix>0.1.0</VersionPrefix>
-    <PreReleaseVersionLabel>alpha.1</PreReleaseVersionLabel>
-    <UseVSTestRunner>true</UseVSTestRunner>
+    <VersionMajor>10</VersionMajor>
+    <VersionMinor>0</VersionMinor>
     <VersionSDKMinor>2</VersionSDKMinor>
+    <VersionSDKMinorPatch>0</VersionSDKMinorPatch>
+    <VersionFeature>$([System.String]::Copy('$(VersionSDKMinorPatch)').PadLeft(2, '0'))</VersionFeature>
+    <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionSDKMinor)$(VersionFeature)</VersionPrefix>
+    <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
+    <PreReleaseVersionIteration></PreReleaseVersionIteration>
+    <!-- 
+      Allowed values: 'repodefault', 'unstable', 'preview', 'release'
+      'repodefault' uses the repo branding defaults.
+      'unstable' produces assets with the repo specified branding suffix.
+      'preview' produces assets with a '.final' branding suffix.
+      'release' produces assets without a branding suffix.
+    -->
+    <RepoDotNetFinalVersionKind>repodefault</RepoDotNetFinalVersionKind>
+
+    <!-- Arcade features -->
+    <UseVSTestRunner>true</UseVSTestRunner>
   </PropertyGroup>
   <PropertyGroup>
     <!--
@@ -25,8 +39,10 @@
       of a .NET major or minor release, prebuilts may be needed. When the release is mature, prebuilts
       are not necessary, and this property is removed from the file.
     -->
-    <PrivateSourceBuiltSdkVersion>10.0.100-rc.1.25451.107</PrivateSourceBuiltSdkVersion>
-    <PrivateSourceBuiltArtifactsVersion>10.0.100-rc.1.25451.107</PrivateSourceBuiltArtifactsVersion>
+    <PrivateSourceBuiltSdkVersion>10.0.102-servicing.25612.105</PrivateSourceBuiltSdkVersion>
+    <PrivateSourceBuiltArtifactsVersion>10.0.102-servicing.25612.105</PrivateSourceBuiltArtifactsVersion>
+    <!-- workload manifest version for 1xx SDK feature band, used by 2xx+ branches to include 1xx workloads -->
+    <DotNet1xxWorkloadManifestVersion>$([System.Text.RegularExpressions.Regex]::Match($(MicrosoftNETSdkVersion), '^(\d+\.\d+\.\d+)').Value)</DotNet1xxWorkloadManifestVersion>
     <!-- arcade-services dependencies -->
     <MicrosoftDotNetDarcLibVersion>1.1.0-beta.26062.6</MicrosoftDotNetDarcLibVersion>
     <!-- command-line-api dependencies -->

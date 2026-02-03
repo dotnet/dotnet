@@ -7,6 +7,11 @@
         <target state="translated">El valor no puede ser nulo ni una cadena vacía.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ComponentCompletionWithRequiredAttributesLabel">
+        <source>{0} (and req'd attributes...)</source>
+        <target state="translated">{0} (y atributos req'd...)</target>
+        <note>The term "req'd" is an abbreviation for "required"</note>
+      </trans-unit>
       <trans-unit id="Create_Component_FromTag_Title">
         <source>Create component from tag</source>
         <target state="translated">Crear un componente a partir de la etiqueta</target>
@@ -99,6 +104,11 @@
         <target state="translated">Desplazamiento no válido.</target>
         <note />
       </trans-unit>
+      <trans-unit id="KeywordDescription">
+        <source>{0} Keyword</source>
+        <target state="translated">{0} Palabra clave</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Language_Services_Missing_Service">
         <source>Razor language services not configured properly, missing language service '{0}'.</source>
         <target state="translated">Los servicios de lenguaje Razor no están configurados correctamente; falta el servicio de idioma "{0}".</target>
@@ -122,6 +132,11 @@
       <trans-unit id="Promote_using_directive_to">
         <source>Promote using directive to {0}</source>
         <target state="translated">Promover mediante la directiva a {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Simplify_Fully_Qualified_Component_Title">
+        <source>Simplify fully qualified component</source>
+        <target state="translated">Simplificar componente totalmente calificado</target>
         <note />
       </trans-unit>
       <trans-unit id="Simplify_Tag_To_SelfClosing_Title">

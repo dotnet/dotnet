@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.CodeGeneration;
@@ -14,19 +12,18 @@ public class DefaultCodeTargetBuilderTest
     {
         // Arrange
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var options = RazorCodeGenerationOptions.Default;
 
-        var builder = new DefaultCodeTargetBuilder(codeDocument, options);
+        var builder = new DefaultCodeTargetBuilder(codeDocument);
 
         var extensions = new ICodeTargetExtension[]
         {
-                new MyExtension1(),
-                new MyExtension2(),
+            new MyExtension1(),
+            new MyExtension2(),
         };
 
-        for (var i = 0; i < extensions.Length; i++)
+        foreach (var extension in extensions)
         {
-            builder.TargetExtensions.Add(extensions[i]);
+            builder.TargetExtensions.Add(extension);
         }
 
         // Act

@@ -15,7 +15,7 @@ public static class TestCodeRenderingContext
         RazorSourceDocument source = null,
         IntermediateNodeWriter nodeWriter = null)
     {
-        nodeWriter ??= new RuntimeNodeWriter();
+        nodeWriter ??= RuntimeNodeWriter.Instance;
         source ??= TestRazorSourceDocument.Create();
         var documentNode = new DocumentIntermediateNode();
 
@@ -33,7 +33,7 @@ public static class TestCodeRenderingContext
         RazorSourceDocument source = null,
         IntermediateNodeWriter nodeWriter = null)
     {
-        nodeWriter ??= new RuntimeNodeWriter();
+        nodeWriter ??= RuntimeNodeWriter.Instance;
         source ??= TestRazorSourceDocument.Create();
         var documentNode = new DocumentIntermediateNode();
 

@@ -19,6 +19,11 @@ Generated Location: (1257:42,0 [114] )
     public void Use() { System.GC.KeepAlive(myComponent); }
 |
 
+Source Location: (1:0,1 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|MyComponent|
+Generated Location: (1829:59,45 [11] )
+|MyComponent|
+
 Source Location: (32:0,32 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 |MyParameter|
 Generated Location: (2019:63,0 [11] )

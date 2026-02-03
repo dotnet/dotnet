@@ -819,13 +819,14 @@ internal static class CodeWriterExtensions
         this CodeWriter writer,
         ImmutableArray<string> modifiers,
         string typeName,
-        ImmutableArray<(string Type, string Name)> parameters)
+        ImmutableArray<MethodParameter> parameters)
     {
         writer
             .WriteModifierList(modifiers)
             .Write(typeName)
             .Write("(")
-            .WriteCommaSeparatedList(parameters, static (w, v) => w.Write($"{v.Type} {v.Name}"))
+            .WriteCommaSeparatedList(parameters, static (w, v) =>
+                w.WriteModifierList(v.Modifiers).Write($"{v.Type} {v.Name}"))
             .WriteLine(")");
 
         return new CSharpCodeWritingScope(writer);
@@ -836,7 +837,7 @@ internal static class CodeWriterExtensions
         ImmutableArray<string> modifiers,
         string returnType,
         string name,
-        ImmutableArray<(string Type, string Name)> parameters)
+        ImmutableArray<MethodParameter> parameters)
     {
         writer
             .WriteModifierList(modifiers)
@@ -844,7 +845,8 @@ internal static class CodeWriterExtensions
             .Write(" ")
             .Write(name)
             .Write("(")
-            .WriteCommaSeparatedList(parameters, static (w, v) => w.Write($"{v.Type} {v.Name}"))
+            .WriteCommaSeparatedList(parameters, static (w, v) =>
+                w.WriteModifierList(v.Modifiers).Write($"{v.Type} {v.Name}"))
             .WriteLine(")");
 
         return new CSharpCodeWritingScope(writer);

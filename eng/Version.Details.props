@@ -5,19 +5,24 @@ This file should be imported by eng/Versions.props
 -->
 <Project>
   <PropertyGroup>
+    <!-- _git/dotnet-dotnet dependencies -->
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.25612.105</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetBuildManifestPackageVersion>10.0.0-beta.25612.105</MicrosoftDotNetBuildManifestPackageVersion>
     <!-- dotnet/dotnet dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.25451.107</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetBuildManifestPackageVersion>10.0.0-beta.25451.107</MicrosoftDotNetBuildManifestPackageVersion>
-    <MicrosoftNETSdkPackageVersion>10.0.100-rtm.25513.102</MicrosoftNETSdkPackageVersion>
+    <MicrosoftNETSdkPackageVersion>10.0.102-servicing.25612.105</MicrosoftNETSdkPackageVersion>
+    <MicrosoftNETCoreAppRefPackageVersion>10.0.2</MicrosoftNETCoreAppRefPackageVersion>
+    <MicrosoftNETCorePlatformsPackageVersion>10.0.2-servicing.25612.105</MicrosoftNETCorePlatformsPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
-    <!-- dotnet/dotnet dependencies -->
+    <!-- _git/dotnet-dotnet dependencies -->
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
     <MicrosoftDotNetBuildManifestVersion>$(MicrosoftDotNetBuildManifestPackageVersion)</MicrosoftDotNetBuildManifestVersion>
+    <!-- dotnet/dotnet dependencies -->
     <MicrosoftNETSdkVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftNETSdkVersion>
-    
-    <!-- dotnet/arcade-services dependencies -->
-    <MicrosoftDotNetDarcLibVersion>1.1.0-beta.25407.5</MicrosoftDotNetDarcLibVersion>
+    <MicrosoftNETCoreAppRefVersion>$(MicrosoftNETCoreAppRefPackageVersion)</MicrosoftNETCoreAppRefVersion>
+    <MicrosoftNETCorePlatformsVersion>$(MicrosoftNETCorePlatformsPackageVersion)</MicrosoftNETCorePlatformsVersion>
+  <!-- dotnet/arcade-services dependencies -->
+  <MicrosoftDotNetDarcLibVersion>1.1.0-beta.25407.5</MicrosoftDotNetDarcLibVersion>
   </PropertyGroup>
 </Project>

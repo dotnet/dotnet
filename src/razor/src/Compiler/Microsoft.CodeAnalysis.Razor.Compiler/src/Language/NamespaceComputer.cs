@@ -247,7 +247,7 @@ internal static class NamespaceComputer
         {
             Debug.Assert(_source != null);
 
-            if (node.DirectiveDescriptor == NamespaceDirective.Directive &&
+            if (node.IsDirective(NamespaceDirective.Directive) &&
                 node.Body is RazorDirectiveBodySyntax { CSharpCode.Children: [_, CSharpSyntaxNode @namespace, ..] })
             {
                 _lastNamespaceName = @namespace.GetContent();

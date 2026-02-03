@@ -15,16 +15,18 @@ internal class DefaultRazorSyntaxTreePhase : RazorEnginePhaseBase, IRazorSyntaxT
         Passes = Engine.GetFeatures<IRazorSyntaxTreePass>().OrderByAsArray(static x => x.Order);
     }
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
+    protected override RazorCodeDocument ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
         var syntaxTree = codeDocument.GetSyntaxTree();
         ThrowForMissingDocumentDependency(syntaxTree);
 
         foreach (var pass in Passes)
         {
-            syntaxTree = pass.Execute(codeDocument, syntaxTree);
+            cancellationToken.ThrowIfCancellationRequested();
+
+            syntaxTree = pass.Execute(codeDocument, syntaxTree, cancellationToken);
         }
 
-        codeDocument.SetSyntaxTree(syntaxTree);
+        return codeDocument.WithSyntaxTree(syntaxTree);
     }
 }

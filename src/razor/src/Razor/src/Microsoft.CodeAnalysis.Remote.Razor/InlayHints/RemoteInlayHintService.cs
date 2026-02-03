@@ -96,7 +96,7 @@ internal sealed class RemoteInlayHintService(in ServiceArgs args) : RazorDocumen
                 // Inlay hints in directives are okay, eg '@attribute [Description(description: "Desc")]', but if the hint is going to be
                 // at the very start of the directive, we want to strip any TextEdit as it would make for an invalid document. eg: '// @page template: "/"'
                 if (node?.SpanStart == hostDocumentIndex &&
-                    node.FirstAncestorOrSelf<RazorDirectiveSyntax>(n => n.DirectiveDescriptor.Kind == DirectiveKind.SingleLine) is not null)
+                    node.FirstAncestorOrSelf<RazorDirectiveSyntax>(static n => n.IsDirectiveKind(DirectiveKind.SingleLine)) is not null)
                 {
                     hint.TextEdits = null;
                 }

@@ -20,7 +20,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Completion;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Response = Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<Roslyn.LanguageServer.Protocol.RazorVSInternalCompletionList?>;
 
@@ -41,19 +40,17 @@ internal sealed class CohostDocumentCompletionEndpoint(
 #pragma warning disable RS0030 // Do not use banned APIs
     [Import(AllowDefault = true)] ISnippetCompletionItemProvider? snippetCompletionItemProvider,
 #pragma warning restore RS0030 // Do not use banned APIs
-    LanguageServerFeatureOptions languageServerFeatureOptions,
     IHtmlRequestInvoker requestInvoker,
     CompletionListCache completionListCache,
     ITelemetryReporter telemetryReporter,
     ILoggerFactory loggerFactory)
-    : AbstractCohostDocumentEndpoint<CompletionParams, RazorVSInternalCompletionList?>(incompatibleProjectService), IDynamicRegistrationProvider
+    : AbstractCohostDocumentEndpoint<RazorVSInternalCompletionParams, RazorVSInternalCompletionList?>(incompatibleProjectService), IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
     private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
     private readonly ISnippetCompletionItemProvider? _snippetCompletionItemProvider = snippetCompletionItemProvider;
-    private readonly CompletionTriggerAndCommitCharacters _triggerAndCommitCharacters = new(languageServerFeatureOptions);
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
+    private readonly CompletionTriggerAndCommitCharacters _triggerAndCommitCharacters = new(clientCapabilitiesService);
     private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
     private readonly CompletionListCache _completionListCache = completionListCache;
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
@@ -73,8 +70,8 @@ internal sealed class CohostDocumentCompletionEndpoint(
                 RegisterOptions = new CompletionRegistrationOptions()
                 {
                     ResolveProvider = true,
-                    TriggerCharacters = [.. _triggerAndCommitCharacters.AllTriggerCharacters],
-                    AllCommitCharacters = [.. _triggerAndCommitCharacters.AllCommitCharacters]
+                    TriggerCharacters = _triggerAndCommitCharacters.AllTriggerCharacters,
+                    AllCommitCharacters = _triggerAndCommitCharacters.AllCommitCharacters
                 }
             }];
         }
@@ -82,13 +79,12 @@ internal sealed class CohostDocumentCompletionEndpoint(
         return [];
     }
 
-    protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(CompletionParams request)
+    protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(RazorVSInternalCompletionParams request)
         => request.TextDocument?.ToRazorTextDocumentIdentifier();
 
-    protected override async Task<RazorVSInternalCompletionList?> HandleRequestAsync(CompletionParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+    protected override async Task<RazorVSInternalCompletionList?> HandleRequestAsync(RazorVSInternalCompletionParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
-        if (request.Context is null ||
-            JsonHelpers.Convert<CompletionContext, VSInternalCompletionContext>(request.Context) is not { } completionContext)
+        if (request.Context is not { } completionContext)
         {
             _logger.LogError("Completion request context is null");
             return null;
@@ -126,13 +122,9 @@ internal sealed class CohostDocumentCompletionEndpoint(
         }
 
         var documentPositionInfo = completionPositionInfo.DocumentPositionInfo;
-        if (documentPositionInfo.LanguageKind != RazorLanguageKind.Razor)
+        if (documentPositionInfo.LanguageKind != RazorLanguageKind.Razor &&
+            DelegatedCompletionHelper.RewriteContext(completionContext, documentPositionInfo.LanguageKind, _triggerAndCommitCharacters) is { } rewrittenContext)
         {
-            if (DelegatedCompletionHelper.RewriteContext(completionContext, documentPositionInfo.LanguageKind, _triggerAndCommitCharacters) is not { } rewrittenContext)
-            {
-                return null;
-            }
-
             completionContext = rewrittenContext;
         }
 
@@ -144,21 +136,19 @@ internal sealed class CohostDocumentCompletionEndpoint(
             SnippetsSupported: true, // always true in non-legacy Razor, always false in legacy Razor
             AutoInsertAttributeQuotes: clientSettings.AdvancedSettings.AutoInsertAttributeQuotes,
             CommitElementsWithSpace: clientSettings.AdvancedSettings.CommitElementsWithSpace,
-            UseVsCodeCompletionCommitCharacters: _languageServerFeatureOptions.UseVsCodeCompletionCommitCharacters);
+            UseVsCodeCompletionCommitCharacters: !_clientCapabilitiesService.ClientCapabilities.SupportsVisualStudioExtensions);
         using var _ = HashSetPool<string>.GetPooledObject(out var existingHtmlCompletions);
 
-        if (_triggerAndCommitCharacters.IsValidHtmlTrigger(completionContext))
+        // We can just blindly call HTML LSP because if we are in C#, generated HTML seen by HTML LSP may return
+        // results we don't want to show. So we want to call HTML LSP only if we know we are in HTML content.
+        if (documentPositionInfo.LanguageKind == RazorLanguageKind.Html &&
+            _triggerAndCommitCharacters.IsValidHtmlTrigger(completionContext))
         {
-            // We can just blindly call HTML LSP because if we are in C#, generated HTML seen by HTML LSP may return
-            // results we don't want to show. So we want to call HTML LSP only if we know we are in HTML content.
-            if (documentPositionInfo.LanguageKind == RazorLanguageKind.Html)
-            {
-                htmlCompletionList = await GetHtmlCompletionListAsync(request, razorDocument, razorCompletionOptions, correlationId, cancellationToken).ConfigureAwait(false);
+            htmlCompletionList = await GetHtmlCompletionListAsync(request, razorDocument, razorCompletionOptions, correlationId, cancellationToken).ConfigureAwait(false);
 
-                if (htmlCompletionList is not null)
-                {
-                    existingHtmlCompletions.UnionWith(htmlCompletionList.Items.Select(i => i.Label));
-                }
+            if (htmlCompletionList is not null)
+            {
+                existingHtmlCompletions.UnionWith(htmlCompletionList.Items.Select(i => i.Label));
             }
         }
 
@@ -218,24 +208,24 @@ internal sealed class CohostDocumentCompletionEndpoint(
     }
 
     private async Task<RazorVSInternalCompletionList?> GetHtmlCompletionListAsync(
-        CompletionParams request,
+        RazorVSInternalCompletionParams completionParams,
         TextDocument razorDocument,
         RazorCompletionOptions razorCompletionOptions,
         Guid correlationId,
         CancellationToken cancellationToken)
     {
-        var result = await _requestInvoker.MakeHtmlLspRequestAsync<CompletionParams, RazorVSInternalCompletionList>(
+        var result = await _requestInvoker.MakeHtmlLspRequestAsync<RazorVSInternalCompletionParams, RazorVSInternalCompletionList>(
             razorDocument,
             Methods.TextDocumentCompletionName,
-            request,
+            completionParams,
             TelemetryThresholds.CompletionSubLSPTelemetryThreshold,
             correlationId,
             cancellationToken).ConfigureAwait(false);
 
         var rewrittenResponse = DelegatedCompletionHelper.RewriteHtmlResponse(result, razorCompletionOptions);
 
-        var razorDocumentIdentifier = new TextDocumentIdentifierAndVersion(request.TextDocument, Version: 0);
-        var resolutionContext = new DelegatedCompletionResolutionContext(razorDocumentIdentifier, RazorLanguageKind.Html, rewrittenResponse.Data ?? rewrittenResponse.ItemDefaults?.Data);
+        var razorDocumentIdentifier = new TextDocumentIdentifierAndVersion(completionParams.TextDocument, Version: 0);
+        var resolutionContext = new DelegatedCompletionResolutionContext(razorDocumentIdentifier, RazorLanguageKind.Html, rewrittenResponse.Data ?? rewrittenResponse.ItemDefaults?.Data, ProvisionalTextEdit: null);
         var resultId = _completionListCache.Add(rewrittenResponse, resolutionContext);
         rewrittenResponse.SetResultId(resultId, _clientCapabilitiesService.ClientCapabilities);
 
@@ -261,20 +251,23 @@ internal sealed class CohostDocumentCompletionEndpoint(
             return completionList;
         }
 
-        // If there was a list with items, add them to snippets
-        if (completionList?.Items is { } combinedItems)
-        {
-            builder.AddRange(combinedItems);
-        }
+        // We create a list here to put in our cache. It doesn't really matter if its not the one that is sent to the client,
+        // we'll still be able to pull it out again when the client sends us back an item. The SetResultId method associates
+        // the resolution context with each item.
+        var snippetCompletionList = new RazorVSInternalCompletionList { IsIncomplete = true, Items = builder.ToArray() };
+        var resolutionContext = new SnippetCompletionResolutionContext();
+        var resultId = _completionListCache.Add(snippetCompletionList, resolutionContext);
+        snippetCompletionList.SetResultId(resultId, _clientCapabilitiesService.ClientCapabilities);
 
-        // Create or update final completion list
         if (completionList is null)
         {
-            completionList = new RazorVSInternalCompletionList { IsIncomplete = true, Items = builder.ToArray() };
+            // If there were no Html completion items, just use our snippet list
+            completionList = snippetCompletionList;
         }
         else
         {
-            completionList.Items = builder.ToArray();
+            // There were Html completion items, so combine them with our snippet list
+            completionList.Items = [.. snippetCompletionList.Items, .. completionList.Items];
         }
 
         return completionList;
@@ -285,7 +278,7 @@ internal sealed class CohostDocumentCompletionEndpoint(
     internal readonly struct TestAccessor(CohostDocumentCompletionEndpoint instance)
     {
         public Task<RazorVSInternalCompletionList?> HandleRequestAsync(
-            CompletionParams request,
+            RazorVSInternalCompletionParams request,
             TextDocument razorDocument,
             CancellationToken cancellationToken)
                 => instance.HandleRequestAsync(request, razorDocument, cancellationToken);

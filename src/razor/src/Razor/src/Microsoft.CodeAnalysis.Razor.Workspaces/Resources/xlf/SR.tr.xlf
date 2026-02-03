@@ -7,6 +7,11 @@
         <target state="translated">Değer null veya boş bir dize olamaz.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ComponentCompletionWithRequiredAttributesLabel">
+        <source>{0} (and req'd attributes...)</source>
+        <target state="translated">{0} (ve gerekli öznitelikler...)</target>
+        <note>The term "req'd" is an abbreviation for "required"</note>
+      </trans-unit>
       <trans-unit id="Create_Component_FromTag_Title">
         <source>Create component from tag</source>
         <target state="translated">Etiketten bileşen oluştur</target>
@@ -99,6 +104,11 @@
         <target state="translated">Geçersiz uzaklık.</target>
         <note />
       </trans-unit>
+      <trans-unit id="KeywordDescription">
+        <source>{0} Keyword</source>
+        <target state="translated">{0} Anahtar Sözcüğü</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Language_Services_Missing_Service">
         <source>Razor language services not configured properly, missing language service '{0}'.</source>
         <target state="translated">Razor dil hizmetleri düzgün yapılandırılmadı, '{0}' dil hizmeti eksik.</target>
@@ -122,6 +132,11 @@
       <trans-unit id="Promote_using_directive_to">
         <source>Promote using directive to {0}</source>
         <target state="translated">Yönergeyi şu sürüme yükseltmeyi destekleyin: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Simplify_Fully_Qualified_Component_Title">
+        <source>Simplify fully qualified component</source>
+        <target state="translated">Tam nitelenmiş bileşeni basitleştir</target>
         <note />
       </trans-unit>
       <trans-unit id="Simplify_Tag_To_SelfClosing_Title">

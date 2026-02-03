@@ -4,18 +4,21 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using static Microsoft.AspNetCore.Razor.Language.Components.ComponentHelpers;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
-internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
+internal sealed class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
 {
     public override int Order => 50;
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         if (!IsComponentDocument(documentNode))
         {
@@ -33,7 +36,7 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
         // For each event handler *usage* we need to rewrite the tag helper node to map to basic constructs.
         // Each usage will be represented by a tag helper property that is a descendant of either
         // a component or element.
-        using var _ = ReferenceEqualityHashSetPool<IntermediateNode>.GetPooledObject(out var parents);
+        using var _ = SpecializedPools.GetPooledReferenceEqualityHashSet<IntermediateNode>(out var parents);
         var references = documentNode.FindDescendantReferences<TagHelperDirectiveAttributeIntermediateNode>();
 
         foreach (var reference in references)

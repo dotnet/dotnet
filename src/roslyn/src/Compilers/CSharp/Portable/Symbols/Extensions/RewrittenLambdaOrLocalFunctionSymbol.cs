@@ -4,6 +4,7 @@
 
 using System.Collections.Immutable;
 using System.Diagnostics;
+using Microsoft.CodeAnalysis.CSharp.Emit;
 using Microsoft.CodeAnalysis.PooledObjects;
 
 namespace Microsoft.CodeAnalysis.CSharp.Symbols
@@ -13,7 +14,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private readonly RewrittenMethodSymbol _containingMethod;
 
         public RewrittenLambdaOrLocalFunctionSymbol(MethodSymbol lambdaOrLocalFunctionSymbol, RewrittenMethodSymbol containingMethod)
-            : base(lambdaOrLocalFunctionSymbol, containingMethod.TypeMap, lambdaOrLocalFunctionSymbol.TypeParameters, propagateTypeParameterAttributes: false)
+            : base(lambdaOrLocalFunctionSymbol, containingMethod.TypeMap, lambdaOrLocalFunctionSymbol.TypeParameters)
         {
             Debug.Assert(lambdaOrLocalFunctionSymbol.AssociatedSymbol is null);
             Debug.Assert(lambdaOrLocalFunctionSymbol.TryGetThisParameter(out var thisParameter) && thisParameter is null);
@@ -37,5 +38,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             return ImmutableArray<ParameterSymbol>.CastUp(_originalMethod.Parameters.SelectAsArray(static (p, @this) => new RewrittenMethodParameterSymbol(@this, p), this));
         }
+
+        internal override void AddSynthesizedAttributes(PEModuleBuilder moduleBuilder, ref ArrayBuilder<CSharpAttributeData> attributes)
+            => throw ExceptionUtilities.Unreachable();
     }
 }

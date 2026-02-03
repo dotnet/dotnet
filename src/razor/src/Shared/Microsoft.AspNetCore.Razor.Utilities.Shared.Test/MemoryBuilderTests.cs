@@ -105,6 +105,306 @@ public class MemoryBuilderTests
     }
 
     [Fact]
+    public void Push_SingleItem_AddsToBuilder()
+    {
+        using var builder = new MemoryBuilder<int>();
+
+        builder.Push(42);
+
+        Assert.Equal(1, builder.Length);
+        Assert.Equal(42, builder[0]);
+    }
+
+    [Fact]
+    public void Push_MultipleItems_AddsInOrder()
+    {
+        using var builder = new MemoryBuilder<int>();
+
+        builder.Push(10);
+        builder.Push(20);
+        builder.Push(30);
+
+        Assert.Equal(3, builder.Length);
+        Assert.Equal(10, builder[0]);
+        Assert.Equal(20, builder[1]);
+        Assert.Equal(30, builder[2]);
+    }
+
+    [Fact]
+    public void Push_WithInitialCapacity_WorksCorrectly()
+    {
+        using var builder = new MemoryBuilder<string>(10);
+
+        builder.Push("first");
+        builder.Push("second");
+
+        Assert.Equal(2, builder.Length);
+        Assert.Equal("first", builder[0]);
+        Assert.Equal("second", builder[1]);
+    }
+
+    [Fact]
+    public void Push_CausesResize_WorksCorrectly()
+    {
+        using var builder = new MemoryBuilder<int>(2);
+
+        // Fill initial capacity
+        builder.Push(1);
+        builder.Push(2);
+        
+        // This should cause a resize
+        builder.Push(3);
+        builder.Push(4);
+
+        Assert.Equal(4, builder.Length);
+        Assert.Equal(1, builder[0]);
+        Assert.Equal(2, builder[1]);
+        Assert.Equal(3, builder[2]);
+        Assert.Equal(4, builder[3]);
+    }
+
+    [Fact]
+    public void Peek_SingleItem_ReturnsLastItem()
+    {
+        using var builder = new MemoryBuilder<int>();
+
+        builder.Push(42);
+
+        var result = builder.Peek();
+
+        Assert.Equal(42, result);
+        Assert.Equal(1, builder.Length); // Length should remain unchanged
+    }
+
+    [Fact]
+    public void Peek_MultipleItems_ReturnsLastItem()
+    {
+        using var builder = new MemoryBuilder<string>();
+
+        builder.Push("first");
+        builder.Push("second");
+        builder.Push("third");
+
+        var result = builder.Peek();
+
+        Assert.Equal("third", result);
+        Assert.Equal(3, builder.Length); // Length should remain unchanged
+    }
+
+    [Fact]
+    public void Peek_AfterMultiplePushes_ReturnsCorrectItem()
+    {
+        using var builder = new MemoryBuilder<int>();
+
+        for (var i = 0; i < 100; i++)
+        {
+            builder.Push(i);
+            Assert.Equal(i, builder.Peek());
+        }
+
+        Assert.Equal(100, builder.Length);
+        Assert.Equal(99, builder.Peek());
+    }
+
+    [Fact]
+    public void Pop_SingleItem_ReturnsAndRemovesItem()
+    {
+        using var builder = new MemoryBuilder<int>();
+
+        builder.Push(42);
+
+        var result = builder.Pop();
+
+        Assert.Equal(42, result);
+        Assert.Equal(0, builder.Length);
+        Assert.True(builder.IsEmpty);
+    }
+
+    [Fact]
+    public void Pop_MultipleItems_ReturnsInReverseOrder()
+    {
+        using var builder = new MemoryBuilder<string>();
+
+        builder.Push("first");
+        builder.Push("second");
+        builder.Push("third");
+
+        Assert.Equal("third", builder.Pop());
+        Assert.Equal(2, builder.Length);
+
+        Assert.Equal("second", builder.Pop());
+        Assert.Equal(1, builder.Length);
+
+        Assert.Equal("first", builder.Pop());
+        Assert.Equal(0, builder.Length);
+        Assert.True(builder.IsEmpty);
+    }
+
+    [Fact]
+    public void Pop_Order_WorksCorrectly()
+    {
+        using var builder = new MemoryBuilder<int>();
+
+        // Push numbers 0-9
+        for (var i = 0; i < 10; i++)
+        {
+            builder.Push(i);
+        }
+
+        // Pop should return in reverse order (LIFO)
+        for (var i = 9; i >= 0; i--)
+        {
+            Assert.Equal(i, builder.Pop());
+        }
+
+        Assert.True(builder.IsEmpty);
+    }
+
+    [Fact]
+    public void TryPop_EmptyBuilder_ReturnsFalse()
+    {
+        using var builder = new MemoryBuilder<int>();
+
+        var result = builder.TryPop(out var item);
+
+        Assert.False(result);
+        Assert.Equal(default, item);
+        Assert.True(builder.IsEmpty);
+    }
+
+    [Fact]
+    public void TryPop_SingleItem_ReturnsTrueAndItem()
+    {
+        using var builder = new MemoryBuilder<string>();
+
+        builder.Push("test");
+
+        var result = builder.TryPop(out var item);
+
+        Assert.True(result);
+        Assert.Equal("test", item);
+        Assert.Equal(0, builder.Length);
+        Assert.True(builder.IsEmpty);
+    }
+
+    [Fact]
+    public void TryPop_MultipleItems_ReturnsTrueAndLastItem()
+    {
+        using var builder = new MemoryBuilder<int>();
+
+        builder.Push(10);
+        builder.Push(20);
+        builder.Push(30);
+
+        var result = builder.TryPop(out var item);
+
+        Assert.True(result);
+        Assert.Equal(30, item);
+        Assert.Equal(2, builder.Length);
+    }
+
+    [Fact]
+    public void TryPop_UntilEmpty_WorksCorrectly()
+    {
+        using var builder = new MemoryBuilder<int>();
+
+        builder.Push(1);
+        builder.Push(2);
+        builder.Push(3);
+
+        // Pop all items
+        Assert.True(builder.TryPop(out var item1));
+        Assert.Equal(3, item1);
+
+        Assert.True(builder.TryPop(out var item2));
+        Assert.Equal(2, item2);
+
+        Assert.True(builder.TryPop(out var item3));
+        Assert.Equal(1, item3);
+
+        // Try to pop from empty builder
+        Assert.False(builder.TryPop(out var item4));
+        Assert.Equal(default, item4);
+    }
+
+    [Fact]
+    public void TryPop_WithNullableReferenceTypes_WorksCorrectly()
+    {
+        using var builder = new MemoryBuilder<string?>();
+
+        builder.Push("test");
+        builder.Push(null);
+
+        // Pop null value
+        Assert.True(builder.TryPop(out var item1));
+        Assert.Null(item1);
+
+        // Pop string value
+        Assert.True(builder.TryPop(out var item2));
+        Assert.Equal("test", item2);
+
+        // Pop from empty
+        Assert.False(builder.TryPop(out var item3));
+        Assert.Null(item3);
+    }
+
+    [Fact]
+    public void StackOperations_MixedUsage_WorksCorrectly()
+    {
+        using var builder = new MemoryBuilder<int>();
+
+        // Push some items
+        builder.Push(1);
+        builder.Push(2);
+        builder.Push(3);
+
+        // Peek (should not modify)
+        Assert.Equal(3, builder.Peek());
+        Assert.Equal(3, builder.Length);
+
+        // Pop one item
+        Assert.Equal(3, builder.Pop());
+        Assert.Equal(2, builder.Length);
+
+        // Push another item
+        builder.Push(4);
+        Assert.Equal(3, builder.Length);
+
+        // TryPop
+        Assert.True(builder.TryPop(out var item));
+        Assert.Equal(4, item);
+        Assert.Equal(2, builder.Length);
+
+        // Peek again
+        Assert.Equal(2, builder.Peek());
+    }
+
+    [Fact]
+    public void StackOperations_LargeNumberOfItems_WorksCorrectly()
+    {
+        using var builder = new MemoryBuilder<int>();
+
+        // Push 1000 items
+        for (var i = 0; i < 1000; i++)
+        {
+            builder.Push(i);
+        }
+
+        Assert.Equal(1000, builder.Length);
+        Assert.Equal(999, builder.Peek());
+
+        // Pop all items in reverse order
+        for (var i = 999; i >= 0; i--)
+        {
+            Assert.True(builder.TryPop(out var item));
+            Assert.Equal(i, item);
+        }
+
+        Assert.True(builder.IsEmpty);
+        Assert.False(builder.TryPop(out _));
+    }
+
+    [Fact]
     public void CreateString_EmptyBuilder_ReturnsEmptyString()
     {
         var builder = new MemoryBuilder<ReadOnlyMemory<char>>();

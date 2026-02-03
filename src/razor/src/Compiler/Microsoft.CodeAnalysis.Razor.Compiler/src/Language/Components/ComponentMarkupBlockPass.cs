@@ -1,12 +1,11 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
@@ -16,7 +15,7 @@ namespace Microsoft.AspNetCore.Razor.Language.Components;
 //
 // Does not preserve insignificant details of the HTML, like tag closing style
 // or quote style.
-internal class ComponentMarkupBlockPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
+internal sealed class ComponentMarkupBlockPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
 {
     private readonly RazorLanguageVersion _version;
 
@@ -33,7 +32,8 @@ internal class ComponentMarkupBlockPass : ComponentIntermediateNodePassBase, IRa
 
     protected override void ExecuteCore(
         RazorCodeDocument codeDocument,
-        DocumentIntermediateNode documentNode)
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         if (!IsComponentDocument(documentNode))
         {
@@ -191,7 +191,7 @@ internal class ComponentMarkupBlockPass : ComponentIntermediateNodePassBase, IRa
 
             if (!_foundNonHtml)
             {
-                Trees.Add(new IntermediateNodeReference(node, Parent));
+                Trees.Add(new IntermediateNodeReference(node, Parent!));
             }
 
             _foundNonHtml = originalState |= _foundNonHtml;
@@ -241,7 +241,7 @@ internal class ComponentMarkupBlockPass : ComponentIntermediateNodePassBase, IRa
 
             if (!_foundNonHtml)
             {
-                Trees.Add(new IntermediateNodeReference(node, Parent));
+                Trees.Add(new IntermediateNodeReference(node, Parent!));
             }
 
             _foundNonHtml = originalState |= _foundNonHtml;

@@ -13,13 +13,20 @@ internal sealed class RemoteLoggerFactory : ILoggerFactory
 {
     private ILoggerFactory _targetLoggerFactory = EmptyLoggerFactory.Instance;
 
-    internal void SetTargetLoggerFactory(ILoggerFactory loggerFactory)
+    /// <summary>
+    /// Sets the logger factory to use in OOP
+    /// </summary>
+    /// <returns>True if the factory was set</returns>
+    internal bool SetTargetLoggerFactory(ILoggerFactory loggerFactory)
     {
         // We only set the target logger factory if the current factory is empty.
         if (_targetLoggerFactory is EmptyLoggerFactory)
         {
             _targetLoggerFactory = loggerFactory;
+            return true;
         }
+
+        return false;
     }
 
     public void AddLoggerProvider(ILoggerProvider provider)

@@ -25,32 +25,8 @@
             "defaultRemote": "https://github.com/dotnet/arcade"
         },
         {
-            "name": "aspnetcore",
-            "defaultRemote": "https://github.com/dotnet/aspnetcore"
-        },
-        {
-            "name": "cecil",
-            "defaultRemote": "https://github.com/dotnet/cecil"
-        },
-        {
-            "name": "command-line-api",
-            "defaultRemote": "https://github.com/dotnet/command-line-api"
-        },
-        {
-            "name": "deployment-tools",
-            "defaultRemote": "https://github.com/dotnet/deployment-tools"
-        },
-        {
             "name": "diagnostics",
             "defaultRemote": "https://github.com/dotnet/diagnostics"
-        },
-        {
-            "name": "efcore",
-            "defaultRemote": "https://github.com/dotnet/efcore"
-        },
-        {
-            "name": "emsdk",
-            "defaultRemote": "https://github.com/dotnet/emsdk"
         },
         {
             "name": "fsharp",
@@ -74,10 +50,6 @@
             "defaultRemote": "https://github.com/dotnet/roslyn"
         },
         {
-            "name": "runtime",
-            "defaultRemote": "https://github.com/dotnet/runtime"
-        },
-        {
             "name": "scenario-tests",
             "defaultRemote": "https://github.com/dotnet/scenario-tests"
         },
@@ -94,10 +66,6 @@
             "defaultRemote": "https://github.com/dotnet/sourcelink"
         },
         {
-            "name": "symreader",
-            "defaultRemote": "https://github.com/dotnet/symreader"
-        },
-        {
             "name": "templating",
             "defaultRemote": "https://github.com/dotnet/templating"
         },
@@ -110,29 +78,6 @@
                 "src/package/licenses/LICENSE_VS.txt",
                 "test/Microsoft.TestPlatform.CoreUtilities.UnitTests/TestAssets/dotnetWinX86.exe"
             ]
-        },
-        {
-            "name": "xdt",
-            "defaultRemote": "https://github.com/dotnet/xdt"
-        },
-        {
-            "name": "winforms",
-            "defaultRemote": "https://github.com/dotnet/winforms",
-            "exclude": [
-                // Non-OSS license - https://github.com/dotnet/source-build/issues/3772
-                "src/test/integration/DesignSurface/**/*.cs",
-                "src/test/integration/DesignSurface/**/*.ico",
-                "src/test/integration/DesignSurface/**/*.resx",
-                "src/test/integration/DesignSurface/THIRD-PARTY-NOTICE.txt"
-            ]
-        },
-        {
-            "name": "wpf",
-            "defaultRemote": "https://github.com/dotnet/wpf"
-        },
-        {
-            "name": "windowsdesktop",
-            "defaultRemote": "https://github.com/dotnet/windowsdesktop"
         }
     ]
 }

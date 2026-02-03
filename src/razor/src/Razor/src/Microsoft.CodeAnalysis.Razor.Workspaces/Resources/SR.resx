@@ -214,6 +214,9 @@
   <data name="Simplify_Tag_To_SelfClosing_Title" xml:space="preserve">
     <value>Simplify tag to self-closing</value>
   </data>
+  <data name="Simplify_Fully_Qualified_Component_Title" xml:space="preserve">
+    <value>Simplify fully qualified component</value>
+  </data>
   <data name="IncompatibleProject_NotAnAdditionalFile" xml:space="preserve">
     <value>The Razor editor utilizes the Razor Source Generator, which requires *.razor and *.cshtml files to be AdditionalFiles in the project. {0} appears to come from '{1}', which has Razor documents but this file is not an AdditionalFile, so the editing experience will be limited. No more messages will be logged for this project.</value>
   </data>
@@ -222,5 +225,12 @@
   </data>
   <data name="ExtractTo_Css_Title" xml:space="preserve">
     <value>Extract to {0}.css</value>
+  </data>
+  <data name="ComponentCompletionWithRequiredAttributesLabel" xml:space="preserve">
+    <value>{0} (and req'd attributes...)</value>
+    <comment>The term "req'd" is an abbreviation for "required"</comment>
+  </data>
+  <data name="KeywordDescription" xml:space="preserve">
+    <value>{0} Keyword</value>
   </data>
 </root>

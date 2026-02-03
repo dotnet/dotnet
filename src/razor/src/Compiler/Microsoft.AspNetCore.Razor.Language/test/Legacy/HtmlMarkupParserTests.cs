@@ -1,13 +1,12 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Test.Legacy;
@@ -76,6 +75,7 @@ public class HtmlMarkupParserTests
         // Assert
         Assert.True(doubleHyphenToken.IsEquivalentTo(token));
         Assert.True(sut.At(SyntaxKind.CloseAngle));
+        Assert.NotNull(sut.PreviousToken);
         Assert.True(HtmlMarkupParser.IsHyphen(sut.PreviousToken));
     }
 
@@ -164,35 +164,34 @@ public class HtmlMarkupParserTests
     {
         // Arrange
         var expectedToken1 = SyntaxFactory.Token(SyntaxKind.Text, "a");
-        var sequence = Enumerable.Range((int)'a', 26).Select(item => SyntaxFactory.Token(SyntaxKind.Text, ((char)item).ToString()));
+        using var array = new PooledArrayBuilder<SyntaxToken>();
+        array.AddRange(Enumerable.Range('a', 26).Select(item => SyntaxFactory.Token(SyntaxKind.Text, ((char)item).ToString())));
 
         // Act & Assert
-        Assert.False(HtmlMarkupParser.IsCommentContentEndingInvalid(sequence));
+        Assert.False(HtmlMarkupParser.IsCommentContentEndingInvalid(in array));
     }
 
     [Fact]
     public void IsCommentContentEndingInvalid_ReturnsTrueForDisallowedContent()
     {
         // Arrange
-        var sequence = new[]
-        {
-                SyntaxFactory.Token(SyntaxKind.OpenAngle, "<"),
-                SyntaxFactory.Token(SyntaxKind.Bang, "!"),
-                SyntaxFactory.Token(SyntaxKind.Text, "-")
-            };
+        using var array = new PooledArrayBuilder<SyntaxToken>();
+        array.Add(SyntaxFactory.Token(SyntaxKind.OpenAngle, "<"));
+        array.Add(SyntaxFactory.Token(SyntaxKind.Bang, "!"));
+        array.Add(SyntaxFactory.Token(SyntaxKind.Text, "-"));
 
         // Act & Assert
-        Assert.True(HtmlMarkupParser.IsCommentContentEndingInvalid(sequence));
+        Assert.True(HtmlMarkupParser.IsCommentContentEndingInvalid(in array));
     }
 
     [Fact]
     public void IsCommentContentEndingInvalid_ReturnsFalseForEmptyContent()
     {
         // Arrange
-        var sequence = Array.Empty<SyntaxToken>();
+        using var array = new PooledArrayBuilder<SyntaxToken>();
 
         // Act & Assert
-        Assert.False(HtmlMarkupParser.IsCommentContentEndingInvalid(sequence));
+        Assert.False(HtmlMarkupParser.IsCommentContentEndingInvalid(in array));
     }
 
     private class TestHtmlMarkupParser : HtmlMarkupParser, IDisposable
@@ -209,7 +208,7 @@ public class HtmlMarkupParserTests
             base.Dispose();
         }
 
-        public new SyntaxToken PreviousToken
+        public new SyntaxToken? PreviousToken
         {
             get => base.PreviousToken;
         }
@@ -219,7 +218,7 @@ public class HtmlMarkupParserTests
             return base.IsHtmlCommentAhead();
         }
 
-        public new SyntaxToken AcceptAllButLastDoubleHyphens()
+        public new SyntaxToken? AcceptAllButLastDoubleHyphens()
         {
             return base.AcceptAllButLastDoubleHyphens();
         }

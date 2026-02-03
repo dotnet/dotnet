@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -21,7 +19,7 @@ namespace NuGet.PackageManagement.UI
             Id = string.Empty;
         }
 
-        public DetailedPackageMetadata(PackageSearchMetadataContextInfo serverData, PackageDeprecationMetadataContextInfo deprecationMetadata, ImmutableList<KnownOwnerViewModel>? knownOwnerViewModels, long? downloadCount)
+        public DetailedPackageMetadata(PackageSearchMetadataContextInfo serverData, PackageDeprecationMetadataContextInfo deprecationMetadata, ImmutableList<KnownOwnerViewModel>? knownOwnerViewModels, long? downloadCount, IReadOnlyCollection<PackageVulnerabilityMetadataContextInfo>? packageVulnerabilities)
         {
             Id = serverData.Identity?.Id ?? string.Empty;
             Version = serverData.Identity?.Version;
@@ -55,7 +53,7 @@ namespace NuGet.PackageManagement.UI
             PrefixReserved = serverData.PrefixReserved;
             LicenseMetadata = serverData.LicenseMetadata;
             DeprecationMetadata = deprecationMetadata;
-            Vulnerabilities = serverData.Vulnerabilities;
+            Vulnerabilities = packageVulnerabilities ?? serverData.Vulnerabilities;
             PackagePath = serverData.PackagePath;
 
             // Determine the package details URL and text.
@@ -120,7 +118,7 @@ namespace NuGet.PackageManagement.UI
 
         public PackageDeprecationMetadataContextInfo? DeprecationMetadata { get; set; }
 
-        public IEnumerable<PackageVulnerabilityMetadataContextInfo>? Vulnerabilities { get; set; }
+        public IReadOnlyCollection<PackageVulnerabilityMetadataContextInfo>? Vulnerabilities { get; set; }
 
         public IReadOnlyList<IText>? LicenseLinks => PackageLicenseUtilities.GenerateLicenseLinks(this);
 

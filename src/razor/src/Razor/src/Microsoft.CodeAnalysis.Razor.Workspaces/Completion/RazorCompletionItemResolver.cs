@@ -89,6 +89,19 @@ internal class RazorCompletionItemResolver : CompletionItemResolver
 
                     break;
                 }
+            case RazorCompletionItemKind.Attribute:
+                {
+                    if (associatedRazorCompletion.DescriptionInfo is AttributeDescriptionInfo descriptionInfo)
+                    {
+                        completionItem.Documentation = new MarkupContent
+                        {
+                            Kind = documentationKind,
+                            Value = descriptionInfo.Documentation
+                        };
+                    }
+
+                    break;
+                }
             case RazorCompletionItemKind.DirectiveAttribute:
             case RazorCompletionItemKind.DirectiveAttributeParameter:
             case RazorCompletionItemKind.TagHelperAttribute:
@@ -127,6 +140,15 @@ internal class RazorCompletionItemResolver : CompletionItemResolver
                         tagHelperMarkupTooltip = await MarkupTagHelperTooltipFactory
                             .TryCreateTooltipAsync(razorCompletionResolveContext.FilePath, descriptionInfo, componentAvailabilityService, documentationKind, cancellationToken)
                             .ConfigureAwait(false);
+                    }
+
+                    break;
+                }
+            case RazorCompletionItemKind.CSharpRazorKeyword:
+                {
+                    if (associatedRazorCompletion.DescriptionInfo is CSharpRazorKeywordCompletionDescription descriptionInfo)
+                    {
+                        completionItem.Documentation = descriptionInfo.Description;
                     }
 
                     break;

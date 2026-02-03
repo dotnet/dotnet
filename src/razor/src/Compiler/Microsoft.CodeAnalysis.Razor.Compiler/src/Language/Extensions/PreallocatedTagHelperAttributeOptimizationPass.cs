@@ -1,21 +1,21 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Extensions;
 
-internal class PreallocatedTagHelperAttributeOptimizationPass : IntermediateNodePassBase, IRazorOptimizationPass
+internal sealed class PreallocatedTagHelperAttributeOptimizationPass : IntermediateNodePassBase, IRazorOptimizationPass
 {
     // We want to run after the passes that 'lower' tag helpers. We also want this to run after DefaultTagHelperOptimizationPass.
     public override int Order => DefaultFeatureOrder + 1010;
 
-    protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
+    protected override void ExecuteCore(
+        RazorCodeDocument codeDocument,
+        DocumentIntermediateNode documentNode,
+        CancellationToken cancellationToken)
     {
         // There's no value in executing this pass at design time, it just prevents some allocations.
         if (documentNode.Options.DesignTime)
@@ -34,7 +34,7 @@ internal class PreallocatedTagHelperAttributeOptimizationPass : IntermediateNode
     {
         private const string PreAllocatedAttributeVariablePrefix = "__tagHelperAttribute_";
 
-        private ClassDeclarationIntermediateNode _classDeclaration;
+        private ClassDeclarationIntermediateNode? _classDeclaration;
         private int _variableCountOffset;
         private int _preallocatedDeclarationCount;
 
@@ -48,20 +48,17 @@ internal class PreallocatedTagHelperAttributeOptimizationPass : IntermediateNode
 
         public void VisitExtension(DefaultTagHelperHtmlAttributeIntermediateNode node)
         {
-            if (node.Children.Count != 1 || !(node.Children.First() is HtmlContentIntermediateNode))
+            if (node.Children is not [HtmlContentIntermediateNode htmlContentNode])
             {
                 return;
             }
 
-            var htmlContentNode = node.Children.First() as HtmlContentIntermediateNode;
             var plainTextValue = GetContent(htmlContentNode);
 
-            PreallocatedTagHelperHtmlAttributeValueIntermediateNode declaration = null;
+            PreallocatedTagHelperHtmlAttributeValueIntermediateNode? declaration = null;
 
-            for (var i = 0; i < _classDeclaration.Children.Count; i++)
+            foreach (var current in _classDeclaration.AssumeNotNull().Children)
             {
-                var current = _classDeclaration.Children[i];
-
                 if (current is PreallocatedTagHelperHtmlAttributeValueIntermediateNode existingDeclaration)
                 {
                     if (string.Equals(existingDeclaration.AttributeName, node.AttributeName, StringComparison.Ordinal) &&
@@ -93,28 +90,24 @@ internal class PreallocatedTagHelperAttributeOptimizationPass : IntermediateNode
                 VariableName = declaration.VariableName,
             };
 
-            var nodeIndex = Parent.Children.IndexOf(node);
+            var nodeIndex = Parent!.Children.IndexOf(node);
             Parent.Children[nodeIndex] = addPreAllocatedAttribute;
         }
 
         public void VisitExtension(DefaultTagHelperPropertyIntermediateNode node)
         {
             if (!(node.BoundAttribute.IsStringProperty || (node.IsIndexerNameMatch && node.BoundAttribute.IsIndexerStringProperty)) ||
-                node.Children.Count != 1 ||
-                !(node.Children.First() is HtmlContentIntermediateNode))
+                node.Children is not [HtmlContentIntermediateNode htmlContentNode])
             {
                 return;
             }
 
-            var htmlContentNode = node.Children.First() as HtmlContentIntermediateNode;
             var plainTextValue = GetContent(htmlContentNode);
 
-            PreallocatedTagHelperPropertyValueIntermediateNode declaration = null;
+            PreallocatedTagHelperPropertyValueIntermediateNode? declaration = null;
 
-            for (var i = 0; i < _classDeclaration.Children.Count; i++)
+            foreach (var current in _classDeclaration.AssumeNotNull().Children)
             {
-                var current = _classDeclaration.Children[i];
-
                 if (current is PreallocatedTagHelperPropertyValueIntermediateNode existingDeclaration)
                 {
                     if (string.Equals(existingDeclaration.AttributeName, node.AttributeName, StringComparison.Ordinal) &&
@@ -146,22 +139,22 @@ internal class PreallocatedTagHelperAttributeOptimizationPass : IntermediateNode
                 VariableName = declaration.VariableName,
             };
 
-            var nodeIndex = Parent.Children.IndexOf(node);
+            var nodeIndex = Parent!.Children.IndexOf(node);
             Parent.Children[nodeIndex] = setPreallocatedProperty;
         }
 
         private string GetContent(HtmlContentIntermediateNode node)
         {
-            var builder = new StringBuilder();
-            for (var i = 0; i < node.Children.Count; i++)
+            return string.Build(node, (ref builder, node) =>
             {
-                if (node.Children[i] is HtmlIntermediateToken token)
+                foreach (var child in node.Children)
                 {
-                    builder.Append(token.Content);
+                    if (child is HtmlIntermediateToken token)
+                    {
+                        builder.Append(token.Content);
+                    }
                 }
-            }
-
-            return builder.ToString();
+            });
         }
     }
 }

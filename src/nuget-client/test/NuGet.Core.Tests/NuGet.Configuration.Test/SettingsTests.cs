@@ -1930,7 +1930,7 @@ namespace NuGet.Configuration.Test
                 // Assert
                 var files = settings.GetConfigFilePaths();
 
-                files.Count().Should().Be(9);
+                files.Count.Should().Be(9);
                 files.Should().Contain(Path.Combine(mockBaseDirectory, "nuget", "Config", "IDE", "Version", "SKU", "a2.config"));
                 files.Should().Contain(Path.Combine(mockBaseDirectory, "nuget", "Config", "IDE", "Version", "SKU", "a1.config"));
                 files.Should().Contain(Path.Combine(mockBaseDirectory, "nuget", "Config", "IDE", "Version", "a2.config"));
@@ -2234,7 +2234,7 @@ namespace NuGet.Configuration.Test
                 // Assert
                 var files = settings.GetConfigFilePaths();
 
-                files.Count().Should().Be(10);
+                files.Count.Should().Be(10);
                 files.Should().Contain(configPath1);
                 files.Should().Contain(configPath2);
                 files.Should().Contain(configPath3);
@@ -2311,7 +2311,7 @@ namespace NuGet.Configuration.Test
                 // Assert
                 var files = settings.GetConfigRoots();
 
-                files.Count().Should().Be(6);
+                files.Count.Should().Be(6);
                 files.Should().Contain(configRoot1);
                 files.Should().Contain(configRoot2);
                 files.Should().Contain(configRoot3);

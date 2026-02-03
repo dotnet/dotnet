@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Xunit;
@@ -64,9 +65,9 @@ public class DocumentClassifierPassBaseTest : RazorProjectEngineTestBase
 
         var projectEngine = RazorProjectEngine.CreateEmpty(builder =>
         {
-            foreach (var codeTarget in expected)
+            foreach (var extension in expected)
             {
-                builder.AddTargetExtension(codeTarget);
+                builder.AddTargetExtension(extension);
             }
         });
 
@@ -77,13 +78,16 @@ public class DocumentClassifierPassBaseTest : RazorProjectEngineTestBase
             Options = codeDocument.CodeGenerationOptions
         };
 
-        ICodeTargetExtension[]? extensions = null;
+        ImmutableArray<ICodeTargetExtension> extensions = default;
 
         // Act
         projectEngine.ExecutePass<TestDocumentClassifierPass>(codeDocument, documentNode,
             () => new()
             {
-                CodeTargetCallback = builder => extensions = [.. builder.TargetExtensions]
+                CodeTargetCallback = builder =>
+                {
+                    extensions = builder.TargetExtensions.ToImmutable();
+                }
             });
 
         // Assert
@@ -269,10 +273,16 @@ public class DocumentClassifierPassBaseTest : RazorProjectEngineTestBase
             @method.Name = Method;
         }
 
-        protected override void ConfigureTarget(CodeTargetBuilder builder)
-        {
-            CodeTargetCallback?.Invoke(builder);
-        }
+        protected override CodeTarget CreateTarget(RazorCodeDocument codeDocument)
+            => CodeTarget.CreateDefault(codeDocument, builder =>
+            {
+                foreach (var extension in TargetExtensions)
+                {
+                    builder.TargetExtensions.Add(extension);
+                }
+
+                CodeTargetCallback?.Invoke(builder);
+            });
     }
 
     private class MyExtension1 : ICodeTargetExtension

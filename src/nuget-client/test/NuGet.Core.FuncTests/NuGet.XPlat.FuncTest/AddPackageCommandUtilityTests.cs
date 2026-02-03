@@ -17,7 +17,7 @@ using Xunit;
 
 namespace NuGet.XPlat.FuncTest
 {
-    [Collection("NuGet XPlat Test Collection")]
+    [Collection(XPlatCollection.Name)]
     public class AddPackageCommandUtilityTests
     {
         [Fact]
@@ -119,11 +119,11 @@ namespace NuGet.XPlat.FuncTest
         private static async Task<string> GetSourceWithPackages(string[] source, TestDirectory testDirectory, string path)
         {
             var sourcePath = Path.Combine(testDirectory.Path, path);
-            for (var i = 0; i < source.Count(); i++)
+            for (var i = 0; i < source.Length; i++)
             {
                 var packageInfo = source[i].Split(';');
-                var packages = new SimpleTestPackageContext[packageInfo.Count() - 1];
-                for (var j = 0; j < packageInfo.Count() - 1; j++)
+                var packages = new SimpleTestPackageContext[packageInfo.Length - 1];
+                for (var j = 0; j < packageInfo.Length - 1; j++)
                 {
                     packages[j] = new SimpleTestPackageContext(packageInfo.Last(), packageInfo[j]);
                 }

@@ -3,6 +3,8 @@
   <PropertyGroup>
     <!-- May stabilize. -->
     <AllowDotNetFinalVersionKindOverride>true</AllowDotNetFinalVersionKindOverride>
+
+    <BuildArgs>$(BuildArgs) /p:PublicBaseURL=file:%2F%2F$(ArtifactsAssetsDir)</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>

@@ -19,6 +19,11 @@ Generated Location: (1184:40,0 [58] )
     public TItem MyItem { get; set; }
 |
 
+Source Location: (89:6,1 [13] x:\dir\subdir\Test\TestComponent.cshtml)
+|TestComponent|
+Generated Location: (1639:57,45 [13] )
+|TestComponent|
+
 Source Location: (103:6,15 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |MyItem|
 Generated Location: (1841:61,0 [6] )

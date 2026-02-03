@@ -8,7 +8,6 @@
   <ItemGroup>
     <Compile Include="..\..\src\Microsoft.CodeAnalysis.Razor.Workspaces\GlobalUsings.cs" Link="GlobalUsings.cs" />
     <Compile Include="..\Microsoft.AspNetCore.Razor.LanguageServer.Test\XunitAssemblyInfo.cs" Link="XunitAssemblyInfo.cs" />
-    <Compile Include="..\Microsoft.VisualStudio.LanguageServices.Razor.Test\Cohost\Shared\*.cs" LinkBase="Endpoints\Shared" />
   </ItemGroup>
 
   <ItemGroup>

@@ -226,8 +226,7 @@ public class DirectiveCompletionItemProviderTest(ITestOutputHelper testOutput) :
     public void ShouldProvideCompletions_ReturnsFalseWhenOwnerIsNotExpression()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("@{");
-        var context = CreateRazorCompletionContext(absoluteIndex: 2, syntaxTree);
+        var context = CreateRazorCompletionContext("@$${");
 
         // Act
         var result = DirectiveCompletionItemProvider.ShouldProvideCompletions(context);
@@ -240,8 +239,7 @@ public class DirectiveCompletionItemProviderTest(ITestOutputHelper testOutput) :
     public void ShouldProvideCompletions_ReturnsFalseWhenOwnerIsComplexExpression()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("@DateTime.Now");
-        var context = CreateRazorCompletionContext(absoluteIndex: 2, syntaxTree);
+        var context = CreateRazorCompletionContext("@D$$ateTime.Now");
 
         // Act
         var result = DirectiveCompletionItemProvider.ShouldProvideCompletions(context);
@@ -254,8 +252,7 @@ public class DirectiveCompletionItemProviderTest(ITestOutputHelper testOutput) :
     public void ShouldProvideCompletions_ReturnsFalseWhenOwnerIsExplicitExpression()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("@(something)");
-        var context = CreateRazorCompletionContext(absoluteIndex: 4, syntaxTree);
+        var context = CreateRazorCompletionContext("@(so$$mething)");
 
         // Act
         var result = DirectiveCompletionItemProvider.ShouldProvideCompletions(context);
@@ -268,8 +265,7 @@ public class DirectiveCompletionItemProviderTest(ITestOutputHelper testOutput) :
     public void ShouldProvideCompletions_ReturnsFalseWhenInsideStatement()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("@{ @ }");
-        var context = CreateRazorCompletionContext(absoluteIndex: 4, syntaxTree);
+        var context = CreateRazorCompletionContext("@{ @$$ }");
 
         // Act
         var result = DirectiveCompletionItemProvider.ShouldProvideCompletions(context);
@@ -282,8 +278,7 @@ public class DirectiveCompletionItemProviderTest(ITestOutputHelper testOutput) :
     public void ShouldProvideCompletions_ReturnsFalseWhenInsideMarkup()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("<p>@ </p>");
-        var context = CreateRazorCompletionContext(absoluteIndex: 4, syntaxTree);
+        var context = CreateRazorCompletionContext("<p>@$$ </p>");
 
         // Act
         var result = DirectiveCompletionItemProvider.ShouldProvideCompletions(context);
@@ -296,8 +291,7 @@ public class DirectiveCompletionItemProviderTest(ITestOutputHelper testOutput) :
     public void ShouldProvideCompletions_ReturnsFalseWhenInsideAttributeArea()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("<p @ >");
-        var context = CreateRazorCompletionContext(absoluteIndex: 4, syntaxTree);
+        var context = CreateRazorCompletionContext("<p @$$ >");
 
         // Act
         var result = DirectiveCompletionItemProvider.ShouldProvideCompletions(context);
@@ -310,8 +304,7 @@ public class DirectiveCompletionItemProviderTest(ITestOutputHelper testOutput) :
     public void ShouldProvideCompletions_ReturnsFalseWhenInsideDirective()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("@functions { @  }", FunctionsDirective.Directive);
-        var context = CreateRazorCompletionContext(absoluteIndex: 14, syntaxTree);
+        var context = CreateRazorCompletionContext("@functions { @$$  }", CompletionReason.Invoked, FunctionsDirective.Directive);
 
         // Act
         var result = DirectiveCompletionItemProvider.ShouldProvideCompletions(context);
@@ -324,8 +317,7 @@ public class DirectiveCompletionItemProviderTest(ITestOutputHelper testOutput) :
     public void ShouldProvideCompletions_ReturnsTrueForSimpleImplicitExpressionsStartOfWord()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("@m");
-        var context = CreateRazorCompletionContext(absoluteIndex: 1, syntaxTree);
+        var context = CreateRazorCompletionContext("@$$m");
 
         // Act
         var result = DirectiveCompletionItemProvider.ShouldProvideCompletions(context);
@@ -338,8 +330,7 @@ public class DirectiveCompletionItemProviderTest(ITestOutputHelper testOutput) :
     public void ShouldProvideCompletions_ReturnsFalseForSimpleImplicitExpressions_WhenNotInvoked()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("@mod");
-        var context = CreateRazorCompletionContext(absoluteIndex: 2, syntaxTree, CompletionReason.Typing);
+        var context = CreateRazorCompletionContext("@m$$od", CompletionReason.Typing);
 
         // Act
         var result = DirectiveCompletionItemProvider.ShouldProvideCompletions(context);
@@ -352,8 +343,7 @@ public class DirectiveCompletionItemProviderTest(ITestOutputHelper testOutput) :
     public void ShouldProvideCompletions_ReturnsTrueForSimpleImplicitExpressions_WhenInvoked()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("@mod");
-        var context = CreateRazorCompletionContext(absoluteIndex: 2, syntaxTree);
+        var context = CreateRazorCompletionContext("@m$$od");
 
         // Act
         var result = DirectiveCompletionItemProvider.ShouldProvideCompletions(context);
@@ -428,12 +418,17 @@ public class DirectiveCompletionItemProviderTest(ITestOutputHelper testOutput) :
         Assert.False(result);
     }
 
-    private static RazorCompletionContext CreateRazorCompletionContext(int absoluteIndex, RazorSyntaxTree syntaxTree, CompletionReason reason = CompletionReason.Invoked)
+    private static RazorCompletionContext CreateRazorCompletionContext(TestCode text, CompletionReason reason = CompletionReason.Invoked, params DirectiveDescriptor[] directives)
     {
-        var tagHelperDocumentContext = TagHelperDocumentContext.Create(prefix: string.Empty, tagHelpers: []);
+        var syntaxTree = CreateSyntaxTree(text, directives);
+        var absoluteIndex = text.Position;
+        var sourceDocument = RazorSourceDocument.Create("", RazorSourceDocumentProperties.Default);
+        var codeDocument = RazorCodeDocument.Create(sourceDocument);
+
+        var tagHelperDocumentContext = TagHelperDocumentContext.GetOrCreate(tagHelpers: []);
         var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex);
         owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, absoluteIndex);
-        return new RazorCompletionContext(absoluteIndex, owner, syntaxTree, tagHelperDocumentContext, reason);
+        return new RazorCompletionContext(codeDocument, absoluteIndex, owner, syntaxTree, tagHelperDocumentContext, reason);
     }
 
     private static void AssertRazorCompletionItem(string completionDisplayText, DirectiveDescriptor directive, RazorCompletionItem item, ImmutableArray<RazorCommitCharacter> commitCharacters = default, bool isSnippet = false)
@@ -461,14 +456,14 @@ public class DirectiveCompletionItemProviderTest(ITestOutputHelper testOutput) :
     private static void AssertRazorCompletionItem(DirectiveDescriptor directive, RazorCompletionItem item, bool isSnippet = false) =>
         AssertRazorCompletionItem(directive.Directive + (isSnippet ? " directive ..." : string.Empty), directive, item, isSnippet: isSnippet);
 
-    private static RazorSyntaxTree CreateSyntaxTree(string text, params DirectiveDescriptor[] directives)
+    private static RazorSyntaxTree CreateSyntaxTree(TestCode text, params DirectiveDescriptor[] directives)
     {
         return CreateSyntaxTree(text, RazorFileKind.Legacy, directives);
     }
 
-    private static RazorSyntaxTree CreateSyntaxTree(string text, RazorFileKind fileKind, params DirectiveDescriptor[] directives)
+    private static RazorSyntaxTree CreateSyntaxTree(TestCode text, RazorFileKind fileKind, params DirectiveDescriptor[] directives)
     {
-        var sourceDocument = TestRazorSourceDocument.Create(text);
+        var sourceDocument = TestRazorSourceDocument.Create(text.Text);
 
         var builder = new RazorParserOptions.Builder(RazorLanguageVersion.Latest, fileKind)
         {

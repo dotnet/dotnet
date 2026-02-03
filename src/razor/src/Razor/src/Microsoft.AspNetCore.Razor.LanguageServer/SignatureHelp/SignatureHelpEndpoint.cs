@@ -15,13 +15,11 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.SignatureHelp;
 
 [RazorLanguageServerEndpoint(Methods.TextDocumentSignatureHelpName)]
 internal sealed class SignatureHelpEndpoint(
-        LanguageServerFeatureOptions languageServerFeatureOptions,
         IDocumentMappingService documentMappingService,
         IClientConnection clientConnection,
         RazorLSPOptionsMonitor optionsMonitor,
         ILoggerFactory loggerProvider)
     : AbstractRazorDelegatingEndpoint<SignatureHelpParams, LspSignatureHelp?>(
-        languageServerFeatureOptions,
         documentMappingService,
         clientConnection,
         loggerProvider.GetOrCreateLogger<SignatureHelpEndpoint>()),

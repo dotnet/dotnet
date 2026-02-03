@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters;
 
@@ -13,11 +12,11 @@ internal partial class SerializerCachingOptions
     public struct ReferenceMap<T> : IDisposable
         where T : notnull
     {
-        private readonly ObjectPool<Dictionary<T, int>> _dictionaryPool;
+        private readonly DictionaryPool<T, int> _dictionaryPool;
         private List<T> _values;
         private Dictionary<T, int> _valueToIdMap;
 
-        public ReferenceMap(ObjectPool<Dictionary<T, int>> dictionaryPool)
+        public ReferenceMap(DictionaryPool<T, int> dictionaryPool)
         {
             _dictionaryPool = dictionaryPool;
             _values = ListPool<T>.Default.Get();

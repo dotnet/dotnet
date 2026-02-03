@@ -53,18 +53,21 @@ variables:
   - name: ibcEnabled
     value: false
 
-- ${{ if eq(parameters.desiredFinalVersionKind, 'Default (repo specifies)') }}:
+- ${{ if eq(parameters.desiredFinalVersionKind, 'Repo default (uses the repo branding defaults)') }}:
   - name: brandingType
-    value: 'default'
-- ${{ elseif eq(parameters.desiredFinalVersionKind, 'Stable Preview') }}:
+    value: 'repodefault'
+- ${{ elseif eq(parameters.desiredFinalVersionKind, 'Unstable (produces assets with the repo specified branding suffix)') }}:
+  - name: brandingType
+    value: 'unstable'
+- ${{ elseif eq(parameters.desiredFinalVersionKind, 'Preview (produces assets with a .final branding suffix)') }}:
   - name: brandingType
     value: 'preview'
-- ${{ elseif eq(parameters.desiredFinalVersionKind, 'Stable Final') }}:
+- ${{ elseif eq(parameters.desiredFinalVersionKind, 'Release (produces assets without a branding suffix)') }}:
   - name: brandingType
-    value: 'rtm'
+    value: 'release'
 - ${{ else }}:
   - name: brandingType
-    value: 'default'
+    value: ''
 
 ## Do not set this when building source only to avoid including telemetry in the bootstrap artifacts
 ## handed off to distro partners.
@@ -266,13 +269,13 @@ variables:
   - name: poolName_LinuxArm64
     value: Docker-Linux-Arm-Public
   - name: poolImage_Mac
-    value: macos-13
+    value: macos-15
   - ${{ if eq(parameters.isScoutingJob, true) }}:
     - name: poolImage_Windows
-      value: windows.vs2022preview.scout.amd64.open
+      value: windows.vs2022.scout.amd64.open
   - ${{ else }}:
     - name: poolImage_Windows
-      value: windows.vs2022preview.amd64.open
+      value: windows.vs2022.amd64.open
 - ${{ else }}:
   - name: defaultPoolName
     value: NetCore1ESPool-Internal
@@ -281,10 +284,11 @@ variables:
   - name: poolImage_Linux
     value: build.ubuntu.2204.amd64
   - name: poolImage_LinuxArm64
-    value: Mariner-2-Docker-ARM64
+    value: Azure-Linux-3-Arm64
   - name: poolName_LinuxArm64
     value: Docker-Linux-Arm-Internal
   - name: poolImage_Mac
-    value: macos-14-arm64
+    value: macos-latest-internal
   - name: poolImage_Windows
-    value: windows.vs2022preview.amd64
+    value: windows.vs2022.amd64
+

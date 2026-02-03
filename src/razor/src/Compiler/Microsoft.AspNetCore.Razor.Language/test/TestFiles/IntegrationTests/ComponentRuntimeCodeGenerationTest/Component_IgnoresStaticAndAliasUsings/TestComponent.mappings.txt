@@ -8,3 +8,8 @@ Source Location: (36:1,1 [17] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (515:18,0 [17] )
 |using Foo = Test3|
 
+Source Location: (56:2,1 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|MyComponent|
+Generated Location: (974:31,49 [11] )
+|MyComponent|
+

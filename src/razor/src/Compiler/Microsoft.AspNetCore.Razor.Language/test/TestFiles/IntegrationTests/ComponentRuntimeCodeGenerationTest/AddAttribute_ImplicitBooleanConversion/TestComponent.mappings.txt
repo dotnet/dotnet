@@ -17,6 +17,11 @@ Generated Location: (1189:40,0 [42] )
     private MyClass<string> c = new();
 |
 
+Source Location: (1:0,1 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|MyComponent|
+Generated Location: (1683:56,45 [11] )
+|MyComponent|
+
 Source Location: (13:0,13 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 |MyParameter|
 Generated Location: (1864:60,0 [11] )

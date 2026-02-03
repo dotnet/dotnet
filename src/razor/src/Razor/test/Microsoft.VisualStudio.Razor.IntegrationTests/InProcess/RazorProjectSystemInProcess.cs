@@ -38,11 +38,6 @@ internal partial class RazorProjectSystemInProcess
 
     private async Task WaitForLSPServerActivationStatusAsync(bool active, CancellationToken cancellationToken)
     {
-        if (await IsCohostingActiveAsync(cancellationToken))
-        {
-            return;
-        }
-
         var tracker = await TestServices.Shell.GetComponentModelServiceAsync<ILspServerActivationTracker>(cancellationToken);
         await Helper.RetryAsync(ct =>
         {
@@ -126,13 +121,8 @@ internal partial class RazorProjectSystemInProcess
         return projectManager.GetProjectKeysWithFilePath(projectFilePath).SelectAsArray(static key => key.Id);
     }
 
-    public async Task WaitForCSharpVirtualDocumentAsync(string razorFilePath, CancellationToken cancellationToken)
+    public async Task WaitForHtmlVirtualDocumentAsync(string razorFilePath, CancellationToken cancellationToken)
     {
-        if (await IsCohostingActiveAsync(cancellationToken))
-        {
-            return;
-        }
-
         var documentManager = await TestServices.Shell.GetComponentModelServiceAsync<LSPDocumentManager>(cancellationToken);
 
         var uri = new Uri(razorFilePath, UriKind.Absolute);
@@ -140,11 +130,9 @@ internal partial class RazorProjectSystemInProcess
         {
             if (documentManager.TryGetDocument(uri, out var snapshot))
             {
-                if (snapshot.TryGetVirtualDocument<CSharpVirtualDocumentSnapshot>(out var virtualDocument))
+                if (snapshot.TryGetVirtualDocument<HtmlVirtualDocumentSnapshot>(out var virtualDocument))
                 {
-                    var result = !virtualDocument.ProjectKey.IsUnknown &&
-                        virtualDocument.Snapshot.Length > 0;
-                    return Task.FromResult(result);
+                    return Task.FromResult(true);
                 }
             }
 
@@ -153,15 +141,8 @@ internal partial class RazorProjectSystemInProcess
         }, TimeSpan.FromMilliseconds(100), cancellationToken);
     }
 
-    public async Task WaitForCSharpVirtualDocumentUpdateAsync(string projectName, string relativeFilePath, Func<Task> updater, CancellationToken cancellationToken)
+    public async Task WaitForHtmlVirtualDocumentUpdateAsync(string projectName, string relativeFilePath, Func<Task> updater, CancellationToken cancellationToken)
     {
-        if (await IsCohostingActiveAsync(cancellationToken))
-        {
-            // In cohosting we don't wait for anything, we just update the Razor doc and assume that Roslyn will do the right things
-            await updater();
-            return;
-        }
-
         var filePath = await TestServices.SolutionExplorer.GetAbsolutePathForProjectRelativeFilePathAsync(projectName, relativeFilePath, cancellationToken);
 
         var documentManager = await TestServices.Shell.GetComponentModelServiceAsync<LSPDocumentManager>(cancellationToken);
@@ -174,10 +155,9 @@ internal partial class RazorProjectSystemInProcess
         {
             if (documentManager.TryGetDocument(uri, out var snapshot))
             {
-                if (snapshot.TryGetVirtualDocument<CSharpVirtualDocumentSnapshot>(out var virtualDocument))
+                if (snapshot.TryGetVirtualDocument<HtmlVirtualDocumentSnapshot>(out var virtualDocument))
                 {
-                    if (!virtualDocument.ProjectKey.IsUnknown &&
-                        virtualDocument.Snapshot.Length > 0)
+                    if (virtualDocument.Snapshot.Length > 0)
                     {
                         if (desiredVersion is null)
                         {

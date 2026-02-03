@@ -10,6 +10,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.VisualStudio.Editor.Razor;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
@@ -37,16 +38,11 @@ internal class TagHelperCompletionProvider(ITagHelperCompletionService tagHelper
             return [];
         }
 
-        owner = owner switch
+        owner = CompletionContextHelper.AdjustSyntaxNodeForCompletion(owner);
+        if (owner is null)
         {
-            // This provider is trying to find the nearest Start or End tag. Most of the time, that's a level up, but if the index the user is typing at
-            // is a token of a start or end tag directly, we already have the node we want.
-            MarkupStartTagSyntax or MarkupEndTagSyntax or MarkupTagHelperStartTagSyntax or MarkupTagHelperEndTagSyntax or MarkupTagHelperAttributeSyntax => owner,
-            // Invoking completion in an empty file will give us RazorDocumentSyntax which always has null parent
-            RazorDocumentSyntax => owner,
-            // Either the parent is a context we can handle, or it's not and we shouldn't show completions.
-            _ => owner.Parent
-        };
+            return [];
+        }
 
         if (HtmlFacts.TryGetElementInfo(owner, out var containingTagNameToken, out var attributes, out _) &&
             containingTagNameToken.Span.IntersectsWith(context.AbsoluteIndex))
@@ -118,9 +114,9 @@ internal class TagHelperCompletionProvider(ITagHelperCompletionService tagHelper
         RazorCompletionOptions options)
     {
         var ancestors = containingAttribute.Parent.Ancestors();
-        var nonDirectiveAttributeTagHelpers = tagHelperDocumentContext.TagHelpers.WhereAsArray(
+        var nonDirectiveAttributeTagHelpers = tagHelperDocumentContext.TagHelpers.Where(
             static tagHelper => !tagHelper.BoundAttributes.Any(static attribute => attribute.IsDirectiveAttribute));
-        var filteredContext = TagHelperDocumentContext.Create(tagHelperDocumentContext.Prefix, nonDirectiveAttributeTagHelpers);
+        var filteredContext = TagHelperDocumentContext.GetOrCreate(tagHelperDocumentContext.Prefix, nonDirectiveAttributeTagHelpers);
         var (ancestorTagName, ancestorIsTagHelper) = TagHelperFacts.GetNearestAncestorTagInfo(ancestors);
         var attributeCompletionContext = new AttributeCompletionContext(
             filteredContext,
@@ -233,18 +229,57 @@ internal class TagHelperCompletionProvider(ITagHelperCompletionService tagHelper
 
         foreach (var (displayText, tagHelpers) in completionResult.Completions)
         {
-            var tagHelperDescriptions = tagHelpers.SelectAsArray(BoundElementDescriptionInfo.From);
+            var descriptionInfo = new AggregateBoundElementDescription(tagHelpers.SelectAsArray(BoundElementDescriptionInfo.From));
 
+            // Always add the regular completion item
             var razorCompletionItem = RazorCompletionItem.CreateTagHelperElement(
                 displayText: displayText,
                 insertText: displayText,
-                descriptionInfo: new(tagHelperDescriptions),
-                commitCharacters: commitChars);
+                descriptionInfo,
+                commitCharacters: commitChars,
+                isSnippet: false);
 
             completionItems.Add(razorCompletionItem);
+
+            AddCompletionItemWithRequiredAttributesSnippet(
+                ref completionItems.AsRef(),
+                context,
+                tagHelpers,
+                displayText,
+                descriptionInfo,
+                commitChars);
+
+            AddCompletionItemWithUsingDirective(ref completionItems.AsRef(), context, commitChars, displayText, descriptionInfo);
         }
 
         return completionItems.ToImmutableAndClear();
+    }
+
+    private static void AddCompletionItemWithUsingDirective(ref PooledArrayBuilder<RazorCompletionItem> completionItems, RazorCompletionContext context, ImmutableArray<RazorCommitCharacter> commitChars, string displayText, AggregateBoundElementDescription descriptionInfo)
+    {
+        // If this is a fully qualified name (contains a dot), it means there's an out-of-scope component
+        // so we add an additional completion item with @using hint and additional edits that will insert
+        // the @using correctly.
+        var lastDotIndex = displayText.LastIndexOf('.');
+        if (lastDotIndex == -1)
+        {
+            return;
+        }
+
+        var @namespace = displayText[..lastDotIndex];
+        var shortName = displayText[(lastDotIndex + 1)..]; // Get the short name after the last dot
+        var displayTextWithUsing = $"{shortName} - @using {@namespace}";
+
+        var addUsingEdit = AddUsingsHelper.CreateAddUsingTextEdit(@namespace, context.CodeDocument);
+
+        var razorCompletionItemWithUsing = RazorCompletionItem.CreateTagHelperElement(
+            displayText: displayTextWithUsing,
+            insertText: shortName,
+            descriptionInfo,
+            commitCharacters: commitChars,
+            additionalTextEdits: [addUsingEdit]);
+
+        completionItems.Add(razorCompletionItemWithUsing);
     }
 
     private const string BooleanTypeString = "System.Boolean";
@@ -281,6 +316,79 @@ internal class TagHelperCompletionProvider(ITagHelperCompletionService tagHelper
             AttributeContext.FullSnippet => AttributeSnippetCommitCharacters,
             _ => throw new InvalidOperationException("Unexpected context"),
         };
+    }
+
+    private static void AddCompletionItemWithRequiredAttributesSnippet(
+        ref PooledArrayBuilder<RazorCompletionItem> completionItems,
+        RazorCompletionContext context,
+        IEnumerable<TagHelperDescriptor> tagHelpers,
+        string displayText,
+        AggregateBoundElementDescription descriptionInfo,
+        ImmutableArray<RazorCommitCharacter> commitChars)
+    {
+        // If snippets are not supported, exit early
+        if (!context.Options.SnippetsSupported)
+        {
+            return;
+        }
+
+        if (TryGetEditorRequiredAttributesSnippet(tagHelpers, displayText, out var snippetText))
+        {
+            var snippetCompletionItem = RazorCompletionItem.CreateTagHelperElement(
+                displayText: SR.FormatComponentCompletionWithRequiredAttributesLabel(displayText),
+                insertText: snippetText,
+                descriptionInfo: descriptionInfo,
+                commitCharacters: commitChars,
+                isSnippet: true);
+
+            completionItems.Add(snippetCompletionItem);
+        }
+    }
+
+    private static bool TryGetEditorRequiredAttributesSnippet(
+        IEnumerable<TagHelperDescriptor> tagHelpers,
+        string tagName,
+        [NotNullWhen(true)] out string? snippetText)
+    {
+        // For components, there should only be one tag helper descriptor per component name
+        // Get EditorRequired attributes from the first component tag helper
+        var componentTagHelper = tagHelpers.FirstOrDefault(th => th.Kind == TagHelperKind.Component);
+        if (componentTagHelper is null)
+        {
+            snippetText = null;
+            return false;
+        }
+
+        var requiredAttributes = componentTagHelper.EditorRequiredAttributes;
+        if (requiredAttributes.Length == 0)
+        {
+            snippetText = null;
+            return false;
+        }
+
+        // Build snippet with placeholders for each required attribute
+        using var _ = StringBuilderPool.GetPooledObject(out var builder);
+        builder.Append(tagName);
+
+        var tabStopIndex = 1;
+        foreach (var attribute in requiredAttributes)
+        {
+            builder.Append(' ');
+            builder.Append(attribute.Name);
+            builder.Append("=\"$");
+            builder.Append(tabStopIndex);
+            builder.Append('"');
+
+            tabStopIndex++;
+        }
+
+        // Add final tab stop for the element content
+        builder.Append(">$0</");
+        builder.Append(tagName);
+        builder.Append('>');
+
+        snippetText = builder.ToString();
+        return true;
     }
 
     private enum AttributeContext

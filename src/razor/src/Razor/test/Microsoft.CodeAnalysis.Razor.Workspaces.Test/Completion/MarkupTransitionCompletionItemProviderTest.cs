@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -20,9 +19,7 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
     public void GetCompletionItems_ReturnsEmptyCompletionItemInUnopenedMarkupContext()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("<div>");
-        var absoluteIndex = 5;
-        var razorCompletionContext = CreateRazorCompletionContext(absoluteIndex, syntaxTree);
+        var razorCompletionContext = CreateRazorCompletionContext("<div>$$");
 
         // Act
         var completionItems = _provider.GetCompletionItems(razorCompletionContext);
@@ -35,9 +32,7 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
     public void GetCompletionItems_ReturnsEmptyCompletionItemInSimpleMarkupContext()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("<div><");
-        var absoluteIndex = 6;
-        var razorCompletionContext = CreateRazorCompletionContext(absoluteIndex, syntaxTree);
+        var razorCompletionContext = CreateRazorCompletionContext("<div><$$");
 
         // Act
         var completionItems = _provider.GetCompletionItems(razorCompletionContext);
@@ -50,9 +45,7 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
     public void GetCompletionItems_ReturnsEmptyCompletionItemInNestedMarkupContext()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("<div><span><p></p><p>< </p></span></div>");
-        var absoluteIndex = 22;
-        var razorCompletionContext = CreateRazorCompletionContext(absoluteIndex, syntaxTree);
+        var razorCompletionContext = CreateRazorCompletionContext("<div><span><p></p><p><$$ </p></span></div>");
 
         // Act
         var completionItems = _provider.GetCompletionItems(razorCompletionContext);
@@ -65,9 +58,7 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
     public void GetCompletionItems_ReturnsMarkupTransitionCompletionItemInCodeBlockStartingTag()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("@{<");
-        var absoluteIndex = 3;
-        var razorCompletionContext = CreateRazorCompletionContext(absoluteIndex, syntaxTree);
+        var razorCompletionContext = CreateRazorCompletionContext("@{<$$");
 
         // Act
         var completionItems = _provider.GetCompletionItems(razorCompletionContext);
@@ -80,9 +71,7 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
     public void GetCompletionItems_ReturnsMarkupTransitionCompletionItemInCodeBlockPartialCompletion()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("@{<te");
-        var absoluteIndex = 5;
-        var razorCompletionContext = CreateRazorCompletionContext(absoluteIndex, syntaxTree);
+        var razorCompletionContext = CreateRazorCompletionContext("@{<te$$");
 
         // Act
         var completionItems = _provider.GetCompletionItems(razorCompletionContext);
@@ -95,9 +84,7 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
     public void GetCompletionItems_ReturnsMarkupTransitionCompletionItemInIfConditional()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("@if (true) {< }");
-        var absoluteIndex = 13;
-        var razorCompletionContext = CreateRazorCompletionContext(absoluteIndex, syntaxTree);
+        var razorCompletionContext = CreateRazorCompletionContext("@if (true) {<$$ }");
 
         // Act
         var completionItems = _provider.GetCompletionItems(razorCompletionContext);
@@ -110,9 +97,7 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
     public void GetCompletionItems_ReturnsMarkupTransitionCompletionItemInFunctionDirective()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("@functions {public string GetHello(){< return \"pi\";}}", FunctionsDirective.Directive);
-        var absoluteIndex = 38;
-        var razorCompletionContext = CreateRazorCompletionContext(absoluteIndex, syntaxTree);
+        var razorCompletionContext = CreateRazorCompletionContext("@functions {public string GetHello(){<$$ return \"pi\";}}", FunctionsDirective.Directive);
 
         // Act
         var completionItems = _provider.GetCompletionItems(razorCompletionContext);
@@ -125,7 +110,7 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
     public void GetCompletionItems_ReturnsEmptyCompletionItemInExpression()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree(@"@{
+        var testCode = @"@{
     SomeFunctionAcceptingMethod(() =>
     {
         string foo = ""bar"";
@@ -134,10 +119,9 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
 
 @SomeFunctionAcceptingMethod(() =>
 {
-    <
-})");
-        var absoluteIndex = 121 + (Environment.NewLine.Length * 9);
-        var razorCompletionContext = CreateRazorCompletionContext(absoluteIndex, syntaxTree);
+    <$$
+})";
+        var razorCompletionContext = CreateRazorCompletionContext(testCode);
 
         // Act
         var completionItems = _provider.GetCompletionItems(razorCompletionContext);
@@ -150,12 +134,11 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
     public void GetCompletionItems_ReturnsEmptyCompletionItemInSingleLineTransitions()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree(@"@{
-    @* @: Here's some Markup | <-- You shouldn't get a <text> tag completion here. *@
+        var testCode = @"@{
+    @* @: Here's some Markup $$| <-- You shouldn't get a <text> tag completion here. *@
     @: Here's some markup <
-}");
-        var absoluteIndex = 114 + (Environment.NewLine.Length * 2);
-        var razorCompletionContext = CreateRazorCompletionContext(absoluteIndex, syntaxTree);
+}";
+        var razorCompletionContext = CreateRazorCompletionContext(testCode);
 
         // Act
         var completionItems = _provider.GetCompletionItems(razorCompletionContext);
@@ -168,14 +151,13 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
     public void GetCompletionItems_ReturnsMarkupTransitionCompletionItemInNestedCSharpBlock()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree(@"<div>
+        var testCode = @"<div>
 @if (true)
 {
-  < @* Should get text completion here *@
+  <$$ @* Should get text completion here *@
 }
-</div>");
-        var absoluteIndex = 19 + (Environment.NewLine.Length * 3);
-        var razorCompletionContext = CreateRazorCompletionContext(absoluteIndex, syntaxTree);
+</div>";
+        var razorCompletionContext = CreateRazorCompletionContext(testCode);
 
         // Act
         var completionItems = _provider.GetCompletionItems(razorCompletionContext);
@@ -188,14 +170,13 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
     public void GetCompletionItems_ReturnsEmptyCompletionItemInNestedMarkupBlock()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree(@"@if (true)
+        var testCode = @"@if (true)
 {
 <div>
-  < @* Shouldn't get text completion here *@
+  <$$ @* Shouldn't get text completion here *@
 </div>
-}");
-        var absoluteIndex = 19 + (Environment.NewLine.Length * 3);
-        var razorCompletionContext = CreateRazorCompletionContext(absoluteIndex, syntaxTree);
+}";
+        var razorCompletionContext = CreateRazorCompletionContext(testCode);
 
         // Act
         var completionItems = _provider.GetCompletionItems(razorCompletionContext);
@@ -208,16 +189,15 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
     public void GetCompletionItems_ReturnsMarkupTransitionCompletionItemWithUnrelatedClosingAngleBracket()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree(@"@functions {
+        var testCode = @"@functions {
     public void SomeOtherMethod()
     {
-        <
+        <$$
     }
 
     private bool _collapseNavMenu => true;
-}", FunctionsDirective.Directive);
-        var absoluteIndex = 59 + (Environment.NewLine.Length * 3);
-        var razorCompletionContext = CreateRazorCompletionContext(absoluteIndex, syntaxTree);
+}";
+        var razorCompletionContext = CreateRazorCompletionContext(testCode, FunctionsDirective.Directive);
 
         // Act
         var completionItems = _provider.GetCompletionItems(razorCompletionContext);
@@ -230,9 +210,7 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
     public void GetCompletionItems_ReturnsMarkupTransitionCompletionItemWithUnrelatedClosingTag()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("@{<></>");
-        var absoluteIndex = 3;
-        var razorCompletionContext = CreateRazorCompletionContext(absoluteIndex, syntaxTree);
+        var razorCompletionContext = CreateRazorCompletionContext("@{<$$></>");
 
         // Act
         var completionItems = _provider.GetCompletionItems(razorCompletionContext);
@@ -245,9 +223,7 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
     public void GetCompletionItems_ReturnsEmptyCompletionItemWhenOwnerIsComplexExpression()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("@DateTime.Now<");
-        var absoluteIndex = 14;
-        var razorCompletionContext = CreateRazorCompletionContext(absoluteIndex, syntaxTree);
+        var razorCompletionContext = CreateRazorCompletionContext("@DateTime.Now<$$");
 
         // Act
         var completionItems = _provider.GetCompletionItems(razorCompletionContext);
@@ -260,9 +236,7 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
     public void GetCompletionItems_ReturnsEmptyCompletionItemWhenOwnerIsExplicitExpression()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("@(something)<");
-        var absoluteIndex = 13;
-        var razorCompletionContext = CreateRazorCompletionContext(absoluteIndex, syntaxTree);
+        var razorCompletionContext = CreateRazorCompletionContext("@(something)<$$");
 
         // Act
         var completionItems = _provider.GetCompletionItems(razorCompletionContext);
@@ -275,9 +249,7 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
     public void GetCompletionItems_ReturnsEmptyCompletionItemWithSpaceAfterStartTag()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("@{< ");
-        var absoluteIndex = 4;
-        var razorCompletionContext = CreateRazorCompletionContext(absoluteIndex, syntaxTree);
+        var razorCompletionContext = CreateRazorCompletionContext("@{< $$");
 
         // Act
         var completionItems = _provider.GetCompletionItems(razorCompletionContext);
@@ -290,9 +262,7 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
     public void GetCompletionItems_ReturnsEmptyCompletionItemWithSpaceAfterStartTagAndAttribute()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("@{< te=\"\"");
-        var absoluteIndex = 6;
-        var razorCompletionContext = CreateRazorCompletionContext(absoluteIndex, syntaxTree);
+        var razorCompletionContext = CreateRazorCompletionContext("@{< te$$=\"\"");
 
         // Act
         var completionItems = _provider.GetCompletionItems(razorCompletionContext);
@@ -305,9 +275,7 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
     public void GetCompletionItems_ReturnsEmptyCompletionItemWhenInsideAttributeArea()
     {
         // Arrange
-        var syntaxTree = CreateSyntaxTree("<p < >");
-        var absoluteIndex = 4;
-        var razorCompletionContext = CreateRazorCompletionContext(absoluteIndex, syntaxTree);
+        var razorCompletionContext = CreateRazorCompletionContext("<p <$$ >");
 
         // Act
         var completionItems = _provider.GetCompletionItems(razorCompletionContext);
@@ -324,23 +292,28 @@ public class MarkupTransitionCompletionItemProviderTest(ITestOutputHelper testOu
         Assert.Equal(CodeAnalysisResources.MarkupTransition_Description, completionDescription.Description);
     }
 
-    private static RazorCompletionContext CreateRazorCompletionContext(int absoluteIndex, RazorSyntaxTree syntaxTree)
+    private static RazorCompletionContext CreateRazorCompletionContext(TestCode text, params DirectiveDescriptor[] directives)
     {
-        var tagHelperDocumentContext = TagHelperDocumentContext.Create(prefix: string.Empty, tagHelpers: []);
+        var syntaxTree = CreateSyntaxTree(text, directives);
+        var absoluteIndex = text.Position;
+        var sourceDocument = RazorSourceDocument.Create("", RazorSourceDocumentProperties.Default);
+        var codeDocument = RazorCodeDocument.Create(sourceDocument);
+
+        var tagHelperDocumentContext = TagHelperDocumentContext.GetOrCreate(tagHelpers: []);
 
         var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex, includeWhitespace: true, walkMarkersBack: true);
         owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, absoluteIndex);
-        return new RazorCompletionContext(absoluteIndex, owner, syntaxTree, tagHelperDocumentContext);
+        return new RazorCompletionContext(codeDocument, absoluteIndex, owner, syntaxTree, tagHelperDocumentContext);
     }
 
-    private static RazorSyntaxTree CreateSyntaxTree(string text, params DirectiveDescriptor[] directives)
+    private static RazorSyntaxTree CreateSyntaxTree(TestCode text, params DirectiveDescriptor[] directives)
     {
         return CreateSyntaxTree(text, RazorFileKind.Legacy, directives);
     }
 
-    private static RazorSyntaxTree CreateSyntaxTree(string text, RazorFileKind fileKind, params DirectiveDescriptor[] directives)
+    private static RazorSyntaxTree CreateSyntaxTree(TestCode text, RazorFileKind fileKind, params DirectiveDescriptor[] directives)
     {
-        var sourceDocument = TestRazorSourceDocument.Create(text);
+        var sourceDocument = TestRazorSourceDocument.Create(text.Text);
 
         var builder = new RazorParserOptions.Builder(RazorLanguageVersion.Latest, fileKind)
         {

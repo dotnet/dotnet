@@ -110,7 +110,7 @@ public class SourceChangeTest
         builder.Add(SyntaxFactory.Token(SyntaxKind.Marker, "Hello, "));
         builder.Add(SyntaxFactory.Token(SyntaxKind.Marker, "World"));
 
-        var node = SyntaxFactory.MarkupTextLiteral(builder.ToList(), SpanChunkGenerator.Null).CreateRed();
+        var node = SyntaxFactory.MarkupTextLiteral(builder.ToList(), SpanChunkGenerator.Null, editHandler: null).CreateRed();
 
         var change = new SourceChange(2, 2, "heyo");
 
@@ -129,7 +129,7 @@ public class SourceChangeTest
         builder.Add(SyntaxFactory.Token(SyntaxKind.Marker, "Hello, "));
         builder.Add(SyntaxFactory.Token(SyntaxKind.Marker, "World"));
 
-        var node = SyntaxFactory.MarkupTextLiteral(builder.ToList(), SpanChunkGenerator.Null).CreateRed(null, 13);
+        var node = SyntaxFactory.MarkupTextLiteral(builder.ToList(), SpanChunkGenerator.Null, editHandler: null).CreateRed(null, 13);
 
         var change = new SourceChange(15, 2, "heyo");
 
@@ -148,7 +148,7 @@ public class SourceChangeTest
         builder.Add(SyntaxFactory.Token(SyntaxKind.Marker, "Hello, "));
         builder.Add(SyntaxFactory.Token(SyntaxKind.Marker, "World"));
 
-        var node = SyntaxFactory.MarkupTextLiteral(builder.ToList(), SpanChunkGenerator.Null).CreateRed(null, 13);
+        var node = SyntaxFactory.MarkupTextLiteral(builder.ToList(), SpanChunkGenerator.Null, editHandler: null).CreateRed(null, 13);
 
         var change = new SourceChange(12, 2, "heyo");
 
@@ -167,7 +167,7 @@ public class SourceChangeTest
         builder.Add(SyntaxFactory.Token(SyntaxKind.Marker, "Hello, "));
         builder.Add(SyntaxFactory.Token(SyntaxKind.Marker, "World"));
 
-        var node = SyntaxFactory.MarkupTextLiteral(builder.ToList(), SpanChunkGenerator.Null).CreateRed(null, 13);
+        var node = SyntaxFactory.MarkupTextLiteral(builder.ToList(), SpanChunkGenerator.Null, editHandler: null).CreateRed(null, 13);
 
         var change = new SourceChange(15, 2, "heyo");
 
@@ -186,7 +186,7 @@ public class SourceChangeTest
         builder.Add(SyntaxFactory.Token(SyntaxKind.Marker, "Hello, "));
         builder.Add(SyntaxFactory.Token(SyntaxKind.Marker, "World"));
 
-        var node = SyntaxFactory.MarkupTextLiteral(builder.ToList(), SpanChunkGenerator.Null).CreateRed(null, 13);
+        var node = SyntaxFactory.MarkupTextLiteral(builder.ToList(), SpanChunkGenerator.Null, editHandler: null).CreateRed(null, 13);
 
         var change = new SourceChange(15, 0, "heyo");
 

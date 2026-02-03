@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-public abstract partial class TagHelperObjectBuilder<T>
+public abstract partial class TagHelperObjectBuilder<T> : IPoolableObject
     where T : TagHelperObject<T>
 {
     private ImmutableArray<RazorDiagnostic>.Builder? _diagnostics;
@@ -50,4 +50,23 @@ public abstract partial class TagHelperObjectBuilder<T>
     }
 
     private protected abstract void Reset();
+
+    void IPoolableObject.Reset()
+    {
+        _isBuilt = false;
+
+        const int MaxSize = 32;
+
+        if (_diagnostics is { } diagnostics)
+        {
+            diagnostics.Clear();
+
+            if (diagnostics.Capacity > MaxSize)
+            {
+                diagnostics.Capacity = MaxSize;
+            }
+        }
+
+        Reset();
+    }
 }
