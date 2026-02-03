@@ -1,9 +1,9 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
 
-  <PropertyGroup>
-    <ArchiveFormat Condition="$([MSBuild]::IsOSPlatform(Windows)) AND '$(ArchiveFormat)' == ''">zip</ArchiveFormat>
-    <ArchiveFormat Condition="!$([MSBuild]::IsOSPlatform(Windows)) AND '$(ArchiveFormat)' == ''">tar.gz</ArchiveFormat>
-  </PropertyGroup>
+  <ItemGroup Condition="'@(ArchiveFormat)' == ''">
+    <ArchiveFormat Condition="$([MSBuild]::IsOSPlatform(Windows))" Include="zip" />
+    <ArchiveFormat Include="tar.gz" />
+  </ItemGroup>
 
 </Project>
