@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
   <Import Project="Version.Details.props" />
   <PropertyGroup>
     <VersionMajor>10</VersionMajor>
@@ -43,6 +43,8 @@
     <PrivateSourceBuiltArtifactsVersion>10.0.102-servicing.25612.105</PrivateSourceBuiltArtifactsVersion>
     <!-- workload manifest version for 1xx SDK feature band, used by 2xx+ branches to include 1xx workloads -->
     <DotNet1xxWorkloadManifestVersion>$([System.Text.RegularExpressions.Regex]::Match($(MicrosoftNETSdkVersion), '^(\d+\.\d+\.\d+)').Value)</DotNet1xxWorkloadManifestVersion>
+    <!-- arcade-services dependencies -->
+    <MicrosoftDotNetDarcLibVersion>1.1.0-beta.26062.6</MicrosoftDotNetDarcLibVersion>
     <!-- command-line-api dependencies -->
     <SystemCommandLineVersion>2.0.0-beta5.25208.1</SystemCommandLineVersion>
     <!-- msbuild dependencies -->
@@ -51,11 +53,12 @@
     <NuGetProtocolVersion>6.13.1</NuGetProtocolVersion>
     <NuGetProjectModelVersion>6.13.1</NuGetProjectModelVersion>
     <!-- runtime dependencies -->
-    <MicrosoftExtensionsFileSystemGlobbingVersion>9.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
-    <MicrosoftExtensionsLoggingConsoleVersion>9.0.0</MicrosoftExtensionsLoggingConsoleVersion>
-    <MicrosoftExtensionsLoggingVersion>9.0.0</MicrosoftExtensionsLoggingVersion>
+    <MicrosoftExtensionsFileSystemGlobbingVersion>10.0.1</MicrosoftExtensionsFileSystemGlobbingVersion>
+    <MicrosoftExtensionsLoggingConsoleVersion>10.0.1</MicrosoftExtensionsLoggingConsoleVersion>
+    <MicrosoftExtensionsLoggingVersion>10.0.1</MicrosoftExtensionsLoggingVersion>
+    <MicrosoftExtensionsHostingVersion>10.0.1</MicrosoftExtensionsHostingVersion>
     <!-- external dependencies -->
     <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
-    <OctokitVersion>10.0.0</OctokitVersion>
+    <OctokitVersion>14.0.0</OctokitVersion>
   </PropertyGroup>
 </Project>
