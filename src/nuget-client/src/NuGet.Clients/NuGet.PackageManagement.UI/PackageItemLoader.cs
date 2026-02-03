@@ -329,13 +329,13 @@ namespace NuGet.PackageManagement.UI
 
                     if (listItem.PackageLevel == PackageLevel.TopLevel)
                     {
-                        listItem.UpdatePackageStatusAsync(_installedPackages)
+                        listItem.UpdatePackageStatusAsync(_installedPackages, CancellationToken.None)
                             .PostOnFailure(nameof(PackageItemLoader), nameof(GetCurrent));
                     }
                     else
                     {
                         listItem.UpdateTransitiveInfo(metadataContextInfo);
-                        listItem.UpdateTransitivePackageStatusAsync()
+                        listItem.UpdateTransitivePackageStatusAsync(CancellationToken.None)
                             .PostOnFailure(nameof(PackageItemLoader), nameof(GetCurrent));
                     }
 
