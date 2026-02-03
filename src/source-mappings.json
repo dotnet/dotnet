@@ -26,7 +26,7 @@
         },
         {
             "name": "aspnetcore",
-            "defaultRemote": "https://github.com/dotnet/aspnetcore",
+            "defaultRemote": "https://github.com/dotnet/aspnetcore"
         },
         {
             "name": "cecil",
