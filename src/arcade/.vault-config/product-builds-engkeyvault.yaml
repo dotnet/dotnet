@@ -22,6 +22,11 @@ secrets:
     parameters:
       Name: dotnet-bot
 
+  BotAccount-dotnet-renovate-bot:
+    type: github-account
+    parameters:
+      Name: dotnet-renovate-bot
+
   #Publish-Build-Assets
   BotAccount-dotnet-maestro-bot-PAT:
     type: github-access-token

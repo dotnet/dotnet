@@ -58,6 +58,19 @@ parameters:
   type: boolean
   default: false
 
+# Because branding affects quite a lot of places,
+# this is intentionally left without a default so that 
+# we don't accidentally miss a pass.
+- name: brandingType
+  displayName: Type of branding to use
+  type: string
+  values:
+  - repodefault
+  - preview
+  - unstable
+  - release
+  - empty
+
 # Overrides the rid that is produced by the build.
 - name: targetRid
   type: string
@@ -255,9 +268,10 @@ jobs:
       ${{ else }}:
         value: $(commandPrefix)clean-while-building
 
+  # If the branding argument is 'empty', then we allow the VMR's versions.props to set the default.
   - name: brandingArgument
-    ${{ if ne(variables['brandingType'], '') }}:
-      value: $(commandPrefix)branding $(brandingType)
+    ${{ if ne(parameters.brandingType, 'empty') }}:
+      value: $(commandPrefix)branding ${{ parameters.brandingType }}
     ${{ else }}:
       value: ''
 
