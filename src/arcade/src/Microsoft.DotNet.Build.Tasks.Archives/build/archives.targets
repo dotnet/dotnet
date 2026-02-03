@@ -101,7 +101,11 @@
 
     <ItemGroup>
       <_ArchiveBuildProject Include="$(MSBuildProjectFile)">
-        <AdditionalProperties>_CurrentArchiveFormat=%(ArchiveFormat.Identity);_IsIndividualArchiveBuild=true;_OutputPathRoot=$(_OutputPathRoot)</AdditionalProperties>
+        <AdditionalProperties>
+          _CurrentArchiveFormat=%(ArchiveFormat.Identity);
+          _IsIndividualArchiveBuild=true;
+          _OutputPathRoot=$(_OutputPathRoot)
+        </AdditionalProperties>
       </_ArchiveBuildProject>
     </ItemGroup>
 
