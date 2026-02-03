@@ -118,6 +118,7 @@ stages:
           targetOS: linux
           targetArchitecture: x64
           extraProperties: /p:DotNetBuildTests=true
+          brandingType: ${{ variables.brandingType }}
 
     - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), containsValue(parameters.verifications, 'unified-build-windows-buildtests')) }}:
       - template: ../jobs/vmr-build.yml
@@ -128,6 +129,7 @@ stages:
           targetOS: windows
           targetArchitecture: x64
           extraProperties: /p:DotNetBuildTests=true
+          brandingType: ${{ variables.brandingType }}
 
 #### VERTICAL BUILD (Official) ####
 - ${{ if and(notin(parameters.scope, 'scout'), or(in(parameters.scope, 'full') , contains(join(';', parameters.verifications), 'unified-build-'))) }}:
@@ -155,6 +157,7 @@ stages:
           targetOS: windows
           targetArchitecture: x64
           enableIBCOptimization: ${{ variables.ibcEnabled }}
+          brandingType: ${{ variables.brandingType }}
 
     - ${{ if containsValue(parameters.verifications, 'unified-build-windows-x86') }}:
       - template: ../jobs/vmr-build.yml
@@ -167,6 +170,7 @@ stages:
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
           targetArchitecture: x86
+          brandingType: ${{ variables.brandingType }}
 
     - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
 
@@ -183,6 +187,7 @@ stages:
               image: ${{ variables.androidCrossContainerImage }}
             targetOS: android
             targetArchitecture: arm64
+            brandingType: ${{ variables.brandingType }}
 
       - ${{ if containsValue(parameters.verifications, 'unified-build-browser-wasm') }}:
         - template: ../jobs/vmr-build.yml
@@ -198,6 +203,7 @@ stages:
             crossRootFs: '/crossrootfs/x64'
             targetOS: browser
             targetArchitecture: wasm
+            brandingType: ${{ variables.brandingType }}
 
       - ${{ if containsValue(parameters.verifications, 'unified-build-iossimulator-arm64') }}:
         - template: ../jobs/vmr-build.yml
@@ -209,6 +215,7 @@ stages:
             pool: ${{ parameters.pool_Mac }}
             targetOS: iossimulator
             targetArchitecture: arm64
+            brandingType: ${{ variables.brandingType }}
 
     ### Additional jobs for full build ###
     - ${{ if in(parameters.scope, 'full') }}:
@@ -227,6 +234,7 @@ stages:
               image: ${{ variables.androidCrossContainerImage }}
             targetOS: android
             targetArchitecture: arm
+            brandingType: ${{ variables.brandingType }}
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -240,6 +248,7 @@ stages:
               image: ${{ variables.androidCrossContainerImage }}
             targetOS: android
             targetArchitecture: x64
+            brandingType: ${{ variables.brandingType }}
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -253,6 +262,7 @@ stages:
               image: ${{ variables.androidCrossContainerImage }}
             targetOS: android
             targetArchitecture: x86
+            brandingType: ${{ variables.brandingType }}
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -268,6 +278,7 @@ stages:
             targetOS: browser
             targetArchitecture: wasm
             extraProperties: /p:WasmEnableThreads=true
+            brandingType: ${{ variables.brandingType }}
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -281,6 +292,7 @@ stages:
               image: ${{ variables.linuxBionicCrossContainerImage }}
             targetOS: linux-bionic
             targetArchitecture: arm64
+            brandingType: ${{ variables.brandingType }}
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -294,6 +306,7 @@ stages:
               image: ${{ variables.linuxBionicCrossContainerImage }}
             targetOS: linux-bionic
             targetArchitecture: arm
+            brandingType: ${{ variables.brandingType }}
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -307,6 +320,7 @@ stages:
               image: ${{ variables.linuxBionicCrossContainerImage }}
             targetOS: linux-bionic
             targetArchitecture: x64
+            brandingType: ${{ variables.brandingType }}
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -317,6 +331,7 @@ stages:
             pool: ${{ parameters.pool_Mac }}
             targetOS: ios
             targetArchitecture: arm64
+            brandingType: ${{ variables.brandingType }}
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -327,6 +342,7 @@ stages:
             pool: ${{ parameters.pool_Mac }}
             targetOS: iossimulator
             targetArchitecture: x64
+            brandingType: ${{ variables.brandingType }}
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -337,6 +353,7 @@ stages:
             pool: ${{ parameters.pool_Mac }}
             targetOS: maccatalyst
             targetArchitecture: arm64
+            brandingType: ${{ variables.brandingType }}
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -347,6 +364,7 @@ stages:
             pool: ${{ parameters.pool_Mac }}
             targetOS: maccatalyst
             targetArchitecture: x64
+            brandingType: ${{ variables.brandingType }}
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -357,6 +375,7 @@ stages:
             pool: ${{ parameters.pool_Mac }}
             targetOS: tvos
             targetArchitecture: arm64
+            brandingType: ${{ variables.brandingType }}
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -367,6 +386,7 @@ stages:
             pool: ${{ parameters.pool_Mac }}
             targetOS: tvossimulator
             targetArchitecture: arm64
+            brandingType: ${{ variables.brandingType }}
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -377,6 +397,7 @@ stages:
             pool: ${{ parameters.pool_Mac }}
             targetOS: tvossimulator
             targetArchitecture: x64
+            brandingType: ${{ variables.brandingType }}
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -391,6 +412,7 @@ stages:
             crossRootFs: '/crossrootfs/x64'
             targetOS: wasi
             targetArchitecture: wasm
+            brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -401,6 +423,7 @@ stages:
           pool: ${{ parameters.pool_Mac }}
           targetOS: osx
           targetArchitecture: x64
+          brandingType: ${{ variables.brandingType }}
 
       - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
 
@@ -415,6 +438,7 @@ stages:
             targetOS: osx
             targetArchitecture: x64
             extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
+            brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -429,6 +453,7 @@ stages:
           crossRootFs: '/crossrootfs/x64'
           targetOS: linux
           targetArchitecture: x64
+          brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -443,6 +468,7 @@ stages:
           targetOS: linux
           targetArchitecture: x64
           extraProperties: /p:PgoInstrument=true
+          brandingType: ${{ variables.brandingType }}
 
       - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
 
@@ -461,6 +487,7 @@ stages:
             targetOS: linux
             targetArchitecture: x64
             extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
+            brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -475,6 +502,7 @@ stages:
           crossRootFs: '/crossrootfs/arm'
           targetOS: linux
           targetArchitecture: arm
+          brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -489,6 +517,7 @@ stages:
           crossRootFs: '/crossrootfs/arm64'
           targetOS: linux
           targetArchitecture: arm64
+          brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -503,6 +532,7 @@ stages:
           targetOS: linux
           targetArchitecture: arm64
           extraProperties: /p:PgoInstrument=true
+          brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -518,6 +548,7 @@ stages:
           targetOS: linux-musl
           targetArchitecture: x64
           targetRid: ${{ variables.linuxMuslX64Rid }}
+          brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -533,6 +564,7 @@ stages:
           targetOS: linux-musl
           targetArchitecture: arm
           targetRid: ${{ variables.linuxMuslArmRid }}
+          brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -548,6 +580,7 @@ stages:
           targetOS: linux-musl
           targetArchitecture: arm64
           targetRid: ${{ variables.linuxMuslArm64Rid }}
+          brandingType: ${{ variables.brandingType }}
 
       - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
         - template: ../jobs/vmr-build.yml
@@ -565,6 +598,7 @@ stages:
             targetOS: linux
             targetArchitecture: arm64
             extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
+            brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -575,6 +609,7 @@ stages:
           pool: ${{ parameters.pool_Mac }}
           targetOS: osx
           targetArchitecture: arm64
+          brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -587,6 +622,7 @@ stages:
           targetOS: windows
           targetArchitecture: arm64
           enableIBCOptimization: ${{ variables.ibcEnabled }}
+          brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -597,6 +633,7 @@ stages:
           targetOS: windows
           targetArchitecture: x64
           extraProperties: /p:PgoInstrument=true
+          brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -608,6 +645,7 @@ stages:
           targetArchitecture: x86
           extraProperties: /p:PgoInstrument=true
           enableIBCOptimization: ${{ variables.ibcEnabled }}
+          brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -618,6 +656,7 @@ stages:
           targetOS: windows
           targetArchitecture: arm64
           extraProperties: /p:PgoInstrument=true
+          brandingType: ${{ variables.brandingType }}
 
       ## Build Pass 2 verticals
 
@@ -642,6 +681,7 @@ stages:
             - AzureLinux_x64_Cross_Alpine_arm64
             - AzureLinux_x64_Cross_arm
             - AzureLinux_x64_Cross_Alpine_arm
+            brandingType: ${{ variables.brandingType }}
 
       # build the ASP.NET Core hosting bundle and VS components
       - template: ../jobs/vmr-build.yml
@@ -658,6 +698,7 @@ stages:
           - Windows_x64
           - Windows_x86
           - Windows_arm64
+          brandingType: ${{ variables.brandingType }}
 
       # build the workloads
       - template: ../jobs/vmr-build.yml
@@ -666,6 +707,7 @@ stages:
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
+          brandingType: ${{ variables.brandingType }}
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
           targetArchitecture: x64
@@ -701,6 +743,7 @@ stages:
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
+          brandingType: ${{ variables.brandingType }}
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
           targetArchitecture: x64
@@ -717,6 +760,7 @@ stages:
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
+          brandingType: ${{ variables.brandingType }}
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
           targetArchitecture: x86
@@ -733,6 +777,7 @@ stages:
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
+          brandingType: ${{ variables.brandingType }}
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
           targetArchitecture: arm64
@@ -764,6 +809,7 @@ stages:
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         signType: ${{ variables.signType }}
+        brandingType: ${{ variables.brandingType }}
         signDac: ${{ variables.signDacEnabled }}
         pool: ${{ parameters.pool_Windows }}
         targetOS: windows
@@ -776,6 +822,7 @@ stages:
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         signType: ${{ variables.signType }}
+        brandingType: ${{ variables.brandingType }}
         signDac: ${{ variables.signDacEnabled }}
         pool: ${{ parameters.pool_Windows }}
         targetOS: windows
@@ -787,6 +834,7 @@ stages:
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         signType: ${{ variables.signType }}
+        brandingType: ${{ variables.brandingType }}
         signDac: ${{ variables.signDacEnabled }}
         pool: ${{ parameters.pool_Windows }}
         targetOS: windows
@@ -802,6 +850,7 @@ stages:
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
         signType: ${{ variables.signType }}
+        brandingType: ${{ variables.brandingType }}
         pool: ${{ parameters.pool_Windows }}
         targetOS: windows
         targetArchitecture: x64
