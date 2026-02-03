@@ -16,5 +16,8 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
     <MicrosoftDotNetBuildManifestVersion>$(MicrosoftDotNetBuildManifestPackageVersion)</MicrosoftDotNetBuildManifestVersion>
     <MicrosoftNETSdkVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftNETSdkVersion>
+    
+    <!-- dotnet/arcade-services dependencies -->
+    <MicrosoftDotNetDarcLibVersion>1.1.0-beta.25407.5</MicrosoftDotNetDarcLibVersion>
   </PropertyGroup>
 </Project>
