@@ -42,6 +42,8 @@ namespace System.Net
 
         private bool _unsafeConnectionNtlmAuthentication;
 
+        private bool _enableKernelResponseBuffering;
+
         private HttpServerSessionHandle? _serverSessionHandle;
         private ulong _urlGroupId;
 
@@ -89,6 +91,8 @@ namespace System.Net
                 }
             }
         }
+
+        internal bool EnableKernelResponseBuffering => _enableKernelResponseBuffering;
 
         private Dictionary<ulong, DisconnectAsyncResult> DisconnectResults =>
             LazyInitializer.EnsureInitialized(ref _disconnectResults, () => new Dictionary<ulong, DisconnectAsyncResult>());
@@ -231,6 +235,9 @@ namespace System.Net
 
                     Debug.Assert(_currentSession is null);
 
+                    // Snapshot AppContext switch at Start() so the same value is used while the listener is running.
+                    SetEnableKernelResponseBuffering();
+
                     // SetupV2Config() is not called in the ctor, because it may throw. This would
                     // be a regression since in v1 the ctor never threw. Besides, ctors should do
                     // minimal work according to the framework design guidelines.
@@ -335,6 +342,11 @@ namespace System.Net
             {
                 if (NetEventSource.Log.IsEnabled()) NetEventSource.Error(this, $"DetachRequestQueueFromUrlGroup {SR.Format(SR.net_listener_detach_error, statusCode)}");
             }
+        }
+
+        private void SetEnableKernelResponseBuffering()
+        {
+            _enableKernelResponseBuffering = AppContext.TryGetSwitch("System.Net.HttpListener.EnableKernelResponseBuffering", out bool enabled) && enabled;
         }
 
         public void Stop()

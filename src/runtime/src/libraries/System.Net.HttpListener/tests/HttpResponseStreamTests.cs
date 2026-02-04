@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Net.Http;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -576,5 +577,113 @@ namespace System.Net.Tests
                 Assert.Throws<InvalidOperationException>(() => outputStream.EndWrite(beginWriteResult));
             }
         }
+
+        [PlatformSpecific(TestPlatforms.Windows)]
+        public class HttpResponseStreamWindowsTests
+        {
+            [ConditionalFact(nameof(Helpers) + "." + nameof(Helpers.IsWindowsImplementation))]
+            public async Task KernelResponseBufferingEnabled_WriteAsynchronouslyInParts_SetsFlagAndSucceeds()
+            {
+                AppContext.SetSwitch("System.Net.HttpListener.EnableKernelResponseBuffering", true);
+
+                using (var listenerFactory = new HttpListenerFactory())
+                {
+                    HttpListener listener = listenerFactory.GetListener();
+
+                    const string expectedResponse = "hello from HttpListener";
+                    Task<HttpListenerContext> serverContextTask = listener.GetContextAsync();
+
+                    using (HttpClient client = new HttpClient())
+                    {
+                        Task<string> clientTask = client.GetStringAsync(listenerFactory.ListeningUrl);
+
+                        HttpListenerContext serverContext = await serverContextTask;
+                        using (HttpListenerResponse response = serverContext.Response)
+                        {
+                            byte[] responseBuffer = Encoding.UTF8.GetBytes(expectedResponse);
+                            response.ContentLength64 = responseBuffer.Length;
+
+                            using (Stream outputStream = response.OutputStream)
+                            {
+                                AssertBufferDataFlagIsSet(outputStream);
+
+                                await outputStream.WriteAsync(responseBuffer, 0, 5);
+                                await outputStream.WriteAsync(responseBuffer, 5, responseBuffer.Length - 5);
+                            }
+                        }
+
+                        var clientString = await clientTask;
+
+                        Assert.Equal(expectedResponse, clientString);
+                    }
+                }
+
+                // Reset static state
+                AppContext.SetSwitch("System.Net.HttpListener.EnableKernelResponseBuffering", false);
+            }
+
+            [ConditionalFact(nameof(Helpers) + "." + nameof(Helpers.IsWindowsImplementation))]
+            public async Task KernelResponseBufferingEnabled_WriteSynchronouslyInParts_SetsFlagAndSucceeds()
+            {
+                AppContext.SetSwitch("System.Net.HttpListener.EnableKernelResponseBuffering", true);
+
+                using (var listenerFactory = new HttpListenerFactory())
+                {
+                    HttpListener listener = listenerFactory.GetListener();
+
+                    const string expectedResponse = "hello from HttpListener";
+                    Task<HttpListenerContext> serverContextTask = listener.GetContextAsync();
+
+                    using (HttpClient client = new HttpClient())
+                    {
+                        Task<string> clientTask = client.GetStringAsync(listenerFactory.ListeningUrl);
+
+                        HttpListenerContext serverContext = await serverContextTask;
+                        using (HttpListenerResponse response = serverContext.Response)
+                        {
+                            byte[] responseBuffer = Encoding.UTF8.GetBytes(expectedResponse);
+                            response.ContentLength64 = responseBuffer.Length;
+
+                            using (Stream outputStream = response.OutputStream)
+                            {
+                                AssertBufferDataFlagIsSet(outputStream);
+
+                                outputStream.Write(responseBuffer, 0, 5);
+                                outputStream.Write(responseBuffer, 5, responseBuffer.Length - 5);
+                            }
+                        }
+
+                        var clientString = await clientTask;
+
+                        Assert.Equal(expectedResponse, clientString);
+                    }
+                }
+
+                // Reset static state
+                AppContext.SetSwitch("System.Net.HttpListener.EnableKernelResponseBuffering", false);
+            }
+
+            private static void AssertBufferDataFlagIsSet(Stream outputStream)
+            {
+                MethodInfo compute =
+                    outputStream.GetType().GetMethod("ComputeLeftToWrite", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+
+                Assert.NotNull(compute);
+
+                object flagsObj = compute.Invoke(outputStream, parameters: null);
+                Assert.NotNull(flagsObj);
+
+                Assert.True(flagsObj is Enum, "Expected ComputeLeftToWrite to return an enum");
+
+                Enum flagsEnum = (Enum)flagsObj;
+
+                Type enumType = flagsEnum.GetType();
+                object bufferDataEnum =
+                    Enum.Parse(enumType, "HTTP_SEND_RESPONSE_FLAG_BUFFER_DATA", ignoreCase: false);
+
+                Assert.True(flagsEnum.HasFlag((Enum)bufferDataEnum));
+            }
+        }
+
     }
 }
