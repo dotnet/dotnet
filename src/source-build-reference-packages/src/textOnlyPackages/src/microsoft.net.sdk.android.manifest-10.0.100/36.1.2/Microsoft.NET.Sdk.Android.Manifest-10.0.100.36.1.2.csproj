@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>36.1.2</PackageVersion>
+    <AssemblyName>Microsoft.NET.Sdk.Android.Manifest-10.0.100</AssemblyName>
+  </PropertyGroup>
+
+</Project>
