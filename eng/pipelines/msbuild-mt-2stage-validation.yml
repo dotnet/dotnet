@@ -1,0 +1,227 @@
+# MSBuild -mt Validation Pipeline
+# 
+# This pipeline validates MSBuild's multithreaded (-mt) mode by:
+# 1. Syncing a PR from a constituent repo (e.g., dotnet/msbuild) into the VMR
+# 2. Running a 2-stage source-build with -mt mode enabled
+#
+# Trigger: Manual only (no CI/PR triggers)
+# Usage: Queue from Azure DevOps UI with a GitHub PR URL
+
+trigger: none
+pr: none
+
+parameters:
+- name: prUrl
+  displayName: 'GitHub PR URL (e.g., https://github.com/dotnet/msbuild/pull/123)'
+  type: string
+  default: ''
+
+- name: vmrBranch
+  displayName: 'VMR branch to build on top of'
+  type: string
+  default: 'main'
+
+- name: excludedRepos
+  displayName: 'Repos to exclude from -mt mode (colon-separated, empty = use defaults from Directory.Build.props)'
+  type: string
+  default: ''
+
+resources:
+  repositories:
+  - repository: vmr
+    type: github
+    endpoint: dotnet
+    name: dotnet/dotnet
+    ref: refs/heads/main
+
+variables:
+- template: /eng/common/templates/variables/pool-providers.yml@self
+- name: centOSStreamContainerName
+  value: centOSStreamContainer
+- name: centOSStreamContainerImage
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream-10-amd64
+- name: centOSStreamX64Rid
+  value: centos.10-x64
+
+stages:
+- stage: SyncAndValidate
+  displayName: Sync PR and Validate -mt Mode
+  jobs:
+  
+  # Job 1: Clone VMR and sync PR into it
+  - job: SyncPR
+    displayName: Sync PR to VMR
+    pool:
+      name: NetCore-Public
+      demands: ImageOverride -equals build.ubuntu.2204.amd64.open
+    steps:
+    - checkout: vmr
+      displayName: Clone dotnet/dotnet
+      path: vmr
+      clean: true
+      fetchDepth: 0
+
+    - script: |
+        set -ex
+        
+        # Parse PR URL: https://github.com/dotnet/msbuild/pull/123
+        PR_URL="${{ parameters.prUrl }}"
+        
+        if [ -z "$PR_URL" ]; then
+          echo "##vso[task.logissue type=error]No PR URL provided"
+          exit 1
+        fi
+        
+        # Extract org, repo, and PR number
+        # Expected format: https://github.com/{org}/{repo}/pull/{number}
+        if [[ "$PR_URL" =~ github\.com/([^/]+)/([^/]+)/pull/([0-9]+) ]]; then
+          ORG="${BASH_REMATCH[1]}"
+          REPO="${BASH_REMATCH[2]}"
+          PR_NUMBER="${BASH_REMATCH[3]}"
+        else
+          echo "##vso[task.logissue type=error]Invalid PR URL format: $PR_URL"
+          echo "Expected: https://github.com/{org}/{repo}/pull/{number}"
+          exit 1
+        fi
+        
+        echo "Parsed PR: org=$ORG, repo=$REPO, pr=$PR_NUMBER"
+        echo "##vso[task.setvariable variable=PR_ORG;isOutput=true]$ORG"
+        echo "##vso[task.setvariable variable=PR_REPO;isOutput=true]$REPO"
+        echo "##vso[task.setvariable variable=PR_NUMBER;isOutput=true]$PR_NUMBER"
+        
+        # Clone the PR source
+        cd $(Agent.BuildDirectory)
+        git clone https://github.com/$ORG/$REPO.git pr-repo
+        cd pr-repo
+        git fetch origin pull/$PR_NUMBER/head:pr-branch
+        git checkout pr-branch
+        git branch repo-head
+        
+        echo "PR HEAD commit: $(git rev-parse HEAD)"
+      displayName: Parse PR URL and clone
+      name: parsePR
+
+    - script: |
+        set -ex
+        cd $(Agent.BuildDirectory)/vmr
+        git checkout ${{ parameters.vmrBranch }}
+        git log -1 --oneline
+      displayName: Checkout VMR branch
+
+    - script: |
+        set -ex
+        git config --global user.name "mt-validation-bot"
+        git config --global user.email "mt-validation@dotnet.org"
+      displayName: Configure git
+
+    - script: |
+        set -ex
+        cd $(Agent.BuildDirectory)/pr-repo
+        
+        ./eng/common/vmr-sync.sh           \
+          --vmr $(Agent.BuildDirectory)/vmr \
+          --tmp $(Agent.TempDirectory)      \
+          --ci                              \
+          --debug
+        
+        if [ $? -ne 0 ]; then
+          echo "##vso[task.logissue type=error]Failed to sync PR to VMR"
+          exit 1
+        fi
+        
+        echo "Successfully synced PR to VMR"
+      displayName: Sync PR into VMR
+
+    - script: |
+        set -ex
+        cd $(Agent.BuildDirectory)/vmr
+        git status
+        git log -3 --oneline
+      displayName: Show VMR state after sync
+
+    # Publish the synced VMR as a pipeline artifact for subsequent jobs
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: $(Agent.BuildDirectory)/vmr
+        artifactName: vmr-with-pr
+      displayName: Publish synced VMR
+
+  # Job 2: Stage 1 - Build with LKG MSBuild (no -mt)
+  - job: Stage1_Build
+    displayName: 'Stage 1: Build SDK (no -mt)'
+    dependsOn: SyncPR
+    pool:
+      name: NetCore-Public
+      demands: ImageOverride -equals build.ubuntu.2204.amd64.open
+    container:
+      image: $(centOSStreamContainerImage)
+      options: --privileged
+    timeoutInMinutes: 360
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifactName: vmr-with-pr
+        targetPath: $(Build.SourcesDirectory)
+      displayName: Download synced VMR
+
+    - script: |
+        set -ex
+        chmod +x ./build.sh
+        ./build.sh --ci --clean-while-building --prepareMachine -c Release --source-only --online
+      displayName: Build Stage 1
+      workingDirectory: $(Build.SourcesDirectory)
+
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: $(Build.SourcesDirectory)/artifacts
+        artifactName: stage1-artifacts
+      displayName: Publish Stage 1 artifacts
+
+  # Job 3: Stage 2 - Build with Stage 1's MSBuild + -mt mode
+  - job: Stage2_MT_Build
+    displayName: 'Stage 2: Build with -mt mode'
+    dependsOn: Stage1_Build
+    pool:
+      name: NetCore-Public
+      demands: ImageOverride -equals build.ubuntu.2204.amd64.open
+    container:
+      image: $(centOSStreamContainerImage)
+      options: --privileged
+    timeoutInMinutes: 360
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifactName: vmr-with-pr
+        targetPath: $(Build.SourcesDirectory)
+      displayName: Download synced VMR
+
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifactName: stage1-artifacts
+        targetPath: $(Build.SourcesDirectory)/artifacts
+      displayName: Download Stage 1 artifacts
+
+    - script: |
+        set -ex
+        chmod +x ./build.sh
+        
+        # Set exclusion override if provided
+        EXCLUDED_REPOS="${{ parameters.excludedRepos }}"
+        if [ -n "$EXCLUDED_REPOS" ]; then
+          export MSBUILD_MT_EXCLUDED_REPOS="$EXCLUDED_REPOS"
+          echo "Using custom exclusion list: $EXCLUDED_REPOS"
+        else
+          echo "Using default exclusion list from Directory.Build.props"
+        fi
+        
+        ./build.sh --ci --clean-while-building --prepareMachine -c Release --source-only \
+          /p:DotNetBuildMT=true
+      displayName: Build Stage 2 with -mt
+      workingDirectory: $(Build.SourcesDirectory)
+
+    - script: |
+        echo "✅ MSBuild -mt validation completed successfully!"
+        echo "PR: ${{ parameters.prUrl }}"
+        echo "Exclusions: ${{ coalesce(parameters.excludedRepos, '(defaults from Directory.Build.props)') }}"
+      displayName: Report success
+      condition: succeeded()
