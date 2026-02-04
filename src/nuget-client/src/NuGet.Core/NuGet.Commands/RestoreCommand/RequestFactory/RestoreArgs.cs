@@ -184,6 +184,8 @@ namespace NuGet.Commands
 
         public void ApplyStandardProperties(RestoreRequest request)
         {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+
             if (request.ProjectStyle == ProjectStyle.PackageReference)
             {
                 request.LockFilePath = Path.Combine(request.RestoreOutputPath, LockFileFormat.AssetsFileName);
@@ -203,7 +205,8 @@ namespace NuGet.Commands
 
             request.RequestedRuntimes.UnionWith(Runtimes);
             request.FallbackRuntimes.UnionWith(FallbackRuntimes);
-            request.LockFileVersion = LockFileFormat.Version;
+            // Use legacy version for classic csproj.
+            request.LockFileVersion = request.Project.RestoreMetadata?.UsingMicrosoftNETSdk == true ? LockFileFormat.Version : LockFileFormat.LegacyVersion;
 
             // Run runtime asset checks for project.json, and for other types if enabled.
             if (ValidateRuntimeAssets == null)

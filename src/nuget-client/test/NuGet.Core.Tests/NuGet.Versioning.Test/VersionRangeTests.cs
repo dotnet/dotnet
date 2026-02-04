@@ -25,12 +25,16 @@ namespace NuGet.Versioning.Test
         [InlineData("(, 2.0.0)", "(< 2.0.0)")]
         [InlineData("[, 2.0.0)", "(< 2.0.0)")]
         [InlineData("[, 2.0.0]", "(<= 2.0.0)")]
-        [InlineData("1.0.0-beta*", "(>= 1.0.0-beta)")]
-        [InlineData("[1.0.0-beta*, 2.0.0)", "(>= 1.0.0-beta && < 2.0.0)")]
+        [InlineData("1.0.0-beta*", "(>= 1.0.0-beta)", "(>= 1.0.0-beta*)")]
+        [InlineData("[1.0.0-beta*, 2.0.0)", "(>= 1.0.0-beta && < 2.0.0)", "(>= 1.0.0-beta* && < 2.0.0)")]
         [InlineData("[1.0.0-beta.1, 2.0.0-alpha.2]", "(>= 1.0.0-beta.1 && <= 2.0.0-alpha.2)")]
         [InlineData("[1.0.0+beta.1, 2.0.0+alpha.2]", "(>= 1.0.0 && <= 2.0.0)")]
         [InlineData("[1.0, 2.0]", "(>= 1.0.0 && <= 2.0.0)")]
-        public void VersionRange_PrettyPrintTests(string versionString, string expected)
+        [InlineData("*", "(>= 0.0.0)", "(>= *)")]
+        [InlineData("1.*", "(>= 1.0.0)", "(>= 1.*)")]
+        [InlineData("1.2.*", "(>= 1.2.0)", "(>= 1.2.*)")]
+        [InlineData("1.2.3.*", "(>= 1.2.3)", "(>= 1.2.3.*)")]
+        public void VersionRange_PrettyPrintTests(string versionString, string expected, string? expectedFloating = null)
         {
             // Arrange
             var formatter = new VersionRangeFormatter();
@@ -41,10 +45,14 @@ namespace NuGet.Versioning.Test
             var s2 = range.ToString("P", formatter);
             var s3 = range.PrettyPrint();
 
+            var s4 = string.Format(formatter, "{0:F}", range);
+
             // Assert
             Assert.Equal(expected, s);
             Assert.Equal(expected, s2);
             Assert.Equal(expected, s3);
+
+            Assert.Equal(expectedFloating ?? expected, s4);
         }
 
         [Theory]

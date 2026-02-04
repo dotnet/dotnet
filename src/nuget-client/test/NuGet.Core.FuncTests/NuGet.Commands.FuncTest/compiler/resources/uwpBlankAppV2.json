@@ -1,7 +1,7 @@
 {
-  "version": 3,
+  "version": 4,
   "targets": {
-    "UAP,Version=v10.0": {
+    "uap10.0": {
       "Microsoft.CSharp/4.0.0": {
         "type": "package",
         "dependencies": {
@@ -2053,7 +2053,7 @@
         }
       }
     },
-    "UAP,Version=v10.0/win10-arm": {
+    "uap10.0/win10-arm": {
       "Microsoft.CSharp/4.0.0": {
         "type": "package",
         "dependencies": {
@@ -3968,7 +3968,7 @@
         }
       }
     },
-    "UAP,Version=v10.0/win10-arm-aot": {
+    "uap10.0/win10-arm-aot": {
       "Microsoft.CSharp/4.0.0": {
         "type": "package",
         "dependencies": {
@@ -5844,7 +5844,7 @@
         }
       }
     },
-    "UAP,Version=v10.0/win10-x64": {
+    "uap10.0/win10-x64": {
       "Microsoft.CSharp/4.0.0": {
         "type": "package",
         "dependencies": {
@@ -7766,7 +7766,7 @@
         }
       }
     },
-    "UAP,Version=v10.0/win10-x64-aot": {
+    "uap10.0/win10-x64-aot": {
       "Microsoft.CSharp/4.0.0": {
         "type": "package",
         "dependencies": {
@@ -9642,7 +9642,7 @@
         }
       }
     },
-    "UAP,Version=v10.0/win10-x86": {
+    "uap10.0/win10-x86": {
       "Microsoft.CSharp/4.0.0": {
         "type": "package",
         "dependencies": {
@@ -11564,7 +11564,7 @@
         }
       }
     },
-    "UAP,Version=v10.0/win10-x86-aot": {
+    "uap10.0/win10-x86-aot": {
       "Microsoft.CSharp/4.0.0": {
         "type": "package",
         "dependencies": {
@@ -16898,13 +16898,14 @@
     }
   },
   "projectFileDependencyGroups": {
-    "UAP,Version=v10.0": [
+    "uap10.0": [
       "Microsoft.NETCore.UniversalWindowsPlatform >= 5.0.0"
     ]
   },
   "project": {
     "frameworks": {
       "uap10.0": {
+        "framework": "uap10.0",
         "targetAlias": "uap10.0",
         "dependencies": {
           "Microsoft.NETCore.UniversalWindowsPlatform": "[5.0.0, )"

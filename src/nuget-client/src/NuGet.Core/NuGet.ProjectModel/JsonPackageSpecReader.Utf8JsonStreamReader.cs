@@ -26,6 +26,7 @@ namespace NuGet.ProjectModel
     {
         private static readonly byte[] DependenciesPropertyName = Encoding.UTF8.GetBytes("dependencies");
         private static readonly byte[] FrameworksPropertyName = Encoding.UTF8.GetBytes("frameworks");
+        private static readonly byte[] FrameworkPropertyName = Encoding.UTF8.GetBytes("framework");
         private static readonly byte[] RestorePropertyName = Encoding.UTF8.GetBytes("restore");
         private static readonly byte[] RuntimesPropertyName = Encoding.UTF8.GetBytes("runtimes");
         private static readonly byte[] SupportsPropertyName = Encoding.UTF8.GetBytes("supports");
@@ -42,8 +43,6 @@ namespace NuGet.ProjectModel
         private static readonly byte[] AliasesPropertyName = Encoding.UTF8.GetBytes("aliases");
         private static readonly byte[] NamePropertyName = Encoding.UTF8.GetBytes("name");
         private static readonly byte[] PrivateAssetsPropertyName = Encoding.UTF8.GetBytes("privateAssets");
-        private static readonly byte[] ExcludeFilesPropertyName = Encoding.UTF8.GetBytes("excludeFiles");
-        private static readonly byte[] IncludeFilesPropertyName = Encoding.UTF8.GetBytes("includeFiles");
         private static readonly byte[] CentralPackageVersionsManagementEnabledPropertyName = Encoding.UTF8.GetBytes("centralPackageVersionsManagementEnabled");
         private static readonly byte[] CentralPackageVersionOverrideDisabledPropertyName = Encoding.UTF8.GetBytes("centralPackageVersionOverrideDisabled");
         private static readonly byte[] CentralPackageTransitivePinningEnabledPropertyName = Encoding.UTF8.GetBytes("CentralPackageTransitivePinningEnabled");
@@ -97,7 +96,6 @@ namespace NuGet.ProjectModel
         private static readonly byte[] UsingMicrosoftNETSdk = Encoding.UTF8.GetBytes("UsingMicrosoftNETSdk");
         private static readonly byte[] UseLegacyDependencyResolverPropertyName = Encoding.UTF8.GetBytes("restoreUseLegacyDependencyResolver");
         private static readonly byte[] PackagesToPrunePropertyName = Encoding.UTF8.GetBytes("packagesToPrune");
-        private static readonly byte[] EnablePackagePruningPropertyName = Encoding.UTF8.GetBytes("enablePackagePruning");
 
         internal static PackageSpec GetPackageSpecUtf8JsonStreamReader(Stream stream, string name, string packageSpecPath, IEnvironmentVariableReader environmentVariableReader, string snapshotValue = null)
         {
@@ -116,7 +114,6 @@ namespace NuGet.ProjectModel
             List<CompatibilityProfile> compatibilityProfiles = null;
             List<RuntimeDescription> runtimeDescriptions = null;
             string filePath = name == null ? null : Path.GetFullPath(packageSpecPath);
-
             if (jsonReader.TokenType == JsonTokenType.StartObject)
             {
                 while (jsonReader.Read() && jsonReader.TokenType == JsonTokenType.PropertyName)
@@ -1307,9 +1304,10 @@ namespace NuGet.ProjectModel
             {
                 while (jsonReader.Read() && jsonReader.TokenType == JsonTokenType.PropertyName)
                 {
-                    var frameworkPropertyName = jsonReader.GetString();
-                    NuGetFramework framework = NuGetFramework.Parse(frameworkPropertyName);
-                    var frameworkGroup = new ProjectRestoreMetadataFrameworkInfo(framework);
+                    var key = jsonReader.GetString();
+                    string frameworkProperty = null;
+                    string targetAlias = string.Empty;
+                    List<ProjectRestoreReference> projectReferences = new();
 
                     if (jsonReader.Read() && jsonReader.TokenType == JsonTokenType.StartObject)
                     {
@@ -1355,7 +1353,7 @@ namespace NuGet.ProjectModel
                                             }
                                         }
 
-                                        frameworkGroup.ProjectReferences.Add(new ProjectRestoreReference()
+                                        projectReferences.Add(new ProjectRestoreReference()
                                         {
                                             ProjectUniqueName = projectReferencePropertyName,
                                             ProjectPath = projectReferenceProjectPath,
@@ -1377,13 +1375,25 @@ namespace NuGet.ProjectModel
                             }
                             else if (jsonReader.ValueTextEquals(TargetAliasPropertyName))
                             {
-                                frameworkGroup.TargetAlias = jsonReader.ReadNextTokenAsString();
+                                targetAlias = jsonReader.ReadNextTokenAsString();
+                            }
+                            else if (jsonReader.ValueTextEquals(FrameworkPropertyName))
+                            {
+                                frameworkProperty = jsonReader.ReadNextTokenAsString();
                             }
                             else
                             {
                                 jsonReader.Skip();
                             }
                         }
+                        NuGetFramework framework = frameworkProperty == null ? NuGetFramework.Parse(key) : NuGetFramework.Parse(frameworkProperty);
+                        ProjectRestoreMetadataFrameworkInfo frameworkGroup = new(framework)
+                        {
+                            FrameworkName = framework,
+                            TargetAlias = targetAlias,
+                            ProjectReferences = projectReferences
+                        };
+
                         targetFrameworks ??= [];
                         targetFrameworks.Add(frameworkGroup);
                     }
@@ -1394,8 +1404,8 @@ namespace NuGet.ProjectModel
 
         private static void ReadTargetFrameworks(PackageSpec packageSpec, ref Utf8JsonStreamReader jsonReader)
         {
-            var frameworkName = NuGetFramework.Parse(jsonReader.GetString());
-
+            string key = jsonReader.GetString();
+            NuGetFramework frameworkName = null;
             bool assetTargetFallback = false;
             Dictionary<string, CentralPackageVersion> centralPackageVersions = null;
             List<LibraryDependency> dependencies = null;
@@ -1467,6 +1477,11 @@ namespace NuGet.ProjectModel
                             frameworkReferences,
                             packageSpec.FilePath);
                     }
+                    else if (jsonReader.ValueTextEquals(FrameworkPropertyName))
+                    {
+                        string frameworkProperty = jsonReader.ReadNextTokenAsString();
+                        frameworkName = NuGetFramework.Parse(frameworkProperty);
+                    }
                     else if (jsonReader.ValueTextEquals(ImportsPropertyName))
                     {
                         imports ??= new List<NuGetFramework>();
@@ -1512,6 +1527,11 @@ namespace NuGet.ProjectModel
                 TargetAlias = targetAlias,
                 Warn = warn
             };
+
+            if (frameworkName == null) // V3 writers don't set the framework property, so use the key instead.
+            {
+                frameworkName = NuGetFramework.Parse(key);
+            }
 
             AddTargetFramework(packageSpec, frameworkName, secondaryFramework, targetFrameworkInformation);
         }

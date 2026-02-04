@@ -15,7 +15,6 @@ using NuGet.LibraryModel;
 using NuGet.ProjectModel;
 using NuGet.Versioning;
 using Xunit;
-using static NuGet.Frameworks.FrameworkConstants;
 
 namespace NuGet.Commands.Test
 {
@@ -109,40 +108,6 @@ namespace NuGet.Commands.Test
 
             // Act && Assert
             AssertError(spec, "No target frameworks specified");
-        }
-
-        [Fact]
-        public void SpecValidationUtility_VerifyFrameworks_Duplicates()
-        {
-            // Arrange
-            var spec = new DependencyGraphSpec();
-            spec.AddRestore("a");
-
-            var targetFramework1 = new TargetFrameworkInformation()
-            {
-                FrameworkName = NuGetFramework.Parse("net45")
-            };
-
-            var targetFramework2 = new TargetFrameworkInformation()
-            {
-                FrameworkName = NuGetFramework.Parse("net45")
-            };
-
-            var info = new[] { targetFramework1, targetFramework2 };
-
-            var project = new PackageSpec(info);
-            project.RestoreMetadata = new ProjectRestoreMetadata();
-            project.Name = "a";
-            project.FilePath = Path.Combine(Directory.GetCurrentDirectory(), "a.csproj");
-            project.RestoreMetadata.ProjectUniqueName = "a";
-            project.RestoreMetadata.ProjectName = "a";
-            project.RestoreMetadata.ProjectPath = Path.Combine(Directory.GetCurrentDirectory(), "a.csproj");
-            project.RestoreMetadata.ProjectStyle = ProjectStyle.PackageReference;
-
-            spec.AddProject(project);
-
-            // Act && Assert
-            AssertError(spec, "Duplicate frameworks found");
         }
 
         [Fact]
@@ -379,7 +344,7 @@ namespace NuGet.Commands.Test
         }
 
         [Fact]
-        public void SpecValidationUtility_VerifyFrameworks_WithSameBase_DifferentAssetTargetFallback_Duplicates()
+        public void SpecValidationUtility_VerifyFrameworks_Duplicates()
         {
             // Arrange
             var spec = new DependencyGraphSpec();
@@ -387,12 +352,14 @@ namespace NuGet.Commands.Test
 
             var targetFramework1 = new TargetFrameworkInformation()
             {
-                FrameworkName = new AssetTargetFallbackFramework(CommonFrameworks.Net50, new List<NuGetFramework>() { CommonFrameworks.Net463 })
+                FrameworkName = NuGetFramework.Parse("net46"),
+                TargetAlias = "net45"
             };
 
             var targetFramework2 = new TargetFrameworkInformation()
             {
-                FrameworkName = new AssetTargetFallbackFramework(CommonFrameworks.Net50, new List<NuGetFramework>() { CommonFrameworks.Net462 })
+                FrameworkName = NuGetFramework.Parse("net45"),
+                TargetAlias = "net45"
             };
 
             var info = new[] { targetFramework1, targetFramework2 };
@@ -405,11 +372,14 @@ namespace NuGet.Commands.Test
             project.RestoreMetadata.ProjectName = "a";
             project.RestoreMetadata.ProjectPath = Path.Combine(Directory.GetCurrentDirectory(), "a.csproj");
             project.RestoreMetadata.ProjectStyle = ProjectStyle.PackageReference;
+            project.RestoreMetadata.OutputPath = Directory.GetCurrentDirectory();
+            project.RestoreMetadata.OriginalTargetFrameworks.Add("net45");
+            project.RestoreMetadata.OriginalTargetFrameworks.Add("net45");
 
             spec.AddProject(project);
 
             // Act && Assert
-            AssertError(spec, "Duplicate frameworks found");
+            AssertError(spec, "TargetFramework property must be unique");
         }
 
         private static PackageSpec GetProjectA()
@@ -458,11 +428,11 @@ namespace NuGet.Commands.Test
                 specEx = ex;
             }
 
-            Assert.NotNull(specEx);
+            specEx.Should().NotBeNull();
 
             foreach (var s in contains)
             {
-                Assert.Contains(s, specEx.Message);
+                specEx.Message.Should().Contain(s);
             }
         }
     }
