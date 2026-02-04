@@ -7,10 +7,10 @@
       "commitSha": "b0f891cf7c1febc0ebbae7dd787f8a0b4c0cbc95"
     },
     {
-      "barId": 299584,
+      "barId": 300062,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "0ee1da26feb6f746bab013ee9414cd6510febb25"
+      "commitSha": "0c6d74d93e4c774863606ff99c0b1a4ddfe39d35"
     },
     {
       "barId": 279211,
@@ -37,10 +37,10 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 300033,
+      "barId": 300098,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "6cb0f357629b136e22102edb5428d13760d682ef"
+      "commitSha": "2d323abb024aac9a59b5008cdc2c8d6e804877a4"
     },
     {
       "barId": 298197,
@@ -91,10 +91,10 @@
       "commitSha": "9e293c93cdffeb5a193eb28e445dab742def23ae"
     },
     {
-      "barId": 299729,
+      "barId": 300109,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "ce2b7a54fd330ed35e0e82f69c63b384db7c2cf8"
+      "commitSha": "f46c335982ae897cd102d7b773073b27e057e48d"
     },
     {
       "barId": 298868,
@@ -115,10 +115,10 @@
       "commitSha": "1536a1ca256a4e9f804b2073464ca8e4f4794702"
     },
     {
-      "barId": 299741,
+      "barId": 300176,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "6f4d95fa8d8bb2ee48924a2f5c8dbaf4166acfc4"
+      "commitSha": "8f46f06fc5132007d96de26d832efc8231542493"
     },
     {
       "barId": 287819,
@@ -127,22 +127,22 @@
       "commitSha": "697c1270eebc92c531f27265dd0ff60211b088bb"
     },
     {
-      "barId": 299569,
+      "barId": 300172,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "29443d8cc00b2a66d9f441bd5ffa2b185629d0e2"
+      "commitSha": "233b0fd0ac3256851107eb560587c36152776b8d"
     },
     {
-      "barId": 299087,
+      "barId": 300101,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "4e97eb7fea1536620baecafd46ab8bf49fe20e6a"
+      "commitSha": "eea9756a4a6dc561e9dc3f5a69a721658443e996"
     },
     {
-      "barId": 299791,
+      "barId": 299951,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "493de48dd11ac1468da3fd82c66b49f12057dbf0"
+      "commitSha": "a4f79e094fec731cfc4a55571b39d0e494902b57"
     },
     {
       "barId": 291267,
