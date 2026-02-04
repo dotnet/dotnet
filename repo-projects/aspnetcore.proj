@@ -66,12 +66,17 @@
     -->
     <ExtraPackageVersionPropsPackageInfo Include="MicrosoftCodeAnalysisVersion_LatestVS" Version="%24(MicrosoftCodeAnalysisCommonVersion)" />
 
-    <!-- For non-official builds, use the Roslyn version contained in the N-1 build because ASP.NET Core needs to build and execute
-      a source generator which must be built targeting a version of Roslyn contained in the executing SDK. Otherwise, because of how
-      Arcade works for non-official builds, M.CA will get an assembly version of 42.42.42.42 and the source generator would target that
-      version leading to an error like the following: 
+    <!-- Use the Roslyn version contained in the N-1 build because ASP.NET Core needs to build and execute a source generator which
+      must be built targeting a version of Roslyn contained in the executing SDK.
+      
+      In the case of non-official builds, because of how Arcade works for non-official builds, M.CA will get an assembly version of
+      42.42.42.42 and the source generator would target that version leading to an error like the following: 
         CSC error CS9057: Analyzer assembly '/repos/dotnet/src/aspnetcore/artifacts/bin/Microsoft.AspNetCore.Http.RequestDelegateGenerator/Release/netstandard2.0/Microsoft.AspNetCore.Http.RequestDelegateGenerator.dll'
         cannot be used because it references version '42.42.42.42' of the compiler, which is newer than the currently running version '5.0.0.0'.
+      
+      In the case of official build, there can be the scenario where M.CA has been upgraded in the live version so that it is higher
+      than the version contained in the executed SDK. This would lead to a similar error as above but with real version numbers.
+
       By not lifting the M.CA version to the current version and instead using the N-1 version, we guarantee that it will match the version
       containing in the executed SDK and avoiding this error.
     -->
