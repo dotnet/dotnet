@@ -14,7 +14,7 @@
     "editor.tabSize": 2
   },
   "dotnet.defaultSolution": "Razor.slnx",
-  "omnisharp.defaultLaunchSolution": "Razor.slnx",
+  "dotnet.solution.autoOpen": "Razor.slnx",
   "files.encoding": "utf8bom",
   "dotnet.testWindow.disableBuildOnRefresh": true
 }
