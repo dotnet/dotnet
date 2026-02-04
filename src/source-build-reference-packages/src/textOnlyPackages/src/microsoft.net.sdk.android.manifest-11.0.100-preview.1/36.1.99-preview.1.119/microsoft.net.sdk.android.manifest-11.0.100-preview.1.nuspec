@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.NET.Sdk.Android.Manifest-11.0.100-preview.1</id>
+    <version>36.1.99-preview.1.119</version>
+    <authors>Microsoft</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="file">LICENSE.TXT</license>
+    <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
+    <projectUrl>https://dot.net/</projectUrl>
+    <description>Microsoft.NET.Sdk.Android workload manifest. Please do not reference directly.</description>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <packageTypes>
+      <packageType name="DotnetPlatform" />
+    </packageTypes>
+    <repository type="git" url="https://github.com/dotnet/android" commit="b6afc7e51d72d1213947f2fbff207127d36fe02a" />
+  </metadata>
+</package>
