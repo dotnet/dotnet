@@ -1,8 +1,10 @@
 <Project>
 
   <PropertyGroup>
+    <!-- Update downlevel known packs when building from source in the VMR and targeting a non-current .NETCoreApp TFM. -->
     <UpdateDownlevelKnownPacks Condition="'$(UpdateDownlevelKnownPacks)' == '' and
       '$(DotNetBuildSourceOnly)' == 'true' and
+      '$(DotNetBuildFromVMR)' == 'true' and
       '$(TargetFrameworkIdentifier)' == '.NETCoreApp' and
       '$(TargetFrameworkVersion)' != '' and
       $([MSBuild]::VersionLessThan('$(TargetFrameworkVersion)', '$(BundledNETCoreAppTargetFrameworkVersion)'))">true</UpdateDownlevelKnownPacks>
