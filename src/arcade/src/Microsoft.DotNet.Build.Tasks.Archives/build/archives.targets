@@ -88,8 +88,7 @@
   </Target>
 
   <Target Name="_CreateArchives"
-          DependsOnTargets="_CheckPigzAvailability"
-          Condition="'$(SkipArchivesBuild)' != 'true' AND '$(_IsIndividualArchiveBuild)' != 'true'">
+          Condition="'$(SkipArchivesBuild)' != 'true'">
     <!-- Publish once before dispatching to individual formats -->
     <PropertyGroup>
       <_OutputPathRoot>$([MSBuild]::NormalizeDirectory($(IntermediateOutputPath), 'output'))</_OutputPathRoot>
@@ -103,7 +102,6 @@
       <_ArchiveBuildProject Include="$(MSBuildProjectFile)">
         <AdditionalProperties>
           _CurrentArchiveFormat=%(ArchiveFormat.Identity);
-          _IsIndividualArchiveBuild=true;
           _OutputPathRoot=$(_OutputPathRoot)
         </AdditionalProperties>
       </_ArchiveBuildProject>
@@ -115,8 +113,7 @@
   </Target>
 
   <Target Name="_CreateSingleArchive"
-          DependsOnTargets="_CheckPigzAvailability"
-          Condition="'$(_IsIndividualArchiveBuild)' == 'true'">
+          DependsOnTargets="_CheckPigzAvailability">
     <PropertyGroup>
       <_ArchiveFileName>$(ArchiveName)-$(Version)</_ArchiveFileName>
       <_ArchiveFileName Condition="'$(RuntimeIdentifier)' != ''">$(ArchiveName)-$(Version)-$(RuntimeIdentifier)</_ArchiveFileName>
@@ -145,8 +142,7 @@
   </Target>
 
   <Target Name="_CreateSymbolsArchives"
-          DependsOnTargets="_CheckPigzAvailability"
-          Condition="'$(CreateSymbolsArchive)' == 'true' AND '$(SkipArchivesBuild)' != 'true' AND '$(_IsIndividualArchiveBuild)' != 'true'">
+          Condition="'$(CreateSymbolsArchive)' == 'true' AND '$(SkipArchivesBuild)' != 'true'">
     <!-- Publish once before dispatching to individual formats -->
     <PropertyGroup>
       <_SymbolsOutputPathRoot>$([MSBuild]::NormalizeDirectory($(IntermediateOutputPath), 'symbols'))</_SymbolsOutputPathRoot>
@@ -160,7 +156,6 @@
       <_SymbolsArchiveBuildProject Include="$(MSBuildProjectFile)">
         <AdditionalProperties>
           _CurrentArchiveFormat=%(ArchiveFormat.Identity);
-          _IsIndividualArchiveBuild=true;
           _SymbolsOutputPathRoot=$(_SymbolsOutputPathRoot)
         </AdditionalProperties>
       </_SymbolsArchiveBuildProject>
@@ -172,8 +167,7 @@
   </Target>
 
   <Target Name="_CreateSingleSymbolsArchive"
-          DependsOnTargets="_CheckPigzAvailability"
-          Condition="'$(_IsIndividualArchiveBuild)' == 'true'">
+          DependsOnTargets="_CheckPigzAvailability">
     <PropertyGroup>
       <_ArchiveFileName>$(SymbolsArchiveName)-$(Version)</_ArchiveFileName>
       <_ArchiveFileName Condition="'$(RuntimeIdentifier)' != ''">$(SymbolsArchiveName)-$(RuntimeIdentifier)-$(Version)</_ArchiveFileName>
