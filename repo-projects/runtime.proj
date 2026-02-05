@@ -53,6 +53,7 @@
     <BuildArgs Condition="'$(PgoInstrument)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)pgoinstrument</BuildArgs>
 
     <!-- Handle system libraries -->
+    <BuildArgs Condition="$(UseSystemLibs.Contains('+zstd')) or $(UseSystemLibs.Contains('+all'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_ZSTD=true</BuildArgs>
     <BuildArgs Condition="$(UseSystemLibs.Contains('+brotli')) or $(UseSystemLibs.Contains('+all'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_BROTLI=true</BuildArgs>
     <BuildArgs Condition="$(UseSystemLibs.Contains('+libunwind')) or $(UseSystemLibs.Contains('+all'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_LIBUNWIND=true</BuildArgs>
     <!-- TODO: llvm-libunwind -->
