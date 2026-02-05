@@ -25,17 +25,6 @@
                       Private="true"
                       IncludeReferenceAssemblyInPackage="true" />
 
-    <!-- These generators only provides an implementation targeting Roslyn 4.4 and upwards. -->
-    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Configuration.Binder\gen\Microsoft.Extensions.Configuration.Binder.SourceGeneration.csproj"
-                      ReferenceOutputAssembly="false"
-                      PackAsAnalyzer="true" />
-    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Logging.Abstractions\gen\Microsoft.Extensions.Logging.Generators.Roslyn4.4.csproj"
-                      ReferenceOutputAssembly="false"
-                      PackAsAnalyzer="true" />
-    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Options\gen\Microsoft.Extensions.Options.SourceGeneration.csproj"
-                      ReferenceOutputAssembly="false"
-                      PackAsAnalyzer="true" />
-
     <!-- Manually reference Pkcs to make sure that the $(NetCoreAppCurrent)-windows assembly gets included as well. -->
     <ProjectReference Include="$(LibrariesProjectRoot)System.Security.Cryptography.Pkcs\src\System.Security.Cryptography.Pkcs.csproj"
                       PrivateAssets="all"
