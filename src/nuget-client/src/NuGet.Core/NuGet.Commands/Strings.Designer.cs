@@ -19,7 +19,7 @@ namespace NuGet.Commands {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Strings {
@@ -1205,6 +1205,16 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
+        ///Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature..
+        /// </summary>
+        internal static string Log_AliasingSupportedInNewDependencyResolver {
+            get {
+                return ResourceManager.GetString("Log_AliasingSupportedInNewDependencyResolver", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All projects are up-to-date for restore..
         /// </summary>
         internal static string Log_AllProjectsUpToDate {
@@ -2240,11 +2250,11 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Duplicate frameworks found: &apos;{0}&apos;..
+        ///   Looks up a localized string similar to The TargetFramework property must be unique. List of TargetFramework properties: {0}..
         /// </summary>
-        internal static string SpecValidationDuplicateFrameworks {
+        internal static string SpecValidationDuplicateTargetAlias {
             get {
-                return ResourceManager.GetString("SpecValidationDuplicateFrameworks", resourceCulture);
+                return ResourceManager.GetString("SpecValidationDuplicateTargetAlias", resourceCulture);
             }
         }
         
@@ -2272,15 +2282,6 @@ namespace NuGet.Commands {
         internal static string SpecValidationNoFrameworks {
             get {
                 return ResourceManager.GetString("SpecValidationNoFrameworks", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to UAP projects must contain exactly one target framework..
-        /// </summary>
-        internal static string SpecValidationUAPSingleFramework {
-            get {
-                return ResourceManager.GetString("SpecValidationUAPSingleFramework", resourceCulture);
             }
         }
         

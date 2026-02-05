@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NuGet.Shared;
+using NuGet.Versioning;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
@@ -96,7 +97,19 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
 
         private static IRenderable GetNodeText(DependencyNode node, string targetPackage)
         {
-            string text = $"{node.Id} (v{node.Version})";
+            string text;
+
+            if (node is PackageNode pkgNode)
+            {
+                string resolved = pkgNode.ResolvedVersion.OriginalVersion ?? pkgNode.ResolvedVersion.ToString();
+                string requested = pkgNode.RequestedVersion.ToString("f", VersionRangeFormatter.Instance);
+                text = $"{node.Id}@{resolved} ({requested})";
+            }
+            else
+            {
+                text = node.Id;
+            }
+
             Style? style = node.Id.Equals(targetPackage, StringComparison.OrdinalIgnoreCase)
                 ? new Style(foreground: TargetPackageColor)
                 : null;

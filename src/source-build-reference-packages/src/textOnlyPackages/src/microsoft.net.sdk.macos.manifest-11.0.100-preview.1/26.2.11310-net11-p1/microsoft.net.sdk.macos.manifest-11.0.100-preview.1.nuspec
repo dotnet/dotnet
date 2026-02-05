@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.NET.Sdk.macOS.Manifest-11.0.100-preview.1</id>
+    <version>26.2.11310-net11-p1</version>
+    <authors>Microsoft</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="file">LICENSE</license>
+    <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
+    <projectUrl>https://dot.net/</projectUrl>
+    <description>.NET Workload for macOS platforms</description>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <packageTypes>
+      <packageType name="DotnetPlatform" />
+    </packageTypes>
+    <repository type="git" url="https://github.com/dotnet/macios" branch="release/11.0.1xx-preview1" commit="b596b18899901332049ad4c0a47af5e0c5c68d62" />
+  </metadata>
+</package>

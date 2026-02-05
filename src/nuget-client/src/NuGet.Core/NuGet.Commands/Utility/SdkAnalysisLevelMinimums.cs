@@ -26,6 +26,14 @@ namespace NuGet.Commands
         internal static readonly NuGetVersion V10_0_100 = new("10.0.100");
 
         /// <summary>
+        /// Minimum SDK Analysis Level required for:
+        /// <list type="bullet">
+        /// <item>.NET SDK version that supports aliased assets files.</item>
+        /// </list>
+        /// </summary>
+        internal static readonly NuGetVersion V10_0_300 = new("10.0.300");
+
+        /// <summary>
         /// Determines whether the feature is enabled based on the SDK analysis level.
         /// </summary>
         /// <param name="sdkAnalysisLevel">The project SdkAnalysisLevel value </param>

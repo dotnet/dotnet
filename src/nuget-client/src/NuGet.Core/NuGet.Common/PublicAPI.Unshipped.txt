@@ -1,1 +1,2 @@
 #nullable enable
+NuGet.Common.NuGetLogCode.NU1018 = 1018 -> NuGet.Common.NuGetLogCode
