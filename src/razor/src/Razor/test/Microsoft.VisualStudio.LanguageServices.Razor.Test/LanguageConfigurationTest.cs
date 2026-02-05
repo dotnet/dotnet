@@ -22,6 +22,10 @@ public class LanguageConfigurationTest(ITestOutputHelper output)
     [InlineData("""<ValidationMessage />""", false)]
     [InlineData("""<ValidationMessage Attr="Value" />""", false)]
     [InlineData("""<ValidationMessage For="() => Input.Username" class="text-danger" />""", false)]
+    [InlineData("""<div dir="@(1 > 2 ? "ltr" : "rtl")">""", true)]
+    [InlineData("""<table title="@(1 > 2 ? "re\"d" : "blue")">""", true)]
+    [InlineData("""<div dir="@(1 > 2 ? "ltr" : "rtl")"/>""", false)]
+    [InlineData("""<table title="@(1 > 2 ? "re\"d" : "blue")"/>""", false)]
     public void ShouldIncreaseIndentation(string input, bool expected)
     {
         var langConfig = GetLanguageConfigurationJson();
