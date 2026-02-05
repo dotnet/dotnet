@@ -34,7 +34,6 @@ internal static partial class Interop
             internal long RDev;
             internal long Ino;
             internal uint UserFlags;
-            internal int HardLinkCount;
         }
 
         internal static class FileTypes
