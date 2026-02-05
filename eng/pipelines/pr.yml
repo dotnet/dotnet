@@ -52,6 +52,7 @@ variables:
     value: false
 
 - template: /eng/common/templates/variables/pool-providers.yml@self
+- template: /eng/pipelines/templates/variables/vmr-build.yml@self
 
 stages:
 - template: /eng/pipelines/templates/stages/vmr-build.yml
@@ -84,24 +85,28 @@ stages:
     - job: Validate
       displayName: Run Validation Script
       pool:
-        vmImage: windows-latest
+        name: $(shortStackPoolName)
+        demands: ImageOverride -equals $(poolImage_Linux)
       steps:
         - checkout: self
           fetchDepth: 0
 
-        - powershell: |
-            Write-Host "Fetching target branch: $(System.PullRequest.TargetBranch)"
+        - script: |
+            set -ex
+            echo "Fetching target branch: $(System.PullRequest.TargetBranch)"
             git fetch origin $(System.PullRequest.TargetBranch)
           displayName: Fetch target branch
 
-        - powershell: |
-            . "$(Build.SourcesDirectory)\eng\common\tools.ps1"
-            InitializeDotNetCli -install $true
-            Write-Host "##vso[task.setvariable variable=DOTNET_INSTALL_DIR]$env:DOTNET_INSTALL_DIR"
+        - script: |
+            set -ex
+            source "$(Build.SourcesDirectory)/eng/common/tools.sh"
+            InitializeDotNetCli -install true
+            echo "##vso[task.setvariable variable=DOTNET_INSTALL_DIR]$DOTNET_INSTALL_DIR"
           displayName: Initialize .NET CLI
 
-        - powershell: |
-            & "$(DOTNET_INSTALL_DIR)\dotnet.exe" run --project eng/tools/ChangeValidation/ChangeValidation.csproj
+        - script: |
+            set -ex
+            "$(DOTNET_INSTALL_DIR)/dotnet" run --project eng/tools/ChangeValidation/ChangeValidation.csproj
           displayName: Run ChangeValidation tool
           env:
             SYSTEM_PULLREQUEST_TARGETBRANCH: $(System.PullRequest.TargetBranch)
