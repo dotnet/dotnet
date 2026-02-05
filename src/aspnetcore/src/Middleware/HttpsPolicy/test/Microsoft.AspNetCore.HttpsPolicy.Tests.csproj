@@ -16,7 +16,6 @@
     <Reference Include="Microsoft.AspNetCore.Http.Features" />
     <Reference Include="Microsoft.AspNetCore.HttpsPolicy" />
     <Reference Include="Microsoft.AspNetCore.TestHost" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
-  </ItemGroup>
+      </ItemGroup>
 
 </Project>

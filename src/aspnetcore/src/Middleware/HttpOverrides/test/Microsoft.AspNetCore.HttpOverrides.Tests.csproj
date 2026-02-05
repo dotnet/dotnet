@@ -15,8 +15,7 @@
     <Reference Include="Microsoft.AspNetCore.Http.Features" />
     <Reference Include="Microsoft.AspNetCore.HttpOverrides" />
     <Reference Include="Microsoft.AspNetCore.TestHost" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
-    <Content Include="$(SharedSourceRoot)test\Certificates\*.cer" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+        <Content Include="$(SharedSourceRoot)test\Certificates\*.cer" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

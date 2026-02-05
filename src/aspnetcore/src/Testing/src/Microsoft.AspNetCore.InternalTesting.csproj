@@ -23,9 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Microsoft.Extensions.DependencyInjection" />
-    <Reference Include="Microsoft.Extensions.Logging.Console" />
-    <Reference Include="Microsoft.Extensions.Logging" />
     <Reference Include="Serilog.Extensions.Logging" />
     <Reference Include="Serilog.Sinks.File" />
     <Reference Include="System.ValueTuple" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />

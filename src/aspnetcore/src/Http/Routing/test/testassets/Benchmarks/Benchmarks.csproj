@@ -16,8 +16,5 @@
     <Reference Include="Microsoft.AspNetCore.Routing.Abstractions" />
     <Reference Include="Microsoft.AspNetCore.Server.Kestrel" />
     <Reference Include="Microsoft.AspNetCore.TestHost" />
-    <Reference Include="Microsoft.Extensions.Configuration.CommandLine" />
-    <Reference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
-  </ItemGroup>
+              </ItemGroup>
 </Project>

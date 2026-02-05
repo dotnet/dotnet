@@ -11,9 +11,7 @@
     <Reference Include="Microsoft.AspNetCore.SignalR.Client" />
     <Reference Include="Microsoft.AspNetCore.SignalR" />
     <Reference Include="Microsoft.AspNetCore.Server.Kestrel" />
-    <Reference Include="Microsoft.Extensions.Configuration.CommandLine" />
     <Reference Include="Microsoft.AspNetCore.SignalR.Protocols.MessagePack" />
-    <Reference Include="Microsoft.Extensions.Logging.Console" />
     <Reference Include="Newtonsoft.Json" />
     <Reference Include="Microsoft.Azure.SignalR" />
 

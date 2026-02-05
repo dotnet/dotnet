@@ -15,8 +15,7 @@
   <ItemGroup>
     <Reference Include="BenchmarkDotNet" />
     <Reference Include="Microsoft.AspNetCore.DataProtection" />
-    <Reference Include="Microsoft.Extensions.DependencyInjection" />
-  </ItemGroup>
+      </ItemGroup>
 
   <ItemGroup>
     <Compile Include="$(SharedSourceRoot)BenchmarkRunner\*.cs" />

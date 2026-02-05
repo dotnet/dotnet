@@ -81,7 +81,6 @@
     <Reference Include="Microsoft.AspNetCore.StaticAssets" />
     <Reference Include="Microsoft.AspNetCore.StaticFiles" />
     <Reference Include="Microsoft.AspNetCore.WebSockets" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
     <Reference Include="Microsoft.Extensions.Caching.Hybrid" />
     <Reference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" />
     <Reference Include="Microsoft.AspNetCore.Session" />

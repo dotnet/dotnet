@@ -23,8 +23,7 @@
   <ItemGroup>
     <Reference Include="Microsoft.AspNetCore.Hosting.Abstractions" />
     <Reference Include="Microsoft.AspNetCore.Connections.Abstractions" />
-    <Reference Include="Microsoft.Extensions.Options" />
-  </ItemGroup>
+      </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Update="SocketsStrings.resx">

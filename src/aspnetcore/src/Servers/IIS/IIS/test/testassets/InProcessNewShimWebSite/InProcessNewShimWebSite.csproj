@@ -52,15 +52,6 @@
     <PackageReference Include="Microsoft.AspNetCore.HttpsPolicy" Version="2.2.0" >
       <AllowExplicitReference>true</AllowExplicitReference>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.2.0" >
-      <AllowExplicitReference>true</AllowExplicitReference>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" >
-      <AllowExplicitReference>true</AllowExplicitReference>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" >
-      <AllowExplicitReference>true</AllowExplicitReference>
-    </PackageReference>
     <Reference Include="xunit.assert" />
   </ItemGroup>
 </Project>

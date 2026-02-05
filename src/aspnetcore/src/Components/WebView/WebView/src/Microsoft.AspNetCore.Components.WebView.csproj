@@ -40,12 +40,8 @@
 
   <ItemGroup>
     <Reference Include="Microsoft.AspNetCore.Components.Web" />
-    <Reference Include="Microsoft.Extensions.Configuration.Json" />
-    <Reference Include="Microsoft.Extensions.Configuration.Binder" />
     <Reference Include="Microsoft.Extensions.FileProviders.Embedded" />
-    <Reference Include="Microsoft.Extensions.FileProviders.Composite" />
-    <Reference Include="Microsoft.Extensions.Logging" />
-
+        
   </ItemGroup>
 
     <!-- This workaround is required when referencing FileProviders.Embedded as a project -->

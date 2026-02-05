@@ -55,8 +55,6 @@
     <Reference Include="Microsoft.AspNetCore.HttpsPolicy" />
     <Reference Include="Microsoft.AspNetCore.ResponseCompression" />
     <Reference Include="Microsoft.AspNetCore.StaticFiles" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
-    <Reference Include="Microsoft.Extensions.DependencyInjection" />
-  </ItemGroup>
+          </ItemGroup>
 
 </Project>

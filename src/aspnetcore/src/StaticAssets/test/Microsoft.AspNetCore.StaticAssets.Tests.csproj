@@ -22,7 +22,6 @@
     <Reference Include="Microsoft.AspNetCore.StaticFiles" />
     <Reference Include="Microsoft.AspNetCore.StaticAssets" />
     <Reference Include="Microsoft.AspNetCore.TestHost" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
-  </ItemGroup>
+      </ItemGroup>
 
 </Project>

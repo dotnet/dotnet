@@ -32,8 +32,6 @@
     <Reference Include="Microsoft.AspNetCore.Http.Features" />
     <Reference Include="Microsoft.AspNetCore.Owin" />
     <Reference Include="Microsoft.Extensions.Diagnostics.Testing" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
-    <Reference Include="Microsoft.Extensions.Options" />
-  </ItemGroup>
+          </ItemGroup>
 
 </Project>

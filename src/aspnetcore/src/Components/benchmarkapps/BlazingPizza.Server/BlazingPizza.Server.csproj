@@ -57,7 +57,6 @@
     <Reference Include="Microsoft.AspNetCore.WebSockets" />
     <Reference Include="Microsoft.AspNetCore.Diagnostics" />
     <Reference Include="Microsoft.AspNetCore.Diagnostics.Abstractions" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
-  </ItemGroup>
+      </ItemGroup>
 
 </Project>

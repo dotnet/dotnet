@@ -14,7 +14,6 @@
     <Reference Include="Microsoft.AspNetCore.Http.Extensions" />
     <Reference Include="Microsoft.AspNetCore.Http.Features" />
     <Reference Include="Microsoft.AspNetCore.Owin" />
-    <Reference Include="Microsoft.Extensions.DependencyInjection" />
-  </ItemGroup>
+      </ItemGroup>
 
 </Project>

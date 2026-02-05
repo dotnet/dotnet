@@ -25,7 +25,6 @@
     <Reference Include="Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets" />
     <Reference Include="Microsoft.AspNetCore.Server.Kestrel.Transport.NamedPipes" />
     <Reference Include="Microsoft.AspNetCore.TestHost" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
-  </ItemGroup>
+      </ItemGroup>
 
 </Project>

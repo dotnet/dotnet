@@ -12,8 +12,6 @@
 
   <ItemGroup>
     <Reference Include="Microsoft.AspNetCore.SignalR.Client" />
-    <Reference Include="Microsoft.Extensions.Logging.Console" />
-    <Reference Include="Microsoft.Extensions.Logging" />
-  </ItemGroup>
+          </ItemGroup>
 
 </Project>

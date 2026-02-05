@@ -19,7 +19,6 @@
     <Reference Include="Microsoft.AspNetCore.Routing" />
     <Reference Include="Microsoft.AspNetCore.Routing.Abstractions" />
     <Reference Include="Microsoft.EntityFrameworkCore.InMemory" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
-  </ItemGroup>
+      </ItemGroup>
 
 </Project>

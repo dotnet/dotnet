@@ -24,8 +24,7 @@
     <Reference Include="Microsoft.AspNetCore.Routing" />
     <Reference Include="Microsoft.AspNetCore.Routing.Abstractions" />
     <Reference Include="Microsoft.AspNetCore.Server.HttpSys" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
-  </ItemGroup>
+      </ItemGroup>
 
   <PropertyGroup>
     <!--Imitate IIS Express so we can use it's cert bindings-->

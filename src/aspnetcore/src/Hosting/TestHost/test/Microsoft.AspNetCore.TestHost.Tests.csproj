@@ -21,7 +21,6 @@
     <Reference Include="Microsoft.AspNetCore.Hosting.Server.Abstractions" />
     <Reference Include="Microsoft.AspNetCore.TestHost" />
     <Reference Include="Microsoft.AspNetCore.WebSockets" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
-  </ItemGroup>
+      </ItemGroup>
 
 </Project>

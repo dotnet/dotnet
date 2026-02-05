@@ -16,8 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Microsoft.Extensions.Caching.Abstractions" />
-    <Reference Include="Microsoft.Extensions.Options" />
     <Reference Include="Microsoft.Data.SqlClient" />
     <Reference Include="Azure.Identity" />
   </ItemGroup>

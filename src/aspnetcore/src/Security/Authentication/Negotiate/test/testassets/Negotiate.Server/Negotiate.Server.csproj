@@ -27,7 +27,6 @@
     <Reference Include="Microsoft.AspNetCore.Server.Kestrel" />
     <Reference Include="Microsoft.AspNetCore.Server.Kestrel.Core" />
     <Reference Include="Microsoft.AspNetCore.Hosting.Server.Abstractions" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
-  </ItemGroup>
+      </ItemGroup>
 
 </Project>

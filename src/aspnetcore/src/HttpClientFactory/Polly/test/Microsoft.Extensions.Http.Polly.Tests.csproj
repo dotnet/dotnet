@@ -6,15 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
-    <Reference Include="Microsoft.Extensions.DependencyInjection" />
-    <Reference Include="Microsoft.Extensions.Logging.Abstractions" />
-    <Reference Include="Microsoft.Extensions.Logging" />
     <Reference Include="Microsoft.Extensions.Http.Polly" />
-    <Reference Include="Microsoft.Extensions.Http" />
-    <Reference Include="Microsoft.Extensions.Options" />
-    <Reference Include="Microsoft.Extensions.Primitives" />
-  </ItemGroup>
+              </ItemGroup>
 
   <ItemGroup>
     <Compile Include="$(SharedSourceRoot)test\Shared.Tests\SingleThreadedSynchronizationContext.cs" Link="Shared\SingleThreadedSynchronizationContext.cs"/>

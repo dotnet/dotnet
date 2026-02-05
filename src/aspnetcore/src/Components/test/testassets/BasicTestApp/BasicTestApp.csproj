@@ -27,7 +27,6 @@
     <Reference Include="Microsoft.AspNetCore.Components.Authorization" />
     <Reference Include="Microsoft.AspNetCore.Components.QuickGrid" />
     <Reference Include="Microsoft.AspNetCore.SignalR.Client" />
-    <Reference Include="Microsoft.Extensions.Logging.Configuration" />
     <Reference Include="Newtonsoft.Json" />
   </ItemGroup>
 

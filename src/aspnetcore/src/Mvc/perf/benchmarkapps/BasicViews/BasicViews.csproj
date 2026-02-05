@@ -17,7 +17,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.1" PrivateAssets="All" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.1" />
-
     <PackageReference Update="@(PackageReference)" AllowExplicitReference="true" />
   </ItemGroup>
 
@@ -26,7 +25,6 @@
     <Reference Include="Microsoft.AspNetCore.Server.IISIntegration" />
     <Reference Include="Microsoft.AspNetCore.Server.Kestrel" />
     <Reference Include="Microsoft.AspNetCore.StaticFiles" />
-    <Reference Include="Microsoft.Extensions.Configuration.CommandLine" />
     <Reference Include="Microsoft.AspNetCore.Mvc" />
     <Reference Include="Microsoft.AspNetCore.Mvc.Razor" />
     <Reference Include="Microsoft.AspNetCore.Mvc.Abstractions" />

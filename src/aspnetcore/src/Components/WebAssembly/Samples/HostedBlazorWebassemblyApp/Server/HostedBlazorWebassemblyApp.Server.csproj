@@ -52,13 +52,11 @@
     <Reference Include="Microsoft.AspNetCore.Hosting.Server.Abstractions" />
     <Reference Include="Microsoft.AspNetCore.Http.Features" />
     <Reference Include="Microsoft.AspNetCore.Http.Extensions" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
-  </ItemGroup>
+      </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Client\HostedBlazorWebassemblyApp.Client.csproj" />
     <ProjectReference Include="..\Shared\HostedBlazorWebassemblyApp.Shared.csproj" />
   </ItemGroup>
-
 
 </Project>

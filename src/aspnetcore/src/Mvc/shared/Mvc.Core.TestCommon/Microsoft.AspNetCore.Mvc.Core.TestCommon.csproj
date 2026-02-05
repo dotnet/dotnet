@@ -52,7 +52,6 @@
     <Reference Include="Microsoft.AspNetCore.Server.Kestrel.Transport.Quic" />
     <Reference Include="Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets" />
     <Reference Include="Microsoft.AspNetCore.Razor" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
     <Reference Include="Microsoft.Extensions.WebEncoders" />
     <Reference Include="Moq" />
   </ItemGroup>

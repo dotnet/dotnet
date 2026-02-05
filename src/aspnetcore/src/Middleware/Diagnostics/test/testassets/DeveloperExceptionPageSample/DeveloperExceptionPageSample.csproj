@@ -18,7 +18,6 @@
     <Reference Include="Microsoft.AspNetCore.Routing.Abstractions" />
     <Reference Include="Microsoft.AspNetCore.Server.IISIntegration" />
     <Reference Include="Microsoft.AspNetCore.Server.Kestrel" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
-  </ItemGroup>
+      </ItemGroup>
 
 </Project>

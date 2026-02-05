@@ -20,8 +20,6 @@
       Private="false"
       ReferenceOutputAssembly="false"
       SkipGetTargetFrameworkProperties="true" />
-
-    <Reference Include="Microsoft.Extensions.Logging" />
     <Reference Include="Microsoft.Net.Http.Headers" />
     <Reference Include="Serilog.Extensions.Logging" />
     <Reference Include="Serilog.Sinks.File" />

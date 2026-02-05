@@ -15,8 +15,6 @@
     <Reference Include="Microsoft.AspNetCore.Http.Extensions" />
     <Reference Include="Microsoft.AspNetCore.Localization" />
     <Reference Include="Microsoft.AspNetCore.TestHost" />
-    <Reference Include="Microsoft.Extensions.Logging" />
-    <Reference Include="Microsoft.Extensions.Logging.Console" />
-  </ItemGroup>
+          </ItemGroup>
 
 </Project>

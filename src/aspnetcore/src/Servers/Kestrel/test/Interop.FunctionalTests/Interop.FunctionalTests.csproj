@@ -48,7 +48,6 @@
     <Reference Include="Microsoft.AspNetCore.WebSockets" />
     <Reference Include="Microsoft.AspNetCore.WebUtilities" />
     <Reference Include="Microsoft.Extensions.Diagnostics.Testing" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
     <Reference Include="Microsoft.Internal.AspNetCore.H2Spec.All" />
   </ItemGroup>
 

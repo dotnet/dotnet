@@ -20,8 +20,7 @@
 
   <ItemGroup>
     <Reference Include="Microsoft.AspNetCore.DataProtection" />
-    <Reference Include="Microsoft.Extensions.DependencyInjection" />
-  </ItemGroup>
+      </ItemGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.AspNetCore.DataProtection.Extensions.Tests" />
