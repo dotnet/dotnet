@@ -7,7 +7,8 @@
   <ItemGroup>
     <!-- Microsoft.WindowsDesktop.App shared framework -->
     <ProjectReference Include="src\windowsdesktop\src\sfx\**\*.sfxproj" />
-    <ProjectReference Include="src\windowsdesktop\src\bundle\**\*.bundleproj" />
+    <!-- Windows Desktop Runtime Bundle -->
+    <ProjectReference Include="src\windowsdesktop\src\bundle\**\*.wixproj" />
     <ProjectReference Include="src\windowsdesktop\tests\**\*.Tests.csproj" />
 
     <!-- Microsoft.Windows.Compatibility nuget meta package -->

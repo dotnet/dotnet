@@ -129,6 +129,11 @@
       Do not localize `PackageVersion`
     </note>
       </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_MissingTransitivelyPinnedIncludeType">
+        <source>The centrally pinned dependency '{0}' was not found in the resolved graph unexpectedly for node '{1}'. Please file an issue at https://github.com/NuGet/Home</source>
+        <target state="translated">'{1}' 노드에 대해 확인된 그래프에서 중앙에서 고정된 종속성 '{0}'을(를) 예기치 않게 찾을 수 없었습니다. https://github.com/NuGet/Home에 문제를 신고하세요.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Error_CentralPackageManagement_PackageReferenceWithVersionNotAllowed">
         <source>The following PackageReference items cannot define a value for Version: {0}. Projects using Central Package Management must define a Version value on a PackageVersion item. For more information, visit https://aka.ms/nuget/cpm/gettingstarted</source>
         <target state="translated">다음 PackageReference 항목은 버전에 대한 값을 정의할 수 없습니다. {0}. 중앙 패키지 관리를 사용하는 프로젝트는 PackageVersion 항목에 버전 값을 정의해야 합니다. 자세한 내용은 https://aka.ms/nuget/cpm/gettingstarted를 방문하세요.</target>
@@ -225,7 +230,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSources_Multiple">
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">{1} 'HTTP' 원본을 사용하여 '{0}' 작업을 실행하고 있습니다. NuGet에 HTTPS 원본이 필요합니다. HTTP 원본을 사용하려면 NuGet.Config 파일에서 'allowInsecureConnections'를 명시적으로 true로 설정해야 합니다. https://aka.ms/nuget-https-everywhere에서 자세한 내용을 참조하세요.</target>
+        <target state="translated">{1} 'HTTP' 원본을 사용하여 '{0}' 작업을 실행하고 있습니다. NuGet에 HTTPS 원본이 필요합니다. HTTP 소스를 사용하려면 NuGet.Config 파일에서 'allowInsecureConnections'를 명시적으로 true로 설정해야 합니다. https://aka.ms/nuget-https-everywhere에서 자세한 내용을 참조하세요.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Error_IncompatiblePackageType">
@@ -280,21 +285,21 @@
       </trans-unit>
       <trans-unit id="Error_InvalidNuGetAuditLevelValue">
         <source>Invalid NuGetAuditLevel value '{0}'. Valid values: {1}</source>
-        <target state="translated">잘못된 NuGetAuditLevel 값 '{0}'입니다. 유효한 값: {1}</target>
+        <target state="translated">잘못된 NuGetAuditLevel 값 '{0}'입니다. 유효한 값: {1}.</target>
         <note>Don't translate 'NuGetAuditLevel'
 {0} - is the value from the customer's project file
 {1} is the list of valid values "low, moderate, high, critical" (these should not be translated either)</note>
       </trans-unit>
       <trans-unit id="Error_InvalidNuGetAuditModeValue">
         <source>Invalid NuGetAuditMode value '{0}'. Valid values: {1}</source>
-        <target state="translated">잘못된 NuGetAuditMode 값 '{0}'입니다. 유효한 값: {1}</target>
+        <target state="translated">잘못된 NuGetAuditMode 값 '{0}'입니다. 유효한 값: {1}.</target>
         <note>Don't translate 'NuGetAuditMode'
 {0} - is the value from the customer's project file
 {1} is the list of valid values "direct, all"</note>
       </trans-unit>
       <trans-unit id="Error_InvalidNuGetAuditValue">
         <source>Invalid NuGetAudit value '{0}'. Valid values: {1}</source>
-        <target state="translated">잘못된 NuGetAudit 값 '{0}'입니다. 유효한 값: {1}</target>
+        <target state="translated">잘못된 NuGetAudit 값 '{0}'입니다. 유효한 값: {1}.</target>
         <note>Don't translate 'NuGetAudit'
 {0} - is the value from the customer's project file
 {1} is the list of valid values "true, false"</note>
@@ -336,7 +341,7 @@
       </trans-unit>
       <trans-unit id="Error_NoMatchingCertificate">
         <source>The package signature did not match any of the allowed certificate fingerprints.</source>
-        <target state="translated">패키지 서명이 허용된 인증서 지문과 일치하지 않습니다.</target>
+        <target state="translated">패키지 시그니처가 허용된 인증서 지문과 일치하지 않습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_NoMatchingClientCertificate">
@@ -461,12 +466,12 @@
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
         <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">PackageReference {0} 잘라내지 않습니다. 이 패키지는 필요하지 않으므로 종속성에서 제거해 보세요.</target>
+        <target state="translated">PackageReference {0}은(는) 잘리지 않습니다. 이 패키지는 불필요할 수 있으므로 종속성에서 제거하는 것이 좋습니다.</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
         <source>A ProjectReference cannot be pruned, {0}.</source>
-        <target state="translated">ProjectReference를 잘라낼 수 없습니다. {0}.</target>
+        <target state="translated">ProjectReference는 잘라낼 수 없습니다. {0}.</target>
         <note>0 - project reference</note>
       </trans-unit>
       <trans-unit id="Error_ServiceIndexShouldBeHttps">
@@ -671,6 +676,13 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       <trans-unit id="LocalsCommand_LocalsPartiallyCleared">
         <source>Local resources partially cleared.</source>
         <target state="translated">로컬 리소스를 부분적으로 지웠습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_AliasingSupportedInNewDependencyResolver">
+        <source>The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
+Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</source>
+        <target state="new">The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
+Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_AllProjectsUpToDate">
@@ -1083,7 +1095,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="RestoreDebugPruningPackageReference">
         <source>Pruning the package '{0}' as a dependency of '{1}'. The maximum prunable version is '{2}'</source>
-        <target state="translated">패키지 '{0}' '{1}' 종속성으로 잘라내는 중입니다. 잘라내기 가능한 최대 버전은 '{2}'</target>
+        <target state="translated">패키지 '{0}'을(를) '{1}'의 종속성으로 잘라내는 중입니다. 잘라내기 가능한 최대 버전은 '{2}'입니다.</target>
         <note>0 - package id and version, 1 - version</note>
       </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
@@ -1252,9 +1264,9 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <target state="translated">지정된 프로토콜 버전이 잘못되었습니다. 유효한 프로토콜 버전은 {0}부터 {1}까지입니다.</target>
         <note />
       </trans-unit>
-      <trans-unit id="SpecValidationDuplicateFrameworks">
-        <source>Duplicate frameworks found: '{0}'.</source>
-        <target state="translated">중복된 프레임워크가 발견되었습니다. '{0}'.</target>
+      <trans-unit id="SpecValidationDuplicateTargetAlias">
+        <source>The TargetFramework property must be unique. List of TargetFramework properties: {0}.</source>
+        <target state="new">The TargetFramework property must be unique. List of TargetFramework properties: {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecValidationInvalidFramework">
@@ -1270,11 +1282,6 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       <trans-unit id="SpecValidationNoFrameworks">
         <source>No target frameworks specified.</source>
         <target state="translated">대상 프레임워크를 지정하지 않았습니다.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="SpecValidationUAPSingleFramework">
-        <source>UAP projects must contain exactly one target framework.</source>
-        <target state="translated">UAP 프로젝트에는 대상 프레임워크가 하나만 포함되어야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecValidationZeroRestoreRequests">
@@ -1367,7 +1374,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="VerifyCommand_Failed">
         <source>Package signature validation failed.</source>
-        <target state="translated">패키지 서명 유효성 검사에 실패했습니다.</target>
+        <target state="translated">패키지 시그니처 유효성 검사에 실패했습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="VerifyCommand_FinishedWithErrors">
@@ -1407,12 +1414,12 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_High">
         <source>high</source>
-        <target state="translated">높은</target>
+        <target state="translated">높음</target>
         <note>As in "This package has a high severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_Low">
         <source>low</source>
-        <target state="translated">낮은</target>
+        <target state="translated">낮음</target>
         <note>As in "This package has a low severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_Moderate">
@@ -1459,14 +1466,14 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <source>The following is a 'Non-HTTPS' source: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
         <target state="translated">다음은 '비 HTTPS' 원본입니다. {0}
-NuGet에 HTTPS 원본이 필요합니다. https://aka.ms/nuget-https-everywhere에서 자세한 내용을 참조하세요.</target>
+NuGet에는 HTTPS 원본이 필요합니다. https://aka.ms/nuget-https-everywhere에서 자세한 내용을 참조하세요.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_List_HttpSources">
         <source>The following are 'Non-HTTPS' sources: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
         <target state="translated">다음은 '비 HTTPS' 원본입니다. {0}
-NuGet에 HTTPS 원본이 필요합니다. https://aka.ms/nuget-https-everywhere에서 자세한 내용을 참조하세요.</target>
+NuGet에는 HTTPS 원본이 필요합니다. https://aka.ms/nuget-https-everywhere에서 자세한 내용을 참조하세요.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_MinVersionDoesNotExist">

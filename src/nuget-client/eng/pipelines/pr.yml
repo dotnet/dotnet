@@ -68,12 +68,12 @@ stages:
 
 - ${{ if eq(parameters.RunUnitTestsOnWindows, true) }}:
   - stage:
-    displayName: Unit Tests on Windows (.NET 9.0)
+    displayName: Unit Tests on Windows (.NET 10.0)
     dependsOn: []
     jobs:
     - template: pr.job.yml
       parameters:
-        displayName: Unit Tests on Windows (.NET 9.0)
+        displayName: Unit Tests on Windows (.NET 10.0)
         osName: Windows
         ${{ if eq(variables['System.TeamProject'], 'public') }}:
           agentPool: NetCore-Public
@@ -81,7 +81,7 @@ stages:
         ${{ else }}:
           agentPool: VSEngSS-MicroBuild2022-1ES
         testType: Unit
-        testTargetFramework: net9.0
+        testTargetFramework: net10.0
 
 - ${{ if eq(parameters.RunFunctionalTestsOnWindows, true) }}:
   - stage:
@@ -160,12 +160,12 @@ stages:
 
 - ${{ if eq(parameters.RunFunctionalTestsOnWindows, true) }}:
   - stage:
-    displayName: Dotnet.Integration.Test on Windows (.NET 9.0)
+    displayName: Dotnet.Integration.Test on Windows (.NET 10.0)
     dependsOn: []
     jobs:
     - template: pr.job.yml
       parameters:
-        displayName: Dotnet.Integration.Test on Windows (.NET 9.0)
+        displayName: Dotnet.Integration.Test on Windows (.NET 10.0)
         osName: Windows
         ${{ if eq(variables['System.TeamProject'], 'public') }}:
           agentPool: NetCore-Public
@@ -173,18 +173,18 @@ stages:
         ${{ else }}:
           agentPool: VSEngSS-MicroBuild2022-1ES
         testType: Functional
-        testTargetFramework: net9.0
+        testTargetFramework: net10.0
         testProjectName: Dotnet.Integration.Test
         timeoutInMinutes: 60
 
 - ${{ if eq(parameters.RunFunctionalTestsOnWindows, true) }}:
   - stage:
-    displayName: NuGet.Packaging.FuncTest on Windows (.NET 9.0)
+    displayName: NuGet.Packaging.FuncTest on Windows (.NET 10.0)
     dependsOn: []
     jobs:
     - template: pr.job.yml
       parameters:
-        displayName: NuGet.Packaging.FuncTest on Windows (.NET 9.0)
+        displayName: NuGet.Packaging.FuncTest on Windows (.NET 10.0)
         osName: Windows
         ${{ if eq(variables['System.TeamProject'], 'public') }}:
           agentPool: NetCore-Public
@@ -192,61 +192,61 @@ stages:
         ${{ else }}:
           agentPool: VSEngSS-MicroBuild2022-1ES
         testType: Functional
-        testTargetFramework: net9.0
+        testTargetFramework: net10.0
         testProjectName: NuGet.Packaging.FuncTest
 
 - ${{ if eq(parameters.RunUnitTestsOnLinux, true) }}:
   - stage:
-    displayName: Unit Tests on Linux (.NET 9.0)
+    displayName: Unit Tests on Linux (.NET 10.0)
     dependsOn: []
     jobs:
     - template: pr.job.yml
       parameters:
-        displayName: Unit Tests on Linux (.NET 9.0)
+        displayName: Unit Tests on Linux (.NET 10.0)
         osName: Linux
         vmImage: ubuntu-latest
         testType: Unit
-        testTargetFramework: net9.0
+        testTargetFramework: net10.0
 
 - ${{ if eq(parameters.RunFunctionalTestsOnLinux, true) }}:
   - stage:
-    displayName: Functional Tests on Linux (.NET 9.0)
+    displayName: Functional Tests on Linux (.NET 10.0)
     dependsOn: []
     jobs:
     - template: pr.job.yml
       parameters:
-        displayName: Functional Tests on Linux (.NET 9.0)
+        displayName: Functional Tests on Linux (.NET 10.0)
         osName: Linux
         vmImage: ubuntu-latest
         testType: Functional
-        testTargetFramework: net9.0
+        testTargetFramework: net10.0
         timeoutInMinutes: 30
 
 - ${{ if eq(parameters.RunUnitTestsOnMacOS, true) }}:
   - stage:
-    displayName: Unit Tests on MacOS (.NET 9.0)
+    displayName: Unit Tests on MacOS (.NET 10.0)
     dependsOn: []
     jobs:
     - template: pr.job.yml
       parameters:
-        displayName: Unit Tests on MacOS (.NET 9.0)
+        displayName: Unit Tests on MacOS (.NET 10.0)
         osName: MacOS
-        vmImage: macos-latest
+        vmImage: macos-14
         testType: Unit
-        testTargetFramework: net9.0
+        testTargetFramework: net10.0
 
 - ${{ if eq(parameters.RunFunctionalTestsOnMacOS, true) }}:
   - stage:
-    displayName: Functional Tests on MacOS (.NET 9.0)
+    displayName: Functional Tests on MacOS (.NET 10.0)
     dependsOn: []
     jobs:
     - template: pr.job.yml
       parameters:
-        displayName: Functional Tests on MacOS (.NET 9.0)
+        displayName: Functional Tests on MacOS (.NET 10.0)
         osName: MacOS
-        vmImage: macos-latest
+        vmImage: macos-14
         testType: Functional
-        testTargetFramework: net9.0
+        testTargetFramework: net10.0
         timeoutInMinutes: 30
 
 - ${{ if or(eq(parameters.RunSourceBuild, true), eq(parameters.RunStaticAnalysis, true)) }}:

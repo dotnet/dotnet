@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Globalization;
 using System.IO;
@@ -69,12 +71,6 @@ namespace NuGet.Protocol
             int count,
             CancellationToken cancellationToken)
         {
-            var timeoutMessage = string.Format(
-                CultureInfo.CurrentCulture,
-                Strings.Error_DownloadTimeout,
-                _downloadName,
-                _timeout.TotalMilliseconds);
-
             try
             {
                 var result = await TimeoutUtility.StartWithTimeout(
@@ -87,6 +83,12 @@ namespace NuGet.Protocol
             }
             catch (TimeoutException e)
             {
+                var timeoutMessage = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Strings.Error_DownloadTimeout,
+                    _downloadName,
+                    _timeout.TotalMilliseconds);
+
                 // Failed stream operations should throw an IOException.
                 throw new IOException(timeoutMessage, e);
             }

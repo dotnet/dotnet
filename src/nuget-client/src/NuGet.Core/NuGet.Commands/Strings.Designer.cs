@@ -250,6 +250,15 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The centrally pinned dependency &apos;{0}&apos; was not found in the resolved graph unexpectedly for node &apos;{1}&apos;. Please file an issue at https://github.com/NuGet/Home.
+        /// </summary>
+        internal static string Error_CentralPackageManagement_MissingTransitivelyPinnedIncludeType {
+            get {
+                return ResourceManager.GetString("Error_CentralPackageManagement_MissingTransitivelyPinnedIncludeType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The following PackageReference items cannot define a value for Version: {0}. Projects using Central Package Management must define a Version value on a PackageVersion item. For more information, visit https://aka.ms/nuget/cpm/gettingstarted.
         /// </summary>
         internal static string Error_CentralPackageManagement_PackageReferenceWithVersionNotAllowed {
@@ -754,7 +763,7 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The project.json project type is deprecated. Migrate to PackageReference..
+        ///   Looks up a localized string similar to Managing packages with project.json is deprecated. Migrate to PackageReference..
         /// </summary>
         internal static string Error_ProjectJson_Deprecated {
             get {
@@ -1192,6 +1201,16 @@ namespace NuGet.Commands {
         internal static string LocalsCommand_LocalsPartiallyCleared {
             get {
                 return ResourceManager.GetString("LocalsCommand_LocalsPartiallyCleared", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
+        ///Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature..
+        /// </summary>
+        internal static string Log_AliasingSupportedInNewDependencyResolver {
+            get {
+                return ResourceManager.GetString("Log_AliasingSupportedInNewDependencyResolver", resourceCulture);
             }
         }
         
@@ -2231,11 +2250,11 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Duplicate frameworks found: &apos;{0}&apos;..
+        ///   Looks up a localized string similar to The TargetFramework property must be unique. List of TargetFramework properties: {0}..
         /// </summary>
-        internal static string SpecValidationDuplicateFrameworks {
+        internal static string SpecValidationDuplicateTargetAlias {
             get {
-                return ResourceManager.GetString("SpecValidationDuplicateFrameworks", resourceCulture);
+                return ResourceManager.GetString("SpecValidationDuplicateTargetAlias", resourceCulture);
             }
         }
         
@@ -2263,15 +2282,6 @@ namespace NuGet.Commands {
         internal static string SpecValidationNoFrameworks {
             get {
                 return ResourceManager.GetString("SpecValidationNoFrameworks", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to UAP projects must contain exactly one target framework..
-        /// </summary>
-        internal static string SpecValidationUAPSingleFramework {
-            get {
-                return ResourceManager.GetString("SpecValidationUAPSingleFramework", resourceCulture);
             }
         }
         

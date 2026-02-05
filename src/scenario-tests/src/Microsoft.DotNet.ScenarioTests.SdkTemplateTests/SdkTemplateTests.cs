@@ -1,4 +1,4 @@
-﻿using Microsoft.DotNet.ScenarioTests.Common;
+using Microsoft.DotNet.ScenarioTests.Common;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -22,6 +22,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     
     [Theory]
     [MemberData(nameof(GetLanguages))]
+    [Trait("SkipIfBuild", "SourceOnly")] // Disabled for source build until SDK templates are updated to .NET 11.0 - https://github.com/dotnet/source-build/issues/5422
     public void VerifyConsoleTemplateComplex(DotNetLanguage language)
     {
         var newTest = new SdkTemplateTest(
@@ -231,6 +232,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     [Fact]
     [Trait("SkipIfBuild", "Portable")] // Portable builds don't bundle an AOT compiler.
     [Trait("SkipIfBuild", "Mono")]     // Mono builds don't bundle an AOT compiler.
+    [Trait("SkipIfBuild", "SourceOnly")] // Disabled for source build until SDK templates are updated to .NET 11.0 - https://github.com/dotnet/source-build/issues/5422
     public void VerifyWebTemplatePublishBundledAot()
     {
         var newTest = new SdkTemplateTest(
@@ -279,6 +281,16 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
         newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot, PreMadeSolution: "SampleProject");
     }
 
+    [Fact]
+    [Trait("Category", "MultiTFM")]
+    public void VerifyILLinkAnalyzerProject()
+    {
+        var newTest = new SdkTemplateTest(
+            nameof(SdkTemplateTests), DotNetLanguage.CSharp, _scenarioTestInput.TargetRid, DotNetSdkTemplate.Console,
+            DotNetSdkActions.Build | DotNetSdkActions.Run | DotNetSdkActions.Publish);
+        newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot, GetFrameworks, PreMadeSolution: "ILLinkAnalyzerProject");
+    }
+
     /*
      * v-masche note: Requires ASP.NET runtimes for .NET6 and .NET7. To be enabled if we decide to 
      * download that as part of the build like we do the normal .NET runtimes
@@ -306,7 +318,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
         newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot, GetDupeArray);
     }*/
 
-    private static string[] GetFrameworks = { "net9.0", "net8.0", "net7.0", "net6.0" };
+    private static string[] GetFrameworks = { "net11.0", "net10.0", "net9.0", "net8.0", "net7.0", "net6.0" };
     
     private static IEnumerable<object[]> GetLanguages() => Enum.GetValues<DotNetLanguage>().Select(lang => new object[] { lang });
 

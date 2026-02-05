@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -10,8 +12,8 @@ using NuGet.Commands.Test;
 using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
+using NuGet.Shared;
 using NuGet.Versioning;
-using Test.Utility;
 using Xunit;
 
 namespace NuGet.ProjectModel.Test
@@ -27,7 +29,7 @@ namespace NuGet.ProjectModel.Test
         [InlineData(false, true, true)]
         [InlineData(true, false, true)]
         [InlineData(true, true, true)]
-        public void GetSpecDependencies_AddsCentralPackageVersionsIfDefined(bool cpvmEnabled, bool CentralPackageTransitivePinningEnabled, bool useLegacyDependencyGraphResolution)
+        public void GetLibrary__AddsCentralPackageVersionsIfDefined(bool cpvmEnabled, bool CentralPackageTransitivePinningEnabled, bool useLegacyDependencyGraphResolution)
         {
             // Arrange
             var centralVersionFoo = new CentralPackageVersion("foo", VersionRange.Parse("2.0.0"));
@@ -49,10 +51,11 @@ namespace NuGet.ProjectModel.Test
             var dependencyGraphSpec = CreateDependencyGraphSpecWithCentralDependencies(cpvmEnabled, CentralPackageTransitivePinningEnabled, true, tfi);
             var packSpec = dependencyGraphSpec.Projects[0];
 
-            var dependencyProvider = new PackageSpecReferenceDependencyProvider(new List<ExternalProjectReference>(), NullLogger.Instance, useLegacyDependencyGraphResolution);
+            var dependencyProvider = new PackageSpecReferenceDependencyProvider([new ExternalProjectReference(packSpec.Name, packSpec, packSpec.FilePath, [])], NullLogger.Instance, useLegacyDependencyGraphResolution);
             // Act
-            var dependencies = dependencyProvider.GetSpecDependencies(packSpec, tfi.FrameworkName);
+            var libraryRange = new LibraryRange(packSpec.Name, versionRange: null, LibraryDependencyTarget.Project);
 
+            var dependencies = dependencyProvider.GetLibrary(libraryRange, tfi.FrameworkName, tfi.TargetAlias).Dependencies.AsList();
             // Assert
             if (cpvmEnabled && CentralPackageTransitivePinningEnabled && useLegacyDependencyGraphResolution)
             {
@@ -82,32 +85,25 @@ namespace NuGet.ProjectModel.Test
             }
         }
 
-        // TODO - Add a test verifying that the new algorithm *doesn't* require packages to be added as top level
-
-        [Theory]
-        [InlineData(null, 1)]
-        [InlineData("true", 0)]
-        public void GetSpecDependencies_WithAssetTargetFallback_AndDependencyResolutionVariableSpecified_ReturnsCorrectDependencies(string assetTargetFallbackEnvironmentVariableValue, int dependencyCount)
+        [Fact]
+        public void GetLibrary_WithAssetTargetFallback_AndDependencyResolutionVariableSpecified_ReturnsCorrectDependencies()
         {
             // Arrange
+            int dependencyCount = 1;
             var net60Framework = FrameworkConstants.CommonFrameworks.Net60;
             var net472Framework = FrameworkConstants.CommonFrameworks.Net472;
             var packageSpec = ProjectTestHelpers.GetPackageSpec(rootPath: "C:\\", projectName: "A", framework: net472Framework.GetShortFolderName(), dependencyName: "x");
 
-            var envVarWrapper = new TestEnvironmentVariableReader(new Dictionary<string, string> { { "NUGET_USE_LEGACY_ASSET_TARGET_FALLBACK_DEPENDENCY_RESOLUTION", assetTargetFallbackEnvironmentVariableValue } });
-            var dependencyProvider = new PackageSpecReferenceDependencyProvider(new List<ExternalProjectReference>(), envVarWrapper);
+            var dependencyProvider = new PackageSpecReferenceDependencyProvider([new ExternalProjectReference(packageSpec.Name, packageSpec, packageSpec.FilePath, [])], NullLogger.Instance);
             var assetTargetFallback = new AssetTargetFallbackFramework(net60Framework, new List<NuGetFramework> { net472Framework });
-            // Act
+            var libraryRange = new LibraryRange(packageSpec.Name, versionRange: null, LibraryDependencyTarget.Project);
 
-            var dependencies = dependencyProvider.GetSpecDependencies(packageSpec, assetTargetFallback);
+            // Act
+            var dependencies = dependencyProvider.GetLibrary(libraryRange, assetTargetFallback, null).Dependencies.AsList();
 
             // Assert
             dependencies.Should().HaveCount(dependencyCount);
-
-            if (dependencyCount > 0)
-            {
-                dependencies[0].Name.Should().Be("x");
-            }
+            dependencies[0].Name.Should().Be("x");
         }
 
         private static TargetFrameworkInformation CreateTargetFrameworkInformation(ImmutableArray<LibraryDependency> dependencies, List<CentralPackageVersion> centralVersionsDependencies)
@@ -129,14 +125,16 @@ namespace NuGet.ProjectModel.Test
 
         private static DependencyGraphSpec CreateDependencyGraphSpecWithCentralDependencies(bool cpvmEnabled, bool tdpEnabled, bool legacyAlgorithmEnabled, params TargetFrameworkInformation[] tfis)
         {
-            var packageSpec = new PackageSpec(tfis);
-            packageSpec.RestoreMetadata = new ProjectRestoreMetadata
+            var packageSpec = new PackageSpec(tfis)
             {
-                ProjectUniqueName = "a",
-                CentralPackageVersionsEnabled = cpvmEnabled,
-                CentralPackageTransitivePinningEnabled = tdpEnabled,
-                UseLegacyDependencyResolver = legacyAlgorithmEnabled,
-            };
+                Name = "a",
+                FilePath = "a.csproj",
+            }.WithTestRestoreMetadata();
+
+            packageSpec.RestoreMetadata.CentralPackageVersionsEnabled = cpvmEnabled;
+            packageSpec.RestoreMetadata.CentralPackageTransitivePinningEnabled = tdpEnabled;
+            packageSpec.RestoreMetadata.UseLegacyDependencyResolver = legacyAlgorithmEnabled;
+
             var dgSpec = new DependencyGraphSpec();
             dgSpec.AddRestore("a");
             dgSpec.AddProject(packageSpec);

@@ -25,6 +25,7 @@ Microsoft.ApplicationInsights.dll;; IGNORE-STRONG-NAME
 Microsoft.Build.Locator.dll;; IGNORE-STRONG-NAME
 Mono.Cecil.*dll;; IGNORE-STRONG-NAME
 Newtonsoft.Json.dll;; IGNORE-STRONG-NAME
+Spectre.Console.dll;; IGNORE-STRONG-NAME
 *.mibc;; IGNORE-STRONG-NAME, .mibc files are not strong-named
 
 ;; ## MACH-O ##

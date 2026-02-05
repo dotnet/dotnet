@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -22,8 +24,6 @@ namespace NuGet.Commands
         public IMachineWideSettings MachineWideSettings { get; set; }
 
         public string GlobalPackagesFolder { get; set; }
-
-        public bool? IsLowercaseGlobalPackagesFolder { get; set; }
 
         public bool DisableParallel { get; set; }
 
@@ -52,8 +52,6 @@ namespace NuGet.Commands
         public List<IPreLoadedRestoreRequestProvider> PreLoadedRequestProviders { get; set; } = new List<IPreLoadedRestoreRequestProvider>();
 
         public PackageSaveMode PackageSaveMode { get; set; } = PackageSaveMode.Defaultv3;
-
-        public int? LockFileVersion { get; set; }
 
         public bool? ValidateRuntimeAssets { get; set; }
 
@@ -186,6 +184,8 @@ namespace NuGet.Commands
 
         public void ApplyStandardProperties(RestoreRequest request)
         {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+
             if (request.ProjectStyle == ProjectStyle.PackageReference)
             {
                 request.LockFilePath = Path.Combine(request.RestoreOutputPath, LockFileFormat.AssetsFileName);
@@ -205,16 +205,8 @@ namespace NuGet.Commands
 
             request.RequestedRuntimes.UnionWith(Runtimes);
             request.FallbackRuntimes.UnionWith(FallbackRuntimes);
-
-            if (IsLowercaseGlobalPackagesFolder.HasValue)
-            {
-                request.IsLowercasePackagesDirectory = IsLowercaseGlobalPackagesFolder.Value;
-            }
-
-            if (LockFileVersion.HasValue && LockFileVersion.Value > 0)
-            {
-                request.LockFileVersion = LockFileVersion.Value;
-            }
+            // Use legacy version for classic csproj.
+            request.LockFileVersion = request.Project.RestoreMetadata?.UsingMicrosoftNETSdk == true ? LockFileFormat.Version : LockFileFormat.LegacyVersion;
 
             // Run runtime asset checks for project.json, and for other types if enabled.
             if (ValidateRuntimeAssets == null)

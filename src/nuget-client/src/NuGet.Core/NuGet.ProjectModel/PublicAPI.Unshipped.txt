@@ -1,10 +1,5 @@
 #nullable enable
-NuGet.ProjectModel.LockFileLibrary.HasTools.init -> void
-NuGet.ProjectModel.LockFileLibrary.IsServiceable.init -> void
-~NuGet.ProjectModel.LockFileLibrary.Files.init -> void
-~NuGet.ProjectModel.LockFileLibrary.MSBuildProject.init -> void
-~NuGet.ProjectModel.LockFileLibrary.Name.init -> void
-~NuGet.ProjectModel.LockFileLibrary.Path.init -> void
-~NuGet.ProjectModel.LockFileLibrary.Sha512.init -> void
-~NuGet.ProjectModel.LockFileLibrary.Type.init -> void
-~NuGet.ProjectModel.LockFileLibrary.Version.init -> void
+static NuGet.ProjectModel.PackageSpecExtensions.GetNearestTargetFramework(this NuGet.ProjectModel.PackageSpec! project, NuGet.Frameworks.NuGetFramework! targetFramework, string? targetAlias) -> NuGet.ProjectModel.TargetFrameworkInformation!
+const NuGet.ProjectModel.LockFileFormat.AliasedVersion = 4 -> int
+const NuGet.ProjectModel.LockFileFormat.LegacyVersion = 3 -> int
+~NuGet.ProjectModel.PackageSpecReferenceDependencyProvider.GetLibrary(NuGet.LibraryModel.LibraryRange libraryRange, NuGet.Frameworks.NuGetFramework targetFramework, string alias) -> NuGet.LibraryModel.Library

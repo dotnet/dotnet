@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using FluentAssertions;
@@ -27,14 +29,9 @@ namespace NuGet.ProjectModel.Test
         {
             // Arrange
             var json = @"{
-                    ""dependencies"": {
-                        ""b"": {
-                            ""version"": ""[1.0.0, )"",
-                            ""autoReferenced"": true
-                        }
-                    },
                   ""frameworks"": {
                     ""net46"": {
+                        ""framework"": ""net46"",
                         ""dependencies"": {
                             ""a"": {
                                 ""version"": ""[1.0.0, )"",
@@ -56,6 +53,7 @@ namespace NuGet.ProjectModel.Test
             var json = @"{
                   ""frameworks"": {
                     ""net46"": {
+                        ""framework"": ""net46"",
                         ""dependencies"": {
                             ""a"": {
                                 ""version"": ""[1.0.0, )"",
@@ -97,14 +95,16 @@ namespace NuGet.ProjectModel.Test
             // Arrange
             var json = @"{
   ""version"": ""1.2.3"",
-  ""dependencies"": {
-    ""packageA"": {
-      ""suppressParent"": ""All"",
-      ""target"": ""Project""
-    }
-  },
   ""frameworks"": {
-    ""net46"": {}
+    ""net46"": {
+        ""framework"": ""net46"",
+        ""dependencies"": {
+            ""packageA"": {
+                ""suppressParent"": ""All"",
+                ""target"": ""Project""
+            }
+        }
+    }
   }
 }";
             // Act & Assert
@@ -146,6 +146,7 @@ namespace NuGet.ProjectModel.Test
     },
     ""frameworks"": {
       ""net45"": {
+        ""framework"": ""net45"",
         ""projectReferences"": {}
       }
     },
@@ -170,27 +171,6 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Fact]
-        public void WriteToFile_ThrowsForNullPackageSpec()
-        {
-            // Assert
-            Assert.Throws<ArgumentNullException>(() => PackageSpecWriter.WriteToFile(packageSpec: null, filePath: @"C:\a.json"));
-        }
-
-        [Fact]
-        public void WriteToFile_ThrowsForNullFilePath()
-        {
-            // Assert
-            Assert.Throws<ArgumentException>(() => PackageSpecWriter.WriteToFile(EmptyPackageSpec, filePath: null));
-        }
-
-        [Fact]
-        public void WriteToFile_ThrowsForEmptyFilePath()
-        {
-            // Assert
-            Assert.Throws<ArgumentException>(() => PackageSpecWriter.WriteToFile(EmptyPackageSpec, filePath: null));
-        }
-
-        [Fact]
         public void Write_SerializesMembersAsJson()
         {
             // Arrange && Act
@@ -199,7 +179,7 @@ namespace NuGet.ProjectModel.Test
             var actualJson = GetJsonString(packageSpec);
 
             // Assert
-            Assert.Equal(expectedJson, actualJson);
+            actualJson.Should().Be(expectedJson);
         }
 
         [Fact]
@@ -211,7 +191,7 @@ namespace NuGet.ProjectModel.Test
             var actualJson = GetJsonString(packageSpec);
 
             // Assert
-            expectedJson.Should().Be(actualJson);
+            actualJson.Should().Be(expectedJson);
         }
 
         [Fact]
@@ -351,16 +331,9 @@ namespace NuGet.ProjectModel.Test
         {
             // Arrange
             var json = @"{
-                    ""dependencies"": {
-                        ""b"": {
-                                ""version"": ""[1.0.0, )"",
-                        },
-                        ""a"": {
-                            ""version"": ""[1.0.0, )"",
-                        }
-                    },
                   ""frameworks"": {
                     ""net46"": {
+                        ""framework"": ""net46"",
                         ""dependencies"": {
                             ""b"": {
                                 ""version"": ""[1.0.0, )"",
@@ -386,12 +359,9 @@ namespace NuGet.ProjectModel.Test
                 }";
 
             var expectedJson = @"{
-                  ""dependencies"": {
-                    ""a"": ""[1.0.0, )"",
-                    ""b"": ""[1.0.0, )""
-                  },
                   ""frameworks"": {
                     ""net46"": {
+                      ""framework"": ""net46"",
                       ""dependencies"": {
                         ""a"": ""[1.0.0, )"",
                         ""b"": ""[1.0.0, )""
@@ -420,13 +390,9 @@ namespace NuGet.ProjectModel.Test
         {
             // Arrange
             var json = @"{
-                    ""dependencies"": {
-                        ""a"": {
-                                ""version"": ""1.0.0"",
-                        },
-                    },
                   ""frameworks"": {
                     ""net46"": {
+                        ""framework"": ""net46"",
                         ""dependencies"": {
                             ""a"": {
                                 ""version"": ""1.0.0"",
@@ -440,11 +406,9 @@ namespace NuGet.ProjectModel.Test
                 }";
 
             var expectedJson = @"{
-                  ""dependencies"": {
-                    ""a"": ""[1.0.0, )""
-                  },
                   ""frameworks"": {
                     ""net46"": {
+                      ""framework"": ""net46"",
                       ""dependencies"": {
                         ""a"": ""[1.0.0, )""
                       },
@@ -465,6 +429,7 @@ namespace NuGet.ProjectModel.Test
             var json = @"{
                   ""frameworks"": {
                     ""net46"": {
+                        ""framework"": ""net46"",
                         ""dependencies"": {
                             ""a"": {
                                 ""version"": ""[1.0.0, )"",
@@ -494,6 +459,7 @@ namespace NuGet.ProjectModel.Test
             var json = @"{
                   ""frameworks"": {
                     ""netcoreapp3.0"": {
+                        ""framework"": ""netcoreapp3.0"",
                         ""dependencies"": {
                             ""a"": {
                                 ""version"": ""[1.0.0, )"",
@@ -503,6 +469,7 @@ namespace NuGet.ProjectModel.Test
                         ""runtimeIdentifierGraphPath"": ""path\\to\\sdk\\3.0.100\\runtime.json""
                     },
                     ""netcoreapp3.1"": {
+                        ""framework"": ""netcoreapp3.1"",
                         ""dependencies"": {
                             ""a"": {
                                 ""version"": ""[2.0.0, )"",
@@ -525,6 +492,7 @@ namespace NuGet.ProjectModel.Test
             var json = @"{
                   ""frameworks"": {
                     ""net46"": {
+                        ""framework"": ""net46"",
                         ""dependencies"": {
                             ""a"": {
                                 ""version"": ""[1.0.0, )"",
@@ -546,6 +514,7 @@ namespace NuGet.ProjectModel.Test
             var json = @"{
                   ""frameworks"": {
                     ""net46"": {
+                        ""framework"": ""net46"",
                         ""dependencies"": {
                             ""a"": {
                                 ""version"": ""[1.0.0, )"",
@@ -567,6 +536,7 @@ namespace NuGet.ProjectModel.Test
             var json = @"{
                   ""frameworks"": {
                     ""net46"": {
+                        ""framework"": ""net46"",
                         ""dependencies"": {
                             ""a"": {
                                 ""version"": ""[1.0.0, )"",
@@ -594,14 +564,16 @@ namespace NuGet.ProjectModel.Test
                         ""outputPath"": ""outputPath"",
                         ""projectStyle"": ""PackageReference"",
                         ""frameworks"": {
-                          ""net45"": {
+                          ""minNetVersion"": {
+                            ""framework"": ""net45"",
                             ""targetAlias"" : ""minNetVersion"",
                             ""projectReferences"": {}
                           }
                         }
                       },
                   ""frameworks"": {
-                    ""net46"": {
+                    ""minNetVersion"": {
+                        ""framework"" : ""net45"",
                         ""targetAlias"" : ""minNetVersion"",
                         ""dependencies"": {
                             ""a"": {
@@ -625,6 +597,7 @@ namespace NuGet.ProjectModel.Test
             var json = @"{
                   ""frameworks"": {
                     ""net5.0"": {
+                        ""framework"": ""net5.0"",
                         ""dependencies"": {
                             ""a"": {
                                 ""version"": ""[1.0.0, )"",
@@ -776,8 +749,33 @@ namespace NuGet.ProjectModel.Test
             var json = @"{
                   ""frameworks"": {
                     ""net46"": {
+                        ""framework"": ""net46"",
                         ""packagesToPrune"": {
                             ""a"": ""(, 2.1.3]""
+                        }
+                    }
+                  }
+                }";
+
+            // Act & Assert
+            VerifyJsonPackageSpecRoundTrip(json);
+        }
+
+
+        [Fact]
+        public void RoundTripAliasedFrameworks()
+        {
+            // Arrange
+            var json = @"{
+                  ""frameworks"": {
+                    ""latestNet"": {
+                        ""framework"": ""net10.0"",
+                        ""targetAlias"": ""latestNet"",
+                        ""dependencies"": {
+                            ""a"": {
+                                ""version"": ""[1.0.0, )"",
+                                ""autoReferenced"": true
+                            }
                         }
                     }
                   }
@@ -826,7 +824,6 @@ namespace NuGet.ProjectModel.Test
 
             var packageSpec = new PackageSpec()
             {
-                Dependencies = new List<LibraryDependency>() { libraryDependency, libraryDependencyWithNoWarnGlobal },
                 Name = "name",
                 FilePath = "filePath",
                 RestoreMetadata = new ProjectRestoreMetadata()
@@ -882,14 +879,14 @@ namespace NuGet.ProjectModel.Test
 
             packageSpec.TargetFrameworks.Add(new TargetFrameworkInformation()
             {
-                Dependencies = [],
+                Dependencies = [libraryDependency, libraryDependencyWithNoWarnGlobal],
                 FrameworkName = nugetFramework,
                 Imports = [nugetFramework],
             });
 
             packageSpec.TargetFrameworks.Add(new TargetFrameworkInformation()
             {
-                Dependencies = [libraryDependencyWithNoWarn],
+                Dependencies = [libraryDependencyWithNoWarn, libraryDependency, libraryDependencyWithNoWarnGlobal],
                 FrameworkName = nugetFrameworkWithNoWarn,
                 Imports = [nugetFrameworkWithNoWarn],
                 Warn = true

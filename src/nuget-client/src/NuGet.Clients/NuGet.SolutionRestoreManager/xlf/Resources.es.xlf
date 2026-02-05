@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="ErrorOccurredRestoringPackages">
         <source>Error occurred while restoring NuGet packages: {0}</source>
-        <target state="translated">Error al restaurar los paquetes NuGet: {0}</target>
+        <target state="translated">Error al restaurar paquetes NuGet: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageDownload_NoVersion">
@@ -21,6 +21,11 @@
         <source>Package '{0} {1}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
         <target state="translated">El paquete "{0} {1}" no tiene una versión exacta, como "[1.0.0]". Solo se permiten versiones exactas con PackageDownload.</target>
         <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
+      </trans-unit>
+      <trans-unit id="InfoBar_HyperlinkFixVulnerabilitiesWithCopilot">
+        <source>Fix with GitHub Copilot</source>
+        <target state="translated">Corrección con GitHub Copilot</target>
+        <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="InfoBar_HyperlinkMessage">
         <source>Manage NuGet Packages</source>
@@ -45,7 +50,7 @@
       </trans-unit>
       <trans-unit id="NothingToRestore">
         <source>All packages are already installed and there is nothing to restore.</source>
-        <target state="translated">Todos los paquetes ya están instalados y no hay nada que restaurar.</target>
+        <target state="translated">Ya se han instalado todos los paquetes y no hay nada que restaurar.</target>
         <note />
       </trans-unit>
       <trans-unit id="Operation_Finished">
@@ -74,7 +79,7 @@ Paquetes que faltan: {0}</target>
       </trans-unit>
       <trans-unit id="PackageRestoreCanceled">
         <source>NuGet package restore canceled.</source>
-        <target state="translated">Restauración del paquete NuGet cancelada.</target>
+        <target state="translated">La restauración del paquete NuGet se canceló.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFailedForProject">
@@ -84,7 +89,7 @@ Paquetes que faltan: {0}</target>
       </trans-unit>
       <trans-unit id="PackageRestoreFinished">
         <source>NuGet package restore finished.</source>
-        <target state="translated">La restauración del paquete de NuGet ha finalizado.</target>
+        <target state="translated">La restauración del paquete NuGet finalizó.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFinishedForProject">
@@ -121,12 +126,12 @@ Para evitar que NuGet restaure paquetes durante la compilación, abra el cuadro 
       </trans-unit>
       <trans-unit id="RestoringPackages">
         <source>Restoring NuGet packages...</source>
-        <target state="translated">Restaurando los paquetes de NuGet...</target>
+        <target state="translated">Restaurando paquetes NuGet...</target>
         <note />
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
         <source>Solution is not saved. Please save your solution before managing NuGet packages.</source>
-        <target state="translated">No se ha guardado la solución. Guarde la solución antes de administrar los paquetes NuGet.</target>
+        <target state="translated">No se guardó la solución. Guarde la solución antes de administrar los paquetes NuGet.</target>
         <note />
       </trans-unit>
     </body>

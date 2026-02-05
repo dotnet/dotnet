@@ -57,11 +57,11 @@ public abstract class RazorSourceGeneratorTestsBase
         return (result.Item1, result.Item2);
     }
 
-    protected static async ValueTask<(GeneratorDriver, ImmutableArray<AdditionalText>, TestAnalyzerConfigOptionsProvider)> GetDriverWithAdditionalTextAndProviderAsync(Project project, Action<TestAnalyzerConfigOptionsProvider>? configureGlobalOptions = null, bool hostOutputs = false)
+    protected static async ValueTask<(GeneratorDriver, ImmutableArray<AdditionalText>, TestAnalyzerConfigOptionsProvider)> GetDriverWithAdditionalTextAndProviderAsync(Project project, Action<TestAnalyzerConfigOptionsProvider>? configureGlobalOptions = null, bool hostOutputs = false, bool trackSteps = false)
     {
         var razorSourceGenerator = new RazorSourceGenerator(testUniqueIds: "test").AsSourceGenerator();
         var disabledOutputs = hostOutputs ? IncrementalGeneratorOutputKind.None : (IncrementalGeneratorOutputKind)0b100000;
-        var driver = (GeneratorDriver)CSharpGeneratorDriver.Create(new[] { razorSourceGenerator }, parseOptions: (CSharpParseOptions)project.ParseOptions!, driverOptions: new GeneratorDriverOptions(disabledOutputs, true));
+        var driver = (GeneratorDriver)CSharpGeneratorDriver.Create(new[] { razorSourceGenerator }, parseOptions: (CSharpParseOptions)project.ParseOptions!, driverOptions: new GeneratorDriverOptions(disabledOutputs, trackSteps));
 
         var optionsProvider = new TestAnalyzerConfigOptionsProvider();
         optionsProvider.TestGlobalOptions["build_property.RazorConfiguration"] = "Default";
@@ -483,6 +483,9 @@ internal static class Extensions
     [Conditional("GENERATE_BASELINES")]
     private static void GenerateOutputBaseline(string baselinePath, string text)
     {
+        var directory = Path.GetDirectoryName(baselinePath)!;
+        Directory.CreateDirectory(directory);
+
         text = text.Replace("\r", "").Replace("\n", "\r\n");
         File.WriteAllText(baselinePath, text, _baselineEncoding);
     }

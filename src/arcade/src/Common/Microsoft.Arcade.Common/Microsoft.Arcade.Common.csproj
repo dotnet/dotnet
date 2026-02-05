@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <!-- Treat this as a tooling library as it references msbuild. -->
-    <TargetFrameworks>$(NetToolCurrent);netstandard2.0;$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFrameworks>$(BundledNETCoreAppTargetFramework);netstandard2.0;$(NetFrameworkToolCurrent)</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <DefaultExcludesInProjectFolder Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) != '.NETFramework'">**/*.Desktop.*</DefaultExcludesInProjectFolder>
   </PropertyGroup>

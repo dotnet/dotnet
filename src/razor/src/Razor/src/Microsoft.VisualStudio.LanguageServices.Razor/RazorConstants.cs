@@ -20,4 +20,6 @@ internal static class RazorConstants
     public static readonly Guid RazorLanguageServiceGuid = new(RazorLanguageServiceString);
 
     public const string VSProjectItemsIdentifier = "CF_VSSTGPROJECTITEMS";
+
+    public const int AboveManagedProjectSystemOrder = 50;
 }

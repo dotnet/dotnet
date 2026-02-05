@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -73,7 +75,6 @@ namespace NuGet.Commands
             NuspecReader nuspec,
             List<ContentItemGroup> contentFileGroups)
         {
-            var results = new List<LockFileContentFile>(contentFileGroups.Count);
             var rootFolderPathLength = ContentFilesFolderName.Length;
 
             // Read the contentFiles section of the nuspec
@@ -145,6 +146,8 @@ namespace NuGet.Commands
                     }
                 }
             }
+
+            var results = new List<LockFileContentFile>(entryMappings.Count);
 
             // Create lock file entries for each item in the contentFiles folder
             foreach ((var file, var entries) in entryMappings)

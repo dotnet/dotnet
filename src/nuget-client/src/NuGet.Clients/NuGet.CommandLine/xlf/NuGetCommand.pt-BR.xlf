@@ -120,8 +120,8 @@ nuget client-certs List</target>
         <note />
       </trans-unit>
       <trans-unit id="CommandApiKey">
-        <source>The API key for the server.</source>
-        <target state="translated">A chave de API do servidor.</target>
+        <source>The API key for the server. If not set, the NUGET_API_KEY environment variable is read.</source>
+        <target state="needs-review-translation">A chave de API do servidor.</target>
         <note />
       </trans-unit>
       <trans-unit id="CommandDirectDownload">
@@ -703,7 +703,7 @@ nuget pack foo.nuspec -Version 2.1.0</target>
       </trans-unit>
       <trans-unit id="PushCommandAllowInsecureConnectionsDescription">
         <source>Allows pushing to HTTP sources (insecure).</source>
-        <target state="new">Allows pushing to HTTP sources (insecure).</target>
+        <target state="translated">Permite enviar por push para fontes HTTP (não seguras).</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandDescription">
@@ -784,7 +784,7 @@ nuget push foo.nupkg -Timeout 360</target>
       </trans-unit>
       <trans-unit id="RestoreCommandLockFilePath">
         <source>Output location where project lock file is written. By default, this is 'PROJECT_ROOT\packages.lock.json'.</source>
-        <target state="translated">Local de saída, onde o arquivo de bloqueio projeto é gravado. Por padrão, isso é 'PROJECT_ROOT\packages.lock.json'.</target>
+        <target state="translated">Local de saída em que o arquivo de bloqueio de projeto é gravado. Por padrão, é "PROJECT_ROOT\packages.lock.json".</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandLockedMode">
@@ -932,23 +932,23 @@ Essa opção pode ser usada para especificar a senha do certificado. Se nenhuma 
         <source>Name of the X.509 certificate store use to search for the certificate. Defaults to "CurrentUser", the X.509 certificate store used by the current user.
 This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
         <target state="translated">Nome do armazenamento de certificados X.509 para ser usado para pesquisar o certificado. O padrão para "CurrentUser", o armazenamento de certificados X.509 usado pelo usuário atual.
-Essa opção deve ser usada ao especificar o certificado com as opções -CertificateSubjectName ou -CertificateFingerprint.</target>
+Essa opção deve ser usada ao especificar o certificado por meio das opções -CertificateSubjectName ou -CertificatePrintprint.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateStoreNameDescription">
         <source>Name of the X.509 certificate store to use to search for the certificate. Defaults to "My", the X.509 certificate store for personal certificates.
 This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
         <target state="translated">Nome do armazenamento de certificados X.509 para ser usado para pesquisar o certificado. O padrão para "My", o armazenamento de certificados X.509 para certificados pessoais.
-Essa opção deve ser usada ao especificar o certificado com as opções -CertificateSubjectName ou -CertificateFingerprint.</target>
+Essa opção deve ser usada ao especificar o certificado por meio das opções -CertificateSubjectName ou -CertificatePrintprint.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateSubjectNameDescription">
         <source>Subject name of the certificate used to search a local certificate store for the certificate. 
 The search is a case-insensitive string comparison using the supplied value, which will find all certificates with the subject name containing that string, regardless of other subject values.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
-        <target state="translated">Nome do assunto do certificado usado para pesquisar um armazenamento de certificados local para o certificado.
-A pesquisa é uma comparação de cadeia de caracteres que não faz distinção entre maiúsculas e minúsculas usando o valor fornecido, o qual encontrará todos os certificados com o nome do assunto que contém essa cadeia de caracteres, independentemente de outros valores de assunto. 
-O armazenamento de certificados pode ser especificado pelas opções CertificateStoreName e -CertificateStoreLocation.</target>
+        <target state="translated">Nome do assunto do certificado usado para pesquisar um armazenamento de certificados local para o certificado. 
+A pesquisa é uma comparação de cadeia de caracteres que não faz distinção entre maiúsculas e minúsculas usando o valor fornecido, o qual encontrará todos os certificados com o nome do assunto que contém essa cadeia de caracteres, independentemente de outros valores de assunto.
+O repositório de certificados pode ser especificado pelas opções -CertificateStoreName e -CertificateStoreLocation.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandDescription">
@@ -1146,8 +1146,8 @@ nuget spec -a MyAssembly.dll</target>
         <note />
       </trans-unit>
       <trans-unit id="SymbolApiKey">
-        <source>The API key for the symbol server.</source>
-        <target state="translated">A chave de API do servidor de símbolos.</target>
+        <source>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</source>
+        <target state="needs-review-translation">A chave de API do servidor de símbolos.</target>
         <note />
       </trans-unit>
       <trans-unit id="TrustedSignersCommandAllowUntrustedRootDescription">

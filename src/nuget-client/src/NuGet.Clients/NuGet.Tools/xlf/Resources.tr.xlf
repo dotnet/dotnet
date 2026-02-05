@@ -22,6 +22,26 @@
         <target state="translated">İşlem başarısız oldu</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_CopilotAccessDenied">
+        <source>Access denied. Please ensure you are signed in to GitHub Copilot.</source>
+        <target state="translated">Erişim reddedildi. Lütfen GitHub Copilot’ta oturum açtığınızdan emin olun.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_CopilotNotReady">
+        <source>GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">GitHub Copilot hazır değil. Lütfen GitHub Copilot’un yüklü ve oturum açıldığından emin olun.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_CopilotServiceNotAvailable">
+        <source>GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">GitHub Copilot Hizmeti kullanılamıyor. Lütfen GitHub Copilot’un yüklü ve oturum açıldığından emin olun.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_McpToolServiceNotAvailable">
+        <source>MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">MCP Araç Hizmeti kullanılamıyor. Lütfen GitHub Copilot’un yüklü ve oturum açıldığından emin olun.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
       <trans-unit id="Error_PackageSourceMappingPattern_Missing">
         <source>A package pattern must be provided.</source>
         <target state="translated">Bir paket deseni sağlanmalıdır.</target>
@@ -34,7 +54,7 @@
       </trans-unit>
       <trans-unit id="Error_PackageSourceName_Missing">
         <source>A name must be provided.</source>
-        <target state="translated">Bir ad sağlanmalı.</target>
+        <target state="translated">Bir ad sağlanmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSourceUriHostname_Missing">
@@ -45,6 +65,11 @@
       <trans-unit id="Error_PackageSourceUri_Missing">
         <source>A source must be provided.</source>
         <target state="translated">Bir kaynak sağlanmalı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ServiceBrokerNotAvailable">
+        <source>Service Broker is not available. Please ensure Visual Studio is running correctly.</source>
+        <target state="translated">Hizmet Aracısı kullanılamıyor. Lütfen Visual Studio’nun düzgün çalıştığından emin olun.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoProjectSelected">
@@ -64,7 +89,7 @@
       </trans-unit>
       <trans-unit id="NuGetSearchProvider_Description">
         <source>Search NuGet packages</source>
-        <target state="translated">NuGet paketlerinde ara</target>
+        <target state="translated">NuGet paketlerini ara</target>
         <note />
       </trans-unit>
       <trans-unit id="NuGetSearchProvider_DisplayText">
@@ -74,7 +99,7 @@
       </trans-unit>
       <trans-unit id="NuGetStaticResult_DisplayText">
         <source>Search Online for NuGet Packages matching '{0}'</source>
-        <target state="translated">'{0}' ile eşleşen NuGet Paketlerini Çevrimiçi Ara</target>
+        <target state="translated">'{0}' ile eşleşen NuGet Paketlerini Çevrimiçi ara</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageManagement">
@@ -113,13 +138,18 @@
         <note />
       </trans-unit>
       <trans-unit id="ProjectMigrateErrorMessage">
-        <source>Project is not eligible for migration as it's not project.json based.</source>
-        <target state="translated">Proje, proje tabanlı olmadığından geçiş için project.json değil.</target>
+        <source>Project is not eligible for migration. Either the project is not packages.config based or doesn't support PackageReference yet.</source>
+        <target state="translated">Proje geçiş için uygun değil. Proje packages.config tabanlı değil veya henüz PackageReference'ı desteklemiyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Prompt_FixNuGetPackageVulnerabilities">
+        <source>Fix my NuGet package vulnerabilities</source>
+        <target state="translated">NuGet paketimdeki güvenlik açıklarını düzelt</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
         <source>These settings are stored in %NuGet.Config% files</source>
-        <target state="translated">Bu ayarlar %NuGet.Config% dosyada depolanır</target>
+        <target state="translated">Bu ayarlar %NuGet.Config% dosyalarında depolanır</target>
         <note>Do not translate % % or what is between them</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
@@ -130,6 +160,26 @@
       <trans-unit id="Text_AllowInsecureConnections_Header">
         <source>Allow Insecure Connections</source>
         <target state="translated">Güvenli Olmayan Bağlantılara İzin Ver</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Checkbox">
+        <source>Use separate sources for vulnerability audit</source>
+        <target state="translated">Güvenlik açığı denetimi için ayrı kaynaklar kullan</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Description">
+        <source>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</source>
+        <target state="translated">Denetim kaynakları, paket kaynağı olarak işlev görmeden geri yükleme sırasında güvenlik açığı verilerini sağlar. Denetim kaynağı yapılandırılmadıysa, NuGet Denetimi paket kaynaklarını kullanır. [Denetim kaynakları hakkında daha fazla bilgi edinin](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_HowToRemove">
+        <source>Remove all audit sources to revert to using package sources for vulnerability data.</source>
+        <target state="translated">Güvenlik açığı verileri için paket kaynaklarını kullanmaya geri dönmek için tüm denetim kaynaklarını kaldırın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Title">
+        <source>Audit sources</source>
+        <target state="translated">Denetim kaynakları</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">
@@ -157,6 +207,11 @@
         <target state="translated">HTTP kaynakları güvenli değil. Bunun yerine HTTPS kullanmayı düşünün. 'AllowInsecureConnections' etkinleştirildi ve HTTP erişimine izin verildi. Daha güvenli seçenekler için [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere) adresine bakın.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_MachineWidePackageSource_Description">
+        <source>Machine‑wide package sources are provisioned by Visual Studio workloads and can only be enabled or disabled.</source>
+        <target state="translated">Makine genelinde paket kaynakları Visual Studio iş yükleri tarafından sağlanır ve yalnızca etkinleştirilebilir veya devre dışı bırakılabilir.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_PackageSourceEnabled_Header">
         <source>Enabled</source>
         <target state="translated">Etkin</target>
@@ -177,6 +232,11 @@
         <target state="translated">Kaynak</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_PackageSources_Description">
+        <source>Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</source>
+        <target state="translated">Paket kaynakları, NuGet'in yükleme, geri yükleme, denetim ve güncelleme işlemleri için paketleri nereden alacağını belirler. [Paket kaynakları hakkında daha fazla bilgi edinin](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_PackageSources_MachineWide">
         <source>Machine-wide package sources</source>
         <target state="translated">Makine genelindeki paket kaynakları</target>
@@ -191,6 +251,11 @@
         <source>Contoso.Contracts or System.*</source>
         <target state="translated">Contoso.Contracts veya System.*</target>
         <note>"Contoso.Contracts" and "System.*" are examples of a package ID pattern and a package prefix pattern, respectively, so these two specific examples should not be translated.</note>
+      </trans-unit>
+      <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
+        <source>Fix Vulnerabilities with GitHub Copilot</source>
+        <target state="translated">GitHub Copilot ile güvenlik açıklarını düzelt</target>
+        <note />
       </trans-unit>
       <trans-unit id="clearLocalResources">
         <source>Clear NuGet local resources</source>

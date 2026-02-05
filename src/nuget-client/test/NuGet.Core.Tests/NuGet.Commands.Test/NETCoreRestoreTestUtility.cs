@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using NuGet.Configuration;
@@ -32,7 +34,7 @@ namespace NuGet.Commands.Test
             }
 
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot, projects.ToArray());
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             return projects;
         }
@@ -66,11 +68,13 @@ namespace NuGet.Commands.Test
             var targetFrameworkInfo = libraryRange == null ?
                 new TargetFrameworkInformation()
                 {
-                    FrameworkName = NuGetFramework.Parse(framework)
+                    FrameworkName = NuGetFramework.Parse(framework),
+                    TargetAlias = framework,
                 } :
                 new TargetFrameworkInformation()
                 {
                     FrameworkName = NuGetFramework.Parse(framework),
+                    TargetAlias = framework,
                     Dependencies = [new LibraryDependency() { LibraryRange = libraryRange }]
                 };
 

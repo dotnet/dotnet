@@ -13,14 +13,11 @@
     <PackageReference Include="Microsoft.Build" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Build.Locator" />
+    <PackageReference Include="Spectre.Console.Testing" />
     <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="compiler\resources\DNW.Test.SampleProject1.project.assets.json" />
-    <EmbeddedResource Include="compiler\resources\Test.SampleProject2.project.assets.json" />
-    <EmbeddedResource Include="compiler\resources\Test.TwoDifferentVersions.project.assets.json" />
-    <EmbeddedResource Include="compiler\resources\Test.MultiTfmMultiRidProject.project.assets.json" />
-    <EmbeddedResource Include="compiler\resources\Test.NoPackageRidSpecificPackageProject.project.assets.json" />
+    <EmbeddedResource Include="compiler\resources\**\*" />
   </ItemGroup>
 </Project>

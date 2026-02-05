@@ -14,13 +14,33 @@
       </trans-unit>
       <trans-unit id="DTE_ProjectUnsupported">
         <source>The project '{0}' is unsupported</source>
-        <target state="translated">项目“{0}”不受支持</target>
+        <target state="translated">不支持项目“{0}”</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorDialogBoxTitle">
         <source>Operation failed</source>
         <target state="translated">操作失败</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Error_CopilotAccessDenied">
+        <source>Access denied. Please ensure you are signed in to GitHub Copilot.</source>
+        <target state="translated">访问被拒绝。请确保你已登录 GitHub Copilot。</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_CopilotNotReady">
+        <source>GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">GitHub Copilot 未就绪。请确保 GitHub Copilot 已安装并登录。</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_CopilotServiceNotAvailable">
+        <source>GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">GitHub Copilot 服务不可用。请确保 GitHub Copilot 已安装并登录。</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_McpToolServiceNotAvailable">
+        <source>MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">MCP 工具服务不可用。请确保 GitHub Copilot 已安装并登录。</target>
+        <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingPattern_Missing">
         <source>A package pattern must be provided.</source>
@@ -45,6 +65,11 @@
       <trans-unit id="Error_PackageSourceUri_Missing">
         <source>A source must be provided.</source>
         <target state="translated">必须提供源。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ServiceBrokerNotAvailable">
+        <source>Service Broker is not available. Please ensure Visual Studio is running correctly.</source>
+        <target state="translated">Service Broker 不可用。请确保 Visual Studio 正确运行。</target>
         <note />
       </trans-unit>
       <trans-unit id="NoProjectSelected">
@@ -74,7 +99,7 @@
       </trans-unit>
       <trans-unit id="NuGetStaticResult_DisplayText">
         <source>Search Online for NuGet Packages matching '{0}'</source>
-        <target state="translated">在线搜索与“{0}”匹配的 NuGet 程序包</target>
+        <target state="translated">联机搜索与“{0}”匹配的 NuGet 程序包</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageManagement">
@@ -113,8 +138,13 @@
         <note />
       </trans-unit>
       <trans-unit id="ProjectMigrateErrorMessage">
-        <source>Project is not eligible for migration as it's not project.json based.</source>
-        <target state="translated">项目不符合迁移条件，因为它不是基于project.json。</target>
+        <source>Project is not eligible for migration. Either the project is not packages.config based or doesn't support PackageReference yet.</source>
+        <target state="translated">项目不符合迁移条件。项目不是基于 packages.config 或者尚不支持 PackageReference。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Prompt_FixNuGetPackageVulnerabilities">
+        <source>Fix my NuGet package vulnerabilities</source>
+        <target state="translated">修复我的 NuGet 包漏洞</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
@@ -124,12 +154,32 @@
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
         <source>Solution is not saved. Please save your solution before managing NuGet packages.</source>
-        <target state="translated">解决方案未保存。请先保存你的解决方案，然后再管理 NuGet 程序包。</target>
+        <target state="translated">解决方案未保存。请先保存你的解决方案，然后再管理 NuGet 包。</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_AllowInsecureConnections_Header">
         <source>Allow Insecure Connections</source>
         <target state="translated">允许不安全的连接</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Checkbox">
+        <source>Use separate sources for vulnerability audit</source>
+        <target state="translated">使用独立源进行漏洞审计</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Description">
+        <source>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</source>
+        <target state="translated">审核源在还原期间提供漏洞数据，但不充当包源。如果未配置审核源，则 NuGet 审核使用包源。[了解有关审核源的更多信息](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_HowToRemove">
+        <source>Remove all audit sources to revert to using package sources for vulnerability data.</source>
+        <target state="translated">删除所有审核源，以恢复使用包源获取漏洞数据。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Title">
+        <source>Audit sources</source>
+        <target state="translated">审核源</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">
@@ -157,6 +207,11 @@
         <target state="translated">HTTP 源不安全。请考虑改用 HTTPS。启用了 "AllowInsecureConnections"，允许 HTTP 访问。如需更安全的选项，请参阅 [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere)。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_MachineWidePackageSource_Description">
+        <source>Machine‑wide package sources are provisioned by Visual Studio workloads and can only be enabled or disabled.</source>
+        <target state="translated">计算机范围的包源由 Visual Studio 工作负载预配，只能启用或禁用。</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_PackageSourceEnabled_Header">
         <source>Enabled</source>
         <target state="translated">已启用</target>
@@ -177,6 +232,11 @@
         <target state="translated">源</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_PackageSources_Description">
+        <source>Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</source>
+        <target state="translated">包源定义了 NuGet 为安装、还原、审核和更新操作检索包的位置。[了解有关包源的更多信息](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_PackageSources_MachineWide">
         <source>Machine-wide package sources</source>
         <target state="translated">计算机范围的包源</target>
@@ -191,6 +251,11 @@
         <source>Contoso.Contracts or System.*</source>
         <target state="translated">Contoso.Contracts 或 System。*</target>
         <note>"Contoso.Contracts" and "System.*" are examples of a package ID pattern and a package prefix pattern, respectively, so these two specific examples should not be translated.</note>
+      </trans-unit>
+      <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
+        <source>Fix Vulnerabilities with GitHub Copilot</source>
+        <target state="translated">使用 GitHub Copilot 修复漏洞</target>
+        <note />
       </trans-unit>
       <trans-unit id="clearLocalResources">
         <source>Clear NuGet local resources</source>

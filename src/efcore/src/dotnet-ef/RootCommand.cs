@@ -66,7 +66,11 @@ internal class RootCommand : CommandBase
         Reporter.WriteVerbose(Resources.UsingProject(projectFile));
         Reporter.WriteVerbose(Resources.UsingStartupProject(startupProjectFile));
 
-        var project = Project.FromFile(projectFile);
+        var project = Project.FromFile(
+            projectFile,
+            _framework!.Value(),
+            _configuration!.Value(),
+            _runtime!.Value());
         var startupProject = Project.FromFile(
             startupProjectFile,
             _framework!.Value(),
@@ -91,8 +95,7 @@ internal class RootCommand : CommandBase
             Path.GetDirectoryName(typeof(Program).Assembly.Location)!,
             "tools");
 
-        var targetDir = Path.GetFullPath(Path.Combine(startupProject.ProjectDir!, startupProject.OutputPath!))
-            .Replace('\\', Path.DirectorySeparatorChar);
+        var targetDir = Path.GetFullPath(Path.Combine(startupProject.ProjectDir!, startupProject.OutputPath!));
         var targetPath = Path.Combine(targetDir, project.TargetFileName!);
         var startupTargetPath = Path.Combine(targetDir, startupProject.TargetFileName!);
         var depsFile = Path.Combine(

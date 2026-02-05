@@ -47,6 +47,10 @@ parameters:
   displayName: "Skip tests"
   type: boolean
   default: False
+- name: codeQLForce
+  displayName: "Try collecting CodeQL before default CodeQL cadence"
+  type: boolean
+  default: False
 
 - name: otherOsPools
   type: object
@@ -84,6 +88,13 @@ variables:
   - ${{ if eq(parameters.isRTM, True) }}:
     - name: _ReleaseVersionKind
       value: release
+
+  # Set to 0 to force CodeQL scan without waiting 72 from last attempt (even if it failed).
+  # This is only a hint for the tool, it might reject to run it if it already has up to date data.
+  # See the Starting Code QL step for details.
+  - ${{ if eq(parameters.codeQLForce, True) }}:
+    - name: Codeql.Cadence 
+      value: 0
 
   # Group gives access to $microsoft-symbol-server-pat and $symweb-symbol-server-pat
   - group: DotNet-Symbol-Server-Pats
@@ -127,8 +138,10 @@ extends:
         enabled: true
     pool:
       name: $(DncEngInternalBuildPool)
-      image: windows.vs2022preview.amd64
+      image: windows.vs2026preview.scout.amd64
       os: windows
+    settings:
+      networkIsolationPolicy: Permissive,CFSClean
     customBuildTags:
     - ES365AIMigrationTooling
     stages:
@@ -151,7 +164,7 @@ extends:
             timeoutInMinutes: 120
             pool:
               name: $(DncEngInternalBuildPool)
-              image: windows.vs2022preview.amd64
+              image: windows.vs2026preview.scout.amd64
               os: windows
             steps:
             # This steps help to understand versions of .NET runtime installed on the machine,
@@ -185,6 +198,8 @@ extends:
                   -performanceTest
                 name: Test
                 displayName: Test
+                env:
+                  DOTNET_ROOT: $(Build.SourcesDirectory)/.dotnet
 
               # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
               # through the console or trx
@@ -239,6 +254,8 @@ extends:
                     --performanceTest
                   name: Test
                   displayName: Test
+                  env:
+                    DOTNET_ROOT: $(Build.SourcesDirectory)/.dotnet
 
                 # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
                 # through the console or trx
@@ -248,14 +265,14 @@ extends:
                     PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
                     ArtifactName: TestResults
                   condition: failed()
-
+          
           - job: Publish
             dependsOn:
               - ${{ each pool in parameters.otherOsPools }}:
                 - ${{ pool.os }}
             pool:
                 name: $(DncEngInternalBuildPool)
-                image: windows.vs2022preview.amd64
+                image: windows.vs2026preview.scout.amd64
                 os: windows
             steps:
               # The template job needs a log, otherwise it writes a warning. We can disable log uploading only for
@@ -275,22 +292,23 @@ extends:
                   artifactName: VSSetupArtifacts
                   targetPath: '$(Build.SourcesDirectory)/artifacts/VSSetup/Release'
 
-              - task: NuGetAuthenticate@1
-                displayName: 'NuGet Authenticate to dotnet-tools and test-tools feeds'
+              - ${{ if eq(parameters.isRTM, False) }}:
+                - task: NuGetAuthenticate@1
+                  displayName: 'NuGet Authenticate to dotnet-tools and test-tools feeds'
 
-              - task:  1ES.PublishNuget@1
-                displayName: 'Publish NuGet packages to dotnet-tools feed'
-                inputs:
-                  packageParentPath: '$(Build.SourcesDirectory)/artifacts/packages/Release'
-                  packagesToPush: '$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.nupkg;!$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.symbols.nupkg'
-                  publishVstsFeed: 'public/dotnet-tools'
-
-              - task:  1ES.PublishNuget@1
-                displayName: 'Publish NuGet packages to test-tools feed'
-                inputs:
-                  packageParentPath: '$(Build.SourcesDirectory)/artifacts/packages/Release'
-                  packagesToPush: '$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.nupkg;!$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.symbols.nupkg'
-                  publishVstsFeed: 'public/test-tools'
+                - task:  1ES.PublishNuget@1
+                  displayName: 'Publish NuGet packages to dotnet-tools feed'
+                  inputs:
+                    packageParentPath: '$(Build.SourcesDirectory)/artifacts/packages/Release'
+                    packagesToPush: '$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.nupkg;!$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.symbols.nupkg'
+                    publishVstsFeed: 'public/dotnet-tools'
+                
+                - task:  1ES.PublishNuget@1
+                  displayName: 'Publish NuGet packages to test-tools feed'
+                  inputs:
+                    packageParentPath: '$(Build.SourcesDirectory)/artifacts/packages/Release'
+                    packagesToPush: '$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.nupkg;!$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.symbols.nupkg'
+                    publishVstsFeed: 'public/test-tools'
 
               # Publishes setup VSIXes to a drop.
               # Note: The insertion tool looks for the display name of this task in the logs.

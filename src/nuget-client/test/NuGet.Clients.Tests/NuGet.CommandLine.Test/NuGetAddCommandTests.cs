@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -439,7 +441,6 @@ namespace NuGet.CommandLine.Test
 
             public string NuGetExePath { get; }
             public string SourceParamFolder { get; set; }
-            public string RandomNupkgFolder { get { return Path.GetDirectoryName(RandomNupkgFilePath); } }
             public PackageIdentity Package { get; }
             public FileInfo TestPackage { get; set; }
             public string RandomNupkgFilePath { get { return TestPackage.FullName; } }

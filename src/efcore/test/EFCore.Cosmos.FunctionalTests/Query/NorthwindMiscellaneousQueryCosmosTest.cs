@@ -566,12 +566,12 @@ ORDER BY ((c["UnitsInStock"] > 10) ? (c["ProductID"] > 40) : (c["ProductID"] <= 
                 AssertSql(
                     """
 @p='5'
-@p0='10'
+@p1='10'
 
 SELECT VALUE c
 FROM root c
 ORDER BY c["ContactName"]
-OFFSET @p LIMIT @p0
+OFFSET @p LIMIT @p1
 """);
             });
 
@@ -1307,13 +1307,13 @@ SELECT VALUE EXISTS (
             AssertSql(
                 """
 @p='5'
-@p0='10'
+@p1='10'
 
 SELECT VALUE EXISTS (
     SELECT 1
     FROM root c
     ORDER BY c["ContactName"]
-    OFFSET @p LIMIT @p0)
+    OFFSET @p LIMIT @p1)
 """);
         }
     }
@@ -2034,6 +2034,18 @@ WHERE (c["$type"] = "Order")
 """);
             });
 
+    public override Task Captured_variable_from_switch_case_pattern_matching(bool async)
+        => Fixture.NoSyncTest(
+            async, async a =>
+            {
+                await base.Captured_variable_from_switch_case_pattern_matching(a);
+
+                AssertSql(
+                    """
+ReadItem(None, ALFKI)
+""");
+            });
+
     public override async Task Subquery_member_pushdown_does_not_change_original_subquery_model(bool async)
     {
         // Cosmos client evaluation. Issue #17246.
@@ -2307,12 +2319,12 @@ WHERE (((c["$type"] = "Order") AND (c["OrderDate"] != null)) AND (DateTimePart("
             AssertSql(
                 """
 @p='5'
-@p0='8'
+@p1='8'
 
 SELECT VALUE c
 FROM root c
 ORDER BY c["ContactTitle"], c["ContactName"]
-OFFSET @p LIMIT @p0
+OFFSET @p LIMIT @p1
 """);
         }
     }
@@ -3034,12 +3046,12 @@ ORDER BY c["id"] DESC
                 AssertSql(
                     """
 @p='5'
-@p0='10'
+@p1='10'
 
 SELECT VALUE c["id"]
 FROM root c
 ORDER BY c["id"]
-OFFSET @p LIMIT @p0
+OFFSET @p LIMIT @p1
 """);
             });
 
@@ -5029,6 +5041,18 @@ WHERE (c["id"] = "ALFKI")
     {
         // Uncorrelated subquery, not supported by Cosmos
         await AssertTranslationFailed(() => base.Late_subquery_pushdown(async));
+
+        AssertSql();
+    }
+
+    [ConditionalTheory, MemberData(nameof(IsAsyncData))]
+    public virtual async Task Concat_on_entity_queries_throws(bool async)
+    {
+        await AssertTranslationFailedWithDetails(
+            () => AssertQuery(
+                async,
+                ss => ss.Set<Customer>().Concat(ss.Set<Customer>())),
+            CosmosStrings.NonCorrelatedSubqueriesNotSupported);
 
         AssertSql();
     }

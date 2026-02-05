@@ -111,7 +111,7 @@ nuget client-certs List</target>
       </trans-unit>
       <trans-unit id="ClientCertificatesCommandUsageSummary">
         <source>&lt;List|Add|Update|Remove&gt; [options]</source>
-        <target state="translated">&lt;列表|添加|更新|移除&gt; [选项]</target>
+        <target state="translated">&lt;List|Add|Update|Remove&gt; [选项]</target>
         <note />
       </trans-unit>
       <trans-unit id="ClientCertificatesDescription">
@@ -120,8 +120,8 @@ nuget client-certs List</target>
         <note />
       </trans-unit>
       <trans-unit id="CommandApiKey">
-        <source>The API key for the server.</source>
-        <target state="translated">服务器的 API 密钥。</target>
+        <source>The API key for the server. If not set, the NUGET_API_KEY environment variable is read.</source>
+        <target state="needs-review-translation">服务器的 API 密钥。</target>
         <note />
       </trans-unit>
       <trans-unit id="CommandDirectDownload">
@@ -242,7 +242,7 @@ nuget delete MyPackage 1.0 -NoPrompt</target>
       </trans-unit>
       <trans-unit id="DeleteCommandUsageSummary">
         <source>&lt;package Id&gt; &lt;package version&gt; [API Key] [options]</source>
-        <target state="translated">&lt;包 Id&gt; &lt;包 版本&gt; [API 密钥] [选项]</target>
+        <target state="translated">&lt;package Id&gt; &lt;package version&gt; [API 密钥] [选项]</target>
         <note />
       </trans-unit>
       <trans-unit id="EulaDescription">
@@ -288,13 +288,13 @@ nuget help push
 nuget ?
 
 nuget push -?</source>
-        <target state="translated">nuget 帮助
+        <target state="translated">nuget help
 
-nuget 帮助推送
+nuget help push
 
-nuget?
+nuget ?
 
-nuget 推送 -?</target>
+nuget push -?</target>
         <note>Please don't localize this string</note>
       </trans-unit>
       <trans-unit id="HelpCommandUsageSummary">
@@ -703,7 +703,7 @@ nuget pack foo.nuspec -Version 2.1.0</target>
       </trans-unit>
       <trans-unit id="PushCommandAllowInsecureConnectionsDescription">
         <source>Allows pushing to HTTP sources (insecure).</source>
-        <target state="new">Allows pushing to HTTP sources (insecure).</target>
+        <target state="translated">允许推送到 HTTP 源(不安全)。</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandDescription">
@@ -784,7 +784,7 @@ nuget push foo.nupkg -Timeout 360</target>
       </trans-unit>
       <trans-unit id="RestoreCommandLockFilePath">
         <source>Output location where project lock file is written. By default, this is 'PROJECT_ROOT\packages.lock.json'.</source>
-        <target state="translated">写入项目锁定文件的输出位置。默认情况下, 此位置为 "PROJECT_ROOT\packages.lock.json"。</target>
+        <target state="translated">写入项目锁文件的输出位置。默认情况下，这是 "PROJECT_ROOT\packages.lock.json"。</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandLockedMode">
@@ -931,14 +931,14 @@ This option can be used to specify the password for the certificate. If no passw
       <trans-unit id="SignCommandCertificateStoreLocationDescription">
         <source>Name of the X.509 certificate store use to search for the certificate. Defaults to "CurrentUser", the X.509 certificate store used by the current user.
 This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
-        <target state="translated">用于搜索证书的 X.509 证书存储的名称。默认为 “CurrentUser”，即当前用户使用的 X.509 证书存储。
-通过 -CertificateSubjectName 或 -CertificateFingerPrint 选项指定证书时，应使用此选项。</target>
+        <target state="translated">用于搜索证书的 X.509 证书存储的名称。默认为 "CurrentUser"，即当前用户使用的 X.509 证书存储。
+通过 -CertificateSubjectName 或 -CertificateFingerprint 选项指定证书时，应使用此选项。</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateStoreNameDescription">
         <source>Name of the X.509 certificate store to use to search for the certificate. Defaults to "My", the X.509 certificate store for personal certificates.
 This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
-        <target state="translated">用于搜索证书的 X.509 证书存储的名称。默认为 “My”，即用于个人证书的 X.509 证书存储。
+        <target state="translated">用于搜索证书的 X.509 证书存储的名称。默认为 "My"，即用于个人证书的 X.509 证书存储。
 通过 -CertificateSubjectName 或 -CertificateFingerprint 选项指定证书时，应使用此选项。</target>
         <note />
       </trans-unit>
@@ -946,7 +946,7 @@ This option should be used when specifying the certificate via -CertificateSubje
         <source>Subject name of the certificate used to search a local certificate store for the certificate. 
 The search is a case-insensitive string comparison using the supplied value, which will find all certificates with the subject name containing that string, regardless of other subject values.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
-        <target state="translated">用于在本地证书存储中搜索证书的证书使用者名称。
+        <target state="translated">用于在本地证书存储中搜索证书的证书的使用者名称。
 该搜索是一个使用所提供值的不区分大小写的字符串比较，它将查找使用者名称包含该字符串的所有证书，而不考虑其他使用者值。
 证书存储可通过 -CertificateStoreName 和 -CertificateStoreLocation 选项指定。</target>
         <note />
@@ -1146,8 +1146,8 @@ nuget spec -a MyAssembly.dll</target>
         <note />
       </trans-unit>
       <trans-unit id="SymbolApiKey">
-        <source>The API key for the symbol server.</source>
-        <target state="translated">符号服务器的 API 密钥。</target>
+        <source>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</source>
+        <target state="needs-review-translation">符号服务器的 API 密钥。</target>
         <note />
       </trans-unit>
       <trans-unit id="TrustedSignersCommandAllowUntrustedRootDescription">

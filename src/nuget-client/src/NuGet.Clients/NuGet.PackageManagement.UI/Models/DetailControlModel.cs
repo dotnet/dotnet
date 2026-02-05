@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -135,10 +137,12 @@ namespace NuGet.PackageManagement.UI
         /// </summary>
         /// <param name="searchResultPackage">The package to be displayed.</param>
         /// <param name="filter">The current filter. This will used to select the default action.</param>
+        /// <param name="cancellationToken">Cancellation token for async operations.</param>
         public async virtual Task SetCurrentPackageAsync(
             PackageItemViewModel searchResultPackage,
             ItemFilter filter,
-            Func<PackageItemViewModel> getPackageItemViewModel)
+            Func<PackageItemViewModel> getPackageItemViewModel,
+            CancellationToken cancellationToken)
         {
             // Clear old data
             ClearVersions();
@@ -154,7 +158,7 @@ namespace NuGet.PackageManagement.UI
             OnPropertyChanged(nameof(IconBitmap));
             OnPropertyChanged(nameof(PrefixReserved));
 
-            Task<IReadOnlyCollection<VersionInfoContextInfo>> getVersionsTask = searchResultPackage.GetVersionsAsync(_nugetProjects);
+            Task<IReadOnlyCollection<VersionInfoContextInfo>> getVersionsTask = searchResultPackage.GetVersionsAsync(_nugetProjects, cancellationToken);
 
             _projectVersionConstraints = new List<ProjectVersionConstraint>();
 
@@ -233,7 +237,7 @@ namespace NuGet.PackageManagement.UI
                 (searchResultPackage.Version, false, false)
             };
 
-            await CreateVersionsAsync(CancellationToken.None);
+            await CreateVersionsAsync(cancellationToken);
             NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(OnCurrentPackageChanged)
                 .PostOnFailure(nameof(DetailControlModel), nameof(OnCurrentPackageChanged));
 
@@ -252,12 +256,12 @@ namespace NuGet.PackageManagement.UI
                 .Select(GetVersion)
                 .ToList();
 
-            await CreateVersionsAsync(CancellationToken.None);
+            await CreateVersionsAsync(cancellationToken);
             NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(OnCurrentPackageChanged)
                 .PostOnFailure(nameof(DetailControlModel), nameof(OnCurrentPackageChanged));
 
             (PackageSearchMetadataContextInfo packageSearchMetadata, PackageDeprecationMetadataContextInfo packageDeprecationMetadata) =
-                await searchResultPackage.GetDetailedPackageSearchMetadataAsync();
+                await searchResultPackage.GetDetailedPackageSearchMetadataAsync(cancellationToken);
 
             if (packageSearchMetadata != null)
             {
@@ -271,7 +275,8 @@ namespace NuGet.PackageManagement.UI
                     packageSearchMetadata,
                     packageDeprecationMetadata,
                     searchResultPackage.KnownOwnerViewModels,
-                    searchResultPackage.DownloadCount);
+                    searchResultPackage.DownloadCount,
+                    PackageVulnerabilities);
 
                 _metadataDict[detailedPackageMetadata.Version] = detailedPackageMetadata;
 
@@ -637,7 +642,7 @@ namespace NuGet.PackageManagement.UI
         {
             // Load the detailed metadata that we already have and check to see if this matches what is selected, we cannot use the _metadataDict here unfortunately as it won't be populated yet
             (PackageSearchMetadataContextInfo packageSearchMetadata, PackageDeprecationMetadataContextInfo packageDeprecationMetadata) =
-                await packageItemViewModel.GetDetailedPackageSearchMetadataAsync();
+                await packageItemViewModel.GetDetailedPackageSearchMetadataAsync(cancellationToken);
             if (packageSearchMetadata != null && packageSearchMetadata.Identity.Version.Equals(nugetVersion))
             {
                 if (_searchResultPackage != packageItemViewModel)
@@ -649,7 +654,8 @@ namespace NuGet.PackageManagement.UI
                     packageSearchMetadata,
                     packageDeprecationMetadata,
                     packageItemViewModel.KnownOwnerViewModels,
-                    packageItemViewModel.DownloadCount);
+                    packageItemViewModel.DownloadCount,
+                    packageItemViewModel.Vulnerabilities);
             }
             else
             {
@@ -669,7 +675,8 @@ namespace NuGet.PackageManagement.UI
                         searchMetadata,
                         deprecationData,
                         knownOwnerViewModels: null,
-                        searchMetadata.DownloadCount);
+                        searchMetadata.DownloadCount,
+                        PackageVulnerabilities);
 
                     _metadataDict[detailedPackageMetadata.Version] = detailedPackageMetadata;
 

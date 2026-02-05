@@ -1,17 +1,2 @@
 #nullable enable
-NuGet.Commands.Restore.IItem
-NuGet.Commands.Restore.IItem.GetMetadata(string! name) -> string!
-NuGet.Commands.Restore.IItem.Identity.get -> string!
-NuGet.Commands.Restore.IProject
-NuGet.Commands.Restore.IProject.Directory.get -> string!
-NuGet.Commands.Restore.IProject.FullPath.get -> string!
-NuGet.Commands.Restore.IProject.OuterBuild.get -> NuGet.Commands.Restore.ITargetFramework!
-NuGet.Commands.Restore.IProject.TargetFrameworks.get -> System.Collections.Generic.IReadOnlyDictionary<string!, NuGet.Commands.Restore.ITargetFramework!>!
-NuGet.Commands.Restore.ITargetFramework
-NuGet.Commands.Restore.ITargetFramework.GetItems(string! itemType) -> System.Collections.Generic.IReadOnlyList<NuGet.Commands.Restore.IItem!>!
-NuGet.Commands.Restore.ITargetFramework.GetProperty(string! propertyName) -> string!
-NuGet.Commands.Restore.Utility.PackageSpecFactory
-static NuGet.Commands.Restore.Utility.PackageSpecFactory.GetPackageSpec(NuGet.Commands.Restore.IProject! project, NuGet.Configuration.ISettings! settings) -> NuGet.ProjectModel.PackageSpec?
-~static NuGet.Commands.MSBuildRestoreUtility.GetRestoreAuditProperties(NuGet.Commands.IMSBuildItem specItem, System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> allItems, System.Collections.Generic.HashSet<string> suppressionItems) -> NuGet.ProjectModel.RestoreAuditProperties
-~static NuGet.Commands.PushRunner.Run(NuGet.Configuration.ISettings settings, NuGet.Configuration.IPackageSourceProvider sourceProvider, System.Collections.Generic.IList<string> packagePaths, string source, string apiKey, string symbolSource, string symbolApiKey, int timeoutSeconds, bool disableBuffering, bool noSymbols, bool noServiceEndpoint, bool skipDuplicate, bool allowInsecureConnections, NuGet.Common.ILogger logger) -> System.Threading.Tasks.Task
-~static NuGet.Commands.RestoreRunner.RunWithoutCommitAsync(System.Collections.Generic.IEnumerable<NuGet.Commands.RestoreSummaryRequest> restoreRequests, NuGet.Commands.RestoreArgs restoreContext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Commands.RestoreResultPair>>
+~NuGet.Commands.SourceRepositoryDependencyProvider.FindLibraryAsync(NuGet.LibraryModel.LibraryRange! libraryRange, NuGet.Frameworks.NuGetFramework! targetFramework, string! targetAlias, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.LibraryModel.LibraryIdentity!>!

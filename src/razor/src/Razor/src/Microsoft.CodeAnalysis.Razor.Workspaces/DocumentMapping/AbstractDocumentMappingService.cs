@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.DocumentMapping;
@@ -220,19 +221,19 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
 
         var sourceText = csharpDocument.CodeDocument.Source.Text;
         var range = razorRange;
-        if (!IsRangeWithinDocument(range, sourceText))
+        if (!IsSpanWithinDocument(range, sourceText))
         {
             return false;
         }
 
         if (!sourceText.TryGetAbsoluteIndex(range.Start, out var startIndex) ||
-            !TryMapToCSharpDocumentPosition(csharpDocument, startIndex, out var generatedRangeStart, out var _))
+            !TryMapToCSharpDocumentPosition(csharpDocument, startIndex, out var generatedRangeStart, out _))
         {
             return false;
         }
 
         if (!sourceText.TryGetAbsoluteIndex(range.End, out var endIndex) ||
-            !TryMapToCSharpDocumentPosition(csharpDocument, endIndex, out var generatedRangeEnd, out var _))
+            !TryMapToCSharpDocumentPosition(csharpDocument, endIndex, out var generatedRangeEnd, out _))
         {
             return false;
         }
@@ -251,6 +252,31 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
         csharpRange = new LinePositionSpan(generatedRangeStart, generatedRangeEnd);
 
         return true;
+    }
+
+    public ImmutableArray<LinePositionSpan> GetCSharpSpansOverlappingRazorSpan(RazorCSharpDocument csharpDocument, LinePositionSpan razorSpan)
+    {
+        var sourceText = csharpDocument.CodeDocument.Source.Text;
+        if (!IsSpanWithinDocument(razorSpan, sourceText))
+        {
+            return [];
+        }
+
+        using var builder = new PooledArrayBuilder<LinePositionSpan>();
+
+        foreach (var mapping in csharpDocument.SourceMappings)
+        {
+            var originalSpan = mapping.OriginalSpan.ToLinePositionSpan();
+
+            if (razorSpan.OverlapsWith(originalSpan))
+            {
+                var generatedSpan = mapping.GeneratedSpan.ToLinePositionSpan();
+
+                builder.Add(generatedSpan);
+            }
+        }
+
+        return builder.ToImmutableAndClear();
     }
 
     public bool TryMapToRazorDocumentPosition(RazorCSharpDocument csharpDocument, int csharpIndex, out LinePosition razorPosition, out int razorIndex)
@@ -348,7 +374,7 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
 
         var csharpSourceText = csharpDocument.Text;
         var range = csharpRange;
-        if (!IsRangeWithinDocument(range, csharpSourceText))
+        if (!IsSpanWithinDocument(range, csharpSourceText))
         {
             return false;
         }
@@ -382,7 +408,7 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
 
         var csharpSourceText = csharpDocument.Text;
 
-        if (!IsRangeWithinDocument(csharpRange, csharpSourceText))
+        if (!IsSpanWithinDocument(csharpRange, csharpSourceText))
         {
             return false;
         }
@@ -462,7 +488,7 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
         razorRange = default;
         var csharpSourceText = csharpDocument.Text;
 
-        if (!IsRangeWithinDocument(csharpRange, csharpSourceText))
+        if (!IsSpanWithinDocument(csharpRange, csharpSourceText))
         {
             return false;
         }
@@ -530,16 +556,16 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
 
     private static bool s_haveAsserted = false;
 
-    private bool IsRangeWithinDocument(LinePositionSpan range, SourceText sourceText)
+    private bool IsSpanWithinDocument(LinePositionSpan span, SourceText sourceText)
     {
         // This might happen when the document that ranges were created against was not the same as the document we're consulting.
-        var result = IsPositionWithinDocument(range.Start, sourceText) && IsPositionWithinDocument(range.End, sourceText);
+        var result = IsPositionWithinDocument(span.Start, sourceText) && IsPositionWithinDocument(span.End, sourceText);
 
         if (!s_haveAsserted && !result)
         {
             s_haveAsserted = true;
             var sourceTextLinesCount = sourceText.Lines.Count;
-            Logger.LogWarning($"Attempted to map a range ({range.Start.Line},{range.Start.Character})-({range.End.Line},{range.End.Character}) outside of the Source (line count {sourceTextLinesCount}.) This could happen if the Roslyn and Razor LSP servers are not in sync.");
+            Logger.LogWarning($"Attempted to map a range ({span.Start.Line},{span.Start.Character})-({span.End.Line},{span.End.Character}) outside of the Source (line count {sourceTextLinesCount}.) This could happen if the Roslyn and Razor LSP servers are not in sync.");
         }
 
         return result;

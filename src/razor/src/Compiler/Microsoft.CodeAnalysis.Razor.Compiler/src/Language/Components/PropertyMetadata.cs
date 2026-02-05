@@ -21,13 +21,13 @@ public sealed record PropertyMetadata() : MetadataObject(MetadataKind.Property)
 
     private protected override void BuildChecksum(in Checksum.Builder builder)
     {
-        builder.AppendData(GloballyQualifiedTypeName);
-        builder.AppendData(IsChildContent);
-        builder.AppendData(IsEventCallback);
-        builder.AppendData(IsDelegateSignature);
-        builder.AppendData(IsDelegateWithAwaitableResult);
-        builder.AppendData(IsGenericTyped);
-        builder.AppendData(IsInitOnlyProperty);
+        builder.Append(GloballyQualifiedTypeName);
+        builder.Append(IsChildContent);
+        builder.Append(IsEventCallback);
+        builder.Append(IsDelegateSignature);
+        builder.Append(IsDelegateWithAwaitableResult);
+        builder.Append(IsGenericTyped);
+        builder.Append(IsInitOnlyProperty);
     }
 
     public ref struct Builder

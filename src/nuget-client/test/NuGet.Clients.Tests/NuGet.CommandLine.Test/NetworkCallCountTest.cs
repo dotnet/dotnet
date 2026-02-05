@@ -602,7 +602,7 @@ namespace NuGet.CommandLine.Test
                 var task = Task.Run(() =>
                 {
                     // Wait until all packages exist before allowing v2 to return
-                    while (Directory.GetDirectories(packagesFolder, "*", SearchOption.TopDirectoryOnly).Count() < 3)
+                    while (Directory.GetDirectories(packagesFolder, "*", SearchOption.TopDirectoryOnly).Length < 3)
                     {
                         Thread.Sleep(100);
                     }
@@ -619,12 +619,10 @@ namespace NuGet.CommandLine.Test
                 task.Wait();
 
                 var globalFolderCount = Directory.GetDirectories(
-                    globalFolder, "*", SearchOption.TopDirectoryOnly)
-                    .Count();
+                    globalFolder, "*", SearchOption.TopDirectoryOnly).Length;
 
                 var packagesFolderCount = Directory.GetDirectories(
-                    packagesFolder, "*", SearchOption.TopDirectoryOnly)
-                    .Count();
+                    packagesFolder, "*", SearchOption.TopDirectoryOnly).Length;
 
                 // Assert
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
@@ -698,7 +696,7 @@ namespace NuGet.CommandLine.Test
                 var task = Task.Run(() =>
                 {
                     // Wait until all packages exist before allowing v2 to return
-                    while (Directory.GetDirectories(packagesFolder, "*", SearchOption.TopDirectoryOnly).Count() < 3)
+                    while (Directory.GetDirectories(packagesFolder, "*", SearchOption.TopDirectoryOnly).Length < 3)
                     {
                         Thread.Sleep(100);
                     }
@@ -716,12 +714,10 @@ namespace NuGet.CommandLine.Test
                 task.Wait();
 
                 var globalFolderCount = Directory.GetDirectories(
-                    globalFolder, "*", SearchOption.TopDirectoryOnly)
-                    .Count();
+                    globalFolder, "*", SearchOption.TopDirectoryOnly).Length;
 
                 var packagesFolderCount = Directory.GetDirectories(
-                    packagesFolder, "*", SearchOption.TopDirectoryOnly)
-                    .Count();
+                    packagesFolder, "*", SearchOption.TopDirectoryOnly).Length;
 
                 // Assert
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
@@ -1567,7 +1563,7 @@ namespace NuGet.CommandLine.Test
             project3.AddPackageToAllFrameworks(new SimpleTestPackageContext("packageF", "*"));
 
             var simpleTestSolutionContext = new SimpleTestSolutionContext(workingPath, project1, project2, project3, project4);
-            simpleTestSolutionContext.Create(string.Empty);
+            simpleTestSolutionContext.Create();
         }
 
         private Action<HttpListenerResponse> ServerHandler(
@@ -1668,7 +1664,7 @@ namespace NuGet.CommandLine.Test
                 {
                     v2DownloadWait.Wait();
 
-                    var id = parts.Reverse().Skip(1).First();
+                    var id = parts.AsEnumerable().Reverse().Skip(1).First();
                     var version = parts.Last();
 
                     var file = new FileInfo(Path.Combine(repositoryPath, $"{id}.{version}.nupkg"));
@@ -1695,7 +1691,7 @@ namespace NuGet.CommandLine.Test
                 }
                 else if (path.StartsWith("/reg/") && path.EndsWith("/index.json"))
                 {
-                    var id = parts.Reverse().Skip(1).First();
+                    var id = parts.AsEnumerable().Reverse().Skip(1).First();
                     var version = "1.0.0";
 
                     return new Action<HttpListenerResponse>(response =>

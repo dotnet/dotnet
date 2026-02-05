@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,7 +23,6 @@
           Condition="'$(SkipBinaryScan)' != 'true'"
           Inputs="$(AllowedBinariesFile);$(AllowedVmrBinariesFile);$(AllowedSbBinariesFile);$(BinaryToolKitAssembly)"
           Outputs="$(BaseIntermediateOutputPath)DetectBinaries$(BinariesMode).complete">
-
     <BinaryToolTask
       Mode="$(BinariesMode)"
       TargetDirectory="$(RepoRoot)"

@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -85,7 +87,7 @@ namespace NuGet.DependencyResolver
                 throw new ArgumentNullException(nameof(targetFramework));
             }
 
-            var library = _dependencyProvider.GetLibrary(libraryRange, targetFramework);
+            var library = _dependencyProvider.GetLibrary(libraryRange, targetFramework, alias: null);
 
             if (library == null)
             {
@@ -127,7 +129,7 @@ namespace NuGet.DependencyResolver
                 throw new ArgumentNullException(nameof(targetFramework));
             }
 
-            var library = _dependencyProvider.GetLibrary(libraryIdentity, targetFramework);
+            var library = _dependencyProvider.GetLibrary(libraryIdentity, targetFramework, alias: null);
 
             var dependencyInfo = LibraryDependencyInfo.Create(
                 library.Identity,

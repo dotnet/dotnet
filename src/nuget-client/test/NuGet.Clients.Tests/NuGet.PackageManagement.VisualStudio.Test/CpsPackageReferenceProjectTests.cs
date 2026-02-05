@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -572,7 +574,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 projectCache.AddProjectRestoreInfo(projectNames, projectRestoreInfo, new List<IAssetsLogMessage>());
 
                 // Assert
-                Assert.Equal(initialInstalledPackages.Count(), 1);
+                Assert.Equal(initialInstalledPackages.Count, 1);
                 var builtIntegratedActions = actions.OfType<BuildIntegratedProjectAction>().ToList();
                 Assert.Equal(actions.Length, builtIntegratedActions.Count);
                 Assert.True(builtIntegratedActions.All(b => b.VersionRange.OriginalString == versionRange));
@@ -685,7 +687,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 projectCache.AddProjectRestoreInfo(projectNames, projectRestoreInfo, new List<IAssetsLogMessage>());
 
                 // Assert
-                Assert.Equal(initialInstalledPackages.Count(), 1);
+                Assert.Equal(initialInstalledPackages.Count, 1);
                 var builtIntegratedActions = actions.OfType<BuildIntegratedProjectAction>().ToList();
                 Assert.Equal(actions.Length, builtIntegratedActions.Count);
                 Assert.True(builtIntegratedActions.All(b => b.VersionRange.OriginalString == versionRange));
@@ -824,7 +826,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 }
 
                 // Assert
-                Assert.Equal(initialInstalledPackages.Count(), 1);
+                Assert.Equal(initialInstalledPackages.Count, 1);
                 var builtIntegratedActions = actions.OfType<BuildIntegratedProjectAction>().ToList();
                 for (int i = 0; i < numberOfProjects; i++)
                 {
@@ -993,7 +995,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 }
 
                 // Assert
-                Assert.Equal(initialInstalledPackages.Count(), 1);
+                Assert.Equal(initialInstalledPackages.Count, 1);
                 var builtIntegratedActions = actions.OfType<BuildIntegratedProjectAction>().ToList();
                 for (int i = 0; i < numberOfProjects; i++)
                 {
@@ -1133,7 +1135,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     CancellationToken.None);
 
                 // Assert
-                Assert.Equal(initialInstalledPackages.Count(), 1);
+                Assert.Equal(initialInstalledPackages.Count, 1);
                 var builtIntegratedActions = actions.OfType<BuildIntegratedProjectAction>().ToList();
                 Assert.Equal(actions.Length, builtIntegratedActions.Count);
                 Assert.True(builtIntegratedActions.All(b => b.RestoreResult.Success));
@@ -1273,7 +1275,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     CancellationToken.None);
 
                 // Assert
-                Assert.Equal(initialInstalledPackages.Count(), 2);
+                Assert.Equal(initialInstalledPackages.Count, 2);
                 var builtIntegratedActions = actions.OfType<BuildIntegratedProjectAction>().ToList();
                 Assert.Equal(actions.Length, builtIntegratedActions.Count);
                 Assert.True(builtIntegratedActions.All(b => b.RestoreResult.Success));
@@ -1430,9 +1432,9 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     CancellationToken.None);
 
                 // Assert
-                Assert.Equal(initialInstalledPackages.Count(), 2);
+                Assert.Equal(initialInstalledPackages.Count, 2);
                 var builtIntegratedActions = actions.OfType<BuildIntegratedProjectAction>().ToList();
-                Assert.Equal(actions.Length, targetProjects.Count());
+                Assert.Equal(actions.Length, targetProjects.Count);
                 Assert.Equal(actions.Length, builtIntegratedActions.Count);
                 // Uprade succeed for this top parent project(no parent but with childs).
                 // Keep existing Upgrade/downgrade of individual project logic and making sure that my change is not breaking it.
@@ -1585,7 +1587,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 // Assert
                 Assert.Equal(initialInstalledPackages.Count(), 2);
                 var builtIntegratedActions = actions.OfType<BuildIntegratedProjectAction>().ToList();
-                Assert.Equal(actions.Length, targetProjects.Count());
+                Assert.Equal(actions.Length, targetProjects.Count);
                 Assert.Equal(actions.Length, builtIntegratedActions.Count);
                 // Upgrade succeed for this middle parent project(with parent and childs).
                 // Keep existing Upgrade/downgrade of individual project logic and making sure that my change is not breaking it.
@@ -1738,7 +1740,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 // Assert
                 Assert.Equal(initialInstalledPackages.Count(), 2);
                 var builtIntegratedActions = actions.OfType<BuildIntegratedProjectAction>().ToList();
-                Assert.Equal(actions.Length, targetProjects.Count());
+                Assert.Equal(actions.Length, targetProjects.Count);
                 Assert.Equal(actions.Length, builtIntegratedActions.Count);
                 // Upgrade succeed for this bottom project(with parent but no childs).
                 // Keep existing Upgrade/downgrade of individual project logic and making sure that my change is not breaking it.
@@ -2026,7 +2028,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 // Assert
                 Assert.Equal(initialInstalledPackages.Count(), 2);
                 var builtIntegratedActions = actions.OfType<BuildIntegratedProjectAction>().ToList();
-                Assert.Equal(actions.Length, targetProjects.Count());
+                Assert.Equal(actions.Length, targetProjects.Count);
                 Assert.Equal(actions.Length, builtIntegratedActions.Count);
                 // Downgrade fails for this top parent project(no parent but with childs).
                 // Keep existing Upgrade/downgrade of individual project logic and making sure that my change is not breaking it.
@@ -2309,7 +2311,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 Assert.Equal(actions.Length, builtIntegratedActions.Count);
                 Assert.True(builtIntegratedActions.All(b => b.RestoreResult.Success));
                 // There should be no error/warnings
-                Assert.Equal(builtIntegratedActions.Sum(b => b.RestoreResult.LogMessages.Count()), 0);
+                Assert.Equal(builtIntegratedActions.Sum(b => b.RestoreResult.LogMessages.Count), 0);
                 // Make sure top parent project still have non-downgraded version.
                 var finalInstalledPackages = (await netCorePackageReferenceProjects[numberOfProjects - 1].GetInstalledPackagesAsync(CancellationToken.None)).ToList();
                 Assert.Contains(finalInstalledPackages, f => f.PackageIdentity.Id == packageB.Id
@@ -2522,7 +2524,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 var actionTelemetryStepEvents = telemetryEvents.OfType<ActionTelemetryStepEvent>();
                 Assert.Contains(actionTelemetryStepEvents, t => t.SubStepName.Contains("Preview build integrated action time"));
                 var builtIntegratedActions = actions.OfType<BuildIntegratedProjectAction>().ToList();
-                Assert.Equal(actions.Length, netCorePackageReferenceProjects.Count());
+                Assert.Equal(actions.Length, netCorePackageReferenceProjects.Count);
                 Assert.Equal(actions.Length, builtIntegratedActions.Count);
                 Assert.True(builtIntegratedActions.All(b => b.RestoreResult.Success));
             }
@@ -2666,7 +2668,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 // Assert
                 Assert.Equal(initialInstalledPackages.Count(), 2);
                 var builtIntegratedActions = actions.OfType<BuildIntegratedProjectAction>().ToList();
-                Assert.Equal(actions.Length, targetProjects.Count());
+                Assert.Equal(actions.Length, targetProjects.Count);
                 Assert.Equal(actions.Length, builtIntegratedActions.Count);
                 Assert.True(builtIntegratedActions.All(b => b.RestoreResult.Success));
                 var restoringLogs = testNuGetProjectContext.Logs.Value.Where(l => l.StartsWith("Restoring packages for ")).ToList();
@@ -2675,14 +2677,14 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 // https://github.com/NuGet/Home/issues/9932
                 Assert.Equal(restoringLogs.Count(l => l.EndsWith("project0.csproj...")), 1);
                 Assert.Equal(restoredLogs.Count(l => l.Contains("project0.csproj")), 1);
-                // Making sure project1 restored only once, not many. 
+                // Making sure project1 restored only once, not many.
                 Assert.Equal(restoringLogs.Count(l => l.EndsWith("project1.csproj...")), 1);
                 Assert.Equal(restoredLogs.Count(l => l.Contains("project1.csproj")), 1);
                 var writingAssetsLogs = testNuGetProjectContext.Logs.Value.Where(l => l.StartsWith("Writing assets file to disk.")).ToList();
                 // Only 2 write to assets for above 2 projects, not more than that.
                 Assert.Equal(writingAssetsLogs.Count, 2);
                 // There should be no warning/error.
-                Assert.Equal(builtIntegratedActions.Sum(b => b.RestoreResult.LogMessages.Count()), 0);
+                Assert.Equal(builtIntegratedActions.Sum(b => b.RestoreResult.LogMessages.Count), 0);
             }
         }
 
@@ -2824,7 +2826,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 // Assert
                 Assert.Equal(initialInstalledPackages.Count(), 2);
                 var builtIntegratedActions = actions.OfType<BuildIntegratedProjectAction>().ToList();
-                Assert.Equal(actions.Length, targetProjects.Count());
+                Assert.Equal(actions.Length, targetProjects.Count);
                 Assert.Equal(actions.Length, builtIntegratedActions.Count);
                 Assert.True(builtIntegratedActions.All(b => b.RestoreResult.Success));
                 var restoringLogs = testNuGetProjectContext.Logs.Value.Where(l => l.StartsWith("Restoring packages for ")).ToList();
@@ -2833,14 +2835,14 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 // https://github.com/NuGet/Home/issues/9932
                 Assert.Equal(restoringLogs.Count(l => l.EndsWith("project1.csproj...")), 1);
                 Assert.Equal(restoredLogs.Count(l => l.Contains("project1.csproj")), 1);
-                // Making sure project2 restored only once, not many. 
+                // Making sure project2 restored only once, not many.
                 Assert.Equal(restoringLogs.Count(l => l.EndsWith("project2.csproj...")), 1);
                 Assert.Equal(restoredLogs.Count(l => l.Contains("project2.csproj")), 1);
                 var writingAssetsLogs = testNuGetProjectContext.Logs.Value.Where(l => l.StartsWith("Writing assets file to disk.")).ToList();
                 // Only 2 write to assets for above 2 projects, never more than that.
                 Assert.Equal(writingAssetsLogs.Count, 2);
                 // There should be no warning/error.
-                Assert.Equal(builtIntegratedActions.Sum(b => b.RestoreResult.LogMessages.Count()), 0);
+                Assert.Equal(builtIntegratedActions.Sum(b => b.RestoreResult.LogMessages.Count), 0);
             }
         }
 
@@ -3134,7 +3136,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 Assert.True(builtIntegratedActions.All(b => b.RestoreResult.Success));
                 Assert.True(builtIntegratedActions.All(b => !b.RestoreResult.LogMessages.Any())); // There should be no error or warning.
                 List<string> uninstalledLogs = testNuGetProjectContext.Logs.Value.Where(l => l.StartsWith("Successfully uninstalled ")).ToList();
-                Assert.True(uninstalledLogs.Count() > 0);
+                Assert.True(uninstalledLogs.Count > 0);
                 List<string> restoringLogs = testNuGetProjectContext.Logs.Value.Where(l => l.StartsWith("Restoring packages for ")).ToList();
                 List<string> restoredLogs = testNuGetProjectContext.Logs.Value.Where(l => l.StartsWith("Restored ")).ToList();
                 // Making sure project0 restored only once, not many.
@@ -3578,7 +3580,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 Assert.True(builtIntegratedActions.All(b => b.RestoreResult.Success));
                 Assert.True(builtIntegratedActions.All(b => !b.RestoreResult.LogMessages.Any())); // There should be no error or warning.
                 List<string> uninstalledLogs = testNuGetProjectContext.Logs.Value.Where(l => l.StartsWith("Successfully uninstalled ")).ToList();
-                Assert.True(uninstalledLogs.Count() > 0);
+                Assert.True(uninstalledLogs.Count > 0);
                 List<string> restoringLogs = testNuGetProjectContext.Logs.Value.Where(l => l.StartsWith("Restoring packages for ")).ToList();
                 List<string> restoredLogs = testNuGetProjectContext.Logs.Value.Where(l => l.StartsWith("Restored ")).ToList();
                 Assert.Equal(restoringLogs.Count(l => l.EndsWith("project0.csproj...")), 0);
@@ -4522,7 +4524,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             using var pathContext = new SimpleTestPathContext();
             using var testSolutionManager = new TestSolutionManager();
 
-            // Arrange - Setup project 
+            // Arrange - Setup project
             var packageA = new SimpleTestPackageContext("packageA", "1.0.0");
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageA);
             var sources = new PackageSource[] { new PackageSource(pathContext.PackageSource) };
@@ -4556,7 +4558,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 new SourceCacheContext(),
                 CancellationToken.None);
 
-            // Assert 
+            // Assert
             progressReporter.VerifyAll();
         }
 
@@ -4617,7 +4619,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 new SourceCacheContext(),
                 CancellationToken.None);
 
-            // Assert 
+            // Assert
             progressReporter.VerifyAll();
         }
 

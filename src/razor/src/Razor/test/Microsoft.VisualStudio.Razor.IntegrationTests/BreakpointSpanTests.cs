@@ -18,7 +18,7 @@ public class BreakpointSpanTests(ITestOutputHelper testOutputHelper) : AbstractR
         // Wait for classifications to indicate Razor LSP is up and running
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
 
-        await TestServices.RazorProjectSystem.WaitForCSharpVirtualDocumentUpdateAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.CounterRazorFile, async () =>
+        await TestServices.RazorProjectSystem.WaitForHtmlVirtualDocumentUpdateAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.CounterRazorFile, async () =>
         {
             await TestServices.Editor.SetTextAsync("<p>@{ var abc = 123; }</p>", ControlledHangMitigatingCancellationToken);
         }, ControlledHangMitigatingCancellationToken);
@@ -37,7 +37,7 @@ public class BreakpointSpanTests(ITestOutputHelper testOutputHelper) : AbstractR
         // Wait for classifications to indicate Razor LSP is up and running
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
 
-        await TestServices.RazorProjectSystem.WaitForCSharpVirtualDocumentUpdateAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.CounterRazorFile, async () =>
+        await TestServices.RazorProjectSystem.WaitForHtmlVirtualDocumentUpdateAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.CounterRazorFile, async () =>
         {
             await TestServices.Editor.SetTextAsync("""
                 <p>@{
@@ -58,7 +58,7 @@ public class BreakpointSpanTests(ITestOutputHelper testOutputHelper) : AbstractR
         // Wait for classifications to indicate Razor LSP is up and running
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
 
-        await TestServices.RazorProjectSystem.WaitForCSharpVirtualDocumentUpdateAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.CounterRazorFile, async () =>
+        await TestServices.RazorProjectSystem.WaitForHtmlVirtualDocumentUpdateAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.CounterRazorFile, async () =>
         {
             await TestServices.Editor.SetTextAsync("""
                 <p>@{

@@ -39,32 +39,24 @@ public partial class LinuxInstallerTests : IDisposable
         { DotnetHostFxrPrefix, new List<string> { $"{DotnetHostPrefix.TrimEnd('-')}" } },
         { DotnetRuntimePrefix, new List<string>
             {
-                $"{DotnetHostFxrPrefix}{Config.TargetFrameworkVersion}",
-                $"{DotnetRuntimeDepsPrefix}{Config.TargetFrameworkVersion}"
+                $"{DotnetHostFxrPrefix}{Config.TargetProductVersion}",
+                $"{DotnetRuntimeDepsPrefix}{Config.TargetProductVersion}"
             }
         },
         { DotnetTargetingPackPrefix, new List<string> {  } },
-        { AspNetCoreRuntimePrefix, new List<string> { $"{DotnetRuntimePrefix}{Config.TargetFrameworkVersion}" } },
-        { AspNetCoreTargetingPackPrefix, new List<string> { $"{DotnetTargetingPackPrefix}{Config.TargetFrameworkVersion}" } },
+        { AspNetCoreRuntimePrefix, new List<string> { $"{DotnetRuntimePrefix}{Config.TargetProductVersion}" } },
+        { AspNetCoreTargetingPackPrefix, new List<string> { $"{DotnetTargetingPackPrefix}{Config.TargetProductVersion}" } },
         { DotnetApphostPackPrefix, new List<string> { } },
         { DotnetSdkPrefix, new List<string>
             {
-                $"{DotnetRuntimePrefix}{Config.TargetFrameworkVersion}",
-                $"{DotnetTargetingPackPrefix}{Config.TargetFrameworkVersion}",
-                $"{DotnetApphostPackPrefix}{Config.TargetFrameworkVersion}",
-                $"{AspNetCoreRuntimePrefix}{Config.TargetFrameworkVersion}",
-                $"{AspNetCoreTargetingPackPrefix}{Config.TargetFrameworkVersion}"
+                $"{DotnetRuntimePrefix}{Config.TargetProductVersion}",
+                $"{DotnetTargetingPackPrefix}{Config.TargetProductVersion}",
+                $"{DotnetApphostPackPrefix}{Config.TargetProductVersion}",
+                $"{AspNetCoreRuntimePrefix}{Config.TargetProductVersion}",
+                $"{AspNetCoreTargetingPackPrefix}{Config.TargetProductVersion}"
             }
         }
     };
-
-    // Transform patch versions in 100-199 range by removing leading "1"
-    // e.g., 10.0.100-rc.1.25405.108 -> 10.0.0-rc.1.25405.108
-    // e.g., 10.0.112-rc.1.25405.108 -> 10.0.12-rc.1.25405.108
-    // Note: This will transform 108 -> 8, 112 -> 12, etc.
-    [GeneratedRegex(@"^(\d+\.\d+\.)1(0)?(\d+)(-.*)?$")]
-    private static partial Regex SdkVersionToRuntimeVersionRegex { get; }
-    private static readonly string Runtime1xxVersion = SdkVersionToRuntimeVersionRegex.Replace(Config.Sdk1xxVersion, "$1$3$4");
 
     // Extract the package prefix from the package name
     // e.g., dotnet-runtime-10.0.0-rc.2.25418.119-x64 -> dotnet-runtime-
@@ -82,11 +74,11 @@ public partial class LinuxInstallerTests : IDisposable
     private static partial Regex RemoveVersionConstraintRegex { get; }
 
     // Remove version numbers from package names: "dotnet-runtime-10.0.0-rc.1.25480.112-x64.rpm" -> "dotnet-runtime-*-x64.rpm"
-    [GeneratedRegex(@"\d+\.\d+\.\d+(?:-(?:rc|rtm|preview)(?:\.\d+)*)?", RegexOptions.CultureInvariant)]
+    [GeneratedRegex(@"\d+\.\d+\.\d+(?:-(?:alpha|rc|rtm|preview)(?:\.\d+)*)?", RegexOptions.CultureInvariant)]
     private static partial Regex RemoveVersionFromPackageNameRegex { get; }
 
     private const string RuntimeDepsRepo = "mcr.microsoft.com/dotnet/runtime-deps";
-    private const string RuntimeDepsVersion = "10.0-preview";
+    private const string RuntimeDepsVersion = "10.0";
     private const string DotnetRuntimeDepsPrefix = "dotnet-runtime-deps-";
     private const string DotnetHostPrefix = "dotnet-host-";
     private const string DotnetHostFxrPrefix = "dotnet-hostfxr-";
@@ -149,7 +141,7 @@ public partial class LinuxInstallerTests : IDisposable
     }
 
     [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
-    [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-trixie-slim")]
+    [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-noble")]
     public async Task DebScenarioTest(string repo, string tag)
     {
         await InitializeContextAsync(PackageType.Deb);
@@ -167,7 +159,7 @@ public partial class LinuxInstallerTests : IDisposable
     }
 
     [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
-    [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-trixie-slim")]
+    [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-noble")]
     public async Task DebPackageMetadataTest(string repo, string tag)
     {
         await InitializeContextAsync(PackageType.Deb, initializeSharedContext: false);
@@ -320,7 +312,7 @@ public partial class LinuxInstallerTests : IDisposable
         string runtimeLocation = "Runtime",
         string distroLabel = "")
     {
-        Uri packageUrl = new Uri($"https://ci.dot.net/public/{runtimeLocation}/{Runtime1xxVersion}/{packagePrefix}{Runtime1xxVersion}{distroLabel}-{architecture}.{packageType.ToString().ToLower()}");
+        Uri packageUrl = new Uri($"https://ci.dot.net/public/{runtimeLocation}/{Config.MicrosoftNETCorePlatformsVersion1xx}/{packagePrefix}{Config.MicrosoftNETCoreAppRefVersion1xx}{distroLabel}-{architecture}.{packageType.ToString().ToLower()}");
         downloadsToProcess.Add((packageUrl, packageUrl.Segments.Last()));
     }
 
@@ -795,17 +787,43 @@ public partial class LinuxInstallerTests : IDisposable
 
         var patterns = new List<string>();
 
-        // Base package prefixes (common to both RPM and DEB)
-        var basePackages = new List<string>
-        {
-            "aspnetcore-runtime", "aspnetcore-targeting-pack", "dotnet-apphost-pack",
-            "dotnet-host", "dotnet-hostfxr", "dotnet-runtime", "dotnet-sdk", "dotnet-targeting-pack"
-        };
+        List<string> basePackages;
 
-        // Add runtime-deps for DEB only (RPM only has distro-specific variants)
-        if (packageType == PackageType.Deb)
+        if (Config.DotNetBuildSharedComponents)
         {
-            basePackages.Add("dotnet-runtime-deps");
+            // Base package prefixes (common to both RPM and DEB)
+            basePackages =
+            [
+                "aspnetcore-runtime", "aspnetcore-targeting-pack", "dotnet-apphost-pack",
+                "dotnet-host", "dotnet-hostfxr", "dotnet-runtime", "dotnet-sdk", "dotnet-targeting-pack"
+            ];
+
+            // Add runtime-deps for DEB only (RPM only has distro-specific variants)
+            if (packageType == PackageType.Deb)
+            {
+                basePackages.Add("dotnet-runtime-deps");
+            }
+
+            if (packageType == PackageType.Rpm)
+            {
+                // Runtime deps distro variants (RPM only)
+                string[] distros = new[] { "azl.3", "opensuse.15", "sles.15" };
+                foreach (string distro in distros)
+                {
+                    patterns.Add($"dotnet-runtime-deps-*-{distro}-{arch}{extension}");
+
+                    // `azl` deps packages do not have a -newkey- variant
+                    if (distro != "azl.3")
+                    {
+                        patterns.Add($"dotnet-runtime-deps-*-{distro}-newkey-{arch}{extension}");
+                    }
+                }
+            }
+        }
+        else
+        {
+            // When not building shared components, only sdk is expected
+            basePackages = [ "dotnet-sdk" ];
         }
 
         // Standard variants
@@ -826,19 +844,6 @@ public partial class LinuxInstallerTests : IDisposable
             foreach (string package in basePackages)
             {
                 patterns.Add($"{package}-*-azl-{arch}{extension}");
-            }
-
-            // Runtime deps distro variants (RPM only)
-            string[] distros = new[] { "azl.3", "opensuse.15", "sles.15" };
-            foreach (string distro in distros)
-            {
-                patterns.Add($"dotnet-runtime-deps-*-{distro}-{arch}{extension}");
-
-                // `azl` deps packages do not have a -newkey- variant
-                if (distro != "azl.3")
-                {
-                    patterns.Add($"dotnet-runtime-deps-*-{distro}-newkey-{arch}{extension}");
-                }
             }
         }
 

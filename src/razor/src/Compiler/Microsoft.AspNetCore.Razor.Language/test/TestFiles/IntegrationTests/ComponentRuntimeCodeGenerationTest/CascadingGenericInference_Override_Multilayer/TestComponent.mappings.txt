@@ -10,36 +10,36 @@ Generated Location: (1342:34,0 [37] )
 
 Source Location: (1:0,1 [8] x:\dir\subdir\Test\TestComponent.cshtml)
 |TreeNode|
-Generated Location: (4085:81,0 [8] )
+Generated Location: (4002:78,45 [8] )
 |TreeNode|
 
 Source Location: (10:0,10 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Item|
-Generated Location: (4337:90,0 [4] )
+Generated Location: (4194:82,0 [4] )
 |Item|
 
 Source Location: (38:1,5 [8] x:\dir\subdir\Test\TestComponent.cshtml)
 |TreeNode|
-Generated Location: (5080:109,0 [8] )
+Generated Location: (4854:98,45 [8] )
 |TreeNode|
 
 Source Location: (47:1,14 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Item|
-Generated Location: (5332:118,0 [4] )
+Generated Location: (5046:102,0 [4] )
 |Item|
 
 Source Location: (104:2,9 [8] x:\dir\subdir\Test\TestComponent.cshtml)
 |TreeNode|
-Generated Location: (6073:137,0 [8] )
+Generated Location: (5703:118,45 [8] )
 |TreeNode|
 
 Source Location: (128:3,13 [8] x:\dir\subdir\Test\TestComponent.cshtml)
 |TreeNode|
-Generated Location: (6782:156,0 [8] )
+Generated Location: (6268:129,45 [8] )
 |TreeNode|
 
 Source Location: (184:6,5 [8] x:\dir\subdir\Test\TestComponent.cshtml)
 |TreeNode|
-Generated Location: (7416:174,0 [8] )
+Generated Location: (6759:139,45 [8] )
 |TreeNode|
 

@@ -19,8 +19,28 @@
       </trans-unit>
       <trans-unit id="ErrorDialogBoxTitle">
         <source>Operation failed</source>
-        <target state="translated">Operace se nepovedla.</target>
+        <target state="translated">Operace se nepovedla</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Error_CopilotAccessDenied">
+        <source>Access denied. Please ensure you are signed in to GitHub Copilot.</source>
+        <target state="translated">Přístup byl odepřen. Ujistěte se prosím, že jste přihlášení ke službě GitHub Copilot.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_CopilotNotReady">
+        <source>GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">GitHub Copilot není připravený. Ujistěte se, že je GitHub Copilot nainstalovaný a že jste přihlášení.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_CopilotServiceNotAvailable">
+        <source>GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">Služba GitHub Copilot není k dispozici. Ujistěte se, že je GitHub Copilot nainstalovaný a že jste přihlášení.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_McpToolServiceNotAvailable">
+        <source>MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">Služba MCP Tool není k dispozici. Ujistěte se, že je GitHub Copilot nainstalovaný a že jste přihlášení.</target>
+        <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingPattern_Missing">
         <source>A package pattern must be provided.</source>
@@ -45,6 +65,11 @@
       <trans-unit id="Error_PackageSourceUri_Missing">
         <source>A source must be provided.</source>
         <target state="translated">Musí být uveden zdroj.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ServiceBrokerNotAvailable">
+        <source>Service Broker is not available. Please ensure Visual Studio is running correctly.</source>
+        <target state="translated">Service Broker není k dispozici. Ujistěte se prosím, že Visual Studio běží správně.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoProjectSelected">
@@ -113,13 +138,18 @@
         <note />
       </trans-unit>
       <trans-unit id="ProjectMigrateErrorMessage">
-        <source>Project is not eligible for migration as it's not project.json based.</source>
-        <target state="translated">Projekt nemá nárok na migraci, protože není založený na project.json.</target>
+        <source>Project is not eligible for migration. Either the project is not packages.config based or doesn't support PackageReference yet.</source>
+        <target state="translated">Projekt nejde migrovat. Projekt není založený na souboru packages.config nebo zatím nepodporuje formát PackageReference.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Prompt_FixNuGetPackageVulnerabilities">
+        <source>Fix my NuGet package vulnerabilities</source>
+        <target state="translated">Opravit ohrožení zabezpečení balíčku NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
         <source>These settings are stored in %NuGet.Config% files</source>
-        <target state="translated">Tato nastavení jsou uložená v %NuGet.Config% souborech.</target>
+        <target state="translated">Tato nastavení jsou uložena v souborech %NuGet.Config%.</target>
         <note>Do not translate % % or what is between them</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
@@ -130,6 +160,26 @@
       <trans-unit id="Text_AllowInsecureConnections_Header">
         <source>Allow Insecure Connections</source>
         <target state="translated">Povolit nezabezpečená připojení</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Checkbox">
+        <source>Use separate sources for vulnerability audit</source>
+        <target state="translated">Použít samostatné zdroje pro audit ohrožení zabezpečení</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Description">
+        <source>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</source>
+        <target state="translated">Zdroje auditu poskytují během obnovování data ohrožení zabezpečení, aniž by se chovaly jako zdroje balíčků. Pokud nejsou nakonfigurované žádné zdroje auditu, NuGet Audit použije zdroje balíčků. [Další informace o zdrojích auditu](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_HowToRemove">
+        <source>Remove all audit sources to revert to using package sources for vulnerability data.</source>
+        <target state="translated">Odebráním všech zdrojů auditu se vrátíte k používání zdrojů balíčků pro data ohrožení zabezpečení.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Title">
+        <source>Audit sources</source>
+        <target state="translated">Zdroje auditu</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">
@@ -157,6 +207,11 @@
         <target state="translated">Zdroje HTTP nejsou bezpečné. Zvažte místo toho použití protokolu HTTPS. Možnost AllowInsecureConnections je povolená a umožňuje přístup HTTP. Pro bezpečnější možnosti navštivte [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere).</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_MachineWidePackageSource_Description">
+        <source>Machine‑wide package sources are provisioned by Visual Studio workloads and can only be enabled or disabled.</source>
+        <target state="translated">Zdroje balíčků pro celý počítač jsou zřizovány pracovními úlohami Visual Studia a lze je pouze povolit, nebo zakázat.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_PackageSourceEnabled_Header">
         <source>Enabled</source>
         <target state="translated">Povoleno</target>
@@ -177,6 +232,11 @@
         <target state="translated">Zdroj</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_PackageSources_Description">
+        <source>Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</source>
+        <target state="translated">Zdroje balíčků definují, kde NuGet načítá balíčky pro operace instalace, obnovení, auditování a aktualizace. [Další informace o zdrojích balíčků](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_PackageSources_MachineWide">
         <source>Machine-wide package sources</source>
         <target state="translated">Zdroje balíčků v rámci celého počítače</target>
@@ -191,6 +251,11 @@
         <source>Contoso.Contracts or System.*</source>
         <target state="translated">Contoso.Contracts nebo System.*</target>
         <note>"Contoso.Contracts" and "System.*" are examples of a package ID pattern and a package prefix pattern, respectively, so these two specific examples should not be translated.</note>
+      </trans-unit>
+      <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
+        <source>Fix Vulnerabilities with GitHub Copilot</source>
+        <target state="translated">Opravit ohrožení zabezpečení pomocí GitHub Copilota</target>
+        <note />
       </trans-unit>
       <trans-unit id="clearLocalResources">
         <source>Clear NuGet local resources</source>

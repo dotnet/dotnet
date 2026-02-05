@@ -121,7 +121,7 @@
         }
       }
     },
-    "nuGetPackageManager.packageSources.externalSettings": {
+    "nuGetPackageManager.sources.externalSettings": {
       "type": "external",
       "title": "@114;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
       "backingStoreDescription": "@SettingsStoredInNuGetConfiguration;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
@@ -137,7 +137,7 @@
       // Their values are retrieved via IExternalSettingsProvider.GetValueAsync; when the user edits them, the new values are passed to
       // IExternalSettingsProvider.SetValueAsync.
       "properties": {
-        "packageSources": {
+        "packageSources.notMachineWide": {
           "type": "array",
           "title": "@Text_PackageSources_NotMachineWide;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
 
@@ -156,7 +156,7 @@
                 "type": "string",
                 "title": "@Text_PackageSourceName_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
                 "uniqueness": "caseInsensitive",
-                "default":  "",
+                "default": "",
                 "example": "Package source",
                 "messages": [
                   {
@@ -206,11 +206,72 @@
           "allowItemEditing": true,
           "allowAdditionsAndRemovals": true
         },
-        "machineWidePackageSources": {
+        "nuGetAudit.enableCheckbox": {
+          "type": "boolean",
+          "title": "@Text_AuditSources_Checkbox;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "helpUri": "https://learn.microsoft.com/nuget/concepts/auditing-packages",
+          "visibleWhen": "${config:nuGetAudit.auditSources} == '[]'"
+        },
+        "nuGetAudit.auditSources": {
+          "type": "array",
+          "title": "@Text_AuditSources_Title;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "visibleWhen": "${config:nuGetAudit.enableCheckbox}",
+
+          // Metadata about items in this array
+          "items": {
+            "type": "object",
+
+            // The properties of items in this array
+            "properties": {
+              "sourceName": {
+                "type": "string",
+                "title": "@Text_PackageSourceName_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                "uniqueness": "caseInsensitive",
+                "default": "",
+                "example": "Package source",
+                "messages": [
+                  {
+                    "text": "@Error_PackageSourceName_Missing;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                    "visibleWhen": "${config:sourceName} ~= '^\\\\s*$'",
+                    "severity": "error"
+                  }
+                ]
+              },
+              "sourceUrl": {
+                "type": "string",
+                "format": "path",
+                "pathKind": "folderOrUri",
+                "title": "@Text_PackageSourceUrl_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                "uniqueness": "caseInsensitive",
+                "default": "",
+                "example": "https://packagesource",
+                "messages": [
+                  {
+                    "text": "@Error_PackageSourceUri_Missing;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                    "visibleWhen": "${config:sourceUrl} ~= '^\\\\s*$'",
+                    "severity": "error"
+                  }
+                ]
+              }
+            }
+          },
+
+          // The actual items that appear by default; in most cases, you'd leave this array empty.
+          "default": [],
+          "allowItemEditing": true,
+          "allowAdditionsAndRemovals": true,
+          "messages": [
+            {
+              "text": "@Text_AuditSources_HowToRemove;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+              "visibleWhen": "${config:nuGetAudit.auditSources} != '[]'"
+            }
+          ]
+        },
+        "machineWide.machineWidePackageSources": {
           "type": "array",
           "title": "@Text_PackageSources_MachineWide;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
           // Don't show Machine-wide Package Sources section when empty.
-          "visibleWhen": "${config:machineWidePackageSources} != '[]'",
+          "visibleWhen": "${config:machineWide.machineWidePackageSources} != '[]'",
 
           // Metadata about items in this array
           "items": {
@@ -240,6 +301,23 @@
           "allowItemEditing": false,
           "allowAdditionsAndRemovals": false
         }
+      },
+      "categories": {
+        "packageSources": {
+          "title": "@Text_PackageSources_NotMachineWide;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "description": "@Text_PackageSources_Description;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "helpUri": "https://learn.microsoft.com/nuget/consume-packages/nuget-visual-studio-options#package-sources"
+        },
+        "nuGetAudit": {
+          "title": "@Text_AuditSources_Title;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "description": "@Text_AuditSources_Description;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "helpUri": "https://learn.microsoft.com/nuget/consume-packages/nuget-visual-studio-options#audit-sources"
+        },
+        "machineWide": {
+          "title": "@Text_PackageSources_MachineWide;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "description": "@Text_MachineWidePackageSource_Description;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "helpUri": "https://learn.microsoft.com/nuget/consume-packages/nuget-visual-studio-options#machine-wide-package-sources"
+        }
       }
     },
     "nuGetPackageManager.packageSourceMapping.externalSettings": {
@@ -260,7 +338,7 @@
       "properties": {
         "packageSourceMapping": {
           "type": "array",
-          "title": "Package Source Mapping",
+          "title": "@116;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
 
           // Metadata about items in this array
           "items": {
@@ -335,7 +413,7 @@
       "legacyOptionPageId": "C17B308A-00BB-446E-9212-2D14E1005985", // Corresponds to the GUID defined in OptionsPageActivator.cs for ConfigurationFilesPage
       "order": 1
     },
-    "nuGetPackageManager.packageSources": {
+    "nuGetPackageManager.sources": {
       "title": "@114;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
       "legacyOptionPageId": "2819C3B6-FC75-4CD5-8C77-877903DE864C", // Corresponds to the GUID defined in OptionsPageActivator.cs for PackageSourcesPage
       "order": 2

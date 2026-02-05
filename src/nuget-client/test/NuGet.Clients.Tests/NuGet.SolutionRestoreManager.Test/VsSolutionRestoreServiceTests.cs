@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -34,8 +32,6 @@ namespace NuGet.SolutionRestoreManager.Test
     [Collection(DispatcherThreadCollection.CollectionName)]
     public class VsSolutionRestoreServiceTests
     {
-        private static readonly IReadOnlyDictionary<string, string> EmptyProperties = new Dictionary<string, string>();
-
         public VsSolutionRestoreServiceTests()
         {
 #pragma warning disable VSSDK005 // Avoid instantiating JoinableTaskContext

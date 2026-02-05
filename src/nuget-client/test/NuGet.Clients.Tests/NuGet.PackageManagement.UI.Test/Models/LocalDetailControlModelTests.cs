@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -66,7 +68,8 @@ namespace NuGet.PackageManagement.UI.Test.Models
             _testInstance.SetCurrentPackageAsync(
                 _testViewModel,
                 ItemFilter.All,
-                () => null).Wait();
+                () => null,
+                CancellationToken.None).Wait();
         }
 
         [Fact]
@@ -161,7 +164,8 @@ namespace NuGet.PackageManagement.UI.Test.Models
                     InstalledVersion = installedVersion,
                 },
                 ItemFilter.All,
-                () => null);
+                () => null,
+                CancellationToken.None);
 
             NuGetVersion selectedVersion = NuGetVersion.Parse("2.0.0");
 
@@ -201,7 +205,8 @@ namespace NuGet.PackageManagement.UI.Test.Models
             await model.SetCurrentPackageAsync(
                 packageItemModel,
                 ItemFilter.All,
-                () => null);
+                () => null,
+                CancellationToken.None);
 
             model.SelectedVersion = new DisplayVersion(installedVersion, additionalInfo: null);
 
@@ -242,7 +247,9 @@ namespace NuGet.PackageManagement.UI.Test.Models
             _testInstance.SetCurrentPackageAsync(
                 _testViewModel,
                 ItemFilter.All,
-                () => null).Wait();
+                () => null,
+                CancellationToken.None).Wait();
         }
     }
 }
+

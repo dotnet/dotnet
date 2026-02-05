@@ -1,11 +1,14 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.ProjectModel;
@@ -28,8 +31,6 @@ namespace NuGet.Commands.Test
             var projectJson = @"
             {
                 ""version"": ""2.0.0"",
-                ""dependencies"": {
-                },
                 ""frameworks"": {
                     ""net45"": {}
                 }
@@ -38,16 +39,11 @@ namespace NuGet.Commands.Test
             var project2Json = @"
             {
               ""version"": ""2.0.0-*"",
-              ""description"": ""Proj2 Class Library"",
-              ""authors"": [ ""author"" ],
-              ""tags"": [ """" ],
-              ""projectUrl"": """",
-              ""licenseUrl"": """",
-              ""dependencies"": {
-                ""project3"": ""2.0.0-*""
-              },
               ""frameworks"": {
                 ""net45"": {
+                  ""dependencies"": {
+                    ""project3"": ""2.0.0-*""
+                  }
                 }
               }
             }";
@@ -55,11 +51,6 @@ namespace NuGet.Commands.Test
             var project3Json = @"
             {
               ""version"": ""2.0.0-*"",
-              ""description"": ""Proj3 Class Library"",
-              ""authors"": [ ""author"" ],
-              ""tags"": [ """" ],
-              ""projectUrl"": """",
-              ""licenseUrl"": """",
               ""frameworks"": {
                 ""net45"": {
                 }
@@ -133,8 +124,6 @@ namespace NuGet.Commands.Test
             var project1Json = @"
             {
                 ""version"": ""1.0.0"",
-                ""dependencies"": {
-                },
                 ""frameworks"": {
                     ""net45"": {}
                 }
@@ -143,11 +132,12 @@ namespace NuGet.Commands.Test
             var project2Json = @"
             {
                 ""version"": ""1.0.0"",
-                ""dependencies"": {
-                    ""Microsoft.VisualBasic"": ""10.0.0""
-                },
                 ""frameworks"": {
-                    ""net45"": {}
+                    ""net45"": {
+                        ""dependencies"": {
+                            ""Microsoft.VisualBasic"": ""10.0.0""
+                        }
+                    }
                 }
             }";
 
@@ -266,6 +256,36 @@ namespace NuGet.Commands.Test
                 Assert.Null(project2Target.Framework);
                 Assert.Null(project3Target.Framework);
             }
+        }
+
+        [Fact]
+        public async Task Project2ProjectInLockFile_WithPackagesConfigProjectInBetweenPackageReference_FlowsTransitiveDependencies()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+
+            var specA = ProjectTestHelpers.GetPackageSpec("a", pathContext.SolutionRoot, framework: "netcoreapp1.0");
+            var specB = ProjectTestHelpers.GetPackagesConfigPackageSpec("b", pathContext.SolutionRoot, framework: "net461");
+            var specC = ProjectTestHelpers.GetPackageSpec("c", pathContext.SolutionRoot, framework: "netstandard1.5");
+            specA = specA.WithTestProjectReference(specB);
+            specB = specB.WithTestProjectReference(specC);
+
+            var logger = new TestLogger();
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, specA, specB, specC);
+            var format = new LockFileFormat();
+
+            // Act
+            var command = new RestoreCommand(request);
+            var result = await command.ExecuteAsync();
+            await result.CommitAsync(logger, CancellationToken.None);
+
+            // Assert
+            result.Success.Should().BeTrue();
+
+            // Assert transitivity is applied across non PackageReference projects.
+            var ridlessTarget = result.LockFile.Targets.Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));
+            ridlessTarget.Libraries.Should().Contain(e => e.Type == "project" && e.Name == specB.Name);
+            ridlessTarget.Libraries.Should().Contain(e => e.Type == "project" && e.Name == specC.Name);
         }
 
         [Fact]

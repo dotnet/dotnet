@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="AddPkg_All">
         <source>all</source>
-        <target state="new">all</target>
+        <target state="translated">tümü</target>
         <note />
       </trans-unit>
       <trans-unit id="AddPkg_Description">
@@ -47,11 +47,6 @@
         <target state="translated">Eklenecek paketin kimliği.</target>
         <note />
       </trans-unit>
-      <trans-unit id="AddPkg_PackagePrerelease">
-        <source>Allows prerelease packages to be installed.</source>
-        <target state="translated">Ön sürüm paketlerinin yüklenmesini sağlar.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="AddPkg_PackageVersionDescription">
         <source>Version of the package to be added.</source>
         <target state="translated">Eklenecek paket sürümü.</target>
@@ -84,17 +79,22 @@
       </trans-unit>
       <trans-unit id="AllowInsecureConnections_Description">
         <source>Allows pushing to HTTP sources (insecure).</source>
-        <target state="new">Allows pushing to HTTP sources (insecure).</target>
+        <target state="translated">HTTP kaynaklarına (güvenli olmayan) aktarım yapılmasına izin verir.</target>
         <note />
       </trans-unit>
       <trans-unit id="ApiKey_Description">
-        <source>The API key for the server.</source>
-        <target state="translated">Sunucunun API anahtarı.</target>
+        <source>The API key for the server. If not set, the NUGET_API_KEY environment variable is read.</source>
+        <target state="needs-review-translation">Sunucunun API anahtarı.</target>
         <note />
       </trans-unit>
       <trans-unit id="App_FullName">
         <source>NuGet Command Line</source>
         <target state="translated">NuGet Command Line</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ArgumentNullOrEmpty">
+        <source>Argument cannot be null or empty.</source>
+        <target state="translated">Bağımsız değişken null veya boş olamaz.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConfigCommandKeyNotFound">
@@ -164,7 +164,7 @@
       </trans-unit>
       <trans-unit id="ConsoleConfirmMessage">
         <source>{0} (y/N)</source>
-        <target state="translated">{0} (y/N) </target>
+        <target state="translated">{0} (y/N)</target>
         <note />
       </trans-unit>
       <trans-unit id="ConsoleConfirmMessageAccept">
@@ -246,12 +246,12 @@
       </trans-unit>
       <trans-unit id="Error_AddPkgProjectReference">
         <source>Failed to add a PackageReference for '{0}'. A ProjectReference with the same name already exists and a package with the same name cannot be added to the project.</source>
-        <target state="new">Failed to add a PackageReference for '{0}'. A ProjectReference with the same name already exists and a package with the same name cannot be added to the project.</target>
+        <target state="translated">'{0}' için PackageReference eklenemedi. Aynı adlı bir ProjectReference zaten mevcut ve projeye aynı adlı bir paket eklenemez.</target>
         <note>{0} - PackageId</note>
       </trans-unit>
       <trans-unit id="Error_AddPkgUnresolved">
         <source>Unable to find a resolved package for '{0}'. This is a tooling error. Please file an issue at https://github.com/NuGet/Home.</source>
-        <target state="new">Unable to find a resolved package for '{0}'. This is a tooling error. Please file an issue at https://github.com/NuGet/Home.</target>
+        <target state="translated">'{0}' için çözülmüş bir paket bulunamadı. Bu bir araç hatasıdır. Lütfen https://github.com/NuGet/Home sayfasından sorun bildirin.</target>
         <note>{0} Package Id</note>
       </trans-unit>
       <trans-unit id="Error_AddPkg_CentralPackageVersions_EmptyVersionOverride">
@@ -278,6 +278,12 @@
         <source>Failed to obtain a search resource.</source>
         <target state="translated">Arama kaynağı alınamadı.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotUpgradeAutoReferencedPackage">
+        <source>{0}: Package {1} is implicitly added by the SDK and cannot be upgraded independently</source>
+        <target state="translated">{0}: Paket {1}, SDK tarafından örtük olarak eklenir ve bağımsız olarak yükseltilemez</target>
+        <note>{0} - project referencing the package
+{1} - package id</note>
       </trans-unit>
       <trans-unit id="Error_CentralPackageVersions_AutoreferencedReferencesNotAllowed">
         <source>The packages {0} are implicitly referenced. You do not typically need to reference them from your project or in your central package versions management file. For more information, see https://aka.ms/sdkimplicitrefs</source>
@@ -323,8 +329,9 @@ Do not translate "PackageVersion"</note>
       <trans-unit id="Error_HttpServerUsage_MultipleSources">
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}
 NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">'{0}' işlemini {1}]D; 'HTTP' kaynakları ile çalıştırıyorsunuz.
-NuGet için HTTPS kaynakları gereklidir. HTTP kaynaklarını kullanmak için NuGet.Config dosyanızda 'allowInsecureConnections' ayarını açıkça “true” olarak ayarlamanız gerekir. Daha fazla bilgi için şuraya başvurun: https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">'{0}' işlemini {1}
+ 'HTTP' kaynakları ile çalıştırıyorsunuz
+NuGet için HTTPS kaynakları gereklidir. HTTP kaynaklarını kullanmak için NuGet.Config dosyanızda 'allowInsecureConnections' ayarını açıkça “true” olarak ayarlamanız gerekir. Daha fazla bilgi için şuraya bakın: https://aka.ms/nuget-https-everywhere.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - list of server uris</note>
       </trans-unit>
       <trans-unit id="Error_InvalidCultureInfo">
@@ -341,6 +348,11 @@ NuGet için HTTPS kaynakları gereklidir. HTTP kaynaklarını kullanmak için Nu
         <source>The specified source '{0}' is invalid. Provide a valid source.</source>
         <target state="translated">Belirtilen '{0}' kaynağı geçersiz. Geçerli bir kaynak belirtin.</target>
         <note>0 - The invalid source.</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidVersion">
+        <source>Invalid version value '{0}'.</source>
+        <target state="translated">Geçersiz sürüm değeri '{0}'.</target>
+        <note>0 - package version</note>
       </trans-unit>
       <trans-unit id="Error_InvalidVersionRange">
         <source>Invalid version range '{0}'</source>
@@ -387,11 +399,15 @@ NuGet için HTTPS kaynakları gereklidir. HTTP kaynaklarını kullanmak için Nu
         <target state="translated">`{0}` projesi, NuGuet paketleri için package.config dosyasını kullanıyor fakat komut yalnızca paket başvurusu projeleriyle çalışır.</target>
         <note />
       </trans-unit>
-      <trans-unit id="Error_PackageNotReferenced">
-        <source>The package {0} is not referenced by project {1}</source>
-        <target state="translated">{0} paketine {1} projesi tarafından başvurulmuyor</target>
-        <note>0 - The package ID
-1 - The project path</note>
+      <trans-unit id="Error_PackageDownload_VersionNotFound">
+        <source>Unable to find a valid package version</source>
+        <target state="translated">Geçerli bir paket sürümü bulunamıyor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageSourceMappingNotFound">
+        <source>Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</source>
+        <target state="translated">Paket kaynağı eşlemesi etkinleştirildi, ancak paket {0} için eşleme bulunamadı. Daha fazla bilgi için https://aka.ms/nuget/psm adresini ziyaret edin.</target>
+        <note>{0} - package id</note>
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
         <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, or directory.</source>
@@ -400,7 +416,7 @@ NuGet için HTTPS kaynakları gereklidir. HTTP kaynaklarını kullanmak için Nu
       </trans-unit>
       <trans-unit id="Error_PathNotFound">
         <source>The specified path '{0}' does not exist.</source>
-        <target state="translated">Belirtilen yol ('{0}') yok.</target>
+        <target state="translated">Belirtilen '{0}' yolu yok.</target>
         <note>0 - path</note>
       </trans-unit>
       <trans-unit id="Error_PkgMissingArgument">
@@ -876,6 +892,81 @@ Daha fazla bilgi için bkz. https://docs.nuget.org/docs/reference/command-line-r
         <note>{0}: App full name
 {1}: App version</note>
       </trans-unit>
+      <trans-unit id="PackageDownloadCommand_AllowInsecureConnectionsDescription">
+        <source>Allows downloading from HTTP (non-HTTPS) package sources.</source>
+        <target state="translated">HTTP (HTTPS olmayan) paket kaynaklarından indirmeye izin verir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_AlreadyInstalled">
+        <source>Skipping download. Package '{0}' version {1} already exists at '{2}'.</source>
+        <target state="translated">İndirme atlanıyor. '{0}' paketinin {1} sürümü '{2}' adresinde zaten mevcut.</target>
+        <note>0 - package id
+1 - version
+2 - directory path where the package was downloaded</note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_Description">
+        <source>Downloads a NuGet package to a local folder without requiring a project file.</source>
+        <target state="translated">Proje dosyası gerektirmeden bir NuGet paketini yerel bir klasöre indirir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_Failed">
+        <source>Package '{0}' ({1}) failed to download.</source>
+        <target state="translated">Paket '{0}' ({1}) indirilemedi.</target>
+        <note>0 - package id
+1 - package version</note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_LatestVersion">
+        <source>latest version</source>
+        <target state="translated">en son sürüm</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_OutputDirectoryDescription">
+        <source>Directory where the package will be placed. Defaults to the current working directory.</source>
+        <target state="translated">Paketin yerleştirileceği dizin. Varsayılan değer geçerli çalışma dizinidir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_PackageIdDescription">
+        <source>Package identifier (e.g. 'Newtonsoft.Json').</source>
+        <target state="translated">Paket tanımlayıcısı (örneğin ‘Newtonsoft.Json’).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_PackageSourceMapping_NoSourcesMapped">
+        <source>Unable to download package '{0}'. PackageSourceMapping is enabled, but no mapped sources were found for this package. The following source(s) were not considered: {1}.</source>
+        <target state="translated">'{0}' paketi indirilemiyor. PackageSourceMapping etkinleştirilmiş, ancak bu paket için eşlenen kaynak bulunamadı. Şu kaynaklar değerlendirmeye alınmadı: {1}.</target>
+        <note>{0} = package ID 
+{1} = comma-separated list of all configured sources </note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_PackageSourceMapping_NoSuchSource">
+        <source>The mapped source '{0}' for package '{1}' was not found among the configured sources.</source>
+        <target state="translated">'{1}' paketi için eşlenen '{0}' kaynağı yapılandırılmış kaynaklar arasında bulunamadı.</target>
+        <note>0 - package source name
+1 - package name</note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_SourcesDescription">
+        <source>Specifies one or more NuGet package sources to use.</source>
+        <target state="translated">Kullanılacak bir veya daha fazla NuGet paket kaynağını belirtir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_Starting">
+        <source>Downloading package {0}, version {1}.</source>
+        <target state="translated">{0} paketi, {1} sürümü indiriliyor.</target>
+        <note>0- package id
+1- package version</note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_Succeeded">
+        <source>Package '{0}' ({1}) successfully downloaded to '{2}'.</source>
+        <target state="translated">'{0}' ({1}) paketi '{2}' adresine başarıyla indirildi.</target>
+        <note>0 - package id
+1 - package version
+2 - package download location</note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_UnableToDownload">
+        <source>Package download failed for `{0} {1}` from source `{2}`.</source>
+        <target state="translated">`{2}` kaynağından `{0} {1}` için paket indirme başarısız oldu.</target>
+        <note>0 package id
+1 package version
+2 package source</note>
+      </trans-unit>
       <trans-unit id="PackageUpdateCommand_Description">
         <source>Update referenced packages in a project or solution.</source>
         <target state="translated">Bir projede veya çözümde başvurulan paketleri güncelleştirin.</target>
@@ -886,10 +977,35 @@ Daha fazla bilgi için bkz. https://docs.nuget.org/docs/reference/command-line-r
         <target state="translated">Bir proje veya çözüm dosyasına ya da dizine giden yol.</target>
         <note />
       </trans-unit>
+      <trans-unit id="PackageUpdateCommand_VulnerableOptionDescription">
+        <source>Upgrade packages with known vulnerabilities.</source>
+        <target state="translated">Bilinen güvenlik açıkları bulunan paketleri yükseltin.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PackageUpdate_AllPackagesAlreadyUpToDate">
         <source>All packages are already up to date.</source>
-        <target state="new">All packages are already up to date.</target>
+        <target state="translated">Tüm paketler zaten güncel.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="PackageUpdate_AllVersionsHaveAdvisories">
+        <source>All versions of package {0} have security advisories. Unable to find a non-vulnerable version to update to.</source>
+        <target state="translated">{0} paketinin tüm sürümleri için güvenlik uyarıları bulunmaktadır. Güncelleştirme için güvenlik açığı olmayan bir sürüm bulunamadı.</target>
+        <note>{0}: package id</note>
+      </trans-unit>
+      <trans-unit id="PackageUpdate_AlreadyUpToDate">
+        <source>All packages are up to date</source>
+        <target state="translated">Tüm paketler güncel</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageUpdate_AuditDisabled">
+        <source>This command requires NuGetAudit to be enabled at this time. See https://aka.ms/nuget/audit for more information.</source>
+        <target state="translated">Bu komutun çalışması için NuGetAudit'in etkinleştirilmiş olması gerekir. Daha fazla bilgi için https://aka.ms/nuget/audit adresini ziyaret edin.</target>
+        <note>{Locked="NuGetAudit"}{Locked="dotnet package update"}</note>
+      </trans-unit>
+      <trans-unit id="PackageUpdate_AuditModeIsDirect">
+        <source>NuGetAuditMode is set to direct, which means that transitive packages with known vulnerabilities will not be updated. See https://aka.ms/nuget/audit for more information.</source>
+        <target state="translated">NuGetAuditMode doğrudan olarak ayarlanmıştır, bu da bilinen güvenlik açıkları bulunan geçişli paketlerin güncelleştirilmeyeceği anlamına gelir. Daha fazla bilgi için https://aka.ms/nuget/audit adresini ziyaret edin.</target>
+        <note>{Locked="NuGetAuditMode"}</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_FinalSummary">
         <source>Updated {0} packages in {1} scanned packages.</source>
@@ -907,9 +1023,14 @@ Daha fazla bilgi için bkz. https://docs.nuget.org/docs/reference/command-line-r
         <target state="translated">Proje(ler) yükleniyor.</target>
         <note />
       </trans-unit>
+      <trans-unit id="PackageUpdate_NoVulnerablePackages">
+        <source>No upgradable packages have known vulnerabilities.</source>
+        <target state="translated">Yükseltilebilir paketlerde bilinen güvenlik açıkları yok.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PackageUpdate_PackageArgumentDescription">
         <source>Package reference in the form of a package identifier like 'Newtonsoft.Json' or package identifier and version separated by '@' like 'Newtonsoft.Json@13.0.3'.</source>
-        <target state="translated">'Newtonsoft.Json' gibi bir paket tanımlayıcısı veya 'Newtonsoft.Json@13.0.3' gibi '@' ile ayrılmış paket tanımlayıcısı ve sürümü şeklinde paket referansı.</target>
+        <target state="translated">'Newtonsoft.Json' gibi bir paket tanımlayıcısı veya 'Newtonsoft.Json@13.0.3' gibi '@' ile ayrılmış paket tanımlayıcısı ve sürümü şeklinde paket başvurusu.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">
@@ -923,8 +1044,8 @@ Daha fazla bilgi için bkz. https://docs.nuget.org/docs/reference/command-line-r
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatedMessage">
-        <source>Updated {0} {1} to {2}.</source>
-        <target state="translated">{0} {1}, {2} olarak güncelleştirildi.</target>
+        <source>Updating {0} {1} to {2}.</source>
+        <target state="translated">{0} {1}, {2} sürümüne güncelleştiriliyor.</target>
         <note>{0}: package id
 {1}: existing version
 {2}: new version</note>
@@ -934,10 +1055,20 @@ Daha fazla bilgi için bkz. https://docs.nuget.org/docs/reference/command-line-r
         <target state="translated">{0} içindeki eski paketleri güncelleştirme.</target>
         <note>{0}: the project or solution that is being updated</note>
       </trans-unit>
+      <trans-unit id="PackageUpdate_UpdatingVulnerablePackages">
+        <source>Updating packages with security advisories in {0}</source>
+        <target state="translated">{0} içerisinde güvenlik uyarıları içeren paketler güncelleştiriliyor</target>
+        <note>{0} - the project/solution being checked</note>
+      </trans-unit>
       <trans-unit id="PrereleaseVersionsAvailable">
         <source>There are no stable versions available, {0} is the best available. Consider adding the --prerelease option</source>
         <target state="translated">Kullanılabilir kararlı bir sürüm olmadığından {0} en iyi seçenektir. --prerelease seçeneğini eklemeyi göz önünde bulundurun</target>
         <note>{0} - Package Version</note>
+      </trans-unit>
+      <trans-unit id="Prerelease_Description">
+        <source>Allows prerelease packages to be installed.</source>
+        <target state="translated">Ön sürüm paketlerinin yüklenmesini sağlar.</target>
+        <note />
       </trans-unit>
       <trans-unit id="PushCommandSkipDuplicateDescription">
         <source>If a package and version already exists, skip it and continue with the next package in the push, if any.</source>
@@ -1158,8 +1289,8 @@ Arama, sağlanan değeri kullanan büyük/küçük harfe duyarsız bir dize kar�
         <note />
       </trans-unit>
       <trans-unit id="SymbolApiKey_Description">
-        <source>The API key for the symbol server.</source>
-        <target state="translated">Sembol sunucusunun API anahtarı.</target>
+        <source>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</source>
+        <target state="needs-review-translation">Sembol sunucusunun API anahtarı.</target>
         <note />
       </trans-unit>
       <trans-unit id="SymbolSource_Description">
@@ -1257,11 +1388,6 @@ Arama, sağlanan değeri kullanan büyük/küçük harfe duyarsız bir dize kar�
         <target state="translated">Kaldırılacak mevcut güvenilen imzalayanın adı.</target>
         <note />
       </trans-unit>
-      <trans-unit id="Unsupported_PackageSourceMapping">
-        <source>Unsupported: Projects using Package Source Mapping are not yet supported</source>
-        <target state="translated">Desteklenmiyor: Paket Kaynağı Eşlemesi özelliğini kullanan projeler henüz desteklenmiyor</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Unsupported_UpdatePackageWithDifferentPerTfmVersions">
         <source>The package {0} references different versions of the package for different target frameworks. This is not supported by this command. Please edit the project file directly. ({1})</source>
         <target state="translated">{0} paketi farklı hedef çerçeveler için paketin farklı sürümlerine başvuruyor. Bu işlem, bu komut tarafından desteklenmiyor. Lütfen proje dosyasını doğrudan düzenleyin. ({1})</target>
@@ -1355,6 +1481,11 @@ Arama, sağlanan değeri kullanan büyük/küçük harfe duyarsız bir dize kar�
         <source>Unable to run 'dotnet nuget why'. {0}</source>
         <target state="translated">'Dotnet nuget why' çalıştırılamıyor. {0}</target>
         <note>{0} - Exception mssage</note>
+      </trans-unit>
+      <trans-unit id="WhyCommand_Error_InconsistentAssetsFile">
+        <source>Internal error: Assets file is inconsistent</source>
+        <target state="new">Internal error: Assets file is inconsistent</target>
+        <note />
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. Please run restore for project '{1}' before running this command.</source>

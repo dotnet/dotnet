@@ -120,8 +120,8 @@ liste nuget client-certs</target>
         <note />
       </trans-unit>
       <trans-unit id="CommandApiKey">
-        <source>The API key for the server.</source>
-        <target state="translated">Clé API du serveur.</target>
+        <source>The API key for the server. If not set, the NUGET_API_KEY environment variable is read.</source>
+        <target state="needs-review-translation">Clé API du serveur.</target>
         <note />
       </trans-unit>
       <trans-unit id="CommandDirectDownload">
@@ -703,7 +703,7 @@ nuget pack foo.nuspec -Version 2.1.0</target>
       </trans-unit>
       <trans-unit id="PushCommandAllowInsecureConnectionsDescription">
         <source>Allows pushing to HTTP sources (insecure).</source>
-        <target state="new">Allows pushing to HTTP sources (insecure).</target>
+        <target state="translated">Autorise l’envoi (push) vers des sources HTTP (non sécurisé).</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandDescription">
@@ -779,12 +779,12 @@ nuget push foo.nupkg -Timeout 360</target>
       </trans-unit>
       <trans-unit id="RestoreCommandForceEvaluate">
         <source>Forces restore to reevaluate all dependencies even if a lock file already exists.</source>
-        <target state="translated">Force la restauration à réévaluer toutes les dépendances, même s'il existe déjà un fichier de verrouillage.</target>
+        <target state="translated">Force la restauration à réévaluer toutes les dépendances, même s’il existe déjà un fichier de verrouillage.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandLockFilePath">
         <source>Output location where project lock file is written. By default, this is 'PROJECT_ROOT\packages.lock.json'.</source>
-        <target state="translated">Emplacement de sortie où le fichier de verrouillage du projet est écrit. Par défaut, le chemin est « PROJECT_ROOT\packages.lock.json ».</target>
+        <target state="translated">Emplacement de sortie où le fichier de verrouillage du projet est écrit. Par défaut, il s’agit de « PROJECT_ROOT\packages.lock.json ».</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandLockedMode">
@@ -834,7 +834,7 @@ nuget push foo.nupkg -Timeout 360</target>
       </trans-unit>
       <trans-unit id="RestoreCommandUseLockFile">
         <source>Enables project lock file to be generated and used with restore.</source>
-        <target state="translated">Permet au fichier de verrouillage du projet d'être généré et utilisé avec la restauration.</target>
+        <target state="translated">Permet au fichier de verrouillage du projet d’être généré et utilisé avec la restauration.</target>
         <note />
       </trans-unit>
       <trans-unit id="SearchCommandDescription">
@@ -931,15 +931,15 @@ Cette option peut être utilisée pour spécifier le mot de passe du certificat.
       <trans-unit id="SignCommandCertificateStoreLocationDescription">
         <source>Name of the X.509 certificate store use to search for the certificate. Defaults to "CurrentUser", the X.509 certificate store used by the current user.
 This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
-        <target state="translated">Nom du magasin de certificats X.509 utilisé pour rechercher le certificat. La valeur par défaut est « CurrentUser », le magasin de certificats X.509 utilisé par l'utilisateur actuel.
-Cette option doit être utilisée lorsque le certificat est spécifié via les options -CertificateSubjectName ou -CertificateFingerprint.</target>
+        <target state="translated">Nom du magasin de certificats X.509 utilisé pour rechercher le certificat. La valeur par défaut est « CurrentUser », le magasin de certificats X.509 utilisé par l’utilisateur actuel.
+Cette option doit être utilisée lors de la spécification du certificat via les options -CertificateSubjectName ou -CertificateFingerprint.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateStoreNameDescription">
         <source>Name of the X.509 certificate store to use to search for the certificate. Defaults to "My", the X.509 certificate store for personal certificates.
 This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
-        <target state="translated">Nom du magasin de certificats X.509 à utiliser pour rechercher le certificat. La valeur par défaut est "My", le magasin de certificats X.509 pour les certificats personnels.
-Cette option doit être utilisée lors de la spécification du certificat via les options -CertificateSubjectName ou -CertificateFingerprint options.</target>
+        <target state="translated">Nom du magasin de certificats X.509 à utiliser pour rechercher le certificat. La valeur par défaut est « My », le magasin de certificats X.509 pour les certificats personnels.
+Cette option doit être utilisée lors de la spécification du certificat via les options -CertificateSubjectName ou -CertificateFingerprint.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateSubjectNameDescription">
@@ -948,7 +948,7 @@ The search is a case-insensitive string comparison using the supplied value, whi
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
         <target state="translated">Nom du sujet du certificat utilisé pour rechercher le certificat dans un magasin de certificats local. 
 La recherche est une comparaison de chaînes qui ne respecte pas la casse à l’aide de la valeur fournie, ce qui permet de trouver tous les certificats avec le nom de sujet contenant cette chaîne, quelles que soient les autres valeurs de sujet.
-Vous pouvez spécifier le magasin de certificats à l’aide des options -CertificateStoreName et -CertificateStoreLocation.</target>
+Le magasin de certificats peut être spécifié par les options -CertificateStoreName et -CertificateStoreLocation.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandDescription">
@@ -1146,8 +1146,8 @@ nuget spec -a MyAssembly.dll</target>
         <note />
       </trans-unit>
       <trans-unit id="SymbolApiKey">
-        <source>The API key for the symbol server.</source>
-        <target state="translated">Clé API du serveur de symboles.</target>
+        <source>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</source>
+        <target state="needs-review-translation">Clé API du serveur de symboles.</target>
         <note />
       </trans-unit>
       <trans-unit id="TrustedSignersCommandAllowUntrustedRootDescription">

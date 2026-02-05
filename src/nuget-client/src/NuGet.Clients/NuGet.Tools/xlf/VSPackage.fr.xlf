@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="1">
         <source>plk</source>
-        <target state="new">plk</target>
+        <target state="translated">plk</target>
         <note />
       </trans-unit>
       <trans-unit id="110">
@@ -23,8 +23,8 @@
         <note />
       </trans-unit>
       <trans-unit id="114">
-        <source>Package Sources</source>
-        <target state="translated">Sources de package</target>
+        <source>Sources</source>
+        <target state="translated">Sources</target>
         <note />
       </trans-unit>
       <trans-unit id="115">
@@ -54,7 +54,7 @@
       </trans-unit>
       <trans-unit id="3">
         <source>plk</source>
-        <target state="new">plk</target>
+        <target state="translated">plk</target>
         <note />
       </trans-unit>
       <trans-unit id="300">
@@ -64,7 +64,7 @@
       </trans-unit>
       <trans-unit id="4">
         <source>plk</source>
-        <target state="new">plk</target>
+        <target state="translated">plk</target>
         <note />
       </trans-unit>
     </body>

@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -339,7 +341,8 @@ namespace NuGet.Commands
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            LibraryRangeCacheKey key = new(libraryIdentity, targetFramework);
+            // Aliases are not supported for packages.
+            LibraryRangeCacheKey key = new(libraryIdentity, targetFramework, alias: null);
 
             return _dependencyInfoCache.GetOrAddAsync(
                 key,

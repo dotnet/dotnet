@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -327,13 +329,13 @@ namespace NuGet.PackageManagement.UI
 
                     if (listItem.PackageLevel == PackageLevel.TopLevel)
                     {
-                        listItem.UpdatePackageStatusAsync(_installedPackages)
+                        listItem.UpdatePackageStatusAsync(_installedPackages, CancellationToken.None)
                             .PostOnFailure(nameof(PackageItemLoader), nameof(GetCurrent));
                     }
                     else
                     {
                         listItem.UpdateTransitiveInfo(metadataContextInfo);
-                        listItem.UpdateTransitivePackageStatusAsync()
+                        listItem.UpdateTransitivePackageStatusAsync(CancellationToken.None)
                             .PostOnFailure(nameof(PackageItemLoader), nameof(GetCurrent));
                     }
 

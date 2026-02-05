@@ -35,6 +35,7 @@ namespace Dotnet.Integration.Test
             _dotnetFixture = dotnetFixture;
             _signFixture = signFixture;
             _testOutputHelper = testOutputHelper;
+            _signFixture.SetFallbackCertificateBundles(dotnetFixture.SdkDirectory);
         }
 
         [PlatformFact(Platform.Windows, Platform.Linux)]

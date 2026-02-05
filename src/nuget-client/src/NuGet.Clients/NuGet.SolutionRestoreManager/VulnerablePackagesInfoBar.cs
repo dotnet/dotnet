@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -13,7 +11,10 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Threading;
+using NuGet.Common;
 using NuGet.PackageManagement;
+using NuGet.PackageManagement.Telemetry;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Telemetry;
 
@@ -29,15 +30,19 @@ namespace NuGet.SolutionRestoreManager
         internal bool _wasInfoBarClosed = false; // InfoBar was closed by the user, using the 'x'(close) in the InfoBar
         internal bool _wasInfoBarHidden = false; // InfoBar was hid, this is caused because there are no more vulnerabilities to address
         private uint? _eventCookie; // To hold the connection cookie
+        private IVsInfoBarActionItem? _launchPackageManagerActionItem;
+        private IVsInfoBarActionItem? _fixVulnerabilitiesActionItem;
 
         private Lazy<IPackageManagerLaunchService>? PackageManagerLaunchService { get; }
+        private Lazy<IFixVulnerabilitiesService>? FixVulnerabilitiesService { get; }
         private ISolutionManager? SolutionManager { get; }
 
         [ImportingConstructor]
-        public VulnerablePackagesInfoBar(ISolutionManager solutionManager, Lazy<IPackageManagerLaunchService> packageManagerLaunchService)
+        public VulnerablePackagesInfoBar(ISolutionManager solutionManager, Lazy<IPackageManagerLaunchService> packageManagerLaunchService, Lazy<IFixVulnerabilitiesService> fixVulnerabilitiesService)
         {
             SolutionManager = solutionManager;
             PackageManagerLaunchService = packageManagerLaunchService;
+            FixVulnerabilitiesService = fixVulnerabilitiesService;
             SolutionManager.SolutionClosed += OnSolutionClosed;
         }
 
@@ -157,16 +162,38 @@ namespace NuGet.SolutionRestoreManager
         public void OnActionItemClicked(IVsInfoBarUIElement infoBarUIElement, IVsInfoBarActionItem actionItem)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            PackageManagerLaunchService?.Value.LaunchSolutionPackageManager();
+            if (actionItem == _launchPackageManagerActionItem)
+            {
+                PackageManagerLaunchService?.Value.LaunchSolutionPackageManager();
+                var evt = NavigatedTelemetryEvent.CreateWithVulnerabilityInfoBarManagePackages();
+                TelemetryActivity.EmitTelemetryEvent(evt);
+            }
+            else if (actionItem == _fixVulnerabilitiesActionItem)
+            {
+                NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(async () =>
+                {
+                    if (FixVulnerabilitiesService == null)
+                    {
+                        return;
+                    }
+
+                    await FixVulnerabilitiesService.Value.LaunchFixVulnerabilitiesAsync(CancellationToken.None);
+                }).PostOnFailure(nameof(VulnerablePackagesInfoBar));
+            }
         }
 
         protected InfoBarModel GetInfoBarModel()
         {
-            IEnumerable<IVsInfoBarTextSpan> textSpans = new IVsInfoBarTextSpan[]
-            {
+            _launchPackageManagerActionItem = new InfoBarHyperlink(Resources.InfoBar_HyperlinkMessage);
+            _fixVulnerabilitiesActionItem = new InfoBarHyperlink(Resources.InfoBar_HyperlinkFixVulnerabilitiesWithCopilot);
+
+            IEnumerable<IVsInfoBarTextSpan> textSpans =
+            [
                 new InfoBarTextSpan(Resources.InfoBar_TextMessage + " "),
-                new InfoBarHyperlink(Resources.InfoBar_HyperlinkMessage)
-            };
+                _launchPackageManagerActionItem,
+                new InfoBarTextSpan(" | "),
+                _fixVulnerabilitiesActionItem
+            ];
 
             return new InfoBarModel(
                 textSpans,

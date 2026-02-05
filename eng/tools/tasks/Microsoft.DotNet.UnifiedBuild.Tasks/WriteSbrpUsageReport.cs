@@ -1,8 +1,10 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -119,8 +121,46 @@ public partial class WriteSbrpUsageReport : Task
     private IEnumerable<PackageInfo> GetUnreferencedSbrps() =>
         _sbrpPackages.Values.Where(pkg => pkg.References.Count == 0);
 
-    [GeneratedRegex(@"^(?<name>.*?)\.(?<version>(?:\.?[0-9]+){3,}(?:[-A-Za-z0-9][A-Za-z0-9\.-]*)?)\.nupkg$")]
-    private static partial Regex GetPackageNameVersionRegex();
+    /// <summary>
+    /// Extracts package name and version from a .nupkg file by reading its .nuspec metadata.
+    /// </summary>
+    /// <param name="nupkgFilePath">Path to the .nupkg file</param>
+    /// <returns>A tuple containing the package name and version, or (null, null) if parsing failed</returns>
+    private (string? Name, string? Version) GetPackageInfoFromNupkg(string nupkgFilePath)
+    {
+        try
+        {
+            using var fileStream = File.OpenRead(nupkgFilePath);
+            using var archive = new ZipArchive(fileStream, ZipArchiveMode.Read);
+            var nuspecEntry = archive.Entries.FirstOrDefault(e => e.Name.EndsWith(".nuspec"));
+            
+            if (nuspecEntry == null)
+            {
+                Log.LogWarning($"Could not find .nuspec in {nupkgFilePath}");
+                return (null, null);
+            }
+
+            using var stream = nuspecEntry.Open();
+            var nuspecDoc = XDocument.Load(stream);
+            var ns = nuspecDoc.Root?.GetDefaultNamespace() ?? XNamespace.None;
+            
+            string? packageName = nuspecDoc.Root?.Element(ns + "metadata")?.Element(ns + "id")?.Value;
+            string? version = nuspecDoc.Root?.Element(ns + "metadata")?.Element(ns + "version")?.Value;
+
+            if (string.IsNullOrEmpty(packageName) || string.IsNullOrEmpty(version))
+            {
+                Log.LogError($"Could not parse package name and version from nuspec in {nupkgFilePath}");
+                return (null, null);
+            }
+
+            return (packageName, version);
+        }
+        catch (Exception ex)
+        {
+            Log.LogError($"Error processing {nupkgFilePath}: {ex.Message}");
+            return (null, null);
+        }
+    }
 
     /// <summary>
     /// External packages cannot be discovered in the same way as the other packages, scanning the src for csprojs.
@@ -134,15 +174,12 @@ public partial class WriteSbrpUsageReport : Task
 
         foreach (string nupkgFile in Directory.GetFiles(SbrpPackagesPath, "*.nupkg", SearchOption.TopDirectoryOnly))
         {
-            var match = GetPackageNameVersionRegex().Match(Path.GetFileName(nupkgFile));
-            if (!match.Success)
+            var (packageName, version) = GetPackageInfoFromNupkg(nupkgFile);
+            
+            if (packageName == null || version == null)
             {
-                Log.LogError($"Could not parse package name and version from `{nupkgFile}`.");
                 continue;
             }
-
-            string packageName = match.Groups["name"].Value;
-            string version = match.Groups["version"].Value;
 
             if (!_sbrpPackages.TryGetValue(PackageInfo.GetId(packageName, version), out PackageInfo? info))
             {

@@ -132,7 +132,6 @@ internal sealed class DebuggingSession : IDisposable
         IManagedHotReloadService debuggerService,
         Func<Project, CompilationOutputs> compilationOutputsProvider,
         IPdbMatchingSourceTextProvider sourceTextProvider,
-        IEnumerable<KeyValuePair<DocumentId, CommittedSolution.DocumentState>> initialDocumentStates,
         TraceLog sessionLog,
         TraceLog analysisLog,
         bool reportDiagnostics)
@@ -148,7 +147,7 @@ internal sealed class DebuggingSession : IDisposable
 
         Id = id;
         DebuggerService = debuggerService;
-        LastCommittedSolution = new CommittedSolution(this, solution, initialDocumentStates);
+        LastCommittedSolution = new CommittedSolution(this, solution);
 
         EditSession = new EditSession(
             this,
@@ -396,7 +395,7 @@ internal sealed class DebuggingSession : IDisposable
                 throw new FileNotFoundException();
             }
 
-            var debugInfoReader = debugInfoReaderProvider.CreateEditAndContinueMethodDebugInfoReader();
+            var debugInfoReader = debugInfoReaderProvider.CreateEditAndContinueDebugInfoReader();
 
             fileBeingRead = compilationOutputs.AssemblyDisplayPath;
 

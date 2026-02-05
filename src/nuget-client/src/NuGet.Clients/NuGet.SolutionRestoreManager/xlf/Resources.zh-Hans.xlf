@@ -22,6 +22,11 @@
         <target state="translated">包“{0} {1}”不是类似 "[1.0.0]" 的精确版本。仅可对 PackageDownload 使用精确版本。</target>
         <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
       </trans-unit>
+      <trans-unit id="InfoBar_HyperlinkFixVulnerabilitiesWithCopilot">
+        <source>Fix with GitHub Copilot</source>
+        <target state="translated">使用 GitHub Copilot 修复</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
       <trans-unit id="InfoBar_HyperlinkMessage">
         <source>Manage NuGet Packages</source>
         <target state="translated">管理 NuGet 程序包</target>
@@ -45,7 +50,7 @@
       </trans-unit>
       <trans-unit id="NothingToRestore">
         <source>All packages are already installed and there is nothing to restore.</source>
-        <target state="translated">所有程序包均已安装，并且没有要还原的内容。</target>
+        <target state="translated">所有程序包都已安装，没有要还原的内容。</target>
         <note />
       </trans-unit>
       <trans-unit id="Operation_Finished">
@@ -126,7 +131,7 @@ To prevent NuGet from restoring packages during build, open the Visual Studio Op
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
         <source>Solution is not saved. Please save your solution before managing NuGet packages.</source>
-        <target state="translated">解决方案未保存。请先保存你的解决方案，然后再管理 NuGet 程序包。</target>
+        <target state="translated">解决方案未保存。请先保存你的解决方案，然后再管理 NuGet 包。</target>
         <note />
       </trans-unit>
     </body>

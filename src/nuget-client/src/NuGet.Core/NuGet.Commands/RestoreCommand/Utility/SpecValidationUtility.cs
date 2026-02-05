@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -20,15 +22,7 @@ namespace NuGet.Commands
         /// </summary>
         public static void ValidateDependencySpec(DependencyGraphSpec spec)
         {
-            ValidateDependencySpec(spec, projectsToSkip: new HashSet<string>());
-        }
-
-        /// <summary>
-        /// Validate a dg file. This will throw a RestoreSpecException if there are errors.
-        /// </summary>
-        public static void ValidateDependencySpec(DependencyGraphSpec spec, HashSet<string> projectsToSkip)
-        {
-            ValidateDependencySpec(spec, projectsToSkip, NullLogger.Instance);
+            ValidateDependencySpec(spec, projectsToSkip: new HashSet<string>(), NullLogger.Instance);
         }
 
         public static void ValidateDependencySpec(DependencyGraphSpec spec, HashSet<string> projectsToSkip, ILogger logger)
@@ -38,6 +32,11 @@ namespace NuGet.Commands
             if (spec == null)
             {
                 throw new ArgumentNullException(nameof(spec));
+            }
+
+            if (projectsToSkip == null)
+            {
+                throw new ArgumentNullException(nameof(projectsToSkip));
             }
 
             try
@@ -135,10 +134,6 @@ namespace NuGet.Commands
                         ValidateProjectSpecPackageReference(spec, files, logger);
                         break;
 
-                    case ProjectStyle.ProjectJson:
-                        ValidateProjectSpecUAP(spec, files, logger);
-                        break;
-
                     default:
                         ValidateProjectSpecOther(spec, files);
                         break;
@@ -177,18 +172,6 @@ namespace NuGet.Commands
             if (frameworkNames.Count < 1)
             {
                 throw RestoreSpecException.Create(Strings.SpecValidationNoFrameworks, files);
-            }
-
-            // Duplicate frameworks may not exist
-            // Change in ATF should *not* affect our duplicate check, so we use the full framework comparer.
-            if (frameworkNames.Count != frameworkNames.Distinct(NuGetFrameworkFullComparer.Instance).Count())
-            {
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    Strings.SpecValidationDuplicateFrameworks,
-                    string.Join(", ", frameworkNames.Select(f => f.GetShortFolderName())));
-
-                throw RestoreSpecException.Create(message, files);
             }
         }
 
@@ -233,11 +216,13 @@ namespace NuGet.Commands
                 throw RestoreSpecException.Create(message, files);
             }
 
+            List<string> aliases = (spec.TargetFrameworks.Count > 1 || spec.RestoreMetadata.TargetFrameworks.Count > 1) ?
+                spec.TargetFrameworks.Select(e => e.TargetAlias).ToList()
+                : [];
+
             //OriginalTargetFrameworks must match the aliases.
             if (spec.RestoreMetadata.TargetFrameworks.Count > 1)
             {
-                var aliases = spec.TargetFrameworks.Select(e => e.TargetAlias);
-
                 if (!EqualityUtility.OrderedEquals(aliases, spec.RestoreMetadata.OriginalTargetFrameworks, e => e, StringComparer.OrdinalIgnoreCase, StringComparer.OrdinalIgnoreCase))
                 {
                     var message = string.Format(
@@ -249,32 +234,23 @@ namespace NuGet.Commands
                     throw RestoreSpecException.Create(message, files);
                 }
             }
-        }
 
-        private static void ValidateProjectSpecUAP(PackageSpec spec, IEnumerable<string> files, ILogger logger)
-        {
-            // Verify frameworks
-            ValidateFrameworks(spec, files, logger);
-
-            // UAP may contain only 1 framework
-            if (spec.TargetFrameworks.Count != 1)
+            if (spec.TargetFrameworks.Count > 1)
             {
-                throw RestoreSpecException.Create(Strings.SpecValidationUAPSingleFramework, files);
-            }
+                var uniqueAliases = new HashSet<string>(aliases, StringComparer.OrdinalIgnoreCase);
 
-            // UAP must specify a project.json file
-            if (string.IsNullOrEmpty(spec.RestoreMetadata.ProjectJsonPath)
-                || spec.RestoreMetadata.ProjectJsonPath != spec.FilePath)
-            {
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    Strings.MissingRequiredPropertyForProjectType,
-                    nameof(spec.RestoreMetadata.ProjectJsonPath),
-                    ProjectStyle.ProjectJson.ToString());
+                if (uniqueAliases.Count != aliases.Count)
+                {
+                    var message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Strings.SpecValidationDuplicateTargetAlias,
+                        string.Join(", ", aliases));
 
-                throw RestoreSpecException.Create(message, files);
+                    throw RestoreSpecException.Create(message, files);
+                }
             }
         }
+
 
         private static void ValidateToolSpec(PackageSpec spec, IEnumerable<string> files)
         {
@@ -315,7 +291,7 @@ namespace NuGet.Commands
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
                     Strings.PropertyNotAllowed,
-                    nameof(spec.Dependencies));
+                    "dependencies");
 
                 throw RestoreSpecException.Create(message, files);
             }
@@ -409,8 +385,7 @@ namespace NuGet.Commands
 
         private static IEnumerable<LibraryDependency> GetAllDependencies(PackageSpec spec)
         {
-            return spec.Dependencies
-                .Concat(spec.TargetFrameworks.SelectMany(f => f.Dependencies));
+            return spec.TargetFrameworks.SelectMany(f => f.Dependencies);
         }
     }
 }

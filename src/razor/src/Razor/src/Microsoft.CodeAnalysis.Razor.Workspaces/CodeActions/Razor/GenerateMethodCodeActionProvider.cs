@@ -116,20 +116,20 @@ internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
         }
 
         var found = false;
-        foreach (var tagHelperDescriptor in binding.Descriptors)
+        foreach (var tagHelper in binding.TagHelpers)
         {
-            foreach (var attribute in tagHelperDescriptor.BoundAttributes)
+            foreach (var attribute in tagHelper.BoundAttributes)
             {
                 if (attribute.Name == attributeName)
                 {
                     // We found the attribute that matches the directive attribute, now we need to check if the
                     // tag helper it's bound to is an event handler. This filters out things like @ref and @rendermode
-                    if (tagHelperDescriptor.Kind == TagHelperKind.EventHandler)
+                    if (tagHelper.Kind == TagHelperKind.EventHandler)
                     {
                         // An event handler like "@onclick"
-                        eventParameterType = tagHelperDescriptor.GetEventArgsType() ?? "";
+                        eventParameterType = tagHelper.GetEventArgsType() ?? "";
                     }
-                    else if (tagHelperDescriptor.Kind == TagHelperKind.Bind)
+                    else if (tagHelper.Kind == TagHelperKind.Bind)
                     {
                         // A bind tag helper, so either @bind-XX:after or @bind-XX:set, the latter of which has a parameter
                         if (markupTagHelperDirectiveAttribute.TagHelperAttributeInfo.ParameterName == "set" &&
@@ -181,9 +181,9 @@ internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
         eventParameterType = null;
         allowAsync = true;
 
-        foreach (var tagHelperDescriptor in binding.Descriptors)
+        foreach (var tagHelper in binding.TagHelpers)
         {
-            foreach (var attribute in tagHelperDescriptor.BoundAttributes)
+            foreach (var attribute in tagHelper.BoundAttributes)
             {
                 if (attribute.Name == markupTagHelperDirectiveAttribute.TagHelperAttributeInfo.Name)
                 {
@@ -202,7 +202,7 @@ internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
 
                         if (attribute.IsGenericTypedProperty())
                         {
-                            if (tagHelperDescriptor.TryGetGenericTypeNameFromComponent(binding, out var genericType) &&
+                            if (tagHelper.TryGetGenericTypeNameFromComponent(binding, out var genericType) &&
                                 ComponentAttributeIntermediateNode.TryGetGenericActionArgument(attribute.TypeName.AsMemory(), genericType, out var argument))
                             {
                                 eventParameterType = argument.ToString();

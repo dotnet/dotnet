@@ -129,6 +129,11 @@
       Do not localize `PackageVersion`
     </note>
       </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_MissingTransitivelyPinnedIncludeType">
+        <source>The centrally pinned dependency '{0}' was not found in the resolved graph unexpectedly for node '{1}'. Please file an issue at https://github.com/NuGet/Home</source>
+        <target state="translated">Центрально закрепленная зависимость "{0}" неожиданно не найдена в разрешенном графе для узла "{1}". Сообщите о проблеме на странице https://github.com/NuGet/Home</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Error_CentralPackageManagement_PackageReferenceWithVersionNotAllowed">
         <source>The following PackageReference items cannot define a value for Version: {0}. Projects using Central Package Management must define a Version value on a PackageVersion item. For more information, visit https://aka.ms/nuget/cpm/gettingstarted</source>
         <target state="translated">Следующие элементы PackageReference не могут определять значение для версии: {0}. Проекты, использующие централизованное управление пакетами, должны определять значение версии в элементе PackageVersion. Дополнительные сведения см. на странице https://aka.ms/nuget/cpm/gettingstarted</target>
@@ -225,7 +230,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSources_Multiple">
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Вы выполняете операцию "{0}" с источниками "HTTP": {1}. Для NuGet требуются источники HTTPS. Чтобы использовать источники HTTP, необходимо явно задать для параметра "allowInsecureConnections" значение true в файле NuGet.Config. Для получения дополнительных сведений см. страницу https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Вы выполняете операцию "{0}" с источниками "HTTP": {1}. Для NuGet требуются источники HTTPS. Чтобы использовать источники HTTP, необходимо явно задать для параметра "allowInsecureConnections" значение true в файле NuGet.Config. Дополнительные сведения см. на странице https://aka.ms/nuget-https-everywhere.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Error_IncompatiblePackageType">
@@ -461,12 +466,12 @@
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
         <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">Пакетная ссылка {0} не будет очищена. Рассмотрите возможность удаления этого пакета из зависимостей, так как он, скорее всего, не требуется.</target>
+        <target state="translated">PackageReference {0} не будет урезано. Рассмотрите возможность удаления этого пакета из зависимостей, так как он, вероятно, не требуется.</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
         <source>A ProjectReference cannot be pruned, {0}.</source>
-        <target state="translated">Невозможно удалить Ссылку projectReference, {0}.</target>
+        <target state="translated">ProjectReference нельзя урезать, {0}.</target>
         <note>0 - project reference</note>
       </trans-unit>
       <trans-unit id="Error_ServiceIndexShouldBeHttps">
@@ -671,6 +676,13 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       <trans-unit id="LocalsCommand_LocalsPartiallyCleared">
         <source>Local resources partially cleared.</source>
         <target state="translated">Локальные ресурсы частично удалены.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_AliasingSupportedInNewDependencyResolver">
+        <source>The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
+Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</source>
+        <target state="new">The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
+Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_AllProjectsUpToDate">
@@ -1083,7 +1095,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="RestoreDebugPruningPackageReference">
         <source>Pruning the package '{0}' as a dependency of '{1}'. The maximum prunable version is '{2}'</source>
-        <target state="translated">Очистка пакета '{0}' как зависимость '{1}'. Максимальная версия не может быть '{2}'</target>
+        <target state="translated">Урезание пакета "{0}" как зависимости "{1}". Максимальная версия, которую можно урезать: "{2}"</target>
         <note>0 - package id and version, 1 - version</note>
       </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
@@ -1184,7 +1196,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="SourcesCommandDisabled">
         <source>Disabled</source>
-        <target state="translated">Отключен</target>
+        <target state="translated">Отключено</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandEnabled">
@@ -1252,9 +1264,9 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <target state="translated">Указана недопустимая версия протокола. Допустимые версии протокола: от {0} до {1}.</target>
         <note />
       </trans-unit>
-      <trans-unit id="SpecValidationDuplicateFrameworks">
-        <source>Duplicate frameworks found: '{0}'.</source>
-        <target state="translated">Платформы дублируются: "{0}".</target>
+      <trans-unit id="SpecValidationDuplicateTargetAlias">
+        <source>The TargetFramework property must be unique. List of TargetFramework properties: {0}.</source>
+        <target state="new">The TargetFramework property must be unique. List of TargetFramework properties: {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecValidationInvalidFramework">
@@ -1270,11 +1282,6 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       <trans-unit id="SpecValidationNoFrameworks">
         <source>No target frameworks specified.</source>
         <target state="translated">Целевые платформы не указаны.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="SpecValidationUAPSingleFramework">
-        <source>UAP projects must contain exactly one target framework.</source>
-        <target state="translated">В проектах универсальной платформы приложений (UAP) должна быть только одна целевая платформа.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecValidationZeroRestoreRequests">
@@ -1422,7 +1429,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_unknown">
         <source>unknown</source>
-        <target state="translated">нет данных</target>
+        <target state="translated">неизвестно</target>
         <note>As in "This package has a unknown severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="WarningAsError">

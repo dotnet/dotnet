@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -106,7 +108,13 @@ namespace Test.Utility
             return new TestPackage(dependencies);
         }
 
+        [Obsolete]
         public Library GetLibrary(LibraryRange libraryRange, NuGetFramework targetFramework)
+        {
+            return GetLibrary(libraryRange, targetFramework, alias: null);
+        }
+
+        public Library GetLibrary(LibraryRange libraryRange, NuGetFramework targetFramework, string alias)
         {
             var packages = _graph.Keys.Where(p => p.Name == libraryRange.Name);
             var identity = packages.FindBestMatch(libraryRange.VersionRange, i => i?.Version);

@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -604,7 +606,7 @@ namespace NuGet.PackageManagement.UI
             _loadingStatusBar.ItemsLoaded = 0;
         }
 
-        public async Task UpdatePackageStatusAsync(PackageCollectionItem[] installedPackages, bool clearCache = false)
+        public async Task UpdatePackageStatusAsync(PackageCollectionItem[] installedPackages, CancellationToken cancellationToken, bool clearCache = false)
         {
             // in this case, we only need to update PackageStatus of
             // existing items in the package list
@@ -612,11 +614,11 @@ namespace NuGet.PackageManagement.UI
             {
                 if (package.PackageLevel == PackageLevel.TopLevel)
                 {
-                    await package.UpdatePackageStatusAsync(installedPackages, clearCache);
+                    await package.UpdatePackageStatusAsync(installedPackages, cancellationToken, clearCache);
                 }
                 else
                 {
-                    await package.UpdateTransitivePackageStatusAsync();
+                    await package.UpdateTransitivePackageStatusAsync(cancellationToken);
                 }
             }
         }

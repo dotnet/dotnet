@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,6 +68,78 @@ namespace NuGet.PackageManagement.Test.Telemetry
             Assert.Equal(currentTab, _lastTelemetryEvent[NavigatedTelemetryEvent.CurrentTabPropertyName]);
             Assert.Equal(isSolutionView, _lastTelemetryEvent[NavigatedTelemetryEvent.IsSolutionViewPropertyName]);
             Assert.Empty(_lastTelemetryEvent.GetPiiData());
+        }
+
+        [Fact]
+        public void CreateWithVulnerabilityInfoBarManagePackages_WithValidProperties_CreatedWithoutPiiData()
+        {
+            // Arrange
+            var nuGetTelemetryService = SetupTelemetryListener();
+
+            var navigationType = NavigationType.Button;
+            var navigationOrigin = NavigationOrigin.VulnerabilityInfoBar_ManagePackages;
+
+            var evt = NavigatedTelemetryEvent.CreateWithVulnerabilityInfoBarManagePackages();
+
+            // Act
+            nuGetTelemetryService.EmitTelemetryEvent(evt);
+
+            // Assert
+            Assert.NotNull(_lastTelemetryEvent);
+            Assert.Equal(navigationType, _lastTelemetryEvent[NavigatedTelemetryEvent.NavigationTypePropertyName]);
+            Assert.Equal(navigationOrigin, _lastTelemetryEvent[NavigatedTelemetryEvent.OriginPropertyName]);
+            Assert.Null(_lastTelemetryEvent[NavigatedTelemetryEvent.HyperLinkTypePropertyName]);
+            Assert.Null(_lastTelemetryEvent[NavigatedTelemetryEvent.CurrentTabPropertyName]);
+            Assert.Null(_lastTelemetryEvent[NavigatedTelemetryEvent.IsSolutionViewPropertyName]);
+            Assert.Empty(_lastTelemetryEvent.GetPiiData());
+        }
+
+        [Fact]
+        public void CreateWithVulnerabilityInfoBarFixWithCopilot_WithValidProperties_CreatedWithoutPiiData()
+        {
+            // Arrange
+            var nuGetTelemetryService = SetupTelemetryListener();
+
+            var navigationType = NavigationType.Button;
+            var navigationOrigin = NavigationOrigin.VulnerabilityInfoBar_FixVulnerabilitiesWithCopilot;
+
+            var evt = NavigatedTelemetryEvent.CreateWithVulnerabilityInfoBarFixWithCopilot(FixVulnerabilitiesWithCopilotErrorType.None);
+
+            // Act
+            nuGetTelemetryService.EmitTelemetryEvent(evt);
+
+            // Assert
+            Assert.NotNull(_lastTelemetryEvent);
+            Assert.Equal(navigationType, _lastTelemetryEvent[NavigatedTelemetryEvent.NavigationTypePropertyName]);
+            Assert.Equal(navigationOrigin, _lastTelemetryEvent[NavigatedTelemetryEvent.OriginPropertyName]);
+            Assert.Null(_lastTelemetryEvent[NavigatedTelemetryEvent.HyperLinkTypePropertyName]);
+            Assert.Null(_lastTelemetryEvent[NavigatedTelemetryEvent.CurrentTabPropertyName]);
+            Assert.Null(_lastTelemetryEvent[NavigatedTelemetryEvent.IsSolutionViewPropertyName]);
+            Assert.Empty(_lastTelemetryEvent.GetPiiData());
+        }
+
+        [Theory]
+        [InlineData(FixVulnerabilitiesWithCopilotErrorType.None)]
+        [InlineData(FixVulnerabilitiesWithCopilotErrorType.CopilotNotReady)]
+        [InlineData(FixVulnerabilitiesWithCopilotErrorType.ServiceBrokerNotAvailable)]
+        [InlineData(FixVulnerabilitiesWithCopilotErrorType.CopilotServiceNotAvailable)]
+        [InlineData(FixVulnerabilitiesWithCopilotErrorType.McpToolServiceNotAvailable)]
+        [InlineData(FixVulnerabilitiesWithCopilotErrorType.CopilotAccessDenied)]
+        public void CreateWithVulnerabilityInfoBarFixWithCopilot_WithAllErrorTypes_CreatesEventWithCorrectProperties(FixVulnerabilitiesWithCopilotErrorType errorType)
+        {
+            // Arrange
+            var nuGetTelemetryService = SetupTelemetryListener();
+
+            // Act
+            var evt = NavigatedTelemetryEvent.CreateWithVulnerabilityInfoBarFixWithCopilot(errorType);
+            nuGetTelemetryService.EmitTelemetryEvent(evt);
+
+            // Assert
+            Assert.NotNull(_lastTelemetryEvent);
+            Assert.Equal(3, _lastTelemetryEvent.Count);
+            Assert.Equal(NavigationType.Button, _lastTelemetryEvent[NavigatedTelemetryEvent.NavigationTypePropertyName]);
+            Assert.Equal(NavigationOrigin.VulnerabilityInfoBar_FixVulnerabilitiesWithCopilot, _lastTelemetryEvent[NavigatedTelemetryEvent.OriginPropertyName]);
+            Assert.Equal(errorType, _lastTelemetryEvent[NavigatedTelemetryEvent.ErrorTypePropertyName]);
         }
 
         [Fact]

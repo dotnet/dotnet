@@ -50,7 +50,7 @@ For the latest information about Source-Build support for new .NET versions, ple
 
 ## Code flow
 
-The VMR's code flow operates in two directions. Individual repositories flow source changes into the VMR upon promotion of their local official builds (forward flow). The VMR changes are checked in, an official build happens, and then source changes + packages flows backward into the constituent repositories (back flow). For more details on code flow and code flow pull requests, please see this information on [Code Flow PRs](docs/Codeflow-PRs.md).
+The contents of the VMR are two-way synchronized with the product repositories via code flow PRs. Individual repositories flow source changes into the VMR upon promotion of their local official builds (forward flow). The VMR changes are checked in, an official build happens, and then source changes + packages flow backward into the constituent repositories (back flow). For more details on code flow and code flow pull requests, please see this information on [Code Flow PRs](docs/Codeflow-PRs.md).
 
 ## Contribution
 
@@ -129,9 +129,6 @@ git config --global core.longpaths true
 
         # Build the .NET SDK
         ./build.sh -sb --clean-while-building
-
-        # When building RTM and servicing, pass the `--branding` switch to generate stable branding
-        ./build.sh --sb --branding rtm
         ```
 
     The resulting SDK is placed at `artifacts/assets/Release/dotnet-sdk-9.0.100-[your-RID].tar.gz` (for Unix) or `artifacts/assets/Release/dotnet-sdk-9.0.100-[your-RID].zip` (for Windows).
@@ -196,11 +193,11 @@ Usually, this means the [dotnet/dotnet repository](https://github.com/dotnet/dot
 In practice, this means that when calling the main build script, you need to provide additional arguments when building outside of a context of a git repository.  
 Alternatively, you can also provide a manifest file where this information can be read from. This file (`release.json`) can be found attached with the [dotnet/dotnet release](https://github.com/dotnet/dotnet/releases).
 
-### Synchronizing code into the VMR
+### Manually synchronizing code with the VMR
 
-Sometimes you want to make a change in a repository and test that change in the VMR. You could of course make the change in the VMR directly, but in case it's already available in your repository, you can synchronize it locally into your clone of the VMR, commit, and then open a PR.
+Sometimes you want to make a change in a repository and test that change in the VMR locally (or vice versa). You could of course make the change in the VMR directly, but in case it's already available in your repository, you can synchronize it locally into your clone of the VMR, commit, and then open a PR.
 
-To do this, you need to use the [`darc vmr forwardflow` command](https://github.com/dotnet/arcade-services/blob/main/docs/Darc.md#forwardflow) which can move your changes from your repository's dev branch into a local VMR one. Please refer to command's documentation (`--help`) for more details.
+To do this, you need to use the [`darc vmr forwardflow`](https://github.com/dotnet/arcade-services/blob/main/docs/Darc.md#forwardflow) or [`darc vmr backflow`](https://github.com/dotnet/arcade-services/blob/main/docs/Darc.md#backflow) commands which can move your changes from your repository's dev branch into a local VMR one. Please refer to command's documentation (`--help`) for more details.
 
 ## Filing Issues
 

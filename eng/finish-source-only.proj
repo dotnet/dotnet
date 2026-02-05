@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
 
     <!-- Need to set to false to calculate RepositoryCommit. -->
     <EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
 
-    <PackageReportDataFile>$(ArtifactsLogDir)prebuilt-usage.xml</PackageReportDataFile>
+    <PrebuiltUsageReportFile>$(ArtifactsLogDir)prebuilt-usage.xml</PrebuiltUsageReportFile>
+    <PrebuiltAnnotatedUsageReportFile>$(ArtifactsLogDir)prebuilt-annotated-usage.xml</PrebuiltAnnotatedUsageReportFile>
     <ProjectAssetsJsonArchiveFile>$(ArtifactsLogDir)all-project-assets-json-files.zip</ProjectAssetsJsonArchiveFile>
 
     <ResultingPrebuiltPackagesDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsLogDir)', 'prebuilt-packages'))</ResultingPrebuiltPackagesDir>
@@ -20,7 +21,8 @@
 
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport.WritePackageUsageData" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="WritePrebuiltUsageData"
-          BeforeTargets="Build"
+          AfterTargets="Build"
+          DependsOnTargets="ResolveProjectReferences"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(BaseIntermediateOutputPath)WritePrebuiltUsageData.complete">
     <ItemGroup>
@@ -65,18 +67,19 @@
       <IgnoredProjectAssetsJsonFile Include="$(SrcDir)*nuget-client*/**/test/NuGet.Core.Tests/NuGet.Build.Tasks.Pack.Test/compiler/resources/project.assets.json"/>
     </ItemGroup>
 
-    <WritePackageUsageData
-      RestoredPackageFiles="@(RestoredPackageFile)"
-      TarballPrebuiltPackageFiles="@(TarballPrebuiltPackageFile)"
-      SourceBuiltPackageFiles="@(SourceBuiltPackageFile)"
-      ReferencePackageFiles="@(ReferencePackageFile)"
-      PlatformsRuntimeJsonFiles="@(PlatformsRuntimeJsonFile)"
-      TargetRid="$(TargetRid)"
-      ProjectDirectories="@(RepoProjectDirectory)"
-      RootDir="$(RepoRoot)"
-      IgnoredProjectAssetsJsonFiles="@(IgnoredProjectAssetsJsonFile)"
-      DataFile="$(PackageReportDataFile)"
-      ProjectAssetsJsonArchiveFile="$(ProjectAssetsJsonArchiveFile)" />
+    <WritePackageUsageData RestoredPackageFiles="@(RestoredPackageFile)"
+                           TarballPrebuiltPackageFiles="@(TarballPrebuiltPackageFile)"
+                           SourceBuiltPackageFiles="@(SourceBuiltPackageFile)"
+                           ReferencePackageFiles="@(ReferencePackageFile)"
+                           PlatformsRuntimeJsonFiles="@(PlatformsRuntimeJsonFile)"
+                           TargetRid="$(TargetRid)"
+                           ProjectDirectories="@(RepoProjectDirectory)"
+                           RootDir="$(RepoRoot)"
+                           IgnoredProjectAssetsJsonFiles="@(IgnoredProjectAssetsJsonFile)"
+                           DataFile="$(PrebuiltUsageReportFile)"
+                           ProjectAssetsJsonArchiveFile="$(ProjectAssetsJsonArchiveFile)">
+      <Output TaskParameter="PrebuiltPackages" ItemName="DetectedPrebuiltPackage" />
+    </WritePackageUsageData>
 
     <!-- Copy packages detected as prebuilts to the artifacts prebuilt folder -->
     <ItemGroup>
@@ -101,45 +104,38 @@
     </Touch>
   </Target>
 
-  <!-- After building, generate a prebuilt usage report.
-       Also, dev scenario: rewrite a prebuilt-report. This makes it easy to add data to an existing
-       prebuilt report without performing another full build. This doesn't reevalutate which packages
+  <!-- After building, generate a prebuilt annotated usage report.
+       Also, dev scenario: rewrite a prebuilt report. This makes it easy to add data to an existing
+       prebuilt report without performing another full build. This doesn't reevaluate which packages
        are prebuilts or search the projects: it uses the existing usage.xml file to generate report
        XMLs based on the info put in artifacts/. -->
-  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport.WriteUsageReports" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport.ValidateUsageAgainstBaseline" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport.WriteAnnotatedUsageReport" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="ReportPrebuiltUsage"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(BaseIntermediateOutputPath)ReportPrebuiltUsage.complete"
-          DependsOnTargets="WritePrebuiltUsageData"
-          BeforeTargets="Build">
-    <PropertyGroup>
-      <FailOnPrebuiltBaselineError Condition="'$(FailOnPrebuiltBaselineError)' == ''">false</FailOnPrebuiltBaselineError>
-    </PropertyGroup>
-
+          DependsOnTargets="ResolveProjectReferences;WritePrebuiltUsageData"
+          AfterTargets="Build">
     <ItemGroup>
       <PackageVersionPropsSavedSnapshotFile Include="$(PackageVersionsDir)PackageVersions.*.Snapshot.props" />
     </ItemGroup>
     <Copy SourceFiles="@(PackageVersionPropsSnapshotFiles)" DestinationFolder="$(ArtifactsLogDir)snapshots/" />
 
-    <WriteUsageReports DataFile="$(PackageReportDataFile)"
-                       PackageVersionPropsSnapshots="@(PackageVersionPropsSavedSnapshotFile)"
-                       PoisonedReportFile="$(PoisonedReportFile)"
-                       OutputDirectory="$(ArtifactsLogDir)"
-                       VersionPropertySuffix="$(PackageVersionPropertySuffix)" />
+    <WriteAnnotatedUsageReport DataFile="$(PrebuiltUsageReportFile)"
+                               PackageVersionPropsSnapshots="@(PackageVersionPropsSavedSnapshotFile)"
+                               PoisonedReportFile="$(PoisonedReportFile)"
+                               PrebuiltAnnotatedUsageReportFile="$(PrebuiltAnnotatedUsageReportFile)"
+                               VersionPropertySuffix="$(PackageVersionPropertySuffix)" />
 
-    <PropertyGroup Condition="'$(ContinueOnPrebuiltBaselineError)' == ''">
-      <ContinueOnPrebuiltBaselineError>false</ContinueOnPrebuiltBaselineError>
-      <ContinueOnPrebuiltBaselineError Condition="'$(FailOnPrebuiltBaselineError)' != 'true'">true</ContinueOnPrebuiltBaselineError>
+    <!-- Build error message for prebuilt detection -->
+    <PropertyGroup Condition="'@(DetectedPrebuiltPackage)' != ''">
+      <PrebuiltErrorMessage>Prebuilt packages are not allowed in source-only builds.%0A%0A</PrebuiltErrorMessage>
+      <PrebuiltErrorMessage>$(PrebuiltErrorMessage)Detected @(DetectedPrebuiltPackage->Count()) prebuilt package(s):%0A</PrebuiltErrorMessage>
+      <PrebuiltErrorMessage>$(PrebuiltErrorMessage)@(DetectedPrebuiltPackage->'  - %(Identity)', '%0A')%0A%0A</PrebuiltErrorMessage>
+      <PrebuiltErrorMessage>$(PrebuiltErrorMessage)For detailed usage information, see: $(PrebuiltAnnotatedUsageReportFile)%0A%0A</PrebuiltErrorMessage>
+      <PrebuiltErrorMessage>$(PrebuiltErrorMessage)See https://aka.ms/dotnet/prebuilts for guidance on what prebuilts are and how to eliminate them.</PrebuiltErrorMessage>
     </PropertyGroup>
 
-    <ValidateUsageAgainstBaseline
-      DataFile="$(PackageReportDataFile)"
-      BaselineDataFile="$(BaselineDataFile)"
-      OutputBaselineFile="$(ArtifactsLogDir)generated-new-baseline.xml"
-      OutputReportFile="$(ArtifactsLogDir)baseline-comparison.xml"
-      AllowTestProjectUsage="$(AllowTestProjectUsage)"
-      ContinueOnError="$(ContinueOnPrebuiltBaselineError)" />
+    <Error Condition="'@(DetectedPrebuiltPackage)' != ''" Text="$(PrebuiltErrorMessage)" />
 
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
     <Touch Files="$(BaseIntermediateOutputPath)ReportPrebuiltUsage.complete" AlwaysCreate="true">
@@ -149,7 +145,8 @@
 
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.WriteSBRPUsageReport" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="ReportSbrpUsage"
-          BeforeTargets="Build"
+          AfterTargets="Build"
+          DependsOnTargets="ResolveProjectReferences"
           Condition="'$(ReportSbrpUsage)' == 'true'">
     <ItemGroup>
       <ProjectAssetsJsonFile Include="$(ArtifactsDir)**/project.assets.json" />
@@ -202,11 +199,10 @@
 
   <!-- After building, repackage symbols into a single tarball. -->
   <Target Name="RepackageSymbols"
-          BeforeTargets="Build"
+          AfterTargets="Build"
           DependsOnTargets="DetermineSymbolsTargetsInputsAndOutputs"
           Inputs="@(IntermediateSymbol)"
           Outputs="$(UnifiedSymbolsTarball)">
-
     <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(UnifiedSymbolsTarball)'))" />
     <Exec Command="tar --numeric-owner -czf $(UnifiedSymbolsTarball) *"
           WorkingDirectory="$(IntermediateSymbolsRootDir)" />
@@ -217,8 +213,8 @@
   <!-- After building, create the sdk symbols tarball. -->
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.CreateSdkSymbolsLayout" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="CreateSdkSymbolsTarball"
-          BeforeTargets="Build"
-          DependsOnTargets="RepackageSymbols"
+          AfterTargets="Build"
+          DependsOnTargets="ResolveProjectReferences;RepackageSymbols"
           Inputs="@(IntermediateSymbol);$(SdkTarballPath)"
           Outputs="$(SdkSymbolsTarball)">
     <PropertyGroup>
@@ -238,14 +234,13 @@
     <RemoveDir Directories="$(IntermediateSdkSymbolsLayout)" />
   </Target>
 
-  <!-- After building, generate the source tarball and zipball -->
-  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.CreateSourceArtifacts" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <Target Name="CreateSourceArtifacts"
-          BeforeTargets="Build"
-          DependsOnTargets="WriteSourceBuiltSdkVersionFile"
-          Condition="'$(CreateSourceArtifacts)' == 'true'" >
-
-    <CreateSourceArtifacts
+  <!-- After building, generate the source tarball -->
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.CreateSourceArtifact" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <Target Name="CreateSourceArtifact"
+          AfterTargets="Build"
+          DependsOnTargets="ResolveProjectReferences;WriteSourceBuiltSdkVersionFile"
+          Condition="'$(CreateSourceArtifact)' == 'true'" >
+    <CreateSourceArtifact
         SourceCommit="$(RepositoryCommit)"
         ArtifactName="$(SourceBuiltSourceArtifactName)"
         SdkStableVersion="$(SourceBuiltSdkVersion)"
@@ -254,26 +249,8 @@
         OutputDirectory="$(ArtifactsAssetsDir)" />
   </Target>
 
-  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport.WriteUsageBurndownData" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <Target Name="GeneratePrebuiltBurndownData"
-          Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(BaseIntermediateOutputPath)GeneratePrebuiltBurndownData.complete" >
-    <PropertyGroup>
-      <PrebuiltBurndownDataFile>$(ArtifactsLogDir)PrebuiltBurndownData.csv</PrebuiltBurndownDataFile>
-    </PropertyGroup>
-
-    <WriteUsageBurndownData RootDirectory="$(RepoRoot)"
-                            PrebuiltBaselineFile="$(BaselineDataFile)"
-                            OutputFilePath="$(PrebuiltBurndownDataFile)" />
-
-    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
-    <Touch Files="$(BaseIntermediateOutputPath)GeneratePrebuiltBurndownData.complete" AlwaysCreate="true">
-      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
-    </Touch>
-  </Target>
-
   <Target Name="CreatePrebuiltsTarball"
-          BeforeTargets="Build"
+          AfterTargets="Build"
           DependsOnTargets="
             CheckIfPrebuiltsExistToPack;
             CreatePrebuiltsTarballIfPrebuiltsExist"/>
@@ -302,4 +279,5 @@
 
     <Error Text="@(PrebuiltFile->Count()) Prebuilts Exist" Condition="'$(SkipErrorOnPrebuilts)' != 'true'" />
   </Target>
+
 </Project>

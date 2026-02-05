@@ -61,7 +61,7 @@ public class FindAllReferencesEndpointTest(ITestOutputHelper testOutput) : Singl
         });
 
         var endpoint = new FindAllReferencesEndpoint(
-            LanguageServerFeatureOptions, DocumentMappingService, languageServer, LoggerFactory, FilePathService, projectManager);
+            DocumentMappingService, languageServer, LoggerFactory, FilePathService, projectManager);
 
         var sourceText = codeDocument.Source.Text;
 

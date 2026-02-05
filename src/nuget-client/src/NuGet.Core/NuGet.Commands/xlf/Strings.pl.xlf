@@ -129,6 +129,11 @@
       Do not localize `PackageVersion`
     </note>
       </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_MissingTransitivelyPinnedIncludeType">
+        <source>The centrally pinned dependency '{0}' was not found in the resolved graph unexpectedly for node '{1}'. Please file an issue at https://github.com/NuGet/Home</source>
+        <target state="translated">Nieoczekiwanie nie znaleziono centralnie przypiętej zależności „{0}” w rozwiązywanym grafie dla węzła „{1}”. Zgłoś problem w witrynie https://github.com/NuGet/Home</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Error_CentralPackageManagement_PackageReferenceWithVersionNotAllowed">
         <source>The following PackageReference items cannot define a value for Version: {0}. Projects using Central Package Management must define a Version value on a PackageVersion item. For more information, visit https://aka.ms/nuget/cpm/gettingstarted</source>
         <target state="translated">Następujące elementy PackageReference nie mogą definiować wartości dla wersji: {0}. Projekty korzystające z centralnego zarządzania pakietami muszą definiować wartość version w elemencie PackageVersion. Aby uzyskać więcej informacji, odwiedź witrynę https://aka.ms/nuget/cpm/gettingstarted</target>
@@ -220,12 +225,12 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single_Short">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Uruchamiasz operację „{0}” ze źródłem „HTTP”: {1}. Narzędzie NuGet wymaga źródeł HTTPS. Aby uzyskać więcej informacji, sprawdź witrynę https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Uruchamiasz operację „{0}” ze źródłem „HTTP”: {1}. Menedżer NuGet wymaga źródeł HTTPS. Aby uzyskać więcej informacji, sprawdź witrynę https://aka.ms/nuget-https-everywhere.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - server URI.</note>
       </trans-unit>
       <trans-unit id="Error_HttpSources_Multiple">
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Uruchamiasz operację „{0}” ze źródłami „HTTP”: {1}. Narzędzie NuGet wymaga źródeł HTTPS. Aby użyć źródła HTTP, musisz wyraźnie ustawić właściwość „allowInsecureConnections” na wartość true w pliku NuGet.Config. Aby uzyskać więcej informacji, sprawdź witrynę https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Uruchamiasz operację „{0}” ze źródłami „HTTP”: {1}. Narzędzie NuGet wymaga źródeł HTTPS. Aby użyć źródeł HTTP, musisz wyraźnie ustawić właściwość „allowInsecureConnections” na wartość true w pliku NuGet.Config. Aby uzyskać więcej informacji, sprawdź witrynę https://aka.ms/nuget-https-everywhere.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Error_IncompatiblePackageType">
@@ -461,12 +466,12 @@
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
         <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">{0} PackageReference nie zostaną oczyszczone. Rozważ usunięcie tego pakietu z zależności, ponieważ prawdopodobnie jest on niepotrzebny.</target>
+        <target state="translated">Element PackageReference {0} nie zostanie oczyszczony. Rozważ usunięcie tego pakietu z zależności, ponieważ prawdopodobnie nie jest on potrzebny.</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
         <source>A ProjectReference cannot be pruned, {0}.</source>
-        <target state="translated">Nie można obciąć elementu ProjectReference, {0}.</target>
+        <target state="translated">Nie można oczyścić elementu ProjectReference, {0}.</target>
         <note>0 - project reference</note>
       </trans-unit>
       <trans-unit id="Error_ServiceIndexShouldBeHttps">
@@ -671,6 +676,13 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
       <trans-unit id="LocalsCommand_LocalsPartiallyCleared">
         <source>Local resources partially cleared.</source>
         <target state="translated">Częściowo wyczyszczono zasoby lokalne.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_AliasingSupportedInNewDependencyResolver">
+        <source>The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
+Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</source>
+        <target state="new">The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
+Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_AllProjectsUpToDate">
@@ -1083,7 +1095,7 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
       </trans-unit>
       <trans-unit id="RestoreDebugPruningPackageReference">
         <source>Pruning the package '{0}' as a dependency of '{1}'. The maximum prunable version is '{2}'</source>
-        <target state="translated">Oczyszczanie pakietu '{0}' jako zależności '{1}'. Maksymalna możliwa do obcięcie wersja to '{2}'</target>
+        <target state="translated">Oczyszczanie pakietu „{0}” jako zależności „{1}”. Maksymalna wersja możliwa do oczyszczenia to „{2}”</target>
         <note>0 - package id and version, 1 - version</note>
       </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
@@ -1184,7 +1196,7 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
       </trans-unit>
       <trans-unit id="SourcesCommandDisabled">
         <source>Disabled</source>
-        <target state="translated">Wyłączony</target>
+        <target state="translated">Wyłączono</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandEnabled">
@@ -1252,9 +1264,9 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
         <target state="translated">Określona wersja protokołu jest nieprawidłowa. Prawidłowe wersje protokołu należą do zakresu od {0} do {1}.</target>
         <note />
       </trans-unit>
-      <trans-unit id="SpecValidationDuplicateFrameworks">
-        <source>Duplicate frameworks found: '{0}'.</source>
-        <target state="translated">Znaleziono zduplikowane platformy: „{0}”.</target>
+      <trans-unit id="SpecValidationDuplicateTargetAlias">
+        <source>The TargetFramework property must be unique. List of TargetFramework properties: {0}.</source>
+        <target state="new">The TargetFramework property must be unique. List of TargetFramework properties: {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecValidationInvalidFramework">
@@ -1270,11 +1282,6 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
       <trans-unit id="SpecValidationNoFrameworks">
         <source>No target frameworks specified.</source>
         <target state="translated">Nie określono platform docelowych.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="SpecValidationUAPSingleFramework">
-        <source>UAP projects must contain exactly one target framework.</source>
-        <target state="translated">Projekty UAP muszą zawierać dokładnie jedną platformę docelową.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecValidationZeroRestoreRequests">
@@ -1422,7 +1429,7 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_unknown">
         <source>unknown</source>
-        <target state="translated">nieznana</target>
+        <target state="translated">nieznany</target>
         <note>As in "This package has a unknown severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="WarningAsError">
@@ -1458,15 +1465,15 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
       <trans-unit id="Warning_List_HttpSource">
         <source>The following is a 'Non-HTTPS' source: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Poniżej przedstawiono źródła „Inne niż-HTTPS”: {0}
-Narzędzie NuGet wymaga źródeł HTTPS. Aby uzyskać więcej informacji, sprawdź witrynę https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Poniżej przedstawiono źródło „Inne niż HTTPS”: {0}
+Menedżer NuGet wymaga źródeł HTTPS. Aby uzyskać więcej informacji, sprawdź witrynę https://aka.ms/nuget-https-everywhere.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_List_HttpSources">
         <source>The following are 'Non-HTTPS' sources: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Poniżej przedstawiono źródła „Inne niż-HTTPS”: {0}
-Narzędzie NuGet wymaga źródeł HTTPS. Aby uzyskać więcej informacji, sprawdź witrynę https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Poniżej przedstawiono źródła „Inne niż HTTPS”: {0}
+Menedżer NuGet wymaga źródeł HTTPS. Aby uzyskać więcej informacji, sprawdź witrynę https://aka.ms/nuget-https-everywhere.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_MinVersionDoesNotExist">

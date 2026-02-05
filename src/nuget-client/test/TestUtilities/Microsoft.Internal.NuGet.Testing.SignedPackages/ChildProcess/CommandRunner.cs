@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -57,6 +59,8 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess
                         RedirectStandardOutput = true,
                         RedirectStandardInput = true,
                         CreateNoWindow = true,
+                        StandardOutputEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
+                        StandardErrorEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
                     },
                 })
                 {

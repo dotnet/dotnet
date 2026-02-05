@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Utilities;
@@ -150,23 +151,110 @@ public class CohostFindAllReferencesEndpointTest(ITestOutputHelper testOutputHel
             (FilePath("SurveyPrompt.cs"), surveyPrompt));
     }
 
+    [Fact]
+    public async Task Component_FromRazor()
+    {
+        TestCode input = """
+            <[|Sur$$veyPrompt|] Title="InputValue" />
+
+            @nameof([|SurveyPrompt|])
+            """;
+
+        TestCode surveyPrompt = """
+            [||]<div>
+            </div>
+            """;
+
+        await VerifyFindAllReferencesAsync(input,
+            (FilePath("SurveyPrompt.razor"), surveyPrompt));
+    }
+
+    [Fact]
+    public async Task Component_FromCSharp()
+    {
+        TestCode input = """
+            <[|SurveyPrompt|] Title="InputValue" />
+
+            @nameof([|Survey$$Prompt|])
+            """;
+
+        TestCode surveyPrompt = """
+            [||]<div>
+            </div>
+            """;
+
+        await VerifyFindAllReferencesAsync(input,
+            (FilePath("SurveyPrompt.razor"), surveyPrompt));
+    }
+
+
+    [Fact]
+    public async Task ComponentAttribute_CrossProject()
+    {
+        // Note: This test doesn't simulate syncing solutions to the remote workspace, so strictly speaking is running in the "wrong" MEF composition
+        // but thats not an important aspect of this scenario.
+
+        var someProjectId = ProjectId.CreateNewId();
+        var surveyPromptId = DocumentId.CreateNewId(someProjectId);
+        TestCode surveyPrompt = """
+            @namespace SomeProject
+
+            <div></div>
+
+            @code
+            {
+                [Parameter]
+                public string [|Title|] { get; set; }
+            }
+            """;
+
+        var anotherProjectId = ProjectId.CreateNewId();
+        var componentId = DocumentId.CreateNewId(anotherProjectId);
+        TestCode component = """
+            @using SomeProject
+
+            <File1 [|Ti$$tle|]="InputValue" />
+            """;
+
+        var solution = LocalWorkspace.CurrentSolution;
+        var project1 = AddProjectAndRazorDocument(solution, TestProjectData.SomeProject.FilePath, someProjectId, surveyPromptId, TestProjectData.SomeProjectComponentFile1.FilePath, surveyPrompt.Text).Project;
+        var project2 = AddProjectAndRazorDocument(project1.Solution, TestProjectData.AnotherProject.FilePath, anotherProjectId, componentId, TestProjectData.AnotherProjectComponentFile2.FilePath, component.Text).Project;
+        project2 = project2.AddProjectReference(new ProjectReference(project1.Id));
+        project1 = project2.Solution.GetRequiredProject(project1.Id);
+
+        var surveyPromptDocument = project1.GetAdditionalDocument(surveyPromptId);
+        Assert.NotNull(surveyPromptDocument);
+        var componentDocument = project2.GetAdditionalDocument(componentId);
+        Assert.NotNull(componentDocument);
+
+        var position = (await componentDocument.GetTextAsync(DisposalToken)).GetPosition(component.Position);
+        var result = await GetFindAllReferencesResultsAsync(componentDocument, position);
+
+        Assert.Collection(result,
+            t =>
+            {
+                var location = GetLocation(t);
+                Assert.Equal(surveyPromptDocument.CreateUri(), location.DocumentUri.GetRequiredParsedUri());
+                var text = SourceText.From(surveyPrompt.Text);
+                var range = text.GetRange(surveyPrompt.Spans[0]);
+                Assert.Equal(range, location.Range);
+            },
+            t =>
+            {
+                var location = GetLocation(t);
+                Assert.Equal(componentDocument.CreateUri(), location.DocumentUri.GetRequiredParsedUri());
+                var text = SourceText.From(component.Text);
+                var range = text.GetRange(component.Spans[0]);
+                Assert.Equal(range, location.Range);
+            });
+    }
+
     private async Task VerifyFindAllReferencesAsync(TestCode input, params (string fileName, TestCode testCode)[] additionalFiles)
     {
         var document = CreateProjectAndRazorDocument(input.Text, additionalFiles: [.. additionalFiles.Select(f => (f.fileName, f.testCode.Text))]);
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(input.Position);
-
-        var endpoint = new CohostFindAllReferencesEndpoint(IncompatibleProjectService, RemoteServiceInvoker);
-
-        var textDocumentPositionParams = new TextDocumentPositionParams
-        {
-            Position = position,
-            TextDocument = new TextDocumentIdentifier { DocumentUri = document.CreateDocumentUri() },
-        };
-
-        var results = await endpoint.GetTestAccessor().HandleRequestAsync(document, position, DisposalToken);
-
-        Assumes.NotNull(results);
+        var results = await GetFindAllReferencesResultsAsync(document, position);
 
         var totalSpans = input.Spans.Length + additionalFiles.Sum(f => f.testCode.TryGetNamedSpans("", out var spans) ? spans.Length : 0);
         Assert.Equal(totalSpans, results.Length);
@@ -211,6 +299,16 @@ public class CohostFindAllReferencesEndpointTest(ITestOutputHelper testOutputHel
                 Assert.Equal(matchedText.Trim(), GetText(referenceItem));
             }
         }
+    }
+
+    private async Task<SumType<VSInternalReferenceItem, LspLocation>[]> GetFindAllReferencesResultsAsync(TextDocument document, Position position)
+    {
+        var endpoint = new CohostFindAllReferencesEndpoint(IncompatibleProjectService, RemoteServiceInvoker);
+
+        var results = await endpoint.GetTestAccessor().HandleRequestAsync(document, position, DisposalToken);
+
+        Assumes.NotNull(results);
+        return results;
     }
 
     private static string GetText(VSInternalReferenceItem referenceItem)

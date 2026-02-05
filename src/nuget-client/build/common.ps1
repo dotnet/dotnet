@@ -168,7 +168,7 @@ Function Install-DotnetCLI {
 
         Trace-Log "$DotNetInstall $CliBranch -InstallDir $CLIRoot -NoPath"
 
-        & powershell $DotNetInstall $CliBranch -InstallDir $CLIRoot -NoPath
+        & powershell -NoProfile $DotNetInstall $CliBranch -InstallDir $CLIRoot -NoPath
         if ($LASTEXITCODE -ne 0)
         {
             throw "dotnet-install.ps1 exited with non-zero exit code"
@@ -190,11 +190,9 @@ Function Install-DotnetCLI {
 
     if ($env:CI -eq "true") {
         Write-Host "##vso[task.setvariable variable=DOTNET_ROOT;isOutput=false;issecret=false;]$CLIRoot"
-        Write-Host "##vso[task.setvariable variable=DOTNET_MULTILEVEL_LOOKUP;isOutput=false;issecret=false;]0"
         Write-Host "##vso[task.prependpath]$CLIRoot"
     } else {
         $env:DOTNET_ROOT=$CLIRoot
-        $env:DOTNET_MULTILEVEL_LOOKUP=0
         if (-not $env:path.Contains($CLIRoot)) {
             $env:path = $CLIRoot + ";" + $env:path
         }
@@ -231,7 +229,7 @@ Function Install-DotNetSdksForTesting {
 
         Trace-Log "$DotNetInstall $SdkItem -InstallDir $SdkTestingRoot -Architecture $arch -NoPath"
 
-        & powershell $DotNetInstall $SdkItem -InstallDir $SdkTestingRoot -Architecture $arch -NoPath
+        & powershell -NoProfile $DotNetInstall $SdkItem -InstallDir $SdkTestingRoot -Architecture $arch -NoPath
         if ($LASTEXITCODE -ne 0)
         {
             throw "dotnet-install.ps1 exited with non-zero exit code"

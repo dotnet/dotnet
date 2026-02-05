@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +10,7 @@ using System.Text;
 using System.Text.Json;
 using NuGet.Common;
 using NuGet.Frameworks;
+using NuGet.Shared;
 
 namespace NuGet.ProjectModel
 {
@@ -41,7 +44,7 @@ namespace NuGet.ProjectModel
             return Read(ref reader, LockFileReadFlags.All);
         }
 
-        public LockFile Read(ref Utf8JsonStreamReader reader, LockFileReadFlags flags)
+        public static LockFile Read(ref Utf8JsonStreamReader reader, LockFileReadFlags flags)
         {
             if (reader.TokenType != JsonTokenType.StartObject)
             {
@@ -70,7 +73,7 @@ namespace NuGet.ProjectModel
 
                     if ((flags & LockFileReadFlags.Libraries) == LockFileReadFlags.Libraries)
                     {
-                        lockFile.Libraries = reader.ReadObjectAsList<LockFileLibrary>(Utf8JsonReaderExtensions.LockFileLibraryConverter);
+                        lockFile.Libraries = reader.ReadObjectAsList<LockFileLibrary>(Utf8JsonStreamLockFileConverters.LockFileLibraryConverter);
                     }
                     else
                     {
@@ -84,7 +87,14 @@ namespace NuGet.ProjectModel
 
                     if ((flags & LockFileReadFlags.Targets) == LockFileReadFlags.Targets)
                     {
-                        lockFile.Targets = reader.ReadObjectAsList<LockFileTarget>(Utf8JsonReaderExtensions.LockFileTargetConverter);
+                        if (lockFile.Version >= 4)
+                        {
+                            lockFile.Targets = reader.ReadObjectAsList<LockFileTarget>(Utf8JsonStreamLockFileConverters.LockFileTargetConverterV4);
+                        }
+                        else
+                        {
+                            lockFile.Targets = reader.ReadObjectAsList<LockFileTarget>(Utf8JsonStreamLockFileConverters.LockFileTargetConverter);
+                        }
                     }
                     else
                     {
@@ -98,7 +108,7 @@ namespace NuGet.ProjectModel
 
                     if ((flags & LockFileReadFlags.ProjectFileDependencyGroups) == LockFileReadFlags.ProjectFileDependencyGroups)
                     {
-                        lockFile.ProjectFileDependencyGroups = reader.ReadObjectAsList<ProjectFileDependencyGroup>(Utf8JsonReaderExtensions.ProjectFileDepencencyGroupConverter);
+                        lockFile.ProjectFileDependencyGroups = reader.ReadObjectAsList<ProjectFileDependencyGroup>(Utf8JsonStreamLockFileConverters.ProjectFileDepencencyGroupConverter);
                     }
                     else
                     {
@@ -112,7 +122,7 @@ namespace NuGet.ProjectModel
 
                     if ((flags & LockFileReadFlags.PackageFolders) == LockFileReadFlags.PackageFolders)
                     {
-                        lockFile.PackageFolders = reader.ReadObjectAsList<LockFileItem>(Utf8JsonReaderExtensions.LockFileItemConverter);
+                        lockFile.PackageFolders = reader.ReadObjectAsList<LockFileItem>(Utf8JsonStreamLockFileConverters.LockFileItemConverter);
                     }
                     else
                     {
@@ -172,7 +182,7 @@ namespace NuGet.ProjectModel
                     reader.Read();
                     if ((flags & LockFileReadFlags.LogMessages) == LockFileReadFlags.LogMessages)
                     {
-                        lockFile.LogMessages = reader.ReadListOfObjects<IAssetsLogMessage>(Utf8JsonReaderExtensions.IAssetsLogMessageConverter);
+                        lockFile.LogMessages = reader.ReadListOfObjects<IAssetsLogMessage>(Utf8JsonStreamLockFileConverters.IAssetsLogMessageConverter);
                     }
                     else
                     {
@@ -183,6 +193,23 @@ namespace NuGet.ProjectModel
                 else
                 {
                     reader.Skip();
+                }
+            }
+
+            if (lockFile.Version == LockFileFormat.LegacyVersion)
+            {
+                // Populate the alias at read time. This allows readers to use the alias to find targets regardless of what the underlying assets file format is.
+                foreach (var target in lockFile.Targets.NoAllocEnumerate())
+                {
+                    target.TargetAlias = lockFile.PackageSpec?.GetTargetFramework(target.TargetFramework)?.TargetAlias;
+                }
+            }
+
+            if (lockFile.Version >= LockFileFormat.AliasedVersion)
+            {
+                foreach (var target in lockFile.Targets.NoAllocEnumerate())
+                {
+                    target.TargetFramework = lockFile.PackageSpec.GetTargetFramework(target.TargetAlias).FrameworkName;
                 }
             }
 

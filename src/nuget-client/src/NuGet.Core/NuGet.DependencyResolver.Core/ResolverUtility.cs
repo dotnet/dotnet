@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -23,14 +21,15 @@ namespace NuGet.DependencyResolver
             LibraryRange libraryRange,
             NuGetFramework framework,
             string? runtimeIdentifier,
+            string? targetAlias,
             RemoteWalkContext context,
             CancellationToken cancellationToken)
         {
-            LibraryRangeCacheKey key = new(libraryRange, framework);
+            LibraryRangeCacheKey key = new(libraryRange, framework, targetAlias);
 
             return context.FindLibraryEntryCache.GetOrAddAsync(key,
-                static state => FindLibraryEntryAsync(state.LibraryRange, state.framework, state.runtimeIdentifier, state.context, state.cancellationToken),
-                (key.LibraryRange, framework, runtimeIdentifier, context, cancellationToken),
+                static state => FindLibraryEntryAsync(state.LibraryRange, state.framework, state.runtimeIdentifier, state.targetAlias, state.context, state.cancellationToken),
+                (key.LibraryRange, framework, runtimeIdentifier, targetAlias, context, cancellationToken),
                 cancellationToken);
         }
 
@@ -38,6 +37,7 @@ namespace NuGet.DependencyResolver
             LibraryRange libraryRange,
             NuGetFramework framework,
             string? runtimeIdentifier,
+            string? targetAlias,
             RemoteWalkContext context,
             CancellationToken cancellationToken)
         {
@@ -56,7 +56,7 @@ namespace NuGet.DependencyResolver
             }
 
             // Try up to two times to get the package. The second
-            // retry will refresh the cache if a package is listed 
+            // retry will refresh the cache if a package is listed
             // but fails to download. This can happen if the feed prunes
             // the package.
             for (var i = 0; i < 2 && graphItem == null; i++)
@@ -65,6 +65,7 @@ namespace NuGet.DependencyResolver
                     libraryRange,
                     framework,
                     runtimeIdentifier,
+                    targetAlias,
                     remoteDependencyProviders,
                     context.LocalLibraryProviders,
                     context.ProjectLibraryProviders,
@@ -152,10 +153,37 @@ namespace NuGet.DependencyResolver
             };
         }
 
-        public static async Task<RemoteMatch?> FindLibraryMatchAsync(
+        internal static Task<RemoteMatch?> FindLibraryMatchAsync(
             LibraryRange libraryRange,
             NuGetFramework framework,
             string? runtimeIdentifier,
+            IEnumerable<IRemoteDependencyProvider> remoteProviders,
+            IEnumerable<IRemoteDependencyProvider> localProviders,
+            IEnumerable<IDependencyProvider> projectProviders,
+            IDictionary<LockFileCacheKey, IList<LibraryIdentity>> lockFileLibraries,
+            SourceCacheContext cacheContext,
+            ILogger logger,
+            CancellationToken cancellationToken)
+        {
+            return FindLibraryMatchAsync(
+                libraryRange,
+                framework,
+                runtimeIdentifier,
+                targetAlias: null,
+                remoteProviders,
+                localProviders,
+                projectProviders,
+                lockFileLibraries,
+                cacheContext,
+                logger,
+                cancellationToken);
+        }
+
+        internal static async Task<RemoteMatch?> FindLibraryMatchAsync(
+            LibraryRange libraryRange,
+            NuGetFramework framework,
+            string? runtimeIdentifier,
+            string? targetAlias,
             IEnumerable<IRemoteDependencyProvider> remoteProviders,
             IEnumerable<IRemoteDependencyProvider> localProviders,
             IEnumerable<IDependencyProvider> projectProviders,
@@ -173,7 +201,7 @@ namespace NuGet.DependencyResolver
             if (cacheContext == null) throw new ArgumentNullException(nameof(cacheContext));
             if (logger == null) throw new ArgumentNullException(nameof(logger));
 
-            var projectMatch = await FindProjectMatchAsync(libraryRange, framework, projectProviders, cancellationToken);
+            var projectMatch = await FindProjectMatchAsync(libraryRange, framework, targetAlias, projectProviders, cancellationToken);
 
             if (projectMatch != null)
             {
@@ -285,7 +313,7 @@ namespace NuGet.DependencyResolver
                 if (remoteMatch != null)
                 {
                     // Try to see if the specific version found on the remote exists locally. This avoids any unnecessary
-                    // remote access incase we already have it in the cache/local packages folder. 
+                    // remote access incase we already have it in the cache/local packages folder.
                     var localMatch = await FindLibraryByVersionAsync(remoteMatch.Library, framework, localProviders, cacheContext, logger, cancellationToken);
 
                     if (localMatch != null
@@ -313,7 +341,7 @@ namespace NuGet.DependencyResolver
                     return localMatch;
                 }
 
-                // Either we found a local match but it wasn't the exact version, or 
+                // Either we found a local match but it wasn't the exact version, or
                 // we didn't find a local match.
                 var remoteMatch = await FindLibraryByVersionAsync(libraryRange, framework, remoteProviders, cacheContext, logger, cancellationToken);
 
@@ -347,9 +375,20 @@ namespace NuGet.DependencyResolver
             }
         }
 
+        [Obsolete("This method is obsolete")]
         public static Task<RemoteMatch?> FindProjectMatchAsync(
             LibraryRange libraryRange,
             NuGetFramework framework,
+            IEnumerable<IDependencyProvider> projectProviders,
+            CancellationToken cancellationToken)
+        {
+            return FindProjectMatchAsync(libraryRange, framework, targetAlias: null, projectProviders, cancellationToken);
+        }
+
+        internal static Task<RemoteMatch?> FindProjectMatchAsync(
+            LibraryRange libraryRange,
+            NuGetFramework framework,
+            string? targetAlias,
             IEnumerable<IDependencyProvider> projectProviders,
             CancellationToken cancellationToken)
         {
@@ -369,7 +408,7 @@ namespace NuGet.DependencyResolver
                 {
                     if (provider.SupportsType(libraryRange.TypeConstraint))
                     {
-                        var match = provider.GetLibrary(libraryRange, framework);
+                        var match = provider.GetLibrary(libraryRange, framework, targetAlias);
 
                         if (match != null)
                         {

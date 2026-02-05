@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Linq;
 using Newtonsoft.Json;
@@ -23,7 +25,7 @@ namespace NuGet.Protocol
 
             if (reader.TokenType == JsonToken.StartArray)
             {
-                var array = JArray.Load(reader);
+                var array = JArray.Load(reader, JsonUtility.DefaultLoadSettings);
                 return string.Join(", ", array.Values<string>().Where(s => !string.IsNullOrWhiteSpace(s)));
             }
 

@@ -30,34 +30,51 @@
     },
     "frameworks": {
       "frameworkidentifier123-frameworkprofile": {
+        "framework": "frameworkidentifier123-frameworkprofile",
         "projectReferences": {}
       }
     }
   },
-  "dependencies": {
-    "library": {
-      "include": "Build",
-      "target": "Package",
-      "version": "[1.2.3, )"
-    },
-    "libraryRangeWithNoWarnGlobal": {
-      "include": "Build",
-      "target": "Package",
-      "version": "[1.2.3, )",
-      "noWarn": [
-        "NU1500",
-        "NU1608"
-      ]
-    }
-  },
   "frameworks": {
     "frameworkidentifier123-frameworkprofile": {
+      "framework": "frameworkidentifier123-frameworkprofile",
+      "dependencies": {
+        "library": {
+          "include": "Build",
+          "target": "Package",
+          "version": "[1.2.3, )"
+        },
+        "libraryRangeWithNoWarnGlobal": {
+          "include": "Build",
+          "target": "Package",
+          "version": "[1.2.3, )",
+          "noWarn": [
+            "NU1500",
+            "NU1608"
+          ]
+        }
+      },
       "imports": [
         "frameworkidentifier123-frameworkprofile"
       ]
     },
     "frameworkidentifierwithnowarn125-frameworkprofilewithnowarn": {
+      "framework": "frameworkidentifierwithnowarn125-frameworkprofilewithnowarn",
       "dependencies": {
+        "library": {
+          "include": "Build",
+          "target": "Package",
+          "version": "[1.2.3, )"
+        },
+        "libraryRangeWithNoWarnGlobal": {
+          "include": "Build",
+          "target": "Package",
+          "version": "[1.2.3, )",
+          "noWarn": [
+            "NU1500",
+            "NU1608"
+          ]
+        },
         "libraryWithNoWarn": {
           "include": "Build",
           "target": "Package",

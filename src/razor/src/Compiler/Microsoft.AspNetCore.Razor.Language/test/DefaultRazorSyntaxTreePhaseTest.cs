@@ -65,7 +65,7 @@ public class DefaultRazorSyntaxTreePhaseTest
         var originalSyntaxTree = RazorSyntaxTree.Parse(codeDocument.Source);
         var firstPassSyntaxTree = RazorSyntaxTree.Parse(codeDocument.Source);
         var secondPassSyntaxTree = RazorSyntaxTree.Parse(codeDocument.Source);
-        codeDocument.SetSyntaxTree(originalSyntaxTree);
+        codeDocument = codeDocument.WithSyntaxTree(originalSyntaxTree);
 
         var firstPass = new Mock<IRazorSyntaxTreePass>(MockBehavior.Strict);
         firstPass.SetupGet(m => m.Order).Returns(0);
@@ -104,7 +104,7 @@ public class DefaultRazorSyntaxTreePhaseTest
         });
 
         // Act
-        phase.Execute(codeDocument);
+        codeDocument = phase.Execute(codeDocument);
 
         // Assert
         Assert.Same(secondPassSyntaxTree, codeDocument.GetSyntaxTree());

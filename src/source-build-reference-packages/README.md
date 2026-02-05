@@ -205,17 +205,22 @@ See the workflow documented in the servicing branch readmes for additional requi
 #### Regenerating all Reference Packages
 
 As bugs are fixed or enhancements are made to the generate tooling, it may be desirable or necessary to
-regenerate the existing packages. The following commands can be used to generate all of the reference packages.
+regenerate the existing packages. The following command will regenerate all of the reference packages.
 
 ``` bash
-find src/referencePackages/src -mindepth 2 -maxdepth 2 -type d | awk -F'/' '{print $(NF-1)","$NF}' > packages.csv
-./generate.sh -x -c packages.csv
+./generate.sh -a
 ```
 
 ### Targeting
 
-Generating new targeting packages is not supported.
-If you feel a new targeting pack is needed, please [open a new issue](#filing-issues) to discuss.
+The [generate script](https://github.com/dotnet/source-build-reference-packages/blob/main/generate.sh) supports generating targeting packages.
+Run `generate.sh --help` for usage details.
+
+``` bash
+./generate.sh --type target --package Microsoft.NetCore.App.Ref,10.0.0
+```
+
+> **Note:** Generating targeting packages uses ILDasm to disassemble reference assemblies.
 
 ### Text Only
 

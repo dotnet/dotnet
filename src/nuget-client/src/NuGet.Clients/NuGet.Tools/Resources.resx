@@ -151,7 +151,7 @@
     <value>The project '{0}' is unsupported</value>
   </data>
   <data name="ProjectMigrateErrorMessage" xml:space="preserve">
-    <value>Project is not eligible for migration as it's not project.json based.</value>
+    <value>Project is not eligible for migration. Either the project is not packages.config based or doesn't support PackageReference yet.</value>
   </data>
   <data name="ProjectJsonMigrateErrorMessage" xml:space="preserve">
     <value>Project is not eligible for migration. Either the project is not packages.config based or doesn't support PackageReference yet. Visit https://docs.microsoft.com/en-us/nuget/reference/migrate-packages-config-to-package-reference for more information.</value>
@@ -248,5 +248,48 @@
   </data>
   <data name="Text_AllowInsecureConnections_Header" xml:space="preserve">
     <value>Allow Insecure Connections</value>
+  </data>
+  <data name="Text_PackageSources_Description" xml:space="preserve">
+    <value>Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</value>
+  </data>
+  <data name="Text_AuditSources_HowToRemove" xml:space="preserve">
+    <value>Remove all audit sources to revert to using package sources for vulnerability data.</value>
+  </data>
+  <data name="Text_AuditSources_Description" xml:space="preserve">
+    <value>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</value>
+  </data>
+  <data name="Text_AuditSources_Title" xml:space="preserve">
+    <value>Audit sources</value>
+  </data>
+  <data name="Text_AuditSources_Checkbox" xml:space="preserve">
+    <value>Use separate sources for vulnerability audit</value>
+  </data>
+  <data name="Text_MachineWidePackageSource_Description" xml:space="preserve">
+    <value>Machine‑wide package sources are provisioned by Visual Studio workloads and can only be enabled or disabled.</value>
+  </data>
+  <data name="Title_FixVulnerabilitiesWithCopilot" xml:space="preserve">
+    <value>Fix Vulnerabilities with GitHub Copilot</value>
+  </data>
+  <data name="Prompt_FixNuGetPackageVulnerabilities" xml:space="preserve">
+    <value>Fix my NuGet package vulnerabilities</value>
+  </data>
+  <data name="Error_CopilotNotReady" xml:space="preserve">
+    <value>GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in.</value>
+    <comment>Do not translate GitHub or Copilot</comment>
+  </data>
+  <data name="Error_ServiceBrokerNotAvailable" xml:space="preserve">
+    <value>Service Broker is not available. Please ensure Visual Studio is running correctly.</value>
+  </data>
+  <data name="Error_CopilotServiceNotAvailable" xml:space="preserve">
+    <value>GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in.</value>
+    <comment>Do not translate GitHub or Copilot</comment>
+  </data>
+  <data name="Error_McpToolServiceNotAvailable" xml:space="preserve">
+    <value>MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in.</value>
+    <comment>Do not translate GitHub or Copilot</comment>
+  </data>
+  <data name="Error_CopilotAccessDenied" xml:space="preserve">
+    <value>Access denied. Please ensure you are signed in to GitHub Copilot.</value>
+    <comment>Do not translate GitHub or Copilot</comment>
   </data>
 </root>

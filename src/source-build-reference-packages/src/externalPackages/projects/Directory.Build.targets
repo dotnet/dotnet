@@ -19,13 +19,21 @@
     </ItemGroup>
 
     <Copy SourceFiles="@(RepoFileToCopy)" DestinationFolder="$(ProjectDirectory)%(RecursiveDir)" SkipUnchangedFiles="true" />
+
+    <PropertyGroup>
+      <ProjectDirectoryParent>$([System.IO.Path]::GetDirectoryName('$(ProjectDirectory.TrimEnd('\/'))'))\</ProjectDirectoryParent>
+    </PropertyGroup>
+
+    <!-- Create Directory.Build and Directory.Packages files to avoid using the repo state. -->
+    <WriteLinesToFile Lines="&lt;Project&gt;&lt;/Project&gt;" File="$(ProjectDirectoryParent)Directory.Build.props" Overwrite="true" WriteOnlyWhenDifferent="true" />
+    <WriteLinesToFile Lines="&lt;Project&gt;&lt;/Project&gt;" File="$(ProjectDirectoryParent)Directory.Build.targets" Overwrite="true" WriteOnlyWhenDifferent="true" />
+    <WriteLinesToFile Lines="&lt;Project&gt;&lt;PropertyGroup&gt;&lt;ManagePackageVersionsCentrally&gt;false&lt;/ManagePackageVersionsCentrally&gt;&lt;/PropertyGroup&gt;&lt;/Project&gt;"
+      File="$(ProjectDirectoryParent)Directory.Packages.props" Overwrite="true" WriteOnlyWhenDifferent="true" />
   </Target>
 
   <Target Name="ApplyPatches"
           Condition="'@(PatchToApply)' != '' and '$(SkipPatches)' != 'true'"
-          DependsOnTargets="PrepareInnerClone"
-          Inputs="@(PatchToApply)"
-          Outputs="$(BaseIntermediateOutputPath)ApplyPatches.complete" >
+          DependsOnTargets="PrepareInnerClone">
     <PropertyGroup>
       <PatchCommand>git --work-tree=$(ProjectDirectory) apply --ignore-whitespace --whitespace=nowarn</PatchCommand>
     </PropertyGroup>
@@ -79,9 +87,7 @@
   <UsingTask TaskName="UpdateJson" AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="UpdateGlobalJsonVersions"
           DependsOnTargets="PrepareInnerClone;ResolveProjectReferences"
-          Condition="'$(GlobalJsonFile)' != ''"
-          Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(BaseIntermediateOutputPath)UpdateGlobalJsonVersions.complete">
+          Condition="'$(GlobalJsonFile)' != ''">
     <ItemGroup>
       <_PossibleCliVersionJsonPath Include="sdk.version" />
       <_PossibleCliVersionJsonPath Include="tools.dotnet" />

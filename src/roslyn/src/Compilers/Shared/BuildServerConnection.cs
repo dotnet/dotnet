@@ -39,7 +39,7 @@ namespace Microsoft.CodeAnalysis.CommandLine
         /// 
         /// As such this timeout should be significantly longer than the average gen2 pause
         /// time for the server. When changing this value consider profiling building 
-        /// Roslyn.sln and consulting the GC stats to see what a typical pause time is.
+        /// Roslyn.slnx and consulting the GC stats to see what a typical pause time is.
         /// </remarks>
         internal const int TimeOutMsExistingProcess = 5_000;
 
@@ -55,6 +55,13 @@ namespace Microsoft.CodeAnalysis.CommandLine
         /// Determines if the compiler server is supported in this environment.
         /// </summary>
         internal static bool IsCompilerServerSupported => GetPipeName("") is object;
+
+        internal static bool IsBuiltinToolRunningOnCoreClr =>
+#if NETFRAMEWORK && SDK_TASK
+                true;
+#else
+                RuntimeHostInfo.IsCoreClrRuntime;
+#endif
 
         /// <summary>
         /// Create a build request for processing on the server. 
@@ -483,7 +490,7 @@ namespace Microsoft.CodeAnalysis.CommandLine
         /// <returns>Dictionary of environment variables to set, or null if no custom environment is needed</returns>
         internal static Dictionary<string, string>? GetServerEnvironmentVariables(System.Collections.IDictionary currentEnvironment, ICompilerServerLogger? logger = null)
         {
-            if (RuntimeHostInfo.GetToolDotNetRoot() is not { } dotNetRoot)
+            if (!IsBuiltinToolRunningOnCoreClr || RuntimeHostInfo.GetToolDotNetRoot(logger is null ? null : logger.Log) is not { } dotNetRoot)
             {
                 return null;
             }
@@ -754,7 +761,7 @@ namespace Microsoft.CodeAnalysis.CommandLine
         internal static string GetMutexDirectory()
         {
             var tempPath = Path.GetTempPath();
-            var result = Path.Combine(tempPath!, ".roslyn");
+            var result = Path.Combine(tempPath, ".roslyn");
             Directory.CreateDirectory(result);
             return result;
         }

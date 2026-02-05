@@ -12,9 +12,9 @@
     <NETFXTargetFramework>net472</NETFXTargetFramework>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
     <NETCoreTargetFramework>net8.0</NETCoreTargetFramework>
-    <NETCoreTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">net10.0</NETCoreTargetFramework>
-    <LatestNETCoreTargetFramework>net9.0</LatestNETCoreTargetFramework>
-    <LatestNETCoreTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">net10.0</LatestNETCoreTargetFramework>
+    <NETCoreTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">$(NetCurrent)</NETCoreTargetFramework>
+    <LatestNETCoreTargetFramework>net10.0</LatestNETCoreTargetFramework>
+    <LatestNETCoreTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">$(NetCurrent)</LatestNETCoreTargetFramework>
 
     <!-- Target frameworks for class libraries-->
     <TargetFrameworksLibrary>$(NETCoreTargetFramework)</TargetFrameworksLibrary>
@@ -46,13 +46,12 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">$(RepositoryRootDirectory)</SolutionDir>
     <ArtifactRoot>$(ArtifactsDirectory)</ArtifactRoot>
     <ArtifactTempDirectory>$(ArtifactsDirectory)temp</ArtifactTempDirectory>
-    <LocalizationRootDirectory>$(NuGetBuildLocalizationRepository)localize</LocalizationRootDirectory>
-    <LocalizationWorkDirectory>$(RepositoryRootDirectory)localize</LocalizationWorkDirectory>
     <NoWarn>$(NoWarn);NU5105;MSB3277;NETSDK1138</NoWarn>
     <!-- additional warnings new in .NET 6 that we need to disable when building with source-build -->
     <NoWarn Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NoWarn);CS1998;CA1416;CS0618;CS1574</NoWarn>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <!-- Defaults -->
@@ -89,7 +88,7 @@
     <Features>strict</Features>
     <!-- Same as SDK default, but without CandidateAssemblyFiles in front, which would search in Content items -->
     <AssemblySearchPaths>{HintPathFromItem};{TargetFrameworkDirectory};{RawFileName}</AssemblySearchPaths>
-    <LangVersion>12</LangVersion>
+    <LangVersion>14</LangVersion>
     <LangVersion Condition="'$(DotNetBuildSourceOnly)' == 'true'">latest</LangVersion>
   </PropertyGroup>
 

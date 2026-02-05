@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,7 +21,7 @@ using Xunit;
 
 namespace NuGet.XPlat.FuncTest
 {
-    [Collection("NuGet XPlat Test Collection")]
+    [Collection(XPlatCollection.Name)]
     public class XplatListPackageJsonRendererTests
     {
         [Fact]
@@ -1401,6 +1403,11 @@ namespace NuGet.XPlat.FuncTest
             {
                 var projectModel = new ListPackageProjectModel(project.projectPath);
                 projectModel.TargetFrameworkPackages = project.listPackageReportFrameworks;
+                var hasAutoReferencedTopLevelPackage = project.listPackageReportFrameworks?.Any(packageReportFramework =>
+                                                           packageReportFramework.TopLevelPackages?.Any(topLevelPackage => topLevelPackage.AutoReference) ?? false) ??
+                                                       false;
+
+                projectModel.AutoReferenceFound = hasAutoReferencedTopLevelPackage;
 
                 if (project.projectProblems != null)
                 {

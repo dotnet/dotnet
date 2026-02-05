@@ -1,10 +1,8 @@
 stages:
-- stage: Tag_n_Scan
-  displayName: Tag & Scan
+- stage: Scan
   dependsOn: []
   jobs:
-  - job: Tag_n_Scan
-    displayName: Tag & Scan
+  - job: Scan
     pool:
       name: $(DncEngInternalBuildPool)
       image: 1es-ubuntu-2204
@@ -16,11 +14,15 @@ stages:
     - script: |
         source ./eng/common/tools.sh
         InitializeDotNetCli true
-        .dotnet/dotnet tool restore
-      displayName: Initialize tooling
+        echo "##vso[task.setvariable variable=DotNetPath]$_InitializeDotNetCli"
+      displayName: Install .NET CLI
+  
+    - script: |
+        $(DotNetPath)/dotnet tool restore
+      displayName: Restore tools
 
     - script: >
-        .dotnet/dotnet darc vmr scan-cloaked-files
+        $(DotNetPath)/dotnet darc vmr scan-cloaked-files
         --vmr "$(Build.SourcesDirectory)"
         --tmp "$(Agent.TempDirectory)"
         || (echo '##[error]Found cloaked files in the VMR' && exit 1)

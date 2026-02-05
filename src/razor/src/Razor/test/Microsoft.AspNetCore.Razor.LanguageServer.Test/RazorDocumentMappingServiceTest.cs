@@ -649,6 +649,75 @@ public class RazorDocumentMappingServiceTest(ITestOutputHelper testOutput) : Too
     }
 
     [Fact]
+    public void TryMapToGeneratedDocumentRange_CSharp_OneLine()
+    {
+        // Arrange
+        var service = new LspDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
+        var codeDoc = CreateCodeDocumentWithCSharpProjection(
+            razorSource: "@{ a; }",
+            projectedCSharpSource: "1\n2 a; ",
+            sourceMappings: [
+                new SourceMapping(new SourceSpan(2, 4), new SourceSpan(3, 4)),
+            ]);
+        var range = new LinePositionSpan(new LinePosition(0, 3), new LinePosition(0, 5));
+
+        // Act & Assert
+        var result = service.TryMapToCSharpDocumentRange(
+            codeDoc.GetRequiredCSharpDocument(),
+            range, // |a;|
+            out var projectedRange);
+
+        Assert.True(result);
+        Assert.Equal("(1,2)-(1,4)", projectedRange.ToString());
+    }
+
+    [Fact]
+    public void TryMapToGeneratedDocumentRange_CSharp_TwoLines()
+    {
+        // Arrange
+        var service = new LspDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
+        var codeDoc = CreateCodeDocumentWithCSharpProjection(
+            razorSource: "@{ a\n; }",
+            projectedCSharpSource: "1\n2 a\n; ",
+            sourceMappings: [
+                new SourceMapping(new SourceSpan(2, 5), new SourceSpan(3, 5)),
+            ]);
+        var range = new LinePositionSpan(new LinePosition(0, 3), new LinePosition(1, 2));
+
+        // Act & Assert
+        var result = service.TryMapToCSharpDocumentRange(
+            codeDoc.GetRequiredCSharpDocument(),
+            range, // |a\n;|
+            out var projectedRange);
+
+        Assert.True(result);
+        Assert.Equal("(1,2)-(2,2)", projectedRange.ToString());
+    }
+
+    [Fact]
+    public void TryMapToGeneratedDocumentRange_CSharp_ThreeLines()
+    {
+        // Arrange
+        var service = new LspDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
+        var codeDoc = CreateCodeDocumentWithCSharpProjection(
+            razorSource: "@{ a\n\n; }",
+            projectedCSharpSource: "1\n2 a\n\n; ",
+            sourceMappings: [
+                new SourceMapping(new SourceSpan(2, 6), new SourceSpan(3, 6)),
+            ]);
+        var range = new LinePositionSpan(new LinePosition(0, 3), new LinePosition(2, 2));
+
+        // Act & Assert
+        var result = service.TryMapToCSharpDocumentRange(
+            codeDoc.GetRequiredCSharpDocument(),
+            range, // |a\n\n;|
+            out var projectedRange);
+
+        Assert.True(result);
+        Assert.Equal("(1,2)-(3,2)", projectedRange.ToString());
+    }
+
+    [Fact]
     public void TryMapToGeneratedDocumentRange_CSharp_MissingSourceMappings()
     {
         // Arrange
@@ -711,7 +780,7 @@ public class RazorDocumentMappingServiceTest(ITestOutputHelper testOutput) : Too
             codeDocument,
             projectedCSharpSource,
             sourceMappings);
-        codeDocument.SetCSharpDocument(csharpDocument);
+        codeDocument = codeDocument.WithCSharpDocument(csharpDocument);
 
         return codeDocument;
     }

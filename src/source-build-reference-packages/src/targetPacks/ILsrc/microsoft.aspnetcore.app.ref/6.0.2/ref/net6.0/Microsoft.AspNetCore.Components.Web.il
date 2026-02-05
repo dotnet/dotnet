@@ -1,5 +1,4 @@
 
-//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
 
 
 // ----- DOS Header:
@@ -569,7 +568,6 @@
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000009    //  ILONLY
-// Image base: 0x00007F815BF2D000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -6652,7 +6650,7 @@
                                [opt] float32 size) cil managed
   // SIG: 20 02 01 08 0C
   {
-    .param [2]/*08000108*/  = float32(0)
+    .param [2]/*08000108*/  = float32(0.0000000)
     // Method begins at RVA 0x4050
     // Code size       2 (0x2)
     .maxstack  8

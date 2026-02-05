@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -165,20 +166,17 @@ public abstract class EditAndContinueWorkspaceTestBase : TestBase, IDisposable
         return service;
     }
 
-    internal async Task<DebuggingSession> StartDebuggingSessionAsync(
+    internal DebuggingSession StartDebuggingSession(
         EditAndContinueService service,
         Solution solution,
         CommittedSolution.DocumentState initialState = CommittedSolution.DocumentState.MatchesBuildOutput,
         IPdbMatchingSourceTextProvider? sourceTextProvider = null)
     {
-        var sessionId = await service.StartDebuggingSessionAsync(
+        var sessionId = service.StartDebuggingSession(
             solution,
             _debuggerService,
             sourceTextProvider: sourceTextProvider ?? NullPdbMatchingSourceTextProvider.Instance,
-            captureMatchingDocuments: [],
-            captureAllMatchingDocuments: false,
-            reportDiagnostics: true,
-            CancellationToken.None);
+            reportDiagnostics: true);
 
         var session = service.GetTestAccessor().GetDebuggingSession(sessionId);
 
@@ -282,10 +280,12 @@ public abstract class EditAndContinueWorkspaceTestBase : TestBase, IDisposable
         string language = LanguageNames.CSharp,
         string? sourceFilePath = null,
         Encoding? encoding = null,
-        SourceHashAlgorithm checksumAlgorithm = SourceHashAlgorithms.Default,
         string? assemblyName = null,
+        DebugInformationFormat pdbFormat = DebugInformationFormat.PortablePdb,
+        SourceHashAlgorithm checksumAlgorithm = SourceHashAlgorithms.Default,
+        Encoding? defaultEncoding = null,
         TargetFramework targetFramework = DefaultTargetFramework)
-        => LoadLibraryToDebuggee(EmitLibrary(projectId, source, sourceFilePath, language, encoding, checksumAlgorithm, assemblyName, targetFramework: targetFramework));
+        => LoadLibraryToDebuggee(EmitLibrary(projectId, source, sourceFilePath, language, encoding, assemblyName, pdbFormat, checksumAlgorithm, defaultEncoding, targetFramework: targetFramework));
 
     internal Guid LoadLibraryToDebuggee(Guid moduleId, ManagedHotReloadAvailability availability = default)
     {
@@ -307,9 +307,10 @@ public abstract class EditAndContinueWorkspaceTestBase : TestBase, IDisposable
         string? sourceFilePath = null,
         string language = LanguageNames.CSharp,
         Encoding? encoding = null,
-        SourceHashAlgorithm checksumAlgorithm = SourceHashAlgorithms.Default,
         string? assemblyName = null,
         DebugInformationFormat pdbFormat = DebugInformationFormat.PortablePdb,
+        SourceHashAlgorithm checksumAlgorithm = SourceHashAlgorithms.Default,
+        Encoding? defaultEncoding = null,
         Project? generatorProject = null,
         string? additionalFileText = null,
         IEnumerable<(string, string)>? analyzerOptions = null,
@@ -319,9 +320,10 @@ public abstract class EditAndContinueWorkspaceTestBase : TestBase, IDisposable
             [(source, sourceFilePath ?? Path.Combine(TempRoot.Root, "test1.cs"))],
             language,
             encoding,
-            checksumAlgorithm,
             assemblyName,
             pdbFormat,
+            checksumAlgorithm,
+            defaultEncoding,
             generatorProject,
             additionalFileText,
             analyzerOptions,
@@ -332,9 +334,10 @@ public abstract class EditAndContinueWorkspaceTestBase : TestBase, IDisposable
         (string content, string filePath)[] sources,
         string language = LanguageNames.CSharp,
         Encoding? encoding = null,
-        SourceHashAlgorithm checksumAlgorithm = SourceHashAlgorithms.Default,
         string? assemblyName = null,
         DebugInformationFormat pdbFormat = DebugInformationFormat.PortablePdb,
+        SourceHashAlgorithm checksumAlgorithm = SourceHashAlgorithms.Default,
+        Encoding? defaultEncoding = null,
         Project? generatorProject = null,
         string? additionalFileText = null,
         IEnumerable<(string, string)>? analyzerOptions = null,
@@ -346,6 +349,8 @@ public abstract class EditAndContinueWorkspaceTestBase : TestBase, IDisposable
             language,
             assemblyName,
             pdbFormat,
+            checksumAlgorithm,
+            defaultEncoding,
             generatorProject,
             additionalFileText,
             analyzerOptions,
@@ -364,6 +369,8 @@ public abstract class EditAndContinueWorkspaceTestBase : TestBase, IDisposable
         string language = LanguageNames.CSharp,
         string? assemblyName = null,
         DebugInformationFormat pdbFormat = DebugInformationFormat.PortablePdb,
+        SourceHashAlgorithm checksumAlgorithm = SourceHashAlgorithms.Default,
+        Encoding? defaultEncoding = null,
         Project? generatorProject = null,
         string? additionalFileText = null,
         IEnumerable<(string, string)>? analyzerOptions = null,
@@ -392,7 +399,7 @@ public abstract class EditAndContinueWorkspaceTestBase : TestBase, IDisposable
         if (generatorProject != null)
         {
             var generators = generatorProject.AnalyzerReferences.SelectMany(r => r.GetGenerators(language: generatorProject.Language));
-            var driverOptions = new GeneratorDriverOptions(baseDirectory: generatorProject.CompilationOutputInfo.GetEffectiveGeneratedFilesOutputDirectory()!);
+            var driverOptions = new GeneratorDriverOptions(baseDirectory: generatorProject.CompilationOutputInfo.GetEffectiveGeneratedFilesOutputDirectory());
 
             var optionsProvider = (analyzerOptions != null) ? new EditAndContinueTestAnalyzerConfigOptionsProvider(analyzerOptions) : null;
             var additionalTexts = (additionalFileText != null) ? new[] { new InMemoryAdditionalText("additional_file", additionalFileText) } : null;
@@ -403,7 +410,7 @@ public abstract class EditAndContinueWorkspaceTestBase : TestBase, IDisposable
                 generatorDriver = CSharpGeneratorDriver.Create(
                     generators,
                     additionalTexts,
-                    csParseOptions!,
+                    csParseOptions,
                     optionsProvider,
                     driverOptions);
             }
@@ -412,7 +419,7 @@ public abstract class EditAndContinueWorkspaceTestBase : TestBase, IDisposable
                 generatorDriver = VisualBasic.VisualBasicGeneratorDriver.Create(
                     [.. generators],
                     additionalTexts.ToImmutableArrayOrEmpty<AdditionalText>(),
-                    vbParseOptions!,
+                    vbParseOptions,
                     optionsProvider,
                     driverOptions);
             }
@@ -422,12 +429,29 @@ public abstract class EditAndContinueWorkspaceTestBase : TestBase, IDisposable
             compilation = outputCompilation;
         }
 
-        return EmitLibrary(projectId, compilation, pdbFormat);
+        return EmitLibrary(projectId, compilation, pdbFormat, checksumAlgorithm, defaultEncoding);
     }
 
-    internal Guid EmitLibrary(ProjectId projectId, Compilation compilation, DebugInformationFormat pdbFormat = DebugInformationFormat.PortablePdb)
+    internal Guid EmitLibrary(
+        ProjectId projectId,
+        Compilation compilation,
+        DebugInformationFormat pdbFormat = DebugInformationFormat.PortablePdb,
+        SourceHashAlgorithm checksumAlgorithm = SourceHashAlgorithms.Default,
+        Encoding? defaultEncoding = null)
     {
-        var (peImage, pdbImage) = compilation.EmitToArrays(new EmitOptions(debugInformationFormat: pdbFormat));
+        var hashAlgorithmName = checksumAlgorithm switch
+        {
+            SourceHashAlgorithm.Sha1 => HashAlgorithmName.SHA1,
+            SourceHashAlgorithm.Sha256 => HashAlgorithmName.SHA256,
+            _ => throw ExceptionUtilities.UnexpectedValue(checksumAlgorithm),
+        };
+
+        var (peImage, pdbImage) = compilation.EmitToArrays(new EmitOptions(debugInformationFormat: pdbFormat, pdbChecksumAlgorithm: hashAlgorithmName, defaultSourceFileEncoding: defaultEncoding));
+
+        var dir = Temp.CreateDirectory();
+        dir.CreateFile(compilation.AssemblyName + ".dll").WriteAllBytes(peImage.ToArray());
+        dir.CreateFile(compilation.AssemblyName + ".pdb").WriteAllBytes(pdbImage.ToArray());
+
         var symReader = SymReaderTestHelpers.OpenDummySymReader(pdbImage);
 
         var moduleMetadata = ModuleMetadata.CreateFromImage(peImage);
@@ -484,7 +508,7 @@ public abstract class EditAndContinueWorkspaceTestBase : TestBase, IDisposable
                 }
                 else
                 {
-                    ((DebugInformationReaderProvider)reader).CreateEditAndContinueMethodDebugInfoReader();
+                    ((DebugInformationReaderProvider)reader).CreateEditAndContinueDebugInfoReader();
                 }
             });
         }

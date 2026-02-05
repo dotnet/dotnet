@@ -14,13 +14,33 @@
       </trans-unit>
       <trans-unit id="DTE_ProjectUnsupported">
         <source>The project '{0}' is unsupported</source>
-        <target state="translated">Projekt „{0}” jest nieobsługiwany</target>
+        <target state="translated">Projekt „{0}” nie jest obsługiwany</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorDialogBoxTitle">
         <source>Operation failed</source>
         <target state="translated">Operacja nie powiodła się</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Error_CopilotAccessDenied">
+        <source>Access denied. Please ensure you are signed in to GitHub Copilot.</source>
+        <target state="translated">Odmowa dostępu. Upewnij się, że zalogowano się do usługi GitHub Copilot.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_CopilotNotReady">
+        <source>GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">Usługa GitHub Copilot nie jest gotowa. Upewnij się, że usługa GitHub Copilot jest zainstalowana i zalogowano się.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_CopilotServiceNotAvailable">
+        <source>GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">Usługa GitHub Copilot jest niedostępna. Upewnij się, że usługa GitHub Copilot jest zainstalowana i zalogowano się.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_McpToolServiceNotAvailable">
+        <source>MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">Usługa narzędzia MCP jest niedostępna. Upewnij się, że usługa GitHub Copilot jest zainstalowana i zalogowano się.</target>
+        <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingPattern_Missing">
         <source>A package pattern must be provided.</source>
@@ -45,6 +65,11 @@
       <trans-unit id="Error_PackageSourceUri_Missing">
         <source>A source must be provided.</source>
         <target state="translated">Należy podać źródło.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ServiceBrokerNotAvailable">
+        <source>Service Broker is not available. Please ensure Visual Studio is running correctly.</source>
+        <target state="translated">Technologia Service Broker jest niedostępna. Upewnij się, że program Visual Studio działa poprawnie.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoProjectSelected">
@@ -113,13 +138,18 @@
         <note />
       </trans-unit>
       <trans-unit id="ProjectMigrateErrorMessage">
-        <source>Project is not eligible for migration as it's not project.json based.</source>
-        <target state="translated">Projekt nie kwalifikuje się do migracji, ponieważ nie jest oparty na project.json.</target>
+        <source>Project is not eligible for migration. Either the project is not packages.config based or doesn't support PackageReference yet.</source>
+        <target state="translated">Projekt nie kwalifikuje się do migracji. Projekt nie jest oparty na pliku packages.config lub nie obsługuje jeszcze elementu PackageReference.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Prompt_FixNuGetPackageVulnerabilities">
+        <source>Fix my NuGet package vulnerabilities</source>
+        <target state="translated">Napraw luki w zabezpieczeniach pakietu NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
         <source>These settings are stored in %NuGet.Config% files</source>
-        <target state="translated">Te ustawienia są przechowywane w %NuGet.Config% plikach</target>
+        <target state="translated">Te ustawienia są przechowywane w plikach %NuGet.Config%</target>
         <note>Do not translate % % or what is between them</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
@@ -130,6 +160,26 @@
       <trans-unit id="Text_AllowInsecureConnections_Header">
         <source>Allow Insecure Connections</source>
         <target state="translated">Zezwalaj na niezabezpieczone połączenia</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Checkbox">
+        <source>Use separate sources for vulnerability audit</source>
+        <target state="translated">Skorzystaj z oddzielnych źródeł do inspekcji luk w zabezpieczeniach</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Description">
+        <source>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</source>
+        <target state="translated">Źródła inspekcji udostępniają dane dotyczące luk w zabezpieczeniach podczas przywracania bez działania jako źródła pakietów. Jeśli żadne źródła inspekcji nie są skonfigurowane, usługa NuGet Audit używa źródeł pakietów. [Dowiedz się więcej o źródłach inspekcji](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_HowToRemove">
+        <source>Remove all audit sources to revert to using package sources for vulnerability data.</source>
+        <target state="translated">Usuń wszystkie źródła inspekcji, aby przywrócić używanie źródeł pakietów na potrzeby danych dotyczących luk w zabezpieczeniach.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Title">
+        <source>Audit sources</source>
+        <target state="translated">Źródła inspekcji</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">
@@ -157,6 +207,11 @@
         <target state="translated">Źródła HTTP są niezabezpieczone. Zamiast tego rozważ użycie protokołu HTTPS. Opcja „AllowInsecureConnections” jest włączona, co zezwala na dostęp HTTP. Aby uzyskać bezpieczniejsze opcje, zobacz [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere).</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_MachineWidePackageSource_Description">
+        <source>Machine‑wide package sources are provisioned by Visual Studio workloads and can only be enabled or disabled.</source>
+        <target state="translated">Źródła pakietów dla całej maszyny są aprowizowane przez obciążenia programu Visual Studio i można je tylko włączać lub wyłączać.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_PackageSourceEnabled_Header">
         <source>Enabled</source>
         <target state="translated">Włączone</target>
@@ -177,6 +232,11 @@
         <target state="translated">Źródło</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_PackageSources_Description">
+        <source>Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</source>
+        <target state="translated">Źródła pakietów definiują, gdzie program NuGet pobiera pakiety na potrzeby operacji instalowania, przywracania, inspekcji i aktualizacji. [Dowiedz się więcej o źródłach pakietów](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_PackageSources_MachineWide">
         <source>Machine-wide package sources</source>
         <target state="translated">Źródła pakietów na całym komputerze</target>
@@ -192,9 +252,14 @@
         <target state="translated">Contoso.Contracts lub System.*</target>
         <note>"Contoso.Contracts" and "System.*" are examples of a package ID pattern and a package prefix pattern, respectively, so these two specific examples should not be translated.</note>
       </trans-unit>
+      <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
+        <source>Fix Vulnerabilities with GitHub Copilot</source>
+        <target state="translated">Napraw luki w zabezpieczeniach z usługą GitHub Copilot</target>
+        <note />
+      </trans-unit>
       <trans-unit id="clearLocalResources">
         <source>Clear NuGet local resources</source>
-        <target state="translated">Wyczyść zasoby lokalne nuGet</target>
+        <target state="translated">Wyczyść zasoby lokalne menedżera pakietów NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="defaultPackageManagementFormat">

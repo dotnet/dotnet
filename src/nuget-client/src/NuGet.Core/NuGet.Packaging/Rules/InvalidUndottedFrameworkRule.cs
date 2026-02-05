@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -37,10 +39,6 @@ namespace NuGet.Packaging.Rules
 
         // NOTE: We generate many different messages here, so we avoid using MessageFormat itself.
         public string MessageFormat => "";
-
-        public InvalidUndottedFrameworkRule()
-        {
-        }
 
         public IEnumerable<PackagingLogMessage> Validate(PackageArchiveReader builder)
         {

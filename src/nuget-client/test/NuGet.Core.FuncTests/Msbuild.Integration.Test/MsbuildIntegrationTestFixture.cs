@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,7 +20,6 @@ namespace Msbuild.Integration.Test
 
         private readonly Dictionary<string, string> _processEnvVars = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
-            ["DOTNET_MULTILEVEL_LOOKUP"] = "0",
             // Uncomment to debug the msbuild call
             //["DEBUG_RESTORE_TASK"] = bool.TrueString,
             ["UNIT_TEST_RESTORE_TASK"] = bool.TrueString,

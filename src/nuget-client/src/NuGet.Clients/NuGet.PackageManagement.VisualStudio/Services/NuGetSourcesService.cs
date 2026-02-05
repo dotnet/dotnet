@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +10,8 @@ using Microsoft;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.ServiceHub.Framework.Services;
 using NuGet.Configuration;
+using NuGet.Protocol;
+using NuGet.Protocol.Core.Types;
 using NuGet.VisualStudio.Internal.Contracts;
 
 namespace NuGet.PackageManagement.VisualStudio
@@ -22,8 +22,6 @@ namespace NuGet.PackageManagement.VisualStudio
         private readonly IServiceBroker _serviceBroker;
         private readonly AuthorizationServiceClient _authorizationServiceClient;
         private readonly IPackageSourceProvider _packageSourceProvider;
-
-        public event EventHandler<IReadOnlyList<PackageSourceContextInfo>>? PackageSourcesChanged;
 
         public NuGetSourcesService(
             ServiceActivationOptions options,
@@ -39,7 +37,6 @@ namespace NuGet.PackageManagement.VisualStudio
             _serviceBroker = serviceBroker;
             _authorizationServiceClient = authorizationServiceClient;
             _packageSourceProvider = packageSourceProvider;
-            _packageSourceProvider.PackageSourcesChanged += PackageSourceProvider_PackageSourcesChanged;
         }
 
         public ValueTask<IReadOnlyList<PackageSourceContextInfo>> GetPackageSourcesAsync(CancellationToken cancellationToken)
@@ -49,6 +46,24 @@ namespace NuGet.PackageManagement.VisualStudio
                 .LoadPackageSources()
                 .Select(PackageSourceContextInfo.Create)
                 .ToList());
+        }
+
+        public IReadOnlyList<SourceRepository> GetEnabledAuditSources()
+        {
+            IReadOnlyList<PackageSource> auditSources = _packageSourceProvider.LoadAuditSources();
+
+            List<SourceRepository> auditRepositories = new List<SourceRepository>(auditSources.Count);
+            for (int i = 0; i < auditSources.Count; i++)
+            {
+                PackageSource auditSource = auditSources[i];
+                if (auditSource.IsEnabled)
+                {
+                    SourceRepository repository = Repository.Factory.GetCoreV3(auditSource);
+                    auditRepositories.Add(repository);
+                }
+            }
+
+            return auditRepositories;
         }
 
         public ValueTask SavePackageSourceContextInfosAsync(IReadOnlyList<PackageSourceContextInfo> sources, CancellationToken cancellationToken)
@@ -66,15 +81,8 @@ namespace NuGet.PackageManagement.VisualStudio
 
         public void Dispose()
         {
-            _packageSourceProvider.PackageSourcesChanged -= PackageSourceProvider_PackageSourcesChanged;
             _authorizationServiceClient.Dispose();
             GC.SuppressFinalize(this);
-        }
-
-        private void PackageSourceProvider_PackageSourcesChanged(object sender, EventArgs e)
-        {
-            List<PackageSourceContextInfo> packageSources = _packageSourceProvider.LoadPackageSources().Select(PackageSourceContextInfo.Create).ToList();
-            PackageSourcesChanged?.Invoke(this, packageSources);
         }
 
         private IReadOnlyList<PackageSource> GetPackageSourcesToUpdate(IReadOnlyList<PackageSourceContextInfo> packageSourceContextInfos)

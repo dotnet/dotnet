@@ -1,10 +1,13 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using NuGet.Protocol.Core.Types;
 using NuGet.VisualStudio.Internal.Contracts;
 using Xunit;
 
@@ -55,34 +58,6 @@ namespace NuGet.PackageManagement.UI.Test
         }
 
         [Fact]
-        public void PackageSourcesChanged_Always_ForwardsEvent()
-        {
-            var service = new TestNuGetSourcesService();
-            var packageSources = new List<PackageSourceContextInfo>
-                    {
-                        new PackageSourceContextInfo("a")
-                    };
-
-            using (_wrapper.Swap(service))
-            {
-            }
-
-            var eventRaised = false;
-
-            _wrapper.PackageSourcesChanged += (sender, e) =>
-            {
-                Assert.Same(packageSources, e);
-
-                eventRaised = true;
-            };
-
-            service.RaisePackageSourcesChanged(packageSources);
-
-            Assert.True(eventRaised);
-        }
-
-
-        [Fact]
         public async Task GetActivePackageSourceNameAsync_Always_ReturnsActivePackageSourceName()
         {
             var service = new TestNuGetSourcesService();
@@ -101,18 +76,11 @@ namespace NuGet.PackageManagement.UI.Test
 
         private sealed class TestNuGetSourcesService : INuGetSourcesService
         {
-            public event EventHandler<IReadOnlyList<PackageSourceContextInfo>> PackageSourcesChanged;
-
             internal string ActivePackageSourceName { get; set; }
             internal IReadOnlyList<PackageSourceContextInfo> PackageSources { get; set; }
 
             public void Dispose()
             {
-            }
-
-            internal void RaisePackageSourcesChanged(IReadOnlyList<PackageSourceContextInfo> packageSources)
-            {
-                PackageSourcesChanged?.Invoke(this, packageSources);
             }
 
             public ValueTask<string> GetActivePackageSourceNameAsync(CancellationToken cancellationToken)
@@ -128,6 +96,11 @@ namespace NuGet.PackageManagement.UI.Test
             public ValueTask<IReadOnlyList<PackageSourceContextInfo>> GetPackageSourcesAsync(CancellationToken cancellationToken)
             {
                 return new ValueTask<IReadOnlyList<PackageSourceContextInfo>>(PackageSources);
+            }
+
+            public IReadOnlyList<SourceRepository> GetEnabledAuditSources()
+            {
+                throw new NotImplementedException();
             }
         }
     }

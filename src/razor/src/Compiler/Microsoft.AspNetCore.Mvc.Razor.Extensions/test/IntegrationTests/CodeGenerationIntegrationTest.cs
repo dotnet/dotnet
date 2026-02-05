@@ -941,7 +941,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -961,7 +961,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -989,7 +989,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1028,7 +1028,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1066,7 +1066,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1088,7 +1088,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1108,7 +1108,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1128,7 +1128,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1145,7 +1145,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1171,7 +1171,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1188,7 +1188,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1214,7 +1214,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1249,7 +1249,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1285,7 +1285,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1302,7 +1302,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1327,7 +1327,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1356,7 +1356,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1380,7 +1380,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1397,7 +1397,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1421,7 +1421,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1438,7 +1438,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1455,7 +1455,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1488,7 +1488,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1505,7 +1505,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
-        AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(compiled.CodeDocument));
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -1604,7 +1604,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument.GetDocumentNode(), testName: testName);
-        AssertHtmlDocumentMatchesBaseline(generated.CodeDocument.GetHtmlDocument(), testName: testName);
+        AssertHtmlDocumentMatchesBaseline(RazorHtmlWriter.GetHtmlDocument(generated.CodeDocument), testName: testName);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument.GetCSharpDocument(), testName: testName);
         AssertLinePragmas(generated.CodeDocument);
         AssertSourceMappingsMatchBaseline(generated.CodeDocument, testName: testName);

@@ -4,27 +4,27 @@
     <body>
       <trans-unit id="1">
         <source>plk</source>
-        <target state="new">plk</target>
+        <target state="translated">plk</target>
         <note />
       </trans-unit>
       <trans-unit id="110">
         <source>NuGet Package Manager</source>
-        <target state="translated">NuGet 套件管理員</target>
+        <target state="translated">NuGet 套件管理器</target>
         <note />
       </trans-unit>
       <trans-unit id="112">
         <source>NuGet Package Manager in Visual Studio. For more information about NuGet, visit https://docs.nuget.org/</source>
-        <target state="translated">Visual Studio 中的 NuGet 套件管理員。如需 NuGet 的詳細資訊，請前往 https://docs.nuget.org/</target>
+        <target state="translated">Visual Studio 中的 NuGet 套件管理器。如需 NuGet 的詳細資訊，請前往 https://docs.nuget.org/</target>
         <note />
       </trans-unit>
       <trans-unit id="113">
         <source>NuGet Package Manager</source>
-        <target state="translated">NuGet 套件管理員</target>
+        <target state="translated">NuGet 套件管理器</target>
         <note />
       </trans-unit>
       <trans-unit id="114">
-        <source>Package Sources</source>
-        <target state="translated">套件來源</target>
+        <source>Sources</source>
+        <target state="translated">來源</target>
         <note />
       </trans-unit>
       <trans-unit id="115">
@@ -54,7 +54,7 @@
       </trans-unit>
       <trans-unit id="3">
         <source>plk</source>
-        <target state="new">plk</target>
+        <target state="translated">plk</target>
         <note />
       </trans-unit>
       <trans-unit id="300">
@@ -64,7 +64,7 @@
       </trans-unit>
       <trans-unit id="4">
         <source>plk</source>
-        <target state="new">plk</target>
+        <target state="translated">plk</target>
         <note />
       </trans-unit>
     </body>

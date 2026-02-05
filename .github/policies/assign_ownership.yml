@@ -8,216 +8,312 @@ configuration:
     - description: 
       if:
       - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/arcade/.*'
-          matchAny: true
+      - or:
+        - filesMatchPattern:
+            pattern: 'src/arcade/.*'
+            matchAny: true
+        - titleContains:
+            pattern: 'dotnet/arcade'
+            isRegex: False
       then:
       - requestReview:
           teamReviewer: dnceng
     - description: 
       if:
       - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/aspnetcore/.*'
-          matchAny: true
+      - or:
+        - filesMatchPattern:
+            pattern: 'src/aspnetcore/.*'
+            matchAny: true
+        - titleContains:
+            pattern: 'dotnet/aspnetcore'
+            isRegex: False
       then:
       - requestReview:
           teamReviewer: aspnet-build
     # - description: 
     #   if:
     #   - payloadType: Pull_Request
-    #   - filesMatchPattern:
-    #       pattern: 'src/cecil/.*'
-    #       matchAny: true
+    #   - or:
+    #     - filesMatchPattern:
+    #         pattern: 'src/cecil/.*'
+    #         matchAny: true
+    #     - titleContains:
+    #         pattern: 'dotnet/cecil'
+    #         isRegex: False
     #   then:
     #   - requestReview:
     #       teamReviewer: PLACEHOLDER
     - description: 
       if:
       - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/command-line-api/.*'
-          matchAny: true
+      - or:
+        - filesMatchPattern:
+            pattern: 'src/command-line-api/.*'
+            matchAny: true
+        - titleContains:
+            pattern: 'dotnet/command-line-api'
+            isRegex: False
       then:
       - requestReview:
           teamReviewer: system-commandline
     - description: 
       if:
       - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/deployment-tools/.*'
-          matchAny: true
+      - or:
+        - filesMatchPattern:
+            pattern: 'src/deployment-tools/.*'
+            matchAny: true
+        - titleContains:
+            pattern: 'dotnet/deployment-tools'
+            isRegex: False
       then:
       - requestReview:
           teamReviewer: deployment-tools-admins
     # - description: 
     #   if:
     #   - payloadType: Pull_Request
-    #   - filesMatchPattern:
-    #       pattern: 'src/diagnostics/.*'
-    #       matchAny: true
+    #   - or:
+    #     - filesMatchPattern:
+    #         pattern: 'src/diagnostics/.*'
+    #         matchAny: true
+    #     - titleContains:
+    #         pattern: 'dotnet/diagnostics'
+    #         isRegex: False
     #   then:
     #   - requestReview:
     #       teamReviewer: PLACEHOLDER
     - description: 
       if:
       - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/efcore/.*'
-          matchAny: true
+      - or:
+        - filesMatchPattern:
+            pattern: 'src/efcore/.*'
+            matchAny: true
+        - titleContains:
+            pattern: 'dotnet/efcore'
+            isRegex: False
       then:
       - requestReview:
           teamReviewer: efteam
     - description: 
       if:
       - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/emsdk/.*'
-          matchAny: true
+      - or:
+        - filesMatchPattern:
+            pattern: 'src/emsdk/.*'
+            matchAny: true
+        - titleContains:
+            pattern: 'dotnet/emsdk'
+            isRegex: False
       then:
       - requestReview:
           teamReviewer: dnr-codeflow
     - description: 
       if:
       - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/fsharp/.*'
-          matchAny: true
+      - or:
+        - filesMatchPattern:
+            pattern: 'src/fsharp/.*'
+            matchAny: true
+        - titleContains:
+            pattern: 'dotnet/fsharp'
+            isRegex: False
       then:
       - requestReview:
           teamReviewer: fsharp
     - description: 
       if:
       - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/msbuild/.*'
-          matchAny: true
+      - or:
+        - filesMatchPattern:
+            pattern: 'src/msbuild/.*'
+            matchAny: true
+        - titleContains:
+            pattern: 'dotnet/msbuild'
+            isRegex: False
       then:
       - requestReview:
           teamReviewer: msbuild
     - description: 
       if:
       - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/nuget-client/.*'
-          matchAny: true
+      - or:
+        - filesMatchPattern:
+            pattern: 'src/nuget-client/.*'
+            matchAny: true
+        - titleContains:
+            pattern: 'dotnet/nuget-client'
+            isRegex: False
       then:
       - requestReview:
           teamReviewer: nuget-team
     - description: 
       if:
       - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/razor/.*'
-          matchAny: true
+      - or:
+        - filesMatchPattern:
+            pattern: 'src/razor/.*'
+            matchAny: true
+        - titleContains:
+            pattern: 'dotnet/razor'
+            isRegex: False
       then:
       - requestReview:
-          teamReviewer: roslyn-infrastructure-current-swat
+          teamReviewer: roslyn-infrastructure
     - description: 
       if:
       - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/roslyn/.*'
-          matchAny: true
+      - or:
+        - filesMatchPattern:
+            pattern: 'src/roslyn/.*'
+            matchAny: true
+        - titleContains:
+            pattern: 'dotnet/roslyn'
+            isRegex: False
       then:
       - requestReview:
-          teamReviewer: roslyn-infrastructure-current-swat
+          teamReviewer: roslyn-infrastructure
     - description: 
       if:
       - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/runtime/.*'
-          matchAny: true
+      - or:
+        - filesMatchPattern:
+            pattern: 'src/runtime/.*'
+            matchAny: true
+        - titleContains:
+            pattern: 'dotnet/runtime'
+            isRegex: False
       then:
       - requestReview:
           teamReviewer: dnr-codeflow
     # - description: 
     #   if:
     #   - payloadType: Pull_Request
-    #   - filesMatchPattern:
-    #       pattern: 'src/scenario-tests/.*'
-    #       matchAny: true
+    #   - or:
+    #     - filesMatchPattern:
+    #         pattern: 'src/scenario-tests/.*'
+    #         matchAny: true
+    #     - titleContains:
+    #         pattern: 'dotnet/scenario-tests'
+    #         isRegex: False
     #   then:
     #   - requestReview:
     #       teamReviewer: PLACEHOLDER
     - description: 
       if:
       - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/sdk/.*'
-          matchAny: true
+      - or:
+        - filesMatchPattern:
+            pattern: 'src/sdk/.*'
+            matchAny: true
+        - titleContains:
+            pattern: 'dotnet/sdk'
+            isRegex: False
       then:
       - requestReview:
           teamReviewer: dotnet-cli
     - description: 
       if:
       - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/source-build-reference-packages/.*'
-          matchAny: true
+      - or:
+        - filesMatchPattern:
+            pattern: 'src/source-build-reference-packages/.*'
+            matchAny: true
+        - titleContains:
+            pattern: 'dotnet/source-build-reference-packages'
+            isRegex: False
       then:
       - requestReview:
           teamReviewer: source-build
     # - description: 
     #   if:
     #   - payloadType: Pull_Request
-    #   - filesMatchPattern:
-    #       pattern: 'src/sourcelink/.*'
-    #       matchAny: true
+    #   - or:
+    #     - filesMatchPattern:
+    #         pattern: 'src/sourcelink/.*'
+    #         matchAny: true
+    #     - titleContains:
+    #         pattern: 'dotnet/sourcelink'
+    #         isRegex: False
     #   then:
     #   - requestReview:
     #       teamReviewer: PLACEHOLDER
     # - description: 
     #   if:
     #   - payloadType: Pull_Request
-    #   - filesMatchPattern:
-    #       pattern: 'src/symreader/.*'
-    #       matchAny: true
+    #   - or:
+    #     - filesMatchPattern:
+    #         pattern: 'src/symreader/.*'
+    #         matchAny: true
+    #     - titleContains:
+    #         pattern: 'dotnet/symreader'
+    #         isRegex: False
     #   then:
     #   - requestReview:
     #       teamReviewer: PLACEHOLDER
     - description: 
       if:
       - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/templating/.*'
-          matchAny: true
+      - or:
+        - filesMatchPattern:
+            pattern: 'src/templating/.*'
+            matchAny: true
+        - titleContains:
+            pattern: 'dotnet/templating'
+            isRegex: False
       then:
       - requestReview:
           teamReviewer: templating-engine-maintainers
     - description: 
       if:
       - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/vstest/.*'
-          matchAny: true
+      - or:
+        - filesMatchPattern:
+            pattern: 'src/vstest/.*'
+            matchAny: true
+        - titleContains:
+            pattern: 'microsoft/vstest'
+            isRegex: False
       then:
       - requestReview:
-          teamReviewer: testing-admin
+          teamReviewer: dotnet-testing-admin
     - description: 
       if:
       - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/windowsdesktop/.*'
-          matchAny: true
+      - or:
+        - filesMatchPattern:
+            pattern: 'src/windowsdesktop/.*'
+            matchAny: true
+        - titleContains:
+            pattern: 'dotnet/windowsdesktop'
+            isRegex: False
       then:
       - requestReview:
           teamReviewer: wpf-developers
     - description: 
       if:
       - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/winforms/.*'
-          matchAny: true
+      - or:
+        - filesMatchPattern:
+            pattern: 'src/winforms/.*'
+            matchAny: true
+        - titleContains:
+            pattern: 'dotnet/winforms'
+            isRegex: False
       then:
       - requestReview:
           teamReviewer: dotnet-winforms-admin
     - description: 
       if:
       - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/wpf/.*'
-          matchAny: true
+      - or:
+        - filesMatchPattern:
+            pattern: 'src/wpf/.*'
+            matchAny: true
+        - titleContains:
+            pattern: 'dotnet/wpf'
+            isRegex: False
       then:
       - requestReview:
           teamReviewer: wpf-developers

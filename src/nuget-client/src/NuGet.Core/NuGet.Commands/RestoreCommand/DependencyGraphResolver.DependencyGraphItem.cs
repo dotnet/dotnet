@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -99,7 +97,7 @@ namespace NuGet.Commands
                 }
 
                 // Create a new list that is big enough for the existing items plus any runtime dependencies
-                List<LibraryDependency> dependencies = new(capacity: RuntimeDependencies?.Count ?? 0 + item.Data.Dependencies.Count);
+                List<LibraryDependency> dependencies = new(capacity: (RuntimeDependencies?.Count ?? 0) + item.Data.Dependencies.Count);
 
                 // Loop through the defined dependencies, leaving out any pruned packages or runtime packages that replace them
                 for (int i = 0; i < item.Data.Dependencies.Count; i++)

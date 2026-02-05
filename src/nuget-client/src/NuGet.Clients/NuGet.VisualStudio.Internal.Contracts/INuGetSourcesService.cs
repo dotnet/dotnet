@@ -5,14 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using NuGet.Protocol.Core.Types;
 
 namespace NuGet.VisualStudio.Internal.Contracts
 {
     public interface INuGetSourcesService : IDisposable
     {
-        /// <remarks> First available in version 1.0.1 </remarks>
-        event EventHandler<IReadOnlyList<PackageSourceContextInfo>>? PackageSourcesChanged;
-
         /// <remarks> First available in version 1.0.1 </remarks>
         ValueTask<string?> GetActivePackageSourceNameAsync(CancellationToken cancellationToken);
 
@@ -20,5 +18,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
         ValueTask SavePackageSourceContextInfosAsync(IReadOnlyList<PackageSourceContextInfo> sources, CancellationToken cancellationToken);
 
         ValueTask<IReadOnlyList<PackageSourceContextInfo>> GetPackageSourcesAsync(CancellationToken cancellationToken);
+
+        public IReadOnlyList<SourceRepository> GetEnabledAuditSources();
     }
 }

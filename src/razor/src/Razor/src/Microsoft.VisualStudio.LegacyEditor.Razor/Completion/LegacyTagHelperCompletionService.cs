@@ -20,6 +20,9 @@ namespace Microsoft.VisualStudio.LegacyEditor.Razor.Completion;
 [Export(typeof(ITagHelperCompletionService))]
 internal sealed class LegacyTagHelperCompletionService : ITagHelperCompletionService
 {
+    private static readonly HashSetPool<TagHelperDescriptor> s_shortNameSetPool =
+        HashSetPool<TagHelperDescriptor>.Create(ShortNameToFullyQualifiedComparer.Instance);
+
     private static readonly HashSet<TagHelperDescriptor> s_emptyHashSet = new();
 
     // This API attempts to understand a users context as they're typing in a Razor file to provide TagHelper based attribute IntelliSense.
@@ -45,8 +48,13 @@ internal sealed class LegacyTagHelperCompletionService : ITagHelperCompletionSer
             StringComparer.OrdinalIgnoreCase);
 
         var documentContext = completionContext.DocumentContext;
-        var descriptorsForTag = TagHelperFacts.GetTagHelpersGivenTag(documentContext, completionContext.CurrentTagName, completionContext.CurrentParentTagName);
-        if (descriptorsForTag.Length == 0)
+
+        var tagHelpersForTag = TagHelperFacts.GetTagHelpersGivenTag(
+            documentContext,
+            completionContext.CurrentTagName,
+            completionContext.CurrentParentTagName);
+
+        if (tagHelpersForTag.IsEmpty)
         {
             // If the current tag has no possible descriptors then we can't have any additional attributes.
             return AttributeCompletionResult.Create(attributeCompletions);
@@ -64,9 +72,9 @@ internal sealed class LegacyTagHelperCompletionService : ITagHelperCompletionSer
 
         using var _ = HashSetPool<TagHelperDescriptor>.GetPooledObject(out var applicableDescriptors);
 
-        if (applicableTagHelperBinding is { Descriptors: var descriptors })
+        if (applicableTagHelperBinding is { TagHelpers: var tagHelpers })
         {
-            applicableDescriptors.UnionWith(descriptors);
+            applicableDescriptors.UnionWith(tagHelpers);
         }
 
         var unprefixedTagName = completionContext.CurrentTagName[prefix.Length..];
@@ -78,11 +86,11 @@ internal sealed class LegacyTagHelperCompletionService : ITagHelperCompletionSer
             attributeCompletions.Clear();
         }
 
-        foreach (var descriptor in descriptorsForTag)
+        foreach (var tagHelper in tagHelpersForTag)
         {
-            if (applicableDescriptors.Contains(descriptor))
+            if (applicableDescriptors.Contains(tagHelper))
             {
-                foreach (var attributeDescriptor in descriptor.BoundAttributes)
+                foreach (var attributeDescriptor in tagHelper.BoundAttributes)
                 {
                     if (!attributeDescriptor.Name.IsNullOrEmpty())
                     {
@@ -98,7 +106,7 @@ internal sealed class LegacyTagHelperCompletionService : ITagHelperCompletionSer
             else
             {
                 var htmlNameToBoundAttribute = new Dictionary<string, BoundAttributeDescriptor>(StringComparer.OrdinalIgnoreCase);
-                foreach (var attributeDescriptor in descriptor.BoundAttributes)
+                foreach (var attributeDescriptor in tagHelper.BoundAttributes)
                 {
                     if (attributeDescriptor.Name != null)
                     {
@@ -111,7 +119,7 @@ internal sealed class LegacyTagHelperCompletionService : ITagHelperCompletionSer
                     }
                 }
 
-                foreach (var rule in descriptor.TagMatchingRules)
+                foreach (var rule in tagHelper.TagMatchingRules)
                 {
                     foreach (var requiredAttribute in rule.Attributes)
                     {
@@ -178,16 +186,21 @@ internal sealed class LegacyTagHelperCompletionService : ITagHelperCompletionSer
             _ => new HashSet<TagHelperDescriptor>(),
             StringComparer.Ordinal);
 
-        var catchAllDescriptors = new HashSet<TagHelperDescriptor>();
+        var catchAllTagHelpers = new HashSet<TagHelperDescriptor>();
         var prefix = completionContext.DocumentContext.Prefix ?? string.Empty;
-        var possibleChildDescriptors = TagHelperFacts.GetTagHelpersGivenParent(completionContext.DocumentContext, completionContext.ContainingTagName);
-        possibleChildDescriptors = FilterFullyQualifiedCompletions(possibleChildDescriptors);
-        foreach (var possibleDescriptor in possibleChildDescriptors)
+
+        var possibleChildTagHelpers = TagHelperFacts.GetTagHelpersGivenParent(
+            completionContext.DocumentContext,
+            completionContext.ContainingTagName);
+
+        possibleChildTagHelpers = FilterFullyQualifiedTagHelpers(possibleChildTagHelpers);
+
+        foreach (var possibleChildTagHelper in possibleChildTagHelpers)
         {
             var addRuleCompletions = false;
-            var outputHint = possibleDescriptor.TagOutputHint;
+            var outputHint = possibleChildTagHelper.TagOutputHint;
 
-            foreach (var rule in possibleDescriptor.TagMatchingRules)
+            foreach (var rule in possibleChildTagHelper.TagMatchingRules)
             {
                 if (!TagHelperMatchingConventions.SatisfiesParentTag(rule, completionContext.ContainingTagName.AsSpanOrDefault()))
                 {
@@ -196,7 +209,7 @@ internal sealed class LegacyTagHelperCompletionService : ITagHelperCompletionSer
 
                 if (rule.TagName == TagHelperMatchingConventions.ElementCatchAllName)
                 {
-                    catchAllDescriptors.Add(possibleDescriptor);
+                    catchAllTagHelpers.Add(possibleChildTagHelper);
                 }
                 else if (elementCompletions.ContainsKey(rule.TagName))
                 {
@@ -221,14 +234,14 @@ internal sealed class LegacyTagHelperCompletionService : ITagHelperCompletionSer
 
                 if (addRuleCompletions)
                 {
-                    UpdateCompletions(prefix + rule.TagName, possibleDescriptor);
+                    UpdateCompletions(prefix + rule.TagName, possibleChildTagHelper);
                 }
             }
         }
 
         // We needed to track all catch-alls and update their completions after all other completions have been completed.
         // This way, any TagHelper added completions will also have catch-alls listed under their entries.
-        foreach (var catchAllDescriptor in catchAllDescriptors)
+        foreach (var catchAllDescriptor in catchAllTagHelpers)
         {
             foreach (var completionTagName in elementCompletions.Keys)
             {
@@ -290,17 +303,17 @@ internal sealed class LegacyTagHelperCompletionService : ITagHelperCompletionSer
             return;
         }
 
-        foreach (var descriptor in binding.Descriptors)
+        foreach (var tagHelper in binding.TagHelpers)
         {
-            foreach (var childTag in descriptor.AllowedChildTags)
+            foreach (var childTag in tagHelper.AllowedChildTags)
             {
                 var prefixedName = string.Concat(prefix, childTag.Name);
-                var descriptors = TagHelperFacts.GetTagHelpersGivenTag(
+                var tagHelpersForTag = TagHelperFacts.GetTagHelpersGivenTag(
                     completionContext.DocumentContext,
                     prefixedName,
                     completionContext.ContainingTagName);
 
-                if (descriptors.Length == 0)
+                if (tagHelpersForTag.IsEmpty)
                 {
                     if (!elementCompletions.ContainsKey(prefixedName))
                     {
@@ -316,47 +329,33 @@ internal sealed class LegacyTagHelperCompletionService : ITagHelperCompletionSer
                     elementCompletions[prefixedName] = existingRuleDescriptors;
                 }
 
-                existingRuleDescriptors.AddRange(descriptors);
+                existingRuleDescriptors.UnionWith(tagHelpersForTag);
             }
         }
     }
 
-    private static ImmutableArray<TagHelperDescriptor> FilterFullyQualifiedCompletions(ImmutableArray<TagHelperDescriptor> possibleChildDescriptors)
+    private static TagHelperCollection FilterFullyQualifiedTagHelpers(TagHelperCollection tagHelpers)
     {
-        // Iterate once through the list to tease apart fully qualified and short name TagHelpers
-        using var fullyQualifiedTagHelpers = new PooledArrayBuilder<TagHelperDescriptor>();
-        var shortNameTagHelpers = new HashSet<TagHelperDescriptor>(ShortNameToFullyQualifiedComparer.Instance);
+        // We want to filter 'tagHelpers' and remove any tag helpers that require a fully-qualified name match
+        // but have a short name match present.
 
-        foreach (var descriptor in possibleChildDescriptors)
+        // First, collect all "short name" tag helpers, i.e. those that do not require a fully qualified name match.
+        using var _ = s_shortNameSetPool.GetPooledObject(out var shortNameSet);
+
+        foreach (var tagHelper in tagHelpers)
         {
-            if (descriptor.IsFullyQualifiedNameMatch)
+            if (!tagHelper.IsFullyQualifiedNameMatch)
             {
-                fullyQualifiedTagHelpers.Add(descriptor);
-            }
-            else
-            {
-                shortNameTagHelpers.Add(descriptor);
+                shortNameSet.Add(tagHelper);
             }
         }
 
-        // Re-combine the short named & fully qualified TagHelpers but filter out any fully qualified TagHelpers that have a short
-        // named representation already.
-        using var filteredList = new PooledArrayBuilder<TagHelperDescriptor>(capacity: shortNameTagHelpers.Count);
-        filteredList.AddRange(shortNameTagHelpers);
-
-        foreach (var fullyQualifiedTagHelper in fullyQualifiedTagHelpers)
+        return tagHelpers.Where(shortNameSet, static (tagHelper, shortNameSet) =>
         {
-            if (!shortNameTagHelpers.Contains(fullyQualifiedTagHelper))
-            {
-                // Unimported completion item that isn't represented in a short named form.
-                filteredList.Add(fullyQualifiedTagHelper);
-            }
-            else
-            {
-                // There's already a shortname variant of this item, don't include it.
-            }
-        }
-
-        return filteredList.ToImmutableAndClear();
+            // We want to keep tag helpers that either:
+            // 1. Do not require a fully qualified name match (i.e., short name tag helpers).
+            // 2. Are fully qualified tag helpers that do not have a corresponding short name tag helper.
+            return !tagHelper.IsFullyQualifiedNameMatch || !shortNameSet.Contains(tagHelper);
+        });
     }
 }

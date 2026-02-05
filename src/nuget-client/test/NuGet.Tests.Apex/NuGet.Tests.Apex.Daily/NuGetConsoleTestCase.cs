@@ -92,8 +92,8 @@ namespace NuGet.Tests.Apex.Daily
                     }
                     else
                     {
-                        CommonUtility.AssertPackageReferenceExists(VisualStudio, testContext.Project, packageName1, packageVersion2, Logger);
-                        CommonUtility.AssertPackageReferenceExists(VisualStudio, testContext.Project, packageName2, packageVersion4, Logger);
+                        CommonUtility.AssertPackageReferenceExists(testContext.Project, packageName1, packageVersion2, Logger);
+                        CommonUtility.AssertPackageReferenceExists(testContext.Project, packageName2, packageVersion4, Logger);
                     }
                     VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
                     Assert.IsTrue(VisualStudio.HasNoErrorsInOutputWindows());
@@ -101,6 +101,7 @@ namespace NuGet.Tests.Apex.Daily
             }
         }
 
+        [Ignore("MAUI projects cause UAC prompt for the remainder of the test run, blocking all tests video recordings")]
         [DataTestMethod]
         [DynamicData(nameof(GetMauiTemplates), DynamicDataSourceType.Method)]
         [Timeout(DefaultTimeout)]
@@ -135,6 +136,7 @@ namespace NuGet.Tests.Apex.Daily
             }
         }
 
+        [Ignore("MAUI projects cause UAC prompt for the remainder of the test run, blocking all tests video recordings")]
         [DataTestMethod]
         [DynamicData(nameof(GetMauiTemplates), DynamicDataSourceType.Method)]
         [Timeout(DefaultTimeout)]
@@ -176,6 +178,7 @@ namespace NuGet.Tests.Apex.Daily
             }
         }
 
+        [Ignore("MAUI projects cause UAC prompt for the remainder of the test run, blocking all tests video recordings")]
         [DataTestMethod]
         [DynamicData(nameof(GetMauiTemplates), DynamicDataSourceType.Method)]
         [Timeout(DefaultTimeout)]
@@ -349,7 +352,7 @@ namespace NuGet.Tests.Apex.Daily
                     }
                     else
                     {
-                        CommonUtility.AssertPackageReferenceExists(VisualStudio, testContext.Project, packageName, v200, Logger);
+                        CommonUtility.AssertPackageReferenceExists(testContext.Project, packageName, v200, Logger);
                     }
                     VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
                     Assert.IsTrue(VisualStudio.HasNoErrorsInOutputWindows());

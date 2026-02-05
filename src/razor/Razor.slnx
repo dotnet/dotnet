@@ -1,0 +1,91 @@
+<Solution>
+  <Folder Name="/Analyzers/">
+    <Project Path="src/Analyzers/Razor.Diagnostics.Analyzers.Test/Razor.Diagnostics.Analyzers.Test.csproj" />
+    <Project Path="src/Analyzers/Razor.Diagnostics.Analyzers/Razor.Diagnostics.Analyzers.csproj" />
+  </Folder>
+  <Folder Name="/benchmarks/">
+    <Project Path="src/Compiler/perf/Microbenchmarks/Microsoft.AspNetCore.Razor.Microbenchmarks.Compiler.csproj" />
+    <Project Path="src/Compiler/perf/Microsoft.AspNetCore.Razor.Microbenchmarks.Generator/Microsoft.AspNetCore.Razor.Microbenchmarks.Generator.csproj" />
+    <Project Path="src/Razor/benchmarks/Microsoft.AspNetCore.Razor.Microbenchmarks/Microsoft.AspNetCore.Razor.Microbenchmarks.csproj" />
+  </Folder>
+  <Folder Name="/build/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Packages.props" />
+    <File Path="eng/targets/Services.props" />
+    <File Path="eng/Version.Details.props" />
+    <File Path="eng/Version.Details.xml" />
+    <File Path="eng/Versions.props" />
+    <File Path="NuGet.config" />
+    <File Path="SpellingExclusions.dic" />
+  </Folder>
+  <Folder Name="/Compiler Tests/">
+    <Project Path="src/Compiler/test/Microsoft.AspNetCore.Razor.Test.MvcShim.Version1_X/Microsoft.AspNetCore.Razor.Test.MvcShim.Version1_X.Compiler.csproj" />
+    <Project Path="src/Compiler/test/Microsoft.AspNetCore.Razor.Test.MvcShim.Version2_X/Microsoft.AspNetCore.Razor.Test.MvcShim.Version2_X.Compiler.csproj" />
+  </Folder>
+  <Folder Name="/Compiler/" />
+  <Folder Name="/Compiler/Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X/">
+    <Project Path="src/Compiler/Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X/test/Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X.Test.csproj" />
+  </Folder>
+  <Folder Name="/Compiler/Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X/">
+    <Project Path="src/Compiler/Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X/test/Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X.Test.csproj" />
+  </Folder>
+  <Folder Name="/Compiler/Microsoft.AspNetCore.Mvc.Razor.Extensions/">
+    <Project Path="src/Compiler/Microsoft.AspNetCore.Mvc.Razor.Extensions/test/Microsoft.AspNetCore.Mvc.Razor.Extensions.Test.csproj" />
+  </Folder>
+  <Folder Name="/Compiler/Microsoft.AspNetCore.Razor.Language/">
+    <Project Path="src/Compiler/Microsoft.AspNetCore.Razor.Language/test/Microsoft.AspNetCore.Razor.Language.Test.csproj" />
+  </Folder>
+  <Folder Name="/Compiler/Microsoft.CodeAnalysis.Razor.Compiler/">
+    <Project Path="src/Compiler/Microsoft.CodeAnalysis.Razor.Compiler/src/Microsoft.CodeAnalysis.Razor.Compiler.csproj" />
+  </Folder>
+  <Folder Name="/Compiler/Microsoft.CodeAnalysis.Razor/">
+    <Project Path="src/Compiler/Microsoft.AspNetCore.Razor.Language/legacyTest/Microsoft.AspNetCore.Razor.Language.Legacy.Test.csproj" />
+    <Project Path="src/Compiler/Microsoft.CodeAnalysis.Razor/test/Microsoft.CodeAnalysis.Razor.Test.csproj" />
+  </Folder>
+  <Folder Name="/Compiler/sdk/">
+    <Project Path="src/Compiler/Microsoft.Net.Compilers.Razor.Toolset/Microsoft.Net.Compilers.Razor.Toolset.csproj" />
+    <Project Path="src/Compiler/Microsoft.NET.Sdk.Razor.SourceGenerators.Transport/Microsoft.NET.Sdk.Razor.SourceGenerators.Transport.csproj" />
+    <Project Path="src/Compiler/test/Microsoft.NET.Sdk.Razor.SourceGenerators.Tests/Microsoft.NET.Sdk.Razor.SourceGenerators.Test.csproj" />
+  </Folder>
+  <Folder Name="/Compiler/tools/">
+    <Project Path="src/Compiler/tools/Microsoft.AspNetCore.Mvc.Razor.Extensions.Tooling.Internal/Microsoft.AspNetCore.Mvc.Razor.Extensions.Tooling.Internal.csproj" />
+    <Project Path="src/Compiler/tools/Microsoft.CodeAnalysis.Razor.Tooling.Internal/Microsoft.CodeAnalysis.Razor.Tooling.Internal.csproj" />
+    <Project Path="src/Compiler/tools/RazorSyntaxGenerator/RazorSyntaxGenerator.csproj" />
+  </Folder>
+  <Folder Name="/Shared/">
+    <Project Path="src/Shared/Microsoft.AspNetCore.Razor.Serialization.Json/Microsoft.AspNetCore.Razor.Serialization.Json.shproj" />
+    <Project Path="src/Shared/Microsoft.AspNetCore.Razor.Test.Common/Microsoft.AspNetCore.Razor.Test.Common.csproj" />
+    <Project Path="src/Shared/Microsoft.AspNetCore.Razor.Utilities.Shared.Test/Microsoft.AspNetCore.Razor.Utilities.Shared.Test.csproj" />
+    <Project Path="src/Shared/Microsoft.AspNetCore.Razor.Utilities.Shared/Microsoft.AspNetCore.Razor.Utilities.Shared.csproj" />
+  </Folder>
+  <Folder Name="/Tooling Tests/">
+    <Project Path="src/Razor/test/Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.Test/Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.Test.csproj" />
+    <Project Path="src/Razor/test/Microsoft.AspNetCore.Razor.LanguageServer.Test/Microsoft.AspNetCore.Razor.LanguageServer.Test.csproj" />
+    <Project Path="src/Razor/test/Microsoft.AspNetCore.Razor.Test.Common.Cohosting/Microsoft.AspNetCore.Razor.Test.Common.Cohosting.csproj" />
+    <Project Path="src/Razor/test/Microsoft.AspNetCore.Razor.Test.Common.Tooling/Microsoft.AspNetCore.Razor.Test.Common.Tooling.csproj" />
+    <Project Path="src/Razor/test/Microsoft.CodeAnalysis.Razor.Workspaces.Test/Microsoft.CodeAnalysis.Razor.Workspaces.Test.csproj" />
+    <Project Path="src/Razor/test/Microsoft.CodeAnalysis.Remote.Razor.Test/Microsoft.CodeAnalysis.Remote.Razor.Test.csproj" />
+    <Project Path="src/Razor/test/Microsoft.VisualStudio.LanguageServer.ContainedLanguage.Test/Microsoft.VisualStudio.LanguageServer.ContainedLanguage.Test.csproj" />
+    <Project Path="src/Razor/test/Microsoft.VisualStudio.LanguageServices.Razor.Test/Microsoft.VisualStudio.LanguageServices.Razor.Test.csproj" />
+    <Project Path="src/Razor/test/Microsoft.VisualStudio.LegacyEditor.Razor.Test/Microsoft.VisualStudio.LegacyEditor.Razor.Test.csproj" />
+    <Project Path="src/Razor/test/Microsoft.VisualStudio.Razor.IntegrationTests/Microsoft.VisualStudio.Razor.IntegrationTests.csproj" />
+    <Project Path="src/Razor/test/Microsoft.VisualStudioCode.RazorExtension.Test/Microsoft.VisualStudioCode.RazorExtension.Test.csproj" />
+  </Folder>
+  <Folder Name="/Tooling/">
+    <File Path="src/Razor/src/Directory.Build.props" />
+    <Project Path="src/Razor/src/Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor/Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.csproj" />
+    <Project Path="src/Razor/src/Microsoft.AspNetCore.Razor.LanguageServer/Microsoft.AspNetCore.Razor.LanguageServer.csproj" />
+    <Project Path="src/Razor/src/Microsoft.CodeAnalysis.Razor.CohostingShared/Microsoft.CodeAnalysis.Razor.CohostingShared.shproj" />
+    <Project Path="src/Razor/src/Microsoft.CodeAnalysis.Razor.Workspaces/Microsoft.CodeAnalysis.Razor.Workspaces.csproj" />
+    <Project Path="src/Razor/src/Microsoft.CodeAnalysis.Remote.Razor.CoreComponents/arm64/Microsoft.CodeAnalysis.Remote.Razor.CoreComponents.arm64.csproj" />
+    <Project Path="src/Razor/src/Microsoft.CodeAnalysis.Remote.Razor.CoreComponents/x64/Microsoft.CodeAnalysis.Remote.Razor.CoreComponents.x64.csproj" />
+    <Project Path="src/Razor/src/Microsoft.CodeAnalysis.Remote.Razor/Microsoft.CodeAnalysis.Remote.Razor.csproj" />
+    <Project Path="src/Razor/src/Microsoft.VisualStudio.LanguageServer.ContainedLanguage/Microsoft.VisualStudio.LanguageServer.ContainedLanguage.csproj" />
+    <Project Path="src/Razor/src/Microsoft.VisualStudio.LanguageServices.Razor/Microsoft.VisualStudio.LanguageServices.Razor.csproj" />
+    <Project Path="src/Razor/src/Microsoft.VisualStudio.LegacyEditor.Razor/Microsoft.VisualStudio.LegacyEditor.Razor.csproj" />
+    <Project Path="src/Razor/src/Microsoft.VisualStudio.RazorExtension.Dependencies/Microsoft.VisualStudio.RazorExtension.Dependencies.csproj" />
+    <Project Path="src/Razor/src/Microsoft.VisualStudio.RazorExtension/Microsoft.VisualStudio.RazorExtension.csproj" />
+    <Project Path="src/Razor/src/Microsoft.VisualStudioCode.RazorExtension/Microsoft.VisualStudioCode.RazorExtension.csproj" />
+    <Project Path="src/Razor/src/RazorDeployment/RazorDeployment.csproj" />
+  </Folder>
+</Solution>

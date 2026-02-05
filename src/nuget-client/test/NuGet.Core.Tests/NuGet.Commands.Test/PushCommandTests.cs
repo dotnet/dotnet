@@ -108,7 +108,7 @@ namespace NuGet.Commands.Test
             Assert.True(File.Exists(outputFileName), "The package file should exist after the push operation.");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/NuGet/Home/issues/14492")]
         public async Task Run_WhenPushingToAnHttpServerWithAllowInsecureConnectionsOptionFalse_Throws()
         {
             // Arrange
@@ -147,6 +147,130 @@ namespace NuGet.Commands.Test
 
             // Assert
             result.Message.Should().Contain(string.Format(Strings.Error_HttpSource_Single, "push", $"{server.Uri}push"));
+        }
+
+        [Fact]
+        public async Task Run_WhenApiKeyNotProvided_ReadsFromEnvironmentVariable()
+        {
+            // Arrange
+            using var packageDirectory = TestDirectory.Create();
+            var pkgA = new SimpleTestPackageContext("pkgA");
+            await pkgA.CreateAsFileAsync(packageDirectory, "pkgA.1.0.0.nupkg");
+
+            // Create a symbols package
+            var symbolPackagePath = Path.Combine(packageDirectory.Path, "pkgA.1.0.0.symbols.nupkg");
+            File.Copy(Path.Combine(packageDirectory.Path, "pkgA.1.0.0.nupkg"), symbolPackagePath);
+
+            string? capturedApiKey = null;
+            string? capturedSymbolApiKey = null;
+
+            using var server = new MockServer();
+            server.Get.Add("/push", r => "OK");
+            server.Put.Add("/push", r =>
+            {
+                capturedApiKey = r.Headers["X-NuGet-ApiKey"];
+                return HttpStatusCode.Created;
+            });
+
+            server.Get.Add("/symbols", r => "OK");
+            server.Put.Add("/symbols", r =>
+            {
+                capturedSymbolApiKey = r.Headers["X-NuGet-ApiKey"];
+                return HttpStatusCode.Created;
+            });
+            server.Start();
+
+            var logger = new TestLogger();
+            var environmentVariableReader = new TestEnvironmentVariableReader(
+                new Dictionary<string, string>
+                {
+                    [PushRunner.ApiKeyEnvironmentVariableName] = "EnvApiKey123",
+                    [PushRunner.SymbolApiKeyEnvironmentVariableName] = "EnvSymbolApiKey456"
+                });
+
+            // Act
+            await PushRunner.Run(
+                settings: Settings.LoadDefaultSettings(null, null, null),
+                sourceProvider: new TestPackageSourceProvider(new List<PackageSource> { new PackageSource($"{server.Uri}push") }),
+                packagePaths: [Path.Combine(packageDirectory.Path, "pkgA.1.0.0.nupkg")],
+                source: $"{server.Uri}push",
+                apiKey: null,
+                symbolSource: $"{server.Uri}symbols",
+                symbolApiKey: null,
+                timeoutSeconds: 0,
+                disableBuffering: false,
+                noSymbols: false,
+                noServiceEndpoint: false,
+                skipDuplicate: false,
+                allowInsecureConnections: true,
+                logger,
+                environmentVariableReader);
+
+            // Assert
+            Assert.Equal("EnvApiKey123", capturedApiKey);
+            Assert.Equal("EnvSymbolApiKey456", capturedSymbolApiKey);
+        }
+
+        [Fact]
+        public async Task Run_WhenSymbolApiKeyProvided_DoesNotUseEnvironmentVariable()
+        {
+            // Arrange
+            using var packageDirectory = TestDirectory.Create();
+            var pkgA = new SimpleTestPackageContext("pkgA");
+            await pkgA.CreateAsFileAsync(packageDirectory, "pkgA.1.0.0.nupkg");
+
+            // Create a symbols package
+            var symbolPackagePath = Path.Combine(packageDirectory.Path, "pkgA.1.0.0.symbols.nupkg");
+            File.Copy(Path.Combine(packageDirectory.Path, "pkgA.1.0.0.nupkg"), symbolPackagePath);
+
+            string? capturedApiKey = null;
+            string? capturedSymbolApiKey = null;
+
+            using var server = new MockServer();
+            server.Get.Add("/push", r => "OK");
+            server.Put.Add("/push", r =>
+            {
+                capturedApiKey = r.Headers["X-NuGet-ApiKey"];
+                return HttpStatusCode.Created;
+            });
+
+            server.Get.Add("/symbols", r => "OK");
+            server.Put.Add("/symbols", r =>
+            {
+                capturedSymbolApiKey = r.Headers["X-NuGet-ApiKey"];
+                return HttpStatusCode.Created;
+            });
+            server.Start();
+
+            var logger = new TestLogger();
+            var environmentVariableReader = new TestEnvironmentVariableReader(
+                new Dictionary<string, string>
+                {
+                    [PushRunner.ApiKeyEnvironmentVariableName] = "EnvApiKey123",
+                    [PushRunner.SymbolApiKeyEnvironmentVariableName] = "EnvSymbolApiKey456"
+                });
+
+            // Act
+            await PushRunner.Run(
+                settings: Settings.LoadDefaultSettings(null, null, null),
+                sourceProvider: new TestPackageSourceProvider(new List<PackageSource> { new PackageSource($"{server.Uri}push") }),
+                packagePaths: [Path.Combine(packageDirectory.Path, "pkgA.1.0.0.nupkg")],
+                source: $"{server.Uri}push",
+                apiKey: "CommandLineApiKey",
+                symbolSource: $"{server.Uri}symbols",
+                symbolApiKey: "CommandLineSymbolApiKey",
+                timeoutSeconds: 0,
+                disableBuffering: false,
+                noSymbols: false,
+                noServiceEndpoint: false,
+                skipDuplicate: false,
+                allowInsecureConnections: true,
+                logger,
+                environmentVariableReader);
+
+            // Assert - command line API keys should take precedence
+            Assert.Equal("CommandLineApiKey", capturedApiKey);
+            Assert.Equal("CommandLineSymbolApiKey", capturedSymbolApiKey);
         }
     }
 }

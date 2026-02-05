@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -99,11 +101,6 @@ namespace NuGet.CommandLine.XPlat.ListPackage
 
             writer.WritePropertyName(ParametersProperty);
             writer.WriteValue(PathUtility.GetPathWithForwardSlashes(listPackageArgs.ArgumentText));
-
-            if (listPackageReportModel.Projects.Any(p => p.AutoReferenceFound))
-            {
-                _problems.Add(new ReportProblem(ProblemType.Warning, string.Empty, Strings.ListPkg_AutoReferenceDescription));
-            }
 
             if (_problems?.Count > 0)
             {

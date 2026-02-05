@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!--
-    Microsoft ResX Schema
-
+  <!-- 
+    Microsoft ResX Schema 
+    
     Version 2.0
-
-    The primary goals of this format is to allow a simple XML format
-    that is mostly human readable. The generation and parsing of the
-    various data types are done through the TypeConverter classes
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
     associated with the data types.
-
+    
     Example:
-
+    
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-
-    There are any number of "resheader" rows that contain simple
+                
+    There are any number of "resheader" rows that contain simple 
     name/value pairs.
-
-    Each data row contains a name, and value. The row also contains a
-    type or mimetype. Type corresponds to a .NET class that support
-    text/value conversion through the TypeConverter architecture.
-    Classes that don't support this are serialized and stored with the
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
     mimetype set.
-
-    The mimetype is used for serialized objects, and tells the
-    ResXResourceReader how to depersist the object. This is currently not
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
     extensible. For a given mimetype the value must be set accordingly:
-
-    Note - application/x-microsoft.net.object.binary.base64 is the format
-    that the ResXResourceWriter will generate, however the reader can
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
     read any of the formats listed below.
-
+    
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-
+    
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array
+    value   : The object must be serialized into a byte array 
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ApiKey_Description" xml:space="preserve">
-    <value>The API key for the server.</value>
+    <value>The API key for the server. If not set, the NUGET_API_KEY environment variable is read.</value>
   </data>
   <data name="App_FullName" xml:space="preserve">
     <value>NuGet Command Line</value>
@@ -180,7 +180,7 @@
     <value>Symbol server URL to use.</value>
   </data>
   <data name="SymbolApiKey_Description" xml:space="preserve">
-    <value>The API key for the symbol server.</value>
+    <value>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</value>
   </data>
   <data name="LocalsCommand_ArgumentDescription" xml:space="preserve">
     <value>Specifies the cache location(s) to list or clear.
@@ -586,7 +586,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
     <value>Set the verbosity level of the command. Allowed values are q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic].</value>
     <comment>Please don't localize "q[uiet]", "m[inimal]", "n[ormal]", "d[etailed]", or "diag[nostic]"</comment>
   </data>
-  <data name="AddPkg_PackagePrerelease" xml:space="preserve">
+  <data name="Prerelease_Description" xml:space="preserve">
     <value>Allows prerelease packages to be installed.</value>
   </data>
   <data name="Error_PrereleaseWhenVersionSpecified" xml:space="preserve">
@@ -988,9 +988,6 @@ NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allo
   <data name="PackageUpdate_PreviewRestoreFailed" xml:space="preserve">
     <value>Preview restore with updated packages was not successful. Force mode is not yet available.</value>
   </data>
-  <data name="Unsupported_PackageSourceMapping" xml:space="preserve">
-    <value>Unsupported: Projects using Package Source Mapping are not yet supported</value>
-  </data>
   <data name="Error_CouldNotFindPackageVersionForCpmPackage" xml:space="preserve">
     <value>Central Package Management configuration error: Could not find PackageVersion for package {0}</value>
     <comment>0 - a package name
@@ -1006,11 +1003,6 @@ Do not translate "PackageVersion"</comment>
   </data>
   <data name="PackageUpdateCommand_ProjectOptionDescription" xml:space="preserve">
     <value>Path to a project or solution file, or a directory.</value>
-  </data>
-  <data name="Error_PackageNotReferenced" xml:space="preserve">
-    <value>The package {0} is not referenced by project {1}</value>
-    <comment>0 - The package ID
-1 - The project path</comment>
   </data>
   <data name="Warning_AlreadyHighestVersion" xml:space="preserve">
     <value>The package {0} is already referencing the highest version {1} in project {2}</value>
@@ -1051,7 +1043,7 @@ Do not translate "PackageVersion"</comment>
     <value>Running preview restore to check package compatibility.</value>
   </data>
   <data name="PackageUpdate_UpdatedMessage" xml:space="preserve">
-    <value>Updated {0} {1} to {2}.</value>
+    <value>Updating {0} {1} to {2}.</value>
     <comment>{0}: package id
 {1}: existing version
 {2}: new version</comment>
@@ -1074,5 +1066,108 @@ Do not translate "PackageVersion"</comment>
   </data>
   <data name="PackageUpdate_AllPackagesAlreadyUpToDate" xml:space="preserve">
     <value>All packages are already up to date.</value>
+  </data>
+  <data name="PackageUpdateCommand_VulnerableOptionDescription" xml:space="preserve">
+    <value>Upgrade packages with known vulnerabilities.</value>
+  </data>
+  <data name="PackageUpdate_AlreadyUpToDate" xml:space="preserve">
+    <value>All packages are up to date</value>
+  </data>
+  <data name="PackageUpdate_NoVulnerablePackages" xml:space="preserve">
+    <value>No upgradable packages have known vulnerabilities.</value>
+  </data>
+  <data name="PackageUpdate_UpdatingVulnerablePackages" xml:space="preserve">
+    <value>Updating packages with security advisories in {0}</value>
+    <comment>{0} - the project/solution being checked</comment>
+  </data>
+  <data name="PackageUpdate_AllVersionsHaveAdvisories" xml:space="preserve">
+    <value>All versions of package {0} have security advisories. Unable to find a non-vulnerable version to update to.</value>
+    <comment>{0}: package id</comment>
+  </data>
+  <data name="PackageUpdate_AuditDisabled" xml:space="preserve">
+    <value>This command requires NuGetAudit to be enabled at this time. See https://aka.ms/nuget/audit for more information.</value>
+    <comment>{Locked="NuGetAudit"}{Locked="dotnet package update"}</comment>
+  </data>
+  <data name="PackageUpdate_AuditModeIsDirect" xml:space="preserve">
+    <value>NuGetAuditMode is set to direct, which means that transitive packages with known vulnerabilities will not be updated. See https://aka.ms/nuget/audit for more information.</value>
+    <comment>{Locked="NuGetAuditMode"}</comment>
+  </data>
+  <data name="Error_PackageSourceMappingNotFound" xml:space="preserve">
+    <value>Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</value>
+    <comment>{0} - package id</comment>
+  </data>
+  <data name="Error_CannotUpgradeAutoReferencedPackage" xml:space="preserve">
+    <value>{0}: Package {1} is implicitly added by the SDK and cannot be upgraded independently</value>
+    <comment>{0} - project referencing the package
+{1} - package id</comment>
+  </data>
+  <data name="ArgumentNullOrEmpty" xml:space="preserve">
+    <value>Argument cannot be null or empty.</value>
+  </data>
+  <data name="Error_InvalidVersion" xml:space="preserve">
+    <value>Invalid version value '{0}'.</value>
+    <comment>0 - package version</comment>
+  </data>
+  <data name="PackageDownloadCommand_Description" xml:space="preserve">
+    <value>Downloads a NuGet package to a local folder without requiring a project file.</value>
+  </data>
+  <data name="PackageDownloadCommand_PackageIdDescription" xml:space="preserve">
+    <value>Package identifier (e.g. 'Newtonsoft.Json').</value>
+  </data>
+  <data name="PackageDownloadCommand_AllowInsecureConnectionsDescription" xml:space="preserve">
+    <value>Allows downloading from HTTP (non-HTTPS) package sources.</value>
+  </data>
+  <data name="PackageDownloadCommand_OutputDirectoryDescription" xml:space="preserve">
+    <value>Directory where the package will be placed. Defaults to the current working directory.</value>
+  </data>
+  <data name="PackageDownloadCommand_SourcesDescription" xml:space="preserve">
+    <value>Specifies one or more NuGet package sources to use.</value>
+  </data>
+  <data name="PackageDownloadCommand_Starting" xml:space="preserve">
+    <value>Downloading package {0}, version {1}.</value>
+    <comment>0- package id
+1- package version</comment>
+  </data>
+  <data name="PackageDownloadCommand_AlreadyInstalled" xml:space="preserve">
+    <value>Skipping download. Package '{0}' version {1} already exists at '{2}'.</value>
+    <comment>0 - package id
+1 - version
+2 - directory path where the package was downloaded</comment>
+  </data>
+  <data name="PackageDownloadCommand_Succeeded" xml:space="preserve">
+    <value>Package '{0}' ({1}) successfully downloaded to '{2}'.</value>
+    <comment>0 - package id
+1 - package version
+2 - package download location</comment>
+  </data>
+  <data name="PackageDownloadCommand_Failed" xml:space="preserve">
+    <value>Package '{0}' ({1}) failed to download.</value>
+    <comment>0 - package id
+1 - package version</comment>
+  </data>
+  <data name="PackageDownloadCommand_UnableToDownload" xml:space="preserve">
+    <value>Package download failed for `{0} {1}` from source `{2}`.</value>
+    <comment>0 package id
+1 package version
+2 package source</comment>
+  </data>
+  <data name="PackageDownloadCommand_LatestVersion" xml:space="preserve">
+    <value>latest version</value>
+  </data>
+  <data name="Error_PackageDownload_VersionNotFound" xml:space="preserve">
+    <value>Unable to find a valid package version</value>
+  </data>
+  <data name="PackageDownloadCommand_PackageSourceMapping_NoSuchSource" xml:space="preserve">
+    <value>The mapped source '{0}' for package '{1}' was not found among the configured sources.</value>
+    <comment>0 - package source name
+1 - package name</comment>
+  </data>
+  <data name="PackageDownloadCommand_PackageSourceMapping_NoSourcesMapped" xml:space="preserve">
+    <value>Unable to download package '{0}'. PackageSourceMapping is enabled, but no mapped sources were found for this package. The following source(s) were not considered: {1}.</value>
+    <comment>{0} = package ID 
+{1} = comma-separated list of all configured sources </comment>
+  </data>
+  <data name="WhyCommand_Error_InconsistentAssetsFile" xml:space="preserve">
+    <value>Internal error: Assets file is inconsistent</value>
   </data>
 </root>

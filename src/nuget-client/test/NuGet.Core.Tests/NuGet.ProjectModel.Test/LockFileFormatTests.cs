@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -151,11 +153,9 @@ namespace NuGet.ProjectModel.Test
             var lockFileFormat = new LockFileFormat();
 
             // Act
-#pragma warning disable CS0612 // Type or member is obsolete
             var lockFileTrue = Parse(lockFileContentTrue, "In Memory");
             var lockFileFalse = Parse(lockFileContentFalse, "In Memory");
             var lockFileMissing = Parse(lockFileContentMissing, "In Memory");
-#pragma warning restore CS0612 // Type or member is obsolete
 
             var lockFileTrueString = lockFileFormat.Render(lockFileTrue);
             var lockFileFalseString = lockFileFormat.Render(lockFileFalse);
@@ -376,7 +376,9 @@ namespace NuGet.ProjectModel.Test
   ""projectFileDependencyGroups"": {},
   ""project"": {
     ""frameworks"": {
-      ""dotnet"": {}
+      ""dotnet"": {
+        ""framework"": ""dotnet""
+        }
     }
   }
 }";
@@ -688,6 +690,7 @@ namespace NuGet.ProjectModel.Test
       ],
       ""frameworks"": {
         ""netcoreapp1.0"": {
+          ""framework"": ""netcoreapp1.0"",
           ""targetAlias"": ""netcoreapp10"",
           ""projectReferences"": {}
         }
@@ -695,6 +698,7 @@ namespace NuGet.ProjectModel.Test
     },
     ""frameworks"": {
       ""netcoreapp1.0"": {
+        ""framework"": ""netcoreapp1.0"",
         ""targetAlias"": ""netcoreapp10"",
         ""dependencies"": {
          ""Microsoft.NET.Sdk"": {
@@ -1409,7 +1413,7 @@ namespace NuGet.ProjectModel.Test
             // Assert
             Assert.NotNull(lockFileObj);
             Assert.NotNull(logMessage);
-            Assert.Equal(1, lockFileObj.LogMessages.Count());
+            Assert.Equal(1, lockFileObj.LogMessages.Count);
             Assert.Equal(LogLevel.Error, logMessage.Level);
             Assert.Equal(NuGetLogCode.NU1000, logMessage.Code);
             Assert.Null(logMessage.FilePath);
@@ -1548,7 +1552,7 @@ namespace NuGet.ProjectModel.Test
             // Assert
             Assert.NotNull(lockFileObj);
             Assert.NotNull(logMessage);
-            Assert.Equal(1, lockFileObj.LogMessages.Count());
+            Assert.Equal(1, lockFileObj.LogMessages.Count);
             Assert.Equal(LogLevel.Error, logMessage.Level);
             Assert.Equal(NuGetLogCode.NU1000, logMessage.Code);
             Assert.Null(logMessage.FilePath);
@@ -1629,7 +1633,7 @@ namespace NuGet.ProjectModel.Test
             // Assert
             Assert.NotNull(lockFileObj);
             Assert.NotNull(logMessage);
-            Assert.Equal(1, lockFileObj.LogMessages.Count());
+            Assert.Equal(1, lockFileObj.LogMessages.Count);
             Assert.Equal(LogLevel.Error, logMessage.Level);
             Assert.Equal(NuGetLogCode.NU1000, logMessage.Code);
             Assert.Equal("kung\\fu\\fighting.targets", logMessage.FilePath);
@@ -1712,7 +1716,7 @@ namespace NuGet.ProjectModel.Test
             // Assert
             Assert.NotNull(lockFileObj);
             Assert.NotNull(logMessage);
-            Assert.Equal(1, lockFileObj.LogMessages.Count());
+            Assert.Equal(1, lockFileObj.LogMessages.Count);
             Assert.Equal(LogLevel.Warning, logMessage.Level);
             Assert.Equal(WarningLevel.Important, logMessage.WarningLevel);
             Assert.Equal(NuGetLogCode.NU1000, logMessage.Code);
@@ -1796,7 +1800,7 @@ namespace NuGet.ProjectModel.Test
             // Assert
             Assert.NotNull(lockFileObj);
             Assert.NotNull(logMessage);
-            Assert.Equal(1, lockFileObj.LogMessages.Count());
+            Assert.Equal(1, lockFileObj.LogMessages.Count);
             Assert.Equal(LogLevel.Warning, logMessage.Level);
             Assert.Equal(WarningLevel.Important, logMessage.WarningLevel);
             Assert.Equal(NuGetLogCode.NU1000, logMessage.Code);
@@ -1878,7 +1882,7 @@ namespace NuGet.ProjectModel.Test
             // Assert
             Assert.NotNull(lockFileObj);
             Assert.NotNull(logMessage);
-            Assert.Equal(1, lockFileObj.LogMessages.Count());
+            Assert.Equal(1, lockFileObj.LogMessages.Count);
             Assert.Equal(LogLevel.Warning, logMessage.Level);
             Assert.Equal(WarningLevel.Severe, logMessage.WarningLevel);
             Assert.Equal(NuGetLogCode.NU1000, logMessage.Code);
@@ -1970,7 +1974,7 @@ namespace NuGet.ProjectModel.Test
 
             // Assert
             Assert.NotNull(lockFileObj);
-            Assert.Equal(5, lockFileObj.LogMessages.Count());
+            Assert.Equal(5, lockFileObj.LogMessages.Count);
             Assert.Equal(3, lockFileObj.LogMessages.Count(m => m.Level == LogLevel.Error));
             Assert.Equal(2, lockFileObj.LogMessages.Count(m => m.Level == LogLevel.Warning));
             Assert.Equal(2, lockFileObj.LogMessages.Count(m => m.Message == "test log message"));
@@ -2045,7 +2049,7 @@ namespace NuGet.ProjectModel.Test
             // Assert
             Assert.NotNull(lockFileObj);
             Assert.NotNull(logMessage);
-            Assert.Equal(1, lockFileObj.LogMessages.Count());
+            Assert.Equal(1, lockFileObj.LogMessages.Count);
             Assert.Equal(LogLevel.Error, logMessage.Level);
             Assert.Equal(NuGetLogCode.NU1000, logMessage.Code);
             Assert.NotNull(logMessage.FilePath);
@@ -2122,7 +2126,7 @@ namespace NuGet.ProjectModel.Test
             // Assert
             Assert.NotNull(lockFileObj);
             Assert.NotNull(logMessage);
-            Assert.Equal(1, lockFileObj.LogMessages.Count());
+            Assert.Equal(1, lockFileObj.LogMessages.Count);
             Assert.Equal(LogLevel.Error, logMessage.Level);
             Assert.Equal(NuGetLogCode.NU1000, logMessage.Code);
             Assert.NotNull(logMessage.FilePath);
@@ -2188,7 +2192,7 @@ namespace NuGet.ProjectModel.Test
             Assert.Equal(0, runtimeTargetLibrary.RuntimeAssemblies.Count);
             Assert.Equal(1, runtimeTargetLibrary.ToolsAssemblies.Count);
             Assert.Equal("tools/dotnet/any/test.dll", runtimeTargetLibrary.ToolsAssemblies.Single().Path);
-            Assert.Equal(0, runtimeTargetLibrary.Dependencies.Count());
+            Assert.Equal(0, runtimeTargetLibrary.Dependencies.Count);
 
             var runtimeLibrary = lockFile.Libraries.Single();
             Assert.Equal("GlobalTool", runtimeLibrary.Name);
@@ -2445,6 +2449,126 @@ namespace NuGet.ProjectModel.Test
 
             // Assert
             Assert.Equal(expected.ToString(), output.ToString());
+        }
+
+        [Fact]
+        public void LockFileFormat_WhenPackageSpecIsAvailableAppliesTargetAliasToLockFileTarget()
+        {
+            // Arrange
+            var lockFileContent = @"{
+  ""version"": 3,
+  ""targets"": {
+    "".NETCoreApp,Version=v1.0"": {
+      ""Microsoft.NET.Sdk/1.0.0"": {
+        ""compile"": {
+          ""ref/dotnet/System.Runtime.dll"": {}
+        }
+      }
+    }
+  },
+  ""libraries"": {},
+  ""projectFileDependencyGroups"": {},
+  ""project"":   {
+    ""version"": ""1.0.0"",
+    ""restore"": {
+      ""projectUniqueName"": ""X:\\ProjectPath\\ProjectPath.csproj"",
+      ""projectName"": ""ProjectPath"",
+      ""projectPath"": ""X:\\ProjectPath\\ProjectPath.csproj"",
+      ""outputPath"": ""X:\\ProjectPath\\obj\\"",
+      ""projectStyle"": ""PackageReference"",
+      ""UsingMicrosoftNETSdk"": false,
+      ""originalTargetFrameworks"": [
+        ""netcoreapp10""
+      ],
+      ""frameworks"": {
+        ""netcoreapp1.0"": {
+          ""targetAlias"": ""netcoreapp10"",
+          ""projectReferences"": {}
+        }
+      }
+    },
+    ""frameworks"": {
+      ""netcoreapp1.0"": {
+        ""targetAlias"": ""netcoreapp10"",
+        ""dependencies"": {
+         ""Microsoft.NET.Sdk"": {
+                ""suppressParent"": ""All"",
+                ""target"": ""Package"",
+                ""version"": ""[1.0.0, )""
+          },
+        }
+      }
+    }
+  }
+}";
+
+
+            var targetLib = new LockFileTargetLibrary()
+            {
+                Name = "Microsoft.NET.Sdk",
+                Version = NuGetVersion.Parse("1.0.0"),
+            };
+            targetLib.CompileTimeAssemblies.Add(new LockFileItem("ref/dotnet/System.Runtime.dll"));
+
+            var expected = new LockFile()
+            {
+                Version = 3,
+                Targets = [
+                        new LockFileTarget() {
+                            TargetFramework = FrameworkConstants.CommonFrameworks.NetCoreApp10,
+                            Libraries = [targetLib],
+                            TargetAlias = "netcoreapp10"
+                        }
+                    ],
+                PackageSpec = new PackageSpec(new[]
+                {
+                    new TargetFrameworkInformation
+                    {
+                        FrameworkName = FrameworkConstants.CommonFrameworks.NetCoreApp10,
+                        TargetAlias = "netcoreapp10",
+                        Dependencies =
+                        [
+                            new LibraryDependency
+                            {
+                                LibraryRange = new LibraryRange(
+                                    "Microsoft.NET.Sdk",
+                                    new VersionRange(
+                                        minVersion: new NuGetVersion("1.0.0"),
+                                        originalString: "1.0.0"),
+                                    LibraryDependencyTarget.Package),
+                                SuppressParent = LibraryIncludeFlags.All
+                            }
+                        ]
+                    }
+                })
+                {
+                    FilePath = @"X:\ProjectPath\ProjectPath.csproj",
+                    Version = new NuGetVersion("1.0.0"),
+                    Name = "ProjectPath",
+                    RestoreMetadata = new ProjectRestoreMetadata
+                    {
+                        ProjectUniqueName = @"X:\ProjectPath\ProjectPath.csproj",
+                        ProjectName = "ProjectPath",
+                        ProjectPath = @"X:\ProjectPath\ProjectPath.csproj",
+                        OutputPath = @"X:\ProjectPath\obj\",
+                        ProjectStyle = ProjectStyle.PackageReference,
+                        OriginalTargetFrameworks = new[] { "netcoreapp10" },
+                        TargetFrameworks = new List<ProjectRestoreMetadataFrameworkInfo>
+                        {
+                            new ProjectRestoreMetadataFrameworkInfo(NuGetFramework.Parse("netcoreapp1.0"))
+                            {
+                                TargetAlias = "netcoreapp10",
+                            }
+                        }
+                    }
+                }
+            };
+
+            // Act
+            var actual = Parse(lockFileContent, "In Memory");
+
+            // Assert
+            Assert.Equal(expected, actual);
         }
 
         private LockFile Read(string filePath)

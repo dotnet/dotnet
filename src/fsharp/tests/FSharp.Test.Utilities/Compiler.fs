@@ -585,9 +585,6 @@ module rec Compiler =
     let withNoDebug (cUnit: CompilationUnit) : CompilationUnit =
         withOptionsHelper [ "--debug-" ] "debug- is only supported on F#" cUnit
 
-    let withOcamlCompat (cUnit: CompilationUnit) : CompilationUnit =
-        withOptionsHelper [ "--mlcompatibility" ] "withOcamlCompat is only supported on F#" cUnit
-
     let withOptions (options: string list) (cUnit: CompilationUnit) : CompilationUnit =
         withOptionsHelper options "withOptions is only supported for F#" cUnit
 
@@ -611,21 +608,6 @@ module rec Compiler =
 
     let withErrorRanges (cUnit: CompilationUnit) : CompilationUnit =
         withOptionsHelper [ "--test:ErrorRanges" ] "withErrorRanges is only supported on F#" cUnit
-
-    let withLangVersion46 (cUnit: CompilationUnit) : CompilationUnit =
-        withOptionsHelper [ "--langversion:4.6" ] "withLangVersion46 is only supported on F#" cUnit
-
-    let withLangVersion47 (cUnit: CompilationUnit) : CompilationUnit =
-        withOptionsHelper [ "--langversion:4.7" ] "withLangVersion47 is only supported on F#" cUnit
-
-    let withLangVersion50 (cUnit: CompilationUnit) : CompilationUnit =
-        withOptionsHelper [ "--langversion:5.0" ] "withLangVersion50 is only supported on F#" cUnit
-
-    let withLangVersion60 (cUnit: CompilationUnit) : CompilationUnit =
-        withOptionsHelper [ "--langversion:6.0" ] "withLangVersion60 is only supported on F#" cUnit
-
-    let withLangVersion70 (cUnit: CompilationUnit) : CompilationUnit =
-        withOptionsHelper [ "--langversion:7.0" ] "withLangVersion70 is only supported on F#" cUnit
 
     let withLangVersion80 (cUnit: CompilationUnit) : CompilationUnit =
         withOptionsHelper [ "--langversion:8.0" ] "withLangVersion80 is only supported on F#" cUnit

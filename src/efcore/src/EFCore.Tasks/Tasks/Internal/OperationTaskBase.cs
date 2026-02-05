@@ -82,6 +82,11 @@ public abstract class OperationTaskBase : ToolTask
     public bool Nullable { get; set; }
 
     /// <summary>
+    ///     Runtime copy local items for dependency resolution.
+    /// </summary>
+    public ITaskItem[]? RuntimeCopyLocalItems { get; set; }
+
+    /// <summary>
     ///     The additional arguments to pass to the dotnet-ef command.
     /// </summary>
     protected List<string> AdditionalArguments { get; } = [];
@@ -194,7 +199,7 @@ public abstract class OperationTaskBase : ToolTask
         }
 
 #if NET472
-#elif NET10_0
+#elif NET11_0
 #else
 #error Target framework needs to be updated here
 #endif
@@ -204,7 +209,7 @@ public abstract class OperationTaskBase : ToolTask
                 "..",
                 "..",
                 "tools",
-                "net10.0",
+                "net11.0",
                 "ef.dll"));
 
         args.AddRange(AdditionalArguments);

@@ -113,7 +113,7 @@
       </trans-unit>
       <trans-unit id="DefaultError_NoMatchInAllowList">
         <source>The package signature certificate fingerprint does not match any certificate fingerprint in the allow list.</source>
-        <target state="translated">A impressão digital do certificado de assinatura de pacote não corresponde a nenhuma impressão digital de certificado na lista de permissões.</target>
+        <target state="translated">A impressão digital do certificado de assinatura do pacote não corresponde a nenhuma impressão digital de certificado na lista de permissões.</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorAuthorTargetCannotBeACountersignature">
@@ -190,7 +190,7 @@
       </trans-unit>
       <trans-unit id="ErrorPackageSignatureInvalid">
         <source>The package signature is invalid or cannot be verified on this platform.</source>
-        <target state="translated">A assinatura de pacote é inválida ou não pode ser verificada nesta plataforma.</target>
+        <target state="translated">A assinatura do pacote é inválida ou não pode ser verificada nesta plataforma.</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorUnableCheckPackageEntries">
@@ -252,7 +252,7 @@
       </trans-unit>
       <trans-unit id="Error_NotOnePrimarySignature">
         <source>The package signature file does not contain exactly one primary signature.</source>
-        <target state="translated">O arquivo de assinatura de pacote não contém exatamente uma assinatura principal.</target>
+        <target state="translated">O arquivo de assinatura do pacote não contém exatamente uma assinatura principal.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_NotOneRepositoryCounterSignature">
@@ -367,7 +367,7 @@
       </trans-unit>
       <trans-unit id="InvalidPackageSignatureFileEntry">
         <source>The package signature file entry is invalid. {0}</source>
-        <target state="translated">A entrada do arquivo de assinatura de pacote é inválida. {0}</target>
+        <target state="translated">A entrada do arquivo de assinatura do pacote é inválida. {0}</target>
         <note>{0} - error message suffix containing the reason for failure.</note>
       </trans-unit>
       <trans-unit id="InvalidPackageSignatureFileEntryCentralDirectoryHeader">
@@ -665,7 +665,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">'{0}' não pode ser nulo.</target>
+        <target state="translated">"{0}" não pode ser nulo.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="RangeOutOfBoundsForArray">
@@ -730,7 +730,7 @@
       </trans-unit>
       <trans-unit id="SignatureContainsInvalidAttribute">
         <source>Package signature contains an invalid attribute: {0}</source>
-        <target state="translated">A assinatura de pacote contém um atributo inválido: {0}</target>
+        <target state="translated">A assinatura do pacote contém um atributo inválido: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="SignatureDebug_HashOidFound">
@@ -925,12 +925,12 @@
       </trans-unit>
       <trans-unit id="UnableToReadPackageHashInformation">
         <source>Package hash information could not be read from the package signature.</source>
-        <target state="translated">Não foi possível ler informações sobre pacote de hash da assinatura de pacote.</target>
+        <target state="translated">Não foi possível ler informações sobre pacote de hash da assinatura do pacote.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnexpectedPackageSignatureVerificationError">
         <source>An unexpected error occurred while verifying a package signature.</source>
-        <target state="translated">Ocorreu um erro inesperado ao verificar uma assinatura de pacote.</target>
+        <target state="translated">Ocorreu um erro inesperado ao verificar uma assinatura do pacote.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnrecognizedEnumValue">
@@ -950,7 +950,7 @@
       </trans-unit>
       <trans-unit id="UnsupportedSignatureFormatVersion">
         <source>The package signature format version is not supported. Updating your client may solve this problem.</source>
-        <target state="translated">A versão do formato da assinatura de pacote não é compatível. Atualizar o cliente poderá resolver esse problema.</target>
+        <target state="translated">A versão do formato da assinatura do pacote não é compatível. Atualizar o cliente poderá resolver esse problema.</target>
         <note />
       </trans-unit>
       <trans-unit id="UntrustedRoot_WithCertificateBundle">
@@ -960,9 +960,9 @@
     Certificate (PEM):
 {3}</source>
         <target state="translated">O seguinte certificado raiz X.509 não é confiável porque não está presente no pacote de certificados em {0}.  Para obter mais informações, veja a documentação do NU3042.
-     Assunto:  {1}
-     Impressão digital (SHA-256):  {2}
-     Certificado (PEM):
+    Assunto:  {1}
+    Impressão digital (SHA-256):  {2}
+    Certificado (PEM):
 {3}</target>
         <note>0 is a file path, 1 is a certificate subject, 2 is a certificate fingerprint, and 3 is a PEM-encoded certificate.</note>
       </trans-unit>
@@ -973,9 +973,9 @@
     Certificate (PEM):
 {2}</source>
         <target state="translated">O seguinte certificado raiz X.509 não é confiável porque nenhum pacote de certificados foi encontrado.  Para obter mais informações, veja a documentação do NU3042.
-     Assunto:  {0}
-     Impressão digital (SHA-256):  {1}
-     Certificado (PEM):
+    Assunto:  {0}
+    Impressão digital (SHA-256):  {1}
+    Certificado (PEM):
 {2}</target>
         <note>0 is a certificate subject, 1 is a certificate fingerprint, and 2 is a PEM-encoded certificate.</note>
       </trans-unit>

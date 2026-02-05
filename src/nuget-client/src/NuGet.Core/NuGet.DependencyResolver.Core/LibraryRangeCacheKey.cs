@@ -14,9 +14,10 @@ namespace NuGet.DependencyResolver
     /// </summary>
     public readonly struct LibraryRangeCacheKey : IEquatable<LibraryRangeCacheKey>
     {
-        public LibraryRangeCacheKey(LibraryRange range, NuGetFramework framework)
+        public LibraryRangeCacheKey(LibraryRange range, NuGetFramework framework, string? alias)
         {
             Framework = framework;
+            Alias = alias ?? string.Empty; // alias may be passed as both null or empty and we need to treat them equivalently.
             LibraryRange = range;
         }
 
@@ -30,20 +31,28 @@ namespace NuGet.DependencyResolver
         /// </summary>
         public LibraryRange LibraryRange { get; }
 
-        public override bool Equals(object obj)
+        public string? Alias { get; }
+
+
+        public override bool Equals(object? obj)
         {
             return obj is LibraryRangeCacheKey key && Equals(key);
         }
 
         public override int GetHashCode()
         {
-            return HashCodeCombiner.GetHashCode(LibraryRange, Framework);
+            var combiner = new HashCodeCombiner();
+            combiner.AddObject(LibraryRange);
+            combiner.AddObject(Framework);
+            combiner.AddObject(Alias);
+            return combiner.CombinedHash;
         }
 
         public bool Equals(LibraryRangeCacheKey other)
         {
             return LibraryRange.Equals(other.LibraryRange)
-                && Framework.Equals(other.Framework);
+                && Framework.Equals(other.Framework)
+                && StringComparer.OrdinalIgnoreCase.Equals(Alias, other.Alias);
         }
 
         public override string ToString()

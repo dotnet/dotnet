@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +36,7 @@ namespace NuGet.PackageManagement.VisualStudio
             PackageSourceNames = PackageSources.Select(s => s.Name).ToList();
 
             _stringRepresentation = $"{SourceName}: [{string.Join("; ", PackageSourceNames)}]";
-            _tooltip = PackageSources.Count() == 1
+            _tooltip = PackageSources.Count == 1
                 ? GetTooltip(PackageSources.First())
                 : string.Join("; ", PackageSourceNames);
             PriorityOrder = priorityOrder;

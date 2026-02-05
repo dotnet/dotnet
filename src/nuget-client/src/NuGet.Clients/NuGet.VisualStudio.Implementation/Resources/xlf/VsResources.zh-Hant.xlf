@@ -70,7 +70,7 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="Error_ProjectNotInCache">
         <source>Project {0} does not exist in the project system cache.</source>
-        <target state="translated">專案系統快取中不存在專案 {0}。</target>
+        <target state="translated">專案系統快取中沒有專案 {0}。</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidNetStandardFramework">
@@ -305,32 +305,32 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PreinstalledPackages_FailedToInstallPackage">
         <source>Could not add all required packages to the project. The following packages failed to install from '{0}':</source>
-        <target state="translated">無法將所有必要的套件加入到專案。從 '{0}' 安裝下列套件失敗:</target>
+        <target state="translated">無法將所有必要封裝加入專案中。無法從 '{0}' 安裝下列封裝:</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_InvalidExtensionId">
         <source>The preinstalled packages have a reference to a missing Extension. Could not find an Extension with ID '{0}'.</source>
-        <target state="translated">預先安裝的套件參考了遺漏的擴充。找不到識別碼為 '{0}' 的擴充。</target>
+        <target state="translated">預先安裝之封裝參考了缺少的擴充功能。找不到識別碼為 '{0}' 的擴充功能。</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_InvalidRegistryValue">
         <source>The preinstalled packages have a reference to a missing Registry value. Could not find a Registry key with name '{0}' under '{1}'.</source>
-        <target state="translated">預先安裝的套件參考了遺漏的登錄值。在 '{1}' 下找不到名稱為 '{0}' 的登錄機碼。</target>
+        <target state="translated">預先安裝之封裝參考了缺少的登錄值。在 '{1}' 下找不到名稱為 '{0}' 的登錄機碼。</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_PackageInstallStatus">
         <source>Adding {0}.{1} to project...</source>
-        <target state="translated">正在將 {0}.{1} 加入到專案...</target>
+        <target state="translated">正在將 {0}.{1} 加入專案中...</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_RegistryKeyError">
         <source>The preinstalled packages are configured to use a Registry-provided package repository but there was an error accessing Registry key '{0}'.</source>
-        <target state="translated">預先安裝的套件是設為使用登錄所提供的套件存放庫，但存取登錄機碼 '{0}' 時發生錯誤。</target>
+        <target state="translated">預先安裝之封裝已設定為要使用已有提供登錄的封裝儲存機制，但存取登錄機碼 '{0}' 時發生錯誤。</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_VersionConflict">
         <source>Attempting to install version '{1}' of '{0}' but the project already includes a different version. Skipping...</source>
-        <target state="translated">正在嘗試安裝 '{0}' 的版本 '{1}'，但專案已經包含一個不同的版本。正在略過...</target>
+        <target state="translated">嘗試安裝 '{1}' 版的 '{0}'，但專案已包含不同的版本。略過中...</target>
         <note />
       </trans-unit>
       <trans-unit id="ProjectReferenceBrowseObjectClassName">
@@ -350,37 +350,37 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">'{0}' 不能是空值。</target>
+        <target state="translated">「{0}」不得為 Null。</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="TemplateWizard_ErrorDialogTitle">
         <source>Package Installation Error</source>
-        <target state="translated">套件安裝錯誤</target>
+        <target state="translated">封裝安裝錯誤</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidPackageElementAttributes">
         <source>The project template lists one or more packages with missing, empty, or invalid values for the "id" or "version" attributes. Both attributes are required and must have valid values.</source>
-        <target state="translated">專案範本列出在 "id" 或 "version" 屬性中缺值、空白或為無效值的一或多個套件。這兩個屬性皆必填，且皆必須含有效值。</target>
+        <target state="translated">專案範本列出的一或多個封裝中，有缺少 "id" 或 "version" 屬性，也有這兩個屬性為空白，或其值無效。這兩個屬性為必要屬性，且其值必須有效。</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidRepositoryAttribute">
         <source>The "repository" attribute of the package element has an invalid value: '{0}'. Valid values are: 'template' or 'extension'.</source>
-        <target state="translated">套件元素的 "repository" 屬性中為無效值: '{0}'。有效值為: 'template' 或 'extension'。</target>
+        <target state="translated">package 項目之 "repository" 屬性的值無效: '{0}'。有效值為: 'template' 或 'extension'。</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidWizardRunKind">
         <source>This template wizard can only be applied to single-project or project-item templates.</source>
-        <target state="translated">這個範本精靈只能套用到單一專案或專案項目性質的範本。</target>
+        <target state="translated">此範本精靈只能套用到單一專案或專案項目範本。</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_MissingExtensionId">
         <source>The project template is configured to use an Extension-specific package repository but the Extension ID has not been specified. Use the "repositoryId" attribute to specify the Extension ID.</source>
-        <target state="translated">專案範本是設定成使用擴充專屬的套件存放庫，但並未指定擴充識別碼。請使用 "repositoryId" 屬性指定擴充識別碼。</target>
+        <target state="translated">此專案範本已設定為使用擴充功能專用的封裝儲存機制，但卻未指定擴充功能識別碼。請使用 "repositoryId" 屬性指定擴充功能識別碼。</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_MissingRegistryKeyName">
         <source>The project template is configured to use a Registry-provided package repository but the Registry value name has not been specified. Use the "keyName" attribute to specify the Registry value.</source>
-        <target state="translated">預先安裝的套件是設定成使用登錄所提供的套件存放庫，但並未指定登錄值名稱。請使用 "keyName" 屬性指定登錄值。</target>
+        <target state="translated">此專案範本已設定為已有提供登錄的封裝儲存機制，但卻未指定登錄值名稱。請使用 "keyName" 屬性指定登錄值。</target>
         <note />
       </trans-unit>
       <trans-unit id="UnknownPackage">

@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.FoldingRanges;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Folding;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
@@ -23,6 +24,7 @@ internal sealed class RemoteFoldingRangeService(in ServiceArgs args) : RazorDocu
     }
 
     private readonly IFoldingRangeService _foldingRangeService = args.ExportProvider.GetExportedValue<IFoldingRangeService>();
+    private readonly IClientCapabilitiesService _clientCapabilitiesService = args.ExportProvider.GetExportedValue<IClientCapabilitiesService>();
 
     public ValueTask<ImmutableArray<RemoteFoldingRange>> GetFoldingRangesAsync(
         RazorPinnedSolutionInfoWrapper solutionInfo,
@@ -44,24 +46,13 @@ internal sealed class RemoteFoldingRangeService(in ServiceArgs args) : RazorDocu
             .GetGeneratedDocumentAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        var csharpRanges = await ExternalHandlers.FoldingRanges.GetFoldingRangesAsync(generatedDocument, cancellationToken).ConfigureAwait(false);
+        var lineFoldingOnly = _clientCapabilitiesService.ClientCapabilities.TextDocument?.FoldingRange?.LineFoldingOnly ?? false;
+        var csharpRanges = await ExternalHandlers.FoldingRanges.GetFoldingRangesAsync(generatedDocument, lineFoldingOnly, cancellationToken).ConfigureAwait(false);
 
-        var convertedCSharp = csharpRanges.SelectAsArray(ToFoldingRange);
-        var convertedHtml = htmlRanges.SelectAsArray(RemoteFoldingRange.ToVsFoldingRange);
+        var convertedHtml = htmlRanges.SelectAsArray(RemoteFoldingRange.ToLspFoldingRange);
 
         var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        return _foldingRangeService.GetFoldingRanges(codeDocument, convertedCSharp, convertedHtml, cancellationToken)
-            .SelectAsArray(RemoteFoldingRange.FromVsFoldingRange);
+        return _foldingRangeService.GetFoldingRanges(codeDocument, csharpRanges, convertedHtml, cancellationToken)
+            .SelectAsArray(RemoteFoldingRange.FromLspFoldingRange);
     }
-
-    public static FoldingRange ToFoldingRange(FoldingRange r)
-        => new()
-        {
-            StartLine = r.StartLine,
-            StartCharacter = r.StartCharacter,
-            EndLine = r.EndLine,
-            EndCharacter = r.EndCharacter,
-            Kind = r.Kind is { } kind ? new FoldingRangeKind(kind.Value) : null,
-            CollapsedText = r.CollapsedText
-        };
 }

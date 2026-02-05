@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,7 +21,11 @@ namespace Test.Utility
         private string _packageDirectory;
         private readonly MockResponseBuilder _builder;
         private readonly bool _isPrivateFeed;
+
+        /// <summary>Does the source support the VulnerabilityInfo resource</summary>
+        /// <remarks>Sources can provide vulnerability info on registration pages without supporting the vulnerability info resource.</remarks>
         private readonly bool _sourceReportsVulnerabilities;
+
         public FileSystemBackedV3MockServer(string packageDirectory, bool isPrivateFeed = false, bool sourceReportsVulnerabilities = false)
         {
             _packageDirectory = packageDirectory;
@@ -31,7 +37,7 @@ namespace Test.Utility
 
         public ISet<PackageIdentity> UnlistedPackages { get; } = new HashSet<PackageIdentity>();
 
-        public Dictionary<string, List<(Uri, PackageVulnerabilitySeverity, VersionRange)>> Vulnerabilities = new();
+        public Dictionary<string, List<(Uri, PackageVulnerabilitySeverity, VersionRange)>> Vulnerabilities = new(StringComparer.OrdinalIgnoreCase);
 
         public ISet<PackageIdentity> DeprecatedPackages { get; } = new HashSet<PackageIdentity>();
 
@@ -99,9 +105,21 @@ namespace Test.Utility
             }
             else if (path.StartsWith("/flat/") && path.EndsWith(".nupkg"))
             {
-                var file = new FileInfo(Path.Combine(_packageDirectory, parts.Last()));
+                var requestedFileName = parts.Last();
+                var directory = new DirectoryInfo(_packageDirectory);
+                FileInfo file = null;
 
-                if (file.Exists)
+                // Scan for file and ignore case to make sure this works in linux too
+                foreach (var candidate in directory.EnumerateFiles("*.nupkg", SearchOption.TopDirectoryOnly))
+                {
+                    if (string.Equals(candidate.Name, requestedFileName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        file = candidate;
+                        break;
+                    }
+                }
+
+                if (file != null && file.Exists)
                 {
                     return new Action<HttpListenerResponse>(response =>
                     {
@@ -133,7 +151,7 @@ namespace Test.Utility
                     {
                         response.ContentType = "text/javascript";
                         var packageToListedMapping = packages.Select(e => new KeyValuePair<PackageIdentity, bool>(e.Identity, !UnlistedPackages.Contains(e.Identity))).ToArray();
-                        MockResponse mockResponse = _builder.BuildRegistrationIndexResponse(Uri, packageToListedMapping, DeprecatedPackages);
+                        MockResponse mockResponse = _builder.BuildRegistrationIndexResponse(Uri, packageToListedMapping, DeprecatedPackages, Vulnerabilities);
                         SetResponseContent(response, mockResponse.Content);
                     });
                 }

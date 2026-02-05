@@ -8,10 +8,10 @@
         different architecture (i.e. "cannot execute binary file: Exec format error"). -->
     <_RunScenarioTests Condition="'$(BuildArchitecture.ToLowerInvariant())' != '$(TargetArchitecture.ToLowerInvariant())'">false</_RunScenarioTests>
 
-    <!-- Skip scenario tests if the portable OS (determined from the host machine) is different from the target OS
+    <!-- Skip scenario tests if the build OS (determined from the host machine) is different from the target OS
         since the tests require the ability to execute the built SDK. An example of where this would be disabled is
-        cross-build of using Mariner to build for Alpine (linux vs linux-musl). -->
-    <_RunScenarioTests Condition="'$(BuildOS)' != 'windows' and '$(DotNetBuildSourceOnly)' != 'true' and '$(__PortableTargetOS.ToLowerInvariant())' != '$(TargetOS.ToLowerInvariant())'">false</_RunScenarioTests>
+        cross-build of using Azure Linux to build for Alpine (linux vs linux-musl). -->
+    <_RunScenarioTests Condition="'$(BuildOS)' != 'windows' and '$(DotNetBuildSourceOnly)' != 'true' and '$(BuildOS.ToLowerInvariant())' != '$(TargetOS.ToLowerInvariant())'">false</_RunScenarioTests>
 
     <!-- Short stack builds can't run scenario-tests as no SDK gets produced. -->
     <_RunScenarioTests Condition="'$(ShortStack)' == 'true' or '$(PgoInstrument)' == 'true'">false</_RunScenarioTests>
@@ -50,10 +50,11 @@
 
     <PropertyGroup>
       <_TmpPackagesRoot>$(ArtifactsTmpDir)wasm-dependencies/</_TmpPackagesRoot>
+      <_WasmRestoreConfigFileArg Condition="'$(SYSTEM_TEAMPROJECT)' == 'internal'">--configfile &quot;$(MSBuildThisFileDirectory)Microsoft.DotNet.SourceBuild.Tests/assets/online.NuGet.Config&quot;</_WasmRestoreConfigFileArg>
     </PropertyGroup>
     
     <Exec
-        Command="&quot;$(DOTNET_HOST_PATH)&quot; restore &quot;$(MSBuildThisFileDirectory)wasm-dependencies.proj&quot; -bl:$(ArtifactsLogDir)/wasm-test-dependencies.binlog"
+        Command="&quot;$(DOTNET_HOST_PATH)&quot; restore &quot;$(MSBuildThisFileDirectory)wasm-dependencies.proj&quot; $(_WasmRestoreConfigFileArg) -bl:$(ArtifactsLogDir)/wasm-test-dependencies.binlog"
         EnvironmentVariables="NUGET_PACKAGES=$(_TmpPackagesRoot)"
     />
     

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <VSTestLogger>console%3bverbosity=normal;trx%3bverbosity=diagnostic%3bLogFileName=$(MSBuildProjectName).trx</VSTestLogger>
     <VSTestCLIRunSettings>$(VSTestCLIRunSettings);RunConfiguration.DotNetHostPath=$(DotnetTool)</VSTestCLIRunSettings>
   </PropertyGroup>
@@ -62,11 +62,14 @@
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).DotNetBuildSharedComponents">
         <Value>$(DotNetBuildSharedComponents)</Value>
       </RuntimeHostConfigurationOption>
-      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).Sdk1xxVersion">
-        <Value>$(MicrosoftNETSdkVersion)</Value>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).MicrosoftNETCorePlatformsVersion1xx">
+        <Value>$(MicrosoftNETCorePlatformsVersion)</Value>
       </RuntimeHostConfigurationOption>
-      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).TargetFrameworkVersion">
-        <Value>$(_TargetFrameworkVersionWithoutV)</Value>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).MicrosoftNETCoreAppRefVersion1xx">
+        <Value>$(MicrosoftNETCoreAppRefVersion)</Value>
+      </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).TargetProductVersion">
+        <Value>$(MajorVersion).$(MinorVersion)</Value>
       </RuntimeHostConfigurationOption>
     </ItemGroup>
   </Target>

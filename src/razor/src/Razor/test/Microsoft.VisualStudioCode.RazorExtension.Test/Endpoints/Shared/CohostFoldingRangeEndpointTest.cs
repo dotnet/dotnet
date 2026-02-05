@@ -1,6 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
@@ -98,14 +99,14 @@ public class CohostFoldingRangeEndpointTest(ITestOutputHelper testOutputHelper) 
     [Fact]
     public Task Usings()
         => VerifyFoldingRangesAsync("""
-            @using System[|
-            @using System.Text|]
+            @using System{|imports:
+            @using System.Text|}
 
             <p>hello!</p>
 
-            @using System.Buffers[|
+            @using System.Buffers{|imports:
             @using System.Drawing
-            @using System.CodeDom|]
+            @using System.CodeDom|}
 
             <p>hello!</p>
             """);
@@ -215,8 +216,8 @@ public class CohostFoldingRangeEndpointTest(ITestOutputHelper testOutputHelper) 
             @code {[|
                 private string _name = "Dave";
 
-                public void M() {[|
-                }|]
+                public void M() {{|implementation:
+                }|}
             }|]
             """);
 
@@ -234,13 +235,140 @@ public class CohostFoldingRangeEndpointTest(ITestOutputHelper testOutputHelper) 
             @code {[|
                 private string _name = "Dave";
 
-                public void M() {[|
-                }|]
+                public void M() {{|implementation:
+                }|}
             }|]
             """);
 
-    private async Task VerifyFoldingRangesAsync(string input, RazorFileKind? fileKind = null, bool miscellaneousFile = false, string? razorFilePath = null)
+    [Fact]
+    public Task CSharp_LineFoldingOnly()
+        => VerifyFoldingRangesAsync("""
+            <div>{|html:
+              Hello @_name
+            </div>|}
+
+            @code {[|
+                class C { public void M1() {{|implementation:
+                        var x = 1;
+            |}        }
+                }
+            }|]
+            """,
+            lineFoldingOnly: true);
+
+    [Fact]
+    public Task CSharp_NotLineFoldingOnly()
+    => VerifyFoldingRangesAsync("""
+            <div>{|html:
+              Hello @_name
+            </div>|}
+
+            @code {[|
+                class C { public void M1() {[|
+                        var x = 1;
+                    }
+                }|]
+            }|]
+            """,
+        lineFoldingOnly: false);
+
+    [Fact]
+    public Task IfElseStatements_LineFoldingOnly()
+      => VerifyFoldingRangesAsync("""
+            <div>
+              @if (true) {[|
+                <div>
+                  Hello World
+                </div>
+                } else {[|
+                <div>
+                    Goodbye World
+                </div>
+            |]    }
+            |]  }
+            </div>
+
+            @code[|
+            {
+                void M(){|implementation:
+                {
+                    if (true) {[|
+            |]            var x = 1;
+                    } else {[|
+                        var y = 2;
+            |]        }
+            |}    }
+            }|]
+            """,
+            lineFoldingOnly: true);
+
+    [Fact]
+    public Task CSharpExpressionBodiedMethods()
+   => VerifyFoldingRangesAsync("""
+            <p>hello!</p>
+
+            @code {[|
+                private void M(){|implementation:
+                {
+                }|}
+
+                private Func<object, int> M1() => __builder => {{|implementation:
+                    var x = 1;
+                    var y = 2;
+                    var z = x + y;
+                    x = y + z;
+                    y = x + z;
+                    return 42;
+                };|}
+
+                private Func<object, int> M2() => __builder =>{|implementation:
+                {
+                    var x = 1;
+                    var y = 2;
+                    var z = x + y;
+                    x = y + z;
+                    y = x + z;
+                    return 42;
+                };|}
+
+                private Func<object, int> M2() =>{|implementation:
+                __builder =>[|
+                {
+                    var x = 1;
+                    var y = 2;
+                    var z = x + y;
+                    x = y + z;
+                    y = x + z;
+                    return 42;
+                };|}|]
+
+
+                private RenderFragment N3() => __builder =>{|implementation:
+                {
+                    var test = "Hello";
+                };|}
+
+                private RenderFragment N4() => __builder =>{|implementation:
+                {
+                    var test = "Hello";
+                    <div>@test</div>
+                };|}
+            }|]
+
+            <p>hello!</p>
+            """);
+
+    private async Task VerifyFoldingRangesAsync(string input, RazorFileKind? fileKind = null, bool miscellaneousFile = false, string? razorFilePath = null, bool lineFoldingOnly = false)
     {
+        UpdateClientLSPInitializationOptions(c =>
+        {
+            c.ClientCapabilities.TextDocument!.FoldingRange = new FoldingRangeSetting()
+            {
+                LineFoldingOnly = lineFoldingOnly,
+            };
+            return c;
+        });
+
         TestFileMarkupParser.GetSpans(input, out var source, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spans);
         var document = CreateProjectAndRazorDocument(source, fileKind, miscellaneousFile: miscellaneousFile, documentFilePath: razorFilePath);
         var inputText = await document.GetTextAsync(DisposalToken);
@@ -282,28 +410,32 @@ public class CohostFoldingRangeEndpointTest(ITestOutputHelper testOutputHelper) 
         var markerPositions = result
             .SelectMany(r =>
                 new[] {
-                    (index: inputText.GetRequiredAbsoluteIndex(r.StartLine, r.StartCharacter.AssumeNotNull()), isStart: true),
-                    (index: inputText.GetRequiredAbsoluteIndex(r.EndLine, r.EndCharacter.AssumeNotNull()), isStart: false)
+                    (index: inputText.GetRequiredAbsoluteIndex(r.StartLine, r.StartCharacter.AssumeNotNull()), isStart: true, r.Kind),
+                    (index: inputText.GetRequiredAbsoluteIndex(r.EndLine, r.EndCharacter.AssumeNotNull()), isStart: false, r.Kind)
                 });
 
         var actual = new StringBuilder(inputText.ToString());
-        foreach (var (index, isStart) in markerPositions.OrderByDescending(p => p.index))
+        foreach (var (index, isStart, kind) in markerPositions.OrderByDescending(p => p.index))
         {
-            actual.Insert(index, GetMarker(index, isStart, htmlSpans));
+            actual.Insert(index, GetMarker(index, isStart, htmlSpans, kind));
         }
 
-        static string GetMarker(int index, bool isStart, ImmutableArray<TextSpan> htmlSpans)
+        static string GetMarker(int index, bool isStart, ImmutableArray<TextSpan> htmlSpans, FoldingRangeKind? kind)
         {
             if (isStart)
             {
                 return htmlSpans.Any(r => r.Start == index)
                     ? "{|html:"
-                    : "[|";
+                    : kind is null
+                        ? "[|"
+                        : $"{{|{kind.Value.Value}:";
             }
 
             return htmlSpans.Any(r => r.End == index)
                 ? "|}"
-                : "|]";
+                : kind is null
+                    ? "|]"
+                    : "|}";
         }
 
         return actual.ToString();

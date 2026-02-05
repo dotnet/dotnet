@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,9 +19,6 @@ namespace NuGet.ProjectModel
         public static readonly string RestoreOptions = "restore";
         public static readonly string RestoreSettings = "restoreSettings";
         public static readonly string HideWarningsAndErrors = "hideWarningsAndErrors";
-        public static readonly string PackOptions = "packOptions";
-        public static readonly string PackageType = "packageType";
-        public static readonly string Files = "files";
 
         /// <summary>
         /// Load and parse a project.json file

@@ -45,7 +45,7 @@ namespace Msbuild.Integration.Test
                 var projectAPackages = Path.Combine(pathContext.SolutionRoot, "packages");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config")))
                 {
@@ -159,7 +159,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 var projectAPackages = Path.Combine(pathContext.SolutionRoot, "packages");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config")))
                 {
@@ -258,7 +258,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 var projectAPackages = Path.Combine(pathContext.SolutionRoot, "packages");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config")))
                 {
@@ -369,7 +369,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 var projectAPackages = Path.Combine(pathContext.SolutionRoot, "packages");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config")))
                 {
@@ -468,7 +468,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 var projectAPackages = Path.Combine(pathContext.SolutionRoot, "packages");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config")))
                 {
@@ -584,7 +584,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 var projectAPackages = Path.Combine(pathContext.SolutionRoot, "packages");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config")))
                 {
@@ -672,7 +672,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 var projectAPackages = Path.Combine(pathContext.SolutionRoot, "packages");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config")))
                 {
@@ -770,7 +770,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 var projectAPackages = Path.Combine(pathContext.SolutionRoot, "packages");
 
                 solution.Projects.Add(projectA);
-                solution.Create(pathContext.SolutionRoot);
+                solution.Create();
 
                 using (var writer = new StreamWriter(Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config")))
                 {
@@ -836,7 +836,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             projectA.AddPackageToAllFrameworks(packageOpenSourceA);
             projectA.AddPackageToAllFrameworks(packageOpenSourceContosoMvc);
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             // SimpleTestPathContext adds a NuGet.Config with a repositoryPath,
             // so we go ahead and replace that config before running MSBuild.
@@ -922,7 +922,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             projectA.AddPackageToAllFrameworks(packageOpenSourceA);
             projectA.AddPackageToAllFrameworks(packageOpenSourceContosoMvc);
             solution.Projects.Add(projectA);
-            solution.Create(pathContext.SolutionRoot);
+            solution.Create();
 
             // SimpleTestPathContext adds a NuGet.Config with a repositoryPath,
             // so we go ahead and replace that config before running MSBuild.

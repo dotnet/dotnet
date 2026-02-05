@@ -120,8 +120,8 @@ nuget client-certs List</target>
         <note />
       </trans-unit>
       <trans-unit id="CommandApiKey">
-        <source>The API key for the server.</source>
-        <target state="translated">Sunucunun API anahtarı.</target>
+        <source>The API key for the server. If not set, the NUGET_API_KEY environment variable is read.</source>
+        <target state="needs-review-translation">Sunucunun API anahtarı.</target>
         <note />
       </trans-unit>
       <trans-unit id="CommandDirectDownload">
@@ -329,7 +329,7 @@ nuget push -?</target>
       </trans-unit>
       <trans-unit id="HelpCommand_Suggestion">
         <source>Type '{0} help &lt;command&gt;' for help on a specific command.</source>
-        <target state="translated">Belirli bir komut hakkında yardım için '{0} yardımı &lt;command&gt;' yazın.</target>
+        <target state="translated">Belirli bir komut hakkında yardım için '{0} yardım &lt;command&gt;' yazın.</target>
         <note>{0} - executable name: nuget.exe; Don't localize text enclosed in single quotes: '{0} help command'</note>
       </trans-unit>
       <trans-unit id="HelpCommand_Title">
@@ -703,7 +703,7 @@ nuget pack foo.nuspec -Sürüm 2.1.0</target>
       </trans-unit>
       <trans-unit id="PushCommandAllowInsecureConnectionsDescription">
         <source>Allows pushing to HTTP sources (insecure).</source>
-        <target state="new">Allows pushing to HTTP sources (insecure).</target>
+        <target state="translated">HTTP kaynaklarına (güvenli olmayan) aktarım yapılmasına izin verir.</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandDescription">
@@ -784,7 +784,7 @@ nuget push foo.nupkg -Timeout 360</target>
       </trans-unit>
       <trans-unit id="RestoreCommandLockFilePath">
         <source>Output location where project lock file is written. By default, this is 'PROJECT_ROOT\packages.lock.json'.</source>
-        <target state="translated">Proje kilit dosyasının yazıldığı çıkış konumu. Varsayılan değeri 'PROJECT_ROOT\packages.lock.json' şeklindedir.</target>
+        <target state="translated">Proje kilit dosyasının yazıldığı çıktı konumu. Varsayılan olarak, bu 'PROJECT_ROOT\packages.lock.json'dur.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandLockedMode">
@@ -913,7 +913,7 @@ nuget setapikey 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -Source http://example.com/
         <source>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a local certificate store for the certificate.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
         <target state="translated">Sertifika için yerel sertifika deposunda arama yapmak üzere kullanılan sertifikanın SHA-256, SHA-384 veya SHA-512 parmak izi.
-Sertifika deposu, -CertificateStoreName ve -CertificateStoreLocation seçenekleri ile belirtilebilir.</target>
+Sertifika deposu, -CertificateStoreName ve -CertificateStoreLocation seçenekleriyle belirtilebilir.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificatePasswordDescription">
@@ -932,23 +932,23 @@ Bu seçenek, sertifikanın parolasını belirtmek için kullanılabilir. Parola 
         <source>Name of the X.509 certificate store use to search for the certificate. Defaults to "CurrentUser", the X.509 certificate store used by the current user.
 This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
         <target state="translated">Sertifikayı aramak için kullanılacak X.509 sertifika deposunun adı. Varsayılan olarak, geçerli kullanıcı tarafından kullanılan X.509 sertifika deposu olan "CurrentUser" ayarlanır.
-Bu seçenek, sertifika -CertificateSubjectName veya -CertificateFingerprint seçenekleri aracılığıyla belirtildiğinde kullanılmalıdır.</target>
+Bu seçenek, -CertificateSubjectName veya -CertificateFingerprint seçenekleriyle sertifikayı belirtirken kullanılmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateStoreNameDescription">
         <source>Name of the X.509 certificate store to use to search for the certificate. Defaults to "My", the X.509 certificate store for personal certificates.
 This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
         <target state="translated">Sertifikayı aramak için kullanılacak X.509 sertifika deposunun adı. Varsayılan olarak, kişisel sertifikalara yönelik X.509 sertifika deposu olan "My" ayarlanır.
-Bu seçenek, sertifika -CertificateSubjectName veya -CertificateFingerprint seçenekleri aracılığıyla belirtildiğinde kullanılmalıdır.</target>
+Bu seçenek, -CertificateSubjectName veya -CertificateFingerprint seçenekleriyle sertifikayı belirtirken kullanılmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateSubjectNameDescription">
         <source>Subject name of the certificate used to search a local certificate store for the certificate. 
 The search is a case-insensitive string comparison using the supplied value, which will find all certificates with the subject name containing that string, regardless of other subject values.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
-        <target state="translated">Sertifika için yerel bir sertifika deposunda arama yapmak için kullanılan sertifikanın konu adı.
+        <target state="translated">Sertifika için yerel bir sertifika deposunda arama yapmak için kullanılan sertifikanın konu adı. 
 Arama, sağlanan değeri kullanan büyük/küçük harfe duyarsız bir dize karşılaştırmasıdır. Bu arama sayesinde diğer konu değerlerinden bağımsız olarak, o dizeyi içeren konu adına sahip tüm sertifikalar bulunabilir.
-Sertifika deposu -CertificateStoreName ve -CertificateStoreLocation seçenekleriyle belirtilebilir.</target>
+Sertifika deposu, -CertificateStoreName ve -CertificateStoreLocation seçenekleriyle belirtilebilir.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandDescription">
@@ -1146,8 +1146,8 @@ nuget spec -a MyAssembly.dll</target>
         <note />
       </trans-unit>
       <trans-unit id="SymbolApiKey">
-        <source>The API key for the symbol server.</source>
-        <target state="translated">Sembol sunucusunun API anahtarı.</target>
+        <source>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</source>
+        <target state="needs-review-translation">Sembol sunucusunun API anahtarı.</target>
         <note />
       </trans-unit>
       <trans-unit id="TrustedSignersCommandAllowUntrustedRootDescription">

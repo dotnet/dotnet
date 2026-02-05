@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="AddPkg_All">
         <source>all</source>
-        <target state="new">all</target>
+        <target state="translated">alle</target>
         <note />
       </trans-unit>
       <trans-unit id="AddPkg_Description">
@@ -47,11 +47,6 @@
         <target state="translated">ID des hinzuzufügenden Pakets.</target>
         <note />
       </trans-unit>
-      <trans-unit id="AddPkg_PackagePrerelease">
-        <source>Allows prerelease packages to be installed.</source>
-        <target state="translated">Ermöglicht die Installation von Paketen mit Vorabversionen.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="AddPkg_PackageVersionDescription">
         <source>Version of the package to be added.</source>
         <target state="translated">Version des hinzuzufügenden Pakets.</target>
@@ -84,17 +79,22 @@
       </trans-unit>
       <trans-unit id="AllowInsecureConnections_Description">
         <source>Allows pushing to HTTP sources (insecure).</source>
-        <target state="new">Allows pushing to HTTP sources (insecure).</target>
+        <target state="translated">Ermöglicht pushen an HTTP-Quellen (unsicher).</target>
         <note />
       </trans-unit>
       <trans-unit id="ApiKey_Description">
-        <source>The API key for the server.</source>
-        <target state="translated">Der API-Schlüssel für den Server.</target>
+        <source>The API key for the server. If not set, the NUGET_API_KEY environment variable is read.</source>
+        <target state="needs-review-translation">Der API-Schlüssel für den Server.</target>
         <note />
       </trans-unit>
       <trans-unit id="App_FullName">
         <source>NuGet Command Line</source>
         <target state="translated">NuGet Command Line</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ArgumentNullOrEmpty">
+        <source>Argument cannot be null or empty.</source>
+        <target state="translated">Das Argument darf nicht NULL oder leer sein.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConfigCommandKeyNotFound">
@@ -164,7 +164,7 @@
       </trans-unit>
       <trans-unit id="ConsoleConfirmMessage">
         <source>{0} (y/N)</source>
-        <target state="translated">{0} (J/N) </target>
+        <target state="translated">{0} (y/N)</target>
         <note />
       </trans-unit>
       <trans-unit id="ConsoleConfirmMessageAccept">
@@ -246,12 +246,12 @@
       </trans-unit>
       <trans-unit id="Error_AddPkgProjectReference">
         <source>Failed to add a PackageReference for '{0}'. A ProjectReference with the same name already exists and a package with the same name cannot be added to the project.</source>
-        <target state="new">Failed to add a PackageReference for '{0}'. A ProjectReference with the same name already exists and a package with the same name cannot be added to the project.</target>
+        <target state="translated">Fehler beim Hinzufügen einer PackageReference für „{0}“. Eine ProjectReference mit demselben Namen ist bereits vorhanden, und dem Projekt kann kein Paket mit demselben Namen hinzugefügt werden.</target>
         <note>{0} - PackageId</note>
       </trans-unit>
       <trans-unit id="Error_AddPkgUnresolved">
         <source>Unable to find a resolved package for '{0}'. This is a tooling error. Please file an issue at https://github.com/NuGet/Home.</source>
-        <target state="new">Unable to find a resolved package for '{0}'. This is a tooling error. Please file an issue at https://github.com/NuGet/Home.</target>
+        <target state="translated">Es wurde kein aufgelöstes Paket für „{0}“ gefunden. Dies ist ein Toolfehler. Melden Sie ein Problem unter https://github.com/NuGet/Home.</target>
         <note>{0} Package Id</note>
       </trans-unit>
       <trans-unit id="Error_AddPkg_CentralPackageVersions_EmptyVersionOverride">
@@ -278,6 +278,12 @@
         <source>Failed to obtain a search resource.</source>
         <target state="translated">Fehler beim Abrufen einer Suchressource.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotUpgradeAutoReferencedPackage">
+        <source>{0}: Package {1} is implicitly added by the SDK and cannot be upgraded independently</source>
+        <target state="translated">{0}: Das Paket {1} wird implizit vom SDK hinzugefügt und kann nicht unabhängig aktualisiert werden.</target>
+        <note>{0} - project referencing the package
+{1} - package id</note>
       </trans-unit>
       <trans-unit id="Error_CentralPackageVersions_AutoreferencedReferencesNotAllowed">
         <source>The packages {0} are implicitly referenced. You do not typically need to reference them from your project or in your central package versions management file. For more information, see https://aka.ms/sdkimplicitrefs</source>
@@ -342,6 +348,11 @@ NuGet erfordert HTTPS-Quellen. Um HTTP-Quellen zu verwenden, müssen Sie „allo
         <target state="translated">Die angegebene Quelle "{0}" ist ungültig. Geben Sie eine gültige Quelle an.</target>
         <note>0 - The invalid source.</note>
       </trans-unit>
+      <trans-unit id="Error_InvalidVersion">
+        <source>Invalid version value '{0}'.</source>
+        <target state="translated">Ungültiger Versionswert „{0}“.</target>
+        <note>0 - package version</note>
+      </trans-unit>
       <trans-unit id="Error_InvalidVersionRange">
         <source>Invalid version range '{0}'</source>
         <target state="translated">Ungültiger Versionsbereich „{0}“</target>
@@ -387,11 +398,15 @@ NuGet erfordert HTTPS-Quellen. Um HTTP-Quellen zu verwenden, müssen Sie „allo
         <target state="translated">Das Projekt "{0}" verwendet "package.config" für NuGet-Pakete, der Befehl funktioniert jedoch nur mit Projekten mit Paketverweis.</target>
         <note />
       </trans-unit>
-      <trans-unit id="Error_PackageNotReferenced">
-        <source>The package {0} is not referenced by project {1}</source>
-        <target state="translated">Das Paket {0} wird vom Projekt {1} nicht referenziert.</target>
-        <note>0 - The package ID
-1 - The project path</note>
+      <trans-unit id="Error_PackageDownload_VersionNotFound">
+        <source>Unable to find a valid package version</source>
+        <target state="translated">Es konnte keine gültige Paketversion gefunden werden.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageSourceMappingNotFound">
+        <source>Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</source>
+        <target state="translated">Die Paketquellzuordnung ist aktiviert, aber es wurde keine Zuordnung für das Paket {0} gefunden. Weitere Informationen finden Sie unter https://aka.ms/nuget/psm.</target>
+        <note>{0} - package id</note>
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
         <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, or directory.</source>
@@ -400,7 +415,7 @@ NuGet erfordert HTTPS-Quellen. Um HTTP-Quellen zu verwenden, müssen Sie „allo
       </trans-unit>
       <trans-unit id="Error_PathNotFound">
         <source>The specified path '{0}' does not exist.</source>
-        <target state="translated">Der angegebene Pfad "{0}" ist nicht vorhanden.</target>
+        <target state="translated">Der angegebene Pfad „{0}“ ist nicht vorhanden.</target>
         <note>0 - path</note>
       </trans-unit>
       <trans-unit id="Error_PkgMissingArgument">
@@ -573,7 +588,7 @@ NuGet erfordert HTTPS-Quellen. Um HTTP-Quellen zu verwenden, müssen Sie „allo
       </trans-unit>
       <trans-unit id="ListPkg_InvalidOptions">
         <source>Options '--outdated', '--deprecated' and '--vulnerable' cannot be combined.</source>
-        <target state="translated">Die Optionen "--outdated", "--deprecated" und "--vulnerable" können nicht kombiniert werden.</target>
+        <target state="translated">Die Optionen „--outdated“, „--deprecated“ und „--vulnerable“ können nicht kombiniert werden.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListPkg_InvalidOutputFormat">
@@ -876,6 +891,81 @@ Weitere Informationen finden Sie unter: https://docs.nuget.org/docs/reference/co
         <note>{0}: App full name
 {1}: App version</note>
       </trans-unit>
+      <trans-unit id="PackageDownloadCommand_AllowInsecureConnectionsDescription">
+        <source>Allows downloading from HTTP (non-HTTPS) package sources.</source>
+        <target state="translated">Ermöglicht das Herunterladen von Paketen aus HTTP-Quellen (nicht HTTPS).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_AlreadyInstalled">
+        <source>Skipping download. Package '{0}' version {1} already exists at '{2}'.</source>
+        <target state="translated">Download wird übersprungen. Das Paket {0} Version {1} ist bereits unter {2} vorhanden.</target>
+        <note>0 - package id
+1 - version
+2 - directory path where the package was downloaded</note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_Description">
+        <source>Downloads a NuGet package to a local folder without requiring a project file.</source>
+        <target state="translated">Lädt ein NuGet-Paket in einen lokalen Ordner herunter, ohne dass eine Projektdatei benötigt wird.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_Failed">
+        <source>Package '{0}' ({1}) failed to download.</source>
+        <target state="translated">Fehler beim Herunterladen des Pakets {0} ({1}).</target>
+        <note>0 - package id
+1 - package version</note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_LatestVersion">
+        <source>latest version</source>
+        <target state="translated">aktuellste Version</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_OutputDirectoryDescription">
+        <source>Directory where the package will be placed. Defaults to the current working directory.</source>
+        <target state="translated">Verzeichnis, in dem das Paket abgelegt wird. Standardmäßig ist das das aktuelle Arbeitsverzeichnis.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_PackageIdDescription">
+        <source>Package identifier (e.g. 'Newtonsoft.Json').</source>
+        <target state="translated">Paketbezeichner (z. B. „Newtonsoft.Json“).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_PackageSourceMapping_NoSourcesMapped">
+        <source>Unable to download package '{0}'. PackageSourceMapping is enabled, but no mapped sources were found for this package. The following source(s) were not considered: {1}.</source>
+        <target state="translated">Das Paket „{0}“ kann nicht heruntergeladen werden. PackageSourceMapping ist aktiviert, aber für dieses Paket wurden keine zugeordneten Quellen gefunden. Die folgenden Quellen wurden nicht berücksichtigt: {1}.</target>
+        <note>{0} = package ID 
+{1} = comma-separated list of all configured sources </note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_PackageSourceMapping_NoSuchSource">
+        <source>The mapped source '{0}' for package '{1}' was not found among the configured sources.</source>
+        <target state="translated">Die zugeordnete Quelle {0} für das Paket {1} wurde unter den konfigurierten Quellen nicht gefunden.</target>
+        <note>0 - package source name
+1 - package name</note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_SourcesDescription">
+        <source>Specifies one or more NuGet package sources to use.</source>
+        <target state="translated">Gibt eine oder mehrere NuGet-Paketquellen an, die verwendet werden sollen.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_Starting">
+        <source>Downloading package {0}, version {1}.</source>
+        <target state="translated">Paket {0}wird heruntergeladen, Version {1}.</target>
+        <note>0- package id
+1- package version</note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_Succeeded">
+        <source>Package '{0}' ({1}) successfully downloaded to '{2}'.</source>
+        <target state="translated">Das Paket {0} ({1}) wurde erfolgreich in {2} heruntergeladen.</target>
+        <note>0 - package id
+1 - package version
+2 - package download location</note>
+      </trans-unit>
+      <trans-unit id="PackageDownloadCommand_UnableToDownload">
+        <source>Package download failed for `{0} {1}` from source `{2}`.</source>
+        <target state="translated">Paketdownload für {0} {1} aus der Quelle {2} fehlgeschlagen.</target>
+        <note>0 package id
+1 package version
+2 package source</note>
+      </trans-unit>
       <trans-unit id="PackageUpdateCommand_Description">
         <source>Update referenced packages in a project or solution.</source>
         <target state="translated">Referenzierte Pakete in einem Projekt oder einer Projektmappe aktualisieren.</target>
@@ -886,10 +976,35 @@ Weitere Informationen finden Sie unter: https://docs.nuget.org/docs/reference/co
         <target state="translated">Pfad zu einer Projekt- oder Projektmappendatei oder einem Verzeichnis</target>
         <note />
       </trans-unit>
+      <trans-unit id="PackageUpdateCommand_VulnerableOptionDescription">
+        <source>Upgrade packages with known vulnerabilities.</source>
+        <target state="translated">Pakete mit bekannten Sicherheitslücken aktualisieren.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PackageUpdate_AllPackagesAlreadyUpToDate">
         <source>All packages are already up to date.</source>
-        <target state="new">All packages are already up to date.</target>
+        <target state="translated">Alle Pakete sind bereits auf dem neuesten Stand.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="PackageUpdate_AllVersionsHaveAdvisories">
+        <source>All versions of package {0} have security advisories. Unable to find a non-vulnerable version to update to.</source>
+        <target state="translated">Alle Versionen des Pakets {0} enthalten Sicherheitshinweise. Es konnte keine Version ohne Sicherheitslücken zum Aktualisieren gefunden werden.</target>
+        <note>{0}: package id</note>
+      </trans-unit>
+      <trans-unit id="PackageUpdate_AlreadyUpToDate">
+        <source>All packages are up to date</source>
+        <target state="translated">Alle Pakete sind auf dem neuesten Stand.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageUpdate_AuditDisabled">
+        <source>This command requires NuGetAudit to be enabled at this time. See https://aka.ms/nuget/audit for more information.</source>
+        <target state="translated">Für diesen Befehl muss NuGetAudit zu diesem Zeitpunkt aktiviert sein. Weitere Informationen finden Sie unter https://aka.ms/nuget/audit.</target>
+        <note>{Locked="NuGetAudit"}{Locked="dotnet package update"}</note>
+      </trans-unit>
+      <trans-unit id="PackageUpdate_AuditModeIsDirect">
+        <source>NuGetAuditMode is set to direct, which means that transitive packages with known vulnerabilities will not be updated. See https://aka.ms/nuget/audit for more information.</source>
+        <target state="translated">NuGetAuditMode ist auf „direkt“ festgelegt, was bedeutet, dass transitive Pakete mit bekannten Sicherheitslücken nicht aktualisiert werden. Weitere Informationen finden Sie unter https://aka.ms/nuget/audit.</target>
+        <note>{Locked="NuGetAuditMode"}</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_FinalSummary">
         <source>Updated {0} packages in {1} scanned packages.</source>
@@ -907,9 +1022,14 @@ Weitere Informationen finden Sie unter: https://docs.nuget.org/docs/reference/co
         <target state="translated">Projekte werden geladen.</target>
         <note />
       </trans-unit>
+      <trans-unit id="PackageUpdate_NoVulnerablePackages">
+        <source>No upgradable packages have known vulnerabilities.</source>
+        <target state="translated">Keine aktualisierbaren Pakete weisen bekannte Sicherheitslücken auf.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PackageUpdate_PackageArgumentDescription">
         <source>Package reference in the form of a package identifier like 'Newtonsoft.Json' or package identifier and version separated by '@' like 'Newtonsoft.Json@13.0.3'.</source>
-        <target state="translated">Paketverweis in Form eines Paketbezeichners wie "Newtonsoft.Json" oder Paketbezeichner und -version getrennt durch "@" wie "Newtonsoft.Json@13.0.3".</target>
+        <target state="translated">Paketverweis in Form eines Paketbezeichners wie „Newtonsoft.Json“ oder Paketbezeichner und -version getrennt durch „@“ wie „Newtonsoft.Json@13.0.3“.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">
@@ -923,8 +1043,8 @@ Weitere Informationen finden Sie unter: https://docs.nuget.org/docs/reference/co
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatedMessage">
-        <source>Updated {0} {1} to {2}.</source>
-        <target state="translated">{0} {1} wurde auf {2} aktualisiert.</target>
+        <source>Updating {0} {1} to {2}.</source>
+        <target state="translated">{0} {1} wird auf {2} aktualisiert.</target>
         <note>{0}: package id
 {1}: existing version
 {2}: new version</note>
@@ -934,10 +1054,20 @@ Weitere Informationen finden Sie unter: https://docs.nuget.org/docs/reference/co
         <target state="translated">Veraltete Pakete in {0} werden aktualisiert.</target>
         <note>{0}: the project or solution that is being updated</note>
       </trans-unit>
+      <trans-unit id="PackageUpdate_UpdatingVulnerablePackages">
+        <source>Updating packages with security advisories in {0}</source>
+        <target state="translated">Pakete mit Sicherheitshinweisen in {0} werden aktualisiert.</target>
+        <note>{0} - the project/solution being checked</note>
+      </trans-unit>
       <trans-unit id="PrereleaseVersionsAvailable">
         <source>There are no stable versions available, {0} is the best available. Consider adding the --prerelease option</source>
         <target state="translated">Es sind keine stabilen Versionen verfügbar. Beste verfügbare Version: {0}. Erwägen Sie, die Option "--prerelease" hinzuzufügen.</target>
         <note>{0} - Package Version</note>
+      </trans-unit>
+      <trans-unit id="Prerelease_Description">
+        <source>Allows prerelease packages to be installed.</source>
+        <target state="translated">Ermöglicht die Installation von Paketen mit Vorabversionen.</target>
+        <note />
       </trans-unit>
       <trans-unit id="PushCommandSkipDuplicateDescription">
         <source>If a package and version already exists, skip it and continue with the next package in the push, if any.</source>
@@ -1158,8 +1288,8 @@ Bei der Suche handelt es sich um einen ungültigen Zeichenfolgenvergleich mit de
         <note />
       </trans-unit>
       <trans-unit id="SymbolApiKey_Description">
-        <source>The API key for the symbol server.</source>
-        <target state="translated">Der API-Schlüssel für den Symbolserver.</target>
+        <source>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</source>
+        <target state="needs-review-translation">Der API-Schlüssel für den Symbolserver.</target>
         <note />
       </trans-unit>
       <trans-unit id="SymbolSource_Description">
@@ -1257,11 +1387,6 @@ Bei der Suche handelt es sich um einen ungültigen Zeichenfolgenvergleich mit de
         <target state="translated">Der Name des vorhandenen vertrauenswürdigen Signaturgebers, der entfernt werden soll.</target>
         <note />
       </trans-unit>
-      <trans-unit id="Unsupported_PackageSourceMapping">
-        <source>Unsupported: Projects using Package Source Mapping are not yet supported</source>
-        <target state="translated">Nicht unterstützt: Projekte, die die Paketquellzuordnung verwenden, werden noch nicht unterstützt.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Unsupported_UpdatePackageWithDifferentPerTfmVersions">
         <source>The package {0} references different versions of the package for different target frameworks. This is not supported by this command. Please edit the project file directly. ({1})</source>
         <target state="translated">Das Paket {0} verweist für verschiedene Zielframeworks auf unterschiedliche Versionen des Pakets. Dies wird von diesem Befehl nicht unterstützt. Bitte bearbeiten Sie die Projektdatei direkt. ({1})</target>
@@ -1355,6 +1480,11 @@ Bei der Suche handelt es sich um einen ungültigen Zeichenfolgenvergleich mit de
         <source>Unable to run 'dotnet nuget why'. {0}</source>
         <target state="translated">"dotnet nuget why" kann nicht ausgeführt werden. {0}</target>
         <note>{0} - Exception mssage</note>
+      </trans-unit>
+      <trans-unit id="WhyCommand_Error_InconsistentAssetsFile">
+        <source>Internal error: Assets file is inconsistent</source>
+        <target state="new">Internal error: Assets file is inconsistent</target>
+        <note />
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. Please run restore for project '{1}' before running this command.</source>

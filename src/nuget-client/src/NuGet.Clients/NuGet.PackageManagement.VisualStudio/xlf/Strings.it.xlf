@@ -73,12 +73,12 @@
       </trans-unit>
       <trans-unit id="Debug_RemoveReference">
         <source>Removed reference '{0}' from project '{1}'</source>
-        <target state="translated">È stato rimosso il riferimento '{0}' dal progetto '{1}'</target>
+        <target state="translated">Il riferimento '{0}' è stato rimosso dal progetto '{1}'</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFile">
         <source>Removed file '{0}'</source>
-        <target state="translated">Il file '{0}' è stato rimosso</target>
+        <target state="translated">File '{0}' rimosso</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFileFromFolder">
@@ -117,8 +117,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSource_InvalidSource">
-        <source>The source specified is invalid.</source>
-        <target state="translated">L'origine specificata non è valida.</target>
+        <source>A valid local or remote path must be specified.</source>
+        <target state="translated">È necessario specificare un percorso locale o remoto valido.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSource_UniqueName">
@@ -181,6 +181,16 @@
         <source>The {0} MSBuild property could not be found for project '{1}'.</source>
         <target state="translated">La proprietà MSBuild {0} non è stata trovata per il progetto '{1}'.</target>
         <note>{0} is the name of the property that was not set.  {1} is the full path to the project.</note>
+      </trans-unit>
+      <trans-unit id="Migrating_ProjectJson_Started">
+        <source>Migrating project.json project...</source>
+        <target state="translated">Migrazione del progetto project.json in corso...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrating_ProjectJson_Succeeded">
+        <source>Migration Succeeded</source>
+        <target state="translated">Migrazione completata</target>
+        <note />
       </trans-unit>
       <trans-unit id="PathToExistingFileNotPresent">
         <source>Path '{0}' to existing file is not found on disk. Cannot add to project '{1}'</source>
@@ -256,7 +266,7 @@
       </trans-unit>
       <trans-unit id="Warning_DirectoryNotEmpty">
         <source>Directory '{0}' is not empty. Skipping...</source>
-        <target state="translated">La directory '{0}' non è vuota. L'operazione verrà ignorata...</target>
+        <target state="translated">La directory '{0}' non è vuota. Operazione ignorata...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectories">

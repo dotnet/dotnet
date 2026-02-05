@@ -30,15 +30,7 @@ using Test
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __builder.OpenComponent<global::Test.
-#nullable restore
-#line (4,2)-(4,17) "x:\dir\subdir\Test\TestComponent.cshtml"
-HeaderComponent
-
-#line default
-#line hidden
-#nullable disable
-            >(0);
+            __builder.OpenComponent<global::Test.HeaderComponent>(0);
             __builder.AddComponentParameter(1, nameof(global::Test.HeaderComponent.
 #nullable restore
 #line (4,18)-(4,24) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -50,15 +42,7 @@ Header
             ), "head");
             __builder.CloseComponent();
             __builder.AddMarkupContent(2, "\r\n");
-            __builder.OpenComponent<global::AnotherTest.
-#nullable restore
-#line (6,2)-(6,17) "x:\dir\subdir\Test\TestComponent.cshtml"
-FooterComponent
-
-#line default
-#line hidden
-#nullable disable
-            >(3);
+            __builder.OpenComponent<global::AnotherTest.FooterComponent>(3);
             __builder.AddComponentParameter(4, nameof(global::AnotherTest.FooterComponent.
 #nullable restore
 #line (6,18)-(6,24) "x:\dir\subdir\Test\TestComponent.cshtml"

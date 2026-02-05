@@ -26,6 +26,8 @@ namespace NuGet.PackageManagement.Telemetry
 
         internal const string AlternativePackageIdPropertyName = "AlternativePackageId";
 
+        internal const string ErrorTypePropertyName = "ErrorType";
+
         /// <summary>
         /// General Navigation event with an origin specified.
         /// </summary>
@@ -68,6 +70,38 @@ namespace NuGet.PackageManagement.Telemetry
             navigatedTelemetryEvent[CurrentTabPropertyName] = currentTab;
             navigatedTelemetryEvent[IsSolutionViewPropertyName] = isSolutionView;
             navigatedTelemetryEvent[PackageSourceMappingStatusPropertyName] = packageSourceMappingStatus;
+
+            return navigatedTelemetryEvent;
+        }
+
+        /// <summary>
+        /// Navigating from the Vulnerability InfoBar to the Manage Packages dialog.
+        /// </summary>
+        public static NavigatedTelemetryEvent CreateWithVulnerabilityInfoBarManagePackages()
+        {
+            NavigatedTelemetryEvent navigatedTelemetryEvent = new(NavigationType.Button, NavigationOrigin.VulnerabilityInfoBar_ManagePackages);
+            return navigatedTelemetryEvent;
+        }
+
+        /// <summary>
+        /// Navigating from the Vulnerability InfoBar to Fix Vulnerabilities with GitHub Copilot.
+        /// </summary>
+        public static NavigatedTelemetryEvent CreateWithVulnerabilityInfoBarFixWithCopilot(FixVulnerabilitiesWithCopilotErrorType errorType)
+        {
+            NavigatedTelemetryEvent navigatedTelemetryEvent = new(NavigationType.Button, NavigationOrigin.VulnerabilityInfoBar_FixVulnerabilitiesWithCopilot);
+            navigatedTelemetryEvent[ErrorTypePropertyName] = errorType;
+            return navigatedTelemetryEvent;
+        }
+
+        /// <summary>
+        /// Navigating an External hyperlink from VS.
+        /// </summary>
+        /// <param name="hyperlinkType">Hyperlink origin</param>
+        public static NavigatedTelemetryEvent CreateWithExternalLink(HyperlinkType hyperlinkType)
+        {
+            NavigatedTelemetryEvent navigatedTelemetryEvent = new(NavigationType.Hyperlink, NavigationOrigin.PMUI_ExternalLink);
+
+            navigatedTelemetryEvent[HyperLinkTypePropertyName] = hyperlinkType;
 
             return navigatedTelemetryEvent;
         }

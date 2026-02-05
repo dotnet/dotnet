@@ -29,7 +29,7 @@ namespace NuGet.Tests.Apex
         {
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, addNetStandardFeeds: true))
             {
-                var project2 = testContext.SolutionService.AddProject(ProjectLanguage.CSharp, projectTemplate, ProjectTargetFramework.V46, "TestProject2");
+                var project2 = testContext.SolutionService.AddProject(ProjectLanguage.CSharp, projectTemplate, CommonUtility.DefaultTargetFramework, "TestProject2");
                 project2.Build();
 
                 testContext.Project.References.Dte.AddProjectReference(project2);
@@ -101,7 +101,7 @@ namespace NuGet.Tests.Apex
 
                 // Assert
                 VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
-                CommonUtility.AssertPackageReferenceExists(VisualStudio, testContext.SolutionService.Projects[0], packageName, packageVersion, Logger);
+                CommonUtility.AssertPackageReferenceExists(testContext.SolutionService.Projects[0], packageName, packageVersion, Logger);
                 StringAssert.Contains(GetPackageManagerOutputWindowPaneText(), $"Installed {packageName} {packageVersion} from {privateRepositoryPath}");
             }
         }
@@ -170,7 +170,7 @@ namespace NuGet.Tests.Apex
 
                 // Assert
                 VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
-                CommonUtility.AssertPackageReferenceExists(VisualStudio, testContext.SolutionService.Projects[0], packageName, packageVersion2, Logger);
+                CommonUtility.AssertPackageReferenceExists(testContext.SolutionService.Projects[0], packageName, packageVersion2, Logger);
                 StringAssert.Contains(GetPackageManagerOutputWindowPaneText(), $"Installed {packageName} {packageVersion2} from {privateRepositoryPath}");
             }
         }
@@ -229,7 +229,7 @@ namespace NuGet.Tests.Apex
                 uiwindow.InstallPackageFromUI(packageName, packageVersion);
 
                 // Assert
-                CommonUtility.AssertPackageReferenceDoesNotExist(VisualStudio, testContext.SolutionService.Projects[0], packageName, packageVersion, Logger);
+                CommonUtility.AssertPackageReferenceDoesNotExist(testContext.SolutionService.Projects[0], packageName, packageVersion, Logger);
             }
         }
 

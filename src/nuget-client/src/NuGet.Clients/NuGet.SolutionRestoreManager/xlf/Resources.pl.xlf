@@ -22,6 +22,11 @@
         <target state="translated">Pakiet „{0}{1}” nie ma dokładnej wersji, takiej jak „[1.0.0]”. Z elementem PackageDownload są dozwolone tylko dokładne wersje.</target>
         <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
       </trans-unit>
+      <trans-unit id="InfoBar_HyperlinkFixVulnerabilitiesWithCopilot">
+        <source>Fix with GitHub Copilot</source>
+        <target state="translated">Napraw za pomocą usługi GitHub Copilot</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
       <trans-unit id="InfoBar_HyperlinkMessage">
         <source>Manage NuGet Packages</source>
         <target state="translated">Zarządzaj pakietami NuGet</target>
@@ -45,7 +50,7 @@
       </trans-unit>
       <trans-unit id="NothingToRestore">
         <source>All packages are already installed and there is nothing to restore.</source>
-        <target state="translated">Wszystkie pakiety są już zainstalowane i nie ma elementów do przywrócenia.</target>
+        <target state="translated">Wszystkie pakiety są już zainstalowane i nie ma niczego do przywrócenia.</target>
         <note />
       </trans-unit>
       <trans-unit id="Operation_Finished">

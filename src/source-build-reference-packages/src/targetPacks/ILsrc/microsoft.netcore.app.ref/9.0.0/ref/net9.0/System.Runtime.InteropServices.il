@@ -1,5 +1,4 @@
 
-//  Microsoft (R) .NET IL Disassembler.  Version 5.0.0
 
 
 // ----- DOS Header:
@@ -485,9 +484,9 @@
 .assembly /*20000001*/ noplatform System.Runtime.InteropServices
 {
   .custom instance void [System.Runtime/*23000001*/]System.Reflection.AssemblyMetadataAttribute::.ctor(string,
-                                                                                        string) = ( 01 00 06 73 6F 75 72 63 65 1F 73 6F 75 72 63 65   // ...source.source
-                                                                                                    2D 62 75 69 6C 64 2D 72 65 66 65 72 65 6E 63 65   // -build-reference
-                                                                                                    2D 70 61 63 6B 61 67 65 73 00 00 )                // -packages..
+                                                                                                       string) = ( 01 00 06 73 6F 75 72 63 65 1F 73 6F 75 72 63 65   // ...source.source
+                                                                                                                   2D 62 75 69 6C 64 2D 72 65 66 65 72 65 6E 63 65   // -build-reference
+                                                                                                                   2D 70 61 63 6B 61 67 65 73 00 00 )                // -packages..
   .custom /*0C000004:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilationRelaxationsAttribute/*01000001*/::.ctor(int32) /* 0A000001 */ = ( 01 00 08 00 00 00 00 00 ) 
   .custom /*0C000005:0A000002*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.RuntimeCompatibilityAttribute/*01000002*/::.ctor() /* 0A000002 */ = ( 01 00 01 00 54 02 16 57 72 61 70 4E 6F 6E 45 78   // ....T..WrapNonEx
                                                                                                                                                                                 63 65 70 74 69 6F 6E 54 68 72 6F 77 73 01 )       // ceptionThrows.
@@ -596,7 +595,6 @@
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000009    //  ILONLY
-// Image base: 0x00007FD0910E0000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -3014,8 +3012,8 @@
   } // end of method CollectionsMarshal::GetValueRefOrNullRef
 
   .method /*0600009D*/ public hidebysig static 
-          !!TValue&  GetValueRefOrNullRef<TKey,TValue,TAlternateKey>(valuetype [System.Collections/*23000002*/]System.Collections.Generic.Dictionary`2/*0100003D*//AlternateLookup`1/*0100003E*/<!!TKey,!!TValue,!!TAlternateKey> dictionary,
-                                                                     !!TAlternateKey key) cil managed
+          !!TValue&  GetValueRefOrNullRef<TKey,TValue,byreflike TAlternateKey>(valuetype [System.Collections/*23000002*/]System.Collections.Generic.Dictionary`2/*0100003D*//AlternateLookup`1/*0100003E*/<!!TKey,!!TValue,!!TAlternateKey> dictionary,
+                                                                               !!TAlternateKey key) cil managed
   // SIG: 10 03 02 10 1E 01 15 11 80 F9 03 1E 00 1E 01 1E 02 1E 02
   {
     .param type TValue /*2A000015*/ 
@@ -3047,9 +3045,9 @@
   } // end of method CollectionsMarshal::GetValueRefOrAddDefault
 
   .method /*0600009F*/ public hidebysig static 
-          !!TValue&  GetValueRefOrAddDefault<TKey,TValue,TAlternateKey>(valuetype [System.Collections/*23000002*/]System.Collections.Generic.Dictionary`2/*0100003D*//AlternateLookup`1/*0100003E*/<!!TKey,!!TValue,!!TAlternateKey> dictionary,
-                                                                        !!TAlternateKey key,
-                                                                        [out] bool& exists) cil managed
+          !!TValue&  GetValueRefOrAddDefault<TKey,TValue,byreflike TAlternateKey>(valuetype [System.Collections/*23000002*/]System.Collections.Generic.Dictionary`2/*0100003D*//AlternateLookup`1/*0100003E*/<!!TKey,!!TValue,!!TAlternateKey> dictionary,
+                                                                                  !!TAlternateKey key,
+                                                                                  [out] bool& exists) cil managed
   // SIG: 10 03 03 10 1E 01 15 11 80 F9 03 1E 00 1E 01 1E 02 1E 02 10 02
   {
     .param type TValue /*2A00001A*/ 

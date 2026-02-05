@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.Build.Traversal">
+<Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -9,11 +9,9 @@
   </ItemGroup>
 
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.SignSourceBuiltArtifacts" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-
   <Target Name="SignSourceBuiltArtifacts"
-      DependsOnTargets="GetSignableSourceBuiltAssets"
-      BeforeTargets="Build">
-
+          DependsOnTargets="GetSignableSourceBuiltAssets"
+          AfterTargets="Build">
     <SignSourceBuiltArtifacts
       DotNetEngDirectory="$(RepositoryEngineeringDir)"
       SignableSourceBuiltAssets="@(SignableSourceBuiltAsset)"
@@ -23,9 +21,8 @@
   </Target>
 
   <Target Name="GetSignableSourceBuiltAssets"
-    DependsOnTargets="ResolveProjectReferences"
-    BeforeTargets="Build">
-
+          DependsOnTargets="ResolveProjectReferences"
+          AfterTargets="Build">
     <!-- We always publish when building the VMR, so we need to define these properties to ensure that we're pulling the source-build artifacts from the correct locations -->
     <!-- Keep in line with the properties defined in $(RepositoryEngineeringDir)Publishing.props -->
     <PropertyGroup>
@@ -48,16 +45,16 @@
       <SignableSourceBuiltArtifactsTarball Include="$(SourceBuiltPublishAssetsDir)/$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
       <SignableSourceBuiltAsset Include="@(SignableSourceBuiltArtifactsTarball)" />
 
-      <!-- Source tarball and zipball -->
-      <!-- Uncomment once https://github.com/dotnet/arcade/issues/16034 has been resolved. -->
-      <!-- <SignableSourceBuiltSourceArtifact Include="$(SourceBuiltPublishAssetsDir)/$(SourceBuiltSourceArtifactName)-*" />
-      <SignableSourceBuiltAsset Include="@(SignableSourceBuiltSourceArtifact)" /> -->
+      <!-- Source tarball -->
+      <!-- Uncomment once https://github.com/dotnet/arcade/issues/16370 has been resolved. -->
+      <!-- <SignableSourceBuiltSourceArtifact Include="$(SourceBuiltPublishAssetsDir)/$(SourceBuiltSourceArtifactName)-*$(ArchiveExtension)" /> -->
+      <!-- <SignableSourceBuiltAsset Include="@(SignableSourceBuiltSourceArtifact)" /> -->
     </ItemGroup>
 
     <Error Text="$(SourceBuiltSdkTarballName) artifact count is @(SignableSourceBuiltSdkTarball->Count()) and should be 1" Condition="@(SignableSourceBuiltSdkTarball->Count()) != 1"/>
     <Error Text="$(SourceBuiltArtifactsTarballName) artifact count is @(SignableSourceBuiltArtifactsTarball->Count()) and should be 1" Condition="@(SignableSourceBuiltArtifactsTarball->Count()) != 1"/>
-    <!-- Enable once https://github.com/dotnet/arcade/issues/16034 has been resolved. -->
-    <!-- <Error Text="$(SourceBuiltSourceArtifactName) artifact count is @(SignableSourceBuiltSourceArtifact->Count()) and should be 2" Condition="@(SignableSourceBuiltSourceArtifact->Count()) != 2"/> -->
+    <!-- Enable once https://github.com/dotnet/arcade/issues/16370 has been resolved. -->
+    <!-- <Error Text="$(SourceBuiltSourceArtifactName) artifact count is @(SignableSourceBuiltSourceArtifact->Count()) and should be 1" Condition="@(SignableSourceBuiltSourceArtifact->Count()) != 1"/> -->
   </Target>
 
 </Project>

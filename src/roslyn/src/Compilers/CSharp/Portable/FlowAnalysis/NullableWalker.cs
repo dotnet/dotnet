@@ -795,10 +795,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return;
                 }
 
-                // If 'field' keyword is explicitly used by 'symbol', then use FlowAnalysisAnnotations from the backing field.
-                // Otherwise, use the FlowAnalysisAnnotations from the user-declared symbol (property or ordinary field).
-                var usesFieldKeyword = symbol is SourcePropertySymbolBase { UsesFieldKeyword: true };
-                var annotations = usesFieldKeyword ? field!.FlowAnalysisAnnotations : symbol.GetFlowAnalysisAnnotations();
+                // If we are considering the backing field for this check, and the field keyword is explicitly used by 'symbol', then use FlowAnalysisAnnotations from the backing field.
+                // Otherwise, use the FlowAnalysisAnnotations from 'symbol'.
+                var (usesFieldKeyword, annotations) = field != null && symbol is SourcePropertySymbolBase { UsesFieldKeyword: true }
+                    ? (true, field.FlowAnalysisAnnotations)
+                    : (false, symbol.GetFlowAnalysisAnnotations());
                 if ((annotations & FlowAnalysisAnnotations.AllowNull) != 0)
                 {
                     // We assume that if a member has AllowNull then the user
@@ -3194,18 +3195,17 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode? VisitLocal(BoundLocal node)
         {
-            var local = node.LocalSymbol;
-
             // Ignore var self-references (e.g., the RHS of `var x = x;`) to avoid cycles.
             // While inferring the type of a more complex construct (like lambda),
             // nullability analysis could be triggered against a reference of the local being inferred,
             // querying its type and hence starting the same type inference recursively.
-            if (local is SourceLocalSymbol { IsVar: true } && local.ForbiddenZone?.Contains(node.Syntax) == true)
+            if (node.Type == (object)this.compilation.ImplicitlyTypedVariableUsedInForbiddenZoneType)
             {
                 SetResultType(node, TypeWithState.ForType(node.Type));
                 return null;
             }
 
+            var local = node.LocalSymbol;
             int slot = GetOrCreateSlot(local);
             var type = GetDeclaredLocalResult(local);
 
@@ -3869,10 +3869,19 @@ namespace Microsoft.CodeAnalysis.CSharp
             // When the target-typing conversion is processed, the completion continuation will be given a target-type and
             // we'll be able to process the element conversions and compute the final visit result.
 
+            // Walk into the creation side first (generally, this corresponds to the 'with(...)' elements if present.
+            // This will ensure any nullable changes in those arguments are reflected before we walk into the elements.
+            // Note: the creation side may reference a placeholder representing the actual elements to add to the
+            // collection.  For example `SomeCollection.Create(withArg1, withArg2, <placeholder_for_elements>)`. In this
+            // case, we know the type of that place holder and that it is not nullable (it is a ReadOnlySpan).  Populate
+            // the right maps so walking into the creation understands this.
+
+            var collectionCreationCompletion = visitCollectionCreationArguments(node);
+
             var (collectionKind, targetElementType) = getCollectionDetails(node, node.Type);
 
             var resultBuilder = ArrayBuilder<VisitResult>.GetInstance(node.Elements.Length);
-            var elementConversionCompletions = ArrayBuilder<Func<TypeWithAnnotations /*targetElementType*/, TypeSymbol /*targetCollectionType*/, TypeWithState>>.GetInstance();
+            var elementConversionCompletions = ArrayBuilder<Action<TypeWithAnnotations /*targetElementType*/, TypeSymbol /*targetCollectionType*/>>.GetInstance();
             foreach (var element in node.Elements)
             {
                 visitElement(element, node, targetElementType, elementConversionCompletions);
@@ -3884,7 +3893,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // We're in the context of a conversion, so the analysis of element conversions and the final visit result
                 // will be completed later (when that conversion is processed).
                 TargetTypedAnalysisCompletion[node] =
-                    (TypeWithAnnotations resultTypeWithAnnotations) => convertCollection(node, resultTypeWithAnnotations, elementConversionCompletions);
+                    (TypeWithAnnotations resultTypeWithAnnotations) => convertCollection(
+                        node, resultTypeWithAnnotations, collectionCreationCompletion, elementConversionCompletions);
             }
             else
             {
@@ -3900,7 +3910,115 @@ namespace Microsoft.CodeAnalysis.CSharp
             SetResult(node, visitResult, updateAnalyzedNullability: !node.WasTargetTyped, isLvalue: false);
             return null;
 
-            void visitElement(BoundNode element, BoundCollectionExpression node, TypeWithAnnotations targetElementType, ArrayBuilder<Func<TypeWithAnnotations, TypeSymbol, TypeWithState>> elementConversionCompletions)
+            Action<TypeSymbol>? visitCollectionCreationArguments(BoundCollectionExpression node)
+            {
+                var collectionCreation = node.GetUnconvertedCollectionCreation();
+                if (collectionCreation is BoundObjectCreationExpression objectCreation &&
+                    node.CollectionTypeKind == CollectionExpressionTypeKind.ImplementsIEnumerable)
+                {
+                    // Walk into the arguments of the object creation, passing in 'delayCompletionForTargetMember: true'
+                    // so that we reprocess the nullability of the arguments when we have the target-type for the
+                    // collection expression.
+                    var reinferenceResult = this.VisitArgumentsCore(
+                        objectCreation,
+                        objectCreation.Arguments,
+                        objectCreation.ArgumentRefKindsOpt,
+                        objectCreation.Constructor.Parameters,
+                        objectCreation.ArgsToParamsOpt,
+                        objectCreation.DefaultArguments,
+                        objectCreation.Expanded,
+                        usesExtensionReceiver: false,
+                        objectCreation.Constructor,
+                        delayCompletionForTargetMember: true);
+                    Debug.Assert(reinferenceResult.Completion != null);
+
+                    return collectionFinalType =>
+                    {
+                        // Find the actual constructor we are calling into now that we know the real target-type of the
+                        // collection expression.
+                        var constructor = (MethodSymbol)AsMemberOfType(collectionFinalType, objectCreation.Constructor);
+                        reinferenceResult.Completion(reinferenceResult.Results, constructor.Parameters, constructor);
+
+                        if (!ReferenceEquals(objectCreation.Constructor, constructor))
+                            SetUpdatedSymbol(objectCreation, objectCreation.Constructor, constructor);
+                    };
+                }
+                else if (collectionCreation is BoundCall call)
+                {
+                    var collectionBuilderElementsPlaceholder = node.CollectionBuilderElementsPlaceholder;
+                    Debug.Assert(collectionBuilderElementsPlaceholder != null);
+
+                    AddPlaceholderReplacement(
+                        collectionBuilderElementsPlaceholder,
+                        collectionBuilderElementsPlaceholder,
+                        result: new VisitResult(
+                            collectionBuilderElementsPlaceholder.Type,
+                            NullableAnnotation.NotAnnotated,
+                            NullableFlowState.NotNull));
+
+                    var reinferenceResult = this.VisitArgumentsCore(
+                        call,
+                        call.Arguments,
+                        call.ArgumentRefKindsOpt,
+                        call.Method.Parameters,
+                        call.ArgsToParamsOpt,
+                        call.DefaultArguments,
+                        call.Expanded,
+                        call.InvokedAsExtensionMethod,
+                        call.Method,
+                        delayCompletionForTargetMember: true);
+                    Debug.Assert(reinferenceResult.Completion != null);
+
+                    RemovePlaceholderReplacement(collectionBuilderElementsPlaceholder);
+
+                    return collectionFinalType =>
+                    {
+                        // BoundCalls are calls to CollectionBuilder factory methods.  In the case where they are generic,
+                        // our first pass will have substituted oblivious types in the type signature for the type
+                        // arguments.  So we'll have a signature like:
+                        //
+                        //      SomeCollection<X~,Y~> Create<X~,Y~>(...X~..., ReadOnlySpan<ElementType> t).
+                        //
+                        // Now that we have determined the real final collection type (say `SomeCollection<X!, Y?>`) we need
+                        // to go back through and reanalyze the arguments to the BoundCall with the proper substitutions for
+                        // X and Y.
+                        //
+                        // Note: the language requires (and our conversion logic ensures) that the creation method has the
+                        // same arity as the collection type.  So in order to get the final creation method we just need to
+                        // take the final collection type and use its type arguments to re-construct the creation method.
+
+                        var allTypeArguments = ((NamedTypeSymbol)collectionFinalType).GetAllTypeArgumentsNoUseSiteDiagnostics();
+                        Debug.Assert(allTypeArguments.Length == call.Method.Arity, "Guaranteed by GetCollectionBuilderMethods");
+
+                        var constructed = call.Method.Arity == 0 ? call.Method : call.Method.ConstructedFrom.Construct(allTypeArguments);
+                        reinferenceResult.Completion(reinferenceResult.Results, constructed.Parameters, constructed);
+
+                        if (!ReferenceEquals(call.Method, constructed))
+                            SetUpdatedSymbol(call, call.Method, constructed);
+                    };
+                }
+                else
+                {
+                    // Only the CollectionBuilder and ImplementsIEnumerable kinds can end up with a target type that
+                    // would make us want to reanalyze the collection creation arguments.  This is because these are the
+                    // types where the factory-method or constructor (respectively), could be generic and then have type
+                    // parameters which are reinferred to be more specific nullable types that will affect the analysis
+                    // of the arguments passed into them.  The other kinds are:
+                    //
+                    // 1. Arrays/Spans.  These can't have CollectionCreation expressions at all.
+                    // 2. Array interfaces (e.g. IList<T>).  These only have two supported constructors that are called
+                    //    (List<T>() and List<T>(int)), and neither of these involve generics, so they do not need
+                    //    reanalysis.
+                    //
+                    // So for all these uninteresting cases, all we do is visit the collection creation once and be
+                    // done. This at least ensures we visit any *arguments* passed into the 'with', which themselves
+                    // could affect nullability state.  For example `[with(a = "")]`.
+                    Visit(node.CollectionCreation);
+                    return null;
+                }
+            }
+
+            void visitElement(BoundNode element, BoundCollectionExpression node, TypeWithAnnotations targetElementType, ArrayBuilder<Action<TypeWithAnnotations, TypeSymbol>> elementConversionCompletions)
             {
                 switch (element)
                 {
@@ -3923,7 +4041,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             // Reinfer the addMethod signature and convert the argument to parameter type
                             var addMethod = initializer.AddMethod;
                             MethodSymbol reinferredAddMethod;
-                            if (!addMethod.IsExtensionMethod && !addMethod.GetIsNewExtensionMember())
+                            if (!addMethod.IsExtensionMethod && !addMethod.IsExtensionBlockMember())
                             {
                                 reinferredAddMethod = (MethodSymbol)AsMemberOfType(targetCollectionType, addMethod);
                             }
@@ -3934,7 +4052,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             }
 
                             var reinferredParameter = reinferredAddMethod.Parameters[argIndex];
-                            var resultType = VisitConversion(
+                            VisitConversion(
                                 conversionOpt: null,
                                 addArgument,
                                 Conversion.Identity, // as only a nullable reinference is being done we expect an identity conversion
@@ -3948,7 +4066,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 reportTopLevelWarnings: true,
                                 reportRemainingWarnings: true,
                                 trackMembers: false);
-                            return resultType;
                         });
 
                         break;
@@ -3992,7 +4109,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            TypeWithState convertCollection(BoundCollectionExpression node, TypeWithAnnotations targetCollectionType, ArrayBuilder<Func<TypeWithAnnotations, TypeSymbol, TypeWithState>> completions)
+            TypeWithState convertCollection(
+                BoundCollectionExpression node,
+                TypeWithAnnotations targetCollectionType,
+                Action<TypeSymbol>? collectionCreationCompletion,
+                ArrayBuilder<Action<TypeWithAnnotations, TypeSymbol>> completions)
             {
                 var strippedTargetCollectionType = targetCollectionType.Type.StrippedType();
                 Debug.Assert(TypeSymbol.Equals(strippedTargetCollectionType, node.Type, TypeCompareKind.AllIgnoreOptions));
@@ -4003,18 +4124,29 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // Process the element conversions now that we have the target-type
                 var (collectionKind, targetElementType) = getCollectionDetails(node, strippedTargetCollectionType);
 
-                // We should analyze the Create method
-                // Tracked by https://github.com/dotnet/roslyn/issues/68786
+                // Now that we know the final type of the collection, use that to properly reanalyze the arguments
+                // passed to a with(...) element if present.
+                collectionCreationCompletion?.Invoke(strippedTargetCollectionType);
 
                 foreach (var completion in completions)
                 {
-                    _ = completion(targetElementType, strippedTargetCollectionType);
+                    completion(targetElementType, strippedTargetCollectionType);
                 }
                 completions.Free();
 
                 // Record the final state
                 NullableFlowState resultState = getResultState(node, collectionKind);
                 var resultTypeWithState = TypeWithState.Create(strippedTargetCollectionType, resultState);
+
+                var collectionCreation = node.CollectionCreation;
+                while (collectionCreation is BoundConversion conversion)
+                {
+                    SetAnalyzedNullability(collectionCreation, resultTypeWithState);
+                    collectionCreation = conversion.Operand;
+                }
+
+                SetAnalyzedNullability(collectionCreation, resultTypeWithState);
+
                 SetAnalyzedNullability(node, resultTypeWithState);
                 return resultTypeWithState;
             }
@@ -4090,11 +4222,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             MethodSymbol? constructor = getConstructor(node, node.Type);
             var arguments = node.Arguments;
 
-            (_, ImmutableArray<VisitResult> argumentResults, _, ArgumentsCompletionDelegate<MethodSymbol>? argumentsCompletion) =
-                VisitArguments(
-                           node, arguments, node.ArgumentRefKindsOpt, constructor?.Parameters ?? default,
-                           node.ArgsToParamsOpt, node.DefaultArguments, node.Expanded, invokedAsExtensionMethod: false,
-                           constructor, delayCompletionForTargetMember: isTargetTyped);
+            ReinferenceResult<MethodSymbol> reinferenceResult = VisitArgumentsCore(
+                node, arguments, node.ArgumentRefKindsOpt, constructor?.Parameters ?? default,
+                node.ArgsToParamsOpt, node.DefaultArguments, node.Expanded, usesExtensionReceiver: false,
+                constructor, delayCompletionForTargetMember: isTargetTyped);
+
+            ImmutableArray<VisitResult> argumentResults = reinferenceResult.Results;
+            ArgumentsCompletionDelegate<MethodSymbol>? argumentsCompletion = reinferenceResult.Completion;
             Debug.Assert(isTargetTyped == argumentsCompletion is not null);
 
             var type = node.Type;
@@ -4102,7 +4236,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             (int slot, NullableFlowState resultState, Func<TypeSymbol, MethodSymbol?, int>? initialStateInferenceCompletion) =
                 inferInitialObjectState(node, type, constructor, arguments, argumentResults, isTargetTyped, hasObjectInitializer: initializerOpt is { });
 
-            Action<int, TypeSymbol>? initializerCompletion = null;
+            InitializerCompletionAfterTargetType? initializerCompletion = null;
             if (initializerOpt != null)
             {
                 initializerCompletion = VisitObjectCreationInitializer(slot, type, initializerOpt, delayCompletionForType: isTargetTyped);
@@ -4118,7 +4252,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 ImmutableArray<VisitResult> argumentResults,
                 ArgumentsCompletionDelegate<MethodSymbol>? argumentsCompletion,
                 Func<TypeSymbol, MethodSymbol?, int>? initialStateInferenceCompletion,
-                Action<int, TypeSymbol>? initializerCompletion,
+                InitializerCompletionAfterTargetType? initializerCompletion,
                 NullableFlowState resultState,
                 bool isTargetTyped)
             {
@@ -4147,7 +4281,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 ImmutableArray<VisitResult> argumentResults,
                 ArgumentsCompletionDelegate<MethodSymbol> argumentsCompletion,
                 Func<TypeSymbol, MethodSymbol?, int> initialStateInferenceCompletion,
-                Action<int, TypeSymbol>? initializerCompletion,
+                InitializerCompletionAfterTargetType? initializerCompletion,
                 NullableFlowState resultState)
             {
                 Debug.Assert(resultState == NullableFlowState.NotNull);
@@ -4273,10 +4407,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// If <paramref name="delayCompletionForType"/>, <paramref name="containingSlot"/> is known only within returned delegate.
         /// </summary>
         /// <returns>A delegate to complete the initializer analysis.</returns>
-        private Action<int, TypeSymbol>? VisitObjectCreationInitializer(int containingSlot, TypeSymbol containingType, BoundObjectInitializerExpressionBase node, bool delayCompletionForType)
+        private InitializerCompletionAfterTargetType? VisitObjectCreationInitializer(int containingSlot, TypeSymbol containingType, BoundObjectInitializerExpressionBase node, bool delayCompletionForType)
         {
             Debug.Assert(!delayCompletionForType || containingSlot == -1);
-            Action<int, TypeSymbol>? completion = null;
+            InitializerCompletionAfterTargetType? completion = null;
 
             TakeIncrementalSnapshot(node);
             switch (node)
@@ -4323,7 +4457,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// If <paramref name="delayCompletionForType"/>, <paramref name="containingSlot"/> is known only within returned delegate.
         /// </summary>
         /// <returns>A delegate to complete the element initializer analysis.</returns>
-        private Action<int, TypeSymbol>? VisitObjectElementInitializer(int containingSlot, TypeSymbol containingType, BoundAssignmentOperator node, bool delayCompletionForType)
+        private InitializerCompletionAfterTargetType? VisitObjectElementInitializer(int containingSlot, TypeSymbol containingType, BoundAssignmentOperator node, bool delayCompletionForType)
         {
             Debug.Assert(!delayCompletionForType || containingSlot == -1);
 
@@ -4342,26 +4476,49 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return null;
             }
 
-            Action<int, TypeSymbol>? visitMemberInitializer(int containingSlot, TypeSymbol containingType, BoundAssignmentOperator node, bool delayCompletionForType)
+            InitializerCompletionAfterTargetType? visitMemberInitializer(int containingSlot, TypeSymbol containingType, BoundAssignmentOperator node, bool delayCompletionForType)
             {
                 var objectInitializer = (BoundObjectInitializerMember)node.Left;
                 Symbol? symbol = getTargetMember(containingType, objectInitializer);
 
                 ImmutableArray<VisitResult> argumentResults = default;
                 ArgumentsCompletionDelegate<Symbol>? argumentsCompletion = null;
-                if (!objectInitializer.Arguments.IsDefaultOrEmpty)
+                bool isExtensionBlockMember = symbol?.IsExtensionBlockMember() == true;
+                if (!objectInitializer.Arguments.IsEmpty || isExtensionBlockMember)
                 {
                     // It is an error for an interpolated string to use the receiver of an object initializer indexer here, so we just use
                     // a default visit result
-                    (_, argumentResults, _, argumentsCompletion) =
-                        VisitArguments(
-                            objectInitializer, objectInitializer.Arguments, objectInitializer.ArgumentRefKindsOpt,
-                            ((PropertySymbol?)symbol)?.Parameters ?? default, objectInitializer.ArgsToParamsOpt,
+                    ImmutableArray<RefKind> refKindsOpt = objectInitializer.ArgumentRefKindsOpt;
+                    ImmutableArray<BoundExpression> arguments = objectInitializer.Arguments;
+                    ImmutableArray<ParameterSymbol> parameters = ((PropertySymbol?)symbol)?.Parameters ?? default;
+                    ImmutableArray<int> argsToParamsOpt = objectInitializer.ArgsToParamsOpt;
+                    if (isExtensionBlockMember)
+                    {
+                        Debug.Assert(symbol is not null);
+                        refKindsOpt = AdjustArgumentRefKindsIfNeeded(refKindsOpt, adjustForExtensionBlockMethod: true, symbol, objectInitializer.Arguments.Length);
+
+                        arguments = AdjustArgumentsIfNeeded(
+                            arguments,
+                            isExtensionBlockMember,
+                            receiver: new BoundExpressionWithNullability(objectInitializer.Syntax, objectInitializer, NullableAnnotation.NotAnnotated, containingType));
+
+                        parameters = AdjustParametersIfNeeded(parameters, isExtensionBlockMember: true, symbol);
+                        argsToParamsOpt = AdjustArgsToParamsOptIfNeeded(argsToParamsOpt, isExtensionBlockMethod: true);
+
+                        Debug.Assert(objectInitializer.DefaultArguments.IsNull);
+                    }
+
+                    var reinferenceResult = VisitArgumentsCore(
+                            objectInitializer, arguments, refKindsOpt,
+                            parameters, argsToParamsOpt,
                             objectInitializer.DefaultArguments, objectInitializer.Expanded,
-                            invokedAsExtensionMethod: false, member: (Symbol?)null, delayCompletionForTargetMember: delayCompletionForType);
+                            usesExtensionReceiver: isExtensionBlockMember, member: (Symbol?)null, delayCompletionForTargetMember: delayCompletionForType);
+
+                    argumentResults = reinferenceResult.Results;
+                    argumentsCompletion = reinferenceResult.Completion;
                 }
 
-                Action<int, Symbol>? initializationCompletion = null;
+                InitializerCompletionAfterUpdatedSymbol? initializationCompletion = null;
 
                 if (symbol is object)
                 {
@@ -4381,11 +4538,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return setAnalyzedNullability(node, argumentResults, argumentsCompletion, initializationCompletion, delayCompletionForType);
             }
 
-            Action<int, TypeSymbol>? setAnalyzedNullability(
+            InitializerCompletionAfterTargetType? setAnalyzedNullability(
                 BoundAssignmentOperator node,
                 ImmutableArray<VisitResult> argumentResults,
                 ArgumentsCompletionDelegate<Symbol>? argumentsCompletion,
-                Action<int, Symbol>? initializationCompletion,
+                InitializerCompletionAfterUpdatedSymbol? initializationCompletion,
                 bool delayCompletionForType)
             {
                 if (delayCompletionForType)
@@ -4403,11 +4560,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return null;
             }
 
-            Action<int, TypeSymbol>? setAnalyzedNullabilityAsContinuation(
+            InitializerCompletionAfterTargetType? setAnalyzedNullabilityAsContinuation(
                 BoundAssignmentOperator node,
                 ImmutableArray<VisitResult> argumentResults,
                 ArgumentsCompletionDelegate<Symbol>? argumentsCompletion,
-                Action<int, Symbol>? initializationCompletion)
+                InitializerCompletionAfterUpdatedSymbol? initializationCompletion)
             {
                 return (int containingSlot, TypeSymbol containingType) =>
                 {
@@ -4429,7 +4586,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (symbol == null)
                     return null;
 
-                if (!symbol.GetIsNewExtensionMember())
+                if (!symbol.IsExtensionBlockMember())
                 {
                     Debug.Assert(TypeSymbol.Equals(objectInitializer.Type, GetTypeOrReturnType(symbol), TypeCompareKind.IgnoreNullableModifiersForReferenceTypes));
                     return AsMemberOfType(containingType, symbol);
@@ -4479,18 +4636,18 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return (containingSlot < 0 || !IsSlotMember(containingSlot, symbol)) ? -1 : GetOrCreateSlot(symbol, containingSlot);
             }
 
-            Action<int, Symbol>? visitNestedInitializer(int containingSlot, TypeSymbol containingType, Symbol symbol, BoundObjectInitializerExpressionBase initializer, bool delayCompletionForType)
+            InitializerCompletionAfterUpdatedSymbol? visitNestedInitializer(int containingSlot, TypeSymbol containingType, Symbol symbol, BoundObjectInitializerExpressionBase initializer, bool delayCompletionForType)
             {
                 int slot = getOrCreateSlot(containingSlot, symbol);
                 Debug.Assert(!delayCompletionForType || slot == -1);
 
-                Action<int, TypeSymbol>? nestedCompletion = VisitObjectCreationInitializer(slot, GetTypeOrReturnType(symbol), initializer, delayCompletionForType);
+                InitializerCompletionAfterTargetType? nestedCompletion = VisitObjectCreationInitializer(slot, GetTypeOrReturnType(symbol), initializer, delayCompletionForType);
 
                 return completeNestedInitializerAnalysis(symbol, initializer, slot, nestedCompletion, delayCompletionForType);
             }
 
-            Action<int, Symbol>? completeNestedInitializerAnalysis(
-                Symbol symbol, BoundObjectInitializerExpressionBase initializer, int slot, Action<int, TypeSymbol>? nestedCompletion,
+            InitializerCompletionAfterUpdatedSymbol? completeNestedInitializerAnalysis(
+                Symbol symbol, BoundObjectInitializerExpressionBase initializer, int slot, InitializerCompletionAfterTargetType? nestedCompletion,
                 bool delayCompletionForType)
             {
                 if (delayCompletionForType)
@@ -4511,7 +4668,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return null;
             }
 
-            Action<int, Symbol>? completeNestedInitializerAnalysisAsContinuation(BoundObjectInitializerExpressionBase initializer, Action<int, TypeSymbol>? nestedCompletion)
+            InitializerCompletionAfterUpdatedSymbol? completeNestedInitializerAnalysisAsContinuation(BoundObjectInitializerExpressionBase initializer, InitializerCompletionAfterTargetType? nestedCompletion)
             {
                 return (int containingSlot, Symbol symbol) =>
                 {
@@ -4521,7 +4678,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 };
             }
 
-            Action<int, Symbol>? visitMemberAssignment(BoundAssignmentOperator node, int containingSlot, Symbol symbol, bool delayCompletionForType, Func<TypeWithAnnotations, TypeWithState>? conversionCompletion = null)
+            InitializerCompletionAfterUpdatedSymbol? visitMemberAssignment(BoundAssignmentOperator node, int containingSlot, Symbol symbol, bool delayCompletionForType, Func<TypeWithAnnotations, TypeWithState>? conversionCompletion = null)
             {
                 Debug.Assert(!delayCompletionForType || conversionCompletion is null);
 
@@ -4554,7 +4711,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return null;
             }
 
-            Action<int, Symbol>? visitMemberAssignmentAsContinuation(BoundAssignmentOperator node, Func<TypeWithAnnotations, TypeWithState> conversionCompletion)
+            InitializerCompletionAfterUpdatedSymbol? visitMemberAssignmentAsContinuation(BoundAssignmentOperator node, Func<TypeWithAnnotations, TypeWithState> conversionCompletion)
             {
                 return (int containingSlot, Symbol symbol) =>
                 {
@@ -4572,17 +4729,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             throw ExceptionUtilities.Unreachable();
         }
 
-        private Action<int, TypeSymbol>? VisitCollectionElementInitializer(BoundCollectionElementInitializer node, TypeSymbol containingType, bool delayCompletionForType)
+        private InitializerCompletionAfterTargetType? VisitCollectionElementInitializer(BoundCollectionElementInitializer node, TypeSymbol containingType, bool delayCompletionForType)
         {
             ImmutableArray<VisitResult> argumentResults = default;
             MethodSymbol addMethod = addMethodAsMemberOfContainingType(node, containingType, ref argumentResults);
 
             // Note: we analyze even omitted calls
-            (MethodSymbol? reinferredMethod,
-             argumentResults,
-             _,
-             ArgumentsCompletionDelegate<MethodSymbol>? visitArgumentsCompletion) =
-                VisitArguments(
+            var reinferenceResult = VisitArgumentsCore(
                     node,
                     node.Arguments,
                     refKindsOpt: default,
@@ -4593,6 +4746,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                     node.InvokedAsExtensionMethod,
                     addMethod,
                     delayCompletionForTargetMember: delayCompletionForType);
+
+            MethodSymbol? reinferredMethod = reinferenceResult.Member;
+            argumentResults = reinferenceResult.Results;
+            ArgumentsCompletionDelegate<MethodSymbol>? visitArgumentsCompletion = reinferenceResult.Completion;
 
 #if DEBUG
             if (node.InvokedAsExtensionMethod)
@@ -4605,7 +4762,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             return setUpdatedSymbol(node, containingType, reinferredMethod, argumentResults, visitArgumentsCompletion, delayCompletionForType);
 
-            Action<int, TypeSymbol>? setUpdatedSymbol(
+            InitializerCompletionAfterTargetType? setUpdatedSymbol(
                 BoundCollectionElementInitializer node,
                 TypeSymbol containingType,
                 MethodSymbol? reinferredMethod,
@@ -4632,7 +4789,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return null;
             }
 
-            Action<int, TypeSymbol>? setUpdatedSymbolAsContinuation(
+            InitializerCompletionAfterTargetType? setUpdatedSymbolAsContinuation(
                 BoundCollectionElementInitializer node,
                 ImmutableArray<VisitResult> argumentResults,
                 ArgumentsCompletionDelegate<MethodSymbol> visitArgumentsCompletion)
@@ -4670,7 +4827,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         argumentResults = builder.ToImmutableAndFree();
                     }
                 }
-                else if (!method.GetIsNewExtensionMember())
+                else if (!method.IsExtensionBlockMember())
                 {
                     // Tracked by https://github.com/dotnet/roslyn/issues/78828: Do we need to do anything special for new extensions here?
                     method = (MethodSymbol)AsMemberOfType(containingType, method);
@@ -5340,7 +5497,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             TypeWithState rightType,
             BoundBinaryOperator binary)
         {
-            var inferredResult = ReinferAndVisitBinaryOperator(binary, binary.OperatorKind, binary.Method, binary.Type, binary.Left, leftOperand, leftConversion, leftType, binary.Right, rightOperand, rightConversion, rightType);
+            var inferredResult = ReinferAndVisitBinaryOperator(binary, binary.OperatorKind, binary.BinaryOperatorMethod, binary.Type, binary.Left, leftOperand, leftConversion, leftType, binary.Right, rightOperand, rightConversion, rightType);
             SetResult(binary, inferredResult, inferredResult.ToTypeWithAnnotations(compilation));
         }
 
@@ -5438,7 +5595,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             TypeSymbol methodContainer = method.ContainingType;
             MethodSymbol reinferredMethod;
 
-            if (!method.GetIsNewExtensionMember())
+            if (!method.IsExtensionBlockMember())
             {
                 TypeSymbol asMemberOfType = getTypeIfContainingType(methodContainer, leftUnderlyingType.Type, leftOperand) ??
                     getTypeIfContainingType(methodContainer, rightUnderlyingType.Type, rightOperand) ?? methodContainer;
@@ -6558,10 +6715,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                     else
                     {
-                        bool isNewExtensionMethod = node.Method.GetIsNewExtensionMember();
+                        bool isExtensionBlockMethod = node.Method.IsExtensionBlockMember();
 
                         // Only instance receivers go through VisitRvalue; arguments go through VisitArgumentEvaluate.
-                        if (node.ReceiverOpt is not null && !isNewExtensionMethod)
+                        if (node.ReceiverOpt is not null && !isExtensionBlockMethod)
                         {
                             VisitRvalueEpilogue(receiver); // VisitRvalue does this after visiting each node
                             receiverType = ResultType;
@@ -6571,12 +6728,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                         else
                         {
                             // The receiver for new extension methods is analyzed as an argument
-                            Debug.Assert(node.InvokedAsExtensionMethod || isNewExtensionMethod);
+                            Debug.Assert(node.InvokedAsExtensionMethod || isExtensionBlockMethod);
 
-                            var refKind = isNewExtensionMethod ? GetExtensionReceiverRefKind(node.Method) : GetRefKind(node.ArgumentRefKindsOpt, 0);
+                            var refKind = isExtensionBlockMethod ? GetExtensionReceiverRefKind(node.Method) : GetRefKind(node.ArgumentRefKindsOpt, 0);
 
                             FlowAnalysisAnnotations annotations;
-                            if (isNewExtensionMethod)
+                            if (isExtensionBlockMethod)
                             {
                                 Debug.Assert(node.Method.ContainingType.ExtensionParameter is not null);
                                 annotations = node.Method.ContainingType.ExtensionParameter.FlowAnalysisAnnotations;
@@ -6658,7 +6815,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return;
                 }
 
-                (MethodSymbol method, ImmutableArray<VisitResult> results, bool returnNotNull) = ReInferMethodAndVisitArguments(
+                ReinferenceResult<MethodSymbol> reinferenceResult = ReInferMethodAndVisitArguments(
                     node,
                     node.ReceiverOpt,
                     receiverType,
@@ -6670,6 +6827,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                     node.Expanded,
                     node.InvokedAsExtensionMethod,
                     firstArgumentResult);
+
+                Debug.Assert(reinferenceResult.Member is not null);
+                MethodSymbol? method = reinferenceResult.Member;
+                ImmutableArray<VisitResult> results = reinferenceResult.Results;
+                bool returnNotNull = reinferenceResult.ReturnNotNull;
 
                 LearnFromEqualsMethod(method, node, receiverType, results);
 
@@ -6689,7 +6851,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             TypeWithState receiverType = default;
 
             // The receiver for new extension methods will be analyzed as an argument
-            if (receiverOpt is { } receiver && !method.GetIsNewExtensionMember())
+            if (receiverOpt is { } receiver && !method.IsExtensionBlockMember())
             {
                 receiverType = VisitRvalueWithState(receiver);
                 CheckCallReceiver(receiver, receiverType, method);
@@ -6698,7 +6860,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             return receiverType;
         }
 
-        private (MethodSymbol method, ImmutableArray<VisitResult> results, bool returnNotNull) ReInferMethodAndVisitArguments(
+        private ReinferenceResult<MethodSymbol> ReInferMethodAndVisitArguments(
             BoundNode node,
             BoundExpression? receiverOpt,
             TypeWithState receiverType,
@@ -6711,65 +6873,66 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool invokedAsExtensionMethod,
             VisitResult? firstArgumentResult = null)
         {
-            bool adjustForNewExtension = method.GetIsNewExtensionMember();
+            bool adjustForExtensionBlockMember = method.IsExtensionBlockMember();
 
-            refKindsOpt = GetArgumentRefKinds(refKindsOpt, adjustForNewExtension, method, arguments.Length);
+            refKindsOpt = AdjustArgumentRefKindsIfNeeded(refKindsOpt, adjustForExtensionBlockMember, method, arguments.Length);
 
-            if (!method.GetIsNewExtensionMember() && !receiverType.HasNullType)
+            if (!method.IsExtensionBlockMember() && !receiverType.HasNullType)
             {
                 // Update method based on inferred receiver type.
                 method = (MethodSymbol)AsMemberOfType(receiverType.Type, method);
             }
 
-            arguments = getArguments(arguments, adjustForNewExtension, receiverOpt);
-            ImmutableArray<ParameterSymbol> parameters = getParameters(method.Parameters, adjustForNewExtension, method);
-            argsToParamsOpt = GetArgsToParamsOpt(argsToParamsOpt, adjustForNewExtension);
+            arguments = AdjustArgumentsIfNeeded(arguments, adjustForExtensionBlockMember, receiverOpt);
+            ImmutableArray<ParameterSymbol> parameters = AdjustParametersIfNeeded(method.Parameters, adjustForExtensionBlockMember, method);
+            argsToParamsOpt = AdjustArgsToParamsOptIfNeeded(argsToParamsOpt, adjustForExtensionBlockMember);
 
-            ImmutableArray<VisitResult> results;
-            bool returnNotNull;
-            (var newMethod, results, returnNotNull) = VisitArguments(node, arguments, refKindsOpt, parameters, argsToParamsOpt, defaultArguments,
-                expanded, invokedAsExtensionMethod, method, firstArgumentResult: firstArgumentResult);
+            bool usesExtensionReceiver = invokedAsExtensionMethod || method.IsExtensionBlockMember();
+            ReinferenceResult<MethodSymbol> reinferenceResult = VisitArgumentsCore(node, arguments, refKindsOpt, parameters, argsToParamsOpt, defaultArguments,
+                expanded, usesExtensionReceiver, method, firstArgumentResult: firstArgumentResult, delayCompletionForTargetMember: false);
 
+            Debug.Assert(reinferenceResult.Completion is null);
+            var newMethod = reinferenceResult.Member;
             Debug.Assert(newMethod is not null);
             ApplyMemberPostConditions(receiverOpt, newMethod);
 
-            return (newMethod, results, returnNotNull);
-
-            static ImmutableArray<BoundExpression> getArguments(ImmutableArray<BoundExpression> arguments, bool isNewExtension, BoundExpression? receiver)
-            {
-                // In error cases, the receiver may have already been stored as an argument
-                if (isNewExtension && receiver is not null)
-                {
-                    return [receiver, .. arguments];
-                }
-
-                return arguments;
-            }
-
-            static ImmutableArray<ParameterSymbol> getParameters(ImmutableArray<ParameterSymbol> parameters, bool isNewExtension, MethodSymbol method)
-            {
-                if (!isNewExtension)
-                {
-                    return parameters;
-                }
-
-                ParameterSymbol? extensionParameter = method.ContainingType.ExtensionParameter;
-                Debug.Assert(extensionParameter is not null);
-
-                return [extensionParameter, .. parameters];
-            }
+            return reinferenceResult;
         }
 
-        internal static ImmutableArray<RefKind> GetArgumentRefKinds(ImmutableArray<RefKind> argumentRefKindsOpt, bool adjustForNewExtension,
-            MethodSymbol method, int argumentCount)
+        private static ImmutableArray<BoundExpression> AdjustArgumentsIfNeeded(ImmutableArray<BoundExpression> arguments, bool isExtensionBlockMethod, BoundExpression? receiver)
         {
-            if (!adjustForNewExtension)
+            // In error cases, the receiver may have already been stored as an argument
+            if (isExtensionBlockMethod && receiver is not null)
+            {
+                return [receiver, .. arguments];
+            }
+
+            return arguments;
+        }
+
+        private static ImmutableArray<ParameterSymbol> AdjustParametersIfNeeded(ImmutableArray<ParameterSymbol> parameters, bool isExtensionBlockMember, Symbol member)
+        {
+            if (!isExtensionBlockMember)
+            {
+                return parameters;
+            }
+
+            ParameterSymbol? extensionParameter = member.ContainingType.ExtensionParameter;
+            Debug.Assert(extensionParameter is not null);
+
+            return [extensionParameter, .. parameters];
+        }
+
+        internal static ImmutableArray<RefKind> AdjustArgumentRefKindsIfNeeded(ImmutableArray<RefKind> argumentRefKindsOpt, bool adjustForExtensionBlockMethod,
+            Symbol member, int argumentCount)
+        {
+            if (!adjustForExtensionBlockMethod)
             {
                 return argumentRefKindsOpt;
             }
 
-            Debug.Assert(method.GetIsNewExtensionMember());
-            RefKind receiverRefKind = GetExtensionReceiverRefKind(method);
+            Debug.Assert(member.IsExtensionBlockMember());
+            RefKind receiverRefKind = GetExtensionReceiverRefKind(member);
 
             if (argumentRefKindsOpt.IsDefault)
             {
@@ -6786,9 +6949,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             return [receiverRefKind, .. argumentRefKindsOpt];
         }
 
-        private static RefKind GetExtensionReceiverRefKind(MethodSymbol method)
+        private static RefKind GetExtensionReceiverRefKind(Symbol member)
         {
-            ParameterSymbol? extensionParameter = method.ContainingType.ExtensionParameter;
+            ParameterSymbol? extensionParameter = member.ContainingType.ExtensionParameter;
             Debug.Assert(extensionParameter is not null);
             // See "OverloadResolution.IsApplicable": we only give an implicit `ref` on the receiver for a `ref` parameter
             // For `ref readonly` or `in`, we use "none"
@@ -6796,9 +6959,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             return extensionParameter.RefKind == RefKind.Ref ? RefKind.Ref : RefKind.None;
         }
 
-        private static ImmutableArray<int> GetArgsToParamsOpt(ImmutableArray<int> argsToParamsOpt, bool isNewExtension)
+        private static ImmutableArray<int> AdjustArgsToParamsOptIfNeeded(ImmutableArray<int> argsToParamsOpt, bool isExtensionBlockMethod)
         {
-            if (!isNewExtension)
+            if (!isExtensionBlockMethod)
             {
                 return argsToParamsOpt;
             }
@@ -7057,7 +7220,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private void CheckCallReceiver(BoundExpression? receiverOpt, TypeWithState receiverType, MethodSymbol method)
         {
-            if (method.GetIsNewExtensionMember())
+            if (method.IsExtensionBlockMember())
             {
                 return;
             }
@@ -7232,7 +7395,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             throw ExceptionUtilities.Unreachable();
         }
 
-        private (MethodSymbol? method, ImmutableArray<VisitResult> results, bool returnNotNull) VisitArguments(
+        private void VisitArguments(
             BoundExpression node,
             ImmutableArray<BoundExpression> arguments,
             ImmutableArray<RefKind> refKindsOpt,
@@ -7242,10 +7405,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool expanded,
             bool invokedAsExtensionMethod)
         {
-            return VisitArguments(node, arguments, refKindsOpt, method is null ? default : method.Parameters, argsToParamsOpt, defaultArguments, expanded, invokedAsExtensionMethod, method);
+            var reinferenceResult = VisitArgumentsCore(node, arguments, refKindsOpt, method is null ? default : method.Parameters, argsToParamsOpt, defaultArguments, expanded, invokedAsExtensionMethod, method, delayCompletionForTargetMember: false);
+            Debug.Assert(reinferenceResult.Completion is null);
         }
 
-        private ImmutableArray<VisitResult> VisitArguments(
+        private void VisitArguments(
             BoundExpression node,
             ImmutableArray<BoundExpression> arguments,
             ImmutableArray<RefKind> refKindsOpt,
@@ -7254,33 +7418,26 @@ namespace Microsoft.CodeAnalysis.CSharp
             BitVector defaultArguments,
             bool expanded)
         {
-            return VisitArguments<PropertySymbol>(node, arguments, refKindsOpt, parametersOpt: property is null ? default : property.Parameters, argsToParamsOpt, defaultArguments, expanded, invokedAsExtensionMethod: false).results;
-        }
-
-        // Returns the re-inferred member and the results of the arguments.
-        private (TMember? member, ImmutableArray<VisitResult> results, bool returnNotNull) VisitArguments<TMember>(
-            BoundNode node,
-            ImmutableArray<BoundExpression> arguments,
-            ImmutableArray<RefKind> refKindsOpt,
-            ImmutableArray<ParameterSymbol> parametersOpt,
-            ImmutableArray<int> argsToParamsOpt,
-            BitVector defaultArguments,
-            bool expanded,
-            bool invokedAsExtensionMethod,
-            TMember? member = null,
-            VisitResult? firstArgumentResult = null)
-            where TMember : Symbol
-        {
-            var result = VisitArguments(node, arguments, refKindsOpt, parametersOpt, argsToParamsOpt, defaultArguments, expanded, invokedAsExtensionMethod, member, delayCompletionForTargetMember: false, firstArgumentResult: firstArgumentResult);
-            Debug.Assert(result.completion is null);
-
-            return (result.member, result.results, result.returnNotNull);
+            var reinferenceResult = VisitArgumentsCore(node, arguments, refKindsOpt, parametersOpt: property is null ? default : property.Parameters, argsToParamsOpt, defaultArguments, expanded, usesExtensionReceiver: false, member: property, delayCompletionForTargetMember: false);
+            Debug.Assert(reinferenceResult.Completion is null);
         }
 
         private delegate (TMember? member, bool returnNotNull) ArgumentsCompletionDelegate<TMember>(ImmutableArray<VisitResult> argumentResults, ImmutableArray<ParameterSymbol> parametersOpt, TMember? member) where TMember : Symbol;
 
-        private (TMember? member, ImmutableArray<VisitResult> results, bool returnNotNull, ArgumentsCompletionDelegate<TMember>? completion)
-        VisitArguments<TMember>(
+        private delegate void InitializerCompletionAfterTargetType(int containingSlot, TypeSymbol containingType);
+        private delegate void InitializerCompletionAfterUpdatedSymbol(int containingSlot, Symbol updatedSymbol);
+
+        private readonly struct ReinferenceResult<TMember>(TMember? member, ImmutableArray<VisitResult> results,
+            bool returnNotNull, ArgumentsCompletionDelegate<TMember>? completion)
+            where TMember : Symbol
+        {
+            public readonly TMember? Member = member;
+            public readonly ImmutableArray<VisitResult> Results = results;
+            public readonly bool ReturnNotNull = returnNotNull;
+            public readonly ArgumentsCompletionDelegate<TMember>? Completion = completion;
+        }
+
+        private ReinferenceResult<TMember> VisitArgumentsCore<TMember>(
             BoundNode node,
             ImmutableArray<BoundExpression> arguments,
             ImmutableArray<RefKind> refKindsOpt,
@@ -7288,7 +7445,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             ImmutableArray<int> argsToParamsOpt,
             BitVector defaultArguments,
             bool expanded,
-            bool invokedAsExtensionMethod,
+            bool usesExtensionReceiver, // determines what conversions are allowed on the receiver
             TMember? member,
             bool delayCompletionForTargetMember,
             VisitResult? firstArgumentResult = null)
@@ -7313,13 +7470,12 @@ namespace Microsoft.CodeAnalysis.CSharp
             // Visit the arguments and collect results
             ImmutableArray<VisitResult> results = VisitArgumentsEvaluate(argumentsNoConversions, refKindsOpt, GetParametersAnnotations(arguments, parametersOpt, argsToParamsOpt, expanded), defaultArguments, firstArgumentResult: firstArgumentResult);
 
-            return visitArguments(
+            return visitArgumentsCore(
                 node, arguments, argumentsNoConversions, conversions, results, refKindsOpt,
-                parametersOpt, argsToParamsOpt, defaultArguments, expanded, invokedAsExtensionMethod,
+                parametersOpt, argsToParamsOpt, defaultArguments, expanded, usesExtensionReceiver,
                 member, delayCompletionForTargetMember);
 
-            (TMember? member, ImmutableArray<VisitResult> results, bool returnNotNull, ArgumentsCompletionDelegate<TMember>? completion)
-            visitArguments(
+            ReinferenceResult<TMember> visitArgumentsCore(
                 BoundNode node,
                 ImmutableArray<BoundExpression> arguments,
                 ImmutableArray<BoundExpression> argumentsNoConversions,
@@ -7330,7 +7486,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 ImmutableArray<int> argsToParamsOpt,
                 BitVector defaultArguments,
                 bool expanded,
-                bool invokedAsExtensionMethod,
+                bool usesExtensionReceiver,
                 TMember? member,
                 bool delayCompletionForTargetMember)
             {
@@ -7338,9 +7494,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 if (delayCompletionForTargetMember)
                 {
-                    return (member, results, shouldReturnNotNull, visitArgumentsAsContinuation(
+                    return new ReinferenceResult<TMember>(member, results, shouldReturnNotNull, visitArgumentsCoreAsContinuation(
                                                                       node, arguments, argumentsNoConversions, conversions, refKindsOpt,
-                                                                      argsToParamsOpt, defaultArguments, expanded, invokedAsExtensionMethod));
+                                                                      argsToParamsOpt, defaultArguments, expanded, usesExtensionReceiver));
                 }
 
                 // Re-infer method type arguments
@@ -7366,7 +7522,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             CheckMethodConstraints(syntaxForConstraintCheck, reinferredMethod);
                         }
                     }
-                    else if (member.GetIsNewExtensionMember())
+                    else if (member.IsExtensionBlockMember())
                     {
                         if (member.ContainingType is { } extension && ConstraintsHelper.RequiresChecking(extension))
                         {
@@ -7432,11 +7588,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                             parameterAnnotations,
                             results[i],
                             conversionResultsBuilder,
-                            invokedAsExtensionMethod && i == 0);
+                            extensionMethodThisArgument: usesExtensionReceiver && i == 0);
 
                         _disableDiagnostics = previousDisableDiagnostics;
 
-                        bool isStaticExtensionReceiver = member?.GetIsNewExtensionMember() == true && member.IsStatic && i == 0;
+                        bool isStaticExtensionReceiver = member?.IsExtensionBlockMember() == true && member.IsStatic && i == 0;
                         if (!isStaticExtensionReceiver)
                         {
                             if (results[i].RValueType.IsNotNull || isExpandedParamsArgument)
@@ -7506,10 +7662,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
 
                 notNullParametersBuilder?.Free();
-                return (member, results, shouldReturnNotNull, null);
+                return new ReinferenceResult<TMember>(member, results, shouldReturnNotNull, completion: null);
             }
 
-            ArgumentsCompletionDelegate<TMember> visitArgumentsAsContinuation(
+            ArgumentsCompletionDelegate<TMember> visitArgumentsCoreAsContinuation(
                 BoundNode node,
                 ImmutableArray<BoundExpression> arguments,
                 ImmutableArray<BoundExpression> argumentsNoConversions,
@@ -7518,17 +7674,17 @@ namespace Microsoft.CodeAnalysis.CSharp
                 ImmutableArray<int> argsToParamsOpt,
                 BitVector defaultArguments,
                 bool expanded,
-                bool invokedAsExtensionMethod)
+                bool usesExtensionReceiver)
             {
                 return (ImmutableArray<VisitResult> results, ImmutableArray<ParameterSymbol> parametersOpt, TMember? member) =>
                        {
-                           var result = visitArguments(
+                           var result = visitArgumentsCore(
                                            node, arguments, argumentsNoConversions, conversions, results, refKindsOpt,
-                                           parametersOpt, argsToParamsOpt, defaultArguments, expanded, invokedAsExtensionMethod,
+                                           parametersOpt, argsToParamsOpt, defaultArguments, expanded, usesExtensionReceiver,
                                            member, delayCompletionForTargetMember: false);
-                           Debug.Assert(result.completion is null);
+                           Debug.Assert(result.Completion is null);
 
-                           return (result.member, result.returnNotNull);
+                           return (result.Member, result.ReturnNotNull);
                        };
             }
 
@@ -7684,7 +7840,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private void ApplyMemberPostConditions(int receiverSlot, MethodSymbol method)
         {
             Debug.Assert(receiverSlot >= 0);
-            if (method.GetIsNewExtensionMember())
+            if (method.IsExtensionBlockMember())
             {
                 // Tracked by https://github.com/dotnet/roslyn/issues/78828 : should we extend member post-conditions to work with extension members?
                 return;
@@ -8376,7 +8532,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // https://github.com/dotnet/roslyn/issues/27961 OverloadResolution.IsMemberApplicableInNormalForm and
             // IsMemberApplicableInExpandedForm use the least overridden method. We need to do the same here.
-            var definition = member.GetIsNewExtensionMember() ? member.OriginalDefinition : member.ConstructedFrom();
+            var definition = member.IsExtensionBlockMember() ? member.OriginalDefinition : member.ConstructedFrom();
             var refKinds = ArrayBuilder<RefKind>.GetInstance();
             if (argumentRefKindsOpt != null)
             {
@@ -8577,7 +8733,18 @@ namespace Microsoft.CodeAnalysis.CSharp
                         }
                     }
 
-                    return new BoundUnconvertedCollectionExpression(collection.Syntax, elementsBuilder.ToImmutableAndFree()) { WasCompilerGenerated = true };
+                    // Note: the 'with(...)' element in a collection expression does not contribute to method type
+                    // inference (just like 'new(...)' in an argument position does not.  Instead, once method type
+                    // inference is done, the final target type will be used to bind and determine what 'with(...)'
+                    // and 'new(...)' mean.
+                    //
+                    // So in this case, just pass 'null' for this as they do not contribute to inference and it's 
+                    // the same as if the user did not provide any.
+                    return new BoundUnconvertedCollectionExpression(
+                        collection.Syntax, withElement: null, elements: elementsBuilder.ToImmutableAndFree())
+                    {
+                        WasCompilerGenerated = true
+                    };
                 }
 
                 // Note: for `out` arguments, the argument result contains the declaration type (see `VisitArgumentEvaluate`)
@@ -8804,7 +8971,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private static Symbol AsMemberOfType(TypeSymbol? type, Symbol symbol)
         {
             Debug.Assert((object)symbol != null);
-            Debug.Assert(!symbol.GetIsNewExtensionMember(), symbol.ToDisplayString());
+            Debug.Assert(!symbol.IsExtensionBlockMember(), symbol.ToDisplayString());
 
             var containingType = type as NamedTypeSymbol;
             if (containingType is null || containingType.IsErrorType() || symbol is ErrorMethodSymbol)
@@ -9911,7 +10078,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 // In new extension form, the nullable rewriter processes the arguments as if receiver is the first item in the argument list, like the old extension form. This means that all of
                 // our placeholders will be off-by-one, with the extension receiver in the first position.
-                var newExtensionFormOffset = parameterOpt?.ContainingType.IsExtension is true ? 1 : 0;
+                var extensionBlockFormOffset = parameterOpt?.ContainingType.IsExtension is true ? 1 : 0;
                 bool addedPlaceholders = false;
                 foreach (var placeholder in handlerData.ArgumentPlaceholders)
                 {
@@ -9925,7 +10092,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         case BoundInterpolatedStringArgumentPlaceholder.InstanceParameter:
                             break;
                         case BoundInterpolatedStringArgumentPlaceholder.ExtensionReceiver:
-                            Debug.Assert(newExtensionFormOffset == 1);
+                            Debug.Assert(extensionBlockFormOffset == 1);
                             AddPlaceholderReplacement(placeholder, expression: null, previousArgumentConversionResults[0]);
                             addedPlaceholders = true;
                             break;
@@ -9935,7 +10102,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 // We intentionally do not give a replacement bound node for this placeholder, as we do not propagate any post conditions from the constructor
                                 // to the original location of the node. This is because the nullable walker is not a true evaluation-order walker, and doing so would cause
                                 // us to miss real warnings.
-                                AddPlaceholderReplacement(placeholder, expression: null, previousArgumentConversionResults[placeholder.ArgumentIndex + newExtensionFormOffset]);
+                                AddPlaceholderReplacement(placeholder, expression: null, previousArgumentConversionResults[placeholder.ArgumentIndex + extensionBlockFormOffset]);
                                 addedPlaceholders = true;
                             }
                             break;
@@ -9982,8 +10149,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool reportRemainingWarnings,
             Location diagnosticLocation)
         {
-            // Uncomment when https://github.com/dotnet/roslyn/issues/67153 is fixed
-            // Debug.Assert(!IsConditionalState);
+            Debug.Assert(!IsConditionalState);
             Debug.Assert(conversionOperand != null);
             Debug.Assert(targetTypeWithNullability.HasType);
             Debug.Assert(diagnosticLocation != null);
@@ -10451,12 +10617,12 @@ namespace Microsoft.CodeAnalysis.CSharp
         private MethodSymbol CheckMethodGroupReceiverNullability(BoundMethodGroup group, ImmutableArray<ParameterSymbol> parameters, MethodSymbol method, bool invokedAsExtensionMethod)
         {
             var receiverOpt = group.ReceiverOpt;
-            bool isNewExtensionMethod = method.GetIsNewExtensionMember();
+            bool isExtensionBlockMethod = method.IsExtensionBlockMember();
 
             if (TryGetMethodGroupReceiverNullability(receiverOpt, out TypeWithState receiverType))
             {
                 var syntax = group.Syntax;
-                if (!invokedAsExtensionMethod && !isNewExtensionMethod)
+                if (!invokedAsExtensionMethod && !isExtensionBlockMethod)
                 {
                     method = (MethodSymbol)AsMemberOfType(receiverType.Type, method);
                 }
@@ -10464,7 +10630,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (method.GetMemberArityIncludingExtension() != 0 && HasImplicitTypeArguments(group.Syntax))
                 {
                     var arguments = ArrayBuilder<BoundExpression>.GetInstance();
-                    if (invokedAsExtensionMethod || isNewExtensionMethod)
+                    if (invokedAsExtensionMethod || isExtensionBlockMethod)
                     {
                         arguments.Add(CreatePlaceholderIfNecessary(receiverOpt, receiverType.ToTypeWithAnnotations(compilation)));
                     }
@@ -10481,11 +10647,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                     method = InferMemberTypeArguments(method, arguments.ToImmutableAndFree(), argumentRefKindsOpt: default, argsToParamsOpt: default, expanded: false);
                 }
 
-                if (!isNewExtensionMethod || !method.IsStatic)
+                if (!isExtensionBlockMethod || !method.IsStatic)
                 {
-                    if (invokedAsExtensionMethod || isNewExtensionMethod)
+                    if (invokedAsExtensionMethod || isExtensionBlockMethod)
                     {
-                        ParameterSymbol? receiverParameter = isNewExtensionMethod ? method.ContainingType.ExtensionParameter : method.Parameters[0];
+                        ParameterSymbol? receiverParameter = isExtensionBlockMethod ? method.ContainingType.ExtensionParameter : method.Parameters[0];
                         Debug.Assert(receiverParameter is not null);
 
                         CheckExtensionMethodThisNullability(receiverOpt, Conversion.Identity, receiverParameter, receiverType);
@@ -10549,7 +10715,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 var unboundLambda = lambda.UnboundLambda;
                 useDelegateInvokeParameterTypes = !unboundLambda.HasExplicitlyTypedParameterList;
-                useDelegateInvokeReturnType = !unboundLambda.HasExplicitReturnType(out _, out _);
+                useDelegateInvokeReturnType = !unboundLambda.HasExplicitReturnType(out _, out _, out _);
             }
         }
 
@@ -10832,8 +10998,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 Debug.Assert(rightResult.Type is object);
 
                 int n = variables.Count;
-                bool isNewExtension = deconstructMethod.GetIsNewExtensionMember();
-                if (!invocation.InvokedAsExtensionMethod && !isNewExtension)
+                bool isExtensionBlockMethod = deconstructMethod.IsExtensionBlockMember();
+                if (!invocation.InvokedAsExtensionMethod && !isExtensionBlockMethod)
                 {
                     _ = CheckPossibleNullReceiver(right);
 
@@ -10853,8 +11019,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                         placeholderArgs.Add(new BoundExpressionWithNullability(variables[i].Expression.Syntax, variables[i].Expression, NullableAnnotation.Oblivious, conversion.DeconstructionInfo.OutputPlaceholders[i].Type));
                     }
 
-                    var argumentRefKinds = GetArgumentRefKinds(invocation.ArgumentRefKindsOpt, isNewExtension, deconstructMethod, argumentCount: n);
-                    var argsToParams = GetArgsToParamsOpt(invocation.ArgsToParamsOpt, isNewExtension);
+                    var argumentRefKinds = AdjustArgumentRefKindsIfNeeded(invocation.ArgumentRefKindsOpt, isExtensionBlockMethod, deconstructMethod, argumentCount: n);
+                    var argsToParams = AdjustArgsToParamsOptIfNeeded(invocation.ArgsToParamsOpt, isExtensionBlockMethod);
                     deconstructMethod = InferMemberTypeArguments(deconstructMethod, placeholderArgs.ToImmutableAndFree(), argumentRefKinds, argsToParams, invocation.Expanded);
 
                     // check the constraints remain valid with the re-inferred parameter types
@@ -10868,11 +11034,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                 int offset = invocation.InvokedAsExtensionMethod ? 1 : 0;
                 Debug.Assert(parameters.Length - offset == n);
 
-                if (invocation.InvokedAsExtensionMethod || isNewExtension)
+                if (invocation.InvokedAsExtensionMethod || isExtensionBlockMethod)
                 {
                     // Check nullability for `this` parameter
                     var argConversion = RemoveConversion(invocation.Arguments[0], includeExplicitConversions: false).conversion;
-                    var receiverParameter = isNewExtension ? deconstructMethod.ContainingType.ExtensionParameter : deconstructMethod.Parameters[0];
+                    var receiverParameter = isExtensionBlockMethod ? deconstructMethod.ContainingType.ExtensionParameter : deconstructMethod.Parameters[0];
                     Debug.Assert(receiverParameter is not null);
                     CheckExtensionMethodThisNullability(right, argConversion, receiverParameter, rightResult);
                 }
@@ -11094,13 +11260,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     int extensionReceiverSlot = -1;
 
-                    if (instanceMethod.GetIsNewExtensionMember())
+                    if (instanceMethod.IsExtensionBlockMember())
                     {
                         extensionReceiverSlot = MakeSlot(node.Operand) is > 0 and int slot ? slot : GetOrCreatePlaceholderSlot(node.Operand);
                     }
 
                     TypeWithState receiverType = VisitAndCheckReceiver(node.Operand, instanceMethod);
-                    (instanceMethod, ImmutableArray<VisitResult> results, bool returnNotNull) = ReInferMethodAndVisitArguments(
+                    ReinferenceResult<MethodSymbol> reinferenceResult = ReInferMethodAndVisitArguments(
                         node,
                         node.Operand,
                         receiverType,
@@ -11112,11 +11278,15 @@ namespace Microsoft.CodeAnalysis.CSharp
                         expanded: false,
                         invokedAsExtensionMethod: false);
 
+                    Debug.Assert(reinferenceResult.Member is not null);
+                    instanceMethod = reinferenceResult.Member;
+                    ImmutableArray<VisitResult> results = reinferenceResult.Results;
+
                     if (node.Type.IsVoidType())
                     {
                         SetNotNullResult(node);
                     }
-                    else if (!instanceMethod.GetIsNewExtensionMember())
+                    else if (!instanceMethod.IsExtensionBlockMember())
                     {
                         SetResultType(node, TypeWithState.Create(receiverType.Type, NullableFlowState.NotNull));
                     }
@@ -11271,13 +11441,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     int extensionReceiverSlot = -1;
 
-                    if (instanceMethod.GetIsNewExtensionMember())
+                    if (instanceMethod.IsExtensionBlockMember())
                     {
                         extensionReceiverSlot = MakeSlot(node.Left) is > 0 and int slot ? slot : GetOrCreatePlaceholderSlot(node.Left);
                     }
 
                     TypeWithState receiverType = VisitAndCheckReceiver(node.Left, instanceMethod);
-                    (instanceMethod, ImmutableArray<VisitResult> results, bool returnNotNull) = ReInferMethodAndVisitArguments(
+                    ReinferenceResult<MethodSymbol> reinferenceResult = ReInferMethodAndVisitArguments(
                         node,
                         node.Left,
                         receiverType,
@@ -11289,11 +11459,15 @@ namespace Microsoft.CodeAnalysis.CSharp
                         expanded: false,
                         invokedAsExtensionMethod: false);
 
+                    Debug.Assert(reinferenceResult.Member is not null);
+                    instanceMethod = reinferenceResult.Member;
+                    ImmutableArray<VisitResult> results = reinferenceResult.Results;
+
                     if (node.Type.IsVoidType())
                     {
                         SetNotNullResult(node);
                     }
-                    else if (!instanceMethod.GetIsNewExtensionMember())
+                    else if (!instanceMethod.IsExtensionBlockMember())
                     {
                         SetResultType(node, TypeWithState.Create(receiverType.Type, NullableFlowState.NotNull));
                     }
@@ -11469,9 +11643,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             return null;
         }
 
-        private (PropertySymbol updatedProperty, bool returnNotNull) ReInferAndVisitExtensionPropertyAccess(BoundNode node, PropertySymbol property, BoundExpression receiver)
+        private ReinferenceResult<PropertySymbol> ReInferAndVisitExtensionPropertyAccess(BoundNode node, PropertySymbol property, BoundExpression receiver)
         {
-            Debug.Assert(property.GetIsNewExtensionMember());
+            Debug.Assert(property.IsExtensionBlockMember());
             ImmutableArray<BoundExpression> arguments = [receiver];
 
             var extensionParameter = property.ContainingType.ExtensionParameter;
@@ -11481,11 +11655,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             ImmutableArray<RefKind> refKindsOpt = extensionParameter.RefKind == RefKind.Ref ? [RefKind.Ref] : default;
 
             // Tracked by https://github.com/dotnet/roslyn/issues/37238 : properties/indexers should account for NotNullIfNotNull
-            var (updatedProperty, _, returnNotNull) = VisitArguments(node, arguments, refKindsOpt, parameters, default, defaultArguments: default,
-                expanded: false, invokedAsExtensionMethod: false, property, firstArgumentResult: null);
+            var reinferenceResult = VisitArgumentsCore(node, arguments, refKindsOpt, parameters, default, defaultArguments: default,
+                expanded: false, usesExtensionReceiver: true, property, firstArgumentResult: null, delayCompletionForTargetMember: false);
 
-            Debug.Assert(updatedProperty is not null);
-            return (updatedProperty, returnNotNull);
+            Debug.Assert(reinferenceResult.Completion is null);
+            return reinferenceResult;
         }
 
         public override BoundNode? VisitPropertyAccess(BoundPropertyAccess node)
@@ -11493,10 +11667,12 @@ namespace Microsoft.CodeAnalysis.CSharp
             var property = node.PropertySymbol;
             Symbol? updatedProperty;
 
-            if (property.GetIsNewExtensionMember())
+            if (property.IsExtensionBlockMember())
             {
                 Debug.Assert(node.ReceiverOpt is not null);
-                (updatedProperty, _) = ReInferAndVisitExtensionPropertyAccess(node, property, node.ReceiverOpt);
+                ReinferenceResult<PropertySymbol> reinferenceResult = ReInferAndVisitExtensionPropertyAccess(node, property, node.ReceiverOpt);
+                Debug.Assert(reinferenceResult.Member is not null);
+                updatedProperty = reinferenceResult.Member;
 
                 TypeWithAnnotations typeWithAnnotations = GetTypeOrReturnTypeWithAnnotations(updatedProperty);
                 FlowAnalysisAnnotations memberAnnotations = GetRValueAnnotations(updatedProperty);
@@ -11589,6 +11765,12 @@ namespace Microsoft.CodeAnalysis.CSharp
             return null;
         }
 
+        public override BoundNode? VisitCollectionBuilderElementsPlaceholder(BoundCollectionBuilderElementsPlaceholder node)
+        {
+            VisitPlaceholderWithReplacement(node);
+            return null;
+        }
+
         public override BoundNode? VisitEventAccess(BoundEventAccess node)
         {
             var updatedSymbol = VisitMemberAccess(node, node.ReceiverOpt, node.EventSymbol);
@@ -11599,7 +11781,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private Symbol VisitMemberAccess(BoundExpression node, BoundExpression? receiverOpt, Symbol member)
         {
             Debug.Assert(!IsConditionalState);
-            Debug.Assert(!member.GetIsNewExtensionMember());
+            Debug.Assert(!member.IsExtensionBlockMember());
 
             var receiverType = (receiverOpt != null) ? VisitRvalueWithState(receiverOpt) : default;
 
@@ -11738,13 +11920,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             MethodSymbol? reinferredGetEnumeratorMethod = null;
 
             if (enumeratorInfoOpt?.GetEnumeratorInfo is { } enumeratorMethodInfo
-                && (enumeratorMethodInfo.Method.IsExtensionMethod || enumeratorMethodInfo.Method.GetIsNewExtensionMember()))
+                && (enumeratorMethodInfo.Method.IsExtensionMethod || enumeratorMethodInfo.Method.IsExtensionBlockMember()))
             {
                 // this is case 7
                 // We do not need to do this same analysis for non-extension methods because they do not have generic parameters that
                 // can be inferred from usage like extension methods can. We don't warn about default arguments at the call site, so
                 // there's nothing that can be learned from the non-extension case.
-                (reinferredGetEnumeratorMethod, var results, _) = ReInferMethodAndVisitArguments(
+                ReinferenceResult<MethodSymbol> reinferenceResult = ReInferMethodAndVisitArguments(
                     node: node,
                     receiverOpt: expr,
                     receiverType: resultTypeWithState,
@@ -11757,7 +11939,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     invokedAsExtensionMethod: true,
                     firstArgumentResult: _visitResult);
 
-                targetTypeWithAnnotations = results[0].LValueType;
+                reinferredGetEnumeratorMethod = reinferenceResult.Member;
+                targetTypeWithAnnotations = reinferenceResult.Results[0].LValueType;
             }
             else if (conversion.IsIdentity ||
                 (conversion.Kind == ConversionKind.ExplicitReference && resultType.SpecialType == SpecialType.System_String))
@@ -11809,7 +11992,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 AssignmentKind.Assignment);
 
             bool reportedDiagnostic = enumeratorInfoOpt?.GetEnumeratorInfo.Method is { } getEnumeratorMethod
-                    && (getEnumeratorMethod.IsExtensionMethod || getEnumeratorMethod.GetIsNewExtensionMember())
+                    && (getEnumeratorMethod.IsExtensionMethod || getEnumeratorMethod.IsExtensionBlockMember())
                 ? false
                 : CheckPossibleNullReceiver(expr);
 
@@ -12151,7 +12334,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         private MethodSymbol ReInferUnaryOperator(SyntaxNode syntax, MethodSymbol method, BoundExpression operand, TypeWithState operandType)
         {
-            if (!method.GetIsNewExtensionMember())
+            if (!method.IsExtensionBlockMember())
             {
                 method = (MethodSymbol)AsMemberOfType(operandType.Type!.StrippedType(), method);
             }
@@ -12294,7 +12477,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 Visit(node.Right);
                 TypeWithState rightType = ResultType;
-                SetResultType(node, InferResultNullability(node.OperatorKind, node.Method, node.Type, leftType, rightType));
+                SetResultType(node, InferResultNullability(node.OperatorKind, node.BinaryOperatorMethod, node.Type, leftType, rightType));
                 AfterRightChildOfBinaryLogicalOperatorHasBeenVisited(node.Right, isAnd, isBool, ref leftTrue, ref leftFalse);
             }
 
@@ -12959,7 +13142,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             return null;
         }
 
-        protected override void VisitCatchBlock(BoundCatchBlock node, ref LocalState finallyState)
+        public override BoundNode? VisitCatchBlock(BoundCatchBlock node)
         {
             TakeIncrementalSnapshot(node);
             if (node.Locals.Length > 0)
@@ -12978,7 +13161,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 VisitWithoutDiagnostics(node.ExceptionSourceOpt);
             }
 
-            base.VisitCatchBlock(node, ref finallyState);
+            base.VisitCatchBlock(node);
+
+            return null;
         }
 
         public override BoundNode? VisitLockStatement(BoundLockStatement node)
@@ -13059,7 +13244,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             _ = Visit(node.InvokedExpression);
             Debug.Assert(ResultType is TypeWithState { Type: FunctionPointerTypeSymbol { }, State: NullableFlowState.NotNull });
-            _ = VisitArguments(
+            VisitArguments(
                 node,
                 node.Arguments,
                 node.ArgumentRefKindsOpt,

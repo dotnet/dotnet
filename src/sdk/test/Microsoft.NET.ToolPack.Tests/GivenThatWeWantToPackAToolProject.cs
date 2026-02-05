@@ -22,7 +22,7 @@ namespace Microsoft.NET.ToolPack.Tests
         private string SetupNuGetPackage(bool multiTarget, string packageType = null, [CallerMemberName] string callingMethod = "")
         {
             string id = $"{callingMethod}-{_targetFrameworkOrFrameworks}";
-            TestAsset helloWorldAsset = _testAssetsManager
+            TestAsset helloWorldAsset = TestAssetsManager
                 .CopyTestAsset("PortableTool", id)
                 .WithSource()
                 .WithProjectChanges(project =>
@@ -72,7 +72,7 @@ namespace Microsoft.NET.ToolPack.Tests
         [Fact]
         public void Given_nuget_alias_It_finds_the_entry_point_dll_and_command_name_and_put_in_setting_file()
         {
-            TestAsset helloWorldAsset = _testAssetsManager
+            TestAsset helloWorldAsset = TestAssetsManager
                 .CopyTestAsset("PortableTool")
                 .WithSource()
                 .WithProjectChanges(project =>
@@ -310,7 +310,7 @@ namespace Microsoft.NET.ToolPack.Tests
         [Fact]
         public void Given_targetplatform_set_It_should_error()
         {
-            TestAsset helloWorldAsset = _testAssetsManager
+            TestAsset helloWorldAsset = TestAssetsManager
                 .CopyTestAsset("PortableTool")
                 .WithSource()
                 .WithTargetFramework($"{ToolsetInfo.CurrentTargetFramework}-windows");
@@ -321,6 +321,43 @@ namespace Microsoft.NET.ToolPack.Tests
 
             var result = packCommand.Execute();
             result.Should().Fail().And.HaveStdOutContaining("NETSDK1146");
+
+        }
+
+        [Fact]
+        public void It_packs_with_RuntimeIdentifier()
+        {
+            var testProject = new TestProject("ToolWithRuntimeIdentifier")
+            {
+                TargetFrameworks = ToolsetInfo.CurrentTargetFramework,
+                IsExe = true,
+                RuntimeIdentifier = EnvironmentInfo.GetCompatibleRid()
+            };
+            testProject.AdditionalProperties["PackAsTool"] = "true";
+            testProject.AdditionalProperties["ImplicitUsings"] = "enable";
+            testProject.AdditionalProperties["CreateRidSpecificToolPackages"] = "false";
+            testProject.AdditionalProperties["UseAppHost"] = "false";
+
+
+            var testAsset = TestAssetsManager.CreateTestProject(testProject);
+
+            var packCommand = new PackCommand(testAsset);
+
+            packCommand.Execute().Should().Pass();
+
+            packCommand.GetPackageDirectory().Should().HaveFile($"{testProject.Name}.1.0.0.nupkg");
+            packCommand.GetPackageDirectory().Should().NotHaveFile($"{testProject.Name}.{testProject.RuntimeIdentifier}.1.0.0.nupkg");
+
+            var nupkgPath = packCommand.GetNuGetPackage();
+
+            using (var nupkgReader = new PackageArchiveReader(nupkgPath))
+            {
+                var toolSettingsItem = nupkgReader.GetToolItems().SelectMany(g => g.Items).SingleOrDefault(i => i.Equals($"tools/{testProject.TargetFrameworks}/{testProject.RuntimeIdentifier}/DotnetToolSettings.xml"));
+                toolSettingsItem.Should().NotBeNull();
+
+                var toolSettingsXml = XDocument.Load(nupkgReader.GetStream(toolSettingsItem));
+                toolSettingsXml.Root.Attribute("Version").Value.Should().Be("1");
+            }
 
         }
     }

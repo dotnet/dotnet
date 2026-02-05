@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -406,7 +408,7 @@ namespace NuGet.CommandLine.XPlat
         /// <param name="targetFrameworks">A <see cref="FrameworkPackages"/> per project target framework</param>
         /// <param name="listPackageArgs">List command args</param>
         /// <returns>A dictionary where the key is the package id, and the value is a list of <see cref="IPackageSearchMetadata"/>.</returns>
-        private async Task<Dictionary<string, List<IPackageSearchMetadata>>> GetPackageMetadataAsync(
+        internal async Task<Dictionary<string, List<IPackageSearchMetadata>>> GetPackageMetadataAsync(
             List<FrameworkPackages> targetFrameworks,
             ListPackageArgs listPackageArgs)
         {
@@ -415,10 +417,12 @@ namespace NuGet.CommandLine.XPlat
 
             int maxParallel = listPackageArgs.PackageSources.Any(s => s.IsHttp)
                 ? 8 // Try to be nice to HTTP package sources
-                : (Environment.ProcessorCount / listPackageArgs.PackageSources.Count) + 1;
+                : listPackageArgs.PackageSources.Count == 0
+                    ? Environment.ProcessorCount + 1 // Fallback when no package sources are configured
+                    : (Environment.ProcessorCount / listPackageArgs.PackageSources.Count) + 1;
 
             await ThrottledForEachAsync(allPackages,
-                async (packageId, cancellationToken) => await GetPackageVersionsAsync(packageId, listPackageArgs, cancellationToken),
+                async (packageId, cancellationToken) => await GetPackageMetadataAsync(packageId, listPackageArgs, cancellationToken),
                 packageMetadata => packageMetadataById[packageMetadata.Key] = packageMetadata.Value,
                 maxParallel,
                 listPackageArgs.CancellationToken);
@@ -555,7 +559,10 @@ namespace NuGet.CommandLine.XPlat
                         // Get latest metadata *only* if this is a report requiring "outdated" metadata
                         if (listPackageArgs.ReportType == ReportType.Outdated && matchingPackage.Count > 0)
                         {
-                            var latestVersion = matchingPackage.Where(newVersion => MeetsConstraints(newVersion.Identity.Version, topLevelPackage, listPackageArgs)).Max(i => i.Identity.Version);
+                            var latestVersion = matchingPackage
+                                .Where(package => package.IsListed)
+                                .Where(newVersion => MeetsConstraints(newVersion.Identity.Version, topLevelPackage, listPackageArgs))
+                                .Max(i => i.Identity.Version);
 
                             if (latestVersion is not null)
                             {
@@ -591,7 +598,10 @@ namespace NuGet.CommandLine.XPlat
                         // Get latest metadata *only* if this is a report requiring "outdated" metadata
                         if (listPackageArgs.ReportType == ReportType.Outdated && matchingPackage.Count > 0)
                         {
-                            var latestVersion = matchingPackage.Where(newVersion => MeetsConstraints(newVersion.Identity.Version, transitivePackage, listPackageArgs)).Max(i => i.Identity.Version);
+                            var latestVersion = matchingPackage
+                                .Where(newVersion => newVersion.IsListed)
+                                .Where(newVersion => MeetsConstraints(newVersion.Identity.Version, transitivePackage, listPackageArgs))
+                                .Max(i => i.Identity.Version);
 
                             transitivePackage.LatestPackageMetadata = matchingPackage.First(p => p.Identity.Version == latestVersion);
                             transitivePackage.UpdateLevel = GetUpdateLevel(transitivePackage.ResolvedPackageMetadata.Identity.Version, transitivePackage.LatestPackageMetadata.Identity.Version);
@@ -641,14 +651,13 @@ namespace NuGet.CommandLine.XPlat
         }
 
         /// <summary>
-        /// Prepares the calls to sources for latest versions and updates
-        /// the list of tasks with the requests
+        /// Gets the package metadata for a specific package from all sources
         /// </summary>
         /// <param name="package">The package to get the latest version for</param>
         /// <param name="listPackageArgs">List args for the token and source provider></param>
         /// <param name="cancellationToken"></param>
         /// <returns>A list of tasks for all latest versions for packages from all sources</returns>
-        private async Task<KeyValuePair<string, List<IPackageSearchMetadata>>> GetPackageVersionsAsync(
+        private async Task<KeyValuePair<string, List<IPackageSearchMetadata>>> GetPackageMetadataAsync(
             string package,
             ListPackageArgs listPackageArgs,
             CancellationToken cancellationToken)
@@ -657,7 +666,7 @@ namespace NuGet.CommandLine.XPlat
             var sources = listPackageArgs.PackageSources;
 
             await ThrottledForEachAsync(sources,
-                async (source, innerCancellationToken) => await GetLatestVersionPerSourceAsync(source, listPackageArgs, package, innerCancellationToken),
+                async (source, innerCancellationToken) => await GetPackageMetadataAsync(source, listPackageArgs, package, innerCancellationToken),
                 continuation: results.AddRange,
                 maxParallel: listPackageArgs.PackageSources.Count,
                 cancellationToken);
@@ -666,14 +675,14 @@ namespace NuGet.CommandLine.XPlat
         }
 
         /// <summary>
-        /// Gets the highest version of a package from a specific source
+        /// Gets package metadata for a specific package from a specific source
         /// </summary>
         /// <param name="packageSource">The source to look for packages at</param>
         /// <param name="listPackageArgs">The list args for the cancellation token</param>
         /// <param name="package">Package to look for updates for</param>
         /// <param name="cancellationToken"></param>
         /// <returns>An updated package with the highest version at a single source</returns>
-        private async Task<IEnumerable<IPackageSearchMetadata>> GetLatestVersionPerSourceAsync(
+        private async Task<IEnumerable<IPackageSearchMetadata>> GetPackageMetadataAsync(
             PackageSource packageSource,
             ListPackageArgs listPackageArgs,
             string package,
@@ -683,11 +692,16 @@ namespace NuGet.CommandLine.XPlat
             var packageMetadataResource = await sourceRepository.GetResourceAsync<PackageMetadataResource>(cancellationToken);
 
             using var sourceCacheContext = new SourceCacheContext();
+            // This is used for --outdated, --deprecated, and --vulnerable.
+            // So, we need the package metadata for the currently installed version,
+            // even if it's pre-release or unlisted.
+            // This means that the logic for --outdated has to do filtering based on IsListed and
+            // prerelease.
             IEnumerable<IPackageSearchMetadata> packages =
                 await packageMetadataResource.GetMetadataAsync(
                     package,
-                    includePrerelease: listPackageArgs.Prerelease,
-                    includeUnlisted: false,
+                    includePrerelease: true,
+                    includeUnlisted: true,
                     sourceCacheContext: sourceCacheContext,
                     log: listPackageArgs.Logger,
                     token: listPackageArgs.CancellationToken);
@@ -706,7 +720,7 @@ namespace NuGet.CommandLine.XPlat
         /// <returns>Whether the new version meets the constraints or not</returns>
         private bool MeetsConstraints(NuGetVersion newVersion, InstalledPackageReference package, ListPackageArgs listPackageArgs)
         {
-            var result = !newVersion.IsPrerelease || listPackageArgs.Prerelease || package.ResolvedPackageMetadata.Identity.Version.IsPrerelease;
+            var result = !newVersion.IsPrerelease || listPackageArgs.Prerelease;
 
             if (listPackageArgs.HighestPatch)
             {

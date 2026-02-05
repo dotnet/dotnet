@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="ErrorOccurredRestoringPackages">
         <source>Error occurred while restoring NuGet packages: {0}</source>
-        <target state="translated">還原 NuGet 套件時發生錯誤: {0}。</target>
+        <target state="translated">還原 NuGet 套件時發生錯誤: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageDownload_NoVersion">
@@ -21,6 +21,11 @@
         <source>Package '{0} {1}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
         <target state="translated">套件 '{0} {1}' 沒有如 '[1.0.0]' 的精確版本。只有精確版本才允許使用 PackageDownload。</target>
         <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
+      </trans-unit>
+      <trans-unit id="InfoBar_HyperlinkFixVulnerabilitiesWithCopilot">
+        <source>Fix with GitHub Copilot</source>
+        <target state="translated">使用 GitHub Copilot 修正</target>
+        <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="InfoBar_HyperlinkMessage">
         <source>Manage NuGet Packages</source>
@@ -45,7 +50,7 @@
       </trans-unit>
       <trans-unit id="NothingToRestore">
         <source>All packages are already installed and there is nothing to restore.</source>
-        <target state="translated">所有套件均已安裝且無需還原。</target>
+        <target state="translated">已安裝所有封裝，因此沒有要還原的項目。</target>
         <note />
       </trans-unit>
       <trans-unit id="Operation_Finished">
@@ -62,19 +67,19 @@
         <source>One or more NuGet packages need to be restored but couldn't be because consent has not been granted. To give consent, open the Visual Studio Options dialog, click on the NuGet Package Manager node and check 'Allow NuGet to download missing packages during build.' You can also give consent by setting the environment variable 'EnableNuGetPackageRestore' to 'true'.
 
 Missing packages: {0}</source>
-        <target state="translated">有一或多個 NuGet 套件必須還原，但因為尚未獲得同意而無法進行。若要同意此作業，請開啟 [Visual Studio 選項] 對話方塊，按一下 [NuGet 套件管理員] 節點，再選取 [允許 NuGet 在建置期間下載缺少的套件]。您也可以將環境變數 'EnableNuGetPackageRestore' 設定為 'true' 來同意此作業。
+        <target state="translated">有一或多個 NuGet 套件必須還原，但因為尚未獲得同意而無法進行。若要同意此作業，請開啟 [Visual Studio 選項] 對話方塊，按一下 [NuGet 套件管理器] 節點，再選取 [允許 NuGet 在建置期間下載缺少的套件]。您也可以將環境變數 'EnableNuGetPackageRestore' 設定為 'true' 來同意此作業。
 
 缺少的套件: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRefNotRestoredBecauseOfNoConsent">
         <source>NuGet restore is currently disabled. To enable it, open the Visual Studio Options dialog, click on the NuGet Package Manager node and check 'Allow NuGet to download missing packages during build.' You can also enable it by setting the environment variable 'EnableNuGetPackageRestore' to 'true'.</source>
-        <target state="translated">NuGet 還原目前已停用。若要啟用，請開啟 [Visual Studio 選項] 對話方塊，按一下 [NuGet 套件管理員] 節點並選取 [允許 NuGet 在建置期間下載缺少的套件]。您也可以將環境變數 'EnableNuGetPackageRestore' 設定為 'true' 來加以啟用。</target>
+        <target state="translated">NuGet 還原目前已停用。若要啟用，請開啟 [Visual Studio 選項] 對話方塊，按一下 [NuGet 套件管理器] 節點並選取 [允許 NuGet 在建置期間下載缺少的套件]。您也可以將環境變數 'EnableNuGetPackageRestore' 設定為 'true' 來加以啟用。</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreCanceled">
         <source>NuGet package restore canceled.</source>
-        <target state="translated">NuGet 套件還原已取消。</target>
+        <target state="translated">已取消 NuGet 套件還原。</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFailedForProject">
@@ -84,7 +89,7 @@ Missing packages: {0}</source>
       </trans-unit>
       <trans-unit id="PackageRestoreFinished">
         <source>NuGet package restore finished.</source>
-        <target state="translated">NuGet 套件還原已完成。</target>
+        <target state="translated">已完成 NuGet 套件還原。</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFinishedForProject">
@@ -101,7 +106,7 @@ Missing packages: {0}</source>
         <source>Restoring NuGet packages...
 To prevent NuGet from restoring packages during build, open the Visual Studio Options dialog, click on the NuGet Package Manager node and uncheck 'Allow NuGet to download missing packages during build.'</source>
         <target state="translated">正在還原 NuGet 套件...
-為避免 NuGet 在建置期間還原套件，請開啟 [Visual Studio 選項] 對話方塊，按一下 [NuGet 套件管理員] 節點，然後取消選取 [允許 NuGet 在建置期間下載缺少的套件]。</target>
+為避免 NuGet 在建置期間還原套件，請開啟 [Visual Studio 選項] 對話方塊，按一下 [NuGet 套件管理器] 節點，然後取消選取 [允許 NuGet 在建置期間下載缺少的套件]。</target>
         <note />
       </trans-unit>
       <trans-unit id="PropertyDoesNotHaveSingleValue">

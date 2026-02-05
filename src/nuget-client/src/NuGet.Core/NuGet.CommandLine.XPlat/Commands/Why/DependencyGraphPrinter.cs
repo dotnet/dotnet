@@ -7,19 +7,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NuGet.Shared;
+using NuGet.Versioning;
+using Spectre.Console;
+using Spectre.Console.Rendering;
 
 namespace NuGet.CommandLine.XPlat.Commands.Why
 {
     internal static class DependencyGraphPrinter
     {
-        private const ConsoleColor TargetPackageColor = ConsoleColor.Cyan;
-
-        // Dependency graph console output symbols
-        private const string ChildNodeSymbol = "├─ ";
-        private const string LastChildNodeSymbol = "└─ ";
-
-        private const string ChildPrefixSymbol = "│  ";
-        private const string LastChildPrefixSymbol = "   ";
+        private static readonly Color TargetPackageColor = Color.Cyan;
 
         /// <summary>
         /// Prints the dependency graphs for all target frameworks.
@@ -27,10 +23,10 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
         /// <param name="dependencyGraphPerFramework">A dictionary mapping target frameworks to their dependency graphs.</param>
         /// <param name="targetPackage">The package we want the dependency paths for.</param>
         /// <param name="logger"></param>
-        public static void PrintAllDependencyGraphs(Dictionary<string, List<DependencyNode>?> dependencyGraphPerFramework, string targetPackage, ILoggerWithColor logger)
+        public static void PrintAllDependencyGraphs(Dictionary<string, List<DependencyNode>?> dependencyGraphPerFramework, string targetPackage, IAnsiConsole logger)
         {
             // print empty line
-            logger.LogMinimal("");
+            logger.WriteLine();
 
             // deduplicate the dependency graphs
             List<List<string>> deduplicatedFrameworks = GetDeduplicatedFrameworks(dependencyGraphPerFramework);
@@ -51,29 +47,27 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
         /// <param name="topLevelNodes">The top-level package nodes of the dependency graph.</param>
         /// <param name="targetPackage">The package we want the dependency paths for.</param>
         /// <param name="logger"></param>
-        private static void PrintDependencyGraphPerFramework(List<string> frameworks, List<DependencyNode>? topLevelNodes, string targetPackage, ILoggerWithColor logger)
+        private static void PrintDependencyGraphPerFramework(List<string> frameworks, List<DependencyNode>? topLevelNodes, string targetPackage, IAnsiConsole logger)
         {
-            // print framework header
-            foreach (var framework in frameworks)
-            {
-                logger.LogMinimal($"  [{framework}]");
-            }
-
-            logger.LogMinimal($"   {ChildPrefixSymbol}");
+            var tree = new Tree(string.Join("\n", frameworks.Select(f => $"[[{f}]]")));
 
             if (topLevelNodes == null || topLevelNodes.Count == 0)
             {
-                logger.LogMinimal($"   {LastChildNodeSymbol}{Strings.WhyCommand_Message_NoDependencyGraphsFoundForFramework}\n\n");
+                tree.AddNode(Strings.WhyCommand_Message_NoDependencyGraphsFoundForFramework);
+                logger.Write(PadTree(tree));
                 return;
             }
 
             var stack = new Stack<StackOutputData>();
 
             // initialize the stack with all top-level nodes
-            int counter = 0;
             foreach (var node in topLevelNodes.OrderByDescending(c => c.Id, StringComparer.OrdinalIgnoreCase))
             {
-                stack.Push(new StackOutputData(node, prefix: "   ", isLastChild: counter++ == 0));
+                stack.Push(new StackOutputData
+                {
+                    Node = node,
+                    ParentNode = tree
+                });
             }
 
             // print the dependency graph
@@ -81,41 +75,51 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
             {
                 var current = stack.Pop();
 
-                string currentPrefix, childPrefix;
-                if (current.IsLastChild)
-                {
-                    currentPrefix = current.Prefix + LastChildNodeSymbol;
-                    childPrefix = current.Prefix + LastChildPrefixSymbol;
-                }
-                else
-                {
-                    currentPrefix = current.Prefix + ChildNodeSymbol;
-                    childPrefix = current.Prefix + ChildPrefixSymbol;
-                }
-
-                // print current node
-                if (current.Node.Id.Equals(targetPackage, StringComparison.OrdinalIgnoreCase))
-                {
-                    logger.LogMinimal($"{currentPrefix}", Console.ForegroundColor);
-                    logger.LogMinimal($"{current.Node.Id} (v{current.Node.Version})\n", TargetPackageColor);
-                }
-                else
-                {
-                    logger.LogMinimal($"{currentPrefix}{current.Node.Id} (v{current.Node.Version})");
-                }
+                var treeNodeText = GetNodeText(current.Node, targetPackage);
+                var treeNode = current.ParentNode.AddNode(treeNodeText);
 
                 if (current.Node.Children?.Count > 0)
                 {
-                    // push all the node's children onto the stack
-                    counter = 0;
                     foreach (var child in current.Node.Children.OrderByDescending(c => c.Id, StringComparer.OrdinalIgnoreCase))
                     {
-                        stack.Push(new StackOutputData(child, childPrefix, isLastChild: counter++ == 0));
+                        stack.Push(new StackOutputData
+                        {
+                            Node = child,
+                            ParentNode = treeNode
+                        });
                     }
                 }
             }
 
-            logger.LogMinimal("");
+            logger.Write(PadTree(tree));
+            logger.WriteLine();
+        }
+
+        private static IRenderable GetNodeText(DependencyNode node, string targetPackage)
+        {
+            string text;
+
+            if (node is PackageNode pkgNode)
+            {
+                string resolved = pkgNode.ResolvedVersion.OriginalVersion ?? pkgNode.ResolvedVersion.ToString();
+                string requested = pkgNode.RequestedVersion.ToString("f", VersionRangeFormatter.Instance);
+                text = $"{node.Id}@{resolved} ({requested})";
+            }
+            else
+            {
+                text = node.Id;
+            }
+
+            Style? style = node.Id.Equals(targetPackage, StringComparison.OrdinalIgnoreCase)
+                ? new Style(foreground: TargetPackageColor)
+                : null;
+
+            return new Text(text, style);
+        }
+
+        private static IRenderable PadTree(Tree tree)
+        {
+            return new Padder(tree, new Padding(left: 2, 0, 0, 0));
         }
 
         /// <summary>
@@ -173,16 +177,9 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
 
         private class StackOutputData
         {
-            public DependencyNode Node { get; set; }
-            public string Prefix { get; set; }
-            public bool IsLastChild { get; set; }
+            public required DependencyNode Node { get; init; }
 
-            public StackOutputData(DependencyNode node, string prefix, bool isLastChild)
-            {
-                Node = node;
-                Prefix = prefix;
-                IsLastChild = isLastChild;
-            }
+            public required IHasTreeNodes ParentNode { get; init; }
         }
     }
 }

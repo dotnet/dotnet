@@ -129,6 +129,11 @@
       Do not localize `PackageVersion`
     </note>
       </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_MissingTransitivelyPinnedIncludeType">
+        <source>The centrally pinned dependency '{0}' was not found in the resolved graph unexpectedly for node '{1}'. Please file an issue at https://github.com/NuGet/Home</source>
+        <target state="translated">對節點 '{1}' 而言，中央釘選的相依性 '{0}' 在解析的圖形中意外地找不到。請在 https://github.com/NuGet/Home 提出問題</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Error_CentralPackageManagement_PackageReferenceWithVersionNotAllowed">
         <source>The following PackageReference items cannot define a value for Version: {0}. Projects using Central Package Management must define a Version value on a PackageVersion item. For more information, visit https://aka.ms/nuget/cpm/gettingstarted</source>
         <target state="translated">下列 PackageReference 項目無法定義 Version: {0} 的值。使用中央套件管理的專案必須在 PackageVersion 項目上定義 Version 值。如需詳細資訊，請造訪 https://aka.ms/nuget/cpm/gettingstarted</target>
@@ -225,7 +230,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSources_Multiple">
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">您正在使用 'HTTP' 來源執行 '{0}' 作業：{1}。NuGet 需要 HTTPS 來源。若要使用 HTTP 來源，您必須在 NuGet.Config 檔案中將 'allowInsecureConnections' 明確設定為 [True]。參閱 https://aka.ms/nuget-https-everywhere 以取得更多資訊。</target>
+        <target state="translated">您正在使用 'HTTP' 來源執行 '{0}' 作業: {1}。NuGet 需要 HTTPS 來源。若要使用 HTTP 來源，您必須在 NuGet.Config 檔案中將 'allowInsecureConnections' 明確設定為 true。參閱 https://aka.ms/nuget-https-everywhere 以取得更多資訊。</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Error_IncompatiblePackageType">
@@ -461,7 +466,7 @@
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
         <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">將不會剪除 packageReference {0}。請考慮從您的相依性移除此套件，因為它可能是不必要的。</target>
+        <target state="translated">將不會剪除 PackageReference {0}。請考慮從相依性中移除此套件，因為它可能非必要。</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
@@ -671,6 +676,13 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       <trans-unit id="LocalsCommand_LocalsPartiallyCleared">
         <source>Local resources partially cleared.</source>
         <target state="translated">已部份清除本機資源。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_AliasingSupportedInNewDependencyResolver">
+        <source>The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
+Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</source>
+        <target state="new">The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
+Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_AllProjectsUpToDate">
@@ -1083,7 +1095,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="RestoreDebugPruningPackageReference">
         <source>Pruning the package '{0}' as a dependency of '{1}'. The maximum prunable version is '{2}'</source>
-        <target state="translated">正在剪除封裝 '{0}' 為 '{1}' 的相依性。可截斷的版本上限為 '{2}'</target>
+        <target state="translated">修剪套件「{0}」作為「{1}」的相依性。最大可修剪版本為「{2}」</target>
         <note>0 - package id and version, 1 - version</note>
       </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
@@ -1184,7 +1196,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="SourcesCommandDisabled">
         <source>Disabled</source>
-        <target state="translated">停用</target>
+        <target state="translated">已停用</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandEnabled">
@@ -1252,9 +1264,9 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <target state="translated">指定的通訊協定版本無效。有效的通訊協定版本從 {0} 到 {1}。</target>
         <note />
       </trans-unit>
-      <trans-unit id="SpecValidationDuplicateFrameworks">
-        <source>Duplicate frameworks found: '{0}'.</source>
-        <target state="translated">找到重複的架構: '{0}'。</target>
+      <trans-unit id="SpecValidationDuplicateTargetAlias">
+        <source>The TargetFramework property must be unique. List of TargetFramework properties: {0}.</source>
+        <target state="new">The TargetFramework property must be unique. List of TargetFramework properties: {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecValidationInvalidFramework">
@@ -1270,11 +1282,6 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       <trans-unit id="SpecValidationNoFrameworks">
         <source>No target frameworks specified.</source>
         <target state="translated">未指定任何目標 Framework。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="SpecValidationUAPSingleFramework">
-        <source>UAP projects must contain exactly one target framework.</source>
-        <target state="translated">UAP 專案必須正好包含一個目標 Framework。</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecValidationZeroRestoreRequests">
@@ -1367,7 +1374,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="VerifyCommand_Failed">
         <source>Package signature validation failed.</source>
-        <target state="translated">套件簽章驗證失敗。</target>
+        <target state="translated">套件特徵標記驗證失敗。</target>
         <note />
       </trans-unit>
       <trans-unit id="VerifyCommand_FinishedWithErrors">

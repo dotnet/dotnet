@@ -129,6 +129,11 @@
       Do not localize `PackageVersion`
     </note>
       </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_MissingTransitivelyPinnedIncludeType">
+        <source>The centrally pinned dependency '{0}' was not found in the resolved graph unexpectedly for node '{1}'. Please file an issue at https://github.com/NuGet/Home</source>
+        <target state="translated">ノード '{1}' の解決済みグラフで、中央に固定された依存関係 '{0}' が予期せず見つかりませんでした。https://github.com/NuGet/Home でイシューを提出してください</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Error_CentralPackageManagement_PackageReferenceWithVersionNotAllowed">
         <source>The following PackageReference items cannot define a value for Version: {0}. Projects using Central Package Management must define a Version value on a PackageVersion item. For more information, visit https://aka.ms/nuget/cpm/gettingstarted</source>
         <target state="translated">次の PackageReference 項目では、Version の値を定義できません: {0}。Central Package Management を使用するプロジェクトでは、PackageVersion 項目で Version 値を定義する必要があります。詳細情報については、https://aka.ms/nuget/cpm/gettingstarted を参照してください</target>
@@ -336,7 +341,7 @@
       </trans-unit>
       <trans-unit id="Error_NoMatchingCertificate">
         <source>The package signature did not match any of the allowed certificate fingerprints.</source>
-        <target state="translated">パッケージの署名が、許可されている証明書のフィンガープリントのいずれとも一致しませんでした。</target>
+        <target state="translated">パッケージ署名が、許可されている証明書のフィンガープリントのいずれとも一致しませんでした。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_NoMatchingClientCertificate">
@@ -461,7 +466,7 @@
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
         <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">PackageReference {0} は排除されません。このパッケージは不要である可能性があるため、依存関係から削除することを検討してください。</target>
+        <target state="translated">PackageReference {0} は取り除かれません。このパッケージは不要である可能性があるため、依存関係から削除することを検討してください。</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
@@ -671,6 +676,13 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       <trans-unit id="LocalsCommand_LocalsPartiallyCleared">
         <source>Local resources partially cleared.</source>
         <target state="translated">ローカル リソースが一部クリアされました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_AliasingSupportedInNewDependencyResolver">
+        <source>The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
+Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</source>
+        <target state="new">The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
+Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_AllProjectsUpToDate">
@@ -1083,7 +1095,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="RestoreDebugPruningPackageReference">
         <source>Pruning the package '{0}' as a dependency of '{1}'. The maximum prunable version is '{2}'</source>
-        <target state="translated">パッケージ '{0}' を '{1}' の依存関係として排除しています。排除可能な最大バージョンが '{2}'</target>
+        <target state="translated">パッケージ '{0}' を '{1}' の依存関係として取り除いています。取り除きが可能な最大バージョンは '{2}' です</target>
         <note>0 - package id and version, 1 - version</note>
       </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
@@ -1252,9 +1264,9 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <target state="translated">指定されたプロトコル バージョンが無効です。有効なプロトコル バージョンは {0} から {1} です。</target>
         <note />
       </trans-unit>
-      <trans-unit id="SpecValidationDuplicateFrameworks">
-        <source>Duplicate frameworks found: '{0}'.</source>
-        <target state="translated">重複するフレームワークが見つかりました: '{0}'。</target>
+      <trans-unit id="SpecValidationDuplicateTargetAlias">
+        <source>The TargetFramework property must be unique. List of TargetFramework properties: {0}.</source>
+        <target state="new">The TargetFramework property must be unique. List of TargetFramework properties: {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecValidationInvalidFramework">
@@ -1270,11 +1282,6 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       <trans-unit id="SpecValidationNoFrameworks">
         <source>No target frameworks specified.</source>
         <target state="translated">ターゲット フレームワークが指定されていません。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="SpecValidationUAPSingleFramework">
-        <source>UAP projects must contain exactly one target framework.</source>
-        <target state="translated">UAP プロジェクトにはターゲット フレームワークが 1 つだけ入っている必要があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecValidationZeroRestoreRequests">
@@ -1367,7 +1374,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="VerifyCommand_Failed">
         <source>Package signature validation failed.</source>
-        <target state="translated">パッケージの署名の検証に失敗しました。</target>
+        <target state="translated">パッケージ署名の検証に失敗しました。</target>
         <note />
       </trans-unit>
       <trans-unit id="VerifyCommand_FinishedWithErrors">
@@ -1458,15 +1465,15 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       <trans-unit id="Warning_List_HttpSource">
         <source>The following is a 'Non-HTTPS' source: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">"非 HTTPS" ソースを次に示します: {0}
-NuGet には HTTPS ソースが必要です。詳細については、https://aka.ms/nuget-https-everywhere を参照してください。</target>
+        <target state="translated">'非 HTTPS' ソースを次に示します: {0}
+NuGet には HTTPS ソースが必要です。詳しくは、https://aka.ms/nuget-https-everywhere を参照してください。</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_List_HttpSources">
         <source>The following are 'Non-HTTPS' sources: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
         <target state="translated">'非 HTTPS' ソースを次に示します: {0}
-NuGet には HTTPS ソースが必要です。詳細については、https://aka.ms/nuget-https-everywhere を参照してください。</target>
+NuGet には HTTPS ソースが必要です。詳しくは、https://aka.ms/nuget-https-everywhere を参照してください。</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_MinVersionDoesNotExist">
