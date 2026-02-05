@@ -19,10 +19,10 @@
       "commitSha": "82f47fc2ff84b3d94e910147d52f2e6795f6ae21"
     },
     {
-      "barId": 291857,
+      "barId": 300219,
       "path": "command-line-api",
       "remoteUri": "https://github.com/dotnet/command-line-api",
-      "commitSha": "cf5fd8d696450a48d3cc75a7a1792d34b5303f88"
+      "commitSha": "ddf3078641e8e11ebb7d6d893eb09d014d35df70"
     },
     {
       "barId": 298082,
@@ -79,10 +79,10 @@
       "commitSha": "73f41a40d486342a6f7830cb0b980ae0bfc07f40"
     },
     {
-      "barId": 299212,
+      "barId": 300213,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "ed49df765cfe2e6671f53ccd0ca91c143a1c6d5b"
+      "commitSha": "b027ccb3edb4b1d69a038285cd7f43c7c2ab73ce"
     },
     {
       "barId": 298691,
@@ -91,10 +91,10 @@
       "commitSha": "2c0dd466fa060a772a87b9c433495ec0c559d19c"
     },
     {
-      "barId": 299351,
+      "barId": 300107,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "768aa8ea6c55d78db4df38414e667cad66957a5f"
+      "commitSha": "03d5770846542b9090f339a9270b53edc513a70f"
     },
     {
       "barId": 298520,
