@@ -298,7 +298,7 @@
       SuppressRootDirectory="true"
       DirectoryRefId="%(DirectoryToHarvest.DirectoryRef)"
       OutputFile="%(DirectoryToHarvest.WixSourceFile)"
-      AdditionalOptions="$(AdditionalHeatArgs)" />
+      AdditionalOptions="-sw5149" />
 
     <!--
       Currently FileElementToStabilize assumes a single DirectoryToHarvest. If there were multiple,
