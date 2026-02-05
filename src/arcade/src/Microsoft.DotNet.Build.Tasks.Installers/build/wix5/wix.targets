@@ -53,7 +53,7 @@
 
     <PropertyGroup>
       <WixExeDir>$(PkgMicrosoft_Wix)\tools\net6.0\any\</WixExeDir>
-      <WixExtensionsDir>wixext5</WixExtensionsDir>
+      <WixExtensionsDir>wixext6</WixExtensionsDir>
       <WixUIExtensionDir>$(PkgMicrosoft_WixToolset_UI_wixext)\$(WixExtensionsDir)\</WixUIExtensionDir>
       <WixDependencyExtensionDir>$(PkgMicrosoft_WixToolset_Dependency_wixext)\$(WixExtensionsDir)\</WixDependencyExtensionDir>
       <WixUtilExtensionDir>$(PkgMicrosoft_WixToolset_Util_wixext)\$(WixExtensionsDir)\</WixUtilExtensionDir>
