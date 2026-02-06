@@ -135,3 +135,40 @@ steps:
       '${{ parameters.darcToolPath }}/darc' update-dependencies --packages-folder '${{ parameters.packagesDir }}'
     displayName: Update dependencies from VMR packages (Unix)
     condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
+
+  # Add VMR packages as a local NuGet source so restore can find them
+  - powershell: |
+      $nugetConfigPath = Join-Path '${{ parameters.repoPath }}' 'NuGet.config'
+      if (-not (Test-Path $nugetConfigPath)) {
+        Write-Error "NuGet.config not found at $nugetConfigPath"
+        exit 1
+      }
+      $nugetConfig = New-Object XML
+      $nugetConfig.PreserveWhitespace = $true
+      $nugetConfig.Load($nugetConfigPath)
+      $packageSources = $nugetConfig.SelectSingleNode("//packageSources")
+      $newSource = $nugetConfig.CreateElement("add")
+      $keyAttr = $nugetConfig.CreateAttribute("key")
+      $keyAttr.Value = "vmr-packages"
+      $valueAttr = $nugetConfig.CreateAttribute("value")
+      $valueAttr.Value = '${{ parameters.packagesDir }}'
+      $newSource.Attributes.Append($keyAttr) | Out-Null
+      $newSource.Attributes.Append($valueAttr) | Out-Null
+      $packageSources.AppendChild($newSource) | Out-Null
+      $nugetConfig.Save($nugetConfigPath)
+      Write-Host "Added 'vmr-packages' source (${{ parameters.packagesDir }}) to $nugetConfigPath"
+    displayName: Add VMR packages as NuGet source (Windows)
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+
+  - script: |
+      set -e
+      nugetConfig='${{ parameters.repoPath }}/NuGet.config'
+      if [ ! -f "$nugetConfig" ]; then
+        echo "##vso[task.logissue type=error]NuGet.config not found at $nugetConfig"
+        exit 1
+      fi
+      # Insert a local source before the closing </packageSources> tag
+      sed -i 's|</packageSources>|  <add key="vmr-packages" value="${{ parameters.packagesDir }}" />\n  </packageSources>|' "$nugetConfig"
+      echo "Added 'vmr-packages' source (${{ parameters.packagesDir }}) to $nugetConfig"
+    displayName: Add VMR packages as NuGet source (Unix)
+    condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
