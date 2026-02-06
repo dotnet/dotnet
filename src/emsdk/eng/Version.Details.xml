@@ -50,37 +50,37 @@
       <Uri>https://github.com/dotnet/cpython</Uri>
       <Sha>82618c74bf61290b68f05be9bfaddfc13c33398e</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="10.0.0-alpha.1.26081.1">
+    <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="10.0.0-alpha.1.26104.2">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>ebf23cdc0f44947b0977c524ec1825db1a2bd17f</Sha>
+      <Sha>b5b12333513e92a6b5bfbdf6db94667a6cc99cc1</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-musl-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="10.0.0-alpha.1.26081.1">
+    <Dependency Name="runtime.linux-musl-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="10.0.0-alpha.1.26104.2">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>ebf23cdc0f44947b0977c524ec1825db1a2bd17f</Sha>
+      <Sha>b5b12333513e92a6b5bfbdf6db94667a6cc99cc1</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="10.0.0-alpha.1.26081.1">
+    <Dependency Name="runtime.linux-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="10.0.0-alpha.1.26104.2">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>ebf23cdc0f44947b0977c524ec1825db1a2bd17f</Sha>
+      <Sha>b5b12333513e92a6b5bfbdf6db94667a6cc99cc1</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-musl-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="10.0.0-alpha.1.26081.1">
+    <Dependency Name="runtime.linux-musl-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="10.0.0-alpha.1.26104.2">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>ebf23cdc0f44947b0977c524ec1825db1a2bd17f</Sha>
+      <Sha>b5b12333513e92a6b5bfbdf6db94667a6cc99cc1</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="10.0.0-alpha.1.26081.1">
+    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="10.0.0-alpha.1.26104.2">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>ebf23cdc0f44947b0977c524ec1825db1a2bd17f</Sha>
+      <Sha>b5b12333513e92a6b5bfbdf6db94667a6cc99cc1</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="10.0.0-alpha.1.26081.1">
+    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="10.0.0-alpha.1.26104.2">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>ebf23cdc0f44947b0977c524ec1825db1a2bd17f</Sha>
+      <Sha>b5b12333513e92a6b5bfbdf6db94667a6cc99cc1</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="10.0.0-alpha.1.26081.1">
+    <Dependency Name="runtime.win-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="10.0.0-alpha.1.26104.2">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>ebf23cdc0f44947b0977c524ec1825db1a2bd17f</Sha>
+      <Sha>b5b12333513e92a6b5bfbdf6db94667a6cc99cc1</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="10.0.0-alpha.1.26081.1">
+    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="10.0.0-alpha.1.26104.2">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>ebf23cdc0f44947b0977c524ec1825db1a2bd17f</Sha>
+      <Sha>b5b12333513e92a6b5bfbdf6db94667a6cc99cc1</Sha>
     </Dependency>
     <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.Wasm.LLVM.Transport" Version="19.1.0-alpha.1.25461.1">
       <Uri>https://github.com/dotnet/llvm-project</Uri>
