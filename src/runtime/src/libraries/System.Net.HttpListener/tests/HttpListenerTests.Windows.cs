@@ -12,7 +12,7 @@ namespace System.Net.Tests
     public class HttpListenerWindowsTests
     {
         [Fact]
-        public void EnableKernelResponeBuffering_DefaultIsDisabled()
+        public void EnableKernelResponseBuffering_DefaultIsDisabled()
         {
             using (var listener = new HttpListener())
             {
@@ -22,9 +22,8 @@ namespace System.Net.Tests
         }
 
         [ConditionalFact(typeof(RemoteExecutor), nameof(RemoteExecutor.IsSupported))]
-        public void EnableKernelResponeBuffering_Enabled()
+        public void EnableKernelResponseBuffering_Enabled()
         {
-            var a = RemoteExecutor.IsSupported;
             RemoteExecutor.Invoke(() =>
             {
                 AppContext.SetSwitch("System.Net.HttpListener.EnableKernelResponseBuffering", true);
@@ -34,9 +33,6 @@ namespace System.Net.Tests
                     listener.Start();
                     Assert.True(GetEnableKernelResponseBufferingValue());
                 }
-
-                // Reset static state
-                AppContext.SetSwitch("System.Net.HttpListener.EnableKernelResponseBuffering", false);
             }).Dispose();
         }
 

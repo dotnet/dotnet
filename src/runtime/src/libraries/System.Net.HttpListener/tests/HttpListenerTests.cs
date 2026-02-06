@@ -3,7 +3,6 @@
 
 using System.Net.Http;
 using System.Net.Sockets;
-using System.Reflection;
 using System.Security.Authentication.ExtendedProtection;
 using System.Text;
 using System.Threading;
