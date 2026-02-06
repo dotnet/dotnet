@@ -25,7 +25,7 @@
 | Platform | main<br>(11.0.x&nbsp;Runtime) | 11.0.1xx-preview1<br>(11.0-preview1&nbsp;Runtime) | 10.0.3xx<br>(10.0.3xx&nbsp;Runtime) | 10.0.2xx<br>(10.0.2xx&nbsp;Runtime) |
 | :--------- | :----------: | :----------: | :----------: | :----------: |
 | **Windows x64** | [![][win-x64-badge-main]][win-x64-version-main]<br>[Installer][win-x64-installer-main] - [Checksum][win-x64-installer-checksum-main]<br>[zip][win-x64-zip-main] - [Checksum][win-x64-zip-checksum-main] | [![][win-x64-badge-11.0.1xx-preview1]][win-x64-version-11.0.1xx-preview1]<br>[Installer][win-x64-installer-11.0.1xx-preview1] - [Checksum][win-x64-installer-checksum-11.0.1xx-preview1]<br>[zip][win-x64-zip-11.0.1xx-preview1] - [Checksum][win-x64-zip-checksum-11.0.1xx-preview1] | [![][win-x64-badge-10.0.3xx]][win-x64-version-10.0.3xx]<br>[Installer][win-x64-installer-10.0.3xx] - [Checksum][win-x64-installer-checksum-10.0.3xx]<br>[zip][win-x64-zip-10.0.3xx] - [Checksum][win-x64-zip-checksum-10.0.3xx] | [![][win-x64-badge-10.0.2XX]][win-x64-version-10.0.2XX]<br>[Installer][win-x64-installer-10.0.2XX] - [Checksum][win-x64-installer-checksum-10.0.2XX]<br>[zip][win-x64-zip-10.0.2XX] - [Checksum][win-x64-zip-checksum-10.0.2XX] |
-| **Windows x86** | [![][win-x86-badge-main]][win-x86-version-main]<br>[Installer][win-x86-installer-main] - [Checksum][win-x86-installer-checksum-main]<br>[zip][win-x86-zip-main] - [Checksum][win-x86-zip-checksum-main] |[![][win-x86-badge-11.0.1xx-preview1]][win-x86-version-11.0.1xx-preview1]<br>[Installer][win-x86-installer-11.0.1xx-preview1] - [Checksum][win-x86-installer-checksum-11.0.1xx-preview1]<br>[zip][win-x86-zip-11.0.1xx-preview1] - [Checksum][win-x86-zip-checksum-11.0.1xx-preview1] |[![][win-x86-badge-10.0.3xx]][win-x86-version-10.0.3xx]<br>[Installer][win-x86-installer-10.0.3xx] - [Checksum][win-x86-installer-checksum-10.0.3xx]<br>[zip][win-x86-zip-10.0.3xx] - [Checksum][win-x86-zip-checksum-10.0.3xx] | [![][win-x86-badge-10.0.2XX]][win-x86-version-10.0.2XX]<br>[Installer][win-x86-installer-10.0.2XX] - [Checksum][win-x86-installer-checksum-10.0.2XX]<br>[zip][win-x86-zip-10.0.2XX] - [Checksum][win-x86-zip-checksum-10.0.2XX] |
+| **Windows x86** | [![][win-x86-badge-main]][win-x86-version-main]<br>[Installer][win-x86-installer-main] - [Checksum][win-x86-installer-checksum-main]<br>[zip][win-x86-zip-main] - [Checksum][win-x86-zip-checksum-main] | [![][win-x86-badge-11.0.1xx-preview1]][win-x86-version-11.0.1xx-preview1]<br>[Installer][win-x86-installer-11.0.1xx-preview1] - [Checksum][win-x86-installer-checksum-11.0.1xx-preview1]<br>[zip][win-x86-zip-11.0.1xx-preview1] - [Checksum][win-x86-zip-checksum-11.0.1xx-preview1] | [![][win-x86-badge-10.0.3xx]][win-x86-version-10.0.3xx]<br>[Installer][win-x86-installer-10.0.3xx] - [Checksum][win-x86-installer-checksum-10.0.3xx]<br>[zip][win-x86-zip-10.0.3xx] - [Checksum][win-x86-zip-checksum-10.0.3xx] | [![][win-x86-badge-10.0.2XX]][win-x86-version-10.0.2XX]<br>[Installer][win-x86-installer-10.0.2XX] - [Checksum][win-x86-installer-checksum-10.0.2XX]<br>[zip][win-x86-zip-10.0.2XX] - [Checksum][win-x86-zip-checksum-10.0.2XX] |
 | **Windows arm64** | [![][win-arm64-badge-main]][win-arm64-version-main]<br>[Installer][win-arm64-installer-main] - [Checksum][win-arm64-installer-checksum-main]<br>[zip][win-arm64-zip-main] - [Checksum][win-arm64-zip-checksum-main] | [![][win-arm64-badge-11.0.1xx-preview1]][win-arm64-version-11.0.1xx-preview1]<br>[Installer][win-arm64-installer-11.0.1xx-preview1] - [Checksum][win-arm64-installer-checksum-11.0.1xx-preview1]<br>[zip][win-arm64-zip-11.0.1xx-preview1] - [Checksum][win-arm64-zip-checksum-11.0.1xx-preview1] | [![][win-arm64-badge-10.0.3xx]][win-arm64-version-10.0.3xx]<br>[Installer][win-arm64-installer-10.0.3xx] - [Checksum][win-arm64-installer-checksum-10.0.3xx]<br>[zip][win-arm64-zip-10.0.3xx] - [Checksum][win-arm64-zip-checksum-10.0.3xx] | [![][win-arm64-badge-10.0.2XX]][win-arm64-version-10.0.2XX]<br>[Installer][win-arm64-installer-10.0.2XX] - [Checksum][win-arm64-installer-checksum-10.0.2XX]<br>[zip][win-arm64-zip-10.0.2XX] - [Checksum][win-arm64-zip-checksum-10.0.2XX] |
 | **macOS arm64**</br>(M-series CPUs) | [![][osx-arm64-badge-main]][osx-arm64-version-main]<br>[Installer][osx-arm64-installer-main] - [Checksum][osx-arm64-installer-checksum-main]<br>[tar.gz][osx-arm64-targz-main] - [Checksum][osx-arm64-targz-checksum-main] | [![][osx-arm64-badge-11.0.1xx-preview1]][osx-arm64-version-11.0.1xx-preview1]<br>[Installer][osx-arm64-installer-11.0.1xx-preview1] - [Checksum][osx-arm64-installer-checksum-11.0.1xx-preview1]<br>[tar.gz][osx-arm64-targz-11.0.1xx-preview1] - [Checksum][osx-arm64-targz-checksum-11.0.1xx-preview1] | [![][osx-arm64-badge-10.0.3xx]][osx-arm64-version-10.0.3xx]<br>[Installer][osx-arm64-installer-10.0.3xx] - [Checksum][osx-arm64-installer-checksum-10.0.3xx]<br>[tar.gz][osx-arm64-targz-10.0.3xx] - [Checksum][osx-arm64-targz-checksum-10.0.3xx] | [![][osx-arm64-badge-10.0.2XX]][osx-arm64-version-10.0.2XX]<br>[Installer][osx-arm64-installer-10.0.2XX] - [Checksum][osx-arm64-installer-checksum-10.0.2XX]<br>[tar.gz][osx-arm64-targz-10.0.2XX] - [Checksum][osx-arm64-targz-checksum-10.0.2XX] |
 | **macOS x64**</br>(Intel CPUs) | [![][osx-x64-badge-main]][osx-x64-version-main]<br>[Installer][osx-x64-installer-main] - [Checksum][osx-x64-installer-checksum-main]<br>[tar.gz][osx-x64-targz-main] - [Checksum][osx-x64-targz-checksum-main] | [![][osx-x64-badge-11.0.1xx-preview1]][osx-x64-version-11.0.1xx-preview1]<br>[Installer][osx-x64-installer-11.0.1xx-preview1] - [Checksum][osx-x64-installer-checksum-11.0.1xx-preview1]<br>[tar.gz][osx-x64-targz-11.0.1xx-preview1] - [Checksum][osx-x64-targz-checksum-11.0.1xx-preview1] | [![][osx-x64-badge-10.0.3xx]][osx-x64-version-10.0.3xx]<br>[Installer][osx-x64-installer-10.0.3xx] - [Checksum][osx-x64-installer-checksum-10.0.3xx]<br>[tar.gz][osx-x64-targz-10.0.3xx] - [Checksum][osx-x64-targz-checksum-10.0.3xx] | [![][osx-x64-badge-10.0.2XX]][osx-x64-version-10.0.2XX]<br>[Installer][osx-x64-installer-10.0.2XX] - [Checksum][osx-x64-installer-checksum-10.0.2XX]<br>[tar.gz][osx-x64-targz-10.0.2XX] - [Checksum][osx-x64-targz-checksum-10.0.2XX] |
@@ -226,56 +226,56 @@ For the 2xx and later bands, the 1xx runtime flows to 2xx+. The version of the r
 [osx-x64-installer-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-osx-x64.pkg
 [osx-x64-installer-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-osx-x64.pkg.sha512
 [osx-x64-targz-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-osx-x64.tar.gz
-[osx-x64-targz-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-osx-x64.pkg.tar.gz.sha512
+[osx-x64-targz-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-osx-x64.tar.gz.sha512
 
 [osx-x64-badge-11.0.1xx-preview1]: https://aka.ms/dotnet/11.0.1xx-preview1/daily/osx_x64_Release_version_badge.svg?no-cache
 [osx-x64-version-11.0.1xx-preview1]: https://aka.ms/dotnet/11.0.1xx-preview1/daily/productCommit-osx-x64.txt
 [osx-x64-installer-11.0.1xx-preview1]: https://aka.ms/dotnet/11.0.1xx-preview1/daily/dotnet-sdk-osx-x64.pkg
 [osx-x64-installer-checksum-11.0.1xx-preview1]: https://aka.ms/dotnet/11.0.1xx-preview1/daily/dotnet-sdk-osx-x64.pkg.sha512
 [osx-x64-targz-11.0.1xx-preview1]: https://aka.ms/dotnet/11.0.1xx-preview1/daily/dotnet-sdk-osx-x64.tar.gz
-[osx-x64-targz-checksum-11.0.1xx-preview1]: https://aka.ms/dotnet/11.0.1xx-preview1/daily/dotnet-sdk-osx-x64.pkg.tar.gz.sha512
+[osx-x64-targz-checksum-11.0.1xx-preview1]: https://aka.ms/dotnet/11.0.1xx-preview1/daily/dotnet-sdk-osx-x64.tar.gz.sha512
 
 [osx-x64-badge-10.0.3xx]: https://aka.ms/dotnet/10.0.3xx/daily/osx_x64_Release_version_badge.svg?no-cache
 [osx-x64-version-10.0.3xx]: https://aka.ms/dotnet/10.0.3xx/daily/productCommit-osx-x64.txt
 [osx-x64-installer-10.0.3xx]: https://aka.ms/dotnet/10.0.3xx/daily/dotnet-sdk-osx-x64.pkg
 [osx-x64-installer-checksum-10.0.3xx]: https://aka.ms/dotnet/10.0.3xx/daily/dotnet-sdk-osx-x64.pkg.sha512
 [osx-x64-targz-10.0.3xx]: https://aka.ms/dotnet/10.0.3xx/daily/dotnet-sdk-osx-x64.tar.gz
-[osx-x64-targz-checksum-10.0.3xx]: https://aka.ms/dotnet/10.0.3xx/daily/dotnet-sdk-osx-x64.pkg.tar.gz.sha512
+[osx-x64-targz-checksum-10.0.3xx]: https://aka.ms/dotnet/10.0.3xx/daily/dotnet-sdk-osx-x64.tar.gz.sha512
 
 [osx-x64-badge-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/osx_x64_Release_version_badge.svg?no-cache
 [osx-x64-version-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/productCommit-osx-x64.txt
 [osx-x64-installer-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-osx-x64.pkg
 [osx-x64-installer-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-osx-x64.pkg.sha512
 [osx-x64-targz-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-osx-x64.tar.gz
-[osx-x64-targz-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-osx-x64.pkg.tar.gz.sha512
+[osx-x64-targz-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-osx-x64.tar.gz.sha512
 
 [osx-arm64-badge-main]: https://aka.ms/dotnet/11.0.1xx/daily/osx_arm64_Release_version_badge.svg?no-cache
 [osx-arm64-version-main]: https://aka.ms/dotnet/11.0.1xx/daily/productCommit-osx-arm64.txt
 [osx-arm64-installer-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-osx-arm64.pkg
 [osx-arm64-installer-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-osx-arm64.pkg.sha512
 [osx-arm64-targz-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-osx-arm64.tar.gz
-[osx-arm64-targz-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-osx-arm64.pkg.tar.gz.sha512
+[osx-arm64-targz-checksum-main]: https://aka.ms/dotnet/11.0.1xx/daily/dotnet-sdk-osx-arm64.tar.gz.sha512
 
 [osx-arm64-badge-11.0.1xx-preview1]: https://aka.ms/dotnet/11.0.1xx-preview1/daily/osx_arm64_Release_version_badge.svg?no-cache
 [osx-arm64-version-11.0.1xx-preview1]: https://aka.ms/dotnet/11.0.1xx-preview1/daily/productCommit-osx-arm64.txt
 [osx-arm64-installer-11.0.1xx-preview1]: https://aka.ms/dotnet/11.0.1xx-preview1/daily/dotnet-sdk-osx-arm64.pkg
 [osx-arm64-installer-checksum-11.0.1xx-preview1]: https://aka.ms/dotnet/11.0.1xx-preview1/daily/dotnet-sdk-osx-arm64.pkg.sha512
 [osx-arm64-targz-11.0.1xx-preview1]: https://aka.ms/dotnet/11.0.1xx-preview1/daily/dotnet-sdk-osx-arm64.tar.gz
-[osx-arm64-targz-checksum-11.0.1xx-preview1]: https://aka.ms/dotnet/11.0.1xx-preview1/daily/dotnet-sdk-osx-arm64.pkg.tar.gz.sha512
+[osx-arm64-targz-checksum-11.0.1xx-preview1]: https://aka.ms/dotnet/11.0.1xx-preview1/daily/dotnet-sdk-osx-arm64.tar.gz.sha512
 
 [osx-arm64-badge-10.0.3xx]: https://aka.ms/dotnet/10.0.3xx/daily/osx_arm64_Release_version_badge.svg?no-cache
 [osx-arm64-version-10.0.3xx]: https://aka.ms/dotnet/10.0.3xx/daily/productCommit-osx-arm64.txt
 [osx-arm64-installer-10.0.3xx]: https://aka.ms/dotnet/10.0.3xx/daily/dotnet-sdk-osx-arm64.pkg
 [osx-arm64-installer-checksum-10.0.3xx]: https://aka.ms/dotnet/10.0.3xx/daily/dotnet-sdk-osx-arm64.pkg.sha512
 [osx-arm64-targz-10.0.3xx]: https://aka.ms/dotnet/10.0.3xx/daily/dotnet-sdk-osx-arm64.tar.gz
-[osx-arm64-targz-checksum-10.0.3xx]: https://aka.ms/dotnet/10.0.3xx/daily/dotnet-sdk-osx-arm64.pkg.tar.gz.sha512
+[osx-arm64-targz-checksum-10.0.3xx]: https://aka.ms/dotnet/10.0.3xx/daily/dotnet-sdk-osx-arm64.tar.gz.sha512
 
 [osx-arm64-badge-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/osx_arm64_Release_version_badge.svg?no-cache
 [osx-arm64-version-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/productCommit-osx-arm64.txt
 [osx-arm64-installer-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-osx-arm64.pkg
 [osx-arm64-installer-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-osx-arm64.pkg.sha512
 [osx-arm64-targz-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-osx-arm64.tar.gz
-[osx-arm64-targz-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-osx-arm64.pkg.tar.gz.sha512
+[osx-arm64-targz-checksum-10.0.2XX]: https://aka.ms/dotnet/10.0.2XX/daily/dotnet-sdk-osx-arm64.tar.gz.sha512
 
 [linux-badge-main]: https://aka.ms/dotnet/11.0.1xx/daily/linux_x64_Release_version_badge.svg?no-cache
 [linux-version-main]: https://aka.ms/dotnet/11.0.1xx/daily/productCommit-linux-x64.txt
