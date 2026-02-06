@@ -143,11 +143,6 @@ stages:
       desiredSigning: ${{ parameters.desiredSigning }}
       isOfficialBuild: ${{ parameters.isOfficialBuild }}
 
-- ${{ if and(notin(parameters.scope, 'scout'), contains(join(';', parameters.verifications), 'repo-test-')) }}:
-  - template: vmr-repo-tests.yml
-    parameters:
-      verifications: ${{ parameters.verifications }}
-
 - ${{ if notin(parameters.scope, 'scout') }}:
   - template: source-build-stages.yml
     parameters:

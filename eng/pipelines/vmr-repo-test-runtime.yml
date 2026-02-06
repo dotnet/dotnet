@@ -1,8 +1,9 @@
 # This pipeline runs repo-level tests against VMR build packages.
 # Triggered via /azp run dotnet-vmr-repo-test-runtime
 #
-# It builds the VMR, then clones dotnet/runtime, updates its dependencies
-# to use the VMR-built packages, and runs the runtime libraries tests.
+# It builds the VMR to produce packages, then clones dotnet/runtime,
+# updates its dependencies to use those packages, and runs the
+# runtime's normal build and test commands.
 
 trigger: none
 pr: none
@@ -11,17 +12,52 @@ variables:
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:
   - name: skipComponentGovernanceDetection
     value: true
-
   - name: Codeql.Enabled
     value: false
-
 - template: /eng/common/templates/variables/pool-providers.yml@self
 
 stages:
+
+# Stage 1: Build VMR to produce packages
 - template: /eng/pipelines/templates/stages/vmr-build.yml
   parameters:
     scope: lite
     verifications:
     - unified-build-windows-x64
-    - repo-test-runtime
     excludeRuntimeDependentJobs: true
+
+# Stage 2: Run runtime tests against VMR packages
+- stage: RepoTest_Runtime
+  displayName: 'Test: dotnet/runtime'
+  dependsOn:
+  - VMR_Vertical_Build
+  pool:
+    name: $(defaultPoolName)
+    image: $(poolImage_Linux)
+    demands: ImageOverride -equals $(poolImage_Linux)
+    os: linux
+  jobs:
+  - job: RuntimeLibsTest
+    displayName: 'runtime libs tests'
+    timeoutInMinutes: 180
+    steps:
+    - checkout: self
+
+    - script: |
+        set -e
+        git clone --depth 1 https://github.com/dotnet/runtime '$(Pipeline.Workspace)/runtime'
+      displayName: Clone dotnet/runtime
+
+    - template: /eng/common/templates/steps/vmr-repo-test-setup.yml
+      parameters:
+        downloadFromCurrentRun: true
+        artifactName: 'Windows_x64_Artifacts'
+        repoPath: '$(Pipeline.Workspace)/runtime'
+        vmrSha: '$(Build.SourceVersion)'
+        darcToolPath: '$(Pipeline.Workspace)/runtime/artifacts/tools/darc'
+
+    - script: |
+        set -e
+        cd '$(Pipeline.Workspace)/runtime'
+        ./build.sh -subset libs -test -c Release
+      displayName: Build and test runtime libraries
