@@ -31,6 +31,13 @@ namespace System.Net
         // flag is only used on Win8 and later.
         internal static readonly bool SkipIOCPCallbackOnSuccess = Environment.OSVersion.Version >= new Version(6, 2);
 
+        // Enable buffering of response data in the Kernel. The default value is false.
+        // It should be used by an application doing synchronous I/O or by an application doing asynchronous I/O with
+        // no more than one outstanding write at a time, and can significantly improve throughput over high-latency connections.
+        // Applications that use asynchronous I/O and that may have more than one send outstanding at a time should not use this flag.
+        // Enabling this can result in higher CPU and memory usage by Http.sys.
+        internal static bool EnableKernelResponseBuffering { get; } = AppContext.TryGetSwitch("System.Net.HttpListener.EnableKernelResponseBuffering", out bool enabled) && enabled;
+
         // Mitigate potential DOS attacks by limiting the number of unknown headers we accept.  Numerous header names
         // with hash collisions will cause the server to consume excess CPU.  1000 headers limits CPU time to under
         // 0.5 seconds per request.  Respond with a 400 Bad Request.
@@ -41,8 +48,6 @@ namespace System.Net
         private HttpListenerSession? _currentSession;
 
         private bool _unsafeConnectionNtlmAuthentication;
-
-        private bool _enableKernelResponseBuffering;
 
         private HttpServerSessionHandle? _serverSessionHandle;
         private ulong _urlGroupId;
@@ -91,8 +96,6 @@ namespace System.Net
                 }
             }
         }
-
-        internal bool EnableKernelResponseBuffering => _enableKernelResponseBuffering;
 
         private Dictionary<ulong, DisconnectAsyncResult> DisconnectResults =>
             LazyInitializer.EnsureInitialized(ref _disconnectResults, () => new Dictionary<ulong, DisconnectAsyncResult>());
@@ -235,9 +238,6 @@ namespace System.Net
 
                     Debug.Assert(_currentSession is null);
 
-                    // Snapshot AppContext switch at Start() so the same value is used while the listener is running.
-                    SetEnableKernelResponseBuffering();
-
                     // SetupV2Config() is not called in the ctor, because it may throw. This would
                     // be a regression since in v1 the ctor never threw. Besides, ctors should do
                     // minimal work according to the framework design guidelines.
@@ -342,11 +342,6 @@ namespace System.Net
             {
                 if (NetEventSource.Log.IsEnabled()) NetEventSource.Error(this, $"DetachRequestQueueFromUrlGroup {SR.Format(SR.net_listener_detach_error, statusCode)}");
             }
-        }
-
-        private void SetEnableKernelResponseBuffering()
-        {
-            _enableKernelResponseBuffering = AppContext.TryGetSwitch("System.Net.HttpListener.EnableKernelResponseBuffering", out bool enabled) && enabled;
         }
 
         public void Stop()

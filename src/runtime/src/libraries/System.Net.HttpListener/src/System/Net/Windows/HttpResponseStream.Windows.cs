@@ -31,7 +31,7 @@ namespace System.Net
             {
                 flags = _httpContext.Response.ComputeHeaders();
             }
-            if (_httpContext.Listener!.EnableKernelResponseBuffering)
+            if (HttpListener.EnableKernelResponseBuffering)
             {
                 flags |= Interop.HttpApi.HTTP_FLAGS.HTTP_SEND_RESPONSE_FLAG_BUFFER_DATA;
             }
