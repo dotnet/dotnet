@@ -7,7 +7,11 @@ using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+#if NET
 using System.IO;
+#else
+using Microsoft.IO;
+#endif
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -29,11 +33,6 @@ using ParseArgs = Microsoft.Build.Evaluation.Expander.ArgumentParser;
 using ReservedPropertyNames = Microsoft.Build.Internal.ReservedPropertyNames;
 using TaskItem = Microsoft.Build.Execution.ProjectItemInstance.TaskItem;
 using TaskItemFactory = Microsoft.Build.Execution.ProjectItemInstance.TaskItem.TaskItemFactory;
-
-#if FEATURE_MSIOREDIST
-using Directory = Microsoft.IO.Directory;
-using Path = Microsoft.IO.Path;
-#endif
 
 #nullable disable
 
@@ -2022,20 +2021,24 @@ namespace Microsoft.Build.Evaluation
                             break;
                     }
 
-                    foreach (KeyValuePair<string, S> itemTuple in transformedItems)
-                    {
-                        if (!string.IsNullOrEmpty(itemTuple.Key) && (options & ExpanderOptions.BreakOnNotEmpty) != 0)
-                        {
-                            brokeEarly = true;
-                            return transformedItems; // break out early
-                        }
-                    }
-
                     // If we have another transform, swap the source and transform lists.
                     if (i < captures.Count - 1)
                     {
                         (transformedItems, sourceItems) = (sourceItems, transformedItems);
                         transformedItems.Clear();
+                    }
+                }
+
+                // Check for break on non-empty only after ALL transforms are complete
+                if ((options & ExpanderOptions.BreakOnNotEmpty) != 0)
+                {
+                    foreach (KeyValuePair<string, S> itemTuple in transformedItems)
+                    {
+                        if (!string.IsNullOrEmpty(itemTuple.Key))
+                        {
+                            brokeEarly = true;
+                            return transformedItems; // break out early
+                        }
                     }
                 }
 
