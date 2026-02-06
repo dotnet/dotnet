@@ -53,9 +53,8 @@ stages:
         # Set up VMR packages and update runtime dependencies
         - template: /eng/common/templates/steps/vmr-repo-test-setup.yml
           parameters:
-            buildId: $(Build.BuildId)
+            downloadFromCurrentRun: true
             artifactName: 'Windows_x64_Artifacts'
-            project: '$(System.TeamProject)'
             repoPath: '$(Pipeline.Workspace)/runtime'
             vmrSha: '$(Build.SourceVersion)'
             darcToolPath: '$(Pipeline.Workspace)/runtime/artifacts/tools/darc'

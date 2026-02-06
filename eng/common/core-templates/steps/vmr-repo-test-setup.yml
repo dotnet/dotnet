@@ -1,12 +1,14 @@
 parameters:
-  # The Azure DevOps build ID of the VMR build to test against
+  # The Azure DevOps build ID of the VMR build to test against (ignored when downloadFromCurrentRun is true)
   buildId: '$(Build.BuildId)'
   # The artifact name to download (e.g., Windows_x64_Artifacts)
   artifactName: ''
-  # The Azure DevOps project where the VMR build ran
+  # The Azure DevOps project where the VMR build ran (ignored when downloadFromCurrentRun is true)
   project: '$(System.TeamProject)'
-  # The pipeline name/ID for the VMR unified build
+  # The pipeline name/ID for the VMR unified build (ignored when downloadFromCurrentRun is true)
   pipeline: 'dotnet-unified-build'
+  # Set to true when the VMR build artifacts are produced by the current pipeline run
+  downloadFromCurrentRun: false
   # Path to the repo checkout to update
   repoPath: '$(Build.SourcesDirectory)'
   # VMR commit SHA for source sync (leave empty to skip source sync)
@@ -19,20 +21,31 @@ parameters:
   itemPattern: '**/packages/**/*.nupkg'
 
 steps:
-  # Download VMR artifact from the unified build pipeline
-  - task: DownloadPipelineArtifact@2
-    displayName: Download VMR build packages
-    inputs:
-      buildType: specific
-      project: ${{ parameters.project }}
-      pipeline: ${{ parameters.pipeline }}
-      buildVersionToDownload: specific
-      buildId: ${{ parameters.buildId }}
-      artifactName: ${{ parameters.artifactName }}
-      targetPath: '$(Pipeline.Workspace)/vmr-artifacts'
-      itemPattern: ${{ parameters.itemPattern }}
-      allowPartiallySucceededBuilds: true
-      allowFailedBuilds: true
+  # Download VMR artifact from the current pipeline run
+  - ${{ if eq(parameters.downloadFromCurrentRun, true) }}:
+    - task: DownloadPipelineArtifact@2
+      displayName: Download VMR build packages (current run)
+      inputs:
+        buildType: current
+        artifactName: ${{ parameters.artifactName }}
+        targetPath: '$(Pipeline.Workspace)/vmr-artifacts'
+        itemPattern: ${{ parameters.itemPattern }}
+
+  # Download VMR artifact from a specific pipeline run
+  - ${{ else }}:
+    - task: DownloadPipelineArtifact@2
+      displayName: Download VMR build packages
+      inputs:
+        buildType: specific
+        project: ${{ parameters.project }}
+        pipeline: ${{ parameters.pipeline }}
+        buildVersionToDownload: specific
+        buildId: ${{ parameters.buildId }}
+        artifactName: ${{ parameters.artifactName }}
+        targetPath: '$(Pipeline.Workspace)/vmr-artifacts'
+        itemPattern: ${{ parameters.itemPattern }}
+        allowPartiallySucceededBuilds: true
+        allowFailedBuilds: true
 
   # Flatten packages — Windows
   - powershell: |
