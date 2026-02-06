@@ -1,0 +1,124 @@
+parameters:
+  # The Azure DevOps build ID of the VMR build to test against
+  buildId: '$(Build.BuildId)'
+  # The artifact name to download (e.g., Windows_x64_Artifacts)
+  artifactName: ''
+  # The Azure DevOps project where the VMR build ran
+  project: '$(System.TeamProject)'
+  # The pipeline name/ID for the VMR unified build
+  pipeline: 'dotnet-unified-build'
+  # Path to the repo checkout to update
+  repoPath: '$(Build.SourcesDirectory)'
+  # VMR commit SHA for source sync (leave empty to skip source sync)
+  vmrSha: ''
+  # Directory to store flattened packages
+  packagesDir: '$(Pipeline.Workspace)/vmr-packages'
+  # Directory to install darc CLI
+  darcToolPath: '$(Build.SourcesDirectory)/artifacts/tools/darc'
+  # Item pattern for artifact download
+  itemPattern: '**/packages/**/*.nupkg'
+
+steps:
+  # Download VMR artifact from the unified build pipeline
+  - task: DownloadPipelineArtifact@2
+    displayName: Download VMR build packages
+    inputs:
+      buildType: specific
+      project: ${{ parameters.project }}
+      pipeline: ${{ parameters.pipeline }}
+      buildVersionToDownload: specific
+      buildId: ${{ parameters.buildId }}
+      artifactName: ${{ parameters.artifactName }}
+      targetPath: '$(Pipeline.Workspace)/vmr-artifacts'
+      itemPattern: ${{ parameters.itemPattern }}
+      allowPartiallySucceededBuilds: true
+      allowFailedBuilds: true
+
+  # Flatten packages — Windows
+  - powershell: |
+      New-Item -ItemType Directory -Force -Path '${{ parameters.packagesDir }}' | Out-Null
+      Get-ChildItem -Path '$(Pipeline.Workspace)/vmr-artifacts' -Recurse -Filter '*.nupkg' |
+        Copy-Item -Destination '${{ parameters.packagesDir }}'
+      $count = (Get-ChildItem '${{ parameters.packagesDir }}' -Filter '*.nupkg' | Measure-Object).Count
+      if ($count -eq 0) {
+        Write-Error "No .nupkg files found in downloaded artifacts"
+        exit 1
+      }
+      Write-Host "Flattened $count packages to ${{ parameters.packagesDir }}"
+    displayName: Flatten VMR packages (Windows)
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+
+  # Flatten packages — Unix
+  - script: |
+      set -e
+      mkdir -p '${{ parameters.packagesDir }}'
+      find '$(Pipeline.Workspace)/vmr-artifacts' -name '*.nupkg' -exec cp {} '${{ parameters.packagesDir }}/' \;
+      count=$(find '${{ parameters.packagesDir }}' -name '*.nupkg' | wc -l)
+      if [ "$count" -eq 0 ]; then
+        echo "##vso[task.logissue type=error]No .nupkg files found in downloaded artifacts"
+        exit 1
+      fi
+      echo "Flattened $count packages to ${{ parameters.packagesDir }}"
+    displayName: Flatten VMR packages (Unix)
+    condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
+
+  # Install darc CLI — Windows
+  - powershell: |
+      & '${{ parameters.repoPath }}/eng/common/darc-init.ps1' -toolpath '${{ parameters.darcToolPath }}'
+    displayName: Install darc CLI (Windows)
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+
+  # Install darc CLI — Unix
+  - script: |
+      '${{ parameters.repoPath }}/eng/common/darc-init.sh' --toolpath '${{ parameters.darcToolPath }}'
+    displayName: Install darc CLI (Unix)
+    condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
+
+  # Source sync from VMR (optional)
+  - ${{ if ne(parameters.vmrSha, '') }}:
+    - script: |
+        set -e
+        git clone https://github.com/dotnet/dotnet '$(Pipeline.Workspace)/vmr'
+        cd '$(Pipeline.Workspace)/vmr'
+        git fetch origin ${{ parameters.vmrSha }}
+        git checkout FETCH_HEAD
+      displayName: Clone VMR at target SHA (Unix)
+      condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
+
+    - powershell: |
+        git clone https://github.com/dotnet/dotnet '$(Pipeline.Workspace)/vmr'
+        Set-Location '$(Pipeline.Workspace)/vmr'
+        git fetch origin ${{ parameters.vmrSha }}
+        git checkout FETCH_HEAD
+      displayName: Clone VMR at target SHA (Windows)
+      condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+
+    # Run backflow — Windows
+    - powershell: |
+        Set-Location '${{ parameters.repoPath }}'
+        & '${{ parameters.darcToolPath }}/darc.exe' vmr backflow '$(Pipeline.Workspace)/vmr'
+      displayName: Apply VMR source changes via backflow (Windows)
+      condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+
+    # Run backflow — Unix
+    - script: |
+        set -e
+        cd '${{ parameters.repoPath }}'
+        '${{ parameters.darcToolPath }}/darc' vmr backflow '$(Pipeline.Workspace)/vmr'
+      displayName: Apply VMR source changes via backflow (Unix)
+      condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
+
+  # Update dependencies — Windows
+  - powershell: |
+      Set-Location '${{ parameters.repoPath }}'
+      & '${{ parameters.darcToolPath }}/darc.exe' update-dependencies --packages-folder '${{ parameters.packagesDir }}'
+    displayName: Update dependencies from VMR packages (Windows)
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+
+  # Update dependencies — Unix
+  - script: |
+      set -e
+      cd '${{ parameters.repoPath }}'
+      '${{ parameters.darcToolPath }}/darc' update-dependencies --packages-folder '${{ parameters.packagesDir }}'
+    displayName: Update dependencies from VMR packages (Unix)
+    condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
