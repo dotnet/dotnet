@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Remote;
@@ -359,6 +360,103 @@ public class RemoteDebugInfoServiceTest(ITestOutputHelper testOutputHelper) : Co
         await VerifyBreakpointRangeAsync(input);
     }
 
+    [Theory]
+    [CombinatorialData]
+    public async Task ResolveBreakpointRangeAsync_CodeBlockInMiddleOfDocument(bool legacy)
+    {
+        var blockKind = legacy ? "functions" : "code";
+        var fileKind = legacy ? RazorFileKind.Legacy : RazorFileKind.Component;
+
+        var input = $$"""
+                @{
+                    ViewData["Title"] = "Home Page";
+                }
+
+                @{{blockKind}} {
+                    string GetTimeStamp()
+                    {
+                $$        [|return DateTime.Now.ToString("F");|]
+                    }
+                }
+
+                <div class="text-center">
+                    <h1 class="display-4">Welcome</h1>
+                    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+                    @{
+                        string timeStamp = GetTimeStamp();
+                        <span>Current time: @timeStamp</span>
+                    }
+                </div>
+                """;
+
+        await VerifyBreakpointRangeAsync(input, fileKind: fileKind);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_UsingDirectiveInLine1()
+    {
+        var input = $$"""
+                @{
+                    string x = "";
+                }
+
+                $$<div class="@([|x = nameof(Object)|])" accesskey="A" @using System.IO data="please don't do this">
+                    <h1 class="display-4">Welcome</h1>
+                </div>
+                """;
+
+        // This is only an issue for Legacy files. For Components, the using directive is treated as plain text
+        await VerifyBreakpointRangeAsync(input, fileKind: RazorFileKind.Legacy);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_UsingDirectiveInLine2()
+    {
+        var input = $$"""
+                @{
+                    string x = "";
+                }
+
+                $$<div class="@[|x|]" accesskey="A" @using System.Text.RegularExpressions data="please don't do this">
+                    <h1 class="display-4">Welcome</h1>
+                </div>
+                """;
+
+        await VerifyBreakpointRangeAsync(input, fileKind: RazorFileKind.Legacy);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_UsingDirectiveInLine3()
+    {
+        var input = $$"""
+                @{
+                    ViewData["Title"] = "Home Page";
+
+                    string x = "";
+                }
+
+                $$<div>@[|x|]</div> hello @using System.Text.Encodings world
+                """;
+
+        await VerifyBreakpointRangeAsync(input, fileKind: RazorFileKind.Legacy);
+    }
+
+    [Fact]
+    public async Task ResolveBreakpointRangeAsync_MultipleCSharpExpressions()
+    {
+        var input = $$"""
+                @{
+                    string x = "";
+                }
+
+                <div accesskey="@x" $$ class="@[|x|]">
+                    <h1 class="display-4">Welcome</h1>
+                </div>
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
     private async Task VerifyProximityExpressionsAsync(TestCode input, string[] extraExpressions)
     {
         var document = CreateProjectAndRazorDocument(input.Text);
@@ -385,9 +483,9 @@ public class RemoteDebugInfoServiceTest(ITestOutputHelper testOutputHelper) : Co
         AssertEx.SequenceEqual(expected, result.OrderAsArray());
     }
 
-    private async Task VerifyBreakpointRangeAsync(TestCode input)
+    private async Task VerifyBreakpointRangeAsync(TestCode input, RazorFileKind? fileKind = null)
     {
-        var document = CreateProjectAndRazorDocument(input.Text);
+        var document = CreateProjectAndRazorDocument(input.Text, fileKind: fileKind);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var span = inputText.GetLinePosition(input.Position);
