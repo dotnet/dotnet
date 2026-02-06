@@ -54,7 +54,7 @@ stages:
         - template: /eng/common/templates/steps/vmr-repo-test-setup.yml
           parameters:
             buildId: $(Build.BuildId)
-            artifactName: 'AzureLinux_x64_Cross_x64_Artifacts'
+            artifactName: 'Windows_x64_Artifacts'
             project: '$(System.TeamProject)'
             repoPath: '$(Pipeline.Workspace)/runtime'
             vmrSha: '$(Build.SourceVersion)'

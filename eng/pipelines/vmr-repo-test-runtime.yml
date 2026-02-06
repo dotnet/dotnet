@@ -1,0 +1,27 @@
+# This pipeline runs repo-level tests against VMR build packages.
+# Triggered via /azp run dotnet-vmr-repo-test-runtime
+#
+# It builds the VMR, then clones dotnet/runtime, updates its dependencies
+# to use the VMR-built packages, and runs the runtime libraries tests.
+
+trigger: none
+pr: none
+
+variables:
+- ${{ if eq(variables['System.TeamProject'], 'public') }}:
+  - name: skipComponentGovernanceDetection
+    value: true
+
+  - name: Codeql.Enabled
+    value: false
+
+- template: /eng/common/templates/variables/pool-providers.yml@self
+
+stages:
+- template: /eng/pipelines/templates/stages/vmr-build.yml
+  parameters:
+    scope: lite
+    verifications:
+    - unified-build-windows-x64
+    - repo-test-runtime
+    excludeRuntimeDependentJobs: true
