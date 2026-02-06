@@ -31,17 +31,17 @@ stages:
   displayName: 'Test: dotnet/runtime'
   dependsOn:
   - VMR_Vertical_Build
-  pool:
-    name: $(defaultPoolName)
-    image: $(poolImage_Linux)
-    demands: ImageOverride -equals $(poolImage_Linux)
-    os: linux
   jobs:
   - job: RuntimeLibsTest
     displayName: 'runtime libs tests'
     timeoutInMinutes: 180
+    pool:
+      name: $(defaultPoolName)
+      image: $(poolImage_Linux)
+      demands: ImageOverride -equals $(poolImage_Linux)
+      os: linux
     steps:
-    - checkout: self
+    - checkout: none
 
     - script: |
         set -e
@@ -53,7 +53,6 @@ stages:
         downloadFromCurrentRun: true
         artifactName: 'Windows_x64_Artifacts'
         repoPath: '$(Pipeline.Workspace)/runtime'
-        vmrSha: '$(Build.SourceVersion)'
         darcToolPath: '$(Pipeline.Workspace)/runtime/artifacts/tools/darc'
 
     - script: |

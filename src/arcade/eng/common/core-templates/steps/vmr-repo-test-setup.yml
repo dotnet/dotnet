@@ -91,17 +91,21 @@ steps:
   - ${{ if ne(parameters.vmrSha, '') }}:
     - script: |
         set -e
-        git clone https://github.com/dotnet/dotnet '$(Pipeline.Workspace)/vmr'
+        mkdir -p '$(Pipeline.Workspace)/vmr'
         cd '$(Pipeline.Workspace)/vmr'
-        git fetch origin ${{ parameters.vmrSha }}
+        git init
+        git remote add origin https://github.com/dotnet/dotnet
+        git fetch --depth 1 origin ${{ parameters.vmrSha }}
         git checkout FETCH_HEAD
       displayName: Clone VMR at target SHA (Unix)
       condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
 
     - powershell: |
-        git clone https://github.com/dotnet/dotnet '$(Pipeline.Workspace)/vmr'
+        New-Item -ItemType Directory -Force -Path '$(Pipeline.Workspace)/vmr' | Out-Null
         Set-Location '$(Pipeline.Workspace)/vmr'
-        git fetch origin ${{ parameters.vmrSha }}
+        git init
+        git remote add origin https://github.com/dotnet/dotnet
+        git fetch --depth 1 origin ${{ parameters.vmrSha }}
         git checkout FETCH_HEAD
       displayName: Clone VMR at target SHA (Windows)
       condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
@@ -109,7 +113,7 @@ steps:
     # Run backflow — Windows
     - powershell: |
         Set-Location '${{ parameters.repoPath }}'
-        & '${{ parameters.darcToolPath }}/darc.exe' vmr backflow '$(Pipeline.Workspace)/vmr'
+        & '${{ parameters.darcToolPath }}/darc.exe' vmr backflow '${{ parameters.repoPath }}' --vmr '$(Pipeline.Workspace)/vmr'
       displayName: Apply VMR source changes via backflow (Windows)
       condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
 
@@ -117,7 +121,7 @@ steps:
     - script: |
         set -e
         cd '${{ parameters.repoPath }}'
-        '${{ parameters.darcToolPath }}/darc' vmr backflow '$(Pipeline.Workspace)/vmr'
+        '${{ parameters.darcToolPath }}/darc' vmr backflow '${{ parameters.repoPath }}' --vmr '$(Pipeline.Workspace)/vmr'
       displayName: Apply VMR source changes via backflow (Unix)
       condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
 
