@@ -6,12 +6,25 @@ This package generates an archive that can be extracted on top of an existing .N
 
 ## Build Skip Support for Unsupported Platforms and Servicing
 
-This SDK also supports automatically skipping builds on unsupported platforms or in servicing releases. If a project with a list of provided RIDs in `RuntimeIdentifiers` is built with the `RuntimeIdentifier` property set to a RID that is not in the `RuntimeIdentifiers` list, the build will be skipped. This enables cleanly skipping optional packs, installers, or bundles that only exist on specific platforms. 
+This SDK also supports automatically skipping builds on unsupported platforms or in servicing releases. If a project with a list of provided RIDs in `RuntimeIdentifiers` is built with the `RuntimeIdentifier` property set to a RID that is not in the `RuntimeIdentifiers` list, the build will be skipped. This enables cleanly skipping optional packs, installers, or bundles that only exist on specific platforms.
 
 Additionally, if a `ProjectServicingConfiguration` item is provided with the identity of the project name and the `PatchVersion` metadata on the item is not equal to the current `PatchVersion`, the build will be skipped. This support enables a repository to disable building targeting packs in servicing releases if that is desired.
 
-# Creating tar.gz archives on Windows
+## Archive Formats
 
-There is an override that you can use to opt into generating tar.gz archives instead of zip archives on Windows to get an consistent experience as with linux and macos.
-That opt-in is setting ``ArchiveFormat`` to ``tar.gz`` on a project that uses this package when building for Windows.
-This can also be used on Linux and MacOS to force creating ``zip`` archives as well.
+The `ArchiveFormat` ItemGroup specifies which archive formats to generate. By default:
+
+- **Windows**: Both `zip` and `tar.gz` archives are generated
+- **Linux/macOS**: Only `tar.gz` archives are generated
+
+The `PublishToDisk` target runs once, then each archive format is created from the same staged output directory.
+
+### Customizing Archive Formats
+
+To customize which formats are generated, define the `ArchiveFormat` ItemGroup in your project:
+
+```xml
+<ItemGroup>
+  <ArchiveFormat Include="tar.gz" />
+</ItemGroup>
+```
