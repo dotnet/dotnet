@@ -4131,7 +4131,8 @@ public:
     void lvaInitAsyncContinuation(unsigned* curVarNum);
 
 #if defined(TARGET_WASM)
-    void lvaInitWasmStackPtr(unsigned* curVarNum);
+    void lvaInitWasmStackPtrArg(unsigned* curVarNum);
+    void lvaAllocWasmStackPtr();
     void lvaInitWasmPortableEntryPtr(unsigned* curVarNum);
 #endif // defined(TARGET_WASM)
 
@@ -4214,6 +4215,7 @@ public:
 
     PhaseStatus lvaMarkLocalVars(); // Local variable ref-counting
     void lvaComputeRefCounts(bool isRecompute, bool setSlotNumbers);
+    void lvaComputePreciseRefCounts(bool isRecompute, bool setSlotNumbers);
     void lvaMarkLocalVars(BasicBlock* block);
 
     void lvaAllocOutgoingArgSpaceVar(); // Set up lvaOutgoingArgSpaceVar
