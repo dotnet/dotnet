@@ -217,6 +217,18 @@ stages:
             targetArchitecture: arm64
             brandingType: ${{ variables.brandingType }}
 
+      - ${{ if containsValue(parameters.verifications, 'unified-build-osx-arm64') }}:
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: OSX
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Mac }}
+            targetOS: osx
+            targetArchitecture: arm64
+            brandingType: ${{ variables.brandingType }}
+
     ### Additional jobs for full build ###
     - ${{ if in(parameters.scope, 'full') }}:
 
@@ -602,17 +614,6 @@ stages:
 
       - template: ../jobs/vmr-build.yml
         parameters:
-          buildName: OSX
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Mac }}
-          targetOS: osx
-          targetArchitecture: arm64
-          brandingType: ${{ variables.brandingType }}
-
-      - template: ../jobs/vmr-build.yml
-        parameters:
           buildName: Windows
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
@@ -859,3 +860,4 @@ stages:
         - Windows_x64
         - Windows_x86
         - Windows_arm64
+
