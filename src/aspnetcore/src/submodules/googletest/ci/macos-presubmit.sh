@@ -31,8 +31,13 @@
 
 set -euox pipefail
 
-# Use Xcode 16.0
-sudo xcode-select -s /Applications/Xcode_16.0.app/Contents/Developer
+# Use Xcode 26.2
+sudo xcode-select -s /Applications/Xcode_26.2.app/Contents/Developer
+
+brew install cmake
+
+export CMAKE_BUILD_PARALLEL_LEVEL=$(sysctl -n hw.ncpu)
+export CTEST_PARALLEL_LEVEL=$(sysctl -n hw.ncpu)
 
 if [[ -z ${GTEST_ROOT:-} ]]; then
   GTEST_ROOT="$(realpath $(dirname ${0})/..)"
@@ -56,7 +61,7 @@ done
 # Test the Bazel build
 
 # If we are running on Kokoro, check for a versioned Bazel binary.
-KOKORO_GFILE_BAZEL_BIN="bazel-8.2.1-darwin-x86_64"
+KOKORO_GFILE_BAZEL_BIN="bazel-9.0.0-darwin-x86_64"
 if [[ ${KOKORO_GFILE_DIR:-} ]] && [[ -f ${KOKORO_GFILE_DIR}/${KOKORO_GFILE_BAZEL_BIN} ]]; then
   BAZEL_BIN="${KOKORO_GFILE_DIR}/${KOKORO_GFILE_BAZEL_BIN}"
   chmod +x ${BAZEL_BIN}
