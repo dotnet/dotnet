@@ -37,10 +37,10 @@
       "commitSha": "970c803abb1ed5657b056cdaf01f1693f437c242"
     },
     {
-      "barId": 300499,
+      "barId": 300698,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "17321883ba8a48d97ad8c1010e0026b5d24e647d"
+      "commitSha": "7c3f266fea87aea5684d60b75cb65433c56687f5"
     },
     {
       "barId": 298250,
@@ -61,10 +61,10 @@
       "commitSha": "54d87c53bfa6554edc550216ff14874754bc2a5f"
     },
     {
-      "barId": 299945,
+      "barId": 300517,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "a893f4ae3cd251ce1676953422bb0429894f12fd"
+      "commitSha": "849933c6f67cfeaa0b7c4d5d1202be70d1ee9966"
     },
     {
       "barId": 300496,

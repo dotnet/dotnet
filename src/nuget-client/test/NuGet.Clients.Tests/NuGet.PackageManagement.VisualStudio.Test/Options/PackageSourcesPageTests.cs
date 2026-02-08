@@ -71,7 +71,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
-        public async Task SetValueAsync_AuditSources_WhenNameChanging_RaisesSettingValuesChangedAsync(bool isNameChanging)
+        public async Task SetValueAsync_AuditSources_Never_RaisesSettingValuesChangedAsync(bool isNameChanging)
         {
             // Arrange
             string originalSourceName = "auditTestingSourceName";
@@ -224,6 +224,9 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
             failure.ErrorMessage.Should().StartWith(Strings.Error_NuGetConfig_InvalidState);
         }
 
+        /// <summary>
+        /// Any edit will cause the event to be raised. Here we test changing the source's name followed by the source's URL.
+        /// </summary>
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
@@ -273,7 +276,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
             // Assert
             result.Should().NotBeNull();
             result.Should().BeOfType<ExternalSettingOperationResult.Success>();
-            wasVsSettingsSettingsChangedCalled.Should().Be(isPackageNameChanging);
+            wasVsSettingsSettingsChangedCalled.Should().Be(true);
         }
 
         [Theory]
