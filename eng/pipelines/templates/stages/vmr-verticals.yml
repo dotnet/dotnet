@@ -217,7 +217,7 @@ stages:
             targetArchitecture: arm64
             brandingType: ${{ variables.brandingType }}
 
-      - ${{ if containsValue(parameters.verifications, 'unified-build-osx-arm64') }}:
+      - ${{ if containsValue(parameters.verifications, 'unified-build-osx-x64') }}:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: OSX
@@ -226,7 +226,7 @@ stages:
             signType: ${{ variables.signType }}
             pool: ${{ parameters.pool_Mac }}
             targetOS: osx
-            targetArchitecture: arm64
+            targetArchitecture: x64
             brandingType: ${{ variables.brandingType }}
 
     ### Additional jobs for full build ###
@@ -426,17 +426,6 @@ stages:
             targetArchitecture: wasm
             brandingType: ${{ variables.brandingType }}
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: OSX
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Mac }}
-          targetOS: osx
-          targetArchitecture: x64
-          brandingType: ${{ variables.brandingType }}
-
       - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
 
         - template: ../jobs/vmr-build.yml
@@ -611,6 +600,17 @@ stages:
             targetArchitecture: arm64
             extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
             brandingType: ${{ variables.brandingType }}
+
+      - template: ../jobs/vmr-build.yml
+        parameters:
+          buildName: OSX
+          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
+          pool: ${{ parameters.pool_Mac }}
+          targetOS: osx
+          targetArchitecture: arm64
+          brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:

@@ -46,7 +46,7 @@ parameters:
   - unified-build-android-arm64
   - unified-build-browser-wasm
   - unified-build-iossimulator-arm64
-  - unified-build-osx-arm64
+  - unified-build-osx-x64
   - unified-build-linux-buildtests
   - unified-build-windows-buildtests
   - unified-build-windows-x64
