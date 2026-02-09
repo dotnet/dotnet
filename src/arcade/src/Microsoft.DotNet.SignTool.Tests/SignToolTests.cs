@@ -3635,5 +3635,132 @@ $@"
                 "File 'NestedContainer.1.0.0.nupkg' Certificate='NuGet'",
             });
         }
+
+        [Fact]
+        public void NotarizationRetriesOnFailure()
+        {
+            // List of files to be considered for signing
+            var itemsToSign = new List<ItemToSign>()
+            {
+                new ItemToSign(GetResourcePath("test.pkg"))
+            };
+
+            // Default signing information
+            var strongNameSignInfo = new Dictionary<string, List<SignInfo>>()
+            {
+                { "581d91ccdfc4ea9c", new List<SignInfo>{ new SignInfo(certificate: "ArcadeCertTest", strongName: "ArcadeStrongTest") } }
+            };
+
+            // Set up the cert to allow for signing and notarization.
+            var additionalCertificateInfo = new Dictionary<string, List<AdditionalCertificateInformation>>()
+            {
+                {  "MacDeveloperHardenWithNotarization",
+                    new List<AdditionalCertificateInformation>() {
+                        new AdditionalCertificateInformation() { MacNotarizationAppName = "dotnet", MacSigningOperation = "MacDeveloperHarden" }
+                    }
+                }
+            };
+
+            // Overriding information
+            var fileSignInfo = new Dictionary<ExplicitSignInfoKey, FileSignInfoEntry>()
+            {
+                { new ExplicitSignInfoKey("test.pkg"), new FileSignInfoEntry("MacDeveloperHardenWithNotarization") }
+            };
+
+            var configuration = new Configuration(_tmpDir,
+                itemsToSign,
+                strongNameSignInfo,
+                fileSignInfo,
+                s_fileExtensionSignInfo,
+                additionalCertificateInfo,
+                itemsToSkip3rdPartyCheck: null,
+                tarToolPath: null,
+                pkgToolPath: null,
+                snPath: null,
+                new TaskLoggingHelper(new FakeBuildEngine(_output), "SignToolTests"),
+                telemetry: null);
+
+            var parsedSigningInput = configuration.GenerateListOfFiles();
+
+            // Create a fake build engine to track build calls
+            var fakeBuildEngine = new FakeBuildEngineWithFailures(_output, failNotarizationCount: 3);
+            var fakeLog = new TaskLoggingHelper(fakeBuildEngine, "SignToolTests");
+
+            var args = new SignToolArgs(
+                tempPath: _tmpDir,
+                microBuildCorePath: CreateTestResource("MicroBuild.Core"),
+                testSign: true,
+                dotnetPath: null,
+                msbuildVerbosity: "quiet",
+                logDir: _tmpDir,
+                enclosingDir: "",
+                snBinaryPath: null,
+                wix3ToolsPath: null,
+                wixToolsPath: null,
+                tarToolPath: null,
+                pkgToolPath: null,
+                dotnetTimeout: -1);
+
+            var signTool = new FakeSignTool(args, fakeLog);
+
+            var util = new BatchSignUtil(
+                fakeBuildEngine,
+                fakeLog,
+                signTool,
+                parsedSigningInput,
+                Array.Empty<string>(),
+                null);
+
+            util.Go(false);
+
+            // Verify that notarization was retried
+            fakeBuildEngine.NotarizationAttempts.Should().Be(4, "Notarization should succeed on the 4th attempt after 3 failures");
+        }
+    }
+
+    /// <summary>
+    /// Fake build engine that can simulate notarization failures
+    /// </summary>
+    internal class FakeBuildEngineWithFailures : IBuildEngine
+    {
+        private readonly int _failNotarizationCount;
+        private int _notarizationAttemptsSoFar = 0;
+        private readonly FakeBuildEngine _innerEngine;
+
+        public int NotarizationAttempts => _notarizationAttemptsSoFar;
+
+        public FakeBuildEngineWithFailures(ITestOutputHelper output, int failNotarizationCount)
+        {
+            _failNotarizationCount = failNotarizationCount;
+            _innerEngine = new FakeBuildEngine(output);
+        }
+
+        public bool BuildProjectFile(string projectFileName, string[] targetNames, System.Collections.IDictionary globalProperties, System.Collections.IDictionary targetOutputs)
+        {
+            // Check if this is a notarization project
+            if (projectFileName.Contains("Notarize"))
+            {
+                _notarizationAttemptsSoFar++;
+                
+                // Fail the first N attempts
+                if (_notarizationAttemptsSoFar <= _failNotarizationCount)
+                {
+                    return false;
+                }
+            }
+
+            // Otherwise use the inner engine implementation
+            return _innerEngine.BuildProjectFile(projectFileName, targetNames, globalProperties, targetOutputs);
+        }
+
+        public int ColumnNumberOfTaskNode => _innerEngine.ColumnNumberOfTaskNode;
+        public bool ContinueOnError { get => _innerEngine.ContinueOnError; set => _innerEngine.ContinueOnError = value; }
+        public int LineNumberOfTaskNode => _innerEngine.LineNumberOfTaskNode;
+        public string ProjectFileOfTaskNode => _innerEngine.ProjectFileOfTaskNode;
+
+        public void LogCustomEvent(CustomBuildEventArgs e) => _innerEngine.LogCustomEvent(e);
+        public void LogErrorEvent(BuildErrorEventArgs e) => _innerEngine.LogErrorEvent(e);
+        public void LogMessageEvent(BuildMessageEventArgs e) => _innerEngine.LogMessageEvent(e);
+        public void LogWarningEvent(BuildWarningEventArgs e) => _innerEngine.LogWarningEvent(e);
     }
 }
