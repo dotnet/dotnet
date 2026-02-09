@@ -128,12 +128,9 @@ public static class Utilities
         {
             using FileStream fileStream = File.OpenRead(tarballPath);
             using GZipStream decompressorStream = new(fileStream, CompressionMode.Decompress);
-            using TarReader reader = new(decompressorStream);
-
-            TarEntry? entry;
-            while ((entry = reader.GetNextEntry()) is not null)
+            foreach (string name in TarHelper.GetEntryNames(decompressorStream))
             {
-                yield return entry.Name;
+                yield return name;
             }
         }
         else

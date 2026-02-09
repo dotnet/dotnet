@@ -5,21 +5,20 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.FileSystemGlobbing;
-using Xunit;
-using Xunit.Abstractions;
 
-namespace Microsoft.DotNet.SourceBuild.Tests;
+namespace TestUtilities;
 
-internal class ExclusionsHelper
+public class ExclusionsHelper
 {
     private const string NullSuffix = "NULL_SUFFIX";
 
     private readonly string _exclusionsFileName;
 
     private readonly string _baselineSubDir;
+
+    private readonly string _logsDirectory;
 
     // Use this to narrow down the scope of exclusions to a specific category.
     // For instance, setting this to "vstest" will consider 
@@ -30,7 +29,7 @@ internal class ExclusionsHelper
 
     private readonly Dictionary<string, HashSet<string>> _suffixToUnusedExclusions;
 
-    public ExclusionsHelper(string exclusionsFileName, string baselineSubDir = "", string? exclusionRegexString = null)
+    public ExclusionsHelper(string exclusionsFileName, string logsDirectory, string baselineSubDir = "", string? exclusionRegexString = null)
     {
         if (exclusionsFileName is null)
         {
@@ -38,6 +37,7 @@ internal class ExclusionsHelper
         }
 
         _exclusionsFileName = exclusionsFileName;
+        _logsDirectory = logsDirectory;
         _baselineSubDir = baselineSubDir;
         _exclusionRegex = string.IsNullOrWhiteSpace(exclusionRegexString) ? null : new Regex(exclusionRegexString);
         _suffixToExclusions = ParseExclusionsFile();
@@ -45,7 +45,7 @@ internal class ExclusionsHelper
             _suffixToExclusions.ToDictionary(pair => pair.Key, pair => new HashSet<string>(pair.Value)));
     }
 
-    internal bool IsFileExcluded(string filePath, string suffix = NullSuffix)
+    public bool IsFileExcluded(string filePath, string suffix = NullSuffix)
     {
         if (suffix is null)
         {
@@ -62,7 +62,7 @@ internal class ExclusionsHelper
     /// <param name="updatedFileTag">Optional tag to append to the updated file name.</param>
     /// <param name="additionalLines">Optional additional lines to append to the updated file.</param>
     /// </summary>
-    internal void GenerateNewBaselineFile(string? updatedFileTag = null, List<string>? additionalLines = null)
+    public void GenerateNewBaselineFile(string? updatedFileTag = null, List<string>? additionalLines = null)
     {
         string exclusionsFilePath = BaselineHelper.GetBaselineFilePath(_exclusionsFileName, _baselineSubDir);
 
@@ -80,7 +80,7 @@ internal class ExclusionsHelper
         string updatedFileName = updatedFileTag is null
             ? $"Updated{_exclusionsFileName}"
             : $"Updated{Path.GetFileNameWithoutExtension(_exclusionsFileName)}.{updatedFileTag}{Path.GetExtension(_exclusionsFileName)}";
-        string actualFilePath = Path.Combine(Config.LogsDirectory, updatedFileName);
+        string actualFilePath = Path.Combine(_logsDirectory, updatedFileName);
         File.WriteAllLines(actualFilePath, newLines!);
     }
 
