@@ -11,16 +11,19 @@
          UseMSBuildMT controls whether this repository builds with -mt flag when DotNetBuildMT=true.
          
          Default exclusions are defined here so local builds match CI behavior.
-         Override via MSBUILD_MT_EXCLUDED_REPOS environment variable (colon-separated for bash compatibility).
+         Override via MSBuild property /p:MSBuildMTExcludedReposOverride=... or
+         MSBUILD_MT_EXCLUDED_REPOS environment variable (colon-separated for bash compatibility).
          
          Priority (highest to lowest):
          1. Per-repo .proj file setting <UseMSBuildMT>false</UseMSBuildMT>
-         2. MSBUILD_MT_EXCLUDED_REPOS environment variable override
-         3. Default exclusion list below
-         4. Default: enabled for all repos
+         2. MSBuildMTExcludedReposOverride MSBuild property
+         3. MSBUILD_MT_EXCLUDED_REPOS environment variable override
+         4. Default exclusion list below
+         5. Default: enabled for all repos
     -->
     <_MSBuildMTExcludedRepos>arcade;runtime;roslyn;aspnetcore;sdk;efcore;winforms;wpf;razor;source-build-reference-packages</_MSBuildMTExcludedRepos>
-    <!-- Allow override via environment variable (uses colons to avoid bash issues, convert to semicolons) -->
+    <!-- Allow override via MSBuild property (e.g. /p:MSBuildMTExcludedReposOverride=...) or environment variable -->
+    <_MSBuildMTExcludedRepos Condition="'$(MSBuildMTExcludedReposOverride)' != ''">$(MSBuildMTExcludedReposOverride)</_MSBuildMTExcludedRepos>
     <_MSBuildMTExcludedReposOverride>$([System.Environment]::GetEnvironmentVariable('MSBUILD_MT_EXCLUDED_REPOS'))</_MSBuildMTExcludedReposOverride>
     <_MSBuildMTExcludedRepos Condition="'$(_MSBuildMTExcludedReposOverride)' != ''">$(_MSBuildMTExcludedReposOverride.Replace(':',';'))</_MSBuildMTExcludedRepos>
     <!-- Use same pattern as UseBootstrapArcade check above -->

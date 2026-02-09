@@ -1,0 +1,42 @@
+# MSBuild -mt (multithreaded) mode VMR validation pipeline.
+#
+# Validates that MSBuild's -mt mode works correctly by building the VMR
+# with the current PR's changes and -mt enabled.
+#
+# Trigger: Manual only (queue from Azure DevOps UI)
+# Uses the same pattern as runtime's vmr-build-pr.yml.
+
+trigger: none
+pr: none
+
+parameters:
+- name: excludedRepos
+  displayName: 'Repos to exclude from -mt mode (use %3B as separator, decoded to ; by MSBuild)'
+  type: string
+  default: 'arcade%3Bruntime%3Broslyn%3Baspnetcore%3Bsdk%3Befcore%3Bwinforms%3Bwpf%3Brazor%3Bsource-build-reference-packages'
+
+variables:
+- template: /eng/common/templates/variables/pool-providers.yml@self
+
+- name: skipComponentGovernanceDetection
+  value: true
+
+- name: Codeql.Enabled
+  value: false
+
+resources:
+  repositories:
+  - repository: vmr
+    type: github
+    name: dotnet/dotnet
+    endpoint: dotnet
+
+stages:
+- template: /eng/pipelines/templates/stages/vmr-build.yml@vmr
+  parameters:
+    isBuiltFromVmr: false
+    scope: lite
+    verifications: [ "source-build-stage1", "source-build-stage2" ]
+    extraPropertiesStage2: >-
+      /p:DotNetBuildMT=true
+      /p:MSBuildMTExcludedReposOverride=${{ parameters.excludedRepos }}
