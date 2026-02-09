@@ -3,6 +3,8 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Nullable>disable</Nullable>
     <Win32Resource>EventLogMessages.res</Win32Resource>
+    <!-- Copy to shared framework -->
+    <IsNETCoreAppSrc>true</IsNETCoreAppSrc>
     <!-- Override the parent Directory.Build.props -->
     <SupportedOSPlatforms />
     <EnableLibraryImportGenerator>false</EnableLibraryImportGenerator>

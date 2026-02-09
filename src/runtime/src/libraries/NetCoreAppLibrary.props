@@ -50,6 +50,7 @@
       System.Diagnostics.Contracts;
       System.Diagnostics.Debug;
       System.Diagnostics.DiagnosticSource;
+      System.Diagnostics.EventLog;
       System.Diagnostics.FileVersionInfo;
       System.Diagnostics.Process;
       System.Diagnostics.StackTrace;
@@ -227,7 +228,6 @@
       System.Text.RegularExpressions.Generator;
     </NetCoreAppLibraryGenerator>
     <AspNetCoreAppLibrary>
-      System.Diagnostics.EventLog;
       System.Formats.Cbor;
       System.Security.Cryptography.Pkcs;
       System.Security.Cryptography.Xml;
@@ -238,7 +238,6 @@
       Microsoft.Win32.SystemEvents;
       System.CodeDom;
       System.Configuration.ConfigurationManager;
-      System.Diagnostics.EventLog;
       System.Diagnostics.PerformanceCounter;
       System.DirectoryServices;
       System.Formats.Nrbf;

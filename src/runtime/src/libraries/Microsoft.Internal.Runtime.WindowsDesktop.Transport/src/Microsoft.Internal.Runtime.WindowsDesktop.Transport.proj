@@ -22,15 +22,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Requires Private=true to calculate ReferenceCopyLocalPaths items.
-         ReferringTargetFramework is set to $(NetCoreAppCurrent)-windows so that we pack the Windows specific implementation assemblies -->
-    <ProjectReference Include="@(WindowsDesktopCoreAppLibrary->'$(LibrariesProjectRoot)%(Identity)\src\%(Identity).csproj');
-                               $(LibrariesProjectRoot)System.Diagnostics.EventLog\src\Messages\System.Diagnostics.EventLog.Messages.csproj"
-                      PrivateAssets="all"
-                      Pack="true"
-                      Private="true"
-                      IncludeReferenceAssemblyInPackage="true" />
-
     <PackageReference Include="Microsoft.DotNet.Build.Tasks.Templating" Version="$(MicrosoftDotNetBuildTasksTemplatingVersion)" />
   </ItemGroup>
 
