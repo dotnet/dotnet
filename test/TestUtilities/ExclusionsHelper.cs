@@ -108,9 +108,8 @@ public class ExclusionsHelper
         return File.ReadAllLines(exclusionsFilePath)
             .Select(line =>
             {
-                // Ignore comments
-                var index = line.IndexOf('#');
-                return index >= 0 ? line[..index].TrimEnd() : line;
+                // Ignore full-line comments
+                return line.TrimStart().StartsWith('#') ? string.Empty : line;
             })
             .Where(line => !string.IsNullOrEmpty(line))
             .Select(line => line.Split('|'))
@@ -167,7 +166,7 @@ public class ExclusionsHelper
             return line;
         }
 
-        string suffixString = parts[1].Split('#')[0];
+        string suffixString = parts[1];
         var originalSuffixes = suffixString.Split(',').Select(suffix => suffix.Trim()).ToList();
         var newSuffixes = originalSuffixes.Except(unusedSuffixes).ToList();
 
