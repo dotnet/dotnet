@@ -67,12 +67,13 @@ stages:
   displayName: Validate user changes in VMR
   dependsOn: []
   condition: and(
-                eq(variables['isPRTrigger'], 'true'),
-                and(
-                    ne(variables['Build.RequestedForEmail'], 'maestro-dotnet-bot@microsoft.com'),
-                    ne(variables['Build.RequestedForEmail'], 'dotnet-sb-bot@microsoft.com')
-                    ) 
-                )
+              eq(variables['isPRTrigger'], 'true'),
+              and(
+                  not(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/darc-')),
+                  not(startsWith(variables['System.PullRequest.SourceBranch'], 'darc-')),
+                  not(eq(variables['Build.RequestedFor'], 'dotnet-bot'))
+              )
+          )
   jobs:
     - job: Validate
       displayName: Run Validation Script
