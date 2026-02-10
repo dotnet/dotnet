@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
   <Import Project="Version.Details.props" />
   <PropertyGroup>
     <VersionMajor>10</VersionMajor>
@@ -38,8 +38,8 @@
       of a .NET major or minor release, prebuilts may be needed. When the release is mature, prebuilts
       are not necessary, and this property is removed from the file.
     -->
-    <PrivateSourceBuiltSdkVersion>10.0.102-servicing.25612.105</PrivateSourceBuiltSdkVersion>
-    <PrivateSourceBuiltArtifactsVersion>10.0.102-servicing.25612.105</PrivateSourceBuiltArtifactsVersion>
+    <PrivateSourceBuiltSdkVersion>10.0.103-servicing.26075.103</PrivateSourceBuiltSdkVersion>
+    <PrivateSourceBuiltArtifactsVersion>10.0.103-servicing.26075.103</PrivateSourceBuiltArtifactsVersion>
     <!-- arcade-services dependencies -->
     <MicrosoftDotNetDarcLibVersion>1.1.0-beta.26062.6</MicrosoftDotNetDarcLibVersion>
     <!-- command-line-api dependencies -->
