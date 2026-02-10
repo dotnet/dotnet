@@ -9,7 +9,8 @@ This file should be imported by eng/Versions.props
     <MicrosoftBuildPackageVersion>18.0.10</MicrosoftBuildPackageVersion>
     <MicrosoftBuildUtilitiesCorePackageVersion>18.0.10</MicrosoftBuildUtilitiesCorePackageVersion>
     <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26057.111</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetGenAPITaskPackageVersion>10.0.103-servicing.26057.111</MicrosoftDotNetGenAPITaskPackageVersion>
+    <!-- _git/dotnet-dotnet dependencies -->
+    <MicrosoftDotNetGenAPITaskPackageVersion>10.0.103-servicing.26075.103</MicrosoftDotNetGenAPITaskPackageVersion>
     <MicrosoftNETCoreILAsmPackageVersion>10.0.3</MicrosoftNETCoreILAsmPackageVersion>
     <MicrosoftNETCoreILDAsmPackageVersion>10.0.3</MicrosoftNETCoreILDAsmPackageVersion>
   </PropertyGroup>
@@ -19,6 +20,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftBuildVersion>$(MicrosoftBuildPackageVersion)</MicrosoftBuildVersion>
     <MicrosoftBuildUtilitiesCoreVersion>$(MicrosoftBuildUtilitiesCorePackageVersion)</MicrosoftBuildUtilitiesCoreVersion>
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
+    <!-- _git/dotnet-dotnet dependencies -->
     <MicrosoftDotNetGenAPITaskVersion>$(MicrosoftDotNetGenAPITaskPackageVersion)</MicrosoftDotNetGenAPITaskVersion>
     <MicrosoftNETCoreILAsmVersion>$(MicrosoftNETCoreILAsmPackageVersion)</MicrosoftNETCoreILAsmVersion>
     <MicrosoftNETCoreILDAsmVersion>$(MicrosoftNETCoreILDAsmPackageVersion)</MicrosoftNETCoreILDAsmVersion>

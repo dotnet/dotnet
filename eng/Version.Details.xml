@@ -14,17 +14,17 @@
       <Uri>https://github.com/dotnet/arcade-services</Uri>
       <Sha>db9ea03a5ea7330d52ca996e08d50ba2f3d09ad9</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="10.0.102-servicing.25612.105">
+    <Dependency Name="Microsoft.NET.Sdk" Version="10.0.103-servicing.26075.103">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>44525024595742ebe09023abe709df51de65009b</Sha>
+      <Sha>c2435c3e0f46de784341ac3ed62863ce77e117b4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.App.Ref" Version="10.0.2">
+    <Dependency Name="Microsoft.NETCore.App.Ref" Version="10.0.3">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>44525024595742ebe09023abe709df51de65009b</Sha>
+      <Sha>c2435c3e0f46de784341ac3ed62863ce77e117b4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.Platforms" Version="10.0.2-servicing.25612.105">
+    <Dependency Name="Microsoft.NETCore.Platforms" Version="10.0.3-servicing.26075.103">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>44525024595742ebe09023abe709df51de65009b</Sha>
+      <Sha>c2435c3e0f46de784341ac3ed62863ce77e117b4</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.25407.5">
       <Uri>arcade-services</Uri>
