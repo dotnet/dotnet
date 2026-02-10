@@ -29,7 +29,7 @@ parameters:
 
   is1ESPipeline: ''
 
-  # Optional: 🌤️ or not the build has assets it wants to publish to BAR
+  # Optional: ≡ƒîñ∩╕Å or not the build has assets it wants to publish to BAR
   isAssetlessBuild: false
 
   # Optional, publishing version

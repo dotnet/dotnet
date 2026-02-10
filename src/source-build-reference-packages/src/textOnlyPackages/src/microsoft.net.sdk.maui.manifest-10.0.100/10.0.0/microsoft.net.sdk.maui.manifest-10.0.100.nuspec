@@ -9,7 +9,7 @@
     <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
     <projectUrl>https://github.com/dotnet/maui</projectUrl>
     <description>.NET Multi-platform App UI (.NET MAUI) workload manifest. Please do not reference this package directly.</description>
-    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <copyright>┬⌐ Microsoft Corporation. All rights reserved.</copyright>
     <tags>dotnet-maui dotnet maui cross-platform ios android macos maccatalyst windows winui</tags>
     <serviceable>true</serviceable>
     <packageTypes>

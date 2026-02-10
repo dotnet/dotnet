@@ -9,7 +9,7 @@
     <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
     <projectUrl>https://dot.net/</projectUrl>
     <description>.NET Workload for iOS platforms</description>
-    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <copyright>┬⌐ Microsoft Corporation. All rights reserved.</copyright>
     <packageTypes>
       <packageType name="DotnetPlatform" />
     </packageTypes>

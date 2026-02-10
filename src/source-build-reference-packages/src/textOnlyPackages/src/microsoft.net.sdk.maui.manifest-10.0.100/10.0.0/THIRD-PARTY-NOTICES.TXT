@@ -560,7 +560,7 @@ License notice for BenchmarkDotNet
 
 The MIT License (MIT)
 
-Copyright (c) 2013–2024 .NET Foundation and contributors
+Copyright (c) 2013ΓÇô2024 .NET Foundation and contributors
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

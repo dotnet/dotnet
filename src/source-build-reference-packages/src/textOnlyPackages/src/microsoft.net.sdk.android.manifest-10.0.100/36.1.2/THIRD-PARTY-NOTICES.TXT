@@ -2111,7 +2111,7 @@ END OF javaparser/javaparser NOTICES AND INFORMATION
 
 %% KonradKuczynski/ELFSharp NOTICES AND INFORMATION BEGIN HERE
 ==============================================================
-Copyright (c) 2011 Konrad Kruczyński and other contributors
+Copyright (c) 2011 Konrad Kruczy┼äski and other contributors
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
