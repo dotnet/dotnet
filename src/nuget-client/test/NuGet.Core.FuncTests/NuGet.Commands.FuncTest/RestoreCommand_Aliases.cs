@@ -411,7 +411,7 @@ namespace NuGet.Commands.FuncTest
 
         [Theory]
         [InlineData("10.0.200", "10.0.300")]
-        [InlineData("10.0.300", "10.0.300-preview.0.12345")]
+        [InlineData("10.0.300", "10.0.300-preview.0.26109")]
         [InlineData("11.0.100", "11.0.100-preview.2.26103")]
         public async Task RestoreCommand_WithAliasesOfSameFramework_AndIncompatibleSDKAnalysisLevelAndSDKVersionCombinations_FailsWithNU1018(string sdkAnalysisLevel, string sdkVersion)
         {
@@ -428,7 +428,7 @@ namespace NuGet.Commands.FuncTest
         [InlineData("10.0.300", "10.0.300")]
         [InlineData("10.0.300", "10.0.400")]
         [InlineData("10.0.300", null)] // Null value means we let it be.
-        [InlineData("10.0.300", "10.0.300-preview.1.12345")] // This is a dummy value that'll need to be updated once we have a real one.
+        [InlineData("10.0.300", "10.0.300-preview.0.26110")] // This is a dummy value that'll need to be updated once we have a real one.
         [InlineData("11.0.100", "11.0.100-preview.2.26104")]
         [InlineData("11.0.100", "11.0.100")]
         [InlineData("11.0.100", "11.0.101")]
