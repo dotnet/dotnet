@@ -17,7 +17,7 @@ internal class SectionDirectiveFoldingProvider : AbstractSyntaxNodeFoldingProvid
 
         static string GetSectionName(RazorDirectiveSyntax node)
         {
-            if (node.Body is RazorDirectiveBodySyntax { CSharpCode.Children: [_, { } name, ..] })
+            if (node.DirectiveBody.CSharpCode.Children is [_, { } name, ..])
             {
                 return $" {name.GetContent()}";
             }

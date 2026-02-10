@@ -3,7 +3,7 @@
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
         CSharpCodeBlock - [0..41)::41
-            RazorDirective - [0..41)::41
+            RazorUsingDirective - [0..41)::41
                 CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
                     Transition;[@];
                 RazorDirectiveBody - [1..41)::40
