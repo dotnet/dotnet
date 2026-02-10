@@ -66,4 +66,5 @@
     <!-- external dependencies -->
     <NewtonsoftJsonVersion>13.0.4</NewtonsoftJsonVersion>
   </PropertyGroup>
+
 </Project>
