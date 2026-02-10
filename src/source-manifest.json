@@ -103,10 +103,10 @@
       "commitSha": "0717d47ef1a2b1a175375854a28573272caa268d"
     },
     {
-      "barId": 297145,
+      "barId": 300575,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "bd09f317fcb2542199ee478ed4743ac5d97866e7"
+      "commitSha": "2752a5e913a6edeb066e8e7c159a4c1f2b681b21"
     },
     {
       "barId": 291125,
@@ -139,10 +139,10 @@
       "commitSha": "c09bef70e7304bfdff6cc0d9a786a03212ce93ee"
     },
     {
-      "barId": 300378,
+      "barId": 301005,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "cf9f765d98cc753fdb76b2ef1578c61ecd5b5123"
+      "commitSha": "36f3469e727acf75ad7e4b3563ea1d01d4dc1139"
     },
     {
       "barId": 291267,
