@@ -21,11 +21,6 @@
     <ProjectReference Include="..\Microsoft.DotNet.XUnitExtensions\src\Microsoft.DotNet.XUnitExtensions.csproj" />
   </ItemGroup>
 
-  <!-- Upgrade transitive NETStandard.Library dependency to avoid .NET Standard 1.x dependencies from symbol uploading. -->
-  <ItemGroup>
-    <PackageReference Include="NETStandard.Library" IsImplicitlyDefined="false" PrivateAssets="all" ExcludeAssets="runtime" VersionOverride="2.0.3" />
-  </ItemGroup>
-
   <ItemGroup>
     <Content Include="..\Microsoft.DotNet.Build.Manifest.Tests\TestInputs\**" LinkBase="TestInputs" CopyToOutputDirectory="Always" />
     <Compile Include="..\Microsoft.DotNet.Build.Manifest.Tests\TestInputs\TestInputs.cs" />

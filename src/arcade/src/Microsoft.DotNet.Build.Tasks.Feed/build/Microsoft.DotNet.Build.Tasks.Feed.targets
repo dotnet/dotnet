@@ -43,15 +43,14 @@
   -->
   
   <PropertyGroup>
-    <_MicrosoftDotNetBuildTasksFeedTaskDir>$(MSBuildThisFileDirectory)../tools/netframework/</_MicrosoftDotNetBuildTasksFeedTaskDir>
-    <_MicrosoftDotNetBuildTasksFeedTaskDir Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)../tools/net/</_MicrosoftDotNetBuildTasksFeedTaskDir>
+    <_MicrosoftDotNetBuildTasksFeedTaskDir>$(MSBuildThisFileDirectory)../tools/net/</_MicrosoftDotNetBuildTasksFeedTaskDir>
   </PropertyGroup>
 
-  <UsingTask TaskName="PushToBuildStorage" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll"/>
-  <UsingTask TaskName="PublishArtifactsInManifest" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll"/>
-  <UsingTask TaskName="CreateAzureDevOpsFeed" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll" />
-  <UsingTask TaskName="PublishSignedAssets" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll" />
-  <UsingTask TaskName="CreateNewAzureContainer" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll" />
-  <UsingTask TaskName="PublishBuildToMaestro" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll" Condition="'$(MSBuildRuntimeType)' == 'Core'"/>
+  <UsingTask TaskName="PushToBuildStorage" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll" Runtime="NET" />
+  <UsingTask TaskName="PublishArtifactsInManifest" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll" Runtime="NET" />
+  <UsingTask TaskName="CreateAzureDevOpsFeed" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll" Runtime="NET" />
+  <UsingTask TaskName="PublishSignedAssets" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll" Runtime="NET" />
+  <UsingTask TaskName="CreateNewAzureContainer" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll" Runtime="NET" />
+  <UsingTask TaskName="PublishBuildToMaestro" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll" Runtime="NET" />
 
 </Project>

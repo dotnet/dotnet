@@ -232,7 +232,7 @@ namespace Microsoft.DotNet.StrongName
 
         /// <summary>
         /// Returns true if the PE file meets all of the pre-conditions to be Open Source Signed.
-        /// Returns false and logs msbuild errors otherwise.
+        /// Returns false otherwise.
         /// </summary>
         private static bool IsPublicSigned(PEReader peReader)
         {

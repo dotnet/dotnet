@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Execute">
 
   <PropertyGroup>
-    <TargetFramework>$(NetFrameworkToolCurrent)</TargetFramework>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <NETCORE_ENGINEERING_TELEMETRY>Publish</NETCORE_ENGINEERING_TELEMETRY>
   </PropertyGroup>
 

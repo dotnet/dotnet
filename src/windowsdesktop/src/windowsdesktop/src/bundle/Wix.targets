@@ -1,7 +1,7 @@
 <Project>
   <!-- Extracted WiX build targets for Windows Desktop Runtime bundle -->
 
-  <UsingTask TaskName="DownloadFile" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
+  <UsingTask TaskName="DownloadFile" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
 
   <Target Name="CollectRuntimePrereqDependencies">
     <PropertyGroup>

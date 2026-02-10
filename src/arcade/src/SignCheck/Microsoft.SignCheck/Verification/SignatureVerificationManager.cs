@@ -86,18 +86,19 @@ namespace Microsoft.SignCheck.Verification
             Log = log;
             Options = options;
 
-#if NETFRAMEWORK
-            AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".psd1"));
-            AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".psm1"));
-            AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".ps1"));
-            AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".ps1xml"));
-            AddFileVerifier(new CabVerifier(log, exclusions, options, ".cab"));
-            AddFileVerifier(new JarVerifier(log, exclusions, options));
-            AddFileVerifier(new MsiVerifier(log, exclusions, options));
-            AddFileVerifier(new MspVerifier(log, exclusions, options));
-            AddFileVerifier(new MsuVerifier(log, exclusions, options));
-            AddFileVerifier(new VsixVerifier(log, exclusions, options));
-#else
+            if (OperatingSystem.IsWindows())
+            {
+                AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".psd1"));
+                AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".psm1"));
+                AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".ps1"));
+                AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".ps1xml"));
+                AddFileVerifier(new CabVerifier(log, exclusions, options, ".cab"));
+                AddFileVerifier(new JarVerifier(log, exclusions, options));
+                AddFileVerifier(new MsiVerifier(log, exclusions, options));
+                AddFileVerifier(new MspVerifier(log, exclusions, options));
+                AddFileVerifier(new MsuVerifier(log, exclusions, options));
+            }
+
             AddFileVerifier(new DebVerifier(log, exclusions, options));
             AddFileVerifier(new MachOVerifier(log, exclusions, options, ".dylib"));
             AddFileVerifier(new MachOVerifier(log, exclusions, options, ".macho"));
@@ -109,7 +110,6 @@ namespace Microsoft.SignCheck.Verification
             AddFileVerifier(new TarVerifier(log, exclusions, options, ".tgz"));
             AddFileVerifier(new TarVerifier(log, exclusions, options, ".gz"));
             AddFileVerifier(new RpmVerifier(log, exclusions, options));
-#endif
             AddFileVerifier(new ExeVerifier(log, exclusions, options, ".exe"));
             AddFileVerifier(new JavaScriptVerifier(log, exclusions, options));
             AddFileVerifier(new LzmaVerifier(log, exclusions, options));
@@ -276,7 +276,7 @@ namespace Microsoft.SignCheck.Verification
                         fileVerifier = GetFileVerifierByExtension(".macho");
                     }
                 }
-#if NETFRAMEWORK
+
                 reader.BaseStream.Seek(0, SeekOrigin.Begin);
                 if (stream.Length > 2)
                 {
@@ -295,7 +295,6 @@ namespace Microsoft.SignCheck.Verification
                         }
                     }
                 }
-#endif
             }
 
             return fileVerifier;

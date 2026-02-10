@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(BundledNETCoreAppTargetFramework);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <SignAssembly>false</SignAssembly>
     <Description>This package provides support for publishing assets to appropriate channels.</Description>
@@ -23,7 +23,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' and '$(DotNetBuildSourceOnly)' != 'true'">
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
     <!-- ProductConstructionService.Client stopped supporting .NET 4.7.2 long ago.
     This functionality should eventually be moved into an arcade-services package,
     but for users consuming other functionality we'll still support 4.7.2 by ifdefing it out. -->
@@ -34,13 +34,6 @@
     the symbol publishing doesn't run on framework anyway (this project has a throwing stub for .NET framework in that path
     due to the reliance in maestro). Until we really need to multitarget, this is the better path. -->
     <ProjectReference Include="..\Microsoft.DotNet.Internal.SymbolHelper\Microsoft.DotNet.Internal.SymbolHelper.csproj" />
-    <!-- Additionally, SymbolHelper relies on Microsoft.DiaSymReader which brings NS.Library 1.6.1 and the slew of
-    old packages with it. Upgrade to keep CG happy. -->
-    <PackageReference Include="NETStandard.Library" IsImplicitlyDefined="false" PrivateAssets="all" ExcludeAssets="runtime" VersionOverride="2.0.3" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <PackageReference Include="Microsoft.Bcl.HashCode" />
   </ItemGroup>
 
   <ItemGroup>
@@ -55,8 +48,8 @@
     <Compile Include="..\Common\Internal\EnumExtensions.cs" />
   </ItemGroup>
 
-  <!-- Most tasks are not supported on NETFramework or source build. Add only those that we need -->
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' or '$(DotNetBuildSourceOnly)' == 'true'">
+  <!-- Most tasks are not supported on source-build. Add only those that we need. -->
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <Compile Remove="@(Compile)" />
     <Compile Include="src\PushToBuildStorage.cs" />
     <Compile Include="src\common\NativeMethods.cs" />

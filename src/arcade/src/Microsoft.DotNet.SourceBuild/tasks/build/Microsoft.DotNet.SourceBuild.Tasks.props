@@ -2,12 +2,11 @@
 <Project>
 
   <PropertyGroup>
-    <MicrosoftDotNetSourceBuildTasksAssembly Condition="'$(MSBuildRuntimeType)' == 'core'">$(MSBuildThisFileDirectory)..\tools\net\$(MSBuildThisFileName).dll</MicrosoftDotNetSourceBuildTasksAssembly>
-    <MicrosoftDotNetSourceBuildTasksAssembly Condition="'$(MSBuildRuntimeType)' != 'core'">$(MSBuildThisFileDirectory)..\tools\netframework\$(MSBuildThisFileName).dll</MicrosoftDotNetSourceBuildTasksAssembly>
+    <MicrosoftDotNetSourceBuildTasksAssembly>$(MSBuildThisFileDirectory)..\tools\net\$(MSBuildThisFileName).dll</MicrosoftDotNetSourceBuildTasksAssembly>
   </PropertyGroup>
 
-  <UsingTask TaskName="ReadNuGetPackageInfos" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksAssembly)" />
-  <UsingTask TaskName="WritePackageUsageData" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksAssembly)" />
-  <UsingTask TaskName="WriteUsageReports" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksAssembly)" />
+  <UsingTask TaskName="ReadNuGetPackageInfos" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksAssembly)" Runtime="NET" />
+  <UsingTask TaskName="WritePackageUsageData" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksAssembly)" Runtime="NET" />
+  <UsingTask TaskName="WriteUsageReports" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksAssembly)" Runtime="NET" />
 
 </Project>

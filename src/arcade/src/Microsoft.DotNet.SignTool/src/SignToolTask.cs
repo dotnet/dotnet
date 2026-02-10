@@ -2,11 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.Build.Framework;
-#if NET472
-using AppDomainIsolatedTask = Microsoft.Build.Utilities.AppDomainIsolatedTask;
-#else
 using BuildTask = Microsoft.Build.Utilities.Task;
-#endif
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,15 +12,8 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.DotNet.SignTool
 {
-#if NET472
-    [LoadInSeparateAppDomain]
-    public class SignToolTask : AppDomainIsolatedTask
-    {
-        static SignToolTask() => AssemblyResolution.Initialize();
-#else
     public class SignToolTask : BuildTask
     {
-#endif
         /// <summary>
         /// Perform validation but do not actually send signing request to the server.
         /// </summary>
@@ -145,11 +134,6 @@ namespace Microsoft.DotNet.SignTool
         public string SNBinaryPath { get; set; }
 
         /// <summary>
-        /// Path to Microsoft.DotNet.Tar.dll. Required for signing tar files on .NET Framework.
-        /// </summary>
-        public string TarToolPath { get; set; }
-
-        /// <summary>
         /// Path to Microsoft.DotNet.MacOsPkg.dll. Required for signing pkg files on MacOS.
         /// </summary>
         public string PkgToolPath { get; set; }
@@ -181,9 +165,6 @@ namespace Microsoft.DotNet.SignTool
 
         public override bool Execute()
         {
-#if NET472
-            AssemblyResolution.Log = Log;
-#endif
             try
             {
                 ExecuteImpl();
@@ -191,9 +172,6 @@ namespace Microsoft.DotNet.SignTool
             }
             finally
             {
-#if NET472
-                AssemblyResolution.Log = null;
-#endif
                 Log.LogMessage(MessageImportance.High, "SignToolTask execution finished.");
             }
         }
@@ -253,7 +231,7 @@ namespace Microsoft.DotNet.SignTool
 
             if (Log.HasLoggedErrors) return;
 
-            var signToolArgs = new SignToolArgs(TempDir, MicroBuildCorePath, TestSign, DotNetPath, MSBuildVerbosity, LogDir, enclosingDir, SNBinaryPath, Wix3ToolsPath, WixToolsPath, TarToolPath, PkgToolPath, DotNetTimeout);
+            var signToolArgs = new SignToolArgs(TempDir, MicroBuildCorePath, TestSign, DotNetPath, MSBuildVerbosity, LogDir, enclosingDir, SNBinaryPath, Wix3ToolsPath, WixToolsPath, PkgToolPath, DotNetTimeout);
             var signTool = DryRun ? new ValidationOnlySignTool(signToolArgs, Log) : (SignTool)new RealSignTool(signToolArgs, Log);
 
             var itemsToSign = ItemsToSign.Select(i => new ItemToSign(i.ItemSpec, i.GetMetadata(SignToolConstants.CollisionPriorityId))).OrderBy(i => i.CollisionPriorityId).ToList();
@@ -269,7 +247,6 @@ namespace Microsoft.DotNet.SignTool
                     extensionSignInfo,
                     dualCertificates,
                     filesToSkip3rdPartyCheck,
-                    tarToolPath: TarToolPath,
                     pkgToolPath: PkgToolPath,
                     snPath: SNBinaryPath,
                     Log,

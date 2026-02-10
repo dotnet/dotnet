@@ -2,10 +2,9 @@
 <Project>
 
   <PropertyGroup>
-    <MicrosoftDotNetSignToolTaskAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\lib\net\Microsoft.DotNet.SignTool.dll</MicrosoftDotNetSignToolTaskAssembly>
-    <MicrosoftDotNetSignToolTaskAssembly Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\lib\netframework\Microsoft.DotNet.SignTool.dll</MicrosoftDotNetSignToolTaskAssembly>
+    <MicrosoftDotNetSignToolTaskAssembly>$(MSBuildThisFileDirectory)..\lib\net\Microsoft.DotNet.SignTool.dll</MicrosoftDotNetSignToolTaskAssembly>
   </PropertyGroup>
 
-  <UsingTask TaskName="Microsoft.DotNet.SignTool.SignToolTask" AssemblyFile="$(MicrosoftDotNetSignToolTaskAssembly)" />
+  <UsingTask TaskName="Microsoft.DotNet.SignTool.SignToolTask" AssemblyFile="$(MicrosoftDotNetSignToolTaskAssembly)" Runtime="NET" />
 
 </Project>

@@ -34,7 +34,7 @@
 
   <Import Project="BuildStep.props" />
 
-  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.GenerateChecksums" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
+  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.GenerateChecksums" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
 
   <!--
     Inside the VMR, we want to include "Vertical" artifacts as they should be available to other builds within the same
