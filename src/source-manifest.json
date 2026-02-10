@@ -37,10 +37,10 @@
       "commitSha": "970c803abb1ed5657b056cdaf01f1693f437c242"
     },
     {
-      "barId": 300755,
+      "barId": 300803,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "82ee1b8a70993670e6ca0d5ee7a3dcd124f4f770"
+      "commitSha": "e929ee3843760a453cd8ad7f883493ec0e43ee62"
     },
     {
       "barId": 298250,
@@ -55,10 +55,10 @@
       "commitSha": "1870673a6f057bbcf0357e5daf5ae3e650a02aa7"
     },
     {
-      "barId": 300488,
+      "barId": 300657,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "54d87c53bfa6554edc550216ff14874754bc2a5f"
+      "commitSha": "ee7b4d39caf3f02f1f5753a6d8438b07192e1446"
     },
     {
       "barId": 300517,
@@ -121,10 +121,10 @@
       "commitSha": "a7c067013a5f3a4798993f2cc7059771126fc333"
     },
     {
-      "barId": 299110,
+      "barId": 299899,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "5ea14d056fb9fd42184f0741481b3812c9ea23ff"
+      "commitSha": "0864b1a2e751e757aa73f81bfddcb498e3413dbf"
     },
     {
       "barId": 299568,
@@ -139,10 +139,10 @@
       "commitSha": "9b546b7a67f83412b61b56de13bf9e597559f90c"
     },
     {
-      "barId": 298576,
+      "barId": 300191,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "06c89e7135d12fdc09a28284fe94cff3da3304aa"
+      "commitSha": "f52d8e79a7ba0a8e121ccf42c7a967d5f75e613e"
     },
     {
       "barId": 291230,

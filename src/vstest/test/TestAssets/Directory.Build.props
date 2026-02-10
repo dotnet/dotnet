@@ -10,21 +10,25 @@
   </PropertyGroup>
 
   <PropertyGroup>
-
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>$(NoWarn);
-    <!-- Suppress warnings about testhost being x64 (AMD64)/x86 when imported into AnyCPU (MSIL) test projects. -->
-    MSB3270;
-    <!-- Suppress warnings about net8.0 being used, and being out of support. -->
-    NETSDK1138;
     <!-- Suppress warning about nugets that we produce not being available when we did not build at least once -->
-    NU1603</NoWarn>
+    NU1603;
+    <!-- Suppress warning about using a preview of NETSDK -->
+    NETSDK1057;
+
+    <!-- Use Environment.ProcessId instead of Process.GetCurrentProcess().Id, api is not available on all targetted frameworks. -->
+    CA1837;
+    </NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
     <!-- The TFMs to build and test against. -->
-    <!-- Naming is based on dotnet/runtime one -->
     <NetFrameworkMinimum>net462</NetFrameworkMinimum>
     <NetCoreAppMinimum>net8.0</NetCoreAppMinimum>
+    <NetFrameworkTargetFrameworks>net462;net472;net48</NetFrameworkTargetFrameworks>
+    <NetCoreAppTargetFrameworks>net8.0;net9.0;net10.0;net11.0</NetCoreAppTargetFrameworks>
+    <TestProjectTargetFrameworks>$(NetFrameworkTargetFrameworks);$(NetCoreAppTargetFrameworks)</TestProjectTargetFrameworks>
     <LangVersion>Latest</LangVersion>
   </PropertyGroup>
 

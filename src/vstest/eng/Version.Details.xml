@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="vstest" Sha="feff871cec763e9a9f8e9ace212f0fd6041d479f" BarId="291132" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="vstest" Sha="a8b46ab052618a946f8b728e7ffa6566ef7c094b" BarId="298090" />
   <ProductDependencies>
-    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="18.3.0-preview.25571.1">
+    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="18.4.0-preview.26077.3">
       <Uri>https://dev.azure.com/devdiv/DevDiv/_git/vs-code-coverage</Uri>
-      <Sha>4369328a34a179f8bc91d3757d850a1214c72c73</Sha>
+      <Sha>d3d17aac8329f24259c83d33e8f1bd8d1371e108</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.0-preview.25567.106">
+    <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.0-preview.26070.110">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>feff871cec763e9a9f8e9ace212f0fd6041d479f</Sha>
+      <Sha>a8b46ab052618a946f8b728e7ffa6566ef7c094b</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
@@ -23,9 +23,9 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26059.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26073.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>367e3ab44812021f59aaf4c7506d5b4569769eec</Sha>
+      <Sha>5353d03e27329df35a68fedf3da1fbb26cdd8057</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DiaSymReader.Pdb2Pdb" Version="1.1.0-beta2-19575-01">
       <Uri>https://github.com/dotnet/symreader-converter</Uri>

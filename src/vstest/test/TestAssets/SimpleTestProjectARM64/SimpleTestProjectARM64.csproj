@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>$(NetFrameworkMinimum);$(NetCoreAppMinimum)</TargetFrameworks>
+    <TargetFrameworks>$(TestProjectTargetFrameworks)</TargetFrameworks>
     <OutputType Condition="$(NetCoreAppTargetFrameWork) == 'true' ">Exe</OutputType>
   </PropertyGroup>
 
