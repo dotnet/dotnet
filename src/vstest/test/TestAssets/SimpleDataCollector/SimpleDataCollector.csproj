@@ -4,7 +4,7 @@
     <Version>15.0.0.0</Version>
     <FileVersion>15.0.0.0</FileVersion>
     <ProductVersion>15.0.0.0</ProductVersion>
-    <TargetFrameworks>$(NetFrameworkMinimum);$(NetCoreAppMinimum)</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <WarningsAsErrors>true</WarningsAsErrors>
     <AssemblyName>SimpleDataCollector</AssemblyName>
     <AssemblyOriginatorKeyFile>TITestDllKey.snk</AssemblyOriginatorKeyFile>
@@ -14,9 +14,6 @@
     <IsSourcePackage>false</IsSourcePackage>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="$(RepoRoot)src/testhost/testhost.csproj">
-      <FromP2P>true</FromP2P>
-    </ProjectReference>
     <ProjectReference Include="$(RepoRoot)src/Microsoft.TestPlatform.CommunicationUtilities/Microsoft.TestPlatform.CommunicationUtilities.csproj">
       <FromP2P>true</FromP2P>
     </ProjectReference>

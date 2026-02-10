@@ -44,7 +44,7 @@
     <!-- Naming is based on dotnet/runtime one -->
     <NetFrameworkMinimum>net462</NetFrameworkMinimum>
     <NetCoreAppMinimum>net8.0</NetCoreAppMinimum>
-    <NetCoreAppStable>net9.0</NetCoreAppStable>
+    <NetCoreAppStable>net10.0</NetCoreAppStable>
     <!--
       Arcade is making things hard to work with. This property is unset when its value is equal to NetMinimum.
       https://github.com/dotnet/arcade/blob/66c9c5397d599af40f2a94989241944f5a73442a/src/Microsoft.DotNet.Arcade.Sdk/tools/TargetFrameworkDefaults.props#L16-L18

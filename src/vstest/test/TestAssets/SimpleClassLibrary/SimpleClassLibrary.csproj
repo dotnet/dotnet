@@ -1,24 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(NetFrameworkMinimum);$(NetCoreAppMinimum)</TargetFrameworks>
-  </PropertyGroup>
-
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <Reference Include="System.Net.Http" />
-  </ItemGroup>
-
-  <PropertyGroup Condition="$(NetCoreAppTargetFramework) == 'true' and $(Configuration) == 'Debug'">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="$(NetCoreAppTargetFramework) == 'true' and $(Configuration) == 'Release'">
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == '$(NetFrameworkMinimum)' and $(Configuration) == 'Debug'">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == '$(NetFrameworkMinimum)' and $(Configuration) == 'Release'">
-    <DebugType>portable</DebugType>
+    <TargetFrameworks>$(TestProjectTargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
 </Project>
