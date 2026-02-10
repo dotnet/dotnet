@@ -74,7 +74,7 @@ stages:
         OS: Linux
         reuseBuildArtifactsFrom:
         - Windows_x64
-        - AzureLinux_x64_Cross_x64
+        - Linux_x64
   - job: ValidateInstallers_Linux_arm64
     pool: ${{ parameters.pool_LinuxArm64 }}
     timeoutInMinutes: 60
@@ -85,7 +85,7 @@ stages:
         OS: Linux
         reuseBuildArtifactsFrom:
         - Windows_x64
-        - AzureLinux_x64_Cross_arm64
+        - Linux_arm64
   - ${{ if eq(variables.signType, 'real') }}:
     - job: ValidateSigning_Windows
       displayName: Validate Signing - Windows

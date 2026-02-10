@@ -229,7 +229,7 @@ stages:
             - template: ../steps/download-artifacts.yml
               parameters:
                 artifactDescription: Microsoft Linux (musl) Packages
-                artifactName: AzureLinux_x64_Cross_Alpine_${{ leg.targetArchitecture }}_Artifacts
+                artifactName: Linux_Alpine_${{ leg.targetArchitecture }}_Artifacts
                 downloadFilePatterns: packages/Release/Shipping/**
                 copyDestination: $(Pipeline.Workspace)/msft-pkgs
                 flattenDirs: true
@@ -237,7 +237,7 @@ stages:
             - template: ../steps/download-artifacts.yml
               parameters:
                 artifactDescription: Microsoft Linux Packages
-                artifactName: AzureLinux_x64_Cross_${{ leg.targetArchitecture }}_Artifacts
+                artifactName: Linux_${{ leg.targetArchitecture }}_Artifacts
                 downloadFilePatterns: packages/Release/Shipping/**
                 copyDestination: $(Pipeline.Workspace)/msft-pkgs
                 flattenDirs: true
