@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
-using System.Text;
 using TestUtilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -23,7 +23,8 @@ public class SourceTarballContentTests
     private ITestOutputHelper OutputHelper { get; }
 
     public static bool IncludeSourceTarballContentTests =>
-        !string.IsNullOrWhiteSpace(Config.RepoRoot);
+        !string.IsNullOrWhiteSpace(Config.RepoRoot) &&
+        !string.IsNullOrWhiteSpace(Config.SourceTarballPath);
 
     public SourceTarballContentTests(ITestOutputHelper outputHelper)
     {
@@ -36,7 +37,7 @@ public class SourceTarballContentTests
     }
 
     /// <summary>
-    /// Validates that all files tracked in the git repository are included in the git archive output.
+    /// Validates that all files tracked in the git repository are included in the source tarball.
     /// Detects files excluded by export-ignore directives in .gitattributes files.
     /// See https://github.com/dotnet/source-build/issues/5472
     /// </summary>
@@ -44,6 +45,9 @@ public class SourceTarballContentTests
     public void CompareSourceTarballToGitRepository()
     {
         string repoRoot = Config.RepoRoot!;
+        string sourceTarballPath = Config.SourceTarballPath!;
+
+        Assert.True(File.Exists(sourceTarballPath), $"Source tarball not found: {sourceTarballPath}");
 
         (Process lsTreeProcess, string lsTreeStdOut, string lsTreeStdErr) = ExecuteHelper.ExecuteProcess(
             "git", $"-c core.quotePath=false -C \"{repoRoot}\" ls-tree -r HEAD --name-only",
@@ -58,9 +62,9 @@ public class SourceTarballContentTests
 
         OutputHelper.WriteLine($"Found {repoFiles.Count} files in git repository");
 
-        HashSet<string> archiveFiles = GetGitArchiveFileList(repoRoot);
+        HashSet<string> archiveFiles = GetSourceTarballFileList(sourceTarballPath);
 
-        OutputHelper.WriteLine($"Found {archiveFiles.Count} files in git archive");
+        OutputHelper.WriteLine($"Found {archiveFiles.Count} files in source tarball");
 
         List<string> missingFromArchive = repoFiles.Except(archiveFiles).Order().ToList();
 
@@ -79,42 +83,27 @@ public class SourceTarballContentTests
     }
 
     /// <summary>
-    /// Runs git archive and reads the tar stream directly from stdout to enumerate file entries
-    /// without writing the full archive to disk.
+    /// Reads the source tarball produced by CreateSourceArtifact and enumerates file entries,
+    /// stripping the archive prefix directory (e.g. "dotnet-9.0.100/") from each entry name.
     /// </summary>
-    private HashSet<string> GetGitArchiveFileList(string repoRoot)
+    private HashSet<string> GetSourceTarballFileList(string tarballPath)
     {
-        using Process process = new()
-        {
-            StartInfo = new ProcessStartInfo
-            {
-                FileName = "git",
-                Arguments = $"-C \"{repoRoot}\" archive --format=tar HEAD",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-            }
-        };
+        using FileStream fileStream = File.OpenRead(tarballPath);
+        using GZipStream gzipStream = new(fileStream, CompressionMode.Decompress);
 
-        process.Start();
-
-        // Read stderr asynchronously to prevent deadlock
-        StringBuilder stderr = new();
-        process.ErrorDataReceived += (_, e) => { if (e.Data is not null) stderr.AppendLine(e.Data); };
-        process.BeginErrorReadLine();
-
-        HashSet<string> files = TarHelper.GetEntryNames(process.StandardOutput.BaseStream)
+        return TarHelper.GetEntryNames(gzipStream)
             .Where(name => !name.EndsWith('/'))
+            .Select(StripArchivePrefix)
             .ToHashSet();
+    }
 
-        process.WaitForExit(600000);
-
-        if (process.ExitCode != 0)
-        {
-            throw new InvalidOperationException(
-                $"git archive failed with exit code {process.ExitCode}: {stderr}");
-        }
-
-        return files;
+    /// <summary>
+    /// Strips the leading prefix directory from a tar entry name.
+    /// CreateSourceArtifact uses --prefix "dotnet-{version}/" so entries are like "dotnet-9.0.100/path/to/file".
+    /// </summary>
+    private static string StripArchivePrefix(string entryName)
+    {
+        int slashIndex = entryName.IndexOf('/');
+        return slashIndex >= 0 ? entryName[(slashIndex + 1)..] : entryName;
     }
 }

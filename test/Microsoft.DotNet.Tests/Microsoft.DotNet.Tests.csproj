@@ -42,6 +42,10 @@
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).RepoRoot">
         <Value>$(RepoRoot)</Value>
       </RuntimeHostConfigurationOption>
+      <SourceTarballPathItem Include="$(ArtifactsAssetsDir)$(SourceBuiltSourceArtifactName)-*.tar.gz" />
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).SourceTarballPath">
+        <Value>@(SourceTarballPathItem)</Value>
+      </RuntimeHostConfigurationOption>
     </ItemGroup>
   </Target>
 
