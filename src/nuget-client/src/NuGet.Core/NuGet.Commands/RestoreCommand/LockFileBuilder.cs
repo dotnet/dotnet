@@ -162,12 +162,20 @@ namespace NuGet.Commands
                 .OrderBy(graph => graph.Framework.ToString(), StringComparer.Ordinal)
                 .ThenBy(graph => graph.RuntimeIdentifier, StringComparer.Ordinal))
             {
-                var target = new LockFileTarget
-                {
-                    TargetFramework = targetGraph.Framework,
-                    RuntimeIdentifier = targetGraph.RuntimeIdentifier,
-                    TargetAlias = targetGraph.TargetAlias,
-                };
+                var target = lockFile.Version >= LockFileFormat.AliasedVersion ?
+                    new LockFileTarget
+                    {
+                        TargetFramework = targetGraph.Framework,
+                        RuntimeIdentifier = targetGraph.RuntimeIdentifier,
+                        TargetAlias = targetGraph.TargetAlias,
+                        Name = targetGraph.TargetGraphName
+                    } :
+                    new LockFileTarget
+                    {
+                        TargetFramework = targetGraph.Framework,
+                        RuntimeIdentifier = targetGraph.RuntimeIdentifier,
+                        TargetAlias = targetGraph.TargetAlias,
+                    };
 
                 var flattenedFlags = IncludeFlagUtils.FlattenDependencyTypes(_includeFlagGraphs, project, targetGraph);
 
@@ -389,20 +397,24 @@ namespace NuGet.Commands
             return string.Join(", ", frameworks);
         }
 
-        private static void AddProjectFileDependenciesForPackageReference(PackageSpec project, LockFile lockFile, IEnumerable<RestoreTargetGraph> targetGraphs)
+        private static void AddProjectFileDependenciesForPackageReference(PackageSpec project, LockFile lockFile, List<RestoreTargetGraph> targetGraphs)
         {
-            // For NETCore put everything under a TFM section
-            // Projects are included for NETCore
+            bool isAliasedLockFile = lockFile.Version >= LockFileFormat.AliasedVersion;
+
             foreach (var frameworkInfo in project.TargetFrameworks
-                .OrderBy(framework => framework.FrameworkName.ToString(),
+                .OrderBy(framework => framework.TargetAlias,
                     StringComparer.Ordinal))
             {
                 var dependencies = new List<LibraryRange>();
                 dependencies.AddRange(frameworkInfo.Dependencies.Select(e => e.LibraryRange));
 
-                var targetGraph = targetGraphs.SingleOrDefault(graph =>
-                    graph.Framework.Equals(frameworkInfo.FrameworkName)
-                    && string.IsNullOrEmpty(graph.RuntimeIdentifier));
+                RestoreTargetGraph targetGraph = !string.IsNullOrEmpty(frameworkInfo.TargetAlias) ?
+                    targetGraphs.SingleOrDefault(graph =>
+                        frameworkInfo.TargetAlias.Equals(graph.TargetAlias)
+                        && string.IsNullOrEmpty(graph.RuntimeIdentifier)) :
+                    targetGraphs.SingleOrDefault(graph =>
+                        graph.Framework.Equals(frameworkInfo.FrameworkName)
+                        && string.IsNullOrEmpty(graph.RuntimeIdentifier));
 
                 var resolvedEntry = targetGraph?
                     .Flattened
@@ -428,8 +440,9 @@ namespace NuGet.Commands
                 }
 
                 // Add entry
+                string framework = (isAliasedLockFile && !string.IsNullOrEmpty(frameworkInfo.TargetAlias)) ? frameworkInfo.TargetAlias : frameworkInfo.FrameworkName.ToString();
                 var dependencyGroup = new ProjectFileDependencyGroup(
-                    frameworkInfo.FrameworkName.ToString(),
+                    framework,
                     uniqueDependencies.Select(x => x.ToLockFileDependencyGroupString())
                         .OrderBy(dependency => dependency, StringComparer.Ordinal));
 

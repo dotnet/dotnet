@@ -372,9 +372,6 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
   <data name="PropertyNotAllowedForProjectType" xml:space="preserve">
     <value>Invalid input combination. Property '{0}' is not allowed for project type '{1}'.</value>
   </data>
-  <data name="SpecValidationDuplicateFrameworks" xml:space="preserve">
-    <value>Duplicate frameworks found: '{0}'.</value>
-  </data>
   <data name="SpecValidationInvalidFramework" xml:space="preserve">
     <value>Invalid target framework '{0}'.</value>
   </data>
@@ -384,11 +381,11 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
   <data name="SpecValidationNoFrameworks" xml:space="preserve">
     <value>No target frameworks specified.</value>
   </data>
-  <data name="SpecValidationUAPSingleFramework" xml:space="preserve">
-    <value>UAP projects must contain exactly one target framework.</value>
-  </data>
   <data name="SpecValidationZeroRestoreRequests" xml:space="preserve">
     <value>Restore request does not contain any projects to restore.</value>
+  </data>
+  <data name="SpecValidationDuplicateTargetAlias" xml:space="preserve">
+    <value>The TargetFramework property must be unique. List of TargetFramework properties: {0}.</value>
   </data>
   <data name="Error_XPROJNotAllowed" xml:space="preserve">
     <value>Invalid input '{0}'. XProj support has been removed. Support for XProj and standalone project.json files has been removed, to continue working with legacy projects use NuGet 3.5.x from https://nuget.org/downloads</value>
@@ -1169,5 +1166,9 @@ NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for
   </data>
   <data name="Error_ProjectJson_Deprecated" xml:space="preserve">
     <value>Managing packages with project.json is deprecated. Migrate to PackageReference.</value>
+  </data>
+  <data name="Log_AliasingSupportedInNewDependencyResolver" xml:space="preserve">
+    <value>The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
+Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</value>
   </data>
 </root>
