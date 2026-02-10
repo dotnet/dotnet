@@ -1972,7 +1972,7 @@ namespace NuGet.Commands
         }
 
         private static NuGetVersion Version_11_WithAliasSupport = NuGetVersion.Parse("11.0.100-preview.2.26104");
-        private static NuGetVersion Version_10_WithAliasSupport = NuGetVersion.Parse("10.0.300-preview.0.26110");
+        private static NuGetVersion Version_10_WithAliasSupport = NuGetVersion.Parse("10.0.300-preview.0.26109");
 
         private static bool DoesProjectToolsetSupportsDuplicateFrameworks(PackageSpec project)
         {
