@@ -18,7 +18,7 @@
     <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Configuration\ref\Microsoft.Extensions.Configuration.csproj" />
     <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Configuration.Abstractions\ref\Microsoft.Extensions.Configuration.Abstractions.csproj" />
     <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.DependencyInjection\ref\Microsoft.Extensions.DependencyInjection.csproj" />
-    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.DependencyInjection.Abstractions\ref\Microsoft.Extensions.DependencyInjection.Abstractions.csproj" />    
+    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.DependencyInjection.Abstractions\ref\Microsoft.Extensions.DependencyInjection.Abstractions.csproj" />
     <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Diagnostics.Abstractions\ref\Microsoft.Extensions.Diagnostics.Abstractions.csproj" />
     <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Hosting.Abstractions\ref\Microsoft.Extensions.Hosting.Abstractions.csproj" />
     <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Logging\ref\Microsoft.Extensions.Logging.csproj" />

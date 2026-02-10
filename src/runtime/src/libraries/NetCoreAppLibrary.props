@@ -187,7 +187,6 @@
       Microsoft.Extensions.Configuration.CommandLine;
       Microsoft.Extensions.Configuration.EnvironmentVariables;
       Microsoft.Extensions.Configuration.FileExtensions;
-      Microsoft.Extensions.Configuration.Ini;
       Microsoft.Extensions.Configuration.Json;
       Microsoft.Extensions.Configuration.UserSecrets;
       Microsoft.Extensions.DependencyInjection;
@@ -195,7 +194,6 @@
       Microsoft.Extensions.Diagnostics;
       Microsoft.Extensions.Diagnostics.Abstractions;
       Microsoft.Extensions.FileProviders.Abstractions;
-      Microsoft.Extensions.FileProviders.Composite;
       Microsoft.Extensions.FileProviders.Physical;
       Microsoft.Extensions.FileSystemGlobbing;
       Microsoft.Extensions.Hosting;
@@ -208,10 +206,8 @@
       Microsoft.Extensions.Logging.Debug;
       Microsoft.Extensions.Logging.EventLog;
       Microsoft.Extensions.Logging.EventSource;
-      Microsoft.Extensions.Logging.TraceSource;
       Microsoft.Extensions.Options;
       Microsoft.Extensions.Options.ConfigurationExtensions;
-      Microsoft.Extensions.Options.DataAnnotations;
       Microsoft.Extensions.Primitives;
     </NetCoreAppLibrary>
     <!-- List .NETCoreApp shared framework generator project names below. -->
@@ -227,7 +223,11 @@
       System.Text.RegularExpressions.Generator;
     </NetCoreAppLibraryGenerator>
     <AspNetCoreAppLibrary>
+      Microsoft.Extensions.Configuration.Ini;
       Microsoft.Extensions.Configuration.Xml;
+      Microsoft.Extensions.Logging.TraceSource;
+      Microsoft.Extensions.Options.DataAnnotations;
+      Microsoft.Extensions.FileProviders.Composite;
       System.Formats.Cbor;
       System.Security.Cryptography.Pkcs;
       System.Security.Cryptography.Xml;

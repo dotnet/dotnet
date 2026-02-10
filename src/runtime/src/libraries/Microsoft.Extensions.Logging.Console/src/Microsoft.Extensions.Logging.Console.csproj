@@ -41,6 +41,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Configuration.Abstractions\src\Microsoft.Extensions.Configuration.Abstractions.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Configuration\src\Microsoft.Extensions.Configuration.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Configuration.Binder\src\Microsoft.Extensions.Configuration.Binder.csproj" />
     <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Configuration.Binder\gen\Microsoft.Extensions.Configuration.Binder.SourceGeneration.csproj"
                       OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false"
@@ -50,9 +53,8 @@
     <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Logging.Configuration\src\Microsoft.Extensions.Logging.Configuration.csproj" />
     <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Logging\src\Microsoft.Extensions.Logging.csproj" />
     <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Options\src\Microsoft.Extensions.Options.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' != '$(NetCoreAppCurrent)'">
+    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Options.ConfigurationExtensions\src\Microsoft.Extensions.Options.ConfigurationExtensions.csproj" />    
+    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Primitives\src\Microsoft.Extensions.Primitives.csproj" />
     <ProjectReference Include="$(LibrariesProjectRoot)System.Text.Json\src\System.Text.Json.csproj" />
   </ItemGroup>
 
@@ -66,12 +68,16 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == '$(NetCoreAppCurrent)'">
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Collections\src\System.Collections.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Collections.Concurrent\src\System.Collections.Concurrent.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Console\src\System.Console.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.IO.Pipelines\src\System.IO.Pipelines.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Memory\src\System.Memory.csproj" />
     <ProjectReference Include="$(LibrariesProjectRoot)System.Runtime\src\System.Runtime.csproj" />
-    <ProjectReference Include="$(LibrariesProjectRoot)System.Text.Json\src\System.Text.Json.csproj" />
-    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Logging\src\Microsoft.Extensions.Logging.csproj" />
-    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Logging.Abstractions\src\Microsoft.Extensions.Logging.Abstractions.csproj" />
-    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Logging.Configuration\src\Microsoft.Extensions.Logging.Configuration.csproj" />
-    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Options\src\Microsoft.Extensions.Options.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Runtime.InteropServices\src\System.Runtime.InteropServices.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Text.Encodings.Web\src\System.Text.Encodings.Web.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Threading\src\System.Threading.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Threading.Thread\src\System.Threading.Thread.csproj" />
   </ItemGroup>
 
 </Project>

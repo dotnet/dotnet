@@ -29,10 +29,6 @@
     <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Logging.Abstractions\src\Microsoft.Extensions.Logging.Abstractions.csproj" />
     <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Options\src\Microsoft.Extensions.Options.csproj" />
     <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Primitives\src\Microsoft.Extensions.Primitives.csproj" />
-  </ItemGroup>
-
-  <!-- Application tfms (.NETCoreApp, .NETFramework) need to use the same or higher version of .NETStandard's dependencies. -->
-  <ItemGroup Condition="'$(TargetFramework)' != '$(NetCoreAppCurrent)'">
     <ProjectReference Include="$(LibrariesProjectRoot)System.Text.Json\src\System.Text.Json.csproj" />
   </ItemGroup>
 
@@ -43,10 +39,13 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == '$(NetCoreAppCurrent)'">
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Collections\src\System.Collections.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.ComponentModel\src\System.ComponentModel.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Diagnostics.DiagnosticSource\src\System.Diagnostics.DiagnosticSource.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Diagnostics.Tracing\src\System.Diagnostics.Tracing.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Memory\src\System.Memory.csproj" />
     <ProjectReference Include="$(LibrariesProjectRoot)System.Runtime\src\System.Runtime.csproj" />
-    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Logging\src\Microsoft.Extensions.Logging.csproj" />
-    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Logging.Abstractions\src\Microsoft.Extensions.Logging.Abstractions.csproj" />
-    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Options\src\Microsoft.Extensions.Options.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Threading\src\System.Threading.csproj" />
   </ItemGroup>
 
 </Project>

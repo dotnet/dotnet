@@ -27,11 +27,14 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == '$(NetCoreAppCurrent)'">
-    <ProjectReference Include="$(LibrariesProjectRoot)System.Runtime\src\System.Runtime.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Collections.Concurrent\src\System.Collections.Concurrent.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.ComponentModel.Primitives\src\System.ComponentModel.Primitives.csproj" />
     <ProjectReference Include="$(LibrariesProjectRoot)System.IO.FileSystem.Watcher\src\System.IO.FileSystem.Watcher.csproj" />
-    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.FileProviders.Abstractions\src\Microsoft.Extensions.FileProviders.Abstractions.csproj" />
-    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.FileSystemGlobbing\src\Microsoft.Extensions.FileSystemGlobbing.csproj" />
-    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Primitives\src\Microsoft.Extensions.Primitives.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Linq\src\System.Linq.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Memory\src\System.Memory.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Runtime\src\System.Runtime.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Security.Cryptography\src\System.Security.Cryptography.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Threading\src\System.Threading.csproj" />
   </ItemGroup>
 
 </Project>

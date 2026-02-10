@@ -16,9 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Configuration.Abstractions\ref\Microsoft.Extensions.Configuration.Abstractions.csproj" />
     <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.DependencyInjection.Abstractions\ref\Microsoft.Extensions.DependencyInjection.Abstractions.csproj" />
-    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Logging\ref\Microsoft.Extensions.Logging.csproj" />
     <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Logging.Abstractions\ref\Microsoft.Extensions.Logging.Abstractions.csproj" />
-    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.Options\ref\Microsoft.Extensions.Options.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
@@ -26,8 +24,9 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == '$(NetCoreAppCurrent)'">
+    <ProjectReference Include="$(LibrariesProjectRoot)System.ComponentModel\ref\System.ComponentModel.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Net.Http\ref\System.Net.Http.csproj" />
     <ProjectReference Include="$(LibrariesProjectRoot)System.Runtime\ref\System.Runtime.csproj" />
-    <ProjectReference Include="$(LibrariesProjectRoot)Microsoft.Extensions.DependencyInjection.Abstractions\ref\Microsoft.Extensions.DependencyInjection.Abstractions.csproj" />
   </ItemGroup>
 
 
