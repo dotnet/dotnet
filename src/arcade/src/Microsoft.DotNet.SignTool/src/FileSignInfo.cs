@@ -127,7 +127,7 @@ namespace Microsoft.DotNet.SignTool
 
         internal bool HasSignableParts { get; }
 
-        internal bool ShouldRepack => HasSignableParts;
+        internal bool ShouldRepack => HasSignableParts && !SignInfo.DoNotUnpack;
 
         internal bool ShouldTrack => SignInfo.ShouldSign || ShouldRepack;
 
@@ -150,7 +150,8 @@ namespace Microsoft.DotNet.SignTool
                (TargetFramework != null ? $" TargetFramework='{TargetFramework}'" : "") +
                (SignInfo.ShouldSign ? $" Certificate='{SignInfo.Certificate}'" : "") +
                (SignInfo.ShouldStrongName ? $" StrongName='{SignInfo.StrongName}'" : "") +
-               (SignInfo.ShouldNotarize ? $" NotarizationAppName='{SignInfo.NotarizationAppName}'" : "");
+               (SignInfo.ShouldNotarize ? $" NotarizationAppName='{SignInfo.NotarizationAppName}'" : "") +
+               (HasSignableParts && SignInfo.DoNotUnpack ? " DoNotUnpack='true'" : "");
 
         internal FileSignInfo WithSignableParts()
             => new FileSignInfo(File, SignInfo.WithIsAlreadySigned(false), TargetFramework, WixContentFilePath, true);
