@@ -12,7 +12,6 @@ This is the [dotnet/dotnet](https://github.com/dotnet/dotnet) VMR — a single r
 - **`test/`** — VMR-level validation tests (not individual repo tests):
   - `Microsoft.DotNet.Tests` — Shared tests
   - `Microsoft.DotNet.SourceBuild.Tests` — Source-build-specific validation
-  - `Microsoft.DotNet.UnifiedBuild.Tests` — Unified-build-specific validation
   - `Microsoft.DotNet.Installer.Tests` — Linux installer (deb/rpm) tests
   - Scenario tests are built/run from `repo-projects/scenario-tests.proj` using the `src/scenario-tests/` repo
 - **`docs/`** — VMR design and operation documentation. Key docs: `VMR-Design-And-Operation.md`, `VMR-Code-And-Build-Workflow.md`, `Codeflow-PRs.md`.
