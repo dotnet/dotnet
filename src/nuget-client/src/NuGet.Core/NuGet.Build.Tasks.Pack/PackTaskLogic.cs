@@ -655,14 +655,28 @@ namespace NuGet.Build.Tasks.Pack
                 {
                     var newTargetPaths = new List<string>();
                     var fileName = Path.GetFileName(sourcePath);
+                    // Normalize RecursiveDir for comparison: forward slashes with trailing slash.
+                    var normalizedRecursiveDir = PathUtility.GetPathWithForwardSlashes(
+                        PathUtility.EnsureTrailingForwardSlash(recursiveDir));
                     foreach (var targetPath in targetPaths)
                     {
+                        // Skip appending RecursiveDir if the targetPath already ends with it.
+                        // This happens when PackagePath was built from a TargetPath that already
+                        // incorporated RecursiveDir (e.g. TargetPath="analyzers/%(RecursiveDir)").
+                        // With MSBuild 18.5+ (dotnet/msbuild#13142), RecursiveDir is preserved
+                        // across task boundaries, so without this guard the path gets doubled.
+                        var normalizedTargetPath = PathUtility.GetPathWithForwardSlashes(targetPath);
+                        var alreadyIncluded = normalizedTargetPath.EndsWith(normalizedRecursiveDir,
+                            PathUtility.GetStringComparisonBasedOnOS());
+
                         newTargetPaths.Add(PathUtility.GetStringComparerBasedOnOS().
                             Compare(Path.GetExtension(fileName),
                             Path.GetExtension(targetPath)) == 0
                             && !string.IsNullOrEmpty(Path.GetExtension(fileName))
                                 ? targetPath
-                                : Path.Combine(targetPath, recursiveDir));
+                                : alreadyIncluded
+                                    ? targetPath
+                                    : Path.Combine(targetPath, recursiveDir));
                     }
 
                     targetPaths = newTargetPaths;
