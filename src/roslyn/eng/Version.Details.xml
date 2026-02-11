@@ -12,6 +12,10 @@
       <Sha>db3b7424251b47d9474dbbe3b4fa7a81fe2915b7</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
+    <Dependency Name="Microsoft.NETCore.App.Ref" Version="11.0.0-preview.1.26069.103">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>adf42f5dcec99a409a6f63355f5b52147bfaf043</Sha>
+    </Dependency>
     <Dependency Name="Microsoft.Bcl.AsyncInterfaces" Version="10.0.1">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>fad253f51b461736dfd3cd9c15977bb7493becef</Sha>

@@ -6,7 +6,7 @@
 
 All components that consume runtime packages for compilation properly reference Microsoft.NETCore.App.Ref targeting pack.
 
-## Components Using Microsoft.NETCore.App.Ref (10)
+## Components Using Microsoft.NETCore.App.Ref (11)
 
 | Component | Runtime Usage | Ref Pack Version | Notes |
 |-----------|--------------|------------------|-------|
@@ -15,18 +15,12 @@ All components that consume runtime packages for compilation properly reference 
 | diagnostics | KnownRuntimePack for net8.0/9.0/10.0 | 10.0.2 | Diagnostic tools |
 | efcore | FrameworkReference | 11.0.0-preview.2.26108.103 | EF Core |
 | nuget-client | Test assets | In Version.Details.xml | NuGet client |
+| roslyn | ReadyToRun/crossgen2 | 11.0.0-preview.1.26069.103 | Uses 8.0.10 for VS, live for source-build |
 | runtime | Producer | 11.0.0-preview.1.26069.103 | Runtime itself |
 | sdk | Extensive layout management | 11.0.0-preview.1.26069.105 | .NET SDK |
 | windowsdesktop | KnownFrameworkReference | 11.0.0-preview.2.26079.111 | Desktop framework |
 | winforms | FrameworkReference | 11.0.0-preview.2.26109.104 | Windows Forms |
 | wpf | Runtime pack downloads | 11.0.0-preview.2.26080.101 | WPF |
-
-## Special Case: Roslyn
-
-- Uses runtime packs (version 8.0.10) for ReadyToRun/crossgen2 compilation only
-- Does NOT need live Microsoft.NETCore.App.Ref
-- Targets stable .NET versions for VS compatibility
-- Status: ⚠️ This is intentional and correct
 
 ## Components Not Using Runtime Packages (14)
 

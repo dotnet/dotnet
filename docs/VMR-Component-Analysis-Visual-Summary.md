@@ -41,8 +41,7 @@
 
 | Status | Count | Components |
 |--------|-------|------------|
-| ✅ Properly Configured | 10 | arcade, aspnetcore, diagnostics, efcore, nuget-client, runtime, sdk, windowsdesktop, winforms, wpf |
-| ⚠️ Special Case (Intentional) | 1 | roslyn |
+| ✅ Properly Configured | 11 | arcade, aspnetcore, diagnostics, efcore, nuget-client, roslyn, runtime, sdk, windowsdesktop, winforms, wpf |
 | ✅ No Runtime Usage | 14 | cecil, command-line-api, deployment-tools, emsdk, fsharp, msbuild, razor, scenario-tests, source-build-reference-packages, sourcelink, symreader, templating, vstest, xdt |
 | ❌ Issues Found | 0 | None |
 
@@ -51,10 +50,10 @@
 ### ✅ All Clear!
 
 ```
-  10 components consume runtime packages
-+ 10 components have Microsoft.NETCore.App.Ref configured
+  11 components consume runtime packages
++ 11 components have Microsoft.NETCore.App.Ref configured
 ─────────────────────────────────────────────
-= 10/10 (100%) properly configured
+= 11/11 (100%) properly configured
 ```
 
 ### Risk Assessment

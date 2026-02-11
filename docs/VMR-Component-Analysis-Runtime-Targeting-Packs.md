@@ -101,22 +101,18 @@ These components consume runtime packages AND properly reference Microsoft.NETCo
   - `eng/Version.Details.xml`: Microsoft.NETCore.App.Ref Version="11.0.0-preview.2.26080.101"
 - **Status:** ✅ Properly configured
 
-### Category 2: Components with Special Usage Patterns
-
 #### 11. **roslyn** (C# and VB.NET compilers)
-- **Runtime Usage:** References runtime packs for ReadyToRun/crossgen compilation only
+- **Runtime Usage:** References runtime packs for ReadyToRun/crossgen compilation
   - Evidence: `eng/Packages.props` specifies Microsoft.NETCore.App.Runtime.win-x64/arm64 and crossgen2 packages
-  - Version used: 8.0.10 (hard-coded, not live runtime)
+  - Version used: 8.0.10 for VS builds, live version for source-build
   - Usage: `src/Workspaces/Remote/ServiceHub.CoreComponents/CoreComponents.Shared.targets` uses these for AOT compilation
-- **Targeting Pack:** Not referenced in Version.Details.xml
-- **Status:** ⚠️ SPECIAL CASE - Does not need live Microsoft.NETCore.App.Ref
-- **Justification:**
-  - Roslyn references a specific stable runtime version (8.0.10) for VS compatibility
-  - Runtime packs are used for ReadyToRun compilation of ServiceHub components
-  - Roslyn does not compile against latest runtime APIs - it targets stable .NET versions
-  - The comment in CoreComponents.Shared.targets explains: "For BCL, we want to use the version provided by the runtime in VS, not the ones from the NuGet packages"
+- **Targeting Pack:** Properly referenced for source-build
+  - `eng/Version.Details.xml`: Microsoft.NETCore.App.Ref Version="11.0.0-preview.1.26069.103"
+  - `eng/Packages.props`: Uses MicrosoftNETCoreAppRefVersion when `DotNetBuildSourceOnly` is true
+- **Status:** ✅ Properly configured
+- **Note:** Uses stable runtime version (8.0.10) for VS builds, live version for source-build via conditional logic
 
-### Category 3: Components with No Runtime Package Usage
+### Category 2: Components with No Runtime Package Usage
 
 The following 14 components do not consume Microsoft.NETCore.App runtime packages in significant ways, so targeting pack references are not needed:
 

@@ -16,6 +16,15 @@
     -->
     <MicrosoftNetCoreAppRuntimePackagesVersion>8.0.10</MicrosoftNetCoreAppRuntimePackagesVersion>
     <MicrosoftWindowsDesktopAppRuntimePackagesVersion>8.0.10</MicrosoftWindowsDesktopAppRuntimePackagesVersion>
+  </PropertyGroup>
+
+  <!-- For source-build, use the live runtime version from Microsoft.NETCore.App.Ref -->
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <MicrosoftNetCoreAppRuntimePackagesVersion>$(MicrosoftNETCoreAppRefVersion)</MicrosoftNetCoreAppRuntimePackagesVersion>
+    <MicrosoftWindowsDesktopAppRuntimePackagesVersion>$(MicrosoftNETCoreAppRefVersion)</MicrosoftWindowsDesktopAppRuntimePackagesVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <_xunitVersion>2.9.2</_xunitVersion>
     <SqliteVersion>2.1.6</SqliteVersion>
     <!-- HumanizerVersion is referenced from the Text.Analyzers.Package.csproj -->

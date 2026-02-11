@@ -35,19 +35,18 @@ This directory contains the comprehensive analysis of dotnet/dotnet VMR componen
 ## 🎯 Key Findings
 
 - **25 components analyzed** across the VMR
-- **10 components** consume runtime packages AND properly reference Microsoft.NETCore.App.Ref
-- **1 special case** (roslyn) uses runtime packs for AOT only - intentionally does not need live targeting pack
+- **11 components** consume runtime packages AND properly reference Microsoft.NETCore.App.Ref
 - **14 components** do not use runtime packages - no targeting pack needed
 - **0 issues found** - all components properly configured
 
-**Total: 10 + 1 + 14 = 25 components**
+**Total: 11 + 14 = 25 components**
 
 ## 📈 Component Status
 
 | Status | Count |
 |--------|-------|
-| ✅ Properly Configured | 10 |
-| ⚠️ Special Case | 1 |
+| ✅ Properly Configured | 11 |
+| ❌ Issues Found | 0 |
 | ❌ Issues Found | 0 |
 
 ## 🔍 What Was Analyzed
