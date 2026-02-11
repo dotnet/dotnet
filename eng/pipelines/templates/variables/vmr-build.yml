@@ -263,9 +263,9 @@ variables:
   - name: shortStackPoolName
     value: NetCore-Public
   - name: poolImage_Linux
-    value: build.ubuntu.2204.amd64.open
+    value: build.azurelinux.3.amd64.open
   - name: poolImage_LinuxArm64
-    value: Mariner-2-Docker-ARM64
+    value: build.azurelinux.3.arm64.open
   - name: poolName_LinuxArm64
     value: Docker-Linux-Arm-Public
   - name: poolImage_Mac
@@ -282,9 +282,9 @@ variables:
   - name: shortStackPoolName
     value: NetCore1ESPool-Internal
   - name: poolImage_Linux
-    value: build.ubuntu.2204.amd64
+    value: build.azurelinux.3.amd64
   - name: poolImage_LinuxArm64
-    value: Azure-Linux-3-Arm64
+    value: build.azurelinux.3.arm64
   - name: poolName_LinuxArm64
     value: Docker-Linux-Arm-Internal
   - name: poolImage_Mac
