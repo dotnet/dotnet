@@ -53,7 +53,7 @@ extends:
     - template: /eng/pipelines/templates/pipeline.yml@self
       parameters:
         isOfficialBuild: true
-        ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/dev'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
+        ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/dev'), eq(variables['Build.SourceBranch'], format('refs/heads/{0}', variables['OneLocReleaseBranch']))) }}:
           RunOneLocBuild: true
         RunBuildForPublishing: ${{parameters.RunBuildForPublishing}}
         SigningType: ${{ parameters.SigningType }}

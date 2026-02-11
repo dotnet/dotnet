@@ -50,10 +50,10 @@
       When we're doing a build of a single vertical, we may not have a runtime or host available for any RID outside of our current target.
       For many of our projects, we don't actually need to build any RID-specific assets, but the SDK may still try to pull down assets for other RIDs,
       in particular for the RID matching the SDK's RID.
-      To avoid this, we'll default to setting the RID to the vertical's target RID.
+      To avoid this, we'll default to setting the RID to the vertical's target RID when we're building for NetCurrent (the only scenario where we may have limited runtime/host assets).
       To preserve expected behavior for projects that don't specify a RID in a non-vertical build, we won't append the RID to the output path if the user hasn't explicitly requested it.
     -->
-    <_EnableArcadeRuntimeIdentifierInference Condition="'$(_EnableArcadeRuntimeIdentifierInference)' == '' and '$(DotNetBuildTargetRidOnly)' == 'true'">true</_EnableArcadeRuntimeIdentifierInference>
+    <_EnableArcadeRuntimeIdentifierInference Condition="'$(_EnableArcadeRuntimeIdentifierInference)' == '' and '$(DotNetBuildTargetRidOnly)' == 'true' and $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCurrent)'))">true</_EnableArcadeRuntimeIdentifierInference>
 
     <_EnableArcadeRuntimeIdentifierFilters Condition="'$(EnableArcadeRuntimeIdentifierFilters)' != ''">$(EnableArcadeRuntimeIdentifierFilters)</_EnableArcadeRuntimeIdentifierFilters>
 

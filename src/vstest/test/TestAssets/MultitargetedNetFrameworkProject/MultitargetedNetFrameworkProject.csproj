@@ -2,13 +2,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(NetFrameworkMinimum);net47;net471;net472;net48</TargetFrameworks>
+    <TargetFrameworks>$(NetFrameworkTargetFrameworks)</TargetFrameworks>
     <TestProject>true</TestProject>
     <IsTestProject>true</IsTestProject>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|$(NetFrameworkMinimum)|AnyCPU'">
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
+    
 
   <ItemGroup>
     <PackageReference Include="xunit" Version="$(XUnitFrameworkVersion)" />
@@ -17,7 +16,5 @@
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
-  </ItemGroup>
+
 </Project>

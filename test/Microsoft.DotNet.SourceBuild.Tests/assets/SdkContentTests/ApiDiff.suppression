@@ -9,6 +9,24 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Microsoft.DotNet.Cli.Utils.DotDefaultPathCorrector</Target>
+    <Left>/msft/sdk/x.y.z/Microsoft.DotNet.Cli.Utils.dll</Left>
+    <Right>/sb/sdk/x.y.z/Microsoft.DotNet.Cli.Utils.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Microsoft.DotNet.Cli.Utils.Extensions.ProcessExtensions</Target>
+    <Left>/msft/sdk/x.y.z/Microsoft.DotNet.Cli.Utils.dll</Left>
+    <Right>/sb/sdk/x.y.z/Microsoft.DotNet.Cli.Utils.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Windows.Win32.Foundation.StringParameterArray</Target>
+    <Left>/msft/sdk/x.y.z/Microsoft.DotNet.Cli.Utils.dll</Left>
+    <Right>/sb/sdk/x.y.z/Microsoft.DotNet.Cli.Utils.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Runtime.CompilerServices.IsExternalInit</Target>
     <Left>/msft/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Left>
     <Right>/sb/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Right>

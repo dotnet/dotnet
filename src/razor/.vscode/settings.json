@@ -13,8 +13,8 @@
   "[json]": {
     "editor.tabSize": 2
   },
-  "dotnet.defaultSolution": "Razor.sln",
-  "omnisharp.defaultLaunchSolution": "Razor.sln",
+  "dotnet.defaultSolution": "Razor.slnx",
+  "dotnet.solution.autoOpen": "Razor.slnx",
   "files.encoding": "utf8bom",
   "dotnet.testWindow.disableBuildOnRefresh": true
 }

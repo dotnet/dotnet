@@ -15,7 +15,7 @@ public class RunnerCompatibilityDataSource : TestDataSourceAttribute<RunnerInfo>
     private readonly CompatibilityRowsBuilder _builder;
 
     public RunnerCompatibilityDataSource(
-        string runnerFrameworks = AcceptanceTestBase.DEFAULT_HOST_NETFX_AND_NET,
+        string runnerFrameworks = AcceptanceTestBase.DEFAULT_RUNNER_NETFX_AND_NET,
         string runnerVersions = AcceptanceTestBase.LATEST_TO_LEGACY,
         string hostFrameworks = AcceptanceTestBase.DEFAULT_HOST_NETFX_AND_NET)
     {

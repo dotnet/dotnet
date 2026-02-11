@@ -330,6 +330,10 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
 
     private static bool TryMapToCSharpDocumentPositionInternal(RazorCSharpDocument csharpDocument, int razorIndex, bool nextCSharpPositionOnFailure, out LinePosition csharpPosition, out int csharpIndex)
     {
+        SourceMapping? nextCSharpMapping = null;
+
+        var hostDocumentLine = csharpDocument.CodeDocument.Source.Text.GetLinePosition(razorIndex).Line;
+
         foreach (var mapping in csharpDocument.SourceMappings)
         {
             var originalSpan = mapping.OriginalSpan;
@@ -346,21 +350,24 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
                     return true;
                 }
             }
-            else if (nextCSharpPositionOnFailure)
+            else if (nextCSharpPositionOnFailure &&
+                mapping.OriginalSpan.LineIndex == hostDocumentLine &&
+                mapping.OriginalSpan.AbsoluteIndex >= razorIndex &&
+                (nextCSharpMapping is null || mapping.OriginalSpan.AbsoluteIndex < nextCSharpMapping.OriginalSpan.AbsoluteIndex))
             {
                 // The "next" C# location is only valid if it is on the same line in the source document
-                // as the requested position.
-                var hostDocumentLinePosition = csharpDocument.CodeDocument.Source.Text.GetLinePosition(razorIndex);
-
-                if (mapping.OriginalSpan.LineIndex == hostDocumentLinePosition.Line)
-                {
-                    csharpIndex = mapping.GeneratedSpan.AbsoluteIndex;
-                    csharpPosition = csharpDocument.Text.GetLinePosition(csharpIndex);
-                    return true;
-                }
-
-                break;
+                // as the requested position, and before than any previous "next" C# position we have found,
+                // comparing their original positions.  Due to source mappings being ordered by generated span,
+                // not original span, its possible for things to be out of order.
+                nextCSharpMapping = mapping;
             }
+        }
+
+        if (nextCSharpPositionOnFailure && nextCSharpMapping is not null)
+        {
+            csharpIndex = nextCSharpMapping.GeneratedSpan.AbsoluteIndex;
+            csharpPosition = csharpDocument.Text.GetLinePosition(csharpIndex);
+            return true;
         }
 
         csharpPosition = default;

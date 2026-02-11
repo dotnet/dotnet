@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <AssemblyName>ConsoleManagedApp</AssemblyName>
-    <TargetFrameworks>$(NetFrameworkMinimum);$(NetCoreAppMinimum)</TargetFrameworks>
+    <TargetFrameworks>$(TestProjectTargetFrameworks)</TargetFrameworks>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
 
