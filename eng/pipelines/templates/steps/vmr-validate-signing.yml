@@ -42,7 +42,7 @@ steps:
   inputs:
     patterns: |
       **ShortStack*_Artifacts/**
-      **AzureLinux*_Artifacts/**
+      **Linux_*_Artifacts/**
       **OSX_*_Artifacts/**
       **Windows_*_Artifacts/**
       **SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/dotnet-sdk-*.tar.gz
