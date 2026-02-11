@@ -67,6 +67,8 @@
     <PlatformManifestFileEntry Include="@(NetCoreAppLibrary->'%(Identity).dll')" />
     <PlatformManifestFileEntry Include="@(NetFxReference->'%(Identity).dll')" />
     <PlatformManifestFileEntry Include="netstandard.dll" />
+    <!-- Resource libraries -->
+    <PlatformManifestFileEntry Include="System.Diagnostics.EventLog.Messages.dll" />
     <!-- Private libraries -->
     <PlatformManifestFileEntry Include="System.Private.CoreLib.dll" />
     <PlatformManifestFileEntry Include="System.Private.DataContractSerialization.dll" />
