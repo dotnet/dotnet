@@ -681,8 +681,8 @@ Daha fazla bilgi için bkz. https://docs.nuget.org/docs/reference/command-line-r
       <trans-unit id="Log_AliasingSupportedInNewDependencyResolver">
         <source>The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
 Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</source>
-        <target state="new">The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
-Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</target>
+        <target state="translated">{0} projesi yalnızca .NET SDK sürümü{1} ya da daha yeni olduğunda varsayılan bağımlılık çözümleyicisinde desteklenen yinelenen çerçeveleri geri yüklemeye çalışıyor.
+Bu özelliği kullanmak için .NET SDK'nizi yükseltin veya RestoreUseLegacyDependencyResolver öğesini kaldırın.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_AllProjectsUpToDate">
@@ -1266,7 +1266,7 @@ Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this f
       </trans-unit>
       <trans-unit id="SpecValidationDuplicateTargetAlias">
         <source>The TargetFramework property must be unique. List of TargetFramework properties: {0}.</source>
-        <target state="new">The TargetFramework property must be unique. List of TargetFramework properties: {0}.</target>
+        <target state="translated">TargetFramework özelliği benzersiz olmalıdır. TargetFramework özellikleri listesi: {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecValidationInvalidFramework">
