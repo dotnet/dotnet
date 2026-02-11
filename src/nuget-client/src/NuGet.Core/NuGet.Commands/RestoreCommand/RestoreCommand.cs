@@ -1868,7 +1868,7 @@ namespace NuGet.Commands
 
                 return (success, []);
             }
-            var shouldDoDuplicatesCheck = !SupportsDuplicateFrameworks(_request.Project);
+            var shouldDoDuplicatesCheck = !DoesProjectToolsetSupportsDuplicateFrameworks(_request.Project);
 
             if (shouldDoDuplicatesCheck)
             {
