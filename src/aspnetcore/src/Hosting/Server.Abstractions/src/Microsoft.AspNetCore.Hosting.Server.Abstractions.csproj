@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <Reference Include="Microsoft.AspNetCore.Http.Features" />
-      </ItemGroup>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions" />
+  </ItemGroup>
 
 </Project>

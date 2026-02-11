@@ -13,6 +13,9 @@
   <ItemGroup>
     <Reference Include="Microsoft.AspNetCore.DataProtection.Abstractions" />
     <Reference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" />
-              </ItemGroup>
+    <Reference Include="Microsoft.Extensions.Configuration.Json" />
+    <Reference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
+    <Reference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
 
 </Project>

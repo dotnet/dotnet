@@ -12,7 +12,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-        <Compile Include="..\..\Shared\CookieHeaderParserShared.cs" Link="CookieHeaderParserShared.cs" />
+    <Reference Include="Microsoft.Extensions.Primitives" />
+    <Compile Include="..\..\Shared\CookieHeaderParserShared.cs" Link="CookieHeaderParserShared.cs" />
     <Compile Include="$(SharedSourceRoot)HttpRuleParser.cs" />
     <Compile Include="$(SharedSourceRoot)HttpParseResult.cs" />
   </ItemGroup>

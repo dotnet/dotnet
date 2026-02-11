@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="$(RepoRoot)src\Servers\IIS\IntegrationTesting.IIS\src\Microsoft.AspNetCore.Server.IntegrationTesting.IIS.csproj" />
+
     <Reference Include="Microsoft.AspNetCore.Authentication" />
     <Reference Include="Microsoft.AspNetCore.Authentication.Core" />
     <Reference Include="Microsoft.AspNetCore.Authentication.Abstractions" />
@@ -26,6 +27,7 @@
     <Reference Include="Microsoft.AspNetCore.Server.IISIntegration" />
     <Reference Include="Microsoft.AspNetCore.Server.Kestrel" />
     <Reference Include="Microsoft.AspNetCore.Http.Extensions" />
-      </ItemGroup>
+    <Reference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
 
 </Project>

@@ -13,7 +13,8 @@
     <Reference Include="Microsoft.AspNetCore.Authentication" />
     <Reference Include="Microsoft.AspNetCore.Authentication.Abstractions" />
     <Reference Include="Microsoft.AspNetCore.Http.Abstractions" />
-      </ItemGroup>
+    <Reference Include="Microsoft.Extensions.Caching.Memory" />
+  </ItemGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Authentication.Test" />

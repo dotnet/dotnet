@@ -24,6 +24,8 @@
     <Reference Include="Microsoft.AspNetCore.Authorization" />
     <Reference Include="Microsoft.AspNetCore.Authorization.Policy" />
     <Reference Include="Microsoft.AspNetCore.TestHost" />
-          </ItemGroup>
+    <Reference Include="Microsoft.Extensions.Caching.Memory" />
+    <Reference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
 
 </Project>

@@ -7,6 +7,8 @@
 
   <ItemGroup>
     <ProjectReference Include="$(RepoRoot)src\Servers\IIS\IntegrationTesting.IIS\src\Microsoft.AspNetCore.Server.IntegrationTesting.IIS.csproj" />
-          </ItemGroup>
+    <Reference Include="Microsoft.Extensions.Logging" />
+    <Reference Include="Microsoft.Extensions.Logging.Console" />
+  </ItemGroup>
 
 </Project>

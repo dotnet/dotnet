@@ -41,6 +41,7 @@
     <Reference Include="Microsoft.AspNetCore.Localization" />
     <Reference Include="Microsoft.AspNetCore.Routing" />
     <Reference Include="Microsoft.AspNetCore.Routing.Abstractions" />
-    
+    <Reference Include="Microsoft.Extensions.Hosting" />
+
   </ItemGroup>
 </Project>

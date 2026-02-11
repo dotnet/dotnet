@@ -19,7 +19,10 @@
     <Reference Include="Microsoft.AspNetCore.InternalTesting" />
     <Reference Include="Microsoft.AspNetCore.Localization" />
     <Reference Include="Microsoft.AspNetCore.Server.Kestrel" />
+    <Reference Include="Microsoft.Extensions.Configuration.CommandLine" />
+    <Reference Include="Microsoft.Extensions.Hosting" />
     <Reference Include="Microsoft.Extensions.Localization" />
-      </ItemGroup>
+    <Reference Include="Microsoft.Extensions.Logging.Console" />
+  </ItemGroup>
 
 </Project>

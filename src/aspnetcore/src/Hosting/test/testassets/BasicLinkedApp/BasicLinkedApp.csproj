@@ -18,7 +18,8 @@
     <Reference Include="Microsoft.AspNetCore.Http.Features" />
     <Reference Include="Microsoft.AspNetCore.Server.Kestrel" />
     <Reference Include="Microsoft.AspNetCore.Server.Kestrel.Core" />
-      </ItemGroup>
+    <Reference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
 
   <!-- Link all assemblies -->
   <Target Name="EnsureAllAssembliesAreLinked" BeforeTargets="PrepareForILLink">

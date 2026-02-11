@@ -9,6 +9,7 @@
     <Reference Include="Microsoft.AspNetCore.Routing.Abstractions" />
     <Reference Include="Microsoft.AspNetCore.Components.WebAssembly" />
     <Reference Include="Microsoft.CodeAnalysis.CSharp" />
-      </ItemGroup>
+    <Reference Include="Microsoft.Extensions.Hosting.Abstractions" />
+  </ItemGroup>
 
 </Project>

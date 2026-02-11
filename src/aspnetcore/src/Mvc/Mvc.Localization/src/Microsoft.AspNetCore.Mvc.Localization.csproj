@@ -24,6 +24,7 @@ Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer</Description>
     <Reference Include="Microsoft.AspNetCore.Mvc.TagHelpers" />
     <Reference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" />
     <Reference Include="Microsoft.AspNetCore.Localization" />
+    <Reference Include="Microsoft.Extensions.DependencyInjection" />
     <Reference Include="Microsoft.Extensions.Localization" />
   </ItemGroup>
 

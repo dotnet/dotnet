@@ -15,6 +15,7 @@
     <Reference Include="Microsoft.AspNetCore.OutputCaching" />
     <Reference Include="Microsoft.AspNetCore.OutputCaching.StackExchangeRedis" />
     <Reference Include="Microsoft.AspNetCore.TestHost" />
-      </ItemGroup>
+    <Reference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
 
 </Project>

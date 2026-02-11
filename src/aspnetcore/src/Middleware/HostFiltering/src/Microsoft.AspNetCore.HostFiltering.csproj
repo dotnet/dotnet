@@ -18,6 +18,7 @@
     <Reference Include="Microsoft.AspNetCore.Http.Abstractions" />
     <Reference Include="Microsoft.AspNetCore.Http.Extensions" />
     <Reference Include="Microsoft.AspNetCore.Http.Features" />
-        <InternalsVisibleTo Include="Microsoft.AspNetCore.HostFiltering.Tests" />
+    <Reference Include="Microsoft.Extensions.Options" />
+    <InternalsVisibleTo Include="Microsoft.AspNetCore.HostFiltering.Tests" />
   </ItemGroup>
 </Project>

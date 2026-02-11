@@ -12,7 +12,8 @@
     <Reference Include="Microsoft.AspNetCore.Http.Features" />
     <Reference Include="Microsoft.AspNetCore.StaticFiles" />
     <Reference Include="Microsoft.AspNetCore.WebSockets" />
-      </ItemGroup>
+    <Reference Include="Microsoft.Extensions.FileProviders.Physical" />
+  </ItemGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.AspNetCore.SpaServices.Extensions.Tests" />

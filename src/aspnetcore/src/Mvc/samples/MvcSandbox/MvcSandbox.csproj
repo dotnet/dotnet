@@ -24,7 +24,10 @@
     <Reference Include="Microsoft.AspNetCore.Razor.Runtime" />
     <Reference Include="Microsoft.AspNetCore.Server.Kestrel" />
     <Reference Include="Microsoft.AspNetCore.StaticFiles" />
-              </ItemGroup>
+    <Reference Include="Microsoft.Extensions.Logging.Console" />
+    <Reference Include="Microsoft.Extensions.Logging.Debug" />
+    <Reference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
 
   <!-- Work around https://github.com/dotnet/sdk/issues/23777. Reset ContentWithTargetPath items if not building. -->
   <Target Name="RemoveCshtmlFiles" BeforeTargets="GetCopyToPublishDirectoryItems" Condition=" '$(NoBuild)' == 'true' ">

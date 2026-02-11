@@ -28,7 +28,8 @@
     <Reference Include="Microsoft.AspNetCore.Hosting.Abstractions" />
     <Reference Include="Microsoft.AspNetCore.Connections.Abstractions" />
     <Reference Include="Microsoft.Extensions.ObjectPool" />
-      </ItemGroup>
+    <Reference Include="Microsoft.Extensions.Options" />
+  </ItemGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Server.Kestrel.Tests" />

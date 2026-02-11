@@ -32,7 +32,10 @@
   <ItemGroup>
     <Reference Include="Selenium.Support" />
     <Reference Include="Selenium.WebDriver" />
-              </ItemGroup>
+    <Reference Include="Microsoft.Extensions.Configuration" />
+    <Reference Include="Microsoft.Extensions.Configuration.Json" />
+    <Reference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
+  </ItemGroup>
 
   <ItemGroup>
     <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">

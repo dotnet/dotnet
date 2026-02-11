@@ -28,6 +28,8 @@
       Private="false"
       ReferenceOutputAssembly="false"
       SkipGetTargetFrameworkProperties="true" />
+
     <Reference Include="Microsoft.AspNetCore.Hosting" />
-      </ItemGroup>
+    <Reference Include="Microsoft.Extensions.Logging.Console" />
+  </ItemGroup>
 </Project>

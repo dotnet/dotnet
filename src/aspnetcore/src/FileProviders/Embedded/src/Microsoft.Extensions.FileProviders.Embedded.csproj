@@ -20,7 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-        <ProjectReference Include="..\..\Manifest.MSBuildTask\src\Microsoft.Extensions.FileProviders.Embedded.Manifest.Task.csproj"
+    <Reference Include="Microsoft.Extensions.FileProviders.Abstractions" />
+    <ProjectReference Include="..\..\Manifest.MSBuildTask\src\Microsoft.Extensions.FileProviders.Embedded.Manifest.Task.csproj"
       Private="false"
       ReferenceOutputAssembly="false" />
   </ItemGroup>

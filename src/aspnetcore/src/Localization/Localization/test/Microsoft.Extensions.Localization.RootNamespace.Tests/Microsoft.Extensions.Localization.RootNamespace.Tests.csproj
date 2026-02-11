@@ -13,7 +13,9 @@
   <ItemGroup>
     <Reference Include="Microsoft.Extensions.Localization.Abstractions" />
     <Reference Include="Microsoft.Extensions.Localization" />
-          </ItemGroup>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <Reference Include="Microsoft.Extensions.Options" />
+  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Update="ValuesController.resx">

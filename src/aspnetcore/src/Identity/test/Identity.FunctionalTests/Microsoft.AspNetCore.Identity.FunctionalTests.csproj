@@ -19,6 +19,7 @@
         RelativeFolder=""
         SkipBuild="true" />
     <ProjectReference Include="@(TestAssetProjectReference)" />
+
     <Reference Include="AngleSharp" />
     <Reference Include="Microsoft.AspNetCore.Antiforgery" />
     <Reference Include="Microsoft.AspNetCore.Authentication" />
@@ -81,6 +82,7 @@
     <Reference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     <Reference Include="Microsoft.Extensions.DependencyModel" />
     <Reference Include="Microsoft.Extensions.Diagnostics.Testing" />
+    <Reference Include="Microsoft.Extensions.Hosting" />
     <Reference Include="Microsoft.Extensions.Identity.Core" />
     <Reference Include="Microsoft.Extensions.Identity.Stores" />
     <Reference Include="Microsoft.Extensions.TimeProvider.Testing" />

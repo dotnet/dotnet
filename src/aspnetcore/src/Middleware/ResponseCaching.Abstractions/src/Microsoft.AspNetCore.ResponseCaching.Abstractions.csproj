@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-      </ItemGroup>
+    <Reference Include="Microsoft.Extensions.Primitives" />
+  </ItemGroup>
 
 </Project>

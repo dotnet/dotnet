@@ -27,7 +27,8 @@
     <Reference Include="Microsoft.AspNetCore.Razor" />
     <Reference Include="Microsoft.AspNetCore.Routing" />
     <Reference Include="Microsoft.AspNetCore.Routing.Abstractions" />
-      </ItemGroup>
+    <Reference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Update="TestApplication.staticwebassets.endpoints.json" CopyToOutputDirectory="Always" />

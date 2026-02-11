@@ -17,6 +17,7 @@
     <Reference Include="Microsoft.AspNetCore.Mvc.Localization" />
     <Reference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" />
     <ProjectReference Include="..\RazorPagesClassLibrary\RazorPagesClassLibrary.csproj" />
+
     <Reference Include="Microsoft.AspNetCore.Authentication.Cookies" />
     <Reference Include="Microsoft.AspNetCore.Authorization" />
     <Reference Include="Microsoft.AspNetCore.Authorization.Policy" />
@@ -46,6 +47,7 @@
     <Reference Include="Microsoft.AspNetCore.Localization.Routing" />
     <Reference Include="Microsoft.AspNetCore.Routing" />
     <Reference Include="Microsoft.AspNetCore.Routing.Abstractions" />
+    <Reference Include="Microsoft.Extensions.Hosting" />
     <Reference Include="Microsoft.AspNetCore.Server.IISIntegration" />
     <Reference Include="Microsoft.AspNetCore.Server.Kestrel" />
     <Reference Include="Microsoft.AspNetCore.Server.Kestrel.Core" />
