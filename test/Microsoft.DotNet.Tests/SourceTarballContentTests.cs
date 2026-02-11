@@ -50,7 +50,7 @@ public class SourceTarballContentTests
         Assert.True(File.Exists(sourceTarballPath), $"Source tarball not found: {sourceTarballPath}");
 
         (Process lsTreeProcess, string lsTreeStdOut, string lsTreeStdErr) = ExecuteHelper.ExecuteProcess(
-            "git", $"-c core.quotePath=false -C \"{repoRoot}\" ls-tree -r HEAD --name-only",
+            "git", $"-c core.quotePath=false -c safe.directory=* -C \"{repoRoot}\" ls-tree -r HEAD --name-only",
             OutputHelper,
             millisecondTimeout: 120000);
         Assert.True(lsTreeProcess.ExitCode == 0,
