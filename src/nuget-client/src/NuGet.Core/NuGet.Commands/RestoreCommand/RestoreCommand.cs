@@ -1868,7 +1868,7 @@ namespace NuGet.Commands
 
                 return (success, []);
             }
-            var shouldDoDuplicatesCheck = !DoesProjectToolsetSupportsDuplicateFrameworks(_request.Project);
+            var shouldDoDuplicatesCheck = !SupportsDuplicateFrameworks(_request.Project);
 
             if (shouldDoDuplicatesCheck)
             {
@@ -1983,21 +1983,12 @@ namespace NuGet.Commands
             {
                 return false;
             }
-            else
+
+            foreach (var tfi in project.TargetFrameworks)
             {
-                // If the SDK version is a prerelease, we need to ensure it's a prerelease version that can handle the aliased assets file.
-                if (project.RestoreSettings.SdkVersion?.IsPrerelease == true)
+                if (string.IsNullOrEmpty(tfi.TargetAlias))
                 {
-                    if (project.RestoreSettings.SdkVersion.Major == 11
-                        && project.RestoreSettings.SdkVersion.Minor == 0
-                        && project.RestoreSettings.SdkVersion.Patch == 100)
-                    {
-                        if (project.RestoreSettings.SdkVersion < Version_11_WithAliasSupport)
-                        {
-                            return false;
-                        }
-                    }
-                    return true;
+                    return false;
                 }
             }
 
