@@ -11,6 +11,9 @@
     <ProjectAssetsJsonArchiveFile>$(ArtifactsLogDir)all-project-assets-json-files.zip</ProjectAssetsJsonArchiveFile>
 
     <ResultingPrebuiltPackagesDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsLogDir)', 'prebuilt-packages'))</ResultingPrebuiltPackagesDir>
+
+    <!-- SBRP usage report is diagnostic-only and should not fail the build -->
+    <MSBuildWarningsNotAsErrors>$(MSBuildWarningsNotAsErrors);SBRP001</MSBuildWarningsNotAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
@@ -153,7 +156,8 @@
       <ProjectAssetsJsonFile Include="$(SrcDir)**/artifacts/**/project.assets.json" />
     </ItemGroup>
 
-    <WriteSbrpUsageReport SbrpRepoSrcPath="$(SbrpRepoSrcDir)"
+    <WriteSbrpUsageReport ContinueOnError="WarnAndContinue"
+                          SbrpRepoSrcPath="$(SbrpRepoSrcDir)"
                           SbrpPackagesPath="$(ArtifactsShippingPackagesDir)/source-build-reference-packages"
                           ProjectAssetsJsons="@(ProjectAssetsJsonFile)"
                           OutputPath="$(ArtifactsLogDir)" />
