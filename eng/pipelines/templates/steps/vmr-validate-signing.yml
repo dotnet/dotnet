@@ -41,7 +41,7 @@ steps:
   enabled: true
   inputs:
     patterns: |
-      **ShortStack*_Artifacts/**
+      **Shortstack*_Artifacts/**
       **Linux_*_Artifacts/**
       **OSX_*_Artifacts/**
       **Windows_*_Artifacts/**
