@@ -118,7 +118,7 @@ These components consume runtime packages AND properly reference Microsoft.NETCo
 
 ### Category 3: Components with No Runtime Package Usage
 
-The following 15 components do not consume Microsoft.NETCore.App runtime packages in significant ways, so targeting pack references are not needed:
+The following 14 components do not consume Microsoft.NETCore.App runtime packages in significant ways, so targeting pack references are not needed:
 
 1. **cecil** - IL manipulation library
 2. **command-line-api** - Command-line parsing library
@@ -134,7 +134,6 @@ The following 15 components do not consume Microsoft.NETCore.App runtime package
 12. **templating** - Templating engine
 13. **vstest** - Test platform
 14. **xdt** - XML Document Transform
-15. **scenario-tests** - Scenario testing infrastructure
 
 ## Key Patterns Identified
 

@@ -40,6 +40,8 @@ This directory contains the comprehensive analysis of dotnet/dotnet VMR componen
 - **14 components** do not use runtime packages - no targeting pack needed
 - **0 issues found** - all components properly configured
 
+**Total: 10 + 1 + 14 = 25 components**
+
 ## 📈 Component Status
 
 | Status | Count |

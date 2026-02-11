@@ -28,7 +28,7 @@ All components that consume runtime packages for compilation properly reference 
 - Targets stable .NET versions for VS compatibility
 - Status: ⚠️ This is intentional and correct
 
-## Components Not Using Runtime Packages (15)
+## Components Not Using Runtime Packages (14)
 
 cecil, command-line-api, deployment-tools, emsdk, fsharp, msbuild, razor, scenario-tests, source-build-reference-packages, sourcelink, symreader, templating, vstest, xdt
 
