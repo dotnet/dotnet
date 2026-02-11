@@ -409,13 +409,40 @@ namespace NuGet.Commands.FuncTest
             bananaTarget.Libraries.Should().Contain(e => e.Name!.Equals("Project3"));
         }
 
-        // P1 (banana) -> X
-        // P1 (apple) -> Y
-        [Fact]
-        public async Task RestoreCommand_WithAliasesOfSameFramework_And10_0_200_FailsWithNU1018()
+        [Theory]
+        [InlineData("10.0.200", "10.0.300")]
+        [InlineData("10.0.300", "10.0.300-preview.0.12345")]
+        [InlineData("11.0.100", "11.0.100-preview.2.26103")]
+        public async Task RestoreCommand_WithAliasesOfSameFramework_AndIncompatibleSDKAnalysisLevelAndSDKVersionCombinations_FailsWithNU1018(string sdkAnalysisLevel, string sdkVersion)
         {
             using var pathContext = new SimpleTestPathContext();
 
+            RestoreResult result = await RunSimpleAliasedRestoreWithSDKAnalysisLevelAndSDKVersion(pathContext, sdkAnalysisLevel, sdkVersion);
+
+            result.Success.Should().BeFalse();
+            result.LockFile.LogMessages.Should().HaveCount(1);
+            result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1018);
+        }
+
+        [Theory]
+        [InlineData("10.0.300", "10.0.300")]
+        [InlineData("10.0.300", "10.0.400")]
+        [InlineData("10.0.300", null)] // Null value means we let it be.
+        [InlineData("10.0.300", "10.0.300-preview.1.12345")] // This is a dummy value that'll need to be updated once we have a real one.
+        [InlineData("11.0.100", "11.0.100-preview.2.26104")]
+        [InlineData("11.0.100", "11.0.100")]
+        [InlineData("11.0.100", "11.0.101")]
+        public async Task RestoreCommand_WithAliasesOfSameFramework_AndValidSDKAnalysisLevelAndSDKVersionCombinations_Succeeds(string sdkAnalysisLevel, string sdkVersion)
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            RestoreResult result = await RunSimpleAliasedRestoreWithSDKAnalysisLevelAndSDKVersion(pathContext, sdkAnalysisLevel, sdkVersion);
+
+            result.Success.Should().BeTrue();
+        }
+
+        private static async Task<RestoreResult> RunSimpleAliasedRestoreWithSDKAnalysisLevelAndSDKVersion(SimpleTestPathContext pathContext, string sdkAnalysisLevel, string sdkVersion)
+        {
             // Setup packages
             var packageA = new SimpleTestPackageContext("packageA", "1.0.0")
             {
@@ -461,14 +488,12 @@ namespace NuGet.Commands.FuncTest
                 new SimpleTestPackageContext("x", "1.0.0"),
                 new SimpleTestPackageContext("y", "1.0.0"));
 
-            projectSpec.RestoreMetadata.SdkAnalysisLevel = NuGetVersion.Parse("10.0.200");
+            projectSpec.RestoreMetadata.SdkAnalysisLevel = NuGetVersion.Parse(sdkAnalysisLevel);
             projectSpec.RestoreMetadata.UsingMicrosoftNETSdk = true;
+            projectSpec.RestoreSettings.SdkVersion = sdkVersion != null ? NuGetVersion.Parse(sdkVersion) : null;
 
             // Act & Assert
-            var result = await RunRestoreAsync(pathContext, projectSpec);
-            result.Success.Should().BeFalse();
-            result.LockFile.LogMessages.Should().HaveCount(1);
-            result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1018);
+            return await RunRestoreAsync(pathContext, projectSpec);
         }
 
         internal static Task<RestoreResult> RunRestoreAsync(SimpleTestPathContext pathContext, params PackageSpec[] projects)
