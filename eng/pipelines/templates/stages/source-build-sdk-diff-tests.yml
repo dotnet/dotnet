@@ -14,7 +14,7 @@ stages:
   - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
     parameters:
       sbJobName: ${{ format('SB_{0}_Offline_MsftSdk', variables.centOSStreamName) }}
-      msftJobName: AzureLinux_x64_Cross
+      msftJobName: Linux
       sbTargetRid: ${{ variables.centOSStreamX64Rid }}
       msftTargetRid: ${{ variables.linuxX64Rid }}
       architecture: x64
@@ -24,7 +24,7 @@ stages:
   - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
     parameters:
       sbJobName: ${{ format('SB_{0}_Offline_MsftSdk', variables.almaLinuxName) }}
-      msftJobName: AzureLinux_x64_Cross
+      msftJobName: Linux
       sbTargetRid: ${{ variables.almaLinuxX64Rid }}
       msftTargetRid: ${{ variables.linuxX64Rid }}
       architecture: x64
@@ -33,7 +33,7 @@ stages:
   - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
     parameters:
       sbJobName: ${{ format('SB_{0}_Offline_MsftSdk', variables.alpineName) }}
-      msftJobName: AzureLinux_x64_Cross_Alpine
+      msftJobName: Linux_Alpine
       sbTargetRid: ${{ variables.alpineX64Rid }}
       msftTargetRid: ${{ variables.linuxMuslX64Rid }}
       architecture: x64
@@ -42,7 +42,7 @@ stages:
   - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
     parameters:
       sbJobName: ${{ format('SB_{0}_Offline_MsftSdk', variables.fedoraName) }}
-      msftJobName: AzureLinux_x64_Cross
+      msftJobName: Linux
       sbTargetRid: ${{ variables.fedoraX64Rid }}
       msftTargetRid: ${{ variables.linuxX64Rid }}
       architecture: x64
@@ -51,7 +51,7 @@ stages:
   - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
     parameters:
       sbJobName: ${{ format('SB_{0}_Offline_MsftSdk', variables.ubuntuName) }}
-      msftJobName: AzureLinux_x64_Cross
+      msftJobName: Linux
       sbTargetRid: ${{ variables.ubuntuX64Rid }}
       msftTargetRid: ${{ variables.linuxX64Rid }}
       architecture: x64
@@ -60,7 +60,7 @@ stages:
   - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
     parameters:
       sbJobName: ${{ format('SB_{0}Arm64_Offline_MsftSdk', variables.ubuntuName) }}
-      msftJobName: AzureLinux_x64_Cross
+      msftJobName: Linux
       sbTargetRid: ${{ variables.ubuntuArm64Rid }}
       msftTargetRid: ${{ variables.linuxArm64Rid }}
       architecture: arm64
