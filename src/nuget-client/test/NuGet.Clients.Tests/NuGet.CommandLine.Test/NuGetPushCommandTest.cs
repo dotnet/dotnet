@@ -2824,5 +2824,113 @@ $@"<configuration>
                 };
             }
         }
+
+        [Fact]
+        public void PushCommand_ApiKeyFromEnvironmentVariable()
+        {
+            // Test that the symbol API keys are read environment variables
+            using var packageDirectory = TestDirectory.Create();
+            using var server = new MockServer();
+            using var pathContext = new SimpleTestPathContext();
+
+            // Arrange
+            var packageFileName = Util.CreateTestPackage("testPackage1", "1.1.0", packageDirectory);
+            var symbolFileName = packageFileName.Replace(".nupkg", ".symbols.nupkg");
+            File.Copy(packageFileName, symbolFileName);
+
+            string capturedApiKey = null;
+            string capturedSymbolApiKey = null;
+
+            server.Get.Add("/push", r => "OK");
+            server.Put.Add("/push", r =>
+            {
+                capturedApiKey = r.Headers["X-NuGet-ApiKey"];
+                return HttpStatusCode.Created;
+            });
+
+            server.Get.Add("/symbols", r => "OK");
+            server.Put.Add("/symbols", r =>
+            {
+                capturedSymbolApiKey = r.Headers["X-NuGet-ApiKey"];
+                return HttpStatusCode.Created;
+            });
+            pathContext.Settings.AddSource("http-feed", $"{server.Uri}push", allowInsecureConnectionsValue: "true");
+            server.Start();
+
+            var pushUri = $"{server.Uri}push";
+            var pushSymbolsUri = $"{server.Uri}symbols";
+
+            var environmentVariables = new Dictionary<string, string>
+            {
+                { "NUGET_API_KEY", "EnvApiKey123" },
+                { "NUGET_SYMBOL_API_KEY", "EnvSymbolApiKey456" }
+            };
+
+            // Act
+            var result = CommandRunner.Run(
+                NuGetExePath,
+                pathContext.WorkingDirectory,
+                $"push {packageFileName} -Source {pushUri} -SymbolSource {pushSymbolsUri}",
+                environmentVariables: environmentVariables);
+
+            // Assert
+            Assert.Equal(0, result.ExitCode);
+            Assert.Equal("EnvApiKey123", capturedApiKey);
+            Assert.Equal("EnvSymbolApiKey456", capturedSymbolApiKey);
+        }
+
+        [Fact]
+        public void PushCommand_CommandLineApiKeyTakesPrecedenceOverEnvironmentVariable()
+        {
+            // Test that command line symbol API key takes precedence over environment variable
+            using var packageDirectory = TestDirectory.Create();
+            using var server = new MockServer();
+            using var pathContext = new SimpleTestPathContext();
+
+            // Arrange
+            var packageFileName = Util.CreateTestPackage("testPackage1", "1.1.0", packageDirectory);
+            var symbolFileName = packageFileName.Replace(".nupkg", ".symbols.nupkg");
+            File.Copy(packageFileName, symbolFileName);
+
+            string capturedApiKey = null;
+            string capturedSymbolApiKey = null;
+
+            server.Get.Add("/push", r => "OK");
+            server.Put.Add("/push", r =>
+            {
+                capturedApiKey = r.Headers["X-NuGet-ApiKey"];
+                return HttpStatusCode.Created;
+            });
+
+            server.Get.Add("/symbols", r => "OK");
+            server.Put.Add("/symbols", r =>
+            {
+                capturedSymbolApiKey = r.Headers["X-NuGet-ApiKey"];
+                return HttpStatusCode.Created;
+            });
+            pathContext.Settings.AddSource("http-feed", $"{server.Uri}push", allowInsecureConnectionsValue: "true");
+            server.Start();
+
+            var pushUri = $"{server.Uri}push";
+            var pushSymbolsUri = $"{server.Uri}symbols";
+
+            var environmentVariables = new Dictionary<string, string>
+            {
+                { "NUGET_API_KEY", "EnvApiKey123" },
+                { "NUGET_SYMBOL_API_KEY", "EnvSymbolApiKey456" }
+            };
+
+            // Act
+            var result = CommandRunner.Run(
+                NuGetExePath,
+                pathContext.WorkingDirectory,
+                $"push {packageFileName} -Source {pushUri} -SymbolSource {pushSymbolsUri} -ApiKey CommandLineKey -SymbolApiKey CommandLineSymbolKey",
+                environmentVariables: environmentVariables);
+
+            // Assert
+            Assert.Equal(0, result.ExitCode);
+            Assert.Equal("CommandLineKey", capturedApiKey);
+            Assert.Equal("CommandLineSymbolKey", capturedSymbolApiKey);
+        }
     }
 }

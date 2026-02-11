@@ -103,6 +103,31 @@ namespace NuGet.Commands.Test
             return spec;
         }
 
+        public static PackageSpec WithTestProjectReferenceByAlias(this PackageSpec parent, PackageSpec child, params string[] aliases)
+        {
+            return parent.WithTestProjectReferenceByAlias(child, privateAssets: LibraryIncludeFlagUtils.DefaultSuppressParent, aliases);
+        }
+
+        public static PackageSpec WithTestProjectReferenceByAlias(this PackageSpec parent, PackageSpec child, LibraryIncludeFlags privateAssets, params string[] aliases)
+        {
+            var spec = parent.Clone();
+
+            foreach (var framework in spec
+                .RestoreMetadata
+                .TargetFrameworks
+                .Where(e => aliases.Contains(e.TargetAlias)))
+            {
+                framework.ProjectReferences.Add(new ProjectRestoreReference()
+                {
+                    ProjectUniqueName = child.RestoreMetadata.ProjectUniqueName,
+                    ProjectPath = child.RestoreMetadata.ProjectPath,
+                    PrivateAssets = privateAssets,
+                });
+            }
+
+            return spec;
+        }
+
         /// <summary>
         /// Add fake PackageReference restore metadata.
         /// This resembles the .NET Core based projects (<see cref="ProjectRestoreSettings"/>.
@@ -121,7 +146,6 @@ namespace NuGet.Commands.Test
 
             updated.RestoreMetadata = new ProjectRestoreMetadata();
             updated.RestoreMetadata.CrossTargeting = updated.TargetFrameworks.Count > 1;
-            updated.RestoreMetadata.OriginalTargetFrameworks = updated.TargetFrameworks.Select(e => e.FrameworkName.GetShortFolderName()).ToList();
             updated.RestoreMetadata.OutputPath = projectDir;
             updated.RestoreMetadata.ProjectStyle = ProjectStyle.PackageReference;
             updated.RestoreMetadata.ProjectName = spec.Name;
@@ -129,7 +153,6 @@ namespace NuGet.Commands.Test
             updated.RestoreMetadata.ProjectPath = projectPath;
             updated.RestoreMetadata.CentralPackageVersionsEnabled = spec.RestoreMetadata?.CentralPackageVersionsEnabled ?? false;
             updated.RestoreMetadata.CentralPackageTransitivePinningEnabled = spec.RestoreMetadata?.CentralPackageTransitivePinningEnabled ?? false;
-
             updated.RestoreMetadata.RestoreAuditProperties = new RestoreAuditProperties()
             {
                 EnableAudit = bool.FalseString
@@ -149,6 +172,9 @@ namespace NuGet.Commands.Test
             {
                 updated.RestoreMetadata.TargetFrameworks.Add(new ProjectRestoreMetadataFrameworkInfo(framework.FrameworkName) { TargetAlias = framework.TargetAlias });
             }
+
+            updated.RestoreMetadata.OriginalTargetFrameworks = updated.TargetFrameworks.Select(e => e.TargetAlias).ToList();
+
             return updated;
         }
 

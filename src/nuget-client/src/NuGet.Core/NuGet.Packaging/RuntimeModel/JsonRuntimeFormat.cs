@@ -208,7 +208,7 @@ namespace NuGet.RuntimeModel
                     var imports = property.Value as JArray;
                     foreach (var import in imports)
                     {
-                        inheritedRuntimes ??= new();
+                        inheritedRuntimes ??= new List<string>(imports.Count);
                         inheritedRuntimes.Add(import.Value<string>());
                     }
                 }

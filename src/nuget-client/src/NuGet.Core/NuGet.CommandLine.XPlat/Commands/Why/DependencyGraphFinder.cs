@@ -80,8 +80,8 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
                 if (useTargetAlias)
                 {
                     targetAlias = target.TargetAlias;
-                    directPackages = packageSpec.GetTargetFramework(targetAlias).Dependencies;
-                    directProjectReferences = packageSpec.GetRestoreMetadataFramework(targetAlias).ProjectReferences;
+                    directPackages = packageSpec.GetTargetFramework(targetAlias)!.Dependencies;
+                    directProjectReferences = packageSpec.GetRestoreMetadataFramework(targetAlias)!.ProjectReferences;
                 }
                 else
                 {

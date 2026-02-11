@@ -1168,7 +1168,7 @@ namespace NuGet.PackageManagement.UI
 
                 EmitSearchSelectionTelemetry(selectedItem);
 
-                await _detailModel.SetCurrentPackageAsync(selectedItem, _topPanel.Filter, () => _packageList.SelectedItem);
+                await _detailModel.SetCurrentPackageAsync(selectedItem, _topPanel.Filter, () => _packageList.SelectedItem, cancellationToken);
                 Model.UIController.SelectedPackageId = selectedItem.Id;
                 _detailModel.SetCurrentSelectionInfo(selectedIndex, recommendedCount, _recommendPackages, selectedItem.RecommenderVersion);
 
@@ -1331,7 +1331,7 @@ namespace NuGet.PackageManagement.UI
                     Model.Context.ServiceBroker,
                     Model.Context.Projects,
                     CancellationToken.None);
-                await _packageList.UpdatePackageStatusAsync(installedPackages.ToArray(), clearCache);
+                await _packageList.UpdatePackageStatusAsync(installedPackages.ToArray(), CancellationToken.None, clearCache);
 
                 await RefreshInstalledAndUpdatesTabsAsync();
             }

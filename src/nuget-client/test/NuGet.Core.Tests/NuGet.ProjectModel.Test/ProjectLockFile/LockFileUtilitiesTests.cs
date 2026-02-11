@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using FluentAssertions;
 using NuGet.Commands.Test;
 using NuGet.LibraryModel;
 using NuGet.Packaging.Core;
@@ -950,7 +951,7 @@ namespace NuGet.ProjectModel.Test.ProjectLockFile
 
             var actual = PackagesLockFileUtilities.IsLockFileValid(dgSpec, lockFile);
 
-            Assert.True(actual.IsValid);
+            actual.IsValid.Should().BeTrue(because: string.Join(Environment.NewLine, actual.InvalidReasons));
             Assert.Empty(actual.InvalidReasons);
         }
 

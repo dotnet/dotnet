@@ -23,6 +23,7 @@ using NuGet.ProjectModel;
 using NuGet.Protocol.Core.Types;
 using NuGet.Repositories;
 using NuGet.RuntimeModel;
+using NuGet.Shared;
 using NuGet.Versioning;
 
 namespace NuGet.Commands
@@ -153,12 +154,12 @@ namespace NuGet.Commands
             _request = request ?? throw new ArgumentNullException(nameof(request));
             _lockFileBuilderCache = request.LockFileBuilderCache;
 
-            // Validate the lock file version requested
-            if (_request.LockFileVersion < 3 || _request.LockFileVersion > LockFileFormat.Version)
+            // Validate the assets file version requested
+            if (_request.LockFileVersion < LockFileFormat.LegacyVersion || _request.LockFileVersion > LockFileFormat.Version)
             {
                 throw new ArgumentOutOfRangeException(
                     paramName: nameof(request),
-                    message: $"Lock file version {_request.LockFileVersion} is not supported.");
+                    message: $"Assets file version {_request.LockFileVersion} is not supported.");
             }
 
             var collectorLoggerHideWarningsAndErrors = request.Project.RestoreSettings.HideWarningsAndErrors
@@ -1462,8 +1463,10 @@ namespace NuGet.Commands
             IReadOnlyList<NuGetv3LocalRepository> localRepositories,
             RemoteWalkContext contextForProject)
         {
+            int lockFileVersion = DetermineLockFileVersion();
+
             // Build the lock file
-            var lockFile = new LockFileBuilder(_request.LockFileVersion, _logger, _includeFlagGraphs)
+            var lockFile = new LockFileBuilder(lockFileVersion, _logger, _includeFlagGraphs)
                     .CreateLockFile(
                         existingLockFile,
                         project,
@@ -1473,6 +1476,17 @@ namespace NuGet.Commands
                         _lockFileBuilderCache);
 
             return lockFile;
+
+            int DetermineLockFileVersion()
+            {
+                // We use the request provided version, unless we are using the Microsoft.NET.Sdk version that does not support reading of aliased assets files.
+                if (DoesProjectToolsetSupportsDuplicateFrameworks(_request.Project))
+                {
+                    return _request.LockFileVersion;
+                }
+
+                return LockFileFormat.LegacyVersion;
+            }
         }
 
         /// <summary>
@@ -1660,6 +1674,14 @@ namespace NuGet.Commands
             TelemetryActivity telemetryActivity)
         {
             bool success = true;
+
+            // Check for duplicate frameworks. The new dependency resolver supports aliasing, but the legacy one does not.
+            if (await ErrorForDuplicateFrameworks(_request, _logger))
+            {
+                success = false;
+                return (success, []);
+            }
+
             if (_request.Project.TargetFrameworks.Count == 0)
             {
                 var message = string.Format(CultureInfo.CurrentCulture, Strings.Log_ProjectDoesNotSpecifyTargetFrameworks, _request.Project.Name, _request.Project.FilePath);
@@ -1846,6 +1868,16 @@ namespace NuGet.Commands
 
                 return (success, []);
             }
+            var shouldDoDuplicatesCheck = !DoesProjectToolsetSupportsDuplicateFrameworks(_request.Project);
+
+            if (shouldDoDuplicatesCheck)
+            {
+                if (await ErrorForDuplicateFrameworks(_request, _logger))
+                {
+                    success = false;
+                    return (success, []);
+                }
+            }
 
             var projectRestoreRequest = new ProjectRestoreRequest(_request, _request.Project, _request.ExistingLockFile, _logger)
             {
@@ -1937,6 +1969,73 @@ namespace NuGet.Commands
             }
 
             return (success, graphs);
+        }
+
+        private static NuGetVersion Version_11_WithAliasSupport = NuGetVersion.Parse("11.0.100-preview.2.26104");
+        private static NuGetVersion Version_10_WithAliasSupport = NuGetVersion.Parse("10.0.300-preview.1");
+
+        private static bool DoesProjectToolsetSupportsDuplicateFrameworks(PackageSpec project)
+        {
+            if (project.RestoreMetadata.UsingMicrosoftNETSdk &&
+                    !SdkAnalysisLevelMinimums.IsEnabled(
+                    project.RestoreMetadata.SdkAnalysisLevel,
+                    project.RestoreMetadata.UsingMicrosoftNETSdk,
+                    SdkAnalysisLevelMinimums.V10_0_300))
+            {
+                return false;
+            }
+            else
+            {
+                // If the SDK version is a prerelease, we need to ensure it's a prerelease version that can handle the aliased assets file.
+                if (project.RestoreSettings.SdkVersion?.IsPrerelease == true)
+                {
+                    if (project.RestoreSettings.SdkVersion.Major == 10
+                        && project.RestoreSettings.SdkVersion.Minor == 0
+                        && project.RestoreSettings.SdkVersion.Patch == 300)
+                    {
+                        if (project.RestoreSettings.SdkVersion < Version_10_WithAliasSupport)
+                        {
+                            return false;
+                        }
+                    }
+                    if (project.RestoreSettings.SdkVersion.Major == 11
+                        && project.RestoreSettings.SdkVersion.Minor == 0
+                        && project.RestoreSettings.SdkVersion.Patch == 100)
+                    {
+                        if (project.RestoreSettings.SdkVersion < Version_11_WithAliasSupport)
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            }
+
+            return true;
+        }
+
+        // Check for duplicate frameworks and log an error if found.
+        // Returns true if duplicates exist, false otherwise.
+        private static async ValueTask<bool> ErrorForDuplicateFrameworks(RestoreRequest request, ILogger logger)
+        {
+            if (request.Project.TargetFrameworks.Count <= 1)
+            {
+                return false;
+            }
+
+            var seenFrameworks = new HashSet<NuGetFramework>(request.Project.TargetFrameworks.Count);
+            for (int i = 0; i < request.Project.TargetFrameworks.Count; i++)
+            {
+                if (!seenFrameworks.Add(request.Project.TargetFrameworks[i].FrameworkName))
+                {
+                    // Duplicate found - log error and return immediately
+                    var message = string.Format(CultureInfo.CurrentCulture, Strings.Log_AliasingSupportedInNewDependencyResolver, request.Project.Name, SdkAnalysisLevelMinimums.V10_0_300);
+                    await logger.LogAsync(RestoreLogMessage.CreateError(NuGetLogCode.NU1018, message));
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         internal static List<ExternalProjectReference> GetProjectReferences(RestoreRequest request)

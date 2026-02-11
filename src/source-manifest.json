@@ -13,10 +13,10 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 300625,
+      "barId": 301012,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "1f14a9345946513cd25dd4e99f441d9c2f54c0cc"
+      "commitSha": "63f37346bf8295c24e6f782250ca55b1881569b8"
     },
     {
       "barId": 296892,
@@ -25,10 +25,10 @@
       "commitSha": "6ef3f7b7870b0cdecd9773d4c7b3c58f206f554b"
     },
     {
-      "barId": 299370,
+      "barId": 301091,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "1a85f194c361db121c217cbf72cd1aae84bead11"
+      "commitSha": "dba621cb12abbc049191519f3dc6ce1e2b63b14d"
     },
     {
       "barId": 297559,

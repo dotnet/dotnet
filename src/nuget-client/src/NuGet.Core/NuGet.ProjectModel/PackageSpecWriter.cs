@@ -6,9 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
 using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
@@ -36,6 +34,11 @@ namespace NuGet.ProjectModel
 
         internal static void Write(PackageSpec packageSpec, IObjectWriter writer, bool hashing, IEnvironmentVariableReader environmentVariableReader)
         {
+            Write(packageSpec, writer, hashing, environmentVariableReader, useLegacyWriter: false);
+        }
+
+        internal static void Write(PackageSpec packageSpec, IObjectWriter writer, bool hashing, IEnvironmentVariableReader environmentVariableReader, bool useLegacyWriter)
+        {
             if (packageSpec == null)
             {
                 throw new ArgumentNullException(nameof(packageSpec));
@@ -51,43 +54,11 @@ namespace NuGet.ProjectModel
                 SetValue(writer, "version", packageSpec.Version?.ToFullString());
             }
 
-            SetMSBuildMetadata(writer, packageSpec, environmentVariableReader);
+            SetMSBuildMetadata(writer, packageSpec, environmentVariableReader, useLegacyWriter);
 
-            SetFrameworks(writer, packageSpec.TargetFrameworks, hashing);
+            SetFrameworks(writer, packageSpec.TargetFrameworks, hashing, useLegacyWriter);
 
             JsonRuntimeFormat.WriteRuntimeGraph(writer, packageSpec.RuntimeGraph);
-        }
-
-        /// <summary>
-        /// Writes a PackageSpec to a file.
-        /// </summary>
-        /// <param name="packageSpec">A <c>PackageSpec</c> instance.</param>
-        /// <param name="filePath">A file path to write to.</param>
-        public static void WriteToFile(PackageSpec packageSpec, string filePath)
-        {
-            if (packageSpec == null)
-            {
-                throw new ArgumentNullException(nameof(packageSpec));
-            }
-
-            if (string.IsNullOrEmpty(filePath))
-            {
-                throw new ArgumentException(Strings.ArgumentNullOrEmpty, nameof(filePath));
-            }
-
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
-#if NET5_0_OR_GREATER
-            using (var textWriter = new StreamWriter(fileStream))
-#else
-            using (var textWriter = new NoAllocNewLineStreamWriter(fileStream))
-#endif
-            using (var jsonWriter = new JsonTextWriter(textWriter))
-            using (var writer = new JsonObjectWriter(jsonWriter))
-            {
-                jsonWriter.Formatting = Formatting.Indented;
-
-                Write(packageSpec, writer);
-            }
         }
 
         private static bool IsMetadataValid(ProjectRestoreMetadata msbuildMetadata)
@@ -110,7 +81,7 @@ namespace NuGet.ProjectModel
         /// <summary>
         /// This method sets the msbuild metadata that's important for restore. Ensures that frameworks regardless of which way they're stores in the metadata(full name or short tfm name) are written out the same.
         /// </summary>
-        private static void SetMSBuildMetadata(IObjectWriter writer, PackageSpec packageSpec, IEnvironmentVariableReader environmentVariableReader)
+        private static void SetMSBuildMetadata(IObjectWriter writer, PackageSpec packageSpec, IEnvironmentVariableReader environmentVariableReader, bool useTargetFrameworkAsKey)
         {
             var msbuildMetadata = packageSpec.RestoreMetadata;
 
@@ -159,7 +130,7 @@ namespace NuGet.ProjectModel
 
             WriteMetadataSources(writer, msbuildMetadata);
             WriteMetadataFiles(writer, msbuildMetadata);
-            WriteMetadataTargetFrameworks(writer, msbuildMetadata);
+            WriteMetadataTargetFrameworks(writer, msbuildMetadata, useTargetFrameworkAsKey);
             SetWarningProperties(writer, msbuildMetadata);
 
             WriteNuGetLockFileProperties(writer, msbuildMetadata);
@@ -244,7 +215,7 @@ namespace NuGet.ProjectModel
             writer.WriteObjectEnd();
         }
 
-        private static void WriteMetadataTargetFrameworks(IObjectWriter writer, ProjectRestoreMetadata msbuildMetadata)
+        private static void WriteMetadataTargetFrameworks(IObjectWriter writer, ProjectRestoreMetadata msbuildMetadata, bool useTargetFrameworkAsKey)
         {
             if (msbuildMetadata.TargetFrameworks?.Count > 0)
             {
@@ -252,18 +223,20 @@ namespace NuGet.ProjectModel
 
                 var frameworkNames = new HashSet<string>();
                 var frameworkSorter = NuGetFrameworkSorter.Instance;
-                foreach (var framework in msbuildMetadata.TargetFrameworks.OrderBy(c => c.FrameworkName, frameworkSorter))
+                foreach (var framework in msbuildMetadata.TargetFrameworks.OrderBy(c => c.TargetAlias, StringComparer.OrdinalIgnoreCase))
                 {
-                    var frameworkName = framework.FrameworkName.GetShortFolderName();
+                    string frameworkHeader = useTargetFrameworkAsKey || string.IsNullOrEmpty(framework.TargetAlias)
+                        ? framework.FrameworkName.GetShortFolderName()
+                        : framework.TargetAlias;
 
-                    if (!frameworkNames.Contains(frameworkName))
+                    if (!frameworkNames.Contains(frameworkHeader))
                     {
-                        frameworkNames.Add(frameworkName);
+                        frameworkNames.Add(frameworkHeader);
 
-                        writer.WriteObjectStart(frameworkName);
+                        writer.WriteObjectStart(frameworkHeader);
 
+                        SetValue(writer, "framework", framework.FrameworkName.GetShortFolderName());
                         SetValueIfNotNull(writer, "targetAlias", framework.TargetAlias);
-
                         writer.WriteObjectStart("projectReferences");
 
                         foreach (var project in framework.ProjectReferences.OrderBy(e => e.ProjectPath, PathUtility.GetStringComparerBasedOnOS()))
@@ -542,15 +515,20 @@ namespace NuGet.ProjectModel
             writer.WriteArrayEnd();
         }
 
-        private static void SetFrameworks(IObjectWriter writer, IList<TargetFrameworkInformation> frameworks, bool hashing)
+        private static void SetFrameworks(IObjectWriter writer, IList<TargetFrameworkInformation> frameworks, bool hashing, bool useTargetFrameworkAsKey)
         {
             if (frameworks.Count > 0)
             {
                 writer.WriteObjectStart("frameworks");
                 var frameworkSorter = NuGetFrameworkSorter.Instance;
-                foreach (var framework in frameworks.OrderBy(c => c.FrameworkName, frameworkSorter))
+                foreach (var framework in frameworks.OrderBy(c => c.TargetAlias, StringComparer.OrdinalIgnoreCase))
                 {
-                    writer.WriteObjectStart(framework.FrameworkName.GetShortFolderName());
+                    string frameworkHeader = useTargetFrameworkAsKey || string.IsNullOrEmpty(framework.TargetAlias)
+                        ? framework.FrameworkName.GetShortFolderName()
+                        : framework.TargetAlias;
+
+                    writer.WriteObjectStart(frameworkHeader);
+                    SetValue(writer, "framework", framework.FrameworkName.GetShortFolderName());
                     SetValueIfNotNull(writer, "targetAlias", framework.TargetAlias);
                     SetDependencies(writer, framework.Dependencies);
                     SetCentralDependencies(writer, framework.CentralPackageVersions.Count, framework.CentralPackageVersions.Values, hashing);
