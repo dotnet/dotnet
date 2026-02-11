@@ -1479,19 +1479,13 @@ namespace NuGet.Commands
 
             int DetermineLockFileVersion()
             {
-                int lockFileVersion = _request.LockFileVersion;
-
-                // We use the request provided version, unless we are using the Microsoft.NET.Sdk that does not support reading of aliased assets files.
-                if (_request.Project.RestoreMetadata.UsingMicrosoftNETSdk &&
-                    !SdkAnalysisLevelMinimums.IsEnabled(
-                    _request.Project.RestoreMetadata.SdkAnalysisLevel,
-                    _request.Project.RestoreMetadata.UsingMicrosoftNETSdk,
-                    SdkAnalysisLevelMinimums.V10_0_300))
+                // We use the request provided version, unless we are using the Microsoft.NET.Sdk version that does not support reading of aliased assets files.
+                if (DoesProjectToolsetSupportsDuplicateFrameworks(_request.Project))
                 {
-                    lockFileVersion = LockFileFormat.LegacyVersion;
+                    return _request.LockFileVersion;
                 }
 
-                return lockFileVersion;
+                return LockFileFormat.LegacyVersion;
             }
         }
 
@@ -1874,12 +1868,7 @@ namespace NuGet.Commands
 
                 return (success, []);
             }
-
-            bool shouldDoDuplicatesCheck = _request.Project.RestoreMetadata.UsingMicrosoftNETSdk &&
-                    !SdkAnalysisLevelMinimums.IsEnabled(
-                    _request.Project.RestoreMetadata.SdkAnalysisLevel,
-                    _request.Project.RestoreMetadata.UsingMicrosoftNETSdk,
-                    SdkAnalysisLevelMinimums.V10_0_300);
+            var shouldDoDuplicatesCheck = !DoesProjectToolsetSupportsDuplicateFrameworks(_request.Project);
 
             if (shouldDoDuplicatesCheck)
             {
@@ -1980,6 +1969,49 @@ namespace NuGet.Commands
             }
 
             return (success, graphs);
+        }
+
+        private static NuGetVersion Version_11_WithAliasSupport = NuGetVersion.Parse("11.0.100-preview.2.26104");
+        private static NuGetVersion Version_10_WithAliasSupport = NuGetVersion.Parse("10.0.300-preview.1");
+
+        private static bool DoesProjectToolsetSupportsDuplicateFrameworks(PackageSpec project)
+        {
+            if (project.RestoreMetadata.UsingMicrosoftNETSdk &&
+                    !SdkAnalysisLevelMinimums.IsEnabled(
+                    project.RestoreMetadata.SdkAnalysisLevel,
+                    project.RestoreMetadata.UsingMicrosoftNETSdk,
+                    SdkAnalysisLevelMinimums.V10_0_300))
+            {
+                return false;
+            }
+            else
+            {
+                // If the SDK version is a prerelease, we need to ensure it's a prerelease version that can handle the aliased assets file.
+                if (project.RestoreSettings.SdkVersion?.IsPrerelease == true)
+                {
+                    if (project.RestoreSettings.SdkVersion.Major == 10
+                        && project.RestoreSettings.SdkVersion.Minor == 0
+                        && project.RestoreSettings.SdkVersion.Patch == 300)
+                    {
+                        if (project.RestoreSettings.SdkVersion < Version_10_WithAliasSupport)
+                        {
+                            return false;
+                        }
+                    }
+                    if (project.RestoreSettings.SdkVersion.Major == 11
+                        && project.RestoreSettings.SdkVersion.Minor == 0
+                        && project.RestoreSettings.SdkVersion.Patch == 100)
+                    {
+                        if (project.RestoreSettings.SdkVersion < Version_11_WithAliasSupport)
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            }
+
+            return true;
         }
 
         // Check for duplicate frameworks and log an error if found.

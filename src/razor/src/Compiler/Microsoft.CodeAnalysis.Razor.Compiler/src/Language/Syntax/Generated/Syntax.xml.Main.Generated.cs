@@ -125,6 +125,9 @@ internal partial class SyntaxVisitor<TResult>
     /// <summary>Called when the visitor visits a RazorDirectiveSyntax node.</summary>
     public virtual TResult VisitRazorDirective(RazorDirectiveSyntax node) => DefaultVisit(node);
 
+    /// <summary>Called when the visitor visits a RazorUsingDirectiveSyntax node.</summary>
+    public virtual TResult VisitRazorUsingDirective(RazorUsingDirectiveSyntax node) => DefaultVisit(node);
+
     /// <summary>Called when the visitor visits a RazorDirectiveBodySyntax node.</summary>
     public virtual TResult VisitRazorDirectiveBody(RazorDirectiveBodySyntax node) => DefaultVisit(node);
 }
@@ -248,6 +251,9 @@ internal partial class SyntaxVisitor
     /// <summary>Called when the visitor visits a RazorDirectiveSyntax node.</summary>
     public virtual void VisitRazorDirective(RazorDirectiveSyntax node) => DefaultVisit(node);
 
+    /// <summary>Called when the visitor visits a RazorUsingDirectiveSyntax node.</summary>
+    public virtual void VisitRazorUsingDirective(RazorUsingDirectiveSyntax node) => DefaultVisit(node);
+
     /// <summary>Called when the visitor visits a RazorDirectiveBodySyntax node.</summary>
     public virtual void VisitRazorDirectiveBody(RazorDirectiveBodySyntax node) => DefaultVisit(node);
 }
@@ -369,6 +375,9 @@ internal partial class SyntaxRewriter : SyntaxVisitor<SyntaxNode>
         => node.Update((CSharpCodeBlockSyntax)Visit(node.CSharpCode));
 
     public override SyntaxNode VisitRazorDirective(RazorDirectiveSyntax node)
+        => node.Update((CSharpTransitionSyntax)Visit(node.Transition), (CSharpSyntaxNode)Visit(node.Body), node.DirectiveDescriptor);
+
+    public override SyntaxNode VisitRazorUsingDirective(RazorUsingDirectiveSyntax node)
         => node.Update((CSharpTransitionSyntax)Visit(node.Transition), (CSharpSyntaxNode)Visit(node.Body), node.DirectiveDescriptor);
 
     public override SyntaxNode VisitRazorDirectiveBody(RazorDirectiveBodySyntax node)
@@ -806,6 +815,18 @@ internal static partial class SyntaxFactory
     /// <summary>Creates a new RazorDirectiveSyntax instance.</summary>
     public static RazorDirectiveSyntax RazorDirective(CSharpTransitionSyntax transition, CSharpSyntaxNode body)
         => SyntaxFactory.RazorDirective(transition, body, default(DirectiveDescriptor));
+
+    /// <summary>Creates a new RazorUsingDirectiveSyntax instance.</summary>
+    public static RazorUsingDirectiveSyntax RazorUsingDirective(CSharpTransitionSyntax transition, CSharpSyntaxNode body, DirectiveDescriptor directiveDescriptor)
+    {
+        ArgHelper.ThrowIfNull(transition);
+        ArgHelper.ThrowIfNull(body);
+        return (RazorUsingDirectiveSyntax)InternalSyntax.SyntaxFactory.RazorUsingDirective(transition == null ? null : (InternalSyntax.CSharpTransitionSyntax)transition.Green, body == null ? null : (InternalSyntax.CSharpSyntaxNode)body.Green, directiveDescriptor).CreateRed();
+    }
+
+    /// <summary>Creates a new RazorUsingDirectiveSyntax instance.</summary>
+    public static RazorUsingDirectiveSyntax RazorUsingDirective(CSharpTransitionSyntax transition, CSharpSyntaxNode body)
+        => SyntaxFactory.RazorUsingDirective(transition, body, default(DirectiveDescriptor));
 
     /// <summary>Creates a new RazorDirectiveBodySyntax instance.</summary>
     public static RazorDirectiveBodySyntax RazorDirectiveBody(RazorSyntaxNode keyword, CSharpCodeBlockSyntax csharpCode)

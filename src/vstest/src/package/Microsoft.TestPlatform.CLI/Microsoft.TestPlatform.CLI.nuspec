@@ -45,6 +45,8 @@
     <file src="$TesthostRuntimeconfig$\testhost-7.0.runtimeconfig.json" target="contentFiles\any\net10.0" />
     <file src="$TesthostRuntimeconfig$\testhost-8.0.runtimeconfig.json" target="contentFiles\any\net10.0" />
     <file src="$TesthostRuntimeconfig$\testhost-9.0.runtimeconfig.json" target="contentFiles\any\net10.0" />
+    <file src="$TesthostRuntimeconfig$\testhost-10.0.runtimeconfig.json" target="contentFiles\any\net10.0" />
+    <file src="$TesthostRuntimeconfig$\testhost-11.0.runtimeconfig.json" target="contentFiles\any\net10.0" />
     <file src="$TesthostRuntimeconfig$\testhost-latest.runtimeconfig.json" target="contentFiles\any\net10.0" />
     <file src="net10.0\testhost.dll" target="contentFiles\any\net10.0" />
     <file src="net10.0\testhost.deps.json" target="contentFiles\any\net10.0" />

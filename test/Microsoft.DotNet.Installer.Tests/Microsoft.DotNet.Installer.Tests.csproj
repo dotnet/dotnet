@@ -69,7 +69,7 @@
         <Value>$(MicrosoftNETCoreAppRefVersion)</Value>
       </RuntimeHostConfigurationOption>
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).TargetProductVersion">
-        <Value>$(MajorVersion).$(MinorVersion)</Value>
+        <Value>$(VersionMajor).$(VersionMinor)</Value>
       </RuntimeHostConfigurationOption>
     </ItemGroup>
   </Target>

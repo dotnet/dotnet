@@ -21,7 +21,6 @@ using NuGet.Versioning;
 using NuGet.VisualStudio;
 using Test.Utility;
 using Xunit;
-using static NuGet.Frameworks.FrameworkConstants;
 
 namespace NuGet.PackageManagement.Test
 {
@@ -84,9 +83,9 @@ namespace NuGet.PackageManagement.Test
             originalAction.NuGetProjectActionType.Should().Be(NuGetProjectActionType.Install);
             installationContext.Should().NotBeNull();
             installationContext.UnsuccessfulFrameworks.Should().HaveCount(1);
-            installationContext.UnsuccessfulFrameworks.Should().Contain(CommonFrameworks.Net50);
+            installationContext.UnsuccessfulFrameworks.Should().Contain("net5.0");
             installationContext.SuccessfulFrameworks.Should().HaveCount(1);
-            installationContext.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net472);
+            installationContext.SuccessfulFrameworks.Should().Contain("net472");
             installationContext.AreAllPackagesConditional.Should().BeFalse();
 
             var assetsFile = buildIntegratedAction.RestoreResult.LockFile;
@@ -161,9 +160,9 @@ namespace NuGet.PackageManagement.Test
             originalAction.NuGetProjectActionType.Should().Be(NuGetProjectActionType.Install);
             installationContext.Should().NotBeNull();
             installationContext.UnsuccessfulFrameworks.Should().HaveCount(1);
-            installationContext.UnsuccessfulFrameworks.Should().Contain(CommonFrameworks.Net50);
+            installationContext.UnsuccessfulFrameworks.Should().Contain("net5.0");
             installationContext.SuccessfulFrameworks.Should().HaveCount(1);
-            installationContext.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net472);
+            installationContext.SuccessfulFrameworks.Should().Contain("net472");
             installationContext.AreAllPackagesConditional.Should().BeFalse();
 
             var assetsFile = buildIntegratedAction.RestoreResult.LockFile;
@@ -240,8 +239,8 @@ namespace NuGet.PackageManagement.Test
             installationContext.Should().NotBeNull();
             installationContext.UnsuccessfulFrameworks.Should().HaveCount(0);
             installationContext.SuccessfulFrameworks.Should().HaveCount(2);
-            installationContext.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net472);
-            installationContext.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net50);
+            installationContext.SuccessfulFrameworks.Should().Contain("net472");
+            installationContext.SuccessfulFrameworks.Should().Contain("net5.0");
             installationContext.AreAllPackagesConditional.Should().BeFalse();
 
             var assetsFile = buildIntegratedAction.RestoreResult.LockFile;
@@ -327,8 +326,8 @@ namespace NuGet.PackageManagement.Test
             installationContextA.Should().NotBeNull();
             installationContextA.UnsuccessfulFrameworks.Should().HaveCount(1);
             installationContextA.SuccessfulFrameworks.Should().HaveCount(1);
-            installationContextA.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net472);
-            installationContextA.UnsuccessfulFrameworks.Should().Contain(CommonFrameworks.Net50);
+            installationContextA.SuccessfulFrameworks.Should().Contain("net472");
+            installationContextA.UnsuccessfulFrameworks.Should().Contain("net5.0");
             installationContextA.AreAllPackagesConditional.Should().BeFalse();
 
             (var originalActionB, var installationContextB) = buildIntegratedAction.ActionAndContextList[1];
@@ -337,8 +336,8 @@ namespace NuGet.PackageManagement.Test
             installationContextB.Should().NotBeNull();
             installationContextB.UnsuccessfulFrameworks.Should().HaveCount(1);
             installationContextB.SuccessfulFrameworks.Should().HaveCount(1);
-            installationContextB.UnsuccessfulFrameworks.Should().Contain(CommonFrameworks.Net472);
-            installationContextB.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net50);
+            installationContextB.UnsuccessfulFrameworks.Should().Contain("net472");
+            installationContextB.SuccessfulFrameworks.Should().Contain("net5.0");
             installationContextB.AreAllPackagesConditional.Should().BeFalse();
 
             var assetsFile = buildIntegratedAction.RestoreResult.LockFile;
@@ -423,8 +422,8 @@ namespace NuGet.PackageManagement.Test
             installationContext.Should().NotBeNull();
             installationContext.UnsuccessfulFrameworks.Should().HaveCount(0);
             installationContext.SuccessfulFrameworks.Should().HaveCount(2);
-            installationContext.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net472);
-            installationContext.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net50);
+            installationContext.SuccessfulFrameworks.Should().Contain("net472");
+            installationContext.SuccessfulFrameworks.Should().Contain("net5.0");
             installationContext.AreAllPackagesConditional.Should().BeTrue();
 
             var assetsFile = buildIntegratedAction.RestoreResult.LockFile;
@@ -504,8 +503,8 @@ namespace NuGet.PackageManagement.Test
             installationContextA100.Should().NotBeNull();
             installationContextA100.UnsuccessfulFrameworks.Should().HaveCount(0);
             installationContextA100.SuccessfulFrameworks.Should().HaveCount(2);
-            installationContextA100.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net472);
-            installationContextA100.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net50);
+            installationContextA100.SuccessfulFrameworks.Should().Contain("net472");
+            installationContextA100.SuccessfulFrameworks.Should().Contain("net5.0");
             installationContextA100.AreAllPackagesConditional.Should().BeTrue();
 
             var assetsFile = buildIntegratedAction.RestoreResult.LockFile;
@@ -580,8 +579,8 @@ namespace NuGet.PackageManagement.Test
             installationContextA.Should().NotBeNull();
             installationContextA.UnsuccessfulFrameworks.Should().HaveCount(1);
             installationContextA.SuccessfulFrameworks.Should().HaveCount(1);
-            installationContextA.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net472);
-            installationContextA.UnsuccessfulFrameworks.Should().Contain(CommonFrameworks.Net50);
+            installationContextA.SuccessfulFrameworks.Should().Contain("net472");
+            installationContextA.UnsuccessfulFrameworks.Should().Contain("net5.0");
             installationContextA.AreAllPackagesConditional.Should().BeFalse();
 
             var assetsFile = buildIntegratedAction.RestoreResult.LockFile;
@@ -594,6 +593,338 @@ namespace NuGet.PackageManagement.Test
             net50Target.Libraries.Should().HaveCount(1);
             net50Target.Libraries[0].Name.Should().Be(b100.Id);
             net50Target.Libraries[0].Version.Should().Be(b100.Version);
+        }
+
+        [Fact]
+        public async Task PreviewInstallPackageAsync_WithAliasedFrameworks_InstallsPackageInBothFrameworks()
+        {
+            // Arrange
+            using SimpleTestPathContext pathContext = new();
+            using var solutionManager = new TestVSSolutionManager(pathContext);
+            SourceRepositoryProvider sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new PackageSource(pathContext.PackageSource));
+            var settings = Settings.LoadDefaultSettings(solutionManager.SolutionDirectory);
+            var nuGetPackageManager = new NuGetPackageManager(sourceRepositoryProvider, settings, solutionManager, new TestDeleteOnRestartManager());
+
+            string referenceSpec = @"
+                {
+                    ""frameworks"": {
+                        ""banana"": {
+                            ""targetAlias"": ""banana"",
+                            ""framework"": ""net10.0"",
+                            ""dependencies"": {
+                            }
+                        },
+                        ""apple"": {
+                            ""targetAlias"": ""apple"",
+                            ""framework"": ""net10.0"",
+                            ""dependencies"": {
+                            }
+                        }
+                    }
+                }";
+            NuGetProject buildIntegratedProject = CreateBuildIntegratedProjectAndAddToSolutionManager(solutionManager, settings, referenceSpec);
+
+            var packageID = "A";
+            var packageContext = new SimpleTestPackageContext(packageID, "1.0.0");
+            packageContext.AddFile("lib/net10.0/a.dll");
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageContext);
+            var packageToInstall = packageContext.Identity;
+
+            // Main Act
+            var result = (await nuGetPackageManager.PreviewInstallPackageAsync(
+                buildIntegratedProject,
+                packageToInstall,
+                new ResolutionContext(DependencyBehavior.Lowest, false, false, VersionConstraints.None),
+                new TestNuGetProjectContext(),
+                sourceRepositoryProvider.GetRepositories(),
+                sourceRepositoryProvider.GetRepositories(),
+                CancellationToken.None)).ToList();
+
+            // Assert
+            result.Should().HaveCount(1);
+            result[0].NuGetProjectActionType.Should().Be(NuGetProjectActionType.Install);
+            result[0].PackageIdentity.Should().Be(packageToInstall);
+            var buildIntegratedAction = (BuildIntegratedProjectAction)result[0];
+            buildIntegratedAction.RestoreResult.Success.Should().BeTrue(because: string.Join(",", buildIntegratedAction.RestoreResult.LogMessages.Select(e => e.Message)));
+
+            buildIntegratedAction.ActionAndContextList.Should().HaveCount(1);
+            (var originalAction, var installationContext) = buildIntegratedAction.ActionAndContextList[0];
+            originalAction.PackageIdentity.Should().Be(packageToInstall);
+            originalAction.NuGetProjectActionType.Should().Be(NuGetProjectActionType.Install);
+            installationContext.Should().NotBeNull();
+            installationContext.UnsuccessfulFrameworks.Should().HaveCount(0);
+            installationContext.SuccessfulFrameworks.Should().HaveCount(2);
+            installationContext.SuccessfulFrameworks.Should().Contain("banana");
+            installationContext.SuccessfulFrameworks.Should().Contain("apple");
+            installationContext.AreAllPackagesConditional.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task PreviewUpdatePackagesAsync_WithAliasedFrameworks_UpdatesPackageInBothFrameworks()
+        {
+            // Arrange
+            using SimpleTestPathContext pathContext = new();
+            using var solutionManager = new TestVSSolutionManager(pathContext);
+            SourceRepositoryProvider sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new PackageSource(pathContext.PackageSource));
+            var settings = Settings.LoadDefaultSettings(solutionManager.SolutionDirectory);
+            var nuGetPackageManager = new NuGetPackageManager(sourceRepositoryProvider, settings, solutionManager, new TestDeleteOnRestartManager());
+
+            string referenceSpec = @"
+                {
+                    ""frameworks"": {
+                        ""banana"": {
+                            ""targetAlias"": ""banana"",
+                            ""framework"": ""net10.0"",
+                            ""dependencies"": {
+                                ""A"" : ""1.0.0""
+                            }
+                        },
+                        ""apple"": {
+                            ""targetAlias"": ""apple"",
+                            ""framework"": ""net10.0"",
+                            ""dependencies"": {
+                                ""A"" : ""1.0.0""
+                            }
+                        }
+                    }
+                }";
+            NuGetProject buildIntegratedProject = CreateBuildIntegratedProjectAndAddToSolutionManager(solutionManager, settings, referenceSpec);
+
+            var packageID = "A";
+            var before = new PackageIdentity(packageID, new NuGetVersion(1, 0, 0));
+            var after = new PackageIdentity(packageID, new NuGetVersion(2, 0, 0));
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, before, after);
+
+            // Main Act
+            var result = (await nuGetPackageManager.PreviewUpdatePackagesAsync(
+                packageID,
+                new List<NuGetProject> { buildIntegratedProject },
+                new ResolutionContext(DependencyBehavior.Lowest, false, false, VersionConstraints.None),
+                new TestNuGetProjectContext(),
+                sourceRepositoryProvider.GetRepositories(),
+                sourceRepositoryProvider.GetRepositories(),
+                CancellationToken.None)).ToList();
+
+            // Assert
+            result.Should().HaveCount(1);
+            result[0].NuGetProjectActionType.Should().Be(NuGetProjectActionType.Install);
+            result[0].PackageIdentity.Should().Be(after);
+            var buildIntegratedAction = (BuildIntegratedProjectAction)result[0];
+            buildIntegratedAction.RestoreResult.Success.Should().BeTrue(because: string.Join(",", buildIntegratedAction.RestoreResult.LogMessages.Select(e => e.Message)));
+
+            buildIntegratedAction.ActionAndContextList.Should().HaveCount(1);
+            (var originalAction, var installationContext) = buildIntegratedAction.ActionAndContextList[0];
+            originalAction.PackageIdentity.Should().Be(after);
+            originalAction.NuGetProjectActionType.Should().Be(NuGetProjectActionType.Install);
+            installationContext.Should().NotBeNull();
+            installationContext.UnsuccessfulFrameworks.Should().HaveCount(0);
+            installationContext.SuccessfulFrameworks.Should().HaveCount(2);
+            installationContext.SuccessfulFrameworks.Should().Contain("banana");
+            installationContext.SuccessfulFrameworks.Should().Contain("apple");
+            installationContext.AreAllPackagesConditional.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task PreviewUpdatePackagesAsync_WithAliasedFrameworks_UpdatesPackageInOneFrameworkOnly()
+        {
+            // Arrange
+            using SimpleTestPathContext pathContext = new();
+            using var solutionManager = new TestVSSolutionManager(pathContext);
+            SourceRepositoryProvider sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new PackageSource(pathContext.PackageSource));
+            var settings = Settings.LoadDefaultSettings(solutionManager.SolutionDirectory);
+            var nuGetPackageManager = new NuGetPackageManager(sourceRepositoryProvider, settings, solutionManager, new TestDeleteOnRestartManager());
+
+            string referenceSpec = @"
+                {
+                    ""frameworks"": {
+                        ""banana"": {
+                            ""targetAlias"": ""banana"",
+                            ""framework"": ""net10.0"",
+                            ""dependencies"": {
+                                ""A"" : ""1.0.0""
+                            }
+                        },
+                        ""apple"": {
+                            ""targetAlias"": ""apple"",
+                            ""framework"": ""net10.0"",
+                            ""dependencies"": {
+                            }
+                        }
+                    }
+                }";
+            NuGetProject buildIntegratedProject = CreateBuildIntegratedProjectAndAddToSolutionManager(solutionManager, settings, referenceSpec);
+
+            var packageID = "A";
+            var before = new PackageIdentity(packageID, new NuGetVersion(1, 0, 0));
+            var after = new PackageIdentity(packageID, new NuGetVersion(2, 0, 0));
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, before, after);
+
+            // Main Act
+            var result = (await nuGetPackageManager.PreviewUpdatePackagesAsync(
+                packageID,
+                new List<NuGetProject> { buildIntegratedProject },
+                new ResolutionContext(DependencyBehavior.Lowest, false, false, VersionConstraints.None),
+                new TestNuGetProjectContext(),
+                sourceRepositoryProvider.GetRepositories(),
+                sourceRepositoryProvider.GetRepositories(),
+                CancellationToken.None)).ToList();
+
+            // Assert
+            result.Should().HaveCount(1);
+            result[0].NuGetProjectActionType.Should().Be(NuGetProjectActionType.Install);
+            result[0].PackageIdentity.Should().Be(after);
+            var buildIntegratedAction = (BuildIntegratedProjectAction)result[0];
+            buildIntegratedAction.RestoreResult.Success.Should().BeTrue(because: string.Join(",", buildIntegratedAction.RestoreResult.LogMessages.Select(e => e.Message)));
+
+            buildIntegratedAction.ActionAndContextList.Should().HaveCount(1);
+            (var originalAction, var installationContext) = buildIntegratedAction.ActionAndContextList[0];
+            originalAction.PackageIdentity.Should().Be(after);
+            originalAction.NuGetProjectActionType.Should().Be(NuGetProjectActionType.Install);
+            installationContext.Should().NotBeNull();
+            installationContext.UnsuccessfulFrameworks.Should().HaveCount(1);
+            installationContext.UnsuccessfulFrameworks.Should().Contain("apple");
+            installationContext.SuccessfulFrameworks.Should().HaveCount(1);
+            installationContext.SuccessfulFrameworks.Should().Contain("banana");
+            installationContext.AreAllPackagesConditional.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task PreviewInstallPackageAsync_WithMixedAliasedFrameworks_InstallsNet10PackageInBothAliasedFrameworks()
+        {
+            // Arrange
+            using SimpleTestPathContext pathContext = new();
+            using var solutionManager = new TestVSSolutionManager(pathContext);
+            SourceRepositoryProvider sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new PackageSource(pathContext.PackageSource));
+            var settings = Settings.LoadDefaultSettings(solutionManager.SolutionDirectory);
+            var nuGetPackageManager = new NuGetPackageManager(sourceRepositoryProvider, settings, solutionManager, new TestDeleteOnRestartManager());
+
+            string referenceSpec = @"
+                {
+                    ""frameworks"": {
+                        ""apple"": {
+                            ""targetAlias"": ""apple"",
+                            ""framework"": ""net10.0"",
+                            ""dependencies"": {
+                            }
+                        },
+                        ""banana"": {
+                            ""targetAlias"": ""banana"",
+                            ""framework"": ""net10.0"",
+                            ""dependencies"": {
+                            }
+                        },
+                        ""net8.0"": {
+                            ""dependencies"": {
+                            }
+                        }
+                    }
+                }";
+            NuGetProject buildIntegratedProject = CreateBuildIntegratedProjectAndAddToSolutionManager(solutionManager, settings, referenceSpec);
+
+            var packageID = "A";
+            var packageContext = new SimpleTestPackageContext(packageID, "1.0.0");
+            packageContext.AddFile("lib/net10.0/a.dll");
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageContext);
+            var packageToInstall = packageContext.Identity;
+
+            // Main Act
+            var result = (await nuGetPackageManager.PreviewInstallPackageAsync(
+                buildIntegratedProject,
+                packageToInstall,
+                new ResolutionContext(DependencyBehavior.Lowest, false, false, VersionConstraints.None),
+                new TestNuGetProjectContext(),
+                sourceRepositoryProvider.GetRepositories(),
+                sourceRepositoryProvider.GetRepositories(),
+                CancellationToken.None)).ToList();
+
+            // Assert
+            result.Should().HaveCount(1);
+            result[0].NuGetProjectActionType.Should().Be(NuGetProjectActionType.Install);
+            result[0].PackageIdentity.Should().Be(packageToInstall);
+            var buildIntegratedAction = (BuildIntegratedProjectAction)result[0];
+            buildIntegratedAction.RestoreResult.Success.Should().BeTrue(because: string.Join(",", buildIntegratedAction.RestoreResult.LogMessages.Select(e => e.Message)));
+
+            buildIntegratedAction.ActionAndContextList.Should().HaveCount(1);
+            (var originalAction, var installationContext) = buildIntegratedAction.ActionAndContextList[0];
+            originalAction.PackageIdentity.Should().Be(packageToInstall);
+            originalAction.NuGetProjectActionType.Should().Be(NuGetProjectActionType.Install);
+            installationContext.Should().NotBeNull();
+            installationContext.UnsuccessfulFrameworks.Should().HaveCount(1);
+            installationContext.UnsuccessfulFrameworks.Should().Contain("net8.0");
+            installationContext.SuccessfulFrameworks.Should().HaveCount(2);
+            installationContext.SuccessfulFrameworks.Should().Contain("apple");
+            installationContext.SuccessfulFrameworks.Should().Contain("banana");
+            installationContext.AreAllPackagesConditional.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task PreviewUpdatePackagesAsync_WithMixedAliasedFrameworks_UpdatesPackageInTwoOfThreeFrameworks()
+        {
+            // Arrange
+            using SimpleTestPathContext pathContext = new();
+            using var solutionManager = new TestVSSolutionManager(pathContext);
+            SourceRepositoryProvider sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new PackageSource(pathContext.PackageSource));
+            var settings = Settings.LoadDefaultSettings(solutionManager.SolutionDirectory);
+            var nuGetPackageManager = new NuGetPackageManager(sourceRepositoryProvider, settings, solutionManager, new TestDeleteOnRestartManager());
+
+            string referenceSpec = @"
+                {
+                    ""frameworks"": {
+                        ""apple"": {
+                            ""targetAlias"": ""apple"",
+                            ""framework"": ""net10.0"",
+                            ""dependencies"": {
+                                ""A"" : ""1.0.0""
+                            }
+                        },
+                        ""banana"": {
+                            ""targetAlias"": ""banana"",
+                            ""framework"": ""net10.0"",
+                            ""dependencies"": {
+                                ""A"" : ""1.0.0""
+                            }
+                        },
+                        ""net8.0"": {
+                            ""dependencies"": {
+                            }
+                        }
+                    }
+                }";
+            NuGetProject buildIntegratedProject = CreateBuildIntegratedProjectAndAddToSolutionManager(solutionManager, settings, referenceSpec);
+
+            var packageID = "A";
+            var before = new PackageIdentity(packageID, new NuGetVersion(1, 0, 0));
+            var after = new PackageIdentity(packageID, new NuGetVersion(2, 0, 0));
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, before, after);
+
+            // Main Act
+            var result = (await nuGetPackageManager.PreviewUpdatePackagesAsync(
+                packageID,
+                new List<NuGetProject> { buildIntegratedProject },
+                new ResolutionContext(DependencyBehavior.Lowest, false, false, VersionConstraints.None),
+                new TestNuGetProjectContext(),
+                sourceRepositoryProvider.GetRepositories(),
+                sourceRepositoryProvider.GetRepositories(),
+                CancellationToken.None)).ToList();
+
+            // Assert
+            result.Should().HaveCount(1);
+            result[0].NuGetProjectActionType.Should().Be(NuGetProjectActionType.Install);
+            result[0].PackageIdentity.Should().Be(after);
+            var buildIntegratedAction = (BuildIntegratedProjectAction)result[0];
+            buildIntegratedAction.RestoreResult.Success.Should().BeTrue(because: string.Join(",", buildIntegratedAction.RestoreResult.LogMessages.Select(e => e.Message)));
+
+            buildIntegratedAction.ActionAndContextList.Should().HaveCount(1);
+            (var originalAction, var installationContext) = buildIntegratedAction.ActionAndContextList[0];
+            originalAction.PackageIdentity.Should().Be(after);
+            originalAction.NuGetProjectActionType.Should().Be(NuGetProjectActionType.Install);
+            installationContext.Should().NotBeNull();
+            installationContext.UnsuccessfulFrameworks.Should().HaveCount(1);
+            installationContext.UnsuccessfulFrameworks.Should().Contain("net8.0");
+            installationContext.SuccessfulFrameworks.Should().HaveCount(2);
+            installationContext.SuccessfulFrameworks.Should().Contain("apple");
+            installationContext.SuccessfulFrameworks.Should().Contain("banana");
+            installationContext.AreAllPackagesConditional.Should().BeFalse();
         }
 
         private static NuGetProject CreateBuildIntegratedProjectAndAddToSolutionManager(TestVSSolutionManager solutionManager, ISettings settings, string referenceSpec)

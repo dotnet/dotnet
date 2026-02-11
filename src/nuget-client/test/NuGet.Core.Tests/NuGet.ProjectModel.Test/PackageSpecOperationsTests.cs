@@ -70,12 +70,14 @@ namespace NuGet.ProjectModel.Test
                 new TargetFrameworkInformation
                 {
                     FrameworkName = FrameworkConstants.CommonFrameworks.Net45,
+                    TargetAlias = "net45",
                     Dependencies = [dependency]
 
                 },
                 new TargetFrameworkInformation
                 {
-                    FrameworkName = FrameworkConstants.CommonFrameworks.Net46
+                    FrameworkName = FrameworkConstants.CommonFrameworks.Net46,
+                    TargetAlias = "net46"
                 }
             });
             var identity = new PackageIdentity("NuGet.Versioning", new NuGetVersion("2.0.0"));
@@ -113,7 +115,8 @@ namespace NuGet.ProjectModel.Test
                         VersionRange = new VersionRange(new NuGetVersion("0.9.0"))
                     }
                 }],
-                FrameworkName = FrameworkConstants.CommonFrameworks.Net45
+                FrameworkName = FrameworkConstants.CommonFrameworks.Net45,
+                TargetAlias = "net45"
             };
             var frameworkB = new TargetFrameworkInformation
             {
@@ -125,7 +128,8 @@ namespace NuGet.ProjectModel.Test
                         VersionRange = new VersionRange(new NuGetVersion("0.8.0"))
                     }
                 }],
-                FrameworkName = FrameworkConstants.CommonFrameworks.NetStandard16
+                FrameworkName = FrameworkConstants.CommonFrameworks.NetStandard16,
+                TargetAlias = "netstandard1.6"
             };
             var spec = new PackageSpec(new[] { frameworkA, frameworkB });
             var identity = new PackageIdentity("NuGet.Versioning", new NuGetVersion("1.0.0"));
@@ -156,9 +160,11 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void AddOrUpdateDependency_ToSpecificFrameworks_UpdatesExistingDependencies(bool usePackageDependency)
+        [InlineData(true, false)]
+        [InlineData(false, false)]
+        [InlineData(true, true)]
+        [InlineData(false, true)]
+        public void AddOrUpdateDependency_ToSpecificFrameworks_UpdatesExistingDependencies(bool usePackageDependency, bool useAlias)
         {
             // Arrange
             var packageId = "NuGet.Versioning";
@@ -167,7 +173,8 @@ namespace NuGet.ProjectModel.Test
 
             var frameworkA = new TargetFrameworkInformation
             {
-                FrameworkName = FrameworkConstants.CommonFrameworks.Net45
+                FrameworkName = FrameworkConstants.CommonFrameworks.Net45,
+                TargetAlias = "net45"
             };
             var ld = new LibraryDependency()
             {
@@ -176,6 +183,7 @@ namespace NuGet.ProjectModel.Test
             var frameworkB = new TargetFrameworkInformation
             {
                 FrameworkName = FrameworkConstants.CommonFrameworks.NetStandard16,
+                TargetAlias = "netstandard1.6",
                 Dependencies = [ld]
 
             };
@@ -191,17 +199,37 @@ namespace NuGet.ProjectModel.Test
             if (usePackageDependency)
             {
                 var packageDependency = new PackageDependency(identity.Id, new VersionRange(identity.Version));
-                PackageSpecOperations.AddOrUpdateDependency(
-                      spec,
-                      packageDependency,
-                      new[] { frameworkB.FrameworkName });
+                if (useAlias)
+                {
+                    PackageSpecOperations.AddOrUpdateDependency(
+                          spec,
+                          packageDependency,
+                          new[] { frameworkB.TargetAlias });
+                }
+                else
+                {
+                    PackageSpecOperations.AddOrUpdateDependency(
+                          spec,
+                          packageDependency,
+                          new[] { frameworkB.FrameworkName });
+                }
             }
             else
             {
-                PackageSpecOperations.AddOrUpdateDependency(
-                    spec,
-                    identity,
-                    new[] { frameworkB.FrameworkName });
+                if (useAlias)
+                {
+                    PackageSpecOperations.AddOrUpdateDependency(
+                        spec,
+                        identity,
+                        new[] { frameworkB.TargetAlias });
+                }
+                else
+                {
+                    PackageSpecOperations.AddOrUpdateDependency(
+                        spec,
+                        identity,
+                        new[] { frameworkB.FrameworkName });
+                }
             }
 
 
@@ -216,9 +244,11 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void AddOrUpdateDependency_ToSpecificFrameworks_AddsNewDependency(bool usePackageDependency)
+        [InlineData(true, false)]
+        [InlineData(false, false)]
+        [InlineData(true, true)]
+        [InlineData(false, true)]
+        public void AddOrUpdateDependency_ToSpecificFrameworks_AddsNewDependency(bool usePackageDependency, bool useAlias)
         {
             // Arrange
             var packageId = "NuGet.Versioning";
@@ -227,7 +257,8 @@ namespace NuGet.ProjectModel.Test
 
             var frameworkA = new TargetFrameworkInformation
             {
-                FrameworkName = FrameworkConstants.CommonFrameworks.Net45
+                FrameworkName = FrameworkConstants.CommonFrameworks.Net45,
+                TargetAlias = "net45"
             };
             var ld = new LibraryDependency()
             {
@@ -236,6 +267,7 @@ namespace NuGet.ProjectModel.Test
             var frameworkB = new TargetFrameworkInformation
             {
                 FrameworkName = FrameworkConstants.CommonFrameworks.NetStandard16,
+                TargetAlias = "netstandard1.6",
                 Dependencies = [ld]
 
             };
@@ -251,17 +283,37 @@ namespace NuGet.ProjectModel.Test
             if (usePackageDependency)
             {
                 var packageDependency = new PackageDependency(identity.Id, new VersionRange(identity.Version));
-                PackageSpecOperations.AddOrUpdateDependency(
-                      spec,
-                      packageDependency,
-                      new[] { frameworkB.FrameworkName });
+                if (useAlias)
+                {
+                    PackageSpecOperations.AddOrUpdateDependency(
+                          spec,
+                          packageDependency,
+                          new[] { frameworkB.TargetAlias });
+                }
+                else
+                {
+                    PackageSpecOperations.AddOrUpdateDependency(
+                          spec,
+                          packageDependency,
+                          new[] { frameworkB.FrameworkName });
+                }
             }
             else
             {
-                PackageSpecOperations.AddOrUpdateDependency(
-                    spec,
-                    identity,
-                    new[] { frameworkB.FrameworkName });
+                if (useAlias)
+                {
+                    PackageSpecOperations.AddOrUpdateDependency(
+                        spec,
+                        identity,
+                        new[] { frameworkB.TargetAlias });
+                }
+                else
+                {
+                    PackageSpecOperations.AddOrUpdateDependency(
+                        spec,
+                        identity,
+                        new[] { frameworkB.FrameworkName });
+                }
             }
 
             // Assert
@@ -323,9 +375,11 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void AddOrUpdateDependency_WithCentralPackageManagementEnabled_UpdatesDependency(bool usePackageDependency)
+        [InlineData(true, false)]
+        [InlineData(false, false)]
+        [InlineData(true, true)]
+        [InlineData(false, true)]
+        public void AddOrUpdateDependency_WithCentralPackageManagementEnabled_UpdatesDependency(bool usePackageDependency, bool useAlias)
         {
             // Arrange
             var packageId = "NuGet.Versioning";
@@ -334,7 +388,8 @@ namespace NuGet.ProjectModel.Test
 
             var frameworkA = new TargetFrameworkInformation
             {
-                FrameworkName = FrameworkConstants.CommonFrameworks.Net45
+                FrameworkName = FrameworkConstants.CommonFrameworks.Net45,
+                TargetAlias = "net45"
             };
 
             var ld = new LibraryDependency
@@ -350,6 +405,7 @@ namespace NuGet.ProjectModel.Test
                     { ld.Name, new CentralPackageVersion(ld.Name, ld.LibraryRange.VersionRange) },
                 },
                 FrameworkName = FrameworkConstants.CommonFrameworks.NetStandard16,
+                TargetAlias = "netstandard1.6",
                 Dependencies = [ld],
             };
 
@@ -371,17 +427,37 @@ namespace NuGet.ProjectModel.Test
             if (usePackageDependency)
             {
                 var packageDependency = new PackageDependency(identity.Id, new VersionRange(identity.Version));
-                PackageSpecOperations.AddOrUpdateDependency(
-                      spec,
-                      packageDependency,
-                      new[] { frameworkB.FrameworkName });
+                if (useAlias)
+                {
+                    PackageSpecOperations.AddOrUpdateDependency(
+                          spec,
+                          packageDependency,
+                          new[] { frameworkB.TargetAlias });
+                }
+                else
+                {
+                    PackageSpecOperations.AddOrUpdateDependency(
+                          spec,
+                          packageDependency,
+                          new[] { frameworkB.FrameworkName });
+                }
             }
             else
             {
-                PackageSpecOperations.AddOrUpdateDependency(
-                    spec,
-                    identity,
-                    new[] { frameworkB.FrameworkName });
+                if (useAlias)
+                {
+                    PackageSpecOperations.AddOrUpdateDependency(
+                        spec,
+                        identity,
+                        new[] { frameworkB.TargetAlias });
+                }
+                else
+                {
+                    PackageSpecOperations.AddOrUpdateDependency(
+                        spec,
+                        identity,
+                        new[] { frameworkB.FrameworkName });
+                }
             }
 
             // Assert
@@ -410,7 +486,8 @@ namespace NuGet.ProjectModel.Test
                         VersionRange = new VersionRange(new NuGetVersion("0.9.0"))
                     }
                 }],
-                FrameworkName = FrameworkConstants.CommonFrameworks.Net45
+                FrameworkName = FrameworkConstants.CommonFrameworks.Net45,
+                TargetAlias = "net45"
             };
             var frameworkB = new TargetFrameworkInformation
             {
@@ -422,7 +499,8 @@ namespace NuGet.ProjectModel.Test
                         VersionRange = new VersionRange(new NuGetVersion("0.8.0"))
                     }
                 }],
-                FrameworkName = FrameworkConstants.CommonFrameworks.NetStandard16
+                FrameworkName = FrameworkConstants.CommonFrameworks.NetStandard16,
+                TargetAlias = "netstandard1.6"
             };
             var spec = new PackageSpec(new[] { frameworkA, frameworkB });
             var id = "NuGet.Versioning";
