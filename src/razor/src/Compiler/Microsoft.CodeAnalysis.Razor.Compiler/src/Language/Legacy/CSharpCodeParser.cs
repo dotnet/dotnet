@@ -2626,7 +2626,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
             Debug.Assert(directiveBuilder.Count == 0, "We should not have built any blocks so far.");
             var keywordTokens = OutputTokensAsStatementLiteral();
             var directiveBody = SyntaxFactory.RazorDirectiveBody(keywordTokens, null);
-            builder.Add(SyntaxFactory.RazorDirective(transition, directiveBody));
+            builder.Add(SyntaxFactory.RazorUsingDirective(transition, directiveBody));
 
             if (!Context.DesignTimeMode)
             {

@@ -665,7 +665,7 @@ internal sealed class CSharpOnTypeFormattingPass(
                 // itself that is mapped, the baseline indentation will be whatever happens to be the nearest C# mapping from outside the block
                 // which is not helpful. To solve this, we artificially introduce a mapping for the start of the section block, which points to
                 // the first C# mapping inside it.
-                if (((RazorDirectiveBodySyntax)containingDirective.Body).CSharpCode.Children is [.., MarkupBlockSyntax block, RazorMetaCodeSyntax /* close brace */])
+                if (containingDirective.DirectiveBody.CSharpCode.Children is [.., MarkupBlockSyntax block, RazorMetaCodeSyntax /* close brace */])
                 {
                     var blockSpan = block.Span;
                     foreach (var mapping in csharpDocument.SourceMappings)
@@ -1048,7 +1048,7 @@ internal sealed class CSharpOnTypeFormattingPass(
             // `@using |System;
             //
             return owner.AncestorsAndSelf().Any(
-                n => n is RazorDirectiveSyntax { HasDirectiveDescriptor: false });
+                n => n is RazorUsingDirectiveSyntax or RazorDirectiveSyntax { HasDirectiveDescriptor: false });
         }
 
         bool IsAttributeDirective()

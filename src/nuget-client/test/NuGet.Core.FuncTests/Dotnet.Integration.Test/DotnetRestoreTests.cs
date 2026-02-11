@@ -3413,7 +3413,7 @@ EndGlobal";
 
         // P1 (banana) -> X
         // P1 (apple) -> Y
-        [PlatformFact(Platform.Windows)]
+        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Client.Engineering/issues/3632")]
         public async Task DotnetRestore_WithAliasesOfTheSameFramework_UsesCorrectPackages()
         {
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
@@ -3433,7 +3433,6 @@ EndGlobal";
             {
                 var xml = XDocument.Load(stream);
                 ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
-                ProjectFileUtils.AddProperty(xml, "SDKAnalysisLevel", "10.0.300");
 
                 var attributes = new Dictionary<string, string>() { { "Version", "1.0.0" } };
 
@@ -3486,7 +3485,7 @@ EndGlobal";
 
         // P (apple)  -> Net472 package, with ATF, succeeds
         // P (banana) -> Net472 package, with ATF, fails
-        [PlatformFact(Platform.Windows)]
+        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Client.Engineering/issues/3632")]
         public async Task DotnetRestore_WithAliasesOfSameFramework_WithAssetTargetFallback_OneSucceedsOneFails()
         {
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
@@ -3507,7 +3506,6 @@ EndGlobal";
             {
                 var xml = XDocument.Load(stream);
                 ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
-                ProjectFileUtils.AddProperty(xml, "SDKAnalysisLevel", "10.0.300");
 
                 var attributes = new Dictionary<string, string>() { { "Version", "1.0.0" } };
 
@@ -3570,7 +3568,7 @@ EndGlobal";
 
         // P (apple)  -> Net472 package -> Transitive Net472 package, with ATF, succeeds
         // P (banana) -> Net472 package, with ATF, fails
-        [PlatformFact(Platform.Windows)]
+        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Client.Engineering/issues/3632")]
         public async Task DotnetRestore_WithAliasesOfSameFramework_WithAssetTargetFallback_TransitiveDependenciesFlowCorrectly()
         {
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
@@ -3597,7 +3595,6 @@ EndGlobal";
             {
                 var xml = XDocument.Load(stream);
                 ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
-                ProjectFileUtils.AddProperty(xml, "SDKAnalysisLevel", "10.0.300");
 
                 var attributes = new Dictionary<string, string>() { { "Version", "1.0.0" } };
 
@@ -3665,7 +3662,7 @@ EndGlobal";
 
         // P (apple) -> Project2 (apple) -> Package A
         // P (banana) -> Project2 (banana) -> Package B
-        [PlatformFact(Platform.Windows)]
+        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Client.Engineering/issues/3632")]
         public async Task DotnetRestore_WithAliasesOfSameFrameworkAndProjectReferences_TransitivePackageDependenciesFlowCorrectly()
         {
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
@@ -3687,7 +3684,6 @@ EndGlobal";
             {
                 var xml = XDocument.Load(stream);
                 ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
-                ProjectFileUtils.AddProperty(xml, "SDKAnalysisLevel", "10.0.300");
 
                 var attributesA = new Dictionary<string, string>() { { "Version", "1.0.0" } };
                 var attributesB = new Dictionary<string, string>() { { "Version", "1.0.0" } };
@@ -3737,7 +3733,6 @@ EndGlobal";
             {
                 var xml = XDocument.Load(stream);
                 ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
-                ProjectFileUtils.AddProperty(xml, "SDKAnalysisLevel", "10.0.300");
 
                 // Add project reference to project2
                 ProjectFileUtils.AddItem(
@@ -3787,7 +3782,7 @@ EndGlobal";
 
         // P (apple) -> Project2 
         // P (banana) -> Project3
-        [PlatformFact(Platform.Windows)]
+        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Client.Engineering/issues/3632")]
         public async Task DotnetRestore_WithAliasesOfSameFramework_MultipleProjectReferencesFlowCorrectly()
         {
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
@@ -3813,7 +3808,6 @@ EndGlobal";
             {
                 var xml = XDocument.Load(stream);
                 ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
-                ProjectFileUtils.AddProperty(xml, "SDKAnalysisLevel", "10.0.300");
 
                 // Add Project2 reference only for apple alias
                 ProjectFileUtils.AddItem(
@@ -3940,7 +3934,7 @@ EndGlobal";
 
         // P (apple) -> Project2 with APPLE constant -> Uses Project2Type
         // P (banana) -> Project3 with BANANA constant -> Uses Project3Type
-        [PlatformFact(Platform.Windows)]
+        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Client.Engineering/issues/3632")]
         public async Task DotnetRestore_WithAliasesOfSameFramework_MultipleProjectReferencesWithConditionalCompilation_BuildSucceeds()
         {
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
@@ -3990,7 +3984,6 @@ EndGlobal";
             {
                 var xml = XDocument.Load(stream);
                 ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
-                ProjectFileUtils.AddProperty(xml, "SDKAnalysisLevel", "10.0.300");
 
                 // Add Project2 reference only for apple alias
                 ProjectFileUtils.AddItem(

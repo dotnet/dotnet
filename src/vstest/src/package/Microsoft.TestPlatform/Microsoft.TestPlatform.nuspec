@@ -415,7 +415,9 @@
     <file src="$TesthostRuntimeconfig$\testhost-6.0.runtimeconfig.json" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-6.0.runtimeconfig.json" />
     <file src="$TesthostRuntimeconfig$\testhost-7.0.runtimeconfig.json" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-7.0.runtimeconfig.json" />
     <file src="$TesthostRuntimeconfig$\testhost-8.0.runtimeconfig.json" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-8.0.runtimeconfig.json" />
-    <file src="$TesthostRuntimeconfig$\testhost-8.0.runtimeconfig.json" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-9.0.runtimeconfig.json" />
+    <file src="$TesthostRuntimeconfig$\testhost-9.0.runtimeconfig.json" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-9.0.runtimeconfig.json" />
+    <file src="$TesthostRuntimeconfig$\testhost-10.0.runtimeconfig.json" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-10.0.runtimeconfig.json" />
+    <file src="$TesthostRuntimeconfig$\testhost-11.0.runtimeconfig.json" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-11.0.runtimeconfig.json" />
     <file src="$TesthostRuntimeconfig$\testhost-latest.runtimeconfig.json" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-latest.runtimeconfig.json" />
     <file src="net8.0\testhost.deps.json" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost.deps.json" />
     <file src="net8.0\testhost.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost.dll" />

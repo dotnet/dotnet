@@ -23,11 +23,16 @@ namespace NuGet.PackageManagement.Test.BuildIntegration
         private readonly PackageIdentity _packageIdentity = new("a", new NuGetVersion(1, 0, 0));
         private readonly LockFile _lockFile = Mock.Of<LockFile>();
         private readonly RestoreResultPair _restoreResultPair = new(null, null);
-        private readonly BuildIntegratedInstallationContext _installationContext = new(null, null, null);
+        private readonly BuildIntegratedInstallationContext _installationContext = new()
+        {
+            SuccessfulFrameworks = new List<string>(),
+            UnsuccessfulFrameworks = new List<string>(),
+            AreAllPackagesConditional = false,
+        };
+
         private readonly VersionRange _versionRange = new(new NuGetVersion(1, 0, 0));
         private readonly List<(NuGetProjectAction, BuildIntegratedInstallationContext)> _originalActionAndProjectContexts = new();
 
-#pragma warning disable CS0618 // Type or member is obsolete
         [Fact]
         public void Constructor_WithNullProjectIdentity_Throws()
         {
@@ -139,7 +144,6 @@ namespace NuGet.PackageManagement.Test.BuildIntegration
                 versionRange: _versionRange));
             exception.ParamName.Should().Be("installationContext");
         }
-#pragma warning restore CS0618 // Type or member is obsolete
 
         [Fact]
         public void Constructor_WithActionAndContextList_WithNullProjectIdentity_Throws()
@@ -250,11 +254,22 @@ namespace NuGet.PackageManagement.Test.BuildIntegration
         public void Constructor_WithActionAndContextList_SetsOriginalActionsAndInstallationContextToFirst()
         {
             var firstProjectAction = NuGetProjectAction.CreateInstallProjectAction(_packageIdentity, Mock.Of<SourceRepository>(), _nuGetProject);
-            var firstInstallationContext = new BuildIntegratedInstallationContext(null, null, null);
+            var firstInstallationContext = new BuildIntegratedInstallationContext()
+            {
+                SuccessfulFrameworks = [],
+                UnsuccessfulFrameworks = [],
+                AreAllPackagesConditional = false,
+            };
             var actionsAndContextsList = new List<(NuGetProjectAction, BuildIntegratedInstallationContext)>
             {
                 (firstProjectAction, firstInstallationContext),
-                (NuGetProjectAction.CreateUninstallProjectAction(_packageIdentity, _nuGetProject), new BuildIntegratedInstallationContext(null, null, null))
+                (NuGetProjectAction.CreateUninstallProjectAction(_packageIdentity, _nuGetProject), new BuildIntegratedInstallationContext()
+                    {
+                        SuccessfulFrameworks = [],
+                        UnsuccessfulFrameworks = [],
+                        AreAllPackagesConditional = false,
+                    }
+                )
             };
 
             var action = new BuildIntegratedProjectAction(
@@ -274,7 +289,6 @@ namespace NuGet.PackageManagement.Test.BuildIntegration
         public void Constructor_SetsOriginalActionsAndInstallationContextsList()
         {
             var firstProjectAction = NuGetProjectAction.CreateInstallProjectAction(_packageIdentity, Mock.Of<SourceRepository>(), _nuGetProject);
-#pragma warning disable CS0618 // Type or member is obsolete
             var action = new BuildIntegratedProjectAction(
                 project: _nuGetProject,
                 packageIdentity: _packageIdentity,
@@ -285,7 +299,6 @@ namespace NuGet.PackageManagement.Test.BuildIntegration
                 originalActions: new List<NuGetProjectAction>() { firstProjectAction },
                 installationContext: _installationContext,
                 versionRange: _versionRange);
-#pragma warning restore CS0618 // Type or member is obsolete
             action.ActionAndContextList.Should().HaveCount(1);
             action.ActionAndContextList[0].Item1.Should().Be(firstProjectAction);
             action.ActionAndContextList[0].Item2.Should().Be(_installationContext);
