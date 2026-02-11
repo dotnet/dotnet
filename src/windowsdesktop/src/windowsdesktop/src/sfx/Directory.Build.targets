@@ -36,7 +36,6 @@
     <FrameworkListFileClass Include="Microsoft.Win32.SystemEvents.dll" Profile="WindowsForms;WPF" />
     <FrameworkListFileClass Include="System.CodeDom.dll" Profile="WindowsForms;WPF" />
     <FrameworkListFileClass Include="System.Configuration.ConfigurationManager.dll" Profile="WindowsForms;WPF" />
-    <FrameworkListFileClass Include="System.Diagnostics.EventLog.dll" Profile="WindowsForms;WPF" />
     <FrameworkListFileClass Include="System.Diagnostics.PerformanceCounter.dll" Profile="WindowsForms;WPF" />
     <FrameworkListFileClass Include="System.DirectoryServices.dll" Profile="WindowsForms;WPF" />
     <FrameworkListFileClass Include="System.Formats.Nrbf.dll" Profile="WindowsForms;WPF" />
