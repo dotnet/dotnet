@@ -33,4 +33,7 @@ internal static partial class SyntaxFactory
 
     public static RazorDirectiveSyntax RazorDirective(CSharpTransitionSyntax transition, CSharpSyntaxNode body)
         => RazorDirective(transition, body, directiveDescriptor: null);
+
+    public static RazorUsingDirectiveSyntax RazorUsingDirective(CSharpTransitionSyntax transition, CSharpSyntaxNode body)
+        => RazorUsingDirective(transition, body, directiveDescriptor: null);
 }

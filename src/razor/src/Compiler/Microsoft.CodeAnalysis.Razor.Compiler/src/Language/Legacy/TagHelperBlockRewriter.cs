@@ -732,6 +732,12 @@ internal static class TagHelperBlockRewriter
             return node;
         }
 
+        public override SyntaxNode VisitRazorUsingDirective(RazorUsingDirectiveSyntax node)
+        {
+            // We don't support directives inside tag helper attributes. Don't rewrite anything inside a directive.
+            return node;
+        }
+
         public override SyntaxNode VisitRazorDirective(RazorDirectiveSyntax node)
         {
             // We don't support directives inside tag helper attributes. Don't rewrite anything inside a directive.
