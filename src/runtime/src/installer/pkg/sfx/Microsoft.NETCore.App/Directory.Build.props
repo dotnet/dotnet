@@ -309,6 +309,12 @@
  <ItemGroup>
     <!-- Exclude shims from the closure verification -->
     <ExcludeFromClosure Include="@(NetFxReference)" />
+
+    <!-- Pre-existing duplicate, extension methods so unlikely to cause issue -->
+    <IgnoredDuplicateType Include="Microsoft.Extensions.Logging.LoggingBuilderExtensions" />
+
+    <!-- This file is missing file version - no way to build x-plat https://github.com/dotnet/runtime/issues/99997 -->
+    <ExcludeFromValidateFileVersions Include="System.Diagnostics.EventLog.Messages" />
  </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
