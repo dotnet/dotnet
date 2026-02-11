@@ -98,4 +98,3 @@ steps:
     artifactName: SignCheck_${{ parameters.OS }}
     artifactType: Container
     parallel: true
-
