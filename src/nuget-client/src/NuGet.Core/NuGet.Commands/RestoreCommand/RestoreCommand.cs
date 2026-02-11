@@ -1989,15 +1989,6 @@ namespace NuGet.Commands
                 // If the SDK version is a prerelease, we need to ensure it's a prerelease version that can handle the aliased assets file.
                 if (project.RestoreSettings.SdkVersion?.IsPrerelease == true)
                 {
-                    if (project.RestoreSettings.SdkVersion.Major == 10
-                        && project.RestoreSettings.SdkVersion.Minor == 0
-                        && project.RestoreSettings.SdkVersion.Patch == 300)
-                    {
-                        if (project.RestoreSettings.SdkVersion < Version_10_WithAliasSupport)
-                        {
-                            return false;
-                        }
-                    }
                     if (project.RestoreSettings.SdkVersion.Major == 11
                         && project.RestoreSettings.SdkVersion.Minor == 0
                         && project.RestoreSettings.SdkVersion.Patch == 100)
