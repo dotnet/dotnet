@@ -44,6 +44,8 @@
     <file src="$TesthostRuntimeconfig$\testhost-7.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
     <file src="$TesthostRuntimeconfig$\testhost-8.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
     <file src="$TesthostRuntimeconfig$\testhost-9.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$TesthostRuntimeconfig$\testhost-10.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$TesthostRuntimeconfig$\testhost-11.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
     <file src="$TesthostRuntimeconfig$\testhost-latest.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
     <file src="$SourceBuildTfmCurrent$\testhost.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
     <file src="$SourceBuildTfmCurrent$\testhost.deps.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />

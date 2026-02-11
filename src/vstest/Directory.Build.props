@@ -108,7 +108,7 @@
       Library that is loaded by others and by us. We don't know where it will run (e.b. TranslationLayer),
       we need to support all frameworks from minimum, and also netstandard2.0.
     -->
-    <LibraryTargetFrameworks>$(NetFrameworkMinimum);netstandard2.0</LibraryTargetFrameworks>
+    <LibraryTargetFrameworks>$(NetFrameworkMinimum);$(NetCoreAppMinimum);netstandard2.0</LibraryTargetFrameworks>
   </PropertyGroup>
 
   <!-- Build & pack config -->
