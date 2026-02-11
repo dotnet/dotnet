@@ -2128,7 +2128,18 @@ internal sealed partial class CSharpImplicitExpressionBodySyntax : CSharpSyntaxN
     public CSharpImplicitExpressionBodySyntax AddCSharpCodeChildren(params RazorSyntaxNode[] items) => WithCSharpCode(this.CSharpCode.WithChildren(this.CSharpCode.Children.AddRange(items)));
 }
 
-internal sealed partial class RazorDirectiveSyntax : CSharpRazorBlockSyntax
+internal abstract partial class BaseRazorDirectiveSyntax : CSharpRazorBlockSyntax
+{
+    internal BaseRazorDirectiveSyntax(GreenNode green, SyntaxNode parent, int position)
+        : base(green, parent, position)
+    {
+    }
+
+    public new BaseRazorDirectiveSyntax WithTransition(CSharpTransitionSyntax transition) => (BaseRazorDirectiveSyntax)WithTransitionCore(transition);
+    public new BaseRazorDirectiveSyntax WithBody(CSharpSyntaxNode body) => (BaseRazorDirectiveSyntax)WithBodyCore(body);
+}
+
+internal sealed partial class RazorDirectiveSyntax : BaseRazorDirectiveSyntax
 {
     private CSharpTransitionSyntax _transition;
     private CSharpSyntaxNode _body;
@@ -2180,6 +2191,60 @@ internal sealed partial class RazorDirectiveSyntax : CSharpRazorBlockSyntax
     internal override CSharpRazorBlockSyntax WithBodyCore(CSharpSyntaxNode body) => WithBody(body);
     public new RazorDirectiveSyntax WithBody(CSharpSyntaxNode body) => Update(Transition, body, DirectiveDescriptor);
     public RazorDirectiveSyntax WithDirectiveDescriptor(DirectiveDescriptor directiveDescriptor) => Update(Transition, Body, directiveDescriptor);
+}
+
+internal sealed partial class RazorUsingDirectiveSyntax : BaseRazorDirectiveSyntax
+{
+    private CSharpTransitionSyntax _transition;
+    private CSharpSyntaxNode _body;
+
+    internal RazorUsingDirectiveSyntax(GreenNode green, SyntaxNode parent, int position)
+        : base(green, parent, position)
+    {
+    }
+
+    public override CSharpTransitionSyntax Transition  => GetRedAtZero(ref _transition);
+    public override CSharpSyntaxNode Body  => GetRed(ref _body, 1);
+    public DirectiveDescriptor DirectiveDescriptor => ((InternalSyntax.RazorUsingDirectiveSyntax)Green).DirectiveDescriptor;
+
+    internal override SyntaxNode GetNodeSlot(int index)
+        => index switch
+        {
+            0 => GetRedAtZero(ref _transition),
+            1 => GetRed(ref _body, 1),
+            _ => null
+        };
+
+    internal override SyntaxNode GetCachedSlot(int index)
+        => index switch
+        {
+            0 => this._transition,
+            1 => this._body,
+            _ => null
+        };
+
+    public override TResult Accept<TResult>(SyntaxVisitor<TResult> visitor) => visitor.VisitRazorUsingDirective(this);
+    public override void Accept(SyntaxVisitor visitor) => visitor.VisitRazorUsingDirective(this);
+
+    public RazorUsingDirectiveSyntax Update(CSharpTransitionSyntax transition, CSharpSyntaxNode body, DirectiveDescriptor directiveDescriptor)
+    {
+        if (transition != Transition || body != Body || directiveDescriptor != DirectiveDescriptor)
+        {
+            var newNode = SyntaxFactory.RazorUsingDirective(transition, body, directiveDescriptor);
+            var diagnostics = GetDiagnostics();
+            if (diagnostics != null && diagnostics.Length > 0)
+                newNode = newNode.WithDiagnostics(diagnostics);
+            return newNode;
+        }
+
+        return this;
+    }
+
+    internal override CSharpRazorBlockSyntax WithTransitionCore(CSharpTransitionSyntax transition) => WithTransition(transition);
+    public new RazorUsingDirectiveSyntax WithTransition(CSharpTransitionSyntax transition) => Update(transition, Body, DirectiveDescriptor);
+    internal override CSharpRazorBlockSyntax WithBodyCore(CSharpSyntaxNode body) => WithBody(body);
+    public new RazorUsingDirectiveSyntax WithBody(CSharpSyntaxNode body) => Update(Transition, body, DirectiveDescriptor);
+    public RazorUsingDirectiveSyntax WithDirectiveDescriptor(DirectiveDescriptor directiveDescriptor) => Update(Transition, Body, directiveDescriptor);
 }
 
 internal sealed partial class RazorDirectiveBodySyntax : CSharpSyntaxNode
