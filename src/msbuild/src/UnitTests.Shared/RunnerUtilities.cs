@@ -9,6 +9,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Internal;
 using Microsoft.Build.Shared;
 using Xunit.Abstractions;
+using Constants = Microsoft.Build.Framework.Constants;
 
 #nullable disable
 
@@ -38,7 +39,7 @@ namespace Microsoft.Build.UnitTests.Shared
         public static void ApplyDotnetHostPathEnvironmentVariable(TestEnvironment testEnvironment)
         {
             // Built msbuild.dll executed by dotnet.exe needs this environment variable for msbuild tasks such as RoslynCodeTaskFactory.
-            testEnvironment.SetEnvironmentVariable("DOTNET_HOST_PATH", s_dotnetExePath);
+            testEnvironment.SetEnvironmentVariable(Constants.DotnetHostPathEnvVarName, s_dotnetExePath);
         }
 #endif
 
@@ -57,14 +58,7 @@ namespace Microsoft.Build.UnitTests.Shared
         /// </summary>
         public static string ExecMSBuild(string pathToMsBuildExe, string msbuildParameters, out bool successfulExit, bool shellExecute = false, ITestOutputHelper outputHelper = null)
         {
-#if FEATURE_RUN_EXE_IN_TESTS
-            var pathToExecutable = pathToMsBuildExe;
-#else
-            var pathToExecutable = s_dotnetExePath;
-            msbuildParameters = FileUtilities.EnsureDoubleQuotes(pathToMsBuildExe) + " " + msbuildParameters;
-#endif
-
-            return RunProcessAndGetOutput(pathToExecutable, msbuildParameters, out successfulExit, shellExecute, outputHelper);
+            return RunProcessAndGetOutput(pathToMsBuildExe, msbuildParameters, out successfulExit, shellExecute, outputHelper);
         }
 
         public static string ExecBootstrapedMSBuild(
@@ -76,8 +70,7 @@ namespace Microsoft.Build.UnitTests.Shared
             int timeoutMilliseconds = 30_000)
         {
 #if NET
-            string pathToExecutable = EnvironmentProvider.GetDotnetExePathFromFolder(BootstrapMsBuildBinaryLocation);
-            msbuildParameters = Path.Combine(BootstrapMsBuildBinaryLocation, "sdk", BootstrapLocationAttribute.BootstrapSdkVersion, Constants.MSBuildAssemblyName) + " " + msbuildParameters;
+            string pathToExecutable = Path.Combine(BootstrapMsBuildBinaryLocation, "sdk", BootstrapLocationAttribute.BootstrapSdkVersion, Constants.MSBuildExecutableName);
 #else
             string pathToExecutable = Path.Combine(BootstrapMsBuildBinaryLocation, Constants.MSBuildExecutableName);
 #endif

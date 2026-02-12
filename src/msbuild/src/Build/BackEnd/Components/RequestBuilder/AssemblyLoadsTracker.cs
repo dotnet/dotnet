@@ -121,6 +121,16 @@ namespace Microsoft.Build.BackEnd.Components.RequestBuilder
                 return EmptyDisposable.Instance;
             }
 
+#if FEATURE_APPDOMAIN
+            // Cannot subscribe to AssemblyLoad on a non-default AppDomain from outside it,
+            // because AssemblyLoadEventArgs is not [Serializable] and the cross-domain
+            // remoting call will throw SerializationException.
+            if (appDomain is not null && !appDomain.IsDefaultAppDomain())
+            {
+                return EmptyDisposable.Instance;
+            }
+#endif
+
             var tracker = new AssemblyLoadsTracker(loggingContext, loggingService, context, initiatorType, appDomain ?? AppDomain.CurrentDomain);
 #if FEATURE_APPDOMAIN
             if (appDomain != null && !appDomain.IsDefaultAppDomain())

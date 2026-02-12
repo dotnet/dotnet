@@ -5,20 +5,12 @@
 
 using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace Microsoft.Build.Shared
 {
     internal static partial class EnvironmentUtilities
     {
-#if NET472_OR_GREATER || NETCOREAPP
-        public static bool Is64BitProcess => Marshal.SizeOf<IntPtr>() == 8;
-
-        public static bool Is64BitOperatingSystem =>
-            Environment.Is64BitOperatingSystem;
-#endif
-
 #if !NETCOREAPP
         private static volatile int s_processId;
         private static volatile string? s_processPath;
@@ -63,14 +55,14 @@ namespace Microsoft.Build.Shared
 #if NETCOREAPP
                 return Environment.ProcessPath;
 #else
-                // copied from Environment.ProcessPath
+                // copied from Environment.ProcessId
                 string? processPath = s_processPath;
                 if (processPath == null)
                 {
                     // The value is cached both as a performance optimization and to ensure that the API always returns
                     // the same path in a given process.
                     using Process currentProcess = Process.GetCurrentProcess();
-                    Interlocked.CompareExchange(ref s_processPath, currentProcess.MainModule.FileName ?? "", null);
+                    Interlocked.CompareExchange(ref s_processPath, currentProcess?.MainModule?.FileName ?? "", null);
                     processPath = s_processPath;
                     Debug.Assert(processPath != null);
                 }

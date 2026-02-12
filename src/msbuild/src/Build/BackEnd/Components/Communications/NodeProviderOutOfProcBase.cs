@@ -22,6 +22,7 @@ using System.Security.Principal;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Internal;
 using Microsoft.Build.Shared;
+using Constants = Microsoft.Build.Framework.Constants;
 
 #nullable disable
 
@@ -181,18 +182,23 @@ namespace Microsoft.Build.BackEnd
         }
 
         /// <summary>
-        /// Finds or creates a child processes which can act as a node.
+        /// Finds or creates child processes which can act as nodes using the provided launch data.
         /// </summary>
+        /// <param name="nodeLaunchData">The launch configuration containing executable path, arguments, and environment overrides.</param>
+        /// <param name="nextNodeId">The next node ID to use.</param>
+        /// <param name="factory">The packet factory for communication.</param>
+        /// <param name="createNode">Callback when a node is created.</param>
+        /// <param name="terminateNode">Callback when a node terminates.</param>
+        /// <param name="numberOfNodesToCreate">Number of nodes to create.</param>
         protected IList<NodeContext> GetNodes(
-            string msbuildLocation,
-            string commandLineArgs,
+            NodeLaunchData nodeLaunchData,
             int nextNodeId,
             INodePacketFactory factory,
-            Handshake hostHandshake,
             NodeContextCreatedDelegate createNode,
             NodeContextTerminateDelegate terminateNode,
             int numberOfNodesToCreate)
         {
+            string commandLineArgs = nodeLaunchData.CommandLineArgs;
 #if DEBUG
             if (Execution.BuildManager.WaitForDebugger)
             {
@@ -200,6 +206,7 @@ namespace Microsoft.Build.BackEnd
             }
 #endif
 
+            var msbuildLocation = nodeLaunchData.MSBuildLocation;
             if (String.IsNullOrEmpty(msbuildLocation))
             {
                 msbuildLocation = _componentHost.BuildParameters.NodeExeLocation;
@@ -216,7 +223,7 @@ namespace Microsoft.Build.BackEnd
                 }
             }
 
-            bool nodeReuseRequested = Handshake.IsHandshakeOptionEnabled(hostHandshake.HandshakeOptions, HandshakeOptions.NodeReuse);
+            bool nodeReuseRequested = Handshake.IsHandshakeOptionEnabled(nodeLaunchData.Handshake.HandshakeOptions, HandshakeOptions.NodeReuse);
             // Get all process of possible running node processes for reuse and put them into ConcurrentQueue.
             // Processes from this queue will be concurrently consumed by TryReusePossibleRunningNodes while
             //    trying to connect to them and reuse them. When queue is empty, no process to reuse left
@@ -264,7 +271,9 @@ namespace Microsoft.Build.BackEnd
             });
             if (!exceptions.IsEmpty)
             {
-                ErrorUtilities.ThrowInternalError("Cannot acquire required number of nodes.", new AggregateException(exceptions.ToArray()));
+                ErrorUtilities.ThrowInternalError(
+                    $"Cannot acquire required number of nodes. MSBuildLocation: '{msbuildLocation}', CommandLineArgs: '{commandLineArgs}', NumberOfNodesToCreate: {numberOfNodesToCreate}, NextNodeId: {nextNodeId}.",
+                    new AggregateException(exceptions.ToArray()));
             }
 
             return nodeContexts.ToList();
@@ -280,7 +289,7 @@ namespace Microsoft.Build.BackEnd
                     }
 
                     // Get the full context of this inspection so that we can always skip this process when we have the same taskhost context
-                    string nodeLookupKey = GetProcessesToIgnoreKey(hostHandshake, nodeToReuse.Id);
+                    string nodeLookupKey = GetProcessesToIgnoreKey(nodeLaunchData.Handshake, nodeToReuse.Id);
                     if (_processesToIgnore.ContainsKey(nodeLookupKey))
                     {
                         continue;
@@ -290,7 +299,7 @@ namespace Microsoft.Build.BackEnd
                     _processesToIgnore.TryAdd(nodeLookupKey, default);
 
                     // Attempt to connect to each process in turn.
-                    Stream nodeStream = TryConnectToProcess(nodeToReuse.Id, 0 /* poll, don't wait for connections */, hostHandshake, out HandshakeResult result);
+                    Stream nodeStream = TryConnectToProcess(nodeToReuse.Id, 0 /* poll, don't wait for connections */, nodeLaunchData.Handshake, out HandshakeResult result);
                     if (nodeStream != null)
                     {
                         // Connection successful, use this node.
@@ -342,16 +351,17 @@ namespace Microsoft.Build.BackEnd
 #endif
                     // Create the node process
                     INodeLauncher nodeLauncher = (INodeLauncher)_componentHost.GetComponent(BuildComponentType.NodeLauncher);
-                    Process msbuildProcess = nodeLauncher.Start(msbuildLocation, commandLineArgs, nodeId);
+                    NodeLaunchData launchData = new(msbuildLocation, commandLineArgs, nodeLaunchData.Handshake, nodeLaunchData.EnvironmentOverrides);
+                    Process msbuildProcess = nodeLauncher.Start(launchData, nodeId);
 
-                    _processesToIgnore.TryAdd(GetProcessesToIgnoreKey(hostHandshake, msbuildProcess.Id), default);
+                    _processesToIgnore.TryAdd(GetProcessesToIgnoreKey(nodeLaunchData.Handshake, msbuildProcess.Id), default);
 
                     // Note, when running under IMAGEFILEEXECUTIONOPTIONS registry key to debug, the process ID
                     // gotten back from CreateProcess is that of the debugger, which causes this to try to connect
                     // to the debugger process. Instead, use MSBUILDDEBUGONSTART=1
 
                     // Now try to connect to it.
-                    Stream nodeStream = TryConnectToProcess(msbuildProcess.Id, TimeoutForNewNodeCreation, hostHandshake, out HandshakeResult result);
+                    Stream nodeStream = TryConnectToProcess(msbuildProcess.Id, TimeoutForNewNodeCreation, nodeLaunchData.Handshake, out HandshakeResult result);
                     if (nodeStream != null)
                     {
                         // Connection successful, use this node.
@@ -388,7 +398,7 @@ namespace Microsoft.Build.BackEnd
 
             void CreateNodeContext(int nodeId, Process nodeToReuse, Stream nodeStream, byte negotiatedVersion)
             {
-                NodeContext nodeContext = new(nodeId, nodeToReuse, nodeStream, factory, terminateNode, negotiatedVersion, hostHandshake.HandshakeOptions);
+                NodeContext nodeContext = new(nodeId, nodeToReuse, nodeStream, factory, terminateNode, negotiatedVersion, nodeLaunchData.Handshake.HandshakeOptions);
                 nodeContexts.Enqueue(nodeContext);
                 createNode(nodeContext);
             }
@@ -507,7 +517,7 @@ namespace Microsoft.Build.BackEnd
         /// Connect to named pipe stream and ensure validate handshake and security.
         /// </summary>
         /// <remarks>
-        /// Reused by MSBuild server client <see cref="Microsoft.Build.Experimental.MSBuildClient"/>.
+        /// Reused by MSBuild server client <see cref="Experimental.MSBuildClient"/>.
         /// </remarks>
         internal static bool TryConnectToPipeStream(NamedPipeClientStream nodeStream, string pipeName, Handshake handshake, int timeout, out HandshakeResult result)
         {
