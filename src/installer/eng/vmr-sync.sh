@@ -238,7 +238,8 @@ set -e
 highlight 'Installing .NET, preparing the tooling..'
 source "$scriptroot/common/tools.sh"
 InitializeDotNetCli true
-dotnet=$(realpath "$scriptroot/../.dotnet/dotnet")
+dotnetDir=$_InitializeDotNetCli
+dotnet=$dotnetDir/dotnet
 "$dotnet" tool restore
 
 highlight "Starting the synchronization of '$repository'.."
