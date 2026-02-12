@@ -871,14 +871,10 @@ jobs:
   - task: CopyFiles@2
     displayName: Prepare BuildLogs staging directory
     inputs:
-      SourceFolder: '$(sourcesPath)'
+      SourceFolder: '$(sourcesPath)/artifacts'
       Contents: |
-        artifacts/log/**
-        artifacts/TestResults/**/*.binlog
-        artifacts/TestResults/**/*.diff
-        artifacts/TestResults/**/Updated*.txt
-        artifacts/TestResults/**/*.trx
-        artifacts/TestResults/**/*.xml
+        log/**
+        TestResults/**
       TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs'
       CleanTargetFolder: true
     continueOnError: true
