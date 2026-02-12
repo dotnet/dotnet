@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NuGet.Commands.Test;
 using NuGet.Common;
+using NuGet.Frameworks;
 using NuGet.LibraryModel;
 using NuGet.Packaging;
 using NuGet.ProjectModel;
@@ -1450,6 +1452,98 @@ namespace NuGet.Commands.FuncTest
             restoreLogMessage.LibraryId.Should().Be("B");
             testEvent["Pruning.RemovablePackages.Count"].Should().Be(1);
             testEvent["Pruning.Pruned.Direct.Count"].Should().Be(1);
+        }
+
+        [Fact]
+        public void AnalyzePruningResults_WithCPMAndNullVersionRange_HandlesItGracefully()
+        {
+            var projectSpec = new PackageSpec(
+            [
+                new() {
+                    FrameworkName = NuGetFramework.Parse("net10.0"),
+                    TargetAlias = "net10.0",
+                    Dependencies = ImmutableArray.Create(new LibraryDependency
+                    {
+                        LibraryRange = new LibraryRange("A", null, LibraryDependencyTarget.Package)
+                    }),
+                    PackagesToPrune = new Dictionary<string, PrunePackageReference>
+                    {
+                        { "A", new PrunePackageReference("A", VersionRange.Parse("(,1.0.0]")) }
+                    }
+                }
+            ])
+            {
+                Name = "Project1",
+                FilePath = Path.Combine(Path.GetTempPath(), "Project1.csproj")
+            }.WithTestRestoreMetadata();
+
+            var testLogger = new TestLogger();
+            var testEvent = new TelemetryEvent("dummyEvent");
+
+            RestoreCommand.AnalyzePruningResults(projectSpec, testEvent, testLogger);
+
+            testLogger.WarningMessages.Should().BeEmpty();
+            testEvent["Pruning.Pruned.Direct.Count"].Should().Be(0);
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithCPMAndMissingVersion_HandlesItGracefully()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Setup packages
+            var packageA = new SimpleTestPackageContext("A", "1.0.0");
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageA);
+
+            var rootProject = @"
+        {
+        ""restore"": {
+                    ""centralPackageVersionsManagementEnabled"": true,
+                    ""CentralPackageTransitivePinningEnabled"": true,
+                    },
+          ""frameworks"": {
+            ""net10.0"": {
+                ""dependencies"": {
+                        ""A"": {
+                            ""version"": ""[1.0.0,)"",
+                            ""target"": ""Package"",
+                            ""versionCentrallyManaged"": true
+                        },
+                },
+                ""packagesToPrune"": {
+                    ""A"" : ""(,1.0.0]"" 
+                },
+                ""centralPackageVersions"": {
+                }
+            }
+          }
+        }";
+
+            // Setup project using the standard pattern
+            var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, rootProject);
+
+            // Modify to simulate CPM without version - create new framework with null version range
+            var originalFramework = projectSpec.TargetFrameworks[0];
+            var newFramework = new TargetFrameworkInformation(originalFramework)
+            {
+                Dependencies = [new LibraryDependency
+                    {
+                        LibraryRange = new LibraryRange("A", null, LibraryDependencyTarget.Package),
+                        VersionCentrallyManaged = true,
+                    }],
+            };
+            projectSpec.TargetFrameworks[0] = newFramework;
+            var testLogger = new TestLogger();
+
+            var result = await RunRestoreAsync(pathContext, testLogger, projectSpec);
+
+            result.Success.Should().BeFalse();
+            result.LockFile.LogMessages.Should().HaveCount(1);
+            result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1010);
         }
 
         // A 1.0.0 -> B 1.0.0
