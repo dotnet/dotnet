@@ -12,6 +12,11 @@
 
     <FileSignInfo Include="RuntimeContracts.dll" CertificateName="3PartySHA2" />
 
+    <!-- MSBuild.exe is a native apphost that will be re-signed in the SDK layout.
+         Exclude from NuPkg signing to avoid AssemblyLoadsTracker cross-AppDomain
+         serialization issue in VS MSBuild (tracked separately). -->
+    <FileSignInfo Include="MSBuild.exe" CertificateName="None" />
+
     <!-- For Telemetry in VS.-->
     <FileSignInfo Include="Newtonsoft.Json.dll" CertificateName="3PartySHA2" />
   </ItemGroup>
