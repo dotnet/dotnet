@@ -648,16 +648,9 @@ namespace NuGet.Build.Tasks.Pack
                     .Distinct()
                     .ToList();
 
-                // Only use NuGetRecursiveDir (set by _GetTfmSpecificContentForPackage as a workaround
-                // for https://github.com/Microsoft/msbuild/issues/3121).
-                // We intentionally do NOT fall back to the built-in RecursiveDir metadata, because
-                // MSBuild 18.5+ (dotnet/msbuild#13142) now preserves RecursiveDir across task
-                // boundaries. Items flowing through other targets (e.g. sharedfx.targets) may have
-                // already incorporated RecursiveDir into their PackagePath/TargetPath, and reading
-                // the built-in RecursiveDir here would cause the subdirectory to be appended twice.
-                // TODO: Remove the NuGetRecursiveDir workaround entirely once the minimum supported
-                // MSBuild version includes the fix for #3121. See https://github.com/NuGet/Home/issues/14413
-                var recursiveDir = packageFile.GetProperty("NuGetRecursiveDir");
+                var recursiveDir = packageFile.GetProperty("RecursiveDir");
+                // The below NuGetRecursiveDir workaround needs to be done due to msbuild bug https://github.com/Microsoft/msbuild/issues/3121
+                recursiveDir = string.IsNullOrEmpty(recursiveDir) ? packageFile.GetProperty("NuGetRecursiveDir") : recursiveDir;
                 if (!string.IsNullOrEmpty(recursiveDir))
                 {
                     var newTargetPaths = new List<string>();
