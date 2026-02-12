@@ -13,6 +13,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Internal;
 using Microsoft.Build.Shared;
 using Microsoft.Build.Shared.FileSystem;
+using Constants = Microsoft.Build.Framework.Constants;
 
 #nullable disable
 
@@ -413,7 +414,7 @@ namespace Microsoft.Build.BackEnd
                 }
 
                 // Default based on whether it's .NET or Framework
-                s_msbuildName = NativeMethodsShared.IsWindows ? "MSBuild.exe" : "MSBuild";
+                s_msbuildName = Constants.MSBuildExecutableName;
             }
 
             return s_msbuildName;
@@ -724,7 +725,7 @@ namespace Microsoft.Build.BackEnd
             HandshakeOptions hostContext,
             bool nodeReuseEnabled)
         {
-            string appHostPath = Path.Combine(msbuildAssemblyPath, NativeMethodsShared.IsWindows ? "MSBuild.exe" : "MSBuild");
+            string appHostPath = Path.Combine(msbuildAssemblyPath, Constants.MSBuildExecutableName);
             string commandLineArgs = BuildCommandLineArgs(nodeReuseEnabled);
 
             if (FileSystems.Default.FileExists(appHostPath))
@@ -746,7 +747,7 @@ namespace Microsoft.Build.BackEnd
 
             return new NodeLaunchData(
                 dotnetHostPath,
-                $"\"{Path.Combine(msbuildAssemblyPath, "MSBuild.dll")}\" {commandLineArgs}",
+                $"\"{Path.Combine(msbuildAssemblyPath, Constants.MSBuildAssemblyName)}\" {commandLineArgs}",
                 new Handshake(hostContext, predefinedToolsDirectory: msbuildAssemblyPath));
         }
 

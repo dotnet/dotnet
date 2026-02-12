@@ -22,6 +22,7 @@ using TargetLoggingContext = Microsoft.Build.BackEnd.Logging.TargetLoggingContex
 using TaskLoggingContext = Microsoft.Build.BackEnd.Logging.TaskLoggingContext;
 using Microsoft.Build.Execution;
 using Microsoft.Build.BackEnd.Logging;
+using Constants = Microsoft.Build.Framework.Constants;
 
 #nullable disable
 
@@ -653,13 +654,13 @@ namespace Microsoft.Build.BackEnd
                 return currentParams;
             }
 
-            string dotnetHostPath = getProperty("DOTNET_HOST_PATH")?.EvaluatedValue;
-            string netCoreSdkRoot = getProperty("NetCoreSdkRoot")?.EvaluatedValue?.TrimEnd('/', '\\');
+            string dotnetHostPath = getProperty(Constants.DotnetHostPathEnvVarName)?.EvaluatedValue;
+            string netCoreSdkRoot = getProperty(Constants.NetCoreSdkRoot)?.EvaluatedValue?.TrimEnd('/', '\\');
 
             // The NetCoreSdkRoot property got added with .NET 11, so for earlier SDKs we fall back to the RID graph path
             if (string.IsNullOrEmpty(netCoreSdkRoot))
             {
-                string ridGraphPath = getProperty("RuntimeIdentifierGraphPath")?.EvaluatedValue;
+                string ridGraphPath = getProperty(Constants.RuntimeIdentifierGraphPath)?.EvaluatedValue;
                 if (!string.IsNullOrEmpty(ridGraphPath))
                 {
                     netCoreSdkRoot = Path.GetDirectoryName(ridGraphPath);
