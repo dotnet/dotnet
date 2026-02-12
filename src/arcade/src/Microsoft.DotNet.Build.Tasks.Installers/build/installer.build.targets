@@ -249,11 +249,11 @@
     <Exec Command="chmod ugo+x '$(_LayoutControlRoot)postrm'"
           Condition="'@(LinuxPostRemoveScript)' != ''" />
 
-    <Exec Command="tar -C '$(_LayoutControlRoot)' -czf '$(_LayoutDirectory)/control.tar.gz' ."
+    <Exec Command="tar --owner=root --group=root -C '$(_LayoutControlRoot)' -czf '$(_LayoutDirectory)/control.tar.gz' ."
           IgnoreExitCode="true"
           IgnoreStandardErrorWarningFormat="true" />
     
-    <Exec Command="tar -C '$(_LayoutDataRoot)' -czf '$(_LayoutDirectory)/data.tar.gz' ."
+    <Exec Command="tar --owner=root --group=root -C '$(_LayoutDataRoot)' -czf '$(_LayoutDirectory)/data.tar.gz' ."
           IgnoreExitCode="true"
           IgnoreStandardErrorWarningFormat="true" />
 
