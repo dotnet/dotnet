@@ -115,7 +115,7 @@ namespace Microsoft.DiaSymReader
                 throw new InvalidDataException();
             }
 
-            int uncompressedLength = BitConverter.ToInt32(blob, 0);
+            int uncompressedLength = blob[0] + (blob[1] << 8) + (blob[2] << 16) + (blob[3] << 24);
             if (uncompressedLength == 0)
             {
                 return new ArraySegment<byte>(blob, sizeof(int), bytesRead - sizeof(int));
