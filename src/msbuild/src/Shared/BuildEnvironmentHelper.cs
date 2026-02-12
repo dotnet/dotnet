@@ -22,6 +22,12 @@ namespace Microsoft.Build.Shared
         // MSBuildConstants.CurrentToolsVersion
         private const string CurrentToolsVersion = "Current";
 
+        // Constants.MSBuildExecutableName / Constants.MSBuildAssemblyName are not available
+        // in all projects that link this file (e.g. MSBuildTaskHost, source-build).
+        private const string MSBuildAppName = "MSBuild";
+        private const string MSBuildAssemblyName = "MSBuild.dll";
+        private static readonly string MSBuildExecutableName = NativeMethodsShared.IsWindows ? $"{MSBuildAppName}.exe" : MSBuildAppName;
+
         /// <summary>
         /// Name of the Visual Studio (and Blend) process.
         /// VS ASP intellisense server fails without Microsoft.VisualStudio.Web.Host. Remove when issue fixed: https://devdiv.visualstudio.com/DevDiv/_workitems/edit/574986
@@ -188,7 +194,7 @@ namespace Microsoft.Build.Shared
         // GetProcessFromRunningProcess returns the entry assembly location (MSBuild.dll) when
         // running via dotnet, so we need to check the actual process path to distinguish.
         private static bool IsRunningInMSBuildExe(string processPath) =>
-            !string.IsNullOrEmpty(processPath) && processPath.EndsWith(Constants.MSBuildExecutableName, StringComparison.OrdinalIgnoreCase);
+            !string.IsNullOrEmpty(processPath) && processPath.EndsWith(MSBuildExecutableName, StringComparison.OrdinalIgnoreCase);
 
         private static BuildEnvironment TryFromMSBuildAppHost()
         {
@@ -199,7 +205,7 @@ namespace Microsoft.Build.Shared
             }
 
             // Check for MSBuild.[exe] next to the current assembly
-            var msBuildExecutableCandidate = Path.Combine(Path.GetDirectoryName(buildAssembly), Constants.MSBuildExecutableName);
+            var msBuildExecutableCandidate = Path.Combine(Path.GetDirectoryName(buildAssembly), MSBuildExecutableName);
 
             // First check if we're in a VS installation
             var environment = TryFromMSBuildExeUnderVisualStudio(msBuildExecutableCandidate);
@@ -327,9 +333,9 @@ namespace Microsoft.Build.Shared
             }
 
             // Prioritize MSBuild[.exe] over MSBuild.dll
-            return TryFromStandaloneMSBuildExe(Path.Combine(appContextBaseDirectory, Constants.MSBuildExecutableName))
+            return TryFromStandaloneMSBuildExe(Path.Combine(appContextBaseDirectory, MSBuildExecutableName))
                 // Fall back to MSBuild.dll
-                ?? TryFromStandaloneMSBuildExe(Path.Combine(appContextBaseDirectory, Constants.MSBuildAssemblyName));
+                ?? TryFromStandaloneMSBuildExe(Path.Combine(appContextBaseDirectory, MSBuildAssemblyName));
         }
 
         private static BuildEnvironment TryFromStandaloneMSBuildExe(string msBuildExePath)
@@ -368,7 +374,7 @@ namespace Microsoft.Build.Shared
                 "Bin",
                 NativeMethodsShared.ProcessorArchitecture == Framework.NativeMethods.ProcessorArchitectures.X64 ? "amd64" :
                 NativeMethodsShared.ProcessorArchitecture == Framework.NativeMethods.ProcessorArchitectures.ARM64 ? "arm64" : string.Empty,
-                Constants.MSBuildExecutableName);
+                MSBuildExecutableName);
         }
 
         private static bool? _runningTests;

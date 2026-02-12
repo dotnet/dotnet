@@ -22,7 +22,6 @@ using System.Security.Principal;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Internal;
 using Microsoft.Build.Shared;
-using Constants = Microsoft.Build.Framework.Constants;
 
 #nullable disable
 
@@ -416,7 +415,7 @@ namespace Microsoft.Build.BackEnd
         {
             if (String.IsNullOrEmpty(msbuildLocation))
             {
-                msbuildLocation = Constants.MSBuildExecutableName;
+                msbuildLocation = NativeMethodsShared.IsWindows ? "MSBuild.exe" : "MSBuild";
             }
 
             var expectedProcessName = Path.GetFileNameWithoutExtension(CurrentHost.GetCurrentHost() ?? msbuildLocation);
