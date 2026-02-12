@@ -89,6 +89,15 @@ namespace Microsoft.SignCheck.Verification
         }
 
         /// <summary>
+        /// True if this file was marked as DO-NOT-UNPACK.
+        /// </summary>
+        public bool IsDoNotUnpack
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// True if the file was excluded from verification, false otherwise.
         /// </summary>
         public bool IsExcluded
