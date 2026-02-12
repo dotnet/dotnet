@@ -497,13 +497,26 @@
     <Copy SourceFiles="@(NativeRestoredAppHostNETCore)" DestinationFolder="$(AppHostTemplatePath)" SkipUnchangedFiles="true" />
   </Target>
 
+  <Target Name="CreateMSBuildAppHost"
+          DependsOnTargets="GenerateCliRuntimeConfigurationFiles">
+    <CreateAppHost AppHostSourcePath="$(NuGetPackageRoot)\microsoft.netcore.app.host.$(SharedFrameworkRid)\$(MicrosoftNETCoreAppHostPackageVersion)\runtimes\$(SharedFrameworkRid)\native\apphost$(ExeExtension)"
+                   AppHostDestinationPath="%(_MSBuildAppHost.RootDir)%(_MSBuildAppHost.Directory)%(_MSBuildAppHost.Filename)$(ExeExtension)"
+                   AppBinaryName="%(_MSBuildAppHost.Filename)%(_MSBuildAppHost.Extension)"
+                   IntermediateAssembly="%(_MSBuildAppHost.FullPath)"
+                   EnableMacOSCodeSign="$(SharedFrameworkRid.StartsWith('osx'))" />
+
+    <Exec Command="codesign --sign - --force --entitlements '$(MSBuildProjectDirectory)/msbuild-entitlements.plist' %(_MSBuildAppHost.RootDir)%(_MSBuildAppHost.Directory)%(_MSBuildAppHost.Filename)$(ExeExtension)"
+          Condition="$(SharedFrameworkRid.StartsWith('osx'))" />
+  </Target>
+
   <Target Name="ChmodPublishDir"
-          DependsOnTargets="GenerateCliRuntimeConfigurationFiles"
+          DependsOnTargets="GenerateCliRuntimeConfigurationFiles;CreateMSBuildAppHost"
           Condition="'$(OSName)' != 'win'">
 
     <Exec Command="find $(OutputPath) -type d -exec chmod 755 {} \;" />
     <Exec Command="find $(OutputPath) -type f -exec chmod 644 {} \;" />
     <Exec Command="chmod 755 %(_RoslynAppHost.RootDir)%(_RoslynAppHost.Directory)%(_RoslynAppHost.Filename)" />
+    <Exec Command="chmod 755 %(_MSBuildAppHost.RootDir)%(_MSBuildAppHost.Directory)%(_MSBuildAppHost.Filename)" />
   </Target>
 
   <Target Name="DeleteSymbolsFromPublishDir" DependsOnTargets="GenerateCliRuntimeConfigurationFiles">
@@ -551,6 +564,7 @@
                             GeneratePackagePruneData;
                             PublishContainersSdk;
                             GenerateCliRuntimeConfigurationFiles;
+                            CreateMSBuildAppHost;
                             MakeFscRunnableAndMoveToPublishDir;
                             RemoveFscFilesAfterPublish;
                             PublishTargetExtensions;
