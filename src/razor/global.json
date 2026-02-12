@@ -1,6 +1,6 @@
 {
   "tools": {
-    "dotnet": "9.0.112",
+    "dotnet": "9.0.113",
     "runtimes": {
       "dotnet": [
         "2.1.30",
@@ -16,12 +16,12 @@
     }
   },
   "sdk": {
-    "version": "9.0.112",
+    "version": "9.0.113",
     "allowPrerelease": false,
     "rollForward": "latestPatch"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "9.0.0-beta.25577.5",
+    "Microsoft.DotNet.Arcade.Sdk": "9.0.0-beta.26110.2",
     "Microsoft.Build.NoTargets": "3.7.0"
   }
 }
