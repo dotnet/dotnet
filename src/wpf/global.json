@@ -12,15 +12,14 @@
     }
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "9.0.0-beta.26104.5",
-    "Microsoft.DotNet.Helix.Sdk": "9.0.0-beta.26104.5"
+    "Microsoft.DotNet.Arcade.Sdk": "9.0.0-beta.26110.2",
+    "Microsoft.DotNet.Helix.Sdk": "9.0.0-beta.26110.2"
   },
   "sdk": {
     "version": "9.0.113"
   },
   "native-tools": {
     "strawberry-perl": "5.38.0.1",
-    "net-framework-48-ref-assemblies": "0.0.0.1",
-    "windows-sdk-d3d-redist": "1.0.0"
+    "net-framework-48-ref-assemblies": "0.0.0.1"
   }
 }
