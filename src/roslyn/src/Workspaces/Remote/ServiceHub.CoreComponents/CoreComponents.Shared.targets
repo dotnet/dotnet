@@ -37,7 +37,7 @@
       "Microsoft.NETCore.App.Runtime.win-{arch}"
       "Microsoft.WindowsDesktop.App.Runtime.win-{arch}"
     -->    
-    <PackageReference Include="Microsoft.NETCore.App.crossgen2.win-x64" Condition="'$(GenerateReadyToRun)' == 'true'" ExcludeAssets="all" PrivateAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.NETCore.App.crossgen2.win-x64" Condition="'$(GenerateReadyToRun)' == 'true' and '$(DotNetBuildSourceOnly)' != 'true'" ExcludeAssets="all" PrivateAssets="all" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.VisualStudio.Copilot.Roslyn.SemanticSearch" />
   </ItemGroup>
   
