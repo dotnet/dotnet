@@ -875,7 +875,7 @@ jobs:
       Contents: |
         log/**
         TestResults/**
-      TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs/artifacts'
       CleanTargetFolder: true
     continueOnError: true
     condition: succeededOrFailed()
