@@ -1,7 +1,7 @@
-# MSBuild -mt (multithreaded) mode VMR validation pipeline.
+# MSBuild VMR source-build validation pipeline.
 #
-# Validates that MSBuild's -mt mode works correctly by building the VMR
-# with the current PR's changes and -mt enabled.
+# Builds the VMR in source-build mode to validate MSBuild changes.
+# Supports passing extra MSBuild properties to stage 2 builds (e.g., -mt mode).
 #
 # Trigger: Manual only (queue from Azure DevOps UI)
 # Uses the same pattern as runtime's vmr-build-pr.yml.
@@ -10,10 +10,10 @@ trigger: none
 pr: none
 
 parameters:
-- name: excludedRepos
-  displayName: 'Repos to exclude from -mt mode (use %3B as separator, decoded to ; by MSBuild)'
+- name: extraPropertiesStage2
+  displayName: 'Extra MSBuild properties for stage 2 (e.g., /p:DotNetBuildMT=true)'
   type: string
-  default: 'arcade%3Bruntime%3Broslyn%3Baspnetcore%3Bsdk%3Befcore%3Bwinforms%3Bwpf%3Brazor%3Bsource-build-reference-packages'
+  default: '/p:DotNetBuildMT=true /p:MSBuildMTExcludedReposOverride=arcade%3Bruntime%3Broslyn%3Baspnetcore%3Bsdk%3Befcore%3Bwinforms%3Bwpf%3Brazor%3Bsource-build-reference-packages'
 
 variables:
 - template: /eng/common/templates/variables/pool-providers.yml@self
@@ -37,6 +37,4 @@ stages:
     isBuiltFromVmr: false
     scope: lite
     verifications: [ "source-build-stage1", "source-build-stage2" ]
-    extraPropertiesStage2: >-
-      /p:DotNetBuildMT=true
-      /p:MSBuildMTExcludedReposOverride=${{ parameters.excludedRepos }}
+    extraPropertiesStage2: ${{ parameters.extraPropertiesStage2 }}
