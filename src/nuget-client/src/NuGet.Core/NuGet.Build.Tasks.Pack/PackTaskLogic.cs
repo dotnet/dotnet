@@ -648,35 +648,28 @@ namespace NuGet.Build.Tasks.Pack
                     .Distinct()
                     .ToList();
 
-                var recursiveDir = packageFile.GetProperty("RecursiveDir");
-                // The below NuGetRecursiveDir workaround needs to be done due to msbuild bug https://github.com/Microsoft/msbuild/issues/3121
-                recursiveDir = string.IsNullOrEmpty(recursiveDir) ? packageFile.GetProperty("NuGetRecursiveDir") : recursiveDir;
+                // Only use NuGetRecursiveDir (set by _GetTfmSpecificContentForPackage as a workaround
+                // for https://github.com/Microsoft/msbuild/issues/3121).
+                // We intentionally do NOT fall back to the built-in RecursiveDir metadata, because
+                // MSBuild 18.5+ (dotnet/msbuild#13142) now preserves RecursiveDir across task
+                // boundaries. Items flowing through other targets (e.g. sharedfx.targets) may have
+                // already incorporated RecursiveDir into their PackagePath/TargetPath, and reading
+                // the built-in RecursiveDir here would cause the subdirectory to be appended twice.
+                // TODO: Remove the NuGetRecursiveDir workaround entirely once the minimum supported
+                // MSBuild version includes the fix for #3121. See https://github.com/NuGet/Home/issues/14413
+                var recursiveDir = packageFile.GetProperty("NuGetRecursiveDir");
                 if (!string.IsNullOrEmpty(recursiveDir))
                 {
                     var newTargetPaths = new List<string>();
                     var fileName = Path.GetFileName(sourcePath);
-                    // Normalize RecursiveDir for comparison: forward slashes with trailing slash.
-                    var normalizedRecursiveDir = PathUtility.GetPathWithForwardSlashes(
-                        PathUtility.EnsureTrailingForwardSlash(recursiveDir));
                     foreach (var targetPath in targetPaths)
                     {
-                        // Skip appending RecursiveDir if the targetPath already ends with it.
-                        // This happens when PackagePath was built from a TargetPath that already
-                        // incorporated RecursiveDir (e.g. TargetPath="analyzers/%(RecursiveDir)").
-                        // With MSBuild 18.5+ (dotnet/msbuild#13142), RecursiveDir is preserved
-                        // across task boundaries, so without this guard the path gets doubled.
-                        var normalizedTargetPath = PathUtility.GetPathWithForwardSlashes(targetPath);
-                        var alreadyIncluded = normalizedTargetPath.EndsWith(normalizedRecursiveDir,
-                            PathUtility.GetStringComparisonBasedOnOS());
-
                         newTargetPaths.Add(PathUtility.GetStringComparerBasedOnOS().
                             Compare(Path.GetExtension(fileName),
                             Path.GetExtension(targetPath)) == 0
                             && !string.IsNullOrEmpty(Path.GetExtension(fileName))
                                 ? targetPath
-                                : alreadyIncluded
-                                    ? targetPath
-                                    : Path.Combine(targetPath, recursiveDir));
+                                : Path.Combine(targetPath, recursiveDir));
                     }
 
                     targetPaths = newTargetPaths;

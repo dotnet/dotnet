@@ -798,17 +798,16 @@ namespace NuGet.Build.Tasks.Pack.Test
         }
 
         [Fact]
-        public void PackTaskLogic_BuiltInRecursiveDirUsed_WhenNuGetRecursiveDirAbsent()
+        public void PackTaskLogic_BuiltInRecursiveDirIgnored_WhenNuGetRecursiveDirAbsent()
         {
-            // Verify that Content items from glob patterns (no task boundary crossing) still
-            // use the built-in RecursiveDir when NuGetRecursiveDir is not set.
+            // Verify that when only built-in RecursiveDir is present (no NuGetRecursiveDir),
+            // it is NOT appended to PackagePath. This avoids double-counting when upstream
+            // targets have already incorporated RecursiveDir into TargetPath/PackagePath.
             using (var testDir = TestDirectory.Create())
             {
                 var tc = new TestContext(testDir);
                 tc.Request.ContentTargetFolders = new[] { "content", "contentFiles" };
 
-                // Simulate a Content item from a glob pattern (e.g. <Content Include="stuff/**/*" PackagePath="content/" />)
-                // No NuGetRecursiveDir is set because the item didn't cross a task boundary.
                 var metadata = new Dictionary<string, string>()
                 {
                     {"PackagePath", "content/" },
@@ -828,9 +827,9 @@ namespace NuGet.Build.Tasks.Pack.Test
                 using (var nupkgReader = new PackageArchiveReader(tc.NupkgPath))
                 {
                     var contentItems = nupkgReader.GetFiles("content").ToList();
-                    // RecursiveDir should be appended since NuGetRecursiveDir is absent
+                    // RecursiveDir should NOT be appended since only NuGetRecursiveDir is used
                     Assert.Equal(1, contentItems.Count);
-                    Assert.Contains("content/subdir/data.json", contentItems, StringComparer.Ordinal);
+                    Assert.Contains("content/data.json", contentItems, StringComparer.Ordinal);
                 }
             }
         }
@@ -867,6 +866,46 @@ namespace NuGet.Build.Tasks.Pack.Test
                     // NuGetRecursiveDir should still be appended
                     Assert.Equal(1, toolItems.Count);
                     Assert.Contains("tools/net45/subdir/tool.exe", toolItems, StringComparer.Ordinal);
+                }
+            }
+        }
+
+        [Fact]
+        public void PackTaskLogic_RoslynVersionedAnalyzer_RecursiveDirNotAppended()
+        {
+            // Regression test for roslyn-versioned analyzers in AspNetCore.App.Ref.
+            // These items have RecursiveDir="dotnet/roslyn4.8/cs/" (from glob) but
+            // TargetPath/PackagePath="analyzers/dotnet/cs/" (roslyn version stripped by MSBuild regex).
+            // With new MSBuild preserving RecursiveDir, the mismatched RecursiveDir must NOT
+            // be appended to PackagePath.
+            using (var testDir = TestDirectory.Create())
+            {
+                var tc = new TestContext(testDir);
+                tc.Request.ContentTargetFolders = new[] { "content", "contentFiles" };
+
+                var metadata = new Dictionary<string, string>()
+                {
+                    {"PackagePath", "analyzers/dotnet/cs/" },
+                    {"RecursiveDir", "dotnet/roslyn4.8/cs/" },  // Mismatched: roslyn version in RecursiveDir
+                    {"BuildAction", "None"},
+                    {"Pack", "true" },
+                };
+
+                var msbuildItem = tc.AddContentToProject("", "Microsoft.Extensions.Logging.Generators.dll", "fake", metadata);
+                tc.Request.PackageFiles = new MSBuildItem[] { msbuildItem };
+
+                // Act
+                tc.BuildPackage();
+
+                // Assert
+                Assert.True(File.Exists(tc.NupkgPath), "The output .nupkg file is not in the expected place.");
+                using (var nupkgReader = new PackageArchiveReader(tc.NupkgPath))
+                {
+                    var analyzerItems = nupkgReader.GetFiles("analyzers").ToList();
+                    // Should be at analyzers/dotnet/cs/, NOT analyzers/dotnet/cs/dotnet/roslyn4.8/cs/
+                    Assert.Equal(1, analyzerItems.Count);
+                    Assert.Contains("analyzers/dotnet/cs/Microsoft.Extensions.Logging.Generators.dll",
+                        analyzerItems, StringComparer.Ordinal);
                 }
             }
         }
