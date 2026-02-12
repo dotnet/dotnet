@@ -759,6 +759,119 @@ namespace NuGet.Build.Tasks.Pack.Test
         }
 
         [Fact]
+        public void PackTaskLogic_RecursiveDirDoesNotDoubleCount_WhenPackagePathAlreadyIncludesSubdirectory()
+        {
+            // Regression test: When MSBuild correctly preserves RecursiveDir across task boundaries
+            // (fix for https://github.com/Microsoft/msbuild/issues/3121), items whose PackagePath
+            // already includes the recursive directory structure should NOT get RecursiveDir appended
+            // again. This is the sharedfx.targets pattern where TargetPath="analyzers/%(RecursiveDir)"
+            // becomes PackagePath, and RecursiveDir is now also preserved on the item.
+            using (var testDir = TestDirectory.Create())
+            {
+                var tc = new TestContext(testDir);
+                tc.Request.ContentTargetFolders = new[] { "content", "contentFiles" };
+
+                var metadata = new Dictionary<string, string>()
+                {
+                    {"PackagePath", "analyzers/dotnet/cs/" },
+                    {"RecursiveDir", "dotnet/cs/" },
+                    {"BuildAction", "None"},
+                    {"Pack", "true" },
+                };
+
+                var msbuildItem = tc.AddContentToProject("", "MyAnalyzer.dll", "fake analyzer content", metadata);
+                tc.Request.PackageFiles = new MSBuildItem[] { msbuildItem };
+
+                // Act
+                tc.BuildPackage();
+
+                // Assert
+                Assert.True(File.Exists(tc.NupkgPath), "The output .nupkg file is not in the expected place.");
+                using (var nupkgReader = new PackageArchiveReader(tc.NupkgPath))
+                {
+                    var analyzerItems = nupkgReader.GetFiles("analyzers").ToList();
+                    // Should be at analyzers/dotnet/cs/MyAnalyzer.dll, NOT analyzers/dotnet/cs/dotnet/cs/MyAnalyzer.dll
+                    Assert.Equal(1, analyzerItems.Count);
+                    Assert.Contains("analyzers/dotnet/cs/MyAnalyzer.dll", analyzerItems, StringComparer.Ordinal);
+                }
+            }
+        }
+
+        [Fact]
+        public void PackTaskLogic_BuiltInRecursiveDirUsed_WhenNuGetRecursiveDirAbsent()
+        {
+            // Verify that Content items from glob patterns (no task boundary crossing) still
+            // use the built-in RecursiveDir when NuGetRecursiveDir is not set.
+            using (var testDir = TestDirectory.Create())
+            {
+                var tc = new TestContext(testDir);
+                tc.Request.ContentTargetFolders = new[] { "content", "contentFiles" };
+
+                // Simulate a Content item from a glob pattern (e.g. <Content Include="stuff/**/*" PackagePath="content/" />)
+                // No NuGetRecursiveDir is set because the item didn't cross a task boundary.
+                var metadata = new Dictionary<string, string>()
+                {
+                    {"PackagePath", "content/" },
+                    {"RecursiveDir", "subdir/" },  // Built-in RecursiveDir from glob evaluation
+                    {"BuildAction", "None"},
+                    {"Pack", "true" },
+                };
+
+                var msbuildItem = tc.AddContentToProject("", "data.json", "{}", metadata);
+                tc.Request.PackageFiles = new MSBuildItem[] { msbuildItem };
+
+                // Act
+                tc.BuildPackage();
+
+                // Assert
+                Assert.True(File.Exists(tc.NupkgPath), "The output .nupkg file is not in the expected place.");
+                using (var nupkgReader = new PackageArchiveReader(tc.NupkgPath))
+                {
+                    var contentItems = nupkgReader.GetFiles("content").ToList();
+                    // RecursiveDir should be appended since NuGetRecursiveDir is absent
+                    Assert.Equal(1, contentItems.Count);
+                    Assert.Contains("content/subdir/data.json", contentItems, StringComparer.Ordinal);
+                }
+            }
+        }
+
+        [Fact]
+        public void PackTaskLogic_NuGetRecursiveDirStillWorks_WhenRecursiveDirIsEmpty()
+        {
+            // Verify backward compatibility: NuGetRecursiveDir custom metadata is still
+            // used when RecursiveDir is empty (older MSBuild versions).
+            using (var testDir = TestDirectory.Create())
+            {
+                var tc = new TestContext(testDir);
+                tc.Request.ContentTargetFolders = new[] { "content", "contentFiles" };
+
+                var metadata = new Dictionary<string, string>()
+                {
+                    {"PackagePath", "tools/net45/" },
+                    {"NuGetRecursiveDir", "subdir/" },  // Custom metadata set by NuGet targets workaround
+                    {"BuildAction", "None"},
+                    {"Pack", "true" },
+                };
+
+                var msbuildItem = tc.AddContentToProject("", "tool.exe", "fake tool content", metadata);
+                tc.Request.PackageFiles = new MSBuildItem[] { msbuildItem };
+
+                // Act
+                tc.BuildPackage();
+
+                // Assert
+                Assert.True(File.Exists(tc.NupkgPath), "The output .nupkg file is not in the expected place.");
+                using (var nupkgReader = new PackageArchiveReader(tc.NupkgPath))
+                {
+                    var toolItems = nupkgReader.GetFiles("tools").ToList();
+                    // NuGetRecursiveDir should still be appended
+                    Assert.Equal(1, toolItems.Count);
+                    Assert.Contains("tools/net45/subdir/tool.exe", toolItems, StringComparer.Ordinal);
+                }
+            }
+        }
+
+        [Fact]
         public void PackTaskLogic_EmbedInteropAssembly()
         {
             // Arrange
