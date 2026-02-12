@@ -228,14 +228,7 @@ steps:
   name: SetAdditionalArgs
   displayName: Set additional command arguments
 
-- task: PowerShell@2
-  inputs:
-    filePath: $(Build.SourcesDirectory)/eng/common/build.ps1
-    arguments: -ci -projects $(Build.SourcesDirectory)/eng/tools/BuildComparer/BuildComparer.csproj -restore -build
-  displayName: Build BuildComparer
-
-- script: $(InstallDarc.dotnetPath)
-    $(Build.SourcesDirectory)/artifacts/bin/BuildComparer/Debug/BuildComparer.dll
+- script: $(InstallDarc.dotnetPath) run $(Build.SourcesDirectory)/eng/tools/BuildComparer/BuildComparer.csproj
     ${{ parameters.command }}
     -vmrAssetBasePath "$(Build.ArtifactStagingDirectory)/vmr-assets"
     -msftAssetBasePath "$(Build.ArtifactStagingDirectory)/base-assets"
