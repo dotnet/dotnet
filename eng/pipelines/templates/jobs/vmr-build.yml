@@ -503,20 +503,23 @@ jobs:
       inputs:
         targetType: 'inline'
         script: |
-          $sourcesPath = "$(sourcesPath)"
-          $token = $env:Token
-          
-          Get-ChildItem -Path "$sourcesPath/src" -Directory | ForEach-Object {
-            $repoDir = $_.FullName
+          function Setup-NuGetFeeds($repoDir, $description) {
             $setupScript = Join-Path $repoDir "eng/common/SetupNugetSources.ps1"
-            
             # Search for nuget.config using "Filter" to allow for case-insensitive matching.
             $nugetConfigFile = Get-ChildItem -Path $repoDir -Filter "nuget.config" -File | Select-Object -First 1
             $nugetConfig = if ($nugetConfigFile) { $nugetConfigFile.FullName } else { Join-Path $repoDir "NuGet.config" }
             
-            Write-Host "Setting up internal NuGet feeds for $($_.Name)"
-            & $setupScript $nugetConfig $token
+            Write-Host "Setting up internal NuGet feeds for $description"
+            & $setupScript $nugetConfig $env:Token
             Write-Host ""
+          }
+          
+          # Setup internal feeds for root NuGet.config
+          Setup-NuGetFeeds "$(sourcesPath)" "root NuGet.config"
+          
+          # Setup internal feeds for each global tool project that has a NuGet.config in the repo.
+          Get-ChildItem -Path "$(sourcesPath)/src" -Directory | ForEach-Object {
+            Setup-NuGetFeeds $_.FullName $_.Name
           }
       env:
         Token: $(dn-bot-dnceng-artifact-feeds-rw)
