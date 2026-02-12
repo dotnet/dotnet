@@ -814,7 +814,7 @@ jobs:
           extraBuildProperties="$(baseProperties) /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory) $(targetProperties) ${{ parameters.extraProperties }}"
 
           if [[ '${{ parameters.runOnline }}' == 'False' ]]; then
-            customPreBuildArgs="$customPreBuildArgs sudo"
+            customPreBuildArgs="$customPreBuildArgs sudo -E"
           fi
 
           if [[ '${{ parameters.buildSourceOnly }}' == 'True' ]]; then
