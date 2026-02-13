@@ -241,7 +241,7 @@ steps:
     -issuesReport "$(Build.SourcesDirectory)/artifacts/AssetBaselines/BaselineComparisonIssues.xml"
     -noIssuesReport "$(Build.SourcesDirectory)/artifacts/AssetBaselines/BaselineComparisonNoIssues.xml"
     -baseline "$(Build.SourcesDirectory)/eng/vmr-msft-comparison-baseline.json"
-    -includedRepositories ${{ parameters.includedRepositories }}
+    -includedRepositories "${{ parameters.includedRepositories }}"
     $(SetAdditionalArgs.additionalArgs)
   displayName: Compare ${{ parameters.command}}
 
