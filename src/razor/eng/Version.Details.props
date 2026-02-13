@@ -28,7 +28,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftNetCompilersToolsetPackageVersion>5.0.0-2.25461.22</MicrosoftNetCompilersToolsetPackageVersion>
     <MicrosoftVisualStudioLanguageServicesPackageVersion>5.0.0-2.25461.22</MicrosoftVisualStudioLanguageServicesPackageVersion>
     <!-- dotnet/arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>9.0.0-beta.25577.5</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>9.0.0-beta.26110.2</MicrosoftDotNetArcadeSdkPackageVersion>
     <!-- dotnet/aspnetcore dependencies -->
     <MicrosoftExtensionsObjectPoolPackageVersion>8.0.0</MicrosoftExtensionsObjectPoolPackageVersion>
     <!-- dotnet/runtime dependencies -->
