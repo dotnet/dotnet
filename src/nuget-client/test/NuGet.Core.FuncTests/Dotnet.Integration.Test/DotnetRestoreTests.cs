@@ -1045,7 +1045,7 @@ EndGlobal";
             using (SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext())
             {
                 // Arrange
-                string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
+                string tfm = TestConstants.DefaultTargetFramework.GetShortFolderName();
                 string projectFileContents =
 @$"<Project Sdk=""Microsoft.NET.Sdk"">
     <PropertyGroup>
@@ -1065,7 +1065,7 @@ EndGlobal";
                 // Assert
                 PackagesLockFile lockFile = PackagesLockFileFormat.Read(lockFilePath);
                 Assert.Equal(2, lockFile.Targets.Count);
-                Assert.Contains(lockFile.Targets, target => target.TargetFramework == Constants.DefaultTargetFramework);
+                Assert.Contains(lockFile.Targets, target => target.TargetFramework == TestConstants.DefaultTargetFramework);
                 NuGetFramework targetFramework = NuGetFramework.Parse($"{tfm}-windows7.0");
                 Assert.Contains(lockFile.Targets, target => target.TargetFramework == targetFramework);
             }
@@ -2654,7 +2654,7 @@ EndGlobal";
                 using (var stream = File.Open(projectFile1, FileMode.Open, FileAccess.ReadWrite))
                 {
                     var xml = XDocument.Load(stream);
-                    ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", Constants.DefaultTargetFramework.GetShortFolderName());
+                    ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", TestConstants.DefaultTargetFramework.GetShortFolderName());
                     ProjectFileUtils.AddProperty(xml, "ManagePackageVersionsCentrally", "true");
 
                     ProjectFileUtils.AddItem(
@@ -2692,7 +2692,7 @@ EndGlobal";
                 var assetsFilePath = Path.Combine(workingDirectory1, "obj", "project.assets.json");
                 File.Exists(assetsFilePath).Should().BeTrue(because: "The assets file needs to exist");
                 var assetsFile = new LockFileFormat().Read(assetsFilePath);
-                LockFileTarget target = assetsFile.Targets.Single(e => e.TargetFramework.Equals(Constants.DefaultTargetFramework) && string.IsNullOrEmpty(e.RuntimeIdentifier));
+                LockFileTarget target = assetsFile.Targets.Single(e => e.TargetFramework.Equals(TestConstants.DefaultTargetFramework) && string.IsNullOrEmpty(e.RuntimeIdentifier));
                 target.Libraries.Should().ContainSingle(e => e.Name.Equals("x"));
 
                 // Act another restore
@@ -2711,7 +2711,7 @@ EndGlobal";
             // Arrange
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, new SimpleTestPackageContext("x", "1.0.0"));
-            string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
+            string tfm = TestConstants.DefaultTargetFramework.GetShortFolderName();
             string projectFileContents =
 @$"<Project Sdk=""Microsoft.NET.Sdk"">
     <PropertyGroup>
@@ -2755,7 +2755,7 @@ EndGlobal";
             Directory.CreateDirectory(projectBWorkingDirectory);
             var projectAPath = Path.Combine(projectAWorkingDirectory, "a.csproj");
             var projectBPath = Path.Combine(projectBWorkingDirectory, "b.csproj");
-            string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
+            string tfm = TestConstants.DefaultTargetFramework.GetShortFolderName();
             string projectAFileContents =
 @$"<Project Sdk=""Microsoft.NET.Sdk"">
     <PropertyGroup>
@@ -2800,7 +2800,7 @@ EndGlobal";
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
             var additionalSource = Path.Combine(pathContext.SolutionRoot, "additionalSource");
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(additionalSource, new SimpleTestPackageContext("x", "1.0.0"));
-            string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
+            string tfm = TestConstants.DefaultTargetFramework.GetShortFolderName();
             string projectFileContents =
 @$"<Project Sdk=""Microsoft.NET.Sdk"">
     <PropertyGroup>
@@ -2863,7 +2863,7 @@ EndGlobal";
                 pathContext.PackageSource,
                 packageA1);
 
-            var targetFramework = Constants.DefaultTargetFramework.GetShortFolderName();
+            var targetFramework = TestConstants.DefaultTargetFramework.GetShortFolderName();
             string csprojContents = GetProjectFileForRestoreTaskOutputTests(targetFramework);
             var csprojPath = Path.Combine(pathContext.SolutionRoot, "test.csproj");
             File.WriteAllText(csprojPath, csprojContents);
@@ -2892,7 +2892,7 @@ EndGlobal";
             using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource);
             pathContext.Settings.RemoveSource("source");
             pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri, allowInsecureConnectionsValue: "true");
-            var targetFramework = Constants.DefaultTargetFramework.GetShortFolderName();
+            var targetFramework = TestConstants.DefaultTargetFramework.GetShortFolderName();
             string csprojContents = GetProjectFileForRestoreTaskOutputTestsFromPackageId(targetFramework, id);
             var csprojPath = Path.Combine(pathContext.SolutionRoot, "test.csproj");
             File.WriteAllText(csprojPath, csprojContents);
@@ -2925,7 +2925,7 @@ EndGlobal";
                 pathContext.PackageSource,
                 packageA1);
 
-            var targetFramework = Constants.DefaultTargetFramework.GetShortFolderName();
+            var targetFramework = TestConstants.DefaultTargetFramework.GetShortFolderName();
             string csprojContents = GetProjectFileForRestoreTaskOutputTestsFromPackageId(targetFramework, packageid);
             var csprojPath = Path.Combine(pathContext.SolutionRoot, "test.csproj");
             File.WriteAllText(csprojPath, csprojContents);
@@ -2954,7 +2954,7 @@ EndGlobal";
                 pathContext.PackageSource,
                 packageA1);
 
-            var targetFramework = Constants.DefaultTargetFramework.GetShortFolderName();
+            var targetFramework = TestConstants.DefaultTargetFramework.GetShortFolderName();
             string csprojContents = GetProjectFileForRestoreTaskOutputTests(targetFramework);
             var csprojPath = Path.Combine(pathContext.SolutionRoot, "test.csproj");
             File.WriteAllText(csprojPath, csprojContents);
@@ -3012,7 +3012,7 @@ EndGlobal";
             var projectName = "ClassLibrary1";
             var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
             var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
-            string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
+            string tfm = TestConstants.DefaultTargetFramework.GetShortFolderName();
             await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, new SimpleTestPackageContext("X", "1.0.0") { Dependencies = [new SimpleTestPackageContext("Y", "1.0.0")] });
 
             _dotnetFixture.CreateDotnetNewProject(pathContext.SolutionRoot, projectName, "classlib -f netstandard2.1", testOutputHelper: _testOutputHelper);
@@ -3076,7 +3076,7 @@ EndGlobal";
         [InlineData("9.0.100", "true", false)]
         public async Task DotnetRestore_SDKAnalysisLevelAndRestoreEnablePackagePruning_EnablesPruning(string sdkAnalysisLevel, string restoreEnablePackagePruning, bool useStaticGraphRestore)
         {
-            string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
+            string tfm = TestConstants.DefaultTargetFramework.GetShortFolderName();
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
             var projectName = "ClassLibrary1";
             var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
@@ -3130,7 +3130,7 @@ EndGlobal";
         [InlineData("10.0.100", "false")]
         public async Task DotnetRestore_SDKAnalysisLevelAndRestoreEnablePackagePruning_DisablesPruning(string sdkAnalysisLevel, string restoreEnablePackagePruning)
         {
-            string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
+            string tfm = TestConstants.DefaultTargetFramework.GetShortFolderName();
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
             var projectName = "ClassLibrary1";
             var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
@@ -3216,7 +3216,7 @@ EndGlobal";
 
         private async Task<LockFile> DotnetRestore_MultiTargetedProjectWithSDKAnalysisLevel(SimpleTestPathContext pathContext, string sdkAnalysisLevel, bool useStaticGraphRestore)
         {
-            string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
+            string tfm = TestConstants.DefaultTargetFramework.GetShortFolderName();
             var projectName = "ClassLibrary1";
             var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
             var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
@@ -3298,7 +3298,7 @@ EndGlobal";
 
         private async Task<LockFile> DotnetRestore_MultiTargetedProjectWithRestoreEnablePackagePruning(SimpleTestPathContext pathContext, string restoreEnablePackagePruning, string condition, bool useStaticGraphRestore)
         {
-            string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
+            string tfm = TestConstants.DefaultTargetFramework.GetShortFolderName();
             var projectName = "ClassLibrary1";
             var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
             var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
@@ -3409,6 +3409,669 @@ EndGlobal";
 
             var result = _dotnetFixture.RunDotnetExpectFailure(workingDirectory, $"restore {projectFile}", testOutputHelper: _testOutputHelper);
             result.Output.Should().Contain(expected);
+        }
+
+        // P1 (banana) -> X
+        // P1 (apple) -> Y
+        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Client.Engineering/issues/3632")]
+        public async Task DotnetRestore_WithAliasesOfTheSameFramework_UsesCorrectPackages()
+        {
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+            var testDirectory = pathContext.SolutionRoot;
+            var pkgX = new SimpleTestPackageContext("x", "1.0.0");
+            var pkgY = new SimpleTestPackageContext("y", "1.0.0");
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, pkgX, pkgY);
+
+            string apple = nameof(apple);
+            string banana = nameof(banana);
+            var projectName = "ClassLibrary1";
+            var projectDirectory = Path.Combine(testDirectory, projectName);
+            var projectFile = Path.Combine(projectDirectory, $"{projectName}.csproj");
+            _dotnetFixture.CreateDotnetNewProject(testDirectory, projectName, " classlib", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(projectFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
+
+                var attributes = new Dictionary<string, string>() { { "Version", "1.0.0" } };
+
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "PackageReference",
+                    "x",
+                    banana,
+                    [],
+                    attributes);
+
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "PackageReference",
+                    "y",
+                    apple,
+                    [],
+                    attributes);
+
+                var appleProps = new Dictionary<string, string>
+                    {
+                        { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                        { "TargetFrameworkVersion", $"v{TestConstants.DefaultTargetFramework.Version.ToString(2)}" }
+                    };
+                ProjectFileUtils.AddProperties(xml, appleProps, $" '$(TargetFramework)' == '{apple}' ");
+
+                var bananaProps = new Dictionary<string, string>
+                    {
+                        { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                        { "TargetFrameworkVersion", $"v{TestConstants.DefaultTargetFramework.Version.ToString(2)}" }
+                    };
+                ProjectFileUtils.AddProperties(xml, bananaProps, $" '$(TargetFramework)' == '{banana}' ");
+
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            // Act
+            var result = _dotnetFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, $"restore {projectFile}", testOutputHelper: _testOutputHelper);
+
+            // Assert
+            var assetsFilePath = Path.Combine(projectDirectory, "obj", "project.assets.json");
+            var assetsFile = new LockFileFormat().Read(assetsFilePath);
+            LockFileTarget bananaTarget = assetsFile.GetTarget(banana, null);
+            bananaTarget.Libraries.Should().ContainSingle(e => e.Name.Equals("x"));
+            bananaTarget.Libraries.Should().NotContain(e => e.Name.Equals("y"));
+            LockFileTarget appleTarget = assetsFile.GetTarget(apple, null);
+            appleTarget.Libraries.Should().NotContain(e => e.Name.Equals("x"));
+            appleTarget.Libraries.Should().ContainSingle(e => e.Name.Equals("y"));
+        }
+
+        // P (apple)  -> Net472 package, with ATF, succeeds
+        // P (banana) -> Net472 package, with ATF, fails
+        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Client.Engineering/issues/3632")]
+        public async Task DotnetRestore_WithAliasesOfSameFramework_WithAssetTargetFallback_OneSucceedsOneFails()
+        {
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+
+            // Create a package that only supports net472
+            var pkgNet472Only = new SimpleTestPackageContext("Net472Package", "1.0.0");
+            pkgNet472Only.AddFile("lib/net472/Net472Package.dll");
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, pkgNet472Only);
+
+            string apple = nameof(apple);
+            string banana = nameof(banana);
+            var projectName = "ClassLibrary1";
+            var projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
+            var projectFile = Path.Combine(projectDirectory, $"{projectName}.csproj");
+            _dotnetFixture.CreateDotnetNewProject(pathContext.SolutionRoot, projectName, " classlib", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(projectFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
+
+                var attributes = new Dictionary<string, string>() { { "Version", "1.0.0" } };
+
+                // Add package reference to both frameworks
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "PackageReference",
+                    "Net472Package",
+                    string.Empty,
+                    [],
+                    attributes);
+
+                // Apple framework props - with AssetTargetFallback
+                var appleProps = new Dictionary<string, string>
+                    {
+                        { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                        { "TargetFrameworkVersion", $"v{TestConstants.DefaultTargetFramework.Version.ToString(2)}" },
+                    };
+                ProjectFileUtils.AddProperties(xml, appleProps, $" '$(TargetFramework)' == '{apple}' ");
+
+                // Banana framework props - without AssetTargetFallback (should fail)
+                var bananaProps = new Dictionary<string, string>
+                    {
+                        { "DisableImplicitAssetTargetFallback", "true" },
+                        { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                        { "TargetFrameworkVersion", $"v{TestConstants.DefaultTargetFramework.Version.ToString(2)}" }
+                    };
+                ProjectFileUtils.AddProperties(xml, bananaProps, $" '$(TargetFramework)' == '{banana}' ");
+
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            // Act
+            var result = _dotnetFixture.RunDotnetExpectFailure(pathContext.SolutionRoot, $"restore {projectFile}", testOutputHelper: _testOutputHelper);
+
+            // Assert
+            var assetsFilePath = Path.Combine(projectDirectory, "obj", "project.assets.json");
+            var assetsFile = new LockFileFormat().Read(assetsFilePath);
+
+            // Apple alias should succeed with the package
+            LockFileTarget appleTarget = assetsFile.GetTarget(apple, null);
+            appleTarget.Libraries.Should().ContainSingle(e => e.Name.Equals("Net472Package"));
+
+            // Banana alias should have no compatible assets
+            LockFileTarget bananaTarget = assetsFile.GetTarget(banana, null);
+            // The package will be in the graph but with no compatible assets
+            var bananaLib = bananaTarget.Libraries.Single(e => e.Name.Equals("Net472Package"));
+            bananaLib.CompileTimeAssemblies.Should().BeEmpty();
+            bananaLib.RuntimeAssemblies.Should().BeEmpty();
+
+            assetsFile.LogMessages.Should().HaveCount(2);
+            assetsFile.LogMessages[0].Level.Should().Be(LogLevel.Warning);
+            assetsFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1701);
+            assetsFile.LogMessages[0].TargetGraphs.Should().BeEquivalentTo([apple]);
+
+            assetsFile.LogMessages[1].Level.Should().Be(LogLevel.Error);
+            assetsFile.LogMessages[1].Code.Should().Be(NuGetLogCode.NU1202);
+            assetsFile.LogMessages[1].TargetGraphs.Should().BeEquivalentTo([banana]);
+        }
+
+        // P (apple)  -> Net472 package -> Transitive Net472 package, with ATF, succeeds
+        // P (banana) -> Net472 package, with ATF, fails
+        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Client.Engineering/issues/3632")]
+        public async Task DotnetRestore_WithAliasesOfSameFramework_WithAssetTargetFallback_TransitiveDependenciesFlowCorrectly()
+        {
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+
+            // Create a transitive dependency package that only supports net472
+            var pkgTransitive = new SimpleTestPackageContext("TransitiveNet472Package", "1.0.0");
+            pkgTransitive.AddFile("lib/net472/TransitiveNet472Package.dll");
+
+            // Create a top-level package that only supports net472 and depends on the transitive package
+            var pkgNet472WithDependency = new SimpleTestPackageContext("Net472PackageWithDependency", "1.0.0");
+            pkgNet472WithDependency.AddFile("lib/net472/Net472PackageWithDependency.dll");
+            pkgNet472WithDependency.PerFrameworkDependencies.Add(CommonFrameworks.Net472, [pkgTransitive]);
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, pkgNet472WithDependency, pkgTransitive);
+
+            string apple = nameof(apple);
+            string banana = nameof(banana);
+            var projectName = "ClassLibrary1";
+            var projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
+            var projectFile = Path.Combine(projectDirectory, $"{projectName}.csproj");
+            _dotnetFixture.CreateDotnetNewProject(pathContext.SolutionRoot, projectName, " classlib", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(projectFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
+
+                var attributes = new Dictionary<string, string>() { { "Version", "1.0.0" } };
+
+                // Add package reference to both frameworks
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "PackageReference",
+                    "Net472PackageWithDependency",
+                    string.Empty,
+                    [],
+                    attributes);
+
+                // Apple framework props - with AssetTargetFallback
+                var appleProps = new Dictionary<string, string>
+                    {
+                        { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                        { "TargetFrameworkVersion", $"v{TestConstants.DefaultTargetFramework.Version.ToString(2)}" },
+                    };
+                ProjectFileUtils.AddProperties(xml, appleProps, $" '$(TargetFramework)' == '{apple}' ");
+
+                // Banana framework props - without AssetTargetFallback (should fail)
+                var bananaProps = new Dictionary<string, string>
+                    {
+                        { "DisableImplicitAssetTargetFallback", "true" },
+                        { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                        { "TargetFrameworkVersion", $"v{TestConstants.DefaultTargetFramework.Version.ToString(2)}" }
+                    };
+                ProjectFileUtils.AddProperties(xml, bananaProps, $" '$(TargetFramework)' == '{banana}' ");
+
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            // Act
+            var result = _dotnetFixture.RunDotnetExpectFailure(pathContext.SolutionRoot, $"restore {projectFile}", testOutputHelper: _testOutputHelper);
+
+            // Assert
+            var assetsFilePath = Path.Combine(projectDirectory, "obj", "project.assets.json");
+            var assetsFile = new LockFileFormat().Read(assetsFilePath);
+
+            // Apple alias should succeed with both the package and its transitive dependency
+            LockFileTarget appleTarget = assetsFile.GetTarget(apple, null);
+            appleTarget.Libraries.Should().Contain(e => e.Name.Equals("Net472PackageWithDependency"));
+            appleTarget.Libraries.Should().Contain(e => e.Name.Equals("TransitiveNet472Package"));
+
+            // Verify the dependency relationship
+            var appleTopLevelLib = appleTarget.Libraries.First(e => e.Name.Equals("Net472PackageWithDependency"));
+            appleTopLevelLib.Dependencies.Should().Contain(d => d.Id.Equals("TransitiveNet472Package"));
+
+            // Banana alias should have no compatible assets for either package
+            LockFileTarget bananaTarget = assetsFile.GetTarget(banana, null);
+            bananaTarget.Libraries.Should().HaveCount(1);
+            bananaTarget.Libraries[0].CompileTimeAssemblies.Should().BeEmpty();
+            bananaTarget.Libraries[0].RuntimeAssemblies.Should().BeEmpty();
+
+            assetsFile.LogMessages.Should().HaveCount(3);
+            assetsFile.LogMessages[0].Level.Should().Be(LogLevel.Warning);
+            assetsFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1701);
+
+            assetsFile.LogMessages[1].Level.Should().Be(LogLevel.Warning);
+            assetsFile.LogMessages[1].Code.Should().Be(NuGetLogCode.NU1701);
+
+            assetsFile.LogMessages[2].Level.Should().Be(LogLevel.Error);
+            assetsFile.LogMessages[2].Code.Should().Be(NuGetLogCode.NU1202);
+        }
+
+        // P (apple) -> Project2 (apple) -> Package A
+        // P (banana) -> Project2 (banana) -> Package B
+        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Client.Engineering/issues/3632")]
+        public async Task DotnetRestore_WithAliasesOfSameFrameworkAndProjectReferences_TransitivePackageDependenciesFlowCorrectly()
+        {
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+
+            // Create packages
+            var pkgA = new SimpleTestPackageContext("PackageA", "1.0.0");
+            var pkgB = new SimpleTestPackageContext("PackageB", "1.0.0");
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, pkgA, pkgB);
+
+            string apple = nameof(apple);
+            string banana = nameof(banana);
+
+            // Create project2 with dependencies on different packages for each alias
+            var project2Name = "Project2";
+            var project2File = Path.Combine(pathContext.SolutionRoot, project2Name, $"{project2Name}.csproj");
+            _dotnetFixture.CreateDotnetNewProject(pathContext.SolutionRoot, project2Name, " classlib", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(project2File, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
+
+                var attributesA = new Dictionary<string, string>() { { "Version", "1.0.0" } };
+                var attributesB = new Dictionary<string, string>() { { "Version", "1.0.0" } };
+
+                // Add PackageA only for apple alias
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "PackageReference",
+                    "PackageA",
+                    apple,
+                    [],
+                    attributesA);
+
+                // Add PackageB only for banana alias
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "PackageReference",
+                    "PackageB",
+                    banana,
+                    [],
+                    attributesB);
+
+                var appleProps = new Dictionary<string, string>
+                    {
+                        { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                        { "TargetFrameworkVersion", $"v{TestConstants.DefaultTargetFramework.Version.ToString(2)}" },
+                    };
+                ProjectFileUtils.AddProperties(xml, appleProps, $" '$(TargetFramework)' == '{apple}' ");
+
+                var bananaProps = new Dictionary<string, string>
+                    {
+                        { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                        { "TargetFrameworkVersion", $"v{TestConstants.DefaultTargetFramework.Version.ToString(2)}" }
+                    };
+                ProjectFileUtils.AddProperties(xml, bananaProps, $" '$(TargetFramework)' == '{banana}' ");
+
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            // Create project1 that references project2
+            var project1Name = "Project1";
+            var project1Directory = Path.Combine(pathContext.SolutionRoot, project1Name);
+            var project1File = Path.Combine(project1Directory, $"{project1Name}.csproj");
+            _dotnetFixture.CreateDotnetNewProject(pathContext.SolutionRoot, project1Name, " classlib", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(project1File, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
+
+                // Add project reference to project2
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "ProjectReference",
+                    $"..\\{project2Name}\\{project2Name}.csproj",
+                    string.Empty,
+                    [],
+                    []);
+
+                var appleProps = new Dictionary<string, string>
+                    {
+                        { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                        { "TargetFrameworkVersion", $"v{TestConstants.DefaultTargetFramework.Version.ToString(2)}" },
+                    };
+                ProjectFileUtils.AddProperties(xml, appleProps, $" '$(TargetFramework)' == '{apple}' ");
+
+                var bananaProps = new Dictionary<string, string>
+                    {
+                        { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                        { "TargetFrameworkVersion", $"v{TestConstants.DefaultTargetFramework.Version.ToString(2)}" }
+                    };
+                ProjectFileUtils.AddProperties(xml, bananaProps, $" '$(TargetFramework)' == '{banana}' ");
+
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            // Act
+            var result = _dotnetFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, $"restore {project1File}", testOutputHelper: _testOutputHelper);
+
+            // Assert
+            var assetsFilePath = Path.Combine(project1Directory, "obj", "project.assets.json");
+            var assetsFile = new LockFileFormat().Read(assetsFilePath);
+
+            // Apple alias should have PackageA transitively through Project2
+            LockFileTarget appleTarget = assetsFile.GetTarget(apple, null);
+            appleTarget.Libraries.Should().Contain(e => e.Name.Equals("Project2"));
+            appleTarget.Libraries.Should().Contain(e => e.Name.Equals("PackageA"));
+            appleTarget.Libraries.Should().NotContain(e => e.Name.Equals("PackageB"));
+
+            // Banana alias should have PackageB transitively through Project2
+            LockFileTarget bananaTarget = assetsFile.GetTarget(banana, null);
+            bananaTarget.Libraries.Should().Contain(e => e.Name.Equals("Project2"));
+            bananaTarget.Libraries.Should().NotContain(e => e.Name.Equals("PackageA"));
+            bananaTarget.Libraries.Should().Contain(e => e.Name.Equals("PackageB"));
+        }
+
+        // P (apple) -> Project2 
+        // P (banana) -> Project3
+        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Client.Engineering/issues/3632")]
+        public async Task DotnetRestore_WithAliasesOfSameFramework_MultipleProjectReferencesFlowCorrectly()
+        {
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+
+            string apple = nameof(apple);
+            string banana = nameof(banana);
+
+            // Create project2 - uses default framework, no custom aliases needed
+            string project2Name = "Project2";
+            _dotnetFixture.CreateDotnetNewProject(pathContext.SolutionRoot, project2Name, " classlib", testOutputHelper: _testOutputHelper);
+
+            // Create project3 - uses default framework, no custom aliases needed
+            var project3Name = "Project3";
+            _dotnetFixture.CreateDotnetNewProject(pathContext.SolutionRoot, project3Name, " classlib", testOutputHelper: _testOutputHelper);
+
+            // Create project1 that references both project2 and project3, but with different references per alias
+            var project1Name = "Project1";
+            var project1Directory = Path.Combine(pathContext.SolutionRoot, project1Name);
+            var project1File = Path.Combine(project1Directory, $"{project1Name}.csproj");
+            _dotnetFixture.CreateDotnetNewProject(pathContext.SolutionRoot, project1Name, " classlib", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(project1File, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
+
+                // Add Project2 reference only for apple alias
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "ProjectReference",
+                    $"..\\{project2Name}\\{project2Name}.csproj",
+                    apple,
+                    [],
+                    []);
+
+                // Add Project3 reference only for banana alias
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "ProjectReference",
+                    $"..\\{project3Name}\\{project3Name}.csproj",
+                    banana,
+                    [],
+                    []);
+
+                var appleProps = new Dictionary<string, string>
+                    {
+                        { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                        { "TargetFrameworkVersion", $"v{TestConstants.DefaultTargetFramework.Version.ToString(2)}" }
+                    };
+                ProjectFileUtils.AddProperties(xml, appleProps, $" '$(TargetFramework)' == '{apple}' ");
+
+                var bananaProps = new Dictionary<string, string>
+                    {
+                        { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                        { "TargetFrameworkVersion", $"v{TestConstants.DefaultTargetFramework.Version.ToString(2)}" }
+                    };
+                ProjectFileUtils.AddProperties(xml, bananaProps, $" '$(TargetFramework)' == '{banana}' ");
+
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            // Act
+            var result = _dotnetFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, $"restore {project1File}", testOutputHelper: _testOutputHelper);
+
+            // Assert
+            var assetsFilePath = Path.Combine(project1Directory, "obj", "project.assets.json");
+            var assetsFile = new LockFileFormat().Read(assetsFilePath);
+
+            // Apple alias should have Project2 but not Project3
+            LockFileTarget appleTarget = assetsFile.GetTarget(apple, null);
+            appleTarget.Libraries.Should().Contain(e => e.Name.Equals("Project2"));
+            appleTarget.Libraries.Should().NotContain(e => e.Name.Equals("Project3"));
+
+            // Banana alias should have Project3 but not Project2
+            LockFileTarget bananaTarget = assetsFile.GetTarget(banana, null);
+            bananaTarget.Libraries.Should().NotContain(e => e.Name.Equals("Project2"));
+            bananaTarget.Libraries.Should().Contain(e => e.Name.Equals("Project3"));
+        }
+
+        // P1 (banana) -> X
+        // P1 (apple) -> Y
+        [PlatformFact(Platform.Windows)]
+        public async Task DotnetRestore_WithAliasesOfTheSameFramework_AndSDKAnalysisLevel10_0_200_FailsWithNU1018()
+        {
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+            var testDirectory = pathContext.SolutionRoot;
+            var pkgX = new SimpleTestPackageContext("x", "1.0.0");
+            var pkgY = new SimpleTestPackageContext("y", "1.0.0");
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, pkgX, pkgY);
+
+            string apple = nameof(apple);
+            string banana = nameof(banana);
+            var projectName = "ClassLibrary1";
+            var projectDirectory = Path.Combine(testDirectory, projectName);
+            var projectFile = Path.Combine(projectDirectory, $"{projectName}.csproj");
+            _dotnetFixture.CreateDotnetNewProject(testDirectory, projectName, " classlib", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(projectFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
+                ProjectFileUtils.AddProperty(xml, "SDKAnalysisLevel", "10.0.200");
+
+                var attributes = new Dictionary<string, string>() { { "Version", "1.0.0" } };
+
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "PackageReference",
+                    "x",
+                    banana,
+                    [],
+                    attributes);
+
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "PackageReference",
+                    "y",
+                    apple,
+                    [],
+                    attributes);
+
+                var appleProps = new Dictionary<string, string>
+                    {
+                        { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                        { "TargetFrameworkVersion", $"v{TestConstants.DefaultTargetFramework.Version.ToString(2)}" }
+                    };
+                ProjectFileUtils.AddProperties(xml, appleProps, $" '$(TargetFramework)' == '{apple}' ");
+
+                var bananaProps = new Dictionary<string, string>
+                    {
+                        { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                        { "TargetFrameworkVersion", $"v{TestConstants.DefaultTargetFramework.Version.ToString(2)}" }
+                    };
+                ProjectFileUtils.AddProperties(xml, bananaProps, $" '$(TargetFramework)' == '{banana}' ");
+
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            // Act
+            var result = _dotnetFixture.RunDotnetExpectFailure(pathContext.SolutionRoot, $"restore {projectFile}", testOutputHelper: _testOutputHelper);
+
+            // Assert
+            var assetsFilePath = Path.Combine(projectDirectory, "obj", "project.assets.json");
+            var assetsFile = new LockFileFormat().Read(assetsFilePath);
+            assetsFile.Version.Should().Be(3);
+            assetsFile.LogMessages.Should().HaveCount(1);
+            assetsFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1018);
+        }
+
+        // P (apple) -> Project2 with APPLE constant -> Uses Project2Type
+        // P (banana) -> Project3 with BANANA constant -> Uses Project3Type
+        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Client.Engineering/issues/3632")]
+        public async Task DotnetRestore_WithAliasesOfSameFramework_MultipleProjectReferencesWithConditionalCompilation_BuildSucceeds()
+        {
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+
+            string apple = nameof(apple);
+            string banana = nameof(banana);
+
+            // Create project2 with a type that Project1 will reference
+            string project2Name = "Project2";
+            var project2Directory = Path.Combine(pathContext.SolutionRoot, project2Name);
+            _dotnetFixture.CreateDotnetNewProject(pathContext.SolutionRoot, project2Name, " classlib", testOutputHelper: _testOutputHelper);
+
+            // Add a class to Project2
+            var project2ClassFile = Path.Combine(project2Directory, "Project2Type.cs");
+            File.WriteAllText(project2ClassFile, @"
+        namespace Project2
+        {
+            public class Project2Type
+            {
+                public string GetMessage() => ""Hello from Project2"";
+            }
+        }");
+
+            // Create project3 with a type that Project1 will reference
+            var project3Name = "Project3";
+            var project3Directory = Path.Combine(pathContext.SolutionRoot, project3Name);
+            _dotnetFixture.CreateDotnetNewProject(pathContext.SolutionRoot, project3Name, " classlib", testOutputHelper: _testOutputHelper);
+
+            // Add a class to Project3
+            var project3ClassFile = Path.Combine(project3Directory, "Project3Type.cs");
+            File.WriteAllText(project3ClassFile, @"
+        namespace Project3
+        {
+            public class Project3Type
+            {
+                public string GetMessage() => ""Hello from Project3"";
+            }
+        }");
+
+            // Create project1 that references both project2 and project3, but with different references per alias
+            var project1Name = "Project1";
+            var project1Directory = Path.Combine(pathContext.SolutionRoot, project1Name);
+            var project1File = Path.Combine(project1Directory, $"{project1Name}.csproj");
+            _dotnetFixture.CreateDotnetNewProject(pathContext.SolutionRoot, project1Name, " classlib", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(project1File, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
+
+                // Add Project2 reference only for apple alias
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "ProjectReference",
+                    $"..\\{project2Name}\\{project2Name}.csproj",
+                    apple,
+                    [],
+                    []);
+
+                // Add Project3 reference only for banana alias
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "ProjectReference",
+                    $"..\\{project3Name}\\{project3Name}.csproj",
+                    banana,
+                    [],
+                    []);
+
+                var appleProps = new Dictionary<string, string>
+                    {
+                        { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                        { "TargetFrameworkVersion", $"v{TestConstants.DefaultTargetFramework.Version.ToString(2)}" },
+                        { "DefineConstants", "APPLE" }
+                    };
+                ProjectFileUtils.AddProperties(xml, appleProps, $" '$(TargetFramework)' == '{apple}' ");
+
+                var bananaProps = new Dictionary<string, string>
+                    {
+                        { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                        { "TargetFrameworkVersion", $"v{TestConstants.DefaultTargetFramework.Version.ToString(2)}" },
+                        { "DefineConstants", "BANANA" }
+                    };
+                ProjectFileUtils.AddProperties(xml, bananaProps, $" '$(TargetFramework)' == '{banana}' ");
+
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            // Add conditional code to Project1 that uses the project references
+            var project1ClassFile = Path.Combine(project1Directory, "Class1.cs");
+            File.WriteAllText(project1ClassFile, @"
+        #if APPLE
+        using Project2;
+        #elif BANANA
+        using Project3;
+        #endif
+
+        namespace Project1
+        {
+            public class Class1
+            {
+                public string GetFrameworkMessage()
+                {
+        #if APPLE
+                    var type = new Project2Type();
+                    return type.GetMessage();
+        #elif BANANA
+                    var type = new Project3Type();
+                    return type.GetMessage();
+        #else
+                    return ""Unknown framework"";
+        #endif
+                }
+            }
+        }");
+
+            // Act - Restore
+            var restoreResult = _dotnetFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, $"restore {project1File}", testOutputHelper: _testOutputHelper);
+
+            // Assert - Verify restore results
+            var assetsFilePath = Path.Combine(project1Directory, "obj", "project.assets.json");
+            var assetsFile = new LockFileFormat().Read(assetsFilePath);
+
+            // Apple alias should have Project2 but not Project3
+            LockFileTarget appleTarget = assetsFile.GetTarget(apple, null);
+            appleTarget.Libraries.Should().Contain(e => e.Name.Equals("Project2"));
+            appleTarget.Libraries.Should().NotContain(e => e.Name.Equals("Project3"));
+
+            // Banana alias should have Project3 but not Project2
+            LockFileTarget bananaTarget = assetsFile.GetTarget(banana, null);
+            bananaTarget.Libraries.Should().NotContain(e => e.Name.Equals("Project2"));
+            bananaTarget.Libraries.Should().Contain(e => e.Name.Equals("Project3"));
+
+            // Act - Build
+            var buildResult = _dotnetFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, $"build {project1File} --no-restore", testOutputHelper: _testOutputHelper);
+
+            // Assert - Verify build succeeded
+            buildResult.ExitCode.Should().Be(0);
         }
 
         private void AssertRelatedProperty(IList<LockFileItem> items, string path, string related)

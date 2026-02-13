@@ -83,8 +83,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ApiKey_Description">
-        <source>The API key for the server.</source>
-        <target state="translated">Clé API du serveur.</target>
+        <source>The API key for the server. If not set, the NUGET_API_KEY environment variable is read.</source>
+        <target state="translated">La clé API pour le serveur. Si elle n'est pas définie, la variable d'environnement NUGET_API_KEY est lue.</target>
         <note />
       </trans-unit>
       <trans-unit id="App_FullName">
@@ -1288,8 +1288,8 @@ La recherche est une comparaison de chaînes qui ne respecte pas la casse à l�
         <note />
       </trans-unit>
       <trans-unit id="SymbolApiKey_Description">
-        <source>The API key for the symbol server.</source>
-        <target state="translated">Clé API du serveur de symboles.</target>
+        <source>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</source>
+        <target state="translated">La clé API pour le serveur de symboles. Si elle n'est pas définie, la variable d'environnement NUGET_SYMBOL_API_KEY est lue.</target>
         <note />
       </trans-unit>
       <trans-unit id="SymbolSource_Description">
@@ -1480,6 +1480,11 @@ La recherche est une comparaison de chaînes qui ne respecte pas la casse à l�
         <source>Unable to run 'dotnet nuget why'. {0}</source>
         <target state="translated">Impossible d’exécuter « dotnet nuget why ». {0}</target>
         <note>{0} - Exception mssage</note>
+      </trans-unit>
+      <trans-unit id="WhyCommand_Error_InconsistentAssetsFile">
+        <source>Internal error: Assets file is inconsistent</source>
+        <target state="translated">Erreur interne : le fichier des ressources est incohérent</target>
+        <note />
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. Please run restore for project '{1}' before running this command.</source>

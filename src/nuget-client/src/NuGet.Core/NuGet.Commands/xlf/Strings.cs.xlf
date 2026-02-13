@@ -678,6 +678,13 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
         <target state="translated">Místní prostředky se částečně vymazaly.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Log_AliasingSupportedInNewDependencyResolver">
+        <source>The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
+Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</source>
+        <target state="translated">Projekt {0} se pokouší obnovit duplicitní architektury, které jsou podporovány pouze ve výchozím překladače závislostí, pokud je sada .NET SDK verze {1} nebo novější.
+Upgradujte svou sadu .NET SDK nebo odeberte RestoreUseLegacyDependencyResolver, abyste mohli tuto funkci používat.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Log_AllProjectsUpToDate">
         <source>All projects are up-to-date for restore.</source>
         <target state="translated">Všechny projekty jsou v aktuálním stavu pro obnovení.</target>
@@ -1257,9 +1264,9 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
         <target state="translated">Zadaná verze protokolu je neplatná. Platné verze protokolu jsou od {0} do {1}.</target>
         <note />
       </trans-unit>
-      <trans-unit id="SpecValidationDuplicateFrameworks">
-        <source>Duplicate frameworks found: '{0}'.</source>
-        <target state="translated">Našly se duplicitní architektury: {0}</target>
+      <trans-unit id="SpecValidationDuplicateTargetAlias">
+        <source>The TargetFramework property must be unique. List of TargetFramework properties: {0}.</source>
+        <target state="translated">Vlastnost TargetFramework musí být jedinečná. Seznam vlastností TargetFramework: {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecValidationInvalidFramework">
@@ -1275,11 +1282,6 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       <trans-unit id="SpecValidationNoFrameworks">
         <source>No target frameworks specified.</source>
         <target state="translated">Nezadaly se žádné cílové architektury.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="SpecValidationUAPSingleFramework">
-        <source>UAP projects must contain exactly one target framework.</source>
-        <target state="translated">Projekty UAP musí obsahovat právě jednu cílovou architekturu.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecValidationZeroRestoreRequests">

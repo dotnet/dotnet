@@ -22,6 +22,26 @@
         <target state="translated">Falha na operação</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_CopilotAccessDenied">
+        <source>Access denied. Please ensure you are signed in to GitHub Copilot.</source>
+        <target state="translated">Acesso negado. Verifique se você está conectado ao GitHub Copilot.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_CopilotNotReady">
+        <source>GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">O GitHub Copilot não está pronto. Verifique se o GitHub Copilot está instalado e conectado.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_CopilotServiceNotAvailable">
+        <source>GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">O serviço GitHub Copilot não está disponível. Verifique se o GitHub Copilot está instalado e conectado.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_McpToolServiceNotAvailable">
+        <source>MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">O Serviço de Ferramenta MCP não está disponível. Verifique se o GitHub Copilot está instalado e conectado.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
       <trans-unit id="Error_PackageSourceMappingPattern_Missing">
         <source>A package pattern must be provided.</source>
         <target state="translated">Um padrão de pacote deve ser fornecido.</target>
@@ -45,6 +65,11 @@
       <trans-unit id="Error_PackageSourceUri_Missing">
         <source>A source must be provided.</source>
         <target state="translated">Uma fonte deve ser fornecida.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ServiceBrokerNotAvailable">
+        <source>Service Broker is not available. Please ensure Visual Studio is running correctly.</source>
+        <target state="translated">Service Broker não está disponível. Verifique se o Visual Studio está sendo executado corretamente.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoProjectSelected">
@@ -117,6 +142,11 @@
         <target state="translated">O projeto não é elegível para migração. Ou o projeto não é baseado em packages.config ou ainda não oferece suporte a PackageReference.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Prompt_FixNuGetPackageVulnerabilities">
+        <source>Fix my NuGet package vulnerabilities</source>
+        <target state="translated">Corrigir minhas vulnerabilidades de pacote NuGet</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
         <source>These settings are stored in %NuGet.Config% files</source>
         <target state="translated">Estas configurações são armazenadas em arquivos %NuGet.Config%</target>
@@ -130,6 +160,11 @@
       <trans-unit id="Text_AllowInsecureConnections_Header">
         <source>Allow Insecure Connections</source>
         <target state="translated">Permitir Conexões Inseguras</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AuditSources_Checkbox">
+        <source>Use separate sources for vulnerability audit</source>
+        <target state="translated">Usar fontes separadas para auditoria de vulnerabilidades</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_AuditSources_Description">
@@ -172,6 +207,11 @@
         <target state="translated">Fontes HTTP não são seguras. Considere usar HTTPS em vez disso. "AllowInsecureConnections" está habilitado, permitindo acesso HTTP. Para obter opções mais seguras, confira [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere).</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_MachineWidePackageSource_Description">
+        <source>Machine‑wide package sources are provisioned by Visual Studio workloads and can only be enabled or disabled.</source>
+        <target state="translated">As fontes de pacotes em todo o computador são provisionadas por cargas de trabalho do Visual Studio e só podem ser habilitadas ou desabilitadas.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_PackageSourceEnabled_Header">
         <source>Enabled</source>
         <target state="translated">Habilitado</target>
@@ -211,6 +251,11 @@
         <source>Contoso.Contracts or System.*</source>
         <target state="translated">Contoso.Cotracts ou System.*</target>
         <note>"Contoso.Contracts" and "System.*" are examples of a package ID pattern and a package prefix pattern, respectively, so these two specific examples should not be translated.</note>
+      </trans-unit>
+      <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
+        <source>Fix Vulnerabilities with GitHub Copilot</source>
+        <target state="translated">Corrigir vulnerabilidades com o GitHub Copilot</target>
+        <note />
       </trans-unit>
       <trans-unit id="clearLocalResources">
         <source>Clear NuGet local resources</source>

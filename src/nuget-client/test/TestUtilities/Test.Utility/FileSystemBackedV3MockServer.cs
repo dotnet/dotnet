@@ -21,7 +21,11 @@ namespace Test.Utility
         private string _packageDirectory;
         private readonly MockResponseBuilder _builder;
         private readonly bool _isPrivateFeed;
+
+        /// <summary>Does the source support the VulnerabilityInfo resource</summary>
+        /// <remarks>Sources can provide vulnerability info on registration pages without supporting the vulnerability info resource.</remarks>
         private readonly bool _sourceReportsVulnerabilities;
+
         public FileSystemBackedV3MockServer(string packageDirectory, bool isPrivateFeed = false, bool sourceReportsVulnerabilities = false)
         {
             _packageDirectory = packageDirectory;
@@ -33,7 +37,7 @@ namespace Test.Utility
 
         public ISet<PackageIdentity> UnlistedPackages { get; } = new HashSet<PackageIdentity>();
 
-        public Dictionary<string, List<(Uri, PackageVulnerabilitySeverity, VersionRange)>> Vulnerabilities = new();
+        public Dictionary<string, List<(Uri, PackageVulnerabilitySeverity, VersionRange)>> Vulnerabilities = new(StringComparer.OrdinalIgnoreCase);
 
         public ISet<PackageIdentity> DeprecatedPackages { get; } = new HashSet<PackageIdentity>();
 
@@ -147,7 +151,7 @@ namespace Test.Utility
                     {
                         response.ContentType = "text/javascript";
                         var packageToListedMapping = packages.Select(e => new KeyValuePair<PackageIdentity, bool>(e.Identity, !UnlistedPackages.Contains(e.Identity))).ToArray();
-                        MockResponse mockResponse = _builder.BuildRegistrationIndexResponse(Uri, packageToListedMapping, DeprecatedPackages);
+                        MockResponse mockResponse = _builder.BuildRegistrationIndexResponse(Uri, packageToListedMapping, DeprecatedPackages, Vulnerabilities);
                         SetResponseContent(response, mockResponse.Content);
                     });
                 }

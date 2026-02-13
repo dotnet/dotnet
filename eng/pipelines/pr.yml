@@ -46,6 +46,7 @@ variables:
     value: false
 
 - template: /eng/common/templates/variables/pool-providers.yml@self
+- template: /eng/pipelines/templates/variables/vmr-build.yml@self
 
 stages:
 - template: /eng/pipelines/templates/stages/vmr-build.yml
@@ -62,3 +63,39 @@ stages:
     # Exclude runtime dependent jobs for any branch not producing a 1xx version since runtime-related repos aren't built in that context
     # This is enabled for all branches except main and 1xx
     excludeRuntimeDependentJobs: true
+
+- stage: ValidateUserChanges
+  displayName: Validate user changes in VMR
+  dependsOn: []
+  condition: and(
+              eq(variables['isPRTrigger'], 'true'),
+              and(
+                  not(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/darc-')),
+                  not(startsWith(variables['System.PullRequest.SourceBranch'], 'darc-')),
+                  not(eq(variables['Build.RequestedFor'], 'dotnet-bot'))
+              )
+          )
+  jobs:
+    - job: Validate
+      displayName: Run Validation Script
+      pool:
+        name: $(shortStackPoolName)
+        demands: ImageOverride -equals $(poolImage_Linux)
+      steps:
+        - checkout: self
+          fetchDepth: 0
+
+        - script: |
+            set -ex
+            echo "Fetching target branch: $(System.PullRequest.TargetBranch)"
+            git fetch origin $(System.PullRequest.TargetBranch)
+          displayName: Fetch target branch
+
+        - script: |
+            set -ex
+            eng/common/dotnet.sh run --project eng/tools/ChangeValidation/ChangeValidation.csproj
+          displayName: Run ChangeValidation tool
+          env:
+            SYSTEM_PULLREQUEST_TARGETBRANCH: $(System.PullRequest.TargetBranch)
+            SYSTEM_PULLREQUEST_SOURCEBRANCH: $(System.PullRequest.SourceBranch)
+            SYSTEM_PULLREQUEST_PULLREQUESTNUMBER: $(System.PullRequest.PullRequestNumber)

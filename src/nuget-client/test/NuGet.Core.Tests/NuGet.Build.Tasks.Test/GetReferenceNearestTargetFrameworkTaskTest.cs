@@ -466,6 +466,11 @@ namespace NuGet.Build.Tasks.Test
         [InlineData(".NETCoreApp,Version=v5.0", "Windows,Version=7.0", "net5.0-windows;netcoreapp3.1", ".NETCoreApp,Version=v5.0;.NETCoreApp,Version=v3.1", "Windows,Version=7.0;Windows,Version=7.0", "net5.0-windows")]
         [InlineData(".NETCoreApp,Version=v5.0", "None", "net;net-windows", ".NETCoreApp,Version=v5.0;.NETCoreApp,Version=v5.0", "None;Windows,Version=7.0", "net")]
         [InlineData(".NETCoreApp,Version=v3.1", "Windows,Version=7.0", "net50;netstandard20", ".NETCoreApp,Version=v5.0;NETStandard,Version=v2.0", "Windows,Version=7.0;None", "netstandard20")]
+        [InlineData(".NETCoreApp,Version=v10.0", null, // TFM & TPM of current project
+            "apple;netstandard20", // TargetFramework of reference project
+            ".NETCoreApp,Version=v5.0;NETStandard,Version=v2.0", // TFM of reference project
+            "Windows,Version=7.0;None", // TPM of reference project
+            "netstandard20")] // Alias to return
         public void GetReferenceNearestTargetFrameworkTask_WithTargetFrameworkInformation_ReturnsCompatibleAlias(
             string currentProjectTFM, string currentProjectTPM, string refTargetFrameworks, string refTargetFrameworkMonikers, string refTargetPlatformMonikers, string expected)
         {
@@ -534,7 +539,6 @@ namespace NuGet.Build.Tasks.Test
             testLogger.Warnings.Should().Be(0);
             testLogger.Errors.Should().Be(1);
         }
-
 
         [Theory]
         [InlineData(".NETFramework,Version=v4.7.2", null, "net46;net472", ".NETFramework,Version=v4.6", "None")]
@@ -645,6 +649,116 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(1);
             testLogger.Errors.Should().Be(0);
+        }
+
+        [Theory]
+        // Exact alias match, first in list.
+        [InlineData(".NETCoreApp,Version=v10.0", null, "apple", // TFM & TPM & TF of current project
+            "apple;banana", // TargetFramework of reference project
+            ".NETCoreApp,Version=v10.0;.NETCoreApp,Version=v10.0", // TFM of reference project
+            "None;None", // TPM of reference project
+            "apple")] // Alias to return
+        // Exact alias match, second in list
+        [InlineData(".NETCoreApp,Version=v10.0", null, "banana", // TFM & TPM & TF of current project
+            "apple;banana", // TargetFramework of reference project
+            ".NETCoreApp,Version=v10.0;.NETCoreApp,Version=v10.0", // TFM of reference project
+            "None;None", // TPM of reference project
+            "banana")] // Alias to return
+        // True compat superceeds alias match
+        [InlineData(".NETCoreApp,Version=v10.0", null, "apple", // TFM & TPM & TF of current project
+            "apple;banana", // TargetFramework of reference project
+            ".NETCoreApp,Version=v9.0;.NETCoreApp,Version=v10.0", // TFM of reference project
+            "None;None", // TPM of reference project
+            "banana")] // Alias to return
+        // True compat superceeds alias match - v2
+        [InlineData(".NETCoreApp,Version=v10.0", null, "net10.0", // TFM & TPM & TF of current project
+            "apple;banana", // TargetFramework of reference project
+            ".NETCoreApp,Version=v9.0;.NETCoreApp,Version=v10.0", // TFM of reference project
+            "None;None", // TPM of reference project
+            "banana")] // Alias to return
+        // Exact alias match, with many frameworks
+        [InlineData(".NETCoreApp,Version=v10.0", null, "banana", // TFM & TPM & TF of current project
+            "net8.0;banana;net9.0;net10.0", // TargetFramework of reference project
+            ".NETCoreApp,Version=v8.0;.NETCoreApp,Version=v10.0;.NETCoreApp,Version=v9.0;.NETCoreApp,Version=v10.0", // TFM of reference project
+            "None;None;None;None", // TPM of reference project
+            "banana")] // Alias to return
+        public void GetReferenceNearestTargetFrameworkTask_WithAlias_ReturnsCompatibleAlias(
+            string currentProjectTFM, string currentProjectTPM, string currentProjectTargetFramework, string refTargetFrameworks, string refTargetFrameworkMonikers, string refTargetPlatformMonikers, string expected)
+        {
+            var buildEngine = new TestBuildEngine();
+            var testLogger = buildEngine.TestLogger;
+
+            var references = new List<ITaskItem>();
+            var reference = new Mock<ITaskItem>();
+            reference.SetupGet(e => e.ItemSpec).Returns("a.csproj");
+            reference.Setup(e => e.GetMetadata("TargetFrameworks")).Returns(refTargetFrameworks);
+            reference.Setup(e => e.GetMetadata("TargetFrameworkMonikers")).Returns(refTargetFrameworkMonikers);
+            reference.Setup(e => e.GetMetadata("TargetPlatformMonikers")).Returns(refTargetPlatformMonikers);
+            references.Add(reference.Object);
+
+            var task = new GetReferenceNearestTargetFrameworkTask
+            {
+                BuildEngine = buildEngine,
+                CurrentProjectTargetFramework = currentProjectTFM,
+                CurrentProjectTargetPlatform = currentProjectTPM,
+                CurrentProjectTargetFrameworkProperty = currentProjectTargetFramework,
+                FallbackTargetFrameworks = new string[] { },
+                AnnotatedProjectReferences = references.ToArray()
+            };
+
+            var result = task.Execute();
+            result.Should().BeTrue(because: testLogger.ShowMessages());
+
+            task.AssignedProjects.Should().HaveCount(1);
+            task.AssignedProjects[0].GetMetadata("NearestTargetFramework").Should().Be(expected);
+
+            testLogger.Warnings.Should().Be(0);
+            testLogger.Errors.Should().Be(0);
+        }
+
+        [Theory]
+        // Multiple frameworks matched, but alias does not match
+        [InlineData(".NETCoreApp,Version=v10.0", null, "conflict", // TFM & TPM & TF of current project
+            "apple;banana", // TargetFramework of reference project
+            ".NETCoreApp,Version=v10.0;.NETCoreApp,Version=v10.0", // TFM of reference project
+            "None;None")] // TPM of reference project
+        // Multiple frameworks matched, but alias does not match
+        [InlineData(".NETCoreApp,Version=v10.0", null, "net10.0", // TFM & TPM & TF of current project
+            "apple;banana", // TargetFramework of reference project
+            ".NETCoreApp,Version=v10.0;.NETCoreApp,Version=v10.0", // TFM of reference project
+            "None;None")] // TPM of reference project
+        public void GetReferenceNearestTargetFrameworkTask_WithAlias_WithoutAmbigiousFrameworks_Errors(
+            string currentProjectTFM, string currentProjectTPM, string currentProjectTargetFramework, string refTargetFrameworks, string refTargetFrameworkMonikers, string refTargetPlatformMonikers)
+        {
+            var buildEngine = new TestBuildEngine();
+            var testLogger = buildEngine.TestLogger;
+
+            var references = new List<ITaskItem>();
+            var reference = new Mock<ITaskItem>();
+            reference.SetupGet(e => e.ItemSpec).Returns("a.csproj");
+            reference.Setup(e => e.GetMetadata("TargetFrameworks")).Returns(refTargetFrameworks);
+            reference.Setup(e => e.GetMetadata("TargetFrameworkMonikers")).Returns(refTargetFrameworkMonikers);
+            reference.Setup(e => e.GetMetadata("TargetPlatformMonikers")).Returns(refTargetPlatformMonikers);
+            references.Add(reference.Object);
+
+            var task = new GetReferenceNearestTargetFrameworkTask
+            {
+                BuildEngine = buildEngine,
+                CurrentProjectTargetFramework = currentProjectTFM,
+                CurrentProjectTargetPlatform = currentProjectTPM,
+                CurrentProjectTargetFrameworkProperty = currentProjectTargetFramework,
+                FallbackTargetFrameworks = new string[] { },
+                AnnotatedProjectReferences = references.ToArray()
+            };
+
+            var result = task.Execute();
+
+            result.Should().BeFalse();
+
+            task.AssignedProjects.Should().HaveCount(1);
+
+            testLogger.Warnings.Should().Be(0);
+            testLogger.Errors.Should().Be(1);
         }
     }
 }

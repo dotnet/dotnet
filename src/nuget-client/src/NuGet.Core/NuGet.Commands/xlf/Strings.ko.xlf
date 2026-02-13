@@ -678,6 +678,13 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <target state="translated">로컬 리소스를 부분적으로 지웠습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Log_AliasingSupportedInNewDependencyResolver">
+        <source>The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
+Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</source>
+        <target state="translated">프로젝트 {0}이(가) .NET SDK 버전이 {1} 이상일 때 기본 종속성 확인자에서만 지원되는 중복 프레임워크를 복원하려고 합니다.
+이 기능을 사용하려면 .NET SDK를 업그레이드하거나 RestoreUseLegacyDependencyResolver를 제거하세요.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Log_AllProjectsUpToDate">
         <source>All projects are up-to-date for restore.</source>
         <target state="translated">복원할 모든 프로젝트가 최신 상태입니다.</target>
@@ -1257,9 +1264,9 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <target state="translated">지정된 프로토콜 버전이 잘못되었습니다. 유효한 프로토콜 버전은 {0}부터 {1}까지입니다.</target>
         <note />
       </trans-unit>
-      <trans-unit id="SpecValidationDuplicateFrameworks">
-        <source>Duplicate frameworks found: '{0}'.</source>
-        <target state="translated">중복된 프레임워크가 발견되었습니다. '{0}'.</target>
+      <trans-unit id="SpecValidationDuplicateTargetAlias">
+        <source>The TargetFramework property must be unique. List of TargetFramework properties: {0}.</source>
+        <target state="translated">TargetFramework 속성은 고유해야 합니다. TargetFramework 속성 목록: {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecValidationInvalidFramework">
@@ -1275,11 +1282,6 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       <trans-unit id="SpecValidationNoFrameworks">
         <source>No target frameworks specified.</source>
         <target state="translated">대상 프레임워크를 지정하지 않았습니다.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="SpecValidationUAPSingleFramework">
-        <source>UAP projects must contain exactly one target framework.</source>
-        <target state="translated">UAP 프로젝트에는 대상 프레임워크가 하나만 포함되어야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecValidationZeroRestoreRequests">

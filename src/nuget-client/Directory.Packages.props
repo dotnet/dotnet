@@ -58,12 +58,13 @@
     <PackageVersion Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingPackageVersion)" />
     <PackageVersion Include="Microsoft.Internal.VisualStudio.Shell.Framework" Version="17.10.40173" />
     <PackageVersion Include="Microsoft.NET.StringTools" Version="$(MicrosoftBuildVersion)" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageVersion Include="Microsoft.PowerShell.3.ReferenceAssemblies" Version="1.0.0" />
     <!-- Microsoft.TeamFoundationServer.ExtendedClient has vulnerable dependencies Microsoft.IdentityModel.JsonWebTokens and System.IdentityModel.Tokens.Jwt . When it's upgraded, try removing the pinned packages -->
     <PackageVersion Include="Microsoft.TeamFoundationServer.ExtendedClient" Version="16.153.0" />
     <PackageVersion Include="Microsoft.Test.Apex.VisualStudio" Version="18.0.0-preview-1-10723-180" />
     <PackageVersion Include="Microsoft.TestPlatform.Portable" Version="17.1.0" />
+    <PackageVersion Include="Microsoft.VisualStudio.Copilot" Version="18.0.848-alpha" />
     <PackageVersion Include="Microsoft.VisualStudio.LanguageServices" Version="4.3.1" />
     <PackageVersion Include="Microsoft.VisualStudio.Markdown.Platform" Version="17.14.76-preview" />
     <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem" Version="17.4.221-pre" />
@@ -104,7 +105,7 @@
     <PackageVersion Include="System.Threading.Tasks.Dataflow" Version="4.9.0" />
     <PackageVersion Include="VsWebSite.Interop" Version="17.10.40173" />
     <PackageVersion Include="xunit" Version="2.9.0" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageVersion Include="Xunit.StaFact" Version="1.1.11" />
   </ItemGroup>
 
