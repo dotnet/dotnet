@@ -70,11 +70,11 @@ internal sealed partial class RemoteSpanMappingService(in ServiceArgs args) : Ra
 
         // Then we'll classify the spans based on the primary document, since that's the coordinate
         // space that our output mappings use.
-        var mappings = codeDocument.GetRequiredCSharpDocument().SourceMappings;
+        var mappingsSortedByOriginal = codeDocument.GetRequiredCSharpDocument().SourceMappingsSortedByOriginal;
         var classifiedSpans = await DocumentExcerptHelper.ClassifyPreviewAsync(
             excerptSpan,
             generatedDocument,
-            mappings,
+            mappingsSortedByOriginal,
             options,
             cancellationToken).ConfigureAwait(false);
 

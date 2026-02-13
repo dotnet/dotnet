@@ -503,7 +503,7 @@ public abstract class IntegrationTestBase
             }
 
             var found = false;
-            foreach (var mapping in csharpDocument.SourceMappings)
+            foreach (var mapping in csharpDocument.SourceMappingsSortedByOriginal)
             {
                 if (mapping.OriginalSpan == sourceSpan)
                 {
@@ -517,6 +517,11 @@ public abstract class IntegrationTestBase
                     }
 
                     found = true;
+                    break;
+                }
+                else if (mapping.OriginalSpan.CompareByStartThenLength(sourceSpan) > 0)
+                {
+                    // This span (and all following) are after the area we're interested in
                     break;
                 }
             }
