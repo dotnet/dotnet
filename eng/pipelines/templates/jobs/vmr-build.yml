@@ -872,17 +872,24 @@ jobs:
           enableMicrobuildForMacAndLinux: true
 
   - task: CopyFiles@2
-    displayName: Prepare BuildLogs staging directory
+    displayName: Copy logs to BuildLogs staging
     inputs:
-      SourceFolder: '$(sourcesPath)/artifacts'
-      Contents: |
-        log/**
-        TestResults/**
-      TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs/artifacts'
+      SourceFolder: '$(sourcesPath)/artifacts/log'
+      Contents: '**'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs/artifacts/log'
       CleanTargetFolder: true
     continueOnError: true
     condition: succeededOrFailed()
-    
+
+  - task: CopyFiles@2
+    displayName: Copy TestResults to BuildLogs staging
+    inputs:
+      SourceFolder: '$(sourcesPath)/artifacts/TestResults'
+      Contents: '**'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs/artifacts/TestResults'
+    continueOnError: true
+    condition: succeededOrFailed()
+
   - task: CopyFiles@2
     displayName: Copy unmerged artifacts to staging directory
     inputs:
