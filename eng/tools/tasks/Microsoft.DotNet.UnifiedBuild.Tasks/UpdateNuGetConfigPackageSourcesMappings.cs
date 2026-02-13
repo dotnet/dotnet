@@ -236,7 +236,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
             foreach (string sourceName in pkgSourcesElement
                 .Descendants()
                 .Where(e => e.Name == "add" &&
-                        !SourceBuildSources?.Contains(e.Attribute("key").Value) &&
+                        !(SourceBuildSources?.Contains(e.Attribute("key").Value) == true) &&
                         // SBRP Cache source is not in SourceBuildSources, skip it as it's not an online source
                         !(e.Attribute("key").Value == SbrpCacheSourceName))
                 .Select(e => e.Attribute("key").Value)
