@@ -505,6 +505,12 @@
                    IntermediateAssembly="%(_MSBuildAppHost.FullPath)"
                    EnableMacOSCodeSign="$(SharedFrameworkRid.StartsWith('osx'))" />
 
+    <!-- Copy the COM type library next to the apphost on Windows (needed for ITaskHost marshaling) -->
+    <Copy SourceFiles="$(MSBuildProjectDirectory)/Microsoft.Build.Framework.tlb"
+          DestinationFolder="%(_MSBuildAppHost.RootDir)%(_MSBuildAppHost.Directory)"
+          SkipUnchangedFiles="true"
+          Condition="$(SharedFrameworkRid.StartsWith('win'))" />
+
     <Exec Command="codesign --sign - --force --entitlements '$(MSBuildProjectDirectory)/msbuild-entitlements.plist' %(_MSBuildAppHost.RootDir)%(_MSBuildAppHost.Directory)%(_MSBuildAppHost.Filename)$(ExeExtension)"
           Condition="$(SharedFrameworkRid.StartsWith('osx'))" />
   </Target>
