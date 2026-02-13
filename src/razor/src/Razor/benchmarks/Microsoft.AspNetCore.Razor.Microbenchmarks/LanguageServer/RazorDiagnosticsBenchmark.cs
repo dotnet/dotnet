@@ -85,7 +85,7 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
         var documentMappingService = BuildRazorDocumentMappingService();
 
         var optionsMonitor = Mock.Of<RazorLSPOptionsMonitor>(MockBehavior.Strict);
-        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(documentMappingService, loggerFactory);
+        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(documentMappingService, languageServerFeatureOptions, loggerFactory);
         DocumentPullDiagnosticsEndpoint = new VSDocumentDiagnosticsEndpoint(translateDiagnosticsService, optionsMonitor, languageServer, telemetryReporter: null);
     }
 

@@ -4,7 +4,9 @@
 using Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Diagnostics;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -17,9 +19,11 @@ public sealed class VSDocumentDiagnosticsEndpointTest(ITestOutputHelper testOutp
     public void ApplyCapabilities_AddsExpectedCapabilities()
     {
         // Arrange
+        var languageServerFeatureOptions = new TestLanguageServerFeatureOptions();
         var documentMappingService = new LspDocumentMappingService(FilePathService, new TestDocumentContextFactory(), LoggerFactory);
         var razorTranslate = new Mock<RazorTranslateDiagnosticsService>(MockBehavior.Strict,
             documentMappingService,
+            languageServerFeatureOptions,
             LoggerFactory);
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
         var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);

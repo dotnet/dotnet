@@ -1,4 +1,4 @@
-﻿Source Location: (11:0,11 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+∩╗┐Source Location: (11:0,11 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 |TRenderMode|
 Generated Location: (474:16,0 [11] )
 |TRenderMode|

@@ -19,6 +19,7 @@ internal sealed record RazorLSPOptions(
     bool AutoInsertAttributeQuotes,
     bool ColorBackground,
     bool CodeBlockBraceOnNextLine,
+    AttributeIndentStyle AttributeIndentStyle,
     bool CommitElementsWithSpace,
     ImmutableArray<string> TaskListDescriptors)
 {
@@ -31,6 +32,7 @@ internal sealed record RazorLSPOptions(
                                                          AutoInsertAttributeQuotes: true,
                                                          ColorBackground: false,
                                                          CodeBlockBraceOnNextLine: false,
+                                                         AttributeIndentStyle: AttributeIndentStyle.AlignWithFirst,
                                                          CommitElementsWithSpace: true,
                                                          TaskListDescriptors: []);
 
@@ -47,16 +49,17 @@ internal sealed record RazorLSPOptions(
     /// </summary>
     internal static RazorLSPOptions From(ClientSettings settings)
         => new(GetFormattingFlags(settings),
-              settings.AdvancedSettings.AutoClosingTags,
-              !settings.ClientSpaceSettings.IndentWithTabs,
-              settings.ClientSpaceSettings.IndentSize,
-              settings.ClientCompletionSettings.AutoShowCompletion,
-              settings.ClientCompletionSettings.AutoListParams,
-              settings.AdvancedSettings.AutoInsertAttributeQuotes,
-              settings.AdvancedSettings.ColorBackground,
-              settings.AdvancedSettings.CodeBlockBraceOnNextLine,
-              settings.AdvancedSettings.CommitElementsWithSpace,
-              settings.AdvancedSettings.TaskListDescriptors);
+            settings.AdvancedSettings.AutoClosingTags,
+            !settings.ClientSpaceSettings.IndentWithTabs,
+            settings.ClientSpaceSettings.IndentSize,
+            settings.ClientCompletionSettings.AutoShowCompletion,
+            settings.ClientCompletionSettings.AutoListParams,
+            settings.AdvancedSettings.AutoInsertAttributeQuotes,
+            settings.AdvancedSettings.ColorBackground,
+            settings.AdvancedSettings.CodeBlockBraceOnNextLine,
+            settings.AdvancedSettings.AttributeIndentStyle,
+            settings.AdvancedSettings.CommitElementsWithSpace,
+            settings.AdvancedSettings.TaskListDescriptors);
 
     private static FormattingFlags GetFormattingFlags(ClientSettings settings)
     {
@@ -86,6 +89,7 @@ internal sealed record RazorLSPOptions(
             AutoInsertAttributeQuotes == other.AutoInsertAttributeQuotes &&
             ColorBackground == other.ColorBackground &&
             CodeBlockBraceOnNextLine == other.CodeBlockBraceOnNextLine &&
+            AttributeIndentStyle == other.AttributeIndentStyle &&
             CommitElementsWithSpace == other.CommitElementsWithSpace &&
             TaskListDescriptors.SequenceEqual(other.TaskListDescriptors);
     }
@@ -102,6 +106,7 @@ internal sealed record RazorLSPOptions(
         hash.Add(AutoInsertAttributeQuotes);
         hash.Add(ColorBackground);
         hash.Add(CodeBlockBraceOnNextLine);
+        hash.Add(AttributeIndentStyle);
         hash.Add(CommitElementsWithSpace);
         hash.Add(TaskListDescriptors);
         return hash;

@@ -1,4 +1,4 @@
-﻿RazorDocument - [0..124)::124 - [@{LF    var value = 42;LF}LF<section is-confirm-redirect="true" @@data-id="item_@value" control-id="section1">Text</section>]
+∩╗┐RazorDocument - [0..124)::124 - [@{LF    var value = 42;LF}LF<section is-confirm-redirect="true" @@data-id="item_@value" control-id="section1">Text</section>]
     MarkupBlock - [0..124)::124
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];

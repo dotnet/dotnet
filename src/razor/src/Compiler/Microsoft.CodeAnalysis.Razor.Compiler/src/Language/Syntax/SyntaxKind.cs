@@ -14,6 +14,7 @@ internal enum SyntaxKind : byte
     RazorComment,
     RazorMetaCode,
     RazorDirective,
+    RazorUsingDirective,
     RazorDirectiveBody,
     UnclassifiedTextLiteral,
 
@@ -145,6 +146,7 @@ internal enum SyntaxKind : byte
 
     // New common (Consider condensing when https://github.com/dotnet/razor/issues/8400 is done and we can break the API).
     EndOfFile,
+    ConflictMarkerTrivia,
     #endregion
 
     // New nodes should go before this one

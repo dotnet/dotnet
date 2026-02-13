@@ -1,4 +1,4 @@
-﻿RazorDocument - [0..63)::63 - [<pLF  attribute-1="true"LF  @* visible *@LF  not-visible>LF</p>]
+∩╗┐RazorDocument - [0..63)::63 - [<pLF  attribute-1="true"LF  @* visible *@LF  not-visible>LF</p>]
     MarkupBlock - [0..63)::63
         MarkupTagHelperElement - [0..63)::63 - p[StartTagAndEndTag] - PTagHelper
             MarkupTagHelperStartTag - [0..57)::57 - [<pLF  attribute-1="true"LF  @* visible *@LF  not-visible>] - Gen<Markup>

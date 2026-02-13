@@ -115,4 +115,15 @@ public struct SourceSpan : IEquatable<SourceSpan>
     {
         return !left.Equals(right);
     }
+
+    public readonly int CompareByStartThenLength(SourceSpan other)
+    {
+        var cmpByStart = AbsoluteIndex.CompareTo(other.AbsoluteIndex);
+        if (cmpByStart != 0)
+        {
+            return cmpByStart;
+        }
+
+        return Length.CompareTo(other.Length);
+    }
 }

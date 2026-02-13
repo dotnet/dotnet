@@ -1,197 +1,197 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+∩╗┐<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="ko" original="../SR.resx">
     <body>
       <trans-unit id="ArgumentCannotBeNullOrEmpty">
         <source>Value cannot be null or an empty string.</source>
-        <target state="translated">값은 null이거나 빈 문자열일 수 없습니다.</target>
+        <target state="translated">Ω░Æ∞¥Ç null∞¥┤Ω▒░δéÿ δ╣ê δ¼╕∞₧É∞ù┤∞¥╝ ∞êÿ ∞ùå∞è╡δïêδïñ.</target>
         <note />
       </trans-unit>
       <trans-unit id="ComponentCompletionWithRequiredAttributesLabel">
         <source>{0} (and req'd attributes...)</source>
-        <target state="translated">{0}(및 필수 특성...)</target>
+        <target state="translated">{0}(δ░Å φòä∞êÿ φè╣∞ä▒...)</target>
         <note>The term "req'd" is an abbreviation for "required"</note>
       </trans-unit>
       <trans-unit id="Create_Component_FromTag_Title">
         <source>Create component from tag</source>
-        <target state="translated">태그에서 구성 요소 만들기</target>
+        <target state="translated">φâ£Ω╖╕∞ùÉ∞ä£ Ω╡¼∞ä▒ ∞Üö∞åî δºîδôñΩ╕░</target>
         <note />
       </trans-unit>
       <trans-unit id="Blazor_directive_attributes">
         <source>Blazor directive attributes</source>
-        <target state="translated">Blazor 지시문 특성</target>
+        <target state="translated">Blazor ∞ºÇ∞ï£δ¼╕ φè╣∞ä▒</target>
         <note />
       </trans-unit>
       <trans-unit id="Diagnostics_after">
         <source>Diagnostics after:</source>
-        <target state="translated">다음 이후 진단:</target>
+        <target state="translated">δïñ∞¥î ∞¥┤φ¢ä ∞ºäδï¿:</target>
         <note />
       </trans-unit>
       <trans-unit id="Diagnostics_before">
         <source>Diagnostics before:</source>
-        <target state="translated">다음 이전 진단:</target>
+        <target state="translated">δïñ∞¥î ∞¥┤∞áä ∞ºäδï¿:</target>
         <note />
       </trans-unit>
       <trans-unit id="Directive">
         <source>directive</source>
-        <target state="translated">지시문</target>
+        <target state="translated">∞ºÇ∞ï£δ¼╕</target>
         <note />
       </trans-unit>
       <trans-unit id="DirectiveSnippetDescription">
         <source>Insert a directive code snippet
 [Tab] to navigate between elements, [Enter] to complete</source>
-        <target state="translated">지시문 코드 조각 삽입
-요소 간에 탐색하려면 [Tab], 완료하려면 [Enter]</target>
+        <target state="translated">∞ºÇ∞ï£δ¼╕ ∞╜öδô£ ∞í░Ω░ü ∞é╜∞₧à
+∞Üö∞åî Ω░ä∞ùÉ φâÉ∞âëφòÿδáñδ⌐┤ [Tab], ∞Öäδúîφòÿδáñδ⌐┤ [Enter]</target>
         <note />
       </trans-unit>
       <trans-unit id="Edit_at_adds">
         <source>Edit at {0} adds the non-whitespace content '{1}'.</source>
-        <target state="translated">{0}에서 편집은 공백이 아닌 콘텐츠 '{1}'을(를) 추가합니다.</target>
+        <target state="translated">{0}∞ùÉ∞ä£ φÄ╕∞ºæ∞¥Ç Ω│╡δ░▒∞¥┤ ∞òäδïî ∞╜ÿφàÉ∞╕á '{1}'∞¥ä(δÑ╝) ∞╢öΩ░Çφò⌐δïêδïñ.</target>
         <note />
       </trans-unit>
       <trans-unit id="Edit_at_deletes">
         <source>Edit at {0} deletes the non-whitespace content '{1}'.</source>
-        <target state="translated">{0}에서 편집은 공백이 아닌 콘텐츠 '{1}'을(를) 삭제합니다.</target>
+        <target state="translated">{0}∞ùÉ∞ä£ φÄ╕∞ºæ∞¥Ç Ω│╡δ░▒∞¥┤ ∞òäδïî ∞╜ÿφàÉ∞╕á '{1}'∞¥ä(δÑ╝) ∞é¡∞á£φò⌐δïêδïñ.</target>
         <note />
       </trans-unit>
       <trans-unit id="ExtractTo_CodeBehind_Title">
         <source>Extract block to code behind</source>
-        <target state="translated">코드 숨김에 블록 추출</target>
+        <target state="translated">∞╜öδô£ ∞ê¿Ω╣Ç∞ùÉ δ╕öδí¥ ∞╢ö∞╢£</target>
         <note />
       </trans-unit>
       <trans-unit id="ExtractTo_Component_Title">
         <source>Extract element to new component</source>
-        <target state="translated">새 구성 요소에 요소 추출</target>
+        <target state="translated">∞âê Ω╡¼∞ä▒ ∞Üö∞åî∞ùÉ ∞Üö∞åî ∞╢ö∞╢£</target>
         <note />
       </trans-unit>
       <trans-unit id="ExtractTo_Css_Title">
         <source>Extract to {0}.css</source>
-        <target state="translated">{0}.css로 추출</target>
+        <target state="translated">{0}.cssδí£ ∞╢ö∞╢£</target>
         <note />
       </trans-unit>
       <trans-unit id="Format_operation_changed_diagnostics">
         <source>A format operation is being abandoned because it would introduce or remove one of more diagnostics.</source>
-        <target state="translated">서식 작업이 중단되는 이유는 진단 중 하나를 더 도입하거나 제거할 수 있기 때문입니다.</target>
+        <target state="translated">∞ä£∞ï¥ ∞₧æ∞ùà∞¥┤ ∞ñæδï¿δÉÿδèö ∞¥┤∞£áδèö ∞ºäδï¿ ∞ñæ φòÿδéÿδÑ╝ δìö δÅä∞₧àφòÿΩ▒░δéÿ ∞á£Ω▒░φòá ∞êÿ ∞₧êΩ╕░ δòîδ¼╕∞₧àδïêδïñ.</target>
         <note />
       </trans-unit>
       <trans-unit id="Format_operation_changed_nonwhitespace">
         <source>A format operation is being abandoned because it would add or delete non-whitespace content.</source>
-        <target state="translated">공백이 아닌 콘텐츠를 추가하거나 삭제하기 때문에 형식 작업이 중단됩니다.</target>
+        <target state="translated">Ω│╡δ░▒∞¥┤ ∞òäδïî ∞╜ÿφàÉ∞╕áδÑ╝ ∞╢öΩ░ÇφòÿΩ▒░δéÿ ∞é¡∞á£φòÿΩ╕░ δòîδ¼╕∞ùÉ φÿò∞ï¥ ∞₧æ∞ùà∞¥┤ ∞ñæδï¿δÉ⌐δïêδïñ.</target>
         <note />
       </trans-unit>
       <trans-unit id="Generate_Async_Event_Handler_Title">
         <source>Generate Async Event Handler '{0}'</source>
-        <target state="translated">비동기 이벤트 처리기 '{0}' 생성</target>
+        <target state="translated">δ╣äδÅÖΩ╕░ ∞¥┤δ▓ñφè╕ ∞▓ÿδª¼Ω╕░ '{0}' ∞â¥∞ä▒</target>
         <note />
       </trans-unit>
       <trans-unit id="Generate_Event_Handler_Title">
         <source>Generate Event Handler '{0}'</source>
-        <target state="translated">이벤트 처리기 '{0}' 생성</target>
+        <target state="translated">∞¥┤δ▓ñφè╕ ∞▓ÿδª¼Ω╕░ '{0}' ∞â¥∞ä▒</target>
         <note />
       </trans-unit>
       <trans-unit id="IncompatibleProject_NoAdditionalFiles">
         <source>The Razor editor utilizes the Razor Source Generator, which requires *.razor and *.cshtml files to be AdditionalFiles in the project. {0} appears to come from '{1}', which has no Razor documents that are AdditionalFiles, so the editing experience will be limited. Is it using the Razor SDK? No more messages will be logged for this project.</source>
-        <target state="translated">Razor 편집기는 프로젝트의 AdditionalFiles이 *.razor 및 *.cshtml 파일이어야 하는 Razor 원본 생성기를 사용합니다. {0}은(는) AdditionalFiles인 Razor 문서가 포함되지 않은 '{1}'에서 가져왔으므로 편집 환경이 제한됩니다. Razor SDK를 사용하고 계십니까? 이 프로젝트에 대해 더 이상 메시지가 기록되지 않습니다.</target>
+        <target state="translated">Razor φÄ╕∞ºæΩ╕░δèö φöäδí£∞á¥φè╕∞¥ÿ AdditionalFiles∞¥┤ *.razor δ░Å *.cshtml φîî∞¥╝∞¥┤∞û┤∞ò╝ φòÿδèö Razor ∞¢Éδ│╕ ∞â¥∞ä▒Ω╕░δÑ╝ ∞é¼∞Ü⌐φò⌐δïêδïñ. {0}∞¥Ç(δèö) AdditionalFiles∞¥╕ Razor δ¼╕∞ä£Ω░Ç φÅ¼φò¿δÉÿ∞ºÇ ∞òè∞¥Ç '{1}'∞ùÉ∞ä£ Ω░Ç∞á╕∞Öö∞£╝δ»Çδí£ φÄ╕∞ºæ φÖÿΩ▓╜∞¥┤ ∞á£φò£δÉ⌐δïêδïñ. Razor SDKδÑ╝ ∞é¼∞Ü⌐φòÿΩ│á Ω│ä∞ï¡δïêΩ╣î? ∞¥┤ φöäδí£∞á¥φè╕∞ùÉ δîÇφò┤ δìö ∞¥┤∞âü δ⌐ö∞ï£∞ºÇΩ░Ç Ω╕░δí¥δÉÿ∞ºÇ ∞òè∞è╡δïêδïñ.</target>
         <note />
       </trans-unit>
       <trans-unit id="IncompatibleProject_NotAnAdditionalFile">
         <source>The Razor editor utilizes the Razor Source Generator, which requires *.razor and *.cshtml files to be AdditionalFiles in the project. {0} appears to come from '{1}', which has Razor documents but this file is not an AdditionalFile, so the editing experience will be limited. No more messages will be logged for this project.</source>
-        <target state="translated">Razor 편집기는 프로젝트의 AdditionalFiles이 *.razor 및 *.cshtml 파일이어야 하는 Razor 원본 생성기를 사용합니다. {0}에는 Razor 문서가 포함되었지만 이 파일은 AdditionalFile이 아닌 '{1}'에서 가져왔으므로 편집 환경이 제한됩니다. 이 프로젝트에 대해 더 이상 메시지가 기록되지 않습니다.</target>
+        <target state="translated">Razor φÄ╕∞ºæΩ╕░δèö φöäδí£∞á¥φè╕∞¥ÿ AdditionalFiles∞¥┤ *.razor δ░Å *.cshtml φîî∞¥╝∞¥┤∞û┤∞ò╝ φòÿδèö Razor ∞¢Éδ│╕ ∞â¥∞ä▒Ω╕░δÑ╝ ∞é¼∞Ü⌐φò⌐δïêδïñ. {0}∞ùÉδèö Razor δ¼╕∞ä£Ω░Ç φÅ¼φò¿δÉÿ∞ùê∞ºÇδºî ∞¥┤ φîî∞¥╝∞¥Ç AdditionalFile∞¥┤ ∞òäδïî '{1}'∞ùÉ∞ä£ Ω░Ç∞á╕∞Öö∞£╝δ»Çδí£ φÄ╕∞ºæ φÖÿΩ▓╜∞¥┤ ∞á£φò£δÉ⌐δïêδïñ. ∞¥┤ φöäδí£∞á¥φè╕∞ùÉ δîÇφò┤ δìö ∞¥┤∞âü δ⌐ö∞ï£∞ºÇΩ░Ç Ω╕░δí¥δÉÿ∞ºÇ ∞òè∞è╡δïêδïñ.</target>
         <note />
       </trans-unit>
       <trans-unit id="Invalid_Offset">
         <source>Invalid offset.</source>
-        <target state="translated">오프셋이 유효하지 않습니다.</target>
+        <target state="translated">∞ÿñφöä∞àï∞¥┤ ∞£áφÜ¿φòÿ∞ºÇ ∞òè∞è╡δïêδïñ.</target>
         <note />
       </trans-unit>
       <trans-unit id="KeywordDescription">
         <source>{0} Keyword</source>
-        <target state="translated">{0} 키워드</target>
+        <target state="translated">{0} φéñ∞¢îδô£</target>
         <note />
       </trans-unit>
       <trans-unit id="Language_Services_Missing_Service">
         <source>Razor language services not configured properly, missing language service '{0}'.</source>
-        <target state="translated">Razor 언어 서비스가 제대로 구성되지 않았습니다. 언어 서비스 '{0}'이(가) 없습니다.</target>
+        <target state="translated">Razor ∞û╕∞û┤ ∞ä£δ╣ä∞èñΩ░Ç ∞á£δîÇδí£ Ω╡¼∞ä▒δÉÿ∞ºÇ ∞òè∞òÿ∞è╡δïêδïñ. ∞û╕∞û┤ ∞ä£δ╣ä∞èñ '{0}'∞¥┤(Ω░Ç) ∞ùå∞è╡δïêδïñ.</target>
         <note />
       </trans-unit>
       <trans-unit id="Not_Available_In">
         <source>Not available in</source>
-        <target state="translated">에서 사용할 수 없음</target>
+        <target state="translated">∞ùÉ∞ä£ ∞é¼∞Ü⌐φòá ∞êÿ ∞ùå∞¥î</target>
         <note />
       </trans-unit>
       <trans-unit id="PositionCharacter_Outside_Range">
         <source>Character '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
-        <target state="translated">'{2}'의 {1} 범위를 벗어나는 문자 '{0}'이(가) 쿼리되었습니다. 문서가 최신이 아닐 수 있습니다.</target>
+        <target state="translated">'{2}'∞¥ÿ {1} δ▓ö∞£äδÑ╝ δ▓ù∞û┤δéÿδèö δ¼╕∞₧É '{0}'∞¥┤(Ω░Ç) ∞┐╝δª¼δÉÿ∞ùê∞è╡δïêδïñ. δ¼╕∞ä£Ω░Ç ∞╡£∞ïá∞¥┤ ∞òäδïÉ ∞êÿ ∞₧ê∞è╡δïêδïñ.</target>
         <note />
       </trans-unit>
       <trans-unit id="PositionLine_Outside_Range">
         <source>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
-        <target state="translated">'{2}'의 {1} 범위를 벗어나는 줄 '{0}'을(를) 쿼리했습니다. 문서가 최신이 아닐 수 있습니다.</target>
+        <target state="translated">'{2}'∞¥ÿ {1} δ▓ö∞£äδÑ╝ δ▓ù∞û┤δéÿδèö ∞ñä '{0}'∞¥ä(δÑ╝) ∞┐╝δª¼φûê∞è╡δïêδïñ. δ¼╕∞ä£Ω░Ç ∞╡£∞ïá∞¥┤ ∞òäδïÉ ∞êÿ ∞₧ê∞è╡δïêδïñ.</target>
         <note />
       </trans-unit>
       <trans-unit id="Promote_using_directive_to">
         <source>Promote using directive to {0}</source>
-        <target state="translated">using 지시문을 {0} 수준 올리기</target>
+        <target state="translated">using ∞ºÇ∞ï£δ¼╕∞¥ä {0} ∞êÿ∞ñÇ ∞ÿ¼δª¼Ω╕░</target>
         <note />
       </trans-unit>
       <trans-unit id="Simplify_Fully_Qualified_Component_Title">
         <source>Simplify fully qualified component</source>
-        <target state="translated">정규화된 구성 요소 간소화</target>
+        <target state="translated">∞áòΩ╖£φÖöδÉ£ Ω╡¼∞ä▒ ∞Üö∞åî Ω░ä∞åîφÖö</target>
         <note />
       </trans-unit>
       <trans-unit id="Simplify_Tag_To_SelfClosing_Title">
         <source>Simplify tag to self-closing</source>
-        <target state="translated">태그를 자체 닫음으로 간소화</target>
+        <target state="translated">φâ£Ω╖╕δÑ╝ ∞₧É∞▓┤ δï½∞¥î∞£╝δí£ Ω░ä∞åîφÖö</target>
         <note />
       </trans-unit>
       <trans-unit id="TagHelper_Attribute_Glyph">
         <source>Razor TagHelper Attribute Glyph</source>
-        <target state="translated">Razor TagHelper 특성 문자 모양</target>
+        <target state="translated">Razor TagHelper φè╣∞ä▒ δ¼╕∞₧É δ¬¿∞ûæ</target>
         <note />
       </trans-unit>
       <trans-unit id="TagHelper_Element_Glyph">
         <source>Razor TagHelper Element Glyph</source>
-        <target state="translated">Razor TagHelper 요소 문자 모양</target>
+        <target state="translated">Razor TagHelper ∞Üö∞åî δ¼╕∞₧É δ¬¿∞ûæ</target>
         <note />
       </trans-unit>
       <trans-unit id="ReTrigger_Completions_Title">
         <source>"Re-trigger completions..."</source>
-        <target state="translated">"완료된 항목 다시 트리거"</target>
+        <target state="translated">"∞ÖäδúîδÉ£ φò¡δ¬⌐ δïñ∞ï£ φè╕δª¼Ω▒░"</target>
         <note />
       </trans-unit>
       <trans-unit id="Unknown_RazorMetaCode">
         <source>Attempted to visit a RazorMetaCode other than '{' or '}'.</source>
-        <target state="translated">''{' or '}' 이외의 RazorMetaCode를 방문하려고 했습니다.</target>
+        <target state="translated">''{' or '}' ∞¥┤∞Ö╕∞¥ÿ RazorMetaCodeδÑ╝ δ░⌐δ¼╕φòÿδáñΩ│á φûê∞è╡δïêδïñ.</target>
         <note />
       </trans-unit>
       <trans-unit id="Unknown_mapping_behavior">
         <source>Unknown mapping behavior</source>
-        <target state="translated">알 수 없는 매핑 동작</target>
+        <target state="translated">∞òî ∞êÿ ∞ùåδèö δºñφòæ δÅÖ∞₧æ</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_Razor_extension_0">
         <source>Unsupported Razor extension: '{0}'.</source>
-        <target state="translated">지원되지 않는 Razor 확장: '{0}'.</target>
+        <target state="translated">∞ºÇ∞¢ÉδÉÿ∞ºÇ ∞òèδèö Razor φÖò∞₧Ñ: '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_argument_kind">
         <source>Unsupported argument kind: '{0}'.</source>
-        <target state="translated">지원되지 않는 인수 종류: '{0}'.</target>
+        <target state="translated">∞ºÇ∞¢ÉδÉÿ∞ºÇ ∞òèδèö ∞¥╕∞êÿ ∞óàδÑÿ: '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_argument_type">
         <source>Unsupported argument type: '{0}'.</source>
-        <target state="translated">지원되지 않는 인수 유형: '{0}'.</target>
+        <target state="translated">∞ºÇ∞¢ÉδÉÿ∞ºÇ ∞òèδèö ∞¥╕∞êÿ ∞£áφÿò: '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_razor_project_info_version_encountered">
         <source>Unsupported razor project info version encounted.</source>
-        <target state="translated">지원되지 않는 Razor 프로젝트 정보 버전이 발견되었습니다.</target>
+        <target state="translated">∞ºÇ∞¢ÉδÉÿ∞ºÇ ∞òèδèö Razor φöäδí£∞á¥φè╕ ∞áòδ│┤ δ▓ä∞áä∞¥┤ δ░£Ω▓¼δÉÿ∞ùê∞è╡δïêδïñ.</target>
         <note />
       </trans-unit>
       <trans-unit id="Wrap_attributes">
         <source>Wrap attributes</source>
-        <target state="translated">특성을 래핑합니다.</target>
+        <target state="translated">φè╣∞ä▒∞¥ä δ₧ÿφòæφò⌐δïêδïñ.</target>
         <note />
       </trans-unit>
     </body>

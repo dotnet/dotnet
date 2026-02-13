@@ -25,29 +25,29 @@
         }
     </div>
     <div>
-        @functions {
+@functions {
 
-            int userAge = 0;
+    int userAge = 0;
 
-            string HelloMessage(string user)
-            {
-                var msg = "Hi " + user + "how are you?";
-                return msg;
-            }
+    string HelloMessage(string user)
+    {
+        var msg = "Hi " + user + "how are you?";
+        return msg;
+    }
 
-            int Age
-            {
-                get
-                {
-                    return userAge;
-                }
-                set
-                {
-                    userAge = value;
-                }
-            }
+    int Age
+    {
+        get
+        {
+            return userAge;
         }
-    </div>
+        set
+        {
+            userAge = value;
+        }
+    }
+}
+</div>
 </body>
 </html>
 

@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+∩╗┐// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 // Copied from https://github.com/dotnet/runtime/blob/f1d463f46268382a8287d71aea929dadaa5dfef5/src/libraries/System.IO.Hashing/src/System/IO/Hashing/XxHash128.cs#L1.

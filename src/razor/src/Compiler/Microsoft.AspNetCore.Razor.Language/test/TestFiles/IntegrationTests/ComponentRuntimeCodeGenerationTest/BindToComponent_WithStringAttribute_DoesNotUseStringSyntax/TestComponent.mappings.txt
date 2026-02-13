@@ -1,4 +1,4 @@
-﻿Source Location: (1:0,1 [9] x:\dir\subdir\Test\TestComponent.cshtml)
+∩╗┐Source Location: (1:0,1 [9] x:\dir\subdir\Test\TestComponent.cshtml)
 |InputText|
 Generated Location: (703:19,49 [9] )
 |InputText|

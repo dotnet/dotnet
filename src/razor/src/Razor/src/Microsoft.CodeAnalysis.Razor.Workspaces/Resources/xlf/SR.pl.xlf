@@ -1,10 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+∩╗┐<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="pl" original="../SR.resx">
     <body>
       <trans-unit id="ArgumentCannotBeNullOrEmpty">
         <source>Value cannot be null or an empty string.</source>
-        <target state="translated">Wartość nie może być wartością null ani pustym ciągiem.</target>
+        <target state="translated">Warto┼¢─ç nie mo┼╝e by─ç warto┼¢ci─à null ani pustym ci─àgiem.</target>
         <note />
       </trans-unit>
       <trans-unit id="ComponentCompletionWithRequiredAttributesLabel">
@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="Create_Component_FromTag_Title">
         <source>Create component from tag</source>
-        <target state="translated">Utwórz składnik z tagu</target>
+        <target state="translated">Utw├│rz sk┼éadnik z tagu</target>
         <note />
       </trans-unit>
       <trans-unit id="Blazor_directive_attributes">
@@ -41,127 +41,127 @@
         <source>Insert a directive code snippet
 [Tab] to navigate between elements, [Enter] to complete</source>
         <target state="translated">Wstaw fragment kodu dyrektywy
-[Tab], aby przechodzić między elementami, [Enter], aby zakończyć</target>
+[Tab], aby przechodzi─ç mi─Ödzy elementami, [Enter], aby zako┼äczy─ç</target>
         <note />
       </trans-unit>
       <trans-unit id="Edit_at_adds">
         <source>Edit at {0} adds the non-whitespace content '{1}'.</source>
-        <target state="translated">Edycja na stronie {0} dodaje zawartość bez białych znaków „{1}”.</target>
+        <target state="translated">Edycja na stronie {0} dodaje zawarto┼¢─ç bez bia┼éych znak├│w ΓÇ₧{1}ΓÇ¥.</target>
         <note />
       </trans-unit>
       <trans-unit id="Edit_at_deletes">
         <source>Edit at {0} deletes the non-whitespace content '{1}'.</source>
-        <target state="translated">Edycja na stronie {0} usuwa zawartość bez białych znaków „{1}”.</target>
+        <target state="translated">Edycja na stronie {0} usuwa zawarto┼¢─ç bez bia┼éych znak├│w ΓÇ₧{1}ΓÇ¥.</target>
         <note />
       </trans-unit>
       <trans-unit id="ExtractTo_CodeBehind_Title">
         <source>Extract block to code behind</source>
-        <target state="translated">Wyodrębnij blok do kodu znajdującego się poza</target>
+        <target state="translated">Wyodr─Öbnij blok do kodu znajduj─àcego si─Ö poza</target>
         <note />
       </trans-unit>
       <trans-unit id="ExtractTo_Component_Title">
         <source>Extract element to new component</source>
-        <target state="translated">Wyodrębnij element do nowego składnika</target>
+        <target state="translated">Wyodr─Öbnij element do nowego sk┼éadnika</target>
         <note />
       </trans-unit>
       <trans-unit id="ExtractTo_Css_Title">
         <source>Extract to {0}.css</source>
-        <target state="translated">Wyodrębnij do {0}.css</target>
+        <target state="translated">Wyodr─Öbnij do {0}.css</target>
         <note />
       </trans-unit>
       <trans-unit id="Format_operation_changed_diagnostics">
         <source>A format operation is being abandoned because it would introduce or remove one of more diagnostics.</source>
-        <target state="translated">Operacja formatowania jest porzucana, ponieważ spowodowałaby wprowadzenie lub usunięcie jednej z większej liczby diagnostyki.</target>
+        <target state="translated">Operacja formatowania jest porzucana, poniewa┼╝ spowodowa┼éaby wprowadzenie lub usuni─Öcie jednej z wi─Ökszej liczby diagnostyki.</target>
         <note />
       </trans-unit>
       <trans-unit id="Format_operation_changed_nonwhitespace">
         <source>A format operation is being abandoned because it would add or delete non-whitespace content.</source>
-        <target state="translated">Operacja formatowania jest porzucana, ponieważ doda lub usunie zawartość bez białych znaków.</target>
+        <target state="translated">Operacja formatowania jest porzucana, poniewa┼╝ doda lub usunie zawarto┼¢─ç bez bia┼éych znak├│w.</target>
         <note />
       </trans-unit>
       <trans-unit id="Generate_Async_Event_Handler_Title">
         <source>Generate Async Event Handler '{0}'</source>
-        <target state="translated">Generuj asynchroniczny program obsługi zdarzeń „{0}”</target>
+        <target state="translated">Generuj asynchroniczny program obs┼éugi zdarze┼ä ΓÇ₧{0}ΓÇ¥</target>
         <note />
       </trans-unit>
       <trans-unit id="Generate_Event_Handler_Title">
         <source>Generate Event Handler '{0}'</source>
-        <target state="translated">Generuj obsługę zdarzeń „{0}”</target>
+        <target state="translated">Generuj obs┼éug─Ö zdarze┼ä ΓÇ₧{0}ΓÇ¥</target>
         <note />
       </trans-unit>
       <trans-unit id="IncompatibleProject_NoAdditionalFiles">
         <source>The Razor editor utilizes the Razor Source Generator, which requires *.razor and *.cshtml files to be AdditionalFiles in the project. {0} appears to come from '{1}', which has no Razor documents that are AdditionalFiles, so the editing experience will be limited. Is it using the Razor SDK? No more messages will be logged for this project.</source>
-        <target state="translated">Edytor Razor korzysta z generatora źródła Razor, który wymaga, aby pliki *.razor i *.cshtml były plikami AdditionalFiles w projekcie. Wygląda na to, że {0} pochodzi z folderu „{1}”, który nie zawiera dokumentów usługi Razor będących plikami AdditionalFiles, więc środowisko edycji będzie ograniczone. Czy używa zestawu Razor SDK? Dla tego projektu nie będą rejestrowane żadne inne wiadomości.</target>
+        <target state="translated">Edytor Razor korzysta z generatora ┼║r├│d┼éa Razor, kt├│ry wymaga, aby pliki *.razor i *.cshtml by┼éy plikami AdditionalFiles w projekcie. Wygl─àda na to, ┼╝e {0} pochodzi z folderu ΓÇ₧{1}ΓÇ¥, kt├│ry nie zawiera dokument├│w us┼éugi Razor b─Öd─àcych plikami AdditionalFiles, wi─Öc ┼¢rodowisko edycji b─Ödzie ograniczone. Czy u┼╝ywa zestawu Razor SDK? Dla tego projektu nie b─Öd─à rejestrowane ┼╝adne inne wiadomo┼¢ci.</target>
         <note />
       </trans-unit>
       <trans-unit id="IncompatibleProject_NotAnAdditionalFile">
         <source>The Razor editor utilizes the Razor Source Generator, which requires *.razor and *.cshtml files to be AdditionalFiles in the project. {0} appears to come from '{1}', which has Razor documents but this file is not an AdditionalFile, so the editing experience will be limited. No more messages will be logged for this project.</source>
-        <target state="translated">Edytor Razor korzysta z generatora źródła Razor, który wymaga, aby pliki *.razor i *.cshtml były plikami AdditionalFiles w projekcie. Wygląda na to, że {0} pochodzi z folderu „{1}”, który zawiera dokumenty usługi Razor, ale ten plik nie jest plikiem AdditionalFile, więc środowisko edycji będzie ograniczone. Dla tego projektu nie będą rejestrowane żadne inne wiadomości.</target>
+        <target state="translated">Edytor Razor korzysta z generatora ┼║r├│d┼éa Razor, kt├│ry wymaga, aby pliki *.razor i *.cshtml by┼éy plikami AdditionalFiles w projekcie. Wygl─àda na to, ┼╝e {0} pochodzi z folderu ΓÇ₧{1}ΓÇ¥, kt├│ry zawiera dokumenty us┼éugi Razor, ale ten plik nie jest plikiem AdditionalFile, wi─Öc ┼¢rodowisko edycji b─Ödzie ograniczone. Dla tego projektu nie b─Öd─à rejestrowane ┼╝adne inne wiadomo┼¢ci.</target>
         <note />
       </trans-unit>
       <trans-unit id="Invalid_Offset">
         <source>Invalid offset.</source>
-        <target state="translated">Nieprawidłowe przesunięcie.</target>
+        <target state="translated">Nieprawid┼éowe przesuni─Öcie.</target>
         <note />
       </trans-unit>
       <trans-unit id="KeywordDescription">
         <source>{0} Keyword</source>
-        <target state="translated">Słowo kluczowe {0}</target>
+        <target state="translated">S┼éowo kluczowe {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Language_Services_Missing_Service">
         <source>Razor language services not configured properly, missing language service '{0}'.</source>
-        <target state="translated">Usługi języka dla składni Razor nie zostały prawidłowo skonfigurowane — brak usługi językowej "{0}".</target>
+        <target state="translated">Us┼éugi j─Özyka dla sk┼éadni Razor nie zosta┼éy prawid┼éowo skonfigurowane ΓÇö brak us┼éugi j─Özykowej "{0}".</target>
         <note />
       </trans-unit>
       <trans-unit id="Not_Available_In">
         <source>Not available in</source>
-        <target state="translated">Niedostępne w</target>
+        <target state="translated">Niedost─Öpne w</target>
         <note />
       </trans-unit>
       <trans-unit id="PositionCharacter_Outside_Range">
         <source>Character '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
-        <target state="translated">Zbadano znak „{0}” poza zakresem {1} „{2}”. Dokument może być nieaktualny.</target>
+        <target state="translated">Zbadano znak ΓÇ₧{0}ΓÇ¥ poza zakresem {1} ΓÇ₧{2}ΓÇ¥. Dokument mo┼╝e by─ç nieaktualny.</target>
         <note />
       </trans-unit>
       <trans-unit id="PositionLine_Outside_Range">
         <source>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
-        <target state="translated">Wykonano zapytanie wiersza "{0}" poza zakresem {1} "{2}". Dokument może być nieaktualny.</target>
+        <target state="translated">Wykonano zapytanie wiersza "{0}" poza zakresem {1} "{2}". Dokument mo┼╝e by─ç nieaktualny.</target>
         <note />
       </trans-unit>
       <trans-unit id="Promote_using_directive_to">
         <source>Promote using directive to {0}</source>
-        <target state="translated">Podwyższ poziom dyrektywy using do {0}</target>
+        <target state="translated">Podwy┼╝sz poziom dyrektywy using do {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Simplify_Fully_Qualified_Component_Title">
         <source>Simplify fully qualified component</source>
-        <target state="translated">Upraszczanie w pełni kwalifikowanego składnika</target>
+        <target state="translated">Upraszczanie w pe┼éni kwalifikowanego sk┼éadnika</target>
         <note />
       </trans-unit>
       <trans-unit id="Simplify_Tag_To_SelfClosing_Title">
         <source>Simplify tag to self-closing</source>
-        <target state="translated">Uprość tag do samodzielnego zamykania</target>
+        <target state="translated">Upro┼¢─ç tag do samodzielnego zamykania</target>
         <note />
       </trans-unit>
       <trans-unit id="TagHelper_Attribute_Glyph">
         <source>Razor TagHelper Attribute Glyph</source>
-        <target state="translated">Symbol atrybutu pomocnika tagów składni Razor</target>
+        <target state="translated">Symbol atrybutu pomocnika tag├│w sk┼éadni Razor</target>
         <note />
       </trans-unit>
       <trans-unit id="TagHelper_Element_Glyph">
         <source>Razor TagHelper Element Glyph</source>
-        <target state="translated">Symbol elementu pomocnika tagów składni Razor</target>
+        <target state="translated">Symbol elementu pomocnika tag├│w sk┼éadni Razor</target>
         <note />
       </trans-unit>
       <trans-unit id="ReTrigger_Completions_Title">
         <source>"Re-trigger completions..."</source>
-        <target state="translated">"Ponownie wyzwalaj uzupełniania..."</target>
+        <target state="translated">"Ponownie wyzwalaj uzupe┼éniania..."</target>
         <note />
       </trans-unit>
       <trans-unit id="Unknown_RazorMetaCode">
         <source>Attempted to visit a RazorMetaCode other than '{' or '}'.</source>
-        <target state="translated">Podjęto próbę odwiedzenia elementu RazorMetaCode innego niż '{' or '}'.</target>
+        <target state="translated">Podj─Öto pr├│b─Ö odwiedzenia elementu RazorMetaCode innego ni┼╝ '{' or '}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="Unknown_mapping_behavior">
@@ -171,22 +171,22 @@
       </trans-unit>
       <trans-unit id="Unsupported_Razor_extension_0">
         <source>Unsupported Razor extension: '{0}'.</source>
-        <target state="translated">Nieobsługiwane rozszerzenie Razor: „{0}”.</target>
+        <target state="translated">Nieobs┼éugiwane rozszerzenie Razor: ΓÇ₧{0}ΓÇ¥.</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_argument_kind">
         <source>Unsupported argument kind: '{0}'.</source>
-        <target state="translated">Nieobsługiwany rodzaj argumentu: „{0}”.</target>
+        <target state="translated">Nieobs┼éugiwany rodzaj argumentu: ΓÇ₧{0}ΓÇ¥.</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_argument_type">
         <source>Unsupported argument type: '{0}'.</source>
-        <target state="translated">Nieobsługiwany typ argumentu: „{0}”.</target>
+        <target state="translated">Nieobs┼éugiwany typ argumentu: ΓÇ₧{0}ΓÇ¥.</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_razor_project_info_version_encountered">
         <source>Unsupported razor project info version encounted.</source>
-        <target state="translated">Napotkano nieobsługiwaną wersję informacji o projekcie Razor.</target>
+        <target state="translated">Napotkano nieobs┼éugiwan─à wersj─Ö informacji o projekcie Razor.</target>
         <note />
       </trans-unit>
       <trans-unit id="Wrap_attributes">

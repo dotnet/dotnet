@@ -1,4 +1,4 @@
-﻿namespace Microsoft.NET.Sdk.Razor.SourceGenerators;
+∩╗┐namespace Microsoft.NET.Sdk.Razor.SourceGenerators;
 
 internal static class RazorCohostingOptions
 {

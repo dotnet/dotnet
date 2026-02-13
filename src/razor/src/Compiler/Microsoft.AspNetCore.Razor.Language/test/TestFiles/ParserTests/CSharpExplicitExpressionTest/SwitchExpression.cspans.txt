@@ -1,4 +1,4 @@
-﻿Markup span at (0:0,0 [6] ) - Parent: Tag block at (0:0,0 [6] )
+∩╗┐Markup span at (0:0,0 [6] ) - Parent: Tag block at (0:0,0 [6] )
 Transition span at (6:0,6 [1] ) - Parent: Expression block at (6:0,6 [55] )
 MetaCode span at (7:0,7 [1] ) - Parent: Expression block at (6:0,6 [55] )
 Code span at (8:0,8 [52] ) - Parent: Expression block at (6:0,6 [55] )

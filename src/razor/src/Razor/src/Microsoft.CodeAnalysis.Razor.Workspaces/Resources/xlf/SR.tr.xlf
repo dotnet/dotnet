@@ -1,152 +1,152 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+∩╗┐<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="tr" original="../SR.resx">
     <body>
       <trans-unit id="ArgumentCannotBeNullOrEmpty">
         <source>Value cannot be null or an empty string.</source>
-        <target state="translated">Değer null veya boş bir dize olamaz.</target>
+        <target state="translated">De─ƒer null veya bo┼ƒ bir dize olamaz.</target>
         <note />
       </trans-unit>
       <trans-unit id="ComponentCompletionWithRequiredAttributesLabel">
         <source>{0} (and req'd attributes...)</source>
-        <target state="translated">{0} (ve gerekli öznitelikler...)</target>
+        <target state="translated">{0} (ve gerekli ├╢znitelikler...)</target>
         <note>The term "req'd" is an abbreviation for "required"</note>
       </trans-unit>
       <trans-unit id="Create_Component_FromTag_Title">
         <source>Create component from tag</source>
-        <target state="translated">Etiketten bileşen oluştur</target>
+        <target state="translated">Etiketten bile┼ƒen olu┼ƒtur</target>
         <note />
       </trans-unit>
       <trans-unit id="Blazor_directive_attributes">
         <source>Blazor directive attributes</source>
-        <target state="translated">Blazor yönergesi öznitelikleri</target>
+        <target state="translated">Blazor y├╢nergesi ├╢znitelikleri</target>
         <note />
       </trans-unit>
       <trans-unit id="Diagnostics_after">
         <source>Diagnostics after:</source>
-        <target state="translated">Şundan sonraki tanılama:</target>
+        <target state="translated">┼₧undan sonraki tan─▒lama:</target>
         <note />
       </trans-unit>
       <trans-unit id="Diagnostics_before">
         <source>Diagnostics before:</source>
-        <target state="translated">Şundan önceki tanılama:</target>
+        <target state="translated">┼₧undan ├╢nceki tan─▒lama:</target>
         <note />
       </trans-unit>
       <trans-unit id="Directive">
         <source>directive</source>
-        <target state="translated">yönerge</target>
+        <target state="translated">y├╢nerge</target>
         <note />
       </trans-unit>
       <trans-unit id="DirectiveSnippetDescription">
         <source>Insert a directive code snippet
 [Tab] to navigate between elements, [Enter] to complete</source>
-        <target state="translated">Yönerge kod parçacığı ekle
-öğeler arasında gezinmek için [Tab], tamamlamak için [Enter] seçeneğini belirleyin</target>
+        <target state="translated">Y├╢nerge kod par├ºac─▒─ƒ─▒ ekle
+├╢─ƒeler aras─▒nda gezinmek i├ºin [Tab], tamamlamak i├ºin [Enter] se├ºene─ƒini belirleyin</target>
         <note />
       </trans-unit>
       <trans-unit id="Edit_at_adds">
         <source>Edit at {0} adds the non-whitespace content '{1}'.</source>
-        <target state="translated">{0} konumunda düzenleme, '{1}' boşluk dışı içeriğini ekler.</target>
+        <target state="translated">{0} konumunda d├╝zenleme, '{1}' bo┼ƒluk d─▒┼ƒ─▒ i├ºeri─ƒini ekler.</target>
         <note />
       </trans-unit>
       <trans-unit id="Edit_at_deletes">
         <source>Edit at {0} deletes the non-whitespace content '{1}'.</source>
-        <target state="translated">{0} konumunda düzenleme, '{1}' boşluk dışı içeriğini siler.</target>
+        <target state="translated">{0} konumunda d├╝zenleme, '{1}' bo┼ƒluk d─▒┼ƒ─▒ i├ºeri─ƒini siler.</target>
         <note />
       </trans-unit>
       <trans-unit id="ExtractTo_CodeBehind_Title">
         <source>Extract block to code behind</source>
-        <target state="translated">Bloğu arkadaki koda ayıkla</target>
+        <target state="translated">Blo─ƒu arkadaki koda ay─▒kla</target>
         <note />
       </trans-unit>
       <trans-unit id="ExtractTo_Component_Title">
         <source>Extract element to new component</source>
-        <target state="translated">Öğeyi yeni bileşene ayıklayın</target>
+        <target state="translated">├û─ƒeyi yeni bile┼ƒene ay─▒klay─▒n</target>
         <note />
       </trans-unit>
       <trans-unit id="ExtractTo_Css_Title">
         <source>Extract to {0}.css</source>
-        <target state="translated"> {0}.css'a ayıkla</target>
+        <target state="translated"> {0}.css'a ay─▒kla</target>
         <note />
       </trans-unit>
       <trans-unit id="Format_operation_changed_diagnostics">
         <source>A format operation is being abandoned because it would introduce or remove one of more diagnostics.</source>
-        <target state="translated">Bir veya daha fazla tanılamayı ortaya çıkarabileceği veya kaldırabileceği için biçimlendirme işlemi bırakılıyor.</target>
+        <target state="translated">Bir veya daha fazla tan─▒lamay─▒ ortaya ├º─▒karabilece─ƒi veya kald─▒rabilece─ƒi i├ºin bi├ºimlendirme i┼ƒlemi b─▒rak─▒l─▒yor.</target>
         <note />
       </trans-unit>
       <trans-unit id="Format_operation_changed_nonwhitespace">
         <source>A format operation is being abandoned because it would add or delete non-whitespace content.</source>
-        <target state="translated">Boşluk dışı içeriği ekleyebileceği veya silebileceği için biçimlendirme işlemi bırakıl.</target>
+        <target state="translated">Bo┼ƒluk d─▒┼ƒ─▒ i├ºeri─ƒi ekleyebilece─ƒi veya silebilece─ƒi i├ºin bi├ºimlendirme i┼ƒlemi b─▒rak─▒l.</target>
         <note />
       </trans-unit>
       <trans-unit id="Generate_Async_Event_Handler_Title">
         <source>Generate Async Event Handler '{0}'</source>
-        <target state="translated">'{0}' Asenkron Olay İşleyicisini Oluştur</target>
+        <target state="translated">'{0}' Asenkron Olay ─░┼ƒleyicisini Olu┼ƒtur</target>
         <note />
       </trans-unit>
       <trans-unit id="Generate_Event_Handler_Title">
         <source>Generate Event Handler '{0}'</source>
-        <target state="translated">'{0}' Olay İşleyicisi Oluştur</target>
+        <target state="translated">'{0}' Olay ─░┼ƒleyicisi Olu┼ƒtur</target>
         <note />
       </trans-unit>
       <trans-unit id="IncompatibleProject_NoAdditionalFiles">
         <source>The Razor editor utilizes the Razor Source Generator, which requires *.razor and *.cshtml files to be AdditionalFiles in the project. {0} appears to come from '{1}', which has no Razor documents that are AdditionalFiles, so the editing experience will be limited. Is it using the Razor SDK? No more messages will be logged for this project.</source>
-        <target state="translated">Razor düzenleyici, *.razor ve *.cshtml dosyalarının projede AdditionalFiles olmasını gerektiren Razor Kaynak Oluşturucuyu kullanır. {0}, AdditionalFile olan herhangi bir Razor belgesine sahip olmayan '{1}' dosyasından geliyor gibi görünüyor, bu nedenle düzenleme deneyimi sınırlı olacaktır. Razor SDK'sını kullanıyor mu? Bu proje için başka mesajlar günlüğe kaydedilmeyecektir.</target>
+        <target state="translated">Razor d├╝zenleyici, *.razor ve *.cshtml dosyalar─▒n─▒n projede AdditionalFiles olmas─▒n─▒ gerektiren Razor Kaynak Olu┼ƒturucuyu kullan─▒r. {0}, AdditionalFile olan herhangi bir Razor belgesine sahip olmayan '{1}' dosyas─▒ndan geliyor gibi g├╢r├╝n├╝yor, bu nedenle d├╝zenleme deneyimi s─▒n─▒rl─▒ olacakt─▒r. Razor SDK's─▒n─▒ kullan─▒yor mu? Bu proje i├ºin ba┼ƒka mesajlar g├╝nl├╝─ƒe kaydedilmeyecektir.</target>
         <note />
       </trans-unit>
       <trans-unit id="IncompatibleProject_NotAnAdditionalFile">
         <source>The Razor editor utilizes the Razor Source Generator, which requires *.razor and *.cshtml files to be AdditionalFiles in the project. {0} appears to come from '{1}', which has Razor documents but this file is not an AdditionalFile, so the editing experience will be limited. No more messages will be logged for this project.</source>
-        <target state="translated">Razor düzenleyici, *.razor ve *.cshtml dosyalarının projede AdditionalFiles olmasını gerektiren Razor Kaynak Oluşturucuyu kullanır. {0}, Razor belgelerine sahip olan '{1}' dosyasından geliyor gibi görünüyor, ancak bu dosya bir AdditionalFile değildir, bu nedenle düzenleme deneyimi sınırlı olacaktır. Bu proje için başka mesajlar günlüğe kaydedilmeyecektir.</target>
+        <target state="translated">Razor d├╝zenleyici, *.razor ve *.cshtml dosyalar─▒n─▒n projede AdditionalFiles olmas─▒n─▒ gerektiren Razor Kaynak Olu┼ƒturucuyu kullan─▒r. {0}, Razor belgelerine sahip olan '{1}' dosyas─▒ndan geliyor gibi g├╢r├╝n├╝yor, ancak bu dosya bir AdditionalFile de─ƒildir, bu nedenle d├╝zenleme deneyimi s─▒n─▒rl─▒ olacakt─▒r. Bu proje i├ºin ba┼ƒka mesajlar g├╝nl├╝─ƒe kaydedilmeyecektir.</target>
         <note />
       </trans-unit>
       <trans-unit id="Invalid_Offset">
         <source>Invalid offset.</source>
-        <target state="translated">Geçersiz uzaklık.</target>
+        <target state="translated">Ge├ºersiz uzakl─▒k.</target>
         <note />
       </trans-unit>
       <trans-unit id="KeywordDescription">
         <source>{0} Keyword</source>
-        <target state="translated">{0} Anahtar Sözcüğü</target>
+        <target state="translated">{0} Anahtar S├╢zc├╝─ƒ├╝</target>
         <note />
       </trans-unit>
       <trans-unit id="Language_Services_Missing_Service">
         <source>Razor language services not configured properly, missing language service '{0}'.</source>
-        <target state="translated">Razor dil hizmetleri düzgün yapılandırılmadı, '{0}' dil hizmeti eksik.</target>
+        <target state="translated">Razor dil hizmetleri d├╝zg├╝n yap─▒land─▒r─▒lmad─▒, '{0}' dil hizmeti eksik.</target>
         <note />
       </trans-unit>
       <trans-unit id="Not_Available_In">
         <source>Not available in</source>
-        <target state="translated">Şurada kullanılamaz:</target>
+        <target state="translated">┼₧urada kullan─▒lamaz:</target>
         <note />
       </trans-unit>
       <trans-unit id="PositionCharacter_Outside_Range">
         <source>Character '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
-        <target state="translated">'{2}' {1} aralığının dışındaki '{0}' karakteri sorgulandı. Belge güncel olmayabilir.</target>
+        <target state="translated">'{2}' {1} aral─▒─ƒ─▒n─▒n d─▒┼ƒ─▒ndaki '{0}' karakteri sorguland─▒. Belge g├╝ncel olmayabilir.</target>
         <note />
       </trans-unit>
       <trans-unit id="PositionLine_Outside_Range">
         <source>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
-        <target state="translated">{1} / '{2}' aralığının dışındaki '{0}' satırı sorgulandı. Belge güncel olmayabilir.</target>
+        <target state="translated">{1} / '{2}' aral─▒─ƒ─▒n─▒n d─▒┼ƒ─▒ndaki '{0}' sat─▒r─▒ sorguland─▒. Belge g├╝ncel olmayabilir.</target>
         <note />
       </trans-unit>
       <trans-unit id="Promote_using_directive_to">
         <source>Promote using directive to {0}</source>
-        <target state="translated">Yönergeyi şu sürüme yükseltmeyi destekleyin: {0}</target>
+        <target state="translated">Y├╢nergeyi ┼ƒu s├╝r├╝me y├╝kseltmeyi destekleyin: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Simplify_Fully_Qualified_Component_Title">
         <source>Simplify fully qualified component</source>
-        <target state="translated">Tam nitelenmiş bileşeni basitleştir</target>
+        <target state="translated">Tam nitelenmi┼ƒ bile┼ƒeni basitle┼ƒtir</target>
         <note />
       </trans-unit>
       <trans-unit id="Simplify_Tag_To_SelfClosing_Title">
         <source>Simplify tag to self-closing</source>
-        <target state="translated">Etiketi kendi kendine kapatacak şekilde basitleştir</target>
+        <target state="translated">Etiketi kendi kendine kapatacak ┼ƒekilde basitle┼ƒtir</target>
         <note />
       </trans-unit>
       <trans-unit id="TagHelper_Attribute_Glyph">
         <source>Razor TagHelper Attribute Glyph</source>
-        <target state="translated">Razor TagHelper Öznitelik Karakteri</target>
+        <target state="translated">Razor TagHelper ├ûznitelik Karakteri</target>
         <note />
       </trans-unit>
       <trans-unit id="TagHelper_Element_Glyph">
@@ -156,42 +156,42 @@
       </trans-unit>
       <trans-unit id="ReTrigger_Completions_Title">
         <source>"Re-trigger completions..."</source>
-        <target state="translated">"Tamamlamaları yeniden tetikleyin..."</target>
+        <target state="translated">"Tamamlamalar─▒ yeniden tetikleyin..."</target>
         <note />
       </trans-unit>
       <trans-unit id="Unknown_RazorMetaCode">
         <source>Attempted to visit a RazorMetaCode other than '{' or '}'.</source>
-        <target state="translated">'{' or '}' dışında bir RazorMetaCode ziyaret edilmeye çalışıldı.</target>
+        <target state="translated">'{' or '}' d─▒┼ƒ─▒nda bir RazorMetaCode ziyaret edilmeye ├ºal─▒┼ƒ─▒ld─▒.</target>
         <note />
       </trans-unit>
       <trans-unit id="Unknown_mapping_behavior">
         <source>Unknown mapping behavior</source>
-        <target state="translated">Bilinmeyen eşleme davranışı</target>
+        <target state="translated">Bilinmeyen e┼ƒleme davran─▒┼ƒ─▒</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_Razor_extension_0">
         <source>Unsupported Razor extension: '{0}'.</source>
-        <target state="translated">Desteklenmeyen Razor uzantısı: '{0}'.</target>
+        <target state="translated">Desteklenmeyen Razor uzant─▒s─▒: '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_argument_kind">
         <source>Unsupported argument kind: '{0}'.</source>
-        <target state="translated">Desteklenmeyen bağımsız değişken tipi: '{0}'.</target>
+        <target state="translated">Desteklenmeyen ba─ƒ─▒ms─▒z de─ƒi┼ƒken tipi: '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_argument_type">
         <source>Unsupported argument type: '{0}'.</source>
-        <target state="translated">Desteklenmeyen bağımsız değişken türü: '{0}'.</target>
+        <target state="translated">Desteklenmeyen ba─ƒ─▒ms─▒z de─ƒi┼ƒken t├╝r├╝: '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_razor_project_info_version_encountered">
         <source>Unsupported razor project info version encounted.</source>
-        <target state="translated">Desteklenmeyen razor proje bilgileri sürümüyle karşılaşıldı.</target>
+        <target state="translated">Desteklenmeyen razor proje bilgileri s├╝r├╝m├╝yle kar┼ƒ─▒la┼ƒ─▒ld─▒.</target>
         <note />
       </trans-unit>
       <trans-unit id="Wrap_attributes">
         <source>Wrap attributes</source>
-        <target state="translated">Öznitelikleri kaydır</target>
+        <target state="translated">├ûznitelikleri kayd─▒r</target>
         <note />
       </trans-unit>
     </body>

@@ -1,4 +1,4 @@
-﻿RazorDocument - [0..138)::138 - [@{LF    var functionCode = 10;LF}LF<div @@click="switchFunction(@functionCode)" is-confirm-redirect="true" control-id="test">Content</div>]
+∩╗┐RazorDocument - [0..138)::138 - [@{LF    var functionCode = 10;LF}LF<div @@click="switchFunction(@functionCode)" is-confirm-redirect="true" control-id="test">Content</div>]
     MarkupBlock - [0..138)::138
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];

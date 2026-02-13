@@ -1,4 +1,4 @@
-﻿Source Location: (19:0,19 [16] x:\dir\subdir\Test\TestComponent.cshtml)
+∩╗┐Source Location: (19:0,19 [16] x:\dir\subdir\Test\TestComponent.cshtml)
 |new CustomType()|
 Generated Location: (837:22,0 [16] )
 |new CustomType()|

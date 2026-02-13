@@ -1082,6 +1082,136 @@ catch(bar) { baz(); }");
             """);
     }
 
+    [Fact]
+    public void GitConflictMarker_InMarkup()
+    {
+        ParseDocumentTest("""
+            <div>
+            <<<<<<< HEAD
+            <p>Current changes</p>
+            =======
+            <p>Incoming changes</p>
+            >>>>>>> feature-branch
+            </div>
+            """);
+    }
+
+    [Fact]
+    public void GitConflictMarker_InCodeBlock()
+    {
+        ParseDocumentTest("""
+            @{
+            <<<<<<< HEAD
+                var x = 1;
+            =======
+                var x = 2;
+            >>>>>>> feature-branch
+            }
+            """);
+    }
+
+    [Fact]
+    public void GitConflictMarker_InExpression()
+    {
+        ParseDocumentTest("""
+            @(
+            <<<<<<< HEAD
+            someValue
+            =======
+            otherValue
+            >>>>>>> feature-branch
+            )
+            """);
+    }
+
+    [Fact]
+    public void GitConflictMarker_MixedWithRazor()
+    {
+        ParseDocumentTest("""
+            @if (true)
+            {
+            <<<<<<< HEAD
+                <p>@currentValue</p>
+            =======
+                <p>@incomingValue</p>
+            >>>>>>> feature-branch
+            }
+            """);
+    }
+
+    [Fact]
+    public void GitConflictMarker_StartMarkerOnly()
+    {
+        ParseDocumentTest("""
+            <div>
+            <<<<<<< HEAD
+            <p>Unresolved conflict</p>
+            </div>
+            """);
+    }
+
+    [Fact]
+    public void GitConflictMarker_WithDividerOnly()
+    {
+        ParseDocumentTest("""
+            <div>
+            <<<<<<< HEAD
+            <p>Current changes</p>
+            =======
+            <p>Missing end marker</p>
+            </div>
+            """);
+    }
+
+    [Fact]
+    public void GitConflictMarker_AtDocumentStart()
+    {
+        ParseDocumentTest("""
+            <<<<<<< HEAD
+            <p>Current</p>
+            =======
+            <p>Incoming</p>
+            >>>>>>> main
+            """);
+    }
+
+    [Fact]
+    public void GitConflictMarker_InImplicitExpression()
+    {
+        ParseDocumentTest("""
+            <p>@<<<<<<< HEAD</p>
+            """);
+    }
+
+
+    [Fact]
+    public void GitConflictMarker_Malformed_Trailing()
+    {
+        ParseDocumentTest("""
+            @{
+            <<<<<<< HEAD var x = 0;
+                var x = 1;
+            ======= var x = 3;
+                var x = 2;
+            >>>>>>> feature-branch var x = 4;
+            }
+            """);
+    }
+
+    [Fact]
+    public void GitConflictMarker_Malformed_Leading()
+    {
+        ParseDocumentTest("""
+            @{
+            var x = 0; <<<<<<< HEAD 
+                var x = 1;
+            var x = 3; ======= 
+                var x = 2;
+            var x = 4; >>>>>>> feature-branch 
+            }
+            """);
+    }
+
     private void RunRazorCommentBetweenClausesTest(string preComment, string postComment, AcceptedCharactersInternal acceptedCharacters = AcceptedCharactersInternal.Any)
     {
         ParseDocumentTest(preComment + "@* Foo *@ @* Bar *@" + postComment);

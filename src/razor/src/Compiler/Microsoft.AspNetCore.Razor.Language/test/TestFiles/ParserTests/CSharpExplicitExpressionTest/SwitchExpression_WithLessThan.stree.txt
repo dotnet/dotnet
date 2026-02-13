@@ -1,4 +1,4 @@
-﻿RazorDocument - [0..135)::135 - [<span>@(value switch{LF    < 10 => "less than",LF    10 => "ten",LF    _ => "other"LF})</span>LFLF@code{LF    public int value = 10;LF}]
+∩╗┐RazorDocument - [0..135)::135 - [<span>@(value switch{LF    < 10 => "less than",LF    10 => "ten",LF    _ => "other"LF})</span>LFLF@code{LF    public int value = 10;LF}]
     MarkupBlock - [0..135)::135
         MarkupElement - [0..94)::94
             MarkupStartTag - [0..6)::6 - [<span>] - Gen<Markup>

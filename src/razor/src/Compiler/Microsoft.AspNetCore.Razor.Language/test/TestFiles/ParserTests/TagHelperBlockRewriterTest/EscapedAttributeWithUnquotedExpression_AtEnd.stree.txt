@@ -1,4 +1,4 @@
-﻿RazorDocument - [0..115)::115 - [@{LF    var id = 5;LF}LF<div control-id="container" is-confirm-redirect="false" @@click="action(@id)">Content</div>]
+∩╗┐RazorDocument - [0..115)::115 - [@{LF    var id = 5;LF}LF<div control-id="container" is-confirm-redirect="false" @@click="action(@id)">Content</div>]
     MarkupBlock - [0..115)::115
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];

@@ -1,4 +1,4 @@
-﻿Source Location: (1:0,1 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+∩╗┐Source Location: (1:0,1 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Grid|
 Generated Location: (703:19,49 [4] )
 |Grid|

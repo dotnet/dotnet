@@ -1,4 +1,4 @@
-﻿steps:
+∩╗┐steps:
   - task: NuGetAuthenticate@1
     inputs:
       nuGetServiceConnections: devdiv/dotnet-core-internal-tooling, devdiv/engineering

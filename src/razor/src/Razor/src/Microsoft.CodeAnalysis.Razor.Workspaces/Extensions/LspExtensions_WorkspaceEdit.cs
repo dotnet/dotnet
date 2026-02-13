@@ -57,8 +57,13 @@ internal static partial class LspExtensions
         }
     }
 
-    public static WorkspaceEdit Concat(this WorkspaceEdit first, WorkspaceEdit second)
+    public static WorkspaceEdit Concat(this WorkspaceEdit first, WorkspaceEdit? second)
     {
+        if (second is null)
+        {
+            return first;
+        }
+
         using var builder = new PooledArrayBuilder<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>>();
 
         AddEdits(ref builder.AsRef(), first);

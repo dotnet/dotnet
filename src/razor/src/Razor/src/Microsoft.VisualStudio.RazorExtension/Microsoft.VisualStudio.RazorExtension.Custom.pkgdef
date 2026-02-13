@@ -44,15 +44,9 @@
 "Title"="Show all C# code actions in Razor files (requires restart)"
 "PreviewPaneChannels"="IntPreview,int.main"
 
-[$RootKey$\FeatureFlags\Razor\LSP\UseRazorCohostServer]
-"Description"="Uses the Razor language server that is cohosted in Roslyn to provide some Razor tooling functionality."
-"Value"=dword:00000001
-"Title"="Use Roslyn Cohost server for Razor (requires restart)"
-"PreviewPaneChannels"="*"
-
 // CacheTag value should be changed when registration file changes
 // See https://devdiv.visualstudio.com/DevDiv/_wiki/wikis/DevDiv.wiki/39345/Manifest-Build-Deployment-and-Setup-Authoring-In-Depth?anchor=example-pkgdef-key for more infomation
 [$RootKey$\SettingsManifests\{13b72f58-279e-49e0-a56d-296be02f0805}]
 @="Microsoft.VisualStudio.RazorExtension.RazorPackage"
 "ManifestPath"="$PackageFolder$\UnifiedSettings\razor.registration.json"
-"CacheTag"=qword:91324F976E73CC56
+"CacheTag"=qword:91324F976E73CC57

@@ -1,4 +1,4 @@
-﻿RazorDocument - [0..105)::105 - [@{LF    var url = "Tasks";LF}LF<button @@click="navigate(@url)" control-id="nav-button">Navigate</button>]
+∩╗┐RazorDocument - [0..105)::105 - [@{LF    var url = "Tasks";LF}LF<button @@click="navigate(@url)" control-id="nav-button">Navigate</button>]
     MarkupBlock - [0..105)::105
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];

@@ -1,6 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -649,6 +650,75 @@ public class RazorDocumentMappingServiceTest(ITestOutputHelper testOutput) : Too
     }
 
     [Fact]
+    public void TryMapToGeneratedDocumentRange_CSharp_OneLine()
+    {
+        // Arrange
+        var service = new LspDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
+        var codeDoc = CreateCodeDocumentWithCSharpProjection(
+            razorSource: "@{ a; }",
+            projectedCSharpSource: "1\n2 a; ",
+            sourceMappings: [
+                new SourceMapping(new SourceSpan(2, 4), new SourceSpan(3, 4)),
+            ]);
+        var range = new LinePositionSpan(new LinePosition(0, 3), new LinePosition(0, 5));
+
+        // Act & Assert
+        var result = service.TryMapToCSharpDocumentRange(
+            codeDoc.GetRequiredCSharpDocument(),
+            range, // |a;|
+            out var projectedRange);
+
+        Assert.True(result);
+        Assert.Equal("(1,2)-(1,4)", projectedRange.ToString());
+    }
+
+    [Fact]
+    public void TryMapToGeneratedDocumentRange_CSharp_TwoLines()
+    {
+        // Arrange
+        var service = new LspDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
+        var codeDoc = CreateCodeDocumentWithCSharpProjection(
+            razorSource: "@{ a\n; }",
+            projectedCSharpSource: "1\n2 a\n; ",
+            sourceMappings: [
+                new SourceMapping(new SourceSpan(2, 5), new SourceSpan(3, 5)),
+            ]);
+        var range = new LinePositionSpan(new LinePosition(0, 3), new LinePosition(1, 2));
+
+        // Act & Assert
+        var result = service.TryMapToCSharpDocumentRange(
+            codeDoc.GetRequiredCSharpDocument(),
+            range, // |a\n;|
+            out var projectedRange);
+
+        Assert.True(result);
+        Assert.Equal("(1,2)-(2,2)", projectedRange.ToString());
+    }
+
+    [Fact]
+    public void TryMapToGeneratedDocumentRange_CSharp_ThreeLines()
+    {
+        // Arrange
+        var service = new LspDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
+        var codeDoc = CreateCodeDocumentWithCSharpProjection(
+            razorSource: "@{ a\n\n; }",
+            projectedCSharpSource: "1\n2 a\n\n; ",
+            sourceMappings: [
+                new SourceMapping(new SourceSpan(2, 6), new SourceSpan(3, 6)),
+            ]);
+        var range = new LinePositionSpan(new LinePosition(0, 3), new LinePosition(2, 2));
+
+        // Act & Assert
+        var result = service.TryMapToCSharpDocumentRange(
+            codeDoc.GetRequiredCSharpDocument(),
+            range, // |a\n\n;|
+            out var projectedRange);
+
+        Assert.True(result);
+        Assert.Equal("(1,2)-(3,2)", projectedRange.ToString());
+    }
+
+    [Fact]
     public void TryMapToGeneratedDocumentRange_CSharp_MissingSourceMappings()
     {
         // Arrange
@@ -679,8 +749,8 @@ public class RazorDocumentMappingServiceTest(ITestOutputHelper testOutput) : Too
             projectedCSharpSource: "\n// Prefix\n var abc;\nvar def; \n// Suffix",
             sourceMappings: [
                 new SourceMapping(new SourceSpan(0, 1), new SourceSpan(0, 1)),
-                new SourceMapping(new SourceSpan(16, 3), new SourceSpan(11, 3)),
-                new SourceMapping(new SourceSpan(19, 10), new SourceSpan(5, 10))
+                new SourceMapping(new SourceSpan(19, 10), new SourceSpan(5, 10)),
+                new SourceMapping(new SourceSpan(16, 3), new SourceSpan(11, 3))
             ]);
         var range = new LinePositionSpan(new LinePosition(1, 10), new LinePosition(1, 13));
 
@@ -692,6 +762,47 @@ public class RazorDocumentMappingServiceTest(ITestOutputHelper testOutput) : Too
 
         // Assert
         Assert.False(result);
+    }
+
+    [Fact]
+    public void RazorCSharpDocument_Constructor_WhenMappingsNotOrderedByGeneratedSpans()
+    {
+        // Arrange
+        var razorSource = "Line 1\nLine 2 @{ var abc;\nvar def; }";
+        var projectedCSharpSource = "\n// Prefix\n var abc;\nvar def; \n// Suffix";
+        var sourceDocument = TestRazorSourceDocument.Create(razorSource);
+        var projectEngine = RazorProjectEngine.Create(builder =>
+        {
+            builder.ConfigureParserOptions(builder =>
+            {
+                builder.UseRoslynTokenizer = true;
+            });
+        });
+
+        var codeDocument = projectEngine.Process(sourceDocument, RazorFileKind.Legacy, importSources: default, tagHelpers: []);
+        ImmutableArray<SourceMapping> sourceMappings = [
+            new SourceMapping(new SourceSpan(0, 1), new SourceSpan(0, 1)),
+            new SourceMapping(new SourceSpan(16, 3), new SourceSpan(11, 3)),
+            new SourceMapping(new SourceSpan(19, 10), new SourceSpan(5, 10))
+        ];
+
+        // Act/Assert
+#if DEBUG
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            _ = TestRazorCSharpDocument.Create(
+                codeDocument,
+                projectedCSharpSource,
+                sourceMappings);
+        });
+#else
+        var doc = TestRazorCSharpDocument.Create(
+                codeDocument,
+                projectedCSharpSource,
+                sourceMappings);
+
+        Assert.NotEqual(doc.SourceMappingsSortedByOriginal, sourceMappings);
+#endif
     }
 
     private static RazorCodeDocument CreateCodeDocumentWithCSharpProjection(string razorSource, string projectedCSharpSource, ImmutableArray<SourceMapping> sourceMappings)

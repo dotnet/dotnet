@@ -1,4 +1,4 @@
-﻿// TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml(14,55): error CS1525: Invalid expression term ')'
+∩╗┐// TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml(14,55): error CS1525: Invalid expression term ')'
 // await
 Diagnostic(ErrorCode.ERR_InvalidExprTerm, "").WithArguments(")").WithLocation(14, 55),
 // TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml(19,49): error CS1501: No overload for method 'Foo' takes 2 arguments

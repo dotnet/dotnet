@@ -1,4 +1,4 @@
-﻿Source Location: (11:0,11 [7] x:\dir\subdir\Test\TestComponent.cshtml)
+∩╗┐Source Location: (11:0,11 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |TDomain|
 Generated Location: (474:16,0 [7] )
 |TDomain|

@@ -1,4 +1,4 @@
-﻿Source Location: (6:0,6 [9] x:\dir\subdir\Test\TestComponent.cshtml)
+∩╗┐Source Location: (6:0,6 [9] x:\dir\subdir\Test\TestComponent.cshtml)
 |"/MyPage"|
 Generated Location: (504:16,0 [9] )
 |"/MyPage"|

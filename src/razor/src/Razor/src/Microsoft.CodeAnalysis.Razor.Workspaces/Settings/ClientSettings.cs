@@ -40,6 +40,7 @@ internal sealed record ClientAdvancedSettings(bool FormatOnType,
                                               bool AutoInsertAttributeQuotes,
                                               bool ColorBackground,
                                               bool CodeBlockBraceOnNextLine,
+                                              AttributeIndentStyle AttributeIndentStyle,
                                               bool CommitElementsWithSpace,
                                               SnippetSetting SnippetSetting,
                                               LogLevel LogLevel,
@@ -51,6 +52,7 @@ internal sealed record ClientAdvancedSettings(bool FormatOnType,
                                                                 AutoInsertAttributeQuotes: true,
                                                                 ColorBackground: false,
                                                                 CodeBlockBraceOnNextLine: false,
+                                                                AttributeIndentStyle: AttributeIndentStyle.AlignWithFirst,
                                                                 CommitElementsWithSpace: true,
                                                                 SnippetSetting.All,
                                                                 LogLevel.Warning,
@@ -65,6 +67,7 @@ internal sealed record ClientAdvancedSettings(bool FormatOnType,
             AutoInsertAttributeQuotes == other.AutoInsertAttributeQuotes &&
             ColorBackground == other.ColorBackground &&
             CodeBlockBraceOnNextLine == other.CodeBlockBraceOnNextLine &&
+            AttributeIndentStyle == other.AttributeIndentStyle &&
             CommitElementsWithSpace == other.CommitElementsWithSpace &&
             SnippetSetting == other.SnippetSetting &&
             LogLevel == other.LogLevel &&
@@ -80,6 +83,7 @@ internal sealed record ClientAdvancedSettings(bool FormatOnType,
         hash.Add(AutoInsertAttributeQuotes);
         hash.Add(ColorBackground);
         hash.Add(CodeBlockBraceOnNextLine);
+        hash.Add(AttributeIndentStyle);
         hash.Add(CommitElementsWithSpace);
         hash.Add(SnippetSetting);
         hash.Add(LogLevel);

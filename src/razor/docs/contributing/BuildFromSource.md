@@ -1,4 +1,4 @@
-﻿# Build Razor Tooling from Source
+∩╗┐# Build Razor Tooling from Source
 
 Building Razor from source allows you to tweak and customize the Razor compiler and tooling experience for ASP.NET Core, and to contribute your improvements back to the project.
 

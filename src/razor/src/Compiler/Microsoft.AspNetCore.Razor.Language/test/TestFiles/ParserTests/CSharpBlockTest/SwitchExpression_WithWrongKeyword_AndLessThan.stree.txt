@@ -1,4 +1,4 @@
-﻿RazorDocument - [0..75)::75 - [@{LF    var val = 0 usingLF    {LF         < 9 => "less than 10"LF    };LF}]
+∩╗┐RazorDocument - [0..75)::75 - [@{LF    var val = 0 usingLF    {LF         < 9 => "less than 10"LF    };LF}]
     MarkupBlock - [0..75)::75
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];

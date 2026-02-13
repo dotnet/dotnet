@@ -2,22 +2,29 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
-internal sealed class HtmlFormattingPass(IDocumentMappingService documentMappingService) : IFormattingPass
+internal sealed partial class HtmlFormattingPass(
+    IDocumentMappingService documentMappingService,
+    ILoggerFactory loggerFactory) : IFormattingPass
 {
     private readonly IDocumentMappingService _documentMappingService = documentMappingService;
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<HtmlFormattingPass>();
 
     public async Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
@@ -62,10 +69,7 @@ internal sealed class HtmlFormattingPass(IDocumentMappingService documentMapping
                 }
             }
 
-            // Now that the changes are on our terms, we can apply our own filtering without having to worry
-            // that we're missing something important. We could still, in theory, be missing something the Html
-            // formatter intentionally did, but we also know the Html formatter made its decisions without an
-            // awareness of Razor anyway, so it's not a reliable source.
+            // Apply the line-by-line filtering algorithm
             var filteredChanges = await FilterIncomingChangesAsync(context, changes, cancellationToken).ConfigureAwait(false);
             if (filteredChanges.Length == 0)
             {
@@ -84,22 +88,53 @@ internal sealed class HtmlFormattingPass(IDocumentMappingService documentMapping
     {
         var codeDocument = context.CodeDocument;
         var csharpDocument = codeDocument.GetRequiredCSharpDocument();
-        var syntaxRoot = codeDocument.GetRequiredSyntaxRoot();
-        var sourceText = codeDocument.Source.Text;
-        SyntaxNode? csharpSyntaxRoot = null;
+        var originalText = codeDocument.Source.Text;
 
-        using var changesToKeep = new PooledArrayBuilder<TextChange>(capacity: changes.Length);
+        var csharpSyntaxTree = await context.OriginalSnapshot.GetCSharpSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+        var csharpSyntaxRoot = await csharpSyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
 
-        foreach (var change in changes)
+        // Apply all changes to create the formatted document
+        var formattedText = originalText.WithChanges(changes);
+        context.Logger?.LogSourceText("UnfilteredFormattedHtmlSourceText", formattedText);
+
+        // Filter out any change that happens in a C# literal. We can't do this based on text easily, as there could
+        // be any number of C# literals on a line, so we have to do it at the edit level, after computing character
+        // level edits.
+        //
+        // eg, <div><span>@("hello   there")</<span><span>@("hello   there")</<span></div>
+        //
+        // The Html formatter would remove the whitespace in the string literal, but if we go line-by-line
+        // we'd have to work very hard to detect that, and if we just process edits we could miss it because
+        // there could be one edit to replace the whole line.
+        changes = SourceTextDiffer.GetMinimalTextChanges(originalText, formattedText, DiffKind.Char);
+        changes = FilterChangesInStringLiterals(changes);
+
+        // Re-apply the changes to get the new formatted text
+        formattedText = originalText.WithChanges(changes);
+
+        context.Logger?.LogSourceText("FormattedHtmlSourceText", formattedText);
+
+        // Compute the line metadata, to tell the formatting helper how to deal with each line
+        var lineInfo = GenerateLineInfo(codeDocument, originalText);
+
+        context.Logger?.LogObject("HtmlFormattingLineInfo", lineInfo);
+
+        // Now go line-by-line and build the final changes by selecting what to keep from each line
+        using var formattingChanges = new PooledArrayBuilder<TextChange>();
+        FormattingUtilities.GetOriginalDocumentChangesFromLineInfo(context, originalText, lineInfo, formattedText, _logger, ShouldKeepInsertedNewLine, ref formattingChanges.AsRef(), out _);
+
+        var finalFormattingChanges = formattingChanges.ToArray();
+        context.Logger?.LogObject("FinalHtmlFormattingChanges", finalFormattingChanges);
+        var changedText = originalText.WithChanges(finalFormattingChanges);
+        context.Logger?.LogSourceText("FinalHtmlFormattedDocument", changedText);
+
+        // Finally, one more pass to compute the minial changes as the algorithm we use above is pretty naive
+        // and will have lots of changes that don't actually change anything.
+        return SourceTextDiffer.GetMinimalTextChanges(context.SourceText, changedText, DiffKind.Char);
+
+        bool ShouldKeepInsertedNewLine(int originalPosition)
         {
-            // We don't keep changes that start inside of a razor comment block.
-            var node = syntaxRoot.FindInnermostNode(change.Span.Start);
-            var comment = node?.FirstAncestorOrSelf<RazorCommentBlockSyntax>();
-            if (comment is not null && change.Span.Start > comment.SpanStart)
-            {
-                context.Logger?.LogMessage($"Dropping change {change} because it's in a Razor comment");
-                continue;
-            }
+            Debug.Assert(originalPosition < originalText.Length);
 
             // When render fragments are inside a C# code block, eg:
             //
@@ -107,89 +142,177 @@ internal sealed class HtmlFormattingPass(IDocumentMappingService documentMapping
             //      void Foo()
             //      {
             //          Render(@<SurveyPrompt />);
-            //      {
+            //      }
             // }
             //
             // This is popular in some libraries, like bUnit. The issue here is that
             // the Html formatter sees ~~~~~<SurveyPrompt /> and puts a newline before
             // the tag, but obviously that breaks things by separating the transition and the tag.
-            //
-            // It's straight forward enough to just check for this situation and ignore the change.
-
-            // There needs to be a newline being inserted between an '@' and a '<'.
-            if (change.NewText is ['\r' or '\n', ..])
+            if (originalPosition > 0 &&
+                originalText[originalPosition - 1] == '@' &&
+                originalText[originalPosition] == '<')
             {
-                if (change.Span.Start > 0 &&
-                    sourceText.Length > 1 &&
-                    sourceText[change.Span.Start - 1] == '@' &&
-                    sourceText[change.Span.Start] == '<')
-                {
-                    context.Logger?.LogMessage($"Dropping change {change} because it breaks a C# template");
-                    continue;
-                }
-
-                // The Html formatter in VS Code wraps long lines, based on a user setting, but when there
-                // are long C# string literals that ends up breaking the code. For example:
-                //
-                // @("this is a long string that spans past some user set maximum limit")
-                //
-                // could become
-                //
-                // @("this is a long string that spans past
-                // some user set maximum limit")
-                //
-                // That doesn't compile, and depending on the scenario, can even cause a crash inside the
-                // Roslyn formatter.
-                //
-                // Strictly speaking if literal is a verbatim string, or multiline raw string literal, then
-                // it would compile, but it would also change the value of the string, and since these edits
-                // come from the Html formatter which clearly has no idea it's doing that, it is safer to
-                // disregard them all equally, and let the user make the final decision.
-                //
-                // In order to avoid hard coding all of the various string syntax kinds here, we can just check
-                // for any literal, as the only literals that can contain spaces, which is what the Html formatter
-                // will wrap on, are strings. And if it did decide to insert a newline into a number, or the 'null'
-                // keyword, that would be pretty bad too.
-                if (await ChangeIsInStringLiteralAsync(context, csharpDocument, change, cancellationToken).ConfigureAwait(false))
-                {
-                    continue;
-                }
+                return false;
             }
 
-            // As well as breaking long string literals, above, in VS Code the formatter will also potentially remove spaces
-            // within a string literal, and in both VS and VS Code, they will happily remove indentation inside a multi-line
-            // verbatim string, or raw string literal. Simply dropping any edit that is removing content from a string literal
-            // fixes this. Strictly speaking we only need to care about removing whitespace, not removing anything else, but
-            // we never want the formatter to remove anything else anyway.
-            if (change.NewText?.Length == 0 &&
-                await ChangeIsInStringLiteralAsync(context, csharpDocument, change, cancellationToken).ConfigureAwait(false))
+            // String literal protection - check if newline was added in a string literal.
+            // We check at the position of the newline, which is the end of the formatted line, but need
+            // to translate that back to the original document position.
+            // There is a good chance this is unnecessary, based on the pre-filtering we did above but
+            // since we're at the point where we know for sure a newline was added, and there shouldn't
+            // be too many of those scenarios, its worth being extra safe, because the pre-filtering is
+            // at the mercy of the exact shape of the edits the Html formatter made.
+            if (IsInStringLiteral(originalPosition))
             {
-                continue;
+                return false;
             }
 
-            changesToKeep.Add(change);
+            return true;
         }
 
-        return changesToKeep.ToImmutableAndClear();
-
-        async Task<bool> ChangeIsInStringLiteralAsync(FormattingContext context, RazorCSharpDocument csharpDocument, TextChange change, CancellationToken cancellationToken)
+        ImmutableArray<TextChange> FilterChangesInStringLiterals(ImmutableArray<TextChange> changes)
         {
-            if (csharpSyntaxRoot is null)
+            using var validChanges = new PooledArrayBuilder<TextChange>();
+            foreach (var change in changes)
             {
-                var csharpSyntaxTree = await context.OriginalSnapshot.GetCSharpSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
-                csharpSyntaxRoot = await csharpSyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
+                if (IsInStringLiteral(change.Span.Start))
+                {
+                    continue;
+                }
+
+                validChanges.Add(change);
             }
 
-            if (_documentMappingService.TryMapToCSharpDocumentPosition(csharpDocument, change.Span.Start, out _, out var csharpIndex) &&
+            if (changes.Length == validChanges.Count)
+            {
+                return changes;
+            }
+
+            return validChanges.ToImmutableAndClear();
+        }
+
+        bool IsInStringLiteral(int position)
+        {
+            if (_documentMappingService.TryMapToCSharpDocumentPosition(csharpDocument, position, out _, out var csharpIndex) &&
                 csharpSyntaxRoot.FindNode(new TextSpan(csharpIndex, 0), getInnermostNodeForTie: true) is { } csharpNode &&
                 csharpNode.IsStringLiteral())
             {
-                context.Logger?.LogMessage($"Dropping change {change} because it breaks a C# string literal");
                 return true;
             }
 
             return false;
         }
+    }
+
+    private static ImmutableArray<LineInfo> GenerateLineInfo(RazorCodeDocument codeDocument, SourceText originalText)
+    {
+        var (scriptAndStyleSpans, razorCommentSpans) = BuildSpans(codeDocument, originalText);
+
+        using var lineInfoBuilder = new PooledArrayBuilder<LineInfo>(capacity: originalText.Lines.Count);
+
+        // Build LineInfo for each line in the original document.
+        // We try to find the corresponding line in the formatted document by matching
+        // non-whitespace content. This handles cases where lines are shifted.
+        foreach (var originalLine in originalText.Lines)
+        {
+            var lineStart = originalLine.Start;
+
+            // Determine processing flags based on context
+            // For most lines, we don't change indentation, but allow formatting
+            var processIndentation = false;
+            var processFormatting = true;
+
+            if (IsPositionInSpans(lineStart, razorCommentSpans))
+            {
+                // Inside Razor comments: don't process anything
+                processIndentation = false;
+                processFormatting = false;
+            }
+            else if (IsPositionInSpans(lineStart, scriptAndStyleSpans))
+            {
+                // Inside script/style tags: process both indentation and formatting
+                processIndentation = true;
+                processFormatting = true;
+            }
+
+            lineInfoBuilder.Add(new LineInfo(
+                ProcessIndentation: processIndentation,
+                ProcessFormatting: processFormatting,
+                CheckForNewLines: true,
+                // Everything below here is default/unused for Html formatting
+                SkipPreviousLine: false,
+                SkipNextLine: false,
+                SkipNextLineIfBrace: false,
+                FixedIndentLevel: 0,
+                OriginOffset: 0,
+                FormattedLength: 0,
+                FormattedOffset: 0,
+                FormattedOffsetFromEndOfLine: 0,
+                AdditionalIndentation: null));
+        }
+
+        return lineInfoBuilder.ToImmutable();
+    }
+
+    /// <summary>
+    /// Builds arrays of TextSpans for script/style elements and Razor comments in a single tree traversal.
+    /// </summary>
+    private static (ImmutableArray<TextSpan> ScriptAndStyleSpans, ImmutableArray<TextSpan> RazorCommentSpans) BuildSpans(
+        RazorCodeDocument codeDocument,
+        SourceText sourceText)
+    {
+        var syntaxRoot = codeDocument.GetRequiredSyntaxRoot();
+
+        using var scriptStyleBuilder = new PooledArrayBuilder<TextSpan>();
+        using var commentBuilder = new PooledArrayBuilder<TextSpan>();
+
+        foreach (var node in syntaxRoot.DescendantNodes())
+        {
+            if (node is MarkupElementSyntax element &&
+                RazorSyntaxFacts.IsScriptOrStyleBlock(element) &&
+                element.GetLinePositionSpan(codeDocument.Source).SpansMultipleLines())
+            {
+                // We only want the contents of the script tag to be included, but not whitespace before the end tag if
+                // there is only whitespace before the tag, so the calculation of the end is a little annoying.
+                // eg, if the last line is just "    </script>", then the contents end at the start of the line, so
+                // we are free to modify the whitespace in front of the end tag. If the last line is "   foo();</script>"
+                // however, then we want the Html formatter to be in charge of the whitespace, so the contents end at the "f";
+                var endTagLine = sourceText.Lines.GetLineFromPosition(element.EndTag.SpanStart);
+                var firstNonWhitespace = endTagLine.GetFirstNonWhitespacePosition();
+                var end = firstNonWhitespace == element.EndTag.SpanStart
+                    ? endTagLine.Start
+                    : firstNonWhitespace.GetValueOrDefault() + 1;
+                scriptStyleBuilder.Add(TextSpan.FromBounds(element.StartTag.EndPosition, end));
+            }
+            else if (node is RazorCommentBlockSyntax comment &&
+                comment.GetLinePositionSpan(codeDocument.Source).SpansMultipleLines())
+            {
+                // Razor comment
+                commentBuilder.Add(comment.Span);
+            }
+        }
+
+        return (scriptStyleBuilder.ToImmutable(), commentBuilder.ToImmutable());
+    }
+
+    private static bool IsPositionInSpans(int position, ImmutableArray<TextSpan> spans)
+    {
+        if (spans.Length == 0)
+        {
+            return false;
+        }
+
+        var index = spans.BinarySearchBy(position, static (span, pos) =>
+        {
+            if (span.Contains(pos))
+            {
+                return 0;
+            }
+
+            return span.Start.CompareTo(pos);
+        });
+
+        return index >= 0;
     }
 
     internal TestAccessor GetTestAccessor() => new(this);

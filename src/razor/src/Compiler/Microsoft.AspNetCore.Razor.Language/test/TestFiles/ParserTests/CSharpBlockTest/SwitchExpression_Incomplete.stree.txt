@@ -1,4 +1,4 @@
-﻿RazorDocument - [0..86)::86 - [@{LF    var val = 0 switchLF    {LF        0 => "value"LFLF    var val2 = "value2";LF}]
+∩╗┐RazorDocument - [0..86)::86 - [@{LF    var val = 0 switchLF    {LF        0 => "value"LFLF    var val2 = "value2";LF}]
     MarkupBlock - [0..86)::86
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];

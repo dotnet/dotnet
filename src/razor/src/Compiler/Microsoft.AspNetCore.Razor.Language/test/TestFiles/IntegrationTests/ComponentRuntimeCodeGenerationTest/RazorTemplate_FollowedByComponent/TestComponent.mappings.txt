@@ -1,4 +1,4 @@
-﻿Source Location: (2:0,2 [45] x:\dir\subdir\Test\TestComponent.cshtml)
+∩╗┐Source Location: (2:0,2 [45] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     RenderFragment<Person> p = (person) => |
 Generated Location: (735:21,0 [45] )

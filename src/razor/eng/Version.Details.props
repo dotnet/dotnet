@@ -25,10 +25,12 @@ This file should be imported by eng/Versions.props
     <MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>5.3.0-2.26064.108</MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>
     <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>5.3.0-2.26064.108</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
     <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>5.3.0-2.26064.108</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
-    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26064.108</MicrosoftDotNetArcadeSdkPackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>5.3.0-2.26064.108</MicrosoftNetCompilersToolsetPackageVersion>
     <MicrosoftVisualStudioLanguageServicesPackageVersion>5.3.0-2.26064.108</MicrosoftVisualStudioLanguageServicesPackageVersion>
-    <RoslynDiagnosticsAnalyzersPackageVersion>5.3.0-2.26064.108</RoslynDiagnosticsAnalyzersPackageVersion>
+    <!-- dotnet/roslyn dependencies -->
+    <RoslynDiagnosticsAnalyzersPackageVersion>5.3.0-2.25630.5</RoslynDiagnosticsAnalyzersPackageVersion>
+    <!-- dotnet/arcade dependencies -->
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26110.1</MicrosoftDotNetArcadeSdkPackageVersion>
     <!-- dotnet/aspnetcore dependencies -->
     <MicrosoftExtensionsObjectPoolPackageVersion>8.0.0</MicrosoftExtensionsObjectPoolPackageVersion>
     <!-- dotnet/runtime dependencies -->
@@ -57,10 +59,12 @@ This file should be imported by eng/Versions.props
     <MicrosoftCodeAnalysisWorkspacesCommonVersion>$(MicrosoftCodeAnalysisWorkspacesCommonPackageVersion)</MicrosoftCodeAnalysisWorkspacesCommonVersion>
     <MicrosoftCodeAnalysisWorkspacesMSBuildVersion>$(MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion)</MicrosoftCodeAnalysisWorkspacesMSBuildVersion>
     <MicrosoftCommonLanguageServerProtocolFrameworkVersion>$(MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion)</MicrosoftCommonLanguageServerProtocolFrameworkVersion>
-    <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
     <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNetCompilersToolsetPackageVersion)</MicrosoftNetCompilersToolsetVersion>
     <MicrosoftVisualStudioLanguageServicesVersion>$(MicrosoftVisualStudioLanguageServicesPackageVersion)</MicrosoftVisualStudioLanguageServicesVersion>
+    <!-- dotnet/roslyn dependencies -->
     <RoslynDiagnosticsAnalyzersVersion>$(RoslynDiagnosticsAnalyzersPackageVersion)</RoslynDiagnosticsAnalyzersVersion>
+    <!-- dotnet/arcade dependencies -->
+    <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
     <!-- dotnet/aspnetcore dependencies -->
     <MicrosoftExtensionsObjectPoolVersion>$(MicrosoftExtensionsObjectPoolPackageVersion)</MicrosoftExtensionsObjectPoolVersion>
     <!-- dotnet/runtime dependencies -->

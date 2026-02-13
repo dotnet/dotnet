@@ -83,7 +83,7 @@ public class VSCSharpDiagnosticsEndToEndTest(ITestOutputHelper testOutput) : Sin
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var requestContext = new RazorRequestContext(documentContext, null!, "lsp/method", uri: null);
 
-        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(DocumentMappingService, LoggerFactory);
+        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(DocumentMappingService, LanguageServerFeatureOptions, LoggerFactory);
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
         var diagnosticsEndPoint = new VSDocumentDiagnosticsEndpoint(translateDiagnosticsService, optionsMonitor, languageServer, telemetryReporter: null);
 

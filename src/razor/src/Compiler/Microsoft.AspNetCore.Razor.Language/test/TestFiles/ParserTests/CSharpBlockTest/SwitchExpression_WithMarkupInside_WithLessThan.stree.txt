@@ -1,4 +1,4 @@
-﻿RazorDocument - [0..123)::123 - [@{LF    var val = 0 switchLF    {LF        < 10 => @<span>less than 10</span>,LF        _ => @<span>other</span>LF    };LF}]
+∩╗┐RazorDocument - [0..123)::123 - [@{LF    var val = 0 switchLF    {LF        < 10 => @<span>less than 10</span>,LF        _ => @<span>other</span>LF    };LF}]
     MarkupBlock - [0..123)::123
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
