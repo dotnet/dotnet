@@ -80,8 +80,9 @@ namespace NuGet.Protocol
 
             if (dependencyGroupsArray != null)
             {
-                foreach (JObject dependencyGroupObj in dependencyGroupsArray)
+                for (int i = 0; i < dependencyGroupsArray.Count; i++)
                 {
+                    var dependencyGroupObj = (JObject)dependencyGroupsArray[i];
                     var currentFramework = GetFramework(dependencyGroupObj);
 
                     var groupDependencies = new List<PackageDependency>();
@@ -91,8 +92,10 @@ namespace NuGet.Protocol
                     // Packages with no dependencies have 'dependencyGroups' but no 'dependencies'
                     if (dependencyGroupObj.TryGetValue("dependencies", out dependenciesObj))
                     {
-                        foreach (JObject dependencyObj in dependenciesObj)
+                        var dependencies = (JArray)dependenciesObj;
+                        for (int j = 0; j < dependencies.Count; j++)
                         {
+                            var dependencyObj = (JObject)dependencies[j];
                             var dependencyId = dependencyObj.Value<string>("id");
                             var dependencyRange = RegistrationUtility.CreateVersionRange(dependencyObj.Value<string>("range"));
 

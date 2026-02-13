@@ -7,10 +7,10 @@
       "commitSha": "ab22aeec12730f321addeb11568f0213b23ac3f4"
     },
     {
-      "barId": 301237,
+      "barId": 301363,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "339f512cf2cec6d975b8dcd7d36e9b1958aaa244"
+      "commitSha": "f4d8b25fc3ded611373cb518a999c18295e0c100"
     },
     {
       "barId": 292148,
@@ -37,10 +37,10 @@
       "commitSha": "970c803abb1ed5657b056cdaf01f1693f437c242"
     },
     {
-      "barId": 301219,
+      "barId": 301392,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "d46ce64b88d89f5d437fdf181983c52f1f477b9c"
+      "commitSha": "37edffa450e4b722fcbf51ac08d011e9d59a89bf"
     },
     {
       "barId": 298250,
@@ -61,10 +61,10 @@
       "commitSha": "ee7b4d39caf3f02f1f5753a6d8438b07192e1446"
     },
     {
-      "barId": 301091,
+      "barId": 301236,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "dba621cb12abbc049191519f3dc6ce1e2b63b14d"
+      "commitSha": "4ab100e0757ad6b88dba9079fad6a7bc83665430"
     },
     {
       "barId": 301084,
@@ -79,10 +79,10 @@
       "commitSha": "da86ec644af82dcb8575ff0c22ac6afdcd6b5066"
     },
     {
-      "barId": 301220,
+      "barId": 301382,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "0b91113ce10b7b868f0df88a1c87ae8f2f04bbf0"
+      "commitSha": "56a1b4dc67607eb6f15388c4acfa01a61aca4d03"
     },
     {
       "barId": 298986,
@@ -91,10 +91,10 @@
       "commitSha": "5745f7404c4a3ae7f1b08117bc6092a96224a985"
     },
     {
-      "barId": 301238,
+      "barId": 301373,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "f44050fd77b0ada2439f217e98540329a8ee8e3c"
+      "commitSha": "64f46dab01b1e0ae97e51f411c6d807b4270a684"
     },
     {
       "barId": 300965,
