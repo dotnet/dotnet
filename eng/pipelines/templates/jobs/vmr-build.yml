@@ -871,6 +871,7 @@ jobs:
           enableMicrobuild: true
           enableMicrobuildForMacAndLinux: true
 
+  # Keep the following two CopyFiles tasks separate to avoid scanning the entire artifacts folder
   - task: CopyFiles@2
     displayName: Copy logs to BuildLogs staging
     inputs:
