@@ -110,6 +110,7 @@ src/runtime/src/**/tests/**/*.res
 src/runtime/src/**/tests/**/*.resources
 
 # sdk
+src/sdk/src/Layout/redist/Microsoft.Build.Framework.tlb
 src/sdk/test/TestAssets/TestProjects/**/*.dat
 src/sdk/test/TestAssets/TestProjects/**/*.cache
 src/sdk/test/TestAssets/TestProjects/**/*.tlb
