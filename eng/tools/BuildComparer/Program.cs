@@ -73,7 +73,7 @@ public class Program
         Required = true
     };
 
-    private static Option includedRepositories = new Option<string[]>("--includedRepositories")
+    private static Option includedRepositories = new Option<string[]>("-includedRepositories")
     {
         Description = "Comma separated list of repositories to include in the comparison.",
         Required = true,
