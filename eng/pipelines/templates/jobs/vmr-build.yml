@@ -888,6 +888,7 @@ jobs:
       SourceFolder: '$(sourcesPath)/artifacts/TestResults'
       Contents: '**'
       TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs/artifacts/TestResults'
+      CleanTargetFolder: true
     continueOnError: true
     condition: succeededOrFailed()
 
