@@ -1,5 +1,6 @@
-<Project>
+PLEASE READ
 
+<<<<<<<< HEAD:src/msbuild/eng/dependabot/Directory.Packages.props
   <!-- Packages in this file have versions updated periodically by Dependabot.
   Versions managed by Darc/Maestro should be in ..\Packages.props.
 
@@ -58,3 +59,9 @@
   </ItemGroup>
 
 </Project>
+========
+Please remove this file during conflict resolution in your PR.
+This file has been reverted (removed) in the source repository but the PR branch
+does not have the file yet as it's based on an older commit. This means the file is
+not getting removed in the PR due to the other conflicts.
+>>>>>>>> darc/forward/0f2efdc-d3f6c3a:src/msbuild/eng/dependabot/Packages.props
