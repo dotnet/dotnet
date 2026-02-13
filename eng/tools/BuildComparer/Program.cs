@@ -1,17 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Microsoft.DotNet.Build.Manifest;
-using NuGet.Packaging;
-using System.Collections.Concurrent;
-using System.Collections.Immutable;
 using System.CommandLine;
-using System.Formats.Tar;
-using System.IO.Compression;
-using System.Reflection;
-using System.Reflection.Metadata;
-using System.Reflection.PortableExecutable;
-using System.Xml.Linq;
+using System.CommandLine.Parsing;
 
 /// <summary>
 /// Tool for comparing Microsoft builds with VMR (Virtual Mono Repo) builds.
@@ -82,6 +73,15 @@ public class Program
         Required = true
     };
 
+    private static Option includedRepositories = new Option<string[]>("-includedRepositories")
+    {
+        Description = "Comma separated list of repositories to include in the comparison.",
+        Required = true,
+        CustomParser = ParseIncludedRepositories,
+        AllowMultipleArgumentsPerToken = true,
+        Arity = ArgumentArity.OneOrMore,
+    };
+
     /// <summary>
     /// Entry point for the build comparison tool.
     /// </summary>
@@ -92,16 +92,16 @@ public class Program
         var rootCommand = new RootCommand("Tool for comparing Microsoft builds with VMR builds.");
         var subCommands = new List<ComparerCommand>
         {
-            new ComparerCommand(
+            new(
                 "assets",
                 "Compares asset manifests and outputs missing or misclassified assets",
                 typeof(AssetComparer),
-                new List<Option> { clean, assetType, vmrAssetBasePath, msftAssetBasePath, issuesReport, noIssuesReport, parallel, baseline }),
-            new ComparerCommand(
+                [clean, assetType, vmrAssetBasePath, msftAssetBasePath, issuesReport, noIssuesReport, parallel, baseline, includedRepositories]),
+            new(
                 "signing",
                 "Compares signing status between builds and outputs assets with differences.",
                 typeof(SigningComparer),
-                new List<Option> { clean, assetType, vmrAssetBasePath, msftAssetBasePath, issuesReport, noIssuesReport, parallel, baseline, exclusions, sdkTaskScript }),
+                [clean, assetType, vmrAssetBasePath, msftAssetBasePath, issuesReport, noIssuesReport, parallel, baseline, exclusions, sdkTaskScript, includedRepositories]),
         };
 
         foreach (var command in CreateComparerCommands(subCommands))
@@ -137,5 +137,16 @@ public class Program
 
             yield return subCommand;
         }
+    }
+
+    private static string[] ParseIncludedRepositories(ArgumentResult argumentResult)
+    {
+        List<string> args = [];
+        foreach (var token in argumentResult.Tokens)
+        {
+            args.AddRange(token.Value.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()));
+        }
+
+        return [.. args];
     }
 }
