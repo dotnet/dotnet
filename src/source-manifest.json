@@ -55,7 +55,7 @@
       "commitSha": "f779efc8c61a92528741de0210e46b47b8e71601"
     },
     {
-      "barId": -1,
+      "barId": 301553,
       "path": "source-build-reference-packages",
       "remoteUri": "/home/dkurepa/repos/source-build-reference-packages",
       "commitSha": "83baa8561d6f00b5c12714745fc93ca6dd305d1f"
