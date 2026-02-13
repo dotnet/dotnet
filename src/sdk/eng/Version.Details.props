@@ -7,7 +7,10 @@ This file should be imported by eng/Versions.props
   <PropertyGroup>
     <!-- dotnet/dotnet dependencies -->
     <MicrosoftAspNetCoreMvcRazorExtensionsToolingInternalPackageVersion>10.0.0-preview.26103.116</MicrosoftAspNetCoreMvcRazorExtensionsToolingInternalPackageVersion>
+    <MicrosoftBuildPackageVersion>18.3.0-preview-26103-116</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildLocalizationPackageVersion>18.3.0-preview-26103-116</MicrosoftBuildLocalizationPackageVersion>
     <MicrosoftBuildNuGetSdkResolverPackageVersion>7.4.0-rc.10416</MicrosoftBuildNuGetSdkResolverPackageVersion>
+    <MicrosoftBuildTasksGitPackageVersion>10.0.300-alpha.26103.116</MicrosoftBuildTasksGitPackageVersion>
     <MicrosoftCodeAnalysisPackageVersion>5.5.0-2.26103.116</MicrosoftCodeAnalysisPackageVersion>
     <MicrosoftCodeAnalysisBuildClientPackageVersion>5.5.0-2.26103.116</MicrosoftCodeAnalysisBuildClientPackageVersion>
     <MicrosoftCodeAnalysisCSharpPackageVersion>5.5.0-2.26103.116</MicrosoftCodeAnalysisCSharpPackageVersion>
@@ -33,6 +36,11 @@ This file should be imported by eng/Versions.props
     <MicrosoftNETRuntimeEmscriptenSdkInternalPackageVersion>10.0.0-preview.7.25377.103</MicrosoftNETRuntimeEmscriptenSdkInternalPackageVersion>
     <MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion>10.0.0-preview.26103.116</MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion>
     <MicrosoftNETTestSdkPackageVersion>18.3.0-release-26103-116</MicrosoftNETTestSdkPackageVersion>
+    <MicrosoftSourceLinkAzureReposGitPackageVersion>10.0.300-alpha.26103.116</MicrosoftSourceLinkAzureReposGitPackageVersion>
+    <MicrosoftSourceLinkBitbucketGitPackageVersion>10.0.300-alpha.26103.116</MicrosoftSourceLinkBitbucketGitPackageVersion>
+    <MicrosoftSourceLinkCommonPackageVersion>10.0.300-alpha.26103.116</MicrosoftSourceLinkCommonPackageVersion>
+    <MicrosoftSourceLinkGitHubPackageVersion>10.0.300-alpha.26103.116</MicrosoftSourceLinkGitHubPackageVersion>
+    <MicrosoftSourceLinkGitLabPackageVersion>10.0.300-alpha.26103.116</MicrosoftSourceLinkGitLabPackageVersion>
     <MicrosoftTemplateEngineAbstractionsPackageVersion>10.0.200-preview.26103.116</MicrosoftTemplateEngineAbstractionsPackageVersion>
     <MicrosoftTemplateEngineAuthoringTemplateVerifierPackageVersion>10.0.200-preview.26103.116</MicrosoftTemplateEngineAuthoringTemplateVerifierPackageVersion>
     <MicrosoftTemplateEngineEdgePackageVersion>10.0.200-preview.26103.116</MicrosoftTemplateEngineEdgePackageVersion>
@@ -85,9 +93,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>10.0.3-servicing.26075.103</MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>
     <MicrosoftAspNetCoreTestHostPackageVersion>10.0.3</MicrosoftAspNetCoreTestHostPackageVersion>
     <MicrosoftBclAsyncInterfacesPackageVersion>10.0.3</MicrosoftBclAsyncInterfacesPackageVersion>
-    <MicrosoftBuildPackageVersion>18.0.11</MicrosoftBuildPackageVersion>
-    <MicrosoftBuildLocalizationPackageVersion>18.0.11-servicing-26075-103</MicrosoftBuildLocalizationPackageVersion>
-    <MicrosoftBuildTasksGitPackageVersion>10.0.103</MicrosoftBuildTasksGitPackageVersion>
     <MicrosoftDeploymentDotNetReleasesPackageVersion>2.0.0-preview.1.26075.103</MicrosoftDeploymentDotNetReleasesPackageVersion>
     <MicrosoftDiaSymReaderPackageVersion>2.2.3</MicrosoftDiaSymReaderPackageVersion>
     <MicrosoftDotNetWebItemTemplates100PackageVersion>10.0.3</MicrosoftDotNetWebItemTemplates100PackageVersion>
@@ -111,11 +116,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftNETSdkWindowsDesktopPackageVersion>10.0.3-servicing.26075.103</MicrosoftNETSdkWindowsDesktopPackageVersion>
     <MicrosoftNETCoreAppRefPackageVersion>10.0.3</MicrosoftNETCoreAppRefPackageVersion>
     <MicrosoftNETCorePlatformsPackageVersion>10.0.3-servicing.26075.103</MicrosoftNETCorePlatformsPackageVersion>
-    <MicrosoftSourceLinkAzureReposGitPackageVersion>10.0.103</MicrosoftSourceLinkAzureReposGitPackageVersion>
-    <MicrosoftSourceLinkBitbucketGitPackageVersion>10.0.103</MicrosoftSourceLinkBitbucketGitPackageVersion>
-    <MicrosoftSourceLinkCommonPackageVersion>10.0.103</MicrosoftSourceLinkCommonPackageVersion>
-    <MicrosoftSourceLinkGitHubPackageVersion>10.0.103</MicrosoftSourceLinkGitHubPackageVersion>
-    <MicrosoftSourceLinkGitLabPackageVersion>10.0.103</MicrosoftSourceLinkGitLabPackageVersion>
     <MicrosoftWebXdtPackageVersion>3.2.3</MicrosoftWebXdtPackageVersion>
     <MicrosoftWin32SystemEventsPackageVersion>10.0.3</MicrosoftWin32SystemEventsPackageVersion>
     <MicrosoftWindowsDesktopAppInternalPackageVersion>10.0.3-servicing.26075.103</MicrosoftWindowsDesktopAppInternalPackageVersion>
@@ -152,7 +152,10 @@ This file should be imported by eng/Versions.props
   <PropertyGroup>
     <!-- dotnet/dotnet dependencies -->
     <MicrosoftAspNetCoreMvcRazorExtensionsToolingInternalVersion>$(MicrosoftAspNetCoreMvcRazorExtensionsToolingInternalPackageVersion)</MicrosoftAspNetCoreMvcRazorExtensionsToolingInternalVersion>
+    <MicrosoftBuildVersion>$(MicrosoftBuildPackageVersion)</MicrosoftBuildVersion>
+    <MicrosoftBuildLocalizationVersion>$(MicrosoftBuildLocalizationPackageVersion)</MicrosoftBuildLocalizationVersion>
     <MicrosoftBuildNuGetSdkResolverVersion>$(MicrosoftBuildNuGetSdkResolverPackageVersion)</MicrosoftBuildNuGetSdkResolverVersion>
+    <MicrosoftBuildTasksGitVersion>$(MicrosoftBuildTasksGitPackageVersion)</MicrosoftBuildTasksGitVersion>
     <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisPackageVersion)</MicrosoftCodeAnalysisVersion>
     <MicrosoftCodeAnalysisBuildClientVersion>$(MicrosoftCodeAnalysisBuildClientPackageVersion)</MicrosoftCodeAnalysisBuildClientVersion>
     <MicrosoftCodeAnalysisCSharpVersion>$(MicrosoftCodeAnalysisCSharpPackageVersion)</MicrosoftCodeAnalysisCSharpVersion>
@@ -178,6 +181,11 @@ This file should be imported by eng/Versions.props
     <MicrosoftNETRuntimeEmscriptenSdkInternalVersion>$(MicrosoftNETRuntimeEmscriptenSdkInternalPackageVersion)</MicrosoftNETRuntimeEmscriptenSdkInternalVersion>
     <MicrosoftNETSdkRazorSourceGeneratorsTransportVersion>$(MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion)</MicrosoftNETSdkRazorSourceGeneratorsTransportVersion>
     <MicrosoftNETTestSdkVersion>$(MicrosoftNETTestSdkPackageVersion)</MicrosoftNETTestSdkVersion>
+    <MicrosoftSourceLinkAzureReposGitVersion>$(MicrosoftSourceLinkAzureReposGitPackageVersion)</MicrosoftSourceLinkAzureReposGitVersion>
+    <MicrosoftSourceLinkBitbucketGitVersion>$(MicrosoftSourceLinkBitbucketGitPackageVersion)</MicrosoftSourceLinkBitbucketGitVersion>
+    <MicrosoftSourceLinkCommonVersion>$(MicrosoftSourceLinkCommonPackageVersion)</MicrosoftSourceLinkCommonVersion>
+    <MicrosoftSourceLinkGitHubVersion>$(MicrosoftSourceLinkGitHubPackageVersion)</MicrosoftSourceLinkGitHubVersion>
+    <MicrosoftSourceLinkGitLabVersion>$(MicrosoftSourceLinkGitLabPackageVersion)</MicrosoftSourceLinkGitLabVersion>
     <MicrosoftTemplateEngineAbstractionsVersion>$(MicrosoftTemplateEngineAbstractionsPackageVersion)</MicrosoftTemplateEngineAbstractionsVersion>
     <MicrosoftTemplateEngineAuthoringTemplateVerifierVersion>$(MicrosoftTemplateEngineAuthoringTemplateVerifierPackageVersion)</MicrosoftTemplateEngineAuthoringTemplateVerifierVersion>
     <MicrosoftTemplateEngineEdgeVersion>$(MicrosoftTemplateEngineEdgePackageVersion)</MicrosoftTemplateEngineEdgeVersion>
@@ -230,9 +238,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftAspNetCoreMvcApiAnalyzersVersion>$(MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion)</MicrosoftAspNetCoreMvcApiAnalyzersVersion>
     <MicrosoftAspNetCoreTestHostVersion>$(MicrosoftAspNetCoreTestHostPackageVersion)</MicrosoftAspNetCoreTestHostVersion>
     <MicrosoftBclAsyncInterfacesVersion>$(MicrosoftBclAsyncInterfacesPackageVersion)</MicrosoftBclAsyncInterfacesVersion>
-    <MicrosoftBuildVersion>$(MicrosoftBuildPackageVersion)</MicrosoftBuildVersion>
-    <MicrosoftBuildLocalizationVersion>$(MicrosoftBuildLocalizationPackageVersion)</MicrosoftBuildLocalizationVersion>
-    <MicrosoftBuildTasksGitVersion>$(MicrosoftBuildTasksGitPackageVersion)</MicrosoftBuildTasksGitVersion>
     <MicrosoftDeploymentDotNetReleasesVersion>$(MicrosoftDeploymentDotNetReleasesPackageVersion)</MicrosoftDeploymentDotNetReleasesVersion>
     <MicrosoftDiaSymReaderVersion>$(MicrosoftDiaSymReaderPackageVersion)</MicrosoftDiaSymReaderVersion>
     <MicrosoftDotNetWebItemTemplates100Version>$(MicrosoftDotNetWebItemTemplates100PackageVersion)</MicrosoftDotNetWebItemTemplates100Version>
@@ -256,11 +261,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftNETSdkWindowsDesktopVersion>$(MicrosoftNETSdkWindowsDesktopPackageVersion)</MicrosoftNETSdkWindowsDesktopVersion>
     <MicrosoftNETCoreAppRefVersion>$(MicrosoftNETCoreAppRefPackageVersion)</MicrosoftNETCoreAppRefVersion>
     <MicrosoftNETCorePlatformsVersion>$(MicrosoftNETCorePlatformsPackageVersion)</MicrosoftNETCorePlatformsVersion>
-    <MicrosoftSourceLinkAzureReposGitVersion>$(MicrosoftSourceLinkAzureReposGitPackageVersion)</MicrosoftSourceLinkAzureReposGitVersion>
-    <MicrosoftSourceLinkBitbucketGitVersion>$(MicrosoftSourceLinkBitbucketGitPackageVersion)</MicrosoftSourceLinkBitbucketGitVersion>
-    <MicrosoftSourceLinkCommonVersion>$(MicrosoftSourceLinkCommonPackageVersion)</MicrosoftSourceLinkCommonVersion>
-    <MicrosoftSourceLinkGitHubVersion>$(MicrosoftSourceLinkGitHubPackageVersion)</MicrosoftSourceLinkGitHubVersion>
-    <MicrosoftSourceLinkGitLabVersion>$(MicrosoftSourceLinkGitLabPackageVersion)</MicrosoftSourceLinkGitLabVersion>
     <MicrosoftWebXdtVersion>$(MicrosoftWebXdtPackageVersion)</MicrosoftWebXdtVersion>
     <MicrosoftWin32SystemEventsVersion>$(MicrosoftWin32SystemEventsPackageVersion)</MicrosoftWin32SystemEventsVersion>
     <MicrosoftWindowsDesktopAppInternalVersion>$(MicrosoftWindowsDesktopAppInternalPackageVersion)</MicrosoftWindowsDesktopAppInternalVersion>
