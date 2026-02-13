@@ -144,7 +144,7 @@ public class Program
         List<string> args = [];
         foreach (var token in argumentResult.Tokens)
         {
-            args.AddRange(token.Value.Split(','));
+            args.AddRange(token.Value.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()));
         }
 
         return [.. args];
