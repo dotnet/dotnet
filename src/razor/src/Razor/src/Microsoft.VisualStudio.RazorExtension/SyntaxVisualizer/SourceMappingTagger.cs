@@ -63,7 +63,7 @@ internal sealed class SourceMappingTagger : ITagger<SourceMappingTag>
         {
             var csharpDocument = codeDocument.GetRequiredCSharpDocument();
             var generatedCode = csharpDocument.Text.ToString();
-            foreach (var mapping in csharpDocument.SourceMappings)
+            foreach (var mapping in csharpDocument.SourceMappingsSortedByGenerated)
             {
                 var generatedText = GetGeneratedCodeSnippet(generatedCode, mapping.GeneratedSpan.AbsoluteIndex);
 

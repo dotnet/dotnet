@@ -228,14 +228,14 @@ steps:
   name: SetAdditionalArgs
   displayName: Set additional command arguments
 
-- script: $(InstallDarc.dotnetPath) run $(Build.SourcesDirectory)/eng/tools/BuildComparer/BuildComparer.csproj
+- script: $(InstallDarc.dotnetPath) run --project $(Build.SourcesDirectory)/eng/tools/BuildComparer/BuildComparer.csproj
     ${{ parameters.command }}
     -vmrAssetBasePath "$(Build.ArtifactStagingDirectory)/vmr-assets"
     -msftAssetBasePath "$(Build.ArtifactStagingDirectory)/base-assets"
     -issuesReport "$(Build.SourcesDirectory)/artifacts/AssetBaselines/BaselineComparisonIssues.xml"
     -noIssuesReport "$(Build.SourcesDirectory)/artifacts/AssetBaselines/BaselineComparisonNoIssues.xml"
     -baseline "$(Build.SourcesDirectory)/eng/vmr-msft-comparison-baseline.json"
-    $(SetAdditionalArgs.additionalArgs)
+    $(additionalArgs)
   displayName: Compare ${{ parameters.command}}
 
 - task: 1ES.PublishPipelineArtifact@1

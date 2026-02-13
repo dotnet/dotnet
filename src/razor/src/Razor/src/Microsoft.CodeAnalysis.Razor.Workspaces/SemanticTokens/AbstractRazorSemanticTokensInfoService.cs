@@ -227,7 +227,7 @@ internal abstract partial class AbstractRazorSemanticTokensInfoService(
         var csharpDoc = codeDocument.GetRequiredCSharpDocument();
 
         // We want to find the min and max C# source mapping that corresponds with our Razor range.
-        foreach (var mapping in csharpDoc.SourceMappings)
+        foreach (var mapping in csharpDoc.SourceMappingsSortedByOriginal)
         {
             var mappedTextSpan = mapping.OriginalSpan.AsTextSpan();
 
@@ -235,6 +235,11 @@ internal abstract partial class AbstractRazorSemanticTokensInfoService(
             {
                 var mappedRange = csharpSourceText.GetLinePositionSpan(mapping.GeneratedSpan);
                 csharpRanges.Add(mappedRange);
+            }
+            else if (mappedTextSpan.Start > textSpan.End)
+            {
+                // This span (and all following) are after textSpan
+                break;
             }
         }
 
