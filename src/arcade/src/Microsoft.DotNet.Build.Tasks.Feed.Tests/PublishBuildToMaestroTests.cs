@@ -3,7 +3,7 @@
 
 using System;
 using System.Net;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed.Tests

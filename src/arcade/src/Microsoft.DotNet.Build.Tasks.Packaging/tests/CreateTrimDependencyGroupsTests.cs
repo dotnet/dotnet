@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
-using FluentAssertions;
+using AwesomeAssertions;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests
 {

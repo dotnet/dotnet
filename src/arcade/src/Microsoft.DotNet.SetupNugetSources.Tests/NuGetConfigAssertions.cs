@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using FluentAssertions;
+using AwesomeAssertions;
 
 namespace Microsoft.DotNet.SetupNugetSources.Tests
 {

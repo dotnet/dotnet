@@ -5,7 +5,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Xunit;
 using Xunit.Abstractions;
-using FluentAssertions;
+using AwesomeAssertions;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests
 {

@@ -9,7 +9,7 @@ using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Arcade.Test.Common;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -2263,7 +2263,7 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "Container
 
             task.Execute().Should().BeFalse();
             task.Log.HasLoggedErrors.Should().BeTrue();
-            fakeBuildEngine.LogErrorEvents.ForEach(a => a.Message.Should().EndWithEquivalent(" does not exist." ));
+            fakeBuildEngine.LogErrorEvents.ForEach(a => a.Message.Should().EndWith(" does not exist." ));
         }
 
         [Fact]
