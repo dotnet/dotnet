@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TestUtilities\TestUtilities.csproj" />
-    <ProjectReference Include="$(RepoProjectsDir)scenario-tests.proj" AdditionalProperties="SkipScenarioTestsDependencies=true" />
+    <ProjectReference Include="$(RepoProjectsDir)scenario-tests.proj" AdditionalProperties="SkipScenarioTestsDependencies=true;SkipExtractSdkArchive=true" />
   </ItemGroup>
 
   <ItemGroup>
