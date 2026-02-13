@@ -9,6 +9,36 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Microsoft.DotNet.Cli.Installer.Windows.FormatMessage</Target>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/dotnet.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/dotnet.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Microsoft.DotNet.Cli.Installer.Windows.InstallAction</Target>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/dotnet.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/dotnet.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Microsoft.DotNet.Cli.Installer.Windows.InstallRequestType</Target>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/dotnet.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/dotnet.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Microsoft.DotNet.Cli.Installer.Windows.UpgradeAttributes</Target>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/dotnet.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/dotnet.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Microsoft.DotNet.Cli.Installer.Windows.WindowsUtils</Target>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/dotnet.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/dotnet.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.DotNet.Cli.Utils.DotDefaultPathCorrector</Target>
     <Left>/msft/sdk/x.y.z/Microsoft.DotNet.Cli.Utils.dll</Left>
     <Right>/sb/sdk/x.y.z/Microsoft.DotNet.Cli.Utils.dll</Right>
