@@ -20,7 +20,7 @@
       analyzer assembly version is not the same as the compiler assembly version being used by the sdk that the project
       is being built with. But this is fine because the analyzer is just being used here to distribute it with the tool.
     -->
-    <NoWarn Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(OfficialBuild)' != 'true'">$(NoWarn);CS9057</NoWarn>
+    <NoWarn Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NoWarn);CS9057</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
