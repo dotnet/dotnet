@@ -14,8 +14,8 @@
   <PropertyGroup>
     <!-- Don't use the built in support for pre-release iteration. The nuget repack task doesn't support
          the iteration format at the moment. https://github.com/dotnet/arcade/issues/15919 -->
-    <FSharpPreReleaseIteration></FSharpPreReleaseIteration>
-    <PreReleaseVersionLabel>alpha$(FSharpPreReleaseIteration)</PreReleaseVersionLabel>
+    <FSharpPreReleaseIteration>2</FSharpPreReleaseIteration>
+    <PreReleaseVersionLabel>preview$(FSharpPreReleaseIteration)</PreReleaseVersionLabel>
     <!-- F# Version components -->
     <FSMajorVersion>11</FSMajorVersion>
     <FSMinorVersion>0</FSMinorVersion>
@@ -26,11 +26,15 @@
     <FSLanguageVersion>$(FSMajorVersion).$(FSMinorVersion)</FSLanguageVersion>
     <!-- -->
     <!-- FSharp.Core version -->
+    <!-- For FSMajorVersion 10, use MinorVersion 1 to indicate breaking changes in FSharp.Core -->
+    <FSMinorVersion Condition="'$(FSMajorVersion)' == '10'">1</FSMinorVersion>
     <FSCoreProductVersion>$(FSMajorVersion).$(FSMinorVersion)</FSCoreProductVersion>
     <FSCorePackageVersionValue>$(FSMajorVersion).$(FSMinorVersion).$(FSBuildVersion)</FSCorePackageVersionValue>
     <FSCoreVersionPrefix>$(FSMajorVersion).$(FSMinorVersion).$(FSBuildVersion)</FSCoreVersionPrefix>
     <FSCoreVersion>$(FSMajorVersion).$(FSMinorVersion).0.0</FSCoreVersion>
     <FSCoreShippedVersion>10.0.101.0</FSCoreShippedVersion>
+    <!-- Reset FSMinorVersion for non-FSharp.Core uses -->
+    <FSMinorVersion Condition="'$(FSMajorVersion)' == '10'">0</FSMinorVersion>
     <!-- -->
     <!-- FSharp.Compiler.Service version -->
     <FCSMajorVersion>43</FCSMajorVersion>

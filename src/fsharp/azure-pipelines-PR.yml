@@ -436,11 +436,6 @@ stages:
                 _configuration: Release
                 _testKind: testCoreclr
                 transparentCompiler: # Empty display name part.
-              fsharpqa_release:
-                _configuration: Release
-                _testKind: testFSharpQA
-                FSharp_CacheEvictionImmediate: true
-                transparentCompiler:
               vs_release:
                 _configuration: Release
                 _testKind: testVs
@@ -481,7 +476,7 @@ stages:
               testResultsFiles: '*.xml'
               searchFolder: '$(Build.SourcesDirectory)/artifacts/TestResults/$(_configuration)'
             continueOnError: true
-            condition: succeededOrFailed() # ne(variables['_testKind'], 'testFSharpQA')
+            condition: succeededOrFailed()
           - task: PublishBuildArtifacts@1
             displayName: Publish Tests BinLog
             condition: always()
@@ -726,10 +721,20 @@ stages:
               publishLocation: pipeline
             condition: succeeded()
 
+          - pwsh: |
+              # Stage UseLocalCompiler props and TargetFrameworks.props together
+              $stagingDir = "$(Build.SourcesDirectory)/UseLocalCompilerPropsStaging"
+              New-Item -ItemType Directory -Force -Path $stagingDir | Out-Null
+              Copy-Item "$(Build.SourcesDirectory)/UseLocalCompiler.Directory.Build.props" -Destination $stagingDir
+              Copy-Item "$(Build.SourcesDirectory)/eng/TargetFrameworks.props" -Destination $stagingDir
+              Write-Host "Staged files for UseLocalCompilerProps artifact:"
+              Get-ChildItem $stagingDir -Name
+            displayName: Stage UseLocalCompiler props files
+
           - task: PublishPipelineArtifact@1
             displayName: Publish UseLocalCompiler props file for Regression Tests
             inputs:
-              targetPath: '$(Build.SourcesDirectory)/UseLocalCompiler.Directory.Build.props'
+              targetPath: '$(Build.SourcesDirectory)/UseLocalCompilerPropsStaging'
               artifactName: 'UseLocalCompilerProps'
               publishLocation: pipeline
             condition: succeeded()
@@ -906,3 +911,41 @@ stages:
           buildScript: build.sh
           displayName: FSharpPlus_Linux
           useVmImage: $(UbuntuMachineQueueName)
+        - repo: fsprojects/FSharpPlus
+          commit: 2648efe
+          buildScript: build.cmd
+          displayName: FsharpPlus_NET10
+         # remove this before merging
+        - repo: fsprojects/FSharpPlus
+          commit: 2648efe
+          buildScript: dotnet msbuild build.proj -t:Build;Test
+          displayName: FsharpPlus_NET10_Test
+        - repo: fsprojects/FSharpPlus
+          commit: 2648efe
+          buildScript: dotnet msbuild build.proj -t:Build;AllDocs
+          displayName: FsharpPlus_NET10_Docs
+        - repo: fsprojects/FSharpPlus
+          commit: 2648efe
+          buildScript: build.sh
+          displayName: FsharpPlus_Net10_Linux
+          useVmImage: $(UbuntuMachineQueueName)
+        - repo: TheAngryByrd/IcedTasks
+          commit: 863bf91cdee93d8c4c875bb5d321dd92eb20d5a9
+          buildScript: dotnet build IcedTasks.sln
+          displayName: IcedTasks_Build
+        - repo: TheAngryByrd/IcedTasks
+          commit: 863bf91cdee93d8c4c875bb5d321dd92eb20d5a9
+          buildScript: dotnet test IcedTasks.sln
+          displayName: IcedTasks_Test
+        - repo: demystifyfp/FsToolkit.ErrorHandling
+          commit: 9cd957e335767df03e2fb0aa2f7b0fed782c5091
+          buildScript: dotnet build FsToolkit.ErrorHandling.sln
+          displayName: FsToolkit_ErrorHandling_Build
+        - repo: demystifyfp/FsToolkit.ErrorHandling
+          commit: 9cd957e335767df03e2fb0aa2f7b0fed782c5091
+          buildScript: dotnet test FsToolkit.ErrorHandling.sln
+          displayName: FsToolkit_ErrorHandling_Test
+        - repo: opentk/opentk
+          commit: 60c20cca65a7df6e8335e8d6060d91b30909fbea
+          buildScript: dotnet build tests/OpenTK.Tests/OpenTK.Tests.fsproj -c Release ;; dotnet build tests/OpenTK.Tests.Integration/OpenTK.Tests.Integration.fsproj -c Release
+          displayName: OpenTK_FSharp_Build
