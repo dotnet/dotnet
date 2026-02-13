@@ -236,7 +236,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
             foreach (string sourceName in pkgSourcesElement
                 .Descendants()
                 .Where(e => e.Name == "add" &&
-                        !SourceBuildSources.Contains(e.Attribute("key").Value) &&
+                        !SourceBuildSources?.Contains(e.Attribute("key").Value) &&
                         // SBRP Cache source is not in SourceBuildSources, skip it as it's not an online source
                         !(e.Attribute("key").Value == SbrpCacheSourceName))
                 .Select(e => e.Attribute("key").Value)
@@ -320,6 +320,11 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
 
         private void DiscoverPackagesFromAllSourceBuildSources(XElement pkgSourcesElement)
         {
+            if (SourceBuildSources == null)
+            {
+                return;
+            }
+
             foreach (string packageSource in SourceBuildSources)
             {
                 XElement sourceElement = GetElement(pkgSourcesElement, "add", packageSource);
