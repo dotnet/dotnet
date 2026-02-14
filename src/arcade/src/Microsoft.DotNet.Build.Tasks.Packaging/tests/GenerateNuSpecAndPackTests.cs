@@ -7,7 +7,7 @@ using System;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
-using FluentAssertions;
+using AwesomeAssertions;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests
 {

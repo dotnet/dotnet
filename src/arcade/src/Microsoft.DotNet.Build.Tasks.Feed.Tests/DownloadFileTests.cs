@@ -8,7 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Arcade.Common;
 using Microsoft.Arcade.Test.Common;
 using Microsoft.DotNet.Build.Manifest.Tests;
