@@ -50,6 +50,7 @@ public abstract class DocumentFormattingTestBase(ITestOutputHelper testOutput) :
         AttributeIndentStyle attributeIndentStyle = AttributeIndentStyle.AlignWithFirst,
         bool inGlobalNamespace = false,
         bool debugAssertsEnabled = true,
+        bool validateHtmlFormattedMatchesWebTools = true,
         RazorCSharpSyntaxFormattingOptions? csharpSyntaxFormattingOptions = null)
     {
         var razorLSPOptions = RazorLSPOptions.Default with
@@ -60,7 +61,7 @@ public abstract class DocumentFormattingTestBase(ITestOutputHelper testOutput) :
 
         csharpSyntaxFormattingOptions ??= RazorCSharpSyntaxFormattingOptions.Default;
 
-        await RunFormattingTestInternalAsync(input, htmlFormatted, expected, tabSize, insertSpaces, fileKind, tagHelpers, allowDiagnostics, razorLSPOptions, inGlobalNamespace, debugAssertsEnabled, csharpSyntaxFormattingOptions);
+        await RunFormattingTestInternalAsync(input, htmlFormatted, expected, tabSize, insertSpaces, fileKind, tagHelpers, allowDiagnostics, razorLSPOptions, inGlobalNamespace, debugAssertsEnabled, validateHtmlFormattedMatchesWebTools, csharpSyntaxFormattingOptions);
     }
 
     private async Task RunFormattingTestInternalAsync(
@@ -75,6 +76,7 @@ public abstract class DocumentFormattingTestBase(ITestOutputHelper testOutput) :
         RazorLSPOptions? razorLSPOptions,
         bool inGlobalNamespace,
         bool debugAssertsEnabled,
+        bool validateHtmlFormattedMatchesWebTools,
         RazorCSharpSyntaxFormattingOptions csharpSyntaxFormattingOptions)
     {
         // Arrange
@@ -107,18 +109,21 @@ public abstract class DocumentFormattingTestBase(ITestOutputHelper testOutput) :
 
         var htmlChanges = SourceText.From(htmlFormatted).GetTextChangesArray(source);
 
+        if (validateHtmlFormattedMatchesWebTools)
+        {
 #if NETFRAMEWORK
-        var htmlFormattingService = new HtmlFormattingService();
-        var client = new FormattingLanguageServerClient(htmlFormattingService, LoggerFactory);
-        client.AddCodeDocument(codeDocument);
+            var htmlFormattingService = new HtmlFormattingService();
+            var client = new FormattingLanguageServerClient(htmlFormattingService, LoggerFactory);
+            client.AddCodeDocument(codeDocument);
 
-        var htmlFormatter = new HtmlFormatter(client);
-        var htmlEdited = source.WithChanges(htmlChanges);
-        var htmlEditedLegacy = source.WithChanges(await htmlFormatter.GetDocumentFormattingEditsAsync(documentSnapshot, uri, options, DisposalToken) ?? []);
-        Assert.Equal(htmlEdited.ToString(), htmlEditedLegacy.ToString());
-        Assert.Equal(htmlFormatted, htmlEditedLegacy.ToString());
-        AssertEx.EqualOrDiff(htmlFormatted, htmlEdited.ToString());
+            var htmlFormatter = new HtmlFormatter(client);
+            var htmlEdited = source.WithChanges(htmlChanges);
+            var htmlEditedLegacy = source.WithChanges(await htmlFormatter.GetDocumentFormattingEditsAsync(documentSnapshot, uri, options, DisposalToken) ?? []);
+            Assert.Equal(htmlEdited.ToString(), htmlEditedLegacy.ToString());
+            Assert.Equal(htmlFormatted, htmlEditedLegacy.ToString());
+            AssertEx.EqualOrDiff(htmlFormatted, htmlEdited.ToString());
 #endif
+        }
 
         // Act
         var changes = await formattingService.GetDocumentFormattingChangesAsync(documentContext, htmlChanges, range, razorOptions, DisposalToken);

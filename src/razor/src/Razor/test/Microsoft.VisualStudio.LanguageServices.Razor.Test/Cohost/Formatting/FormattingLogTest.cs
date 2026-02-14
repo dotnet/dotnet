@@ -78,6 +78,16 @@ public class FormattingLogTest(FormattingTestContext context, HtmlFormattingFixt
         Assert.Null(await GetFormattingEditsAsync(contents, htmlChangesFile));
     }
 
+    [Fact]
+    [WorkItem("https://github.com/microsoft/vscode-dotnettools/issues/2766")]
+    public async Task RanOutOfOriginalLines()
+    {
+        var contents = GetResource("InitialDocument.txt");
+        var htmlChangesFile = GetResource("HtmlChanges.json");
+
+        await GetFormattingEditsAsync(contents, htmlChangesFile);
+    }
+
     private async Task<TextEdit[]?> GetFormattingEditsAsync(string contents, string htmlChangesFile)
     {
         var document = CreateProjectAndRazorDocument(contents);
