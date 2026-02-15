@@ -55,7 +55,7 @@ internal static partial class RazorWrapperFactory
 
         public ImmutableArray<RazorSourceMapping> GetSourceMappings()
         {
-            var mappings = Object.GetRequiredCSharpDocument().SourceMappings;
+            var mappings = Object.GetRequiredCSharpDocument().SourceMappingsSortedByGenerated;
 
             return WrapAll<SourceMapping, RazorSourceMapping>(mappings, ConvertSourceMapping);
         }

@@ -864,6 +864,7 @@ namespace NuGet.Commands
                         foreach (var dependency in framework.Dependencies)
                         {
                             if (framework.PackagesToPrune.TryGetValue(dependency.Name, out PrunePackageReference packageToPrune)
+                                && dependency.LibraryRange.VersionRange != null
                                 && dependency.LibraryRange.VersionRange.Satisfies(packageToPrune.VersionRange.MaxVersion!))
                             {
                                 prunedDirectPackages ??= new(StringComparer.OrdinalIgnoreCase);
@@ -1986,6 +1987,17 @@ namespace NuGet.Commands
             }
             else
             {
+                if (project.RestoreMetadata.UsingMicrosoftNETSdk)
+                {
+                    foreach (TargetFrameworkInformation tfi in project.TargetFrameworks)
+                    {
+                        if (string.IsNullOrEmpty(tfi.TargetAlias))
+                        {
+                            return false;
+                        }
+                    }
+                }
+
                 // If the SDK version is a prerelease, we need to ensure it's a prerelease version that can handle the aliased assets file.
                 if (project.RestoreSettings.SdkVersion?.IsPrerelease == true)
                 {

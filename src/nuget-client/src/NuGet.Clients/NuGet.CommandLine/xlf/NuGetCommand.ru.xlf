@@ -121,7 +121,7 @@ nuget client-certs List</target>
       </trans-unit>
       <trans-unit id="CommandApiKey">
         <source>The API key for the server. If not set, the NUGET_API_KEY environment variable is read.</source>
-        <target state="needs-review-translation">Ключ API сервера.</target>
+        <target state="translated">Ключ API сервера. Если не настроено, читается переменная среды NUGET_API_KEY.</target>
         <note />
       </trans-unit>
       <trans-unit id="CommandDirectDownload">
@@ -1147,7 +1147,7 @@ nuget spec -a MyAssembly.dll</target>
       </trans-unit>
       <trans-unit id="SymbolApiKey">
         <source>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</source>
-        <target state="needs-review-translation">Ключ API сервера символов.</target>
+        <target state="translated">Ключ API сервера символов. Если не настроено, читается переменная среды NUGET_SYMBOL_API_KEY.</target>
         <note />
       </trans-unit>
       <trans-unit id="TrustedSignersCommandAllowUntrustedRootDescription">
