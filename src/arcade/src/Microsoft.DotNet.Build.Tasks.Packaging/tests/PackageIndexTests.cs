@@ -4,7 +4,7 @@
 using System;
 using System.IO;
 using Xunit;
-using FluentAssertions;
+using AwesomeAssertions;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests
 {

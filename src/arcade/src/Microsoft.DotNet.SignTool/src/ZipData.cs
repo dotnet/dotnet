@@ -10,6 +10,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Data;
+using System.Text;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using NuGet.Packaging;
@@ -70,6 +71,8 @@ namespace Microsoft.DotNet.SignTool
                 }
 
                 return ReadTarGZipEntries(archivePath)
+                    .Where(static entry => entry.EntryType != TarEntryType.SymbolicLink &&
+                                           entry.EntryType != TarEntryType.Directory)
                     .Select(static entry => new ZipDataEntry(entry.Name, entry.DataStream, entry.Length)
                     {
                         UnixFileMode = (uint)entry.Mode,
@@ -331,6 +334,9 @@ namespace Microsoft.DotNet.SignTool
 
         private static IEnumerable<ZipDataEntry> ReadPkgOrAppBundleEntries(string archivePath, string tempDir, string pkgToolPath, bool ignoreContent)
         {
+#if NET472
+            throw new NotImplementedException("PKG signing is not supported on .NET Framework");
+#else
             string extractDir = Path.Combine(tempDir, Guid.NewGuid().ToString());
             try
             {
@@ -341,6 +347,11 @@ namespace Microsoft.DotNet.SignTool
 
                 foreach (var path in Directory.EnumerateFiles(extractDir, "*.*", SearchOption.AllDirectories))
                 {
+                    // Skip symbolic links - they reference files that are processed at their real paths.
+                    if (new FileInfo(path).LinkTarget != null)
+                    {
+                        continue;
+                    }
                     var relativePath = path.Substring(extractDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
                     using var stream = ignoreContent ? null : (Stream)File.Open(path, FileMode.Open);
                     yield return new ZipDataEntry(relativePath, stream)
@@ -356,6 +367,7 @@ namespace Microsoft.DotNet.SignTool
                     Directory.Delete(extractDir, recursive: true);
                 }
             }
+#endif
         }
 
         private void RepackPkgOrAppBundles(TaskLoggingHelper log, string tempDir, string pkgToolPath)
@@ -379,6 +391,13 @@ namespace Microsoft.DotNet.SignTool
 
                 foreach (var path in Directory.EnumerateFiles(extractDir, "*.*", SearchOption.AllDirectories))
                 {
+                    // Skip symbolic links - they are preserved from extraction and point to
+                    // the real files which are updated in place.
+                    if (new FileInfo(path).LinkTarget != null)
+                    {
+                        continue;
+                    }
+
                     var relativePath = path.Substring(extractDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
 
                     var signedPart = FindNestedPart(relativePath);
@@ -793,7 +812,20 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 
-        private static IEnumerable<ZipDataEntry> ReadRpmContainerEntries(string archivePath)
+        /// <summary>
+        /// Read entries from an RPM container.
+        /// </summary>
+        /// <param name="archivePath">Path to the RPM package.</param>
+        /// <param name="skipSymlinks">
+        /// When true (the default), symbolic links are excluded from the returned entries.
+        /// This is used during the read/signing phase where only regular files need to be inspected and signed.
+        /// When false, symbolic links are included (with their target paths captured) so that
+        /// <see cref="ExtractRpmPayloadContents"/> can recreate them on disk. This is necessary because
+        /// repacking rebuilds the cpio payload from the extracted disk layout rather than copying
+        /// streams from the original archive, so symlinks must be physically present or they
+        /// would be dropped from the repacked RPM.
+        /// </param>
+        private static IEnumerable<ZipDataEntry> ReadRpmContainerEntries(string archivePath, bool skipSymlinks = true)
         {
             using var stream = File.Open(archivePath, FileMode.Open);
             using RpmPackage rpmPackage = RpmPackage.Read(stream);
@@ -801,9 +833,26 @@ namespace Microsoft.DotNet.SignTool
 
             while (archive.GetNextEntry() is CpioEntry entry)
             {
-                yield return new ZipDataEntry(entry.Name, entry.DataStream)
+                uint fileKind = entry.Mode & CpioEntry.FileKindMask;
+                if (fileKind == CpioEntry.Directory ||
+                    (skipSymlinks && fileKind == CpioEntry.SymbolicLink))
+                {
+                    continue;
+                }
+
+                bool isSymlink = fileKind == CpioEntry.SymbolicLink;
+                string linkTarget = null;
+                if (isSymlink)
+                {
+                    using StreamReader reader = new(entry.DataStream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true, bufferSize: -1, leaveOpen: true);
+                    linkTarget = reader.ReadToEnd().TrimEnd();
+                }
+
+                yield return new ZipDataEntry(entry.Name, isSymlink ? null : entry.DataStream)
                 {
                     UnixFileMode = entry.Mode & CpioEntry.FilePermissionMask,
+                    IsSymbolicLink = isSymlink,
+                    SymbolicLinkTarget = linkTarget,
                 };
             }
         }
@@ -892,12 +941,16 @@ namespace Microsoft.DotNet.SignTool
 
         internal static void ExtractRpmPayloadContents(TaskLoggingHelper log, string rpmPackage, string layout)
         {
-            foreach (var entry in ReadRpmContainerEntries(rpmPackage))
+            foreach (var entry in ReadRpmContainerEntries(rpmPackage, skipSymlinks: false))
             {
                 string outputPath = Path.Combine(layout, entry.RelativePath);
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
 
-                if (entry != null)
+                if (entry.IsSymbolicLink)
+                {
+                    File.CreateSymbolicLink(outputPath, entry.SymbolicLinkTarget);
+                }
+                else
                 {
                     entry.WriteToFile(outputPath);
                     SetUnixFileMode(log, entry.UnixFileMode, outputPath);
