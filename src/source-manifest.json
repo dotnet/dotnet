@@ -109,10 +109,10 @@
       "commitSha": "abbd07d096967bb7a5b968a5163f2de645fd7251"
     },
     {
-      "barId": 301396,
+      "barId": 301926,
       "path": "symreader",
       "remoteUri": "https://github.com/dotnet/symreader",
-      "commitSha": "139235bd8117e4bf904cedc40688097dfef3cd9a"
+      "commitSha": "df8823942e6f5ef94cbcbe164c403d4f5bd6f081"
     },
     {
       "barId": 300151,
