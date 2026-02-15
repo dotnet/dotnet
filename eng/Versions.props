@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
   <Import Project="Version.Details.props" />
   <PropertyGroup>
     <VersionMajor>10</VersionMajor>
@@ -16,7 +16,7 @@
       'preview' produces assets with a '.final' branding suffix.
       'release' produces assets without a branding suffix.
     -->
-    <RepoDotNetFinalVersionKind>repodefault</RepoDotNetFinalVersionKind>
+    <RepoDotNetFinalVersionKind>release</RepoDotNetFinalVersionKind>
 
     <!-- Arcade features -->
     <UseVSTestRunner>true</UseVSTestRunner>
