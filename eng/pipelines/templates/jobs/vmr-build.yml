@@ -882,15 +882,17 @@ jobs:
     continueOnError: true
     condition: succeededOrFailed()
 
-  - task: CopyFiles@2
-    displayName: Copy TestResults to BuildLogs staging
-    inputs:
-      SourceFolder: '$(sourcesPath)/artifacts/TestResults'
-      Contents: '**'
-      TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs/artifacts/TestResults'
-      CleanTargetFolder: true
-    continueOnError: true
-    condition: succeededOrFailed()
+  # Only copy test results when tests ran
+  - ${{ if eq(parameters.runTests, 'True') }}:
+    - task: CopyFiles@2
+      displayName: Copy TestResults to BuildLogs staging
+      inputs:
+        SourceFolder: '$(sourcesPath)/artifacts/TestResults'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs/artifacts/TestResults'
+        CleanTargetFolder: true
+      continueOnError: true
+      condition: succeededOrFailed()
 
   - task: CopyFiles@2
     displayName: Copy unmerged artifacts to staging directory
@@ -912,7 +914,7 @@ jobs:
       continueOnError: true
       condition: always()
 
-  # Only upload test results if enabled
+  # Only upload test results when tests ran
   - ${{ if eq(parameters.runTests, 'True') }}:
     - task: PublishTestResults@2
       displayName: Publish Test Results
