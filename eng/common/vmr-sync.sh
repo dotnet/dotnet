@@ -186,6 +186,9 @@ fi
 
 # Synchronize the VMR
 
+repo_root=$(git rev-parse --show-toplevel)
+repo_name=$(basename "$repo_root")
+
 export DOTNET_ROOT="$dotnetDir"
 
 "$darc_tool" vmr forwardflow \
@@ -199,9 +202,22 @@ export DOTNET_ROOT="$dotnetDir"
 if [[ $? == 0 ]]; then
   highlight "Synchronization succeeded"
 else
-  fail "Synchronization of repo to VMR failed!"
-  fail "'$vmr_dir' is left in its last state (re-run of this script will reset it)."
-  fail "Please inspect the logs which contain path to the failing patch file (use --debug to get all the details)."
-  fail "Once you make changes to the conflicting VMR patch, commit it locally and re-run this script."
-  exit 1
+  highlight "Forwardflow failed, attempting recovery with 'darc vmr reset'.."
+  git -C "$vmr_dir" reset --hard
+
+  "$darc_tool" vmr reset \
+    "$repo_name:HEAD"                              \
+    --vmr "$vmr_dir"                               \
+    --tmp "$tmp_dir"                               \
+    --additional-remotes "$repo_name:$repo_root"
+
+  if [[ $? == 0 ]]; then
+    highlight "Recovery with 'darc vmr reset' succeeded"
+  else
+    fail "Synchronization of repo to VMR failed!"
+    fail "'$vmr_dir' is left in its last state (re-run of this script will reset it)."
+    fail "Please inspect the logs which contain path to the failing patch file (use --debug to get all the details)."
+    fail "Once you make changes to the conflicting VMR patch, commit it locally and re-run this script."
+    exit 1
+  fi
 fi
