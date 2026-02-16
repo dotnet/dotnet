@@ -8,4 +8,4 @@ It is recommended that new applications and libraries read Portable PDBs directl
 
 Pre-release builds are available from Azure DevOps public feed: `https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json` ([browse](https://dev.azure.com/dnceng/public/_packaging?_a=feed&feed=dotnet-tools)).
 
-[![Build Status](https://dnceng.visualstudio.com/public/_apis/build/status/dotnet/symreader/SymReader%20PR?branchName=main)](https://dnceng.visualstudio.com/public/_build/latest?definitionId=291&branchName=main)
+[![Build Status](https://dev.azure.com/dnceng-public/public/_apis/build/status%2Fdotnet%2Fsymreader%2FSymReader%20PR?branchName=main)](https://dev.azure.com/dnceng-public/public/_build/latest?definitionId=39&branchName=main)
