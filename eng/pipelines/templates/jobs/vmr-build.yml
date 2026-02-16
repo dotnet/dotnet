@@ -871,18 +871,29 @@ jobs:
           enableMicrobuild: true
           enableMicrobuildForMacAndLinux: true
 
+  # Keep the following two CopyFiles tasks separate to avoid scanning the entire artifacts folder
   - task: CopyFiles@2
-    displayName: Prepare BuildLogs staging directory
+    displayName: Copy logs to BuildLogs staging
     inputs:
-      SourceFolder: '$(sourcesPath)/artifacts'
-      Contents: |
-        log/**
-        TestResults/**
-      TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs/artifacts'
+      SourceFolder: '$(sourcesPath)/artifacts/log'
+      Contents: '**'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs/artifacts/log'
       CleanTargetFolder: true
     continueOnError: true
     condition: succeededOrFailed()
-    
+
+  # Only copy test results when tests ran
+  - ${{ if eq(parameters.runTests, 'True') }}:
+    - task: CopyFiles@2
+      displayName: Copy TestResults to BuildLogs staging
+      inputs:
+        SourceFolder: '$(sourcesPath)/artifacts/TestResults'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs/artifacts/TestResults'
+        CleanTargetFolder: true
+      continueOnError: true
+      condition: succeededOrFailed()
+
   - task: CopyFiles@2
     displayName: Copy unmerged artifacts to staging directory
     inputs:
@@ -903,7 +914,7 @@ jobs:
       continueOnError: true
       condition: always()
 
-  # Only upload test results if enabled
+  # Only upload test results when tests ran
   - ${{ if eq(parameters.runTests, 'True') }}:
     - task: PublishTestResults@2
       displayName: Publish Test Results
