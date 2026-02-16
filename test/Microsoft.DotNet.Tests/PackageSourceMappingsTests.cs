@@ -35,6 +35,7 @@ namespace Microsoft.DotNet.Tests
         [Fact]
         public void BuildWithMappingsNoLocalSources()
         {
+            string[] sources = [];
             RunTest("ub-mappings-nolocal.config", true, sources);
         }
 
