@@ -5,15 +5,10 @@ resources:
   pipelines:
   - pipeline: dotnet-unified-build
     source: dotnet-unified-build
-    # Run on every build of the main branch.
-    # For releases branches only run on internal/release branches because that's where dependencies flow.
-    # Previews don't have internal/release branches so they must be run from non-internal release branches.
     trigger:
       branches:
         include:
         - refs/heads/main
-        - refs/heads/release/*.0.1xx-preview*
-        - refs/heads/internal/release/*.0.1xx*
       stages:
       - Publish_Build_Assets
 
