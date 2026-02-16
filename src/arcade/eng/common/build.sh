@@ -10,10 +10,11 @@ set -e
 usage()
 {
   echo "Common settings:"
-  echo "  --configuration <value>    Build configuration: 'Debug' or 'Release' (short: -c)"
-  echo "  --verbosity <value>        Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic] (short: -v)"
-  echo "  --binaryLog                Create MSBuild binary log (short: -bl)"
-  echo "  --help                     Print help and exit (short: -h)"
+  echo "  --configuration <value>     Build configuration: 'Debug' or 'Release' (short: -c)"
+  echo "  --verbosity <value>         Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic] (short: -v)"
+  echo "  --loggerParameters <value>  Msbuild console logger parameters. Defaults to 'Summary'"
+  echo "  --binaryLog                 Create MSBuild binary log (short: -bl)"
+  echo "  --help                      Print help and exit (short: -h)"
   echo ""
 
   echo "Actions:"
@@ -88,6 +89,7 @@ projects=''
 configuration=''
 prepare_machine=false
 verbosity='minimal'
+logger_parameters='Summary'
 runtime_source_feed=''
 runtime_source_feed_key=''
 
@@ -108,6 +110,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     -verbosity|-v)
       verbosity=$2
+      shift
+      ;;
+    -loggerparameters)
+      logger_parameters=$2
       shift
       ;;
     -binarylog|-bl)

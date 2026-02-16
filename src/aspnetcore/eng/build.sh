@@ -15,6 +15,7 @@ ci=false
 binary_log=false
 exclude_ci_binary_log=false
 verbosity='minimal'
+logger_parameters='Summary'
 run_restore=''
 run_build=true
 run_pack=false
@@ -85,6 +86,7 @@ Options:
     --binarylog|-bl                   Use a binary logger
     --excludeCIBinarylog              Don't output binary log by default in CI builds (short: -nobl).
     --verbosity|-v                    MSBuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic]
+    --loggerParameters <value>        MSBuild console logger parameters. Defaults to 'Summary'
     --warnAsError                     Sets warnaserror msbuild parameter: 'true' or 'false'
 
     --runtime-source-feed             Additional feed that can be used when downloading .NET runtimes and SDKs
@@ -229,13 +231,18 @@ while [[ $# -gt 0 ]]; do
         -binarylog|-bl)
             binary_log=true
             ;;
-        -excludeCIBinarylog|-nobl)
+        -excludecibinarylog|-nobl)
             exclude_ci_binary_log=true
             ;;
         -verbosity|-v)
             shift
             [ -z "${1:-}" ] && __error "Missing value for parameter --verbosity" && __usage
             verbosity="${1:-}"
+            ;;
+        -loggerparameters)
+            shift
+            [ -z "${1:-}" ] && __error "Missing value for parameter --loggerParameters" && __usage
+            logger_parameters="${1:-}"
             ;;
         -dotnet-runtime-source-feed|-dotnetruntimesourcefeed|-runtime-source-feed|-runtimesourcefeed)
             shift
