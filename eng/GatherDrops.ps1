@@ -11,14 +11,16 @@ param(
   [Parameter(Mandatory=$true)]
   [String]$azdevPat,
   [Parameter(Mandatory=$true)]
-  [String]$includedRepositories,
+  [String[]]$includedRepositories,
   [Parameter(Mandatory=$false)]
   [String]$assetFilter = ".*",
   [Switch]$nonShipping = $false
 )
 
+$ErrorActionPreference = 'Stop'
+
 $jsonContent = Get-Content -Path $filePath -Raw | ConvertFrom-Json
-$includedReposList = $includedRepositories -split ',' | ForEach-Object { $_.Trim() }
+$includedReposList = $includedRepositories | ForEach-Object { $_.Trim() }
 
 foreach ($includedRepo in $includedReposList) {
   $repo = $jsonContent.repositories | Where-Object { $_.path -eq $includedRepo } | Select-Object -First 1
@@ -34,4 +36,5 @@ foreach ($includedRepo in $includedReposList) {
   Write-Output "Gathering drop for $repoName"
   Invoke-Expression $darcCommand
 }
+
 exit 0
