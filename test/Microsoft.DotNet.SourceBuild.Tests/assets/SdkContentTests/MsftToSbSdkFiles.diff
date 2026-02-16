@@ -44,3 +44,15 @@ index ------------
  ./packs/Microsoft.NETCore.App.Ref/
  ./packs/Microsoft.NETCore.App.Ref/x.y.z/
  ./packs/Microsoft.NETCore.App.Ref/x.y.z/analyzers/
+@@ ------------ @@
+ ./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Web/tools/netx.y/
+ ./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Web/tools/netx.y/Microsoft.NET.Sdk.Web.Tasks.dll
+ ./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WebAssembly/
+-./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WebAssembly/hotreload/
+-./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WebAssembly/hotreload/netx.y/
+-./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WebAssembly/hotreload/netx.y/Microsoft.DotNet.HotReload.WebAssembly.Browser.dll
+-./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WebAssembly/hotreload/netx.y/wwwroot/
+-./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WebAssembly/hotreload/netx.y/wwwroot/Microsoft.DotNet.HotReload.WebAssembly.Browser.lib.module.js
+ ./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WebAssembly/Sdk/
+ ./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WebAssembly/Sdk/Sdk.props
+ ./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WebAssembly/Sdk/Sdk.targets
