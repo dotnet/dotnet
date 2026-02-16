@@ -898,7 +898,8 @@
     CleanupRepo" />
 
   <Target Name="RepoTest"
-          DependsOnTargets="DiscoverBuiltSdkOverrides;
+          DependsOnTargets="ResolveProjectReferences;
+                            DiscoverBuiltSdkOverrides;
                             SetSourceBuiltSdkOverrides">
     <PropertyGroup>
       <TestCommand>$(BuildScript) $(TestActions) $(CommonArgs) $(TestArgs)</TestCommand>
