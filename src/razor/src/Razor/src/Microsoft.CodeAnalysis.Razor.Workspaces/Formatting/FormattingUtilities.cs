@@ -407,7 +407,11 @@ internal static class FormattingUtilities
                         ? originalLine.End - originalStart
                         : lineInfo.FormattedLength;
                     var formattedStart = formattedLine.Start + formattedIndentation + lineInfo.FormattedOffset;
-                    formattingChanges.Add(new TextChange(new TextSpan(originalStart, length), formattedText.ToString(TextSpan.FromBounds(formattedStart, formattedLine.End - lineInfo.FormattedOffsetFromEndOfLine))));
+                    var formattedEnd = formattedLine.End - lineInfo.FormattedOffsetFromEndOfLine;
+                    if (formattedEnd > formattedStart)
+                    {
+                        formattingChanges.Add(new TextChange(new TextSpan(originalStart, length), formattedText.ToString(TextSpan.FromBounds(formattedStart, formattedEnd))));
+                    }
 
                     if (lineInfo.CheckForNewLines)
                     {

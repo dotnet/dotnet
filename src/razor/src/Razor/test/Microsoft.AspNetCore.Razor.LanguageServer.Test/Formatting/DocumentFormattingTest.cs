@@ -19,6 +19,56 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentFormattingTestBase(testOutput)
 {
     [Fact]
+    [WorkItem("https://developercommunity.visualstudio.com/t/Razor-Formatting-Feature-internal-error/11041869")]
+    public async Task TextAndTagOnSameLine()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                 <div>
+                 	@if (b)
+                 	{
+                 		<text>:</text> <InputFile OnChange="StateHasChanged" />
+                 	}
+                 </div>
+
+                 @code
+                 {
+                 	bool b;
+                 }
+                 
+                 """,
+            htmlFormatted: """
+                 <div>
+                 	@if (b)
+                 	{
+                 	<text>:</text> <InputFile OnChange="StateHasChanged" />
+                 	}
+                 </div>
+                 
+                 @code
+                 {
+                 	bool b;
+                 }
+                 
+                 """,
+            expected: """
+                 <div>
+                 	@if (b)
+                 	{
+                 		<text>:</text> <InputFile OnChange="StateHasChanged" />
+                 	}
+                 </div>
+                 
+                 @code
+                 {
+                 	bool b;
+                 }
+                 
+                 """,
+            insertSpaces: false);
+    }
+
+    [Fact]
     [WorkItem("https://github.com/microsoft/vscode-dotnettools/issues/2766")]
     public async Task DifferentAttributeWrappingPoint1()
     {

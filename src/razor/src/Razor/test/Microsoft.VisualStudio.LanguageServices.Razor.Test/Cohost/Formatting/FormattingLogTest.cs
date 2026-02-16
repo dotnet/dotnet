@@ -88,6 +88,22 @@ public class FormattingLogTest(FormattingTestContext context, HtmlFormattingFixt
         await GetFormattingEditsAsync(contents, htmlChangesFile);
     }
 
+    [Fact]
+    [WorkItem("https://developercommunity.visualstudio.com/t/Razor-Formatting-Feature-internal-error/11041869#T-ND11043454")]
+    public async Task MultiLineLambda()
+    {
+        var contents = GetResource("InitialDocument.txt");
+
+        var document = CreateProjectAndRazorDocument(contents);
+
+        var options = new RazorFormattingOptions();
+
+        var formattingService = (RazorFormattingService)OOPExportProvider.GetExportedValue<IRazorFormattingService>();
+        formattingService.GetTestAccessor().SetFormattingLoggerFactory(new TestFormattingLoggerFactory(TestOutputHelper));
+
+        await GetFormattingEditsAsync(document, [], span: default, options.CodeBlockBraceOnNextLine, options.AttributeIndentStyle, options.InsertSpaces, options.TabSize, RazorCSharpSyntaxFormattingOptions.Default);
+    }
+
     private async Task<TextEdit[]?> GetFormattingEditsAsync(string contents, string htmlChangesFile)
     {
         var document = CreateProjectAndRazorDocument(contents);
