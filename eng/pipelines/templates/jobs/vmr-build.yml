@@ -435,9 +435,9 @@ jobs:
           else
             storageKey=""
           fi
-          # Download the 1xx source-built SDK
-          DownloadArchive "1xx source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "" "" $storageKey
-        displayName: Download 1xx SDK
+          # Download the N-1 source-built SDK
+          DownloadArchive "N-1 source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "" "" $storageKey
+        displayName: Download N-1 SDK
 
     - script: |
         source "$(sourcesPath)/eng/download-source-built-archive.sh"
