@@ -426,19 +426,19 @@ jobs:
 
   - template: /eng/common/templates/steps/enable-internal-runtimes.yml
 
-  - ${{ if and(parameters.excludeRuntimeDependentJobs, eq(parameters.reuseBuildArtifactsFrom, ''), not(parameters.withPreviousSDK)) }}:
-    - script: |
-        source "$(sourcesPath)/eng/download-source-built-archive.sh"
-        if [[ $SYSTEM_TEAMPROJECT == "internal" ]]; then
-          storageKey="$(dotnetbuilds-internal-container-read-token-base64)"
-        else
-          storageKey=""
-        fi
-        # Download the 1xx source-built SDK
-        DownloadArchive "1xx source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "" "" $storageKey
-      displayName: Download 1xx SDK
-
   - ${{ if parameters.excludeRuntimeDependentJobs }}:
+    - ${{ if and(eq(parameters.reuseBuildArtifactsFrom, ''), not(parameters.withPreviousSDK)) }}:
+      - script: |
+          source "$(sourcesPath)/eng/download-source-built-archive.sh"
+          if [[ $SYSTEM_TEAMPROJECT == "internal" ]]; then
+            storageKey="$(dotnetbuilds-internal-container-read-token-base64)"
+          else
+            storageKey=""
+          fi
+          # Download the 1xx source-built SDK
+          DownloadArchive "1xx source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "" "" $storageKey
+        displayName: Download 1xx SDK
+
     - script: |
         source "$(sourcesPath)/eng/download-source-built-archive.sh"
         if [[ $SYSTEM_TEAMPROJECT == "internal" ]]; then
