@@ -133,7 +133,7 @@ if ($LASTEXITCODE -eq 0) {
   Highlight "Synchronization succeeded"
 }
 else {
-  Highlight "Forwardflow failed, attempting recovery with 'darc vmr reset'.."
+  Highlight "Failed to flow code into the local VMR. Falling back to resetting the VMR to match repo contents..."
   git -C $vmrDir reset --hard
 
   $resetArgs = (
@@ -147,7 +147,7 @@ else {
   & "$darc" $resetArgs
 
   if ($LASTEXITCODE -eq 0) {
-    Highlight "Recovery with 'darc vmr reset' succeeded"
+    Highlight "Successfully reset the VMR using `darc vmr reset`"
   }
   else {
     Fail "Synchronization of repo to VMR failed!"
