@@ -109,8 +109,7 @@ $dotnet = "$dotnetRoot\dotnet.exe"
 Highlight "Starting the synchronization of VMR.."
 
 # Synchronize the VMR
-$repoRoot = Resolve-Path (Join-Path $PSScriptRoot '..\..') | Select-Object -ExpandProperty Path
-$versionDetailsPath = Join-Path $repoRoot 'eng\Version.Details.xml'
+$versionDetailsPath = Resolve-Path (Join-Path $PSScriptRoot '..\Version.Details.xml') | Select-Object -ExpandProperty Path
 [xml]$versionDetails = Get-Content -Path $versionDetailsPath
 $repoName = $versionDetails.SelectSingleNode('//Source').Mapping
 if (-not $repoName) {

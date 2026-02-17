@@ -186,8 +186,7 @@ fi
 
 # Synchronize the VMR
 
-repo_root=$(cd "$scriptroot/../.."; pwd -P)
-version_details_path="$repo_root/eng/Version.Details.xml"
+version_details_path=$(cd "$scriptroot/.."; pwd -P)/Version.Details.xml
 repo_name=$(grep -m 1 '<Source ' "$version_details_path" | sed -n 's/.*Mapping="\([^"]*\)".*/\1/p')
 if [[ -z "$repo_name" ]]; then
   fail "Failed to resolve repo mapping from $version_details_path"
