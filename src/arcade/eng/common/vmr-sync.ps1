@@ -110,7 +110,13 @@ Highlight "Starting the synchronization of VMR.."
 
 # Synchronize the VMR
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot '..\..') | Select-Object -ExpandProperty Path
-$repoName = Split-Path -Leaf $repoRoot
+$versionDetailsPath = Join-Path $repoRoot 'eng\Version.Details.xml'
+[xml]$versionDetails = Get-Content -Path $versionDetailsPath
+$repoName = $versionDetails.SelectSingleNode('//Source').Mapping
+if (-not $repoName) {
+  Fail "Failed to resolve repo mapping from $versionDetailsPath"
+  exit 1
+}
 
 $darcArgs = (
   "vmr", "forwardflow",

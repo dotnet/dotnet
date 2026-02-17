@@ -187,7 +187,12 @@ fi
 # Synchronize the VMR
 
 repo_root=$(git rev-parse --show-toplevel)
-repo_name=$(basename "$repo_root")
+version_details_path="$repo_root/eng/Version.Details.xml"
+repo_name=$(grep -m 1 '<Source ' "$version_details_path" | sed -n 's/.*Mapping="\([^"]*\)".*/\1/p')
+if [[ -z "$repo_name" ]]; then
+  fail "Failed to resolve repo mapping from $version_details_path"
+  exit 1
+fi
 
 export DOTNET_ROOT="$dotnetDir"
 
