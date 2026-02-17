@@ -124,6 +124,21 @@ stages:
             ${{ if in(parameters.scope, 'lite') }}:
               extraProperties: /p:DotNetSkipTestsRequiringMicrosoftArtifacts=true
 
+          # Remove this leg from lite build before merging PR
+          - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
+            distro: centos
+            targetArchitecture: x64
+            buildFromArchive: false            # 🚫
+            enablePoison: false                # 🚫
+            runOnline: false                   # 🚫
+            useMonoRuntime: false              # 🚫
+            useSystemLibraries: false          # 🚫
+            withPreviousSDK: false             # 🚫
+            disableSigning: false              # 🚫
+            createSourceArtifact: true         # ✅
+            ${{ if in(parameters.scope, 'lite') }}:
+              extraProperties: /p:DotNetSkipTestsRequiringMicrosoftArtifacts=true
+
           - ${{ if containsValue(parameters.verifications, 'source-build-stage2') }}:
 
             - buildNameFormat: 'SB_{0}_Offline_CurrentSourceBuiltSdk'
