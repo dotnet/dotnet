@@ -119,7 +119,7 @@ dotnetArguments+=("/p:DotNetBuild=$product_build")
 dotnetArguments+=("/p:DotNetBuildSourceOnly=$source_build")
 dotnetArguments+=("/p:DotNetBuildFromVMR=$from_vmr")
 
-local bl=""
+bl=""
 if [[ "$binary_log" == true ]]; then
   bl="/bl:\"${repo_root}artifacts/log/${configuration}/Build.binlog\""
 fi

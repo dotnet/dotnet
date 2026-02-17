@@ -9,18 +9,8 @@ using System.Xml.Linq;
 
 public abstract class BuildComparer
 {
-    private readonly HashSet<string> _includedRepositories =
-    [
-        "arcade",
-        "deployment-tools",
-        "diagnostics",
-        "fsharp",
-        "msbuild",
-        "nuget-client",
-        "razor",
-        "roslyn",
-        "vstest"
-    ];
+    private readonly List<IssueType> _issuesToReport;
+    private readonly string[] _includedRepositories;
 
     /// <summary>
     /// Type of asset being processed in the build comparison tool.
@@ -72,11 +62,6 @@ public abstract class BuildComparer
     /// </summary>
     protected bool _clean;
 
-    /// <summary>
-    /// The issues to report on.
-    /// </summary>
-    List<IssueType> _issuesToReport;
-
     protected BuildComparer(
         bool clean,
         AssetType? assetType,
@@ -86,12 +71,14 @@ public abstract class BuildComparer
         string noIssuesReportPath,
         int parallelTasks,
         string baselineFilePath,
-        List<IssueType> issuesToReport)
+        List<IssueType> issuesToReport,
+        string[] includedRepositories)
     {
         _clean = clean;
         _assetType = assetType;
         _vmrBuildAssetBasePath = vmrAssetBasePath;
         _baseBuildAssetBasePath = baseBuildAssetBasePath;
+        _includedRepositories = includedRepositories;
         _issuesReportPath = issuesReportPath;
         _noIssuesReportPath = noIssuesReportPath;
         _throttle = new SemaphoreSlim(parallelTasks, parallelTasks);

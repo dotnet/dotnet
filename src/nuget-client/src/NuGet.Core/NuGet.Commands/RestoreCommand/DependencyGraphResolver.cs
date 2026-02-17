@@ -195,6 +195,7 @@ namespace NuGet.Commands
                         _rootProjectLibraryDependency.LibraryRange,
                         frameworkRuntimeDefinition.Framework,
                         runtimeIdentifier: string.IsNullOrWhiteSpace(frameworkRuntimeDefinition.RuntimeIdentifier) ? null : frameworkRuntimeDefinition.RuntimeIdentifier,
+                        frameworkRuntimeDefinition.TargetAlias,
                         context,
                         token),
                     Parent = LibraryRangeIndex.None
@@ -1394,6 +1395,7 @@ namespace NuGet.Commands
                             childDependency.LibraryRange,
                             pair.Framework,
                             runtimeIdentifier: string.IsNullOrWhiteSpace(pair.RuntimeIdentifier) ? null : pair.RuntimeIdentifier,
+                            pair.TargetAlias,
                             context,
                             token)
                     };

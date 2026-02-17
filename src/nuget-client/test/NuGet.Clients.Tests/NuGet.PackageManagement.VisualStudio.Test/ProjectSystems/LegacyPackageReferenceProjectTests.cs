@@ -637,10 +637,12 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     projectServices,
                     _threadingService);
 
-                var buildIntegratedInstallationContext = new BuildIntegratedInstallationContext(
-                    Enumerable.Empty<NuGetFramework>(),
-                    Enumerable.Empty<NuGetFramework>(),
-                    new Dictionary<NuGetFramework, string>());
+                var buildIntegratedInstallationContext = new BuildIntegratedInstallationContext()
+                {
+                    SuccessfulFrameworks = [],
+                    UnsuccessfulFrameworks = [],
+                    AreAllPackagesConditional = false
+                };
 
                 // Act
                 var result = await testProject.InstallPackageAsync(
@@ -988,7 +990,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(packageSpecs[0], sources, packagesDir.FullName, logger)
                 {
-                    LockFilePath = Path.Combine(testDirectory, "obj", "project.assets.json")
+                    LockFilePath = Path.Combine(testDirectory, "obj", "project.assets.json"),
+                    LockFileVersion = 3,
                 };
 
                 await SimpleTestPackageUtility.CreateFullPackageAsync(packageSource.FullName, "packageA", "2.15.3");
@@ -1029,7 +1032,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(packageSpecs[0], sources, packagesDir.FullName, logger)
                 {
-                    LockFilePath = Path.Combine(testDirectory, "obj", "project.assets.json")
+                    LockFilePath = Path.Combine(testDirectory, "obj", "project.assets.json"),
+                    LockFileVersion = 3,
                 };
 
                 await SimpleTestPackageUtility.CreateFullPackageAsync(packageSource.FullName, "packageA", "2.15.3");
@@ -1073,7 +1077,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(packageSpecs[0], sources, packagesDir.FullName, logger)
                 {
-                    LockFilePath = Path.Combine(testDirectory, "obj", "project.assets.json")
+                    LockFilePath = Path.Combine(testDirectory, "obj", "project.assets.json"),
+                    LockFileVersion = 3,
                 };
 
                 await SimpleTestPackageUtility.CreateFullPackageAsync(packageSource.FullName, "packageA", "4.0.0");
@@ -1115,7 +1120,10 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 sources.Add(new PackageSource(packageSource.FullName));
 
                 var logger = new TestLogger();
-                var request = new TestRestoreRequest(packageSpecs[0], sources, packagesDir.FullName, logger);
+                var request = new TestRestoreRequest(packageSpecs[0], sources, packagesDir.FullName, logger)
+                {
+                    LockFileVersion = 3,
+                };
 
                 // Act
                 var command = new RestoreCommand(request);
@@ -1185,7 +1193,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(packageSpecs[0], sources, packagesDir.FullName, logger)
                 {
-                    LockFilePath = Path.Combine(testDirectory, "obj", "project.assets.json")
+                    LockFilePath = Path.Combine(testDirectory, "obj", "project.assets.json"),
+                    LockFileVersion = 3,
                 };
 
                 await SimpleTestPackageUtility.CreateFullPackageAsync(packageSource.FullName, "packageA", "4.0.0");
@@ -1202,6 +1211,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             }
         }
 
+        // TODO NK - this test is funky.
         [Fact]
         public async Task GetInstalledVersion_WithoutPackages_WithAssets_ReturnsEmpty()
         {
@@ -1226,7 +1236,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(packageSpecs[0], sources, packagesDir.FullName, logger)
                 {
-                    LockFilePath = Path.Combine(testDirectory, "obj", "project.assets.json")
+                    LockFilePath = Path.Combine(testDirectory, "obj", "project.assets.json"),
+                    LockFileVersion = 3,
                 };
 
                 await SimpleTestPackageUtility.CreateFullPackageAsync(packageSource.FullName, "packageA", "1.0.0");
@@ -1266,7 +1277,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(packageSpecs[0], sources, packagesDir.FullName, logger)
                 {
-                    LockFilePath = Path.Combine(testDirectory, "obj", "project.assets.json")
+                    LockFilePath = Path.Combine(testDirectory, "obj", "project.assets.json"),
+                    LockFileVersion = 3,
                 };
 
                 await SimpleTestPackageUtility.CreateFullPackageAsync(packageSource.FullName, "packageB", "1.0.0");
@@ -1316,7 +1328,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(packageSpecs[0], sources, packagesDir.FullName, logger)
                 {
-                    LockFilePath = Path.Combine(testDirectory, "obj", "project.assets.json")
+                    LockFilePath = Path.Combine(testDirectory, "obj", "project.assets.json"),
+                    LockFileVersion = 3,
                 };
 
                 await SimpleTestPackageUtility.CreateFullPackageAsync(packageSource.FullName, "packageC", "2.1.43");
@@ -1375,7 +1388,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(packageSpecs[0], sources, packagesDir.FullName, logger)
                 {
-                    LockFilePath = Path.Combine(testDirectory, "obj", "project.assets.json")
+                    LockFilePath = Path.Combine(testDirectory, "obj", "project.assets.json"),
+                    LockFileVersion = 3,
                 };
 
                 await SimpleTestPackageUtility.CreateFullPackageAsync(packageSource.FullName, "packageA", "2.15.3");
@@ -1418,7 +1432,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(packageSpecs[0], sources, packagesDir.FullName, logger)
                 {
-                    LockFilePath = lockFilePath
+                    LockFilePath = lockFilePath,
+                    LockFileVersion = 3,
                 };
 
                 await SimpleTestPackageUtility.CreateFullPackageAsync(packageSource.FullName, "packageB", "1.0.0");

@@ -293,10 +293,19 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
         public RazorSourceDocument SourceDocument { get; set; }
 
+        public override void VisitRazorUsingDirective(RazorUsingDirectiveSyntax node)
+        {
+            VisitDirective(node, descriptor: null);
+        }
+
         public override void VisitRazorDirective(RazorDirectiveSyntax node)
         {
+            VisitDirective(node, node.DirectiveDescriptor);
+        }
+
+        private void VisitDirective(BaseRazorDirectiveSyntax node, DirectiveDescriptor descriptor)
+        {
             IntermediateNode directiveNode;
-            var descriptor = node.DirectiveDescriptor;
 
             if (descriptor != null)
             {

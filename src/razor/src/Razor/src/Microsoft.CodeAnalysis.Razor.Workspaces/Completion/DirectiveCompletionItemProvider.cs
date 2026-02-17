@@ -94,7 +94,7 @@ internal class DirectiveCompletionItemProvider : IRazorCompletionItemProvider
             return false;
         }
 
-        if (implicitExpression.FirstAncestorOrSelf<RazorDirectiveSyntax>() != null)
+        if (implicitExpression.FirstAncestorOrSelf<BaseRazorDirectiveSyntax>() != null)
         {
             // Implicit expression is nested in a directive
             return false;

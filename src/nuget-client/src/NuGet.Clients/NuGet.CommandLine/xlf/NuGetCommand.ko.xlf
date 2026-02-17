@@ -120,8 +120,8 @@ nuget client-certs List</target>
         <note />
       </trans-unit>
       <trans-unit id="CommandApiKey">
-        <source>The API key for the server.</source>
-        <target state="translated">서버의 API 키입니다.</target>
+        <source>The API key for the server. If not set, the NUGET_API_KEY environment variable is read.</source>
+        <target state="translated">서버의 API 키입니다. 설정하지 않으면 NUGET_API_KEY 환경 변수를 사용합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="CommandDirectDownload">
@@ -1146,8 +1146,8 @@ nuget spec -a MyAssembly.dll</target>
         <note />
       </trans-unit>
       <trans-unit id="SymbolApiKey">
-        <source>The API key for the symbol server.</source>
-        <target state="translated">기호 서버의 API 키입니다.</target>
+        <source>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</source>
+        <target state="translated">기호 서버의 API 키입니다. 설정하지 않으면 NUGET_SYMBOL_API_KEY 환경 변수를 사용합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="TrustedSignersCommandAllowUntrustedRootDescription">

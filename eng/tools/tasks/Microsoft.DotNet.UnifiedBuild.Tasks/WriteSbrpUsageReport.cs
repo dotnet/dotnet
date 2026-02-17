@@ -1,8 +1,10 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -22,6 +24,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks;
 public partial class WriteSbrpUsageReport : Task
 {
     private const string SbrpRepoName = "source-build-reference-packages";
+    private const string ErrorCode = "SBRP001";
 
     private readonly Dictionary<string, PackageInfo> _sbrpPackages = [];
 
@@ -53,16 +56,23 @@ public partial class WriteSbrpUsageReport : Task
 
     public override bool Execute()
     {
-        Log.LogMessage($"Scanning for SBRP Package Usage...");
+        try
+        {
+            Log.LogMessage($"Scanning for SBRP Package Usage...");
 
-        ReadSbrpPackages(Path.Combine("referencePackages", "src"), trackTfms: true);
-        ReadSbrpPackages(Path.Combine("targetPacks", "ILsrc"), trackTfms: false);
-        ReadSbrpPackages(Path.Combine("textOnlyPackages", "src"), trackTfms: false);
-        ReadExternalPackages(Path.Combine("externalPackages", "src"));
+            ReadSbrpPackages(Path.Combine("referencePackages", "src"), trackTfms: true);
+            ReadSbrpPackages(Path.Combine("targetPacks", "ILsrc"), trackTfms: false);
+            ReadSbrpPackages(Path.Combine("textOnlyPackages", "src"), trackTfms: false);
+            ReadExternalPackages(Path.Combine("externalPackages", "src"));
 
-        ScanProjectReferences();
+            ScanProjectReferences();
 
-        GenerateUsageReport();
+            GenerateUsageReport();
+        }
+        catch (Exception ex)
+        {
+            LogError($"Failed to generate SBRP usage report: {ex}");
+        }
 
         return !Log.HasLoggedErrors;
     }
@@ -75,7 +85,7 @@ public partial class WriteSbrpUsageReport : Task
 
         if (unreferencedSbrps.Count() == existingSbrps.Length)
         {
-            Log.LogError("No SBRP packages are detected as being referenced.");
+            LogError("No SBRP packages are detected as being referenced.");
         }
 
         Report report = new(existingSbrps, unreferencedSbrps);
@@ -119,8 +129,46 @@ public partial class WriteSbrpUsageReport : Task
     private IEnumerable<PackageInfo> GetUnreferencedSbrps() =>
         _sbrpPackages.Values.Where(pkg => pkg.References.Count == 0);
 
-    [GeneratedRegex(@"^(?<name>.*?)\.(?<version>(?:\.?[0-9]+){3,}(?:[-A-Za-z0-9][A-Za-z0-9\.-]*)?)\.nupkg$")]
-    private static partial Regex GetPackageNameVersionRegex();
+    /// <summary>
+    /// Extracts package name and version from a .nupkg file by reading its .nuspec metadata.
+    /// </summary>
+    /// <param name="nupkgFilePath">Path to the .nupkg file</param>
+    /// <returns>A tuple containing the package name and version, or (null, null) if parsing failed</returns>
+    private (string? Name, string? Version) GetPackageInfoFromNupkg(string nupkgFilePath)
+    {
+        try
+        {
+            using var fileStream = File.OpenRead(nupkgFilePath);
+            using var archive = new ZipArchive(fileStream, ZipArchiveMode.Read);
+            var nuspecEntry = archive.Entries.FirstOrDefault(e => e.Name.EndsWith(".nuspec"));
+            
+            if (nuspecEntry == null)
+            {
+                LogError($"Could not find .nuspec in {nupkgFilePath}");
+                return (null, null);
+            }
+
+            using var stream = nuspecEntry.Open();
+            var nuspecDoc = XDocument.Load(stream);
+            var ns = nuspecDoc.Root?.GetDefaultNamespace() ?? XNamespace.None;
+            
+            string? packageName = nuspecDoc.Root?.Element(ns + "metadata")?.Element(ns + "id")?.Value;
+            string? version = nuspecDoc.Root?.Element(ns + "metadata")?.Element(ns + "version")?.Value;
+
+            if (string.IsNullOrEmpty(packageName) || string.IsNullOrEmpty(version))
+            {
+                LogError($"Could not parse package name and version from nuspec in {nupkgFilePath}");
+                return (null, null);
+            }
+
+            return (packageName, version);
+        }
+        catch (Exception ex)
+        {
+            LogError($"Error processing {nupkgFilePath}: {ex.Message}");
+            return (null, null);
+        }
+    }
 
     /// <summary>
     /// External packages cannot be discovered in the same way as the other packages, scanning the src for csprojs.
@@ -134,15 +182,12 @@ public partial class WriteSbrpUsageReport : Task
 
         foreach (string nupkgFile in Directory.GetFiles(SbrpPackagesPath, "*.nupkg", SearchOption.TopDirectoryOnly))
         {
-            var match = GetPackageNameVersionRegex().Match(Path.GetFileName(nupkgFile));
-            if (!match.Success)
+            var (packageName, version) = GetPackageInfoFromNupkg(nupkgFile);
+            
+            if (packageName == null || version == null)
             {
-                Log.LogError($"Could not parse package name and version from `{nupkgFile}`.");
                 continue;
             }
-
-            string packageName = match.Groups["name"].Value;
-            string version = match.Groups["version"].Value;
 
             if (!_sbrpPackages.TryGetValue(PackageInfo.GetId(packageName, version), out PackageInfo? info))
             {
@@ -177,7 +222,7 @@ public partial class WriteSbrpUsageReport : Task
 
                 if (tfms == null || tfms.Count == 0)
                 {
-                    Log.LogError($"No TargetFrameworks were detected in {projectPath}.");
+                    LogError($"No TargetFrameworks were detected in {projectPath}.");
                     continue;
                 }
             }
@@ -194,66 +239,78 @@ public partial class WriteSbrpUsageReport : Task
     {
         if (ProjectAssetsJsons.Length == 0)
         {
-            Log.LogError($"No project.assets.json files were specified.");
+            LogError($"No project.assets.json files were specified.");
             return;
         }
 
         foreach (string projectJsonFile in ProjectAssetsJsons.Select(item => item.GetMetadata("Identity")))
         {
-            LockFile lockFile = new LockFileFormat().Read(projectJsonFile);
-            foreach (LockFileTargetLibrary lib in lockFile.Targets.SelectMany(t => t.Libraries))
+            try
             {
-                IEnumerable<string> tfms = lib.CompileTimeAssemblies
-                    .Where(asm => asm.Path.StartsWith("lib") || asm.Path.StartsWith("ref"))
-                    .Select(asm => asm.Path.Split('/')[1]);
-
-                TrackPackageReference(lockFile.Path, lib.Name, lib.Version?.ToString(), tfms);
+                ScanProjectAssetsFile(projectJsonFile);
             }
-
-            foreach (DownloadDependency downloadDep in lockFile.PackageSpec.TargetFrameworks.SelectMany(fx => fx.DownloadDependencies))
+            catch (Exception ex)
             {
-                TrackPackageReference(lockFile.Path, downloadDep.Name, downloadDep.VersionRange.MinVersion?.ToString(), Enumerable.Empty<string>());
+                LogError($"Error processing {projectJsonFile}: {ex.Message}");
             }
+        }
+    }
 
-            // Track framework references (e.g., Microsoft.NETCore.App, Microsoft.AspNetCore.App)
-            // These correspond to targeting packs like Microsoft.NETCore.App.Ref.6.0.0
-            foreach (var targetFramework in lockFile.PackageSpec.TargetFrameworks)
+    private void ScanProjectAssetsFile(string projectJsonFile)
+    {
+        LockFile lockFile = new LockFileFormat().Read(projectJsonFile);
+        foreach (LockFileTargetLibrary lib in lockFile.Targets.SelectMany(t => t.Libraries))
+        {
+            IEnumerable<string> tfms = lib.CompileTimeAssemblies
+                .Where(asm => asm.Path.StartsWith("lib") || asm.Path.StartsWith("ref"))
+                .Select(asm => asm.Path.Split('/')[1]);
+
+            TrackPackageReference(lockFile.Path, lib.Name, lib.Version?.ToString(), tfms);
+        }
+
+        foreach (DownloadDependency downloadDep in lockFile.PackageSpec.TargetFrameworks.SelectMany(fx => fx.DownloadDependencies))
+        {
+            TrackPackageReference(lockFile.Path, downloadDep.Name, downloadDep.VersionRange.MinVersion?.ToString(), Enumerable.Empty<string>());
+        }
+
+        // Track framework references (e.g., Microsoft.NETCore.App, Microsoft.AspNetCore.App)
+        // These correspond to targeting packs like Microsoft.NETCore.App.Ref.6.0.0
+        foreach (var targetFramework in lockFile.PackageSpec.TargetFrameworks)
+        {
+            foreach (var frameworkRef in targetFramework.FrameworkReferences)
             {
-                foreach (var frameworkRef in targetFramework.FrameworkReferences)
+                string? targetingPackVersion = InferTargetingPackVersion(targetFramework.FrameworkName.GetShortFolderName());
+                if (targetingPackVersion != null)
                 {
-                    string? targetingPackVersion = InferTargetingPackVersion(targetFramework.FrameworkName.GetShortFolderName());
-                    if (targetingPackVersion != null)
-                    {
-                        string targetingPackName = $"{frameworkRef.Name}.Ref";
-                        TrackPackageReference(
-                            lockFile.Path,
-                            targetingPackName,
-                            targetingPackVersion,
-                            [ targetFramework.FrameworkName.GetShortFolderName() ]);
-                    }
+                    string targetingPackName = $"{frameworkRef.Name}.Ref";
+                    TrackPackageReference(
+                        lockFile.Path,
+                        targetingPackName,
+                        targetingPackVersion,
+                        [ targetFramework.FrameworkName.GetShortFolderName() ]);
                 }
             }
+        }
 
-            if (lockFile.PackageSpec.RestoreMetadata.ProjectPath.Contains(SbrpRepoName))
+        if (lockFile.PackageSpec.RestoreMetadata.ProjectPath.Contains(SbrpRepoName))
+        {
+            // For SBRP projects, we need to track the project references as well. While project references are included in the targets
+            // which were processed above, only the resolved version is included in the cases when the dependency graph contains multiple
+            // versions. All project references must be tracked as dependencies because they are required to build SBRP.
+            foreach (ProjectRestoreMetadataFrameworkInfo targetFx in lockFile.PackageSpec.RestoreMetadata.TargetFrameworks)
             {
-                // For SBRP projects, we need to track the project references as well. While project references are included in the targets
-                // which were processed above, only the resolved version is included in the cases when the dependency graph contains multiple
-                // versions. All project references must be tracked as dependencies because they are required to build SBRP.
-                foreach (ProjectRestoreMetadataFrameworkInfo targetFx in lockFile.PackageSpec.RestoreMetadata.TargetFrameworks)
+                foreach (ProjectRestoreReference projectRef in targetFx.ProjectReferences)
                 {
-                    foreach (ProjectRestoreReference projectRef in targetFx.ProjectReferences)
+                    if (projectRef.ProjectPath.Contains(SbrpRepoName))
                     {
-                        if (projectRef.ProjectPath.Contains(SbrpRepoName))
-                        {
-                            string[] pathSegments = projectRef.ProjectPath.Split('/');
-                            string projName = pathSegments[pathSegments.Length - 3];
-                            string projVersion = pathSegments[pathSegments.Length - 2];
-                            TrackPackageReference(lockFile.Path, projName, projVersion, new[] { targetFx.TargetAlias });
-                        }
-                        else
-                        {
-                            Log.LogMessage($"Unexpected non-SBRP project reference detected: {projectRef.ProjectPath}");
-                        }
+                        string[] pathSegments = projectRef.ProjectPath.Split('/');
+                        string projName = pathSegments[pathSegments.Length - 3];
+                        string projVersion = pathSegments[pathSegments.Length - 2];
+                        TrackPackageReference(lockFile.Path, projName, projVersion, new[] { targetFx.TargetAlias });
+                    }
+                    else
+                    {
+                        Log.LogMessage($"Unexpected non-SBRP project reference detected: {projectRef.ProjectPath}");
                     }
                 }
             }
@@ -304,6 +361,11 @@ public partial class WriteSbrpUsageReport : Task
         _sbrpPackages.Add(info.Id, info);
         Log.LogMessage($"Detected package: {info.Id}");
     }
+
+    private void LogError(string message) =>
+        Log.LogError(subcategory: null, errorCode: ErrorCode, helpKeyword: null,
+            file: null, lineNumber: 0, columnNumber: 0, endLineNumber: 0, endColumnNumber: 0,
+            message: message);
 
     private record PackageInfo(string Name, string Version, string Path, HashSet<string>? Tfms = default)
     {

@@ -2935,7 +2935,20 @@ internal sealed partial class CSharpImplicitExpressionBodySyntax : CSharpSyntaxN
         => new CSharpImplicitExpressionBodySyntax(Kind, _csharpCode, diagnostics);
 }
 
-internal sealed partial class RazorDirectiveSyntax : CSharpRazorBlockSyntax
+internal abstract partial class BaseRazorDirectiveSyntax : CSharpRazorBlockSyntax
+{
+    internal BaseRazorDirectiveSyntax(SyntaxKind kind, RazorDiagnostic[] diagnostics)
+        : base(kind, diagnostics)
+    {
+    }
+
+    internal BaseRazorDirectiveSyntax(SyntaxKind kind)
+        : base(kind)
+    {
+    }
+}
+
+internal sealed partial class RazorDirectiveSyntax : BaseRazorDirectiveSyntax
 {
     internal readonly CSharpTransitionSyntax _transition;
     internal readonly CSharpSyntaxNode _body;
@@ -2996,6 +3009,69 @@ internal sealed partial class RazorDirectiveSyntax : CSharpRazorBlockSyntax
 
     internal override GreenNode SetDiagnostics(RazorDiagnostic[] diagnostics)
         => new RazorDirectiveSyntax(Kind, _transition, _body, _directiveDescriptor, diagnostics);
+}
+
+internal sealed partial class RazorUsingDirectiveSyntax : BaseRazorDirectiveSyntax
+{
+    internal readonly CSharpTransitionSyntax _transition;
+    internal readonly CSharpSyntaxNode _body;
+    internal readonly DirectiveDescriptor _directiveDescriptor;
+
+    internal RazorUsingDirectiveSyntax(SyntaxKind kind, CSharpTransitionSyntax transition, CSharpSyntaxNode body, DirectiveDescriptor directiveDescriptor, RazorDiagnostic[] diagnostics)
+        : base(kind, diagnostics)
+    {
+        SlotCount = 2;
+        AdjustFlagsAndWidth(transition);
+        _transition = transition;
+        AdjustFlagsAndWidth(body);
+        _body = body;
+        _directiveDescriptor = directiveDescriptor;
+    }
+
+    internal RazorUsingDirectiveSyntax(SyntaxKind kind, CSharpTransitionSyntax transition, CSharpSyntaxNode body, DirectiveDescriptor directiveDescriptor)
+        : base(kind)
+    {
+        SlotCount = 2;
+        AdjustFlagsAndWidth(transition);
+        _transition = transition;
+        AdjustFlagsAndWidth(body);
+        _body = body;
+        _directiveDescriptor = directiveDescriptor;
+    }
+
+    public override CSharpTransitionSyntax Transition => _transition;
+    public override CSharpSyntaxNode Body => _body;
+    public DirectiveDescriptor DirectiveDescriptor => _directiveDescriptor;
+
+    internal override GreenNode GetSlot(int index)
+        => index switch
+        {
+            0 => _transition,
+            1 => _body,
+            _ => null
+        };
+
+    internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new Syntax.RazorUsingDirectiveSyntax(this, parent, position);
+
+    public override TResult Accept<TResult>(SyntaxVisitor<TResult> visitor) => visitor.VisitRazorUsingDirective(this);
+    public override void Accept(SyntaxVisitor visitor) => visitor.VisitRazorUsingDirective(this);
+
+    public RazorUsingDirectiveSyntax Update(CSharpTransitionSyntax transition, CSharpSyntaxNode body, DirectiveDescriptor directiveDescriptor)
+    {
+        if (transition != Transition || body != Body)
+        {
+            var newNode = SyntaxFactory.RazorUsingDirective(transition, body, directiveDescriptor);
+            var diags = GetDiagnostics();
+            if (diags != null && diags.Length > 0)
+                newNode = newNode.WithDiagnosticsGreen(diags);
+            return newNode;
+        }
+
+        return this;
+    }
+
+    internal override GreenNode SetDiagnostics(RazorDiagnostic[] diagnostics)
+        => new RazorUsingDirectiveSyntax(Kind, _transition, _body, _directiveDescriptor, diagnostics);
 }
 
 internal sealed partial class RazorDirectiveBodySyntax : CSharpSyntaxNode
@@ -3104,6 +3180,7 @@ internal partial class SyntaxVisitor<TResult>
     public virtual TResult VisitCSharpImplicitExpression(CSharpImplicitExpressionSyntax node) => DefaultVisit(node);
     public virtual TResult VisitCSharpImplicitExpressionBody(CSharpImplicitExpressionBodySyntax node) => DefaultVisit(node);
     public virtual TResult VisitRazorDirective(RazorDirectiveSyntax node) => DefaultVisit(node);
+    public virtual TResult VisitRazorUsingDirective(RazorUsingDirectiveSyntax node) => DefaultVisit(node);
     public virtual TResult VisitRazorDirectiveBody(RazorDirectiveBodySyntax node) => DefaultVisit(node);
 }
 
@@ -3148,6 +3225,7 @@ internal partial class SyntaxVisitor
     public virtual void VisitCSharpImplicitExpression(CSharpImplicitExpressionSyntax node) => DefaultVisit(node);
     public virtual void VisitCSharpImplicitExpressionBody(CSharpImplicitExpressionBodySyntax node) => DefaultVisit(node);
     public virtual void VisitRazorDirective(RazorDirectiveSyntax node) => DefaultVisit(node);
+    public virtual void VisitRazorUsingDirective(RazorUsingDirectiveSyntax node) => DefaultVisit(node);
     public virtual void VisitRazorDirectiveBody(RazorDirectiveBodySyntax node) => DefaultVisit(node);
 }
 
@@ -3268,6 +3346,9 @@ internal partial class SyntaxRewriter : SyntaxVisitor<GreenNode>
         => node.Update((CSharpCodeBlockSyntax)Visit(node.CSharpCode));
 
     public override GreenNode VisitRazorDirective(RazorDirectiveSyntax node)
+        => node.Update((CSharpTransitionSyntax)Visit(node.Transition), (CSharpSyntaxNode)Visit(node.Body), node.DirectiveDescriptor);
+
+    public override GreenNode VisitRazorUsingDirective(RazorUsingDirectiveSyntax node)
         => node.Update((CSharpTransitionSyntax)Visit(node.Transition), (CSharpSyntaxNode)Visit(node.Body), node.DirectiveDescriptor);
 
     public override GreenNode VisitRazorDirectiveBody(RazorDirectiveBodySyntax node)
@@ -3663,6 +3744,16 @@ internal static partial class SyntaxFactory
         return result;
     }
 
+    public static RazorUsingDirectiveSyntax RazorUsingDirective(CSharpTransitionSyntax transition, CSharpSyntaxNode body, DirectiveDescriptor directiveDescriptor)
+    {
+        ArgHelper.ThrowIfNull(transition);
+        ArgHelper.ThrowIfNull(body);
+
+        var result = new RazorUsingDirectiveSyntax(SyntaxKind.RazorUsingDirective, transition, body, directiveDescriptor);
+
+        return result;
+    }
+
     public static RazorDirectiveBodySyntax RazorDirectiveBody(RazorSyntaxNode keyword, CSharpCodeBlockSyntax csharpCode)
     {
         ArgHelper.ThrowIfNull(keyword);
@@ -3715,6 +3806,7 @@ internal static partial class SyntaxFactory
             typeof(CSharpImplicitExpressionSyntax),
             typeof(CSharpImplicitExpressionBodySyntax),
             typeof(RazorDirectiveSyntax),
+            typeof(RazorUsingDirectiveSyntax),
             typeof(RazorDirectiveBodySyntax)
         };
     }

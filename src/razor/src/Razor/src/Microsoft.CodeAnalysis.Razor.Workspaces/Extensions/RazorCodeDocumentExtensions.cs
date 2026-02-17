@@ -61,7 +61,7 @@ internal static partial class RazorCodeDocumentExtensions
         var csharpDoc = codeDocument.GetRequiredCSharpDocument();
 
         // We want to find the min and max C# source mapping that corresponds with our Razor range.
-        foreach (var mapping in csharpDoc.SourceMappings)
+        foreach (var mapping in csharpDoc.SourceMappingsSortedByOriginal)
         {
             var mappedTextSpan = mapping.OriginalSpan.AsTextSpan();
 
@@ -77,6 +77,11 @@ internal static partial class RazorCodeDocumentExtensions
                 {
                     maxGeneratedSpan = mapping.GeneratedSpan;
                 }
+            }
+            else if (mappedTextSpan.Start > textSpan.End)
+            {
+                // This span (and all following) are after the area we're interested in
+                break;
             }
         }
 

@@ -209,6 +209,13 @@ extends:
                   PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
                   ArtifactName: TestResults
                 condition: failed()
+              
+              # Remove generated test projects from the compatibility matrix because they use older versions of our packages
+              # and some of them use dependencies that are now vulnerable.
+              # We don't depend on those vulnerable versions anymore, but need to keep restoring them to ensure backwards compatibility.
+              - pwsh: |
+                  Remove-Item -Path $(Build.SourcesDirectory)/artifacts/tmp/GeneratedTestAssets -Recurse -Force
+                displayName: Remove artifacts/tmp/GeneratedTestAssets
 
             - task: 1ES.PublishBuildArtifacts@1
               displayName: 'Publish VSSetup'
@@ -256,6 +263,13 @@ extends:
                   displayName: Test
                   env:
                     DOTNET_ROOT: $(Build.SourcesDirectory)/.dotnet
+                
+                # Remove generated test projects from the compatibility matrix because they use older versions of our packages
+                # and some of them use dependencies that are now vulnerable.
+                # We don't depend on those vulnerable versions anymore, but need to keep restoring them to ensure backwards compatibility.
+                - pwsh: |
+                    Remove-Item -Path $(Build.SourcesDirectory)/artifacts/tmp/GeneratedTestAssets -Recurse -Force
+                  displayName: Remove artifacts/tmp/GeneratedTestAssets
 
                 # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
                 # through the console or trx

@@ -69,6 +69,7 @@
     <Project Path="src/Razor/test/Microsoft.VisualStudio.LanguageServices.Razor.Test/Microsoft.VisualStudio.LanguageServices.Razor.Test.csproj" />
     <Project Path="src/Razor/test/Microsoft.VisualStudio.LegacyEditor.Razor.Test/Microsoft.VisualStudio.LegacyEditor.Razor.Test.csproj" />
     <Project Path="src/Razor/test/Microsoft.VisualStudio.Razor.IntegrationTests/Microsoft.VisualStudio.Razor.IntegrationTests.csproj" />
+    <Project Path="src/Razor/test/Microsoft.VisualStudioCode.Razor.IntegrationTests/Microsoft.VisualStudioCode.Razor.IntegrationTests.csproj" />
     <Project Path="src/Razor/test/Microsoft.VisualStudioCode.RazorExtension.Test/Microsoft.VisualStudioCode.RazorExtension.Test.csproj" />
   </Folder>
   <Folder Name="/Tooling/">

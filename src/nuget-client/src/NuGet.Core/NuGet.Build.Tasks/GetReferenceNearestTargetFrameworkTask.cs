@@ -43,6 +43,11 @@ namespace NuGet.Build.Tasks
 
 
         /// <summary>
+        /// The value of the current project's TargetFramework property.
+        /// </summary>
+        public string CurrentProjectTargetFrameworkProperty { get; set; }
+
+        /// <summary>
         /// Optional list of target frameworks to be used as Fallback target frameworks.
         /// </summary>
         public string[] FallbackTargetFrameworks { get; set; }
@@ -153,7 +158,7 @@ namespace NuGet.Build.Tasks
 
             var packageSpec = new PackageSpec(targetFrameworkInformations);
 
-            var nearestNuGetFramework = packageSpec.GetTargetFramework(projectNuGetFramework);
+            var nearestNuGetFramework = packageSpec.GetNearestTargetFramework(projectNuGetFramework, CurrentProjectTargetFrameworkProperty);
 
             if (nearestNuGetFramework.FrameworkName != null)
             {
@@ -164,7 +169,7 @@ namespace NuGet.Build.Tasks
             // try project fallback frameworks
             foreach (var currentProjectTargetFramework in fallbackNuGetFrameworks)
             {
-                nearestNuGetFramework = packageSpec.GetTargetFramework(currentProjectTargetFramework);
+                nearestNuGetFramework = packageSpec.GetNearestTargetFramework(currentProjectTargetFramework, targetAlias: null);
 
                 if (nearestNuGetFramework.FrameworkName != null)
                 {

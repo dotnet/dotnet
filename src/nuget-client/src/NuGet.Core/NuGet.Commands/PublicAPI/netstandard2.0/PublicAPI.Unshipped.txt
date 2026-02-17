@@ -1,1 +1,2 @@
 #nullable enable
+~NuGet.Commands.SourceRepositoryDependencyProvider.FindLibraryAsync(NuGet.LibraryModel.LibraryRange! libraryRange, NuGet.Frameworks.NuGetFramework! targetFramework, string! targetAlias, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.LibraryModel.LibraryIdentity!>!

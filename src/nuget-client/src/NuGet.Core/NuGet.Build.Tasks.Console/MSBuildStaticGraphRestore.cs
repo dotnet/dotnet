@@ -25,6 +25,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Graph;
 using Microsoft.Build.Logging;
 using NuGet.Commands;
+using NuGet.Commands.Restore;
 using NuGet.Commands.Restore.Utility;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -567,6 +568,23 @@ namespace NuGet.Build.Tasks.Console
         }
 
         /// <summary>
+        /// Gets the .NET SDK version. If not specified, it will return null.
+        /// </summary>
+        /// <param name="project">The <see cref="ITargetFramework" /> representing the project.</param>
+        /// <returns>The <see cref="NuGetVersion" /> of the .NET SDK if one was found, otherwise <see langword="null">null</see>.</returns>
+        internal static NuGetVersion GetSdkVersion(IMSBuildItem project)
+        {
+            string version = project.GetProperty("NETCoreSdkVersion");
+
+            if (version == null)
+            {
+                return null;
+            }
+
+            return NuGetVersion.Parse(version);
+        }
+
+        /// <summary>
         /// Gets the repository path for the specified project.
         /// </summary>
         /// <param name="project">The <see cref="IMSBuildItem" /> representing the project.</param>
@@ -975,7 +993,11 @@ namespace NuGet.Build.Tasks.Console
                         .Select(s => new CompatibilityProfile(s))
                         .ToList()
                     ),
-                Version = GetProjectVersion(project)
+                Version = GetProjectVersion(project),
+                RestoreSettings = new ProjectRestoreSettings()
+                {
+                    SdkVersion = GetSdkVersion(project)
+                }
             };
 
             return packageSpec;

@@ -376,7 +376,9 @@ namespace NuGet.ProjectModel.Test
   ""projectFileDependencyGroups"": {},
   ""project"": {
     ""frameworks"": {
-      ""dotnet"": {}
+      ""dotnet"": {
+        ""framework"": ""dotnet""
+        }
     }
   }
 }";
@@ -688,6 +690,7 @@ namespace NuGet.ProjectModel.Test
       ],
       ""frameworks"": {
         ""netcoreapp1.0"": {
+          ""framework"": ""netcoreapp1.0"",
           ""targetAlias"": ""netcoreapp10"",
           ""projectReferences"": {}
         }
@@ -695,6 +698,7 @@ namespace NuGet.ProjectModel.Test
     },
     ""frameworks"": {
       ""netcoreapp1.0"": {
+        ""framework"": ""netcoreapp1.0"",
         ""targetAlias"": ""netcoreapp10"",
         ""dependencies"": {
          ""Microsoft.NET.Sdk"": {

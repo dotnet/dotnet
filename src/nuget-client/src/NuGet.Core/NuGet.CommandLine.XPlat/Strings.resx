@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ApiKey_Description" xml:space="preserve">
-    <value>The API key for the server.</value>
+    <value>The API key for the server. If not set, the NUGET_API_KEY environment variable is read.</value>
   </data>
   <data name="App_FullName" xml:space="preserve">
     <value>NuGet Command Line</value>
@@ -180,7 +180,7 @@
     <value>Symbol server URL to use.</value>
   </data>
   <data name="SymbolApiKey_Description" xml:space="preserve">
-    <value>The API key for the symbol server.</value>
+    <value>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</value>
   </data>
   <data name="LocalsCommand_ArgumentDescription" xml:space="preserve">
     <value>Specifies the cache location(s) to list or clear.
@@ -1166,5 +1166,8 @@ Do not translate "PackageVersion"</comment>
     <value>Unable to download package '{0}'. PackageSourceMapping is enabled, but no mapped sources were found for this package. The following source(s) were not considered: {1}.</value>
     <comment>{0} = package ID 
 {1} = comma-separated list of all configured sources </comment>
+  </data>
+  <data name="WhyCommand_Error_InconsistentAssetsFile" xml:space="preserve">
+    <value>Internal error: Assets file is inconsistent</value>
   </data>
 </root>

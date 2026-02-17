@@ -156,10 +156,10 @@ stages:
             value: Release
         strategy:
           matrix:
-            Ubuntu_22_04:
+            ubuntu:
               vmImage: ubuntu-22.04
               pwsh: true
-            macOS_12:
+            macOS:
               vmImage: macos-14
               pwsh: true
         pool:

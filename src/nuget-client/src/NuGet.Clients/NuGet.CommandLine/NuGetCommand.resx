@@ -481,10 +481,10 @@ nuget update -Self</value>
     <value>Show verbose output while updating.</value>
   </data>
   <data name="CommandApiKey" xml:space="preserve">
-    <value>The API key for the server.</value>
+    <value>The API key for the server. If not set, the NUGET_API_KEY environment variable is read.</value>
   </data>
   <data name="SymbolApiKey" xml:space="preserve">
-    <value>The API key for the symbol server.</value>
+    <value>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</value>
   </data>
   <data name="DefaultConfigDescription" xml:space="preserve">
     <value>NuGet's default configuration is obtained by loading %AppData%\NuGet\NuGet.config, then loading any nuget.config or .nuget\nuget.config starting from root of drive and ending in current directory.</value>

@@ -58,6 +58,7 @@
     <!-- TODO: llvm-libunwind -->
     <BuildArgs Condition="$(UseSystemLibs.Contains('+rapidjson')) or $(UseSystemLibs.Contains('+all'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_RAPIDJSON=true</BuildArgs>
     <BuildArgs Condition="$(UseSystemLibs.Contains('+zlib')) or $(UseSystemLibs.Contains('+all'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_ZLIB=true</BuildArgs>
+    <BuildArgs Condition="$(UseSystemLibs.Contains('+zstd')) or $(UseSystemLibs.Contains('+all'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_ZSTD=true</BuildArgs>
     <BuildArgs Condition="$(UseSystemLibs.Contains('-lttng'))">$(BuildArgs) /p:FeatureXplatEventSource=false</BuildArgs>
   </PropertyGroup>
 

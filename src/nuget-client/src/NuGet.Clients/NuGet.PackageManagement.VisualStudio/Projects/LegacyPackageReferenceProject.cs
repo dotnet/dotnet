@@ -233,17 +233,21 @@ namespace NuGet.PackageManagement.VisualStudio
             string packageId,
             VersionRange range,
             INuGetProjectContext _,
-            BuildIntegratedInstallationContext __,
+            BuildIntegratedInstallationContext context,
             CancellationToken token)
         {
+            if (string.IsNullOrEmpty(packageId)) throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.Argument_Cannot_Be_Null_Or_Empty, nameof(packageId)));
+            if (range == null) throw new ArgumentNullException(nameof(range));
+            if (context == null) throw new ArgumentNullException(nameof(context));
+
             var dependency = new LibraryDependency()
             {
                 LibraryRange = new LibraryRange(
                     name: packageId,
                     versionRange: range,
                     typeConstraint: LibraryDependencyTarget.Package),
-                SuppressParent = __.SuppressParent,
-                IncludeType = __.IncludeType
+                SuppressParent = context.SuppressParent,
+                IncludeType = context.IncludeType
             };
 
             await ProjectServices.References.AddOrUpdatePackageReferenceAsync(dependency, token);

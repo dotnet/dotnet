@@ -678,6 +678,13 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <target state="translated">Локальные ресурсы частично удалены.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Log_AliasingSupportedInNewDependencyResolver">
+        <source>The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
+Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</source>
+        <target state="translated">Проект {0} пытается восстановить дублирующиеся платформы, которые поддерживаются только в стандартном сопоставителе зависимостей при версии пакета SDK для .NET {1} или более поздней.
+Обновите пакет SDK для .NET или удалите RestoreUseLegacyDependencyResolver, чтобы использовать эту функцию.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Log_AllProjectsUpToDate">
         <source>All projects are up-to-date for restore.</source>
         <target state="translated">Все проекты обновлены для восстановления.</target>
@@ -1257,9 +1264,9 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <target state="translated">Указана недопустимая версия протокола. Допустимые версии протокола: от {0} до {1}.</target>
         <note />
       </trans-unit>
-      <trans-unit id="SpecValidationDuplicateFrameworks">
-        <source>Duplicate frameworks found: '{0}'.</source>
-        <target state="translated">Платформы дублируются: "{0}".</target>
+      <trans-unit id="SpecValidationDuplicateTargetAlias">
+        <source>The TargetFramework property must be unique. List of TargetFramework properties: {0}.</source>
+        <target state="translated">Свойство TargetFramework должно быть уникальным. Список свойств TargetFramework: {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecValidationInvalidFramework">
@@ -1275,11 +1282,6 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       <trans-unit id="SpecValidationNoFrameworks">
         <source>No target frameworks specified.</source>
         <target state="translated">Целевые платформы не указаны.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="SpecValidationUAPSingleFramework">
-        <source>UAP projects must contain exactly one target framework.</source>
-        <target state="translated">В проектах универсальной платформы приложений (UAP) должна быть только одна целевая платформа.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecValidationZeroRestoreRequests">

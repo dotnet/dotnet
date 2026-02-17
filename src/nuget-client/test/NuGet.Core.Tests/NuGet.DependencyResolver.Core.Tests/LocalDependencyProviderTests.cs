@@ -88,7 +88,8 @@ namespace NuGet.DependencyResolver.Tests
 
             dependencyProvider.Setup(x => x.GetLibrary(
                     It.IsNotNull<LibraryRange>(),
-                    It.IsNotNull<NuGetFramework>()))
+                    It.IsNotNull<NuGetFramework>(),
+                    It.IsAny<string>()))
                 .Returns<Library>(null);
 
             var provider = new LocalDependencyProvider(dependencyProvider.Object);
@@ -119,7 +120,8 @@ namespace NuGet.DependencyResolver.Tests
 
             dependencyProvider.Setup(x => x.GetLibrary(
                     It.IsNotNull<LibraryRange>(),
-                    It.IsNotNull<NuGetFramework>()))
+                    It.IsNotNull<NuGetFramework>(),
+                    It.IsAny<string>()))
                 .Returns(library);
 
             var provider = new LocalDependencyProvider(dependencyProvider.Object);
@@ -194,7 +196,8 @@ namespace NuGet.DependencyResolver.Tests
 
             dependencyProvider.Setup(x => x.GetLibrary(
                     It.IsNotNull<LibraryRange>(),
-                    It.IsNotNull<NuGetFramework>()))
+                    It.IsNotNull<NuGetFramework>(),
+                    It.IsAny<string>()))
                 .Returns(library);
 
             var provider = new LocalDependencyProvider(dependencyProvider.Object);

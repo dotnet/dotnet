@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using FluentAssertions;
 using NuGet.Commands.Test;
 using NuGet.Frameworks;
@@ -31,23 +30,17 @@ namespace NuGet.PackageManagement.Test
                         }
                     }
                 }";
-            Dictionary<NuGetFramework, string> originalFrameworks = new()
-            {
-                { FrameworkConstants.CommonFrameworks.Net472, "net472" },
-                { FrameworkConstants.CommonFrameworks.Net50, "net50" }
-            };
 
             var originalPackageSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("project", @"C:\", referenceSpec);
 
             // Act
-            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", originalPackageSpec, originalPackageSpec, unsuccessfulFrameworks: new(), originalFrameworks);
+            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", originalPackageSpec, originalPackageSpec, unsuccessfulFrameworks: new());
 
             // Assert
-            buildIntegrationInstallationContext.OriginalFrameworks.Should().Equal(originalFrameworks);
             buildIntegrationInstallationContext.SuccessfulFrameworks.Should().HaveCount(2);
             buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().HaveCount(0);
-            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net50);
-            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472);
+            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net50.GetShortFolderName());
+            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472.GetShortFolderName());
             buildIntegrationInstallationContext.AreAllPackagesConditional.Should().BeFalse();
         }
 
@@ -71,23 +64,17 @@ namespace NuGet.PackageManagement.Test
                         }
                     }
                 }";
-            Dictionary<NuGetFramework, string> originalFrameworks = new()
-            {
-                { FrameworkConstants.CommonFrameworks.Net472, "net472" },
-                { FrameworkConstants.CommonFrameworks.Net50, "net50" }
-            };
 
             var originalPackageSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("project", @"C:\", referenceSpec);
 
             // Act
-            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", originalPackageSpec, originalPackageSpec, unsuccessfulFrameworks: new(), originalFrameworks);
+            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", originalPackageSpec, originalPackageSpec, unsuccessfulFrameworks: new());
 
             // Assert
-            buildIntegrationInstallationContext.OriginalFrameworks.Should().Equal(originalFrameworks);
             buildIntegrationInstallationContext.SuccessfulFrameworks.Should().HaveCount(1);
             buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().HaveCount(1);
-            buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net50);
-            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472);
+            buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net50.GetShortFolderName());
+            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472.GetShortFolderName());
             buildIntegrationInstallationContext.AreAllPackagesConditional.Should().BeFalse();
         }
 
@@ -110,23 +97,17 @@ namespace NuGet.PackageManagement.Test
                         }
                     }
                 }";
-            Dictionary<NuGetFramework, string> originalFrameworks = new()
-            {
-                { FrameworkConstants.CommonFrameworks.Net472, "net472" },
-                { FrameworkConstants.CommonFrameworks.Net50, "net50" }
-            };
 
             var originalPackageSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("project", @"C:\", referenceSpec);
 
             // Act
-            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", originalPackageSpec, originalPackageSpec, unsuccessfulFrameworks: new() { FrameworkConstants.CommonFrameworks.Net472 }, originalFrameworks);
+            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", originalPackageSpec, originalPackageSpec, unsuccessfulFrameworks: new() { FrameworkConstants.CommonFrameworks.Net472.GetShortFolderName() });
 
             // Assert
-            buildIntegrationInstallationContext.OriginalFrameworks.Should().Equal(originalFrameworks);
             buildIntegrationInstallationContext.SuccessfulFrameworks.Should().HaveCount(0);
             buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().HaveCount(2);
-            buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net50);
-            buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472);
+            buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net50.GetShortFolderName());
+            buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472.GetShortFolderName());
             buildIntegrationInstallationContext.AreAllPackagesConditional.Should().BeFalse();
         }
 
@@ -150,23 +131,17 @@ namespace NuGet.PackageManagement.Test
                         }
                     }
                 }";
-            Dictionary<NuGetFramework, string> originalFrameworks = new()
-            {
-                { FrameworkConstants.CommonFrameworks.Net472, "net472" },
-                { FrameworkConstants.CommonFrameworks.Net50, "net50" }
-            };
 
             var originalPackageSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("project", @"C:\", referenceSpec);
 
             // Act
-            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", originalPackageSpec, originalPackageSpec, unsuccessfulFrameworks: new() { FrameworkConstants.CommonFrameworks.Net50 }, originalFrameworks);
+            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", originalPackageSpec, originalPackageSpec, unsuccessfulFrameworks: new() { FrameworkConstants.CommonFrameworks.Net50.GetShortFolderName() });
 
             // Assert
-            buildIntegrationInstallationContext.OriginalFrameworks.Should().Equal(originalFrameworks);
             buildIntegrationInstallationContext.SuccessfulFrameworks.Should().HaveCount(1);
             buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().HaveCount(1);
-            buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net50);
-            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472);
+            buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net50.GetShortFolderName());
+            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472.GetShortFolderName());
             buildIntegrationInstallationContext.AreAllPackagesConditional.Should().BeFalse();
         }
 
@@ -190,23 +165,17 @@ namespace NuGet.PackageManagement.Test
                         }
                     }
                 }";
-            Dictionary<NuGetFramework, string> originalFrameworks = new()
-            {
-                { FrameworkConstants.CommonFrameworks.Net472, "net472" },
-                { FrameworkConstants.CommonFrameworks.Net50, "net50" }
-            };
 
             var originalPackageSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("project", @"C:\", referenceSpec);
 
             // Act
-            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", originalPackageSpec, originalPackageSpec, unsuccessfulFrameworks: new(), originalFrameworks);
+            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", originalPackageSpec, originalPackageSpec, unsuccessfulFrameworks: new());
 
             // Assert
-            buildIntegrationInstallationContext.OriginalFrameworks.Should().Equal(originalFrameworks);
             buildIntegrationInstallationContext.SuccessfulFrameworks.Should().HaveCount(2);
             buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().HaveCount(0);
-            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net50);
-            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472);
+            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net50.GetShortFolderName());
+            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472.GetShortFolderName());
             buildIntegrationInstallationContext.AreAllPackagesConditional.Should().BeTrue();
         }
 
@@ -249,23 +218,17 @@ namespace NuGet.PackageManagement.Test
                         }
                     }
                 }";
-            Dictionary<NuGetFramework, string> originalFrameworks = new()
-            {
-                { FrameworkConstants.CommonFrameworks.Net472, "net472" },
-                { FrameworkConstants.CommonFrameworks.Net50, "net50" }
-            };
 
             var resultingPackageSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("project", @"C:\", referenceSpec);
 
             // Act
-            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", resultingPackageSpec, originalPackageSpec, unsuccessfulFrameworks: new(), originalFrameworks);
+            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", resultingPackageSpec, originalPackageSpec, unsuccessfulFrameworks: new());
 
             // Assert
-            buildIntegrationInstallationContext.OriginalFrameworks.Should().Equal(originalFrameworks);
             buildIntegrationInstallationContext.SuccessfulFrameworks.Should().HaveCount(2);
             buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().HaveCount(0);
-            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net50);
-            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472);
+            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net50.GetShortFolderName());
+            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472.GetShortFolderName());
             buildIntegrationInstallationContext.AreAllPackagesConditional.Should().BeTrue();
         }
 
@@ -296,21 +259,16 @@ namespace NuGet.PackageManagement.Test
                         }
                     }
                 }";
-            Dictionary<NuGetFramework, string> originalFrameworks = new()
-            {
-                { FrameworkConstants.CommonFrameworks.Net472, "net472" }
-            };
 
             var resultingPackageSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("project", @"C:\", referenceSpec);
 
             // Act
-            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "A", resultingPackageSpec, originalPackageSpec, unsuccessfulFrameworks: new(), originalFrameworks);
+            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "A", resultingPackageSpec, originalPackageSpec, unsuccessfulFrameworks: new());
 
             // Assert
-            buildIntegrationInstallationContext.OriginalFrameworks.Should().Equal(originalFrameworks);
             buildIntegrationInstallationContext.SuccessfulFrameworks.Should().HaveCount(1);
             buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().HaveCount(0);
-            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472);
+            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472.GetShortFolderName());
             buildIntegrationInstallationContext.AreAllPackagesConditional.Should().BeFalse();
         }
     }

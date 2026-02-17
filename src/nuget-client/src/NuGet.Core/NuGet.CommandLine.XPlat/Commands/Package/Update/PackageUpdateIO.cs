@@ -134,14 +134,12 @@ internal class PackageUpdateIO : IPackageUpdateIO, IDisposable
                 new DependencyGraphSpecRequestProvider(providerCache, dgSpec)
             };
 
-        var globalPackagesFolder = dgSpec.GetProjectSpec(dgSpec.Restore.First()).RestoreMetadata.PackagesPath;
 
         var restoreContext = new RestoreArgs()
         {
             CacheContext = _sourceCacheContext,
             Log = restoreLogger,
             MachineWideSettings = new XPlatMachineWideSetting(),
-            GlobalPackagesFolder = globalPackagesFolder,
             PreLoadedRequestProviders = providers
             // Sources : No need to pass it, because SourceRepositories contains the already built SourceRepository objects
         };

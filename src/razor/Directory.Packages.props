@@ -62,6 +62,7 @@
     <PackageVersion Include="Microsoft.Internal.VisualStudio.Shell.Framework" Version="$(_MicrosoftVisualStudioShellPackagesVersion)" />
     <PackageVersion Include="Microsoft.Internal.VisualStudio.Interop" Version="$(_MicrosoftVisualStudioShellPackagesVersion)" />
     <PackageVersion Include="Microsoft.NET.Sdk.Razor" Version="$(MicrosoftNETSdkRazorPackageVersion)" />
+    <PackageVersion Include="Microsoft.Playwright" Version="1.49.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Copilot" Version="0.2.28-beta" />
     <PackageVersion Include="Microsoft.VisualStudio.Editor" Version="$(_MicrosoftVisualStudioPackagesVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Extensibility.Testing.Xunit" Version="$(MicrosoftVisualStudioExtensibilityTestingXunitPackageVersion)" />

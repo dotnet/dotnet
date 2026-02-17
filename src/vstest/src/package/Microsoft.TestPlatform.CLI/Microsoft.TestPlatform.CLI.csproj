@@ -23,7 +23,6 @@
   <ItemGroup Label="NuGet">
     <NuspecProperty Include="SrcPackageFolder=$(SrcPackageFolder)" />
     <NuspecProperty Include="TesthostRuntimeconfig=$(RepoRoot)temp\testhost" />
-    <NuspecProperty Include="SourceBuildTfmPrevious=$(NetPrevious)" />
     <NuspecProperty Include="SourceBuildTfmCurrent=$(NetCurrent)" />
   </ItemGroup>
 

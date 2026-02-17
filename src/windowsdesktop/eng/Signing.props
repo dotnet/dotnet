@@ -10,7 +10,8 @@
 
   <!-- Include installers -->
   <ItemGroup>
-    <Artifact Include="$(ArtifactsPackagesDir)**\*.zip;
+    <Artifact Include="$(ArtifactsPackagesDir)**\*.tar.gz;
+                       $(ArtifactsPackagesDir)**\*.zip;
                        $(ArtifactsPackagesDir)**\*.exe;
                        $(ArtifactsPackagesDir)**\*.msi"
               Kind="Blob"

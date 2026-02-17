@@ -12,6 +12,7 @@ namespace NuGet.ProjectModel
         internal static readonly Utf8JsonStreamLockFileTargetLibraryConverter LockFileTargetLibraryConverter = new Utf8JsonStreamLockFileTargetLibraryConverter();
         internal static readonly Utf8JsonStreamLockFileLibraryConverter LockFileLibraryConverter = new Utf8JsonStreamLockFileLibraryConverter();
         internal static readonly Utf8JsonStreamLockFileTargetConverter LockFileTargetConverter = new Utf8JsonStreamLockFileTargetConverter();
+        internal static readonly Utf8JsonStreamLockFileTargetConverterV4 LockFileTargetConverterV4 = new Utf8JsonStreamLockFileTargetConverterV4();
         internal static readonly Utf8JsonStreamProjectFileDependencyGroupConverter ProjectFileDepencencyGroupConverter = new Utf8JsonStreamProjectFileDependencyGroupConverter();
         internal static readonly Utf8JsonStreamIAssetsLogMessageConverter IAssetsLogMessageConverter = new Utf8JsonStreamIAssetsLogMessageConverter();
     }

@@ -3077,13 +3077,9 @@ namespace NuGet.PackageManagement
                     .Result
                     .CompatibilityCheckResults
                     .Where(t => !t.Success)
-                    .Select(t => t.Graph.Framework)
+                    .Select(t => t.Graph.TargetAlias ?? string.Empty)
                     .Distinct()
                     .ToList();
-
-                var originalFrameworks = updatedPackageSpec
-                    .TargetFrameworks
-                    .ToDictionary(x => x.FrameworkName, x => x.TargetAlias);
 
                 List<(NuGetProjectAction, BuildIntegratedInstallationContext)> projectActionsAndInstallationContexts = new(nuGetProjectActions.Length);
 
@@ -3096,7 +3092,7 @@ namespace NuGet.PackageManagement
                         NuGetProjectActionType.Uninstall => originalPackageSpec,
                         _ => throw new InvalidOperationException("Unknown NuGetProjectActionType"),
                     };
-                    BuildIntegratedInstallationContext installationContext = CreateInstallationContextForPackageId(action.PackageIdentity.Id, referencePackageSpec, originalPackageSpec, unsuccessfulFrameworks, originalFrameworks);
+                    BuildIntegratedInstallationContext installationContext = CreateInstallationContextForPackageId(action.PackageIdentity.Id, referencePackageSpec, originalPackageSpec, unsuccessfulFrameworks);
                     projectActionsAndInstallationContexts.Add((action, installationContext));
                 }
 
@@ -3190,18 +3186,18 @@ namespace NuGet.PackageManagement
         /// The "successful" frameworks are the ones that contain the package and are not part of the failed list.
         /// The "unsuccessful" frameworks are the ones that never had the package or are part of the unsuccessful list.
         /// </summary>>
-        internal static BuildIntegratedInstallationContext CreateInstallationContextForPackageId(string packageIdentityId, PackageSpec packageSpec, PackageSpec originalPackageSpec, List<NuGetFramework> unsuccessfulFrameworks, Dictionary<NuGetFramework, string> originalFrameworks)
+        internal static BuildIntegratedInstallationContext CreateInstallationContextForPackageId(string packageIdentityId, PackageSpec packageSpec, PackageSpec originalPackageSpec, List<string> unsuccessfulFrameworks)
         {
             var frameworksWithResultingPackage = packageSpec
                 .TargetFrameworks
                 .Where(e => e.Dependencies.Any(a => string.Equals(a.Name, packageIdentityId, StringComparison.OrdinalIgnoreCase)))
-                .Select(e => e.FrameworkName)
+                .Select(e => e.TargetAlias ?? string.Empty)
                 .Distinct();
 
             var frameworksWithoutResultingPackage = packageSpec
                 .TargetFrameworks
                 .Where(e => !e.Dependencies.Any(a => string.Equals(a.Name, packageIdentityId, StringComparison.OrdinalIgnoreCase)))
-                .Select(e => e.FrameworkName)
+                .Select(e => e.TargetAlias ?? string.Empty)
                 .Distinct();
 
             var successfulFrameworksWithPackage = frameworksWithResultingPackage
@@ -3210,11 +3206,12 @@ namespace NuGet.PackageManagement
 
             var areAllPackagesConditional = DoesPackageAppearWithDifferentVersions(packageIdentityId, originalPackageSpec);
 
-            return new BuildIntegratedInstallationContext(
-                successfulFrameworksWithPackage,
-                unsuccessfulFrameworks.Union(frameworksWithoutResultingPackage).Distinct(),
-                originalFrameworks,
-                areAllPackagesConditional);
+            return new BuildIntegratedInstallationContext()
+            {
+                SuccessfulFrameworks = successfulFrameworksWithPackage,
+                UnsuccessfulFrameworks = unsuccessfulFrameworks.Union(frameworksWithoutResultingPackage).Distinct().ToList(),
+                AreAllPackagesConditional = areAllPackagesConditional
+            };
         }
 
         private static bool DoesPackageAppearWithDifferentVersions(string packageIdentityId, PackageSpec packageSpec)
@@ -3335,7 +3332,11 @@ namespace NuGet.PackageManagement
                                 originalAction.PackageIdentity);
 
                             var framework = installationContext.SuccessfulFrameworks.First();
-                            var resolvedAction = projectAction.RestoreResult.LockFile.PackageSpec.TargetFrameworks.FirstOrDefault(fm => fm.FrameworkName.Equals(framework))
+
+                            TargetFrameworkInformation matchingTfi = projectAction.RestoreResult.LockFile.PackageSpec.TargetFrameworks.Count == 1 ?
+                                projectAction.RestoreResult.LockFile.PackageSpec.TargetFrameworks[0] :
+                                projectAction.RestoreResult.LockFile.PackageSpec.TargetFrameworks.FirstOrDefault(fm => fm.TargetAlias.Equals(framework));
+                            var resolvedAction = matchingTfi
                                 .Dependencies.First(dependency => dependency.Name.Equals(originalAction.PackageIdentity.Id, StringComparison.OrdinalIgnoreCase));
 
                             installationContext.SuppressParent = resolvedAction.SuppressParent;

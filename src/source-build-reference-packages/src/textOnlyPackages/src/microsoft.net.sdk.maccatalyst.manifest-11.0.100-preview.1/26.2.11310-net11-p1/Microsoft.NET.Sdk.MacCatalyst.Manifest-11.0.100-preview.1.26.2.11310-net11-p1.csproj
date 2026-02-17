@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>26.2.11310-net11-p1</PackageVersion>
+    <AssemblyName>Microsoft.NET.Sdk.MacCatalyst.Manifest-11.0.100-preview.1</AssemblyName>
+  </PropertyGroup>
+
+</Project>

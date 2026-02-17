@@ -58,17 +58,14 @@ namespace NuGet.ProjectModel
                 bool thisEmpty = _properties == null || _properties.Count == 0;
                 bool otherEmpty = other._properties == null || other._properties.Count == 0;
 
-                if (thisEmpty && otherEmpty)
-                {
-                    return true;
-                }
-
                 if (thisEmpty || otherEmpty)
                 {
-                    return false;
+                    return thisEmpty && otherEmpty;
                 }
-
-                return _properties.OrderedEquals(other._properties, pair => pair.Key, StringComparer.Ordinal);
+                else
+                {
+                    return _properties.OrderedEquals(other._properties, pair => pair.Key, StringComparer.Ordinal);
+                }
             }
 
             return false;

@@ -68,11 +68,13 @@ namespace NuGet.Commands.Test
             var targetFrameworkInfo = libraryRange == null ?
                 new TargetFrameworkInformation()
                 {
-                    FrameworkName = NuGetFramework.Parse(framework)
+                    FrameworkName = NuGetFramework.Parse(framework),
+                    TargetAlias = framework,
                 } :
                 new TargetFrameworkInformation()
                 {
                     FrameworkName = NuGetFramework.Parse(framework),
+                    TargetAlias = framework,
                     Dependencies = [new LibraryDependency() { LibraryRange = libraryRange }]
                 };
 

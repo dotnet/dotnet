@@ -479,7 +479,7 @@ public abstract class IntegrationTestBase
             {
                 // For now we don't verify whitespace inside of a directive. We know that directives cheat
                 // with how they bound whitespace/C#/markup to make completion work.
-                if (span.FirstAncestorOrSelf<RazorDirectiveSyntax>() != null)
+                if (span.FirstAncestorOrSelf<BaseRazorDirectiveSyntax>() != null)
                 {
                     continue;
                 }
@@ -503,7 +503,7 @@ public abstract class IntegrationTestBase
             }
 
             var found = false;
-            foreach (var mapping in csharpDocument.SourceMappings)
+            foreach (var mapping in csharpDocument.SourceMappingsSortedByOriginal)
             {
                 if (mapping.OriginalSpan == sourceSpan)
                 {
@@ -517,6 +517,11 @@ public abstract class IntegrationTestBase
                     }
 
                     found = true;
+                    break;
+                }
+                else if (mapping.OriginalSpan.CompareByStartThenLength(sourceSpan) > 0)
+                {
+                    // This span (and all following) are after the area we're interested in
                     break;
                 }
             }
@@ -691,6 +696,18 @@ public abstract class IntegrationTestBase
             }
 
             return base.VisitCSharpStatement(node);
+        }
+
+        public override Syntax.SyntaxNode VisitRazorUsingDirective(RazorUsingDirectiveSyntax node)
+        {
+            if (node.FirstAncestorOrSelf<MarkupTagHelperAttributeValueSyntax>() != null)
+            {
+                // We don't support Razor directives inside tag helper attribute values.
+                // If it exists, we don't want to track its code spans for source mappings.
+                return node;
+            }
+
+            return base.VisitRazorUsingDirective(node);
         }
 
         public override Syntax.SyntaxNode VisitRazorDirective(RazorDirectiveSyntax node)

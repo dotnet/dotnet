@@ -1,1 +1,7 @@
 #nullable enable
+static NuGet.ProjectModel.PackageSpecExtensions.GetNearestTargetFramework(this NuGet.ProjectModel.PackageSpec! project, NuGet.Frameworks.NuGetFramework! targetFramework, string? targetAlias) -> NuGet.ProjectModel.TargetFrameworkInformation!
+const NuGet.ProjectModel.LockFileFormat.AliasedVersion = 4 -> int
+const NuGet.ProjectModel.LockFileFormat.LegacyVersion = 3 -> int
+~NuGet.ProjectModel.PackageSpecReferenceDependencyProvider.GetLibrary(NuGet.LibraryModel.LibraryRange libraryRange, NuGet.Frameworks.NuGetFramework targetFramework, string alias) -> NuGet.LibraryModel.Library
+~static NuGet.ProjectModel.PackageSpecOperations.AddOrUpdateDependency(NuGet.ProjectModel.PackageSpec spec, NuGet.Packaging.Core.PackageDependency dependency, System.Collections.Generic.IEnumerable<string> frameworksToAdd) -> void
+~static NuGet.ProjectModel.PackageSpecOperations.AddOrUpdateDependency(NuGet.ProjectModel.PackageSpec spec, NuGet.Packaging.Core.PackageIdentity identity, System.Collections.Generic.IEnumerable<string> frameworksToAdd) -> void

@@ -156,7 +156,7 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
         var linePragmas = csharpDocument.LinePragmas;
         if (DesignTime)
         {
-            var sourceMappings = csharpDocument.SourceMappings;
+            var sourceMappings = csharpDocument.SourceMappingsSortedByOriginal;
             foreach (var sourceMapping in sourceMappings)
             {
                 var content = codeDocument.Source.Text.GetSubText(new TextSpan(sourceMapping.OriginalSpan.AbsoluteIndex, sourceMapping.OriginalSpan.Length)).ToString();

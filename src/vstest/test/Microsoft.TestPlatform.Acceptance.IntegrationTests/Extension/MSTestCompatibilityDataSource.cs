@@ -10,7 +10,7 @@ public class MSTestCompatibilityDataSource : TestDataSourceAttribute<RunnerInfo>
     private readonly CompatibilityRowsBuilder _builder;
 
     public MSTestCompatibilityDataSource(
-        string runnerFrameworks = AcceptanceTestBase.DEFAULT_HOST_NETFX_AND_NET,
+        string runnerFrameworks = AcceptanceTestBase.DEFAULT_RUNNER_NETFX_AND_NET,
         string hostFrameworks = AcceptanceTestBase.DEFAULT_HOST_NETFX_AND_NET,
         string adapterVersions = AcceptanceTestBase.LATESTPREVIEW_TO_LEGACY)
     {

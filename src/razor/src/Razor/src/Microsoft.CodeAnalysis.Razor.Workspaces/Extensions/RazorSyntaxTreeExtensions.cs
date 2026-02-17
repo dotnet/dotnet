@@ -12,38 +12,40 @@ namespace Microsoft.AspNetCore.Razor.Language;
 internal static class RazorSyntaxTreeExtensions
 {
     public static ImmutableArray<RazorDirectiveSyntax> GetSectionDirectives(this RazorSyntaxTree syntaxTree)
-        => GetDirectives(syntaxTree, static d => d.IsSectionDirective());
+        => GetDirectives<RazorDirectiveSyntax>(syntaxTree, static d => d.IsSectionDirective());
 
     public static ImmutableArray<RazorDirectiveSyntax> GetCodeBlockDirectives(this RazorSyntaxTree syntaxTree)
-        => GetDirectives(syntaxTree, static d => d.IsCodeBlockDirective());
+        => GetDirectives<RazorDirectiveSyntax>(syntaxTree, static d => d.IsCodeBlockDirective());
 
-    public static ImmutableArray<RazorDirectiveSyntax> GetUsingDirectives(this RazorSyntaxTree syntaxTree)
-        => GetDirectives(syntaxTree, static d => d.IsUsingDirective());
+    public static ImmutableArray<RazorUsingDirectiveSyntax> GetUsingDirectives(this RazorSyntaxTree syntaxTree)
+        => GetDirectives<RazorUsingDirectiveSyntax>(syntaxTree);
 
-    public static ImmutableArray<RazorDirectiveSyntax> GetDirectives(
-        this RazorSyntaxTree syntaxTree, Func<RazorDirectiveSyntax, bool>? predicate = null)
+    public static ImmutableArray<TDirective> GetDirectives<TDirective>(
+        this RazorSyntaxTree syntaxTree, Func<TDirective, bool>? predicate = null)
+        where TDirective : BaseRazorDirectiveSyntax
     {
-        using var builder = new PooledArrayBuilder<RazorDirectiveSyntax>();
+        using var builder = new PooledArrayBuilder<TDirective>();
         builder.AddRange(EnumerateDirectives(syntaxTree, predicate));
 
         return builder.ToImmutable();
     }
 
     public static IEnumerable<RazorDirectiveSyntax> EnumerateSectionDirectives(this RazorSyntaxTree syntaxTree)
-        => EnumerateDirectives(syntaxTree, static d => d.IsSectionDirective());
+        => EnumerateDirectives<RazorDirectiveSyntax>(syntaxTree, static d => d.IsSectionDirective());
 
     public static IEnumerable<RazorDirectiveSyntax> EnumerateCodeBlockDirectives(this RazorSyntaxTree syntaxTree)
-        => EnumerateDirectives(syntaxTree, static d => d.IsCodeBlockDirective());
+        => EnumerateDirectives<RazorDirectiveSyntax>(syntaxTree, static d => d.IsCodeBlockDirective());
 
-    public static IEnumerable<RazorDirectiveSyntax> EnumerateUsingDirectives(this RazorSyntaxTree syntaxTree)
-        => EnumerateDirectives(syntaxTree, static d => d.IsUsingDirective());
+    public static IEnumerable<RazorUsingDirectiveSyntax> EnumerateUsingDirectives(this RazorSyntaxTree syntaxTree)
+        => EnumerateDirectives<RazorUsingDirectiveSyntax>(syntaxTree);
 
-    public static IEnumerable<RazorDirectiveSyntax> EnumerateDirectives(
-        this RazorSyntaxTree syntaxTree, Func<RazorDirectiveSyntax, bool>? predicate = null)
+    public static IEnumerable<TDirective> EnumerateDirectives<TDirective>(
+        this RazorSyntaxTree syntaxTree, Func<TDirective, bool>? predicate = null)
+        where TDirective : BaseRazorDirectiveSyntax
     {
         foreach (var node in syntaxTree.Root.DescendantNodes(MayContainDirectives))
         {
-            if (node is RazorDirectiveSyntax directive && (predicate == null || predicate(directive)))
+            if (node is TDirective directive && (predicate == null || predicate(directive)))
             {
                 yield return directive;
             }

@@ -30,12 +30,14 @@
     },
     "frameworks": {
       "frameworkidentifier123-frameworkprofile": {
+        "framework": "frameworkidentifier123-frameworkprofile",
         "projectReferences": {}
       }
     }
   },
   "frameworks": {
     "frameworkidentifier123-frameworkprofile": {
+      "framework": "frameworkidentifier123-frameworkprofile",
       "dependencies": {
         "library": {
           "include": "Build",
@@ -57,6 +59,7 @@
       ]
     },
     "frameworkidentifierwithnowarn125-frameworkprofilewithnowarn": {
+      "framework": "frameworkidentifierwithnowarn125-frameworkprofilewithnowarn",
       "dependencies": {
         "library": {
           "include": "Build",

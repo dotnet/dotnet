@@ -83,8 +83,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ApiKey_Description">
-        <source>The API key for the server.</source>
-        <target state="translated">Sunucunun API anahtarı.</target>
+        <source>The API key for the server. If not set, the NUGET_API_KEY environment variable is read.</source>
+        <target state="translated">Sunucunun API anahtarı. Ayarlı değilse, NUGET_API_KEY ortam değişkeni okunur.</target>
         <note />
       </trans-unit>
       <trans-unit id="App_FullName">
@@ -1289,8 +1289,8 @@ Arama, sağlanan değeri kullanan büyük/küçük harfe duyarsız bir dize kar�
         <note />
       </trans-unit>
       <trans-unit id="SymbolApiKey_Description">
-        <source>The API key for the symbol server.</source>
-        <target state="translated">Sembol sunucusunun API anahtarı.</target>
+        <source>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</source>
+        <target state="translated">Sembol sunucusunun API anahtarı. Ayarlı değilse, NUGET_SYMBOL_API_KEY ortam değişkeni okunur.</target>
         <note />
       </trans-unit>
       <trans-unit id="SymbolSource_Description">
@@ -1481,6 +1481,11 @@ Arama, sağlanan değeri kullanan büyük/küçük harfe duyarsız bir dize kar�
         <source>Unable to run 'dotnet nuget why'. {0}</source>
         <target state="translated">'Dotnet nuget why' çalıştırılamıyor. {0}</target>
         <note>{0} - Exception mssage</note>
+      </trans-unit>
+      <trans-unit id="WhyCommand_Error_InconsistentAssetsFile">
+        <source>Internal error: Assets file is inconsistent</source>
+        <target state="translated">İç hata: Varlıklar dosyası tutarsız</target>
+        <note />
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. Please run restore for project '{1}' before running this command.</source>

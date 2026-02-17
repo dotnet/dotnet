@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Internal.NuGet.Testing.SignedPackages;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NuGet.Commands.Test;
 using NuGet.Common;
@@ -26,6 +27,7 @@ using NuGet.ProjectModel;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Protocol.Test;
+using NuGet.RuntimeModel;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
 using Test.Utility;
@@ -98,7 +100,7 @@ namespace NuGet.Commands.FuncTest
                 var referenceSpec = JsonPackageSpecReader.GetPackageSpec(BasicConfigWithNet46.ToString(), "ReferencedProject", referenceSpecPath).WithTestRestoreMetadata();
                 projectSpec = projectSpec.WithTestProjectReference(referenceSpec);
                 referenceSpec.Version = new NuGetVersion("2.0.0-BETA1");
-                PackageSpecWriter.WriteToFile(referenceSpec, referenceSpecPath);
+                WriteToFile(referenceSpec, referenceSpecPath);
 
                 var logger = new TestLogger();
 
@@ -161,7 +163,7 @@ namespace NuGet.Commands.FuncTest
                 Directory.CreateDirectory(Path.Combine(projectDir, "ReferencedProject"));
                 var referenceSpecPath = Path.Combine(projectDir, "ReferencedProject", "project.json");
                 var referenceSpec = JsonPackageSpecReader.GetPackageSpec(BasicConfigWithNet46.ToString(), "ReferencedProject", referenceSpecPath);
-                PackageSpecWriter.WriteToFile(referenceSpec, referenceSpecPath);
+                WriteToFile(referenceSpec, referenceSpecPath);
 
                 var logger = new TestLogger();
                 var request = new TestRestoreRequest(projectSpec, sources, packagesDir, logger);
@@ -179,6 +181,17 @@ namespace NuGet.Commands.FuncTest
                     .FirstOrDefault(g => g.Name == "REFERENCEDPROJECT");
                 Assert.NotNull(libraryRange);
             }
+        }
+
+        private static void WriteToFile(PackageSpec packageSpec, string filePath)
+        {
+            using var fileStream = new FileStream(filePath, FileMode.Create);
+            using var textWriter = new StreamWriter(fileStream);
+            using var jsonWriter = new JsonTextWriter(textWriter);
+            using var writer = new JsonObjectWriter(jsonWriter);
+            jsonWriter.Formatting = Formatting.Indented;
+
+            PackageSpecWriter.Write(packageSpec, writer);
         }
 
         /// <summary>
@@ -1681,7 +1694,7 @@ namespace NuGet.Commands.FuncTest
 
                 // Assert
                 Assert.Equal(1, result.LockFile.ProjectFileDependencyGroups.Count);
-                Assert.Equal(".NETFramework,Version=v4.5", result.LockFile.ProjectFileDependencyGroups[0].FrameworkName);
+                Assert.Equal("net45", result.LockFile.ProjectFileDependencyGroups[0].FrameworkName);
                 Assert.Equal(new[] { "Newtonsoft.Json >= 6.0.4" }, result.LockFile.ProjectFileDependencyGroups[0].Dependencies.ToArray());
             }
         }

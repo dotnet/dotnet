@@ -4,7 +4,7 @@
             Text;[{];
             NewLine;[LF];
         CSharpCodeBlock - [3..26)::23
-            RazorDirective - [3..24)::21
+            RazorUsingDirective - [3..24)::21
                 CSharpTransition - [3..4)::1 - Gen<None>
                     Transition;[@];
                 RazorDirectiveBody - [4..24)::20
@@ -17,7 +17,7 @@
             RazorMetaCode - [24..26)::2 - Gen<None>
                 NewLine;[LF];
         CSharpCodeBlock - [26..69)::43
-            RazorDirective - [26..67)::41
+            RazorUsingDirective - [26..67)::41
                 CSharpTransition - [26..27)::1 - Gen<None>
                     Transition;[@];
                 RazorDirectiveBody - [27..67)::40
@@ -34,7 +34,7 @@
             RazorMetaCode - [67..69)::2 - Gen<None>
                 NewLine;[LF];
         CSharpCodeBlock - [69..97)::28
-            RazorDirective - [69..95)::26
+            RazorUsingDirective - [69..95)::26
                 CSharpTransition - [69..70)::1 - Gen<None>
                     Transition;[@];
                 RazorDirectiveBody - [70..95)::25
@@ -49,7 +49,7 @@
             RazorMetaCode - [95..97)::2 - Gen<None>
                 NewLine;[LF];
         CSharpCodeBlock - [97..136)::39
-            RazorDirective - [97..134)::37
+            RazorUsingDirective - [97..134)::37
                 CSharpTransition - [97..98)::1 - Gen<None>
                     Transition;[@];
                 RazorDirectiveBody - [98..134)::36
@@ -66,7 +66,7 @@
             RazorMetaCode - [134..136)::2 - Gen<None>
                 NewLine;[LF];
         CSharpCodeBlock - [136..184)::48
-            RazorDirective - [136..182)::46
+            RazorUsingDirective - [136..182)::46
                 CSharpTransition - [136..137)::1 - Gen<None>
                     Transition;[@];
                 RazorDirectiveBody - [137..182)::45

@@ -144,6 +144,11 @@ namespace NuGet.Common
         NU1017 = 1017,
 
         /// <summary>
+        /// Aliasing is only supported in the new resolver and when the .NET SDK version is 10.0.300 or newer.
+        /// </summary>
+        NU1018 = 1018,
+
+        /// <summary>
         /// Unable to resolve package, generic message for unknown type constraints.
         /// </summary>
         NU1100 = 1100,

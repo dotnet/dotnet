@@ -33,4 +33,37 @@ public class CohostConfigurationChangedServiceTest(ITestOutputHelper testOutput)
         Assert.Equal(AttributeIndentStyle.IndentByOne, updatedSettings.AttributeIndentStyle);
         Assert.False(updatedSettings.CommitElementsWithSpace);
     }
+
+    [Fact]
+    public void ReadSettings_WithAutoClosingTags()
+    {
+        var settings = ClientSettingsManager.GetClientSettings().AdvancedSettings;
+
+        // Default should be true for AutoClosingTags
+        Assert.True(settings.AutoClosingTags);
+
+        // Test with autoClosingTags set to false
+        var json = (JsonArray)JsonNode.Parse("""
+            ["true", "indentByOne", "false", "false"]
+            """).AssumeNotNull();
+
+        var updatedSettings = CohostConfigurationChangedService.TestAccessor.UpdateSettingsFromJson(settings, json);
+
+        Assert.True(updatedSettings.CodeBlockBraceOnNextLine);
+        Assert.Equal(AttributeIndentStyle.IndentByOne, updatedSettings.AttributeIndentStyle);
+        Assert.False(updatedSettings.CommitElementsWithSpace);
+        Assert.False(updatedSettings.AutoClosingTags);
+
+        // Test with autoClosingTags set to true
+        var json2 = (JsonArray)JsonNode.Parse("""
+            ["false", "alignWithFirst", "true", "true"]
+            """).AssumeNotNull();
+
+        var updatedSettings2 = CohostConfigurationChangedService.TestAccessor.UpdateSettingsFromJson(settings, json2);
+
+        Assert.False(updatedSettings2.CodeBlockBraceOnNextLine);
+        Assert.Equal(AttributeIndentStyle.AlignWithFirst, updatedSettings2.AttributeIndentStyle);
+        Assert.True(updatedSettings2.CommitElementsWithSpace);
+        Assert.True(updatedSettings2.AutoClosingTags);
+    }
 }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.1.32024.52
+# Visual Studio Version 18
+VisualStudioVersion = 18.4.11420.227 main
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NUnit10kPassing", "performance\NUnit10kPassing\NUnit10kPassing.csproj", "{F22A8D65-0581-4CC7-9C1C-9BC9F9E80DA4}"
 EndProject
@@ -51,7 +51,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrashingOnDebugAssertTestPr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DCD7C4DA-B8CC-46D0-AA21-1340DD1EB5ED}"
 	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
 		NuGet.config = NuGet.config
+		test.js = test.js
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleTestProject3", "SimpleTestProject3\SimpleTestProject3.csproj", "{1FF723F6-3A09-41F6-B85C-C4BE9C4374F0}"

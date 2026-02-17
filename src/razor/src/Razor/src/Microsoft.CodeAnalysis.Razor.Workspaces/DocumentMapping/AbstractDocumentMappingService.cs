@@ -264,7 +264,7 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
 
         using var builder = new PooledArrayBuilder<LinePositionSpan>();
 
-        foreach (var mapping in csharpDocument.SourceMappings)
+        foreach (var mapping in csharpDocument.SourceMappingsSortedByOriginal)
         {
             var originalSpan = mapping.OriginalSpan.ToLinePositionSpan();
 
@@ -274,6 +274,11 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
 
                 builder.Add(generatedSpan);
             }
+            else if (originalSpan.Start > razorSpan.End)
+            {
+                // This span (and all following) are after the area we're interested in
+                break;
+            }
         }
 
         return builder.ToImmutableAndClear();
@@ -281,11 +286,7 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
 
     public bool TryMapToRazorDocumentPosition(RazorCSharpDocument csharpDocument, int csharpIndex, out LinePosition razorPosition, out int razorIndex)
     {
-        var sourceMappings = csharpDocument.SourceMappings;
-
-        // We expect source mappings to be ordered by their generated document absolute index, because that is how the compiler creates them: As it
-        // outputs the generated file to the text write.
-        Debug.Assert(sourceMappings.SequenceEqual(sourceMappings.OrderBy(s => s.GeneratedSpan.AbsoluteIndex)));
+        var sourceMappings = csharpDocument.SourceMappingsSortedByGenerated;
 
         var index = sourceMappings.BinarySearchBy(csharpIndex, static (mapping, generatedDocumentIndex) =>
         {
@@ -330,7 +331,11 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
 
     private static bool TryMapToCSharpDocumentPositionInternal(RazorCSharpDocument csharpDocument, int razorIndex, bool nextCSharpPositionOnFailure, out LinePosition csharpPosition, out int csharpIndex)
     {
-        foreach (var mapping in csharpDocument.SourceMappings)
+        SourceMapping? nextCSharpMapping = null;
+
+        var hostDocumentLine = csharpDocument.CodeDocument.Source.Text.GetLinePosition(razorIndex).Line;
+
+        foreach (var mapping in csharpDocument.SourceMappingsSortedByOriginal)
         {
             var originalSpan = mapping.OriginalSpan;
             var originalAbsoluteIndex = originalSpan.AbsoluteIndex;
@@ -346,21 +351,29 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
                     return true;
                 }
             }
-            else if (nextCSharpPositionOnFailure)
+            else if (nextCSharpPositionOnFailure &&
+                mapping.OriginalSpan.LineIndex == hostDocumentLine &&
+                mapping.OriginalSpan.AbsoluteIndex >= razorIndex &&
+                (nextCSharpMapping is null || mapping.OriginalSpan.AbsoluteIndex < nextCSharpMapping.OriginalSpan.AbsoluteIndex))
             {
                 // The "next" C# location is only valid if it is on the same line in the source document
-                // as the requested position.
-                var hostDocumentLinePosition = csharpDocument.CodeDocument.Source.Text.GetLinePosition(razorIndex);
-
-                if (mapping.OriginalSpan.LineIndex == hostDocumentLinePosition.Line)
-                {
-                    csharpIndex = mapping.GeneratedSpan.AbsoluteIndex;
-                    csharpPosition = csharpDocument.Text.GetLinePosition(csharpIndex);
-                    return true;
-                }
-
+                // as the requested position, and before than any previous "next" C# position we have found,
+                // comparing their original positions.  Due to source mappings being ordered by generated span,
+                // not original span, its possible for things to be out of order.
+                nextCSharpMapping = mapping;
+            }
+            else
+            {
+                // This span (and all following) are after the area we're interested in
                 break;
             }
+        }
+
+        if (nextCSharpPositionOnFailure && nextCSharpMapping is not null)
+        {
+            csharpIndex = nextCSharpMapping.GeneratedSpan.AbsoluteIndex;
+            csharpPosition = csharpDocument.Text.GetLinePosition(csharpIndex);
+            return true;
         }
 
         csharpPosition = default;
@@ -427,23 +440,24 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
         }
 
         using var _1 = ListPool<SourceMapping>.GetPooledObject(out var candidateMappings);
+        var sourceMappings = csharpDocument.SourceMappingsSortedByGenerated;
         if (startMappedDirectly)
         {
             // Start of generated range intersects with a mapping
             candidateMappings.AddRange(
-                csharpDocument.SourceMappings.Where(mapping => IntersectsWith(startIndex, mapping.GeneratedSpan)));
+                sourceMappings.Where(mapping => IntersectsWith(startIndex, mapping.GeneratedSpan)));
         }
         else if (endMappedDirectly)
         {
             // End of generated range intersects with a mapping
             candidateMappings.AddRange(
-                csharpDocument.SourceMappings.Where(mapping => IntersectsWith(endIndex, mapping.GeneratedSpan)));
+                sourceMappings.Where(mapping => IntersectsWith(endIndex, mapping.GeneratedSpan)));
         }
         else
         {
             // Our range does not intersect with any mapping; we should see if it overlaps generated locations
             candidateMappings.AddRange(
-                csharpDocument.SourceMappings
+                sourceMappings
                     .Where(mapping => Overlaps(csharpSourceText.GetTextSpan(csharpRange), mapping.GeneratedSpan)));
         }
 
@@ -496,20 +510,21 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
         var generatedRangeAsSpan = csharpSourceText.GetTextSpan(csharpRange);
         SourceMapping? mappingBeforeGeneratedRange = null;
         SourceMapping? mappingAfterGeneratedRange = null;
+        var sourceMappings = csharpDocument.SourceMappingsSortedByGenerated;
 
-        for (var i = csharpDocument.SourceMappings.Length - 1; i >= 0; i--)
+        for (var i = sourceMappings.Length - 1; i >= 0; i--)
         {
-            var sourceMapping = csharpDocument.SourceMappings[i];
+            var sourceMapping = sourceMappings[i];
             var sourceMappingEnd = sourceMapping.GeneratedSpan.AbsoluteIndex + sourceMapping.GeneratedSpan.Length;
             if (generatedRangeAsSpan.Start >= sourceMappingEnd)
             {
                 // This is the source mapping that's before us!
                 mappingBeforeGeneratedRange = sourceMapping;
 
-                if (i + 1 < csharpDocument.SourceMappings.Length)
+                if (i + 1 < sourceMappings.Length)
                 {
                     // We're not at the end of the document there's another source mapping after us
-                    mappingAfterGeneratedRange = csharpDocument.SourceMappings[i + 1];
+                    mappingAfterGeneratedRange = sourceMappings[i + 1];
                 }
 
                 break;

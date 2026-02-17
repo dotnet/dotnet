@@ -71,7 +71,11 @@
         },
         {
             "name": "roslyn",
-            "defaultRemote": "https://github.com/dotnet/roslyn"
+            "defaultRemote": "https://github.com/dotnet/roslyn",
+            "exclude": [
+                // Obfuscated files are blocking the source tarball signing
+                "src/Compilers/Test/Resources/Core/MetadataTests/Invalid/Obfuscated*.dll"
+            ]
         },
         {
             "name": "runtime",
@@ -91,8 +95,8 @@
             "exclude": [
                 // Contains disallowed binaries
                 // 1ES Secret Scanning does not allow any PFX files
-                "src/source-build-reference-packages/src/externalPackages/spectre-console/docs/**/*",
-                "src/source-build-reference-packages/src/externalPackages/**/*.pfx"
+                "src/externalPackages/spectre-console/docs/**/*",
+                "src/externalPackages/**/*.pfx"
             ]
         },
         {

@@ -73,7 +73,7 @@ public class AppDomainTests : AcceptanceTestBase
     private string GetInProcDataCollectionRunsettingsFile(bool disableAppDomain, TempDirectory tempDirectory)
     {
         var runSettings = Path.Combine(tempDirectory.Path, "test_" + Guid.NewGuid() + ".runsettings");
-        var inprocasm = _testEnvironment.GetTestAsset("SimpleDataCollector.dll");
+        var inprocasm = _testEnvironment.GetTestAsset("SimpleDataCollector.dll", "netstandard2.0");
 #if !NETFRAMEWORK
         var assemblyName = AssemblyLoadContext.GetAssemblyName(inprocasm);
 #else

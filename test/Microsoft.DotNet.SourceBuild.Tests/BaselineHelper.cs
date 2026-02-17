@@ -29,64 +29,32 @@ namespace Microsoft.DotNet.SourceBuild.Tests
             + @"(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?"
             + @"(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?";
 
+        // Wrapper methods delegating to TestUtilities.BaselineHelper
         public static void CompareEntries(string baselineFileName, IOrderedEnumerable<string> actualEntries)
         {
-            IEnumerable<string> baseline = File.ReadAllLines(GetBaselineFilePath(baselineFileName));
-            string[] missingEntries = actualEntries.Except(baseline).ToArray();
-            string[] extraEntries = baseline.Except(actualEntries).ToArray();
-
-            string? message = null;
-            if (missingEntries.Length > 0)
-            {
-                message = $"Missing entries in '{baselineFileName}' baseline: {Environment.NewLine}{string.Join(Environment.NewLine, missingEntries)}{Environment.NewLine}{Environment.NewLine}";
-            }
-
-            if (extraEntries.Length > 0)
-            {
-                message += $"Extra entries in '{baselineFileName}' baseline: {Environment.NewLine}{string.Join(Environment.NewLine, extraEntries)}{Environment.NewLine}{Environment.NewLine}";
-            }
-
+            string? message = TestUtilities.BaselineHelper.CompareEntries(baselineFileName, actualEntries);
             Assert.True(message == null, message);
         }
 
         public static void CompareBaselineContents(string baselineFileName, string actualContents, ITestOutputHelper outputHelper, string baselineSubDir = "")
         {
-            string actualFilePath = Path.Combine(Config.LogsDirectory, $"Updated{baselineFileName}");
-            File.WriteAllText(actualFilePath, actualContents);
-
-            CompareFiles(GetBaselineFilePath(baselineFileName, baselineSubDir), actualFilePath, outputHelper);
+            string? message = TestUtilities.BaselineHelper.CompareBaselineContents(baselineFileName, actualContents, outputHelper, Config.LogsDirectory, baselineSubDir);
+            Assert.True(message == null, message);
         }
 
         public static void CompareFiles(string expectedFilePath, string actualFilePath, ITestOutputHelper outputHelper)
         {
-            string baselineFileText = File.ReadAllText(expectedFilePath).Trim();
-            string actualFileText = File.ReadAllText(actualFilePath).Trim();
-
-            string? message = null;
-
-            if (baselineFileText != actualFileText)
-            {
-                // Retrieve a diff in order to provide a UX which calls out the diffs.
-                string diff = DiffFiles(expectedFilePath, actualFilePath, outputHelper);
-                message = $"{Environment.NewLine}Expected file '{expectedFilePath}' does not match actual file '{actualFilePath}`.  {Environment.NewLine}"
-                    + $"{diff}{Environment.NewLine}";
-            }
-
+            string? message = TestUtilities.BaselineHelper.CompareFiles(expectedFilePath, actualFilePath, outputHelper);
             Assert.True(message == null, message);
         }
 
-        public static string DiffFiles(string file1Path, string file2Path, ITestOutputHelper outputHelper)
-        {
-            (Process Process, string StdOut, string StdErr) diffResult =
-                ExecuteHelper.ExecuteProcess("git", $"diff --no-index {file1Path} {file2Path}", outputHelper);
+        public static string DiffFiles(string file1Path, string file2Path, ITestOutputHelper outputHelper) =>
+            TestUtilities.BaselineHelper.DiffFiles(file1Path, file2Path, outputHelper);
 
-            return diffResult.StdOut;
-        }
-
-        public static string GetAssetsDirectory() => Path.Combine(Directory.GetCurrentDirectory(), "assets");
+        public static string GetAssetsDirectory() => TestUtilities.BaselineHelper.GetAssetsDirectory();
 
         public static string GetBaselineFilePath(string baselineFileName, string baselineSubDir = "") =>
-            Path.Combine(GetAssetsDirectory(), baselineSubDir, baselineFileName);
+            TestUtilities.BaselineHelper.GetBaselineFilePath(baselineFileName, baselineSubDir);
 
         public static string RemoveRids(string diff, bool isPortable = false) =>
             isPortable ? diff.Replace(Config.PortableRid, PortableRidPlaceholder) : diff.Replace(Config.TargetRid, TargetRidPlaceholder);

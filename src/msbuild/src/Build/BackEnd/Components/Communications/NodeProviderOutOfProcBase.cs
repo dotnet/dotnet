@@ -22,6 +22,7 @@ using System.Security.Principal;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Internal;
 using Microsoft.Build.Shared;
+using Constants = Microsoft.Build.Framework.Constants;
 
 #nullable disable
 
@@ -848,6 +849,12 @@ namespace Microsoft.Build.BackEnd
                                 // Write extended header with version BEFORE writing packet data
                                 NodePacketTypeExtensions.WriteVersion(writeStream, context._negotiatedPacketVersion);
                                 writeTranslator.NegotiatedPacketVersion = context._negotiatedPacketVersion;
+                            }
+                            else if (!Handshake.IsHandshakeOptionEnabled(_handshakeOptions, HandshakeOptions.CLR2))
+                            {
+                                // CLR4 task hosts: set version to 0 to enable version-dependent fields.
+                                // CLR2 task hosts: leave as null (default) to skip version-dependent fields.
+                                writeTranslator.NegotiatedPacketVersion = 0;
                             }
 
                             packet.Translate(writeTranslator);

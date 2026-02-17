@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.ProjectModel;
@@ -255,6 +256,36 @@ namespace NuGet.Commands.Test
                 Assert.Null(project2Target.Framework);
                 Assert.Null(project3Target.Framework);
             }
+        }
+
+        [Fact]
+        public async Task Project2ProjectInLockFile_WithPackagesConfigProjectInBetweenPackageReference_FlowsTransitiveDependencies()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+
+            var specA = ProjectTestHelpers.GetPackageSpec("a", pathContext.SolutionRoot, framework: "netcoreapp1.0");
+            var specB = ProjectTestHelpers.GetPackagesConfigPackageSpec("b", pathContext.SolutionRoot, framework: "net461");
+            var specC = ProjectTestHelpers.GetPackageSpec("c", pathContext.SolutionRoot, framework: "netstandard1.5");
+            specA = specA.WithTestProjectReference(specB);
+            specB = specB.WithTestProjectReference(specC);
+
+            var logger = new TestLogger();
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, specA, specB, specC);
+            var format = new LockFileFormat();
+
+            // Act
+            var command = new RestoreCommand(request);
+            var result = await command.ExecuteAsync();
+            await result.CommitAsync(logger, CancellationToken.None);
+
+            // Assert
+            result.Success.Should().BeTrue();
+
+            // Assert transitivity is applied across non PackageReference projects.
+            var ridlessTarget = result.LockFile.Targets.Single(e => string.IsNullOrEmpty(e.RuntimeIdentifier));
+            ridlessTarget.Libraries.Should().Contain(e => e.Type == "project" && e.Name == specB.Name);
+            ridlessTarget.Libraries.Should().Contain(e => e.Type == "project" && e.Name == specC.Name);
         }
 
         [Fact]

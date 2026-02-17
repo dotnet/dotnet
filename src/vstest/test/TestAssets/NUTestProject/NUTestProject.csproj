@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(NetFrameworkMinimum);$(NetCoreAppMinimum)</TargetFrameworks>
+    <TargetFrameworks>$(TestProjectTargetFrameworks)</TargetFrameworks>
     <AssemblyName>NUTestProject</AssemblyName>
   </PropertyGroup>
 
