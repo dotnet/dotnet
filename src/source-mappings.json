@@ -95,8 +95,8 @@
             "exclude": [
                 // Contains disallowed binaries
                 // 1ES Secret Scanning does not allow any PFX files
-                "src/externalPackages/spectre-console/docs/**/*",
-                "src/externalPackages/**/*.pfx"
+                "src/externalPackages/src/spectre-console/docs/**/*",
+                "**/*.pfx"
             ]
         },
         {

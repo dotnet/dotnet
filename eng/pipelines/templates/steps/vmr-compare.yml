@@ -21,6 +21,10 @@ parameters:
     - Linux
     - Darwin
 
+- name: includedRepositories
+  type: string
+  default: 'arcade,deployment-tools,diagnostics,fsharp,msbuild,nuget-client,razor,roslyn,vstest'
+
 - name: sourceManifestCommit
   type: string
   default: ''
@@ -147,6 +151,7 @@ steps:
           -darcPath $darcPath `
           -githubPat $githubPat `
           -azdevPat $azdevPat `
+          -includedRepositories ${{ parameters.includedRepositories }} `
           -assetFilter "`".*assets\/manifests\/.*\/MergedManifest\.xml`"" `
           -nonShipping
       }
@@ -159,6 +164,7 @@ steps:
         -darcPath $darcPath `
         -githubPat $githubPat `
         -azdevPat $azdevPat `
+        -includedRepositories ${{ parameters.includedRepositories }} `
         -assetFilter $assetFilter `
         -nonShipping:$nonShipping
 
@@ -228,20 +234,14 @@ steps:
   name: SetAdditionalArgs
   displayName: Set additional command arguments
 
-- task: PowerShell@2
-  inputs:
-    filePath: $(Build.SourcesDirectory)/eng/common/build.ps1
-    arguments: -ci -projects $(Build.SourcesDirectory)/eng/tools/BuildComparer/BuildComparer.csproj -restore -build
-  displayName: Build BuildComparer
-
-- script: $(InstallDarc.dotnetPath)
-    $(Build.SourcesDirectory)/artifacts/bin/BuildComparer/Debug/BuildComparer.dll
+- script: $(InstallDarc.dotnetPath) run --project $(Build.SourcesDirectory)/eng/tools/BuildComparer/BuildComparer.csproj
     ${{ parameters.command }}
     -vmrAssetBasePath "$(Build.ArtifactStagingDirectory)/vmr-assets"
     -msftAssetBasePath "$(Build.ArtifactStagingDirectory)/base-assets"
     -issuesReport "$(Build.SourcesDirectory)/artifacts/AssetBaselines/BaselineComparisonIssues.xml"
     -noIssuesReport "$(Build.SourcesDirectory)/artifacts/AssetBaselines/BaselineComparisonNoIssues.xml"
     -baseline "$(Build.SourcesDirectory)/eng/vmr-msft-comparison-baseline.json"
+    -includedRepositories "${{ parameters.includedRepositories }}"
     $(SetAdditionalArgs.additionalArgs)
   displayName: Compare ${{ parameters.command}}
 

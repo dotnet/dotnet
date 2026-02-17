@@ -84,7 +84,7 @@
       </trans-unit>
       <trans-unit id="ApiKey_Description">
         <source>The API key for the server. If not set, the NUGET_API_KEY environment variable is read.</source>
-        <target state="needs-review-translation">서버의 API 키입니다.</target>
+        <target state="translated">서버의 API 키입니다. 설정하지 않으면 NUGET_API_KEY 환경 변수를 사용합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="App_FullName">
@@ -1290,7 +1290,7 @@ The search is a case-insensitive string comparison using the supplied value, whi
       </trans-unit>
       <trans-unit id="SymbolApiKey_Description">
         <source>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</source>
-        <target state="needs-review-translation">기호 서버의 API 키입니다.</target>
+        <target state="translated">기호 서버의 API 키입니다. 설정하지 않으면 NUGET_SYMBOL_API_KEY 환경 변수를 사용합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="SymbolSource_Description">
@@ -1484,7 +1484,7 @@ The search is a case-insensitive string comparison using the supplied value, whi
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InconsistentAssetsFile">
         <source>Internal error: Assets file is inconsistent</source>
-        <target state="new">Internal error: Assets file is inconsistent</target>
+        <target state="translated">내부 오류: 자산 파일이 일치하지 않습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">

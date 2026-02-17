@@ -17,7 +17,6 @@ namespace Microsoft.DotNet.Tests
     {
         private static readonly PackageSourceMappingsSetup TestSetup = PackageSourceMappingsSetup.Instance;
 
-        private const string NetSdkSupportingFeedName = "net-sdk-supporting-feed";
         private const string ArcadeSourceName = "source-built-arcade";
         private const string RuntimeSourceName = "previous-build-pass-runtime";
         private const string PrebuiltSourceName = "prebuilt";
@@ -36,8 +35,8 @@ namespace Microsoft.DotNet.Tests
         [Fact]
         public void BuildWithMappingsNoLocalSources()
         {
-            string[] sources = [NetSdkSupportingFeedName];
-            RunTest("ub-mappings-nolocal.config", true, sources, customSources: [NetSdkSupportingFeedName]);
+            string[] sources = [];
+            RunTest("ub-mappings-nolocal.config", true, sources);
         }
 
         // Build with local sources - mappings and no mappings - online
@@ -46,8 +45,8 @@ namespace Microsoft.DotNet.Tests
         [InlineData("ub-nomappings.config")]
         public void BuildWithLocalSources(string nugetConfigFilename)
         {
-            string[] sources = [ArcadeSourceName, RuntimeSourceName, NetSdkSupportingFeedName];
-            RunTest(nugetConfigFilename, true, sources, customSources: [NetSdkSupportingFeedName]);
+            string[] sources = [ArcadeSourceName, RuntimeSourceName];
+            RunTest(nugetConfigFilename, true, sources);
         }
 
         // Source build tests - with and without mappings - online and offline

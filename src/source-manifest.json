@@ -1,16 +1,16 @@
 {
   "repositories": [
     {
-      "barId": 301182,
+      "barId": 302020,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "ab22aeec12730f321addeb11568f0213b23ac3f4"
+      "commitSha": "0d4dddc6228dcfb80723742f186ad89522ae1273"
     },
     {
-      "barId": 301237,
+      "barId": 301607,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "339f512cf2cec6d975b8dcd7d36e9b1958aaa244"
+      "commitSha": "23e6a3a457e88f4463154c2b63b8787e9bf195fc"
     },
     {
       "barId": 292148,
@@ -37,10 +37,10 @@
       "commitSha": "970c803abb1ed5657b056cdaf01f1693f437c242"
     },
     {
-      "barId": 301219,
+      "barId": 301944,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "d46ce64b88d89f5d437fdf181983c52f1f477b9c"
+      "commitSha": "a471ebfd9564bc14fb188407a84a031b69d29f77"
     },
     {
       "barId": 298250,
@@ -49,28 +49,28 @@
       "commitSha": "34ea87b2e530301557526b558e89f3f031f2a8d9"
     },
     {
-      "barId": 301012,
+      "barId": 302041,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "63f37346bf8295c24e6f782250ca55b1881569b8"
+      "commitSha": "019588e4b5d9722ebffae59c6c5c17f0573b3545"
     },
     {
-      "barId": 300657,
+      "barId": 302028,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "ee7b4d39caf3f02f1f5753a6d8438b07192e1446"
+      "commitSha": "81815e52c87864858802a8188241894fc5ffc376"
     },
     {
-      "barId": 301091,
+      "barId": 301786,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "dba621cb12abbc049191519f3dc6ce1e2b63b14d"
+      "commitSha": "a527f9edd5b4b5b573f004609434b726ad324510"
     },
     {
-      "barId": 301084,
+      "barId": 301610,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "a5a762010867aee187bb7cf68a29daca1153abd0"
+      "commitSha": "b7860660581174f32d28e3ce127f4818055dd297"
     },
     {
       "barId": 300424,
@@ -79,10 +79,10 @@
       "commitSha": "da86ec644af82dcb8575ff0c22ac6afdcd6b5066"
     },
     {
-      "barId": 301220,
+      "barId": 302065,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "0b91113ce10b7b868f0df88a1c87ae8f2f04bbf0"
+      "commitSha": "a92d749b959d22aec0581508303125ae915bba60"
     },
     {
       "barId": 298986,
@@ -91,16 +91,16 @@
       "commitSha": "5745f7404c4a3ae7f1b08117bc6092a96224a985"
     },
     {
-      "barId": 301238,
+      "barId": 301993,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "f44050fd77b0ada2439f217e98540329a8ee8e3c"
+      "commitSha": "e9d68d884cd44246e6d2d7fdb12714ff7618b90e"
     },
     {
-      "barId": 300965,
+      "barId": 301813,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "061555a6c6bde01f39962239286056b558e76fcf"
+      "commitSha": "cc90bb4ad53ff35dc109c2827428113e70a4681d"
     },
     {
       "barId": 298878,
@@ -109,10 +109,10 @@
       "commitSha": "abbd07d096967bb7a5b968a5163f2de645fd7251"
     },
     {
-      "barId": 291112,
+      "barId": 301926,
       "path": "symreader",
       "remoteUri": "https://github.com/dotnet/symreader",
-      "commitSha": "2255aa6d6c21541848933c33f72e60363041abaf"
+      "commitSha": "df8823942e6f5ef94cbcbe164c403d4f5bd6f081"
     },
     {
       "barId": 300151,
@@ -133,10 +133,10 @@
       "commitSha": "8350252f689bc85aec91a47e3d7eff9333ef6569"
     },
     {
-      "barId": 301233,
+      "barId": 301354,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "298ae1983efac02c63722dc1f2e7ba39ca9a5ae1"
+      "commitSha": "6ac21aee21d08db3df87d37ce75b2617c03158f3"
     },
     {
       "barId": 300191,

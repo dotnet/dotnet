@@ -84,7 +84,7 @@
       </trans-unit>
       <trans-unit id="ApiKey_Description">
         <source>The API key for the server. If not set, the NUGET_API_KEY environment variable is read.</source>
-        <target state="needs-review-translation">服务器的 API 密钥。</target>
+        <target state="translated">服务器的 API 密钥。如果未设置，则读取 NUGET_API_KEY 环境变量。</target>
         <note />
       </trans-unit>
       <trans-unit id="App_FullName">
@@ -1289,7 +1289,7 @@ The search is a case-insensitive string comparison using the supplied value, whi
       </trans-unit>
       <trans-unit id="SymbolApiKey_Description">
         <source>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</source>
-        <target state="needs-review-translation">符号服务器的 API 密钥。</target>
+        <target state="translated">符号服务器的 API 密钥。如果未设置，则读取 NUGET_SYMBOL_API_KEY 环境变量。</target>
         <note />
       </trans-unit>
       <trans-unit id="SymbolSource_Description">
@@ -1483,7 +1483,7 @@ The search is a case-insensitive string comparison using the supplied value, whi
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InconsistentAssetsFile">
         <source>Internal error: Assets file is inconsistent</source>
-        <target state="new">Internal error: Assets file is inconsistent</target>
+        <target state="translated">内部错误: 资产文件不一致</target>
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">

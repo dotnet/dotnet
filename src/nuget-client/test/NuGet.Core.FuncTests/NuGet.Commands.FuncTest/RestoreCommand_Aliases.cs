@@ -496,6 +496,57 @@ namespace NuGet.Commands.FuncTest
             return await RunRestoreAsync(pathContext, projectSpec);
         }
 
+        [Fact]
+        public async Task RestoreCommand_SDKProjectWithMissingAliases_UsesV3AssetsFile()
+        {
+            using var pathContext = new SimpleTestPathContext();
+            PackageSpec projectSpec = GetSDKPackageSpecWithMissingAlias(pathContext);
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource,
+                new SimpleTestPackageContext("x", "1.0.0"));
+
+            // Act & Assert
+            var result = await RunRestoreAsync(pathContext, projectSpec);
+            result.Success.Should().BeTrue();
+            result.LockFile.Targets.Should().HaveCount(1);
+            result.LockFile.Targets[0].TargetAlias.Should().Be(string.Empty);
+            result.LockFile.Targets[0].Libraries.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries[0].Name.Should().Be("x");
+            result.LockFile.Version.Should().Be(3);
+        }
+
+        private static PackageSpec GetSDKPackageSpecWithMissingAlias(SimpleTestPathContext pathContext)
+        {
+            var rootProject = @"
+            {
+              ""frameworks"": {
+                ""net10.0"": {
+                    ""framework"": ""net10.0"",
+                    ""dependencies"": {
+                            ""x"": {
+                                ""version"": ""[1.0.0,)"",
+                                ""target"": ""Package"",
+                            }
+                    }
+                }
+              }
+            }";
+
+
+            // Setup project
+            var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, rootProject);
+            // pre-conditions
+            projectSpec.RestoreMetadata.UsingMicrosoftNETSdk = true;
+            projectSpec.RestoreMetadata.SdkAnalysisLevel = NuGetVersion.Parse("10.0.400");
+            projectSpec.TargetFrameworks[0] = new TargetFrameworkInformation(projectSpec.TargetFrameworks[0])
+            {
+                TargetAlias = string.Empty
+            };
+            projectSpec.RestoreMetadata.TargetFrameworks[0].TargetAlias = string.Empty;
+            return projectSpec;
+        }
+
         internal static Task<RestoreResult> RunRestoreAsync(SimpleTestPathContext pathContext, params PackageSpec[] projects)
         {
             return RunRestoreAsync(pathContext, forceEvaluate: false, new TestLogger(), projects);

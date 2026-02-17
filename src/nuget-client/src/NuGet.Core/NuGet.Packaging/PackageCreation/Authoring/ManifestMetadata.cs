@@ -68,7 +68,6 @@ namespace NuGet.Packaging
             Readme = copy.Readme;
         }
 
-        [ManifestVersion(5)]
         public string MinClientVersionString
         {
             get { return _minClientVersionString; }
@@ -173,10 +172,8 @@ namespace NuGet.Packaging
 
         public string Summary { get; set; }
 
-        [ManifestVersion(2)]
         public string ReleaseNotes { get; set; }
 
-        [ManifestVersion(2)]
         public string Copyright { get; set; }
 
         public string Language { get; set; }
@@ -208,7 +205,6 @@ namespace NuGet.Packaging
 
         private IEnumerable<PackageReferenceSet> _packageAssemblyReferences = [];
 
-        [ManifestVersion(2)]
         public IEnumerable<PackageReferenceSet> PackageAssemblyReferences
         {
             get

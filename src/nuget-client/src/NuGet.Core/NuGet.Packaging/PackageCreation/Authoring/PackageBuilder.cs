@@ -513,15 +513,9 @@ namespace NuGet.Packaging
             ICollection<IPackageFile> Files,
             ICollection<PackageDependencyGroup> package)
         {
-            if (HasContentFilesV2(Files) || HasIncludeExclude(package))
+            if (HasContentFilesV2(Files) || HasIncludeExclude(package) || HasXdtTransformFile(Files))
             {
-                // version 5
-                return ManifestVersionUtility.XdtTransformationVersion;
-            }
-
-            if (HasXdtTransformFile(Files))
-            {
-                // version 5
+                // version 6
                 return ManifestVersionUtility.XdtTransformationVersion;
             }
 

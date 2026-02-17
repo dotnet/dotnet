@@ -17,7 +17,7 @@ public static class SourceMappingsSerializer
     {
         using var _ = StringBuilderPool.GetPooledObject(out var builder);
 
-        foreach (var sourceMapping in csharpDocument.SourceMappings)
+        foreach (var sourceMapping in csharpDocument.SourceMappingsSortedByGenerated)
         {
             builder.Append("Source Location: ");
             var sourceCode = GetCodeForSpan(sourceMapping.OriginalSpan, sourceDocument.Text);

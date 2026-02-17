@@ -18,7 +18,8 @@ namespace NuGet.Protocol.Core.Types
     /// </summary>
     public class SourceRepository
     {
-        private readonly Dictionary<Type, INuGetResourceProvider[]> _providerCache;
+        internal const int ProviderCacheTypes = 25;
+        private readonly Dictionary<Type, IReadOnlyList<INuGetResourceProvider>> _providerCache;
         private readonly PackageSource _source;
 
         /// <summary>
@@ -150,12 +151,13 @@ namespace NuGet.Protocol.Core.Types
         public virtual async Task<T> GetResourceAsync<T>(CancellationToken token) where T : class, INuGetResource
         {
             var resourceType = typeof(T);
-            INuGetResourceProvider[] possible = null;
+            IReadOnlyList<INuGetResourceProvider> possible;
 
             if (_providerCache.TryGetValue(resourceType, out possible))
             {
-                foreach (var provider in possible)
+                for (int i = 0; i < possible.Count; i++)
                 {
+                    var provider = possible[i];
                     var result = await provider.TryCreate(this, token);
                     if (result.Item1)
                     {
@@ -172,47 +174,59 @@ namespace NuGet.Protocol.Core.Types
         /// </summary>
         /// <param name="providers"></param>
         /// <returns></returns>
-        private static Dictionary<Type, INuGetResourceProvider[]> Init(IEnumerable<Lazy<INuGetResourceProvider>> providers)
+        private static Dictionary<Type, IReadOnlyList<INuGetResourceProvider>> Init(IEnumerable<Lazy<INuGetResourceProvider>> providers)
         {
-            var cache = new Dictionary<Type, INuGetResourceProvider[]>();
+            var cache = new Dictionary<Type, IReadOnlyList<INuGetResourceProvider>>(ProviderCacheTypes);
 
             foreach (var group in providers.GroupBy(p => p.Value.ResourceType))
             {
-                cache.Add(group.Key, Sort(group).ToArray());
+                cache.Add(group.Key, Sort(group));
             }
 
             return cache;
         }
 
-        private static INuGetResourceProvider[]
+        private static IReadOnlyList<INuGetResourceProvider>
             Sort(IEnumerable<Lazy<INuGetResourceProvider>> group)
         {
+            var items = new List<INuGetResourceProvider>(group.Count());
+            foreach (var lazy in group)
+            {
+                items.Add(lazy.Value);
+            }
+
             // initial ordering to help make this deterministic
-            var items = new List<INuGetResourceProvider>(
-                group.Select(e => e.Value).OrderBy(e => e.Name).ThenBy(e => e.After.Count()).ThenBy(e => e.Before.Count()));
+            items.Sort((a, b) =>
+            {
+                int cmp = StringComparer.Ordinal.Compare(a.Name, b.Name);
+                if (cmp != 0) return cmp;
+                cmp = a.After.Count().CompareTo(b.After.Count());
+                if (cmp != 0) return cmp;
+                return a.Before.Count().CompareTo(b.Before.Count());
+            });
 
             var comparer = ProviderComparer.Instance;
 
-            var ordered = new Queue<INuGetResourceProvider>();
-
             // List.Sort does not work when lists have unsolvable gaps, which can occur here
-            while (items.Count > 0)
+            for (int start = 0; start < items.Count - 1; start++)
             {
-                var best = items[0];
+                int bestIndex = start;
 
-                for (var i = 1; i < items.Count; i++)
+                for (int i = start + 1; i < items.Count; i++)
                 {
-                    if (comparer.Compare(items[i], best) < 0)
+                    if (comparer.Compare(items[i], items[bestIndex]) < 0)
                     {
-                        best = items[i];
+                        bestIndex = i;
                     }
                 }
 
-                items.Remove(best);
-                ordered.Enqueue(best);
+                if (bestIndex != start)
+                {
+                    (items[start], items[bestIndex]) = (items[bestIndex], items[start]);
+                }
             }
 
-            return ordered.ToArray();
+            return items;
         }
 
         /// <summary>
