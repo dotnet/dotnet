@@ -44,7 +44,7 @@ public class FormattingLogTest(FormattingTestContext context, HtmlFormattingFixt
         var sourceText = await document.GetTextAsync();
         var htmlEdits = htmlChanges.Select(c => sourceText.GetTextEdit(c.ToTextChange())).ToArray();
 
-        await GetFormattingEditsAsync(document, htmlEdits, span: default, options.CodeBlockBraceOnNextLine, options.InsertSpaces, options.TabSize, options.CSharpSyntaxFormattingOptions.AssumeNotNull());
+        await GetFormattingEditsAsync(document, htmlEdits, span: default, options.CodeBlockBraceOnNextLine, options.AttributeIndentStyle, options.InsertSpaces, options.TabSize, options.CSharpSyntaxFormattingOptions.AssumeNotNull());
     }
 
     [Fact]
@@ -78,6 +78,32 @@ public class FormattingLogTest(FormattingTestContext context, HtmlFormattingFixt
         Assert.Null(await GetFormattingEditsAsync(contents, htmlChangesFile));
     }
 
+    [Fact]
+    [WorkItem("https://github.com/microsoft/vscode-dotnettools/issues/2766")]
+    public async Task RanOutOfOriginalLines()
+    {
+        var contents = GetResource("InitialDocument.txt");
+        var htmlChangesFile = GetResource("HtmlChanges.json");
+
+        await GetFormattingEditsAsync(contents, htmlChangesFile);
+    }
+
+    [Fact]
+    [WorkItem("https://developercommunity.visualstudio.com/t/Razor-Formatting-Feature-internal-error/11041869#T-ND11043454")]
+    public async Task MultiLineLambda()
+    {
+        var contents = GetResource("InitialDocument.txt");
+
+        var document = CreateProjectAndRazorDocument(contents);
+
+        var options = new RazorFormattingOptions();
+
+        var formattingService = (RazorFormattingService)OOPExportProvider.GetExportedValue<IRazorFormattingService>();
+        formattingService.GetTestAccessor().SetFormattingLoggerFactory(new TestFormattingLoggerFactory(TestOutputHelper));
+
+        await GetFormattingEditsAsync(document, [], span: default, options.CodeBlockBraceOnNextLine, options.AttributeIndentStyle, options.InsertSpaces, options.TabSize, RazorCSharpSyntaxFormattingOptions.Default);
+    }
+
     private async Task<TextEdit[]?> GetFormattingEditsAsync(string contents, string htmlChangesFile)
     {
         var document = CreateProjectAndRazorDocument(contents);
@@ -91,7 +117,7 @@ public class FormattingLogTest(FormattingTestContext context, HtmlFormattingFixt
         var sourceText = await document.GetTextAsync();
         var htmlEdits = htmlChanges.Select(c => sourceText.GetTextEdit(c.ToTextChange())).ToArray();
 
-        return await GetFormattingEditsAsync(document, htmlEdits, span: default, options.CodeBlockBraceOnNextLine, options.InsertSpaces, options.TabSize, RazorCSharpSyntaxFormattingOptions.Default);
+        return await GetFormattingEditsAsync(document, htmlEdits, span: default, options.CodeBlockBraceOnNextLine, options.AttributeIndentStyle, options.InsertSpaces, options.TabSize, RazorCSharpSyntaxFormattingOptions.Default);
     }
 
     private string GetResource(string name, [CallerMemberName] string? testName = null)

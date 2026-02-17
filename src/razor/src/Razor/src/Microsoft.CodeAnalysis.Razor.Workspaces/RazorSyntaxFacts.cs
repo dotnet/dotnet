@@ -84,10 +84,12 @@ internal static class RazorSyntaxFacts
         return attributeNameSpan != default;
     }
 
-    private static TextSpan GetFullAttributeNameSpan(RazorSyntaxNode? node)
+    public static TextSpan GetFullAttributeNameSpan(RazorSyntaxNode? node)
     {
         return node switch
         {
+            MarkupAttributeBlockSyntax att => att.Name.Span,
+            MarkupMinimizedAttributeBlockSyntax att => att.Name.Span,
             MarkupTagHelperAttributeSyntax att => att.Name.Span,
             MarkupMinimizedTagHelperAttributeSyntax att => att.Name.Span,
             MarkupTagHelperDirectiveAttributeSyntax att => CalculateFullSpan(att.Name, att.ParameterName, att.Transition),
@@ -158,10 +160,10 @@ internal static class RazorSyntaxFacts
     {
         if (node is CSharpCodeBlockSyntax block &&
             block.Children.FirstOrDefault(n => n is RazorDirectiveSyntax) is RazorDirectiveSyntax directive &&
-            directive.Body is RazorDirectiveBodySyntax directiveBody &&
-            directiveBody.Keyword.GetContent() == "code")
+            directive.DirectiveBody is { } body &&
+            body.Keyword.GetContent() == "code")
         {
-            return directiveBody.CSharpCode;
+            return body.CSharpCode;
         }
 
         return null;
@@ -176,7 +178,7 @@ internal static class RazorSyntaxFacts
     public static bool IsInCodeBlock(RazorSyntaxNode n)
         => n.FirstAncestorOrSelf<RazorSyntaxNode>(static n => n is RazorDirectiveSyntax { DirectiveDescriptor.Directive: "code" }) is not null;
 
-    internal static bool TryGetNamespaceFromDirective(RazorDirectiveSyntax directiveNode, [NotNullWhen(true)] out string? @namespace)
+    internal static bool TryGetNamespaceFromDirective(RazorUsingDirectiveSyntax directiveNode, [NotNullWhen(true)] out string? @namespace)
     {
         foreach (var child in directiveNode.DescendantNodes())
         {
@@ -193,33 +195,32 @@ internal static class RazorSyntaxFacts
 
     internal static bool IsInUsingDirective(RazorSyntaxNode node)
     {
-        var directives = node
-            .AncestorsAndSelf()
-            .OfType<RazorDirectiveSyntax>();
+        return node.AncestorsAndSelf().OfType<RazorUsingDirectiveSyntax>().Any();
+    }
 
-        foreach (var directive in directives)
+    internal static bool IsScriptOrStyleBlock(MarkupElementSyntax? element)
+    {
+        // StartTag is annotated as not nullable, but on invalid documents it can be. The 'Format_DocumentWithDiagnostics' test
+        // illustrates this.
+        if (element?.StartTag?.Name.Content is not { } tagName)
         {
-            if (directive.IsUsingDirective())
-            {
-                return true;
-            }
+            return false;
         }
 
-        return false;
+        return string.Equals(tagName, "script", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(tagName, "style", StringComparison.OrdinalIgnoreCase);
     }
 
-    internal static bool IsElementWithName(MarkupElementSyntax? element, string name)
+    internal static bool IsAttributeName(RazorSyntaxNode node, [NotNullWhen(true)] out BaseMarkupStartTagSyntax? startTag)
     {
-        return string.Equals(element?.StartTag.Name.Content, name, StringComparison.OrdinalIgnoreCase);
-    }
+        startTag = null;
 
-    internal static bool IsStyleBlock(MarkupElementSyntax? node)
-    {
-        return IsElementWithName(node, "style");
-    }
+        if (node.Parent.IsAnyAttributeSyntax() &&
+            GetFullAttributeNameSpan(node.Parent).Start == node.SpanStart)
+        {
+            startTag = node.Parent.Parent as BaseMarkupStartTagSyntax;
+        }
 
-    internal static bool IsScriptBlock(MarkupElementSyntax? node)
-    {
-        return IsElementWithName(node, "script");
+        return startTag is not null;
     }
 }

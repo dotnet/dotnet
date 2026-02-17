@@ -86,7 +86,8 @@ internal sealed class CohostCodeActionsResolveEndpoint(
         {
             InsertSpaces = !clientSettings.ClientSpaceSettings.IndentWithTabs,
             TabSize = clientSettings.ClientSpaceSettings.IndentSize,
-            CodeBlockBraceOnNextLine = clientSettings.AdvancedSettings.CodeBlockBraceOnNextLine
+            CodeBlockBraceOnNextLine = clientSettings.AdvancedSettings.CodeBlockBraceOnNextLine,
+            AttributeIndentStyle = clientSettings.AdvancedSettings.AttributeIndentStyle,
         };
 
         return await _remoteServiceInvoker.TryInvokeAsync<IRemoteCodeActionsService, CodeAction>(
@@ -104,14 +105,7 @@ internal sealed class CohostCodeActionsResolveEndpoint(
 
             var uri = resolveParams.DelegatedDocumentUri.AssumeNotNull();
 
-            var solution = razorDocument.Project.Solution;
-            if (!solution.TryGetSourceGeneratedDocumentIdentity(uri, out var identity) ||
-                !solution.TryGetProject(identity.DocumentId.ProjectId, out var project))
-            {
-                return codeAction;
-            }
-
-            var generatedDocument = await project.TryGetCSharpDocumentForGeneratedDocumentAsync(identity, cancellationToken).ConfigureAwait(false);
+            var generatedDocument = await razorDocument.Project.Solution.TryGetSourceGeneratedDocumentAsync(uri, cancellationToken).ConfigureAwait(false);
             if (generatedDocument is null)
             {
                 return codeAction;

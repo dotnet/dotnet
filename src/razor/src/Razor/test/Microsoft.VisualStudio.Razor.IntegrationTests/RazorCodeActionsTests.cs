@@ -20,8 +20,8 @@ public class RazorCodeActionsTests(ITestOutputHelper testOutputHelper) : Abstrac
         // Open the file
         await TestServices.SolutionExplorer.OpenFileAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.CounterRazorFile, ControlledHangMitigatingCancellationToken);
 
-        await TestServices.Editor.SetTextAsync("<SurveyPrompt></SurveyPrompt>", ControlledHangMitigatingCancellationToken);
-        await TestServices.Editor.MoveCaretAsync(3, ControlledHangMitigatingCancellationToken);
+        var position = await TestServices.Editor.SetTextAsync("<Su$$rveyPrompt></SurveyPrompt>", ControlledHangMitigatingCancellationToken);
+        await TestServices.Editor.PlaceCaretAsync(position, ControlledHangMitigatingCancellationToken);
 
         // Act
         var codeActions = await TestServices.Editor.InvokeCodeActionListAsync(ControlledHangMitigatingCancellationToken);

@@ -12,6 +12,7 @@ internal static class SettingsNames
     public static readonly string AutoInsertAttributeQuotes = UnifiedCollection + ".autoInsertAttributeQuotes";
     public static readonly string ColorBackground = UnifiedCollection + ".colorBackground";
     public static readonly string CodeBlockBraceOnNextLine = UnifiedCollection + ".codeBlockBraceOnNextLine";
+    public static readonly string AttributeIndentStyle = UnifiedCollection + ".attributeIndentStyle";
     public static readonly string CommitElementsWithSpace = UnifiedCollection + ".commitElementsWithSpace";
     public static readonly string Snippets = UnifiedCollection + ".snippets";
     public static readonly string LogLevel = UnifiedCollection + ".logLevel";
@@ -24,6 +25,7 @@ internal static class SettingsNames
         AutoInsertAttributeQuotes,
         ColorBackground,
         CodeBlockBraceOnNextLine,
+        AttributeIndentStyle,
         CommitElementsWithSpace,
         Snippets,
         LogLevel,

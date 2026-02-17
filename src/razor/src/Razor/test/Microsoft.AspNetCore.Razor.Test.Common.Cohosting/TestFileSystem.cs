@@ -15,6 +15,8 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 internal sealed class TestFileSystem((string filePath, string contents)[]? files) : IFileSystem
 {
+    public List<(string source, string destination)> MovedFiles { get; } = new();
+
     public bool FileExists(string filePath)
         => files?.Any(f => FilePathNormalizingComparer.Instance.Equals(f.filePath, filePath)) ?? false;
 
@@ -29,4 +31,7 @@ internal sealed class TestFileSystem((string filePath, string contents)[]? files
 
     public IEnumerable<string> GetFiles(string workspaceDirectory, string searchPattern, SearchOption searchOption)
         => throw new NotImplementedException();
+
+    public void Move(string sourceFilePath, string destinationFilePath)
+        => MovedFiles.Add((sourceFilePath, destinationFilePath));
 }

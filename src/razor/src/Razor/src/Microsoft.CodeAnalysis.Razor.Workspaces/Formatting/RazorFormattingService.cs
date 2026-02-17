@@ -51,7 +51,7 @@ internal class RazorFormattingService : IRazorFormattingService
         ];
 
         _documentFormattingPasses = [
-                new HtmlFormattingPass(documentMappingService),
+                new HtmlFormattingPass(documentMappingService, loggerFactory),
                 new RazorFormattingPass(),
                 new CSharpFormattingPass(hostServicesProvider, documentMappingService, loggerFactory),
             ];
@@ -342,7 +342,7 @@ internal class RazorFormattingService : IRazorFormattingService
         var affectedRange = changedText.GetEncompassingTextChangeRange(sourceText);
         var spanBeforeChange = affectedRange.Span;
         var spanAfterChange = new TextSpan(spanBeforeChange.Start, affectedRange.NewLength);
-        var newText = changedText.GetSubTextString(spanAfterChange);
+        var newText = changedText.ToString(spanAfterChange);
 
         return new TextChange(spanBeforeChange, newText);
     }

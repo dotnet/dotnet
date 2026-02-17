@@ -22,6 +22,16 @@
         <target state="translated">正在判斷鄰近運算式...</target>
         <note />
       </trans-unit>
+      <trans-unit id="Renaming_0_to_1">
+        <source>Renaming {0} to {1}</source>
+        <target state="translated">正在將 {0} 重新命名為 {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Renaming_Razor_Component">
+        <source>Renaming Razor Component</source>
+        <target state="translated">正在重新命名 Razor 元件</target>
+        <note />
+      </trans-unit>
       <trans-unit id="View Code">
         <source>View Code</source>
         <target state="translated">檢視程式碼</target>

@@ -1132,7 +1132,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             builder.Append(length).Append(' ');
             builder.Append(typeString).Append(' ');
             builder.Append(data[i + 4]).Append(' ');
-            builder.Append('[').Append(sourceText.GetSubTextString(new TextSpan(sourceText.Lines[lineIndex].Start + lineOffset, length))).Append(']');
+            builder.Append('[').Append(sourceText.ToString(new TextSpan(sourceText.Lines[lineIndex].Start + lineOffset, length))).Append(']');
             builder.AppendLine();
 
             prevLength = length;

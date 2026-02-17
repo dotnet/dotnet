@@ -8,8 +8,6 @@
 /eng/common/                                   @dotnet/razor-tooling
 /eng/Versions.props                            @dotnet/razor-tooling
 /eng/Version.Details.xml                       @dotnet/razor-tooling
-/eng/DotNetBuild.props                         @dotnet/product-construction
-/eng/SourceBuild*                              @dotnet/source-build
 /src/Razor                                     @dotnet/razor-tooling
 /src/Compiler                                  @dotnet/razor-tooling
 /src/Shared                                    @dotnet/razor-tooling

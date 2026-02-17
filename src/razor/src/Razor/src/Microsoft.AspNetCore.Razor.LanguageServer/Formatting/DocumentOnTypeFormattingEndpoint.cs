@@ -91,7 +91,7 @@ internal class DocumentOnTypeFormattingEndpoint(
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var options = RazorFormattingOptions.From(request.Options, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine);
+        var options = RazorFormattingOptions.From(request.Options, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine, _optionsMonitor.CurrentValue.AttributeIndentStyle);
 
         ImmutableArray<TextChange> formattedChanges;
         if (triggerCharacterKind == RazorLanguageKind.CSharp)

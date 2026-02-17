@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Razor.IntegrationTests.InProcess;
 using Microsoft.VisualStudio.Shell;
@@ -56,13 +57,7 @@ internal partial class EditorInProcess
     {
         var commandGuid = typeof(VSStd2KCmdID).GUID;
         var commandId = VSStd2KCmdID.RENAME;
-
-        // Rename seems to be extra-succeptable to COM exceptions
-        await Helper.RetryAsync<bool?>(async (cancellationToken) =>
-        {
-            await ExecuteCommandAsync(commandGuid, (uint)commandId, cancellationToken);
-            return true;
-        }, TimeSpan.FromSeconds(1), cancellationToken);
+        await ExecuteCommandAsync(commandGuid, (uint)commandId, cancellationToken);
     }
 
     public async Task CloseCodeFileAsync(string projectName, string relativeFilePath, bool saveFile, CancellationToken cancellationToken)
@@ -88,7 +83,34 @@ internal partial class EditorInProcess
     {
         await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
-        var dispatcher = await GetRequiredGlobalServiceAsync<SUIHostCommandDispatcher, IOleCommandTarget>(cancellationToken);
+        var dispatcher = await TestServices.Shell.GetRequiredGlobalServiceAsync<SUIHostCommandDispatcher, IOleCommandTarget>(cancellationToken);
+
+        // Before we execute the command, lets wait until it's enabled and available. Unfortunately this is an annoying COM pattern.
+
+        // Set up the data for the API to fill in. We set command id, it sets the status in "cmdf"
+        var cmds = new OLECMD[1];
+        cmds[0].cmdID = commandId;
+        cmds[0].cmdf = 0;
+
+        await Helper.RetryAsync(ct =>
+        {
+            // The return value here is just whether the QueryStatus call worked, not whether the command is enabled.
+            ErrorHandler.ThrowOnFailure(dispatcher.QueryStatus(ref commandGuid, 1, cmds, IntPtr.Zero));
+
+            // Now check the status flags that were filled in for the command we asked about.
+            var status = (OLECMDF)cmds[0].cmdf;
+            if (status.HasFlag(OLECMDF.OLECMDF_ENABLED) &&
+                status.HasFlag(OLECMDF.OLECMDF_SUPPORTED))
+            {
+                // Returning non-default from RetryAsync stops the retry loop.
+                return SpecializedTasks.True;
+            }
+
+            // Returning default means it will try again.
+            return SpecializedTasks.False;
+        }, TimeSpan.FromMilliseconds(100), cancellationToken);
+
+        // Now we can be reasonably sure the command is available, so execute it.
         ErrorHandler.ThrowOnFailure(dispatcher.Exec(commandGuid, commandId, (uint)OLECMDEXECOPT.OLECMDEXECOPT_DODEFAULT, IntPtr.Zero, IntPtr.Zero));
     }
 

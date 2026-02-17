@@ -4,6 +4,7 @@
 using System.Runtime.Serialization;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
+using Microsoft.CodeAnalysis.Razor.Settings;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
@@ -17,26 +18,30 @@ internal readonly record struct RazorFormattingOptions
     [DataMember(Order = 2)]
     public bool CodeBlockBraceOnNextLine { get; init; } = false;
     [DataMember(Order = 3)]
+    public AttributeIndentStyle AttributeIndentStyle { get; init; } = AttributeIndentStyle.AlignWithFirst;
+    [DataMember(Order = 4)]
     public RazorCSharpSyntaxFormattingOptions? CSharpSyntaxFormattingOptions { get; init; }
 
     public RazorFormattingOptions()
     {
     }
 
-    public static RazorFormattingOptions From(FormattingOptions options, bool codeBlockBraceOnNextLine)
-        => new()
-        {
-            InsertSpaces = options.InsertSpaces,
-            TabSize = options.TabSize,
-            CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine
-        };
-
-    public static RazorFormattingOptions From(FormattingOptions options, bool codeBlockBraceOnNextLine, RazorCSharpSyntaxFormattingOptions csharpSyntaxFormattingOptions)
+    public static RazorFormattingOptions From(FormattingOptions options, bool codeBlockBraceOnNextLine, AttributeIndentStyle attributeIndentStyle)
         => new()
         {
             InsertSpaces = options.InsertSpaces,
             TabSize = options.TabSize,
             CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine,
+            AttributeIndentStyle = attributeIndentStyle,
+        };
+
+    public static RazorFormattingOptions From(FormattingOptions options, bool codeBlockBraceOnNextLine, AttributeIndentStyle attributeIndentStyle, RazorCSharpSyntaxFormattingOptions csharpSyntaxFormattingOptions)
+        => new()
+        {
+            InsertSpaces = options.InsertSpaces,
+            TabSize = options.TabSize,
+            CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine,
+            AttributeIndentStyle = attributeIndentStyle,
             CSharpSyntaxFormattingOptions = csharpSyntaxFormattingOptions
         };
 

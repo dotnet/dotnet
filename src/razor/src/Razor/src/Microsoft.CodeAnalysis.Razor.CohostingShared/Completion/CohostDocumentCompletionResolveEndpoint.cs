@@ -135,7 +135,8 @@ internal sealed class CohostDocumentCompletionResolveEndpoint(
         {
             InsertSpaces = !clientSettings.ClientSpaceSettings.IndentWithTabs,
             TabSize = clientSettings.ClientSpaceSettings.IndentSize,
-            CodeBlockBraceOnNextLine = clientSettings.AdvancedSettings.CodeBlockBraceOnNextLine
+            CodeBlockBraceOnNextLine = clientSettings.AdvancedSettings.CodeBlockBraceOnNextLine,
+            AttributeIndentStyle = clientSettings.AdvancedSettings.AttributeIndentStyle,
         };
 
         // Couldn't find an associated completion list, so its either Razor or C#. Either way, over to OOP

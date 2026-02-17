@@ -17,6 +17,7 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.Diagnostics;
@@ -28,13 +29,11 @@ using SyntaxNode = AspNetCore.Razor.Language.Syntax.SyntaxNode;
 /// Contains several methods for mapping and filtering Razor and C# diagnostics. It allows for
 /// translating code diagnostics from one representation into another, such as from C# to Razor.
 /// </summary>
-/// <param name="documentMappingService">The <see cref="IDocumentMappingService"/>.</param>
-/// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
-/// <exception cref="ArgumentNullException"/>
-internal class RazorTranslateDiagnosticsService(IDocumentMappingService documentMappingService, ILoggerFactory loggerFactory)
+internal class RazorTranslateDiagnosticsService(IDocumentMappingService documentMappingService, LanguageServerFeatureOptions featureOptions, ILoggerFactory loggerFactory)
 {
-    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RazorTranslateDiagnosticsService>();
     private readonly IDocumentMappingService _documentMappingService = documentMappingService;
+    private readonly LanguageServerFeatureOptions _featureOptions = featureOptions;
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RazorTranslateDiagnosticsService>();
 
     private static readonly FrozenSet<string> s_cSharpDiagnosticsToIgnore = new HashSet<string>(
     [
@@ -453,13 +452,19 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
 
         if (markupAttributeValue is not null)
         {
-            if (!processedAttributes.TryGetValue(markupAttributeValue.Span, out var doesAttributeContainNonMarkup))
+            if (!processedAttributes.TryGetValue(markupAttributeValue.Span, out var shouldFilterDiagnostic))
             {
-                doesAttributeContainNonMarkup = CheckIfAttributeContainsNonMarkupNodes(markupAttributeValue);
-                processedAttributes.Add(markupAttributeValue.Span, doesAttributeContainNonMarkup);
+                // If a component attribute is spread across multiple lines, it's not valid Html so the Html server can't be expected to reason
+                // about the contents correctly
+                shouldFilterDiagnostic = markupAttributeValue is MarkupTagHelperAttributeValueSyntax &&
+                    markupAttributeValue.GetLinePositionSpan(syntaxTree.Source).SpansMultipleLines();
+
+                // Similarly, if the attribute value contains non-markup, the Html could report false positives
+                shouldFilterDiagnostic |= CheckIfAttributeContainsNonMarkupNodes(markupAttributeValue);
+                processedAttributes.Add(markupAttributeValue.Span, shouldFilterDiagnostic);
             }
 
-            return doesAttributeContainNonMarkup;
+            return shouldFilterDiagnostic;
         }
 
         return false;
@@ -521,7 +526,8 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
 
     private bool TryGetOriginalDiagnosticRange(LspDiagnostic diagnostic, RazorCodeDocument codeDocument, [NotNullWhen(true)] out LspRange? originalRange)
     {
-        if (IsRudeEditDiagnostic(diagnostic))
+        // In cohosting, Enc diagnostics aren't special
+        if (!_featureOptions.UseRazorCohostServer && IsRudeEditDiagnostic(diagnostic))
         {
             if (TryRemapRudeEditRange(diagnostic.Range, codeDocument, out originalRange))
             {
@@ -560,9 +566,9 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
 
     private bool TryRemapRudeEditRange(LspRange diagnosticRange, RazorCodeDocument codeDocument, [NotNullWhen(true)] out LspRange? remappedRange)
     {
-        // This is a rude edit diagnostic that has already been mapped to the Razor document. The mapping isn't absolutely correct though,
-        // it's based on the runtime code generation of the Razor document therefore we need to re-map the already mapped diagnostic in a
-        // semi-intelligent way.
+        // This is a rude edit diagnostic that has already been mapped to the Razor document if cohosting is off.
+        // The mapping isn't absolutely correct though, it's based on the runtime code generation of the Razor document
+        // therefore we need to re-map the already mapped diagnostic in a semi-intelligent way.
 
         var syntaxRoot = codeDocument.GetRequiredSyntaxRoot();
         var sourceText = codeDocument.Source.Text;

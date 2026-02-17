@@ -21,6 +21,13 @@ internal abstract partial class BaseMarkupStartTagSyntax
         }
     }
 
+    public bool IsSelfClosing()
+    {
+        return ForwardSlash.Kind != SyntaxKind.None &&
+            !ForwardSlash.IsMissing &&
+            !CloseAngle.IsMissing;
+    }
+
     /// <summary>
     ///  This method returns the children of this start tag in legacy format.
     ///  This is needed to generate the same classified spans as the legacy syntax tree.

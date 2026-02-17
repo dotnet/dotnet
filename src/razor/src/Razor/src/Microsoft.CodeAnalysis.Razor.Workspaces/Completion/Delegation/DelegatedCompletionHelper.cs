@@ -255,7 +255,7 @@ internal static class DelegatedCompletionHelper
             {
                 if (node is MarkupElementSyntax elementNode)
                 {
-                    if (RazorSyntaxFacts.IsStyleBlock(elementNode) || RazorSyntaxFacts.IsScriptBlock(elementNode))
+                    if (RazorSyntaxFacts.IsScriptOrStyleBlock(elementNode))
                     {
                         return true;
                     }
