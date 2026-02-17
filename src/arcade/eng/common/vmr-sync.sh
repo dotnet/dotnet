@@ -186,7 +186,7 @@ fi
 
 # Synchronize the VMR
 
-repo_root=$(git rev-parse --show-toplevel)
+repo_root=$(cd "$scriptroot/../.."; pwd -P)
 version_details_path="$repo_root/eng/Version.Details.xml"
 repo_name=$(grep -m 1 '<Source ' "$version_details_path" | sed -n 's/.*Mapping="\([^"]*\)".*/\1/p')
 if [[ -z "$repo_name" ]]; then
