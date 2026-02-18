@@ -3,7 +3,6 @@
 #:package Azure.Identity@1.17.1
 #:package Octokit@13.0.1
 
-using System.Drawing;
 using Azure.Core;
 using Azure.Identity;
 using Microsoft.DotNet.ProductConstructionService.Client;
