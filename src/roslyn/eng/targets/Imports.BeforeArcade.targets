@@ -14,10 +14,13 @@
   </PropertyGroup>
 
   <!-- do not restore or use the 8.0 app host in source-build -->
-  <Import Project="$(MSBuildThisFileDirectory)TargetingPacks.targets" />
-
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <UseAppHost>false</UseAppHost>
+    <!-- For source-build: Configure targeting packs to use live Microsoft.NETCore.App.Ref version -->
+    <KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion>
+    <KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion>
+    <KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion>
+    <KnownCrossgen2PackCurrentVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownCrossgen2PackCurrentVersion>
   </PropertyGroup>
 
 </Project>
