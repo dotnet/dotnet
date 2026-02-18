@@ -19,4 +19,5 @@
     <BuiltSdkPackage Include="Microsoft.DotNet.SharedFramework.Sdk" />
     <BuiltSdkPackage Include="Microsoft.DotNet.CMake.Sdk" />
   </ItemGroup>
+
 </Project>
