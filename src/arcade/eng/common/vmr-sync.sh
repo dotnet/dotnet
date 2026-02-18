@@ -216,7 +216,7 @@ else
     --additional-remotes "$repo_name:$repo_root"
 
   if [[ $? == 0 ]]; then
-    highlight "Successfully reset the VMR using `darc vmr reset`"
+    highlight "Successfully reset the VMR using 'darc vmr reset'"
   else
     fail "Synchronization of repo to VMR failed!"
     fail "'$vmr_dir' is left in its last state (re-run of this script will reset it)."

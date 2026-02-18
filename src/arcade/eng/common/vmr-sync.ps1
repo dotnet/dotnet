@@ -103,8 +103,8 @@ Set-StrictMode -Version Latest
 Highlight 'Installing .NET, preparing the tooling..'
 . .\eng\common\tools.ps1
 $dotnetRoot = InitializeDotNetCli -install:$true
+$env:DOTNET_ROOT = $dotnetRoot
 $darc = Get-Darc
-$dotnet = "$dotnetRoot\dotnet.exe"
 
 Highlight "Starting the synchronization of VMR.."
 
@@ -152,7 +152,7 @@ else {
   & "$darc" $resetArgs
 
   if ($LASTEXITCODE -eq 0) {
-    Highlight "Successfully reset the VMR using `darc vmr reset`"
+    Highlight "Successfully reset the VMR using 'darc vmr reset'"
   }
   else {
     Fail "Synchronization of repo to VMR failed!"
