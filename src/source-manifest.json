@@ -85,10 +85,10 @@
       "commitSha": "1b01161da7e231892119ce2906937265e5d430b8"
     },
     {
-      "barId": 300418,
+      "barId": 301984,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "64f9f4bc3a23634a0d80d9b8dcaec1126e7d4891"
+      "commitSha": "b6341891a4b74582b772635757c73d4d9d78fd86"
     },
     {
       "barId": 301858,
@@ -103,10 +103,10 @@
       "commitSha": "83baa8561d6f00b5c12714745fc93ca6dd305d1f"
     },
     {
-      "barId": 301398,
+      "barId": 302141,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "87111bcd96317b807505e1e68e88b0b33059bbce"
+      "commitSha": "89b290fe5cf579afea6bd087c1294f8c2754d859"
     },
     {
       "barId": 291125,
@@ -127,10 +127,10 @@
       "commitSha": "697c1270eebc92c531f27265dd0ff60211b088bb"
     },
     {
-      "barId": 301644,
+      "barId": 302211,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "16400fd8bd584ff9612826bc3f2a2190917dfa3a"
+      "commitSha": "11c3ba6de94e275365ed208f0802eb0cb4ca63c5"
     },
     {
       "barId": 301468,
