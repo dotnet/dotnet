@@ -198,7 +198,7 @@ void SavePullRequestInfo(Dictionary<string, DateTimeOffset> prInfoMap)
     }
     var filePath = GetFilePathPullRequestInfo();
     _ = Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
-    File.WriteAllLines(GetFilePathPullRequestInfo(), lines);
+    File.WriteAllLines(filePath, lines);
 }
 
 IProductConstructionServiceApi CreatePcsClient()
