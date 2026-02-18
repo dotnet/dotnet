@@ -385,7 +385,8 @@ internal sealed class RoslynCSharpTokenizer : CSharpTokenizer
         // If the token is the expected kind and is only the expected prefix or doesn't have the expected postfix, then it's unterminated.
         // This is a case like `"test` (which doesn't end in the expected postfix), or `"` (which ends in the expected postfix, but
         // exactly matches the expected prefix).
-        if (lookForPrePostFix || csharpToken.Text == expectedPrefix || !csharpToken.Text.EndsWith(expectedPostfix!, StringComparison.Ordinal))
+        // Note: UTF-8 string literals can have a u8 or U8 suffix after the closing quote, e.g., "hello"u8
+        if (lookForPrePostFix || csharpToken.Text == expectedPrefix || !IsStringProperlyTerminated(csharpToken.Text, expectedPostfix))
         {
             CurrentErrors.Add(
                 RazorDiagnosticFactory.CreateParsing_UnterminatedStringLiteral(
@@ -802,6 +803,35 @@ internal sealed class RoslynCSharpTokenizer : CSharpTokenizer
         base.Dispose();
         _roslynTokenParser.Dispose();
         ListPool<(int, SyntaxTokenParser.Result, bool)>.Default.Return(_resultCache);
+    }
+
+    private static bool IsStringProperlyTerminated(string tokenText, string expectedPostfix)
+    {
+        // Check if the string ends with the expected postfix (e.g., ")
+        if (tokenText.EndsWith(expectedPostfix, StringComparison.Ordinal))
+        {
+            return true;
+        }
+
+        // Check if it's a UTF-8 string literal with u8 or U8 suffix
+        // UTF-8 strings have the format: prefix + content + postfix + "u8"
+        // The minimum valid UTF-8 string is when content is empty.
+        // For a regular string: ""u8 is 4 characters total (opening quote + closing quote + u8)
+        // For a raw string: """content"""u8 is at least 8 characters (3 opening quotes + content + 3 closing quotes + u8)
+        // The expectedPostfix can vary: for "" it's "", for "x" it's ", for """x""" it's """
+        // So minimum length is expectedPostfix.Length (closing delimiter) + 2 (u8 suffix)
+        if (tokenText.Length >= expectedPostfix.Length + 2)
+        {
+            var suffix = tokenText.AsSpan(tokenText.Length - 2);
+            if (suffix is ['u' or 'U', '8'])
+            {
+                // Check if the part before the suffix ends with the expected postfix
+                var textBeforeSuffix = tokenText.AsSpan(0, tokenText.Length - 2);
+                return textBeforeSuffix.EndsWith(expectedPostfix.AsSpan(), StringComparison.Ordinal);
+            }
+        }
+
+        return false;
     }
 
     private enum NextResultType

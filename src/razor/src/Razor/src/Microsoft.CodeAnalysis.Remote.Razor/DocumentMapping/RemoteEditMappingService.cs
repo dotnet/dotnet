@@ -52,18 +52,12 @@ internal sealed class RemoteEditMappingService(
         }
 
         var solution = originSnapshot.TextDocument.Project.Solution;
-        if (!solution.TryGetSourceGeneratedDocumentIdentity(generatedDocumentUri, out var identity) ||
-            !solution.TryGetProject(identity.DocumentId.ProjectId, out var project))
-        {
-            return null;
-        }
-
-        var razorCodeDocument = await _snapshotManager.GetSnapshot(project).TryGetCodeDocumentForGeneratedDocumentAsync(identity, cancellationToken).ConfigureAwait(false);
+        var razorCodeDocument = await _snapshotManager.TryGetRazorCodeDocumentAsync(solution, generatedDocumentUri, cancellationToken).ConfigureAwait(false);
         if (razorCodeDocument is null)
         {
             return null;
         }
 
-        return project.Solution.GetRazorDocumentUri(razorCodeDocument);
+        return solution.GetRazorDocumentUri(razorCodeDocument);
     }
 }

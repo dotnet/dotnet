@@ -2603,10 +2603,6 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
             }
 
             var usingStatementTokens = TokenBuilder.ToList().Nodes;
-            var usingContentTokens = usingStatementTokens.Skip(1);
-            var parsedNamespaceTokens = usingStatementTokens
-                .Skip(nonNamespaceTokenCount)
-                .Where(s => s.Kind != SyntaxKind.CSharpComment && s.Kind != SyntaxKind.Whitespace && s.Kind != SyntaxKind.NewLine);
 
             SetAcceptedCharacters(AcceptedCharactersInternal.AnyExceptNewline);
 
@@ -2617,9 +2613,30 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                 hasExplicitSemicolon = TryAccept(SyntaxKind.Semicolon);
             }
 
+            using var _1 = StringBuilderPool.GetPooledObject(out var usingContentBuilder);
+            using var _2 = StringBuilderPool.GetPooledObject(out var parsedNamespaceBuilder);
+
+            for (var i = 0; i < usingStatementTokens.Length; i++)
+            {
+                var token = usingStatementTokens[i];
+
+                if (i >= 1)
+                {
+                    usingContentBuilder.Append(token.Content);
+                }
+
+                if (i >= nonNamespaceTokenCount &&
+                    token.Kind != SyntaxKind.CSharpComment &&
+                    token.Kind != SyntaxKind.Whitespace &&
+                    token.Kind != SyntaxKind.NewLine)
+                {
+                    parsedNamespaceBuilder.Append(token.Content);
+                }
+            }
+
             chunkGenerator = new AddImportChunkGenerator(
-                string.Concat(usingContentTokens.Select(s => s.Content)),
-                string.Concat(parsedNamespaceTokens.Select(s => s.Content)),
+                usingContentBuilder.ToString(),
+                parsedNamespaceBuilder.ToString(),
                 isStatic,
                 hasExplicitSemicolon);
 
