@@ -26,10 +26,15 @@ function GetXmlPropertyValue {
 function DownloadWithRetries {
   local url="$1"
   local targetDir="$2"
+  local outputFileName="${3:-}"
+  local curlOutputArg=("-O")
+  if [[ -n "$outputFileName" ]]; then
+    curlOutputArg=("-o" "$outputFileName")
+  fi
   (
     cd "$targetDir" &&
     for i in {1..5}; do
-      if curl -fL --retry 5 -O "$url"; then
+      if curl -fL --retry 5 "${curlOutputArg[@]}" "$url"; then
         return 0
       else
         local exitCode=$?
@@ -150,7 +155,7 @@ function DownloadArchive {
     fi
     
     echo "  Downloading $label from $displayUrl..."
-    if DownloadWithRetries "$archiveUrl" "$outputDir"; then
+    if DownloadWithRetries "$archiveUrl" "$outputDir" "$downloadedFilename"; then
       downloadSucceeded=true
       break
     else

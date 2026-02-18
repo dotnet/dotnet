@@ -136,6 +136,7 @@ stages:
     parameters:
       desiredSigning: ${{ parameters.desiredSigning }}
       isOfficialBuild: ${{ parameters.isOfficialBuild }}
+      excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
 
 - ${{ if notin(parameters.scope, 'scout') }}:
   - template: source-build-stages.yml
