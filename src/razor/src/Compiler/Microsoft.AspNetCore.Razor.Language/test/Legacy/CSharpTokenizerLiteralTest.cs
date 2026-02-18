@@ -363,6 +363,68 @@ public class CSharpTokenizerLiteralTest : CSharpTokenizerTestBase
     }
 
     [Fact]
+    public void Utf8_String_Literal_Is_Recognized_Lowercase()
+    {
+        TestSingleToken("\"hello\"u8", SyntaxKind.StringLiteral);
+    }
+
+    [Fact]
+    public void Utf8_String_Literal_Is_Recognized_Uppercase()
+    {
+        TestSingleToken("\"hello\"U8", SyntaxKind.StringLiteral);
+    }
+
+    [Fact]
+    public void Utf8_String_Literal_Empty_String()
+    {
+        TestSingleToken("\"\"u8", SyntaxKind.StringLiteral);
+    }
+
+    [Fact]
+    public void Utf8_String_Literal_With_Escape_Sequences()
+    {
+        TestSingleToken("\"hello\\nworld\"u8", SyntaxKind.StringLiteral);
+    }
+
+    [Fact]
+    public void Utf8_String_Literal_Allows_Trailing_Content()
+    {
+        TestTokenizer("\"hello\"u8;",
+            SyntaxFactory.Token(SyntaxKind.StringLiteral, "\"hello\"u8"),
+            SyntaxFactory.Token(SyntaxKind.Semicolon, ";"));
+    }
+
+    [Fact]
+    public void Utf8_Verbatim_String_Literal_Is_Recognized()
+    {
+        TestSingleToken("@\"hello\\nworld\"u8", SyntaxKind.StringLiteral);
+    }
+
+    [Fact]
+    public void Utf8_Raw_String_Literal_Is_Recognized()
+    {
+        TestSingleToken("\"\"\"hello\"\"\"u8", SyntaxKind.StringLiteral);
+    }
+
+    [Fact]
+    public void Utf8_Raw_String_Literal_Multiline_Is_Recognized()
+    {
+        TestSingleToken("\"\"\"\nhello\nworld\n\"\"\"u8", SyntaxKind.StringLiteral);
+    }
+
+    [Fact]
+    public void Utf8_Raw_String_Literal_With_Quotes_Is_Recognized()
+    {
+        TestSingleToken("\"\"\"She said \"hello\"\"\"\"u8", SyntaxKind.StringLiteral);
+    }
+
+    [Fact]
+    public void Utf8_Raw_String_Literal_Uppercase_Is_Recognized()
+    {
+        TestSingleToken("\"\"\"content\"\"\"U8", SyntaxKind.StringLiteral);
+    }
+
+    [Fact]
     public void Interpolated_String_Is_Recognized()
     {
         TestSingleToken("""

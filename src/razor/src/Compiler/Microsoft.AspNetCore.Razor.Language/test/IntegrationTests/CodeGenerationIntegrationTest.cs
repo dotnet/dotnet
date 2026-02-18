@@ -478,4 +478,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
         AddCSharpSyntaxTree(string.Join("\n", tagHelperClasses));
     }
+
+    [IntegrationTestFact]
+    public void Utf8StringLiterals() => RunTest();
 }
