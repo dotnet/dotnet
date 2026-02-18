@@ -94,13 +94,11 @@ namespace NuGet.CommandLine.XPlat
                     packageReferenceArgs.ProjectPath));
             }
 
-            // Parse the user specified frameworks once to avoid re-do's
-            var userSpecifiedFrameworks = new List<NuGetFramework>();
+            // Keep the user specified frameworks as aliases to match against TargetAlias
+            var userSpecifiedFrameworks = new List<string>();
             if (packageReferenceArgs.Frameworks?.Any() == true)
             {
-                userSpecifiedFrameworks.AddRange(packageReferenceArgs
-                    .Frameworks
-                    .Select(NuGetFramework.Parse));
+                userSpecifiedFrameworks.AddRange(packageReferenceArgs.Frameworks);
             }
 
             var originalPackageSpec = matchingPackageSpecs.FirstOrDefault();
@@ -198,19 +196,19 @@ namespace NuGet.CommandLine.XPlat
             packageReferenceArgs.Logger.LogDebug("Restore Review completed");
 
             // 4. Process Restore Result
-            var compatibleFrameworks = new HashSet<NuGetFramework>(
+            var compatibleFrameworks = new HashSet<string>(
                 restorePreviewResult
                 .Result
                 .CompatibilityCheckResults
                 .Where(t => t.Success)
-                .Select(t => t.Graph.Framework), NuGetFrameworkFullComparer.Instance);
+                .Select(t => t.Graph.TargetAlias), StringComparer.OrdinalIgnoreCase);
 
             if (packageReferenceArgs.Frameworks?.Any() == true)
             {
                 // If the user has specified frameworks then we intersect that with the compatible frameworks.
-                var userSpecifiedFrameworkSet = new HashSet<NuGetFramework>(
+                var userSpecifiedFrameworkSet = new HashSet<string>(
                     userSpecifiedFrameworks,
-                    NuGetFrameworkFullComparer.Instance);
+                    StringComparer.OrdinalIgnoreCase);
 
                 compatibleFrameworks.IntersectWith(userSpecifiedFrameworkSet);
             }
@@ -260,16 +258,13 @@ namespace NuGet.CommandLine.XPlat
                     packageReferenceArgs.PackageId,
                     packageReferenceArgs.ProjectPath));
 
-                var compatibleOriginalFrameworks = compatibleFrameworks
-                    .Select(e => GetAliasForFramework(originalPackageSpec, e))
-                    .Where(originalFramework => originalFramework != null);
-
                 // generate a library dependency with all the metadata like Include, Exlude and SuppressParent
                 var libraryDependency = GenerateLibraryDependency(updatedPackageSpec, packageReferenceArgs.PackageDirectory, packageDependency, resolvedVersion);
 
+                // compatibleFrameworks already contains aliases from TargetAlias
                 msBuild.AddPackageReferencePerTFM(packageReferenceArgs.ProjectPath,
                     libraryDependency,
-                    compatibleOriginalFrameworks,
+                    compatibleFrameworks,
                     packageReferenceArgs.NoVersion);
             }
 
@@ -279,7 +274,7 @@ namespace NuGet.CommandLine.XPlat
             return 0;
         }
 
-        internal static bool TryFindResolvedVersion(List<NuGetFramework> userSpecifiedFrameworks, string packageId, RestoreResult restoreResult, ILogger logger, out NuGetVersion resolvedVersion)
+        internal static bool TryFindResolvedVersion(List<string> userSpecifiedFrameworks, string packageId, RestoreResult restoreResult, ILogger logger, out NuGetVersion resolvedVersion)
         {
             // get the package resolved version from restore preview result
             (LibraryType libraryType, resolvedVersion) = GetPackageVersionFromRestoreResult(restoreResult, packageId, userSpecifiedFrameworks);
@@ -454,7 +449,7 @@ namespace NuGet.CommandLine.XPlat
 
         private static (LibraryType, NuGetVersion) GetPackageVersionFromRestoreResult(RestoreResult restoreResult,
             string packageId,
-            List<NuGetFramework> userSpecifiedFrameworks)
+            List<string> userSpecifiedFrameworks)
         {
             // Get the restore graphs from the restore result
             var restoreGraphs = restoreResult
@@ -463,12 +458,12 @@ namespace NuGet.CommandLine.XPlat
             if (userSpecifiedFrameworks.Count > 1)
             {
                 // If the user specified frameworks then we get the flattened graphs  only from the compatible frameworks.
-                var userSpecifiedFrameworkSet = new HashSet<NuGetFramework>(
+                var userSpecifiedFrameworkSet = new HashSet<string>(
                     userSpecifiedFrameworks,
-                    NuGetFrameworkFullComparer.Instance);
+                    StringComparer.OrdinalIgnoreCase);
 
                 restoreGraphs = restoreGraphs
-                    .Where(r => userSpecifiedFrameworkSet.Contains(r.Framework));
+                    .Where(r => userSpecifiedFrameworkSet.Contains(r.TargetAlias));
             }
 
             foreach (var restoreGraph in restoreGraphs)
