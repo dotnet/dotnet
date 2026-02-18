@@ -222,7 +222,10 @@ stages:
               distro: centos
               targetArchitecture: x64
               buildFromArchive: false            # 🚫
-              enablePoison: false                # 🚫
+              ${{ if parameters.excludeRuntimeDependentJobs }}:
+                enablePoison: true               # ✅
+              ${{ else }}:
+                enablePoison: false              # 🚫
               runOnline: false                   # 🚫
               useMonoRuntime: false              # 🚫
               useSystemLibraries: false          # 🚫
