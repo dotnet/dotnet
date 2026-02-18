@@ -80,7 +80,10 @@ stages:
 
         - ${{ if in(parameters.scope, 'source-build-outer-loop') }}:
 
-          - buildNameFormat: 'SB_{0}_Mono_Offline_MsftSdk'
+          - ${{ if parameters.excludeRuntimeDependentJobs }}:
+              buildNameFormat: 'SB_{0}_Mono_Offline_PreviousSourceBuiltSdk'
+            ${{ else }}:
+              buildNameFormat: 'SB_{0}_Mono_Offline_MsftSdk'
             distro: centos
             targetArchitecture: x64
             buildFromArchive: true             # ✅
@@ -104,13 +107,19 @@ stages:
             withPreviousSDK: false             # 🚫
             disableSigning: true               # ✅
             createSourceArtifact: false        # 🚫
-            reuseBuildArtifactsFrom: 'SB_{0}_Mono_Offline_MsftSdk_x64'
+            ${{ if parameters.excludeRuntimeDependentJobs }}:
+              reuseBuildArtifactsFrom: 'SB_{0}_Mono_Offline_PreviousSourceBuiltSdk_x64'
+            ${{ else }}:
+              reuseBuildArtifactsFrom: 'SB_{0}_Mono_Offline_MsftSdk_x64'
             extraProperties: /p:DotNetSkipTestsRequiringMicrosoftArtifacts=true
 
         - ${{ else }}:
 
           # Stage 1 leg is built in full scope, or lite when any of the `source-build-` verifications are requested.
-          - buildNameFormat: 'SB_{0}_Online_MsftSdk'
+          - ${{ if parameters.excludeRuntimeDependentJobs }}:
+              buildNameFormat: 'SB_{0}_Online_PreviousSourceBuiltSdk'
+            ${{ else }}:
+              buildNameFormat: 'SB_{0}_Online_MsftSdk'
             distro: centos
             targetArchitecture: x64
             buildFromArchive: false            # 🚫
@@ -137,14 +146,20 @@ stages:
               withPreviousSDK: false             # 🚫
               disableSigning: true               # ✅
               createSourceArtifact: false        # 🚫
-              reuseBuildArtifactsFrom: 'SB_{0}_Online_MsftSdk_x64'
+              ${{ if parameters.excludeRuntimeDependentJobs }}:
+                reuseBuildArtifactsFrom: 'SB_{0}_Online_PreviousSourceBuiltSdk_x64'
+              ${{ else }}:
+                reuseBuildArtifactsFrom: 'SB_{0}_Online_MsftSdk_x64'
               ${{ if in(parameters.scope, 'lite') }}:
                 extraProperties: /p:DotNetSkipTestsRequiringMicrosoftArtifacts=true
 
           ### Additional legs for full build ###
           - ${{ if in(parameters.scope, 'full') }}:
 
-            - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
+            - ${{ if parameters.excludeRuntimeDependentJobs }}:
+                buildNameFormat: 'SB_{0}_Offline_PreviousSourceBuiltSdk'
+              ${{ else }}:
+                buildNameFormat: 'SB_{0}_Offline_MsftSdk'
               distro: ubuntu
               targetArchitecture: x64
               buildFromArchive: false            # 🚫
@@ -157,19 +172,23 @@ stages:
               disableSigning: true               # ✅
               createSourceArtifact: false        # 🚫
 
-            - buildNameFormat: 'SB_{0}_Offline_PreviousSourceBuiltSdk'
-              distro: centos
-              targetArchitecture: x64
-              buildFromArchive: false            # 🚫
-              enablePoison: true                 # ✅
-              runOnline: false                   # 🚫
-              useMonoRuntime: false              # 🚫
-              useSystemLibraries: false          # 🚫
-              withPreviousSDK: true              # ✅
-              disableSigning: true               # ✅
-              createSourceArtifact: false        # 🚫
+            - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
+              - buildNameFormat: 'SB_{0}_Offline_PreviousSourceBuiltSdk'
+                distro: centos
+                targetArchitecture: x64
+                buildFromArchive: false            # 🚫
+                enablePoison: true                 # ✅
+                runOnline: false                   # 🚫
+                useMonoRuntime: false              # 🚫
+                useSystemLibraries: false          # 🚫
+                withPreviousSDK: true              # ✅
+                disableSigning: true               # ✅
+                createSourceArtifact: false        # 🚫
 
-            - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
+            - ${{ if parameters.excludeRuntimeDependentJobs }}:
+                buildNameFormat: 'SB_{0}_Offline_PreviousSourceBuiltSdk'
+              ${{ else }}:
+                buildNameFormat: 'SB_{0}_Offline_MsftSdk'
               distro: almalinux
               targetArchitecture: x64
               buildFromArchive: false            # 🚫
@@ -181,7 +200,10 @@ stages:
               disableSigning: true               # ✅
               createSourceArtifact: false        # 🚫
 
-            - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
+            - ${{ if parameters.excludeRuntimeDependentJobs }}:
+                buildNameFormat: 'SB_{0}_Offline_PreviousSourceBuiltSdk'
+              ${{ else }}:
+                buildNameFormat: 'SB_{0}_Offline_MsftSdk'
               distro: alpine
               targetArchitecture: x64
               buildFromArchive: false            # 🚫
@@ -193,7 +215,10 @@ stages:
               disableSigning: true               # ✅
               createSourceArtifact: false        # 🚫
 
-            - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
+            - ${{ if parameters.excludeRuntimeDependentJobs }}:
+                buildNameFormat: 'SB_{0}_Offline_PreviousSourceBuiltSdk'
+              ${{ else }}:
+                buildNameFormat: 'SB_{0}_Offline_MsftSdk'
               distro: centos
               targetArchitecture: x64
               buildFromArchive: false            # 🚫
@@ -205,19 +230,23 @@ stages:
               disableSigning: false              # 🚫
               createSourceArtifact: true         # ✅
 
-            - buildNameFormat: 'SB_{0}_Online_PreviousSourceBuiltSdk'
-              distro: centos
-              targetArchitecture: x64
-              buildFromArchive: false            # 🚫
-              enablePoison: false                # 🚫
-              runOnline: true                    # ✅
-              useMonoRuntime: false              # 🚫
-              useSystemLibraries: false          # 🚫
-              withPreviousSDK: true              # ✅
-              disableSigning: true               # ✅
-              createSourceArtifact: false        # 🚫
+            - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
+              - buildNameFormat: 'SB_{0}_Online_PreviousSourceBuiltSdk'
+                distro: centos
+                targetArchitecture: x64
+                buildFromArchive: false            # 🚫
+                enablePoison: false                # 🚫
+                runOnline: true                    # ✅
+                useMonoRuntime: false              # 🚫
+                useSystemLibraries: false          # 🚫
+                withPreviousSDK: true              # ✅
+                disableSigning: true               # ✅
+                createSourceArtifact: false        # 🚫
 
-            - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
+            - ${{ if parameters.excludeRuntimeDependentJobs }}:
+                buildNameFormat: 'SB_{0}_Offline_PreviousSourceBuiltSdk'
+              ${{ else }}:
+                buildNameFormat: 'SB_{0}_Offline_MsftSdk'
               distro: fedora
               targetArchitecture: x64
               buildFromArchive: true             # ✅
@@ -229,7 +258,10 @@ stages:
               disableSigning: true               # ✅
               createSourceArtifact: false        # 🚫
 
-            - buildNameFormat: 'SB_{0}Arm64_Offline_MsftSdk'
+            - ${{ if parameters.excludeRuntimeDependentJobs }}:
+                buildNameFormat: 'SB_{0}Arm64_Offline_PreviousSourceBuiltSdk'
+              ${{ else }}:
+                buildNameFormat: 'SB_{0}Arm64_Offline_MsftSdk'
               distro: ubuntu
               targetArchitecture: arm64
               buildFromArchive: false            # 🚫
@@ -252,4 +284,7 @@ stages:
               withPreviousSDK: false             # 🚫
               disableSigning: true               # ✅
               createSourceArtifact: false        # 🚫
-              reuseBuildArtifactsFrom: 'SB_{0}_Offline_MsftSdk_x64'
+              ${{ if parameters.excludeRuntimeDependentJobs }}:
+                reuseBuildArtifactsFrom: 'SB_{0}_Offline_PreviousSourceBuiltSdk_x64'
+              ${{ else }}:
+                reuseBuildArtifactsFrom: 'SB_{0}_Offline_MsftSdk_x64'

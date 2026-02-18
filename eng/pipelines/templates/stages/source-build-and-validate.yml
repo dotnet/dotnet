@@ -49,6 +49,11 @@ stages:
       isOfficialBuild: ${{ parameters.isOfficialBuild }}
       desiredSigning: ${{ parameters.desiredSigning }}
       desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
+  - name: sbBuildSuffix
+    ${{ if parameters.excludeRuntimeDependentJobs }}:
+      value: PreviousSourceBuiltSdk
+    ${{ else }}:
+      value: MsftSdk
   jobs:
   - ${{ each leg in parameters.legs }}:
     - template: ../jobs/vmr-build.yml
@@ -136,7 +141,7 @@ stages:
         excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
         
         # We only want to publish SB artifacts for each distinct distro/version/arch combination
-        ${{ if and(endsWith(leg.buildNameFormat, 'Offline_MsftSdk'), not(contains(leg.buildNameFormat, '_Mono_'))) }}:
+        ${{ if and(endsWith(leg.buildNameFormat, variables.sbBuildSuffix), not(contains(leg.buildNameFormat, '_Mono_'))) }}:
           extraProperties: ${{ leg.extraProperties }} /p:DotNetSourceOnlyPublishArtifacts=true
         ${{ else }}:
           extraProperties: ${{ leg.extraProperties }}
