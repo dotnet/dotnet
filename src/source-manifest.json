@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 301121,
+      "barId": 302191,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "4bf37ce670528cf2aef4d9b1cd892554b1b02d9d"
+      "commitSha": "eae2786f0de623ee284aea80713ec2c61531e9bd"
     },
     {
       "barId": 288647,
@@ -19,10 +19,10 @@
       "commitSha": "019588e4b5d9722ebffae59c6c5c17f0573b3545"
     },
     {
-      "barId": 293177,
+      "barId": 296892,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "228caa11ad0046ccb599530abd9aba4e1979b5e9"
+      "commitSha": "6ef3f7b7870b0cdecd9773d4c7b3c58f206f554b"
     },
     {
       "barId": 301786,
@@ -31,10 +31,10 @@
       "commitSha": "a527f9edd5b4b5b573f004609434b726ad324510"
     },
     {
-      "barId": 289279,
+      "barId": 297559,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "191feab170b690f6a4923072d1b6f6e00272d8a7"
+      "commitSha": "43c97a1b8d5e97dd1dcc1e467079268f483ed903"
     },
     {
       "barId": 301555,
@@ -43,10 +43,10 @@
       "commitSha": "b538ca91069041386ab413e44b3de8941edadd09"
     },
     {
-      "barId": 291014,
+      "barId": 297273,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "f29ac531ec59b79ff12335835ae4a69cde51156a"
+      "commitSha": "368b99891ce58728b6795383c862520ec15efb22"
     },
     {
       "barId": 301670,
@@ -55,28 +55,28 @@
       "commitSha": "780ab9a730c4ace69e1285e8d745b5141a3b2a0b"
     },
     {
-      "barId": 293338,
+      "barId": 296673,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "b73c3ef0856c34ccd8a50a1c8c2151cab1f469e0"
+      "commitSha": "3397ffbc55f54c3c3f0889d443e3a55868416c38"
     },
     {
-      "barId": 292299,
+      "barId": 297150,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "b9386293548b43c7c6cd294c1fc14a5c4d16a15f"
+      "commitSha": "494565b6d10cc9e39bcad37143fd7e35fc469d50"
     },
     {
-      "barId": 291391,
+      "barId": 299482,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "069bda6132d6ac2134cc9b26d651ccb825ff212d"
+      "commitSha": "5cdedf0899c6a3c815680b602f0cf8379627cd47"
     },
     {
-      "barId": 291277,
+      "barId": 295978,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "4524dcd1e91c0d09d6da6576952f8df05e666e9c"
+      "commitSha": "41f7799afd5767945acc16071ab64fa984bca274"
     }
   ],
   "submodules": [
