@@ -2,6 +2,11 @@
 
   <Import Project="Version.Details.props" />
 
+  <!-- For source-build: Set the Microsoft.NETCore.App.Ref version property from Version.Details.props -->
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <MicrosoftNETCoreAppRefVersion>$(MicrosoftNETCoreAppRefPackageVersion)</MicrosoftNETCoreAppRefVersion>
+  </PropertyGroup>
+
   <!-- Roslyn version -->
   <PropertyGroup>
     <MajorVersion>5</MajorVersion>
