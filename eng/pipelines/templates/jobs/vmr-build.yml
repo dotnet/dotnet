@@ -427,30 +427,31 @@ jobs:
   - template: /eng/common/templates/steps/enable-internal-runtimes.yml
 
   - ${{ if parameters.excludeRuntimeDependentJobs }}:
-    - ${{ if and(eq(parameters.reuseBuildArtifactsFrom, ''), not(parameters.withPreviousSDK)) }}:
-      - script: |
-          source "$(sourcesPath)/eng/download-source-built-archive.sh"
-          if [[ $SYSTEM_TEAMPROJECT == "internal" ]]; then
-            storageKey="$(dotnetbuilds-internal-container-read-token-base64)"
-          else
-            storageKey=""
-          fi
-          # Download the N-1 source-built SDK
-          DownloadArchive "N-1 source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "" "" $storageKey
-        displayName: Download N-1 SDK
-
     - script: |
+        set -euo pipefail
         source "$(sourcesPath)/eng/download-source-built-archive.sh"
         if [[ $SYSTEM_TEAMPROJECT == "internal" ]]; then
           storageKey="$(dotnetbuilds-internal-container-read-token-base64)"
         else
           storageKey=""
         fi
+
+        if [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -eq '0' ]]; then
+          if [[ '${{ parameters.withPreviousSDK }}' != 'True' ]]; then
+            # Download the N-1 source-built SDK
+            DownloadArchive "N-1 source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "" "" $storageKey
+          fi
+
+          # Download the non-portable, RID-specific artifacts so that prep-source-build.sh
+          # finds them already present and skips downloading centos artifacts and bootstrapping.
+          DownloadArchive "previously source-built artifacts" "PrivateSourceBuiltArtifactsVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "" "" $storageKey
+        fi
+
         mkdir -p "$(sharedComponentsDir)"
         DownloadArchive "shared component artifacts" "PrivateSourceBuiltArtifactsVersion" false "${{ parameters.artifactsRid }}" "$(sharedComponentsDir)" "Private.SourceBuilt.SharedComponents" "MicrosoftNETSdkPackageVersion" $storageKey
         tar -xzf $(sharedComponentsDir)/Private.SourceBuilt.SharedComponents.*.tar.gz -C "$(sharedComponentsDir)"
         rm -f $(sharedComponentsDir)/Private.SourceBuilt.SharedComponents.*.tar.gz
-      displayName: Download Shared Component Artifacts
+      displayName: Download Source-Built Archives
 
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - task: PowerShell@2
@@ -568,6 +569,8 @@ jobs:
           prepSdk=true
 
           if [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
+            # Non-portable, RID-specific artifacts were already downloaded; no need to bootstrap.
+            customPrepArgs="${customPrepArgs} --no-bootstrap --artifacts-rid ${{ parameters.artifactsRid }}"
             prepSdk=false
           fi
 
