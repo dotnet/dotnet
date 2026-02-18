@@ -2,13 +2,13 @@
   <ProductDependencies>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26104.118">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26117.112">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>87bc0b04e21d786669142109a5128c95618b75ed</Sha>
+      <Sha>a4d9d41dacea3edd7c9e8cef5a63edd63eba16d5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Manifest" Version="11.0.0-beta.26104.118">
+    <Dependency Name="Microsoft.DotNet.Build.Manifest" Version="11.0.0-beta.26117.112">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>87bc0b04e21d786669142109a5128c95618b75ed</Sha>
+      <Sha>a4d9d41dacea3edd7c9e8cef5a63edd63eba16d5</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.26112.6" SkipProperty="True">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
