@@ -40,7 +40,7 @@ variables:
   - name: defaultPoolName
     value: NetCore-Public-XL
   - name: poolImage_Linux
-    value: 1es-ubuntu-2004-open
+    value: build.ubuntu.2204.amd64.open
   - name: poolImage_LinuxArm64
     value: Mariner-2-Docker-ARM64
   - name: poolName_LinuxArm64
