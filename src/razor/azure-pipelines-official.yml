@@ -87,7 +87,7 @@ extends:
         configFile: '$(Build.SourcesDirectory)/eng/TSAConfig.gdntsa'
     pool:
       name: $(DncEngInternalBuildPool)
-      image: windows.vs2022preview.amd64
+      image: windows.vs2022.amd64
       os: windows
     customBuildTags:
     - ES365AIMigrationTooling
@@ -115,7 +115,7 @@ extends:
               displayName: Code check
               pool:
                 name: $(DncEngInternalBuildPool)
-                demands: ImageOverride -equals windows.vs2022preview.amd64
+                demands: ImageOverride -equals windows.vs2022.amd64
               steps:
               - task: NuGetCommand@2
                 displayName: 'Clear NuGet caches'
@@ -148,7 +148,7 @@ extends:
             timeoutInMinutes: 120
             pool:
               name: $(DncEngInternalBuildPool)
-              demands: ImageOverride -equals windows.vs2022preview.amd64
+              demands: ImageOverride -equals windows.vs2022.amd64
             strategy:
               matrix:
                 release:
