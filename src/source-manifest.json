@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 301121,
+      "barId": 302191,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "4bf37ce670528cf2aef4d9b1cd892554b1b02d9d"
+      "commitSha": "eae2786f0de623ee284aea80713ec2c61531e9bd"
     },
     {
       "barId": 288647,
@@ -25,10 +25,10 @@
       "commitSha": "6ef3f7b7870b0cdecd9773d4c7b3c58f206f554b"
     },
     {
-      "barId": 301485,
+      "barId": 301786,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "e323999d8ed0ba791e507f74264a99fc8d2565d3"
+      "commitSha": "a527f9edd5b4b5b573f004609434b726ad324510"
     },
     {
       "barId": 297559,
