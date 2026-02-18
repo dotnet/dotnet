@@ -7,10 +7,10 @@ This file should be imported by eng/Versions.props
   <PropertyGroup>
     <!-- _git/dotnet-dotnet dependencies -->
     <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.25612.105</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetBuildManifestPackageVersion>10.0.0-beta.26110.123</MicrosoftDotNetBuildManifestPackageVersion>
-    <MicrosoftNETSdkPackageVersion>10.0.104-servicing.26110.123</MicrosoftNETSdkPackageVersion>
+    <MicrosoftDotNetBuildManifestPackageVersion>10.0.0-beta.26117.105</MicrosoftDotNetBuildManifestPackageVersion>
+    <MicrosoftNETSdkPackageVersion>10.0.104-servicing.26117.105</MicrosoftNETSdkPackageVersion>
     <MicrosoftNETCoreAppRefPackageVersion>10.0.4</MicrosoftNETCoreAppRefPackageVersion>
-    <MicrosoftNETCorePlatformsPackageVersion>10.0.4-servicing.26110.123</MicrosoftNETCorePlatformsPackageVersion>
+    <MicrosoftNETCorePlatformsPackageVersion>10.0.4-servicing.26117.105</MicrosoftNETCorePlatformsPackageVersion>
     <!-- arcade-services dependencies -->
     <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.25407.5</MicrosoftDotNetDarcLibPackageVersion>
   </PropertyGroup>
