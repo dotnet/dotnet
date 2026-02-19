@@ -86,7 +86,7 @@ namespace NuGet.LibraryModel
 
             var flagStrings = new List<string>();
 
-            foreach (LibraryIncludeFlags value in Enum.GetValues(typeof(LibraryIncludeFlags)))
+            foreach (LibraryIncludeFlags value in EnumUtility.GetValues<LibraryIncludeFlags>())
             {
                 if (value != LibraryIncludeFlags.None && flags.HasFlag(value))
                 {
