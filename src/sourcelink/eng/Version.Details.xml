@@ -4,11 +4,11 @@
   <ProductDependencies>
     <Dependency Name="System.CommandLine" Version="2.0.4">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>423d9a321c08c6412507ff90be1b2a1349083814</Sha>
+      <Sha>ddf4b8a11e3b37cb1d415d157a4801934ee4fb26</Sha>
     </Dependency>
     <Dependency Name="System.IO.Hashing" Version="10.0.4">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>423d9a321c08c6412507ff90be1b2a1349083814</Sha>
+      <Sha>ddf4b8a11e3b37cb1d415d157a4801934ee4fb26</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
