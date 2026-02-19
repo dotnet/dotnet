@@ -38,6 +38,11 @@ parameters:
   type: string
   default: ''
 
+# Extra MSBuild properties to pass only to source-build stage 2 legs (those that reuse stage 1 artifacts).
+- name: extraPropertiesStage2
+  type: string
+  default: ''
+
 stages:
 - stage: VMR_SourceOnly_Build
   displayName: VMR Source-Only Build
@@ -136,11 +141,18 @@ stages:
         excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
         brandingType: ${{ variables.brandingType }}
         
-        # We only want to publish SB artifacts for each distinct distro/version/arch combination
+        # We only want to publish SB artifacts for each distinct distro/version/arch combination.
+        # Stage 2 legs (those with reuseBuildArtifactsFrom) also get extraPropertiesStage2.
         ${{ if and(endsWith(leg.buildNameFormat, 'Offline_MsftSdk'), not(contains(leg.buildNameFormat, '_Mono_'))) }}:
-          extraProperties: ${{ leg.extraProperties }} /p:DotNetSourceOnlyPublishArtifacts=true
+          ${{ if ne(leg.reuseBuildArtifactsFrom, '') }}:
+            extraProperties: ${{ leg.extraProperties }} ${{ parameters.extraPropertiesStage2 }} /p:DotNetSourceOnlyPublishArtifacts=true
+          ${{ else }}:
+            extraProperties: ${{ leg.extraProperties }} /p:DotNetSourceOnlyPublishArtifacts=true
         ${{ else }}:
-          extraProperties: ${{ leg.extraProperties }}
+          ${{ if ne(leg.reuseBuildArtifactsFrom, '') }}:
+            extraProperties: ${{ leg.extraProperties }} ${{ parameters.extraPropertiesStage2 }}
+          ${{ else }}:
+            extraProperties: ${{ leg.extraProperties }}
 
 - ${{ if and(parameters.isBuiltFromVmr, ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.useMicrosoftBuildAssetsForTests, true)) }}:
   - stage: VMR_SourceOnly_Validation
@@ -214,6 +226,7 @@ stages:
           skipBuild: true
           extraProperties: >
             ${{ leg.extraProperties }}
+            ${{ parameters.extraPropertiesStage2 }}
             /p:DotNetSourceOnlyTestOnly=true
             /p:ExtraRestoreSourcePath=$(Pipeline.Workspace)/msft-pkgs
             /p:RestoreAdditionalProjectSources=$(Pipeline.Workspace)/msft-pkgs

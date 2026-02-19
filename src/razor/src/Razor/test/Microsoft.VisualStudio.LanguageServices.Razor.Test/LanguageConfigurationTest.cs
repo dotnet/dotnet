@@ -26,6 +26,16 @@ public class LanguageConfigurationTest(ITestOutputHelper output)
     [InlineData("""<table title="@(1 > 2 ? "re\"d" : "blue")">""", true)]
     [InlineData("""<div dir="@(1 > 2 ? "ltr" : "rtl")"/>""", false)]
     [InlineData("""<table title="@(1 > 2 ? "re\"d" : "blue")"/>""", false)]
+    // Lines with closing tag on same line should NOT increase indent
+    [InlineData("""<button stuff></button>""", false)]
+    [InlineData("""<div></div>""", false)]
+    [InlineData("""<div class="hello"></div>""", false)]
+    [InlineData("""<ValidationMessage For="() => Input.Username" class="text-danger"></ValidationMessage>""", false)]
+    // Void elements should NOT increase indent
+    [InlineData("""<br>""", false)]
+    [InlineData("""<hr>""", false)]
+    [InlineData("""<input>""", false)]
+    [InlineData("""<img src="foo.png">""", false)]
     public void ShouldIncreaseIndentation(string input, bool expected)
     {
         var langConfig = GetLanguageConfigurationJson();

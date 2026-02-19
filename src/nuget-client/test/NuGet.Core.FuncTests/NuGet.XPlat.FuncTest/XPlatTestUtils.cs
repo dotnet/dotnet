@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using NuGet.CommandLine.XPlat;
 using NuGet.Common;
 using NuGet.Configuration;
+using NuGet.Frameworks;
 using NuGet.Packaging.Core;
 using NuGet.ProjectModel;
 using NuGet.Test.Utility;
@@ -116,6 +117,37 @@ namespace NuGet.XPlat.FuncTest
                     projectName: projectName,
                     solutionRoot: pathContext.SolutionRoot,
                     frameworks: MSBuildStringUtility.Split(projectFrameworks));
+
+            project.FallbackFolders = (IList<string>)SettingsUtility.GetFallbackPackageFolders(settings);
+            project.GlobalPackagesFolder = SettingsUtility.GetGlobalPackagesFolder(settings);
+            var packageSourceProvider = new PackageSourceProvider(settings);
+            project.Sources = packageSourceProvider.LoadPackageSources();
+
+            project.Save();
+            return project;
+        }
+
+        public static SimpleTestProjectContext CreateProject(string projectName,
+            SimpleTestPathContext pathContext,
+            string projectFrameworks,
+            string projectTargetFrameworkMonikers)
+        {
+            var settings = Settings.LoadDefaultSettings(Path.GetDirectoryName(pathContext.NuGetConfig), Path.GetFileName(pathContext.NuGetConfig), null);
+            var actualProjectFrameworks = MSBuildStringUtility.Split(projectFrameworks);
+            var actualTfms = MSBuildStringUtility.Split(projectTargetFrameworkMonikers);
+            var project = new SimpleTestProjectContext(projectName, ProjectStyle.PackageReference, pathContext.SolutionRoot);
+            project.ToolingVersion15 = true;
+            project.Properties.Add("BuildWithNetFrameworkHostedCompiler", bool.FalseString);
+
+            for (int i = 0; i < actualProjectFrameworks.Length; i++)
+            {
+                var fw = new SimpleTestProjectFrameworkContext(NuGetFramework.Parse(actualTfms[i]))
+                {
+                    TargetAlias = actualProjectFrameworks[i]
+                };
+                fw.Properties.Add("TargetFrameworkMoniker", actualTfms[i]);
+                project.Frameworks.Add(fw);
+            }
 
             project.FallbackFolders = (IList<string>)SettingsUtility.GetFallbackPackageFolders(settings);
             project.GlobalPackagesFolder = SettingsUtility.GetGlobalPackagesFolder(settings);

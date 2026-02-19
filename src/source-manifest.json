@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 302101,
+      "barId": 302156,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "7db333e4a411694073963937fe192cac478b7847"
+      "commitSha": "90215a077f841615b6c6e6c7b2272aa0eef1492a"
     },
     {
       "barId": 301607,
@@ -49,10 +49,10 @@
       "commitSha": "34ea87b2e530301557526b558e89f3f031f2a8d9"
     },
     {
-      "barId": 302041,
+      "barId": 302106,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "019588e4b5d9722ebffae59c6c5c17f0573b3545"
+      "commitSha": "6c7aa5bebfb7c21731c3b08695d3f4899bdcb79e"
     },
     {
       "barId": 302028,
@@ -61,16 +61,16 @@
       "commitSha": "81815e52c87864858802a8188241894fc5ffc376"
     },
     {
-      "barId": 301786,
+      "barId": 302193,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "a527f9edd5b4b5b573f004609434b726ad324510"
+      "commitSha": "a60358ca11592a57122c0e73aefbe3ca202f4b6f"
     },
     {
-      "barId": 301610,
+      "barId": 302155,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "b7860660581174f32d28e3ce127f4818055dd297"
+      "commitSha": "a1bd540f2969fb04ca70e942369eb944e2032063"
     },
     {
       "barId": 300424,
@@ -79,10 +79,10 @@
       "commitSha": "da86ec644af82dcb8575ff0c22ac6afdcd6b5066"
     },
     {
-      "barId": 302192,
+      "barId": 302404,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "8e6e74e62ee844e9b36df891ee24637f95b288ce"
+      "commitSha": "20046b051a00069fd700c61d33584643b8848351"
     },
     {
       "barId": 298986,
