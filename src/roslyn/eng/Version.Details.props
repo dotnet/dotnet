@@ -13,6 +13,7 @@ This file should be imported by eng/Versions.props
     <!-- dotnet/dotnet dependencies -->
     <MicrosoftBclAsyncInterfacesPackageVersion>10.0.1</MicrosoftBclAsyncInterfacesPackageVersion>
     <MicrosoftDotNetFileBasedProgramsPackageVersion>11.0.100-alpha.1.26060.102</MicrosoftDotNetFileBasedProgramsPackageVersion>
+    <MicrosoftNETCoreAppRefPackageVersion>11.0.0-preview.1.26069.103</MicrosoftNETCoreAppRefPackageVersion>
     <MicrosoftExtensionsConfigurationPackageVersion>10.0.1</MicrosoftExtensionsConfigurationPackageVersion>
     <MicrosoftExtensionsDependencyInjectionPackageVersion>10.0.1</MicrosoftExtensionsDependencyInjectionPackageVersion>
     <MicrosoftExtensionsFileSystemGlobbingPackageVersion>10.0.1</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
