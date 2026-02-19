@@ -34,9 +34,6 @@
     the symbol publishing doesn't run on framework anyway (this project has a throwing stub for .NET framework in that path
     due to the reliance in maestro). Until we really need to multitarget, this is the better path. -->
     <ProjectReference Include="..\Microsoft.DotNet.Internal.SymbolHelper\Microsoft.DotNet.Internal.SymbolHelper.csproj" />
-    <!-- Additionally, SymbolHelper relies on Microsoft.DiaSymReader which brings NS.Library 1.6.1 and the slew of
-    old packages with it. Upgrade to keep CG happy. -->
-    <PackageReference Include="NETStandard.Library" IsImplicitlyDefined="false" PrivateAssets="all" ExcludeAssets="runtime" VersionOverride="2.0.3" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
