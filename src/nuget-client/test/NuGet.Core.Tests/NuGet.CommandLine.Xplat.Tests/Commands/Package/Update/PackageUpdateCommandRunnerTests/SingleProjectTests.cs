@@ -197,6 +197,112 @@ public class SingleProjectTests
     }
 
     [Fact]
+    public async Task SingleTargetWithAlias_SinglePackage_UpdatesCorrectPackageVersion()
+    {
+        // Arrange
+        var packageSpec = new TestPackageSpecFactory(builder =>
+        {
+            builder
+            .WithProperty("TargetFramework", "myapp")
+            .WithProperty("TargetFrameworkIdentifier", ".NETCoreApp")
+            .WithProperty("TargetFrameworkVersion", "v9.0")
+            .WithProperty("TargetFrameworkMoniker", ".NETCoreApp,Version=v9.0")
+            .WithItem("PackageReference", "Test.Package", [new("Version", "1.0.0")]);
+        }).Build();
+
+        var packagesToUpdate = new List<Pkg>
+        {
+            new Pkg { Id = "Test.Package", VersionRange = new VersionRange(new NuGetVersion("1.2.3")) }
+        };
+
+        TestData testData = InitTest(packagesToUpdate, packageSpec);
+
+        // Act
+        int exitCode = await RunCommand(testData, CancellationToken.None);
+
+        // Assert
+        exitCode.Should().Be(0);
+
+        testData.IoMock.Verify(x => x.UpdatePackageReference(
+            It.IsAny<PackageSpec>(),
+            It.IsAny<IPackageUpdateIO.RestoreResult>(),
+            It.IsAny<List<string>>(),
+            It.Is<PackageUpdateCommandRunner.PackageToUpdate>(p => p.Id == "Test.Package" && p.NewVersion.ToString() == "[1.2.3, )"),
+            It.IsAny<ILogger>()),
+            Times.Once);
+
+        testData.LoggerMock.Verify(x => x.LogMinimal(
+            It.Is<string>(s => s.Contains(string.Format(Strings.PackageUpdate_FinalSummary, 1, 1))),
+            It.IsAny<ConsoleColor>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task MultiTargetingWithAliases_ConditionalAndUnconditionalPackages_UpdatesCorrectly()
+    {
+        // Arrange
+        var packageSpec = new TestPackageSpecFactory(builder =>
+        {
+            builder.WithProperty("TargetFrameworks", "apple;banana")
+                   .WithItem("PackageReference", "Contoso.Tools", [new("Version", "1.0.0")]);
+        })
+            .WithInnerBuild(builder =>
+            {
+                builder
+                .WithProperty("TargetFramework", "apple")
+                .WithProperty("TargetFrameworkIdentifier", ".NETCoreApp")
+                .WithProperty("TargetFrameworkVersion", "v10.0")
+                .WithProperty("TargetFrameworkMoniker", ".NETCoreApp,Version=v10.0")
+                .WithItem("PackageReference", "Contoso.Polyfill", [new("Version", "1.0.0")]);
+            })
+            .WithInnerBuild(builder =>
+            {
+                builder
+                .WithProperty("TargetFramework", "banana")
+                .WithProperty("TargetFrameworkIdentifier", ".NETCoreApp")
+                .WithProperty("TargetFrameworkVersion", "v10.0")
+                .WithProperty("TargetFrameworkMoniker", ".NETCoreApp,Version=v10.0");
+            }).Build();
+
+        var packagesToUpdate = new List<Pkg>
+        {
+            new Pkg { Id = "Contoso.Tools", VersionRange = new VersionRange(new NuGetVersion("2.0.0")) },
+            new Pkg { Id = "Contoso.Polyfill", VersionRange = new VersionRange(new NuGetVersion("1.2.3")) }
+        };
+
+        TestData testData = InitTest(packagesToUpdate, packageSpec);
+
+        // Act
+        int exitCode = await RunCommand(testData, CancellationToken.None);
+
+        // Assert
+        exitCode.Should().Be(0);
+
+        // Unconditional package (in all TFMs) - updated with both framework aliases
+        testData.IoMock.Verify(x => x.UpdatePackageReference(
+            It.IsAny<PackageSpec>(),
+            It.IsAny<IPackageUpdateIO.RestoreResult>(),
+            It.Is<List<string>>(p => p.Count == 2),
+            It.Is<PackageUpdateCommandRunner.PackageToUpdate>(p => p.Id == "Contoso.Tools" && p.NewVersion.ToString() == "[2.0.0, )"),
+            It.IsAny<ILogger>()),
+            Times.Once);
+
+        // Conditional package (only in "apple") - updated with specific framework alias
+        testData.IoMock.Verify(x => x.UpdatePackageReference(
+            It.IsAny<PackageSpec>(),
+            It.IsAny<IPackageUpdateIO.RestoreResult>(),
+            It.Is<List<string>>(p => p.Count == 1 && p[0] == "apple"),
+            It.Is<PackageUpdateCommandRunner.PackageToUpdate>(p => p.Id == "Contoso.Polyfill" && p.NewVersion.ToString() == "[1.2.3, )"),
+            It.IsAny<ILogger>()),
+            Times.Once);
+
+        testData.LoggerMock.Verify(x => x.LogMinimal(
+            It.Is<string>(s => s.Contains(string.Format(Strings.PackageUpdate_FinalSummary, 2, 2))),
+            It.IsAny<ConsoleColor>()),
+            Times.Once);
+    }
+
+    [Fact]
     public async Task PackageNotReferenced_ReturnsNothingToUpdateExitCode()
     {
         // Arrange

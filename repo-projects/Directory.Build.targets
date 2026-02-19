@@ -479,6 +479,7 @@
       <SourceBuiltSdkOverride Include="@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.DotNet.SharedFramework.Sdk'))" Group="ARCADE_SHARED_FX_SDK" />
       <SourceBuiltSdkOverride Include="@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.DotNet.CMake.Sdk'))" Group="ARCADE_CMAKE_SDK" />
     </ItemGroup>
+
     <!--
       Add Microsoft.Build.NoTargets and Microsoft.Build.Traversal SDK overrides, for all repos that have it built (ie. excluding SBRP as it builds the SDKs).
 
@@ -491,6 +492,11 @@
     <ItemGroup>
       <SourceBuiltSdkOverride Include="@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.Build.Traversal'))" Group="TRAVERSAL" />
       <SourceBuiltSdkOverride Include="@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.Build.NoTargets'))" Group="NOTARGETS" />
+    </ItemGroup>
+
+    <!-- WindowsDesktop SDK. -->
+    <ItemGroup>
+      <SourceBuiltSdkOverride Include="@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.Net.Sdk.WindowsDesktop'))" Group="WINDOWS_DESKTOP" />
     </ItemGroup>
   </Target>
 

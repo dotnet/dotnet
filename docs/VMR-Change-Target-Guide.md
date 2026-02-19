@@ -37,8 +37,8 @@ See also:
 |-------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------|-------------------------------|
 | - Change is non-security **AND** <br/> - Change is approved for nearest upcoming servicing release **AND** <br/> - Release specific branches have not been created (e.g. release/10.0.105)  |  **General Servicing branch** in VMR or component repository (e.g. release/10.0) | Port to main as necessary on disclosure day |
 | - Change is not approved for release corresponding to any branch (usually approved for future month's release) | Hold change for branch opening  |  | N/A |
-| - Change is non-security **AND** <br/> - Change is approved for nearest upcoming servicing release **AND** <br/> - Release specific branches have been created (e.g. release/10.0.105) | **Release specific branch in VMR** (e.g. release/10.0.105) | Will merge to General Servicing branch on release day. Port to main as necessary on disclosure day. |
-| - Change is security **AND** <br/> - Change is approved for nearest upcoming servicing release **AND** <br/> - Release specific branches have been created (e.g. release/10.0.105) | **Internal specific branch in VMR** (e.g. internal/release/10.0.105) | Will merge to General Servicing branch on release day. Port to main as necessary on disclosure day.|
+| - Change is non-security **AND** <br/> - Change is approved for nearest upcoming servicing release **AND** <br/> - Release specific branches have been created (e.g. internal/release/10.0.105) | **Internal release specific branch in VMR** (e.g. internal/release/10.0.105) | Will merge to General Servicing branch on release day. Port to main as necessary on disclosure day. |
+| - Change is security **AND** <br/> - Change is approved for nearest upcoming servicing release **AND** <br/> - Release specific branches have been created (e.g. release/10.0.105) | **Internal release specific branch in VMR** (e.g. internal/release/10.0.105) | Will merge to General Servicing branch on release day. Port to main as necessary on disclosure day.|
 | - Change is security **AND** <br/> - Change is approved for nearest upcoming servicing release **AND** <br/> - Release specific branches have not been created (e.g. release/10.0.105) | Internal release branch (e.g. `internal/release/10.0.1xx`) | Will merge to General Servicing branch on release day. Port to main as necessary on disclosure day. |
 
 ---
@@ -138,8 +138,8 @@ flowchart TD
     releaseCutSec{Have release-specific<br/>branches been created?}
 
     generalServicing["General servicing<br/>branch<br/>(e.g. release/10.0)<br/><br/>Port to main as<br/>necessary on disclosure day"]
-    releaseSpecific["Release-specific<br/>branch<br/>(e.g. release/10.0.105)<br/>Merges to general<br/>servicing on release day<br/><br/>Port to main as<br/>necessary on disclosure day"]
-    internalSpecific["Internal release<br/>branch<br/>(e.g. internal/release/10.0.105)<br/>Merges to general<br/>servicing on release day<br/><br/>Port to main as<br/>necessary on disclosure day"]
+    internalSpecificNonSec["Internal release-specific<br/>branch<br/>(e.g. internal/release/10.0.105)<br/>Merges to general<br/>servicing on release day<br/><br/>Port to main as<br/>necessary on disclosure day"]
+    internalSpecific["Internal release-specific<br/>branch<br/>(e.g. internal/release/10.0.105)<br/>Merges to general<br/>servicing on release day<br/><br/>Port to main as<br/>necessary on disclosure day"]
     internalGeneral["Internal servicing<br/>branch<br/>(e.g. internal/release/10.0.1xx)<br/>Merges to general<br/>servicing on release day<br/><br/>Port to main as<br/>necessary on disclosure day"]
     holdChange["Hold change until<br/>branch opens<br/><br/>(Re-evaluate later)"]
 
@@ -151,12 +151,12 @@ flowchart TD
     security -- "Yes" --> releaseCutSec
 
     releaseCutNonSec -- "No" --> generalServicing
-    releaseCutNonSec -- "Yes" --> releaseSpecific
+    releaseCutNonSec -- "Yes" --> internalSpecificNonSec
 
     releaseCutSec -- "No" --> internalGeneral
     releaseCutSec -- "Yes" --> internalSpecific
 
     class approved,security,releaseCutNonSec,releaseCutSec decision;
-    class generalServicing,releaseSpecific,internalSpecific,internalGeneral action;
+    class generalServicing,internalSpecificNonSec,internalSpecific,internalGeneral action;
     class holdChange wait;
 ```

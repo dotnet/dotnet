@@ -380,6 +380,13 @@ internal sealed class RazorFormattingPass : IFormattingPass
             return didFormat;
         }
 
+        // When there are multiple sibling markup blocks in a C# code block (e.g., "<text>:</text> <InputFile />"),
+        // the open/close brace nodes passed to this method may actually be sibling markup blocks rather than
+        // actual braces. We should not try to format between sibling markup blocks as they should remain on the
+        // same line.
+        var openBraceIsMarkupBlock = openBraceNode is MarkupBlockSyntax && openBraceNode != codeNode;
+        var closeBraceIsMarkupBlock = closeBraceNode is MarkupBlockSyntax && closeBraceNode != codeNode;
+
         var additionalIndentation = "";
 
         // It's important with the new formatting engine that we maintain the indentation that the Html formatter would have applied,
@@ -401,7 +408,8 @@ internal sealed class RazorFormattingPass : IFormattingPass
             additionalIndentation = openBraceLine.GetLeadingWhitespace();
         }
 
-        if (openBraceNode.TryGetLinePositionSpanWithoutWhitespace(source, out var openBraceRange) &&
+        if (!openBraceIsMarkupBlock &&
+            openBraceNode.TryGetLinePositionSpanWithoutWhitespace(source, out var openBraceRange) &&
             openBraceRange.End.Line == codeRange.Start.Line &&
             !RangeHasBeenModified(ref changes, source.Text, codeRange))
         {
@@ -411,7 +419,8 @@ internal sealed class RazorFormattingPass : IFormattingPass
             didFormat = true;
         }
 
-        if (closeBraceNode.Span.Length > 0 &&
+        if (!closeBraceIsMarkupBlock &&
+            closeBraceNode.Span.Length > 0 &&
             closeBraceNode.TryGetLinePositionSpanWithoutWhitespace(source, out var closeBraceRange) &&
             !RangeHasBeenModified(ref changes, source.Text, codeRange))
         {

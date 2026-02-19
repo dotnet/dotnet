@@ -51,6 +51,11 @@ parameters:
   type: boolean
   default: false
 
+# Extra MSBuild properties to pass only to source-build stage 2 legs.
+- name: extraPropertiesStage2
+  type: string
+  default: ''
+
 stages:
 - ${{ if or(in(parameters.scope, 'full') , contains(join(';', parameters.verifications), 'source-build-')) }}:
   - template: source-build-and-validate.yml
@@ -63,6 +68,7 @@ stages:
       desiredSigning: ${{ parameters.desiredSigning }}
       desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
       excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
+      extraPropertiesStage2: ${{ parameters.extraPropertiesStage2 }}
       
       # Description of the source build legs to run.
       # This is described here as a parameter to allow two separate stages to be produced from this list (one for building

@@ -217,6 +217,16 @@
         </dict>
       </dict>
 
+      <dict>
+        <key>scope</key>
+        <string>punctuation.whitespace.comment.leading.cs</string>
+        <key>settings</key>
+        <dict>
+          <key>vsclassificationtype</key>
+          <string>whitespace</string>
+        </dict>
+      </dict>
+
       <!-- Classification removed temporarily due to https://github.com/dotnet/razor-tooling/issues/5614 -->
       <!-- <dict>
         <key>scope</key>
