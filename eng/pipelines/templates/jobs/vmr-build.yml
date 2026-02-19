@@ -424,7 +424,10 @@ jobs:
         DownloadArchive "source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/"
       displayName: Download Previously Source-Built SDK
 
+  # Enable internal runtimes with 3 hour expiry. Late building repos will need to download runtime assets.
   - template: /eng/common/templates/steps/enable-internal-runtimes.yml
+    parameters:
+      expiryInHours: 3
 
   - ${{ if and(parameters.excludeRuntimeDependentJobs, eq(parameters.reuseBuildArtifactsFrom, ''), not(parameters.withPreviousSDK)) }}:
     - script: |
