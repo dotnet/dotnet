@@ -58,14 +58,7 @@ namespace Microsoft.Build.UnitTests.Shared
         /// </summary>
         public static string ExecMSBuild(string pathToMsBuildExe, string msbuildParameters, out bool successfulExit, bool shellExecute = false, ITestOutputHelper outputHelper = null)
         {
-#if FEATURE_RUN_EXE_IN_TESTS
-            var pathToExecutable = pathToMsBuildExe;
-#else
-            var pathToExecutable = s_dotnetExePath;
-            msbuildParameters = FileUtilities.EnsureDoubleQuotes(pathToMsBuildExe) + " " + msbuildParameters;
-#endif
-
-            return RunProcessAndGetOutput(pathToExecutable, msbuildParameters, out successfulExit, shellExecute, outputHelper);
+            return RunProcessAndGetOutput(pathToMsBuildExe, msbuildParameters, out successfulExit, shellExecute, outputHelper);
         }
 
         public static string ExecBootstrapedMSBuild(
@@ -77,8 +70,7 @@ namespace Microsoft.Build.UnitTests.Shared
             int timeoutMilliseconds = 30_000)
         {
 #if NET
-            string pathToExecutable = EnvironmentProvider.GetDotnetExePathFromFolder(BootstrapMsBuildBinaryLocation);
-            msbuildParameters = Path.Combine(BootstrapMsBuildBinaryLocation, "sdk", BootstrapLocationAttribute.BootstrapSdkVersion, Constants.MSBuildAssemblyName) + " " + msbuildParameters;
+            string pathToExecutable = Path.Combine(BootstrapMsBuildBinaryLocation, "sdk", BootstrapLocationAttribute.BootstrapSdkVersion, Constants.MSBuildExecutableName);
 #else
             string pathToExecutable = Path.Combine(BootstrapMsBuildBinaryLocation, Constants.MSBuildExecutableName);
 #endif

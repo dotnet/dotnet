@@ -62,7 +62,7 @@ namespace Microsoft.Build.Engine.UnitTests
         {
             bool? expectedNodeReuse = DetermineExpectedNodeReuse(runtimeToUse, taskFactoryToUse);
 
-            using TestEnvironment env = TestEnvironment.Create(_output);
+            using TestEnvironment env = TestEnvironment.Create(_output, setupDotnetHostPath: taskFactoryToUse == TaskHostFactory);
 
             string buildOutput = ExecuteBuildWithTaskHost(runtimeToUse, taskFactoryToUse);
 

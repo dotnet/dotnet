@@ -10,9 +10,11 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Internal;
 using Microsoft.Build.Shared;
 using Microsoft.Build.Shared.Debugging;
 using Microsoft.Build.Shared.FileSystem;
+using Microsoft.Build.UnitTests.Shared;
 using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
@@ -56,10 +58,14 @@ namespace Microsoft.Build.UnitTests
         /// (MSBuild_*.txt) in the temp directory and treats their presence as test failures.
         /// Set to true to disable this monitoring for tests that expect build failures.
         /// </param>
+        /// <param name="setupDotnetHostPath">
+        /// When true, configures .NET environment variable DOTNET_HOST_PATH to point to the bootstrap core directory.
+        /// It's necessary for the tests that rely on app host execution and need to find the correct .NET runtime.
+        /// </param>
         /// <returns>
         /// A configured TestEnvironment instance with the specified settings applied.
         /// </returns>
-        public static TestEnvironment Create(ITestOutputHelper output = null, bool ignoreBuildErrorFiles = false)
+        public static TestEnvironment Create(ITestOutputHelper output = null, bool ignoreBuildErrorFiles = false, bool setupDotnetHostPath = false)
         {
             var env = new TestEnvironment(output ?? new DefaultOutput());
 
@@ -67,6 +73,13 @@ namespace Microsoft.Build.UnitTests
             if (!ignoreBuildErrorFiles)
             {
                 env.WithInvariant(new BuildFailureLogInvariant());
+            }
+
+            if (setupDotnetHostPath)
+            {
+                var bootstrapCorePath = Path.Combine(Path.Combine(RunnerUtilities.BootstrapRootPath, "core"), Constants.DotnetProcessName);
+
+                _ = env.SetEnvironmentVariable(Constants.DotnetHostPathEnvVarName, bootstrapCorePath);
             }
 
             // Clear these two environment variables first in case pre-setting affects the test.
