@@ -689,6 +689,9 @@ namespace NuGet.Frameworks
                 case "net10.0":
                     framework = FrameworkConstants.CommonFrameworks.Net10_0;
                     break;
+                case "net11.0":
+                    framework = FrameworkConstants.CommonFrameworks.Net11_0;
+                    break;
             }
 
             return framework != null;
