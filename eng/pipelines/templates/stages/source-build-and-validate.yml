@@ -141,7 +141,7 @@ stages:
         excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
         
         # We only want to publish SB artifacts for each distinct distro/version/arch combination
-        ${{ if and(endsWith(leg.buildNameFormat, variables.sbBuildSuffix), not(contains(leg.buildNameFormat, '_Mono_'))) }}:
+        ${{ if and(endsWith(leg.buildNameFormat, format('Offline_{0}', variables.sbBuildSuffix)), not(contains(leg.buildNameFormat, '_Mono_'))) }}:
           extraProperties: ${{ leg.extraProperties }} /p:DotNetSourceOnlyPublishArtifacts=true
         ${{ else }}:
           extraProperties: ${{ leg.extraProperties }}

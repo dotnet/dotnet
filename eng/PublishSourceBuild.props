@@ -156,7 +156,7 @@
 
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="Publish"
-             Condition="'$(DotNetSourceOnlyPublishArtifacts)' == 'true'"
+             Condition="'$(DotNetSourceOnlyPublishArtifacts)' == 'true' and '$(IsPublishPass2)' != 'true'"
              Properties="@(_PublishProps);IsPublishPass2=true;AssetManifestFileName=$(SYSTEM_PHASENAME).xml" />
   </Target>
 
