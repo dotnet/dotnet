@@ -24,6 +24,8 @@
     <ProjectReference Include="$(RepositoryEngineeringDir)init-poison.proj"
                       Condition="'$(EnablePoison)' == 'true'"
                       BuildInParallel="true" />
+    <ProjectReference Include="$(RepositoryEngineeringDir)tools\tools.proj"
+                      BuildInParallel="true" />
 
     <ProjectReference Include="$(RepoProjectsDir)dotnet.proj" />
 

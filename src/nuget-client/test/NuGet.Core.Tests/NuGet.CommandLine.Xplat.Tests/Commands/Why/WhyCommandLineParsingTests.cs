@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NuGet.CommandLine.XPlat.Commands;
 using NuGet.CommandLine.XPlat.Commands.Why;
+using Spectre.Console;
 using Spectre.Console.Testing;
 using Xunit;
 
@@ -19,9 +20,10 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
         {
             // Arrange
             Command rootCommand = new("nuget");
+            var console = new Lazy<IAnsiConsole>(() => new TestConsole());
 
             // Act
-            WhyCommand.Register(rootCommand, new TestConsole());
+            WhyCommand.Register(rootCommand, console);
 
             // Assert
             rootCommand.Subcommands[0].Should().BeAssignableTo<DocumentedCommand>();
@@ -33,8 +35,10 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
         {
             // Arrange
             Command rootCommand = new("nuget");
+            var console = new Lazy<IAnsiConsole>(() => new TestConsole());
 
-            WhyCommand.Register(rootCommand, new TestConsole(), whyCommandArgs =>
+
+            WhyCommand.Register(rootCommand, console, whyCommandArgs =>
             {
                 // Assert
                 whyCommandArgs.Path.Should().Be(@"path\to\my.proj");
@@ -54,8 +58,9 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
         {
             // Arrange
             Command rootCommand = new("nuget");
+            var console = new Lazy<IAnsiConsole>(() => new TestConsole());
 
-            WhyCommand.Register(rootCommand, new TestConsole(), whyCommandArgs =>
+            WhyCommand.Register(rootCommand, console, whyCommandArgs =>
             {
                 // Assert
                 whyCommandArgs.Path.Should().NotBeNull();
@@ -75,8 +80,9 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
         {
             // Arrange
             Command rootCommand = new("nuget");
+            var console = new Lazy<IAnsiConsole>(() => new TestConsole());
 
-            WhyCommand.Register(rootCommand, new TestConsole(), whyCommandArgs =>
+            WhyCommand.Register(rootCommand, console, whyCommandArgs =>
             {
                 // Assert
                 throw new Exception("Should not get here");
@@ -92,8 +98,9 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
         {
             // Arrange
             Command rootCommand = new("nuget");
+            var console = new Lazy<IAnsiConsole>(() => new TestConsole());
 
-            WhyCommand.Register(rootCommand, new TestConsole(), whyCommandArgs =>
+            WhyCommand.Register(rootCommand, console, whyCommandArgs =>
             {
                 // Assert
                 throw new Exception("Should not get here");
@@ -112,8 +119,9 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
         {
             // Arrange
             Command rootCommand = new("nuget");
+            var console = new Lazy<IAnsiConsole>(() => new TestConsole());
 
-            WhyCommand.Register(rootCommand, new TestConsole(), whyCommandArgs =>
+            WhyCommand.Register(rootCommand, console, whyCommandArgs =>
             {
                 // Assert
                 whyCommandArgs.Path.Should().Be("my.proj");
@@ -135,8 +143,9 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
         {
             // Arrange
             Command rootCommand = new("nuget");
+            var console = new Lazy<IAnsiConsole>(() => new TestConsole());
 
-            WhyCommand.Register(rootCommand, new TestConsole(), whyCommandArgs =>
+            WhyCommand.Register(rootCommand, console, whyCommandArgs =>
             {
                 // Assert
                 whyCommandArgs.Path.Should().Be("my.proj");
@@ -156,8 +165,9 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
         {
             // Arrange
             Command rootCommand = new("nuget");
+            var console = new Lazy<IAnsiConsole>(() => new TestConsole());
 
-            WhyCommand.Register(rootCommand, new TestConsole(), whyCommandArgs =>
+            WhyCommand.Register(rootCommand, console, whyCommandArgs =>
             {
                 // Assert
                 whyCommandArgs.Path.Should().Be("my.proj");
@@ -177,8 +187,9 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
         {
             // Arrange
             Command rootCommand = new("nuget");
+            var console = new Lazy<IAnsiConsole>(() => new TestConsole());
 
-            WhyCommand.Register(rootCommand, new TestConsole(), whyCommandArgs =>
+            WhyCommand.Register(rootCommand, console, whyCommandArgs =>
             {
                 // Assert
                 whyCommandArgs.Path.Should().Be("my.proj");

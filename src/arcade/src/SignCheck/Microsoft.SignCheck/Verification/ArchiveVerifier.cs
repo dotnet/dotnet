@@ -79,6 +79,18 @@ namespace Microsoft.SignCheck.Verification
         {
             if (VerifyRecursive)
             {
+                svr.IsDoNotUnpack = Exclusions.IsDoNotUnpack(
+                    svr.FullPath,
+                    Path.GetDirectoryName(svr.FullPath) ?? SignCheckResources.NA,
+                    svr.VirtualPath,
+                    svr.VirtualPath);
+
+                if (svr.IsDoNotUnpack)
+                {
+                    Log.WriteMessage(LogVerbosity.Detailed, SignCheckResources.DiagSkippingArchiveExtraction, svr.FullPath);
+                    return;
+                }
+
                 string tempPath = svr.TempPath;
                 CreateDirectory(tempPath);
                 Log.WriteMessage(LogVerbosity.Diagnostic, SignCheckResources.DiagExtractingFileContents, tempPath);

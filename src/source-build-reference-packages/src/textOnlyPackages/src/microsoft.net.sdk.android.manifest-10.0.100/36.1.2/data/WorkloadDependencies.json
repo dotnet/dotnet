@@ -1,0 +1,82 @@
+{
+  "microsoft.net.sdk.android": {
+    "workload": {
+      "alias": [
+        "android"
+      ],
+      "version": "36.1.2"
+    },
+    "jdk": {
+      "version": "[17.0,22.0)",
+      "recommendedVersion": "17.0.14"
+    },
+    "androidsdk": {
+      "packages": [
+        {
+          "desc": "Android SDK Build-Tools 35",
+          "sdkPackage": {
+            "id": "build-tools;35.0.0"
+          },
+          "optional": "false"
+        },
+        {
+          "desc": "Android SDK Command-line Tools",
+          "sdkPackage": {
+            "id": "cmdline-tools;13.0"
+          },
+          "optional": "false"
+        },
+        {
+          "desc": "Android Emulator",
+          "sdkPackage": {
+            "id": "emulator",
+            "recommendedVersion": "35.1.20"
+          },
+          "optional": "true"
+        },
+        {
+          "desc": "NDK (Side by side) 27.1.12297006",
+          "sdkPackage": {
+            "id": "ndk;27.1.12297006"
+          },
+          "optional": "true"
+        },
+        {
+          "desc": "Android SDK Platform 35",
+          "sdkPackage": {
+            "id": "platforms;android-35"
+          },
+          "optional": "false"
+        },
+        {
+          "desc": "Android SDK Platform 36.1 (Preview)",
+          "sdkPackage": {
+            "id": "platforms;android-36.1"
+          },
+          "optional": "true"
+        },
+        {
+          "desc": "Android SDK Platform-Tools",
+          "sdkPackage": {
+            "id": "platform-tools",
+            "recommendedVersion": "35.0.2"
+          },
+          "optional": "false"
+        },
+        {
+          "desc": "Google APIs ARM 64 v8a System Image",
+          "sdkPackage": {
+            "id": {
+              "win-x64": "system-images;android-35;google_apis;x86_64",
+              "mac-x64": "system-images;android-35;google_apis;x86_64",
+              "linux-x64": "system-images;android-35;google_apis;x86_64",
+              "mac-arm64": "system-images;android-35;google_apis;arm64-v8a",
+              "linux-arm64": "system-images;android-35;google_apis;arm64-v8a"
+            }
+          },
+          "optional": "true"
+        }
+      ]
+    }
+  }
+}

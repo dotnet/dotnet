@@ -48,16 +48,19 @@ public class OmniSharpTests : SdkTests
         string projectDirectory = DotNetHelper.ExecuteNew(templateName, projectName);
 
         (Process Process, string StdOut, string StdErr) executeResult = ExecuteHelper.ExecuteProcess(
-            Path.Combine(OmniSharpDirectory, "run"),
-            $"-s {projectDirectory}",
+            DotNetHelper.DotNetPath,
+            $"{Path.Combine(OmniSharpDirectory, "OmniSharp.dll")} -- -s {projectDirectory}",
             OutputHelper,
             logOutput: true,
             millisecondTimeout: 5000,
-            configureCallback: (process) => DotNetHelper.ConfigureProcess(process, projectDirectory));
+            // Set the working directory to the OmniSharp directory to allow OmniSharp to find the custom config file
+            configureCallback: (process) => DotNetHelper.ConfigureProcess(process, OmniSharpDirectory));
 
         Assert.NotEqual(0, executeResult.Process.ExitCode);
         Assert.DoesNotContain("ERROR", executeResult.StdOut);
         Assert.DoesNotContain("ERROR", executeResult.StdErr);
+        Assert.DoesNotContain("command not found", executeResult.StdErr, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("No such file or directory", executeResult.StdErr, StringComparison.OrdinalIgnoreCase);
     }
 
     private async Task InitializeOmniSharp()
@@ -65,15 +68,23 @@ public class OmniSharpTests : SdkTests
         if (!Directory.Exists(OmniSharpDirectory))
         {
             using HttpClient client = new();
-            string omniSharpTarballFile = $"omnisharp-linux-{Config.TargetArchitecture}.tar.gz";
+            string omniSharpTarballFile = $"omnisharp-linux-{Config.TargetArchitecture}-net6.0.tar.gz";
             Uri omniSharpTarballUrl = new($"https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{OmniSharpReleaseVersion}/{omniSharpTarballFile}");
             await client.DownloadFileAsync(omniSharpTarballUrl, omniSharpTarballFile, OutputHelper);
 
             Directory.CreateDirectory(OmniSharpDirectory);
             Utilities.ExtractTarball(omniSharpTarballFile, OmniSharpDirectory, OutputHelper);
 
-            // Ensure the run script is executable (see https://github.com/OmniSharp/omnisharp-roslyn/issues/2547)
-            File.SetUnixFileMode($"{OmniSharpDirectory}/run", UnixFileMode.UserRead | UnixFileMode.UserExecute);
+            // Enable OmniSharp to use prerelease .NET SDK
+            string omniSharpConfigPath = Path.Combine(OmniSharpDirectory, "omnisharp.json");
+            string omniSharpConfig = """
+                {
+                    "SDK": {
+                        "includePrereleases": true
+                    }
+                }
+                """;
+            File.WriteAllText(omniSharpConfigPath, omniSharpConfig);
         }
     }
 }
