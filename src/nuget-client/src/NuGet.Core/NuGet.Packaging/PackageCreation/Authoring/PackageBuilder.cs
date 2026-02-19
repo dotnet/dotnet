@@ -35,6 +35,7 @@ namespace NuGet.Packaging
         private readonly bool _includeEmptyDirectories;
         private readonly bool _deterministic;
         private readonly ILogger _logger;
+        private readonly string _versionOverride;
 
         /// <summary>
         /// Maximum Icon file size: 1 megabyte
@@ -52,7 +53,12 @@ namespace NuGet.Packaging
         }
 
         public PackageBuilder(string path, Func<string, string> propertyProvider, bool includeEmptyDirectories, bool deterministic, ILogger logger)
-            : this(path, Path.GetDirectoryName(path), propertyProvider, includeEmptyDirectories, deterministic, logger)
+            : this(path, Path.GetDirectoryName(path), propertyProvider, includeEmptyDirectories, deterministic, logger, versionOverride: "")
+        {
+        }
+
+        public PackageBuilder(string path, Func<string, string> propertyProvider, bool includeEmptyDirectories, bool deterministic, ILogger logger, string versionOverride)
+            : this(path, Path.GetDirectoryName(path), propertyProvider, includeEmptyDirectories, deterministic, logger, versionOverride)
         {
         }
 
@@ -62,12 +68,21 @@ namespace NuGet.Packaging
         }
 
         public PackageBuilder(string path, string basePath, Func<string, string> propertyProvider, bool includeEmptyDirectories, bool deterministic, ILogger logger)
-            : this(path, basePath, propertyProvider, includeEmptyDirectories, deterministic)
+            : this(path, basePath, propertyProvider, includeEmptyDirectories, deterministic, logger, versionOverride: "")
+        {
+        }
+        public PackageBuilder(string path, string basePath, Func<string, string> propertyProvider, bool includeEmptyDirectories, bool deterministic, ILogger logger, string versionOverride)
+            : this(path, basePath, propertyProvider, includeEmptyDirectories, deterministic, versionOverride)
         {
             _logger = logger;
         }
 
         public PackageBuilder(string path, string basePath, Func<string, string> propertyProvider, bool includeEmptyDirectories, bool deterministic)
+            : this(path, basePath, propertyProvider, includeEmptyDirectories, deterministic, versionOverride: "")
+        {
+
+        }
+        public PackageBuilder(string path, string basePath, Func<string, string> propertyProvider, bool includeEmptyDirectories, bool deterministic, string versionOverride)
             : this(includeEmptyDirectories, deterministic)
         {
             if (!File.Exists(path))
@@ -76,6 +91,8 @@ namespace NuGet.Packaging
                     NuGetLogCode.NU5008,
                     string.Format(CultureInfo.CurrentCulture, Strings.ErrorManifestFileNotFound, path ?? "null"));
             }
+
+            _versionOverride = versionOverride;
 
             using (Stream stream = File.OpenRead(path))
             {
@@ -89,8 +106,14 @@ namespace NuGet.Packaging
         }
 
         public PackageBuilder(Stream stream, string basePath, Func<string, string> propertyProvider)
+            : this(stream, basePath, propertyProvider, "")
+        {
+        }
+
+        public PackageBuilder(Stream stream, string basePath, Func<string, string> propertyProvider, string versionOverride)
             : this()
         {
+            _versionOverride = versionOverride;
             ReadManifest(stream, basePath, propertyProvider);
         }
 
@@ -513,15 +536,9 @@ namespace NuGet.Packaging
             ICollection<IPackageFile> Files,
             ICollection<PackageDependencyGroup> package)
         {
-            if (HasContentFilesV2(Files) || HasIncludeExclude(package))
+            if (HasContentFilesV2(Files) || HasIncludeExclude(package) || HasXdtTransformFile(Files))
             {
-                // version 5
-                return ManifestVersionUtility.XdtTransformationVersion;
-            }
-
-            if (HasXdtTransformFile(Files))
-            {
-                // version 5
+                // version 6
                 return ManifestVersionUtility.XdtTransformationVersion;
             }
 
@@ -927,7 +944,11 @@ namespace NuGet.Packaging
         private void ReadManifest(Stream stream, string basePath, Func<string, string> propertyProvider)
         {
             // Deserialize the document and extract the metadata
-            Manifest manifest = Manifest.ReadFrom(stream, propertyProvider, validateSchema: true);
+            Manifest manifest = Manifest.ReadFrom(
+                stream,
+                propertyProvider,
+                validateSchema: true,
+                overrideVersion: !(string.IsNullOrEmpty(_versionOverride)) ? NuGetVersion.Parse(_versionOverride) : null);
 
             Populate(manifest.Metadata);
 
