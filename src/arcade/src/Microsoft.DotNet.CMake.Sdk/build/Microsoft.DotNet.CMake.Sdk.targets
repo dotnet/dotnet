@@ -1,6 +1,14 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project DefaultTargets="Build">
 
+  <PropertyGroup>
+    <MicrosoftDotNetCMakeSdkTaskAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\net\Microsoft.DotNet.CMake.Sdk.dll</MicrosoftDotNetCMakeSdkTaskAssembly>
+    <MicrosoftDotNetCMakeSdkTaskAssembly Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\netframework\Microsoft.DotNet.CMake.Sdk.dll</MicrosoftDotNetCMakeSdkTaskAssembly>
+  </PropertyGroup>
+
+  <UsingTask TaskName="Microsoft.DotNet.CMake.Sdk.CreateCMakeFileApiQuery" AssemblyFile="$(MicrosoftDotNetCMakeSdkTaskAssembly)" />
+  <UsingTask TaskName="Microsoft.DotNet.CMake.Sdk.GetCMakeArtifactsFromFileApi" AssemblyFile="$(MicrosoftDotNetCMakeSdkTaskAssembly)" />
+
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
   <ItemGroup>
@@ -92,6 +100,12 @@
     </ItemGroup>
   </Target>
 
+  <Target Name="GetCMakeOutputDirProperty" Returns="$(CMakeOutputDir)">
+  </Target>
+
+  <Target Name="GetConfigurationProperty" Returns="$(Configuration)">
+  </Target>
+
   <Target Name="_ResolveVSCompilerToolchainForNonVSGenerators"
     Condition="$([MSBuild]::IsOsPlatform(Windows)) and !$(CMakeGenerator.StartsWith('Visual Studio')) and '$(CMakeCompilerToolchain)' == 'MSVC' and '$(CMakeCompilerSearchScript)' == ''">
     <Error Condition="'$(_VSNativeCompilerComponentArchName)' == ''" Text="Unable to determine location of MSVC tools installed for the '$(Platform)' architecture." />
@@ -175,8 +189,14 @@
     </PropertyGroup>
   </Target>
 
+  <Target Name="CreateFileApiQuery"
+    DependsOnTargets="GetConfigScript"
+    BeforeTargets="Configure">
+    <CreateCMakeFileApiQuery CMakeOutputDir="$(CMakeOutputDir)" />
+  </Target>
+
   <Target Name="Configure"
-    DependsOnTargets="GetConfigScript">
+    DependsOnTargets="GetConfigScript;CreateFileApiQuery">
     <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="
       $(CMakeCompilerSearchScript)
       $(CMakeConfigScript)" />
