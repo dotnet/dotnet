@@ -90,6 +90,7 @@
     <Compile Include="Conformance\Expressions\ControlFlowExpressions\PatternMatching\PatternMatching.fs" />
     <Compile Include="Conformance\Expressions\ControlFlowExpressions\SequenceIteration\SequenceIteration.fs" />
     <Compile Include="Conformance\Expressions\ControlFlowExpressions\Type-relatedExpressions\Type-relatedExpressions.fs" />
+    <Compile Include="Conformance\Expressions\OverloadResolutionCacheE2ETests.fs" />
     <Compile Include="Conformance\Expressions\ApplicationExpressions\Assertion\Assertion.fs" />
     <Compile Include="Conformance\Expressions\ApplicationExpressions\ObjectConstruction\ObjectConstruction.fs" />
     <Compile Include="Conformance\Expressions\ConstantExpressions\ConstantExpressions.fs" />
