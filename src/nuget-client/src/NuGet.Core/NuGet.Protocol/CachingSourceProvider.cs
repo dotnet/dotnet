@@ -64,6 +64,11 @@ namespace NuGet.Protocol
 
         public SourceRepository CreateRepository(PackageSource source, FeedType type)
         {
+            if (_cachedSources.TryGetValue(source.Source, out SourceRepository cached))
+            {
+                return cached;
+            }
+
             return _cachedSources.GetOrAdd(source.Source, new SourceRepository(source, _resourceProviders, type));
         }
 
