@@ -59,6 +59,8 @@ Copyright (c) .NET Foundation. All rights reserved.
     <PackageDownloadSupported>true</PackageDownloadSupported>
     <!-- Mark that this targets file GetReferenceNearestTargetFrameworkTask task supports the TargetPlatformMoniker -->
     <GetReferenceNearestTargetFrameworkTaskSupportsTargetPlatformParameter>true</GetReferenceNearestTargetFrameworkTaskSupportsTargetPlatformParameter>
+    <!-- Mark that this targets file GetReferenceNearestTargetFrameworkTask task supports the TargetFramework -->
+    <GetReferenceNearestTargetFrameworkTaskSupportsTargetFrameworkPropertyParameter>true</GetReferenceNearestTargetFrameworkTaskSupportsTargetFrameworkPropertyParameter>
     <!-- Flag if the Central package file is enabled -->
     <_CentralPackageVersionsEnabled Condition="'$(ManagePackageVersionsCentrally)' == 'true' AND '$(CentralPackageVersionsFileImported)' == 'true'">true</_CentralPackageVersionsEnabled>
   </PropertyGroup>

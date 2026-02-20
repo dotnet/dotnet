@@ -466,6 +466,11 @@ namespace NuGet.Build.Tasks.Test
         [InlineData(".NETCoreApp,Version=v5.0", "Windows,Version=7.0", "net5.0-windows;netcoreapp3.1", ".NETCoreApp,Version=v5.0;.NETCoreApp,Version=v3.1", "Windows,Version=7.0;Windows,Version=7.0", "net5.0-windows")]
         [InlineData(".NETCoreApp,Version=v5.0", "None", "net;net-windows", ".NETCoreApp,Version=v5.0;.NETCoreApp,Version=v5.0", "None;Windows,Version=7.0", "net")]
         [InlineData(".NETCoreApp,Version=v3.1", "Windows,Version=7.0", "net50;netstandard20", ".NETCoreApp,Version=v5.0;NETStandard,Version=v2.0", "Windows,Version=7.0;None", "netstandard20")]
+        [InlineData(".NETCoreApp,Version=v10.0", null, // TFM & TPM of current project
+            "apple;netstandard20", // TargetFramework of reference project
+            ".NETCoreApp,Version=v5.0;NETStandard,Version=v2.0", // TFM of reference project
+            "Windows,Version=7.0;None", // TPM of reference project
+            "netstandard20")] // Alias to return
         public void GetReferenceNearestTargetFrameworkTask_WithTargetFrameworkInformation_ReturnsCompatibleAlias(
             string currentProjectTFM, string currentProjectTPM, string refTargetFrameworks, string refTargetFrameworkMonikers, string refTargetPlatformMonikers, string expected)
         {
@@ -534,7 +539,6 @@ namespace NuGet.Build.Tasks.Test
             testLogger.Warnings.Should().Be(0);
             testLogger.Errors.Should().Be(1);
         }
-
 
         [Theory]
         [InlineData(".NETFramework,Version=v4.7.2", null, "net46;net472", ".NETFramework,Version=v4.6", "None")]
