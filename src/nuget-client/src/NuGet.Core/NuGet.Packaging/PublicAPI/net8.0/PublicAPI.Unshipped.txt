@@ -1,1 +1,6 @@
 #nullable enable
+~NuGet.Packaging.PackageBuilder.PackageBuilder(string path, string basePath, System.Func<string, string> propertyProvider, bool includeEmptyDirectories, bool deterministic, NuGet.Common.ILogger logger, string versionOverride) -> void
+~NuGet.Packaging.PackageBuilder.PackageBuilder(string path, string basePath, System.Func<string, string> propertyProvider, bool includeEmptyDirectories, bool deterministic, string versionOverride) -> void
+~NuGet.Packaging.PackageBuilder.PackageBuilder(string path, System.Func<string, string> propertyProvider, bool includeEmptyDirectories, bool deterministic, NuGet.Common.ILogger logger, string versionOverride) -> void
+~NuGet.Packaging.PackageBuilder.PackageBuilder(System.IO.Stream stream, string basePath, System.Func<string, string> propertyProvider, string versionOverride) -> void
+~static NuGet.Packaging.Manifest.ReadFrom(System.IO.Stream stream, System.Func<string, string> propertyProvider, bool validateSchema, NuGet.Versioning.NuGetVersion overrideVersion) -> NuGet.Packaging.Manifest
