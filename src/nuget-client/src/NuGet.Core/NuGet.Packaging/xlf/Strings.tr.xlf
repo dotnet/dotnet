@@ -414,7 +414,7 @@
       </trans-unit>
       <trans-unit id="InvalidX509StorePurpose">
         <source>Invalid X.509 store purpose.</source>
-        <target state="translated">Geçersiz X.509 depolama amacı.</target>
+        <target state="translated">Geçersiz X.509 depo amacı.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_InstalledPackage">

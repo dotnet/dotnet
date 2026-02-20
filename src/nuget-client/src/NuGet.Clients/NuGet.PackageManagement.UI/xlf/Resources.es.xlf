@@ -933,12 +933,12 @@ Error: {1}</target>
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueName">
         <source>The name specified has already been added to the list of available package sources. Please provide a unique name.</source>
-        <target state="translated">El nombre especificado ya se ha agregado a la lista de orígenes de paquetes disponibles. Proporcione un nombre único.</target>
+        <target state="translated">El nombre especificado ya se ha agregado a la lista de orígenes de paquete disponibles. Proporcione un nombre único.</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueSource">
         <source>The source specified has already been added to the list of available package sources. Please provide a unique source.</source>
-        <target state="translated">El origen especificado ya se ha agregado a la lista de orígenes de paquetes disponibles. Proporcione un origen único.</target>
+        <target state="translated">El origen especificado ya se ha agregado a la lista de orígenes de paquete disponibles. Proporcione un origen único.</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Canceled">
@@ -953,7 +953,7 @@ Error: {1}</target>
       </trans-unit>
       <trans-unit id="Status_NoMoreItems">
         <source>End of package list loaded</source>
-        <target state="translated">Fin de la carga de la lista de paquetes</target>
+        <target state="translated">Final de la lista de paquetes cargada</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Ready">

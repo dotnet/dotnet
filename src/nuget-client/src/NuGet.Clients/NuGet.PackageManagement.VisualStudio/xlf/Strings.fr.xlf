@@ -266,7 +266,7 @@
       </trans-unit>
       <trans-unit id="Warning_DirectoryNotEmpty">
         <source>Directory '{0}' is not empty. Skipping...</source>
-        <target state="translated">Le répertoire « {0} » n'est pas vide. Ignoré...</target>
+        <target state="translated">Le répertoire '{0}' n'est pas vide. Ignoré...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectories">

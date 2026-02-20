@@ -1,10 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="zh-Hant" original="../Resources.resx">
     <body>
       <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
         <source>Argument cannot be null or empty</source>
-        <target state="translated">引數不能為 Null 或空白</target>
+        <target state="translated">引數不得為 Null 或空白</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorOccurredRestoringPackages">
@@ -67,7 +67,7 @@
         <source>One or more NuGet packages need to be restored but couldn't be because consent has not been granted. To give consent, open the Visual Studio Options dialog, click on the NuGet Package Manager node and check 'Allow NuGet to download missing packages during build.' You can also give consent by setting the environment variable 'EnableNuGetPackageRestore' to 'true'.
 
 Missing packages: {0}</source>
-        <target state="translated">有一或多個 NuGet 套件必須還原，但因為尚未獲得同意而無法進行。若要同意此作業，請開啟 [Visual Studio 選項] 對話方塊，按一下 [NuGet 套件管理器] 節點，再選取 [允許 NuGet 在建置期間下載缺少的套件]。您也可以將環境變數 'EnableNuGetPackageRestore' 設定為 'true' 來同意此作業。
+        <target state="translated">有一或多個 NuGet 套件必須還原，但因為尚未獲得同意而無法進行。若要同意此作業，請開啟 [Visual Studio 選項] 對話方塊，按一下 [NuGet 套件管理員] 節點，再選取 [允許 NuGet 在建置期間下載缺少的套件]。您也可以將環境變數 'EnableNuGetPackageRestore' 設定為 'true' 來同意此作業。
 
 缺少的套件: {0}</target>
         <note />
@@ -106,7 +106,7 @@ Missing packages: {0}</source>
         <source>Restoring NuGet packages...
 To prevent NuGet from restoring packages during build, open the Visual Studio Options dialog, click on the NuGet Package Manager node and uncheck 'Allow NuGet to download missing packages during build.'</source>
         <target state="translated">正在還原 NuGet 套件...
-為避免 NuGet 在建置期間還原套件，請開啟 [Visual Studio 選項] 對話方塊，按一下 [NuGet 套件管理器] 節點，然後取消選取 [允許 NuGet 在建置期間下載缺少的套件]。</target>
+為避免 NuGet 在建置期間還原套件，請開啟 [Visual Studio 選項] 對話方塊，按一下 [NuGet 套件管理員] 節點，然後取消選取 [允許 NuGet 在建置期間下載缺少的套件]。</target>
         <note />
       </trans-unit>
       <trans-unit id="PropertyDoesNotHaveSingleValue">

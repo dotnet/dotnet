@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="AddPackage_SuccessfullyAdded">
         <source>Successfully added package '{0}' to feed '{1}'.</source>
-        <target state="translated">El paquete "{0}" se agregó correctamente a la fuente "{1}".</target>
+        <target state="translated">Se agregó el paquete "{0}" correctamente a la fuente "{1}".</target>
         <note />
       </trans-unit>
       <trans-unit id="ArgumentCannotBeNullOrEmpty">
@@ -174,7 +174,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Log_FailedToGetNuspecStream">
         <source>Unable to load nuspec from package '{0}'.</source>
-        <target state="translated">No se puede cargar nuspec del paquete "{0}".</target>
+        <target state="translated">No se puede cargar nuspec desde el paquete "{0}".</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_FailedToParseRepoSignInfor">
@@ -190,7 +190,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Log_FailedToReadServiceIndex">
         <source>Unable to load the service index for source {0}.</source>
-        <target state="translated">No se puede cargar el índice de servicio del origen {0}.</target>
+        <target state="translated">No se puede cargar el índice de servicio para el origen {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_FailedToRetrievePackage">
@@ -247,7 +247,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Log_RetryingServiceIndex">
         <source>Retrying service index request for source '{0}'.</source>
-        <target state="translated">Se reintentará la solicitud del índice de servicio del origen "{0}".</target>
+        <target state="translated">Se reintentará la solicitud de índice de servicio para el origen "{0}".</target>
         <note />
       </trans-unit>
       <trans-unit id="NoApiKeyFound">
@@ -457,12 +457,12 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_InvalidXml">
         <source>The content at '{0}' is not valid XML.</source>
-        <target state="translated">El contenido en "{0}" no es XML válido.</target>
+        <target state="translated">El contenido en "{0}" no es código XML válido.</target>
         <note />
       </trans-unit>
       <trans-unit id="Protocol_MalformedMetadataError">
         <source>Metadata could not be loaded from the source '{0}'.</source>
-        <target state="translated">No se pudieron cargar los metadatos del origen "{0}".</target>
+        <target state="translated">No se pudieron cargar metadatos del origen "{0}".</target>
         <note />
       </trans-unit>
       <trans-unit id="Protocol_MissingSearchService">

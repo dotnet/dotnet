@@ -129,7 +129,10 @@ namespace NuGet.Commands.Test
             updated.RestoreMetadata.ProjectPath = projectPath;
             updated.RestoreMetadata.CentralPackageVersionsEnabled = spec.RestoreMetadata?.CentralPackageVersionsEnabled ?? false;
             updated.RestoreMetadata.CentralPackageTransitivePinningEnabled = spec.RestoreMetadata?.CentralPackageTransitivePinningEnabled ?? false;
-
+            if (spec.RestoreMetadata != null)
+            {
+                updated.RestoreMetadata.ProjectWideWarningProperties = spec.RestoreMetadata.ProjectWideWarningProperties;
+            }
             updated.RestoreMetadata.RestoreAuditProperties = new RestoreAuditProperties()
             {
                 EnableAudit = bool.FalseString

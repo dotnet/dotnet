@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="MSSignCommandCertificateFingerprintDescription">
         <source>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a p7b file for the certificate.</source>
-        <target state="translated">Kryptografický otisk SHA-256, SHA-384 nebo SHA-512 certifikátu, pomocí kterého se pro daný certifikát hledá soubor p7b</target>
+        <target state="translated">Kryptografický otisk SHA-256, SHA-384 nebo SHA-512 certifikátu, pomocí kterého se pro daný certifikát hledá soubor p7b.</target>
         <note />
       </trans-unit>
       <trans-unit id="MSSignCommandDescription">

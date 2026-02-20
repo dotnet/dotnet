@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="BindingRedirectsHeader.Text">
         <source>Binding Redirects</source>
-        <target state="translated">Przekierowania wiązań</target>
+        <target state="translated">Przekierowania powiązań</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageManagementHeader.Text">

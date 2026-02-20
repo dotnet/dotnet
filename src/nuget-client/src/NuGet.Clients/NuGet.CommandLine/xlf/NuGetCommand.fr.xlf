@@ -92,21 +92,21 @@ nuget client-certs Remove -PackageSource certificateName
 nuget client-certs
 
 nuget client-certs List</source>
-        <target state="translated">nuget client-certs Ajouter -PackageSource Foo -Path .\MyCertificate.pfx
+        <target state="translated">nuget client-certs Add -PackageSource Foo -Path .\MyCertificate.pfx
 
-nuget client-certs Ajouter -PackageSource Contoso -Path c:\MyCertificate.pfx -Password 42
+nuget client-certs Add -PackageSource Contoso -Path c:\MyCertificate.pfx -Password 42
 
-nuget client-certs Ajouter -PackageSource Foo -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
+nuget client-certs Add -PackageSource Foo -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
 
-nuget client-certs Ajouter -PackageSource Contoso -StoreLocation LocalMachine -StoreName My -FindBy Thumbprint -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
+nuget client-certs Add -PackageSource Contoso -StoreLocation LocalMachine -StoreName My -FindBy Thumbprint -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
 
-nuget client-certs Mise à jour -PackageSource Foo -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
+nuget client-certs Update -PackageSource Foo -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
 
-nuget client-certs Supprimer -PackageSource certificateName
+nuget client-certs Remove -PackageSource certificateName
 
 nuget client-certs
 
-liste nuget client-certs</target>
+nuget client-certs List</target>
         <note />
       </trans-unit>
       <trans-unit id="ClientCertificatesCommandUsageSummary">
@@ -1054,7 +1054,7 @@ nuget sign .\..\MyPackage.nupkg -Timestamper https://foo.bar -OutputDirectory .\
       </trans-unit>
       <trans-unit id="SourcesCommandAllowInsecureConnectionsDescription">
         <source>Allows HTTP connections for adding or updating packages. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Autorise les connexions HTTP pour l’ajout ou la mise à jour de packages. Remarque : cette méthode n’est pas sécurisée. Si vous souhaitez découvrir des options sécurisées, consultez https://aka.ms/nuget-https-everywhere pour obtenir plus d’informations.</target>
+        <target state="translated">Autorise les connexions HTTP pour ajouter ou mettre à jour des packages. Remarque : cette méthode n’est pas sécurisée. Si vous souhaitez découvrir les options sécurisées, consultez https://aka.ms/nuget-https-everywhere pour obtenir plus d'informations.</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandDescription">

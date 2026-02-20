@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="zh-Hant" original="../Resources.resx">
     <body>
@@ -132,6 +132,11 @@
         <target state="translated">允許不安全連線</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_AuditSources_Checkbox">
+        <source>Use separate sources for vulnerability audit</source>
+        <target state="translated">使用個別來源進行弱點稽核</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_AuditSources_Description">
         <source>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</source>
         <target state="translated">稽核來源在還原過程中提供漏洞資料，但不作為套件來源。若未設定稽核來源，NuGet 稽核會使用套件來源。[深入了解稽核來源](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
@@ -170,6 +175,11 @@
       <trans-unit id="Text_HttpSource_Warning">
         <source>HTTP sources are insecure. Consider using HTTPS instead. 'AllowInsecureConnections' is enabled, permitting HTTP access. For more secure options, see [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere).</source>
         <target state="translated">HTTP 來源不安全。請考慮改用 HTTPS。已啟用 'AllowInsecureConnections' 並允許 HTTP 存取。若要獲得更安全的選項，請參閱 [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere)。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_MachineWidePackageSource_Description">
+        <source>Machine‑wide package sources are provisioned by Visual Studio workloads and can only be enabled or disabled.</source>
+        <target state="translated">全機套件來源由 Visual Studio 工作負載提供，僅能啟用或停用。</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageSourceEnabled_Header">
