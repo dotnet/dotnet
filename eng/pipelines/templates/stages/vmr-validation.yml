@@ -14,6 +14,10 @@ parameters:
 - name: desiredFinalVersionKind
   type: string
   default: ''
+
+- name: excludeRuntimeDependentJobs
+  type: boolean
+  default: false
   
 # These are not expected to be passed it but rather just object variables reused below
 - name: pool_Linux
@@ -63,6 +67,11 @@ stages:
       desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
   - group: Release-Pipeline
   - group: DotNetBot-GitHub-AllBranches
+  - name: sbBuildSuffix
+    ${{ if parameters.excludeRuntimeDependentJobs }}:
+      value: PreviousSourceBuiltSdk
+    ${{ else }}:
+      value: MsftSdk
   jobs:
   - job: ValidateInstallers_Linux_x64
     pool: ${{ parameters.pool_Linux }}
@@ -96,6 +105,7 @@ stages:
         parameters:
           continueOnError: true
           OS: Windows_NT
+          sbBuildSuffix: ${{ variables.sbBuildSuffix }}
 
     - job: ValidateSigning_Mac
       displayName: Validate Signing - Mac
@@ -106,6 +116,7 @@ stages:
         parameters:
           continueOnError: true
           OS: Darwin
+          sbBuildSuffix: ${{ variables.sbBuildSuffix }}
 
     - job: ValidateSigning_Linux
       displayName: Validate Signing - Linux
@@ -116,3 +127,4 @@ stages:
         parameters:
           continueOnError: true
           OS: Linux
+          sbBuildSuffix: ${{ variables.sbBuildSuffix }}
