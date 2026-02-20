@@ -8,7 +8,7 @@ This file should be imported by eng/Versions.props
     <!-- _git/vs-code-coverage dependencies -->
     <MicrosoftInternalCodeCoveragePackageVersion>18.5.0-preview.26113.4</MicrosoftInternalCodeCoveragePackageVersion>
     <!-- dotnet/dotnet dependencies -->
-    <MicrosoftDiagnosticsNETCoreClientPackageVersion>0.2.0-preview.26118.109</MicrosoftDiagnosticsNETCoreClientPackageVersion>
+    <MicrosoftDiagnosticsNETCoreClientPackageVersion>0.2.0-preview.26119.109</MicrosoftDiagnosticsNETCoreClientPackageVersion>
     <!-- dotnet/runtime dependencies -->
     <MicrosoftExtensionsDependencyModelPackageVersion>6.0.2</MicrosoftExtensionsDependencyModelPackageVersion>
     <!-- dotnet/core-setup dependencies -->
