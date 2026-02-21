@@ -174,4 +174,34 @@ namespace Test
     {
     }
     """;
+
+    [Fact]
+    public void DeclarationConfiguration_IncludesUtf8StringLiterals()
+    {
+        // Arrange & Act
+        var component = CompileToComponent(""""
+@using System.Text
+@code {
+    private ReadOnlySpan<byte> GetUtf8Data()
+    {
+        return "hello"u8;
+    }
+    
+    private void ProcessData()
+    {
+        ReadOnlySpan<byte> data = "world"U8;
+        var result = Encoding.UTF8.GetString(data);
+    }
+    
+    private ReadOnlySpan<byte> GetRawUtf8Data()
+    {
+        return """raw string"""u8;
+    }
+}
+"""");
+
+        // Assert - Should compile without RZ1000 errors
+        var method = component.GetMembers("GetUtf8Data").Single();
+        AssertEx.Equal("private System.ReadOnlySpan<System.Byte> Test.TestComponent.GetUtf8Data()", method.ToTestDisplayString());
+    }
 }

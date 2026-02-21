@@ -227,7 +227,6 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
         await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
     }
 
-
     [Theory]
     [CombinatorialData]
     public async Task GetSemanticTokens_Razor_NestedTextDirectives(bool colorBackground, bool miscellaneousFile)
@@ -369,6 +368,27 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
             """;
 
         await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile, fileKind: RazorFileKind.Legacy);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task Obsolete(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @using System
+
+            <div>
+                @status
+            </div>
+
+            @code
+            {
+                [Obsolete]
+                private string status = "All good";
+            }
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
     }
 
     private async Task VerifySemanticTokensAsync(

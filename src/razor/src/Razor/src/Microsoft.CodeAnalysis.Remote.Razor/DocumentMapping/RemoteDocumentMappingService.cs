@@ -44,13 +44,8 @@ internal sealed class RemoteDocumentMappingService(
         }
 
         var solution = originSnapshot.TextDocument.Project.Solution;
-        if (!solution.TryGetSourceGeneratedDocumentIdentity(generatedDocumentUri, out var identity))
-        {
-            return (generatedDocumentUri, generatedDocumentRange);
-        }
-
-        var project = solution.GetProject(identity.DocumentId.ProjectId);
-        if (project is null)
+        if (!solution.TryGetSourceGeneratedDocumentIdentity(generatedDocumentUri, out var identity) ||
+            !solution.TryGetProject(identity.DocumentId.ProjectId, out var project))
         {
             return (generatedDocumentUri, generatedDocumentRange);
         }
