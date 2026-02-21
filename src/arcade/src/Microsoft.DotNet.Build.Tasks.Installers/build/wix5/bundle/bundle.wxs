@@ -33,7 +33,7 @@
     -->
     <?ifdef RelatedDotNetBundleIds?>
       <?foreach relatedId in $(var.RelatedDotNetBundleIds)?>
-        <RelatedBundle Action="upgrade" Id="$(var.relatedId)"/>
+        <RelatedBundle Action="upgrade" Code="$(var.relatedId)"/>
       <?endforeach?>
     <?endif?>
 

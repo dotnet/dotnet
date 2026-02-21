@@ -11,7 +11,7 @@
     <!-- Keep Microsoft.Data.Services.Client package version in sync with Microsoft.Data.OData -->
     <MicrosoftDataServicesClientVersion>5.8.4</MicrosoftDataServicesClientVersion>
     <MicrosoftSignedWixVersion>3.14.1-9323.2545153</MicrosoftSignedWixVersion>
-    <MicrosoftWixToolsetSdkVersion>5.0.2-dotnet.2811440</MicrosoftWixToolsetSdkVersion>
+    <MicrosoftWixToolsetSdkVersion>6.0.3-dotnet.3</MicrosoftWixToolsetSdkVersion>
     <!-- Overwrite XUnitVersion/XUnitAnalyzersVersion/XUnitRunnerConsoleVersion/XUnitRunnerVisualStudioVersion that comes from the Arcade SDK to be in sync as Arcade doesn't use a live Arcade SDK.
          Keep in sync with DefaultVersions.props. -->
     <XUnitVersion>2.9.3</XUnitVersion>

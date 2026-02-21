@@ -22,6 +22,6 @@
     "Microsoft.DotNet.SharedFramework.Sdk": "11.0.0-beta.26079.111",
     "Microsoft.Build.NoTargets": "3.7.0",
     "Microsoft.Build.Traversal": "3.4.0",
-    "Microsoft.WixToolset.Sdk": "5.0.2-dotnet.2811440"
+    "Microsoft.WixToolset.Sdk": "6.0.3-dotnet.3"
   }
 }
