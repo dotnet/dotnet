@@ -575,9 +575,10 @@ public class HtmlFormattingTest(ITestOutputHelper testOutput) : DocumentFormatti
                         @{
                     #if DEBUG
                     }
-                    <div />
+                     <div />
                     @{
                     #endif
+
                         }
                     </div>
 
