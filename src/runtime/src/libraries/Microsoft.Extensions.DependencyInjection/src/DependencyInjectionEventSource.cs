@@ -46,9 +46,6 @@ namespace Microsoft.Extensions.DependencyInjection
         //   https://blogs.msdn.microsoft.com/vancem/2015/09/14/exploring-eventsource-activity-correlation-and-causation-features/
         // - A stop event's event id must be next one after its start event.
         // - Avoid renaming methods or parameters marked with EventAttribute. EventSource uses these to form the event object.
-
-        [UnconditionalSuppressMessage("ReflectionAnalysis", "IL2026:RequiresUnreferencedCode",
-            Justification = "Parameters to this method are primitive and are trimmer safe.")]
         [Event(1, Level = EventLevel.Verbose)]
         private void CallSiteBuilt(string serviceType, string callSite, int chunkIndex, int chunkCount, int serviceProviderHashCode)
         {
@@ -85,16 +82,12 @@ namespace Microsoft.Extensions.DependencyInjection
             WriteEvent(6, exceptionMessage, serviceProviderHashCode);
         }
 
-        [UnconditionalSuppressMessage("ReflectionAnalysis", "IL2026:RequiresUnreferencedCode",
-            Justification = "Parameters to this method are primitive and are trimmer safe.")]
         [Event(7, Level = EventLevel.Informational, Keywords = Keywords.ServiceProviderInitialized)]
         private void ServiceProviderBuilt(int serviceProviderHashCode, int singletonServices, int scopedServices, int transientServices, int closedGenericsServices, int openGenericsServices)
         {
             WriteEvent(7, serviceProviderHashCode, singletonServices, scopedServices, transientServices, closedGenericsServices, openGenericsServices);
         }
 
-        [UnconditionalSuppressMessage("ReflectionAnalysis", "IL2026:RequiresUnreferencedCode",
-            Justification = "Parameters to this method are primitive and are trimmer safe.")]
         [Event(8, Level = EventLevel.Informational, Keywords = Keywords.ServiceProviderInitialized)]
         private void ServiceProviderDescriptors(int serviceProviderHashCode, string descriptors, int chunkIndex, int chunkCount)
         {

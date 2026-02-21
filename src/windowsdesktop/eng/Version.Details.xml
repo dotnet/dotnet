@@ -62,10 +62,6 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>159b6d62add9dd2bbaaaaef8169f3d50f3cd711a</Sha>
     </Dependency>
-    <Dependency Name="System.Diagnostics.EventLog" Version="11.0.0-preview.2.26079.111">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>159b6d62add9dd2bbaaaaef8169f3d50f3cd711a</Sha>
-    </Dependency>
     <Dependency Name="System.Diagnostics.PerformanceCounter" Version="11.0.0-preview.2.26079.111">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>159b6d62add9dd2bbaaaaef8169f3d50f3cd711a</Sha>

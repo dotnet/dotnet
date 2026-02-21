@@ -14,11 +14,6 @@
     <FrameworkListFileClass Include="WindowsFormsIntegration.resources.dll" />
   </ItemGroup>
 
-  <!-- Runtime only files that are common to both WinForms and WPF -->
-  <ItemGroup>
-    <FrameworkListFileClass Include="System.Diagnostics.EventLog.Messages.dll" Profile="WindowsForms;WPF" />
-  </ItemGroup>
-
   <!-- WPF specific runtime-only files -->
   <ItemGroup>
     <FrameworkListFileClass Condition="'$(PlatformTarget)' != 'ARM64'" Include="D3DCompiler_47_cor3.dll" Profile="WPF" />

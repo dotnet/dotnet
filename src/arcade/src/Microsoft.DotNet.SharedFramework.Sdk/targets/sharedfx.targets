@@ -521,7 +521,12 @@
           DependsOnTargets="GetFilesToPackage"
           Condition="'$(PermitDllAndExeFilesLackingFileVersion)' != 'true' and '$(PlatformPackageType)' == 'RuntimePack'">
     <ItemGroup>
-      <_filesToVerify Include="@(FilesToPackage)" Condition="'%(Extension)' == '.dll' or '%(Extension)' == '.exe'" />
+      <_verFile Include="@(FilesToPackage)" Condition="'%(Extension)' == '.dll' or '%(Extension)' == '.exe'" />
+      
+      <_dupVerFileName Include="@(_verFile->'%(FileName)')" Original="%(Identity)" />
+
+      <_dupVerFileNamesFiltered Include="@(_dupVerFileName)" Exclude="@(ExcludeFromValidateFileVersions)"/>
+      <_verFileFiltered Include="@(_dupVerFileNamesFiltered->'%(Original)')"/>
     </ItemGroup>
     <ValidateFileVersions Files="@(_filesToVerify)" />
   </Target>
