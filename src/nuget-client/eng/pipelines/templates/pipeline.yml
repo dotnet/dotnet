@@ -2,8 +2,8 @@ parameters:
 - name: isOfficialBuild
   type: boolean
   default: false
-- name: RunOneLocBuild
-  displayName: Run OneLocBuild
+- name: TryRunOneLocBuild
+  displayName: Run OneLocBuild if on dev or a OneLoc release branch
   type: boolean
   default: false
 - name: RunBuildForPublishing
@@ -43,9 +43,19 @@ stages:
     steps:
     - template: /eng/pipelines/templates/Initialize_Build.yml@self
 
-- ${{ if eq(parameters.RunOneLocBuild, true) }}:
+- ${{ if eq(parameters.TryRunOneLocBuild, true) }}:
   - stage: RunOneLocBuild
     displayName: Run OneLocBuild
+    condition: |
+      and(
+        succeeded(),
+        eq(variables['IsOfficialBuild'], 'true'),
+        or(
+          eq(variables['Build.SourceBranch'], 'refs/heads/dev'),
+          eq(variables['Build.SourceBranch'], variables['OneLocReleaseBranch']),
+          eq(variables['Build.SourceBranch'], format('refs/heads/{0}', variables['OneLocReleaseBranch']))
+        )
+      )
     jobs:
     - template: /eng/common/templates-official/job/onelocbuild.yml
       parameters:

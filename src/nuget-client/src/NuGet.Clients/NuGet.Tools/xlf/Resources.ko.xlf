@@ -42,6 +42,11 @@
         <target state="translated">MCP 도구 서비스를 사용할 수 없습니다. GitHub Copilot이 설치되어 있고 로그인되어 있는지 확인하세요.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
+      <trans-unit id="Error_NuGetSolverNotAvailable">
+        <source>The NuGet Solver tool is unavailable. Please enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
+        <target state="new">The NuGet Solver tool is unavailable. Please enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
       <trans-unit id="Error_PackageSourceMappingPattern_Missing">
         <source>A package pattern must be provided.</source>
         <target state="translated">패키지 패턴을 제공해야 합니다.</target>
