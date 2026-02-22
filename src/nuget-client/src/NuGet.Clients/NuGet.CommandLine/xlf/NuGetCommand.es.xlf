@@ -92,7 +92,7 @@ nuget client-certs Remove -PackageSource certificateName
 nuget client-certs
 
 nuget client-certs List</source>
-        <target state="translated">nuget client-certs Agregar -PackageSource Foo -Path .\MyCertificate.pfx
+        <target state="translated">nuget client-certs Add -PackageSource Foo -Path .\MyCertificate.pfx
 
 nuget client-certs Add -PackageSource Contoso -Path c:\MyCertificate.pfx -Password 42
 
@@ -1054,7 +1054,7 @@ nuget sign .\..\MyPackage.nupkg -Timestamper https://foo.bar -OutputDirectory .\
       </trans-unit>
       <trans-unit id="SourcesCommandAllowInsecureConnectionsDescription">
         <source>Allows HTTP connections for adding or updating packages. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Permite conexiones HTTP para agregar o actualizar paquetes. Nota: este método no es seguro. Para opciones seguras, consulte https://aka.ms/nuget-https-everywhere para obtener más información.</target>
+        <target state="translated">Permite conexiones HTTP para agregar o actualizar paquetes. Nota: Este método no es seguro. En referencia a opciones seguras, consulte https://aka.ms/nuget-https-everywhere para obtener más información.</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandDescription">

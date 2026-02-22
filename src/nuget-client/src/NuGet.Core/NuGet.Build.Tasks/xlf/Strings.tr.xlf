@@ -123,7 +123,7 @@
       </trans-unit>
       <trans-unit id="NoCompatibleTargetFramework">
         <source>Project '{0}' targets '{2}'. It cannot be referenced by a project that targets '{1}'.</source>
-        <target state="translated">Proje '{0}'hedefleri'{2}'.  '{1}' öğesini hedefleyen bir proje tarafından başvurulamaz.</target>
+        <target state="translated">'{0}' projesi '{2}' çerçevesini hedefliyor. Buna, '{1}' çerçevesini hedefleyen bir proje tarafından başvurulamaz.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoProjectsProvidedToTask">

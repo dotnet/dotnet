@@ -3411,6 +3411,64 @@ EndGlobal";
             result.Output.Should().Contain(expected);
         }
 
+        [PlatformFact(Platform.Windows)]
+        public async Task DotnetRestore_WithAliasedFramework_SuppressesWithPackageSpecificNoWarn()
+        {
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+            var testDirectory = pathContext.SolutionRoot;
+
+            var packageA = new SimpleTestPackageContext("packageA", "1.0.0");
+            packageA.AddFile("lib/net45/a.dll");
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageA);
+
+            string apple = nameof(apple);
+            var projectName = "ClassLibrary1";
+            var projectDirectory = Path.Combine(testDirectory, projectName);
+            var projectFile = Path.Combine(projectDirectory, $"{projectName}.csproj");
+            _dotnetFixture.CreateDotnetNewProject(testDirectory, projectName, " classlib", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(projectFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple}");
+
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "PackageReference",
+                    packageA.Id,
+                    framework: (string)null,
+                    [],
+                    new Dictionary<string, string>() {
+                        { "Version", packageA.Version },
+                        { "NoWarn", "NU1701" },
+                    });
+
+                var appleProps = new Dictionary<string, string>
+                    {
+                        { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                        { "TargetFrameworkVersion", $"v{Constants.DefaultTargetFramework.Version.ToString(2)}" },
+                        { "TargetFrameworkMoniker", $".NETCoreApp, Version={Constants.DefaultTargetFramework.Version.ToString(2)}" }
+                    };
+                ProjectFileUtils.AddProperties(xml, appleProps, $" '$(TargetFramework)' == '{apple}' ");
+
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            // Act
+            var result = _dotnetFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, $"restore {projectFile}", testOutputHelper: _testOutputHelper);
+
+            // Assert
+            var assetsFilePath = Path.Combine(projectDirectory, "obj", "project.assets.json");
+            var assetsFile = new LockFileFormat().Read(assetsFilePath);
+            LockFileTarget appleTarget = assetsFile.GetTarget(apple, null);
+            appleTarget.Libraries.Should().NotContain(e => e.Name.Equals("x"));
+            assetsFile.LogMessages.Should().BeEmpty();
+        }
+
         private void AssertRelatedProperty(IList<LockFileItem> items, string path, string related)
         {
             var item = items.Single(i => i.Path.Equals(path));

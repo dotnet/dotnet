@@ -61,7 +61,7 @@
       </trans-unit>
       <trans-unit id="None">
         <source>None</source>
-        <target state="translated">Yok</target>
+        <target state="translated">Hiçbiri</target>
         <note />
       </trans-unit>
       <trans-unit id="PackagesLockFile_CentralPackageVersionRemoved">

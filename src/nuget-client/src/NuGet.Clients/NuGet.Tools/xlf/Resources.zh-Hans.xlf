@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="zh-Hans" original="../Resources.resx">
     <body>
@@ -132,6 +132,11 @@
         <target state="translated">允许不安全的连接</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_AuditSources_Checkbox">
+        <source>Use separate sources for vulnerability audit</source>
+        <target state="translated">使用独立源进行漏洞审计</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_AuditSources_Description">
         <source>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</source>
         <target state="translated">审核源在还原期间提供漏洞数据，但不充当包源。如果未配置审核源，则 NuGet 审核使用包源。[了解有关审核源的更多信息](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
@@ -172,6 +177,11 @@
         <target state="translated">HTTP 源不安全。请考虑改用 HTTPS。启用了 "AllowInsecureConnections"，允许 HTTP 访问。如需更安全的选项，请参阅 [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere)。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_MachineWidePackageSource_Description">
+        <source>Machine‑wide package sources are provisioned by Visual Studio workloads and can only be enabled or disabled.</source>
+        <target state="translated">计算机范围的包源由 Visual Studio 工作负载预配，只能启用或禁用。</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_PackageSourceEnabled_Header">
         <source>Enabled</source>
         <target state="translated">已启用</target>
@@ -194,7 +204,7 @@
       </trans-unit>
       <trans-unit id="Text_PackageSources_Description">
         <source>Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</source>
-        <target state="translated">包源定义了 NuGet 在安装、还原、审核和更新操作中检索包的位置。[了解有关审核源的更多信息](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</target>
+        <target state="translated">包源定义了 NuGet 为安装、还原、审核和更新操作检索包的位置。[了解有关包源的更多信息](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageSources_MachineWide">

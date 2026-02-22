@@ -29,7 +29,7 @@
       </trans-unit>
       <trans-unit id="MSSignCommandInvalidArgumentException">
         <source>Invalid value provided for '{0}'. For a list of accepted values, please visit https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign</source>
-        <target state="translated">为“{0}”提供的值无效。有关接受值的列表，请访问 https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign</target>
+        <target state="translated">为 ‘{0}’ 提供的值无效。有关被接受值的列表，请访问 https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign</target>
         <note>{0} - argument name</note>
       </trans-unit>
       <trans-unit id="MSSignCommandInvalidCertificateFingerprint">

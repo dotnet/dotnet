@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="de" original="../Resources.resx">
     <body>
@@ -132,6 +132,11 @@
         <target state="translated">Unsichere Verbindungen zulassen</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_AuditSources_Checkbox">
+        <source>Use separate sources for vulnerability audit</source>
+        <target state="translated">Für die Sicherheitsrisikoüberwachung separate Quellen verwenden</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_AuditSources_Description">
         <source>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</source>
         <target state="translated">Überwachungsquellen liefern während der Wiederherstellung Sicherheitsrisikodaten, ohne als Paketquellen zu fungieren. Wenn keine Überwachungsquellen konfiguriert sind, verwendet NuGet Audit Paketquellen. [Weitere Informationen zu Überwachungsquellen](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
@@ -170,6 +175,11 @@
       <trans-unit id="Text_HttpSource_Warning">
         <source>HTTP sources are insecure. Consider using HTTPS instead. 'AllowInsecureConnections' is enabled, permitting HTTP access. For more secure options, see [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere).</source>
         <target state="translated">HTTP-Quellen sind unsicher. Erwägen Sie stattdessen die Verwendung von HTTPS. „AllowInsecureConnections“ ist aktiviert und erlaubt den HTTP-Zugriff. Sicherere Optionen finden Sie unter [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_MachineWidePackageSource_Description">
+        <source>Machine‑wide package sources are provisioned by Visual Studio workloads and can only be enabled or disabled.</source>
+        <target state="translated">Computerweite Paketquellen werden von Visual Studio-Workloads bereitgestellt und können nur aktiviert bzw. deaktiviert werden.</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageSourceEnabled_Header">
