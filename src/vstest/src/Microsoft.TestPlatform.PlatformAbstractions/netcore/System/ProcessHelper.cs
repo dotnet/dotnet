@@ -47,12 +47,6 @@ public partial class ProcessHelper : IProcessHelper
             _ => throw new NotSupportedException(),
         };
     }
-
-    public PlatformArchitecture GetProcessArchitecture(int processId)
-    {
-        // Return the same as the current process.
-        return GetCurrentProcessArchitecture();
-    }
 }
 
 #endif

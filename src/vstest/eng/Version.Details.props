@@ -6,15 +6,15 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- _git/vs-code-coverage dependencies -->
-    <MicrosoftInternalCodeCoveragePackageVersion>18.5.0-preview.26106.5</MicrosoftInternalCodeCoveragePackageVersion>
+    <MicrosoftInternalCodeCoveragePackageVersion>18.5.0-preview.26113.4</MicrosoftInternalCodeCoveragePackageVersion>
     <!-- dotnet/dotnet dependencies -->
-    <MicrosoftDiagnosticsNETCoreClientPackageVersion>0.2.0-preview.26070.110</MicrosoftDiagnosticsNETCoreClientPackageVersion>
+    <MicrosoftDiagnosticsNETCoreClientPackageVersion>0.2.0-preview.26119.109</MicrosoftDiagnosticsNETCoreClientPackageVersion>
     <!-- dotnet/runtime dependencies -->
     <MicrosoftExtensionsDependencyModelPackageVersion>6.0.2</MicrosoftExtensionsDependencyModelPackageVersion>
     <!-- dotnet/core-setup dependencies -->
     <MicrosoftExtensionsFileSystemGlobbingPackageVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
     <!-- dotnet/arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26106.2</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26113.2</MicrosoftDotNetArcadeSdkPackageVersion>
     <!-- dotnet/symreader-converter dependencies -->
     <MicrosoftDiaSymReaderConverterPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderConverterPackageVersion>
     <MicrosoftDiaSymReaderPdb2PdbPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderPdb2PdbPackageVersion>
