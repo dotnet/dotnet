@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceHub.Framework;
@@ -26,6 +27,8 @@ namespace NuGetVSExtension
         private const string AgentModeResponderServiceMoniker = "Microsoft.VisualStudio.Copilot.AgentModeResponder";
         private const string AuthStatusDetermined = "c936efcc-6baa-4ad3-9c2b-7ba750acf18f";
         private const string ServiceName = "Microsoft.VisualStudio.Copilot.SolutionContextProvider";
+        private const string NuGetMCPServerName = "nuget";
+        private const string NuGetSolverToolName = "get-nuget-solver";
 
         private static readonly Guid CopilotReadyUIContext = new(AuthStatusDetermined);
         private static readonly ServiceRpcDescriptor ProviderDescriptor = CopilotDescriptors.CreateContextProviderDescriptor(ServiceName);
@@ -99,6 +102,13 @@ namespace NuGetVSExtension
                     string solutionPathContext = $"The current solution file path is: {GetSolutionPath()}.";
                     CopilotContext context = new CopilotContext(ProviderDescriptor.Moniker, ContextDescriptor, request.CorrelationId, solutionPathContext);
                     IReadOnlyList<CopilotFunctionDescriptor> functions = await cfp.GetFunctionsAsync(request.CorrelationId, cancellationToken);
+                    if (functions is null || !functions.Any(f => string.Equals(f.Name, $"{NuGetMCPServerName}_{NuGetSolverToolName}", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        SendTelemetryEvent(FixVulnerabilitiesWithCopilotErrorType.NuGetSolverNotAvailable);
+                        ShowWarningMessage(Resources.Error_NuGetSolverNotAvailable);
+                        return;
+                    }
+
                     CopilotRequest requestWithFunctionsAndContext = request.WithFunctions(functions).WithContext(context);
 
                     try
