@@ -574,6 +574,14 @@ namespace Microsoft.DotNet.SignTool
 
                 foreach (var path in Directory.EnumerateFiles(extractDir, "*", SearchOption.AllDirectories))
                 {
+                    // Symbolic links require elevated permissions to create on Windows. They should not be used therefore they are not supported.
+                    if (new FileInfo(path).LinkTarget != null)
+                    {
+                        throw new InvalidOperationException(
+                            $"Symbolic link detected in tar archive '{archivePath}': '{path}'. " +
+                            $"Tarballs containing symbolic links are not supported for signing on Windows.");
+                    }
+
                     string relativePath = path.Substring(extractDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
                     using var stream = ignoreContent ? null : (Stream)File.Open(path, FileMode.Open);
                     yield return new ZipDataEntry(relativePath, stream);
@@ -609,6 +617,14 @@ namespace Microsoft.DotNet.SignTool
                 // Replace signed files in the extracted directory
                 foreach (var path in Directory.EnumerateFiles(extractDir, "*", SearchOption.AllDirectories))
                 {
+                    // Symbolic links are not supported by the external tar.exe signing path.
+                    if (new FileInfo(path).LinkTarget != null)
+                    {
+                        throw new InvalidOperationException(
+                            $"Symbolic link detected in tar archive '{FileSignInfo.FullPath}': '{path}'. " +
+                            $"Tarballs containing symbolic links are not supported for signing on Windows.");
+                    }
+
                     string relativePath = path.Substring(extractDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
                     ZipPart? signedPart = FindNestedPart(relativePath);
 
@@ -779,11 +795,18 @@ namespace Microsoft.DotNet.SignTool
                 string outputPath = Path.Join(destination, tar.Name);
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
 
-                using (FileStream outputFileStream = File.Create(outputPath))
+                if (tar.EntryType == TarEntryType.SymbolicLink)
                 {
-                    tar.DataStream?.CopyTo(outputFileStream);
+                    File.CreateSymbolicLink(outputPath, tar.LinkName);
                 }
-                SetUnixFileMode(log, (uint)tar.Mode, outputPath);
+                else
+                {
+                    using (FileStream outputFileStream = File.Create(outputPath))
+                    {
+                        tar.DataStream?.CopyTo(outputFileStream);
+                    }
+                    SetUnixFileMode(log, (uint)tar.Mode, outputPath);
+                }
             }
         }
 
