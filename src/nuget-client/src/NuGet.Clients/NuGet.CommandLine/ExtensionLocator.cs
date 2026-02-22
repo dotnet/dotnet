@@ -112,7 +112,7 @@ namespace NuGet.CommandLine
             // and among other things breaks our build.
             // Consequently, we'll use a convention - only binaries ending in the name Extensions would be loaded.
             var nugetDirectory = Path.GetDirectoryName(typeof(Program).Assembly.Location);
-            if (nugetDirectory == null)
+            if (string.IsNullOrEmpty(nugetDirectory))
             {
                 return paths;
             }
