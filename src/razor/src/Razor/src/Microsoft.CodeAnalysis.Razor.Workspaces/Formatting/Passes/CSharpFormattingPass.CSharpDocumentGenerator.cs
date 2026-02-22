@@ -632,7 +632,7 @@ internal partial class CSharpFormattingPass
                     return false;
                 }
 
-                if (node is MarkupStartTagSyntax startTag && startTag.IsVoidElement())
+                if (node.IsVoidElement())
                 {
                     // Void elements don't cause indentation
                     return false;

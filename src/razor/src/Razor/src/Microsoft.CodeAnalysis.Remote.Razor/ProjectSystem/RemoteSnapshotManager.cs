@@ -1,8 +1,13 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Composition;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
@@ -66,5 +71,17 @@ internal sealed class RemoteSnapshotManager(IFilePathService filePathService, IT
             s_solutionToSnapshotMap.Add(project.Solution, new RemoteSolutionSnapshot(retryProject.Solution, this));
             return retryProject;
         }
+    }
+
+    public Task<RazorCodeDocument?> TryGetRazorCodeDocumentAsync(Solution solution, Uri generatedDocumentUri, CancellationToken cancellationToken)
+    {
+        if (!solution.TryGetSourceGeneratedDocumentIdentity(generatedDocumentUri, out var identity) ||
+            !solution.TryGetProject(identity.DocumentId.ProjectId, out var project))
+        {
+            return SpecializedTasks.Null<RazorCodeDocument>();
+        }
+
+        var snapshot = GetSnapshot(project);
+        return snapshot.TryGetCodeDocumentForGeneratedDocumentAsync(identity, cancellationToken);
     }
 }
