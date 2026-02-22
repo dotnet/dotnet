@@ -86,6 +86,7 @@ internal class RazorProjectBuilder(ProjectId? id = null)
                 assemblyName: ProjectName ?? "",
                 LanguageNames.CSharp,
                 ProjectFilePath,
+                parseOptions: CSharpParseOptions.Default.WithFeatures([new("use-roslyn-tokenizer", "true")]),
                 compilationOptions: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
             .WithMetadataReferences(_references)
             .WithDefaultNamespace(RootNamespace);
