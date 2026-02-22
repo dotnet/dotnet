@@ -6,6 +6,8 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
@@ -110,5 +112,16 @@ internal static class SolutionExtensions
         }
 
         return true;
+    }
+
+    public static async Task<SourceGeneratedDocument?> TryGetSourceGeneratedDocumentAsync(this Solution solution, Uri generatedDocumentUri, CancellationToken cancellationToken)
+    {
+        if (!solution.TryGetSourceGeneratedDocumentIdentity(generatedDocumentUri, out var identity) ||
+            !solution.TryGetProject(identity.DocumentId.ProjectId, out var project))
+        {
+            return null;
+        }
+
+        return await project.TryGetCSharpDocumentForGeneratedDocumentAsync(identity, cancellationToken).ConfigureAwait(false);
     }
 }
