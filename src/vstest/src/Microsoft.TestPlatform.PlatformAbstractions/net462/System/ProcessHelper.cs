@@ -1,19 +1,20 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-#if NETFRAMEWORK || NETSTANDARD2_0
-
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-
+# if NETCOREAPP || NETSTANDARD2_0_OR_GREATER
+using System.Runtime.InteropServices;
+#endif
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
 
 namespace Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
 
 public partial class ProcessHelper : IProcessHelper
 {
+#if NETFRAMEWORK || NETSTANDARD2_0_OR_GREATER
     private PlatformArchitecture? _currentProcessArchitecture;
 
     /// <inheritdoc/>
@@ -29,27 +30,35 @@ public partial class ProcessHelper : IProcessHelper
     /// <inheritdoc/>
     public PlatformArchitecture GetCurrentProcessArchitecture()
     {
+        // If we already cached the current process architecture, no need to figure it out again.
+        if (_currentProcessArchitecture is not null)
+        {
+            return _currentProcessArchitecture.Value;
+        }
+
+        // When this is current process, we can just check if IntPointer size to get if we are 64-bit or 32-bit.
+        // When it is 32-bit we can just return, if it is 64-bit we need to clarify if x64 or arm64.
+        if (IntPtr.Size == 4)
+        {
+            _currentProcessArchitecture = PlatformArchitecture.X86;
+            return _currentProcessArchitecture.Value;
+        }
+
         _currentProcessArchitecture ??= GetProcessArchitecture(_currentProcess.Id);
         return _currentProcessArchitecture.Value;
     }
+#endif
 
     public PlatformArchitecture GetProcessArchitecture(int processId)
     {
-        if (_currentProcess.Id == processId)
+#if NETCOREAPP || NETSTANDARD2_0_OR_GREATER
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            // If we already cached the current process architecture, no need to figure it out again.
-            if (_currentProcessArchitecture is not null)
-            {
-                return _currentProcessArchitecture.Value;
-            }
-
-            // When this is current process, we can just check if IntPointer size to get if we are 64-bit or 32-bit.
-            // When it is 32-bit we can just return, if it is 64-bit we need to clarify if x64 or arm64.
-            if (IntPtr.Size == 4)
-            {
-                return PlatformArchitecture.X86;
-            }
+            // No implementation for this for cross platform, and we cannot move this to platform specific file.
+            // Usages are only from hang dumper.
+            throw new NotImplementedException();
         }
+#endif
 
         // If the current process is 64-bit, or this is any remote process, we need to query it via native api.
         var process = processId == _currentProcess.Id ? _currentProcess : Process.GetProcessById(processId);
@@ -72,7 +81,7 @@ public partial class ProcessHelper : IProcessHelper
             if (processMachine == NativeMethods.IMAGE_FILE_MACHINE_UNKNOWN && nativeMachine == NativeMethods.IMAGE_FILE_MACHINE_ARM64)
             {
                 // To distinguish between ARM64 and x64 emulated on ARM64 we check the PE header of the current running executable.
-                if (IsArm64Executable(process.MainModule.FileName))
+                if (IsArm64Executable(process.MainModule!.FileName))
                 {
                     return PlatformArchitecture.ARM64;
                 }
@@ -169,5 +178,3 @@ public partial class ProcessHelper : IProcessHelper
         return magic is 0x010B or 0x020B && machine == NativeMethods.IMAGE_FILE_MACHINE_ARM64;
     }
 }
-
-#endif
