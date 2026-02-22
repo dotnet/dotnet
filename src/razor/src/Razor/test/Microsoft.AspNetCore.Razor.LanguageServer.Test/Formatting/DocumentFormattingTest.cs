@@ -19,6 +19,75 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentFormattingTestBase(testOutput)
 {
     [Fact]
+    [WorkItem("https://developercommunity.visualstudio.com/t/Format-Document-in-a-blazor-documents-ad/11046727")]
+    public async Task MultilineRawStringLiteral()
+    {
+        await RunFormattingTestAsync(
+            input: """"
+                <PageTitle>
+                    <PageTitle>
+                        @("""
+                          <FluentButton IconStart="Icons.Create" @onclick="(() => _createDialogBs5?.Show())">Nieuw</FluentButton>
+
+                          <FCBS5Modal @ref="_createDialogBs5" OnClose="() => _createDialogBs5?.Hide()">
+                          <Title>Aanmaak scherm</Title>
+                          <Body>
+                                <label>Vul hier een tekst in</label>
+                                <input @bind=_createItem />
+                          </Body>
+                          <Footer>
+                                <FluentButton IconStart="Icons.Save" @onclick="SaveItem">Opslaan</FluentButton>
+                                <FluentButton IconStart="Icons.Cancel" @onclick="() => _createDialogBs5?.Hide()">Annuleren</FluentButton>
+                          </Footer>
+                          </FCBS5Modal>
+                          """)</PageTitle>
+                </PageTitle>
+                """",
+            htmlFormatted: """"
+                <PageTitle>
+                    <PageTitle>
+                        @("""
+                        <FluentButton IconStart="Icons.Create" @onclick="(() => _createDialogBs5?.Show())">Nieuw</FluentButton>
+
+                        <FCBS5Modal @ref="_createDialogBs5" OnClose="() => _createDialogBs5?.Hide()">
+                        <Title>Aanmaak scherm</Title>
+                        <Body>
+                        <label>Vul hier een tekst in</label>
+                        <input @bind=_createItem />
+                        </Body>
+                        <Footer>
+                        <FluentButton IconStart="Icons.Save" @onclick="SaveItem">Opslaan</FluentButton>
+                        <FluentButton IconStart="Icons.Cancel" @onclick="() => _createDialogBs5?.Hide()">Annuleren</FluentButton>
+                        </Footer>
+                        </FCBS5Modal>
+                        """)
+                    </PageTitle>
+                </PageTitle>
+                """",
+            expected: """"
+                <PageTitle>
+                    <PageTitle>
+                        @("""
+                          <FluentButton IconStart="Icons.Create" @onclick="(() => _createDialogBs5?.Show())">Nieuw</FluentButton>
+
+                          <FCBS5Modal @ref="_createDialogBs5" OnClose="() => _createDialogBs5?.Hide()">
+                          <Title>Aanmaak scherm</Title>
+                          <Body>
+                                <label>Vul hier een tekst in</label>
+                                <input @bind=_createItem />
+                          </Body>
+                          <Footer>
+                                <FluentButton IconStart="Icons.Save" @onclick="SaveItem">Opslaan</FluentButton>
+                                <FluentButton IconStart="Icons.Cancel" @onclick="() => _createDialogBs5?.Hide()">Annuleren</FluentButton>
+                          </Footer>
+                          </FCBS5Modal>
+                          """)
+                    </PageTitle>
+                </PageTitle>
+                """");
+    }
+
+    [Fact]
     [WorkItem("https://developercommunity.visualstudio.com/t/Razor-Formatting-Feature-internal-error/11041869")]
     public async Task TextAndTagOnSameLine()
     {
