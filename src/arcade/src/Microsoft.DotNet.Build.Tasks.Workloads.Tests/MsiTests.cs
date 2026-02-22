@@ -20,8 +20,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
     {
         private static ITaskItem BuildManifestMsi(string path, string msiVersion = "1.2.3", string platform = "x64", string msiOutputPath = null)
         {
+            string packageRootDirectory = Path.Combine(PackageRootDirectory, Guid.NewGuid().ToString("N"));
             TaskItem packageItem = new(path);
-            WorkloadManifestPackage pkg = new(packageItem, PackageRootDirectory, new Version(msiVersion));
+            WorkloadManifestPackage pkg = new(packageItem, packageRootDirectory, new Version(msiVersion));
             pkg.Extract();
             WorkloadManifestMsi msi = new(pkg, platform, new MockBuildEngine(), WixToolsetPath, BaseIntermediateOutputPath,
                 isSxS: true);
@@ -43,8 +44,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         [WindowsOnlyFact]
         public void ItCanBuildSideBySideManifestMsis()
         {
-            string PackageRootDirectory = Path.Combine(BaseIntermediateOutputPath, "pkg");
-
             // Build 6.0.200 manifest for version 6.0.3
             ITaskItem msi603 = BuildManifestMsi(Path.Combine(TestAssetsPath, "microsoft.net.workload.mono.toolchain.manifest-6.0.200.6.0.3.nupkg"));
             string msiPath603 = msi603.GetMetadata(Metadata.FullPath);
@@ -80,9 +79,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         [WindowsOnlyFact]
         public void ItCanBuildAManifestMsi()
         {
-            string PackageRootDirectory = Path.Combine(BaseIntermediateOutputPath, "pkg");
+            string packageRootDirectory = Path.Combine(PackageRootDirectory, Guid.NewGuid().ToString("N"));
             TaskItem packageItem = new(Path.Combine(TestAssetsPath, "microsoft.net.workload.mono.toolchain.manifest-6.0.200.6.0.3.nupkg"));
-            WorkloadManifestPackage pkg = new(packageItem, PackageRootDirectory, new Version("1.2.3"));
+            WorkloadManifestPackage pkg = new(packageItem, packageRootDirectory, new Version("1.2.3"));
             pkg.Extract();
             WorkloadManifestMsi msi = new(pkg, "x64", new MockBuildEngine(), WixToolsetPath, BaseIntermediateOutputPath);
 
@@ -110,11 +109,11 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         [WindowsOnlyFact]
         public void ItCanBuildATemplatePackMsi()
         {
-            string PackageRootDirectory = Path.Combine(BaseIntermediateOutputPath, "pkg");
+            string packageRootDirectory = Path.Combine(PackageRootDirectory, Guid.NewGuid().ToString("N"));
             string packagePath = Path.Combine(TestAssetsPath, "microsoft.ios.templates.15.2.302-preview.14.122.nupkg");
 
             WorkloadPack p = new(new WorkloadPackId("Microsoft.iOS.Templates"), "15.2.302-preview.14.122", WorkloadPackKind.Template, null);
-            TemplatePackPackage pkg = new(p, packagePath, new[] { "x64" }, PackageRootDirectory);
+            TemplatePackPackage pkg = new(p, packagePath, new[] { "x64" }, packageRootDirectory);
             pkg.Extract();
             var buildEngine = new MockBuildEngine();
             WorkloadPackMsi msi = new(pkg, "x64", buildEngine, WixToolsetPath, BaseIntermediateOutputPath);

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.Build.NoTargets" DefaultTargets="Test">
+<Project DefaultTargets="Test">
 
   <!-- <Import Sdk="Microsoft.DotNet.Helix.Sdk" Project="Sdk.props"/> -->
   <!-- Using locally built version of the helix sdk, normal projects replace the below Import and PropertyGroup with the SDK import above-->
@@ -64,7 +64,7 @@
 
   <ItemGroup Condition=" '$(HelixAccessToken)' != '' ">
     <HelixTargetQueue Include="(AlmaLinux.9.Amd64)Ubuntu.2204.Amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64"/>
-    <HelixTargetQueue Include="Windows.10.Amd64"/>
+    <HelixTargetQueue Include="Windows.11.Amd64"/>
     <HelixTargetQueue Include="(Debian.13.Amd64)ubuntu.2204.amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-13-helix-amd64"/>
   </ItemGroup>
 
@@ -76,7 +76,7 @@
 
   <ItemGroup Condition=" '$(HelixAccessToken)' == '' ">
     <HelixTargetQueue Include="(AlmaLinux.9.Amd64.Open)Ubuntu.2204.Amd64.Open@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64"/>
-    <HelixTargetQueue Include="Windows.10.Amd64.Open"/>
+    <HelixTargetQueue Include="Windows.11.Amd64.Client.Open"/>
     <HelixTargetQueue Include="(Debian.13.Amd64.Open)ubuntu.2204.amd64.open@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-13-helix-amd64"/>
   </ItemGroup>
 
