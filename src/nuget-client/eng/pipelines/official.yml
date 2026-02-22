@@ -39,8 +39,6 @@ extends:
         enabled: true
       credscan:
         enabled: false
-      suppression:
-        suppressionFile: $(Build.SourcesDirectory)\.gdn\.gdnsuppress
     pool:
       name: AzurePipelines-EO
       image: 1ESPT-Windows2022
@@ -53,7 +51,6 @@ extends:
     - template: /eng/pipelines/templates/pipeline.yml@self
       parameters:
         isOfficialBuild: true
-        ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/dev'), eq(variables['Build.SourceBranch'], format('refs/heads/{0}', variables['OneLocReleaseBranch']))) }}:
-          RunOneLocBuild: true
         RunBuildForPublishing: ${{parameters.RunBuildForPublishing}}
         SigningType: ${{ parameters.SigningType }}
+        TryRunOneLocBuild: true
