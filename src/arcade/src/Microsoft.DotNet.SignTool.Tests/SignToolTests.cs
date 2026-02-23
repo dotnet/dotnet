@@ -1753,16 +1753,49 @@ $@"
 </FilesToSign>
 "
             });
-
-#if !NETFRAMEWORK
-            ValidateProducedTarGZipContent(Path.Combine(_tmpDir, "test.tgz"), new[]
-            {
-                ("test/this_is_a_big_folder_name_look/NativeLibrary.dll", "../NativeLibrary.dll")
-            });
-#endif
         }
 
 #if !NETFRAMEWORK
+        /// <summary>
+        /// Validates that tar.gz archives containing symbolic links are handled correctly.
+        /// On Windows, ReadTarGZipEntriesWithExternalTar throws when symlinks are detected,
+        /// so this test is skipped on Windows.
+        /// </summary>
+        [UnixOnlyFactAttribute]
+        public void SignTarGZipFileWithSymlinks()
+        {
+            // List of files to be considered for signing
+            var itemsToSign = new List<ItemToSign>()
+            {
+                new ItemToSign(GetResourcePath("testSymlinks.tgz"))
+            };
+
+            // Default signing information
+            var strongNameSignInfo = new Dictionary<string, List<SignInfo>>()
+            {
+                { "581d91ccdfc4ea9c", new List<SignInfo>{ new SignInfo(certificate: "ArcadeCertTest", strongName: "ArcadeStrongTest") } }
+            };
+
+            // Overriding information
+            var fileSignInfo = new Dictionary<ExplicitSignInfoKey, FileSignInfoEntry>();
+
+            // The symlink (test/this_is_a_big_folder_name_look/NativeLibrary.dll -> ../NativeLibrary.dll)
+            // is filtered out by System.Formats.Tar on non-Windows, so only regular files are signed.
+            ValidateFileSignInfos(itemsToSign, strongNameSignInfo, fileSignInfo, s_fileExtensionSignInfo, new[]
+            {
+                "File 'NativeLibrary.dll' Certificate='Microsoft400'",
+                "File 'SOS.NETCore.dll' TargetFramework='.NETCoreApp,Version=v1.0' Certificate='Microsoft400'",
+                "File 'Nested.NativeLibrary.dll' Certificate='Microsoft400'",
+                "File 'Nested.SOS.NETCore.dll' TargetFramework='.NETCoreApp,Version=v1.0' Certificate='Microsoft400'",
+                "File 'testSymlinks.tgz'",
+            });
+
+            ValidateProducedTarGZipContent(Path.Combine(_tmpDir, "testSymlinks.tgz"), new[]
+            {
+                ("test/this_is_a_big_folder_name_look/NativeLibrary.dll", "../NativeLibrary.dll")
+            });
+        }
+
         // TODO: Remove WindowsOnlyFact once https://github.com/dotnet/arcade/issues/16484 is resolved.
         [WindowsOnlyFact]
         public void SignTarGZipFileWithHardlinks()
@@ -1923,7 +1956,7 @@ $@"
         }
 
 #if !NETFRAMEWORK
-        [Fact]
+        [UnixOnlyFact]
         public void CheckDebSigning()
         {
             // List of files to be considered for signing
@@ -3276,6 +3309,12 @@ $@"
         [MemberData(nameof(GetSignableExtensions))]
         public void MissingCertificateNameButExtensionIsIgnored(string extension)
         {
+            //  test.deb contains symbolic links which aren't supported on windows.
+            if (extension == ".deb" && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return;
+            }
+
             var needContent = new Dictionary<string, (string, string[])>(StringComparer.OrdinalIgnoreCase)
             {
                 { ".dll", ("EmptyPKT.dll", []) },
