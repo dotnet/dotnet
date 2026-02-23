@@ -21,6 +21,9 @@ The commit hash being built
 
 .PARAMETER BuildNumber
 The build number of the current build
+
+.PARAMETER BuildInfoDirectory
+Optional directory path to write buildinfo.json to. When not provided, defaults to the repository's artifacts directory.
 #>
 
 param
@@ -34,7 +37,9 @@ param
     [Parameter(Mandatory=$true)]
     [string]$CommitHash,
     [Parameter(Mandatory=$true)]
-    [string]$BuildNumber
+    [string]$BuildNumber,
+    [Parameter(Mandatory=$false)]
+    [string]$BuildInfoDirectory
 )
 
 Function Get-Version {
@@ -141,11 +146,21 @@ else
         NuGetVsVersion = $GetNuGetVsVersion
     }
 
-    # First create the file locally so that we can laster publish it as a build artifact from a local source file instead of a remote source file.
-    $localBuildInfoJsonFilePath = [System.IO.Path]::Combine("$RepositoryPath\artifacts", 'buildinfo.json')
+    if (-not [string]::IsNullOrWhiteSpace($BuildInfoDirectory))
+    {
+        $buildInfoDirectoryPath = $BuildInfoDirectory
+    }
+    else
+    {
+        $buildInfoDirectoryPath = Join-Path $RepositoryPath 'artifacts'
+    }
+
+    New-Item -Path $buildInfoDirectoryPath -ItemType Directory -Force | Out-Null
+    $localBuildInfoJsonFilePath = Join-Path $buildInfoDirectoryPath 'buildinfo.json'
 
     New-Item $localBuildInfoJsonFilePath -Force | Out-Null
     $jsonRepresentation | ConvertTo-Json | Set-Content $localBuildInfoJsonFilePath
+    Write-Host "Created $localBuildInfoJsonFilePath"
 
     Update-VsixVersion -manifestName source.extension.vsixmanifest -buildNumber $BuildNumber -RepositoryPath $RepositoryPath
 }

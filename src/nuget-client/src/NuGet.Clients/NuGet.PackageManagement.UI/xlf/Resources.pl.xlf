@@ -953,12 +953,12 @@ Błąd: {1}</target>
       </trans-unit>
       <trans-unit id="Status_NoMoreItems">
         <source>End of package list loaded</source>
-        <target state="translated">Załadowano koniec listy pakietów</target>
+        <target state="translated">Koniec załadowanej listy pakietów</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Ready">
         <source>Package list loaded</source>
-        <target state="translated">Załadowano listę pakietów</target>
+        <target state="translated">Załadowana lista pakietów</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_By">

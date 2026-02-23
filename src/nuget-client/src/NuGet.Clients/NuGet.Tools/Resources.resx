@@ -261,4 +261,10 @@
   <data name="Text_AuditSources_Title" xml:space="preserve">
     <value>Audit sources</value>
   </data>
+  <data name="Text_AuditSources_Checkbox" xml:space="preserve">
+    <value>Use separate sources for vulnerability audit</value>
+  </data>
+  <data name="Text_MachineWidePackageSource_Description" xml:space="preserve">
+    <value>Machine‑wide package sources are provisioned by Visual Studio workloads and can only be enabled or disabled.</value>
+  </data>
 </root>

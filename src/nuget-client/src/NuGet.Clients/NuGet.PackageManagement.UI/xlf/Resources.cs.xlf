@@ -284,7 +284,7 @@
       </trans-unit>
       <trans-unit id="Checkbox_Show_Vulnerable_Only">
         <source>Show only vulnerable</source>
-        <target state="translated">Zobrazit jen zranitelné</target>
+        <target state="translated">Zobrazit pouze zranitelné</target>
         <note />
       </trans-unit>
       <trans-unit id="ColumnHeader_InstalledVersion">
@@ -779,7 +779,7 @@
       </trans-unit>
       <trans-unit id="Link_configuration">
         <source>Common NuGet configurations; How settings are applied.</source>
-        <target state="translated">Běžné konfigurace NuGet: Způsob použití nastavení</target>
+        <target state="translated">Běžné konfigurace NuGet: Způsob použití nastavení.</target>
         <note />
       </trans-unit>
       <trans-unit id="Migrator_PackageIdColumnHeader">
@@ -933,17 +933,17 @@ Chyba: {1}</target>
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueName">
         <source>The name specified has already been added to the list of available package sources. Please provide a unique name.</source>
-        <target state="translated">Zadaný název už byl přidaný do seznamu dostupných zdrojů balíčků. Zadejte jedinečný název.</target>
+        <target state="translated">Zadaný název se už do seznamu dostupných zdrojů balíčků přidal. Zadejte jedinečný název.</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueSource">
         <source>The source specified has already been added to the list of available package sources. Please provide a unique source.</source>
-        <target state="translated">Zadaný zdroj už byl přidaný do seznamu dostupných zdrojů balíčků. Zadejte jedinečný zdroj.</target>
+        <target state="translated">Zadaný zdroj se už do seznamu dostupných zdrojů balíčků přidal. Zadejte jedinečný zdroj.</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Canceled">
         <source>Canceled loading packages</source>
-        <target state="translated">Načítání balíčku se zrušilo.</target>
+        <target state="translated">Zrušeno načítání balíčků</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_ErrorOccurred">
@@ -953,12 +953,12 @@ Chyba: {1}</target>
       </trans-unit>
       <trans-unit id="Status_NoMoreItems">
         <source>End of package list loaded</source>
-        <target state="translated">Konec načteného seznamu balíčků</target>
+        <target state="translated">Konec načítání seznamu balíčků</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Ready">
         <source>Package list loaded</source>
-        <target state="translated">Načtený seznam balíčků</target>
+        <target state="translated">Seznam balíčků načten</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_By">

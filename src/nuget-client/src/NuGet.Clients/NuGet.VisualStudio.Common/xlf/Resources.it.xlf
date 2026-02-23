@@ -29,12 +29,12 @@
       </trans-unit>
       <trans-unit id="Text_PackageFormatSelection">
         <source>Select the NuGet package manager format for {0}</source>
-        <target state="translated">Selezionare il formato di gestione pacchetti NuGet per {0}</target>
+        <target state="translated">Selezionare il formato di Gestione pacchetti NuGet per {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageFormatSelection_Solution">
         <source>Select the NuGet package manager format for this Solution</source>
-        <target state="translated">Selezionare il formato di gestione pacchetti NuGet per questo elemento Solution</target>
+        <target state="translated">Selezionare il formato di Gestione pacchetti NuGet per questa soluzione</target>
         <note />
       </trans-unit>
     </body>

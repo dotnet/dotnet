@@ -18,9 +18,10 @@ namespace NuGet.PackageManagement.VisualStudio.Options
     public class PackageSourcesPage : NuGetExternalSettingsProvider, IExternalSettingValidator
     {
         internal const bool DefaultNuGetAudit = false;
-        internal const string MonikerPackageSources = "packageSources";
-        internal const string MonikerAuditSources = "auditSources";
-        internal const string MonikerMachineWideSources = "machineWidePackageSources";
+        internal const string MonikerPackageSources = "packageSources.notMachineWide";
+        internal const string MonikerAuditSources = "nuGetAudit.auditSources";
+        internal const string MonikerNuGetAudit = "nuGetAudit.enableCheckbox";
+        internal const string MonikerMachineWideSources = "machineWide.machineWidePackageSources";
         internal const string MonikerPackageSourceId = "packageSourceId"; // Unique identifier for the package source
         internal const string MonikerSourceName = "sourceName";
         internal const string MonikerSourceUrl = "sourceUrl";
@@ -69,6 +70,17 @@ namespace NuGet.PackageManagement.VisualStudio.Options
 
                         return GetValuePackageSources<T>(packageSources);
                     }
+                case MonikerNuGetAudit:
+                    {
+                        var auditSources = await Task.Run(
+                            () => LoadAuditSources(),
+                            cancellationToken);
+                        if (auditSources.Count > 0)
+                        {
+                            return await ConvertValueOrThrow<T>(true);
+                        }
+                        return await ConvertValueOrThrow<T>(DefaultNuGetAudit);
+                    }
                 case MonikerAuditSources:
                     {
                         var auditSources = await Task.Run(
@@ -103,6 +115,8 @@ namespace NuGet.PackageManagement.VisualStudio.Options
 
                 switch (moniker)
                 {
+                    case MonikerNuGetAudit:
+                        return (ExternalSettingOperationResult)ExternalSettingOperationResult.Success.Instance;
                     case MonikerPackageSources:
                         var packageSourcesList = (IReadOnlyList<IDictionary<string, object>>)value;
                         return await Task.Run(

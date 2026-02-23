@@ -20,6 +20,11 @@
     <DotNetBuildWithOnlineFeeds Condition="'$(DotNetBuildSourceOnly)' == 'true'">true</DotNetBuildWithOnlineFeeds>
   </PropertyGroup>
 
+  <ItemGroup>
+    <!-- Keep Maestro-managed internal feeds (darc-int-*) so they are not stripped from NuGet.config -->
+    <KeepFeedPrefixes Include="darc-int" />
+  </ItemGroup>
+
   <PropertyGroup Condition="'$(SkipScenarioTestsDependencies)' == 'true'">
     <UseBootstrapArcade>true</UseBootstrapArcade>
     <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>

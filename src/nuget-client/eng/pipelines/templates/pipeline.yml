@@ -94,18 +94,18 @@ stages:
           DropNamePrefix: OptimizationInputs/$(System.TeamProject)/$(Build.Repository.Name)
           ShouldSkipOptimize: $(ShouldSkipOptimize)
           AccessToken: $(System.AccessToken)
+      outputParentDirectory: '$(Build.StagingDirectory)'
       outputs:
       - output: pipelineArtifact
         displayName: 'Publish buildinfo.json as an artifact'
         condition: "succeeded()"
-        targetPath: '$(Build.Repository.LocalPath)\artifacts\buildinfo.json'
+        targetPath: '$(Build.StagingDirectory)\BuildInfo'
         artifactName: 'BuildInfo'
         sbomBuildDropPath: $(Build.SourcesDirectory)/artifacts
 
       - output: pipelineArtifact
         displayName: 'Publish nupkgs'
-        condition: "and(succeeded(), eq(variables['IsOfficialBuild'], 'true'))"
-        targetPath: "$(Build.Repository.LocalPath)\\artifacts\\$(NupkgOutputDir)"
+        targetPath: "$(Build.StagingDirectory)\\nupkgs"
         artifactName: "nupkgs - $(RtmLabel)"
         sbomBuildDropPath: $(Build.SourcesDirectory)/artifacts
 
@@ -114,7 +114,7 @@ stages:
         condition: "succeeded()"
         dropServiceURI: 'https://devdiv.artifacts.visualstudio.com'
         buildNumber: '$(RunSettingsDropName)'
-        sourcePath: 'artifacts\RunSettings'
+        sourcePath: '$(Build.StagingDirectory)\RunSettings'
         toLowerCase: false
         usePat: true
         dropMetadataContainerName: 'DropMetadata-RunSettings'
@@ -126,21 +126,20 @@ stages:
         condition: "and(succeeded(), eq(variables['IsOfficialBuild'], 'true'))"
         dropServiceURI: 'https://devdiv.artifacts.visualstudio.com'
         buildNumber: '$(ProfilingInputsDropName)'
-        sourcePath: '$(Build.ArtifactStagingDirectory)\OptProf\ProfilingInputs'
+        sourcePath: '$(Build.StagingDirectory)\OptProf\ProfilingInputs'
         toLowerCase: false
         usePat: true
         dropMetadataContainerName: 'DropMetadata-ProfilingInputs'
 
       - output: pipelineArtifact
         displayName: 'Publish NuGet.exe and VSIX as artifact'
-        targetPath: "$(Build.Repository.LocalPath)\\artifacts\\VS15"
+        targetPath: "$(Build.StagingDirectory)\\VS15"
         artifactName: "$(VsixPublishDir)"
         sbomBuildDropPath: $(Build.SourcesDirectory)/artifacts
 
       - output: pipelineArtifact
         displayName: 'Publish symbols as pipeline artifacts'
-        condition: "and(succeeded(), eq(variables['IsOfficialBuild'], 'true'))"
-        targetPath: "$(Build.Repository.LocalPath)\\artifacts\\symbolstoindex"
+        targetPath: "$(Build.StagingDirectory)\\symbolstoindex"
         artifactName: "symbols - $(RtmLabel)"
         sbomBuildDropPath: $(Build.SourcesDirectory)/artifacts
 
@@ -149,7 +148,7 @@ stages:
         condition: "succeeded()"
         dropServiceURI: 'https://devdiv.artifacts.visualstudio.com'
         buildNumber: '$(MicroBuild.ManifestDropName)'
-        sourcePath: "$(Build.Repository.LocalPath)\\artifacts\\VS15"
+        sourcePath: "$(Build.StagingDirectory)\\VS15"
         toLowerCase: false
         usePat: true
         dropMetadataContainerName: "DropMetadata-Product"
@@ -158,7 +157,7 @@ stages:
         displayName: 'LocValidation: Publish Logs as an artifact'
         condition: "succeededOrFailed()"
         artifactName: LocValidationLogs - Attempt $(System.JobAttempt)
-        targetPath: "$(Build.Repository.LocalPath)\\logs\\BuildValidatorLogs"
+        targetPath: "$(Build.StagingDirectory)\\BuildValidatorLogs"
         sbomEnabled: true
 
       - output: pipelineArtifact
@@ -171,7 +170,7 @@ stages:
       - output: pipelineArtifact
         displayName: Publish SBOM manifest
         artifactName: $(ARTIFACT_NAME)
-        targetPath: "$(Build.SourcesDirectory)/artifacts/_manifest"
+        targetPath: "$(Build.StagingDirectory)/sbom"
         sbomEnabled: false
 
     steps:
@@ -209,24 +208,24 @@ stages:
           enabled: true
         optprof:
           enabled: false
+      outputParentDirectory: '$(Build.StagingDirectory)'
       outputs:
       - output: pipelineArtifact
         displayName: 'Publish nupkgs'
         condition: "succeeded()"
-        targetPath: "$(Build.Repository.LocalPath)\\artifacts\\$(NupkgOutputDir)"
+        targetPath: "$(Build.StagingDirectory)\\$(NupkgOutputDir)"
         artifactName: "nupkgs - $(RtmLabel)"
         sbomBuildDropPath: $(Build.SourcesDirectory)/artifacts
 
       - output: pipelineArtifact
         displayName: 'Publish NuGet.exe and VSIX as artifact'
-        targetPath: "$(Build.Repository.LocalPath)\\artifacts\\VS15"
+        targetPath: "$(Build.StagingDirectory)\\VS15"
         artifactName: "$(VsixPublishDir)"
         sbomBuildDropPath: $(Build.SourcesDirectory)/artifacts
 
       - output: pipelineArtifact
         displayName: 'Publish symbols as pipeline artifacts'
-        condition: "and(succeeded(), eq(variables['IsOfficialBuild'], 'true'))"
-        targetPath: "$(Build.Repository.LocalPath)\\artifacts\\symbolstoindex"
+        targetPath: "$(Build.StagingDirectory)\\symbolstoindex"
         artifactName: "symbols - $(RtmLabel)"
         sbomBuildDropPath: $(Build.SourcesDirectory)/artifacts
 

@@ -54,7 +54,7 @@
       </trans-unit>
       <trans-unit id="PackageSourcesListBox.AccessibleName">
         <source>Package sources</source>
-        <target state="translated">パッケージ ソース:</target>
+        <target state="translated">パッケージ ソース</target>
         <note />
       </trans-unit>
       <trans-unit id="addButton.AccessibleDescription">
@@ -64,7 +64,7 @@
       </trans-unit>
       <trans-unit id="addButton.AccessibleName">
         <source>Add package source</source>
-        <target state="translated">パッケージ ソースを追加する</target>
+        <target state="translated">パッケージ ソースの追加</target>
         <note />
       </trans-unit>
       <trans-unit id="removeButton.AccessibleDescription">

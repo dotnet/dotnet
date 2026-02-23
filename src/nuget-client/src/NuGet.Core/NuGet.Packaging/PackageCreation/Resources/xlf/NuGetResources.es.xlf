@@ -39,7 +39,7 @@
       </trans-unit>
       <trans-unit id="IconMaxFileSizeExceeded">
         <source>The icon file size must not exceed 1 megabyte.</source>
-        <target state="translated">El tamaño del archivo de icono no debe superar 1 MB.</target>
+        <target state="translated">El tamaño del archivo de icono no debe ser superior a 1 megabyte.</target>
         <note />
       </trans-unit>
       <trans-unit id="IconMissingRequiredValue">
@@ -49,7 +49,7 @@
       </trans-unit>
       <trans-unit id="IconNoFileElement">
         <source>The icon file '{0}' does not exist in the package.</source>
-        <target state="translated">El archivo de icono "{0}" no existe en el paquete.</target>
+        <target state="translated">No existe el archivo de icono "{0}" en el paquete.</target>
         <note />
       </trans-unit>
       <trans-unit id="IconNoFileElementWithHint">

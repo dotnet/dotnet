@@ -1,3 +1,1 @@
 #nullable enable
-~NuGet.Commands.IRestoreTargetGraph.TargetAlias.get -> string
-~NuGet.Commands.RestoreTargetGraph.TargetAlias.get -> string
