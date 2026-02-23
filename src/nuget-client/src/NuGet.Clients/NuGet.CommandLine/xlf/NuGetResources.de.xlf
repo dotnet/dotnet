@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="AddCommand_PackageAlreadyExists">
         <source>Package '{0}' already exists at feed '{1}'.</source>
-        <target state="translated">Das Paket "{0}" ist bereits in Feed "{1}" vorhanden.</target>
+        <target state="translated">Das Paket "{0}" ist bereits im Feed "{1}" vorhanden.</target>
         <note />
       </trans-unit>
       <trans-unit id="AddCommand_SourceNotProvided">
@@ -54,7 +54,7 @@
       </trans-unit>
       <trans-unit id="ConsoleConfirmMessage">
         <source>{0} (y/N) </source>
-        <target state="translated">{0} (J/N) </target>
+        <target state="translated">{0} (y/N) </target>
         <note />
       </trans-unit>
       <trans-unit id="ConsoleConfirmMessageAccept">
@@ -252,8 +252,8 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
         <source>`project.json` pack is disabled in the current NuGet version, and will be permanently removed in a future version.
 Please consider migrating '{0}' to `PackageReference` and using the pack targets.
 You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</source>
-        <target state="translated">Das „project.json“-Paket ist in der aktuellen NuGet-Version deaktiviert und wird in einer zukünftigen Version dauerhaft entfernt.
-Ziehen Sie in Erwägung, „{0}“ zu „PackageReference“ zu migrieren und Paketziele zu verwenden.
+        <target state="translated">Das „project.json“-Paket ist in der aktuellen NuGet-Version deaktiviert und wird in einer zukünftigen Version dauerhaft deaktiviert.
+Ziehen Sie in Erwägung, „{0}“ zu „PackageReference“ zu migrieren und dazu die Paketziele zu verwenden.
 Sie können die Umgebungsvariable „{1}“ auf „true“ festlegen, um diese Funktionalität vorübergehend wieder zu aktivieren.</target>
         <note>Please do not localize `project.json` pack and `PackageReference`. 0 - path, 1 - env var name</note>
       </trans-unit>

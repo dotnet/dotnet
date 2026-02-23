@@ -23,8 +23,8 @@
         <note />
       </trans-unit>
       <trans-unit id="114">
-        <source>Package Sources</source>
-        <target state="translated">パッケージ ソース</target>
+        <source>Sources</source>
+        <target state="translated">ソース</target>
         <note />
       </trans-unit>
       <trans-unit id="115">

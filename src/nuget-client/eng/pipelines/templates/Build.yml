@@ -15,7 +15,13 @@ steps:
   - task: PowerShell@1
     inputs:
       scriptName: "$(Build.Repository.LocalPath)\\scripts\\cibuild\\ConfigureVstsBuild.ps1"
-      arguments: "-BuildRTM $(BuildRTM) -RepositoryPath $(Build.Repository.LocalPath) -BranchName $(SourceBranch) -CommitHash $(Build.SourceVersion) -BuildNumber $(Build.BuildNumber)"
+      arguments: >-
+        -BuildRTM $(BuildRTM)
+        -RepositoryPath $(Build.Repository.LocalPath)
+        -BranchName $(SourceBranch)
+        -CommitHash $(Build.SourceVersion)
+        -BuildNumber $(Build.BuildNumber)
+        -BuildInfoDirectory $(Build.StagingDirectory)\BuildInfo
     displayName: "Configure VSTS CI Environment"
 
   - task: PowerShell@1
@@ -225,7 +231,7 @@ steps:
     displayName: "Generate .runsettings files"
     inputs:
       solution: 'build\runsettings.proj'
-      msbuildArguments: '/restore:false /property:OutputPath="$(Build.Repository.LocalPath)\artifacts\RunSettings" /property:TestDrop="$(RunSettingsDropName)" /property:ProfilingInputsDrop="$(ProfilingInputsDropName)" /binarylogger:$(Build.StagingDirectory)\\binlog\\17.GenerateRunSettings.binlog'
+      msbuildArguments: '/restore:false /property:OutputPath="$(Build.StagingDirectory)\RunSettings" /property:TestDrop="$(RunSettingsDropName)" /property:ProfilingInputsDrop="$(ProfilingInputsDropName)" /binarylogger:$(Build.StagingDirectory)\\binlog\\17.GenerateRunSettings.binlog'
     condition: "and(succeeded(), eq(variables['BuildRTM'], 'false'))"
 
   - task: PowerShell@1
@@ -235,11 +241,11 @@ steps:
       inlineScript: |
         try {
           Write-Output "Copying NuGet.OptProf binaries"
-          Copy-Item test\NuGet.Tests.Apex\NuGet.OptProf\bin\$(BuildConfiguration) artifacts\RunSettings\NuGet.OptProf\ -Recurse -ErrorAction Stop
+          Copy-Item test\NuGet.Tests.Apex\NuGet.OptProf\bin\$(BuildConfiguration) $(Build.StagingDirectory)\RunSettings\NuGet.OptProf\ -Recurse -ErrorAction Stop
           Write-Output "Copying NuGet.Tests.Apex binaries"
-          Copy-Item test\NuGet.Tests.Apex\NuGet.Tests.Apex\bin\$(BuildConfiguration) artifacts\RunSettings\NuGet.Tests.Apex\ -Recurse -ErrorAction Stop
+          Copy-Item test\NuGet.Tests.Apex\NuGet.Tests.Apex\bin\$(BuildConfiguration) $(Build.StagingDirectory)\RunSettings\NuGet.Tests.Apex\ -Recurse -ErrorAction Stop
           Write-Output "Copying NuGet.Tests.Apex.Daily binaries"
-          Copy-Item test\NuGet.Tests.Apex\NuGet.Tests.Apex.Daily\bin\$(BuildConfiguration) artifacts\RunSettings\NuGet.Tests.Apex.Daily\ -Recurse -ErrorAction Stop
+          Copy-Item test\NuGet.Tests.Apex\NuGet.Tests.Apex.Daily\bin\$(BuildConfiguration) $(Build.StagingDirectory)\RunSettings\NuGet.Tests.Apex.Daily\ -Recurse -ErrorAction Stop
         } catch {
           Write-Host "##vso[task.LogIssue type=error;]$_"
           exit 1
@@ -251,16 +257,21 @@ steps:
     inputs:
       solution: "build\\symbols.proj"
       configuration: "$(BuildConfiguration)"
-      msbuildArguments: "/restore:false /property:BuildProjectReferences=false /property:IsSymbolBuild=true /property:BuildRTM=$(BuildRTM) /binarylogger:$(Build.StagingDirectory)\\binlog\\18.CollectBuildSymbols.binlog"
+      msbuildArguments: >-
+        /restore:false
+        /property:BuildProjectReferences=false
+        /property:IsSymbolBuild=true
+        /property:BuildRTM=$(BuildRTM)
+        /property:SymbolsOutputDirectory=$(Build.StagingDirectory)\\symbolstoindex
+        /binarylogger:$(Build.StagingDirectory)\\binlog\\18.CollectBuildSymbols.binlog
       maximumCpuCount: true
-    condition: "and(succeeded(), eq(variables['IsOfficialBuild'], 'true'))"
 
   - task: MSBuild@1
     displayName: "LocValidation: Verify VSIX"
     inputs:
       solution: "build\\BuildValidator.proj"
       configuration: "$(BuildConfiguration)"
-      msbuildArguments: "/target:ValidateVsix /property:BuildRTM=$(BuildRTM) /property:LogsBasePath=$(Build.Repository.LocalPath)\\logs\\BuildValidatorLogs /property:TempDirectory=$(Agent.TempDirectory) /binarylogger:$(Build.StagingDirectory)\\binlog\\19.ValidateVsixLocalization.binlog"
+      msbuildArguments: "/target:ValidateVsix /property:BuildRTM=$(BuildRTM) /property:LogsBasePath=$(Build.StagingDirectory)\\BuildValidatorLogs /property:TempDirectory=$(Agent.TempDirectory) /binarylogger:$(Build.StagingDirectory)\\binlog\\19.ValidateVsixLocalization.binlog"
     condition: "and(succeeded(), eq(variables['BuildRTM'], 'false'))"
 
   - task: MSBuild@1
@@ -268,8 +279,22 @@ steps:
     inputs:
       solution: "build\\BuildValidator.proj"
       configuration: "$(BuildConfiguration)"
-      msbuildArguments: "/target:ValidateArtifacts /property:BuildRTM=$(BuildRTM) /property:LogsBasePath=$(Build.Repository.LocalPath)\\logs\\BuildValidatorLogs /property:TempDirectory=$(Agent.TempDirectory) /binarylogger:$(Build.StagingDirectory)\\binlog\\20.ValidateArtifactsLocalization.binlog"
+      msbuildArguments: "/target:ValidateArtifacts /property:BuildRTM=$(BuildRTM) /property:LogsBasePath=$(Build.StagingDirectory)\\BuildValidatorLogs /property:TempDirectory=$(Agent.TempDirectory) /binarylogger:$(Build.StagingDirectory)\\binlog\\20.ValidateArtifactsLocalization.binlog"
     condition: "and(succeeded(), eq(variables['BuildRTM'], 'false'))"
+
+  - task: CopyFiles@2
+    displayName: Copy product to staging directory
+    inputs:
+      SourceFolder: '$(Build.Repository.LocalPath)\\artifacts\\VS15'
+      Contents: '**'
+      TargetFolder: '$(Build.StagingDirectory)\\VS15'
+
+  - task: CopyFiles@2
+    displayName: Copy nupkgs to staging directory
+    inputs:
+      SourceFolder: '$(Build.Repository.LocalPath)\\artifacts\\$(NupkgOutputDir)'
+      Contents: '**'
+      TargetFolder: '$(Build.StagingDirectory)\\nupkgs'
 
     # Use dotnet msbuild instead of MSBuild CLI.
     # Using MSBuild CLI results in an assembly binding failure for NuGet.Common.dll 4.4.0.3 because Microsoft.DotNet.Build.Tasks.Feed.dll references SleetLib.dll which references NuGet.Common 4.4.0.3.

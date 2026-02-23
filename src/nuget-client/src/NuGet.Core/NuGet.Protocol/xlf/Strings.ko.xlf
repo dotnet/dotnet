@@ -39,7 +39,7 @@
       </trans-unit>
       <trans-unit id="DeleteCommandConfirm">
         <source>{0} {1} will be deleted from the {2}. Would you like to continue?</source>
-        <target state="translated">{0} {1}이(가) {2}에서 삭제됩니다. 계속할까요?</target>
+        <target state="translated">{0} {1}이(가) {2}에서 삭제됩니다. 계속하시겠습니까?</target>
         <note />
       </trans-unit>
       <trans-unit id="DeleteCommandDeletedPackage">
@@ -49,7 +49,7 @@
       </trans-unit>
       <trans-unit id="DeleteCommandDeletingPackage">
         <source>Deleting {0} {1} from the {2}.</source>
-        <target state="translated">{2}에서 {0} {1}을(를) 삭제합니다.</target>
+        <target state="translated">{2}에서 {0} {1}을(를) 삭제하는 중입니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DeletePackage_NotFound">
@@ -190,7 +190,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Log_FailedToReadServiceIndex">
         <source>Unable to load the service index for source {0}.</source>
-        <target state="translated">{0} 원본에 대한 서비스 인덱스를 로드할 수 없습니다.</target>
+        <target state="translated">{0} 소스에 대한 서비스 인덱스를 로드할 수 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_FailedToRetrievePackage">
@@ -231,12 +231,12 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Log_RetryingFindPackagesById">
         <source>Retrying '{0}' for source '{1}'.</source>
-        <target state="translated">'{1}' 원본에 대해 '{0}'을(를) 다시 시도합니다.</target>
+        <target state="translated">'{1}' 소스에 대해 '{0}'을(를) 다시 시도합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_RetryingHttp">
         <source>An error was encountered when fetching '{0} {1}'. The request will now be retried.</source>
-        <target state="translated">'{0} {1}'을(를) 가져오는 동안 오류가 발생했습니다. 지금 요청을 다시 시도합니다.</target>
+        <target state="translated">'{0} {1}'을(를) 페치하는 동안 오류가 발생했습니다. 지금 요청을 다시 시도합니다.</target>
         <note>'{0}' is replaced with the HTTP method used.
 '{1}' is replaced with the URL that failed to be reached.</note>
       </trans-unit>
@@ -247,7 +247,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Log_RetryingServiceIndex">
         <source>Retrying service index request for source '{0}'.</source>
-        <target state="translated">'{0}' 원본에 대한 서비스 인덱스 요청을 다시 시도합니다.</target>
+        <target state="translated">'{0}' 소스에 대한 서비스 인덱스 요청을 다시 시도합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoApiKeyFound">
@@ -287,7 +287,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="PackageServerEndpoint_NotSupported">
         <source>ERROR: This version of nuget.exe does not support updating packages to package source '{0}'.</source>
-        <target state="translated">오류: 이 버전의 nuget.exe는 패키지 원본 '{0}'에 대한 패키지 업데이트를 지원하지 않습니다.</target>
+        <target state="translated">오류: 이 버전의 nuget.exe는 패키지 소스 '{0}'에 대한 패키지 업데이트를 지원하지 않습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Path_Invalid">
@@ -447,7 +447,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_BadSource">
         <source>Failed to retrieve metadata from source '{0}'.</source>
-        <target state="translated">'{0}' 원본에서 메타데이터를 검색하지 못했습니다.</target>
+        <target state="translated">'{0}' 소스에서 메타데이터를 검색하지 못했습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Protocol_InvalidJsonObject">
@@ -462,7 +462,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_MalformedMetadataError">
         <source>Metadata could not be loaded from the source '{0}'.</source>
-        <target state="translated">'{0}' 원본에서 메타데이터를 로드할 수 없습니다.</target>
+        <target state="translated">'{0}' 소스에서 메타데이터를 로드할 수 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Protocol_MissingSearchService">
@@ -472,7 +472,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_MissingVersion">
         <source>The source does not have the 'version' property.</source>
-        <target state="translated">원본에 'version' 속성이 없습니다.</target>
+        <target state="translated">소스에 'version' 속성이 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Protocol_PackageMetadataError">
@@ -487,12 +487,12 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_UnsupportedVersion">
         <source>The source version is not supported: '{0}'.</source>
-        <target state="translated">원본 버전이 지원되지 않습니다. '{0}'.</target>
+        <target state="translated">소스 버전이 지원되지 않습니다. '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="Protocol_duplicateUri">
         <source>'{0}' is a duplicate url which has already been downloaded and will lead to a cyclic dependency. Please correct from server.</source>
-        <target state="translated">'{0}'은(는) 이미 다운로드된 중복 url이며 순환 종속성을 생성합니다. 서버에서 수정하세요.</target>
+        <target state="translated">'{0}'은(는) 이미 다운로드된 중복 URL이며 순환 종속성을 생성합니다. 서버에서 수정하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandPackagePushed">
