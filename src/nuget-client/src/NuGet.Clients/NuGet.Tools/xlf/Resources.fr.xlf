@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="fr" original="../Resources.resx">
     <body>
@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="CanNotCreateWindow">
         <source>Can not create tool window.</source>
-        <target state="translated">Impossible de créer la fenêtre d'outil.</target>
+        <target state="translated">Impossible de créer la fenêtre Outil.</target>
         <note />
       </trans-unit>
       <trans-unit id="DTE_ProjectUnsupported">
@@ -132,6 +132,11 @@
         <target state="translated">Autorisez les connexions non sécurisées</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_AuditSources_Checkbox">
+        <source>Use separate sources for vulnerability audit</source>
+        <target state="translated">Utilisez des sources distinctes pour l’audit des vulnérabilités</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_AuditSources_Description">
         <source>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</source>
         <target state="translated">Les sources d’audit fournissent des données de vulnérabilité lors de la restauration sans agir comme sources de package. Si aucune source d’audit n’est configurée, NuGet Audit utilise les sources de package. [En savoir plus sur les sources d’audit](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
@@ -170,6 +175,11 @@
       <trans-unit id="Text_HttpSource_Warning">
         <source>HTTP sources are insecure. Consider using HTTPS instead. 'AllowInsecureConnections' is enabled, permitting HTTP access. For more secure options, see [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere).</source>
         <target state="translated">Les sources HTTP ne sont pas sécurisées. Envisagez d'utiliser HTTPS à la place. L'option « AllowInsecureConnections » est activée, ce qui permet l'accès au protocole HTTP. Pour des options plus sécurisées, consultez [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_MachineWidePackageSource_Description">
+        <source>Machine‑wide package sources are provisioned by Visual Studio workloads and can only be enabled or disabled.</source>
+        <target state="translated">Les sources de packages à l’échelle de la machine sont fournies par les charges de travail Visual Studio et ne peuvent être qu’activées ou désactivées.</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageSourceEnabled_Header">

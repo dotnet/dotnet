@@ -179,7 +179,7 @@
       </trans-unit>
       <trans-unit id="InvalidProjectName">
         <source>Unable to determine the project name for '{0}'.</source>
-        <target state="translated">'{0}' için proje adı belirleemiyor.</target>
+        <target state="translated">'{0}' için proje adı belirlenemiyor.</target>
         <note />
       </trans-unit>
       <trans-unit id="MultiplePackageTypesNotSupported">
@@ -476,7 +476,7 @@
       </trans-unit>
       <trans-unit id="Warning_AuditSourceWithoutData">
         <source>Audit source '{0}' did not provide any vulnerability data.</source>
-        <target state="translated">'{0}' güvenlik kaynağı hassasiyet verisi sağlamadı.</target>
+        <target state="translated">'{0}' denetim kaynağı hassasiyet verisi sağlamadı.</target>
         <note>{0} is the source name</note>
       </trans-unit>
       <trans-unit id="Warning_DirectoryNotEmpty">

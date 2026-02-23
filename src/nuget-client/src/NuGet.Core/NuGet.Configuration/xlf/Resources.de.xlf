@@ -133,7 +133,7 @@
       </trans-unit>
       <trans-unit id="FileDoesNotExist">
         <source>File '{0}' does not exist.</source>
-        <target state="translated">Die Datei "{0}" ist nicht vorhanden.</target>
+        <target state="translated">Die Datei '{0}' ist nicht vorhanden.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidNullSettingsOperation">

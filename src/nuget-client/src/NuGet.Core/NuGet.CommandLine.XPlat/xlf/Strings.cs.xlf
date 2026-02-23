@@ -1136,7 +1136,7 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       </trans-unit>
       <trans-unit id="SignCommandCertificateFingerprintDescription">
         <source>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a local certificate store for the certificate. The certificate store can be specified by --certificate-store-name and --certificate-store-location options.</source>
-        <target state="translated">Otisk SHA-256, SHA-384 nebo SHA-512 certifikátu použitý k hledání místního úložiště certifikátů tohoto certifikátu Úložiště certifikátů lze zadat pomocí parametrů --certificate-store-name a --certificate-store-location.</target>
+        <target state="translated">Otisk SHA-256, SHA-384 nebo SHA-512 certifikátu použitý k hledání místního úložiště certifikátů tohoto certifikátu. Úložiště certifikátů lze zadat pomocí parametrů --certificate-store-name a --certificate-store-location.</target>
         <note>Please don't localize '--certificate-store-name' and '--certificate-store-location'</note>
       </trans-unit>
       <trans-unit id="SignCommandCertificatePasswordDescription">

@@ -44,7 +44,7 @@
       </trans-unit>
       <trans-unit id="DeleteCommandDeletedPackage">
         <source>{0} {1} was deleted successfully.</source>
-        <target state="translated">{0} {1} supprimé.</target>
+        <target state="translated">{0} {1} a été supprimé.</target>
         <note />
       </trans-unit>
       <trans-unit id="DeleteCommandDeletingPackage">
@@ -236,7 +236,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Log_RetryingHttp">
         <source>An error was encountered when fetching '{0} {1}'. The request will now be retried.</source>
-        <target state="translated">Une erreur s'est produite pendant la récupération de '{0} {1}'. La demande va être retentée.</target>
+        <target state="translated">Une erreur s'est produite lors de la récupération de '{0} {1}'. La demande va être retentée.</target>
         <note>'{0}' is replaced with the HTTP method used.
 '{1}' is replaced with the URL that failed to be reached.</note>
       </trans-unit>
@@ -462,12 +462,12 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_MalformedMetadataError">
         <source>Metadata could not be loaded from the source '{0}'.</source>
-        <target state="translated">Les métadonnées n'ont pas pu être chargées à partir de la source '{0}'.</target>
+        <target state="translated">Impossible de charger les métadonnées à partir de la source '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="Protocol_MissingSearchService">
         <source>The source does not have a Search service!</source>
-        <target state="translated">Aucun service de recherche n'est associé à la source !</target>
+        <target state="translated">Aucun service Search n'est associé à la source !</target>
         <note />
       </trans-unit>
       <trans-unit id="Protocol_MissingVersion">
@@ -502,7 +502,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="PushCommandPushingPackage">
         <source>Pushing {0} to {1}...</source>
-        <target state="translated">Exécution d'un push de {0} vers {1}...</target>
+        <target state="translated">Envoi de {0} vers {1}...</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandSkipDuplicateAdvertiseDotnetExe">

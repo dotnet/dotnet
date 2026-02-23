@@ -574,7 +574,7 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="NupkgPath_InvalidNupkg">
         <source>'{0}' is not a valid nupkg file.</source>
-        <target state="translated">"{0}" не является допустимым NUPKG-файлом.</target>
+        <target state="translated">"{0}" не является допустимым файлом NUPKG.</target>
         <note />
       </trans-unit>
       <trans-unit id="NupkgPath_NotFound">
@@ -599,7 +599,7 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="OutputNuGetVersion">
         <source>{0} Version: {1}</source>
-        <target state="translated">{0}, версия: {1}</target>
+        <target state="translated">{0}, версия {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageCommandAddedFile">

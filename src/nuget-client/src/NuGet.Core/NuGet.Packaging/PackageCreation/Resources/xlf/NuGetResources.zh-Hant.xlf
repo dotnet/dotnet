@@ -89,7 +89,7 @@
       </trans-unit>
       <trans-unit id="Manifest_InvalidReference">
         <source>Invalid assembly reference '{0}'. Ensure that a file named '{0}' exists in the lib directory.</source>
-        <target state="translated">組件參考 '{0}' 無效。請確定 lib 目錄中存在名稱為 '{0}' 的檔案。</target>
+        <target state="translated">組件參考 '{0}' 無效。請確定程式庫目錄中存在名稱為 '{0}' 的檔案。</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_InvalidReferenceFile">

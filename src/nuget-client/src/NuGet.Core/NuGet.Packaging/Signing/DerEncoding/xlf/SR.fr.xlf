@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="Cryptography_Der_Invalid_Encoding">
         <source>ASN1 corrupted data.</source>
-        <target state="translated">Données endommagées ASN1.</target>
+        <target state="translated">Les données ASN1 sont endommagées.</target>
         <note />
       </trans-unit>
       <trans-unit id="Cryptography_Invalid_IA5String">
