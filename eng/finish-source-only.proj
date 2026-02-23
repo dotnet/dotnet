@@ -251,7 +251,8 @@
         SdkStableVersion="$(SourceBuiltSdkVersion)"
         SdkNonStableVersion="$(SourceBuiltSdkNonStableVersion)"
         RepoRoot="$(RepoRoot)"
-        OutputDirectory="$(ArtifactsAssetsDir)" />
+        OutputDirectory="$(ArtifactsAssetsDir)"
+        CreateEmptyDetachedSignature="$(DotNetSourceOnlyPostBuildSign)" />
   </Target>
 
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport.WriteUsageBurndownData" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
