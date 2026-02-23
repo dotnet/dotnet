@@ -29,17 +29,16 @@ Utilizes a **continuously** open servicing branch. A new VMR **Release Specific*
   - Internal **Release Specific** VMR: `internal/release/10.0.Nxx` -> `internal/release/10.0.NOM` (off HEAD)
   - Internal **Release Specific** VMR validation branches: `validation/release/10.0.N[0M]` off the last forward-flow SHAs.
 - **Current Month** changes then move to being checked into the following locations:
-  - Public **Release Specific** VMR branches (`release/10.0.NOM`) – for public VMR fixes.
-  - Internal **Release Specific** VMR branches (`internal/release/10.0.NOM`) – for internal fixes.
+  - Internal **Release Specific** VMR branches (`internal/release/10.0.NOM`) – for all VMR fixes.
 - The Public VMR branches are rebranded for **Current+1 Month**.
 - After rebranding for **Current+1 Month** and until the next branch point, **General Servicing** branches are open for **Current+1 Month** changes. While the **General Servicing** VMR branch represents **Current+1 Month**, changes for **Current+1 Month** may be checked into the following locations:
   - Public **General Servicing** component repository branches (e.g., SDK @ `release/10.0.1xx`, runtime @ `release/10.0`) – flows to public VMR (`release/10.0.Nxx`) via forward flow.
   - Public **General Servicing** VMR branches (`release/10.0.Nxx`) – for public VMR fixes.
   - Internal **General Servicing** VMR branches (`internal/release/10.0.Nxx`) – for internal fixes.
-- Changes in public VMR branches automatically merge into internal VMR branches (`release/10.0.Nxx` -> `internal/release/10.0.Nxx`, `release/10.0.NOM` -> `internal/release/10.0.NOM`). This happens continuously for both **Release Specific** and **General Servicing**.
+- Changes in public **General Servicing** VMR branches automatically merge into internal **General Servicing** VMR branches (`release/10.0.Nxx` -> `internal/release/10.0.Nxx`). This happens continuously for **General Servicing** branches.
 - Automated validation for changes is provided in the following ways:
   - **General Servicing** – Public forward flows from component repositories receive validation on the public PRs to those repositories (e.g., `my-fix-12345` validated before merging to runtime @ `release/10.0`).
-  - **General Servicing** and **Release Specific** – Public VMR-targeted changes are validated before merge via VMR PR pipelines and scenario testing.
+  - **General Servicing** – Public VMR-targeted changes are validated before merge via VMR PR pipelines and scenario testing.
   - **General Servicing** and **Release Specific** – Internal VMR-targeted changes are validated before merge via VMR PR pipelines and scenario testing.
   - **General Servicing** and **Release Specific** – Internal component repository changes may be validated before cherry-picking into the VMR via PRs against internal validation branches (e.g., runtime @ `validation/release/10.0`, SDK @ `validation/release/10.0.202`). These changes may be merged into the validation branch but do not flow further.
   - **General Servicing** – Public VMR builds of servicing branches backflow to the public **General Servicing** component repository branches (e.g., builds of the VMR applying to channel .NET 10.0.1xx SDK backflow to runtime @ `release/10.0` and SDK @ `release/10.0.1xx`). PR validation occurs on those backflows. This covers VMR-only changes and validates component repository sources against the latest built dependency packages.
@@ -108,7 +107,7 @@ gantt
 2. Developer prepares an approval template and brings the fix to Tactics.
 3. Tactics approves the bug for a specific release (e.g. 10.0.3 or 10.0.4)
 4. Developer merges the fix based on the current branch status and schedule, choosing the appropriate place to check in:
-    - If the approved milestone corresponds to the **Release Specific** branch, then the PR is targeted to the public VMR **Release Specific** branch and merged.
+    - If the approved milestone corresponds to the **Release Specific** branch, then the PR is targeted to the internal VMR **Release Specific** branch and merged.
     - If the approved milestone corresponds to the current state of the **General Servicing** branch (the branch is branded for that milestone), then the PR is targeted to the public VMR **General Servicing** branch, or the component repository **General Servicing** branch and merged.
     - If the approved milestone does not correspond to any currently open branch, the fix is parked until a **General Servicing** VMR/component repo branch matches the milestone, and then the fix is merged.
 5. Confirm that the fix flowed into the VMR servicing branch matching the approved milestone.

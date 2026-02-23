@@ -99,6 +99,12 @@ parameters:
   type: boolean
   default: false
 
+# Extra MSBuild properties to pass only to source-build stage 2 legs (those that reuse stage 1 artifacts).
+# Stage 1 builds with the LKG SDK, stage 2 builds with the source-built SDK from stage 1.
+- name: extraPropertiesStage2
+  type: string
+  default: ''
+
 stages:
 - ${{ if notin(parameters.scope, 'source-build-outer-loop') }}:
   - template: vmr-verticals.yml
@@ -154,3 +160,4 @@ stages:
         # the tests in the same job as the build and filter out some of the tests that can't be executed in this state.
         useMicrosoftBuildAssetsForTests: false
       excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
+      extraPropertiesStage2: ${{ parameters.extraPropertiesStage2 }}

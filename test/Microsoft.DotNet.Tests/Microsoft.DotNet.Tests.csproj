@@ -4,7 +4,7 @@
     <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <DefaultExcludesInProjectFolder>$(DefaultExcludesInProjectFolder);assets/**/*</DefaultExcludesInProjectFolder>
     <VSTestLogger>console%3bverbosity=normal;trx%3bverbosity=diagnostic%3bLogFileName=$(MSBuildProjectName).trx</VSTestLogger>
-    <VSTestCLIRunSettings>$(VSTestCLIRunSettings);RunConfiguration.DotNetHostPath=$(DotnetTool)</VSTestCLIRunSettings>
+    <VSTestCLIRunSettings Condition="'$(DotnetTool)' != ''">$(VSTestCLIRunSettings);RunConfiguration.DotNetHostPath=$(DotnetTool)</VSTestCLIRunSettings>
   </PropertyGroup>
 
   <ItemGroup>
@@ -38,6 +38,13 @@
       </RuntimeHostConfigurationOption>
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).BinariesReportFile">
         <Value>$(BinariesReportFile)</Value>
+      </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).RepoRoot">
+        <Value>$(RepoRoot)</Value>
+      </RuntimeHostConfigurationOption>
+      <SourceTarballPathItem Include="$(ArtifactsAssetsDir)$(SourceBuiltSourceArtifactName)-*.tar.gz" />
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).SourceTarballPath">
+        <Value>@(SourceTarballPathItem)</Value>
       </RuntimeHostConfigurationOption>
     </ItemGroup>
   </Target>

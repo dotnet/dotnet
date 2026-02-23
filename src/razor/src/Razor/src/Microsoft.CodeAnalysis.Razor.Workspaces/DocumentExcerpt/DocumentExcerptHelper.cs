@@ -18,30 +18,34 @@ internal static class DocumentExcerptHelper
     public static async Task<ImmutableArray<ClassifiedSpan>.Builder> ClassifyPreviewAsync(
         TextSpan excerptSpan,
         Document generatedDocument,
-        ImmutableArray<SourceMapping> mappings,
+        ImmutableArray<SourceMapping> mappingsSortedByOriginal,
         RazorClassificationOptionsWrapper options,
         CancellationToken cancellationToken)
     {
         var builder = ImmutableArray.CreateBuilder<ClassifiedSpan>();
 
-        var sorted = mappings.Sort((x, y) => x.OriginalSpan.AbsoluteIndex.CompareTo(y.OriginalSpan.AbsoluteIndex));
-
         // The algorithm here is to iterate through the source mappings (sorted) and use the C# classifier
         // on the spans that are known to be C#. For the spans that are not known to be C# then
         // we just treat them as text since we'd don't currently have our own classifications.
 
-        var remainingSpan = excerptSpan;
-        foreach (var span in sorted)
+        if (excerptSpan.Length == 0)
         {
-            if (excerptSpan.Length == 0)
-            {
-                break;
-            }
+            return builder;
+        }
 
+        var remainingSpan = excerptSpan;
+        foreach (var span in mappingsSortedByOriginal)
+        {
             var primarySpan = span.OriginalSpan.AsTextSpan();
             if (primarySpan.Intersection(remainingSpan) is not TextSpan intersection)
             {
-                // This span is outside the area we're interested in.
+                if (primarySpan.Start > remainingSpan.End)
+                {
+                    // This span (and all following) are after the area we're interested in
+                    break;
+                }
+
+                // This span precedes the area we're interested in
                 continue;
             }
 

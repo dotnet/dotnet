@@ -4,7 +4,7 @@
   <!-- This file is only imported in CI build. The conversion thus does not affect dev build. -->
   
   <ItemGroup>
-    <PackageReference Include="Microsoft.DiaSymReader.Pdb2Pdb" Version="$(MicrosoftDiaSymReaderPdb2PdbVersion)" Condition="'$(UsingToolPdbConverter)' == 'true'" IsImplicitlyDefined="true" PrivateAssets="all" />
+    <PackageDownload Include="Microsoft.DiaSymReader.Pdb2Pdb" Version="[$(MicrosoftDiaSymReaderPdb2PdbVersion)]" Condition="'$(UsingToolPdbConverter)' == 'true'" />
   </ItemGroup>
 
   <PropertyGroup>

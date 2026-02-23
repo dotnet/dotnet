@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="AwesomeAssertions" />
     <PackageReference Include="Microsoft.Build.Tasks.Core"/>
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="NuGet.Packaging" />

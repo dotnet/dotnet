@@ -68,6 +68,10 @@ namespace Microsoft.DotNet.SignTool
 
         public uint? UnixFileMode { get; set; }
 
+        public bool IsSymbolicLink { get; set; }
+
+        public string SymbolicLinkTarget { get; set; }
+
         public void WriteToFile(string path)
         {
             using var fs = File.Create(path);

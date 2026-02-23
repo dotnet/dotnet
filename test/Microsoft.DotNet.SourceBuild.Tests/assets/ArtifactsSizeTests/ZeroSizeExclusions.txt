@@ -2,9 +2,9 @@
 #
 # Format
 #   Exclude the path entirely: 
-#     <path> [# comment]
+#     <path>
 #   Exclude a path from a specific artifact:
-#     <path>|{sdk} [# comment]
+#     <path>|{sdk}
 #   sdk        = source-built SDK
 #
 # '*' in exclusions match zero or more characters.

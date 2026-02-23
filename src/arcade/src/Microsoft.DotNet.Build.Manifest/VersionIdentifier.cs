@@ -19,7 +19,8 @@ namespace Microsoft.DotNet.Build.Manifest
                 "prerelease",
                 "servicing",
                 "rtm",
-                "rc"
+                "rc",
+                "hotfix"
             };
 
         private static readonly SortedDictionary<string, string> _sequencesToReplace =

@@ -19,6 +19,185 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentFormattingTestBase(testOutput)
 {
     [Fact]
+    [WorkItem("https://developercommunity.visualstudio.com/t/Razor-Formatting-Feature-internal-error/11041869")]
+    public async Task TextAndTagOnSameLine()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                 <div>
+                 	@if (b)
+                 	{
+                 		<text>:</text> <InputFile OnChange="StateHasChanged" />
+                 	}
+                 </div>
+
+                 @code
+                 {
+                 	bool b;
+                 }
+                 
+                 """,
+            htmlFormatted: """
+                 <div>
+                 	@if (b)
+                 	{
+                 	<text>:</text> <InputFile OnChange="StateHasChanged" />
+                 	}
+                 </div>
+                 
+                 @code
+                 {
+                 	bool b;
+                 }
+                 
+                 """,
+            expected: """
+                 <div>
+                 	@if (b)
+                 	{
+                 		<text>:</text> <InputFile OnChange="StateHasChanged" />
+                 	}
+                 </div>
+                 
+                 @code
+                 {
+                 	bool b;
+                 }
+                 
+                 """,
+            insertSpaces: false);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/microsoft/vscode-dotnettools/issues/2766")]
+    public async Task DifferentAttributeWrappingPoint1()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                 <div>
+                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                             aria-expanded="false" aria-label="Toggle navigation"></button>
+                 </div>
+                 """,
+            htmlFormatted: """
+                 <div>
+                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
+                 </div>
+                 """,
+            expected: """
+                 <div>
+                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
+                 </div>
+                 """,
+            validateHtmlFormattedMatchesWebTools: false);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/microsoft/vscode-dotnettools/issues/2766")]
+    public async Task DifferentAttributeWrappingPoint2()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                 <div>
+                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                             data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
+                 </div>
+                 """,
+            htmlFormatted: """
+                 <div>
+                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
+                 </div>
+                 """,
+            expected: """
+                 <div>
+                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
+                 </div>
+                 """,
+            validateHtmlFormattedMatchesWebTools: false);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/microsoft/vscode-dotnettools/issues/2766")]
+    public async Task DifferentAttributeWrappingPoint3()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                 <div>
+                     <button class="navbar-toggler"
+                             type="button" data-bs-toggle="collapse"
+                             data-bs-target=".navbar-collapse"
+                             aria-controls="navbarSupportedContent"
+                             aria-expanded="false"
+                             aria-label="Toggle navigation"></button>
+                 </div>
+                 """,
+            htmlFormatted: """
+                 <div>
+                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
+                 </div>
+                 """,
+            expected: """
+                 <div>
+                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
+                 </div>
+                 """,
+            validateHtmlFormattedMatchesWebTools: false);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/microsoft/vscode-dotnettools/issues/2766")]
+    public async Task NewBlankLines()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <html>
+                <head>
+                <title>Goo</title>
+                </head>
+                <body>
+                <div>
+                </div>
+                </body>
+                </html>
+                """,
+            htmlFormatted: """
+                <html>
+
+                <head>
+                    <title>Goo</title>
+                </head>
+
+                <body>
+                    <div>
+                    </div>
+                </body>
+
+                </html>
+                """,
+            expected: """
+                <html>
+            
+                <head>
+                    <title>Goo</title>
+                </head>
+            
+                <body>
+                    <div>
+                    </div>
+                </body>
+            
+                </html>
+                """,
+            validateHtmlFormattedMatchesWebTools: false);
+    }
+
+    [Fact]
     public async Task EmptyDocument()
     {
         await RunFormattingTestAsync(

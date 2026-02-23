@@ -129,7 +129,7 @@ public class RazorDocumentMappingBenchmark : RazorLanguageServerBenchmarkBase
             throw new ArgumentNullException(nameof(csharpDocument));
         }
 
-        foreach (var mapping in csharpDocument.SourceMappings)
+        foreach (var mapping in csharpDocument.SourceMappingsSortedByGenerated)
         {
             var generatedSpan = mapping.GeneratedSpan;
             var generatedAbsoluteIndex = generatedSpan.AbsoluteIndex;
