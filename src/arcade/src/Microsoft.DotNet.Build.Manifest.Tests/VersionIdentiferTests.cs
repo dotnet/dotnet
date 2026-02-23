@@ -1,7 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using FluentAssertions;
+using AwesomeAssertions;
 using System.Collections.Generic;
 using System.IO;
 using Xunit;
@@ -38,6 +38,7 @@ namespace Microsoft.DotNet.Build.Manifest.Tests
         [InlineData("What-Is-A.FooPackage", null)]
         [InlineData("What-Is-A.FooPackage-2.2-64", null)]
         [InlineData("What-Is-A.FooPackage-2.2.nupkg", null)]
+        [InlineData("What-Is-A.FooPackage.10.0.3-hotfix.12345.1", "10.0.3-hotfix.12345.1")]
         public void ValidateSimpleVersions(string assetName, string version)
         {
             VersionIdentifier.GetVersion(assetName).Should().Be(version);

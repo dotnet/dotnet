@@ -56,13 +56,7 @@ public static class Utilities
     {
         using FileStream fileStream = File.OpenRead(tarballPath);
         using GZipStream decompressorStream = new(fileStream, CompressionMode.Decompress);
-        using TarReader reader = new(decompressorStream);
-
-        TarEntry? entry;
-        while ((entry = reader.GetNextEntry()) is not null)
-        {
-            yield return entry.Name;
-        }
+        return TarHelper.GetEntryNames(decompressorStream).ToList();
     }
 
     public static void ExtractNupkg(string package, string outputDir)

@@ -180,6 +180,15 @@ type TestCompilation =
                 let (_, data) = result.Value
                 File.WriteAllBytes (outputPath, data)
 
+    member this.EmitToDirectory (outputDir: DirectoryInfo) =
+        let fileName =
+            match this with
+            | TestCompilation.CSharp c when not (String.IsNullOrWhiteSpace c.AssemblyName) -> c.AssemblyName
+            | _ -> getTemporaryFileNameInDirectory outputDir
+        let outputPath = Path.Combine(outputDir.FullName, Path.ChangeExtension(fileName, ".dll"))
+        this.EmitAsFile outputPath
+        outputPath
+
 type CSharpLanguageVersion =
     | CSharp8 = 0
     | CSharp9 = 1
@@ -561,12 +570,7 @@ module CompilerAssertHelpers =
                         | CompilationReference (cmpl, staticLink) ->
                             compileCompilationAux outputDir ignoreWarnings cmpl, staticLink
                         | TestCompilationReference (cmpl) ->
-                            let fileName =
-                                match cmpl with
-                                | TestCompilation.CSharp c when not (String.IsNullOrWhiteSpace c.AssemblyName) -> c.AssemblyName
-                                | _ -> getTemporaryFileNameInDirectory outputDir
-                            let tmp = Path.Combine(outputDir.FullName, Path.ChangeExtension(fileName, ".dll"))
-                            cmpl.EmitAsFile tmp
+                            let tmp = cmpl.EmitToDirectory outputDir
                             (([||], None, tmp), []), false)
 
             let compilationRefs =
@@ -615,16 +619,18 @@ module CompilerAssertHelpers =
         let fileName = "dotnet"
         let arguments = outputFilePath
 
-        let runtimeconfig = """
-{
-    "runtimeOptions": {
-        "tfm": "net10.0",
-        "framework": {
+        // Derive the runtime version from productTfm (e.g., "net10.0" -> "10.0.0")
+        let runtimeVersion = productTfm.Replace("net", "") + ".0"
+        let runtimeconfig = $"""
+{{
+    "runtimeOptions": {{
+        "tfm": "{productTfm}",
+        "framework": {{
             "name": "Microsoft.NETCore.App",
-            "version": "10.0.0"
-        }
-    }
-}"""
+            "version": "{runtimeVersion}"
+        }}
+    }}
+}}"""
         let runtimeconfigPath = Path.ChangeExtension(outputFilePath, ".runtimeconfig.json")
         File.WriteAllText(runtimeconfigPath, runtimeconfig)
 #endif

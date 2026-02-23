@@ -23,7 +23,8 @@ public class AssetComparer : BuildComparer
         string issuesReportPath,
         string noIssuesReportPath,
         int parallelTasks,
-        string baselineFilePath)
+        string baselineFilePath,
+        string[] includedRepositories)
         : base(
             clean,
             assetType,
@@ -44,7 +45,8 @@ public class AssetComparer : BuildComparer
                 IssueType.PackageMetadataDifference,
                 IssueType.MissingPackageContent,
                 IssueType.ExtraPackageContent
-            })
+            },
+            includedRepositories)
     { }
 
     /// <summary>

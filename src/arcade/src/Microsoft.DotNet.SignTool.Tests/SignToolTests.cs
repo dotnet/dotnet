@@ -9,7 +9,7 @@ using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Arcade.Test.Common;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -406,7 +406,8 @@ namespace Microsoft.DotNet.SignTool.Tests
             string debianPackage,
             (string, string)[] expectedFilesOriginalHashes,
             string[] signableFiles,
-            string expectedControlFileContent)
+            string expectedControlFileContent,
+            (string path, string target)[] expectedSymlinks = null)
         {
             string tempDir = Path.Combine(_tmpDir, "verification");
             Directory.CreateDirectory(tempDir);
@@ -455,6 +456,23 @@ namespace Microsoft.DotNet.SignTool.Tests
                 }
             }
 
+            // Checks: Symbolic links are preserved and point to the correct targets
+            if (expectedSymlinks != null)
+            {
+                foreach ((string symlinkPath, string expectedTarget) in expectedSymlinks)
+                {
+                    string layoutPath = Path.Combine(dataLayout, symlinkPath);
+                    var fileInfo = new FileInfo(layoutPath);
+                    fileInfo.Exists.Should().BeTrue($"symlink '{symlinkPath}' should exist");
+                    fileInfo.LinkTarget.Should().Be(expectedTarget, $"symlink '{symlinkPath}' should point to '{expectedTarget}'");
+
+                    // Verify the symlink resolves to a valid file with the same content as its target
+                    string resolvedTarget = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(layoutPath)!, expectedTarget));
+                    File.ReadAllBytes(layoutPath).Should().BeEquivalentTo(File.ReadAllBytes(resolvedTarget),
+                        $"symlink '{symlinkPath}' should resolve to the signed file");
+                }
+            }
+
             // Check: control file contents matches the expected contents
             string controlFileContents = File.ReadAllText(Path.Combine(controlLayout, "control"));
             controlFileContents.Should().Be(expectedControlFileContent);
@@ -472,7 +490,8 @@ namespace Microsoft.DotNet.SignTool.Tests
             string rpmPackage,
             (string, string)[] expectedFilesOriginalHashes,
             string[] signableFiles,
-            string originalUncompressedPayloadChecksum)
+            string originalUncompressedPayloadChecksum,
+            (string path, string target)[] expectedSymlinks = null)
         {
             string tempDir = Path.Combine(_tmpDir, "verification");
             Directory.CreateDirectory(tempDir);
@@ -506,6 +525,23 @@ namespace Microsoft.DotNet.SignTool.Tests
                 }
             }
 
+            // Checks: Symbolic links are preserved and point to the correct targets
+            if (expectedSymlinks != null)
+            {
+                foreach ((string symlinkPath, string expectedTarget) in expectedSymlinks)
+                {
+                    string layoutPath = Path.Combine(layout, symlinkPath);
+                    var fileInfo = new FileInfo(layoutPath);
+                    fileInfo.Exists.Should().BeTrue($"symlink '{symlinkPath}' should exist");
+                    fileInfo.LinkTarget.Should().Be(expectedTarget, $"symlink '{symlinkPath}' should point to '{expectedTarget}'");
+
+                    // Verify the symlink resolves to a valid file with the same content as its target
+                    string resolvedTarget = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(layoutPath)!, expectedTarget));
+                    File.ReadAllBytes(layoutPath).Should().BeEquivalentTo(File.ReadAllBytes(resolvedTarget),
+                        $"symlink '{symlinkPath}' should resolve to the signed file");
+                }
+            }
+
             // Checks:
             // Header payload digest matches the hash of the payload
             // Header payload digest is different than the hash of the original payload
@@ -521,6 +557,34 @@ namespace Microsoft.DotNet.SignTool.Tests
                 byte[] hash = sha256.ComputeHash(package.ArchiveStream);
                 string checksum = Convert.ToHexString(hash).ToLower();
                 checksum.Should().Be(uncompressedPayloadDigest);
+            }
+        }
+
+        private void ValidateProducedTarGZipContent(
+            string tarGZipPath,
+            (string path, string target)[] expectedSymlinks)
+        {
+            string tempDir = Path.Combine(_tmpDir, "verification");
+            Directory.CreateDirectory(tempDir);
+
+            string layout = Path.Combine(tempDir, "tgz");
+            Directory.CreateDirectory(layout);
+
+            var fakeBuildEngine = new FakeBuildEngine(_output);
+            var fakeLog = new TaskLoggingHelper(fakeBuildEngine, "TestLog");
+            ZipData.ExtractTarballContents(fakeLog, tarGZipPath, layout, skipSymlinks: false);
+
+            foreach ((string symlinkPath, string expectedTarget) in expectedSymlinks)
+            {
+                string layoutPath = Path.Combine(layout, symlinkPath);
+                var fileInfo = new FileInfo(layoutPath);
+                fileInfo.Exists.Should().BeTrue($"symlink '{symlinkPath}' should exist");
+                fileInfo.LinkTarget.Should().Be(expectedTarget, $"symlink '{symlinkPath}' should point to '{expectedTarget}'");
+
+                // Verify the symlink resolves to a valid file with the same content as its target
+                string resolvedTarget = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(layoutPath)!, expectedTarget));
+                File.ReadAllBytes(layoutPath).Should().BeEquivalentTo(File.ReadAllBytes(resolvedTarget),
+                    $"symlink '{symlinkPath}' should resolve to the signed file");
             }
         }
 #endif
@@ -1692,6 +1756,46 @@ $@"
         }
 
 #if !NETFRAMEWORK
+        /// <summary>
+        /// Validates that tar.gz archives containing symbolic links are handled correctly.
+        /// On Windows, ReadTarGZipEntriesWithExternalTar throws when symlinks are detected,
+        /// so this test is skipped on Windows.
+        /// </summary>
+        [UnixOnlyFactAttribute]
+        public void SignTarGZipFileWithSymlinks()
+        {
+            // List of files to be considered for signing
+            var itemsToSign = new List<ItemToSign>()
+            {
+                new ItemToSign(GetResourcePath("testSymlinks.tgz"))
+            };
+
+            // Default signing information
+            var strongNameSignInfo = new Dictionary<string, List<SignInfo>>()
+            {
+                { "581d91ccdfc4ea9c", new List<SignInfo>{ new SignInfo(certificate: "ArcadeCertTest", strongName: "ArcadeStrongTest") } }
+            };
+
+            // Overriding information
+            var fileSignInfo = new Dictionary<ExplicitSignInfoKey, FileSignInfoEntry>();
+
+            // The symlink (test/this_is_a_big_folder_name_look/NativeLibrary.dll -> ../NativeLibrary.dll)
+            // is filtered out by System.Formats.Tar on non-Windows, so only regular files are signed.
+            ValidateFileSignInfos(itemsToSign, strongNameSignInfo, fileSignInfo, s_fileExtensionSignInfo, new[]
+            {
+                "File 'NativeLibrary.dll' Certificate='Microsoft400'",
+                "File 'SOS.NETCore.dll' TargetFramework='.NETCoreApp,Version=v1.0' Certificate='Microsoft400'",
+                "File 'Nested.NativeLibrary.dll' Certificate='Microsoft400'",
+                "File 'Nested.SOS.NETCore.dll' TargetFramework='.NETCoreApp,Version=v1.0' Certificate='Microsoft400'",
+                "File 'testSymlinks.tgz'",
+            });
+
+            ValidateProducedTarGZipContent(Path.Combine(_tmpDir, "testSymlinks.tgz"), new[]
+            {
+                ("test/this_is_a_big_folder_name_look/NativeLibrary.dll", "../NativeLibrary.dll")
+            });
+        }
+
         // TODO: Remove WindowsOnlyFact once https://github.com/dotnet/arcade/issues/16484 is resolved.
         [WindowsOnlyFact]
         public void SignTarGZipFileWithHardlinks()
@@ -1852,7 +1956,7 @@ $@"
         }
 
 #if !NETFRAMEWORK
-        [Fact]
+        [UnixOnlyFact]
         public void CheckDebSigning()
         {
             // List of files to be considered for signing
@@ -1892,8 +1996,12 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.deb"
             string[] signableFiles = ["usr/local/bin/mscorlib.dll"];
             string expectedControlFileContent = "Package: test\nVersion: 1.0\nSection: base\nPriority: optional\nArchitecture: all\n";
             expectedControlFileContent +="Maintainer: Arcade <test@example.com>\nInstalled-Size: 48\nDescription: A simple test package\n This is a simple generated .deb package for testing purposes.\n";
+            var expectedSymlinks = new (string, string)[]
+            {
+                ("usr/local/bin/mscorlib-link.dll", "./mscorlib.dll")
+            };
 
-            ValidateProducedDebContent(Path.Combine(_tmpDir, "test.deb"), expectedFilesOriginalHashes, signableFiles, expectedControlFileContent);
+            ValidateProducedDebContent(Path.Combine(_tmpDir, "test.deb"), expectedFilesOriginalHashes, signableFiles, expectedControlFileContent, expectedSymlinks);
         }
 
         [WindowsOnlyFact]
@@ -1962,8 +2070,12 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.rpm"
             };
             string[] signableFiles = ["usr/local/bin/mscorlib.dll"];
             string originalUncompressedPayloadChecksum = "216c2a99006d2e14d28a40c0f14a63f6462f533e89789a6f294186e0a0aad3fd";
+            var expectedSymlinks = new (string, string)[]
+            {
+                ("usr/local/bin/mscorlib-link.dll", "mscorlib.dll")
+            };
 
-            ValidateProducedRpmContent(Path.Combine(_tmpDir, "test.rpm"), expectedFilesOriginalHashes, signableFiles, originalUncompressedPayloadChecksum);
+            ValidateProducedRpmContent(Path.Combine(_tmpDir, "test.rpm"), expectedFilesOriginalHashes, signableFiles, originalUncompressedPayloadChecksum, expectedSymlinks);
         }
 
         [Fact]
@@ -2263,7 +2375,7 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "Container
 
             task.Execute().Should().BeFalse();
             task.Log.HasLoggedErrors.Should().BeTrue();
-            fakeBuildEngine.LogErrorEvents.ForEach(a => a.Message.Should().EndWithEquivalent(" does not exist." ));
+            fakeBuildEngine.LogErrorEvents.ForEach(a => a.Message.Should().EndWith(" does not exist." ));
         }
 
         [Fact]
@@ -3197,6 +3309,12 @@ $@"
         [MemberData(nameof(GetSignableExtensions))]
         public void MissingCertificateNameButExtensionIsIgnored(string extension)
         {
+            //  test.deb contains symbolic links which aren't supported on windows.
+            if (extension == ".deb" && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return;
+            }
+
             var needContent = new Dictionary<string, (string, string[])>(StringComparer.OrdinalIgnoreCase)
             {
                 { ".dll", ("EmptyPKT.dll", []) },

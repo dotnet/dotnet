@@ -3413,7 +3413,7 @@ EndGlobal";
 
         // P1 (banana) -> X
         // P1 (apple) -> Y
-        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Client.Engineering/issues/3632")]
+        [PlatformFact(Platform.Windows)]
         public async Task DotnetRestore_WithAliasesOfTheSameFramework_UsesCorrectPackages()
         {
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
@@ -3485,7 +3485,7 @@ EndGlobal";
 
         // P (apple)  -> Net472 package, with ATF, succeeds
         // P (banana) -> Net472 package, with ATF, fails
-        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Client.Engineering/issues/3632")]
+        [PlatformFact(Platform.Windows)]
         public async Task DotnetRestore_WithAliasesOfSameFramework_WithAssetTargetFallback_OneSucceedsOneFails()
         {
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
@@ -3568,7 +3568,7 @@ EndGlobal";
 
         // P (apple)  -> Net472 package -> Transitive Net472 package, with ATF, succeeds
         // P (banana) -> Net472 package, with ATF, fails
-        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Client.Engineering/issues/3632")]
+        [PlatformFact(Platform.Windows)]
         public async Task DotnetRestore_WithAliasesOfSameFramework_WithAssetTargetFallback_TransitiveDependenciesFlowCorrectly()
         {
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
@@ -3662,7 +3662,7 @@ EndGlobal";
 
         // P (apple) -> Project2 (apple) -> Package A
         // P (banana) -> Project2 (banana) -> Package B
-        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Client.Engineering/issues/3632")]
+        [PlatformFact(Platform.Windows)]
         public async Task DotnetRestore_WithAliasesOfSameFrameworkAndProjectReferences_TransitivePackageDependenciesFlowCorrectly()
         {
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
@@ -3782,7 +3782,7 @@ EndGlobal";
 
         // P (apple) -> Project2 
         // P (banana) -> Project3
-        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Client.Engineering/issues/3632")]
+        [PlatformFact(Platform.Windows)]
         public async Task DotnetRestore_WithAliasesOfSameFramework_MultipleProjectReferencesFlowCorrectly()
         {
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
@@ -3934,7 +3934,7 @@ EndGlobal";
 
         // P (apple) -> Project2 with APPLE constant -> Uses Project2Type
         // P (banana) -> Project3 with BANANA constant -> Uses Project3Type
-        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Client.Engineering/issues/3632")]
+        [PlatformFact(Platform.Windows)]
         public async Task DotnetRestore_WithAliasesOfSameFramework_MultipleProjectReferencesWithConditionalCompilation_BuildSucceeds()
         {
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();

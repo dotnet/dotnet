@@ -103,14 +103,7 @@ internal sealed class CohostCodeActionsEndpoint(
 
     private async Task<RazorVSInternalCodeAction[]> GetCSharpCodeActionsAsync(TextDocument razorDocument, VSCodeActionParams request, Guid correlationId, CancellationToken cancellationToken)
     {
-        var solution = razorDocument.Project.Solution;
-        if (!solution.TryGetSourceGeneratedDocumentIdentity(request.TextDocument.DocumentUri.GetRequiredParsedUri(), out var identity) ||
-            !solution.TryGetProject(identity.DocumentId.ProjectId, out var project))
-        {
-            return [];
-        }
-
-        var generatedDocument = await project.TryGetCSharpDocumentForGeneratedDocumentAsync(identity, cancellationToken).ConfigureAwait(false);
+        var generatedDocument = await razorDocument.Project.Solution.TryGetSourceGeneratedDocumentAsync(request.TextDocument.DocumentUri.GetRequiredParsedUri(), cancellationToken).ConfigureAwait(false);
         if (generatedDocument is null)
         {
             return [];

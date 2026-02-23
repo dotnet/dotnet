@@ -24,22 +24,22 @@
       </trans-unit>
       <trans-unit id="Error_CopilotAccessDenied">
         <source>Access denied. Please ensure you are signed in to GitHub Copilot.</source>
-        <target state="translated">Accesso negato. Assicurarsi di aver effettuato l'accesso a GitHub Copilot.</target>
+        <target state="translated">Accesso negato. Assicurati di aver effettuato l'accesso a GitHub Copilot.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_CopilotNotReady">
         <source>GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in.</source>
-        <target state="translated">GitHub Copilot non è pronto. Assicurarsi di aver installato ed eseguito l'accesso a GitHub Copilot.</target>
+        <target state="translated">GitHub Copilot non è pronto. Assicurati di aver installato ed eseguito l'accesso a GitHub Copilot.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_CopilotServiceNotAvailable">
         <source>GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
-        <target state="translated">Il servizio GitHub Copilot non è disponibile. Assicurarsi di aver installato ed eseguito l'accesso a GitHub Copilot.</target>
+        <target state="translated">Il servizio GitHub Copilot non è disponibile. Assicurati di aver installato ed eseguito l'accesso a GitHub Copilot.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_McpToolServiceNotAvailable">
         <source>MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
-        <target state="translated">Il servizio dello strumento MCP non è disponibile. Assicurarsi di aver installato ed eseguito l'accesso a GitHub Copilot.</target>
+        <target state="translated">Il servizio dello strumento MCP non è disponibile. Assicurati di aver installato ed eseguito l'accesso a GitHub Copilot.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingPattern_Missing">
@@ -254,7 +254,7 @@
       </trans-unit>
       <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
         <source>Fix Vulnerabilities with GitHub Copilot</source>
-        <target state="translated">Correggere le vulnerabilità con GitHub Copilot</target>
+        <target state="translated">Correggi le vulnerabilità con GitHub Copilot</target>
         <note />
       </trans-unit>
       <trans-unit id="clearLocalResources">

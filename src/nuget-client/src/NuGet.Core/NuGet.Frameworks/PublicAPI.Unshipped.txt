@@ -1,1 +1,3 @@
 #nullable enable
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net11_0 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.Version11 -> System.Version!

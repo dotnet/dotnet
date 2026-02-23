@@ -9,7 +9,7 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Arcade.Common;
 using Microsoft.Arcade.Test.Common;
 using Microsoft.DotNet.Build.Manifest;
@@ -333,7 +333,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             if (!expectedFailure && localPackageMatchesFeed)
             {
                 // Successful retry scenario; make sure we ran the # of retries we thought.
-                timesCalled.Should().BeLessOrEqualTo(task.MaxRetryCount);
+                timesCalled.Should().BeLessThanOrEqualTo(task.MaxRetryCount);
             }
             expectedFailure.Should().Be(task.Log.HasLoggedErrors);
         }

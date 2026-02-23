@@ -22,13 +22,18 @@ internal static partial class RazorEditHelper
 {
     internal static bool TryGetMappedSpan(TextSpan span, SourceText source, RazorCSharpDocument output, out LinePositionSpan linePositionSpan, out TextSpan mappedSpan)
     {
-        foreach (var mapping in output.SourceMappings)
+        foreach (var mapping in output.SourceMappingsSortedByGenerated)
         {
-            var original = mapping.OriginalSpan.AsTextSpan();
             var generated = mapping.GeneratedSpan.AsTextSpan();
 
             if (!generated.Contains(span))
             {
+                if (generated.Start > span.End)
+                {
+                    // This span (and all following) are after the area we're interested in
+                    break;
+                }
+
                 // If the search span isn't contained within the generated span, it is not a match.
                 // A C# identifier won't cover multiple generated spans.
                 continue;
@@ -39,6 +44,7 @@ internal static partial class RazorEditHelper
             if (leftOffset >= 0 && rightOffset <= 0)
             {
                 // This span mapping contains the span.
+                var original = mapping.OriginalSpan.AsTextSpan();
                 mappedSpan = new TextSpan(original.Start + leftOffset, (original.End + rightOffset) - (original.Start + leftOffset));
                 linePositionSpan = source.GetLinePositionSpan(mappedSpan);
                 return true;
