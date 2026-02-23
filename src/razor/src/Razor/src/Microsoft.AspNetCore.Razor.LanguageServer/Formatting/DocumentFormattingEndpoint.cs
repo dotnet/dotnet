@@ -49,7 +49,7 @@ internal class DocumentFormattingEndpoint(
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
-        var options = RazorFormattingOptions.From(request.Options, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine);
+        var options = RazorFormattingOptions.From(request.Options, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine, _optionsMonitor.CurrentValue.AttributeIndentStyle);
 
         if (await _htmlFormatter.GetDocumentFormattingEditsAsync(
             documentContext.Snapshot,

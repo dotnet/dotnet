@@ -10,4 +10,5 @@ namespace Microsoft.CodeAnalysis.Razor.Remote;
 internal interface IRemoteRenameService : IRemoteJsonService
 {
     ValueTask<RemoteResponse<WorkspaceEdit?>> GetRenameEditAsync(JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo, JsonSerializableDocumentId documentId, Position position, string newName, CancellationToken cancellationToken);
+    ValueTask<WorkspaceEdit?> GetFileRenameEditAsync(JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo, RenameFilesParams fileRenameRequest, CancellationToken cancellationToken);
 }

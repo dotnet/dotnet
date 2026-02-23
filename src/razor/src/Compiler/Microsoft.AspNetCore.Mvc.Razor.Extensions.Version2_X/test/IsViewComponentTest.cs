@@ -24,15 +24,15 @@ public class IsViewComponentTest
     {
         var assembly = typeof(IsViewComponentTest).GetTypeInfo().Assembly;
         Compilation = TestCompilation.Create(assembly);
-        TestViewComponentAttributeSymbol = Compilation.GetTypeByMetadataName(typeof(TestViewComponentAttribute).FullName.AssumeNotNull()).AssumeNotNull();
-        TestNonViewComponentAttributeSymbol = Compilation.GetTypeByMetadataName(typeof(TestNonViewComponentAttribute).FullName.AssumeNotNull()).AssumeNotNull();
+        TestViewComponentAttributeSymbol = Compilation.GetTypeByMetadataName(typeof(TestViewComponentAttribute).FullName).AssumeNotNull();
+        TestNonViewComponentAttributeSymbol = Compilation.GetTypeByMetadataName(typeof(TestNonViewComponentAttribute).FullName).AssumeNotNull();
     }
 
     [Fact]
     public void IsViewComponent_PlainViewComponent_ReturnsTrue()
     {
         // Arrange
-        var tagHelperSymbol = Compilation.GetTypeByMetadataName(typeof(Valid_PlainViewComponent).FullName.AssumeNotNull());
+        var tagHelperSymbol = Compilation.GetTypeByMetadataName(typeof(Valid_PlainViewComponent).FullName);
         Assert.NotNull(tagHelperSymbol);
 
         // Act
@@ -46,7 +46,7 @@ public class IsViewComponentTest
     public void IsViewComponent_DecoratedViewComponent_ReturnsTrue()
     {
         // Arrange
-        var tagHelperSymbol = Compilation.GetTypeByMetadataName(typeof(Valid_DecoratedVC).FullName.AssumeNotNull());
+        var tagHelperSymbol = Compilation.GetTypeByMetadataName(typeof(Valid_DecoratedVC).FullName);
         Assert.NotNull(tagHelperSymbol);
 
         // Act
@@ -60,7 +60,7 @@ public class IsViewComponentTest
     public void IsViewComponent_InheritedViewComponent_ReturnsTrue()
     {
         // Arrange
-        var tagHelperSymbol = Compilation.GetTypeByMetadataName(typeof(Valid_InheritedVC).FullName.AssumeNotNull());
+        var tagHelperSymbol = Compilation.GetTypeByMetadataName(typeof(Valid_InheritedVC).FullName);
         Assert.NotNull(tagHelperSymbol);
 
         // Act
@@ -74,7 +74,7 @@ public class IsViewComponentTest
     public void IsViewComponent_AbstractViewComponent_ReturnsFalse()
     {
         // Arrange
-        var tagHelperSymbol = Compilation.GetTypeByMetadataName(typeof(Invalid_AbstractViewComponent).FullName.AssumeNotNull());
+        var tagHelperSymbol = Compilation.GetTypeByMetadataName(typeof(Invalid_AbstractViewComponent).FullName);
         Assert.NotNull(tagHelperSymbol);
 
         // Act
@@ -88,7 +88,7 @@ public class IsViewComponentTest
     public void IsViewComponent_GenericViewComponent_ReturnsFalse()
     {
         // Arrange
-        var tagHelperSymbol = Compilation.GetTypeByMetadataName(typeof(Invalid_GenericViewComponent<>).FullName.AssumeNotNull());
+        var tagHelperSymbol = Compilation.GetTypeByMetadataName(typeof(Invalid_GenericViewComponent<>).FullName);
         Assert.NotNull(tagHelperSymbol);
 
         // Act
@@ -102,7 +102,7 @@ public class IsViewComponentTest
     public void IsViewComponent_InternalViewComponent_ReturnsFalse()
     {
         // Arrange
-        var tagHelperSymbol = Compilation.GetTypeByMetadataName(typeof(Invalid_InternalViewComponent).FullName.AssumeNotNull());
+        var tagHelperSymbol = Compilation.GetTypeByMetadataName(typeof(Invalid_InternalViewComponent).FullName);
         Assert.NotNull(tagHelperSymbol);
 
         // Act
@@ -116,7 +116,7 @@ public class IsViewComponentTest
     public void IsViewComponent_DecoratedNonViewComponent_ReturnsFalse()
     {
         // Arrange
-        var tagHelperSymbol = Compilation.GetTypeByMetadataName(typeof(Invalid_DecoratedViewComponent).FullName.AssumeNotNull());
+        var tagHelperSymbol = Compilation.GetTypeByMetadataName(typeof(Invalid_DecoratedViewComponent).FullName);
         Assert.NotNull(tagHelperSymbol);
 
         // Act
@@ -130,7 +130,7 @@ public class IsViewComponentTest
     public void IsViewComponent_InheritedNonViewComponent_ReturnsFalse()
     {
         // Arrange
-        var tagHelperSymbol = Compilation.GetTypeByMetadataName(typeof(Invalid_InheritedViewComponent).FullName.AssumeNotNull());
+        var tagHelperSymbol = Compilation.GetTypeByMetadataName(typeof(Invalid_InheritedViewComponent).FullName);
         Assert.NotNull(tagHelperSymbol);
 
         // Act

@@ -176,7 +176,8 @@ internal class GenerateMethodCodeActionResolver(
                 {
                     TabSize = options.TabSize,
                     InsertSpaces = options.InsertSpaces,
-                    CodeBlockBraceOnNextLine = options.CodeBlockBraceOnNextLine
+                    CodeBlockBraceOnNextLine = options.CodeBlockBraceOnNextLine,
+                    AttributeIndentStyle = options.AttributeIndentStyle,
                 };
 
                 var formattedChange = await _razorFormattingService.TryGetCSharpCodeActionEditAsync(

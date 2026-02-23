@@ -1,7 +1,12 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.Razor.IntegrationTests.Extensions;
+using Microsoft.VisualStudio.Razor.IntegrationTests.InProcess;
+using Microsoft.VisualStudio.Text.Editor.Commanding.Commands;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -212,21 +217,23 @@ public class RenameTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdit
 
         await TestServices.Editor.PlaceCaretAsync(position, ControlledHangMitigatingCancellationToken);
 
-        await Task.Delay(500);
+        // For some reason, this particular rename exercise is particularly flaky so we have a few hail marys to recite
+        await TestServices.Shell.WaitForOperationProgressAsync(ControlledHangMitigatingCancellationToken);
+        await WaitForRoslynRenameReadyAsync(ControlledHangMitigatingCancellationToken);
 
         // Act
         await TestServices.Editor.InvokeRenameAsync(ControlledHangMitigatingCancellationToken);
+
+        // Even though we waited for the command to be ready and available, it can still be a bit slow to come up
+        await Task.Delay(500);
+
         TestServices.Input.Send("ZooperDooper{ENTER}");
 
         await TestServices.Editor.WaitForCurrentLineTextAsync("public class ZooperDooper : ComponentBase", ControlledHangMitigatingCancellationToken);
 
-        // The rename operation updates the editor as the new name is being typed, so waiting for the line in the editor can trigger before the rename
-        // actually occurs, and then moving tabs cancels it. So we have to wait a beat.
-        await Task.Delay(500);
-
         // Assert
         await TestServices.SolutionExplorer.OpenFileAsync(RazorProjectConstants.BlazorProjectName, "MyPage.razor", ControlledHangMitigatingCancellationToken);
-        await TestServices.Editor.VerifyTextContainsAsync("<ZooperDooper></ZooperDooper>", ControlledHangMitigatingCancellationToken);
+        await TestServices.Editor.WaitForTextContainsAsync("<ZooperDooper></ZooperDooper>", ControlledHangMitigatingCancellationToken);
     }
 
     [IdeFact]
@@ -350,5 +357,24 @@ public class RenameTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdit
 
         await TestServices.SolutionExplorer.OpenFileAsync(RazorProjectConstants.BlazorProjectName, "MyComponent.cs", ControlledHangMitigatingCancellationToken);
         await TestServices.Editor.VerifyTextContainsAsync("public class ZooperDooper : ComponentBase", ControlledHangMitigatingCancellationToken);
+    }
+
+    private async Task WaitForRoslynRenameReadyAsync(CancellationToken cancellationToken)
+    {
+        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        var view = await TestServices.Editor.GetActiveTextViewAsync(cancellationToken);
+        var buffer = view.GetBufferContainingCaret();
+
+        var commandArgs = new RenameCommandArgs(view, buffer);
+
+        // We don't have EA from this project, so we have to resort to reflection. Fortunately it's pretty simple
+        var roslynHandler = Type.GetType("Microsoft.CodeAnalysis.Editor.Implementation.InlineRename.AbstractRenameCommandHandler, Microsoft.CodeAnalysis.EditorFeatures");
+        var canRename = roslynHandler.GetMethod("CanRename", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+
+        await Helper.RetryAsync(ct =>
+        {
+            return Task.FromResult((bool)canRename.Invoke(null, [commandArgs]));
+        }, TimeSpan.FromMilliseconds(100), cancellationToken);
     }
 }

@@ -42,6 +42,31 @@
         <target state="translated">Razor Syntax Visualizer</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_AttributeIndentStyleAlignWithFirst">
+        <source>Align with first attribute</source>
+        <target state="translated">Aligner sur le premier attribut</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_AttributeIndentStyleDescription">
+        <source>Defines how Html and component tag attributes should be indented</source>
+        <target state="translated">Définit la manière dont les attributs des balises HTML et des composants doivent être mis en retrait</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_AttributeIndentStyleDisplayName">
+        <source>Attribute Indent Style</source>
+        <target state="translated">Style de retrait des attributs</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_AttributeIndentStyleIndentByOne">
+        <source>Indent by one level</source>
+        <target state="translated">Mettre en retrait d’un niveau</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_AttributeIndentStyleIndentByTwo">
+        <source>Indent by two levels</source>
+        <target state="translated">Indentation de deux niveaux</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_AutoClosingTagsDescription">
         <source>If true, closing tags will be automatically inserted</source>
         <target state="translated">Si la valeur est true, les balises de fermeture sont automatiquement insérées</target>

@@ -84,7 +84,7 @@ public sealed class DiagnosticsEndToEndTest(ITestOutputHelper testOutput) : Sing
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var requestContext = new RazorRequestContext(documentContext, null!, "lsp/method", uri: null);
 
-        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(DocumentMappingService, LoggerFactory);
+        var translateDiagnosticsService = new RazorTranslateDiagnosticsService(DocumentMappingService, LanguageServerFeatureOptions, LoggerFactory);
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
         var diagnosticsEndPoint = new DocumentDiagnosticsEndpoint(translateDiagnosticsService, languageServer, telemetryReporter: null);
 

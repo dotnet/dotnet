@@ -1,6 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Composition;
 using System.Text.Json.Nodes;
 using System.Threading;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -47,7 +49,11 @@ internal sealed class CohostConfigurationChangedService(
             Items = [
                 //TODO: new ConfigurationItem { Section = "razor.format.enable" },
                 new ConfigurationItem { Section = "razor.format.code_block_brace_on_next_line" },
+                new ConfigurationItem { Section = "razor.format.attribute_indent_style" },
                 new ConfigurationItem { Section = "razor.completion.commit_elements_with_space" },
+                // Note: VS Code settings use snake_case, so this is "auto_closing_tags" not "autoClosingTags"
+                // TypeScript code in the VS Code extension converts between camelCase and snake_case
+                new ConfigurationItem { Section = "html.auto_closing_tags" },
             ]
         };
 
@@ -57,13 +63,30 @@ internal sealed class CohostConfigurationChangedService(
             cancellationToken).ConfigureAwait(false);
 
         var current = _clientSettingsManager.GetClientSettings().AdvancedSettings;
-        var settings = current with
-        {
-            CodeBlockBraceOnNextLine = GetBooleanOptionValue(options[0], current.CodeBlockBraceOnNextLine),
-            CommitElementsWithSpace = GetBooleanOptionValue(options[1], current.CommitElementsWithSpace),
-        };
+        var settings = UpdateSettingsFromJson(current, options);
 
         _clientSettingsManager.Update(settings);
+    }
+
+    private static ClientAdvancedSettings UpdateSettingsFromJson(ClientAdvancedSettings settings, JsonArray jsonArray)
+    {
+        return settings with
+        {
+            CodeBlockBraceOnNextLine = GetBooleanOptionValue(TryGetElement(jsonArray, 0), settings.CodeBlockBraceOnNextLine),
+            AttributeIndentStyle = GetEnumOptionValue(TryGetElement(jsonArray, 1), settings.AttributeIndentStyle),
+            CommitElementsWithSpace = GetBooleanOptionValue(TryGetElement(jsonArray, 2), settings.CommitElementsWithSpace),
+            AutoClosingTags = GetBooleanOptionValue(TryGetElement(jsonArray, 3), settings.AutoClosingTags),
+        };
+    }
+
+    private static JsonNode? TryGetElement(JsonArray jsonArray, int index)
+    {
+        if (index < jsonArray.Count)
+        {
+            return jsonArray[index];
+        }
+
+        return null;
     }
 
     private static bool GetBooleanOptionValue(JsonNode? jsonNode, bool defaultValue)
@@ -74,5 +97,26 @@ internal sealed class CohostConfigurationChangedService(
         }
 
         return jsonNode.ToString() == "true";
+    }
+
+    private static T GetEnumOptionValue<T>(JsonNode? jsonNode, T defaultValue) where T : struct
+    {
+        if (jsonNode is null)
+        {
+            return defaultValue;
+        }
+
+        if (Enum.TryParse<T>(jsonNode.GetValue<string>(), ignoreCase: true, out var value))
+        {
+            return value;
+        }
+
+        return defaultValue;
+    }
+
+    public static class TestAccessor
+    {
+        public static ClientAdvancedSettings UpdateSettingsFromJson(ClientAdvancedSettings settigns, JsonArray jsonArray)
+            => CohostConfigurationChangedService.UpdateSettingsFromJson(settigns, jsonArray);
     }
 }

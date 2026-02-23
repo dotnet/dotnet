@@ -171,7 +171,7 @@ internal class OnAutoInsertEndpoint(
         // For C# we run the edit through our formatting engine
         Debug.Assert(positionInfo.LanguageKind == RazorLanguageKind.CSharp);
 
-        var options = RazorFormattingOptions.From(originalRequest.Options, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine);
+        var options = RazorFormattingOptions.From(originalRequest.Options, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine, _optionsMonitor.CurrentValue.AttributeIndentStyle);
 
         var csharpSourceText = await documentContext.GetCSharpSourceTextAsync(cancellationToken).ConfigureAwait(false);
         var textChange = csharpSourceText.GetTextChange(delegatedResponse.TextEdit);

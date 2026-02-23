@@ -6,9 +6,11 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.OperationProgress;
 using Microsoft.VisualStudio.Razor;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;
+using Microsoft.VisualStudio.Threading;
 using Xunit;
 
 namespace Microsoft.VisualStudio.Extensibility.Testing;
@@ -109,5 +111,12 @@ internal partial class ShellInProcess
         {
             window.CloseFrame((uint)__FRAMECLOSE.FRAMECLOSE_NoSave);
         }
+    }
+
+    public async Task WaitForOperationProgressAsync(CancellationToken cancellationToken)
+    {
+        var operationProgressStatus = await GetRequiredGlobalServiceAsync<SVsOperationProgress, IVsOperationProgressStatusService>(cancellationToken);
+        var stageStatus = operationProgressStatus.GetStageStatus(CommonOperationProgressStageIds.Intellisense);
+        await stageStatus.WaitForCompletionAsync().WithCancellation(cancellationToken);
     }
 }

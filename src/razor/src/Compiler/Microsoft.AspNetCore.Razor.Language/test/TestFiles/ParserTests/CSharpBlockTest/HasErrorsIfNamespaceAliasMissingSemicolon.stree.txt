@@ -3,7 +3,7 @@
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..30)::30
-            RazorDirective - [0..30)::30
+            RazorUsingDirective - [0..30)::30
                 CSharpTransition - [0..1)::1 - Gen<None>
                     Transition;[@];
                 RazorDirectiveBody - [1..30)::29

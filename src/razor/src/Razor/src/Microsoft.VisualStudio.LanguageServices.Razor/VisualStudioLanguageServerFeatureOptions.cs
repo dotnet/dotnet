@@ -14,7 +14,6 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
 {
     private readonly ILspEditorFeatureDetector _lspEditorFeatureDetector;
     private readonly Lazy<bool> _showAllCSharpCodeActions;
-    private readonly Lazy<bool> _useRazorCohostServer;
 
     [ImportingConstructor]
     public VisualStudioLanguageServerFeatureOptions(ILspEditorFeatureDetector lspEditorFeatureDetector)
@@ -27,13 +26,6 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
             var showAllCSharpCodeActions = featureFlags.IsFeatureEnabled(WellKnownFeatureFlagNames.ShowAllCSharpCodeActions, defaultValue: false);
             return showAllCSharpCodeActions;
         });
-
-        _useRazorCohostServer = new Lazy<bool>(() =>
-        {
-            var featureFlags = (IVsFeatureFlags)Package.GetGlobalService(typeof(SVsFeatureFlags));
-            var useRazorCohostServer = featureFlags.IsFeatureEnabled(WellKnownFeatureFlagNames.UseRazorCohostServer, defaultValue: true);
-            return useRazorCohostServer;
-        });
     }
 
     // We don't currently support file creation operations on VS Codespaces or VS Liveshare
@@ -45,5 +37,5 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
 
     public override bool ShowAllCSharpCodeActions => _showAllCSharpCodeActions.Value;
 
-    public override bool UseRazorCohostServer => _useRazorCohostServer.Value;
+    public override bool UseRazorCohostServer => true;
 }

@@ -420,6 +420,58 @@ public partial class CohostDocumentPullDiagnosticsTest
             }]);
     }
 
+    [Fact]
+    public Task FilterFromMultilineComponentAttributes()
+    {
+        var firstLine = "Hello this is a";
+        TestCode input = $$"""
+            <File1 Title="{{firstLine}}
+                          multiline attribute" />
+
+            @code
+            {
+                [Parameter]
+                public string Title { get; set; }
+            }
+            """;
+
+        return VerifyDiagnosticsAsync(input,
+            htmlResponse: [new VSInternalDiagnosticReport
+            {
+                Diagnostics =
+                [
+                    new LspDiagnostic
+                    {
+                        Code = HtmlErrorCodes.MismatchedAttributeQuotesErrorCode,
+                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf(firstLine), firstLine.Length))
+                    },
+                ]
+            }]);
+    }
+
+    [Fact]
+    public Task DontFilterFromMultilineHtmlAttributes()
+    {
+        var firstLine = "Hello this is a";
+        TestCode input = $$"""
+            <div class="{|HTML0005:{{firstLine}}|}
+                        multiline attribute" />
+            """;
+
+        return VerifyDiagnosticsAsync(input,
+            htmlResponse: [new VSInternalDiagnosticReport
+            {
+                Diagnostics =
+                [
+                    new LspDiagnostic
+                    {
+                        Code = HtmlErrorCodes.MismatchedAttributeQuotesErrorCode,
+                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf(firstLine), firstLine.Length))
+                    },
+                ]
+            }]);
+    }
+
     [Theory]
     [InlineData("", "\"")]
     [InlineData("", "'")]

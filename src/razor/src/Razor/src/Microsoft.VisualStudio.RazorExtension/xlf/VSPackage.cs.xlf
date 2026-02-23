@@ -42,6 +42,31 @@
         <target state="translated">Razor Syntax Visualizer</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_AttributeIndentStyleAlignWithFirst">
+        <source>Align with first attribute</source>
+        <target state="translated">Zarovnat s prvním atributem</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_AttributeIndentStyleDescription">
+        <source>Defines how Html and component tag attributes should be indented</source>
+        <target state="translated">Definuje, jak se mají odsazovat atributy značek HTML a komponent.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_AttributeIndentStyleDisplayName">
+        <source>Attribute Indent Style</source>
+        <target state="translated">Styl odsazení atributu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_AttributeIndentStyleIndentByOne">
+        <source>Indent by one level</source>
+        <target state="translated">Odsadit o jednu úroveň</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_AttributeIndentStyleIndentByTwo">
+        <source>Indent by two levels</source>
+        <target state="translated">Odsazení o dvě úrovně</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_AutoClosingTagsDescription">
         <source>If true, closing tags will be automatically inserted</source>
         <target state="translated">Při hodnotě true se budou automaticky vkládat uzavírací značky.</target>

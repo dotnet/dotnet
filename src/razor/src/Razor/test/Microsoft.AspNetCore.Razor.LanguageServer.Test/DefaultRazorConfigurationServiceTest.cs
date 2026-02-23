@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.CodeAnalysis.Razor.Settings;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -21,7 +22,7 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
     {
         // Arrange
         var expectedOptions = new RazorLSPOptions(
-            FormattingFlags.Disabled, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, AutoShowCompletion: true, AutoListParams: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CodeBlockBraceOnNextLine: true, CommitElementsWithSpace: false, TaskListDescriptors: []);
+            FormattingFlags.Disabled, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, AutoShowCompletion: true, AutoListParams: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CodeBlockBraceOnNextLine: true, AttributeIndentStyle: AttributeIndentStyle.AlignWithFirst, CommitElementsWithSpace: false, TaskListDescriptors: []);
         var razorJsonString =
             """
 
@@ -93,12 +94,13 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
     {
         // Arrange - purposely choosing options opposite of default
         var expectedOptions = new RazorLSPOptions(
-            FormattingFlags.Disabled, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, AutoShowCompletion: true, AutoListParams: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CodeBlockBraceOnNextLine: true, CommitElementsWithSpace: false, TaskListDescriptors: []);
+            FormattingFlags.Disabled, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, AutoShowCompletion: true, AutoListParams: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CodeBlockBraceOnNextLine: true, AttributeIndentStyle: AttributeIndentStyle.IndentByOne, CommitElementsWithSpace: false, TaskListDescriptors: []);
         var razorJsonString = """
             {
               "format": {
                 "enable": false,
-                "codeBlockBraceOnNextLine": true
+                "codeBlockBraceOnNextLine": true,
+                "attributeIndentStyle": "indentByOne"
               }
             }
 
@@ -130,7 +132,7 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
     {
         // Arrange - purposely choosing options opposite of default
         var expectedOptions = new RazorLSPOptions(
-            FormattingFlags.Enabled, AutoClosingTags: false, InsertSpaces: false, TabSize: 8, AutoShowCompletion: true, AutoListParams: true, AutoInsertAttributeQuotes: false, ColorBackground: false, CodeBlockBraceOnNextLine: false, CommitElementsWithSpace: false, TaskListDescriptors: []);
+            FormattingFlags.Enabled, AutoClosingTags: false, InsertSpaces: false, TabSize: 8, AutoShowCompletion: true, AutoListParams: true, AutoInsertAttributeQuotes: false, ColorBackground: false, CodeBlockBraceOnNextLine: false, CommitElementsWithSpace: false, AttributeIndentStyle: AttributeIndentStyle.IndentByOne, TaskListDescriptors: []);
         var razorJsonString = """
             {
             }
@@ -151,7 +153,8 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
                     "FormatOnType": false,
                     "AutoClosingTags": false,
                     "AutoInsertAttributeQuotes": false,
-                    "CommitElementsWithSpace": false
+                    "CommitElementsWithSpace": false,
+                    "AttributeIndentStyle": 1
                 }
             }
             """;
