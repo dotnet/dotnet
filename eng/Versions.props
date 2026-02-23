@@ -19,7 +19,7 @@
       'preview' produces assets with a '.final' branding suffix.
       'release' produces assets without a branding suffix.
     -->
-    <RepoDotNetFinalVersionKind>repodefault</RepoDotNetFinalVersionKind>
+    <RepoDotNetFinalVersionKind>preview</RepoDotNetFinalVersionKind>
 
     <!-- Arcade features -->
     <UseVSTestRunner>true</UseVSTestRunner>
