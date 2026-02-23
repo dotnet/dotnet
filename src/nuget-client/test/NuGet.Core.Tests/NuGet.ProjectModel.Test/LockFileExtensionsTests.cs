@@ -21,7 +21,6 @@ namespace NuGet.ProjectModel.Test
             assetsFile.Targets.Add(new LockFileTarget()
             {
                 TargetFramework = NuGetFramework.Parse("net45"),
-                TargetAlias = "net45"
             });
 
             assetsFile.Targets.Single().Libraries.Add(new LockFileTargetLibrary()
@@ -31,12 +30,11 @@ namespace NuGet.ProjectModel.Test
             });
 
             var expected = NuGetFramework.Parse("net45").DotNetFrameworkName;
-            var message = new AssetsLogMessage(LogLevel.Warning, NuGetLogCode.NU1103, "test", "net45");
+            var message = new AssetsLogMessage(LogLevel.Warning, NuGetLogCode.NU1103, "test", expected);
 
             var graphs = message.GetTargetGraphs(assetsFile);
 
             graphs.Select(e => e.Name).Should().BeEquivalentTo(new[] { expected });
-            graphs.Select(e => e.TargetAlias).Should().BeEquivalentTo(new[] { "net45" });
         }
 
         [Fact]
@@ -46,28 +44,24 @@ namespace NuGet.ProjectModel.Test
             assetsFile.Targets.Add(new LockFileTarget()
             {
                 TargetFramework = NuGetFramework.Parse("net45"),
-                TargetAlias = "net45"
             });
 
             assetsFile.Targets.Add(new LockFileTarget()
             {
                 TargetFramework = NuGetFramework.Parse("net46"),
-                RuntimeIdentifier = "win8",
-                TargetAlias = "net46"
+                RuntimeIdentifier = "win8"
             });
 
             var expected1 = NuGetFramework.Parse("net45").DotNetFrameworkName;
             var expected2 = NuGetFramework.Parse("net46").DotNetFrameworkName + "/win8";
             var message = new AssetsLogMessage(LogLevel.Warning, NuGetLogCode.NU1103, "test")
             {
-                TargetGraphs = new[] { "net45", "net46/win8" }
+                TargetGraphs = new[] { expected1, expected2 }
             };
 
             var graphs = message.GetTargetGraphs(assetsFile);
 
             graphs.Select(e => e.Name).Should().BeEquivalentTo(new[] { expected1, expected2 });
-            graphs.Select(e => e.TargetAlias).Should().BeEquivalentTo(new[] { "net45", "net46" });
-            graphs.Select(e => e.RuntimeIdentifier).Should().BeEquivalentTo(new[] { null, "win8" });
         }
 
         [Fact]
@@ -123,12 +117,9 @@ namespace NuGet.ProjectModel.Test
         public void GivenALogMessageVerifyTargetGraphLibraryIsReturned()
         {
             var assetsFile = new LockFile();
-            var targetAlias = "net45";
             assetsFile.Targets.Add(new LockFileTarget()
             {
-                TargetFramework = NuGetFramework.Parse(targetAlias),
-                TargetAlias = targetAlias
-
+                TargetFramework = NuGetFramework.Parse("net45"),
             });
 
             assetsFile.Targets.Single().Libraries.Add(new LockFileTargetLibrary()
@@ -137,7 +128,8 @@ namespace NuGet.ProjectModel.Test
                 Version = NuGetVersion.Parse("1.0.0")
             });
 
-            var message = new AssetsLogMessage(LogLevel.Warning, NuGetLogCode.NU1103, "test", targetAlias);
+            var expected = NuGetFramework.Parse("net45").DotNetFrameworkName;
+            var message = new AssetsLogMessage(LogLevel.Warning, NuGetLogCode.NU1103, "test", expected);
 
             var graphs = message.GetTargetGraphs(assetsFile);
 

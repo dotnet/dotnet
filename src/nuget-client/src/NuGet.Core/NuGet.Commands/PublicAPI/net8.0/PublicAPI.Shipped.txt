@@ -182,6 +182,7 @@ NuGet.Commands.IRestoreTargetGraph.InConflict.get -> bool
 ~NuGet.Commands.IRestoreTargetGraph.ResolvedDependencies.get -> System.Collections.Generic.ISet<NuGet.Commands.ResolvedDependencyKey>
 ~NuGet.Commands.IRestoreTargetGraph.RuntimeGraph.get -> NuGet.RuntimeModel.RuntimeGraph
 ~NuGet.Commands.IRestoreTargetGraph.RuntimeIdentifier.get -> string
+~NuGet.Commands.IRestoreTargetGraph.TargetAlias.get -> string
 ~NuGet.Commands.IRestoreTargetGraph.TargetGraphName.get -> string
 ~NuGet.Commands.IRestoreTargetGraph.Unresolved.get -> System.Collections.Generic.ISet<NuGet.LibraryModel.LibraryRange>
 NuGet.Commands.ISignCommandRunner
@@ -652,6 +653,7 @@ NuGet.Commands.RestoreTargetGraph.InConflict.get -> bool
 ~NuGet.Commands.RestoreTargetGraph.ResolvedDependencies.get -> System.Collections.Generic.ISet<NuGet.Commands.ResolvedDependencyKey>
 ~NuGet.Commands.RestoreTargetGraph.RuntimeGraph.get -> NuGet.RuntimeModel.RuntimeGraph
 ~NuGet.Commands.RestoreTargetGraph.RuntimeIdentifier.get -> string
+~NuGet.Commands.RestoreTargetGraph.TargetAlias.get -> string
 ~NuGet.Commands.RestoreTargetGraph.TargetGraphName.get -> string
 ~NuGet.Commands.RestoreTargetGraph.Unresolved.get -> System.Collections.Generic.ISet<NuGet.LibraryModel.LibraryRange>
 NuGet.Commands.SignArgs

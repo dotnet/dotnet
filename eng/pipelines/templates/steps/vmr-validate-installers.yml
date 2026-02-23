@@ -34,6 +34,19 @@ steps:
 - task: NuGetAuthenticate@1
   displayName: 'Authenticate to AzDO Feeds'
 
+- ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+  - task: PowerShell@2
+    displayName: Setup Internal Feeds (scenario-tests)
+    inputs:
+      targetType: 'inline'
+      script: |
+        $setupScript = "$(Build.SourcesDirectory)/src/scenario-tests/eng/common/SetupNugetSources.ps1"
+        $nugetConfigFile = Get-ChildItem -Path "$(Build.SourcesDirectory)/src/scenario-tests" -Filter "nuget.config" -File | Select-Object -First 1
+        $nugetConfig = if ($nugetConfigFile) { $nugetConfigFile.FullName } else { "$(Build.SourcesDirectory)/src/scenario-tests/NuGet.config" }
+        & $setupScript $nugetConfig $env:Token
+    env:
+      Token: $(dn-bot-dnceng-artifact-feeds-rw)
+
 - ${{ if eq(parameters.OS, 'Linux') }}:
   - script: ./build.sh --ci -t --projects $(Build.SourcesDirectory)/test/Microsoft.DotNet.Installer.Tests/Microsoft.DotNet.Installer.Tests.csproj /p:TestRpmPackages=true /p:TestDebPackages=true
     displayName: Validate installer packages

@@ -61,7 +61,7 @@
       </trans-unit>
       <trans-unit id="IconUrlDeprecationWarning">
         <source>The 'PackageIconUrl'/'iconUrl' element is deprecated. Consider using the 'PackageIcon'/'icon' element instead. Learn more at https://aka.ms/deprecateIconUrl</source>
-        <target state="translated">El elemento "PackageIconUrl"/"iconUrl" está en desuso. Considere la posibilidad de usar el elemento "PackageIcon"/"icon" en su lugar. Encontrará más información en https://aka.ms/deprecateIconUrl.</target>
+        <target state="translated">El elemento "PackageIconUrl"/"iconUrl" está en desuso. Considere la posibilidad de usar el elemento "PackageIcon"/"icon" en su lugar. Obtenga más información en https://aka.ms/deprecateIconUrl</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidFrameworkWarning">

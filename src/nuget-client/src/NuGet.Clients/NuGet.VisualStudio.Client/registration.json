@@ -121,7 +121,7 @@
         }
       }
     },
-    "nuGetPackageManager.packageSources.externalSettings": {
+    "nuGetPackageManager.sources.externalSettings": {
       "type": "external",
       "title": "@114;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
       "backingStoreDescription": "@SettingsStoredInNuGetConfiguration;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
@@ -137,10 +137,9 @@
       // Their values are retrieved via IExternalSettingsProvider.GetValueAsync; when the user edits them, the new values are passed to
       // IExternalSettingsProvider.SetValueAsync.
       "properties": {
-        "packageSources": {
+        "packageSources.notMachineWide": {
           "type": "array",
           "title": "@Text_PackageSources_NotMachineWide;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
-          "description": "@Text_PackageSources_Description;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
 
           // Metadata about items in this array
           "items": {
@@ -207,11 +206,16 @@
           "allowItemEditing": true,
           "allowAdditionsAndRemovals": true
         },
-        "auditSources": {
+        "nuGetAudit.enableCheckbox": {
+          "type": "boolean",
+          "title": "@Text_AuditSources_Checkbox;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "helpUri": "https://learn.microsoft.com/nuget/concepts/auditing-packages",
+          "visibleWhen": "${config:nuGetAudit.auditSources} == '[]'"
+        },
+        "nuGetAudit.auditSources": {
           "type": "array",
           "title": "@Text_AuditSources_Title;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
-          "description": "@Text_AuditSources_Description;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
-          "helpUri": "https://learn.microsoft.com/nuget/concepts/auditing-packages",
+          "visibleWhen": "${config:nuGetAudit.enableCheckbox}",
 
           // Metadata about items in this array
           "items": {
@@ -259,16 +263,15 @@
           "messages": [
             {
               "text": "@Text_AuditSources_HowToRemove;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
-              "visibleWhen": "${config:auditSources} != '[]'"
+              "visibleWhen": "${config:nuGetAudit.auditSources} != '[]'"
             }
           ]
         },
-
-        "machineWidePackageSources": {
+        "machineWide.machineWidePackageSources": {
           "type": "array",
           "title": "@Text_PackageSources_MachineWide;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
           // Don't show Machine-wide Package Sources section when empty.
-          "visibleWhen": "${config:machineWidePackageSources} != '[]'",
+          "visibleWhen": "${config:machineWide.machineWidePackageSources} != '[]'",
 
           // Metadata about items in this array
           "items": {
@@ -297,6 +300,23 @@
           "default": [],
           "allowItemEditing": false,
           "allowAdditionsAndRemovals": false
+        }
+      },
+      "categories": {
+        "packageSources": {
+          "title": "@Text_PackageSources_NotMachineWide;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "description": "@Text_PackageSources_Description;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "helpUri": "https://learn.microsoft.com/nuget/consume-packages/nuget-visual-studio-options#package-sources"
+        },
+        "nuGetAudit": {
+          "title": "@Text_AuditSources_Title;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "description": "@Text_AuditSources_Description;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "helpUri": "https://learn.microsoft.com/nuget/consume-packages/nuget-visual-studio-options#audit-sources"
+        },
+        "machineWide": {
+          "title": "@Text_PackageSources_MachineWide;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "description": "@Text_MachineWidePackageSource_Description;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "helpUri": "https://learn.microsoft.com/nuget/consume-packages/nuget-visual-studio-options#machine-wide-package-sources"
         }
       }
     },
@@ -393,7 +413,7 @@
       "legacyOptionPageId": "C17B308A-00BB-446E-9212-2D14E1005985", // Corresponds to the GUID defined in OptionsPageActivator.cs for ConfigurationFilesPage
       "order": 1
     },
-    "nuGetPackageManager.packageSources": {
+    "nuGetPackageManager.sources": {
       "title": "@114;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
       "legacyOptionPageId": "2819C3B6-FC75-4CD5-8C77-877903DE864C", // Corresponds to the GUID defined in OptionsPageActivator.cs for PackageSourcesPage
       "order": 2

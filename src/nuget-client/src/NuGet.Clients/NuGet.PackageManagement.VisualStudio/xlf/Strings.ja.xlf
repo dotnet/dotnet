@@ -229,7 +229,7 @@
       </trans-unit>
       <trans-unit id="Text_DeprecatedFramework_DocumentLink_After">
         <source>.</source>
-        <target state="translated">。</target>
+        <target state="translated">.</target>
         <note>This test goes immediately after the document link.</note>
       </trans-unit>
       <trans-unit id="Text_DeprecatedFramework_DocumentLink_Before">
