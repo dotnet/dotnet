@@ -83,6 +83,7 @@ NuGet.Configuration.IPackageSourceProvider.LoadPackageSources() -> System.Collec
 NuGet.Configuration.IPackageSourceProvider.PackageSourcesChanged -> System.EventHandler?
 NuGet.Configuration.IPackageSourceProvider.RemovePackageSource(string! name) -> void
 NuGet.Configuration.IPackageSourceProvider.SaveActivePackageSource(NuGet.Configuration.PackageSource! source) -> void
+NuGet.Configuration.IPackageSourceProvider.SaveAuditSources(System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource!>! sources) -> void
 NuGet.Configuration.IPackageSourceProvider.SavePackageSources(System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource!>! sources) -> void
 NuGet.Configuration.IPackageSourceProvider.UpdatePackageSource(NuGet.Configuration.PackageSource! source, bool updateCredentials, bool updateEnabled) -> void
 NuGet.Configuration.IProxyCache
@@ -212,6 +213,7 @@ NuGet.Configuration.PackageSourceProvider.PackageSourceProvider(NuGet.Configurat
 NuGet.Configuration.PackageSourceProvider.PackageSourcesChanged -> System.EventHandler?
 NuGet.Configuration.PackageSourceProvider.RemovePackageSource(string! name) -> void
 NuGet.Configuration.PackageSourceProvider.SaveActivePackageSource(NuGet.Configuration.PackageSource! source) -> void
+NuGet.Configuration.PackageSourceProvider.SaveAuditSources(System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource!>! sources) -> void
 NuGet.Configuration.PackageSourceProvider.SavePackageSources(System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource!>! sources) -> void
 NuGet.Configuration.PackageSourceProvider.Settings.get -> NuGet.Configuration.ISettings!
 NuGet.Configuration.PackageSourceProvider.UpdatePackageSource(NuGet.Configuration.PackageSource! source, bool updateCredentials, bool updateEnabled) -> void

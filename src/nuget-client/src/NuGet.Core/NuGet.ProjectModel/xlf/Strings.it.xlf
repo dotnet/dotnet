@@ -19,7 +19,7 @@
       </trans-unit>
       <trans-unit id="Invalid_AttributeValue">
         <source>The {0} value: `{1}` is invalid. Valid example: `{2}`</source>
-        <target state="translated">Il valore{0} {1} non è valido. Esempio valido: `{2}`</target>
+        <target state="translated">Il valore {0}: '{1}' non è valido. Esempio valido: '{2}'</target>
         <note>{0} - is the attribute
 {1} is the invalid value of the attribute.
 {2} a valid attriibute value example</note>

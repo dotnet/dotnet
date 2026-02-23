@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
         <source>Argument cannot be null or empty</source>
-        <target state="translated">O argumento não pode ser nulo ou vazio</target>
+        <target state="translated">O argumento não pode ser nulo nem estar vazio</target>
         <note />
       </trans-unit>
       <trans-unit id="CreatedDependencyGraphSpec">

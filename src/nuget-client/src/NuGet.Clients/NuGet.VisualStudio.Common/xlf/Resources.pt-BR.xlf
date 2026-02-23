@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
         <source>Argument cannot be null or empty</source>
-        <target state="translated">O argumento não pode ser nulo ou vazio</target>
+        <target state="translated">O argumento não pode ser nulo nem estar vazio</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Invalid_GUID">
@@ -34,7 +34,7 @@
       </trans-unit>
       <trans-unit id="Text_PackageFormatSelection_Solution">
         <source>Select the NuGet package manager format for this Solution</source>
-        <target state="translated">Selecione o formato do gerenciador de pacotes do NuGet para este Solution</target>
+        <target state="translated">Selecione o formato do gerenciador de pacotes do NuGet para esta Solução</target>
         <note />
       </trans-unit>
     </body>

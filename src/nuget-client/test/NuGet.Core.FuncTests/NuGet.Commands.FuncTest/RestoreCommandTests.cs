@@ -4247,6 +4247,111 @@ namespace NuGet.Commands.FuncTest
             restoreTargetGraph.TargetAlias.Should().Be(alias);
         }
 
+        [Fact]
+        public async Task RestoreCommand_WithAliasedFramework_SuppressesWithPackageSpecificNoWarn()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Setup packages
+            var packageA = new SimpleTestPackageContext("packageA", "1.0.0");
+            packageA.AddFile("lib/net45/a.dll");
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageA);
+
+            var rootProject = @"
+        {
+          ""frameworks"": {
+            ""net10.0-windows7.0"": {
+                ""targetAlias"": ""net10.0-windows"",
+                ""dependencies"": {
+                        ""packageA"": {
+                            ""version"": ""[1.0.0,)"",
+                            ""target"": ""Package"",
+                            ""noWarn"": [
+                              ""NU1701""
+                            ]
+                        },
+                },
+                ""imports"": [
+                  ""net481""
+                ],
+                ""assetTargetFallback"": true,
+                ""warn"": true,
+            }
+          }
+        }";
+
+
+            // Setup project
+            var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, rootProject);
+
+            // Act & Assert
+            var result = await RunRestoreAsync(pathContext, projectSpec);
+            result.LockFile.Targets.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries[0].Name.Should().Be("packageA");
+            result.LockFile.Targets[0].Libraries[0].Version.Should().Be(new NuGetVersion("1.0.0"));
+            result.LockFile.LogMessages.Should().HaveCount(0);
+        }
+
+
+        [Fact]
+        public async Task RestoreCommand_WithAliasedFramework_SuppressesProjectSpecificNoWarn()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Setup packages
+            var packageA = new SimpleTestPackageContext("packageA", "1.0.0");
+            packageA.AddFile("lib/net45/a.dll");
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageA);
+
+            var rootProject = @"
+        {
+          ""frameworks"": {
+            ""net10.0-windows7.0"": {
+                ""targetAlias"": ""net10.0-windows"",
+                ""dependencies"": {
+                        ""packageA"": {
+                            ""version"": ""[1.0.0,)"",
+                            ""target"": ""Package""
+                        },
+                },
+                ""imports"": [
+                  ""net481""
+                ],
+                ""assetTargetFallback"": true,
+                ""warn"": true,
+            }
+          },
+        ""restore"": {
+            ""warningProperties"": {
+                ""noWarn"": [
+                  ""NU1701""
+                ]
+            }
+        }
+        }";
+
+
+            // Setup project
+            var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, rootProject);
+
+            // Act & Assert
+            var result = await RunRestoreAsync(pathContext, projectSpec);
+            result.LockFile.Targets.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries[0].Name.Should().Be("packageA");
+            result.LockFile.Targets[0].Libraries[0].Version.Should().Be(new NuGetVersion("1.0.0"));
+            result.LockFile.LogMessages.Should().HaveCount(0);
+        }
+
         private static void CreateFakeProjectFile(PackageSpec project2spec)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(project2spec.RestoreMetadata.ProjectUniqueName));

@@ -6,7 +6,6 @@ schedules:
     # They can be removed once released as the pipeline triggers below will handle the branches after release.
     include:
     - main
-    - release/*.0.2xx*
     - release/*.0.3xx*
     - release/*.0.4xx*
 

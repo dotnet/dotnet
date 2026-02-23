@@ -24,17 +24,17 @@
       </trans-unit>
       <trans-unit id="HttpWarningIcon.AccessibleDescription">
         <source>HTTP Warning Icon</source>
-        <target state="translated">HTTP Uyarı simgesi</target>
+        <target state="translated">HTTP Uyarı Simgesi</target>
         <note />
       </trans-unit>
       <trans-unit id="HttpWarningIcon.AccessibleName">
         <source>HTTP Warning Icon</source>
-        <target state="translated">HTTP Uyarı simgesi</target>
+        <target state="translated">HTTP Uyarı Simgesi</target>
         <note />
       </trans-unit>
       <trans-unit id="MachineWidePackageSourcesListBox.AccessibleName">
         <source>Machine-wide package sources</source>
-        <target state="translated">Makine genelindeki paket kaynakları:</target>
+        <target state="translated">Makine genelindeki paket kaynakları</target>
         <note />
       </trans-unit>
       <trans-unit id="MachineWideSourcesLabel.Text">

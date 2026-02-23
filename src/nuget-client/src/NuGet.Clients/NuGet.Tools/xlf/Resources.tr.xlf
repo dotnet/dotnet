@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="tr" original="../Resources.resx">
     <body>
@@ -132,6 +132,11 @@
         <target state="translated">Güvenli Olmayan Bağlantılara İzin Ver</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_AuditSources_Checkbox">
+        <source>Use separate sources for vulnerability audit</source>
+        <target state="translated">Güvenlik açığı denetimi için ayrı kaynaklar kullan</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_AuditSources_Description">
         <source>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</source>
         <target state="translated">Denetim kaynakları, paket kaynağı olarak işlev görmeden geri yükleme sırasında güvenlik açığı verilerini sağlar. Denetim kaynağı yapılandırılmadıysa, NuGet Denetimi paket kaynaklarını kullanır. [Denetim kaynakları hakkında daha fazla bilgi edinin](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
@@ -170,6 +175,11 @@
       <trans-unit id="Text_HttpSource_Warning">
         <source>HTTP sources are insecure. Consider using HTTPS instead. 'AllowInsecureConnections' is enabled, permitting HTTP access. For more secure options, see [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere).</source>
         <target state="translated">HTTP kaynakları güvenli değil. Bunun yerine HTTPS kullanmayı düşünün. 'AllowInsecureConnections' etkinleştirildi ve HTTP erişimine izin verildi. Daha güvenli seçenekler için [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere) adresine bakın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_MachineWidePackageSource_Description">
+        <source>Machine‑wide package sources are provisioned by Visual Studio workloads and can only be enabled or disabled.</source>
+        <target state="translated">Makine genelinde paket kaynakları Visual Studio iş yükleri tarafından sağlanır ve yalnızca etkinleştirilebilir veya devre dışı bırakılabilir.</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageSourceEnabled_Header">

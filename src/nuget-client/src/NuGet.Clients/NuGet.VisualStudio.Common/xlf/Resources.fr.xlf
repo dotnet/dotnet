@@ -34,7 +34,7 @@
       </trans-unit>
       <trans-unit id="Text_PackageFormatSelection_Solution">
         <source>Select the NuGet package manager format for this Solution</source>
-        <target state="translated">Sélectionner le format du gestionnaire de package NuGet pour cette Solution</target>
+        <target state="translated">Sélectionner le format du gestionnaire de package NuGet pour cette solution</target>
         <note />
       </trans-unit>
     </body>

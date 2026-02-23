@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="AddCommand_PackageAlreadyExists">
         <source>Package '{0}' already exists at feed '{1}'.</source>
-        <target state="translated">Pakiet „{0}” już istnieje w kanale informacyjnym „{1}”.</target>
+        <target state="translated">Pakiet „{0}” już istnieje w źródle danych „{1}”.</target>
         <note />
       </trans-unit>
       <trans-unit id="AddCommand_SourceNotProvided">
@@ -599,7 +599,7 @@ Możesz ustawić zmienną środowiskową „{1}” na wartość „true”, aby 
       </trans-unit>
       <trans-unit id="OutputNuGetVersion">
         <source>{0} Version: {1}</source>
-        <target state="translated">wersja{0} : {1}</target>
+        <target state="translated">{0} wersja {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageCommandAddedFile">

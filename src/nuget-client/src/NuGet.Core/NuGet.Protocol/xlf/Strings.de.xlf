@@ -9,12 +9,12 @@
       </trans-unit>
       <trans-unit id="AddPackage_PackageAlreadyExists">
         <source>Package '{0}' already exists at feed '{1}'.</source>
-        <target state="translated">Das Paket "{0}" ist bereits in Feed "{1}" vorhanden.</target>
+        <target state="translated">Das Paket "{0}" ist bereits im Feed "{1}" vorhanden.</target>
         <note />
       </trans-unit>
       <trans-unit id="AddPackage_SuccessfullyAdded">
         <source>Successfully added package '{0}' to feed '{1}'.</source>
-        <target state="translated">Das Paket "{0}" wurde erfolgreich zum Feed "{1}" hinzugefügt.</target>
+        <target state="translated">Das Paket "{0}" wurde dem Feed "{1}" erfolgreich hinzugefügt.</target>
         <note />
       </trans-unit>
       <trans-unit id="ArgumentCannotBeNullOrEmpty">
@@ -34,7 +34,7 @@
       </trans-unit>
       <trans-unit id="DeleteCommandCanceled">
         <source>Delete canceled</source>
-        <target state="translated">Löschvorgang abgebrochen</target>
+        <target state="translated">Löschvorgang abgebrochen.</target>
         <note />
       </trans-unit>
       <trans-unit id="DeleteCommandConfirm">
@@ -457,7 +457,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_InvalidXml">
         <source>The content at '{0}' is not valid XML.</source>
-        <target state="translated">Der Inhalt unter "{0}" ist keine gültige XML.</target>
+        <target state="translated">Der Inhalt unter "{0}" ist kein gültiges XML.</target>
         <note />
       </trans-unit>
       <trans-unit id="Protocol_MalformedMetadataError">
@@ -467,7 +467,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_MissingSearchService">
         <source>The source does not have a Search service!</source>
-        <target state="translated">Die Quelle besitzt keinen Suchdienst.</target>
+        <target state="translated">Die Quelle weist keinen Suchdienst auf.</target>
         <note />
       </trans-unit>
       <trans-unit id="Protocol_MissingVersion">
@@ -487,7 +487,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_UnsupportedVersion">
         <source>The source version is not supported: '{0}'.</source>
-        <target state="translated">Die Quellversion wird nicht unterstützt: "{0}".</target>
+        <target state="translated">Die Quellversion wird nicht unterstützt: {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Protocol_duplicateUri">

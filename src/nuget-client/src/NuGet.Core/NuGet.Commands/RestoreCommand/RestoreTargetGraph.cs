@@ -81,7 +81,7 @@ namespace NuGet.Commands
             RuntimeGraph = runtimeGraph;
             Framework = framework;
             Graphs = graphs;
-            TargetGraphName = string.IsNullOrEmpty(TargetAlias) ? FrameworkRuntimePair.GetTargetGraphName(Framework, RuntimeIdentifier) : GetTargetGraphName(TargetAlias, RuntimeIdentifier);
+            TargetGraphName = FrameworkRuntimePair.GetTargetGraphName(Framework, RuntimeIdentifier);
             Conventions = new ManagedCodeConventions(runtimeGraph);
 
             Install = install;

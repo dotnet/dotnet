@@ -379,7 +379,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file.</source>
-        <target state="translated">NuGet에 HTTPS 원본이 필요합니다. HTTP 소스를 사용하려면 NuGet.Config 파일에서 'allowInsecureConnections'를 명시적으로 true로 설정해야 합니다.</target>
+        <target state="translated">NuGet에 HTTPS 원본이 필요합니다. HTTP 원본을 사용하려면 NuGet.Config 파일에서 'allowInsecureConnections'를 명시적으로 true로 설정해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_MetadataNotFound">
@@ -933,17 +933,17 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueName">
         <source>The name specified has already been added to the list of available package sources. Please provide a unique name.</source>
-        <target state="translated">지정한 이름은 이미 사용 가능한 패키지 소스 목록에 추가되어 있습니다. 고유한 이름을 제공하십시오.</target>
+        <target state="translated">지정한 이름은 이미 사용 가능한 패키지 소스 목록에 추가되어 있습니다. 고유한 이름을 제공하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueSource">
         <source>The source specified has already been added to the list of available package sources. Please provide a unique source.</source>
-        <target state="translated">지정한 소스는 이미 사용 가능한 패키지 소스 목록에 추가되어 있습니다. 고유한 소스를 제공하십시오.</target>
+        <target state="translated">지정한 소스는 이미 사용 가능한 패키지 소스 목록에 추가되어 있습니다. 고유한 소스를 제공하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Canceled">
         <source>Canceled loading packages</source>
-        <target state="translated">패키지 로드를 취소함</target>
+        <target state="translated">패키지 로드가 취소됨</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_ErrorOccurred">
