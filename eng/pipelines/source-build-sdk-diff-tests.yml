@@ -74,3 +74,4 @@ extends:
     - template: /eng/pipelines/templates/stages/source-build-sdk-diff-tests.yml@self
       parameters:
         dotnetDotnetRunId: ${{ parameters.dotnetDotnetRunId }}
+        excludeRuntimeDependentJobs: true
