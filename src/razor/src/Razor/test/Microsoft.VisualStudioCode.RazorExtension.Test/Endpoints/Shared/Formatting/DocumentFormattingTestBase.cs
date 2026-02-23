@@ -37,6 +37,7 @@ public abstract class DocumentFormattingTestBase(ITestOutputHelper testOutputHel
         int tabSize = 4,
         bool allowDiagnostics = false,
         bool debugAssertsEnabled = true,
+        bool validateHtmlFormattedMatchesWebTools = true,
         RazorCSharpSyntaxFormattingOptions? csharpSyntaxFormattingOptions = null,
         (string fileName, string contents)[]? additionalFiles = null)
     {
@@ -72,18 +73,21 @@ public abstract class DocumentFormattingTestBase(ITestOutputHelper testOutputHel
         var htmlChanges = SourceText.From(htmlFormatted).GetTextChanges(source);
         htmlEdits = [.. htmlChanges.Select(source.GetTextEdit)];
 
+        if (validateHtmlFormattedMatchesWebTools)
+        {
 #if NETFRAMEWORK
-        var htmlFormattingService = new HtmlFormattingService();
-        // Lets make sure everything is working as we expect in our tests
-        var htmlEditsResult = await htmlFormattingService.GetDocumentFormattingEditsAsync(LoggerFactory, uri, generatedHtml, insertSpaces, tabSize);
-        var htmlChangesResult = htmlEditsResult.Select(source.GetTextChange);
+            var htmlFormattingService = new HtmlFormattingService();
+            // Lets make sure everything is working as we expect in our tests
+            var htmlEditsResult = await htmlFormattingService.GetDocumentFormattingEditsAsync(LoggerFactory, uri, generatedHtml, insertSpaces, tabSize);
+            var htmlChangesResult = htmlEditsResult.Select(source.GetTextChange);
 
-        var htmlEdited = source.WithChanges(htmlChanges);
-        var htmlEditedLegacy = source.WithChanges(htmlChangesResult ?? []);
-        Assert.Equal(htmlEdited.ToString(), htmlEditedLegacy.ToString());
-        Assert.Equal(htmlFormatted, htmlEditedLegacy.ToString());
-        Assert.Equal(htmlFormatted, htmlEdited.ToString());
+            var htmlEdited = source.WithChanges(htmlChanges);
+            var htmlEditedLegacy = source.WithChanges(htmlChangesResult ?? []);
+            AssertEx.EqualOrDiff(htmlEdited.ToString(), htmlEditedLegacy.ToString());
+            AssertEx.EqualOrDiff(htmlFormatted, htmlEditedLegacy.ToString());
+            AssertEx.EqualOrDiff(htmlFormatted, htmlEdited.ToString());
 #endif
+        }
 
         var span = input.TryGetNamedSpans(string.Empty, out var spans)
             ? spans.First()

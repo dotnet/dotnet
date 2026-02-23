@@ -14,7 +14,6 @@ using NuGet.CommandLine.XPlat.Utility;
 using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
-using NuGet.Frameworks;
 using NuGet.Packaging.Core;
 using NuGet.ProjectModel;
 using NuGet.Protocol;
@@ -169,18 +168,11 @@ internal class PackageUpdateIO : IPackageUpdateIO, IDisposable
     {
         PackageDependency packageDependency = new PackageDependency(packageToUpdate.Id, packageToUpdate.NewVersion);
 
-        List<NuGetFramework> packageTfms = new List<NuGetFramework>(packageTfmAliases.Count);
-        foreach (var alias in packageTfmAliases)
-        {
-            var targetFramework = updatedPackageSpec.TargetFrameworks.Single(tfm => tfm.TargetAlias == alias);
-            packageTfms.Add(targetFramework.FrameworkName);
-        }
-
         var restoreResult = (RestoreResult)restorePreviewResult;
         var restoreResultPair = restoreResult.RestoreResultPairs.Single(pair =>
             string.Equals(pair.SummaryRequest.Request.Project.FilePath, updatedPackageSpec.FilePath, StringComparison.OrdinalIgnoreCase));
 
-        if (!AddPackageReferenceCommandRunner.TryFindResolvedVersion(packageTfms,
+        if (!AddPackageReferenceCommandRunner.TryFindResolvedVersion(packageTfmAliases,
             packageDependency.Id,
             restoreResultPair.Result,
             logger,
@@ -200,18 +192,14 @@ internal class PackageUpdateIO : IPackageUpdateIO, IDisposable
         const bool noVersion = false;
 
         // Determine whether to add package reference conditionally or unconditionally
-        if (packageTfms.Count == updatedPackageSpec.TargetFrameworks.Count)
+        if (packageTfmAliases.Count == updatedPackageSpec.TargetFrameworks.Count)
         {
             // package is used by all project TFMs (no condition)
             _msbuildUtility.AddPackageReference(updatedPackageSpec.FilePath, libraryDependency, noVersion);
         }
         else
         {
-            var frameworkAliases = packageTfms
-                .Select(e => AddPackageReferenceCommandRunner.GetAliasForFramework(updatedPackageSpec, e))
-                .Where(originalFramework => originalFramework != null);
-
-            _msbuildUtility.AddPackageReferencePerTFM(updatedPackageSpec.FilePath, libraryDependency, frameworkAliases, noVersion);
+            _msbuildUtility.AddPackageReferencePerTFM(updatedPackageSpec.FilePath, libraryDependency, packageTfmAliases, noVersion);
         }
     }
 
