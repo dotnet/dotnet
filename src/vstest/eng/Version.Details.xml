@@ -10,7 +10,11 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>a8b46ab052618a946f8b728e7ffa6566ef7c094b</Sha>
     </Dependency>
-    <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
+    <!-- Necessary for source-build. This allows the live version of the targeting pack to be used by source-build. -->
+    <Dependency Name="Microsoft.NETCore.App.Ref" Version="11.0.0-preview.1.26069.103">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>adf42f5dcec99a409a6f63355f5b52147bfaf043</Sha>
+    </Dependency>
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
     <Dependency Name="Microsoft.Extensions.DependencyModel" Version="6.0.2">
       <Uri>https://github.com/dotnet/runtime</Uri>
