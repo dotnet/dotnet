@@ -64,7 +64,7 @@
 
   <ItemGroup Condition=" '$(HelixAccessToken)' != '' ">
     <HelixTargetQueue Include="(AlmaLinux.9.Amd64)Ubuntu.2204.Amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64"/>
-    <HelixTargetQueue Include="Windows.11.Amd64"/>
+    <HelixTargetQueue Include="Windows.11.Amd64.Client"/>
     <HelixTargetQueue Include="(Debian.13.Amd64)ubuntu.2204.amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-13-helix-amd64"/>
   </ItemGroup>
 
