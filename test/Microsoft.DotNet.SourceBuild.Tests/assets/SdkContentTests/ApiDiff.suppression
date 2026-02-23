@@ -224,6 +224,12 @@
     <Right>/sb/sdk/x.y.z/Spectre.Console.dll</Right>
   </Suppression>
   <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>System.IO.Hashing, Version=x.y.z, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51</Target>
+    <Left>/msft/sdk/x.y.z/System.IO.Hashing.dll</Left>
+    <Right>/sb/sdk/x.y.z/System.IO.Hashing.dll</Right>
+  </Suppression>
+  <Suppression>
     <DiagnosticId>CP0008</DiagnosticId>
     <Target>T:Newtonsoft.Json.Bson.BsonReader</Target>
     <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
