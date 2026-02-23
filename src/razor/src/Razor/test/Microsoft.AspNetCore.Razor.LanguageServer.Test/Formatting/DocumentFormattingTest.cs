@@ -19,6 +19,46 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentFormattingTestBase(testOutput)
 {
     [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/9658#issuecomment-3943605712")]
+    public async Task MultilineIfStatement()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <div>
+                    @if (true ||
+                        true ||
+                        true ||
+                        true)
+                        {
+                            // Hi
+                        }
+                    </div>
+                """,
+            htmlFormatted: """
+                <div>
+                    @if (true ||
+                    true ||
+                    true ||
+                    true)
+                    {
+                    // Hi
+                    }
+                </div>
+                """,
+            expected: """
+                <div>
+                    @if (true ||
+                        true ||
+                        true ||
+                        true)
+                    {
+                        // Hi
+                    }
+                </div>
+                """);
+    }
+
+    [Fact]
     [WorkItem("https://developercommunity.visualstudio.com/t/Format-Document-in-a-blazor-documents-ad/11046727")]
     public async Task MultilineRawStringLiteral()
     {
@@ -10302,6 +10342,169 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
             attributeIndentStyle: AttributeIndentStyle.IndentByTwo);
 
     [Fact]
+    internal Task PreTag_InIf()
+        => RunFormattingTestAsync(
+            input: """
+                @if (true)
+                {
+                    <pre>
+                    a
+                        @if (true)
+                        {
+                        b
+                            }
+                            c
+                    </pre>
+                }
+                """,
+            htmlFormatted: """
+                @if (true)
+                {
+                <pre>
+                    a
+                        @if (true)
+                        {
+                        b
+                            }
+                            c
+                    </pre>
+                }
+                """,
+            expected: """
+                @if (true)
+                {
+                    <pre>
+                    a
+                        @if (true)
+                        {
+                        b
+                            }
+                            c
+                    </pre>
+                }
+                """);
+
+    [Fact]
+    internal Task PreTag()
+        => RunFormattingTestAsync(
+            input: """
+                <pre>
+                    a
+                        @if (true)
+                        {
+                        b
+                            }
+                            c
+                    </pre>
+                """,
+            htmlFormatted: """
+                <pre>
+                    a
+                        @if (true)
+                        {
+                        b
+                            }
+                            c
+                    </pre>
+                """,
+            expected: """
+                <pre>
+                    a
+                        @if (true)
+                        {
+                        b
+                            }
+                            c
+                    </pre>
+                """);
+
+    [Fact]
+    internal Task PreTag_Nested()
+        => RunFormattingTestAsync(
+            input: """
+                <div>
+                    <pre>
+                            a
+                                @if (true)
+                                {
+                                b
+                                    }
+                                    c
+                        </pre>
+                </div>
+                """,
+            htmlFormatted: """
+                <div>
+                    <pre>
+                            a
+                                @if (true)
+                                {
+                                b
+                                    }
+                                    c
+                        </pre>
+                </div>
+                """,
+            expected: """
+                <div>
+                    <pre>
+                            a
+                                @if (true)
+                                {
+                                b
+                                    }
+                                    c
+                        </pre>
+                </div>
+                """);
+
+    [Fact]
+    internal Task PreTag_WithAttributes()
+        => RunFormattingTestAsync(
+            input: """
+                <pre class="code"
+                                    id="foo">some content
+                           more content</pre>
+                """,
+            htmlFormatted: """
+                <pre class="code"
+                     id="foo">some content
+                           more content</pre>
+                """,
+            expected: """
+                <pre class="code"
+                     id="foo">some content
+                           more content</pre>
+                """);
+
+    [Fact]
+    public async Task PreTag_IndentStartTag()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <div>
+                        <pre>
+                    content here
+                        </pre>
+                </div>
+                """,
+            htmlFormatted: """
+                <div>
+                    <pre>
+                    content here
+                        </pre>
+                </div>
+                """,
+            expected: """
+                <div>
+                    <pre>
+                    content here
+                        </pre>
+                </div>
+                """);
+    }
+
+    [Fact]
     [WorkItem("https://github.com/dotnet/razor/issues/11777")]
     public Task RangeFormat_AfterProperty()
         => RunFormattingTestAsync(
@@ -11456,5 +11659,20 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                         <tr>
                             <td>
                     """,
+            allowDiagnostics: true);
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12807")]
+    public Task TernaryInAttribute()
+        => RunFormattingTestAsync(
+            input: """
+                <Icon Name="@(expanded?ParentDataGrid.SelfReferenceCollapseIcon:ParentDataGrid.SelfReferenceExpandIcon)"/>
+                """,
+            htmlFormatted: """
+                <Icon Name="@(expanded?ParentDataGrid.SelfReferenceCollapseIcon:ParentDataGrid.SelfReferenceExpandIcon)" />
+                """,
+            expected: """
+                <Icon Name="@(expanded ? ParentDataGrid.SelfReferenceCollapseIcon : ParentDataGrid.SelfReferenceExpandIcon)" />
+                """,
             allowDiagnostics: true);
 }
