@@ -613,6 +613,18 @@ stages:
 
       - template: ../jobs/vmr-build.yml
         parameters:
+          buildName: OSX_Interpreter
+          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
+          pool: ${{ parameters.pool_Mac }}
+          targetOS: osx
+          targetArchitecture: arm64
+          extraProperties: /p:FeatureInterpreter=true
+          brandingType: ${{ variables.brandingType }}
+
+      - template: ../jobs/vmr-build.yml
+        parameters:
           buildName: Windows
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
@@ -656,6 +668,18 @@ stages:
           targetOS: windows
           targetArchitecture: arm64
           extraProperties: /p:PgoInstrument=true
+          brandingType: ${{ variables.brandingType }}
+
+      - template: ../jobs/vmr-build.yml
+        parameters:
+          buildName: Windows_Interpreter
+          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
+          pool: ${{ parameters.pool_Windows }}
+          targetOS: windows
+          targetArchitecture: x64
+          extraProperties: /p:FeatureInterpreter=true
           brandingType: ${{ variables.brandingType }}
 
       ## Build Pass 2 verticals
