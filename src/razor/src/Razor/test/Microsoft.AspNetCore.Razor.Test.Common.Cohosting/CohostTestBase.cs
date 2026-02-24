@@ -82,6 +82,7 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
 
         var remoteLogger = _exportProvider.GetExportedValue<RemoteLoggerFactory>();
         remoteLogger.SetTargetLoggerFactory(LoggerFactory);
+        remoteLogger.AddLoggerProvider(new ThrowingErrorLoggerProvider());
 
         _clientInitializationOptions = new()
         {
