@@ -125,6 +125,14 @@ internal sealed class FormattingVisitor : SyntaxWalker
         }
     }
 
+    public override void VisitRazorUsingDirective(RazorUsingDirectiveSyntax node)
+    {
+        using (DirectiveBlock())
+        {
+            base.VisitRazorUsingDirective(node);
+        }
+    }
+
     public override void VisitRazorDirective(RazorDirectiveSyntax node)
     {
         using (DirectiveBlock())

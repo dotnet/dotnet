@@ -1,6 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -748,8 +749,8 @@ public class RazorDocumentMappingServiceTest(ITestOutputHelper testOutput) : Too
             projectedCSharpSource: "\n// Prefix\n var abc;\nvar def; \n// Suffix",
             sourceMappings: [
                 new SourceMapping(new SourceSpan(0, 1), new SourceSpan(0, 1)),
-                new SourceMapping(new SourceSpan(16, 3), new SourceSpan(11, 3)),
-                new SourceMapping(new SourceSpan(19, 10), new SourceSpan(5, 10))
+                new SourceMapping(new SourceSpan(19, 10), new SourceSpan(5, 10)),
+                new SourceMapping(new SourceSpan(16, 3), new SourceSpan(11, 3))
             ]);
         var range = new LinePositionSpan(new LinePosition(1, 10), new LinePosition(1, 13));
 
@@ -761,6 +762,47 @@ public class RazorDocumentMappingServiceTest(ITestOutputHelper testOutput) : Too
 
         // Assert
         Assert.False(result);
+    }
+
+    [Fact]
+    public void RazorCSharpDocument_Constructor_WhenMappingsNotOrderedByGeneratedSpans()
+    {
+        // Arrange
+        var razorSource = "Line 1\nLine 2 @{ var abc;\nvar def; }";
+        var projectedCSharpSource = "\n// Prefix\n var abc;\nvar def; \n// Suffix";
+        var sourceDocument = TestRazorSourceDocument.Create(razorSource);
+        var projectEngine = RazorProjectEngine.Create(builder =>
+        {
+            builder.ConfigureParserOptions(builder =>
+            {
+                builder.UseRoslynTokenizer = true;
+            });
+        });
+
+        var codeDocument = projectEngine.Process(sourceDocument, RazorFileKind.Legacy, importSources: default, tagHelpers: []);
+        ImmutableArray<SourceMapping> sourceMappings = [
+            new SourceMapping(new SourceSpan(0, 1), new SourceSpan(0, 1)),
+            new SourceMapping(new SourceSpan(16, 3), new SourceSpan(11, 3)),
+            new SourceMapping(new SourceSpan(19, 10), new SourceSpan(5, 10))
+        ];
+
+        // Act/Assert
+#if DEBUG
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            _ = TestRazorCSharpDocument.Create(
+                codeDocument,
+                projectedCSharpSource,
+                sourceMappings);
+        });
+#else
+        var doc = TestRazorCSharpDocument.Create(
+                codeDocument,
+                projectedCSharpSource,
+                sourceMappings);
+
+        Assert.NotEqual(doc.SourceMappingsSortedByOriginal, sourceMappings);
+#endif
     }
 
     private static RazorCodeDocument CreateCodeDocumentWithCSharpProjection(string razorSource, string projectedCSharpSource, ImmutableArray<SourceMapping> sourceMappings)

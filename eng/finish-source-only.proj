@@ -11,6 +11,9 @@
     <ProjectAssetsJsonArchiveFile>$(ArtifactsLogDir)all-project-assets-json-files.zip</ProjectAssetsJsonArchiveFile>
 
     <ResultingPrebuiltPackagesDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsLogDir)', 'prebuilt-packages'))</ResultingPrebuiltPackagesDir>
+
+    <!-- SBRP usage report is diagnostic-only and should not fail the build -->
+    <MSBuildWarningsNotAsErrors>$(MSBuildWarningsNotAsErrors);SBRP001</MSBuildWarningsNotAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
@@ -135,7 +138,7 @@
       <PrebuiltErrorMessage>$(PrebuiltErrorMessage)See https://aka.ms/dotnet/prebuilts for guidance on what prebuilts are and how to eliminate them.</PrebuiltErrorMessage>
     </PropertyGroup>
 
-    <Error Condition="'@(DetectedPrebuiltPackage)' != ''" Text="$(PrebuiltErrorMessage)" />
+    <Error Condition="'@(DetectedPrebuiltPackage)' != '' and '$(SkipErrorOnPrebuilts)' != 'true'" Text="$(PrebuiltErrorMessage)" />
 
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
     <Touch Files="$(BaseIntermediateOutputPath)ReportPrebuiltUsage.complete" AlwaysCreate="true">
@@ -153,7 +156,8 @@
       <ProjectAssetsJsonFile Include="$(SrcDir)**/artifacts/**/project.assets.json" />
     </ItemGroup>
 
-    <WriteSbrpUsageReport SbrpRepoSrcPath="$(SbrpRepoSrcDir)"
+    <WriteSbrpUsageReport ContinueOnError="WarnAndContinue"
+                          SbrpRepoSrcPath="$(SbrpRepoSrcDir)"
                           SbrpPackagesPath="$(ArtifactsShippingPackagesDir)/source-build-reference-packages"
                           ProjectAssetsJsons="@(ProjectAssetsJsonFile)"
                           OutputPath="$(ArtifactsLogDir)" />

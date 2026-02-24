@@ -28,7 +28,7 @@ internal static class AddUsingsHelper
 {
     private static readonly Regex s_addUsingVSCodeAction = new Regex("@?using ([^;]+);?$", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
-    private readonly record struct RazorUsingDirective(RazorDirectiveSyntax Node, AddImportChunkGenerator Statement);
+    private readonly record struct RazorUsingDirective(RazorUsingDirectiveSyntax Node, AddImportChunkGenerator Statement);
 
     public static async Task<TextEdit[]> GetUsingStatementEditsAsync(IDocumentSnapshot documentSnapshot, SourceText changedCSharpText, CancellationToken cancellationToken)
     {
@@ -219,7 +219,7 @@ internal static class AddUsingsHelper
         var root = codeDocument.GetRequiredSyntaxRoot();
         foreach (var node in root.DescendantNodes())
         {
-            if (node is RazorDirectiveSyntax directiveNode)
+            if (node is RazorUsingDirectiveSyntax directiveNode)
             {
                 foreach (var child in directiveNode.DescendantNodes())
                 {

@@ -293,6 +293,7 @@ namespace NuGet.Commands
                 result.RestoreMetadata.UsingMicrosoftNETSdk = GetUsingMicrosoftNETSdk(specItem.GetProperty("UsingMicrosoftNETSdk"));
                 result.RestoreMetadata.SdkAnalysisLevel = GetSdkAnalysisLevel(specItem.GetProperty("SdkAnalysisLevel"));
                 result.RestoreMetadata.UseLegacyDependencyResolver = IsPropertyTrue(specItem, "RestoreUseLegacyDependencyResolver");
+                result.RestoreSettings.SdkVersion = GetSdkAnalysisLevel(specItem.GetProperty("NETCoreSdkVersion"));
             }
 
             return result;

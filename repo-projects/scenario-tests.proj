@@ -23,7 +23,7 @@
   <PropertyGroup Condition="'$(SkipScenarioTestsDependencies)' == 'true'">
     <UseBootstrapArcade>true</UseBootstrapArcade>
     <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
-    <_GlobalPropertiesToRemoveFromProjectReferences>$(_GlobalPropertiesToRemoveFromProjectReferences);SkipScenarioTestsDependencies</_GlobalPropertiesToRemoveFromProjectReferences>
+    <_GlobalPropertiesToRemoveFromProjectReferences>$(_GlobalPropertiesToRemoveFromProjectReferences);SkipScenarioTestsDependencies;SkipExtractSdkArchive</_GlobalPropertiesToRemoveFromProjectReferences>
   </PropertyGroup>
 
   <!-- Use PrivateAssets="all" to not flow repo dependencies to consuming projects (for installer tests). -->
@@ -34,8 +34,16 @@
     <RepositoryReference Include="sdk" PrivateAssets="all" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference
+      Include="$(RepositoryEngineeringDir)extract-sdk-archive.proj"
+      ReferenceOutputAssembly="false"
+      SkipGetTargetFrameworkProperties="true"
+      Condition="'$(SkipExtractSdkArchive)' != 'true'" />
+  </ItemGroup>
+
   <Target Name="PrepareScenarioTestsInputs"
-          DependsOnTargets="DetermineSourceBuiltSdkVersion;DetermineSourceBuiltRuntimeVersion"
+          DependsOnTargets="ResolveProjectReferences;DetermineSourceBuiltSdkVersion;DetermineSourceBuiltRuntimeVersion"
           BeforeTargets="RepoTest">
     <PropertyGroup>
       <TestArgs>$(TestArgs) /p:TestSdkVersion=$(SourceBuiltSdkVersion)</TestArgs>

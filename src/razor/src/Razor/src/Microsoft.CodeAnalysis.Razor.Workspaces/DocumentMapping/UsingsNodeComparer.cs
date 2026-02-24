@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 
 namespace Microsoft.CodeAnalysis.Razor.DocumentMapping;
 
-internal sealed class UsingsNodeComparer : IComparer<RazorDirectiveSyntax>
+internal sealed class UsingsNodeComparer : IComparer<RazorUsingDirectiveSyntax>
 {
     public static readonly UsingsNodeComparer Instance = new();
 
-    public int Compare(RazorDirectiveSyntax? x, RazorDirectiveSyntax? y)
+    public int Compare(RazorUsingDirectiveSyntax? x, RazorUsingDirectiveSyntax? y)
     {
         if (x is null)
         {

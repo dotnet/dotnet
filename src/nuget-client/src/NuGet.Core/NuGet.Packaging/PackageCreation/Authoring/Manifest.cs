@@ -117,6 +117,11 @@ namespace NuGet.Packaging
 
         public static Manifest ReadFrom(Stream stream, Func<string, string> propertyProvider, bool validateSchema)
         {
+            return ReadFrom(stream, propertyProvider, validateSchema, overrideVersion: null);
+        }
+
+        public static Manifest ReadFrom(Stream stream, Func<string, string> propertyProvider, bool validateSchema, NuGetVersion overrideVersion)
+        {
             XDocument document;
             if (propertyProvider == null)
             {
@@ -147,14 +152,9 @@ namespace NuGet.Packaging
             // Deserialize it
             var manifest = ManifestReader.ReadManifest(document);
 
-            // Update manifest metadata version if version was provided by the CLI command
-            if (propertyProvider is not null && propertyProvider.Target.GetType().Name.Equals("PackArgs"))
+            if (overrideVersion != null)
             {
-                var versionProperty = propertyProvider.Target.GetType().GetProperty("Version");
-                if (versionProperty?.GetValue(propertyProvider.Target) is string version)
-                {
-                    manifest.Metadata.Version = NuGetVersion.Parse(version);
-                }
+                manifest.Metadata.Version = overrideVersion;
             }
 
             // Validate before returning

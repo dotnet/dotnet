@@ -3,6 +3,36 @@
 <Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Microsoft.DotNet.Cli.Installer.Windows.FormatMessage</Target>
+    <Left>/msft/sdk/x.y.z/dotnet.dll</Left>
+    <Right>/sb/sdk/x.y.z/dotnet.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Microsoft.DotNet.Cli.Installer.Windows.InstallAction</Target>
+    <Left>/msft/sdk/x.y.z/dotnet.dll</Left>
+    <Right>/sb/sdk/x.y.z/dotnet.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Microsoft.DotNet.Cli.Installer.Windows.InstallRequestType</Target>
+    <Left>/msft/sdk/x.y.z/dotnet.dll</Left>
+    <Right>/sb/sdk/x.y.z/dotnet.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Microsoft.DotNet.Cli.Installer.Windows.UpgradeAttributes</Target>
+    <Left>/msft/sdk/x.y.z/dotnet.dll</Left>
+    <Right>/sb/sdk/x.y.z/dotnet.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Microsoft.DotNet.Cli.Installer.Windows.WindowsUtils</Target>
+    <Left>/msft/sdk/x.y.z/dotnet.dll</Left>
+    <Right>/sb/sdk/x.y.z/dotnet.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.IdentityModel.Tokens.EcdhKeyExchangeProvider</Target>
     <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Left>
     <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Right>
@@ -234,12 +264,6 @@
     <Target>Microsoft.ApplicationInsights, Version=x.y.z, Culture=neutral, PublicKeyToken=f23a46de0be5d6f3</Target>
     <Left>/msft/sdk/x.y.z/Microsoft.ApplicationInsights.dll</Left>
     <Right>/sb/sdk/x.y.z/Microsoft.ApplicationInsights.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0003</DiagnosticId>
-    <Target>Spectre.Console, Version=x.y.z, Culture=neutral, PublicKeyToken=170fe27f8af98a30</Target>
-    <Left>/msft/sdk/x.y.z/Spectre.Console.dll</Left>
-    <Right>/sb/sdk/x.y.z/Spectre.Console.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0008</DiagnosticId>

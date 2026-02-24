@@ -8,7 +8,6 @@ extern alias Abstraction;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
@@ -96,29 +95,7 @@ internal static class DebuggerBreakpoint
 
     private static string? FindAttachVs()
     {
-        var fromPath = FindOnPath("AttachVS.exe");
-        if (fromPath != null)
-        {
-            return fromPath;
-        }
-
-
-        // Don't use current process MainModule here, it resolves to dotnet if you invoke
-        // dotnet vstest.console.dll, or dotnet testhost.dll. Use the entry assembly instead.
-        var parent = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location);
-        while (parent != null)
-        {
-            var path = Path.Combine(parent, @"artifacts\bin\AttachVS\Debug\net472\AttachVS.exe");
-            Debug.WriteLine($"Looking for AttachVS in: {path}.");
-            if (File.Exists(path))
-            {
-                return path;
-            }
-
-            parent = Path.GetDirectoryName(parent);
-        }
-
-        return parent;
+        return FindOnPath("AttachVS.exe");
     }
 
     private static string? FindOnPath(string exeName)

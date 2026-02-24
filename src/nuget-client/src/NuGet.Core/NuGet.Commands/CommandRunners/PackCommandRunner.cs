@@ -453,7 +453,8 @@ namespace NuGet.Commands
                     _packArgs.GetPropertyValue,
                     !_packArgs.ExcludeEmptyDirectories,
                     _packArgs.Deterministic,
-                    _packArgs.Logger);
+                    _packArgs.Logger,
+                    _packArgs.Version);
             }
 
             return new PackageBuilder(
@@ -462,7 +463,8 @@ namespace NuGet.Commands
                 _packArgs.GetPropertyValue,
                 !_packArgs.ExcludeEmptyDirectories,
                 _packArgs.Deterministic,
-                _packArgs.Logger);
+                _packArgs.Logger,
+                _packArgs.Version);
         }
 
         private bool BuildFromProjectFile(string path)

@@ -681,8 +681,8 @@ Pour plus d'informations, visitez https://docs.nuget.org/docs/reference/command-
       <trans-unit id="Log_AliasingSupportedInNewDependencyResolver">
         <source>The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
 Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</source>
-        <target state="new">The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
-Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</target>
+        <target state="translated">Le projet {0} tente de restaurer des infrastructure en double, ce qui est pris en charge uniquement par le résolveur de dépendances par défaut lorsque la version du Kit de développement logiciel (SDK) .NET est {1} ou ultérieure.
+Mettez à niveau votre Kit de développement logiciel (SDK) .NET ou supprimez RestoreUseLegacyDependencyResolver pour utiliser cette fonctionnalité.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_AllProjectsUpToDate">
@@ -1266,7 +1266,7 @@ Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this f
       </trans-unit>
       <trans-unit id="SpecValidationDuplicateTargetAlias">
         <source>The TargetFramework property must be unique. List of TargetFramework properties: {0}.</source>
-        <target state="new">The TargetFramework property must be unique. List of TargetFramework properties: {0}.</target>
+        <target state="translated">La propriété TargetFramework doit être unique. Liste des propriétés TargetFramework : {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecValidationInvalidFramework">

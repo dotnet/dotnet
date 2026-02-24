@@ -299,12 +299,18 @@ internal sealed class CSharpOnTypeFormattingPass(
         var csharpDocument = context.CodeDocument.GetRequiredCSharpDocument();
 
         using var changes = new PooledArrayBuilder<TextChange>();
-        foreach (var mapping in csharpDocument.SourceMappings)
+        foreach (var mapping in csharpDocument.SourceMappingsSortedByOriginal)
         {
             var mappingSpan = new TextSpan(mapping.OriginalSpan.AbsoluteIndex, mapping.OriginalSpan.Length);
             var mappingLinePositionSpan = text.GetLinePositionSpan(mappingSpan);
             if (!spanAfterFormatting.LineOverlapsWith(mappingLinePositionSpan))
             {
+                if (mappingLinePositionSpan.Start > spanAfterFormatting.End)
+                {
+                    // This span (and all following) are after the area we're interested in
+                    break;
+                }
+
                 // We don't care about this range. It didn't change.
                 continue;
             }
@@ -583,7 +589,7 @@ internal sealed class CSharpOnTypeFormattingPass(
 
         // First, collect all the locations at the beginning and end of each source mapping.
         var sourceMappingMap = new Dictionary<int, int>();
-        foreach (var mapping in csharpDocument.SourceMappings)
+        foreach (var mapping in csharpDocument.SourceMappingsSortedByOriginal)
         {
             var mappingSpan = new TextSpan(mapping.OriginalSpan.AbsoluteIndex, mapping.OriginalSpan.Length);
 #if DEBUG
@@ -665,10 +671,10 @@ internal sealed class CSharpOnTypeFormattingPass(
                 // itself that is mapped, the baseline indentation will be whatever happens to be the nearest C# mapping from outside the block
                 // which is not helpful. To solve this, we artificially introduce a mapping for the start of the section block, which points to
                 // the first C# mapping inside it.
-                if (((RazorDirectiveBodySyntax)containingDirective.Body).CSharpCode.Children is [.., MarkupBlockSyntax block, RazorMetaCodeSyntax /* close brace */])
+                if (containingDirective.DirectiveBody.CSharpCode.Children is [.., MarkupBlockSyntax block, RazorMetaCodeSyntax /* close brace */])
                 {
                     var blockSpan = block.Span;
-                    foreach (var mapping in csharpDocument.SourceMappings)
+                    foreach (var mapping in csharpDocument.SourceMappingsSortedByOriginal)
                     {
                         if (blockSpan.Contains(mapping.OriginalSpan.AbsoluteIndex))
                         {
@@ -676,6 +682,11 @@ internal sealed class CSharpOnTypeFormattingPass(
                             lineStartMap[blockSpan.Start] = projectedStartLocation;
                             sourceMappingMap[blockSpan.Start] = projectedStartLocation;
                             significantLocations.Add(projectedStartLocation);
+                            break;
+                        }
+                        else if (mapping.OriginalSpan.AbsoluteIndex > blockSpan.End)
+                        {
+                            // This span (and all following) are after the area we're interested in
                             break;
                         }
                     }
@@ -1048,7 +1059,7 @@ internal sealed class CSharpOnTypeFormattingPass(
             // `@using |System;
             //
             return owner.AncestorsAndSelf().Any(
-                n => n is RazorDirectiveSyntax { HasDirectiveDescriptor: false });
+                n => n is RazorUsingDirectiveSyntax or RazorDirectiveSyntax { HasDirectiveDescriptor: false });
         }
 
         bool IsAttributeDirective()
@@ -1153,22 +1164,24 @@ internal sealed class CSharpOnTypeFormattingPass(
 
     private static string RenderSourceMappings(RazorCodeDocument codeDocument)
     {
-        var markers = codeDocument.GetRequiredCSharpDocument().SourceMappings.SelectMany(mapping =>
-            new[]
-            {
-                (index: mapping.OriginalSpan.AbsoluteIndex, text: "<#" ),
-                (index: mapping.OriginalSpan.AbsoluteIndex + mapping.OriginalSpan.Length, text: "#>"),
-            })
-            .OrderByDescending(mapping => mapping.index)
-            .ThenBy(mapping => mapping.text);
+        using var pooledBuilder = StringBuilderPool.GetPooledObject();
+        var builder = pooledBuilder.Object;
 
-        var output = codeDocument.Source.Text.ToString();
-        foreach (var (index, text) in markers)
+        var documentText = codeDocument.Source.Text.ToString();
+        var lastIndex = 0;
+        foreach (var mapping in codeDocument.GetRequiredCSharpDocument().SourceMappingsSortedByOriginal)
         {
-            output = output.Insert(index, text);
+            builder.Append(documentText, lastIndex, mapping.OriginalSpan.AbsoluteIndex - lastIndex);
+            builder.Append("<#");
+            builder.Append(documentText, mapping.OriginalSpan.AbsoluteIndex, mapping.OriginalSpan.Length);
+            builder.Append("#>");
+
+            lastIndex = mapping.OriginalSpan.AbsoluteIndex + mapping.OriginalSpan.Length;
         }
 
-        return output;
+        builder.Append(documentText, lastIndex, documentText.Length - lastIndex);
+
+        return builder.ToString();
     }
 
     private record struct ShouldFormatOptions(bool AllowImplicitStatements, bool AllowImplicitExpressions, bool AllowSingleLineExplicitExpressions, bool IsLineRequest)

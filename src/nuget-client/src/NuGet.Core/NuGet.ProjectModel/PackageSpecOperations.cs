@@ -125,41 +125,67 @@ namespace NuGet.ProjectModel
             for (var i = 0; i < spec.TargetFrameworks.Count; i++)
             {
                 var targetFramework = spec.TargetFrameworks[i];
+
                 if (frameworksToAdd == null || frameworksToAdd.Contains(targetFramework.FrameworkName))
                 {
-                    var newDependencies = AddOrUpdateDependencyInDependencyList(spec, targetFramework.Dependencies, dependency.Id, dependency.VersionRange);
-                    spec.TargetFrameworks[i] = new TargetFrameworkInformation(targetFramework) { Dependencies = newDependencies };
-                }
-            }
-
-            if (spec.RestoreMetadata?.CentralPackageVersionsEnabled ?? false)
-            {
-                for (var i = 0; i < spec.TargetFrameworks.Count; i++)
-                {
-                    var targetFramework = spec.TargetFrameworks[i];
-                    if (frameworksToAdd == null || frameworksToAdd.Contains(targetFramework.FrameworkName))
-                    {
-                        var newCentralPackageVersion = new KeyValuePair<string, CentralPackageVersion>(dependency.Id, new CentralPackageVersion(dependency.Id, dependency.VersionRange));
-                        var newCentralPackageVersionsEnum = targetFramework.CentralPackageVersions
-                            .Where(kvp => !string.Equals(kvp.Key, dependency.Id, StringComparison.OrdinalIgnoreCase))
-                            .Append(newCentralPackageVersion);
-                        var newCentralPackageVersions = CreateCentralPackageVersions(newCentralPackageVersionsEnum);
-
-                        spec.TargetFrameworks[i] = new TargetFrameworkInformation(targetFramework) { CentralPackageVersions = newCentralPackageVersions };
-                    }
+                    spec.TargetFrameworks[i] = GetTargetFrameworkInformationWithAddedDependency(spec, dependency, targetFramework);
                 }
             }
         }
 
-        static IReadOnlyDictionary<string, CentralPackageVersion> CreateCentralPackageVersions(IEnumerable<KeyValuePair<string, CentralPackageVersion>> versions)
+        /// <summary>
+        /// Add or Update the dependencies in the spec. Only the frameworks specified will be considered. 
+        /// </summary>
+        /// <param name="spec">PackageSpec to update. Cannot be <see langword="null"/></param>
+        /// <param name="dependency">Dependency to add. Cannot be <see langword="null"/> </param>
+        /// <param name="frameworksToAdd">The frameworks to be considered. If <see langword="null"/>, then all frameworks will be considered. </param>
+        /// <exception cref="ArgumentNullException"> If <paramref name="spec"/> or <paramref name="dependency"/> is <see langword="null"/> </exception>
+        public static void AddOrUpdateDependency(
+            PackageSpec spec,
+            PackageDependency dependency,
+            IEnumerable<string> frameworksToAdd)
         {
-            Dictionary<string, CentralPackageVersion> result = new Dictionary<string, CentralPackageVersion>(StringComparer.OrdinalIgnoreCase);
-            foreach (var kvp in versions)
-            {
-                result.Add(kvp.Key, kvp.Value);
-            }
+            if (spec == null) throw new ArgumentNullException(nameof(spec));
+            if (dependency == null) throw new ArgumentNullException(nameof(dependency));
 
-            return result;
+            for (var i = 0; i < spec.TargetFrameworks.Count; i++)
+            {
+                var targetFramework = spec.TargetFrameworks[i];
+
+                if (frameworksToAdd == null || frameworksToAdd.Contains(targetFramework.TargetAlias))
+                {
+                    spec.TargetFrameworks[i] = GetTargetFrameworkInformationWithAddedDependency(spec, dependency, targetFramework);
+                }
+            }
+        }
+
+        private static TargetFrameworkInformation GetTargetFrameworkInformationWithAddedDependency(PackageSpec spec, PackageDependency dependency, TargetFrameworkInformation targetFramework)
+        {
+            ImmutableArray<LibraryDependency> newDependencies = AddOrUpdateDependencyInDependencyList(spec, targetFramework.Dependencies, dependency.Id, dependency.VersionRange);
+
+            // Update Central Package Version if enabled.
+            IReadOnlyDictionary<string, CentralPackageVersion> newCentralPackageVersions = spec.RestoreMetadata?.CentralPackageVersionsEnabled ?? false ?
+                GetUpdatedCentralPackageDependencies(dependency, targetFramework.CentralPackageVersions) :
+                targetFramework.CentralPackageVersions;
+
+            return new TargetFrameworkInformation(targetFramework) { Dependencies = newDependencies, CentralPackageVersions = newCentralPackageVersions };
+
+            static IReadOnlyDictionary<string, CentralPackageVersion> GetUpdatedCentralPackageDependencies(PackageDependency dependency, IReadOnlyDictionary<string, CentralPackageVersion> centralPackageVersions)
+            {
+                // The central packages dictionaries can be pretty large, so right-sizing them is important.
+                int dictSize = centralPackageVersions.ContainsKey(dependency.Id) ? centralPackageVersions.Count : centralPackageVersions.Count + 1;
+                Dictionary<string, CentralPackageVersion> result = new(dictSize, StringComparer.OrdinalIgnoreCase);
+                foreach (var kvp in centralPackageVersions.NoAllocEnumerate())
+                {
+                    if (!string.Equals(kvp.Key, dependency.Id, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Add(kvp.Key, kvp.Value);
+                    }
+                }
+                result.Add(dependency.Id, new CentralPackageVersion(dependency.Id, dependency.VersionRange));
+
+                return result;
+            }
         }
 
         /// <summary>
@@ -173,6 +199,24 @@ namespace NuGet.ProjectModel
             PackageSpec spec,
             PackageIdentity identity,
             IEnumerable<NuGetFramework> frameworksToAdd)
+        {
+            if (spec == null) throw new ArgumentNullException(nameof(spec));
+            if (identity == null) throw new ArgumentNullException(nameof(identity));
+
+            AddOrUpdateDependency(spec, new PackageDependency(identity.Id, new VersionRange(identity.Version)), frameworksToAdd);
+        }
+
+        /// <summary>
+        /// Add or Update the dependencies in the spec. Only the frameworks specified will be considered. 
+        /// </summary>
+        /// <param name="spec">PackageSpec to update. Cannot be <see langword="null"/></param>
+        /// <param name="identity">Dependency to add. Cannot be <see langword="null"/> </param>
+        /// <param name="frameworksToAdd">The frameworks to be considered. If <see langword="null"/>, then all frameworks will be considered. </param>
+        /// <exception cref="ArgumentNullException"> If <paramref name="spec"/> or <paramref name="identity"/> is <see langword="null"/> </exception>
+        public static void AddOrUpdateDependency(
+            PackageSpec spec,
+            PackageIdentity identity,
+            IEnumerable<string> frameworksToAdd)
         {
             if (spec == null) throw new ArgumentNullException(nameof(spec));
             if (identity == null) throw new ArgumentNullException(nameof(identity));

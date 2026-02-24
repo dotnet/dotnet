@@ -442,7 +442,7 @@ stages:
 
       - template: ../jobs/vmr-build.yml
         parameters:
-          buildName: AzureLinux_x64_Cross
+          buildName: Linux
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
@@ -457,7 +457,7 @@ stages:
 
       - template: ../jobs/vmr-build.yml
         parameters:
-          buildName: AzureLinux_x64_Cross_Pgo
+          buildName: Linux_Pgo
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: false
           pool: ${{ parameters.pool_Linux }}
@@ -474,7 +474,7 @@ stages:
 
         - template: ../jobs/vmr-build.yml
           parameters:
-            buildName: AzureLinux_x64_Cross_Shortstack_Mono_LLVMAOT
+            buildName: Linux_Shortstack_Mono_LLVMAOT
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
@@ -491,7 +491,7 @@ stages:
 
       - template: ../jobs/vmr-build.yml
         parameters:
-          buildName: AzureLinux_x64_Cross
+          buildName: Linux
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
@@ -506,7 +506,7 @@ stages:
 
       - template: ../jobs/vmr-build.yml
         parameters:
-          buildName: AzureLinux_x64_Cross
+          buildName: Linux
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
@@ -521,7 +521,7 @@ stages:
 
       - template: ../jobs/vmr-build.yml
         parameters:
-          buildName: AzureLinux_x64_Cross_Pgo
+          buildName: Linux_Pgo
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: false
           pool: ${{ parameters.pool_Linux }}
@@ -536,7 +536,7 @@ stages:
 
       - template: ../jobs/vmr-build.yml
         parameters:
-          buildName: AzureLinux_x64_Cross_Alpine
+          buildName: Linux_Alpine
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
@@ -552,7 +552,7 @@ stages:
 
       - template: ../jobs/vmr-build.yml
         parameters:
-          buildName: AzureLinux_x64_Cross_Alpine
+          buildName: Linux_Alpine
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
@@ -568,7 +568,7 @@ stages:
 
       - template: ../jobs/vmr-build.yml
         parameters:
-          buildName: AzureLinux_x64_Cross_Alpine
+          buildName: Linux_Alpine
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
@@ -585,7 +585,7 @@ stages:
       - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
         - template: ../jobs/vmr-build.yml
           parameters:
-            buildName: AzureLinux_x64_Cross_Shortstack_Mono_LLVMAOT
+            buildName: Linux_Shortstack_Mono_LLVMAOT
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
@@ -675,12 +675,12 @@ stages:
             targetArchitecture: x86
             buildPass: 2
             reuseBuildArtifactsFrom:
-            - AzureLinux_x64_Cross_x64
-            - AzureLinux_x64_Cross_Alpine_x64
-            - AzureLinux_x64_Cross_arm64
-            - AzureLinux_x64_Cross_Alpine_arm64
-            - AzureLinux_x64_Cross_arm
-            - AzureLinux_x64_Cross_Alpine_arm
+            - Linux_x64
+            - Linux_Alpine_x64
+            - Linux_arm64
+            - Linux_Alpine_arm64
+            - Linux_arm
+            - Linux_Alpine_arm
             brandingType: ${{ variables.brandingType }}
 
       # build the ASP.NET Core hosting bundle and VS components

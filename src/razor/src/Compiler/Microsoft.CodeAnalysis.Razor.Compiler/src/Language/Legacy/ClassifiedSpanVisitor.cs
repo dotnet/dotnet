@@ -113,6 +113,14 @@ internal sealed class ClassifiedSpanVisitor : SyntaxWalker, IPoolableObject
         }
     }
 
+    public override void VisitRazorUsingDirective(RazorUsingDirectiveSyntax node)
+    {
+        using (DirectiveBlock(node))
+        {
+            base.VisitRazorUsingDirective(node);
+        }
+    }
+
     public override void VisitRazorDirective(RazorDirectiveSyntax node)
     {
         using (DirectiveBlock(node))

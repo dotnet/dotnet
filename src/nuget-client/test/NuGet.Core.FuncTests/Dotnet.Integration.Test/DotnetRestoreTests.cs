@@ -3433,7 +3433,6 @@ EndGlobal";
             {
                 var xml = XDocument.Load(stream);
                 ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
-                ProjectFileUtils.AddProperty(xml, "SDKAnalysisLevel", "10.0.300");
 
                 var attributes = new Dictionary<string, string>() { { "Version", "1.0.0" } };
 
@@ -3507,7 +3506,6 @@ EndGlobal";
             {
                 var xml = XDocument.Load(stream);
                 ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
-                ProjectFileUtils.AddProperty(xml, "SDKAnalysisLevel", "10.0.300");
 
                 var attributes = new Dictionary<string, string>() { { "Version", "1.0.0" } };
 
@@ -3597,7 +3595,6 @@ EndGlobal";
             {
                 var xml = XDocument.Load(stream);
                 ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
-                ProjectFileUtils.AddProperty(xml, "SDKAnalysisLevel", "10.0.300");
 
                 var attributes = new Dictionary<string, string>() { { "Version", "1.0.0" } };
 
@@ -3687,7 +3684,6 @@ EndGlobal";
             {
                 var xml = XDocument.Load(stream);
                 ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
-                ProjectFileUtils.AddProperty(xml, "SDKAnalysisLevel", "10.0.300");
 
                 var attributesA = new Dictionary<string, string>() { { "Version", "1.0.0" } };
                 var attributesB = new Dictionary<string, string>() { { "Version", "1.0.0" } };
@@ -3737,7 +3733,6 @@ EndGlobal";
             {
                 var xml = XDocument.Load(stream);
                 ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
-                ProjectFileUtils.AddProperty(xml, "SDKAnalysisLevel", "10.0.300");
 
                 // Add project reference to project2
                 ProjectFileUtils.AddItem(
@@ -3813,7 +3808,6 @@ EndGlobal";
             {
                 var xml = XDocument.Load(stream);
                 ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
-                ProjectFileUtils.AddProperty(xml, "SDKAnalysisLevel", "10.0.300");
 
                 // Add Project2 reference only for apple alias
                 ProjectFileUtils.AddItem(
@@ -3990,7 +3984,6 @@ EndGlobal";
             {
                 var xml = XDocument.Load(stream);
                 ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{apple};{banana}");
-                ProjectFileUtils.AddProperty(xml, "SDKAnalysisLevel", "10.0.300");
 
                 // Add Project2 reference only for apple alias
                 ProjectFileUtils.AddItem(

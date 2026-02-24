@@ -146,7 +146,6 @@ namespace NuGet.Commands.Test
 
             updated.RestoreMetadata = new ProjectRestoreMetadata();
             updated.RestoreMetadata.CrossTargeting = updated.TargetFrameworks.Count > 1;
-            updated.RestoreMetadata.OriginalTargetFrameworks = updated.TargetFrameworks.Select(e => e.FrameworkName.GetShortFolderName()).ToList();
             updated.RestoreMetadata.OutputPath = projectDir;
             updated.RestoreMetadata.ProjectStyle = ProjectStyle.PackageReference;
             updated.RestoreMetadata.ProjectName = spec.Name;
@@ -173,6 +172,9 @@ namespace NuGet.Commands.Test
             {
                 updated.RestoreMetadata.TargetFrameworks.Add(new ProjectRestoreMetadataFrameworkInfo(framework.FrameworkName) { TargetAlias = framework.TargetAlias });
             }
+
+            updated.RestoreMetadata.OriginalTargetFrameworks = updated.TargetFrameworks.Select(e => e.TargetAlias).ToList();
+
             return updated;
         }
 

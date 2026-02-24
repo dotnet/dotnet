@@ -156,9 +156,19 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
             }
         }
 
-        protected abstract void ProcessChunkGenerator(RazorDirectiveSyntax node, ISpanChunkGenerator chunkGenerator);
+        protected abstract void ProcessChunkGenerator(BaseRazorDirectiveSyntax node, ISpanChunkGenerator chunkGenerator);
 
         public override void VisitRazorDirective(RazorDirectiveSyntax node)
+        {
+            VisitDirective(node);
+        }
+
+        public override void VisitRazorUsingDirective(RazorUsingDirectiveSyntax node)
+        {
+            VisitDirective(node);
+        }
+
+        private void VisitDirective(BaseRazorDirectiveSyntax node)
         {
             foreach (var child in node.DescendantNodes())
             {
@@ -262,7 +272,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
             base.Reset();
         }
 
-        protected override void ProcessChunkGenerator(RazorDirectiveSyntax node, ISpanChunkGenerator chunkGenerator)
+        protected override void ProcessChunkGenerator(BaseRazorDirectiveSyntax node, ISpanChunkGenerator chunkGenerator)
         {
             switch (chunkGenerator)
             {
@@ -457,7 +467,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
             base.Reset();
         }
 
-        protected override void ProcessChunkGenerator(RazorDirectiveSyntax node, ISpanChunkGenerator chunkGenerator)
+        protected override void ProcessChunkGenerator(BaseRazorDirectiveSyntax node, ISpanChunkGenerator chunkGenerator)
         {
             switch (chunkGenerator)
             {
@@ -476,7 +486,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
             }
         }
 
-        private void ProcessAddTagHelper(RazorDirectiveSyntax node, AddTagHelperChunkGenerator addTagHelper)
+        private void ProcessAddTagHelper(BaseRazorDirectiveSyntax node, AddTagHelperChunkGenerator addTagHelper)
         {
             if (ShouldAddDiagnostics)
             {
@@ -485,7 +495,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
             }
         }
 
-        private void ProcessRemoveTagHelper(RazorDirectiveSyntax node, RemoveTagHelperChunkGenerator removeTagHelper)
+        private void ProcessRemoveTagHelper(BaseRazorDirectiveSyntax node, RemoveTagHelperChunkGenerator removeTagHelper)
         {
             if (ShouldAddDiagnostics)
             {
@@ -494,7 +504,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
             }
         }
 
-        private void ProcessTagHelperPrefix(RazorDirectiveSyntax node, TagHelperPrefixDirectiveChunkGenerator tagHelperPrefix)
+        private void ProcessTagHelperPrefix(BaseRazorDirectiveSyntax node, TagHelperPrefixDirectiveChunkGenerator tagHelperPrefix)
         {
             if (ShouldAddDiagnostics)
             {

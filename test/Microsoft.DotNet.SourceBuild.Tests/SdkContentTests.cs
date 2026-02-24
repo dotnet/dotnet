@@ -47,7 +47,7 @@ public partial class SdkContentTests : SdkTests
     {
         const string msftFileListingFileName = "msftSdkFiles.txt";
         const string sbFileListingFileName = "sbSdkFiles.txt";
-        ExclusionsHelper exclusionsHelper = new ExclusionsHelper("SdkFileDiffExclusions.txt", BaselineSubDir);
+        ExclusionsHelper exclusionsHelper = new ExclusionsHelper("SdkFileDiffExclusions.txt", Config.LogsDirectory, BaselineSubDir);
 
         WriteTarballFileList(Config.MsftSdkTarballPath, msftFileListingFileName, isPortable: true, MsftSdkType, exclusionsHelper);
         WriteTarballFileList(Config.SdkTarballPath, sbFileListingFileName, isPortable: false, SourceBuildSdkType, exclusionsHelper);
@@ -131,7 +131,7 @@ public partial class SdkContentTests : SdkTests
         // Remove any excluded files as long as SB SDK's file has the same or greater assembly version compared to the corresponding
         // file in the MSFT SDK. If the version is less, the file will show up in the results as this is not a scenario
         // that is valid for shipping.
-        ExclusionsHelper exclusionsHelper = new ExclusionsHelper("SdkAssemblyVersionDiffExclusions.txt", BaselineSubDir);
+        ExclusionsHelper exclusionsHelper = new ExclusionsHelper("SdkAssemblyVersionDiffExclusions.txt", Config.LogsDirectory, BaselineSubDir);
         string[] sbSdkFileArray = sbSdkAssemblyVersions.Keys.ToArray();
         for (int i = sbSdkFileArray.Length - 1; i >= 0; i--)
         {
@@ -218,7 +218,7 @@ public partial class SdkContentTests : SdkTests
 
     private Dictionary<string, Version?> GetSbSdkAssemblyVersions(string sbSdkPath)
     {
-        ExclusionsHelper exclusionsHelper = new("SdkFileDiffExclusions.txt", BaselineSubDir);
+        ExclusionsHelper exclusionsHelper = new("SdkFileDiffExclusions.txt", Config.LogsDirectory, BaselineSubDir);
         Dictionary<string, Version?> sbSdkAssemblyVersions = new();
         foreach (string file in Directory.EnumerateFiles(sbSdkPath, "*", SearchOption.AllDirectories))
         {

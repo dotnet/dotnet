@@ -60,7 +60,11 @@ namespace NuGet.Commands.Restore.Utility
                         .Select(s => new CompatibilityProfile(s))
                         .ToList()
                     ),
-                Version = GetProjectVersion(project.OuterBuild)
+                Version = GetProjectVersion(project.OuterBuild),
+                RestoreSettings = new ProjectRestoreSettings()
+                {
+                    SdkVersion = GetSdkVersion(project.OuterBuild)
+                }
             };
 
             return packageSpec;
@@ -78,6 +82,23 @@ namespace NuGet.Commands.Restore.Utility
             if (version == null)
             {
                 return PackageSpec.DefaultVersion;
+            }
+
+            return NuGetVersion.Parse(version);
+        }
+
+        /// <summary>
+        /// Gets the .NET SDK version. If not specified, it will return null.
+        /// </summary>
+        /// <param name="project">The <see cref="ITargetFramework" /> representing the project.</param>
+        /// <returns>The <see cref="NuGetVersion" /> of the .NET SDK if one was found, otherwise <see langword="null">null</see>.</returns>
+        internal static NuGetVersion? GetSdkVersion(ITargetFramework project)
+        {
+            string? version = project.GetProperty("NETCoreSdkVersion");
+
+            if (version == null)
+            {
+                return null;
             }
 
             return NuGetVersion.Parse(version);

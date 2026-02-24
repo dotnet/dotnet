@@ -160,10 +160,10 @@ internal static class RazorSyntaxFacts
     {
         if (node is CSharpCodeBlockSyntax block &&
             block.Children.FirstOrDefault(n => n is RazorDirectiveSyntax) is RazorDirectiveSyntax directive &&
-            directive.Body is RazorDirectiveBodySyntax directiveBody &&
-            directiveBody.Keyword.GetContent() == "code")
+            directive.DirectiveBody is { } body &&
+            body.Keyword.GetContent() == "code")
         {
-            return directiveBody.CSharpCode;
+            return body.CSharpCode;
         }
 
         return null;
@@ -178,7 +178,7 @@ internal static class RazorSyntaxFacts
     public static bool IsInCodeBlock(RazorSyntaxNode n)
         => n.FirstAncestorOrSelf<RazorSyntaxNode>(static n => n is RazorDirectiveSyntax { DirectiveDescriptor.Directive: "code" }) is not null;
 
-    internal static bool TryGetNamespaceFromDirective(RazorDirectiveSyntax directiveNode, [NotNullWhen(true)] out string? @namespace)
+    internal static bool TryGetNamespaceFromDirective(RazorUsingDirectiveSyntax directiveNode, [NotNullWhen(true)] out string? @namespace)
     {
         foreach (var child in directiveNode.DescendantNodes())
         {
@@ -195,19 +195,7 @@ internal static class RazorSyntaxFacts
 
     internal static bool IsInUsingDirective(RazorSyntaxNode node)
     {
-        var directives = node
-            .AncestorsAndSelf()
-            .OfType<RazorDirectiveSyntax>();
-
-        foreach (var directive in directives)
-        {
-            if (directive.IsUsingDirective())
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return node.AncestorsAndSelf().OfType<RazorUsingDirectiveSyntax>().Any();
     }
 
     internal static bool IsScriptOrStyleBlock(MarkupElementSyntax? element)
