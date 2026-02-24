@@ -49,6 +49,12 @@
 
     <!-- Exclude tests that do not target .NET Core -->
     <XUnitProject Remove="..\src\Microsoft.DotNet.Build.Tasks.VisualStudio.Tests\Microsoft.DotNet.Build.Tasks.VisualStudio.Tests.csproj"/>
+    <!-- XUnit v3 tests are self-hosting executables and use XUnitV3Project instead -->
+    <XUnitProject Remove="..\src\Microsoft.DotNet.XUnitV3Extensions\tests\Microsoft.DotNet.XUnitV3Extensions.Tests.csproj"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <XUnitV3Project Include="..\src\Microsoft.DotNet.XUnitV3Extensions\tests\Microsoft.DotNet.XUnitV3Extensions.Tests.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
