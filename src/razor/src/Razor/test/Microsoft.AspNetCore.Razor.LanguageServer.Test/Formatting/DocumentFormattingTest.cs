@@ -11675,4 +11675,101 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 <Icon Name="@(expanded ? ParentDataGrid.SelfReferenceCollapseIcon : ParentDataGrid.SelfReferenceExpandIcon)" />
                 """,
             allowDiagnostics: true);
+
+    [Fact]
+    public Task CSSWrappedToMultipleLines()
+        => RunFormattingTestAsync(
+            input: """
+                @using System
+
+                <style>
+                    /* Card header row */
+                    .ipam-card-header-row { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+                    .ipam-card-header-row h3 { margin: 0; }
+                </style>
+                """,
+            htmlFormatted: """
+                @using System
+
+                <style>
+                    /* Card header row */
+                    .ipam-card-header-row {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        width: 100%;
+                    }
+
+                        .ipam-card-header-row h3 {
+                            margin: 0;
+                        }
+                </style>
+                """,
+            expected: """
+                @using System
+
+                <style>
+                    /* Card header row */
+                    .ipam-card-header-row {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        width: 100%;
+                    }
+                
+                        .ipam-card-header-row h3 {
+                            margin: 0;
+                        }
+                </style>
+                """,
+            validateHtmlFormattedMatchesWebTools: false);
+
+    [Fact]
+    public Task CSSWrappedToMultipleLines_WithBlankLines()
+        => RunFormattingTestAsync(
+            input: """
+                @using System
+
+                <style>
+                    /* Card header row */
+                    .ipam-card-header-row { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+
+                    .ipam-card-header-row h3 { margin: 0; }
+                </style>
+                """,
+            htmlFormatted: """
+                @using System
+
+                <style>
+                    /* Card header row */
+                    .ipam-card-header-row {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        width: 100%;
+                    }
+
+                        .ipam-card-header-row h3 {
+                            margin: 0;
+                        }
+                </style>
+                """,
+            expected: """
+                @using System
+
+                <style>
+                    /* Card header row */
+                    .ipam-card-header-row {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        width: 100%;
+                    }
+                
+                        .ipam-card-header-row h3 {
+                            margin: 0;
+                        }
+                </style>
+                """,
+            validateHtmlFormattedMatchesWebTools: false);
 }
