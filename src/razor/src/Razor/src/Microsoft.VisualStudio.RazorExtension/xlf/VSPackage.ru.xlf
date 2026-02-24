@@ -42,6 +42,31 @@
         <target state="translated">Razor Syntax Visualizer</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_AttributeIndentStyleAlignWithFirst">
+        <source>Align with first attribute</source>
+        <target state="translated">Выровнять по первому атрибуту</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_AttributeIndentStyleDescription">
+        <source>Defines how Html and component tag attributes should be indented</source>
+        <target state="translated">Определяет отступ атрибутов тегов HTML и компонентов</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_AttributeIndentStyleDisplayName">
+        <source>Attribute Indent Style</source>
+        <target state="translated">Стиль отступа атрибута</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_AttributeIndentStyleIndentByOne">
+        <source>Indent by one level</source>
+        <target state="translated">Отступ на один уровень</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_AttributeIndentStyleIndentByTwo">
+        <source>Indent by two levels</source>
+        <target state="translated">Отступ на два уровня</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_AutoClosingTagsDescription">
         <source>If true, closing tags will be automatically inserted</source>
         <target state="translated">При значении true закрывающие теги вставляются автоматически</target>

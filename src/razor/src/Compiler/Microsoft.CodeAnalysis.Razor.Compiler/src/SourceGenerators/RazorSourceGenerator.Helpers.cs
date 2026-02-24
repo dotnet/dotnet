@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Text;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -17,6 +18,15 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
         {
             using var _ = StringBuilderPool.GetPooledObject(out var builder);
 
+            BuildIdentifierFromPath(builder, filePath);
+
+            builder.Append(".g.cs");
+
+            return builder.ToString();
+        }
+
+        internal static void BuildIdentifierFromPath(StringBuilder builder, ReadOnlySpan<char> filePath)
+        {
             for (var i = 0; i < filePath.Length; i++)
             {
                 switch (filePath[i])
@@ -36,10 +46,6 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                         break;
                 }
             }
-
-            builder.Append(".g.cs");
-
-            return builder.ToString();
         }
 
         private static RazorProjectEngine GetDeclarationProjectEngine(

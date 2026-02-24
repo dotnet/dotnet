@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>$(NetVSCode)</TargetFrameworks>
-    <DefineConstants>$(DefineConstants);VSCODE</DefineConstants>
+    <DefineConstants>$(DefineConstants);VSCODE;COHOSTING</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,6 +18,10 @@
 
   <ItemGroup>
     <EmbeddedResource Include="TestFiles\**\*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Microsoft.AspNetCore.Razor.LanguageServer.Test\Formatting\DocumentFormattingTest.cs" Link="Endpoints\Formatting\DocumentFormattingTest.cs" />
   </ItemGroup>
 
   <ItemGroup>

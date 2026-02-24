@@ -103,7 +103,7 @@ internal sealed class InlineCompletionEndpoint(
                 continue;
             }
 
-            var options = RazorFormattingOptions.From(request.Options, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine);
+            var options = RazorFormattingOptions.From(request.Options, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine, _optionsMonitor.CurrentValue.AttributeIndentStyle);
             var formattingContext = FormattingContext.Create(
                 documentContext.Snapshot,
                 codeDocument,

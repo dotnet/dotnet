@@ -90,6 +90,7 @@ public class ClientSettingsManagerTest(ITestOutputHelper testOutput) : VisualStu
             AutoInsertAttributeQuotes: true,
             ColorBackground: true,
             CodeBlockBraceOnNextLine: false,
+            AttributeIndentStyle: AttributeIndentStyle.AlignWithFirst,
             CommitElementsWithSpace: false,
             SnippetSetting: SnippetSetting.All,
             LogLevel: LogLevel.None,

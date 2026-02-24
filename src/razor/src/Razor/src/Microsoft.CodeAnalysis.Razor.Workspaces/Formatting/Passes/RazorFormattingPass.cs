@@ -92,7 +92,7 @@ internal sealed class RazorFormattingPass : IFormattingPass
         if (node is CSharpCodeBlockSyntax directiveCode &&
             directiveCode.Children is [RazorDirectiveSyntax directive, ..] &&
             directive.IsDirective(SectionDirective.Directive) &&
-            directive.Body is RazorDirectiveBodySyntax { CSharpCode.Children: var children })
+            directive.DirectiveBody.CSharpCode.Children is { } children)
         {
             if (TryGetWhitespace(children, out var whitespaceBeforeSectionName, out var whitespaceAfterSectionName))
             {
@@ -148,14 +148,14 @@ internal sealed class RazorFormattingPass : IFormattingPass
 
         // In design time code gen, there is only one child of a node like this, but at runtime any leading whitespace is included
         // as a child, so we handle both cases by just checking the last child.
-        if (node is CSharpCodeBlockSyntax { Children: [.., RazorDirectiveSyntax { Body: RazorDirectiveBodySyntax body } directive] })
+        if (node is CSharpCodeBlockSyntax { Children: [.., RazorDirectiveSyntax directive] })
         {
-            if (!IsCodeOrFunctionsBlock(body.Keyword))
+            if (!IsCodeOrFunctionsBlock(directive.DirectiveBody.Keyword))
             {
                 return false;
             }
 
-            var csharpCodeChildren = body.CSharpCode.Children;
+            var csharpCodeChildren = directive.DirectiveBody.CSharpCode.Children;
             if (!csharpCodeChildren.TryGetOpenBraceNode(out var openBrace) ||
                 !csharpCodeChildren.TryGetCloseBraceNode(out var closeBrace))
             {
@@ -258,7 +258,7 @@ internal sealed class RazorFormattingPass : IFormattingPass
         {
             // If we're formatting a @code or @functions directive, the user might have indicated they always want a newline
             var forceNewLine = context.Options.CodeBlockBraceOnNextLine &&
-                directive.Body is RazorDirectiveBodySyntax { Keyword: { } keyword } &&
+                directive.DirectiveBody.Keyword is { } keyword &&
                 IsCodeOrFunctionsBlock(keyword);
 
             var children = code.Children;
@@ -380,6 +380,13 @@ internal sealed class RazorFormattingPass : IFormattingPass
             return didFormat;
         }
 
+        // When there are multiple sibling markup blocks in a C# code block (e.g., "<text>:</text> <InputFile />"),
+        // the open/close brace nodes passed to this method may actually be sibling markup blocks rather than
+        // actual braces. We should not try to format between sibling markup blocks as they should remain on the
+        // same line.
+        var openBraceIsMarkupBlock = openBraceNode is MarkupBlockSyntax && openBraceNode != codeNode;
+        var closeBraceIsMarkupBlock = closeBraceNode is MarkupBlockSyntax && closeBraceNode != codeNode;
+
         var additionalIndentation = "";
 
         // It's important with the new formatting engine that we maintain the indentation that the Html formatter would have applied,
@@ -401,7 +408,8 @@ internal sealed class RazorFormattingPass : IFormattingPass
             additionalIndentation = openBraceLine.GetLeadingWhitespace();
         }
 
-        if (openBraceNode.TryGetLinePositionSpanWithoutWhitespace(source, out var openBraceRange) &&
+        if (!openBraceIsMarkupBlock &&
+            openBraceNode.TryGetLinePositionSpanWithoutWhitespace(source, out var openBraceRange) &&
             openBraceRange.End.Line == codeRange.Start.Line &&
             !RangeHasBeenModified(ref changes, source.Text, codeRange))
         {
@@ -411,7 +419,8 @@ internal sealed class RazorFormattingPass : IFormattingPass
             didFormat = true;
         }
 
-        if (closeBraceNode.Span.Length > 0 &&
+        if (!closeBraceIsMarkupBlock &&
+            closeBraceNode.Span.Length > 0 &&
             closeBraceNode.TryGetLinePositionSpanWithoutWhitespace(source, out var closeBraceRange) &&
             !RangeHasBeenModified(ref changes, source.Text, codeRange))
         {

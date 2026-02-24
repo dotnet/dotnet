@@ -227,7 +227,6 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
         await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
     }
 
-
     [Theory]
     [CombinatorialData]
     public async Task GetSemanticTokens_Razor_NestedTextDirectives(bool colorBackground, bool miscellaneousFile)
@@ -371,6 +370,27 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
         await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile, fileKind: RazorFileKind.Legacy);
     }
 
+    [Theory]
+    [CombinatorialData]
+    public async Task Obsolete(bool colorBackground, bool miscellaneousFile)
+    {
+        var input = """
+            @using System
+
+            <div>
+                @status
+            </div>
+
+            @code
+            {
+                [Obsolete]
+                private string status = "All good";
+            }
+            """;
+
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
+    }
+
     private async Task VerifySemanticTokensAsync(
         string input,
         bool colorBackground,
@@ -475,7 +495,7 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
 
             var type = tokenTypes[data[i + 3]];
             var modifier = GetTokenModifierString(data[i + 4], legend);
-            var text = sourceText.GetSubTextString(new TextSpan(sourceText.Lines[lineIndex].Start + lineOffset, length));
+            var text = sourceText.ToString(new TextSpan(sourceText.Lines[lineIndex].Start + lineOffset, length));
             builder.AppendLine($"{lineDelta} {charDelta} {length} {type} {modifier} [{text}]");
 
             prevLength = length;

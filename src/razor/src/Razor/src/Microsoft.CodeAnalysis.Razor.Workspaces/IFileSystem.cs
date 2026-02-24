@@ -17,4 +17,6 @@ internal interface IFileSystem
     string ReadFile(string filePath);
 
     Stream OpenReadStream(string filePath);
+
+    void Move(string sourceFilePath, string destinationFilePath);
 }

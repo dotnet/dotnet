@@ -28,6 +28,9 @@ internal class RemoteFileSystem : IFileSystem
     public IEnumerable<string> GetFiles(string workspaceDirectory, string searchPattern, SearchOption searchOption)
         => _fileSystem.GetFiles(workspaceDirectory, searchPattern, searchOption);
 
+    public void Move(string sourceFilePath, string destinationFilePath)
+        => _fileSystem.Move(sourceFilePath, destinationFilePath);
+
     internal TestAccessor GetTestAccessor() => new(this);
 
     internal readonly struct TestAccessor(RemoteFileSystem instance)

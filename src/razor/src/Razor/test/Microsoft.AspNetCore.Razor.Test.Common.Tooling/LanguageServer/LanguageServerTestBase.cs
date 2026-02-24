@@ -21,6 +21,7 @@ using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Xunit.Abstractions;
@@ -138,6 +139,7 @@ public abstract class LanguageServerTestBase(ITestOutputHelper testOutput) : Too
         bool autoInsertAttributeQuotes = true,
         bool colorBackground = false,
         bool codeBlockBraceOnNextLine = false,
+        AttributeIndentStyle attributeIndentStyle = AttributeIndentStyle.AlignWithFirst,
         bool commitElementsWithSpace = true,
         bool formatOnPaste = true)
     {
@@ -153,6 +155,7 @@ public abstract class LanguageServerTestBase(ITestOutputHelper testOutput) : Too
             autoInsertAttributeQuotes,
             colorBackground,
             codeBlockBraceOnNextLine,
+            attributeIndentStyle,
             commitElementsWithSpace,
             TaskListDescriptors: []);
         var optionsMonitor = new RazorLSPOptionsMonitor(configService, options);

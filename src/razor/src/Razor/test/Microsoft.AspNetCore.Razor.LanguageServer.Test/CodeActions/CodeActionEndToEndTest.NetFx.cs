@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using Xunit.Abstractions;
@@ -843,6 +844,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : CodeActionEn
             AutoInsertAttributeQuotes: true,
             ColorBackground: false,
             CodeBlockBraceOnNextLine: false,
+            AttributeIndentStyle: AttributeIndentStyle.AlignWithFirst,
             CommitElementsWithSpace: true,
             TaskListDescriptors: []);
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
