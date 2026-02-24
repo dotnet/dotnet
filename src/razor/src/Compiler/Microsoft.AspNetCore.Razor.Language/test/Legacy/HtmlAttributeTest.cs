@@ -385,4 +385,28 @@ public class HtmlAttributeTest() : ParserTestBase(layer: TestProject.Layer.Compi
     {
         ParseDocumentTest("<span @class:param='@foo'></span>", RazorFileKind.Component);
     }
+
+    [Fact]
+    public void EscapedAttributeValue_InHtmlElement()
+    {
+        ParseDocumentTest("""<p class="@@test">Content</p>""");
+    }
+
+    [Fact]
+    public void EscapedAttributeValue_InComponent()
+    {
+        ParseDocumentTest("""<Weather Value="@@currentCount" />""", RazorFileKind.Component);
+    }
+
+    [Fact]
+    public void EscapedAttributeValue_MultipleInComponent()
+    {
+        ParseDocumentTest("""<Weather Value="@@count" Title="@@title" />""", RazorFileKind.Component);
+    }
+
+    [Fact]
+    public void EscapedAttributeValue_MixedWithCSharp()
+    {
+        ParseDocumentTest("""<Weather Value="@@currentCount @someVar" />""", RazorFileKind.Component);
+    }
 }

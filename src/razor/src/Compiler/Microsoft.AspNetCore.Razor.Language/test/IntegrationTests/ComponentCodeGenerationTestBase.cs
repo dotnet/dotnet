@@ -13018,5 +13018,30 @@ Time: @DateTime.Now
         CompileToAssembly(generated);
     }
 
+    [IntegrationTestFact]
+    public void ComponentAttribute_WithDoubleAtEscape()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse(@"
+using Microsoft.AspNetCore.Components;
+
+namespace Test
+{
+    public class MyComponent : ComponentBase
+    {
+        [Parameter]
+        public string Value { get; set; }
+    }
+}"));
+
+        // Act
+        var generated = CompileToCSharp(@"<MyComponent Value=""@@currentCount"" />");
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
     #endregion
 }

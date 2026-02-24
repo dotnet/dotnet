@@ -49,14 +49,14 @@ public class ProjectContextsEndpointTest(ITestOutputHelper testOutput) : SingleS
             context =>
             {
                 Assert.Equal(VSProjectKind.CSharp, context.Kind);
-                Assert.Equal("TestProject (net6.0)", context.Label);
-                Assert.Contains("|TestProject (net6.0)", context.Id);
+                Assert.Equal("TestProject (net10.0)", context.Label);
+                Assert.Contains("|TestProject (net10.0)", context.Id);
             },
             context =>
             {
                 Assert.Equal(VSProjectKind.CSharp, context.Kind);
-                Assert.Equal("TestProject (net8.0)", context.Label);
-                Assert.Contains("|TestProject (net8.0)", context.Id);
+                Assert.Equal("TestProject (net6.0)", context.Label);
+                Assert.Contains("|TestProject (net6.0)", context.Id);
             });
     }
 }
