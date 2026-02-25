@@ -9,6 +9,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26115.104</MicrosoftDotNetArcadeSdkPackageVersion>
     <SystemCommandLinePackageVersion>3.0.0-preview.2.26115.104</SystemCommandLinePackageVersion>
     <SystemIOHashingPackageVersion>11.0.0-preview.2.26115.104</SystemIOHashingPackageVersion>
+    <MicrosoftNETCoreAppRefPackageVersion>11.0.0-preview.1.26069.103</MicrosoftNETCoreAppRefPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
@@ -16,5 +17,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
     <SystemCommandLineVersion>$(SystemCommandLinePackageVersion)</SystemCommandLineVersion>
     <SystemIOHashingVersion>$(SystemIOHashingPackageVersion)</SystemIOHashingVersion>
+    <MicrosoftNETCoreAppRefVersion>$(MicrosoftNETCoreAppRefPackageVersion)</MicrosoftNETCoreAppRefVersion>
   </PropertyGroup>
 </Project>

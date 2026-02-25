@@ -2,6 +2,12 @@
 <Dependencies>
   <Source Uri="https://github.com/dotnet/dotnet" Mapping="msbuild" Sha="2293c4c42809d258d5246ecaca1e986514cb425c" BarId="301941" />
   <ProductDependencies>
+    <!-- Necessary for source-build. This allows the live version of the targeting pack to be used by source-build. -->
+    <Dependency Name="Microsoft.NETCore.App.Ref" Version="11.0.0-preview.1.26069.103">
+      <Uri>https://github.com/dotnet/runtime</Uri>
+      <Sha>
+      </Sha>
+    </Dependency>
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
     <Dependency Name="System.CodeDom" Version="10.0.2">
       <Uri>https://github.com/dotnet/runtime</Uri>
