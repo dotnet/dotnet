@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -18,9 +19,10 @@ namespace NuGet.ProjectModel
     public static class PackagesLockFileFormat
     {
         public static readonly int Version = 1;
+        internal static readonly int AliasedVersion = 3;
 
-        // Diverge the lockfile version to allow evolving the lock file schema
-        public static readonly int PackagesLockFileVersion = 2;
+        // This allows us to maintain compatibility with older clients that don't understand the concept of central package versions.
+        public static readonly int PackagesLockFileVersion = AliasedVersion;
 
         public static readonly string LockFileName = "packages.lock.json";
 
@@ -30,6 +32,7 @@ namespace NuGet.ProjectModel
         private const string ContentHashProperty = "contentHash";
         private const string DependenciesProperty = "dependencies";
         private const string TypeProperty = "type";
+        private const string FrameworkProperty = "framework";
 
         public static PackagesLockFile Parse(string lockFileContent, string path)
         {
@@ -91,10 +94,35 @@ namespace NuGet.ProjectModel
 
         private static PackagesLockFile ReadLockFile(JObject cursor)
         {
+            int version = JsonUtility.ReadInt(cursor, VersionProperty, defaultValue: int.MinValue);
+            IList<PackagesLockFileTarget> targets;
+
+            if (version >= AliasedVersion)
+            {
+                // V3 format: read from root level (alias/rid keys with framework and dependencies inside)
+                targets = new List<PackagesLockFileTarget>();
+                foreach (var property in cursor.Properties())
+                {
+                    if (property.Name != VersionProperty)
+                    {
+                        var target = ReadTargetV3(property.Name, property.Value);
+                        if (target != null)
+                        {
+                            targets.Add(target);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // V1 and V2 format: read from dependencies property
+                targets = JsonUtility.ReadObject(cursor[DependenciesProperty] as JObject, ReadDependencyV2);
+            }
+
             var lockFile = new PackagesLockFile()
             {
-                Version = JsonUtility.ReadInt(cursor, VersionProperty, defaultValue: int.MinValue),
-                Targets = JsonUtility.ReadObject(cursor[DependenciesProperty] as JObject, ReadDependency),
+                Version = version,
+                Targets = targets,
             };
 
             return lockFile;
@@ -148,16 +176,30 @@ namespace NuGet.ProjectModel
         {
             var json = new JObject
             {
-                [VersionProperty] = new JValue(lockFile.Version),
-                [DependenciesProperty] = JsonUtility.WriteObject(lockFile.Targets, WriteTarget),
+                [VersionProperty] = new JValue(lockFile.Version)
             };
+
+            if (lockFile.Version >= AliasedVersion)
+            {
+                // V3 format: write targets at root level with framework and dependencies inside
+                foreach (var target in lockFile.Targets)
+                {
+                    var targetProperty = WriteTargetV3(target);
+                    json.Add(targetProperty);
+                }
+            }
+            else
+            {
+                // V1 and V2 format: write targets under dependencies property
+                json[DependenciesProperty] = JsonUtility.WriteObject(lockFile.Targets, WriteTarget);
+            }
 
             return json;
         }
 
-        private static PackagesLockFileTarget ReadDependency(string property, JToken json)
+        private static PackagesLockFileTarget ReadDependencyV2(string property, JToken json)
         {
-            var parts = property.Split(JsonUtility.PathSplitChars, 2);
+            var parts = property.Split(JsonUtility.PathSplitChars);
 
             var target = new PackagesLockFileTarget
             {
@@ -169,6 +211,33 @@ namespace NuGet.ProjectModel
             {
                 target.RuntimeIdentifier = parts[1];
             }
+
+            return target;
+        }
+
+        private static PackagesLockFileTarget ReadTargetV3(string property, JToken json)
+        {
+            var jObject = json as JObject;
+            if (jObject == null)
+            {
+                return null;
+            }
+
+            var frameworkString = JsonUtility.ReadProperty<string>(jObject, FrameworkProperty);
+            if (string.IsNullOrEmpty(frameworkString))
+            {
+                return null;
+            }
+
+            var parts = property.Split(JsonUtility.PathSplitChars);
+
+            var target = new PackagesLockFileTarget
+            {
+                TargetFramework = NuGetFramework.Parse(frameworkString),
+                RuntimeIdentifier = parts.Length == 2 ? parts[1] : null,
+                TargetAlias = parts[0],
+                Dependencies = JsonUtility.ReadObject(jObject[DependenciesProperty] as JObject, ReadTargetDependency)
+            };
 
             return target;
         }
@@ -210,6 +279,19 @@ namespace NuGet.ProjectModel
             return dependency;
         }
 
+        private static JProperty WriteTargetV3(PackagesLockFileTarget target)
+        {
+            var key = target.Name;
+
+            var json = new JObject
+            {
+                [FrameworkProperty] = target.TargetFramework.ToString(),
+                [DependenciesProperty] = JsonUtility.WriteObject(target.Dependencies, WriteTargetDependency)
+            };
+
+            return new JProperty(key, json);
+        }
+
         private static JProperty WriteTarget(PackagesLockFileTarget target)
         {
             var json = JsonUtility.WriteObject(target.Dependencies, WriteTargetDependency);
@@ -218,6 +300,7 @@ namespace NuGet.ProjectModel
 
             return new JProperty(key, json);
         }
+
 
         private static JProperty WriteTargetDependency(LockFileDependency dependency)
         {

@@ -26,6 +26,12 @@ namespace NuGet.ProjectModel
         public string RuntimeIdentifier { get; set; }
 
         /// <summary>
+        /// Target alias for version 3 lock files when multiple aliases exist for the same framework.
+        /// It is very important that the alias is *not* set when there are no duplicate frameworks, since this drives the format of the lock file.
+        /// </summary>
+        public string TargetAlias { get; set; }
+
+        /// <summary>
         /// 
         /// </summary>
         public IList<LockFileDependency> Dependencies { get; set; } = new List<LockFileDependency>();
@@ -33,7 +39,7 @@ namespace NuGet.ProjectModel
         /// <summary>
         /// Full framework name.
         /// </summary>
-        public string Name => GetNameString(TargetFramework, RuntimeIdentifier);
+        public string Name => GetNameString(TargetFramework, RuntimeIdentifier, TargetAlias);
 
         public bool Equals(PackagesLockFileTarget other)
         {
@@ -48,6 +54,7 @@ namespace NuGet.ProjectModel
             }
 
             return StringComparer.Ordinal.Equals(RuntimeIdentifier, other.RuntimeIdentifier)
+                && StringComparer.OrdinalIgnoreCase.Equals(TargetAlias, other.TargetAlias)
                 && NuGetFramework.Comparer.Equals(TargetFramework, other.TargetFramework)
                 && EqualityUtility.SequenceEqualWithNullCheck(Dependencies, other.Dependencies);
         }
@@ -63,12 +70,13 @@ namespace NuGet.ProjectModel
 
             combiner.AddObject(TargetFramework);
             combiner.AddObject(RuntimeIdentifier);
+            combiner.AddObject(TargetAlias);
             combiner.AddSequence(Dependencies);
 
             return combiner.CombinedHash;
         }
 
-        private static string GetNameString(NuGetFramework framework, string runtime)
+        private static string GetNameString(NuGetFramework framework, string runtime, string alias)
         {
             string frameworkString;
 
@@ -92,6 +100,17 @@ namespace NuGet.ProjectModel
                 frameworkString = framework.DotNetFrameworkName;
             }
 
+            // For version 3, use alias/framework/rid format when alias is present
+            if (!string.IsNullOrEmpty(alias))
+            {
+                if (!string.IsNullOrEmpty(runtime))
+                {
+                    return $"{alias}/{runtime}";
+                }
+                return $"{alias}";
+            }
+
+            // Version 1 & 2 : framework or framework/rid
             if (!string.IsNullOrEmpty(runtime))
             {
                 return $"{frameworkString}/{runtime}";
