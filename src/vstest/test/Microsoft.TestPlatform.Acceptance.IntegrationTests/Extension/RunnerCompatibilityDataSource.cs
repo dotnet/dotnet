@@ -59,6 +59,7 @@ public class RunnerCompatibilityDataSource : TestDataSourceAttribute<RunnerInfo>
     public override void CreateData(MethodInfo methodInfo)
     {
         _builder.WithEveryVersionOfRunner = true;
+        _builder.WithVSIXRunner = true;
         _builder.WithEveryVersionOfHost = false;
         _builder.WithEveryVersionOfAdapter = false;
         _builder.WithOlderConfigurations = false;

@@ -7,10 +7,10 @@
       "commitSha": "0d4dddc6228dcfb80723742f186ad89522ae1273"
     },
     {
-      "barId": 301607,
+      "barId": 303270,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "23e6a3a457e88f4463154c2b63b8787e9bf195fc"
+      "commitSha": "4e09789dd2f0cf73be3c4baa5b44af22e8980d35"
     },
     {
       "barId": 292148,
@@ -61,10 +61,10 @@
       "commitSha": "b3eba18a92fc2171a656151290d319b58cd6a26b"
     },
     {
-      "barId": 302763,
+      "barId": 303272,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "6e8e121e95d7df449c5cd3c299883c896866e0b6"
+      "commitSha": "ee68be338061a797f4074c760a7c9e0b3ff415fb"
     },
     {
       "barId": 303428,
@@ -121,10 +121,10 @@
       "commitSha": "a7c067013a5f3a4798993f2cc7059771126fc333"
     },
     {
-      "barId": 302682,
+      "barId": 303332,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "561da931e249e56376b4ce10b5f2d49f4033343d"
+      "commitSha": "e31538146d8df06a663d8a4ad9c75aa548deebc0"
     },
     {
       "barId": 299568,
