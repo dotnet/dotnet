@@ -7,10 +7,10 @@
       "commitSha": "88c88084abfa1e379f54933af89e43fa774e323c"
     },
     {
-      "barId": 301607,
+      "barId": 301805,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "23e6a3a457e88f4463154c2b63b8787e9bf195fc"
+      "commitSha": "6bf45a7f29db639c1eac5c84c70deac7334b3bdf"
     },
     {
       "barId": 292148,
@@ -37,10 +37,10 @@
       "commitSha": "970c803abb1ed5657b056cdaf01f1693f437c242"
     },
     {
-      "barId": 302825,
+      "barId": 303073,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "fb11d70a30a5ccbb2004875f656a0ecc981e5454"
+      "commitSha": "fc6f21de852845da01783712edbcfe48c44e98ca"
     },
     {
       "barId": 298250,
@@ -49,22 +49,22 @@
       "commitSha": "34ea87b2e530301557526b558e89f3f031f2a8d9"
     },
     {
-      "barId": 302393,
+      "barId": 302621,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "5fd82bcea68136cccf9050e1eba7058b911361c9"
+      "commitSha": "7d0437e8bcf9ead9483483eaa556f1998af8806b"
     },
     {
-      "barId": 302028,
+      "barId": 302299,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "81815e52c87864858802a8188241894fc5ffc376"
+      "commitSha": "89e3ec493ee58ecd9a85f71e5e1017bc616852ef"
     },
     {
-      "barId": 302193,
+      "barId": 302763,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "a60358ca11592a57122c0e73aefbe3ca202f4b6f"
+      "commitSha": "6e8e121e95d7df449c5cd3c299883c896866e0b6"
     },
     {
       "barId": 303268,
@@ -133,10 +133,10 @@
       "commitSha": "8350252f689bc85aec91a47e3d7eff9333ef6569"
     },
     {
-      "barId": 301354,
+      "barId": 302402,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "6ac21aee21d08db3df87d37ce75b2617c03158f3"
+      "commitSha": "fdb43c86a4e556a3e98b54fb1cd34685660b171b"
     },
     {
       "barId": 300191,
