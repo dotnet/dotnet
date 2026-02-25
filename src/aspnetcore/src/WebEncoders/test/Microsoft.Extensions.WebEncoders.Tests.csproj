@@ -7,6 +7,9 @@
 
   <ItemGroup>
     <Reference Include="Microsoft.Extensions.WebEncoders" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <Reference Include="Microsoft.Extensions.DependencyInjection" />
     <Reference Include="Microsoft.Extensions.Options" />

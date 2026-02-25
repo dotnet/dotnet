@@ -30,6 +30,5 @@
       SkipGetTargetFrameworkProperties="true" />
 
     <Reference Include="Microsoft.AspNetCore.Hosting" />
-    <Reference Include="Microsoft.Extensions.Logging.Console" />
   </ItemGroup>
 </Project>

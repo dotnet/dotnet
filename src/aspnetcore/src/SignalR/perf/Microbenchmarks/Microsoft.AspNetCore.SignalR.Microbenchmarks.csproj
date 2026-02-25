@@ -31,7 +31,6 @@
     <Reference Include="Microsoft.AspNetCore.SignalR.Protocols.MessagePack" />
     <Reference Include="Microsoft.AspNetCore.SignalR.Protocols.Json" />
     <Reference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" />
-    <Reference Include="Microsoft.Extensions.DependencyInjection" />
     <Reference Include="Moq" />
     <Reference Include="System.Reactive.Linq" />
 

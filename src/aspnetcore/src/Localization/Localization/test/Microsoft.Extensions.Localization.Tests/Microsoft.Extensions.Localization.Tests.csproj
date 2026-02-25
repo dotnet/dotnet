@@ -8,6 +8,9 @@
   <ItemGroup>
     <Reference Include="Microsoft.Extensions.Localization.Abstractions" />
     <Reference Include="Microsoft.Extensions.Localization" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <Reference Include="Microsoft.Extensions.DependencyInjection" />
     <Reference Include="Microsoft.Extensions.Logging.Abstractions" />

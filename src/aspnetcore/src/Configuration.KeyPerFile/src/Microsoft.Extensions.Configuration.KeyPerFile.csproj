@@ -11,7 +11,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
     <Reference Include="Microsoft.Extensions.Configuration" />
     <Reference Include="Microsoft.Extensions.FileProviders.Physical" />
   </ItemGroup>

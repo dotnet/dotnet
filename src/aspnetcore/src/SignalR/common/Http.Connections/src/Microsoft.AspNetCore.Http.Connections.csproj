@@ -43,7 +43,6 @@
     <Reference Include="Microsoft.AspNetCore.Routing" />
     <Reference Include="Microsoft.AspNetCore.Routing.Abstractions" />
     <Reference Include="Microsoft.AspNetCore.WebSockets" />
-    <Reference Include="Microsoft.Extensions.Diagnostics" />
   </ItemGroup>
 
   <ItemGroup>

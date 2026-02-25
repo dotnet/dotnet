@@ -27,7 +27,6 @@
     <Reference Include="Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets" />
     <Reference Include="Microsoft.AspNetCore.WebSockets" />
     <Reference Include="Microsoft.AspNetCore.WebUtilities" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
     <Reference Include="System.Net.Http.WinHttpHandler" />
   </ItemGroup>
 

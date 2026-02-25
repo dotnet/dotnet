@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="Microsoft.Extensions.DependencyInjection" />
     <Reference Include="Microsoft.AspNetCore.Components" />
     <Reference Include="Microsoft.AspNetCore.Components.Web" />
   </ItemGroup>

@@ -12,9 +12,6 @@
 
   <ItemGroup>
     <Reference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" />
-    <Reference Include="Microsoft.Extensions.Diagnostics" />
-    <Reference Include="Microsoft.Extensions.Logging" />
-    <Reference Include="Microsoft.Extensions.Options" />
 
     <Compile Include="$(SharedSourceRoot)Metrics\MetricsConstants.cs" LinkBase="Shared" />
     <Compile Include="$(SharedSourceRoot)TrimmingAttributes.cs" LinkBase="Shared" />
@@ -23,6 +20,12 @@
     <Compile Include="$(SharedSourceRoot)ThrowHelpers\ArgumentOutOfRangeThrowHelper.cs" LinkBase="Shared" />
     <Compile Include="$(SharedSourceRoot)ThrowHelpers\ObjectDisposedThrowHelper.cs" LinkBase="Shared" />
     <Compile Include="$(SharedSourceRoot)CallerArgument\CallerArgumentExpressionAttribute.cs" LinkBase="Shared" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
+    <Reference Include="Microsoft.Extensions.Diagnostics" />
+    <Reference Include="Microsoft.Extensions.Logging" />
+    <Reference Include="Microsoft.Extensions.Options" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == '$(DefaultNetFxTargetFramework)' OR '$(MSBuildRestoreSessionId)' == ''">

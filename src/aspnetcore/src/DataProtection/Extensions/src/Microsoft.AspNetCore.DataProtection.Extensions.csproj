@@ -20,6 +20,9 @@
 
   <ItemGroup>
     <Reference Include="Microsoft.AspNetCore.DataProtection" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
     <Reference Include="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>
 

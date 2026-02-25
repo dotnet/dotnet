@@ -18,8 +18,6 @@
     <Reference Include="Grpc.Auth" />
     <Reference Include="Grpc.Net.Client" />
     <Reference Include="Grpc.Tools" PrivateAssets="All" />
-    <Reference Include="Microsoft.Extensions.DependencyInjection" />
-    <Reference Include="Microsoft.Extensions.Logging.Console" />
   </ItemGroup>
 
 </Project>

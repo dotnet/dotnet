@@ -32,6 +32,9 @@
   <ItemGroup>
     <Reference Include="Selenium.Support" />
     <Reference Include="Selenium.WebDriver" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
     <Reference Include="Microsoft.Extensions.Configuration" />
     <Reference Include="Microsoft.Extensions.Configuration.Json" />
     <Reference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />

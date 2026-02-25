@@ -46,6 +46,5 @@
     <Reference Include="Microsoft.AspNetCore.StaticFiles" />
     <Reference Include="Microsoft.AspNetCore.Diagnostics" />
     <Reference Include="Microsoft.AspNetCore.CookiePolicy" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
   </ItemGroup>
 </Project>

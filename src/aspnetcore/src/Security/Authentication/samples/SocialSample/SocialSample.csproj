@@ -40,8 +40,6 @@
     <Reference Include="Microsoft.AspNetCore.Routing" />
     <Reference Include="Microsoft.AspNetCore.Routing.Abstractions" />
     <Reference Include="Microsoft.Extensions.FileProviders.Embedded" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
-    <Reference Include="Microsoft.Extensions.Logging.Console" />
     <Reference Include="Microsoft.Net.Http.Headers" />
   </ItemGroup>
 

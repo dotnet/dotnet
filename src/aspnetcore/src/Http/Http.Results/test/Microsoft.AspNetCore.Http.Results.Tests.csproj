@@ -17,8 +17,6 @@
     <Reference Include="Microsoft.AspNetCore.Http.Features" />
     <Reference Include="Microsoft.AspNetCore.Http.Results" />
     <Reference Include="Microsoft.AspNetCore.Routing.Abstractions" />
-    <Reference Include="Microsoft.Extensions.DependencyInjection" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
     <Reference Include="Mono.TextTemplating" />
 
     <ProjectReference Include="..\tools\ResultsOfTGenerator\ResultsOfTGenerator.csproj" />

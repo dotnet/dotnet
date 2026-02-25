@@ -33,9 +33,6 @@
     <Reference Include="Microsoft.AspNetCore.SignalR" />
     <Reference Include="Microsoft.AspNetCore.SignalR.Core" />
     <Reference Include="Microsoft.AspNetCore.StaticFiles" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
-    <Reference Include="Microsoft.Extensions.Logging.Console" />
-    <Reference Include="Microsoft.Extensions.Logging.Debug" />
   </ItemGroup>
 
   <Target Name="CopyTSClient" BeforeTargets="AfterBuild">

@@ -57,4 +57,38 @@
     <_CompilationOnlyReference Include="System.Runtime.CompilerServices.Unsafe" />
     <_CompilationOnlyReference Include="System.Text.Json" />
   </ItemGroup>
+
+  <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
+    <_CompilationOnlyReference Include="System.Diagnostics.EventLog" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Caching.Abstractions" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Caching.Memory" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Configuration" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Configuration.Binder" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Configuration.CommandLine" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Configuration.FileExtensions" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Configuration.Json" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Configuration.UserSecrets" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.DependencyInjection" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Diagnostics" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Diagnostics.Abstractions" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.FileProviders.Abstractions" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.FileProviders.Physical" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.FileSystemGlobbing" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Hosting" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Http" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Logging" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Logging.Configuration" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Logging.Console" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Logging.Debug" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Logging.EventLog" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Logging.EventSource" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Options" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+    <_CompilationOnlyReference Include="Microsoft.Extensions.Primitives" />
+  </ItemGroup>
 </Project>

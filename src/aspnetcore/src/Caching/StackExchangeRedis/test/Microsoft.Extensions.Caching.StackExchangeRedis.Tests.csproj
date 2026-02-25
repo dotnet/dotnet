@@ -5,9 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Reference Include="Microsoft.Extensions.Caching.StackExchangeRedis" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
     <Reference Include="Microsoft.Extensions.Caching.Abstractions" />
     <Reference Include="Microsoft.Extensions.Caching.Memory" />
-    <Reference Include="Microsoft.Extensions.Caching.StackExchangeRedis" />
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <Reference Include="Microsoft.Extensions.DependencyInjection" />
     <Reference Include="Microsoft.Extensions.Options" />

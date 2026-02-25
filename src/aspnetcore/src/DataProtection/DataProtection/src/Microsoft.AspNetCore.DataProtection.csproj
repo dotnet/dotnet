@@ -28,11 +28,14 @@
   <ItemGroup>
     <Reference Include="Microsoft.AspNetCore.Cryptography.Internal" />
     <Reference Include="Microsoft.AspNetCore.DataProtection.Abstractions" />
+    <Reference Include="System.Security.Cryptography.Xml" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <Reference Include="Microsoft.Extensions.Hosting.Abstractions" />
     <Reference Include="Microsoft.Extensions.Logging.Abstractions" />
     <Reference Include="Microsoft.Extensions.Options" />
-    <Reference Include="System.Security.Cryptography.Xml" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' OR

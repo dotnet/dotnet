@@ -45,7 +45,6 @@
     <Reference Include="Microsoft.AspNetCore.Server.IIS" />
     <Reference Include="Microsoft.AspNetCore.Server.IISIntegration" />
     <Reference Include="Microsoft.Extensions.DependencyModel" />
-    <Reference Include="Microsoft.Extensions.Hosting" />
     <Reference Include="AngleSharp" />
   </ItemGroup>
 

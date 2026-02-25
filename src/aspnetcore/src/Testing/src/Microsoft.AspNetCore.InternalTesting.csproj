@@ -23,9 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Microsoft.Extensions.DependencyInjection" />
-    <Reference Include="Microsoft.Extensions.Logging.Console" />
-    <Reference Include="Microsoft.Extensions.Logging" />
     <Reference Include="Serilog.Extensions.Logging" />
     <Reference Include="Serilog.Sinks.File" />
     <Reference Include="System.ValueTuple" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
@@ -41,6 +38,12 @@
     <Reference Include="xunit.assert" />
     <Reference Include="xunit.extensibility.execution" />
     <Reference Include="Microsoft.DotNet.RemoteExecutor" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
+    <Reference Include="Microsoft.Extensions.DependencyInjection" />
+    <Reference Include="Microsoft.Extensions.Logging" />
+    <Reference Include="Microsoft.Extensions.Logging.Console" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' OR

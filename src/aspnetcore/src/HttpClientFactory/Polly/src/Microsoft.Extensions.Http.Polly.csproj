@@ -23,8 +23,11 @@
     <Compile Include="$(SharedSourceRoot)ValueStopwatch\**\*.cs" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
     <Reference Include="Microsoft.Extensions.Http" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Polly.Extensions.Http" />
     <Reference Include="Polly" />
   </ItemGroup>

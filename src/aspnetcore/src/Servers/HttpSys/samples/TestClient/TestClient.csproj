@@ -6,8 +6,4 @@
     <StartupObject>TestClient.Program</StartupObject>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Reference Include="Microsoft.Extensions.Logging.Console" />
-  </ItemGroup>
-
 </Project>

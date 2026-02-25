@@ -29,6 +29,5 @@
     <Reference Include="Microsoft.AspNetCore.Mvc.DataAnnotations" />
     <Reference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
     <Reference Include="Microsoft.AspNetCore.Server.Kestrel" />
-    <Reference Include="Microsoft.Extensions.Configuration.CommandLine" />
   </ItemGroup>
 </Project>
