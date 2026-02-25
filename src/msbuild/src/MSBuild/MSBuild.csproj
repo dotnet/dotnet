@@ -113,6 +113,9 @@
     <Compile Include="..\Shared\TaskHostTaskComplete.cs" />
     <Compile Include="..\Shared\OutOfProcTaskHostTaskResult.cs" />
     <Compile Include="..\Shared\TaskHostTaskCancelled.cs" />
+    <Compile Include="..\Shared\ITaskHostCallbackPacket.cs" />
+    <Compile Include="..\Shared\TaskHostIsRunningMultipleNodesRequest.cs" />
+    <Compile Include="..\Shared\TaskHostIsRunningMultipleNodesResponse.cs" />
     <Compile Include="..\Shared\TaskLoader.cs" />
     <Compile Include="..\Shared\MSBuildLoadContext.cs" Condition="'$(TargetFrameworkIdentifier)'!='.NETFramework'" />
     <Compile Include="..\Shared\TypeLoader.cs" />
@@ -165,10 +168,10 @@
     <Content Include="MSBuild.rsp" Pack="false">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <!-- Only include XSDs for .NET Framework (VS Setup and schema validation). -->
-    <XsdsForVS Include="**\*.xsd" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
-    <XsdsForVS Include="Update-MSBuildXsds.ps1" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
-    <None Include="@(XsdsForVS)">
+    <!-- Only include XSDs for .NET Framework (they don't ship in the .NET SDK). -->
+    <XsdsForVS Include="**\*.xsd" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+    <XsdsForVS Include="Update-MSBuildXsds.ps1" />
+    <None Include="@(XsdsForVS)" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -314,17 +317,6 @@
 
   <Target Name="ValidateMSBuildPackageDependencyVersions" BeforeTargets="AfterBuild" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
     <ValidateMSBuildPackageDependencyVersions AppConfig="@(AppConfigWithTargetPath)" AssemblyPath="$(OutputPath)" />
-  </Target>
-
-  <!-- Add MSBuild.exe.config for the app host on .NET Core (SDK only generates MSBuild.dll.config) -->
-  <PropertyGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'">
-    <_AppHostExtension Condition="$([MSBuild]::IsOSPlatform('windows'))">.exe</_AppHostExtension>
-    <_AppHostExtension Condition="!$([MSBuild]::IsOSPlatform('windows'))"></_AppHostExtension>
-  </PropertyGroup>
-
-  <Target Name="CopyDllConfigToAppHostConfig" AfterTargets="_CopyAppConfigFile" Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'">    
-    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll.config" DestinationFiles="$(OutputPath)$(AssemblyName)$(_AppHostExtension).config" SkipUnchangedFiles="true" Condition="Exists('$(OutputPath)$(AssemblyName).dll.config')" />
-    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll.config" DestinationFiles="$(ArtifactsDir)bin\Microsoft.Build.Engine.UnitTests\$(Configuration)\$(TargetFramework)\$(AssemblyName)$(_AppHostExtension).config" SkipUnchangedFiles="true" Condition="Exists('$(OutputPath)$(AssemblyName).dll.config')" />
   </Target>
 
 </Project>

@@ -11,6 +11,7 @@ using System.IO;
 #endif
 
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Text;
 using Microsoft.Build.Exceptions;
 using Microsoft.Build.Framework;
@@ -138,6 +139,7 @@ namespace Microsoft.Build.BackEnd
             return flags;
         }
 
+        [UnsupportedOSPlatform("windows")]
         private Process StartProcessUnix(NodeLaunchData nodeLaunchData, string exeName, uint creationFlags, bool redirectStreams, bool isNativeAppHost)
         {
             string commandLineArgs = BuildUnixCommandLineArgs(nodeLaunchData, isNativeAppHost);
@@ -173,6 +175,7 @@ namespace Microsoft.Build.BackEnd
             }
         }
 
+        [SupportedOSPlatform("windows")]
         private static Process StartProcessWindows(NodeLaunchData nodeLaunchData, string exeName, uint creationFlags, bool redirectStreams, bool isNativeAppHost)
         {
             string commandLineArgs = BuildWindowsCommandLineArgs(nodeLaunchData, exeName, isNativeAppHost);
@@ -233,7 +236,6 @@ namespace Microsoft.Build.BackEnd
 
             static void CloseProcessHandles(BackendNativeMethods.PROCESS_INFORMATION processInfo)
             {
-#if WINDOWS
                 if (processInfo.hProcess != IntPtr.Zero && processInfo.hProcess != NativeMethods.InvalidHandle)
                 {
                     NativeMethodsShared.CloseHandle(processInfo.hProcess);
@@ -243,10 +245,10 @@ namespace Microsoft.Build.BackEnd
                 {
                     NativeMethodsShared.CloseHandle(processInfo.hThread);
                 }
-#endif
             }
         }
 
+        [SupportedOSPlatform("windows")]
         private static BackendNativeMethods.STARTUP_INFO CreateStartupInfo(bool redirectStreams)
         {
             var startInfo = new BackendNativeMethods.STARTUP_INFO
@@ -270,6 +272,7 @@ namespace Microsoft.Build.BackEnd
         /// </summary>
         /// <param name="environmentOverrides">Environment variable overrides. Null values remove variables.</param>
         /// <returns>Pointer to environment block that must be freed with Marshal.FreeHGlobal, or BackendNativeMethods.NullPtr.</returns>
+        [SupportedOSPlatform("windows")]
         private static IntPtr BuildEnvironmentBlock(IDictionary<string, string> environmentOverrides)
         {
             if (environmentOverrides == null || environmentOverrides.Count == 0)

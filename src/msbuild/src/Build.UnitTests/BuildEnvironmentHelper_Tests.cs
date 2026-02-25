@@ -24,8 +24,12 @@ namespace Microsoft.Build.Engine.UnitTests
             string configFilePath = BuildEnvironmentHelper.Instance.CurrentMSBuildConfigurationFile.ToLowerInvariant();
             string toolsDirectoryPath = BuildEnvironmentHelper.Instance.CurrentMSBuildToolsDirectory.ToLowerInvariant();
             string actualMSBuildPath = BuildEnvironmentHelper.Instance.CurrentMSBuildExePath.ToLowerInvariant();
-
+#if NETFRAMEWORK
             configFilePath.ShouldBe($"{actualMSBuildPath}.config");
+#else
+            // Even after app host introduction we still use MSBuild.dll.config as a source of tool paths.
+            configFilePath.ShouldBe($"{Path.GetDirectoryName(actualMSBuildPath)}{Path.DirectorySeparatorChar}{Constants.MSBuildAssemblyName.ToLowerInvariant()}.config");
+#endif
             actualMSBuildPath.ShouldBe(expectedMSBuildPath);
             Path.GetDirectoryName(expectedMSBuildPath).ShouldBe(toolsDirectoryPath);
             BuildEnvironmentHelper.Instance.Mode.ShouldBe(BuildEnvironmentMode.Standalone);
@@ -38,7 +42,12 @@ namespace Microsoft.Build.Engine.UnitTests
             {
                 var path = env.BuildDirectory;
                 var msBuildPath = Path.Combine(path, Constants.MSBuildExecutableName);
-                var msBuildConfig = Path.Combine(path, $"{Constants.MSBuildExecutableName}.config");
+                var msBuildConfig = Path.Combine(path,
+#if NET
+                                        "MSBuild.dll.config");
+#else
+                                        "MSBuild.exe.config");
+#endif
 
                 env.WithEnvironment("MSBUILD_EXE_PATH", env.MSBuildExePath);
                 BuildEnvironmentHelper.ResetInstance_ForUnitTestsOnly(ReturnNull, ReturnNull, ReturnNull, env.VsInstanceMock, env.EnvironmentMock, () => false);

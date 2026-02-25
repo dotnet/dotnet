@@ -61,14 +61,15 @@ namespace Microsoft.Build.Engine.UnitTests
         [WindowsFullFrameworkOnlyFact] // Verifies that when MSBuild.exe app host is available in the SDK, it is used instead of dotnet.exe + MSBuild.dll.
         public void NetTaskHostTest_AppHostUsedWhenAvailable()
         {
-            using TestEnvironment env = TestEnvironment.Create(_output, setupDotnetHostPath: true);
+            using TestEnvironment env = TestEnvironment.Create(_output);
+
+            // Set the .NET SDK's SDK resolver override to point to our bootstrap, which is guaranteed to have the apphost.
             var coreDirectory = Path.Combine(RunnerUtilities.BootstrapRootPath, "core");
-            env.SetEnvironmentVariable("PATH", $"{coreDirectory}{Path.PathSeparator}{Environment.GetEnvironmentVariable("PATH")}");
-            env.SetEnvironmentVariable("DOTNET_ROOT", coreDirectory);
+            env.SetEnvironmentVariable("DOTNET_MSBUILD_SDK_RESOLVER_CLI_DIR", coreDirectory);
 
             string testProjectPath = Path.Combine(TestAssetsRootPath, "ExampleNetTask", "TestNetTask", "TestNetTask.csproj");
 
-            string testTaskOutput = RunnerUtilities.ExecBootstrapedMSBuild($"{testProjectPath} -restore -v:n -p:LatestDotNetCoreForMSBuild={RunnerUtilities.LatestDotNetCoreForMSBuild}", out bool successTestTask);
+            string testTaskOutput = RunnerUtilities.ExecBootstrapedMSBuild($"{testProjectPath} -restore -v:n -p:LatestDotNetCoreForMSBuild={RunnerUtilities.LatestDotNetCoreForMSBuild}", out bool successTestTask, outputHelper: _output);
 
             successTestTask.ShouldBeTrue();
 
@@ -179,6 +180,33 @@ namespace Microsoft.Build.Engine.UnitTests
             testTaskOutput.ShouldContain($"Hello TEST");
         }
 
+        [WindowsFullFrameworkOnlyFact]
+        public void NetTaskHost_CallbackIsRunningMultipleNodesTest()
+        {
+            using TestEnvironment env = TestEnvironment.Create(_output);
+            env.SetEnvironmentVariable("MSBUILDENABLETASKHOSTCALLBACKS", "1");
+
+            // Point dotnet resolution to the bootstrap layout so the .NET Core TaskHost
+            // uses the locally-built MSBuild.dll (with callback support) instead of the system SDK.
+            string bootstrapCorePath = Path.Combine(RunnerUtilities.BootstrapRootPath, "core");
+            string bootstrapDotnet = Path.Combine(bootstrapCorePath, "dotnet.exe");
+            env.SetEnvironmentVariable("DOTNET_HOST_PATH", bootstrapDotnet);
+            env.SetEnvironmentVariable("DOTNET_ROOT", bootstrapCorePath);
+            env.SetEnvironmentVariable("DOTNET_MSBUILD_SDK_RESOLVER_CLI_DIR", bootstrapCorePath);
+
+            string testProjectPath = Path.Combine(TestAssetsRootPath, "ExampleNetTask", "TestNetTaskCallback", "TestNetTaskCallback.csproj");
+
+            string testTaskOutput = RunnerUtilities.ExecBootstrapedMSBuild($"{testProjectPath} -v:n -p:LatestDotNetCoreForMSBuild={RunnerUtilities.LatestDotNetCoreForMSBuild} -t:TestTask", out bool successTestTask);
+
+            if (!successTestTask)
+            {
+                _output.WriteLine(testTaskOutput);
+            }
+
+            successTestTask.ShouldBeTrue();
+            testTaskOutput.ShouldContain("CallbackResult: IsRunningMultipleNodes = False");
+        }
+
         [WindowsFullFrameworkOnlyFact] // This test verifies the fallback behavior with implicit host parameters.
         public void NetTaskWithImplicitHostParamsTest_FallbackToDotnet()
         {
@@ -211,13 +239,13 @@ namespace Microsoft.Build.Engine.UnitTests
         [WindowsFullFrameworkOnlyFact] // This test verifies app host behavior with implicit host parameters.
         public void NetTaskWithImplicitHostParamsTest_AppHost()
         {
-            using TestEnvironment env = TestEnvironment.Create(_output, setupDotnetHostPath: true);
+            using TestEnvironment env = TestEnvironment.Create(_output);
             var coreDirectory = Path.Combine(RunnerUtilities.BootstrapRootPath, "core");
             env.SetEnvironmentVariable("PATH", $"{coreDirectory}{Path.PathSeparator}{Environment.GetEnvironmentVariable("PATH")}");
             env.SetEnvironmentVariable("DOTNET_ROOT", coreDirectory);
 
             string testProjectPath = Path.Combine(TestAssetsRootPath, "ExampleNetTask", "TestNetTaskWithImplicitParams", "TestNetTaskWithImplicitParams.csproj");
-            string testTaskOutput = RunnerUtilities.ExecBootstrapedMSBuild($"{testProjectPath} -restore -v:n -p:LatestDotNetCoreForMSBuild={RunnerUtilities.LatestDotNetCoreForMSBuild}", out bool successTestTask);
+            string testTaskOutput = RunnerUtilities.ExecBootstrapedMSBuild($"{testProjectPath} -restore -v:n -p:LatestDotNetCoreForMSBuild={RunnerUtilities.LatestDotNetCoreForMSBuild}", out bool successTestTask, outputHelper: _output);
 
             _output.WriteLine(testTaskOutput);
 
