@@ -22,6 +22,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftExtensionsOptionsPackageVersion>10.0.1</MicrosoftExtensionsOptionsPackageVersion>
     <MicrosoftExtensionsOptionsConfigurationExtensionPackageVersion>10.0.1</MicrosoftExtensionsOptionsConfigurationExtensionPackageVersion>
     <MicrosoftExtensionsPrimitivesPackageVersion>10.0.1</MicrosoftExtensionsPrimitivesPackageVersion>
+    <MicrosoftNETCoreAppRefPackageVersion>11.0.0-preview.1.26069.103</MicrosoftNETCoreAppRefPackageVersion>
     <RoslynDiagnosticsAnalyzersPackageVersion>5.4.0-2.26062.101</RoslynDiagnosticsAnalyzersPackageVersion>
     <SystemCollectionsImmutablePackageVersion>10.0.1</SystemCollectionsImmutablePackageVersion>
     <SystemCommandLinePackageVersion>3.0.0-alpha.1.26062.101</SystemCommandLinePackageVersion>
@@ -68,6 +69,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftExtensionsOptionsVersion>$(MicrosoftExtensionsOptionsPackageVersion)</MicrosoftExtensionsOptionsVersion>
     <MicrosoftExtensionsOptionsConfigurationExtensionVersion>$(MicrosoftExtensionsOptionsConfigurationExtensionPackageVersion)</MicrosoftExtensionsOptionsConfigurationExtensionVersion>
     <MicrosoftExtensionsPrimitivesVersion>$(MicrosoftExtensionsPrimitivesPackageVersion)</MicrosoftExtensionsPrimitivesVersion>
+    <MicrosoftNETCoreAppRefVersion>$(MicrosoftNETCoreAppRefPackageVersion)</MicrosoftNETCoreAppRefVersion>
     <RoslynDiagnosticsAnalyzersVersion>$(RoslynDiagnosticsAnalyzersPackageVersion)</RoslynDiagnosticsAnalyzersVersion>
     <SystemCollectionsImmutableVersion>$(SystemCollectionsImmutablePackageVersion)</SystemCollectionsImmutableVersion>
     <SystemCommandLineVersion>$(SystemCommandLinePackageVersion)</SystemCommandLineVersion>
