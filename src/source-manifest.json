@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 302156,
+      "barId": 302850,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "90215a077f841615b6c6e6c7b2272aa0eef1492a"
+      "commitSha": "88c88084abfa1e379f54933af89e43fa774e323c"
     },
     {
       "barId": 301607,
@@ -37,10 +37,10 @@
       "commitSha": "970c803abb1ed5657b056cdaf01f1693f437c242"
     },
     {
-      "barId": 302545,
+      "barId": 302825,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "6f19809475ddd9bb666c2f2d3735ba4de1758e38"
+      "commitSha": "fb11d70a30a5ccbb2004875f656a0ecc981e5454"
     },
     {
       "barId": 298250,
@@ -103,10 +103,10 @@
       "commitSha": "53df2d8ec665b5c00dfee3866bf7053374d52c7e"
     },
     {
-      "barId": 298878,
+      "barId": 302357,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "abbd07d096967bb7a5b968a5163f2de645fd7251"
+      "commitSha": "6ea6adb7b969c3d58c5aececc1df68e09288cbbf"
     },
     {
       "barId": 301926,
@@ -121,10 +121,10 @@
       "commitSha": "a7c067013a5f3a4798993f2cc7059771126fc333"
     },
     {
-      "barId": 301132,
+      "barId": 302543,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "d9ab5ad7445f66f07eda413eb120f7d5066fb7fb"
+      "commitSha": "42e97b79362804174f12a97d08b08064f40479d3"
     },
     {
       "barId": 299568,
