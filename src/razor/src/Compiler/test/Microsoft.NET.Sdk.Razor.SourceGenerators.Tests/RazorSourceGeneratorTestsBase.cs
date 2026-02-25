@@ -40,9 +40,6 @@ using Xunit;
 
 namespace Microsoft.NET.Sdk.Razor.SourceGenerators;
 
-// RazorSourceGenerator tests cannot run in parallel if they use RazorEventListener
-// because that listens to events across all source generator instances.
-[Collection(nameof(RazorSourceGenerator))]
 public abstract class RazorSourceGeneratorTestsBase
 {
     protected static async ValueTask<GeneratorDriver> GetDriverAsync(Project project, Action<TestAnalyzerConfigOptionsProvider>? configureGlobalOptions = null)
@@ -545,18 +542,47 @@ internal static class Extensions
         return trimmed.Substring(trimmed.IndexOf('\n') + 1);
     }
 
-    public static void AssertSingleItem(this RazorEventListener.RazorEvent e, string expectedEventName, string expectedFileName)
+    public static void VerifyIncrementalSteps(this GeneratorRunResult result, string stepName, params IncrementalStepRunReason[] expectedReasons)
     {
-        Assert.Equal(expectedEventName, e.EventName);
-        var file = Assert.Single(e.Payload);
-        Assert.Equal(expectedFileName, file);
+        VerifyStepExists(result, stepName);
+        
+        var steps = result.TrackedSteps[stepName];
+        Assert.Equal(expectedReasons.Length, steps.Length);
+        
+        for (int i = 0; i < expectedReasons.Length; i++)
+        {
+            var step = steps[i];
+            Assert.Collection(step.Outputs,
+                output => Assert.Equal(expectedReasons[i], output.Reason));
+        }
     }
 
-    public static void AssertPair(this RazorEventListener.RazorEvent e, string expectedEventName, string payload1, string payload2)
+    public static void VerifyIncrementalStepsMultiple(this GeneratorRunResult result, string stepName, params IncrementalStepRunReason[] expectedReasons)
     {
-        Assert.Equal(expectedEventName, e.EventName);
-        Assert.Equal(2, e.Payload.Length);
-        Assert.Equal(payload1, e.Payload[0]);
-        Assert.Equal(payload2, e.Payload[1]);
+        VerifyStepExists(result, stepName);
+        
+        var steps = result.TrackedSteps[stepName];
+        
+        var actualReasons = steps.SelectMany(step => step.Outputs.Select(output => output.Reason)).ToArray();
+        Assert.Equal(expectedReasons.Length, actualReasons.Length);
+        
+        for (int i = 0; i < expectedReasons.Length; i++)
+        {
+            Assert.Equal(expectedReasons[i], actualReasons[i]);
+        }
+    }
+
+    private static void VerifyStepExists(GeneratorRunResult result, string stepName)
+    {
+        var trackedSteps = result.TrackedSteps;
+        if (!trackedSteps.ContainsKey(stepName))
+        {
+            var availableSteps = string.Join(", ", trackedSteps.Keys.OrderBy(k => k).Take(10));
+            if (trackedSteps.Count > 10)
+            {
+                availableSteps += $", ... ({trackedSteps.Count - 10} more)";
+            }
+            Assert.Fail($"Expected step '{stepName}' not found. Available steps: {availableSteps}");
+        }
     }
 }
