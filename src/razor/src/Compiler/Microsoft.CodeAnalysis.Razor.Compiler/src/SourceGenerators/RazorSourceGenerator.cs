@@ -52,6 +52,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 .Combine(metadataRefs.Collect())
                 .SuppressIfNeeded(isGeneratorSuppressed)
                 .Select(ComputeRazorSourceGeneratorOptions)
+                .WithTrackingName("RazorSourceGeneratorOptions")
                 .ReportDiagnostics(context);
 
             var sourceItems = additionalTexts
@@ -100,7 +101,8 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                     RazorSourceGeneratorEventSource.Log.GenerateDeclarationCodeStop(sourceItem.FilePath);
 
                     return result;
-                });
+                })
+                .WithTrackingName("GeneratedDeclarationCode");
 
             var generatedDeclarationSyntaxTrees = generatedDeclarationText
                 .Combine(parseOptions)
@@ -139,7 +141,8 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
                     return collection;
                 })
-                .WithLambdaComparer(static (a, b) => a!.SequenceEqual(b!));
+                .WithLambdaComparer(static (a, b) => a!.SequenceEqual(b!))
+                .WithTrackingName("TagHelpersFromCompilation");
 
             var tagHelpersFromReferences = compilation
                 .Combine(razorSourceGeneratorOptions)
@@ -243,7 +246,8 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                     RazorSourceGeneratorEventSource.Log.DiscoverTagHelpersFromReferencesStop();
 
                     return TagHelperCollection.Merge(collections.AsMemory().Span);
-                });
+                })
+                .WithTrackingName("TagHelpersFromReferences");
 
             var allTagHelpers = tagHelpersFromCompilation
                 .Combine(tagHelpersFromReferences)
@@ -277,6 +281,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                         RazorSourceGeneratorEventSource.Log.ParseRazorDocumentStop(sourceItem.RelativePhysicalPath);
                         return (projectEngine, sourceItem.RelativePhysicalPath, document);
                     })
+                    .WithTrackingName(designTime ? "ParsedDocuments_DesignTime" : "ParsedDocuments")
 
                     // Add the tag helpers in, but ignore if they've changed or not, only reprocessing the actual document changed
                     .Combine(allTagHelpers)
@@ -291,6 +296,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                         RazorSourceGeneratorEventSource.Log.RewriteTagHelpersStop(filePath);
                         return (projectEngine, filePath, codeDocument);
                     })
+                    .WithTrackingName(designTime ? "RewrittenTagHelpers_DesignTime" : "RewrittenTagHelpers")
 
                     // next we do a second parse, along with the helpers, but check for idempotency. If the tag helpers used on the previous parse match, the compiler can skip re-writing them
                     .Combine(allTagHelpers)
@@ -304,6 +310,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                         RazorSourceGeneratorEventSource.Log.CheckAndRewriteTagHelpersStop(filePath);
                         return (projectEngine, filePath, document);
                     })
+                    .WithTrackingName(designTime ? "CheckedAndRewrittenTagHelpers_DesignTime" : "CheckedAndRewrittenTagHelpers")
                     .Select((pair, cancellationToken) =>
                     {
                         var (projectEngine, filePath, document) = pair;
@@ -314,7 +321,8 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
                         RazorSourceGeneratorEventSource.Log.RazorCodeGenerateStop(filePath, kind);
                         return (filePath, document);
-                    });
+                    })
+                    .WithTrackingName(designTime ? "GeneratedCode_DesignTime" : "GeneratedCode");
             }
 
             var csharpDocuments = processed(designTime: false)

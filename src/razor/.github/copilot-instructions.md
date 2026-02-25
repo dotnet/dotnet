@@ -33,6 +33,7 @@ Razor documents contain multiple languages:
 
 - Always build and test with `build.sh -test` before submitting PRs, without specifying a project or test filter
 - Write clear, concise, and maintainable code
+- When fixing a bug, look for existing code that already attempts to handle the scenario before adding new code. The bug is more likely in that existing logic than a missing feature.
 - Always place `[WorkItem]` attributes on tests for tracking
 - Prefer immutable collection types and pooled collections where possible
 - Use `using` statements for disposable resources

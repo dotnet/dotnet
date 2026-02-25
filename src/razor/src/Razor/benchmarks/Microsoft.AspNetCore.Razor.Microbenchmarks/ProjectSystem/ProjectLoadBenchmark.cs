@@ -10,6 +10,8 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks;
 
+#pragma warning disable VSTHRD200
+
 public class ProjectLoadBenchmark : ProjectSnapshotManagerBenchmarkBase
 {
     [IterationSetup]

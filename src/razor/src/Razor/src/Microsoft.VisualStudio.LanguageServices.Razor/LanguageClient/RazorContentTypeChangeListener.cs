@@ -75,7 +75,13 @@ internal class RazorContentTypeChangeListener : ITextBufferContentTypeListener
         }
         else if (supportedBefore)
         {
+            // Stash the old content type so that listeners to
+            textBuffer.Properties[DefaultLSPDocumentManager.LSPDocumentRemovalOldContentTypeKey] = oldContentType;
+
             RazorBufferDisposed(textBuffer);
+
+            // Clean up after ourselves
+            textBuffer.Properties.RemoveProperty(DefaultLSPDocumentManager.LSPDocumentRemovalOldContentTypeKey);
         }
     }
 

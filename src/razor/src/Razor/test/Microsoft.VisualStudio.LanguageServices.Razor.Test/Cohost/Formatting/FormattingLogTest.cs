@@ -89,6 +89,15 @@ public class FormattingLogTest(FormattingTestContext context, HtmlFormattingFixt
     }
 
     [Fact]
+    public async Task CSSWrappedToMultipleLines()
+    {
+        var contents = GetResource("InitialDocument.txt");
+        var htmlChangesFile = GetResource("HtmlChanges.json");
+
+        await GetFormattingEditsAsync(contents, htmlChangesFile);
+    }
+
+    [Fact]
     [WorkItem("https://developercommunity.visualstudio.com/t/Razor-Formatting-Feature-internal-error/11041869#T-ND11043454")]
     public async Task MultiLineLambda()
     {
