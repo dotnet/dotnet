@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 using IO = System.IO;
 
@@ -22,6 +23,8 @@ public class TempDirectory : IDisposable
     }
 
     public string Path { get; }
+
+    public static string? NuGetConfigPath { get; set; }
 
     public void Dispose()
     {
@@ -91,11 +94,24 @@ public class TempDirectory : IDisposable
     /// <returns>
     /// Path of the created directory.
     /// </returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     internal static string CreateUniqueDirectory()
     {
         var temp = GetTempPath();
         var directoryPath = IO.Path.Combine(temp, "vstest", RandomId.Next());
         Directory.CreateDirectory(directoryPath);
+
+        if (NuGetConfigPath == null)
+        {
+            throw new InvalidOperationException("NuGetConfigPath on TempDirectory class must be set.");
+        }
+
+        var tempNugetConfigPath = IO.Path.Combine(directoryPath, IO.Path.GetFileName(NuGetConfigPath));
+
+        if (!File.Exists(tempNugetConfigPath))
+        {
+            File.Copy(NuGetConfigPath, tempNugetConfigPath);
+        }
 
         return directoryPath;
     }
