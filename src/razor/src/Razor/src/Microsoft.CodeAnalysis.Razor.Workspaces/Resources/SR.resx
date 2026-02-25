@@ -223,6 +223,9 @@
   <data name="IncompatibleProject_NoAdditionalFiles" xml:space="preserve">
     <value>The Razor editor utilizes the Razor Source Generator, which requires *.razor and *.cshtml files to be AdditionalFiles in the project. {0} appears to come from '{1}', which has no Razor documents that are AdditionalFiles, so the editing experience will be limited. Is it using the Razor SDK? No more messages will be logged for this project.</value>
   </data>
+  <data name="Sort_And_Consolidate_Usings_Title" xml:space="preserve">
+    <value>Sort and consolidate usings</value>
+  </data>
   <data name="ExtractTo_Css_Title" xml:space="preserve">
     <value>Extract to {0}.css</value>
   </data>

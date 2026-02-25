@@ -64,6 +64,8 @@ internal static class LanguageServerConstants
 
         public const string SimplifyFullyQualifiedComponent = nameof(SimplifyFullyQualifiedComponent);
 
+        public const string SortAndConsolidateUsings = nameof(SortAndConsolidateUsings);
+
         /// <summary>
         /// Remaps without formatting the resolved code action edit
         /// </summary>

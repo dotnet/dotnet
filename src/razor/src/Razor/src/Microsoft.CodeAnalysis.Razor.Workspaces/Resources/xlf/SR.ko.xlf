@@ -144,6 +144,11 @@
         <target state="translated">태그를 자체 닫음으로 간소화</target>
         <note />
       </trans-unit>
+      <trans-unit id="Sort_And_Consolidate_Usings_Title">
+        <source>Sort and consolidate usings</source>
+        <target state="new">Sort and consolidate usings</target>
+        <note />
+      </trans-unit>
       <trans-unit id="TagHelper_Attribute_Glyph">
         <source>Razor TagHelper Attribute Glyph</source>
         <target state="translated">Razor TagHelper 특성 문자 모양</target>

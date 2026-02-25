@@ -18,13 +18,14 @@ using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
-internal static class AddUsingsHelper
+internal static class UsingDirectiveHelper
 {
     private static readonly Regex s_addUsingVSCodeAction = new Regex("@?using ([^;]+);?$", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
@@ -242,5 +243,101 @@ internal static class AddUsingsHelper
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Determines whether the using directives in the document need sorting or consolidating.
+    /// </summary>
+    public static bool NeedsSortOrConsolidate(RazorCodeDocument codeDocument)
+    {
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+
+        var usingDirectives = syntaxTree.GetUsingDirectives();
+        if (usingDirectives.Length <= 1)
+        {
+            return false;
+        }
+
+        var sourceText = codeDocument.Source.Text;
+
+        // Check if namespaces are already in sorted order
+        string? previousNamespace = null;
+        foreach (var directive in usingDirectives)
+        {
+            if (RazorSyntaxFacts.TryGetNamespaceFromDirective(directive, out var ns))
+            {
+                if (previousNamespace is not null && UsingsStringComparer.Instance.Compare(previousNamespace, ns) > 0)
+                {
+                    return true;
+                }
+
+                previousNamespace = ns;
+            }
+        }
+
+        // Check if usings are in multiple groups (non-consecutive lines)
+        for (var i = 1; i < usingDirectives.Length; i++)
+        {
+            var prevLine = sourceText.GetLinePosition(usingDirectives[i - 1].Span.End).Line;
+            var currentLine = sourceText.GetLinePosition(usingDirectives[i].Span.Start).Line;
+
+            if (currentLine > prevLine + 1)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Returns the text edits to sort and consolidate the using directives in the document
+    /// into one group at the location of the first group. Each directive's original source
+    /// text is preserved (including semicolons or other trailing content on the directive node).
+    /// Any non-directive content that follows a using directive on the same line is left in place.
+    /// </summary>
+    public static ImmutableArray<TextEdit> GetSortAndConsolidateEdits(RazorCodeDocument codeDocument)
+    {
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+        var usingDirectives = syntaxTree.GetUsingDirectives();
+        var sourceText = codeDocument.Source.Text;
+
+        // Sort the directive nodes by namespace and build consolidated text from original source
+        var sorted = usingDirectives.Sort(UsingsNodeComparer.Instance);
+
+        using var _ = StringBuilderPool.GetPooledObject(out var builder);
+        foreach (var directive in sorted)
+        {
+            // Append the full directive text, so (optional) semi-colons are preserved
+            builder.AppendLine(sourceText.ToString(directive.Span));
+        }
+
+        using var editBuilder = new PooledArrayBuilder<TextEdit>();
+
+        // Remove every using directive. If the directive is the only content on its line,
+        // remove the entire line (including the newline). Otherwise, only remove the
+        // directive span so any trailing content on the line is preserved.
+        foreach (var directive in usingDirectives)
+        {
+            var directiveLineNumber = sourceText.GetLinePosition(directive.Span.Start).Line;
+            var lineSpan = sourceText.Lines[directiveLineNumber].SpanIncludingLineBreak;
+            var directiveSpan = directive.Span;
+
+            // If the non-whitespace content of the line and the directive match, then the directive is the only thing on the line
+            // so we remove the whole line. Otherwise, just remove the directive.
+            var removeSpan = sourceText.NonWhitespaceContentEquals(sourceText, lineSpan.Start, lineSpan.End, directiveSpan.Start, directiveSpan.End)
+                ? lineSpan
+                : directiveSpan;
+            var removeRange = sourceText.GetRange(removeSpan);
+            editBuilder.Add(LspFactory.CreateTextEdit(removeRange, string.Empty));
+        }
+
+        // Insert all sorted usings at the position of the first directive's line
+        var firstDirectiveLine = sourceText.GetLinePosition(usingDirectives[0].Span.Start).Line;
+        var insertPosition = sourceText.Lines[firstDirectiveLine].Start;
+        var insertRange = sourceText.GetRange(insertPosition, insertPosition);
+        editBuilder.Add(LspFactory.CreateTextEdit(insertRange, builder.ToString()));
+
+        return editBuilder.ToImmutableAndClear();
     }
 }

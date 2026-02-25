@@ -22,6 +22,7 @@ internal static class RazorCodeActionFactory
     private readonly static Guid s_promoteUsingDirectiveTelemetryId = new("751f9012-e37b-444a-9211-b4ebce91d96e");
     private readonly static Guid s_wrapAttributesTelemetryId = new("1df50ba6-4ed1-40d8-8fe2-1c4c1b08e8b5");
     private readonly static Guid s_simplifyFullyQualifiedComponentTelemetryId = new("f8640324-2037-49fd-9697-2227690c33c3");
+    private readonly static Guid s_sortAndConsolidateUsingsTelemetryId = new("a3dc8f52-7e1b-4a09-9c6d-2f5e7a8b3c01");
 
     public static RazorVSInternalCodeAction CreateWrapAttributes(RazorCodeActionResolutionParams resolutionParams)
         => new RazorVSInternalCodeAction
@@ -207,6 +208,22 @@ internal static class RazorCodeActionFactory
             Data = data,
             TelemetryId = s_simplifyFullyQualifiedComponentTelemetryId,
             Name = LanguageServerConstants.CodeActions.SimplifyFullyQualifiedComponent,
+        };
+        return codeAction;
+    }
+
+    public static RazorVSInternalCodeAction CreateSortAndConsolidateUsings(RazorCodeActionResolutionParams resolutionParams)
+    {
+        var data = JsonSerializer.SerializeToElement(resolutionParams);
+        var codeAction = new RazorVSInternalCodeAction()
+        {
+            Title = SR.Sort_And_Consolidate_Usings_Title,
+            Data = data,
+            TelemetryId = s_sortAndConsolidateUsingsTelemetryId,
+            Name = LanguageServerConstants.CodeActions.SortAndConsolidateUsings,
+            // Since this code action only appears when necessary, and promote appears all the time, it makes sense
+            // to order this before Promote Using Directive
+            Order = -10
         };
         return codeAction;
     }
