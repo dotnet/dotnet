@@ -145,6 +145,8 @@ This file should be imported by eng/Versions.props
     <SystemWindowsExtensionsPackageVersion>10.0.3</SystemWindowsExtensionsPackageVersion>
     <!-- dotnet/core-setup dependencies -->
     <NETStandardLibraryRefPackageVersion>2.1.0</NETStandardLibraryRefPackageVersion>
+    <!-- dotnet/roslyn dependencies -->
+    <MicrosoftCodeAnalysisWorkspacesMSBuildBuildHostPackageVersion>5.5.0-2.26113.102</MicrosoftCodeAnalysisWorkspacesMSBuildBuildHostPackageVersion>
     <!-- microsoft/testfx dependencies -->
     <MicrosoftTestingPlatformPackageVersion>2.1.0-preview.25571.1</MicrosoftTestingPlatformPackageVersion>
     <MSTestPackageVersion>4.1.0-preview.25571.1</MSTestPackageVersion>
@@ -291,6 +293,8 @@ This file should be imported by eng/Versions.props
     <SystemWindowsExtensionsVersion>$(SystemWindowsExtensionsPackageVersion)</SystemWindowsExtensionsVersion>
     <!-- dotnet/core-setup dependencies -->
     <NETStandardLibraryRefVersion>$(NETStandardLibraryRefPackageVersion)</NETStandardLibraryRefVersion>
+    <!-- dotnet/roslyn dependencies -->
+    <MicrosoftCodeAnalysisWorkspacesMSBuildBuildHostVersion>$(MicrosoftCodeAnalysisWorkspacesMSBuildBuildHostPackageVersion)</MicrosoftCodeAnalysisWorkspacesMSBuildBuildHostVersion>
     <!-- microsoft/testfx dependencies -->
     <MicrosoftTestingPlatformVersion>$(MicrosoftTestingPlatformPackageVersion)</MicrosoftTestingPlatformVersion>
     <MSTestVersion>$(MSTestPackageVersion)</MSTestVersion>
