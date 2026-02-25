@@ -31,7 +31,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftVisualStudioLanguageServicesPackageVersion>5.5.0-2.26080.14</MicrosoftVisualStudioLanguageServicesPackageVersion>
     <RoslynDiagnosticsAnalyzersPackageVersion>5.5.0-2.26080.14</RoslynDiagnosticsAnalyzersPackageVersion>
     <!-- dotnet/arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26110.1</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26123.2</MicrosoftDotNetArcadeSdkPackageVersion>
     <!-- dotnet/aspnetcore dependencies -->
     <MicrosoftExtensionsObjectPoolPackageVersion>8.0.0</MicrosoftExtensionsObjectPoolPackageVersion>
     <!-- dotnet/runtime dependencies -->
