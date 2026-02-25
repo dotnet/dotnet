@@ -7,6 +7,11 @@
 <Project>
   <ItemGroup>
     <!-- Dependencies from dotnet/runtime -->
+    <ExternalAspNetCoreAppReference Include="Microsoft.Extensions.Configuration.Ini"                       Version="$(MicrosoftExtensionsConfigurationIniVersion)" />
+    <ExternalAspNetCoreAppReference Include="Microsoft.Extensions.Configuration.Xml"                       Version="$(MicrosoftExtensionsConfigurationXmlVersion)" />
+    <ExternalAspNetCoreAppReference Include="Microsoft.Extensions.FileProviders.Composite"                 Version="$(MicrosoftExtensionsFileProvidersCompositeVersion)" />
+    <ExternalAspNetCoreAppReference Include="Microsoft.Extensions.Logging.TraceSource"                     Version="$(MicrosoftExtensionsLoggingTraceSourceVersion)" />
+    <ExternalAspNetCoreAppReference Include="Microsoft.Extensions.Options.DataAnnotations"                 Version="$(MicrosoftExtensionsOptionsDataAnnotationsVersion)" />
     <ExternalAspNetCoreAppReference Include="System.Formats.Cbor"                                          Version="$(SystemFormatsCborVersion)" />
     <ExternalAspNetCoreAppReference Include="System.Security.Cryptography.Xml"                             Version="$(SystemSecurityCryptographyXmlVersion)" />
     <ExternalAspNetCoreAppReference Include="System.Threading.RateLimiting"                                Version="$(SystemThreadingRateLimitingVersion)" />
