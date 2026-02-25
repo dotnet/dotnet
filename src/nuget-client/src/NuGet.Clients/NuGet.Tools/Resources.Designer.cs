@@ -142,6 +142,15 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The NuGet Solver tool is unavailable. Please enable the NuGet MCP Server in the GitHub Copilot chat window and try again..
+        /// </summary>
+        internal static string Error_NuGetSolverNotAvailable {
+            get {
+                return ResourceManager.GetString("Error_NuGetSolverNotAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A package pattern must be provided..
         /// </summary>
         internal static string Error_PackageSourceMappingPattern_Missing {
