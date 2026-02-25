@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.DotNet.Watch
 {
-    internal sealed class ProcessRunner(TimeSpan processCleanupTimeout)
+    internal class ProcessRunner(TimeSpan processCleanupTimeout)
     {
         private sealed class ProcessState(Process process) : IDisposable
         {
@@ -35,8 +35,9 @@ namespace Microsoft.DotNet.Watch
 
         /// <summary>
         /// Launches a process.
+        /// Virutal for testing.
         /// </summary>
-        public async Task<int> RunAsync(ProcessSpec processSpec, ILogger logger, ProcessLaunchResult? launchResult, CancellationToken processTerminationToken)
+        public virtual async Task<int> RunAsync(ProcessSpec processSpec, ILogger logger, ProcessLaunchResult? launchResult, CancellationToken processTerminationToken)
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -71,7 +72,7 @@ namespace Microsoft.DotNet.Watch
                     // Either Ctrl+C was pressed or the process is being restarted.
 
                     // Non-cancellable to not leave orphaned processes around blocking resources:
-                    await TerminateProcessAsync(state.Process, processSpec, state, logger, CancellationToken.None);
+                    await TerminateProcessAsync(state.Process, processSpec, state, logger);
                 }
             }
             catch (Exception e)
@@ -118,7 +119,7 @@ namespace Microsoft.DotNet.Watch
                     }
                     else
                     {
-                        logger.Log(MessageDescriptor.ExitedWithErrorCode, exitCode);
+                        logger.Log(MessageDescriptor.ExitedWithErrorCode, exitCode.Value);
                     }
                 }
 
@@ -158,16 +159,9 @@ namespace Microsoft.DotNet.Watch
                 process.StartInfo.CreateNewProcessGroup = true;
             }
 
-            if (processSpec.EscapedArguments is not null)
+            for (var i = 0; i < processSpec.Arguments.Count; i++)
             {
-                process.StartInfo.Arguments = processSpec.EscapedArguments;
-            }
-            else if (processSpec.Arguments is not null)
-            {
-                for (var i = 0; i < processSpec.Arguments.Count; i++)
-                {
-                    process.StartInfo.ArgumentList.Add(processSpec.Arguments[i]);
-                }
+                process.StartInfo.ArgumentList.Add(processSpec.Arguments[i]);
             }
 
             foreach (var env in processSpec.EnvironmentVariables)
@@ -236,7 +230,7 @@ namespace Microsoft.DotNet.Watch
             }
         }
 
-        private async ValueTask TerminateProcessAsync(Process process, ProcessSpec processSpec, ProcessState state, ILogger logger, CancellationToken cancellationToken)
+        private async ValueTask TerminateProcessAsync(Process process, ProcessSpec processSpec, ProcessState state, ILogger logger)
         {
             var forceOnly = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !processSpec.IsUserApplication;
 
@@ -244,37 +238,38 @@ namespace Microsoft.DotNet.Watch
 
             if (forceOnly)
             {
-                _ = await WaitForExitAsync(process, state, timeout: null, logger, cancellationToken);
+                _ = await WaitForExitAsync(process, state, timeout: null, logger);
                 return;
             }
 
             // Ctlr+C/SIGTERM has been sent, wait for the process to exit gracefully.
             if (processCleanupTimeout.TotalMilliseconds == 0 ||
-                !await WaitForExitAsync(process, state, processCleanupTimeout, logger, cancellationToken))
+                !await WaitForExitAsync(process, state, processCleanupTimeout, logger))
             {
                 // Force termination if the process is still running after the timeout.
                 TerminateProcess(process, state, logger, force: true);
 
-                _ = await WaitForExitAsync(process, state, timeout: null, logger, cancellationToken);
+                _ = await WaitForExitAsync(process, state, timeout: null, logger);
             }
         }
 
-        private static async ValueTask<bool> WaitForExitAsync(Process process, ProcessState state, TimeSpan? timeout, ILogger logger, CancellationToken cancellationToken)
+        private static async ValueTask<bool> WaitForExitAsync(Process process, ProcessState state, TimeSpan? timeout, ILogger logger)
         {
             // On Linux simple call WaitForExitAsync does not work reliably (it may hang).
             // As a workaround we poll for HasExited.
             // See also https://github.com/dotnet/runtime/issues/109434.
 
-            var task = process.WaitForExitAsync(cancellationToken);
-
-            if (timeout is { } timeoutValue)
+            if (timeout.HasValue)
             {
+                using var cancellationSource = new CancellationTokenSource();
+                cancellationSource.CancelAfter(timeout.Value);
+
                 try
                 {
-                    logger.Log(MessageDescriptor.WaitingForProcessToExitWithin, state.ProcessId, timeoutValue.TotalSeconds);
-                    await task.WaitAsync(timeoutValue, cancellationToken);
+                    logger.Log(MessageDescriptor.WaitingForProcessToExitWithin, state.ProcessId, (int)timeout.Value.TotalSeconds);
+                    await process.WaitForExitAsync(cancellationSource.Token);
                 }
-                catch (TimeoutException)
+                catch (OperationCanceledException)
                 {
                     try
                     {
@@ -304,12 +299,15 @@ namespace Microsoft.DotNet.Watch
 
                     logger.Log(MessageDescriptor.WaitingForProcessToExit, state.ProcessId, i++);
 
+                    using var cancellationSource = new CancellationTokenSource();
+                    cancellationSource.CancelAfter(TimeSpan.FromSeconds(1));
+
                     try
                     {
-                        await task.WaitAsync(TimeSpan.FromSeconds(1), cancellationToken);
+                        await process.WaitForExitAsync(cancellationSource.Token);
                         break;
                     }
-                    catch (TimeoutException)
+                    catch (OperationCanceledException)
                     {
                     }
                 }
