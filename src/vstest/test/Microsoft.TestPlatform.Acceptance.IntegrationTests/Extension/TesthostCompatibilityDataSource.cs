@@ -51,6 +51,7 @@ public class TestHostCompatibilityDataSource : TestDataSourceAttribute<RunnerInf
         _builder.WithEveryVersionOfAdapter = false;
         _builder.WithOlderConfigurations = false;
         _builder.WithInProcess = false;
+        _builder.WithVSIXRunner = false;
 
         _builder.BeforeTestHostFeature = BeforeFeature;
         _builder.AfterTestHostFeature = AfterFeature;
