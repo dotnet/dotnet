@@ -56,17 +56,14 @@ namespace Microsoft.Build.BackEnd
         {
             ValidateMSBuildLocation(nodeLaunchData.MSBuildLocation);
 
-            // Repeat the executable name as the first token of the command line because the command line
-            // parser logic expects it and will otherwise skip the first argument
-            string commandLineArgs = $"\"{nodeLaunchData.MSBuildLocation}\" {nodeLaunchData.CommandLineArgs}";
             string exeName = ResolveExecutableName(nodeLaunchData.MSBuildLocation, out bool isNativeAppHost);
             uint creationFlags = GetCreationFlags(out bool redirectStreams);
 
             CommunicationsUtilities.Trace("Launching node from {0}", nodeLaunchData.MSBuildLocation);
 
             return NativeMethodsShared.IsWindows
-                ? StartProcessWindows(nodeLaunchData, exeName, commandLineArgs, creationFlags, redirectStreams, isNativeAppHost)
-                : StartProcessUnix(nodeLaunchData, exeName, commandLineArgs, creationFlags, redirectStreams);
+                ? StartProcessWindows(nodeLaunchData, exeName, creationFlags, redirectStreams, isNativeAppHost)
+                : StartProcessUnix(nodeLaunchData, exeName, creationFlags, redirectStreams, isNativeAppHost);
 
             static void ValidateMSBuildLocation(string msbuildLocation)
             {
@@ -78,6 +75,32 @@ namespace Microsoft.Build.BackEnd
                     throw new BuildAbortedException(ResourceUtilities.FormatResourceStringStripCodeAndKeyword("CouldNotFindMSBuildExe", msbuildLocation));
                 }
             }
+        }
+
+        /// <summary>
+        /// Builds command line args for Unix Process.Start, which sets argv[0] from FileName
+        /// automatically. We must not duplicate the executable name in Arguments for native
+        /// app hosts. For dotnet-hosted launches, the assembly path must be included so dotnet
+        /// knows which assembly to run.
+        /// </summary>
+        internal static string BuildUnixCommandLineArgs(NodeLaunchData nodeLaunchData, bool isNativeAppHost) =>
+            isNativeAppHost ? nodeLaunchData.CommandLineArgs : $"\"{nodeLaunchData.MSBuildLocation}\" {nodeLaunchData.CommandLineArgs}";
+
+        /// <summary>
+        /// Builds command line args for Windows CreateProcess, which takes a single command line
+        /// string and the C runtime parses argv[0] from its first token. This differs from Unix
+        /// where Process.Start sets argv[0] from FileName separately.
+        /// </summary>
+        internal static string BuildWindowsCommandLineArgs(NodeLaunchData nodeLaunchData, string hostExeName, bool isNativeAppHost)
+        {
+            string args = $"\"{nodeLaunchData.MSBuildLocation}\" {nodeLaunchData.CommandLineArgs}";
+            if (isNativeAppHost)
+            {
+                return args;
+            }
+
+            // Running via dotnet host: prepend the host exe as argv[0].
+            return $"\"{hostExeName}\" {args}";
         }
 
         private string ResolveExecutableName(string msbuildLocation, out bool isNativeAppHost)
@@ -115,8 +138,10 @@ namespace Microsoft.Build.BackEnd
             return flags;
         }
 
-        private Process StartProcessUnix(NodeLaunchData nodeLaunchData, string exeName, string commandLineArgs, uint creationFlags, bool redirectStreams)
+        private Process StartProcessUnix(NodeLaunchData nodeLaunchData, string exeName, uint creationFlags, bool redirectStreams, bool isNativeAppHost)
         {
+            string commandLineArgs = BuildUnixCommandLineArgs(nodeLaunchData, isNativeAppHost);
+
             var processStartInfo = new ProcessStartInfo
             {
                 FileName = exeName,
@@ -148,15 +173,9 @@ namespace Microsoft.Build.BackEnd
             }
         }
 
-        private static Process StartProcessWindows(NodeLaunchData nodeLaunchData, string exeName, string commandLineArgs, uint creationFlags, bool redirectStreams, bool isNativeAppHost)
+        private static Process StartProcessWindows(NodeLaunchData nodeLaunchData, string exeName, uint creationFlags, bool redirectStreams, bool isNativeAppHost)
         {
-#if RUNTIME_TYPE_NETCORE
-            if (!isNativeAppHost)
-            {
-                commandLineArgs = $"\"{exeName}\" {commandLineArgs}";
-            }
-#endif
-
+            string commandLineArgs = BuildWindowsCommandLineArgs(nodeLaunchData, exeName, isNativeAppHost);
             BackendNativeMethods.STARTUP_INFO startInfo = CreateStartupInfo(redirectStreams);
             BackendNativeMethods.SECURITY_ATTRIBUTES processSecurityAttributes = new() { nLength = Marshal.SizeOf<BackendNativeMethods.SECURITY_ATTRIBUTES>() };
             BackendNativeMethods.SECURITY_ATTRIBUTES threadSecurityAttributes = new() { nLength = Marshal.SizeOf<BackendNativeMethods.SECURITY_ATTRIBUTES>() };
