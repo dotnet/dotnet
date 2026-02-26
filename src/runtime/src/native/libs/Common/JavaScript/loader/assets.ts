@@ -378,8 +378,3 @@ const noThrottleNoRetry: { [key: string]: number | undefined } = {
     "symbols": 1,
     "webcil10": 1,
 };
-
-const noThrottleNoRetry: { [key: string]: number | undefined } = {
-    "dotnetwasm": 1,
-    "symbols": 1,
-};
