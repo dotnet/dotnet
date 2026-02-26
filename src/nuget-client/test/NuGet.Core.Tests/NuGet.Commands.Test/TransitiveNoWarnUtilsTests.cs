@@ -218,8 +218,8 @@ namespace NuGet.Commands.Test
             // Arrange
             var packageId1 = "test_id1";
             var packageId2 = "test_id2";
-            var net461 = NuGetFramework.Parse("net461");
-            var netcoreapp = NuGetFramework.Parse("netcoreapp2.0");
+            var net461 = "net461";
+            var netcoreapp = "netcoreapp2.0";
             var expectedResult = new PackageSpecificWarningProperties();
             expectedResult.AddRangeOfCodes(
                 [NuGetLogCode.NU1601, NuGetLogCode.NU1605],
@@ -228,19 +228,19 @@ namespace NuGet.Commands.Test
             expectedResult.AddRangeOfFrameworks(
                 NuGetLogCode.NU1701,
                 packageId2,
-                new List<NuGetFramework> { net461, netcoreapp });
+                new List<string> { net461, netcoreapp });
             expectedResult.AddRangeOfFrameworks(
                 NuGetLogCode.NU1701,
                 packageId1,
-                new List<NuGetFramework> { net461, netcoreapp });
+                new List<string> { net461, netcoreapp });
             expectedResult.AddRangeOfFrameworks(
                 NuGetLogCode.NU1701,
                 packageId2,
-                new List<NuGetFramework> { net461, netcoreapp });
+                new List<string> { net461, netcoreapp });
             expectedResult.AddRangeOfFrameworks(
                 NuGetLogCode.NU1604,
                 packageId1,
-                new List<NuGetFramework> { net461, netcoreapp });
+                new List<string> { net461, netcoreapp });
 
 
             var first = new PackageSpecificWarningProperties();
@@ -251,25 +251,25 @@ namespace NuGet.Commands.Test
             first.AddRangeOfFrameworks(
                 NuGetLogCode.NU1701,
                 packageId2,
-                new List<NuGetFramework> { net461, netcoreapp });
+                new List<string> { net461, netcoreapp });
             first.AddRangeOfFrameworks(
                 NuGetLogCode.NU1701,
                 packageId1,
-                new List<NuGetFramework> { netcoreapp });
+                new List<string> { netcoreapp });
 
             var second = new PackageSpecificWarningProperties();
             second.AddRangeOfFrameworks(
                 NuGetLogCode.NU1701,
                 packageId2,
-                new List<NuGetFramework> { net461, netcoreapp });
+                new List<string> { net461, netcoreapp });
             second.AddRangeOfFrameworks(
                 NuGetLogCode.NU1604,
                 packageId1,
-                new List<NuGetFramework> { net461, netcoreapp });
+                new List<string> { net461, netcoreapp });
             second.AddRangeOfFrameworks(
                 NuGetLogCode.NU1701,
                 packageId1,
-                new List<NuGetFramework> { net461 });
+                new List<string> { net461 });
 
 
             var expectedNoWarnForNet461 = TransitiveNoWarnUtils.ExtractPackageSpecificNoWarnForFramework(expectedResult, net461);
@@ -415,8 +415,8 @@ namespace NuGet.Commands.Test
             // Arrange
             var packageId1 = "test_id1";
             var packageId2 = "test_id2";
-            var net461 = NuGetFramework.Parse("net461");
-            var netcoreapp = NuGetFramework.Parse("netcoreapp2.0");
+            var net461 = "net461";
+            var netcoreapp = "netcoreapp2.0";
             var input = new PackageSpecificWarningProperties();
             input.AddRangeOfCodes(
                 [NuGetLogCode.NU1601, NuGetLogCode.NU1605],
@@ -425,21 +425,21 @@ namespace NuGet.Commands.Test
             input.AddRangeOfFrameworks(
                 NuGetLogCode.NU1701,
                 packageId2,
-                new List<NuGetFramework> { net461, netcoreapp });
+                new List<string> { net461, netcoreapp });
             input.AddRangeOfFrameworks(
                 NuGetLogCode.NU1701,
                 packageId1,
-                new List<NuGetFramework> { net461, netcoreapp });
+                new List<string> { net461, netcoreapp });
             input.AddRangeOfFrameworks(
                 NuGetLogCode.NU1701,
                 packageId2,
-                new List<NuGetFramework> { net461, netcoreapp });
+                new List<string> { net461, netcoreapp });
             input.AddRangeOfFrameworks(
                 NuGetLogCode.NU1604,
                 packageId1,
-                new List<NuGetFramework> { net461 });
+                new List<string> { net461 });
 
-            var expected = new Dictionary<NuGetFramework, Dictionary<string, HashSet<NuGetLogCode>>>
+            var expected = new Dictionary<string, Dictionary<string, HashSet<NuGetLogCode>>>(StringComparer.OrdinalIgnoreCase)
             {
                 [net461] = new Dictionary<string, HashSet<NuGetLogCode>>(StringComparer.OrdinalIgnoreCase)
                 {
@@ -482,7 +482,7 @@ namespace NuGet.Commands.Test
         {
             // Arrange
             PackageSpecificWarningProperties input = null;
-            NuGetFramework framework = null;
+            string framework = null;
 
             // Act
             var result = TransitiveNoWarnUtils.ExtractPackageSpecificNoWarnForFramework(input, framework);
@@ -496,7 +496,7 @@ namespace NuGet.Commands.Test
         {
             // Arrange
             var input = new PackageSpecificWarningProperties();
-            NuGetFramework framework = null;
+            string framework = null;
 
             // Act
             var result = TransitiveNoWarnUtils.ExtractPackageSpecificNoWarnForFramework(input, framework);
@@ -512,8 +512,8 @@ namespace NuGet.Commands.Test
 
             var packageId1 = "test_id1";
             var packageId2 = "test_id2";
-            var net461 = NuGetFramework.Parse("net461");
-            var netcoreapp = NuGetFramework.Parse("netcoreapp2.0");
+            var net461 = "net461";
+            var netcoreapp = "netcoreapp2.0";
             var input = new PackageSpecificWarningProperties();
             input.AddRangeOfCodes(
                 [NuGetLogCode.NU1601, NuGetLogCode.NU1605],
@@ -522,21 +522,21 @@ namespace NuGet.Commands.Test
             input.AddRangeOfFrameworks(
                 NuGetLogCode.NU1701,
                 packageId2,
-                new List<NuGetFramework> { net461, netcoreapp });
+                new List<string> { net461, netcoreapp });
             input.AddRangeOfFrameworks(
                 NuGetLogCode.NU1701,
                 packageId1,
-                new List<NuGetFramework> { net461, netcoreapp });
+                new List<string> { net461, netcoreapp });
             input.AddRangeOfFrameworks(
                 NuGetLogCode.NU1701,
                 packageId2,
-                new List<NuGetFramework> { net461, netcoreapp });
+                new List<string> { net461, netcoreapp });
             input.AddRangeOfFrameworks(
                 NuGetLogCode.NU1604,
                 packageId1,
-                new List<NuGetFramework> { net461 });
+                new List<string> { net461 });
 
-            var expected = new Dictionary<NuGetFramework, Dictionary<string, HashSet<NuGetLogCode>>>
+            var expected = new Dictionary<string, Dictionary<string, HashSet<NuGetLogCode>>>(StringComparer.OrdinalIgnoreCase)
             {
                 [net461] = new Dictionary<string, HashSet<NuGetLogCode>>(StringComparer.OrdinalIgnoreCase)
                 {
