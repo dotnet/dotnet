@@ -272,10 +272,10 @@ variables:
     value: macos-15
   - ${{ if eq(parameters.isScoutingJob, true) }}:
     - name: poolImage_Windows
-      value: windows.vs2026preview.scout.amd64.open
+      value: windows.vs2026.amd64.open
   - ${{ else }}:
     - name: poolImage_Windows
-      value: windows.vs2026preview.scout.amd64.open  # TODO: use the GA image once it's available
+      value: windows.vs2026.amd64.open
 - ${{ else }}:
   - name: defaultPoolName
     value: NetCore1ESPool-Internal
@@ -290,5 +290,5 @@ variables:
   - name: poolImage_Mac
     value: macos-latest-internal
   - name: poolImage_Windows
-    value: windows.vs2026preview.scout.amd64   # TODO: use the GA image once it's available
+    value: windows.vs2026.amd64
 
