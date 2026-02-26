@@ -20,8 +20,7 @@
     <ProjectReference Include="..\Common\Microsoft.Arcade.Test.Common\Microsoft.Arcade.Test.Common.csproj" />
     <ProjectReference Include="..\Microsoft.DotNet.XUnitExtensions\src\Microsoft.DotNet.XUnitExtensions.csproj" />
 
-    <ProjectReference Condition="$([MSBuild]::IsOSPlatform('osx'))"
-                  Include="..\Microsoft.DotNet.MacOsPkg\Cli\Microsoft.DotNet.MacOsPkg.Cli.csproj"
+    <ProjectReference Include="..\Microsoft.DotNet.MacOsPkg\Cli\Microsoft.DotNet.MacOsPkg.Cli.csproj"
                   ReferenceOutputAssembly="false"
                   SetTargetFramework="TargetFramework=$(BundledNETCoreAppTargetFramework)"
                   SkipGetTargetFrameworkProperties="true"
@@ -29,7 +28,7 @@
                   OutputItemType="_MacOsPkgToolPath" />
   </ItemGroup>
 
-  <Target Name="_CopyMacOsPkgTool" AfterTargets="ResolveProjectReferences" Condition="$([MSBuild]::IsOSPlatform('osx'))">
+  <Target Name="_CopyMacOsPkgTool" AfterTargets="ResolveProjectReferences">
     <PropertyGroup>
       <_MacOSPkgToolPattern>@(_MacOsPkgToolPath->'%(RootDir)%(Directory)')**\*.*</_MacOSPkgToolPattern>
     </PropertyGroup>
