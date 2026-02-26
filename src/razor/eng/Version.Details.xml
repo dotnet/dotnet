@@ -104,6 +104,11 @@
       <Uri>https://github.com/dotnet/arcade</Uri>
       <Sha>4bf37ce670528cf2aef4d9b1cd892554b1b02d9d</Sha>
     </Dependency>
+    <!-- Necessary for source-build. This allows the live version of the targeting pack to be used by source-build. -->
+    <Dependency Name="Microsoft.NETCore.App.Ref" Version="11.0.0-preview.1.26069.103">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>adf42f5dcec99a409a6f63355f5b52147bfaf043</Sha>
+    </Dependency>
     <!-- Necessary for source-build. This allows Microsoft.Extensions.ObjectPool and System.Collections.Immutable packages
          to be retrieved from live source-build and their content consumed by packages produced by razor.
          Without these entries, due to PVP flow work, SBRP packages would be consumed causing runtime issue. -->

@@ -1,16 +1,16 @@
 {
   "repositories": [
     {
-      "barId": 302850,
+      "barId": 302933,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "88c88084abfa1e379f54933af89e43fa774e323c"
+      "commitSha": "0831f9c135e88dd09993903ed5ac1a950285ac96"
     },
     {
-      "barId": 301805,
+      "barId": 303238,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "6bf45a7f29db639c1eac5c84c70deac7334b3bdf"
+      "commitSha": "eec80e1c63963802a215d58b3907d6e46090fc28"
     },
     {
       "barId": 292148,
@@ -37,10 +37,10 @@
       "commitSha": "970c803abb1ed5657b056cdaf01f1693f437c242"
     },
     {
-      "barId": 303073,
+      "barId": 303257,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "fc6f21de852845da01783712edbcfe48c44e98ca"
+      "commitSha": "1d245f36ea1d20183ed39567975a2e1e2c8899e0"
     },
     {
       "barId": 298250,
@@ -79,10 +79,10 @@
       "commitSha": "b4c07e21e75fc8d21349d360f43c3b1db49f1398"
     },
     {
-      "barId": 302615,
+      "barId": 303353,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "f8ac08f32b25431ca53e38ea45a5a78128c978e3"
+      "commitSha": "77b5f2f3935a74a0240ee7e1b0da72ce88ca8d88"
     },
     {
       "barId": 298986,
@@ -115,10 +115,10 @@
       "commitSha": "df8823942e6f5ef94cbcbe164c403d4f5bd6f081"
     },
     {
-      "barId": 300151,
+      "barId": 303354,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "a7c067013a5f3a4798993f2cc7059771126fc333"
+      "commitSha": "fe60e19061279aa918d0f11997673cd18c9f5f4c"
     },
     {
       "barId": 302543,
@@ -133,10 +133,10 @@
       "commitSha": "8350252f689bc85aec91a47e3d7eff9333ef6569"
     },
     {
-      "barId": 302402,
+      "barId": 303091,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "fdb43c86a4e556a3e98b54fb1cd34685660b171b"
+      "commitSha": "d65e8b04a4d56f728b34012026a2bd4c83277f56"
     },
     {
       "barId": 300191,
@@ -155,7 +155,7 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "5a9c3f9e8d9b90bbbe8feb32902146cb8f7c1757"
+      "commitSha": "850cb69efda7ef00aed1c08fbe2bc1b6b4e615ee"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
