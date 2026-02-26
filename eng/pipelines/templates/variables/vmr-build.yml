@@ -272,7 +272,7 @@ variables:
     value: macos-15
   - ${{ if eq(parameters.isScoutingJob, true) }}:
     - name: poolImage_Windows
-      value: windows.vs2026.amd64.open
+      value: windows.vs2026preview.scout.amd64.open
   - ${{ else }}:
     - name: poolImage_Windows
       value: windows.vs2026.amd64.open
