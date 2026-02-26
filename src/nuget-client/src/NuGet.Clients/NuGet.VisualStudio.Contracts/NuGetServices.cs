@@ -20,6 +20,6 @@ namespace NuGet.VisualStudio.Contracts
         public static ServiceRpcDescriptor NuGetProjectServiceV1 { get; } = new ServiceJsonRpcDescriptor(
             new ServiceMoniker(NuGetProjectServiceName, new System.Version(Version1)),
             ServiceJsonRpcDescriptor.Formatters.MessagePack,
-            ServiceJsonRpcDescriptor.MessageDelimiters.HttpLikeHeaders);
+            ServiceJsonRpcDescriptor.MessageDelimiters.BigEndianInt32LengthHeader);
     }
 }

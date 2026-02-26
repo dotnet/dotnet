@@ -419,7 +419,7 @@ NuGet.Commands.PackageSpecificWarningProperties
 NuGet.Commands.PackageSpecificWarningProperties.PackageSpecificWarningProperties() -> void
 ~NuGet.Commands.PackageSpecificWarningProperties.Properties.get -> System.Collections.Generic.IDictionary<NuGet.Common.NuGetLogCode, System.Collections.Generic.IDictionary<string, System.Collections.Generic.ISet<NuGet.Frameworks.NuGetFramework>>>
 NuGet.Commands.PackagesLockFileBuilder
-~NuGet.Commands.PackagesLockFileBuilder.CreateNuGetLockFile(NuGet.ProjectModel.LockFile assetsFile) -> NuGet.ProjectModel.PackagesLockFile
+NuGet.Commands.PackagesLockFileBuilder.CreateNuGetLockFile(NuGet.ProjectModel.LockFile! assetsFile) -> NuGet.ProjectModel.PackagesLockFile!
 NuGet.Commands.PackagesLockFileBuilder.PackagesLockFileBuilder() -> void
 NuGet.Commands.PushRunner
 NuGet.Commands.RemoveClientCertArgs
