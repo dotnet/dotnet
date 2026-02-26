@@ -101,7 +101,7 @@ public sealed class MSBuildLogger : ILogger
         // scope will be our dictionary thing we need to probe into
         scopeProvider?.ForEachScope((scope, state) => ProcessScope(scope, ref message, ref originalFormat, unprocessedKeyValues), state);
 
-        Debug.Assert(originalFormat is not null, "Original format should not be null at this point - either state or scope should have provided it.");
+        System.Diagnostics.Debug.Assert(originalFormat is not null, "Original format should not be null at this point - either state or scope should have provided it.");
 
         ApplyUnprocessedItemsToMessage(unprocessedKeyValues, originalFormat, builder);
 
