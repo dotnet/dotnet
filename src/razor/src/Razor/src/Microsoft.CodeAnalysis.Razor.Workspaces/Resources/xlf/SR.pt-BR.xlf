@@ -146,7 +146,7 @@
       </trans-unit>
       <trans-unit id="Sort_And_Consolidate_Usings_Title">
         <source>Sort and consolidate usings</source>
-        <target state="new">Sort and consolidate usings</target>
+        <target state="translated">Classificar e consolidar usos</target>
         <note />
       </trans-unit>
       <trans-unit id="TagHelper_Attribute_Glyph">
