@@ -8,16 +8,14 @@ using Xunit.Sdk;
 
 namespace Xunit
 {
-#if USES_XUNIT_3
-    [XunitTestCaseDiscoverer(typeof(ConditionalTheoryDiscoverer))]
-#else
+#if !USES_XUNIT_3
     [XunitTestCaseDiscoverer("Microsoft.DotNet.XUnitExtensions.ConditionalTheoryDiscoverer", "Microsoft.DotNet.XUnitExtensions")]
 #endif
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public sealed class ConditionalTheoryAttribute : TheoryAttribute
     {
         [DynamicallyAccessedMembers(StaticReflectionConstants.ConditionalMemberKinds)]
-        public Type     CalleeType { get; private set; }
+        public Type CalleeType { get; private set; }
         public string[] ConditionMemberNames { get; private set; }
 
         public ConditionalTheoryAttribute(
@@ -27,8 +25,16 @@ namespace Xunit
         {
             CalleeType = calleeType;
             ConditionMemberNames = conditionMemberNames;
+#if USES_XUNIT_3
+            string skipReason = ConditionalTestDiscoverer.EvaluateSkipConditions(calleeType, conditionMemberNames);
+            if (skipReason != null)
+                Skip = skipReason;
+#endif
         }
 
+#if USES_XUNIT_3
+        [Obsolete("Use the overload that takes a Type parameter: ConditionalTheory(typeof(MyClass), nameof(MyCondition)).")]
+#endif
         public ConditionalTheoryAttribute(params string[] conditionMemberNames)
         {
             ConditionMemberNames = conditionMemberNames;

@@ -239,6 +239,20 @@ Given a local folder `$(TestFolder)` containing `runtests.cmd`, this will run `r
     <XUnitArguments></XUnitArguments>
   </PropertyGroup>
 
+  <!--
+    XUnit v3 Runner
+      Enabling this will create one work item for each xunit v3 test project specified.
+      XUnit v3 tests are self-hosting executables and do not need an external console runner.
+      This is enabled by specifying one or more XUnitV3Project items.
+  -->
+  <ItemGroup>
+    <XUnitV3Project Include="..\tests\bar.Tests.csproj"/>
+  </ItemGroup>
+  <PropertyGroup>
+    <!-- Whether to use the Microsoft Testing Platform runner. Defaults to true. -->
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+  </PropertyGroup>
+
   <ItemGroup>
     <!--
       Another way to specify target queues

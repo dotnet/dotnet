@@ -8,9 +8,7 @@ using Xunit.Sdk;
 
 namespace Xunit
 {
-#if USES_XUNIT_3
-    [XunitTestCaseDiscoverer(typeof(ConditionalFactDiscoverer))]
-#else
+#if !USES_XUNIT_3
     [XunitTestCaseDiscoverer("Microsoft.DotNet.XUnitExtensions.ConditionalFactDiscoverer", "Microsoft.DotNet.XUnitExtensions")]
 #endif
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
@@ -27,8 +25,16 @@ namespace Xunit
         {
             CalleeType = calleeType;
             ConditionMemberNames = conditionMemberNames;
+#if USES_XUNIT_3
+            string skipReason = ConditionalTestDiscoverer.EvaluateSkipConditions(calleeType, conditionMemberNames);
+            if (skipReason != null)
+                Skip = skipReason;
+#endif
         }
 
+#if USES_XUNIT_3
+        [Obsolete("Use the overload that takes a Type parameter: ConditionalFact(typeof(MyClass), nameof(MyCondition)).")]
+#endif
         public ConditionalFactAttribute(params string[] conditionMemberNames)
         {
             ConditionMemberNames = conditionMemberNames;
