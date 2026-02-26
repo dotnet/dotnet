@@ -43,7 +43,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
 #if NET
                 writer.Write($"{Convert.ToHexStringLower(hash)}  {relativePath}\n");
 #else
-                writer.Write($"{BitConverter.ToString(hash).Replace("-", "")} {relativePath}\n");
+                writer.Write($"{BitConverter.ToString(hash).Replace("-", "").ToLower()}  {relativePath}\n");
 #endif
             }
 
