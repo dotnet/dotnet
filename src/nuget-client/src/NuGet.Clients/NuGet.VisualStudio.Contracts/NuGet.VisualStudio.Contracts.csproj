@@ -25,4 +25,8 @@
     <!-- We do this to avoid the warning our build raises about keeping a consistent newtonsoft.json version. We don't need newtonsonft.json type in here, we don't use it. -->
     <PackageReference Include="Newtonsoft.Json" PrivateAssets="all" ExcludeAssets="all" />
   </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="NuGet.VisualStudio.Implementation.Test" />
+  </ItemGroup>
 </Project>
