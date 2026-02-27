@@ -6,7 +6,6 @@
 using System;
 using System.Collections.Generic;
 using NuGet.Common;
-using NuGet.Frameworks;
 using NuGet.ProjectModel;
 using NuGet.Shared;
 
@@ -16,14 +15,14 @@ namespace NuGet.Commands
     /// <summary>
     /// Contains Package specific properties for Warnings.
     /// </summary>
-    public class PackageSpecificWarningProperties : IEquatable<PackageSpecificWarningProperties>
+    internal class PackageSpecificWarningProperties : IEquatable<PackageSpecificWarningProperties>
     {
 
         /// <summary>
         /// Contains Package specific No warn properties.
         /// NuGetLogCode -> LibraryId -> Set of Frameworks.
         /// </summary>
-        public IDictionary<NuGetLogCode, IDictionary<string, ISet<NuGetFramework>>> Properties { get; private set; }
+        public IDictionary<NuGetLogCode, IDictionary<string, ISet<string>>> Properties { get; private set; }
 
         /// <summary>
         /// Extracts PackageSpecific WarningProperties from a PackageSpec
@@ -39,7 +38,7 @@ namespace NuGet.Commands
             {
                 foreach (var dependency in framework.Dependencies)
                 {
-                    warningProperties.AddRangeOfCodes(dependency.NoWarn, dependency.Name, framework.FrameworkName);
+                    warningProperties.AddRangeOfCodes(dependency.NoWarn, dependency.Name, framework.TargetAlias);
                 }
             }
 
@@ -53,16 +52,19 @@ namespace NuGet.Commands
         /// <param name="framework">NuGetFramework for which the properties should be assessed.</param>
         /// <returns>PackageSpecific WarningProperties extracted from a PackageSpec for a specific NuGetFramework</returns>
         public static PackageSpecificWarningProperties CreatePackageSpecificWarningProperties(PackageSpec packageSpec,
-            NuGetFramework framework)
+            string framework)
         {
             // NuGetLogCode -> LibraryId -> Set of Frameworks.
             var warningProperties = new PackageSpecificWarningProperties();
 
             var targetFrameworkInformation = packageSpec.GetTargetFramework(framework);
 
-            foreach (var dependency in targetFrameworkInformation.Dependencies)
+            if (targetFrameworkInformation != null)
             {
-                warningProperties.AddRangeOfCodes(dependency.NoWarn, dependency.Name, framework);
+                foreach (var dependency in targetFrameworkInformation.Dependencies)
+                {
+                    warningProperties.AddRangeOfCodes(dependency.NoWarn, dependency.Name, framework);
+                }
             }
 
             return warningProperties;
@@ -74,19 +76,19 @@ namespace NuGet.Commands
         /// <param name="code">NuGetLogCode for which no warning should be thrown.</param>
         /// <param name="libraryId">Library for which no warning should be thrown.</param>
         /// <param name="framework">Target graph for which no warning should be thrown.</param>
-        public void Add(NuGetLogCode code, string libraryId, NuGetFramework framework)
+        public void Add(NuGetLogCode code, string libraryId, string framework)
         {
-            Properties ??= new Dictionary<NuGetLogCode, IDictionary<string, ISet<NuGetFramework>>>();
+            Properties ??= new Dictionary<NuGetLogCode, IDictionary<string, ISet<string>>>();
 
-            if (!Properties.TryGetValue(code, out IDictionary<string, ISet<NuGetFramework>> frameworksByLibraryId))
+            if (!Properties.TryGetValue(code, out IDictionary<string, ISet<string>> frameworksByLibraryId))
             {
-                frameworksByLibraryId = new Dictionary<string, ISet<NuGetFramework>>(StringComparer.OrdinalIgnoreCase);
+                frameworksByLibraryId = new Dictionary<string, ISet<string>>(StringComparer.OrdinalIgnoreCase);
                 Properties.Add(code, frameworksByLibraryId);
             }
 
-            if (!frameworksByLibraryId.TryGetValue(libraryId, out ISet<NuGetFramework> frameworks))
+            if (!frameworksByLibraryId.TryGetValue(libraryId, out ISet<string> frameworks))
             {
-                frameworks = new HashSet<NuGetFramework>(NuGetFrameworkFullComparer.Instance);
+                frameworks = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 frameworksByLibraryId[libraryId] = frameworks;
             }
 
@@ -99,7 +101,7 @@ namespace NuGet.Commands
         /// <param name="codes">IEnumerable of NuGetLogCode for which no warning should be thrown.</param>
         /// <param name="libraryId">Library for which no warning should be thrown.</param>
         /// <param name="framework">Target graph for which no warning should be thrown.</param>
-        public void AddRangeOfCodes(IEnumerable<NuGetLogCode> codes, string libraryId, NuGetFramework framework)
+        public void AddRangeOfCodes(IEnumerable<NuGetLogCode> codes, string libraryId, string framework)
         {
             foreach (var code in codes.NoAllocEnumerate())
             {
@@ -113,7 +115,7 @@ namespace NuGet.Commands
         /// <param name="code">NuGetLogCode for which no warning should be thrown.</param>
         /// <param name="libraryId">Library for which no warning should be thrown.</param>
         /// <param name="frameworks">IEnumerable of Target graph for which no warning should be thrown.</param>
-        public void AddRangeOfFrameworks(NuGetLogCode code, string libraryId, IEnumerable<NuGetFramework> frameworks)
+        public void AddRangeOfFrameworks(NuGetLogCode code, string libraryId, IEnumerable<string> frameworks)
         {
             foreach (var framework in frameworks)
             {
@@ -128,7 +130,7 @@ namespace NuGet.Commands
         /// <param name="libraryId">library Id to be checked.</param>
         /// <param name="framework">target graph to be checked.</param>
         /// <returns>True iff the NugetLogCode is part of the NoWarn list for the specified libraryId and Target Graph.</returns>
-        public bool Contains(NuGetLogCode code, string libraryId, NuGetFramework framework)
+        public bool Contains(NuGetLogCode code, string libraryId, string framework)
         {
             return Properties != null &&
                 Properties.TryGetValue(code, out var libraryIdsAndFrameworks) &&
