@@ -568,10 +568,10 @@ public partial class LinuxInstallerTests : IDisposable
         HttpResponseMessage response = await client.GetAsync(url);
         if (!response.IsSuccessStatusCode && !string.IsNullOrEmpty(Config.DotNetRuntimeSourceFeedKey))
         {
-            string internalUrlStr = url.ToString().Replace("https://ci.dot.net/public/", "https://ci.dot.net/internal/");
+            string internalUrlStr = url.ToString().Replace("https://ci.dot.net/public", Config.DotNetRuntimeSourceFeed);
             _outputHelper.WriteLine($"Public URL failed ({(int)response.StatusCode}), falling back to internal URL: {internalUrlStr}");
             // The feed key is a base64-encoded SAS token that must be decoded and appended to the URL as a query string
-            string decodedSasToken = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(Config.DotNetRuntimeSourceFeedKey));
+            string decodedSasToken = Encoding.UTF8.GetString(Convert.FromBase64String(Config.DotNetRuntimeSourceFeedKey));
             Uri internalUrl = new Uri($"{internalUrlStr}?{decodedSasToken}");
             response = await client.GetAsync(internalUrl);
         }
