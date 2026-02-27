@@ -51,12 +51,4 @@
     <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" Condition="'$(EnablePublicApiAnalyzer)' == 'true'" />
   </ItemGroup>
 
-  <!-- For source-build: Configure targeting packs to use live Microsoft.NETCore.App.Ref version -->
-  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion>
-    <KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion>
-    <KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion>
-    <KnownCrossgen2PackCurrentVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownCrossgen2PackCurrentVersion>
-  </PropertyGroup>
-
 </Project>

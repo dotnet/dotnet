@@ -83,12 +83,4 @@ ates https://learn.microsoft.com/en-gb/dotnet/fundamentals/syslib-diagnostics/sy
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
   </PropertyGroup>
 
-  <!-- For source-build: Configure targeting packs to use live Microsoft.NETCore.App.Ref version -->
-  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion>
-    <KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion>
-    <KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion>
-    <KnownCrossgen2PackCurrentVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownCrossgen2PackCurrentVersion>
-  </PropertyGroup>
-
 </Project>
