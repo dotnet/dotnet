@@ -35,6 +35,7 @@
     <Project Path="src/Microsoft.DotNet.XliffTasks.Tests/Microsoft.DotNet.XliffTasks.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.XUnitAssert/tests/Microsoft.DotNet.XUnitAssert.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.XUnitExtensions/tests/Microsoft.DotNet.XUnitExtensions.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.XUnitV3Extensions/tests/Microsoft.DotNet.XUnitV3Extensions.Tests.csproj" />
     <Project Path="src/VersionTools/Microsoft.DotNet.VersionTools.Cli.Tests/Microsoft.DotNet.VersionTools.Cli.Tests.csproj" />
   </Folder>
   <Folder Name="/VisualStudio/">
