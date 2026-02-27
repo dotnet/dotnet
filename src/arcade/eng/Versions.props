@@ -50,8 +50,6 @@
     <MicrosoftiOSTemplatesVersion>15.2.302-preview.14.122</MicrosoftiOSTemplatesVersion>
     <MicrosoftiOSTemplatesVersion160527>16.0.527</MicrosoftiOSTemplatesVersion160527>
     <SystemCompositionVersion>9.0.0-preview.6.24327.7</SystemCompositionVersion>
-    <!-- vstest -->
-    <MicrosoftNetTestSdkVersion>17.5.0</MicrosoftNetTestSdkVersion>
   </PropertyGroup>
 
 </Project>
