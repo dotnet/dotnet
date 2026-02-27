@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 302933,
+      "barId": 303364,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "0831f9c135e88dd09993903ed5ac1a950285ac96"
+      "commitSha": "e95f9ba53ea7de7f36fb651b633967ca54dbcacc"
     },
     {
       "barId": 303238,
@@ -37,10 +37,10 @@
       "commitSha": "970c803abb1ed5657b056cdaf01f1693f437c242"
     },
     {
-      "barId": 303257,
+      "barId": 303445,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "1d245f36ea1d20183ed39567975a2e1e2c8899e0"
+      "commitSha": "150afc9b7487c2b2b566ccea49afb850dcbd1ca0"
     },
     {
       "barId": 298250,
@@ -49,10 +49,10 @@
       "commitSha": "34ea87b2e530301557526b558e89f3f031f2a8d9"
     },
     {
-      "barId": 302621,
+      "barId": 303374,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "7d0437e8bcf9ead9483483eaa556f1998af8806b"
+      "commitSha": "242bedbdbbd95b2e40670af00c779b6338df42d6"
     },
     {
       "barId": 302299,
@@ -79,10 +79,10 @@
       "commitSha": "24ed5cb175a3071d6e2d79488a856ba20bfb3738"
     },
     {
-      "barId": 303353,
+      "barId": 303440,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "77b5f2f3935a74a0240ee7e1b0da72ce88ca8d88"
+      "commitSha": "133c7bde3fb7dd914f423ffb3e408cc61787e0bb"
     },
     {
       "barId": 298986,

@@ -19,12 +19,4 @@
     <CustomBeforeMicrosoftCommonTargets Condition="'$(DotNetBuild)' == 'true'">$(CustomBeforeMicrosoftCommonTargets);$(MSBuildThisFileDirectory)eng\dotnet-build\TargetingPacks.BeforeCommonTargets.targets</CustomBeforeMicrosoftCommonTargets>
   </PropertyGroup>
 
-  <!-- For source-build: Configure targeting packs to use live Microsoft.NETCore.App.Ref version -->
-  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion>
-    <KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion>
-    <KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion>
-    <KnownCrossgen2PackCurrentVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownCrossgen2PackCurrentVersion>
-  </PropertyGroup>
-
 </Project>
