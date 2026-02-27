@@ -71,13 +71,13 @@ stages:
               eq(variables['isPRTrigger'], 'true'),
               and(
                   not(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/darc-')),
-                  not(startsWith(variables['System.PullRequest.SourceBranch'], 'darc-')),
-                  not(eq(variables['Build.RequestedFor'], 'dotnet-bot'))
+                  not(startsWith(variables['System.PullRequest.SourceBranch'], 'darc-'))
               )
           )
   jobs:
     - job: Validate
       displayName: Run Validation Script
+      condition: not(eq(variables['Build.SourceVersionAuthor'], 'dotnet-bot'))
       pool:
         name: $(shortStackPoolName)
         demands: ImageOverride -equals $(poolImage_Linux)

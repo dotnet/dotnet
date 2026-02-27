@@ -11,10 +11,9 @@ schedules:
     include:
     - main
     - release/*.0.1xx-preview*
-    - release/*.0.2xx*
     - release/*.0.3xx*
     - release/*.0.4xx*
-    - internal/release/*.0.1xx*
+    - internal/release/*.0.?xx*
 
 pr: none
 
@@ -26,7 +25,6 @@ trigger:
     include:
     - main
     - release/*.0.1xx-preview*
-    - release/*.0.2xx*
     - release/*.0.3xx*
     - release/*.0.4xx*
     - internal/release/*.0.?xx*

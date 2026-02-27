@@ -27,7 +27,7 @@ parameters:
   # Optional: Publish the assets as soon as the publish to BAR stage is complete, rather doing so in a separate stage.
   publishAssetsImmediately: false
 
-  # Optional: 🌤️ or not the build has assets it wants to publish to BAR
+  # Optional: ≡ƒîñ∩╕Å or not the build has assets it wants to publish to BAR
   isAssetlessBuild: false
 
   # Optional: If using publishAssetsImmediately and additional parameters are needed, can be used to send along additional parameters (normally sent to post-build.yml)

@@ -1483,12 +1483,12 @@ The search is a case-insensitive string comparison using the supplied value, whi
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. Please run restore for project '{1}' before running this command.</source>
-        <target state="translated">ファイル '{0}' は NuGet アセット ファイルではない可能性があります。このコマンドを実行する前に、プロジェクト '{1}' の復元を実行してください。</target>
+        <target state="translated">ファイル '{0}' は NuGet 資産ファイルではない可能性があります。このコマンドを実行する前に、プロジェクト '{1}' の復元を実行してください。</target>
         <note>{0} - Assets file path, {1} - Project name</note>
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithoutProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. For more information, see https://aka.ms/dotnet/nuget/why#older-project-format</source>
-        <target state="translated">ファイル '{0}' は NuGet アセット ファイルではない可能性があります。詳細については、https://aka.ms/dotnet/nuget/why#older-project-format を参照してください</target>
+        <target state="translated">ファイル '{0}' は NuGet 資産ファイルではない可能性があります。詳しくは、https://aka.ms/dotnet/nuget/why#older-project-format を参照してください</target>
         <note>{0} - Assets file path</note>
       </trans-unit>
       <trans-unit id="WhyCommand_FrameworksOption_Description">

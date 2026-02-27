@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="ja" original="../Resources.resx">
     <body>
@@ -132,6 +132,11 @@
         <target state="translated">安全ではない接続を許可する</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_AuditSources_Checkbox">
+        <source>Use separate sources for vulnerability audit</source>
+        <target state="translated">脆弱性監査に個別のソースを使用する</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_AuditSources_Description">
         <source>Audit sources provide vulnerability data during restore without acting as package sources. If no audit sources are configured, NuGet Audit uses package sources. [Learn more about audit sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</source>
         <target state="translated">監査ソースは、パッケージ ソースとして機能することなく、復元中に脆弱性データを提供します。監査ソースが構成されていない場合、NuGet Audit はパッケージ ソースを使用します。[監査ソースに関する詳細情報](https://learn.microsoft.com/nuget/reference/nuget-config-file#auditsources)</target>
@@ -170,6 +175,11 @@
       <trans-unit id="Text_HttpSource_Warning">
         <source>HTTP sources are insecure. Consider using HTTPS instead. 'AllowInsecureConnections' is enabled, permitting HTTP access. For more secure options, see [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere).</source>
         <target state="translated">HTTP ソースは安全ではありません。代わりに HTTPS の使用を検討してください。'AllowInsecureConnections' が有効になっており、HTTP アクセスが許可されています。より安全なオプションについては、[https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere) を参照してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_MachineWidePackageSource_Description">
+        <source>Machine‑wide package sources are provisioned by Visual Studio workloads and can only be enabled or disabled.</source>
+        <target state="translated">マシン全体のパッケージ ソースは Visual Studio ワークロードによってプロビジョニングされ、有効化または無効化のみが可能です。</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageSourceEnabled_Header">
