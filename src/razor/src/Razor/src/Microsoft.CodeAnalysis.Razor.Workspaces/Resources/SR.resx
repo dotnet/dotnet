@@ -236,4 +236,7 @@
   <data name="KeywordDescription" xml:space="preserve">
     <value>{0} Keyword</value>
   </data>
+  <data name="Remove_unnecessary_directives" xml:space="preserve">
+    <value>Remove unnecessary directives</value>
+  </data>
 </root>

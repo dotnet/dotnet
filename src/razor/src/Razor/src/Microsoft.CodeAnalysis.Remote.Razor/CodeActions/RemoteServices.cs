@@ -66,6 +66,9 @@ internal sealed class OOPGenerateMethodCodeActionProvider : GenerateMethodCodeAc
 internal sealed class OOPPromoteUsingDirectiveCodeActionProvider : PromoteUsingCodeActionProvider;
 
 [Export(typeof(IRazorCodeActionProvider)), Shared]
+internal sealed class OOPRemoveUnnecessaryDirectivesCodeActionProvider : RemoveUnnecessaryDirectivesCodeActionProvider;
+
+[Export(typeof(IRazorCodeActionProvider)), Shared]
 internal sealed class OOPWrapAttributesCodeActionProvider : WrapAttributesCodeActionProvider;
 
 [Export(typeof(IRazorCodeActionProvider)), Shared]
@@ -125,6 +128,9 @@ internal sealed class OOPGenerateMethodCodeActionResolver(
 [Export(typeof(IRazorCodeActionResolver)), Shared]
 [method: ImportingConstructor]
 internal sealed class OOPPromoteUsingDirectiveCodeActionResolver(IFileSystem fileSystem) : PromoteUsingCodeActionResolver(fileSystem);
+
+[Export(typeof(IRazorCodeActionResolver)), Shared]
+internal sealed class OOPRemoveUnnecessaryDirectivesCodeActionResolver : RemoveUnnecessaryDirectivesCodeActionResolver;
 
 [Export(typeof(IRazorCodeActionResolver)), Shared]
 internal sealed class OOPWrapAttributesCodeActionResolver : WrapAttributesCodeActionResolver;

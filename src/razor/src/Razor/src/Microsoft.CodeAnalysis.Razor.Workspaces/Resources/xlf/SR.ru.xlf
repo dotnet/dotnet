@@ -134,6 +134,11 @@
         <target state="translated">Повысить уровень с использованием директивы до {0}</target>
         <note />
       </trans-unit>
+      <trans-unit id="Remove_unnecessary_directives">
+        <source>Remove unnecessary directives</source>
+        <target state="new">Remove unnecessary directives</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Simplify_Fully_Qualified_Component_Title">
         <source>Simplify fully qualified component</source>
         <target state="translated">Упростите полный компонент с квалификатором</target>

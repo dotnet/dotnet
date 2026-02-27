@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.Diagnostics;
@@ -42,7 +43,7 @@ internal static class TaskListDiagnosticProvider
                     {
                         Code = "TODO",
                         Message = comment.Comment.Content.Trim(),
-                        Source = "Razor",
+                        Source = LanguageServerConstants.RazorDiagnosticSource,
                         Severity = LspDiagnosticSeverity.Information,
                         Range = source.GetRange(comment.Comment.Span),
                         Tags = s_taskItemTags

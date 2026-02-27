@@ -5,6 +5,8 @@ namespace Microsoft.CodeAnalysis.Razor.Protocol;
 
 internal static class LanguageServerConstants
 {
+    public const string RazorDiagnosticSource = "Razor";
+
     public const string HtmlVirtualDocumentSuffix = "__virtual.html";
     public const string CSharpVirtualDocumentSuffix = ".ide.g.cs";
 
@@ -36,9 +38,11 @@ internal static class LanguageServerConstants
 
     public static class CodeActions
     {
-        public const string GenerateEventHandler = nameof(GenerateEventHandler);
+        public const string AddUsing = nameof(AddUsing);
 
-        public const string GenerateAsyncEventHandler = nameof(GenerateAsyncEventHandler);
+        public const string CodeActionFromVSCode = nameof(CodeActionFromVSCode);
+
+        public const string CreateComponentFromTag = nameof(CreateComponentFromTag);
 
         public const string EditBasedCodeActionCommand = nameof(EditBasedCodeActionCommand);
 
@@ -48,23 +52,23 @@ internal static class LanguageServerConstants
 
         public const string ExtractToNewComponent = nameof(ExtractToNewComponent);
 
-        public const string SimplifyTagToSelfClosing = nameof(SimplifyTagToSelfClosing);
-
-        public const string CreateComponentFromTag = nameof(CreateComponentFromTag);
-
-        public const string AddUsing = nameof(AddUsing);
-
         public const string FullyQualify = nameof(FullyQualify);
+
+        public const string GenerateAsyncEventHandler = nameof(GenerateAsyncEventHandler);
+
+        public const string GenerateEventHandler = nameof(GenerateEventHandler);
 
         public const string PromoteUsingDirective = nameof(PromoteUsingDirective);
 
-        public const string CodeActionFromVSCode = nameof(CodeActionFromVSCode);
-
-        public const string WrapAttributes = nameof(WrapAttributes);
+        public const string RemoveUnnecessaryDirectives = nameof(RemoveUnnecessaryDirectives);
 
         public const string SimplifyFullyQualifiedComponent = nameof(SimplifyFullyQualifiedComponent);
 
+        public const string SimplifyTagToSelfClosing = nameof(SimplifyTagToSelfClosing);
+
         public const string SortAndConsolidateUsings = nameof(SortAndConsolidateUsings);
+
+        public const string WrapAttributes = nameof(WrapAttributes);
 
         /// <summary>
         /// Remaps without formatting the resolved code action edit

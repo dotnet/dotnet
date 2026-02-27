@@ -295,15 +295,19 @@ internal static class UsingDirectiveHelper
     /// into one group at the location of the first group. Each directive's original source
     /// text is preserved (including semicolons or other trailing content on the directive node).
     /// Any non-directive content that follows a using directive on the same line is left in place.
+    /// If <paramref name="directivesToKeep"/> is provided, only those directives appear in the
+    /// sorted output; all others are removed. If null, all directives are kept.
     /// </summary>
-    public static ImmutableArray<TextEdit> GetSortAndConsolidateEdits(RazorCodeDocument codeDocument)
+    public static ImmutableArray<TextEdit> GetSortAndConsolidateEdits(
+        RazorCodeDocument codeDocument,
+        ImmutableArray<RazorUsingDirectiveSyntax>? directivesToKeep = null)
     {
         var syntaxTree = codeDocument.GetRequiredSyntaxTree();
         var usingDirectives = syntaxTree.GetUsingDirectives();
         var sourceText = codeDocument.Source.Text;
 
         // Sort the directive nodes by namespace and build consolidated text from original source
-        var sorted = usingDirectives.Sort(UsingsNodeComparer.Instance);
+        var sorted = (directivesToKeep ?? usingDirectives).Sort(UsingsNodeComparer.Instance);
 
         using var _ = StringBuilderPool.GetPooledObject(out var builder);
         foreach (var directive in sorted)
@@ -319,17 +323,7 @@ internal static class UsingDirectiveHelper
         // directive span so any trailing content on the line is preserved.
         foreach (var directive in usingDirectives)
         {
-            var directiveLineNumber = sourceText.GetLinePosition(directive.Span.Start).Line;
-            var lineSpan = sourceText.Lines[directiveLineNumber].SpanIncludingLineBreak;
-            var directiveSpan = directive.Span;
-
-            // If the non-whitespace content of the line and the directive match, then the directive is the only thing on the line
-            // so we remove the whole line. Otherwise, just remove the directive.
-            var removeSpan = sourceText.NonWhitespaceContentEquals(sourceText, lineSpan.Start, lineSpan.End, directiveSpan.Start, directiveSpan.End)
-                ? lineSpan
-                : directiveSpan;
-            var removeRange = sourceText.GetRange(removeSpan);
-            editBuilder.Add(LspFactory.CreateTextEdit(removeRange, string.Empty));
+            editBuilder.Add(GetRemoveDirectiveEdit(sourceText, directive.Span));
         }
 
         // Insert all sorted usings at the position of the first directive's line
@@ -339,5 +333,24 @@ internal static class UsingDirectiveHelper
         editBuilder.Add(LspFactory.CreateTextEdit(insertRange, builder.ToString()));
 
         return editBuilder.ToImmutableAndClear();
+    }
+
+    /// <summary>
+    /// Creates a text edit to remove a directive from its line. If the directive is the only
+    /// non-whitespace content on the line, the entire line including the line break is removed.
+    /// Otherwise, only the directive span is removed.
+    /// </summary>
+    public static TextEdit GetRemoveDirectiveEdit(SourceText sourceText, TextSpan directiveSpan)
+    {
+        var directiveLineNumber = sourceText.GetLinePosition(directiveSpan.Start).Line;
+        var lineSpan = sourceText.Lines[directiveLineNumber].SpanIncludingLineBreak;
+
+        // If the non-whitespace content of the line and the directive match, then the directive is the only thing on the line
+        // so we remove the whole line. Otherwise, just remove the directive.
+        var removeSpan = sourceText.NonWhitespaceContentEquals(sourceText, lineSpan.Start, lineSpan.End, directiveSpan.Start, directiveSpan.End)
+            ? lineSpan
+            : directiveSpan;
+
+        return LspFactory.CreateTextEdit(sourceText.GetRange(removeSpan), string.Empty);
     }
 }
