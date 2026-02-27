@@ -17,7 +17,7 @@
     <FSharpPreReleaseIteration>2</FSharpPreReleaseIteration>
     <PreReleaseVersionLabel>preview$(FSharpPreReleaseIteration)</PreReleaseVersionLabel>
     <!-- F# Version components -->
-    <FSMajorVersion>10>FSMajorVersion>
+    <FSMajorVersion>10</FSMajorVersion>
     <FSMinorVersion>0</FSMinorVersion>
     <FSBuildVersion>201</FSBuildVersion>
     <FSRevisionVersion>0</FSRevisionVersion>
