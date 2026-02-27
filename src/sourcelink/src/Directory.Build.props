@@ -15,12 +15,4 @@
     <WarningsNotAsErrors Condition="'$(OfficialBuild)' != 'true'">$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
   </PropertyGroup>
 
-  <!-- For source-build: Configure targeting packs to use live Microsoft.NETCore.App.Ref version -->
-  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion>
-    <KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion>
-    <KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion>
-    <KnownCrossgen2PackCurrentVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownCrossgen2PackCurrentVersion>
-  </PropertyGroup>
-
 </Project>
