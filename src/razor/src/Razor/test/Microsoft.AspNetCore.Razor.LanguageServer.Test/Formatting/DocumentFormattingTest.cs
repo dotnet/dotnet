@@ -133,47 +133,47 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                 <div>
-                 	@if (b)
-                 	{
-                 		<text>:</text> <InputFile OnChange="StateHasChanged" />
-                 	}
-                 </div>
+                <div>
+                	@if (b)
+                	{
+                		<text>:</text> <InputFile OnChange="StateHasChanged" />
+                	}
+                </div>
 
-                 @code
-                 {
-                 	bool b;
-                 }
-                 
-                 """,
+                @code
+                {
+                	bool b;
+                }
+                
+                """,
             htmlFormatted: """
-                 <div>
-                 	@if (b)
-                 	{
-                 	<text>:</text> <InputFile OnChange="StateHasChanged" />
-                 	}
-                 </div>
-                 
-                 @code
-                 {
-                 	bool b;
-                 }
-                 
-                 """,
+                <div>
+                	@if (b)
+                	{
+                	<text>:</text> <InputFile OnChange="StateHasChanged" />
+                	}
+                </div>
+                
+                @code
+                {
+                	bool b;
+                }
+                
+                """,
             expected: """
-                 <div>
-                 	@if (b)
-                 	{
-                 		<text>:</text> <InputFile OnChange="StateHasChanged" />
-                 	}
-                 </div>
-                 
-                 @code
-                 {
-                 	bool b;
-                 }
-                 
-                 """,
+                <div>
+                	@if (b)
+                	{
+                		<text>:</text> <InputFile OnChange="StateHasChanged" />
+                	}
+                </div>
+                
+                @code
+                {
+                	bool b;
+                }
+                
+                """,
             insertSpaces: false);
     }
 
@@ -183,23 +183,23 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                 <div>
-                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                             aria-expanded="false" aria-label="Toggle navigation"></button>
-                 </div>
-                 """,
+                <div>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation"></button>
+                </div>
+                """,
             htmlFormatted: """
-                 <div>
-                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
-                 </div>
-                 """,
+                <div>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
+                </div>
+                """,
             expected: """
-                 <div>
-                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
-                 </div>
-                 """,
+                <div>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
+                </div>
+                """,
             validateHtmlFormattedMatchesWebTools: false);
     }
 
@@ -209,23 +209,23 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                 <div>
-                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                             data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
-                 </div>
-                 """,
+                <div>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                            data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
+                </div>
+                """,
             htmlFormatted: """
-                 <div>
-                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
-                 </div>
-                 """,
+                <div>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
+                </div>
+                """,
             expected: """
-                 <div>
-                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
-                 </div>
-                 """,
+                <div>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
+                </div>
+                """,
             validateHtmlFormattedMatchesWebTools: false);
     }
 
@@ -235,27 +235,27 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                 <div>
-                     <button class="navbar-toggler"
-                             type="button" data-bs-toggle="collapse"
-                             data-bs-target=".navbar-collapse"
-                             aria-controls="navbarSupportedContent"
-                             aria-expanded="false"
-                             aria-label="Toggle navigation"></button>
-                 </div>
-                 """,
+                <div>
+                    <button class="navbar-toggler"
+                            type="button" data-bs-toggle="collapse"
+                            data-bs-target=".navbar-collapse"
+                            aria-controls="navbarSupportedContent"
+                            aria-expanded="false"
+                            aria-label="Toggle navigation"></button>
+                </div>
+                """,
             htmlFormatted: """
-                 <div>
-                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
-                 </div>
-                 """,
+                <div>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
+                </div>
+                """,
             expected: """
-                 <div>
-                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
-                 </div>
-                 """,
+                <div>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
+                </div>
+                """,
             validateHtmlFormattedMatchesWebTools: false);
     }
 
@@ -989,19 +989,19 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
         await RunFormattingTestAsync(
             input: """
 
-                
-                
+                    
+                    
 
-            """,
+                """,
             htmlFormatted: """
                 
                 """,
             expected: """
 
+                    
+                    
                 
-                
-            
-            """);
+                """);
     }
 
     [Fact]
@@ -1010,11 +1010,11 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
         await RunFormattingTestAsync(
             input: """
 
-                
+                    
 
-            <div></div>
+                <div></div>
 
-            """,
+                """,
             htmlFormatted: """
                 
                 
@@ -1023,12 +1023,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 
                 """,
             expected: """
-            
                 
-            
-            <div></div>
-            
-            """);
+                    
+                
+                <div></div>
+                
+                """);
     }
 
     [Fact]
@@ -1060,11 +1060,11 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @section    Scripts
-                        {
-                    <meta property="a" content="b">
-                    }
-                    """,
+                @section    Scripts
+                    {
+                <meta property="a" content="b">
+                }
+                """,
             htmlFormatted: """
                 @section    Scripts
                     {
@@ -1072,11 +1072,11 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @section Scripts
-                    {
-                        <meta property="a" content="b">
-                    }
-                    """,
+                @section Scripts
+                {
+                    <meta property="a" content="b">
+                }
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -1085,20 +1085,20 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @section        Scripts                         {
-                    <meta property="a" content="b">
-                    }
-                    """,
+                @section        Scripts                         {
+                <meta property="a" content="b">
+                }
+                """,
             htmlFormatted: """
                 @section        Scripts                         {
                 <meta property="a" content="b">
                 }
                 """,
             expected: """
-                    @section Scripts {
-                        <meta property="a" content="b">
-                    }
-                    """,
+                @section Scripts {
+                    <meta property="a" content="b">
+                }
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -1107,16 +1107,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code
-                            {
-                        private int currentCount = 0;
-
-                        private void IncrementCount()
+                @code
                         {
-                            currentCount++;
-                        }
+                    private int currentCount = 0;
+
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code
                         {
@@ -1129,16 +1129,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code
-                    {
-                        private int currentCount = 0;
+                @code
+                {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             inGlobalNamespace: inGlobalNamespace);
     }
 
@@ -1147,18 +1147,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    <boo>
-                        @code
-                                {
-                            private int currentCount = 0;
-
-                            private void IncrementCount()
+                <boo>
+                    @code
                             {
-                                currentCount++;
-                            }
+                        private int currentCount = 0;
+
+                        private void IncrementCount()
+                        {
+                            currentCount++;
                         }
-                    </boo>
-                    """,
+                    }
+                </boo>
+                """,
             htmlFormatted: """
                 <boo>
                     @code
@@ -1173,18 +1173,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </boo>
                 """,
             expected: """
-                    <boo>
-                    @code
-                    {
-                        private int currentCount = 0;
+                <boo>
+                @code
+                {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    </boo>
-                    """,
+                }
+                </boo>
+                """,
             inGlobalNamespace: inGlobalNamespace);
     }
 
@@ -1193,18 +1193,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    <boo>
-                        @code
-                                {
-                            private int currentCount = 0;
-
-                            private void IncrementCount()
+                <boo>
+                    @code
                             {
-                                currentCount++;
-                            }
-                                            }
-                    </boo>
-                    """,
+                        private int currentCount = 0;
+
+                        private void IncrementCount()
+                        {
+                            currentCount++;
+                        }
+                                        }
+                </boo>
+                """,
             htmlFormatted: """
                 <boo>
                     @code
@@ -1219,18 +1219,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </boo>
                 """,
             expected: """
-                    <boo>
-                    @code
-                    {
-                        private int currentCount = 0;
+                <boo>
+                @code
+                {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    </boo>
-                    """);
+                }
+                </boo>
+                """);
     }
 
     [Fact]
@@ -1238,18 +1238,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    <boo>
-                    @code
-                            {
-                        private int currentCount = 0;
-
-                        private void IncrementCount()
+                <boo>
+                @code
                         {
-                            currentCount++;
-                        }
+                    private int currentCount = 0;
+
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    </boo>
-                    """,
+                }
+                </boo>
+                """,
             htmlFormatted: """
                 <boo>
                     @code
@@ -1264,18 +1264,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </boo>
                 """,
             expected: """
-                    <boo>
-                    @code
-                    {
-                        private int currentCount = 0;
+                <boo>
+                @code
+                {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    </boo>
-                    """);
+                }
+                </boo>
+                """);
     }
 
     [Fact]
@@ -1283,15 +1283,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code        {
-                        private int currentCount = 0;
+                @code        {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
-                        }
-                    """,
+                    private void IncrementCount()
+                    {
+                        currentCount++;
+                    }
+                    }
+                """,
             htmlFormatted: """
                 @code        {
                     private int currentCount = 0;
@@ -1303,15 +1303,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                     }
                 """,
             expected: """
-                    @code {
-                        private int currentCount = 0;
+                @code {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -1319,14 +1319,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code        {
-                        private int currentCount = 0;
+                @code        {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }                        }
-                    """,
+                    private void IncrementCount()
+                    {
+                        currentCount++;
+                    }                        }
+                """,
             htmlFormatted: """
                 @code        {
                     private int currentCount = 0;
@@ -1337,15 +1337,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                     }                        }
                 """,
             expected: """
-                    @code {
-                        private int currentCount = 0;
+                @code {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -1353,15 +1353,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code        {
-                        private int currentCount = 0;
+                @code        {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
-                        }
-                    """,
+                    private void IncrementCount()
+                    {
+                        currentCount++;
+                    }
+                    }
+                """,
             htmlFormatted: """
                 @code        {
                     private int currentCount = 0;
@@ -1373,16 +1373,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                     }
                 """,
             expected: """
-                    @code
-                    {
-                        private int currentCount = 0;
+                @code
+                {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             codeBlockBraceOnNextLine: true);
     }
 
@@ -1391,14 +1391,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code        {
-                        private int currentCount = 0;
+                @code        {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }                        }
-                    """,
+                    private void IncrementCount()
+                    {
+                        currentCount++;
+                    }                        }
+                """,
             htmlFormatted: """
                 @code        {
                     private int currentCount = 0;
@@ -1409,16 +1409,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                     }                        }
                 """,
             expected: """
-                    @code
-                    {
-                        private int currentCount = 0;
+                @code
+                {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             codeBlockBraceOnNextLine: true);
     }
 
@@ -1427,15 +1427,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code        {
-                        private int currentCount = 0;
+                @code        {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code        {
                     private int currentCount = 0;
@@ -1447,15 +1447,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                        private int currentCount = 0;
+                @code {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -1463,15 +1463,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code	{
-                        private int currentCount = 0;
+                @code	{
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code	{
                     private int currentCount = 0;
@@ -1483,15 +1483,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                        private int currentCount = 0;
+                @code {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -1499,15 +1499,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code	{
-                        private int currentCount = 0;
+                @code	{
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code	{
                     private int currentCount = 0;
@@ -1519,16 +1519,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code
-                    {
-                        private int currentCount = 0;
+                @code
+                {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             codeBlockBraceOnNextLine: true);
     }
 
@@ -1537,15 +1537,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code{
-                        private int currentCount = 0;
+                @code{
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code{
                     private int currentCount = 0;
@@ -1557,15 +1557,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                        private int currentCount = 0;
+                @code {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -1573,15 +1573,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code{
-                        private int currentCount = 0;
+                @code{
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code{
                     private int currentCount = 0;
@@ -1593,16 +1593,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code
-                    {
-                        private int currentCount = 0;
+                @code
+                {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             codeBlockBraceOnNextLine: true);
     }
 
@@ -1611,16 +1611,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions
-                            {
-                        private int currentCount = 0;
-
-                        private void IncrementCount()
+                @functions
                         {
-                            currentCount++;
-                        }
+                    private int currentCount = 0;
+
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @functions
                         {
@@ -1633,16 +1633,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @functions
-                    {
-                        private int currentCount = 0;
+                @functions
+                {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -1651,15 +1651,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions        {
-                        private int currentCount = 0;
+                @functions        {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @functions        {
                     private int currentCount = 0;
@@ -1671,15 +1671,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @functions {
-                        private int currentCount = 0;
+                @functions {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -1688,15 +1688,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions        {
-                        private int currentCount = 0;
+                @functions        {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @functions        {
                     private int currentCount = 0;
@@ -1708,16 +1708,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @functions
-                    {
-                        private int currentCount = 0;
+                @functions
+                {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             fileKind: RazorFileKind.Legacy,
             codeBlockBraceOnNextLine: true);
     }
@@ -1727,15 +1727,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions        {
-                        private int currentCount = 0;
+                @functions        {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
-                             }
-                    """,
+                    private void IncrementCount()
+                    {
+                        currentCount++;
+                    }
+                         }
+                """,
             htmlFormatted: """
                 @functions        {
                     private int currentCount = 0;
@@ -1747,15 +1747,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                          }
                 """,
             expected: """
-                    @functions {
-                        private int currentCount = 0;
+                @functions {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -1764,14 +1764,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions        {
-                        private int currentCount = 0;
+                @functions        {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }                             }
-                    """,
+                    private void IncrementCount()
+                    {
+                        currentCount++;
+                    }                             }
+                """,
             htmlFormatted: """
                 @functions        {
                     private int currentCount = 0;
@@ -1782,15 +1782,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                     }                             }
                 """,
             expected: """
-                    @functions {
-                        private int currentCount = 0;
+                @functions {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -1799,25 +1799,25 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions        {
-                    	private int currentCount = 0;
+                @functions        {
+                	private int currentCount = 0;
 
-                    	private void IncrementCount()
-                    	{
-                    		currentCount++;
-                    	}
-                    				}
-                    """,
+                	private void IncrementCount()
+                	{
+                		currentCount++;
+                	}
+                				}
+                """,
             expected: """
-                    @functions {
-                    	private int currentCount = 0;
+                @functions {
+                	private int currentCount = 0;
 
-                    	private void IncrementCount()
-                    	{
-                    		currentCount++;
-                    	}
-                    }
-                    """,
+                	private void IncrementCount()
+                	{
+                		currentCount++;
+                	}
+                }
+                """,
             insertSpaces: false,
             tabSize: 8,
             fileKind: RazorFileKind.Legacy,
@@ -1838,14 +1838,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @layout    MyLayout
-                    """,
+                @layout    MyLayout
+                """,
             htmlFormatted: """
                 @layout    MyLayout
                 """,
             expected: """
-                    @layout MyLayout
-                    """);
+                @layout MyLayout
+                """);
     }
 
     [Fact]
@@ -1853,14 +1853,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @inherits    MyBaseClass
-                    """,
+                @inherits    MyBaseClass
+                """,
             htmlFormatted: """
                 @inherits    MyBaseClass
                 """,
             expected: """
-                    @inherits MyBaseClass
-                    """);
+                @inherits MyBaseClass
+                """);
     }
 
     [Fact]
@@ -1868,14 +1868,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @implements    IDisposable
-                    """,
+                @implements    IDisposable
+                """,
             htmlFormatted: """
                 @implements    IDisposable
                 """,
             expected: """
-                    @implements IDisposable
-                    """);
+                @implements IDisposable
+                """);
     }
 
     [Fact]
@@ -1883,14 +1883,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @preservewhitespace    true
-                    """,
+                @preservewhitespace    true
+                """,
             htmlFormatted: """
                 @preservewhitespace    true
                 """,
             expected: """
-                    @preservewhitespace true
-                    """);
+                @preservewhitespace true
+                """);
     }
 
     [Fact]
@@ -1898,14 +1898,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @inject    MyClass     myClass
-                    """,
+                @inject    MyClass     myClass
+                """,
             htmlFormatted: """
                 @inject    MyClass     myClass
                 """,
             expected: """
-                    @inject MyClass myClass
-                    """);
+                @inject MyClass myClass
+                """);
     }
 
     [Fact]
@@ -1913,14 +1913,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @inject    MyClass     myClass
-                    """,
+                @inject    MyClass     myClass
+                """,
             htmlFormatted: """
                 @inject    MyClass     myClass
                 """,
             expected: """
-                    @inject MyClass myClass
-                    """);
+                @inject MyClass myClass
+                """);
     }
 
     [Fact]
@@ -1928,14 +1928,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @attribute     [Obsolete(   "asdf"   , error:    false)]
-                    """,
+                @attribute     [Obsolete(   "asdf"   , error:    false)]
+                """,
             htmlFormatted: """
                 @attribute     [Obsolete(   "asdf"   , error:    false)]
                 """,
             expected: """
-                    @attribute [Obsolete("asdf", error: false)]
-                    """);
+                @attribute [Obsolete("asdf", error: false)]
+                """);
     }
 
     [Fact]
@@ -1943,20 +1943,20 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @attribute     [Attr(   "asdf"   , error:    false)]
-                    @attribute   [Attribute(   "asdf"   , error:    false)]
-                    @attribute [ALongAttributeName(   "asdf"   , error:    false)]
-                    """,
+                @attribute     [Attr(   "asdf"   , error:    false)]
+                @attribute   [Attribute(   "asdf"   , error:    false)]
+                @attribute [ALongAttributeName(   "asdf"   , error:    false)]
+                """,
             htmlFormatted: """
                 @attribute     [Attr(   "asdf"   , error:    false)]
                 @attribute   [Attribute(   "asdf"   , error:    false)]
                 @attribute [ALongAttributeName(   "asdf"   , error:    false)]
                 """,
             expected: """
-                    @attribute [Attr("asdf", error: false)]
-                    @attribute [Attribute("asdf", error: false)]
-                    @attribute [ALongAttributeName("asdf", error: false)]
-                    """);
+                @attribute [Attr("asdf", error: false)]
+                @attribute [Attribute("asdf", error: false)]
+                @attribute [ALongAttributeName("asdf", error: false)]
+                """);
     }
 
     [Fact]
@@ -1964,14 +1964,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    <div></div>
-                    @attribute     [Obsolete(   "asdf"   , error:    false)]
-                    <div></div>
-                    @attribute     [Obsolete(   "asdf"   , error:    false)]
-                    <div></div>
-                    @attribute     [Obsolete(   "asdf"   , error:    false)]
-                    <div></div>
-                    """,
+                <div></div>
+                @attribute     [Obsolete(   "asdf"   , error:    false)]
+                <div></div>
+                @attribute     [Obsolete(   "asdf"   , error:    false)]
+                <div></div>
+                @attribute     [Obsolete(   "asdf"   , error:    false)]
+                <div></div>
+                """,
             htmlFormatted: """
                 <div></div>
                 @attribute     [Obsolete(   "asdf"   , error:    false)]
@@ -1982,14 +1982,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 <div></div>
                 """,
             expected: """
-                    <div></div>
-                    @attribute [Obsolete("asdf", error: false)]
-                    <div></div>
-                    @attribute [Obsolete("asdf", error: false)]
-                    <div></div>
-                    @attribute [Obsolete("asdf", error: false)]
-                    <div></div>
-                    """);
+                <div></div>
+                @attribute [Obsolete("asdf", error: false)]
+                <div></div>
+                @attribute [Obsolete("asdf", error: false)]
+                <div></div>
+                @attribute [Obsolete("asdf", error: false)]
+                <div></div>
+                """);
     }
 
     [Fact]
@@ -1997,14 +1997,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @typeparam     T
-                    """,
+                @typeparam     T
+                """,
             htmlFormatted: """
                 @typeparam     T
                 """,
             expected: """
-                    @typeparam T
-                    """);
+                @typeparam T
+                """);
     }
 
     [Fact]
@@ -2012,14 +2012,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @typeparam     T     where    T    :   IDisposable
-                    """,
+                @typeparam     T     where    T    :   IDisposable
+                """,
             htmlFormatted: """
                 @typeparam     T     where    T    :   IDisposable
                 """,
             expected: """
-                    @typeparam T where T : IDisposable
-                    """);
+                @typeparam T where T : IDisposable
+                """);
     }
 
     [Fact]
@@ -2027,14 +2027,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @typeparam     TItem     where    TItem    :   IDisposable
-                    """,
+                @typeparam     TItem     where    TItem    :   IDisposable
+                """,
             htmlFormatted: """
                 @typeparam     TItem     where    TItem    :   IDisposable
                 """,
             expected: """
-                    @typeparam TItem where TItem : IDisposable
-                    """);
+                @typeparam TItem where TItem : IDisposable
+                """);
     }
 
     [Fact]
@@ -2042,18 +2042,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using System
-                    @typeparam     TItem     where    TItem    :   IDisposable
+                @using System
+                @typeparam     TItem     where    TItem    :   IDisposable
 
-                    <div>
-                    @{
-                    if (true)
-                    {
-                    // Hello
-                    }
-                    }
-                    </div>
-                    """,
+                <div>
+                @{
+                if (true)
+                {
+                // Hello
+                }
+                }
+                </div>
+                """,
             htmlFormatted: """
                 @using System
                 @typeparam     TItem     where    TItem    :   IDisposable
@@ -2068,18 +2068,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    @using System
-                    @typeparam TItem where TItem : IDisposable
-                    
-                    <div>
-                        @{
-                            if (true)
-                            {
-                                // Hello
-                            }
+                @using System
+                @typeparam TItem where TItem : IDisposable
+                
+                <div>
+                    @{
+                        if (true)
+                        {
+                            // Hello
                         }
-                    </div>
-                    """);
+                    }
+                </div>
+                """);
     }
 
     [Fact]
@@ -2087,15 +2087,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using System
-                    @typeparam     TItem     where    TItem    :   IDisposable
-                    @typeparam TParent where TParent : string
+                @using System
+                @typeparam     TItem     where    TItem    :   IDisposable
+                @typeparam TParent where TParent : string
 
-                    @if (true)
-                    {
-                    // Hello
-                    }
-                    """,
+                @if (true)
+                {
+                // Hello
+                }
+                """,
             htmlFormatted: """
                 @using System
                 @typeparam     TItem     where    TItem    :   IDisposable
@@ -2107,15 +2107,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @using System
-                    @typeparam TItem where TItem : IDisposable
-                    @typeparam TParent where TParent : string
-                    
-                    @if (true)
-                    {
-                        // Hello
-                    }
-                    """);
+                @using System
+                @typeparam TItem where TItem : IDisposable
+                @typeparam TParent where TParent : string
+                
+                @if (true)
+                {
+                    // Hello
+                }
+                """);
     }
 
     [Fact]
@@ -2123,14 +2123,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @model    MyModel
-                    """,
+                @model    MyModel
+                """,
             htmlFormatted: """
                 @model    MyModel
                 """,
             expected: """
-                    @model MyModel
-                    """,
+                @model MyModel
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -2139,14 +2139,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @page    "MyPage"
-                    """,
+                @page    "MyPage"
+                """,
             htmlFormatted: """
                 @page    "MyPage"
                 """,
             expected: """
-                    @page "MyPage"
-                    """,
+                @page "MyPage"
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -2155,14 +2155,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    <div>
-                    @* <div>
-                    This comment's opening at-star will be aligned, and the
-                    indentation of the rest of its lines will be preserved.
-                            </div>
-                        *@
-                    </div>
-                    """,
+                <div>
+                @* <div>
+                This comment's opening at-star will be aligned, and the
+                indentation of the rest of its lines will be preserved.
+                        </div>
+                    *@
+                </div>
+                """,
             htmlFormatted: """
                 <div>
                     @* <div>
@@ -2173,14 +2173,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    <div>
-                        @* <div>
-                    This comment's opening at-star will be aligned, and the
-                    indentation of the rest of its lines will be preserved.
-                            </div>
-                        *@
-                    </div>
-                    """,
+                <div>
+                    @* <div>
+                This comment's opening at-star will be aligned, and the
+                indentation of the rest of its lines will be preserved.
+                        </div>
+                    *@
+                </div>
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -2189,13 +2189,13 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    <div>
-                    @* <div>
-                    This comment's opening at-star will be aligned, and the
-                    indentation of the rest of its lines will be preserved.
-                            </div>                        *@
-                    </div>
-                    """,
+                <div>
+                @* <div>
+                This comment's opening at-star will be aligned, and the
+                indentation of the rest of its lines will be preserved.
+                        </div>                        *@
+                </div>
+                """,
             htmlFormatted: """
                 <div>
                     @* <div>
@@ -2205,13 +2205,13 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    <div>
-                        @* <div>
-                    This comment's opening at-star will be aligned, and the
-                    indentation of the rest of its lines will be preserved.
-                            </div>                        *@
-                    </div>
-                    """,
+                <div>
+                    @* <div>
+                This comment's opening at-star will be aligned, and the
+                indentation of the rest of its lines will be preserved.
+                        </div>                        *@
+                </div>
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -2220,14 +2220,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    <div>
-                    @* <div>
-                    This comment's opening at-star will be aligned, and the
-                    indentation of the rest of its lines will be preserved.
-                            </div>
-                    *@
-                    </div>
-                    """,
+                <div>
+                @* <div>
+                This comment's opening at-star will be aligned, and the
+                indentation of the rest of its lines will be preserved.
+                        </div>
+                *@
+                </div>
+                """,
             htmlFormatted: """
                 <div>
                     @* <div>
@@ -2238,14 +2238,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    <div>
-                        @* <div>
-                    This comment's opening at-star will be aligned, and the
-                    indentation of the rest of its lines will be preserved.
-                            </div>
-                    *@
-                    </div>
-                    """,
+                <div>
+                    @* <div>
+                This comment's opening at-star will be aligned, and the
+                indentation of the rest of its lines will be preserved.
+                        </div>
+                *@
+                </div>
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -2254,14 +2254,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using   System;
-                    """,
+                @using   System;
+                """,
             htmlFormatted: """
                 @using   System;
                 """,
             expected: """
-                    @using System;
-                    """);
+                @using System;
+                """);
     }
 
     [Fact]
@@ -2269,14 +2269,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using  static   System.Math;
-                    """,
+                @using  static   System.Math;
+                """,
             htmlFormatted: """
                 @using  static   System.Math;
                 """,
             expected: """
-                    @using static System.Math;
-                    """);
+                @using static System.Math;
+                """);
     }
 
     [Fact]
@@ -2284,14 +2284,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using  M   =    System.Math;
-                    """,
+                @using  M   =    System.Math;
+                """,
             htmlFormatted: """
                 @using  M   =    System.Math;
                 """,
             expected: """
-                    @using M = System.Math;
-                    """);
+                @using M = System.Math;
+                """);
     }
 
     [Fact]
@@ -2299,12 +2299,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @addTagHelper    *,    Microsoft.AspNetCore.Mvc.TagHelpers
-                    @removeTagHelper    *,     Microsoft.AspNetCore.Mvc.TagHelpers
-                    @addTagHelper    "*,  Microsoft.AspNetCore.Mvc.TagHelpers"
-                    @removeTagHelper    "*,  Microsoft.AspNetCore.Mvc.TagHelpers"
-                    @tagHelperPrefix    th:
-                    """,
+                @addTagHelper    *,    Microsoft.AspNetCore.Mvc.TagHelpers
+                @removeTagHelper    *,     Microsoft.AspNetCore.Mvc.TagHelpers
+                @addTagHelper    "*,  Microsoft.AspNetCore.Mvc.TagHelpers"
+                @removeTagHelper    "*,  Microsoft.AspNetCore.Mvc.TagHelpers"
+                @tagHelperPrefix    th:
+                """,
             htmlFormatted: """
                 @addTagHelper    *,    Microsoft.AspNetCore.Mvc.TagHelpers
                 @removeTagHelper    *,     Microsoft.AspNetCore.Mvc.TagHelpers
@@ -2313,12 +2313,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 @tagHelperPrefix    th:
                 """,
             expected: """
-                    @addTagHelper    *,    Microsoft.AspNetCore.Mvc.TagHelpers
-                    @removeTagHelper    *,     Microsoft.AspNetCore.Mvc.TagHelpers
-                    @addTagHelper    "*,  Microsoft.AspNetCore.Mvc.TagHelpers"
-                    @removeTagHelper    "*,  Microsoft.AspNetCore.Mvc.TagHelpers"
-                    @tagHelperPrefix    th:
-                    """,
+                @addTagHelper    *,    Microsoft.AspNetCore.Mvc.TagHelpers
+                @removeTagHelper    *,     Microsoft.AspNetCore.Mvc.TagHelpers
+                @addTagHelper    "*,  Microsoft.AspNetCore.Mvc.TagHelpers"
+                @removeTagHelper    "*,  Microsoft.AspNetCore.Mvc.TagHelpers"
+                @tagHelperPrefix    th:
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -2337,14 +2337,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                       <html>
-                    <head>
-                       <title>Hello</title></head>
-                    <body><div>
-                    </div>
-                            </body>
-                     </html>
-                    """,
+                   <html>
+                <head>
+                   <title>Hello</title></head>
+                <body><div>
+                </div>
+                        </body>
+                 </html>
+                """,
             htmlFormatted: """
                 <html>
                 <head>
@@ -2357,16 +2357,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </html>
                 """,
             expected: """
-                    <html>
-                    <head>
-                        <title>Hello</title>
-                    </head>
-                    <body>
-                        <div>
-                        </div>
-                    </body>
-                    </html>
-                    """);
+                <html>
+                <head>
+                    <title>Hello</title>
+                </head>
+                <body>
+                    <div>
+                    </div>
+                </body>
+                </html>
+                """);
     }
 
     [Fact]
@@ -2374,16 +2374,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    <html>
-                    <head>
-                        <title>Hello</title>
-                    </head>
-                    <body>
-                            [|<div>
-                            </div>|]
-                    </body>
-                    </html>
-                    """,
+                <html>
+                <head>
+                    <title>Hello</title>
+                </head>
+                <body>
+                        [|<div>
+                        </div>|]
+                </body>
+                </html>
+                """,
             htmlFormatted: """
                 <html>
                 <head>
@@ -2396,16 +2396,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </html>
                 """,
             expected: """
-                    <html>
-                    <head>
-                        <title>Hello</title>
-                    </head>
-                    <body>
-                        <div>
-                        </div>
-                    </body>
-                    </html>
-                    """);
+                <html>
+                <head>
+                    <title>Hello</title>
+                </head>
+                <body>
+                    <div>
+                    </div>
+                </body>
+                </html>
+                """);
     }
 
     [Fact]
@@ -2413,29 +2413,29 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @page "/error"
+                @page "/error"
 
-                            <h1 class=
-                    "text-danger">Error.</h1>
-                        <h2 class="text-danger">An error occurred while processing your request.</h2>
+                        <h1 class=
+                "text-danger">Error.</h1>
+                    <h2 class="text-danger">An error occurred while processing your request.</h2>
 
-                                <h3>Development Mode</h3>
-                    <p>
-                        Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.</p>
-                    <p>
-                        <strong>The Development environment shouldn't be enabled for deployed applications.
-                    </strong>
-                                <div>
-                     <div>
-                        <div>
+                            <h3>Development Mode</h3>
+                <p>
+                    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.</p>
+                <p>
+                    <strong>The Development environment shouldn't be enabled for deployed applications.
+                </strong>
+                            <div>
+                 <div>
                     <div>
-                            This is heavily nested
+                <div>
+                        This is heavily nested
+                </div>
+                 </div>
                     </div>
-                     </div>
                         </div>
-                            </div>
-                    </p>
-                    """,
+                </p>
+                """,
             htmlFormatted: """
                 @page "/error"
                 
@@ -2464,32 +2464,32 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </p>
                 """,
             expected: """
-                    @page "/error"
+                @page "/error"
 
-                    <h1 class="text-danger">
-                        Error.
-                    </h1>
-                    <h2 class="text-danger">An error occurred while processing your request.</h2>
+                <h1 class="text-danger">
+                    Error.
+                </h1>
+                <h2 class="text-danger">An error occurred while processing your request.</h2>
 
-                    <h3>Development Mode</h3>
-                    <p>
-                        Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-                    </p>
-                    <p>
-                        <strong>
-                            The Development environment shouldn't be enabled for deployed applications.
-                        </strong>
+                <h3>Development Mode</h3>
+                <p>
+                    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
+                </p>
+                <p>
+                    <strong>
+                        The Development environment shouldn't be enabled for deployed applications.
+                    </strong>
+                    <div>
                         <div>
                             <div>
                                 <div>
-                                    <div>
-                                        This is heavily nested
-                                    </div>
+                                    This is heavily nested
                                 </div>
                             </div>
                         </div>
-                    </p>
-                    """);
+                    </div>
+                </p>
+                """);
     }
 
     [Fact]
@@ -2497,28 +2497,28 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @page "/test"
-                    @{
-                    <p>
-                            @{
-                                    var t = 1;
-                    if (true)
-                    {
+                @page "/test"
+                @{
+                <p>
+                        @{
+                                var t = 1;
+                if (true)
+                {
 
-                                }
                             }
-                            </p>
-                    <div>
-                     @{
-                        <div>
-                    <div>
-                            This is heavily nested
-                    </div>
-                     </div>
                         }
-                            </div>
+                        </p>
+                <div>
+                 @{
+                    <div>
+                <div>
+                        This is heavily nested
+                </div>
+                 </div>
                     }
-                    """,
+                        </div>
+                }
+                """,
             htmlFormatted: """
                 @page "/test"
                 @{
@@ -2543,28 +2543,28 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @page "/test"
-                    @{
-                        <p>
-                            @{
-                                var t = 1;
-                                if (true)
-                                {
+                @page "/test"
+                @{
+                    <p>
+                        @{
+                            var t = 1;
+                            if (true)
+                            {
 
-                                }
                             }
-                        </p>
-                        <div>
-                            @{
+                        }
+                    </p>
+                    <div>
+                        @{
+                            <div>
                                 <div>
-                                    <div>
-                                        This is heavily nested
-                                    </div>
+                                    This is heavily nested
                                 </div>
-                            }
-                        </div>
-                    }
-                    """);
+                            </div>
+                        }
+                    </div>
+                }
+                """);
     }
 
     [Fact]
@@ -2572,18 +2572,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    <div class=@className>Some Text</div>
-                    <div class=@className style=@style>Some Text</div>
-                    <div class=@className style="@style">Some Text</div>
-                    <div class='@className'>Some Text</div>
-                    <div class="@className">Some Text</div>
-                    
-                    <br class=@className/>
-                    <br class=@className style=@style/>
-                    <br class=@className style="@style"/>
-                    <br class='@className'/>
-                    <br class="@className"/>
-                    """,
+                <div class=@className>Some Text</div>
+                <div class=@className style=@style>Some Text</div>
+                <div class=@className style="@style">Some Text</div>
+                <div class='@className'>Some Text</div>
+                <div class="@className">Some Text</div>
+                
+                <br class=@className/>
+                <br class=@className style=@style/>
+                <br class=@className style="@style"/>
+                <br class='@className'/>
+                <br class="@className"/>
+                """,
             htmlFormatted: """
                 <div class=@className>Some Text</div>
                 <div class=@className style=@style>Some Text</div>
@@ -2598,18 +2598,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 <br class="@className"/>
                 """,
             expected: """
-                    <div class=@className>Some Text</div>
-                    <div class=@className style=@style>Some Text</div>
-                    <div class=@className style="@style">Some Text</div>
-                    <div class='@className'>Some Text</div>
-                    <div class="@className">Some Text</div>
+                <div class=@className>Some Text</div>
+                <div class=@className style=@style>Some Text</div>
+                <div class=@className style="@style">Some Text</div>
+                <div class='@className'>Some Text</div>
+                <div class="@className">Some Text</div>
 
-                    <br class=@className/>
-                    <br class=@className style=@style/>
-                    <br class=@className style="@style"/>
-                    <br class='@className'/>
-                    <br class="@className"/>
-                    """);
+                <br class=@className/>
+                <br class=@className style=@style/>
+                <br class=@className style="@style"/>
+                <br class='@className'/>
+                <br class="@className"/>
+                """);
     }
 
     [Fact]
@@ -2617,27 +2617,27 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @page "/test"
+                @page "/test"
 
-                    <div class=@className>Some Text</div>
+                <div class=@className>Some Text</div>
 
-                    @{
-                    @: Hi!
-                    var x = 123;
-                    <p>
-                            @if (true) {
-                                    var t = 1;
-                    if (true)
-                    {
-                    <div>@DateTime.Now</div>
-                                }
-
-                                @while(true){
-                     }
+                @{
+                @: Hi!
+                var x = 123;
+                <p>
+                        @if (true) {
+                                var t = 1;
+                if (true)
+                {
+                <div>@DateTime.Now</div>
                             }
-                            </p>
-                    }
-                    """,
+
+                            @while(true){
+                 }
+                        }
+                        </p>
+                }
+                """,
             htmlFormatted: """
                 @page "/test"
                 
@@ -2661,29 +2661,29 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @page "/test"
+                @page "/test"
 
-                    <div class=@className>Some Text</div>
+                <div class=@className>Some Text</div>
 
-                    @{
-                        @: Hi!
-                        var x = 123;
-                        <p>
-                            @if (true)
+                @{
+                    @: Hi!
+                    var x = 123;
+                    <p>
+                        @if (true)
+                        {
+                            var t = 1;
+                            if (true)
                             {
-                                var t = 1;
-                                if (true)
-                                {
-                                    <div>@DateTime.Now</div>
-                                }
-
-                                @while (true)
-                                {
-                                }
+                                <div>@DateTime.Now</div>
                             }
-                        </p>
-                    }
-                    """);
+
+                            @while (true)
+                            {
+                            }
+                        }
+                    </p>
+                }
+                """);
     }
 
     [Fact]
@@ -2691,34 +2691,34 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @page "/test"
+                @page "/test"
 
-                    <div
-                    attr='val'
-                    class=@className>Some Text</div>
+                <div
+                attr='val'
+                class=@className>Some Text</div>
 
-                    @{
-                    @: Hi!
-                    var x = DateTime
-                        .Now.ToString();
-                    <p>
-                            @if (true) {
-                                    var t = 1;
-                            }
-                            </p>
-                    }
+                @{
+                @: Hi!
+                var x = DateTime
+                    .Now.ToString();
+                <p>
+                        @if (true) {
+                                var t = 1;
+                        }
+                        </p>
+                }
 
-                    @(DateTime
-                        .Now
-                    .ToString())
+                @(DateTime
+                    .Now
+                .ToString())
 
-                    @(
-                        Foo.Values.Select(f =>
-                        {
-                            return f.ToString();
-                        })
-                    )
-                    """,
+                @(
+                    Foo.Values.Select(f =>
+                    {
+                        return f.ToString();
+                    })
+                )
+                """,
             htmlFormatted: """
                 @page "/test"
                 
@@ -2750,36 +2750,36 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 )
                 """,
             expected: """
-                    @page "/test"
+                @page "/test"
 
-                    <div attr='val'
-                         class=@className>
-                        Some Text
-                    </div>
+                <div attr='val'
+                     class=@className>
+                    Some Text
+                </div>
 
-                    @{
-                        @: Hi!
-                        var x = DateTime
-                            .Now.ToString();
-                        <p>
-                            @if (true)
-                            {
-                                var t = 1;
-                            }
-                        </p>
-                    }
-
-                    @(DateTime
-                        .Now
-                    .ToString())
-
-                    @(
-                        Foo.Values.Select(f =>
+                @{
+                    @: Hi!
+                    var x = DateTime
+                        .Now.ToString();
+                    <p>
+                        @if (true)
                         {
-                            return f.ToString();
-                        })
-                    )
-                    """);
+                            var t = 1;
+                        }
+                    </p>
+                }
+
+                @(DateTime
+                    .Now
+                .ToString())
+
+                @(
+                    Foo.Values.Select(f =>
+                    {
+                        return f.ToString();
+                    })
+                )
+                """);
     }
 
     [Fact]
@@ -2787,58 +2787,58 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @page "/"
+                @page "/"
 
-                    <h1>Hello, world!</h1>
+                <h1>Hello, world!</h1>
 
-                            Welcome to your new app.
+                        Welcome to your new app.
 
-                    <PageTitle Title="How is Blazor working for you?" />
+                <PageTitle Title="How is Blazor working for you?" />
 
-                    <div class="FF"
-                         id="ERT">
-                         asdf
-                        <div class="3"
-                             id="3">
-                                 @if(true){<p></p>}
-                             </div>
-                    </div>
+                <div class="FF"
+                     id="ERT">
+                     asdf
+                    <div class="3"
+                         id="3">
+                             @if(true){<p></p>}
+                         </div>
+                </div>
 
+                @{
+                <div class="FF"
+                    id="ERT">
+                    asdf
+                    <div class="3"
+                        id="3">
+                            @if(true){<p></p>}
+                        </div>
+                </div>
+                }
+
+                @{
+                <div class="FF"
+                    id="ERT">
                     @{
-                    <div class="FF"
-                        id="ERT">
-                        asdf
-                        <div class="3"
-                            id="3">
-                                @if(true){<p></p>}
-                            </div>
-                    </div>
-                    }
+                <div class="FF"
+                    id="ERT">
+                    asdf
+                    <div class="3"
+                        id="3">
+                            @if(true){<p></p>}
+                        </div>
+                </div>
+                }
+                </div>
+                }
 
-                    @{
-                    <div class="FF"
-                        id="ERT">
-                        @{
-                    <div class="FF"
-                        id="ERT">
-                        asdf
-                        <div class="3"
-                            id="3">
-                                @if(true){<p></p>}
-                            </div>
-                    </div>
+                @functions {
+                        public class Foo
+                    {
+                        @* This is a Razor Comment *@
+                        void Method() { }
                     }
-                    </div>
-                    }
-
-                    @functions {
-                            public class Foo
-                        {
-                            @* This is a Razor Comment *@
-                            void Method() { }
-                        }
-                    }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @page "/"
                 
@@ -2893,14 +2893,27 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @page "/"
+                @page "/"
 
-                    <h1>Hello, world!</h1>
+                <h1>Hello, world!</h1>
 
-                    Welcome to your new app.
+                Welcome to your new app.
 
-                    <PageTitle Title="How is Blazor working for you?" />
+                <PageTitle Title="How is Blazor working for you?" />
 
+                <div class="FF"
+                     id="ERT">
+                    asdf
+                    <div class="3"
+                         id="3">
+                        @if (true)
+                        {
+                            <p></p>
+                        }
+                    </div>
+                </div>
+
+                @{
                     <div class="FF"
                          id="ERT">
                         asdf
@@ -2912,48 +2925,35 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                             }
                         </div>
                     </div>
+                }
 
-                    @{
-                        <div class="FF"
-                             id="ERT">
-                            asdf
-                            <div class="3"
-                                 id="3">
-                                @if (true)
-                                {
-                                    <p></p>
-                                }
-                            </div>
-                        </div>
-                    }
-
-                    @{
-                        <div class="FF"
-                             id="ERT">
-                            @{
-                                <div class="FF"
-                                     id="ERT">
-                                    asdf
-                                    <div class="3"
-                                         id="3">
-                                        @if (true)
-                                        {
-                                            <p></p>
-                                        }
-                                    </div>
+                @{
+                    <div class="FF"
+                         id="ERT">
+                        @{
+                            <div class="FF"
+                                 id="ERT">
+                                asdf
+                                <div class="3"
+                                     id="3">
+                                    @if (true)
+                                    {
+                                        <p></p>
+                                    }
                                 </div>
-                            }
-                        </div>
-                    }
-
-                    @functions {
-                        public class Foo
-                        {
-                            @* This is a Razor Comment *@
-                            void Method() { }
+                            </div>
                         }
+                    </div>
+                }
+
+                @functions {
+                    public class Foo
+                    {
+                        @* This is a Razor Comment *@
+                        void Method() { }
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -2961,22 +2961,22 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    <div>
-                    </div>
-                    @{<p></p>}
-                    """,
+                <div>
+                </div>
+                @{<p></p>}
+                """,
             htmlFormatted: """
                 <div>
                 </div>
                 @{<p></p>}
                 """,
             expected: """
-                    <div>
-                    </div>
-                    @{
-                        <p></p>
-                    }
-                    """);
+                <div>
+                </div>
+                @{
+                    <p></p>
+                }
+                """);
     }
 
     [Fact]
@@ -2985,17 +2985,17 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                        public string DoSomething()
-                        {
-                            <strong>
-                                @DateTime.Now.ToString()
-                            </strong>
+                @code {
+                    public string DoSomething()
+                    {
+                        <strong>
+                            @DateTime.Now.ToString()
+                        </strong>
 
-                            return String.Empty;
-                        }
+                        return String.Empty;
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code {
                     public string DoSomething()
@@ -3009,17 +3009,17 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                        public string DoSomething()
-                        {
-                            <strong>
-                                @DateTime.Now.ToString()
-                            </strong>
+                @code {
+                    public string DoSomething()
+                    {
+                        <strong>
+                            @DateTime.Now.ToString()
+                        </strong>
 
-                            return String.Empty;
-                        }
+                        return String.Empty;
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -3028,17 +3028,17 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                        public string DoSomething()
-                        {
-                            <strong>
-                                @DateTime.Now.ToString()
-                            </strong>
+                @code {
+                    public string DoSomething()
+                    {
+                        <strong>
+                            @DateTime.Now.ToString()
+                        </strong>
 
-                            return String.Empty;
-                        }
+                        return String.Empty;
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code {
                     public string DoSomething()
@@ -3052,17 +3052,17 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                    	public string DoSomething()
-                    	{
-                    		<strong>
-                    			@DateTime.Now.ToString()
-                    		</strong>
+                @code {
+                	public string DoSomething()
+                	{
+                		<strong>
+                			@DateTime.Now.ToString()
+                		</strong>
 
-                    		return String.Empty;
-                    	}
-                    }
-                    """, // Due to a bug in the HTML formatter, this needs to be 4
+                		return String.Empty;
+                	}
+                }
+                """, // Due to a bug in the HTML formatter, this needs to be 4
             tabSize: 4,
             insertSpaces: false);
     }
@@ -3073,23 +3073,23 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @page "/"
-                    @{
-                     ViewData["Title"] = "Create";
-                     <hr />
-                     <div class="row">
-                      <div class="col-md-4">
-                       <form method="post">
-                        <div class="form-group">
-                         <label asp-for="Movie.Title" class="control-label"></label>
-                         <input asp-for="Movie.Title" class="form-control" />
-                         <span asp-validation-for="Movie.Title" class="text-danger"></span>
-                        </div>
-                       </form>
-                      </div>
-                     </div>
-                    }
-                    """,
+                @page "/"
+                @{
+                 ViewData["Title"] = "Create";
+                 <hr />
+                 <div class="row">
+                  <div class="col-md-4">
+                   <form method="post">
+                    <div class="form-group">
+                     <label asp-for="Movie.Title" class="control-label"></label>
+                     <input asp-for="Movie.Title" class="form-control" />
+                     <span asp-validation-for="Movie.Title" class="text-danger"></span>
+                    </div>
+                   </form>
+                  </div>
+                 </div>
+                }
+                """,
             htmlFormatted: """
                 @page "/"
                 @{
@@ -3109,23 +3109,23 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @page "/"
-                    @{
-                    	ViewData["Title"] = "Create";
-                    	<hr />
-                    	<div class="row">
-                    		<div class="col-md-4">
-                    			<form method="post">
-                    				<div class="form-group">
-                    					<label asp-for="Movie.Title" class="control-label"></label>
-                    					<input asp-for="Movie.Title" class="form-control" />
-                    					<span asp-validation-for="Movie.Title" class="text-danger"></span>
-                    				</div>
-                    			</form>
-                    		</div>
-                    	</div>
-                    }
-                    """, // Due to a bug in the HTML formatter, this needs to be 4
+                @page "/"
+                @{
+                	ViewData["Title"] = "Create";
+                	<hr />
+                	<div class="row">
+                		<div class="col-md-4">
+                			<form method="post">
+                				<div class="form-group">
+                					<label asp-for="Movie.Title" class="control-label"></label>
+                					<input asp-for="Movie.Title" class="form-control" />
+                					<span asp-validation-for="Movie.Title" class="text-danger"></span>
+                				</div>
+                			</form>
+                		</div>
+                	</div>
+                }
+                """, // Due to a bug in the HTML formatter, this needs to be 4
             tabSize: 4,
             insertSpaces: false,
             fileKind: RazorFileKind.Legacy);
@@ -3137,21 +3137,21 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @page "/"
+                @page "/"
 
-                     <hr />
-                     <div class="row">
-                      <div class="col-md-4">
-                       <form method="post">
-                        <div class="form-group">
-                         <label asp-for="Movie.Title" class="control-label"></label>
-                         <input asp-for="Movie.Title" class="form-control" />
-                         <span asp-validation-for="Movie.Title" class="text-danger"></span>
-                        </div>
-                       </form>
-                      </div>
-                     </div>
-                    """,
+                 <hr />
+                 <div class="row">
+                  <div class="col-md-4">
+                   <form method="post">
+                    <div class="form-group">
+                     <label asp-for="Movie.Title" class="control-label"></label>
+                     <input asp-for="Movie.Title" class="form-control" />
+                     <span asp-validation-for="Movie.Title" class="text-danger"></span>
+                    </div>
+                   </form>
+                  </div>
+                 </div>
+                """,
             htmlFormatted: """
                 @page "/"
                 
@@ -3169,21 +3169,21 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    @page "/"
+                @page "/"
 
-                    <hr />
-                    <div class="row">
-                    	<div class="col-md-4">
-                    		<form method="post">
-                    			<div class="form-group">
-                    				<label asp-for="Movie.Title" class="control-label"></label>
-                    				<input asp-for="Movie.Title" class="form-control" />
-                    				<span asp-validation-for="Movie.Title" class="text-danger"></span>
-                    			</div>
-                    		</form>
-                    	</div>
-                    </div>
-                    """, // Due to a bug in the HTML formatter, this needs to be 4
+                <hr />
+                <div class="row">
+                	<div class="col-md-4">
+                		<form method="post">
+                			<div class="form-group">
+                				<label asp-for="Movie.Title" class="control-label"></label>
+                				<input asp-for="Movie.Title" class="form-control" />
+                				<span asp-validation-for="Movie.Title" class="text-danger"></span>
+                			</div>
+                		</form>
+                	</div>
+                </div>
+                """, // Due to a bug in the HTML formatter, this needs to be 4
             tabSize: 4,
             insertSpaces: false,
             fileKind: RazorFileKind.Legacy);
@@ -3195,23 +3195,23 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @page "/"
+                @page "/"
 
-                     <hr />
-                     <div class="row">
-                      <div class="col-md-4"
-                      label="label">
-                       <form method="post">
-                        <div class="form-group">
-                         <label asp-for="Movie.Title"
-                         class="control-label"></label>
-                         <input asp-for="Movie.Title" class="form-control" />
-                         <span asp-validation-for="Movie.Title" class="text-danger"></span>
-                        </div>
-                       </form>
-                      </div>
-                     </div>
-                    """,
+                 <hr />
+                 <div class="row">
+                  <div class="col-md-4"
+                  label="label">
+                   <form method="post">
+                    <div class="form-group">
+                     <label asp-for="Movie.Title"
+                     class="control-label"></label>
+                     <input asp-for="Movie.Title" class="form-control" />
+                     <span asp-validation-for="Movie.Title" class="text-danger"></span>
+                    </div>
+                   </form>
+                  </div>
+                 </div>
+                """,
             htmlFormatted: """
                 @page "/"
                 
@@ -3231,23 +3231,23 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    @page "/"
+                @page "/"
 
-                    <hr />
-                    <div class="row">
-                    	<div class="col-md-4"
-                    		 label="label">
-                    		<form method="post">
-                    			<div class="form-group">
-                    				<label asp-for="Movie.Title"
-                    					   class="control-label"></label>
-                    				<input asp-for="Movie.Title" class="form-control" />
-                    				<span asp-validation-for="Movie.Title" class="text-danger"></span>
-                    			</div>
-                    		</form>
-                    	</div>
-                    </div>
-                    """, // Due to a bug in the HTML formatter, this needs to be 4
+                <hr />
+                <div class="row">
+                	<div class="col-md-4"
+                		 label="label">
+                		<form method="post">
+                			<div class="form-group">
+                				<label asp-for="Movie.Title"
+                					   class="control-label"></label>
+                				<input asp-for="Movie.Title" class="form-control" />
+                				<span asp-validation-for="Movie.Title" class="text-danger"></span>
+                			</div>
+                		</form>
+                	</div>
+                </div>
+                """, // Due to a bug in the HTML formatter, this needs to be 4
             tabSize: 4,
             insertSpaces: false,
             fileKind: RazorFileKind.Legacy);
@@ -3259,24 +3259,24 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    <CascadingAuthenticationState>
-                    <Router AppAssembly="@typeof(Program).Assembly">
-                        <Found Context="routeData">
-                            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-                        </Found>
-                        <NotFound>
-                            <LayoutView Layout="@typeof(MainLayout)">
-                                <p>Sorry, there's nothing at this address.</p>
+                <CascadingAuthenticationState>
+                <Router AppAssembly="@typeof(Program).Assembly">
+                    <Found Context="routeData">
+                        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+                    </Found>
+                    <NotFound>
+                        <LayoutView Layout="@typeof(MainLayout)">
+                            <p>Sorry, there's nothing at this address.</p>
 
-                                @if (true)
-                                        {
-                                            <strong></strong>
-                                    }
-                            </LayoutView>
-                        </NotFound>
-                    </Router>
-                    </CascadingAuthenticationState>
-                    """,
+                            @if (true)
+                                    {
+                                        <strong></strong>
+                                }
+                        </LayoutView>
+                    </NotFound>
+                </Router>
+                </CascadingAuthenticationState>
+                """,
             htmlFormatted: """
                 <CascadingAuthenticationState>
                     <Router AppAssembly="@typeof(Program).Assembly">
@@ -3297,24 +3297,24 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </CascadingAuthenticationState>
                 """,
             expected: """
-                    <CascadingAuthenticationState>
-                        <Router AppAssembly="@typeof(Program).Assembly">
-                            <Found Context="routeData">
-                                <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-                            </Found>
-                            <NotFound>
-                                <LayoutView Layout="@typeof(MainLayout)">
-                                    <p>Sorry, there's nothing at this address.</p>
+                <CascadingAuthenticationState>
+                    <Router AppAssembly="@typeof(Program).Assembly">
+                        <Found Context="routeData">
+                            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+                        </Found>
+                        <NotFound>
+                            <LayoutView Layout="@typeof(MainLayout)">
+                                <p>Sorry, there's nothing at this address.</p>
 
-                                    @if (true)
-                                    {
-                                        <strong></strong>
-                                    }
-                                </LayoutView>
-                            </NotFound>
-                        </Router>
-                    </CascadingAuthenticationState>
-                    """);
+                                @if (true)
+                                {
+                                    <strong></strong>
+                                }
+                            </LayoutView>
+                        </NotFound>
+                    </Router>
+                </CascadingAuthenticationState>
+                """);
     }
 
     [Fact]
@@ -3323,24 +3323,24 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @if (true)
-                    {
-                        <p><em>Loading...</em></p>
-                    }
-                    else
-                    {
-                        <table class="table">
-                            <thead>
-                                <tr>
-                            <th>Date</th>
-                            <th>Temp. (C)</th>
-                            <th>Temp. (F)</th>
-                            <th>Summary</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    }
-                    """,
+                @if (true)
+                {
+                    <p><em>Loading...</em></p>
+                }
+                else
+                {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                        <th>Date</th>
+                        <th>Temp. (C)</th>
+                        <th>Temp. (F)</th>
+                        <th>Summary</th>
+                            </tr>
+                        </thead>
+                    </table>
+                }
+                """,
             htmlFormatted: """
                 @if (true)
                 {
@@ -3361,24 +3361,24 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @if (true)
-                    {
-                        <p><em>Loading...</em></p>
-                    }
-                    else
-                    {
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Temp. (C)</th>
-                                    <th>Temp. (F)</th>
-                                    <th>Summary</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    }
-                    """);
+                @if (true)
+                {
+                    <p><em>Loading...</em></p>
+                }
+                else
+                {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Temp. (C)</th>
+                                <th>Temp. (F)</th>
+                                <th>Summary</th>
+                            </tr>
+                        </thead>
+                    </table>
+                }
+                """);
     }
 
     [Fact]
@@ -3482,24 +3482,24 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @if (true)
-                    {
-                        <p><em>Loading...</em></p>
-                    }
-                    else
-                    {
-                        <table class="table">
-                            <thead>
-                                <tr>
-                    [|      <th>Date</th>
-                            <th>Temp. (C)</th>
-                            <th>Temp. (F)</th>
-                            <th>Summary</th>|]
-                                </tr>
-                            </thead>
-                        </table>
-                    }
-                    """,
+                @if (true)
+                {
+                    <p><em>Loading...</em></p>
+                }
+                else
+                {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                [|      <th>Date</th>
+                        <th>Temp. (C)</th>
+                        <th>Temp. (F)</th>
+                        <th>Summary</th>|]
+                            </tr>
+                        </thead>
+                    </table>
+                }
+                """,
             htmlFormatted: """
                 @if (true)
                 {
@@ -3520,24 +3520,24 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @if (true)
-                    {
-                        <p><em>Loading...</em></p>
-                    }
-                    else
-                    {
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Temp. (C)</th>
-                                    <th>Temp. (F)</th>
-                                    <th>Summary</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    }
-                    """);
+                @if (true)
+                {
+                    <p><em>Loading...</em></p>
+                }
+                else
+                {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Temp. (C)</th>
+                                <th>Temp. (F)</th>
+                                <th>Summary</th>
+                            </tr>
+                        </thead>
+                    </table>
+                }
+                """);
     }
 
     [Fact]
@@ -3552,22 +3552,22 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
 
         await RunFormattingTestAsync(
             input: """
-                    @code
+                @code
+                {
+                    public void DoStuff(RenderFragment renderFragment)
                     {
-                        public void DoStuff(RenderFragment renderFragment)
-                        {
-                            DoThings();
-                            renderFragment(@<PageTitle Title="Foo" />);
-                    DoThings();
-                    renderFragment(@<PageTitle          Title="Foo"             />);
+                        DoThings();
+                        renderFragment(@<PageTitle Title="Foo" />);
+                DoThings();
+                renderFragment(@<PageTitle          Title="Foo"             />);
 
-                            @* comment *@
-                    <div></div>
+                        @* comment *@
+                <div></div>
 
-                            @* comment *@<div></div>
-                        }
+                        @* comment *@<div></div>
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code
                 {
@@ -3588,23 +3588,23 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code
+                @code
+                {
+                    public void DoStuff(RenderFragment renderFragment)
                     {
-                        public void DoStuff(RenderFragment renderFragment)
-                        {
-                            DoThings();
-                            renderFragment(@<PageTitle Title="Foo" />);
-                            DoThings();
-                            renderFragment(@<PageTitle Title="Foo" />);
+                        DoThings();
+                        renderFragment(@<PageTitle Title="Foo" />);
+                        DoThings();
+                        renderFragment(@<PageTitle Title="Foo" />);
 
-                            @* comment *@
-                            <div></div>
+                        @* comment *@
+                        <div></div>
 
-                            @* comment *@
-                            <div></div>
-                        }
+                        @* comment *@
+                        <div></div>
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -3619,17 +3619,17 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
 
         await RunFormattingTestAsync(
             input: """
-                    <div>
-                    @{
-                        renderFragment(@<PageTitle Title="Foo" />);
+                <div>
+                @{
+                    renderFragment(@<PageTitle Title="Foo" />);
 
-                            @* comment *@
-                    <div></div>
+                        @* comment *@
+                <div></div>
 
-                            @* comment *@<div></div>
-                        }
-                    </div>
-                    """,
+                        @* comment *@<div></div>
+                    }
+                </div>
+                """,
             htmlFormatted: """
                 <div>
                     @{
@@ -3643,18 +3643,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    <div>
-                        @{
-                            renderFragment(@<PageTitle Title="Foo" />);
+                <div>
+                    @{
+                        renderFragment(@<PageTitle Title="Foo" />);
 
-                            @* comment *@
-                            <div></div>
+                        @* comment *@
+                        <div></div>
 
-                            @* comment *@
-                            <div></div>
-                        }
-                    </div>
-                    """);
+                        @* comment *@
+                        <div></div>
+                    }
+                </div>
+                """);
     }
 
     [Fact]
@@ -3669,17 +3669,17 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
 
         await RunFormattingTestAsync(
             input: """
-                    <div>
-                    @{
-                        renderFragment    (@<PageTitle      Title=  "Foo"     />);
+                <div>
+                @{
+                    renderFragment    (@<PageTitle      Title=  "Foo"     />);
 
-                            @* comment *@
-                    <div></div>
+                        @* comment *@
+                <div></div>
 
-                            @* comment *@<div></div>
-                        }
-                    </div>
-                    """,
+                        @* comment *@<div></div>
+                    }
+                </div>
+                """,
             htmlFormatted: """
                 <div>
                     @{
@@ -3693,25 +3693,25 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    <div>
-                        @{
-                            renderFragment(@<PageTitle Title="Foo" />);
+                <div>
+                    @{
+                        renderFragment(@<PageTitle Title="Foo" />);
 
-                            @* comment *@
-                            <div></div>
+                        @* comment *@
+                        <div></div>
 
-                            @* comment *@
-                            <div></div>
-                        }
-                    </div>
-                    """);
+                        @* comment *@
+                        <div></div>
+                    }
+                </div>
+                """);
     }
 
     [Fact]
     [WorkItem("https://github.com/dotnet/razor/issues/12635")]
     public Task TwoRenderFragmentsAfterEachOther()
      => RunFormattingTestAsync(
-         input: """
+            input: """
                 @{
                 Func<(bool b1, bool b2), object> o1 = @<text>
                 <div></div>
@@ -3721,7 +3721,7 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </text>;
                 }
                 """,
-         htmlFormatted: """
+            htmlFormatted: """
                 @{
                 Func<(bool b1, bool b2), object> o1 = @<text>
                     <div></div>
@@ -3748,19 +3748,19 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @foreach (var num in Enumerable.Range(1, 10))
-                    {
-                        <span class="skill_result btn">
-                            <!--asdfasd-->
-                            <span style="margin-left:0px">
-                                <svg>
-                                    <rect width="1" height="1" />
-                                </svg>
-                            </span>
-                            <!--adfasfd-->
+                @foreach (var num in Enumerable.Range(1, 10))
+                {
+                    <span class="skill_result btn">
+                        <!--asdfasd-->
+                        <span style="margin-left:0px">
+                            <svg>
+                                <rect width="1" height="1" />
+                            </svg>
                         </span>
-                    }
-                    """,
+                        <!--adfasfd-->
+                    </span>
+                }
+                """,
             htmlFormatted: """
                 @foreach (var num in Enumerable.Range(1, 10))
                 {
@@ -3776,19 +3776,19 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @foreach (var num in Enumerable.Range(1, 10))
-                    {
-                        <span class="skill_result btn">
-                            <!--asdfasd-->
-                            <span style="margin-left:0px">
-                                <svg>
-                                    <rect width="1" height="1" />
-                                </svg>
-                            </span>
-                            <!--adfasfd-->
+                @foreach (var num in Enumerable.Range(1, 10))
+                {
+                    <span class="skill_result btn">
+                        <!--asdfasd-->
+                        <span style="margin-left:0px">
+                            <svg>
+                                <rect width="1" height="1" />
+                            </svg>
                         </span>
-                    }
-                    """);
+                        <!--adfasfd-->
+                    </span>
+                }
+                """);
     }
 
     [Fact]
@@ -3797,15 +3797,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @foreach (var num in Enumerable.Range(1, 10))
-                    {
-                        <span class="skill_result btn">
-                            <!--asdfasd-->
-                            <input type="text" />
-                            <!--adfasfd-->
-                        </span>
-                    }
-                    """,
+                @foreach (var num in Enumerable.Range(1, 10))
+                {
+                    <span class="skill_result btn">
+                        <!--asdfasd-->
+                        <input type="text" />
+                        <!--adfasfd-->
+                    </span>
+                }
+                """,
             htmlFormatted: """
                 @foreach (var num in Enumerable.Range(1, 10))
                 {
@@ -3817,15 +3817,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @foreach (var num in Enumerable.Range(1, 10))
-                    {
-                        <span class="skill_result btn">
-                            <!--asdfasd-->
-                            <input type="text" />
-                            <!--adfasfd-->
-                        </span>
-                    }
-                    """);
+                @foreach (var num in Enumerable.Range(1, 10))
+                {
+                    <span class="skill_result btn">
+                        <!--asdfasd-->
+                        <input type="text" />
+                        <!--adfasfd-->
+                    </span>
+                }
+                """);
     }
 
     [Fact]
@@ -3834,20 +3834,20 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @foreach (var num in Enumerable.Range(1, 10))
-                    {
-                        <span class="skill_result btn">
-                                <!-- this is a
-                                very long
-                            comment in Html -->
-                            <input type="text" />
-                                    <!-- this is a
+                @foreach (var num in Enumerable.Range(1, 10))
+                {
+                    <span class="skill_result btn">
+                            <!-- this is a
                             very long
-                            comment in Html
-                                -->
-                        </span>
-                    }
-                    """,
+                        comment in Html -->
+                        <input type="text" />
+                                <!-- this is a
+                        very long
+                        comment in Html
+                            -->
+                    </span>
+                }
+                """,
             htmlFormatted: """
                 @foreach (var num in Enumerable.Range(1, 10))
                 {
@@ -3864,20 +3864,20 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @foreach (var num in Enumerable.Range(1, 10))
-                    {
-                        <span class="skill_result btn">
-                            <!-- this is a
-                                very long
-                            comment in Html -->
-                            <input type="text" />
-                            <!-- this is a
+                @foreach (var num in Enumerable.Range(1, 10))
+                {
+                    <span class="skill_result btn">
+                        <!-- this is a
                             very long
-                            comment in Html
-                                -->
-                        </span>
-                    }
-                    """);
+                        comment in Html -->
+                        <input type="text" />
+                        <!-- this is a
+                        very long
+                        comment in Html
+                            -->
+                    </span>
+                }
+                """);
     }
 
     [Fact]
@@ -3886,32 +3886,32 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @if (Object1!= null)
-                    {
-                        <CascadingValue Value="Variable1">
-                            <CascadingValue Value="Variable2">
+                @if (Object1!= null)
+                {
+                    <CascadingValue Value="Variable1">
+                        <CascadingValue Value="Variable2">
+                            <PageTitle  />
+                            @if (VarBool)
+                        {
+                            <div class="mb-16">
                                 <PageTitle  />
-                                @if (VarBool)
-                            {
-                                <div class="mb-16">
-                                    <PageTitle  />
-                                    <PageTitle  />
-                                </div>
-                            }
-                        </CascadingValue>
+                                <PageTitle  />
+                            </div>
+                        }
                     </CascadingValue>
-                    }
+                </CascadingValue>
+                }
 
-                    @code
-                    {
-                        public object Object1 {get;set;}
-                        public object Variable1 {get;set;}
-                    public object Variable2 {get;set;}
-                    public bool VarBool {get;set;}
-                    }
-                    """,
+                @code
+                {
+                    public object Object1 {get;set;}
+                    public object Variable1 {get;set;}
+                public object Variable2 {get;set;}
+                public bool VarBool {get;set;}
+                }
+                """,
             htmlFormatted: """
                 @using Microsoft.AspNetCore.Components.Forms;
                 
@@ -3940,32 +3940,32 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @if (Object1 != null)
-                    {
-                        <CascadingValue Value="Variable1">
-                            <CascadingValue Value="Variable2">
-                                <PageTitle />
-                                @if (VarBool)
-                                {
-                                    <div class="mb-16">
-                                        <PageTitle />
-                                        <PageTitle />
-                                    </div>
-                                }
-                            </CascadingValue>
+                @if (Object1 != null)
+                {
+                    <CascadingValue Value="Variable1">
+                        <CascadingValue Value="Variable2">
+                            <PageTitle />
+                            @if (VarBool)
+                            {
+                                <div class="mb-16">
+                                    <PageTitle />
+                                    <PageTitle />
+                                </div>
+                            }
                         </CascadingValue>
-                    }
+                    </CascadingValue>
+                }
 
-                    @code
-                    {
-                        public object Object1 { get; set; }
-                        public object Variable1 { get; set; }
-                        public object Variable2 { get; set; }
-                        public bool VarBool { get; set; }
-                    }
-                    """,
+                @code
+                {
+                    public object Object1 { get; set; }
+                    public object Variable1 { get; set; }
+                    public object Variable2 { get; set; }
+                    public bool VarBool { get; set; }
+                }
+                """,
             fileKind: RazorFileKind.Component);
     }
 
@@ -3975,30 +3975,30 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @if (Object1!= null)
-                    {
-                        <CascadingValue Value="Variable1">
+                @if (Object1!= null)
+                {
+                    <CascadingValue Value="Variable1">
+                            <PageTitle  />
+                            @if (VarBool)
+                        {
+                            <div class="mb-16">
                                 <PageTitle  />
-                                @if (VarBool)
-                            {
-                                <div class="mb-16">
-                                    <PageTitle  />
-                                    <PageTitle  />
-                                </div>
-                            }
-                    </CascadingValue>
-                    }
+                                <PageTitle  />
+                            </div>
+                        }
+                </CascadingValue>
+                }
 
-                    @code
-                    {
-                        public object Object1 {get;set;}
-                        public object Variable1 {get;set;}
-                    public object Variable2 {get;set;}
-                    public bool VarBool {get;set;}
-                    }
-                    """,
+                @code
+                {
+                    public object Object1 {get;set;}
+                    public object Variable1 {get;set;}
+                public object Variable2 {get;set;}
+                public bool VarBool {get;set;}
+                }
+                """,
             htmlFormatted: """
                 @using Microsoft.AspNetCore.Components.Forms;
                 
@@ -4025,30 +4025,30 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @if (Object1 != null)
-                    {
-                        <CascadingValue Value="Variable1">
-                            <PageTitle />
-                            @if (VarBool)
-                            {
-                                <div class="mb-16">
-                                    <PageTitle />
-                                    <PageTitle />
-                                </div>
-                            }
-                        </CascadingValue>
-                    }
+                @if (Object1 != null)
+                {
+                    <CascadingValue Value="Variable1">
+                        <PageTitle />
+                        @if (VarBool)
+                        {
+                            <div class="mb-16">
+                                <PageTitle />
+                                <PageTitle />
+                            </div>
+                        }
+                    </CascadingValue>
+                }
 
-                    @code
-                    {
-                        public object Object1 { get; set; }
-                        public object Variable1 { get; set; }
-                        public object Variable2 { get; set; }
-                        public bool VarBool { get; set; }
-                    }
-                    """,
+                @code
+                {
+                    public object Object1 { get; set; }
+                    public object Variable1 { get; set; }
+                    public object Variable2 { get; set; }
+                    public bool VarBool { get; set; }
+                }
+                """,
             fileKind: RazorFileKind.Component); // tracked by https://github.com/dotnet/razor/issues/10836
     }
 
@@ -4058,31 +4058,31 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @if (Object1!= null)
+                @if (Object1!= null)
+                {
+                    @if (VarBool)
                     {
-                        @if (VarBool)
+                            <PageTitle  />
+                            @if (VarBool)
                         {
+                            <div class="mb-16">
                                 <PageTitle  />
-                                @if (VarBool)
-                            {
-                                <div class="mb-16">
-                                    <PageTitle  />
-                                    <PageTitle  />
-                                </div>
-                            }
-                    }
-                    }
+                                <PageTitle  />
+                            </div>
+                        }
+                }
+                }
 
-                    @code
-                    {
-                        public object Object1 {get;set;}
-                        public object Variable1 {get;set;}
-                    public object Variable2 {get;set;}
-                    public bool VarBool {get;set;}
-                    }
-                    """,
+                @code
+                {
+                    public object Object1 {get;set;}
+                    public object Variable1 {get;set;}
+                public object Variable2 {get;set;}
+                public bool VarBool {get;set;}
+                }
+                """,
             htmlFormatted: """
                 @using Microsoft.AspNetCore.Components.Forms;
                 
@@ -4110,31 +4110,31 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @if (Object1 != null)
+                @if (Object1 != null)
+                {
+                    @if (VarBool)
                     {
+                        <PageTitle />
                         @if (VarBool)
                         {
-                            <PageTitle />
-                            @if (VarBool)
-                            {
-                                <div class="mb-16">
-                                    <PageTitle />
-                                    <PageTitle />
-                                </div>
-                            }
+                            <div class="mb-16">
+                                <PageTitle />
+                                <PageTitle />
+                            </div>
                         }
                     }
+                }
 
-                    @code
-                    {
-                        public object Object1 { get; set; }
-                        public object Variable1 { get; set; }
-                        public object Variable2 { get; set; }
-                        public bool VarBool { get; set; }
-                    }
-                    """,
+                @code
+                {
+                    public object Object1 { get; set; }
+                    public object Variable1 { get; set; }
+                    public object Variable2 { get; set; }
+                    public bool VarBool { get; set; }
+                }
+                """,
             fileKind: RazorFileKind.Component);
     }
 
@@ -4144,27 +4144,27 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                        <CascadingValue Value="Variable1">
+                    <CascadingValue Value="Variable1">
+                            <PageTitle  />
+                            @if (VarBool)
+                        {
+                            <div class="mb-16">
                                 <PageTitle  />
-                                @if (VarBool)
-                            {
-                                <div class="mb-16">
-                                    <PageTitle  />
-                                    <PageTitle  />
-                                </div>
-                            }
-                    </CascadingValue>
+                                <PageTitle  />
+                            </div>
+                        }
+                </CascadingValue>
 
-                    @code
-                    {
-                        public object Object1 {get;set;}
-                        public object Variable1 {get;set;}
-                    public object Variable2 {get;set;}
-                    public bool VarBool {get;set;}
-                    }
-                    """,
+                @code
+                {
+                    public object Object1 {get;set;}
+                    public object Variable1 {get;set;}
+                public object Variable2 {get;set;}
+                public bool VarBool {get;set;}
+                }
+                """,
             htmlFormatted: """
                 @using Microsoft.AspNetCore.Components.Forms;
                 
@@ -4188,27 +4188,27 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    <CascadingValue Value="Variable1">
-                        <PageTitle />
-                        @if (VarBool)
-                        {
-                            <div class="mb-16">
-                                <PageTitle />
-                                <PageTitle />
-                            </div>
-                        }
-                    </CascadingValue>
-
-                    @code
+                <CascadingValue Value="Variable1">
+                    <PageTitle />
+                    @if (VarBool)
                     {
-                        public object Object1 { get; set; }
-                        public object Variable1 { get; set; }
-                        public object Variable2 { get; set; }
-                        public bool VarBool { get; set; }
+                        <div class="mb-16">
+                            <PageTitle />
+                            <PageTitle />
+                        </div>
                     }
-                    """,
+                </CascadingValue>
+
+                @code
+                {
+                    public object Object1 { get; set; }
+                    public object Variable1 { get; set; }
+                    public object Variable2 { get; set; }
+                    public bool VarBool { get; set; }
+                }
+                """,
             fileKind: RazorFileKind.Component);
     }
 
@@ -4218,30 +4218,30 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @if (Object1!= null)
-                    {
-                        <PageTitle>
+                @if (Object1!= null)
+                {
+                    <PageTitle>
+                            <PageTitle  />
+                            @if (VarBool)
+                        {
+                            <div class="mb-16">
                                 <PageTitle  />
-                                @if (VarBool)
-                            {
-                                <div class="mb-16">
-                                    <PageTitle  />
-                                    <PageTitle  />
-                                </div>
-                            }
-                    </PageTitle>
-                    }
+                                <PageTitle  />
+                            </div>
+                        }
+                </PageTitle>
+                }
 
-                    @code
-                    {
-                        public object Object1 {get;set;}
-                        public object Variable1 {get;set;}
-                    public object Variable2 {get;set;}
-                    public bool VarBool {get;set;}
-                    }
-                    """,
+                @code
+                {
+                    public object Object1 {get;set;}
+                    public object Variable1 {get;set;}
+                public object Variable2 {get;set;}
+                public bool VarBool {get;set;}
+                }
+                """,
             htmlFormatted: """
                 @using Microsoft.AspNetCore.Components.Forms;
                 
@@ -4268,30 +4268,30 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @if (Object1 != null)
-                    {
-                        <PageTitle>
-                            <PageTitle />
-                            @if (VarBool)
-                            {
-                                <div class="mb-16">
-                                    <PageTitle />
-                                    <PageTitle />
-                                </div>
-                            }
-                        </PageTitle>
-                    }
+                @if (Object1 != null)
+                {
+                    <PageTitle>
+                        <PageTitle />
+                        @if (VarBool)
+                        {
+                            <div class="mb-16">
+                                <PageTitle />
+                                <PageTitle />
+                            </div>
+                        }
+                    </PageTitle>
+                }
 
-                    @code
-                    {
-                        public object Object1 { get; set; }
-                        public object Variable1 { get; set; }
-                        public object Variable2 { get; set; }
-                        public bool VarBool { get; set; }
-                    }
-                    """,
+                @code
+                {
+                    public object Object1 { get; set; }
+                    public object Variable1 { get; set; }
+                    public object Variable2 { get; set; }
+                    public bool VarBool { get; set; }
+                }
+                """,
             fileKind: RazorFileKind.Component);
     }
 
@@ -4301,32 +4301,32 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @if (Object1!= null)
-                    {
-                        <CascadingValue Value="Variable1">
-                        <div>
+                @if (Object1!= null)
+                {
+                    <CascadingValue Value="Variable1">
+                    <div>
+                            <PageTitle  />
+                            @if (VarBool)
+                        {
+                            <div class="mb-16">
                                 <PageTitle  />
-                                @if (VarBool)
-                            {
-                                <div class="mb-16">
-                                    <PageTitle  />
-                                    <PageTitle  />
-                                </div>
-                            }
+                                <PageTitle  />
                             </div>
-                    </CascadingValue>
-                    }
+                        }
+                        </div>
+                </CascadingValue>
+                }
 
-                    @code
-                    {
-                        public object Object1 {get;set;}
-                        public object Variable1 {get;set;}
-                    public object Variable2 {get;set;}
-                    public bool VarBool {get;set;}
-                    }
-                    """,
+                @code
+                {
+                    public object Object1 {get;set;}
+                    public object Variable1 {get;set;}
+                public object Variable2 {get;set;}
+                public bool VarBool {get;set;}
+                }
+                """,
             htmlFormatted: """
                 @using Microsoft.AspNetCore.Components.Forms;
                 
@@ -4355,32 +4355,32 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @if (Object1 != null)
-                    {
-                        <CascadingValue Value="Variable1">
-                            <div>
-                                <PageTitle />
-                                @if (VarBool)
-                                {
-                                    <div class="mb-16">
-                                        <PageTitle />
-                                        <PageTitle />
-                                    </div>
-                                }
-                            </div>
-                        </CascadingValue>
-                    }
+                @if (Object1 != null)
+                {
+                    <CascadingValue Value="Variable1">
+                        <div>
+                            <PageTitle />
+                            @if (VarBool)
+                            {
+                                <div class="mb-16">
+                                    <PageTitle />
+                                    <PageTitle />
+                                </div>
+                            }
+                        </div>
+                    </CascadingValue>
+                }
 
-                    @code
-                    {
-                        public object Object1 { get; set; }
-                        public object Variable1 { get; set; }
-                        public object Variable2 { get; set; }
-                        public bool VarBool { get; set; }
-                    }
-                    """,
+                @code
+                {
+                    public object Object1 { get; set; }
+                    public object Variable1 { get; set; }
+                    public object Variable2 { get; set; }
+                    public bool VarBool { get; set; }
+                }
+                """,
             fileKind: RazorFileKind.Component);
     }
 
@@ -4390,26 +4390,26 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @code {
-                        private string _id {get;set;}
+                @code {
+                    private string _id {get;set;}
+                }
+
+                <div>
+                    @if (true)
+                    {
+                        <div>
+                            <InputSelect @bind-Value="_id">
+                                @if (true)
+                                {
+                                    <option>goo</option>
+                                }
+                            </InputSelect>
+                        </div>
                     }
-
-                    <div>
-                        @if (true)
-                        {
-                            <div>
-                                <InputSelect @bind-Value="_id">
-                                    @if (true)
-                                    {
-                                        <option>goo</option>
-                                    }
-                                </InputSelect>
-                            </div>
-                        }
-                    </div>
-                    """,
+                </div>
+                """,
             htmlFormatted: """
                 @using Microsoft.AspNetCore.Components.Forms;
                 
@@ -4432,26 +4432,26 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @code {
-                        private string _id { get; set; }
+                @code {
+                    private string _id { get; set; }
+                }
+
+                <div>
+                    @if (true)
+                    {
+                        <div>
+                            <InputSelect @bind-Value="_id">
+                                @if (true)
+                                {
+                                    <option>goo</option>
+                                }
+                            </InputSelect>
+                        </div>
                     }
-
-                    <div>
-                        @if (true)
-                        {
-                            <div>
-                                <InputSelect @bind-Value="_id">
-                                    @if (true)
-                                    {
-                                        <option>goo</option>
-                                    }
-                                </InputSelect>
-                            </div>
-                        }
-                    </div>
-                    """,
+                </div>
+                """,
             fileKind: RazorFileKind.Component);
     }
 
@@ -4461,23 +4461,23 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @code {
-                        private string _id {get;set;}
-                    }
+                @code {
+                    private string _id {get;set;}
+                }
 
-                    <div>
-                            <div>
-                                <InputSelect @bind-Value="_id">
-                                    @if (true)
-                                    {
-                                        <option>goo</option>
-                                    }
-                                </InputSelect>
-                            </div>
-                    </div>
-                    """,
+                <div>
+                        <div>
+                            <InputSelect @bind-Value="_id">
+                                @if (true)
+                                {
+                                    <option>goo</option>
+                                }
+                            </InputSelect>
+                        </div>
+                </div>
+                """,
             htmlFormatted: """
                 @using Microsoft.AspNetCore.Components.Forms;
                 
@@ -4497,23 +4497,23 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @code {
-                        private string _id { get; set; }
-                    }
+                @code {
+                    private string _id { get; set; }
+                }
 
+                <div>
                     <div>
-                        <div>
-                            <InputSelect @bind-Value="_id">
-                                @if (true)
-                                {
-                                    <option>goo</option>
-                                }
-                            </InputSelect>
-                        </div>
+                        <InputSelect @bind-Value="_id">
+                            @if (true)
+                            {
+                                <option>goo</option>
+                            }
+                        </InputSelect>
                     </div>
-                    """,
+                </div>
+                """,
             fileKind: RazorFileKind.Component);
     }
 
@@ -4523,20 +4523,20 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @code {
-                        private string _id {get;set;}
-                    }
+                @code {
+                    private string _id {get;set;}
+                }
 
-                    <div>
-                            <div>
-                                <InputSelect @bind-Value="_id">
-                                        <option>goo</option>
-                                </InputSelect>
-                            </div>
-                    </div>
-                    """,
+                <div>
+                        <div>
+                            <InputSelect @bind-Value="_id">
+                                    <option>goo</option>
+                            </InputSelect>
+                        </div>
+                </div>
+                """,
             htmlFormatted: """
                 @using Microsoft.AspNetCore.Components.Forms;
                 
@@ -4553,20 +4553,20 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @code {
-                        private string _id { get; set; }
-                    }
+                @code {
+                    private string _id { get; set; }
+                }
 
+                <div>
                     <div>
-                        <div>
-                            <InputSelect @bind-Value="_id">
-                                <option>goo</option>
-                            </InputSelect>
-                        </div>
+                        <InputSelect @bind-Value="_id">
+                            <option>goo</option>
+                        </InputSelect>
                     </div>
-                    """,
+                </div>
+                """,
             fileKind: RazorFileKind.Component);
     }
 
@@ -4576,23 +4576,23 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @code {
-                        private string _id {get;set;}
+                @code {
+                    private string _id {get;set;}
+                }
+
+                <div>
+                    @if (true)
+                    {
+                        <div>
+                            <InputSelect @bind-Value="_id">
+                                    <option>goo</option>
+                            </InputSelect>
+                        </div>
                     }
-
-                    <div>
-                        @if (true)
-                        {
-                            <div>
-                                <InputSelect @bind-Value="_id">
-                                        <option>goo</option>
-                                </InputSelect>
-                            </div>
-                        }
-                    </div>
-                    """,
+                </div>
+                """,
             htmlFormatted: """
                 @using Microsoft.AspNetCore.Components.Forms;
                 
@@ -4612,23 +4612,23 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @code {
-                        private string _id { get; set; }
+                @code {
+                    private string _id { get; set; }
+                }
+
+                <div>
+                    @if (true)
+                    {
+                        <div>
+                            <InputSelect @bind-Value="_id">
+                                <option>goo</option>
+                            </InputSelect>
+                        </div>
                     }
-
-                    <div>
-                        @if (true)
-                        {
-                            <div>
-                                <InputSelect @bind-Value="_id">
-                                    <option>goo</option>
-                                </InputSelect>
-                            </div>
-                        }
-                    </div>
-                    """,
+                </div>
+                """,
             fileKind: RazorFileKind.Component);
     }
 
@@ -4638,26 +4638,26 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @code {
-                        private string _id {get;set;}
+                @code {
+                    private string _id {get;set;}
+                }
+
+                <div>
+                    @if (true)
+                    {
+                        <div>
+                            <InputSelect CssClass="goo"
+                                 @bind-Value="_id"
+                               @ref="elem"
+                                CurrentValue="boo">
+                                    <option>goo</option>
+                            </InputSelect>
+                        </div>
                     }
-
-                    <div>
-                        @if (true)
-                        {
-                            <div>
-                                <InputSelect CssClass="goo"
-                                     @bind-Value="_id"
-                                   @ref="elem"
-                                    CurrentValue="boo">
-                                        <option>goo</option>
-                                </InputSelect>
-                            </div>
-                        }
-                    </div>
-                    """,
+                </div>
+                """,
             htmlFormatted: """
                 @using Microsoft.AspNetCore.Components.Forms;
                 
@@ -4680,26 +4680,26 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @code {
-                        private string _id { get; set; }
+                @code {
+                    private string _id { get; set; }
+                }
+
+                <div>
+                    @if (true)
+                    {
+                        <div>
+                            <InputSelect CssClass="goo"
+                                         @bind-Value="_id"
+                                         @ref="elem"
+                                         CurrentValue="boo">
+                                <option>goo</option>
+                            </InputSelect>
+                        </div>
                     }
-
-                    <div>
-                        @if (true)
-                        {
-                            <div>
-                                <InputSelect CssClass="goo"
-                                             @bind-Value="_id"
-                                             @ref="elem"
-                                             CurrentValue="boo">
-                                    <option>goo</option>
-                                </InputSelect>
-                            </div>
-                        }
-                    </div>
-                    """,
+                </div>
+                """,
             fileKind: RazorFileKind.Component);
     }
 
@@ -4708,21 +4708,21 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    <p>Current count: @currentCount</p>
+                <p>Current count: @currentCount</p>
 
-                    <button @onclick="IncrementCount">Increment</button>
-                    <button @onclick="@(e=>currentCount=4)">Update to 4</button>
-                    <button @onclick="e=>currentCount=5">Update to 5</button>
+                <button @onclick="IncrementCount">Increment</button>
+                <button @onclick="@(e=>currentCount=4)">Update to 4</button>
+                <button @onclick="e=>currentCount=5">Update to 5</button>
 
-                    @code {
-                        private int currentCount=0;
+                @code {
+                    private int currentCount=0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 <p>Current count: @currentCount</p>
                 
@@ -4740,21 +4740,21 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    <p>Current count: @currentCount</p>
+                <p>Current count: @currentCount</p>
 
-                    <button @onclick="IncrementCount">Increment</button>
-                    <button @onclick="@(e => currentCount = 4)">Update to 4</button>
-                    <button @onclick="e => currentCount = 5">Update to 5</button>
+                <button @onclick="IncrementCount">Increment</button>
+                <button @onclick="@(e => currentCount = 4)">Update to 4</button>
+                <button @onclick="e => currentCount = 5">Update to 5</button>
 
-                    @code {
-                        private int currentCount = 0;
+                @code {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             fileKind: RazorFileKind.Component);
     }
 
@@ -4763,23 +4763,23 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    <p>Current count: @currentCount</p>
+                <p>Current count: @currentCount</p>
 
-                    <InputText ValueChanged="IncrementCount">Increment</InputText>
-                    <InputText ValueChanged="@(e=>currentCount=4)">Update to 4</InputText>
-                    <InputText ValueChanged="e=>currentCount=5">Update to 5</InputText>
+                <InputText ValueChanged="IncrementCount">Increment</InputText>
+                <InputText ValueChanged="@(e=>currentCount=4)">Update to 4</InputText>
+                <InputText ValueChanged="e=>currentCount=5">Update to 5</InputText>
 
-                    @code {
-                        private int currentCount=0;
+                @code {
+                    private int currentCount=0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @using Microsoft.AspNetCore.Components.Forms;
                 
@@ -4799,23 +4799,23 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    <p>Current count: @currentCount</p>
+                <p>Current count: @currentCount</p>
 
-                    <InputText ValueChanged="IncrementCount">Increment</InputText>
-                    <InputText ValueChanged="@(e => currentCount = 4)">Update to 4</InputText>
-                    <InputText ValueChanged="e => currentCount = 5">Update to 5</InputText>
+                <InputText ValueChanged="IncrementCount">Increment</InputText>
+                <InputText ValueChanged="@(e => currentCount = 4)">Update to 4</InputText>
+                <InputText ValueChanged="e => currentCount = 5">Update to 5</InputText>
 
-                    @code {
-                        private int currentCount = 0;
+                @code {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             fileKind: RazorFileKind.Component);
     }
 
@@ -4824,22 +4824,22 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    <p>Current count: @currentCount</p>
+                <p>Current count: @currentCount</p>
 
-                    <InputText @bind-Value="currentCount" @bind-Value:after="IncrementCount">Increment</InputText>
-                    <InputText @bind-Value="currentCount" @bind-Value:after="e=>currentCount=5">Update to 5</InputText>
+                <InputText @bind-Value="currentCount" @bind-Value:after="IncrementCount">Increment</InputText>
+                <InputText @bind-Value="currentCount" @bind-Value:after="e=>currentCount=5">Update to 5</InputText>
 
-                    @code {
-                        private int currentCount=0;
+                @code {
+                    private int currentCount=0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @using Microsoft.AspNetCore.Components.Forms;
                 
@@ -4858,22 +4858,22 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    <p>Current count: @currentCount</p>
+                <p>Current count: @currentCount</p>
 
-                    <InputText @bind-Value="currentCount" @bind-Value:after="IncrementCount">Increment</InputText>
-                    <InputText @bind-Value="currentCount" @bind-Value:after="e => currentCount = 5">Update to 5</InputText>
+                <InputText @bind-Value="currentCount" @bind-Value:after="IncrementCount">Increment</InputText>
+                <InputText @bind-Value="currentCount" @bind-Value:after="e => currentCount = 5">Update to 5</InputText>
 
-                    @code {
-                        private int currentCount = 0;
+                @code {
+                    private int currentCount = 0;
 
-                        private void IncrementCount()
-                        {
-                            currentCount++;
-                        }
+                    private void IncrementCount()
+                    {
+                        currentCount++;
                     }
-                    """,
+                }
+                """,
             fileKind: RazorFileKind.Component);
     }
 
@@ -4883,23 +4883,23 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @code {
-                        private bool _id {get;set;}
+                @code {
+                    private bool _id {get;set;}
+                }
+
+                <div>
+                    @if (true)
+                    {
+                        <div>
+                            <InputCheckbox CssClass="goo"
+                               Value
+                               accesskey="F" />
+                        </div>
                     }
-
-                    <div>
-                        @if (true)
-                        {
-                            <div>
-                                <InputCheckbox CssClass="goo"
-                                   Value
-                                   accesskey="F" />
-                            </div>
-                        }
-                    </div>
-                    """,
+                </div>
+                """,
             htmlFormatted: """
                 @using Microsoft.AspNetCore.Components.Forms;
                 
@@ -4919,23 +4919,23 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    @using Microsoft.AspNetCore.Components.Forms;
+                @using Microsoft.AspNetCore.Components.Forms;
 
-                    @code {
-                        private bool _id { get; set; }
+                @code {
+                    private bool _id { get; set; }
+                }
+
+                <div>
+                    @if (true)
+                    {
+                        <div>
+                            <InputCheckbox CssClass="goo"
+                                           Value
+                                           accesskey="F" />
+                        </div>
                     }
-
-                    <div>
-                        @if (true)
-                        {
-                            <div>
-                                <InputCheckbox CssClass="goo"
-                                               Value
-                                               accesskey="F" />
-                            </div>
-                        }
-                    </div>
-                    """,
+                </div>
+                """,
             fileKind: RazorFileKind.Component);
     }
 
@@ -4945,48 +4945,48 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using System.Text;
+                @using System.Text;
 
-                    <div>
-                        @(new C()
-                                .M("Hello")
-                            .M("World")
-                            .M(source =>
-                            {
-                            if (source.Length > 0)
-                            {
-                            source.ToString();
-                            }
-                            }))
-
-                        @(DateTime.Now)
-
-                        @(DateTime
-                    .Now
-                    .ToString())
-
-                                    @(   Html.DisplayNameFor (@<text>
-                            <p >
-                            <h2 ></h2>
-                            </p>
-                            </text>)
-                            .ToString())
-
-                    @{
-                    var x = @<p>Hi there!</p>;
-                    }
-                    @x()
-                    @(@x())
-                    </div>
-
-                    @functions {
-                        class C
+                <div>
+                    @(new C()
+                            .M("Hello")
+                        .M("World")
+                        .M(source =>
                         {
-                            C M(string a) => this;
-                            C M(Func<string, C> a) => this;
+                        if (source.Length > 0)
+                        {
+                        source.ToString();
                         }
+                        }))
+
+                    @(DateTime.Now)
+
+                    @(DateTime
+                .Now
+                .ToString())
+
+                                @(   Html.DisplayNameFor (@<text>
+                        <p >
+                        <h2 ></h2>
+                        </p>
+                        </text>)
+                        .ToString())
+
+                @{
+                var x = @<p>Hi there!</p>;
+                }
+                @x()
+                @(@x())
+                </div>
+
+                @functions {
+                    class C
+                    {
+                        C M(string a) => this;
+                        C M(Func<string, C> a) => this;
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @using System.Text;
                 
@@ -5031,48 +5031,48 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @using System.Text;
+                @using System.Text;
 
-                    <div>
-                        @(new C()
-                                .M("Hello")
-                            .M("World")
-                            .M(source =>
-                            {
-                                if (source.Length > 0)
-                                {
-                                    source.ToString();
-                                }
-                            }))
-
-                        @(DateTime.Now)
-
-                        @(DateTime
-                    .Now
-                    .ToString())
-
-                        @(Html.DisplayNameFor(@<text>
-                            <p>
-                                <h2></h2>
-                            </p>
-                        </text>)
-                    .ToString())
-
-                        @{
-                            var x = @<p>Hi there!</p>;
-                        }
-                        @x()
-                        @(@x())
-                    </div>
-
-                    @functions {
-                        class C
+                <div>
+                    @(new C()
+                            .M("Hello")
+                        .M("World")
+                        .M(source =>
                         {
-                            C M(string a) => this;
-                            C M(Func<string, C> a) => this;
-                        }
+                            if (source.Length > 0)
+                            {
+                                source.ToString();
+                            }
+                        }))
+
+                    @(DateTime.Now)
+
+                    @(DateTime
+                .Now
+                .ToString())
+
+                    @(Html.DisplayNameFor(@<text>
+                        <p>
+                            <h2></h2>
+                        </p>
+                    </text>)
+                .ToString())
+
+                    @{
+                        var x = @<p>Hi there!</p>;
                     }
-                    """,
+                    @x()
+                    @(@x())
+                </div>
+
+                @functions {
+                    class C
+                    {
+                        C M(string a) => this;
+                        C M(Func<string, C> a) => this;
+                    }
+                }
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -5082,37 +5082,37 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    <div>
-                         @(   Html.DisplayNameFor (@<text>
-                            <p >
-                            <h2 ></h2>
-                            </p>
-                            </text>)
-                            .ToString())
+                <div>
+                     @(   Html.DisplayNameFor (@<text>
+                        <p >
+                        <h2 ></h2>
+                        </p>
+                        </text>)
+                        .ToString())
 
-                         @(   Html.DisplayNameFor (@<div></div>,
-                            1,   3,    4))
+                     @(   Html.DisplayNameFor (@<div></div>,
+                        1,   3,    4))
 
-                         @(   Html.DisplayNameFor (@<div></div>,
-                            1,   3, @<div></div>,
-                            2, 4))
+                     @(   Html.DisplayNameFor (@<div></div>,
+                        1,   3, @<div></div>,
+                        2, 4))
 
-                         @(   Html.DisplayNameFor (
-                            1,   3, @<div></div>,
-                            2, 4))
+                     @(   Html.DisplayNameFor (
+                        1,   3, @<div></div>,
+                        2, 4))
 
-                         @(   Html.DisplayNameFor (
-                            1,   3,
-                            2,  4))
+                     @(   Html.DisplayNameFor (
+                        1,   3,
+                        2,  4))
 
-                         @(   Html.DisplayNameFor (
-                            2, 4,
-                            1,   3, @<div></div>,
-                            2, 4,
-                            1,   3, @<div></div>,
-                            4))
-                    </div>
-                    """,
+                     @(   Html.DisplayNameFor (
+                        2, 4,
+                        1,   3, @<div></div>,
+                        2, 4,
+                        1,   3, @<div></div>,
+                        4))
+                </div>
+                """,
             htmlFormatted: """
                 <div>
                     @(   Html.DisplayNameFor (@<text>
@@ -5146,37 +5146,37 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    <div>
-                        @(Html.DisplayNameFor(@<text>
-                            <p>
-                                <h2></h2>
-                            </p>
-                        </text>)
-                           .ToString())
+                <div>
+                    @(Html.DisplayNameFor(@<text>
+                        <p>
+                            <h2></h2>
+                        </p>
+                    </text>)
+                       .ToString())
 
-                        @(Html.DisplayNameFor(@<div></div>,
-                           1, 3, 4))
-                    
-                        @(Html.DisplayNameFor(@<div></div>,
-                           1, 3, @<div></div>,
-                           2, 4))
+                    @(Html.DisplayNameFor(@<div></div>,
+                       1, 3, 4))
+                
+                    @(Html.DisplayNameFor(@<div></div>,
+                       1, 3, @<div></div>,
+                       2, 4))
 
-                        @(Html.DisplayNameFor(
-                           1, 3, @<div></div>,
-                           2, 4))
+                    @(Html.DisplayNameFor(
+                       1, 3, @<div></div>,
+                       2, 4))
 
-                        @(Html.DisplayNameFor(
-                           1, 3,
-                           2, 4))
-                    
-                        @(Html.DisplayNameFor(
-                           2, 4,
-                           1, 3, @<div></div>,
-                           2, 4,
-                           1, 3, @<div></div>,
-                           4))
-                    </div>
-                    """,
+                    @(Html.DisplayNameFor(
+                       1, 3,
+                       2, 4))
+                
+                    @(Html.DisplayNameFor(
+                       2, 4,
+                       1, 3, @<div></div>,
+                       2, 4,
+                       1, 3, @<div></div>,
+                       4))
+                </div>
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -5186,27 +5186,27 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using System.Text;
+                @using System.Text;
 
-                    <div>
-                        @(new C()
-                            .M("Hello")
-                            .M("World")
-                            .M(source =>
+                <div>
+                    @(new C()
+                        .M("Hello")
+                        .M("World")
+                        .M(source =>
+                        {
+                            if (source.Length > 0)
                             {
-                                if (source.Length > 0)
-                                {
-                                    source.ToString();
-                                }
-                            }))
+                                source.ToString();
+                            }
+                        }))
 
-                        @(DateTime.Now)
+                    @(DateTime.Now)
 
-                        @(DateTime
-                            .Now
-                            .ToString())
-                    </div>
-                    """,
+                    @(DateTime
+                        .Now
+                        .ToString())
+                </div>
+                """,
             htmlFormatted: """
                 @using System.Text;
                 
@@ -5230,27 +5230,27 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    @using System.Text;
+                @using System.Text;
 
-                    <div>
-                        @(new C()
-                            .M("Hello")
-                            .M("World")
-                            .M(source =>
+                <div>
+                    @(new C()
+                        .M("Hello")
+                        .M("World")
+                        .M(source =>
+                        {
+                            if (source.Length > 0)
                             {
-                                if (source.Length > 0)
-                                {
-                                    source.ToString();
-                                }
-                            }))
+                                source.ToString();
+                            }
+                        }))
 
-                        @(DateTime.Now)
+                    @(DateTime.Now)
 
-                        @(DateTime
-                            .Now
-                            .ToString())
-                    </div>
-                    """,
+                    @(DateTime
+                        .Now
+                        .ToString())
+                </div>
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -5259,15 +5259,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @page "Goo"
+                @page "Goo"
 
-                    <div></div>
+                <div></div>
 
-                    [|<button|]
-                    @functions {
-                     void M() { }
-                    }
-                    """,
+                [|<button|]
+                @functions {
+                 void M() { }
+                }
+                """,
             htmlFormatted: """
                 @page "Goo"
                 
@@ -5278,15 +5278,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                         }
                 """,
             expected: """
-                    @page "Goo"
+                @page "Goo"
 
-                    <div></div>
+                <div></div>
 
-                    <button
-                    @functions {
-                     void M() { }
-                    }
-                    """,
+                <button
+                @functions {
+                 void M() { }
+                }
+                """,
             allowDiagnostics: true);
     }
 
@@ -5297,21 +5297,21 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
         // to user action, and they can always undo it.
         await RunFormattingTestAsync(
             input: """
-                    <button
-                    @functions {
-                     void M() { }
-                    }
-                    """,
+                <button
+                @functions {
+                 void M() { }
+                }
+                """,
             htmlFormatted: """
                 <button @functions {
                         void M() { }
                         }
                 """,
             expected: """
-                    <button @functions {
-                        void M() { }
-                        }
-                    """,
+                <button @functions {
+                    void M() { }
+                    }
+                """,
             allowDiagnostics: true);
     }
 
@@ -5320,22 +5320,22 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    [|<button
-                    @functions {
-                     void M() { }
-                    }|]
-                    """,
+                [|<button
+                @functions {
+                 void M() { }
+                }|]
+                """,
             htmlFormatted: """
                 <button @functions {
                         void M() { }
                         }
                 """,
             expected: """
-                    <button
-                    @functions {
-                     void M() { }
-                    }
-                    """,
+                <button
+                @functions {
+                 void M() { }
+                }
+                """,
             allowDiagnostics: true);
     }
 
@@ -5344,15 +5344,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @page "Goo"
+                @page "Goo"
 
-                    [|      <div></div>|]
+                [|      <div></div>|]
 
-                    <button
-                    @functions {
-                     void M() { }
-                    }
-                    """,
+                <button
+                @functions {
+                 void M() { }
+                }
+                """,
             htmlFormatted: """
                 @page "Goo"
                 
@@ -5363,15 +5363,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                         }
                 """,
             expected: """
-                    @page "Goo"
+                @page "Goo"
 
-                    <div></div>
+                <div></div>
 
-                    <button
-                    @functions {
-                     void M() { }
-                    }
-                    """,
+                <button
+                @functions {
+                 void M() { }
+                }
+                """,
             allowDiagnostics: true);
     }
 
@@ -5380,63 +5380,63 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    Welcome.
+                Welcome.
 
-                    <div class="goo"
-                     align="center">
-                    </div>
+                <div class="goo"
+                 align="center">
+                </div>
 
-                    <PageTitle Title="How is Blazor working for you?"
-                     Color="Red" />
+                <PageTitle Title="How is Blazor working for you?"
+                 Color="Red" />
 
-                    <PageTitle Title="How is Blazor working for you?"
-                     Color="Red"></PageTitle>
+                <PageTitle Title="How is Blazor working for you?"
+                 Color="Red"></PageTitle>
 
-                    <PageTitle Title="How is Blazor working for you?"
-                     Color="Red">
-                     Hello
-                     </PageTitle>
+                <PageTitle Title="How is Blazor working for you?"
+                 Color="Red">
+                 Hello
+                 </PageTitle>
 
-                    @if (true)
-                    {
-                    <div class="goo"
-                     align="center">
-                    </div>
+                @if (true)
+                {
+                <div class="goo"
+                 align="center">
+                </div>
 
-                    <PageTitle Title="How is Blazor working for you?"
-                       Color="Red" />
+                <PageTitle Title="How is Blazor working for you?"
+                   Color="Red" />
 
-                       <tag attr1="value1"
-                       attr2="value2"
-                       attr3="value3"
-                       />
+                   <tag attr1="value1"
+                   attr2="value2"
+                   attr3="value3"
+                   />
 
-                     <tag attr1="value1"
-                       attr2="value2"
-                       attr3="value3"></tag>
+                 <tag attr1="value1"
+                   attr2="value2"
+                   attr3="value3"></tag>
 
-                     <tag attr1="value1"
-                       attr2="value2"
-                       attr3="value3">
-                    Hello
-                        </tag>
+                 <tag attr1="value1"
+                   attr2="value2"
+                   attr3="value3">
+                Hello
+                    </tag>
 
-                       @if (true)
-                       {
-                       @if (true)
-                       {
-                       @if(true)
-                       {
-                       <table width="10"
-                       height="10"
-                       cols="3"
-                       rows="3">
-                       </table>
-                       }
-                       }
-                       }
-                    }
-                    """,
+                   @if (true)
+                   {
+                   @if (true)
+                   {
+                   @if(true)
+                   {
+                   <table width="10"
+                   height="10"
+                   cols="3"
+                   rows="3">
+                   </table>
+                   }
+                   }
+                   }
+                }
+                """,
             htmlFormatted: """
                 Welcome.
                 
@@ -5495,8 +5495,25 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    Welcome.
+                Welcome.
 
+                <div class="goo"
+                     align="center">
+                </div>
+
+                <PageTitle Title="How is Blazor working for you?"
+                           Color="Red" />
+
+                <PageTitle Title="How is Blazor working for you?"
+                           Color="Red"></PageTitle>
+                
+                <PageTitle Title="How is Blazor working for you?"
+                           Color="Red">
+                    Hello
+                </PageTitle>
+
+                @if (true)
+                {
                     <div class="goo"
                          align="center">
                     </div>
@@ -5504,65 +5521,48 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                     <PageTitle Title="How is Blazor working for you?"
                                Color="Red" />
 
-                    <PageTitle Title="How is Blazor working for you?"
-                               Color="Red"></PageTitle>
-                    
-                    <PageTitle Title="How is Blazor working for you?"
-                               Color="Red">
+                    <tag attr1="value1"
+                         attr2="value2"
+                         attr3="value3" />
+
+                    <tag attr1="value1"
+                         attr2="value2"
+                         attr3="value3"></tag>
+                
+                    <tag attr1="value1"
+                         attr2="value2"
+                         attr3="value3">
                         Hello
-                    </PageTitle>
+                    </tag>
 
                     @if (true)
                     {
-                        <div class="goo"
-                             align="center">
-                        </div>
-
-                        <PageTitle Title="How is Blazor working for you?"
-                                   Color="Red" />
-
-                        <tag attr1="value1"
-                             attr2="value2"
-                             attr3="value3" />
-
-                        <tag attr1="value1"
-                             attr2="value2"
-                             attr3="value3"></tag>
-                    
-                        <tag attr1="value1"
-                             attr2="value2"
-                             attr3="value3">
-                            Hello
-                        </tag>
-
                         @if (true)
                         {
                             @if (true)
                             {
-                                @if (true)
-                                {
-                                    <table width="10"
-                                           height="10"
-                                           cols="3"
-                                           rows="3">
-                                    </table>
-                                }
+                                <table width="10"
+                                       height="10"
+                                       cols="3"
+                                       rows="3">
+                                </table>
                             }
                         }
                     }
-                    """);
+                }
+                """);
     }
     [Fact]
     public async Task FormatsCodeBlockDirective()
     {
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                     public class Foo{}
-                            public interface Bar {
-                    }
-                    }
-                    """,
+                @code {
+                 public class Foo{}
+                        public interface Bar {
+                }
+                }
+                """,
             htmlFormatted: """
                 @code {
                  public class Foo{}
@@ -5571,13 +5571,13 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                        public class Foo { }
-                        public interface Bar
-                        {
-                        }
+                @code {
+                    public class Foo { }
+                    public interface Bar
+                    {
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -5585,17 +5585,17 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    <html>
-                    <body>
-                    <div>
-                    @{
-                    <span>foo</span>
-                    <span>foo</span>
-                    }
-                    </div>
-                    </body>
-                    </html>
-                    """,
+                <html>
+                <body>
+                <div>
+                @{
+                <span>foo</span>
+                <span>foo</span>
+                }
+                </div>
+                </body>
+                </html>
+                """,
             htmlFormatted: """
                 <html>
                 <body>
@@ -5609,17 +5609,17 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </html>
                 """,
             expected: """
-                    <html>
-                    <body>
-                        <div>
-                            @{
-                                <span>foo</span>
-                                <span>foo</span>
-                            }
-                        </div>
-                    </body>
-                    </html>
-                    """);
+                <html>
+                <body>
+                    <div>
+                        @{
+                            <span>foo</span>
+                            <span>foo</span>
+                        }
+                    </div>
+                </body>
+                </html>
+                """);
     }
 
     [Fact]
@@ -5629,26 +5629,26 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
         // but the test validates that we don't crash at least.
         await RunFormattingTestAsync(
             input: """
-                    @page
-                    @model BlazorApp58.Pages.Index2Model
-                    @{
-                    }
+                @page
+                @model BlazorApp58.Pages.Index2Model
+                @{
+                }
 
-                    <section class="section">
-                        <div class="container">
-                            <h1 class="title">Managed pohotos</h1>
-                            <p class="subtitle">@Model.ReferenceNumber</p>
-                        </div>
-                    </section>
-                    <section class="section">
-                        <div class="container">
-                            @foreach       (var item in Model.Images)
-                            {
-                                <div><div>
-                            }
-                        </div>
-                    </section>
-                    """,
+                <section class="section">
+                    <div class="container">
+                        <h1 class="title">Managed pohotos</h1>
+                        <p class="subtitle">@Model.ReferenceNumber</p>
+                    </div>
+                </section>
+                <section class="section">
+                    <div class="container">
+                        @foreach       (var item in Model.Images)
+                        {
+                            <div><div>
+                        }
+                    </div>
+                </section>
+                """,
             htmlFormatted: """
                 @page
                 @model BlazorApp58.Pages.Index2Model
@@ -5672,27 +5672,27 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </section>
                 """,
             expected: """
-                    @page
-                    @model BlazorApp58.Pages.Index2Model
-                    @{
-                    }
+                @page
+                @model BlazorApp58.Pages.Index2Model
+                @{
+                }
 
-                    <section class="section">
-                        <div class="container">
-                            <h1 class="title">Managed pohotos</h1>
-                            <p class="subtitle">@Model.ReferenceNumber</p>
-                        </div>
-                    </section>
-                    <section class="section">
-                        <div class="container">
-                            @foreach (var item in Model.Images)
-                            {
+                <section class="section">
+                    <div class="container">
+                        <h1 class="title">Managed pohotos</h1>
+                        <p class="subtitle">@Model.ReferenceNumber</p>
+                    </div>
+                </section>
+                <section class="section">
+                    <div class="container">
+                        @foreach (var item in Model.Images)
+                        {
+                            <div>
                                 <div>
-                                    <div>
-                                        }
-                                    </div>
-                                </section>
-                    """,
+                                    }
+                                </div>
+                            </section>
+                """,
             fileKind: RazorFileKind.Legacy,
             allowDiagnostics: true);
     }
@@ -5702,17 +5702,17 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @{
-                    void Method(){
-                    var x = "foo";
-                    @(DateTime.Now)
-                        <p></p>
-                    var y= "fooo";
-                    }
-                    }
-                    <div>
-                            </div>
-                    """,
+                @{
+                void Method(){
+                var x = "foo";
+                @(DateTime.Now)
+                    <p></p>
+                var y= "fooo";
+                }
+                }
+                <div>
+                        </div>
+                """,
             htmlFormatted: """
                 @{
                 void Method(){
@@ -5726,18 +5726,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    @{
-                        void Method()
-                        {
-                            var x = "foo";
-                            @(DateTime.Now)
-                            <p></p>
-                            var y = "fooo";
-                        }
+                @{
+                    void Method()
+                    {
+                        var x = "foo";
+                        @(DateTime.Now)
+                        <p></p>
+                        var y = "fooo";
                     }
-                    <div>
-                    </div>
-                    """);
+                }
+                <div>
+                </div>
+                """);
     }
 
     [Fact]
@@ -5745,12 +5745,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @{
-                    var x = "foo";
-                    }
-                    <div>
-                            </div>
-                    """,
+                @{
+                var x = "foo";
+                }
+                <div>
+                        </div>
+                """,
             htmlFormatted: """
                 @{
                 var x = "foo";
@@ -5759,12 +5759,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    @{
-                        var x = "foo";
-                    }
-                    <div>
-                    </div>
-                    """);
+                @{
+                    var x = "foo";
+                }
+                <div>
+                </div>
+                """);
     }
 
     [Fact]
@@ -5772,12 +5772,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions {
-                     public class Foo{
-                    void Method() { var x = "t"; <div></div> var y = "t";}
-                    }
-                    }
-                    """,
+                @functions {
+                 public class Foo{
+                void Method() { var x = "t"; <div></div> var y = "t";}
+                }
+                }
+                """,
             htmlFormatted: """
                 @functions {
                  public class Foo{
@@ -5786,18 +5786,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @functions {
-                        public class Foo
+                @functions {
+                    public class Foo
+                    {
+                        void Method()
                         {
-                            void Method()
-                            {
-                                var x = "t";
-                                <div></div>
-                                var y = "t";
-                            }
+                            var x = "t";
+                            <div></div>
+                            var y = "t";
                         }
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -5805,12 +5805,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions {
-                     public class Foo{
-                    void Method() { <div></div> }
-                    }
-                    }
-                    """,
+                @functions {
+                 public class Foo{
+                void Method() { <div></div> }
+                }
+                }
+                """,
             htmlFormatted: """
                 @functions {
                  public class Foo{
@@ -5819,16 +5819,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @functions {
-                        public class Foo
+                @functions {
+                    public class Foo
+                    {
+                        void Method()
                         {
-                            void Method()
-                            {
-                                <div></div>
-                            }
+                            <div></div>
                         }
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -5836,12 +5836,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                     public class Foo{
-                    void Method() { @DateTime.Now }
-                        }
+                @code {
+                 public class Foo{
+                void Method() { @DateTime.Now }
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code {
                  public class Foo{
@@ -5850,16 +5850,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                        public class Foo
+                @code {
+                    public class Foo
+                    {
+                        void Method()
                         {
-                            void Method()
-                            {
-                                @DateTime.Now
-                            }
+                            @DateTime.Now
                         }
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -5867,16 +5867,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    <div>
-                        It is @DateTime.Now.ToString(   "d MM yyy"   ). Or is it @DateTime.Now.ToString(   "d MM yyy"   ).
+                <div>
+                    It is @DateTime.Now.ToString(   "d MM yyy"   ). Or is it @DateTime.Now.ToString(   "d MM yyy"   ).
 
-                        @DateTime.Now.ToString(   "d MM yyy"   ) it is.
+                    @DateTime.Now.ToString(   "d MM yyy"   ) it is.
 
-                        @DateTime.Now.ToString(   "d MM yyy"   ). Is what it is today. Or is it @DateTime.Now.ToString(   "d MM yyy"   ).
+                    @DateTime.Now.ToString(   "d MM yyy"   ). Is what it is today. Or is it @DateTime.Now.ToString(   "d MM yyy"   ).
 
-                        @DateTime.Now.ToString(   "d MM yyy"   ) <span>Today!</span>
-                    </div>
-                    """,
+                    @DateTime.Now.ToString(   "d MM yyy"   ) <span>Today!</span>
+                </div>
+                """,
             htmlFormatted: """
                 <div>
                     It is @DateTime.Now.ToString(   "d MM yyy"   ). Or is it @DateTime.Now.ToString(   "d MM yyy"   ).
@@ -5889,16 +5889,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    <div>
-                        It is @DateTime.Now.ToString("d MM yyy"). Or is it @DateTime.Now.ToString("d MM yyy").
-                    
-                        @DateTime.Now.ToString("d MM yyy") it is.
-                    
-                        @DateTime.Now.ToString("d MM yyy"). Is what it is today. Or is it @DateTime.Now.ToString("d MM yyy").
-                    
-                        @DateTime.Now.ToString("d MM yyy") <span>Today!</span>
-                    </div>
-                    """);
+                <div>
+                    It is @DateTime.Now.ToString("d MM yyy"). Or is it @DateTime.Now.ToString("d MM yyy").
+                
+                    @DateTime.Now.ToString("d MM yyy") it is.
+                
+                    @DateTime.Now.ToString("d MM yyy"). Is what it is today. Or is it @DateTime.Now.ToString("d MM yyy").
+                
+                    @DateTime.Now.ToString("d MM yyy") <span>Today!</span>
+                </div>
+                """);
     }
 
     [Fact]
@@ -5906,16 +5906,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    <div>
-                        It is @(DateTime.    Now). Or is it @(DateTime.    Now).
+                <div>
+                    It is @(DateTime.    Now). Or is it @(DateTime.    Now).
 
-                        @(DateTime.    Now) it is.
+                    @(DateTime.    Now) it is.
 
-                        @(DateTime.    Now). Is what it is today. Or is it @(DateTime.    Now).
+                    @(DateTime.    Now). Is what it is today. Or is it @(DateTime.    Now).
 
-                        @(DateTime.    Now) <span>Today!</span>
-                    </div>
-                    """,
+                    @(DateTime.    Now) <span>Today!</span>
+                </div>
+                """,
             htmlFormatted: """
                 <div>
                     It is @(DateTime.    Now). Or is it @(DateTime.    Now).
@@ -5928,16 +5928,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    <div>
-                        It is @(DateTime.Now). Or is it @(DateTime.Now).
-                    
-                        @(DateTime.Now) it is.
-                    
-                        @(DateTime.Now). Is what it is today. Or is it @(DateTime.Now).
-                    
-                        @(DateTime.Now) <span>Today!</span>
-                    </div>
-                    """);
+                <div>
+                    It is @(DateTime.Now). Or is it @(DateTime.Now).
+                
+                    @(DateTime.Now) it is.
+                
+                    @(DateTime.Now). Is what it is today. Or is it @(DateTime.Now).
+                
+                    @(DateTime.Now) <span>Today!</span>
+                </div>
+                """);
     }
 
     [Fact]
@@ -5945,12 +5945,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions {
-                     public class Foo{
-                    void Method() { @(DateTime.Now) }
-                        }
+                @functions {
+                 public class Foo{
+                void Method() { @(DateTime.Now) }
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @functions {
                  public class Foo{
@@ -5959,16 +5959,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @functions {
-                        public class Foo
+                @functions {
+                    public class Foo
+                    {
+                        void Method()
                         {
-                            void Method()
-                            {
-                                @(DateTime.Now)
-                            }
+                            @(DateTime.Now)
                         }
                     }
-                    """,
+                }
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -5977,16 +5977,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions {
-                     public class Foo{
-                    void Method() {  }
-                        }
+                @functions {
+                 public class Foo{
+                void Method() {  }
                     }
+                }
 
-                    @section Scripts {
-                    <script></script>
-                    }
-                    """,
+                @section Scripts {
+                <script></script>
+                }
+                """,
             htmlFormatted: """
                 @functions {
                  public class Foo{
@@ -5999,17 +5999,17 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @functions {
-                        public class Foo
-                        {
-                            void Method() { }
-                        }
+                @functions {
+                    public class Foo
+                    {
+                        void Method() { }
                     }
+                }
 
-                    @section Scripts {
-                        <script></script>
-                    }
-                    """,
+                @section Scripts {
+                    <script></script>
+                }
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -6018,19 +6018,19 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions {
-                     public class Foo{
-                    void Method() {  }
-                        }
+                @functions {
+                 public class Foo{
+                void Method() {  }
                     }
+                }
 
-                    @section Scripts {
-                    <script>
-                        function f() {
-                        }
-                    </script>
+                @section Scripts {
+                <script>
+                    function f() {
                     }
-                    """,
+                </script>
+                }
+                """,
             htmlFormatted: """
                 @functions {
                  public class Foo{
@@ -6046,20 +6046,20 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @functions {
-                        public class Foo
-                        {
-                            void Method() { }
-                        }
+                @functions {
+                    public class Foo
+                    {
+                        void Method() { }
                     }
+                }
 
-                    @section Scripts {
-                        <script>
-                            function f() {
-                            }
-                        </script>
-                    }
-                    """,
+                @section Scripts {
+                    <script>
+                        function f() {
+                        }
+                    </script>
+                }
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -6068,20 +6068,20 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions {
-                     public class Foo{
-                    void Method() {  }
-                        }
+                @functions {
+                 public class Foo{
+                void Method() {  }
                     }
+                }
 
-                    @section Scripts {
-                    <p>this is a para</p>
-                    @if(true)
-                    {
-                    <p>and so is this</p>
-                    }
-                    }
-                    """,
+                @section Scripts {
+                <p>this is a para</p>
+                @if(true)
+                {
+                <p>and so is this</p>
+                }
+                }
+                """,
             htmlFormatted: """
                 @functions {
                  public class Foo{
@@ -6098,21 +6098,21 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @functions {
-                        public class Foo
-                        {
-                            void Method() { }
-                        }
+                @functions {
+                    public class Foo
+                    {
+                        void Method() { }
                     }
+                }
 
-                    @section Scripts {
-                        <p>this is a para</p>
-                        @if (true)
-                        {
-                            <p>and so is this</p>
-                        }
+                @section Scripts {
+                    <p>this is a para</p>
+                    @if (true)
+                    {
+                        <p>and so is this</p>
                     }
-                    """,
+                }
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -6122,21 +6122,21 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions {
-                     public class Foo{
-                    void Method() {  }
-                        }
+                @functions {
+                 public class Foo{
+                void Method() {  }
                     }
+                }
 
-                    @section Scripts {
-                    <script></script>
-                    }
+                @section Scripts {
+                <script></script>
+                }
 
-                    @if (true)
-                    {
-                        <p></p>
-                    }
-                    """,
+                @if (true)
+                {
+                    <p></p>
+                }
+                """,
             htmlFormatted: """
                 @functions {
                  public class Foo{
@@ -6154,22 +6154,22 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @functions {
-                        public class Foo
-                        {
-                            void Method() { }
-                        }
-                    }
-
-                    @section Scripts {
-                        <script></script>
-                    }
-
-                    @if (true)
+                @functions {
+                    public class Foo
                     {
-                        <p></p>
+                        void Method() { }
                     }
-                    """,
+                }
+
+                @section Scripts {
+                    <script></script>
+                }
+
+                @if (true)
+                {
+                    <p></p>
+                }
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -6178,24 +6178,24 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions {
-                     public class Foo{
-                    void Method() {  }
-                        }
+                @functions {
+                 public class Foo{
+                void Method() {  }
                     }
+                }
 
-                    @section Foo {
-                        @{ var test = 1; }
-                    }
+                @section Foo {
+                    @{ var test = 1; }
+                }
 
-                    <p></p>
+                <p></p>
 
-                    @section Scripts {
-                    <script></script>
-                    }
+                @section Scripts {
+                <script></script>
+                }
 
-                    <p></p>
-                    """,
+                <p></p>
+                """,
             htmlFormatted: """
                 @functions {
                  public class Foo{
@@ -6216,27 +6216,27 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 <p></p>
                 """,
             expected: """
-                    @functions {
-                        public class Foo
-                        {
-                            void Method() { }
-                        }
+                @functions {
+                    public class Foo
+                    {
+                        void Method() { }
                     }
+                }
 
-                    @section Foo {
-                        @{
-                            var test = 1;
-                        }
+                @section Foo {
+                    @{
+                        var test = 1;
                     }
+                }
 
-                    <p></p>
+                <p></p>
 
-                    @section Scripts {
-                        <script></script>
-                    }
+                @section Scripts {
+                    <script></script>
+                }
 
-                    <p></p>
-                    """,
+                <p></p>
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -6245,23 +6245,23 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions {
-                     public class Foo{
-                    void Method() {  }
-                        }
+                @functions {
+                 public class Foo{
+                void Method() {  }
                     }
+                }
 
-                    @section Scripts {
-                    <meta property="a" content="b">
-                    <meta property="a" content="b"/>
-                    <meta property="a" content="b">
+                @section Scripts {
+                <meta property="a" content="b">
+                <meta property="a" content="b"/>
+                <meta property="a" content="b">
 
-                    @if(true)
-                    {
-                    <p>this is a paragraph</p>
-                    }
-                    }
-                    """,
+                @if(true)
+                {
+                <p>this is a paragraph</p>
+                }
+                }
+                """,
             htmlFormatted: """
                 @functions {
                  public class Foo{
@@ -6281,24 +6281,24 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @functions {
-                        public class Foo
-                        {
-                            void Method() { }
-                        }
+                @functions {
+                    public class Foo
+                    {
+                        void Method() { }
                     }
+                }
 
-                    @section Scripts {
-                        <meta property="a" content="b">
-                        <meta property="a" content="b" />
-                        <meta property="a" content="b">
+                @section Scripts {
+                    <meta property="a" content="b">
+                    <meta property="a" content="b" />
+                    <meta property="a" content="b">
 
-                        @if (true)
-                        {
-                            <p>this is a paragraph</p>
-                        }
+                    @if (true)
+                    {
+                        <p>this is a paragraph</p>
                     }
-                    """,
+                }
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -6307,24 +6307,24 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions {
-                     public class Foo{
-                    void Method() {  }
-                        }
+                @functions {
+                 public class Foo{
+                void Method() {  }
                     }
+                }
 
-                    @section Scripts
-                    {
-                    <meta property="a" content="b">
-                    <meta property="a" content="b"/>
-                    <meta property="a" content="b">
+                @section Scripts
+                {
+                <meta property="a" content="b">
+                <meta property="a" content="b"/>
+                <meta property="a" content="b">
 
-                    @if(true)
-                    {
-                    <p>this is a paragraph</p>
-                    }
-                    }
-                    """,
+                @if(true)
+                {
+                <p>this is a paragraph</p>
+                }
+                }
+                """,
             htmlFormatted: """
                 @functions {
                  public class Foo{
@@ -6345,25 +6345,25 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @functions {
-                        public class Foo
-                        {
-                            void Method() { }
-                        }
-                    }
-
-                    @section Scripts
+                @functions {
+                    public class Foo
                     {
-                        <meta property="a" content="b">
-                        <meta property="a" content="b" />
-                        <meta property="a" content="b">
-
-                        @if (true)
-                        {
-                            <p>this is a paragraph</p>
-                        }
+                        void Method() { }
                     }
-                    """,
+                }
+
+                @section Scripts
+                {
+                    <meta property="a" content="b">
+                    <meta property="a" content="b" />
+                    <meta property="a" content="b">
+
+                    @if (true)
+                    {
+                        <p>this is a paragraph</p>
+                    }
+                }
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -6372,21 +6372,21 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions {
-                     public class Foo{
-                    void Method() {  }
-                        }
+                @functions {
+                 public class Foo{
+                void Method() {  }
                     }
+                }
 
-                    @section Scripts {
-                    <p>this is a para</p>
-                    @if(true)
-                    {
-                    <p>and so is this</p>
-                    }
-                    <p>and finally this</p>
-                    }
-                    """,
+                @section Scripts {
+                <p>this is a para</p>
+                @if(true)
+                {
+                <p>and so is this</p>
+                }
+                <p>and finally this</p>
+                }
+                """,
             htmlFormatted: """
                 @functions {
                  public class Foo{
@@ -6404,22 +6404,22 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @functions {
-                        public class Foo
-                        {
-                            void Method() { }
-                        }
+                @functions {
+                    public class Foo
+                    {
+                        void Method() { }
                     }
+                }
 
-                    @section Scripts {
-                        <p>this is a para</p>
-                        @if (true)
-                        {
-                            <p>and so is this</p>
-                        }
-                        <p>and finally this</p>
+                @section Scripts {
+                    <p>this is a para</p>
+                    @if (true)
+                    {
+                        <p>and so is this</p>
                     }
-                    """,
+                    <p>and finally this</p>
+                }
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -6428,29 +6428,29 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions {
-                     public class Foo{
-                    void Method() {  }
-                        }
+                @functions {
+                 public class Foo{
+                void Method() {  }
                     }
+                }
 
-                    @section Scripts {
-                    <p>this is a para</p>
-                    @if(true)
-                    {
-                    <p>and so is this</p>
-                    }
-                    <p>and finally this</p>
-                    }
+                @section Scripts {
+                <p>this is a para</p>
+                @if(true)
+                {
+                <p>and so is this</p>
+                }
+                <p>and finally this</p>
+                }
 
-                    <p>I lied when I said finally</p>
+                <p>I lied when I said finally</p>
 
-                    @functions {
-                     public class Foo2{
-                    void Method() {  }
-                        }
+                @functions {
+                 public class Foo2{
+                void Method() {  }
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @functions {
                  public class Foo{
@@ -6476,31 +6476,31 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @functions {
-                        public class Foo
-                        {
-                            void Method() { }
-                        }
+                @functions {
+                    public class Foo
+                    {
+                        void Method() { }
                     }
+                }
 
-                    @section Scripts {
-                        <p>this is a para</p>
-                        @if (true)
-                        {
-                            <p>and so is this</p>
-                        }
-                        <p>and finally this</p>
+                @section Scripts {
+                    <p>this is a para</p>
+                    @if (true)
+                    {
+                        <p>and so is this</p>
                     }
+                    <p>and finally this</p>
+                }
 
-                    <p>I lied when I said finally</p>
+                <p>I lied when I said finally</p>
 
-                    @functions {
-                        public class Foo2
-                        {
-                            void Method() { }
-                        }
+                @functions {
+                    public class Foo2
+                    {
+                        void Method() { }
                     }
-                    """,
+                }
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -6509,13 +6509,13 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions {
-                     public class Foo{
-                    @* This is a Razor Comment *@
-                    void Method() {  }
-                    }
-                    }
-                    """,
+                @functions {
+                 public class Foo{
+                @* This is a Razor Comment *@
+                void Method() {  }
+                }
+                }
+                """,
             htmlFormatted: """
                 @functions {
                  public class Foo{
@@ -6525,14 +6525,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @functions {
-                        public class Foo
-                        {
-                            @* This is a Razor Comment *@
-                            void Method() { }
-                        }
+                @functions {
+                    public class Foo
+                    {
+                        @* This is a Razor Comment *@
+                        void Method() { }
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -6540,12 +6540,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions {
-                     public class Foo{
-                    @* This is a Razor Comment *@
-                        }
+                @functions {
+                 public class Foo{
+                @* This is a Razor Comment *@
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @functions {
                  public class Foo{
@@ -6554,13 +6554,13 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @functions {
-                        public class Foo
-                        {
-                            @* This is a Razor Comment *@
-                        }
+                @functions {
+                    public class Foo
+                    {
+                        @* This is a Razor Comment *@
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -6568,18 +6568,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                   @{
-                    <text>Hello</text>
-                   }
+                @{
+                 <text>Hello</text>
+                }
 
-                   @{ <text>Hello</text> }
+                @{ <text>Hello</text> }
 
-                   <div></div>
+                <div></div>
 
-                   @{ }
+                @{ }
 
-                   <div></div>
-                   """,
+                <div></div>
+                """,
             htmlFormatted: """
                 @{
                 <text>Hello</text>
@@ -6594,20 +6594,20 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 <div></div>
                 """,
             expected: """
-                    @{
-                        <text>Hello</text>
-                    }
-                    
-                    @{
-                        <text>Hello</text>
-                    }
-                    
-                    <div></div>
-                    
-                    @{ }
-                    
-                    <div></div>
-                    """);
+                @{
+                    <text>Hello</text>
+                }
+                
+                @{
+                    <text>Hello</text>
+                }
+                
+                <div></div>
+                
+                @{ }
+                
+                <div></div>
+                """);
     }
 
     [Fact]
@@ -6615,20 +6615,20 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                   <div>
-                   @{
-                    <text>Hello</text>
-                   }
+                <div>
+                @{
+                 <text>Hello</text>
+                }
 
-                   @{ <text>Hello</text> }
+                @{ <text>Hello</text> }
 
-                   <div></div>
+                <div></div>
 
-                   @{ }
+                @{ }
 
-                   <div></div>
-                   </div>
-                   """,
+                <div></div>
+                </div>
+                """,
             htmlFormatted: """
                 <div>
                     @{
@@ -6645,22 +6645,22 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    <div>
-                        @{
-                            <text>Hello</text>
-                        }
-                    
-                        @{
-                            <text>Hello</text>
-                        }
-                    
-                        <div></div>
-                    
-                        @{ }
-                    
-                        <div></div>
-                    </div>
-                    """);
+                <div>
+                    @{
+                        <text>Hello</text>
+                    }
+                
+                    @{
+                        <text>Hello</text>
+                    }
+                
+                    <div></div>
+                
+                    @{ }
+                
+                    <div></div>
+                </div>
+                """);
     }
 
     [Fact]
@@ -6668,13 +6668,13 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    [|<div>Foo</div>|]
-                    @functions {
-                     public class Foo{}
-                            public interface Bar {
-                    }
-                    }
-                    """,
+                [|<div>Foo</div>|]
+                @functions {
+                 public class Foo{}
+                        public interface Bar {
+                }
+                }
+                """,
             htmlFormatted: """
                 <div>Foo</div>
                 @functions {
@@ -6684,13 +6684,13 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    <div>Foo</div>
-                    @functions {
-                     public class Foo{}
-                            public interface Bar {
-                    }
-                    }
-                    """);
+                <div>Foo</div>
+                @functions {
+                 public class Foo{}
+                        public interface Bar {
+                }
+                }
+                """);
     }
 
     [Fact]
@@ -6698,12 +6698,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions {
-                     public class Foo{}
-                            [|public interface Bar {
-                    }|]
-                    }
-                    """,
+                @functions {
+                 public class Foo{}
+                        [|public interface Bar {
+                }|]
+                }
+                """,
             htmlFormatted: """
                 @functions {
                  public class Foo{}
@@ -6712,13 +6712,13 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @functions {
-                     public class Foo{}
-                        public interface Bar
-                        {
-                        }
+                @functions {
+                 public class Foo{}
+                    public interface Bar
+                    {
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -6726,19 +6726,19 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions {
-                     public class Foo{}
-                            public interface Bar {
-                    }
-                    }
-                    Hello World
-                    @functions {
-                          public class Baz    {
-                              void Method ( )
-                              { }
-                              }
-                    }
-                    """,
+                @functions {
+                 public class Foo{}
+                        public interface Bar {
+                }
+                }
+                Hello World
+                @functions {
+                      public class Baz    {
+                          void Method ( )
+                          { }
+                          }
+                }
+                """,
             htmlFormatted: """
                 @functions {
                  public class Foo{}
@@ -6754,21 +6754,21 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @functions {
-                        public class Foo { }
-                        public interface Bar
-                        {
-                        }
+                @functions {
+                    public class Foo { }
+                    public interface Bar
+                    {
                     }
-                    Hello World
-                    @functions {
-                        public class Baz
-                        {
-                            void Method()
-                            { }
-                        }
+                }
+                Hello World
+                @functions {
+                    public class Baz
+                    {
+                        void Method()
+                        { }
                     }
-                    """,
+                }
+                """,
             fileKind: RazorFileKind.Legacy);
     }
 
@@ -6777,18 +6777,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    Hello World
-                    @code {
-                    public class HelloWorld
-                    {
-                    }
-                    }
+                Hello World
+                @code {
+                public class HelloWorld
+                {
+                }
+                }
 
-                    @functions{
+                @functions{
 
-                        public class Bar {}
-                    }
-                    """,
+                    public class Bar {}
+                }
+                """,
             htmlFormatted: """
                 Hello World
                 @code {
@@ -6803,18 +6803,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    Hello World
-                    @code {
-                        public class HelloWorld
-                        {
-                        }
+                Hello World
+                @code {
+                    public class HelloWorld
+                    {
                     }
+                }
 
-                    @functions {
+                @functions {
 
-                        public class Bar { }
-                    }
-                    """);
+                    public class Bar { }
+                }
+                """);
     }
 
     [Fact]
@@ -6822,22 +6822,22 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions {public class Foo{
-                    }
-                    }
-                    """,
+                @functions {public class Foo{
+                }
+                }
+                """,
             htmlFormatted: """
                 @functions {public class Foo{
                 }
                 }
                 """,
             expected: """
-                    @functions {
-                        public class Foo
-                        {
-                        }
+                @functions {
+                    public class Foo
+                    {
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -6845,33 +6845,33 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions {
-                    public class Foo{
-                    }}
-                    """,
+                @functions {
+                public class Foo{
+                }}
+                """,
             htmlFormatted: """
                 @functions {
                 public class Foo{
                 }}
                 """,
             expected: """
-                    @functions {
-                        public class Foo
-                        {
-                        }
+                @functions {
+                    public class Foo
+                    {
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
     public async Task SingleLineCodeBlockDirective()
     {
         await RunFormattingTestAsync(
-        input: """
+            input: """
                 @functions {public class Foo{}
                 }
                 """,
-        htmlFormatted: """
+            htmlFormatted: """
                 @functions {public class Foo{}
                 }
                 """,
@@ -6887,21 +6887,21 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    Hello World
-                         @functions {public class Foo{}
-                    }
-                    """,
+                Hello World
+                     @functions {public class Foo{}
+                }
+                """,
             htmlFormatted: """
                 Hello World
                      @functions {public class Foo{}
                 }
                 """,
             expected: """
-                    Hello World
-                    @functions {
-                        public class Foo { }
-                    }
-                    """);
+                Hello World
+                @functions {
+                    public class Foo { }
+                }
+                """);
     }
 
     [Fact]
@@ -6909,20 +6909,20 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions {
-                    public class Foo{}
-                         }
-                    """,
+                @functions {
+                public class Foo{}
+                     }
+                """,
             htmlFormatted: """
                 @functions {
                 public class Foo{}
                      }
                 """,
             expected: """
-                    @functions {
-                        public class Foo { }
-                    }
-                    """);
+                @functions {
+                    public class Foo { }
+                }
+                """);
     }
 
     [Fact]
@@ -6930,30 +6930,30 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @using System.Buffers
-                    @functions{
-                         public class Foo
+                @using System.Buffers
+                @functions{
+                     public class Foo
+                            {
+                                public Foo()
                                 {
-                                    public Foo()
-                                    {
-                                        var arr = new string[ ] { "One", "two","three" };
-                                        var str = @"
-                    This should
-                    not
-                    be indented.
-                    ";
+                                    var arr = new string[ ] { "One", "two","three" };
+                                    var str = @"
+                This should
+                not
+                be indented.
+                ";
+                                }
+                public int MyProperty { get
+                {
+                return 0 ;
+                } set {} }
+
+                void Method(){
+
+                }
                                     }
-                    public int MyProperty { get
-                    {
-                    return 0 ;
-                    } set {} }
-
-                    void Method(){
-
-                    }
-                                        }
-                    }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @using System.Buffers
                 @functions{
@@ -6980,35 +6980,35 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @using System.Buffers
-                    @functions {
-                        public class Foo
+                @using System.Buffers
+                @functions {
+                    public class Foo
+                    {
+                        public Foo()
                         {
-                            public Foo()
+                            var arr = new string[] { "One", "two", "three" };
+                            var str = @"
+                This should
+                not
+                be indented.
+                ";
+                        }
+                        public int MyProperty
+                        {
+                            get
                             {
-                                var arr = new string[] { "One", "two", "three" };
-                                var str = @"
-                    This should
-                    not
-                    be indented.
-                    ";
+                                return 0;
                             }
-                            public int MyProperty
-                            {
-                                get
-                                {
-                                    return 0;
-                                }
-                                set { }
-                            }
+                            set { }
+                        }
 
-                            void Method()
-                            {
+                        void Method()
+                        {
 
-                            }
                         }
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -7016,28 +7016,28 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @functions{
-                    private string str1 = "hello world";
-                    private string str2 = $"hello world";
-                    private string str3 = @"hello world";
-                    private string str4 = $@"hello world";
-                    private string str5 = @"
-                        One
-                            Two
-                                Three
-                    ";
-                    private string str6 = $@"
-                        One
-                            Two
-                                Three
-                    ";
-                    // This looks wrong, but matches what the C# formatter does. Try it and see!
-                    private string str7 = "One" +
-                        "Two" +
-                            "Three" +
-                    "";
-                    }
-                    """,
+                @functions{
+                private string str1 = "hello world";
+                private string str2 = $"hello world";
+                private string str3 = @"hello world";
+                private string str4 = $@"hello world";
+                private string str5 = @"
+                    One
+                        Two
+                            Three
+                ";
+                private string str6 = $@"
+                    One
+                        Two
+                            Three
+                ";
+                // This looks wrong, but matches what the C# formatter does. Try it and see!
+                private string str7 = "One" +
+                    "Two" +
+                        "Three" +
+                "";
+                }
+                """,
             htmlFormatted: """
                 @functions{
                 private string str1 = "hello world";
@@ -7062,28 +7062,28 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @functions {
-                        private string str1 = "hello world";
-                        private string str2 = $"hello world";
-                        private string str3 = @"hello world";
-                        private string str4 = $@"hello world";
-                        private string str5 = @"
-                        One
-                            Two
-                                Three
-                    ";
-                        private string str6 = $@"
-                        One
-                            Two
-                                Three
-                    ";
-                        // This looks wrong, but matches what the C# formatter does. Try it and see!
-                        private string str7 = "One" +
-                            "Two" +
-                                "Three" +
-                        "";
-                    }
-                    """);
+                @functions {
+                    private string str1 = "hello world";
+                    private string str2 = $"hello world";
+                    private string str3 = @"hello world";
+                    private string str4 = $@"hello world";
+                    private string str5 = @"
+                    One
+                        Two
+                            Three
+                ";
+                    private string str6 = $@"
+                    One
+                        Two
+                            Three
+                ";
+                    // This looks wrong, but matches what the C# formatter does. Try it and see!
+                    private string str7 = "One" +
+                        "Two" +
+                            "Three" +
+                    "";
+                }
+                """);
     }
 
     [Fact]
@@ -7091,12 +7091,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                     public class Foo{}
-                            void Method(  ) {
-                    }
-                    }
-                    """,
+                @code {
+                 public class Foo{}
+                        void Method(  ) {
+                }
+                }
+                """,
             htmlFormatted: """
                 @code {
                  public class Foo{}
@@ -7105,13 +7105,13 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                    	public class Foo { }
-                    	void Method()
-                    	{
-                    	}
-                    }
-                    """,
+                @code {
+                	public class Foo { }
+                	void Method()
+                	{
+                	}
+                }
+                """,
             insertSpaces: false);
 
     }
@@ -7120,12 +7120,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                     public class Foo{}
-                            void Method(  ) {<div></div>
-                    }
-                    }
-                    """,
+                @code {
+                 public class Foo{}
+                        void Method(  ) {<div></div>
+                }
+                }
+                """,
             htmlFormatted: """
                 @code {
                  public class Foo{}
@@ -7134,14 +7134,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                    	public class Foo { }
-                    	void Method()
-                    	{
-                    		<div></div>
-                    	}
-                    }
-                    """,
+                @code {
+                	public class Foo { }
+                	void Method()
+                	{
+                		<div></div>
+                	}
+                }
+                """,
             tabSize: 8,
             insertSpaces: false);
     }
@@ -7151,12 +7151,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                     public class Foo{}
-                            void Method(  ) {
-                    }
-                    }
-                    """,
+                @code {
+                 public class Foo{}
+                        void Method(  ) {
+                }
+                }
+                """,
             htmlFormatted: """
                 @code {
                  public class Foo{}
@@ -7165,13 +7165,13 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                    	public class Foo { }
-                    	void Method()
-                    	{
-                    	}
-                    }
-                    """,
+                @code {
+                	public class Foo { }
+                	void Method()
+                	{
+                	}
+                }
+                """,
             tabSize: 8,
             insertSpaces: false);
     }
@@ -7181,12 +7181,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                     public class Foo{}
-                            void Method(  ) {
-                    }
-                    }
-                    """,
+                @code {
+                 public class Foo{}
+                        void Method(  ) {
+                }
+                }
+                """,
             htmlFormatted: """
                 @code {
                  public class Foo{}
@@ -7195,13 +7195,13 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                       public class Foo { }
-                       void Method()
-                       {
-                       }
-                    }
-                    """,
+                @code {
+                   public class Foo { }
+                   void Method()
+                   {
+                   }
+                }
+                """,
             tabSize: 3);
     }
 
@@ -7210,12 +7210,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                     public class Foo{}
-                            void Method(  ) {
-                    }
-                    }
-                    """,
+                @code {
+                 public class Foo{}
+                        void Method(  ) {
+                }
+                }
+                """,
             htmlFormatted: """
                 @code {
                  public class Foo{}
@@ -7224,13 +7224,13 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                            public class Foo { }
-                            void Method()
-                            {
-                            }
-                    }
-                    """,
+                @code {
+                        public class Foo { }
+                        void Method()
+                        {
+                        }
+                }
+                """,
             tabSize: 8);
     }
 
@@ -7239,12 +7239,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                     public class Foo{}
-                            void Method(  ) {
-                    }
-                    }
-                    """,
+                @code {
+                 public class Foo{}
+                        void Method(  ) {
+                }
+                }
+                """,
             htmlFormatted: """
                 @code {
                  public class Foo{}
@@ -7253,13 +7253,13 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                                public class Foo { }
-                                void Method()
-                                {
-                                }
-                    }
-                    """,
+                @code {
+                            public class Foo { }
+                            void Method()
+                            {
+                            }
+                }
+                """,
             tabSize: 12);
     }
 
@@ -7269,22 +7269,22 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    <div></div>
-                    @{ Debugger.Launch()$$;}
-                    <div></div>
-                    """,
+                <div></div>
+                @{ Debugger.Launch()$$;}
+                <div></div>
+                """,
             htmlFormatted: """
                 <div></div>
                 @{ Debugger.Launch();}
                 <div></div>
                 """,
             expected: """
-                    <div></div>
-                    @{
-                        Debugger.Launch();
-                    }
-                    <div></div>
-                    """);
+                <div></div>
+                @{
+                    Debugger.Launch();
+                }
+                <div></div>
+                """);
     }
 
     [Fact]
@@ -7293,21 +7293,21 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                        private WeatherForecast[] forecasts;
+                @code {
+                    private WeatherForecast[] forecasts;
 
-                        protected override async Task OnInitializedAsync()
-                        {
-                            <PageTitle>
-                                @{
-                                        var t = DateTime.Now;
-                                        t.ToString();
-                                    }
-                                </PageTitle>
-                            forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
-                        }
+                    protected override async Task OnInitializedAsync()
+                    {
+                        <PageTitle>
+                            @{
+                                    var t = DateTime.Now;
+                                    t.ToString();
+                                }
+                            </PageTitle>
+                        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code {
                     private WeatherForecast[] forecasts;
@@ -7325,21 +7325,21 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                        private WeatherForecast[] forecasts;
+                @code {
+                    private WeatherForecast[] forecasts;
 
-                        protected override async Task OnInitializedAsync()
-                        {
-                            <PageTitle>
-                                @{
-                                    var t = DateTime.Now;
-                                    t.ToString();
-                                }
-                            </PageTitle>
-                            forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
-                        }
+                    protected override async Task OnInitializedAsync()
+                    {
+                        <PageTitle>
+                            @{
+                                var t = DateTime.Now;
+                                t.ToString();
+                            }
+                        </PageTitle>
+                        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -7350,30 +7350,30 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
         // just verifies we don't regress things and start moving code around.
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                        public List<object> AList = new List<object>()
+                @code {
+                    public List<object> AList = new List<object>()
+                    {
+                        new
                         {
-                            new
+                            Name = "One",
+                            Goo = new
                             {
-                                Name = "One",
-                                Goo = new
-                                {
-                                    First = 1,
-                                    Second = 2
-                                },
-                                Bar = new string[] {
-                                    "Hello",
-                                    "There"
-                                },
-                                Baz = new string[]
-                                {
-                                    "Hello",
-                                    "There"
-                                }
+                                First = 1,
+                                Second = 2
+                            },
+                            Bar = new string[] {
+                                "Hello",
+                                "There"
+                            },
+                            Baz = new string[]
+                            {
+                                "Hello",
+                                "There"
                             }
-                        };
-                    }
-                    """,
+                        }
+                    };
+                }
+                """,
             htmlFormatted: """
                 @code {
                     public List<object> AList = new List<object>()
@@ -7400,30 +7400,30 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                        public List<object> AList = new List<object>()
+                @code {
+                    public List<object> AList = new List<object>()
+                    {
+                        new
                         {
-                            new
+                            Name = "One",
+                            Goo = new
                             {
-                                Name = "One",
-                                Goo = new
-                                {
-                                    First = 1,
-                                    Second = 2
-                                },
-                                Bar = new string[] {
-                                    "Hello",
-                                    "There"
-                                },
-                                Baz = new string[]
-                                {
-                                    "Hello",
-                                    "There"
-                                }
+                                First = 1,
+                                Second = 2
+                            },
+                            Bar = new string[] {
+                                "Hello",
+                                "There"
+                            },
+                            Baz = new string[]
+                            {
+                                "Hello",
+                                "There"
                             }
-                        };
-                    }
-                    """);
+                        }
+                    };
+                }
+                """);
     }
 
     [Fact]
@@ -7434,23 +7434,23 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
         // just verifies we don't regress things and start moving code around.
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                        private object _x = new()
+                @code {
+                    private object _x = new()
+                        {
+                            Name = "One",
+                            Goo = new
                             {
-                                Name = "One",
-                                Goo = new
-                                {
-                                    First = 1,
-                                    Second = 2
-                                },
-                                Bar = new string[]
-                                {
-                                    "Hello",
-                                    "There"
-                                },
-                            };
-                    }
-                    """,
+                                First = 1,
+                                Second = 2
+                            },
+                            Bar = new string[]
+                            {
+                                "Hello",
+                                "There"
+                            },
+                        };
+                }
+                """,
             htmlFormatted: """
                 @code {
                     private object _x = new()
@@ -7470,23 +7470,23 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                        private object _x = new()
+                @code {
+                    private object _x = new()
+                    {
+                        Name = "One",
+                        Goo = new
                         {
-                            Name = "One",
-                            Goo = new
+                            First = 1,
+                            Second = 2
+                        },
+                        Bar = new string[]
                             {
-                                First = 1,
-                                Second = 2
+                                "Hello",
+                                "There"
                             },
-                            Bar = new string[]
-                                {
-                                    "Hello",
-                                    "There"
-                                },
-                        };
-                    }
-                    """);
+                    };
+                }
+                """);
     }
 
     [Fact]
@@ -7495,18 +7495,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                        private void M()
+                @code {
+                    private void M()
+                    {
+                        var entries = new[]
                         {
-                            var entries = new[]
-                            {
-                                "a",
-                                "b",
-                                "c"
-                            };
-                        }
+                            "a",
+                            "b",
+                            "c"
+                        };
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code {
                     private void M()
@@ -7521,18 +7521,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                        private void M()
+                @code {
+                    private void M()
+                    {
+                        var entries = new[]
                         {
-                            var entries = new[]
-                            {
-                                "a",
-                                "b",
-                                "c"
-                            };
-                        }
+                            "a",
+                            "b",
+                            "c"
+                        };
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -7543,18 +7543,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
         // just verifies we don't regress things and start moving code around.
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                        private void M()
+                @code {
+                    private void M()
+                    {
+                        var entries = new string[]
                         {
-                            var entries = new string[]
-                            {
-                                "a",
-                                "b",
-                                "c"
-                            };
-                        }
+                            "a",
+                            "b",
+                            "c"
+                        };
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code {
                     private void M()
@@ -7569,18 +7569,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                        private void M()
+                @code {
+                    private void M()
+                    {
+                        var entries = new string[]
                         {
-                            var entries = new string[]
-                            {
-                                "a",
-                                "b",
-                                "c"
-                            };
-                        }
+                            "a",
+                            "b",
+                            "c"
+                        };
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -7591,33 +7591,33 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
         // just verifies we don't regress things and start moving code around.
         await RunFormattingTestAsync(
             input: """
-                    <p></p>
+                <p></p>
 
-                    @code {
-                        private void M()
+                @code {
+                    private void M()
+                    {
+                        var entries = new string[]
                         {
-                            var entries = new string[]
-                            {
-                                "a",
-                                "b",
-                                "c"
-                            };
+                            "a",
+                            "b",
+                            "c"
+                        };
 
-                            object gridOptions = new()
+                        object gridOptions = new()
+                        {
+                            Columns = new GridColumn<WorkOrderModel>[]
                             {
-                                Columns = new GridColumn<WorkOrderModel>[]
-                                {
-                                    new TextColumn<WorkOrderModel>(e => e.Name) { Label = "Work Order #" },
-                                    new TextColumn<WorkOrderModel>(e => e.PartNumber) { Label = "Part #" },
-                                    new TextColumn<WorkOrderModel>(e => e.Lot) { Label = "Lot #" },
-                                            new DateTimeColumn<WorkOrderModel>(e => e.TargetStartOn) { Label = "Target Start" },
-                                },
-                                Data = Model.WorkOrders,
-                                Title = "Work Orders"
-                            };
-                        }
+                                new TextColumn<WorkOrderModel>(e => e.Name) { Label = "Work Order #" },
+                                new TextColumn<WorkOrderModel>(e => e.PartNumber) { Label = "Part #" },
+                                new TextColumn<WorkOrderModel>(e => e.Lot) { Label = "Lot #" },
+                                        new DateTimeColumn<WorkOrderModel>(e => e.TargetStartOn) { Label = "Target Start" },
+                            },
+                            Data = Model.WorkOrders,
+                            Title = "Work Orders"
+                        };
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 <p></p>
                 
@@ -7647,33 +7647,33 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    <p></p>
-                    
-                    @code {
-                        private void M()
+                <p></p>
+                
+                @code {
+                    private void M()
+                    {
+                        var entries = new string[]
                         {
-                            var entries = new string[]
+                            "a",
+                            "b",
+                            "c"
+                        };
+                
+                        object gridOptions = new()
+                        {
+                            Columns = new GridColumn<WorkOrderModel>[]
                             {
-                                "a",
-                                "b",
-                                "c"
-                            };
-                    
-                            object gridOptions = new()
-                            {
-                                Columns = new GridColumn<WorkOrderModel>[]
-                                {
-                                    new TextColumn<WorkOrderModel>(e => e.Name) { Label = "Work Order #" },
-                                    new TextColumn<WorkOrderModel>(e => e.PartNumber) { Label = "Part #" },
-                                    new TextColumn<WorkOrderModel>(e => e.Lot) { Label = "Lot #" },
-                                            new DateTimeColumn<WorkOrderModel>(e => e.TargetStartOn) { Label = "Target Start" },
-                                },
-                                Data = Model.WorkOrders,
-                                Title = "Work Orders"
-                            };
-                        }
+                                new TextColumn<WorkOrderModel>(e => e.Name) { Label = "Work Order #" },
+                                new TextColumn<WorkOrderModel>(e => e.PartNumber) { Label = "Part #" },
+                                new TextColumn<WorkOrderModel>(e => e.Lot) { Label = "Lot #" },
+                                        new DateTimeColumn<WorkOrderModel>(e => e.TargetStartOn) { Label = "Target Start" },
+                            },
+                            Data = Model.WorkOrders,
+                            Title = "Work Orders"
+                        };
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -7684,29 +7684,29 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
         // just verifies we don't regress things and start moving code around.
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                        private void M()
+                @code {
+                    private void M()
+                    {
+                        var entries = new List<string[]>()
                         {
-                            var entries = new List<string[]>()
+                            new string[]
                             {
-                                new string[]
-                                {
-                                    "Hello",
-                                    "There"
-                                },
-                                new string[] {
-                                    "Hello",
-                                    "There"
-                                },
-                                new string[]
-                                {
-                                    "Hello",
-                                    "There"
-                                }
-                            };
-                        }
+                                "Hello",
+                                "There"
+                            },
+                            new string[] {
+                                "Hello",
+                                "There"
+                            },
+                            new string[]
+                            {
+                                "Hello",
+                                "There"
+                            }
+                        };
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code {
                     private void M()
@@ -7732,29 +7732,29 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                        private void M()
+                @code {
+                    private void M()
+                    {
+                        var entries = new List<string[]>()
                         {
-                            var entries = new List<string[]>()
+                            new string[]
                             {
-                                new string[]
-                                {
-                                    "Hello",
-                                    "There"
-                                },
-                                new string[] {
-                                    "Hello",
-                                    "There"
-                                },
-                                new string[]
-                                {
-                                    "Hello",
-                                    "There"
-                                }
-                            };
-                        }
+                                "Hello",
+                                "There"
+                            },
+                            new string[] {
+                                "Hello",
+                                "There"
+                            },
+                            new string[]
+                            {
+                                "Hello",
+                                "There"
+                            }
+                        };
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -7765,17 +7765,17 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
         // just verifies we don't regress things and start moving code around.
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                        private void M()
+                @code {
+                    private void M()
+                    {
+                        var entries = new
                         {
-                            var entries = new
-                            {
-                                First = 1,
-                                Second = 2
-                            };
-                        }
+                            First = 1,
+                            Second = 2
+                        };
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code {
                     private void M()
@@ -7789,17 +7789,17 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                        private void M()
+                @code {
+                    private void M()
+                    {
+                        var entries = new
                         {
-                            var entries = new
-                            {
-                                First = 1,
-                                Second = 2
-                            };
-                        }
+                            First = 1,
+                            Second = 2
+                        };
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -7810,17 +7810,17 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
         // just verifies we don't regress things and start moving code around.
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                        private void M()
+                @code {
+                    private void M()
+                    {
+                        object entries = new()
                         {
-                            object entries = new()
-                            {
-                                First = 1,
-                                Second = 2
-                            };
-                        }
+                            First = 1,
+                            Second = 2
+                        };
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code {
                     private void M()
@@ -7834,17 +7834,17 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                        private void M()
+                @code {
+                    private void M()
+                    {
+                        object entries = new()
                         {
-                            object entries = new()
-                            {
-                                First = 1,
-                                Second = 2
-                            };
-                        }
+                            First = 1,
+                            Second = 2
+                        };
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -7855,18 +7855,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
         // just verifies we don't regress things and start moving code around.
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                        private void M()
+                @code {
+                    private void M()
+                    {
+                        var entries = new List<string>()
                         {
-                            var entries = new List<string>()
-                            {
-                                "a",
-                                "b",
-                                "c"
-                            };
-                        }
+                            "a",
+                            "b",
+                            "c"
+                        };
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code {
                     private void M()
@@ -7881,18 +7881,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                        private void M()
+                @code {
+                    private void M()
+                    {
+                        var entries = new List<string>()
                         {
-                            var entries = new List<string>()
-                            {
-                                "a",
-                                "b",
-                                "c"
-                            };
-                        }
+                            "a",
+                            "b",
+                            "c"
+                        };
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -7903,19 +7903,19 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
         // just verifies we don't regress things and start moving code around.
         await RunFormattingTestAsync(
             input: """
-                    @code
+                @code
+                {
+                    private void M()
                     {
-                        private void M()
+                        var entries = new List<string>()
                         {
-                            var entries = new List<string>()
-                            {
-                                "a",
-                                "b",
-                                "c"
-                            };
-                        }
+                            "a",
+                            "b",
+                            "c"
+                        };
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code
                 {
@@ -7931,19 +7931,19 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code
+                @code
+                {
+                    private void M()
                     {
-                        private void M()
+                        var entries = new List<string>()
                         {
-                            var entries = new List<string>()
-                            {
-                                "a",
-                                "b",
-                                "c"
-                            };
-                        }
+                            "a",
+                            "b",
+                            "c"
+                        };
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -7954,17 +7954,17 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
         // just verifies we don't regress things and start moving code around.
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                        private void M()
-                        {
-                            List<string> entries = [
-                                "a",
-                                "b",
-                                "c"
-                            ];
-                        }
+                @code {
+                    private void M()
+                    {
+                        List<string> entries = [
+                            "a",
+                            "b",
+                            "c"
+                        ];
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code {
                     private void M()
@@ -7978,17 +7978,17 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                        private void M()
-                        {
-                            List<string> entries = [
-                                "a",
-                                "b",
-                                "c"
-                            ];
-                        }
+                @code {
+                    private void M()
+                    {
+                        List<string> entries = [
+                            "a",
+                            "b",
+                            "c"
+                        ];
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -7999,17 +7999,17 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
         // just verifies we don't regress things and start moving code around.
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                        private void M()
-                        {
-                            List<string> entries = [
-                                    "a",
-                            "b",
-                                "c"
-                            ];
-                        }
+                @code {
+                    private void M()
+                    {
+                        List<string> entries = [
+                                "a",
+                        "b",
+                            "c"
+                        ];
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code {
                     private void M()
@@ -8023,17 +8023,17 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                        private void M()
-                        {
-                            List<string> entries = [
-                                    "a",
-                            "b",
-                                "c"
-                            ];
-                        }
+                @code {
+                    private void M()
+                    {
+                        List<string> entries = [
+                                "a",
+                        "b",
+                            "c"
+                        ];
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -8044,14 +8044,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
         // just verifies we don't regress things and start moving code around.
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                        private void M()
-                        {
-                            List<string> entries = [
-                            ];
-                        }
+                @code {
+                    private void M()
+                    {
+                        List<string> entries = [
+                        ];
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code {
                     private void M()
@@ -8062,14 +8062,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                        private void M()
-                        {
-                            List<string> entries = [
-                            ];
-                        }
+                @code {
+                    private void M()
+                    {
+                        List<string> entries = [
+                        ];
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -8078,13 +8078,13 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                        private void M(string[] strings)
-                        {
-                            List<string> entries = [  ..     strings,    "a",      "b",         "c"    ];
-                        }
+                @code {
+                    private void M(string[] strings)
+                    {
+                        List<string> entries = [  ..     strings,    "a",      "b",         "c"    ];
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code {
                     private void M(string[] strings)
@@ -8094,13 +8094,13 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                        private void M(string[] strings)
-                        {
-                            List<string> entries = [.. strings, "a", "b", "c"];
-                        }
+                @code {
+                    private void M(string[] strings)
+                    {
+                        List<string> entries = [.. strings, "a", "b", "c"];
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -8110,21 +8110,21 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
         // The C# Formatter _does_ touch these types of initializers if they're empty. Who knew ¯\_(ツ)_/¯
         await RunFormattingTestAsync(
             input: """
-                    @code {
-                        public void Foo()
-                        {
-                            SomeMethod(new List<string>()
-                                {
+                @code {
+                    public void Foo()
+                    {
+                        SomeMethod(new List<string>()
+                            {
 
-                                });
+                            });
 
-                            SomeMethod(new Exception
-                                {
+                        SomeMethod(new Exception
+                            {
 
-                                });
-                        }
+                            });
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code {
                     public void Foo()
@@ -8142,21 +8142,21 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
-                        public void Foo()
+                @code {
+                    public void Foo()
+                    {
+                        SomeMethod(new List<string>()
                         {
-                            SomeMethod(new List<string>()
-                            {
 
-                            });
+                        });
 
-                            SomeMethod(new Exception
-                            {
+                        SomeMethod(new Exception
+                        {
 
-                            });
-                        }
+                        });
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -8165,20 +8165,20 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                            @if (true)
-                    {
-                    }
-                    """,
+                        @if (true)
+                {
+                }
+                """,
             htmlFormatted: """
                         @if (true)
                 {
                 }
                 """,
             expected: """
-                    @if (true)
-                    {
-                    }
-                    """);
+                @if (true)
+                {
+                }
+                """);
     }
 
     [Fact]
@@ -8187,14 +8187,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @{
-                        // foo
-                    }
+                @{
+                    // foo
+                }
 
-                            @if (true)
-                    {
-                    }
-                    """,
+                        @if (true)
+                {
+                }
+                """,
             htmlFormatted: """
                 @{
                     // foo
@@ -8205,14 +8205,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @{
-                        // foo
-                    }
+                @{
+                    // foo
+                }
 
-                    @if (true)
-                    {
-                    }
-                    """);
+                @if (true)
+                {
+                }
+                """);
     }
 
     [Fact]
@@ -8221,18 +8221,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @{
+                @{
+
+                    // foo
 
                         // foo
 
-                            // foo
+                }
 
-                    }
-
-                            @if (true)
-                    {
-                    }
-                    """,
+                        @if (true)
+                {
+                }
+                """,
             htmlFormatted: """
                 @{
                 
@@ -8247,18 +8247,18 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @{
+                @{
 
-                        // foo
+                    // foo
 
-                        // foo
+                    // foo
 
-                    }
+                }
 
-                    @if (true)
-                    {
-                    }
-                    """);
+                @if (true)
+                {
+                }
+                """);
     }
 
     [Fact]
@@ -8267,16 +8267,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @{
-                        var x = 3;
+                @{
+                    var x = 3;
 
-                        // foo
-                    }
+                    // foo
+                }
 
-                            @if (true)
-                    {
-                    }
-                    """,
+                        @if (true)
+                {
+                }
+                """,
             htmlFormatted: """
                 @{
                     var x = 3;
@@ -8289,16 +8289,16 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @{
-                        var x = 3;
+                @{
+                    var x = 3;
 
-                        // foo
-                    }
+                    // foo
+                }
 
-                    @if (true)
-                    {
-                    }
-                    """);
+                @if (true)
+                {
+                }
+                """);
     }
 
     [Fact]
@@ -8307,14 +8307,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @{
-                        var x = 3;
-                    }
+                @{
+                    var x = 3;
+                }
 
-                            @if (true)
-                    {
-                    }
-                    """,
+                        @if (true)
+                {
+                }
+                """,
             htmlFormatted: """
                 @{
                     var x = 3;
@@ -8325,14 +8325,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @{
-                        var x = 3;
-                    }
+                @{
+                    var x = 3;
+                }
 
-                    @if (true)
-                    {
-                    }
-                    """);
+                @if (true)
+                {
+                }
+                """);
     }
 
     [Fact]
@@ -8341,12 +8341,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    <div>
-                            @if (true)
-                    {
-                    }
-                    </div>
-                    """,
+                <div>
+                        @if (true)
+                {
+                }
+                </div>
+                """,
             htmlFormatted: """
                 <div>
                     @if (true)
@@ -8355,12 +8355,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    <div>
-                        @if (true)
-                        {
-                        }
-                    </div>
-                    """);
+                <div>
+                    @if (true)
+                    {
+                    }
+                </div>
+                """);
     }
 
     [Fact]
@@ -8368,15 +8368,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    <div>
-                    <div></div>
-                            @if (true)
-                    {
-                    <div></div>
-                    }
-                    <div></div>
-                    </div>
-                    """,
+                <div>
+                <div></div>
+                        @if (true)
+                {
+                <div></div>
+                }
+                <div></div>
+                </div>
+                """,
             htmlFormatted: """
                 <div>
                     <div></div>
@@ -8388,15 +8388,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    <div>
+                <div>
+                    <div></div>
+                    @if (true)
+                    {
                         <div></div>
-                        @if (true)
-                        {
-                            <div></div>
-                        }
-                        <div></div>
-                    </div>
-                    """);
+                    }
+                    <div></div>
+                </div>
+                """);
     }
 
     [Fact]
@@ -8404,12 +8404,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    <div>
-                    <div></div>
-                            @if (true) { <div></div> }
-                    <div></div>
-                    </div>
-                    """,
+                <div>
+                <div></div>
+                        @if (true) { <div></div> }
+                <div></div>
+                </div>
+                """,
             htmlFormatted: """
                 <div>
                     <div></div>
@@ -8418,15 +8418,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    <div>
+                <div>
+                    <div></div>
+                    @if (true)
+                    {
                         <div></div>
-                        @if (true)
-                        {
-                            <div></div>
-                        }
-                        <div></div>
-                    </div>
-                    """);
+                    }
+                    <div></div>
+                </div>
+                """);
     }
 
     [Fact]
@@ -8434,28 +8434,28 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @{
-                        var icon = "/images/bootstrap-icons.svg#"
-                            + GetIconName(login.ProviderDisplayName!);
+                @{
+                    var icon = "/images/bootstrap-icons.svg#"
+                        + GetIconName(login.ProviderDisplayName!);
 
-                        var x = DateTime
+                    var x = DateTime
+                            .Now
+                        .ToString();
+                }
+
+                @code
+                {
+                    public void M()
+                    {
+                        var icon2 = "/images/bootstrap-icons.svg#"
+                            + GetIconName(login.ProviderDisplayName!);
+                
+                        var x2 = DateTime
                                 .Now
                             .ToString();
                     }
-
-                    @code
-                    {
-                        public void M()
-                        {
-                            var icon2 = "/images/bootstrap-icons.svg#"
-                                + GetIconName(login.ProviderDisplayName!);
-                    
-                            var x2 = DateTime
-                                    .Now
-                                .ToString();
-                        }
-                    }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @{
                     var icon = "/images/bootstrap-icons.svg#"
@@ -8480,28 +8480,28 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @{
-                        var icon = "/images/bootstrap-icons.svg#"
-                            + GetIconName(login.ProviderDisplayName!);
+                @{
+                    var icon = "/images/bootstrap-icons.svg#"
+                        + GetIconName(login.ProviderDisplayName!);
 
-                        var x = DateTime
+                    var x = DateTime
+                            .Now
+                        .ToString();
+                }
+                
+                @code
+                {
+                    public void M()
+                    {
+                        var icon2 = "/images/bootstrap-icons.svg#"
+                            + GetIconName(login.ProviderDisplayName!);
+                
+                        var x2 = DateTime
                                 .Now
                             .ToString();
                     }
-                    
-                    @code
-                    {
-                        public void M()
-                        {
-                            var icon2 = "/images/bootstrap-icons.svg#"
-                                + GetIconName(login.ProviderDisplayName!);
-                    
-                            var x2 = DateTime
-                                    .Now
-                                .ToString();
-                        }
-                    }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -8509,12 +8509,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @{
-                        var x = DateTime
-                            .Now
-                            .ToString();
-                    }
-                    """,
+                @{
+                    var x = DateTime
+                        .Now
+                        .ToString();
+                }
+                """,
             htmlFormatted: """
                 @{
                     var x = DateTime
@@ -8523,12 +8523,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @{
-                        var x = DateTime
-                            .Now
-                            .ToString();
-                    }
-                    """);
+                @{
+                    var x = DateTime
+                        .Now
+                        .ToString();
+                }
+                """);
     }
 
     [Fact]
@@ -8536,15 +8536,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @{
+                @{
 
 
 
-                        var x = DateTime
-                            .Now
-                            .ToString();
-                    }
-                    """,
+                    var x = DateTime
+                        .Now
+                        .ToString();
+                }
+                """,
             htmlFormatted: """
                 @{
                 
@@ -8556,15 +8556,15 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @{
+                @{
 
 
 
-                        var x = DateTime
-                            .Now
-                            .ToString();
-                    }
-                    """);
+                    var x = DateTime
+                        .Now
+                        .ToString();
+                }
+                """);
     }
 
     [Fact]
@@ -8572,13 +8572,13 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @{
-                        //
-                        var x = DateTime
-                            .Now
-                            .ToString();
-                    }
-                    """,
+                @{
+                    //
+                    var x = DateTime
+                        .Now
+                        .ToString();
+                }
+                """,
             htmlFormatted: """
                 @{
                     //
@@ -8588,13 +8588,13 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @{
-                        //
-                        var x = DateTime
-                            .Now
-                            .ToString();
-                    }
-                    """);
+                @{
+                    //
+                    var x = DateTime
+                        .Now
+                        .ToString();
+                }
+                """);
     }
 
     [Fact]
@@ -8602,24 +8602,24 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    <div></div>
-                        @*
-                    line 1
-                      line 2
-                        line 3
-                                *@
-                    @code
+                <div></div>
+                    @*
+                line 1
+                  line 2
+                    line 3
+                            *@
+                @code
+                {
+                    void M()
                     {
-                        void M()
-                        {
-                        @*
-                    line 1
-                      line 2
-                        line 3
-                                    *@
-                        }
+                    @*
+                line 1
+                  line 2
+                    line 3
+                                *@
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 <div></div>
                     @*
@@ -8640,24 +8640,24 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    <div></div>
-                    @*
-                    line 1
-                      line 2
-                        line 3
-                                *@
-                    @code
+                <div></div>
+                @*
+                line 1
+                  line 2
+                    line 3
+                            *@
+                @code
+                {
+                    void M()
                     {
-                        void M()
-                        {
-                            @*
-                    line 1
-                      line 2
-                        line 3
-                                    *@
-                        }
+                        @*
+                line 1
+                  line 2
+                    line 3
+                                *@
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -8694,31 +8694,31 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code {
+                @code {
 
-                        protected Action Goo(string input)
+                    protected Action Goo(string input)
+                    {
+                        return async () =>
                         {
-                            return async () =>
-                            {
-                            foreach (var x in input)
-                            {
-                            if (true)
-                            {
-                            await Task.Delay(1);
+                        foreach (var x in input)
+                        {
+                        if (true)
+                        {
+                        await Task.Delay(1);
 
-                            if (true)
-                            {
-                            // do some stufff
-                            if (true)
-                            {
-                            }
-                            }
-                            }
-                            }
-                            };
+                        if (true)
+                        {
+                        // do some stufff
+                        if (true)
+                        {
                         }
+                        }
+                        }
+                        }
+                        };
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code {
                 
@@ -8746,31 +8746,31 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
+                @code {
 
-                        protected Action Goo(string input)
+                    protected Action Goo(string input)
+                    {
+                        return async () =>
                         {
-                            return async () =>
+                            foreach (var x in input)
                             {
-                                foreach (var x in input)
+                                if (true)
                                 {
+                                    await Task.Delay(1);
+
                                     if (true)
                                     {
-                                        await Task.Delay(1);
-
+                                        // do some stufff
                                         if (true)
                                         {
-                                            // do some stufff
-                                            if (true)
-                                            {
-                                            }
                                         }
                                     }
                                 }
-                            };
-                        }
+                            }
+                        };
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -8779,17 +8779,17 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @code {
+                @code {
 
-                        public RenderFragment RenderFoo()
+                    public RenderFragment RenderFoo()
+                    {
+                        return (__builder) =>
                         {
-                            return (__builder) =>
-                            {
-                                @if (true) { }
-                            };
-                        }
+                            @if (true) { }
+                        };
                     }
-                    """,
+                }
+                """,
             htmlFormatted: """
                 @code {
                 
@@ -8803,17 +8803,17 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @code {
+                @code {
 
-                        public RenderFragment RenderFoo()
+                    public RenderFragment RenderFoo()
+                    {
+                        return (__builder) =>
                         {
-                            return (__builder) =>
-                            {
-                                @if (true) { }
-                            };
-                        }
+                            @if (true) { }
+                        };
                     }
-                    """);
+                }
+                """);
     }
 
     [Fact]
@@ -8822,24 +8822,24 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @page "/"
-                    @code
+                @page "/"
+                @code
+                {
+                    void T()
                     {
-                        void T()
-                        {
-                            S("first"
-                                + "second"
-                                + "third");
-                        }
-
-                    string[] S(string s) =>
-                            s.Split(',')
-                            . Select(s => s.Trim())
-                            . ToArray();
-
-                    RenderFragment R => @<div></div>;
+                        S("first"
+                            + "second"
+                            + "third");
                     }
-                    """,
+
+                string[] S(string s) =>
+                        s.Split(',')
+                        . Select(s => s.Trim())
+                        . ToArray();
+
+                RenderFragment R => @<div></div>;
+                }
+                """,
             htmlFormatted: """
                 @page "/"
                 @code
@@ -8860,24 +8860,24 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @page "/"
-                    @code
+                @page "/"
+                @code
+                {
+                    void T()
                     {
-                        void T()
-                        {
-                            S("first"
-                                + "second"
-                                + "third");
-                        }
-
-                        string[] S(string s) =>
-                                s.Split(',')
-                                .Select(s => s.Trim())
-                                .ToArray();
-
-                        RenderFragment R => @<div></div>;
+                        S("first"
+                            + "second"
+                            + "third");
                     }
-                    """);
+
+                    string[] S(string s) =>
+                            s.Split(',')
+                            .Select(s => s.Trim())
+                            .ToArray();
+
+                    RenderFragment R => @<div></div>;
+                }
+                """);
     }
 
     [Fact]
@@ -8886,24 +8886,24 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @page "/"
-                    @code
+                @page "/"
+                @code
+                {
+                    void T()
                     {
-                        void T()
-                        {
-                            S("first"
-                                + "second"
-                                + "third");
-                        }
-
-                    string[] S(string s) =>
-                            s.Split(',')
-                            . Select(s => s.Trim())
-                            . ToArray();
-
-                    RenderFragment     R      =>      @<div></div>;
+                        S("first"
+                            + "second"
+                            + "third");
                     }
-                    """,
+
+                string[] S(string s) =>
+                        s.Split(',')
+                        . Select(s => s.Trim())
+                        . ToArray();
+
+                RenderFragment     R      =>      @<div></div>;
+                }
+                """,
             htmlFormatted: """
                 @page "/"
                 @code
@@ -8924,24 +8924,24 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @page "/"
-                    @code
+                @page "/"
+                @code
+                {
+                    void T()
                     {
-                        void T()
-                        {
-                            S("first"
-                                + "second"
-                                + "third");
-                        }
-
-                        string[] S(string s) =>
-                                s.Split(',')
-                                .Select(s => s.Trim())
-                                .ToArray();
-
-                        RenderFragment R => @<div></div>;
+                        S("first"
+                            + "second"
+                            + "third");
                     }
-                    """);
+
+                    string[] S(string s) =>
+                            s.Split(',')
+                            .Select(s => s.Trim())
+                            .ToArray();
+
+                    RenderFragment R => @<div></div>;
+                }
+                """);
     }
 
     [Fact]
@@ -8950,24 +8950,24 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @page "/"
-                    @code
+                @page "/"
+                @code
+                {
+                    void T()
                     {
-                        void T()
-                        {
-                            S("first"
-                                + "second"
-                                + "third");
-                        }
-
-                    string[] S(string s) =>
-                            s.Split(',')
-                            . Select(s => s.Trim())
-                            . ToArray();
-
-                    RenderFragment R=>@<div></div>;
+                        S("first"
+                            + "second"
+                            + "third");
                     }
-                    """,
+
+                string[] S(string s) =>
+                        s.Split(',')
+                        . Select(s => s.Trim())
+                        . ToArray();
+
+                RenderFragment R=>@<div></div>;
+                }
+                """,
             htmlFormatted: """
                 @page "/"
                 @code
@@ -8988,24 +8988,24 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @page "/"
-                    @code
+                @page "/"
+                @code
+                {
+                    void T()
                     {
-                        void T()
-                        {
-                            S("first"
-                                + "second"
-                                + "third");
-                        }
-
-                        string[] S(string s) =>
-                                s.Split(',')
-                                .Select(s => s.Trim())
-                                .ToArray();
-
-                        RenderFragment R => @<div></div>;
+                        S("first"
+                            + "second"
+                            + "third");
                     }
-                    """);
+
+                    string[] S(string s) =>
+                            s.Split(',')
+                            .Select(s => s.Trim())
+                            .ToArray();
+
+                    RenderFragment R => @<div></div>;
+                }
+                """);
     }
 
     [Fact]
@@ -9014,25 +9014,25 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @page "/"
-                    @code
+                @page "/"
+                @code
+                {
+                    void T()
                     {
-                        void T()
-                        {
-                            S("first"
-                                + "second"
-                                + "third");
-                        }
-
-                    string[] S(string s) =>
-                            s.Split(',')
-                            . Select(s => s.Trim())
-                            . ToArray();
-
-                    RenderFragment R =>
-                        @<div></div>;
+                        S("first"
+                            + "second"
+                            + "third");
                     }
-                    """,
+
+                string[] S(string s) =>
+                        s.Split(',')
+                        . Select(s => s.Trim())
+                        . ToArray();
+
+                RenderFragment R =>
+                    @<div></div>;
+                }
+                """,
             htmlFormatted: """
                 @page "/"
                 @code
@@ -9054,25 +9054,25 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @page "/"
-                    @code
+                @page "/"
+                @code
+                {
+                    void T()
                     {
-                        void T()
-                        {
-                            S("first"
-                                + "second"
-                                + "third");
-                        }
-
-                        string[] S(string s) =>
-                                s.Split(',')
-                                .Select(s => s.Trim())
-                                .ToArray();
-
-                        RenderFragment R =>
-                            @<div></div>;
+                        S("first"
+                            + "second"
+                            + "third");
                     }
-                    """);
+
+                    string[] S(string s) =>
+                            s.Split(',')
+                            .Select(s => s.Trim())
+                            .ToArray();
+
+                    RenderFragment R =>
+                        @<div></div>;
+                }
+                """);
     }
 
     [Fact]
@@ -9082,24 +9082,24 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
         // Formatting result here is not necessarily perfect, but in the new engine is stable
         await RunFormattingTestAsync(
             input: """
-                    @page "/"
-                    @using RazorClassLibrary2.Models
+                @page "/"
+                @using RazorClassLibrary2.Models
 
-                    @code{
-                        private DateTime? date1;
+                @code{
+                    private DateTime? date1;
 
-                        Gopt<int> gopt = new Gopt<int>()
-                        {
-                            Name = "hi"
-                        }
-                        .Editor(m =>
-                        {
-                        return
-                        @<text>hi</text>
-                        ; }
-                        );    
+                    Gopt<int> gopt = new Gopt<int>()
+                    {
+                        Name = "hi"
                     }
-                    """,
+                    .Editor(m =>
+                    {
+                    return
+                    @<text>hi</text>
+                    ; }
+                    );    
+                }
+                """,
             htmlFormatted: """
                 @page "/"
                 @using RazorClassLibrary2.Models
@@ -9120,25 +9120,25 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @page "/"
-                    @using RazorClassLibrary2.Models
+                @page "/"
+                @using RazorClassLibrary2.Models
 
-                    @code {
-                        private DateTime? date1;
+                @code {
+                    private DateTime? date1;
 
-                        Gopt<int> gopt = new Gopt<int>()
-                        {
-                            Name = "hi"
-                        }
-                        .Editor(m =>
-                        {
-                            return
-                            @<text>hi</text>
-                            ;
-                        }
-                        );
+                    Gopt<int> gopt = new Gopt<int>()
+                    {
+                        Name = "hi"
                     }
-                    """);
+                    .Editor(m =>
+                    {
+                        return
+                        @<text>hi</text>
+                        ;
+                    }
+                    );
+                }
+                """);
     }
 
     [Theory]
@@ -9722,38 +9722,38 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                    @{
-                        // Stable
-                        var formatMe = new string[] {
-                            "One",
-                            "Two",
-                            "Three",
-                        };
+                @{
+                    // Stable
+                    var formatMe = new string[] {
+                        "One",
+                        "Two",
+                        "Three",
+                    };
 
-                        // Closing brace advances to the right
-                        var formatMeTwo = new string[]
-                        {
-                            "One",
-                            "Two",
-                            "Three",
-                        };
+                    // Closing brace advances to the right
+                    var formatMeTwo = new string[]
+                    {
+                        "One",
+                        "Two",
+                        "Three",
+                    };
 
-                        // Stable
-                        var formatMeThree = new List<string> {
-                            "One",
-                            "Two",
-                            "Three",
-                        };
-                    
-                        // Opening brace advances to the right
-                        var formatMeFour = new List<string>
-                        {
-                            "One",
-                            "Two",
-                            "Three",
-                        };
-                    }
-                    """,
+                    // Stable
+                    var formatMeThree = new List<string> {
+                        "One",
+                        "Two",
+                        "Three",
+                    };
+                
+                    // Opening brace advances to the right
+                    var formatMeFour = new List<string>
+                    {
+                        "One",
+                        "Two",
+                        "Three",
+                    };
+                }
+                """,
             htmlFormatted: """
                 @{
                     // Stable
@@ -9788,38 +9788,38 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @{
-                        // Stable
-                        var formatMe = new string[] {
-                            "One",
-                            "Two",
-                            "Three",
-                        };
-                    
-                        // Closing brace advances to the right
-                        var formatMeTwo = new string[]
-                        {
-                            "One",
-                            "Two",
-                            "Three",
-                        };
-                    
-                        // Stable
-                        var formatMeThree = new List<string> {
-                            "One",
-                            "Two",
-                            "Three",
-                        };
-                    
-                        // Opening brace advances to the right
-                        var formatMeFour = new List<string>
-                        {
-                            "One",
-                            "Two",
-                            "Three",
-                        };
-                    }
-                    """);
+                @{
+                    // Stable
+                    var formatMe = new string[] {
+                        "One",
+                        "Two",
+                        "Three",
+                    };
+                
+                    // Closing brace advances to the right
+                    var formatMeTwo = new string[]
+                    {
+                        "One",
+                        "Two",
+                        "Three",
+                    };
+                
+                    // Stable
+                    var formatMeThree = new List<string> {
+                        "One",
+                        "Two",
+                        "Three",
+                    };
+                
+                    // Opening brace advances to the right
+                    var formatMeFour = new List<string>
+                    {
+                        "One",
+                        "Two",
+                        "Three",
+                    };
+                }
+                """);
     }
 
     [Fact]
@@ -9828,13 +9828,13 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     {
         await RunFormattingTestAsync(
             input: """
-                            @page "/"
+                        @page "/"
 
-                            @using System
-                            @inject object Foo
+                        @using System
+                        @inject object Foo
 
 
-                    """,
+                """,
             htmlFormatted: """
                         @page "/"
                 
@@ -9844,13 +9844,13 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 
                 """,
             expected: """
-                    @page "/"
-                    
-                    @using System
-                    @inject object Foo
-                    
-                    
-                    """);
+                @page "/"
+                
+                @using System
+                @inject object Foo
+                
+                
+                """);
     }
 
     [Fact]
@@ -10329,7 +10329,7 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                                     id="foo">@("Foo")
                      test</textarea>
                 """,
-                        htmlFormatted: """
+            htmlFormatted: """
                 <textarea name="foo"
                           id="foo">@("Foo")
                      test</textarea>
@@ -10868,13 +10868,13 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     [WorkItem("https://github.com/dotnet/razor/issues/12445")]
     public Task TypeParameterAttribute()
      => RunFormattingTestAsync(
-         input: """
+            input: """
                 <div>
                 <InputSelect TValue="Guid?">
                 </InputSelect>
                 </div>
                 """,
-         htmlFormatted: """
+            htmlFormatted: """
                 <div>
                     <InputSelect TValue="Guid?">
                     </InputSelect>
@@ -10891,25 +10891,25 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     public Task HtmlAttributes()
         => RunFormattingTestAsync(
             input: """
-                    <div class="foo"
-                                disabled
-                            style="hello"
-                      @onclick="foo()">
-                    <InputSelect @onclick="foo()"
-                    TValue="Guid?"
-                     disabled
-                     style="hello">
-                     <p></p><a href="#"
-                     disabled
-                     style="hello"
-                    @onclick="foo()"/>
-                     <br class="a"
-                     style="b"
-                     disabled>
-                     <br />
-                    </InputSelect>
-                    </div>
-                    """,
+                <div class="foo"
+                            disabled
+                        style="hello"
+                  @onclick="foo()">
+                <InputSelect @onclick="foo()"
+                TValue="Guid?"
+                 disabled
+                 style="hello">
+                 <p></p><a href="#"
+                 disabled
+                 style="hello"
+                @onclick="foo()"/>
+                 <br class="a"
+                 style="b"
+                 disabled>
+                 <br />
+                </InputSelect>
+                </div>
+                """,
             htmlFormatted: """
                 <div class="foo"
                      disabled
@@ -10931,37 +10931,37 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    <div class="foo"
-                         disabled
-                         style="hello"
-                         @onclick="foo()">
-                        <InputSelect @onclick="foo()"
-                                     TValue="Guid?"
-                                     disabled
-                                     style="hello">
-                            <p></p><a href="#"
-                                      disabled
-                                      style="hello"
-                                      @onclick="foo()" />
-                            <br class="a"
-                                style="b"
-                                disabled>
-                            <br />
-                        </InputSelect>
-                    </div>
-                    """);
+                <div class="foo"
+                     disabled
+                     style="hello"
+                     @onclick="foo()">
+                    <InputSelect @onclick="foo()"
+                                 TValue="Guid?"
+                                 disabled
+                                 style="hello">
+                        <p></p><a href="#"
+                                  disabled
+                                  style="hello"
+                                  @onclick="foo()" />
+                        <br class="a"
+                            style="b"
+                            disabled>
+                        <br />
+                    </InputSelect>
+                </div>
+                """);
 
     [Fact]
     public Task HtmlAttributes_FirstAttributeOnNextLine()
         => RunFormattingTestAsync(
             input: """
-                    <div
-                      class="foo"
-                      disabled
-                      style="hello"
-                      @onclick="foo()">
-                    </div>
-                    """,
+                <div
+                  class="foo"
+                  disabled
+                  style="hello"
+                  @onclick="foo()">
+                </div>
+                """,
             htmlFormatted: """
                 <div class="foo"
                      disabled
@@ -10970,36 +10970,36 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    <div class="foo"
-                         disabled
-                         style="hello"
-                         @onclick="foo()">
-                    </div>
-                    """);
+                <div class="foo"
+                     disabled
+                     style="hello"
+                     @onclick="foo()">
+                </div>
+                """);
 
     [Fact]
     public Task HtmlAttributes_IndentByOne()
         => RunFormattingTestAsync(
             input: """
-                    <div class="foo"
-                                disabled
-                            style="hello"
-                      @onclick="foo()">
-                    <InputSelect @onclick="foo()"
-                    TValue="Guid?"
-                     disabled
-                     style="hello">
-                     <p></p><a href="#"
-                     disabled
-                     style="hello"
-                    @onclick="foo()"/>
-                     <br class="a"
-                     style="b"
-                     disabled>
-                     <br />
-                    </InputSelect>
-                    </div>
-                    """,
+                <div class="foo"
+                            disabled
+                        style="hello"
+                  @onclick="foo()">
+                <InputSelect @onclick="foo()"
+                TValue="Guid?"
+                 disabled
+                 style="hello">
+                 <p></p><a href="#"
+                 disabled
+                 style="hello"
+                @onclick="foo()"/>
+                 <br class="a"
+                 style="b"
+                 disabled>
+                 <br />
+                </InputSelect>
+                </div>
+                """,
             htmlFormatted: """
                 <div class="foo"
                      disabled
@@ -11021,50 +11021,50 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    <div class="foo"
+                <div class="foo"
+                    disabled
+                    style="hello"
+                    @onclick="foo()">
+                    <InputSelect @onclick="foo()"
+                        TValue="Guid?"
                         disabled
-                        style="hello"
-                        @onclick="foo()">
-                        <InputSelect @onclick="foo()"
-                            TValue="Guid?"
+                        style="hello">
+                        <p></p><a href="#"
                             disabled
-                            style="hello">
-                            <p></p><a href="#"
-                                disabled
-                                style="hello"
-                                @onclick="foo()" />
-                            <br class="a"
-                                style="b"
-                                disabled>
-                            <br />
-                        </InputSelect>
-                    </div>
-                    """,
+                            style="hello"
+                            @onclick="foo()" />
+                        <br class="a"
+                            style="b"
+                            disabled>
+                        <br />
+                    </InputSelect>
+                </div>
+                """,
             attributeIndentStyle: AttributeIndentStyle.IndentByOne);
 
     [Fact]
     public Task HtmlAttributes_IndentByTwo()
         => RunFormattingTestAsync(
             input: """
-                    <div class="foo"
-                                disabled
-                            style="hello"
-                      @onclick="foo()">
-                    <InputSelect @onclick="foo()"
-                    TValue="Guid?"
-                     disabled
-                     style="hello">
-                     <p></p><a href="#"
-                     disabled
-                     style="hello"
-                    @onclick="foo()"/>
-                     <br class="a"
-                     style="b"
-                     disabled>
-                     <br />
-                    </InputSelect>
-                    </div>
-                    """,
+                <div class="foo"
+                            disabled
+                        style="hello"
+                  @onclick="foo()">
+                <InputSelect @onclick="foo()"
+                TValue="Guid?"
+                 disabled
+                 style="hello">
+                 <p></p><a href="#"
+                 disabled
+                 style="hello"
+                @onclick="foo()"/>
+                 <br class="a"
+                 style="b"
+                 disabled>
+                 <br />
+                </InputSelect>
+                </div>
+                """,
             htmlFormatted: """
                 <div class="foo"
                      disabled
@@ -11086,25 +11086,25 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    <div class="foo"
+                <div class="foo"
+                        disabled
+                        style="hello"
+                        @onclick="foo()">
+                    <InputSelect @onclick="foo()"
+                            TValue="Guid?"
                             disabled
-                            style="hello"
-                            @onclick="foo()">
-                        <InputSelect @onclick="foo()"
-                                TValue="Guid?"
+                            style="hello">
+                        <p></p><a href="#"
                                 disabled
-                                style="hello">
-                            <p></p><a href="#"
-                                    disabled
-                                    style="hello"
-                                    @onclick="foo()" />
-                            <br class="a"
-                                    style="b"
-                                    disabled>
-                            <br />
-                        </InputSelect>
-                    </div>
-                    """,
+                                style="hello"
+                                @onclick="foo()" />
+                        <br class="a"
+                                style="b"
+                                disabled>
+                        <br />
+                    </InputSelect>
+                </div>
+                """,
             attributeIndentStyle: AttributeIndentStyle.IndentByTwo);
 
     [Fact]
@@ -11112,12 +11112,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     public Task ExplicitExpression_InIf()
         => RunFormattingTestAsync(
             input: """
-                    @if (true)
-                    {
-                        @(Html.Grid()
-                            .Render())
-                    }
-                    """,
+                @if (true)
+                {
+                    @(Html.Grid()
+                        .Render())
+                }
+                """,
             htmlFormatted: """
                 @if (true)
                 {
@@ -11126,36 +11126,36 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 }
                 """,
             expected: """
-                    @if (true)
-                    {
-                        @(Html.Grid()
-                            .Render())
-                    }
-                    """);
+                @if (true)
+                {
+                    @(Html.Grid()
+                        .Render())
+                }
+                """);
 
     [Fact]
     [WorkItem("https://github.com/dotnet/razor/issues/12554")]
     public Task ObjectInitializers1()
         => RunFormattingTestAsync(
             input: """
-                    @{
-                        Func<Test, IHtmlContent> RenderTest = @<div>Test X: @item.X, Y: @item.Y</div>;
-                    }
+                @{
+                    Func<Test, IHtmlContent> RenderTest = @<div>Test X: @item.X, Y: @item.Y</div>;
+                }
 
+                @RenderTest(new Test()
+                {
+                    X = 10,
+                    Y = 20,
+                })
+
+                <div>
                     @RenderTest(new Test()
                     {
-                        X = 10,
-                        Y = 20,
+                        X = 1,
+                        Y = 2,
                     })
-
-                    <div>
-                        @RenderTest(new Test()
-                        {
-                            X = 1,
-                            Y = 2,
-                        })
-                    </div>
-                    """,
+                </div>
+                """,
             htmlFormatted: """
                 @{
                     Func<Test, IHtmlContent> RenderTest = @<div>Test X: @item.X, Y: @item.Y</div>;
@@ -11176,40 +11176,40 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    @{
-                        Func<Test, IHtmlContent> RenderTest = @<div>Test X: @item.X, Y: @item.Y</div>;
-                    }
+                @{
+                    Func<Test, IHtmlContent> RenderTest = @<div>Test X: @item.X, Y: @item.Y</div>;
+                }
 
+                @RenderTest(new Test()
+                {
+                    X = 10,
+                    Y = 20,
+                })
+
+                <div>
                     @RenderTest(new Test()
                     {
-                        X = 10,
-                        Y = 20,
+                        X = 1,
+                        Y = 2,
                     })
-
-                    <div>
-                        @RenderTest(new Test()
-                        {
-                            X = 1,
-                            Y = 2,
-                        })
-                    </div>
-                    """);
+                </div>
+                """);
 
     [Fact]
     [WorkItem("https://github.com/dotnet/razor/issues/12554")]
     public Task ObjectInitializers2()
         => RunFormattingTestAsync(
             input: """
-                    <div>
-                        @if (true)
+                <div>
+                    @if (true)
+                    {
+                        @Html.TextBox(new Test()
                         {
-                            @Html.TextBox(new Test()
-                            {
-                                test = 5
-                            })
-                        }
-                    </div>
-                    """,
+                            test = 5
+                        })
+                    }
+                </div>
+                """,
             htmlFormatted: """
                 <div>
                     @if (true)
@@ -11222,30 +11222,30 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    <div>
-                        @if (true)
+                <div>
+                    @if (true)
+                    {
+                        @Html.TextBox(new Test()
                         {
-                            @Html.TextBox(new Test()
-                            {
-                                test = 5
-                            })
-                        }
-                    </div>
-                    """);
+                            test = 5
+                        })
+                    }
+                </div>
+                """);
 
     [Fact]
     [WorkItem("https://github.com/dotnet/razor/issues/12554")]
     public Task ObjectInitializers3()
         => RunFormattingTestAsync(
             input: """
-                    <div>
-                        @{
-                            var a = new int[] { 1, 2, 3 }
-                                .Where(i => i % 2 == 0)
-                                .ToArray();
-                        }
-                    </div>
-                    """,
+                <div>
+                    @{
+                        var a = new int[] { 1, 2, 3 }
+                            .Where(i => i % 2 == 0)
+                            .ToArray();
+                    }
+                </div>
+                """,
             htmlFormatted: """
                 <div>
                     @{
@@ -11256,14 +11256,14 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </div>
                 """,
             expected: """
-                    <div>
-                        @{
-                            var a = new int[] { 1, 2, 3 }
-                                .Where(i => i % 2 == 0)
-                                .ToArray();
-                        }
-                    </div>
-                    """);
+                <div>
+                    @{
+                        var a = new int[] { 1, 2, 3 }
+                            .Where(i => i % 2 == 0)
+                            .ToArray();
+                    }
+                </div>
+                """);
 
     [Fact]
     [WorkItem("https://github.com/dotnet/razor/issues/12622")]
@@ -11644,10 +11644,10 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     public Task PartialDocument()
         => RunFormattingTestAsync(
             input: """
-                    <table>
-                    <tr>
-                    <td>
-                    """,
+                <table>
+                <tr>
+                <td>
+                """,
             htmlFormatted: """
                 <table>
                     <tr>
@@ -11655,10 +11655,10 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
 
                 """,
             expected: """
-                    <table>
-                        <tr>
-                            <td>
-                    """,
+                <table>
+                    <tr>
+                        <td>
+                """,
             allowDiagnostics: true);
 
     [Fact]

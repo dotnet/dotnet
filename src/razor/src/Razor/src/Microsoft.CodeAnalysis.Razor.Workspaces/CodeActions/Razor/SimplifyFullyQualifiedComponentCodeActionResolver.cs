@@ -92,7 +92,7 @@ internal class SimplifyFullyQualifiedComponentCodeActionResolver : IRazorCodeAct
         // which would change line numbers for subsequent edits
         if (needsUsing)
         {
-            var addUsingEdit = AddUsingsHelper.CreateAddUsingTextEdit(actionParams.Namespace, codeDocument);
+            var addUsingEdit = UsingDirectiveHelper.CreateAddUsingTextEdit(actionParams.Namespace, codeDocument);
             tagEdits.Add(addUsingEdit);
         }
 

@@ -29,6 +29,7 @@ public sealed partial class RazorCodeDocument
     private readonly TagHelperDocumentContext? _tagHelperContext;
     private readonly DocumentIntermediateNode? _documentNode;
     private readonly RazorCSharpDocument? _csharpDocument;
+    private readonly ImmutableArray<DirectiveTagHelperContribution> _directiveTagHelperContributions;
 
     private RazorCodeDocument(
         RazorSourceDocument source,
@@ -42,7 +43,8 @@ public sealed partial class RazorCodeDocument
         ImmutableArray<RazorSyntaxTree> importSyntaxTrees,
         TagHelperDocumentContext? tagHelperContext,
         DocumentIntermediateNode? documentNode,
-        RazorCSharpDocument? csharpDocument)
+        RazorCSharpDocument? csharpDocument,
+        ImmutableArray<DirectiveTagHelperContribution> directiveTagHelperContributions)
     {
         Source = source;
         Imports = imports.NullToEmpty();
@@ -58,6 +60,7 @@ public sealed partial class RazorCodeDocument
         _tagHelperContext = tagHelperContext;
         _documentNode = documentNode;
         _csharpDocument = csharpDocument;
+        _directiveTagHelperContributions = directiveTagHelperContributions.NullToEmpty();
     }
 
     public static RazorCodeDocument Create(
@@ -86,7 +89,8 @@ public sealed partial class RazorCodeDocument
             importSyntaxTrees: default,
             tagHelperContext: null,
             documentNode: null,
-            csharpDocument: null);
+            csharpDocument: null,
+            directiveTagHelperContributions: default);
     }
 
     internal bool TryGetTagHelpers([NotNullWhen(true)] out TagHelperCollection? result)
@@ -107,7 +111,7 @@ public sealed partial class RazorCodeDocument
         {
             return this;
         }
-        return new RazorCodeDocument(Source, Imports, ParserOptions, CodeGenerationOptions, value, _referencedTagHelpers, _preTagHelperSyntaxTree, _syntaxTree, _importSyntaxTrees, _tagHelperContext, _documentNode, _csharpDocument);
+        return new RazorCodeDocument(Source, Imports, ParserOptions, CodeGenerationOptions, value, _referencedTagHelpers, _preTagHelperSyntaxTree, _syntaxTree, _importSyntaxTrees, _tagHelperContext, _documentNode, _csharpDocument, _directiveTagHelperContributions);
     }
 
     internal bool TryGetReferencedTagHelpers([NotNullWhen(true)] out TagHelperCollection? result)
@@ -128,7 +132,7 @@ public sealed partial class RazorCodeDocument
         {
             return this;
         }
-        return new RazorCodeDocument(Source, Imports, ParserOptions, CodeGenerationOptions, _tagHelpers, value, _preTagHelperSyntaxTree, _syntaxTree, _importSyntaxTrees, _tagHelperContext, _documentNode, _csharpDocument);
+        return new RazorCodeDocument(Source, Imports, ParserOptions, CodeGenerationOptions, _tagHelpers, value, _preTagHelperSyntaxTree, _syntaxTree, _importSyntaxTrees, _tagHelperContext, _documentNode, _csharpDocument, _directiveTagHelperContributions);
     }
 
     internal bool TryGetPreTagHelperSyntaxTree([NotNullWhen(true)] out RazorSyntaxTree? result)
@@ -149,7 +153,7 @@ public sealed partial class RazorCodeDocument
         {
             return this;
         }
-        return new RazorCodeDocument(Source, Imports, ParserOptions, CodeGenerationOptions, _tagHelpers, _referencedTagHelpers, value, _syntaxTree, _importSyntaxTrees, _tagHelperContext, _documentNode, _csharpDocument);
+        return new RazorCodeDocument(Source, Imports, ParserOptions, CodeGenerationOptions, _tagHelpers, _referencedTagHelpers, value, _syntaxTree, _importSyntaxTrees, _tagHelperContext, _documentNode, _csharpDocument, _directiveTagHelperContributions);
     }
 
     internal bool TryGetSyntaxTree([NotNullWhen(true)] out RazorSyntaxTree? result)
@@ -171,7 +175,7 @@ public sealed partial class RazorCodeDocument
         {
             return this;
         }
-        return new RazorCodeDocument(Source, Imports, ParserOptions, CodeGenerationOptions, _tagHelpers, _referencedTagHelpers, _preTagHelperSyntaxTree, value, _importSyntaxTrees, _tagHelperContext, _documentNode, _csharpDocument);
+        return new RazorCodeDocument(Source, Imports, ParserOptions, CodeGenerationOptions, _tagHelpers, _referencedTagHelpers, _preTagHelperSyntaxTree, value, _importSyntaxTrees, _tagHelperContext, _documentNode, _csharpDocument, _directiveTagHelperContributions);
     }
 
     internal bool TryGetImportSyntaxTrees(out ImmutableArray<RazorSyntaxTree> result)
@@ -198,7 +202,7 @@ public sealed partial class RazorCodeDocument
         {
             return this;
         }
-        return new RazorCodeDocument(Source, Imports, ParserOptions, CodeGenerationOptions, _tagHelpers, _referencedTagHelpers, _preTagHelperSyntaxTree, _syntaxTree, value, _tagHelperContext, _documentNode, _csharpDocument);
+        return new RazorCodeDocument(Source, Imports, ParserOptions, CodeGenerationOptions, _tagHelpers, _referencedTagHelpers, _preTagHelperSyntaxTree, _syntaxTree, value, _tagHelperContext, _documentNode, _csharpDocument, _directiveTagHelperContributions);
     }
 
     internal bool TryGetTagHelperContext([NotNullWhen(true)] out TagHelperDocumentContext? result)
@@ -221,7 +225,7 @@ public sealed partial class RazorCodeDocument
         {
             return this;
         }
-        return new RazorCodeDocument(Source, Imports, ParserOptions, CodeGenerationOptions, _tagHelpers, _referencedTagHelpers, _preTagHelperSyntaxTree, _syntaxTree, _importSyntaxTrees, value, _documentNode, _csharpDocument);
+        return new RazorCodeDocument(Source, Imports, ParserOptions, CodeGenerationOptions, _tagHelpers, _referencedTagHelpers, _preTagHelperSyntaxTree, _syntaxTree, _importSyntaxTrees, value, _documentNode, _csharpDocument, _directiveTagHelperContributions);
     }
 
     internal bool TryGetDocumentNode([NotNullWhen(true)] out DocumentIntermediateNode? result)
@@ -243,7 +247,7 @@ public sealed partial class RazorCodeDocument
         {
             return this;
         }
-        return new RazorCodeDocument(Source, Imports, ParserOptions, CodeGenerationOptions, _tagHelpers, _referencedTagHelpers, _preTagHelperSyntaxTree, _syntaxTree, _importSyntaxTrees, _tagHelperContext, value, _csharpDocument);
+        return new RazorCodeDocument(Source, Imports, ParserOptions, CodeGenerationOptions, _tagHelpers, _referencedTagHelpers, _preTagHelperSyntaxTree, _syntaxTree, _importSyntaxTrees, _tagHelperContext, value, _csharpDocument, _directiveTagHelperContributions);
     }
 
     internal bool TryGetCSharpDocument([NotNullWhen(true)] out RazorCSharpDocument? result)
@@ -265,7 +269,20 @@ public sealed partial class RazorCodeDocument
         {
             return this;
         }
-        return new RazorCodeDocument(Source, Imports, ParserOptions, CodeGenerationOptions, _tagHelpers, _referencedTagHelpers, _preTagHelperSyntaxTree, _syntaxTree, _importSyntaxTrees, _tagHelperContext, _documentNode, value);
+        return new RazorCodeDocument(Source, Imports, ParserOptions, CodeGenerationOptions, _tagHelpers, _referencedTagHelpers, _preTagHelperSyntaxTree, _syntaxTree, _importSyntaxTrees, _tagHelperContext, _documentNode, value, _directiveTagHelperContributions);
+    }
+
+    internal ImmutableArray<DirectiveTagHelperContribution> GetDirectiveTagHelperContributions()
+        => _directiveTagHelperContributions;
+
+    internal RazorCodeDocument WithDirectiveTagHelperContributions(ImmutableArray<DirectiveTagHelperContribution> value)
+    {
+        if (value == _directiveTagHelperContributions)
+        {
+            return this;
+        }
+
+        return new RazorCodeDocument(Source, Imports, ParserOptions, CodeGenerationOptions, _tagHelpers, _referencedTagHelpers, _preTagHelperSyntaxTree, _syntaxTree, _importSyntaxTrees, _tagHelperContext, _documentNode, _csharpDocument, value);
     }
 
     // In general documents will have a relative path (relative to the project root).

@@ -2,11 +2,19 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Diagnostics;
+using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Razor.Settings;
 using Roslyn.Test.Utilities;
@@ -535,29 +543,26 @@ public partial class CohostDocumentPullDiagnosticsTest
             """,
             taskListRequest: true);
 
-    private async Task VerifyDiagnosticsAsync(TestCode input, VSInternalDiagnosticReport[]? htmlResponse = null, bool taskListRequest = false, bool miscellaneousFile = false)
+    private async Task VerifyDiagnosticsAsync(
+        TestCode input,
+        VSInternalDiagnosticReport[]? htmlResponse = null,
+        RazorFileKind? fileKind = null,
+        bool taskListRequest = false,
+        bool miscellaneousFile = false,
+        (string fileName, string contents)[]? additionalFiles = null)
     {
-        var document = CreateProjectAndRazorDocument(input.Text, miscellaneousFile: miscellaneousFile);
+        var document = CreateProjectAndRazorDocument(input.Text, fileKind, miscellaneousFile: miscellaneousFile, additionalFiles: additionalFiles);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var requestInvoker = new TestHtmlRequestInvoker([(VSInternalMethods.DocumentPullDiagnosticName, htmlResponse)]);
 
         var clientSettingsManager = new ClientSettingsManager([]);
         var clientCapabilitiesService = new TestClientCapabilitiesService(new VSInternalClientCapabilities { SupportsVisualStudioExtensions = true });
-        var endpoint = new CohostDocumentPullDiagnosticsEndpoint(IncompatibleProjectService, RemoteServiceInvoker, requestInvoker, clientSettingsManager, clientCapabilitiesService, NoOpTelemetryReporter.Instance, LoggerFactory);
-
-        var result = taskListRequest
-            ? await endpoint.GetTestAccessor().HandleTaskListItemRequestAsync(document, ["TODO"], DisposalToken)
-            : [new()
-                {
-                    Diagnostics = await endpoint.GetTestAccessor().HandleRequestAsync(document, DisposalToken)
-                }];
+        var result = await MakeDiagnosticsRequestAsync(document, taskListRequest, requestInvoker, IncompatibleProjectService, RemoteServiceInvoker, clientSettingsManager, clientCapabilitiesService, LoggerFactory, DisposalToken);
 
         Assert.NotNull(result);
-        var report = Assert.Single(result);
-        Assert.NotNull(report);
 
-        var markers = report.Diagnostics.SelectMany(d =>
+        var markers = result.SelectMany(d =>
             new[] {
                 (index: inputText.GetTextSpan(d.Range).Start, text: $"{{|{d.Code!.Value.Second}:"),
                 (index: inputText.GetTextSpan(d.Range).End, text:"|}")
@@ -574,8 +579,8 @@ public partial class CohostDocumentPullDiagnosticsTest
 
         if (!taskListRequest)
         {
-            Assert.NotNull(report.Diagnostics);
-            Assert.All(report.Diagnostics,
+            Assert.NotNull(result);
+            Assert.All(result,
                 d =>
                 {
                     var vsDiagnostic = Assert.IsType<VSDiagnostic>(d);
@@ -584,8 +589,30 @@ public partial class CohostDocumentPullDiagnosticsTest
                     var project = Assert.Single(vsDiagnostic.Projects);
                     Assert.NotNull(project.ProjectIdentifier);
                     // We always report the same project info for all diagnostics
-                    Assert.Same(project, ((VSDiagnostic)report.Diagnostics.First()).Projects.Single());
+                    Assert.Same(project, ((VSDiagnostic)result.First()).Projects.Single());
                 });
         }
+    }
+
+    internal static async Task<LspDiagnostic[]?> MakeDiagnosticsRequestAsync(
+        TextDocument document,
+        bool taskListRequest,
+        TestHtmlRequestInvoker requestInvoker,
+        IIncompatibleProjectService incompatibleProjectService,
+        IRemoteServiceInvoker remoteServiceInvoker,
+        IClientSettingsManager clientSettingsManager,
+        IClientCapabilitiesService clientCapabilitiesService,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var endpoint = new CohostDocumentPullDiagnosticsEndpoint(incompatibleProjectService, remoteServiceInvoker, requestInvoker, clientSettingsManager, clientCapabilitiesService, NoOpTelemetryReporter.Instance, loggerFactory);
+
+        var result = taskListRequest
+            ? await endpoint.GetTestAccessor().HandleTaskListItemRequestAsync(document, ["TODO"], cancellationToken)
+            : [new()
+                {
+                    Diagnostics = await endpoint.GetTestAccessor().HandleRequestAsync(document, cancellationToken)
+                }];
+        return result.FirstOrDefault()?.Diagnostics;
     }
 }
