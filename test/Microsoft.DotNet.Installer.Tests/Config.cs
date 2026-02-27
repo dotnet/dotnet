@@ -52,6 +52,9 @@ public static class Config
     public static string TargetFrameworkVersion { get; } = TryGetRuntimeConfig(TargetFrameworkVersionSwitch, out string? value) ? value : string.Empty;
     const string TargetFrameworkVersionSwitch = RuntimeConfigSwitchPrefix + nameof(TargetFrameworkVersion);
 
+    public static string DotNetRuntimeSourceFeed { get; } = TryGetRuntimeConfig(DotNetRuntimeSourceFeedSwitch, out string? value) ? value : string.Empty;
+    const string DotNetRuntimeSourceFeedSwitch = RuntimeConfigSwitchPrefix + nameof(DotNetRuntimeSourceFeed);
+
     public static string DotNetRuntimeSourceFeedKey { get; } = TryGetRuntimeConfig(DotNetRuntimeSourceFeedKeySwitch, out string? value) ? value : string.Empty;
     const string DotNetRuntimeSourceFeedKeySwitch = RuntimeConfigSwitchPrefix + nameof(DotNetRuntimeSourceFeedKey);
 

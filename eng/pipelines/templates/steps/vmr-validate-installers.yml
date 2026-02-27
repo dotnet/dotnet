@@ -54,7 +54,7 @@ steps:
   - script: |
       runtimeSourceFeedKeyArgs=""
       if [[ "$(System.TeamProject)" == "internal" ]]; then
-        runtimeSourceFeedKeyArgs="/p:DotNetRuntimeSourceFeedKey=$(dotnetbuilds-internal-container-read-token-base64)"
+        runtimeSourceFeedKeyArgs="/p:DotNetRuntimeSourceFeed=https://ci.dot.net/internal /p:DotNetRuntimeSourceFeedKey=$(dotnetbuilds-internal-container-read-token-base64)"
       fi
       ./build.sh --ci -t --projects $(Build.SourcesDirectory)/test/Microsoft.DotNet.Installer.Tests/Microsoft.DotNet.Installer.Tests.csproj /p:TestRpmPackages=true /p:TestDebPackages=true $runtimeSourceFeedKeyArgs
     displayName: Validate installer packages
