@@ -697,6 +697,20 @@ let UnifyFunctionType extraInfo (cenv: cenv) denv mFunExpr ty =
         | Some argm -> error (NotAFunction(denv, ty, mFunExpr, argm))
         | None -> error (FunctionExpected(denv, ty, mFunExpr))
 
+let UnifyFunctionTypeAndRecover extraInfo (cenv: cenv) denv mFunExpr ty =
+    match UnifyFunctionTypeUndoIfFailed cenv denv mFunExpr ty with
+    | ValueSome res -> res
+    | ValueNone ->
+        match extraInfo with
+        | Some argm -> errorR (NotAFunction(denv, ty, mFunExpr, argm))
+        | None -> errorR (FunctionExpected(denv, ty, mFunExpr))
+
+        let g = cenv.g
+        let domainTy = NewInferenceType g
+        let resultTy = NewInferenceType g
+        domainTy, resultTy
+
+
 let ReportImplicitlyIgnoredBoolExpression denv m ty expr =
     let checkExpr m expr =
         match stripDebugPoints expr with
@@ -7861,10 +7875,13 @@ and TcRecdExpr cenv overallTy env tpenv (inherits, withExprOpt, synRecdFields, m
                 UnifyTypes cenv env mWholeExpr overallTy gtyp
 
                 // (#15290) For copy-and-update expressions, register the record type as a reference
-                // so that "Find All References" on the record type includes copy-and-update usages
+                // so that "Find All References" on the record type includes copy-and-update usages.
+                // Use a zero-width range at the start of the expression to avoid affecting semantic
+                // classification (coloring) of field names and other tokens within the expression.
                 if hasOrigExpr then
                     let item = Item.Types(tcref.DisplayName, [gtyp])
-                    CallNameResolutionSink cenv.tcSink (mWholeExpr, env.NameEnv, item, emptyTyparInst, ItemOccurrence.Use, env.eAccessRights)
+                    let pointRange = Range.mkRange mWholeExpr.FileName mWholeExpr.Start mWholeExpr.Start
+                    CallNameResolutionSink cenv.tcSink (pointRange, env.NameEnv, item, emptyTyparInst, ItemOccurrence.Use, env.eAccessRights)
 
                 [ for n, v in fldsList do
                     match v with
@@ -10078,7 +10095,7 @@ and TcMethodApplication_UniqueOverloadInference
         // type we assume the number of arguments is just "1".
         | None, _ ->
 
-            let domainTy, returnTy = UnifyFunctionType None cenv denv mMethExpr exprTy.Commit
+            let domainTy, returnTy = UnifyFunctionTypeAndRecover None cenv denv mMethExpr exprTy.Commit
             let argTys = if isUnitTy g domainTy then [] else tryDestRefTupleTy g domainTy
             // Only apply this rule if a candidate method exists with this number of arguments
             let argTys =
@@ -10099,6 +10116,8 @@ and TcMethodApplication_UniqueOverloadInference
 
     let callerArgs = { Unnamed = unnamedCurriedCallerArgs; Named = namedCurriedCallerArgs }
 
+    let arityFilteredCandidates = candidateMethsAndProps
+
     let makeOneCalledMeth (minfo, pinfoOpt, usesParamArrayConversion) =
         let minst = FreshenMethInfo mItem minfo
         let callerTyArgs =
@@ -10108,7 +10127,7 @@ and TcMethodApplication_UniqueOverloadInference
         CalledMeth<SynExpr>(cenv.infoReader, Some(env.NameEnv), isCheckingAttributeCall, FreshenMethInfo, mMethExpr, ad, minfo, minst, callerTyArgs, pinfoOpt, callerObjArgTys, callerArgs, usesParamArrayConversion, true, objTyOpt, staticTyOpt)
 
     let preArgumentTypeCheckingCalledMethGroup =
-        [ for minfo, pinfoOpt in candidateMethsAndProps do
+        [ for minfo, pinfoOpt in arityFilteredCandidates do
             let meth = makeOneCalledMeth (minfo, pinfoOpt, true)
             yield meth
             if meth.UsesParamArrayConversion then
@@ -10158,7 +10177,7 @@ and TcMethodApplication_CheckArguments
                 let curriedArgTys, returnTy = UnifyMatchingSimpleArgumentTypes cenv env exprTy.Commit calledMeth mMethExpr mItem
                 curriedArgTys, paramNamesIfFeatureEnabled g calledMeth, MustEqual returnTy
             | _ ->
-                let domainTy, returnTy = UnifyFunctionType None cenv denv mMethExpr exprTy.Commit
+                let domainTy, returnTy = UnifyFunctionTypeAndRecover None cenv denv mMethExpr exprTy.Commit
                 let argTys = if isUnitTy g domainTy then [] else tryDestRefTupleTy g domainTy
                 // Only apply this rule if a candidate method exists with this number of arguments
                 let argTys, argNames =
