@@ -17,7 +17,7 @@
     <IncludeDotNetCli>true</IncludeDotNetCli>
     <DotNetCliPackageType>sdk</DotNetCliPackageType>
 
-    <TestRunNamePrefix>$(AGENT_JOBNAME)</TestRunNamePrefix>
+    <TestRunNamePrefix>$(AGENT_JOBNAME) run on </TestRunNamePrefix>
     <XUnitWorkitemTimeout>300</XUnitWorkitemTimeout>
   </PropertyGroup>
 
@@ -69,9 +69,14 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(HelixAccessToken)' != '' ">
-    <HelixTargetQueue Include="(AlmaLinux.9.Amd64)Ubuntu.2204.Amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64"/>
+    <HelixTargetQueue Include="(AlmaLinux.9.Amd64)Ubuntu.2204.Amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64">
+      <TestRunName>$(TestRunNamePrefix)AlmaLinux.9.Amd64</TestRunName>
+    </HelixTargetQueue>
     <HelixTargetQueue Include="Windows.11.Amd64.Client"/>
-    <HelixTargetQueue Include="(Debian.13.Amd64)ubuntu.2204.amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-13-helix-amd64"/>
+    <HelixTargetQueue Include="(Debian.13.Amd64)ubuntu.2204.amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-13-helix-amd64">
+      <TestRunName>$(TestRunNamePrefix)Debian.13.Amd64</TestRunName>
+    </HelixTargetQueue>
+    <HelixTargetQueue Include="OSX.15.Amd64"/>
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(HelixAccessToken)' == '' ">
@@ -81,9 +86,14 @@
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(HelixAccessToken)' == '' ">
-    <HelixTargetQueue Include="(AlmaLinux.9.Amd64.Open)Ubuntu.2204.Amd64.Open@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64"/>
+    <HelixTargetQueue Include="(AlmaLinux.9.Amd64.Open)Ubuntu.2204.Amd64.Open@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64">
+      <TestRunName>$(TestRunNamePrefix)AlmaLinux.9.Amd64.Open</TestRunName>
+    </HelixTargetQueue>
     <HelixTargetQueue Include="Windows.11.Amd64.Client.Open"/>
-    <HelixTargetQueue Include="(Debian.13.Amd64.Open)ubuntu.2204.amd64.open@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-13-helix-amd64"/>
+    <HelixTargetQueue Include="(Debian.13.Amd64.Open)ubuntu.2204.amd64.open@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-13-helix-amd64">
+      <TestRunName>$(TestRunNamePrefix)Debian.13.Amd64.Open</TestRunName>
+    </HelixTargetQueue>
+    <HelixTargetQueue Include="OSX.15.Amd64.Open"/>
   </ItemGroup>
 
   <PropertyGroup Condition="!$(HelixTargetQueue.StartsWith('Windows'))">
