@@ -31,9 +31,9 @@ namespace NuGet.Commands
         internal IEnumerable<IRestoreLogMessage> SuppressedWarnings => _suppressedWarnings.ToArray();
 
 
-        public WarningPropertiesCollection ProjectWarningPropertiesCollection { get; set; }
+        internal WarningPropertiesCollection ProjectWarningPropertiesCollection { get; set; }
 
-        public WarningPropertiesCollection TransitiveWarningPropertiesCollection
+        internal WarningPropertiesCollection TransitiveWarningPropertiesCollection
         {
             get
             {
@@ -70,7 +70,7 @@ namespace NuGet.Commands
             ProjectWarningPropertiesCollection = new WarningPropertiesCollection(
                 projectSpec.RestoreMetadata?.ProjectWideWarningProperties,
                 PackageSpecificWarningProperties.CreatePackageSpecificWarningProperties(projectSpec),
-                projectSpec.TargetFrameworks.Select(f => f.FrameworkName).AsList().AsReadOnly()
+                projectSpec.TargetFrameworks.Select(f => f.TargetAlias).AsList().AsReadOnly()
                 );
         }
 
