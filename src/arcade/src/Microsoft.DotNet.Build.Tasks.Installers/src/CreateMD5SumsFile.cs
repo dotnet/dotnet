@@ -41,9 +41,9 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 string relativePath = file.ItemSpec.Substring(RootDirectory.Length).TrimStart(Path.DirectorySeparatorChar).Replace('\\', '/');
                 // Always use Linux line-endings
 #if NET
-                writer.Write($"{Convert.ToHexString(hash)} {relativePath}\n");
+                writer.Write($"{Convert.ToHexStringLower(hash)}  {relativePath}\n");
 #else
-                writer.Write($"{BitConverter.ToString(hash).Replace("-", "")} {relativePath}\n");
+                writer.Write($"{BitConverter.ToString(hash).Replace("-", "").ToLower()}  {relativePath}\n");
 #endif
             }
 
