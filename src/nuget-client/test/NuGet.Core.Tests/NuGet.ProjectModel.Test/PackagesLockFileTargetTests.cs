@@ -9,19 +9,22 @@ namespace NuGet.ProjectModel.Test
     public class PackagesLockFileTargetTests
     {
         [Theory]
-        [InlineData("net472", null, ".NETFramework,Version=v4.7.2")]
-        [InlineData("netstandard2.0", null, ".NETStandard,Version=v2.0")]
-        [InlineData("netcoreapp3.1", null, ".NETCoreApp,Version=v3.1")]
-        [InlineData("netcoreapp3.1", "win-x64", ".NETCoreApp,Version=v3.1/win-x64")]
-        [InlineData("net5.0", null, ".NETCoreApp,Version=v5.0")]
-        [InlineData("net5.0", "win-x64", ".NETCoreApp,Version=v5.0/win-x64")]
-        [InlineData("net5.0-windows7.0", null, "net5.0-windows7.0")]
-        [InlineData("net5.0-windows7.0", "win-x64", "net5.0-windows7.0/win-x64")]
-        [InlineData("net6.0", null, "net6.0")]
-        [InlineData("net6.0", "win-x64", "net6.0/win-x64")]
-        [InlineData("net6.0-windows7.0", null, "net6.0-windows7.0")]
-        [InlineData("net6.0-windows7.0", "win-x64", "net6.0-windows7.0/win-x64")]
-        public void Name_DifferentTargetFrameworkAndRuntimeIdentifiers_HasExpectedValue(string targetFramework, string runtimeIdentifier, string expectedName)
+        [InlineData("net472", null, null, ".NETFramework,Version=v4.7.2")]
+        [InlineData("netstandard2.0", null, null, ".NETStandard,Version=v2.0")]
+        [InlineData("netcoreapp3.1", null, null, ".NETCoreApp,Version=v3.1")]
+        [InlineData("netcoreapp3.1", "win-x64", null, ".NETCoreApp,Version=v3.1/win-x64")]
+        [InlineData("net5.0", null, null, ".NETCoreApp,Version=v5.0")]
+        [InlineData("net5.0", "win-x64", null, ".NETCoreApp,Version=v5.0/win-x64")]
+        [InlineData("net5.0-windows7.0", null, null, "net5.0-windows7.0")]
+        [InlineData("net5.0-windows7.0", "win-x64", null, "net5.0-windows7.0/win-x64")]
+        [InlineData("net6.0", null, null, "net6.0")]
+        [InlineData("net6.0", "win-x64", null, "net6.0/win-x64")]
+        [InlineData("net6.0-windows7.0", null, null, "net6.0-windows7.0")]
+        [InlineData("net6.0-windows7.0", "win-x64", null, "net6.0-windows7.0/win-x64")]
+        [InlineData("net10.0", null, "netcoreapp10.0", "netcoreapp10.0")]
+        [InlineData("net10.0", "win-x64", "netcoreapp10.0", "netcoreapp10.0/win-x64")]
+        [InlineData("net6.0", null, "net6.0", "net6.0")]
+        public void Name_DifferentTargetFrameworkRuntimeIdentifiersAndAliases_HasExpectedValue(string targetFramework, string runtimeIdentifier, string alias, string expectedName)
         {
             // Arrange
             NuGetFramework framework = NuGetFramework.Parse(targetFramework);
@@ -29,7 +32,8 @@ namespace NuGet.ProjectModel.Test
             PackagesLockFileTarget packagesLockFileTarget = new()
             {
                 TargetFramework = framework,
-                RuntimeIdentifier = runtimeIdentifier
+                RuntimeIdentifier = runtimeIdentifier,
+                TargetAlias = alias
             };
 
             // Act

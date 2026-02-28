@@ -81,11 +81,10 @@ NuGet.DependencyResolver.LocalMatch.LocalMatch() -> void
 ~NuGet.DependencyResolver.LocalMatch.LocalProvider.get -> NuGet.DependencyResolver.IDependencyProvider
 ~NuGet.DependencyResolver.LocalMatch.LocalProvider.set -> void
 NuGet.DependencyResolver.LockFileCacheKey
-~NuGet.DependencyResolver.LockFileCacheKey.Equals(NuGet.DependencyResolver.LockFileCacheKey other) -> bool
-~NuGet.DependencyResolver.LockFileCacheKey.LockFileCacheKey(NuGet.Frameworks.NuGetFramework framework, string runtimeIdentifier) -> void
-~NuGet.DependencyResolver.LockFileCacheKey.Name.get -> string
-~NuGet.DependencyResolver.LockFileCacheKey.RuntimeIdentifier.get -> string
-~NuGet.DependencyResolver.LockFileCacheKey.TargetFramework.get -> NuGet.Frameworks.NuGetFramework
+NuGet.DependencyResolver.LockFileCacheKey.Equals(NuGet.DependencyResolver.LockFileCacheKey? other) -> bool
+NuGet.DependencyResolver.LockFileCacheKey.Name.get -> string!
+NuGet.DependencyResolver.LockFileCacheKey.RuntimeIdentifier.get -> string?
+NuGet.DependencyResolver.LockFileCacheKey.TargetFramework.get -> NuGet.Frameworks.NuGetFramework!
 NuGet.DependencyResolver.PackagingUtility
 NuGet.DependencyResolver.RemoteDependencyWalker
 ~NuGet.DependencyResolver.RemoteDependencyWalker.RemoteDependencyWalker(NuGet.DependencyResolver.RemoteWalkContext context) -> void
@@ -139,9 +138,9 @@ override NuGet.DependencyResolver.GraphItem<TItem>.GetHashCode() -> int
 override NuGet.DependencyResolver.LibraryRangeCacheKey.Equals(object? obj) -> bool
 override NuGet.DependencyResolver.LibraryRangeCacheKey.GetHashCode() -> int
 override NuGet.DependencyResolver.LibraryRangeCacheKey.ToString() -> string!
-~override NuGet.DependencyResolver.LockFileCacheKey.Equals(object obj) -> bool
+override NuGet.DependencyResolver.LockFileCacheKey.Equals(object? obj) -> bool
 override NuGet.DependencyResolver.LockFileCacheKey.GetHashCode() -> int
-~override NuGet.DependencyResolver.LockFileCacheKey.ToString() -> string
+override NuGet.DependencyResolver.LockFileCacheKey.ToString() -> string!
 ~override NuGet.DependencyResolver.RemoteMatch.Equals(object obj) -> bool
 override NuGet.DependencyResolver.RemoteMatch.GetHashCode() -> int
 ~static NuGet.DependencyResolver.GraphItemKeyComparer<T>.Instance.get -> NuGet.DependencyResolver.GraphItemKeyComparer<T>

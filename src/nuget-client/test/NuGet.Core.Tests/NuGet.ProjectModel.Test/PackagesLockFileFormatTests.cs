@@ -4,6 +4,7 @@
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using NuGet.Frameworks;
+using NuGet.Versioning;
 using Xunit;
 
 namespace NuGet.ProjectModel.Test
@@ -227,6 +228,227 @@ namespace NuGet.ProjectModel.Test
 
             // Assert
             Assert.Equal(expected.ToString(), output.ToString());
+        }
+
+        [Fact]
+        public void PackagesLockFileFormat_ReadVersion3WithAliases()
+        {
+            var lockFileContent = @"{
+                ""version"": 3,
+                ""netcoreapp10.0"": {
+                    ""framework"": ""net10.0"",
+                    ""dependencies"": {
+                        ""PackageA"": {
+                            ""type"": ""Direct"",
+                            ""requested"": ""[1.0.0, )"",
+                            ""resolved"": ""1.0.0"",
+                            ""contentHash"": ""hash1""
+                        }
+                    }
+                },
+                ""net10.0"": {
+                    ""framework"": ""net10.0"",
+                    ""dependencies"": {
+                        ""PackageB"": {
+                            ""type"": ""Direct"",
+                            ""requested"": ""[2.0.0, )"",
+                            ""resolved"": ""2.0.0"",
+                            ""contentHash"": ""hash2""
+                        }
+                    }
+                }
+            }";
+
+            var lockFile = PackagesLockFileFormat.Parse(lockFileContent, "In Memory");
+
+            Assert.Equal(3, lockFile.Version);
+            Assert.Equal(2, lockFile.Targets.Count);
+
+            var target1 = lockFile.Targets[0];
+            Assert.Equal("netcoreapp10.0", target1.TargetAlias);
+            Assert.Equal(NuGetFramework.Parse("net10.0"), target1.TargetFramework);
+            Assert.Equal("PackageA", target1.Dependencies[0].Id);
+
+            var target2 = lockFile.Targets[1];
+            Assert.Equal("net10.0", target2.TargetAlias);
+            Assert.Equal(NuGetFramework.Parse("net10.0"), target2.TargetFramework);
+            Assert.Equal("PackageB", target2.Dependencies[0].Id);
+        }
+
+        [Fact]
+        public void PackagesLockFileFormat_ReadVersion3WithAliasesAndRid()
+        {
+            var lockFileContent = @"{
+                ""version"": 3,
+                ""netcoreapp10.0"": {
+                    ""framework"": ""net10.0"",
+                    ""dependencies"": {
+                        ""PackageA"": {
+                            ""type"": ""Direct"",
+                            ""resolved"": ""1.0.0"",
+                            ""contentHash"": ""hash1""
+                        }
+                    }
+                },
+                ""netcoreapp10.0/win-x64"": {
+                    ""framework"": ""net10.0"",
+                    ""dependencies"": {
+                        ""PackageC"": {
+                            ""type"": ""Transitive"",
+                            ""resolved"": ""1.5.0"",
+                            ""contentHash"": ""hash3""
+                        }
+                    }
+                }
+            }";
+
+            var lockFile = PackagesLockFileFormat.Parse(lockFileContent, "In Memory");
+
+            Assert.Equal(3, lockFile.Version);
+            Assert.Equal(2, lockFile.Targets.Count);
+
+            var target1 = lockFile.Targets[0];
+            Assert.Equal("netcoreapp10.0", target1.TargetAlias);
+            Assert.Equal(NuGetFramework.Parse("net10.0"), target1.TargetFramework);
+            Assert.Null(target1.RuntimeIdentifier);
+
+            var target2 = lockFile.Targets[1];
+            Assert.Equal("netcoreapp10.0", target2.TargetAlias);
+            Assert.Equal(NuGetFramework.Parse("net10.0"), target2.TargetFramework);
+            Assert.Equal("win-x64", target2.RuntimeIdentifier);
+        }
+
+        [Fact]
+        public void PackagesLockFileFormat_WriteVersion3WithAliases()
+        {
+            var lockFile = new PackagesLockFile(3);
+
+            var target1 = new PackagesLockFileTarget
+            {
+                TargetFramework = NuGetFramework.Parse("net10.0"),
+                TargetAlias = "netcoreapp10.0"
+            };
+            target1.Dependencies.Add(new LockFileDependency
+            {
+                Id = "PackageA",
+                Type = PackageDependencyType.Direct,
+                ResolvedVersion = NuGetVersion.Parse("1.0.0"),
+                ContentHash = "hash1"
+            });
+
+            var target2 = new PackagesLockFileTarget
+            {
+                TargetFramework = NuGetFramework.Parse("net10.0"),
+                TargetAlias = "net10.0"
+            };
+            target2.Dependencies.Add(new LockFileDependency
+            {
+                Id = "PackageB",
+                Type = PackageDependencyType.Direct,
+                ResolvedVersion = NuGetVersion.Parse("2.0.0"),
+                ContentHash = "hash2"
+            });
+
+            lockFile.Targets.Add(target1);
+            lockFile.Targets.Add(target2);
+
+            var output = PackagesLockFileFormat.Render(lockFile);
+            var json = JObject.Parse(output);
+
+            Assert.Equal(3, (int)json["version"]!);
+            Assert.True(json.ContainsKey("netcoreapp10.0"));
+            Assert.True(json.ContainsKey("net10.0"));
+
+            var target1Json = json["netcoreapp10.0"] as JObject;
+            Assert.NotNull(target1Json);
+            Assert.Equal("net10.0", (string)target1Json["framework"]!);
+            Assert.NotNull(target1Json["dependencies"]);
+
+            var target2Json = json["net10.0"] as JObject;
+            Assert.NotNull(target2Json);
+            Assert.Equal("net10.0", (string)target2Json["framework"]!);
+            Assert.NotNull(target2Json["dependencies"]);
+        }
+
+        [Fact]
+        public void PackagesLockFileFormat_RoundTripVersion3WithAliases()
+        {
+            var originalContent = @"{
+                ""version"": 3,
+                ""netcoreapp10.0"": {
+                    ""framework"": ""net10.0"",
+                    ""dependencies"": {
+                        ""PackageA"": {
+                            ""type"": ""Direct"",
+                            ""resolved"": ""1.0.0"",
+                            ""contentHash"": ""hash1""
+                        }
+                    }
+                },
+                ""net10.0"": {
+                    ""framework"": ""net10.0"",
+                    ""dependencies"": {
+                        ""PackageB"": {
+                            ""type"": ""Direct"",
+                            ""resolved"": ""2.0.0"",
+                            ""contentHash"": ""hash2""
+                        }
+                    }
+                }
+            }";
+
+            var lockFile = PackagesLockFileFormat.Parse(originalContent, "In Memory");
+            var output = JObject.Parse(PackagesLockFileFormat.Render(lockFile)).ToString();
+            var expected = JObject.Parse(originalContent).ToString();
+
+            Assert.Equal(expected, output);
+        }
+
+        [Fact]
+        public void PackagesLockFileFormat_BackwardCompatibilityVersion1()
+        {
+            var v1Content = @"{
+                ""version"": 1,
+                ""dependencies"": {
+                    "".NETFramework,Version=v4.7.2"": {
+                        ""PackageA"": {
+                            ""type"": ""Direct"",
+                            ""resolved"": ""1.0.0"",
+                            ""contentHash"": ""hash1""
+                        }
+                    }
+                }
+            }";
+
+            var lockFile = PackagesLockFileFormat.Parse(v1Content, "In Memory");
+
+            Assert.Equal(1, lockFile.Version);
+            Assert.Equal(1, lockFile.Targets.Count);
+            Assert.Null(lockFile.Targets[0].TargetAlias);
+            Assert.Equal(NuGetFramework.Parse(".NETFramework,Version=v4.7.2"), lockFile.Targets[0].TargetFramework);
+        }
+
+        [Fact]
+        public void PackagesLockFileFormat_BackwardCompatibilityVersion2()
+        {
+            var v2Content = @"{
+                ""version"": 2,
+                ""dependencies"": {
+                    ""net6.0"": {
+                        ""PackageA"": {
+                            ""type"": ""Direct"",
+                            ""resolved"": ""1.0.0"",
+                            ""contentHash"": ""hash1""
+                        }
+                    }
+                }
+            }";
+
+            var lockFile = PackagesLockFileFormat.Parse(v2Content, "In Memory");
+
+            Assert.Equal(2, lockFile.Version);
+            Assert.Equal(1, lockFile.Targets.Count);
+            Assert.Null(lockFile.Targets[0].TargetAlias);
         }
     }
 }
