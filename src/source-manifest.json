@@ -55,10 +55,10 @@
       "commitSha": "242bedbdbbd95b2e40670af00c779b6338df42d6"
     },
     {
-      "barId": 302299,
+      "barId": 303377,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "89e3ec493ee58ecd9a85f71e5e1017bc616852ef"
+      "commitSha": "c48fb46ac1a2cc22ed2605b58ea04e3347a27b9f"
     },
     {
       "barId": 302763,
@@ -139,10 +139,10 @@
       "commitSha": "d65e8b04a4d56f728b34012026a2bd4c83277f56"
     },
     {
-      "barId": 300191,
+      "barId": 303126,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "f52d8e79a7ba0a8e121ccf42c7a967d5f75e613e"
+      "commitSha": "9484c1c170c5b03f6b8e2b4132c9e13d2be1286c"
     },
     {
       "barId": 291230,
