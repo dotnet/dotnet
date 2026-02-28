@@ -153,10 +153,6 @@
       <Uri>https://github.com/dotnet/arcade-services</Uri>
       <Sha>8b5a2ffee4f4097893b7fc670f7d86d84c8c841f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.FileBasedPrograms" Version="11.0.100-alpha.1.26062.101">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>7b9ad20ba1d45df5a99fdd9dedbf3bfe6a6fc24f</Sha>
-    </Dependency>
     <Dependency Name="Roslyn.Diagnostics.Analyzers" Version="5.5.0-2.26120.3">
       <Uri>https://github.com/dotnet/roslyn</Uri>
       <Sha>31befaa889690d364864b3c3061c49817768456d</Sha>
