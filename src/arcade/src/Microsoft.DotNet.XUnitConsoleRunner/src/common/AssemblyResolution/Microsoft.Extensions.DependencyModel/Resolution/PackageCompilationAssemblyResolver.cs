@@ -56,23 +56,13 @@ namespace Internal.Microsoft.Extensions.DependencyModel.Resolution
                return new string[] { packageDirectory };
            }
 
-           string basePath;
-           if (osPlatform == Platform.Windows)
-           {
-               basePath = environment.GetEnvironmentVariable("USERPROFILE");
-           }
-           else
-           {
-               basePath = environment.GetEnvironmentVariable("HOME");
-           }
-
+           string basePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
            if (string.IsNullOrEmpty(basePath))
            {
                return new string[] { string.Empty };
            }
 
            return new string[] { Path.Combine(basePath, ".nuget", "packages") };
-
         }
 
         public bool TryResolveAssemblyPaths(CompilationLibrary library, List<string> assemblies)

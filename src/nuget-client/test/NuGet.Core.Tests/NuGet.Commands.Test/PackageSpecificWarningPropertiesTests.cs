@@ -22,10 +22,10 @@ namespace NuGet.Common.Test
             // Arrange
             var properties = new PackageSpecificWarningProperties();
             var libraryId = "test_libraryId";
-            var targetFramework = NuGetFramework.Parse("net45");
+            var frameworkString = "net45";
 
             // Assert
-            Assert.False(properties.Contains(NuGetLogCode.NU1500, libraryId, targetFramework));
+            Assert.False(properties.Contains(NuGetLogCode.NU1500, libraryId, frameworkString));
         }
 
         [Fact]
@@ -35,13 +35,13 @@ namespace NuGet.Common.Test
             // Arrange
             var code = NuGetLogCode.NU1500;
             var libraryId = "test_libraryId";
-            var targetFramework = NuGetFramework.Parse("net45");
+            var frameworkString = "net45";
             var properties = new PackageSpecificWarningProperties();
-            properties.Add(code, libraryId, targetFramework);
+            properties.Add(code, libraryId, frameworkString);
 
             // Assert
-            Assert.True(properties.Contains(code, libraryId, targetFramework));
-            Assert.False(properties.Contains(code, libraryId, NuGetFramework.Parse("random_target_graph")));
+            Assert.True(properties.Contains(code, libraryId, frameworkString));
+            Assert.False(properties.Contains(code, libraryId, "random_target_graph"));
         }
 
         [Fact]
@@ -51,15 +51,15 @@ namespace NuGet.Common.Test
             // Arrange
             ImmutableArray<NuGetLogCode> codes = [NuGetLogCode.NU1500, NuGetLogCode.NU1601, NuGetLogCode.NU1701];
             var libraryId = "test_libraryId";
-            var targetFramework = NuGetFramework.Parse("net45");
+            var frameworkString = "net45";
             var properties = new PackageSpecificWarningProperties();
-            properties.AddRangeOfCodes(codes, libraryId, targetFramework);
+            properties.AddRangeOfCodes(codes, libraryId, frameworkString);
 
             // Assert
             foreach (var code in codes)
             {
-                Assert.False(properties.Contains(code, libraryId, NuGetFramework.Parse("random_target_graph")));
-                Assert.True(properties.Contains(code, libraryId, targetFramework));
+                Assert.False(properties.Contains(code, libraryId, "random_target_graph"));
+                Assert.True(properties.Contains(code, libraryId, frameworkString));
             }
         }
 
@@ -70,6 +70,8 @@ namespace NuGet.Common.Test
             // Arrange
             var net45Framework = NuGetFramework.Parse("net45");
             var netcoreappFramework = NuGetFramework.Parse("netcoreapp1.1");
+            var net45Alias = "net45";
+            var netcoreappAlias = "netcoreapp1.1";
             var NoWarnList = new List<NuGetLogCode>
             {
                 NuGetLogCode.NU1603,
@@ -103,11 +105,13 @@ namespace NuGet.Common.Test
                 new TargetFrameworkInformation()
                 {
                     FrameworkName = net45Framework,
+                    TargetAlias = net45Alias,
                     Dependencies = [dependency1]
                 },
                 new TargetFrameworkInformation()
                 {
                     FrameworkName = netcoreappFramework,
+                    TargetAlias = netcoreappAlias,
                     Dependencies = [dependency2]
                 }
             };
@@ -118,17 +122,17 @@ namespace NuGet.Common.Test
             var warningProperties = PackageSpecificWarningProperties.CreatePackageSpecificWarningProperties(packageSpec);
 
             // Assert
-            Assert.True(warningProperties.Contains(NuGetLogCode.NU1603, "test_library_1", net45Framework));
-            Assert.True(warningProperties.Contains(NuGetLogCode.NU1107, "test_library_1", net45Framework));
-            Assert.False(warningProperties.Contains(NuGetLogCode.NU1603, "test_library", net45Framework));
-            Assert.False(warningProperties.Contains(NuGetLogCode.NU1701, "test_library_1", net45Framework));
-            Assert.False(warningProperties.Contains(NuGetLogCode.NU1603, "test_library_1", netcoreappFramework));
+            Assert.True(warningProperties.Contains(NuGetLogCode.NU1603, "test_library_1", net45Alias));
+            Assert.True(warningProperties.Contains(NuGetLogCode.NU1107, "test_library_1", net45Alias));
+            Assert.False(warningProperties.Contains(NuGetLogCode.NU1603, "test_library", net45Alias));
+            Assert.False(warningProperties.Contains(NuGetLogCode.NU1701, "test_library_1", net45Alias));
+            Assert.False(warningProperties.Contains(NuGetLogCode.NU1603, "test_library_1", netcoreappAlias));
 
-            Assert.True(warningProperties.Contains(NuGetLogCode.NU1603, "test_library_2", netcoreappFramework));
-            Assert.True(warningProperties.Contains(NuGetLogCode.NU1605, "test_library_2", netcoreappFramework));
-            Assert.False(warningProperties.Contains(NuGetLogCode.NU1603, "test_library", netcoreappFramework));
-            Assert.False(warningProperties.Contains(NuGetLogCode.NU1701, "test_library_2", netcoreappFramework));
-            Assert.False(warningProperties.Contains(NuGetLogCode.NU1603, "test_library_2", net45Framework));
+            Assert.True(warningProperties.Contains(NuGetLogCode.NU1603, "test_library_2", netcoreappAlias));
+            Assert.True(warningProperties.Contains(NuGetLogCode.NU1605, "test_library_2", netcoreappAlias));
+            Assert.False(warningProperties.Contains(NuGetLogCode.NU1603, "test_library", netcoreappAlias));
+            Assert.False(warningProperties.Contains(NuGetLogCode.NU1701, "test_library_2", netcoreappAlias));
+            Assert.False(warningProperties.Contains(NuGetLogCode.NU1603, "test_library_2", net45Alias));
         }
     }
 }
