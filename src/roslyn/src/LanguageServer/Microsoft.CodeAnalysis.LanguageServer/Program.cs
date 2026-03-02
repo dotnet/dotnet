@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO.Pipes;
 using System.Runtime.InteropServices;
 using System.Text.Json;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Contracts.Telemetry;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.LanguageServer;
@@ -15,7 +16,6 @@ using Microsoft.CodeAnalysis.LanguageServer.HostWorkspace;
 using Microsoft.CodeAnalysis.LanguageServer.LanguageServer;
 using Microsoft.CodeAnalysis.LanguageServer.Logging;
 using Microsoft.CodeAnalysis.LanguageServer.Services;
-using Microsoft.CodeAnalysis.LanguageServer.StarredSuggestions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using RoslynLog = Microsoft.CodeAnalysis.Internal.Log;
@@ -41,7 +41,7 @@ static async Task RunAsync(ServerConfiguration serverConfiguration, Cancellation
             throw new InvalidOperationException("Server cannot be started with both --stdio and --pipe options.");
         }
 
-        // Redirect Console.Out to try prevent the standard output stream from being corrupted. 
+        // Redirect Console.Out to try prevent the standard output stream from being corrupted.
         // This should be done before the logger is created as it can write to the standard output.
         Console.SetOut(new StreamWriter(Console.OpenStandardError()));
     }
@@ -117,7 +117,6 @@ static async Task RunAsync(ServerConfiguration serverConfiguration, Cancellation
     var workspaceFactory = exportProvider.GetExportedValue<LanguageServerWorkspaceFactory>();
 
     var serviceBrokerFactory = exportProvider.GetExportedValue<ServiceBrokerFactory>();
-    StarredCompletionAssemblyHelper.InitializeInstance(serverConfiguration.StarredCompletionsPath, extensionManager, loggerFactory, serviceBrokerFactory);
 
     LanguageServerHost? server = null;
     if (serverConfiguration.UseStdIo)
@@ -126,23 +125,39 @@ static async Task RunAsync(ServerConfiguration serverConfiguration, Cancellation
     }
     else
     {
-        var (clientPipeName, serverPipeName) = serverConfiguration.ServerPipeName is null
-            ? CreateNewPipeNames()
-            : (serverConfiguration.ServerPipeName, serverConfiguration.ServerPipeName);
+        Stream pipe;
+        if (serverConfiguration.ServerPipeName is not null)
+        {
+            // The VS Code LSP client passes a full pipe path (e.g. \\.\pipe\<guid> on Windows, /tmp/<id>.sock on Unix).
+            // NamedPipeClientStream expects just the pipe name on Windows (it prepends \\.\pipe\ itself),
+            // and the full socket path on Unix.
+            var pipeName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? serverConfiguration.ServerPipeName.Replace(@"\\.\pipe\", "")
+                : serverConfiguration.ServerPipeName;
+            var pipeClient = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut, PipeOptions.CurrentUserOnly | PipeOptions.Asynchronous);
+            await pipeClient.ConnectAsync(cancellationToken);
+            pipe = pipeClient;
+        }
+        else
+        {
+            var (clientPipeName, serverPipeName) = serverConfiguration.ServerPipeName is null
+                ? CreateNewPipeNames()
+                : (serverConfiguration.ServerPipeName, serverConfiguration.ServerPipeName);
+            var pipeServer = new NamedPipeServerStream(serverPipeName,
+                PipeDirection.InOut,
+                maxNumberOfServerInstances: 1,
+                PipeTransmissionMode.Byte,
+                PipeOptions.CurrentUserOnly | PipeOptions.Asynchronous);
 
-        var pipeServer = new NamedPipeServerStream(serverPipeName,
-            PipeDirection.InOut,
-            maxNumberOfServerInstances: 1,
-            PipeTransmissionMode.Byte,
-            PipeOptions.CurrentUserOnly | PipeOptions.Asynchronous);
+            // Send the named pipe connection info to the client
+            Console.WriteLine(JsonSerializer.Serialize(new NamedPipeInformation(clientPipeName)));
 
-        // Send the named pipe connection info to the client 
-        Console.WriteLine(JsonSerializer.Serialize(new NamedPipeInformation(clientPipeName)));
+            // Wait for connection from client
+            await pipeServer.WaitForConnectionAsync(cancellationToken);
+            pipe = pipeServer;
+        }
 
-        // Wait for connection from client
-        await pipeServer.WaitForConnectionAsync(cancellationToken);
-
-        server = new LanguageServerHost(pipeServer, pipeServer, exportProvider, loggerFactory, typeRefResolver);
+        server = new LanguageServerHost(pipe, pipe, exportProvider, loggerFactory, typeRefResolver);
     }
 
     server.Start();
@@ -152,29 +167,10 @@ static async Task RunAsync(ServerConfiguration serverConfiguration, Cancellation
 
     try
     {
-        if (serverConfiguration.ClientProcessId is int clientProcessId)
-        {
+        if (serverConfiguration.ClientProcessId is int clientProcessId && RoslynLanguageServer.TryRegisterClientProcessId(clientProcessId))
             logger.LogInformation("Monitoring client process {clientProcessId} for exit", clientProcessId);
-            var serverExitTask = server.WaitForExitAsync();
-            var clientProcessExitTask = WaitForClientProcessExitAsync(clientProcessId, logger);
-            var completedTask = await Task.WhenAny(serverExitTask, clientProcessExitTask);
 
-            if (completedTask == clientProcessExitTask)
-            {
-                logger.LogInformation("Client process {clientProcessId} exited, shutting down server", clientProcessId);
-
-                // With the client process exited, we cannot send logs or telemetry,
-                // so kill the server process immediately to ensure we exit in a timely manner.
-                Process.GetCurrentProcess().Kill();
-            }
-
-            // Await the task that completed to observe any exceptions.
-            await completedTask;
-        }
-        else
-        {
-            await server.WaitForExitAsync();
-        }
+        await server.WaitForExitAsync();
     }
     finally
     {
@@ -203,12 +199,6 @@ static RootCommand CreateCommand()
     var logLevelOption = new Option<LogLevel?>("--logLevel")
     {
         Description = "The minimum log verbosity.",
-        Required = false,
-    };
-
-    var starredCompletionsPathOption = new Option<string?>("--starredCompletionComponentPath")
-    {
-        Description = "The location of the starred completion component (if one exists).",
         Required = false,
     };
 
@@ -298,7 +288,6 @@ static RootCommand CreateCommand()
         debugOption,
         brokeredServicePipeNameOption,
         logLevelOption,
-        starredCompletionsPathOption,
         telemetryLevelOption,
         sessionIdOption,
         extensionAssemblyPathsOption,
@@ -318,7 +307,6 @@ static RootCommand CreateCommand()
     {
         var launchDebugger = parseResult.GetValue(debugOption);
         var logLevel = parseResult.GetValue(logLevelOption);
-        var starredCompletionsPath = parseResult.GetValue(starredCompletionsPathOption);
         var telemetryLevel = parseResult.GetValue(telemetryLevelOption);
         var sessionId = parseResult.GetValue(sessionIdOption);
         var extensionAssemblyPaths = parseResult.GetValue(extensionAssemblyPathsOption) ?? [];
@@ -335,7 +323,6 @@ static RootCommand CreateCommand()
         var serverConfiguration = new ServerConfiguration(
             LaunchDebugger: launchDebugger,
             LogConfiguration: new LogConfiguration(logLevel ?? LogLevel.Information),
-            StarredCompletionsPath: starredCompletionsPath,
             TelemetryLevel: telemetryLevel,
             SessionId: sessionId,
             ExtensionAssemblyPaths: extensionAssemblyPaths,
@@ -362,7 +349,7 @@ static (string clientPipe, string serverPipe) CreateNewPipeNames()
     const string WINDOWS_DOTNET_PREFIX = @"\\.\";
 
     // The pipe name constructed by some systems is very long (due to temp path).
-    // Shorten the unique id for the pipe. 
+    // Shorten the unique id for the pipe.
     var newGuid = Guid.NewGuid().ToString();
     var pipeName = newGuid.Split('-')[0];
 
