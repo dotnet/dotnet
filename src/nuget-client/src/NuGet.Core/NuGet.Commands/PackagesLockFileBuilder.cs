@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,7 +19,6 @@ namespace NuGet.Commands
     {
         public PackagesLockFile CreateNuGetLockFile(LockFile assetsFile)
         {
-            if (assetsFile == null) throw new ArgumentNullException(nameof(assetsFile));
             var lockFile = new PackagesLockFile(GetPackagesLockFileVersion(assetsFile));
 
             var libraryLookup = assetsFile.Libraries.Where(e => e.Type == LibraryType.Package)
@@ -28,17 +29,18 @@ namespace NuGet.Commands
                 var nuGettarget = new PackagesLockFileTarget()
                 {
                     TargetFramework = target.TargetFramework,
-                    RuntimeIdentifier = target.RuntimeIdentifier,
-                    TargetAlias = lockFile.Version >= 3 ? target.TargetAlias : null
+                    RuntimeIdentifier = target.RuntimeIdentifier
                 };
 
-                TargetFrameworkInformation? framework = assetsFile.PackageSpec.GetTargetFramework(target.TargetAlias);
+                var framework = assetsFile.PackageSpec.TargetFrameworks.FirstOrDefault(
+                    f => EqualityUtility.EqualsWithNullCheck(f.FrameworkName, target.TargetFramework));
+
                 IEnumerable<LockFileTargetLibrary> libraries = target.Libraries;
 
                 // check if this is RID-based graph then only add those libraries which differ from original TFM.
                 if (!string.IsNullOrEmpty(target.RuntimeIdentifier))
                 {
-                    LockFileTarget onlyTFM = assetsFile.Targets.First(t => EqualityUtility.EqualsWithNullCheck(t.TargetAlias, target.TargetAlias));
+                    var onlyTFM = assetsFile.Targets.First(t => EqualityUtility.EqualsWithNullCheck(t.TargetFramework, target.TargetFramework));
 
                     libraries = target.Libraries.Where(lib => !onlyTFM.Libraries.Any(tfmLib => tfmLib.Equals(lib)));
                 }
@@ -58,7 +60,7 @@ namespace NuGet.Commands
                     var framework_dep = framework?.Dependencies.FirstOrDefault(
                         dep => StringComparer.OrdinalIgnoreCase.Equals(dep.Name, library.Name));
 
-                    CentralPackageVersion? centralPackageVersion = null;
+                    CentralPackageVersion centralPackageVersion = null;
                     framework?.CentralPackageVersions.TryGetValue(library.Name, out centralPackageVersion);
 
                     if (framework_dep != null)
@@ -116,20 +118,15 @@ namespace NuGet.Commands
             return lockFile;
         }
 
-        private static int GetPackagesLockFileVersion(LockFile assetsFile)
+        private int GetPackagesLockFileVersion(LockFile assetsFile)
         {
-            if (RestoreCommand.HasDuplicateFrameworks(assetsFile.PackageSpec))
-            {
-                return 3; // Version 3 for alias support
-            }
-
             // Increase the version only for the projects opted-in central version management
             if (assetsFile.PackageSpec.RestoreMetadata.CentralPackageVersionsEnabled)
             {
-                return 2;
+                return PackagesLockFileFormat.PackagesLockFileVersion;
             }
 
-            return 1;
+            return PackagesLockFileFormat.Version;
         }
     }
 }

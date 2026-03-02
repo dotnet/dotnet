@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using NuGet.Common;
+using NuGet.Frameworks;
 using NuGet.ProjectModel;
 using NuGet.Shared;
 
@@ -18,16 +19,15 @@ namespace NuGet.Commands
     /// <summary>
     /// Class to hold ProjectWide and PackageSpecific WarningProperties.
     /// </summary>
-    internal class WarningPropertiesCollection : IEquatable<WarningPropertiesCollection>
+    public class WarningPropertiesCollection : IEquatable<WarningPropertiesCollection>
     {
-
-        private readonly ConcurrentDictionary<string, string> _getTargetGraphAliasCache = new ConcurrentDictionary<string, string>();
+        private readonly ConcurrentDictionary<string, NuGetFramework> _getFrameworkCache = new ConcurrentDictionary<string, NuGetFramework>();
 
         /// <summary>
         /// Contains the target frameworks for the project.
         /// These are used for no warn filtering in case of a log message without a target graph.
         /// </summary>
-        public IReadOnlyList<string> ProjectFrameworks { get; }
+        public IReadOnlyList<NuGetFramework> ProjectFrameworks { get; }
 
         /// <summary>
         /// Contains Project wide properties for Warnings.
@@ -42,11 +42,11 @@ namespace NuGet.Commands
 
         public WarningPropertiesCollection(WarningProperties projectWideWarningProperties,
             PackageSpecificWarningProperties packageSpecificWarningProperties,
-            IReadOnlyList<string> projectFrameworks)
+            IReadOnlyList<NuGetFramework> projectFrameworks)
         {
             ProjectWideWarningProperties = projectWideWarningProperties;
             PackageSpecificWarningProperties = packageSpecificWarningProperties;
-            ProjectFrameworks = projectFrameworks ?? new ReadOnlyCollection<string>(new List<string>());
+            ProjectFrameworks = projectFrameworks ?? new ReadOnlyCollection<NuGetFramework>(new List<NuGetFramework>());
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace NuGet.Commands
                 !string.IsNullOrEmpty(message.LibraryId))
             {
                 // If the message does not contain a target graph, assume that it is applicable for all project frameworks.
-                if (!message.TargetGraphs.Any())
+                if (!message.TargetGraphs.Select(GetNuGetFramework).Any())
                 {
                     // Suppress the warning if the code + libraryId combination is suppressed for all project frameworks.
                     if (ProjectFrameworks.Count > 0 &&
@@ -112,12 +112,10 @@ namespace NuGet.Commands
                 }
                 else
                 {
-                    bool legacy = ProjectFrameworks.Count == 1 && string.IsNullOrEmpty(ProjectFrameworks[0]);
-
                     // Get all the target graphs for which code + libraryId combination is not suppressed.
                     message.TargetGraphs = message
                         .TargetGraphs
-                        .Where(e => !PackageSpecificWarningProperties.Contains(message.Code, message.LibraryId, legacy ? string.Empty : GetTargetGraphAlias(e)))
+                        .Where(e => !PackageSpecificWarningProperties.Contains(message.Code, message.LibraryId, GetNuGetFramework(e)))
                         .ToList();
 
                     // If the message is left with no target graphs then suppress it.
@@ -176,9 +174,16 @@ namespace NuGet.Commands
             }
         }
 
-        private string GetTargetGraphAlias(string targetGraph)
+        private NuGetFramework GetNuGetFramework(string targetGraph)
         {
-            return _getTargetGraphAliasCache.GetOrAdd(targetGraph, (s) => s.Split('/')[0]);
+            return _getFrameworkCache.GetOrAdd(targetGraph, (s) => GetNuGetFrameworkFromTargetGraph(s));
+        }
+
+        private static NuGetFramework GetNuGetFrameworkFromTargetGraph(string targetGraph)
+        {
+            var parts = targetGraph.Split('/');
+
+            return NuGetFramework.Parse(parts[0]);
         }
 
         public override int GetHashCode()
@@ -211,7 +216,7 @@ namespace NuGet.Commands
 
             return EqualityUtility.EqualsWithNullCheck(ProjectWideWarningProperties, other.ProjectWideWarningProperties) &&
                 EqualityUtility.EqualsWithNullCheck(PackageSpecificWarningProperties, other.PackageSpecificWarningProperties) &&
-                EqualityUtility.OrderedEquals(ProjectFrameworks, other.ProjectFrameworks, (fx) => fx, orderComparer: StringComparer.OrdinalIgnoreCase, StringComparer.OrdinalIgnoreCase);
+                EqualityUtility.OrderedEquals(ProjectFrameworks, other.ProjectFrameworks, (fx) => fx.Framework, orderComparer: StringComparer.OrdinalIgnoreCase, sequenceComparer: NuGetFrameworkFullComparer.Instance);
         }
     }
 }

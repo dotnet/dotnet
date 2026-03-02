@@ -179,10 +179,10 @@ NuGet.Commands.IRestoreTargetGraph
 ~NuGet.Commands.IRestoreTargetGraph.Graphs.get -> System.Collections.Generic.IEnumerable<NuGet.DependencyResolver.GraphNode<NuGet.DependencyResolver.RemoteResolveResult>>
 NuGet.Commands.IRestoreTargetGraph.InConflict.get -> bool
 ~NuGet.Commands.IRestoreTargetGraph.Install.get -> System.Collections.Generic.ISet<NuGet.DependencyResolver.RemoteMatch>
+~NuGet.Commands.IRestoreTargetGraph.Name.get -> string
 ~NuGet.Commands.IRestoreTargetGraph.ResolvedDependencies.get -> System.Collections.Generic.ISet<NuGet.Commands.ResolvedDependencyKey>
 ~NuGet.Commands.IRestoreTargetGraph.RuntimeGraph.get -> NuGet.RuntimeModel.RuntimeGraph
 ~NuGet.Commands.IRestoreTargetGraph.RuntimeIdentifier.get -> string
-~NuGet.Commands.IRestoreTargetGraph.TargetAlias.get -> string
 ~NuGet.Commands.IRestoreTargetGraph.TargetGraphName.get -> string
 ~NuGet.Commands.IRestoreTargetGraph.Unresolved.get -> System.Collections.Generic.ISet<NuGet.LibraryModel.LibraryRange>
 NuGet.Commands.ISignCommandRunner
@@ -489,8 +489,12 @@ NuGet.Commands.RestoreArgs.HideWarningsAndErrors.get -> bool
 NuGet.Commands.RestoreArgs.HideWarningsAndErrors.set -> void
 ~NuGet.Commands.RestoreArgs.Inputs.get -> System.Collections.Generic.List<string>
 ~NuGet.Commands.RestoreArgs.Inputs.set -> void
+NuGet.Commands.RestoreArgs.IsLowercaseGlobalPackagesFolder.get -> bool?
+NuGet.Commands.RestoreArgs.IsLowercaseGlobalPackagesFolder.set -> void
 NuGet.Commands.RestoreArgs.IsRestoreOriginalAction.get -> bool
 NuGet.Commands.RestoreArgs.IsRestoreOriginalAction.set -> void
+NuGet.Commands.RestoreArgs.LockFileVersion.get -> int?
+NuGet.Commands.RestoreArgs.LockFileVersion.set -> void
 ~NuGet.Commands.RestoreArgs.Log.get -> NuGet.Common.ILogger
 ~NuGet.Commands.RestoreArgs.Log.set -> void
 ~NuGet.Commands.RestoreArgs.MachineWideSettings.get -> NuGet.Configuration.IMachineWideSettings
@@ -650,10 +654,10 @@ NuGet.Commands.RestoreTargetGraph
 ~NuGet.Commands.RestoreTargetGraph.Graphs.get -> System.Collections.Generic.IEnumerable<NuGet.DependencyResolver.GraphNode<NuGet.DependencyResolver.RemoteResolveResult>>
 NuGet.Commands.RestoreTargetGraph.InConflict.get -> bool
 ~NuGet.Commands.RestoreTargetGraph.Install.get -> System.Collections.Generic.ISet<NuGet.DependencyResolver.RemoteMatch>
+~NuGet.Commands.RestoreTargetGraph.Name.get -> string
 ~NuGet.Commands.RestoreTargetGraph.ResolvedDependencies.get -> System.Collections.Generic.ISet<NuGet.Commands.ResolvedDependencyKey>
 ~NuGet.Commands.RestoreTargetGraph.RuntimeGraph.get -> NuGet.RuntimeModel.RuntimeGraph
 ~NuGet.Commands.RestoreTargetGraph.RuntimeIdentifier.get -> string
-~NuGet.Commands.RestoreTargetGraph.TargetAlias.get -> string
 ~NuGet.Commands.RestoreTargetGraph.TargetGraphName.get -> string
 ~NuGet.Commands.RestoreTargetGraph.Unresolved.get -> System.Collections.Generic.ISet<NuGet.LibraryModel.LibraryRange>
 NuGet.Commands.SignArgs
@@ -743,7 +747,6 @@ NuGet.Commands.TransitiveNoWarnUtils.NodeWarningProperties
 NuGet.Commands.TrustedSignerActionsProvider
 ~NuGet.Commands.TrustedSignerActionsProvider.AddOrUpdateTrustedSigner(string name, string fingerprint, NuGet.Common.HashAlgorithmName hashAlgorithm, bool allowUntrustedRoot) -> void
 ~NuGet.Commands.TrustedSignerActionsProvider.AddTrustedRepositoryAsync(string name, System.Uri serviceIndex, System.Collections.Generic.IEnumerable<string> owners, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
-~NuGet.Commands.TrustedSignerActionsProvider.AddTrustedSignerAsync(string name, NuGet.Packaging.Signing.ISignedPackageReader package, NuGet.Packaging.Signing.VerificationTarget trustTarget, bool allowUntrustedRoot, System.Collections.Generic.IEnumerable<string> owners, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
 ~NuGet.Commands.TrustedSignerActionsProvider.SyncTrustedRepositoryAsync(string name, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
 ~NuGet.Commands.TrustedSignerActionsProvider.TrustedSignerActionsProvider(NuGet.Packaging.Signing.ITrustedSignersProvider trustedSignersProvider, NuGet.Common.ILogger logger) -> void
 NuGet.Commands.TrustedSignersArgs
@@ -993,7 +996,10 @@ static NuGet.Commands.Restore.Utility.PackageSpecFactory.GetPackageSpec(NuGet.Co
 ~static NuGet.Commands.RestoreSpecException.Create(string message, System.Collections.Generic.IEnumerable<string> files) -> NuGet.Commands.RestoreSpecException
 ~static NuGet.Commands.RestoreSpecException.Create(string message, System.Collections.Generic.IEnumerable<string> files, System.Exception innerException) -> NuGet.Commands.RestoreSpecException
 ~static NuGet.Commands.RestoreSummary.Log(NuGet.Common.ILogger logger, System.Collections.Generic.IReadOnlyList<NuGet.Commands.RestoreSummary> restoreSummaries, bool logErrors = false) -> void
+~static NuGet.Commands.RestoreTargetGraph.Create(NuGet.RuntimeModel.RuntimeGraph runtimeGraph, System.Collections.Generic.IEnumerable<NuGet.DependencyResolver.GraphNode<NuGet.DependencyResolver.RemoteResolveResult>> graphs, NuGet.DependencyResolver.RemoteWalkContext context, NuGet.Common.ILogger log, NuGet.Frameworks.NuGetFramework framework, string runtimeIdentifier) -> NuGet.Commands.RestoreTargetGraph
+~static NuGet.Commands.RestoreTargetGraph.Create(System.Collections.Generic.IEnumerable<NuGet.DependencyResolver.GraphNode<NuGet.DependencyResolver.RemoteResolveResult>> graphs, NuGet.DependencyResolver.RemoteWalkContext context, NuGet.Common.ILogger logger, NuGet.Frameworks.NuGetFramework framework) -> NuGet.Commands.RestoreTargetGraph
 ~static NuGet.Commands.SpecValidationUtility.ValidateDependencySpec(NuGet.ProjectModel.DependencyGraphSpec spec) -> void
+~static NuGet.Commands.SpecValidationUtility.ValidateDependencySpec(NuGet.ProjectModel.DependencyGraphSpec spec, System.Collections.Generic.HashSet<string> projectsToSkip) -> void
 ~static NuGet.Commands.SpecValidationUtility.ValidateDependencySpec(NuGet.ProjectModel.DependencyGraphSpec spec, System.Collections.Generic.HashSet<string> projectsToSkip, NuGet.Common.ILogger logger) -> void
 ~static NuGet.Commands.SpecValidationUtility.ValidateProjectSpec(NuGet.ProjectModel.PackageSpec spec) -> void
 ~static NuGet.Commands.ToolRestoreUtility.GetSpec(string projectFilePath, string id, NuGet.Versioning.VersionRange versionRange, NuGet.Frameworks.NuGetFramework framework, string packagesPath, System.Collections.Generic.IList<string> fallbackFolders, System.Collections.Generic.IList<NuGet.Configuration.PackageSource> sources, NuGet.ProjectModel.WarningProperties projectWideWarningProperties) -> NuGet.ProjectModel.PackageSpec

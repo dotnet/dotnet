@@ -22,6 +22,7 @@
     "Microsoft.VisualStudio.Component.IntelliCode",
     "Microsoft.VisualStudio.Component.ManagedDesktop.Prerequisites",
     "Microsoft.VisualStudio.Workload.ManagedDesktop",
+    "Microsoft.Net.Component.4.6.TargetingPack",
     "Microsoft.VisualStudio.Component.VSSDK",
     "Microsoft.VisualStudio.ComponentGroup.VisualStudioExtension.Prerequisites",
     "Microsoft.VisualStudio.Workload.VisualStudioExtension",

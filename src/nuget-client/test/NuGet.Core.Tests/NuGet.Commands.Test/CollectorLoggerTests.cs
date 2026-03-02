@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using NuGet.Common;
+using NuGet.Frameworks;
 using NuGet.ProjectModel;
 using Xunit;
 
@@ -502,12 +503,13 @@ namespace NuGet.Commands.Test
             // Arrange
             var libraryId = "test_library";
             var frameworkString = "net45";
+            var targetFramework = NuGetFramework.Parse(frameworkString);
             var noWarnSet = new HashSet<NuGetLogCode> { };
             var warnAsErrorSet = new HashSet<NuGetLogCode> { };
             var warningsNotAsErrors = new HashSet<NuGetLogCode>();
             var allWarningsAsErrors = false;
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, frameworkString);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
 
             var innerLogger = new Mock<ILogger>();
             var collector = new RestoreCollectorLogger(innerLogger.Object)
@@ -540,12 +542,13 @@ namespace NuGet.Commands.Test
             // Arrange
             var libraryId = "test_library";
             var frameworkString = "net45";
+            var targetFramework = NuGetFramework.Parse(frameworkString);
             var noWarnSet = new HashSet<NuGetLogCode> { };
             var warnAsErrorSet = new HashSet<NuGetLogCode> { };
             var warningsNotAsErrors = new HashSet<NuGetLogCode>();
             var allWarningsAsErrors = false;
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, frameworkString);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
 
             var innerLogger = new Mock<ILogger>();
             var collector = new RestoreCollectorLogger(innerLogger.Object)
@@ -578,14 +581,15 @@ namespace NuGet.Commands.Test
             // Arrange
             var libraryId = "test_library";
             var frameworkString = "net45";
+            var targetFramework = NuGetFramework.Parse(frameworkString);
             var noWarnSet = new HashSet<NuGetLogCode> { };
             var warnAsErrorSet = new HashSet<NuGetLogCode> { };
             var warningsNotAsErrors = new HashSet<NuGetLogCode>();
             var allWarningsAsErrors = false;
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, frameworkString);
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1601, libraryId, frameworkString);
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1605, libraryId, frameworkString);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1601, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1605, libraryId, targetFramework);
 
             var innerLogger = new Mock<ILogger>();
             var collector = new RestoreCollectorLogger(innerLogger.Object)
@@ -620,12 +624,13 @@ namespace NuGet.Commands.Test
             // Arrange
             var libraryId = "test_library";
             var frameworkString = "net45";
+            var targetFramework = NuGetFramework.Parse(frameworkString);
             var noWarnSet = new HashSet<NuGetLogCode> { };
             var warnAsErrorSet = new HashSet<NuGetLogCode> { };
             var warningsNotAsErrors = new HashSet<NuGetLogCode>();
             var allWarningsAsErrors = false;
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.AddRangeOfCodes([NuGetLogCode.NU1500, NuGetLogCode.NU1601, NuGetLogCode.NU1605], libraryId, frameworkString);
+            packageSpecificWarningProperties.AddRangeOfCodes([NuGetLogCode.NU1500, NuGetLogCode.NU1601, NuGetLogCode.NU1605], libraryId, targetFramework);
 
             var innerLogger = new Mock<ILogger>();
             var collector = new RestoreCollectorLogger(innerLogger.Object)
@@ -660,12 +665,13 @@ namespace NuGet.Commands.Test
             // Arrange
             var libraryId = "test_library";
             var frameworkString = "net45";
+            var targetFramework = NuGetFramework.Parse(frameworkString);
             var noWarnSet = new HashSet<NuGetLogCode> { };
             var warnAsErrorSet = new HashSet<NuGetLogCode> { };
             var warningsNotAsErrors = new HashSet<NuGetLogCode>();
             var allWarningsAsErrors = false;
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.AddRangeOfCodes([NuGetLogCode.NU1500], libraryId, frameworkString);
+            packageSpecificWarningProperties.AddRangeOfCodes([NuGetLogCode.NU1500], libraryId, targetFramework);
 
             var innerLogger = new Mock<ILogger>();
             var collector = new RestoreCollectorLogger(innerLogger.Object)
@@ -702,12 +708,13 @@ namespace NuGet.Commands.Test
             // Arrange
             var libraryId = "test_library";
             var frameworkString = "net45";
+            var targetFramework = NuGetFramework.Parse(frameworkString);
             var noWarnSet = new HashSet<NuGetLogCode> { };
             var warnAsErrorSet = new HashSet<NuGetLogCode> { };
             var warningsNotAsErrors = new HashSet<NuGetLogCode>();
             var allWarningsAsErrors = false;
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, frameworkString);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
 
             var innerLogger = new Mock<ILogger>();
             var collector = new RestoreCollectorLogger(innerLogger.Object)
@@ -715,7 +722,7 @@ namespace NuGet.Commands.Test
                 ProjectWarningPropertiesCollection = new WarningPropertiesCollection(
                     new WarningProperties(warnAsErrorSet, noWarnSet, allWarningsAsErrors, warningsNotAsErrors),
                     packageSpecificWarningProperties,
-                    new List<string> { frameworkString })
+                    new List<NuGetFramework> { targetFramework })
             };
 
             // Act
@@ -740,13 +747,15 @@ namespace NuGet.Commands.Test
             // Arrange
             var libraryId = "test_library";
             var frameworkString = "net45";
+            var targetFramework = NuGetFramework.Parse(frameworkString);
             var netcoreFrameworkString = "netcoreapp1.0";
+            var netcoreTargetFramework = NuGetFramework.Parse(netcoreFrameworkString);
             var noWarnSet = new HashSet<NuGetLogCode> { };
             var warnAsErrorSet = new HashSet<NuGetLogCode> { };
             var warningsNotAsErrors = new HashSet<NuGetLogCode>();
             var allWarningsAsErrors = false;
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, frameworkString);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
 
             var innerLogger = new Mock<ILogger>();
             var collector = new RestoreCollectorLogger(innerLogger.Object)
@@ -754,7 +763,7 @@ namespace NuGet.Commands.Test
                 ProjectWarningPropertiesCollection = new WarningPropertiesCollection(
                     new WarningProperties(warnAsErrorSet, noWarnSet, allWarningsAsErrors, warningsNotAsErrors),
                     packageSpecificWarningProperties,
-                    new List<string> { frameworkString, netcoreFrameworkString })
+                    new List<NuGetFramework> { targetFramework, netcoreTargetFramework })
             };
 
             // Act
@@ -779,14 +788,15 @@ namespace NuGet.Commands.Test
             // Arrange
             var libraryId = "test_library";
             var frameworkString = "net45";
+            var targetFramework = NuGetFramework.Parse(frameworkString);
             var noWarnSet = new HashSet<NuGetLogCode> { };
             var warnAsErrorSet = new HashSet<NuGetLogCode> { };
             var warningsNotAsErrors = new HashSet<NuGetLogCode>();
             var allWarningsAsErrors = false;
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, frameworkString);
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1601, libraryId, frameworkString);
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1605, libraryId, frameworkString);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1601, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1605, libraryId, targetFramework);
 
             var innerLogger = new Mock<ILogger>();
             var collector = new RestoreCollectorLogger(innerLogger.Object)
@@ -794,7 +804,7 @@ namespace NuGet.Commands.Test
                 ProjectWarningPropertiesCollection = new WarningPropertiesCollection(
                     new WarningProperties(warnAsErrorSet, noWarnSet, allWarningsAsErrors, warningsNotAsErrors),
                     packageSpecificWarningProperties,
-                    new List<string> { frameworkString })
+                    new List<NuGetFramework> { targetFramework })
             };
 
             // Act
@@ -821,15 +831,17 @@ namespace NuGet.Commands.Test
             // Arrange
             var libraryId = "test_library";
             var frameworkString = "net45";
+            var targetFramework = NuGetFramework.Parse(frameworkString);
             var netcoreFrameworkString = "netcoreapp1.0";
+            var netcoreTargetFramework = NuGetFramework.Parse(netcoreFrameworkString);
             var noWarnSet = new HashSet<NuGetLogCode> { };
             var warnAsErrorSet = new HashSet<NuGetLogCode> { };
             var warningsNotAsErrors = new HashSet<NuGetLogCode>();
             var allWarningsAsErrors = false;
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, frameworkString);
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1601, libraryId, frameworkString);
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1605, libraryId, frameworkString);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1601, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1605, libraryId, targetFramework);
 
             var innerLogger = new Mock<ILogger>();
             var collector = new RestoreCollectorLogger(innerLogger.Object)
@@ -837,7 +849,7 @@ namespace NuGet.Commands.Test
                 ProjectWarningPropertiesCollection = new WarningPropertiesCollection(
                     new WarningProperties(warnAsErrorSet, noWarnSet, allWarningsAsErrors, warningsNotAsErrors),
                     packageSpecificWarningProperties,
-                    new List<string> { frameworkString, netcoreFrameworkString })
+                    new List<NuGetFramework> { targetFramework, netcoreTargetFramework })
             };
 
             // Act
@@ -965,14 +977,15 @@ namespace NuGet.Commands.Test
             // Arrange
             var libraryId = "test_library";
             var frameworkString = "net45";
+            var targetFramework = NuGetFramework.Parse(frameworkString);
             var noWarnSet = new HashSet<NuGetLogCode> { };
             var warnAsErrorSet = new HashSet<NuGetLogCode> { NuGetLogCode.NU1500 };
             var warningsNotAsErrors = new HashSet<NuGetLogCode>();
             var allWarningsAsErrors = false;
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, frameworkString);
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1601, libraryId, frameworkString);
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1605, libraryId, frameworkString);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1601, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1605, libraryId, targetFramework);
 
             var innerLogger = new Mock<ILogger>();
             var collector = new RestoreCollectorLogger(innerLogger.Object)
@@ -1007,14 +1020,15 @@ namespace NuGet.Commands.Test
             // Arrange
             var libraryId = "test_library";
             var frameworkString = "net45";
+            var targetFramework = NuGetFramework.Parse(frameworkString);
             var noWarnSet = new HashSet<NuGetLogCode> { };
             var warnAsErrorSet = new HashSet<NuGetLogCode> { NuGetLogCode.NU1500 };
             var warningsNotAsErrors = new HashSet<NuGetLogCode>();
             var allWarningsAsErrors = true;
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, frameworkString);
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1601, libraryId, frameworkString);
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1605, libraryId, frameworkString);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1601, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1605, libraryId, targetFramework);
 
             var innerLogger = new Mock<ILogger>();
             var collector = new RestoreCollectorLogger(innerLogger.Object)
@@ -1074,14 +1088,15 @@ namespace NuGet.Commands.Test
             // Arrange
             var libraryId = "test_library";
             var frameworkString = "net45";
+            var targetFramework = NuGetFramework.Parse(frameworkString);
             var noWarnSet = new HashSet<NuGetLogCode> { };
             var warnAsErrorSet = new HashSet<NuGetLogCode> { };
             var warningsNotAsErrors = new HashSet<NuGetLogCode>();
             var allWarningsAsErrors = false;
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, frameworkString);
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1601, libraryId, frameworkString);
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1605, libraryId, frameworkString);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1601, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1605, libraryId, targetFramework);
 
             var innerLogger = new Mock<ILogger>();
             var collector = new RestoreCollectorLogger(innerLogger.Object)

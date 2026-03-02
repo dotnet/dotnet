@@ -226,7 +226,7 @@ namespace NuGet.DependencyResolver
                 targetFramework = atfFramework.RootFramework;
             }
 
-            var key = new LockFileCacheKey(targetFramework, runtimeIdentifier, targetAlias);
+            var key = new LockFileCacheKey(targetFramework, runtimeIdentifier);
 
             // This is only applicable when packages has to be resolved from packages.lock.json file
             if (lockFileLibraries.TryGetValue(key, out var libraries))

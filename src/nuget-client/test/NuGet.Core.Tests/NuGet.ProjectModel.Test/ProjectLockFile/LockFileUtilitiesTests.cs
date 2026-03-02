@@ -633,7 +633,7 @@ namespace NuGet.ProjectModel.Test.ProjectLockFile
                         .Build();
 
             var lockFile2 = new PackagesLockFileBuilder()
-                        .WithVersion(2)
+                        .WithVersion(PackagesLockFileFormat.PackagesLockFileVersion)
                         .WithTarget(target => target
                         .WithFramework(CommonFrameworks.NetStandard20)
                         .WithDependency(dep => dep
