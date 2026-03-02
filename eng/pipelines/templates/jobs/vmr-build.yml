@@ -239,6 +239,15 @@ jobs:
   - name: failedJobArtifactName
     value: $(successfulJobArtifactName)_Attempt$(System.JobAttempt)
 
+  - name: failedSDKJobArtifactName
+    value: $(Agent.JobName)_SDK_Artifacts_Attempt$(System.JobAttempt)
+
+  - name: failedRuntimeJobArtifactName
+    value: $(Agent.JobName)_Runtime_Artifacts_Attempt$(System.JobAttempt)
+
+  - name: failedAspNetCoreJobArtifactName
+    value: $(Agent.JobName)_AspNetCore_Artifacts_Attempt$(System.JobAttempt)
+
   # manually disable CodeQL until https://dev.azure.com/mseng/1ES/_workitems/edit/2211548 is implemented
   # CodeQL doesn't work on arm64 macOS, see https://portal.microsofticm.com/imp/v5/incidents/details/532165079/summary
   - ${{ if eq(parameters.pool.os, 'macOS') }}:
@@ -392,6 +401,30 @@ jobs:
       path: $(artifactsPrepublishDir)
       artifact: $(failedJobArtifactName)
       displayName: Publish Artifacts (On Failure)
+      condition: failed()
+      continueOnError: true
+      sbomEnabled: true
+
+    - output: pipelineArtifact
+      path: $(sourcesPath)/src/sdk/artifacts/packages/Release
+      artifact: $(failedSDKJobArtifactName)
+      displayName: Publish SDK Artifacts (On Failure)
+      condition: failed()
+      continueOnError: true
+      sbomEnabled: true
+
+    - output: pipelineArtifact
+      path: $(sourcesPath)/src/runtime/artifacts/packages/Release
+      artifact: $(failedRuntimeJobArtifactName)
+      displayName: Publish Runtime Artifacts (On Failure)
+      condition: failed()
+      continueOnError: true
+      sbomEnabled: true
+
+    - output: pipelineArtifact
+      path: $(sourcesPath)/src/aspnetcore/artifacts/packages/Release
+      artifact: $(failedAspNetCoreJobArtifactName)
+      displayName: Publish Aspentcore Artifacts (On Failure)
       condition: failed()
       continueOnError: true
       sbomEnabled: true
