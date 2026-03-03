@@ -283,7 +283,7 @@ namespace Microsoft.DotNet.SignTool
                                  ? wix3ToolsPath
                                  : wixToolsPath;
 
-                if (!BatchSignUtil.RunWixTool(createFileName, outputDir, workingDir, wixPath, log))
+                if (!BatchSignUtil.RunWixTool(createFileName, outputDir, workingDir, wixPath, log).GetAwaiter().GetResult())
                 {
                     log.LogError($"Packaging of wix file '{FileSignInfo.FullPath}' failed");
                     return;

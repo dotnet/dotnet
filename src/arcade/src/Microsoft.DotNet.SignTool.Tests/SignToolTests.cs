@@ -3354,7 +3354,7 @@ $@"
         [InlineData(true)]
         [InlineData(false)]
         [Trait("Category", "SkipWhenLiveUnitTesting")]
-        public void RunWixToolRunsOrFailsProperly(bool deleteWxsBeforeRunningTool)
+        public async System.Threading.Tasks.Task RunWixToolRunsOrFailsProperly(bool deleteWxsBeforeRunningTool)
         {
             var task = new SignToolTask { BuildEngine = new FakeBuildEngine() };
 
@@ -3379,7 +3379,7 @@ $@"
                     File.Delete(Path.Combine(workingDir, "bundle.wxs"));
                 }
 
-                BatchSignUtil.RunWixTool(createFileName, outputDir, workingDir, wixToolsPath, task.Log).Should().Be(!deleteWxsBeforeRunningTool);
+                (await BatchSignUtil.RunWixTool(createFileName, outputDir, workingDir, wixToolsPath, task.Log)).Should().Be(!deleteWxsBeforeRunningTool);
                 File.Exists(outputFileName).Should().Be(!deleteWxsBeforeRunningTool);
             }
             finally
@@ -3393,12 +3393,12 @@ $@"
         /// Run a wix tool, but with an empty wix path.
         /// </summary>
         [Fact]
-        public void RunWixToolThrowsErrorIfNoWixToolsProvided()
+        public async System.Threading.Tasks.Task RunWixToolThrowsErrorIfNoWixToolsProvided()
         {
             var fakeBuildEngine = new FakeBuildEngine();
             var task = new SignToolTask { BuildEngine = fakeBuildEngine };
 
-            BatchSignUtil.RunWixTool("create.cmd", "foodir", "bardir", null, task.Log).Should().BeFalse();
+            (await BatchSignUtil.RunWixTool("create.cmd", "foodir", "bardir", null, task.Log)).Should().BeFalse();
             task.Log.HasLoggedErrors.Should().BeTrue();
             fakeBuildEngine.LogErrorEvents.Should().Contain(e => e.Message.Contains("WixToolsPath must be defined to run WiX tooling"));
         }
@@ -3408,13 +3408,13 @@ $@"
         /// provided
         /// </summary>
         [Fact]
-        public void RunWixToolThrowsErrorIfWixToolsProvidedButDirDoesNotExist()
+        public async System.Threading.Tasks.Task RunWixToolThrowsErrorIfWixToolsProvidedButDirDoesNotExist()
         {
             const string totalWixToolDir = "totally/wix/tools";
             var fakeBuildEngine = new FakeBuildEngine();
             var task = new SignToolTask { BuildEngine = fakeBuildEngine };
 
-            BatchSignUtil.RunWixTool("create.cmd", "foodir", "bardir", "totally/wix/tools", task.Log).Should().BeFalse();
+            (await BatchSignUtil.RunWixTool("create.cmd", "foodir", "bardir", "totally/wix/tools", task.Log)).Should().BeFalse();
             task.Log.HasLoggedErrors.Should().BeTrue();
             fakeBuildEngine.LogErrorEvents.Should().Contain(e => e.Message.Contains($"WixToolsPath '{totalWixToolDir}' not found."));
         }
