@@ -69,3 +69,9 @@ compat text eol=lf
 #   not treat as generated
 ###############################################################################
 **/build/** linguist-generated=false
+
+###############################################################################
+# Set file behavior to:
+#   treat as JSONC (JSON with Comments) for GitHub syntax highlighting
+###############################################################################
+*.json linguist-language=JSONC
