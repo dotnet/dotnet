@@ -37,12 +37,12 @@ Microsoft.Extensions.DependencyInjection.IServiceCollection</PackageDescription>
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == '$(NetCoreAppCurrent)'">
-    <ProjectReference Include="$(LibrariesProjectRoot)System.Collections\ref\System.Collections.csproj" />
-    <ProjectReference Include="$(LibrariesProjectRoot)System.Collections.Concurrent\ref\System.Collections.Concurrent.csproj" />
-    <ProjectReference Include="$(LibrariesProjectRoot)System.ComponentModel\ref\System.ComponentModel.csproj" />
-    <ProjectReference Include="$(LibrariesProjectRoot)System.Diagnostics.StackTrace\ref\System.Diagnostics.StackTrace.csproj" />
-    <ProjectReference Include="$(LibrariesProjectRoot)System.Linq.Expressions\ref\System.Linq.Expressions.csproj" />
-    <ProjectReference Include="$(LibrariesProjectRoot)System.Memory\ref\System.Memory.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Collections\src\System.Collections.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Collections.Concurrent\src\System.Collections.Concurrent.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.ComponentModel\src\System.ComponentModel.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Diagnostics.StackTrace\src\System.Diagnostics.StackTrace.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Linq.Expressions\src\System.Linq.Expressions.csproj" />
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Memory\src\System.Memory.csproj" />
     <ProjectReference Include="$(LibrariesProjectRoot)System.Runtime\src\System.Runtime.csproj" />
     <ProjectReference Include="$(LibrariesProjectRoot)System.Runtime.Loader\src\System.Runtime.Loader.csproj" />
   </ItemGroup>
