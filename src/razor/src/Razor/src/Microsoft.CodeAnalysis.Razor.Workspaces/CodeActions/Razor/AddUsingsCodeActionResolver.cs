@@ -43,7 +43,7 @@ internal class AddUsingsCodeActionResolver : IRazorCodeActionResolver
         documentChanges.Add(new TextDocumentEdit()
         {
             TextDocument = codeDocumentIdentifier,
-            Edits = [AddUsingsHelper.CreateAddUsingTextEdit(actionParams.Namespace, codeDocument)]
+            Edits = [UsingDirectiveHelper.CreateAddUsingTextEdit(actionParams.Namespace, codeDocument)]
         });
 
         return new WorkspaceEdit()

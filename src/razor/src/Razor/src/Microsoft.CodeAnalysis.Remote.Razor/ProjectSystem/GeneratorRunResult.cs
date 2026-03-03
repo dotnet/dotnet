@@ -45,7 +45,7 @@ internal readonly record struct GeneratorRunResult(RazorGeneratorResult Generato
             ?? throw new InvalidOperationException(SR.FormatCouldnt_get_the_source_generated_document_for_hint_name(hintName));
     }
 
-    public static async Task<GeneratorRunResult> CreateAsync(bool throwIfNotFound, Project project, RemoteSnapshotManager snapshotManager, CancellationToken cancellationToken)
+    public static async Task<GeneratorRunResult> CreateAsync(bool throwIfNotFound, Project project, CancellationToken cancellationToken)
     {
         var result = await project.GetSourceGeneratorRunResultAsync(cancellationToken).ConfigureAwait(false);
         if (result is null)
@@ -81,17 +81,6 @@ internal readonly record struct GeneratorRunResult(RazorGeneratorResult Generato
         if (!runResult.HostOutputs.TryGetValue(nameof(RazorGeneratorResult), out var objectResult))
 #pragma warning restore RSEXPERIMENTAL004 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
         {
-            // We know the generator is referenced, or we wouldn't have gotten past the above checks. We also know cohosting is turned on, since we got here.
-            // There is a race condition that can happen where if Roslyn runs the generator before Razor has a chance to initialize, then Roslyn will have
-            // cached the fact that cohosting was off, and any subsequent runs of the generator will not produce a host output. We can work around this by
-            // making an innocuous change to the project, and trying again. The snapshot manager makes this change inside a lock, and if we're not the first
-            // ones to try, we'll get the updated project which may have already had generators run on it. We recurse back into ourselves here with the updated
-            // project to try again. TryGetRetryProject also protects against infinite recursion.
-            if (snapshotManager.TryGetRetryProject(project) is { } retryProject)
-            {
-                return await CreateAsync(throwIfNotFound, retryProject, snapshotManager, cancellationToken).ConfigureAwait(false);
-            }
-
             if (throwIfNotFound)
             {
                 throw new InvalidOperationException(SR.FormatRazor_source_generator_did_not_produce_a_host_output(project.Name, string.Join(Environment.NewLine, runResult.Diagnostics)));

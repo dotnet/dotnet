@@ -37,11 +37,12 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
         string? documentFilePath = null,
         (string filePath, string contents)[]? additionalFiles = null,
         (Uri fileUri, string contents)[]? additionalExpectedFiles = null,
-        bool addDefaultImports = true)
+        bool addDefaultImports = true,
+        bool makeDiagnosticsRequest = false)
     {
         var document = CreateRazorDocument(input, fileKind, documentFilePath, additionalFiles, addDefaultImports: addDefaultImports);
 
-        var codeAction = await VerifyCodeActionRequestAsync(document, input, codeActionName, codeActionIndex, childActionIndex, expectOffer: expected is not null);
+        var codeAction = await VerifyCodeActionRequestAsync(document, input, codeActionName, codeActionIndex, childActionIndex, expectOffer: expected is not null, makeDiagnosticsRequest);
 
         if (codeAction is null)
         {
@@ -80,9 +81,9 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
         return CreateProjectAndRazorDocument(input.Text, fileKind, documentFilePath, additionalFiles: additionalFiles, addDefaultImports: addDefaultImports);
     }
 
-    private async Task<CodeAction?> VerifyCodeActionRequestAsync(TextDocument document, TestCode input, string codeActionName, int? codeActionIndex, int childActionIndex, bool expectOffer)
+    private async Task<CodeAction?> VerifyCodeActionRequestAsync(TextDocument document, TestCode input, string codeActionName, int? codeActionIndex, int childActionIndex, bool expectOffer, bool makeDiagnosticsRequest)
     {
-        var result = await GetCodeActionsAsync(document, input);
+        var result = await GetCodeActionsAsync(document, input, makeDiagnosticsRequest);
         if (result is null)
         {
             return null;
@@ -131,27 +132,41 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
         return codeActionToRun;
     }
 
-    private protected async Task<SumType<Command, CodeAction>[]?> GetCodeActionsAsync(TextDocument document, TestCode input)
+    private protected async Task<SumType<Command, CodeAction>[]?> GetCodeActionsAsync(TextDocument document, TestCode input, bool makeDiagnosticsRequest = false)
     {
         var requestInvoker = new TestHtmlRequestInvoker();
         var endpoint = new CohostCodeActionsEndpoint(IncompatibleProjectService, RemoteServiceInvoker, ClientCapabilitiesService, requestInvoker, NoOpTelemetryReporter.Instance);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         using var diagnostics = new PooledArrayBuilder<LspDiagnostic>();
-        foreach (var (code, spans) in input.NamedSpans)
-        {
-            if (code.Length == 0)
-            {
-                continue;
-            }
 
-            foreach (var diagnosticSpan in spans)
+        if (makeDiagnosticsRequest)
+        {
+            // If we're making a diagnostics request, we're going to ignore any hard coded diagnostics, so make sure there aren't
+            // any to avoid false negatives/positives.
+            Assert.Empty(input.NamedSpans.Where(kvp => kvp.Key.Length > 0));
+
+            var result = await CohostDocumentPullDiagnosticsTest.MakeDiagnosticsRequestAsync(document, taskListRequest: false, requestInvoker, IncompatibleProjectService, RemoteServiceInvoker, ClientSettingsManager, ClientCapabilitiesService, LoggerFactory, DisposalToken);
+
+            diagnostics.AddRange(result);
+        }
+        else
+        {
+            foreach (var (code, spans) in input.NamedSpans)
             {
-                diagnostics.Add(new LspDiagnostic
+                if (code.Length == 0)
                 {
-                    Code = code,
-                    Range = inputText.GetRange(diagnosticSpan)
-                });
+                    continue;
+                }
+
+                foreach (var diagnosticSpan in spans)
+                {
+                    diagnostics.Add(new LspDiagnostic
+                    {
+                        Code = code,
+                        Range = inputText.GetRange(diagnosticSpan)
+                    });
+                }
             }
         }
 
