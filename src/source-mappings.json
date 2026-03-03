@@ -95,7 +95,7 @@
             "include": [
                 "**/*",
                 "src/externalPackages/src/antlr4/runtime/CSharp/**"
-            ]
+            ],
             "exclude": [
                 // Contains disallowed binaries
                 // 1ES Secret Scanning does not allow any PFX files
