@@ -173,7 +173,7 @@ namespace Microsoft.DotNet.SignTool
                     string engineFileName = $"{Path.Combine(workingDirectory, $"{engineContainer}", file.FileName)}{SignToolConstants.MsiEngineExtension}";
                     _log.LogMessage(MessageImportance.Normal, $"Extracting engine from {file.FullPath}");
                     if (!RunWixTool("wix.exe", $"burn detach {file.FullPath} -engine {engineFileName}",
-                        workingDirectory, _signTool.WixToolsPath, _log))
+                        workingDirectory, _signTool.WixToolsPath, _log).GetAwaiter().GetResult())
                     {
                         _log.LogError($"Failed to extract engine from {file.FullPath}");
                         return false;
@@ -203,7 +203,7 @@ namespace Microsoft.DotNet.SignTool
                     {
                         if (!RunWixTool("wix.exe",
                             $"burn reattach {engine.Value.FullPath} -engine {engine.Key.FileName} -o {engine.Value.FullPath}", workingDirectory,
-                            _signTool.WixToolsPath, _log))
+                            _signTool.WixToolsPath, _log).GetAwaiter().GetResult())
                         {
                             _log.LogError($"Failed to attach engine to {engine.Value.FullPath}");
                             return false;
@@ -409,7 +409,7 @@ namespace Microsoft.DotNet.SignTool
             return true;
         }
 
-        internal static bool RunWixTool(string toolName, string arguments, string workingDirectory, string wixToolsPath, TaskLoggingHelper log)
+        internal static async Task<bool> RunWixTool(string toolName, string arguments, string workingDirectory, string wixToolsPath, TaskLoggingHelper log)
         {
             if (wixToolsPath == null)
             {
@@ -444,7 +444,24 @@ namespace Microsoft.DotNet.SignTool
             processStartInfo.EnvironmentVariables.Add("PATH", path);
 
             var process = Process.Start(processStartInfo);
+            var standardOutputTask = process.StandardOutput.ReadToEndAsync();
+            var standardErrorTask = process.StandardError.ReadToEndAsync();
+            string standardOutput = await standardOutputTask;
+            string standardError = await standardErrorTask;
             process.WaitForExit();
+
+            if (process.ExitCode != 0)
+            {
+                if (!string.IsNullOrWhiteSpace(standardOutput))
+                {
+                    log.LogMessage(MessageImportance.High, standardOutput);
+                }
+                if (!string.IsNullOrWhiteSpace(standardError))
+                {
+                    log.LogMessage(MessageImportance.High, standardError);
+                }
+            }
+
             return process.ExitCode == 0;
         }
 
