@@ -17,15 +17,10 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 {
     public partial class RazorSourceGenerator
     {
-        private (RazorSourceGenerationOptions?, Diagnostic?) ComputeRazorSourceGeneratorOptions((((AnalyzerConfigOptionsProvider, ParseOptions), ImmutableArray<MetadataReference>), bool) pair, CancellationToken ct)
+        private (RazorSourceGenerationOptions?, Diagnostic?) ComputeRazorSourceGeneratorOptions(((AnalyzerConfigOptionsProvider, ParseOptions), ImmutableArray<MetadataReference>) pair, CancellationToken ct)
         {
-            var (((options, parseOptions), references), isSuppressed) = pair;
+            var ((options, parseOptions), references) = pair;
             var globalOptions = options.GlobalOptions;
-
-            if (isSuppressed)
-            {
-                return default;
-            }
 
             Log.ComputeRazorSourceGeneratorOptions();
 
