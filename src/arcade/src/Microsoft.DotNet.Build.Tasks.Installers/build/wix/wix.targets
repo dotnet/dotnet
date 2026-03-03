@@ -354,6 +354,9 @@
       <_wixArgs>$(_wixArgs) @(DirectoryToHarvest -> '"%(WixObjFile)"', ' ')</_wixArgs>
       <_wixArgs>$(_wixArgs) $(AdditionalLightArgs)</_wixArgs>
       <_lightCommand>light.exe $(_wixArgs)</_lightCommand>
+
+      <_suppressValidation>false</_suppressValidation>
+      <_suppressValidation Condition="'$(_wixArgs.Contains(-sval))'">true</_suppressValidation>
     </PropertyGroup>
 
     <!--
@@ -376,6 +379,7 @@
       NoLogo="true"
       Cultures="en-us"
       InstallerFile="$(_OutInstallerFile)"
+      SuppressValidation="$(_suppressValidation)"
       WixExtensions="@(WixExtensions)"
       WixSrcFiles="@(WixSrcFile -> '$(WixObjDir)%(Filename).wixobj');@(DirectoryToHarvest -> '%(WixObjFile)')">
       <Output TaskParameter="OutputFile" PropertyName="_LightCommandPackageNameOutput" />
