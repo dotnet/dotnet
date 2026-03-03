@@ -153,4 +153,8 @@
   <data name="Razor_source_generator_host_output_is_not_RazorGeneratorResult" xml:space="preserve">
     <value>Razor source generator host output is not of type RazorGeneratorResult for project '{0}': {1}</value>
   </data>
+  <data name="AddTagHelper_directive_is_unnecessary" xml:space="preserve">
+    <value>@addTagHelper directive is unnecessary.</value>
+    <comment>@addTagHelper is a keyword</comment>
+  </data>
 </root>

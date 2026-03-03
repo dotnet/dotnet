@@ -6,7 +6,6 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet/runtime dependencies -->
-    <MicrosoftNETCoreAppRefPackageVersion>11.0.0-preview.1.26069.103</MicrosoftNETCoreAppRefPackageVersion>
     <SystemCodeDomPackageVersion>10.0.2</SystemCodeDomPackageVersion>
     <SystemCollectionsImmutablePackageVersion>10.0.2</SystemCollectionsImmutablePackageVersion>
     <SystemConfigurationConfigurationManagerPackageVersion>10.0.2</SystemConfigurationConfigurationManagerPackageVersion>
@@ -25,17 +24,16 @@ This file should be imported by eng/Versions.props
     <SystemThreadingChannelsPackageVersion>10.0.2</SystemThreadingChannelsPackageVersion>
     <SystemThreadingTasksDataflowPackageVersion>10.0.2</SystemThreadingTasksDataflowPackageVersion>
     <!-- dotnet/arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26110.1</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetXUnitExtensionsPackageVersion>10.0.0-beta.26110.1</MicrosoftDotNetXUnitExtensionsPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26119.2</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetXUnitExtensionsPackageVersion>10.0.0-beta.26119.2</MicrosoftDotNetXUnitExtensionsPackageVersion>
     <!-- nuget/nuget.client dependencies -->
-    <NuGetBuildTasksPackageVersion>7.5.0-rc.18</NuGetBuildTasksPackageVersion>
+    <NuGetBuildTasksPackageVersion>7.5.0-rc.31</NuGetBuildTasksPackageVersion>
     <!-- dotnet/roslyn dependencies -->
-    <MicrosoftNetCompilersToolsetPackageVersion>5.5.0-2.26105.1</MicrosoftNetCompilersToolsetPackageVersion>
+    <MicrosoftNetCompilersToolsetPackageVersion>5.5.0-2.26114.2</MicrosoftNetCompilersToolsetPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
     <!-- dotnet/runtime dependencies -->
-    <MicrosoftNETCoreAppRefVersion>$(MicrosoftNETCoreAppRefPackageVersion)</MicrosoftNETCoreAppRefVersion>
     <SystemCodeDomVersion>$(SystemCodeDomPackageVersion)</SystemCodeDomVersion>
     <SystemCollectionsImmutableVersion>$(SystemCollectionsImmutablePackageVersion)</SystemCollectionsImmutableVersion>
     <SystemConfigurationConfigurationManagerVersion>$(SystemConfigurationConfigurationManagerPackageVersion)</SystemConfigurationConfigurationManagerVersion>

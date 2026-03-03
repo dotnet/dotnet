@@ -53,9 +53,10 @@
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
 
     <NetFxVS>net472</NetFxVS>
-    <NetVS>net8.0</NetVS>
+    <NetVS>net10.0</NetVS>
     <NetVSCode>net10.0</NetVSCode>
-    <NetVSAndVSCode>$(NetVS);$(NetVSCode)</NetVSAndVSCode>
+    <NetVSAndVSCode>$(NetVS)</NetVSAndVSCode>
+    <NetVSAndVSCode Condition="'$(NetVS)' != '$(NetVSCode)'">$(NetVS);$(NetVSCode)</NetVSAndVSCode>
   </PropertyGroup>
 
   <PropertyGroup Label="VSIX Settings">
@@ -99,14 +100,6 @@
       Suppress warnings about assembly conflicts. This happens for assemblies that ship in VS so it's irrelevant.
     -->
     <NoWarn>$(NoWarn);MSB3277</NoWarn>
-  </PropertyGroup>
-
-  <!-- For source-build: Configure targeting packs to use live Microsoft.NETCore.App.Ref version -->
-  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion>
-    <KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion>
-    <KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion>
-    <KnownCrossgen2PackCurrentVersion>$(MicrosoftNETCoreAppRefPackageVersion)</KnownCrossgen2PackCurrentVersion>
   </PropertyGroup>
 
   <!-- For InternalsVisibleTo items-->

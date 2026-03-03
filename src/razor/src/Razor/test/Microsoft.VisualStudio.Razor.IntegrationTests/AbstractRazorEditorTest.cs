@@ -26,7 +26,7 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutput) : Ab
 
     protected virtual bool ComponentClassificationExpected => true;
 
-    protected virtual string TargetFramework => "net8.0";
+    protected virtual string TargetFramework => "net10.0";
 
     protected virtual string TargetFrameworkElement => $"""<TargetFramework>{TargetFramework}</TargetFramework>""";
 

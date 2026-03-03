@@ -1176,11 +1176,13 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
             var children = new ChildNodesHelper(node.ChildNodesAndTokens());
             var position = node.Position;
-            if (children.FirstOrDefault().AsNode() is MarkupBlockSyntax { Children: [MarkupTextLiteralSyntax, MarkupEphemeralTextLiteralSyntax] } markupBlock)
+            SyntaxTokenList escapedAtTokens = default;
+            if (children.FirstOrDefault().AsNode() is MarkupBlockSyntax { Children: [MarkupTextLiteralSyntax literalSyntax, MarkupEphemeralTextLiteralSyntax] })
             {
                 // This is a special case when we have an attribute like attr="@@foo".
-                // In this case, we want the foo to be written out as HtmlContent and not HtmlAttributeValue.
-                Visit(markupBlock);
+                // Extract the literal @ token from the first child so it can be merged with the rest of the attribute value.
+                // The ephemeral @ token is ignored.
+                escapedAtTokens = literalSyntax.LiteralTokens;
                 children = children.Skip(1);
                 position = children.Count > 0 ? children[0].Position : position;
             }
@@ -1188,6 +1190,11 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             if (children.TryCast<MarkupLiteralAttributeValueSyntax>(out var attributeLiteralArray))
             {
                 using PooledArrayBuilder<SyntaxToken> builder = [];
+
+                if (escapedAtTokens.Count > 0)
+                {
+                    builder.AddRange(escapedAtTokens);
+                }
 
                 foreach (var literal in attributeLiteralArray)
                 {
@@ -1202,6 +1209,11 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             {
                 using PooledArrayBuilder<SyntaxToken> builder = [];
 
+                if (escapedAtTokens.Count > 0)
+                {
+                    builder.AddRange(escapedAtTokens);
+                }
+
                 foreach (var literal in markupLiteralArray)
                 {
                     builder.AddRange(literal.LiteralTokens);
@@ -1213,6 +1225,11 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             else if (children.TryCast<CSharpExpressionLiteralSyntax>(out var expressionLiteralArray))
             {
                 using PooledArrayBuilder<SyntaxToken> builder = [];
+
+                if (escapedAtTokens.Count > 0)
+                {
+                    builder.AddRange(escapedAtTokens);
+                }
 
                 SpanEditHandler editHandler = null;
                 ISpanChunkGenerator generator = null;
@@ -1228,7 +1245,17 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             }
             else
             {
-                Visit(node);
+                if (escapedAtTokens.Count > 0)
+                {
+                    // If we have escaped @ tokens but no other content to merge with,
+                    // create a MarkupTextLiteral just for the escaped @ tokens
+                    var rewritten = SyntaxFactory.MarkupTextLiteral(escapedAtTokens).Green.CreateRed(node.Parent, position);
+                    Visit(rewritten);
+                }
+                else
+                {
+                    Visit(node);
+                }
             }
         }
 
@@ -2040,11 +2067,13 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
             var children = new ChildNodesHelper(node.ChildNodesAndTokens());
             var position = node.Position;
-            if (children.FirstOrDefault().AsNode() is MarkupBlockSyntax { Children: [MarkupTextLiteralSyntax, MarkupEphemeralTextLiteralSyntax] } markupBlock)
+            SyntaxTokenList escapedAtTokens = default;
+            if (children.FirstOrDefault().AsNode() is MarkupBlockSyntax { Children: [MarkupTextLiteralSyntax literalSyntax, MarkupEphemeralTextLiteralSyntax] })
             {
                 // This is a special case when we have an attribute like attr="@@foo".
-                // In this case, we want the foo to be written out as HtmlContent and not HtmlAttributeValue.
-                Visit(markupBlock);
+                // Extract the literal @ token from the first child so it can be merged with the rest of the attribute value.
+                // The ephemeral @ token is ignored.
+                escapedAtTokens = literalSyntax.LiteralTokens;
                 children = children.Skip(1);
                 position = children.Count > 0 ? children[0].Position : position;
             }
@@ -2052,6 +2081,11 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             if (children.TryCast<MarkupLiteralAttributeValueSyntax>(out var attributeLiteralArray))
             {
                 using PooledArrayBuilder<SyntaxToken> valueTokens = [];
+
+                if (escapedAtTokens.Count > 0)
+                {
+                    valueTokens.AddRange(escapedAtTokens);
+                }
 
                 foreach (var literal in attributeLiteralArray)
                 {
@@ -2066,6 +2100,11 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             {
                 using PooledArrayBuilder<SyntaxToken> builder = [];
 
+                if (escapedAtTokens.Count > 0)
+                {
+                    builder.AddRange(escapedAtTokens);
+                }
+
                 foreach (var literal in markupLiteralArray)
                 {
                     builder.AddRange(literal.LiteralTokens);
@@ -2077,6 +2116,11 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             else if (children.TryCast<CSharpExpressionLiteralSyntax>(out var expressionLiteralArray))
             {
                 using PooledArrayBuilder<SyntaxToken> builder = [];
+
+                if (escapedAtTokens.Count > 0)
+                {
+                    builder.AddRange(escapedAtTokens);
+                }
 
                 ISpanChunkGenerator generator = null;
                 SpanEditHandler editHandler = null;
@@ -2093,7 +2137,17 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             }
             else
             {
-                Visit(node);
+                if (escapedAtTokens.Count > 0)
+                {
+                    // If we have escaped @ tokens but no other content to merge with,
+                    // create a MarkupTextLiteral just for the escaped @ tokens
+                    var rewritten = SyntaxFactory.MarkupTextLiteral(escapedAtTokens).Green.CreateRed(node.Parent, position);
+                    Visit(rewritten);
+                }
+                else
+                {
+                    Visit(node);
+                }
             }
         }
 

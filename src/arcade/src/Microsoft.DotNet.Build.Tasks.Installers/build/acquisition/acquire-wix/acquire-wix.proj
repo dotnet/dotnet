@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <WixVersion>3.14.1-9323.2545153</WixVersion>
+    <WixVersion>3.14.1-11027.2914512</WixVersion>
     <WixToolsDir>$(BaseIntermediateOutputPath)WixTools.$(WixVersion)/</WixToolsDir>
 
     <WixDownloadFilename>Microsoft.Signed.Wix-$(WixVersion).zip</WixDownloadFilename>

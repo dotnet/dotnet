@@ -6,39 +6,37 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet/roslyn dependencies -->
-    <MicrosoftCodeAnalysisAnalyzersPackageVersion>5.3.0-2.25630.5</MicrosoftCodeAnalysisAnalyzersPackageVersion>
-    <MicrosoftCodeAnalysisCommonPackageVersion>5.3.0-2.25630.5</MicrosoftCodeAnalysisCommonPackageVersion>
-    <MicrosoftCodeAnalysisCSharpPackageVersion>5.3.0-2.25630.5</MicrosoftCodeAnalysisCSharpPackageVersion>
-    <MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion>5.3.0-2.25630.5</MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion>
-    <MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>5.3.0-2.25630.5</MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>
-    <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>5.3.0-2.25630.5</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
-    <MicrosoftCodeAnalysisEditorFeaturesPackageVersion>5.3.0-2.25630.5</MicrosoftCodeAnalysisEditorFeaturesPackageVersion>
-    <MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion>5.3.0-2.25630.5</MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion>
-    <MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion>5.3.0-2.25630.5</MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion>
-    <MicrosoftCodeAnalysisExternalAccessFSharpPackageVersion>5.3.0-2.25630.5</MicrosoftCodeAnalysisExternalAccessFSharpPackageVersion>
-    <MicrosoftCodeAnalysisExternalAccessRazorEditorFeaturesPackageVersion>5.3.0-2.25630.5</MicrosoftCodeAnalysisExternalAccessRazorEditorFeaturesPackageVersion>
-    <MicrosoftCodeAnalysisExternalAccessRazorFeaturesPackageVersion>5.3.0-2.25630.5</MicrosoftCodeAnalysisExternalAccessRazorFeaturesPackageVersion>
-    <MicrosoftCodeAnalysisLanguageServerProtocolPackageVersion>5.3.0-2.25630.5</MicrosoftCodeAnalysisLanguageServerProtocolPackageVersion>
-    <MicrosoftCodeAnalysisRemoteServiceHubPackageVersion>5.3.0-2.25630.5</MicrosoftCodeAnalysisRemoteServiceHubPackageVersion>
-    <MicrosoftCodeAnalysisTestUtilitiesPackageVersion>5.3.0-2.25630.5</MicrosoftCodeAnalysisTestUtilitiesPackageVersion>
-    <MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>5.3.0-2.25630.5</MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>
-    <MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>5.3.0-2.25630.5</MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>
-    <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>5.3.0-2.25630.5</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
-    <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>5.3.0-2.25630.5</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
-    <MicrosoftNetCompilersToolsetPackageVersion>5.3.0-2.25630.5</MicrosoftNetCompilersToolsetPackageVersion>
-    <MicrosoftVisualStudioExtensibilityTestingSourceGeneratorPackageVersion>5.3.0-2.25630.5</MicrosoftVisualStudioExtensibilityTestingSourceGeneratorPackageVersion>
-    <MicrosoftVisualStudioExtensibilityTestingXunitPackageVersion>5.3.0-2.25630.5</MicrosoftVisualStudioExtensibilityTestingXunitPackageVersion>
-    <MicrosoftVisualStudioLanguageServicesPackageVersion>5.3.0-2.25630.5</MicrosoftVisualStudioLanguageServicesPackageVersion>
-    <RoslynDiagnosticsAnalyzersPackageVersion>5.3.0-2.25630.5</RoslynDiagnosticsAnalyzersPackageVersion>
+    <MicrosoftCodeAnalysisAnalyzersPackageVersion>5.5.0-2.26118.1</MicrosoftCodeAnalysisAnalyzersPackageVersion>
+    <MicrosoftCodeAnalysisCommonPackageVersion>5.5.0-2.26118.1</MicrosoftCodeAnalysisCommonPackageVersion>
+    <MicrosoftCodeAnalysisCSharpPackageVersion>5.5.0-2.26118.1</MicrosoftCodeAnalysisCSharpPackageVersion>
+    <MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion>5.5.0-2.26118.1</MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>5.5.0-2.26118.1</MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>5.5.0-2.26118.1</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
+    <MicrosoftCodeAnalysisEditorFeaturesPackageVersion>5.5.0-2.26118.1</MicrosoftCodeAnalysisEditorFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion>5.5.0-2.26118.1</MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion>
+    <MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion>5.5.0-2.26118.1</MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion>
+    <MicrosoftCodeAnalysisExternalAccessFSharpPackageVersion>5.5.0-2.26118.1</MicrosoftCodeAnalysisExternalAccessFSharpPackageVersion>
+    <MicrosoftCodeAnalysisExternalAccessRazorEditorFeaturesPackageVersion>5.5.0-2.26118.1</MicrosoftCodeAnalysisExternalAccessRazorEditorFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisExternalAccessRazorFeaturesPackageVersion>5.5.0-2.26118.1</MicrosoftCodeAnalysisExternalAccessRazorFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisLanguageServerProtocolPackageVersion>5.5.0-2.26118.1</MicrosoftCodeAnalysisLanguageServerProtocolPackageVersion>
+    <MicrosoftCodeAnalysisRemoteServiceHubPackageVersion>5.5.0-2.26118.1</MicrosoftCodeAnalysisRemoteServiceHubPackageVersion>
+    <MicrosoftCodeAnalysisTestUtilitiesPackageVersion>5.5.0-2.26118.1</MicrosoftCodeAnalysisTestUtilitiesPackageVersion>
+    <MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>5.5.0-2.26118.1</MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>
+    <MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>5.5.0-2.26118.1</MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>
+    <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>5.5.0-2.26118.1</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
+    <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>5.5.0-2.26118.1</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
+    <MicrosoftNetCompilersToolsetPackageVersion>5.5.0-2.26118.1</MicrosoftNetCompilersToolsetPackageVersion>
+    <MicrosoftVisualStudioExtensibilityTestingSourceGeneratorPackageVersion>5.5.0-2.26118.1</MicrosoftVisualStudioExtensibilityTestingSourceGeneratorPackageVersion>
+    <MicrosoftVisualStudioExtensibilityTestingXunitPackageVersion>5.5.0-2.26118.1</MicrosoftVisualStudioExtensibilityTestingXunitPackageVersion>
+    <MicrosoftVisualStudioLanguageServicesPackageVersion>5.5.0-2.26118.1</MicrosoftVisualStudioLanguageServicesPackageVersion>
+    <RoslynDiagnosticsAnalyzersPackageVersion>5.5.0-2.26118.1</RoslynDiagnosticsAnalyzersPackageVersion>
     <!-- dotnet/arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26110.1</MicrosoftDotNetArcadeSdkPackageVersion>
-    <!-- dotnet/dotnet dependencies -->
-    <MicrosoftNETCoreAppRefPackageVersion>11.0.0-preview.1.26069.103</MicrosoftNETCoreAppRefPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26123.2</MicrosoftDotNetArcadeSdkPackageVersion>
     <!-- dotnet/aspnetcore dependencies -->
-    <MicrosoftExtensionsObjectPoolPackageVersion>8.0.0</MicrosoftExtensionsObjectPoolPackageVersion>
+    <MicrosoftExtensionsObjectPoolPackageVersion>10.0.1</MicrosoftExtensionsObjectPoolPackageVersion>
     <!-- dotnet/runtime dependencies -->
-    <SystemCollectionsImmutablePackageVersion>9.0.0</SystemCollectionsImmutablePackageVersion>
-    <SystemReflectionMetadataPackageVersion>9.0.0</SystemReflectionMetadataPackageVersion>
+    <SystemCollectionsImmutablePackageVersion>10.0.1</SystemCollectionsImmutablePackageVersion>
+    <SystemReflectionMetadataPackageVersion>10.0.1</SystemReflectionMetadataPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
@@ -69,8 +67,6 @@ This file should be imported by eng/Versions.props
     <RoslynDiagnosticsAnalyzersVersion>$(RoslynDiagnosticsAnalyzersPackageVersion)</RoslynDiagnosticsAnalyzersVersion>
     <!-- dotnet/arcade dependencies -->
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
-    <!-- dotnet/dotnet dependencies -->
-    <MicrosoftNETCoreAppRefVersion>$(MicrosoftNETCoreAppRefPackageVersion)</MicrosoftNETCoreAppRefVersion>
     <!-- dotnet/aspnetcore dependencies -->
     <MicrosoftExtensionsObjectPoolVersion>$(MicrosoftExtensionsObjectPoolPackageVersion)</MicrosoftExtensionsObjectPoolVersion>
     <!-- dotnet/runtime dependencies -->
