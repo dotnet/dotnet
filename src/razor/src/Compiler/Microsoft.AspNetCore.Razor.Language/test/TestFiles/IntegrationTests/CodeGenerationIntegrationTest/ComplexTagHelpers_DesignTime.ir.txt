@@ -58,10 +58,8 @@
                             LazyIntermediateToken - (151:7,20 [3] ComplexTagHelpers.cshtml) - CSharp - 1+2
                             LazyIntermediateToken - (154:7,23 [1] ComplexTagHelpers.cshtml) - CSharp - )
                     DefaultTagHelperHtmlAttribute -  - class - HtmlAttributeValueStyle.DoubleQuotes
-                        HtmlContent - (164:7,33 [1] ComplexTagHelpers.cshtml)
-                            LazyIntermediateToken - (164:7,33 [1] ComplexTagHelpers.cshtml) - Html - @
-                        HtmlContent - (166:7,35 [6] ComplexTagHelpers.cshtml)
-                            LazyIntermediateToken - (166:7,35 [6] ComplexTagHelpers.cshtml) - Html - string
+                        HtmlContent - (166:7,35 [7] ComplexTagHelpers.cshtml)
+                            LazyIntermediateToken - (166:7,35 [7] ComplexTagHelpers.cshtml) - Html - @string
                     DefaultTagHelperExecute - 
                 HtmlContent - (178:7,47 [10] ComplexTagHelpers.cshtml)
                     LazyIntermediateToken - (178:7,47 [10] ComplexTagHelpers.cshtml) - Html - \n        

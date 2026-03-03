@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -13,6 +12,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -34,12 +34,6 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
     private readonly IDocumentMappingService _documentMappingService = documentMappingService;
     private readonly LanguageServerFeatureOptions _featureOptions = featureOptions;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RazorTranslateDiagnosticsService>();
-
-    private static readonly FrozenSet<string> s_cSharpDiagnosticsToIgnore = new HashSet<string>(
-    [
-        "RemoveUnnecessaryImportsFixable",
-        "IDE0005_gen", // Using directive is unnecessary
-    ]).ToFrozenSet();
 
     /// <summary>
     ///  Translates code diagnostics from one representation into another.
@@ -82,12 +76,6 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
             codeDocument);
 
         return mappedDiagnostics;
-    }
-
-    private LspDiagnostic[] FilterCSharpDiagnostics(LspDiagnostic[] unmappedDiagnostics, RazorCodeDocument codeDocument)
-    {
-        return unmappedDiagnostics.Where(d =>
-            !ShouldFilterCSharpDiagnosticBasedOnErrorCode(d, codeDocument)).ToArray();
     }
 
     private static LspDiagnostic[] FilterHTMLDiagnostics(
@@ -484,21 +472,36 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         }
     }
 
-    private bool ShouldFilterCSharpDiagnosticBasedOnErrorCode(LspDiagnostic diagnostic, RazorCodeDocument codeDocument)
+    private LspDiagnostic[] FilterCSharpDiagnostics(LspDiagnostic[] diagnostics, RazorCodeDocument codeDocument)
     {
-        if (diagnostic.Code is not { } code ||
-            !code.TryGetSecond(out var str) ||
-            str is null)
+        using var filteredDiagnostics = new PooledArrayBuilder<LspDiagnostic>();
+
+        foreach (var diagnostic in diagnostics)
         {
-            return false;
+            if (diagnostic.Code is not { } code ||
+                !code.TryGetSecond(out var str) ||
+                str is null)
+            {
+                filteredDiagnostics.Add(diagnostic);
+                continue;
+            }
+
+            if (str switch
+            {
+                "CS1525" => ShouldIgnoreCS1525(diagnostic, codeDocument),
+                Constants.DiagnosticIds.IDE0005_gen => IsUsingDirectiveUsed(diagnostic, codeDocument),
+                // This diagnostics is produced by Roslyn to help its Remove Usings code fixer, so is irrelevant to us
+                Constants.DiagnosticIds.RemoveUnnecessaryImportsFixable => true,
+                _ => false
+            })
+            {
+                continue;
+            }
+
+            filteredDiagnostics.Add(diagnostic);
         }
 
-        return str switch
-        {
-            "CS1525" => ShouldIgnoreCS1525(diagnostic, codeDocument),
-            _ => s_cSharpDiagnosticsToIgnore.Contains(str) &&
-                diagnostic.Severity != LspDiagnosticSeverity.Error
-        };
+        return filteredDiagnostics.ToArrayAndClear();
 
         bool ShouldIgnoreCS1525(LspDiagnostic diagnostic, RazorCodeDocument codeDocument)
         {
@@ -517,6 +520,35 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
 
             return false;
         }
+    }
+
+    private bool IsUsingDirectiveUsed(LspDiagnostic diagnostic, RazorCodeDocument codeDocument)
+    {
+        // In imports files, all usings are considered used
+        if (codeDocument.IsImportsFile())
+        {
+            return true;
+        }
+
+        // In legacy files, using directives don't affect tag helper discovery so they're all "unused" to us.
+        if (codeDocument.FileKind.IsLegacy())
+        {
+            return false;
+        }
+
+        // Roslyn reports any usings that aren't used by user code for us. Some of these usings might be
+        // used for component tags though, which are always fully qualified by the Razor compiler, so we
+        // have to check if the using was actually used by component binding, if so, we need to keep the
+        // diagnostic. Conveniently, this means we don't need to worry about actually reporting our own
+        // unused diagnostics, so it's worth it.
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+        if (TryGetOriginalDiagnosticRange(diagnostic, codeDocument, out var originalRange) &&
+            syntaxTree.FindInnermostNode(codeDocument.Source.Text, originalRange.Start) is { Parent.Parent: RazorUsingDirectiveSyntax usingDirectiveSyntax })
+        {
+            return codeDocument.IsDirectiveUsed(usingDirectiveSyntax);
+        }
+
+        return true;
     }
 
     private static bool CheckIfDocumentHasRazorDiagnostic(RazorCodeDocument codeDocument, string razorDiagnosticCode)
