@@ -22,6 +22,7 @@ using System.Xml.Schema;
 using System.Runtime.Serialization;
 #if !CLR2COMPATIBILITY && !MICROSOFT_BUILD_ENGINE_OM_UNITTESTS
 using Microsoft.Build.Shared.Debugging;
+using Microsoft.Build.Framework.Telemetry;
 #endif
 using Microsoft.Build.Framework;
 
@@ -349,7 +350,26 @@ namespace Microsoft.Build.Shared
         {
             Exception ex = (Exception)e.ExceptionObject;
             DumpExceptionToFile(ex);
+#if !CLR2COMPATIBILITY && !MICROSOFT_BUILD_ENGINE_OM_UNITTESTS
+            RecordCrashTelemetryForUnhandledException(ex);
+#endif
         }
+
+#if !CLR2COMPATIBILITY && !MICROSOFT_BUILD_ENGINE_OM_UNITTESTS
+        /// <summary>
+        /// Records and immediately flushes crash telemetry for an unhandled exception.
+        /// Best effort - must never throw, as the process is already crashing.
+        /// </summary>
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+        private static void RecordCrashTelemetryForUnhandledException(Exception ex)
+        {
+            CrashTelemetryRecorder.RecordAndFlushCrashTelemetry(
+                ex,
+                exitType: CrashExitType.UnhandledException,
+                isUnhandled: true,
+                isCritical: IsCriticalException(ex));
+        }
+#endif
 
         /// <summary>
         /// Dump the exception information to a file
@@ -399,6 +419,33 @@ namespace Microsoft.Build.Shared
             // but doesn't prevent the overall crash from going to Watson.
             catch
             {
+            }
+        }
+
+        /// <summary>
+        /// Writes hang diagnostic information to a file so it persists on disk
+        /// for later retrieval from customer machines.
+        /// File is written to the same directory as crash dump files (<see cref="DebugDumpPath"/>).
+        /// </summary>
+        internal static void DumpHangDiagnosticsToFile(string diagnostics)
+        {
+            try
+            {
+                Directory.CreateDirectory(DebugDumpPath);
+
+                var pid = EnvironmentUtilities.CurrentProcessId;
+                string fileName = Path.Combine(DebugDumpPath, $"MSBuild_pid-{pid}.hang.txt");
+
+                using (StreamWriter writer = FileUtilities.OpenWrite(fileName, append: true))
+                {
+                    writer.WriteLine(DateTime.Now.ToString("G", CultureInfo.CurrentCulture));
+                    writer.WriteLine(diagnostics);
+                    writer.WriteLine("===================");
+                }
+            }
+            catch
+            {
+                // Best-effort: diagnostic file writing must never make things worse.
             }
         }
 

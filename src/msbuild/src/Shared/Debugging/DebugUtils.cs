@@ -2,9 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Diagnostics;
 using System.IO;
-using System.Text.RegularExpressions;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Shared.FileSystem;
 
@@ -14,16 +12,37 @@ namespace Microsoft.Build.Shared.Debugging
 {
     internal static class DebugUtils
     {
-        private enum NodeMode
-        {
-            CentralNode,
-            OutOfProcNode,
-            OutOfProcTaskHostNode
-        }
-
         static DebugUtils()
         {
-            SetDebugPath();
+            try
+            {
+                SetDebugPath();
+            }
+            catch (Exception ex)
+            {
+                // A failure in SetDebugPath must not prevent MSBuild from starting.
+                // DebugPath will remain null — debugging/logging features will be
+                // unavailable for this session, but the build can still proceed.
+                //
+                // Known failure scenarios:
+                // - Directory.GetCurrentDirectory() throws DirectoryNotFoundException
+                //   if the working directory was deleted before MSBuild started.
+                // - FileUtilities.EnsureDirectoryExists() throws UnauthorizedAccessException
+                //   or IOException when the target path is on a read-only volume or an
+                //   offline network share.
+                // - Path.Combine() throws ArgumentException when MSBUILDDEBUGPATH contains
+                //   illegal path characters (e.g., '<', '>', '|').
+                // - PathTooLongException when the resolved path exceeds MAX_PATH on
+                //   .NET Framework without long-path support.
+                try
+                {
+                    Console.Error.WriteLine("MSBuild debug path initialization failed: " + ex);
+                }
+                catch
+                {
+                    // Console may not be available.
+                }
+            }
         }
 
         // DebugUtils are initialized early on by the test runner - during preparing data for DataMemeberAttribute of some test,
@@ -63,31 +82,8 @@ namespace Microsoft.Build.Shared.Debugging
             DebugPath = debugDirectory;
         }
 
-        private static readonly Lazy<NodeMode> ProcessNodeMode = new(
-        () =>
-        {
-            return ScanNodeMode(Environment.CommandLine);
-
-            NodeMode ScanNodeMode(string input)
-            {
-                var match = Regex.Match(input, @"/nodemode:(?<nodemode>[12\s])(\s|$)", RegexOptions.IgnoreCase);
-
-                if (!match.Success)
-                {
-                    return NodeMode.CentralNode;
-                }
-                var nodeMode = match.Groups["nodemode"].Value;
-
-                Trace.Assert(!string.IsNullOrEmpty(nodeMode));
-
-                return nodeMode switch
-                {
-                    "1" => NodeMode.OutOfProcNode,
-                    "2" => NodeMode.OutOfProcTaskHostNode,
-                    _ => throw new NotImplementedException(),
-                };
-            }
-        });
+        private static readonly Lazy<NodeMode?> ProcessNodeMode = new(
+            () => NodeModeHelper.ExtractFromCommandLine(Environment.CommandLine));
 
         private static bool CurrentProcessMatchesDebugName()
         {
@@ -99,7 +95,7 @@ namespace Microsoft.Build.Shared.Debugging
         }
 
         public static readonly string ProcessInfoString =
-            $"{ProcessNodeMode.Value}_{EnvironmentUtilities.ProcessName}_PID={EnvironmentUtilities.CurrentProcessId}_x{(Environment.Is64BitProcess ? "64" : "86")}";
+            $"{(ProcessNodeMode.Value?.ToString() ?? "CentralNode")}_{EnvironmentUtilities.ProcessName}_PID={EnvironmentUtilities.CurrentProcessId}_x{(Environment.Is64BitProcess ? "64" : "86")}";
 
         public static readonly bool ShouldDebugCurrentProcess = CurrentProcessMatchesDebugName();
 
