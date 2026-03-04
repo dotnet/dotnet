@@ -3,6 +3,7 @@
 
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Formatting;
@@ -574,9 +575,10 @@ public class HtmlFormattingTest(ITestOutputHelper testOutput) : DocumentFormatti
                         @{
                     #if DEBUG
                     }
-                    <div />
+                     <div />
                     @{
                     #endif
+
                         }
                     </div>
 
@@ -646,6 +648,33 @@ public class HtmlFormattingTest(ITestOutputHelper testOutput) : DocumentFormatti
                 </div>
                 """,
         AttributeIndentStyle.IndentByTwo);
+
+    [Fact]
+    public Task VoidTagHelpers_NotIndented()
+        => base.RunFormattingTestAsync(
+            input: """
+                <input type="checkbox" asp-for="AllowAuthorizationCodeFlow">
+                <input type="checkbox" asp-for="AllowAuthorizationCodeFlow">
+                <input type="checkbox" asp-for="AllowAuthorizationCodeFlow">
+                <input type="checkbox" asp-for="AllowAuthorizationCodeFlow">
+                <input type="checkbox" asp-for="AllowAuthorizationCodeFlow">
+                """,
+            htmlFormatted: """
+                <input type="checkbox" asp-for="AllowAuthorizationCodeFlow">
+                <input type="checkbox" asp-for="AllowAuthorizationCodeFlow">
+                <input type="checkbox" asp-for="AllowAuthorizationCodeFlow">
+                <input type="checkbox" asp-for="AllowAuthorizationCodeFlow">
+                <input type="checkbox" asp-for="AllowAuthorizationCodeFlow">
+                """,
+            expected: """
+                <input type="checkbox" asp-for="AllowAuthorizationCodeFlow">
+                <input type="checkbox" asp-for="AllowAuthorizationCodeFlow">
+                <input type="checkbox" asp-for="AllowAuthorizationCodeFlow">
+                <input type="checkbox" asp-for="AllowAuthorizationCodeFlow">
+                <input type="checkbox" asp-for="AllowAuthorizationCodeFlow">
+                """,
+            fileKind: RazorFileKind.Legacy,
+            allowDiagnostics: true);
 
     private async Task RunAttributeIndentStyleTestAsync(string input, string expected, AttributeIndentStyle attributeIndentStyle)
     {

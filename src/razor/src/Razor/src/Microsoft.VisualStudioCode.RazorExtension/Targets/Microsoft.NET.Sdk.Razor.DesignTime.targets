@@ -114,18 +114,4 @@ Copyright (c) .NET Foundation. All rights reserved.
     DependsOnTargets="$(_RazorGenerateComponentDeclarationDesignTimeDependsOn)">
   </Target>
 
-  <!--
-    Backwards compatibility workaround for https://devdiv.visualstudio.com/DevDiv/_workitems/edit/1803616/.
-    Razor is dependent on RazorSourceGenerator.razorencconfig during design-time build in order to behave correctly.
-    The SDK conditionally includes this config file, however with the current global properties that are set,
-    the condition is not met and config file will not be included. This workaround ensures the config file is included during design-time build.
-    Tracking item to remove the workaround: https://devdiv.visualstudio.com/DevDiv/_workitems/edit/1806334.
-  -->
-  <Target Name="_FixRazorEditorConfigFiles" AfterTargets="_PrepareRazorSourceGenerators">
-    <ItemGroup>
-      <EditorConfigFiles Remove="$(RazorEncConfigFile)" Condition="'$(DesignTimeBuild)' == 'true'"/>
-      <EditorConfigFiles Include="$(RazorEncConfigFile)" Condition="'$(DesignTimeBuild)' == 'true'"/>
-    </ItemGroup>
-  </Target>
-
 </Project>

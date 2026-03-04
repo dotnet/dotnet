@@ -13,8 +13,6 @@ namespace Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 
 internal static class Extensions
 {
-    private const string RetryProjectFeatureName = "__razor_cohost_retry";
-
     public static bool IsRazorDocument(this TextDocument document)
         => document is AdditionalDocument &&
            document.FilePath is string filePath &&
@@ -30,11 +28,4 @@ internal static class Extensions
         var document = solution.GetAdditionalDocument(documentId).AssumeNotNull();
         return document.CreateUri();
     }
-
-    public static Project ForkToRetryProject(this Project project)
-        // Using a feature to act as a no-op change so we can't accidentally break something
-        => project.WithParseOptions(project.ParseOptions.AssumeNotNull().WithFeatures([.. project.ParseOptions.Features, new KeyValuePair<string, string>(RetryProjectFeatureName, "")]));
-
-    public static bool IsRetryProject(this Project project)
-        => project.ParseOptions.AssumeNotNull().Features.ContainsKey(RetryProjectFeatureName);
 }
