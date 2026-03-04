@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@fc5e9ed](https://github.com/dotnet/fsharp/tree/fc5e9eda234e2b69aa479f4f83faddc31fdd4da7)*
 - `src/installer`  
-*[dotnet/installer@2a0ef3f](https://github.com/dotnet/installer/tree/2a0ef3fd5cc6f15d42dad5155df591664b788d12)*
+*[dotnet/installer@5eebd7e](https://github.com/dotnet/installer/tree/5eebd7e2b56a5c7e0d9ddb23cacc557999407929)*
 - `src/msbuild`  
 *[dotnet/msbuild@7806cbf](https://github.com/dotnet/msbuild/tree/7806cbf7b0fd91ea6ab55c2e42d8ed973114e197)*
 - `src/nuget-client`  
@@ -50,7 +50,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/sdk`  
 *[_git/dotnet-sdk@4a8c079](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GC4a8c079f70d224993828973ee7dfdc4b2ea1ab9a)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@5f4a123](https://github.com/dotnet/source-build-externals/tree/5f4a123a49dd5480065c8d6182536cf86b4f4410)*
+*[dotnet/source-build-externals@563783c](https://github.com/dotnet/source-build-externals/tree/563783c7169399c27faa8864a307490e9606358d)*
     - `src/source-build-externals/src/abstractions-xunit`  
     *[xunit/abstractions.xunit@b75d54d](https://github.com/xunit/abstractions.xunit/tree/b75d54d73b141709f805c2001b16f3dd4d71539d)*
     - `src/source-build-externals/src/application-insights`  
@@ -76,7 +76,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/xunit/tools/media`  
     *[xunit/media@5738b6e](https://github.com/xunit/media/tree/5738b6e86f08e0389c4392b939c20e3eca2d9822)*
 - `src/source-build-reference-packages`  
-*[dotnet/source-build-reference-packages@44b5b62](https://github.com/dotnet/source-build-reference-packages/tree/44b5b62182b48c34c4b6aef28943ec3f3e82f214)*
+*[dotnet/source-build-reference-packages@ac35a50](https://github.com/dotnet/source-build-reference-packages/tree/ac35a502714f4867b0386a5bd392868024e7495c)*
 - `src/sourcelink`  
 *[dotnet/sourcelink@94eaac3](https://github.com/dotnet/sourcelink/tree/94eaac3385cafff41094454966e1af1d1cf60f00)*
 - `src/symreader`  
