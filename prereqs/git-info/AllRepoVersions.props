@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <arcadeGitCommitHash>0279dbd04bd1537e13ae3c1f003edf56acfaf123</arcadeGitCommitHash>
-    <arcadeOutputPackageVersion>9.0.0-beta.26110.2</arcadeOutputPackageVersion>
+    <arcadeGitCommitHash>01c94b66e75697e9298eb79a49db74489f8d343e</arcadeGitCommitHash>
+    <arcadeOutputPackageVersion>9.0.0-beta.26152.3</arcadeOutputPackageVersion>
     <aspireGitCommitHash>5fa9337a84a52e9bd185d04d156eccbdcf592f74</aspireGitCommitHash>
     <aspireOutputPackageVersion>8.2.2-preview.1.24521.5</aspireOutputPackageVersion>
     <aspnetcoreGitCommitHash>087328de5f1e0067be48d87295ae8d92064a1535</aspnetcoreGitCommitHash>
@@ -35,11 +35,11 @@
     <runtimeOutputPackageVersion>9.0.13-servicing.26063.17</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>ba4c313fc4aac36d0a08eeb49e7b496b2e23cf94</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.26111.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>3ab1bc4af29d64c029025dcc3ab60ed593f5a857</sdkGitCommitHash>
+    <sdkGitCommitHash>252ae5acb33277b55a854252c54620ca57de7d48</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>16c380d1ce5fa0b24e232251c31cb013bbf3365f</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.26055.1</sourcebuildexternalsOutputPackageVersion>
-    <sourcebuildreferencepackagesGitCommitHash>2060a0a1a17bed13cf046043fb3011bf0e5af58b</sourcebuildreferencepackagesGitCommitHash>
-    <sourcebuildreferencepackagesOutputPackageVersion>9.0.0-alpha.1.26109.3</sourcebuildreferencepackagesOutputPackageVersion>
+    <sourcebuildreferencepackagesGitCommitHash>e6a837a05532cb8e89eda3ce8aa08d0f55ce7b04</sourcebuildreferencepackagesGitCommitHash>
+    <sourcebuildreferencepackagesOutputPackageVersion>9.0.0-alpha.1.26152.3</sourcebuildreferencepackagesOutputPackageVersion>
     <sourcelinkGitCommitHash>657ade4711e607cc4759e89e0943aa1ca8aadc63</sourcelinkGitCommitHash>
     <sourcelinkOutputPackageVersion>9.0.0-beta.25564.5</sourcelinkOutputPackageVersion>
     <symreaderGitCommitHash>0710a7892d89999956e8808c28e9dd0512bd53f3</symreaderGitCommitHash>
