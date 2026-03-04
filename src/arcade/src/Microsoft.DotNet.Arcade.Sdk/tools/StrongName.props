@@ -22,6 +22,6 @@
   -->
   
   <PropertyGroup>
-    <FullAssemblySigningSupported Condition="'$(FullAssemblySigningSupported)' == '' and '$(DotNetBuildSourceOnly)' == 'true'">false</FullAssemblySigningSupported>
+    <FullAssemblySigningSupported Condition="'$(FullAssemblySigningSupported)' == '' and ('$(DotNetBuildSourceOnly)' == 'true' or '$(OS)' != 'Windows_NT')">false</FullAssemblySigningSupported>
   </PropertyGroup>
 </Project>
