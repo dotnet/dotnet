@@ -68,6 +68,26 @@ public class RemoveUnnecessaryDirectiveTests(ITestOutputHelper testOutputHelper)
     }
 
     [Fact]
+    public async Task NotOfferedWhenCursorIsInCodeBlock()
+    {
+        await VerifyCodeActionAsync(
+            input: """
+                @using System.Text
+
+                <div>
+                    Hello World
+                </div>
+
+                @code {
+                    private [||]int _x;
+                }
+                """,
+            expected: null,
+            codeActionName: LanguageServerConstants.CodeActions.RemoveUnnecessaryDirectives,
+            makeDiagnosticsRequest: true);
+    }
+
+    [Fact]
     public async Task MultipleUnusedDirectives_RemovesAll()
     {
         await VerifyCodeActionAsync(
