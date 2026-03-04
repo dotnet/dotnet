@@ -76,7 +76,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Wix
             CommandLineBuilder.AppendSwitchIfNotNull("-o ", OutputFile);
             CommandLineBuilder.AppendSwitchIfTrue("-fv", AddFileVersion);
             CommandLineBuilder.AppendArrayIfNotNull("-ext ", Extensions.ToArray());
-            CommandLineBuilder.AppendSwitchIfNotNull("-sice:", SuppressIces);
+            CommandLineBuilder.AppendSwitch("-sval");
             CommandLineBuilder.AppendFileNamesIfNotNull(SourceFiles.ToArray(), " ");
 
             return CommandLineBuilder.ToString();
