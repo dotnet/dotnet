@@ -20,7 +20,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.25564.1</MicrosoftDotNetDarcLibPackageVersion>
     <MicrosoftDotNetProductConstructionServiceClientPackageVersion>1.1.0-beta.25564.1</MicrosoftDotNetProductConstructionServiceClientPackageVersion>
     <!-- dotnet/xharness dependencies -->
-    <MicrosoftDotNetXHarnessCLIPackageVersion>11.0.0-prerelease.26107.1</MicrosoftDotNetXHarnessCLIPackageVersion>
+    <MicrosoftDotNetXHarnessCLIPackageVersion>11.0.0-prerelease.26117.1</MicrosoftDotNetXHarnessCLIPackageVersion>
     <!-- dotnet/symreader-converter dependencies -->
     <MicrosoftDiaSymReaderConverterPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderConverterPackageVersion>
     <MicrosoftDiaSymReaderPdb2PdbPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderPdb2PdbPackageVersion>
