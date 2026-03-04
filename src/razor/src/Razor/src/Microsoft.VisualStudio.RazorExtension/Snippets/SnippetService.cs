@@ -68,6 +68,13 @@ internal class SnippetService
     {
         await _advancedSettingsStorage.OnChangedAsync(_ =>
         {
+            // If the settings changed before we were able to get the expansion manager, skip population because we can't do it.
+            // After getting the manager for the first time, we'll populate again, so it will all work out.
+            if (_vsExpansionManager is null)
+            {
+                return;
+            }
+
             PopulateAsync().FileAndForget(TelemetryReporter.GetEventName("SnippetService_Populate"));
         }).ConfigureAwait(false);
 
@@ -118,7 +125,7 @@ internal class SnippetService
     /// This method must be called on the UI thread because it eventually calls into
     /// IVsExpansionEnumeration.Next, which must be called on the UI thread due to an issue
     /// with how the call is marshalled.
-    /// 
+    ///
     /// The second parameter for IVsExpansionEnumeration.Next is defined like this:
     ///    [ComAliasName("Microsoft.VisualStudio.TextManager.Interop.VsExpansion")] IntPtr[] rgelt
     ///
@@ -217,9 +224,9 @@ internal class SnippetService
         }
 
         // As of writing, Html and CSharp are the only languages we actually
-        // get snippets for. This assert acts as both a testament to that and 
+        // get snippets for. This assert acts as both a testament to that and
         // a catch for any future soul who might change that behavior. This
-        // code will need to be updated accordingly, as well as the 
+        // code will need to be updated accordingly, as well as the
         // the s_buildInSnippets dictionary
         Debug.Assert(language == SnippetLanguage.Html);
         return s_builtInSnippets[s_HtmlLanguageId];
