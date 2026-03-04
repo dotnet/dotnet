@@ -102,6 +102,9 @@ namespace Microsoft.Build.Internal
                 overrides[varName] = null!;
             }
 
+            var pathEnvVar = Environment.GetEnvironmentVariable("PATH");
+            overrides["PATH"] = "{pathEnvVar}{Path.PathSeparator}{dotnetRoot}";
+
             _cachedOverrides = overrides;
             _cachedDotnetHostPath = resolvedPath;
 
