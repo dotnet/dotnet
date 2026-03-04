@@ -1,16 +1,14 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Arcade.Test.Common;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using Microsoft.Deployment.WindowsInstaller;
 using Microsoft.DotNet.Build.Tasks.Workloads.Msi;
+using WixToolset.Dtf.WindowsInstaller;
 using Xunit;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests

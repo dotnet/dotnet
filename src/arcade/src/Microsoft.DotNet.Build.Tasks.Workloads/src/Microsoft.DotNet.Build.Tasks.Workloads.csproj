@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>$(BundledNETCoreAppTargetFramework);$(NetFrameworkToolCurrent)</TargetFrameworks>
@@ -27,6 +27,8 @@
     <PackageReference Include="Microsoft.Build.Utilities.Core" />
     <PackageReference Include="Microsoft.Deployment.DotNet.Releases" />
     <PackageReference Include="Microsoft.NET.Sdk.WorkloadManifestReader" />
+    <PackageReference Include="Microsoft.WixToolset.Dtf.WindowsInstaller" />
+    <PackageReference Include="Microsoft.WixToolset.Dtf.WindowsInstaller.Package" />
     <PackageReference Include="NuGet.Packaging" />
   </ItemGroup>
 
@@ -37,12 +39,6 @@
 
   <ItemGroup Condition="'$(IncludeWiX)' == 'true'">
     <PackageReference Include="Microsoft.Signed.Wix" />
-
-    <Reference Include="$(WixInstallPath)\Microsoft.Deployment.Resources.dll" />
-    <Reference Include="$(WixInstallPath)\Microsoft.Deployment.Compression.dll" />
-    <Reference Include="$(WixInstallPath)\Microsoft.Deployment.Compression.Cab.dll" />
-    <Reference Include="$(WixInstallPath)\Microsoft.Deployment.WindowsInstaller.dll" />
-    <Reference Include="$(WixInstallPath)\Microsoft.Deployment.WindowsInstaller.Package.dll" />
   </ItemGroup>
 
   <ItemGroup>
