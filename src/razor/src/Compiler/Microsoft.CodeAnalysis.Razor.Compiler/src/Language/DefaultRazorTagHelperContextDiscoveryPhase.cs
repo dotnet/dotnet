@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
@@ -51,10 +52,12 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
         // This will always be null for a component document.
         var tagHelperPrefix = visitor.TagHelperPrefix;
 
+        var directiveContributions = visitor.GetDirectiveTagHelperContributions();
         var context = TagHelperDocumentContext.GetOrCreate(tagHelperPrefix, visitor.GetResults());
         return codeDocument
             .WithTagHelperContext(context)
-            .WithPreTagHelperSyntaxTree(syntaxTree);
+            .WithPreTagHelperSyntaxTree(syntaxTree)
+            .WithDirectiveTagHelperContributions(directiveContributions);
     }
 
     internal static ReadOnlyMemory<char> GetMemoryWithoutGlobalPrefix(string s)
@@ -79,6 +82,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
         private CancellationToken _cancellationToken;
 
         private TagHelperCollection.Builder? _matches;
+        private List<DirectiveTagHelperContribution>? _directiveContributions;
 
         private TagHelperCollection.Builder Matches => _matches ??= [];
 
@@ -88,9 +92,9 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
 
         public virtual string? TagHelperPrefix => null;
 
-        // We only add diagnostics in the source file and not its imports.
+        // True when visiting the source document itself (not imports).
         [MemberNotNullWhen(true, nameof(_filePath), nameof(_source))]
-        protected bool ShouldAddDiagnostics
+        protected bool IsSourceDocument
             => _filePath is string filePath &&
                _source?.FilePath is string sourceFilePath &&
                filePath == sourceFilePath;
@@ -102,6 +106,11 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
         }
 
         public TagHelperCollection GetResults() => _matches?.ToCollection() ?? [];
+
+        public ImmutableArray<DirectiveTagHelperContribution> GetDirectiveTagHelperContributions()
+            => _directiveContributions is { Count: > 0 }
+                ? [.. _directiveContributions]
+                : [];
 
         protected void Initialize(string? filePath, CancellationToken cancellationToken)
         {
@@ -121,7 +130,18 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
             _filePath = null;
             _source = null;
             _cancellationToken = default;
+            _directiveContributions = null;
             _isInitialized = false;
+        }
+
+        protected void RecordDirectiveTagHelperContribution(BaseRazorDirectiveSyntax directive, TagHelperCollection contributedTagHelpers)
+        {
+            // Only track directive usage in source documents, not imports.
+            if (IsSourceDocument)
+            {
+                _directiveContributions ??= [];
+                _directiveContributions.Add(new(directive.SpanStart, contributedTagHelpers));
+            }
         }
 
         protected void AddMatch(TagHelperDescriptor tagHelper)
@@ -277,7 +297,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
             switch (chunkGenerator)
             {
                 case AddTagHelperChunkGenerator addTagHelper:
-                    HandleAddTagHelper(addTagHelper);
+                    HandleAddTagHelper(node, addTagHelper);
                     break;
                 case RemoveTagHelperChunkGenerator removeTagHelper:
                     HandleRemoveTagHelper(removeTagHelper);
@@ -288,7 +308,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
             }
         }
 
-        private void HandleAddTagHelper(AddTagHelperChunkGenerator addTagHelper)
+        private void HandleAddTagHelper(BaseRazorDirectiveSyntax node, AddTagHelperChunkGenerator addTagHelper)
         {
             if (addTagHelper.AssemblyName == null)
             {
@@ -302,10 +322,13 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
                 return;
             }
 
+            // We only record directives if we're visiting the source document, so no point collecting them either.
+            var contributed = IsSourceDocument ? ListPool<TagHelperDescriptor>.Default.Get() : null;
             switch (GetMemoryWithoutGlobalPrefix(addTagHelper.TypePattern).Span)
             {
                 case ['*']:
                     AddMatches(tagHelpers);
+                    contributed?.AddRange(tagHelpers);
                     break;
 
                 case [.. var pattern, '*']:
@@ -314,6 +337,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
                         if (tagHelper.Name.AsSpan().StartsWith(pattern, StringComparison.Ordinal))
                         {
                             AddMatch(tagHelper);
+                            contributed?.Add(tagHelper);
                         }
                     }
 
@@ -325,10 +349,17 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
                         if (tagHelper.Name.AsSpan().Equals(pattern, StringComparison.Ordinal))
                         {
                             AddMatch(tagHelper);
+                            contributed?.Add(tagHelper);
                         }
                     }
 
                     break;
+            }
+
+            if (contributed is not null)
+            {
+                RecordDirectiveTagHelperContribution(node, TagHelperCollection.Create(contributed));
+                ListPool<TagHelperDescriptor>.Default.Return(contributed);
             }
         }
 
@@ -481,14 +512,15 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
                     ProcessTagHelperPrefix(node, tagHelperPrefix);
                     break;
                 case AddImportChunkGenerator { IsStatic: false } addImport:
-                    ProcessAddImport(addImport);
+                    ProcessAddImport(node, addImport);
                     break;
             }
         }
 
         private void ProcessAddTagHelper(BaseRazorDirectiveSyntax node, AddTagHelperChunkGenerator addTagHelper)
         {
-            if (ShouldAddDiagnostics)
+            // We only add diagnostics if we're visiting the source document, not an import
+            if (IsSourceDocument)
             {
                 addTagHelper.Diagnostics.Add(
                     ComponentDiagnosticFactory.Create_UnsupportedTagHelperDirective(node.GetSourceSpan(Source)));
@@ -497,7 +529,8 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
 
         private void ProcessRemoveTagHelper(BaseRazorDirectiveSyntax node, RemoveTagHelperChunkGenerator removeTagHelper)
         {
-            if (ShouldAddDiagnostics)
+            // We only add diagnostics if we're visiting the source document, not an import
+            if (IsSourceDocument)
             {
                 removeTagHelper.Diagnostics.Add(
                     ComponentDiagnosticFactory.Create_UnsupportedTagHelperDirective(node.GetSourceSpan(Source)));
@@ -506,14 +539,15 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
 
         private void ProcessTagHelperPrefix(BaseRazorDirectiveSyntax node, TagHelperPrefixDirectiveChunkGenerator tagHelperPrefix)
         {
-            if (ShouldAddDiagnostics)
+            // We only add diagnostics if we're visiting the source document, not an import
+            if (IsSourceDocument)
             {
                 tagHelperPrefix.Diagnostics.Add(
                     ComponentDiagnosticFactory.Create_UnsupportedTagHelperDirective(node.GetSourceSpan(Source)));
             }
         }
 
-        private void ProcessAddImport(AddImportChunkGenerator addImport)
+        private void ProcessAddImport(BaseRazorDirectiveSyntax node, AddImportChunkGenerator addImport)
         {
             // Get the namespace from the using statement.
             var @namespace = addImport.ParsedNamespace;
@@ -525,9 +559,12 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
 
             if (_namespaceToComponentsMap.Count == 0 && _componentsWithoutNamespace is null or { Count: 0 })
             {
-                // There aren't any non-qualified components to add
+                // There aren't any non-qualified components to add.
+                RecordDirectiveTagHelperContribution(node, TagHelperCollection.Empty);
                 return;
             }
+
+            var contributedTagHelpers = TagHelperCollection.Empty;
 
             if (_componentsWithoutNamespace is { Count: > 0 } componentsWithoutNamespace)
             {
@@ -544,8 +581,14 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
                 if (namespaceToComponentsMap.TryGetValue(normalizedNamespace, out var components))
                 {
                     AddMatches(components);
+                    if (IsSourceDocument)
+                    {
+                        contributedTagHelpers = TagHelperCollection.Create(components);
+                    }
                 }
             }
+
+            RecordDirectiveTagHelperContribution(node, contributedTagHelpers);
         }
 
         // Check if a type's namespace is already in scope given the namespace of the current document.

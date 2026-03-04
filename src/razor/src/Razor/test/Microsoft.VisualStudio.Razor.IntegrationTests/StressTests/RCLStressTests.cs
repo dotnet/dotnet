@@ -12,7 +12,7 @@ namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
 public class RCLStressTests(ITestOutputHelper testOutputHelper) : AbstractStressTest(testOutputHelper)
 {
-    protected override string TargetFramework => "net9.0";
+    protected override string TargetFramework => "net10.0";
 
     protected override string ProjectZipFile => "Microsoft.VisualStudio.Razor.IntegrationTests.TestFiles.BlazorProjectWithRCL.zip";
 

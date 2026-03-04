@@ -3,8 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Xunit;
-using static Microsoft.AspNetCore.Mvc.Razor.Extensions.ViewComponentsApi;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
@@ -96,6 +97,87 @@ public class TagHelpersIntegrationTest() : IntegrationTestBase(layer: TestProjec
 
         // Assert
         AssertDocumentNodeMatchesBaseline(codeDocument.GetRequiredDocumentNode());
+    }
+
+    [Fact]
+    public void AddTagHelperDirective_IsUnused_WhenNoTagHelpersReferenced()
+    {
+        // Arrange
+        TagHelperCollection tagHelpers =
+        [
+            CreateTagHelperDescriptor(
+                tagName: "input",
+                typeName: "InputTagHelper",
+                assemblyName: "TestAssembly")
+        ];
+
+        var projectEngine = CreateProjectEngine(builder => builder.SetTagHelpers(tagHelpers));
+        var projectItem = AddProjectItemFromText("""
+            @addTagHelper *, TestAssembly
+            <div>Hello</div>
+            """, filePath: "Index.cshtml");
+
+        // Act
+        var codeDocument = projectEngine.Process(projectItem);
+
+        // Assert
+        var addTagHelperDirective = codeDocument.GetRequiredSyntaxTree().Root.DescendantNodes().OfType<BaseRazorDirectiveSyntax>().Single();
+        Assert.False(codeDocument.IsDirectiveUsed(addTagHelperDirective));
+    }
+
+    [Fact]
+    public void AddTagHelperDirective_IsUsed_WhenTagHelperReferenced()
+    {
+        // Arrange
+        TagHelperCollection tagHelpers =
+        [
+            CreateTagHelperDescriptor(
+                tagName: "input",
+                typeName: "InputTagHelper",
+                assemblyName: "TestAssembly")
+        ];
+
+        var projectEngine = CreateProjectEngine(builder => builder.SetTagHelpers(tagHelpers));
+        var projectItem = AddProjectItemFromText("""
+            @addTagHelper *, TestAssembly
+            <input />
+            """, filePath: "Index.cshtml");
+
+        // Act
+        var codeDocument = projectEngine.Process(projectItem);
+
+        // Assert
+        var addTagHelperDirective = codeDocument.GetRequiredSyntaxTree().Root.DescendantNodes().OfType<BaseRazorDirectiveSyntax>().Single();
+        Assert.True(codeDocument.IsDirectiveUsed(addTagHelperDirective));
+    }
+
+    [Fact]
+    public void AddTagHelperDirective_StoresDirectiveTagHelperContributions()
+    {
+        // Arrange
+        TagHelperCollection tagHelpers =
+        [
+            CreateTagHelperDescriptor(
+                tagName: "input",
+                typeName: "InputTagHelper",
+                assemblyName: "TestAssembly")
+        ];
+
+        var projectEngine = CreateProjectEngine(builder => builder.SetTagHelpers(tagHelpers));
+        var projectItem = AddProjectItemFromText("""
+            @addTagHelper *, TestAssembly
+            <div>Hello</div>
+            """, filePath: "Index.cshtml");
+
+        // Act
+        var codeDocument = projectEngine.Process(projectItem);
+
+        // Assert
+        var addTagHelperDirective = codeDocument.GetRequiredSyntaxTree().Root.DescendantNodes().OfType<BaseRazorDirectiveSyntax>().Single();
+        var contributions = codeDocument.GetDirectiveTagHelperContributions();
+        var contribution = Assert.Single(contributions);
+        Assert.Equal(addTagHelperDirective.SpanStart, contribution.DirectiveSpanStart);
+        Assert.NotEmpty(contribution.ContributedTagHelpers);
     }
 
     private static TagHelperDescriptor CreateTagHelperDescriptor(
