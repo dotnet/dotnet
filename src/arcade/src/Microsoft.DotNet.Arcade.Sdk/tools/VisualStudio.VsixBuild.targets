@@ -19,7 +19,7 @@
          Writes a stub file to component intermediate directory.
   -->
 
-  <UsingTask TaskName="Microsoft.DotNet.Build.Tasks.VisualStudio.FinalizeInsertionVsixFile" AssemblyFile="$(ArcadeVisualStudioBuildTasksAssembly)" />
+  <UsingTask TaskName="Microsoft.DotNet.Build.Tasks.VisualStudio.FinalizeInsertionVsixFile" AssemblyFile="$(ArcadeVisualStudioBuildTasksAssembly)" Runtime="NET" />
 
   <PropertyGroup>
     <!--

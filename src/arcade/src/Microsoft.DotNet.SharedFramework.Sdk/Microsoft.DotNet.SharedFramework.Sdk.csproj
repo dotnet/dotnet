@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(BundledNETCoreAppTargetFramework);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <IsPackable>true</IsPackable>
     <IsBuildTaskProject>true</IsBuildTaskProject>
     <Description>Common toolset for building shared frameworks and framework packs.</Description>
@@ -29,13 +29,6 @@
     <Compile Include="..\Common\Internal\BuildTask.cs" Link="src\BuildTask.cs" />
     <Compile Include="..\Microsoft.DotNet.PackageTesting\VerifyClosure.cs" Link="src/Packaging/VerifyClosure.cs" />
     <Compile Include="..\Microsoft.DotNet.PackageTesting\VerifyTypes.cs" Link="src/Packaging/VerifyTypes.cs" />
-  </ItemGroup>
-  
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <Compile Include="..\Common\Internal\AssemblyResolver.cs" />
-    <Compile Include="..\Common\Internal\BuildTask.Desktop.cs" />
-
-    <PackageReference Include="System.Reflection.Metadata" />
   </ItemGroup>
 
 </Project>

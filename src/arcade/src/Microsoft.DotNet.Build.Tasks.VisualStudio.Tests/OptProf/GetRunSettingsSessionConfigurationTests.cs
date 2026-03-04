@@ -439,7 +439,7 @@ $@"<TestStores>
   <TestContainer FileName=""DDRIT.RPS.CSharp.dll"" />
   <TestContainer FileName=""VSPE.dll"" />
 </TestContainers>
-<TestCaseFilter>FullyQualifiedName=DDRIT.RPS.CSharp.CSharpTest.EditingAndDesigner|FullyQualifiedName=VSPE.OptProfTests.vs_perf_designtime_ide_searchtest|FullyQualifiedName=VSPE.OptProfTests.vs_perf_designtime_editor_intellisense_globalcompletionlist_cs|FullyQualifiedName=VSPE.OptProfTests.vs_asl_cs_scenario|FullyQualifiedName=VSPE.OptProfTests.vs_ddbvtqa_vbwi|FullyQualifiedName=VSPE.OptProfTests.vs_asl_vb_scenario|FullyQualifiedName=VSPE.OptProfTests.vs_env_solution_createnewproject_vb_winformsapp|FullyQualifiedName=DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging</TestCaseFilter>", task.SessionConfiguration);
+<TestCaseFilter>FullyQualifiedName=DDRIT.RPS.CSharp.CSharpTest.EditingAndDesigner|FullyQualifiedName=VSPE.OptProfTests.vs_perf_designtime_ide_searchtest|FullyQualifiedName=VSPE.OptProfTests.vs_perf_designtime_editor_intellisense_globalcompletionlist_cs|FullyQualifiedName=VSPE.OptProfTests.vs_asl_cs_scenario|FullyQualifiedName=VSPE.OptProfTests.vs_ddbvtqa_vbwi|FullyQualifiedName=VSPE.OptProfTests.vs_asl_vb_scenario|FullyQualifiedName=VSPE.OptProfTests.vs_env_solution_createnewproject_vb_winformsapp|FullyQualifiedName=DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging</TestCaseFilter>", task.SessionConfiguration, ignoreLineEndingDifferences: true);
 
             Assert.True(result);
 
@@ -454,8 +454,8 @@ $@"<TestStores>
         public void TestProductsOnly(string configJson, string expectedContainerString, string expectedTestCaseFilterString)
         {
             var (actualContainerString, actualTestCaseFilterString) = GetRunSettingsSessionConfiguration.GetTestContainersAndFilters(configJson, "config.json");
-            Assert.Equal(expectedContainerString, actualContainerString);
-            Assert.Equal(expectedTestCaseFilterString, actualTestCaseFilterString);
+            Assert.Equal(expectedContainerString, actualContainerString, ignoreLineEndingDifferences: true);
+            Assert.Equal(expectedTestCaseFilterString, actualTestCaseFilterString, ignoreLineEndingDifferences: true);
         }
     }
 }

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(BundledNETCoreAppTargetFramework);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,13 +15,6 @@
     <ProjectReference Include="..\Common\Microsoft.Arcade.Test.Common\Microsoft.Arcade.Test.Common.csproj" />
     <ProjectReference Include="..\Microsoft.DotNet.SignTool\Microsoft.DotNet.SignTool.csproj" />
     <ProjectReference Include="..\Microsoft.DotNet.XUnitExtensions\src\Microsoft.DotNet.XUnitExtensions.csproj" />
-
-    <ProjectReference Include="..\Microsoft.DotNet.Tar\Microsoft.DotNet.Tar.csproj"
-                      ReferenceOutputAssembly="false"
-                      SetTargetFramework="TargetFramework=$(BundledNETCoreAppTargetFramework)"
-                      SkipGetTargetFrameworkProperties="true"
-                      Private="false"
-                      OutputItemType="_TarToolPath" />
 
     <ProjectReference Include="..\Microsoft.DotNet.MacOsPkg\Cli\Microsoft.DotNet.MacOsPkg.Cli.csproj"
                       ReferenceOutputAssembly="false"
@@ -55,18 +48,6 @@
                Link="tools\sn\1033\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
-  <Target Name="_CopyTarTool" AfterTargets="ResolveProjectReferences">
-    <PropertyGroup>
-      <_TarToolPattern>@(_TarToolPath->'%(RootDir)%(Directory)')**\*.*</_TarToolPattern>
-    </PropertyGroup>
-    <ItemGroup>
-      <_TarToolFiles Include="$(_TarToolPattern)" />
-    </ItemGroup>
-    <ItemGroup>
-      <Content Include="@(_TarToolFiles)" CopyToOutputDirectory="PreserveNewest" Link="tools\tar\%(RecursiveDir)%(Filename)%(Extension)" />
-    </ItemGroup>
-  </Target>
-
   <!-- Copy the tooling even on platforms that won't use it, since we might run these
        tests in Helix, on another platform. -->
   <Target Name="_CopyPkgTool" AfterTargets="ResolveProjectReferences">
@@ -80,4 +61,5 @@
       <Content Include="@(_PkgToolFiles)" CopyToOutputDirectory="PreserveNewest" Link="tools\pkg\%(RecursiveDir)%(Filename)%(Extension)"/>
     </ItemGroup>
   </Target>
+
 </Project>

@@ -9,9 +9,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
 using Microsoft.SignCheck.Logging;
-#if NET
 using System.Reflection.PortableExecutable;
-#endif
 
 namespace Microsoft.SignCheck.Verification
 {
@@ -90,7 +88,6 @@ namespace Microsoft.SignCheck.Verification
     {
         public SignedCms ReadSecurityInfo(string path)
         {
-#if NET
             using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
             using (PEReader peReader = new PEReader(fs))
             {
@@ -123,10 +120,8 @@ namespace Microsoft.SignCheck.Verification
                     return signedCms;
                 }
             }
+
             return null;
-#else
-            throw new NotSupportedException("Not supported on .NET Framework");
-#endif
         }
     }
 }

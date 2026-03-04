@@ -2,8 +2,7 @@
 <Project>
 
   <PropertyGroup>
-    <GenAPIAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)\..\tools\net\Microsoft.DotNet.GenAPI.dll</GenAPIAssembly>
-    <GenAPIAssembly Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)\..\tools\netframework\Microsoft.DotNet.GenAPI.dll</GenAPIAssembly>
+    <GenAPIAssembly>$(MSBuildThisFileDirectory)\..\tools\net\Microsoft.DotNet.GenAPI.dll</GenAPIAssembly>
 
     <!-- Hook onto the TargetsTriggeredByCompilation target which only runs when the compiler is invoked. -->
     <TargetsTriggeredByCompilation Condition="'$(GenerateReferenceAssemblySource)' == 'true'">
@@ -25,7 +24,7 @@
   <Target Name="GenerateReferenceSource"
           DependsOnTargets="GenerateReferenceAssemblySource" />
 
-  <UsingTask TaskName="Microsoft.DotNet.GenAPI.GenAPITask" AssemblyFile="$(GenAPIAssembly)" />
+  <UsingTask TaskName="Microsoft.DotNet.GenAPI.GenAPITask" AssemblyFile="$(GenAPIAssembly)" Runtime="NET" />
 
   <Target Name="GenerateReferenceAssemblySource"
           DependsOnTargets="_DontBuildProjectReferences;ResolveAssemblyReferences">

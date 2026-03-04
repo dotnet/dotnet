@@ -128,7 +128,6 @@ namespace Microsoft.DotNet.Arcade.Sdk
             // on Mac if the endpoint is not available. This is only available on .NET Core, but has only been
             // observed on Mac anyway.
 
-#if NET
             using SocketsHttpHandler handler = new SocketsHttpHandler();
             handler.SslOptions.CertificateChainPolicy = new X509ChainPolicy
             {
@@ -151,9 +150,6 @@ namespace Microsoft.DotNet.Arcade.Sdk
             };
 
             using (var httpClient = new HttpClient(handler))
-#else
-            using (var httpClient = new HttpClient(new HttpClientHandler { CheckCertificateRevocationList = true }))
-#endif
             {
                 httpClient.Timeout = TimeSpan.FromSeconds(TimeoutInSeconds);
                 try

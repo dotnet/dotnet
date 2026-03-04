@@ -2,12 +2,11 @@
 <Project>
 
   <PropertyGroup>
-    <DotNetPackageTestingAssembly Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\netframework\Microsoft.DotNet.PackageTesting.dll</DotNetPackageTestingAssembly>
-    <DotNetPackageTestingAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\net\Microsoft.DotNet.PackageTesting.dll</DotNetPackageTestingAssembly>
+    <DotNetPackageTestingAssembly>$(MSBuildThisFileDirectory)..\tools\net\Microsoft.DotNet.PackageTesting.dll</DotNetPackageTestingAssembly>
   </PropertyGroup>
 
-  <UsingTask TaskName="GetCompatiblePackageTargetFrameworks" AssemblyFile="$(DotNetPackageTestingAssembly)" />
-  <UsingTask TaskName="VerifyClosure" AssemblyFile="$(DotNetPackageTestingAssembly)" />
-  <UsingTask TaskName="VerifyTypes" AssemblyFile="$(DotNetPackageTestingAssembly)" />
+  <UsingTask TaskName="GetCompatiblePackageTargetFrameworks" AssemblyFile="$(DotNetPackageTestingAssembly)" Runtime="NET" />
+  <UsingTask TaskName="VerifyClosure" AssemblyFile="$(DotNetPackageTestingAssembly)" Runtime="NET" />
+  <UsingTask TaskName="VerifyTypes" AssemblyFile="$(DotNetPackageTestingAssembly)" Runtime="NET" />
 
 </Project>
