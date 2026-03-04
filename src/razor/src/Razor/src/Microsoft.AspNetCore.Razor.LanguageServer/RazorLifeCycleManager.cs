@@ -24,7 +24,7 @@ internal class RazorLifeCycleManager(RazorLanguageServer languageServer, ILspSer
         return Task.CompletedTask;
     }
 
-    public Task ShutdownAsync(string message = "Shutting down")
+    public Task ShutdownAsync()
     {
         _lspServerActivationTracker?.Deactivated();
 

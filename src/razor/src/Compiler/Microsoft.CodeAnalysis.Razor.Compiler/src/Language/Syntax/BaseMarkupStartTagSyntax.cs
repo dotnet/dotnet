@@ -21,6 +21,11 @@ internal abstract partial class BaseMarkupStartTagSyntax
         }
     }
 
+    public bool IsVoidElement()
+    {
+        return ParserHelpers.VoidElements.Contains(Name.Content);
+    }
+
     public bool IsSelfClosing()
     {
         return ForwardSlash.Kind != SyntaxKind.None &&

@@ -441,18 +441,18 @@ namespace Microsoft.DotNet.SignTool.Tests
 
                 using MD5 md5 = MD5.Create();
                 using FileStream fileStream = File.OpenRead(layoutFilePath);
-                string newHash = Convert.ToHexString(md5.ComputeHash(fileStream));
+                string newHash = Convert.ToHexStringLower(md5.ComputeHash(fileStream));
 
                 if (signableFiles.Contains(targetSystemFilePath))
                 {
                     newHash.Should().NotBe(originalHash);
-                    md5sumsContents.Should().Contain($"{newHash} {targetSystemFilePath}");
-                    md5sumsContents.Should().NotContain($"{originalHash} {targetSystemFilePath}");
+                    md5sumsContents.Should().Contain($"{newHash}  {targetSystemFilePath}");
+                    md5sumsContents.Should().NotContain($"{originalHash}  {targetSystemFilePath}");
                 }
                 else
                 {
                     newHash.Should().Be(originalHash);
-                    md5sumsContents.Should().Contain($"{originalHash} {targetSystemFilePath}");
+                    md5sumsContents.Should().Contain($"{originalHash}  {targetSystemFilePath}");
                 }
             }
 
@@ -1993,8 +1993,8 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.deb"
 
             var expectedFilesOriginalHashes = new (string, string)[]
             {
-                ("usr/local/bin/hello", "644981BBD6F4ED1B3CF68CD0F47981AA"),
-                ("usr/local/bin/mscorlib.dll", "B80EEBA2B8616B7C37E49B004D69BBB7")
+                ("usr/local/bin/hello", "644981bbd6f4ed1b3cf68cd0f47981aa"),
+                ("usr/local/bin/mscorlib.dll", "b80eeba2b8616b7c37e49b004d69bbb7")
             };
             string[] signableFiles = ["usr/local/bin/mscorlib.dll"];
             string expectedControlFileContent = "Package: test\nVersion: 1.0\nSection: base\nPriority: optional\nArchitecture: all\n";

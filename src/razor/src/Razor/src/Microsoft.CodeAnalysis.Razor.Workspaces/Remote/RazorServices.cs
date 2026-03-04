@@ -28,6 +28,7 @@ internal static class RazorServices
             (typeof(IRemoteWrapWithTagService), null),
             (typeof(IRemoteSpanMappingService), null),
             (typeof(IRemoteDevToolsService), null),
+            (typeof(IRemoteRemoveAndSortUsingsService), null),
         ];
 
     // Internal for testing

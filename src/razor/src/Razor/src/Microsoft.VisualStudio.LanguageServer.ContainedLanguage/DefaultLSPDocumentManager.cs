@@ -18,6 +18,13 @@ namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 [Export(typeof(LSPDocumentManager))]
 internal class DefaultLSPDocumentManager : TrackingLSPDocumentManager
 {
+    /// <summary>
+    /// Represents the key used to store the old content type of a document that's being removed. This is needed as part of the
+    /// logic to determine which listeners to notify when a document is removed since the buffer may have already had it's
+    /// content type changed to something else.
+    /// </summary>
+    internal static object LSPDocumentRemovalOldContentTypeKey = new();
+
     private readonly JoinableTaskContext _joinableTaskContext;
     private readonly FileUriProvider _fileUriProvider;
     private readonly LSPDocumentFactory _documentFactory;
@@ -271,12 +278,26 @@ internal class DefaultLSPDocumentManager : TrackingLSPDocumentManager
         VirtualDocumentSnapshot? virtualNew,
         LSPDocumentChangeKind kind)
     {
+        IContentType? oldContentType = null;
+        if (old is not null)
+        {
+            oldContentType = old.Snapshot.ContentType;
+
+            // During removal, prefer to use the content type from the buffer properties if it exists since the buffer may have already
+            // had it's content type changed at this point but we still want to notify the correct listeners based on the old content type.
+            if (kind == LSPDocumentChangeKind.Removed
+                && old.Snapshot.TextBuffer.Properties.TryGetProperty<IContentType>(LSPDocumentRemovalOldContentTypeKey, out var contentType))
+            {
+                oldContentType = contentType;
+            }
+        }
+
         foreach (var listener in _documentManagerChangeListeners)
         {
             var notifyListener = false;
 
-            if (old is not null &&
-                listener.Metadata.ContentTypes.Any(old.Snapshot.ContentType.IsOfType))
+            if (oldContentType != null &&
+                listener.Metadata.ContentTypes.Any(oldContentType.IsOfType))
             {
                 notifyListener = true;
             }
