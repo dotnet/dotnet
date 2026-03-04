@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
+using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
@@ -16,10 +17,10 @@ internal static class RazorSyntaxNodeExtensions
 {
     private static bool IsDirective(SyntaxNode node, DirectiveDescriptor directive, [NotNullWhen(true)] out RazorDirectiveBodySyntax? body)
     {
-        if (node is RazorDirectiveSyntax { HasDirectiveDescriptor: true, Body: RazorDirectiveBodySyntax directiveBody } directiveNode &&
+        if (node is RazorDirectiveSyntax { HasDirectiveDescriptor: true } directiveNode &&
             directiveNode.IsDirective(directive))
         {
-            body = directiveBody;
+            body = directiveNode.DirectiveBody;
             return true;
         }
 
@@ -27,22 +28,23 @@ internal static class RazorSyntaxNodeExtensions
         return false;
     }
 
+    internal static bool IsAddTagHelperDirective(this RazorDirectiveSyntax directive)
+        => directive.DirectiveBody.Keyword.GetContent() == SyntaxConstants.CSharp.AddTagHelperKeyword;
+
     internal static bool IsSectionDirective(this SyntaxNode node)
         => (node as RazorDirectiveSyntax)?.IsDirective(SectionDirective.Directive) is true;
 
     internal static bool IsCodeBlockDirective(this SyntaxNode node)
         => (node as RazorDirectiveSyntax)?.IsDirectiveKind(DirectiveKind.CodeBlock) is true;
 
-    internal static bool IsUsingDirective(this SyntaxNode node)
-        => node.IsUsingDirective(out _);
-
     internal static bool IsUsingDirective(this SyntaxNode node, out SyntaxTokenList tokens)
     {
-        // Using directives are weird, because the directive keyword ("using") is part of the C# statement it represents
-        if (node is RazorDirectiveSyntax { HasDirectiveDescriptor: false, Body: RazorDirectiveBodySyntax body } &&
-            body.Keyword is CSharpStatementLiteralSyntax
+        if (node is RazorUsingDirectiveSyntax
             {
-                LiteralTokens: [{ Kind: SyntaxKind.Keyword, Content: "using" }, ..] literalTokens
+                DirectiveBody.Keyword: CSharpStatementLiteralSyntax
+                {
+                    LiteralTokens: var literalTokens
+                }
             })
         {
             tokens = literalTokens;
@@ -364,7 +366,7 @@ internal static class RazorSyntaxNodeExtensions
             // @code {
             //    var foo = "bar";
             // }
-            case RazorDirectiveSyntax { Body: RazorDirectiveBodySyntax body }:
+            case RazorDirectiveSyntax { DirectiveBody: var body }:
                 // code {
                 //    var foo = "bar";
                 // }
@@ -490,5 +492,17 @@ internal static class RazorSyntaxNodeExtensions
     {
         result = node.GetLastToken(includeZeroWidth);
         return result != default;
+    }
+
+    public static TextSpan SpanWithoutTrailingNewLines(this SyntaxNode node, SourceText sourceText)
+    {
+        var span = node.Span;
+        var end = span.End;
+        while (end > span.Start && sourceText[end - 1] is '\r' or '\n')
+        {
+            end--;
+        }
+
+        return TextSpan.FromBounds(span.Start, end);
     }
 }

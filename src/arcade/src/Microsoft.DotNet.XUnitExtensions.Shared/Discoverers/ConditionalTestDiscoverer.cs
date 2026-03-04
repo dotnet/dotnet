@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 #if !USES_XUNIT_3
@@ -16,15 +17,52 @@ namespace Microsoft.DotNet.XUnitExtensions
     // [ConditionalFact] and [ConditionalTheory]
     internal static class ConditionalTestDiscoverer
     {
+#if USES_XUNIT_3
+        /// <summary>
+        /// Evaluates skip conditions given an explicit callee type and condition member names.
+        /// Used by attribute constructors in xunit v3 where discoverers are not needed.
+        /// </summary>
+        internal static string EvaluateSkipConditions(
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
+            Type calleeType,
+            string[] conditionMemberNames)
+        {
+            if (calleeType == null || conditionMemberNames == null || conditionMemberNames.Length == 0)
+                return null;
+
+            List<string> falseConditions = new(conditionMemberNames.Length);
+            foreach (string entry in conditionMemberNames)
+            {
+                if (string.IsNullOrWhiteSpace(entry))
+                    continue;
+
+                Func<bool> conditionFunc = LookupConditionalMember(calleeType, entry);
+                if (conditionFunc == null)
+                    throw new ConditionalDiscovererException(GetFailedLookupString(entry, calleeType));
+
+                try
+                {
+                    if (!conditionFunc())
+                        falseConditions.Add(entry);
+                }
+                catch (Exception exc)
+                {
+                    falseConditions.Add($"{entry} ({exc.GetType().Name})");
+                }
+            }
+
+            return falseConditions.Count > 0
+                ? string.Format("Condition(s) not met: \"{0}\"", string.Join("\", \"", falseConditions))
+                : null;
+        }
+#endif
+
+#if !USES_XUNIT_3
         // This helper method evaluates the given condition member names for a given set of test cases.
         // If any condition member evaluates to 'false', the test cases are marked to be skipped.
         // The skip reason is the collection of all the condition members that evaluated to 'false'.
         internal static string EvaluateSkipConditions(
-#if USES_XUNIT_3
-            IXunitTestMethod testMethod,
-#else
             ITestMethod testMethod,
-#endif
             object[] conditionArguments)
         {
             Type calleeType = null;
@@ -32,11 +70,7 @@ namespace Microsoft.DotNet.XUnitExtensions
 
             if (CheckInputToSkipExecution(conditionArguments, ref calleeType, ref conditionMemberNames, testMethod)) return null;
 
-#if USES_XUNIT_3
-            MethodInfo testMethodInfo = testMethod.Method;
-#else
             MethodInfo testMethodInfo = testMethod.Method.ToRuntimeMethod();
-#endif
             Type testMethodDeclaringType = testMethodInfo.DeclaringType;
             List<string> falseConditions = new List<string>(conditionMemberNames.Count());
 
@@ -64,15 +98,11 @@ namespace Microsoft.DotNet.XUnitExtensions
                     if (symbols.Length == 2)
                     {
                         conditionMemberName = symbols[1];
-#if USES_XUNIT_3
-                        declaringType = testMethod.TestClass.Class.Assembly.ExportedTypes.Where(t => t.Name.Contains(symbols[0])).FirstOrDefault();
-#else
                         ITypeInfo type = testMethod.TestClass.Class.Assembly.GetTypes(false).Where(t => t.Name.Contains(symbols[0])).FirstOrDefault();
                         if (type != null)
                         {
                             declaringType = type.ToRuntimeType();
                         }
-#endif
                     }
                 }
 
@@ -107,11 +137,7 @@ namespace Microsoft.DotNet.XUnitExtensions
             return null;
         }
 
-#if USES_XUNIT_3
-        internal static bool TryEvaluateSkipConditions(ITestFrameworkDiscoveryOptions discoveryOptions, IXunitTestMethod testMethod, object[] conditionArguments, out string skipReason, out ExecutionErrorTestCase errorTestCase)
-#else
         internal static bool TryEvaluateSkipConditions(ITestFrameworkDiscoveryOptions discoveryOptions, IMessageSink diagnosticMessageSink, ITestMethod testMethod, object[] conditionArguments, out string skipReason, out ExecutionErrorTestCase errorTestCase)
-#endif
         {
             skipReason = null;
             errorTestCase = null;
@@ -122,20 +148,16 @@ namespace Microsoft.DotNet.XUnitExtensions
             }
             catch (ConditionalDiscovererException e)
             {
-#if USES_XUNIT_3
-                var details = TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions, testMethod, new Xunit.FactAttribute());
-                errorTestCase = new ExecutionErrorTestCase(testMethod, details.TestCaseDisplayName, details.UniqueID, details.SourceFilePath, details.SourceLineNumber, e.Message);
-#else
                 errorTestCase = new ExecutionErrorTestCase(
                     diagnosticMessageSink,
                     discoveryOptions.MethodDisplayOrDefault(),
                     discoveryOptions.MethodDisplayOptionsOrDefault(),
                     testMethod,
                     e.Message);
-#endif
                 return false;
             }
         }
+#endif // !USES_XUNIT_3
 
         internal static string GetFailedLookupString(string name, Type type)
         {
@@ -167,7 +189,13 @@ namespace Microsoft.DotNet.XUnitExtensions
             return LookupConditionalMember(ti.BaseType, name);
         }
 
-        internal static bool CheckInputToSkipExecution(object[] conditionArguments, ref Type calleeType, ref string[] conditionMemberNames, ITestMethod testMethod = null)
+        internal static bool CheckInputToSkipExecution(object[] conditionArguments, ref Type calleeType, ref string[] conditionMemberNames,
+#if !USES_XUNIT_3
+            ITestMethod
+#else
+            object
+#endif
+            testMethod = null)
         {
             // A null or empty list of conditionArguments is treated as "no conditions".
             // and the test cases will be executed.

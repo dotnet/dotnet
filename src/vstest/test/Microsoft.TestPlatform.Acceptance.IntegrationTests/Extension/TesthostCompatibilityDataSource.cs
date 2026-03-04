@@ -15,7 +15,7 @@ public class TestHostCompatibilityDataSource : TestDataSourceAttribute<RunnerInf
     private readonly CompatibilityRowsBuilder _builder;
 
     public TestHostCompatibilityDataSource(
-        string runnerFrameworks = AcceptanceTestBase.DEFAULT_HOST_NETFX_AND_NET,
+        string runnerFrameworks = AcceptanceTestBase.DEFAULT_RUNNER_NETFX_AND_NET,
         string hostFrameworks = AcceptanceTestBase.DEFAULT_HOST_NETFX_AND_NET,
         string hostVersions = AcceptanceTestBase.LATEST_TO_LEGACY)
     {
@@ -51,6 +51,7 @@ public class TestHostCompatibilityDataSource : TestDataSourceAttribute<RunnerInf
         _builder.WithEveryVersionOfAdapter = false;
         _builder.WithOlderConfigurations = false;
         _builder.WithInProcess = false;
+        _builder.WithVSIXRunner = false;
 
         _builder.BeforeTestHostFeature = BeforeFeature;
         _builder.AfterTestHostFeature = AfterFeature;

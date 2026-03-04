@@ -291,7 +291,7 @@ internal sealed class MapCodeEndpoint(
         typeof(CSharpImplicitExpressionSyntax),
         typeof(MarkupElementSyntax),
         typeof(MarkupTextLiteralSyntax),
-        typeof(RazorDirectiveSyntax),
+        typeof(BaseRazorDirectiveSyntax),
     ];
 
     private async Task<bool> TrySendCSharpDelegatedMappingRequestAsync(

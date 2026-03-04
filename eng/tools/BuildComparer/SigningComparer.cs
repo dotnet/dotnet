@@ -24,7 +24,8 @@ public class SigningComparer : BuildComparer
         int parallelTasks,
         string baselineFilePath,
         string exclusionsFilePath,
-        string sdkTaskScript)
+        string sdkTaskScript,
+        string[] includedRepositories)
         : base(
             clean,
             assetType,
@@ -37,7 +38,8 @@ public class SigningComparer : BuildComparer
             issuesToReport: new List<IssueType>
             {
                 IssueType.Unsigned
-            })
+            },
+            includedRepositories)
     {
         _signCheckExecuter = new SignCheckExecuter(exclusionsFilePath, sdkTaskScript);
         InitializeSignCheck().Wait();

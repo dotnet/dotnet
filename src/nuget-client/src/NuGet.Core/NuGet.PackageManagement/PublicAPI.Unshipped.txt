@@ -1,1 +1,7 @@
 #nullable enable
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.AreAllPackagesConditional.init -> void
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.BuildIntegratedInstallationContext() -> void
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.SuccessfulFrameworks.get -> System.Collections.Generic.List<string!>!
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.SuccessfulFrameworks.init -> void
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.UnsuccessfulFrameworks.get -> System.Collections.Generic.List<string!>!
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.UnsuccessfulFrameworks.init -> void

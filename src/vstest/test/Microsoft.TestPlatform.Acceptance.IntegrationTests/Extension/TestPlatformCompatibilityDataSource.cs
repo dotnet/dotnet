@@ -27,7 +27,7 @@ public class TestPlatformCompatibilityDataSource : TestDataSourceAttribute<Runne
     private readonly CompatibilityRowsBuilder _builder;
 
     public TestPlatformCompatibilityDataSource(
-        string runnerFrameworks = AcceptanceTestBase.DEFAULT_HOST_NETFX_AND_NET,
+        string runnerFrameworks = AcceptanceTestBase.DEFAULT_RUNNER_NETFX_AND_NET,
         string runnerVersions = AcceptanceTestBase.LATEST_TO_LEGACY,
         string hostFrameworks = AcceptanceTestBase.DEFAULT_HOST_NETFX_AND_NET,
         string hostVersions = AcceptanceTestBase.LATEST_TO_LEGACY,
@@ -58,6 +58,7 @@ public class TestPlatformCompatibilityDataSource : TestDataSourceAttribute<Runne
     public bool WithEveryVersionOfAdapter { get; set; } = true;
 
     public bool WithOlderConfigurations { get; set; } = true;
+    public bool WithVSIXRunner { get; set; } = true;
 
     public string? BeforeRunnerFeature { get; set; }
     public string? AfterRunnerFeature { get; set; }
@@ -74,6 +75,7 @@ public class TestPlatformCompatibilityDataSource : TestDataSourceAttribute<Runne
         _builder.WithEveryVersionOfHost = WithEveryVersionOfHost;
         _builder.WithEveryVersionOfAdapter = WithEveryVersionOfAdapter;
         _builder.WithOlderConfigurations = WithOlderConfigurations;
+        _builder.WithVSIXRunner = WithVSIXRunner;
         _builder.WithInProcess = WithInProcess;
 
         _builder.BeforeRunnerFeature = BeforeRunnerFeature;

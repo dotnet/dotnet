@@ -1,7 +1,9 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Roslyn.Test.Utilities;
 using Xunit;
 using static Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeAssert;
 
@@ -75,5 +77,52 @@ public class SectionDirectivePassTest : RazorProjectEngineTestBase
         var section = Assert.IsType<SectionIntermediateNode>(method.Children[1]);
         Assert.Equal("Header", section.SectionName);
         Children(section, c => Html(" <p>Hello World</p> ", c));
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/11273")]
+    public void SectionDirective_IsRecognizedInLegacyFiles()
+    {
+        // Arrange
+        var content = "@section Header { <p>Hello World</p> }";
+        var source = TestRazorSourceDocument.Create(content, filePath: "test.cshtml", relativePath: "test.cshtml");
+        
+        // Act
+        var codeDocument = ProjectEngine.Process(source, RazorFileKind.Legacy, [], tagHelpers: null);
+
+        // Assert
+        var syntaxTree = codeDocument.GetSyntaxTree();
+        Assert.NotNull(syntaxTree);
+        
+        // The section directive should be recognized without errors
+        var diagnostics = syntaxTree.Diagnostics;
+        Assert.Empty(diagnostics);
+
+        // Verify that a RazorDirective node for 'section' exists in the syntax tree
+        var directiveNodes = syntaxTree.Root.DescendantNodes()
+            .OfType<Microsoft.AspNetCore.Razor.Language.Syntax.RazorDirectiveSyntax>();
+
+        Assert.Contains(directiveNodes, d => d.DirectiveDescriptor?.Directive == "section");
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/11273")]
+    public void SectionDirective_IsNotRecognizedInComponentFiles()
+    {
+        // Arrange
+        var content = "@section Header { <p>Hello World</p> }";
+        var source = TestRazorSourceDocument.Create(content, filePath: "test.razor", relativePath: "test.razor");
+        
+        // Act
+        var codeDocument = ProjectEngine.Process(source, RazorFileKind.Component, [], tagHelpers: null);
+
+        // Assert
+        var syntaxTree = codeDocument.GetSyntaxTree();
+        Assert.NotNull(syntaxTree);
+        
+        // The section directive should NOT be recognized in component files.
+        // Verify that no RazorDirective node for 'section' exists in the syntax tree
+        var directiveNodes = syntaxTree.Root.DescendantNodes()
+            .OfType<Microsoft.AspNetCore.Razor.Language.Syntax.RazorDirectiveSyntax>();
+        
+        Assert.DoesNotContain(directiveNodes, d => d.DirectiveDescriptor?.Directive == "section");
     }
 }

@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -409,13 +410,40 @@ namespace NuGet.Commands.FuncTest
             bananaTarget.Libraries.Should().Contain(e => e.Name!.Equals("Project3"));
         }
 
-        // P1 (banana) -> X
-        // P1 (apple) -> Y
-        [Fact]
-        public async Task RestoreCommand_WithAliasesOfSameFramework_And10_0_200_FailsWithNU1018()
+        [Theory]
+        [InlineData("10.0.200", "10.0.300")]
+        [InlineData("10.0.300", "10.0.300-preview.0.12345")]
+        [InlineData("11.0.100", "11.0.100-preview.2.26103")]
+        public async Task RestoreCommand_WithAliasesOfSameFramework_AndIncompatibleSDKAnalysisLevelAndSDKVersionCombinations_FailsWithNU1018(string sdkAnalysisLevel, string sdkVersion)
         {
             using var pathContext = new SimpleTestPathContext();
 
+            RestoreResult result = await RunSimpleAliasedRestoreWithSDKAnalysisLevelAndSDKVersion(pathContext, sdkAnalysisLevel, sdkVersion);
+
+            result.Success.Should().BeFalse();
+            result.LockFile.LogMessages.Should().HaveCount(1);
+            result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1018);
+        }
+
+        [Theory]
+        [InlineData("10.0.300", "10.0.300")]
+        [InlineData("10.0.300", "10.0.400")]
+        [InlineData("10.0.300", null)] // Null value means we let it be.
+        [InlineData("10.0.300", "10.0.300-preview.1.12345")] // This is a dummy value that'll need to be updated once we have a real one.
+        [InlineData("11.0.100", "11.0.100-preview.2.26104")]
+        [InlineData("11.0.100", "11.0.100")]
+        [InlineData("11.0.100", "11.0.101")]
+        public async Task RestoreCommand_WithAliasesOfSameFramework_AndValidSDKAnalysisLevelAndSDKVersionCombinations_Succeeds(string sdkAnalysisLevel, string sdkVersion)
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            RestoreResult result = await RunSimpleAliasedRestoreWithSDKAnalysisLevelAndSDKVersion(pathContext, sdkAnalysisLevel, sdkVersion);
+
+            result.Success.Should().BeTrue();
+        }
+
+        private static async Task<RestoreResult> RunSimpleAliasedRestoreWithSDKAnalysisLevelAndSDKVersion(SimpleTestPathContext pathContext, string sdkAnalysisLevel, string sdkVersion)
+        {
             // Setup packages
             var packageA = new SimpleTestPackageContext("packageA", "1.0.0")
             {
@@ -461,14 +489,254 @@ namespace NuGet.Commands.FuncTest
                 new SimpleTestPackageContext("x", "1.0.0"),
                 new SimpleTestPackageContext("y", "1.0.0"));
 
-            projectSpec.RestoreMetadata.SdkAnalysisLevel = NuGetVersion.Parse("10.0.200");
+            projectSpec.RestoreMetadata.SdkAnalysisLevel = NuGetVersion.Parse(sdkAnalysisLevel);
             projectSpec.RestoreMetadata.UsingMicrosoftNETSdk = true;
+            projectSpec.RestoreSettings.SdkVersion = sdkVersion != null ? NuGetVersion.Parse(sdkVersion) : null;
+
+            // Act & Assert
+            return await RunRestoreAsync(pathContext, projectSpec);
+        }
+
+        [Fact]
+        public async Task RestoreCommand_SDKProjectWithMissingAliases_UsesV3AssetsFile()
+        {
+            using var pathContext = new SimpleTestPathContext();
+            var rootProject = @"
+            {
+              ""frameworks"": {
+                ""net10.0"": {
+                    ""framework"": ""net10.0"",
+                    ""dependencies"": {
+                            ""x"": {
+                                ""version"": ""[1.0.0,)"",
+                                ""target"": ""Package"",
+                            }
+                    }
+                }
+              }
+            }";
+
+
+            // Setup project
+            var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, rootProject);
+            // pre-conditions
+            projectSpec.RestoreMetadata.UsingMicrosoftNETSdk = true;
+            projectSpec.RestoreMetadata.SdkAnalysisLevel = NuGetVersion.Parse("10.0.400");
+            projectSpec.TargetFrameworks[0] = new TargetFrameworkInformation(projectSpec.TargetFrameworks[0])
+            {
+                TargetAlias = string.Empty
+            };
+            projectSpec.RestoreMetadata.TargetFrameworks[0].TargetAlias = string.Empty;
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource,
+                new SimpleTestPackageContext("x", "1.0.0"));
 
             // Act & Assert
             var result = await RunRestoreAsync(pathContext, projectSpec);
-            result.Success.Should().BeFalse();
+            result.Success.Should().BeTrue();
+            result.LockFile.Targets.Should().HaveCount(1);
+            result.LockFile.Targets[0].TargetAlias.Should().Be(string.Empty);
+            result.LockFile.Targets[0].Libraries.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries[0].Name.Should().Be("x");
+            result.LockFile.Version.Should().Be(3);
+        }
+
+        [Theory]
+        [InlineData("net9.0", "net9.0", "net10.0", "net10.0")]
+        [InlineData("apple", "net9.0", "banana", "net10.0")]
+        [InlineData("apple", "net10.0", "banana", "net10.0")]
+        [InlineData("banana", "net10.0", "apple", "net10.0")]
+        public async Task RestoreCommand_WithAliases_WithConditionalWarningSuppression_SuppressesWarningsCorrectly(string firstAlias, string firstFramework, string secondAlias, string secondFramework)
+        {
+            using var pathContext = new SimpleTestPathContext();
+            var rootProject = @"
+            {
+              ""frameworks"": {
+                ""apple"": {
+                    ""framework"": ""TFM1"",
+                    ""targetAlias"": ""ALIAS1"",
+                    ""dependencies"": {
+                            ""x"": {
+                                ""version"": ""[1.0.0,)"",
+                                ""target"": ""Package"",
+                            }
+                    }
+                },
+                ""banana"": {
+                    ""framework"": ""TFM2"",
+                    ""targetAlias"": ""ALIAS2"",
+                    ""dependencies"": {
+                            ""x"": {
+                                ""version"": ""[1.0.0,)"",
+                                ""target"": ""Package"",
+                                ""noWarn"": [""NU1603""]
+                            }
+                    }
+                }
+              }
+            }"
+            .Replace("ALIAS1", firstAlias)
+            .Replace("TFM1", firstFramework)
+            .Replace("ALIAS2", secondAlias)
+            .Replace("TFM2", secondFramework);
+
+            // Setup project
+            var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, rootProject);
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource,
+                new SimpleTestPackageContext("x", "1.0.1"));
+
+            // Act & Assert
+            var result = await RunRestoreAsync(pathContext, projectSpec);
+            result.Success.Should().BeTrue();
+            result.LockFile.Targets.Should().HaveCount(2);
+            result.LockFile.Targets[0].Libraries.Should().HaveCount(1);
+            result.LockFile.Targets[1].Libraries.Should().HaveCount(1);
             result.LockFile.LogMessages.Should().HaveCount(1);
-            result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1018);
+            result.LockFile.LogMessages[0].TargetGraphs.Should().BeEquivalentTo([firstAlias]);
+        }
+
+        // P (apple) -> Project2 (apple) -> Package A
+        // P (banana) -> Project2 (banana) -> Package B
+        [Fact]
+        public async Task RestoreCommand_WithAliasesOfSameFrameworkAndProjectReferences_WithConditionalWarningSuppression_SuppressesWarningsCorrectly()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Create packages
+            var pkgA = new SimpleTestPackageContext("PackageA", "1.0.1");
+            var pkgB = new SimpleTestPackageContext("PackageB", "1.0.1");
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, pkgA, pkgB);
+
+            string apple = nameof(apple);
+            string banana = nameof(banana);
+
+            // Create Project2 spec with different package dependencies per alias
+            var project2Spec = @"
+            {
+              ""frameworks"": {
+                ""apple"": {
+                    ""framework"": ""net10.0"",
+                    ""targetAlias"": ""apple"",
+                    ""dependencies"": {
+                            ""PackageA"": {
+                                ""version"": ""[1.0.0,)"",
+                                ""target"": ""Package"",
+                                ""noWarn"": [""NU1603""] 
+                            }
+                    }
+                },
+                ""banana"": {
+                    ""framework"": ""net10.0"",
+                    ""targetAlias"": ""banana"",
+                    ""dependencies"": {
+                            ""PackageB"": {
+                                ""version"": ""[1.0.0,)"",
+                                ""target"": ""Package"",
+                            }
+                    }
+                }
+              }
+            }";
+
+            var project2 = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project2", pathContext.SolutionRoot, project2Spec);
+
+            // Create Project1 spec that references Project2
+            var project1Spec = @"
+            {
+              ""frameworks"": {
+                ""apple"": {
+                    ""framework"": ""net10.0"",
+                    ""targetAlias"": ""apple"",
+                    ""dependencies"": {
+                    }
+                },
+                ""banana"": {
+                    ""framework"": ""net10.0"",
+                    ""targetAlias"": ""banana"",
+                    ""dependencies"": {
+                    }
+                }
+              }
+            }";
+
+            var project1 = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, project1Spec);
+            project1 = project1.WithTestProjectReference(project2);
+
+            // Act
+            var result = await RunRestoreAsync(pathContext, project1, project2);
+
+            // Assert
+            result.Success.Should().BeTrue();
+            result.LockFile.Targets.Should().HaveCount(2);
+            result.LockFile.LogMessages.Should().HaveCount(1);
+            result.LockFile.LogMessages[0].TargetGraphs.Should().BeEquivalentTo([banana]);
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithAliasesOfSameFrameworkAndProjectReferenceToASingleProject_WithConditionalWarningSuppression_SuppressesWarningsCorrectly()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Create packages
+            var pkgA = new SimpleTestPackageContext("PackageA", "1.0.1");
+            var pkgB = new SimpleTestPackageContext("PackageB", "1.0.1");
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, pkgA, pkgB);
+
+            string apple = nameof(apple);
+            string banana = nameof(banana);
+
+            var project2Spec = @"
+            {
+              ""frameworks"": {
+                ""net8.0"": {
+                    ""framework"": ""net8.0"",
+                    ""targetAlias"": ""net8.0"",
+                    ""dependencies"": {
+                            ""PackageA"": {
+                                ""version"": ""[,2.0.0)"",
+                                ""target"": ""Package"",
+                                ""noWarn"": [""NU1603""]
+                            }
+                    }
+                }
+              }
+            }";
+
+            var project2 = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project2", pathContext.SolutionRoot, project2Spec);
+
+            // Create Project1 spec that references Project2
+            var project1Spec = @"
+            {
+              ""frameworks"": {
+                ""apple"": {
+                    ""framework"": ""net10.0"",
+                    ""targetAlias"": ""apple"",
+                    ""dependencies"": {
+                    }
+                },
+                ""banana"": {
+                    ""framework"": ""net10.0"",
+                    ""targetAlias"": ""banana"",
+                    ""dependencies"": {
+                    }
+                }
+              }
+            }";
+
+            var project1 = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, project1Spec);
+            project1 = project1.WithTestProjectReference(project2);
+
+            // Act
+            var result = await RunRestoreAsync(pathContext, project1, project2);
+
+            // Assert
+            result.Success.Should().BeTrue(because: string.Join(Environment.NewLine, result.LockFile.LogMessages.Select(e => e.Message)));
+            result.LockFile.Targets.Should().HaveCount(2);
+            result.LockFile.LogMessages.Should().HaveCount(1);
+            result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1602);
+            result.LockFile.LogMessages[0].TargetGraphs.Should().BeEquivalentTo([apple, banana]);
         }
 
         internal static Task<RestoreResult> RunRestoreAsync(SimpleTestPathContext pathContext, params PackageSpec[] projects)

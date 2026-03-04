@@ -8,6 +8,7 @@
     <Shipping>true</Shipping>
     <IncludeInVSIX>true</IncludeInVSIX>
     <XPLATProject>true</XPLATProject>
+    <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(IsVsixBuild)' == 'true' ">
@@ -54,6 +55,8 @@
     <Compile Include="$(SharedDirectory)\SharedExtensions.cs" />
     <Compile Include="$(SharedDirectory)\TaskResult.cs" />
     <Compile Include="$(SharedDirectory)\XmlUtility.cs" />
+    <Compile Include="$(SharedDirectory)\IsExternalInit.cs" />
+    <Compile Include="$(SharedDirectory)\RequiredModifierAttributes.cs" />
   </ItemGroup>
 
   <ItemGroup>

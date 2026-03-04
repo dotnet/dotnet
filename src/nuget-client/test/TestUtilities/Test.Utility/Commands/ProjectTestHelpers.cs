@@ -146,7 +146,6 @@ namespace NuGet.Commands.Test
 
             updated.RestoreMetadata = new ProjectRestoreMetadata();
             updated.RestoreMetadata.CrossTargeting = updated.TargetFrameworks.Count > 1;
-            updated.RestoreMetadata.OriginalTargetFrameworks = updated.TargetFrameworks.Select(e => e.FrameworkName.GetShortFolderName()).ToList();
             updated.RestoreMetadata.OutputPath = projectDir;
             updated.RestoreMetadata.ProjectStyle = ProjectStyle.PackageReference;
             updated.RestoreMetadata.ProjectName = spec.Name;
@@ -154,6 +153,10 @@ namespace NuGet.Commands.Test
             updated.RestoreMetadata.ProjectPath = projectPath;
             updated.RestoreMetadata.CentralPackageVersionsEnabled = spec.RestoreMetadata?.CentralPackageVersionsEnabled ?? false;
             updated.RestoreMetadata.CentralPackageTransitivePinningEnabled = spec.RestoreMetadata?.CentralPackageTransitivePinningEnabled ?? false;
+            if (spec.RestoreMetadata != null)
+            {
+                updated.RestoreMetadata.ProjectWideWarningProperties = spec.RestoreMetadata.ProjectWideWarningProperties.Clone();
+            }
             updated.RestoreMetadata.RestoreAuditProperties = new RestoreAuditProperties()
             {
                 EnableAudit = bool.FalseString
@@ -173,6 +176,9 @@ namespace NuGet.Commands.Test
             {
                 updated.RestoreMetadata.TargetFrameworks.Add(new ProjectRestoreMetadataFrameworkInfo(framework.FrameworkName) { TargetAlias = framework.TargetAlias });
             }
+
+            updated.RestoreMetadata.OriginalTargetFrameworks = updated.TargetFrameworks.Select(e => e.TargetAlias).ToList();
+
             return updated;
         }
 

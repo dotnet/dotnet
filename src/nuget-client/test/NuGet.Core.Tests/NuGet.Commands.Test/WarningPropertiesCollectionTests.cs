@@ -184,7 +184,7 @@ namespace NuGet.Commands.Test
             var targetFramework = NuGetFramework.Parse(frameworkString);
 
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, frameworkString);
 
             var warningPropertiesCollection = new WarningPropertiesCollection(null, packageSpecificWarningProperties, null);
 
@@ -210,7 +210,7 @@ namespace NuGet.Commands.Test
             var targetFramework = new AssetTargetFallbackFramework(NuGetFramework.Parse(frameworkString), new List<NuGetFramework>() { NuGetFramework.AnyFramework });
 
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, frameworkString);
 
             var warningPropertiesCollection = new WarningPropertiesCollection(null, packageSpecificWarningProperties, null);
 
@@ -233,7 +233,7 @@ namespace NuGet.Commands.Test
             var targetFramework = new FallbackFramework(NuGetFramework.Parse(frameworkString), new List<NuGetFramework>() { NuGetFramework.AnyFramework });
 
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, frameworkString);
 
             var warningPropertiesCollection = new WarningPropertiesCollection(null, packageSpecificWarningProperties, null);
 
@@ -256,9 +256,9 @@ namespace NuGet.Commands.Test
             var targetFramework = NuGetFramework.Parse(frameworkString);
 
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, frameworkString);
 
-            var warningPropertiesCollection = new WarningPropertiesCollection(null, packageSpecificWarningProperties, new List<NuGetFramework> { targetFramework });
+            var warningPropertiesCollection = new WarningPropertiesCollection(null, packageSpecificWarningProperties, new List<string> { frameworkString });
 
             var suppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, frameworkString);
 
@@ -279,7 +279,7 @@ namespace NuGet.Commands.Test
             var targetFramework = NuGetFramework.Parse(frameworkString);
 
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, frameworkString);
 
             var warningPropertiesCollection = new WarningPropertiesCollection(null, packageSpecificWarningProperties, null);
 
@@ -307,7 +307,7 @@ namespace NuGet.Commands.Test
             var warningsNotAsErrors = new HashSet<NuGetLogCode>() { };
 
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, frameworkString);
 
             var warningPropertiesCollection = new WarningPropertiesCollection(
                 new WarningProperties(warnAsErrorSet, noWarnSet, allWarningsAsErrors, warningsNotAsErrors),
@@ -368,12 +368,12 @@ namespace NuGet.Commands.Test
             var warningsNotAsErrors = new HashSet<NuGetLogCode>() { };
 
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, frameworkString);
 
             var warningPropertiesCollection = new WarningPropertiesCollection(
                 new WarningProperties(warnAsErrorSet, noWarnSet, allWarningsAsErrors, warningsNotAsErrors),
                 packageSpecificWarningProperties,
-                new List<NuGetFramework> { targetFramework });
+                new List<string> { frameworkString });
 
             var suppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, frameworkString);
             var suppressedMessage2 = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, frameworkString);
@@ -404,12 +404,12 @@ namespace NuGet.Commands.Test
             var warningsNotAsErrors = new HashSet<NuGetLogCode>() { };
 
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, frameworkString);
 
             var warningPropertiesCollection = new WarningPropertiesCollection(
                 new WarningProperties(warnAsErrorSet, noWarnSet, allWarningsAsErrors, warningsNotAsErrors),
                 packageSpecificWarningProperties,
-                new List<NuGetFramework> { targetFramework });
+                new List<string> { frameworkString });
 
             var suppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, frameworkString);
             var suppressedMessage2 = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, frameworkString);
@@ -442,12 +442,12 @@ namespace NuGet.Commands.Test
             var warningsNotAsErrors = new HashSet<NuGetLogCode>() { };
 
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, frameworkString);
 
             var warningPropertiesCollection = new WarningPropertiesCollection(
                 new WarningProperties(warnAsErrorSet, noWarnSet, allWarningsAsErrors, warningsNotAsErrors),
                 packageSpecificWarningProperties,
-                new List<NuGetFramework> { targetFramework });
+                new List<string> { frameworkString });
 
             var suppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning");
             suppressedMessage.LibraryId = libraryId;
@@ -486,12 +486,12 @@ namespace NuGet.Commands.Test
             var warningsNotAsErrors = new HashSet<NuGetLogCode>() { };
 
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, firstTargetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, firstFrameworkString);
 
             var warningPropertiesCollection = new WarningPropertiesCollection(
                 new WarningProperties(warnAsErrorSet, noWarnSet, allWarningsAsErrors, warningsNotAsErrors),
                 packageSpecificWarningProperties,
-                new List<NuGetFramework> { firstTargetFramework, secondTargetFramework });
+                new List<string> { firstFrameworkString, secondFrameworkString });
 
             var nonSuppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning");
             nonSuppressedMessage.LibraryId = libraryId;
@@ -525,13 +525,13 @@ namespace NuGet.Commands.Test
             var warningsNotAsErrors = new HashSet<NuGetLogCode>() { };
 
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, firstTargetFramework);
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, secondTargetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, firstFrameworkString);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, secondFrameworkString);
 
             var warningPropertiesCollection = new WarningPropertiesCollection(
                 new WarningProperties(warnAsErrorSet, noWarnSet, allWarningsAsErrors, warningsNotAsErrors),
                 packageSpecificWarningProperties,
-                new List<NuGetFramework> { firstTargetFramework, secondTargetFramework });
+                new List<string> { firstFrameworkString, secondFrameworkString });
 
             var suppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, firstFrameworkString, secondFrameworkString);
 
@@ -561,12 +561,12 @@ namespace NuGet.Commands.Test
             var warningsNotAsErrors = new HashSet<NuGetLogCode>() { };
 
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, firstTargetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, firstFrameworkString);
 
             var warningPropertiesCollection = new WarningPropertiesCollection(
                 new WarningProperties(warnAsErrorSet, noWarnSet, allWarningsAsErrors, warningsNotAsErrors),
                 packageSpecificWarningProperties,
-                new List<NuGetFramework> { firstTargetFramework, secondTargetFramework });
+                new List<string> { firstFrameworkString, secondFrameworkString });
 
             var nonSuppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, new string[] { firstFrameworkString, secondFrameworkString });
 
@@ -595,13 +595,13 @@ namespace NuGet.Commands.Test
             var warningsNotAsErrors = new HashSet<NuGetLogCode>() { };
 
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, firstTargetFramework);
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, secondTargetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, firstFrameworkString);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, secondFrameworkString);
 
             var warningPropertiesCollection = new WarningPropertiesCollection(
                 new WarningProperties(warnAsErrorSet, noWarnSet, allWarningsAsErrors, warningsNotAsErrors),
                 packageSpecificWarningProperties,
-                new List<NuGetFramework> { firstTargetFramework, secondTargetFramework });
+                new List<string> { firstFrameworkString, secondFrameworkString });
 
             var suppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, new string[] { firstFrameworkString, secondFrameworkString });
 
@@ -628,12 +628,12 @@ namespace NuGet.Commands.Test
             var warningsNotAsErrors = new HashSet<NuGetLogCode>() { };
 
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, frameworkString);
 
             var warningPropertiesCollection = new WarningPropertiesCollection(
                 new WarningProperties(warnAsErrorSet, noWarnSet, allWarningsAsErrors, warningsNotAsErrors),
                 packageSpecificWarningProperties,
-                new List<NuGetFramework> { targetFramework });
+                new List<string> { frameworkString });
 
             var suppressedMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1500, "Warning", libraryId, new string[] { frameworkString });
 
@@ -663,7 +663,7 @@ namespace NuGet.Commands.Test
             var warningsNotAsErrors = new HashSet<NuGetLogCode>() { };
 
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, firstTargetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, firstFrameworkString);
 
             var warningPropertiesCollection = new WarningPropertiesCollection(
                 new WarningProperties(warnAsErrorSet, noWarnSet, allWarningsAsErrors, warningsNotAsErrors),
@@ -697,8 +697,8 @@ namespace NuGet.Commands.Test
             var warningsNotAsErrors = new HashSet<NuGetLogCode>() { };
 
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, firstTargetFramework);
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, secondTargetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, firstFrameworkString);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, secondFrameworkString);
 
             var warningPropertiesCollection = new WarningPropertiesCollection(
                 new WarningProperties(warnAsErrorSet, noWarnSet, allWarningsAsErrors, warningsNotAsErrors),
@@ -730,7 +730,7 @@ namespace NuGet.Commands.Test
             var warningsNotAsErrors = new HashSet<NuGetLogCode>() { };
 
             var packageSpecificWarningProperties = new PackageSpecificWarningProperties();
-            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, targetFramework);
+            packageSpecificWarningProperties.Add(NuGetLogCode.NU1500, libraryId, frameworkString);
 
             var warningPropertiesCollection = new WarningPropertiesCollection(
                 new WarningProperties(warnAsErrorSet, noWarnSet, allWarningsAsErrors, warningsNotAsErrors),

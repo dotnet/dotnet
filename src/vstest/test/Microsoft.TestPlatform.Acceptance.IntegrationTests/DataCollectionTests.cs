@@ -29,7 +29,7 @@ public class DataCollectionTests : AcceptanceTestBase
         var assemblyPaths = GetAssetFullPath("SimpleTestProject2.dll");
         string runSettings = GetRunsettingsFilePath(TempDirectory.Path);
         string diagFileName = Path.Combine(TempDirectory.Path, "diaglog.txt");
-        var extensionsPath = Path.GetDirectoryName(GetTestDllForFramework("OutOfProcDataCollector.dll", runnerInfo.RunnerFramework));
+        var extensionsPath = Path.GetDirectoryName(GetTestDllForFramework("OutOfProcDataCollector.dll", "netstandard2.0"));
         var arguments = PrepareArguments(assemblyPaths, null, runSettings, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
         arguments = string.Concat(arguments, $" /Diag:{diagFileName}", $" /TestAdapterPath:{extensionsPath}");
 
@@ -53,7 +53,7 @@ public class DataCollectionTests : AcceptanceTestBase
 
         var assemblyPaths = GetAssetFullPath("SimpleTestProject2.dll");
         string diagFileName = Path.Combine(TempDirectory.Path, "diaglog.txt");
-        var extensionsPath = Path.GetDirectoryName(GetTestDllForFramework("OutOfProcDataCollector.dll", runnerInfo.RunnerFramework));
+        var extensionsPath = Path.GetDirectoryName(GetTestDllForFramework("OutOfProcDataCollector.dll", "netstandard2.0"));
 
         var arguments = PrepareArguments(assemblyPaths, null, null, FrameworkArgValue, runnerInfo.InIsolationValue, TempDirectory.Path);
         arguments = string.Concat(arguments, $" /Diag:{diagFileName}", $" /Collect:SampleDataCollector", $" /TestAdapterPath:{extensionsPath}");

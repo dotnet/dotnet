@@ -9,10 +9,12 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Microsoft.Build.Exceptions;
+using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Internal;
 using Microsoft.Build.Shared;
 using Microsoft.Build.Shared.FileSystem;
+using Constants = Microsoft.Build.Framework.Constants;
 
 #nullable disable
 
@@ -451,15 +453,16 @@ namespace Microsoft.Build.BackEnd
             bool isArm64 = Handshake.IsHandshakeOptionEnabled(hostContext, HandshakeOptions.Arm64);
             bool isCLR2 = Handshake.IsHandshakeOptionEnabled(hostContext, HandshakeOptions.CLR2);
 
-            // Unsupported combinations
-            if (isArm64 && isCLR2)
-            {
-                ErrorUtilities.ThrowInternalError("ARM64 CLR2 task hosts are not supported.");
-            }
-
             if (isCLR2)
             {
-                return isX64 ? Path.Combine(GetOrInitializeX64Clr2Path(toolName), toolName) : Path.Combine(GetOrInitializeX32Clr2Path(toolName), toolName);
+                if (isArm64)
+                {
+                    ErrorUtilities.ThrowInternalError("ARM64 CLR2 task hosts are not supported.");
+                }
+
+                return isX64
+                    ? Path.Combine(GetOrInitializeX64Clr2Path(toolName), toolName)
+                    : Path.Combine(GetOrInitializeX32Clr2Path(toolName), toolName);
             }
 
             if (isX64)
@@ -661,74 +664,102 @@ namespace Microsoft.Build.BackEnd
 
             HandshakeOptions hostContext = nodeKey.HandshakeOptions;
 
-            // If runtime host path is null it means we don't have MSBuild.dll path resolved and there is no need to include it in the command line arguments.
-            string commandLineArgsPlaceholder = "\"{0}\" /nologo /nodemode:2 /nodereuse:{1} /low:{2} /parentpacketversion:{3} ";
-
             // Generate a unique node ID for communication purposes using atomic increment.
             int communicationNodeId = Interlocked.Increment(ref _nextNodeId);
 
             // Create callbacks that capture the TaskHostNodeKey
             void OnNodeContextCreated(NodeContext context) => NodeContextCreated(context, nodeKey);
 
-            IList<NodeContext> nodeContexts;
+            NodeLaunchData nodeLaunchData = ResolveNodeLaunchConfiguration(hostContext, in taskHostParameters);
 
-            // Handle .NET task host context
-#if NETFRAMEWORK
-            if (Handshake.IsHandshakeOptionEnabled(hostContext, HandshakeOptions.NET))
-            {
-                (string runtimeHostPath, string msbuildAssemblyPath) = GetMSBuildLocationForNETRuntime(hostContext, taskHostParameters);
-
-                CommunicationsUtilities.Trace("For a host context of {0}, spawning dotnet.exe from {1}.", hostContext.ToString(), runtimeHostPath);
-
-                var handshake = new Handshake(hostContext, predefinedToolsDirectory: msbuildAssemblyPath);
-
-                // There is always one task host per host context so we always create just 1 one task host node here.      
-                nodeContexts = GetNodes(
-                    runtimeHostPath,
-                    string.Format(commandLineArgsPlaceholder, Path.Combine(msbuildAssemblyPath, Constants.MSBuildAssemblyName), NodeReuseIsEnabled(hostContext), ComponentHost.BuildParameters.LowPriority, NodePacketTypeExtensions.PacketVersion),
-                    communicationNodeId,
-                    this,
-                    handshake,
-                    OnNodeContextCreated,
-                    NodeContextTerminated,
-                    1);
-
-                return nodeContexts.Count == 1;
-            }
-#endif
-
-            string msbuildLocation = GetMSBuildExecutablePathForNonNETRuntimes(hostContext);
-
-            // we couldn't even figure out the location we're trying to launch ... just go ahead and fail.
-            if (msbuildLocation == null)
+            if (nodeLaunchData.MSBuildLocation == null)
             {
                 return false;
             }
 
-            CommunicationsUtilities.Trace("For a host context of {0}, spawning executable from {1}.", hostContext.ToString(), msbuildLocation ?? Constants.MSBuildExecutableName);
+            if (nodeLaunchData.UsingDotNetExe)
+            {
+                CommunicationsUtilities.Trace("For a host context of {0}, spawning dotnet.exe from {1}.", hostContext.ToString(), nodeLaunchData.MSBuildLocation);
+            }
+            else
+            {
+                CommunicationsUtilities.Trace("For a host context of {0}, spawning executable from {1}.", hostContext.ToString(), nodeLaunchData.MSBuildLocation);
+            }
 
-            nodeContexts = GetNodes(
-                msbuildLocation,
-                string.Format(commandLineArgsPlaceholder, string.Empty, NodeReuseIsEnabled(hostContext), ComponentHost.BuildParameters.LowPriority, NodePacketTypeExtensions.PacketVersion),
+            // There is always one task host per host context so we always create just 1 one task host node here.
+            IList<NodeContext> nodeContexts = GetNodes(
+                nodeLaunchData.MSBuildLocation,
+                nodeLaunchData.CommandLineArgs,
                 communicationNodeId,
-                this,
-                new Handshake(hostContext),
+                factory: this,
+                nodeLaunchData.Handshake,
                 OnNodeContextCreated,
                 NodeContextTerminated,
-                1);
+                numberOfNodesToCreate: 1);
 
             return nodeContexts.Count == 1;
+        }
 
-            // Determines whether node reuse should be enabled for the given host context.
-            // Node reuse allows MSBuild to reuse existing task host processes for better performance,
-            // but is disabled for CLR2 because it uses legacy MSBuildTaskHost.
-            bool NodeReuseIsEnabled(HandshakeOptions hostContext)
+        private NodeLaunchData ResolveNodeLaunchConfiguration(HandshakeOptions hostContext, ref readonly TaskHostParameters taskHostParameters)
+        {
+            string msbuildLocation;
+            string commandLineArgs;
+            Handshake handshake;
+            bool nodeReuse;
+
+            BuildParameters buildParameters = ComponentHost.BuildParameters;
+
+#if NETFRAMEWORK
+
+            // Handle scenario where a .NET task host is launched from .NET Framework
+            if (Handshake.IsHandshakeOptionEnabled(hostContext, HandshakeOptions.NET))
             {
-                bool isCLR2 = Handshake.IsHandshakeOptionEnabled(hostContext, HandshakeOptions.CLR2);
+                (string runtimeHostPath, string msbuildAssemblyDirectory) = GetMSBuildLocationForNETRuntime(hostContext, taskHostParameters);
 
-                return Handshake.IsHandshakeOptionEnabled(hostContext, HandshakeOptions.NodeReuse)
-                    && !isCLR2;
+                msbuildLocation = Path.Combine(msbuildAssemblyDirectory, Constants.MSBuildAssemblyName);
+                nodeReuse = Handshake.IsHandshakeOptionEnabled(hostContext, HandshakeOptions.NodeReuse);
+
+                commandLineArgs = $"""
+                    "{msbuildLocation}" /nologo {NodeModeHelper.ToCommandLineArgument(NodeMode.OutOfProcTaskHostNode)} /nodereuse:{nodeReuse.ToString().ToLower()} /low:{buildParameters.LowPriority.ToString().ToLower()} /parentpacketversion:{NodePacketTypeExtensions.PacketVersion} 
+                    """;
+
+                handshake = new Handshake(hostContext, toolsDirectory: msbuildAssemblyDirectory);
+
+                return new NodeLaunchData(runtimeHostPath, commandLineArgs, handshake, UsingDotNetExe: true);
             }
+#endif
+
+            msbuildLocation = GetMSBuildExecutablePathForNonNETRuntimes(hostContext);
+
+            // we couldn't even figure out the location we're trying to launch ... just go ahead and fail.
+            if (msbuildLocation == null)
+            {
+                return default;
+            }
+
+#if FEATURE_NET35_TASKHOST
+            if (Handshake.IsHandshakeOptionEnabled(hostContext, HandshakeOptions.CLR2))
+            {
+                // The .NET 3.5 task host uses the directory of its EXE when calculating salt for the handshake.
+                string toolsDirectory = Path.GetDirectoryName(msbuildLocation) ?? string.Empty;
+
+                // MSBuildTaskHost doesn't use command-line arguments. 
+                commandLineArgs = "";
+                handshake = new Handshake(hostContext, toolsDirectory);
+
+                return new NodeLaunchData(msbuildLocation, commandLineArgs, handshake);
+            }
+#endif
+
+            nodeReuse = Handshake.IsHandshakeOptionEnabled(hostContext, HandshakeOptions.NodeReuse);
+
+            commandLineArgs = $"""
+                /nologo {NodeModeHelper.ToCommandLineArgument(NodeMode.OutOfProcTaskHostNode)} /nodereuse:{nodeReuse.ToString().ToLower()} /low:{buildParameters.LowPriority.ToString().ToLower()} /parentpacketversion:{NodePacketTypeExtensions.PacketVersion} 
+                """;
+
+            handshake = new Handshake(hostContext);
+
+            return new NodeLaunchData(msbuildLocation, commandLineArgs, handshake);
         }
 
         /// <summary>

@@ -500,7 +500,7 @@ namespace NuGet.Frameworks
 
             var shortNames = shortPortableProfiles.Split(new char[] { '+' }, StringSplitOptions.RemoveEmptyEntries);
 
-            var result = new List<NuGetFramework>();
+            var result = new List<NuGetFramework>(shortNames.Length);
             foreach (var name in shortNames)
             {
                 var framework = NuGetFramework.Parse(name, this);

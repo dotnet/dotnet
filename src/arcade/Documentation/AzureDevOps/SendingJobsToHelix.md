@@ -80,6 +80,8 @@ steps:
 
 The simplest Helix use-case is zipping up a single folder containing your project's tests and a batch file which runs those tests. To accomplish this, reference Arcade's `send-to-helix` template in `eng/common/templates/steps/send-to-helix.yml` from your `azure-pipelines.yml` file.
 
+### XUnit v2
+
 Simply specify the xUnit project(s) you wish to run (semicolon delimited) with the `XUnitProjects` parameter. Then, specify:
 * the `XUnitPublishTargetFramework` &ndash; this is the framework your **test projects are targeting**, e.g. `netcoreapp3.1`.
 * the `XUnitRuntimeTargetFramework` &ndash; this is the framework version of xUnit you want to use from the xUnit NuGet package, e.g. `netcoreapp2.0`. Notably, the xUnit console runner only supports up to netcoreapp2.0 as of 14 March 2018, so this is the target that should be specified for running against any higher version test projects.
@@ -116,6 +118,10 @@ The list of available Helix queues can be found on the [Helix homepage](https://
       # DisplayNamePrefix: 'Send job to Helix' -- the Helix task's display name in AzDO. Defaults to 'Send job to Helix'
       # condition: succeeded() - defaults to succeeded()
 ```
+
+### XUnit v3
+
+XUnit v3 test projects are self-hosting executables and do not need an external console runner. Instead of `XUnitProjects`, use `XUnitV3Project` items directly in your Helix MSBuild project file (see [the SDK's readme](/src/Microsoft.DotNet.Helix/Sdk/Readme.md) for details). The `XUnitPublishTargetFramework`, `XUnitRuntimeTargetFramework`, and `XUnitRunnerVersion` parameters are not needed for v3 projects.
 
 ## The More Complex Case
 

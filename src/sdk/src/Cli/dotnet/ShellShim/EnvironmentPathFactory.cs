@@ -76,6 +76,7 @@ internal static class EnvironmentPathFactory
                 reporter: Reporter.Output);
         }
 #endif
+
         return CreateEnvironmentPath(true, environmentProvider);
     }
 }

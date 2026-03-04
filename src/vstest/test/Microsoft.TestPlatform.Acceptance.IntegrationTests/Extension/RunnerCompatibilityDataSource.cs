@@ -15,7 +15,7 @@ public class RunnerCompatibilityDataSource : TestDataSourceAttribute<RunnerInfo>
     private readonly CompatibilityRowsBuilder _builder;
 
     public RunnerCompatibilityDataSource(
-        string runnerFrameworks = AcceptanceTestBase.DEFAULT_HOST_NETFX_AND_NET,
+        string runnerFrameworks = AcceptanceTestBase.DEFAULT_RUNNER_NETFX_AND_NET,
         string runnerVersions = AcceptanceTestBase.LATEST_TO_LEGACY,
         string hostFrameworks = AcceptanceTestBase.DEFAULT_HOST_NETFX_AND_NET)
     {
@@ -59,6 +59,7 @@ public class RunnerCompatibilityDataSource : TestDataSourceAttribute<RunnerInfo>
     public override void CreateData(MethodInfo methodInfo)
     {
         _builder.WithEveryVersionOfRunner = true;
+        _builder.WithVSIXRunner = true;
         _builder.WithEveryVersionOfHost = false;
         _builder.WithEveryVersionOfAdapter = false;
         _builder.WithOlderConfigurations = false;

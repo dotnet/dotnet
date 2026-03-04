@@ -17,4 +17,8 @@
     <EnvironmentVariables Include="DisableNativeToolsetInstalls=1"  Condition="'$(BuildOS)' != 'windows'" />
   </ItemGroup>
 
+  <ItemGroup>
+    <BuiltSdkPackage Include="Microsoft.Net.Sdk.WindowsDesktop" />
+  </ItemGroup>
+
 </Project>

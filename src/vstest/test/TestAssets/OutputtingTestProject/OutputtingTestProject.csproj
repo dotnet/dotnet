@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(NetFrameworkMinimum);$(NetCoreAppMinimum)</TargetFrameworks>
+    <TargetFrameworks>$(TestProjectTargetFrameworks)</TargetFrameworks>
     <OutputType Condition="$(NetCoreAppTargetFrameWork) == 'true' ">Exe</OutputType>
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
@@ -12,14 +12,5 @@
     <PackageReference Include="MSTest.TestAdapter" Version="$(MSTestTestAdapterVersion)" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(PackageVersion)" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == '$(NetFrameworkMinimum)' ">
-    <Reference Include="System.Runtime" />
-    <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == '$(NetFrameworkMinimum)' ">
-    <PackageReference Include="System.Memory" Version="$(SystemMemoryVersion)"/>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
-  </ItemGroup>
+
 </Project>

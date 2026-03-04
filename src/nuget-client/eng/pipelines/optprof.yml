@@ -10,12 +10,9 @@ resources:
       branches:
         include:
         - dev
-        - release-*
-        - release/*
-        exclude:
-        - release-6.0.x
-        - release-6.3.x
-        - release-6.2.x
+        - release-6.14.x
+        - release-6.12.x
+        - release-5.11.x
   - pipeline: DartLab
     source: DartLab
     branch: main
@@ -111,11 +108,11 @@ stages:
 
           Write-Host "Target Visual Studio branch (full name): $VSBranch"
 
-          # The value will be something like 'main' or 'rel/d16.4';
+          # The value will be something like 'main' or 'rel/insiders';
           # however, the subsequent task which gets bootstrapper details has a parameter (VSBranch)
           # which (as of writing this) requires the branch "short" name.
           # For the 'main' branch, the short name is still 'main'.
-          # For the 'rel/d16.4' branch, the short name is 'd16.4'.
+          # For the 'rel/insiders' branch, the short name is 'insiders'.
           # Ideally, we would not need to figure out the branch short name ourselves,
           # but short-term we will to unblock ourselves.
           $branchParts = $VSBranch.Split('/')

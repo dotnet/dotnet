@@ -410,16 +410,8 @@ NuGet.Commands.PackCommandRunner.GenerateNugetPackage.set -> void
 ~NuGet.Commands.PackCommandRunner.Rules.set -> void
 NuGet.Commands.PackCommandRunner.RunPackageBuild() -> bool
 NuGet.Commands.PackageSourceProviderExtensions
-NuGet.Commands.PackageSpecificWarningProperties
-~NuGet.Commands.PackageSpecificWarningProperties.Add(NuGet.Common.NuGetLogCode code, string libraryId, NuGet.Frameworks.NuGetFramework framework) -> void
-~NuGet.Commands.PackageSpecificWarningProperties.AddRangeOfCodes(System.Collections.Generic.IEnumerable<NuGet.Common.NuGetLogCode> codes, string libraryId, NuGet.Frameworks.NuGetFramework framework) -> void
-~NuGet.Commands.PackageSpecificWarningProperties.AddRangeOfFrameworks(NuGet.Common.NuGetLogCode code, string libraryId, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> frameworks) -> void
-~NuGet.Commands.PackageSpecificWarningProperties.Contains(NuGet.Common.NuGetLogCode code, string libraryId, NuGet.Frameworks.NuGetFramework framework) -> bool
-~NuGet.Commands.PackageSpecificWarningProperties.Equals(NuGet.Commands.PackageSpecificWarningProperties other) -> bool
-NuGet.Commands.PackageSpecificWarningProperties.PackageSpecificWarningProperties() -> void
-~NuGet.Commands.PackageSpecificWarningProperties.Properties.get -> System.Collections.Generic.IDictionary<NuGet.Common.NuGetLogCode, System.Collections.Generic.IDictionary<string, System.Collections.Generic.ISet<NuGet.Frameworks.NuGetFramework>>>
 NuGet.Commands.PackagesLockFileBuilder
-~NuGet.Commands.PackagesLockFileBuilder.CreateNuGetLockFile(NuGet.ProjectModel.LockFile assetsFile) -> NuGet.ProjectModel.PackagesLockFile
+NuGet.Commands.PackagesLockFileBuilder.CreateNuGetLockFile(NuGet.ProjectModel.LockFile! assetsFile) -> NuGet.ProjectModel.PackagesLockFile!
 NuGet.Commands.PackagesLockFileBuilder.PackagesLockFileBuilder() -> void
 NuGet.Commands.PushRunner
 NuGet.Commands.RemoveClientCertArgs
@@ -522,14 +514,10 @@ NuGet.Commands.RestoreCollectorLogger
 ~NuGet.Commands.RestoreCollectorLogger.Log(NuGet.Common.IRestoreLogMessage message) -> void
 ~NuGet.Commands.RestoreCollectorLogger.LogAsync(NuGet.Common.IRestoreLogMessage message) -> System.Threading.Tasks.Task
 ~NuGet.Commands.RestoreCollectorLogger.ProjectPath.get -> string
-~NuGet.Commands.RestoreCollectorLogger.ProjectWarningPropertiesCollection.get -> NuGet.Commands.WarningPropertiesCollection
-~NuGet.Commands.RestoreCollectorLogger.ProjectWarningPropertiesCollection.set -> void
 ~NuGet.Commands.RestoreCollectorLogger.RestoreCollectorLogger(NuGet.Common.ILogger innerLogger) -> void
 ~NuGet.Commands.RestoreCollectorLogger.RestoreCollectorLogger(NuGet.Common.ILogger innerLogger, NuGet.Common.LogLevel verbosity) -> void
 ~NuGet.Commands.RestoreCollectorLogger.RestoreCollectorLogger(NuGet.Common.ILogger innerLogger, NuGet.Common.LogLevel verbosity, bool hideWarningsAndErrors) -> void
 ~NuGet.Commands.RestoreCollectorLogger.RestoreCollectorLogger(NuGet.Common.ILogger innerLogger, bool hideWarningsAndErrors) -> void
-~NuGet.Commands.RestoreCollectorLogger.TransitiveWarningPropertiesCollection.get -> NuGet.Commands.WarningPropertiesCollection
-~NuGet.Commands.RestoreCollectorLogger.TransitiveWarningPropertiesCollection.set -> void
 NuGet.Commands.RestoreCommand
 ~NuGet.Commands.RestoreCommand.ExecuteAsync() -> System.Threading.Tasks.Task<NuGet.Commands.RestoreResult>
 ~NuGet.Commands.RestoreCommand.ExecuteAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Commands.RestoreResult>
@@ -726,21 +714,6 @@ NuGet.Commands.SymbolPackageFormat
 NuGet.Commands.SymbolPackageFormat.Snupkg = 0 -> NuGet.Commands.SymbolPackageFormat
 NuGet.Commands.SymbolPackageFormat.SymbolsNupkg = 1 -> NuGet.Commands.SymbolPackageFormat
 NuGet.Commands.ToolRestoreUtility
-NuGet.Commands.TransitiveNoWarnUtils
-NuGet.Commands.TransitiveNoWarnUtils.DependencyNode
-~NuGet.Commands.TransitiveNoWarnUtils.DependencyNode.DependencyNode(string id, bool isProject, NuGet.Commands.TransitiveNoWarnUtils.NodeWarningProperties nodeWarningProperties) -> void
-~NuGet.Commands.TransitiveNoWarnUtils.DependencyNode.DependencyNode(string id, bool isProject, System.Collections.Generic.HashSet<NuGet.Common.NuGetLogCode> projectWideNoWarn, System.Collections.Generic.Dictionary<string, System.Collections.Generic.HashSet<NuGet.Common.NuGetLogCode>> packageSpecificNoWarn) -> void
-~NuGet.Commands.TransitiveNoWarnUtils.DependencyNode.Equals(NuGet.Commands.TransitiveNoWarnUtils.DependencyNode other) -> bool
-~NuGet.Commands.TransitiveNoWarnUtils.DependencyNode.Id.get -> string
-NuGet.Commands.TransitiveNoWarnUtils.DependencyNode.IsProject.get -> bool
-~NuGet.Commands.TransitiveNoWarnUtils.DependencyNode.NodeWarningProperties.get -> NuGet.Commands.TransitiveNoWarnUtils.NodeWarningProperties
-NuGet.Commands.TransitiveNoWarnUtils.NodeWarningProperties
-~NuGet.Commands.TransitiveNoWarnUtils.NodeWarningProperties.Equals(NuGet.Commands.TransitiveNoWarnUtils.NodeWarningProperties other) -> bool
-~NuGet.Commands.TransitiveNoWarnUtils.NodeWarningProperties.GetIntersect(NuGet.Commands.TransitiveNoWarnUtils.NodeWarningProperties other) -> NuGet.Commands.TransitiveNoWarnUtils.NodeWarningProperties
-~NuGet.Commands.TransitiveNoWarnUtils.NodeWarningProperties.IsSubSetOf(NuGet.Commands.TransitiveNoWarnUtils.NodeWarningProperties other) -> bool
-~NuGet.Commands.TransitiveNoWarnUtils.NodeWarningProperties.NodeWarningProperties(System.Collections.Generic.HashSet<NuGet.Common.NuGetLogCode> projectWide, System.Collections.Generic.Dictionary<string, System.Collections.Generic.HashSet<NuGet.Common.NuGetLogCode>> packageSpecific) -> void
-~NuGet.Commands.TransitiveNoWarnUtils.NodeWarningProperties.PackageSpecific.get -> System.Collections.Generic.Dictionary<string, System.Collections.Generic.HashSet<NuGet.Common.NuGetLogCode>>
-~NuGet.Commands.TransitiveNoWarnUtils.NodeWarningProperties.ProjectWide.get -> System.Collections.Generic.HashSet<NuGet.Common.NuGetLogCode>
 NuGet.Commands.TrustedSignerActionsProvider
 ~NuGet.Commands.TrustedSignerActionsProvider.AddOrUpdateTrustedSigner(string name, string fingerprint, NuGet.Common.HashAlgorithmName hashAlgorithm, bool allowUntrustedRoot) -> void
 ~NuGet.Commands.TrustedSignerActionsProvider.AddTrustedRepositoryAsync(string name, System.Uri serviceIndex, System.Collections.Generic.IEnumerable<string> owners, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
@@ -844,15 +817,6 @@ NuGet.Commands.VerifyArgs.VerifyArgs() -> void
 NuGet.Commands.VerifyCommandRunner
 ~NuGet.Commands.VerifyCommandRunner.ExecuteCommandAsync(NuGet.Commands.VerifyArgs verifyArgs) -> System.Threading.Tasks.Task<int>
 NuGet.Commands.VerifyCommandRunner.VerifyCommandRunner() -> void
-NuGet.Commands.WarningPropertiesCollection
-~NuGet.Commands.WarningPropertiesCollection.ApplyNoWarnProperties(NuGet.Common.IRestoreLogMessage message) -> bool
-~NuGet.Commands.WarningPropertiesCollection.ApplyWarningAsErrorProperties(NuGet.Common.IRestoreLogMessage message) -> void
-~NuGet.Commands.WarningPropertiesCollection.ApplyWarningProperties(NuGet.Common.IRestoreLogMessage message) -> bool
-~NuGet.Commands.WarningPropertiesCollection.Equals(NuGet.Commands.WarningPropertiesCollection other) -> bool
-~NuGet.Commands.WarningPropertiesCollection.PackageSpecificWarningProperties.get -> NuGet.Commands.PackageSpecificWarningProperties
-~NuGet.Commands.WarningPropertiesCollection.ProjectFrameworks.get -> System.Collections.Generic.IReadOnlyList<NuGet.Frameworks.NuGetFramework>
-~NuGet.Commands.WarningPropertiesCollection.ProjectWideWarningProperties.get -> NuGet.ProjectModel.WarningProperties
-~NuGet.Commands.WarningPropertiesCollection.WarningPropertiesCollection(NuGet.ProjectModel.WarningProperties projectWideWarningProperties, NuGet.Commands.PackageSpecificWarningProperties packageSpecificWarningProperties, System.Collections.Generic.IReadOnlyList<NuGet.Frameworks.NuGetFramework> projectFrameworks) -> void
 ~const NuGet.Commands.BuildAssetsUtils.PropsExtension = ".props" -> string
 ~const NuGet.Commands.BuildAssetsUtils.TargetsExtension = ".targets" -> string
 ~override NuGet.Commands.CompatibilityIssue.ToString() -> string
@@ -863,20 +827,11 @@ NuGet.Commands.WarningPropertiesCollection
 ~override NuGet.Commands.NoOpRestoreResult.PreviousLockFile.get -> NuGet.ProjectModel.LockFile
 ~override NuGet.Commands.PackCollectorLogger.Log(NuGet.Common.ILogMessage message) -> void
 ~override NuGet.Commands.PackCollectorLogger.LogAsync(NuGet.Common.ILogMessage message) -> System.Threading.Tasks.Task
-~override NuGet.Commands.PackageSpecificWarningProperties.Equals(object obj) -> bool
-override NuGet.Commands.PackageSpecificWarningProperties.GetHashCode() -> int
 ~override NuGet.Commands.ResolvedDependencyKey.Equals(object obj) -> bool
 override NuGet.Commands.ResolvedDependencyKey.GetHashCode() -> int
 ~override NuGet.Commands.ResolverRequest.ToString() -> string
 ~override NuGet.Commands.RestoreCollectorLogger.Log(NuGet.Common.ILogMessage message) -> void
 ~override NuGet.Commands.RestoreCollectorLogger.LogAsync(NuGet.Common.ILogMessage message) -> System.Threading.Tasks.Task
-~override NuGet.Commands.TransitiveNoWarnUtils.DependencyNode.Equals(object obj) -> bool
-override NuGet.Commands.TransitiveNoWarnUtils.DependencyNode.GetHashCode() -> int
-~override NuGet.Commands.TransitiveNoWarnUtils.DependencyNode.ToString() -> string
-~override NuGet.Commands.TransitiveNoWarnUtils.NodeWarningProperties.Equals(object obj) -> bool
-override NuGet.Commands.TransitiveNoWarnUtils.NodeWarningProperties.GetHashCode() -> int
-~override NuGet.Commands.WarningPropertiesCollection.Equals(object obj) -> bool
-override NuGet.Commands.WarningPropertiesCollection.GetHashCode() -> int
 ~static NuGet.Commands.AddClientCertRunner.Run(NuGet.Commands.AddClientCertArgs args, System.Func<NuGet.Common.ILogger> getLogger) -> void
 ~static NuGet.Commands.AddSourceRunner.Run(NuGet.Commands.AddSourceArgs args, System.Func<NuGet.Common.ILogger> getLogger) -> void
 ~static NuGet.Commands.AssetTargetFallbackUtility.EnsureValidFallback(System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> packageTargetFallback, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> assetTargetFallback, string filePath) -> void
@@ -975,8 +930,6 @@ override NuGet.Commands.WarningPropertiesCollection.GetHashCode() -> int
 ~static NuGet.Commands.PackCommandRunner.SetupCurrentDirectory(NuGet.Commands.PackArgs packArgs) -> void
 ~static NuGet.Commands.PackageSourceProviderExtensions.ResolveAndValidateSource(this NuGet.Configuration.IPackageSourceProvider sourceProvider, string source) -> string
 ~static NuGet.Commands.PackageSourceProviderExtensions.ResolveSource(System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource> availableSources, string source) -> NuGet.Configuration.PackageSource
-~static NuGet.Commands.PackageSpecificWarningProperties.CreatePackageSpecificWarningProperties(NuGet.ProjectModel.PackageSpec packageSpec) -> NuGet.Commands.PackageSpecificWarningProperties
-~static NuGet.Commands.PackageSpecificWarningProperties.CreatePackageSpecificWarningProperties(NuGet.ProjectModel.PackageSpec packageSpec, NuGet.Frameworks.NuGetFramework framework) -> NuGet.Commands.PackageSpecificWarningProperties
 ~static NuGet.Commands.PushRunner.Run(NuGet.Configuration.ISettings settings, NuGet.Configuration.IPackageSourceProvider sourceProvider, System.Collections.Generic.IList<string> packagePaths, string source, string apiKey, string symbolSource, string symbolApiKey, int timeoutSeconds, bool disableBuffering, bool noSymbols, bool noServiceEndpoint, bool skipDuplicate, bool allowInsecureConnections, NuGet.Common.ILogger logger) -> System.Threading.Tasks.Task
 ~static NuGet.Commands.RemoveClientCertRunner.Run(NuGet.Commands.RemoveClientCertArgs args, System.Func<NuGet.Common.ILogger> getLogger) -> void
 ~static NuGet.Commands.RemoveSourceRunner.Run(NuGet.Commands.RemoveSourceArgs args, System.Func<NuGet.Common.ILogger> getLogger) -> void
@@ -1004,18 +957,8 @@ static NuGet.Commands.Restore.Utility.PackageSpecFactory.GetPackageSpec(NuGet.Co
 ~static NuGet.Commands.ToolRestoreUtility.GetToolIdOrNullFromSpec(NuGet.ProjectModel.PackageSpec spec) -> string
 ~static NuGet.Commands.ToolRestoreUtility.GetToolTargetLibrary(NuGet.ProjectModel.LockFile toolLockFile, string toolId) -> NuGet.ProjectModel.LockFileTargetLibrary
 ~static NuGet.Commands.ToolRestoreUtility.GetUniqueName(string id, string framework, NuGet.Versioning.VersionRange versionRange) -> string
-~static NuGet.Commands.TransitiveNoWarnUtils.CreateTransitiveWarningPropertiesCollection(System.Collections.Generic.IEnumerable<NuGet.Commands.RestoreTargetGraph> targetGraphs, NuGet.ProjectModel.PackageSpec parentProjectSpec) -> NuGet.Commands.WarningPropertiesCollection
-~static NuGet.Commands.TransitiveNoWarnUtils.ExtractPackageSpecificNoWarnForFramework(NuGet.Commands.PackageSpecificWarningProperties packageSpecificWarningProperties, NuGet.Frameworks.NuGetFramework framework) -> System.Collections.Generic.Dictionary<string, System.Collections.Generic.HashSet<NuGet.Common.NuGetLogCode>>
-~static NuGet.Commands.TransitiveNoWarnUtils.ExtractPackageSpecificNoWarnPerFramework(NuGet.Commands.PackageSpecificWarningProperties packageSpecificWarningProperties) -> System.Collections.Generic.Dictionary<NuGet.Frameworks.NuGetFramework, System.Collections.Generic.Dictionary<string, System.Collections.Generic.HashSet<NuGet.Common.NuGetLogCode>>>
-~static NuGet.Commands.TransitiveNoWarnUtils.ExtractPathNoWarnProperties(NuGet.Commands.TransitiveNoWarnUtils.NodeWarningProperties nodeWarningProperties, string libraryId) -> System.Collections.Generic.HashSet<NuGet.Common.NuGetLogCode>
-~static NuGet.Commands.TransitiveNoWarnUtils.MergeCodes(System.Collections.Generic.HashSet<NuGet.Common.NuGetLogCode> first, System.Collections.Generic.HashSet<NuGet.Common.NuGetLogCode> second) -> System.Collections.Generic.HashSet<NuGet.Common.NuGetLogCode>
-~static NuGet.Commands.TransitiveNoWarnUtils.MergePackageSpecificNoWarn(System.Collections.Generic.Dictionary<string, System.Collections.Generic.HashSet<NuGet.Common.NuGetLogCode>> first, System.Collections.Generic.Dictionary<string, System.Collections.Generic.HashSet<NuGet.Common.NuGetLogCode>> second) -> System.Collections.Generic.Dictionary<string, System.Collections.Generic.HashSet<NuGet.Common.NuGetLogCode>>
-~static NuGet.Commands.TransitiveNoWarnUtils.MergePackageSpecificWarningProperties(NuGet.Commands.PackageSpecificWarningProperties first, NuGet.Commands.PackageSpecificWarningProperties second) -> NuGet.Commands.PackageSpecificWarningProperties
-~static NuGet.Commands.TransitiveNoWarnUtils.TryMergeNullObjects<T>(T first, T second, out T merged) -> bool
 ~static NuGet.Commands.UpdateClientCertRunner.Run(NuGet.Commands.UpdateClientCertArgs args, System.Func<NuGet.Common.ILogger> getLogger) -> void
 ~static NuGet.Commands.UpdateSourceRunner.Run(NuGet.Commands.UpdateSourceArgs args, System.Func<NuGet.Common.ILogger> getLogger) -> void
-~static NuGet.Commands.WarningPropertiesCollection.ApplyProjectWideNoWarnProperties(NuGet.Common.ILogMessage message, NuGet.ProjectModel.WarningProperties warningProperties) -> bool
-~static NuGet.Commands.WarningPropertiesCollection.ApplyProjectWideWarningsAsErrorProperties(NuGet.Common.ILogMessage message, NuGet.ProjectModel.WarningProperties warningProperties) -> void
 ~static readonly NuGet.Commands.AssetTargetFallbackUtility.AssetTargetFallback -> string
 ~static readonly NuGet.Commands.BuildAssetsUtils.MacroCandidates -> string[]
 ~static readonly NuGet.Commands.LockFileUtils.LIBANY -> string

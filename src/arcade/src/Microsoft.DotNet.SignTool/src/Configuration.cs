@@ -829,7 +829,7 @@ namespace Microsoft.DotNet.SignTool
             {
                 var nestedParts = new Dictionary<string, ZipPart>();
 
-                foreach (var entry in ZipData.ReadEntries(archivePath, _pathToContainerUnpackingDirectory, _tarToolPath, _pkgToolPath))
+                foreach (var entry in ZipData.ReadEntries(archivePath, _pathToContainerUnpackingDirectory, _tarToolPath, _pkgToolPath, _log))
                 {
                     using (entry)
                     {

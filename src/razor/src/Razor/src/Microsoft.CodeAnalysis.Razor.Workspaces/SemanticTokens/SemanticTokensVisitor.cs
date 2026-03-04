@@ -447,7 +447,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
 
     public override void VisitCSharpTransition(CSharpTransitionSyntax node)
     {
-        if (node.Parent is not RazorDirectiveSyntax)
+        if (node.Parent is not BaseRazorDirectiveSyntax)
         {
             using (ColorCSharpBackground())
             {

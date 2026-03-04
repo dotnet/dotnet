@@ -1,7 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using FluentAssertions;
+using AwesomeAssertions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -24,7 +24,7 @@ namespace Microsoft.DotNet.MacOsPkg.Tests
             Path.GetDirectoryName(typeof(UnpackPackTests).Assembly.Location)!,
             "tools",
             "macospkg",
-            "Microsoft.Dotnet.MacOsPkg.dll");
+            "Microsoft.DotNet.MacOsPkg.Cli.dll");
 
         const UnixFileMode nonExecutableFileMode = UnixFileMode.OtherRead | 
                                                    UnixFileMode.GroupRead |
@@ -216,7 +216,7 @@ namespace Microsoft.DotNet.MacOsPkg.Tests
             var process = Process.Start(new ProcessStartInfo()
             {
                 FileName = "dotnet",
-                Arguments = $@"exec ""{pkgToolPath}"" ""{inputPath}"" ""{outputPath}"" {action}",
+                Arguments = $@"exec ""{pkgToolPath}"" {action} ""{inputPath}"" ""{outputPath}""",
                 UseShellExecute = false,
                 RedirectStandardError = true,
             });

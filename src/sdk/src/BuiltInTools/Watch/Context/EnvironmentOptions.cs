@@ -30,7 +30,7 @@ namespace Microsoft.DotNet.Watch
         string MuxerPath,
         TimeSpan? ProcessCleanupTimeout,
         bool IsPollingEnabled = false,
-        bool SuppressHandlingStaticContentFiles = false,
+        bool SuppressHandlingStaticWebAssets = false,
         bool SuppressMSBuildIncrementalism = false,
         bool SuppressLaunchBrowser = false,
         bool SuppressBrowserRefresh = false,
@@ -49,7 +49,7 @@ namespace Microsoft.DotNet.Watch
             MuxerPath: ValidateMuxerPath(muxerPath),
             ProcessCleanupTimeout: EnvironmentVariables.ProcessCleanupTimeout,
             IsPollingEnabled: EnvironmentVariables.IsPollingEnabled,
-            SuppressHandlingStaticContentFiles: EnvironmentVariables.SuppressHandlingStaticContentFiles,
+            SuppressHandlingStaticWebAssets: EnvironmentVariables.SuppressHandlingStaticWebAssets,
             SuppressMSBuildIncrementalism: EnvironmentVariables.SuppressMSBuildIncrementalism,
             SuppressLaunchBrowser: EnvironmentVariables.SuppressLaunchBrowser,
             SuppressBrowserRefresh: EnvironmentVariables.SuppressBrowserRefresh,
@@ -73,7 +73,7 @@ namespace Microsoft.DotNet.Watch
 
         private static string ValidateMuxerPath(string path)
         {
-            Debug.Assert(Path.GetFileNameWithoutExtension(path) == "dotnet");
+            Debug.Assert(Path.GetFileName(path) == $"dotnet{PathUtilities.ExecutableExtension}");
             return path;
         }
 

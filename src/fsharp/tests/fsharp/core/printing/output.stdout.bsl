@@ -4065,6 +4065,7 @@ type 'a T4063 = | AT4063 of 'a
     #r "nuget:FSharp.Data";;                      // Load Nuget Package 'FSharp.Data' with the highest version
     #clear;;                                      // Clear screen
     #quit;;                                       // Exit
+    #exit;;                                       // Exit
 
   F# Interactive command line options:
 
@@ -4076,6 +4077,9 @@ type 'a T4063 = | AT4063 of 'a
 Description:
 Builds a new collection whose elements are the results of applying the given function
 to each of the elements of the collection.
+
+Remarks:
+This is an O(n) operation, where n is the length of the list.
 
 Parameters:
 - mapping: The function to transform elements from the input list.

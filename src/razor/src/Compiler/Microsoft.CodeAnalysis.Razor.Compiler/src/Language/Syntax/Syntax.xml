@@ -380,8 +380,20 @@
     <Kind Name="CSharpImplicitExpressionBody" />
     <Field Name="CSharpCode" Type="CSharpCodeBlockSyntax" />
   </Node>
-  <Node Name="RazorDirectiveSyntax" Base="CSharpRazorBlockSyntax">
+  <AbstractNode Name="BaseRazorDirectiveSyntax" Base="CSharpRazorBlockSyntax">
+  </AbstractNode>
+  <Node Name="RazorDirectiveSyntax" Base="BaseRazorDirectiveSyntax">
     <Kind Name="RazorDirective" />
+    <Field Name="Transition" Type="CSharpTransitionSyntax" Override="true">
+      <Kind Name="CSharpTransition" />
+    </Field>
+    <Field Name="Body" Type="CSharpSyntaxNode" Override="true">
+      <Kind Name="RazorDirectiveBody" />
+    </Field>
+    <Field Name="DirectiveDescriptor" Type="DirectiveDescriptor" Optional="true" />
+  </Node>
+  <Node Name="RazorUsingDirectiveSyntax" Base="BaseRazorDirectiveSyntax">
+    <Kind Name="RazorUsingDirective" />
     <Field Name="Transition" Type="CSharpTransitionSyntax" Override="true">
       <Kind Name="CSharpTransition" />
     </Field>

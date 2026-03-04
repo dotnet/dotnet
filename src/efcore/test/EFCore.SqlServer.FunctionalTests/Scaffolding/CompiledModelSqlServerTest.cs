@@ -218,6 +218,37 @@ public class CompiledModelSqlServerTest(NonSharedFixture fixture) : CompiledMode
             useContext: null,
             additionalSourceFiles: []);
 
+    [ConditionalFact]
+    public virtual Task Full_text_index()
+        => Test(
+            modelBuilder =>
+            {
+                modelBuilder.HasFullTextCatalog("MyCatalog");
+
+                modelBuilder.Entity<FullTextEntity>(b =>
+                {
+                    b.HasFullTextIndex(e => e.Title)
+                        .HasKeyIndex("PK_FullTextEntity")
+                        .OnCatalog("MyCatalog")
+                        .WithChangeTracking(FullTextChangeTracking.Manual)
+                        .HasLanguage("Title", "English");
+                });
+            },
+            model =>
+            {
+                var entityType = model.FindEntityType(typeof(FullTextEntity))!;
+                var index = entityType.GetIndexes().Single();
+                // Full-text index annotations are not used at runtime, so they are not included in the compiled model
+                Assert.Null(index[SqlServerAnnotationNames.FullTextIndex]);
+                Assert.Null(index[SqlServerAnnotationNames.FullTextCatalog]);
+                Assert.Null(index[SqlServerAnnotationNames.FullTextChangeTracking]);
+                Assert.Null(index[SqlServerAnnotationNames.FullTextLanguages]);
+                // Full-text catalogs should also be absent at runtime
+                Assert.Null(model[SqlServerAnnotationNames.FullTextCatalogs]);
+            },
+            useContext: null,
+            additionalSourceFiles: []);
+
     protected override bool UseSprocReturnValue
         => true;
 
@@ -451,12 +482,12 @@ public class CompiledModelSqlServerTest(NonSharedFixture fixture) : CompiledMode
     protected override TestHelpers TestHelpers
         => SqlServerTestHelpers.Instance;
 
-    protected override ITestStoreFactory TestStoreFactory
+    protected override ITestStoreFactory NonSharedTestStoreFactory
         => SqlServerTestStoreFactory.Instance;
 
-    protected override DbContextOptionsBuilder AddOptions(DbContextOptionsBuilder builder)
+    protected override DbContextOptionsBuilder AddNonSharedOptions(DbContextOptionsBuilder builder)
     {
-        builder = base.AddOptions(builder)
+        builder = base.AddNonSharedOptions(builder)
             .ConfigureWarnings(w => w.Ignore(SqlServerEventId.DecimalTypeDefaultWarning));
         new SqlServerDbContextOptionsBuilder(builder).UseNetTopologySuite();
         return builder;
@@ -479,5 +510,11 @@ public class CompiledModelSqlServerTest(NonSharedFixture fixture) : CompiledMode
     {
         public int Id { get; set; }
         public SqlVector<float>? Vector { get; set; }
+    }
+
+    public class FullTextEntity
+    {
+        public int Id { get; set; }
+        public string? Title { get; set; }
     }
 }

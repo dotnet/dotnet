@@ -195,7 +195,7 @@ internal partial class CSharpFormattingPass
                 using var _ = StringBuilderPool.GetPooledObject(out var additionalLinesBuilder);
 
                 var root = _codeDocument.GetRequiredSyntaxRoot();
-                var sourceMappings = _codeDocument.GetRequiredCSharpDocument().SourceMappings;
+                var sourceMappings = _codeDocument.GetRequiredCSharpDocument().SourceMappingsSortedByOriginal;
                 var iMapping = 0;
                 foreach (var line in _sourceText.Lines)
                 {
@@ -284,6 +284,7 @@ internal partial class CSharpFormattingPass
                     return;
                 }
 
+                additionalLinesBuilder.AppendLine("_ =");
                 additionalLinesBuilder.AppendLine(GetAdditionalLineComment(originalSpan));
                 additionalLinesBuilder.AppendLine(_sourceText.ToString(originalSpan.ToTextSpan()));
                 additionalLinesBuilder.AppendLine(";");
@@ -548,9 +549,9 @@ internal partial class CSharpFormattingPass
             {
                 var element = (MarkupElementSyntax)node.Parent;
 
-                if (ElementContentsShouldNotBeIndented(node))
+                if (ElementHasSignificantWhitespace(node))
                 {
-                    // The contents of textareas is significant, so we never want any formatting to happen in their contents
+                    // The contents of some html tags is significant, so we never want any formatting to happen in their contents
                     if (GetLineNumber(node) == GetLineNumber(node.CloseAngle))
                     {
                         _ignoreUntilLine = GetLineNumber(element.EndTag?.CloseAngle ?? element.StartTag.CloseAngle);
@@ -632,7 +633,7 @@ internal partial class CSharpFormattingPass
                     return false;
                 }
 
-                if (node is MarkupStartTagSyntax startTag && startTag.IsVoidElement())
+                if (node.IsVoidElement())
                 {
                     // Void elements don't cause indentation
                     return false;
@@ -648,9 +649,10 @@ internal partial class CSharpFormattingPass
                 return true;
             }
 
-            private static bool ElementContentsShouldNotBeIndented(BaseMarkupStartTagSyntax node)
+            private static bool ElementHasSignificantWhitespace(BaseMarkupStartTagSyntax node)
             {
-                return node.Name.Content.Equals("textarea", StringComparison.OrdinalIgnoreCase);
+                return node.Name.Content.Equals("textarea", StringComparison.OrdinalIgnoreCase)
+                    || node.Name.Content.Equals("pre", StringComparison.OrdinalIgnoreCase);
             }
 
             public override LineInfo VisitRazorMetaCode(RazorMetaCodeSyntax node)
@@ -757,7 +759,7 @@ internal partial class CSharpFormattingPass
                         throw new InvalidOperationException($"Unknown attribute indentation style '{_attributeIndentStyle}'.");
                     }
 
-                    if (ElementContentsShouldNotBeIndented(startTag) &&
+                    if (ElementHasSignificantWhitespace(startTag) &&
                         GetLineNumber(node) == GetLineNumber(startTag.CloseAngle))
                     {
                         // If this is the last line of a tag that shouldn't be indented, honour that
@@ -946,6 +948,10 @@ internal partial class CSharpFormattingPass
             public override LineInfo VisitCSharpCodeBlock(CSharpCodeBlockSyntax node)
             {
                 // Matches things like @if, so skip the first character, but output as C# otherwise
+                // Make sure to output leading whitespace, if any, as Roslyn can move multi-line constructs relative to the first
+                // line, and if we don't maintain input whitespace, we're effectively de-denting, which means when it re-indents,
+                // Roslyn will indent other lines, causing them to migrate right over time.
+                _builder.Append(_sourceText.ToString(TextSpan.FromBounds(_currentLine.Start, _currentFirstNonWhitespacePosition)));
                 _builder.AppendLine(_sourceText.ToString(TextSpan.FromBounds(_currentToken.Position + 1, _currentLine.End)));
 
                 return CreateLineInfo(
@@ -977,14 +983,9 @@ internal partial class CSharpFormattingPass
 
             public override LineInfo VisitRazorDirective(RazorDirectiveSyntax node)
             {
-                // Unfortunately the Razor syntax tree doesn't distinguish different directives with different syntax node types,
+                // Unfortunately the Razor syntax tree doesn't distinguish many different directives with different syntax node types,
                 // so this method is handles way more cases that ideally it would. Sorry! I've split it up into separate methods
                 // so we can pretend, for readability of those methods, if not this one.
-
-                if (node.IsUsingDirective())
-                {
-                    return VisitUsingDirective();
-                }
 
                 if (node.IsAttributeDirective(out var attribute))
                 {
@@ -1003,9 +1004,7 @@ internal partial class CSharpFormattingPass
                 }
 
                 // All other directives that have braces are handled here
-                if (node.Body is RazorDirectiveBodySyntax body &&
-                    body.CSharpCode is CSharpCodeBlockSyntax code &&
-                    code.Children.TryGetOpenBraceToken(out var brace) &&
+                if (node.DirectiveBody.CSharpCode.Children.TryGetOpenBraceToken(out var brace) &&
                     // If the open brace is on the same line as the directive, then we need to ensure the contents are indented.
                     GetLineNumber(brace) == GetLineNumber(_currentToken))
                 {
@@ -1030,7 +1029,7 @@ internal partial class CSharpFormattingPass
                 return CreateLineInfo(skipNextLineIfBrace: true);
             }
 
-            private LineInfo VisitUsingDirective()
+            public override LineInfo VisitRazorUsingDirective(RazorUsingDirectiveSyntax node)
             {
                 // For @using we just skip over the @ and format as a C# using directive
                 // "@using System" to "using System"

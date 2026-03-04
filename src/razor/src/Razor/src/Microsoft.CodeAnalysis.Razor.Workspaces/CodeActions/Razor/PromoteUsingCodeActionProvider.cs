@@ -36,8 +36,8 @@ internal class PromoteUsingCodeActionProvider : IRazorCodeActionProvider
             return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }
 
-        var directive = owner.FirstAncestorOrSelf<RazorDirectiveSyntax>();
-        if (directive is null || !directive.IsUsingDirective())
+        var directive = owner.FirstAncestorOrSelf<RazorUsingDirectiveSyntax>();
+        if (directive is null)
         {
             return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }

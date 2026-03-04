@@ -53,11 +53,11 @@ internal class RazorDocumentExcerptService(
         // Then we'll classify the spans based on the primary document, since that's the coordinate
         // space that our output mappings use.
         var output = await _document.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-        var mappings = output.GetRequiredCSharpDocument().SourceMappings;
+        var mappingsSortedByOriginal = output.GetRequiredCSharpDocument().SourceMappingsSortedByOriginal;
         var classifiedSpans = await DocumentExcerptHelper.ClassifyPreviewAsync(
             excerptSpan,
             generatedDocument,
-            mappings,
+            mappingsSortedByOriginal,
             options,
             cancellationToken).ConfigureAwait(false);
 

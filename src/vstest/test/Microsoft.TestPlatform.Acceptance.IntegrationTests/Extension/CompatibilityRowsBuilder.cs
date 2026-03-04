@@ -46,6 +46,8 @@ public class CompatibilityRowsBuilder
     public bool WithEveryVersionOfHost { get; set; } = true;
     public bool WithEveryVersionOfAdapter { get; set; } = true;
     public bool WithOlderConfigurations { get; set; } = true;
+    // Add runner from VSIX to check the shipment we make into VisualStudio.
+    public bool WithVSIXRunner { get; set; } = true;
 
     public string? BeforeRunnerFeature { get; set; }
     public string? AfterRunnerFeature { get; set; }
@@ -78,6 +80,9 @@ public class CompatibilityRowsBuilder
 
         if (WithInProcess)
             AddInProcess(dataRows);
+
+        if (WithVSIXRunner)
+            AddVsix(dataRows);
 
         var minVersion = ParseAndPatchSemanticVersion("0.0.0-alpha.1");
         var maxVersion = ParseAndPatchSemanticVersion("9999.0.0");
@@ -186,6 +191,15 @@ public class CompatibilityRowsBuilder
                     }
                 }
             }
+        }
+    }
+
+    private void AddVsix(List<RunnerInfo> dataRows)
+    {
+        foreach (var hostFramework in _hostFrameworks)
+        {
+            AddRow(dataRows, "VSIX", AcceptanceTestBase.LATESTVSIX, AcceptanceTestBase.DEFAULT_RUNNER_NETFX, AcceptanceTestBase.LATEST, hostFramework, AcceptanceTestBase.LATESTSTABLE, inIsolation: true);
+            AddRow(dataRows, "VSIX", AcceptanceTestBase.LATESTVSIX, AcceptanceTestBase.DEFAULT_RUNNER_NETFX, AcceptanceTestBase.LATEST, hostFramework, AcceptanceTestBase.LATESTSTABLE, inIsolation: false);
         }
     }
 
@@ -337,6 +351,16 @@ public class CompatibilityRowsBuilder
 
     private static VSTestConsoleInfo GetVSTestConsoleInfo(string vstestConsoleVersion, RunnerInfo runnerInfo)
     {
+        if (vstestConsoleVersion == AcceptanceTestBase.LATESTVSIX)
+        {
+            return new VSTestConsoleInfo
+            {
+                VersionType = vstestConsoleVersion,
+                Version = IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion,
+                Path = Path.Combine(IntegrationTestEnvironment.PublishDirectory, Path.GetFileName(IntegrationTestEnvironment.LocalVsixInsertion), "vstest.console.exe"),
+            };
+        }
+
         var depsXml = GetDependenciesXml();
         var packageName = runnerInfo.IsNetFrameworkRunner
             ? "microsoft.testplatform"
@@ -359,6 +383,8 @@ public class CompatibilityRowsBuilder
             XmlNode? node = depsXml.DocumentElement?.SelectSingleNode($"PropertyGroup/{propertyName}");
             version = node?.InnerText.Replace("[", "").Replace("]", "") ?? "--WRONG-VERSION--";
         }
+
+        // Target frameworks changed in the package over time as we are moving forward, this table selects the correct one.
         var vstestConsolePath = runnerInfo.IsNetFrameworkRunner switch
         {
             true when NuGetVersion.TryParse(version, out var v)
@@ -369,7 +395,9 @@ public class CompatibilityRowsBuilder
                 && new NuGetVersion(v.Major, v.Minor, v.Patch) < new NuGetVersion("17.4.0") => GetContentFilesPath("netcoreapp2.1"),
             false when NuGetVersion.TryParse(version, out var v)
                 && new NuGetVersion(v.Major, v.Minor, v.Patch) <= new NuGetVersion("17.12.0") => GetContentFilesPath("netcoreapp3.1"),
-            false => GetContentFilesPath("net9.0"),
+            false when NuGetVersion.TryParse(version, out var v)
+                && new NuGetVersion(v.Major, v.Minor, v.Patch) <= new NuGetVersion("18.3.0") => GetContentFilesPath("net9.0"),
+            false => GetContentFilesPath("net10.0"),
         };
 
         return new VSTestConsoleInfo

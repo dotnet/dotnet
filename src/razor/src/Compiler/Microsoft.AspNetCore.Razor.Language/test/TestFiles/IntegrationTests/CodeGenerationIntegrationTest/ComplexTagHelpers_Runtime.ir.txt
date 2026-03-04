@@ -12,14 +12,15 @@
         RazorCompiledItemMetadataAttribute - 
         CreateNewOnMetadataUpdateAttribute - 
         ClassDeclaration -  - internal sealed - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ComplexTagHelpers - global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<dynamic> - 
-            PreallocatedTagHelperPropertyValue -  - __tagHelperAttribute_0 - type - text - HtmlAttributeValueStyle.DoubleQuotes
-            PreallocatedTagHelperHtmlAttributeValue -  - __tagHelperAttribute_1 - value -  - HtmlAttributeValueStyle.DoubleQuotes
-            PreallocatedTagHelperHtmlAttributeValue -  - __tagHelperAttribute_2 - placeholder - Enter in a new time... - HtmlAttributeValueStyle.DoubleQuotes
-            PreallocatedTagHelperHtmlAttributeValue -  - __tagHelperAttribute_3 - unbound - first value - HtmlAttributeValueStyle.DoubleQuotes
-            PreallocatedTagHelperHtmlAttributeValue -  - __tagHelperAttribute_4 - unbound - second value - HtmlAttributeValueStyle.DoubleQuotes
-            PreallocatedTagHelperHtmlAttributeValue -  - __tagHelperAttribute_5 - unbound - hello - HtmlAttributeValueStyle.DoubleQuotes
-            PreallocatedTagHelperHtmlAttributeValue -  - __tagHelperAttribute_6 - unbound - world - HtmlAttributeValueStyle.DoubleQuotes
-            PreallocatedTagHelperHtmlAttributeValue -  - __tagHelperAttribute_7 - class - hello - HtmlAttributeValueStyle.DoubleQuotes
+            PreallocatedTagHelperHtmlAttributeValue -  - __tagHelperAttribute_0 - class - @string - HtmlAttributeValueStyle.DoubleQuotes
+            PreallocatedTagHelperPropertyValue -  - __tagHelperAttribute_1 - type - text - HtmlAttributeValueStyle.DoubleQuotes
+            PreallocatedTagHelperHtmlAttributeValue -  - __tagHelperAttribute_2 - value -  - HtmlAttributeValueStyle.DoubleQuotes
+            PreallocatedTagHelperHtmlAttributeValue -  - __tagHelperAttribute_3 - placeholder - Enter in a new time... - HtmlAttributeValueStyle.DoubleQuotes
+            PreallocatedTagHelperHtmlAttributeValue -  - __tagHelperAttribute_4 - unbound - first value - HtmlAttributeValueStyle.DoubleQuotes
+            PreallocatedTagHelperHtmlAttributeValue -  - __tagHelperAttribute_5 - unbound - second value - HtmlAttributeValueStyle.DoubleQuotes
+            PreallocatedTagHelperHtmlAttributeValue -  - __tagHelperAttribute_6 - unbound - hello - HtmlAttributeValueStyle.DoubleQuotes
+            PreallocatedTagHelperHtmlAttributeValue -  - __tagHelperAttribute_7 - unbound - world - HtmlAttributeValueStyle.DoubleQuotes
+            PreallocatedTagHelperHtmlAttributeValue -  - __tagHelperAttribute_8 - class - hello - HtmlAttributeValueStyle.DoubleQuotes
             DefaultTagHelperRuntime - 
             FieldDeclaration -  - private - global::TestNamespace.PTagHelper - __TestNamespace_PTagHelper
             FieldDeclaration -  - private - global::TestNamespace.InputTagHelper - __TestNamespace_InputTagHelper
@@ -46,11 +47,7 @@
                             LazyIntermediateToken - (150:7,19 [1] ComplexTagHelpers.cshtml) - CSharp - (
                             LazyIntermediateToken - (151:7,20 [3] ComplexTagHelpers.cshtml) - CSharp - 1+2
                             LazyIntermediateToken - (154:7,23 [1] ComplexTagHelpers.cshtml) - CSharp - )
-                    DefaultTagHelperHtmlAttribute -  - class - HtmlAttributeValueStyle.DoubleQuotes
-                        HtmlContent - (164:7,33 [1] ComplexTagHelpers.cshtml)
-                            LazyIntermediateToken - (164:7,33 [1] ComplexTagHelpers.cshtml) - Html - @
-                        HtmlContent - (166:7,35 [6] ComplexTagHelpers.cshtml)
-                            LazyIntermediateToken - (166:7,35 [6] ComplexTagHelpers.cshtml) - Html - string
+                    PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_0
                     DefaultTagHelperExecute - 
                 HtmlContent - (178:7,47 [10] ComplexTagHelpers.cshtml)
                     LazyIntermediateToken - (178:7,47 [10] ComplexTagHelpers.cshtml) - Html - \n        
@@ -77,10 +74,10 @@
                                     DefaultTagHelperBody - 
                                     DefaultTagHelperCreate -  - TestNamespace.InputTagHelper
                                     DefaultTagHelperCreate -  - TestNamespace.InputTagHelper2
-                                    PreallocatedTagHelperProperty - (342:12,42 [4] ComplexTagHelpers.cshtml) - __tagHelperAttribute_0 - type - Type
-                                    PreallocatedTagHelperProperty - (342:12,42 [4] ComplexTagHelpers.cshtml) - __tagHelperAttribute_0 - type - Type
-                                    PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_1
+                                    PreallocatedTagHelperProperty - (342:12,42 [4] ComplexTagHelpers.cshtml) - __tagHelperAttribute_1 - type - Type
+                                    PreallocatedTagHelperProperty - (342:12,42 [4] ComplexTagHelpers.cshtml) - __tagHelperAttribute_1 - type - Type
                                     PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_2
+                                    PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_3
                                     DefaultTagHelperExecute - 
                             DefaultTagHelperCreate -  - TestNamespace.PTagHelper
                             DefaultTagHelperExecute - 
@@ -193,11 +190,11 @@
                         HtmlContent - (896:23,40 [10] ComplexTagHelpers.cshtml)
                             LazyIntermediateToken - (896:23,40 [10] ComplexTagHelpers.cshtml) - Html - \n        
                     DefaultTagHelperCreate -  - TestNamespace.PTagHelper
-                    PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_3
+                    PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_4
                     DefaultTagHelperProperty - (759:21,38 [31] ComplexTagHelpers.cshtml) - age - int TestNamespace.PTagHelper.Age - HtmlAttributeValueStyle.DoubleQuotes
                         CSharpExpression - (760:21,39 [30] ComplexTagHelpers.cshtml)
                             LazyIntermediateToken - (760:21,39 [30] ComplexTagHelpers.cshtml) - CSharp - DateTimeOffset.Now.Year\-1970
-                    PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_4
+                    PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_5
                     DefaultTagHelperExecute - 
                 HtmlContent - (910:24,12 [10] ComplexTagHelpers.cshtml)
                     LazyIntermediateToken - (910:24,12 [10] ComplexTagHelpers.cshtml) - Html - \n        
@@ -209,8 +206,8 @@
                             DefaultTagHelperBody - 
                             DefaultTagHelperCreate -  - TestNamespace.InputTagHelper
                             DefaultTagHelperCreate -  - TestNamespace.InputTagHelper2
-                            PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_5
                             PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_6
+                            PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_7
                             DefaultTagHelperProperty - (1024:26,60 [33] ComplexTagHelpers.cshtml) - checked - bool TestNamespace.InputTagHelper2.Checked - HtmlAttributeValueStyle.DoubleQuotes
                                 CSharpExpression - (1025:26,61 [32] ComplexTagHelpers.cshtml)
                                     LazyIntermediateToken - (1025:26,61 [1] ComplexTagHelpers.cshtml) - CSharp - (
@@ -283,7 +280,7 @@
                             DefaultTagHelperCreate -  - TestNamespace.PTagHelper
                             DefaultTagHelperProperty - (1375:34,29 [3] ComplexTagHelpers.cshtml) - age - int TestNamespace.PTagHelper.Age - HtmlAttributeValueStyle.DoubleQuotes
                                 LazyIntermediateToken - (1375:34,29 [3] ComplexTagHelpers.cshtml) - CSharp - 123
-                            PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_7
+                            PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_8
                             DefaultTagHelperExecute - 
                     LazyIntermediateToken - (1424:34,78 [1] ComplexTagHelpers.cshtml) - CSharp - )
                 HtmlContent - (1425:34,79 [10] ComplexTagHelpers.cshtml)

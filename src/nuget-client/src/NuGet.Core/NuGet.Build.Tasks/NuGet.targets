@@ -959,6 +959,7 @@ Copyright (c) .NET Foundation. All rights reserved.
         <NuGetAuditMode>$(NuGetAuditMode)</NuGetAuditMode>
         <SdkAnalysisLevel>$(SdkAnalysisLevel)</SdkAnalysisLevel>
         <UsingMicrosoftNETSdk>$(UsingMicrosoftNETSdk)</UsingMicrosoftNETSdk>
+        <NETCoreSdkVersion>$(NETCoreSdkVersion)</NETCoreSdkVersion>
         <RestoreUseLegacyDependencyResolver>$(RestoreUseLegacyDependencyResolver)</RestoreUseLegacyDependencyResolver>
       </_RestoreGraphEntry>
     </ItemGroup>

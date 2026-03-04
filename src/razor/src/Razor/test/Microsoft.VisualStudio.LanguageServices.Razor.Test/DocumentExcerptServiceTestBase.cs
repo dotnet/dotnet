@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
@@ -73,7 +72,7 @@ public abstract class DocumentExcerptServiceTestBase(ITestOutputHelper testOutpu
     {
         var output = await primary.GetGeneratedOutputAsync(cancellationToken);
 
-        foreach (var mapping in output.GetRequiredCSharpDocument().SourceMappings)
+        foreach (var mapping in output.GetRequiredCSharpDocument().SourceMappingsSortedByOriginal)
         {
             if (mapping.OriginalSpan.AbsoluteIndex <= primarySpan.Start &&
                 (mapping.OriginalSpan.AbsoluteIndex + mapping.OriginalSpan.Length) >= primarySpan.End)

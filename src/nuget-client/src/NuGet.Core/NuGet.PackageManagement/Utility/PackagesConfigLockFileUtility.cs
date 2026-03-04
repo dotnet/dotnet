@@ -65,7 +65,7 @@ namespace NuGet.PackageManagement.Utility
         internal static string GetPackagesLockFilePath(MSBuildNuGetProject msbuildProject)
         {
             var directory = (string)msbuildProject.Metadata["FullPath"];
-            var msbuildProperty = msbuildProject.ProjectSystem?.GetPropertyValue("NuGetLockFilePath");
+            var msbuildProperty = (string)msbuildProject.ProjectSystem?.GetPropertyValue("NuGetLockFilePath");
             var projectName = (string)msbuildProject.Metadata["UniqueName"];
 
             return GetPackagesLockFilePath(directory, msbuildProperty, projectName);

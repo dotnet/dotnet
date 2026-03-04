@@ -33,16 +33,18 @@ steps:
       xcrun simctl runtime delete all
     displayName: Reclaim disk space from unused simulator runtimes
 
-# Include "**SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/dotnet-source-*"
-# once https://github.com/dotnet/arcade/issues/16034 has been resolved.
+# Enable validation of the source artifact after the following issues have been addressed:
+# 1. https://github.com/dotnet/release/issues/1416
+# 2. https://github.com/dotnet/arcade/issues/16249
+# **SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/dotnet-source-*
 - task: DownloadPipelineArtifact@2
   displayName: Download Vertical Build Artifacts
   continueOnError: ${{ parameters.continueOnError }}
   enabled: true
   inputs:
     patterns: |
-      **ShortStack*_Artifacts/**
-      **AzureLinux*_Artifacts/**
+      **Shortstack*_Artifacts/**
+      **Linux_*_Artifacts/**
       **OSX_*_Artifacts/**
       **Windows_*_Artifacts/**
       **SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/dotnet-sdk-*.tar.gz

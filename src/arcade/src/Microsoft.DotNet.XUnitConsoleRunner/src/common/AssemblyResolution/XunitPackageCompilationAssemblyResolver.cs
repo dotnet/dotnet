@@ -44,12 +44,7 @@ namespace Xunit
                     results.Add(packageDirectory);
                 else
                 {
-                    string basePath;
-                    if (osPlatform == Platform.Windows)
-                        basePath = Environment.GetEnvironmentVariable("USERPROFILE");
-                    else
-                        basePath = Environment.GetEnvironmentVariable("HOME");
-
+                    string basePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                     if (!string.IsNullOrEmpty(basePath))
                         results.Add(Path.Combine(basePath, ".nuget", "packages"));
                 }

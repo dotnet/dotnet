@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="vstest" Sha="feff871cec763e9a9f8e9ace212f0fd6041d479f" BarId="291132" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="vstest" Sha="b5d394ea4e7c0d617067aef06f0e8bb19ca09027" BarId="303072" />
   <ProductDependencies>
-    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="18.3.0-preview.25571.1">
+    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="18.5.0-preview.26120.1">
       <Uri>https://dev.azure.com/devdiv/DevDiv/_git/vs-code-coverage</Uri>
-      <Sha>4369328a34a179f8bc91d3757d850a1214c72c73</Sha>
+      <Sha>4fa57a0f75c559331a9132c63495d3c30d155c1d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.0-preview.25567.106">
+    <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.0-preview.26123.115">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>feff871cec763e9a9f8e9ace212f0fd6041d479f</Sha>
+      <Sha>b5d394ea4e7c0d617067aef06f0e8bb19ca09027</Sha>
     </Dependency>
-    <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
     <Dependency Name="Microsoft.Extensions.DependencyModel" Version="6.0.2">
       <Uri>https://github.com/dotnet/runtime</Uri>
@@ -23,9 +22,9 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26059.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26122.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>367e3ab44812021f59aaf4c7506d5b4569769eec</Sha>
+      <Sha>88c88084abfa1e379f54933af89e43fa774e323c</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DiaSymReader.Pdb2Pdb" Version="1.1.0-beta2-19575-01">
       <Uri>https://github.com/dotnet/symreader-converter</Uri>

@@ -121,7 +121,7 @@ nuget client-certs List</target>
       </trans-unit>
       <trans-unit id="CommandApiKey">
         <source>The API key for the server. If not set, the NUGET_API_KEY environment variable is read.</source>
-        <target state="needs-review-translation">Der API-Schlüssel für den Server.</target>
+        <target state="translated">Der API-Schlüssel für den Server. Wenn er nicht festgelegt ist, wird die Umgebungsvariable NUGET_API_KEY ausgelesen.</target>
         <note />
       </trans-unit>
       <trans-unit id="CommandDirectDownload">
@@ -171,7 +171,7 @@ nuget client-certs List</target>
       </trans-unit>
       <trans-unit id="CommandPackageSaveMode">
         <source>Specifies types of files to save after package installation: nuspec, nupkg, nuspec;nupkg.</source>
-        <target state="translated">Gibt Typen von Dateiten an, die nach der Paketinstallation gespeichert werden sollen: nuspec, nupkg, nuspec;nupkg.</target>
+        <target state="translated">Gibt Typen von Dateien an, die nach der Paketinstallation gespeichert werden sollen: nuspec, nupkg, nuspec;nupkg.</target>
         <note />
       </trans-unit>
       <trans-unit id="CommandSourceDescription">
@@ -1147,7 +1147,7 @@ nuget spec -a MyAssembly.dll</target>
       </trans-unit>
       <trans-unit id="SymbolApiKey">
         <source>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</source>
-        <target state="needs-review-translation">Der API-Schlüssel für den Symbolserver.</target>
+        <target state="translated">Der API-Schlüssel für den Symbolserver. Wenn er nicht festgelegt ist, wird die Umgebungsvariable NUGET_SYMBOL_API_KEY ausgelesen.</target>
         <note />
       </trans-unit>
       <trans-unit id="TrustedSignersCommandAllowUntrustedRootDescription">

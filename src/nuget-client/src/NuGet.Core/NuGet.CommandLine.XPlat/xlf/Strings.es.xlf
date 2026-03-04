@@ -84,7 +84,7 @@
       </trans-unit>
       <trans-unit id="ApiKey_Description">
         <source>The API key for the server. If not set, the NUGET_API_KEY environment variable is read.</source>
-        <target state="needs-review-translation">La clave de API del servidor.</target>
+        <target state="translated">La clave de API del servidor. Si no se establece, se lee la variable de entorno NUGET_API_KEY.</target>
         <note />
       </trans-unit>
       <trans-unit id="App_FullName">
@@ -1289,7 +1289,7 @@ La búsqueda es una comparación de cadenas que no diferencia mayúsculas de min
       </trans-unit>
       <trans-unit id="SymbolApiKey_Description">
         <source>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</source>
-        <target state="needs-review-translation">La clave de API del servidor de símbolos.</target>
+        <target state="translated">La clave de API del servidor de símbolos. Si no se establece, se lee la variable de entorno NUGET_SYMBOL_API_KEY.</target>
         <note />
       </trans-unit>
       <trans-unit id="SymbolSource_Description">
@@ -1483,7 +1483,7 @@ La búsqueda es una comparación de cadenas que no diferencia mayúsculas de min
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InconsistentAssetsFile">
         <source>Internal error: Assets file is inconsistent</source>
-        <target state="new">Internal error: Assets file is inconsistent</target>
+        <target state="translated">Error interno: el archivo de recursos es incoherente</target>
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">

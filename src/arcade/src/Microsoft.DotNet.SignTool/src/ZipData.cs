@@ -10,6 +10,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Data;
+using System.Text;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using NuGet.Packaging;
@@ -54,7 +55,7 @@ namespace Microsoft.DotNet.SignTool
             return null;
         }
 
-        public static IEnumerable<ZipDataEntry> ReadEntries(string archivePath, string tempDir, string tarToolPath, string pkgToolPath, bool ignoreContent = false)
+        public static IEnumerable<ZipDataEntry> ReadEntries(string archivePath, string tempDir, string tarToolPath, string pkgToolPath, TaskLoggingHelper log, bool ignoreContent = false)
         {
             if (FileSignInfo.IsTarGZip(archivePath))
             {
@@ -62,7 +63,16 @@ namespace Microsoft.DotNet.SignTool
 #if NET472
                 return ReadTarGZipEntries(archivePath, tempDir, tarToolPath, ignoreContent);
 #else
+                // TODO: Remove workaround for https://github.com/dotnet/arcade/issues/16484
+                // Hardlinks are used on Windows but System.Formats.Tar doesn't fully support them yet.
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    return ReadTarGZipEntriesWithExternalTar(archivePath, tempDir, log, ignoreContent);
+                }
+
                 return ReadTarGZipEntries(archivePath)
+                    .Where(static entry => entry.EntryType != TarEntryType.SymbolicLink &&
+                                           entry.EntryType != TarEntryType.Directory)
                     .Select(static entry => new ZipDataEntry(entry.Name, entry.DataStream, entry.Length)
                     {
                         UnixFileMode = (uint)entry.Mode,
@@ -324,6 +334,9 @@ namespace Microsoft.DotNet.SignTool
 
         private static IEnumerable<ZipDataEntry> ReadPkgOrAppBundleEntries(string archivePath, string tempDir, string pkgToolPath, bool ignoreContent)
         {
+#if NET472
+            throw new NotImplementedException("PKG signing is not supported on .NET Framework");
+#else
             string extractDir = Path.Combine(tempDir, Guid.NewGuid().ToString());
             try
             {
@@ -334,6 +347,11 @@ namespace Microsoft.DotNet.SignTool
 
                 foreach (var path in Directory.EnumerateFiles(extractDir, "*.*", SearchOption.AllDirectories))
                 {
+                    // Skip symbolic links - they reference files that are processed at their real paths.
+                    if (new FileInfo(path).LinkTarget != null)
+                    {
+                        continue;
+                    }
                     var relativePath = path.Substring(extractDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
                     using var stream = ignoreContent ? null : (Stream)File.Open(path, FileMode.Open);
                     yield return new ZipDataEntry(relativePath, stream)
@@ -349,6 +367,7 @@ namespace Microsoft.DotNet.SignTool
                     Directory.Delete(extractDir, recursive: true);
                 }
             }
+#endif
         }
 
         private void RepackPkgOrAppBundles(TaskLoggingHelper log, string tempDir, string pkgToolPath)
@@ -372,6 +391,13 @@ namespace Microsoft.DotNet.SignTool
 
                 foreach (var path in Directory.EnumerateFiles(extractDir, "*.*", SearchOption.AllDirectories))
                 {
+                    // Skip symbolic links - they are preserved from extraction and point to
+                    // the real files which are updated in place.
+                    if (new FileInfo(path).LinkTarget != null)
+                    {
+                        continue;
+                    }
+
                     var relativePath = path.Substring(extractDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
 
                     var signedPart = FindNestedPart(relativePath);
@@ -485,6 +511,14 @@ namespace Microsoft.DotNet.SignTool
 #else
         private void RepackTarGZip(TaskLoggingHelper log, string tempDir, string tarToolPath)
         {
+            // TODO: Remove workaround for https://github.com/dotnet/arcade/issues/16484
+            // Hardlinks are used on Windows but System.Formats.Tar doesn't fully support them yet.
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                RepackTarGZipWithExternalTar(log, tempDir);
+                return;
+            }
+
             using MemoryStream streamToCompress = new();
             using (TarWriter writer = new(streamToCompress, leaveOpen: true))
             {
@@ -517,6 +551,103 @@ namespace Microsoft.DotNet.SignTool
             {
                 using GZipStream compressor = new(outputStream, CompressionMode.Compress);
                 streamToCompress.CopyTo(compressor);
+            }
+        }
+
+        /// <summary>
+        /// Read tar.gz entries using external tar.exe to properly handle hardlinks.
+        /// Windows tarballs use hardlinks for deduplication, which System.Formats.Tar doesn't yet support.
+        /// When tar.exe extracts hardlinks, they become regular files with the same content.
+        /// </summary>
+        private static IEnumerable<ZipDataEntry> ReadTarGZipEntriesWithExternalTar(string archivePath, string tempDir, TaskLoggingHelper log, bool ignoreContent)
+        {
+            string extractDir = Path.Combine(tempDir, Guid.NewGuid().ToString());
+            Directory.CreateDirectory(extractDir);
+
+            try
+            {
+                // Extract the tarball - tar.exe will resolve hardlinks to regular files
+                if (!RunExternalProcess(log, "tar", $"-xzf \"{archivePath}\" -C \"{extractDir}\"", out _))
+                {
+                    throw new Exception($"Failed to extract tar archive: {archivePath}");
+                }
+
+                foreach (var path in Directory.EnumerateFiles(extractDir, "*", SearchOption.AllDirectories))
+                {
+                    // Symbolic links require elevated permissions to create on Windows. They should not be used therefore they are not supported.
+                    if (new FileInfo(path).LinkTarget != null)
+                    {
+                        throw new InvalidOperationException(
+                            $"Symbolic link detected in tar archive '{archivePath}': '{path}'. " +
+                            $"Tarballs containing symbolic links are not supported for signing on Windows.");
+                    }
+
+                    string relativePath = path.Substring(extractDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
+                    using var stream = ignoreContent ? null : (Stream)File.Open(path, FileMode.Open);
+                    yield return new ZipDataEntry(relativePath, stream);
+                }
+            }
+            finally
+            {
+                if (Directory.Exists(extractDir))
+                {
+                    Directory.Delete(extractDir, recursive: true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Repack tar.gz using external tar.exe to preserve hardlinks.
+        /// Windows tarballs use hardlinks for deduplication, which System.Formats.Tar doesn't yet support.
+        /// </summary>
+        private void RepackTarGZipWithExternalTar(TaskLoggingHelper log, string tempDir)
+        {
+            string extractDir = Path.Combine(tempDir, Guid.NewGuid().ToString());
+            Directory.CreateDirectory(extractDir);
+
+            try
+            {
+                // Extract the tarball - tar.exe will recreate hardlinks
+                if (!RunExternalProcess(log, "tar", $"-xzf \"{FileSignInfo.FullPath}\" -C \"{extractDir}\"", out _))
+                {
+                    log.LogError($"Failed to extract tar archive: {FileSignInfo.FullPath}");
+                    return;
+                }
+
+                // Replace signed files in the extracted directory
+                foreach (var path in Directory.EnumerateFiles(extractDir, "*", SearchOption.AllDirectories))
+                {
+                    // Symbolic links are not supported by the external tar.exe signing path.
+                    if (new FileInfo(path).LinkTarget != null)
+                    {
+                        throw new InvalidOperationException(
+                            $"Symbolic link detected in tar archive '{FileSignInfo.FullPath}': '{path}'. " +
+                            $"Tarballs containing symbolic links are not supported for signing on Windows.");
+                    }
+
+                    string relativePath = path.Substring(extractDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
+                    ZipPart? signedPart = FindNestedPart(relativePath);
+
+                    if (signedPart.HasValue)
+                    {
+                        log.LogMessage(MessageImportance.Low, $"Copying signed file from {signedPart.Value.FileSignInfo.FullPath} to {FileSignInfo.FullPath} -> {relativePath}");
+                        File.Copy(signedPart.Value.FileSignInfo.FullPath, path, overwrite: true);
+                    }
+                }
+
+                // Repack the tarball - tar.exe will detect and preserve hardlinks
+                if (!RunExternalProcess(log, "tar", $"-czf \"{FileSignInfo.FullPath}\" -C \"{extractDir}\" .", out _))
+                {
+                    log.LogError($"Failed to create tar archive: {FileSignInfo.FullPath}");
+                    return;
+                }
+            }
+            finally
+            {
+                if (Directory.Exists(extractDir))
+                {
+                    Directory.Delete(extractDir, recursive: true);
+                }
             }
         }
 
@@ -664,11 +795,18 @@ namespace Microsoft.DotNet.SignTool
                 string outputPath = Path.Join(destination, tar.Name);
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
 
-                using (FileStream outputFileStream = File.Create(outputPath))
+                if (tar.EntryType == TarEntryType.SymbolicLink)
                 {
-                    tar.DataStream?.CopyTo(outputFileStream);
+                    File.CreateSymbolicLink(outputPath, tar.LinkName);
                 }
-                SetUnixFileMode(log, (uint)tar.Mode, outputPath);
+                else
+                {
+                    using (FileStream outputFileStream = File.Create(outputPath))
+                    {
+                        tar.DataStream?.CopyTo(outputFileStream);
+                    }
+                    SetUnixFileMode(log, (uint)tar.Mode, outputPath);
+                }
             }
         }
 
@@ -697,7 +835,20 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 
-        private static IEnumerable<ZipDataEntry> ReadRpmContainerEntries(string archivePath)
+        /// <summary>
+        /// Read entries from an RPM container.
+        /// </summary>
+        /// <param name="archivePath">Path to the RPM package.</param>
+        /// <param name="skipSymlinks">
+        /// When true (the default), symbolic links are excluded from the returned entries.
+        /// This is used during the read/signing phase where only regular files need to be inspected and signed.
+        /// When false, symbolic links are included (with their target paths captured) so that
+        /// <see cref="ExtractRpmPayloadContents"/> can recreate them on disk. This is necessary because
+        /// repacking rebuilds the cpio payload from the extracted disk layout rather than copying
+        /// streams from the original archive, so symlinks must be physically present or they
+        /// would be dropped from the repacked RPM.
+        /// </param>
+        private static IEnumerable<ZipDataEntry> ReadRpmContainerEntries(string archivePath, bool skipSymlinks = true)
         {
             using var stream = File.Open(archivePath, FileMode.Open);
             using RpmPackage rpmPackage = RpmPackage.Read(stream);
@@ -705,9 +856,26 @@ namespace Microsoft.DotNet.SignTool
 
             while (archive.GetNextEntry() is CpioEntry entry)
             {
-                yield return new ZipDataEntry(entry.Name, entry.DataStream)
+                uint fileKind = entry.Mode & CpioEntry.FileKindMask;
+                if (fileKind == CpioEntry.Directory ||
+                    (skipSymlinks && fileKind == CpioEntry.SymbolicLink))
+                {
+                    continue;
+                }
+
+                bool isSymlink = fileKind == CpioEntry.SymbolicLink;
+                string linkTarget = null;
+                if (isSymlink)
+                {
+                    using StreamReader reader = new(entry.DataStream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true, bufferSize: -1, leaveOpen: true);
+                    linkTarget = reader.ReadToEnd().TrimEnd();
+                }
+
+                yield return new ZipDataEntry(entry.Name, isSymlink ? null : entry.DataStream)
                 {
                     UnixFileMode = entry.Mode & CpioEntry.FilePermissionMask,
+                    IsSymbolicLink = isSymlink,
+                    SymbolicLinkTarget = linkTarget,
                 };
             }
         }
@@ -796,12 +964,16 @@ namespace Microsoft.DotNet.SignTool
 
         internal static void ExtractRpmPayloadContents(TaskLoggingHelper log, string rpmPackage, string layout)
         {
-            foreach (var entry in ReadRpmContainerEntries(rpmPackage))
+            foreach (var entry in ReadRpmContainerEntries(rpmPackage, skipSymlinks: false))
             {
                 string outputPath = Path.Combine(layout, entry.RelativePath);
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
 
-                if (entry != null)
+                if (entry.IsSymbolicLink)
+                {
+                    File.CreateSymbolicLink(outputPath, entry.SymbolicLinkTarget);
+                }
+                else
                 {
                     entry.WriteToFile(outputPath);
                     SetUnixFileMode(log, entry.UnixFileMode, outputPath);

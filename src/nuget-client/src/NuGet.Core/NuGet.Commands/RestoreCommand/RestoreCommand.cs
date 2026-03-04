@@ -864,6 +864,7 @@ namespace NuGet.Commands
                         foreach (var dependency in framework.Dependencies)
                         {
                             if (framework.PackagesToPrune.TryGetValue(dependency.Name, out PrunePackageReference packageToPrune)
+                                && dependency.LibraryRange.VersionRange != null
                                 && dependency.LibraryRange.VersionRange.Satisfies(packageToPrune.VersionRange.MaxVersion!))
                             {
                                 prunedDirectPackages ??= new(StringComparer.OrdinalIgnoreCase);
@@ -1315,7 +1316,13 @@ namespace NuGet.Commands
                                 .ToList();
 
                             // add lock file libraries into RemoteWalkContext so that it can be used during restore graph generation
-                            contextForProject.LockFileLibraries.Add(new LockFileCacheKey(target.TargetFramework, target.RuntimeIdentifier), libraries);
+                            contextForProject.LockFileLibraries.Add(new LockFileCacheKey(
+                                target.TargetFramework,
+                                target.RuntimeIdentifier,
+                                string.IsNullOrEmpty(target.TargetAlias) ?
+                                    _request.Project.GetTargetFramework(target.TargetFramework)?.TargetAlias :
+                                    target.TargetAlias
+                                ), libraries);
                         }
                     }
                     else if (_request.IsRestoreOriginalAction && _request.Project.RestoreMetadata.RestoreLockProperties.RestoreLockedMode)
@@ -1479,19 +1486,13 @@ namespace NuGet.Commands
 
             int DetermineLockFileVersion()
             {
-                int lockFileVersion = _request.LockFileVersion;
-
-                // We use the request provided version, unless we are using the Microsoft.NET.Sdk that does not support reading of aliased assets files.
-                if (_request.Project.RestoreMetadata.UsingMicrosoftNETSdk &&
-                    !SdkAnalysisLevelMinimums.IsEnabled(
-                    _request.Project.RestoreMetadata.SdkAnalysisLevel,
-                    _request.Project.RestoreMetadata.UsingMicrosoftNETSdk,
-                    SdkAnalysisLevelMinimums.V10_0_300))
+                // We use the request provided version, unless we are using the Microsoft.NET.Sdk version that does not support reading of aliased assets files.
+                if (DoesProjectToolsetSupportsDuplicateFrameworks(_request.Project))
                 {
-                    lockFileVersion = LockFileFormat.LegacyVersion;
+                    return _request.LockFileVersion;
                 }
 
-                return lockFileVersion;
+                return LockFileFormat.LegacyVersion;
             }
         }
 
@@ -1874,12 +1875,7 @@ namespace NuGet.Commands
 
                 return (success, []);
             }
-
-            bool shouldDoDuplicatesCheck = _request.Project.RestoreMetadata.UsingMicrosoftNETSdk &&
-                    !SdkAnalysisLevelMinimums.IsEnabled(
-                    _request.Project.RestoreMetadata.SdkAnalysisLevel,
-                    _request.Project.RestoreMetadata.UsingMicrosoftNETSdk,
-                    SdkAnalysisLevelMinimums.V10_0_300);
+            var shouldDoDuplicatesCheck = !DoesProjectToolsetSupportsDuplicateFrameworks(_request.Project);
 
             if (shouldDoDuplicatesCheck)
             {
@@ -1982,27 +1978,90 @@ namespace NuGet.Commands
             return (success, graphs);
         }
 
-        // Check for duplicate frameworks and log an error if found.
-        // Returns true if duplicates exist, false otherwise.
-        private static async ValueTask<bool> ErrorForDuplicateFrameworks(RestoreRequest request, ILogger logger)
+        private static NuGetVersion Version_11_WithAliasSupport = NuGetVersion.Parse("11.0.100-preview.2.26104");
+        private static NuGetVersion Version_10_WithAliasSupport = NuGetVersion.Parse("10.0.300-preview.1");
+
+        private static bool DoesProjectToolsetSupportsDuplicateFrameworks(PackageSpec project)
         {
-            if (request.Project.TargetFrameworks.Count <= 1)
+            if (project.RestoreMetadata.UsingMicrosoftNETSdk &&
+                    !SdkAnalysisLevelMinimums.IsEnabled(
+                    project.RestoreMetadata.SdkAnalysisLevel,
+                    project.RestoreMetadata.UsingMicrosoftNETSdk,
+                    SdkAnalysisLevelMinimums.V10_0_300))
             {
                 return false;
             }
-
-            var seenFrameworks = new HashSet<NuGetFramework>(request.Project.TargetFrameworks.Count);
-            for (int i = 0; i < request.Project.TargetFrameworks.Count; i++)
+            else
             {
-                if (!seenFrameworks.Add(request.Project.TargetFrameworks[i].FrameworkName))
+                if (project.RestoreMetadata.UsingMicrosoftNETSdk)
                 {
-                    // Duplicate found - log error and return immediately
-                    var message = string.Format(CultureInfo.CurrentCulture, Strings.Log_AliasingSupportedInNewDependencyResolver, request.Project.Name, SdkAnalysisLevelMinimums.V10_0_300);
-                    await logger.LogAsync(RestoreLogMessage.CreateError(NuGetLogCode.NU1018, message));
+                    foreach (TargetFrameworkInformation tfi in project.TargetFrameworks)
+                    {
+                        if (string.IsNullOrEmpty(tfi.TargetAlias))
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                // If the SDK version is a prerelease, we need to ensure it's a prerelease version that can handle the aliased assets file.
+                if (project.RestoreSettings.SdkVersion?.IsPrerelease == true)
+                {
+                    if (project.RestoreSettings.SdkVersion.Major == 10
+                        && project.RestoreSettings.SdkVersion.Minor == 0
+                        && project.RestoreSettings.SdkVersion.Patch == 300)
+                    {
+                        if (project.RestoreSettings.SdkVersion < Version_10_WithAliasSupport)
+                        {
+                            return false;
+                        }
+                    }
+                    if (project.RestoreSettings.SdkVersion.Major == 11
+                        && project.RestoreSettings.SdkVersion.Minor == 0
+                        && project.RestoreSettings.SdkVersion.Patch == 100)
+                    {
+                        if (project.RestoreSettings.SdkVersion < Version_11_WithAliasSupport)
+                        {
+                            return false;
+                        }
+                    }
                     return true;
                 }
             }
 
+            return true;
+        }
+
+        // Check for duplicate frameworks and log an error if found.
+        // Returns true if duplicates exist, false otherwise.
+        private static async ValueTask<bool> ErrorForDuplicateFrameworks(RestoreRequest request, ILogger logger)
+        {
+            if (HasDuplicateFrameworks(request.Project))
+            {
+                // Duplicate found - log error and return immediately
+                var message = string.Format(CultureInfo.CurrentCulture, Strings.Log_AliasingSupportedInNewDependencyResolver, request.Project.Name, SdkAnalysisLevelMinimums.V10_0_300);
+                await logger.LogAsync(RestoreLogMessage.CreateError(NuGetLogCode.NU1018, message));
+                return true;
+            }
+
+            return false;
+        }
+
+        internal static bool HasDuplicateFrameworks(PackageSpec packageSpec)
+        {
+            if (packageSpec.TargetFrameworks.Count <= 1)
+            {
+                return false;
+            }
+
+            var seenFrameworks = new HashSet<NuGetFramework>(packageSpec.TargetFrameworks.Count);
+            for (int i = 0; i < packageSpec.TargetFrameworks.Count; i++)
+            {
+                if (!seenFrameworks.Add(packageSpec.TargetFrameworks[i].FrameworkName))
+                {
+                    return true;
+                }
+            }
             return false;
         }
 
