@@ -1,19 +1,47 @@
-﻿<Project Sdk="Microsoft.Build.NoTargets">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+    <TargetFrameworks>$(BundledNETCoreAppTargetFramework);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <IsPackable>true</IsPackable>
+    <IsBuildTaskProject>true</IsBuildTaskProject>
     <Description>Common toolset for calling into CMake from MSBuild and easily reference native assets from managed projects.</Description>
     <PackageType>MSBuildSdk</PackageType>
-    <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <NoWarn>$(NoWarn);NU5128;CS0649</NoWarn>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <EnableDefaultItems>false</EnableDefaultItems>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="**/*.props;**/*.targets"
+    <PackageReference Include="Microsoft.Build.Utilities.Core" />
+    <PackageReference Include="Microsoft.Build.Framework" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <PackageReference Include="System.Text.Json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="src\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <Compile Include="..\Common\Internal\AssemblyResolver.cs" />
+    <Compile Include="..\Common\Internal\AssemblyResolution.cs" />
+    <Compile Include="..\Common\Internal\BuildTask.Desktop.cs" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Common\Internal\BuildTask.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="build\**\*.props;build\**\*.targets"
           Pack="true"
-          PackagePath="%(RecursiveDir)%(Filename)%(Extension)" />
-    <None Include="$(RepoRoot)LICENSE.TXT;$(RepoRoot)THIRD-PARTY-NOTICES.TXT" Pack="true" PackagePath="%(Filename)%(Extension)" />
+          PackagePath="build\%(RecursiveDir)%(Filename)%(Extension)" />
+    <None Include="sdk\**\*.props;sdk\**\*.targets"
+          Pack="true"
+          PackagePath="sdk\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
 </Project>

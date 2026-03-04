@@ -83,9 +83,9 @@ public abstract class DocumentFormattingTestBase(ITestOutputHelper testOutputHel
 
             var htmlEdited = source.WithChanges(htmlChanges);
             var htmlEditedLegacy = source.WithChanges(htmlChangesResult ?? []);
-            Assert.Equal(htmlEdited.ToString(), htmlEditedLegacy.ToString());
-            Assert.Equal(htmlFormatted, htmlEditedLegacy.ToString());
-            Assert.Equal(htmlFormatted, htmlEdited.ToString());
+            AssertEx.EqualOrDiff(htmlEdited.ToString(), htmlEditedLegacy.ToString());
+            AssertEx.EqualOrDiff(htmlFormatted, htmlEditedLegacy.ToString());
+            AssertEx.EqualOrDiff(htmlFormatted, htmlEdited.ToString());
 #endif
         }
 

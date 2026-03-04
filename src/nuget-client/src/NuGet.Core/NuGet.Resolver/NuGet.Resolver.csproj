@@ -7,6 +7,7 @@
     <PackProject>true</PackProject>
     <Shipping>true</Shipping>
     <IncludeInVSIX>true</IncludeInVSIX>
+    <IsAotCompatible>true</IsAotCompatible>
     <XPLATProject>true</XPLATProject>
   </PropertyGroup>
 

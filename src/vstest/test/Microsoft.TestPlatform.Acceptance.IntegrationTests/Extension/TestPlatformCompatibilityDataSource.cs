@@ -58,6 +58,7 @@ public class TestPlatformCompatibilityDataSource : TestDataSourceAttribute<Runne
     public bool WithEveryVersionOfAdapter { get; set; } = true;
 
     public bool WithOlderConfigurations { get; set; } = true;
+    public bool WithVSIXRunner { get; set; } = true;
 
     public string? BeforeRunnerFeature { get; set; }
     public string? AfterRunnerFeature { get; set; }
@@ -74,6 +75,7 @@ public class TestPlatformCompatibilityDataSource : TestDataSourceAttribute<Runne
         _builder.WithEveryVersionOfHost = WithEveryVersionOfHost;
         _builder.WithEveryVersionOfAdapter = WithEveryVersionOfAdapter;
         _builder.WithOlderConfigurations = WithOlderConfigurations;
+        _builder.WithVSIXRunner = WithVSIXRunner;
         _builder.WithInProcess = WithInProcess;
 
         _builder.BeforeRunnerFeature = BeforeRunnerFeature;

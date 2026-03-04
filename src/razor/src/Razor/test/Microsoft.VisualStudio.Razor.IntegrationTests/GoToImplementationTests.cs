@@ -31,14 +31,16 @@ public class GoToImplementationTests(ITestOutputHelper testOutputHelper) : Abstr
         await TestServices.SolutionExplorer.OpenFileAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.IndexRazorFile, ControlledHangMitigatingCancellationToken);
 
         // Change text to refer back to Program class
-        await TestServices.Editor.SetTextAsync(@"<SurveyPrompt Title=""@nameof(Program)", ControlledHangMitigatingCancellationToken);
-        await TestServices.Editor.PlaceCaretAsync("Program", charsOffset: -1, ControlledHangMitigatingCancellationToken);
+        var position = await TestServices.Editor.SetTextAsync("""
+            <SurveyPrompt Title="@nameof(BlazorProject.Data.Weather$$Forecast)" />
+            """, ControlledHangMitigatingCancellationToken);
+        await TestServices.Editor.PlaceCaretAsync(position, ControlledHangMitigatingCancellationToken);
 
         // Act
         await TestServices.Editor.InvokeGoToImplementationAsync(ControlledHangMitigatingCancellationToken);
 
         // Assert
-        await TestServices.Editor.WaitForActiveWindowAsync("Program.cs", ControlledHangMitigatingCancellationToken);
+        await TestServices.Editor.WaitForActiveWindowAsync("WeatherForecast.cs", ControlledHangMitigatingCancellationToken);
     }
 
     [IdeFact]

@@ -79,6 +79,10 @@ public class DiagnosticTests(ITestOutputHelper testOutputHelper) : AbstractRazor
             (error) =>
             {
                 AssertEx.EqualOrDiff("Error.cshtml(10, 6): warning HTML0001: Element start tag is missing closing angle bracket.", error);
+            },
+            (error) =>
+            {
+                AssertEx.EqualOrDiff("Error.cshtml(2, 1): warning RZ0005: @addTagHelper directive is unnecessary.", error);
             });
     }
 

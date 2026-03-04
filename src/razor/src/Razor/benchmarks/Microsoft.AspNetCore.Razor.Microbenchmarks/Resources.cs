@@ -62,7 +62,11 @@ internal static class Resources
             using var stream = GetResourceStream(name, folder);
 
             value = new byte[stream.Length];
+#if NET
+            stream.ReadExactly(value);
+#else
             stream.Read(value, 0, value.Length);
+#endif
 
             s_bytesMap.Add(key, value);
 

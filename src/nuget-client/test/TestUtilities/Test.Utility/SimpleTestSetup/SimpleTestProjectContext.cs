@@ -128,6 +128,8 @@ namespace NuGet.Test.Utility
 
         public bool SetMSBuildProjectExtensionsPath { get; set; } = true;
 
+        public string SDKAnalysisLevel { get; set; }
+
         /// <summary>
         /// project.lock.json or project.assets.json
         /// </summary>
@@ -288,6 +290,16 @@ namespace NuGet.Test.Utility
                 if (Frameworks.Count > 1)
                 {
                     _packageSpec.RestoreMetadata.CrossTargeting = true;
+                    _packageSpec.RestoreMetadata.UsingMicrosoftNETSdk = true;
+                }
+
+                if (!IsLegacyPackageReference)
+                {
+                    _packageSpec.RestoreMetadata.UsingMicrosoftNETSdk = true;
+                    if (!string.IsNullOrEmpty(SDKAnalysisLevel))
+                    {
+                        _packageSpec.RestoreMetadata.SdkAnalysisLevel = NuGetVersion.Parse(SDKAnalysisLevel);
+                    }
                 }
 
                 return _packageSpec;

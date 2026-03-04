@@ -280,7 +280,7 @@ namespace Microsoft.DotNet.SignTool.Tests
 
         private static string s_snPath = Path.Combine(Path.GetDirectoryName(typeof(SignToolTests).Assembly.Location), "tools", "sn", "sn.exe");
         private static string s_tarToolPath = Path.Combine(Path.GetDirectoryName(typeof(SignToolTests).Assembly.Location), "tools", "tar", "Microsoft.Dotnet.Tar.dll");
-        private static string s_pkgToolPath = Path.Combine(Path.GetDirectoryName(typeof(SignToolTests).Assembly.Location), "tools", "pkg", "Microsoft.Dotnet.MacOsPkg.dll");
+        private static string s_pkgToolPath = Path.Combine(Path.GetDirectoryName(typeof(SignToolTests).Assembly.Location), "tools", "pkg", "Microsoft.DotNet.MacOsPkg.Cli.dll");
 
         private string GetResourcePath(string name, string relativePath = null)
         {
@@ -441,18 +441,18 @@ namespace Microsoft.DotNet.SignTool.Tests
 
                 using MD5 md5 = MD5.Create();
                 using FileStream fileStream = File.OpenRead(layoutFilePath);
-                string newHash = Convert.ToHexString(md5.ComputeHash(fileStream));
+                string newHash = Convert.ToHexStringLower(md5.ComputeHash(fileStream));
 
                 if (signableFiles.Contains(targetSystemFilePath))
                 {
                     newHash.Should().NotBe(originalHash);
-                    md5sumsContents.Should().Contain($"{newHash} {targetSystemFilePath}");
-                    md5sumsContents.Should().NotContain($"{originalHash} {targetSystemFilePath}");
+                    md5sumsContents.Should().Contain($"{newHash}  {targetSystemFilePath}");
+                    md5sumsContents.Should().NotContain($"{originalHash}  {targetSystemFilePath}");
                 }
                 else
                 {
                     newHash.Should().Be(originalHash);
-                    md5sumsContents.Should().Contain($"{originalHash} {targetSystemFilePath}");
+                    md5sumsContents.Should().Contain($"{originalHash}  {targetSystemFilePath}");
                 }
             }
 
@@ -1549,7 +1549,7 @@ $@"
             {
                 {  "MacDeveloperHardenWithNotarization",
                     new List<AdditionalCertificateInformation>() {
-                        new AdditionalCertificateInformation() { MacNotarizationAppName = "dotnet", MacSigningOperation = "MacDeveloperHarden" }
+                        new AdditionalCertificateInformation() { MacNotarizationAppName = "com.microsoft.dotnet", MacSigningOperation = "MacDeveloperHarden" }
                     } 
                 }
             };
@@ -1588,6 +1588,7 @@ $@"
                 <Authenticode>Microsoft400</Authenticode>
                 </FilesToSign>
                 ",
+                // Signing rounds use .pkg.zip because MicroBuild expects zipped packages
                 $@"
                 <FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "ContainerSigning", "1", "NestedPkg.pkg.zip"))}"">
                 <Authenticode>MacDeveloperHarden</Authenticode>
@@ -1597,8 +1598,10 @@ $@"
                 <Authenticode>MacDeveloperHarden</Authenticode>
                 </FilesToSign>
                 ",
+                // Notarization round uses the unzipped .pkg path — files are unzipped
+                // before notarization (see SignTool.cs: "Notarization does not expect zipped packages")
                 $@"
-                <FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.pkg.zip"))}"">
+                <FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.pkg"))}"">
                 <Authenticode>8020</Authenticode>
                 <MacAppName>com.microsoft.dotnet</MacAppName>
                 </FilesToSign>",
@@ -1753,16 +1756,49 @@ $@"
 </FilesToSign>
 "
             });
-
-#if !NETFRAMEWORK
-            ValidateProducedTarGZipContent(Path.Combine(_tmpDir, "test.tgz"), new[]
-            {
-                ("test/this_is_a_big_folder_name_look/NativeLibrary.dll", "../NativeLibrary.dll")
-            });
-#endif
         }
 
 #if !NETFRAMEWORK
+        /// <summary>
+        /// Validates that tar.gz archives containing symbolic links are handled correctly.
+        /// On Windows, ReadTarGZipEntriesWithExternalTar throws when symlinks are detected,
+        /// so this test is skipped on Windows.
+        /// </summary>
+        [UnixOnlyFactAttribute]
+        public void SignTarGZipFileWithSymlinks()
+        {
+            // List of files to be considered for signing
+            var itemsToSign = new List<ItemToSign>()
+            {
+                new ItemToSign(GetResourcePath("testSymlinks.tgz"))
+            };
+
+            // Default signing information
+            var strongNameSignInfo = new Dictionary<string, List<SignInfo>>()
+            {
+                { "581d91ccdfc4ea9c", new List<SignInfo>{ new SignInfo(certificate: "ArcadeCertTest", strongName: "ArcadeStrongTest") } }
+            };
+
+            // Overriding information
+            var fileSignInfo = new Dictionary<ExplicitSignInfoKey, FileSignInfoEntry>();
+
+            // The symlink (test/this_is_a_big_folder_name_look/NativeLibrary.dll -> ../NativeLibrary.dll)
+            // is filtered out by System.Formats.Tar on non-Windows, so only regular files are signed.
+            ValidateFileSignInfos(itemsToSign, strongNameSignInfo, fileSignInfo, s_fileExtensionSignInfo, new[]
+            {
+                "File 'NativeLibrary.dll' Certificate='Microsoft400'",
+                "File 'SOS.NETCore.dll' TargetFramework='.NETCoreApp,Version=v1.0' Certificate='Microsoft400'",
+                "File 'Nested.NativeLibrary.dll' Certificate='Microsoft400'",
+                "File 'Nested.SOS.NETCore.dll' TargetFramework='.NETCoreApp,Version=v1.0' Certificate='Microsoft400'",
+                "File 'testSymlinks.tgz'",
+            });
+
+            ValidateProducedTarGZipContent(Path.Combine(_tmpDir, "testSymlinks.tgz"), new[]
+            {
+                ("test/this_is_a_big_folder_name_look/NativeLibrary.dll", "../NativeLibrary.dll")
+            });
+        }
+
         // TODO: Remove WindowsOnlyFact once https://github.com/dotnet/arcade/issues/16484 is resolved.
         [WindowsOnlyFact]
         public void SignTarGZipFileWithHardlinks()
@@ -1923,7 +1959,7 @@ $@"
         }
 
 #if !NETFRAMEWORK
-        [Fact]
+        [UnixOnlyFact]
         public void CheckDebSigning()
         {
             // List of files to be considered for signing
@@ -1957,8 +1993,8 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.deb"
 
             var expectedFilesOriginalHashes = new (string, string)[]
             {
-                ("usr/local/bin/hello", "644981BBD6F4ED1B3CF68CD0F47981AA"),
-                ("usr/local/bin/mscorlib.dll", "B80EEBA2B8616B7C37E49B004D69BBB7")
+                ("usr/local/bin/hello", "644981bbd6f4ed1b3cf68cd0f47981aa"),
+                ("usr/local/bin/mscorlib.dll", "b80eeba2b8616b7c37e49b004d69bbb7")
             };
             string[] signableFiles = ["usr/local/bin/mscorlib.dll"];
             string expectedControlFileContent = "Package: test\nVersion: 1.0\nSection: base\nPriority: optional\nArchitecture: all\n";
@@ -2066,9 +2102,9 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.rpm"
                 "File 'IncorrectlySignedDeb.deb' Certificate='LinuxSign'"
             };
 
-            // If on windows, both packages will be submitted for signing
-            // because the CL verification tool (gpg) is not available on Windows.
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            // If running on a platform other than Linux, both packages will be submitted for signing
+            // because the CL verification tool (gpg) is not available.
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 expectedFilesToBeSigned.Add("File 'SignedDeb.deb' Certificate='LinuxSign'");
             }
@@ -2097,9 +2133,9 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.rpm"
                 "File 'IncorrectlySignedRpm.rpm' Certificate='LinuxSign'"
             };
 
-            // If on windows, both packages will be submitted for signing
-            // because the CL verification tool (gpg) is not available on Windows.
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            // If running on a platform other than Linux, both packages will be submitted for signing
+            // because the CL verification tool (gpg) is not available.
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 expectedFilesToBeSigned.Add("File 'SignedRpm.rpm' Certificate='LinuxSign'");
             }
@@ -3276,6 +3312,12 @@ $@"
         [MemberData(nameof(GetSignableExtensions))]
         public void MissingCertificateNameButExtensionIsIgnored(string extension)
         {
+            //  test.deb contains symbolic links which aren't supported on windows.
+            if (extension == ".deb" && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return;
+            }
+
             var needContent = new Dictionary<string, (string, string[])>(StringComparer.OrdinalIgnoreCase)
             {
                 { ".dll", ("EmptyPKT.dll", []) },

@@ -138,7 +138,7 @@
       <PrebuiltErrorMessage>$(PrebuiltErrorMessage)See https://aka.ms/dotnet/prebuilts for guidance on what prebuilts are and how to eliminate them.</PrebuiltErrorMessage>
     </PropertyGroup>
 
-    <Error Condition="'@(DetectedPrebuiltPackage)' != ''" Text="$(PrebuiltErrorMessage)" />
+    <Error Condition="'@(DetectedPrebuiltPackage)' != '' and '$(SkipErrorOnPrebuilts)' != 'true'" Text="$(PrebuiltErrorMessage)" />
 
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
     <Touch Files="$(BaseIntermediateOutputPath)ReportPrebuiltUsage.complete" AlwaysCreate="true">

@@ -34,10 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="RazorSourceGenerator.razorencconfig" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
-  <ItemGroup>
     <!-- SDK: src/RazorSdk/Tool/Microsoft.NET.Sdk.Razor.Tool.csproj -->
     <InternalsVisibleTo Include="rzc" Key="$(RazorKey)" />
 

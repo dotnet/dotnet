@@ -134,6 +134,11 @@
         <target state="translated">Yönergeyi şu sürüme yükseltmeyi destekleyin: {0}</target>
         <note />
       </trans-unit>
+      <trans-unit id="Remove_unnecessary_directives">
+        <source>Remove unnecessary directives</source>
+        <target state="translated">Gereksiz yönergeleri kaldır</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Simplify_Fully_Qualified_Component_Title">
         <source>Simplify fully qualified component</source>
         <target state="translated">Tam nitelenmiş bileşeni basitleştir</target>
@@ -142,6 +147,11 @@
       <trans-unit id="Simplify_Tag_To_SelfClosing_Title">
         <source>Simplify tag to self-closing</source>
         <target state="translated">Etiketi kendi kendine kapatacak şekilde basitleştir</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Sort_And_Consolidate_Usings_Title">
+        <source>Sort and consolidate usings</source>
+        <target state="translated">Using bildirimlerini sırala ve birleştir</target>
         <note />
       </trans-unit>
       <trans-unit id="TagHelper_Attribute_Glyph">

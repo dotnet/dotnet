@@ -1,0 +1,21 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "enabledManagers": [
+    "custom.regex"
+  ],
+  "customManagers": [
+    {
+      "description": "Update the renovateVersion parameter in the Renovate stages template when a new Renovate Docker version is released.",
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/eng/common/core-templates/stages/renovate\\.yml$/"
+      ],
+      "matchStrings": [
+        "renovateVersion\\n\\s+default:\\s*(?<currentValue>\\d+)"
+      ],
+      "depNameTemplate": "mcr.microsoft.com/dotnet-buildtools/prereqs",
+      "datasourceTemplate": "docker",
+      "extractVersionTemplate": "^azurelinux-3\\.0-renovate-(?<version>\\d+)-amd64$"
+    }
+  ]
+}
