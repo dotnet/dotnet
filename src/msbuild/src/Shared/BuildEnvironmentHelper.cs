@@ -208,6 +208,16 @@ namespace Microsoft.Build.Shared
                 return environment;
             }
 
+            // Only use the app host if we're actually running as the app host.
+            // When running via dotnet (e.g. dotnet msbuild), prefer MSBuild.dll so that
+            // worker nodes inherit the dotnet process context — otherwise
+            // Environment.ProcessPath changes to the SDK directory where "dotnet" isn't present,
+            // breaking Process.Start("dotnet") resolution in tasks like VSTestTask.
+            if (!IsRunningInMSBuildExe(EnvironmentUtilities.ProcessPath))
+            {
+                return null;
+            }
+
             // We're not in VS, check for MSBuild.exe / dll to consider this a standalone environment.
             string msBuildPath = null;
             if (FileSystems.Default.FileExists(msBuildExecutableCandidate))
@@ -326,10 +336,18 @@ namespace Microsoft.Build.Shared
                 return null;
             }
 
-            // Prioritize MSBuild[.exe] over MSBuild.dll
-            return TryFromStandaloneMSBuildExe(Path.Combine(appContextBaseDirectory, Constants.MSBuildExecutableName))
-                // Fall back to MSBuild.dll
-                ?? TryFromStandaloneMSBuildExe(Path.Combine(appContextBaseDirectory, Constants.MSBuildAssemblyName));
+            // When running via the MSBuild app host, prefer the native executable.
+            // When running via dotnet (e.g. dotnet msbuild, dotnet test), prefer MSBuild.dll
+            // so that worker nodes inherit the dotnet process context — otherwise
+            // Environment.ProcessPath changes to the SDK directory where "dotnet" isn't present,
+            // breaking Process.Start("dotnet") resolution in tasks like VSTestTask.
+            bool runningAsAppHost = IsRunningInMSBuildExe(EnvironmentUtilities.ProcessPath);
+
+            string primary = Path.Combine(appContextBaseDirectory, runningAsAppHost ? Constants.MSBuildExecutableName : Constants.MSBuildAssemblyName);
+            string fallback = Path.Combine(appContextBaseDirectory, runningAsAppHost ? Constants.MSBuildAssemblyName : Constants.MSBuildExecutableName);
+
+            return TryFromStandaloneMSBuildExe(primary)
+                ?? TryFromStandaloneMSBuildExe(fallback);
         }
 
         private static BuildEnvironment TryFromStandaloneMSBuildExe(string msBuildExePath)
