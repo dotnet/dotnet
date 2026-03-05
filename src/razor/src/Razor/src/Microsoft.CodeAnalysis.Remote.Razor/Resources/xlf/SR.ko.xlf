@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="AddTagHelper_directive_is_unnecessary">
         <source>@addTagHelper directive is unnecessary.</source>
-        <target state="new">@addTagHelper directive is unnecessary.</target>
+        <target state="translated">@addTagHelper 지시문은 필요하지 않습니다.</target>
         <note>@addTagHelper is a keyword</note>
       </trans-unit>
       <trans-unit id="Couldnt_get_a_source_generator_run_result">

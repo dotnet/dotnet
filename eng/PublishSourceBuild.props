@@ -222,8 +222,8 @@
         <Kind>Blob</Kind>
         <IsShipping>true</IsShipping>
       </SourceBuildArtifact>
-      <!-- Add the source artifacts to the publishing output. -->
-      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)$(SourceBuiltSourceArtifactName)-*">
+      <!-- Add the source artifact and signature to the publishing output. -->
+      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)$(SourceBuiltSourceArtifactName)-*$(ArchiveExtension)*">
         <Kind>Blob</Kind>
         <IsShipping>true</IsShipping>
       </SourceBuildArtifact>
@@ -256,7 +256,7 @@
     <ItemGroup Condition="'$(IsPublishPass2)' == 'true'">
       <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
       <SourceBuildArtifact Include="$(SdkNonStableVersionedTarballPath)" />
-      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/$(SourceBuiltSourceArtifactName)-*" />
+      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/$(SourceBuiltSourceArtifactName)-*$(ArchiveExtension)*" />
       <Artifact Include="@(SourceBuildArtifact)">
         <IsShipping>true</IsShipping>
         <DotNetReleaseShipping Condition="'$(DotNetSourceOnlyPostBuildSign)' == 'true'">true</DotNetReleaseShipping>
