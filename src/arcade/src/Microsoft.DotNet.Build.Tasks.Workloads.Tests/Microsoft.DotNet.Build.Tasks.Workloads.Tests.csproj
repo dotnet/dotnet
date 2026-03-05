@@ -16,6 +16,13 @@
     <PackageReference Include="Microsoft.WixToolset.Dtf.WindowsInstaller" />
     <PackageReference Include="Microsoft.WixToolset.Dtf.WindowsInstaller.Package" />
     <PackageReference Include="AwesomeAssertions" />
+
+    <!-- WiX toolset CLI is a tool package so we need to set ExcludeAssets. -->
+    <PackageReference Include="Microsoft.Wix" ExcludeAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.WixToolset.Heat" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.WixToolset.Dependency.wixext" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.WixToolset.Util.wixext" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.WixToolset.UI.wixext" GeneratePathProperty="true" />
   </ItemGroup>
 
   <!-- The tests reference the MSBuild task assembly directly and therefore we need to add references that would normally be provided by MSBuild. -->
@@ -29,7 +36,7 @@
     <PackageDownload Include="Microsoft.NET.Workload.Mono.ToolChain.Manifest-6.0.200" Version="[$(MicrosoftNETWorkloadMonoToolChainManifest_60200Version)];[$(MicrosoftNETWorkloadMonoToolChainManifest_60200Version_604)]" />
     <PackageDownload Include="Microsoft.NET.Workload.Mono.ToolChain.Manifest-6.0.300" Version="[$(MicrosoftNETWorkloadMonoToolChainManifest_60300Version_6021)];[$(MicrosoftNETWorkloadMonoToolChainManifest_60300Version_6022)]" />
     <PackageDownload Include="Microsoft.iOS.Templates" Version="[$(MicrosoftiOSTemplatesVersion)];[$(MicrosoftiOSTemplatesVersion160527)]" />
-    <PackageDownload Include="Microsoft.NET.Workload.Emscripten.net6.Manifest-8.0.100-preview.6" Version="[$(MicrosoftNETWorkloadEmscriptenManifest_80100Preview6Version)]"/>
+    <PackageDownload Include="Microsoft.NET.Workload.Emscripten.net6.Manifest-8.0.100-preview.6" Version="[$(MicrosoftNETWorkloadEmscriptenManifest_80100Preview6Version)]" />
     <!-- We can only test the task properly by building an actual workload end-to-end. EMSDK is the tiniest one available -->
     <PackageDownload Include="Microsoft.NET.Workload.Emscripten.Manifest-6.0.200" Version="[$(MicrosoftNETWorkloadEmscriptenManifest_60200Version)]" />
     <PackageDownload Include="Microsoft.NET.Runtime.Emscripten.2.0.23.Node.win-x64" Version="[$(MicrosoftNETRuntimeEmscripten2023Nodewin_x64)]" />
@@ -39,9 +46,9 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <PackageReference Include="System.Text.Json"  />
+    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <Content Include="testassets\**\*" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="$(NuGetPackageRoot)microsoft.signed.wix\$(MicrosoftSignedWixVersion)\tools\**\*" Link="testassets\wix\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
@@ -65,4 +72,22 @@
     <None Remove="testassets\emsdkWorkloadManifest2.json" />
     <None Remove="testassets\mauiWorkloadManifest.json" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="WixToolsetInfo.cs.pp" />
+  </ItemGroup>
+
+  <Target Name="GenerateToolsetInfo" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <ToolsetInfoText>$([System.IO.File]::ReadAllText(WixToolsetInfo.cs.pp))</ToolsetInfoText>
+      <ToolsetInfoText>$(ToolsetInfoText.Replace('{ArcadeVersion}', $(VersionPrefix)-*))</ToolsetInfoText>
+      <ToolsetInfoText>$(ToolsetInfoText.Replace('{WixExePath}', $(PkgMicrosoft_Wix)\tools\net6.0\any\wix.exe))</ToolsetInfoText>
+      <ToolsetInfoText>$(ToolsetInfoText.Replace('{HeatExePath}', $(PkgMicrosoft_Wix)\tools\tools\net472\x64\heat.exe))</ToolsetInfoText>
+    </PropertyGroup>
+
+    <WriteLinesToFile File="$(IntermediateOutputPath)WixToolsetInfo.cs" Overwrite="true" Lines="$(ToolsetInfoText)" />
+    <ItemGroup>
+      <Compile Include="$(IntermediateOutputPath)WixToolsetInfo.cs" />
+    </ItemGroup>
+  </Target>
 </Project>
