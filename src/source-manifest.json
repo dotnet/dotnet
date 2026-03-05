@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 304059,
+      "barId": 304228,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "a27769f306adb2efd8f3089377b384c54414a484"
+      "commitSha": "139fa4e6f6acb2c2714f01f948416429dbf05161"
     },
     {
       "barId": 304354,
@@ -37,10 +37,10 @@
       "commitSha": "970c803abb1ed5657b056cdaf01f1693f437c242"
     },
     {
-      "barId": 304336,
+      "barId": 304567,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "f0fd83cf5b767b785dead117dcaed5b96a7cfc9e"
+      "commitSha": "9f8fd9c99f44bf292bc0882ab662dfd677387fd0"
     },
     {
       "barId": 298250,
@@ -79,10 +79,10 @@
       "commitSha": "0a6db8daccd3d9ab63e5e445240c4b2af86658e0"
     },
     {
-      "barId": 304466,
+      "barId": 304579,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "e524be6928cdcd74bdbb79b389eeb31978b188ef"
+      "commitSha": "fc40302c0968b53f5de0bf8fddec81c232afb865"
     },
     {
       "barId": 298986,
