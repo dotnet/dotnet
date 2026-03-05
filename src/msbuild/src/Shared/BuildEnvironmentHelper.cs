@@ -326,10 +326,19 @@ namespace Microsoft.Build.Shared
                 return null;
             }
 
-            // Prioritize MSBuild[.exe] over MSBuild.dll
-            return TryFromStandaloneMSBuildExe(Path.Combine(appContextBaseDirectory, Constants.MSBuildExecutableName))
-                // Fall back to MSBuild.dll
-                ?? TryFromStandaloneMSBuildExe(Path.Combine(appContextBaseDirectory, Constants.MSBuildAssemblyName));
+            // When running via the MSBuild app host, prefer the native executable.
+            // When running via dotnet (e.g., dotnet msbuild, dotnet test), prefer MSBuild.dll
+            // to avoid changing Environment.ProcessPath for worker nodes, which would
+            // break Process.Start("dotnet") resolution in child tasks like VSTestTask.
+            string processPath = EnvironmentUtilities.ProcessPath;
+            if (IsRunningInMSBuildExe(processPath))
+            {
+                return TryFromStandaloneMSBuildExe(Path.Combine(appContextBaseDirectory, Constants.MSBuildExecutableName))
+                    ?? TryFromStandaloneMSBuildExe(Path.Combine(appContextBaseDirectory, Constants.MSBuildAssemblyName));
+            }
+
+            return TryFromStandaloneMSBuildExe(Path.Combine(appContextBaseDirectory, Constants.MSBuildAssemblyName))
+                ?? TryFromStandaloneMSBuildExe(Path.Combine(appContextBaseDirectory, Constants.MSBuildExecutableName));
         }
 
         private static BuildEnvironment TryFromStandaloneMSBuildExe(string msBuildExePath)
