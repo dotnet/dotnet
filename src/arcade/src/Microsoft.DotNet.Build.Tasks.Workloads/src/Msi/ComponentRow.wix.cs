@@ -23,7 +23,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// <summary>
         /// A string GUID unique to this component, version, and language.
         /// </summary>
-        public Guid ComponentId
+        public string ComponentId
         {
             get;
             set;
@@ -75,7 +75,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             new ComponentRow
             {
                 Component = componentRecord.GetString("Component"),
-                ComponentId = Guid.Parse(componentRecord.GetString("ComponentId")),
+                ComponentId = componentRecord.GetString("ComponentId"),
                 Directory_ = componentRecord.GetString("Directory_"),
                 Attributes = componentRecord.GetInteger("Attributes"),
                 Condition = componentRecord.GetString("Condition"),

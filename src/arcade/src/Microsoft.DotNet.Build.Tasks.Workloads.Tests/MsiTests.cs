@@ -226,10 +226,17 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             Assert.Equal("Microsoft.iOS.Templates,15.2.302-preview.14.122,x64", MsiUtils.GetProviderKeyName(msiPath));
             Assert.Equal("x64;1033", si.Template);
 
-            // Template packs should pull in the raw nupkg. We can verify by query the File table. There should
+            // Template packs should pull in the raw nupkg. We can verify this by querying the File table. There should
             // only be a single file.
             FileRow fileRow = MsiUtils.GetAllFiles(msiPath).FirstOrDefault();
-            Assert.Contains("microsoft.ios.templates.15.2.302-preview.14.122.nupk", fileRow.FileName);
+            Assert.Contains("microsoft.ios.templates.15.2.302-preview.14.122.nupkg", fileRow.FileName);
+
+            // Verify that the generated component GUID for the template pack is stable. This value
+            // should only change if component's keypath changes. The check also checks the foreign key reference
+            // from the file row into the component table.
+            MsiUtils.GetAllComponents(msiPath).Should().Contain(c =>
+                c.ComponentId == "{98827ECA-69A2-5300-A75E-F1A251EB17F9}" &&
+                c.Component == fileRow.Component_);
 
             // Generated MSI should return the path where the .wixobj files are located so
             // WiX packs can be created for post-build signing.
