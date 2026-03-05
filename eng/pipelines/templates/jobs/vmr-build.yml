@@ -560,6 +560,18 @@ jobs:
           serviceConnectionName: 'diagnostics-esrp-kvcertuser-pme'
           scriptRoot: '${{ variables.sourcesPath }}/src/runtime/eng/native/signing'
 
+    - task: PowerShell@2
+      condition: eq(variables['SOURCE_DATE_EPOCH'], '')
+      inputs:
+        targetType: 'inline'
+        script: |
+          # extract the date and revision from the build number (YYYYMMDD.Revision) and use it to calculate the SOURCE_DATE_EPOCH
+          $buildNumberDateRevision = '$(Build.BuildNumber)'.Split('.')
+          $sourceDateEpoch = ([DateTimeOffset]::ParseExact($buildNumberDateRevision[0], 'yyyyMMdd', $null, 'AssumeUniversal')).ToUnixTimeSeconds() + [int]$buildNumberDateRevision[1]
+
+          Write-Host "Calculated SOURCE_DATE_EPOCH: $sourceDateEpoch from build number: $(Build.BuildNumber)"
+          Write-Host "##vso[task.setvariable variable=SOURCE_DATE_EPOCH]$sourceDateEpoch"
+      displayName: Set deterministic build env var
 
     - script: build.cmd
         $(baseArguments)
@@ -575,8 +587,9 @@ jobs:
         ${{ parameters.extraProperties }}
       displayName: Build
       workingDirectory: ${{ variables.sourcesPath }}
-      ${{ if eq(parameters.sign, 'true') }}:
-        env:
+      env:
+        SOURCE_DATE_EPOCH: $(SOURCE_DATE_EPOCH)
+        ${{ if eq(parameters.sign, 'true') }}:
           SYSTEM_ACCESSTOKEN: $(System.AccessToken)
           ${{ if eq(parameters.signDac, 'true') }}:
             ESRP_TOKEN: $(System.AccessToken)
@@ -603,6 +616,24 @@ jobs:
       - script: |
           $(sourcesPath)/eng/common/native/install-dependencies.sh osx
         displayName: Install dependencies
+
+    - script: |
+        # extract the date and revision from the build number (YYYYMMDD.Revision) and use it to calculate the SOURCE_DATE_EPOCH
+        build_number='$(Build.BuildNumber)'
+        build_date="${build_number%%.*}"
+        build_revision="${build_number##*.}"
+        if [[ "$(uname)" == "Darwin" ]]; then
+          sourceDateEpoch=$(TZ=UTC date -j -f '%Y%m%d %H:%M:%S' "$build_date 00:00:00" '+%s')
+        else
+          sourceDateEpoch=$(TZ=UTC date -ud "${build_date:0:4}-${build_date:4:2}-${build_date:6:2} 00:00:00" '+%s')
+        fi
+        sourceDateEpoch=$((sourceDateEpoch + build_revision))
+
+        echo "Calculated SOURCE_DATE_EPOCH: $sourceDateEpoch from build number: $(Build.BuildNumber)"
+        echo "##vso[task.setvariable variable=SOURCE_DATE_EPOCH]$sourceDateEpoch"
+      condition: eq(variables['SOURCE_DATE_EPOCH'], '')
+      displayName: Set deterministic build env var
+
     - ${{ if eq(parameters.buildSourceOnly, 'true') }}:
       - script: |
           set -ex
@@ -790,8 +821,9 @@ jobs:
           $customPreBuildArgs ./build.sh $buildArgs
         displayName: Build
         workingDirectory: $(sourcesPath)
-        ${{ if eq(parameters.sign, 'true') }}:
-          env:
+        env:
+          SOURCE_DATE_EPOCH: $(SOURCE_DATE_EPOCH)
+          ${{ if eq(parameters.sign, 'true') }}:
             SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
     - ${{ if ne(parameters.runOnline, 'True' )}}:

@@ -574,6 +574,7 @@
     <Message Importance="High" Text="  With Environment Variables:"/>
     <Message Importance="High" Text="    %(EnvironmentVariables.Identity)" />
     <Message Importance="High" Text="    %(BuildEnvironmentVariable.Identity)" Condition="'@(BuildEnvironmentVariable)' != ''" />
+    <Message Importance="High" Text="    SOURCE_DATE_EPOCH=$(SOURCE_DATE_EPOCH)" Condition="'$(SOURCE_DATE_EPOCH)' != ''" />
 
     <Message Text="DirSize Before Building $(RepositoryName)" Importance="High" Condition=" '$(CleanWhileBuilding)' == 'true'" />
     <Exec Command="$(DiskUsageCommand)" Condition="'$(CleanWhileBuilding)' == 'true'" />
