@@ -208,6 +208,17 @@ namespace Microsoft.Build.Shared
                 return environment;
             }
 
+            // Only use the app host if we're actually running as the app host.
+            // When running via dotnet (e.g. dotnet msbuild), prefer MSBuild.dll so that
+            // worker nodes inherit the dotnet process context — otherwise
+            // Environment.ProcessPath changes to the SDK directory where "dotnet" isn't present,
+            // breaking Process.Start("dotnet") resolution in tasks like VSTestTask.
+            bool runningAsAppHost = IsRunningInMSBuildExe(EnvironmentUtilities.ProcessPath);
+            if (!runningAsAppHost)
+            {
+                return null;
+            }
+
             // We're not in VS, check for MSBuild.exe / dll to consider this a standalone environment.
             string msBuildPath = null;
             if (FileSystems.Default.FileExists(msBuildExecutableCandidate))
@@ -326,19 +337,18 @@ namespace Microsoft.Build.Shared
                 return null;
             }
 
-            // When running via the MSBuild app host, prefer the native executable.
-            // When running via dotnet (e.g., dotnet msbuild, dotnet test), prefer MSBuild.dll
-            // to avoid changing Environment.ProcessPath for worker nodes, which would
-            // break Process.Start("dotnet") resolution in child tasks like VSTestTask.
-            string processPath = EnvironmentUtilities.ProcessPath;
-            if (IsRunningInMSBuildExe(processPath))
-            {
-                return TryFromStandaloneMSBuildExe(Path.Combine(appContextBaseDirectory, Constants.MSBuildExecutableName))
-                    ?? TryFromStandaloneMSBuildExe(Path.Combine(appContextBaseDirectory, Constants.MSBuildAssemblyName));
-            }
+            // When running as the MSBuild app host (native executable), prefer the app host.
+            // When running via dotnet (e.g. dotnet msbuild, dotnet test), prefer MSBuild.dll
+            // so that worker nodes inherit the dotnet process context — otherwise
+            // Environment.ProcessPath changes to the SDK directory where "dotnet" isn't present,
+            // breaking Process.Start("dotnet") resolution in tasks like VSTestTask.
+            bool runningAsAppHost = IsRunningInMSBuildExe(EnvironmentUtilities.ProcessPath);
 
-            return TryFromStandaloneMSBuildExe(Path.Combine(appContextBaseDirectory, Constants.MSBuildAssemblyName))
-                ?? TryFromStandaloneMSBuildExe(Path.Combine(appContextBaseDirectory, Constants.MSBuildExecutableName));
+            string primary = Path.Combine(appContextBaseDirectory, runningAsAppHost ? Constants.MSBuildExecutableName : Constants.MSBuildAssemblyName);
+            string fallback = Path.Combine(appContextBaseDirectory, runningAsAppHost ? Constants.MSBuildAssemblyName : Constants.MSBuildExecutableName);
+
+            return TryFromStandaloneMSBuildExe(primary)
+                ?? TryFromStandaloneMSBuildExe(fallback);
         }
 
         private static BuildEnvironment TryFromStandaloneMSBuildExe(string msBuildExePath)
