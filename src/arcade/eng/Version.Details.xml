@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="arcade" Sha="29e27492f3c22a11530e45fcf3707987125b7edf" BarId="303682" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="arcade" Sha="5507d7a2f05bb6c073a055ead6ce1c4bbe396cda" BarId="304069" />
   <ProductDependencies>
   </ProductDependencies>
   <ToolsetDependencies>
@@ -123,9 +123,9 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>d3981726bc8b0e179db50301daf9f22d42393096</Sha>
     </Dependency>
-    <Dependency Name="System.CommandLine" Version="2.0.0-beta5.25210.1">
+    <Dependency Name="System.CommandLine" Version="2.0.3">
       <Uri>https://github.com/dotnet/command-line-api</Uri>
-      <Sha>e9b0511d7f1128e2bc3be7a658a2a4ea977e602d</Sha>
+      <Sha>c7b5e07cfed85e88c162dc1c916efaff03742e6e</Sha>
     </Dependency>
     <!-- Transitive dependency needed for source build. -->
     <Dependency Name="System.Reflection.Metadata" Version="9.0.0">
