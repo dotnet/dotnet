@@ -15,6 +15,11 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
     public class MsiUtils
     {
         /// <summary>
+        /// Query string to retrieve all the rows from the MSI Component table.
+        /// </summary>
+        private const string _getComponentsQuery = "SELECT `Component`, `ComponentId`, `Directory_`, `Attributes`, `Condition`, `KeyPath` FROM `Component`";
+
+        /// <summary>
         /// Query string to retrieve all the rows from the MSI File table.
         /// </summary>
         private const string _getFilesQuery = "SELECT `File`, `Component_`, `FileName`, `FileSize`, `Version`, `Language`, `Attributes`, `Sequence` FROM `File`";
@@ -22,7 +27,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// <summary>
         /// Query string to retrieve all the rows from the MSI Upgrade table.
         /// </summary>
-        private const string _getUpgradeQuery = "SELECT `UpgradeCode`, `VersionMin`, `VersionMax`, `Language`, `Attributes` FROM `Upgrade`";
+        private const string _getUpgradeQuery = "SELECT `UpgradeCode`, `VersionMin`, `VersionMax`, `Language`, `Attributes`, `ActionProperty` FROM `Upgrade`";
 
         /// <summary>
         /// Query string to retrieve the dependency provider key from the WixDependencyProvider table.
@@ -38,6 +43,25 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// Query string to retrieve all rows from the MSI Registry table.
         /// </summary>
         private const string _getRegistryQuery = "SELECT `Root`, `Key`, `Name`, `Value` FROM `Registry`";
+
+        /// <summary>
+        /// Gets an enumeration of all the components inside an MSI.
+        /// </summary>
+        /// <param name="packagePath">The path of the MSI package to query.</param>
+        /// <returns>And enumeration of all the components.</returns>
+        public static IEnumerable<ComponentRow> GetAllComponents(string packagePath)
+        {
+            using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
+            using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
+            using View componentView = db.OpenView(_getComponentsQuery);
+            List<ComponentRow> components = new();
+            componentView.Execute();
+            foreach (Record componentRecord in componentView)
+            {
+                components.Add(ComponentRow.Create(componentRecord));
+            }
+            return components;
+        }
 
         /// <summary>
         /// Gets an enumeration of all the files inside an MSI.
@@ -195,7 +219,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             {
                 throw new ArgumentOutOfRangeException(string.Format(Strings.MsiProductVersionOutOfRange, nameof(version.Major), 255));
             }
-                
+
             if (version.Minor > 255)
             {
                 throw new ArgumentOutOfRangeException(string.Format(Strings.MsiProductVersionOutOfRange, nameof(version.Minor), 255));

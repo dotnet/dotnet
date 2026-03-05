@@ -27,6 +27,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
         public override ITaskItem Build(string outputPath, ITaskItem[]? iceSuppressions = null)
         {
+            Directory.CreateDirectory(WixSourceDirectory);
             // Harvest the package contents before adding it to the source files we need to compile.
             string packageContentWxs = Path.Combine(WixSourceDirectory, "PackageContent.wxs");
             string directoryReference = _package.Kind == WorkloadPackKind.Library || _package.Kind == WorkloadPackKind.Template ?
