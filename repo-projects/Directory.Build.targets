@@ -531,7 +531,7 @@
   </Target>
 
   <Target Name="SetBuildProperties"
-          DependsOnTargets="PrepareRepositoryReferences;SetRepoOriginalSourceRevisionId">
+          DependsOnTargets="PrepareRepositoryReferences;SetRepoOriginalSourceRevisionId;GetProducedPackagesFromTransitiveReferences">
     <!-- Make everything that depends on live runtime repo uses the live targeting pack to avoid a mismatch between the API/version packages expect to be in framework and what the actual targeting pack provides. -->
     <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '@(TransitiveRepositoryReference->AnyHaveMetadataValue('Identity', 'runtime'))' == 'true'">
       <!-- Use the targeting pack version as a shortcut for other pack versions since they all version consistently -->
