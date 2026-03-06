@@ -131,7 +131,7 @@ namespace Microsoft.DotNet.SdkCustomHelix.Sdk
 
         private string GetDestinationArchive()
         {
-            return $"-czf {DestinationArchive}";
+            return $"--no-read-sparse -czf {DestinationArchive}";
         }
 
         private string GetExcludes()
