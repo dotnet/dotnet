@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <!-- Project Paths -->
+    <Antlr4Directory>$(ProjectDirectory)runtime/CSharp/src/</Antlr4Directory>
+    <Antlr4ProjectPath>$(Antlr4Directory)Antlr4.csproj</Antlr4ProjectPath>
+    <PackagesOutput>$(Antlr4Directory)bin/$(Configuration)/</PackagesOutput>
+
+    <DotNetToolArgs>$(DotNetToolArgs) /p:Configuration=$(Configuration)</DotNetToolArgs>
+
+    <BuildCommand>$(DotNetTool) build -c $(Configuration) -f netstandard2.0 /p:TargetFrameworks=netstandard2.0 $(Antlr4ProjectPath) /bl:$(ArtifactsLogRepoDir)build.binlog</BuildCommand>
+  </PropertyGroup>
+</Project>
