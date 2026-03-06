@@ -73,10 +73,10 @@
       "commitSha": "10df92a966e2ce16aca870e81d85912d1629108c"
     },
     {
-      "barId": 304411,
+      "barId": 304747,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "44b71321ca3f15d9ecb900c58e06927961a5a76e"
+      "commitSha": "80d0a38e000a1713b9bd86925f41787f1c647a1c"
     },
     {
       "barId": 304362,
@@ -127,10 +127,10 @@
       "commitSha": "14bc0e7af7646a13a32eadf5c0684eded8832008"
     },
     {
-      "barId": 303097,
+      "barId": 304782,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "a40b1499e7db8876f67bd150e3e0adec150628d7"
+      "commitSha": "241fc9a107be6eb0ba06bd18f1ca72cb2ea3efa0"
     },
     {
       "barId": 301468,
@@ -139,10 +139,10 @@
       "commitSha": "3c055945ea64c2634824d1224153efb2ac9b307b"
     },
     {
-      "barId": 303129,
+      "barId": 304611,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "4f4f37a68d0c77ca4cbaf838099291514f86d3c0"
+      "commitSha": "70082d1fc13c2077b40906dd2d80da767ff3fffa"
     },
     {
       "barId": 291267,
