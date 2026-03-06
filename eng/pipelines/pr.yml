@@ -94,8 +94,10 @@ stages:
         - script: |
             set -ex
             echo "Fetching target branch: $(System.PullRequest.TargetBranch)"
-            git fetch origin $(System.PullRequest.TargetBranch)
+            git -c http.extraheader="AUTHORIZATION: bearer $SYSTEM_ACCESSTOKEN" fetch origin $(System.PullRequest.TargetBranch)
           displayName: Fetch target branch
+          env:
+            SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
         - script: |
             set -ex
