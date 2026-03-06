@@ -52,9 +52,9 @@ internal sealed class SourceGeneratorProjectEngine
         Debug.Assert(_discoveryPhaseIndex < _rewritePhaseIndex);
     }
 
-    public SourceGeneratorRazorCodeDocument ProcessInitialParse(RazorProjectItem projectItem, bool designTime, CancellationToken cancellationToken)
+    public SourceGeneratorRazorCodeDocument ProcessInitialParse(RazorProjectItem projectItem, CancellationToken cancellationToken)
     {
-        var codeDocument = _projectEngine.CreateCodeDocument(projectItem, designTime);
+        var codeDocument = _projectEngine.CreateCodeDocument(projectItem);
 
         codeDocument = ExecutePhases(Phases[.._discoveryPhaseIndex], codeDocument, cancellationToken);
 

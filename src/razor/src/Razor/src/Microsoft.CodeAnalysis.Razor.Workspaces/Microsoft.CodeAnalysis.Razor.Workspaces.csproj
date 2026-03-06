@@ -40,9 +40,6 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" Key="$(MoqPublicKey)" />
-    <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor" Key="$(RazorKey)" />
-    <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.LanguageServer" Key="$(RazorKey)" />
-    <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.LanguageServer.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.Microbenchmarks" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.Test.Common.Tooling" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.Test.Common.Cohosting" Key="$(RazorKey)" />
@@ -51,8 +48,6 @@
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.Remote.Razor.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.VisualStudio.LanguageServices.Razor" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.VisualStudio.LanguageServices.Razor.Test" Key="$(RazorKey)" />
-    <InternalsVisibleTo Include="Microsoft.VisualStudio.LegacyEditor.Razor" Key="$(RazorKey)" />
-    <InternalsVisibleTo Include="Microsoft.VisualStudio.LegacyEditor.Razor.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.VisualStudio.RazorExtension" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.VisualStudio.Razor.IntegrationTests" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.VisualStudioCode.RazorExtension" Key="$(RazorKey)" />

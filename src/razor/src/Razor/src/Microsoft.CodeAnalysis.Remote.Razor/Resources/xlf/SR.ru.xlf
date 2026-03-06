@@ -7,6 +7,11 @@
         <target state="translated">"{0}" не является путем к файлу Razor.</target>
         <note />
       </trans-unit>
+      <trans-unit id="AddTagHelper_directive_is_unnecessary">
+        <source>@addTagHelper directive is unnecessary.</source>
+        <target state="translated">Директива @addTagHelper не нужна.</target>
+        <note>@addTagHelper is a keyword</note>
+      </trans-unit>
       <trans-unit id="Couldnt_get_a_source_generator_run_result">
         <source>Couldn't get a source generator run result for project '{0}'.</source>
         <target state="translated">Не удалось получить результат выполнения генератора исходных данных для проекта "{0}".</target>

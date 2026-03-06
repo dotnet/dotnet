@@ -37,12 +37,9 @@
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Mvc.Razor.Extensions.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X.Test" Key="$(RazorKey)" />
-    <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.VisualStudioCode.RazorExtension" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.Language.Legacy.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.Language.Test" Key="$(RazorKey)" />
-    <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.LanguageServer" Key="$(RazorKey)" />
-    <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.LanguageServer.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.Test.Common" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.Test.Common.Cohosting" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.Test.Common.Tooling" Key="$(RazorKey)" />
@@ -57,8 +54,6 @@
     <InternalsVisibleTo Include="Microsoft.VisualStudio.LanguageServer.ContainedLanguage.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.VisualStudio.LanguageServices.Razor" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.VisualStudio.LanguageServices.Razor.Test" Key="$(RazorKey)" />
-    <InternalsVisibleTo Include="Microsoft.VisualStudio.LegacyEditor.Razor" Key="$(RazorKey)" />
-    <InternalsVisibleTo Include="Microsoft.VisualStudio.LegacyEditor.Razor.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.VisualStudio.Razor.IntegrationTests" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.VisualStudio.RazorExtension" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.VisualStudioCode.RazorExtension.Test" Key="$(RazorKey)" />
