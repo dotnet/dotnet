@@ -110,6 +110,7 @@
                 "src/externalPackages/src/antlr4/scripts/**",
                 "src/externalPackages/src/antlr4/tool-testsuite/**",
                 "src/externalPackages/src/antlr4/tool/**",
+                "src/externalPackages/src/antlr4/runtime/CSharp/tests/**",
                 "src/externalPackages/src/antlr4/runtime/Cpp/**",
                 "src/externalPackages/src/antlr4/runtime/Dart/**",
                 "src/externalPackages/src/antlr4/runtime/Go/**",
