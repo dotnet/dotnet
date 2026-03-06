@@ -95,12 +95,13 @@
             "include": [
                 "**/*"
             ],
-            "exclude": [
-                // Contains disallowed binaries
-                // 1ES Secret Scanning does not allow any PFX files
-                "src/externalPackages/src/spectre-console/docs/**/*",
-                "**/*.pfx"
-            ]
+          "exclude": [
+            // Contains disallowed binaries
+            // 1ES Secret Scanning does not allow any PFX files
+            "src/externalPackages/src/spectre-console/docs/**/*",
+            "**/*.pfx",
+            "src/externalPackages/src/antlr4/runtime/CSharp/**"
+          ]
         },
         {
             "name": "sourcelink",
