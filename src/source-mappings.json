@@ -92,16 +92,15 @@
         {
             "name": "source-build-reference-packages",
             "defaultRemote": "https://github.com/dotnet/source-build-reference-packages",
-            "include": [
-                "**/*"
-            ],
-          "exclude": [
-            // Contains disallowed binaries
-            // 1ES Secret Scanning does not allow any PFX files
-            "src/externalPackages/src/spectre-console/docs/**/*",
-            "**/*.pfx",
-            "src/externalPackages/src/antlr4/runtime/CSharp/**"
-          ]
+            "exclude": [
+              // Contains disallowed binaries
+              // 1ES Secret Scanning does not allow any PFX files
+              "src/externalPackages/src/spectre-console/docs/**/*",
+              "**/*.pfx",
+
+              // excludes all antlr4 files, except the CSharp runtime for which we have the vmr-keep attribute
+              "src/externalPackages/src/antlr4/**"
+            ]
         },
         {
             "name": "sourcelink",

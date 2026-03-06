@@ -4,3 +4,6 @@
 *.patch text eol=lf
 
 *.sh text eol=lf
+
+# The CSharp runtime is the only folder from antlr4 we want in the VMR
+src/externalPackages/src/antlr4/runtime/CSharp/** vmr-keep
