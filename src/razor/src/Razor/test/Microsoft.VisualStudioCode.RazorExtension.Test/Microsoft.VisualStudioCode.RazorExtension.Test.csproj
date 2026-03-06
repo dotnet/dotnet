@@ -7,21 +7,10 @@
 
   <ItemGroup>
     <Compile Include="..\..\src\Microsoft.CodeAnalysis.Razor.Workspaces\GlobalUsings.cs" Link="GlobalUsings.cs" />
-    <Compile Include="..\Microsoft.AspNetCore.Razor.LanguageServer.Test\XunitAssemblyInfo.cs" Link="XunitAssemblyInfo.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="..\Microsoft.CodeAnalysis.Razor.Workspaces.Test\Shared\**\*.cs">
-      <Link>Shared\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="TestFiles\**\*" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="..\Microsoft.AspNetCore.Razor.LanguageServer.Test\Formatting\DocumentFormattingTest.cs" Link="Endpoints\Formatting\DocumentFormattingTest.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,5 +28,7 @@
     <ProjectReference Include="..\Microsoft.AspNetCore.Razor.Test.Common.Cohosting\Microsoft.AspNetCore.Razor.Test.Common.Cohosting.csproj" />
     <ProjectReference Include="..\Microsoft.AspNetCore.Razor.Test.Common.Tooling\Microsoft.AspNetCore.Razor.Test.Common.Tooling.csproj" />
   </ItemGroup>
+
+  <Import Project="..\Microsoft.CodeAnalysis.Razor.CohostingShared.Test\Microsoft.CodeAnalysis.Razor.CohostingShared.Test.projitems" Label="Shared" />
 
 </Project>

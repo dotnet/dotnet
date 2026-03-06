@@ -9,7 +9,7 @@
     <_MicrosoftVisualStudioShellPackagesVersion>18.0.2188-preview.1</_MicrosoftVisualStudioShellPackagesVersion>
     <_MicrosoftVisualStudioPackagesVersion>18.0.404-preview</_MicrosoftVisualStudioPackagesVersion>
     <_VisualStudioLanguageServerProtocolVersion>17.12.1-preview</_VisualStudioLanguageServerProtocolVersion>
-    <_MicrosoftExtensionsPackageVersion>9.0.0</_MicrosoftExtensionsPackageVersion>
+    <_MicrosoftExtensionsPackageVersion>10.0.1</_MicrosoftExtensionsPackageVersion>
     <_BasicReferenceAssembliesVersion>1.7.2</_BasicReferenceAssembliesVersion>
     <_BenchmarkDotNetPackageVersion>0.13.5.2136</_BenchmarkDotNetPackageVersion>
     <_MicrosoftVisualStudioLanguageServicesPackageVersion>$(MicrosoftVisualStudioLanguageServicesPackageVersion)</_MicrosoftVisualStudioLanguageServicesPackageVersion>
@@ -24,7 +24,7 @@
     <PackageVersion Include="BenchmarkDotNet.Diagnostics.Windows" Version="$(_BenchmarkDotNetPackageVersion)" />
     <PackageVersion Include="DiffPlex" Version="1.7.2" />
     <PackageVersion Include="MessagePack" Version="2.5.198" />
-    <PackageVersion Include="Microsoft.AspNetCore.App.Runtime.$(NetCoreSDKRuntimeIdentifier)" Version="8.0.2" />
+    <PackageVersion Include="Microsoft.AspNetCore.App.Runtime.$(NetCoreSDKRuntimeIdentifier)" Version="10.0.1" />
     <PackageVersion Include="Microsoft.Build.Framework" Version="$(_MicrosoftBuildPackageVersion)" />
     <PackageVersion Include="Microsoft.Build.Locator" Version="1.10.2" />
     <PackageVersion Include="Microsoft.Build.Tasks.Core" Version="$(_MicrosoftBuildPackageVersion)" />
@@ -102,13 +102,13 @@
     <PackageVersion Include="NuGet.VisualStudio" Version="17.9.1" />
     <PackageVersion Include="Roslyn.Diagnostics.Analyzers" Version="$(RoslynDiagnosticsAnalyzersPackageVersion)" />
     <PackageVersion Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutablePackageVersion)" />
-    <PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="9.0.0" />
+    <PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="10.0.1" />
     <PackageVersion Include="System.Private.Uri" Version="4.3.2" />
     <PackageVersion Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataPackageVersion)" />
-    <PackageVersion Include="System.Resources.Extensions" Version="9.0.0" />
+    <PackageVersion Include="System.Resources.Extensions" Version="10.0.1" />
     <PackageVersion Include="System.Security.Cryptography.Xml" Version="8.0.2" />
-    <PackageVersion Include="System.Text.Encodings.Web" Version="9.0.0" />
-    <PackageVersion Include="System.Text.Json" Version="9.0.0" />
+    <PackageVersion Include="System.Text.Encodings.Web" Version="10.0.1" />
+    <PackageVersion Include="System.Text.Json" Version="10.0.1" />
     <PackageVersion Include="System.Threading.Tasks.Extensions" Version="$(SystemThreadingTasksExtensionsVersion)" />
     <PackageVersion Include="xunit" Version="$(_XunitPackageVersion)" />
     <PackageVersion Include="Xunit.Combinatorial" Version="1.6.24" />
@@ -122,7 +122,7 @@
       ensure the correct version is used in all places
     -->
     <PackageVersion Include="Microsoft.IO.Redist" Version="$(MicrosoftIORedistVersion)" />
-    <PackageVersion Include="System.Formats.Asn1" Version="8.0.1" />
-    <PackageVersion Include="System.IO.Packaging" Version="6.0.1" />
+    <PackageVersion Include="System.Formats.Asn1" Version="10.0.1" />
+    <PackageVersion Include="System.IO.Packaging" Version="10.0.1" />
   </ItemGroup>
 </Project>

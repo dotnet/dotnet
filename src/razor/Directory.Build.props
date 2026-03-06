@@ -53,9 +53,10 @@
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
 
     <NetFxVS>net472</NetFxVS>
-    <NetVS>net8.0</NetVS>
+    <NetVS>net10.0</NetVS>
     <NetVSCode>net10.0</NetVSCode>
-    <NetVSAndVSCode>$(NetVS);$(NetVSCode)</NetVSAndVSCode>
+    <NetVSAndVSCode>$(NetVS)</NetVSAndVSCode>
+    <NetVSAndVSCode Condition="'$(NetVS)' != '$(NetVSCode)'">$(NetVS);$(NetVSCode)</NetVSAndVSCode>
   </PropertyGroup>
 
   <PropertyGroup Label="VSIX Settings">

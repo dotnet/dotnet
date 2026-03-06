@@ -387,8 +387,6 @@ internal static class FormattingUtilities
 
                 if (lineInfo.ProcessIndentation)
                 {
-                    Debug.Assert(originalLine.GetFirstNonWhitespaceOffset().HasValue);
-
                     // First up, we take the indentation from the formatted file, and add on the fixed indentation level from the line info, and
                     // replace whatever was in the original file with it.
                     indentationString = formattedText.ToString(new TextSpan(formattedLine.Start, formattedIndentation))
@@ -434,17 +432,12 @@ internal static class FormattingUtilities
                         originalText.Lines[iOriginal + 1] is { } nextOriginalLine &&
                         nextOriginalLine.Span.Length != 0)
                     {
-                        // Next line is blank, and next original line isn't. Now we check the line after next
-                        if (iFormatted + 2 < formattedText.Lines.Count)
-                        {
-                            var lineAfterNext = formattedText.Lines[iFormatted + 2];
-                            if (originalText.NonWhitespaceContentEquals(formattedText, nextOriginalLine.Start, nextOriginalLine.End, lineAfterNext.Start, lineAfterNext.End))
-                            {
-                                // Next line is blank, and line after next matches the next original line, so we skip the blank line
-                                iFormatted++;
-                                formattingChanges.Add(new TextChange(TextSpan.FromBounds(originalLine.End, originalLine.End), context.NewLineString));
-                            }
-                        }
+                        // Next formatted line is blank but next original line isn't, so the
+                        // formatter inserted a blank line. Consume it and preserve it in the output.
+                        // We insert at EndIncludingLineBreak so the blank line appears after any
+                        // wrapped lines that ConsumeNewLines inserted (which also use EndIncludingLineBreak).
+                        iFormatted++;
+                        formattingChanges.Add(new TextChange(new(originalLine.EndIncludingLineBreak, 0), context.NewLineString));
                     }
                 }
             }
