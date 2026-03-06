@@ -5,6 +5,7 @@ using System;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
@@ -30,7 +31,7 @@ internal class RemoveUnnecessaryDirectivesCodeActionProvider : IRazorCodeActionP
             return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }
 
-        // Trigger if the selection start or end is inside any directive
+        // Trigger if the selection start or end is inside any single line directive
         var root = tree.Root;
         var startToken = root.FindToken(context.StartAbsoluteIndex);
         var endToken = context.StartAbsoluteIndex != context.EndAbsoluteIndex
@@ -40,7 +41,7 @@ internal class RemoveUnnecessaryDirectivesCodeActionProvider : IRazorCodeActionP
         var startDirective = startToken.Parent?.FirstAncestorOrSelf<BaseRazorDirectiveSyntax>();
         var endDirective = endToken.Parent?.FirstAncestorOrSelf<BaseRazorDirectiveSyntax>();
 
-        if (startDirective is null && endDirective is null)
+        if (!ShouldOffer(startDirective) && !ShouldOffer(endDirective))
         {
             return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }
@@ -61,5 +62,22 @@ internal class RemoveUnnecessaryDirectivesCodeActionProvider : IRazorCodeActionP
 
         var action = RazorCodeActionFactory.CreateRemoveUnnecessaryDirectives(resolutionParams);
         return Task.FromResult<ImmutableArray<RazorVSInternalCodeAction>>([action]);
+    }
+
+    private static bool ShouldOffer(BaseRazorDirectiveSyntax? directive)
+    {
+        if (directive is null)
+        {
+            return false;
+        }
+
+        if (directive is RazorUsingDirectiveSyntax)
+        {
+            return true;
+        }
+
+        // We offer for any single line directive on the assumption that the user has a block of directives
+        // at the top of their file that they want to clear up.
+        return directive.DirectiveBody.Keyword.GetContent() == SyntaxConstants.CSharp.AddTagHelperKeyword;
     }
 }

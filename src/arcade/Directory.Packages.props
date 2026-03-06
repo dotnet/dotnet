@@ -12,13 +12,14 @@
     <MicrosoftDataServicesClientVersion>5.8.4</MicrosoftDataServicesClientVersion>
     <MicrosoftSignedWixVersion>3.14.1-11027.2914512</MicrosoftSignedWixVersion>
     <MicrosoftWixToolsetSdkVersion>5.0.2-dotnet.2811440</MicrosoftWixToolsetSdkVersion>
-    <!-- Overwrite XUnitVersion/XUnitAnalyzersVersion/XUnitRunnerConsoleVersion/XUnitRunnerVisualStudioVersion that comes from the Arcade SDK to be in sync as Arcade doesn't use a live Arcade SDK.
+    <!-- Overwrite XUnitVersion/XUnitAnalyzersVersion/XUnitRunnerConsoleVersion/XUnitRunnerVisualStudioVersion/MicrosoftTestingPlatformVersion that comes from the Arcade SDK to be in sync as Arcade doesn't use a live Arcade SDK.
          Keep in sync with DefaultVersions.props. -->
     <XUnitVersion>2.9.3</XUnitVersion>
-    <XUnitV3Version>3.1.0</XUnitV3Version>
+    <XUnitV3Version>3.2.2</XUnitV3Version>
     <XUnitAnalyzersVersion>1.22.0</XUnitAnalyzersVersion>
     <XUnitRunnerConsoleVersion>$(XUnitVersion)</XUnitRunnerConsoleVersion>
-    <XUnitRunnerVisualStudioVersion>3.1.3</XUnitRunnerVisualStudioVersion>
+    <XUnitRunnerVisualStudioVersion>3.1.5</XUnitRunnerVisualStudioVersion>
+    <MicrosoftTestingPlatformVersion>1.9.1</MicrosoftTestingPlatformVersion>
   </PropertyGroup>
 
   <ItemGroup>
