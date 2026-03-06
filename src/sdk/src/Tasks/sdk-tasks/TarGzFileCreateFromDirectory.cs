@@ -108,7 +108,7 @@ namespace Microsoft.DotNet.Build.Tasks
             }
         }
 
-        private string GetDestinationArchive() => $"-czf {DestinationArchive}";
+        private string GetDestinationArchive() => $"--no-read-sparse -czf {DestinationArchive}";
 
         private string GetExcludes()
         {

@@ -99,7 +99,8 @@
         RepackParallelism="$(SignToolRepackParallelism)"
         MaximumParallelFileSize="$(SignToolRepackMaximumParallelFileSize)"
         DotNetTimeout="$(SignToolDotNetTimeout)"
-        MSBuildVerbosity="$(SignToolMSBuildVerbosity)" />
+        MSBuildVerbosity="$(SignToolMSBuildVerbosity)"
+        ContinueOnError="true" />
   </Target>
 
 </Project>

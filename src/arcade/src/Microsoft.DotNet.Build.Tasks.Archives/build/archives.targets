@@ -126,11 +126,11 @@
                   DestinationFile="$(_DestinationFileName)"
                   Condition="'$(_CurrentArchiveFormat)' == 'zip'"/>
     <!-- use parallel gzip implementation when available -->
-    <Exec Command="tar -cf - . | pigz &gt; &quot;$(_DestinationFileName)&quot;"
+    <Exec Command="tar --no-read-sparse -cf - . | pigz &gt; &quot;$(_DestinationFileName)&quot;"
           WorkingDirectory="$(_OutputPathRoot)"
           Condition="'$(_CurrentArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' == '0'"/>
     <!-- otherwise, use built-in gzip feature (-z) -->
-    <Exec Command="tar -czf &quot;$(_DestinationFileName)&quot; ."
+    <Exec Command="tar --no-read-sparse -czf &quot;$(_DestinationFileName)&quot; ."
           WorkingDirectory="$(_OutputPathRoot)"
           Condition="'$(_CurrentArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' != '0'"/>
 
@@ -176,11 +176,11 @@
                   DestinationFile="$(_DestinationFileName)"
                   Condition="'$(_CurrentArchiveFormat)' == 'zip'"/>
     <!-- use parallel gzip implementation when available -->
-    <Exec Command="tar -cf - . | pigz &gt; &quot;$(_DestinationFileName)&quot;"
+    <Exec Command="tar --no-read-sparse -cf - . | pigz &gt; &quot;$(_DestinationFileName)&quot;"
           WorkingDirectory="$(_SymbolsOutputPathRoot)"
           Condition="'$(_CurrentArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' == '0'"/>
     <!-- otherwise, use built-in gzip feature (-z) -->
-    <Exec Command="tar -czf &quot;$(_DestinationFileName)&quot; ."
+    <Exec Command="tar --no-read-sparse -czf &quot;$(_DestinationFileName)&quot; ."
           WorkingDirectory="$(_SymbolsOutputPathRoot)"
           Condition="'$(_CurrentArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' != '0'"/>
 
