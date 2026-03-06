@@ -165,7 +165,6 @@
       <AdditionalProperties>TargetFramework=$(NetFxVS)</AdditionalProperties>
       <NgenPriority>2</NgenPriority>
     </ProjectReference>
-    <ProjectReference Include="..\Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor\Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.csproj" />
 
     <ProjectReference Include="..\Microsoft.AspNetCore.Razor.LanguageServer\Microsoft.AspNetCore.Razor.LanguageServer.csproj">
       <AdditionalProperties>TargetFramework=$(NetFxVS)</AdditionalProperties>
@@ -176,10 +175,9 @@
     </ProjectReference>
 
     <ProjectReference Include="..\Microsoft.VisualStudio.LanguageServer.ContainedLanguage\Microsoft.VisualStudio.LanguageServer.ContainedLanguage.csproj" />
-    <ProjectReference Include="..\Microsoft.VisualStudio.LanguageServices.Razor\Microsoft.VisualStudio.LanguageServices.Razor.csproj" >
+    <ProjectReference Include="..\Microsoft.VisualStudio.LanguageServices.Razor\Microsoft.VisualStudio.LanguageServices.Razor.csproj">
       <NgenPriority>2</NgenPriority>
     </ProjectReference>
-    <ProjectReference Include="..\Microsoft.VisualStudio.LegacyEditor.Razor\Microsoft.VisualStudio.LegacyEditor.Razor.csproj" />
     <ProjectReference Include="..\..\..\Compiler\Microsoft.CodeAnalysis.Razor.Compiler\src\Microsoft.CodeAnalysis.Razor.Compiler.csproj">
       <Name>Microsoft.CodeAnalysis.Razor.Compiler</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
