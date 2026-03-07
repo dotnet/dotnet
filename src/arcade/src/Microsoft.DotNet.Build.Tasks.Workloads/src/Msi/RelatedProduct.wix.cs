@@ -1,7 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Microsoft.Deployment.WindowsInstaller;
+using WixToolset.Dtf.WindowsInstaller;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 {
@@ -55,6 +55,16 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             set;
         }
 
+        /// <summary>
+        /// The public property to which the FindRelatedProducts action appends the installed
+        /// product's ProductCode when it's detected.
+        /// </summary>
+        public string ActionProperty
+        {
+            get;
+            set;
+        }
+
         public static RelatedProduct Create(Record record)
         {
             string versionMin = (string)record["VersionMin"];
@@ -66,7 +76,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
                 VersionMin = string.IsNullOrWhiteSpace(versionMin) ? null : versionMin,
                 VersionMax = string.IsNullOrWhiteSpace(versionMax) ? null : versionMax,
                 Language = (string)record["Language"],
-                Attributes = (int)record["Attributes"]
+                Attributes = (int)record["Attributes"],
+                ActionProperty = (string)record["ActionProperty"]
             };
         }
     }
