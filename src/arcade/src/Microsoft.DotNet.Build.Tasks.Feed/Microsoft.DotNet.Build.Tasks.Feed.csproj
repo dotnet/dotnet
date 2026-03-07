@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(BundledNETCoreAppTargetFramework);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <SignAssembly>false</SignAssembly>
     <Description>This package provides support for publishing assets to appropriate channels.</Description>
@@ -23,7 +23,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' and '$(DotNetBuildSourceOnly)' != 'true'">
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
     <!-- ProductConstructionService.Client stopped supporting .NET 4.7.2 long ago.
     This functionality should eventually be moved into an arcade-services package,
     but for users consuming other functionality we'll still support 4.7.2 by ifdefing it out. -->
@@ -36,14 +36,9 @@
     <ProjectReference Include="..\Microsoft.DotNet.Internal.SymbolHelper\Microsoft.DotNet.Internal.SymbolHelper.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <PackageReference Include="Microsoft.Bcl.HashCode" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Common\Microsoft.Arcade.Common\Microsoft.Arcade.Common.csproj" />
     <ProjectReference Include="..\Microsoft.DotNet.Deployment.Tasks.Links\Microsoft.DotNet.Deployment.Tasks.Links.csproj" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
-    <!--<ProjectReference Include="..\VersionTools\Microsoft.DotNet.VersionTools\Microsoft.DotNet.VersionTools.csproj" />-->
     <ProjectReference Include="..\Microsoft.DotNet.ArcadeAzureIntegration\Microsoft.DotNet.ArcadeAzureIntegration.csproj" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
     <ProjectReference Include="..\Microsoft.DotNet.Build.Manifest\Microsoft.DotNet.Build.Manifest.csproj" />
   </ItemGroup>
@@ -52,8 +47,8 @@
     <Compile Include="..\Common\Internal\EnumExtensions.cs" />
   </ItemGroup>
 
-  <!-- Most tasks are not supported on NETFramework or source build. Add only those that we need -->
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' or '$(DotNetBuildSourceOnly)' == 'true'">
+  <!-- Most tasks are not supported on source-build. Add only those that we need. -->
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <Compile Remove="@(Compile)" />
     <Compile Include="src\PushToBuildStorage.cs" />
     <Compile Include="src\common\NativeMethods.cs" />

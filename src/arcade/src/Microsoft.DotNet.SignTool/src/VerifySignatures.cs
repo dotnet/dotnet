@@ -25,16 +25,9 @@ namespace Microsoft.DotNet.SignTool
 {
     internal class VerifySignatures
     {
-#if !NET472
         private static readonly HttpClient client = new(new SocketsHttpHandler { PooledConnectionLifetime = TimeSpan.FromMinutes(10) });
-#endif
         internal static SigningStatus IsSignedDeb(TaskLoggingHelper log, string filePath)
         {
-# if NET472
-            // Debian unpack tooling is not supported on .NET Framework
-            log.LogMessage(MessageImportance.Low, $"Skipping signature verification of {filePath} for .NET Framework");
-            return SigningStatus.Unknown;
-# else
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 log.LogMessage(MessageImportance.Low, $"Skipping signature verification of {filePath} for Windows.");
@@ -66,16 +59,10 @@ namespace Microsoft.DotNet.SignTool
             {
                 Directory.Delete(tempDir, true);
             }
-# endif
         }
 
         internal static SigningStatus IsSignedRpm(TaskLoggingHelper log, string filePath)
         {
-# if NET472
-            // RPM unpack tooling is not supported on .NET Framework
-            log.LogMessage(MessageImportance.Low, $"Skipping signature verification of {filePath} for .NET Framework");
-            return SigningStatus.Unknown;
-# else
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 log.LogMessage(MessageImportance.Low, $"Skipping signature verification of {filePath} for Windows.");
@@ -122,7 +109,6 @@ namespace Microsoft.DotNet.SignTool
             {
                 Directory.Delete(tempDir, true);
             }
-# endif
         }
 
         internal static SigningStatus IsSignedPowershellFile(string filePath)
@@ -137,32 +123,6 @@ namespace Microsoft.DotNet.SignTool
             using (BinaryReader binaryReader = new BinaryReader(File.OpenRead(filePath)))
             {
                 isSigned = SignedPackageArchiveUtility.IsSigned(binaryReader);
-#if NETFRAMEWORK
-                if (isSigned)
-                {
-                    try
-                    {
-                        // A package will fail integrity checks if, for example, the package is signed and then:
-                        // - it is repacked
-                        // - it has its symbols stripped
-                        // - it is otherwise modified
-                        using (Stream stream = SignedPackageArchiveUtility.OpenPackageSignatureFileStream(binaryReader))
-                        {
-                            using (PackageArchiveReader par = new PackageArchiveReader(filePath))
-                            {
-                                var signature = par.GetPrimarySignatureAsync(CancellationToken.None).Result;
-
-                                var task = par.ValidateIntegrityAsync(signature.SignatureContent, CancellationToken.None);
-                                task.Wait();
-                            }
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        isSigned = false;
-                    }
-                }
-#endif
             }
             return isSigned ? SigningStatus.Signed : SigningStatus.NotSigned;
         }
@@ -257,7 +217,6 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 
-# if !NET472
         private static void DownloadAndConfigurePublicKeys(string tempDir)
         {
             string[] keyUrls = new string[]
@@ -301,6 +260,5 @@ namespace Microsoft.DotNet.SignTool
 
             return entryPath;
         }
-# endif
     }
 }

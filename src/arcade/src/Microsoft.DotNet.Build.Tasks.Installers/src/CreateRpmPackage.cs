@@ -72,13 +72,11 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 "x64" => Architecture.X64,
                 "arm" => Architecture.Arm,
                 "arm64" => Architecture.Arm64,
-#if NET
                 "armv6" => Architecture.Armv6,
                 "s390x" => Architecture.S390x,
                 "ppc64le" => Architecture.Ppc64le,
                 "riscv64" => Architecture.RiscV64,
                 "loongarch64"  => Architecture.LoongArch64,
-#endif
                 _ => throw new ArgumentException($"Unknown architecture: {PackageArchitecture}")
             };
             RpmBuilder builder = new(PackageName, PackageVersion, PackageRelease, arch, OSPlatform.Create(PackageOS))

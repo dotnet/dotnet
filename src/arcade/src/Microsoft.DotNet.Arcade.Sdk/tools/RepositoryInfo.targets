@@ -78,7 +78,7 @@
     Generates and adds {PackageId}.SourceLink.targets file to the build directory of the source package.
   -->
 
-  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.GenerateSourcePackageSourceLinkTargetsFile" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
+  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.GenerateSourcePackageSourceLinkTargetsFile" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
 
   <PropertyGroup Condition="'$(IsPackable)' == 'true' and '$(IsSourcePackage)' == 'true' and '$(EnableSourceLink)' == 'true'">
     <BeforePack>$(BeforePack);_AddSourcePackageSourceLinkFile</BeforePack>

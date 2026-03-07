@@ -35,12 +35,11 @@ Arcade defaults to using the signing task via script invocation for signing vali
 
 The CLI tool is maintained for legacy purposes and is only recommended for repositories that already use it. Refrane from using this; new repositories should use the Signing Task instead.
 
-- **Supported Frameworks**: .NET Framework only
 - **Invocation**:
-  - `Microsoft.DotNet.SignCheck.exe`
+  - `dnx Microsoft.DotNet.SignCheck`
 - **CLI Options**:
 ```
-Microsoft.DotNet.SignCheck.exe [options]
+Microsoft.DotNet.SignCheck [options]
 
 Options:
 
@@ -81,46 +80,46 @@ Options:
 
 #### Detected via File Extensions
 
-| File Extension | Platforms                  | .NET Product         |
-|----------------|----------------------------|----------------------|
-| .a             | macOS                      | .NET Core            |
-| .app           | macOS                      | .NET Core            |
-| .cab           | Windows                    | .NET Framework       |
-| .deb           | Linux                      | .NET Core            |
-| .dll           | Windows, macOS, Linux      | .NET Framework, Core |
-| .dylib         | macOS                      | .NET Core            |
-| .exe           | Windows, macOS, Linux      | .NET Framework, Core |
-| .gz            | macOS, Linux               | .NET Core            |
-| .jar           | Windows                    | .NET Framework       |
-| .js            | Windows, macOS, Linux      | .NET Framework, Core |
-| .lzma          | Windows, macOS, Linux      | .NET Framework, Core |
-| .macho         | macOS                      | .NET Core            |
-| .msi           | Windows                    | .NET Framework       |
-| .msp           | Windows                    | .NET Framework       |
-| .msu           | Windows                    | .NET Framework       |
-| .nupkg         | Windows, macOS, Linux      | .NET Framework, Core |
-| .pkg           | macOS                      | .NET Core            |
-| .ps1           | Windows                    | .NET Framework       |
-| .ps1xml        | Windows                    | .NET Framework       |
-| .psd1          | Windows                    | .NET Framework       |
-| .psm1          | Windows                    | .NET Framework       |
-| .rpm           | Linux                      | .NET Core            |
-| .so            | macOS                      | .NET Core            |
-| .tar           | macOS, Linux               | .NET Core            |
-| .tgz           | macOS, Linux               | .NET Core            |
-| .vsix          | Windows                    | .NET Framework       |
-| .xml           | Windows, macOS, Linux      | .NET Framework, Core |
-| .zip           | Windows, macOS, Linux      | .NET Framework, Core |
+| File Extension | Platforms                  |
+|----------------|----------------------------|
+| .a             | macOS                      |
+| .app           | macOS                      |
+| .cab           | Windows                    |
+| .deb           | Linux                      |
+| .dll           | Windows, macOS, Linux      |
+| .dylib         | macOS                      |
+| .exe           | Windows, macOS, Linux      |
+| .gz            | macOS, Linux               |
+| .jar           | Windows                    |
+| .js            | Windows, macOS, Linux      |
+| .lzma          | Windows, macOS, Linux      |
+| .macho         | macOS                      |
+| .msi           | Windows                    |
+| .msp           | Windows                    |
+| .msu           | Windows                    |
+| .nupkg         | Windows, macOS, Linux      |
+| .pkg           | macOS                      |
+| .ps1           | Windows                    |
+| .ps1xml        | Windows                    |
+| .psd1          | Windows                    |
+| .psm1          | Windows                    |
+| .rpm           | Linux                      |
+| .so            | macOS                      |
+| .tar           | macOS, Linux               |
+| .tgz           | macOS, Linux               |
+| .vsix          | Windows                    |
+| .xml           | Windows, macOS, Linux      |
+| .zip           | Windows, macOS, Linux      |
 
 #### Detected via File Headers
 
-| File Type                  | Platforms                  | .NET Product         |
-|----------------------------|----------------------------|----------------------|
-| Cab Files                  | Windows                    | .NET Framework       |
-| EXE Files                  | Windows                    | .NET Framework       |
-| Jar Files                  | Windows                    | .NET Framework       |
-| Mach-O Files               | macOS                      | .NET Core            |
-| NuGet Packages             | Windows, macOS, Linux      | .NET Framework, Core |
-| PE Files                   | Windows                    | .NET Framework       |
-| VSIX Files                 | Windows                    | .NET Framework       |
-| Zip Files                  | Windows, macOS, Linux      | .NET Framework, Core |
+| File Type                  | Platforms                  |
+|----------------------------|----------------------------|
+| Cab Files                  | Windows                    |
+| EXE Files                  | Windows                    |
+| Jar Files                  | Windows                    |
+| Mach-O Files               | macOS                      |
+| NuGet Packages             | Windows, macOS, Linux      |
+| PE Files                   | Windows                    |
+| VSIX Files                 | Windows                    |
+| Zip Files                  | Windows, macOS, Linux      |

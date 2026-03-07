@@ -6,22 +6,17 @@
     <IncludeVersionInMacOSComponentName>true</IncludeVersionInMacOSComponentName>
   </PropertyGroup>
 
-  <UsingTask TaskName="CreateLightCommandPackageDrop" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
-  <UsingTask TaskName="CreateWixBuildWixpack" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
-  <UsingTask TaskName="ExecWithRetries" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
-  <UsingTask TaskName="GenerateCurrentVersion" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
-  <UsingTask TaskName="GenerateGuidFromName" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
-  <UsingTask TaskName="GenerateMsiVersion" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
-  <UsingTask TaskName="StabilizeWixFileId" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
-  <UsingTask TaskName="CreateChangelogFile"
-   AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
-  <UsingTask TaskName="CreateMD5SumsFile"
-   AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
-  <UsingTask TaskName="CreateControlFile"
-   AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
-  <UsingTask TaskName="CreateDebPackage"
-  AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
-  <UsingTask TaskName="CreateRpmPackage"
-    AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
+  <UsingTask TaskName="CreateLightCommandPackageDrop" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
+  <UsingTask TaskName="CreateWixBuildWixpack" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
+  <UsingTask TaskName="ExecWithRetries" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
+  <UsingTask TaskName="GenerateCurrentVersion" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
+  <UsingTask TaskName="GenerateGuidFromName" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
+  <UsingTask TaskName="GenerateMsiVersion" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
+  <UsingTask TaskName="StabilizeWixFileId" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
+  <UsingTask TaskName="CreateChangelogFile" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
+  <UsingTask TaskName="CreateMD5SumsFile" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
+  <UsingTask TaskName="CreateControlFile" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
+  <UsingTask TaskName="CreateDebPackage" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
+  <UsingTask TaskName="CreateRpmPackage"  AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
 
 </Project>

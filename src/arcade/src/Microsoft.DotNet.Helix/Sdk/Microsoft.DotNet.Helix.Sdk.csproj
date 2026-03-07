@@ -1,10 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(BundledNETCoreAppTargetFramework);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <PackageType>MSBuildSdk</PackageType>
     <IsBuildTaskProject>true</IsBuildTaskProject>
-    <DefaultItemExcludes Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) != '.NETFramework'">**/*.Desktop.*</DefaultItemExcludes>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,25 +15,14 @@
     <PackageReference Include="NuGet.Versioning" />
   </ItemGroup>
 
-  <!-- Reference Microsoft.Data.Services.Client directly via PackageDownload+Reference to avoid its netstandard1.x dependencies. -->
   <ItemGroup>
-    <PackageDownload Include="Microsoft.Data.Services.Client" Version="[$(MicrosoftDataServicesClientVersion)]" />
-    <Reference Include="$(NuGetPackageRoot)microsoft.data.services.client\$(MicrosoftDataServicesClientVersion)\lib\net40\Microsoft.Data.Services.Client.dll"
-               Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
-    <Reference Include="$(NuGetPackageRoot)microsoft.data.services.client\$(MicrosoftDataServicesClientVersion)\lib\netstandard1.1\Microsoft.Data.Services.Client.dll"
-               Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'" />
+    <PackageReference Include="Microsoft.Data.Services.Client" />
     <PackageReference Include="Microsoft.Data.OData" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Client\CSharp\Microsoft.DotNet.Helix.Client.csproj" />
     <ProjectReference Include="..\JobSender\Microsoft.DotNet.Helix.JobSender.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <Compile Include="..\..\Common\Internal\AssemblyResolver.cs" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Net.Http" />
   </ItemGroup>
 
   <ItemGroup>

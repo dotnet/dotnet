@@ -1,8 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- Treat this as a tooling library. -->
-    <TargetFrameworks>$(BundledNETCoreAppTargetFramework);netstandard2.0;$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
     <IsPackable>true</IsPackable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -19,17 +18,5 @@
     <Reference Include="$(NuGetPackageRoot)microsoft.cci\$(MicrosoftCciVersion)\lib\netstandard1.3\Microsoft.Cci.dll" />
     <PackageReference Include="System.Composition" />
   </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'">
-    <PackageReference Include="System.Memory" />
-    <PackageReference Include="System.Reflection.Metadata" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <Reference Include="System.Net.Http" />
-  </ItemGroup>
-
-  <!-- This project is a build task dependency and needs to follow desktop version requirements. -->
-  <Import Project="$(RepositoryEngineeringDir)BuildTask.Packages.props" />
 
 </Project>
