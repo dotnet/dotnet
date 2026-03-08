@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
+using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -51,7 +52,7 @@ public static class RazorCodeDocumentExtensions
     /// </remarks>
     internal static bool IsDirectiveUsed(this RazorCodeDocument codeDocument, BaseRazorDirectiveSyntax directive)
     {
-        Debug.Assert(directive is RazorUsingDirectiveSyntax || directive.DirectiveBody.Keyword.GetContent() == "addTagHelper");
+        Debug.Assert(directive is RazorUsingDirectiveSyntax || directive.DirectiveBody.Keyword.GetContent() == SyntaxConstants.CSharp.AddTagHelperKeyword);
 
         // In imports files, all directives are considered used as usage tracking is only for source documents.
         if (codeDocument.IsImportsFile())

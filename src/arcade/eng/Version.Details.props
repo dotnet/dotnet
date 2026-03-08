@@ -48,7 +48,7 @@ This file should be imported by eng/Versions.props
     <!-- dotnet/sdk dependencies -->
     <MicrosoftNETSdkWorkloadManifestReaderPackageVersion>9.0.100-preview.6.24328.19</MicrosoftNETSdkWorkloadManifestReaderPackageVersion>
     <!-- dotnet/command-line-api dependencies -->
-    <SystemCommandLinePackageVersion>2.0.0-beta5.25210.1</SystemCommandLinePackageVersion>
+    <SystemCommandLinePackageVersion>2.0.3</SystemCommandLinePackageVersion>
     <!-- dotnet/dnceng dependencies -->
     <MicrosoftDncEngSecretManagerPackageVersion>1.1.0-beta.26065.2</MicrosoftDncEngSecretManagerPackageVersion>
     <!-- dotnet/msbuild dependencies -->
