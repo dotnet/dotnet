@@ -19,10 +19,10 @@
       "commitSha": "82f47fc2ff84b3d94e910147d52f2e6795f6ae21"
     },
     {
-      "barId": 302241,
+      "barId": 304932,
       "path": "command-line-api",
       "remoteUri": "https://github.com/dotnet/command-line-api",
-      "commitSha": "a3bae7d667e367376f4eb3edb579bf7e9c81cc10"
+      "commitSha": "0b720d0399197e9a8d9684f26bc6fd82d0da83b2"
     },
     {
       "barId": 303584,
@@ -37,10 +37,10 @@
       "commitSha": "970c803abb1ed5657b056cdaf01f1693f437c242"
     },
     {
-      "barId": 304567,
+      "barId": 304976,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "9f8fd9c99f44bf292bc0882ab662dfd677387fd0"
+      "commitSha": "3817d73e752c3d5f5d0ab9bdaf03cafd97bdaed2"
     },
     {
       "barId": 298250,
