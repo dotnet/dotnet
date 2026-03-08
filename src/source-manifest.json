@@ -97,10 +97,10 @@
       "commitSha": "49e2a87c0463349ff8a2623329487227499e506f"
     },
     {
-      "barId": 304013,
+      "barId": 304880,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "fada075c5c15cb33e208628cade97f42824c690d"
+      "commitSha": "126ae71663e3d22030fc7e55d71ead23d140432d"
     },
     {
       "barId": 302357,
@@ -171,6 +171,11 @@
       "path": "source-build-reference-packages/src/externalPackages/src/abstractions-xunit",
       "remoteUri": "https://github.com/xunit/abstractions.xunit",
       "commitSha": "b75d54d73b141709f805c2001b16f3dd4d71539d"
+    },
+    {
+      "path": "source-build-reference-packages/src/externalPackages/src/antlr4",
+      "remoteUri": "https://github.com/antlr/antlr4",
+      "commitSha": "7ed420ff2c78d62883875c442d75f32e73bc86c8"
     },
     {
       "path": "source-build-reference-packages/src/externalPackages/src/application-insights",
