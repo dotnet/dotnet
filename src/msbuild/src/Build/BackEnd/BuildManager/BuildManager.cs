@@ -1038,9 +1038,22 @@ namespace Microsoft.Build.Execution
                     }
                 }
 
-                _noActiveSubmissionsEvent!.WaitOne();
+                {
+                    Stopwatch hangWatch = Stopwatch.StartNew();
+                    while (!_noActiveSubmissionsEvent!.WaitOne(CrashTelemetryRecorder.EndBuildHangDiagnosticsIntervalMs))
+                    {
+                        EmitEndBuildHangDiagnostics("WaitingForSubmissions", hangWatch);
+                    }
+                }
+
                 ShutdownConnectedNodes(false /* normal termination */);
-                _noNodesActiveEvent!.WaitOne();
+                {
+                    Stopwatch hangWatch = Stopwatch.StartNew();
+                    while (!_noNodesActiveEvent!.WaitOne(CrashTelemetryRecorder.EndBuildHangDiagnosticsIntervalMs))
+                    {
+                        EmitEndBuildHangDiagnostics("WaitingForNodes", hangWatch);
+                    }
+                }
 
                 // Wait for all of the actions in the work queue to drain.
                 // _workQueue.Completion.Wait() could throw here if there was an unhandled exception in the work queue,
@@ -1220,6 +1233,14 @@ namespace Microsoft.Build.Execution
         {
             string? host = _buildTelemetry?.BuildEngineHost ??  BuildEnvironmentState.GetHostName();
 
+            int? activeNodeCount;
+            int? submissionCount;
+            lock (_syncLock)
+            {
+                activeNodeCount = _activeNodes?.Count;
+                submissionCount = _buildSubmissions?.Count;
+            }
+
             CrashTelemetryRecorder.RecordCrashTelemetry(
                 exception,
                 isUnhandled ? CrashExitType.UnhandledException : CrashExitType.EndBuildFailure,
@@ -1227,9 +1248,55 @@ namespace Microsoft.Build.Execution
                 ExceptionHandling.IsCriticalException(exception),
                 ProjectCollection.Version?.ToString(),
                 NativeMethodsShared.FrameworkName,
-                host);
+                host,
+                isStandaloneExecution: _buildTelemetry?.IsStandaloneExecution ?? false,
+                maxNodeCount: _buildParameters?.MaxNodeCount,
+                activeNodeCount,
+                submissionCount);
         }
 
+        /// <summary>
+        /// Extracts build state under lock and delegates to <see cref="CrashTelemetryRecorder"/>
+        /// for EndBuild hang diagnostic telemetry emission.
+        /// </summary>
+        private void EmitEndBuildHangDiagnostics(string waitPhase, Stopwatch hangWatch)
+        {
+            int pendingSubmissionCount;
+            int submissionsWithResultNoLogging = 0;
+            bool threadExceptionRecorded;
+            int unmatchedProjectStartedCount;
+            string? host;
+
+            lock (_syncLock)
+            {
+                foreach (BuildSubmissionBase submission in _buildSubmissions.Values)
+                {
+                    if (submission.BuildResultBase is not null && !submission.LoggingCompleted)
+                    {
+                        submissionsWithResultNoLogging++;
+                    }
+                }
+
+                pendingSubmissionCount = _buildSubmissions.Count;
+                threadExceptionRecorded = _threadException is not null;
+                unmatchedProjectStartedCount = _projectStartedEvents.Count;
+                host = _buildTelemetry?.BuildEngineHost ?? BuildEnvironmentState.GetHostName();
+            }
+
+            CrashTelemetryRecorder.CollectAndEmitEndBuildHangDiagnostics(
+                waitPhase,
+                hangWatch.ElapsedMilliseconds,
+                pendingSubmissionCount,
+                submissionsWithResultNoLogging,
+                threadExceptionRecorded,
+                unmatchedProjectStartedCount,
+                ProjectCollection.Version?.ToString(),
+                NativeMethodsShared.FrameworkName,
+                host,
+                isStandaloneExecution: _buildTelemetry?.IsStandaloneExecution ?? false,
+                maxNodeCount: _buildParameters?.MaxNodeCount,
+                activeNodeCount: _activeNodes?.Count);
+        }
 
         /// <summary>
         /// Convenience method.  Submits a lone build request and blocks until results are available.
