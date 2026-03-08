@@ -2,12 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -17,19 +12,11 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
     {
         private SwixPackageGroup _swixPackageGroup;
 
-        protected override string ProjectFile
-        {
-            get;
-        }
-
-        protected override string ProjectSourceDirectory
-        {
-            get;
-        }
-
         public PackageGroupSwixProject(SwixPackageGroup packageGroup, string baseIntermediateOutputPath, string baseOutputPath, bool outOfSupport = false) :
             base(packageGroup, baseIntermediateOutputPath, baseOutputPath)
         {
+            SourcePath = Path.Combine(SourcePath, $"{packageGroup.SdkFeatureBand}",
+                $"{Path.GetRandomFileName()}");
             _swixPackageGroup = packageGroup;
             ValidateRelativePackagePath(GetRelativePackagePath());
 
@@ -37,19 +24,13 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
             {
                 throw new ArgumentException(string.Format(Strings.ComponentMustHaveAtLeastOneDependency, packageGroup.Name));
             }
-
-            ProjectSourceDirectory = Path.Combine(SwixDirectory, $"{packageGroup.SdkFeatureBand}",
-                $"{Path.GetRandomFileName()}");
         }
 
         /// <inheritdoc />
         public override string Create()
         {
-            string swixProj = EmbeddedTemplates.Extract("packageGroup.swixproj", ProjectSourceDirectory, $"{Id}.{Version.ToString(2)}.swixproj");
-            string packageGroupSwr = EmbeddedTemplates.Extract("packageGroup.swr", ProjectSourceDirectory);
-
-            ReplaceTokens(swixProj);
-            ReplaceTokens(packageGroupSwr);
+            string swixProj = AddFile("packageGroup.swixproj", $"{Id}.{Version.ToString(2)}.swixproj");
+            string packageGroupSwr = AddFile("packageGroup.swr");
 
             // SWIX is indentation sensitive. The dependencies should be written as 
             //

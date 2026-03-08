@@ -26,6 +26,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             _package = package;
         }
 
+        public override string Create() => "";
+
         public override ITaskItem Build(string outputPath, ITaskItem[] iceSuppressions)
         {
             List<string> packageContentWxsFiles = new List<string>();
@@ -37,7 +39,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
             foreach (var pack in _package.Packs)
             {
-                string packageContentWxs = Path.Combine(WixSourceDirectory, $"PackageContent.{pack.Id}.wxs");
+                string packageContentWxs = Path.Combine(SourcePath, $"PackageContent.{pack.Id}.wxs");
 
                 string directoryReference;
                 if (pack.Kind == WorkloadPackKind.Library)
@@ -80,7 +82,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             }
 
             //  Create wxs file from dotnetHomeDirectory structure
-            string directoriesWxsPath = EmbeddedTemplates.Extract("Directories.wxs", WixSourceDirectory);
+            string directoriesWxsPath = AddFile("Directories.wxs");
             var directoriesDoc = XDocument.Load(directoriesWxsPath);
             var dotnetHomeElement = directoriesDoc.Root.Descendants().Where(d => (string)d.Attribute("Id") == "DOTNETHOME").Single();
             //  Remove existing subfolders of DOTNETHOME, which are for single pack MSI
@@ -88,7 +90,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             directoriesDoc.Save(directoriesWxsPath);
 
             //  Replace single ComponentGroupRef from Product.wxs with a ref for each pack
-            string productWxsPath = EmbeddedTemplates.Extract("Product.wxs", WixSourceDirectory);
+            string productWxsPath = AddFile("Product.wxs");
             var productDoc = XDocument.Load(productWxsPath);
             var ns = productDoc.Root.Name.Namespace;
             var componentGroupRefElement = productDoc.Root.Descendants(ns + "ComponentGroupRef").Single();
@@ -96,7 +98,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             productDoc.Save(productWxsPath);
 
             // Add registry keys for packs in the pack group.
-            string registryWxsPath = EmbeddedTemplates.Extract("Registry.wxs", WixSourceDirectory);
+            string registryWxsPath = AddFile("Registry.wxs");
             var registryDoc = XDocument.Load(registryWxsPath);
             ns = registryDoc.Root.Name.Namespace;
             var registryKeyElement = registryDoc.Root.Descendants(ns + "RegistryKey").Single();
@@ -113,14 +115,14 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             candle.AddSourceFiles(packageContentWxsFiles);
 
             candle.AddSourceFiles(
-                EmbeddedTemplates.Extract("DependencyProvider.wxs", WixSourceDirectory),
+                AddFile("DependencyProvider.wxs"),
                 directoriesWxsPath,
-                EmbeddedTemplates.Extract("dotnethome_x64.wxs", WixSourceDirectory),
+                AddFile("dotnethome_x64.wxs"),
                 productWxsPath,
                 registryWxsPath);
 
             // Only extract the include file as it's not compilable, but imported by various source files.
-            EmbeddedTemplates.Extract("Variables.wxi", WixSourceDirectory);
+            AddFile("Variables.wxi");
 
             // Workload packs are not upgradable so the upgrade code is generated using the package identity as that
             // includes the package version.

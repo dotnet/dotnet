@@ -25,11 +25,13 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             _package = package;
         }
 
+        public override string Create() => "";
+
         public override ITaskItem Build(string outputPath, ITaskItem[]? iceSuppressions = null)
         {
-            Directory.CreateDirectory(WixSourceDirectory);
+            Directory.CreateDirectory(SourcePath);
             // Harvest the package contents before adding it to the source files we need to compile.
-            string packageContentWxs = Path.Combine(WixSourceDirectory, "PackageContent.wxs");
+            string packageContentWxs = Path.Combine(SourcePath, "PackageContent.wxs");
             string directoryReference = _package.Kind == WorkloadPackKind.Library || _package.Kind == WorkloadPackKind.Template ?
                 "InstallDir" : "VersionDir";
 
@@ -49,14 +51,14 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             CompilerToolTask candle = CreateDefaultCompiler();
 
             candle.AddSourceFiles(packageContentWxs,
-                EmbeddedTemplates.Extract("DependencyProvider.wxs", WixSourceDirectory),
-                EmbeddedTemplates.Extract("Directories.wxs", WixSourceDirectory),
-                EmbeddedTemplates.Extract("dotnethome_x64.wxs", WixSourceDirectory),
-                EmbeddedTemplates.Extract("Product.wxs", WixSourceDirectory),
-                EmbeddedTemplates.Extract("Registry.wxs", WixSourceDirectory));
+                AddFile("DependencyProvider.wxs"),
+                AddFile("Directories.wxs"),
+                AddFile("dotnethome_x64.wxs"),
+                AddFile("Product.wxs"),
+                AddFile("Registry.wxs"));
 
             // Only extract the include file as it's not compilable, but imported by various source files.
-            EmbeddedTemplates.Extract("Variables.wxi", WixSourceDirectory);
+            AddFile("Variables.wxi");
 
             // Workload packs are not upgradable so the upgrade code is generated using the package identity as that
             // includes the package version.

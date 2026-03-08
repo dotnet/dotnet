@@ -58,5 +58,15 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         /// A value indicating that the SWIX project creates an MSI package for a workload set.
         /// </summary>
         public static readonly string PackageTypeMsiWorkloadSet = "msi-workload-set";
+
+        /// <summary>
+        /// Default values specific to SWIX authoring.
+        /// </summary>
+        internal static class Swix
+        {
+            public static readonly string Yes = "yes";
+
+            public static readonly string No = "no";
+        }
     }
 }

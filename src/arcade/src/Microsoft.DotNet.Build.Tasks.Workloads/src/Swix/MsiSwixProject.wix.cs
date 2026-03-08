@@ -4,7 +4,6 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
-using System.Text;
 using Microsoft.Build.Framework;
 using Microsoft.Deployment.DotNet.Releases;
 using Microsoft.DotNet.Build.Tasks.Workloads.Msi;
@@ -51,13 +50,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
         }
 
         /// <inheritdoc />
-        protected override string ProjectFile
-        {
-            get;
-        }
-
-        /// <inheritdoc />
-        protected override string ProjectSourceDirectory
+        protected string ProjectFile
         {
             get;
         }
@@ -71,6 +64,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
             MachineArch = machineArch;
             ProductArch = productArch;
             Platform = msi.GetMetadata(Metadata.Platform);
+            SourcePath = Path.Combine(SourcePath, $"{sdkFeatureBand}", Id, Platform);
 
             // At least one of Chip or MachineArch should have a value, otherwise we cannot generate valid SWIX.
             if (string.IsNullOrWhiteSpace(Chip) && string.IsNullOrWhiteSpace(MachineArch))
@@ -80,7 +74,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
 
             // We need to always use the platform as an output folder because the chip value will be x64 for both arm64/x64 MSIs
             // and machineArch is not guaranteed to be applicable. 
-            ProjectSourceDirectory = Path.Combine(SwixDirectory, $"{sdkFeatureBand}", Id, Platform);
             ValidateRelativePackagePath(GetRelativePackagePath());
 
             // The name of the .swixproj file is used to create the JSON manifest that will be merged into the .vsman file later.
@@ -92,7 +85,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
             ReplacementTokens[SwixTokens.__VS_PAYLOAD_SOURCE__] = msi.GetMetadata(Metadata.FullPath);
         }
 
-        /// <inheritdoc />
         protected override string GetRelativePackagePath()
         {
             string relativePath = base.GetRelativePackagePath();
@@ -104,15 +96,13 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
             return Path.Combine(relativePath, Path.GetFileName(_msi.ItemSpec));
         }
 
-        /// <inheritdoc />
         public override string Create()
         {
-            string swixProj = EmbeddedTemplates.Extract("msi.swixproj", ProjectSourceDirectory, ProjectFile);
-            Utils.StringReplace(swixProj, ReplacementTokens, Encoding.UTF8);
+            string swixProj = AddFile("msi.swixproj", ProjectFile);
             FileInfo fileInfo = new(_msi.ItemSpec);
 
             // Since we can't use preprocessor directives in the source, we'll do the conditional authoring inline instead.
-            using StreamWriter msiWriter = File.CreateText(Path.Combine(ProjectSourceDirectory, "msi.swr"));
+            using StreamWriter msiWriter = File.CreateText(Path.Combine(SourcePath, "msi.swr"));
 
             msiWriter.WriteLine($"use vs");
             msiWriter.WriteLine();

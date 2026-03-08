@@ -13,16 +13,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
     /// <summary>
     /// Describes a project to package an MSI and its JSON manifest into a NuGet package.
     /// </summary>
-    internal class MsiPayloadPackageProject : ProjectTemplateBase
+    internal class MsiPayloadPackageProject : WorkloadTemplateBase
     {
-        /// <inheritdoc />
-        protected override string ProjectSourceDirectory
-        {
-            get;
-        }
-
-        /// <inheritdoc />
-        protected override string ProjectFile
+        private string ProjectFile
         {
             get;
         }
@@ -34,7 +27,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             base(baseIntermediateOutputPath, baseOutputPath)
         {
             string platform = msi.GetMetadata(Metadata.Platform);
-            ProjectSourceDirectory = Path.Combine(SourceDirectory, "msiPackage", platform, package.Id);
+            SourcePath = Path.Combine(SourcePath, "msiPackage", platform, package.Id);
             ProjectFile = "msi.csproj";
 
             PackageContents = packageContents;
@@ -50,12 +43,12 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// <inheritdoc />
         public override string Create()
         {
-            string msiCsproj = EmbeddedTemplates.Extract("msi.csproj", ProjectSourceDirectory);
+            AddFile("Icon.png", replaceTokens: false);
+            AddFile("LICENSE.TXT", replaceTokens: false);
+            string msiCsproj = AddFile("msi.csproj");
 
-            Utils.StringReplace(msiCsproj, ReplacementTokens, Encoding.UTF8);
-
-            var proj = XDocument.Load(msiCsproj);
-            var itemGroup = proj.Root.Element("ItemGroup");
+            var projectDocument = XDocument.Load(msiCsproj);
+            var itemGroup = projectDocument.Root.Element("ItemGroup");
             foreach (var packageFile in PackageContents)
             {
                 itemGroup.Add(new XElement("None",
@@ -63,10 +56,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
                     new XAttribute("Pack", "true"),
                     new XAttribute("PackagePath", packageFile.Value)));
             }
-            proj.Save(msiCsproj);
-
-            EmbeddedTemplates.Extract("Icon.png", ProjectSourceDirectory);
-            EmbeddedTemplates.Extract("LICENSE.TXT", ProjectSourceDirectory);
+            projectDocument.Save(msiCsproj);
 
             return msiCsproj;
         }

@@ -26,10 +26,12 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             _package = package;
         }
 
+        public override string Create() => "";
+
         public override ITaskItem Build(string outputPath, ITaskItem[]? iceSuppressions)
         {
             // Harvest the package contents before adding it to the source files we need to compile.
-            string packageContentWxs = Path.Combine(WixSourceDirectory, "PackageContent.wxs");
+            string packageContentWxs = Path.Combine(SourcePath, "PackageContent.wxs");
             string packageDataDirectory = Path.Combine(_package.DestinationDirectory, "data");
 
             HarvesterToolTask heat = new(BuildEngine, WixToolsetPath)
@@ -47,14 +49,14 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
             CompilerToolTask candle = CreateDefaultCompiler();
             candle.AddSourceFiles(packageContentWxs,
-                EmbeddedTemplates.Extract("DependencyProvider.wxs", WixSourceDirectory),
-                EmbeddedTemplates.Extract("Directories.wxs", WixSourceDirectory),
-                EmbeddedTemplates.Extract("dotnethome_x64.wxs", WixSourceDirectory),
-                EmbeddedTemplates.Extract("WorkloadSetProduct.wxs", WixSourceDirectory));
+                AddFile("DependencyProvider.wxs"),
+                AddFile("Directories.wxs"),
+                AddFile("dotnethome_x64.wxs"),
+                AddFile("WorkloadSetProduct.wxs"));
 
             // Extract the include file as it's not compilable, but imported by various source files.
-            EmbeddedTemplates.Extract("Variables.wxi", WixSourceDirectory);
-            
+            AddFile("Variables.wxi");
+
             Guid upgradeCode = Utils.CreateUuid(UpgradeCodeNamespaceUuid, $"{_package.Identity};{Platform}");
             string providerKeyName = $"Microsoft.NET.Workload.Set,{_package.SdkFeatureBand},{_package.PackageVersion},{Platform}";
 

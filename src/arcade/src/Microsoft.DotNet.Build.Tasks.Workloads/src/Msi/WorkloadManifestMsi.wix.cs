@@ -42,12 +42,17 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             IsSxS = isSxS;
         }
 
+        public override string Create()
+        {
+            return "";
+        }
+
         /// <inheritdoc />
         /// <exception cref="Exception" />
         public override ITaskItem Build(string outputPath, ITaskItem[]? iceSuppressions = null)
         {
             // Harvest the package contents before adding it to the source files we need to compile.
-            string packageContentWxs = Path.Combine(WixSourceDirectory, "PackageContent.wxs");
+            string packageContentWxs = Path.Combine(SourcePath, "PackageContent.wxs");
             string packageDataDirectory = Path.Combine(Package.DestinationDirectory, "data");
 
             HarvesterToolTask heat = new(BuildEngine, WixToolsetPath)
@@ -74,10 +79,10 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
             if (WorkloadPackGroups.Any())
             {
-                jsonContentWxs = Path.Combine(WixSourceDirectory, "JsonContent.wxs");
+                jsonContentWxs = Path.Combine(SourcePath, "JsonContent.wxs");
 
                 string jsonAsString = JsonSerializer.Serialize(WorkloadPackGroups, typeof(IList<WorkloadPackGroupJson>), new JsonSerializerOptions() { WriteIndented = true });
-                jsonDirectory = Path.Combine(WixSourceDirectory, "json");
+                jsonDirectory = Path.Combine(SourcePath, "json");
                 Directory.CreateDirectory(jsonDirectory);
 
                 string jsonFullPath = Path.GetFullPath(Path.Combine(jsonDirectory, "WorkloadPackGroups.json"));
@@ -103,10 +108,10 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
             CompilerToolTask candle = CreateDefaultCompiler();
             candle.AddSourceFiles(packageContentWxs,
-                EmbeddedTemplates.Extract("DependencyProvider.wxs", WixSourceDirectory),
-                EmbeddedTemplates.Extract("dotnethome_x64.wxs", WixSourceDirectory),
-                EmbeddedTemplates.Extract("ManifestProduct.wxs", WixSourceDirectory),
-                EmbeddedTemplates.Extract("Registry.wxs", WixSourceDirectory));
+                AddFile("DependencyProvider.wxs"),
+                AddFile("dotnethome_x64.wxs"),
+                AddFile("ManifestProduct.wxs"),
+                AddFile("Registry.wxs"));
 
             if (IsSxS)
             {
@@ -125,7 +130,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             }
 
             // Only extract the include file as it's not compilable, but imported by various source files.
-            EmbeddedTemplates.Extract("Variables.wxi", WixSourceDirectory);
+            AddFile("Variables.wxi");
 
             // To support upgrades, the UpgradeCode must be stable within an SDK feature band.
             // For example, 6.0.101 and 6.0.108 will generate the same GUID for the same platform and manifest ID. 

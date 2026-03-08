@@ -73,6 +73,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                 { "ManifestProduct.wxs", $"{ns}.MsiTemplate.ManifestProduct.wxs" },
                 { "WorkloadSetProduct.wxs", $"{ns}.MsiTemplate.WorkloadSetProduct.wxs" },
                 { "Product.wxs", $"{ns}.MsiTemplate.Product.wxs" },
+                { "Productv5.wxs", $"{ns}.MsiTemplate.Productv5.wxs" },
                 { "Registry.wxs", $"{ns}.MsiTemplate.Registry.wxs" },
                 { "Variables.wxi", $"{ns}.MsiTemplate.Variables.wxi" },
 

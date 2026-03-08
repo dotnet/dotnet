@@ -10,11 +10,11 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
     /// <summary>
     /// A base class to create SWIX projects for Visual Studio setup packages.
     /// </summary>
-    public abstract class SwixProjectBase : ProjectTemplateBase
+    public abstract class SwixProjectBase : WorkloadTemplateBase
     {
         /// <summary>
-        /// The maximum relative path length of a package. The length accounts for the Visual Studio package cache
-        /// created at install time.
+        /// The maximum relative path length for a SWIX package. The length accounts for the Visual Studio package cache
+        /// created at install time. 
         /// </summary>
         public const int MaxRelativePackagePath = 182;
 
@@ -47,11 +47,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
         }
 
         /// <summary>
-        /// The root directory for SWIX projects.
-        /// </summary>
-        protected string SwixDirectory => Path.Combine(SourceDirectory, "swix");
-
-        /// <summary>
         /// 
         /// </summary>
         /// <param name="id">The SWIX package ID.</param>
@@ -62,30 +57,16 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
             Id = id;
             Version = version;
             OutOfSupport = outOfSupport;
+            SourcePath = Path.Combine(SourcePath, "swix");
 
+            // Values common to all SWIX packages.
             ReplacementTokens[SwixTokens.__VS_PACKAGE_NAME__] = Id;
             ReplacementTokens[SwixTokens.__VS_PACKAGE_VERSION__] = $"{Version}";
         }
 
         internal SwixProjectBase(SwixPackageBase package, string baseIntermediateOutputPath, string baseOutputPath, bool outOfSupport = false) :
-            base(baseIntermediateOutputPath, baseOutputPath)
+            this(package.Name, package.Version, baseIntermediateOutputPath, baseOutputPath, outOfSupport)
         {
-            Id = package.Name;
-            Version = package.Version;
-            OutOfSupport = outOfSupport;
-
-            ReplacementTokens[SwixTokens.__VS_PACKAGE_NAME__] = Id;
-            ReplacementTokens[SwixTokens.__VS_PACKAGE_VERSION__] = $"{Version}";
-        }
-
-
-        /// <summary>
-        /// Replace all tokens in the specified file.
-        /// </summary>
-        /// <param name="path">The path of the file to update.</param>
-        protected void ReplaceTokens(string path)
-        {
-            Utils.StringReplace(path, ReplacementTokens, Encoding.UTF8);
         }
 
         /// <summary>

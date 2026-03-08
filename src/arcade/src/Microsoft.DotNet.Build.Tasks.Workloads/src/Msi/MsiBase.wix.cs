@@ -14,7 +14,7 @@ using Microsoft.DotNet.Build.Tasks.Workloads.Wix;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 {
-    internal abstract class MsiBase
+    internal abstract class MsiBase : WorkloadTemplateBase
     {
         /// <summary>
         /// Replacement token for license URLs in the generated EULA.
@@ -98,10 +98,10 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// <summary>
         /// The directory where the WiX source code will be generated.
         /// </summary>
-        protected string WixSourceDirectory
-        {
-            get;
-        }
+        //protected string WixSourceDirectory
+        //{
+        //    get;
+        //}
 
         /// <summary>
         /// The directory containing the WiX toolset binaries.
@@ -118,7 +118,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         public Dictionary<string, string> NuGetPackageFiles { get; set; } = new();
 
         public MsiBase(MsiMetadata metadata, IBuildEngine buildEngine, string wixToolsetPath,
-            string platform, string baseIntermediateOutputPath)
+            string platform, string baseIntermediateOutputPath) : base(baseIntermediateOutputPath, "")
         {
             BuildEngine = buildEngine;
             WixToolsetPath = wixToolsetPath;
@@ -127,7 +127,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
             // Candle expects the output path to be terminated with a single '\'.
             CompilerOutputPath = Utils.EnsureTrailingSlash(Path.Combine(baseIntermediateOutputPath, "wixobj", metadata.Id, $"{metadata.PackageVersion}", platform));
-            WixSourceDirectory = Path.Combine(baseIntermediateOutputPath, "src", "wix", metadata.Id, $"{metadata.PackageVersion}", platform);
+
+            SourcePath = Path.Combine(SourcePath, "wix", metadata.Id, $"{metadata.PackageVersion}", platform);
+
             Metadata = metadata;
         }
 
@@ -152,7 +154,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// </summary>
         protected string GenerateEula()
         {
-            string eulaRtf = Path.Combine(WixSourceDirectory, "eula.rtf");
+            string eulaRtf = Path.Combine(SourcePath, "eula.rtf");
             File.WriteAllText(eulaRtf, s_eula.Replace(__LICENSE_URL__, Metadata.LicenseUrl));
 
             return eulaRtf;
