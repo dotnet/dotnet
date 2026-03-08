@@ -397,6 +397,16 @@ namespace Microsoft.Build.Execution
         LegacyThreadingData IBuildComponentHost.LegacyThreadingData => _legacyThreadingData;
 
         /// <summary>
+        /// Enumeration describing the severity of a deferred build message.
+        /// </summary>
+        public enum DeferredBuildMessageSeverity
+        {
+            Message = 1,
+            Warning,
+            Error
+        }
+
+        /// <summary>
         /// <see cref="BuildManager.BeginBuild(BuildParameters,IEnumerable{DeferredBuildMessage})"/>
         /// </summary>
         public readonly struct DeferredBuildMessage
@@ -407,11 +417,19 @@ namespace Microsoft.Build.Execution
 
             public string? FilePath { get; }
 
+            public DeferredBuildMessageSeverity MessageSeverity { get; } = DeferredBuildMessageSeverity.Message;
+
+            /// <summary>
+            /// Build event code (e.g., "MSB1070").
+            /// </summary>
+            public string? Code { get; }
+
             public DeferredBuildMessage(string text, MessageImportance importance)
             {
                 Importance = importance;
                 Text = text;
                 FilePath = null;
+                Code = null;
             }
 
             public DeferredBuildMessage(string text, MessageImportance importance, string filePath)
@@ -419,6 +437,22 @@ namespace Microsoft.Build.Execution
                 Importance = importance;
                 Text = text;
                 FilePath = filePath;
+                Code = null;
+            }
+
+            /// <summary>
+            /// Creates a deferred warning message.
+            /// </summary>
+            /// <param name="text">The warning message text.</param>
+            /// <param name="code">The build message code (e.g., "MSB1070").</param>
+            /// <param name="messageSeverity">The severity of the deferred build message.</param>
+            public DeferredBuildMessage(string text, string code, DeferredBuildMessageSeverity messageSeverity)
+            {
+                Importance = MessageImportance.Normal;
+                Text = text;
+                FilePath = null;
+                Code = code;
+                MessageSeverity = messageSeverity;
             }
         }
 
@@ -594,6 +628,9 @@ namespace Microsoft.Build.Execution
 
                 // Log deferred messages and response files
                 LogDeferredMessages(loggingService, _deferredBuildMessages);
+
+                // Validate environment variables (e.g., DOTNET_HOST_PATH)
+                EnvironmentVariableValidator.ValidateEnvironmentVariables(loggingService);
 
                 // Log if BuildCheck is enabled
                 if (_buildParameters.IsBuildCheckEnabled)
@@ -1001,9 +1038,22 @@ namespace Microsoft.Build.Execution
                     }
                 }
 
-                _noActiveSubmissionsEvent!.WaitOne();
+                {
+                    Stopwatch hangWatch = Stopwatch.StartNew();
+                    while (!_noActiveSubmissionsEvent!.WaitOne(CrashTelemetryRecorder.EndBuildHangDiagnosticsIntervalMs))
+                    {
+                        EmitEndBuildHangDiagnostics("WaitingForSubmissions", hangWatch);
+                    }
+                }
+
                 ShutdownConnectedNodes(false /* normal termination */);
-                _noNodesActiveEvent!.WaitOne();
+                {
+                    Stopwatch hangWatch = Stopwatch.StartNew();
+                    while (!_noNodesActiveEvent!.WaitOne(CrashTelemetryRecorder.EndBuildHangDiagnosticsIntervalMs))
+                    {
+                        EmitEndBuildHangDiagnostics("WaitingForNodes", hangWatch);
+                    }
+                }
 
                 // Wait for all of the actions in the work queue to drain.
                 // _workQueue.Completion.Wait() could throw here if there was an unhandled exception in the work queue,
@@ -1059,6 +1109,7 @@ namespace Microsoft.Build.Execution
             catch (Exception e)
             {
                 exceptionsThrownInEndBuild = true;
+                RecordCrashTelemetry(e, isUnhandled: false);
 
                 if (e is AggregateException ae && ae.InnerExceptions.Count == 1)
                 {
@@ -1092,19 +1143,13 @@ namespace Microsoft.Build.Execution
                             _buildTelemetry.BuildEngineDisplayVersion = ProjectCollection.DisplayVersion;
                             _buildTelemetry.BuildEngineFrameworkName = NativeMethodsShared.FrameworkName;
 
-                            string? host = null;
-                            if (BuildEnvironmentState.s_runningInVisualStudio)
+                            // Populate error categorization data from the logging service
+                            if (!_overallBuildSuccess)
                             {
-                                host = "VS";
+                                loggingService.PopulateBuildTelemetryWithErrors(_buildTelemetry);
                             }
-                            else if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("MSBUILD_HOST_NAME")))
-                            {
-                                host = Environment.GetEnvironmentVariable("MSBUILD_HOST_NAME");
-                            }
-                            else if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("VSCODE_CWD")) || Environment.GetEnvironmentVariable("TERM_PROGRAM") == "vscode")
-                            {
-                                host = "VSCode";
-                            }
+
+                            string? host = BuildEnvironmentState.GetHostName();
 
                             _buildTelemetry.BuildEngineHost = host;
 
@@ -1136,6 +1181,13 @@ namespace Microsoft.Build.Execution
                     _buildManagerState = BuildManagerState.Idle;
 
                     MSBuildEventSource.Log.BuildStop();
+
+                    if (_threadException is not null)
+                    {
+                        RecordCrashTelemetry(_threadException.SourceException, isUnhandled: true);
+                    }
+
+                    CrashTelemetryRecorder.FlushCrashTelemetry();
 
                     _threadException?.Throw();
 
@@ -1172,6 +1224,78 @@ namespace Microsoft.Build.Execution
                 ?.SetTags(_telemetryConsumingLogger?.WorkerNodeTelemetryData.AsActivityDataHolder(
                         includeTasksDetails: !Traits.Instance.ExcludeTasksDetailsFromTelemetry,
                         includeTargetDetails: false));
+        }
+
+        /// <summary>
+        /// Records crash telemetry data for later emission via <see cref="CrashTelemetryRecorder.FlushCrashTelemetry"/>.
+        /// </summary>
+        private void RecordCrashTelemetry(Exception exception, bool isUnhandled)
+        {
+            string? host = _buildTelemetry?.BuildEngineHost ??  BuildEnvironmentState.GetHostName();
+
+            int? activeNodeCount;
+            int? submissionCount;
+            lock (_syncLock)
+            {
+                activeNodeCount = _activeNodes?.Count;
+                submissionCount = _buildSubmissions?.Count;
+            }
+
+            CrashTelemetryRecorder.RecordCrashTelemetry(
+                exception,
+                isUnhandled ? CrashExitType.UnhandledException : CrashExitType.EndBuildFailure,
+                isUnhandled,
+                ExceptionHandling.IsCriticalException(exception),
+                ProjectCollection.Version?.ToString(),
+                NativeMethodsShared.FrameworkName,
+                host,
+                isStandaloneExecution: _buildTelemetry?.IsStandaloneExecution ?? false,
+                maxNodeCount: _buildParameters?.MaxNodeCount,
+                activeNodeCount,
+                submissionCount);
+        }
+
+        /// <summary>
+        /// Extracts build state under lock and delegates to <see cref="CrashTelemetryRecorder"/>
+        /// for EndBuild hang diagnostic telemetry emission.
+        /// </summary>
+        private void EmitEndBuildHangDiagnostics(string waitPhase, Stopwatch hangWatch)
+        {
+            int pendingSubmissionCount;
+            int submissionsWithResultNoLogging = 0;
+            bool threadExceptionRecorded;
+            int unmatchedProjectStartedCount;
+            string? host;
+
+            lock (_syncLock)
+            {
+                foreach (BuildSubmissionBase submission in _buildSubmissions.Values)
+                {
+                    if (submission.BuildResultBase is not null && !submission.LoggingCompleted)
+                    {
+                        submissionsWithResultNoLogging++;
+                    }
+                }
+
+                pendingSubmissionCount = _buildSubmissions.Count;
+                threadExceptionRecorded = _threadException is not null;
+                unmatchedProjectStartedCount = _projectStartedEvents.Count;
+                host = _buildTelemetry?.BuildEngineHost ?? BuildEnvironmentState.GetHostName();
+            }
+
+            CrashTelemetryRecorder.CollectAndEmitEndBuildHangDiagnostics(
+                waitPhase,
+                hangWatch.ElapsedMilliseconds,
+                pendingSubmissionCount,
+                submissionsWithResultNoLogging,
+                threadExceptionRecorded,
+                unmatchedProjectStartedCount,
+                ProjectCollection.Version?.ToString(),
+                NativeMethodsShared.FrameworkName,
+                host,
+                isStandaloneExecution: _buildTelemetry?.IsStandaloneExecution ?? false,
+                maxNodeCount: _buildParameters?.MaxNodeCount,
+                activeNodeCount: _activeNodes?.Count);
         }
 
         /// <summary>
@@ -3148,7 +3272,20 @@ namespace Microsoft.Build.Execution
 
             foreach (var message in deferredBuildMessages)
             {
-                loggingService.LogCommentFromText(BuildEventContext.Invalid, message.Importance, message.Text);
+                if (message.MessageSeverity is DeferredBuildMessageSeverity.Warning)
+                {
+                    loggingService.LogWarningFromText(
+                        BuildEventContext.Invalid,
+                        subcategoryResourceName: null,
+                        warningCode: message.Code,
+                        helpKeyword: null,
+                        file: BuildEventFileInfo.Empty,
+                        message: message.Text);
+                }
+                else
+                {
+                    loggingService.LogCommentFromText(BuildEventContext.Invalid, message.Importance, message.Text);
+                }
 
                 // If message includes a file path, include that file
                 if (message.FilePath is not null)
