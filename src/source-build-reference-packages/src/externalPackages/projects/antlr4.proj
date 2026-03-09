@@ -8,6 +8,6 @@
 
     <DotNetToolArgs>$(DotNetToolArgs) /p:Configuration=$(Configuration)</DotNetToolArgs>
 
-    <BuildCommand>$(DotNetTool) build -c $(Configuration) -f netstandard2.0 /p:TargetFrameworks=netstandard2.0 $(Antlr4ProjectPath) /bl:$(ArtifactsLogRepoDir)build.binlog</BuildCommand>
+    <BuildCommand>$(DotNetTool) build -t:Build,Pack -c $(Configuration) -f netstandard2.0 /p:TargetFrameworks=netstandard2.0 $(Antlr4ProjectPath) /bl:$(ArtifactsLogRepoDir)build.binlog</BuildCommand>
   </PropertyGroup>
 </Project>
