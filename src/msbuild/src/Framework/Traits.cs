@@ -131,9 +131,37 @@ namespace Microsoft.Build.Framework
         public readonly bool EnableRarNode = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("MSBuildRarNode"));
 
         /// <summary>
+        /// Enable IBuildEngine callbacks in the TaskHost process.
+        /// Temporary escape hatch until all callback stages are complete and PacketVersion is bumped to 3.
+        /// </summary>
+        public readonly bool EnableTaskHostCallbacks = Environment.GetEnvironmentVariable("MSBUILDENABLETASKHOSTCALLBACKS") == "1";
+
+        /// <summary>
         /// Name of environment variables used to enable MSBuild server.
         /// </summary>
         public const string UseMSBuildServerEnvVarName = "MSBUILDUSESERVER";
+
+        /// <summary>
+        /// Name of environment variable for logging arguments (e.g., -bl, -check).
+        /// </summary>
+        public const string MSBuildLoggingArgsEnvVarName = "MSBUILD_LOGGING_ARGS";
+
+        /// <summary>
+        /// Name of environment variable that controls the logging level for diagnostic messages
+        /// emitted when processing the MSBUILD_LOGGING_ARGS environment variable.
+        /// Set to "message" to emit as low-importance build messages instead of console warnings.
+        /// </summary>
+        public const string MSBuildLoggingArgsLevelEnvVarName = "MSBUILD_LOGGING_ARGS_LEVEL";
+
+        /// <summary>
+        /// Value of the MSBUILD_LOGGING_ARGS environment variable.
+        /// </summary>
+        public static string? MSBuildLoggingArgs => Environment.GetEnvironmentVariable(MSBuildLoggingArgsEnvVarName);
+
+        /// <summary>
+        /// Gets if the logging level for MSBUILD_LOGGING_ARGS diagnostic is message.
+        /// </summary>
+        public readonly bool EmitLogsAsMessage = string.Equals(Environment.GetEnvironmentVariable(MSBuildLoggingArgsLevelEnvVarName), "message", StringComparison.OrdinalIgnoreCase);
 
         public readonly bool DebugEngine = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("MSBuildDebugEngine"));
         public readonly bool DebugScheduler;
@@ -373,6 +401,13 @@ namespace Microsoft.Build.Framework
         /// Disable AssemblyLoadContext isolation for plugins.
         /// </summary>
         public readonly bool UseSingleLoadContext = Environment.GetEnvironmentVariable("MSBUILDSINGLELOADCONTEXT") == "1";
+
+        /// <summary>
+        /// Use custom AssemblyLoadContext for loading dependencies found in the MSBuild tools directory.
+        /// When enabled, assemblies found in the MSBuild tools directory are loaded into the plugin's isolated context
+        /// instead of the shared default context, preventing potential version conflicts with the host application.
+        /// </summary>
+        public readonly bool UseCustomLoadContextForDependenciesInToolsDirectory = Environment.GetEnvironmentVariable("MSBUILDUSECUSTOMLOADCONTEXTFORDEPENDENCIESINTOOLSDIRECTORY") == "1";
 
         /// <summary>
         /// Enables the user of autorun functionality in CMD.exe on Windows which is disabled by default in MSBuild.

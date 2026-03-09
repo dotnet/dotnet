@@ -1713,7 +1713,7 @@ namespace Microsoft.Build.Evaluation
                 }
                 else if (String.Equals(propertyName, ReservedPropertyNames.thisFileDirectory, StringComparison.OrdinalIgnoreCase))
                 {
-                    value = FileUtilities.EnsureTrailingSlash(Path.GetDirectoryName(elementLocation.File));
+                    value = FrameworkFileUtilities.EnsureTrailingSlash(Path.GetDirectoryName(elementLocation.File));
                 }
                 else if (String.Equals(propertyName, ReservedPropertyNames.thisFileDirectoryNoRoot, StringComparison.OrdinalIgnoreCase))
                 {
@@ -2021,20 +2021,24 @@ namespace Microsoft.Build.Evaluation
                             break;
                     }
 
-                    foreach (KeyValuePair<string, S> itemTuple in transformedItems)
-                    {
-                        if (!string.IsNullOrEmpty(itemTuple.Key) && (options & ExpanderOptions.BreakOnNotEmpty) != 0)
-                        {
-                            brokeEarly = true;
-                            return transformedItems; // break out early
-                        }
-                    }
-
                     // If we have another transform, swap the source and transform lists.
                     if (i < captures.Count - 1)
                     {
                         (transformedItems, sourceItems) = (sourceItems, transformedItems);
                         transformedItems.Clear();
+                    }
+                }
+
+                // Check for break on non-empty only after ALL transforms are complete
+                if ((options & ExpanderOptions.BreakOnNotEmpty) != 0)
+                {
+                    foreach (KeyValuePair<string, S> itemTuple in transformedItems)
+                    {
+                        if (!string.IsNullOrEmpty(itemTuple.Key))
+                        {
+                            brokeEarly = true;
+                            return transformedItems; // break out early
+                        }
                     }
                 }
 
@@ -2548,7 +2552,7 @@ namespace Microsoft.Build.Evaluation
                             // 1. in multiprocess mode we're safe to get the current directory as we'll be running on TaskItems which
                             // only exist within a target where we can trust the current directory
                             // 2. in single process mode we get the project directory set for the thread
-                            string directoryToUse = item.Value.ProjectDirectory ?? FileUtilities.CurrentThreadWorkingDirectory ?? Directory.GetCurrentDirectory();
+                            string directoryToUse = item.Value.ProjectDirectory ?? FrameworkFileUtilities.CurrentThreadWorkingDirectory ?? Directory.GetCurrentDirectory();
                             string definingProjectEscaped = item.Value.GetMetadataValueEscaped(FileUtilities.ItemSpecModifiers.DefiningProjectFullPath);
 
                             result = FileUtilities.ItemSpecModifiers.GetItemSpecModifier(directoryToUse, item.Key, definingProjectEscaped, functionName);
@@ -2606,7 +2610,7 @@ namespace Microsoft.Build.Evaluation
                                 // 1. in multiprocess mode we're safe to get the current directory as we'll be running on TaskItems which
                                 // only exist within a target where we can trust the current directory
                                 // 2. in single process mode we get the project directory set for the thread
-                                string baseDirectoryToUse = item.Value.ProjectDirectory ?? FileUtilities.CurrentThreadWorkingDirectory ?? String.Empty;
+                                string baseDirectoryToUse = item.Value.ProjectDirectory ?? FrameworkFileUtilities.CurrentThreadWorkingDirectory ?? String.Empty;
                                 rootedPath = Path.Combine(baseDirectoryToUse, unescapedPath);
                             }
                         }
@@ -2686,7 +2690,7 @@ namespace Microsoft.Build.Evaluation
                                 // 1. in multiprocess mode we're safe to get the current directory as we'll be running on TaskItems which
                                 // only exist within a target where we can trust the current directory
                                 // 2. in single process mode we get the project directory set for the thread
-                                string baseDirectoryToUse = item.Value.ProjectDirectory ?? FileUtilities.CurrentThreadWorkingDirectory ?? String.Empty;
+                                string baseDirectoryToUse = item.Value.ProjectDirectory ?? FrameworkFileUtilities.CurrentThreadWorkingDirectory ?? String.Empty;
                                 rootedPath = Path.Combine(baseDirectoryToUse, unescapedPath);
                             }
 
@@ -2765,7 +2769,7 @@ namespace Microsoft.Build.Evaluation
                                     // 1. in multiprocess mode we're safe to get the current directory as we'll be running on TaskItems which
                                     // only exist within a target where we can trust the current directory
                                     // 2. in single process mode we get the project directory set for the thread
-                                    string baseDirectoryToUse = item.Value.ProjectDirectory  ?? FileUtilities.CurrentThreadWorkingDirectory ?? String.Empty;
+                                    string baseDirectoryToUse = item.Value.ProjectDirectory ?? FrameworkFileUtilities.CurrentThreadWorkingDirectory ?? String.Empty;
                                     rootedPath = Path.Combine(baseDirectoryToUse, unescapedPath);
                                 }
 
@@ -3316,7 +3320,7 @@ namespace Microsoft.Build.Evaluation
                             // 1. in multiprocess mode we're safe to get the current directory as we'll be running on TaskItems which
                             // only exist within a target where we can trust the current directory
                             // 2. in single process mode we get the project directory set for the thread
-                            string directoryToUse = sourceOfMetadata.ProjectDirectory ?? FileUtilities.CurrentThreadWorkingDirectory ?? Directory.GetCurrentDirectory();
+                            string directoryToUse = sourceOfMetadata.ProjectDirectory ?? FrameworkFileUtilities.CurrentThreadWorkingDirectory ?? Directory.GetCurrentDirectory();
                             string definingProjectEscaped = sourceOfMetadata.GetMetadataValueEscaped(FileUtilities.ItemSpecModifiers.DefiningProjectFullPath);
 
                             value = FileUtilities.ItemSpecModifiers.GetItemSpecModifier(directoryToUse, itemSpec, definingProjectEscaped, match.Name);
@@ -4004,7 +4008,7 @@ namespace Microsoft.Build.Evaluation
                             if (_receiverType == typeof(File) || _receiverType == typeof(Directory)
                                 || _receiverType == typeof(Path))
                             {
-                                argumentValue = FileUtilities.FixFilePath(argumentValue);
+                                argumentValue = FrameworkFileUtilities.FixFilePath(argumentValue);
                             }
 
                             args[n] = EscapingUtilities.UnescapeAll(argumentValue);
