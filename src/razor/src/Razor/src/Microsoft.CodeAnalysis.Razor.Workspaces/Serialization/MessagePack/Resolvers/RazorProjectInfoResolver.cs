@@ -37,11 +37,8 @@ internal sealed class RazorProjectInfoResolver : IFormatterResolver
     {
         private static readonly Dictionary<Type, object> s_map = new()
         {
-            RazorProjectInfoFormatter.Instance,
-
             ChecksumFormatter.Instance,
             DocumentSnapshotHandleFormatter.Instance,
-            ProjectWorkspaceStateFormatter.Instance,
             RazorConfigurationFormatter.Instance,
 
             // tag helpers

@@ -10,7 +10,6 @@ using System.IO;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Serialization.Json;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -60,25 +59,14 @@ public class GenerateJsonFiles(ITestOutputHelper testOutput) : ToolingTestBase(t
     {
         var filePath = Path.Combine([GetSharedFilesRoot(), .. jsonFile.PathParts]);
 
-        if (jsonFile.IsRazorProjectInfo)
-        {
-            var original = DeserializeProjectInfoFromFile(filePath);
-            JsonDataConvert.SerializeToFile(original, filePath, indented: true);
-        }
-        else
-        {
-            var original = DeserializeTagHelperArrayFromFile(filePath);
-            JsonDataConvert.SerializeToFile(original, filePath, indented: true);
-        }
+        var original = DeserializeTagHelperArrayFromFile(filePath);
+        JsonDataConvert.SerializeToFile(original, filePath, indented: true);
     }
 
-    public readonly record struct JsonFile(string[] PathParts, bool IsRazorProjectInfo)
+    public readonly record struct JsonFile(string[] PathParts)
     {
         public static JsonFile TagHelpers(params string[] pathParts)
-            => new(pathParts, IsRazorProjectInfo: false);
-
-        public static JsonFile RazorProjectInfo(params string[] pathParts)
-            => new(pathParts, IsRazorProjectInfo: true);
+            => new(pathParts);
     }
 
     public static TheoryData<JsonFile> JsonFiles =>
@@ -88,15 +76,7 @@ public class GenerateJsonFiles(ITestOutputHelper testOutput) : ToolingTestBase(t
             JsonFile.TagHelpers("Tooling", "BlazorServerApp.TagHelpers.json"),
             JsonFile.TagHelpers("Tooling", "taghelpers.json"),
             JsonFile.TagHelpers("Tooling", "Telerik", "Kendo.Mvc.Examples.taghelpers.json"),
-            JsonFile.RazorProjectInfo("Tooling", "project.razor.json"),
-            JsonFile.RazorProjectInfo("Tooling", "Telerik", "Kendo.Mvc.Examples.project.razor.json")
         };
-
-    private static RazorProjectInfo DeserializeProjectInfoFromFile(string filePath)
-    {
-        using var reader = new StreamReader(filePath);
-        return JsonDataConvert.DeserializeProjectInfo(reader);
-    }
 
     private static ImmutableArray<TagHelperDescriptor> DeserializeTagHelperArrayFromFile(string filePath)
     {
