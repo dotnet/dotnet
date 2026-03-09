@@ -40,7 +40,7 @@ public class AcceptanceTestBase : IntegrationTestBase
 
     public const string NETFX462_48 = "net462;net472;net48";
     public const string NETFX462_NET11 = "net462;net472;net48;net8.0;net9.0;net10.0;net11.0";
-    public const string DEFAULT_RUNNER_NETFX = Net462TargetFramework;
+    public const string DEFAULT_RUNNER_NETFX = Net48TargetFramework;
     public const string DEFAULT_HOST_NETFX = Net462TargetFramework;
     public const string DEFAULT_RUNNER_NETCORE = Core80TargetFramework;
     public const string DEFAULT_HOST_NETCORE = Core80TargetFramework;
@@ -52,6 +52,8 @@ public class AcceptanceTestBase : IntegrationTestBase
     public const string LATEST_TO_LEGACY = "Latest;LatestPreview;LatestStable;RecentStable;MostDownloaded;PreviousStable;LegacyStable";
     public const string LATESTPREVIEW_TO_LEGACY = "LatestPreview;LatestStable;RecentStable;MostDownloaded;PreviousStable;LegacyStable";
     public const string LATEST = "Latest";
+    // "Special" version for runner, to take the latest from VSIX we don't ship any other component that way, so we need separate value to control it.
+    public const string LATESTVSIX = "LatestVsix";
     public const string LATESTSTABLE = "LatestStable";
     internal const string MSTEST = "MSTest";
 

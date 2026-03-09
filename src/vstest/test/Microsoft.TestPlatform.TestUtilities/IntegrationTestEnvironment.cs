@@ -29,6 +29,7 @@ public class IntegrationTestEnvironment
     public static string ArtifactsTempDirectory { get; } = Path.Combine(RepoRootDirectory, "artifacts", "tmp", BuildConfiguration);
 
     public static string LocalPackageSource { get; } = Path.Combine(RepoRootDirectory, "artifacts", "packages", BuildConfiguration, "Shipping").TrimEnd(Path.DirectorySeparatorChar);
+    public static string LocalVsixInsertion { get; } = Path.Combine(RepoRootDirectory, "artifacts", "VSSetup", BuildConfiguration, "Insertion", "Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI.vsix");
     public static string LatestLocallyBuiltNugetVersion { get; } = GetLatestLocallyBuiltPackageVersion();
 
     /// <summary>

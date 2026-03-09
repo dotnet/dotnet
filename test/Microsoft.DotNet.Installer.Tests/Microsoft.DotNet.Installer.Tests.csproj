@@ -71,6 +71,12 @@
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).TargetProductVersion">
         <Value>$(VersionMajor).$(VersionMinor)</Value>
       </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).DotNetRuntimeSourceFeed">
+        <Value>$(DotNetRuntimeSourceFeed)</Value>
+      </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).DotNetRuntimeSourceFeedKey">
+        <Value>$(DotNetRuntimeSourceFeedKey)</Value>
+      </RuntimeHostConfigurationOption>
     </ItemGroup>
   </Target>
 

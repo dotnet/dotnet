@@ -25,3 +25,6 @@
 [submodule "spectre-console"]
 	path = src/externalPackages/src/spectre-console
 	url = https://github.com/spectreconsole/spectre.console
+[submodule "src/externalPackages/src/antlr4"]
+	path = src/externalPackages/src/antlr4
+	url = https://github.com/antlr/antlr4

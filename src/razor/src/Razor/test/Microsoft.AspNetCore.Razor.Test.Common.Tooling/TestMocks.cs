@@ -1,9 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Threading;
-using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
@@ -33,60 +31,6 @@ internal static class TestMocks
 
         return mock.Object;
     }
-
-    public interface IClientConnectionBuilder
-    {
-        void SetupSendRequest<TParams, TResponse>(string method, TResponse response, bool verifiable = false);
-        void SetupSendRequest<TParams, TResponse>(string method, TParams @params, TResponse response, bool verifiable = false);
-    }
-
-    private sealed class ClientConnectionBuilder : IClientConnectionBuilder
-    {
-        public StrictMock<IClientConnection> Mock { get; } = new();
-
-        public void SetupSendRequest<TParams, TResponse>(string method, TResponse response, bool verifiable = false)
-        {
-            var returnsResult = Mock
-                .Setup(x => x.SendRequestAsync<TParams, TResponse>(method, It.IsAny<TParams>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(response);
-
-            if (verifiable)
-            {
-                returnsResult.Verifiable();
-            }
-        }
-
-        public void SetupSendRequest<TParams, TResponse>(string method, TParams @params, TResponse response, bool verifiable = false)
-        {
-            var returnsResult = Mock
-                .Setup(x => x.SendRequestAsync<TParams, TResponse>(method, @params, It.IsAny<CancellationToken>()))
-                .ReturnsAsync(response);
-
-            if (verifiable)
-            {
-                returnsResult.Verifiable();
-            }
-        }
-    }
-
-    public static IClientConnection CreateClientConnection(Action<IClientConnectionBuilder> configure)
-    {
-        var builder = new ClientConnectionBuilder();
-        configure?.Invoke(builder);
-        return builder.Mock.Object;
-    }
-
-    public static void VerifySendRequest<TParams, TResponse>(this Mock<IClientConnection> mock, string method, Times times)
-        => mock.Verify(x => x.SendRequestAsync<TParams, TResponse>(method, It.IsAny<TParams>(), It.IsAny<CancellationToken>()), times);
-
-    public static void VerifySendRequest<TParams, TResponse>(this Mock<IClientConnection> mock, string method, Func<Times> times)
-        => mock.Verify(x => x.SendRequestAsync<TParams, TResponse>(method, It.IsAny<TParams>(), It.IsAny<CancellationToken>()), times);
-
-    public static void VerifySendRequest<TParams, TResponse>(this Mock<IClientConnection> mock, string method, TParams @params, Times times)
-        => mock.Verify(x => x.SendRequestAsync<TParams, TResponse>(method, @params, It.IsAny<CancellationToken>()), times);
-
-    public static void VerifySendRequest<TParams, TResponse>(this Mock<IClientConnection> mock, string method, TParams @params, Func<Times> times)
-        => mock.Verify(x => x.SendRequestAsync<TParams, TResponse>(method, @params, It.IsAny<CancellationToken>()), times);
 
     public static IProjectSnapshot CreateProjectSnapshot(HostProject hostProject, ProjectWorkspaceState? projectWorkspaceState = null)
     {
