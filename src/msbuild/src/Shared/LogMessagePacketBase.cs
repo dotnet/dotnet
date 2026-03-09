@@ -23,9 +23,6 @@ namespace Microsoft.Build.Shared
     /// An enumeration of all the types of BuildEventArgs that can be
     /// packaged by this logMessagePacket
     /// </summary>
-    /// <remarks>
-    /// Several of these values must be kept in sync with MSBuildTaskHost's LoggingEventType.
-    /// </remarks>
     internal enum LoggingEventType : int
     {
         /// <summary>
