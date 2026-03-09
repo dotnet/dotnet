@@ -67,7 +67,7 @@ variables:
     value: 'release'
 - ${{ else }}:
   - name: brandingType
-    value: 'empty'
+    value: ''
 
 ## Do not set this when building source only to avoid including telemetry in the bootstrap artifacts
 ## handed off to distro partners.
@@ -181,52 +181,52 @@ variables:
 - name: azurelinuxX64CrossContainerName
   value: azurelinuxX64CrossContainer
 - name: azurelinuxX64CrossContainerImage
-  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-cross-amd64
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-cross-amd64
 
 - name: azurelinuxArmCrossContainerName
   value: azurelinuxArmCrossContainer
 - name: azurelinuxArmCrossContainerImage
-  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-cross-arm
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-cross-arm
 
 - name: azurelinuxArm64CrossContainerName
   value: azurelinuxArm64CrossContainer
 - name: azurelinuxArm64CrossContainerImage
-  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-cross-arm64
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-cross-arm64
 
 - name: azurelinuxX64MuslCrossContainerName
   value: azurelinuxX64MuslCrossContainer
 - name: azurelinuxX64MuslCrossContainerImage
-  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-cross-amd64-musl
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-cross-amd64-musl
 
 - name: azurelinuxArmMuslCrossContainerName
   value: azurelinuxArmMuslCrossContainer
 - name: azurelinuxArmMuslCrossContainerImage
-  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-cross-arm-musl
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-cross-arm-musl
 
 - name: azurelinuxArm64MuslCrossContainerName
   value: azurelinuxArm64MuslCrossContainer
 - name: azurelinuxArm64MuslCrossContainerImage
-  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-cross-arm64-musl
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-cross-arm64-musl
 
 - name: androidCrossContainerName
   value: androidCrossContainer
 - name: androidCrossContainerImage
-  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-cross-android-amd64
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-cross-android-amd64
 
 - name: linuxBionicCrossContainerName
   value: linuxBionicCrossContainer
 - name: linuxBionicCrossContainerImage
-  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-cross-android-openssl-amd64
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-cross-android-openssl-amd64
 
 - name: browserCrossContainerName
   value: browserCrossContainer
 - name: browserCrossContainerImage
-  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-webassembly-amd64
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-webassembly-amd64
 
 - name: wasiCrossContainerName
   value: wasiCrossContainer
 - name: wasiCrossContainerImage
-  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-webassembly-amd64
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-webassembly-amd64
 
 - name: almaLinuxName
   value: AlmaLinux8
@@ -277,10 +277,10 @@ variables:
     value: macos-15
   - ${{ if eq(parameters.isScoutingJob, true) }}:
     - name: poolImage_Windows
-      value: windows.vs2026preview.scout.amd64.open
+      value: windows.vs2022.scout.amd64.open
   - ${{ else }}:
     - name: poolImage_Windows
-      value: windows.vs2026.amd64.open
+      value: windows.vs2022.amd64.open
 - ${{ else }}:
   - name: defaultPoolName
     value: NetCore1ESPool-Internal
@@ -295,5 +295,5 @@ variables:
   - name: poolImage_Mac
     value: macos-latest-internal
   - name: poolImage_Windows
-    value: windows.vs2026.amd64
+    value: windows.vs2022.amd64
 
