@@ -23,7 +23,7 @@
     <PackageReference Include="System.CommandLine" />
     <PackageReference Include="Microsoft.Build.Locator" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\Watch\Microsoft.DotNet.HotReload.Watch.csproj" />
   </ItemGroup>

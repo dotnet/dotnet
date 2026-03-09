@@ -60,7 +60,7 @@ Examples:
     </source>
         <target state="translated">
 
-环境变量:
+环境变量: 
 
   DOTNET_USE_POLLING_FILE_WATCHER
   设置为 "1" 或 "true" 时，dotnet-watch 将轮询文件系统
@@ -89,7 +89,7 @@ Examples:
   指示应将 "--verbose" 转而视为
   dotnet-run 的参数。
 
-示例:
+示例: 
   dotnet watch run
   dotnet watch test
 
