@@ -56,6 +56,7 @@ public class MSTestCompatibilityDataSource : TestDataSourceAttribute<RunnerInfo>
         _builder.WithEveryVersionOfHost = false;
         _builder.WithEveryVersionOfAdapter = true;
         _builder.WithOlderConfigurations = false;
+        _builder.WithVSIXRunner = false;
         _builder.WithInProcess = InProcess;
 
         _builder.BeforeRunnerFeature = BeforeRunnerFeature;

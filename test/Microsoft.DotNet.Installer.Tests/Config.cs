@@ -52,6 +52,12 @@ public static class Config
     public static string TargetProductVersion { get; } = TryGetRuntimeConfig(TargetProductVersionSwitch, out string? value) ? value : string.Empty;
     const string TargetProductVersionSwitch = RuntimeConfigSwitchPrefix + nameof(TargetProductVersion);
 
+    public static string DotNetRuntimeSourceFeed { get; } = TryGetRuntimeConfig(DotNetRuntimeSourceFeedSwitch, out string? value) ? value : string.Empty;
+    const string DotNetRuntimeSourceFeedSwitch = RuntimeConfigSwitchPrefix + nameof(DotNetRuntimeSourceFeed);
+
+    public static string DotNetRuntimeSourceFeedKey { get; } = TryGetRuntimeConfig(DotNetRuntimeSourceFeedKeySwitch, out string? value) ? value : string.Empty;
+    const string DotNetRuntimeSourceFeedKeySwitch = RuntimeConfigSwitchPrefix + nameof(DotNetRuntimeSourceFeedKey);
+
     public const string RuntimeConfigSwitchPrefix = "Microsoft.DotNet.Installer.Tests.";
 
     public static Architecture GetArchitecture(string architecture) => architecture switch

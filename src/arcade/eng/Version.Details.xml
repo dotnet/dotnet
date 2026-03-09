@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="arcade" Sha="18089f4b324825f5720bd722d24d6a8847f8b5d9" BarId="302589" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="arcade" Sha="3451f7f9d9c3c10f9a8e623985e573b2ff4d3361" BarId="304338" />
   <ProductDependencies>
   </ProductDependencies>
   <ToolsetDependencies>
@@ -36,9 +36,9 @@
       <Uri>https://github.com/dotnet/arcade-services</Uri>
       <Sha>526aa00e2a2533e0263e50f299d5525572c48c18</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XHarness.CLI" Version="11.0.0-prerelease.26107.1">
+    <Dependency Name="Microsoft.DotNet.XHarness.CLI" Version="11.0.0-prerelease.26117.1">
       <Uri>https://github.com/dotnet/xharness</Uri>
-      <Sha>bfbac237157e59cdbd19334325b2af80bd6e9828</Sha>
+      <Sha>0eeaa60169fe6a95932d29d822e20eb225ce0143</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.8.0">
       <Uri>https://github.com/dotnet/roslyn</Uri>
@@ -123,9 +123,9 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>d3981726bc8b0e179db50301daf9f22d42393096</Sha>
     </Dependency>
-    <Dependency Name="System.CommandLine" Version="2.0.0-beta5.25210.1">
+    <Dependency Name="System.CommandLine" Version="2.0.3">
       <Uri>https://github.com/dotnet/command-line-api</Uri>
-      <Sha>e9b0511d7f1128e2bc3be7a658a2a4ea977e602d</Sha>
+      <Sha>c7b5e07cfed85e88c162dc1c916efaff03742e6e</Sha>
     </Dependency>
     <!-- Transitive dependency needed for source build. -->
     <Dependency Name="System.Reflection.Metadata" Version="9.0.0">

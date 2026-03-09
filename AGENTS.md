@@ -90,3 +90,6 @@ Repos are categorized in `eng/VmrLayout.props` as `SharedRepositoryReference` it
 ## Per-Repo Instructions
 
 Each constituent repo may have its own AI assistant instructions (i.e. `AGENTS.md`, `copilot-instructions.md` file) with repo-specific build, test, and coding conventions. **Always refer to these when working within a specific `src/<repo>/` directory.**
+
+## Working with pull requests
+Most pull requests are code flow from constituent repos (their name contains `Source code updates from `), **NEVER** force push to those pull requests.

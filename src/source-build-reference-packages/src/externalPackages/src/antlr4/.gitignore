@@ -1,0 +1,139 @@
+# Nuget packages
+*.nupkg
+
+# Maven build folders
+target/
+# ... but not code generation targets
+!tool/src/org/antlr/v4/codegen/target/
+
+# Node.js (npm and typings) cached dependencies
+node_modules/
+typings/
+
+# Ant build folders
+build/
+dist/
+lib/
+user.build.properties
+
+# MacOSX files
+.DS_Store
+
+## Python, selected lines from https://raw.githubusercontent.com/github/gitignore/master/Python.gitignore
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+# Build results
+*.egg-info/
+
+## CSharp and VisualStudio, selected lines from https://raw.githubusercontent.com/github/gitignore/master/VisualStudio.gitignore
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files (MonoDevelop/Xamarin Studio/Visual Studio)
+*.userprefs
+.vs/
+project.lock.json
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+
+# NetBeans user configuration files
+nbactions*.xml
+/nbproject/private/
+*/nbproject/private/
+
+# IntelliJ projects
+*.iws
+*.iml
+.idea/
+
+# Eclipse projects
+.classpath
+.project
+.settings/
+.metadata
+
+# Profiler results
+*.hprof
+
+# parrt's bash prompt data
+.fetch_time_cache
+
+# Playground
+#/tool/playground/
+
+# Generated files
+/out/
+/gen/
+/gen3/
+/gen4/
+/tool/playground/
+tmp/
+**/generatedCode/*.interp
+**/generatedCode/*.tokens
+**/generatedCode/*.bak
+
+# Configurable build files
+bilder.py
+bilder.pyc
+bild.log
+
+bild_output.txt
+runtime/Cpp/demo/generated
+xcuserdata
+*.jar
+.vscode
+
+# VSCode Java plugin temporary files
+javac-services.0.log
+javac-services.0.log.lck
+
+# Don't ignore python tests
+!runtime/Python3/test/
+Antlr4.sln
+runtime/PHP
+
+# Swift binaries
+.build/
+
+# Code coverage reports
+coverage/
+
+# Cpp generated build files
+runtime/Cpp/CMakeCache.txt
+runtime/Cpp/CMakeFiles/
+runtime/Cpp/CPackConfig.cmake
+runtime/Cpp/CPackSourceConfig.cmake
+runtime/Cpp/CTestTestfile.cmake
+runtime/Cpp/Makefile
+runtime/Cpp/_deps/
+runtime/Cpp/cmake_install.cmake
+runtime/Cpp/runtime/CMakeFiles/
+runtime/Cpp/runtime/CTestTestfile.cmake
+runtime/Cpp/runtime/Makefile
+runtime/Cpp/runtime/antlr4_tests
+runtime/Cpp/runtime/antlr4_tests\[1]_include.cmake
+runtime/Cpp/runtime/antlr4_tests\[1]_tests.cmake
+runtime/Cpp/runtime/cmake_install.cmake
+runtime/Cpp/runtime/libantlr4-runtime.4.10.1.dylib
+runtime/Cpp/runtime/libantlr4-runtime.a
+runtime/Cpp/runtime/libantlr4-runtime.dylib
+/runtime/Cpp/runtime/libantlr4-runtime.4.12.0.dylib
+/runtime/Cpp/runtime/libantlr4-runtime.4.13.0.dylib
+
+# Go test and performance trace files
+**/*.pprof

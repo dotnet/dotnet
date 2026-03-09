@@ -14,6 +14,7 @@
 
   <!-- External package versions -->
   <PropertyGroup>
+    <Antlr4Version>4.13.1</Antlr4Version>
     <AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>8.0.1</AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>
     <CssParserReleaseVersionSuffix>20230414.1</CssParserReleaseVersionSuffix>
     <HumanizerReleaseVersion>2.14.1</HumanizerReleaseVersion>

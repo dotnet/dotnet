@@ -54,14 +54,24 @@ public class SourcelinkTests : SdkTests
                 symbolsRoot,
                 OutputHelper);
 
-            IList<string> failedFiles = ValidateSymbols(symbolsRoot, InitializeSourcelinkTool());
+            IList<(string File, string StdOut, string StdErr)> failedFiles = ValidateSymbols(symbolsRoot, InitializeSourcelinkTool());
 
             if (failedFiles.Count > 0)
             {
                 OutputHelper.WriteLine($"Sourcelink verification failed for the following files:");
-                foreach (string file in failedFiles)
+                foreach ((string file, string stdOut, string stdErr) in failedFiles)
                 {
-                    OutputHelper.WriteLine(file);
+                    OutputHelper.WriteLine($"--- {file} ---");
+                    if (!string.IsNullOrWhiteSpace(stdOut))
+                    {
+                        OutputHelper.WriteLine("stdout:");
+                        OutputHelper.WriteLine(stdOut);
+                    }
+                    if (!string.IsNullOrWhiteSpace(stdErr))
+                    {
+                        OutputHelper.WriteLine("stderr:");
+                        OutputHelper.WriteLine(stdErr);
+                    }
                 }
             }
 
@@ -94,11 +104,11 @@ public class SourcelinkTests : SdkTests
         return Utilities.GetFile(extractedToolPath, SourcelinkToolBinaryFilename);
     }
 
-    private IList<string> ValidateSymbols(string path, string sourcelinkToolPath)
+    private IList<(string File, string StdOut, string StdErr)> ValidateSymbols(string path, string sourcelinkToolPath)
     {
         Assert.True(Directory.Exists(path), $"Path, with symbol files to validate, does not exist: {path}");
 
-        var failedFiles = new ConcurrentBag<string>();
+        var failedFiles = new ConcurrentBag<(string File, string StdOut, string StdErr)>();
 
         IEnumerable<string> allFiles = Directory.GetFiles(path, "*.pdb", SearchOption.AllDirectories);
         Parallel.ForEach(allFiles, file =>
@@ -114,7 +124,7 @@ public class SourcelinkTests : SdkTests
 
             if (executeResult.Process.ExitCode != 0)
             {
-                failedFiles.Add(file);
+                failedFiles.Add((file, executeResult.StdOut, executeResult.StdErr));
             }
         });
 

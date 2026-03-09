@@ -136,7 +136,7 @@
       </trans-unit>
       <trans-unit id="Remove_unnecessary_directives">
         <source>Remove unnecessary directives</source>
-        <target state="new">Remove unnecessary directives</target>
+        <target state="translated">Remover diretivas desnecessárias</target>
         <note />
       </trans-unit>
       <trans-unit id="Simplify_Fully_Qualified_Component_Title">
