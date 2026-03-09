@@ -265,16 +265,6 @@ internal static class TestTaskUtils
             return Path.GetFullPath(dotnetExe);
         }
 
-        var values = Environment.GetEnvironmentVariable("PATH");
-        foreach (var p in values!.Split(Path.PathSeparator))
-        {
-            var fullPath = Path.Combine(p, dotnetExe);
-            if (File.Exists(fullPath))
-            {
-                return fullPath;
-            }
-        }
-
         return null;
     }
 
