@@ -7,9 +7,6 @@ namespace Microsoft.CodeAnalysis.Razor.Remote;
 
 internal struct RemoteClientInitializationOptions
 {
-    [JsonPropertyName("useRazorCohostServer")]
-    public required bool UseRazorCohostServer { get; set; }
-
     [JsonPropertyName("returnCodeActionAndRenamePathsWithPrefixedSlash")]
     public required bool ReturnCodeActionAndRenamePathsWithPrefixedSlash { get; set; }
 
