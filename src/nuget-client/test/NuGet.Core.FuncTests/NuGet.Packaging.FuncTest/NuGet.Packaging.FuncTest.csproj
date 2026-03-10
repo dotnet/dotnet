@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(TargetFrameworksUnitTestForSigning)</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworksUnitTest)</TargetFrameworks>
     <Description>Integration tests for the more involved NuGet.Packaging functionality, such as signing.</Description>
   </PropertyGroup>
 

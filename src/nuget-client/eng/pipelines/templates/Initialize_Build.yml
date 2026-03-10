@@ -29,13 +29,5 @@ steps:
         exit 1
       }
 
-- task: PowerShell@1
-  displayName: "Add Build Tags"
-  inputs:
-    scriptType: "inlineScript"
-    inlineScript: |
-      Write-Host "##vso[build.addbuildtag]${env:BUILD_SOURCEVERSIONAUTHOR}"
-      Write-Host "##vso[build.addbuildtag]${env:BUILD_SOURCEBRANCHNAME}"
-
 - task: ComponentGovernanceComponentDetection@0
   displayName: 'Component Detection'
