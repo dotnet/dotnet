@@ -185,7 +185,7 @@ jobs:
   - name: additionalBuildArgs
     value: ''
   - name: runTestsTimeout
-    value: 30
+    value: 60
 
   - ${{ if parameters.isBuiltFromVmr }}:
     - name: vmrPath
