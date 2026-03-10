@@ -33,12 +33,6 @@ internal class VSCodeRemoteServicesInitializer(
 
     public async Task StartupAsync(VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext, CancellationToken cancellationToken)
     {
-        // Initializing remote services will create a MEF composition, but if cohost is not on we don't need it
-        if (!_featureOptions.UseRazorCohostServer)
-        {
-            return;
-        }
-
         // Normal remote service invoker logic requires a solution, but we don't have one here. Fortunately we don't need one, and since
         // we know this is VS Code specific, its all just smoke and mirrors anyway. We can avoid the smoke :)
         var serviceInterceptor = new VSCodeBrokeredServiceInterceptor();
@@ -53,7 +47,6 @@ internal class VSCodeRemoteServicesInitializer(
 
         await service.InitializeAsync(new RemoteClientInitializationOptions
         {
-            UseRazorCohostServer = _featureOptions.UseRazorCohostServer,
             ReturnCodeActionAndRenamePathsWithPrefixedSlash = _featureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash,
             SupportsFileManipulation = _featureOptions.SupportsFileManipulation,
             ShowAllCSharpCodeActions = _featureOptions.ShowAllCSharpCodeActions,
