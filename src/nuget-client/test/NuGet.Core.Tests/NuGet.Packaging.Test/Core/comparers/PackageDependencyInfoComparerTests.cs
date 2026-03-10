@@ -23,7 +23,7 @@ namespace NuGet.Packaging.Tests
         {
             ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
                 () => new PackageDependencyInfoComparer(
-                    identityComparer: null,
+                    identityComparer: null!,
                     PackageDependencyComparer.Default));
 
             Assert.Equal("identityComparer", exception.ParamName);
@@ -35,7 +35,7 @@ namespace NuGet.Packaging.Tests
             ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
                 () => new PackageDependencyInfoComparer(
                     PackageIdentityComparer.Default,
-                    dependencyComparer: null));
+                    dependencyComparer: null!));
 
             Assert.Equal("dependencyComparer", exception.ParamName);
         }

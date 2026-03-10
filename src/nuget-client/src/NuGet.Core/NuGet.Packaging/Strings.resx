@@ -271,6 +271,14 @@
     <comment>0 -  start date
 1 - end date</comment>
   </data>
+  <data name="CertUtilityCertificateCrlUrl" xml:space="preserve">
+    <value>CRL URL: {0}</value>
+    <comment>0 - CRL distribution point URL</comment>
+  </data>
+  <data name="CertUtilityCertificateOcspUrl" xml:space="preserve">
+    <value>OCSP URL: {0}</value>
+    <comment>0 - OCSP responder URL</comment>
+  </data>
   <data name="CertUtilityMultipleCertificatesFooter" xml:space="preserve">
     <value>... {0} more.</value>
     <comment>0 - number of certificates left</comment>

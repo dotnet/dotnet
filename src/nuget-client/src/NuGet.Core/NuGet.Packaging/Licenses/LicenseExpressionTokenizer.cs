@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -51,7 +49,7 @@ namespace NuGet.Packaging.Licenses
             {
                 var processingToken = token;
 
-                IList<LicenseExpressionToken> tokensAfterValue = null;
+                IList<LicenseExpressionToken>? tokensAfterValue = null;
 
                 while (processingToken.Length > 0 && (processingToken[0] == '(' || processingToken[0] == ')'))
                 {
@@ -97,7 +95,7 @@ namespace NuGet.Packaging.Licenses
             {
                 return new LicenseExpressionToken(bracket.ToString(CultureInfo.CurrentCulture), LicenseTokenType.CLOSING_BRACKET);
             }
-            return null;
+            throw new ArgumentException("Invalid bracket character: " + bracket);
         }
 
         /// <summary>

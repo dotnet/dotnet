@@ -1,16 +1,18 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
+using System;
 
 namespace NuGet.ContentModel
 {
     public class Asset
     {
-        public string Path { get; set; }
-        public string Link { get; set; }
+        public required string Path { get; set; }
 
-        public override string ToString()
+        [Obsolete("This is unused and will be removed in a future release.")]
+        public string? Link { get; set; }
+
+        public override string? ToString()
         {
             return Path;
         }
