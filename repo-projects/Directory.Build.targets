@@ -531,16 +531,16 @@
   </Target>
 
   <Target Name="SetBuildProperties"
-          DependsOnTargets="PrepareRepositoryReferences;SetRepoOriginalSourceRevisionId">
-    <!-- Make everything that depends on live runtime target current pack versions to avoid assembly version mismatches with the LKG SDK that uses 10.0.0.0 versions when targeting net11.0.
-         Experimental, therefore commented out. -->
+          DependsOnTargets="PrepareRepositoryReferences;SetRepoOriginalSourceRevisionId;GetProducedPackagesFromTransitiveReferences">
+    <!-- Make everything that depends on live runtime repo uses the live targeting pack to avoid a mismatch between the API/version packages expect to be in framework and what the actual targeting pack provides. -->
     <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '@(TransitiveRepositoryReference->AnyHaveMetadataValue('Identity', 'runtime'))' == 'true'">
+      <!-- Use the targeting pack version as a shortcut for other pack versions since they all version consistently -->
       <RuntimePackVersion>@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.NETCore.App.Ref')->Metadata('Version'))</RuntimePackVersion>
-      <!-- <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion=$(RuntimePackVersion)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion=$(RuntimePackVersion)</BuildArgs>
       <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
       <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
       <BuildArgs>$(BuildArgs) /p:KnownRuntimePackMicrosoftNETCoreAppCurrentMonoLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
-      <BuildArgs>$(BuildArgs) /p:KnownRuntimePackMicrosoftNETCoreAppCurrentNativeAOTLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs> -->
+      <BuildArgs>$(BuildArgs) /p:KnownRuntimePackMicrosoftNETCoreAppCurrentNativeAOTLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
     </PropertyGroup>
 
     <PropertyGroup>

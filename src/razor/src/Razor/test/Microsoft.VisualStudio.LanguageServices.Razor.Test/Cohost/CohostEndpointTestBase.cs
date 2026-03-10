@@ -42,7 +42,7 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
 
         _clientSettingsManager = new ClientSettingsManager([], null, null);
 
-        _filePathService = new VisualStudioFilePathService(FeatureOptions);
+        _filePathService = new VisualStudioFilePathService();
 
         _semanticTokensLegendService = TestRazorSemanticTokensLegendService.GetInstance(supportsVSExtensions: true);
     }
