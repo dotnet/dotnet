@@ -15,5 +15,4 @@ internal class VSCodeLanguageServerFeatureOptions() : LanguageServerFeatureOptio
     public override bool SupportsFileManipulation => true;
     public override bool ShowAllCSharpCodeActions => false;
     public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash => PlatformInformation.IsWindows;
-    public override bool UseRazorCohostServer => true;
 }
