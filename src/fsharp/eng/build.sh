@@ -183,7 +183,7 @@ while [[ $# > 0 ]]; do
       tfm=$2
       shift
       ;;
-    /p:*)
+    /p:*|/warnAsError*|/warnNotAsError*)
       properties+=("$1")
       ;;
     *)
