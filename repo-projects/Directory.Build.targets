@@ -32,7 +32,7 @@
     <CommonArgs Condition="'$(DefaultArtifactVisibility)' != ''">$(CommonArgs) /p:DefaultArtifactVisibility=$(DefaultArtifactVisibility)</CommonArgs>
 
     <!-- Don't error on pruning warnings during offline build, these will be fixed in on rebootstrap -->
-    <CommonArgs Condition="'$(DotNetBuildWithOnlineFeeds)' != 'true'">$(CommonArgs) /warnNotAsError:NU1510</CommonArgs>
+    <CommonArgs Condition="'$(DotNetBuildWithOnlineFeeds)' != 'true'">$(CommonArgs) /warnNotAsError:NU1510 /p:AdditionalWarningsNotAsErrors=NU1510</CommonArgs>
 
     <!-- Branding -->
     <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'repodefault' or '$(RepoDotNetFinalVersionKind)' == ''"></RepoDotNetFinalVersionKindArg>
