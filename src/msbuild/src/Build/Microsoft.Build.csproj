@@ -122,6 +122,11 @@
     <Compile Include="..\Shared\TaskHostConfiguration.cs" />
     <Compile Include="..\Shared\TaskHostTaskCancelled.cs" />
     <Compile Include="..\Shared\TaskHostTaskComplete.cs" />
+    <Compile Include="..\Shared\ITaskHostCallbackPacket.cs" />
+    <Compile Include="..\Shared\TaskHostIsRunningMultipleNodesRequest.cs" />
+    <Compile Include="..\Shared\TaskHostIsRunningMultipleNodesResponse.cs" />
+    <Compile Include="..\Shared\TaskHostCoresRequest.cs" />
+    <Compile Include="..\Shared\TaskHostCoresResponse.cs" />
     <Compile Include="..\Shared\OutOfProcTaskHostTaskResult.cs" />
     <Compile Include="..\Shared\TaskLoader.cs" />
     <Compile Include="..\Shared\NodeEngineShutdownReason.cs" />
@@ -161,6 +166,7 @@
     <Compile Include="BackEnd\BuildManager\BuildSubmissionBase.cs" />
     <Compile Include="BackEnd\BuildManager\CacheSerialization.cs" />
     <Compile Include="BackEnd\BuildManager\CacheAggregator.cs" />
+    <Compile Include="BackEnd\BuildManager\EnvironmentVariableValidator.cs" />
     <Compile Include="BackEnd\BuildManager\GlobalPropertiesLookup.cs" />
     <Compile Include="BackEnd\BuildManager\ProjectIsolationMode.cs" />
     <Compile Include="BackEnd\Client\MSBuildClientPacketPump.cs" />
@@ -244,6 +250,7 @@
     <Compile Include="BackEnd\Components\Logging\BuildLoggingContext.cs" />
     <Compile Include="BackEnd\Components\Logging\LoggingContext.cs" />
     <Compile Include="BackEnd\Components\Logging\BuildEventArgTransportSink.cs" />
+    <Compile Include="BackEnd\Components\Logging\BuildErrorTelemetryTracker.cs" />
     <Compile Include="BackEnd\Components\Logging\CentralForwardingLogger.cs" />
     <Compile Include="BackEnd\Components\Logging\EventRedirectorToSink.cs" />
     <Compile Include="BackEnd\Components\Logging\EventSourceSink.cs" />

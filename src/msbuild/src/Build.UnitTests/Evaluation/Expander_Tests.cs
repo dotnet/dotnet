@@ -3455,7 +3455,7 @@ namespace Microsoft.Build.UnitTests.Evaluation
 
                 string result = expander.ExpandIntoStringAndUnescape(@"$([MSBuild]::GetDirectoryNameOfFileAbove($(StartingDirectory), $(FileToFind)))", ExpanderOptions.ExpandProperties, MockElementLocation.Instance);
 
-                Assert.Equal(Microsoft.Build.Shared.FileUtilities.EnsureTrailingSlash(tempPath), Microsoft.Build.Shared.FileUtilities.EnsureTrailingSlash(result));
+                Assert.Equal(FrameworkFileUtilities.EnsureTrailingSlash(tempPath), FrameworkFileUtilities.EnsureTrailingSlash(result));
 
                 result = expander.ExpandIntoStringAndUnescape(@"$([MSBuild]::GetDirectoryNameOfFileAbove($(StartingDirectory), Hobbits))", ExpanderOptions.ExpandProperties, MockElementLocation.Instance);
 
@@ -5286,6 +5286,36 @@ $(
                 _ = logger.AllBuildEvents.Select(be => be.ShouldBeOfType<BuildCheckAcquisitionEventArgs>());
                 logger.AllBuildEvents.Count.ShouldBe(1);
             }
+        }
+
+        /// <summary>
+        /// Test for issue where chained item functions with empty results incorrectly evaluate as non-empty in conditions
+        /// </summary>
+        [Fact]
+        public void ChainedItemFunctionEmptyResultInCondition()
+        {
+            string content = @"
+<Project>
+  <Target Name='Test'>
+    <ItemGroup>
+      <TestItem Include='Test1' Foo='Bar' />
+      <TestItem Include='Test2' />
+    </ItemGroup>
+
+    <!-- This should be empty because Test1 has Foo='Bar', not 'Baz' -->
+    <PropertyGroup Condition=""'@(TestItem->WithMetadataValue('Identity', 'Test1')->WithMetadataValue('Foo', 'Baz'))' == ''"">
+      <EmptyResult>TRUE</EmptyResult>
+    </PropertyGroup>
+
+    <Message Text='EmptyResult=$(EmptyResult)' Importance='high' />
+  </Target>
+</Project>
+            ";
+
+            MockLogger log = Helpers.BuildProjectWithNewOMExpectSuccess(content);
+
+            // The chained WithMetadataValue should return empty, so the condition should be true and EmptyResult should be set
+            log.AssertLogContains("EmptyResult=TRUE");
         }
     }
 }
