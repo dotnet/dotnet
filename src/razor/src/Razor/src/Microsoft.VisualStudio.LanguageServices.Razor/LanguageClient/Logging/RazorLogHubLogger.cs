@@ -3,7 +3,6 @@
 
 using System;
 using System.Diagnostics;
-using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.VisualStudio.Razor.Logging;
 
@@ -29,24 +28,7 @@ internal sealed class RazorLogHubLogger(string categoryName, RazorLogHubTracePro
 
         switch (logLevel)
         {
-            // We separate out Information because we want to check for specific log messages set from CLaSP
             case LogLevel.Information:
-                // The category for start and stop will only ever be "CLaSP" so no point logging it
-                if (message.StartsWith(ClaspLoggingBridge.LogStartContextMarker))
-                {
-                    traceSource.TraceEvent(TraceEventType.Start, id: 0, "{0}", message);
-                }
-                else if (message.StartsWith(ClaspLoggingBridge.LogEndContextMarker))
-                {
-                    traceSource.TraceEvent(TraceEventType.Stop, id: 0, "{0}", message);
-                }
-                else
-                {
-                    traceSource.TraceEvent(TraceEventType.Information, id: 0, "[{0}] {1}", _categoryName, message);
-                }
-
-                break;
-
             case LogLevel.Trace:
             case LogLevel.Debug:
             case LogLevel.None:
