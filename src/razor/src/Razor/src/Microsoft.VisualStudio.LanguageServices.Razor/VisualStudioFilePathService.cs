@@ -8,6 +8,6 @@ namespace Microsoft.VisualStudio.Razor;
 
 [Export(typeof(IFilePathService))]
 [method: ImportingConstructor]
-internal sealed class VisualStudioFilePathService(LanguageServerFeatureOptions options) : AbstractFilePathService(options)
+internal sealed class VisualStudioFilePathService() : AbstractFilePathService
 {
 }
