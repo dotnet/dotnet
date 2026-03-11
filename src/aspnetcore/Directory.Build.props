@@ -91,6 +91,11 @@
      <DisableLogTaskParameterItemMetadata_Csc_References>$(TrimTaskParameters)</DisableLogTaskParameterItemMetadata_Csc_References>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(IsTrimmingTestProject)' == 'true'">
+    <!-- Should mitigate https://github.com/dotnet/aspnetcore/issues/61178 -->
+    <RestoreDisableParallel>true</RestoreDisableParallel>
+  </PropertyGroup>
+
   <Import Project="eng\QuarantinedTests.BeforeArcade.props" />
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
   <Import Project="eng\QuarantinedTests.AfterArcade.props" />
@@ -232,11 +237,6 @@
     <!-- Set the arcade before common targets so we compute ExcludeFromBuild before arcade uses it. -->
     <CustomBeforeMicrosoftCommonTargets>$(MSBuildThisFileDirectory)Directory.Build.BeforeCommonTargets.targets</CustomBeforeMicrosoftCommonTargets>
     <CustomBeforeMicrosoftCommonCrossTargetingTargets>$(MSBuildThisFileDirectory)Directory.Build.BeforeCommonTargets.targets</CustomBeforeMicrosoftCommonCrossTargetingTargets>
-  </PropertyGroup>
-
-  <!-- TODO: Re-enable NuGet Audit and fix alerts: https://github.com/dotnet/aspnetcore/issues/64177 -->
-  <PropertyGroup>
-    <NuGetAudit>false</NuGetAudit>
   </PropertyGroup>
 
   <Import Project="eng\Workarounds.props" />
