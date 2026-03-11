@@ -39,6 +39,9 @@ internal static class RazorSyntaxTreeExtensions
     public static IEnumerable<RazorUsingDirectiveSyntax> EnumerateUsingDirectives(this RazorSyntaxTree syntaxTree)
         => EnumerateDirectives<RazorUsingDirectiveSyntax>(syntaxTree);
 
+    public static IEnumerable<RazorDirectiveSyntax> EnumerateAddTagHelperDirectives(this RazorSyntaxTree syntaxTree)
+        => EnumerateDirectives<RazorDirectiveSyntax>(syntaxTree, static d => d.IsAddTagHelperDirective());
+
     public static IEnumerable<TDirective> EnumerateDirectives<TDirective>(
         this RazorSyntaxTree syntaxTree, Func<TDirective, bool>? predicate = null)
         where TDirective : BaseRazorDirectiveSyntax

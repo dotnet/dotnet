@@ -300,5 +300,4 @@ public class CSharpSectionTest() : ParserTestBase(layer: TestProject.Layer.Compi
     {
         ParseDocumentTest("@section s {<span foo='@DateTime.Now @@' />}", [SectionDirective.Directive]);
     }
-
 }

@@ -170,7 +170,7 @@ internal sealed class CSharpTestLspServer : IAsyncDisposable
             .GetMethod("ExitAsync", BindingFlags.Instance | BindingFlags.Public);
         Assert.NotNull(exitAsyncMethod);
 
-        await (Task)exitAsyncMethod.Invoke(_roslynLanguageServer, parameters: null).AssumeNotNull();
+        await (Task)exitAsyncMethod.Invoke(_roslynLanguageServer, parameters: [null]).AssumeNotNull();
 
         _testWorkspace.Dispose();
         _exportProvider.Dispose();

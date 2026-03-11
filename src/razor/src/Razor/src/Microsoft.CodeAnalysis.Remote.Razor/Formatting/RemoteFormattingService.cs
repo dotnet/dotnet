@@ -1,6 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Threading;
@@ -47,7 +48,18 @@ internal sealed class RemoteFormattingService(in ServiceArgs args) : RazorDocume
         => RunServiceAsync(
             solutionInfo,
             documentId,
-            context => new ValueTask<ImmutableArray<TextChange>>(_formattingService.GetDocumentFormattingChangesAsync(context, htmlChanges, linePositionSpan, options, cancellationToken)),
+            async context =>
+            {
+                try
+                {
+                    return await _formattingService.GetDocumentFormattingChangesAsync(context, htmlChanges, linePositionSpan, options, cancellationToken).ConfigureAwait(false);
+                }
+                catch (Exception) when (options.FromPaste)
+                {
+                    // Swallow exceptions during paste, because it's likely the cause is simply invalid code that the user will fix.
+                    return [];
+                }
+            },
             cancellationToken);
 
     public ValueTask<ImmutableArray<TextChange>> GetOnTypeFormattingEditsAsync(

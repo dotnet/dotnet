@@ -7,6 +7,11 @@
         <target state="translated">“{0}”不是 Razor 文件路径。</target>
         <note />
       </trans-unit>
+      <trans-unit id="AddTagHelper_directive_is_unnecessary">
+        <source>@addTagHelper directive is unnecessary.</source>
+        <target state="translated">@addTagHelper 指令不是必要指令。</target>
+        <note>@addTagHelper is a keyword</note>
+      </trans-unit>
       <trans-unit id="Couldnt_get_a_source_generator_run_result">
         <source>Couldn't get a source generator run result for project '{0}'.</source>
         <target state="translated">无法获取项目“{0}”的源生成器运行结果。</target>

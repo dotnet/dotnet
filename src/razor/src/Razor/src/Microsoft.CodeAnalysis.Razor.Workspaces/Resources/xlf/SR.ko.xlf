@@ -134,6 +134,11 @@
         <target state="translated">using 지시문을 {0} 수준 올리기</target>
         <note />
       </trans-unit>
+      <trans-unit id="Remove_unnecessary_directives">
+        <source>Remove unnecessary directives</source>
+        <target state="translated">불필요한 지시문 제거</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Simplify_Fully_Qualified_Component_Title">
         <source>Simplify fully qualified component</source>
         <target state="translated">정규화된 구성 요소 간소화</target>
@@ -142,6 +147,11 @@
       <trans-unit id="Simplify_Tag_To_SelfClosing_Title">
         <source>Simplify tag to self-closing</source>
         <target state="translated">태그를 자체 닫음으로 간소화</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Sort_And_Consolidate_Usings_Title">
+        <source>Sort and consolidate usings</source>
+        <target state="translated">using 정렬 및 통합</target>
         <note />
       </trans-unit>
       <trans-unit id="TagHelper_Attribute_Glyph">

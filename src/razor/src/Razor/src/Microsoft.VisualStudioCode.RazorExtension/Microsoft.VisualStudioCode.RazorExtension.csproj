@@ -44,7 +44,7 @@
 
   <ItemGroup>
     <!-- Need to make sure ObjectPool is in the bin folder for local development scenarios -->
-    <None Include="$(PkgMicrosoft_Extensions_ObjectPool)\lib\net8.0\Microsoft.Extensions.ObjectPool.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <None Include="$(PkgMicrosoft_Extensions_ObjectPool)\lib\net10.0\Microsoft.Extensions.ObjectPool.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
 
     <Content Include=".\Targets\**\*.*">
       <Pack>true</Pack>
