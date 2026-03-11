@@ -13,10 +13,10 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "9.0.13-servicing.26064.9",
+      "packageVersion": "9.0.14-servicing.26119.9",
       "path": "aspnetcore",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore",
-      "commitSha": "087328de5f1e0067be48d87295ae8d92064a1535"
+      "commitSha": "baa6b294e728e6171378b4e8c52e42e7c4d4ed63"
     },
     {
       "packageVersion": "0.11.5-alpha.25628.2",
@@ -43,16 +43,16 @@
       "commitSha": "513150c2f25077b1fcb194407e53c433c975f39b"
     },
     {
-      "packageVersion": "9.0.13",
+      "packageVersion": "9.0.14",
       "path": "efcore",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-efcore",
-      "commitSha": "30a9c442c44804eb88079ca5ca8ef3204a8beec9"
+      "commitSha": "1bea6ab613ce7346af69753850e0dd7eb774bc8a"
     },
     {
-      "packageVersion": "9.0.13-servicing.26056.4",
+      "packageVersion": "9.0.14-servicing.26110.3",
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "8f9e359ad95f422aec3c31c21ab188166f655842"
+      "commitSha": "fb1326b0f4622f04f21584dc133f1c71f7554509"
     },
     {
       "packageVersion": "9.0.101-beta.25070.7",
@@ -91,10 +91,10 @@
       "commitSha": "5ef1abb57ce3df89eae65ecadeb1ddbab323ae05"
     },
     {
-      "packageVersion": "9.0.13-servicing.26063.17",
+      "packageVersion": "9.0.14-servicing.26119.10",
       "path": "runtime",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-runtime",
-      "commitSha": "9ecbfd4f3f330dc9649bce49cb12570b19d48c87"
+      "commitSha": "19c07820cb72aafc554c3bc8fe3c54010f5123f0"
     },
     {
       "packageVersion": "9.0.0-preview.26153.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "798687480ca3d836b6af7bfbd9d492f756f3247f"
+      "commitSha": "f593c0bedc2104ab29111f1dfa2ccb3c560f83cf"
     },
     {
       "packageVersion": "9.0.0-alpha.1.26055.1",
@@ -151,22 +151,22 @@
       "commitSha": "bc9161306b23641b0364b8f93d546da4d48da1eb"
     },
     {
-      "packageVersion": "9.0.13",
+      "packageVersion": "9.0.14",
       "path": "windowsdesktop",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-windowsdesktop",
-      "commitSha": "73b82230e8d1e2714898e93e46a0b1b24b66a51c"
+      "commitSha": "f3d1a3c90c44fd18aecd8fb8a7006807f64b2710"
     },
     {
-      "packageVersion": "9.0.13-servicing.26064.3",
+      "packageVersion": "9.0.14-servicing.26119.4",
       "path": "winforms",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-winforms",
-      "commitSha": "585a409cea7aef1ccb4a66f9c3999e8079ae9c1e"
+      "commitSha": "9399df09f8f8a187dcf1941b1d07a538ca197171"
     },
     {
-      "packageVersion": "9.0.13-rtm.26065.1",
+      "packageVersion": "9.0.14-rtm.26119.2",
       "path": "wpf",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-wpf",
-      "commitSha": "86af53614f2e96919c6daa97a0d20037e1d1814d"
+      "commitSha": "72d4e0415ec4ae0771a5df3e05260691a5d6775b"
     },
     {
       "packageVersion": "10.0.0-preview.24609.2",
@@ -185,7 +185,7 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "9156d4caac880b513264ecbe0aa4746a3fead3d7"
+      "commitSha": "56efe3983185e3f37e43415d1afa97e3860f187f"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
