@@ -1,9 +1,4 @@
 {
-  "sdk": {
-    "version": "10.0.100",
-    "rollForward": "latestMajor",
-    "allowPrerelease": true
-  },
   "tools": {
     "dotnet": "10.0.100",
     "pinned": true

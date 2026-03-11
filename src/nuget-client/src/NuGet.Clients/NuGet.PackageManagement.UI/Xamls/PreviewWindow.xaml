@@ -72,7 +72,7 @@
                 Margin="6, 6">
                 <TextBlock
                   AutomationProperties.Name="{Binding Text}"
-                  FontSize="{Binding ElementName=_self,Path=FontSize,Converter={StaticResource Font122PercentSizeConverter}}"
+                  FontSize="{DynamicResource {x:Static nuget:Brushes.Environment122PercentFontSizeKey}}"
                   Text="{Binding Path=Name}" />
 
                 <!-- Uninstalled packages -->

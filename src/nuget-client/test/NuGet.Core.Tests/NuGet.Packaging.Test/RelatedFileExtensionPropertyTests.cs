@@ -77,8 +77,10 @@ namespace NuGet.Packaging.Test
             List<Asset> assets = new List<Asset>();
             foreach (string path in paths)
             {
-                Asset asset = new Asset();
-                asset.Path = path;
+                Asset asset = new Asset
+                {
+                    Path = path
+                };
                 assets.Add(asset);
             }
             return assets;

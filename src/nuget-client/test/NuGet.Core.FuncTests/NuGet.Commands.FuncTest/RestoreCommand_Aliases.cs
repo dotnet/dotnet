@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using FluentAssertions;
 using NuGet.Commands.Test;
 using NuGet.Common;
@@ -69,6 +70,110 @@ namespace NuGet.Commands.FuncTest
             result.LockFile.Targets[1].TargetAlias.Should().Be("banana");
             result.LockFile.Targets[1].Libraries.Should().HaveCount(1);
             result.LockFile.Targets[1].Libraries[0].Name.Should().Be("y");
+        }
+
+        // P1 (apple) -> X (has build/x.targets and build/x.props)
+        // P1 (banana) -> Y (has build/y.targets and build/y.props)
+        [Fact]
+        public async Task RestoreCommand_WithAliasesOfSameFramework_BuildPropsAndTargetsAreIncluded()
+        {
+            using var pathContext = new SimpleTestPathContext();
+            var rootProject = @"
+            {
+              ""frameworks"": {
+                ""apple"": {
+                    ""framework"": ""net10.0"",
+                    ""targetAlias"": ""apple"",
+                    ""dependencies"": {
+                            ""x"": {
+                                ""version"": ""[1.0.0,)"",
+                                ""target"": ""Package"",
+                            }
+                    }
+                },
+                ""banana"": {
+                    ""framework"": ""net10.0"",
+                    ""targetAlias"": ""banana"",
+                    ""dependencies"": {
+                            ""y"": {
+                                ""version"": ""[1.0.0,)"",
+                                ""target"": ""Package"",
+                            }
+                    }
+                }
+              }
+            }";
+
+            // Create packages with build props and targets
+            var packageX = new SimpleTestPackageContext("x", "1.0.0");
+            packageX.AddFile("build/x.targets");
+            packageX.AddFile("build/x.props");
+
+            var packageY = new SimpleTestPackageContext("y", "1.0.0");
+            packageY.AddFile("build/y.targets");
+            packageY.AddFile("build/y.props");
+
+            // Setup project
+            var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, rootProject);
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource,
+                packageX,
+                packageY);
+
+            // Act
+            var result = await RunRestoreAsync(pathContext, projectSpec);
+
+            // Assert
+            result.Success.Should().BeTrue();
+            result.LockFile.Targets.Should().HaveCount(2);
+
+            var appleTarget = result.LockFile.GetTarget("apple", null);
+            appleTarget.Should().NotBeNull();
+            appleTarget.Libraries.Should().HaveCount(1);
+            appleTarget.Libraries[0].Name.Should().Be("x");
+            appleTarget.Libraries[0].Build.Should().Contain(item => item.Path.Equals("build/x.props"));
+            appleTarget.Libraries[0].Build.Should().Contain(item => item.Path.Equals("build/x.targets"));
+
+            var bananaTarget = result.LockFile.GetTarget("banana", null);
+            bananaTarget.Should().NotBeNull();
+            bananaTarget.Libraries.Should().HaveCount(1);
+            bananaTarget.Libraries[0].Name.Should().Be("y");
+            bananaTarget.Libraries[0].Build.Should().Contain(item => item.Path.Equals("build/y.props"));
+            bananaTarget.Libraries[0].Build.Should().Contain(item => item.Path.Equals("build/y.targets"));
+
+            // Validate MSBuild output files contain correct ImportGroup conditions per alias
+            var targetsOutput = result.MSBuildOutputFiles.First(f => f.Path.EndsWith(".targets"));
+            var propsOutput = result.MSBuildOutputFiles.First(f => f.Path.EndsWith(".props"));
+
+            targetsOutput.Content.Should().NotBeNull();
+            propsOutput.Content.Should().NotBeNull();
+
+            var targetImportGroups = targetsOutput.Content!.Root!.Elements()
+                .Where(e => e.Name.LocalName == "ImportGroup")
+                .ToList();
+            var propsImportGroups = propsOutput.Content!.Root!.Elements()
+                .Where(e => e.Name.LocalName == "ImportGroup")
+                .ToList();
+
+            // There should be an ImportGroup per alias
+            targetImportGroups.Should().Contain(g => g.Attribute(XName.Get("Condition"))!.Value.Contains("'$(TargetFramework)' == 'apple'"));
+            targetImportGroups.Should().Contain(g => g.Attribute(XName.Get("Condition"))!.Value.Contains("'$(TargetFramework)' == 'banana'"));
+
+            propsImportGroups.Should().Contain(g => g.Attribute(XName.Get("Condition"))!.Value.Contains("'$(TargetFramework)' == 'apple'"));
+            propsImportGroups.Should().Contain(g => g.Attribute(XName.Get("Condition"))!.Value.Contains("'$(TargetFramework)' == 'banana'"));
+
+            // Verify the imports reference the correct packages per alias
+            var appleTargetsGroup = targetImportGroups.First(g => g.Attribute(XName.Get("Condition"))!.Value.Contains("apple"));
+            appleTargetsGroup.Elements().Should().Contain(e => e.Attribute(XName.Get("Project"))!.Value.Contains("x.targets"));
+
+            var bananaTargetsGroup = targetImportGroups.First(g => g.Attribute(XName.Get("Condition"))!.Value.Contains("banana"));
+            bananaTargetsGroup.Elements().Should().Contain(e => e.Attribute(XName.Get("Project"))!.Value.Contains("y.targets"));
+
+            var applePropsGroup = propsImportGroups.First(g => g.Attribute(XName.Get("Condition"))!.Value.Contains("apple"));
+            applePropsGroup.Elements().Should().Contain(e => e.Attribute(XName.Get("Project"))!.Value.Contains("x.props"));
+
+            var bananaPropsGroup = propsImportGroups.First(g => g.Attribute(XName.Get("Condition"))!.Value.Contains("banana"));
+            bananaPropsGroup.Elements().Should().Contain(e => e.Attribute(XName.Get("Project"))!.Value.Contains("y.props"));
         }
 
         // P (apple)  -> Net472 package, with ATF, succeeds

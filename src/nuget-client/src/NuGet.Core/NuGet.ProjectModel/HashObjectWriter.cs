@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -134,7 +132,7 @@ namespace NuGet.ProjectModel
             _writer.WriteValue(value);
         }
 
-        public void WriteNameValue(string name, string value)
+        public void WriteNameValue(string name, string? value)
         {
             if (name == null)
             {
@@ -260,11 +258,11 @@ namespace NuGet.ProjectModel
             --_nestLevel;
         }
 
-        private void OnFlush(object sender, ArraySegment<byte> bytes)
+        private void OnFlush(object? sender, ArraySegment<byte> bytes)
         {
             if (bytes.Count > 0)
             {
-                _hashFunc.Update(bytes.Array, bytes.Offset, bytes.Count);
+                _hashFunc.Update(bytes.Array!, bytes.Offset, bytes.Count);
             }
         }
 

@@ -180,7 +180,7 @@ internal static class PackageUpdateCommandRunner
                 .SelectMany(tf => tf.Libraries.Select(library => (tf.TargetFramework, library)))
                 .Where(tuple => tuple.library.Type == "package" && packageIdsWithVulnerabilities.Contains(tuple.library.Name!) && PackageHasVulnerability(tuple.library.Name!, tuple.library.Version!, knownVulnerabilities))
                 .GroupBy(
-                    pair => new PackageIdentity(pair.library.Name, pair.library.Version),
+                    pair => new PackageIdentity(pair.library.Name!, pair.library.Version),
                     pair => assetsFile.PackageSpec.TargetFrameworks.Single(tfm => tfm.FrameworkName == pair.TargetFramework).TargetAlias,
                     (key, g) => (key, g.Distinct().ToList()))
                 .ToList();
