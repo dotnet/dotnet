@@ -8,7 +8,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@0279dbd](https://github.com/dotnet/arcade/tree/0279dbd04bd1537e13ae3c1f003edf56acfaf123)*
+*[dotnet/arcade@01c94b6](https://github.com/dotnet/arcade/tree/01c94b66e75697e9298eb79a49db74489f8d343e)*
 - `src/aspire`  
 *[dotnet/aspire@5fa9337](https://github.com/dotnet/aspire/tree/5fa9337a84a52e9bd185d04d156eccbdcf592f74)*
 - `src/aspnetcore`  
@@ -46,9 +46,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[_git/dotnet-runtime@19c0782](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GC19c07820cb72aafc554c3bc8fe3c54010f5123f0)*
 - `src/scenario-tests`  
-*[dotnet/scenario-tests@ba4c313](https://github.com/dotnet/scenario-tests/tree/ba4c313fc4aac36d0a08eeb49e7b496b2e23cf94)*
+*[dotnet/scenario-tests@acd9dc7](https://github.com/dotnet/scenario-tests/tree/acd9dc7ae0717d7f4fb6ac2b76ea364e94b4ceb3)*
 - `src/sdk`  
-*[dotnet/sdk@cda18f2](https://github.com/dotnet/sdk/tree/cda18f2c7f6def5be449659cb5b0fb5c3563e913)*
+*[dotnet/sdk@3b846f5](https://github.com/dotnet/sdk/tree/3b846f543e7b5a512606863e50c605abe13fea7a)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@16c380d](https://github.com/dotnet/source-build-externals/tree/16c380d1ce5fa0b24e232251c31cb013bbf3365f)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -78,13 +78,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/xunit/tools/media`  
     *[xunit/media@5738b6e](https://github.com/xunit/media/tree/5738b6e86f08e0389c4392b939c20e3eca2d9822)*
 - `src/source-build-reference-packages`  
-*[dotnet/source-build-reference-packages@2060a0a](https://github.com/dotnet/source-build-reference-packages/tree/2060a0a1a17bed13cf046043fb3011bf0e5af58b)*
+*[dotnet/source-build-reference-packages@e6a837a](https://github.com/dotnet/source-build-reference-packages/tree/e6a837a05532cb8e89eda3ce8aa08d0f55ce7b04)*
 - `src/sourcelink`  
 *[dotnet/sourcelink@657ade4](https://github.com/dotnet/sourcelink/tree/657ade4711e607cc4759e89e0943aa1ca8aadc63)*
 - `src/symreader`  
 *[dotnet/symreader@0710a78](https://github.com/dotnet/symreader/tree/0710a7892d89999956e8808c28e9dd0512bd53f3)*
 - `src/templating`  
-*[dotnet/templating@d138822](https://github.com/dotnet/templating/tree/d138822c8195880da116db49511027381c064236)*
+*[dotnet/templating@8b91289](https://github.com/dotnet/templating/tree/8b91289b8faad229ac297839b6717ad34b5d7cba)*
 - `src/test-templates`  
 *[dotnet/test-templates@47c90e1](https://github.com/dotnet/test-templates/tree/47c90e140b027225b799ca8413af10ee3d5f1126)*
 - `src/vstest`  

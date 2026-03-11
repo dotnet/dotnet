@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "9.0.0-beta.26110.2",
+      "packageVersion": "9.0.0-beta.26152.3",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "0279dbd04bd1537e13ae3c1f003edf56acfaf123"
+      "commitSha": "01c94b66e75697e9298eb79a49db74489f8d343e"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -97,16 +97,16 @@
       "commitSha": "19c07820cb72aafc554c3bc8fe3c54010f5123f0"
     },
     {
-      "packageVersion": "9.0.0-preview.26111.1",
+      "packageVersion": "9.0.0-preview.26153.1",
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "ba4c313fc4aac36d0a08eeb49e7b496b2e23cf94"
+      "commitSha": "acd9dc7ae0717d7f4fb6ac2b76ea364e94b4ceb3"
     },
     {
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "cda18f2c7f6def5be449659cb5b0fb5c3563e913"
+      "commitSha": "3b846f543e7b5a512606863e50c605abe13fea7a"
     },
     {
       "packageVersion": "9.0.0-alpha.1.26055.1",
@@ -115,10 +115,10 @@
       "commitSha": "16c380d1ce5fa0b24e232251c31cb013bbf3365f"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.26109.3",
+      "packageVersion": "9.0.0-alpha.1.26152.3",
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "2060a0a1a17bed13cf046043fb3011bf0e5af58b"
+      "commitSha": "e6a837a05532cb8e89eda3ce8aa08d0f55ce7b04"
     },
     {
       "packageVersion": "9.0.0-beta.25564.5",
@@ -133,10 +133,10 @@
       "commitSha": "0710a7892d89999956e8808c28e9dd0512bd53f3"
     },
     {
-      "packageVersion": "9.0.115-servicing.26110.6",
+      "packageVersion": "9.0.116-servicing.26153.11",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "d138822c8195880da116db49511027381c064236"
+      "commitSha": "8b91289b8faad229ac297839b6717ad34b5d7cba"
     },
     {
       "packageVersion": "1.1.0-rtm.25262.1",
