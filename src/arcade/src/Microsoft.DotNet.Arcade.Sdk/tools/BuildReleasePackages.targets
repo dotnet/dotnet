@@ -2,11 +2,10 @@
 <Project>
 
   <PropertyGroup>
-    <_NuGetRepackAssembly Condition="'$(MSBuildRuntimeType)' != 'Core'">$(NuGetPackageRoot)microsoft.dotnet.nugetrepack.tasks\$(MicrosoftDotnetNuGetRepackTasksVersion)\tools\netframework\Microsoft.DotNet.NuGetRepack.Tasks.dll</_NuGetRepackAssembly>
-    <_NuGetRepackAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(NuGetPackageRoot)microsoft.dotnet.nugetrepack.tasks\$(MicrosoftDotnetNuGetRepackTasksVersion)\tools\net\Microsoft.DotNet.NuGetRepack.Tasks.dll</_NuGetRepackAssembly>
+    <_NuGetRepackAssembly>$(NuGetPackageRoot)microsoft.dotnet.nugetrepack.tasks\$(MicrosoftDotnetNuGetRepackTasksVersion)\tools\net\Microsoft.DotNet.NuGetRepack.Tasks.dll</_NuGetRepackAssembly>
   </PropertyGroup>
 
-  <UsingTask TaskName="Microsoft.DotNet.Tools.UpdatePackageVersionTask" AssemblyFile="$(_NuGetRepackAssembly)" />
+  <UsingTask TaskName="Microsoft.DotNet.Tools.UpdatePackageVersionTask" AssemblyFile="$(_NuGetRepackAssembly)" Runtime="NET" />
 
   <Target Name="PackageReleasePackages" AfterTargets="Pack" Condition="'$(DotNetFinalVersionKind)' == ''">
     <Message Text="Building release versions of NuGet packages" Importance="high" />

@@ -1,10 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
     <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <IsPackable>true</IsPackable>
     <IsBuildTaskProject>true</IsBuildTaskProject>
-    <PackTasks>false</PackTasks>
     <Description>Targets for producing an archive of file outputs.</Description>
     <PackageType>MSBuildSdk</PackageType>
   </PropertyGroup>

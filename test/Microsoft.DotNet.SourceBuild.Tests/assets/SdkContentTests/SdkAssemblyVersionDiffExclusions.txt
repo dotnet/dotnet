@@ -13,13 +13,25 @@
 # 'folder/*' matches all files and directories in 'folder/'. It will not match 'folder/abc/def'
 # 'folder/' is equivalent to 'folder/**. It matches 'folder/', 'folder/abc', and 'folder/abc/def/'
 
-# Referenced 6.0/7.0 assemblies (https://github.com/dotnet/sdk/issues/34245)
-./sdk/x.y.z/Microsoft.Extensions.FileProviders.Abstractions.dll
-./sdk/x.y.z/Microsoft.Extensions.FileSystemGlobbing.dll
+# .NET 10 vs 11 diff: https://github.com/dotnet/source-build/issues/5513
 ./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/**/Microsoft.Extensions.ObjectPool.dll
-./sdk/**/System.Configuration.ConfigurationManager.dll
-./sdk/**/System.Diagnostics.EventLog*.dll
-./sdk/**/System.Reflection.MetadataLoadContext.dll
-./sdk/**/System.Security.Cryptography.Pkcs.dll
-./sdk/**/System.Security.Cryptography.ProtectedData.dll
-./sdk/x.y.z/System.Security.Cryptography.Xml.dll
+
+# SBRP/VMR commit hash diff: https://github.com/dotnet/source-build/issues/5506
+./sdk/x.y.z/Containers/tasks/netx.y/Valleysoft.DockerCredsProvider.dll
+./sdk/x.y.z/Spectre.Console.dll
+
+# File version diff: https://github.com/dotnet/source-build/issues/5508, https://github.com/dotnet/source-build/issues/5509
+./sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.*
+./sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/System.IdentityModel.Tokens.Jwt.dll
+
+# File version diff: https://github.com/dotnet/source-build/issues/5510
+./sdk/x.y.z/Microsoft.ApplicationInsights.dll
+
+# File version missing revision: https://github.com/dotnet/source-build/issues/5511
+./sdk/**/Newtonsoft.Json.dll
+
+# Product version diff: https://github.com/dotnet/source-build/issues/5512
+./sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll
+
+# Product version diff: https://github.com/dotnet/source-build/issues/5507
+./sdk/x.y.z/Sdks/**/Microsoft.Css.Parser.dll

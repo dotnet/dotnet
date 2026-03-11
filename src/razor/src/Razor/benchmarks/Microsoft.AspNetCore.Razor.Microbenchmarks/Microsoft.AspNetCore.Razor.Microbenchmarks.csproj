@@ -9,7 +9,6 @@
     <IsPackable>false</IsPackable>
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
     <IsShipping>false</IsShipping>
-    <DefineConstants>$(DefineConstants);JSONSERIALIZATION_PROJECTSYSTEM</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

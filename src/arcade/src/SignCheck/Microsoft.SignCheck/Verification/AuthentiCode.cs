@@ -22,103 +22,6 @@ namespace Microsoft.SignCheck.Verification
         public static IEnumerable<Timestamp> GetTimestamps(string path, ISecurityInfoProvider securityInfoProvider) =>
             string.IsNullOrEmpty(path) ? Enumerable.Empty<Timestamp>() : GetTimestampsInternal(path, securityInfoProvider);
 
-#if NETFRAMEWORK
-        private static bool IsSignedInternal(string path, SignatureVerificationResult svr, ISecurityInfoProvider securityInfoProvider)
-        {
-            WinTrustFileInfo fileInfo = new WinTrustFileInfo()
-            {
-                cbStruct = (uint)Marshal.SizeOf(typeof(WinTrustFileInfo)),
-                pcwszFilePath = Path.GetFullPath(path),
-                hFile = IntPtr.Zero,
-                pgKnownSubject = IntPtr.Zero
-            };
-
-            WinTrustData data = new WinTrustData()
-            {
-                cbStruct = (uint)Marshal.SizeOf(typeof(WinTrustData)),
-                dwProvFlags = 0,
-                dwStateAction = Convert.ToUInt32(StateAction.WTD_STATEACTION_IGNORE),
-                dwUIChoice = Convert.ToUInt32(UIChoice.WTD_UI_NONE),
-                dwUIContext = 0,
-                dwUnionChoice = Convert.ToUInt32(UnionChoice.WTD_CHOICE_FILE),
-                fdwRevocationChecks = Convert.ToUInt32(RevocationChecks.WTD_REVOKE_NONE),
-                hWVTStateData = IntPtr.Zero,
-                pFile = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(WinTrustFileInfo))),
-                pPolicyCallbackData = IntPtr.Zero,
-                pSIPClientData = IntPtr.Zero,
-                pwszURLReference = IntPtr.Zero
-            };
-
-            // Potential memory leak. Need to investigate
-            Marshal.StructureToPtr(fileInfo, data.pFile, false);
-
-            IntPtr pGuid = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(Guid)));
-            IntPtr pData = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(WinTrustData)));
-            Marshal.StructureToPtr(data, pData, true);
-            Marshal.StructureToPtr(WinTrust.WINTRUST_ACTION_GENERIC_VERIFY_V2, pGuid, true);
-
-            uint hrresult = WinTrust.WinVerifyTrust(IntPtr.Zero, pGuid, pData);
-
-            Marshal.FreeHGlobal(pGuid);
-            Marshal.FreeHGlobal(pData);
-
-            // Log non-zero HRESULTs
-            if (hrresult != 0)
-            {
-                string errorMessage = new Win32Exception(Marshal.GetLastWin32Error()).Message;
-                svr.AddDetail(DetailKeys.Error, String.Format(SignCheckResources.ErrorHResult, hrresult, errorMessage));
-            }
-
-            return hrresult == 0;
-        }
-
-        private static IEnumerable<Timestamp> GetTimestampsInternal(string path, ISecurityInfoProvider securityInfoProvider)
-        {
-            int msgAndCertEncodingType;
-            int msgContentType;
-            int formatType;
-
-            // NULL indicates that information is unneeded
-            IntPtr certStore = IntPtr.Zero;
-            IntPtr msg = IntPtr.Zero;
-            IntPtr context = IntPtr.Zero;
-
-            if (!WinCrypt.CryptQueryObject(
-                WinCrypt.CERT_QUERY_OBJECT_FILE,
-                Marshal.StringToHGlobalUni(path),
-                WinCrypt.CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED | WinCrypt.CERT_QUERY_CONTENT_FLAG_PKCS7_UNSIGNED | WinCrypt.CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED,
-                WinCrypt.CERT_QUERY_FORMAT_FLAG_ALL,
-                0,
-                out msgAndCertEncodingType,
-                out msgContentType,
-                out formatType,
-                ref certStore,
-                ref msg,
-                ref context))
-            {
-                throw new Win32Exception(Marshal.GetLastWin32Error());
-            }
-
-            int cbData = 0;
-
-            // Passing in NULL to pvData retrieves the size of the encoded message
-            if (!WinCrypt.CryptMsgGetParam(msg, WinCrypt.CMSG_ENCODED_MESSAGE, 0, IntPtr.Zero, ref cbData))
-            {
-                throw new Win32Exception(Marshal.GetLastWin32Error());
-            }
-
-            byte[] vData = new byte[cbData];
-            if (!WinCrypt.CryptMsgGetParam(msg, WinCrypt.CMSG_ENCODED_MESSAGE, 0, vData, ref cbData))
-            {
-                throw new Win32Exception(Marshal.GetLastWin32Error());
-            }
-
-            var signedCms = new SignedCms();
-            signedCms.Decode(vData);
-
-            return ExtractTimestamps(signedCms);
-        }
-#else
         private static bool IsSignedInternal(string path, SignatureVerificationResult svr, ISecurityInfoProvider securityInfoProvider)
         {
             if (securityInfoProvider == null)
@@ -181,7 +84,6 @@ namespace Microsoft.SignCheck.Verification
 
             return signerInfos[0];
         }
-#endif
 
         private static IEnumerable<Timestamp> ExtractTimestamps(SignedCms signedCms)
         {

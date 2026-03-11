@@ -284,7 +284,7 @@ namespace Microsoft.DotNet.SignTool
                     if (_batchData.ZipDataMap.TryGetValue(file.FileContentKey, out var zipData))
                     {
                         _log.LogMessage($"Repacking container: '{file.FileName}'");
-                        zipData.Repack(_log, _signTool.TempDir, _signTool.Wix3ToolsPath, _signTool.WixToolsPath, _signTool.TarToolPath, _signTool.PkgToolPath);
+                        zipData.Repack(_log, _signTool.TempDir, _signTool.Wix3ToolsPath, _signTool.WixToolsPath, _signTool.PkgToolPath);
                     }
                     else
                     {

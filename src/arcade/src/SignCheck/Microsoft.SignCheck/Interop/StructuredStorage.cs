@@ -8,6 +8,8 @@ using Microsoft.Deployment.WindowsInstaller;
 using Microsoft.VisualStudio.OLE.Interop;
 using STATSTG = Microsoft.VisualStudio.OLE.Interop.STATSTG;
 
+#pragma warning disable CA1416 // Validate platform compatibility
+
 namespace Microsoft.SignCheck.Interop
 {
     // This code is a C# adaptation of MSIX:
