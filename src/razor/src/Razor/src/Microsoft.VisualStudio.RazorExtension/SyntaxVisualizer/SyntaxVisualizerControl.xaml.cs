@@ -2,14 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Serialization.Json;
 using Microsoft.CodeAnalysis.Razor.Protocol.DevTools;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -234,14 +231,14 @@ internal partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTable
         {
             var workspace = VSServiceHelpers.GetRequiredMefService<VisualStudioWorkspace>();
             var solution = workspace.CurrentSolution;
-            var tagHelpers = await SyntaxVisualizerHelper.GetTagHelperDescriptorsAsync(_remoteServiceInvoker, hostDocumentUri, tagHelpersKind, solution, CancellationToken.None).ConfigureAwait(false);
+            var tagHelpersJson = await SyntaxVisualizerHelper.GetTagHelperDescriptorsAsync(_remoteServiceInvoker, hostDocumentUri, tagHelpersKind, solution, CancellationToken.None).ConfigureAwait(false);
 
-            if (tagHelpers is null)
+            if (tagHelpersJson is null)
             {
-                return [];
+                return "";
             }
 
-            return tagHelpers.TagHelpers;
+            return tagHelpersJson;
         });
 
         ShowSerializedTagHelpers(displayKind, tagHelpers);
@@ -260,11 +257,11 @@ internal partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTable
         }
     }
 
-    private static void ShowSerializedTagHelpers(TagHelperDisplayMode displayKind, IEnumerable<TagHelperDescriptor> tagHelpers)
+    private static void ShowSerializedTagHelpers(TagHelperDisplayMode displayKind, string tagHelpers)
     {
         var tempFileName = GetTempFileName(displayKind.ToString() + "TagHelpers.json");
 
-        JsonDataConvert.SerializeToFile(tagHelpers, tempFileName, indented: true);
+        File.WriteAllText(tempFileName, tagHelpers);
 
         VsShellUtilities.OpenDocument(ServiceProvider.GlobalProvider, tempFileName);
     }
