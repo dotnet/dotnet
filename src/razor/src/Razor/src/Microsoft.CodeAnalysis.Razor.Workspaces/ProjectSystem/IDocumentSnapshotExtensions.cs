@@ -12,15 +12,6 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 internal static class IDocumentSnapshotExtensions
 {
-    public static async Task<RazorSourceDocument> GetSourceAsync(
-        this IDocumentSnapshot document,
-        CancellationToken cancellationToken)
-    {
-        var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-        var properties = RazorSourceDocumentProperties.Create(document.FilePath, document.TargetPath);
-        return RazorSourceDocument.Create(text, properties);
-    }
-
     public static async Task<TagHelperDescriptor?> TryGetTagHelperDescriptorAsync(
         this IDocumentSnapshot documentSnapshot,
         CancellationToken cancellationToken)

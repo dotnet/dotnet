@@ -11,10 +11,10 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.VisualStudio.Razor.Settings;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
+using WorkItemAttribute = Microsoft.AspNetCore.Razor.Test.Common.WorkItemAttribute;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -126,6 +126,47 @@ public class CohostRangeFormattingEndpointTest(HtmlFormattingFixture htmlFormatt
                 });
     }
 
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12805")]
+    public async Task FormatOnPasteIgnoresFormattingErrors()
+    {
+        await VerifyRangeFormattingAsync(
+            input: """
+                @using System.Collections.Generic
+                @{
+                    var item = new List<string>();
+                }
+
+                <div class="d-flex">
+                    <div>
+                        @if [|ErrorWitnessPersonID|]
+                    </div>
+                    <div>
+                        @(item.Count)x
+                    </div>
+                </div>
+                """,
+            expected: """
+                @using System.Collections.Generic
+                @{
+                    var item = new List<string>();
+                }
+
+                <div class="d-flex">
+                    <div>
+                        @if ErrorWitnessPersonID
+                    </div>
+                    <div>
+                        @(item.Count)x
+                    </div>
+                </div>
+                """,
+            otherOptions: new()
+                {
+                    { "fromPaste", true }
+                });
+    }
+
     private async Task VerifyRangeFormattingAsync(TestCode input, string expected, Dictionary<string, SumType<bool, int, string>>? otherOptions = null)
     {
         var document = CreateProjectAndRazorDocument(input.Text);
@@ -138,6 +179,10 @@ public class CohostRangeFormattingEndpointTest(HtmlFormattingFixture htmlFormatt
 
         var uri = new Uri(document.CreateUri(), $"{document.FilePath}{LanguageServerConstants.HtmlVirtualDocumentSuffix}");
         var htmlEdits = await htmlFormattingFixture.Service.GetDocumentFormattingEditsAsync(LoggerFactory, uri, generatedHtml, insertSpaces: true, tabSize: 4);
+
+        var formattingService = (RazorFormattingService)OOPExportProvider.GetExportedValue<IRazorFormattingService>();
+        var accessor = formattingService.GetTestAccessor();
+        accessor.SetFormattingLoggerFactory(new TestFormattingLoggerFactory(TestOutputHelper));
 
         var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentFormattingName, htmlEdits)]);
 

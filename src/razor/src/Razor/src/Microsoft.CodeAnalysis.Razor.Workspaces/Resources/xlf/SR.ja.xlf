@@ -134,6 +134,11 @@
         <target state="translated">using ディレクティブを {0} に昇格します</target>
         <note />
       </trans-unit>
+      <trans-unit id="Remove_unnecessary_directives">
+        <source>Remove unnecessary directives</source>
+        <target state="translated">不要なディレクティブを削除する</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Simplify_Fully_Qualified_Component_Title">
         <source>Simplify fully qualified component</source>
         <target state="translated">完全修飾コンポーネントの簡略化</target>
@@ -142,6 +147,11 @@
       <trans-unit id="Simplify_Tag_To_SelfClosing_Title">
         <source>Simplify tag to self-closing</source>
         <target state="translated">タグを自己終了タグに簡略化する</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Sort_And_Consolidate_Usings_Title">
+        <source>Sort and consolidate usings</source>
+        <target state="translated">using の並べ替えと統合</target>
         <note />
       </trans-unit>
       <trans-unit id="TagHelper_Attribute_Glyph">

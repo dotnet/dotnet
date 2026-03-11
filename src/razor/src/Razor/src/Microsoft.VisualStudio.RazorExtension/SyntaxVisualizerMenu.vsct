@@ -75,15 +75,6 @@
         </Strings>
       </Button>
 
-      <!-- Buttons in the tool window -->
-      <Button guid="guidSyntaxVisualizerMenuCmdSet" id="cmdidShowSourceMappingsButton" priority="0x201" type="Button">
-        <Parent guid="guidSyntaxVisualizerMenuCmdSet" id="grpidRazorSyntaxVisualizer" />
-        <CommandFlag>TogglePatternAvailable</CommandFlag>
-        <Strings>
-          <ButtonText>Show C# Transitions</ButtonText>
-        </Strings>
-      </Button>
-
       <Button guid="guidSyntaxVisualizerMenuCmdSet" id="cmdidShowGeneratedCode" priority="0x202" type="Button">
         <Parent guid="guidSyntaxVisualizerMenuCmdSet" id="grpidRazorSyntaxVisualizer" />
         <Strings>
@@ -141,7 +132,6 @@
       <IDSymbol name="grpidRazorSyntaxVisualizer" value="0x1000" />
 
       <!-- Top level commands in the tool window -->
-      <IDSymbol name="cmdidShowSourceMappingsButton" value="0x0110" />
       <IDSymbol name="cmdidShowGeneratedCode" value="0x0111" />
       <IDSymbol name="cmdidShowGeneratedHtml" value="0x0112" />
       <IDSymbol name="cmdIdShowAllTagHelpers" value="0x0113" />

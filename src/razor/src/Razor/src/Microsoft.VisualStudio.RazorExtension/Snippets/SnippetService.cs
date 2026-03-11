@@ -15,6 +15,7 @@ using Microsoft.VisualStudio.ProjectSystem.VS;
 using Microsoft.VisualStudio.Razor.Extensions;
 using Microsoft.VisualStudio.Razor.Settings;
 using Microsoft.VisualStudio.Razor.Snippets;
+using Microsoft.VisualStudio.Razor.Telemetry;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Threading;
@@ -60,14 +61,21 @@ internal class SnippetService
         _serviceProvider = serviceProvider;
         _snippetCache = snippetCache;
         _advancedSettingsStorage = advancedSettingsStorage;
-        _joinableTaskFactory.RunAsync(InitializeAsync).FileAndForget("SnippetService_Initialize");
+        _joinableTaskFactory.RunAsync(InitializeAsync).FileAndForget(TelemetryReporter.GetEventName("SnippetService_Initialize"));
     }
 
     private async Task InitializeAsync()
     {
         await _advancedSettingsStorage.OnChangedAsync(_ =>
         {
-            PopulateAsync().FileAndForget("SnippetService_Populate");
+            // If the settings changed before we were able to get the expansion manager, skip population because we can't do it.
+            // After getting the manager for the first time, we'll populate again, so it will all work out.
+            if (_vsExpansionManager is null)
+            {
+                return;
+            }
+
+            PopulateAsync().FileAndForget(TelemetryReporter.GetEventName("SnippetService_Populate"));
         }).ConfigureAwait(false);
 
         await _joinableTaskFactory.SwitchToMainThreadAsync();
@@ -117,7 +125,7 @@ internal class SnippetService
     /// This method must be called on the UI thread because it eventually calls into
     /// IVsExpansionEnumeration.Next, which must be called on the UI thread due to an issue
     /// with how the call is marshalled.
-    /// 
+    ///
     /// The second parameter for IVsExpansionEnumeration.Next is defined like this:
     ///    [ComAliasName("Microsoft.VisualStudio.TextManager.Interop.VsExpansion")] IntPtr[] rgelt
     ///
@@ -216,9 +224,9 @@ internal class SnippetService
         }
 
         // As of writing, Html and CSharp are the only languages we actually
-        // get snippets for. This assert acts as both a testament to that and 
+        // get snippets for. This assert acts as both a testament to that and
         // a catch for any future soul who might change that behavior. This
-        // code will need to be updated accordingly, as well as the 
+        // code will need to be updated accordingly, as well as the
         // the s_buildInSnippets dictionary
         Debug.Assert(language == SnippetLanguage.Html);
         return s_builtInSnippets[s_HtmlLanguageId];

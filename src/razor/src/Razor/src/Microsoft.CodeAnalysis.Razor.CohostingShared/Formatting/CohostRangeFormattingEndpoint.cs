@@ -63,7 +63,8 @@ internal sealed class CohostRangeFormattingEndpoint(
 
     protected override async Task<TextEdit[]?> HandleRequestAsync(DocumentRangeFormattingParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
-        if (request.Options.OtherOptions is not null && request.Options.OtherOptions.TryGetValue("fromPaste", out var fromPasteObj) && fromPasteObj.TryGetFirst(out var fromPaste))
+        var fromPaste = false;
+        if (request.Options.OtherOptions is not null && request.Options.OtherOptions.TryGetValue("fromPaste", out var fromPasteObj) && fromPasteObj.TryGetFirst(out fromPaste))
         {
             if (fromPaste && !_clientSettingsManager.GetClientSettings().AdvancedSettings.FormatOnPaste)
             {
@@ -89,7 +90,8 @@ internal sealed class CohostRangeFormattingEndpoint(
             request.Options,
             _clientSettingsManager.GetClientSettings().AdvancedSettings.CodeBlockBraceOnNextLine,
             _clientSettingsManager.GetClientSettings().AdvancedSettings.AttributeIndentStyle,
-            csharpSyntaxFormattingOptions);
+            csharpSyntaxFormattingOptions,
+            fromPaste);
 
         _logger.LogDebug($"Calling OOP with the {htmlChanges.Length} html edits, so it can fill in the rest");
         var remoteResult = await _remoteServiceInvoker.TryInvokeAsync<IRemoteFormattingService, ImmutableArray<TextChange>>(

@@ -24,9 +24,7 @@
       "src\\Razor\\src\\Microsoft.VisualStudio.LanguageServices.Razor\\Microsoft.VisualStudio.LanguageServices.Razor.csproj",
       "src\\Razor\\src\\Microsoft.VisualStudio.RazorExtension\\Microsoft.VisualStudio.RazorExtension.csproj",
       "src\\Razor\\src\\Microsoft.VisualStudioCode.RazorExtension\\Microsoft.VisualStudioCode.RazorExtension.csproj",
-      "src\\Razor\\src\\Microsoft.AspNetCore.Razor.LanguageServer\\Microsoft.AspNetCore.Razor.LanguageServer.csproj",
       "src\\Razor\\test\\Microsoft.AspNetCore.Razor.Test.Common.Tooling\\Microsoft.AspNetCore.Razor.Test.Common.Tooling.csproj",
-      "src\\Razor\\test\\Microsoft.AspNetCore.Razor.LanguageServer.Test\\Microsoft.AspNetCore.Razor.LanguageServer.Test.csproj",
       "src\\Razor\\test\\Microsoft.CodeAnalysis.Razor.Workspaces.Test\\Microsoft.CodeAnalysis.Razor.Workspaces.Test.csproj",
       "src\\Razor\\test\\Microsoft.CodeAnalysis.Remote.Razor.Test\\Microsoft.CodeAnalysis.Remote.Razor.Test.csproj",
       "src\\Razor\\test\\Microsoft.VisualStudio.LanguageServer.ContainedLanguage.Test\\Microsoft.VisualStudio.LanguageServer.ContainedLanguage.Test.csproj",
@@ -36,7 +34,6 @@
       "src\\Shared\\Microsoft.AspNetCore.Razor.Test.Common\\Microsoft.AspNetCore.Razor.Test.Common.csproj",
       "src\\Shared\\Microsoft.AspNetCore.Razor.Utilities.Shared.Test\\Microsoft.AspNetCore.Razor.Utilities.Shared.Test.csproj",
       "src\\Shared\\Microsoft.AspNetCore.Razor.Utilities.Shared\\Microsoft.AspNetCore.Razor.Utilities.Shared.csproj",
-      "src\\Shared\\Microsoft.AspNetCore.Razor.Serialization.Json\\Microsoft.AspNetCore.Razor.Serialization.Json.shproj"
     ]
   }
 }

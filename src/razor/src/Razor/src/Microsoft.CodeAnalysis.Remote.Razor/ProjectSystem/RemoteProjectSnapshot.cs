@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -12,7 +11,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -23,8 +21,6 @@ namespace Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 internal sealed class RemoteProjectSnapshot : IProjectSnapshot
 {
     public RemoteSolutionSnapshot SolutionSnapshot { get; }
-
-    public ProjectKey Key { get; }
 
     private readonly Project _project;
     private readonly Dictionary<TextDocument, RemoteDocumentSnapshot> _documentMap = [];
@@ -38,7 +34,6 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
 
         _project = project;
         SolutionSnapshot = solutionSnapshot;
-        Key = _project.ToProjectKey();
     }
 
     public IEnumerable<string> DocumentFilePaths
@@ -50,17 +45,13 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
 
     public string IntermediateOutputPath => FilePathNormalizer.GetNormalizedDirectoryName(_project.CompilationOutputInfo.AssemblyPath);
 
-    public string? RootNamespace => _project.DefaultNamespace ?? "ASP";
-
     public string DisplayName => _project.Name;
 
     public Project Project => _project;
 
-    public LanguageVersion CSharpLanguageVersion => ((CSharpParseOptions)_project.ParseOptions.AssumeNotNull()).LanguageVersion;
-
     public async ValueTask<TagHelperCollection> GetTagHelpersAsync(CancellationToken cancellationToken)
     {
-        var generatorResult = await GeneratorRunResult.CreateAsync(throwIfNotFound: false, _project, SolutionSnapshot.SnapshotManager, cancellationToken).ConfigureAwait(false);
+        var generatorResult = await GeneratorRunResult.CreateAsync(throwIfNotFound: false, _project, cancellationToken).ConfigureAwait(false);
 
         return !generatorResult.IsDefault
             ? generatorResult.TagHelpers
@@ -71,14 +62,7 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
     {
         if (document.Project != _project)
         {
-            // We got asked for a document that doesn't belong to this project, but it could be that we are the result
-            // of re-running the generator (a "retry project") and the document they passed in is from the original project
-            // because it comes from the devenv side, so we can be a little lenient here. Since retry projects only exist
-            // early in a session, we should still catch coding errors with even basic manual testing.
-            document = _project.Solution.Projects.Any(p => p.IsRetryProject()) &&
-                _project.GetAdditionalDocument(document.Id) is { } retryDocument
-                    ? retryDocument
-                    : throw new ArgumentException(SR.Document_does_not_belong_to_this_project, nameof(document));
+            throw new ArgumentException(SR.Document_does_not_belong_to_this_project, nameof(document));
         }
 
         if (!document.IsRazorDocument())
@@ -149,7 +133,7 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
 
     internal async Task<RazorCodeDocument> GetRequiredCodeDocumentAsync(IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
     {
-        var generatorResult = await GeneratorRunResult.CreateAsync(throwIfNotFound: true, _project, SolutionSnapshot.SnapshotManager, cancellationToken).ConfigureAwait(false);
+        var generatorResult = await GeneratorRunResult.CreateAsync(throwIfNotFound: true, _project, cancellationToken).ConfigureAwait(false);
 
         Assumed.False(generatorResult.IsDefault);
 
@@ -158,7 +142,7 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
 
     internal async Task<SourceGeneratedDocument> GetRequiredGeneratedDocumentAsync(IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
     {
-        var generatorResult = await GeneratorRunResult.CreateAsync(throwIfNotFound: true, _project, SolutionSnapshot.SnapshotManager, cancellationToken).ConfigureAwait(false);
+        var generatorResult = await GeneratorRunResult.CreateAsync(throwIfNotFound: true, _project, cancellationToken).ConfigureAwait(false);
 
         Assumed.False(generatorResult.IsDefault);
 
@@ -175,7 +159,7 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
 
     private async Task<RazorCodeDocument?> TryGetCodeDocumentFromGeneratedHintNameAsync(string generatedDocumentHintName, CancellationToken cancellationToken)
     {
-        var generatorResult = await GeneratorRunResult.CreateAsync(throwIfNotFound: false, _project, SolutionSnapshot.SnapshotManager, cancellationToken).ConfigureAwait(false);
+        var generatorResult = await GeneratorRunResult.CreateAsync(throwIfNotFound: false, _project, cancellationToken).ConfigureAwait(false);
         if (generatorResult.IsDefault)
         {
             return null;
@@ -191,7 +175,7 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
         Debug.Assert(identity.DocumentId.ProjectId == _project.Id, "Generated document does not belong to this project.");
         var hintName = identity.HintName;
 
-        var generatorResult = await GeneratorRunResult.CreateAsync(throwIfNotFound: false, _project, SolutionSnapshot.SnapshotManager, cancellationToken).ConfigureAwait(false);
+        var generatorResult = await GeneratorRunResult.CreateAsync(throwIfNotFound: false, _project, cancellationToken).ConfigureAwait(false);
         if (generatorResult.IsDefault)
         {
             return null;
