@@ -94,6 +94,30 @@ public sealed class NavigateToTests : AbstractNavigateToTests
     }
 
     [Theory, CombinatorialData]
+    public async Task FindUnion(TestHost testHost, Composition composition)
+    {
+        // Exercises the full NavigateTo pipeline for union declarations
+        var content = XElement.Parse("""
+            <Workspace>
+                <Project Language="C#"  LanguageVersion="preview" CommonReferences="true">
+                    <Document FilePath="File1.cs">
+            union Goo(int)
+            {
+            }
+                    </Document>
+                </Project>
+            </Workspace>
+            """);
+        await TestAsync(testHost, composition, content, async w =>
+        {
+            // Tracked by https://github.com/dotnet/roslyn/issues/82607
+            // Consider using separate NavigateToItemKind and Glyph for unions
+            var item = (await _aggregator.GetItemsAsync("Goo")).Single(x => x.Kind != "Method");
+            VerifyNavigateToResultItem(item, "Goo", "[|Goo|]", PatternMatchKind.Exact, NavigateToItemKind.Structure, Glyph.StructureInternal);
+        });
+    }
+
+    [Theory, CombinatorialData]
     public async Task FindClassInFileScopedNamespace(TestHost testHost, Composition composition)
     {
         var content = XElement.Parse("""
@@ -1864,7 +1888,7 @@ public sealed class NavigateToTests : AbstractNavigateToTests
     /// <summary>
     /// Verifies that a fuzzy match is found when the length bitset check passes (symbol length
     /// within ±2 of pattern length). With the split fuzzy/non-fuzzy pre-filtering, the length
-    /// check sets 'allowFuzzyMatching', enabling the PatternMatcher's edit-distance computation.
+    /// and bigram checks enable the FuzzyPatternMatcher's edit-distance computation.
     /// "ToEror" (length 6) fuzzy-matches "ToError" (length 7), delta=1, within ±2.
     /// </summary>
     [Theory, CombinatorialData]
