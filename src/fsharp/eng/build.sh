@@ -41,7 +41,7 @@ usage()
   echo "  --buildnorealsig               Build product with realsig- (default use realsig+ where necessary)"
   echo "  --tfm                          Override the default target framework"
   echo ""
-  echo "Command line arguments starting with '/p:' are passed through to MSBuild."
+  echo "Command line arguments starting with '/p:', '/warnAsError', or '/warnNotAsError' are passed through to MSBuild."
 }
 
 source="${BASH_SOURCE[0]}"
@@ -183,7 +183,7 @@ while [[ $# > 0 ]]; do
       tfm=$2
       shift
       ;;
-    /p:*|/warnAsError*|/warnNotAsError*)
+    /p:*|/warnaserror*|/warnnotaserror*)
       properties+=("$1")
       ;;
     *)
