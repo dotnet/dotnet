@@ -1,8 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,7 +22,7 @@ namespace NuGet.ProjectModel
 
         public ToolPathResolver(string packagesDirectory, bool isLowercase)
         {
-            _packagesDirectory = packagesDirectory;
+            _packagesDirectory = packagesDirectory ?? throw new ArgumentNullException(nameof(packagesDirectory));
             _isLowercase = isLowercase;
         }
 
@@ -81,7 +80,7 @@ namespace NuGet.ProjectModel
         /// Returns the directory (packagesFolder/.tools/id/version for example) for the best matching version if any. 
         /// </summary>
         /// <returns></returns>
-        public string GetBestToolDirectoryPath(string packageId, VersionRange versionRange, NuGetFramework framework)
+        public string? GetBestToolDirectoryPath(string packageId, VersionRange versionRange, NuGetFramework framework)
         {
             var availableToolVersions = GetAvailableToolVersions(packageId);
 

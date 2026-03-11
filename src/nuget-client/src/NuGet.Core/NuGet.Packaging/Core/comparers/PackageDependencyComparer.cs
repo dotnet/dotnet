@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using NuGet.Shared;
@@ -35,7 +33,7 @@ namespace NuGet.Packaging.Core
         /// </summary>
         public static readonly PackageDependencyComparer Default = new PackageDependencyComparer();
 
-        public bool Equals(PackageDependency x, PackageDependency y)
+        public bool Equals(PackageDependency? x, PackageDependency? y)
         {
             if (ReferenceEquals(x, y))
             {

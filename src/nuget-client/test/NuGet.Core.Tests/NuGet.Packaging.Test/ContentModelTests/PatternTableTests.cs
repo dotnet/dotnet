@@ -18,7 +18,7 @@ namespace NuGet.Packaging.Test.ContentModelTests
             var table = new PatternTable();
 
             // Act
-            object obj;
+            object? obj;
             var b = table.TryLookup("tfm", "any".AsMemory(), out obj);
 
             // Assert
@@ -39,7 +39,7 @@ namespace NuGet.Packaging.Test.ContentModelTests
             var table = new PatternTable(data);
 
             // Act
-            object obj;
+            object? obj;
             var b = table.TryLookup("tfm", "any".AsMemory(), out obj);
 
             // Assert
@@ -59,7 +59,7 @@ namespace NuGet.Packaging.Test.ContentModelTests
             var table = new PatternTable(data);
 
             // Act
-            object obj;
+            object? obj;
             var b = table.TryLookup("tfm", "any".AsMemory(), out obj);
 
             // Assert

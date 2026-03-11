@@ -56,6 +56,16 @@ namespace NuGet.Packaging.Signing
             issues.Add(SignatureLog.InformationLog($"{indentation}{string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateIssuer, cert.IssuerName.Name)}"));
             issues.Add(SignatureLog.MinimalLog($"{indentation}{string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateValidity, cert.NotBefore, cert.NotAfter)}"));
 
+            foreach (string url in GetCrlDistributionPointUrls(cert))
+            {
+                issues.Add(SignatureLog.InformationLog($"{indentation}{string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateCrlUrl, url)}"));
+            }
+
+            foreach (string url in GetOcspUrls(cert))
+            {
+                issues.Add(SignatureLog.InformationLog($"{indentation}{string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateOcspUrl, url)}"));
+            }
+
             return issues;
         }
 
@@ -68,6 +78,16 @@ namespace NuGet.Packaging.Signing
             certStringBuilder.AppendLine(indentation + string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateHash, fingerprintAlgorithm.ToString(), certificateFingerprint));
             certStringBuilder.AppendLine(indentation + string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateIssuer, cert.IssuerName.Name));
             certStringBuilder.AppendLine(indentation + string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateValidity, cert.NotBefore, cert.NotAfter));
+
+            foreach (string url in GetCrlDistributionPointUrls(cert))
+            {
+                certStringBuilder.AppendLine(indentation + string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateCrlUrl, url));
+            }
+
+            foreach (string url in GetOcspUrls(cert))
+            {
+                certStringBuilder.AppendLine(indentation + string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateOcspUrl, url));
+            }
         }
 
         /// <summary>
@@ -446,6 +466,118 @@ namespace NuGet.Packaging.Signing
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Extracts CRL Distribution Point URLs from the certificate's CRL Distribution Points extension (OID 2.5.29.31).
+        /// </summary>
+        internal static IReadOnlyList<string> GetCrlDistributionPointUrls(X509Certificate2 cert)
+        {
+            const string CrlDistributionPointsOid = "2.5.29.31";
+            // context-specific primitive tag [6] for uniformResourceIdentifier in GeneralName
+            const byte GeneralNameUriTag = 0x86;
+
+            var urls = new List<string>();
+            var extension = cert.Extensions[CrlDistributionPointsOid];
+
+            if (extension == null)
+            {
+                return urls;
+            }
+
+            try
+            {
+                // CRLDistributionPoints ::= SEQUENCE OF DistributionPoint
+                var reader = new DerEncoding.DerSequenceReader(extension.RawData);
+
+                while (reader.HasData)
+                {
+                    // DistributionPoint ::= SEQUENCE { distributionPoint [0] ... }
+                    var dpReader = reader.ReadSequence();
+
+                    if (dpReader.HasData && dpReader.HasTag(DerEncoding.DerSequenceReader.ContextSpecificConstructedTag0))
+                    {
+                        // distributionPoint [0] CONSTRUCTED
+                        byte[] dpNameData = dpReader.ReadValue((DerEncoding.DerSequenceReader.DerTag)DerEncoding.DerSequenceReader.ContextSpecificConstructedTag0);
+                        var dpNameReader = DerEncoding.DerSequenceReader.CreateForPayload(dpNameData);
+
+                        if (dpNameReader.HasData && dpNameReader.HasTag(DerEncoding.DerSequenceReader.ContextSpecificConstructedTag0))
+                        {
+                            // fullName [0] CONSTRUCTED = GeneralNames
+                            byte[] fullNameData = dpNameReader.ReadValue((DerEncoding.DerSequenceReader.DerTag)DerEncoding.DerSequenceReader.ContextSpecificConstructedTag0);
+                            var gnReader = DerEncoding.DerSequenceReader.CreateForPayload(fullNameData);
+
+                            while (gnReader.HasData)
+                            {
+                                byte tag = gnReader.PeekTag();
+
+                                if (tag == GeneralNameUriTag)
+                                {
+                                    byte[] uriBytes = gnReader.ReadValue((DerEncoding.DerSequenceReader.DerTag)GeneralNameUriTag);
+                                    urls.Add(Encoding.ASCII.GetString(uriBytes));
+                                }
+                                else
+                                {
+                                    gnReader.SkipValue();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (System.Security.Cryptography.CryptographicException)
+            {
+            }
+
+            return urls;
+        }
+
+        /// <summary>
+        /// Extracts OCSP responder URLs from the certificate's Authority Information Access extension (OID 1.3.6.1.5.5.7.1.1).
+        /// </summary>
+        internal static IReadOnlyList<string> GetOcspUrls(X509Certificate2 cert)
+        {
+            const string AuthorityInfoAccessOid = "1.3.6.1.5.5.7.1.1";
+            const string OcspAccessMethodOid = "1.3.6.1.5.5.7.48.1";
+            // context-specific primitive tag [6] for uniformResourceIdentifier in GeneralName
+            const byte GeneralNameUriTag = 0x86;
+
+            var urls = new List<string>();
+            var extension = cert.Extensions[AuthorityInfoAccessOid];
+
+            if (extension == null)
+            {
+                return urls;
+            }
+
+            try
+            {
+                // AuthorityInfoAccessSyntax ::= SEQUENCE OF AccessDescription
+                var reader = new DerEncoding.DerSequenceReader(extension.RawData);
+
+                while (reader.HasData)
+                {
+                    // AccessDescription ::= SEQUENCE { accessMethod OID, accessLocation GeneralName }
+                    var adReader = reader.ReadSequence();
+                    string oid = adReader.ReadOidAsString();
+
+                    if (string.Equals(oid, OcspAccessMethodOid, StringComparison.Ordinal) && adReader.HasData)
+                    {
+                        byte tag = adReader.PeekTag();
+
+                        if (tag == GeneralNameUriTag)
+                        {
+                            byte[] uriBytes = adReader.ReadValue((DerEncoding.DerSequenceReader.DerTag)GeneralNameUriTag);
+                            urls.Add(Encoding.ASCII.GetString(uriBytes));
+                        }
+                    }
+                }
+            }
+            catch (System.Security.Cryptography.CryptographicException)
+            {
+            }
+
+            return urls;
         }
     }
 }

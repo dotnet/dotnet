@@ -10,9 +10,9 @@ namespace NuGet.CommandLine.XPlat
         private readonly string[] _detailedVerbosityTableHeader = { "Package ID", "Latest Version", "Owners", "Total Downloads", "Vulnerable", "Deprecation", "Project URL", "Description" };
         private readonly int[] _detailedColumnsToHighlight = { 0, 2, 6, 7 };
 
-        public Table CreateTable()
+        public Table CreateTable(int consoleWidth)
         {
-            return new Table(_detailedColumnsToHighlight, _detailedVerbosityTableHeader);
+            return new Table(_detailedColumnsToHighlight, _detailedVerbosityTableHeader, consoleWidth);
         }
     }
 }

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,7 +64,7 @@ namespace NuGet.Packaging
 
         public bool HasEmptyFolder { get; }
 
-        public bool Equals(FrameworkSpecificGroup other)
+        public bool Equals(FrameworkSpecificGroup? other)
         {
             if (ReferenceEquals(this, other))
             {
@@ -81,7 +79,7 @@ namespace NuGet.Packaging
             return GetHashCode() == other.GetHashCode();
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             var other = obj as FrameworkSpecificGroup;
 
