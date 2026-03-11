@@ -1,29 +1,20 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#nullable disable
+
 using System.Collections.Immutable;
-using Microsoft.AspNetCore.Razor.PooledObjects;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.CodeAnalysis.Razor.Tooltip;
 
-internal sealed class TestComponentAvailabilityService(ProjectSnapshotManager projectManager) : AbstractComponentAvailabilityService
-{
-    private readonly ProjectSnapshotManager _projectManager = projectManager;
-
-    protected override ImmutableArray<IProjectSnapshot> GetProjectsContainingDocument(string documentFilePath)
+internal sealed class TestComponentAvailabilityService : IComponentAvailabilityService
     {
-        using var projects = new PooledArrayBuilder<IProjectSnapshot>();
-
-        foreach (var project in _projectManager.GetProjects())
+        public Task<ImmutableArray<(IProjectSnapshot Project, bool IsAvailable)>> GetComponentAvailabilityAsync(string documentFilePath, string typeName, CancellationToken cancellationToken)
         {
-            if (project.ContainsDocument(documentFilePath))
-            {
-                projects.Add(project);
-            }
+            return SpecializedTasks.EmptyImmutableArray<(IProjectSnapshot Project, bool IsAvailable)>();
         }
-
-        return projects.ToImmutableAndClear();
     }
-}
-

@@ -33,6 +33,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)CodeActions\WrapAttributeTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ComputedTargetPathTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Diagnostics\RazorDiagnosticHelperTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DocumentExcerpt\DocumentExcerptServiceTestBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DocumentExcerpt\RazorDocumentExcerptServiceTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Endpoints\CohostDocumentCompletionEndpointTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Endpoints\CohostDocumentCompletionResolveEndpointTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Endpoints\CohostDocumentHighlightEndpointTest.cs" />
@@ -64,6 +66,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Formatting\MoreHtmlFormattingTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Formatting\RazorFormattingServiceTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\RazorEditHelperTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProjectAvailabilityTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RazorDocumentMappingServiceTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ThrowingSnippetCompletionItemResolveProvider.cs" />
   </ItemGroup>

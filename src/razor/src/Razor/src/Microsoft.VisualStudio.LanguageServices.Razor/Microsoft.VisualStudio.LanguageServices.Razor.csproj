@@ -12,7 +12,7 @@
 
     <!-- Live Share serializes ProjectSnapshotHandleProxy instance to JSON. So, we must include serialization
          for project system types and enable TagHelperDescriptor caching. -->
-    <DefineConstants>$(DefineConstants);JSONSERIALIZATION_PROJECTSYSTEM;JSONSERIALIZATION_ENABLETAGHELPERCACHE</DefineConstants>
+    <DefineConstants>$(DefineConstants);JSONSERIALIZATION_ENABLETAGHELPERCACHE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
