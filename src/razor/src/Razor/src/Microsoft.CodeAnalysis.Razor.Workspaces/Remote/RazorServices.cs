@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Resolvers;
 
 namespace Microsoft.CodeAnalysis.Razor.Remote;
 
@@ -14,7 +13,6 @@ internal static class RazorServices
     internal static readonly IEnumerable<(Type, Type?)> MessagePackServices =
         [
             (typeof(IRemoteLinkedEditingRangeService), null),
-            (typeof(IRemoteTagHelperProviderService), null),
             (typeof(IRemoteSemanticTokensService), null),
             (typeof(IRemoteHtmlDocumentService), null),
             (typeof(IRemoteUriPresentationService), null),
@@ -57,7 +55,7 @@ internal static class RazorServices
         ComponentName,
         featureDisplayNameProvider: GetFeatureDisplayName,
         additionalFormatters: [],
-        additionalResolvers: TopLevelResolvers.All,
+        additionalResolvers: [],
         interfaces: MessagePackServices);
 
     public static readonly RazorServiceDescriptorsWrapper JsonDescriptors = new(

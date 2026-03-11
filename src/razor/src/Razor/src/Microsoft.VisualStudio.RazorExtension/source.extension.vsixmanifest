@@ -32,7 +32,6 @@
     <!-- ServiceHub assets are added by msbuild target -->
     <!--#SERVICEHUB_ASSETS#-->
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.CodeAnalysis.Razor.Compiler.dll" />
-    <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.AspNetCore.Razor.LanguageServer.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.CodeAnalysis.Razor.Workspaces.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly"  Path="Microsoft.VisualStudio.LanguageServices.Razor.dll" />
     <Asset Type="Microsoft.VisualStudio.MefComponent"  Path="Microsoft.VisualStudio.LanguageServices.Razor.dll" />

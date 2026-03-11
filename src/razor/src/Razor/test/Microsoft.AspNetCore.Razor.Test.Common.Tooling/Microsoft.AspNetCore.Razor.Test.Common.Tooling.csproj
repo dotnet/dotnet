@@ -8,10 +8,6 @@
 
     <!-- To generate baselines, run tests with /p:GenerateBaselines=true -->
     <DefineConstants Condition="'$(GenerateBaselines)'=='true'">$(DefineConstants);GENERATE_BASELINES</DefineConstants>
-
-    <!-- We only import JSON serialization on non-NetFx.
-         For NetFx, we rely on the JSON serialization compiled into Microsoft.VisualStudio.LanguageService.Razor for Live Share. -->
-    <DefineConstants Condition="'$(TargetFramework)' != '$(NetFxVS)'">$(DefineConstants);JSONSERIALIZATION_PROJECTSYSTEM</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,7 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Shared\Microsoft.AspNetCore.Razor.Test.Common\Microsoft.AspNetCore.Razor.Test.Common.csproj" />
-    <ProjectReference Include="..\..\src\Microsoft.AspNetCore.Razor.LanguageServer\Microsoft.AspNetCore.Razor.LanguageServer.csproj" />
     <ProjectReference Include="..\..\..\Compiler\Microsoft.CodeAnalysis.Razor.Compiler\src\Microsoft.CodeAnalysis.Razor.Compiler.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.Razor.Workspaces\Microsoft.CodeAnalysis.Razor.Workspaces.csproj" />
   </ItemGroup>
@@ -73,7 +68,6 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" Key="$(MoqPublicKey)" />
-    <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.LanguageServer.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.Test.Common.Cohosting" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.Razor.Workspaces.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.Remote.Razor" Key="$(RazorKey)" />
@@ -83,9 +77,5 @@
     <InternalsVisibleTo Include="Microsoft.VisualStudio.Razor.IntegrationTests" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.VisualStudioCode.RazorExtension.Test" Key="$(RazorKey)" />
   </ItemGroup>
-
-  <!-- We only import JSON serialization on non-NetFx.
-       For NetFx, we rely on the JSON serialization compiled into Microsoft.VisualStudio.LanguageService.Razor for Live Share. -->
-  <Import Condition="'$(TargetFramework)' != '$(NetFxVS)'" Project="..\..\..\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems" Label="Shared" />
 
 </Project>

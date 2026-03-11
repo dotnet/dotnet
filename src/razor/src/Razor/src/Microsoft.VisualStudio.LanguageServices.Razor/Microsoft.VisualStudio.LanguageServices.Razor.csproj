@@ -9,10 +9,6 @@
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
     <IsPackable Condition="'$(OS)' != 'Windows_NT'">false</IsPackable>
     <RootNamespace>Microsoft.VisualStudio.Razor</RootNamespace>
-
-    <!-- Live Share serializes ProjectSnapshotHandleProxy instance to JSON. So, we must include serialization
-         for project system types and enable TagHelperDescriptor caching. -->
-    <DefineConstants>$(DefineConstants);JSONSERIALIZATION_PROJECTSYSTEM;JSONSERIALIZATION_ENABLETAGHELPERCACHE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -42,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.AspNetCore.Razor.LanguageServer\Microsoft.AspNetCore.Razor.LanguageServer.csproj" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.Razor.Workspaces\Microsoft.CodeAnalysis.Razor.Workspaces.csproj" />
     <ProjectReference Include="..\Microsoft.VisualStudio.LanguageServer.ContainedLanguage\Microsoft.VisualStudio.LanguageServer.ContainedLanguage.csproj" />
   </ItemGroup>
 
@@ -186,8 +182,6 @@
       <Compile Remove="@(XamlPropertyRule->'$(IntermediateOutputPath)%(FileName)$(DefaultLanguageSourceExtension)')" />
     </ItemGroup>
   </Target>
-
-  <Import Project="..\..\..\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems" Label="Shared" />
 
   <Import Project="..\Microsoft.CodeAnalysis.Razor.CohostingShared\Microsoft.CodeAnalysis.Razor.CohostingShared.projitems" Label="Shared" />
 

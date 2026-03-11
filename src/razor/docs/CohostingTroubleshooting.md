@@ -52,6 +52,37 @@ A fix has been contributed to the Umbraco templates ([Umbraco-CMS#21861](https:/
 
 See also [dotnet/razor#12331](https://github.com/dotnet/razor/issues/12331) for more details.
 
+### Default Content Items Disabled
+
+The Razor source generator requires `.razor` and `.cshtml` files to be registered as additional items in your project so that Roslyn can see them and pass them to the generator. The Web and Razor SDKs do this by default, but it can be turned off in your project file. If any of the following properties are set to `false`:
+
+```xml
+<EnableDefaultContentItems>false</EnableDefaultContentItems>
+<EnableDefaultRazorGenerateItems>false</EnableDefaultRazorGenerateItems>
+<EnableDefaultRazorComponentItems>false</EnableDefaultRazorComponentItems>
+```
+
+the source generator will not receive the Razor files and the cohosted editor will not function correctly.
+
+**Solution:** Set these properties back to `true`.
+
+If this causes problems with your CI or build pipeline, you can condition them on design-time builds so the editor still works:
+
+```xml
+<EnableDefaultContentItems Condition="'$(DesignTimeBuild)' == 'true'">true</EnableDefaultContentItems>
+<EnableDefaultRazorGenerateItems Condition="'$(DesignTimeBuild)' == 'true'">true</EnableDefaultRazorGenerateItems>
+<EnableDefaultRazorComponentItems Condition="'$(DesignTimeBuild)' == 'true'">true</EnableDefaultRazorComponentItems>
+```
+
+Alternatively, you can manually add the files as additional items:
+
+```xml
+<ItemGroup>
+  <AdditionalFiles Include="**/*.razor" />
+  <AdditionalFiles Include="**/*.cshtml" />
+</ItemGroup>
+```
+
 ### Pinning to Specific .NET 8 SDK Versions via `global.json`
 
 If your project uses a `global.json` that pins to a specific .NET 8 SDK version (e.g., `8.0.201`, and possibly others), the Razor source generator may not work because the SDK looks for an older filename.

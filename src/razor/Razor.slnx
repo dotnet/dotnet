@@ -53,15 +53,14 @@
     <Project Path="src/Compiler/tools/RazorSyntaxGenerator/RazorSyntaxGenerator.csproj" />
   </Folder>
   <Folder Name="/Shared/">
-    <Project Path="src/Shared/Microsoft.AspNetCore.Razor.Serialization.Json/Microsoft.AspNetCore.Razor.Serialization.Json.shproj" />
     <Project Path="src/Shared/Microsoft.AspNetCore.Razor.Test.Common/Microsoft.AspNetCore.Razor.Test.Common.csproj" />
     <Project Path="src/Shared/Microsoft.AspNetCore.Razor.Utilities.Shared.Test/Microsoft.AspNetCore.Razor.Utilities.Shared.Test.csproj" />
     <Project Path="src/Shared/Microsoft.AspNetCore.Razor.Utilities.Shared/Microsoft.AspNetCore.Razor.Utilities.Shared.csproj" />
   </Folder>
   <Folder Name="/Tooling Tests/">
-    <Project Path="src/Razor/test/Microsoft.AspNetCore.Razor.LanguageServer.Test/Microsoft.AspNetCore.Razor.LanguageServer.Test.csproj" />
     <Project Path="src/Razor/test/Microsoft.AspNetCore.Razor.Test.Common.Cohosting/Microsoft.AspNetCore.Razor.Test.Common.Cohosting.csproj" />
     <Project Path="src/Razor/test/Microsoft.AspNetCore.Razor.Test.Common.Tooling/Microsoft.AspNetCore.Razor.Test.Common.Tooling.csproj" />
+    <Project Path="src/Razor/test/Microsoft.CodeAnalysis.Razor.CohostingShared.Test/Microsoft.CodeAnalysis.Razor.CohostingShared.Test.shproj" Id="4369f151-7b14-4973-ada4-ba6b8e26f847" />
     <Project Path="src/Razor/test/Microsoft.CodeAnalysis.Razor.Workspaces.Test/Microsoft.CodeAnalysis.Razor.Workspaces.Test.csproj" />
     <Project Path="src/Razor/test/Microsoft.CodeAnalysis.Remote.Razor.Test/Microsoft.CodeAnalysis.Remote.Razor.Test.csproj" />
     <Project Path="src/Razor/test/Microsoft.VisualStudio.LanguageServer.ContainedLanguage.Test/Microsoft.VisualStudio.LanguageServer.ContainedLanguage.Test.csproj" />
@@ -72,7 +71,6 @@
   </Folder>
   <Folder Name="/Tooling/">
     <File Path="src/Razor/src/Directory.Build.props" />
-    <Project Path="src/Razor/src/Microsoft.AspNetCore.Razor.LanguageServer/Microsoft.AspNetCore.Razor.LanguageServer.csproj" />
     <Project Path="src/Razor/src/Microsoft.CodeAnalysis.Razor.CohostingShared/Microsoft.CodeAnalysis.Razor.CohostingShared.shproj" />
     <Project Path="src/Razor/src/Microsoft.CodeAnalysis.Razor.Workspaces/Microsoft.CodeAnalysis.Razor.Workspaces.csproj" />
     <Project Path="src/Razor/src/Microsoft.CodeAnalysis.Remote.Razor.CoreComponents/arm64/Microsoft.CodeAnalysis.Remote.Razor.CoreComponents.arm64.csproj" />

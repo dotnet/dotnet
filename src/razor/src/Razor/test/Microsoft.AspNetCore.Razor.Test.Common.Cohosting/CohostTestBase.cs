@@ -86,7 +86,6 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
 
         _clientInitializationOptions = new()
         {
-            UseRazorCohostServer = true,
             ReturnCodeActionAndRenamePathsWithPrefixedSlash = false,
             SupportsFileManipulation = true,
             ShowAllCSharpCodeActions = false,
