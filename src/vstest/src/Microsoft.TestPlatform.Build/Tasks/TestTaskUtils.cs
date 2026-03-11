@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 
 using Microsoft.Build.Utilities;
 
@@ -247,6 +246,6 @@ internal static class TestTaskUtils
     internal static string? ResolveDotnetPath()
     {
         var dotnetHostPath = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH");
-        return string.IsNullOrEmpty(dotnetHostPath) ? null : Path.GetFullPath(dotnetHostPath);
+        return StringUtils.IsNullOrEmpty(dotnetHostPath) ? null : Path.GetFullPath(dotnetHostPath);
     }
 }
