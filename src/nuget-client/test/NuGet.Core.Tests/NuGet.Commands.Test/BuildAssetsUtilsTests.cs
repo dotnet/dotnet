@@ -704,6 +704,7 @@ namespace NuGet.Commands.Test
                     {
                         new LockFileTarget
                         {
+                            TargetAlias = targetGraphs[0].TargetAlias,
                             RuntimeIdentifier = targetGraphs[0].RuntimeIdentifier,
                             TargetFramework = targetGraphs[0].Framework,
                             Libraries =
@@ -813,6 +814,7 @@ namespace NuGet.Commands.Test
                     {
                         new LockFileTarget
                         {
+                            TargetAlias = targetGraphs[0].TargetAlias,
                             RuntimeIdentifier = targetGraphs[0].RuntimeIdentifier,
                             TargetFramework = targetGraphs[0].Framework,
                             Libraries =
