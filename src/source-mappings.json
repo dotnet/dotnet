@@ -94,9 +94,9 @@
             "defaultRemote": "https://github.com/dotnet/source-build-reference-packages",
             "exclude": [
               // Contains disallowed binaries
-              // 1ES Secret Scanning does not allow any PFX files
               "src/externalPackages/src/spectre-console/docs/**/*",
 
+              // 1ES Secret Scanning does not allow any PFX files
               // For submodule exclusions, we must use the full relative path of each submodule
               "src/externalPackages/src/**/*.pfx",
               "src/externalPackages/src/MSBuildLocator/**/*.pfx",
