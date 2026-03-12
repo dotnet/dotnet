@@ -78,8 +78,4 @@
     <InternalsVisibleTo Include="Microsoft.VisualStudioCode.RazorExtension.Test" Key="$(RazorKey)" />
   </ItemGroup>
 
-  <!-- We only import JSON serialization on non-NetFx.
-       For NetFx, we rely on the JSON serialization compiled into Microsoft.VisualStudio.LanguageService.Razor for Live Share. -->
-  <Import Condition="'$(TargetFramework)' != '$(NetFxVS)'" Project="..\..\..\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems" Label="Shared" />
-
 </Project>
