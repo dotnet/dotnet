@@ -39,7 +39,7 @@ internal readonly struct FilePathExclusions(
             {
                 // If default items are not enabled exclude just the output directories.
 
-                TryAddOutputDir(projectNode.GetOutputDirectory());
+                TryAddOutputDir(projectNode.ProjectInstance.GetOutputDirectory());
                 TryAddOutputDir(projectNode.ProjectInstance.GetIntermediateOutputDirectory());
 
                 void TryAddOutputDir(string? dir)
@@ -94,7 +94,7 @@ internal readonly struct FilePathExclusions(
         {
             if (glob.IsMatch(fullPath))
             {
-                logger.Log(MessageDescriptor.IgnoringChangeInExcludedFile, fullPath, changeKind, "DefaultItemExcludes", globValue, projectDir);
+                logger.Log(MessageDescriptor.IgnoringChangeInExcludedFile, (fullPath, changeKind, "DefaultItemExcludes", globValue, projectDir));
                 return true;
             }
         }
