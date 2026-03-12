@@ -64,13 +64,11 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 Architecture.X64 => 1,
                 Architecture.Arm => 12,
                 Architecture.Arm64 => 19,
-#if NET
                 Architecture.Armv6 => 12,
                 Architecture.S390x => 15,
                 Architecture.Ppc64le => 16,
                 Architecture.RiscV64 => 22,
                 Architecture.LoongArch64 => 23,
-#endif
                 _ => throw new ArgumentException("Unsupported architecture", nameof(architecture))
             };
         }
@@ -84,13 +82,11 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 Architecture.X64 => "x86_64",
                 Architecture.Arm => "armv7hl",
                 Architecture.Arm64 => "aarch64",
-#if NET
                 Architecture.Armv6 => "armv6hl",
                 Architecture.S390x => "s390x",
                 Architecture.Ppc64le => "ppc64le",
                 Architecture.RiscV64 => "riscv64",
                 Architecture.LoongArch64 => "loongarch64",
-#endif
                 _ => throw new ArgumentException("Unsupported architecture", nameof(architecture))
             };
         }

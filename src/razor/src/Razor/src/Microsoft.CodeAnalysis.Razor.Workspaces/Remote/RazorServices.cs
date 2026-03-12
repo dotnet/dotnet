@@ -14,7 +14,6 @@ internal static class RazorServices
     internal static readonly IEnumerable<(Type, Type?)> MessagePackServices =
         [
             (typeof(IRemoteLinkedEditingRangeService), null),
-            (typeof(IRemoteTagHelperProviderService), null),
             (typeof(IRemoteSemanticTokensService), null),
             (typeof(IRemoteHtmlDocumentService), null),
             (typeof(IRemoteUriPresentationService), null),

@@ -3,7 +3,6 @@
 
 using System.Threading;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Moq;
 
@@ -28,30 +27,6 @@ internal static class TestMocks
 
         mock.Setup(x => x.LoadTextAndVersionAsync(It.IsAny<LoadTextOptions>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(textAndVersion);
-
-        return mock.Object;
-    }
-
-    public static IProjectSnapshot CreateProjectSnapshot(HostProject hostProject, ProjectWorkspaceState? projectWorkspaceState = null)
-    {
-        var mock = new StrictMock<IProjectSnapshot>();
-
-        mock.SetupGet(x => x.Key)
-            .Returns(hostProject.Key);
-        mock.SetupGet(x => x.FilePath)
-            .Returns(hostProject.FilePath);
-        mock.SetupGet(x => x.IntermediateOutputPath)
-            .Returns(hostProject.IntermediateOutputPath);
-        mock.SetupGet(x => x.RootNamespace)
-            .Returns(hostProject.RootNamespace);
-        mock.SetupGet(x => x.DisplayName)
-            .Returns(hostProject.DisplayName);
-
-        if (projectWorkspaceState is not null)
-        {
-            mock.Setup(x => x.GetTagHelpersAsync(It.IsAny<CancellationToken>()))
-                .ReturnsAsync(projectWorkspaceState.TagHelpers);
-        }
 
         return mock.Object;
     }

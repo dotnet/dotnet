@@ -42,6 +42,7 @@
     <FileExtensionSignInfo Update=".js" CertificateName="None" />
 
     <!-- Sign 3rd party files that end up in the artifacts -->
+    <FileSignInfo Include="Antlr4.Runtime.Standard.dll" CertificateName="$(ExternalCertificateId)" />
     <FileSignInfo Include="Humanizer.dll" CertificateName="$(ExternalCertificateId)" />
     <FileSignInfo Include="Mono.Cecil.dll" CertificateName="$(ExternalCertificateId)" />
     <FileSignInfo Include="Mono.Cecil.Mdb.dll" CertificateName="$(ExternalCertificateId)" />

@@ -2,9 +2,8 @@
 
   <PropertyGroup>
     <!-- Treat this as a tooling library as it references msbuild. -->
-    <TargetFrameworks>$(BundledNETCoreAppTargetFramework);netstandard2.0;$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <IsPackable>true</IsPackable>
-    <DefaultExcludesInProjectFolder Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) != '.NETFramework'">**/*.Desktop.*</DefaultExcludesInProjectFolder>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,14 +12,4 @@
     <PackageReference Include="NuGet.Packaging" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <Compile Include="..\Internal\AssemblyResolver.cs" />
-
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Net.Http" />
-  </ItemGroup>
-
-  <!-- This project is a build task dependency and needs to follow desktop version requirements. -->
-  <Import Project="$(RepositoryEngineeringDir)BuildTask.Packages.props" />
-  
 </Project>

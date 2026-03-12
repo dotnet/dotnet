@@ -246,9 +246,7 @@ namespace Microsoft.DotNet.SignTool.Tests
 
             ".py",
             ".pyd",
-#if !NETFRAMEWORK
             ".deb",
-#endif
         };
 
         public static IEnumerable<object[]> GetSignableExtensions()
@@ -279,8 +277,7 @@ namespace Microsoft.DotNet.SignTool.Tests
         }
 
         private static string s_snPath = Path.Combine(Path.GetDirectoryName(typeof(SignToolTests).Assembly.Location), "tools", "sn", "sn.exe");
-        private static string s_tarToolPath = Path.Combine(Path.GetDirectoryName(typeof(SignToolTests).Assembly.Location), "tools", "tar", "Microsoft.Dotnet.Tar.dll");
-        private static string s_pkgToolPath = Path.Combine(Path.GetDirectoryName(typeof(SignToolTests).Assembly.Location), "tools", "pkg", "Microsoft.DotNet.MacOsPkg.Cli.dll");
+        private static string s_pkgToolPath = Path.Combine(Path.GetDirectoryName(typeof(SignToolTests).Assembly.Location), "tools", "pkg", "Microsoft.Dotnet.MacOsPkg.Cli.dll");
 
         private string GetResourcePath(string name, string relativePath = null)
         {
@@ -341,11 +338,11 @@ namespace Microsoft.DotNet.SignTool.Tests
             // The path to DotNet will always be null in these tests, this will force
             // the signing logic to call our FakeBuildEngine.BuildProjectFile with a path
             // to the XML that store the content of the would be Microbuild sign request.
-            var signToolArgs = new SignToolArgs(_tmpDir, microBuildCorePath: "MicroBuildCorePath", testSign: true, dotnetPath: null, msbuildVerbosity: "quiet", _tmpDir, enclosingDir: "", "", wix3ToolsPath: wix3ToolsPath, wixToolsPath: wixToolsPath, tarToolPath: s_tarToolPath, pkgToolPath: s_pkgToolPath, dotnetTimeout: -1);
+            var signToolArgs = new SignToolArgs(_tmpDir, microBuildCorePath: "MicroBuildCorePath", testSign: true, dotnetPath: null, msbuildVerbosity: "quiet", _tmpDir, enclosingDir: "", "", wix3ToolsPath: wix3ToolsPath, wixToolsPath: wixToolsPath, pkgToolPath: s_pkgToolPath, dotnetTimeout: -1);
 
             var signTool = new FakeSignTool(signToolArgs, task.Log);
             // Passing null for the 3rd party check skip as this doesn't affect the generated project.
-            var configuration = new Configuration(signToolArgs.TempDir, itemsToSign, strongNameSignInfo, fileSignInfo, extensionsSignInfo, additionalCertificateInfo, null, tarToolPath: s_tarToolPath, pkgToolPath: s_pkgToolPath, snPath: s_snPath, task.Log);
+            var configuration = new Configuration(signToolArgs.TempDir, itemsToSign, strongNameSignInfo, fileSignInfo, extensionsSignInfo, additionalCertificateInfo, null, pkgToolPath: s_pkgToolPath, snPath: s_snPath, task.Log);
             var signingInput = configuration.GenerateListOfFiles();
             var util = new BatchSignUtil(
                 task.BuildEngine,
@@ -393,7 +390,7 @@ namespace Microsoft.DotNet.SignTool.Tests
             var engine = new FakeBuildEngine();
             var task = new SignToolTask { BuildEngine = engine };
             var signingInput = new Configuration(_tmpDir, itemsToSign, strongNameSignInfo, fileSignInfo, extensionsSignInfo, additionalCertificateInfo,
-                skip3rdPartyCheckFiles, tarToolPath: s_tarToolPath, pkgToolPath: s_pkgToolPath, snPath: s_snPath, task.Log).GenerateListOfFiles();
+                skip3rdPartyCheckFiles, pkgToolPath: s_pkgToolPath, snPath: s_snPath, task.Log).GenerateListOfFiles();
 
             signingInput.FilesToSign.Select(f => f.ToString()).Should().BeEquivalentTo(expected);
             signingInput.FilesToCopy.Select(f => $"{f.Key} -> {f.Value}").Should().BeEquivalentTo(expectedCopyFiles ?? Array.Empty<string>());
@@ -401,7 +398,6 @@ namespace Microsoft.DotNet.SignTool.Tests
             engine.LogWarningEvents.Select(w => $"{w.Code}: {w.Message}").Should().BeEquivalentTo(expectedWarnings ?? Array.Empty<string>());
         }
 
-#if !NETFRAMEWORK
         private void ValidateProducedDebContent(
             string debianPackage,
             (string, string)[] expectedFilesOriginalHashes,
@@ -587,7 +583,7 @@ namespace Microsoft.DotNet.SignTool.Tests
                     $"symlink '{symlinkPath}' should resolve to the signed file");
             }
         }
-#endif
+
         [Fact]
         public void EmptySigningList()
         {
@@ -598,7 +594,7 @@ namespace Microsoft.DotNet.SignTool.Tests
             var fileSignInfo = new Dictionary<ExplicitSignInfoKey, FileSignInfoEntry>();
 
             var task = new SignToolTask { BuildEngine = new FakeBuildEngine() };
-            var signingInput = new Configuration(_tmpDir, itemsToSign, strongNameSignInfo, fileSignInfo, s_fileExtensionSignInfo, null, null, tarToolPath: s_tarToolPath, pkgToolPath: s_pkgToolPath, snPath: s_snPath, task.Log).GenerateListOfFiles();
+            var signingInput = new Configuration(_tmpDir, itemsToSign, strongNameSignInfo, fileSignInfo, s_fileExtensionSignInfo, null, null, pkgToolPath: s_pkgToolPath, snPath: s_snPath, task.Log).GenerateListOfFiles();
 
             signingInput.FilesToSign.Should().BeEmpty();
             signingInput.ZipDataMap.Should().BeEmpty();
@@ -1758,7 +1754,6 @@ $@"
             });
         }
 
-#if !NETFRAMEWORK
         /// <summary>
         /// Validates that tar.gz archives containing symbolic links are handled correctly.
         /// On Windows, ReadTarGZipEntriesWithExternalTar throws when symlinks are detected,
@@ -1851,7 +1846,6 @@ $@"
 "
             });
         }
-#endif
 
         [Fact]
         public void SymbolsNupkg()
@@ -1958,7 +1952,6 @@ $@"
             });
         }
 
-#if !NETFRAMEWORK
         [UnixOnlyFact]
         public void CheckDebSigning()
         {
@@ -2142,7 +2135,6 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.rpm"
 
             ValidateFileSignInfos(itemsToSign, strongNameSignInfo, fileSignInfo, s_fileExtensionSignInfo, expectedFilesToBeSigned.ToArray());
         }
-#endif
 
         [Fact]
         public void CheckPowershellSigning()
@@ -2170,7 +2162,6 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.rpm"
          * NuGet behaves differently on core vs framework 
          * - https://github.com/NuGet/NuGet.Client/blob/e88a5a03a1b26099f8be225d3ee3a897b2edb1d0/build/common.targets#L18-L25
          */
-#if NETFRAMEWORK
         [Fact]
         public void VerifyNupkgIntegrity()
         {
@@ -2210,7 +2201,7 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.rpm"
                 "File 'FakeSignedContents.nupkg' Certificate='NuGet'"
             });
         }
-#endif
+
         [WindowsOnlyFact]
         [Trait("Category", "SkipWhenLiveUnitTesting")]
         public void SignMsiEngine()
@@ -2928,7 +2919,6 @@ $@"
                 MicroBuildCorePath = "MicroBuildCorePath",
                 DoStrongNameCheck = false,
                 SNBinaryPath = null,
-                TarToolPath = s_tarToolPath,
                 PkgToolPath = s_pkgToolPath,
             };
 
@@ -3299,7 +3289,6 @@ $@"
                 new Dictionary<string, List<SignInfo>>(),
                 new(),
                 null,
-                tarToolPath: s_tarToolPath,
                 pkgToolPath: s_pkgToolPath,
                 snPath: s_snPath,
                 task.Log)
@@ -3356,7 +3345,6 @@ $@"
                 extensionSignInfo,
                 new(),
                 null,
-                tarToolPath: s_tarToolPath,
                 pkgToolPath: s_pkgToolPath,
                 snPath: s_snPath,
                 task.Log)
@@ -3718,7 +3706,6 @@ $@"
                 snBinaryPath: "MockSnPath",
                 wix3ToolsPath: null,
                 wixToolsPath: null,
-                tarToolPath: null,
                 pkgToolPath: null,
                 dotnetTimeout: 300000);
 
@@ -3850,7 +3837,6 @@ $@"
                 s_fileExtensionSignInfo,
                 additionalCertificateInfo,
                 itemsToSkip3rdPartyCheck: null,
-                tarToolPath: null,
                 pkgToolPath: null,
                 snPath: null,
                 new TaskLoggingHelper(new FakeBuildEngine(_output), "SignToolTests"),
@@ -3873,7 +3859,6 @@ $@"
                 snBinaryPath: null,
                 wix3ToolsPath: null,
                 wixToolsPath: null,
-                tarToolPath: null,
                 pkgToolPath: null,
                 dotnetTimeout: -1);
 

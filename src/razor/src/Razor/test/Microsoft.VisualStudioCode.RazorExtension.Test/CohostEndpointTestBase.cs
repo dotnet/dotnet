@@ -47,7 +47,7 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
 
         _clientSettingsManager = new ClientSettingsManager();
 
-        _filePathService = new VSCodeFilePathService(FeatureOptions);
+        _filePathService = new VSCodeFilePathService();
 
         _semanticTokensLegendService = new CohostSemanticTokensLegendService(new TestClientCapabilitiesService(new VSInternalClientCapabilities() { SupportsVisualStudioExtensions = false }));
     }

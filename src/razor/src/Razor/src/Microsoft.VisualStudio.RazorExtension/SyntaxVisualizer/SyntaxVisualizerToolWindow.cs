@@ -25,7 +25,6 @@ internal class SyntaxVisualizerToolWindow : ToolWindowPane
     // Values from SyntaxVisualizerMenu.vsct
     private static readonly Guid CmdSet = new Guid("a3a603a2-2b17-4ce2-bd21-cbb8ccc084ec");
     private const int ToolbarCmdId = 0x0102;
-    private const int CmdIdShowSourceMappingsButton = 0x0110;
     private const int CmdIdShowGeneratedCode = 0x0111;
     private const int CmdIdShowGeneratedHtml = 0x0112;
     private const int CmdIdShowAllTagHelpers = 0x0113;
@@ -33,7 +32,6 @@ internal class SyntaxVisualizerToolWindow : ToolWindowPane
     private const int CmdIdShowReferencedTagHelpers = 0x0115;
     private const int CmdidShowFormattingDocument = 0x0116;
 
-    private MenuCommand? _showSourceMappingsCommand;
     private SyntaxVisualizerControl _visualizerControl => (SyntaxVisualizerControl)Content;
 
     public bool CommandHandlersInitialized { get; private set; }
@@ -77,29 +75,12 @@ internal class SyntaxVisualizerToolWindow : ToolWindowPane
 
         CommandHandlersInitialized = true;
 
-        _showSourceMappingsCommand = new MenuCommand(ShowSourceMappings, new CommandID(guidSyntaxVisualizerMenuCmdSet, CmdIdShowSourceMappingsButton))
-        {
-            Checked = SourceMappingTagger.Enabled
-        };
-
-        mcs.AddCommand(_showSourceMappingsCommand);
         mcs.AddCommand(new MenuCommand(ShowFormattingDocument, new CommandID(guidSyntaxVisualizerMenuCmdSet, CmdidShowFormattingDocument)));
         mcs.AddCommand(new MenuCommand(ShowGeneratedCode, new CommandID(guidSyntaxVisualizerMenuCmdSet, CmdIdShowGeneratedCode)));
         mcs.AddCommand(new MenuCommand(ShowGeneratedHtml, new CommandID(guidSyntaxVisualizerMenuCmdSet, CmdIdShowGeneratedHtml)));
         mcs.AddCommand(new MenuCommand(ShowAllTagHelpers, new CommandID(guidSyntaxVisualizerMenuCmdSet, CmdIdShowAllTagHelpers)));
         mcs.AddCommand(new MenuCommand(ShowInScopeTagHelpers, new CommandID(guidSyntaxVisualizerMenuCmdSet, CmdIdShowInScopeTagHelpers)));
         mcs.AddCommand(new MenuCommand(ShowReferencedTagHelpers, new CommandID(guidSyntaxVisualizerMenuCmdSet, CmdIdShowReferencedTagHelpers)));
-    }
-
-    private void ShowSourceMappings(object sender, EventArgs e)
-    {
-        _visualizerControl.ShowSourceMappings();
-
-        if (_showSourceMappingsCommand is not null)
-        {
-            // Always update the checked state after executing the handler
-            _showSourceMappingsCommand.Checked = SourceMappingTagger.Enabled;
-        }
     }
 
     private void ShowFormattingDocument(object sender, EventArgs e)
