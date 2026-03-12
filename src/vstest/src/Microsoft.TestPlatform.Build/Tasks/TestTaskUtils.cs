@@ -240,9 +240,11 @@ internal static class TestTaskUtils
     }
 
     /// <summary>
-    /// Resolves the full path to the dotnet host from the DOTNET_HOST_PATH environment variable, throwing if the variable is not set or empty.
+    /// Resolves the full path to the dotnet host from the DOTNET_HOST_PATH environment variable.
     /// </summary>
-    /// <returns>The resolved full path to the dotnet host.</returns>
+    /// <returns>
+    /// The resolved full path to the dotnet host, or <see langword="null"/> if the variable is not set or empty.
+    /// </returns>
     internal static string? ResolveDotnetPath()
     {
         var dotnetHostPath = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH");
