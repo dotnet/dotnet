@@ -20,8 +20,12 @@
     <DotNetBuildWithOnlineFeeds Condition="'$(DotNetBuildSourceOnly)' == 'true'">true</DotNetBuildWithOnlineFeeds>
   </PropertyGroup>
 
-  <ItemGroup>
-    <!-- Keep Maestro-managed internal feeds (darc-int-*) so they are not stripped from NuGet.config -->
+  <!--
+    If we have authentication, keep Maestro-managed internal feeds (darc-int-*) so they are not
+    stripped from NuGet.config. Without authentication, these feeds must be removed to avoid
+    NU1301 errors in public builds.
+  -->
+  <ItemGroup Condition="'$(SYSTEM_TEAMPROJECT)' == 'internal'">
     <KeepFeedPrefixes Include="darc-int" />
   </ItemGroup>
 
