@@ -6,26 +6,34 @@ Most issues with the cohosted editor stem from the Razor source generator not be
 
 ## Known Issues
 
-### `UseRazorSourceGenerator` Set to False
+### Razor Source Generator Disabled via MSBuild Properties
 
-If your project file disables the Razor source generator:
+If your project file disables the Razor source generator by setting either of these properties to `false`:
 
 ```xml
 <UseRazorSourceGenerator>false</UseRazorSourceGenerator>
 ```
 
-the cohosted editor will not function correctly. A message will be logged to the Output window under the **Razor Logger Output** category indicating that there are no additional files in the project.
+or
 
-**Solution:** Set `UseRazorSourceGenerator` to `true`:
+```xml
+<RazorCompileOnBuild>false</RazorCompileOnBuild>
+```
+
+the cohosted editor will not function correctly. Setting `RazorCompileOnBuild` to `false` implicitly disables the Razor source generator as well. A message will be logged to the Output window under the **Razor Logger Output** category indicating that there are no additional files in the project.
+
+**Solution:** Set these properties to `true` (or remove them, as `true` is the default):
 
 ```xml
 <UseRazorSourceGenerator>true</UseRazorSourceGenerator>
+<RazorCompileOnBuild>true</RazorCompileOnBuild>
 ```
 
 If your CI or build pipeline requires the source generator to be disabled, you can condition it on design-time builds so the editor still works:
 
 ```xml
 <UseRazorSourceGenerator Condition="'$(DesignTimeBuild)' == 'true'">true</UseRazorSourceGenerator>
+<RazorCompileOnBuild Condition="'$(DesignTimeBuild)' == 'true'">true</RazorCompileOnBuild>
 ```
 
 ### Projects Targeting .NET 5.0 or Below
