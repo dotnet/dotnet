@@ -91,7 +91,7 @@ namespace NuGet.Common
         /// </summary>
         /// <param name="s">A comma or semicolon delimited list of NuGet log codes.</param>
         /// <returns>An <see cref="IList{T}" /> containing the <see cref="NuGetLogCode" /> values that were successfully parsed from the specified string.</returns>
-        public static ImmutableArray<NuGetLogCode> GetNuGetLogCodes(string s)
+        public static ImmutableArray<NuGetLogCode> GetNuGetLogCodes(string? s)
         {
             // The Split() method already checks for an empty string and returns Array.Empty<string>().
             string[] split = MSBuildStringUtility.Split(s, ';', ',');

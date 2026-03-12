@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -22,7 +20,7 @@ namespace NuGet.Packaging
         private readonly IEnumerable<PackageDependency> _packages;
 
         [JsonConstructor]
-        private PackageDependencyGroup(NuGetFramework targetFramework)
+        private PackageDependencyGroup(NuGetFramework? targetFramework)
         {
             if (targetFramework == null)
             {
@@ -75,12 +73,12 @@ namespace NuGet.Packaging
             get { return _packages; }
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as PackageDependencyGroup);
         }
 
-        public bool Equals(PackageDependencyGroup other)
+        public bool Equals(PackageDependencyGroup? other)
         {
             if (other == null)
             {

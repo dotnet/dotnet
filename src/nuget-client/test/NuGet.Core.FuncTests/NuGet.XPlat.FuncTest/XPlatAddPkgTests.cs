@@ -573,6 +573,55 @@ namespace NuGet.XPlat.FuncTest
             }
         }
 
+        [Theory]
+        [InlineData("net46", "net46", "1.0.0")]
+        [InlineData("net46; netcoreapp1.0", "net46; netcoreapp1.0", "1.0.0")]
+        public async Task AddPkg_NoRestoreWithCPM_AddsVersionlessPackageReferenceAndPackageVersion(string packageFrameworks,
+            string projectFrameworks,
+            string userInputVersion)
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, projectFrameworks);
+                var packageX = XPlatTestUtils.CreatePackage(frameworkString: packageFrameworks);
+
+                // Generate Package
+                await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    PackageSaveMode.Defaultv3,
+                    packageX);
+
+                // Create Directory.Packages.props to enable CPM
+                var directoryPackagesPropsPath = Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props");
+                File.WriteAllText(directoryPackagesPropsPath,
+@"<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+</Project>");
+
+                var logger = new TestCommandOutputLogger(_testOutputHelper);
+                var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX.Id, userInputVersion, projectA, noRestore: true);
+                var commandRunner = new AddPackageReferenceCommandRunner();
+
+                // Act
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
+                var projectXml = File.ReadAllText(projectA.ProjectPath);
+                var propsXml = File.ReadAllText(directoryPackagesPropsPath);
+
+                // Assert
+                Assert.Equal(0, result);
+
+                // .csproj should contain versionless PackageReference
+                Assert.Contains($"<PackageReference Include=\"{packageX.Id}\"", projectXml);
+                Assert.DoesNotContain("Version=", projectXml);
+
+                // Directory.Packages.props should contain PackageVersion with version
+                Assert.Contains($"<PackageVersion Include=\"{packageX.Id}\" Version=\"{userInputVersion}\"", propsXml);
+            }
+        }
+
         [Fact]
         public async Task AddPkg_UnconditionalAddWithoutVersion_Success()
         {
