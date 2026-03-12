@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.Diagnostics;
@@ -39,7 +40,7 @@ internal static class RazorDiagnosticHelper
         return [new VSDiagnosticProjectInformation()
                 {
                     Context = null,
-                    ProjectIdentifier = documentSnapshot.Project.Key.Id,
+                    ProjectIdentifier = documentSnapshot.Project.IntermediateOutputPath,
                     ProjectName = documentSnapshot.Project.DisplayName
                 }];
     }
@@ -89,7 +90,7 @@ internal static class RazorDiagnosticHelper
         {
             Message = razorDiagnostic.GetMessage(CultureInfo.InvariantCulture),
             Code = razorDiagnostic.Id,
-            Source = "Razor",
+            Source = LanguageServerConstants.RazorDiagnosticSource,
             Severity = ConvertSeverity(razorDiagnostic.Severity),
             // This is annotated as not null, but we have tests that validate the behaviour when
             // we pass in null here

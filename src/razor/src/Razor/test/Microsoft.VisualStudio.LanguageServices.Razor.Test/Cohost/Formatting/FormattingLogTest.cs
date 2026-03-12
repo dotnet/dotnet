@@ -8,10 +8,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Razor.LanguageClient.Cohost.Formatting;
 using Xunit;
 using Xunit.Abstractions;
@@ -22,110 +21,87 @@ namespace Microsoft.VisualStudio.LanguageServices.Razor.Test.Cohost.Formatting;
 /// Not tests of the formatting log, but tests that use formatting logs sent in
 /// by users reporting issues.
 /// </summary>
-[Collection(HtmlFormattingCollection.Name)]
-public class FormattingLogTest(FormattingTestContext context, HtmlFormattingFixture fixture, ITestOutputHelper testOutput)
-    : FormattingTestBase(context, fixture.Service, testOutput), IClassFixture<FormattingTestContext>
+public class FormattingLogTest(ITestOutputHelper testOutput) : DocumentFormattingTestBase(testOutput)
 {
     [Fact]
     [WorkItem("https://github.com/dotnet/vscode-csharp/issues/7264")]
     public async Task UnexpectedFalseInIndentBlockOperation()
-    {
-        var contents = GetResource("InitialDocument.txt");
-        var document = CreateProjectAndRazorDocument(contents);
-
-        var optionsFile = GetResource("Options.json");
-        var options = (RazorFormattingOptions)JsonSerializer.Deserialize(optionsFile, typeof(RazorFormattingOptions), JsonHelpers.JsonSerializerOptions).AssumeNotNull();
-
-        var formattingService = (RazorFormattingService)OOPExportProvider.GetExportedValue<IRazorFormattingService>();
-        formattingService.GetTestAccessor().SetFormattingLoggerFactory(new TestFormattingLoggerFactory(TestOutputHelper));
-
-        var htmlChangesFile = GetResource("HtmlChanges.json");
-        var htmlChanges = JsonSerializer.Deserialize<RazorTextChange[]>(htmlChangesFile, JsonHelpers.JsonSerializerOptions);
-        var sourceText = await document.GetTextAsync();
-        var htmlEdits = htmlChanges.Select(c => sourceText.GetTextEdit(c.ToTextChange())).ToArray();
-
-        await GetFormattingEditsAsync(document, htmlEdits, span: default, options.CodeBlockBraceOnNextLine, options.AttributeIndentStyle, options.InsertSpaces, options.TabSize, options.CSharpSyntaxFormattingOptions.AssumeNotNull());
-    }
+        => Assert.NotNull(await GetFormattingEditsAsync());
 
     [Fact]
     [WorkItem("https://github.com/dotnet/razor/issues/12416")]
     public async Task MixedIndentation()
-    {
-        var contents = GetResource("InitialDocument.txt");
-        var htmlChangesFile = GetResource("HtmlChanges.json");
-
-        Assert.NotNull(await GetFormattingEditsAsync(contents, htmlChangesFile));
-    }
+        => Assert.NotNull(await GetFormattingEditsAsync());
 
     [Fact]
     [WorkItem("https://github.com/dotnet/razor/issues/12416")]
     public async Task RealWorldMixedIndentation()
-    {
-        var contents = GetResource("InitialDocument.txt");
-        var htmlChangesFile = GetResource("HtmlChanges.json");
-
-        Assert.NotNull(await GetFormattingEditsAsync(contents, htmlChangesFile));
-    }
+        => Assert.NotNull(await GetFormattingEditsAsync());
 
     [Fact]
     [WorkItem("https://github.com/dotnet/vscode-csharp/issues/8333")]
     public async Task CSharpStringLiteral()
-    {
-        var contents = GetResource("InitialDocument.txt");
-        var htmlChangesFile = GetResource("HtmlChanges.json");
-
-        // All edits should have been filtered out
-        Assert.Null(await GetFormattingEditsAsync(contents, htmlChangesFile));
-    }
+        => Assert.Null(await GetFormattingEditsAsync()); // All edits should have been filtered out
 
     [Fact]
     [WorkItem("https://github.com/microsoft/vscode-dotnettools/issues/2766")]
     public async Task RanOutOfOriginalLines()
-    {
-        var contents = GetResource("InitialDocument.txt");
-        var htmlChangesFile = GetResource("HtmlChanges.json");
+        => Assert.NotNull(await GetFormattingEditsAsync());
 
-        await GetFormattingEditsAsync(contents, htmlChangesFile);
-    }
+    [Fact]
+    [WorkItem("https://developercommunity.visualstudio.com/t/Whilst-using-format-document-on-a-razo/11041051#T-N11042031-N11049221")]
+    public async Task CSSWrappedToMultipleLines()
+        => Assert.NotNull(await GetFormattingEditsAsync());
 
     [Fact]
     [WorkItem("https://developercommunity.visualstudio.com/t/Razor-Formatting-Feature-internal-error/11041869#T-ND11043454")]
     public async Task MultiLineLambda()
+        => Assert.NotNull(await GetFormattingEditsAsync());
+
+    private async Task<TextEdit[]?> GetFormattingEditsAsync([CallerMemberName] string? testName = null)
     {
-        var contents = GetResource("InitialDocument.txt");
-
+        var contents = GetResource(testName.AssumeNotNull(), "InitialDocument.txt").AssumeNotNull();
         var document = CreateProjectAndRazorDocument(contents);
-
-        var options = new RazorFormattingOptions();
-
-        var formattingService = (RazorFormattingService)OOPExportProvider.GetExportedValue<IRazorFormattingService>();
-        formattingService.GetTestAccessor().SetFormattingLoggerFactory(new TestFormattingLoggerFactory(TestOutputHelper));
-
-        await GetFormattingEditsAsync(document, [], span: default, options.CodeBlockBraceOnNextLine, options.AttributeIndentStyle, options.InsertSpaces, options.TabSize, RazorCSharpSyntaxFormattingOptions.Default);
-    }
-
-    private async Task<TextEdit[]?> GetFormattingEditsAsync(string contents, string htmlChangesFile)
-    {
-        var document = CreateProjectAndRazorDocument(contents);
-
-        var options = new RazorFormattingOptions();
-
-        var formattingService = (RazorFormattingService)OOPExportProvider.GetExportedValue<IRazorFormattingService>();
-        formattingService.GetTestAccessor().SetFormattingLoggerFactory(new TestFormattingLoggerFactory(TestOutputHelper));
-
-        var htmlChanges = JsonSerializer.Deserialize<RazorTextChange[]>(htmlChangesFile, JsonHelpers.JsonSerializerOptions);
         var sourceText = await document.GetTextAsync();
-        var htmlEdits = htmlChanges.Select(c => sourceText.GetTextEdit(c.ToTextChange())).ToArray();
 
-        return await GetFormattingEditsAsync(document, htmlEdits, span: default, options.CodeBlockBraceOnNextLine, options.AttributeIndentStyle, options.InsertSpaces, options.TabSize, RazorCSharpSyntaxFormattingOptions.Default);
+        var options = new RazorFormattingOptions() with
+        {
+            CSharpSyntaxFormattingOptions = CodeAnalysis.ExternalAccess.Razor.Features.RazorCSharpSyntaxFormattingOptions.Default
+        };
+        if (GetResource(testName, "Options.json") is { } optionsFile)
+        {
+            options = (RazorFormattingOptions)JsonSerializer.Deserialize(optionsFile, typeof(RazorFormattingOptions), JsonHelpers.JsonSerializerOptions).AssumeNotNull();
+        }
+
+        TextEdit[] htmlEdits = [];
+        if (GetResource(testName, "HtmlChanges.json") is { } htmlChangesFile)
+        {
+            var htmlChanges = JsonSerializer.Deserialize<RazorTextChange[]>(htmlChangesFile, JsonHelpers.JsonSerializerOptions);
+            htmlEdits = htmlChanges.Select(c => sourceText.GetTextEdit(c.ToTextChange())).ToArray();
+        }
+
+        TextSpan span = default;
+        if (GetResource(testName, "Range.json") is { } rangeFile)
+        {
+            var linePositionSpan = (LinePositionSpan)JsonSerializer.Deserialize(rangeFile, typeof(LinePositionSpan), JsonHelpers.JsonSerializerOptions).AssumeNotNull();
+            span = sourceText.GetTextSpan(linePositionSpan);
+        }
+
+        var formattingService = (RazorFormattingService)OOPExportProvider.GetExportedValue<IRazorFormattingService>();
+        formattingService.GetTestAccessor().SetFormattingLoggerFactory(new TestFormattingLoggerFactory(TestOutputHelper));
+
+        return await GetFormattingEditsAsync(document, htmlEdits, span: default, options.CodeBlockBraceOnNextLine, options.AttributeIndentStyle, options.InsertSpaces, options.TabSize, options.CSharpSyntaxFormattingOptions.AssumeNotNull());
     }
 
-    private string GetResource(string name, [CallerMemberName] string? testName = null)
+    private string? GetResource(string testName, string name)
     {
         var baselineFileName = $@"TestFiles\FormattingLog\{testName}\{name}";
 
         var testFile = TestFile.Create(baselineFileName, GetType().Assembly);
-        Assert.True(testFile.Exists());
+        if (!testFile.Exists())
+        {
+            return null;
+        }
 
         return testFile.ReadAllText();
     }

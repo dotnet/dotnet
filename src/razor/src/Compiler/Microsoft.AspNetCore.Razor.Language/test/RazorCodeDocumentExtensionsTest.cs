@@ -2,7 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.IO;
+using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -60,6 +62,90 @@ public class RazorCodeDocumentExtensionsTest
 
         // Assert
         Assert.Same(expected, actual);
+    }
+
+    [Fact]
+    public void GetAndSetDirectiveTagHelperContributions_ReturnsContributions()
+    {
+        // Arrange
+        var codeDocument = TestRazorCodeDocument.Create("@using A");
+        var usingDirective = GetUsingDirectives(codeDocument).Single();
+        var contribution = new DirectiveTagHelperContribution(usingDirective.SpanStart, TagHelperCollection.Empty);
+
+        // Act
+        codeDocument = codeDocument.WithDirectiveTagHelperContributions([contribution]);
+        var actual = codeDocument.GetDirectiveTagHelperContributions();
+
+        // Assert
+        var stored = Assert.Single(actual);
+        Assert.Equal(usingDirective.SpanStart, stored.DirectiveSpanStart);
+    }
+
+    [Fact]
+    public void IsDirectiveUsed_NoReferencedTagHelpers_ReturnsFalse()
+    {
+        // Arrange
+        var codeDocument = TestRazorCodeDocument.Create("@using A\r\n@using B");
+        var directives = GetUsingDirectives(codeDocument);
+        codeDocument = codeDocument.WithDirectiveTagHelperContributions(
+        [
+            new(directives[0].SpanStart, TagHelperCollection.Empty),
+            new(directives[1].SpanStart, TagHelperCollection.Empty),
+        ]);
+
+        // Act
+        var isFirstUsed = codeDocument.IsDirectiveUsed(directives[0]);
+        var isSecondUsed = codeDocument.IsDirectiveUsed(directives[1]);
+
+        // Assert
+        Assert.False(isFirstUsed);
+        Assert.False(isSecondUsed);
+    }
+
+    [Fact]
+    public void IsDirectiveUsed_MixOfUsedAndUnused_ReturnsExpectedValues()
+    {
+        // Arrange
+        var codeDocument = TestRazorCodeDocument.Create("@using A\r\n@using B");
+        var directives = GetUsingDirectives(codeDocument);
+        var usedTagHelper = TagHelperDescriptorBuilder.CreateTagHelper("T", "A").Build();
+
+        codeDocument = codeDocument
+            .WithDirectiveTagHelperContributions(
+            [
+                new(directives[0].SpanStart, TagHelperCollection.Create([usedTagHelper])),
+                new(directives[1].SpanStart, TagHelperCollection.Empty),
+            ])
+            .WithReferencedTagHelpers(TagHelperCollection.Create([usedTagHelper]));
+
+        // Act
+        var isFirstUsed = codeDocument.IsDirectiveUsed(directives[0]);
+        var isSecondUsed = codeDocument.IsDirectiveUsed(directives[1]);
+
+        // Assert
+        Assert.True(isFirstUsed);
+        Assert.False(isSecondUsed);
+    }
+
+    [Theory]
+    [InlineData("_Imports.razor")]
+    [InlineData("_ViewImports.cshtml")]
+    public void IsDirectiveUsed_ImportDocument_ReturnsTrue(string filePath)
+    {
+        // Arrange
+        var source = TestRazorSourceDocument.Create("@using A", filePath: filePath, relativePath: filePath);
+        var codeDocument = RazorCodeDocument.Create(
+            source,
+            parserOptions: RazorParserOptions.Create(RazorLanguageVersion.Latest, FileKinds.GetFileKindFromPath(filePath)));
+
+        var directive = GetUsingDirectives(codeDocument).Single();
+        codeDocument = codeDocument.WithDirectiveTagHelperContributions([new(directive.SpanStart, TagHelperCollection.Empty)]);
+
+        // Act
+        var isDirectiveUsed = codeDocument.IsDirectiveUsed(directive);
+
+        // Assert
+        Assert.True(isDirectiveUsed);
     }
 
     [Fact]
@@ -450,5 +536,11 @@ public class RazorCodeDocumentExtensionsTest
 
         // Assert
         Assert.Equal("Base", @namespace);
+    }
+
+    private static RazorUsingDirectiveSyntax[] GetUsingDirectives(RazorCodeDocument codeDocument)
+    {
+        var syntaxTree = RazorSyntaxTree.Parse(codeDocument.Source);
+        return [.. syntaxTree.Root.DescendantNodes().OfType<RazorUsingDirectiveSyntax>()];
     }
 }

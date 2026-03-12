@@ -128,18 +128,18 @@ internal static class CSharpTestLspServerHelpers
             filePath: @"C:\TestSolution\TestProject.csproj",
             metadataReferences: metadataReferences).WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath(@"C:\TestSolution\obj\TestProject.dll"));
 
-        var projectInfoNet80 = ProjectInfo.Create(
-            id: ProjectId.CreateNewId("TestProject (net8.0)"),
+        var projectInfoNet100 = ProjectInfo.Create(
+            id: ProjectId.CreateNewId("TestProject (net10.0)"),
             version: VersionStamp.Default,
-            name: "TestProject (net8.0)",
+            name: "TestProject (net10.0)",
             assemblyName: "TestProject.dll",
             language: LanguageNames.CSharp,
             filePath: @"C:\TestSolution\TestProject.csproj",
             metadataReferences: metadataReferences);
 
         ProjectInfo[] projectInfos = multiTargetProject
-            ? [projectInfoNet60, projectInfoNet80]
-            : [projectInfoNet80];
+            ? [projectInfoNet60, projectInfoNet100]
+            : [projectInfoNet100];
 
         foreach (var projectInfo in projectInfos)
         {

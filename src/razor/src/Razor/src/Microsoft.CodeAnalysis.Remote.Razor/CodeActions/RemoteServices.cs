@@ -66,7 +66,13 @@ internal sealed class OOPGenerateMethodCodeActionProvider : GenerateMethodCodeAc
 internal sealed class OOPPromoteUsingDirectiveCodeActionProvider : PromoteUsingCodeActionProvider;
 
 [Export(typeof(IRazorCodeActionProvider)), Shared]
+internal sealed class OOPRemoveUnnecessaryDirectivesCodeActionProvider : RemoveUnnecessaryDirectivesCodeActionProvider;
+
+[Export(typeof(IRazorCodeActionProvider)), Shared]
 internal sealed class OOPWrapAttributesCodeActionProvider : WrapAttributesCodeActionProvider;
+
+[Export(typeof(IRazorCodeActionProvider)), Shared]
+internal sealed class OOPSortAndConsolidateUsingsCodeActionProvider : SortAndConsolidateUsingsCodeActionProvider;
 
 [Export(typeof(ICSharpCodeActionProvider)), Shared]
 internal sealed class OOPTypeAccessibilityCodeActionProvider : TypeAccessibilityCodeActionProvider;
@@ -124,7 +130,13 @@ internal sealed class OOPGenerateMethodCodeActionResolver(
 internal sealed class OOPPromoteUsingDirectiveCodeActionResolver(IFileSystem fileSystem) : PromoteUsingCodeActionResolver(fileSystem);
 
 [Export(typeof(IRazorCodeActionResolver)), Shared]
+internal sealed class OOPRemoveUnnecessaryDirectivesCodeActionResolver : RemoveUnnecessaryDirectivesCodeActionResolver;
+
+[Export(typeof(IRazorCodeActionResolver)), Shared]
 internal sealed class OOPWrapAttributesCodeActionResolver : WrapAttributesCodeActionResolver;
+
+[Export(typeof(IRazorCodeActionResolver)), Shared]
+internal sealed class OOPSortAndConsolidateUsingsCodeActionResolver : SortAndConsolidateUsingsCodeActionResolver;
 
 [Export(typeof(ICSharpCodeActionResolver)), Shared]
 [method: ImportingConstructor]

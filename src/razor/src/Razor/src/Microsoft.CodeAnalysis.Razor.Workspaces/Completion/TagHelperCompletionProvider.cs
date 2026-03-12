@@ -270,7 +270,7 @@ internal class TagHelperCompletionProvider(ITagHelperCompletionService tagHelper
         var shortName = displayText[(lastDotIndex + 1)..]; // Get the short name after the last dot
         var displayTextWithUsing = $"{shortName} - @using {@namespace}";
 
-        var addUsingEdit = AddUsingsHelper.CreateAddUsingTextEdit(@namespace, context.CodeDocument);
+        var addUsingEdit = UsingDirectiveHelper.CreateAddUsingTextEdit(@namespace, context.CodeDocument);
 
         var razorCompletionItemWithUsing = RazorCompletionItem.CreateTagHelperElement(
             displayText: displayTextWithUsing,

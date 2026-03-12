@@ -5,8 +5,6 @@
 
 using System.Collections.Immutable;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Xunit;
 using Xunit.Abstractions;
@@ -65,8 +63,7 @@ World", cleanedSummary);
     public async Task TryCreateTooltip_Markup_NoAssociatedTagHelperDescriptions_ReturnsFalse()
     {
         // Arrange
-        var projectManager = CreateProjectSnapshotManager();
-        var componentAvailabilityService = new TestComponentAvailabilityService(projectManager);
+        var componentAvailabilityService = new TestComponentAvailabilityService();
         var elementDescription = AggregateBoundElementDescription.Empty;
 
         // Act
@@ -80,8 +77,7 @@ World", cleanedSummary);
     public async Task TryCreateTooltip_Markup_Element_SingleAssociatedTagHelper_ReturnsTrue()
     {
         // Arrange
-        var projectManager = CreateProjectSnapshotManager();
-        var componentAvailabilityService = new TestComponentAvailabilityService(projectManager);
+        var componentAvailabilityService = new TestComponentAvailabilityService();
 
         var associatedTagHelperInfos = new[]
         {
@@ -104,8 +100,7 @@ Uses `List<System.String>`s", markdown.Value);
     public async Task TryCreateTooltip_Markup_Element_PlainText_NoBold()
     {
         // Arrange
-        var projectManager = CreateProjectSnapshotManager();
-        var componentAvailabilityService = new TestComponentAvailabilityService(projectManager);
+        var componentAvailabilityService = new TestComponentAvailabilityService();
 
         var associatedTagHelperInfos = new[]
         {
@@ -155,8 +150,7 @@ Uses `List<System.String>`s", markdown.Value);
     public async Task TryCreateTooltip_Markup_Element_MultipleAssociatedTagHelpers_ReturnsTrue()
     {
         // Arrange
-        var projectManager = CreateProjectSnapshotManager();
-        var componentAvailabilityService = new TestComponentAvailabilityService(projectManager);
+        var componentAvailabilityService = new TestComponentAvailabilityService();
 
         var associatedTagHelperInfos = new[]
         {
