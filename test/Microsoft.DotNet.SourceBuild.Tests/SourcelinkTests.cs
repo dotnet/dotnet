@@ -111,7 +111,7 @@ public class SourcelinkTests : SdkTests
         var failedFiles = new ConcurrentBag<(string File, string StdOut, string StdErr)>();
 
         IEnumerable<string> allFiles = Directory.GetFiles(path, "*.pdb", SearchOption.AllDirectories);
-        Parallel.ForEach(allFiles, file =>
+        Parallel.ForEach(allFiles, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, file =>
         {
             (Process Process, string StdOut, string StdErr) executeResult = ExecuteHelper.ExecuteProcess(
                 DotNetHelper.DotNetPath,
