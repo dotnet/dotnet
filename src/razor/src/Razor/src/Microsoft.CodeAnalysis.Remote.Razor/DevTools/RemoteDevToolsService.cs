@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -9,7 +10,6 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Protocol.DevTools;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.CodeAnalysis.Razor.Serialization;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
@@ -23,6 +23,11 @@ internal sealed class RemoteDevToolsService(in ServiceArgs args) : RazorDocument
         protected override IRemoteDevToolsService CreateService(in ServiceArgs args)
             => new RemoteDevToolsService(in args);
     }
+
+    private static readonly JsonSerializerOptions s_serializerOptions = new()
+    {
+        WriteIndented = true
+    };
 
     public ValueTask<string> GetCSharpDocumentTextAsync(
         RazorPinnedSolutionInfoWrapper solutionInfo,
@@ -70,7 +75,7 @@ internal sealed class RemoteDevToolsService(in ServiceArgs args) : RazorDocument
             },
             cancellationToken);
 
-    public ValueTask<FetchTagHelpersResult> GetTagHelpersJsonAsync(
+    public ValueTask<string> GetTagHelpersJsonAsync(
         RazorPinnedSolutionInfoWrapper solutionInfo,
         DocumentId razorDocumentId,
         TagHelpersKind kind,
@@ -81,7 +86,7 @@ internal sealed class RemoteDevToolsService(in ServiceArgs args) : RazorDocument
             context => GetTagHelpersJsonAsync(context, kind, cancellationToken),
             cancellationToken);
 
-    private static async ValueTask<FetchTagHelpersResult> GetTagHelpersJsonAsync(RemoteDocumentContext documentContext, TagHelpersKind kind, CancellationToken cancellationToken)
+    private static async ValueTask<string> GetTagHelpersJsonAsync(RemoteDocumentContext documentContext, TagHelpersKind kind, CancellationToken cancellationToken)
     {
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         var tagHelpers = kind switch
@@ -93,7 +98,70 @@ internal sealed class RemoteDevToolsService(in ServiceArgs args) : RazorDocument
         };
 
         tagHelpers ??= [];
-        return new FetchTagHelpersResult(tagHelpers);
+
+        // TagHelperCollection is self-referencial, so we need to create objects that System.Text.Json can handle.
+        var toSerialize = tagHelpers.Select(th => new
+        {
+            th.Name,
+            th.AssemblyName,
+            th.DisplayName,
+            th.Documentation,
+            th.TagOutputHint,
+            Kind = th.Kind.ToString(),
+            th.CaseSensitive,
+            TagMatchingRules = th.TagMatchingRules.Select(r => new
+            {
+                r.TagName,
+                r.ParentTag,
+                TagStructure = r.TagStructure.ToString(),
+                r.CaseSensitive,
+                Attributes = r.Attributes.Select(a => new
+                {
+                    a.Name,
+                    NameComparison = a.NameComparison.ToString(),
+                    a.Value,
+                    ValueComparison = a.ValueComparison.ToString(),
+                    a.DisplayName,
+                    Diagnostics = a.Diagnostics.Select(d => new { d.Id, Message = d.GetMessage() })
+                })
+            }),
+            BoundAttributes = th.BoundAttributes.Select(a => new
+            {
+                a.Name,
+                a.TypeName,
+                a.IsEnum,
+                a.IsEditorRequired,
+                a.IsStringProperty,
+                a.IndexerNamePrefix,
+                a.IndexerTypeName,
+                a.Documentation,
+                a.DisplayName,
+                a.CaseSensitive,
+                MetadataKind = a.Metadata.Kind.ToString(),
+                Parameters = a.Parameters.Select(p => new
+                {
+                    p.Name,
+                    p.TypeName,
+                    p.IsEnum,
+                    p.Documentation,
+                    p.DisplayName,
+                    p.CaseSensitive,
+                    MetadataKind = a.Metadata.Kind.ToString(),
+                    Diagnostics = p.Diagnostics.Select(d => new { d.Id, Message = d.GetMessage() })
+                }),
+                Diagnostics = a.Diagnostics.Select(d => new { d.Id, Message = d.GetMessage() })
+            }),
+            AllowedChildTags = th.AllowedChildTags.Select(c => new
+            {
+                c.Name,
+                c.DisplayName,
+                Diagnostics = c.Diagnostics.Select(d => new { d.Id, Message = d.GetMessage() })
+            }),
+            MetadataKind = th.Metadata.Kind.ToString(),
+            Diagnostics = th.Diagnostics.Select(d => new { d.Id, Message = d.GetMessage() })
+        });
+
+        return JsonSerializer.Serialize(toSerialize, s_serializerOptions);
     }
 
     public ValueTask<SyntaxVisualizerTree?> GetRazorSyntaxTreeAsync(
