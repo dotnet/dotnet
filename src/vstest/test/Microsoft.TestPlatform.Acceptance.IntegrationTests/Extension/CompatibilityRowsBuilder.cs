@@ -46,6 +46,8 @@ public class CompatibilityRowsBuilder
     public bool WithEveryVersionOfHost { get; set; } = true;
     public bool WithEveryVersionOfAdapter { get; set; } = true;
     public bool WithOlderConfigurations { get; set; } = true;
+    // Add runner from VSIX to check the shipment we make into VisualStudio.
+    public bool WithVSIXRunner { get; set; } = true;
 
     public string? BeforeRunnerFeature { get; set; }
     public string? AfterRunnerFeature { get; set; }
@@ -78,6 +80,9 @@ public class CompatibilityRowsBuilder
 
         if (WithInProcess)
             AddInProcess(dataRows);
+
+        if (WithVSIXRunner)
+            AddVsix(dataRows);
 
         var minVersion = ParseAndPatchSemanticVersion("0.0.0-alpha.1");
         var maxVersion = ParseAndPatchSemanticVersion("9999.0.0");
@@ -186,6 +191,15 @@ public class CompatibilityRowsBuilder
                     }
                 }
             }
+        }
+    }
+
+    private void AddVsix(List<RunnerInfo> dataRows)
+    {
+        foreach (var hostFramework in _hostFrameworks)
+        {
+            AddRow(dataRows, "VSIX", AcceptanceTestBase.LATESTVSIX, AcceptanceTestBase.DEFAULT_RUNNER_NETFX, AcceptanceTestBase.LATEST, hostFramework, AcceptanceTestBase.LATESTSTABLE, inIsolation: true);
+            AddRow(dataRows, "VSIX", AcceptanceTestBase.LATESTVSIX, AcceptanceTestBase.DEFAULT_RUNNER_NETFX, AcceptanceTestBase.LATEST, hostFramework, AcceptanceTestBase.LATESTSTABLE, inIsolation: false);
         }
     }
 
@@ -337,6 +351,16 @@ public class CompatibilityRowsBuilder
 
     private static VSTestConsoleInfo GetVSTestConsoleInfo(string vstestConsoleVersion, RunnerInfo runnerInfo)
     {
+        if (vstestConsoleVersion == AcceptanceTestBase.LATESTVSIX)
+        {
+            return new VSTestConsoleInfo
+            {
+                VersionType = vstestConsoleVersion,
+                Version = IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion,
+                Path = Path.Combine(IntegrationTestEnvironment.PublishDirectory, Path.GetFileName(IntegrationTestEnvironment.LocalVsixInsertion), "vstest.console.exe"),
+            };
+        }
+
         var depsXml = GetDependenciesXml();
         var packageName = runnerInfo.IsNetFrameworkRunner
             ? "microsoft.testplatform"

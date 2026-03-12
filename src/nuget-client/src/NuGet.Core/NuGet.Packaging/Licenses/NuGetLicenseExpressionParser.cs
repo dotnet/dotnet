@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -177,8 +175,8 @@ namespace NuGet.Packaging.Licenses
                     throw new NuGetLicenseExpressionParsingException(string.Format(CultureInfo.CurrentCulture, Strings.NuGetLicenseExpression_InvalidExpression));
 
                 }
-                var right = rightOperand.Item2 as LicenseExpressionToken;
-                var left = leftOperand.Item2 as LicenseExpressionToken;
+                var right = (LicenseExpressionToken)rightOperand.Item2;
+                var left = (LicenseExpressionToken)leftOperand.Item2;
 
                 var withNode = new WithOperator(NuGetLicense.ParseIdentifier(left.Value), NuGetLicenseException.ParseIdentifier(right.Value));
 

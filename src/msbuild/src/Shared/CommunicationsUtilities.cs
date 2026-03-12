@@ -262,10 +262,11 @@ namespace Microsoft.Build.Internal
 #if NETFRAMEWORK
             ErrorUtilities.VerifyThrow(
                 toolsDirectory is null || IsNetTaskHost || IsClr2TaskHost,
-                $"{toolsDirectory} should only be provided for .NET or CLR2 TaskHost nodes (and only when running on .NET Framework).");
+                $"{toolsDirectory} should only be provided for .NET or CLR2 TaskHost nodes.");
 #else
+            // IsNetTaskHost covers the case when NET process spawns NET TaskHost.
             ErrorUtilities.VerifyThrow(
-                toolsDirectory is null,
+                toolsDirectory is null || IsNetTaskHost,
                 $"{toolsDirectory} should not have been provided.");
 #endif
 
@@ -286,8 +287,12 @@ namespace Microsoft.Build.Internal
 
             // Get session ID if needed (expensive call)
             int sessionId = 0;
-            if (includeSessionId)
+            if (includeSessionId && NativeMethodsShared.IsWindows)
             {
+                // On Windows, SessionId differentiates RDP sessions.
+                // On Unix, getsid() returns the session leader PID which differs per terminal,
+                // preventing cross-terminal node reuse. Use 0 since Unix doesn't need
+                // RDP-style session isolation.
                 using var currentProcess = Process.GetCurrentProcess();
                 sessionId = currentProcess.SessionId;
             }
@@ -297,8 +302,7 @@ namespace Microsoft.Build.Internal
                 : CreateStandardComponents(options, salt, sessionId);
         }
 
-        private bool IsNetTaskHost
-            => IsHandshakeOptionEnabled(HandshakeOptions, HandshakeOptions.NET | HandshakeOptions.TaskHost);
+        private bool IsNetTaskHost => IsHandshakeOptionEnabled(HandshakeOptions, HandshakeOptions.NET | HandshakeOptions.TaskHost);
 
 #if NETFRAMEWORK
         private bool IsClr2TaskHost

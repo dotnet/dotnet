@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Enumeration;
 using System.Linq;
@@ -32,6 +33,8 @@ public partial class SdkContentTests : SdkTests
 
     [GeneratedRegex(@"(,\s*Version=)(0|[1-9]\d*)(\.\d+){2,3}")]
     private static partial Regex AssemblyVersionRegex { get; }
+
+    private record VersionInfo(Version? AssemblyVersion, string? FileVersion, Version? FileVersionNumber, string? ProductVersion, Version? ProductVersionNumber);
 
     public SdkContentTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
@@ -74,8 +77,8 @@ public partial class SdkContentTests : SdkTests
             DirectoryInfo msftSdkDir = Directory.CreateDirectory(Path.Combine(tempDir.FullName, MsftSdkType));
             Utilities.ExtractTarball(Config.MsftSdkTarballPath, msftSdkDir.FullName, OutputHelper);
 
-            Dictionary<string, Version?> sbSdkAssemblyVersions = GetSbSdkAssemblyVersions(sbSdkDir.FullName);
-            Dictionary<string, Version?> msftSdkAssemblyVersions = GetMsftSdkAssemblyVersions(msftSdkDir.FullName, sbSdkAssemblyVersions);
+            Dictionary<string, VersionInfo> sbSdkAssemblyVersions = GetSbSdkAssemblyVersions(sbSdkDir.FullName);
+            Dictionary<string, VersionInfo> msftSdkAssemblyVersions = GetMsftSdkAssemblyVersions(msftSdkDir.FullName, sbSdkAssemblyVersions);
 
             RemoveExcludedAssemblyVersionPaths(sbSdkAssemblyVersions, msftSdkAssemblyVersions);
 
@@ -126,7 +129,7 @@ public partial class SdkContentTests : SdkTests
         return content;
     }
 
-    private void RemoveExcludedAssemblyVersionPaths(Dictionary<string, Version?> sbSdkAssemblyVersions, Dictionary<string, Version?> msftSdkAssemblyVersions)
+    private void RemoveExcludedAssemblyVersionPaths(Dictionary<string, VersionInfo> sbSdkAssemblyVersions, Dictionary<string, VersionInfo> msftSdkAssemblyVersions)
     {
         // Remove any excluded files as long as SB SDK's file has the same or greater assembly version compared to the corresponding
         // file in the MSFT SDK. If the version is less, the file will show up in the results as this is not a scenario
@@ -136,16 +139,16 @@ public partial class SdkContentTests : SdkTests
         for (int i = sbSdkFileArray.Length - 1; i >= 0; i--)
         {
             string assemblyPath = sbSdkFileArray[i];
-            Version? sbVersion = sbSdkAssemblyVersions[assemblyPath];
-            if (!msftSdkAssemblyVersions.TryGetValue(assemblyPath, out Version? msftVersion))
+            VersionInfo sbVersionInfo = sbSdkAssemblyVersions[assemblyPath];
+            if (!msftSdkAssemblyVersions.TryGetValue(assemblyPath, out VersionInfo? msftVersionInfo))
             {
                 sbSdkAssemblyVersions.Remove(assemblyPath);
                 continue;
             }
 
-            if (sbVersion is not null &&
-                msftVersion is not null &&
-                sbVersion >= msftVersion &&
+            if (sbVersionInfo.AssemblyVersion is not null &&
+                msftVersionInfo.AssemblyVersion is not null &&
+                sbVersionInfo.AssemblyVersion >= msftVersionInfo.AssemblyVersion &&
                 exclusionsHelper.IsFileExcluded(assemblyPath))
             {
                 sbSdkAssemblyVersions.Remove(assemblyPath);
@@ -155,19 +158,19 @@ public partial class SdkContentTests : SdkTests
         exclusionsHelper.GenerateNewBaselineFile();
     }
 
-    private static void WriteAssemblyVersionsToFile(Dictionary<string, Version?> assemblyVersions, string outputPath)
+    private static void WriteAssemblyVersionsToFile(Dictionary<string, VersionInfo> assemblyVersions, string outputPath)
     {
         string[] lines = assemblyVersions
-            .Select(kvp => $"{kvp.Key} - {kvp.Value}")
+            .Select(kvp => $"{kvp.Key} - AssemblyVersion:{kvp.Value.AssemblyVersion}, FileVersion:{kvp.Value.FileVersion}, FileVersionNumber:{kvp.Value.FileVersionNumber}, ProductVersion:{kvp.Value.ProductVersion}, ProductVersionNumber:{kvp.Value.ProductVersionNumber}")
             .Order()
             .ToArray();
         File.WriteAllLines(outputPath, lines);
     }
 
-    private Dictionary<string, Version?> GetMsftSdkAssemblyVersions(
-        string msftSdkPath, Dictionary<string, Version?> sbSdkAssemblyVersions)
+    private Dictionary<string, VersionInfo> GetMsftSdkAssemblyVersions(
+        string msftSdkPath, Dictionary<string, VersionInfo> sbSdkAssemblyVersions)
     {
-        Dictionary<string, Version?> msftSdkAssemblyVersions = new();
+        Dictionary<string, VersionInfo> msftSdkAssemblyVersions = new();
         foreach ((string relativePath, _) in sbSdkAssemblyVersions)
         {
             // Now we want to find the corresponding file that exists in the MSFT SDK.
@@ -184,22 +187,20 @@ public partial class SdkContentTests : SdkTests
                 continue;
             }
 
-            AssemblyName assemblyName = AssemblyName.GetAssemblyName(file);
-            msftSdkAssemblyVersions.Add(BaselineHelper.RemoveVersions(relativePath), GetVersion(assemblyName));
+            msftSdkAssemblyVersions.Add(BaselineHelper.RemoveVersions(relativePath), GetVersionInfo(file));
         }
         return msftSdkAssemblyVersions;
     }
 
-    // It's known that assembly versions can be different between builds in their revision field. Disregard that difference
-    // by excluding that field in the output.
-    private static Version? GetVersion(AssemblyName assemblyName)
+    private static VersionInfo GetVersionInfo(string filePath)
     {
-        if (assemblyName.Version is not null)
-        {
-            return new Version(assemblyName.Version.ToString(3));
-        }
+        AssemblyName assemblyName = AssemblyName.GetAssemblyName(filePath);
+        FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(filePath);
 
-        return null;
+        Version fileVersionNumber = new(fileVersionInfo.FileMajorPart, fileVersionInfo.FileMinorPart, fileVersionInfo.FileBuildPart, fileVersionInfo.FilePrivatePart);
+        Version productVersionNumber = new(fileVersionInfo.ProductMajorPart, fileVersionInfo.ProductMinorPart, fileVersionInfo.ProductBuildPart, fileVersionInfo.ProductPrivatePart);
+
+        return new VersionInfo(assemblyName.Version, fileVersionInfo.FileVersion, fileVersionNumber, fileVersionInfo.ProductVersion, productVersionNumber);
     }
 
     private string FindMatchingFilePath(string rootDir, Matcher matcher, string representativeFile)
@@ -216,24 +217,23 @@ public partial class SdkContentTests : SdkTests
         return string.Empty;
     }
 
-    private Dictionary<string, Version?> GetSbSdkAssemblyVersions(string sbSdkPath)
+    private Dictionary<string, VersionInfo> GetSbSdkAssemblyVersions(string sbSdkPath)
     {
         ExclusionsHelper exclusionsHelper = new("SdkFileDiffExclusions.txt", Config.LogsDirectory, BaselineSubDir);
-        Dictionary<string, Version?> sbSdkAssemblyVersions = new();
+        Dictionary<string, VersionInfo> sbSdkAssemblyVersions = new();
         foreach (string file in Directory.EnumerateFiles(sbSdkPath, "*", SearchOption.AllDirectories))
         {
             string fileExt = Path.GetExtension(file);
             if (fileExt.Equals(".dll", StringComparison.OrdinalIgnoreCase) ||
                 fileExt.Equals(".exe", StringComparison.OrdinalIgnoreCase))
             {
-                AssemblyName assemblyName = AssemblyName.GetAssemblyName(file);
                 string relativePath = Path.GetRelativePath(sbSdkPath, file);
                 string normalizedPath = BaselineHelper.RemoveRids(relativePath, isPortable: false);
                 normalizedPath = BaselineHelper.RemoveVersions(normalizedPath);
 
                 if(!exclusionsHelper.IsFileExcluded(normalizedPath, SourceBuildSdkType))
                 {
-                    sbSdkAssemblyVersions.Add(normalizedPath, GetVersion(assemblyName));
+                    sbSdkAssemblyVersions.Add(normalizedPath, GetVersionInfo(file));
                 }
             }
         }

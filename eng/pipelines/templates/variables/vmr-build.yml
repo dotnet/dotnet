@@ -143,6 +143,11 @@ variables:
   - name: signDacEnabled
     value: false
 
+# opt in to node24 in pipelines agent to fix noisy warnings: https://github.com/microsoft/azure-pipelines-agent/issues/5464
+# can be removed once it is the default
+- name: AZP_AGENT_USE_NODE24_TO_START_CONTAINER
+  value: true
+
 - name: almaLinuxContainerName
   value: almaLinuxContainer
 - name: almaLinuxContainerImage

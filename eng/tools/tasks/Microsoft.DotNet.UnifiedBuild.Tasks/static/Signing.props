@@ -1,6 +1,9 @@
 <Project>
 
+  <Import Project="$(RepositoryEngineeringDir)VmrLayout.props" />
+
   <PropertyGroup>
+    <SourceAssetCertificateId>LinuxSign500180PGP</SourceAssetCertificateId>
     <ExternalCertificateId>3PartySHA2</ExternalCertificateId>
     <UseDotNetCertificate>true</UseDotNetCertificate>
   </PropertyGroup>
@@ -10,21 +13,36 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ItemsToSign Include="$(SignableSourceBuiltAssets)" />
+    <!-- Materialize an item list from the property so transforms work -->
+    <SignableSourceBuiltAsset Include="$(SignableSourceBuiltAssets)" />
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Some of the artifacts need to be strong-named with the AspNetCore snk -->
-    <!-- Remove once https://github.com/dotnet/arcade/issues/16105 has been addressed -->
-    <StrongNameSignInfo
-      Include="$(NuGetPackageRoot)microsoft.dotnet.arcade.sdk/$(MicrosoftDotNetArcadeSdkPackageVersion)/tools/snk/AspNetCore.snk"
-      PublicKeyToken="adb9793829ddae60"
-      CertificateName="MicrosoftDotNet500" />
+    <!-- Sign all of the source built assets -->
+    <ItemsToSign Include="@(SignableSourceBuiltAsset)" />
+  </ItemGroup>
 
+  <Target Name="SetFileSignInfoForSourceAsset" BeforeTargets="Sign">
+    <ItemGroup>
+      <SourceBuiltSourceAsset Include="@(SignableSourceBuiltAsset)" Condition="$([System.String]::new('%(Filename)').StartsWith('$(SourceBuiltSourceArtifactName)'))"/>
+    </ItemGroup>
+
+    <!-- Do not unpack the source asset -->
+    <!-- Sign the source asset using a detached signature. -->
+    <ItemGroup>
+      <FileSignInfo Include="@(SourceBuiltSourceAsset->'%(Filename)%(Extension)')">
+        <CertificateName>$(SourceAssetCertificateId)</CertificateName>
+        <DoNotUnpack>true</DoNotUnpack>
+      </FileSignInfo>
+    </ItemGroup>
+  </Target>
+
+  <ItemGroup>
     <!-- We don't need to code sign .js files because they are not used in Windows Script Host -->
     <FileExtensionSignInfo Update=".js" CertificateName="None" />
 
     <!-- Sign 3rd party files that end up in the artifacts -->
+    <FileSignInfo Include="Antlr4.Runtime.Standard.dll" CertificateName="$(ExternalCertificateId)" />
     <FileSignInfo Include="Humanizer.dll" CertificateName="$(ExternalCertificateId)" />
     <FileSignInfo Include="Mono.Cecil.dll" CertificateName="$(ExternalCertificateId)" />
     <FileSignInfo Include="Mono.Cecil.Mdb.dll" CertificateName="$(ExternalCertificateId)" />

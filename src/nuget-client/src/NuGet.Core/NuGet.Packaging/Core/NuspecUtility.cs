@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -83,7 +81,7 @@ namespace NuGet.Packaging.Core
 
                 // Get the optional package type version.
                 var versionAttribute = node.Attribute(XName.Get(Version));
-                Version version;
+                Version? version;
 
                 if (versionAttribute != null)
                 {
@@ -122,7 +120,12 @@ namespace NuGet.Packaging.Core
                 return false;
             }
 
-            var value = element.Value ?? element.Value.Trim();
+            if (element.Value == null)
+            {
+                return false;
+            }
+
+            var value = element.Value.Trim();
             return System.Xml.XmlConvert.ToBoolean(value);
         }
 
@@ -143,9 +146,9 @@ namespace NuGet.Packaging.Core
             if (useMetadataNamespace)
             {
                 var frameworkReferencesNode = metadataNode
-                    .Elements(XName.Get(FrameworkReferences, ns));
+                    .Elements(XName.Get(FrameworkReferences, ns!));
                 frameworkReferenceGroups = frameworkReferencesNode
-                    .Elements(XName.Get(Group, ns));
+                    .Elements(XName.Get(Group, ns!));
             }
             else
             {
@@ -159,10 +162,10 @@ namespace NuGet.Packaging.Core
                 var groupFramework = GetAttributeValue(frameworkRefGroup, TargetFramework);
 
                 var frameworkReferences = useMetadataNamespace ?
-                    frameworkRefGroup.Elements(XName.Get(FrameworkReference, ns)) :
+                    frameworkRefGroup.Elements(XName.Get(FrameworkReference, ns!)) :
                     frameworkRefGroup.Elements().Where(x => x.Name.LocalName == FrameworkReference);
 
-                var framework = NuGetFramework.Parse(groupFramework, frameworkProvider);
+                var framework = NuGetFramework.Parse(groupFramework!, frameworkProvider);
                 var frameworkRefs = GetFrameworkReferences(frameworkReferences);
 
                 yield return new FrameworkReferenceGroup(framework, frameworkRefs.Select(e => new FrameworkReference(e)));
@@ -171,10 +174,10 @@ namespace NuGet.Packaging.Core
 
         private static IEnumerable<string> GetFrameworkReferences(IEnumerable<XElement> nodes)
         {
-            return new HashSet<string>(nodes.Select(e => GetAttributeValue(e, Name)), ComparisonUtility.FrameworkReferenceNameComparer);
+            return new HashSet<string>(nodes.Select(e => GetAttributeValue(e, Name)!), ComparisonUtility.FrameworkReferenceNameComparer);
         }
 
-        private static string GetAttributeValue(XElement element, string attributeName)
+        private static string? GetAttributeValue(XElement element, string attributeName)
         {
             var attribute = element.Attribute(XName.Get(attributeName));
             return attribute == null ? null : attribute.Value;

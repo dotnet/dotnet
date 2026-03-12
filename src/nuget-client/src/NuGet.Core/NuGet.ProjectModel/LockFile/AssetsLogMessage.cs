@@ -11,11 +11,11 @@ using NuGet.Shared;
 
 namespace NuGet.ProjectModel
 {
-    public class AssetsLogMessage : IAssetsLogMessage, IEquatable<IAssetsLogMessage>
+    public partial class AssetsLogMessage : IAssetsLogMessage, IEquatable<IAssetsLogMessage>
     {
-        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonConverter(typeof(JsonStringEnumConverter<NuGetLogCode>))]
         public NuGetLogCode Code { get; }
-        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonConverter(typeof(JsonStringEnumConverter<LogLevel>))]
         public LogLevel Level { get; }
         public string Message { get; }
         public string ProjectPath { get; set; }
@@ -70,8 +70,13 @@ namespace NuGet.ProjectModel
             };
         }
 
+        [JsonSerializable(typeof(AssetsLogMessage))]
+        internal sealed partial class AssetsLogMessageSourceGen : JsonSerializerContext
+        {
+        }
+
         [JsonConstructor]
-        private AssetsLogMessage(
+        internal AssetsLogMessage(
             LogLevel level,
             NuGetLogCode code,
             string message,

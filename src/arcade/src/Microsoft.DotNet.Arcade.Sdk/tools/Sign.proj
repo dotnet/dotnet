@@ -65,7 +65,6 @@
     <ItemGroup>
       <!-- .pkgs and .app bundle tooling is only available on MacOS -->
       <MacOSPkgCliItem Condition="$([MSBuild]::IsOSPlatform('OSX'))" Include="$(NuGetPackageRoot)microsoft.dotnet.macospkg.cli\$(MicrosoftDotNetMacOsPkgVersion)\tools\net*\any\Microsoft.Dotnet.MacOsPkg.Cli.dll" />
-      <TarToolItem Include="$(NuGetPackageRoot)microsoft.dotnet.tar\$(MicrosoftDotNetTarVersion)\tools\net*\any\Microsoft.Dotnet.Tar.dll" />
     </ItemGroup>
 
     <Error Condition="'$(AllowEmptySignList)' != 'true' AND '@(ItemsToSign)' == ''" 
@@ -75,7 +74,6 @@
       <_DotNetCorePath>$(DotNetTool)</_DotNetCorePath>
     </PropertyGroup>
 
-    <!-- Keep TarToolPath TFM in sync with TarTool project TFM. -->
     <Microsoft.DotNet.SignTool.SignToolTask
         DryRun="$(_DryRun)"
         TestSign="$(_TestSign)"
@@ -94,7 +92,6 @@
         MicroBuildCorePath="$(NuGetPackageRoot)microsoft.visualstudioeng.microbuild.core\$(MicrosoftVisualStudioEngMicroBuildCoreVersion)"
         Wix3ToolsPath="$(WixInstallPath)"
         WixToolsPath="$(NuGetPackageRoot)microsoft.wixtoolset.sdk\$(MicrosoftWixToolsetSdkVersion)\tools\net472\x64"
-        TarToolPath="@(TarToolItem)"
         PkgToolPath="@(MacOSPkgCliItem)"
         RepackParallelism="$(SignToolRepackParallelism)"
         MaximumParallelFileSize="$(SignToolRepackMaximumParallelFileSize)"

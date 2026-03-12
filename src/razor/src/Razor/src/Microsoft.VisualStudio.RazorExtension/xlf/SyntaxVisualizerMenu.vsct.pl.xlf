@@ -42,11 +42,6 @@
         <target state="translated">Pokaż wygenerowany kod HTML</target>
         <note />
       </trans-unit>
-      <trans-unit id="cmdidShowSourceMappingsButton|ButtonText">
-        <source>Show C# Transitions</source>
-        <target state="translated">Pokaż przejścia w języku C#</target>
-        <note />
-      </trans-unit>
       <trans-unit id="menuidToolWindowToolbar|ButtonText">
         <source>Razor Syntax Visualizer</source>
         <target state="translated">Syntax Visualizer Razor</target>
