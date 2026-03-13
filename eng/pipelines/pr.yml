@@ -93,6 +93,7 @@ stages:
 
         - script: |
             set -ex
+            echo "Validating changes made by $(Build.SourceVersionAuthor)"
             eng/common/dotnet.sh run --project eng/tools/ChangeValidation/ChangeValidation.csproj
           displayName: Run ChangeValidation tool
           env:
