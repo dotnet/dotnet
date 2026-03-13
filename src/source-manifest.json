@@ -37,16 +37,16 @@
       "commitSha": "5ad8bd68fb595a2a64e2db46023ad91c8e5f55ae"
     },
     {
-      "barId": 293418,
+      "barId": 305936,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "2333221c0564852ee5ceac9c622a0b14e864d76e"
+      "commitSha": "7ca9fe1218398de45d077727974a824ae5717839"
     },
     {
-      "barId": 291014,
+      "barId": 304884,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "f29ac531ec59b79ff12335835ae4a69cde51156a"
+      "commitSha": "c470227938073a1fb386af146d4ed12d751cb699"
     },
     {
       "barId": 301862,
@@ -55,10 +55,10 @@
       "commitSha": "9396d43dc6d7b16db3af666867585c4f4db99628"
     },
     {
-      "barId": 302363,
+      "barId": 305204,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "e3466df50c74fecc146addd724bd85263ed6717a"
+      "commitSha": "a84a12954d062206e83bcf10e157ba1c02df00c4"
     },
     {
       "barId": 292299,
