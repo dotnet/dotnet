@@ -184,7 +184,7 @@ namespace NuGet.CommandLine.XPlat
                     throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
                         Strings.Err_InvalidValue,
                         location.LongName,
-                        string.Join(",", Enum.GetValues(typeof(StoreLocation)).Cast<StoreLocation>().ToList())));
+                        string.Join(",", Enum.GetValues<StoreLocation>().ToList())));
                 }
             }
 
@@ -203,7 +203,7 @@ namespace NuGet.CommandLine.XPlat
                     throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
                         Strings.Err_InvalidValue,
                         store.LongName,
-                        string.Join(",", Enum.GetValues(typeof(StoreName)).Cast<StoreName>().ToList())));
+                        string.Join(",", Enum.GetValues<StoreName>().ToList())));
                 }
             }
 
