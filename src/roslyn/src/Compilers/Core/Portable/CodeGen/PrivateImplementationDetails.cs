@@ -699,8 +699,8 @@ namespace Microsoft.CodeAnalysis.CodeGen
 
             var staticConstructor = synthesizeStaticConstructor(containingType.ModuleBuilder, this, dataField, stringField, bytesToStringHelper, diagnostics);
 
-            _fields = ImmutableArray.Create<Cci.IFieldDefinition>(stringField);
-            _methods = ImmutableArray.Create<Cci.IMethodDefinition>(staticConstructor);
+            _fields = [stringField];
+            _methods = [staticConstructor];
 
             static Cci.IMethodDefinition synthesizeStaticConstructor(
                 CommonPEModuleBuilder module,
@@ -1122,10 +1122,11 @@ namespace Microsoft.CodeAnalysis.CodeGen
             ImmutableArray<byte> il)
             : base(containingType, maxStack, il)
         {
-            _parameters = ImmutableArray.Create<Cci.IParameterDefinition>(
+            _parameters =
+            [
                 new BytesParameter(encodingGetString), // byte* bytes
-                LengthParameterDefinition.Instance     // int length
-            );
+                LengthParameterDefinition.Instance,    // int length
+            ];
         }
 
         public static BytesToStringHelper Create(

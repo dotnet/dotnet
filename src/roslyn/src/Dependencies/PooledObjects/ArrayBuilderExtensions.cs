@@ -14,7 +14,7 @@ namespace Microsoft.CodeAnalysis.PooledObjects;
 internal static class ArrayBuilderExtensions
 {
     public static ImmutableArray<T> ToImmutableOrEmptyAndFree<T>(this ArrayBuilder<T>? builder)
-        => builder?.ToImmutableAndFree() ?? ImmutableArray<T>.Empty;
+        => builder?.ToImmutableAndFree() ?? [];
 
     public static void AddIfNotNull<T>(this ArrayBuilder<T> builder, T? value)
         where T : struct
