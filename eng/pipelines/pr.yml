@@ -77,7 +77,7 @@ stages:
   jobs:
     - job: Validate
       displayName: Run Validation Script
-      condition: not(eq(variables['Build.SourceVersionAuthor'], 'dotnet-bot'))
+      condition: not(eq(variables['Build.SourceVersionAuthor'], 'dotnet-maestro[bot]'))
       pool:
         name: $(shortStackPoolName)
         demands: ImageOverride -equals $(poolImage_Linux)
