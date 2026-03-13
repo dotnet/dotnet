@@ -59,9 +59,9 @@ internal static class IDocumentMappingServiceExtensions
             }
             else
             {
-                // It no longer makes sense to think of this location as C# or Html, since it doesn't
-                // correspond to any position in the projected document. This should not happen
-                // since there should be source mappings for all the C# spans.
+                // Some locations are classified as C# but do not correspond to a position in the
+                // projected document. This currently happens for some Razor directive content,
+                // like the assembly name in @addTagHelper, so fall back to Razor.
                 languageKind = RazorLanguageKind.Razor;
             }
         }
