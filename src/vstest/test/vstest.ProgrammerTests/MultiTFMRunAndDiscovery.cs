@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 using FluentAssertions;
+
 using Intent;
 
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;

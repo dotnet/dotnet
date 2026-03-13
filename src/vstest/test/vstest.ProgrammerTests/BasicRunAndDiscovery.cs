@@ -4,6 +4,7 @@
 using System.Diagnostics.CodeAnalysis;
 
 using FluentAssertions;
+
 using Intent;
 
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
