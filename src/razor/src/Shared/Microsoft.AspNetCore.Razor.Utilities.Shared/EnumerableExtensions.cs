@@ -46,7 +46,7 @@ internal static class EnumerableExtensions
         {
             if (count == 0)
             {
-                return [];
+                return ImmutableArray<TResult>.Empty;
             }
 
             var result = new TResult[count];
@@ -117,7 +117,7 @@ internal static class EnumerableExtensions
         {
             if (count == 0)
             {
-                return [];
+                return ImmutableArray<TResult>.Empty;
             }
 
             var result = new TResult[count];
