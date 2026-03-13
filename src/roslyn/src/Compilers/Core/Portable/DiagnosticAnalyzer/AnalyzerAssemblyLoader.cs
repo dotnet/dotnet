@@ -456,7 +456,7 @@ namespace Microsoft.CodeAnalysis
             // developers for the lifetime of VBCSCompiler, Visual Studio, VS Code, etc ... Places like 
             // Program Files are not expected to change and so locking is not a concern. But for everything else
             // we want to avoid locking and use shadow copy.
-            return new AnalyzerAssemblyLoader([.. pathResolvers, ProgramFilesAnalyzerPathResolver.Instance, new ShadowCopyAnalyzerPathResolver(windowsShadowPath)]);
+            return new AnalyzerAssemblyLoader(pathResolvers.Add(ProgramFilesAnalyzerPathResolver.Instance).Add(new ShadowCopyAnalyzerPathResolver(windowsShadowPath)));
         }
 #endif
     }

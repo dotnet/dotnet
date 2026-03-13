@@ -561,7 +561,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
                                 var namedType = (INamedTypeSymbol)context.Symbol;
                                 if (namedType.IsExtension)
                                 {
-                                    parameters = namedType.ExtensionParameter is { } extensionParameter ? [extensionParameter] : [];
+                                    parameters = namedType.ExtensionParameter is { } extensionParameter ? ImmutableArray.Create(extensionParameter) : ImmutableArray<IParameterSymbol>.Empty;
                                 }
                                 else
                                 {

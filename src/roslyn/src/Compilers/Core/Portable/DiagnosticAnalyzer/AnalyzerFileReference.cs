@@ -259,7 +259,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
 
         private static ImmutableArray<string> GetSupportedLanguages(TypeDefinition typeDef, PEModule peModule, Type attributeType, AttributeLanguagesFunc languagesFunc)
         {
-            ImmutableArray<string> result = [];
+            ImmutableArray<string> result = ImmutableArray<string>.Empty;
             foreach (CustomAttributeHandle customAttrHandle in typeDef.GetCustomAttributes())
             {
                 if (peModule.IsTargetAttribute(customAttrHandle, attributeType.Namespace, attributeType.Name, ctor: out _))
@@ -321,7 +321,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
                     string firstLanguageName;
                     if (!PEModule.CrackStringInAttributeValue(out firstLanguageName, ref argsReader))
                     {
-                        return [];
+                        return ImmutableArray<string>.Empty;
                     }
 
                     ImmutableArray<string> additionalLanguageNames;
@@ -329,14 +329,14 @@ namespace Microsoft.CodeAnalysis.Diagnostics
                     {
                         if (additionalLanguageNames.Length == 0)
                         {
-                            return [firstLanguageName];
+                            return ImmutableArray.Create(firstLanguageName);
                         }
 
                         return additionalLanguageNames.Insert(0, firstLanguageName);
                     }
                 }
             }
-            return [];
+            return ImmutableArray<string>.Empty;
         }
 
 #nullable enable

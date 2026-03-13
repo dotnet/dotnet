@@ -819,19 +819,19 @@ namespace Microsoft.CodeAnalysis.PooledObjects
             switch (Count)
             {
                 case 0:
-                    return [];
+                    return ImmutableArray<TResult>.Empty;
 
                 case 1:
-                    return [map(this[0])];
+                    return ImmutableArray.Create(map(this[0]));
 
                 case 2:
-                    return [map(this[0]), map(this[1])];
+                    return ImmutableArray.Create(map(this[0]), map(this[1]));
 
                 case 3:
-                    return [map(this[0]), map(this[1]), map(this[2])];
+                    return ImmutableArray.Create(map(this[0]), map(this[1]), map(this[2]));
 
                 case 4:
-                    return [map(this[0]), map(this[1]), map(this[2]), map(this[3])];
+                    return ImmutableArray.Create(map(this[0]), map(this[1]), map(this[2]), map(this[3]));
 
                 default:
                     var builder = ArrayBuilder<TResult>.GetInstance(Count);
@@ -857,19 +857,19 @@ namespace Microsoft.CodeAnalysis.PooledObjects
             switch (Count)
             {
                 case 0:
-                    return [];
+                    return ImmutableArray<TResult>.Empty;
 
                 case 1:
-                    return [map(this[0], arg)];
+                    return ImmutableArray.Create(map(this[0], arg));
 
                 case 2:
-                    return [map(this[0], arg), map(this[1], arg)];
+                    return ImmutableArray.Create(map(this[0], arg), map(this[1], arg));
 
                 case 3:
-                    return [map(this[0], arg), map(this[1], arg), map(this[2], arg)];
+                    return ImmutableArray.Create(map(this[0], arg), map(this[1], arg), map(this[2], arg));
 
                 case 4:
-                    return [map(this[0], arg), map(this[1], arg), map(this[2], arg), map(this[3], arg)];
+                    return ImmutableArray.Create(map(this[0], arg), map(this[1], arg), map(this[2], arg), map(this[3], arg));
 
                 default:
                     var builder = ArrayBuilder<TResult>.GetInstance(Count);
@@ -895,19 +895,19 @@ namespace Microsoft.CodeAnalysis.PooledObjects
             switch (Count)
             {
                 case 0:
-                    return [];
+                    return ImmutableArray<TResult>.Empty;
 
                 case 1:
-                    return [map(this[0], 0, arg)];
+                    return ImmutableArray.Create(map(this[0], 0, arg));
 
                 case 2:
-                    return [map(this[0], 0, arg), map(this[1], 1, arg)];
+                    return ImmutableArray.Create(map(this[0], 0, arg), map(this[1], 1, arg));
 
                 case 3:
-                    return [map(this[0], 0, arg), map(this[1], 1, arg), map(this[2], 2, arg)];
+                    return ImmutableArray.Create(map(this[0], 0, arg), map(this[1], 1, arg), map(this[2], 2, arg));
 
                 case 4:
-                    return [map(this[0], 0, arg), map(this[1], 1, arg), map(this[2], 2, arg), map(this[3], 3, arg)];
+                    return ImmutableArray.Create(map(this[0], 0, arg), map(this[1], 1, arg), map(this[2], 2, arg), map(this[3], 3, arg));
 
                 default:
                     var builder = ArrayBuilder<TResult>.GetInstance(Count);
