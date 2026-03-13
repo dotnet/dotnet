@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Diagnostics.Tracing;
 using System.IO;
 using System.Threading;
 
@@ -26,7 +25,7 @@ namespace NuGet.Common.Migrations
 
         internal static void Run(string migrationsDirectory, IEnvironmentVariableReader environmentVariableReader)
         {
-            if (NuGetEventSource.IsEnabled) TraceEvents.RunStart();
+            if (CommonEventSource.Instance.IsEnabled()) CommonEventSource.Instance.MigrationRunner_RunStart();
 
             var migrationPerformed = false;
             var expectedMigrationFilename = Path.Combine(migrationsDirectory, MaxMigrationFilename);
@@ -66,7 +65,7 @@ namespace NuGet.Common.Migrations
             }
             finally
             {
-                if (NuGetEventSource.IsEnabled) TraceEvents.RunStop(expectedMigrationFilename, migrationPerformed);
+                if (CommonEventSource.Instance.IsEnabled()) CommonEventSource.Instance.MigrationRunner_RunStop(expectedMigrationFilename, migrationPerformed ? 1 : 0);
             }
 
             static bool WaitForMutex(Mutex mutex)
@@ -98,38 +97,6 @@ namespace NuGet.Common.Migrations
             return string.IsNullOrEmpty(XdgDataHome)
                 ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".local", "share", "NuGet", "Migrations")
                 : Path.Combine(XdgDataHome, "NuGet", "Migrations");
-        }
-
-        private static class TraceEvents
-        {
-            private const string EventNameMigrationRun = "MigrationRunner/Run";
-
-            public static void RunStart()
-            {
-                var eventOptions = new EventSourceOptions
-                {
-                    ActivityOptions = EventActivityOptions.Detachable,
-                    Keywords = NuGetEventSource.Keywords.Common | NuGetEventSource.Keywords.Performance,
-                    Opcode = EventOpcode.Start
-                };
-
-                NuGetEventSource.Instance.Write(EventNameMigrationRun, eventOptions);
-            }
-
-            public static void RunStop(string migrationFilePath, bool migrationPerformed)
-            {
-                var eventOptions = new EventSourceOptions
-                {
-                    ActivityOptions = EventActivityOptions.Detachable,
-                    Keywords = NuGetEventSource.Keywords.Common | NuGetEventSource.Keywords.Performance,
-                    Opcode = EventOpcode.Stop
-                };
-
-                NuGetEventSource.Instance.Write(EventNameMigrationRun, eventOptions, new RunStopEventData(migrationFilePath, migrationPerformed));
-            }
-
-            [EventData]
-            private record struct RunStopEventData(string MigrationFileFullPath, bool MigrationPerformed);
         }
     }
 }

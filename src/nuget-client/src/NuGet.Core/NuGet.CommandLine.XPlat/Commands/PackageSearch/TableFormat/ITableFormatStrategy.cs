@@ -7,6 +7,6 @@ namespace NuGet.CommandLine.XPlat
 {
     internal interface ITableFormatStrategy
     {
-        Table CreateTable();
+        Table CreateTable(int consoleWidth);
     }
 }

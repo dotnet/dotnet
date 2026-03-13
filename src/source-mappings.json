@@ -93,31 +93,44 @@
             "name": "source-build-reference-packages",
             "defaultRemote": "https://github.com/dotnet/source-build-reference-packages",
             "exclude": [
-                // Contains disallowed binaries
-                // 1ES Secret Scanning does not allow any PFX files
-                "src/externalPackages/src/spectre-console/docs/**/*",
-                "**/*.pfx",
-                // Don't include any parts of antlr4 that we don't use.
-                // We don't want 1ES scanning to pick up all of the different
-                // runtimes and add a bunch of compliance work for code we don't use. 
-                "src/externalPackages/src/antlr4/.github/**",
-                "src/externalPackages/src/antlr4/Package.swift",
-                "src/externalPackages/src/antlr4/antlr4-maven-plugin/**",
-                "src/externalPackages/src/antlr4/doc/**",
-                "src/externalPackages/src/antlr4/docker/**",
-                "src/externalPackages/src/antlr4/pom.xml",
-                "src/externalPackages/src/antlr4/runtime-testsuite/**",
-                "src/externalPackages/src/antlr4/scripts/**",
-                "src/externalPackages/src/antlr4/tool-testsuite/**",
-                "src/externalPackages/src/antlr4/tool/**",
-                "src/externalPackages/src/antlr4/runtime/CSharp/tests/**",
-                "src/externalPackages/src/antlr4/runtime/Cpp/**",
-                "src/externalPackages/src/antlr4/runtime/Dart/**",
-                "src/externalPackages/src/antlr4/runtime/Go/**",
-                "src/externalPackages/src/antlr4/runtime/Java/**",
-                "src/externalPackages/src/antlr4/runtime/JavaScript/**",
-                "src/externalPackages/src/antlr4/runtime/Python3/**",
-                "src/externalPackages/src/antlr4/runtime/Swift/**"
+              // Contains disallowed binaries
+              "src/externalPackages/src/spectre-console/docs/**/*",
+
+              // 1ES Secret Scanning does not allow any PFX files
+              // For submodule exclusions, we must use the full relative path of each submodule
+              "src/externalPackages/src/**/*.pfx",
+              "src/externalPackages/src/MSBuildLocator/**/*.pfx",
+              "src/externalPackages/src/antlr4/**/*.pfx",
+              "src/externalPackages/src/application-insights/**/*.pfx",
+              "src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/**/*.pfx",
+              "src/externalPackages/src/cssparser/**/*.pfx",
+              "src/externalPackages/src/docker-creds-provider/**/*.pfx",
+              "src/externalPackages/src/humanizer/**/*.pfx",
+              "src/externalPackages/src/newtonsoft-json/**/*.pfx",
+              "src/externalPackages/src/spectre-console/**/*.pfx",
+              "src/externalPackages/src/vs-solutionpersistence/**/*.pfx",
+
+              // Don't include any parts of antlr4 that we don't use.
+              // We don't want 1ES scanning to pick up all of the different
+              // runtimes and add a bunch of compliance work for code we don't use. 
+              "src/externalPackages/src/antlr4/.github/**",
+              "src/externalPackages/src/antlr4/Package.swift",
+              "src/externalPackages/src/antlr4/antlr4-maven-plugin/**",
+              "src/externalPackages/src/antlr4/doc/**",
+              "src/externalPackages/src/antlr4/docker/**",
+              "src/externalPackages/src/antlr4/pom.xml",
+              "src/externalPackages/src/antlr4/runtime-testsuite/**",
+              "src/externalPackages/src/antlr4/scripts/**",
+              "src/externalPackages/src/antlr4/tool-testsuite/**",
+              "src/externalPackages/src/antlr4/tool/**",
+              "src/externalPackages/src/antlr4/runtime/CSharp/tests/**",
+              "src/externalPackages/src/antlr4/runtime/Cpp/**",
+              "src/externalPackages/src/antlr4/runtime/Dart/**",
+              "src/externalPackages/src/antlr4/runtime/Go/**",
+              "src/externalPackages/src/antlr4/runtime/Java/**",
+              "src/externalPackages/src/antlr4/runtime/JavaScript/**",
+              "src/externalPackages/src/antlr4/runtime/Python3/**",
+              "src/externalPackages/src/antlr4/runtime/Swift/**"
             ]
         },
         {

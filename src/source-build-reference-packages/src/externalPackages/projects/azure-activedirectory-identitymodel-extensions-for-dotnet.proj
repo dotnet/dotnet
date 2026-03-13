@@ -3,6 +3,7 @@
   <PropertyGroup>
     <PackagesOutput>$(ProjectDirectory)pack</PackagesOutput>
     <CustomRepoBuild>true</CustomRepoBuild>
+    <SourceRevisionId>e67b25be77532af9ba405670b34b4d263d505fde</SourceRevisionId>
   </PropertyGroup>
 
   <Target Name="CustomRepoBuild">

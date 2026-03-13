@@ -2,11 +2,9 @@
 <Project>
 
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="'$(MicrosoftCommonPropsHasBeenImported)' != 'true'" />
+  <!-- Only import when NETCoreSdkBundledVersionsProps is not defined (non SDK style projects). -->
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.BundledVersions.props" Condition="'$(NETCoreSdkBundledVersionsProps)' == ''" />
 
-  <!-- Import the BundledVersions.props file from SDK to light-up Runtime="NET" task support.
-       Only import when NETCoreSdkBundledVersionsProps is not defined (non SDK style projects).
-       Remove when https://github.com/dotnet/msbuild/issues/12895 is implemented. -->
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.BundledVersions.props" Condition="'$(MSBuildRuntimeType)' == 'Full' and '$(NETCoreSdkBundledVersionsProps)' == ''" />
   <!-- Set required RuntimeIdentifierGraphPath property for Runtime="NET" support. Remove when
        a desktop msbuild (via VS) with https://github.com/dotnet/msbuild/pull/13176 is consumed. -->
   <PropertyGroup Condition="'$(MSBuildRuntimeType)' == 'Full' and '$(UsingMicrosoftNETSdk)' != 'true' and '$(RuntimeIdentifierGraphPath)' == ''">

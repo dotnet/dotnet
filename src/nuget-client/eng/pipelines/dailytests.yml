@@ -40,7 +40,7 @@ stages:
   - job: Build
     timeoutInMinutes: 170
     pool:
-      name: VSEngSS-MicroBuild2022-1ES
+      name: VSEng-MicroBuildVSStable
     steps:
     - template: vs-test/build.yml
 

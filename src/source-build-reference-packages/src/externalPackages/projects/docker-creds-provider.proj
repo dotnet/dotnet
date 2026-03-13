@@ -5,6 +5,7 @@
     <GlobalJsonFile>$(ProjectDirectory)global.json</GlobalJsonFile>
     <PackagesOutput>$(ProjectDirectory)src/Valleysoft.DockerCredsProvider/bin/$(Configuration)/</PackagesOutput>
     <CustomRepoBuild>true</CustomRepoBuild>
+    <SourceRevisionId>6e1ecd0a80755f9f0e88dc23b98b52f51a77c65e</SourceRevisionId>
   </PropertyGroup>
 
   <Target Name="CustomRepoBuild">

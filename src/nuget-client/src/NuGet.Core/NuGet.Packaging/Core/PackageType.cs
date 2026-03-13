@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using NuGet.Shared;
 
@@ -39,19 +37,19 @@ namespace NuGet.Packaging.Core
 
         public Version Version { get; }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as PackageType);
         }
 
-        public static bool operator ==(PackageType a, PackageType b)
+        public static bool operator ==(PackageType? a, PackageType? b)
         {
             if (ReferenceEquals(a, b))
             {
                 return true;
             }
 
-            if (((object)a == null) || ((object)b == null))
+            if (a is null || b is null)
             {
                 return false;
             }
@@ -59,12 +57,12 @@ namespace NuGet.Packaging.Core
             return a.Equals(b);
         }
 
-        public static bool operator !=(PackageType a, PackageType b)
+        public static bool operator !=(PackageType? a, PackageType? b)
         {
             return !(a == b);
         }
 
-        public bool Equals(PackageType other)
+        public bool Equals(PackageType? other)
         {
             if (other == null)
             {
@@ -91,7 +89,7 @@ namespace NuGet.Packaging.Core
             return combiner.CombinedHash;
         }
 
-        public int CompareTo(PackageType other)
+        public int CompareTo(PackageType? other)
         {
 
             if (other == null)

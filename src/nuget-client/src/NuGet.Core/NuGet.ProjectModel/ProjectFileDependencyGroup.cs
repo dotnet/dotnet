@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using NuGet.Shared;
@@ -13,15 +11,15 @@ namespace NuGet.ProjectModel
     {
         public ProjectFileDependencyGroup(string frameworkName, IEnumerable<string> dependencies)
         {
-            FrameworkName = frameworkName;
-            Dependencies = dependencies;
+            FrameworkName = frameworkName ?? throw new ArgumentNullException(nameof(frameworkName));
+            Dependencies = dependencies ?? throw new ArgumentNullException(nameof(dependencies));
         }
 
         public string FrameworkName { get; }
 
         public IEnumerable<string> Dependencies { get; }
 
-        public bool Equals(ProjectFileDependencyGroup other)
+        public bool Equals(ProjectFileDependencyGroup? other)
         {
             if (other == null)
             {
@@ -46,7 +44,7 @@ namespace NuGet.ProjectModel
             return false;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as ProjectFileDependencyGroup);
         }
