@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using NuGet.Shared;
 using NuGet.Versioning;
@@ -69,7 +67,7 @@ namespace NuGet.Packaging.Core
         /// <summary>
         /// True if the package identities are the same when ignoring build metadata.
         /// </summary>
-        public bool Equals(PackageIdentity x, PackageIdentity y)
+        public bool Equals(PackageIdentity? x, PackageIdentity? y)
         {
             if (ReferenceEquals(x, y))
             {
@@ -82,7 +80,7 @@ namespace NuGet.Packaging.Core
                 return false;
             }
 
-            return _versionComparer.Equals(x.Version, y.Version)
+            return _versionComparer.Equals(x.Version!, y.Version!)
                 && StringComparer.OrdinalIgnoreCase.Equals(x.Id, y.Id);
         }
 
@@ -107,7 +105,7 @@ namespace NuGet.Packaging.Core
         /// <summary>
         /// Compares on the Id first, then version
         /// </summary>
-        public int Compare(PackageIdentity x, PackageIdentity y)
+        public int Compare(PackageIdentity? x, PackageIdentity? y)
         {
             if (ReferenceEquals(x, y))
             {
@@ -128,7 +126,7 @@ namespace NuGet.Packaging.Core
 
             if (result == 0)
             {
-                result = _versionComparer.Compare(x.Version, y.Version);
+                result = _versionComparer.Compare(x.Version!, y.Version!);
             }
 
             return result;

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -64,12 +62,12 @@ namespace NuGet.ProjectModel
             return hashCode.CombinedHash;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as WarningProperties);
         }
 
-        public bool Equals(WarningProperties other)
+        public bool Equals(WarningProperties? other)
         {
             if (other == null)
             {
@@ -95,7 +93,7 @@ namespace NuGet.ProjectModel
         /// <summary>
         /// Create warning properties from the msbuild property strings.
         /// </summary>
-        public static WarningProperties GetWarningProperties(string treatWarningsAsErrors, string warningsAsErrors, string noWarn, string warningsNotAsErrors)
+        public static WarningProperties GetWarningProperties(string? treatWarningsAsErrors, string? warningsAsErrors, string? noWarn, string? warningsNotAsErrors)
         {
             return GetWarningProperties(treatWarningsAsErrors, MSBuildStringUtility.GetNuGetLogCodes(warningsAsErrors), MSBuildStringUtility.GetNuGetLogCodes(noWarn), MSBuildStringUtility.GetNuGetLogCodes(warningsNotAsErrors));
         }
@@ -103,7 +101,7 @@ namespace NuGet.ProjectModel
         /// <summary>
         /// Create warning properties from NuGetLogCode collection.
         /// </summary>
-        public static WarningProperties GetWarningProperties(string treatWarningsAsErrors, ImmutableArray<NuGetLogCode> warningsAsErrors, ImmutableArray<NuGetLogCode> noWarn, ImmutableArray<NuGetLogCode> warningsNotAsErrors)
+        public static WarningProperties GetWarningProperties(string? treatWarningsAsErrors, ImmutableArray<NuGetLogCode> warningsAsErrors, ImmutableArray<NuGetLogCode> noWarn, ImmutableArray<NuGetLogCode> warningsNotAsErrors)
         {
             var props = new WarningProperties()
             {

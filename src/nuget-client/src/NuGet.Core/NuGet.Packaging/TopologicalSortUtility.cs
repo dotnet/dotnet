@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -197,10 +195,10 @@ namespace NuGet.Packaging
                 _comparer = comparer ?? throw new ArgumentNullException(nameof(comparer));
             }
 
-            public int Compare(ItemDependencyInfo x, ItemDependencyInfo y)
+            public int Compare(ItemDependencyInfo? x, ItemDependencyInfo? y)
             {
                 // Order packages by parent count
-                if (x.ActiveParents < y.ActiveParents)
+                if (x!.ActiveParents < y!.ActiveParents)
                 {
                     return -1;
                 }
@@ -227,8 +225,8 @@ namespace NuGet.Packaging
             public string[] DependencyIds;
 
             public int ActiveParents;
-            public List<ItemDependencyInfo> Parents;
-            public List<ItemDependencyInfo> Children;
+            public List<ItemDependencyInfo>? Parents;
+            public List<ItemDependencyInfo>? Children;
         }
     }
 }
