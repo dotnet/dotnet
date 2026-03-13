@@ -10,7 +10,6 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
@@ -113,7 +112,7 @@ internal class CodeActionsService(
             endLocation = startLocation;
         }
 
-        var languageKind = codeDocument.GetLanguageKind(startLocation, rightAssociative: false);
+        var languageKind = _documentMappingService.GetPositionInfo(codeDocument, startLocation).LanguageKind;
         var context = new RazorCodeActionContext(
             request,
             documentSnapshot,

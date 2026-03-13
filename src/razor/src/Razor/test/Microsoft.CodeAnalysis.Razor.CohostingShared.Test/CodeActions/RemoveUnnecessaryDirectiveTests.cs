@@ -3,6 +3,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Xunit;
 using Xunit.Abstractions;
@@ -476,6 +477,36 @@ public class RemoveUnnecessaryDirectiveTests(ITestOutputHelper testOutputHelper)
         await VerifyCodeActionAsync(
             input: """
                 @addTagHelper [||]*, SomeProject
+
+                <div></div>
+                """,
+            expected: """
+
+                <div></div>
+                """,
+            codeActionName: LanguageServerConstants.CodeActions.RemoveUnnecessaryDirectives,
+            additionalFiles:
+            [
+                (FilePath("AboutBoxTagHelper.cs"), """
+                    using Microsoft.AspNetCore.Razor.TagHelpers;
+
+                    [HtmlTargetElement("dw:about-box")]
+                    public class AboutBoxTagHelper : TagHelper
+                    {
+                    }
+                    """)
+            ],
+            fileKind: RazorFileKind.Legacy,
+            makeDiagnosticsRequest: true);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12846")]
+    public async Task Legacy_UnusedAddTagHelper_CursorInAssemblyName()
+    {
+        await VerifyCodeActionAsync(
+            input: """
+                @addTagHelper *, SomePr[||]oject
 
                 <div></div>
                 """,
