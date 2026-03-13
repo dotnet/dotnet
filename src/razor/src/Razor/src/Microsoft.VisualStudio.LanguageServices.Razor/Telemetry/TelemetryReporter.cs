@@ -471,7 +471,15 @@ internal abstract partial class TelemetryReporter : ITelemetryReporter, IDisposa
             Flush();
             if (!Session.IsDisposed)
             {
-                Session.Dispose();
+                try
+                {
+                    Session.Dispose();
+                }
+                catch (ObjectDisposedException)
+                {
+                    // The VS telemetry session's internal object may already be disposed
+                    // by another MEF part during ExportProvider disposal. This is safe to ignore.
+                }
             }
         }
 

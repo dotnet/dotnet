@@ -9,6 +9,7 @@
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <XPLATProject>true</XPLATProject>
     <UsePublicApiAnalyzer>false</UsePublicApiAnalyzer>
+    <IsAotCompatible>false</IsAotCompatible>
   </PropertyGroup>
 
   <ItemGroup>

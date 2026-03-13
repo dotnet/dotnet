@@ -18,6 +18,7 @@
     <DotNetToolArgs>$(DotNetToolArgs) /p:PackageVersion=$(SolutionPersistenceVersion)</DotNetToolArgs>
 
     <BuildCommand>$(DotNetTool) pack $(SlnPersistenceProjectPath) /bl:$(ArtifactsLogRepoDir)build.binlog $(DotNetToolArgs)</BuildCommand>
+    <SourceRevisionId>0b6f82a4073ce0ff0419991ea0cd6dd6898a51ac</SourceRevisionId>
   </PropertyGroup>
 
   <ItemGroup>

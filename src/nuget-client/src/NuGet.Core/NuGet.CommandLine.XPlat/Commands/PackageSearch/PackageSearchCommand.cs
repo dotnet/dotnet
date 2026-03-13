@@ -118,6 +118,7 @@ namespace NuGet.CommandLine.XPlat
                         Interactive = parserResult.GetValue(interactive),
                         Prerelease = parserResult.GetValue(prerelease),
                         Logger = logger,
+                        ConsoleWidth = GetConsoleWidth(),
                     };
 
                     return await setupSettingsAndRunSearchAsync(packageSearchArgs, parserResult.GetValue(configFile), cancelationToken);
@@ -130,6 +131,24 @@ namespace NuGet.CommandLine.XPlat
             });
 
             rootCommand.Subcommands.Add(searchCommand);
+        }
+
+        internal static int GetConsoleWidth()
+        {
+            try
+            {
+                int width = Console.WindowWidth;
+                if (width > 0)
+                {
+                    return width;
+                }
+            }
+            catch (IOException)
+            {
+                // Console.WindowWidth throws IOException when no console is attached
+            }
+
+            return Table.DefaultWindowWidth;
         }
 
         public static async Task<int> SetupSettingsAndRunSearchAsync(PackageSearchArgs packageSearchArgs, string configFile, CancellationToken cancellationToken)

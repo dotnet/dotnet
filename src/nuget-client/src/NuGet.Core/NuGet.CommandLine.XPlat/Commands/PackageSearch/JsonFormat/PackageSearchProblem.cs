@@ -13,7 +13,7 @@ namespace NuGet.CommandLine.XPlat
         public string Text { get; private set; }
 
         [JsonPropertyName("problemType")]
-        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonConverter(typeof(JsonStringEnumConverter<PackageSearchProblemType>))]
         public PackageSearchProblemType ProblemType { get; }
 
         internal PackageSearchProblem(PackageSearchProblemType packageSearchProblemType, string text)

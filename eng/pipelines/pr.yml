@@ -90,6 +90,7 @@ stages:
       steps:
         - checkout: self
           fetchDepth: 0
+          persistCredentials: ${{ ne(variables['System.TeamProject'], 'public') }}
 
         - script: |
             set -ex

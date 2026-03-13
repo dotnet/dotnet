@@ -227,7 +227,7 @@ namespace NuGet.Protocol.Tests
                     Assert.Equal(LicenseMetadata.EmptyVersion, result.LicenseMetadata.Version);
                 }
 
-                Assert.Equal(errorCount, result.LicenseMetadata.WarningsAndErrors.Count);
+                Assert.Equal(errorCount, result.LicenseMetadata.WarningsAndErrors!.Count);
                 Assert.Contains(errorMessage, result.LicenseMetadata.WarningsAndErrors[0]);
             }
         }

@@ -44,7 +44,7 @@
       </trans-unit>
       <trans-unit id="Error_NuGetSolverNotAvailable">
         <source>The NuGet Solver tool is unavailable. Please enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
-        <target state="new">The NuGet Solver tool is unavailable. Please enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</target>
+        <target state="translated">NuGet 해결사 도구를 사용할 수 없습니다. GitHub Copilot 채팅 창에서 NuGet MCP 서버를 활성화한 후 다시 시도하세요.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingPattern_Missing">

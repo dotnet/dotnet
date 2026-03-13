@@ -45,7 +45,7 @@ namespace NuGet.Commands
 
                 foreach (var library in libraries.Where(e => e.Type == LibraryType.Package))
                 {
-                    var identity = new PackageIdentity(library.Name, library.Version);
+                    var identity = new PackageIdentity(library.Name!, library.Version);
 
                     var dependency = new LockFileDependency()
                     {
@@ -92,7 +92,7 @@ namespace NuGet.Commands
 
                 foreach (var projectReference in libraries.Where(e => e.Type == LibraryType.Project || e.Type == LibraryType.ExternalProject))
                 {
-                    var projectIdentity = new PackageIdentity(projectReference.Name, projectReference.Version);
+                    var projectIdentity = new PackageIdentity(projectReference.Name!, projectReference.Version);
                     var projectFullPath = projectFullPaths[projectIdentity];
                     var id = PathUtility.GetStringComparerBasedOnOS().Equals(Path.GetFileNameWithoutExtension(projectFullPath), projectReference.Name)
                         ? projectReference.Name.ToLowerInvariant()

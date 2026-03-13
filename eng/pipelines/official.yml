@@ -115,6 +115,8 @@ extends:
         suppressionsFile: $(Build.SourcesDirectory)/.config/CredScanSuppressions.json
       componentgovernance:
         useExecutionTargetAsUserSteps: true
+      autobaseline:
+        isMainPipeline: true
 
     containers:
       ${{ variables.almaLinuxContainerName }}:

@@ -42,12 +42,6 @@
     x:Key="BooleanToHiddenVisibilityConverter" />
   <nuget:GreaterThanThresholdToVisibilityConverter
     x:Key="GreaterThanThresholdToVisibilityConverter" />
-  <nuget:FontSizeConverter
-    Scale="122"
-    x:Key="Font122PercentSizeConverter" />
-  <nuget:FontSizeConverter
-    Scale="155"
-    x:Key="Font155PercentSizeConverter" />
   <nuget:VersionToStringConverter
     x:Key="VersionToStringConverter" />
   <nuget:ProjectAndSolutionViewHeightConverter

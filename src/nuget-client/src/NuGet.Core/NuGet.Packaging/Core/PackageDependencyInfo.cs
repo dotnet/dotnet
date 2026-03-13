@@ -23,7 +23,7 @@ namespace NuGet.Packaging.Core
         /// </summary>
         public IEnumerable<PackageDependency> Dependencies { get; }
 
-        public PackageDependencyInfo(string id, NuGetVersion version)
+        public PackageDependencyInfo(string id, NuGetVersion? version)
             : this(id, version, null)
         {
         }
@@ -39,7 +39,7 @@ namespace NuGet.Packaging.Core
         /// <param name="id">package name</param>
         /// <param name="version">package version</param>
         /// <param name="dependencies">package dependencies</param>
-        public PackageDependencyInfo(string id, NuGetVersion version, IEnumerable<PackageDependency>? dependencies)
+        public PackageDependencyInfo(string id, NuGetVersion? version, IEnumerable<PackageDependency>? dependencies)
             : base(id, version)
         {
             Dependencies = dependencies?.ToArray() ?? Array.Empty<PackageDependency>();

@@ -3,6 +3,7 @@
   <PropertyGroup>
     <PackagesOutput>$(ProjectDirectory)src/Microsoft.Css.Parser/bin/$(Configuration)/</PackagesOutput>
     <CustomRepoBuild>true</CustomRepoBuild>
+    <SourceRevisionId>0d59611784841735a7778a67aa6e9d8d000c861f</SourceRevisionId>
   </PropertyGroup>
 
   <Target Name="CustomRepoBuild">

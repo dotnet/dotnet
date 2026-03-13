@@ -18,6 +18,7 @@
     <BuildCommand>$(DotNetTool) pack $(NewtonsoftJsonProjectPath) /bl:$(ArtifactsLogRepoDir)build.binlog $(DotNetToolArgs)</BuildCommand>
 
     <PackagesOutput>$(NewtonsoftJsonDirectory)bin/$(Configuration)/</PackagesOutput>
+    <SourceRevisionId>0a2e291c0d9c0c7675d445703e51750363a549ef</SourceRevisionId>
   </PropertyGroup>
 
   <!-- The Library Frameworks was added to environment variables so as to override the frameworks in newtonsoft csproj -->
