@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using FluentAssertions;
+
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.Parallel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Xml;
 
 using Microsoft.TestPlatform.TestUtilities;
+
 using NuGet.Versioning;
 
 namespace Microsoft.TestPlatform.AcceptanceTests;
