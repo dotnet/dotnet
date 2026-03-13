@@ -180,12 +180,12 @@ internal ref struct PooledHashSet<T>
     {
         if (HasSingleItem)
         {
-            return ImmutableArray.Create(_item.value);
+            return [_item.value];
         }
 
         if (SetIsNullOrEmpty)
         {
-            return ImmutableArray<T>.Empty;
+            return [];
         }
 
         return _set.OrderByAsArray(keySelector);

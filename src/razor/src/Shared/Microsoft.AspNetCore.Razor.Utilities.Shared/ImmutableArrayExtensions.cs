@@ -20,7 +20,7 @@ internal static partial class ImmutableArrayExtensions
     /// </summary>
     public static ImmutableArray<T> NullToEmpty<T>(this ImmutableArray<T> array)
     {
-        return array.IsDefault ? ImmutableArray<T>.Empty : array;
+        return array.IsDefault ? [] : array;
     }
 
     public static void SetCapacityIfLarger<T>(this ImmutableArray<T>.Builder builder, int newCapacity)
@@ -83,7 +83,7 @@ internal static partial class ImmutableArrayExtensions
 
         if (length == 0)
         {
-            return ImmutableArray<TResult>.Empty;
+            return [];
         }
 
         var result = new TResult[length];
@@ -115,7 +115,7 @@ internal static partial class ImmutableArrayExtensions
 
         if (length == 0)
         {
-            return ImmutableArray<TResult>.Empty;
+            return [];
         }
 
         var result = new TResult[length];
@@ -147,7 +147,7 @@ internal static partial class ImmutableArrayExtensions
 
         if (length == 0)
         {
-            return ImmutableArray<TResult>.Empty;
+            return [];
         }
 
         var result = new TResult[length];
@@ -181,7 +181,7 @@ internal static partial class ImmutableArrayExtensions
 
         if (length == 0)
         {
-            return ImmutableArray<TResult>.Empty;
+            return [];
         }
 
         var result = new TResult[length];
@@ -198,7 +198,7 @@ internal static partial class ImmutableArrayExtensions
     {
         if (source is null || source.Count == 0)
         {
-            return ImmutableArray<TResult>.Empty;
+            return [];
         }
 
         using var builder = new PooledArrayBuilder<TResult>(capacity: source.Count);
@@ -230,7 +230,7 @@ internal static partial class ImmutableArrayExtensions
 
         if (length == 0)
         {
-            return ImmutableArray<T>.Empty;
+            return [];
         }
 
         using var builder = new PooledArrayBuilder<T>();
@@ -284,7 +284,7 @@ internal static partial class ImmutableArrayExtensions
 
         if (none)
         {
-            return ImmutableArray<T>.Empty;
+            return [];
         }
 
         return builder.ToImmutableAndClear();
@@ -314,7 +314,7 @@ internal static partial class ImmutableArrayExtensions
 
         if (length == 0)
         {
-            return ImmutableArray<T>.Empty;
+            return [];
         }
 
         using var builder = new PooledArrayBuilder<T>();
@@ -368,7 +368,7 @@ internal static partial class ImmutableArrayExtensions
 
         if (none)
         {
-            return ImmutableArray<T>.Empty;
+            return [];
         }
 
         return builder.ToImmutableAndClear();
@@ -396,7 +396,7 @@ internal static partial class ImmutableArrayExtensions
 
         if (length == 0)
         {
-            return ImmutableArray<T>.Empty;
+            return [];
         }
 
         using var builder = new PooledArrayBuilder<T>();
@@ -450,7 +450,7 @@ internal static partial class ImmutableArrayExtensions
 
         if (none)
         {
-            return ImmutableArray<T>.Empty;
+            return [];
         }
 
         return builder.ToImmutableAndClear();
@@ -482,7 +482,7 @@ internal static partial class ImmutableArrayExtensions
 
         if (length == 0)
         {
-            return ImmutableArray<T>.Empty;
+            return [];
         }
 
         using var builder = new PooledArrayBuilder<T>();
@@ -536,7 +536,7 @@ internal static partial class ImmutableArrayExtensions
 
         if (none)
         {
-            return ImmutableArray<T>.Empty;
+            return [];
         }
 
         return builder.ToImmutableAndClear();
@@ -851,7 +851,7 @@ internal static partial class ImmutableArrayExtensions
     {
         if (source.IsEmpty)
         {
-            return ImmutableArray<T>.Empty;
+            return [];
         }
 
         using var _ = HashSetPool<T>.GetPooledObject(out var uniqueItems);
@@ -871,7 +871,7 @@ internal static partial class ImmutableArrayExtensions
     {
         if (source.IsEmpty)
         {
-            return ImmutableArray<T>.Empty;
+            return [];
         }
 
 #if !NETSTANDARD2_0
@@ -896,7 +896,7 @@ internal static partial class ImmutableArrayExtensions
     {
         if (source.IsEmpty)
         {
-            return ImmutableArray<T>.Empty;
+            return [];
         }
 
         return GetMostRecentUniqueItemsCore(source, uniqueItems);

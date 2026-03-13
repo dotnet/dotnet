@@ -26,7 +26,7 @@ internal static class ReadOnlyListExtensions
         var count = list.Count;
         if (count == 0)
         {
-            return ImmutableArray<TResult>.Empty;
+            return [];
         }
 
         // If the list is a boxed ImmutableArray<T>, it's better to unbox it here and call the SelectAsArray<T>
@@ -64,7 +64,7 @@ internal static class ReadOnlyListExtensions
         var count = list.Count;
         if (count == 0)
         {
-            return ImmutableArray<TResult>.Empty;
+            return [];
         }
 
         // If the list is a boxed ImmutableArray<T>, it's better to unbox it here and call the SelectAsArray<T>
@@ -109,7 +109,7 @@ internal static class ReadOnlyListExtensions
 
         return list.Count > 0
             ? ImmutableCollectionsMarshal.AsImmutableArray(CreateArray(list))
-            : ImmutableArray<T>.Empty;
+            : [];
     }
 
     private static T[] CreateArray<T>(IReadOnlyList<T> list)
@@ -1455,9 +1455,9 @@ internal static class ReadOnlyListExtensions
         switch (list.Count)
         {
             case 0:
-                return ImmutableArray<TElement>.Empty;
+                return [];
             case 1:
-                return ImmutableArray.Create(list[0]);
+                return [list[0]];
         }
 
         var length = list.Count;
