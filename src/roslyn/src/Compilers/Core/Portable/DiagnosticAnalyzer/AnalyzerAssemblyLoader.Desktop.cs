@@ -19,7 +19,7 @@ namespace Microsoft.CodeAnalysis
         private bool _hookedAssemblyResolve;
 
         internal AnalyzerAssemblyLoader()
-         : this(analyzerPathResolvers: ImmutableArray<IAnalyzerPathResolver>.Empty)
+         : this(analyzerPathResolvers: [])
         {
         }
 

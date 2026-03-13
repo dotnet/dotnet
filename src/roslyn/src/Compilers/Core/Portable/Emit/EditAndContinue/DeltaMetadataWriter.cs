@@ -585,7 +585,7 @@ namespace Microsoft.CodeAnalysis.Emit
 
                         var (currentLambdas, rudeEdits) = (newMethodDef.HasBody && newMethodDef.GetBody(context) is { } body) ?
                             (body.LambdaDebugInfo, body.OrderedLambdaRuntimeRudeEdits) :
-                            (ImmutableArray<EncLambdaInfo>.Empty, ImmutableArray<LambdaRuntimeRudeEditInfo>.Empty);
+                            ([], []);
 
                         addDeletedClosureMethods(oldMethod, currentLambdas, rudeEdits);
                     }

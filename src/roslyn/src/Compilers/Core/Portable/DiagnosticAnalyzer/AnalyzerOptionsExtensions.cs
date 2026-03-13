@@ -21,7 +21,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
             => s_categoryToSeverityKeyMap.GetOrAdd(category, category, static category => $"{DotnetAnalyzerDiagnosticPrefix}.{CategoryPrefix}-{category}.{SeveritySuffix}");
 
         public static ImmutableArray<AdditionalText> GetAdditionalFiles(this AnalyzerOptions? analyzerOptions)
-            => analyzerOptions?.AdditionalFiles ?? ImmutableArray<AdditionalText>.Empty;
+            => analyzerOptions?.AdditionalFiles ?? [];
 
         /// <summary>
         /// Tries to get configured severity for the given <paramref name="descriptor"/>
