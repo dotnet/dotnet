@@ -3,6 +3,7 @@
   <PropertyGroup>
     <PackagesOutput>$(ProjectDirectory)src/MSBuildLocator/bin/$(Configuration)/</PackagesOutput>
     <CustomRepoBuild>true</CustomRepoBuild>
+    <SourceRevisionId>694ff392b2dcf6ac58fe865afd1c982eb9449014</SourceRevisionId>
   </PropertyGroup>
 
   <Target Name="CustomRepoBuild">

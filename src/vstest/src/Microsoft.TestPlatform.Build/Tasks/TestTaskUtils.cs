@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 
 using Microsoft.Build.Utilities;
 
@@ -241,48 +240,14 @@ internal static class TestTaskUtils
     }
 
     /// <summary>
-    /// Resolves the full path to the dotnet executable by checking DOTNET_HOST_PATH,
-    /// current directory, and PATH in that order.
+    /// Resolves the full path to the dotnet host from the DOTNET_HOST_PATH environment variable.
     /// </summary>
-    /// <param name="dotnetExe">The platform-specific dotnet executable name (e.g. "dotnet.exe" or "dotnet").</param>
-    /// <returns>The resolved full path, or <see langword="null"/> if not found.</returns>
-    internal static string? ResolveDotnetPath(string dotnetExe)
-    {
-        //TODO: https://github.com/dotnet/sdk/issues/20 Need to get the dotnet path from MSBuild?
-
-        var dotnetHostPath = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH");
-        if (!dotnetHostPath.IsNullOrEmpty())
-        {
-            var path = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(dotnetHostPath))!, dotnetExe);
-            if (File.Exists(path))
-            {
-                return path;
-            }
-        }
-
-        if (File.Exists(dotnetExe))
-        {
-            return Path.GetFullPath(dotnetExe);
-        }
-
-        var values = Environment.GetEnvironmentVariable("PATH");
-        foreach (var p in values!.Split(Path.PathSeparator))
-        {
-            var fullPath = Path.Combine(p, dotnetExe);
-            if (File.Exists(fullPath))
-            {
-                return fullPath;
-            }
-        }
-
-        return null;
-    }
-
-    /// <inheritdoc cref="ResolveDotnetPath(string)"/>
+    /// <returns>
+    /// The resolved full path to the dotnet host, or <see langword="null"/> if the variable is not set or empty.
+    /// </returns>
     internal static string? ResolveDotnetPath()
     {
-        var dotnetExe = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "dotnet.exe" : "dotnet";
-
-        return ResolveDotnetPath(dotnetExe);
+        var dotnetHostPath = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH");
+        return StringUtils.IsNullOrEmpty(dotnetHostPath) ? null : Path.GetFullPath(dotnetHostPath);
     }
 }

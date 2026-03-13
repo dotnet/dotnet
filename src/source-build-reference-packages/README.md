@@ -56,6 +56,8 @@ to .NET. The following sections describe how to add/upgrade the various types of
 1. Define a [project](src/externalPackages/projects) for the new component.
    The project is responsible for building the submodule with the appropriate configuration for source build.
    See the [existing projects](src/externalPackages/projects) for examples.
+   Include a `SourceRevisionId` property set to the submodule's commit hash.
+   This ensures the correct commit hash is embedded in the built binaries rather than the VMR's.
 
 1. [Build](#building) locally and resolve any build errors.
    Source changes must be applied via [patches](src/externalPackages/patches).
@@ -92,6 +94,7 @@ to .NET. The following sections describe how to add/upgrade the various types of
     1. Review the [repo's project](src/externalPackages/projects) to ensure it is appropriate for the new version.
        There are a number of projects that utilize MSBuild properties to specify the version.
        These need to be manually updated with each upgrade.
+       Update the `SourceRevisionId` property to match the new submodule commit hash.
 
     1. Resolve build errors.
        Source changes must be applied via [patches](src/externalPackages/patches).
