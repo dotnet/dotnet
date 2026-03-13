@@ -263,10 +263,12 @@ variables:
   value: ubuntu.24.04-arm64
 
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:
+  # There is no servicing variant of the XL pool, so defaultPoolName always uses it
   - name: defaultPoolName
     value: NetCore-Public-XL
+  # shortStackPoolName uses the pool-providers.yml variable which switches to NetCore-Svc-Public on release branches
   - name: shortStackPoolName
-    value: NetCore-Public
+    value: $(DncEngPublicBuildPool)
   - name: poolImage_Linux
     value: build.azurelinux.3.amd64.open
   - name: poolImage_LinuxArm64
@@ -282,10 +284,11 @@ variables:
     - name: poolImage_Windows
       value: windows.vs2026.amd64.open
 - ${{ else }}:
+  # Both pool names use the pool-providers.yml variable which switches to NetCore1ESPool-Svc-Internal on release branches
   - name: defaultPoolName
-    value: NetCore1ESPool-Internal
+    value: $(DncEngInternalBuildPool)
   - name: shortStackPoolName
-    value: NetCore1ESPool-Internal
+    value: $(DncEngInternalBuildPool)
   - name: poolImage_Linux
     value: build.azurelinux.3.amd64
   - name: poolImage_LinuxArm64
