@@ -654,7 +654,7 @@ namespace Microsoft.CodeAnalysis.Emit
                             // If the display class doesn't have any synthesized members it won't be present in the map.
                             // See https://github.com/dotnet/roslyn/issues/73365
                             var displayClassMembers = synthesizedMemberMap != null
-                                ? (synthesizedMemberMap.TryGetValue(displayClass, out var m) ? m : [])
+                                ? (synthesizedMemberMap.TryGetValue(displayClass, out var m) ? m : ImmutableArray<ISymbolInternal>.Empty)
                                 : displayClass.GetMembers();
 
                             if (displayClass.TypeKind == TypeKind.Struct)

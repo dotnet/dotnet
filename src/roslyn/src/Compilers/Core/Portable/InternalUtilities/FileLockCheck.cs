@@ -126,7 +126,7 @@ internal static class FileLockCheck
     {
         if (!PlatformInformation.IsWindows)
         {
-            return [];
+            return ImmutableArray<(int processId, string applicationName)>.Empty;
         }
 
         try
@@ -135,7 +135,7 @@ internal static class FileLockCheck
         }
         catch
         {
-            return [];
+            return ImmutableArray<(int processId, string applicationName)>.Empty;
         }
     }
 
@@ -156,7 +156,7 @@ internal static class FileLockCheck
 
         if (res != 0)
         {
-            return [];
+            return ImmutableArray<(int processId, string applicationName)>.Empty;
         }
 
         try
@@ -164,7 +164,7 @@ internal static class FileLockCheck
             res = RmRegisterResources(handle, (uint)paths.Length, paths, 0, null, 0, null);
             if (res != 0)
             {
-                return [];
+                return ImmutableArray<(int processId, string applicationName)>.Empty;
             }
 
             //
@@ -193,7 +193,7 @@ internal static class FileLockCheck
                     // If pnProcInfo == 0, then there is simply no locking process (found), in this case rgAffectedApps is "null".
                     if (pnProcInfo == 0)
                     {
-                        return [];
+                        return ImmutableArray<(int processId, string applicationName)>.Empty;
                     }
 
                     Debug.Assert(rgAffectedApps != null);
@@ -209,7 +209,7 @@ internal static class FileLockCheck
 
                 if (res != ERROR_MORE_DATA)
                 {
-                    return [];
+                    return ImmutableArray<(int processId, string applicationName)>.Empty;
                 }
 
                 pnProcInfo = pnProcInfoNeeded;
@@ -222,6 +222,6 @@ internal static class FileLockCheck
             _ = RmEndSession(handle);
         }
 
-        return [];
+        return ImmutableArray<(int processId, string applicationName)>.Empty;
     }
 }

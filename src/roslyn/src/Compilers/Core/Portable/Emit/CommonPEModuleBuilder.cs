@@ -1080,7 +1080,7 @@ namespace Microsoft.CodeAnalysis.Emit
             {
                 if (!builder.TryGetValue(hotReloadException.ContainingNamespace, out var existingTypes))
                 {
-                    existingTypes = [];
+                    existingTypes = ImmutableArray<ISymbolInternal>.Empty;
                 }
 
                 builder[hotReloadException.ContainingNamespace] = existingTypes.Add(hotReloadException);

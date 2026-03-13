@@ -22,8 +22,8 @@ internal abstract class ParameterDefinitionBase : Cci.IParameterDefinition
     public virtual ImmutableArray<byte> MarshallingDescriptor => default;
     public bool IsEncDeleted => false;
     public abstract string Name { get; }
-    public virtual ImmutableArray<Cci.ICustomModifier> CustomModifiers => [];
-    public virtual ImmutableArray<Cci.ICustomModifier> RefCustomModifiers => [];
+    public virtual ImmutableArray<Cci.ICustomModifier> CustomModifiers => ImmutableArray<Cci.ICustomModifier>.Empty;
+    public virtual ImmutableArray<Cci.ICustomModifier> RefCustomModifiers => ImmutableArray<Cci.ICustomModifier>.Empty;
     public virtual bool IsByReference => false;
     public abstract ushort Index { get; }
 
