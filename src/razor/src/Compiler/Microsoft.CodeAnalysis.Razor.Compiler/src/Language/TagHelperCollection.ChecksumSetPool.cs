@@ -46,9 +46,6 @@ public abstract partial class TagHelperCollection
                 {
 #if NET9_0_OR_GREATER
                     set.TrimExcess(MaximumObjectSize);
-#elif NET8_0
-                    set.TrimExcess();
-                    set.EnsureCapacity(MaximumObjectSize);
 #else
                     set.TrimExcess();
 #endif

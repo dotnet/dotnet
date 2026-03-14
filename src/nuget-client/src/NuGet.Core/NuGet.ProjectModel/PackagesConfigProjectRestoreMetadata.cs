@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using NuGet.Common;
 using NuGet.Shared;
 
@@ -13,12 +11,12 @@ namespace NuGet.ProjectModel
         /// <summary>
         /// Full path to the packages.config file, if it exists. Only valid when ProjectStyle is PackagesConfig.
         /// </summary>
-        public string PackagesConfigPath { get; set; }
+        public string? PackagesConfigPath { get; set; }
 
         /// <summary>
         /// User packages repository path.
         /// </summary>
-        public string RepositoryPath { get; set; }
+        public string? RepositoryPath { get; set; }
 
         public override int GetHashCode()
         {
@@ -30,13 +28,18 @@ namespace NuGet.ProjectModel
             return hashCode.CombinedHash;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as PackagesConfigProjectRestoreMetadata);
         }
 
-        public bool Equals(PackagesConfigProjectRestoreMetadata obj)
+        public bool Equals(PackagesConfigProjectRestoreMetadata? obj)
         {
+            if (obj == null)
+            {
+                return false;
+            }
+
             return base.Equals(obj) &&
                 PathUtility.GetStringComparerBasedOnOS().Equals(PackagesConfigPath, obj.PackagesConfigPath);
         }

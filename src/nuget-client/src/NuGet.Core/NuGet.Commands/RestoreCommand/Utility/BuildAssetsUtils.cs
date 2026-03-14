@@ -11,7 +11,6 @@ using System.Linq;
 using System.Xml.Linq;
 using NuGet.Common;
 using NuGet.DependencyResolver;
-using NuGet.Frameworks;
 using NuGet.LibraryModel;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
@@ -494,13 +493,13 @@ namespace NuGet.Commands
                 var frameworkConditions = string.Format(
                         CultureInfo.InvariantCulture,
                         TargetFrameworkCondition,
-                        GetMatchingFrameworkStrings(project, ridlessTarget.TargetFramework));
+                        ridlessTarget.TargetAlias);
 
                 // Find matching target in the original target graphs.
                 RestoreTargetGraph targetGraph = null;
                 foreach (RestoreTargetGraph graph in targetGraphs)
                 {
-                    if (string.IsNullOrEmpty(graph.RuntimeIdentifier) && ridlessTarget.TargetFramework == graph.Framework)
+                    if (string.IsNullOrEmpty(graph.RuntimeIdentifier) && ridlessTarget.TargetFramework == graph.Framework && ridlessTarget.TargetAlias == graph.TargetAlias)
                     {
                         targetGraph = graph;
                         break;
@@ -852,19 +851,6 @@ namespace NuGet.Commands
                     }
                 }
             }
-        }
-
-        private static string GetMatchingFrameworkStrings(PackageSpec spec, NuGetFramework framework)
-        {
-            var frameworkString = spec.TargetFrameworks.FirstOrDefault(e => e.FrameworkName.Equals(framework))?.TargetAlias;
-
-            // If there were no matches, use the generated name
-            if (string.IsNullOrEmpty(frameworkString))
-            {
-                return framework.GetShortFolderName();
-            }
-
-            return frameworkString;
         }
 
         private static HashSet<PackageDependencyInfo> ConvertToPackageDependencyInfo(

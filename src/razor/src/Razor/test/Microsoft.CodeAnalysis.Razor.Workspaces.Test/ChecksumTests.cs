@@ -119,31 +119,6 @@ public class ChecksumTests(ITestOutputHelper testOutput) : ToolingTestBase(testO
         }
     }
 
-    [Fact]
-    public void TestTagHelperEquality()
-    {
-        var tagHelpers = RazorTestResources.BlazorServerAppTagHelpers;
-
-        for (var i = 0; i < tagHelpers.Length; i++)
-        {
-            var current = tagHelpers[i].Checksum;
-
-            for (var j = 0; j < tagHelpers.Length; j++)
-            {
-                var other = tagHelpers[j].Checksum;
-
-                if (i == j)
-                {
-                    Assert.Equal(current, other);
-                }
-                else
-                {
-                    Assert.NotEqual(current, other);
-                }
-            }
-        }
-    }
-
     [Fact, WorkItem("https://devdiv.visualstudio.com/DevDiv/_workitems/edit/1909377")]
     public void TestLargeString()
     {

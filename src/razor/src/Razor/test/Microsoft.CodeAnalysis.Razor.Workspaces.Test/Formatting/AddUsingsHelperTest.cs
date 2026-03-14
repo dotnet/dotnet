@@ -16,7 +16,7 @@ public class AddUsingsHelperTest(ITestOutputHelper testOutput) : ToolingTestBase
         var csharpAddUsing = "Abc.Xyz;";
 
         // Act
-        var res = AddUsingsHelper.TryExtractNamespace(csharpAddUsing, out var @namespace, out var prefix);
+        var res = UsingDirectiveHelper.TryExtractNamespace(csharpAddUsing, out var @namespace, out var prefix);
 
         // Assert
         Assert.False(res);
@@ -31,7 +31,7 @@ public class AddUsingsHelperTest(ITestOutputHelper testOutput) : ToolingTestBase
         var csharpAddUsing = "using Abc.Xyz;";
 
         // Act
-        var res = AddUsingsHelper.TryExtractNamespace(csharpAddUsing, out var @namespace, out var prefix);
+        var res = UsingDirectiveHelper.TryExtractNamespace(csharpAddUsing, out var @namespace, out var prefix);
 
         // Assert
         Assert.True(res);
@@ -46,7 +46,7 @@ public class AddUsingsHelperTest(ITestOutputHelper testOutput) : ToolingTestBase
         var csharpAddUsing = "using static X.Y.Z;";
 
         // Act
-        var res = AddUsingsHelper.TryExtractNamespace(csharpAddUsing, out var @namespace, out var prefix);
+        var res = UsingDirectiveHelper.TryExtractNamespace(csharpAddUsing, out var @namespace, out var prefix);
 
         // Assert
         Assert.True(res);
@@ -61,7 +61,7 @@ public class AddUsingsHelperTest(ITestOutputHelper testOutput) : ToolingTestBase
         var csharpAddUsing = "Goo - using X.Y.Z;";
 
         // Act
-        var res = AddUsingsHelper.TryExtractNamespace(csharpAddUsing, out var @namespace, out var prefix);
+        var res = UsingDirectiveHelper.TryExtractNamespace(csharpAddUsing, out var @namespace, out var prefix);
 
         // Assert
         Assert.True(res);

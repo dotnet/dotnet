@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,34 +13,34 @@ namespace NuGet.ContentModel
     /// </summary>
     public class ContentPropertyDefinition
     {
-        private static readonly Func<object, object, bool> EqualsTest = (left, right) => Equals(left, right);
+        private static readonly Func<object?, object?, bool> EqualsTest = (left, right) => Equals(left, right);
 
         internal ContentPropertyDefinition(
             string name,
-            Func<ReadOnlyMemory<char>, PatternTable, bool, object> parser)
+            Func<ReadOnlyMemory<char>, PatternTable?, bool, object?> parser)
             : this(name, parser, null, null, null, false)
         {
         }
 
         internal ContentPropertyDefinition(
             string name,
-            Func<ReadOnlyMemory<char>, PatternTable, bool, object> parser,
-            Func<object, object, bool> compatibilityTest)
+            Func<ReadOnlyMemory<char>, PatternTable?, bool, object?> parser,
+            Func<object?, object?, bool>? compatibilityTest)
             : this(name, parser, compatibilityTest, null, null, false)
         {
         }
 
         internal ContentPropertyDefinition(string name,
-            Func<ReadOnlyMemory<char>, PatternTable, bool, object> parser,
-            Func<object, object, bool> compatibilityTest,
-            Func<object, object, object, int> compareTest)
+            Func<ReadOnlyMemory<char>, PatternTable?, bool, object?> parser,
+            Func<object?, object?, bool>? compatibilityTest,
+            Func<object?, object?, object?, int>? compareTest)
             : this(name, parser, compatibilityTest, compareTest, null, false)
         {
         }
 
         internal ContentPropertyDefinition(
             string name,
-            Func<ReadOnlyMemory<char>, PatternTable, bool, object> parser,
+            Func<ReadOnlyMemory<char>, PatternTable?, bool, object?> parser,
             IEnumerable<string> fileExtensions)
             : this(name, parser, null, null, fileExtensions, false)
         {
@@ -50,10 +48,10 @@ namespace NuGet.ContentModel
 
         internal ContentPropertyDefinition(
             string name,
-            Func<ReadOnlyMemory<char>, PatternTable, bool, object> parser,
-            Func<object, object, bool> compatibilityTest,
-            Func<object, object, object, int> compareTest,
-            IEnumerable<string> fileExtensions,
+            Func<ReadOnlyMemory<char>, PatternTable?, bool, object?> parser,
+            Func<object?, object?, bool>? compatibilityTest,
+            Func<object?, object?, object?, int>? compareTest,
+            IEnumerable<string>? fileExtensions,
             bool allowSubfolders)
         {
             Name = name;
@@ -66,7 +64,7 @@ namespace NuGet.ContentModel
 
         public string Name { get; }
 
-        public List<string> FileExtensions { get; }
+        public List<string>? FileExtensions { get; }
 
         public bool FileExtensionAllowSubFolders { get; }
 
@@ -76,7 +74,7 @@ namespace NuGet.ContentModel
         /// If the bool is true, the return object will be non-null, and match what the ReadOnlyMemory char represents.
         /// If the bool is false, the return object will be non-null if the ReadOnlyMemory char represents a valid value for this definition. This is a performance optimization.
         /// </summary>
-        internal Func<ReadOnlyMemory<char>, PatternTable, bool, object> Parser { get; }
+        internal Func<ReadOnlyMemory<char>, PatternTable?, bool, object?> Parser { get; }
 
         /// <summary>
         /// Looks up a definition for the given substring.
@@ -90,7 +88,7 @@ namespace NuGet.ContentModel
         /// <param name="matchOnly">Whether this is a grouping match, or we actually want to actualize the value of name as a string.</param>
         /// <param name="value">The out param. If matchonly, it will always be null. Otherwise, set to actualized value of name if the return is true, set to null if false.</param>
         /// <returns>True if the name matches the definition. False otherwise.</returns>
-        internal virtual bool TryLookup(ReadOnlyMemory<char> name, PatternTable table, bool matchOnly, out object value)
+        internal virtual bool TryLookup(ReadOnlyMemory<char> name, PatternTable? table, bool matchOnly, out object? value)
         {
             if (name.IsEmpty)
             {
@@ -148,19 +146,19 @@ namespace NuGet.ContentModel
             return containsSlash;
         }
 
-        public Func<object, object, bool> CompatibilityTest { get; }
+        public Func<object?, object?, bool> CompatibilityTest { get; }
 
         /// <summary>
         /// Find the nearest compatible candidate.
         /// </summary>
-        public Func<object, object, object, int> CompareTest { get; }
+        public Func<object?, object?, object?, int>? CompareTest { get; }
 
-        public virtual bool IsCriteriaSatisfied(object critieriaValue, object candidateValue)
+        public virtual bool IsCriteriaSatisfied(object? critieriaValue, object? candidateValue)
         {
             return CompatibilityTest.Invoke(critieriaValue, candidateValue);
         }
 
-        public virtual int Compare(object criteriaValue, object candidateValue1, object candidateValue2)
+        public virtual int Compare(object? criteriaValue, object? candidateValue1, object? candidateValue2)
         {
             var betterCoverageFromValue1 = IsCriteriaSatisfied(candidateValue1, candidateValue2);
             var betterCoverageFromValue2 = IsCriteriaSatisfied(candidateValue2, candidateValue1);

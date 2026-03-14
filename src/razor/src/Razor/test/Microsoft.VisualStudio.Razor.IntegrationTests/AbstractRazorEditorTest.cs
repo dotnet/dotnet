@@ -26,7 +26,7 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutput) : Ab
 
     protected virtual bool ComponentClassificationExpected => true;
 
-    protected virtual string TargetFramework => "net8.0";
+    protected virtual string TargetFramework => "net10.0";
 
     protected virtual string TargetFrameworkElement => $"""<TargetFramework>{TargetFramework}</TargetFramework>""";
 
@@ -52,11 +52,6 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutput) : Ab
 
         await TestServices.SolutionExplorer.RestoreNuGetPackagesAsync(ControlledHangMitigatingCancellationToken);
         await TestServices.Workspace.WaitForProjectSystemAsync(ControlledHangMitigatingCancellationToken);
-
-        await TestServices.RazorProjectSystem.WaitForProjectFileAsync(_projectFilePath, ControlledHangMitigatingCancellationToken);
-
-        var razorFilePath = await TestServices.SolutionExplorer.GetAbsolutePathForProjectRelativeFilePathAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.IndexRazorFile, ControlledHangMitigatingCancellationToken);
-        await TestServices.RazorProjectSystem.WaitForRazorFileInProjectAsync(_projectFilePath, razorFilePath, ControlledHangMitigatingCancellationToken);
 
         // We open the Index.razor file, and wait for 3 RazorComponentElement's to be classified, as that
         // way we know the LSP server is up, running, and has processed both local and library-sourced Components

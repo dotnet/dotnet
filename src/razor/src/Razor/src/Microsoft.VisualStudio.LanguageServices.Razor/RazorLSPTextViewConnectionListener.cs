@@ -3,13 +3,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.Razor.Settings;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Language.Intellisense;
-using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Razor.Extensions;
 using Microsoft.VisualStudio.Razor.LanguageClient;
 using Microsoft.VisualStudio.Shell;
@@ -38,15 +37,23 @@ namespace Microsoft.VisualStudio.Razor;
 [Export(typeof(ITextViewConnectionListener))]
 [TextViewRole(PredefinedTextViewRoles.Document)]
 [ContentType(RazorConstants.RazorLSPContentTypeName)]
-internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
+[method: ImportingConstructor]
+internal sealed partial class RazorLSPTextViewConnectionListener(
+    [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
+    IVsEditorAdaptersFactoryService editorAdaptersFactory,
+    ILspEditorFeatureDetector editorFeatureDetector,
+    IEditorOptionsFactoryService editorOptionsFactory,
+    IClientSettingsManager editorSettingsManager,
+    JoinableTaskContext joinableTaskContext,
+    [ImportMany] IEnumerable<IInterceptedCommand> interceptedCommands) : ITextViewConnectionListener
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly IVsEditorAdaptersFactoryService _editorAdaptersFactory;
-    private readonly ILspEditorFeatureDetector _editorFeatureDetector;
-    private readonly IEditorOptionsFactoryService _editorOptionsFactory;
-    private readonly IClientSettingsManager _editorSettingsManager;
-    private readonly LanguageServerFeatureOptions _featureOptions;
-    private readonly JoinableTaskContext _joinableTaskContext;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly IVsEditorAdaptersFactoryService _editorAdaptersFactory = editorAdaptersFactory;
+    private readonly ILspEditorFeatureDetector _editorFeatureDetector = editorFeatureDetector;
+    private readonly IEditorOptionsFactoryService _editorOptionsFactory = editorOptionsFactory;
+    private readonly IClientSettingsManager _editorSettingsManager = editorSettingsManager;
+    private readonly JoinableTaskContext _joinableTaskContext = joinableTaskContext;
+    private readonly ImmutableArray<IInterceptedCommand> _interceptedCommands = [.. interceptedCommands];
     private IVsTextManager4? _textManager;
 
     /// <summary>
@@ -56,29 +63,10 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
     private readonly object _lock = new();
 
     #region protected by _lock
-    private readonly List<ITextView> _activeTextViews = new();
+    private readonly List<ITextView> _activeTextViews = [];
 
     private ITextBuffer? _textBuffer;
     #endregion
-
-    [ImportingConstructor]
-    public RazorLSPTextViewConnectionListener(
-        [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
-        IVsEditorAdaptersFactoryService editorAdaptersFactory,
-        ILspEditorFeatureDetector editorFeatureDetector,
-        IEditorOptionsFactoryService editorOptionsFactory,
-        IClientSettingsManager editorSettingsManager,
-        LanguageServerFeatureOptions featureOptions,
-        JoinableTaskContext joinableTaskContext)
-    {
-        _serviceProvider = serviceProvider;
-        _editorAdaptersFactory = editorAdaptersFactory;
-        _editorFeatureDetector = editorFeatureDetector;
-        _editorOptionsFactory = editorOptionsFactory;
-        _editorSettingsManager = editorSettingsManager;
-        _featureOptions = featureOptions;
-        _joinableTaskContext = joinableTaskContext;
-    }
 
     /// <summary>
     /// Gets instance of <see cref="IVsTextManager4"/>. This accesses COM object and requires to be called on the UI thread.
@@ -99,13 +87,6 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
             throw new ArgumentNullException(nameof(textView));
         }
 
-        if (!_featureOptions.UseRazorCohostServer)
-        {
-            // This is a potential entry point for Razor start up, if a project is loaded with an editor already opened.
-            // So, we need to ensure that any Razor start up services are initialized.
-            RazorStartupInitializer.Initialize(_serviceProvider);
-        }
-
         var vsTextView = _editorAdaptersFactory.GetViewAdapter(textView);
 
         Assumes.NotNull(vsTextView);
@@ -118,7 +99,7 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
             vsBuffer.SetLanguageServiceID(RazorConstants.RazorLanguageServiceGuid);
         }
 
-        RazorLSPTextViewFilter.CreateAndRegister(vsTextView);
+        RazorLSPTextViewFilter.CreateAndRegister(vsTextView, textView, _joinableTaskContext.Factory, _interceptedCommands);
 
         if (!textView.TextBuffer.IsRazorLSPBuffer())
         {
@@ -133,9 +114,7 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
             {
                 // We have to tell web tools which language server to send requests to for this buffer, but that changes
                 // if cohosting is enabled.
-                textView.TextBuffer.Properties[RazorLSPConstants.WebToolsWrapWithTagServerNameProperty] = _featureOptions.UseRazorCohostServer
-                    ? RazorLSPConstants.RoslynLanguageServerName
-                    : RazorLSPConstants.RazorLanguageServerName;
+                textView.TextBuffer.Properties[RazorLSPConstants.WebToolsWrapWithTagServerNameProperty] = RazorLSPConstants.RoslynLanguageServerName;
             }
 
             // Initialize the user's options and start listening for changes.
@@ -312,62 +291,6 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
         optionsTracker.BufferOptions.SetOptionValue(DefaultOptions.TabSizeOptionId, tabSize);
 
         return (new ClientSpaceSettings(IndentWithTabs: !insertSpaces, tabSize), new ClientCompletionSettings(autoShowCompletion, autoListParams));
-    }
-
-    private class RazorLSPTextViewFilter : IOleCommandTarget, IVsTextViewFilter
-    {
-        private RazorLSPTextViewFilter()
-        {
-        }
-
-        private IOleCommandTarget? _next;
-
-        private IOleCommandTarget Next
-        {
-            get
-            {
-                if (_next is null)
-                {
-                    throw new InvalidOperationException($"{nameof(Next)} called before being set.");
-                }
-
-                return _next;
-            }
-            set
-            {
-                _next = value;
-            }
-        }
-
-        public static void CreateAndRegister(IVsTextView textView)
-        {
-            var viewFilter = new RazorLSPTextViewFilter();
-            textView.AddCommandFilter(viewFilter, out var next);
-
-            viewFilter.Next = next;
-        }
-
-        public int QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLECMD[] prgCmds, IntPtr pCmdText)
-        {
-            var queryResult = Next.QueryStatus(ref pguidCmdGroup, cCmds, prgCmds, pCmdText);
-            return queryResult;
-        }
-
-        public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
-        {
-            var execResult = Next.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
-            return execResult;
-        }
-
-        public int GetWordExtent(int iLine, int iIndex, uint dwFlags, TextSpan[] pSpan) => VSConstants.E_NOTIMPL;
-
-        public int GetDataTipText(TextSpan[] pSpan, out string pbstrText)
-        {
-            pbstrText = null!;
-            return VSConstants.E_NOTIMPL;
-        }
-
-        public int GetPairExtents(int iLine, int iIndex, TextSpan[] pSpan) => VSConstants.E_NOTIMPL;
     }
 
     private record RazorEditorOptionsTracker(ITextView TrackedView, IEditorOptions ViewOptions, IEditorOptions BufferOptions);

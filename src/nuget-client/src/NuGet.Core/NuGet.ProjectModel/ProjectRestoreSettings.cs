@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using NuGet.Shared;
 using NuGet.Versioning;
 
@@ -23,7 +21,7 @@ namespace NuGet.ProjectModel
         /// Indicates the .NET SDK Version if any.
         /// In combination with SdkAnalysisLevel, it allows us to determine whether the analysis level is the default one or manually specified.
         /// </summary>
-        public NuGetVersion SdkVersion { get; set; }
+        public NuGetVersion? SdkVersion { get; set; }
 
         public ProjectRestoreSettings Clone()
         {
@@ -33,12 +31,12 @@ namespace NuGet.ProjectModel
             return clonedObject;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as ProjectRestoreSettings);
         }
 
-        public bool Equals(ProjectRestoreSettings other)
+        public bool Equals(ProjectRestoreSettings? other)
         {
             if (other == null)
             {

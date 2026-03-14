@@ -268,9 +268,9 @@ namespace NuGet.CommandLine.XPlat
             return packageSources;
         }
 
-        private static string GetEnumValues<T>() where T : Enum
+        private static string GetEnumValues<T>() where T : struct, Enum
         {
-            var enumValues = ((T[])Enum.GetValues(typeof(T)))
+            var enumValues = Enum.GetValues<T>()
                .Select(x => x.ToString());
 
             return string.Join(", ", enumValues).ToLower(CultureInfo.CurrentCulture);

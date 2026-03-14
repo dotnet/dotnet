@@ -3,14 +3,13 @@
 
 using System;
 using System.Composition;
-using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 [Export(typeof(IFilePathService)), Shared]
 [method: ImportingConstructor]
-internal sealed class RemoteFilePathService(LanguageServerFeatureOptions options) : AbstractFilePathService(options)
+internal sealed class RemoteFilePathService() : AbstractFilePathService
 {
     public override Uri GetRazorDocumentUri(Uri virtualDocumentUri)
     {
@@ -21,7 +20,4 @@ internal sealed class RemoteFilePathService(LanguageServerFeatureOptions options
 
         return base.GetRazorDocumentUri(virtualDocumentUri);
     }
-
-    public override bool IsVirtualCSharpFile(Uri uri)
-        => RazorUri.IsGeneratedDocumentUri(uri);
 }

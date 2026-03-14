@@ -86,7 +86,7 @@ stages:
       RunSettingsDropName: 'RunSettings/$(System.TeamProject)/$(Build.Repository.Name)/$(SourceBranch)/$(Build.BuildId)'
       ProfilingInputsDropName: 'ProfilingInputs/$(System.TeamProject)/$(Build.Repository.Name)/$(SourceBranch)/$(Build.BuildId)'
     pool:
-      name: VSEngSS-MicroBuild2022-1ES
+      name: VSEng-MicroBuildVSStable
     templateContext:
       mb:
         localization:
@@ -204,7 +204,7 @@ stages:
       VsTargetMajorVersion: $[stageDependencies.Initialize.Initialize_Build.outputs['updatebuildnumber.VsTargetMajorVersion']]
       BuildRTM: "true"
     pool:
-      name: VSEngSS-MicroBuild2022-1ES
+      name: VSEng-MicroBuildVSStable
     templateContext:
       mb:
         localization:

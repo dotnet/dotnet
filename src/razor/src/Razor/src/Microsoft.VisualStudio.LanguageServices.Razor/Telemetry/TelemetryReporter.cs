@@ -450,6 +450,7 @@ internal abstract partial class TelemetryReporter : ITelemetryReporter, IDisposa
         private readonly ConcurrentDictionary<(string Method, string? Language), Counter> _requestCounters = new();
         private readonly ITelemetryReporter _telemetryReporter;
         private readonly AggregatingTelemetryLogManager _aggregatingManager;
+        private bool _isDisposed;
 
         private TelemetrySessionManager(ITelemetryReporter telemetryReporter, TelemetrySession session, AggregatingTelemetryLogManager aggregatingManager)
         {
@@ -460,8 +461,26 @@ internal abstract partial class TelemetryReporter : ITelemetryReporter, IDisposa
 
         public void Dispose()
         {
+            if (_isDisposed)
+            {
+                return;
+            }
+
+            _isDisposed = true;
+
             Flush();
-            Session.Dispose();
+            if (!Session.IsDisposed)
+            {
+                try
+                {
+                    Session.Dispose();
+                }
+                catch (ObjectDisposedException)
+                {
+                    // The VS telemetry session's internal object may already be disposed
+                    // by another MEF part during ExportProvider disposal. This is safe to ignore.
+                }
+            }
         }
 
         public static TelemetrySessionManager Create(TelemetryReporter telemetryReporter, TelemetrySession session)

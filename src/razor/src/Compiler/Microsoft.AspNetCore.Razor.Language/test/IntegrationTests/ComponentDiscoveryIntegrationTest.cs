@@ -1,6 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Linq;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
@@ -164,4 +166,107 @@ namespace Test.AnotherNamespace
 
         Assert.Contains(context.TagHelpers, t => t.Name == "Test.UniqueName<TItem1, TItem2, TItem3>");
     }
+
+    [Fact]
+    public void UnusedUsingDirectives_IsDirectiveUsed_ReturnsFalseForUnusedUsing()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+
+            namespace Components.Library
+            {
+                public class MyButton : ComponentBase
+                {
+                }
+            }
+
+            namespace Some.Unrelated.Namespace
+            {
+                public class Placeholder { }
+            }
+            """));
+
+        // Act
+        var result = CompileToCSharp("""
+            @using Components.Library
+            @using Some.Unrelated.Namespace
+
+            <MyButton />
+            """);
+
+        // Assert
+        var directives = result.CodeDocument.GetRequiredSyntaxTree().Root.DescendantNodes().OfType<BaseRazorDirectiveSyntax>().ToArray();
+        Assert.True(result.CodeDocument.IsDirectiveUsed(directives[0]));
+        Assert.False(result.CodeDocument.IsDirectiveUsed(directives[1]));
+    }
+
+    [Fact]
+    public void DirectiveTagHelperContributions_AreStoredOnCodeDocument_ForUsings()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+
+            namespace Components.Library
+            {
+                public class MyButton : ComponentBase
+                {
+                }
+            }
+            """));
+
+        // Act
+        var result = CompileToCSharp("""
+            @using Components.Library
+            @using System.Text
+
+            <MyButton />
+            """);
+
+        // Assert
+        var contributions = result.CodeDocument.GetDirectiveTagHelperContributions();
+        Assert.Equal(2, contributions.Length);
+        var directives = result.CodeDocument.GetRequiredSyntaxTree().Root.DescendantNodes().OfType<BaseRazorDirectiveSyntax>().ToArray();
+        Assert.Equal([directives[0].SpanStart, directives[1].SpanStart], contributions.Select(c => c.DirectiveSpanStart));
+        Assert.Single(contributions, c => !c.ContributedTagHelpers.IsEmpty);
+        Assert.Single(contributions, c => c.ContributedTagHelpers.IsEmpty);
+    }
+
+    [Fact]
+    public void UnusedUsingDirectives_FullyQualifiedComponent_AllUsingsUnused()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+
+            namespace Components.Library
+            {
+                public class MyButton : ComponentBase
+                {
+                }
+            }
+
+            namespace Some.Unrelated.Namespace
+            {
+                public class Placeholder { }
+            }
+            """));
+
+        // Act
+        // When the component is fully qualified, the @using directives are not needed
+        // for resolution — the FQ tag helper descriptor is used instead.
+        var result = CompileToCSharp("""
+            @using Components.Library
+            @using Some.Unrelated.Namespace
+
+            <Components.Library.MyButton />
+            """);
+
+        // Assert
+        var directives = result.CodeDocument.GetRequiredSyntaxTree().Root.DescendantNodes().OfType<BaseRazorDirectiveSyntax>().ToArray();
+        Assert.False(result.CodeDocument.IsDirectiveUsed(directives[0]));
+        Assert.False(result.CodeDocument.IsDirectiveUsed(directives[1]));
+    }
+
 }

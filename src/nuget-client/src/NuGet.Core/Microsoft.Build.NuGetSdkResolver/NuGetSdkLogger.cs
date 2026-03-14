@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Tracing;
 using System.Threading.Tasks;
 using Microsoft.Build.Framework;
 using NuGet.Common;
@@ -56,46 +55,55 @@ namespace Microsoft.Build.NuGetSdkResolver
         /// <inheritdoc cref="ILogger.Log(NuGet.Common.LogLevel, string)" />
         public void Log(LogLevel level, string data)
         {
-            EventLevel eventLevel = EventLevel.LogAlways;
-
             switch (level)
             {
                 case LogLevel.Debug:
                 case LogLevel.Verbose:
                     // Debug and Verbose verbosity in NuGet maps to a low importance message in MSBuild
                     _sdkLogger.LogMessage(data, MessageImportance.Low);
-
-                    eventLevel = EventLevel.Verbose;
                     break;
 
                 case LogLevel.Information:
                     // Information verbosity in NuGet maps to a normal importance message in MSBuild
                     _sdkLogger.LogMessage(data, MessageImportance.Normal);
-
-                    eventLevel = EventLevel.Informational;
                     break;
 
                 case LogLevel.Minimal:
                     // Minimal verbosity in NuGet maps to a high importance message in MSBuild
                     _sdkLogger.LogMessage(data, MessageImportance.High);
-
-                    eventLevel = EventLevel.LogAlways;
                     break;
 
                 case LogLevel.Warning:
                     _warnings.Add(data);
-
-                    eventLevel = EventLevel.Warning;
                     break;
 
                 case LogLevel.Error:
                     _errors.Add(data);
-
-                    eventLevel = EventLevel.Error;
                     break;
             }
 
-            if (NuGetEventSource.IsEnabled) TraceEvents.LogMessage(eventLevel, level, data);
+            if (SdkResolverEventSource.Instance.IsEnabled())
+            {
+                switch (level)
+                {
+                    case LogLevel.Debug:
+                    case LogLevel.Verbose:
+                        SdkResolverEventSource.Instance.LogMessageVerbose((int)level, data);
+                        break;
+                    case LogLevel.Information:
+                        SdkResolverEventSource.Instance.LogMessageInformational((int)level, data);
+                        break;
+                    case LogLevel.Minimal:
+                        SdkResolverEventSource.Instance.LogMessageAlways((int)level, data);
+                        break;
+                    case LogLevel.Warning:
+                        SdkResolverEventSource.Instance.LogMessageWarning((int)level, data);
+                        break;
+                    case LogLevel.Error:
+                        SdkResolverEventSource.Instance.LogMessageError((int)level, data);
+                        break;
+                }
+            }
         }
 
         /// <inheritdoc cref="ILogger.LogAsync(ILogMessage)" />
@@ -137,22 +145,5 @@ namespace Microsoft.Build.NuGetSdkResolver
 
         /// <inheritdoc cref="ILogger.LogWarning(string)" />
         public void LogWarning(string data) => Log(LogLevel.Warning, data);
-
-        private static class TraceEvents
-        {
-            public static void LogMessage(EventLevel eventLevel, LogLevel level, string message)
-            {
-                var eventOptions = new EventSourceOptions
-                {
-                    Level = eventLevel,
-                    Keywords = NuGetEventSource.Keywords.Logging,
-                };
-
-                NuGetEventSource.Instance.Write("SdkResolver/LogMessage", eventOptions, new LogMessageEventData(level, message));
-            }
-
-            [EventData]
-            private record struct LogMessageEventData(LogLevel Level, string Message);
-        }
     }
 }

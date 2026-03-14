@@ -3,7 +3,6 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.CodeActions;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
@@ -39,8 +38,7 @@ internal sealed partial class RemoteCodeActionsService(in ServiceArgs args) : Ra
         var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
         var absoluteIndex = codeDocument.Source.Text.GetRequiredAbsoluteIndex(request.Range.Start);
-
-        var languageKind = codeDocument.GetLanguageKind(absoluteIndex, rightAssociative: false);
+        var languageKind = GetPositionInfo(codeDocument, absoluteIndex).LanguageKind;
 
         VSCodeActionParams? csharpRequest = null;
         if (languageKind == RazorLanguageKind.CSharp)

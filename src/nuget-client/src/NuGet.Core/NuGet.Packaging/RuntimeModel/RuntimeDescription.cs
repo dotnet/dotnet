@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,17 +29,17 @@ namespace NuGet.RuntimeModel
         {
         }
 
-        public RuntimeDescription(string runtimeIdentifier, IEnumerable<string> inheritedRuntimes)
+        public RuntimeDescription(string runtimeIdentifier, IEnumerable<string>? inheritedRuntimes)
             : this(runtimeIdentifier, inheritedRuntimes, null)
         {
         }
 
-        public RuntimeDescription(string runtimeIdentifier, IEnumerable<RuntimeDependencySet> runtimeDependencySets)
+        public RuntimeDescription(string runtimeIdentifier, IEnumerable<RuntimeDependencySet>? runtimeDependencySets)
             : this(runtimeIdentifier, null, runtimeDependencySets)
         {
         }
 
-        public RuntimeDescription(string runtimeIdentifier, IEnumerable<string> inheritedRuntimes, IEnumerable<RuntimeDependencySet> runtimeDependencySets)
+        public RuntimeDescription(string runtimeIdentifier, IEnumerable<string>? inheritedRuntimes, IEnumerable<RuntimeDependencySet>? runtimeDependencySets)
             : this(
                 runtimeIdentifier,
                 inheritedRuntimes?.ToList(),
@@ -49,14 +47,14 @@ namespace NuGet.RuntimeModel
         {
         }
 
-        private RuntimeDescription(string runtimeIdentifier, IReadOnlyList<string> inheritedRuntimes, IReadOnlyDictionary<string, RuntimeDependencySet> runtimeDependencySets)
+        private RuntimeDescription(string runtimeIdentifier, IReadOnlyList<string>? inheritedRuntimes, IReadOnlyDictionary<string, RuntimeDependencySet>? runtimeDependencySets)
         {
             RuntimeIdentifier = runtimeIdentifier;
             InheritedRuntimes = inheritedRuntimes is null or { Count: 0 } ? Array.Empty<string>() : inheritedRuntimes;
             RuntimeDependencySets = runtimeDependencySets is null or { Count: 0 } ? EmptyRuntimeDependencySets : runtimeDependencySets;
         }
 
-        public bool Equals(RuntimeDescription other)
+        public bool Equals(RuntimeDescription? other)
         {
             if (ReferenceEquals(this, other))
             {
@@ -119,7 +117,7 @@ namespace NuGet.RuntimeModel
                 newSets.Count == 0 ? null : newSets);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as RuntimeDescription);
         }

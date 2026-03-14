@@ -2,20 +2,13 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Diagnostics;
-using System.Text;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
-internal abstract class AbstractFilePathService(LanguageServerFeatureOptions languageServerFeatureOptions) : IFilePathService
+internal abstract class AbstractFilePathService : IFilePathService
 {
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
-
-    public string GetRazorCSharpFilePath(ProjectKey projectKey, string razorFilePath)
-        => GetGeneratedFilePath(projectKey, razorFilePath, LanguageServerConstants.CSharpVirtualDocumentSuffix);
-
     public virtual Uri GetRazorDocumentUri(Uri virtualDocumentUri)
     {
         var uriPath = virtualDocumentUri.AbsoluteUri;
@@ -24,8 +17,8 @@ internal abstract class AbstractFilePathService(LanguageServerFeatureOptions lan
         return uri;
     }
 
-    public virtual bool IsVirtualCSharpFile(Uri uri)
-        => CheckIfFileUriAndExtensionMatch(uri, LanguageServerConstants.CSharpVirtualDocumentSuffix);
+    public bool IsVirtualCSharpFile(Uri uri)
+        => RazorUri.IsGeneratedDocumentUri(uri);
 
     public bool IsVirtualHtmlFile(Uri uri)
         => CheckIfFileUriAndExtensionMatch(uri, LanguageServerConstants.HtmlVirtualDocumentSuffix);
@@ -36,28 +29,9 @@ internal abstract class AbstractFilePathService(LanguageServerFeatureOptions lan
     private static bool CheckIfFileUriAndExtensionMatch(Uri uri, string extension)
         => uri.GetAbsoluteOrUNCPath()?.EndsWith(extension, StringComparison.Ordinal) ?? false;
 
-    private string GetRazorFilePath(string filePath)
+    private static string GetRazorFilePath(string filePath)
     {
         var trimIndex = filePath.LastIndexOf(LanguageServerConstants.HtmlVirtualDocumentSuffix);
-
-        // We don't check for C# in cohosting, as it will throw, and people might call this method on any
-        // random path.
-        if (trimIndex == -1 && !_languageServerFeatureOptions.UseRazorCohostServer)
-        {
-            trimIndex = filePath.LastIndexOf(LanguageServerConstants.CSharpVirtualDocumentSuffix);
-
-            if (trimIndex == -1)
-            {
-                // Not a C# file, and we wouldn't have got here if it was Html, so nothing left to do
-                return filePath;
-            }
-
-            // If this is a C# generated file, then filename will be <Page>.razor.<project slug><c# suffix>
-            // We can remove the project key easily, by just looking for the last '.'. The project
-            // slug itself cannot a '.', enforced by the assert below in GetProjectSuffix
-            trimIndex = filePath.LastIndexOf('.', trimIndex - 1);
-            Debug.Assert(trimIndex != -1, "There was no project element to the generated file name?");
-        }
 
         if (trimIndex != -1)
         {
@@ -67,34 +41,8 @@ internal abstract class AbstractFilePathService(LanguageServerFeatureOptions lan
         return filePath;
     }
 
-    private string GetGeneratedFilePath(ProjectKey projectKey, string razorFilePath, string suffix)
+    internal static class TestAccessor
     {
-        var projectSuffix = GetProjectSuffix(projectKey);
-
-        return razorFilePath + projectSuffix + suffix;
-    }
-
-    private string GetProjectSuffix(ProjectKey projectKey)
-    {
-        // If there is no project key, we still want to generate something as otherwise the GetRazorFilePath method
-        // would end up unnecessarily overcomplicated
-        if (projectKey.IsUnknown)
-        {
-            return ".p";
-        }
-
-        using var sha256 = System.Security.Cryptography.SHA256.Create();
-        var crypto = sha256.ComputeHash(Encoding.Unicode.GetBytes(projectKey.Id));
-        var projectToken = Convert.ToBase64String(crypto, 0, 12).Replace('/', '_').Replace('+', '-');
-
-        Debug.Assert(!projectToken.Contains("."), "Project token can't contain a dot or the GetRazorFilePath method will fail.");
-        return "." + projectToken;
-    }
-
-    internal TestAccessor GetTestAccessor() => new(this);
-
-    internal readonly struct TestAccessor(AbstractFilePathService instance)
-    {
-        internal string GetRazorFilePath(string filePath) => instance.GetRazorFilePath(filePath);
+        internal static string GetRazorFilePath(string filePath) => AbstractFilePathService.GetRazorFilePath(filePath);
     }
 }

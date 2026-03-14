@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -13,11 +12,11 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.Diagnostics;
@@ -29,17 +28,10 @@ using SyntaxNode = AspNetCore.Razor.Language.Syntax.SyntaxNode;
 /// Contains several methods for mapping and filtering Razor and C# diagnostics. It allows for
 /// translating code diagnostics from one representation into another, such as from C# to Razor.
 /// </summary>
-internal class RazorTranslateDiagnosticsService(IDocumentMappingService documentMappingService, LanguageServerFeatureOptions featureOptions, ILoggerFactory loggerFactory)
+internal class RazorTranslateDiagnosticsService(IDocumentMappingService documentMappingService, ILoggerFactory loggerFactory)
 {
     private readonly IDocumentMappingService _documentMappingService = documentMappingService;
-    private readonly LanguageServerFeatureOptions _featureOptions = featureOptions;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RazorTranslateDiagnosticsService>();
-
-    private static readonly FrozenSet<string> s_cSharpDiagnosticsToIgnore = new HashSet<string>(
-    [
-        "RemoveUnnecessaryImportsFixable",
-        "IDE0005_gen", // Using directive is unnecessary
-    ]).ToFrozenSet();
 
     /// <summary>
     ///  Translates code diagnostics from one representation into another.
@@ -82,12 +74,6 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
             codeDocument);
 
         return mappedDiagnostics;
-    }
-
-    private LspDiagnostic[] FilterCSharpDiagnostics(LspDiagnostic[] unmappedDiagnostics, RazorCodeDocument codeDocument)
-    {
-        return unmappedDiagnostics.Where(d =>
-            !ShouldFilterCSharpDiagnosticBasedOnErrorCode(d, codeDocument)).ToArray();
     }
 
     private static LspDiagnostic[] FilterHTMLDiagnostics(
@@ -484,21 +470,36 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         }
     }
 
-    private bool ShouldFilterCSharpDiagnosticBasedOnErrorCode(LspDiagnostic diagnostic, RazorCodeDocument codeDocument)
+    private LspDiagnostic[] FilterCSharpDiagnostics(LspDiagnostic[] diagnostics, RazorCodeDocument codeDocument)
     {
-        if (diagnostic.Code is not { } code ||
-            !code.TryGetSecond(out var str) ||
-            str is null)
+        using var filteredDiagnostics = new PooledArrayBuilder<LspDiagnostic>();
+
+        foreach (var diagnostic in diagnostics)
         {
-            return false;
+            if (diagnostic.Code is not { } code ||
+                !code.TryGetSecond(out var str) ||
+                str is null)
+            {
+                filteredDiagnostics.Add(diagnostic);
+                continue;
+            }
+
+            if (str switch
+            {
+                "CS1525" => ShouldIgnoreCS1525(diagnostic, codeDocument),
+                Constants.DiagnosticIds.IDE0005_gen => IsUsingDirectiveUsed(diagnostic, codeDocument),
+                // This diagnostics is produced by Roslyn to help its Remove Usings code fixer, so is irrelevant to us
+                Constants.DiagnosticIds.RemoveUnnecessaryImportsFixable => true,
+                _ => false
+            })
+            {
+                continue;
+            }
+
+            filteredDiagnostics.Add(diagnostic);
         }
 
-        return str switch
-        {
-            "CS1525" => ShouldIgnoreCS1525(diagnostic, codeDocument),
-            _ => s_cSharpDiagnosticsToIgnore.Contains(str) &&
-                diagnostic.Severity != LspDiagnosticSeverity.Error
-        };
+        return filteredDiagnostics.ToArrayAndClear();
 
         bool ShouldIgnoreCS1525(LspDiagnostic diagnostic, RazorCodeDocument codeDocument)
         {
@@ -519,6 +520,35 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         }
     }
 
+    private bool IsUsingDirectiveUsed(LspDiagnostic diagnostic, RazorCodeDocument codeDocument)
+    {
+        // In imports files, all usings are considered used
+        if (codeDocument.IsImportsFile())
+        {
+            return true;
+        }
+
+        // In legacy files, using directives don't affect tag helper discovery so they're all "unused" to us.
+        if (codeDocument.FileKind.IsLegacy())
+        {
+            return false;
+        }
+
+        // Roslyn reports any usings that aren't used by user code for us. Some of these usings might be
+        // used for component tags though, which are always fully qualified by the Razor compiler, so we
+        // have to check if the using was actually used by component binding, if so, we need to keep the
+        // diagnostic. Conveniently, this means we don't need to worry about actually reporting our own
+        // unused diagnostics, so it's worth it.
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+        if (TryGetOriginalDiagnosticRange(diagnostic, codeDocument, out var originalRange) &&
+            syntaxTree.FindInnermostNode(codeDocument.Source.Text, originalRange.Start) is { Parent.Parent: RazorUsingDirectiveSyntax usingDirectiveSyntax })
+        {
+            return codeDocument.IsDirectiveUsed(usingDirectiveSyntax);
+        }
+
+        return true;
+    }
+
     private static bool CheckIfDocumentHasRazorDiagnostic(RazorCodeDocument codeDocument, string razorDiagnosticCode)
     {
         return codeDocument.GetRequiredSyntaxTree().Diagnostics.Any(razorDiagnosticCode, static (d, code) => d.Id == code);
@@ -526,17 +556,6 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
 
     private bool TryGetOriginalDiagnosticRange(LspDiagnostic diagnostic, RazorCodeDocument codeDocument, [NotNullWhen(true)] out LspRange? originalRange)
     {
-        // In cohosting, Enc diagnostics aren't special
-        if (!_featureOptions.UseRazorCohostServer && IsRudeEditDiagnostic(diagnostic))
-        {
-            if (TryRemapRudeEditRange(diagnostic.Range, codeDocument, out originalRange))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
         if (!_documentMappingService.TryMapToRazorDocumentRange(
             codeDocument.GetRequiredCSharpDocument(),
             diagnostic.Range,
@@ -555,75 +574,5 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         }
 
         return true;
-    }
-
-    private static bool IsRudeEditDiagnostic(LspDiagnostic diagnostic)
-    {
-        return diagnostic.Code.HasValue &&
-            diagnostic.Code.Value.TryGetSecond(out var str) &&
-            str.StartsWith("ENC");
-    }
-
-    private bool TryRemapRudeEditRange(LspRange diagnosticRange, RazorCodeDocument codeDocument, [NotNullWhen(true)] out LspRange? remappedRange)
-    {
-        // This is a rude edit diagnostic that has already been mapped to the Razor document if cohosting is off.
-        // The mapping isn't absolutely correct though, it's based on the runtime code generation of the Razor document
-        // therefore we need to re-map the already mapped diagnostic in a semi-intelligent way.
-
-        var syntaxRoot = codeDocument.GetRequiredSyntaxRoot();
-        var sourceText = codeDocument.Source.Text;
-        var span = sourceText.GetTextSpan(diagnosticRange);
-        var owner = syntaxRoot.FindNode(span, getInnermostNodeForTie: true);
-
-        switch (owner?.Kind)
-        {
-            case SyntaxKind.CSharpStatementLiteral: // Simple C# in @code block, @{ ... } etc.
-            case SyntaxKind.CSharpExpressionLiteral: // Referenced simple C# in an implicit expression @Foo((abc) => {....})
-                // Good as is, we were able to find a known leaf-node that fully contains the diagnostic range. Therefore we can
-                // return the diagnostic range as is.
-                remappedRange = diagnosticRange;
-                return true;
-
-            default:
-                // Unsupported owner of rude diagnostic, lets map to the entirety of the diagnostic range to be sure the diagnostic can be presented
-
-                _logger.LogInformation($"Failed to remap rude edit for SyntaxTree owner '{owner?.Kind}'.");
-
-                var startLineIndex = diagnosticRange.Start.Line;
-                if (startLineIndex >= sourceText.Lines.Count)
-                {
-                    // Documents aren't sync'd we can't remap the ranges correctly, drop the diagnostic.
-                    remappedRange = null;
-                    return false;
-                }
-
-                var startLine = sourceText.Lines[startLineIndex];
-
-                // Look for the first non-whitespace character so we're not squiggling random whitespace at the start of the diagnostic
-                var diagnosticStartCharacter = sourceText.TryGetFirstNonWhitespaceOffset(startLine.Span, out var firstNonWhitespaceOffset)
-                    ? firstNonWhitespaceOffset
-                    : 0;
-                var startLinePosition = (startLineIndex, diagnosticStartCharacter);
-
-                var endLineIndex = diagnosticRange.End.Line;
-                if (endLineIndex >= sourceText.Lines.Count)
-                {
-                    // Documents aren't sync'd we can't remap the ranges correctly, drop the diagnostic.
-                    remappedRange = null;
-                    return false;
-                }
-
-                var endLine = sourceText.Lines[endLineIndex];
-
-                // Look for the last non-whitespace character so we're not squiggling random whitespace at the end of the diagnostic
-                var diagnosticEndCharacter = sourceText.TryGetLastNonWhitespaceOffset(endLine.Span, out var lastNonWhitespaceOffset)
-                    ? lastNonWhitespaceOffset
-                    : 0;
-                var diagnosticEndWhitespaceOffset = diagnosticEndCharacter + 1;
-                var endLinePosition = (endLineIndex, diagnosticEndWhitespaceOffset);
-
-                remappedRange = LspFactory.CreateRange(startLinePosition, endLinePosition);
-                return true;
-        }
     }
 }
