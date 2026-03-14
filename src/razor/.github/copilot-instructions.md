@@ -4,6 +4,7 @@
 
 - **Build**: Use `build.cmd` (Windows) or `./build.sh` (Linux/Mac). NEVER use `dotnet build` directly.
 - **Test**: Use `build.cmd -test` or target a specific project with `dotnet test path/to/Project.csproj`. NEVER run `dotnet test` at the repo root — it includes Playwright integration tests that require VS Code and waste significant time.
+- **Build wrappers**: Be careful passing `-projects` through `build.cmd`/PowerShell wrappers. Do not pass a semicolon-delimited project list through a nested PowerShell command invocation, because PowerShell can treat `;` as a statement separator and open `.csproj` files in Visual Studio. Prefer a single project at a time, or invoke the underlying script in a way that preserves the full `-projects` value as one argument.
 - **Processes**: NEVER kill dotnet processes by name (`Stop-Process -Name`, `taskkill /IM`). Other work may be running on the machine.
 - **Bug fixes**: Look for existing code that already handles the scenario before adding new code. The bug is more likely in existing logic than a missing feature.
 - **Helpers**: Review existing helpers (`UsingDirectiveHelper`, `AddUsingsHelper`, etc.) before writing new utility methods. Don't duplicate.
