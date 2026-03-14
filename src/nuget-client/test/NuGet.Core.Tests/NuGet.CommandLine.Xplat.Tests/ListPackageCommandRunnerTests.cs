@@ -112,7 +112,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                 bool includeTransitivePositives)
             {
                 // Arrange
-                var packages = new FrameworkPackages("net40");
+                var packages = new FrameworkPackages("net40", "net40");
                 var topLevelPackages =
                     new List<InstalledPackageReference>
                     {
@@ -148,12 +148,12 @@ namespace NuGet.CommandLine.Xplat.Tests
                 var allPackages = new List<FrameworkPackages> { packages };
                 var listPackageArgs = new ListPackageArgs(path: "", packageSources: new List<PackageSource>(),
                     frameworks: new List<string>(),
-                    ReportType.Outdated,
-                    new ListPackageConsoleRenderer(consoleOut, consoleError),
+                    reportType: ReportType.Outdated,
+                    renderer: new ListPackageConsoleRenderer(consoleOut, consoleError),
                     includeTransitive: true, prerelease: false, highestPatch: false, highestMinor: false,
                     auditSources: null,
                     logger: new Mock<ILogger>().Object,
-                    CancellationToken.None);
+                    cancellationToken: CancellationToken.None);
 
                 // Act
                 var isFilteredSetNonEmpty = ListPackageCommandRunner.FilterPackages(allPackages, listPackageArgs);
@@ -172,7 +172,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             {
                 // Arrange
                 ListPackageCommandRunner listPackageRunner = new ListPackageCommandRunner();
-                FrameworkPackages packages = new FrameworkPackages("net40");
+                FrameworkPackages packages = new FrameworkPackages("net40", "net40");
                 List<InstalledPackageReference> topLevelPackages =
                     new List<InstalledPackageReference>
                     {
@@ -196,12 +196,12 @@ namespace NuGet.CommandLine.Xplat.Tests
                 List<FrameworkPackages> allPackages = new List<FrameworkPackages> { packages };
                 ListPackageArgs listPackageArgs = new ListPackageArgs(path: "", packageSources: new List<PackageSource>(),
                     frameworks: new List<string>(),
-                    ReportType.Outdated,
-                    new ListPackageConsoleRenderer(consoleOut, consoleError),
+                    reportType: ReportType.Outdated,
+                    renderer: new ListPackageConsoleRenderer(consoleOut, consoleError),
                     includeTransitive: true, prerelease: false, highestPatch: true, highestMinor: true,
                     auditSources: null,
                     logger: new Mock<ILogger>().Object,
-                    CancellationToken.None);
+                    cancellationToken: CancellationToken.None);
 
                 // Act
                 var emptyPackageSearchMetadata = new Dictionary<string, List<IPackageSearchMetadata>>(capacity: allPackages.Count);
@@ -252,7 +252,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                 bool includeTransitivePositives)
             {
                 // Arrange
-                var packages = new FrameworkPackages("net40");
+                var packages = new FrameworkPackages("net40", "net40");
                 var topLevelPackages =
                     new List<InstalledPackageReference> { ListPackageTestHelper.CreateInstalledPackageReference() };
                 var transitivePackages =
@@ -276,10 +276,10 @@ namespace NuGet.CommandLine.Xplat.Tests
                 var allPackages = new List<FrameworkPackages> { packages };
                 var listPackageArgs = new ListPackageArgs(path: "", packageSources: new List<PackageSource>(),
                     frameworks: new List<string>(),
-                    ReportType.Deprecated,
-                    new ListPackageConsoleRenderer(consoleOut, consoleError),
+                    reportType: ReportType.Deprecated,
+                    renderer: new ListPackageConsoleRenderer(consoleOut, consoleError),
                     includeTransitive: true, prerelease: false, highestPatch: false, highestMinor: false, auditSources: null, logger: new Mock<ILogger>().Object,
-                    CancellationToken.None);
+                    cancellationToken: CancellationToken.None);
 
                 // Act
                 var isFilteredSetNonEmpty = ListPackageCommandRunner.FilterPackages(allPackages, listPackageArgs);
@@ -331,7 +331,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                 bool includeTransitivePositives)
             {
                 // Arrange
-                var packages = new FrameworkPackages("net40");
+                var packages = new FrameworkPackages("net40", "net40");
                 var topLevelPackages =
                     new List<InstalledPackageReference> { ListPackageTestHelper.CreateInstalledPackageReference() };
                 var transitivePackages =
@@ -355,10 +355,10 @@ namespace NuGet.CommandLine.Xplat.Tests
                 var allPackages = new List<FrameworkPackages> { packages };
                 var listPackageArgs = new ListPackageArgs(path: "", packageSources: new List<PackageSource>(),
                     frameworks: new List<string>(),
-                    ReportType.Vulnerable,
-                    new ListPackageConsoleRenderer(consoleOut, consoleError),
+                    reportType: ReportType.Vulnerable,
+                    renderer: new ListPackageConsoleRenderer(consoleOut, consoleError),
                     includeTransitive: true, prerelease: false, highestPatch: false, highestMinor: false, auditSources: null, logger: new Mock<ILogger>().Object,
-                    CancellationToken.None);
+                    cancellationToken: CancellationToken.None);
 
                 // Act
                 var isFilteredSetNonEmpty = ListPackageCommandRunner.FilterPackages(allPackages, listPackageArgs);
@@ -374,7 +374,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         public async Task GetPackageMetadataAsync_WithEmptyPackageSources_DoesNotThrowDivideByZero()
         {
             // Arrange
-            var packages = new FrameworkPackages("net40");
+            var packages = new FrameworkPackages("net40", "net40");
             var topLevelPackages = new List<InstalledPackageReference>
             {
                 ListPackageTestHelper.CreateInstalledPackageReference("TestPackage")
@@ -392,15 +392,15 @@ namespace NuGet.CommandLine.Xplat.Tests
                 path: "",
                 packageSources: new List<PackageSource>(), // Empty package sources - this would cause divide by zero
                 frameworks: new List<string>(),
-                ReportType.Outdated, // This will trigger the code path that calls GetPackageMetadataAsync
-                new ListPackageConsoleRenderer(consoleOut, consoleError),
+                reportType: ReportType.Outdated, // This will trigger the code path that calls GetPackageMetadataAsync
+                renderer: new ListPackageConsoleRenderer(consoleOut, consoleError),
                 includeTransitive: false,
                 prerelease: false,
                 highestPatch: false,
                 highestMinor: false,
                 auditSources: null,
                 logger: new Mock<ILogger>().Object,
-                CancellationToken.None);
+                cancellationToken: CancellationToken.None);
 
             var listPackageRunner = new ListPackageCommandRunner();
 

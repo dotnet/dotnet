@@ -113,6 +113,16 @@ namespace NuGet.CommandLine.XPlat
                 return;
             }
 
+            foreach (string frameworkAlias in listPackageArgs.Frameworks)
+            {
+                if (assetsFile.PackageSpec?.GetTargetFramework(frameworkAlias) == null)
+                {
+                    projectModel.AddProjectInformation(problemType: ProblemType.Error,
+                    string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_InvalidFramework, frameworkAlias, projectPath));
+                    return;
+                }
+            }
+
             List<FrameworkPackages> frameworks;
 
             try
@@ -186,7 +196,7 @@ namespace NuGet.CommandLine.XPlat
 
             foreach (var frameworkPackages in frameworks)
             {
-                var frameworkPackage = new ListPackageReportFrameworkPackage(frameworkPackages.Framework)
+                var frameworkPackage = new ListPackageReportFrameworkPackage(frameworkPackages.Framework, frameworkPackages.TargetAlias)
                 {
                     TransitivePackages = new List<ListReportPackage>(),
                     TopLevelPackages = new List<ListReportPackage>()

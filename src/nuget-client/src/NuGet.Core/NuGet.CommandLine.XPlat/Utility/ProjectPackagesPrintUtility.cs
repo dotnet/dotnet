@@ -35,7 +35,7 @@ namespace NuGet.CommandLine.XPlat.Utility
             foreach (FrameworkPackages frameworkPackages in packages)
             {
                 string frameWork = frameworkPackages.Framework;
-                ListPackageReportFrameworkPackage targetFrameworkPackageMetadata = new ListPackageReportFrameworkPackage(frameWork);
+                ListPackageReportFrameworkPackage targetFrameworkPackageMetadata = new ListPackageReportFrameworkPackage(frameWork, frameworkPackages.TargetAlias);
                 projectFrameworkPackages.Add(targetFrameworkPackageMetadata);
                 var frameworkTopLevelPackages = frameworkPackages.TopLevelPackages;
                 var frameworkTransitivePackages = frameworkPackages.TransitivePackages;
