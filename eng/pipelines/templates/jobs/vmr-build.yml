@@ -407,6 +407,7 @@ jobs:
   steps:
   - checkout: self
     fetchDepth: 1
+    retryCountOnTaskFailure: 5
 
 
   # Create artifact staging directories upfront to satisfy 1ES templateContext.outputs validation

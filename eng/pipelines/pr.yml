@@ -91,6 +91,7 @@ stages:
         - checkout: self
           fetchDepth: 0
           persistCredentials: ${{ ne(variables['System.TeamProject'], 'public') }}
+          retryCountOnTaskFailure: 5
 
         - script: |
             set -ex
