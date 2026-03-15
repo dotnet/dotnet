@@ -40,7 +40,7 @@
       are not necessary, and this property is removed from the file.
     -->
     <PrivateSourceBuiltSdkVersion>10.0.201-servicing.26153.122</PrivateSourceBuiltSdkVersion>
-    <PrivateSourceBuiltArtifactsVersion>10.0.201-servicing.26153.122</PrivateSourceBuiltArtifactsVersion>
+    <PrivateSourceBuiltArtifactsVersion>10.0.201-servicing.26153.122-1</PrivateSourceBuiltArtifactsVersion>
     <!-- workload manifest version for 1xx SDK feature band, used by 2xx+ branches to include 1xx workloads -->
     <DotNet1xxWorkloadManifestVersion>$([System.Text.RegularExpressions.Regex]::Match($(MicrosoftNETSdkVersion), '^(\d+\.\d+\.\d+)').Value)</DotNet1xxWorkloadManifestVersion>
     <!-- command-line-api dependencies -->
