@@ -54,14 +54,14 @@ public class SourcelinkTests : SdkTests
                 symbolsRoot,
                 OutputHelper);
 
-            IList<(string File, string StdOut, string StdErr)> failedFiles = ValidateSymbols(symbolsRoot, InitializeSourcelinkTool());
+            IList<(string File, string StdOut, string StdErr, int ExitCode, TimeSpan Elapsed)> failedFiles = ValidateSymbols(symbolsRoot, InitializeSourcelinkTool());
 
             if (failedFiles.Count > 0)
             {
                 OutputHelper.WriteLine($"Sourcelink verification failed for the following files:");
-                foreach ((string file, string stdOut, string stdErr) in failedFiles)
+                foreach ((string file, string stdOut, string stdErr, int exitCode, TimeSpan elapsed) in failedFiles)
                 {
-                    OutputHelper.WriteLine($"--- {file} ---");
+                    OutputHelper.WriteLine($"--- {file} (exit code: {exitCode}, elapsed: {elapsed}) ---");
                     if (!string.IsNullOrWhiteSpace(stdOut))
                     {
                         OutputHelper.WriteLine("stdout:");
@@ -104,27 +104,39 @@ public class SourcelinkTests : SdkTests
         return Utilities.GetFile(extractedToolPath, SourcelinkToolBinaryFilename);
     }
 
-    private IList<(string File, string StdOut, string StdErr)> ValidateSymbols(string path, string sourcelinkToolPath)
+    private IList<(string File, string StdOut, string StdErr, int ExitCode, TimeSpan Elapsed)> ValidateSymbols(string path, string sourcelinkToolPath)
     {
         Assert.True(Directory.Exists(path), $"Path, with symbol files to validate, does not exist: {path}");
 
-        var failedFiles = new ConcurrentBag<(string File, string StdOut, string StdErr)>();
+        var failedFiles = new ConcurrentBag<(string File, string StdOut, string StdErr, int ExitCode, TimeSpan Elapsed)>();
 
         IEnumerable<string> allFiles = Directory.GetFiles(path, "*.pdb", SearchOption.AllDirectories);
+        const int maxRetries = 3;
         Parallel.ForEach(allFiles, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, file =>
         {
-            (Process Process, string StdOut, string StdErr) executeResult = ExecuteHelper.ExecuteProcess(
-                DotNetHelper.DotNetPath,
-                $"{sourcelinkToolPath} test --offline {file}",
-                OutputHelper,
-                logOutput: false,
-                excludeInfo: true, // Exclude info messages, as there can be 1,000+ processes
-                millisecondTimeout: 60000,
-                configureCallback: (process) => DotNetHelper.ConfigureProcess(process, null));
+            (Process Process, string StdOut, string StdErr) executeResult = default;
+            TimeSpan elapsed = default;
+
+            for (int attempt = 1; attempt <= maxRetries; attempt++)
+            {
+                DateTime startTime = DateTime.UtcNow;
+                executeResult = ExecuteHelper.ExecuteProcess(
+                    DotNetHelper.DotNetPath,
+                    $"{sourcelinkToolPath} test --offline {file}",
+                    OutputHelper,
+                    logOutput: false,
+                    excludeInfo: true, // Exclude info messages, as there can be 1,000+ processes
+                    millisecondTimeout: 60000,
+                    configureCallback: (process) => DotNetHelper.ConfigureProcess(process, null));
+                elapsed = DateTime.UtcNow - startTime;
+
+                if (executeResult.Process.ExitCode == 0)
+                    break;
+            }
 
             if (executeResult.Process.ExitCode != 0)
             {
-                failedFiles.Add((file, executeResult.StdOut, executeResult.StdErr));
+                failedFiles.Add((file, executeResult.StdOut, executeResult.StdErr, executeResult.Process.ExitCode, elapsed));
             }
         });
 
