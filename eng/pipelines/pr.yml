@@ -84,6 +84,7 @@ stages:
       steps:
         - checkout: self
           fetchDepth: 0
+          retryCountOnTaskFailure: 5
 
         - script: |
             set -ex
