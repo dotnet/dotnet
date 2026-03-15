@@ -2,21 +2,21 @@
 <Dependencies>
   <Source Uri="https://github.com/dotnet/dotnet" Mapping="fsharp" Sha="8c56ff58fc59fd33fc1dab5c6a7155ca16511bb2" BarId="300794" />
   <ProductDependencies>
-    <Dependency Name="Microsoft.Build" Version="18.3.0-release-26119-122">
+    <Dependency Name="Microsoft.Build" Version="18.3.3">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>40cd698e5cfb2d90f436889726ee01f48d99f3ab</Sha>
+      <Sha>543304928841e4b0e33fe59140004d2fb563c7e4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Framework" Version="18.3.0-release-26119-122">
+    <Dependency Name="Microsoft.Build.Framework" Version="18.3.3">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>40cd698e5cfb2d90f436889726ee01f48d99f3ab</Sha>
+      <Sha>543304928841e4b0e33fe59140004d2fb563c7e4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Tasks.Core" Version="18.3.0-release-26119-122">
+    <Dependency Name="Microsoft.Build.Tasks.Core" Version="18.3.3">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>40cd698e5cfb2d90f436889726ee01f48d99f3ab</Sha>
+      <Sha>543304928841e4b0e33fe59140004d2fb563c7e4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Utilities.Core" Version="18.3.0-release-26119-122">
+    <Dependency Name="Microsoft.Build.Utilities.Core" Version="18.3.3">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>40cd698e5cfb2d90f436889726ee01f48d99f3ab</Sha>
+      <Sha>543304928841e4b0e33fe59140004d2fb563c7e4</Sha>
     </Dependency>
     <Dependency Name="System.Reflection.Metadata" Version="9.0.0">
       <Uri>https://github.com/dotnet/runtime</Uri>
