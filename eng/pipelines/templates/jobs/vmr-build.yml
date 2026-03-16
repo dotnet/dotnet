@@ -394,6 +394,7 @@ jobs:
   steps:
   - checkout: self
     fetchDepth: 1
+    retryCountOnTaskFailure: 5
 
   - ${{ if not(parameters.isBuiltFromVmr) }}:
     # Synchronize new content in the VMR during PRs

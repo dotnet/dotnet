@@ -1,16 +1,16 @@
 {
   "repositories": [
     {
-      "barId": 305181,
+      "barId": 306186,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "6f1da2af699e35f16100c86933b8c65e36fa6f38"
+      "commitSha": "e365cfcb58176841c2fb80d1a40926f394776970"
     },
     {
-      "barId": 304355,
+      "barId": 304956,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "6500c14e70cbec33b70a77f2330b965b9076f541"
+      "commitSha": "ca933ee44a2ee044a658fa936a4d66629cbcf17e"
     },
     {
       "barId": 279211,
@@ -37,10 +37,10 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 305732,
+      "barId": 306241,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "50d0a108b3f8db74745c8320848750417127510f"
+      "commitSha": "79fdc9ff449c624ae74f4b7fa783400cf079c320"
     },
     {
       "barId": 298197,
@@ -73,10 +73,10 @@
       "commitSha": "10df92a966e2ce16aca870e81d85912d1629108c"
     },
     {
-      "barId": 305481,
+      "barId": 305933,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "ca430a26681e839358b42e9de39a27d9eef37e46"
+      "commitSha": "ab7e5c034ad00818b71945bb809adc250bed53e9"
     },
     {
       "barId": 305901,
