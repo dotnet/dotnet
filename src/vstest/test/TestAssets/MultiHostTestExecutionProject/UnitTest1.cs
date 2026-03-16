@@ -22,7 +22,9 @@ namespace SerializeTestRunTestProject
             lock (Lock)
             {
                 string folderToLogTo = Environment.GetEnvironmentVariable("VSTEST_LOGFOLDER");
+#pragma warning disable CA1837 // Use 'Environment.ProcessId'
                 File.AppendAllText(Path.Combine(folderToLogTo, $"TestHost_{Process.GetCurrentProcess().Id}.txt"), testName + "\n");
+#pragma warning restore CA1837 // Use 'Environment.ProcessId'
             }
         }
 

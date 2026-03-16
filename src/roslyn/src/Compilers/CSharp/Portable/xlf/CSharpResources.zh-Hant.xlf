@@ -2554,7 +2554,7 @@
       </trans-unit>
       <trans-unit id="ERR_UnrecognizedRefSafetyRulesAttributeVersion">
         <source>'{0}' is defined in a module with an unrecognized RefSafetyRulesAttribute version, expecting '11'.</source>
-        <target state="translated">'{0}' 是在具有無法辨識的 RefSafetyRulesAttribute 版本的模組中定義，預期為 '11'。</target>
+        <target state="new">'{0}' is defined in a module with an unrecognized RefSafetyRulesAttribute version, expecting '11'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ERR_UnscopedRefAttributeInterfaceImplementation">
@@ -3998,7 +3998,7 @@
                               assembly by all dependencies, and annotate foreign assembly
                               accessibility errors with what assembly they came from.
 </source>
-        <target state="translated">
+        <target state="new">
                              Visual C# Compiler Options
 
                        - OUTPUT FILES -
@@ -6977,7 +6977,7 @@
       </trans-unit>
       <trans-unit id="ERR_PartialTypeKindConflict">
         <source>Partial declarations of '{0}' must be all classes, all record classes, all structs, all record structs, or all interfaces</source>
-        <target state="translated">'{0}' 中有一部分宣告必須全是類別、全是記錄類別、全是結構、全是記錄結構，或全是介面</target>
+        <target state="new">Partial declarations of '{0}' must be all classes, all record classes, all structs, all record structs, or all interfaces</target>
         <note />
       </trans-unit>
       <trans-unit id="ERR_PartialModifierConflict">
