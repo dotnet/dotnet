@@ -13,6 +13,7 @@
 
     <BuildArgs>$(BuildArgs) /p:GenerateResourceUsePreserializedResources=true</BuildArgs>
     <BuildArgs Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)tfm $(NetCurrent)</BuildArgs>
+    <UsesMSBuildWarnAsError>false</UsesMSBuildWarnAsError>
   </PropertyGroup>
 
   <ItemGroup>

@@ -148,7 +148,7 @@ function Print-Usage() {
     Write-Host "  -buildnorealsig               Build product with realsig- (default use realsig+, where necessary)"
     Write-Host "  -verifypackageshipstatus      Verify whether the packages we are building have already shipped to nuget"
     Write-Host ""
-    Write-Host "Command line arguments starting with '/p:', '/warnAsError', or '/warnNotAsError' are passed through to MSBuild."
+    Write-Host "Command line arguments starting with '/p:' are passed through to MSBuild."
 }
 
 # Process the command line arguments and establish defaults for the values which are not
@@ -252,9 +252,7 @@ function Process-Arguments() {
     }
 
     foreach ($property in $properties) {
-        if (!$property.StartsWith("/p:", "InvariantCultureIgnoreCase") -and
-            !$property.StartsWith("/warnAsError", "InvariantCultureIgnoreCase") -and
-            !$property.StartsWith("/warnNotAsError", "InvariantCultureIgnoreCase")) {
+        if (!$property.StartsWith("/p:", "InvariantCultureIgnoreCase")) {
             Write-Host "Invalid argument: $property"
             Print-Usage
             exit 1

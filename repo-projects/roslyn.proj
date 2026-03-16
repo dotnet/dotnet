@@ -3,6 +3,7 @@
   <PropertyGroup>
     <!-- Use the repo root build script -->
     <BuildScript>$(ProjectDirectory)build$(ShellExtension)</BuildScript>
+    <UsesMSBuildWarnAsError>false</UsesMSBuildWarnAsError>
 
     <!-- Roslyn's build.cmd adds -build automatically. On non-windows, use the default -->
     <BuildActions Condition="'$(BuildOS)' == 'windows'">$(FlagParameterPrefix)restore</BuildActions>
