@@ -5,7 +5,11 @@ This file should be imported by eng/Versions.props
 -->
 <Project>
   <PropertyGroup>
-    <!-- dotnet/roslyn dependencies -->
+    <!-- dotnet-arcade dependencies -->
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26160.1</MicrosoftDotNetArcadeSdkPackageVersion>
+    <!-- dotnet-aspnetcore dependencies -->
+    <MicrosoftExtensionsObjectPoolPackageVersion>10.0.1</MicrosoftExtensionsObjectPoolPackageVersion>
+    <!-- dotnet-roslyn dependencies -->
     <MicrosoftCodeAnalysisAnalyzersPackageVersion>5.5.0-2.26118.1</MicrosoftCodeAnalysisAnalyzersPackageVersion>
     <MicrosoftCodeAnalysisCommonPackageVersion>5.5.0-2.26118.1</MicrosoftCodeAnalysisCommonPackageVersion>
     <MicrosoftCodeAnalysisCSharpPackageVersion>5.5.0-2.26118.1</MicrosoftCodeAnalysisCSharpPackageVersion>
@@ -30,17 +34,17 @@ This file should be imported by eng/Versions.props
     <MicrosoftVisualStudioExtensibilityTestingXunitPackageVersion>5.5.0-2.26118.1</MicrosoftVisualStudioExtensibilityTestingXunitPackageVersion>
     <MicrosoftVisualStudioLanguageServicesPackageVersion>5.5.0-2.26118.1</MicrosoftVisualStudioLanguageServicesPackageVersion>
     <RoslynDiagnosticsAnalyzersPackageVersion>5.5.0-2.26118.1</RoslynDiagnosticsAnalyzersPackageVersion>
-    <!-- dotnet/arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26123.2</MicrosoftDotNetArcadeSdkPackageVersion>
-    <!-- dotnet/aspnetcore dependencies -->
-    <MicrosoftExtensionsObjectPoolPackageVersion>10.0.1</MicrosoftExtensionsObjectPoolPackageVersion>
-    <!-- dotnet/runtime dependencies -->
+    <!-- dotnet-runtime dependencies -->
     <SystemCollectionsImmutablePackageVersion>10.0.1</SystemCollectionsImmutablePackageVersion>
     <SystemReflectionMetadataPackageVersion>10.0.1</SystemReflectionMetadataPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
-    <!-- dotnet/roslyn dependencies -->
+    <!-- dotnet-arcade dependencies -->
+    <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
+    <!-- dotnet-aspnetcore dependencies -->
+    <MicrosoftExtensionsObjectPoolVersion>$(MicrosoftExtensionsObjectPoolPackageVersion)</MicrosoftExtensionsObjectPoolVersion>
+    <!-- dotnet-roslyn dependencies -->
     <MicrosoftCodeAnalysisAnalyzersVersion>$(MicrosoftCodeAnalysisAnalyzersPackageVersion)</MicrosoftCodeAnalysisAnalyzersVersion>
     <MicrosoftCodeAnalysisCommonVersion>$(MicrosoftCodeAnalysisCommonPackageVersion)</MicrosoftCodeAnalysisCommonVersion>
     <MicrosoftCodeAnalysisCSharpVersion>$(MicrosoftCodeAnalysisCSharpPackageVersion)</MicrosoftCodeAnalysisCSharpVersion>
@@ -65,11 +69,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftVisualStudioExtensibilityTestingXunitVersion>$(MicrosoftVisualStudioExtensibilityTestingXunitPackageVersion)</MicrosoftVisualStudioExtensibilityTestingXunitVersion>
     <MicrosoftVisualStudioLanguageServicesVersion>$(MicrosoftVisualStudioLanguageServicesPackageVersion)</MicrosoftVisualStudioLanguageServicesVersion>
     <RoslynDiagnosticsAnalyzersVersion>$(RoslynDiagnosticsAnalyzersPackageVersion)</RoslynDiagnosticsAnalyzersVersion>
-    <!-- dotnet/arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
-    <!-- dotnet/aspnetcore dependencies -->
-    <MicrosoftExtensionsObjectPoolVersion>$(MicrosoftExtensionsObjectPoolPackageVersion)</MicrosoftExtensionsObjectPoolVersion>
-    <!-- dotnet/runtime dependencies -->
+    <!-- dotnet-runtime dependencies -->
     <SystemCollectionsImmutableVersion>$(SystemCollectionsImmutablePackageVersion)</SystemCollectionsImmutableVersion>
     <SystemReflectionMetadataVersion>$(SystemReflectionMetadataPackageVersion)</SystemReflectionMetadataVersion>
   </PropertyGroup>

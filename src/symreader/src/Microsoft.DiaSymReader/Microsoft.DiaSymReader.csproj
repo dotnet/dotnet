@@ -8,6 +8,7 @@
     <Description>Microsoft DiaSymReader interop interfaces and utilities.</Description>
     <PackageReleaseNotes>Microsoft DiaSymReader interop interfaces and utilities</PackageReleaseNotes>
     <PackageTags>DiaSymReader ISymUnmanagedReader PDB COM interop debugging</PackageTags>
+    <IsAotCompatible Condition="'$(TargetFramework)' == '$(NetCurrent)'">true</IsAotCompatible>
   </PropertyGroup>
 
   <ItemGroup>
