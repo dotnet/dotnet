@@ -116,6 +116,7 @@ public class SourcelinkTests : SdkTests
         {
             (Process Process, string StdOut, string StdErr) executeResult = default;
             TimeSpan elapsed = default;
+            int exitCode = -1;
 
             for (int attempt = 1; attempt <= maxRetries; attempt++)
             {
@@ -129,14 +130,15 @@ public class SourcelinkTests : SdkTests
                     millisecondTimeout: 60000,
                     configureCallback: (process) => DotNetHelper.ConfigureProcess(process, null));
                 elapsed = DateTime.UtcNow - startTime;
+                exitCode = executeResult.Process?.ExitCode ?? -1;
 
-                if (executeResult.Process.ExitCode == 0)
+                if (exitCode == 0)
                     break;
             }
 
-            if (executeResult.Process.ExitCode != 0)
+            if (exitCode != 0)
             {
-                failedFiles.Add((file, executeResult.StdOut, executeResult.StdErr, executeResult.Process.ExitCode, elapsed));
+                failedFiles.Add((file, executeResult.StdOut ?? "", executeResult.StdErr ?? "", exitCode, elapsed));
             }
         });
 
