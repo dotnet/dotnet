@@ -1,16 +1,16 @@
 {
   "repositories": [
     {
-      "barId": 306055,
+      "barId": 306219,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "2e8c949b4e75b05c3a33e848f36cf5b263707338"
+      "commitSha": "9c14c8e4b0d040769905f195146bdfbb8cfaf01d"
     },
     {
-      "barId": 304542,
+      "barId": 304354,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "552c986d27a1b0fc01a4dfe635a5621f7e672037"
+      "commitSha": "69f35330cfd13d62c9d0157134632a23d3c0c3f4"
     },
     {
       "barId": 292148,
@@ -37,52 +37,52 @@
       "commitSha": "970c803abb1ed5657b056cdaf01f1693f437c242"
     },
     {
-      "barId": 305554,
+      "barId": 304976,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "31144c5b106aa952cb8a9fd672c0442802a39841"
+      "commitSha": "3817d73e752c3d5f5d0ab9bdaf03cafd97bdaed2"
     },
     {
-      "barId": 305436,
+      "barId": 298250,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "bc4c4fbbd8dc0be5b07ee4a9e44da940c0b655be"
+      "commitSha": "34ea87b2e530301557526b558e89f3f031f2a8d9"
     },
     {
-      "barId": 305011,
+      "barId": 304512,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "c80d142a24027fd2933e22649f53639907bf7553"
+      "commitSha": "64796117bf609b752495a9cd005695e7f3aba5ed"
     },
     {
-      "barId": 305811,
+      "barId": 303816,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "8cee1da9a6b89b6779b31e4c542bd2ae7a841471"
+      "commitSha": "414f0acf7486ff8b4887ddbba5717b030c2f92a3"
     },
     {
-      "barId": 305821,
+      "barId": 303433,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "60d1ab4fc1898d68611b06fe36ee1da0156c80c0"
+      "commitSha": "d2887cd591059fd675d397b48c79cdc30ee2b6ba"
     },
     {
-      "barId": 305968,
+      "barId": 304737,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "afc27536cacbaf2d62a5df077058425d0e3ad85b"
+      "commitSha": "3c860eafd06d423949c1d822ad04606030cc9986"
     },
     {
-      "barId": 305991,
+      "barId": 304772,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "f6f8bd575a37766c9c196dc825a236c57b812668"
+      "commitSha": "441caf3eada0c5e6fc26c5b73dee20db7add3afd"
     },
     {
-      "barId": 305998,
+      "barId": 305104,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "281d01cfd353f1ce15208c80b2f148b0d6ce106f"
+      "commitSha": "cd38a58a63aa4a45330ee012ed1f1b5b2bbe279c"
     },
     {
       "barId": 298986,
@@ -91,16 +91,16 @@
       "commitSha": "5745f7404c4a3ae7f1b08117bc6092a96224a985"
     },
     {
-      "barId": 305985,
+      "barId": 304553,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "fa5d8d28a5f206401cb45a60669cdc8fc9d433ba"
+      "commitSha": "49e2a87c0463349ff8a2623329487227499e506f"
     },
     {
-      "barId": 305906,
+      "barId": 304013,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "88e25598e94b87ea1b25e7fdd01f1dcc1ed1d135"
+      "commitSha": "fada075c5c15cb33e208628cade97f42824c690d"
     },
     {
       "barId": 302357,
@@ -171,11 +171,6 @@
       "path": "source-build-reference-packages/src/externalPackages/src/abstractions-xunit",
       "remoteUri": "https://github.com/xunit/abstractions.xunit",
       "commitSha": "b75d54d73b141709f805c2001b16f3dd4d71539d"
-    },
-    {
-      "path": "source-build-reference-packages/src/externalPackages/src/antlr4",
-      "remoteUri": "https://github.com/antlr/antlr4",
-      "commitSha": "7ed420ff2c78d62883875c442d75f32e73bc86c8"
     },
     {
       "path": "source-build-reference-packages/src/externalPackages/src/application-insights",
