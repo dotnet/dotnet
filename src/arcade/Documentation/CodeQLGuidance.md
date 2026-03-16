@@ -4,7 +4,7 @@
 
 CodeQL is a code analysis platform owned by Semmle, now a subsidary of GitHub. It provides value by using extractors to construct a database representing the codebase, then providing a query language to perform sematic analysis. CodeQL instruments the build of compiled languages, and directly analyzes source code for interpreted languages. 
 
-CodeQL is required as part of Microsoft's Security Developent Lifecycle (SDL) requirements. .NET Engineering Services supports CodeQL via the Guardian toolset with scan results published to Trust Services Automation (TSA). 
+CodeQL is required as part of Microsoft's Security Development Lifecycle (SDL) requirements. .NET Engineering Services supports CodeQL via CodeQL 3000, with scan results published to Trust Services Automation (TSA). SDL tooling is now handled entirely by 1ES Pipeline Templates.
 
 CodeQL adds a significant time to builds. We therefore recommend creating a new, seperate pipeline instead of incorporating CodeQL scans into existing PR or testing pipelines.
 
@@ -46,8 +46,6 @@ variables:
 ```
 
 ## Use with Arcade
-
-**NOTE**: Arcade previously provided a Guardian-based job and step template that executed CodeQL using the Guardian toolset. This does not meet the requirements for CodeQL reporting and should not be used, as while it may produce scans it does not satisfy organizational requirements for CodeQL execution.
 
 Much of https://github.dev/dotnet/arcade/blob/main/azure-pipelines-codeql.yml can be copied and used as-is for most repositories. With CodeQL3000, as long as the build completes and exercises the codebase to be scanned, all languages should be reported by the same tasks at the same time.
 

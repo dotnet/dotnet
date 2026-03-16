@@ -5,10 +5,10 @@ Validating builds is an important part of producing a releasable product. There 
 * CI/PR build time
   * Repository-level functional testing. Owned by the product teams and defined in the repositories, and used to identify bugs
 * Official build time (optionally)
-  * Source code validation: this includes SDL testing and localization testing. Used to confirm that source code meets Microsoft's standards.
+  * Source code validation: this includes SDL testing (handled by 1ES Pipeline Templates) and localization testing. Used to confirm that source code meets Microsoft's standards.
   * Package validation: includes sourcelink validation, symbols validation, nupkg metadata validation. Used to confirm that customers will be able to install and debug packages from .NET.
 * Nightly validation pipeline (optionally)
-  * Source code validation: this includes SDL testing and localization testing. Used to confirm that source code meets Microsoft's standards.
+  * Source code validation: this includes SDL testing (handled by 1ES Pipeline Templates) and localization testing. Used to confirm that source code meets Microsoft's standards.
   * Package validation: includes sourcelink validation, symbols validation, nupkg metadata validation. Used to confirm that customers will be able to install and debug packages from .NET.
   * Signing validation: Used to validate that all bits that we ship have been signed properly.
 
@@ -42,9 +42,8 @@ As a part of .NET 5, we had a goal of two hour build turn-around. In order to cl
 [Validate-DotNet](https://dev.azure.com/dnceng/internal/_build?definitionId=827) is a pipeline that automatically runs nightly validation for all repositories that have been onboarded. Onboarding to Validate-DotNet is quite simple:
 
 1. Update the [list of repositories](https://dev.azure.com/dnceng/internal/_git/dotnet-release?path=%2Feng%2Fpipeline%2Ftools%2Frepos-to-validate.txt) in [dotnet-release](https://dev.azure.com/dnceng/internal/_git/dotnet-release) with your repository's URL. Please reach out to dnceng for PR approval.
-2. To enable nightly SDL runs, add the [sdl-tsa-vars.config](https://github.com/dotnet/runtime/blob/main/eng/sdl-tsa-vars.config) file to your repository. This file should include all of the necessary information specific to your repository for creating SDL issues.
 
-Once the first step is complete, your repository will start validating on a nightly basis. Once the second step is complete, you will also get SDL validation.
+Once this step is complete, your repository will start validating on a nightly basis. SDL validation is now handled automatically by 1ES Pipeline Templates.
 
 ## How do I know if there are failures in my validation runs?
 
@@ -118,7 +117,7 @@ Errors we commonly see in validation jobs include:
 
 * Signing Validation
   * Files that are not intended to be signed are not listed in the `eng/SignCheckExclusionsFile.txt` for that repository, so validation complains that the files are not signed. Mitigation: add that file type to the `eng/SignCheckExclusionsFile.txt` in your repository.
-* SDL Validation (which will open TSA issues for any failures found)
+* SDL Validation (now handled by 1ES Pipeline Templates, which will open TSA issues for any failures found)
   * Any pipeline failures in these legs should be reported to [DNCEng First Responders](https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/107/How-to-get-a-hold-of-Engineering-Servicing), as it suggests an infrastructure failure. SDL failures should automatically create TSA issues, which you should address as appropriate.
 * Localization Validation
   * Localization is done closer to release time. Localization failures suggest that either the localization team hasn't finished translations, or the translation PR hasn't been checked into your repository and should be. The closer to release we get, the more important fixing these failures becomes.

@@ -2158,9 +2158,11 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.rpm"
             });
         }
 
-        /* These tests return different results on netcoreapp. ie, we can only truly validate nuget integrity when running on framework.
-         * NuGet behaves differently on core vs framework 
-         * - https://github.com/NuGet/NuGet.Client/blob/e88a5a03a1b26099f8be225d3ee3a897b2edb1d0/build/common.targets#L18-L25
+        /* NuGet package integrity verification behaves differently on .NET Core vs .NET Framework.
+         * On .NET Core, NuGet's SignedPackageArchiveUtility.IsSigned() treats packages with
+         * incorrect signatures as signed (only checks for signature markers, not validity).
+         * On .NET Framework, it correctly detects the invalid signature.
+         * See: https://github.com/NuGet/NuGet.Client/blob/e88a5a03a1b26099f8be225d3ee3a897b2edb1d0/build/common.targets#L18-L25
          */
         [Fact]
         public void VerifyNupkgIntegrity()
@@ -2171,11 +2173,12 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.rpm"
                 new ItemToSign(GetResourcePath("IncorrectlySignedPackage.1.0.0.nupkg"))
             };
 
+            // On .NET Core, both packages appear as already signed so nothing needs signing.
             ValidateFileSignInfos(itemsToSign,
                                   new Dictionary<string, List<SignInfo>>(),
                                   new Dictionary<ExplicitSignInfoKey, FileSignInfoEntry>(),
                                   s_fileExtensionSignInfo,
-                                  new[] { "File 'IncorrectlySignedPackage.1.0.0.nupkg' Certificate='NuGet'" });
+                                  Array.Empty<string>());
         }
 
         [Fact]
@@ -2197,8 +2200,9 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.rpm"
             ValidateFileSignInfos(itemsToSign, strongNameSignInfo, fileSignInfo, s_fileExtensionSignInfo, new[]
             {
                 "File 'UnsignedScript.ps1' Certificate='PSCertificate'",
-                "File 'UnsignedContents.nupkg' Certificate='NuGet'",
-                "File 'FakeSignedContents.nupkg' Certificate='NuGet'"
+                // FakeSignedContents.nupkg appears as already signed on .NET Core
+                // (NuGet only checks for signature markers, not validity).
+                "File 'UnsignedContents.nupkg' Certificate='NuGet'"
             });
         }
 
