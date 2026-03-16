@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="pt-BR" original="../Strings.resx">
     <body>
@@ -582,9 +582,9 @@ O NuGet requer fontes HTTPS. Para usar fontes HTTP, você deve definir explicita
         <note />
       </trans-unit>
       <trans-unit id="ListPkg_InvalidFramework">
-        <source>Failed to parse one of the given frameworks. Please make sure the given frameworks are valid.</source>
-        <target state="translated">Falha ao analisar uma das estruturas fornecidas. Verifique se as estruturas determinadas são válidas.</target>
-        <note />
+        <source>The specified TargetFramework '{0}' is not found in the project '{1}'.</source>
+        <target state="new">The specified TargetFramework '{0}' is not found in the project '{1}'.</target>
+        <note>0 - alias, 1 - project path, {Locked="TargetFramework"}</note>
       </trans-unit>
       <trans-unit id="ListPkg_InvalidOptions">
         <source>Options '--outdated', '--deprecated' and '--vulnerable' cannot be combined.</source>
@@ -1480,11 +1480,6 @@ A pesquisa é uma comparação de cadeia de caracteres que não faz distinção 
         <source>Unable to run 'dotnet nuget why'. {0}</source>
         <target state="translated">Não é possível executar "dotnet nuget why". {0}</target>
         <note>{0} - Exception mssage</note>
-      </trans-unit>
-      <trans-unit id="WhyCommand_Error_InconsistentAssetsFile">
-        <source>Internal error: Assets file is inconsistent</source>
-        <target state="translated">Erro interno: o arquivo de ativos está inconsistente</target>
-        <note />
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. Please run restore for project '{1}' before running this command.</source>

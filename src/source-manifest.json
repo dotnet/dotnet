@@ -25,10 +25,10 @@
       "commitSha": "8cee1da9a6b89b6779b31e4c542bd2ae7a841471"
     },
     {
-      "barId": 305821,
+      "barId": 306015,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "60d1ab4fc1898d68611b06fe36ee1da0156c80c0"
+      "commitSha": "1edb1041c258752ff659965415dcb5844081f7e7"
     },
     {
       "barId": 305968,
@@ -49,10 +49,10 @@
       "commitSha": "368b99891ce58728b6795383c862520ec15efb22"
     },
     {
-      "barId": 303423,
+      "barId": 303447,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "a8c3d2038237842f6fbb33e2c12ad9a0406e40a8"
+      "commitSha": "b6ecfca4772c223907a0fe13b0ab944a8e197d53"
     },
     {
       "barId": 296673,

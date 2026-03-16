@@ -32,8 +32,8 @@ namespace NuGet.XPlat.FuncTest
             using (var pathContext = new SimpleTestPathContext())
             {
                 string consoleOutputFileName = Path.Combine(pathContext.SolutionRoot, "consoleOutput.txt");
-                string frameWork5 = "net5.0";
-                string frameWork31 = "netcoreapp3.1";
+                string framework5 = "net5.0";
+                string framework31 = "netcoreapp3.1";
                 var projectAPath = Path.Combine(pathContext.SolutionRoot, "projectA.csproj");
                 var projectBPath = Path.Combine(pathContext.SolutionRoot, "projectB.csproj");
 
@@ -62,7 +62,7 @@ namespace NuGet.XPlat.FuncTest
                             projectAPath,
                             new List<ListPackageReportFrameworkPackage>()
                             {
-                                new ListPackageReportFrameworkPackage(frameWork31)
+                                new ListPackageReportFrameworkPackage(framework31, framework31)
                                 {
                                     TopLevelPackages =  new List<ListReportPackage>()
                                     {
@@ -88,7 +88,7 @@ namespace NuGet.XPlat.FuncTest
                             projectBPath,
                             new List<ListPackageReportFrameworkPackage>()
                             {
-                                new ListPackageReportFrameworkPackage(frameWork31)
+                                new ListPackageReportFrameworkPackage(framework31, framework31)
                                 {
                                     TopLevelPackages =  new List<ListReportPackage>()
                                     {
@@ -98,7 +98,7 @@ namespace NuGet.XPlat.FuncTest
                                             resolvedVersion : "3.1.0")
                                     }
                                 },
-                                new ListPackageReportFrameworkPackage(frameWork5)
+                                new ListPackageReportFrameworkPackage(framework5, framework5)
                                 {
                                     TopLevelPackages =  new List<ListReportPackage>()
                                     {
@@ -181,7 +181,7 @@ namespace NuGet.XPlat.FuncTest
             using (var pathContext = new SimpleTestPathContext())
             {
                 string consoleOutputFileName = Path.Combine(pathContext.SolutionRoot, "consoleOutput.txt");
-                string frameWork31 = "netcoreapp3.1";
+                string framework31 = "netcoreapp3.1";
                 var projectAPath = Path.Combine(pathContext.SolutionRoot, "projectA.csproj");
 
                 using (FileStream stream = new FileStream(consoleOutputFileName, FileMode.Create))
@@ -209,7 +209,7 @@ namespace NuGet.XPlat.FuncTest
                             projectAPath,
                             new List<ListPackageReportFrameworkPackage>()
                             {
-                                new ListPackageReportFrameworkPackage(frameWork31)
+                                new ListPackageReportFrameworkPackage(framework31, framework31)
                                 {
                                     TopLevelPackages =  new List<ListReportPackage>()
                                     {
@@ -280,7 +280,7 @@ namespace NuGet.XPlat.FuncTest
             using (var pathContext = new SimpleTestPathContext())
             {
                 string consoleOutputFileName = Path.Combine(pathContext.SolutionRoot, "consoleOutput.txt");
-                string frameWork31 = "netcoreapp3.1";
+                string framework31 = "netcoreapp3.1";
                 var projectAPath = Path.Combine(pathContext.SolutionRoot, "projectA.csproj");
 
                 using (FileStream stream = new FileStream(consoleOutputFileName, FileMode.Create))
@@ -308,7 +308,7 @@ namespace NuGet.XPlat.FuncTest
                             projectAPath,
                             new List<ListPackageReportFrameworkPackage>()
                             {
-                                new ListPackageReportFrameworkPackage(frameWork31)
+                                new ListPackageReportFrameworkPackage(framework31, framework31)
                                 {
                                     TopLevelPackages =  new List<ListReportPackage>()
                                     {
@@ -370,7 +370,7 @@ namespace NuGet.XPlat.FuncTest
             using (var pathContext = new SimpleTestPathContext())
             {
                 string consoleOutputFileName = Path.Combine(pathContext.SolutionRoot, "consoleOutput.txt");
-                string frameWork31 = "netcoreapp3.1";
+                string framework31 = "netcoreapp3.1";
                 var projectAPath = Path.Combine(pathContext.SolutionRoot, "projectA.csproj");
 
                 using (FileStream stream = new FileStream(consoleOutputFileName, FileMode.Create))
@@ -398,7 +398,7 @@ namespace NuGet.XPlat.FuncTest
                             projectAPath,
                             new List<ListPackageReportFrameworkPackage>()
                             {
-                                new ListPackageReportFrameworkPackage(frameWork31)
+                                new ListPackageReportFrameworkPackage(framework31, framework31)
                                 {
                                     TopLevelPackages =  new List<ListReportPackage>()
                                     {
@@ -474,7 +474,7 @@ namespace NuGet.XPlat.FuncTest
             using (var pathContext = new SimpleTestPathContext())
             {
                 string consoleOutputFileName = Path.Combine(pathContext.SolutionRoot, "consoleOutput.txt");
-                string frameWork31 = "netcoreapp3.1";
+                string framework31 = "netcoreapp3.1";
                 var projectAPath = Path.Combine(pathContext.SolutionRoot, "projectA.csproj");
 
                 using (FileStream stream = new FileStream(consoleOutputFileName, FileMode.Create))
@@ -502,7 +502,7 @@ namespace NuGet.XPlat.FuncTest
                             projectAPath,
                             new List<ListPackageReportFrameworkPackage>()
                             {
-                                new ListPackageReportFrameworkPackage(frameWork31)
+                                new ListPackageReportFrameworkPackage(framework31, framework31)
                                 {
                                     TopLevelPackages =  new List<ListReportPackage>()
                                     {
@@ -586,7 +586,7 @@ namespace NuGet.XPlat.FuncTest
             using (var pathContext = new SimpleTestPathContext())
             {
                 string consoleOutputFileName = Path.Combine(pathContext.SolutionRoot, "consoleOutput.txt");
-                string frameWork31 = "netcoreapp3.1";
+                string framework31 = "netcoreapp3.1";
                 var projectAPath = Path.Combine(pathContext.SolutionRoot, "projectA.csproj");
 
                 using (FileStream stream = new FileStream(consoleOutputFileName, FileMode.Create))
@@ -614,7 +614,7 @@ namespace NuGet.XPlat.FuncTest
                             projectAPath,
                             new List<ListPackageReportFrameworkPackage>()
                             {
-                                new ListPackageReportFrameworkPackage(frameWork31)
+                                new ListPackageReportFrameworkPackage(framework31, framework31)
                                 {
                                     TopLevelPackages =  new List<ListReportPackage>()
                                     { }
@@ -665,8 +665,8 @@ namespace NuGet.XPlat.FuncTest
             using (var pathContext = new SimpleTestPathContext())
             {
                 string consoleOutputFileName = Path.Combine(pathContext.SolutionRoot, "consoleOutput.txt");
-                string frameWork5 = "net5.0";
-                string frameWork31 = "netcoreapp3.1";
+                string framework5 = "net5.0";
+                string framework31 = "netcoreapp3.1";
                 var projectAPath = Path.Combine(pathContext.SolutionRoot, "projectA.csproj");
                 var projectBPath = Path.Combine(pathContext.SolutionRoot, "projectB.csproj");
 
@@ -695,7 +695,7 @@ namespace NuGet.XPlat.FuncTest
                             projectAPath,
                             new List<ListPackageReportFrameworkPackage>()
                             {
-                                new ListPackageReportFrameworkPackage(frameWork31)
+                                new ListPackageReportFrameworkPackage(framework31, framework31)
                                 {
                                     TopLevelPackages =  new List<ListReportPackage>()
                                     {
@@ -722,7 +722,7 @@ namespace NuGet.XPlat.FuncTest
                             projectBPath,
                             new List<ListPackageReportFrameworkPackage>()
                             {
-                                new ListPackageReportFrameworkPackage(frameWork31)
+                                new ListPackageReportFrameworkPackage(framework31, framework31)
                                 {
                                     TopLevelPackages =  new List<ListReportPackage>()
                                     {
@@ -732,7 +732,7 @@ namespace NuGet.XPlat.FuncTest
                                             resolvedVersion : "3.1.0")
                                     }
                                 },
-                                new ListPackageReportFrameworkPackage(frameWork5)
+                                new ListPackageReportFrameworkPackage(framework5, framework5)
                                 {
                                     TopLevelPackages =  new List<ListReportPackage>()
                                     {
@@ -837,8 +837,8 @@ namespace NuGet.XPlat.FuncTest
             using (var pathContext = new SimpleTestPathContext())
             {
                 string consoleOutputFileName = Path.Combine(pathContext.SolutionRoot, "consoleOutput.txt");
-                string frameWork31 = "netcoreapp3.1";
-                string frameWork5 = "net5.0";
+                string framework31 = "netcoreapp3.1";
+                string framework5 = "net5.0";
                 var projectAPath = Path.Combine(pathContext.SolutionRoot, "projectA.csproj");
 
                 using (FileStream stream = new FileStream(consoleOutputFileName, FileMode.Create))
@@ -866,7 +866,7 @@ namespace NuGet.XPlat.FuncTest
                             projectAPath,
                             new List<ListPackageReportFrameworkPackage>()
                             {
-                                new ListPackageReportFrameworkPackage(frameWork31)
+                                new ListPackageReportFrameworkPackage(framework31, framework31)
                                 {
                                     TopLevelPackages =  new List<ListReportPackage>()
                                     {
@@ -877,7 +877,7 @@ namespace NuGet.XPlat.FuncTest
                                             latestVersion : "2.0.0")
                                     }
                                 },
-                                new ListPackageReportFrameworkPackage(frameWork5)
+                                new ListPackageReportFrameworkPackage(framework5, framework5)
                                 {
                                     TopLevelPackages =  new List<ListReportPackage>()
                                     {
@@ -969,7 +969,7 @@ namespace NuGet.XPlat.FuncTest
             using (var pathContext = new SimpleTestPathContext())
             {
                 string consoleOutputFileName = Path.Combine(pathContext.SolutionRoot, "consoleOutput.txt");
-                string frameWork31 = "netcoreapp3.1";
+                string framework31 = "netcoreapp3.1";
                 var projectAPath = Path.Combine(pathContext.SolutionRoot, "projectA.csproj");
 
                 using (FileStream stream = new FileStream(consoleOutputFileName, FileMode.Create))
@@ -997,7 +997,7 @@ namespace NuGet.XPlat.FuncTest
                             projectAPath,
                             new List<ListPackageReportFrameworkPackage>()
                             {
-                                new ListPackageReportFrameworkPackage(frameWork31)
+                                new ListPackageReportFrameworkPackage(framework31, framework31)
                                 {
                                     TopLevelPackages =  new List<ListReportPackage>()
                                     {
@@ -1111,7 +1111,7 @@ namespace NuGet.XPlat.FuncTest
             using (var pathContext = new SimpleTestPathContext())
             {
                 string consoleOutputFileName = Path.Combine(pathContext.SolutionRoot, "consoleOutput.txt");
-                string frameWork31 = "netcoreapp3.1";
+                string framework31 = "netcoreapp3.1";
                 var projectAPath = Path.Combine(pathContext.SolutionRoot, "projectA.csproj");
                 var projectBPath = Path.Combine(pathContext.SolutionRoot, "projectB.csproj");
 
@@ -1140,7 +1140,7 @@ namespace NuGet.XPlat.FuncTest
                             projectAPath,
                             new List<ListPackageReportFrameworkPackage>()
                             {
-                                new ListPackageReportFrameworkPackage(frameWork31)
+                                new ListPackageReportFrameworkPackage(framework31, framework31)
                                 {
                                     TopLevelPackages =  new List<ListReportPackage>()
                                     {
@@ -1214,7 +1214,7 @@ namespace NuGet.XPlat.FuncTest
             {
                 PackageSource source = new PackageSource("https://test");
                 string consoleOutputFileName = Path.Combine(pathContext.SolutionRoot, "consoleOutput.txt");
-                string frameWork31 = "netcoreapp3.1";
+                string framework31 = "netcoreapp3.1";
                 var projectAPath = Path.Combine(pathContext.SolutionRoot, "projectA.csproj");
 
                 using (FileStream stream = new FileStream(consoleOutputFileName, FileMode.Create))
@@ -1242,7 +1242,7 @@ namespace NuGet.XPlat.FuncTest
                             projectAPath,
                             new List<ListPackageReportFrameworkPackage>()
                             {
-                                new ListPackageReportFrameworkPackage(frameWork31)
+                                new ListPackageReportFrameworkPackage(framework31, framework31)
                                 {
                                     TopLevelPackages =  new List<ListReportPackage>()
                                     {
@@ -1312,7 +1312,7 @@ namespace NuGet.XPlat.FuncTest
             {
                 PackageSource source = new PackageSource("https://test");
                 string consoleOutputFileName = Path.Combine(pathContext.SolutionRoot, "consoleOutput.txt");
-                string frameWork31 = "netcoreapp3.1";
+                string framework31 = "netcoreapp3.1";
                 var projectAPath = Path.Combine(pathContext.SolutionRoot, "projectA.csproj");
 
                 using (FileStream stream = new FileStream(consoleOutputFileName, FileMode.Create))
@@ -1340,7 +1340,7 @@ namespace NuGet.XPlat.FuncTest
                             projectAPath,
                             new List<ListPackageReportFrameworkPackage>()
                             {
-                                new ListPackageReportFrameworkPackage(frameWork31)
+                                new ListPackageReportFrameworkPackage(framework31, framework31)
                                 {
                                     TopLevelPackages =  new List<ListReportPackage>()
                                     {

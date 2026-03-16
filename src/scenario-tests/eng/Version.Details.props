@@ -6,7 +6,7 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- _git/dotnet-dotnet dependencies -->
-    <SystemCommandLinePackageVersion>2.0.3</SystemCommandLinePackageVersion>
+    <SystemCommandLinePackageVersion>2.0.5</SystemCommandLinePackageVersion>
     <!-- dotnet/dotnet dependencies -->
     <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.25631.101</MicrosoftDotNetArcadeSdkPackageVersion>
   </PropertyGroup>
