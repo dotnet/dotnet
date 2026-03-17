@@ -3,6 +3,7 @@
 
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Microsoft.DotNet.HotReload;
 using Microsoft.Extensions.Logging;
@@ -52,8 +53,8 @@ namespace Microsoft.DotNet.Watch
                 _ => throw new InvalidOperationException()
             };
 
-        public static string GetLogMessagePrefix(this Emoji emoji)
-            => $"dotnet watch {emoji.ToDisplay()} ";
+        public static string GetLogMessagePrefix(this Emoji emoji, string logMessagePrefix)
+            => $"{logMessagePrefix} {emoji.ToDisplay()} ";
 
         public static void Log(this ILogger logger, MessageDescriptor<None> descriptor)
             => Log(logger, descriptor, default);
@@ -96,7 +97,7 @@ namespace Microsoft.DotNet.Watch
 
             public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
             {
-                if (!IsEnabled(logLevel))
+                if (logLevel == LogLevel.None || !IsEnabled(logLevel))
                 {
                     return;
                 }
@@ -133,12 +134,12 @@ namespace Microsoft.DotNet.Watch
             => throw new NotImplementedException();
     }
 
-    internal abstract class MessageDescriptor(string format, Emoji emoji, LogLevel level, EventId id)
+    internal abstract class MessageDescriptor(string? format, Emoji emoji, LogLevel level, EventId id)
     {
         private static int s_id;
         private static ImmutableDictionary<EventId, MessageDescriptor> s_descriptors = [];
 
-        public string Format { get; } = format;
+        public string? Format { get; } = format;
         public Emoji Emoji { get; } = emoji;
         public LogLevel Level { get; } = level;
         public EventId Id { get; } = id;
@@ -153,7 +154,14 @@ namespace Microsoft.DotNet.Watch
         private static MessageDescriptor<TArgs> Create<TArgs>(LogEvent<TArgs> logEvent, Emoji emoji)
             => Create<TArgs>(logEvent.Id, logEvent.Message, emoji, logEvent.Level);
 
-        private static MessageDescriptor<TArgs> Create<TArgs>(EventId id, string format, Emoji emoji, LogLevel level)
+        /// <summary>
+        /// Creates a descriptor that's only used for notifications not displayed to the user.
+        /// These can be used for testing or for custom loggers (e.g. Aspire status reporting).
+        /// </summary>
+        private static MessageDescriptor<TArgs> CreateNotification<TArgs>()
+            => Create<TArgs>(new EventId(++s_id), format: null, Emoji.Default, LogLevel.None);
+
+        private static MessageDescriptor<TArgs> Create<TArgs>(EventId id, string? format, Emoji emoji, LogLevel level)
         {
             var descriptor = new MessageDescriptor<TArgs>(format, emoji, level, id);
             s_descriptors = s_descriptors.Add(id, descriptor);
@@ -176,16 +184,25 @@ namespace Microsoft.DotNet.Watch
         // predefined messages used for testing:
         public static readonly MessageDescriptor<string> CommandDoesNotSupportHotReload = Create<string>("Command '{0}' does not support Hot Reload.", Emoji.HotReload, LogLevel.Debug);
         public static readonly MessageDescriptor<None> HotReloadDisabledByCommandLineSwitch = Create("Hot Reload disabled by command line switch.", Emoji.HotReload, LogLevel.Debug);
-        public static readonly MessageDescriptor<None> HotReloadSessionStarting = Create("Hot reload session starting.", Emoji.HotReload, LogLevel.None);
         public static readonly MessageDescriptor<None> HotReloadSessionStarted = Create("Hot reload session started.", Emoji.HotReload, LogLevel.Debug);
+        public static readonly MessageDescriptor<None> RuntimeProcessLauncherCreatedNotification = CreateNotification<None>();
         public static readonly MessageDescriptor<int> ProjectsRebuilt = Create<int>("Projects rebuilt ({0})", Emoji.HotReload, LogLevel.Debug);
         public static readonly MessageDescriptor<int> ProjectsRestarted = Create<int>("Projects restarted ({0})", Emoji.HotReload, LogLevel.Debug);
+        public static readonly MessageDescriptor<IEnumerable<ProjectRepresentation>> RestartingProjectsNotification = CreateNotification<IEnumerable<ProjectRepresentation>>();
+        public static readonly MessageDescriptor<None> ProjectRestarting = Create("Restarting ...", Emoji.Watch, LogLevel.Debug);
+        public static readonly MessageDescriptor<None> ProjectRestarted = Create("Restarted", Emoji.Watch, LogLevel.Debug);
+        public static readonly MessageDescriptor<None> ProjectRelaunching = Create("Relaunching ...", Emoji.Watch, LogLevel.Information);
+        public static readonly MessageDescriptor<None> ProjectRelaunched = Create("Relaunched", Emoji.Watch, LogLevel.Debug);
+        public static readonly MessageDescriptor<None> ProcessCrashedAndWillBeRelaunched = Create("Process crashed and will be relaunched on file change", Emoji.Watch, LogLevel.Debug);
         public static readonly MessageDescriptor<int> ProjectDependenciesDeployed = Create<int>("Project dependencies deployed ({0})", Emoji.HotReload, LogLevel.Debug);
         public static readonly MessageDescriptor<None> FixBuildError = Create("Fix the error to continue or press Ctrl+C to exit.", Emoji.Watch, LogLevel.Warning);
         public static readonly MessageDescriptor<None> WaitingForChanges = Create("Waiting for changes", Emoji.Watch, LogLevel.Information);
         public static readonly MessageDescriptor<(string, string, int)> LaunchedProcess = Create<(string, string, int)>("Launched '{0}' with arguments '{1}': process id {2}", Emoji.Launch, LogLevel.Debug);
         public static readonly MessageDescriptor<long> ManagedCodeChangesApplied = Create<long>("C# and Razor changes applied in {0}ms.", Emoji.HotReload, LogLevel.Information);
         public static readonly MessageDescriptor<long> StaticAssetsChangesApplied = Create<long>("Static asset changes applied in {0}ms.", Emoji.HotReload, LogLevel.Information);
+        public static readonly MessageDescriptor<None> StaticWebAssetManifestNotFound = Create("Static web asset manifest not found.", Emoji.Warning, LogLevel.Warning);
+        public static readonly MessageDescriptor<string> ScopedCssBundleFileNotFound = Create<string>("Scoped CSS bundle file '{BundleFile}' not found.", Emoji.Warning, LogLevel.Warning);
+        public static readonly MessageDescriptor<IEnumerable<ProjectRepresentation>> ChangesAppliedToProjectsNotification = CreateNotification<IEnumerable<ProjectRepresentation>>();
         public static readonly MessageDescriptor<int> SendingUpdateBatch = Create(LogEvents.SendingUpdateBatch, Emoji.HotReload);
         public static readonly MessageDescriptor<int> UpdateBatchCompleted = Create(LogEvents.UpdateBatchCompleted, Emoji.HotReload);
         public static readonly MessageDescriptor<int> UpdateBatchFailed = Create(LogEvents.UpdateBatchFailed, Emoji.HotReload);
@@ -202,7 +219,7 @@ namespace Microsoft.DotNet.Watch
         public static readonly MessageDescriptor<string> ApplyUpdate_Error = Create<string>("{0}", Emoji.Error, LogLevel.Error);
         public static readonly MessageDescriptor<string> ApplyUpdate_Warning = Create<string>("{0}", Emoji.Warning, LogLevel.Warning);
         public static readonly MessageDescriptor<string> ApplyUpdate_Verbose = Create<string>("{0}", Emoji.Default, LogLevel.Debug);
-        public static readonly MessageDescriptor<(string, string)> ApplyUpdate_AutoVerbose = Create<(string, string)>("{0}{1}", Emoji.Default, LogLevel.Debug);
+        public static readonly MessageDescriptor<string> ApplyUpdate_AutoVerbose = Create<string>("{0}", Emoji.Default, LogLevel.Debug);
         public static readonly MessageDescriptor<string> ApplyUpdate_ChangingEntryPoint = Create<string>("{0} Press \"Ctrl + R\" to restart.", Emoji.Warning, LogLevel.Warning);
         public static readonly MessageDescriptor<None> ConfiguredToLaunchBrowser = Create("dotnet-watch is configured to launch a browser on ASP.NET Core application startup.", Emoji.Watch, LogLevel.Debug);
         public static readonly MessageDescriptor<None> ConfiguredToUseBrowserRefresh = Create("Using browser-refresh middleware", Emoji.Default, LogLevel.Debug);
@@ -255,29 +272,44 @@ namespace Microsoft.DotNet.Watch
         public static readonly MessageDescriptor<None> ApplicationKind_WebSockets = Create("Application kind: WebSockets.", Emoji.Default, LogLevel.Debug);
         public static readonly MessageDescriptor<int> WatchingFilesForChanges = Create<int>("Watching {0} file(s) for changes", Emoji.Watch, LogLevel.Debug);
         public static readonly MessageDescriptor<string> WatchingFilesForChanges_FilePath = Create<string>("> {0}", Emoji.Watch, LogLevel.Trace);
-        public static readonly MessageDescriptor<string> Building = Create<string>("Building {0} ...", Emoji.Default, LogLevel.Information);
-        public static readonly MessageDescriptor<string> BuildSucceeded = Create<string>("Build succeeded: {0}", Emoji.Default, LogLevel.Information);
-        public static readonly MessageDescriptor<string> BuildFailed = Create<string>("Build failed: {0}", Emoji.Default, LogLevel.Information);
+        public static readonly MessageDescriptor<None> LoadingProjects = Create("Loading projects ...", Emoji.Watch, LogLevel.Information);
+        public static readonly MessageDescriptor<(int, double)> LoadedProjects = Create<(int, double)>("Loaded {0} project(s) in {1:0.0}s.", Emoji.Watch, LogLevel.Information);
+        public static readonly MessageDescriptor<string> Building = Create<string>("Building {0} ...", Emoji.Default, LogLevel.Debug);
+        public static readonly MessageDescriptor<string> Restoring = Create<string>("Restoring {0} ...", Emoji.Default, LogLevel.Debug);
+        public static readonly MessageDescriptor<string> BuildFailed = Create<string>("Build failed: {0}", Emoji.Default, LogLevel.Debug);
+        public static readonly MessageDescriptor<string> BuildSucceeded = Create<string>("Build succeeded: {0}", Emoji.Default, LogLevel.Debug);
+        public static readonly MessageDescriptor<string> RestoreFailed = Create<string>("Restore failed: {0}", Emoji.Default, LogLevel.Debug);
+        public static readonly MessageDescriptor<string> RestoreSucceeded = Create<string>("Restore succeeded: {0}", Emoji.Default, LogLevel.Debug);
+        public static readonly MessageDescriptor<IEnumerable<ProjectRepresentation>> BuildStartedNotification = CreateNotification<IEnumerable<ProjectRepresentation>>();
+        public static readonly MessageDescriptor<(IEnumerable<ProjectRepresentation> projects, bool success)> BuildCompletedNotification = CreateNotification<(IEnumerable<ProjectRepresentation> projects, bool success)>();
+        public static readonly MessageDescriptor<string> ManifestFileNotFound = Create(LogEvents.ManifestFileNotFound, Emoji.Default);
     }
 
-    internal sealed class MessageDescriptor<TArgs>(string format, Emoji emoji, LogLevel level, EventId id)
-        : MessageDescriptor(VerifyFormat(format), emoji, level, id)
+    internal sealed class MessageDescriptor<TArgs>(string? format, Emoji emoji, LogLevel level, EventId id)
+        : MessageDescriptor(VerifyFormat(format, level), emoji, level, id)
     {
-        private static string VerifyFormat(string format)
+        private static string? VerifyFormat(string? format, LogLevel level)
         {
+            Debug.Assert(format is null == level is LogLevel.None);
 #if DEBUG
-            var actualArity = format.Count(c => c == '{');
-            var expectedArity = typeof(TArgs) == typeof(None) ? 0
-                : typeof(TArgs).IsAssignableTo(typeof(ITuple)) ? typeof(TArgs).GenericTypeArguments.Length
-                : 1;
+            if (format != null)
+            {
+                var actualArity = format.Count(c => c == '{');
+                var expectedArity = typeof(TArgs) == typeof(None) ? 0
+                    : typeof(TArgs).IsAssignableTo(typeof(ITuple)) ? typeof(TArgs).GenericTypeArguments.Length
+                    : 1;
 
-            Debug.Assert(actualArity == expectedArity, $"Arguments of format string '{format}' do not match the specified type: {typeof(TArgs)} (actual arity: {actualArity}, expected arity: {expectedArity})");
+                Debug.Assert(actualArity == expectedArity, $"Arguments of format string '{format}' do not match the specified type: {typeof(TArgs)} (actual arity: {actualArity}, expected arity: {expectedArity})");
+            }
 #endif
             return format;
         }
 
         public string GetMessage(TArgs args)
-            => Id.Id == 0 ? Format : string.Format(Format, LogEvents.GetArgumentValues(args));
+        {
+            Debug.Assert(Format != null);
+            return Id.Id == 0 ? Format : string.Format(Format, LogEvents.GetArgumentValues(args));
+        }
     }
 
     internal interface IProcessOutputReporter

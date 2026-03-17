@@ -39,7 +39,7 @@ namespace Microsoft.DotNet.Watch.UnitTests
 
             if (!hotReload)
             {
-                App.DotnetWatchArgs.Add("--no-hot-reload");
+                App.WatchArgs.Add("--no-hot-reload");
             }
 
             App.Start(testAsset, []);
@@ -57,11 +57,11 @@ namespace Microsoft.DotNet.Watch.UnitTests
 
             if (!hotReload)
             {
-                App.DotnetWatchArgs.Add("--no-hot-reload");
+                App.WatchArgs.Add("--no-hot-reload");
             }
 
-            App.DotnetWatchArgs.Add("--launch-profile");
-            App.DotnetWatchArgs.Add("Second");
+            App.WatchArgs.Add("--launch-profile");
+            App.WatchArgs.Add("Second");
             App.Start(testAsset, []);
             Assert.Equal("<<<Second>>>", await App.AssertOutputLineStartsWith("DOTNET_LAUNCH_PROFILE = "));
         }
@@ -77,18 +77,24 @@ namespace Microsoft.DotNet.Watch.UnitTests
 
             if (!hotReload)
             {
-                App.DotnetWatchArgs.Add("--no-hot-reload");
+                App.WatchArgs.Add("--no-hot-reload");
             }
 
             App.Start(testAsset, ["--", "--launch-profile", "Third"]);
             Assert.Equal("<<<First>>>", await App.AssertOutputLineStartsWith("DOTNET_LAUNCH_PROFILE = "));
         }
 
-        [Fact]
-        public async Task RunsWithIterationEnvVariable()
+        [Theory]
+        [CombinatorialData]
+        public async Task RunsWithIterationEnvVariable(bool hotReload)
         {
             var testAsset = TestAssets.CopyTestAsset(AppName)
                 .WithSource();
+
+            if (!hotReload)
+            {
+                App.WatchArgs.Add("--no-hot-reload");
+            }
 
             App.Start(testAsset, []);
 
@@ -160,7 +166,7 @@ namespace Microsoft.DotNet.Watch.UnitTests
             App.EnvironmentVariables.Add("READ_INPUT", "true");
             App.Start(testAsset, ["--non-interactive"]);
 
-            await App.AssertStarted();
+            await App.WaitForOutputLineContaining("Started");
 
             var standardInput = App.Process.Process.StandardInput;
             var inputString = "This is a test input";
