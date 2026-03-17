@@ -79,6 +79,11 @@
         <target state="translated">Ein Formatierungsvorgang wird abgebrochen, da er Nicht-Leerraum-Inhalte hinzufügen oder löschen würde.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Formatting_Error">
+        <source>Formatting error. Abandoning further work to not corrupt the file, please report this issue. See: https://aka.ms/razor-formatting-issue</source>
+        <target state="translated">Formatierungsfehler Die weitere Bearbeitung wird abgebrochen, um die Datei nicht zu beschädigen. Melden Sie dieses Problem. Weitere Informationen unter https://aka.ms/razor-formatting-issue</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Generate_Async_Event_Handler_Title">
         <source>Generate Async Event Handler '{0}'</source>
         <target state="translated">Asynchronen Ereignishandler "{0}" generieren</target>
