@@ -81,7 +81,7 @@
       </trans-unit>
       <trans-unit id="Formatting_Error">
         <source>Formatting error. Abandoning further work to not corrupt the file, please report this issue. See: https://aka.ms/razor-formatting-issue</source>
-        <target state="new">Formatting error. Abandoning further work to not corrupt the file, please report this issue. See: https://aka.ms/razor-formatting-issue</target>
+        <target state="translated">서식 오류입니다. 파일이 손상되지 않도록 추가 작업을 중단합니다. 이 문제를 보고하세요. 참조: https://aka.ms/razor-formatting-issue</target>
         <note />
       </trans-unit>
       <trans-unit id="Generate_Async_Event_Handler_Title">
