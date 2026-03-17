@@ -401,7 +401,8 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
     <value>Unable to read a package reference from the project `{0}`. Please make sure that your project file and project.assets.json file are in sync by running restore.</value>
   </data>
   <data name="ListPkg_InvalidFramework" xml:space="preserve">
-    <value>Failed to parse one of the given frameworks. Please make sure the given frameworks are valid.</value>
+    <value>The specified TargetFramework '{0}' is not found in the project '{1}'.</value>
+    <comment>0 - alias, 1 - project path, {Locked="TargetFramework"}</comment>
   </data>
   <data name="ListPkg_Latest" xml:space="preserve">
     <value>Latest</value>
@@ -1166,8 +1167,5 @@ Do not translate "PackageVersion"</comment>
     <value>Unable to download package '{0}'. PackageSourceMapping is enabled, but no mapped sources were found for this package. The following source(s) were not considered: {1}.</value>
     <comment>{0} = package ID 
 {1} = comma-separated list of all configured sources </comment>
-  </data>
-  <data name="WhyCommand_Error_InconsistentAssetsFile" xml:space="preserve">
-    <value>Internal error: Assets file is inconsistent</value>
   </data>
 </root>
