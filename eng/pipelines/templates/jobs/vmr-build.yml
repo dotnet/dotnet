@@ -788,6 +788,11 @@ jobs:
           fi
 
           eval $customEnvVarsWithBashSyntax
+
+          # Raise the open file descriptor limit to prevent NuGet restore failures
+          # in cross-build containers with restrictive defaults (see dotnet/dotnet#5381)
+          ulimit -n 65536 2>/dev/null || true
+
           $customPreBuildArgs ./build.sh $buildArgs
         displayName: Build
         workingDirectory: $(sourcesPath)
@@ -839,6 +844,11 @@ jobs:
           buildArgs=$(echo $buildArgs | xargs) # Remove extra spaces
 
           cd $(sourcesPath)
+
+          # Raise the open file descriptor limit to prevent NuGet restore failures
+          # in cross-build containers with restrictive defaults (see dotnet/dotnet#5381)
+          ulimit -n 65536 2>/dev/null || true
+
           $customPreBuildArgs ./build.sh $buildArgs
 
         displayName: Run Tests
