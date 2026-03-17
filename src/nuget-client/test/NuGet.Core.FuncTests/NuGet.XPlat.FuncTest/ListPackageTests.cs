@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using Moq;
@@ -540,7 +541,7 @@ namespace NuGet.XPlat.FuncTest
         {
             Type listPackageArgsType = typeof(ListPackageArgs);
             FieldInfo[] fields = listPackageArgsType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            Assert.True(13 == fields.Length, "Number of fields are changed in ListPackageArgs.cs. Please make sure this change is accounted for GetReportParameters method in that file.");
+            fields.Length.Should().Be(13, because: "Number of fields are changed in ListPackageArgs.cs. Please make sure this change is accounted for GetReportParameters method in that file.");
         }
 
         private static SimpleTestSolutionContext SetupTestSolution(SimpleTestPathContext pathContext)

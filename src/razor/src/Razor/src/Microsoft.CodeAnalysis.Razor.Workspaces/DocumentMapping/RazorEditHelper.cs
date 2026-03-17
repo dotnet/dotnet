@@ -8,9 +8,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.Utilities;
-using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
@@ -72,25 +71,47 @@ internal static partial class RazorEditHelper
         CancellationToken cancellationToken)
     {
         var codeDocument = await snapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-        using var textChangeBuilder = new TextChangeBuilder(documentMappingService);
 
-        var originalSyntaxTree = await snapshot.GetCSharpSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
-        var csharpSourceText = await originalSyntaxTree.GetTextAsync(cancellationToken).ConfigureAwait(false);
+        var originalCSharpSyntaxTree = await snapshot.GetCSharpSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+        var originalCSharpSourceText = await originalCSharpSyntaxTree.GetTextAsync(cancellationToken).ConfigureAwait(false);
+        var originalCSharpSyntaxRoot = await originalCSharpSyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
 
-        var newText = csharpSourceText.WithChanges(textChanges.Select(c => c.ToTextChange()));
-        var newSyntaxTree = originalSyntaxTree.WithChangedText(newText);
+        var newCSharpSourceText = originalCSharpSourceText.WithChanges(textChanges.Select(c => c.ToTextChange()));
+        var newCSharpSyntaxTree = originalCSharpSyntaxTree.WithChangedText(newCSharpSourceText);
+        var newCSharpSyntaxRoot = await newCSharpSyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
 
-        textChangeBuilder.AddDirectlyMappedEdits(textChanges, codeDocument, cancellationToken);
+        using var edits = new PooledArrayBuilder<RazorTextChange>();
+        AddDirectlyMappedEdits(ref edits.AsRef(), textChanges, codeDocument, documentMappingService, cancellationToken);
+        AddCSharpLanguageFeatureChanges(ref edits.AsRef(), codeDocument, originalCSharpSyntaxRoot, originalCSharpSourceText, newCSharpSyntaxRoot, newCSharpSourceText, cancellationToken);
 
-        var oldUsings = await UsingDirectiveHelper.FindUsingDirectiveStringsAsync(originalSyntaxTree, cancellationToken).ConfigureAwait(false);
-        var newUsings = await UsingDirectiveHelper.FindUsingDirectiveStringsAsync(newSyntaxTree, cancellationToken).ConfigureAwait(false);
+        return NormalizeEdits(edits.ToImmutableOrderedBy(static e => e.Span.Start), telemetryReporter, cancellationToken);
+    }
 
-        var addedUsings = Delta.Compute(oldUsings, newUsings);
-        var removedUsings = Delta.Compute(newUsings, oldUsings);
+    /// <summary>
+    /// Detects C# constructs (e.g., using directives) that were added or removed in
+    /// <paramref name="changedCSharpText"/> compared to the original generated C#, and
+    /// returns the corresponding edits for the Razor document. This is the single entry
+    /// point for translating unmapped C# changes into their Razor equivalents, to cover
+    /// scenarios where Roslyn adds a C# construct (eg, using directive, method etc.) that needs
+    /// more work than just mapping to conver to Razor (eg, an @ sign, or whole @code block).
+    /// </summary>
+    internal static async Task<ImmutableArray<RazorTextChange>> GetEditsForCSharpLanguageFeaturesAsync(
+        IDocumentSnapshot snapshot,
+        SourceText changedCSharpText,
+        CancellationToken cancellationToken)
+    {
+        var codeDocument = await snapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
+        var originalCSharpSyntaxTree = await snapshot.GetCSharpSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+        var originalCSharpSourceText = await originalCSharpSyntaxTree.GetTextAsync(cancellationToken).ConfigureAwait(false);
+        var originalCSharpSyntaxRoot = await originalCSharpSyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
 
-        textChangeBuilder.AddUsingsChanges(codeDocument, addedUsings, removedUsings, cancellationToken);
+        var newCSharpSyntaxTree = originalCSharpSyntaxTree.WithChangedText(changedCSharpText);
+        var newCSharpSyntaxRoot = await newCSharpSyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
 
-        return NormalizeEdits(textChangeBuilder.DrainToOrderedImmutable(), telemetryReporter, cancellationToken);
+        using var edits = new PooledArrayBuilder<RazorTextChange>();
+        AddCSharpLanguageFeatureChanges(ref edits.AsRef(), codeDocument, originalCSharpSyntaxRoot, originalCSharpSourceText, newCSharpSyntaxRoot, changedCSharpText, cancellationToken);
+
+        return edits.ToImmutable();
     }
 
     /// <summary>
@@ -200,6 +221,74 @@ internal static partial class RazorEditHelper
         }
 
         return normalizedChanges.ToImmutable();
+    }
+
+    /// <summary>
+    /// For all edits that are not mapped to using directives, map them directly to the Razor document.
+    /// Edits that don't map are skipped, and using directive changes are handled separately
+    /// by <see cref="AddUsingsChanges"/>.
+    /// </summary>
+    private static void AddDirectlyMappedEdits(
+        ref PooledArrayBuilder<RazorTextChange> edits,
+        ImmutableArray<RazorTextChange> csharpEdits,
+        RazorCodeDocument codeDocument,
+        IDocumentMappingService documentMappingService,
+        CancellationToken cancellationToken)
+    {
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var razorText = codeDocument.Source.Text;
+        var csharpDocument = codeDocument.GetRequiredCSharpDocument();
+        var csharpText = csharpDocument.Text;
+
+        foreach (var edit in csharpEdits)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var linePositionSpan = csharpText.GetLinePositionSpan(edit.Span.ToTextSpan());
+
+            if (!documentMappingService.TryMapToRazorDocumentRange(
+                csharpDocument,
+                linePositionSpan,
+                MappingBehavior.Strict,
+                out var mappedLinePositionSpan))
+            {
+                continue;
+            }
+
+            var mappedSpan = razorText.GetTextSpan(mappedLinePositionSpan);
+            var node = root.FindNode(mappedSpan, getInnermostNodeForTie: true);
+            if (node is null)
+            {
+                continue;
+            }
+
+            if (RazorSyntaxFacts.IsInUsingDirective(node))
+            {
+                continue;
+            }
+
+            edits.Add(new RazorTextChange()
+            {
+                Span = mappedSpan.ToRazorTextSpan(),
+                NewText = edit.NewText
+            });
+
+            if (node is BaseMarkupStartTagSyntax startTagSyntax &&
+                startTagSyntax.GetEndTag() is { } endTag)
+            {
+                // We are changing a start tag, and so we have a matching end tag. We have to translate the edit over there too
+                // as we only map the start tag, but if they got out of sync that would be bad.
+                edits.Add(new RazorTextChange()
+                {
+                    Span = new RazorTextSpan()
+                    {
+                        Start = mappedSpan.Start + (endTag.Name.SpanStart - startTagSyntax.Name.SpanStart),
+                        Length = mappedSpan.Length
+                    },
+                    NewText = edit.NewText
+                });
+            }
+        }
     }
 
     private sealed class DroppedEditsException : Exception
