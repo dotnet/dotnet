@@ -16,7 +16,7 @@
       'preview' produces assets with a '.final' branding suffix.
       'release' produces assets without a branding suffix.
     -->
-    <RepoDotNetFinalVersionKind>repodefault</RepoDotNetFinalVersionKind>
+    <RepoDotNetFinalVersionKind>release</RepoDotNetFinalVersionKind>
 
     <!-- Arcade features -->
     <UseVSTestRunner>true</UseVSTestRunner>
@@ -39,8 +39,8 @@
       of a .NET major or minor release, prebuilts may be needed. When the release is mature, prebuilts
       are not necessary, and this property is removed from the file.
     -->
-    <PrivateSourceBuiltSdkVersion>10.0.103-servicing.26075.103</PrivateSourceBuiltSdkVersion>
-    <PrivateSourceBuiltArtifactsVersion>10.0.103-servicing.26075.103</PrivateSourceBuiltArtifactsVersion>
+    <PrivateSourceBuiltSdkVersion>10.0.201-servicing.26153.122</PrivateSourceBuiltSdkVersion>
+    <PrivateSourceBuiltArtifactsVersion>10.0.201-servicing.26153.122-1</PrivateSourceBuiltArtifactsVersion>
     <!-- workload manifest version for 1xx SDK feature band, used by 2xx+ branches to include 1xx workloads -->
     <DotNet1xxWorkloadManifestVersion>$([System.Text.RegularExpressions.Regex]::Match($(MicrosoftNETSdkVersion), '^(\d+\.\d+\.\d+)').Value)</DotNet1xxWorkloadManifestVersion>
     <!-- command-line-api dependencies -->

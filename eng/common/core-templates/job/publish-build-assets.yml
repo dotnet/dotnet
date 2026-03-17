@@ -191,6 +191,7 @@ jobs:
           PromoteToChannelIds: ${{ parameters.PromoteToChannelIds }}
           is1ESPipeline: ${{ parameters.is1ESPipeline }}
 
+      # Darc is targeting 8.0, so make sure it's installed
       - task: UseDotNet@2
         inputs:
           version: 8.0.x

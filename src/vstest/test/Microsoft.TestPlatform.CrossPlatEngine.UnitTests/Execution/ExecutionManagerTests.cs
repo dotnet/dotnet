@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 
+using FluentAssertions;
+
 using Microsoft.TestPlatform.TestUtilities;
 using Microsoft.VisualStudio.TestPlatform.Common;
 using Microsoft.VisualStudio.TestPlatform.Common.ExtensionFramework;
@@ -22,7 +24,6 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Moq;
-using FluentAssertions;
 
 using static TestPlatform.CrossPlatEngine.UnitTests.Execution.RunTestsWithSourcesTests;
 
