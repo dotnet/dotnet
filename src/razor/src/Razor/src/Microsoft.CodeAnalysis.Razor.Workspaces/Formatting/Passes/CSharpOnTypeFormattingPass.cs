@@ -20,6 +20,7 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
@@ -212,9 +213,9 @@ internal sealed class CSharpOnTypeFormattingPass(
             // Because we need to parse the C# code twice for this operation, lets do a quick check to see if its even necessary
             if (changes.Any(static e => e.NewText is not null && e.NewText.IndexOf("using") != -1))
             {
-                var usingStatementEdits = await UsingDirectiveHelper.GetUsingStatementEditsAsync(context.CurrentSnapshot, originalTextWithChanges, cancellationToken).ConfigureAwait(false);
-                var usingStatementChanges = usingStatementEdits.Select(context.CodeDocument.Source.Text.GetTextChange);
-                finalChanges = [.. usingStatementChanges, .. finalChanges];
+                var usingEdits = await RazorEditHelper.GetEditsForCSharpLanguageFeaturesAsync(context.CurrentSnapshot, originalTextWithChanges, cancellationToken).ConfigureAwait(false);
+                var usingChanges = usingEdits.SelectAsArray(static e => e.ToTextChange());
+                finalChanges = [.. usingChanges, .. finalChanges];
             }
         }
 
