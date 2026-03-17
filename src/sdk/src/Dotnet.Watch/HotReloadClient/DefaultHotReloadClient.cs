@@ -82,7 +82,7 @@ namespace Microsoft.DotNet.HotReload
                 {
                     // Don't report a warning when cancelled. The process has terminated or the host is shutting down in that case.
                     // Best effort: There is an inherent race condition due to time between the process exiting and the cancellation token triggering.
-                    if (!cancellationToken.IsCancellationRequested)
+                    if (!transport.IsExpectedConnectionTermination(e, cancellationToken))
                     {
                         Logger.LogError("Failed to read capabilities: {Message}", e.Message);
                     }
@@ -127,9 +127,9 @@ namespace Microsoft.DotNet.HotReload
             }
             catch (Exception e) when (e is not OperationCanceledException)
             {
-                if (!cancellationToken.IsCancellationRequested)
+                if (!transport.IsExpectedConnectionTermination(e, cancellationToken))
                 {
-                    Logger.LogError("Failed to read response: {Message}", e.Message);
+                    Logger.LogError("Failed to read response: {Exception}", e.ToString());
                 }
             }
         }
