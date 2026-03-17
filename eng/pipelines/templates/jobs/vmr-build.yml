@@ -174,19 +174,8 @@ jobs:
         options: $(defaultContainerOptions)
 
   ${{ if gt(length(parameters.reuseBuildArtifactsFrom), 0) }}:
-    ${{ if eq(parameters.buildPass, '') }}:
-      # For PR builds, skip the stage 2 build if the stage 1 build fails.
-      # Otherwise, run the stage 2 build even if the stage 1 build fails so that we can get a complete assessment of the build status.
-      # The build shortcuts when stage 1 build fails and doesn't produce the SDK.
-      ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-        condition: succeeded()
-      ${{ else }}:
-        condition: succeededOrFailed()
-    ${{ else }}:
-      condition: succeeded()
     dependsOn:
-    - ${{ if gt(length(parameters.reuseBuildArtifactsFrom), 0) }}:
-      - ${{ parameters.reuseBuildArtifactsFrom }}
+    - ${{ parameters.reuseBuildArtifactsFrom }}
   variables:
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - group: AzureDevOps-Artifact-Feeds-Pats
