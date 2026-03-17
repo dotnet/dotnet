@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using NuGet.Shared;
 
@@ -12,11 +10,11 @@ namespace NuGet.Packaging
     {
         public int Version { get; set; } = NupkgMetadataFileFormat.Version;
 
-        public string ContentHash { get; set; }
+        public string? ContentHash { get; set; }
 
-        public string Source { get; set; }
+        public string? Source { get; set; }
 
-        public bool Equals(NupkgMetadataFile other)
+        public bool Equals(NupkgMetadataFile? other)
         {
             if (other == null)
             {
@@ -33,7 +31,7 @@ namespace NuGet.Packaging
                 StringComparer.Ordinal.Equals(Source, other.Source);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as NupkgMetadataFile);
         }

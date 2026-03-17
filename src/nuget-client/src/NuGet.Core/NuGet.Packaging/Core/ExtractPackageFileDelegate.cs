@@ -12,5 +12,5 @@ namespace NuGet.Packaging.Core
     /// <param name="targetPath">The path to write to.</param>
     /// <param name="fileStream">The file <see cref="Stream"/>.</param>
     /// <returns>The file name if the file was written; otherwise <see langword="null" />.</returns>
-    public delegate string ExtractPackageFileDelegate(string sourceFile, string targetPath, Stream fileStream);
+    public delegate string? ExtractPackageFileDelegate(string sourceFile, string targetPath, Stream fileStream);
 }
