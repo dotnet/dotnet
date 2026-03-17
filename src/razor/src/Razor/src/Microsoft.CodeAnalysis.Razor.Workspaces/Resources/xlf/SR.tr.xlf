@@ -79,6 +79,11 @@
         <target state="translated">Boşluk dışı içeriği ekleyebileceği veya silebileceği için biçimlendirme işlemi bırakıl.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Formatting_Error">
+        <source>Formatting error. Abandoning further work to not corrupt the file, please report this issue. See: https://aka.ms/razor-formatting-issue</source>
+        <target state="translated">Biçimlendirme hatası. Dosyanın bozulmaması için çalışmaya devam etmeyin ve lütfen bu sorunu bildirin. Bkz.: https://aka.ms/razor-formatting-issue</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Generate_Async_Event_Handler_Title">
         <source>Generate Async Event Handler '{0}'</source>
         <target state="translated">'{0}' Asenkron Olay İşleyicisini Oluştur</target>

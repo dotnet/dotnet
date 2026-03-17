@@ -79,6 +79,11 @@
         <target state="translated">Operace formátování je ukončována, protože by přidala nebo odstranila neprázdný obsah.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Formatting_Error">
+        <source>Formatting error. Abandoning further work to not corrupt the file, please report this issue. See: https://aka.ms/razor-formatting-issue</source>
+        <target state="translated">Chyba formátování Práce se přerušuje, aby nedošlo k poškození souboru, prosím nahlaste tento problém. Více informací zde: https://aka.ms/razor-formatting-issue</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Generate_Async_Event_Handler_Title">
         <source>Generate Async Event Handler '{0}'</source>
         <target state="translated">Generovat asynchronní obslužnou rutinu události {0}</target>

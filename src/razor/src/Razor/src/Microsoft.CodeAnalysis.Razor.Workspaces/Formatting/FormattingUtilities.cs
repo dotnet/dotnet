@@ -626,7 +626,7 @@ internal static class FormattingUtilities
         if (lineIndex >= text.Lines.Count)
         {
             context.Logger?.LogMessage($"Ran out of {label} lines at index {lineIndex} of {text.Lines.Count} (other side: {otherLineIndex} of {otherLineCount})");
-            logger.LogError($"Ran out of {label} lines while trying to process formatted changes. Abandoning further formatting to not corrupt the source file, please report this issue.");
+            logger.LogError(SR.Formatting_Error);
             return false;
         }
 
