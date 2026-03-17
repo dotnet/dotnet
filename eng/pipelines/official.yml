@@ -111,6 +111,7 @@ extends:
         enabled: true
       tsa:
         enabled: true
+        useDynamicRouting: true
       credscan:
         suppressionsFile: $(Build.SourcesDirectory)/.config/CredScanSuppressions.json
       componentgovernance:
