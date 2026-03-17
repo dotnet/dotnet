@@ -707,7 +707,11 @@ jobs:
 
           # Raise the open file descriptor limit to prevent NuGet restore failures
           # in cross-build containers with restrictive defaults (see dotnet/dotnet#5381)
-          ulimit -n 65536 2>/dev/null || true
+          if ! ulimit -n 65536 2>/dev/null; then
+            echo "Warning: failed to raise open file descriptor limit to 65536. Current limits:"
+            echo "  Soft nofile limit: $(ulimit -Sn 2>/dev/null || echo 'unknown')"
+            echo "  Hard nofile limit: $(ulimit -Hn 2>/dev/null || echo 'unknown')"
+          fi
 
           $customPreBuildArgs ./build.sh $buildArgs
 
