@@ -15,7 +15,6 @@ using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Credentials;
-using NuGet.Frameworks;
 
 namespace NuGet.CommandLine.XPlat
 {
@@ -123,8 +122,6 @@ namespace NuGet.CommandLine.XPlat
 
                     var packageSources = GetPackageSources(settings, sources, config);
 
-                    VerifyValidFrameworks(framework);
-
                     var reportType = GetReportType(
                         isOutdated: outdatedReport.HasValue(),
                         isDeprecated: deprecatedReport.HasValue(),
@@ -215,16 +212,6 @@ namespace NuGet.CommandLine.XPlat
                 (packageRefArgs.Prerelease || packageRefArgs.HighestMinor || packageRefArgs.HighestPatch))
             {
                 reportRenderer.AddProblem(ProblemType.Warning, Strings.ListPkg_VulnerableIgnoredOptions);
-            }
-        }
-
-        private static void VerifyValidFrameworks(CommandOption framework)
-        {
-            var frameworks = framework.Values.Select(f =>
-                                NuGetFramework.Parse(f.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToArray()[0]));
-            if (frameworks.Any(f => f.Framework.Equals("Unsupported", StringComparison.OrdinalIgnoreCase)))
-            {
-                throw new ArgumentException(Strings.ListPkg_InvalidFramework, nameof(framework));
             }
         }
 

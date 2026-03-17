@@ -15,7 +15,6 @@ using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
 using NuGet.Common;
-using NuGet.Frameworks;
 using NuGet.LibraryModel;
 using NuGet.Packaging.Core;
 using NuGet.ProjectModel;
@@ -745,26 +744,29 @@ namespace NuGet.CommandLine.XPlat
             if (userInputFrameworks.Any())
             {
                 //Target frameworks filtering
-                var parsedUserFrameworks = userInputFrameworks.Select(f =>
-                                               NuGetFramework.Parse(f.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToArray()[0]));
-                requestedTargetFrameworks = requestedTargetFrameworks.Where(tfm => parsedUserFrameworks.Contains(tfm.FrameworkName)).ToList();
+                var userFrameworkInputs = userInputFrameworks.Select(f =>
+                                               f.Split(['/'], StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToArray()[0]).ToList();
+                requestedTargetFrameworks = requestedTargetFrameworks.Where(tfm =>
+                    userFrameworkInputs.Any(f => string.Equals(f, tfm.TargetAlias, StringComparison.OrdinalIgnoreCase))).ToList();
 
                 //Assets file targets filtering by framework and RID
                 var filteredTargets = new List<LockFileTarget>();
                 foreach (var frameworkAndRID in userInputFrameworks)
                 {
-                    var splitFrameworkAndRID = frameworkAndRID.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToArray();
+                    var splitFrameworkAndRID = frameworkAndRID.Split(['/'], StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToArray();
                     // If a / is not present in the string, we get all of the targets that
                     // have matching framework regardless of RID.
                     if (splitFrameworkAndRID.Length == 1)
                     {
-                        filteredTargets.AddRange(requestedTargets.Where(target => target.TargetFramework.Equals(NuGetFramework.Parse(splitFrameworkAndRID[0]))));
+                        filteredTargets.AddRange(requestedTargets.Where(target =>
+                            string.Equals(target.TargetAlias, splitFrameworkAndRID[0], StringComparison.OrdinalIgnoreCase)));
                     }
                     else
                     {
                         //RID is present in the user input, so we filter using it as well
-                        filteredTargets.AddRange(requestedTargets.Where(target => target.TargetFramework.Equals(NuGetFramework.Parse(splitFrameworkAndRID[0])) &&
-                                                                                  target.RuntimeIdentifier != null && target.RuntimeIdentifier.Equals(splitFrameworkAndRID[1], StringComparison.OrdinalIgnoreCase)));
+                        filteredTargets.AddRange(requestedTargets.Where(target =>
+                            string.Equals(target.TargetAlias, splitFrameworkAndRID[0], StringComparison.OrdinalIgnoreCase) &&
+                            target.RuntimeIdentifier != null && target.RuntimeIdentifier.Equals(splitFrameworkAndRID[1], StringComparison.OrdinalIgnoreCase)));
                     }
                 }
                 requestedTargets = filteredTargets;
@@ -782,7 +784,7 @@ namespace NuGet.CommandLine.XPlat
 
                 try
                 {
-                    tfmInformation = requestedTargetFrameworks.First(tfm => tfm.FrameworkName.Equals(target.TargetFramework));
+                    tfmInformation = requestedTargetFrameworks.First(tfm => tfm.TargetAlias.Equals(target.TargetAlias));
                 }
                 catch (Exception)
                 {
@@ -791,7 +793,8 @@ namespace NuGet.CommandLine.XPlat
 
                 //The packages for the framework that were retrieved with GetRequestedVersions
                 var frameworkDependencies = tfmInformation.Dependencies;
-                var projectPackages = GetPackageReferencesFromTargets(projectPath, tfmInformation.ToString());
+                var targetAlias = tfmInformation.TargetAlias;
+                var projectPackages = GetPackageReferencesFromTargets(projectPath, targetAlias);
                 var topLevelPackages = new List<InstalledPackageReference>();
                 var transitivePackages = new List<InstalledPackageReference>();
 
@@ -861,6 +864,7 @@ namespace NuGet.CommandLine.XPlat
 
                 var frameworkPackages = new FrameworkPackages(
                     target.TargetFramework.GetShortFolderName(),
+                    targetAlias,
                     topLevelPackages,
                     transitivePackages);
 
