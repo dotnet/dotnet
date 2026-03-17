@@ -2,11 +2,11 @@
 <Dependencies>
   <Source Uri="https://github.com/dotnet/dotnet" Mapping="source-build-reference-packages" Sha="455f1358f39b4d38fa3893c327a45027c4a81843" BarId="297972" />
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.Build" Version="18.3.3">
+    <Dependency Name="Microsoft.Build" Version="18.0.11">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
       <Sha>5e7ffa3b5f35958e9e0502642a249173494097e0</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Utilities.Core" Version="18.3.3">
+    <Dependency Name="Microsoft.Build.Utilities.Core" Version="18.0.11">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
       <Sha>5e7ffa3b5f35958e9e0502642a249173494097e0</Sha>
     </Dependency>
