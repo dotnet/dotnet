@@ -37,10 +37,10 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 306209,
+      "barId": 306390,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "d06927c4b91b1c671c7a793e5cd40cabd8cde3a1"
+      "commitSha": "3031b80b2cdcc1c64cca3aca8abf5b01c7aa8778"
     },
     {
       "barId": 298197,
@@ -79,28 +79,28 @@
       "commitSha": "6bf196886a5e6dcf2ee245917ec48f0bc601138d"
     },
     {
-      "barId": 305901,
+      "barId": 306240,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "247ae445b155e9fdfe9faf2c5f45b238734728d5"
+      "commitSha": "9b5abc6fe525475e138a7a7403e18951f4dfbf3a"
     },
     {
-      "barId": 304884,
+      "barId": 306217,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "c470227938073a1fb386af146d4ed12d751cb699"
+      "commitSha": "cda54e3d969844675bb5b8edd45fe2bd39f849c0"
     },
     {
-      "barId": 305527,
+      "barId": 305940,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "2a02bdfdead5795327020938f6c8617fe214066c"
+      "commitSha": "b4670c680698b5d56f14fc7ad2408c3bb523b358"
     },
     {
-      "barId": 305733,
+      "barId": 306376,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "ae6ecff083b0302fb727b5f69a5cee3efa84fea9"
+      "commitSha": "52c84239fc4d01622cf51880e704cd580d727f6c"
     },
     {
       "barId": 305338,
@@ -115,10 +115,10 @@
       "commitSha": "1536a1ca256a4e9f804b2073464ca8e4f4794702"
     },
     {
-      "barId": 305861,
+      "barId": 306254,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "e5bd434255938dc8d223cc1840e1ab99557fe390"
+      "commitSha": "83a700d2aa6852f958a04c539e79980fb63fc05c"
     },
     {
       "barId": 303333,
