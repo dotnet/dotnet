@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
@@ -50,7 +48,7 @@ namespace NuGet.Packaging.Core
                     range = VersionRange.Parse(versionNode.Value);
                 }
 
-                yield return new PackageDependency(node.Attribute(XName.Get(Id)).Value, range);
+                yield return new PackageDependency(node.Attribute(XName.Get(Id))!.Value, range);
             }
 
             yield break;

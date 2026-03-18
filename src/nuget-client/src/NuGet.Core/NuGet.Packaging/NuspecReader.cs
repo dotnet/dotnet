@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -142,7 +140,7 @@ namespace NuGet.Packaging
 
                 var framework = string.IsNullOrEmpty(groupFramework)
                     ? NuGetFramework.AnyFramework
-                    : NuGetFramework.Parse(groupFramework, _frameworkProvider);
+                    : NuGetFramework.Parse(groupFramework!, _frameworkProvider);
 
                 yield return new PackageDependencyGroup(framework, packages);
             }
@@ -177,9 +175,9 @@ namespace NuGet.Packaging
 
                 var groupFramework = GetAttributeValue(group, TargetFramework);
 
-                var items = group.Elements(XName.Get(Reference, ns)).Select(n => GetAttributeValue(n, File)).Where(n => !string.IsNullOrEmpty(n)).ToArray();
+                var items = group.Elements(XName.Get(Reference, ns)).Select(n => GetAttributeValue(n, File)!).Where(n => !string.IsNullOrEmpty(n)).ToArray();
 
-                var framework = string.IsNullOrEmpty(groupFramework) ? NuGetFramework.AnyFramework : NuGetFramework.Parse(groupFramework, _frameworkProvider);
+                var framework = string.IsNullOrEmpty(groupFramework) ? NuGetFramework.AnyFramework : NuGetFramework.Parse(groupFramework!, _frameworkProvider);
 
                 yield return new FrameworkSpecificGroup(framework, items);
             }
@@ -188,7 +186,7 @@ namespace NuGet.Packaging
             if (!groupFound)
             {
                 var items = MetadataNode.Elements(XName.Get(References, ns))
-                    .Elements(XName.Get(Reference, ns)).Select(n => GetAttributeValue(n, File)).Where(n => !string.IsNullOrEmpty(n)).ToArray();
+                    .Elements(XName.Get(Reference, ns)).Select(n => GetAttributeValue(n, File)!).Where(n => !string.IsNullOrEmpty(n)).ToArray();
 
                 if (items.Length > 0)
                 {
@@ -215,7 +213,7 @@ namespace NuGet.Packaging
         {
             var results = new List<FrameworkSpecificGroup>();
 
-            var ns = Xml.Root.GetDefaultNamespace().NamespaceName;
+            var ns = Xml.Root!.GetDefaultNamespace().NamespaceName;
 
             var groups = new Dictionary<NuGetFramework, HashSet<string>>(NuGetFrameworkFullComparer.Instance);
 
@@ -232,7 +230,7 @@ namespace NuGet.Packaging
                 }
                 else
                 {
-                    foreach (var fwString in group.Key.Split(CommaArray, StringSplitOptions.RemoveEmptyEntries))
+                    foreach (var fwString in group.Key!.Split(CommaArray, StringSplitOptions.RemoveEmptyEntries))
                     {
                         if (!string.IsNullOrEmpty(fwString))
                         {
@@ -244,7 +242,7 @@ namespace NuGet.Packaging
                 // apply items to each framework
                 foreach (var framework in frameworks)
                 {
-                    HashSet<string> items = null;
+                    HashSet<string>? items = null;
                     if (!groups.TryGetValue(framework, out items))
                     {
                         items = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -252,7 +250,7 @@ namespace NuGet.Packaging
                     }
 
                     // Merge items and ignore duplicates
-                    items.UnionWith(group.Select(item => GetAttributeValue(item, AssemblyName)).Where(item => !string.IsNullOrEmpty(item)));
+                    items.UnionWith(group.Select(item => GetAttributeValue(item, AssemblyName)!).Where(item => !string.IsNullOrEmpty(item)));
                 }
             }
 
@@ -270,7 +268,7 @@ namespace NuGet.Packaging
         /// <summary>
         /// Package language
         /// </summary>
-        public string GetLanguage()
+        public string? GetLanguage()
         {
             var node = MetadataNode.Elements(XName.Get(Language, MetadataNode.GetDefaultNamespace().NamespaceName)).FirstOrDefault();
             return node?.Value;
@@ -279,7 +277,7 @@ namespace NuGet.Packaging
         /// <summary>
         /// Package License Url
         /// </summary>
-        public string GetLicenseUrl()
+        public string? GetLicenseUrl()
         {
             var node = MetadataNode.Elements(XName.Get(LicenseUrl, MetadataNode.GetDefaultNamespace().NamespaceName)).FirstOrDefault();
             return node?.Value;
@@ -433,7 +431,7 @@ namespace NuGet.Packaging
         /// </summary>
         /// <remarks>This method never throws. Bad data is still parsed. </remarks>
         /// <returns>The licensemetadata if specified</returns>
-        public LicenseMetadata GetLicenseMetadata()
+        public LicenseMetadata? GetLicenseMetadata()
         {
             var licenseNode = MetadataNode.Elements(XName.Get(NuspecUtility.License, MetadataNode.GetDefaultNamespace().NamespaceName)).FirstOrDefault();
 
@@ -445,11 +443,11 @@ namespace NuGet.Packaging
 
                 var isKnownType = Enum.TryParse(type, ignoreCase: true, result: out LicenseType licenseType);
 
-                List<string> errors = null;
+                List<string>? errors = null;
 
                 if (isKnownType)
                 {
-                    Version version = null;
+                    Version? version = null;
                     if (versionValue != null)
                     {
                         if (!System.Version.TryParse(versionValue, out version))
@@ -540,9 +538,9 @@ namespace NuGet.Packaging
             return null;
         }
 
-        private static IList<string> GetNonStandardLicenseIdentifiers(NuGetLicenseExpression expression)
+        private static IList<string>? GetNonStandardLicenseIdentifiers(NuGetLicenseExpression expression)
         {
-            IList<string> invalidLicenseIdentifiers = null;
+            IList<string>? invalidLicenseIdentifiers = null;
             Action<NuGetLicense> licenseProcessor = delegate (NuGetLicense nugetLicense)
             {
                 if (!nugetLicense.IsStandardLicense)
@@ -579,7 +577,7 @@ namespace NuGet.Packaging
         /// Gets the icon metadata from the .nuspec
         /// </summary>
         /// <returns>A string containing the icon path or null if no icon entry is found</returns>
-        public string GetIcon()
+        public string? GetIcon()
         {
             var node = MetadataNode.Elements(XName.Get(Icon, MetadataNode.GetDefaultNamespace().NamespaceName)).FirstOrDefault();
             return node?.Value;
@@ -589,7 +587,7 @@ namespace NuGet.Packaging
         /// Gets the readme metadata from the .nuspec
         /// </summary>
         /// <returns>A string containing the readme path or null if no readme entry is found</returns>
-        public string GetReadme()
+        public string? GetReadme()
         {
             var node = MetadataNode.Elements(XName.Get(Readme, MetadataNode.GetDefaultNamespace().NamespaceName)).FirstOrDefault();
             return node?.Value;
@@ -626,7 +624,7 @@ namespace NuGet.Packaging
             return result;
         }
 
-        private static string GetAttributeValue(XElement element, string attributeName)
+        private static string? GetAttributeValue(XElement element, string attributeName)
         {
             var attribute = element.Attribute(XName.Get(attributeName));
             return attribute == null ? null : attribute.Value;
@@ -634,7 +632,7 @@ namespace NuGet.Packaging
 
         private static readonly List<string> EmptyList = new List<string>();
 
-        private static List<string> GetFlags(string flags)
+        private static List<string> GetFlags(string? flags)
         {
             if (string.IsNullOrEmpty(flags))
             {
@@ -642,7 +640,7 @@ namespace NuGet.Packaging
             }
 
             // PERF: Avoid Linq on hot paths
-            var splitFlags = flags.Split(CommaArray, StringSplitOptions.RemoveEmptyEntries);
+            var splitFlags = flags!.Split(CommaArray, StringSplitOptions.RemoveEmptyEntries);
 
 #if NETSTANDARD2_0
             var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -671,13 +669,13 @@ namespace NuGet.Packaging
 
             foreach (var depNode in nodes)
             {
-                VersionRange range = null;
+                VersionRange? range = null;
 
                 var rangeNode = GetAttributeValue(depNode, Version);
 
                 if (!string.IsNullOrEmpty(rangeNode))
                 {
-                    var versionParsedSuccessfully = VersionRange.TryParse(rangeNode, out range);
+                    var versionParsedSuccessfully = VersionRange.TryParse(rangeNode!, out range);
                     if (!versionParsedSuccessfully && useStrictVersionCheck)
                     {
                         // Invalid version
@@ -710,7 +708,7 @@ namespace NuGet.Packaging
                 var excludeFlags = GetFlags(GetAttributeValue(depNode, ExcludeFlags));
 
                 var dependency = new PackageDependency(
-                    GetAttributeValue(depNode, Id),
+                    GetAttributeValue(depNode, Id)!,
                     range,
                     includeFlags,
                     excludeFlags);

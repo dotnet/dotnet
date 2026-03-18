@@ -1,9 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -20,10 +19,10 @@ namespace NuGet.Packaging
     /// </summary>
     public class PackagesConfigWriter : IDisposable
     {
-        private readonly Stream _stream;
-        private readonly string _filePath;
+        private readonly Stream? _stream;
+        private readonly string? _filePath;
         private bool _disposed;
-        private NuGetVersion _minClientVersion;
+        private NuGetVersion? _minClientVersion;
         private IFrameworkNameProvider _frameworkMappings;
         private XDocument _xDocument;
 
@@ -190,7 +189,7 @@ namespace NuGet.Packaging
 
             var packagesNode = EnsurePackagesNode();
 
-            XElement package;
+            XElement? package;
             if (PackagesConfig.HasAttributeValue(packagesNode, PackagesConfig.IdAttributeName, entry.PackageIdentity.Id, out package))
             {
                 throw new PackagesConfigWriterException(string.Format(CultureInfo.CurrentCulture,
@@ -268,18 +267,18 @@ namespace NuGet.Packaging
 
             var originalPackagesNode = originalConfig.Element(XName.Get(PackagesConfig.PackagesNodeName));
 
-            XElement matchingIdNode;
+            XElement? matchingIdNode;
 
             if (PackagesConfig.HasAttributeValue(
-                originalPackagesNode,
+                originalPackagesNode!,
                 PackagesConfig.IdAttributeName,
                 newEntry.PackageIdentity.Id,
                 out matchingIdNode))
             {
                 // Find the old entry and update it based on the new entry
                 var packagesNode = _xDocument.Element(XName.Get(PackagesConfig.PackagesNodeName));
-                var newPackageNode = ReplacePackageAttributes(matchingIdNode, newEntry);
-                packagesNode.Add(newPackageNode);
+                var newPackageNode = ReplacePackageAttributes(matchingIdNode!, newEntry);
+                packagesNode!.Add(newPackageNode);
                 SortPackageNodes(packagesNode);
             }
             else
@@ -396,6 +395,7 @@ namespace NuGet.Packaging
             return node;
         }
 
+        [MemberNotNull(nameof(_xDocument))]
         private void CreateDefaultXDocument()
         {
             var document = new XDocument();
@@ -418,20 +418,20 @@ namespace NuGet.Packaging
             return packagesNode;
         }
 
-        private XElement FindMatchingPackageNode(PackageReference entry, XElement packagesNode)
+        private XElement? FindMatchingPackageNode(PackageReference entry, XElement packagesNode)
         {
-            XElement matchingIdNode;
+            XElement? matchingIdNode;
             bool hasMatchingNode = PackagesConfig.HasAttributeValue(packagesNode, PackagesConfig.IdAttributeName,
                 entry.PackageIdentity.Id, out matchingIdNode);
 
             if (matchingIdNode != null)
             {
-                string version;
+                string? version;
                 PackagesConfig.TryGetAttribute(matchingIdNode, PackagesConfig.VersionAttributeName, out version);
 
                 if (!string.IsNullOrEmpty(version))
                 {
-                    NuGetVersion nuGetVersion;
+                    NuGetVersion? nuGetVersion;
                     bool isNuGetVersion = NuGetVersion.TryParse(version, out nuGetVersion);
 
                     if (isNuGetVersion && nuGetVersion != null && nuGetVersion.Equals(entry.PackageIdentity.Version))
@@ -455,7 +455,7 @@ namespace NuGet.Packaging
             foreach (XName name in existingAttributeNames)
             {
                 // Clear newValue
-                string newValue = null;
+                string? newValue = null;
 
                 // Try to get newValue correlated to the attribute on the existing node.
                 PackagesConfig.TryGetAttribute(newEntryNode, name.LocalName, out newValue);
@@ -483,7 +483,7 @@ namespace NuGet.Packaging
             // Add new attributes that was not in the old package reference entry, if any
             foreach (XName name in addableAttributeNames)
             {
-                var attribute = new XAttribute(name, newEntryNode.Attribute(name).Value);
+                var attribute = new XAttribute(name, newEntryNode.Attribute(name)!.Value);
                 existingNode.Add(attribute);
             }
 
@@ -497,7 +497,7 @@ namespace NuGet.Packaging
                 select minClient,
 
                 from package in packagesNode.Elements(XName.Get(PackagesConfig.PackageNodeName))
-                orderby package.Attributes(XName.Get(PackagesConfig.IdAttributeName)).FirstOrDefault().Value
+                orderby package.Attributes(XName.Get(PackagesConfig.IdAttributeName)).FirstOrDefault()!.Value
                 select package);
 
             packagesNode.ReplaceWith(newPackagesNode);
@@ -506,7 +506,7 @@ namespace NuGet.Packaging
         private void WriteFile()
         {
             // Clear the content of the old stream
-            _stream.Seek(0, SeekOrigin.Begin);
+            _stream!.Seek(0, SeekOrigin.Begin);
             _stream.SetLength(0);
 
             // Save the updated XDocument to the stream
@@ -521,7 +521,7 @@ namespace NuGet.Packaging
         {
             try
             {
-                var directorypath = Path.GetDirectoryName(fullPath);
+                var directorypath = Path.GetDirectoryName(fullPath)!;
 
                 var configFileCopyPath = Path.Combine(directorypath,
                     @"packages.config.old." + DateTime.Now.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture));
@@ -605,7 +605,7 @@ namespace NuGet.Packaging
             {
                 if (!string.IsNullOrEmpty(_filePath))
                 {
-                    WriteFile(_filePath);
+                    WriteFile(_filePath!);
                 }
                 else
                 {
