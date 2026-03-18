@@ -92,6 +92,9 @@ extends:
       ${{ variables.ubuntuArmContainerName }}:
         image: ${{ variables.ubuntuArmContainerImage }}
         options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.azurelinuxBuildContainerName }}:
+        image: ${{ variables.azurelinuxBuildContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
       ${{ variables.azurelinuxX64CrossContainerName }}:
         image: ${{ variables.azurelinuxX64CrossContainerImage }}
         options: ${{ variables.defaultContainerOptions }}
