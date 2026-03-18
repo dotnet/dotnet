@@ -221,5 +221,47 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 new AkaMSLink("prefix2/assets/plop/Microsoft.stuff.json.zip", "https://example.com/feed/assets/plop/Microsoft.stuff.json.zip")
             });
         }
+
+        [Fact]
+        public void GetLatestLinksToCreate_RestrictedInstallScriptPatternShouldOnlyIncludeGetAspireCli()
+        {
+            var taskLoggingHelper = new TaskLoggingHelper(new StubTask());
+            var assetsToPublish = new HashSet<string>
+            {
+                "assets/installers/get-aspire-cli.ps1",
+                "assets/installers/get-aspire-cli.ps1.sha512",
+                "assets/installers/get-aspire-cli.sh",
+                "assets/installers/get-aspire-cli.sh.sha512",
+                "assets/installers/install-other-tool.ps1",
+                "assets/installers/install-other-tool.sh",
+            };
+            var feedConfig = new TargetFeedConfig(
+                contentType: TargetFeedContentType.Other,
+                targetURL: "https://example.com/feed",
+                type: FeedType.AzureStorageContainer,
+                token: "",
+                latestLinkShortUrlPrefixes: ImmutableList.Create("dotnet/9/aspire/rc/daily"),
+                akaMSCreateLinkPatterns: PublishingConstants.AspireAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: [],
+                assetSelection: AssetSelection.All,
+                isolated: false,
+                @internal: false,
+                allowOverwrite: false,
+                symbolPublishVisibility: SymbolPublishVisibility.None,
+                flatten: true
+            );
+
+            var manager = new LatestLinksManager("clientId", null, "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
+
+            var links = manager.GetLatestLinksToCreate(assetsToPublish, feedConfig, "https://example.com/feed/");
+
+            links.Should().BeEquivalentTo(new List<AkaMSLink>
+            {
+                new AkaMSLink("dotnet/9/aspire/rc/daily/get-aspire-cli.ps1", "https://example.com/feed/assets/installers/get-aspire-cli.ps1"),
+                new AkaMSLink("dotnet/9/aspire/rc/daily/get-aspire-cli.ps1.sha512", "https://example.com/feed/assets/installers/get-aspire-cli.ps1.sha512"),
+                new AkaMSLink("dotnet/9/aspire/rc/daily/get-aspire-cli.sh", "https://example.com/feed/assets/installers/get-aspire-cli.sh"),
+                new AkaMSLink("dotnet/9/aspire/rc/daily/get-aspire-cli.sh.sha512", "https://example.com/feed/assets/installers/get-aspire-cli.sh.sha512"),
+            });
+        }
     }
 }

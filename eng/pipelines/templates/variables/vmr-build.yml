@@ -178,6 +178,11 @@ variables:
 - name: ubuntuArmContainerImage
   value: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-24.04-arm64
 
+- name: azurelinuxBuildContainerName
+  value: azurelinuxBuildContainer
+- name: azurelinuxBuildContainerImage
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-build-amd64
+
 - name: azurelinuxX64CrossContainerName
   value: azurelinuxX64CrossContainer
 - name: azurelinuxX64CrossContainerImage

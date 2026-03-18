@@ -102,8 +102,7 @@
       <_UseHardLinks Condition="!$([MSBuild]::IsOSPlatform('Windows'))">false</_UseHardLinks>
     </PropertyGroup>
 
-    <!-- OSX is disabled until https://github.com/dotnet/runtime/issues/125332 is fixed. -->
-    <DeduplicateAssembliesWithLinks Condition="!$([MSBuild]::IsOSPlatform('OSX'))" LayoutDirectory="$(RedistInstallerLayoutPath)sdk\" UseHardLinks="$(_UseHardLinks)" />
+    <DeduplicateAssembliesWithLinks LayoutDirectory="$(RedistInstallerLayoutPath)sdk\" UseHardLinks="$(_UseHardLinks)" />
   </Target>
 
   <!-- Copy the sdk layout into a temporary folder so that it's nested under "sdk\$(Version)\" which is
