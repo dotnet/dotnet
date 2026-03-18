@@ -153,6 +153,11 @@ parameters:
   displayName: True when build is running from dotnet/dotnet directly
   type: boolean
 
+# Disable binary analysis caching by busting the cache key
+- name: disableBinaryAnalysisCaching
+  type: boolean
+  default: false
+
 jobs:
 - job: ${{ parameters.buildName }}_${{ parameters.targetArchitecture }}${{ replace(format('_BuildPass{0}', coalesce(parameters.buildPass, '1')), '_BuildPass1', '') }}
   pool: ${{ parameters.pool }}
@@ -358,6 +363,10 @@ jobs:
     timeoutInMinutes: 240
 
   templateContext:
+    ${{ if eq(parameters.disableBinaryAnalysisCaching, true) }}:
+      sdl:
+        binaryAnalysisCaching:
+          userState: 'no-cache-$(Build.BuildId)-$(System.JobAttempt)'
     outputParentDirectory: $(Build.ArtifactStagingDirectory)
     outputs:
     - output: pipelineArtifact
