@@ -99,14 +99,14 @@ internal sealed class CohostRangeFormattingEndpoint(
             (service, solutionInfo, cancellationToken) => service.GetRangeFormattingEditsAsync(solutionInfo, razorDocument.Id, htmlChanges, request.Range.ToLinePositionSpan(), options, cancellationToken),
             cancellationToken).ConfigureAwait(false);
 
-        if (remoteResult.Length > 0)
+        if (remoteResult.IsDefaultOrEmpty)
         {
-            _logger.LogDebug($"Got a total of {remoteResult.Length} ranges back from OOP");
-
-            return [.. remoteResult.Select(sourceText.GetTextEdit)];
+            return null;
         }
 
-        return null;
+        _logger.LogDebug($"Got a total of {remoteResult.Length} ranges back from OOP");
+
+        return [.. remoteResult.Select(sourceText.GetTextEdit)];
     }
 
     private async Task<TextEdit[]?> TryGetHtmlFormattingEditsAsync(DocumentRangeFormattingParams request, TextDocument razorDocument, CancellationToken cancellationToken)
