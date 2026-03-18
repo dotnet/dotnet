@@ -5,18 +5,17 @@ This file should be imported by eng/Versions.props
 -->
 <Project>
   <PropertyGroup>
-    <!-- _git/dotnet-dotnet dependencies -->
-    <MicrosoftBuildPackageVersion>18.3.3</MicrosoftBuildPackageVersion>
-    <MicrosoftBuildUtilitiesCorePackageVersion>18.3.3</MicrosoftBuildUtilitiesCorePackageVersion>
-    <MicrosoftDotNetGenAPITaskPackageVersion>10.0.104-servicing.26110.123</MicrosoftDotNetGenAPITaskPackageVersion>
-    <MicrosoftNETCoreILAsmPackageVersion>10.0.4</MicrosoftNETCoreILAsmPackageVersion>
-    <MicrosoftNETCoreILDAsmPackageVersion>10.0.4</MicrosoftNETCoreILDAsmPackageVersion>
-    <!-- dotnet/dotnet dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26070.104</MicrosoftDotNetArcadeSdkPackageVersion>
+    <!-- dotnet-dotnet dependencies -->
+    <MicrosoftBuildPackageVersion>18.0.11</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildUtilitiesCorePackageVersion>18.0.11</MicrosoftBuildUtilitiesCorePackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26161.102</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetGenAPITaskPackageVersion>10.0.106-servicing.26161.102</MicrosoftDotNetGenAPITaskPackageVersion>
+    <MicrosoftNETCoreILAsmPackageVersion>10.0.6</MicrosoftNETCoreILAsmPackageVersion>
+    <MicrosoftNETCoreILDAsmPackageVersion>10.0.6</MicrosoftNETCoreILDAsmPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
-    <!-- _git/dotnet-dotnet dependencies -->
+    <!-- dotnet-dotnet dependencies -->
     <MicrosoftBuildVersion>$(MicrosoftBuildPackageVersion)</MicrosoftBuildVersion>
     <MicrosoftBuildUtilitiesCoreVersion>$(MicrosoftBuildUtilitiesCorePackageVersion)</MicrosoftBuildUtilitiesCoreVersion>
     <MicrosoftDotNetGenAPITaskVersion>$(MicrosoftDotNetGenAPITaskPackageVersion)</MicrosoftDotNetGenAPITaskVersion>
