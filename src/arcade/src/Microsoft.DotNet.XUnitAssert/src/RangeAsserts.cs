@@ -1,6 +1,4 @@
 #pragma warning disable CA1052 // Static holder types should be static
-#pragma warning disable IDE0058 // Expression value is never used
-#pragma warning disable IDE0161 // Convert to file-scoped namespace
 
 #if XUNIT_NULLABLE
 #nullable enable
@@ -15,11 +13,6 @@ using Xunit.Sdk;
 
 namespace Xunit
 {
-#if XUNIT_VISIBILITY_INTERNAL
-	internal
-#else
-	public
-#endif
 	partial class Assert
 	{
 		/// <summary>

@@ -130,7 +130,15 @@ namespace Microsoft.SignCheck.Verification
             {
                 FileVerifier fileVerifier = GetFileVerifier(file);
                 SignatureVerificationResult result;
-                result = fileVerifier.VerifySignature(file, parent: null, virtualPath: Path.GetFileName(file));
+
+                try
+                {
+                    result = fileVerifier.VerifySignature(file, parent: null, virtualPath: Path.GetFileName(file));
+                }
+                catch (Exception e)
+                {
+                    result = SignatureVerificationResult.ErrorResult(file, parent: null, virtualPath: Path.GetFileName(file), e);
+                }
 
                 if ((Options & SignatureVerificationOptions.GenerateExclusion) == SignatureVerificationOptions.GenerateExclusion)
                 {

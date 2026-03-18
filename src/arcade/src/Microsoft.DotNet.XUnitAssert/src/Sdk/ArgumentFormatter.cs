@@ -1,19 +1,7 @@
 #pragma warning disable CA1031 // Do not catch general exception types
-#pragma warning disable CA1707 // Identifiers should not contain underscores
-#pragma warning disable CA1810 // Initialize reference type static fields inline
-#pragma warning disable CA1825 // Avoid zero-length array allocations
-#pragma warning disable CA2263 // Prefer generic overload when type is known
-#pragma warning disable IDE0018 // Inline variable declaration
 #pragma warning disable IDE0019 // Use pattern matching
-#pragma warning disable IDE0038 // Use pattern matching
-#pragma warning disable IDE0040 // Add accessibility modifiers
-#pragma warning disable IDE0045 // Convert to conditional expression
-#pragma warning disable IDE0046 // Convert to conditional expression
 #pragma warning disable IDE0057 // Use range operator
-#pragma warning disable IDE0058 // Expression value is never used
-#pragma warning disable IDE0078 // Use pattern matching
 #pragma warning disable IDE0090 // Use 'new(...)'
-#pragma warning disable IDE0161 // Convert to file-scoped namespace
 #pragma warning disable IDE0300 // Simplify collection initialization
 
 #if XUNIT_NULLABLE
@@ -21,25 +9,23 @@
 #else
 // In case this is source-imported with global nullable enabled but no XUNIT_NULLABLE
 #pragma warning disable CS8600
-#pragma warning disable CS8601
 #pragma warning disable CS8602
 #pragma warning disable CS8603
 #pragma warning disable CS8604
 #pragma warning disable CS8605
-#pragma warning disable CS8618
 #pragma warning disable CS8625
 #endif
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Xunit.Internal;
 
 #if XUNIT_ARGUMENTFORMATTER_PRIVATE
 namespace Xunit.Internal
@@ -55,87 +41,65 @@ namespace Xunit.Sdk
 #else
 	public
 #endif
-	static class ArgumentFormatter
+	static partial class ArgumentFormatter
 	{
+		static readonly Lazy<int> maxEnumerableLength = new Lazy<int>(
+			() => GetEnvironmentValue(EnvironmentVariables.PrintMaxEnumerableLength, EnvironmentVariables.Defaults.PrintMaxEnumerableLength));
+		static readonly Lazy<int> maxObjectDepth = new Lazy<int>(
+			() => GetEnvironmentValue(EnvironmentVariables.PrintMaxObjectDepth, EnvironmentVariables.Defaults.PrintMaxObjectDepth));
+		static readonly Lazy<int> maxObjectMemberCount = new Lazy<int>(
+			() => GetEnvironmentValue(EnvironmentVariables.PrintMaxObjectMemberCount, EnvironmentVariables.Defaults.PrintMaxObjectMemberCount));
+		static readonly Lazy<int> maxStringLength = new Lazy<int>(
+			() => GetEnvironmentValue(EnvironmentVariables.PrintMaxStringLength, EnvironmentVariables.Defaults.PrintMaxStringLength));
+
 		internal static readonly string EllipsisInBrackets = "[" + new string((char)0x00B7, 3) + "]";
 
-		/// <summary>
-		/// Gets the maximum printing depth, in terms of objects before truncation.
-		/// </summary>
-		public const int MAX_DEPTH = 3;
-
-		/// <summary>
-		/// Gets the maximum number of values printed for collections before truncation.
-		/// </summary>
-		public const int MAX_ENUMERABLE_LENGTH = 5;
-
-		/// <summary>
-		/// Gets the maximum number of items (properties or fields) printed in an object before truncation.
-		/// </summary>
-		public const int MAX_OBJECT_ITEM_COUNT = 5;
-
-		/// <summary>
-		/// Gets the maximum strength length before truncation.
-		/// </summary>
-		public const int MAX_STRING_LENGTH = 50;
-
-		static readonly object[] EmptyObjects = new object[0];
-		static readonly Type[] EmptyTypes = new Type[0];
-
-#if !XUNIT_AOT
-#if XUNIT_NULLABLE
-		static readonly PropertyInfo? tupleIndexer;
-		static readonly Type? tupleInterfaceType;
-		static readonly PropertyInfo? tupleLength;
-#else
-		static readonly PropertyInfo tupleIndexer;
-		static readonly Type tupleInterfaceType;
-		static readonly PropertyInfo tupleLength;
-#endif
-#endif
-
 		// List of intrinsic types => C# type names
-		static readonly Dictionary<TypeInfo, string> TypeMappings = new Dictionary<TypeInfo, string>
+		static readonly Dictionary<Type, string> TypeMappings = new Dictionary<Type, string>
 		{
-			{ typeof(bool).GetTypeInfo(), "bool" },
-			{ typeof(byte).GetTypeInfo(), "byte" },
-			{ typeof(sbyte).GetTypeInfo(), "sbyte" },
-			{ typeof(char).GetTypeInfo(), "char" },
-			{ typeof(decimal).GetTypeInfo(), "decimal" },
-			{ typeof(double).GetTypeInfo(), "double" },
-			{ typeof(float).GetTypeInfo(), "float" },
-			{ typeof(int).GetTypeInfo(), "int" },
-			{ typeof(uint).GetTypeInfo(), "uint" },
-			{ typeof(long).GetTypeInfo(), "long" },
-			{ typeof(ulong).GetTypeInfo(), "ulong" },
-			{ typeof(object).GetTypeInfo(), "object" },
-			{ typeof(short).GetTypeInfo(), "short" },
-			{ typeof(ushort).GetTypeInfo(), "ushort" },
-			{ typeof(string).GetTypeInfo(), "string" },
-			{ typeof(IntPtr).GetTypeInfo(), "nint" },
-			{ typeof(UIntPtr).GetTypeInfo(), "nuint" },
+			{ typeof(bool), "bool" },
+			{ typeof(byte), "byte" },
+			{ typeof(sbyte), "sbyte" },
+			{ typeof(char), "char" },
+			{ typeof(decimal), "decimal" },
+			{ typeof(double), "double" },
+			{ typeof(float), "float" },
+			{ typeof(int), "int" },
+			{ typeof(uint), "uint" },
+			{ typeof(long), "long" },
+			{ typeof(ulong), "ulong" },
+			{ typeof(object), "object" },
+			{ typeof(short), "short" },
+			{ typeof(ushort), "ushort" },
+			{ typeof(string), "string" },
+			{ typeof(IntPtr), "nint" },
+			{ typeof(UIntPtr), "nuint" },
 		};
-
-#if !XUNIT_AOT
-		static ArgumentFormatter()
-		{
-			tupleInterfaceType = Type.GetType("System.Runtime.CompilerServices.ITuple");
-
-			if (tupleInterfaceType != null)
-			{
-				tupleIndexer = tupleInterfaceType.GetRuntimeProperty("Item");
-				tupleLength = tupleInterfaceType.GetRuntimeProperty("Length");
-			}
-
-			if (tupleIndexer == null || tupleLength == null)
-				tupleInterfaceType = null;
-		}
-#endif
 
 		/// <summary>
 		/// Gets the ellipsis value (three middle dots, aka U+00B7).
 		/// </summary>
 		public static string Ellipsis { get; } = new string((char)0x00B7, 3);
+
+		/// <summary>
+		/// Gets the maximum number of values printed for collections before truncation.
+		/// </summary>
+		public static int MaxEnumerableLength => maxEnumerableLength.Value;
+
+		/// <summary>
+		/// Gets the maximum printing depth, in terms of objects before truncation.
+		/// </summary>
+		public static int MaxObjectDepth => maxObjectDepth.Value;
+
+		/// <summary>
+		/// Gets the maximum number of items (properties or fields) printed in an object before truncation.
+		/// </summary>
+		public static int MaxObjectMemberCount => maxObjectMemberCount.Value;
+
+		/// <summary>
+		/// Gets the maximum strength length before truncation.
+		/// </summary>
+		public static int MaxStringLength => maxStringLength.Value;
 
 		/// <summary>
 		/// Escapes a string for printing, attempting to most closely model the value on how you would
@@ -146,7 +110,7 @@ namespace Xunit.Sdk
 		/// <param name="s">The string value to be escaped</param>
 		public static string EscapeString(string s)
 		{
-#if NET6_0_OR_GREATER
+#if NET8_0_OR_GREATER
 			ArgumentNullException.ThrowIfNull(s);
 #else
 			if (s == null)
@@ -157,12 +121,8 @@ namespace Xunit.Sdk
 			for (var i = 0; i < s.Length; i++)
 			{
 				var ch = s[i];
-#if XUNIT_NULLABLE
-				string? escapeSequence;
-#else
-				string escapeSequence;
-#endif
-				if (TryGetEscapeSequence(ch, out escapeSequence))
+
+				if (TryGetEscapeSequence(ch, out var escapeSequence))
 					builder.Append(escapeSequence);
 				else if (ch < 32) // C0 control char
 					builder.AppendFormat(CultureInfo.CurrentCulture, @"\x{0}", (+ch).ToString("x2", CultureInfo.CurrentCulture));
@@ -183,32 +143,18 @@ namespace Xunit.Sdk
 			return builder.ToString();
 		}
 
-#if XUNIT_NULLABLE
-		public static string Format(Type? value)
-#else
-		public static string Format(Type value)
-#endif
-		{
-			if (value is null)
-				return "null";
-
-			return string.Format(CultureInfo.CurrentCulture, "typeof({0})", FormatTypeName(value, fullTypeName: true));
-		}
-
 		/// <summary>
 		/// Formats a value for display.
 		/// </summary>
 		/// <param name="value">The value to be formatted</param>
 		/// <param name="depth">The optional printing depth (1 indicates a top-level value)</param>
-		[DynamicDependency("ToString", typeof(object))]
-		[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2072", Justification = "We can't easily annotate callers of this type to require them to preserve the ToString method as we need to use the runtime type. We also can't preserve all of the properties and fields for the complex type printing, but any members that are trimmed aren't used and thus don't contribute to the asserts.")]
-		public static string Format<
-			[DynamicallyAccessedMembers(
-				DynamicallyAccessedMemberTypes.PublicFields |
-				DynamicallyAccessedMemberTypes.NonPublicFields |
-				DynamicallyAccessedMemberTypes.PublicProperties |
-				DynamicallyAccessedMemberTypes.NonPublicProperties |
-				DynamicallyAccessedMemberTypes.PublicMethods)] T>(T value, int depth = 1)
+		public static string Format(
+#if XUNIT_NULLABLE
+			object? value,
+#else
+			object value,
+#endif
+			int depth = 1)
 		{
 			if (value == null)
 				return "null";
@@ -219,7 +165,7 @@ namespace Xunit.Sdk
 
 			try
 			{
-				if (value.GetType().GetTypeInfo().IsEnum)
+				if (value.GetType().IsEnum)
 					return FormatEnumValue(value);
 
 				if (value is char c)
@@ -234,33 +180,33 @@ namespace Xunit.Sdk
 				if (value is DateTime || value is DateTimeOffset)
 					return FormatDateTimeValue(value);
 
-				var stringParameter = value as string;
-				if (stringParameter != null)
+				if (value is string stringParameter)
 					return FormatStringValue(stringParameter);
 
 #if !XUNIT_ARGUMENTFORMATTER_PRIVATE
-				var tracker = value as CollectionTracker;
-				if (tracker != null)
+				if (value is CollectionTracker tracker)
 					return tracker.FormatStart(depth);
 #endif
 
-				var enumerable = value as IEnumerable;
-				if (enumerable != null)
+				if (value is IEnumerable enumerable)
 					return FormatEnumerableValue(enumerable, depth);
 
 				var type = value.GetType();
-				var typeInfo = type.GetTypeInfo();
 
+#if NET8_0_OR_GREATER
 				if (value is ITuple tuple)
 					return FormatTupleValue(tuple, depth);
+#else
+				if (tupleInterfaceType != null && type.GetInterfaces().Contains(tupleInterfaceType))
+					return FormatTupleValue(value, depth);
+#endif
 
-				if (typeInfo.IsValueType)
-					return FormatValueTypeValue(value, typeInfo);
+				if (type.IsValueType)
+					return FormatValueTypeValue(value, type);
 
-				var task = value as Task;
-				if (task != null)
+				if (value is Task task)
 				{
-					var typeParameters = typeInfo.GenericTypeArguments;
+					var typeParameters = type.GenericTypeArguments;
 					var typeName =
 						typeParameters.Length == 0
 							? "Task"
@@ -271,25 +217,13 @@ namespace Xunit.Sdk
 
 				// TODO: ValueTask?
 
-				var isAnonymousType = typeInfo.IsAnonymousType();
-				if (!isAnonymousType)
-				{
-					var toString = type.GetRuntimeMethod("ToString", EmptyTypes);
-
-					if (toString != null && toString.DeclaringType != typeof(object))
-#if XUNIT_NULLABLE
-						return ((string?)toString.Invoke(value, EmptyObjects)) ?? "null";
-#else
-						return ((string)toString.Invoke(value, EmptyObjects)) ?? "null";
-#endif
-				}
-
+				var isAnonymousType = type.IsAnonymousType();
 				return FormatComplexValue(value, depth, type, isAnonymousType);
 			}
 			catch (Exception ex)
 			{
 				// Sometimes an exception is thrown when formatting an argument, such as in ToString.
-				// In these cases, we don't want xunit to crash, as tests may have passed despite this.
+				// In these cases, we don't want to crash, as tests may have passed despite this.
 				return string.Format(CultureInfo.CurrentCulture, "{0} was thrown formatting an object of type \"{1}\"", ex.GetType().Name, value.GetType());
 			}
 		}
@@ -300,12 +234,7 @@ namespace Xunit.Sdk
 				return @"'\''";
 
 			// Take care of all of the escape sequences
-#if XUNIT_NULLABLE
-			string? escapeSequence;
-#else
-			string escapeSequence;
-#endif
-			if (TryGetEscapeSequence(value, out escapeSequence))
+			if (TryGetEscapeSequence(value, out var escapeSequence))
 				return string.Format(CultureInfo.CurrentCulture, "'{0}'", escapeSequence);
 
 			if (char.IsLetterOrDigit(value) || char.IsPunctuation(value) || char.IsSymbol(value) || value == ' ')
@@ -315,51 +244,6 @@ namespace Xunit.Sdk
 			return string.Format(CultureInfo.CurrentCulture, "0x{0:x4}", (int)value);
 		}
 
-		static string FormatComplexValue(
-			object value,
-			int depth,
-			[DynamicallyAccessedMembers(
-				DynamicallyAccessedMemberTypes.PublicFields |
-				DynamicallyAccessedMemberTypes.NonPublicFields |
-				DynamicallyAccessedMemberTypes.PublicProperties |
-				DynamicallyAccessedMemberTypes.NonPublicProperties)] Type type,
-			bool isAnonymousType)
-		{
-			var typeName = isAnonymousType ? "" : type.Name + " ";
-
-			if (depth == MAX_DEPTH)
-				return string.Format(CultureInfo.CurrentCulture, "{0}{{ {1} }}", typeName, Ellipsis);
-
-			var fields =
-				type
-					.GetRuntimeFields()
-					.Where(f => f.IsPublic && !f.IsStatic)
-					.Select(f => new { name = f.Name, value = WrapAndGetFormattedValue(() => f.GetValue(value), depth) });
-
-			var properties =
-				type
-					.GetRuntimeProperties()
-					.Where(p => p.GetMethod != null && p.GetMethod.IsPublic && !p.GetMethod.IsStatic)
-					.Select(p => new { name = p.Name, value = WrapAndGetFormattedValue(() => p.GetValue(value), depth) });
-
-			var parameters =
-				fields
-					.Concat(properties)
-					.OrderBy(p => p.name)
-					.Take(MAX_OBJECT_ITEM_COUNT + 1)
-					.ToList();
-
-			if (parameters.Count == 0)
-				return string.Format(CultureInfo.CurrentCulture, "{0}{{ }}", typeName);
-
-			var formattedParameters = string.Join(", ", parameters.Take(MAX_OBJECT_ITEM_COUNT).Select(p => string.Format(CultureInfo.CurrentCulture, "{0} = {1}", p.name, p.value)));
-
-			if (parameters.Count > MAX_OBJECT_ITEM_COUNT)
-				formattedParameters += ", " + Ellipsis;
-
-			return string.Format(CultureInfo.CurrentCulture, "{0}{{ {1} }}", typeName, formattedParameters);
-		}
-
 		static string FormatDateTimeValue(object value) =>
 			string.Format(CultureInfo.CurrentCulture, "{0:o}", value);
 
@@ -367,7 +251,7 @@ namespace Xunit.Sdk
 			string.Format(CultureInfo.CurrentCulture, "{0:G17}", value);
 
 		static string FormatEnumValue(object value) =>
-#if NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+#if NET8_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
 			value.ToString()?.Replace(", ", " | ", StringComparison.Ordinal) ?? "null";
 #else
 			value.ToString()?.Replace(", ", " | ") ?? "null";
@@ -377,23 +261,11 @@ namespace Xunit.Sdk
 			IEnumerable enumerable,
 			int depth)
 		{
-			if (depth == MAX_DEPTH)
+			if (depth > MaxObjectDepth)
 				return EllipsisInBrackets;
 
-			var result = new StringBuilder();
-
-#if !XUNIT_AOT
-			var groupingTypes = GetGroupingTypes(enumerable);
-			if (groupingTypes != null)
-			{
-				var groupingInterface = typeof(IGrouping<,>).MakeGenericType(groupingTypes);
-				var key = groupingInterface.GetRuntimeProperty("Key")?.GetValue(enumerable);
-				result.AppendFormat(CultureInfo.CurrentCulture, "[{0}] = ", key?.ToString() ?? "null");
-			}
-			else if (!SafeToMultiEnumerate(enumerable))
-#else
-			if (!SafeToMultiEnumerate(enumerable))
-#endif
+			var result = new StringBuilder(GetGroupingKeyPrefix(enumerable));
+			if (result.Length == 0 && !SafeToMultiEnumerate(enumerable))
 				return EllipsisInBrackets;
 
 			// This should only be used on values that are known to be re-enumerable
@@ -408,7 +280,7 @@ namespace Xunit.Sdk
 				if (idx != 0)
 					result.Append(", ");
 
-				if (idx == MAX_ENUMERABLE_LENGTH)
+				if (idx == MaxEnumerableLength)
 				{
 					result.Append(Ellipsis);
 					break;
@@ -431,15 +303,15 @@ namespace Xunit.Sdk
 
 		static string FormatStringValue(string value)
 		{
-#if NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+#if NET8_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
 			value = EscapeString(value).Replace(@"""", @"\""", StringComparison.Ordinal); // escape double quotes
 #else
 			value = EscapeString(value).Replace(@"""", @"\"""); // escape double quotes
 #endif
 
-			if (value.Length > MAX_STRING_LENGTH)
+			if (value.Length > MaxStringLength)
 			{
-				var displayed = value.Substring(0, MAX_STRING_LENGTH);
+				var displayed = value.Substring(0, MaxStringLength);
 				return string.Format(CultureInfo.CurrentCulture, "\"{0}\"{1}", displayed, Ellipsis);
 			}
 
@@ -447,18 +319,34 @@ namespace Xunit.Sdk
 		}
 
 		static string FormatTupleValue(
+#if NET8_0_OR_GREATER
 			ITuple tupleParameter,
+#else
+			object tupleParameter,
+#endif
 			int depth)
 		{
 			var result = new StringBuilder("Tuple (");
+#if NET8_0_OR_GREATER
 			var length = tupleParameter.Length;
+#elif XUNIT_NULLABLE
+			var length = (int)tupleLength!.GetValue(tupleParameter)!;
+#else
+			var length = (int)tupleLength.GetValue(tupleParameter);
+#endif
 
 			for (var idx = 0; idx < length; ++idx)
 			{
 				if (idx != 0)
 					result.Append(", ");
 
+#if NET8_0_OR_GREATER
 				var value = tupleParameter[idx];
+#elif XUNIT_NULLABLE
+				var value = tupleIndexer!.GetValue(tupleParameter, new object[] { idx });
+#else
+				var value = tupleIndexer.GetValue(tupleParameter, new object[] { idx });
+#endif
 				result.Append(Format(value, depth + 1));
 			}
 
@@ -472,22 +360,28 @@ namespace Xunit.Sdk
 		/// of "Int32" or "System.Int32").
 		/// </summary>
 		/// <param name="type">The type to get the formatted name of</param>
-		/// <param name="fullTypeName">Set to <c>true</c> to include the namespace; set to <c>false</c> for just the simple type name</param>
+		/// <param name="fullTypeName">Set to <see langword="true"/> to include the namespace; set to <see langword="false"/> for just the simple type name</param>
 		public static string FormatTypeName(
 			Type type,
 			bool fullTypeName = false)
 		{
-			var typeInfo = type.GetTypeInfo();
+#if NET8_0_OR_GREATER
+			ArgumentNullException.ThrowIfNull(type, nameof(type));
+#else
+			if (type is null)
+				throw new ArgumentNullException(nameof(type));
+#endif
+
 			var arraySuffix = "";
 
 			// Deconstruct and re-construct array
-			while (typeInfo.IsArray)
+			while (type.IsArray)
 			{
-				if (typeInfo.IsSZArrayType())
+				if (type.IsSZArrayType())
 					arraySuffix += "[]";
 				else
 				{
-					var rank = typeInfo.GetArrayRank();
+					var rank = type.GetArrayRank();
 					if (rank == 1)
 						arraySuffix += "[*]";
 					else
@@ -495,26 +389,21 @@ namespace Xunit.Sdk
 				}
 
 #if XUNIT_NULLABLE
-				typeInfo = typeInfo.GetElementType()!.GetTypeInfo();
+				type = type.GetElementType()!;
 #else
-				typeInfo = typeInfo.GetElementType().GetTypeInfo();
+				type = type.GetElementType();
 #endif
 			}
 
 			// Map C# built-in type names
-#if XUNIT_NULLABLE
-			string? result;
-#else
-			string result;
-#endif
-			var shortTypeInfo = typeInfo.IsGenericType ? typeInfo.GetGenericTypeDefinition().GetTypeInfo() : typeInfo;
-			if (!TypeMappings.TryGetValue(shortTypeInfo, out result))
-				result = fullTypeName ? typeInfo.FullName : typeInfo.Name;
+			var shortType = type.IsGenericType ? type.GetGenericTypeDefinition() : type;
+			if (!TypeMappings.TryGetValue(shortType, out var result))
+				result = fullTypeName ? type.FullName : type.Name;
 
-			if (result == null)
-				return typeInfo.Name;
+			if (result is null)
+				return type.Name;
 
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+#if NET8_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
 			var tickIdx = result.IndexOf('`', StringComparison.Ordinal);
 #else
 			var tickIdx = result.IndexOf('`');
@@ -522,121 +411,55 @@ namespace Xunit.Sdk
 			if (tickIdx > 0)
 				result = result.Substring(0, tickIdx);
 
-			if (typeInfo.IsGenericTypeDefinition)
-				result = string.Format(CultureInfo.CurrentCulture, "{0}<{1}>", result, new string(',', typeInfo.GenericTypeParameters.Length - 1));
-			else if (typeInfo.IsGenericType)
+			if (type.IsGenericTypeDefinition)
+				result = string.Format(CultureInfo.CurrentCulture, "{0}<{1}>", result, new string(',', type.GetGenericArguments().Length - 1));
+			else if (type.IsGenericType)
 			{
-				if (typeInfo.GetGenericTypeDefinition() == typeof(Nullable<>))
-					result = FormatTypeName(typeInfo.GenericTypeArguments[0]) + "?";
+				if (type.GetGenericTypeDefinition() == typeof(Nullable<>))
+					result = FormatTypeName(type.GenericTypeArguments[0]) + "?";
 				else
-					result = string.Format(CultureInfo.CurrentCulture, "{0}<{1}>", result, string.Join(", ", typeInfo.GenericTypeArguments.Select(t => FormatTypeName(t))));
+					result = string.Format(CultureInfo.CurrentCulture, "{0}<{1}>", result, string.Join(", ", type.GenericTypeArguments.Select(t => FormatTypeName(t))));
 			}
 
 			return result + arraySuffix;
 		}
 
-		[DynamicDependency(DynamicallyAccessedMemberTypes.PublicProperties, typeof(KeyValuePair<,>))]
-		[DynamicDependency("ToString", typeof(object))]
-		[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2070", Justification = "We can't easily annotate callers of this type to require them to preserve properties for the one type we need or the ToString method as we need to use the runtime type")]
-		static string FormatValueTypeValue(
-			object value,
-			TypeInfo typeInfo)
+		static int GetEnvironmentValue(
+			string environmentVariableName,
+			int defaultValue,
+			bool allowMaxValue = true)
 		{
-			if (typeInfo.IsGenericType && typeInfo.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
-			{
-				var k = typeInfo.GetProperty("Key")?.GetValue(value, null);
-				var v = typeInfo.GetProperty("Value")?.GetValue(value, null);
+			var stringValue = Environment.GetEnvironmentVariable(environmentVariableName);
+			if (string.IsNullOrWhiteSpace(stringValue) || !int.TryParse(stringValue, out var intValue))
+				return defaultValue;
 
-				return string.Format(CultureInfo.CurrentCulture, "[{0}] = {1}", Format(k), Format(v));
-			}
+			if (intValue <= 0)
+				return allowMaxValue ? int.MaxValue : defaultValue;
 
-			return Convert.ToString(value, CultureInfo.CurrentCulture) ?? "null";
+			return intValue;
 		}
 
-#if !XUNIT_AOT
-#if XUNIT_NULLABLE
-		internal static Type[]? GetGroupingTypes(object? obj)
-#else
-		internal static Type[] GetGroupingTypes(object obj)
-#endif
-		{
-			if (obj == null)
-				return null;
-
-			return
-				(from @interface in obj.GetType().GetTypeInfo().ImplementedInterfaces
-				 where @interface.GetTypeInfo().IsGenericType
-				 let genericTypeDefinition = @interface.GetGenericTypeDefinition()
-				 where genericTypeDefinition == typeof(IGrouping<,>)
-				 select @interface.GetTypeInfo()).FirstOrDefault()?.GenericTypeArguments;
-		}
-#endif
-
-		[DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ISet<>))]
-		[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2075", Justification = "We can't easily annotate callers of this type to require them to preserve interfaces, so just preserve the one interface that's checked for.")]
-#if XUNIT_NULLABLE
-		internal static Type? GetSetElementType(object? obj)
-#else
-		internal static Type GetSetElementType(object obj)
-#endif
-		{
-			if (obj == null)
-				return null;
-
-			return
-				(from @interface in obj.GetType().GetTypeInfo().ImplementedInterfaces
-				 where @interface.GetTypeInfo().IsGenericType
-				 let genericTypeDefinition = @interface.GetGenericTypeDefinition()
-				 where genericTypeDefinition == typeof(ISet<>)
-				 select @interface.GetTypeInfo()).FirstOrDefault()?.GenericTypeArguments[0];
-		}
-
-		static bool IsAnonymousType(this TypeInfo typeInfo)
+		static bool IsAnonymousType(this Type type)
 		{
 			// There isn't a sanctioned way to do this, so we look for compiler-generated types that
 			// include "AnonymousType" in their names.
-			if (typeInfo.GetCustomAttribute(typeof(CompilerGeneratedAttribute)) == null)
+			if (type.GetCustomAttribute<CompilerGeneratedAttribute>() == null)
 				return false;
 
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-			return typeInfo.Name.Contains("AnonymousType", StringComparison.Ordinal);
+#if NET8_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+			return type.Name.Contains("AnonymousType", StringComparison.Ordinal);
 #else
-			return typeInfo.Name.Contains("AnonymousType");
+			return type.Name.Contains("AnonymousType");
 #endif
 		}
 
-
-		static bool IsEnumerableOfGrouping(IEnumerable collection)
-		{
-#if !XUNIT_AOT
-			var genericEnumerableType =
-				(from @interface in collection.GetType().GetTypeInfo().ImplementedInterfaces
-				 where @interface.GetTypeInfo().IsGenericType
-				 let genericTypeDefinition = @interface.GetGenericTypeDefinition()
-				 where genericTypeDefinition == typeof(IEnumerable<>)
-				 select @interface.GetTypeInfo()).FirstOrDefault()?.GenericTypeArguments[0];
-
-			if (genericEnumerableType == null)
-				return false;
-
-			return
-				genericEnumerableType
-					.GetTypeInfo()
-					.ImplementedInterfaces
-					.Concat(new[] { genericEnumerableType })
-					.Any(i => i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition() == typeof(IGrouping<,>));
-#else
-			return false;
-#endif
-		}
-
-		static bool IsSZArrayType(this TypeInfo typeInfo) =>
-#if NETCOREAPP2_0_OR_GREATER
-			typeInfo.IsSZArray;
+		static bool IsSZArrayType(this Type type) =>
+#if NET8_0_OR_GREATER
+			type.IsSZArray;
 #elif XUNIT_NULLABLE
-			typeInfo == typeInfo.GetElementType()!.MakeArrayType().GetTypeInfo();
+			type == type.GetElementType()!.MakeArrayType();
 #else
-			typeInfo == typeInfo.GetElementType().MakeArrayType().GetTypeInfo();
+			type == type.GetElementType().MakeArrayType();
 #endif
 
 		static bool SafeToMultiEnumerate(IEnumerable collection) =>

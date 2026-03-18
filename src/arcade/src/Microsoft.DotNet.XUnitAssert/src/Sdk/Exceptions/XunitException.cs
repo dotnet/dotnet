@@ -1,7 +1,5 @@
 #pragma warning disable CA1032 // Implement standard exception constructors
-#pragma warning disable IDE0040 // Add accessibility modifiers
 #pragma warning disable IDE0090 // Use 'new(...)'
-#pragma warning disable IDE0161 // Convert to file-scoped namespace
 #pragma warning disable IDE0290 // Use primary constructor
 
 #if XUNIT_NULLABLE
@@ -25,7 +23,10 @@ namespace Xunit.Sdk
 #else
 	public
 #endif
-	partial class XunitException : Exception, IAssertionException
+	partial class XunitException : Exception
+#if !XUNIT_AOT
+		, IAssertionException
+#endif
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XunitException"/> class.
@@ -62,7 +63,7 @@ namespace Xunit.Sdk
 			var className = GetType().ToString();
 			var message = Message;
 			var result =
-				message == null || message.Length <= 0
+				message is null || message.Length == 0
 					? className
 					: string.Format(CultureInfo.CurrentCulture, "{0}: {1}", className, message);
 
