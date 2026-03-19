@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
@@ -121,14 +120,14 @@ internal sealed class CohostOnTypeFormattingEndpoint(
             (service, solutionInfo, cancellationToken) => service.GetOnTypeFormattingEditsAsync(solutionInfo, razorDocument.Id, htmlChanges, request.Position.ToLinePosition(), request.Character, options, cancellationToken),
             cancellationToken).ConfigureAwait(false);
 
-        if (remoteResult.Length > 0)
+        if (remoteResult.IsDefaultOrEmpty)
         {
-            _logger.LogDebug($"Got a total of {remoteResult.Length} ranges back from OOP");
-
-            return [.. remoteResult.Select(sourceText.GetTextEdit)];
+            return null;
         }
 
-        return null;
+        _logger.LogDebug($"Got a total of {remoteResult.Length} ranges back from OOP");
+
+        return remoteResult.SelectAsPlainArray(sourceText.GetTextEdit);
     }
 
     private async Task<TextEdit[]?> TryGetHtmlFormattingEditsAsync(DocumentOnTypeFormattingParams request, TextDocument razorDocument, CancellationToken cancellationToken)

@@ -338,25 +338,25 @@ internal static class FormattingUtilities
     public static TextEdit[] FixHtmlTextEdits(SourceText htmlSourceText, TextEdit[] edits)
     {
         // Avoid computing a minimal diff if we don't need to
-        if (!edits.Any(static e => e.NewText.Contains("~")))
+        if (!edits.Any(static e => e.NewText.Contains('~')))
             return edits;
 
         var changes = edits.SelectAsArray(htmlSourceText.GetTextChange);
 
         var fixedChanges = htmlSourceText.MinimizeTextChanges(changes);
-        return [.. fixedChanges.Select(htmlSourceText.GetTextEdit)];
+        return fixedChanges.SelectAsPlainArray(htmlSourceText.GetTextEdit);
     }
 
     internal static SumType<TextEdit, AnnotatedTextEdit>[] FixHtmlTextEdits(SourceText htmlSourceText, SumType<TextEdit, AnnotatedTextEdit>[] edits)
     {
         // Avoid computing a minimal diff if we don't need to
-        if (!edits.Any(static e => ((TextEdit)e).NewText.Contains("~")))
+        if (!edits.Any(static e => ((TextEdit)e).NewText.Contains('~')))
             return edits;
 
         var changes = edits.SelectAsArray(e => htmlSourceText.GetTextChange((TextEdit)e));
 
         var fixedChanges = htmlSourceText.MinimizeTextChanges(changes);
-        return [.. fixedChanges.Select(htmlSourceText.GetTextEdit)];
+        return fixedChanges.SelectAsPlainArray<TextChange, SumType<TextEdit, AnnotatedTextEdit>>(c => htmlSourceText.GetTextEdit(c));
     }
 
     public static void GetOriginalDocumentChangesFromLineInfo(FormattingContext context, SourceText originalText, ImmutableArray<LineInfo> formattedLineInfo, SourceText formattedText, ILogger logger, Func<int, bool>? shouldKeepInsertedNewlineAtPosition, ref PooledArrayBuilder<TextChange> formattingChanges, out int lastFormattedTextLine)
@@ -366,8 +366,32 @@ internal static class FormattingUtilities
         {
             var lineInfo = formattedLineInfo[iOriginal];
 
-            if (lineInfo.SkipPreviousLine)
+            if (lineInfo.SkippedPreviousLineOriginOffset is { } skippedPreviousLineOriginOffset)
             {
+                var skippedPreviousLineIndentationString = GetFixedIndentationString(context, lineInfo);
+                var currentLineWasCollapsedIntoSkippedPreviousLine =
+                    CurrentLineIsOnlyAnOpenBrace(originalText, iOriginal) &&
+                    CurrentLineEndsWithAnOpenBrace(formattedText, iFormatted);
+
+                FormatSkippedPreviousLine(
+                    context,
+                    originalText,
+                    formattedText,
+                    logger,
+                    shouldKeepInsertedNewlineAtPosition,
+                    skippedPreviousLineOriginOffset,
+                    skippedPreviousLineIndentationString,
+                    ref formattingChanges,
+                    iOriginal,
+                    ref iFormatted);
+
+                if (currentLineWasCollapsedIntoSkippedPreviousLine)
+                {
+                    // The carried-forward previous line already consumed this brace-only line by pulling `{`
+                    // back up onto the previous line, so the normal per-line processing below must skip it.
+                    continue;
+                }
+
                 iFormatted++;
             }
 
@@ -383,15 +407,14 @@ internal static class FormattingUtilities
             {
                 var originalLine = originalText.Lines[iOriginal];
                 var originalLineOffset = originalLine.GetFirstNonWhitespaceOffset().GetValueOrDefault();
-                var fixedIndentString = context.GetIndentationLevelString(lineInfo.FixedIndentLevel);
+                var fixedIndentString = GetFixedIndentationString(context, lineInfo);
 
                 if (lineInfo.ProcessIndentation)
                 {
                     // First up, we take the indentation from the formatted file, and add on the fixed indentation level from the line info, and
                     // replace whatever was in the original file with it.
                     indentationString = formattedText.ToString(new TextSpan(formattedLine.Start, formattedIndentation))
-                        + fixedIndentString
-                        + lineInfo.AdditionalIndentation;
+                        + fixedIndentString;
                     formattingChanges.Add(new TextChange(new TextSpan(originalLine.Start, originalLineOffset), indentationString));
                 }
 
@@ -404,11 +427,56 @@ internal static class FormattingUtilities
                     var length = lineInfo.FormattedLength == 0
                         ? originalLine.End - originalStart
                         : lineInfo.FormattedLength;
+                    var initialFormattedLine = iFormatted;
                     var formattedStart = formattedLine.Start + formattedIndentation + lineInfo.FormattedOffset;
                     var formattedEnd = formattedLine.End - lineInfo.FormattedOffsetFromEndOfLine;
+                    if (lineInfo.FormattedOffsetFromEndOfLine > 0)
+                    {
+                        // This is the partial-line case: we cannot use ConsumeNewLines because we're intentionally
+                        // trimming trailing generated text, so instead we only advance the formatted side until
+                        // we've captured all of the non-whitespace Roslyn moved onto wrapped lines.
+                        var originalNonWhitespace = CountNonWhitespaceChars(originalText, originalStart, originalStart + length);
+                        var formattedNonWhitespace = CountNonWhitespaceChars(formattedText, formattedStart, Math.Max(formattedStart, formattedEnd));
+
+                        while (originalNonWhitespace > formattedNonWhitespace &&
+                            iFormatted + 1 < formattedText.Lines.Count)
+                        {
+                            iFormatted++;
+                            formattedLine = formattedText.Lines[iFormatted];
+                            formattedEnd = formattedLine.End - lineInfo.FormattedOffsetFromEndOfLine;
+                            formattedNonWhitespace = CountNonWhitespaceChars(formattedText, formattedStart, Math.Max(formattedStart, formattedEnd));
+                        }
+                    }
+
                     if (formattedEnd > formattedStart)
                     {
-                        formattingChanges.Add(new TextChange(new TextSpan(originalStart, length), formattedText.ToString(TextSpan.FromBounds(formattedStart, formattedEnd))));
+                        // Start with Roslyn's raw formatted slice, then reapply Razor's fixed indentation
+                        // if the formatter wrapped it across lines so closing braces/trailing text stay aligned.
+                        string replacementText;
+                        if (iFormatted > initialFormattedLine && fixedIndentString.Length > 0)
+                        {
+                            using var _ = StringBuilderPool.GetPooledObject(out var replacementBuilder);
+
+                            replacementBuilder.Append(formattedText.ToString(TextSpan.FromBounds(
+                                formattedStart,
+                                formattedText.Lines[initialFormattedLine].EndIncludingLineBreak)));
+
+                            for (var wrappedLineIndex = initialFormattedLine + 1; wrappedLineIndex < iFormatted; wrappedLineIndex++)
+                            {
+                                replacementBuilder.Append(fixedIndentString);
+                                replacementBuilder.Append(formattedText.ToString(formattedText.Lines[wrappedLineIndex].SpanIncludingLineBreak));
+                            }
+
+                            replacementBuilder.Append(fixedIndentString);
+                            replacementBuilder.Append(formattedText.ToString(TextSpan.FromBounds(formattedText.Lines[iFormatted].Start, formattedEnd)));
+                            replacementText = replacementBuilder.ToString();
+                        }
+                        else
+                        {
+                            replacementText = formattedText.ToString(TextSpan.FromBounds(formattedStart, formattedEnd));
+                        }
+
+                        formattingChanges.Add(new TextChange(new TextSpan(originalStart, length), replacementText));
                     }
 
                     if (lineInfo.CheckForNewLines)
@@ -448,20 +516,28 @@ internal static class FormattingUtilities
             }
             else if (lineInfo.SkipNextLineIfBrace)
             {
-                // If the next line is a brace, we skip it. This is used to skip the opening brace of a class
-                // that we insert, but Roslyn settings might place on the same line as the class declaration,
-                // or skip the opening brace of a lambda definition we insert, but Roslyn might place it on the
-                // next line. In that case, we can't place it on the next line ourselves because Roslyn doesn't
-                // adjust the indentation of opening braces of lambdas in that scenario.
+                // If the next line is a brace, we skip it. This is used for synthetic lines like:
+                //
+                //     class @code {
+                //     () => {
+                //
+                // Roslyn may keep the brace on that same line, move it down to the next line, or pull an original
+                // next-line brace back up. We have to tolerate all of those shapes when mapping the formatted C#
+                // back onto the Razor document.
                 if (NextLineIsOnlyAnOpenBrace(formattedText, iFormatted))
                 {
                     iFormatted++;
                 }
 
-                // On the other hand, we might insert the opening brace of a class, and Roslyn might collapse
-                // it up to the previous line, so we would want to skip the next line in the original document
-                // in that case. Fortunately its illegal to have `@code {\r\n {` in a Razor file, so there can't
-                // be false positives here.
+                // The reverse case is an original next-line brace being collapsed up by Roslyn. For example, Razor may
+                // start with:
+                //
+                //     @code
+                //     {
+                //
+                // while the generated C# becomes `class @code {` on one line. In that case we skip the original brace
+                // line and copy the previous line's indentation onto it so the surviving brace still lands where Roslyn
+                // intended. Fortunately `@code {\r\n {` is illegal in Razor, so there are no false positives here.
                 if (NextLineIsOnlyAnOpenBrace(originalText, iOriginal))
                 {
                     iOriginal++;
@@ -486,12 +562,83 @@ internal static class FormattingUtilities
         lastFormattedTextLine = iFormatted;
     }
 
+    private static string GetFixedIndentationString(FormattingContext context, LineInfo lineInfo)
+        => context.GetIndentationLevelString(lineInfo.FixedIndentLevel) + (lineInfo.AdditionalIndentation ?? "");
+
+    private static void FormatSkippedPreviousLine(
+        FormattingContext context,
+        SourceText originalText,
+        SourceText formattedText,
+        ILogger logger,
+        Func<int, bool>? shouldKeepInsertedNewlineAtPosition,
+        int skippedPreviousLineOriginOffset,
+        string fixedIndentString,
+        ref PooledArrayBuilder<TextChange> formattingChanges,
+        int iOriginal,
+        ref int iFormatted)
+    {
+        Debug.Assert(iOriginal > 0);
+        Debug.Assert(iFormatted < formattedText.Lines.Count);
+
+        if (iOriginal == 0 || iFormatted >= formattedText.Lines.Count)
+        {
+            // This helper only applies to a carried-forward previous line from a multiline expression. If we're on the
+            // first original line, or we've already consumed all formatted lines, there is nothing safe to map back.
+            return;
+        }
+
+        var previousOriginalLineIndex = iOriginal - 1;
+        var originalLine = originalText.Lines[previousOriginalLineIndex];
+        var formattedLine = formattedText.Lines[iFormatted];
+        if (formattedLine.GetFirstNonWhitespaceOffset() is not { } formattedIndentation)
+        {
+            // Roslyn can leave the carried-forward line blank or whitespace-only. In that case there is no formatted
+            // content to apply to the previous original line, so we leave it alone and let normal processing continue.
+            return;
+        }
+
+        var originalStart = originalLine.Start + skippedPreviousLineOriginOffset;
+        var formattedStart = formattedLine.Start + formattedIndentation;
+        formattingChanges.Add(new TextChange(
+            TextSpan.FromBounds(originalStart, originalLine.End),
+            formattedText.ToString(TextSpan.FromBounds(formattedStart, formattedLine.End))));
+
+        ConsumeNewLines(
+            context, originalText, formattedText, logger, shouldKeepInsertedNewlineAtPosition,
+            ref formattingChanges, ref previousOriginalLineIndex, ref iFormatted, ref originalLine, ref formattedLine,
+            originalStart, formattedStart, fixedIndentString);
+    }
+
     private static bool NextLineIsOnlyAnOpenBrace(SourceText text, int lineNumber)
         => lineNumber + 1 < text.Lines.Count &&
-            text.Lines[lineNumber + 1] is { Span.Length: > 0 } nextLine &&
-            nextLine.GetFirstNonWhitespaceOffset() is { } firstNonWhitespace &&
-            nextLine.Start + firstNonWhitespace == nextLine.End - 1 &&
-            nextLine.CharAt(firstNonWhitespace) == '{';
+            CurrentLineIsOnlyAnOpenBrace(text, lineNumber + 1);
+
+    private static bool CurrentLineIsOnlyAnOpenBrace(SourceText text, int lineNumber)
+        => lineNumber >= 0 &&
+            lineNumber < text.Lines.Count &&
+            text.Lines[lineNumber] is { Span.Length: > 0 } line &&
+            line.GetFirstNonWhitespaceOffset() is { } firstNonWhitespace &&
+            line.Start + firstNonWhitespace == line.End - 1 &&
+            line.CharAt(firstNonWhitespace) == '{';
+
+    private static bool CurrentLineEndsWithAnOpenBrace(SourceText text, int lineNumber)
+    {
+        if (lineNumber < 0 || lineNumber >= text.Lines.Count)
+        {
+            return false;
+        }
+
+        var line = text.Lines[lineNumber];
+        for (var i = line.End - 1; i >= line.Start; i--)
+        {
+            if (!char.IsWhiteSpace(text[i]))
+            {
+                return text[i] == '{';
+            }
+        }
+
+        return false;
+    }
 
     /// <summary>
     /// Handles the case where the external formatter has changed the number of lines by inserting or removing newlines.
