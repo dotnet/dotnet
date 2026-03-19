@@ -3,8 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
@@ -88,15 +89,21 @@ internal abstract class AbstractEditMappingService(
             return;
         }
 
-        // entry.Edits is SumType<TextEdit, AnnotatedTextEdit> but AnnotatedTextEdit inherits from TextEdit, so we can just cast
-        var mappedEdits = await GetMappedTextEditsAsync(documentContext, [.. entry.Edits.Select(static e => (TextEdit)e)], cancellationToken).ConfigureAwait(false);
+        var edits = new TextEdit[entry.Edits.Length];
+        for (var i = 0; i < entry.Edits.Length; i++)
+        {
+            // entry.Edits is SumType<TextEdit, AnnotatedTextEdit> but AnnotatedTextEdit inherits from TextEdit, so we can just cast
+            edits[i] = (TextEdit)entry.Edits[i];
+        }
+
+        var mappedEdits = await GetMappedTextEditsAsync(documentContext, edits, cancellationToken).ConfigureAwait(false);
 
         // Update the entry in-place
         entry.TextDocument = new OptionalVersionedTextDocumentIdentifier()
         {
             DocumentUri = new(razorDocumentUri),
         };
-        entry.Edits = [.. mappedEdits.Select(static e => new SumType<TextEdit, AnnotatedTextEdit>(e))];
+        entry.Edits = mappedEdits.SelectAsPlainArray(static e => new SumType<TextEdit, AnnotatedTextEdit>(e));
     }
 
     private async Task<Dictionary<string, TextEdit[]>> MapDocumentEditsAsync(IDocumentSnapshot contextDocumentSnapshot, Dictionary<string, TextEdit[]> changes, CancellationToken cancellationToken)
@@ -139,13 +146,13 @@ internal abstract class AbstractEditMappingService(
                 continue;
             }
 
-            mappedChanges[razorDocumentUri.AbsoluteUri] = mappedEdits;
+            mappedChanges[razorDocumentUri.AbsoluteUri] = ImmutableCollectionsMarshal.AsArray(mappedEdits)!;
         }
 
         return mappedChanges;
     }
 
-    private async Task<TextEdit[]> GetMappedTextEditsAsync(DocumentContext documentContext, TextEdit[] edits, CancellationToken cancellationToken)
+    private async Task<ImmutableArray<TextEdit>> GetMappedTextEditsAsync(DocumentContext documentContext, TextEdit[] edits, CancellationToken cancellationToken)
     {
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
@@ -158,7 +165,7 @@ internal abstract class AbstractEditMappingService(
         });
         var mappedEdits = await RazorEditHelper.MapCSharpEditsAsync(textChanges, documentContext.Snapshot, _documentMappingService, _telemetryReporter, cancellationToken).ConfigureAwait(false);
 
-        return [.. mappedEdits.Select(e => LspFactory.CreateTextEdit(razorSourceText.GetLinePositionSpan(e.Span.ToTextSpan()), e.NewText.AssumeNotNull()))];
+        return mappedEdits.SelectAsArray(e => LspFactory.CreateTextEdit(razorSourceText.GetLinePositionSpan(e.Span.ToTextSpan()), e.NewText.AssumeNotNull()));
     }
 
     protected abstract bool TryGetDocumentContext(IDocumentSnapshot contextDocumentSnapshot, Uri razorDocumentUri, VSProjectContext? projectContext, [NotNullWhen(true)] out DocumentContext? documentContext);

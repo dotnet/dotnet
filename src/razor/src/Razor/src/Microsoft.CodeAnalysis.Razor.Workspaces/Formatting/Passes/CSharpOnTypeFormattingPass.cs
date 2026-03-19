@@ -211,7 +211,7 @@ internal sealed class CSharpOnTypeFormattingPass(
         if (context.AutomaticallyAddUsings)
         {
             // Because we need to parse the C# code twice for this operation, lets do a quick check to see if its even necessary
-            if (changes.Any(static e => e.NewText is not null && e.NewText.IndexOf("using") != -1))
+            if (changes.Any(static e => e.NewText is not null && e.NewText.Contains("using")))
             {
                 var usingEdits = await RazorEditHelper.GetEditsForCSharpLanguageFeaturesAsync(context.CurrentSnapshot, originalTextWithChanges, cancellationToken).ConfigureAwait(false);
                 var usingChanges = usingEdits.SelectAsArray(static e => e.ToTextChange());
@@ -223,7 +223,7 @@ internal sealed class CSharpOnTypeFormattingPass(
     }
 
     // Returns the minimal TextSpan that encompasses all the differences between the old and the new text.
-    private static SourceText ApplyChangesAndTrackChange(SourceText oldText, IEnumerable<TextChange> changes, out TextSpan spanBeforeChange, out TextSpan spanAfterChange)
+    private static SourceText ApplyChangesAndTrackChange(SourceText oldText, ImmutableArray<TextChange> changes, out TextSpan spanBeforeChange, out TextSpan spanAfterChange)
     {
         var newText = oldText.WithChanges(changes);
         var affectedRange = newText.GetEncompassingTextChangeRange(oldText);
@@ -234,7 +234,7 @@ internal sealed class CSharpOnTypeFormattingPass(
         return newText;
     }
 
-    private static ImmutableArray<TextChange> FilterCSharpTextChanges(FormattingContext context, IEnumerable<TextChange> changes)
+    private static ImmutableArray<TextChange> FilterCSharpTextChanges(FormattingContext context, ImmutableArray<TextChange> changes)
     {
         var indent = context.GetIndentationLevelString(1);
 
