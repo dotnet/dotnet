@@ -1292,7 +1292,10 @@ namespace NuGet.Commands
                 // The list of suppressions should be an aggregate of all parent item's suppressions so add the parent suppressions to the list, otherwise just use the current item's suppressions
                 if (suppressions != null)
                 {
-                    suppressions.AddRange(currentDependencyGraphItem.Suppressions);
+                    if (currentDependencyGraphItem.Suppressions != null)
+                    {
+                        suppressions.AddRange(currentDependencyGraphItem.Suppressions);
+                    }
                 }
                 else
                 {
