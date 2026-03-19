@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.IO.Compression;
+using System.IO.Packaging;
 using System.Linq;
 using System.Data;
 using System.Text;
@@ -15,12 +16,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using NuGet.Packaging;
 using Microsoft.DotNet.Build.Tasks.Installers;
-
-#if NET472
-using System.IO.Packaging;
-#else
 using System.Formats.Tar;
-#endif
 
 namespace Microsoft.DotNet.SignTool
 {
@@ -55,14 +51,10 @@ namespace Microsoft.DotNet.SignTool
             return null;
         }
 
-        public static IEnumerable<ZipDataEntry> ReadEntries(string archivePath, string tempDir, string tarToolPath, string pkgToolPath, TaskLoggingHelper log, bool ignoreContent = false)
+        public static IEnumerable<ZipDataEntry> ReadEntries(string archivePath, string tempDir, string pkgToolPath, TaskLoggingHelper log, bool ignoreContent = false)
         {
             if (FileSignInfo.IsTarGZip(archivePath))
             {
-                // Tar APIs not available on .NET FX. We need sign tool to run on desktop msbuild because building VSIX packages requires desktop.
-#if NET472
-                return ReadTarGZipEntries(archivePath, tempDir, tarToolPath, ignoreContent);
-#else
                 // TODO: Remove workaround for https://github.com/dotnet/arcade/issues/16484
                 // Hardlinks are used on Windows but System.Formats.Tar doesn't fully support them yet.
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -77,7 +69,6 @@ namespace Microsoft.DotNet.SignTool
                     {
                         UnixFileMode = (uint)entry.Mode,
                     });
-#endif
             }
             else if (FileSignInfo.IsPkg(archivePath) || FileSignInfo.IsAppBundle(archivePath))
             {
@@ -85,24 +76,16 @@ namespace Microsoft.DotNet.SignTool
             }
             else if (FileSignInfo.IsDeb(archivePath))
             {
-#if NET472
-                throw new NotImplementedException("Debian signing is not supported on .NET Framework");
-#else
                 return ReadDebContainerEntries(archivePath, "data.tar");
-#endif
             }
             else if (FileSignInfo.IsRpm(archivePath))
             {
-#if NET472
-                throw new NotImplementedException("RPM signing is not supported on .NET Framework");
-#else
                 if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
                     throw new NotImplementedException("RPM signing is only supported on Linux platform");
                 }
 
                 return ReadRpmContainerEntries(archivePath);
-#endif
             }
             else
             {
@@ -113,18 +96,15 @@ namespace Microsoft.DotNet.SignTool
         /// <summary>
         /// Repack the zip container with the signed files.
         /// </summary>
-        public void Repack(TaskLoggingHelper log, string tempDir, string wix3ToolsPath, string wixToolsPath, string tarToolPath, string pkgToolPath)
+        public void Repack(TaskLoggingHelper log, string tempDir, string wix3ToolsPath, string wixToolsPath, string pkgToolPath)
         {
-#if NET472
             if (FileSignInfo.IsVsix())
             {
                 RepackPackage(log);
             }
-            else
-#endif
-            if (FileSignInfo.IsTarGZip())
+            else if (FileSignInfo.IsTarGZip())
             {
-                RepackTarGZip(log, tempDir, tarToolPath);
+                RepackTarGZip(log, tempDir);
             }
             else if (FileSignInfo.IsUnpackableWixContainer())
             {
@@ -136,24 +116,16 @@ namespace Microsoft.DotNet.SignTool
             }
             else if (FileSignInfo.IsDeb())
             {
-#if NET472
-                throw new NotImplementedException("Debian signing is not supported on .NET Framework");
-#else
                 RepackDebContainer(log, tempDir);
-#endif
             }
             else if (FileSignInfo.IsRpm())
             {
-#if NET472
-                throw new NotImplementedException("RPM signing is not supported on .NET Framework");
-#else
                 if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
                     throw new NotImplementedException("RPM signing is only supported on Linux platform");
                 }
 
                 RepackRpmContainer(log, tempDir);
-#endif
             }
             else 
             {
@@ -161,7 +133,6 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 
-#if NET472
         /// <summary>
         /// Repack a zip container with a package structure.
         /// </summary>
@@ -201,7 +172,6 @@ namespace Microsoft.DotNet.SignTool
                 }
             }
         }
-#endif
 
         private static IEnumerable<ZipDataEntry> ReadZipEntries(string archivePath)
         {
@@ -334,9 +304,6 @@ namespace Microsoft.DotNet.SignTool
 
         private static IEnumerable<ZipDataEntry> ReadPkgOrAppBundleEntries(string archivePath, string tempDir, string pkgToolPath, bool ignoreContent)
         {
-#if NET472
-            throw new NotImplementedException("PKG signing is not supported on .NET Framework");
-#else
             string extractDir = Path.Combine(tempDir, Guid.NewGuid().ToString());
             try
             {
@@ -367,14 +334,10 @@ namespace Microsoft.DotNet.SignTool
                     Directory.Delete(extractDir, recursive: true);
                 }
             }
-#endif
         }
 
         private void RepackPkgOrAppBundles(TaskLoggingHelper log, string tempDir, string pkgToolPath)
         {
-#if NET472
-            throw new NotImplementedException("PKG manipulation is not supported on .NET Framework");
-#else
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 log.LogError("Pkg/AppBundle repackaging is not supported on Windows.");
@@ -427,89 +390,9 @@ namespace Microsoft.DotNet.SignTool
                     Directory.Delete(extractDir, recursive: true);
                 }
             }
-#endif
         }
 
-#if NETFRAMEWORK
-        private static bool RunTarProcess(string srcPath, string dstPath, string tarToolPath)
-        {
-            var process = Process.Start(new ProcessStartInfo()
-            {
-                FileName = "dotnet",
-                Arguments = $@"exec ""{tarToolPath}"" ""{srcPath}"" ""{dstPath}""",
-                UseShellExecute = false
-            });
-
-            process.WaitForExit();
-            return process.ExitCode == 0;
-        }
-
-        private static IEnumerable<ZipDataEntry> ReadTarGZipEntries(string archivePath, string tempDir, string tarToolPath, bool ignoreContent)
-        {
-            var extractDir = Path.Combine(tempDir, Guid.NewGuid().ToString());
-            try
-            {
-                Directory.CreateDirectory(extractDir);
-
-                if (!RunTarProcess(archivePath, extractDir, tarToolPath))
-                {
-                    throw new Exception($"Failed to unpack tar archive: {archivePath}");
-                }
-
-                foreach (var path in Directory.EnumerateFiles(extractDir, "*.*", SearchOption.AllDirectories))
-                {
-                    var relativePath = path.Substring(extractDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
-                    using var stream = ignoreContent ? null : (Stream)File.Open(path, FileMode.Open);
-                    yield return new ZipDataEntry(relativePath, stream);
-                }
-            }
-            finally
-            {
-                Directory.Delete(extractDir, recursive: true);
-            }
-        }
-
-        private void RepackTarGZip(TaskLoggingHelper log, string tempDir, string tarToolPath)
-        {
-            var extractDir = Path.Combine(tempDir, Guid.NewGuid().ToString());
-            try
-            {
-                Directory.CreateDirectory(extractDir);
-
-                if (!RunTarProcess(srcPath: FileSignInfo.FullPath, dstPath: extractDir, tarToolPath))
-                {
-                    log.LogMessage(MessageImportance.Low, $"Failed to unpack tar archive: dotnet {tarToolPath} {FileSignInfo.FullPath}");
-                    return;
-                }
-
-                foreach (var path in Directory.EnumerateFiles(extractDir, "*.*", SearchOption.AllDirectories))
-                {
-                    var relativePath = path.Substring(extractDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
-
-                    var signedPart = FindNestedPart(relativePath);
-                    if (!signedPart.HasValue)
-                    {
-                        log.LogMessage(MessageImportance.Low, $"Didn't find signed part for nested file: {FileSignInfo.FullPath} -> {relativePath}");
-                        continue;
-                    }
-
-                    log.LogMessage(MessageImportance.Low, $"Copying signed stream from {signedPart.Value.FileSignInfo.FullPath} to {FileSignInfo.FullPath} -> {relativePath}.");
-                    File.Copy(signedPart.Value.FileSignInfo.FullPath, path, overwrite: true);
-                }
-
-                if (!RunTarProcess(srcPath: extractDir, dstPath: FileSignInfo.FullPath, tarToolPath))
-                {
-                    log.LogMessage(MessageImportance.Low, $"Failed to pack tar archive: dotnet {tarToolPath} {FileSignInfo.FullPath}");
-                    return;
-                }
-            }
-            finally
-            {
-                Directory.Delete(extractDir, recursive: true);
-            }
-        }
-#else
-        private void RepackTarGZip(TaskLoggingHelper log, string tempDir, string tarToolPath)
+        private void RepackTarGZip(TaskLoggingHelper log, string tempDir)
         {
             // TODO: Remove workaround for https://github.com/dotnet/arcade/issues/16484
             // Hardlinks are used on Windows but System.Formats.Tar doesn't fully support them yet.
@@ -1013,27 +896,20 @@ namespace Microsoft.DotNet.SignTool
 
             return process.ExitCode == 0;
         }
-#endif
 
         internal static void SetUnixFileMode(TaskLoggingHelper log, uint? unixFileMode, string outputPath)
         {
-#if NET
             // Set file mode if not the default.
             if (!OperatingSystem.IsWindows() && unixFileMode is { } mode and not /* 0644 */ 420)
             {
                 log.LogMessage(MessageImportance.Low, $"Setting file mode {Convert.ToString(mode, 8)} on: {outputPath}");
                 File.SetUnixFileMode(outputPath, (UnixFileMode)mode);
             }
-#endif
         }
 
         private static uint? GetUnixFileMode(string filePath)
         {
-#if NET
             return OperatingSystem.IsWindows() ? null : (uint)File.GetUnixFileMode(filePath);
-#else
-            return null;
-#endif
         }
     }
 }

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.IO;
 using System.IO.MemoryMappedFiles;
@@ -81,7 +79,7 @@ namespace NuGet.Packaging
                 }
 
                 var directory = Path.GetDirectoryName(fileFullPath);
-                if (!Directory.Exists(directory))
+                if (directory != null && !Directory.Exists(directory))
                 {
                     Directory.CreateDirectory(directory);
                 }

@@ -9,6 +9,7 @@
   xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
   xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
   xmlns:glob="clr-namespace:System.Globalization;assembly=mscorlib"
+  xmlns:shell_controls="clr-namespace:Microsoft.VisualStudio.Shell.Controls;assembly=Microsoft.VisualStudio.Shell.Styles"
   Background="{DynamicResource {x:Static nuget:Brushes.DetailPaneBackground}}"
   Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
   mc:Ignorable="d"
@@ -131,7 +132,7 @@
         x:Name="_descriptionLabel"
         Text="{x:Static nuget:Resources.Label_Description}"
         FontWeight="Bold" />
-      <TextBox
+      <shell_controls:TextBox
         Style="{DynamicResource SelectableTextBlockStyle}"
         Grid.Row="1"
         x:Name="_description"
@@ -173,7 +174,7 @@
           x:Name="_versionLabel"
           AutomationProperties.Name="{Binding Text}"
           Text="{x:Static nuget:Resources.Label_Version}" />
-        <TextBox
+        <shell_controls:TextBox
           Style="{DynamicResource SelectableTextBlockStyle}"
           Grid.Row="0"
           Grid.Column="1"
@@ -242,7 +243,7 @@
           x:Name="_authorsLabel"
           AutomationProperties.Name="{Binding Text}"
           Text="{x:Static nuget:Resources.Label_Authors}" />
-        <TextBox
+        <shell_controls:TextBox
           Style="{DynamicResource SelectableTextBlockStyle}"
           Visibility="{Binding Path=PackageMetadata.Authors,Converter={StaticResource NullToVisibilityConverter}}"
           AutomationProperties.LabeledBy="{Binding ElementName=_authorsLabel}"
@@ -308,7 +309,7 @@
           Margin="0,8,0,0"
           x:Name="_downloadsLabel"
           Text="{x:Static nuget:Resources.Label_Downloads}" />
-        <TextBox
+        <shell_controls:TextBox
           Style="{DynamicResource SelectableTextBlockStyle}"
           Visibility="{Binding Path=PackageMetadata.DownloadCount,Converter={StaticResource GreaterThanThresholdToVisibilityConverter},ConverterParameter=-1}"
           AutomationProperties.LabeledBy="{Binding ElementName=_downloadsLabel}"
@@ -327,7 +328,7 @@
           Margin="0,8,0,0"
           x:Name="_datePublishedLabel"
           Text="{x:Static nuget:Resources.Label_DatePublished}" />
-        <TextBox
+        <shell_controls:TextBox
           Name="datePublished"
           Style="{DynamicResource SelectableTextBlockStyle}"
           Visibility="{Binding Path=PackageMetadata.Published,Converter={StaticResource NullToVisibilityConverter}}"
@@ -400,7 +401,7 @@
           Margin="0,8,0,0"
           x:Name="_tagsLabel"
           Text="{x:Static nuget:Resources.Label_Tags}" />
-        <TextBox
+        <shell_controls:TextBox
           Style="{DynamicResource SelectableTextBlockStyle}"
           Visibility="{Binding Path=PackageMetadata.Tags,Converter={StaticResource NullToVisibilityConverter}}"
           AutomationProperties.LabeledBy="{Binding ElementName=_tagsLabel}"

@@ -49,7 +49,7 @@ internal class ExtractToCodeBehindCodeActionResolver(
         var codeBlockContent = text.ToString(new TextSpan(actionParams.ExtractStart, actionParams.ExtractEnd - actionParams.ExtractStart)).Trim();
         var codeBehindContent = GenerateCodeBehindClass(className, actionParams.Namespace, codeBlockContent, codeDocument);
 
-        codeBehindContent = await _roslynCodeActionHelpers.GetFormattedNewFileContentsAsync(documentContext.Project, codeBehindUri, codeBehindContent, cancellationToken).ConfigureAwait(false);
+        codeBehindContent = await _roslynCodeActionHelpers.GetFormattedNewFileContentsAsync(documentContext.Snapshot.Project, codeBehindUri, codeBehindContent, cancellationToken).ConfigureAwait(false);
 
         var removeRange = codeDocument.Source.Text.GetRange(actionParams.RemoveStart, actionParams.RemoveEnd);
 
@@ -77,7 +77,7 @@ internal class ExtractToCodeBehindCodeActionResolver(
         };
     }
 
-    private string GenerateCodeBehindClass(string className, string namespaceName, string contents, RazorCodeDocument razorCodeDocument)
+    private static string GenerateCodeBehindClass(string className, string namespaceName, string contents, RazorCodeDocument razorCodeDocument)
     {
         using var _ = StringBuilderPool.GetPooledObject(out var builder);
 

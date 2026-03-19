@@ -239,4 +239,7 @@
   <data name="Remove_unnecessary_directives" xml:space="preserve">
     <value>Remove unnecessary directives</value>
   </data>
+  <data name="Formatting_Error" xml:space="preserve">
+    <value>Formatting error. Abandoning further work to not corrupt the file, please report this issue. See: https://aka.ms/razor-formatting-issue</value>
+  </data>
 </root>

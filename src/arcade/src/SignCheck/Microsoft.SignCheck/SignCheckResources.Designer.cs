@@ -214,6 +214,15 @@ namespace Microsoft.SignCheck {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Verification error: {0}.
+        /// </summary>
+        internal static string DetailVerificationError {
+            get {
+                return ResourceManager.GetString("DetailVerificationError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Timestamp: {0:MM/dd/yy H:mm:ss} ({1}).
         /// </summary>
         internal static string DetailTimestamp {

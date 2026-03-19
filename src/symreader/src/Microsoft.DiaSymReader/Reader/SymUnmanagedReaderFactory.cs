@@ -8,6 +8,9 @@ using System.IO;
 
 namespace Microsoft.DiaSymReader
 {
+#if NET
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+#endif
     public static class SymUnmanagedReaderFactory
     {
         /// <summary>

@@ -174,19 +174,8 @@ jobs:
         options: $(defaultContainerOptions)
 
   ${{ if gt(length(parameters.reuseBuildArtifactsFrom), 0) }}:
-    ${{ if eq(parameters.buildPass, '') }}:
-      # For PR builds, skip the stage 2 build if the stage 1 build fails.
-      # Otherwise, run the stage 2 build even if the stage 1 build fails so that we can get a complete assessment of the build status.
-      # The build shortcuts when stage 1 build fails and doesn't produce the SDK.
-      ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-        condition: succeeded()
-      ${{ else }}:
-        condition: succeededOrFailed()
-    ${{ else }}:
-      condition: succeeded()
     dependsOn:
-    - ${{ if gt(length(parameters.reuseBuildArtifactsFrom), 0) }}:
-      - ${{ parameters.reuseBuildArtifactsFrom }}
+    - ${{ parameters.reuseBuildArtifactsFrom }}
   variables:
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - group: AzureDevOps-Artifact-Feeds-Pats
@@ -407,6 +396,7 @@ jobs:
   steps:
   - checkout: self
     fetchDepth: 1
+    retryCountOnTaskFailure: 5
 
 
   # Create artifact staging directories upfront to satisfy 1ES templateContext.outputs validation
@@ -787,6 +777,15 @@ jobs:
           fi
 
           eval $customEnvVarsWithBashSyntax
+
+          # Raise the open file descriptor limit to prevent NuGet restore failures
+          # in cross-build containers with restrictive defaults (see dotnet/dotnet#5381)
+          if ! ulimit -n 65536 2>/dev/null; then
+            echo "Warning: Failed to raise open file descriptor limit to 65536." >&2
+            echo "Current soft limit (ulimit -Sn): $(ulimit -Sn 2>/dev/null || echo 'unknown')" >&2
+            echo "Current hard limit (ulimit -Hn): $(ulimit -Hn 2>/dev/null || echo 'unknown')" >&2
+          fi
+
           $customPreBuildArgs ./build.sh $buildArgs
         displayName: Build
         workingDirectory: $(sourcesPath)
@@ -838,6 +837,15 @@ jobs:
           buildArgs=$(echo $buildArgs | xargs) # Remove extra spaces
 
           cd $(sourcesPath)
+
+          # Raise the open file descriptor limit to prevent NuGet restore failures
+          # in cross-build containers with restrictive defaults (see dotnet/dotnet#5381)
+          if ! ulimit -n 65536 2>/dev/null; then
+            echo "Warning: failed to raise open file descriptor limit to 65536. Current limits:"
+            echo "  Soft nofile limit: $(ulimit -Sn 2>/dev/null || echo 'unknown')"
+            echo "  Hard nofile limit: $(ulimit -Hn 2>/dev/null || echo 'unknown')"
+          fi
+
           $customPreBuildArgs ./build.sh $buildArgs
 
         displayName: Run Tests

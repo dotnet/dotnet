@@ -382,5 +382,81 @@ namespace NuGet.Packaging.Test
 
             return 0;
         }
+
+        [Fact]
+        public void GetCrlDistributionPointUrls_WithNoExtension_ReturnsEmpty()
+        {
+            using (var certificate = SigningTestUtility.GenerateCertificate("test", generator => { }))
+            {
+                var urls = CertificateUtility.GetCrlDistributionPointUrls(certificate);
+
+                Assert.Empty(urls);
+            }
+        }
+
+        [Fact]
+        public void GetCrlDistributionPointUrls_WithExtension_ReturnsUrls()
+        {
+            using (var certificate = SigningTestUtility.GenerateCertificate("test",
+                generator =>
+                {
+                    generator.Extensions.Add(
+                        CertificateRevocationListBuilder.BuildCrlDistributionPointExtension(
+                            new[] { "http://crl.example.com/test.crl", "http://crl2.example.com/test.crl" }));
+                }))
+            {
+                var urls = CertificateUtility.GetCrlDistributionPointUrls(certificate);
+
+                Assert.Equal(2, urls.Count);
+                Assert.Equal("http://crl.example.com/test.crl", urls[0]);
+                Assert.Equal("http://crl2.example.com/test.crl", urls[1]);
+            }
+        }
+
+        [Fact]
+        public void GetOcspUrls_WithNoExtension_ReturnsEmpty()
+        {
+            using (var certificate = SigningTestUtility.GenerateCertificate("test", generator => { }))
+            {
+                var urls = CertificateUtility.GetOcspUrls(certificate);
+
+                Assert.Empty(urls);
+            }
+        }
+
+        [Fact]
+        public void GetOcspUrls_WithExtension_ReturnsUrl()
+        {
+            using (var certificate = SigningTestUtility.GenerateCertificate("test",
+                generator =>
+                {
+                    generator.Extensions.Add(
+                        new Microsoft.Internal.NuGet.Testing.SignedPackages.X509AuthorityInformationAccessExtension(
+                            new Uri("http://ocsp.example.com"), caIssuersUrl: null));
+                }))
+            {
+                var urls = CertificateUtility.GetOcspUrls(certificate);
+
+                Assert.Single(urls);
+                Assert.Equal("http://ocsp.example.com", urls[0]);
+            }
+        }
+
+        [Fact]
+        public void GetOcspUrls_WithCaIssuersOnly_ReturnsEmpty()
+        {
+            using (var certificate = SigningTestUtility.GenerateCertificate("test",
+                generator =>
+                {
+                    generator.Extensions.Add(
+                        new Microsoft.Internal.NuGet.Testing.SignedPackages.X509AuthorityInformationAccessExtension(
+                            ocspResponderUrl: null, caIssuersUrl: new Uri("http://ca.example.com/cert.crt")));
+                }))
+            {
+                var urls = CertificateUtility.GetOcspUrls(certificate);
+
+                Assert.Empty(urls);
+            }
+        }
     }
 }

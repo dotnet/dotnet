@@ -1,6 +1,4 @@
-#pragma warning disable CA1825 // Avoid zero-length array allocations
-#pragma warning disable IDE0161 // Convert to file-scoped namespace
-#pragma warning disable IDE0300 // Simplify collection initialization
+#pragma warning disable IDE0301 // Simplify collection initialization
 
 #if XUNIT_NULLABLE
 #nullable enable
@@ -29,7 +27,7 @@ namespace System.Diagnostics.CodeAnalysis
 		public StringSyntaxAttribute(string syntax)
 		{
 			Syntax = syntax;
-			Arguments = new object[0];
+			Arguments = Array.Empty<object>();
 		}
 
 		/// <summary>

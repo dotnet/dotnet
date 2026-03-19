@@ -9,7 +9,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.Accessors;
 using Microsoft.VisualStudio.Razor.IntegrationTests;
 using Microsoft.VisualStudio.Razor.IntegrationTests.InProcess;
 using Microsoft.VisualStudio.Shell;
@@ -155,12 +154,6 @@ internal partial class SolutionExplorerInProcess
         }
 
         _ = project.ProjectItems.AddFromFile(filePath);
-
-        var fileExtension = Path.GetExtension(filePath);
-        if (fileExtension.Equals(".razor", StringComparison.OrdinalIgnoreCase) || fileExtension.Equals(".cshtml", StringComparison.OrdinalIgnoreCase))
-        {
-            await TestServices.RazorProjectSystem.WaitForRazorFileInProjectAsync(project.FileName, filePath, cancellationToken);
-        }
 
         if (open)
         {

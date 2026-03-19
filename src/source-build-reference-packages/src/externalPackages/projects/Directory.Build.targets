@@ -2,6 +2,12 @@
 
   <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.targets, $(MSBuildThisFileDirectory)..))" />
 
+  <!-- Pass the submodule's commit hash to the inner build so SourceRevisionId reflects the
+       original repo rather than the VMR. See https://github.com/dotnet/source-build/issues/5506 -->
+  <ItemGroup Condition="'$(SourceRevisionId)' != ''">
+    <EnvironmentVariables Include="SourceRevisionId=$(SourceRevisionId)" />
+  </ItemGroup>
+
   <Target Name="BuildRepoReferences" Condition="'@(RepositoryReference)' != '' and '$(SkipRepoReferences)' != 'true'">
     <Message Importance="High" Text="Building dependencies [@(RepositoryReference)] needed by '$(InnerRepoName)'." />
 

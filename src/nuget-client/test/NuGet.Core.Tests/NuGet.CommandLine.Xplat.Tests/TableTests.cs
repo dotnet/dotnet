@@ -25,7 +25,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         public void AddRow_AddNColumnedRowInAnNColumnedTable_AddsRow(int columns)
         {
             // Arrange
-            Table myTable = new Table(Array.Empty<int>(), Enumerable.Repeat("Header", columns).ToArray());
+            Table myTable = new Table(Array.Empty<int>(), Enumerable.Repeat("Header", columns).ToArray(), Table.DefaultWindowWidth);
             List<string[]> expectedTable =
             [
                 Enumerable.Repeat("row 1", columns).ToArray(),
@@ -50,7 +50,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         public void AddRow_AddTwoColumnedRowInANotTwoColumnedTable_ThrowsAnException(int columns)
         {
             // Arrange
-            Table myTable = new Table(Array.Empty<int>(), Enumerable.Repeat("Header", columns).ToArray());
+            Table myTable = new Table(Array.Empty<int>(), Enumerable.Repeat("Header", columns).ToArray(), Table.DefaultWindowWidth);
 
             // Act & Assert
             var exception = Assert.Throws<InvalidOperationException>(() => myTable.AddRow("row", "row column2"));
@@ -65,7 +65,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             // Arrange
             string searchTerm = "TestPackage";
             Mock<ILoggerWithColor> mockLoggerWithColor = new Mock<ILoggerWithColor>();
-            Table table = new Table(Array.Empty<int>(), Enumerable.Repeat("header", 4).ToArray());
+            Table table = new Table(Array.Empty<int>(), Enumerable.Repeat("header", 4).ToArray(), Table.DefaultWindowWidth);
 
             // Act
             table.PrintResult(searchTerm, mockLoggerWithColor.Object);
@@ -94,7 +94,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                     }
                     coloredMessage[color] += message;
                 });
-            Table table = new Table(new int[] { 0, 1, 2, 3 }, new string[] { "column1", "column2", "column3", "column4" });
+            Table table = new Table(new int[] { 0, 1, 2, 3 }, new string[] { "column1", "column2", "column3", "column4" }, Table.DefaultWindowWidth);
             var expectedRedColoredMessage = string.Concat(Enumerable.Repeat(searchTerm, rows));
             var expectedDefaultColoredMessage =
                 "| column1 | column2 | column3 | column4 |" +

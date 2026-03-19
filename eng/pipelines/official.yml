@@ -115,6 +115,8 @@ extends:
         suppressionsFile: $(Build.SourcesDirectory)/.config/CredScanSuppressions.json
       componentgovernance:
         useExecutionTargetAsUserSteps: true
+      autobaseline:
+        isMainPipeline: true
 
     containers:
       ${{ variables.almaLinuxContainerName }}:
@@ -134,6 +136,9 @@ extends:
         options: ${{ variables.defaultContainerOptions }}
       ${{ variables.ubuntuArmContainerName }}:
         image: ${{ variables.ubuntuArmContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.azurelinuxBuildContainerName }}:
+        image: ${{ variables.azurelinuxBuildContainerImage }}
         options: ${{ variables.defaultContainerOptions }}
       ${{ variables.azurelinuxX64CrossContainerName }}:
         image: ${{ variables.azurelinuxX64CrossContainerImage }}

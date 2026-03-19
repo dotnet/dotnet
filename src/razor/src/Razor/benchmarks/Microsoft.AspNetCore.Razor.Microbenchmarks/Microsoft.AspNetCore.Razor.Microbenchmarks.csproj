@@ -9,7 +9,6 @@
     <IsPackable>false</IsPackable>
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
     <IsShipping>false</IsShipping>
-    <DefineConstants>$(DefineConstants);JSONSERIALIZATION_PROJECTSYSTEM</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -38,7 +37,5 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.DiaSymReader" />
   </ItemGroup>
-
-  <Import Project="..\..\..\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems" Label="Shared" />
 
 </Project>

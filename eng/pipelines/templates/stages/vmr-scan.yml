@@ -10,6 +10,7 @@ stages:
 
     steps:
     - checkout: self
+      retryCountOnTaskFailure: 5
 
     - script: |
         source ./eng/common/tools.sh

@@ -15,7 +15,6 @@ using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Credentials;
-using NuGet.Frameworks;
 
 namespace NuGet.CommandLine.XPlat
 {
@@ -123,8 +122,6 @@ namespace NuGet.CommandLine.XPlat
 
                     var packageSources = GetPackageSources(settings, sources, config);
 
-                    VerifyValidFrameworks(framework);
-
                     var reportType = GetReportType(
                         isOutdated: outdatedReport.HasValue(),
                         isDeprecated: deprecatedReport.HasValue(),
@@ -218,16 +215,6 @@ namespace NuGet.CommandLine.XPlat
             }
         }
 
-        private static void VerifyValidFrameworks(CommandOption framework)
-        {
-            var frameworks = framework.Values.Select(f =>
-                                NuGetFramework.Parse(f.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToArray()[0]));
-            if (frameworks.Any(f => f.Framework.Equals("Unsupported", StringComparison.OrdinalIgnoreCase)))
-            {
-                throw new ArgumentException(Strings.ListPkg_InvalidFramework, nameof(framework));
-            }
-        }
-
         private static ISettings ProcessConfigFile(string configFile, string projectOrSolution)
         {
             if (string.IsNullOrEmpty(configFile))
@@ -268,9 +255,9 @@ namespace NuGet.CommandLine.XPlat
             return packageSources;
         }
 
-        private static string GetEnumValues<T>() where T : Enum
+        private static string GetEnumValues<T>() where T : struct, Enum
         {
-            var enumValues = ((T[])Enum.GetValues(typeof(T)))
+            var enumValues = Enum.GetValues<T>()
                .Select(x => x.ToString());
 
             return string.Join(", ", enumValues).ToLower(CultureInfo.CurrentCulture);

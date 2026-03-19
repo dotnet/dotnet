@@ -133,7 +133,6 @@ stages:
         publish:
           logs:
             name: Logs_Test_$(Agent.OS)_$(_BuildConfig)_$(_Testing)
-        download: true
       workspace:
         clean: all
       jobs:
@@ -151,6 +150,13 @@ stages:
         - checkout: self
           clean: true
         steps:
+        - script: eng\common\cibuild.cmd
+            -configuration $(_BuildConfig)
+            -prepareMachine
+            $(_InternalBuildArgs)
+            /p:Test=false
+          displayName: Windows Build / Publish
+
         - task: PowerShell@2
           displayName: sdk-task verification
           inputs:
@@ -163,6 +169,7 @@ stages:
               /p:SymbolPublishingExclusionsFile='$(System.DefaultWorkingDirectory)/eng/SymbolPublishingExclusionsFile.txt'
               /p:Configuration=Release
               /p:PublishToMSDL=false
+
         - powershell: eng\common\build.ps1
             -configuration $(_BuildConfig)
             -prepareMachine
@@ -193,6 +200,12 @@ stages:
         - checkout: self
           clean: true
         steps:
+        - script: eng/common/cibuild.sh
+            --configuration $(_BuildConfig)
+            --prepareMachine
+            /p:Test=false
+          displayName: Unix Build / Publish
+
         - script: eng/common/build.sh
             --configuration $(_BuildConfig)
             --prepareMachine

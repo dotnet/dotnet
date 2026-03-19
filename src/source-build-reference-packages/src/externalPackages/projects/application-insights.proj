@@ -3,6 +3,7 @@
   <PropertyGroup>
     <PackagesOutput>$(ProjectDirectory)bin/$(Configuration)</PackagesOutput>
     <CustomRepoBuild>true</CustomRepoBuild>
+    <SourceRevisionId>2faa7e8b157a431daa2e71785d68abd5fa817b53</SourceRevisionId>
   </PropertyGroup>
 
   <Target Name="CustomRepoBuild">

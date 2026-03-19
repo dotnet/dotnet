@@ -7,8 +7,6 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
@@ -19,9 +17,9 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
+using RoslynSyntaxNode = Microsoft.CodeAnalysis.SyntaxNode;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
@@ -30,36 +28,6 @@ internal static class UsingDirectiveHelper
     private static readonly Regex s_addUsingVSCodeAction = new Regex("@?using ([^;]+);?$", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     private readonly record struct RazorUsingDirective(RazorUsingDirectiveSyntax Node, AddImportChunkGenerator Statement);
-
-    public static async Task<TextEdit[]> GetUsingStatementEditsAsync(IDocumentSnapshot documentSnapshot, SourceText changedCSharpText, CancellationToken cancellationToken)
-    {
-        // Now that we're done with everything, lets see if there are any using statements to fix up
-        // We do this by comparing the original generated C# code, and the changed C# code, and look for a difference
-        // in using statements. We can't use edits for this for two main reasons:
-        //
-        // 1. Using statements in the generated code might come from _Imports.razor, or from this file, and C# will shove them anywhere
-        // 2. The edit might not be clean. eg given:
-        //      using System;
-        //      using System.Text;
-        //    Adding "using System.Linq;" could result in an insert of "Linq;\r\nusing System." on line 2
-        //
-        // So because of the above, we look for a difference in C# using directive nodes directly from the C# syntax tree, and apply them manually
-        // to the Razor document.
-
-        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-        var originalCSharpSyntaxTree = await documentSnapshot.GetCSharpSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
-        var changedCSharpSyntaxTree = originalCSharpSyntaxTree.WithChangedText(changedCSharpText);
-        var oldUsings = await FindUsingDirectiveStringsAsync(originalCSharpSyntaxTree, cancellationToken).ConfigureAwait(false);
-        var newUsings = await FindUsingDirectiveStringsAsync(changedCSharpSyntaxTree, cancellationToken).ConfigureAwait(false);
-
-        using var edits = new PooledArrayBuilder<TextEdit>();
-        foreach (var usingStatement in newUsings.Except(oldUsings))
-        {
-            edits.Add(CreateAddUsingTextEdit(usingStatement, codeDocument));
-        }
-
-        return edits.ToArray();
-    }
 
     /// <summary>
     /// Extracts the namespace from a C# add using statement provided by Visual Studio
@@ -119,16 +87,13 @@ internal static class UsingDirectiveHelper
         return GetInsertUsingTextEdit(codeDocument, @namespace);
     }
 
-    public static async Task<ImmutableArray<string>> FindUsingDirectiveStringsAsync(SyntaxTree syntaxTree, CancellationToken cancellationToken)
+    public static ImmutableArray<string> FindUsingDirectiveStrings(RoslynSyntaxNode csharpSyntaxRoot, SourceText csharpSourceText)
     {
-        var syntaxRoot = await syntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
-        var sourceText = await syntaxTree.GetTextAsync(cancellationToken).ConfigureAwait(false);
-
-        return syntaxRoot
+        return csharpSyntaxRoot
             .DescendantNodes(static n => n is BaseNamespaceDeclarationSyntax or CompilationUnitSyntax)
             .OfType<UsingDirectiveSyntax>()
             .Where(static u => u.Name is not null) // If the Name is null then this isn't a using directive, it's probably an alias for a tuple type
-            .SelectAsArray(u => GetNamespaceFromDirective(u, sourceText));
+            .SelectAsArray(u => GetNamespaceFromDirective(u, csharpSourceText));
 
         static string GetNamespaceFromDirective(UsingDirectiveSyntax usingDirectiveSyntax, SourceText sourceText)
         {

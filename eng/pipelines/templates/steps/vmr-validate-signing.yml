@@ -33,23 +33,54 @@ steps:
       xcrun simctl runtime delete all
     displayName: Reclaim disk space from unused simulator runtimes
 
-# Enable validation of the source artifact after the following issues have been addressed:
-# 1. https://github.com/dotnet/release/issues/1416
-# 2. https://github.com/dotnet/arcade/issues/16249
-# **SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/dotnet-source-*
+- ${{ if eq(parameters.OS, 'Linux') }}:
+  - script: df -h
+    displayName: Print free disk space
+
 - task: DownloadPipelineArtifact@2
-  displayName: Download Vertical Build Artifacts
+  displayName: Download Shortstack Vertical Build Artifacts
   continueOnError: ${{ parameters.continueOnError }}
   enabled: true
   inputs:
     patterns: |
       **Shortstack*_Artifacts/**
-      **Linux_*_Artifacts/**
-      **OSX_*_Artifacts/**
-      **Windows_*_Artifacts/**
-      **SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/dotnet-sdk-*.tar.gz
-      **SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/Private.SourceBuilt.Artifacts.*.tar.gz
     downloadPath: '${{ parameters.signCheckFilesDirectory }}'
+
+- ${{ if eq(parameters.OS, 'Darwin') }}:
+  - task: DownloadPipelineArtifact@2
+    displayName: Download OSX Vertical Build Artifacts
+    continueOnError: ${{ parameters.continueOnError }}
+    enabled: true
+    inputs:
+      patterns: |
+        **OSX_*_Artifacts/**
+      downloadPath: '${{ parameters.signCheckFilesDirectory }}'
+
+- ${{ if eq(parameters.OS, 'Windows_NT') }}:
+  - task: DownloadPipelineArtifact@2
+    displayName: Download Windows Vertical Build Artifacts
+    continueOnError: ${{ parameters.continueOnError }}
+    enabled: true
+    inputs:
+      patterns: |
+        **Windows_*_Artifacts/**
+      downloadPath: '${{ parameters.signCheckFilesDirectory }}'
+
+- ${{ if eq(parameters.OS, 'Linux') }}:
+  # Enable validation of the source artifact after the following issues have been addressed:
+  # 1. https://github.com/dotnet/release/issues/1416
+  # 2. https://github.com/dotnet/arcade/issues/16249
+  # **SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/dotnet-source-*
+  - task: DownloadPipelineArtifact@2
+    displayName: Download Linux Vertical Build Artifacts
+    continueOnError: ${{ parameters.continueOnError }}
+    enabled: true
+    inputs:
+      patterns: |
+        **Linux_*_Artifacts/**
+        **SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/dotnet-sdk-*.tar.gz
+        **SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/Private.SourceBuilt.Artifacts.*.tar.gz
+      downloadPath: '${{ parameters.signCheckFilesDirectory }}'
 
 # This is necessary whenever we want to publish/restore to an AzDO private feed
 # Since sdk-task.ps1 tries to restore packages we need to do this authentication here

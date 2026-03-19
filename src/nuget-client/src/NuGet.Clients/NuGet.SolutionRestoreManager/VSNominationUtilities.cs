@@ -158,7 +158,7 @@ namespace NuGet.SolutionRestoreManager
                 FrameworkReferences = frameworkReferences,
                 Imports = imports,
                 RuntimeIdentifierGraphPath = GetPropertyValueOrNull(targetFrameworkInfo.Properties, ProjectBuildProperties.RuntimeIdentifierGraphPath),
-                TargetAlias = GetPropertyValueOrNull(targetFrameworkInfo.Properties, ProjectBuildProperties.TargetFramework),
+                TargetAlias = GetPropertyValueOrNull(targetFrameworkInfo.Properties, ProjectBuildProperties.TargetFramework) ?? string.Empty,
                 Warn = warn,
                 PackagesToPrune = packagesToPrune,
             };
@@ -191,7 +191,7 @@ namespace NuGet.SolutionRestoreManager
             var tfi = new ProjectRestoreMetadataFrameworkInfo
             {
                 FrameworkName = GetTargetFramework(targetFrameworkInfo.Properties, projectFullPath),
-                TargetAlias = GetPropertyValueOrNull(targetFrameworkInfo.Properties, ProjectBuildProperties.TargetFramework)
+                TargetAlias = GetPropertyValueOrNull(targetFrameworkInfo.Properties, ProjectBuildProperties.TargetFramework) ?? string.Empty,
             };
 
             if (targetFrameworkInfo.Items?.TryGetValue(ProjectItems.ProjectReference, out var projectReferences) ?? false)

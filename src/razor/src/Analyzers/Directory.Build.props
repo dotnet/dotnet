@@ -12,8 +12,8 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" NoWarn="NU1608" />
-    <PackageReference Include="Roslyn.Diagnostics.Analyzers" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" NoWarn="NU1608" PrivateAssets="all" />
+    <PackageReference Include="Roslyn.Diagnostics.Analyzers" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>

@@ -78,7 +78,7 @@ stages:
               and(
                   not(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/darc-')),
                   not(startsWith(variables['System.PullRequest.SourceBranch'], 'darc-')),
-                  not(eq(variables['Build.RequestedFor'], 'dotnet-bot'))
+                  not(startsWith(variables['System.PullRequest.SourceBranch'], 'release-pr-'))
               )
           )
   jobs:
@@ -90,6 +90,8 @@ stages:
       steps:
         - checkout: self
           fetchDepth: 0
+          persistCredentials: ${{ ne(variables['System.TeamProject'], 'public') }}
+          retryCountOnTaskFailure: 5
 
         - script: |
             set -ex

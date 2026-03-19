@@ -20,6 +20,9 @@
     <PackageIcon>Icon.png</PackageIcon>
     <PackageIconFullPath>$(MSBuildThisFileDirectory)Assets\DotNetPackageIcon.png</PackageIconFullPath>
 
+    <!-- Append build script specified warnings not as errors. -->
+    <WarningsNotAsErrors Condition="'$(AdditionalWarningsNotAsErrors)' != ''">$(WarningsNotAsErrors);$(AdditionalWarningsNotAsErrors)</WarningsNotAsErrors>
+ 
     <!-- Turn on package pruning by default. -->
     <RestoreEnablePackagePruning>true</RestoreEnablePackagePruning>
 

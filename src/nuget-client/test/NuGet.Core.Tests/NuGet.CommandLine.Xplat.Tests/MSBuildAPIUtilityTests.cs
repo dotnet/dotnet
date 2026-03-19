@@ -461,6 +461,89 @@ namespace NuGet.CommandLine.Xplat.Tests
             Assert.DoesNotContain(@$"<PackageVersion Include=""X"" VersionOverride=""3.0.0"" />", updatedPropsFile);
         }
 
+        [PlatformFact(Platform.Windows)]
+        public void AddPackageReference_WithCPMEnabled_AddsPackageVersionToProps()
+        {
+            // Arrange
+            using var testDirectory = TestDirectory.Create();
+
+            var propsFile =
+@"<Project>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(testDirectory, "Directory.Packages.props"), propsFile);
+
+            string projectContent =
+@"<Project Sdk=""Microsoft.NET.Sdk"">
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+</Project>";
+            var projectPath = Path.Combine(testDirectory, "projectA.csproj");
+            File.WriteAllText(projectPath, projectContent);
+
+            var libraryDependency = new LibraryDependency
+            {
+                LibraryRange = new LibraryRange(
+                    name: "X",
+                    versionRange: VersionRange.Parse("1.0.0"),
+                    typeConstraint: LibraryDependencyTarget.Package)
+            };
+
+            var msObject = new MSBuildAPIUtility(logger: new TestLogger());
+
+            // Act
+            msObject.AddPackageReference(projectPath, libraryDependency, noVersion: false);
+
+            // Assert
+            string updatedProjectFile = File.ReadAllText(projectPath);
+            string updatedPropsFile = File.ReadAllText(Path.Combine(testDirectory, "Directory.Packages.props"));
+
+            // .csproj should contain versionless PackageReference
+            Assert.Contains(@"<PackageReference Include=""X""", updatedProjectFile);
+            Assert.DoesNotContain("Version=", updatedProjectFile);
+
+            // Directory.Packages.props should contain PackageVersion with version
+            Assert.Contains(@"<PackageVersion Include=""X"" Version=""1.0.0""", updatedPropsFile);
+        }
+
+        [PlatformFact(Platform.Windows)]
+        public void AddPackageReference_WithoutCPM_AddsVersionedPackageReference()
+        {
+            // Arrange
+            using var testDirectory = TestDirectory.Create();
+
+            string projectContent =
+@"<Project Sdk=""Microsoft.NET.Sdk"">
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+</Project>";
+            var projectPath = Path.Combine(testDirectory, "projectA.csproj");
+            File.WriteAllText(projectPath, projectContent);
+
+            var libraryDependency = new LibraryDependency
+            {
+                LibraryRange = new LibraryRange(
+                    name: "X",
+                    versionRange: VersionRange.Parse("1.0.0"),
+                    typeConstraint: LibraryDependencyTarget.Package)
+            };
+
+            var msObject = new MSBuildAPIUtility(logger: new TestLogger());
+
+            // Act
+            msObject.AddPackageReference(projectPath, libraryDependency, noVersion: false);
+
+            // Assert
+            string updatedProjectFile = File.ReadAllText(projectPath);
+
+            // .csproj should contain PackageReference with version
+            Assert.Contains(@"<PackageReference Include=""X"" Version=""1.0.0""", updatedProjectFile);
+        }
+
         [Fact]
         public void GetListOfProjectsFromPathArgument_WithProjectFile_ReturnsCorrectPaths()
         {
@@ -639,6 +722,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             var pathContext = new SimpleTestPathContext();
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
             var net8 = NuGetFramework.Parse("net8.0");
+            string targetAlias = net8.GetShortFolderName();
             var projectA = SimpleTestProjectContext.CreateNETCore("a", pathContext.SolutionRoot, net8);
             solution.Projects.Add(projectA);
             solution.Create();
@@ -670,6 +754,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                     new LockFileTarget()
                     {
                         TargetFramework = net8,
+                        TargetAlias = targetAlias,
                         Libraries = new List<LockFileTargetLibrary>
                         {
                             new LockFileTargetLibrary()
@@ -686,6 +771,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                     new TargetFrameworkInformation
                     {
                         FrameworkName = net8,
+                        TargetAlias = targetAlias,
                         Dependencies =
                         [
                             new LibraryDependency
@@ -719,6 +805,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             var pathContext = new SimpleTestPathContext();
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
             var net8 = NuGetFramework.Parse("net8.0");
+            string targetAlias = net8.GetShortFolderName();
             var projectA = SimpleTestProjectContext.CreateNETCore("a", pathContext.SolutionRoot, net8);
             solution.Projects.Add(projectA);
             solution.Create();
@@ -745,6 +832,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                     new LockFileTarget()
                     {
                         TargetFramework = net8,
+                        TargetAlias = targetAlias,
                         Libraries = new List<LockFileTargetLibrary>
                         {
                             new LockFileTargetLibrary()
@@ -761,6 +849,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                     new TargetFrameworkInformation
                     {
                         FrameworkName = net8,
+                        TargetAlias = targetAlias,
                         Dependencies =
                         [
                             new LibraryDependency

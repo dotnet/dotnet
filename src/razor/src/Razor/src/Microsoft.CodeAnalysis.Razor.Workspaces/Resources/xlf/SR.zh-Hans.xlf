@@ -79,6 +79,11 @@
         <target state="translated">正在放弃格式操作，因为它会添加或删除非空格内容。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Formatting_Error">
+        <source>Formatting error. Abandoning further work to not corrupt the file, please report this issue. See: https://aka.ms/razor-formatting-issue</source>
+        <target state="translated">格式错误。为避免文件损坏，已停止后续操作，请报告此问题。详情请见：https://aka.ms/razor-formatting-issue</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Generate_Async_Event_Handler_Title">
         <source>Generate Async Event Handler '{0}'</source>
         <target state="translated">生成异步事件处理程序“{0}”</target>

@@ -8,7 +8,7 @@
       SemanticVersioningV1        "true" if the Version needs to respect SemVer 1.0. Default is false, which means format following SemVer 2.0.
   -->
 
-  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.CalculateAssemblyAndFileVersions" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
+  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.CalculateAssemblyAndFileVersions" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
   
   <Target Name="_InitializeAssemblyVersion" BeforeTargets="GetAssemblyVersion">
     <Warning Text="AssemblyVersion '$(AssemblyVersion)' overridden by auto-generated version" Condition="'$(AssemblyVersion)' != '' and '$(AutoGenerateAssemblyVersion)' == 'true'"/>

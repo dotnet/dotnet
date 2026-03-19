@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -22,8 +21,6 @@ namespace Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 internal sealed class RemoteProjectSnapshot : IProjectSnapshot
 {
     public RemoteSolutionSnapshot SolutionSnapshot { get; }
-
-    public ProjectKey Key { get; }
 
     private readonly Project _project;
     private readonly Dictionary<TextDocument, RemoteDocumentSnapshot> _documentMap = [];
@@ -37,7 +34,6 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
 
         _project = project;
         SolutionSnapshot = solutionSnapshot;
-        Key = _project.ToProjectKey();
     }
 
     public IEnumerable<string> DocumentFilePaths
@@ -49,13 +45,9 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
 
     public string IntermediateOutputPath => FilePathNormalizer.GetNormalizedDirectoryName(_project.CompilationOutputInfo.AssemblyPath);
 
-    public string? RootNamespace => _project.DefaultNamespace ?? "ASP";
-
     public string DisplayName => _project.Name;
 
     public Project Project => _project;
-
-    public LanguageVersion CSharpLanguageVersion => ((CSharpParseOptions)_project.ParseOptions.AssumeNotNull()).LanguageVersion;
 
     public async ValueTask<TagHelperCollection> GetTagHelpersAsync(CancellationToken cancellationToken)
     {

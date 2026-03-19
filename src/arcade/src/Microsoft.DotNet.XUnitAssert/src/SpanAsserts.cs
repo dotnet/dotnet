@@ -1,25 +1,14 @@
 #pragma warning disable CA1052 // Static holder types should be static
-#pragma warning disable IDE0018 // Inline variable declaration
-#pragma warning disable IDE0161 // Convert to file-scoped namespace
-
-#if XUNIT_SPAN
 
 #if XUNIT_NULLABLE
 #nullable enable
 #endif
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using Xunit.Sdk;
 
 namespace Xunit
 {
-#if XUNIT_VISIBILITY_INTERNAL
-	internal
-#else
-	public
-#endif
 	partial class Assert
 	{
 		// While there is an implicit conversion operator from Span<T> to ReadOnlySpan<T>, the
@@ -35,12 +24,7 @@ namespace Xunit
 		/// <param name="expectedSubSpan">The sub-span expected to be in the span</param>
 		/// <param name="actualSpan">The span to be inspected</param>
 		/// <exception cref="ContainsException">Thrown when the sub-span is not present inside the span</exception>
-		public static void Contains<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void Contains<T>(
 			Span<T> expectedSubSpan,
 			Span<T> actualSpan)
 				where T : IEquatable<T> =>
@@ -52,12 +36,7 @@ namespace Xunit
 		/// <param name="expectedSubSpan">The sub-span expected to be in the span</param>
 		/// <param name="actualSpan">The span to be inspected</param>
 		/// <exception cref="ContainsException">Thrown when the sub-span is not present inside the span</exception>
-		public static void Contains<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void Contains<T>(
 			Span<T> expectedSubSpan,
 			ReadOnlySpan<T> actualSpan)
 				where T : IEquatable<T> =>
@@ -69,12 +48,7 @@ namespace Xunit
 		/// <param name="expectedSubSpan">The sub-span expected to be in the span</param>
 		/// <param name="actualSpan">The span to be inspected</param>
 		/// <exception cref="ContainsException">Thrown when the sub-span is not present inside the span</exception>
-		public static void Contains<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void Contains<T>(
 			ReadOnlySpan<T> expectedSubSpan,
 			Span<T> actualSpan)
 				where T : IEquatable<T> =>
@@ -86,12 +60,7 @@ namespace Xunit
 		/// <param name="expectedSubSpan">The sub-span expected to be in the span</param>
 		/// <param name="actualSpan">The span to be inspected</param>
 		/// <exception cref="ContainsException">Thrown when the sub-span is not present inside the span</exception>
-		public static void Contains<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void Contains<T>(
 			ReadOnlySpan<T> expectedSubSpan,
 			ReadOnlySpan<T> actualSpan)
 				where T : IEquatable<T>
@@ -109,12 +78,7 @@ namespace Xunit
 		/// <param name="expectedSubSpan">The sub-span expected not to be in the span</param>
 		/// <param name="actualSpan">The span to be inspected</param>
 		/// <exception cref="DoesNotContainException">Thrown when the sub-span is present inside the span</exception>
-		public static void DoesNotContain<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void DoesNotContain<T>(
 			Span<T> expectedSubSpan,
 			Span<T> actualSpan)
 				where T : IEquatable<T> =>
@@ -126,12 +90,7 @@ namespace Xunit
 		/// <param name="expectedSubSpan">The sub-span expected not to be in the span</param>
 		/// <param name="actualSpan">The span to be inspected</param>
 		/// <exception cref="DoesNotContainException">Thrown when the sub-span is present inside the span</exception>
-		public static void DoesNotContain<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void DoesNotContain<T>(
 			Span<T> expectedSubSpan,
 			ReadOnlySpan<T> actualSpan)
 				where T : IEquatable<T> =>
@@ -143,12 +102,7 @@ namespace Xunit
 		/// <param name="expectedSubSpan">The sub-span expected not to be in the span</param>
 		/// <param name="actualSpan">The span to be inspected</param>
 		/// <exception cref="DoesNotContainException">Thrown when the sub-span is present inside the span</exception>
-		public static void DoesNotContain<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void DoesNotContain<T>(
 			ReadOnlySpan<T> expectedSubSpan,
 			Span<T> actualSpan)
 				where T : IEquatable<T> =>
@@ -160,12 +114,7 @@ namespace Xunit
 		/// <param name="expectedSubSpan">The sub-span expected not to be in the span</param>
 		/// <param name="actualSpan">The span to be inspected</param>
 		/// <exception cref="DoesNotContainException">Thrown when the sub-span is present inside the span</exception>
-		public static void DoesNotContain<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void DoesNotContain<T>(
 			ReadOnlySpan<T> expectedSubSpan,
 			ReadOnlySpan<T> actualSpan)
 				where T : IEquatable<T>
@@ -173,9 +122,8 @@ namespace Xunit
 			var idx = actualSpan.IndexOf(expectedSubSpan);
 			if (idx > -1)
 			{
-				int? failurePointerIndent;
 				var formattedExpected = CollectionTracker<T>.FormatStart(expectedSubSpan);
-				var formattedActual = CollectionTracker<T>.FormatIndexedMismatch(actualSpan, idx, out failurePointerIndent);
+				var formattedActual = CollectionTracker<T>.FormatIndexedMismatch(actualSpan, idx, out var failurePointerIndent);
 
 				throw DoesNotContainException.ForSubSpanFound(
 					formattedExpected,
@@ -247,9 +195,7 @@ namespace Xunit
 				where T : IEquatable<T>
 		{
 			if (!expectedSpan.SequenceEqual(actualSpan))
-				Equal<object>(expectedSpan.ToArray(), actualSpan.ToArray());
+				Equal(expectedSpan.ToArray(), actualSpan.ToArray(), new AssertEqualityComparer<T>());
 		}
 	}
 }
-
-#endif
