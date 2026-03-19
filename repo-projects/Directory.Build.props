@@ -30,10 +30,6 @@
     <UseMSBuildMT Condition="'$(UseMSBuildMT)' == '' and $([System.String]::new(';$(_MSBuildMTExcludedRepos);').Contains(';$(RepositoryName);'))">false</UseMSBuildMT>
     <UseMSBuildMT Condition="'$(UseMSBuildMT)' == ''">true</UseMSBuildMT>
 
-    <!-- The arcade build script passes this by default, and thus any warnings not as error need to be suppressed at MSBuild level.
-         Not all repos use this though, so they can set this to false to indicate that they should not recieve any /warnNotAsError parameters. -->
-    <UsesMSBuildWarnAsError Condition="'$(UsesMSBuildWarnAsError)' == ''">true</UsesMSBuildWarnAsError>
-
     <BuildInParallel Condition="'$(BuildInParallel)' == ''">true</BuildInParallel>
     <RunEachTargetSeparately>false</RunEachTargetSeparately>
     <!-- If this is a dev build with parallelism enabled, ensure that RunEachTargetSeparately is true so that StopOnFirstFailure will be honored.
