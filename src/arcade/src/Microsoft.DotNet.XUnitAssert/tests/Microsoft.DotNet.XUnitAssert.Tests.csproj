@@ -2,20 +2,28 @@
 
   <PropertyGroup>
     <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+    <OutputType>Exe</OutputType>
     <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <!-- Baseline analyzer warnings. These warnings are present in the upstream xunit.assert tests. -->
-    <NoWarn>$(NoWarn);xUnit2000;xUnit2003;xUnit2005;xUnit2007;xUnit2011;xUnit2015;xUnit2017</NoWarn>
     <NoWarn>$(NoWarn);IDE0073</NoWarn>
     <DefineConstants>$(DefineConstants);XUNIT_NULLABLE;XUNIT_SPAN;XUNIT_IMMUTABLE_COLLECTIONS;XUNIT_AOT</DefineConstants>
     <UseDotNetXUnitAssert>true</UseDotNetXUnitAssert>
+
+    <!-- Arcade tests try to pull in old packages. -->
+    <DisableArcadeTestFramework>true</DisableArcadeTestFramework>
+    <!-- Set explicitly since DisableArcadeTestFramework prevents XUnitV3.targets from setting it -->
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="xunit.v3.core" PrivateAssets="all" Publish="true" />
+    <!-- MTP packages added explicitly because DisableArcadeTestFramework prevents XUnitV3.targets from adding them -->
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="$(MicrosoftTestingPlatformVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true" />
+    <PackageReference Include="Microsoft.Testing.Platform.MSBuild" Version="$(MicrosoftTestingPlatformVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true" />
+    <PackageReference Include="Microsoft.Testing.Platform" Version="$(MicrosoftTestingPlatformVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true" />
     <ProjectReference Include="..\src\Microsoft.DotNet.XUnitAssert.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="nsubstitute" />
   </ItemGroup>
 
 </Project>

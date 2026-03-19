@@ -1,25 +1,14 @@
 #pragma warning disable CA1052 // Static holder types should be static
-#pragma warning disable IDE0018 // Inline variable declaration
-#pragma warning disable IDE0058 // Expression value is never used
-#pragma warning disable IDE0161 // Convert to file-scoped namespace
-
-#if XUNIT_SPAN
 
 #if XUNIT_NULLABLE
 #nullable enable
 #endif
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using Xunit.Sdk;
 
 namespace Xunit
 {
-#if XUNIT_VISIBILITY_INTERNAL
-	internal
-#else
-	public
-#endif
 	partial class Assert
 	{
 		// While there is an implicit conversion operator from Memory<T> to ReadOnlyMemory<T>, the
@@ -35,12 +24,7 @@ namespace Xunit
 		/// <param name="expectedSubMemory">The sub-Memory expected to be in the Memory</param>
 		/// <param name="actualMemory">The Memory to be inspected</param>
 		/// <exception cref="ContainsException">Thrown when the sub-Memory is not present inside the Memory</exception>
-		public static void Contains<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void Contains<T>(
 			Memory<T> expectedSubMemory,
 			Memory<T> actualMemory)
 				where T : IEquatable<T> =>
@@ -52,12 +36,7 @@ namespace Xunit
 		/// <param name="expectedSubMemory">The sub-Memory expected to be in the Memory</param>
 		/// <param name="actualMemory">The Memory to be inspected</param>
 		/// <exception cref="ContainsException">Thrown when the sub-Memory is not present inside the Memory</exception>
-		public static void Contains<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void Contains<T>(
 			Memory<T> expectedSubMemory,
 			ReadOnlyMemory<T> actualMemory)
 				where T : IEquatable<T> =>
@@ -69,12 +48,7 @@ namespace Xunit
 		/// <param name="expectedSubMemory">The sub-Memory expected to be in the Memory</param>
 		/// <param name="actualMemory">The Memory to be inspected</param>
 		/// <exception cref="ContainsException">Thrown when the sub-Memory is not present inside the Memory</exception>
-		public static void Contains<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void Contains<T>(
 			ReadOnlyMemory<T> expectedSubMemory,
 			Memory<T> actualMemory)
 				where T : IEquatable<T> =>
@@ -86,12 +60,7 @@ namespace Xunit
 		/// <param name="expectedSubMemory">The sub-Memory expected to be in the Memory</param>
 		/// <param name="actualMemory">The Memory to be inspected</param>
 		/// <exception cref="ContainsException">Thrown when the sub-Memory is not present inside the Memory</exception>
-		public static void Contains<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void Contains<T>(
 			ReadOnlyMemory<T> expectedSubMemory,
 			ReadOnlyMemory<T> actualMemory)
 				where T : IEquatable<T>
@@ -111,12 +80,7 @@ namespace Xunit
 		/// <param name="expectedSubMemory">The sub-Memory expected not to be in the Memory</param>
 		/// <param name="actualMemory">The Memory to be inspected</param>
 		/// <exception cref="DoesNotContainException">Thrown when the sub-Memory is present inside the Memory</exception>
-		public static void DoesNotContain<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void DoesNotContain<T>(
 			Memory<T> expectedSubMemory,
 			Memory<T> actualMemory)
 				where T : IEquatable<T> =>
@@ -128,12 +92,7 @@ namespace Xunit
 		/// <param name="expectedSubMemory">The sub-Memory expected not to be in the Memory</param>
 		/// <param name="actualMemory">The Memory to be inspected</param>
 		/// <exception cref="DoesNotContainException">Thrown when the sub-Memory is present inside the Memory</exception>
-		public static void DoesNotContain<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void DoesNotContain<T>(
 			Memory<T> expectedSubMemory,
 			ReadOnlyMemory<T> actualMemory)
 				where T : IEquatable<T> =>
@@ -145,12 +104,7 @@ namespace Xunit
 		/// <param name="expectedSubMemory">The sub-Memory expected not to be in the Memory</param>
 		/// <param name="actualMemory">The Memory to be inspected</param>
 		/// <exception cref="DoesNotContainException">Thrown when the sub-Memory is present inside the Memory</exception>
-		public static void DoesNotContain<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void DoesNotContain<T>(
 			ReadOnlyMemory<T> expectedSubMemory,
 			Memory<T> actualMemory)
 				where T : IEquatable<T> =>
@@ -162,12 +116,7 @@ namespace Xunit
 		/// <param name="expectedSubMemory">The sub-Memory expected not to be in the Memory</param>
 		/// <param name="actualMemory">The Memory to be inspected</param>
 		/// <exception cref="DoesNotContainException">Thrown when the sub-Memory is present inside the Memory</exception>
-		public static void DoesNotContain<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void DoesNotContain<T>(
 			ReadOnlyMemory<T> expectedSubMemory,
 			ReadOnlyMemory<T> actualMemory)
 				where T : IEquatable<T>
@@ -180,9 +129,8 @@ namespace Xunit
 
 			if (idx > -1)
 			{
-				int? failurePointerIndent;
 				var formattedExpected = CollectionTracker<T>.FormatStart(expectedSpan);
-				var formattedActual = CollectionTracker<T>.FormatIndexedMismatch(actualSpan, idx, out failurePointerIndent);
+				var formattedActual = CollectionTracker<T>.FormatIndexedMismatch(actualSpan, idx, out var failurePointerIndent);
 
 				throw DoesNotContainException.ForSubMemoryFound(formattedExpected, idx, failurePointerIndent, formattedActual);
 			}
@@ -238,9 +186,7 @@ namespace Xunit
 			GuardArgumentNotNull(nameof(expectedMemory), expectedMemory);
 
 			if (!expectedMemory.Span.SequenceEqual(actualMemory.Span))
-				Equal<object>(expectedMemory.Span.ToArray(), actualMemory.Span.ToArray());
+				Equal(expectedMemory.Span.ToArray(), actualMemory.Span.ToArray(), new AssertEqualityComparer<T>());
 		}
 	}
 }
-
-#endif

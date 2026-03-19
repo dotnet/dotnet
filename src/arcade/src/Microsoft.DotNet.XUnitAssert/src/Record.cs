@@ -1,11 +1,7 @@
 #pragma warning disable CA1031 // Do not catch general exception types
 #pragma warning disable CA1052 // Static holder types should be static
 #pragma warning disable CA2007 // Consider calling ConfigureAwait on the awaited task
-#pragma warning disable IDE0022 // Use expression body for method
-#pragma warning disable IDE0046 // Convert to conditional expression
-#pragma warning disable IDE0058 // Expression value is never used
 #pragma warning disable IDE0059 // Unnecessary assignment of a value
-#pragma warning disable IDE0161 // Convert to file-scoped namespace
 
 #if XUNIT_NULLABLE
 #nullable enable
@@ -21,18 +17,26 @@ using System.Threading.Tasks;
 
 namespace Xunit
 {
-#if XUNIT_VISIBILITY_INTERNAL
-	internal
-#else
-	public
-#endif
 	partial class Assert
 	{
+		/// <summary>
+		/// The contract for exceptions which indicate that something should be skipped rather than
+		/// failed is that exception message should start with this, and that any text following this
+		/// will be treated as the skip reason (for example, <c>"$XunitDynamicSkip$This code can only run
+		/// on Linux"</c>) will result in a skipped test with the reason of <c>"This code can only run
+		/// on Linux"</c>.
+		/// </summary>
+		const string DynamicSkipToken = "$XunitDynamicSkip$";
+
 		/// <summary>
 		/// Records any exception which is thrown by the given code.
 		/// </summary>
 		/// <param name="testCode">The code which may thrown an exception.</param>
 		/// <returns>Returns the exception that was thrown by the code; null, otherwise.</returns>
+		/// <remarks>
+		/// If the thrown exception is determined to be a "skip exception", it's not recorded, but
+		/// instead is allowed to escape this function uncaught.
+		/// </remarks>
 #if XUNIT_NULLABLE
 		protected static Exception? RecordException(Action testCode)
 #else
@@ -48,6 +52,9 @@ namespace Xunit
 			}
 			catch (Exception ex)
 			{
+				if (ex.Message?.StartsWith(DynamicSkipToken, StringComparison.Ordinal) == true)
+					throw;
+
 				return ex;
 			}
 		}
@@ -60,6 +67,10 @@ namespace Xunit
 		/// <param name="asyncMethodName">The name of the async method the user should've called if they accidentally
 		/// passed in an async function</param>
 		/// <returns>Returns the exception that was thrown by the code; null, otherwise.</returns>
+		/// <remarks>
+		/// If the thrown exception is determined to be a "skip exception", it's not recorded, but
+		/// instead is allowed to escape this function uncaught.
+		/// </remarks>
 #if XUNIT_NULLABLE
 		protected static Exception? RecordException(
 			Func<object?> testCode,
@@ -79,11 +90,20 @@ namespace Xunit
 			}
 			catch (Exception ex)
 			{
+				if (ex.Message?.StartsWith(DynamicSkipToken, StringComparison.Ordinal) == true)
+					throw;
+
 				return ex;
 			}
 
 			if (result is Task)
-				throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "You must call Assert.{0} when testing async code", asyncMethodName));
+				throw new InvalidOperationException(
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"You must call Assert.{0} when testing async code",
+						asyncMethodName
+					)
+				);
 
 			return null;
 		}
@@ -93,7 +113,7 @@ namespace Xunit
 		[Obsolete("You must call Assert.RecordExceptionAsync (and await the result) when testing async code.", true)]
 		protected static Exception RecordException(Func<Task> testCode)
 		{
-			throw new NotImplementedException("You must call Assert.RecordExceptionAsync (and await the result) when testing async code.");
+			throw new NotSupportedException("You must call Assert.RecordExceptionAsync (and await the result) when testing async code.");
 		}
 
 		/// <summary>
@@ -101,6 +121,10 @@ namespace Xunit
 		/// </summary>
 		/// <param name="testCode">The task which may thrown an exception.</param>
 		/// <returns>Returns the exception that was thrown by the code; null, otherwise.</returns>
+		/// <remarks>
+		/// If the thrown exception is determined to be a "skip exception", it's not recorded, but
+		/// instead is allowed to escape this function uncaught.
+		/// </remarks>
 #if XUNIT_NULLABLE
 		protected static async Task<Exception?> RecordExceptionAsync(Func<Task> testCode)
 #else
@@ -116,6 +140,9 @@ namespace Xunit
 			}
 			catch (Exception ex)
 			{
+				if (ex.Message?.StartsWith(DynamicSkipToken, StringComparison.Ordinal) == true)
+					throw;
+
 				return ex;
 			}
 		}
