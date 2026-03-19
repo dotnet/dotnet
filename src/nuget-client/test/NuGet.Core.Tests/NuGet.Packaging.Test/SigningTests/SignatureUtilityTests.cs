@@ -74,7 +74,7 @@ namespace NuGet.Packaging.Test
 
                 using (var packageReader = new PackageArchiveReader(signedPackageFile.FullName))
                 {
-                    PrimarySignature signature = await packageReader.GetPrimarySignatureAsync(CancellationToken.None);
+                    PrimarySignature signature = (await packageReader.GetPrimarySignatureAsync(CancellationToken.None))!;
 
                     using (IX509CertificateChain certificates = SignatureUtility.GetCertificateChain(signature))
                     {

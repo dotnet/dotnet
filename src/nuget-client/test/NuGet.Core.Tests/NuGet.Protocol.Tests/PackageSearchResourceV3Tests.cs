@@ -127,7 +127,7 @@ namespace NuGet.Protocol.Tests
             var resource = await repo.GetResourceAsync<PackageSearchResource>(CancellationToken.None);
 
             // Act
-            var packages = (IEnumerable<PackageSearchMetadataBuilder.ClonedPackageSearchMetadata>)await resource.SearchAsync(
+            var packages = await resource.SearchAsync(
                 "entityframework",
                 new SearchFilter(false),
                 skip: 0,
@@ -135,8 +135,8 @@ namespace NuGet.Protocol.Tests
                 log: NullLogger.Instance,
                 cancellationToken: CancellationToken.None);
 
-            var first = packages.ElementAt(0);
-            var second = packages.ElementAt(1);
+            var first = (PackageSearchMetadataBuilder.ClonedPackageSearchMetadata)packages.ElementAt(0);
+            var second = (PackageSearchMetadataBuilder.ClonedPackageSearchMetadata)packages.ElementAt(1);
 
             // Assert
             MetadataReferenceCacheTestUtility.AssertPackagesHaveSameReferences(first, second);
