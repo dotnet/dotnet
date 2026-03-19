@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -83,7 +82,7 @@ internal sealed class CohostFoldingRangeEndpoint(
         {
             _logger.LogDebug($"Got a total of {allRanges.Length} ranges back from OOP");
 
-            return [.. allRanges.Select(RemoteFoldingRange.ToLspFoldingRange)];
+            return allRanges.SelectAsPlainArray(RemoteFoldingRange.ToLspFoldingRange);
         }
 
         return null;

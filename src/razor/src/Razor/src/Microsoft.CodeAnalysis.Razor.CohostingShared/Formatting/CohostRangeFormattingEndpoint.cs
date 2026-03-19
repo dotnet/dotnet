@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -106,7 +105,7 @@ internal sealed class CohostRangeFormattingEndpoint(
 
         _logger.LogDebug($"Got a total of {remoteResult.Length} ranges back from OOP");
 
-        return [.. remoteResult.Select(sourceText.GetTextEdit)];
+        return remoteResult.SelectAsPlainArray(sourceText.GetTextEdit);
     }
 
     private async Task<TextEdit[]?> TryGetHtmlFormattingEditsAsync(DocumentRangeFormattingParams request, TextDocument razorDocument, CancellationToken cancellationToken)

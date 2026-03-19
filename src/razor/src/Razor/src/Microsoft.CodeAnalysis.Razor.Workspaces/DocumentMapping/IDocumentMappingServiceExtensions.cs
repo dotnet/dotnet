@@ -2,9 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
@@ -20,7 +20,7 @@ internal static class IDocumentMappingServiceExtensions
 
         var changes = csharpEdits.SelectAsArray(csharpSourceText.GetTextChange);
         var mappedChanges = service.GetRazorDocumentEdits(csharpDocument, changes);
-        return [.. mappedChanges.Select(documentText.GetTextEdit)];
+        return mappedChanges.SelectAsPlainArray(documentText.GetTextEdit);
     }
 
     public static bool TryMapToRazorDocumentRange(this IDocumentMappingService service, RazorCSharpDocument csharpDocument, LinePositionSpan csharpRange, out LinePositionSpan razorRange)

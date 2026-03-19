@@ -20,8 +20,9 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
 {
     protected readonly ILogger Logger = logger;
 
-    public IEnumerable<TextChange> GetRazorDocumentEdits(RazorCSharpDocument csharpDocument, ImmutableArray<TextChange> csharpChanges)
+    public ImmutableArray<TextChange> GetRazorDocumentEdits(RazorCSharpDocument csharpDocument, ImmutableArray<TextChange> csharpChanges)
     {
+        using var result = new PooledArrayBuilder<TextChange>();
         var csharpSourceText = csharpDocument.Text;
         var lastNewLineAddedToLine = 0;
 
@@ -47,7 +48,7 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
                 // between this edit and the previous one, because the normalization will have swallowed it. See
                 // below for a more info.
                 var newText = (lastNewLineAddedToLine == startLine ? " " : "") + change.NewText;
-                yield return new TextChange(TextSpan.FromBounds(hostStartIndex, hostEndIndex), newText);
+                result.Add(new TextChange(TextSpan.FromBounds(hostStartIndex, hostEndIndex), newText));
                 continue;
             }
 
@@ -90,7 +91,7 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
 
                 if (mappedStart && mappedEnd)
                 {
-                    yield return new TextChange(TextSpan.FromBounds(hostStartIndex, hostEndIndex), change.NewText[lastNewLine..]);
+                    result.Add(new TextChange(TextSpan.FromBounds(hostStartIndex, hostEndIndex), change.NewText[lastNewLine..]));
                     continue;
                 }
             }
@@ -119,7 +120,7 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
                     // If there's a newline in the new text, only take the part before it
                     var firstNewLine = change.NewText.AssumeNotNull().IndexOfAny(['\n', '\r']);
                     var newText = firstNewLine >= 0 ? change.NewText[..firstNewLine] : change.NewText;
-                    yield return new TextChange(TextSpan.FromBounds(hostStartIndex, hostEndIndex), newText);
+                    result.Add(new TextChange(TextSpan.FromBounds(hostStartIndex, hostEndIndex), newText));
                     continue;
                 }
             }
@@ -171,19 +172,21 @@ internal abstract class AbstractDocumentMappingService(ILogger logger) : IDocume
                         // If we already added a newline to this line, then we don't want to add another one, but
                         // we do need to add a space between this edit and the previous one, because the normalization
                         // will have swallowed it.
-                        yield return new TextChange(new TextSpan(hostEndIndex, 0), " " + change.NewText);
+                        result.Add(new TextChange(new TextSpan(hostEndIndex, 0), " " + change.NewText));
                     }
                     else
                     {
                         // Otherwise, add a newline and the real content, and remember where we added it
                         lastNewLineAddedToLine = startLine;
-                        yield return new TextChange(new TextSpan(hostEndIndex, 0), " " + Environment.NewLine + new string(' ', startChar) + change.NewText);
+                        result.Add(new TextChange(new TextSpan(hostEndIndex, 0), " " + Environment.NewLine + new string(' ', startChar) + change.NewText));
                     }
 
                     continue;
                 }
             }
         }
+
+        return result.ToImmutableAndClear();
     }
 
     public bool TryMapToRazorDocumentRange(RazorCSharpDocument csharpDocument, LinePositionSpan csharpRange, MappingBehavior mappingBehavior, out LinePositionSpan razorRange)

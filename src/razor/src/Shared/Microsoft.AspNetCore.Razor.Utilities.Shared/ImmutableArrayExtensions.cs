@@ -78,23 +78,7 @@ internal static partial class ImmutableArrayExtensions
     ///  on each element of <paramref name="array"/>.
     /// </returns>
     public static ImmutableArray<TResult> SelectAsArray<T, TResult>(this ImmutableArray<T> array, Func<T, TResult> selector)
-    {
-        var length = array.Length;
-
-        if (length == 0)
-        {
-            return [];
-        }
-
-        var result = new TResult[length];
-
-        for (var i = 0; i < length; i++)
-        {
-            result[i] = selector(array[i]);
-        }
-
-        return ImmutableCollectionsMarshal.AsImmutableArray(result);
-    }
+        => ImmutableCollectionsMarshal.AsImmutableArray(SelectAsPlainArray(array, selector));
 
     /// <summary>
     ///  Projects each element of an <see cref="ImmutableArray{T}"/> into a new form by incorporating the element's index.
@@ -110,23 +94,7 @@ internal static partial class ImmutableArrayExtensions
     ///  on each element of <paramref name="array"/>.
     /// </returns>
     public static ImmutableArray<TResult> SelectAsArray<T, TResult>(this ImmutableArray<T> array, Func<T, int, TResult> selector)
-    {
-        var length = array.Length;
-
-        if (length == 0)
-        {
-            return [];
-        }
-
-        var result = new TResult[length];
-
-        for (var i = 0; i < length; i++)
-        {
-            result[i] = selector(array[i], i);
-        }
-
-        return ImmutableCollectionsMarshal.AsImmutableArray(result);
-    }
+        => ImmutableCollectionsMarshal.AsImmutableArray(SelectAsPlainArray(array, selector));
 
     /// <summary>
     ///  Projects each element of an <see cref="ImmutableArray{T}"/> into a new form.
@@ -142,23 +110,7 @@ internal static partial class ImmutableArrayExtensions
     ///  on each element of <paramref name="array"/>.
     /// </returns>
     public static ImmutableArray<TResult> SelectAsArray<T, TArg, TResult>(this ImmutableArray<T> array, TArg arg, Func<T, TArg, TResult> selector)
-    {
-        var length = array.Length;
-
-        if (length == 0)
-        {
-            return [];
-        }
-
-        var result = new TResult[length];
-
-        for (var i = 0; i < length; i++)
-        {
-            result[i] = selector(array[i], arg);
-        }
-
-        return ImmutableCollectionsMarshal.AsImmutableArray(result);
-    }
+        => ImmutableCollectionsMarshal.AsImmutableArray(SelectAsPlainArray(array, arg, selector));
 
     /// <summary>
     ///  Projects each element of an <see cref="ImmutableArray{T}"/> into a new form by incorporating the element's index.
@@ -176,6 +128,118 @@ internal static partial class ImmutableArrayExtensions
     ///  on each element of <paramref name="array"/>.
     /// </returns>
     public static ImmutableArray<TResult> SelectAsArray<T, TArg, TResult>(this ImmutableArray<T> array, TArg arg, Func<T, TArg, int, TResult> selector)
+        => ImmutableCollectionsMarshal.AsImmutableArray(SelectAsPlainArray(array, arg, selector));
+
+    /// <summary>
+    ///  Projects each element of an <see cref="ImmutableArray{T}"/> into a new form.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="array"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <param name="array">An array of values to invoke a transform function on.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <returns>
+    ///  Returns a new array whose elements are the result of invoking the transform function
+    ///  on each element of <paramref name="array"/>.
+    /// </returns>
+    public static TResult[] SelectAsPlainArray<T, TResult>(this ImmutableArray<T> array, Func<T, TResult> selector)
+    {
+        var length = array.Length;
+
+        if (length == 0)
+        {
+            return [];
+        }
+
+        var result = new TResult[length];
+
+        for (var i = 0; i < length; i++)
+        {
+            result[i] = selector(array[i]);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    ///  Projects each element of an <see cref="ImmutableArray{T}"/> into a new form by incorporating the element's index.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="array"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <param name="array">An array of values to invoke a transform function on.</param>
+    /// <param name="selector">
+    ///  A transform function to apply to each element; the second parameter of the function represents the index of the element.
+    /// </param>
+    /// <returns>
+    ///  Returns a new array whose elements are the result of invoking the transform function
+    ///  on each element of <paramref name="array"/>.
+    /// </returns>
+    public static TResult[] SelectAsPlainArray<T, TResult>(this ImmutableArray<T> array, Func<T, int, TResult> selector)
+    {
+        var length = array.Length;
+
+        if (length == 0)
+        {
+            return [];
+        }
+
+        var result = new TResult[length];
+
+        for (var i = 0; i < length; i++)
+        {
+            result[i] = selector(array[i], i);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    ///  Projects each element of an <see cref="ImmutableArray{T}"/> into a new form.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="array"/>.</typeparam>
+    /// <typeparam name="TArg">The type of the argument to pass to <paramref name="selector"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <param name="array">An array of values to invoke a transform function on.</param>
+    /// <param name="arg">An argument to pass to <paramref name="selector"/>.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <returns>
+    ///  Returns a new array whose elements are the result of invoking the transform function
+    ///  on each element of <paramref name="array"/>.
+    /// </returns>
+    public static TResult[] SelectAsPlainArray<T, TArg, TResult>(this ImmutableArray<T> array, TArg arg, Func<T, TArg, TResult> selector)
+    {
+        var length = array.Length;
+
+        if (length == 0)
+        {
+            return [];
+        }
+
+        var result = new TResult[length];
+
+        for (var i = 0; i < length; i++)
+        {
+            result[i] = selector(array[i], arg);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    ///  Projects each element of an <see cref="ImmutableArray{T}"/> into a new form by incorporating the element's index.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="array"/>.</typeparam>
+    /// <typeparam name="TArg">The type of the argument to pass to <paramref name="selector"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <param name="array">An array of values to invoke a transform function on.</param>
+    /// <param name="arg">An argument to pass to <paramref name="selector"/>.</param>
+    /// <param name="selector">
+    ///  A transform function to apply to each element; the third parameter of the function represents the index of the element.
+    /// </param>
+    /// <returns>
+    ///  Returns a new array whose elements are the result of invoking the transform function
+    ///  on each element of <paramref name="array"/>.
+    /// </returns>
+    public static TResult[] SelectAsPlainArray<T, TArg, TResult>(this ImmutableArray<T> array, TArg arg, Func<T, TArg, int, TResult> selector)
     {
         var length = array.Length;
 
@@ -191,7 +255,7 @@ internal static partial class ImmutableArrayExtensions
             result[i] = selector(array[i], arg, i);
         }
 
-        return ImmutableCollectionsMarshal.AsImmutableArray(result);
+        return result;
     }
 
     public static ImmutableArray<TResult> SelectManyAsArray<TSource, TResult>(this IReadOnlyCollection<TSource>? source, Func<TSource, ImmutableArray<TResult>> selector)
