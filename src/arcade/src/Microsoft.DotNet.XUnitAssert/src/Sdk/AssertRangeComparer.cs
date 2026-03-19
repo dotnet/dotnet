@@ -1,7 +1,3 @@
-#pragma warning disable IDE0019 // Use pattern matching
-#pragma warning disable IDE0040 // Add accessibility modifiers
-#pragma warning disable IDE0161 // Convert to file-scoped namespace
-
 #if XUNIT_NULLABLE
 #nullable enable
 #else
@@ -48,8 +44,7 @@ namespace Xunit.Sdk
 				return -1;
 
 			// Implements IComparable<T>?
-			var comparable1 = x as IComparable<T>;
-			if (comparable1 != null)
+			if (x is IComparable<T> comparable1)
 				return comparable1.CompareTo(y);
 
 			// Implements IComparable

@@ -81,7 +81,7 @@
       </trans-unit>
       <trans-unit id="Formatting_Error">
         <source>Formatting error. Abandoning further work to not corrupt the file, please report this issue. See: https://aka.ms/razor-formatting-issue</source>
-        <target state="new">Formatting error. Abandoning further work to not corrupt the file, please report this issue. See: https://aka.ms/razor-formatting-issue</target>
+        <target state="translated">Błąd formatowania. Porzucanie dalszej pracy, aby nie uszkodzić pliku, zgłoś ten problem. Zobacz: https://aka.ms/razor-formatting-issue</target>
         <note />
       </trans-unit>
       <trans-unit id="Generate_Async_Event_Handler_Title">

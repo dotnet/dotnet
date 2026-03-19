@@ -22,12 +22,12 @@ stages:
         pool:
           ${{ if eq(variables['System.TeamProject'], 'public') }}:
             name: $(DncEngPublicBuildPool)
-            demands: ImageOverride -equals Build.Ubuntu.2204.Amd64.Open
+            demands: ImageOverride -equals build.azurelinux.3.amd64.open
           ${{ if eq(variables['System.TeamProject'], 'internal') }}:
             name: $(DncEngInternalBuildPool)
-            image: 1es-ubuntu-2204
+            image: build.azurelinux.3.amd64
             os: linux
-        container: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-build-amd64
+        container: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-build-amd64
         variables:
         - _BuildConfig: Release
         steps:

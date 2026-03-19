@@ -1,10 +1,12 @@
 #pragma warning disable CA1052 // Static holder types should be static
 #pragma warning disable CA1720 // Identifier contains type name
-#pragma warning disable IDE0046 // Convert to conditional expression
-#pragma warning disable IDE0161 // Convert to file-scoped namespace
 
 #if XUNIT_NULLABLE
 #nullable enable
+#endif
+
+#if XUNIT_POINTERS
+#pragma warning disable CS8500 // This takes the address of, gets the size of, or declares a pointer to a managed type
 #endif
 
 using Xunit.Sdk;
@@ -15,11 +17,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Xunit
 {
-#if XUNIT_VISIBILITY_INTERNAL
-	internal
-#else
-	public
-#endif
 	partial class Assert
 	{
 		/// <summary>
@@ -37,12 +34,31 @@ namespace Xunit
 				throw NotNullException.ForNullValue();
 		}
 
+#if XUNIT_POINTERS
+
+		/// <summary>
+		/// Verifies that an unmanaged pointer is not null.
+		/// </summary>
+		/// <typeparam name="T">The type of the pointer</typeparam>
+		/// <param name="value">The pointer value</param>
+#if XUNIT_NULLABLE
+		public static unsafe void NotNull<T>([NotNull] T* value)
+#else
+		public static unsafe void NotNull<T>(T* value)
+#endif
+		{
+			if (value == null)
+				throw NotNullException.ForNullPointer(typeof(T));
+		}
+
+#endif  // XUNIT_POINTERS
+
 		/// <summary>
 		/// Verifies that a nullable struct value is not null.
 		/// </summary>
 		/// <typeparam name="T">The type of the struct</typeparam>
 		/// <param name="value">The value to e validated</param>
-		/// <returns>The non-<c>null</c> value</returns>
+		/// <returns>The non-<see langword="null"/> value</returns>
 		/// <exception cref="NotNullException">Thrown when the value is null</exception>
 #if XUNIT_NULLABLE
 		public static T NotNull<T>([NotNull] T? value)
@@ -77,16 +93,30 @@ namespace Xunit
 		/// </summary>
 		/// <param name="value">The value to be inspected</param>
 		/// <exception cref="NullException">Thrown when the value is not null</exception>
-		public static void Null<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(T? value)
+		public static void Null<T>(T? value)
 			where T : struct
 		{
 			if (value.HasValue)
 				throw NullException.ForNonNullStruct(typeof(T), value);
 		}
+
+#if XUNIT_POINTERS
+
+		/// <summary>
+		/// Verifies that an unmanaged pointer is null.
+		/// </summary>
+		/// <typeparam name="T">The type of the pointer</typeparam>
+		/// <param name="value">The pointer value</param>
+#if XUNIT_NULLABLE
+		public static unsafe void Null<T>([NotNull] T* value)
+#else
+		public static unsafe void Null<T>(T* value)
+#endif
+		{
+			if (value != null)
+				throw NullException.ForNonNullPointer(typeof(T));
+		}
+
+#endif  // XUNIT_POINTERS
 	}
 }

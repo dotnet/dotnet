@@ -1,13 +1,12 @@
 #pragma warning disable CA1052 // Static holder types should be static
 #pragma warning disable CA1720 // Identifier contains type name
 #pragma warning disable CA2007 // Consider calling ConfigureAwait on the awaited task
-#pragma warning disable IDE0022 // Use expression body for method
-#pragma warning disable IDE0039 // Use local function
-#pragma warning disable IDE0058 // Expression value is never used
-#pragma warning disable IDE0161 // Convert to file-scoped namespace
 
 #if XUNIT_NULLABLE
 #nullable enable
+#else
+// In case this is source-imported with global nullable enabled but no XUNIT_NULLABLE
+#pragma warning disable CS8622
 #endif
 
 using System;
@@ -17,11 +16,6 @@ using Xunit.Sdk;
 
 namespace Xunit
 {
-#if XUNIT_VISIBILITY_INTERNAL
-	internal
-#else
-	public
-#endif
 	partial class Assert
 	{
 		/// <summary>
@@ -43,7 +37,11 @@ namespace Xunit
 
 			var propertyChangeHappened = false;
 
-			PropertyChangedEventHandler handler = (sender, args) =>
+#if XUNIT_NULLABLE
+			void handler(object? sender, PropertyChangedEventArgs args) =>
+#else
+			void handler(object sender, PropertyChangedEventArgs args) =>
+#endif
 				propertyChangeHappened = propertyChangeHappened || string.IsNullOrEmpty(args.PropertyName) || propertyName.Equals(args.PropertyName, StringComparison.OrdinalIgnoreCase);
 
 			@object.PropertyChanged += handler;
@@ -68,7 +66,7 @@ namespace Xunit
 			string propertyName,
 			Func<Task> testCode)
 		{
-			throw new NotImplementedException("You must call Assert.PropertyChangedAsync (and await the result) when testing async code.");
+			throw new NotSupportedException("You must call Assert.PropertyChangedAsync (and await the result) when testing async code.");
 		}
 
 		/// <summary>
@@ -90,7 +88,11 @@ namespace Xunit
 
 			var propertyChangeHappened = false;
 
-			PropertyChangedEventHandler handler = (sender, args) =>
+#if XUNIT_NULLABLE
+			void handler(object? sender, PropertyChangedEventArgs args) =>
+#else
+			void handler(object sender, PropertyChangedEventArgs args) =>
+#endif
 				propertyChangeHappened = propertyChangeHappened || string.IsNullOrEmpty(args.PropertyName) || propertyName.Equals(args.PropertyName, StringComparison.OrdinalIgnoreCase);
 
 			@object.PropertyChanged += handler;
