@@ -1144,7 +1144,7 @@ namespace NuGet.Packaging
 
             if (!string.IsNullOrEmpty(source))
             {
-                RepositorySignatureInfoProvider.Instance.TryGetRepositorySignatureInfo(source, out repositorySignatureInfo);
+                RepositorySignatureInfoProvider.Instance.TryGetRepositorySignatureInfo(source!, out repositorySignatureInfo);
             }
 
             return repositorySignatureInfo;

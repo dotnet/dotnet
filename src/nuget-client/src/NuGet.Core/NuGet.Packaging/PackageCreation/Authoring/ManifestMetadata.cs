@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -19,14 +17,14 @@ namespace NuGet.Packaging
     /// </summary>
     public class ManifestMetadata : IPackageMetadata
     {
-        private string _minClientVersionString;
+        private string? _minClientVersionString;
 
         private IEnumerable<string> _authors = Enumerable.Empty<string>();
         private IEnumerable<string> _owners = Enumerable.Empty<string>();
 
-        private string _iconUrl;
-        private string _licenseUrl;
-        private string _projectUrl;
+        private string? _iconUrl;
+        private string? _licenseUrl;
+        private string? _projectUrl;
 
         public ManifestMetadata()
         {
@@ -42,7 +40,7 @@ namespace NuGet.Packaging
             Title = copy.Title?.Trim();
             Authors = copy.Authors;
             Owners = copy.Owners;
-            Tags = string.IsNullOrEmpty(copy.Tags) ? null : copy.Tags.Trim();
+            Tags = string.IsNullOrEmpty(copy.Tags) ? null : copy.Tags!.Trim();
             Serviceable = copy.Serviceable;
             _licenseUrl = copy.LicenseUrl?.OriginalString;
             _projectUrl = copy.ProjectUrl?.OriginalString;
@@ -68,12 +66,12 @@ namespace NuGet.Packaging
             Readme = copy.Readme;
         }
 
-        public string MinClientVersionString
+        public string? MinClientVersionString
         {
             get { return _minClientVersionString; }
             set
             {
-                Version version = null;
+                Version? version = null;
                 if (!String.IsNullOrEmpty(value) && !System.Version.TryParse(value, out version))
                 {
                     throw new InvalidDataException(NuGetResources.Manifest_InvalidMinClientVersion);
@@ -84,13 +82,13 @@ namespace NuGet.Packaging
             }
         }
 
-        public Version MinClientVersion { get; private set; }
+        public Version? MinClientVersion { get; private set; }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
-        public NuGetVersion Version { get; set; }
+        public NuGetVersion? Version { get; set; }
 
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         public IEnumerable<string> Authors
         {
@@ -106,12 +104,12 @@ namespace NuGet.Packaging
 
         // The (Icon/License/Project)Url properties have backing strings as we need to be able to differentiate
         //   between the property not being set (valid) and set to an empty value (invalid).
-        public void SetIconUrl(string iconUrl)
+        public void SetIconUrl(string? iconUrl)
         {
             _iconUrl = iconUrl;
         }
 
-        public Uri IconUrl
+        public Uri? IconUrl
         {
             get
             {
@@ -124,14 +122,14 @@ namespace NuGet.Packaging
             }
         }
 
-        public string Icon { get; set; }
+        public string? Icon { get; set; }
 
-        public void SetLicenseUrl(string licenseUrl)
+        public void SetLicenseUrl(string? licenseUrl)
         {
             _licenseUrl = licenseUrl;
         }
 
-        public Uri LicenseUrl
+        public Uri? LicenseUrl
         {
             get
             {
@@ -144,12 +142,12 @@ namespace NuGet.Packaging
             }
         }
 
-        public void SetProjectUrl(string projectUrl)
+        public void SetProjectUrl(string? projectUrl)
         {
             _projectUrl = projectUrl;
         }
 
-        public Uri ProjectUrl
+        public Uri? ProjectUrl
         {
             get
             {
@@ -168,23 +166,23 @@ namespace NuGet.Packaging
 
         public bool DevelopmentDependency { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
-        public string Summary { get; set; }
+        public string? Summary { get; set; }
 
-        public string ReleaseNotes { get; set; }
+        public string? ReleaseNotes { get; set; }
 
-        public string Copyright { get; set; }
+        public string? Copyright { get; set; }
 
-        public string Language { get; set; }
+        public string? Language { get; set; }
 
-        public string Tags { get; set; }
+        public string? Tags { get; set; }
 
-        public string Readme { get; set; }
+        public string? Readme { get; set; }
 
         public bool Serviceable { get; set; }
 
-        public RepositoryMetadata Repository { get; set; }
+        public RepositoryMetadata? Repository { get; set; }
 
         private IEnumerable<PackageDependencyGroup> _dependencyGroups = [];
         public IEnumerable<PackageDependencyGroup> DependencyGroups
@@ -222,7 +220,7 @@ namespace NuGet.Packaging
         {
             if (referenceSets == null)
             {
-                Enumerable.Empty<PackageReferenceSet>();
+                return Enumerable.Empty<PackageReferenceSet>();
             }
 
             var referenceSetGroups = referenceSets.GroupBy(set => set.TargetFramework);
@@ -244,7 +242,7 @@ namespace NuGet.Packaging
 
         public IEnumerable<PackageType> PackageTypes { get; set; } = new List<PackageType>();
 
-        public LicenseMetadata LicenseMetadata { get; set; } = null;
+        public LicenseMetadata? LicenseMetadata { get; set; } = null;
 
         private static IEnumerable<PackageDependencyGroup> MergeDependencyGroups(IEnumerable<PackageDependencyGroup> actualDependencyGroups)
         {
@@ -283,7 +281,7 @@ namespace NuGet.Packaging
             {
                 var dependenciesList = dependencyGroup.Packages.Select(dependency =>
                     new PackageDependency(
-                        dependency.Id.SafeTrim(),
+                        dependency.Id.Trim(),
                         dependency.VersionRange,
                         dependency.Include,
                         dependency.Exclude)).ToList();
@@ -306,7 +304,7 @@ namespace NuGet.Packaging
             }
             else
             {
-                if (Id.Length > PackageIdValidator.MaxPackageIdLength)
+                if (Id!.Length > PackageIdValidator.MaxPackageIdLength)
                 {
                     yield return String.Format(CultureInfo.CurrentCulture, NuGetResources.Manifest_IdMaxLengthExceeded);
                 }
@@ -369,7 +367,7 @@ namespace NuGet.Packaging
                 }
             }
 
-            if (_licenseUrl != null && LicenseMetadata != null && (string.IsNullOrWhiteSpace(_licenseUrl) || !LicenseUrl.Equals(LicenseMetadata.LicenseUrl)))
+            if (_licenseUrl != null && LicenseMetadata != null && (string.IsNullOrWhiteSpace(_licenseUrl) || !LicenseUrl!.Equals(LicenseMetadata.LicenseUrl)))
             {
                 yield return NuGetResources.Manifest_LicenseUrlCannotBeUsedWithLicenseMetadata;
             }

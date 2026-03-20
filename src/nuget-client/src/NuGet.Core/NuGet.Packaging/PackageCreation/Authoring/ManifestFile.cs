@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -22,10 +20,10 @@ namespace NuGet.Packaging
         internal static readonly char[] ReferenceFileInvalidCharacters = _invalidSourceCharacters.Concat(new[] { ':', '*', '?', '\\', '/' }).ToArray();
         private static readonly char[] _invalidTargetChars = ReferenceFileInvalidCharacters.Except(new[] { '\\', '/' }).ToArray();
 
-        private string _target;
-        public string Source { get; set; }
+        private string? _target;
+        public string? Source { get; set; }
 
-        public string Target
+        public string? Target
         {
             get
             {
@@ -33,11 +31,11 @@ namespace NuGet.Packaging
             }
             set
             {
-                _target = string.IsNullOrEmpty(value) ? value : PathUtility.GetPathWithDirectorySeparator(value);
+                _target = string.IsNullOrEmpty(value) ? value : PathUtility.GetPathWithDirectorySeparator(value!);
             }
         }
 
-        public string Exclude { get; set; }
+        public string? Exclude { get; set; }
 
         public IEnumerable<string> Validate()
         {
@@ -45,17 +43,17 @@ namespace NuGet.Packaging
             {
                 yield return String.Format(CultureInfo.CurrentCulture, NuGetResources.Manifest_RequiredMetadataMissing, "Source");
             }
-            else if (Source.IndexOfAny(_invalidSourceCharacters) != -1)
+            else if (Source!.IndexOfAny(_invalidSourceCharacters) != -1)
             {
                 yield return String.Format(CultureInfo.CurrentCulture, NuGetResources.Manifest_SourceContainsInvalidCharacters, Source);
             }
 
-            if (!String.IsNullOrEmpty(Target) && Target.IndexOfAny(_invalidTargetChars) != -1)
+            if (!String.IsNullOrEmpty(Target) && Target!.IndexOfAny(_invalidTargetChars) != -1)
             {
                 yield return String.Format(CultureInfo.CurrentCulture, NuGetResources.Manifest_TargetContainsInvalidCharacters, Target);
             }
 
-            if (!String.IsNullOrEmpty(Exclude) && Exclude.IndexOfAny(_invalidSourceCharacters) != -1)
+            if (!String.IsNullOrEmpty(Exclude) && Exclude!.IndexOfAny(_invalidSourceCharacters) != -1)
             {
                 yield return String.Format(CultureInfo.CurrentCulture, NuGetResources.Manifest_ExcludeContainsInvalidCharacters, Exclude);
             }

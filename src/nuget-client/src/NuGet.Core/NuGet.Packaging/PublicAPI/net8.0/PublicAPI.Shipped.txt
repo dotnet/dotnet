@@ -228,9 +228,9 @@ NuGet.Packaging.FallbackPackagePathResolver.GetPackageDirectory(string! packageI
 NuGet.Packaging.FallbackPackagePathResolver.GetPackageDirectory(string! packageId, string! version) -> string?
 NuGet.Packaging.FallbackPackagePathResolver.GetPackageInfo(string! packageId, NuGet.Versioning.NuGetVersion! version) -> NuGet.Packaging.FallbackPackagePathInfo?
 NuGet.Packaging.FrameworkAssemblyReference
-~NuGet.Packaging.FrameworkAssemblyReference.AssemblyName.get -> string
-~NuGet.Packaging.FrameworkAssemblyReference.FrameworkAssemblyReference(string assemblyName, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> supportedFrameworks) -> void
-~NuGet.Packaging.FrameworkAssemblyReference.SupportedFrameworks.get -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework>
+NuGet.Packaging.FrameworkAssemblyReference.AssemblyName.get -> string!
+NuGet.Packaging.FrameworkAssemblyReference.FrameworkAssemblyReference(string! assemblyName, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>! supportedFrameworks) -> void
+NuGet.Packaging.FrameworkAssemblyReference.SupportedFrameworks.get -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>!
 NuGet.Packaging.FrameworkNameUtility
 NuGet.Packaging.FrameworkReference
 NuGet.Packaging.FrameworkReference.Compare(NuGet.Packaging.FrameworkReference? x, NuGet.Packaging.FrameworkReference? y) -> int
@@ -284,41 +284,41 @@ NuGet.Packaging.IPackageDownloader.SetThrottle(System.Threading.SemaphoreSlim? t
 NuGet.Packaging.IPackageDownloader.SignedPackageReader.get -> NuGet.Packaging.Signing.ISignedPackageReader!
 NuGet.Packaging.IPackageDownloader.Source.get -> string!
 NuGet.Packaging.IPackageFile
-~NuGet.Packaging.IPackageFile.EffectivePath.get -> string
-~NuGet.Packaging.IPackageFile.GetStream() -> System.IO.Stream
+NuGet.Packaging.IPackageFile.EffectivePath.get -> string?
+NuGet.Packaging.IPackageFile.GetStream() -> System.IO.Stream!
 NuGet.Packaging.IPackageFile.LastWriteTime.get -> System.DateTimeOffset
-~NuGet.Packaging.IPackageFile.NuGetFramework.get -> NuGet.Frameworks.NuGetFramework
-~NuGet.Packaging.IPackageFile.Path.get -> string
-~NuGet.Packaging.IPackageFile.TargetFramework.get -> System.Runtime.Versioning.FrameworkName
+NuGet.Packaging.IPackageFile.NuGetFramework.get -> NuGet.Frameworks.NuGetFramework?
+NuGet.Packaging.IPackageFile.Path.get -> string!
+NuGet.Packaging.IPackageFile.TargetFramework.get -> System.Runtime.Versioning.FrameworkName?
 NuGet.Packaging.IPackageMetadata
-~NuGet.Packaging.IPackageMetadata.Authors.get -> System.Collections.Generic.IEnumerable<string>
-~NuGet.Packaging.IPackageMetadata.ContentFiles.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.ManifestContentFiles>
-~NuGet.Packaging.IPackageMetadata.Copyright.get -> string
-~NuGet.Packaging.IPackageMetadata.DependencyGroups.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup>
-~NuGet.Packaging.IPackageMetadata.Description.get -> string
+NuGet.Packaging.IPackageMetadata.Authors.get -> System.Collections.Generic.IEnumerable<string!>!
+NuGet.Packaging.IPackageMetadata.ContentFiles.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.ManifestContentFiles!>!
+NuGet.Packaging.IPackageMetadata.Copyright.get -> string?
+NuGet.Packaging.IPackageMetadata.DependencyGroups.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup!>!
+NuGet.Packaging.IPackageMetadata.Description.get -> string?
 NuGet.Packaging.IPackageMetadata.DevelopmentDependency.get -> bool
-~NuGet.Packaging.IPackageMetadata.FrameworkReferenceGroups.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkReferenceGroup>
-~NuGet.Packaging.IPackageMetadata.FrameworkReferences.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkAssemblyReference>
-~NuGet.Packaging.IPackageMetadata.Icon.get -> string
-~NuGet.Packaging.IPackageMetadata.IconUrl.get -> System.Uri
-~NuGet.Packaging.IPackageMetadata.Id.get -> string
-~NuGet.Packaging.IPackageMetadata.Language.get -> string
-~NuGet.Packaging.IPackageMetadata.LicenseMetadata.get -> NuGet.Packaging.LicenseMetadata
-~NuGet.Packaging.IPackageMetadata.LicenseUrl.get -> System.Uri
-~NuGet.Packaging.IPackageMetadata.MinClientVersion.get -> System.Version
-~NuGet.Packaging.IPackageMetadata.Owners.get -> System.Collections.Generic.IEnumerable<string>
-~NuGet.Packaging.IPackageMetadata.PackageAssemblyReferences.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReferenceSet>
-~NuGet.Packaging.IPackageMetadata.PackageTypes.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageType>
-~NuGet.Packaging.IPackageMetadata.ProjectUrl.get -> System.Uri
-~NuGet.Packaging.IPackageMetadata.Readme.get -> string
-~NuGet.Packaging.IPackageMetadata.ReleaseNotes.get -> string
-~NuGet.Packaging.IPackageMetadata.Repository.get -> NuGet.Packaging.Core.RepositoryMetadata
+NuGet.Packaging.IPackageMetadata.FrameworkReferenceGroups.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkReferenceGroup!>!
+NuGet.Packaging.IPackageMetadata.FrameworkReferences.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkAssemblyReference!>!
+NuGet.Packaging.IPackageMetadata.Icon.get -> string?
+NuGet.Packaging.IPackageMetadata.IconUrl.get -> System.Uri?
+NuGet.Packaging.IPackageMetadata.Id.get -> string?
+NuGet.Packaging.IPackageMetadata.Language.get -> string?
+NuGet.Packaging.IPackageMetadata.LicenseMetadata.get -> NuGet.Packaging.LicenseMetadata?
+NuGet.Packaging.IPackageMetadata.LicenseUrl.get -> System.Uri?
+NuGet.Packaging.IPackageMetadata.MinClientVersion.get -> System.Version?
+NuGet.Packaging.IPackageMetadata.Owners.get -> System.Collections.Generic.IEnumerable<string!>!
+NuGet.Packaging.IPackageMetadata.PackageAssemblyReferences.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReferenceSet!>!
+NuGet.Packaging.IPackageMetadata.PackageTypes.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageType!>!
+NuGet.Packaging.IPackageMetadata.ProjectUrl.get -> System.Uri?
+NuGet.Packaging.IPackageMetadata.Readme.get -> string?
+NuGet.Packaging.IPackageMetadata.ReleaseNotes.get -> string?
+NuGet.Packaging.IPackageMetadata.Repository.get -> NuGet.Packaging.Core.RepositoryMetadata?
 NuGet.Packaging.IPackageMetadata.RequireLicenseAcceptance.get -> bool
 NuGet.Packaging.IPackageMetadata.Serviceable.get -> bool
-~NuGet.Packaging.IPackageMetadata.Summary.get -> string
-~NuGet.Packaging.IPackageMetadata.Tags.get -> string
-~NuGet.Packaging.IPackageMetadata.Title.get -> string
-~NuGet.Packaging.IPackageMetadata.Version.get -> NuGet.Versioning.NuGetVersion
+NuGet.Packaging.IPackageMetadata.Summary.get -> string?
+NuGet.Packaging.IPackageMetadata.Tags.get -> string?
+NuGet.Packaging.IPackageMetadata.Title.get -> string?
+NuGet.Packaging.IPackageMetadata.Version.get -> NuGet.Versioning.NuGetVersion?
 NuGet.Packaging.IPackageResolver
 NuGet.Packaging.IPackageResolver.Resolve(System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity!>! targets, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependencyInfo!>! availablePackages, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference!>! installedPackages, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity!>!
 NuGet.Packaging.IPackageResolver.Resolve(System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity!>! targets, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependencyInfo!>! availablePackages, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity!>!
@@ -331,7 +331,7 @@ NuGet.Packaging.LicenseMetadata.Equals(NuGet.Packaging.LicenseMetadata? other) -
 NuGet.Packaging.LicenseMetadata.License.get -> string!
 NuGet.Packaging.LicenseMetadata.LicenseExpression.get -> NuGet.Packaging.Licenses.NuGetLicenseExpression?
 NuGet.Packaging.LicenseMetadata.LicenseMetadata(NuGet.Packaging.LicenseType type, string! license, NuGet.Packaging.Licenses.NuGetLicenseExpression? expression, System.Collections.Generic.IReadOnlyList<string!>? warningsAndErrors, System.Version! version) -> void
-NuGet.Packaging.LicenseMetadata.LicenseUrl.get -> System.Uri?
+NuGet.Packaging.LicenseMetadata.LicenseUrl.get -> System.Uri!
 NuGet.Packaging.LicenseMetadata.Type.get -> NuGet.Packaging.LicenseType
 NuGet.Packaging.LicenseMetadata.Version.get -> System.Version!
 NuGet.Packaging.LicenseMetadata.WarningsAndErrors.get -> System.Collections.Generic.IReadOnlyList<string!>?
@@ -386,99 +386,99 @@ NuGet.Packaging.Licenses.WithOperator.Exception.get -> NuGet.Packaging.Licenses.
 NuGet.Packaging.Licenses.WithOperator.License.get -> NuGet.Packaging.Licenses.NuGetLicense!
 NuGet.Packaging.Licenses.WithOperator.WithOperator(NuGet.Packaging.Licenses.NuGetLicense! license, NuGet.Packaging.Licenses.NuGetLicenseException! exception) -> void
 NuGet.Packaging.Manifest
-~NuGet.Packaging.Manifest.Files.get -> System.Collections.Generic.ICollection<NuGet.Packaging.ManifestFile>
+NuGet.Packaging.Manifest.Files.get -> System.Collections.Generic.ICollection<NuGet.Packaging.ManifestFile!>!
 NuGet.Packaging.Manifest.HasFilesNode.get -> bool
-~NuGet.Packaging.Manifest.Manifest(NuGet.Packaging.ManifestMetadata metadata) -> void
-~NuGet.Packaging.Manifest.Manifest(NuGet.Packaging.ManifestMetadata metadata, System.Collections.Generic.ICollection<NuGet.Packaging.ManifestFile> files) -> void
-~NuGet.Packaging.Manifest.Metadata.get -> NuGet.Packaging.ManifestMetadata
-~NuGet.Packaging.Manifest.Save(System.IO.Stream stream) -> void
-~NuGet.Packaging.Manifest.Save(System.IO.Stream stream, bool generateBackwardsCompatible) -> void
-~NuGet.Packaging.Manifest.Save(System.IO.Stream stream, int minimumManifestVersion) -> void
-~NuGet.Packaging.Manifest.Save(System.IO.Stream stream, int minimumManifestVersion, bool generateBackwardsCompatible) -> void
+NuGet.Packaging.Manifest.Manifest(NuGet.Packaging.ManifestMetadata! metadata) -> void
+NuGet.Packaging.Manifest.Manifest(NuGet.Packaging.ManifestMetadata! metadata, System.Collections.Generic.ICollection<NuGet.Packaging.ManifestFile!>? files) -> void
+NuGet.Packaging.Manifest.Metadata.get -> NuGet.Packaging.ManifestMetadata!
+NuGet.Packaging.Manifest.Save(System.IO.Stream! stream) -> void
+NuGet.Packaging.Manifest.Save(System.IO.Stream! stream, bool generateBackwardsCompatible) -> void
+NuGet.Packaging.Manifest.Save(System.IO.Stream! stream, int minimumManifestVersion) -> void
+NuGet.Packaging.Manifest.Save(System.IO.Stream! stream, int minimumManifestVersion, bool generateBackwardsCompatible) -> void
 NuGet.Packaging.ManifestContentFiles
-~NuGet.Packaging.ManifestContentFiles.BuildAction.get -> string
-~NuGet.Packaging.ManifestContentFiles.BuildAction.set -> void
-~NuGet.Packaging.ManifestContentFiles.CopyToOutput.get -> string
-~NuGet.Packaging.ManifestContentFiles.CopyToOutput.set -> void
-~NuGet.Packaging.ManifestContentFiles.Exclude.get -> string
-~NuGet.Packaging.ManifestContentFiles.Exclude.set -> void
-~NuGet.Packaging.ManifestContentFiles.Flatten.get -> string
-~NuGet.Packaging.ManifestContentFiles.Flatten.set -> void
-~NuGet.Packaging.ManifestContentFiles.Include.get -> string
-~NuGet.Packaging.ManifestContentFiles.Include.set -> void
+NuGet.Packaging.ManifestContentFiles.BuildAction.get -> string?
+NuGet.Packaging.ManifestContentFiles.BuildAction.set -> void
+NuGet.Packaging.ManifestContentFiles.CopyToOutput.get -> string?
+NuGet.Packaging.ManifestContentFiles.CopyToOutput.set -> void
+NuGet.Packaging.ManifestContentFiles.Exclude.get -> string?
+NuGet.Packaging.ManifestContentFiles.Exclude.set -> void
+NuGet.Packaging.ManifestContentFiles.Flatten.get -> string?
+NuGet.Packaging.ManifestContentFiles.Flatten.set -> void
+NuGet.Packaging.ManifestContentFiles.Include.get -> string!
+NuGet.Packaging.ManifestContentFiles.Include.set -> void
 NuGet.Packaging.ManifestContentFiles.ManifestContentFiles() -> void
 NuGet.Packaging.ManifestFile
-~NuGet.Packaging.ManifestFile.Exclude.get -> string
-~NuGet.Packaging.ManifestFile.Exclude.set -> void
+NuGet.Packaging.ManifestFile.Exclude.get -> string?
+NuGet.Packaging.ManifestFile.Exclude.set -> void
 NuGet.Packaging.ManifestFile.ManifestFile() -> void
-~NuGet.Packaging.ManifestFile.Source.get -> string
-~NuGet.Packaging.ManifestFile.Source.set -> void
-~NuGet.Packaging.ManifestFile.Target.get -> string
-~NuGet.Packaging.ManifestFile.Target.set -> void
-~NuGet.Packaging.ManifestFile.Validate() -> System.Collections.Generic.IEnumerable<string>
+NuGet.Packaging.ManifestFile.Source.get -> string?
+NuGet.Packaging.ManifestFile.Source.set -> void
+NuGet.Packaging.ManifestFile.Target.get -> string?
+NuGet.Packaging.ManifestFile.Target.set -> void
+NuGet.Packaging.ManifestFile.Validate() -> System.Collections.Generic.IEnumerable<string!>!
 NuGet.Packaging.ManifestMetadata
-~NuGet.Packaging.ManifestMetadata.Authors.get -> System.Collections.Generic.IEnumerable<string>
-~NuGet.Packaging.ManifestMetadata.Authors.set -> void
-~NuGet.Packaging.ManifestMetadata.ContentFiles.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.ManifestContentFiles>
-~NuGet.Packaging.ManifestMetadata.ContentFiles.set -> void
-~NuGet.Packaging.ManifestMetadata.Copyright.get -> string
-~NuGet.Packaging.ManifestMetadata.Copyright.set -> void
-~NuGet.Packaging.ManifestMetadata.DependencyGroups.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup>
-~NuGet.Packaging.ManifestMetadata.DependencyGroups.set -> void
-~NuGet.Packaging.ManifestMetadata.Description.get -> string
-~NuGet.Packaging.ManifestMetadata.Description.set -> void
+NuGet.Packaging.ManifestMetadata.Authors.get -> System.Collections.Generic.IEnumerable<string!>!
+NuGet.Packaging.ManifestMetadata.Authors.set -> void
+NuGet.Packaging.ManifestMetadata.ContentFiles.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.ManifestContentFiles!>!
+NuGet.Packaging.ManifestMetadata.ContentFiles.set -> void
+NuGet.Packaging.ManifestMetadata.Copyright.get -> string?
+NuGet.Packaging.ManifestMetadata.Copyright.set -> void
+NuGet.Packaging.ManifestMetadata.DependencyGroups.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup!>!
+NuGet.Packaging.ManifestMetadata.DependencyGroups.set -> void
+NuGet.Packaging.ManifestMetadata.Description.get -> string?
+NuGet.Packaging.ManifestMetadata.Description.set -> void
 NuGet.Packaging.ManifestMetadata.DevelopmentDependency.get -> bool
 NuGet.Packaging.ManifestMetadata.DevelopmentDependency.set -> void
 NuGet.Packaging.ManifestMetadata.EmitRequireLicenseAcceptance.get -> bool
 NuGet.Packaging.ManifestMetadata.EmitRequireLicenseAcceptance.set -> void
-~NuGet.Packaging.ManifestMetadata.FrameworkReferenceGroups.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkReferenceGroup>
-~NuGet.Packaging.ManifestMetadata.FrameworkReferenceGroups.set -> void
-~NuGet.Packaging.ManifestMetadata.FrameworkReferences.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkAssemblyReference>
-~NuGet.Packaging.ManifestMetadata.FrameworkReferences.set -> void
-~NuGet.Packaging.ManifestMetadata.Icon.get -> string
-~NuGet.Packaging.ManifestMetadata.Icon.set -> void
-~NuGet.Packaging.ManifestMetadata.IconUrl.get -> System.Uri
-~NuGet.Packaging.ManifestMetadata.Id.get -> string
-~NuGet.Packaging.ManifestMetadata.Id.set -> void
-~NuGet.Packaging.ManifestMetadata.Language.get -> string
-~NuGet.Packaging.ManifestMetadata.Language.set -> void
-~NuGet.Packaging.ManifestMetadata.LicenseMetadata.get -> NuGet.Packaging.LicenseMetadata
-~NuGet.Packaging.ManifestMetadata.LicenseMetadata.set -> void
-~NuGet.Packaging.ManifestMetadata.LicenseUrl.get -> System.Uri
+NuGet.Packaging.ManifestMetadata.FrameworkReferenceGroups.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkReferenceGroup!>!
+NuGet.Packaging.ManifestMetadata.FrameworkReferenceGroups.set -> void
+NuGet.Packaging.ManifestMetadata.FrameworkReferences.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkAssemblyReference!>!
+NuGet.Packaging.ManifestMetadata.FrameworkReferences.set -> void
+NuGet.Packaging.ManifestMetadata.Icon.get -> string?
+NuGet.Packaging.ManifestMetadata.Icon.set -> void
+NuGet.Packaging.ManifestMetadata.IconUrl.get -> System.Uri?
+NuGet.Packaging.ManifestMetadata.Id.get -> string?
+NuGet.Packaging.ManifestMetadata.Id.set -> void
+NuGet.Packaging.ManifestMetadata.Language.get -> string?
+NuGet.Packaging.ManifestMetadata.Language.set -> void
+NuGet.Packaging.ManifestMetadata.LicenseMetadata.get -> NuGet.Packaging.LicenseMetadata?
+NuGet.Packaging.ManifestMetadata.LicenseMetadata.set -> void
+NuGet.Packaging.ManifestMetadata.LicenseUrl.get -> System.Uri?
 NuGet.Packaging.ManifestMetadata.ManifestMetadata() -> void
-~NuGet.Packaging.ManifestMetadata.ManifestMetadata(NuGet.Packaging.IPackageMetadata copy) -> void
-~NuGet.Packaging.ManifestMetadata.MinClientVersion.get -> System.Version
-~NuGet.Packaging.ManifestMetadata.MinClientVersionString.get -> string
-~NuGet.Packaging.ManifestMetadata.MinClientVersionString.set -> void
-~NuGet.Packaging.ManifestMetadata.Owners.get -> System.Collections.Generic.IEnumerable<string>
-~NuGet.Packaging.ManifestMetadata.Owners.set -> void
-~NuGet.Packaging.ManifestMetadata.PackageAssemblyReferences.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReferenceSet>
-~NuGet.Packaging.ManifestMetadata.PackageAssemblyReferences.set -> void
-~NuGet.Packaging.ManifestMetadata.PackageTypes.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageType>
-~NuGet.Packaging.ManifestMetadata.PackageTypes.set -> void
-~NuGet.Packaging.ManifestMetadata.ProjectUrl.get -> System.Uri
-~NuGet.Packaging.ManifestMetadata.Readme.get -> string
-~NuGet.Packaging.ManifestMetadata.Readme.set -> void
-~NuGet.Packaging.ManifestMetadata.ReleaseNotes.get -> string
-~NuGet.Packaging.ManifestMetadata.ReleaseNotes.set -> void
-~NuGet.Packaging.ManifestMetadata.Repository.get -> NuGet.Packaging.Core.RepositoryMetadata
-~NuGet.Packaging.ManifestMetadata.Repository.set -> void
+NuGet.Packaging.ManifestMetadata.ManifestMetadata(NuGet.Packaging.IPackageMetadata! copy) -> void
+NuGet.Packaging.ManifestMetadata.MinClientVersion.get -> System.Version?
+NuGet.Packaging.ManifestMetadata.MinClientVersionString.get -> string?
+NuGet.Packaging.ManifestMetadata.MinClientVersionString.set -> void
+NuGet.Packaging.ManifestMetadata.Owners.get -> System.Collections.Generic.IEnumerable<string!>!
+NuGet.Packaging.ManifestMetadata.Owners.set -> void
+NuGet.Packaging.ManifestMetadata.PackageAssemblyReferences.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReferenceSet!>!
+NuGet.Packaging.ManifestMetadata.PackageAssemblyReferences.set -> void
+NuGet.Packaging.ManifestMetadata.PackageTypes.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageType!>!
+NuGet.Packaging.ManifestMetadata.PackageTypes.set -> void
+NuGet.Packaging.ManifestMetadata.ProjectUrl.get -> System.Uri?
+NuGet.Packaging.ManifestMetadata.Readme.get -> string?
+NuGet.Packaging.ManifestMetadata.Readme.set -> void
+NuGet.Packaging.ManifestMetadata.ReleaseNotes.get -> string?
+NuGet.Packaging.ManifestMetadata.ReleaseNotes.set -> void
+NuGet.Packaging.ManifestMetadata.Repository.get -> NuGet.Packaging.Core.RepositoryMetadata?
+NuGet.Packaging.ManifestMetadata.Repository.set -> void
 NuGet.Packaging.ManifestMetadata.RequireLicenseAcceptance.get -> bool
 NuGet.Packaging.ManifestMetadata.RequireLicenseAcceptance.set -> void
 NuGet.Packaging.ManifestMetadata.Serviceable.get -> bool
 NuGet.Packaging.ManifestMetadata.Serviceable.set -> void
-~NuGet.Packaging.ManifestMetadata.SetIconUrl(string iconUrl) -> void
-~NuGet.Packaging.ManifestMetadata.SetLicenseUrl(string licenseUrl) -> void
-~NuGet.Packaging.ManifestMetadata.SetProjectUrl(string projectUrl) -> void
-~NuGet.Packaging.ManifestMetadata.Summary.get -> string
-~NuGet.Packaging.ManifestMetadata.Summary.set -> void
-~NuGet.Packaging.ManifestMetadata.Tags.get -> string
-~NuGet.Packaging.ManifestMetadata.Tags.set -> void
-~NuGet.Packaging.ManifestMetadata.Title.get -> string
-~NuGet.Packaging.ManifestMetadata.Title.set -> void
-~NuGet.Packaging.ManifestMetadata.Validate() -> System.Collections.Generic.IEnumerable<string>
-~NuGet.Packaging.ManifestMetadata.Version.get -> NuGet.Versioning.NuGetVersion
-~NuGet.Packaging.ManifestMetadata.Version.set -> void
+NuGet.Packaging.ManifestMetadata.SetIconUrl(string? iconUrl) -> void
+NuGet.Packaging.ManifestMetadata.SetLicenseUrl(string? licenseUrl) -> void
+NuGet.Packaging.ManifestMetadata.SetProjectUrl(string? projectUrl) -> void
+NuGet.Packaging.ManifestMetadata.Summary.get -> string?
+NuGet.Packaging.ManifestMetadata.Summary.set -> void
+NuGet.Packaging.ManifestMetadata.Tags.get -> string?
+NuGet.Packaging.ManifestMetadata.Tags.set -> void
+NuGet.Packaging.ManifestMetadata.Title.get -> string?
+NuGet.Packaging.ManifestMetadata.Title.set -> void
+NuGet.Packaging.ManifestMetadata.Validate() -> System.Collections.Generic.IEnumerable<string!>!
+NuGet.Packaging.ManifestMetadata.Version.get -> NuGet.Versioning.NuGetVersion?
+NuGet.Packaging.ManifestMetadata.Version.set -> void
 NuGet.Packaging.ManifestSchemaUtility
 NuGet.Packaging.ManifestVersionUtility
 NuGet.Packaging.MinClientVersionException
@@ -542,80 +542,80 @@ NuGet.Packaging.PackageArchiveReader.ValidatePackageEntriesAsync(System.Threadin
 NuGet.Packaging.PackageArchiveReader.ZipReadStream.get -> System.IO.Stream?
 NuGet.Packaging.PackageArchiveReader.ZipReadStream.set -> void
 NuGet.Packaging.PackageBuilder
-~NuGet.Packaging.PackageBuilder.AddFiles(string basePath, string source, string destination, string exclude = null) -> void
-~NuGet.Packaging.PackageBuilder.Authors.get -> System.Collections.Generic.ISet<string>
-~NuGet.Packaging.PackageBuilder.ContentFiles.get -> System.Collections.Generic.ICollection<NuGet.Packaging.ManifestContentFiles>
-~NuGet.Packaging.PackageBuilder.Copyright.get -> string
-~NuGet.Packaging.PackageBuilder.Copyright.set -> void
-~NuGet.Packaging.PackageBuilder.DependencyGroups.get -> System.Collections.ObjectModel.Collection<NuGet.Packaging.PackageDependencyGroup>
-~NuGet.Packaging.PackageBuilder.Description.get -> string
-~NuGet.Packaging.PackageBuilder.Description.set -> void
+NuGet.Packaging.PackageBuilder.AddFiles(string! basePath, string! source, string? destination, string? exclude = null) -> void
+NuGet.Packaging.PackageBuilder.Authors.get -> System.Collections.Generic.ISet<string!>!
+NuGet.Packaging.PackageBuilder.ContentFiles.get -> System.Collections.Generic.ICollection<NuGet.Packaging.ManifestContentFiles!>!
+NuGet.Packaging.PackageBuilder.Copyright.get -> string?
+NuGet.Packaging.PackageBuilder.Copyright.set -> void
+NuGet.Packaging.PackageBuilder.DependencyGroups.get -> System.Collections.ObjectModel.Collection<NuGet.Packaging.PackageDependencyGroup!>!
+NuGet.Packaging.PackageBuilder.Description.get -> string?
+NuGet.Packaging.PackageBuilder.Description.set -> void
 NuGet.Packaging.PackageBuilder.DevelopmentDependency.get -> bool
 NuGet.Packaging.PackageBuilder.DevelopmentDependency.set -> void
 NuGet.Packaging.PackageBuilder.EmitRequireLicenseAcceptance.get -> bool
 NuGet.Packaging.PackageBuilder.EmitRequireLicenseAcceptance.set -> void
-~NuGet.Packaging.PackageBuilder.Files.get -> System.Collections.Generic.ICollection<NuGet.Packaging.IPackageFile>
-~NuGet.Packaging.PackageBuilder.FrameworkReferenceGroups.get -> System.Collections.ObjectModel.Collection<NuGet.Packaging.FrameworkReferenceGroup>
-~NuGet.Packaging.PackageBuilder.FrameworkReferences.get -> System.Collections.ObjectModel.Collection<NuGet.Packaging.FrameworkAssemblyReference>
+NuGet.Packaging.PackageBuilder.Files.get -> System.Collections.Generic.ICollection<NuGet.Packaging.IPackageFile!>!
+NuGet.Packaging.PackageBuilder.FrameworkReferenceGroups.get -> System.Collections.ObjectModel.Collection<NuGet.Packaging.FrameworkReferenceGroup!>!
+NuGet.Packaging.PackageBuilder.FrameworkReferences.get -> System.Collections.ObjectModel.Collection<NuGet.Packaging.FrameworkAssemblyReference!>!
 NuGet.Packaging.PackageBuilder.HasSnapshotVersion.get -> bool
 NuGet.Packaging.PackageBuilder.HasSnapshotVersion.set -> void
-~NuGet.Packaging.PackageBuilder.Icon.get -> string
-~NuGet.Packaging.PackageBuilder.Icon.set -> void
-~NuGet.Packaging.PackageBuilder.IconUrl.get -> System.Uri
-~NuGet.Packaging.PackageBuilder.IconUrl.set -> void
-~NuGet.Packaging.PackageBuilder.Id.get -> string
-~NuGet.Packaging.PackageBuilder.Id.set -> void
-~NuGet.Packaging.PackageBuilder.Language.get -> string
-~NuGet.Packaging.PackageBuilder.Language.set -> void
-~NuGet.Packaging.PackageBuilder.LicenseMetadata.get -> NuGet.Packaging.LicenseMetadata
-~NuGet.Packaging.PackageBuilder.LicenseMetadata.set -> void
-~NuGet.Packaging.PackageBuilder.LicenseUrl.get -> System.Uri
-~NuGet.Packaging.PackageBuilder.LicenseUrl.set -> void
-~NuGet.Packaging.PackageBuilder.MinClientVersion.get -> System.Version
-~NuGet.Packaging.PackageBuilder.MinClientVersion.set -> void
-~NuGet.Packaging.PackageBuilder.OutputName.get -> string
-~NuGet.Packaging.PackageBuilder.OutputName.set -> void
-~NuGet.Packaging.PackageBuilder.Owners.get -> System.Collections.Generic.ISet<string>
-~NuGet.Packaging.PackageBuilder.PackageAssemblyReferences.get -> System.Collections.Generic.ICollection<NuGet.Packaging.PackageReferenceSet>
-~NuGet.Packaging.PackageBuilder.PackageAssemblyReferences.set -> void
+NuGet.Packaging.PackageBuilder.Icon.get -> string?
+NuGet.Packaging.PackageBuilder.Icon.set -> void
+NuGet.Packaging.PackageBuilder.IconUrl.get -> System.Uri?
+NuGet.Packaging.PackageBuilder.IconUrl.set -> void
+NuGet.Packaging.PackageBuilder.Id.get -> string!
+NuGet.Packaging.PackageBuilder.Id.set -> void
+NuGet.Packaging.PackageBuilder.Language.get -> string?
+NuGet.Packaging.PackageBuilder.Language.set -> void
+NuGet.Packaging.PackageBuilder.LicenseMetadata.get -> NuGet.Packaging.LicenseMetadata?
+NuGet.Packaging.PackageBuilder.LicenseMetadata.set -> void
+NuGet.Packaging.PackageBuilder.LicenseUrl.get -> System.Uri?
+NuGet.Packaging.PackageBuilder.LicenseUrl.set -> void
+NuGet.Packaging.PackageBuilder.MinClientVersion.get -> System.Version?
+NuGet.Packaging.PackageBuilder.MinClientVersion.set -> void
+NuGet.Packaging.PackageBuilder.OutputName.get -> string?
+NuGet.Packaging.PackageBuilder.OutputName.set -> void
+NuGet.Packaging.PackageBuilder.Owners.get -> System.Collections.Generic.ISet<string!>!
+NuGet.Packaging.PackageBuilder.PackageAssemblyReferences.get -> System.Collections.Generic.ICollection<NuGet.Packaging.PackageReferenceSet!>!
+NuGet.Packaging.PackageBuilder.PackageAssemblyReferences.set -> void
 NuGet.Packaging.PackageBuilder.PackageBuilder() -> void
-~NuGet.Packaging.PackageBuilder.PackageBuilder(System.IO.Stream stream, string basePath) -> void
-~NuGet.Packaging.PackageBuilder.PackageBuilder(System.IO.Stream stream, string basePath, System.Func<string, string> propertyProvider) -> void
+NuGet.Packaging.PackageBuilder.PackageBuilder(System.IO.Stream! stream, string? basePath) -> void
+NuGet.Packaging.PackageBuilder.PackageBuilder(System.IO.Stream! stream, string? basePath, System.Func<string!, string!>? propertyProvider) -> void
 NuGet.Packaging.PackageBuilder.PackageBuilder(bool deterministic) -> void
-~NuGet.Packaging.PackageBuilder.PackageBuilder(bool deterministic, NuGet.Common.ILogger logger) -> void
-~NuGet.Packaging.PackageBuilder.PackageBuilder(string path, System.Func<string, string> propertyProvider, bool includeEmptyDirectories) -> void
-~NuGet.Packaging.PackageBuilder.PackageBuilder(string path, System.Func<string, string> propertyProvider, bool includeEmptyDirectories, bool deterministic) -> void
-~NuGet.Packaging.PackageBuilder.PackageBuilder(string path, System.Func<string, string> propertyProvider, bool includeEmptyDirectories, bool deterministic, NuGet.Common.ILogger logger) -> void
-~NuGet.Packaging.PackageBuilder.PackageBuilder(string path, string basePath, System.Func<string, string> propertyProvider, bool includeEmptyDirectories) -> void
-~NuGet.Packaging.PackageBuilder.PackageBuilder(string path, string basePath, System.Func<string, string> propertyProvider, bool includeEmptyDirectories, bool deterministic) -> void
-~NuGet.Packaging.PackageBuilder.PackageBuilder(string path, string basePath, System.Func<string, string> propertyProvider, bool includeEmptyDirectories, bool deterministic, NuGet.Common.ILogger logger) -> void
-~NuGet.Packaging.PackageBuilder.PackageTypes.get -> System.Collections.Generic.ICollection<NuGet.Packaging.Core.PackageType>
-~NuGet.Packaging.PackageBuilder.PackageTypes.set -> void
-~NuGet.Packaging.PackageBuilder.Populate(NuGet.Packaging.ManifestMetadata manifestMetadata) -> void
-~NuGet.Packaging.PackageBuilder.PopulateFiles(string basePath, System.Collections.Generic.IEnumerable<NuGet.Packaging.ManifestFile> files) -> void
-~NuGet.Packaging.PackageBuilder.ProjectUrl.get -> System.Uri
-~NuGet.Packaging.PackageBuilder.ProjectUrl.set -> void
-~NuGet.Packaging.PackageBuilder.Properties.get -> System.Collections.Generic.Dictionary<string, string>
-~NuGet.Packaging.PackageBuilder.Readme.get -> string
-~NuGet.Packaging.PackageBuilder.Readme.set -> void
-~NuGet.Packaging.PackageBuilder.ReleaseNotes.get -> string
-~NuGet.Packaging.PackageBuilder.ReleaseNotes.set -> void
-~NuGet.Packaging.PackageBuilder.Repository.get -> NuGet.Packaging.Core.RepositoryMetadata
-~NuGet.Packaging.PackageBuilder.Repository.set -> void
+NuGet.Packaging.PackageBuilder.PackageBuilder(bool deterministic, NuGet.Common.ILogger! logger) -> void
+NuGet.Packaging.PackageBuilder.PackageBuilder(string! path, System.Func<string!, string!>? propertyProvider, bool includeEmptyDirectories) -> void
+NuGet.Packaging.PackageBuilder.PackageBuilder(string! path, System.Func<string!, string!>? propertyProvider, bool includeEmptyDirectories, bool deterministic) -> void
+NuGet.Packaging.PackageBuilder.PackageBuilder(string! path, System.Func<string!, string!>? propertyProvider, bool includeEmptyDirectories, bool deterministic, NuGet.Common.ILogger! logger) -> void
+NuGet.Packaging.PackageBuilder.PackageBuilder(string! path, string? basePath, System.Func<string!, string!>? propertyProvider, bool includeEmptyDirectories) -> void
+NuGet.Packaging.PackageBuilder.PackageBuilder(string! path, string? basePath, System.Func<string!, string!>? propertyProvider, bool includeEmptyDirectories, bool deterministic) -> void
+NuGet.Packaging.PackageBuilder.PackageBuilder(string! path, string? basePath, System.Func<string!, string!>? propertyProvider, bool includeEmptyDirectories, bool deterministic, NuGet.Common.ILogger! logger) -> void
+NuGet.Packaging.PackageBuilder.PackageTypes.get -> System.Collections.Generic.ICollection<NuGet.Packaging.Core.PackageType!>!
+NuGet.Packaging.PackageBuilder.PackageTypes.set -> void
+NuGet.Packaging.PackageBuilder.Populate(NuGet.Packaging.ManifestMetadata! manifestMetadata) -> void
+NuGet.Packaging.PackageBuilder.PopulateFiles(string! basePath, System.Collections.Generic.IEnumerable<NuGet.Packaging.ManifestFile!>! files) -> void
+NuGet.Packaging.PackageBuilder.ProjectUrl.get -> System.Uri?
+NuGet.Packaging.PackageBuilder.ProjectUrl.set -> void
+NuGet.Packaging.PackageBuilder.Properties.get -> System.Collections.Generic.Dictionary<string!, string!>!
+NuGet.Packaging.PackageBuilder.Readme.get -> string?
+NuGet.Packaging.PackageBuilder.Readme.set -> void
+NuGet.Packaging.PackageBuilder.ReleaseNotes.get -> string?
+NuGet.Packaging.PackageBuilder.ReleaseNotes.set -> void
+NuGet.Packaging.PackageBuilder.Repository.get -> NuGet.Packaging.Core.RepositoryMetadata?
+NuGet.Packaging.PackageBuilder.Repository.set -> void
 NuGet.Packaging.PackageBuilder.RequireLicenseAcceptance.get -> bool
 NuGet.Packaging.PackageBuilder.RequireLicenseAcceptance.set -> void
-~NuGet.Packaging.PackageBuilder.Save(System.IO.Stream stream) -> void
+NuGet.Packaging.PackageBuilder.Save(System.IO.Stream! stream) -> void
 NuGet.Packaging.PackageBuilder.Serviceable.get -> bool
 NuGet.Packaging.PackageBuilder.Serviceable.set -> void
-~NuGet.Packaging.PackageBuilder.Summary.get -> string
-~NuGet.Packaging.PackageBuilder.Summary.set -> void
-~NuGet.Packaging.PackageBuilder.Tags.get -> System.Collections.Generic.ISet<string>
-~NuGet.Packaging.PackageBuilder.TargetFrameworks.get -> System.Collections.Generic.IList<NuGet.Frameworks.NuGetFramework>
-~NuGet.Packaging.PackageBuilder.TargetFrameworks.set -> void
-~NuGet.Packaging.PackageBuilder.Title.get -> string
-~NuGet.Packaging.PackageBuilder.Title.set -> void
-~NuGet.Packaging.PackageBuilder.Version.get -> NuGet.Versioning.NuGetVersion
-~NuGet.Packaging.PackageBuilder.Version.set -> void
+NuGet.Packaging.PackageBuilder.Summary.get -> string?
+NuGet.Packaging.PackageBuilder.Summary.set -> void
+NuGet.Packaging.PackageBuilder.Tags.get -> System.Collections.Generic.ISet<string!>!
+NuGet.Packaging.PackageBuilder.TargetFrameworks.get -> System.Collections.Generic.IList<NuGet.Frameworks.NuGetFramework!>!
+NuGet.Packaging.PackageBuilder.TargetFrameworks.set -> void
+NuGet.Packaging.PackageBuilder.Title.get -> string?
+NuGet.Packaging.PackageBuilder.Title.set -> void
+NuGet.Packaging.PackageBuilder.Version.get -> NuGet.Versioning.NuGetVersion?
+NuGet.Packaging.PackageBuilder.Version.set -> void
 NuGet.Packaging.PackageDependencyGroup
 NuGet.Packaging.PackageDependencyGroup.Equals(NuGet.Packaging.PackageDependencyGroup? other) -> bool
 NuGet.Packaging.PackageDependencyGroup.PackageDependencyGroup(NuGet.Frameworks.NuGetFramework! targetFramework, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependency!>! packages) -> void
@@ -697,12 +697,12 @@ NuGet.Packaging.PackageReference.PackageReference(NuGet.Packaging.Core.PackageId
 NuGet.Packaging.PackageReference.RequireReinstallation.get -> bool
 NuGet.Packaging.PackageReference.TargetFramework.get -> NuGet.Frameworks.NuGetFramework!
 NuGet.Packaging.PackageReferenceSet
-~NuGet.Packaging.PackageReferenceSet.PackageReferenceSet(NuGet.Frameworks.NuGetFramework targetFramework, System.Collections.Generic.IEnumerable<string> references) -> void
-~NuGet.Packaging.PackageReferenceSet.PackageReferenceSet(System.Collections.Generic.IEnumerable<string> references) -> void
-~NuGet.Packaging.PackageReferenceSet.PackageReferenceSet(string targetFramework, System.Collections.Generic.IEnumerable<string> references) -> void
-~NuGet.Packaging.PackageReferenceSet.References.get -> System.Collections.Generic.IReadOnlyCollection<string>
-~NuGet.Packaging.PackageReferenceSet.TargetFramework.get -> NuGet.Frameworks.NuGetFramework
-~NuGet.Packaging.PackageReferenceSet.Validate() -> System.Collections.Generic.IEnumerable<string>
+NuGet.Packaging.PackageReferenceSet.PackageReferenceSet(NuGet.Frameworks.NuGetFramework? targetFramework, System.Collections.Generic.IEnumerable<string!>! references) -> void
+NuGet.Packaging.PackageReferenceSet.PackageReferenceSet(System.Collections.Generic.IEnumerable<string!>! references) -> void
+NuGet.Packaging.PackageReferenceSet.PackageReferenceSet(string? targetFramework, System.Collections.Generic.IEnumerable<string!>! references) -> void
+NuGet.Packaging.PackageReferenceSet.References.get -> System.Collections.Generic.IReadOnlyCollection<string!>!
+NuGet.Packaging.PackageReferenceSet.TargetFramework.get -> NuGet.Frameworks.NuGetFramework?
+NuGet.Packaging.PackageReferenceSet.Validate() -> System.Collections.Generic.IEnumerable<string!>!
 NuGet.Packaging.PackageSaveMode
 NuGet.Packaging.PackageSaveMode.Defaultv2 = NuGet.Packaging.PackageSaveMode.Nupkg | NuGet.Packaging.PackageSaveMode.Files -> NuGet.Packaging.PackageSaveMode
 NuGet.Packaging.PackageSaveMode.Defaultv3 = NuGet.Packaging.PackageSaveMode.Nuspec | NuGet.Packaging.PackageSaveMode.Defaultv2 -> NuGet.Packaging.PackageSaveMode
@@ -754,51 +754,51 @@ NuGet.Packaging.PackagesConfigWriterException.PackagesConfigWriterException(stri
 NuGet.Packaging.PackagingConstants
 NuGet.Packaging.PackagingConstants.Folders
 NuGet.Packaging.PhysicalPackageFile
-~NuGet.Packaging.PhysicalPackageFile.EffectivePath.get -> string
-~NuGet.Packaging.PhysicalPackageFile.GetStream() -> System.IO.Stream
+NuGet.Packaging.PhysicalPackageFile.EffectivePath.get -> string?
+NuGet.Packaging.PhysicalPackageFile.GetStream() -> System.IO.Stream!
 NuGet.Packaging.PhysicalPackageFile.LastWriteTime.get -> System.DateTimeOffset
-~NuGet.Packaging.PhysicalPackageFile.NuGetFramework.get -> NuGet.Frameworks.NuGetFramework
-~NuGet.Packaging.PhysicalPackageFile.Path.get -> string
+NuGet.Packaging.PhysicalPackageFile.NuGetFramework.get -> NuGet.Frameworks.NuGetFramework?
+NuGet.Packaging.PhysicalPackageFile.Path.get -> string!
 NuGet.Packaging.PhysicalPackageFile.PhysicalPackageFile() -> void
-~NuGet.Packaging.PhysicalPackageFile.PhysicalPackageFile(System.IO.MemoryStream stream) -> void
-~NuGet.Packaging.PhysicalPackageFile.SourcePath.get -> string
-~NuGet.Packaging.PhysicalPackageFile.SourcePath.set -> void
-~NuGet.Packaging.PhysicalPackageFile.TargetFramework.get -> System.Runtime.Versioning.FrameworkName
-~NuGet.Packaging.PhysicalPackageFile.TargetPath.get -> string
-~NuGet.Packaging.PhysicalPackageFile.TargetPath.set -> void
+NuGet.Packaging.PhysicalPackageFile.PhysicalPackageFile(System.IO.MemoryStream! stream) -> void
+NuGet.Packaging.PhysicalPackageFile.SourcePath.get -> string?
+NuGet.Packaging.PhysicalPackageFile.SourcePath.set -> void
+NuGet.Packaging.PhysicalPackageFile.TargetFramework.get -> System.Runtime.Versioning.FrameworkName?
+NuGet.Packaging.PhysicalPackageFile.TargetPath.get -> string!
+NuGet.Packaging.PhysicalPackageFile.TargetPath.set -> void
 NuGet.Packaging.RepositorySignatureInfo
 NuGet.Packaging.RepositorySignatureInfo.AllRepositorySigned.get -> bool
-~NuGet.Packaging.RepositorySignatureInfo.RepositoryCertificateInfos.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.IRepositoryCertificateInfo>
-~NuGet.Packaging.RepositorySignatureInfo.RepositorySignatureInfo(bool allRepositorySigned, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.IRepositoryCertificateInfo> repositoryCertificateInfos) -> void
+NuGet.Packaging.RepositorySignatureInfo.RepositoryCertificateInfos.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.IRepositoryCertificateInfo!>!
+NuGet.Packaging.RepositorySignatureInfo.RepositorySignatureInfo(bool allRepositorySigned, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.IRepositoryCertificateInfo!>! repositoryCertificateInfos) -> void
 NuGet.Packaging.RepositorySignatureInfoProvider
-~NuGet.Packaging.RepositorySignatureInfoProvider.AddOrUpdateRepositorySignatureInfo(string source, NuGet.Packaging.RepositorySignatureInfo repositorySignatureInfo) -> void
+NuGet.Packaging.RepositorySignatureInfoProvider.AddOrUpdateRepositorySignatureInfo(string! source, NuGet.Packaging.RepositorySignatureInfo! repositorySignatureInfo) -> void
 NuGet.Packaging.RepositorySignatureInfoProvider.RepositorySignatureInfoProvider() -> void
-~NuGet.Packaging.RepositorySignatureInfoProvider.TryGetRepositorySignatureInfo(string source, out NuGet.Packaging.RepositorySignatureInfo repositorySignatureInfo) -> bool
+NuGet.Packaging.RepositorySignatureInfoProvider.TryGetRepositorySignatureInfo(string! source, out NuGet.Packaging.RepositorySignatureInfo? repositorySignatureInfo) -> bool
 NuGet.Packaging.Rules.AnalysisResources
 NuGet.Packaging.Rules.DefaultManifestValuesRule
-~NuGet.Packaging.Rules.DefaultManifestValuesRule.DefaultManifestValuesRule(string messageFormat) -> void
-~NuGet.Packaging.Rules.DefaultManifestValuesRule.MessageFormat.get -> string
-~NuGet.Packaging.Rules.DefaultManifestValuesRule.Validate(NuGet.Packaging.PackageArchiveReader builder) -> System.Collections.Generic.IEnumerable<NuGet.Common.PackagingLogMessage>
+NuGet.Packaging.Rules.DefaultManifestValuesRule.DefaultManifestValuesRule(string! messageFormat) -> void
+NuGet.Packaging.Rules.DefaultManifestValuesRule.MessageFormat.get -> string!
+NuGet.Packaging.Rules.DefaultManifestValuesRule.Validate(NuGet.Packaging.PackageArchiveReader! builder) -> System.Collections.Generic.IEnumerable<NuGet.Common.PackagingLogMessage!>!
 NuGet.Packaging.Rules.IPackageRule
 NuGet.Packaging.Rules.IPackageRule.MessageFormat.get -> string!
 NuGet.Packaging.Rules.IPackageRule.Validate(NuGet.Packaging.PackageArchiveReader! builder) -> System.Collections.Generic.IEnumerable<NuGet.Common.PackagingLogMessage!>!
 NuGet.Packaging.Rules.IconUrlDeprecationWarning
-~NuGet.Packaging.Rules.IconUrlDeprecationWarning.IconUrlDeprecationWarning(string messageFormat) -> void
-~NuGet.Packaging.Rules.IconUrlDeprecationWarning.MessageFormat.get -> string
-~NuGet.Packaging.Rules.IconUrlDeprecationWarning.Validate(NuGet.Packaging.PackageArchiveReader builder) -> System.Collections.Generic.IEnumerable<NuGet.Common.PackagingLogMessage>
+NuGet.Packaging.Rules.IconUrlDeprecationWarning.IconUrlDeprecationWarning(string! messageFormat) -> void
+NuGet.Packaging.Rules.IconUrlDeprecationWarning.MessageFormat.get -> string!
+NuGet.Packaging.Rules.IconUrlDeprecationWarning.Validate(NuGet.Packaging.PackageArchiveReader! builder) -> System.Collections.Generic.IEnumerable<NuGet.Common.PackagingLogMessage!>!
 NuGet.Packaging.Rules.LicenseUrlDeprecationWarning
-~NuGet.Packaging.Rules.LicenseUrlDeprecationWarning.LicenseUrlDeprecationWarning(string messageFormat) -> void
-~NuGet.Packaging.Rules.LicenseUrlDeprecationWarning.MessageFormat.get -> string
-~NuGet.Packaging.Rules.LicenseUrlDeprecationWarning.Validate(NuGet.Packaging.PackageArchiveReader builder) -> System.Collections.Generic.IEnumerable<NuGet.Common.PackagingLogMessage>
+NuGet.Packaging.Rules.LicenseUrlDeprecationWarning.LicenseUrlDeprecationWarning(string! messageFormat) -> void
+NuGet.Packaging.Rules.LicenseUrlDeprecationWarning.MessageFormat.get -> string!
+NuGet.Packaging.Rules.LicenseUrlDeprecationWarning.Validate(NuGet.Packaging.PackageArchiveReader! builder) -> System.Collections.Generic.IEnumerable<NuGet.Common.PackagingLogMessage!>!
 NuGet.Packaging.Rules.PathTooLongRule
-~NuGet.Packaging.Rules.PathTooLongRule.MessageFormat.get -> string
-~NuGet.Packaging.Rules.PathTooLongRule.PathTooLongRule(string messageFormat) -> void
-~NuGet.Packaging.Rules.PathTooLongRule.Validate(NuGet.Packaging.PackageArchiveReader builder) -> System.Collections.Generic.IEnumerable<NuGet.Common.PackagingLogMessage>
+NuGet.Packaging.Rules.PathTooLongRule.MessageFormat.get -> string!
+NuGet.Packaging.Rules.PathTooLongRule.PathTooLongRule(string! messageFormat) -> void
+NuGet.Packaging.Rules.PathTooLongRule.Validate(NuGet.Packaging.PackageArchiveReader! builder) -> System.Collections.Generic.IEnumerable<NuGet.Common.PackagingLogMessage!>!
 NuGet.Packaging.Rules.RuleSet
 NuGet.Packaging.Rules.UnspecifiedDependencyVersionRule
-~NuGet.Packaging.Rules.UnspecifiedDependencyVersionRule.MessageFormat.get -> string
-~NuGet.Packaging.Rules.UnspecifiedDependencyVersionRule.UnspecifiedDependencyVersionRule(string messageFormat) -> void
-~NuGet.Packaging.Rules.UnspecifiedDependencyVersionRule.Validate(NuGet.Packaging.PackageArchiveReader builder) -> System.Collections.Generic.IEnumerable<NuGet.Common.PackagingLogMessage>
+NuGet.Packaging.Rules.UnspecifiedDependencyVersionRule.MessageFormat.get -> string!
+NuGet.Packaging.Rules.UnspecifiedDependencyVersionRule.UnspecifiedDependencyVersionRule(string! messageFormat) -> void
+NuGet.Packaging.Rules.UnspecifiedDependencyVersionRule.Validate(NuGet.Packaging.PackageArchiveReader! builder) -> System.Collections.Generic.IEnumerable<NuGet.Common.PackagingLogMessage!>!
 NuGet.Packaging.Sha512HashFunction
 NuGet.Packaging.Sha512HashFunction.Dispose() -> void
 NuGet.Packaging.Sha512HashFunction.GetHash() -> string!
@@ -998,28 +998,28 @@ NuGet.Packaging.Signing.SignatureContent.HashAlgorithm.get -> NuGet.Common.HashA
 ~NuGet.Packaging.Signing.SignatureContent.SignatureContent(NuGet.Packaging.Signing.SigningSpecifications signingSpecifications, NuGet.Common.HashAlgorithmName hashAlgorithm, string hashValue) -> void
 NuGet.Packaging.Signing.SignatureException
 NuGet.Packaging.Signing.SignatureException.Code.get -> NuGet.Common.NuGetLogCode
-~NuGet.Packaging.Signing.SignatureException.PackageIdentity.get -> NuGet.Packaging.Core.PackageIdentity
-~NuGet.Packaging.Signing.SignatureException.Results.get -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Signing.PackageVerificationResult>
-~NuGet.Packaging.Signing.SignatureException.SignatureException(NuGet.Common.NuGetLogCode code, string message) -> void
-~NuGet.Packaging.Signing.SignatureException.SignatureException(NuGet.Common.NuGetLogCode code, string message, NuGet.Packaging.Core.PackageIdentity package) -> void
-~NuGet.Packaging.Signing.SignatureException.SignatureException(NuGet.Common.NuGetLogCode code, string message, System.Exception innerException) -> void
-~NuGet.Packaging.Signing.SignatureException.SignatureException(System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Signing.PackageVerificationResult> results, NuGet.Packaging.Core.PackageIdentity package) -> void
-~NuGet.Packaging.Signing.SignatureException.SignatureException(string message) -> void
+NuGet.Packaging.Signing.SignatureException.PackageIdentity.get -> NuGet.Packaging.Core.PackageIdentity?
+NuGet.Packaging.Signing.SignatureException.Results.get -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Signing.PackageVerificationResult!>?
+NuGet.Packaging.Signing.SignatureException.SignatureException(NuGet.Common.NuGetLogCode code, string! message) -> void
+NuGet.Packaging.Signing.SignatureException.SignatureException(NuGet.Common.NuGetLogCode code, string! message, NuGet.Packaging.Core.PackageIdentity! package) -> void
+NuGet.Packaging.Signing.SignatureException.SignatureException(NuGet.Common.NuGetLogCode code, string! message, System.Exception! innerException) -> void
+NuGet.Packaging.Signing.SignatureException.SignatureException(System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Signing.PackageVerificationResult!>! results, NuGet.Packaging.Core.PackageIdentity! package) -> void
+NuGet.Packaging.Signing.SignatureException.SignatureException(string! message) -> void
 NuGet.Packaging.Signing.SignatureException.VerifyDuration.get -> System.TimeSpan
 NuGet.Packaging.Signing.SignatureException.VerifyDuration.set -> void
 NuGet.Packaging.Signing.SignatureLog
-~NuGet.Packaging.Signing.SignatureLog.AsRestoreLogMessage() -> NuGet.Common.RestoreLogMessage
+NuGet.Packaging.Signing.SignatureLog.AsRestoreLogMessage() -> NuGet.Common.RestoreLogMessage!
 NuGet.Packaging.Signing.SignatureLog.Code.get -> NuGet.Common.NuGetLogCode
 NuGet.Packaging.Signing.SignatureLog.Code.set -> void
-~NuGet.Packaging.Signing.SignatureLog.Equals(NuGet.Packaging.Signing.SignatureLog other) -> bool
+NuGet.Packaging.Signing.SignatureLog.Equals(NuGet.Packaging.Signing.SignatureLog? other) -> bool
 NuGet.Packaging.Signing.SignatureLog.Level.get -> NuGet.Common.LogLevel
 NuGet.Packaging.Signing.SignatureLog.Level.set -> void
-~NuGet.Packaging.Signing.SignatureLog.LibraryId.get -> string
-~NuGet.Packaging.Signing.SignatureLog.LibraryId.set -> void
-~NuGet.Packaging.Signing.SignatureLog.Message.get -> string
-~NuGet.Packaging.Signing.SignatureLog.Message.set -> void
-~NuGet.Packaging.Signing.SignatureLog.ProjectPath.get -> string
-~NuGet.Packaging.Signing.SignatureLog.ProjectPath.set -> void
+NuGet.Packaging.Signing.SignatureLog.LibraryId.get -> string?
+NuGet.Packaging.Signing.SignatureLog.LibraryId.set -> void
+NuGet.Packaging.Signing.SignatureLog.Message.get -> string!
+NuGet.Packaging.Signing.SignatureLog.Message.set -> void
+NuGet.Packaging.Signing.SignatureLog.ProjectPath.get -> string?
+NuGet.Packaging.Signing.SignatureLog.ProjectPath.set -> void
 NuGet.Packaging.Signing.SignatureLog.Time.get -> System.DateTimeOffset
 NuGet.Packaging.Signing.SignatureLog.Time.set -> void
 NuGet.Packaging.Signing.SignatureLog.WarningLevel.get -> NuGet.Common.WarningLevel
@@ -1344,35 +1344,35 @@ const NuGet.Packaging.PackageBuilder.MaxIconFileSize = 1048576 -> int
 const NuGet.Packaging.PackageExtractionTelemetryEvent.EventName = "PackageExtractionInformation" -> string!
 const NuGet.Packaging.PackageIdValidator.MaxPackageIdLength = 100 -> int
 const NuGet.Packaging.PackageSigningTelemetryEvent.EventName = "SigningInformation" -> string!
-~const NuGet.Packaging.Signing.Oids.AnyPolicy = "2.5.29.32.0" -> string
-~const NuGet.Packaging.Signing.Oids.AuthorityKeyIdentifier = "2.5.29.35" -> string
-~const NuGet.Packaging.Signing.Oids.BaselineTimestampPolicy = "0.4.0.2023.1.1" -> string
-~const NuGet.Packaging.Signing.Oids.CodeSigningEku = "1.3.6.1.5.5.7.3.3" -> string
-~const NuGet.Packaging.Signing.Oids.CommitmentTypeIdentifierProofOfOrigin = "1.2.840.113549.1.9.16.6.1" -> string
-~const NuGet.Packaging.Signing.Oids.CommitmentTypeIdentifierProofOfReceipt = "1.2.840.113549.1.9.16.6.2" -> string
-~const NuGet.Packaging.Signing.Oids.CommitmentTypeIndication = "1.2.840.113549.1.9.16.2.16" -> string
-~const NuGet.Packaging.Signing.Oids.Countersignature = "1.2.840.113549.1.9.6" -> string
-~const NuGet.Packaging.Signing.Oids.EnhancedKeyUsage = "2.5.29.37" -> string
-~const NuGet.Packaging.Signing.Oids.IdQtCps = "1.3.6.1.5.5.7.2.1" -> string
-~const NuGet.Packaging.Signing.Oids.IdQtUnotice = "1.3.6.1.5.5.7.2.2" -> string
-~const NuGet.Packaging.Signing.Oids.LifetimeSigningEku = "1.3.6.1.4.1.311.10.3.13" -> string
-~const NuGet.Packaging.Signing.Oids.NuGetPackageOwners = "1.3.6.1.4.1.311.84.2.1.1.2" -> string
-~const NuGet.Packaging.Signing.Oids.NuGetV3ServiceIndexUrl = "1.3.6.1.4.1.311.84.2.1.1.1" -> string
-~const NuGet.Packaging.Signing.Oids.Pkcs7Data = "1.2.840.113549.1.7.1" -> string
-~const NuGet.Packaging.Signing.Oids.Sha1 = "1.3.14.3.2.26" -> string
-~const NuGet.Packaging.Signing.Oids.Sha256 = "2.16.840.1.101.3.4.2.1" -> string
-~const NuGet.Packaging.Signing.Oids.Sha256WithRSAEncryption = "1.2.840.113549.1.1.11" -> string
-~const NuGet.Packaging.Signing.Oids.Sha384 = "2.16.840.1.101.3.4.2.2" -> string
-~const NuGet.Packaging.Signing.Oids.Sha384WithRSAEncryption = "1.2.840.113549.1.1.12" -> string
-~const NuGet.Packaging.Signing.Oids.Sha512 = "2.16.840.1.101.3.4.2.3" -> string
-~const NuGet.Packaging.Signing.Oids.Sha512WithRSAEncryption = "1.2.840.113549.1.1.13" -> string
-~const NuGet.Packaging.Signing.Oids.SignatureTimeStampTokenAttribute = "1.2.840.113549.1.9.16.2.14" -> string
-~const NuGet.Packaging.Signing.Oids.SigningCertificate = "1.2.840.113549.1.9.16.2.12" -> string
-~const NuGet.Packaging.Signing.Oids.SigningCertificateV2 = "1.2.840.113549.1.9.16.2.47" -> string
-~const NuGet.Packaging.Signing.Oids.SigningTime = "1.2.840.113549.1.9.5" -> string
-~const NuGet.Packaging.Signing.Oids.SubjectKeyIdentifier = "2.5.29.14" -> string
-~const NuGet.Packaging.Signing.Oids.TSTInfoContentType = "1.2.840.113549.1.9.16.1.4" -> string
-~const NuGet.Packaging.Signing.Oids.TimeStampingEku = "1.3.6.1.5.5.7.3.8" -> string
+const NuGet.Packaging.Signing.Oids.AnyPolicy = "2.5.29.32.0" -> string!
+const NuGet.Packaging.Signing.Oids.AuthorityKeyIdentifier = "2.5.29.35" -> string!
+const NuGet.Packaging.Signing.Oids.BaselineTimestampPolicy = "0.4.0.2023.1.1" -> string!
+const NuGet.Packaging.Signing.Oids.CodeSigningEku = "1.3.6.1.5.5.7.3.3" -> string!
+const NuGet.Packaging.Signing.Oids.CommitmentTypeIdentifierProofOfOrigin = "1.2.840.113549.1.9.16.6.1" -> string!
+const NuGet.Packaging.Signing.Oids.CommitmentTypeIdentifierProofOfReceipt = "1.2.840.113549.1.9.16.6.2" -> string!
+const NuGet.Packaging.Signing.Oids.CommitmentTypeIndication = "1.2.840.113549.1.9.16.2.16" -> string!
+const NuGet.Packaging.Signing.Oids.Countersignature = "1.2.840.113549.1.9.6" -> string!
+const NuGet.Packaging.Signing.Oids.EnhancedKeyUsage = "2.5.29.37" -> string!
+const NuGet.Packaging.Signing.Oids.IdQtCps = "1.3.6.1.5.5.7.2.1" -> string!
+const NuGet.Packaging.Signing.Oids.IdQtUnotice = "1.3.6.1.5.5.7.2.2" -> string!
+const NuGet.Packaging.Signing.Oids.LifetimeSigningEku = "1.3.6.1.4.1.311.10.3.13" -> string!
+const NuGet.Packaging.Signing.Oids.NuGetPackageOwners = "1.3.6.1.4.1.311.84.2.1.1.2" -> string!
+const NuGet.Packaging.Signing.Oids.NuGetV3ServiceIndexUrl = "1.3.6.1.4.1.311.84.2.1.1.1" -> string!
+const NuGet.Packaging.Signing.Oids.Pkcs7Data = "1.2.840.113549.1.7.1" -> string!
+const NuGet.Packaging.Signing.Oids.Sha1 = "1.3.14.3.2.26" -> string!
+const NuGet.Packaging.Signing.Oids.Sha256 = "2.16.840.1.101.3.4.2.1" -> string!
+const NuGet.Packaging.Signing.Oids.Sha256WithRSAEncryption = "1.2.840.113549.1.1.11" -> string!
+const NuGet.Packaging.Signing.Oids.Sha384 = "2.16.840.1.101.3.4.2.2" -> string!
+const NuGet.Packaging.Signing.Oids.Sha384WithRSAEncryption = "1.2.840.113549.1.1.12" -> string!
+const NuGet.Packaging.Signing.Oids.Sha512 = "2.16.840.1.101.3.4.2.3" -> string!
+const NuGet.Packaging.Signing.Oids.Sha512WithRSAEncryption = "1.2.840.113549.1.1.13" -> string!
+const NuGet.Packaging.Signing.Oids.SignatureTimeStampTokenAttribute = "1.2.840.113549.1.9.16.2.14" -> string!
+const NuGet.Packaging.Signing.Oids.SigningCertificate = "1.2.840.113549.1.9.16.2.12" -> string!
+const NuGet.Packaging.Signing.Oids.SigningCertificateV2 = "1.2.840.113549.1.9.16.2.47" -> string!
+const NuGet.Packaging.Signing.Oids.SigningTime = "1.2.840.113549.1.9.5" -> string!
+const NuGet.Packaging.Signing.Oids.SubjectKeyIdentifier = "2.5.29.14" -> string!
+const NuGet.Packaging.Signing.Oids.TSTInfoContentType = "1.2.840.113549.1.9.16.1.4" -> string!
+const NuGet.Packaging.Signing.Oids.TimeStampingEku = "1.3.6.1.5.5.7.3.8" -> string!
 override NuGet.ContentModel.Asset.ToString() -> string?
 override NuGet.ContentModel.ContentItem.ToString() -> string!
 override NuGet.ContentModel.SelectionCriteriaEntryBuilder.Add.get -> NuGet.ContentModel.SelectionCriteriaEntryBuilder!
@@ -1433,9 +1433,9 @@ override NuGet.Packaging.PackageFolderReader.GetStream(string! path) -> System.I
 override NuGet.Packaging.PackageFolderReader.IsSignedAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>!
 override NuGet.Packaging.PackageFolderReader.ValidateIntegrityAsync(NuGet.Packaging.Signing.SignatureContent! signatureContent, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task!
 override NuGet.Packaging.PackageReference.ToString() -> string!
-~override NuGet.Packaging.PhysicalPackageFile.Equals(object obj) -> bool
+override NuGet.Packaging.PhysicalPackageFile.Equals(object? obj) -> bool
 override NuGet.Packaging.PhysicalPackageFile.GetHashCode() -> int
-~override NuGet.Packaging.PhysicalPackageFile.ToString() -> string
+override NuGet.Packaging.PhysicalPackageFile.ToString() -> string?
 ~override NuGet.Packaging.Signing.AuthorPrimarySignature.FriendlyName.get -> string
 ~override NuGet.Packaging.Signing.AuthorPrimarySignature.Verify(NuGet.Packaging.Signing.Timestamp timestamp, NuGet.Packaging.Signing.SignatureVerifySettings settings, NuGet.Common.HashAlgorithmName fingerprintAlgorithm, System.Security.Cryptography.X509Certificates.X509Certificate2Collection certificateExtraStore) -> NuGet.Packaging.Signing.SignatureVerificationSummary
 override NuGet.Packaging.Signing.AuthorSignPackageRequest.SignatureType.get -> NuGet.Packaging.Signing.SignatureType
@@ -1498,7 +1498,7 @@ override NuGet.RuntimeModel.RuntimePackageDependency.Equals(object? obj) -> bool
 override NuGet.RuntimeModel.RuntimePackageDependency.GetHashCode() -> int
 override NuGet.RuntimeModel.RuntimePackageDependency.ToString() -> string!
 static NuGet.ContentModel.PatternDefinition.implicit operator NuGet.ContentModel.PatternDefinition!(string! pattern) -> NuGet.ContentModel.PatternDefinition!
-~static NuGet.Packaging.CollectionExtensions.AddRange<T>(this System.Collections.Generic.ICollection<T> collection, System.Collections.Generic.IEnumerable<T> items) -> void
+static NuGet.Packaging.CollectionExtensions.AddRange<T>(this System.Collections.Generic.ICollection<T>! collection, System.Collections.Generic.IEnumerable<T>! items) -> void
 static NuGet.Packaging.Core.NuspecUtility.GetPackageTypes(System.Xml.Linq.XElement! metadataNode, bool useMetadataNamespace) -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageType!>!
 static NuGet.Packaging.Core.NuspecUtility.IsServiceable(System.Xml.Linq.XElement! metadataNode) -> bool
 static NuGet.Packaging.Core.PackageDependencyInfoComparer.Default.get -> NuGet.Packaging.Core.PackageDependencyInfoComparer!
@@ -1508,25 +1508,25 @@ static NuGet.Packaging.Core.PackageType.operator !=(NuGet.Packaging.Core.Package
 static NuGet.Packaging.Core.PackageType.operator ==(NuGet.Packaging.Core.PackageType? a, NuGet.Packaging.Core.PackageType? b) -> bool
 static NuGet.Packaging.Core.RepositoryMetadata.operator !=(NuGet.Packaging.Core.RepositoryMetadata? a, NuGet.Packaging.Core.RepositoryMetadata? b) -> bool
 static NuGet.Packaging.Core.RepositoryMetadata.operator ==(NuGet.Packaging.Core.RepositoryMetadata? a, NuGet.Packaging.Core.RepositoryMetadata? b) -> bool
-~static NuGet.Packaging.FrameworkNameUtility.ParseFrameworkFolderName(string path, bool strictParsing, out string effectivePath) -> System.Runtime.Versioning.FrameworkName
-~static NuGet.Packaging.FrameworkNameUtility.ParseFrameworkNameFromFilePath(string filePath, out string effectivePath) -> System.Runtime.Versioning.FrameworkName
-~static NuGet.Packaging.FrameworkNameUtility.ParseNuGetFrameworkFolderName(string path, bool strictParsing, out string effectivePath) -> NuGet.Frameworks.NuGetFramework
-~static NuGet.Packaging.FrameworkNameUtility.ParseNuGetFrameworkFromFilePath(string filePath, out string effectivePath) -> NuGet.Frameworks.NuGetFramework
-~static NuGet.Packaging.FrameworksExtensions.GetFrameworkString(this NuGet.Frameworks.NuGetFramework self) -> string
+static NuGet.Packaging.FrameworkNameUtility.ParseFrameworkFolderName(string! path, bool strictParsing, out string! effectivePath) -> System.Runtime.Versioning.FrameworkName?
+static NuGet.Packaging.FrameworkNameUtility.ParseFrameworkNameFromFilePath(string! filePath, out string! effectivePath) -> System.Runtime.Versioning.FrameworkName?
+static NuGet.Packaging.FrameworkNameUtility.ParseNuGetFrameworkFolderName(string! path, bool strictParsing, out string! effectivePath) -> NuGet.Frameworks.NuGetFramework?
+static NuGet.Packaging.FrameworkNameUtility.ParseNuGetFrameworkFromFilePath(string! filePath, out string! effectivePath) -> NuGet.Frameworks.NuGetFramework?
+static NuGet.Packaging.FrameworksExtensions.GetFrameworkString(this NuGet.Frameworks.NuGetFramework! self) -> string!
 static NuGet.Packaging.Licenses.NuGetLicenseData.LicenseListVersion.get -> string!
 static NuGet.Packaging.Licenses.NuGetLicenseExpression.Parse(string! expression) -> NuGet.Packaging.Licenses.NuGetLicenseExpression!
 static NuGet.Packaging.Licenses.NuGetLicenseExpressionExtensions.HasOnlyStandardIdentifiers(this NuGet.Packaging.Licenses.NuGetLicenseExpression! expression) -> bool
 static NuGet.Packaging.Licenses.NuGetLicenseExpressionExtensions.IsUnlicensed(this NuGet.Packaging.Licenses.NuGetLicense! license) -> bool
 static NuGet.Packaging.Licenses.NuGetLicenseExpressionExtensions.IsUnlicensed(this NuGet.Packaging.Licenses.NuGetLicenseExpression! expression) -> bool
 static NuGet.Packaging.Licenses.NuGetLicenseExpressionExtensions.OnEachLeafNode(this NuGet.Packaging.Licenses.NuGetLicenseExpression! expression, System.Action<NuGet.Packaging.Licenses.NuGetLicense!>? licenseProcessor, System.Action<NuGet.Packaging.Licenses.NuGetLicenseException!>? exceptionProcessor) -> void
-~static NuGet.Packaging.Manifest.Create(NuGet.Packaging.IPackageMetadata metadata) -> NuGet.Packaging.Manifest
-~static NuGet.Packaging.Manifest.ReadFrom(System.IO.Stream stream, System.Func<string, string> propertyProvider, bool validateSchema) -> NuGet.Packaging.Manifest
-~static NuGet.Packaging.Manifest.ReadFrom(System.IO.Stream stream, bool validateSchema) -> NuGet.Packaging.Manifest
-~static NuGet.Packaging.Manifest.Validate(NuGet.Packaging.Manifest manifest) -> void
-~static NuGet.Packaging.ManifestSchemaUtility.GetSchemaNamespace(int version) -> string
-~static NuGet.Packaging.ManifestSchemaUtility.GetVersionFromNamespace(string namespace) -> int
-~static NuGet.Packaging.ManifestSchemaUtility.IsKnownSchema(string schemaNamespace) -> bool
-~static NuGet.Packaging.ManifestVersionUtility.GetManifestVersion(NuGet.Packaging.ManifestMetadata metadata) -> int
+static NuGet.Packaging.Manifest.Create(NuGet.Packaging.IPackageMetadata! metadata) -> NuGet.Packaging.Manifest!
+static NuGet.Packaging.Manifest.ReadFrom(System.IO.Stream! stream, System.Func<string!, string!>? propertyProvider, bool validateSchema) -> NuGet.Packaging.Manifest!
+static NuGet.Packaging.Manifest.ReadFrom(System.IO.Stream! stream, bool validateSchema) -> NuGet.Packaging.Manifest!
+static NuGet.Packaging.Manifest.Validate(NuGet.Packaging.Manifest! manifest) -> void
+static NuGet.Packaging.ManifestSchemaUtility.GetSchemaNamespace(int version) -> string!
+static NuGet.Packaging.ManifestSchemaUtility.GetVersionFromNamespace(string! namespace) -> int
+static NuGet.Packaging.ManifestSchemaUtility.IsKnownSchema(string! schemaNamespace) -> bool
+static NuGet.Packaging.ManifestVersionUtility.GetManifestVersion(NuGet.Packaging.ManifestMetadata! metadata) -> int
 static NuGet.Packaging.MinClientVersionUtility.GetNuGetClientVersion() -> NuGet.Versioning.NuGetVersion!
 static NuGet.Packaging.MinClientVersionUtility.IsMinClientVersionCompatible(NuGet.Packaging.Core.NuspecCoreReaderBase! nuspecReader) -> bool
 static NuGet.Packaging.MinClientVersionUtility.IsMinClientVersionCompatible(NuGet.Versioning.NuGetVersion! packageMinClientVersion) -> bool
@@ -1536,7 +1536,7 @@ static NuGet.Packaging.NupkgMetadataFileFormat.Read(string! filePath) -> NuGet.P
 static NuGet.Packaging.NupkgMetadataFileFormat.Read(string! filePath, NuGet.Common.ILogger! log) -> NuGet.Packaging.NupkgMetadataFile!
 static NuGet.Packaging.NupkgMetadataFileFormat.Write(System.IO.Stream! stream, NuGet.Packaging.NupkgMetadataFile! hashFile) -> void
 static NuGet.Packaging.NupkgMetadataFileFormat.Write(string! filePath, NuGet.Packaging.NupkgMetadataFile! hashFile) -> void
-~static NuGet.Packaging.PackageBuilder.ValidateReferenceAssemblies(System.Collections.Generic.IEnumerable<NuGet.Packaging.IPackageFile> files, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReferenceSet> packageAssemblyReferences) -> void
+static NuGet.Packaging.PackageBuilder.ValidateReferenceAssemblies(System.Collections.Generic.IEnumerable<NuGet.Packaging.IPackageFile!>! files, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReferenceSet!>! packageAssemblyReferences) -> void
 static NuGet.Packaging.PackageExtraction.PackageExtractionBehavior.XmlDocFileSaveMode.get -> NuGet.Packaging.XmlDocFileSaveMode
 static NuGet.Packaging.PackageExtraction.PackageExtractionBehavior.XmlDocFileSaveMode.set -> void
 static NuGet.Packaging.PackageExtractor.CopySatelliteFilesAsync(NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.Packaging.PackagePathResolver! packagePathResolver, NuGet.Packaging.PackageSaveMode packageSaveMode, NuGet.Packaging.PackageExtractionContext! packageExtractionContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string!>!>!
@@ -1553,8 +1553,8 @@ static NuGet.Packaging.PackageHelper.IsManifest(string! path) -> bool
 static NuGet.Packaging.PackageHelper.IsNuspec(string! path) -> bool
 static NuGet.Packaging.PackageHelper.IsPackageFile(string! packageFileName, NuGet.Packaging.PackageSaveMode packageSaveMode) -> bool
 static NuGet.Packaging.PackageHelper.IsRoot(string! path) -> bool
-~static NuGet.Packaging.PackageIdValidator.IsValidPackageId(string packageId) -> bool
-~static NuGet.Packaging.PackageIdValidator.ValidatePackageId(string packageId) -> void
+static NuGet.Packaging.PackageIdValidator.IsValidPackageId(string! packageId) -> bool
+static NuGet.Packaging.PackageIdValidator.ValidatePackageId(string! packageId) -> void
 static NuGet.Packaging.PackagePathHelper.GetInstalledPackageFilePath(NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.Packaging.PackagePathResolver! packagePathResolver) -> string?
 static NuGet.Packaging.PackagePathHelper.GetPackageLookupPaths(NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.Packaging.PackagePathResolver! packagePathResolver) -> System.Collections.Generic.IEnumerable<string!>!
 static NuGet.Packaging.PackageReaderBase.GetNuspecFile(System.Collections.Generic.IEnumerable<string!>! files) -> string!
@@ -1568,7 +1568,7 @@ static NuGet.Packaging.PackagesConfig.BoolAttribute(System.Xml.Linq.XElement! no
 static NuGet.Packaging.PackagesConfig.HasAttributeValue(System.Xml.Linq.XElement! node, string! attributeName, string! targetValue, out System.Xml.Linq.XElement? element) -> bool
 static NuGet.Packaging.PackagesConfig.TryGetAttribute(System.Xml.Linq.XElement! node, string! name, out string? value) -> bool
 static NuGet.Packaging.PackagingConstants.Folders.Known.get -> string![]!
-~static NuGet.Packaging.RepositorySignatureInfoProvider.Instance.get -> NuGet.Packaging.RepositorySignatureInfoProvider
+static NuGet.Packaging.RepositorySignatureInfoProvider.Instance.get -> NuGet.Packaging.RepositorySignatureInfoProvider!
 ~static NuGet.Packaging.Rules.AnalysisResources.AssemblyDirectlyUnderLibWarning.get -> string
 ~static NuGet.Packaging.Rules.AnalysisResources.AssemblyOutsideLibWarning.get -> string
 ~static NuGet.Packaging.Rules.AnalysisResources.BuildConventionIsViolatedWarning.get -> string
@@ -1612,8 +1612,8 @@ static NuGet.Packaging.PackagingConstants.Folders.Known.get -> string![]!
 ~static NuGet.Packaging.Rules.AnalysisResources.UnrecognizedScriptWarning.get -> string
 ~static NuGet.Packaging.Rules.AnalysisResources.UnspecifiedDependencyVersionWarning.get -> string
 ~static NuGet.Packaging.Rules.AnalysisResources.WinRTObsoleteWarning.get -> string
-~static NuGet.Packaging.Rules.RuleSet.PackageCreationRuleSet.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Rules.IPackageRule>
-~static NuGet.Packaging.Rules.RuleSet.PackagesConfigToPackageReferenceMigrationRuleSet.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Rules.IPackageRule>
+static NuGet.Packaging.Rules.RuleSet.PackageCreationRuleSet.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Rules.IPackageRule!>!
+static NuGet.Packaging.Rules.RuleSet.PackagesConfigToPackageReferenceMigrationRuleSet.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Rules.IPackageRule!>!
 ~static NuGet.Packaging.Signing.Accuracy.Read(byte[] bytes) -> NuGet.Packaging.Signing.Accuracy
 ~static NuGet.Packaging.Signing.AlgorithmIdentifier.Read(byte[] bytes) -> NuGet.Packaging.Signing.AlgorithmIdentifier
 ~static NuGet.Packaging.Signing.AttributeUtility.CreateCommitmentTypeIndication(NuGet.Packaging.Signing.SignatureType type) -> System.Security.Cryptography.CryptographicAttributeObject
@@ -1673,12 +1673,12 @@ static NuGet.Packaging.Signing.PrimarySignature.ThrowForInvalidPrimarySignature(
 ~static NuGet.Packaging.Signing.RepositorySignatureInfoUtility.GetRepositoryAllowList(System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.IRepositoryCertificateInfo> repositoryCertificateInfos) -> System.Collections.Generic.IReadOnlyCollection<NuGet.Packaging.Signing.CertificateHashAllowListEntry>
 ~static NuGet.Packaging.Signing.RepositorySignatureInfoUtility.GetSignedPackageVerifierSettings(NuGet.Packaging.RepositorySignatureInfo repoSignatureInfo, NuGet.Packaging.Signing.SignedPackageVerifierSettings fallbackSettings) -> NuGet.Packaging.Signing.SignedPackageVerifierSettings
 ~static NuGet.Packaging.Signing.SignatureContent.Load(byte[] bytes, NuGet.Packaging.Signing.SigningSpecifications signingSpecifications) -> NuGet.Packaging.Signing.SignatureContent
-~static NuGet.Packaging.Signing.SignatureLog.DebugLog(string message) -> NuGet.Packaging.Signing.SignatureLog
-~static NuGet.Packaging.Signing.SignatureLog.DetailedLog(string message) -> NuGet.Packaging.Signing.SignatureLog
-~static NuGet.Packaging.Signing.SignatureLog.Error(NuGet.Common.NuGetLogCode code, string message) -> NuGet.Packaging.Signing.SignatureLog
-~static NuGet.Packaging.Signing.SignatureLog.InformationLog(string message) -> NuGet.Packaging.Signing.SignatureLog
-~static NuGet.Packaging.Signing.SignatureLog.Issue(bool fatal, NuGet.Common.NuGetLogCode code, string message) -> NuGet.Packaging.Signing.SignatureLog
-~static NuGet.Packaging.Signing.SignatureLog.MinimalLog(string message) -> NuGet.Packaging.Signing.SignatureLog
+static NuGet.Packaging.Signing.SignatureLog.DebugLog(string! message) -> NuGet.Packaging.Signing.SignatureLog!
+static NuGet.Packaging.Signing.SignatureLog.DetailedLog(string! message) -> NuGet.Packaging.Signing.SignatureLog!
+static NuGet.Packaging.Signing.SignatureLog.Error(NuGet.Common.NuGetLogCode code, string! message) -> NuGet.Packaging.Signing.SignatureLog!
+static NuGet.Packaging.Signing.SignatureLog.InformationLog(string! message) -> NuGet.Packaging.Signing.SignatureLog!
+static NuGet.Packaging.Signing.SignatureLog.Issue(bool fatal, NuGet.Common.NuGetLogCode code, string! message) -> NuGet.Packaging.Signing.SignatureLog!
+static NuGet.Packaging.Signing.SignatureLog.MinimalLog(string! message) -> NuGet.Packaging.Signing.SignatureLog!
 ~static NuGet.Packaging.Signing.SignatureUtility.GetCertificateChain(NuGet.Packaging.Signing.PrimarySignature primarySignature) -> NuGet.Packaging.Signing.IX509CertificateChain
 ~static NuGet.Packaging.Signing.SignatureUtility.GetCertificateChain(NuGet.Packaging.Signing.PrimarySignature primarySignature, NuGet.Packaging.Signing.RepositoryCountersignature repositoryCountersignature) -> NuGet.Packaging.Signing.IX509CertificateChain
 ~static NuGet.Packaging.Signing.SignatureUtility.GetTimestampCertificateChain(NuGet.Packaging.Signing.PrimarySignature primarySignature) -> NuGet.Packaging.Signing.IX509CertificateChain
@@ -1714,9 +1714,9 @@ static NuGet.Packaging.Signing.VerificationUtility.IsVerificationTarget(NuGet.Pa
 static NuGet.Packaging.StreamExtensions.CopyToFile(this System.IO.Stream! inputStream, string! fileFullPath) -> string!
 static NuGet.Packaging.TopologicalSortUtility.SortPackagesByDependencyOrder(System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependencyInfo!>! packages) -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageDependencyInfo!>!
 static NuGet.Packaging.TopologicalSortUtility.SortPackagesByDependencyOrder<T>(System.Collections.Generic.IEnumerable<T!>! items, System.StringComparer! comparer, System.Func<T!, string!>! getId, System.Func<T!, string![]!>! getDependencies) -> System.Collections.Generic.IReadOnlyList<T!>!
-~static NuGet.Packaging.XElementExtensions.ElementsNoNamespace(this System.Xml.Linq.XContainer container, string localName) -> System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement>
-~static NuGet.Packaging.XElementExtensions.Except(this System.Xml.Linq.XElement source, System.Xml.Linq.XElement target) -> System.Xml.Linq.XElement
-~static NuGet.Packaging.XElementExtensions.GetOptionalAttributeValue(this System.Xml.Linq.XElement element, string localName, string namespaceName = null) -> string
+static NuGet.Packaging.XElementExtensions.ElementsNoNamespace(this System.Xml.Linq.XContainer! container, string! localName) -> System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement!>!
+static NuGet.Packaging.XElementExtensions.Except(this System.Xml.Linq.XElement! source, System.Xml.Linq.XElement? target) -> System.Xml.Linq.XElement!
+static NuGet.Packaging.XElementExtensions.GetOptionalAttributeValue(this System.Xml.Linq.XElement! element, string! localName, string? namespaceName = null) -> string?
 static NuGet.Packaging.ZipArchiveExtensions.GetFiles(this System.IO.Compression.ZipArchive! zipArchive) -> System.Collections.Generic.IEnumerable<string!>!
 static NuGet.Packaging.ZipArchiveExtensions.LookupEntry(this System.IO.Compression.ZipArchive! zipArchive, string! path) -> System.IO.Compression.ZipArchiveEntry!
 static NuGet.Packaging.ZipArchiveExtensions.OpenFile(this System.IO.Compression.ZipArchive! zipArchive, string! path) -> System.IO.Stream!

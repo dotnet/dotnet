@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,18 +11,18 @@ namespace NuGet.Packaging
 {
     public static class XElementExtensions
     {
-        public static string GetOptionalAttributeValue(this XElement element, string localName, string namespaceName = null)
+        public static string? GetOptionalAttributeValue(this XElement element, string localName, string? namespaceName = null)
         {
-            XAttribute attr;
+            XAttribute? attr;
             if (String.IsNullOrEmpty(namespaceName))
             {
                 attr = element.Attribute(localName);
             }
             else
             {
-                attr = element.Attribute(XName.Get(localName, namespaceName));
+                attr = element.Attribute(XName.Get(localName, namespaceName!));
             }
-            return attr != null ? attr.Value : null;
+            return attr?.Value;
         }
 
         public static IEnumerable<XElement> ElementsNoNamespace(this XContainer container, string localName)
@@ -32,7 +30,7 @@ namespace NuGet.Packaging
             return container.Elements().Where(e => e.Name.LocalName == localName);
         }
 
-        public static XElement Except(this XElement source, XElement target)
+        public static XElement Except(this XElement source, XElement? target)
         {
             if (target == null)
             {
@@ -82,7 +80,7 @@ namespace NuGet.Packaging
             return source;
         }
 
-        private static XElement FindElement(XElement source, XElement targetChild)
+        private static XElement? FindElement(XElement source, XElement targetChild)
         {
             // Get all of the elements in the source that match this name
             var sourceElements = source.Elements(targetChild.Name).ToList();
@@ -132,7 +130,7 @@ namespace NuGet.Packaging
             // Loop over all the other attributes and see if there are
             foreach (var targetAttr in target.Attributes())
             {
-                string sourceValue;
+                string? sourceValue;
                 // if any of the attributes are in the source (names match) but the value doesn't match then we've found a conflict
                 if (sourceAttr.TryGetValue(targetAttr.Name, out sourceValue)
                     && sourceValue != targetAttr.Value)
@@ -143,7 +141,7 @@ namespace NuGet.Packaging
             return false;
         }
 
-        private static bool AttributeEquals(XAttribute source, XAttribute target)
+        private static bool AttributeEquals(XAttribute? source, XAttribute? target)
         {
             if (source == null
                 && target == null)
