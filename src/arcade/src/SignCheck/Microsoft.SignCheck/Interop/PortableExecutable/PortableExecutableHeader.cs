@@ -319,6 +319,13 @@ namespace Microsoft.SignCheck.Interop.PortableExecutable
             using (FileStream stream = new FileStream(Path, FileMode.Open, FileAccess.Read, FileShare.Read))
             using (BinaryReader reader = new BinaryReader(stream))
             {
+                // Guard against truncated files: ensure the stream is long enough to
+                // contain the optional header magic value at the calculated offset.
+                if (stream.Length < imageOptionalHeaderOffset + sizeof(UInt16))
+                {
+                    return;
+                }
+
                 reader.BaseStream.Seek(imageOptionalHeaderOffset, SeekOrigin.Begin);
 
                 // Retrieve the Magic field and then read the appropriate (32-bit or 64-bit) IMAGE_NT_OPTIONAL_HEADER
