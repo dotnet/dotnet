@@ -113,12 +113,12 @@ NuGet.Packaging.Core.IAsyncPackageCoreReader.GetNuspecFileAsync(System.Threading
 NuGet.Packaging.Core.IAsyncPackageCoreReader.GetPackageTypesAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageType!>!>!
 NuGet.Packaging.Core.IAsyncPackageCoreReader.GetStreamAsync(string! path, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.IO.Stream!>!
 NuGet.Packaging.Core.INuspecCoreReader
-~NuGet.Packaging.Core.INuspecCoreReader.GetId() -> string
-~NuGet.Packaging.Core.INuspecCoreReader.GetIdentity() -> NuGet.Packaging.Core.PackageIdentity
-~NuGet.Packaging.Core.INuspecCoreReader.GetMetadata() -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>>
-~NuGet.Packaging.Core.INuspecCoreReader.GetMinClientVersion() -> NuGet.Versioning.NuGetVersion
-~NuGet.Packaging.Core.INuspecCoreReader.GetPackageTypes() -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageType>
-~NuGet.Packaging.Core.INuspecCoreReader.GetVersion() -> NuGet.Versioning.NuGetVersion
+NuGet.Packaging.Core.INuspecCoreReader.GetId() -> string!
+NuGet.Packaging.Core.INuspecCoreReader.GetIdentity() -> NuGet.Packaging.Core.PackageIdentity!
+NuGet.Packaging.Core.INuspecCoreReader.GetMetadata() -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, string!>>!
+NuGet.Packaging.Core.INuspecCoreReader.GetMinClientVersion() -> NuGet.Versioning.NuGetVersion?
+NuGet.Packaging.Core.INuspecCoreReader.GetPackageTypes() -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageType!>!
+NuGet.Packaging.Core.INuspecCoreReader.GetVersion() -> NuGet.Versioning.NuGetVersion!
 NuGet.Packaging.Core.IPackageCoreReader
 NuGet.Packaging.Core.IPackageCoreReader.CopyFiles(string! destination, System.Collections.Generic.IEnumerable<string!>! packageFiles, NuGet.Packaging.Core.ExtractPackageFileDelegate! extractFile, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<string!>!
 NuGet.Packaging.Core.IPackageCoreReader.GetFiles() -> System.Collections.Generic.IEnumerable<string!>!
@@ -138,16 +138,16 @@ NuGet.Packaging.Core.IRepositoryCertificateInfo.NotAfter.get -> System.DateTimeO
 NuGet.Packaging.Core.IRepositoryCertificateInfo.NotBefore.get -> System.DateTimeOffset
 NuGet.Packaging.Core.IRepositoryCertificateInfo.Subject.get -> string!
 NuGet.Packaging.Core.NuspecCoreReader
-~NuGet.Packaging.Core.NuspecCoreReader.NuspecCoreReader(System.IO.Stream stream) -> void
-~NuGet.Packaging.Core.NuspecCoreReader.NuspecCoreReader(System.Xml.Linq.XDocument xml) -> void
+NuGet.Packaging.Core.NuspecCoreReader.NuspecCoreReader(System.IO.Stream! stream) -> void
+NuGet.Packaging.Core.NuspecCoreReader.NuspecCoreReader(System.Xml.Linq.XDocument! xml) -> void
 NuGet.Packaging.Core.NuspecCoreReaderBase
-~NuGet.Packaging.Core.NuspecCoreReaderBase.MetadataNode.get -> System.Xml.Linq.XElement
-~NuGet.Packaging.Core.NuspecCoreReaderBase.MetadataValues.get -> System.Collections.Generic.Dictionary<string, string>
-~NuGet.Packaging.Core.NuspecCoreReaderBase.NuspecCoreReaderBase(System.IO.Stream stream) -> void
-~NuGet.Packaging.Core.NuspecCoreReaderBase.NuspecCoreReaderBase(System.IO.Stream stream, bool leaveStreamOpen) -> void
-~NuGet.Packaging.Core.NuspecCoreReaderBase.NuspecCoreReaderBase(System.Xml.Linq.XDocument xml) -> void
-~NuGet.Packaging.Core.NuspecCoreReaderBase.NuspecCoreReaderBase(string path) -> void
-~NuGet.Packaging.Core.NuspecCoreReaderBase.Xml.get -> System.Xml.Linq.XDocument
+NuGet.Packaging.Core.NuspecCoreReaderBase.MetadataNode.get -> System.Xml.Linq.XElement!
+NuGet.Packaging.Core.NuspecCoreReaderBase.MetadataValues.get -> System.Collections.Generic.Dictionary<string!, string!>!
+NuGet.Packaging.Core.NuspecCoreReaderBase.NuspecCoreReaderBase(System.IO.Stream! stream) -> void
+NuGet.Packaging.Core.NuspecCoreReaderBase.NuspecCoreReaderBase(System.IO.Stream! stream, bool leaveStreamOpen) -> void
+NuGet.Packaging.Core.NuspecCoreReaderBase.NuspecCoreReaderBase(System.Xml.Linq.XDocument! xml) -> void
+NuGet.Packaging.Core.NuspecCoreReaderBase.NuspecCoreReaderBase(string! path) -> void
+NuGet.Packaging.Core.NuspecCoreReaderBase.Xml.get -> System.Xml.Linq.XDocument!
 NuGet.Packaging.Core.NuspecUtility
 NuGet.Packaging.Core.PackageDependency
 NuGet.Packaging.Core.PackageDependency.Equals(NuGet.Packaging.Core.PackageDependency? other) -> bool
@@ -275,14 +275,14 @@ NuGet.Packaging.IPackageContentReader.GetPackageDependencies() -> System.Collect
 NuGet.Packaging.IPackageContentReader.GetReferenceItems() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup!>!
 NuGet.Packaging.IPackageContentReader.GetToolItems() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup!>!
 NuGet.Packaging.IPackageDownloader
-~NuGet.Packaging.IPackageDownloader.ContentReader.get -> NuGet.Packaging.IAsyncPackageContentReader
-~NuGet.Packaging.IPackageDownloader.CopyNupkgFileToAsync(string destinationFilePath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>
-~NuGet.Packaging.IPackageDownloader.CoreReader.get -> NuGet.Packaging.Core.IAsyncPackageCoreReader
-~NuGet.Packaging.IPackageDownloader.GetPackageHashAsync(string hashAlgorithm, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string>
-~NuGet.Packaging.IPackageDownloader.SetExceptionHandler(System.Func<System.Exception, System.Threading.Tasks.Task<bool>> handleExceptionAsync) -> void
-~NuGet.Packaging.IPackageDownloader.SetThrottle(System.Threading.SemaphoreSlim throttle) -> void
-~NuGet.Packaging.IPackageDownloader.SignedPackageReader.get -> NuGet.Packaging.Signing.ISignedPackageReader
-~NuGet.Packaging.IPackageDownloader.Source.get -> string
+NuGet.Packaging.IPackageDownloader.ContentReader.get -> NuGet.Packaging.IAsyncPackageContentReader!
+NuGet.Packaging.IPackageDownloader.CopyNupkgFileToAsync(string! destinationFilePath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+NuGet.Packaging.IPackageDownloader.CoreReader.get -> NuGet.Packaging.Core.IAsyncPackageCoreReader!
+NuGet.Packaging.IPackageDownloader.GetPackageHashAsync(string! hashAlgorithm, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string!>!
+NuGet.Packaging.IPackageDownloader.SetExceptionHandler(System.Func<System.Exception!, System.Threading.Tasks.Task<bool>!>! handleExceptionAsync) -> void
+NuGet.Packaging.IPackageDownloader.SetThrottle(System.Threading.SemaphoreSlim? throttle) -> void
+NuGet.Packaging.IPackageDownloader.SignedPackageReader.get -> NuGet.Packaging.Signing.ISignedPackageReader!
+NuGet.Packaging.IPackageDownloader.Source.get -> string!
 NuGet.Packaging.IPackageFile
 ~NuGet.Packaging.IPackageFile.EffectivePath.get -> string
 ~NuGet.Packaging.IPackageFile.GetStream() -> System.IO.Stream
@@ -485,62 +485,62 @@ NuGet.Packaging.MinClientVersionException
 NuGet.Packaging.MinClientVersionException.MinClientVersionException(string! message) -> void
 NuGet.Packaging.MinClientVersionUtility
 NuGet.Packaging.NupkgMetadataFile
-~NuGet.Packaging.NupkgMetadataFile.ContentHash.get -> string
-~NuGet.Packaging.NupkgMetadataFile.ContentHash.set -> void
-~NuGet.Packaging.NupkgMetadataFile.Equals(NuGet.Packaging.NupkgMetadataFile other) -> bool
+NuGet.Packaging.NupkgMetadataFile.ContentHash.get -> string?
+NuGet.Packaging.NupkgMetadataFile.ContentHash.set -> void
+NuGet.Packaging.NupkgMetadataFile.Equals(NuGet.Packaging.NupkgMetadataFile? other) -> bool
 NuGet.Packaging.NupkgMetadataFile.NupkgMetadataFile() -> void
-~NuGet.Packaging.NupkgMetadataFile.Source.get -> string
-~NuGet.Packaging.NupkgMetadataFile.Source.set -> void
+NuGet.Packaging.NupkgMetadataFile.Source.get -> string?
+NuGet.Packaging.NupkgMetadataFile.Source.set -> void
 NuGet.Packaging.NupkgMetadataFile.Version.get -> int
 NuGet.Packaging.NupkgMetadataFile.Version.set -> void
 NuGet.Packaging.NupkgMetadataFileFormat
 NuGet.Packaging.NuspecReader
-~NuGet.Packaging.NuspecReader.GetAuthors() -> string
-~NuGet.Packaging.NuspecReader.GetContentFiles() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.ContentFilesEntry>
-~NuGet.Packaging.NuspecReader.GetCopyright() -> string
-~NuGet.Packaging.NuspecReader.GetDependencyGroups() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup>
-~NuGet.Packaging.NuspecReader.GetDependencyGroups(bool useStrictVersionCheck) -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup>
-~NuGet.Packaging.NuspecReader.GetDescription() -> string
-~NuGet.Packaging.NuspecReader.GetFrameworkAssemblyGroups() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup>
-~NuGet.Packaging.NuspecReader.GetFrameworkRefGroups() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkReferenceGroup>
-~NuGet.Packaging.NuspecReader.GetFrameworkReferenceGroups() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup>
-~NuGet.Packaging.NuspecReader.GetIcon() -> string
-~NuGet.Packaging.NuspecReader.GetIconUrl() -> string
-~NuGet.Packaging.NuspecReader.GetLanguage() -> string
-~NuGet.Packaging.NuspecReader.GetLicenseMetadata() -> NuGet.Packaging.LicenseMetadata
-~NuGet.Packaging.NuspecReader.GetLicenseUrl() -> string
-~NuGet.Packaging.NuspecReader.GetOwners() -> string
-~NuGet.Packaging.NuspecReader.GetProjectUrl() -> string
-~NuGet.Packaging.NuspecReader.GetReadme() -> string
-~NuGet.Packaging.NuspecReader.GetReferenceGroups() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup>
-~NuGet.Packaging.NuspecReader.GetReleaseNotes() -> string
-~NuGet.Packaging.NuspecReader.GetRepositoryMetadata() -> NuGet.Packaging.Core.RepositoryMetadata
+NuGet.Packaging.NuspecReader.GetAuthors() -> string!
+NuGet.Packaging.NuspecReader.GetContentFiles() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.ContentFilesEntry!>!
+NuGet.Packaging.NuspecReader.GetCopyright() -> string!
+NuGet.Packaging.NuspecReader.GetDependencyGroups() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup!>!
+NuGet.Packaging.NuspecReader.GetDependencyGroups(bool useStrictVersionCheck) -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup!>!
+NuGet.Packaging.NuspecReader.GetDescription() -> string!
+NuGet.Packaging.NuspecReader.GetFrameworkAssemblyGroups() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup!>!
+NuGet.Packaging.NuspecReader.GetFrameworkRefGroups() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkReferenceGroup!>!
+NuGet.Packaging.NuspecReader.GetFrameworkReferenceGroups() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup!>!
+NuGet.Packaging.NuspecReader.GetIcon() -> string?
+NuGet.Packaging.NuspecReader.GetIconUrl() -> string!
+NuGet.Packaging.NuspecReader.GetLanguage() -> string?
+NuGet.Packaging.NuspecReader.GetLicenseMetadata() -> NuGet.Packaging.LicenseMetadata?
+NuGet.Packaging.NuspecReader.GetLicenseUrl() -> string?
+NuGet.Packaging.NuspecReader.GetOwners() -> string!
+NuGet.Packaging.NuspecReader.GetProjectUrl() -> string!
+NuGet.Packaging.NuspecReader.GetReadme() -> string?
+NuGet.Packaging.NuspecReader.GetReferenceGroups() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup!>!
+NuGet.Packaging.NuspecReader.GetReleaseNotes() -> string!
+NuGet.Packaging.NuspecReader.GetRepositoryMetadata() -> NuGet.Packaging.Core.RepositoryMetadata!
 NuGet.Packaging.NuspecReader.GetRequireLicenseAcceptance() -> bool
-~NuGet.Packaging.NuspecReader.GetSummary() -> string
-~NuGet.Packaging.NuspecReader.GetTags() -> string
-~NuGet.Packaging.NuspecReader.GetTitle() -> string
-~NuGet.Packaging.NuspecReader.NuspecReader(System.IO.Stream stream) -> void
-~NuGet.Packaging.NuspecReader.NuspecReader(System.IO.Stream stream, NuGet.Frameworks.IFrameworkNameProvider frameworkProvider, bool leaveStreamOpen) -> void
-~NuGet.Packaging.NuspecReader.NuspecReader(System.Xml.Linq.XDocument xml) -> void
-~NuGet.Packaging.NuspecReader.NuspecReader(System.Xml.Linq.XDocument xml, NuGet.Frameworks.IFrameworkNameProvider frameworkProvider) -> void
-~NuGet.Packaging.NuspecReader.NuspecReader(string path) -> void
-~NuGet.Packaging.NuspecReader.NuspecReader(string path, NuGet.Frameworks.IFrameworkNameProvider frameworkProvider) -> void
+NuGet.Packaging.NuspecReader.GetSummary() -> string!
+NuGet.Packaging.NuspecReader.GetTags() -> string!
+NuGet.Packaging.NuspecReader.GetTitle() -> string!
+NuGet.Packaging.NuspecReader.NuspecReader(System.IO.Stream! stream) -> void
+NuGet.Packaging.NuspecReader.NuspecReader(System.IO.Stream! stream, NuGet.Frameworks.IFrameworkNameProvider! frameworkProvider, bool leaveStreamOpen) -> void
+NuGet.Packaging.NuspecReader.NuspecReader(System.Xml.Linq.XDocument! xml) -> void
+NuGet.Packaging.NuspecReader.NuspecReader(System.Xml.Linq.XDocument! xml, NuGet.Frameworks.IFrameworkNameProvider! frameworkProvider) -> void
+NuGet.Packaging.NuspecReader.NuspecReader(string! path) -> void
+NuGet.Packaging.NuspecReader.NuspecReader(string! path, NuGet.Frameworks.IFrameworkNameProvider! frameworkProvider) -> void
 NuGet.Packaging.PackageArchiveReader
-~NuGet.Packaging.PackageArchiveReader.EnumeratePackageEntries(System.Collections.Generic.IEnumerable<string> packageFiles, string packageDirectory) -> System.Collections.Generic.IEnumerable<NuGet.Packaging.ZipFilePair>
-~NuGet.Packaging.PackageArchiveReader.ExtractFile(string packageFile, string targetFilePath, NuGet.Common.ILogger logger) -> string
-~NuGet.Packaging.PackageArchiveReader.GetEntry(string packageFile) -> System.IO.Compression.ZipArchiveEntry
-~NuGet.Packaging.PackageArchiveReader.PackageArchiveReader(System.IO.Compression.ZipArchive zipArchive) -> void
-~NuGet.Packaging.PackageArchiveReader.PackageArchiveReader(System.IO.Compression.ZipArchive zipArchive, NuGet.Frameworks.IFrameworkNameProvider frameworkProvider, NuGet.Frameworks.IFrameworkCompatibilityProvider compatibilityProvider) -> void
-~NuGet.Packaging.PackageArchiveReader.PackageArchiveReader(System.IO.Stream stream) -> void
-~NuGet.Packaging.PackageArchiveReader.PackageArchiveReader(System.IO.Stream stream, NuGet.Frameworks.IFrameworkNameProvider frameworkProvider, NuGet.Frameworks.IFrameworkCompatibilityProvider compatibilityProvider) -> void
-~NuGet.Packaging.PackageArchiveReader.PackageArchiveReader(System.IO.Stream stream, bool leaveStreamOpen) -> void
-~NuGet.Packaging.PackageArchiveReader.PackageArchiveReader(System.IO.Stream stream, bool leaveStreamOpen, NuGet.Frameworks.IFrameworkNameProvider frameworkProvider, NuGet.Frameworks.IFrameworkCompatibilityProvider compatibilityProvider) -> void
-~NuGet.Packaging.PackageArchiveReader.PackageArchiveReader(string filePath, NuGet.Frameworks.IFrameworkNameProvider frameworkProvider = null, NuGet.Frameworks.IFrameworkCompatibilityProvider compatibilityProvider = null) -> void
-~NuGet.Packaging.PackageArchiveReader.SigningSpecifications.get -> NuGet.Packaging.Signing.SigningSpecifications
+NuGet.Packaging.PackageArchiveReader.EnumeratePackageEntries(System.Collections.Generic.IEnumerable<string!>! packageFiles, string! packageDirectory) -> System.Collections.Generic.IEnumerable<NuGet.Packaging.ZipFilePair!>!
+NuGet.Packaging.PackageArchiveReader.ExtractFile(string! packageFile, string! targetFilePath, NuGet.Common.ILogger! logger) -> string!
+NuGet.Packaging.PackageArchiveReader.GetEntry(string! packageFile) -> System.IO.Compression.ZipArchiveEntry!
+NuGet.Packaging.PackageArchiveReader.PackageArchiveReader(System.IO.Compression.ZipArchive! zipArchive) -> void
+NuGet.Packaging.PackageArchiveReader.PackageArchiveReader(System.IO.Compression.ZipArchive! zipArchive, NuGet.Frameworks.IFrameworkNameProvider! frameworkProvider, NuGet.Frameworks.IFrameworkCompatibilityProvider! compatibilityProvider) -> void
+NuGet.Packaging.PackageArchiveReader.PackageArchiveReader(System.IO.Stream! stream) -> void
+NuGet.Packaging.PackageArchiveReader.PackageArchiveReader(System.IO.Stream! stream, NuGet.Frameworks.IFrameworkNameProvider! frameworkProvider, NuGet.Frameworks.IFrameworkCompatibilityProvider! compatibilityProvider) -> void
+NuGet.Packaging.PackageArchiveReader.PackageArchiveReader(System.IO.Stream! stream, bool leaveStreamOpen) -> void
+NuGet.Packaging.PackageArchiveReader.PackageArchiveReader(System.IO.Stream! stream, bool leaveStreamOpen, NuGet.Frameworks.IFrameworkNameProvider! frameworkProvider, NuGet.Frameworks.IFrameworkCompatibilityProvider! compatibilityProvider) -> void
+NuGet.Packaging.PackageArchiveReader.PackageArchiveReader(string! filePath, NuGet.Frameworks.IFrameworkNameProvider? frameworkProvider = null, NuGet.Frameworks.IFrameworkCompatibilityProvider? compatibilityProvider = null) -> void
+NuGet.Packaging.PackageArchiveReader.SigningSpecifications.get -> NuGet.Packaging.Signing.SigningSpecifications!
 NuGet.Packaging.PackageArchiveReader.ThrowIfZipReadStreamIsNull() -> void
-~NuGet.Packaging.PackageArchiveReader.ValidatePackageEntriesAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
-~NuGet.Packaging.PackageArchiveReader.ZipReadStream.get -> System.IO.Stream
-~NuGet.Packaging.PackageArchiveReader.ZipReadStream.set -> void
+NuGet.Packaging.PackageArchiveReader.ValidatePackageEntriesAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task!
+NuGet.Packaging.PackageArchiveReader.ZipReadStream.get -> System.IO.Stream?
+NuGet.Packaging.PackageArchiveReader.ZipReadStream.set -> void
 NuGet.Packaging.PackageBuilder
 ~NuGet.Packaging.PackageBuilder.AddFiles(string basePath, string source, string destination, string exclude = null) -> void
 ~NuGet.Packaging.PackageBuilder.Authors.get -> System.Collections.Generic.ISet<string>
@@ -656,13 +656,13 @@ NuGet.Packaging.PackageExtractionTelemetryEvent.SetResult(NuGet.Common.NuGetOper
 NuGet.Packaging.PackageExtractionTelemetryEvent.Status.get -> NuGet.Common.NuGetOperationStatus
 NuGet.Packaging.PackageExtractor
 NuGet.Packaging.PackageFileExtractor
-~NuGet.Packaging.PackageFileExtractor.ExtractPackageFile(string source, string target, System.IO.Stream stream) -> string
-~NuGet.Packaging.PackageFileExtractor.PackageFileExtractor(System.Collections.Generic.IEnumerable<string> packageFiles, NuGet.Packaging.XmlDocFileSaveMode xmlDocFileSaveMode) -> void
+NuGet.Packaging.PackageFileExtractor.ExtractPackageFile(string! source, string! target, System.IO.Stream! stream) -> string?
+NuGet.Packaging.PackageFileExtractor.PackageFileExtractor(System.Collections.Generic.IEnumerable<string!>! packageFiles, NuGet.Packaging.XmlDocFileSaveMode xmlDocFileSaveMode) -> void
 NuGet.Packaging.PackageFolderReader
-~NuGet.Packaging.PackageFolderReader.PackageFolderReader(System.IO.DirectoryInfo folder) -> void
-~NuGet.Packaging.PackageFolderReader.PackageFolderReader(System.IO.DirectoryInfo folder, NuGet.Frameworks.IFrameworkNameProvider frameworkProvider, NuGet.Frameworks.IFrameworkCompatibilityProvider compatibilityProvider) -> void
-~NuGet.Packaging.PackageFolderReader.PackageFolderReader(string folderPath) -> void
-~NuGet.Packaging.PackageFolderReader.PackageFolderReader(string folderPath, NuGet.Frameworks.IFrameworkNameProvider frameworkProvider, NuGet.Frameworks.IFrameworkCompatibilityProvider compatibilityProvider) -> void
+NuGet.Packaging.PackageFolderReader.PackageFolderReader(System.IO.DirectoryInfo! folder) -> void
+NuGet.Packaging.PackageFolderReader.PackageFolderReader(System.IO.DirectoryInfo! folder, NuGet.Frameworks.IFrameworkNameProvider! frameworkProvider, NuGet.Frameworks.IFrameworkCompatibilityProvider! compatibilityProvider) -> void
+NuGet.Packaging.PackageFolderReader.PackageFolderReader(string! folderPath) -> void
+NuGet.Packaging.PackageFolderReader.PackageFolderReader(string! folderPath, NuGet.Frameworks.IFrameworkNameProvider! frameworkProvider, NuGet.Frameworks.IFrameworkCompatibilityProvider! compatibilityProvider) -> void
 NuGet.Packaging.PackageHelper
 NuGet.Packaging.PackageIdValidator
 NuGet.Packaging.PackagePathHelper
@@ -673,16 +673,16 @@ NuGet.Packaging.PackagePathResolver
 ~NuGet.Packaging.PackagePathResolver.Root.get -> string
 NuGet.Packaging.PackagePathResolver.UseSideBySidePaths.get -> bool
 NuGet.Packaging.PackageReaderBase
-~NuGet.Packaging.PackageReaderBase.CompatibilityProvider.get -> NuGet.Frameworks.IFrameworkCompatibilityProvider
-~NuGet.Packaging.PackageReaderBase.CompatibilityProvider.set -> void
+NuGet.Packaging.PackageReaderBase.CompatibilityProvider.get -> NuGet.Frameworks.IFrameworkCompatibilityProvider!
+NuGet.Packaging.PackageReaderBase.CompatibilityProvider.set -> void
 NuGet.Packaging.PackageReaderBase.Dispose() -> void
-~NuGet.Packaging.PackageReaderBase.FrameworkProvider.get -> NuGet.Frameworks.IFrameworkNameProvider
-~NuGet.Packaging.PackageReaderBase.FrameworkProvider.set -> void
-~NuGet.Packaging.PackageReaderBase.GetFileGroups(string folder) -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup>
-~NuGet.Packaging.PackageReaderBase.GetFrameworkFromPath(string path, bool allowSubFolders = false) -> NuGet.Frameworks.NuGetFramework
-~NuGet.Packaging.PackageReaderBase.NormalizeDirectoryPath(string path) -> string
-~NuGet.Packaging.PackageReaderBase.PackageReaderBase(NuGet.Frameworks.IFrameworkNameProvider frameworkProvider) -> void
-~NuGet.Packaging.PackageReaderBase.PackageReaderBase(NuGet.Frameworks.IFrameworkNameProvider frameworkProvider, NuGet.Frameworks.IFrameworkCompatibilityProvider compatibilityProvider) -> void
+NuGet.Packaging.PackageReaderBase.FrameworkProvider.get -> NuGet.Frameworks.IFrameworkNameProvider!
+NuGet.Packaging.PackageReaderBase.FrameworkProvider.set -> void
+NuGet.Packaging.PackageReaderBase.GetFileGroups(string! folder) -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup!>!
+NuGet.Packaging.PackageReaderBase.GetFrameworkFromPath(string! path, bool allowSubFolders = false) -> NuGet.Frameworks.NuGetFramework!
+NuGet.Packaging.PackageReaderBase.NormalizeDirectoryPath(string! path) -> string!
+NuGet.Packaging.PackageReaderBase.PackageReaderBase(NuGet.Frameworks.IFrameworkNameProvider! frameworkProvider) -> void
+NuGet.Packaging.PackageReaderBase.PackageReaderBase(NuGet.Frameworks.IFrameworkNameProvider! frameworkProvider, NuGet.Frameworks.IFrameworkCompatibilityProvider! compatibilityProvider) -> void
 NuGet.Packaging.PackageReaderExtensions
 NuGet.Packaging.PackageReference
 NuGet.Packaging.PackageReference.AllowedVersions.get -> NuGet.Versioning.VersionRange?
@@ -721,33 +721,33 @@ NuGet.Packaging.PackageSigningTelemetryEvent.SetResult(NuGet.Packaging.PackageSi
 NuGet.Packaging.PackageSigningTelemetryEvent.Status.get -> NuGet.Common.NuGetOperationStatus
 NuGet.Packaging.PackagesConfig
 NuGet.Packaging.PackagesConfigReader
-~NuGet.Packaging.PackagesConfigReader.GetMinClientVersion() -> NuGet.Versioning.NuGetVersion
-~NuGet.Packaging.PackagesConfigReader.GetPackages() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference>
-~NuGet.Packaging.PackagesConfigReader.GetPackages(bool allowDuplicatePackageIds) -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference>
-~NuGet.Packaging.PackagesConfigReader.PackagesConfigReader(NuGet.Frameworks.IFrameworkNameProvider frameworkMappings, System.IO.Stream stream, bool leaveStreamOpen) -> void
-~NuGet.Packaging.PackagesConfigReader.PackagesConfigReader(NuGet.Frameworks.IFrameworkNameProvider frameworkMappings, System.Xml.Linq.XDocument xml) -> void
-~NuGet.Packaging.PackagesConfigReader.PackagesConfigReader(System.IO.Stream stream) -> void
-~NuGet.Packaging.PackagesConfigReader.PackagesConfigReader(System.IO.Stream stream, bool leaveStreamOpen) -> void
-~NuGet.Packaging.PackagesConfigReader.PackagesConfigReader(System.Xml.Linq.XDocument xml) -> void
+NuGet.Packaging.PackagesConfigReader.GetMinClientVersion() -> NuGet.Versioning.NuGetVersion!
+NuGet.Packaging.PackagesConfigReader.GetPackages() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference!>!
+NuGet.Packaging.PackagesConfigReader.GetPackages(bool allowDuplicatePackageIds) -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference!>!
+NuGet.Packaging.PackagesConfigReader.PackagesConfigReader(NuGet.Frameworks.IFrameworkNameProvider! frameworkMappings, System.IO.Stream! stream, bool leaveStreamOpen) -> void
+NuGet.Packaging.PackagesConfigReader.PackagesConfigReader(NuGet.Frameworks.IFrameworkNameProvider! frameworkMappings, System.Xml.Linq.XDocument! xml) -> void
+NuGet.Packaging.PackagesConfigReader.PackagesConfigReader(System.IO.Stream! stream) -> void
+NuGet.Packaging.PackagesConfigReader.PackagesConfigReader(System.IO.Stream! stream, bool leaveStreamOpen) -> void
+NuGet.Packaging.PackagesConfigReader.PackagesConfigReader(System.Xml.Linq.XDocument! xml) -> void
 NuGet.Packaging.PackagesConfigReaderException
 NuGet.Packaging.PackagesConfigReaderException.PackagesConfigReaderException(string! message) -> void
 NuGet.Packaging.PackagesConfigReaderException.PackagesConfigReaderException(string! message, System.Exception! innerException) -> void
 NuGet.Packaging.PackagesConfigWriter
-~NuGet.Packaging.PackagesConfigWriter.AddPackageEntry(NuGet.Packaging.Core.PackageIdentity identity, NuGet.Frameworks.NuGetFramework targetFramework) -> void
-~NuGet.Packaging.PackagesConfigWriter.AddPackageEntry(NuGet.Packaging.PackageReference entry) -> void
-~NuGet.Packaging.PackagesConfigWriter.AddPackageEntry(string packageId, NuGet.Versioning.NuGetVersion version, NuGet.Frameworks.NuGetFramework targetFramework) -> void
+NuGet.Packaging.PackagesConfigWriter.AddPackageEntry(NuGet.Packaging.Core.PackageIdentity! identity, NuGet.Frameworks.NuGetFramework! targetFramework) -> void
+NuGet.Packaging.PackagesConfigWriter.AddPackageEntry(NuGet.Packaging.PackageReference! entry) -> void
+NuGet.Packaging.PackagesConfigWriter.AddPackageEntry(string! packageId, NuGet.Versioning.NuGetVersion! version, NuGet.Frameworks.NuGetFramework! targetFramework) -> void
 NuGet.Packaging.PackagesConfigWriter.Dispose() -> void
-~NuGet.Packaging.PackagesConfigWriter.PackagesConfigWriter(System.IO.Stream stream, bool createNew) -> void
-~NuGet.Packaging.PackagesConfigWriter.PackagesConfigWriter(System.IO.Stream stream, bool createNew, NuGet.Frameworks.IFrameworkNameProvider frameworkMappings) -> void
-~NuGet.Packaging.PackagesConfigWriter.PackagesConfigWriter(string fullPath, bool createNew) -> void
-~NuGet.Packaging.PackagesConfigWriter.PackagesConfigWriter(string fullPath, bool createNew, NuGet.Frameworks.IFrameworkNameProvider frameworkMappings) -> void
-~NuGet.Packaging.PackagesConfigWriter.RemovePackageEntry(NuGet.Packaging.Core.PackageIdentity identity, NuGet.Frameworks.NuGetFramework targetFramework) -> void
-~NuGet.Packaging.PackagesConfigWriter.RemovePackageEntry(NuGet.Packaging.PackageReference entry) -> void
-~NuGet.Packaging.PackagesConfigWriter.RemovePackageEntry(string packageId, NuGet.Versioning.NuGetVersion version, NuGet.Frameworks.NuGetFramework targetFramework) -> void
-~NuGet.Packaging.PackagesConfigWriter.UpdateOrAddPackageEntry(System.Xml.Linq.XDocument originalConfig, NuGet.Packaging.PackageReference newEntry) -> void
-~NuGet.Packaging.PackagesConfigWriter.UpdatePackageEntry(NuGet.Packaging.PackageReference oldEntry, NuGet.Packaging.PackageReference newEntry) -> void
-~NuGet.Packaging.PackagesConfigWriter.WriteFile(string fullPath) -> void
-~NuGet.Packaging.PackagesConfigWriter.WriteMinClientVersion(NuGet.Versioning.NuGetVersion version) -> void
+NuGet.Packaging.PackagesConfigWriter.PackagesConfigWriter(System.IO.Stream! stream, bool createNew) -> void
+NuGet.Packaging.PackagesConfigWriter.PackagesConfigWriter(System.IO.Stream! stream, bool createNew, NuGet.Frameworks.IFrameworkNameProvider! frameworkMappings) -> void
+NuGet.Packaging.PackagesConfigWriter.PackagesConfigWriter(string! fullPath, bool createNew) -> void
+NuGet.Packaging.PackagesConfigWriter.PackagesConfigWriter(string! fullPath, bool createNew, NuGet.Frameworks.IFrameworkNameProvider! frameworkMappings) -> void
+NuGet.Packaging.PackagesConfigWriter.RemovePackageEntry(NuGet.Packaging.Core.PackageIdentity! identity, NuGet.Frameworks.NuGetFramework! targetFramework) -> void
+NuGet.Packaging.PackagesConfigWriter.RemovePackageEntry(NuGet.Packaging.PackageReference! entry) -> void
+NuGet.Packaging.PackagesConfigWriter.RemovePackageEntry(string! packageId, NuGet.Versioning.NuGetVersion! version, NuGet.Frameworks.NuGetFramework! targetFramework) -> void
+NuGet.Packaging.PackagesConfigWriter.UpdateOrAddPackageEntry(System.Xml.Linq.XDocument! originalConfig, NuGet.Packaging.PackageReference! newEntry) -> void
+NuGet.Packaging.PackagesConfigWriter.UpdatePackageEntry(NuGet.Packaging.PackageReference! oldEntry, NuGet.Packaging.PackageReference! newEntry) -> void
+NuGet.Packaging.PackagesConfigWriter.WriteFile(string! fullPath) -> void
+NuGet.Packaging.PackagesConfigWriter.WriteMinClientVersion(NuGet.Versioning.NuGetVersion! version) -> void
 NuGet.Packaging.PackagesConfigWriterException
 NuGet.Packaging.PackagesConfigWriterException.PackagesConfigWriterException(string! message) -> void
 NuGet.Packaging.PackagesConfigWriterException.PackagesConfigWriterException(string! message, System.Exception! innerException) -> void
@@ -889,22 +889,22 @@ NuGet.Packaging.Signing.ISignatureVerificationProvider
 ~NuGet.Packaging.Signing.ISignatureVerificationProvider.GetTrustResultAsync(NuGet.Packaging.Signing.ISignedPackageReader package, NuGet.Packaging.Signing.PrimarySignature signature, NuGet.Packaging.Signing.SignedPackageVerifierSettings settings, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Packaging.Signing.PackageVerificationResult>
 NuGet.Packaging.Signing.ISignedPackage
 NuGet.Packaging.Signing.ISignedPackageReader
-~NuGet.Packaging.Signing.ISignedPackageReader.CanVerifySignedPackages(NuGet.Packaging.Signing.SignedPackageVerifierSettings verifierSettings) -> bool
-~NuGet.Packaging.Signing.ISignedPackageReader.GetArchiveHashAsync(NuGet.Common.HashAlgorithmName hashAlgorithm, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<byte[]>
-~NuGet.Packaging.Signing.ISignedPackageReader.GetContentHash(System.Threading.CancellationToken token, System.Func<string> GetUnsignedPackageHash = null) -> string
-~NuGet.Packaging.Signing.ISignedPackageReader.GetPrimarySignatureAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Packaging.Signing.PrimarySignature>
-~NuGet.Packaging.Signing.ISignedPackageReader.IsSignedAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
-~NuGet.Packaging.Signing.ISignedPackageReader.ValidateIntegrityAsync(NuGet.Packaging.Signing.SignatureContent signatureContent, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+NuGet.Packaging.Signing.ISignedPackageReader.CanVerifySignedPackages(NuGet.Packaging.Signing.SignedPackageVerifierSettings! verifierSettings) -> bool
+NuGet.Packaging.Signing.ISignedPackageReader.GetArchiveHashAsync(NuGet.Common.HashAlgorithmName hashAlgorithm, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<byte[]!>!
+NuGet.Packaging.Signing.ISignedPackageReader.GetContentHash(System.Threading.CancellationToken token, System.Func<string!>? GetUnsignedPackageHash = null) -> string!
+NuGet.Packaging.Signing.ISignedPackageReader.GetPrimarySignatureAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Packaging.Signing.PrimarySignature?>!
+NuGet.Packaging.Signing.ISignedPackageReader.IsSignedAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>!
+NuGet.Packaging.Signing.ISignedPackageReader.ValidateIntegrityAsync(NuGet.Packaging.Signing.SignatureContent! signatureContent, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task!
 NuGet.Packaging.Signing.ISignedPackageWriter
-~NuGet.Packaging.Signing.ISignedPackageWriter.AddSignatureAsync(System.IO.Stream signatureStream, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
-~NuGet.Packaging.Signing.ISignedPackageWriter.IsZip64Async(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
-~NuGet.Packaging.Signing.ISignedPackageWriter.RemoveSignatureAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+NuGet.Packaging.Signing.ISignedPackageWriter.AddSignatureAsync(System.IO.Stream! signatureStream, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task!
+NuGet.Packaging.Signing.ISignedPackageWriter.IsZip64Async(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>!
+NuGet.Packaging.Signing.ISignedPackageWriter.RemoveSignatureAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task!
 NuGet.Packaging.Signing.ITimestampProvider
 ~NuGet.Packaging.Signing.ITimestampProvider.TimestampSignatureAsync(NuGet.Packaging.Signing.PrimarySignature primarySignature, NuGet.Packaging.Signing.TimestampRequest request, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Packaging.Signing.PrimarySignature>
 NuGet.Packaging.Signing.ITrustedSignersProvider
-~NuGet.Packaging.Signing.ITrustedSignersProvider.AddOrUpdateTrustedSigner(NuGet.Configuration.TrustedSignerItem trustedSigner) -> void
-~NuGet.Packaging.Signing.ITrustedSignersProvider.GetTrustedSigners() -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.TrustedSignerItem>
-~NuGet.Packaging.Signing.ITrustedSignersProvider.Remove(System.Collections.Generic.IReadOnlyList<NuGet.Configuration.TrustedSignerItem> trustedSigners) -> void
+NuGet.Packaging.Signing.ITrustedSignersProvider.AddOrUpdateTrustedSigner(NuGet.Configuration.TrustedSignerItem! trustedSigner) -> void
+NuGet.Packaging.Signing.ITrustedSignersProvider.GetTrustedSigners() -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.TrustedSignerItem!>!
+NuGet.Packaging.Signing.ITrustedSignersProvider.Remove(System.Collections.Generic.IReadOnlyList<NuGet.Configuration.TrustedSignerItem!>! trustedSigners) -> void
 NuGet.Packaging.Signing.IX509CertificateChain
 NuGet.Packaging.Signing.IntegrityVerificationProvider
 ~NuGet.Packaging.Signing.IntegrityVerificationProvider.GetTrustResultAsync(NuGet.Packaging.Signing.ISignedPackageReader package, NuGet.Packaging.Signing.PrimarySignature signature, NuGet.Packaging.Signing.SignedPackageVerifierSettings settings, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Packaging.Signing.PackageVerificationResult>
@@ -1182,10 +1182,10 @@ NuGet.Packaging.Signing.TrustedSignerAllowListEntry.AllowUntrustedRoot.get -> bo
 ~NuGet.Packaging.Signing.TrustedSignerAllowListEntry.Owners.get -> System.Collections.Generic.IReadOnlyList<string>
 ~NuGet.Packaging.Signing.TrustedSignerAllowListEntry.TrustedSignerAllowListEntry(NuGet.Packaging.Signing.VerificationTarget target, NuGet.Packaging.Signing.SignaturePlacement placement, string fingerprint, NuGet.Common.HashAlgorithmName algorithm, bool allowUntrustedRoot = false, System.Collections.Generic.IReadOnlyList<string> owners = null) -> void
 NuGet.Packaging.Signing.TrustedSignersProvider
-~NuGet.Packaging.Signing.TrustedSignersProvider.AddOrUpdateTrustedSigner(NuGet.Configuration.TrustedSignerItem trustedSigner) -> void
-~NuGet.Packaging.Signing.TrustedSignersProvider.GetTrustedSigners() -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.TrustedSignerItem>
-~NuGet.Packaging.Signing.TrustedSignersProvider.Remove(System.Collections.Generic.IReadOnlyList<NuGet.Configuration.TrustedSignerItem> trustedSigners) -> void
-~NuGet.Packaging.Signing.TrustedSignersProvider.TrustedSignersProvider(NuGet.Configuration.ISettings settings) -> void
+NuGet.Packaging.Signing.TrustedSignersProvider.AddOrUpdateTrustedSigner(NuGet.Configuration.TrustedSignerItem! trustedSigner) -> void
+NuGet.Packaging.Signing.TrustedSignersProvider.GetTrustedSigners() -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.TrustedSignerItem!>!
+NuGet.Packaging.Signing.TrustedSignersProvider.Remove(System.Collections.Generic.IReadOnlyList<NuGet.Configuration.TrustedSignerItem!>! trustedSigners) -> void
+NuGet.Packaging.Signing.TrustedSignersProvider.TrustedSignersProvider(NuGet.Configuration.ISettings! settings) -> void
 NuGet.Packaging.Signing.TstInfo
 ~NuGet.Packaging.Signing.TstInfo.Accuracy.get -> NuGet.Packaging.Signing.Accuracy
 ~NuGet.Packaging.Signing.TstInfo.Extensions.get -> System.Security.Cryptography.X509Certificates.X509ExtensionCollection
@@ -1321,17 +1321,17 @@ NuGet.RuntimeModel.RuntimePackageDependency.Equals(NuGet.RuntimeModel.RuntimePac
 NuGet.RuntimeModel.RuntimePackageDependency.Id.get -> string!
 NuGet.RuntimeModel.RuntimePackageDependency.RuntimePackageDependency(string! id, NuGet.Versioning.VersionRange! versionRange) -> void
 NuGet.RuntimeModel.RuntimePackageDependency.VersionRange.get -> NuGet.Versioning.VersionRange!
-~abstract NuGet.Packaging.PackageReaderBase.CanVerifySignedPackages(NuGet.Packaging.Signing.SignedPackageVerifierSettings verifierSettings) -> bool
-~abstract NuGet.Packaging.PackageReaderBase.CopyFiles(string destination, System.Collections.Generic.IEnumerable<string> packageFiles, NuGet.Packaging.Core.ExtractPackageFileDelegate extractFile, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<string>
+abstract NuGet.Packaging.PackageReaderBase.CanVerifySignedPackages(NuGet.Packaging.Signing.SignedPackageVerifierSettings! verifierSettings) -> bool
+abstract NuGet.Packaging.PackageReaderBase.CopyFiles(string! destination, System.Collections.Generic.IEnumerable<string!>! packageFiles, NuGet.Packaging.Core.ExtractPackageFileDelegate! extractFile, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<string!>!
 abstract NuGet.Packaging.PackageReaderBase.Dispose(bool disposing) -> void
-~abstract NuGet.Packaging.PackageReaderBase.GetArchiveHashAsync(NuGet.Common.HashAlgorithmName hashAlgorithm, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<byte[]>
-~abstract NuGet.Packaging.PackageReaderBase.GetContentHash(System.Threading.CancellationToken token, System.Func<string> GetUnsignedPackageHash = null) -> string
-~abstract NuGet.Packaging.PackageReaderBase.GetFiles() -> System.Collections.Generic.IEnumerable<string>
-~abstract NuGet.Packaging.PackageReaderBase.GetFiles(string folder) -> System.Collections.Generic.IEnumerable<string>
-~abstract NuGet.Packaging.PackageReaderBase.GetPrimarySignatureAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Packaging.Signing.PrimarySignature>
-~abstract NuGet.Packaging.PackageReaderBase.GetStream(string path) -> System.IO.Stream
-~abstract NuGet.Packaging.PackageReaderBase.IsSignedAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
-~abstract NuGet.Packaging.PackageReaderBase.ValidateIntegrityAsync(NuGet.Packaging.Signing.SignatureContent signatureContent, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+abstract NuGet.Packaging.PackageReaderBase.GetArchiveHashAsync(NuGet.Common.HashAlgorithmName hashAlgorithm, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<byte[]!>!
+abstract NuGet.Packaging.PackageReaderBase.GetContentHash(System.Threading.CancellationToken token, System.Func<string!>? GetUnsignedPackageHash = null) -> string!
+abstract NuGet.Packaging.PackageReaderBase.GetFiles() -> System.Collections.Generic.IEnumerable<string!>!
+abstract NuGet.Packaging.PackageReaderBase.GetFiles(string! folder) -> System.Collections.Generic.IEnumerable<string!>!
+abstract NuGet.Packaging.PackageReaderBase.GetPrimarySignatureAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Packaging.Signing.PrimarySignature?>!
+abstract NuGet.Packaging.PackageReaderBase.GetStream(string! path) -> System.IO.Stream!
+abstract NuGet.Packaging.PackageReaderBase.IsSignedAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>!
+abstract NuGet.Packaging.PackageReaderBase.ValidateIntegrityAsync(NuGet.Packaging.Signing.SignatureContent! signatureContent, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task!
 abstract NuGet.Packaging.Signing.SignPackageRequest.SignatureType.get -> NuGet.Packaging.Signing.SignatureType
 ~abstract NuGet.Packaging.Signing.Signature.GetSignatureValue() -> byte[]
 abstract NuGet.Packaging.Signing.Signature.ThrowForInvalidSignature() -> void
@@ -1343,11 +1343,11 @@ abstract NuGet.Packaging.Signing.Signature.ThrowForInvalidSignature() -> void
 abstract NuGet.Packaging.Signing.SigningSpecifications.RSAPublicKeyMinLength.get -> int
 ~abstract NuGet.Packaging.Signing.SigningSpecifications.SignaturePath.get -> string
 ~abstract NuGet.Packaging.Signing.SigningSpecifications.Version.get -> string
-~const NuGet.Packaging.Core.NuspecCoreReaderBase.DevelopmentDependency = "developmentDependency" -> string
-~const NuGet.Packaging.Core.NuspecCoreReaderBase.Id = "id" -> string
-~const NuGet.Packaging.Core.NuspecCoreReaderBase.Metadata = "metadata" -> string
-~const NuGet.Packaging.Core.NuspecCoreReaderBase.MinClientVersion = "minClientVersion" -> string
-~const NuGet.Packaging.Core.NuspecCoreReaderBase.Version = "version" -> string
+const NuGet.Packaging.Core.NuspecCoreReaderBase.DevelopmentDependency = "developmentDependency" -> string!
+const NuGet.Packaging.Core.NuspecCoreReaderBase.Id = "id" -> string!
+const NuGet.Packaging.Core.NuspecCoreReaderBase.Metadata = "metadata" -> string!
+const NuGet.Packaging.Core.NuspecCoreReaderBase.MinClientVersion = "minClientVersion" -> string!
+const NuGet.Packaging.Core.NuspecCoreReaderBase.Version = "version" -> string!
 const NuGet.Packaging.ManifestVersionUtility.DefaultVersion = 1 -> int
 const NuGet.Packaging.ManifestVersionUtility.SemverVersion = 3 -> int
 const NuGet.Packaging.ManifestVersionUtility.TargetFrameworkSupportForDependencyContentsAndToolsVersion = 4 -> int
@@ -1417,35 +1417,35 @@ override NuGet.Packaging.Licenses.NuGetLicense.ToString() -> string!
 override NuGet.Packaging.Licenses.NuGetLicenseException.ToString() -> string!
 override NuGet.Packaging.Licenses.WithOperator.ToString() -> string!
 override NuGet.Packaging.MinClientVersionException.AsLogMessage() -> NuGet.Common.ILogMessage!
-~override NuGet.Packaging.NupkgMetadataFile.Equals(object obj) -> bool
+override NuGet.Packaging.NupkgMetadataFile.Equals(object? obj) -> bool
 override NuGet.Packaging.NupkgMetadataFile.GetHashCode() -> int
-~override NuGet.Packaging.PackageArchiveReader.CanVerifySignedPackages(NuGet.Packaging.Signing.SignedPackageVerifierSettings verifierSettings) -> bool
-~override NuGet.Packaging.PackageArchiveReader.CopyFiles(string destination, System.Collections.Generic.IEnumerable<string> packageFiles, NuGet.Packaging.Core.ExtractPackageFileDelegate extractFile, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<string>
-~override NuGet.Packaging.PackageArchiveReader.CopyNupkgAsync(string nupkgFilePath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string>
+override NuGet.Packaging.PackageArchiveReader.CanVerifySignedPackages(NuGet.Packaging.Signing.SignedPackageVerifierSettings! verifierSettings) -> bool
+override NuGet.Packaging.PackageArchiveReader.CopyFiles(string! destination, System.Collections.Generic.IEnumerable<string!>! packageFiles, NuGet.Packaging.Core.ExtractPackageFileDelegate! extractFile, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<string!>!
+override NuGet.Packaging.PackageArchiveReader.CopyNupkgAsync(string! nupkgFilePath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string!>!
 override NuGet.Packaging.PackageArchiveReader.Dispose(bool disposing) -> void
-~override NuGet.Packaging.PackageArchiveReader.GetArchiveHashAsync(NuGet.Common.HashAlgorithmName hashAlgorithmName, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<byte[]>
-~override NuGet.Packaging.PackageArchiveReader.GetContentHash(System.Threading.CancellationToken token, System.Func<string> GetUnsignedPackageHash = null) -> string
-~override NuGet.Packaging.PackageArchiveReader.GetFiles() -> System.Collections.Generic.IEnumerable<string>
-~override NuGet.Packaging.PackageArchiveReader.GetFiles(string folder) -> System.Collections.Generic.IEnumerable<string>
-~override NuGet.Packaging.PackageArchiveReader.GetPrimarySignatureAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Packaging.Signing.PrimarySignature>
-~override NuGet.Packaging.PackageArchiveReader.GetStream(string path) -> System.IO.Stream
-~override NuGet.Packaging.PackageArchiveReader.IsSignedAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
-~override NuGet.Packaging.PackageArchiveReader.ValidateIntegrityAsync(NuGet.Packaging.Signing.SignatureContent signatureContent, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+override NuGet.Packaging.PackageArchiveReader.GetArchiveHashAsync(NuGet.Common.HashAlgorithmName hashAlgorithmName, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<byte[]!>!
+override NuGet.Packaging.PackageArchiveReader.GetContentHash(System.Threading.CancellationToken token, System.Func<string!>? GetUnsignedPackageHash = null) -> string!
+override NuGet.Packaging.PackageArchiveReader.GetFiles() -> System.Collections.Generic.IEnumerable<string!>!
+override NuGet.Packaging.PackageArchiveReader.GetFiles(string! folder) -> System.Collections.Generic.IEnumerable<string!>!
+override NuGet.Packaging.PackageArchiveReader.GetPrimarySignatureAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Packaging.Signing.PrimarySignature?>!
+override NuGet.Packaging.PackageArchiveReader.GetStream(string! path) -> System.IO.Stream!
+override NuGet.Packaging.PackageArchiveReader.IsSignedAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>!
+override NuGet.Packaging.PackageArchiveReader.ValidateIntegrityAsync(NuGet.Packaging.Signing.SignatureContent! signatureContent, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task!
 override NuGet.Packaging.PackageDependencyGroup.Equals(object? obj) -> bool
 override NuGet.Packaging.PackageDependencyGroup.GetHashCode() -> int
 override NuGet.Packaging.PackageDependencyGroup.ToString() -> string!
-~override NuGet.Packaging.PackageFolderReader.CanVerifySignedPackages(NuGet.Packaging.Signing.SignedPackageVerifierSettings verifierSettings) -> bool
-~override NuGet.Packaging.PackageFolderReader.CopyFiles(string destination, System.Collections.Generic.IEnumerable<string> packageFiles, NuGet.Packaging.Core.ExtractPackageFileDelegate extractFile, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<string>
+override NuGet.Packaging.PackageFolderReader.CanVerifySignedPackages(NuGet.Packaging.Signing.SignedPackageVerifierSettings! verifierSettings) -> bool
+override NuGet.Packaging.PackageFolderReader.CopyFiles(string! destination, System.Collections.Generic.IEnumerable<string!>! packageFiles, NuGet.Packaging.Core.ExtractPackageFileDelegate! extractFile, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<string!>!
 override NuGet.Packaging.PackageFolderReader.Dispose(bool disposing) -> void
-~override NuGet.Packaging.PackageFolderReader.GetArchiveHashAsync(NuGet.Common.HashAlgorithmName hashAlgorithm, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<byte[]>
-~override NuGet.Packaging.PackageFolderReader.GetContentHash(System.Threading.CancellationToken token, System.Func<string> GetUnsignedPackageHash = null) -> string
-~override NuGet.Packaging.PackageFolderReader.GetFiles() -> System.Collections.Generic.IEnumerable<string>
-~override NuGet.Packaging.PackageFolderReader.GetFiles(string folder) -> System.Collections.Generic.IEnumerable<string>
-~override NuGet.Packaging.PackageFolderReader.GetNuspecFile() -> string
-~override NuGet.Packaging.PackageFolderReader.GetPrimarySignatureAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Packaging.Signing.PrimarySignature>
-~override NuGet.Packaging.PackageFolderReader.GetStream(string path) -> System.IO.Stream
-~override NuGet.Packaging.PackageFolderReader.IsSignedAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
-~override NuGet.Packaging.PackageFolderReader.ValidateIntegrityAsync(NuGet.Packaging.Signing.SignatureContent signatureContent, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+override NuGet.Packaging.PackageFolderReader.GetArchiveHashAsync(NuGet.Common.HashAlgorithmName hashAlgorithm, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<byte[]!>!
+override NuGet.Packaging.PackageFolderReader.GetContentHash(System.Threading.CancellationToken token, System.Func<string!>? GetUnsignedPackageHash = null) -> string!
+override NuGet.Packaging.PackageFolderReader.GetFiles() -> System.Collections.Generic.IEnumerable<string!>!
+override NuGet.Packaging.PackageFolderReader.GetFiles(string! folder) -> System.Collections.Generic.IEnumerable<string!>!
+override NuGet.Packaging.PackageFolderReader.GetNuspecFile() -> string!
+override NuGet.Packaging.PackageFolderReader.GetPrimarySignatureAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Packaging.Signing.PrimarySignature?>!
+override NuGet.Packaging.PackageFolderReader.GetStream(string! path) -> System.IO.Stream!
+override NuGet.Packaging.PackageFolderReader.IsSignedAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>!
+override NuGet.Packaging.PackageFolderReader.ValidateIntegrityAsync(NuGet.Packaging.Signing.SignatureContent! signatureContent, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task!
 override NuGet.Packaging.PackageReference.ToString() -> string!
 ~override NuGet.Packaging.PhysicalPackageFile.Equals(object obj) -> bool
 override NuGet.Packaging.PhysicalPackageFile.GetHashCode() -> int
@@ -1547,37 +1547,37 @@ static NuGet.Packaging.MinClientVersionUtility.GetNuGetClientVersion() -> NuGet.
 static NuGet.Packaging.MinClientVersionUtility.IsMinClientVersionCompatible(NuGet.Packaging.Core.NuspecCoreReaderBase! nuspecReader) -> bool
 static NuGet.Packaging.MinClientVersionUtility.IsMinClientVersionCompatible(NuGet.Versioning.NuGetVersion! packageMinClientVersion) -> bool
 static NuGet.Packaging.MinClientVersionUtility.VerifyMinClientVersion(NuGet.Packaging.Core.NuspecCoreReaderBase! nuspecReader) -> void
-~static NuGet.Packaging.NupkgMetadataFileFormat.Read(System.IO.Stream stream, NuGet.Common.ILogger log, string path) -> NuGet.Packaging.NupkgMetadataFile
-~static NuGet.Packaging.NupkgMetadataFileFormat.Read(string filePath) -> NuGet.Packaging.NupkgMetadataFile
-~static NuGet.Packaging.NupkgMetadataFileFormat.Read(string filePath, NuGet.Common.ILogger log) -> NuGet.Packaging.NupkgMetadataFile
-~static NuGet.Packaging.NupkgMetadataFileFormat.Write(System.IO.Stream stream, NuGet.Packaging.NupkgMetadataFile hashFile) -> void
-~static NuGet.Packaging.NupkgMetadataFileFormat.Write(string filePath, NuGet.Packaging.NupkgMetadataFile hashFile) -> void
+static NuGet.Packaging.NupkgMetadataFileFormat.Read(System.IO.Stream! stream, NuGet.Common.ILogger! log, string! path) -> NuGet.Packaging.NupkgMetadataFile!
+static NuGet.Packaging.NupkgMetadataFileFormat.Read(string! filePath) -> NuGet.Packaging.NupkgMetadataFile!
+static NuGet.Packaging.NupkgMetadataFileFormat.Read(string! filePath, NuGet.Common.ILogger! log) -> NuGet.Packaging.NupkgMetadataFile!
+static NuGet.Packaging.NupkgMetadataFileFormat.Write(System.IO.Stream! stream, NuGet.Packaging.NupkgMetadataFile! hashFile) -> void
+static NuGet.Packaging.NupkgMetadataFileFormat.Write(string! filePath, NuGet.Packaging.NupkgMetadataFile! hashFile) -> void
 ~static NuGet.Packaging.PackageBuilder.ValidateReferenceAssemblies(System.Collections.Generic.IEnumerable<NuGet.Packaging.IPackageFile> files, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReferenceSet> packageAssemblyReferences) -> void
 static NuGet.Packaging.PackageExtraction.PackageExtractionBehavior.XmlDocFileSaveMode.get -> NuGet.Packaging.XmlDocFileSaveMode
 static NuGet.Packaging.PackageExtraction.PackageExtractionBehavior.XmlDocFileSaveMode.set -> void
-~static NuGet.Packaging.PackageExtractor.CopySatelliteFilesAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Packaging.PackagePathResolver packagePathResolver, NuGet.Packaging.PackageSaveMode packageSaveMode, NuGet.Packaging.PackageExtractionContext packageExtractionContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string>>
-~static NuGet.Packaging.PackageExtractor.ExtractPackageAsync(string source, NuGet.Packaging.PackageReaderBase packageReader, NuGet.Packaging.PackagePathResolver packagePathResolver, NuGet.Packaging.PackageExtractionContext packageExtractionContext, System.Threading.CancellationToken token, System.Guid parentId = default(System.Guid)) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string>>
-~static NuGet.Packaging.PackageExtractor.ExtractPackageAsync(string source, NuGet.Packaging.PackageReaderBase packageReader, System.IO.Stream packageStream, NuGet.Packaging.PackagePathResolver packagePathResolver, NuGet.Packaging.PackageExtractionContext packageExtractionContext, System.Threading.CancellationToken token, System.Guid parentId = default(System.Guid)) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string>>
-~static NuGet.Packaging.PackageExtractor.ExtractPackageAsync(string source, System.IO.Stream packageStream, NuGet.Packaging.PackagePathResolver packagePathResolver, NuGet.Packaging.PackageExtractionContext packageExtractionContext, System.Threading.CancellationToken token, System.Guid parentId = default(System.Guid)) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string>>
-~static NuGet.Packaging.PackageExtractor.InstallFromSourceAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Packaging.IPackageDownloader packageDownloader, NuGet.Packaging.VersionFolderPathResolver versionFolderPathResolver, NuGet.Packaging.PackageExtractionContext packageExtractionContext, System.Threading.CancellationToken token, System.Guid parentId = default(System.Guid)) -> System.Threading.Tasks.Task<bool>
-~static NuGet.Packaging.PackageExtractor.InstallFromSourceAsync(string source, NuGet.Packaging.Core.PackageIdentity packageIdentity, System.Func<System.IO.Stream, System.Threading.Tasks.Task> copyToAsync, NuGet.Packaging.VersionFolderPathResolver versionFolderPathResolver, NuGet.Packaging.PackageExtractionContext packageExtractionContext, System.Threading.CancellationToken token, System.Guid parentId = default(System.Guid)) -> System.Threading.Tasks.Task<bool>
-~static NuGet.Packaging.PackageHelper.GetInstalledPackageFilesAsync(NuGet.Packaging.PackageArchiveReader packageReader, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Packaging.PackagePathResolver packagePathResolver, NuGet.Packaging.PackageSaveMode packageSaveMode, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.ZipFilePair>>
-~static NuGet.Packaging.PackageHelper.GetInstalledSatelliteFilesAsync(NuGet.Packaging.PackageArchiveReader packageReader, NuGet.Packaging.PackagePathResolver packagePathResolver, NuGet.Packaging.PackageSaveMode packageSaveMode, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Tuple<string, System.Collections.Generic.IEnumerable<NuGet.Packaging.ZipFilePair>>>
-~static NuGet.Packaging.PackageHelper.GetSatelliteFilesAsync(NuGet.Packaging.PackageReaderBase packageReader, NuGet.Packaging.PackagePathResolver packagePathResolver, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Tuple<string, System.Collections.Generic.IEnumerable<string>>>
-~static NuGet.Packaging.PackageHelper.IsAssembly(string path) -> bool
-~static NuGet.Packaging.PackageHelper.IsManifest(string path) -> bool
-~static NuGet.Packaging.PackageHelper.IsNuspec(string path) -> bool
-~static NuGet.Packaging.PackageHelper.IsPackageFile(string packageFileName, NuGet.Packaging.PackageSaveMode packageSaveMode) -> bool
-~static NuGet.Packaging.PackageHelper.IsRoot(string path) -> bool
+static NuGet.Packaging.PackageExtractor.CopySatelliteFilesAsync(NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.Packaging.PackagePathResolver! packagePathResolver, NuGet.Packaging.PackageSaveMode packageSaveMode, NuGet.Packaging.PackageExtractionContext! packageExtractionContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string!>!>!
+static NuGet.Packaging.PackageExtractor.ExtractPackageAsync(string! source, NuGet.Packaging.PackageReaderBase! packageReader, NuGet.Packaging.PackagePathResolver! packagePathResolver, NuGet.Packaging.PackageExtractionContext! packageExtractionContext, System.Threading.CancellationToken token, System.Guid parentId = default(System.Guid)) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string!>!>!
+static NuGet.Packaging.PackageExtractor.ExtractPackageAsync(string! source, NuGet.Packaging.PackageReaderBase! packageReader, System.IO.Stream! packageStream, NuGet.Packaging.PackagePathResolver! packagePathResolver, NuGet.Packaging.PackageExtractionContext! packageExtractionContext, System.Threading.CancellationToken token, System.Guid parentId = default(System.Guid)) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string!>!>!
+static NuGet.Packaging.PackageExtractor.ExtractPackageAsync(string! source, System.IO.Stream! packageStream, NuGet.Packaging.PackagePathResolver! packagePathResolver, NuGet.Packaging.PackageExtractionContext! packageExtractionContext, System.Threading.CancellationToken token, System.Guid parentId = default(System.Guid)) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string!>!>!
+static NuGet.Packaging.PackageExtractor.InstallFromSourceAsync(NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.Packaging.IPackageDownloader! packageDownloader, NuGet.Packaging.VersionFolderPathResolver! versionFolderPathResolver, NuGet.Packaging.PackageExtractionContext! packageExtractionContext, System.Threading.CancellationToken token, System.Guid parentId = default(System.Guid)) -> System.Threading.Tasks.Task<bool>!
+static NuGet.Packaging.PackageExtractor.InstallFromSourceAsync(string! source, NuGet.Packaging.Core.PackageIdentity! packageIdentity, System.Func<System.IO.Stream!, System.Threading.Tasks.Task!>! copyToAsync, NuGet.Packaging.VersionFolderPathResolver! versionFolderPathResolver, NuGet.Packaging.PackageExtractionContext! packageExtractionContext, System.Threading.CancellationToken token, System.Guid parentId = default(System.Guid)) -> System.Threading.Tasks.Task<bool>!
+static NuGet.Packaging.PackageHelper.GetInstalledPackageFilesAsync(NuGet.Packaging.PackageArchiveReader! packageReader, NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.Packaging.PackagePathResolver! packagePathResolver, NuGet.Packaging.PackageSaveMode packageSaveMode, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.ZipFilePair!>!>!
+static NuGet.Packaging.PackageHelper.GetInstalledSatelliteFilesAsync(NuGet.Packaging.PackageArchiveReader! packageReader, NuGet.Packaging.PackagePathResolver! packagePathResolver, NuGet.Packaging.PackageSaveMode packageSaveMode, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Tuple<string?, System.Collections.Generic.IEnumerable<NuGet.Packaging.ZipFilePair!>!>!>!
+static NuGet.Packaging.PackageHelper.GetSatelliteFilesAsync(NuGet.Packaging.PackageReaderBase! packageReader, NuGet.Packaging.PackagePathResolver! packagePathResolver, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Tuple<string?, System.Collections.Generic.IEnumerable<string!>!>!>!
+static NuGet.Packaging.PackageHelper.IsAssembly(string! path) -> bool
+static NuGet.Packaging.PackageHelper.IsManifest(string! path) -> bool
+static NuGet.Packaging.PackageHelper.IsNuspec(string! path) -> bool
+static NuGet.Packaging.PackageHelper.IsPackageFile(string! packageFileName, NuGet.Packaging.PackageSaveMode packageSaveMode) -> bool
+static NuGet.Packaging.PackageHelper.IsRoot(string! path) -> bool
 ~static NuGet.Packaging.PackageIdValidator.IsValidPackageId(string packageId) -> bool
 ~static NuGet.Packaging.PackageIdValidator.ValidatePackageId(string packageId) -> void
 static NuGet.Packaging.PackagePathHelper.GetInstalledPackageFilePath(NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.Packaging.PackagePathResolver! packagePathResolver) -> string?
 static NuGet.Packaging.PackagePathHelper.GetPackageLookupPaths(NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.Packaging.PackagePathResolver! packagePathResolver) -> System.Collections.Generic.IEnumerable<string!>!
-~static NuGet.Packaging.PackageReaderBase.GetNuspecFile(System.Collections.Generic.IEnumerable<string> files) -> string
-~static NuGet.Packaging.PackageReaderBase.IsAllowedBuildFile(string packageId, string path) -> bool
-~static NuGet.Packaging.PackageReaderBase.IsReferenceAssembly(string path) -> bool
-~static NuGet.Packaging.PackageReaderBase.ValidatePackageEntries(string normalizedDestination, System.Collections.Generic.IEnumerable<string> packageFiles, NuGet.Packaging.Core.PackageIdentity packageIdentity) -> void
-~static NuGet.Packaging.PackageReaderBase.ValidatePackageEntry(string normalizedDestination, string normalizedFilePath, NuGet.Packaging.Core.PackageIdentity packageIdentity) -> void
+static NuGet.Packaging.PackageReaderBase.GetNuspecFile(System.Collections.Generic.IEnumerable<string!>! files) -> string!
+static NuGet.Packaging.PackageReaderBase.IsAllowedBuildFile(string! packageId, string! path) -> bool
+static NuGet.Packaging.PackageReaderBase.IsReferenceAssembly(string! path) -> bool
+static NuGet.Packaging.PackageReaderBase.ValidatePackageEntries(string! normalizedDestination, System.Collections.Generic.IEnumerable<string!>! packageFiles, NuGet.Packaging.Core.PackageIdentity! packageIdentity) -> void
+static NuGet.Packaging.PackageReaderBase.ValidatePackageEntry(string! normalizedDestination, string! normalizedFilePath, NuGet.Packaging.Core.PackageIdentity! packageIdentity) -> void
 static NuGet.Packaging.PackageReaderExtensions.GetPackageFilesAsync(this NuGet.Packaging.Core.IAsyncPackageCoreReader! packageReader, NuGet.Packaging.PackageSaveMode packageSaveMode, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string!>!>!
 static NuGet.Packaging.PackageReaderExtensions.GetSatelliteFilesAsync(this NuGet.Packaging.IAsyncPackageContentReader! packageReader, string! packageLanguage, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string!>!>!
 static NuGet.Packaging.PackagesConfig.BoolAttribute(System.Xml.Linq.XElement! node, string! name, bool defaultValue = false) -> bool
@@ -1722,7 +1722,7 @@ static NuGet.Packaging.Signing.PrimarySignature.ThrowForInvalidPrimarySignature(
 ~static NuGet.Packaging.Signing.SigningUtility.CreateSignedAttributes(NuGet.Packaging.Signing.SignPackageRequest request, System.Collections.Generic.IReadOnlyList<System.Security.Cryptography.X509Certificates.X509Certificate2> chainList) -> System.Security.Cryptography.CryptographicAttributeObjectCollection
 ~static NuGet.Packaging.Signing.SigningUtility.SignAsync(NuGet.Packaging.Signing.SigningOptions options, NuGet.Packaging.Signing.SignPackageRequest signRequest, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
 ~static NuGet.Packaging.Signing.SigningUtility.Verify(NuGet.Packaging.Signing.SignPackageRequest request, NuGet.Common.ILogger logger) -> void
-~static NuGet.Packaging.Signing.TrustedSignersProvider.GetAllowListEntries(NuGet.Configuration.ISettings settings, NuGet.Common.ILogger logger) -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Signing.TrustedSignerAllowListEntry>
+static NuGet.Packaging.Signing.TrustedSignersProvider.GetAllowListEntries(NuGet.Configuration.ISettings! settings, NuGet.Common.ILogger! logger) -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Signing.TrustedSignerAllowListEntry!>!
 ~static NuGet.Packaging.Signing.TstInfo.Read(byte[] bytes) -> NuGet.Packaging.Signing.TstInfo
 static NuGet.Packaging.Signing.VerificationUtility.GetSignatureVerificationStatus(NuGet.Packaging.Signing.SignatureVerificationStatusFlags flags) -> NuGet.Packaging.Signing.SignatureVerificationStatus
 static NuGet.Packaging.Signing.VerificationUtility.IsVerificationTarget(NuGet.Packaging.Signing.SignatureType signatureType, NuGet.Packaging.Signing.VerificationTarget target) -> bool
@@ -1830,15 +1830,15 @@ virtual NuGet.ContentModel.ContentPropertyDefinition.Compare(object? criteriaVal
 virtual NuGet.ContentModel.ContentPropertyDefinition.IsCriteriaSatisfied(object? critieriaValue, object? candidateValue) -> bool
 virtual NuGet.ContentModel.SelectionCriteriaBuilder.Add.get -> NuGet.ContentModel.SelectionCriteriaEntryBuilder!
 virtual NuGet.ContentModel.SelectionCriteriaBuilder.Criteria.get -> NuGet.ContentModel.SelectionCriteria!
-~virtual NuGet.Packaging.Core.NuspecCoreReader.GetDependencies() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependency>
+virtual NuGet.Packaging.Core.NuspecCoreReader.GetDependencies() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependency!>!
 virtual NuGet.Packaging.Core.NuspecCoreReaderBase.GetDevelopmentDependency() -> bool
-~virtual NuGet.Packaging.Core.NuspecCoreReaderBase.GetId() -> string
-~virtual NuGet.Packaging.Core.NuspecCoreReaderBase.GetIdentity() -> NuGet.Packaging.Core.PackageIdentity
-~virtual NuGet.Packaging.Core.NuspecCoreReaderBase.GetMetadata() -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>>
-~virtual NuGet.Packaging.Core.NuspecCoreReaderBase.GetMetadataValue(string name) -> string
-~virtual NuGet.Packaging.Core.NuspecCoreReaderBase.GetMinClientVersion() -> NuGet.Versioning.NuGetVersion
-~virtual NuGet.Packaging.Core.NuspecCoreReaderBase.GetPackageTypes() -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageType>
-~virtual NuGet.Packaging.Core.NuspecCoreReaderBase.GetVersion() -> NuGet.Versioning.NuGetVersion
+virtual NuGet.Packaging.Core.NuspecCoreReaderBase.GetId() -> string!
+virtual NuGet.Packaging.Core.NuspecCoreReaderBase.GetIdentity() -> NuGet.Packaging.Core.PackageIdentity!
+virtual NuGet.Packaging.Core.NuspecCoreReaderBase.GetMetadata() -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, string!>>!
+virtual NuGet.Packaging.Core.NuspecCoreReaderBase.GetMetadataValue(string! name) -> string!
+virtual NuGet.Packaging.Core.NuspecCoreReaderBase.GetMinClientVersion() -> NuGet.Versioning.NuGetVersion?
+virtual NuGet.Packaging.Core.NuspecCoreReaderBase.GetPackageTypes() -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageType!>!
+virtual NuGet.Packaging.Core.NuspecCoreReaderBase.GetVersion() -> NuGet.Versioning.NuGetVersion!
 virtual NuGet.Packaging.Core.NuspecCoreReaderBase.IsServiceable() -> bool
 virtual NuGet.Packaging.Core.PackageIdentity.Equals(NuGet.Packaging.Core.PackageIdentity? other, NuGet.Versioning.VersionComparison versionComparison) -> bool
 virtual NuGet.Packaging.Core.PackagingException.AsLogMessage() -> NuGet.Common.ILogMessage!
@@ -1847,45 +1847,45 @@ virtual NuGet.Packaging.Core.PackagingException.AsLogMessage() -> NuGet.Common.I
 ~virtual NuGet.Packaging.PackagePathResolver.GetInstalledPath(NuGet.Packaging.Core.PackageIdentity packageIdentity) -> string
 ~virtual NuGet.Packaging.PackagePathResolver.GetPackageDirectoryName(NuGet.Packaging.Core.PackageIdentity packageIdentity) -> string
 ~virtual NuGet.Packaging.PackagePathResolver.GetPackageFileName(NuGet.Packaging.Core.PackageIdentity packageIdentity) -> string
-~virtual NuGet.Packaging.PackageReaderBase.CopyFilesAsync(string destination, System.Collections.Generic.IEnumerable<string> packageFiles, NuGet.Packaging.Core.ExtractPackageFileDelegate extractFile, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string>>
-~virtual NuGet.Packaging.PackageReaderBase.CopyNupkgAsync(string nupkgFilePath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string>
-~virtual NuGet.Packaging.PackageReaderBase.GetBuildItems() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup>
-~virtual NuGet.Packaging.PackageReaderBase.GetBuildItemsAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup>>
-~virtual NuGet.Packaging.PackageReaderBase.GetContentItems() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup>
-~virtual NuGet.Packaging.PackageReaderBase.GetContentItemsAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup>>
+virtual NuGet.Packaging.PackageReaderBase.CopyFilesAsync(string! destination, System.Collections.Generic.IEnumerable<string!>! packageFiles, NuGet.Packaging.Core.ExtractPackageFileDelegate! extractFile, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string!>!>!
+virtual NuGet.Packaging.PackageReaderBase.CopyNupkgAsync(string! nupkgFilePath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string!>!
+virtual NuGet.Packaging.PackageReaderBase.GetBuildItems() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup!>!
+virtual NuGet.Packaging.PackageReaderBase.GetBuildItemsAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup!>!>!
+virtual NuGet.Packaging.PackageReaderBase.GetContentItems() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup!>!
+virtual NuGet.Packaging.PackageReaderBase.GetContentItemsAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup!>!>!
 virtual NuGet.Packaging.PackageReaderBase.GetDevelopmentDependency() -> bool
-~virtual NuGet.Packaging.PackageReaderBase.GetDevelopmentDependencyAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>
-~virtual NuGet.Packaging.PackageReaderBase.GetFilesAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string>>
-~virtual NuGet.Packaging.PackageReaderBase.GetFilesAsync(string folder, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string>>
-~virtual NuGet.Packaging.PackageReaderBase.GetFrameworkItems() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup>
-~virtual NuGet.Packaging.PackageReaderBase.GetFrameworkItemsAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup>>
-~virtual NuGet.Packaging.PackageReaderBase.GetIdentity() -> NuGet.Packaging.Core.PackageIdentity
-~virtual NuGet.Packaging.PackageReaderBase.GetIdentityAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Packaging.Core.PackageIdentity>
-~virtual NuGet.Packaging.PackageReaderBase.GetItems(string folderName) -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup>
-~virtual NuGet.Packaging.PackageReaderBase.GetItemsAsync(string folderName, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup>>
-~virtual NuGet.Packaging.PackageReaderBase.GetLibItems() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup>
-~virtual NuGet.Packaging.PackageReaderBase.GetLibItemsAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup>>
-~virtual NuGet.Packaging.PackageReaderBase.GetMinClientVersion() -> NuGet.Versioning.NuGetVersion
-~virtual NuGet.Packaging.PackageReaderBase.GetMinClientVersionAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Versioning.NuGetVersion>
-~virtual NuGet.Packaging.PackageReaderBase.GetNuspec() -> System.IO.Stream
-~virtual NuGet.Packaging.PackageReaderBase.GetNuspecAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.IO.Stream>
-~virtual NuGet.Packaging.PackageReaderBase.GetNuspecFile() -> string
-~virtual NuGet.Packaging.PackageReaderBase.GetNuspecFileAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string>
-~virtual NuGet.Packaging.PackageReaderBase.GetNuspecReaderAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Packaging.NuspecReader>
-~virtual NuGet.Packaging.PackageReaderBase.GetPackageDependencies() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup>
-~virtual NuGet.Packaging.PackageReaderBase.GetPackageDependenciesAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup>>
-~virtual NuGet.Packaging.PackageReaderBase.GetPackageTypes() -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageType>
-~virtual NuGet.Packaging.PackageReaderBase.GetPackageTypesAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageType>>
-~virtual NuGet.Packaging.PackageReaderBase.GetReferenceItems() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup>
-~virtual NuGet.Packaging.PackageReaderBase.GetReferenceItemsAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup>>
-~virtual NuGet.Packaging.PackageReaderBase.GetStreamAsync(string path, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.IO.Stream>
-~virtual NuGet.Packaging.PackageReaderBase.GetSupportedFrameworks() -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework>
-~virtual NuGet.Packaging.PackageReaderBase.GetSupportedFrameworksAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework>>
-~virtual NuGet.Packaging.PackageReaderBase.GetToolItems() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup>
-~virtual NuGet.Packaging.PackageReaderBase.GetToolItemsAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup>>
+virtual NuGet.Packaging.PackageReaderBase.GetDevelopmentDependencyAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+virtual NuGet.Packaging.PackageReaderBase.GetFilesAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string!>!>!
+virtual NuGet.Packaging.PackageReaderBase.GetFilesAsync(string! folder, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string!>!>!
+virtual NuGet.Packaging.PackageReaderBase.GetFrameworkItems() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup!>!
+virtual NuGet.Packaging.PackageReaderBase.GetFrameworkItemsAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup!>!>!
+virtual NuGet.Packaging.PackageReaderBase.GetIdentity() -> NuGet.Packaging.Core.PackageIdentity!
+virtual NuGet.Packaging.PackageReaderBase.GetIdentityAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Packaging.Core.PackageIdentity!>!
+virtual NuGet.Packaging.PackageReaderBase.GetItems(string! folderName) -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup!>!
+virtual NuGet.Packaging.PackageReaderBase.GetItemsAsync(string! folderName, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup!>!>!
+virtual NuGet.Packaging.PackageReaderBase.GetLibItems() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup!>!
+virtual NuGet.Packaging.PackageReaderBase.GetLibItemsAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup!>!>!
+virtual NuGet.Packaging.PackageReaderBase.GetMinClientVersion() -> NuGet.Versioning.NuGetVersion?
+virtual NuGet.Packaging.PackageReaderBase.GetMinClientVersionAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Versioning.NuGetVersion?>!
+virtual NuGet.Packaging.PackageReaderBase.GetNuspec() -> System.IO.Stream!
+virtual NuGet.Packaging.PackageReaderBase.GetNuspecAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.IO.Stream!>!
+virtual NuGet.Packaging.PackageReaderBase.GetNuspecFile() -> string!
+virtual NuGet.Packaging.PackageReaderBase.GetNuspecFileAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string!>!
+virtual NuGet.Packaging.PackageReaderBase.GetNuspecReaderAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Packaging.NuspecReader!>!
+virtual NuGet.Packaging.PackageReaderBase.GetPackageDependencies() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup!>!
+virtual NuGet.Packaging.PackageReaderBase.GetPackageDependenciesAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup!>!>!
+virtual NuGet.Packaging.PackageReaderBase.GetPackageTypes() -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageType!>!
+virtual NuGet.Packaging.PackageReaderBase.GetPackageTypesAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageType!>!>!
+virtual NuGet.Packaging.PackageReaderBase.GetReferenceItems() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup!>!
+virtual NuGet.Packaging.PackageReaderBase.GetReferenceItemsAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup!>!>!
+virtual NuGet.Packaging.PackageReaderBase.GetStreamAsync(string! path, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.IO.Stream!>!
+virtual NuGet.Packaging.PackageReaderBase.GetSupportedFrameworks() -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>!
+virtual NuGet.Packaging.PackageReaderBase.GetSupportedFrameworksAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>!>!
+virtual NuGet.Packaging.PackageReaderBase.GetToolItems() -> System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup!>!
+virtual NuGet.Packaging.PackageReaderBase.GetToolItemsAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup!>!>!
 virtual NuGet.Packaging.PackageReaderBase.IsServiceable() -> bool
-~virtual NuGet.Packaging.PackageReaderBase.IsServiceableAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>
-~virtual NuGet.Packaging.PackageReaderBase.NuspecReader.get -> NuGet.Packaging.NuspecReader
+virtual NuGet.Packaging.PackageReaderBase.IsServiceableAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+virtual NuGet.Packaging.PackageReaderBase.NuspecReader.get -> NuGet.Packaging.NuspecReader!
 virtual NuGet.Packaging.PackagesConfigWriter.Dispose(bool disposing) -> void
 virtual NuGet.Packaging.Signing.KeyPairFileReader.Dispose(bool disposing) -> void
 virtual NuGet.Packaging.Signing.KeyPairFileWriter.Dispose(bool disposing) -> void

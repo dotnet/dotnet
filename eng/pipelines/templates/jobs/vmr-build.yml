@@ -598,9 +598,8 @@ jobs:
       - script: |
           xcrun simctl runtime delete all
         displayName: Reclaim disk space from unused simulator runtimes
-    - ${{ if eq(parameters.targetOS, 'osx') }}:
       - script: |
-          $(sourcesPath)/eng/common/native/install-dependencies.sh osx
+          $(sourcesPath)/eng/common/native/install-dependencies.sh ${{ parameters.targetOS }}
         displayName: Install dependencies
     - ${{ if eq(parameters.buildSourceOnly, 'true') }}:
       - script: |
