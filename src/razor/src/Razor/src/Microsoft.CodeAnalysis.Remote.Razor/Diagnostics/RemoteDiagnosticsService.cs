@@ -28,6 +28,7 @@ internal sealed class RemoteDiagnosticsService(in ServiceArgs args) : RazorDocum
             => new RemoteDiagnosticsService(in args);
     }
 
+    private readonly IClientCapabilitiesService _clientCapabilitiesService = args.ExportProvider.GetExportedValue<IClientCapabilitiesService>();
     private readonly RazorTranslateDiagnosticsService _translateDiagnosticsService = args.ExportProvider.GetExportedValue<RazorTranslateDiagnosticsService>();
 
     public ValueTask<ImmutableArray<LspDiagnostic>> GetDiagnosticsAsync(
@@ -65,6 +66,13 @@ internal sealed class RemoteDiagnosticsService(in ServiceArgs args) : RazorDocum
         var tree = codeDocument.GetRequiredSyntaxTree();
         using var unusedDirectiveSpans = new PooledArrayBuilder<TextSpan>();
 
+        // In VS, we use Warning so we get an error list entry, and the tags mean we won't get squiggles in the editor.
+        // In VS Code we can't do that, so just report as Hint to avoid squiggles. This matches Roslyn's behaviour with
+        // unused using directives too.
+        var unusedDiagnosticSeverity = _clientCapabilitiesService.ClientCapabilities.SupportsVisualStudioExtensions
+            ? LspDiagnosticSeverity.Warning
+            : LspDiagnosticSeverity.Hint;
+
         foreach (var diagnostic in allDiagnostics)
         {
             if (diagnostic.Code is { Value: EAConstants.DiagnosticIds.IDE0005_gen })
@@ -77,7 +85,7 @@ internal sealed class RemoteDiagnosticsService(in ServiceArgs args) : RazorDocum
                     unusedDirectiveSpans.Add(directive.Span);
                 }
 
-                diagnostic.Severity = LspDiagnosticSeverity.Warning;
+                diagnostic.Severity = unusedDiagnosticSeverity;
                 diagnostic.Tags = s_unnecessaryDiagnosticTags;
                 diagnostic.Code = UnusedDirectiveDiagnosticId;
 

@@ -7,6 +7,9 @@
     <BuildScript>$([MSBuild]::NormalizePath('$(ProjectDirectory)', 'eng', 'dotnet-build', 'build$(ShellExtension)'))</BuildScript>
     <!-- Passed for compatibility with new P4 SDK. -->
     <BuildArgs>$(BuildArgs) /p:GenerateResourceUsePreserializedResources=true</BuildArgs>
+
+    <!-- Remove nuget.org from auditSources to avoid reaching the internet during CI builds. -->
+    <RemoveBlockedAuditSources>true</RemoveBlockedAuditSources>
   </PropertyGroup>
 
   <ItemGroup>

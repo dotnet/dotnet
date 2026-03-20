@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -27,8 +25,8 @@ namespace NuGet.Packaging.Rules
             {
                 if (Path.GetFileName(file).Equals(PackagingCoreConstants.EmptyFolder, StringComparison.Ordinal))
                 {
-                    var directory = PathUtility.EnsureTrailingSlash(Path.GetDirectoryName(file));
-                    if (builder.GetFiles().Count(f => PathUtility.EnsureTrailingSlash(Path.GetDirectoryName(f)).StartsWith(directory, StringComparison.OrdinalIgnoreCase)) > 1)
+                    var directory = PathUtility.EnsureTrailingSlash(Path.GetDirectoryName(file)!);
+                    if (builder.GetFiles().Count(f => PathUtility.EnsureTrailingSlash(Path.GetDirectoryName(f)!).StartsWith(directory, StringComparison.OrdinalIgnoreCase)) > 1)
                     {
                         yield return CreatePackageIssueForPlaceholderFile(file);
                     }

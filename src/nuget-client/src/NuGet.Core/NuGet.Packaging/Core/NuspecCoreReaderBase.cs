@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -20,8 +18,8 @@ namespace NuGet.Packaging.Core
     public abstract class NuspecCoreReaderBase : INuspecCoreReader
     {
         private readonly XDocument _xml;
-        private XElement _metadataNode;
-        private Dictionary<string, string> _metadataValues;
+        private XElement? _metadataNode;
+        private Dictionary<string, string>? _metadataValues;
 
         protected const string Metadata = "metadata";
         protected const string Id = "id";
@@ -79,25 +77,29 @@ namespace NuGet.Packaging.Core
         /// <summary>
         /// Id of the package
         /// </summary>
+        /// <remarks>NU_NULL_INC :This method is annotated as not nullable intentionally.
+        /// The null return is possible only with malformed nuspecs and practically illegal in cases dealing with an actual package.</remarks>
         public virtual string GetId()
         {
             var node = MetadataNode.Elements(XName.Get(Id, MetadataNode.GetDefaultNamespace().NamespaceName)).FirstOrDefault();
-            return node == null ? null : node.Value;
+            return node == null ? null! : node.Value;
         }
 
         /// <summary>
         /// Version of the package
         /// </summary>
+        /// <remarks>NU_NULL_INC :This method is annotated as not nullable intentionally.
+        /// The null return is possible only with malformed nuspecs and practically illegal in cases dealing with an actual package.</remarks>
         public virtual NuGetVersion GetVersion()
         {
             var node = MetadataNode.Elements(XName.Get(Version, MetadataNode.GetDefaultNamespace().NamespaceName)).FirstOrDefault();
-            return node == null ? null : NuGetVersion.Parse(node.Value);
+            return node == null ? null! : NuGetVersion.Parse(node.Value);
         }
 
         /// <summary>
         /// The minimum client version this package supports.
         /// </summary>
-        public virtual NuGetVersion GetMinClientVersion()
+        public virtual NuGetVersion? GetMinClientVersion()
         {
             var node = MetadataNode.Attribute(XName.Get(MinClientVersion));
             return node == null ? null : NuGetVersion.Parse(node.Value);
@@ -144,7 +146,7 @@ namespace NuGet.Packaging.Core
         /// </summary>
         public virtual string GetMetadataValue(string name)
         {
-            string metadataValue;
+            string? metadataValue;
             MetadataValues.TryGetValue(name, out metadataValue);
             return metadataValue ?? string.Empty;
         }
@@ -183,7 +185,7 @@ namespace NuGet.Packaging.Core
                 if (_metadataNode == null)
                 {
                     // find the metadata node regardless of the NS, some legacy packages have the NS here instead of on package
-                    _metadataNode = _xml.Root.Elements().FirstOrDefault(e => StringComparer.Ordinal.Equals(e.Name.LocalName, Metadata));
+                    _metadataNode = _xml.Root!.Elements().FirstOrDefault(e => StringComparer.Ordinal.Equals(e.Name.LocalName, Metadata));
 
                     if (_metadataNode == null)
                     {

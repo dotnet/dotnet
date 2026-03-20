@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -193,7 +191,7 @@ namespace NuGet.Packaging.Rules
             var nuspec = packageNuspec.Xml;
             if (nuspec != null)
             {
-                XNamespace name = nuspec.Root.Name.Namespace;
+                XNamespace name = nuspec.Root!.Name.Namespace;
                 return nuspec.Descendants(XName.Get("{" + name.NamespaceName + "}dependencies")).Elements().Attributes("targetFramework").Select(f => NuGetFramework.Parse(f.Value));
             }
             return Array.Empty<NuGetFramework>();

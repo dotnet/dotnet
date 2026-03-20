@@ -77,7 +77,7 @@ namespace NuGet.Protocol
 
             var searchResults = searchResultMetadata
                 .Select(m => m.WithVersions(() => GetVersions(m, filter)))
-                .Select(m => metadataCache.GetObject((PackageSearchMetadataBuilder.ClonedPackageSearchMetadata)m))
+                .Select(m => { ((PackageSearchMetadataBuilder.ClonedPackageSearchMetadata)m).CacheStrings(metadataCache); return m; })
                 .ToArray();
 
             return searchResults;

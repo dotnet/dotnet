@@ -29,6 +29,15 @@ public class DiagnosticsServices(IntegrationTestServices testServices) : Service
     }
 
     /// <summary>
+    /// Checks if VS Code is rendering any unnecessary-code fading decorations in the active editor.
+    /// </summary>
+    public async Task<bool> HasUnnecessaryCodeAsync()
+    {
+        var unnecessaryCount = await TestServices.Playwright.Page.Locator(".monaco-editor .squiggly-inline-unnecessary").CountAsync();
+        return unnecessaryCount > 0;
+    }
+
+    /// <summary>
     /// Waits for diagnostics to appear or disappear using smart polling.
     /// </summary>
     public async Task WaitForDiagnosticsAsync(bool expectErrors = true, TimeSpan? timeout = null)
@@ -38,6 +47,19 @@ public class DiagnosticsServices(IntegrationTestServices testServices) : Service
         await Helper.WaitForConditionAsync(
             HasErrorsAsync,
             hasErrors => hasErrors == expectErrors,
+            timeout.Value);
+    }
+
+    /// <summary>
+    /// Waits for unnecessary-code fading decorations to appear or disappear using smart polling.
+    /// </summary>
+    public async Task WaitForUnnecessaryCodeAsync(bool expectUnnecessaryCode = true, TimeSpan? timeout = null)
+    {
+        timeout ??= TestServices.Settings.LspTimeout;
+
+        await Helper.WaitForConditionAsync(
+            HasUnnecessaryCodeAsync,
+            hasUnnecessaryCode => hasUnnecessaryCode == expectUnnecessaryCode,
             timeout.Value);
     }
 

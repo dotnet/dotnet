@@ -103,5 +103,27 @@ public class DiagnosticsTests(ITestOutputHelper output) : VSCodeIntegrationTestB
         var problems = await TestServices.Diagnostics.GetProblemsAsync();
         Assert.Contains(problems, p => p.Contains("RZ9980"));
     });
+
+    [Fact]
+    public Task Diagnostics_UnusedDirective_IsFadedWithoutWarningSquiggle() => ScreenshotOnFailureAsync(async () =>
+    {
+        var fileName = Path.Combine(TestServices.Workspace.WorkspacePath, "UnusedDirective.cshtml");
+        await File.WriteAllTextAsync(fileName, """
+            @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+            <p>Hello</p>
+            """);
+
+        await TestServices.Editor.OpenFileAsync("UnusedDirective.cshtml");
+
+        await TestServices.Diagnostics.WaitForUnnecessaryCodeAsync(timeout: TimeSpan.FromSeconds(10));
+
+        var hasWarnings = await TestServices.Diagnostics.HasWarningsAsync();
+        Assert.False(hasWarnings, "Unused directives should be faded in VS Code, not shown with warning squiggles.");
+
+        await TestServices.Diagnostics.OpenProblemsPanelAsync();
+        var problems = await TestServices.Diagnostics.GetProblemsAsync();
+        Assert.DoesNotContain(problems, p => p.Contains("RZ0005", StringComparison.OrdinalIgnoreCase));
+    });
 }
 
