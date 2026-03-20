@@ -132,10 +132,6 @@
     <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)verbosity $(LogVerbosity)</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:TargetRid=$(TargetRid)</CommonArgs>
 
-    <!-- Disable NuGet audit. Most repositories do NOT have nuget audit sources because nuget.org is typically a blocked
-         endpoint. However, NuGet itself keeps it for dogfooding in their own build. -->
-    <CommonArgs>$(CommonArgs) /p:NuGetAudit=false</CommonArgs>
-
     <!-- Pass through DotNetBuildPass for join point vertical support. -->
     <CommonArgs Condition="'$(DotNetBuildPass)' != '' and '$(DotNetBuildPass)' != '1'">$(CommonArgs) /p:DotNetBuildPass=$(DotNetBuildPass)</CommonArgs>
 
