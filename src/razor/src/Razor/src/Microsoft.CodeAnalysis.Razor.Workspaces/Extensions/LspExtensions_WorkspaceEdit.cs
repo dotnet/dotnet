@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Roslyn.LanguageServer.Protocol;
@@ -91,10 +90,16 @@ internal static partial class LspExtensions
             {
                 foreach (var (uri, textEdits) in edit.Changes)
                 {
+                    var edits = new SumType<TextEdit, AnnotatedTextEdit>[textEdits.Length];
+                    for (var i = 0; i < textEdits.Length; i++)
+                    {
+                        edits[i] = textEdits[i];
+                    }
+
                     var textDocumentEdit = new TextDocumentEdit
                     {
                         TextDocument = new OptionalVersionedTextDocumentIdentifier { DocumentUri = new(uri) },
-                        Edits = [.. textEdits.Select(te => (SumType<TextEdit, AnnotatedTextEdit>)te)]
+                        Edits = edits
                     };
                     builder.Add(new SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>(textDocumentEdit));
                 }

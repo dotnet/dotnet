@@ -18,13 +18,18 @@ namespace Xunit.Sdk
 {
 	partial class AssertEqualityComparer
 	{
-		static readonly IEqualityComparer defaultComparer = new AssertEqualityComparerAdapter<object>(new AssertEqualityComparer<object>());
-
+		// Create a new instance each call (matching the non-AOT/reflection path behavior)
+		// rather than caching in a static field. A cached static field causes a circular
+		// static initialization dependency: the field initializer triggers
+		// AssertEqualityComparer<object>'s static initializer, which reads the field back
+		// via GetDefaultInnerComparer before it has been assigned. On Mono/WASM, this
+		// causes DefaultInnerComparer to be permanently null, leading to
+		// NullReferenceException when comparing value types via IStructuralEquatable.
 		internal static IEqualityComparer GetDefaultComparer(Type _) =>
-			defaultComparer;
+			new AssertEqualityComparerAdapter<object>(new AssertEqualityComparer<object>());
 
 		internal static IEqualityComparer GetDefaultInnerComparer(Type _) =>
-			defaultComparer;
+			new AssertEqualityComparerAdapter<object>(new AssertEqualityComparer<object>());
 	}
 
 	partial class AssertEqualityComparer<T>

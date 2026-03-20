@@ -140,6 +140,8 @@ stages:
           signType: ${{ variables.signType }}
         excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
         brandingType: ${{ variables.brandingType }}
+        ${{ if leg.disableBinaryAnalysisCaching }}:
+          disableBinaryAnalysisCaching: true
         
         # We only want to publish SB artifacts for each distinct distro/version/arch combination.
         # Stage 2 legs (those with reuseBuildArtifactsFrom) also get extraPropertiesStage2.
@@ -232,6 +234,8 @@ stages:
             /p:RestoreAdditionalProjectSources=$(Pipeline.Workspace)/msft-pkgs
           excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
           brandingType: ${{ variables.brandingType }}
+          ${{ if leg.disableBinaryAnalysisCaching }}:
+            disableBinaryAnalysisCaching: true
           
           testInitSteps:
           # Ensure the artifacts staging directory exists so that even if no files get placed there, it won't fail

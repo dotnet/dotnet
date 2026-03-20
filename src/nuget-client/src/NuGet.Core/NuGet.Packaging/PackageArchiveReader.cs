@@ -1,10 +1,9 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -37,23 +36,12 @@ namespace NuGet.Packaging
         /// Stream underlying the ZipArchive. Used to do signature verification on a SignedPackageArchive.
         /// If this is null then we cannot perform signature verification.
         /// </summary>
-        protected Stream ZipReadStream { get; set; }
+        protected Stream? ZipReadStream { get; set; }
 
         /// <summary>
         /// True if the package is signed
         /// </summary>
         private bool? _isSigned;
-
-        /// <summary>
-        /// Nupkg package reader
-        /// </summary>
-        /// <param name="frameworkProvider">Framework mapping provider for NuGetFramework parsing.</param>
-        /// <param name="compatibilityProvider">Framework compatibility provider.</param>
-        private PackageArchiveReader(IFrameworkNameProvider frameworkProvider, IFrameworkCompatibilityProvider compatibilityProvider)
-            : base(frameworkProvider, compatibilityProvider)
-        {
-            _environmentVariableReader = EnvironmentVariableWrapper.Instance;
-        }
 
         // For testing purposes only
         internal PackageArchiveReader(Stream stream, IEnvironmentVariableReader environmentVariableReader)
@@ -125,14 +113,16 @@ namespace NuGet.Packaging
         /// <param name="frameworkProvider">Framework mapping provider for NuGetFramework parsing.</param>
         /// <param name="compatibilityProvider">Framework compatibility provider.</param>
         public PackageArchiveReader(ZipArchive zipArchive, IFrameworkNameProvider frameworkProvider, IFrameworkCompatibilityProvider compatibilityProvider)
-            : this(frameworkProvider, compatibilityProvider)
+            : base(frameworkProvider, compatibilityProvider)
         {
+            _environmentVariableReader = EnvironmentVariableWrapper.Instance;
             _zipArchive = zipArchive ?? throw new ArgumentNullException(nameof(zipArchive));
         }
 
-        public PackageArchiveReader(string filePath, IFrameworkNameProvider frameworkProvider = null, IFrameworkCompatibilityProvider compatibilityProvider = null)
-            : this(frameworkProvider ?? DefaultFrameworkNameProvider.Instance, compatibilityProvider ?? DefaultCompatibilityProvider.Instance)
+        public PackageArchiveReader(string filePath, IFrameworkNameProvider? frameworkProvider = null, IFrameworkCompatibilityProvider? compatibilityProvider = null)
+            : base(frameworkProvider ?? DefaultFrameworkNameProvider.Instance, compatibilityProvider ?? DefaultCompatibilityProvider.Instance)
         {
+            _environmentVariableReader = EnvironmentVariableWrapper.Instance;
             if (filePath == null)
             {
                 throw new ArgumentNullException(nameof(filePath));
@@ -141,7 +131,7 @@ namespace NuGet.Packaging
             // Since this constructor owns the stream, the responsibility falls here to dispose the stream of an
             // invalid .zip archive. If this constructor succeeds, the disposal of the stream is handled by the
             // disposal of this instance.
-            Stream stream = null;
+            Stream? stream = null;
             try
             {
                 stream = File.OpenRead(filePath);
@@ -167,14 +157,13 @@ namespace NuGet.Packaging
 
         public override Stream GetStream(string path)
         {
-            Stream stream = null;
             path = path.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-            if (!string.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
-                stream = _zipArchive.OpenFile(path);
+                throw new ArgumentException(Strings.ArgumentCannotBeNullOrEmpty, nameof(path));
             }
 
-            return stream;
+            return _zipArchive.OpenFile(path);
         }
 
         /// <summary>
@@ -198,6 +187,8 @@ namespace NuGet.Packaging
             }
 
             cancellationToken.ThrowIfCancellationRequested();
+
+            ThrowIfZipReadStreamIsNull();
 
             ZipReadStream.Seek(offset: 0, origin: SeekOrigin.Begin);
 
@@ -324,7 +315,7 @@ namespace NuGet.Packaging
                 using (var stream = entry.Open())
                 using (var sizedStream = new SizedArchiveEntryStream(stream, entry.Length))
                 {
-                    string copiedFile = extractFile(packageFileName, targetFilePath, sizedStream);
+                    string? copiedFile = extractFile(packageFileName, targetFilePath, sizedStream);
                     if (copiedFile != null)
                     {
                         entry.UpdateFileTimeFromEntry(copiedFile, logger);
@@ -389,13 +380,13 @@ namespace NuGet.Packaging
             }
         }
 
-        public override async Task<PrimarySignature> GetPrimarySignatureAsync(CancellationToken token)
+        public override async Task<PrimarySignature?> GetPrimarySignatureAsync(CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
             ThrowIfZipReadStreamIsNull();
 
-            PrimarySignature signature = null;
+            PrimarySignature? signature = null;
 
             if (await IsSignedAsync(token))
             {
@@ -464,7 +455,7 @@ namespace NuGet.Packaging
             }
         }
 
-        public override string GetContentHash(CancellationToken token, Func<string> GetUnsignedPackageHash = null)
+        public override string GetContentHash(CancellationToken token, Func<string>? GetUnsignedPackageHash = null)
         {
             // Try to get the content hash for signed packages
             var contentHash = GetContentHashForSignedPackage(token);
@@ -489,7 +480,7 @@ namespace NuGet.Packaging
                 contentHash = Convert.ToBase64String(new CryptoHashProvider("SHA512").CalculateHash(ZipReadStream));
             }
 
-            return contentHash;
+            return contentHash!;
         }
 
         public override Task<byte[]> GetArchiveHashAsync(HashAlgorithmName hashAlgorithmName, CancellationToken token)
@@ -518,7 +509,7 @@ namespace NuGet.Packaging
             else if (RuntimeEnvironmentHelper.IsLinux || RuntimeEnvironmentHelper.IsMacOSX)
             {
                 // Please note: Linux/MAC case sensitive for env var name.
-                string signVerifyEnvVariable = _environmentVariableReader.GetEnvironmentVariable(
+                string? signVerifyEnvVariable = _environmentVariableReader.GetEnvironmentVariable(
                     EnvironmentVariableConstants.DotNetNuGetSignatureVerification);
 
                 bool canVerify = false;
@@ -543,6 +534,7 @@ namespace NuGet.Packaging
             }
         }
 
+        [MemberNotNull(nameof(ZipReadStream))]
         protected void ThrowIfZipReadStreamIsNull()
         {
             if (ZipReadStream == null)
@@ -551,7 +543,7 @@ namespace NuGet.Packaging
             }
         }
 
-        private string GetContentHashForSignedPackage(CancellationToken token)
+        private string? GetContentHashForSignedPackage(CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
