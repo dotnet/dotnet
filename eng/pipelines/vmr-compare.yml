@@ -48,6 +48,8 @@ variables:
 extends:
   template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
+    settings:
+      networkIsolationPolicy: Permissive, CFSClean, CFSClean2
     featureFlags:
       incrementalSDLBinaryAnalysis: true
     sdl:

@@ -220,11 +220,11 @@ namespace Microsoft.Build.NuGetSdkResolver
                             foreach (RestoreResult restoreResult in results.Select(i => i.Result).Where(i => i.Success))
                             {
                                 // Find the information about the package that was installed.  In some cases, the version can be different than what was specified (like you specify 1.0 but get 1.0.0)
-                                var installedPackage = restoreResult.GetAllInstalled().FirstOrDefault(i => i == libraryIdentity);
+                                var installedPackage = restoreResult.LockFile.GetLibrary(libraryIdentity.Name, libraryIdentity.Version);
 
                                 if (installedPackage != null)
                                 {
-                                    if (TryGetMSBuildSdkPackageInfo(fallbackPackagePathResolver, installedPackage, out installedPath, out installedVersion))
+                                    if (TryGetMSBuildSdkPackageInfo(fallbackPackagePathResolver, libraryIdentity, out installedPath, out installedVersion))
                                     {
                                         break;
                                     }

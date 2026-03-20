@@ -230,7 +230,7 @@ namespace NuGet.Packaging.FuncTest
                     var package = new SignedPackageArchive(signedPackageReadStream, new MemoryStream());
                     var primarySignature = await package.GetPrimarySignatureAsync(CancellationToken.None);
 
-                    return new VerifyTest(directory, signedPackageReadStream, package, primarySignature);
+                    return new VerifyTest(directory, signedPackageReadStream, package, primarySignature!);
                 }
             }
         }
