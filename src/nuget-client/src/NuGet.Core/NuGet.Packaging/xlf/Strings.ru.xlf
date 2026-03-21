@@ -44,16 +44,6 @@
         <note>0 -  start date
 1 - end date</note>
       </trans-unit>
-      <trans-unit id="CertUtilityCertificateCrlUrl">
-        <source>CRL URL: {0}</source>
-        <target state="translated">URL-АДРЕС CRL: {0}</target>
-        <note>0 - CRL distribution point URL</note>
-      </trans-unit>
-      <trans-unit id="CertUtilityCertificateOcspUrl">
-        <source>OCSP URL: {0}</source>
-        <target state="translated">URL-АДРЕС OCSP: {0}</target>
-        <note>0 - OCSP responder URL</note>
-      </trans-unit>
       <trans-unit id="CertUtilityMultipleCertificatesFooter">
         <source>... {0} more.</source>
         <target state="translated">и другие ({0}).</target>
