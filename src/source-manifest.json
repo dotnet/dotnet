@@ -37,10 +37,10 @@
       "commitSha": "970c803abb1ed5657b056cdaf01f1693f437c242"
     },
     {
-      "barId": 306954,
+      "barId": 307098,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "f9393e713ec0780675b06f942a5c88756be75487"
+      "commitSha": "aeda6f513a12ac5f34a18f647670e389a607499c"
     },
     {
       "barId": 306632,
