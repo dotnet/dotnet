@@ -20,8 +20,8 @@ namespace System.Threading
 
         internal static unsafe int Exponential(uint attempt)
         {
-            if (attempt > 0)
-            {
+            //if (attempt > 0)
+            //{
                 attempt = Math.Min(attempt, MaxExponentialBackoffBits);
                 // We will backoff for some random number of spins that roughly grows as attempt^2
                 // No need for much randomness here, randomness is "good to have", we could do without it,
@@ -33,9 +33,9 @@ namespace System.Threading
                 uint spins = rand >> (byte)(32 - attempt);
                 Thread.SpinWait((int)spins);
                 return (int)spins;
-            }
+            //}
 
-            return 0;
+            //return 0;
         }
     }
 }

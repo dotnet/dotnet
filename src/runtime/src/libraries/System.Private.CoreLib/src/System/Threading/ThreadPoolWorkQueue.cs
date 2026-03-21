@@ -861,7 +861,6 @@ namespace System.Threading
                 // of threads inviting each other while mostly seeing missed steals.
                 if (missedSteal)
                 {
-                    Thread.UninterruptibleSleep0();
                     ThreadPool.EnsureWorkerRequested();
                 }
 
@@ -921,7 +920,6 @@ namespace System.Threading
                         //
                         if (missedSteal)
                         {
-                            Thread.UninterruptibleSleep0();
                             ThreadPool.EnsureWorkerRequested();
                         }
 
