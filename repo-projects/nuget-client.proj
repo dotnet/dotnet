@@ -12,6 +12,9 @@
     <BuildArgs>$(BuildArgs) /p:NetCurrent=$(NetCurrent)</BuildArgs>
     <BuildArgs Condition="'$(NetPrevious)' != ''">$(BuildArgs) /p:NetPrevious=$(NetPrevious)</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:NetMinimum=$(NetMinimum)</BuildArgs>
+
+    <!-- Remove nuget.org from auditSources to avoid reaching the internet during CI builds. -->
+    <RemoveBlockedAuditSources>true</RemoveBlockedAuditSources>
   </PropertyGroup>
 
   <ItemGroup>

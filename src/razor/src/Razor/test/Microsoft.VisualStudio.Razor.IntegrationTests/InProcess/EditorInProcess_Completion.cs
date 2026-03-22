@@ -3,6 +3,8 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Language.Intellisense.AsyncCompletion;
@@ -41,7 +43,13 @@ internal partial class EditorInProcess
 
         var stopWatch = Stopwatch.StartNew();
         var asyncCompletion = await TestServices.Shell.GetComponentModelServiceAsync<IAsyncCompletionBroker>(cancellationToken);
-        var session = asyncCompletion.TriggerCompletion(textView, new CompletionTrigger(CompletionTriggerReason.Insertion, textView.TextSnapshot), textView.Caret.Position.BufferPosition, cancellationToken);
+        var lastTriggerTime = 0L;
+
+        var session = asyncCompletion.GetSession(textView);
+        if (session is null || session.IsDismissed)
+        {
+            session = TriggerCompletion();
+        }
 
         // Loop until completion comes up
         while (session is null || session.IsDismissed)
@@ -51,11 +59,21 @@ internal partial class EditorInProcess
                 return null;
             }
 
-            await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
-            session = asyncCompletion.TriggerCompletion(textView, new CompletionTrigger(CompletionTriggerReason.Insertion, textView.TextSnapshot), textView.Caret.Position.BufferPosition, cancellationToken);
+            await Task.Delay(100, cancellationToken);
+            session = asyncCompletion.GetSession(textView);
+            if ((session is null || session.IsDismissed) && stopWatch.ElapsedMilliseconds - lastTriggerTime >= 1000)
+            {
+                session = TriggerCompletion();
+            }
         }
 
         return session;
+
+        IAsyncCompletionSession? TriggerCompletion()
+        {
+            lastTriggerTime = stopWatch.ElapsedMilliseconds;
+            return asyncCompletion.TriggerCompletion(textView, new CompletionTrigger(CompletionTriggerReason.Insertion, textView.TextSnapshot), textView.Caret.Position.BufferPosition, cancellationToken);
+        }
     }
 
     /// <summary>
@@ -79,21 +97,95 @@ internal partial class EditorInProcess
 
         var textView = await GetActiveTextViewAsync(cancellationToken);
         var stopWatch = Stopwatch.StartNew();
+        var asyncCompletion = await TestServices.Shell.GetComponentModelServiceAsync<IAsyncCompletionBroker>(cancellationToken);
+        var lastOpenOrUpdateTime = 0L;
+        IAsyncCompletionSession? TriggerCompletion()
+            => asyncCompletion.TriggerCompletion(textView, new CompletionTrigger(CompletionTriggerReason.Insertion, textView.TextSnapshot), textView.Caret.Position.BufferPosition, cancellationToken);
+        void OpenOrUpdate(IAsyncCompletionSession currentSession)
+        {
+            currentSession.OpenOrUpdate(new CompletionTrigger(CompletionTriggerReason.Insertion, textView.TextSnapshot), textView.Caret.Position.BufferPosition, cancellationToken);
+            lastOpenOrUpdateTime = stopWatch.ElapsedMilliseconds;
+        }
 
         // Actually open the completion pop-up window and force visible items to be computed or re-computed
-        session.OpenOrUpdate(new CompletionTrigger(CompletionTriggerReason.Insertion, textView.TextSnapshot), textView.Caret.Position.BufferPosition, cancellationToken);
-        while (session.GetComputedItems(cancellationToken).SelectedItem?.DisplayText != selectedItemLabel)
+        OpenOrUpdate(session);
+        while (true)
         {
             if (stopWatch.ElapsedMilliseconds >= timeOut.TotalMilliseconds)
             {
                 return null;
             }
 
+            var currentSession = session;
+            if (currentSession is not null && !currentSession.IsDismissed &&
+                currentSession.GetComputedItems(cancellationToken).SelectedItem?.DisplayText == selectedItemLabel)
+            {
+                return currentSession;
+            }
+
             await Task.Delay(100, cancellationToken);
 
-            session.OpenOrUpdate(new CompletionTrigger(CompletionTriggerReason.Insertion, textView.TextSnapshot), textView.Caret.Position.BufferPosition, cancellationToken);
+            if (currentSession is null || currentSession.IsDismissed)
+            {
+                session = asyncCompletion.GetSession(textView);
+                if (session is null || session.IsDismissed)
+                {
+                    session = TriggerCompletion();
+                    if (session is null || session.IsDismissed)
+                    {
+                        continue;
+                    }
+                }
+
+                OpenOrUpdate(session);
+                continue;
+            }
+
+            if (stopWatch.ElapsedMilliseconds - lastOpenOrUpdateTime >= 1000)
+            {
+                OpenOrUpdate(currentSession);
+            }
+        }
+    }
+
+    public async Task<string> GetCompletionSessionDebugInfoAsync(string? expectedSelectedItemLabel, CancellationToken cancellationToken)
+    {
+        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        var textView = await GetActiveTextViewAsync(cancellationToken);
+        var asyncCompletion = await TestServices.Shell.GetComponentModelServiceAsync<IAsyncCompletionBroker>(cancellationToken);
+        var session = asyncCompletion.GetSession(textView);
+        var caret = textView.Caret.Position.BufferPosition;
+        var currentLine = textView.TextSnapshot.GetLineFromPosition(caret).GetText();
+
+        var builder = new StringBuilder();
+        builder.AppendLine("Timed out waiting for completion session/item.");
+        builder.AppendLine($"Expected selected item: {expectedSelectedItemLabel ?? "<none>"}");
+        builder.AppendLine($"Caret position: {caret.Position}");
+        builder.AppendLine($"Current line text: {currentLine}");
+
+        if (session is null)
+        {
+            builder.AppendLine("No completion session was active.");
+            return builder.ToString();
         }
 
-        return session;
+        builder.AppendLine($"Session dismissed: {session.IsDismissed}");
+
+        if (!session.IsDismissed)
+        {
+            var computedItems = session.GetComputedItems(cancellationToken);
+            builder.AppendLine($"Selected item: {computedItems.SelectedItem?.DisplayText ?? "<null>"}");
+
+            if (expectedSelectedItemLabel is not null)
+            {
+                builder.AppendLine($"Expected item present: {computedItems.Items.Any(i => i.DisplayText == expectedSelectedItemLabel)}");
+            }
+
+            var itemList = string.Join(", ", computedItems.Items.Take(10).Select(i => i.DisplayText));
+            builder.AppendLine($"First items: {itemList}");
+        }
+
+        return builder.ToString();
     }
 }
