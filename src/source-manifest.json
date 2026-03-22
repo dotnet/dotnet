@@ -19,10 +19,10 @@
       "commitSha": "baa6b294e728e6171378b4e8c52e42e7c4d4ed63"
     },
     {
-      "packageVersion": "0.11.5-alpha.25628.2",
+      "packageVersion": "0.11.5-alpha.26122.3",
       "path": "cecil",
       "remoteUri": "https://github.com/dotnet/cecil",
-      "commitSha": "1f9985e482df7a0dee94854226d0aecad102ac15"
+      "commitSha": "4fe10b2349082f474928ac1b97ce207b70dc2307"
     },
     {
       "packageVersion": "0.1.532403",
@@ -49,10 +49,10 @@
       "commitSha": "1bea6ab613ce7346af69753850e0dd7eb774bc8a"
     },
     {
-      "packageVersion": "9.0.14-servicing.26110.3",
+      "packageVersion": "9.0.16-servicing.26160.4",
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "fb1326b0f4622f04f21584dc133f1c71f7554509"
+      "commitSha": "dee978139950436eec13cadd76e9a438bdb26d4b"
     },
     {
       "packageVersion": "9.0.101-beta.25070.7",
@@ -91,10 +91,10 @@
       "commitSha": "5ef1abb57ce3df89eae65ecadeb1ddbab323ae05"
     },
     {
-      "packageVersion": "9.0.14-servicing.26119.10",
+      "packageVersion": "9.0.15-servicing.26170.6",
       "path": "runtime",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-runtime",
-      "commitSha": "19c07820cb72aafc554c3bc8fe3c54010f5123f0"
+      "commitSha": "672f4072279654291cc5a88de4b276d226dafeb3"
     },
     {
       "packageVersion": "9.0.0-preview.26153.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "997d0d07481830761c4e295a1341da98b93bab98"
+      "commitSha": "e54666b5392192d75c9b751e2c2699c02c716a23"
     },
     {
       "packageVersion": "9.0.0-alpha.1.26055.1",
