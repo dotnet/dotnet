@@ -302,7 +302,7 @@ namespace NuGet.Protocol
                             "nupkg_" + identity.Id.ToLowerInvariant() + "." + identity.Version.ToNormalizedString(),
                             httpSourceCacheContext)
                         {
-                            EnsureValidContents = stream => HttpStreamValidation.ValidateNupkg(url, stream),
+                            EnsureValidContents = stream => HttpStreamValidation.ValidatePackageIdentity(url, stream, identity),
                             IgnoreNotFounds = true,
                             MaxTries = 1,
                             IsRetry = retry > 1,

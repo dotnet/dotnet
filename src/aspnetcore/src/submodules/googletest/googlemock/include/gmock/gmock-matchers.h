@@ -4984,9 +4984,9 @@ inline PolymorphicMatcher<internal::TrulyMatcher<Predicate>> Truly(
 }
 
 // Returns a matcher that matches the container size. The container must
-// support both size() and size_type which all STL-like containers provide.
-// Note that the parameter 'size' can be a value of type size_type as well as
-// matcher. For instance:
+// support size() which all STL-like containers provide.
+// Note that the parameter 'size' can be a value of type returned by size() as
+// well as a matcher. For instance:
 //   EXPECT_THAT(container, SizeIs(2));     // Checks container has 2 elements.
 //   EXPECT_THAT(container, SizeIs(Le(2));  // Checks container has at most 2.
 template <typename SizeMatcher>
@@ -5548,7 +5548,7 @@ inline InnerMatcher AllArgs(const InnerMatcher& matcher) {
 // printable using 'PrintToString'. It is compatible with
 // std::optional/std::experimental::optional.
 // Note that to compare an optional type variable against nullopt you should
-// use Eq(nullopt) and not Eq(Optional(nullopt)). The latter implies that the
+// use Eq(nullopt) and not Optional(Eq(nullopt)). The latter implies that the
 // optional value contains an optional itself.
 template <typename ValueMatcher>
 inline internal::OptionalMatcher<ValueMatcher> Optional(
