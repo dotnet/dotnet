@@ -51,7 +51,7 @@ namespace NuGetClone.Frameworks
 
         public override string ToString()
         {
-            return String.Format(CultureInfo.InvariantCulture, "{0} -> {1}", TargetFrameworkRange.ToString(), SupportedFrameworkRange.ToString());
+            return string.Format(CultureInfo.InvariantCulture, "{0} -> {1}", TargetFrameworkRange.ToString(), SupportedFrameworkRange.ToString());
         }
     }
 }
