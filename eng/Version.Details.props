@@ -9,10 +9,10 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.26127.2</MicrosoftDotNetDarcLibPackageVersion>
     <!-- dotnet-dotnet dependencies -->
     <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26153.122</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetBuildManifestPackageVersion>10.0.0-beta.26153.122</MicrosoftDotNetBuildManifestPackageVersion>
-    <MicrosoftNETSdkPackageVersion>10.0.105-servicing.26153.111</MicrosoftNETSdkPackageVersion>
-    <MicrosoftNETCoreAppRefPackageVersion>10.0.5</MicrosoftNETCoreAppRefPackageVersion>
-    <MicrosoftNETCorePlatformsPackageVersion>10.0.5-servicing.26153.111</MicrosoftNETCorePlatformsPackageVersion>
+    <MicrosoftDotNetBuildManifestPackageVersion>10.0.0-beta.26172.103</MicrosoftDotNetBuildManifestPackageVersion>
+    <MicrosoftNETSdkPackageVersion>10.0.106-servicing.26172.103</MicrosoftNETSdkPackageVersion>
+    <MicrosoftNETCoreAppRefPackageVersion>10.0.6</MicrosoftNETCoreAppRefPackageVersion>
+    <MicrosoftNETCorePlatformsPackageVersion>10.0.6-servicing.26172.103</MicrosoftNETCorePlatformsPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
