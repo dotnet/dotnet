@@ -49,10 +49,12 @@
 
     <!-- XUnit v3 tests are self-hosting executables and use XUnitV3Project instead -->
     <XUnitProject Remove="..\src\Microsoft.DotNet.XUnitV3Extensions\tests\Microsoft.DotNet.XUnitV3Extensions.Tests.csproj"/>
+    <XUnitProject Remove="..\src\Microsoft.DotNet.XUnitAssert\tests\Microsoft.DotNet.XUnitAssert.Tests.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
     <XUnitV3Project Include="..\src\Microsoft.DotNet.XUnitV3Extensions\tests\Microsoft.DotNet.XUnitV3Extensions.Tests.csproj"/>
+    <XUnitV3Project Include="..\src\Microsoft.DotNet.XUnitAssert\tests\Microsoft.DotNet.XUnitAssert.Tests.csproj"/>
   </ItemGroup>
 
   <ItemGroup>

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -109,7 +107,7 @@ namespace NuGet.Packaging
         public override IEnumerable<string> GetFiles()
         {
             // Read all files starting at the root.
-            return GetFiles(folder: null);
+            return GetFiles(folder: string.Empty);
         }
 
         public override IEnumerable<string> GetFiles(string folder)
@@ -210,7 +208,7 @@ namespace NuGet.Packaging
                 var sourceFile = GetFile(packageFile);
 
                 var targetPath = Path.Combine(destination, packageFile);
-                Directory.CreateDirectory(Path.GetDirectoryName(targetPath));
+                Directory.CreateDirectory(Path.GetDirectoryName(targetPath)!);
 
                 using (var fileStream = sourceFile.OpenRead())
                 {
@@ -231,7 +229,7 @@ namespace NuGet.Packaging
             // do nothing here
         }
 
-        public override Task<PrimarySignature> GetPrimarySignatureAsync(CancellationToken token)
+        public override Task<PrimarySignature?> GetPrimarySignatureAsync(CancellationToken token)
         {
             return TaskResult.Null<PrimarySignature>();
         }
@@ -256,7 +254,7 @@ namespace NuGet.Packaging
             return false;
         }
 
-        public override string GetContentHash(CancellationToken token, Func<string> GetUnsignedPackageHash = null)
+        public override string GetContentHash(CancellationToken token, Func<string>? GetUnsignedPackageHash = null)
         {
             throw new NotImplementedException();
         }

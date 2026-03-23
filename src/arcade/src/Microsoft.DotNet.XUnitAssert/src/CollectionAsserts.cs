@@ -2,13 +2,8 @@
 #pragma warning disable CA1052 // Static holder types should be static
 #pragma warning disable CA1720 // Identifier contains type name
 #pragma warning disable CA2007 // Consider calling ConfigureAwait on the awaited task
-#pragma warning disable IDE0018 // Inline variable declaration
-#pragma warning disable IDE0019 // Use pattern matching
-#pragma warning disable IDE0040 // Add accessibility modifiers
-#pragma warning disable IDE0058 // Expression value is never used
 #pragma warning disable IDE0063 // Use simple 'using' statement
 #pragma warning disable IDE0066 // Convert switch statement to expression
-#pragma warning disable IDE0161 // Convert to file-scoped namespace
 #pragma warning disable IDE0305 // Simplify collection initialization
 
 #if XUNIT_NULLABLE
@@ -23,18 +18,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit.Sdk;
 
 namespace Xunit
 {
-#if XUNIT_VISIBILITY_INTERNAL
-	internal
-#else
-	public
-#endif
 	partial class Assert
 	{
 		/// <summary>
@@ -45,14 +34,35 @@ namespace Xunit
 		/// <param name="collection">The collection</param>
 		/// <param name="action">The action to test each item against</param>
 		/// <exception cref="AllException">Thrown when the collection contains at least one non-matching element</exception>
-		public static void All<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void All<T>(
 			IEnumerable<T> collection,
 			Action<T> action)
 		{
 			GuardArgumentNotNull(nameof(collection), collection);
 			GuardArgumentNotNull(nameof(action), action);
 
-			All(collection, (item, index) => action(item));
+			All(collection, (item, index) => action(item), throwIfEmpty: false);
+		}
+
+		/// <summary>
+		/// Verifies that all items in the collection pass when executed against
+		/// action.
+		/// </summary>
+		/// <typeparam name="T">The type of the object to be verified</typeparam>
+		/// <param name="collection">The collection</param>
+		/// <param name="action">The action to test each item against</param>
+		/// <param name="throwIfEmpty">Indicates whether to throw an exception if the collection is empty</param>
+		/// <exception cref="AllException">Thrown when the collection contains at least one non-matching element</exception>
+		/// <exception cref="AllException">Also thrown when collection is empty and <paramref name="throwIfEmpty"/> is set to true</exception>
+		public static void All<T>(
+			IEnumerable<T> collection,
+			Action<T> action,
+			bool throwIfEmpty)
+		{
+			GuardArgumentNotNull(nameof(collection), collection);
+			GuardArgumentNotNull(nameof(action), action);
+
+			All(collection, (item, index) => action(item), throwIfEmpty);
 		}
 
 		/// <summary>
@@ -63,9 +73,30 @@ namespace Xunit
 		/// <param name="collection">The collection</param>
 		/// <param name="action">The action to test each item against</param>
 		/// <exception cref="AllException">Thrown when the collection contains at least one non-matching element</exception>
-		public static void All<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void All<T>(
 			IEnumerable<T> collection,
 			Action<T, int> action)
+		{
+			GuardArgumentNotNull(nameof(collection), collection);
+			GuardArgumentNotNull(nameof(action), action);
+
+			All(collection, action, throwIfEmpty: false);
+		}
+
+		/// <summary>
+		/// Verifies that all items in the collection pass when executed against
+		/// action. The item index is provided to the action, in addition to the item.
+		/// </summary>
+		/// <typeparam name="T">The type of the object to be verified</typeparam>
+		/// <param name="collection">The collection</param>
+		/// <param name="action">The action to test each item against</param>
+		/// <param name="throwIfEmpty">Indicates whether to throw an exception if the collection is empty</param>
+		/// <exception cref="AllException">Thrown when the collection contains at least one non-matching element</exception>
+		/// <exception cref="AllException">Also thrown when collection is empty and <paramref name="throwIfEmpty"/> is set to true</exception>
+		public static void All<T>(
+			IEnumerable<T> collection,
+			Action<T, int> action,
+			bool throwIfEmpty)
 		{
 			GuardArgumentNotNull(nameof(collection), collection);
 			GuardArgumentNotNull(nameof(action), action);
@@ -87,6 +118,9 @@ namespace Xunit
 				++idx;
 			}
 
+			if (throwIfEmpty && idx == 0)
+				throw AllException.ForEmptyCollection();
+
 			if (errors.Count > 0)
 				throw AllException.ForFailures(idx, errors);
 		}
@@ -99,14 +133,35 @@ namespace Xunit
 		/// <param name="collection">The collection</param>
 		/// <param name="action">The action to test each item against</param>
 		/// <exception cref="AllException">Thrown when the collection contains at least one non-matching element</exception>
-		public static async Task AllAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static async Task AllAsync<T>(
 			IEnumerable<T> collection,
 			Func<T, Task> action)
 		{
 			GuardArgumentNotNull(nameof(collection), collection);
 			GuardArgumentNotNull(nameof(action), action);
 
-			await AllAsync(collection, async (item, index) => await action(item));
+			await AllAsync(collection, async (item, index) => await action(item), throwIfEmpty: false);
+		}
+
+		/// <summary>
+		/// Verifies that all items in the collection pass when executed against
+		/// action.
+		/// </summary>
+		/// <typeparam name="T">The type of the object to be verified</typeparam>
+		/// <param name="collection">The collection</param>
+		/// <param name="action">The action to test each item against</param>
+		/// <param name="throwIfEmpty">Indicates whether to throw an exception if the collection is empty</param>
+		/// <exception cref="AllException">Thrown when the collection contains at least one non-matching element</exception>
+		/// <exception cref="AllException">Also thrown when collection is empty and <paramref name="throwIfEmpty"/> is set to true</exception>
+		public static async Task AllAsync<T>(
+			IEnumerable<T> collection,
+			Func<T, Task> action,
+			bool throwIfEmpty)
+		{
+			GuardArgumentNotNull(nameof(collection), collection);
+			GuardArgumentNotNull(nameof(action), action);
+
+			await AllAsync(collection, (item, index) => action(item), throwIfEmpty);
 		}
 
 		/// <summary>
@@ -117,9 +172,30 @@ namespace Xunit
 		/// <param name="collection">The collection</param>
 		/// <param name="action">The action to test each item against</param>
 		/// <exception cref="AllException">Thrown when the collection contains at least one non-matching element</exception>
-		public static async Task AllAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static async Task AllAsync<T>(
 			IEnumerable<T> collection,
 			Func<T, int, Task> action)
+		{
+			GuardArgumentNotNull(nameof(collection), collection);
+			GuardArgumentNotNull(nameof(action), action);
+
+			await AllAsync(collection, action, throwIfEmpty: false);
+		}
+
+		/// <summary>
+		/// Verifies that all items in the collection pass when executed against
+		/// action. The item index is provided to the action, in addition to the item.
+		/// </summary>
+		/// <typeparam name="T">The type of the object to be verified</typeparam>
+		/// <param name="collection">The collection</param>
+		/// <param name="action">The action to test each item against</param>
+		/// <param name="throwIfEmpty">Indicates whether to throw an exception if the collection is empty</param>
+		/// <exception cref="AllException">Thrown when the collection contains at least one non-matching element</exception>
+		/// <exception cref="AllException">Also thrown when collection is empty and <paramref name="throwIfEmpty"/> is set to true</exception>
+		public static async Task AllAsync<T>(
+			IEnumerable<T> collection,
+			Func<T, int, Task> action,
+			bool throwIfEmpty)
 		{
 			GuardArgumentNotNull(nameof(collection), collection);
 			GuardArgumentNotNull(nameof(action), action);
@@ -141,6 +217,9 @@ namespace Xunit
 				++idx;
 			}
 
+			if (throwIfEmpty && idx == 0)
+				throw AllException.ForEmptyCollection();
+
 			if (errors.Count > 0)
 				throw AllException.ForFailures(idx, errors.ToArray());
 		}
@@ -153,7 +232,7 @@ namespace Xunit
 		/// <param name="collection">The collection to be inspected</param>
 		/// <param name="elementInspectors">The element inspectors, which inspect each element in turn. The
 		/// total number of element inspectors must exactly match the number of elements in the collection.</param>
-		public static void Collection<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void Collection<T>(
 			IEnumerable<T> collection,
 			params Action<T>[] elementInspectors)
 		{
@@ -173,8 +252,7 @@ namespace Xunit
 					}
 					catch (Exception ex)
 					{
-						int? pointerIndent;
-						var formattedCollection = tracker.FormatIndexedMismatch(index, out pointerIndent);
+						var formattedCollection = tracker.FormatIndexedMismatch(index, out var pointerIndent);
 						throw CollectionException.ForMismatchedItem(ex, index, pointerIndent, formattedCollection);
 					}
 
@@ -194,7 +272,7 @@ namespace Xunit
 		/// <param name="collection">The collection to be inspected</param>
 		/// <param name="elementInspectors">The element inspectors, which inspect each element in turn. The
 		/// total number of element inspectors must exactly match the number of elements in the collection.</param>
-		public static async Task CollectionAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static async Task CollectionAsync<T>(
 			IEnumerable<T> collection,
 			params Func<T, Task>[] elementInspectors)
 		{
@@ -214,8 +292,7 @@ namespace Xunit
 					}
 					catch (Exception ex)
 					{
-						int? pointerIndent;
-						var formattedCollection = tracker.FormatIndexedMismatch(index, out pointerIndent);
+						var formattedCollection = tracker.FormatIndexedMismatch(index, out var pointerIndent);
 						throw CollectionException.ForMismatchedItem(ex, index, pointerIndent, formattedCollection);
 					}
 
@@ -234,7 +311,7 @@ namespace Xunit
 		/// <param name="expected">The object expected to be in the collection</param>
 		/// <param name="collection">The collection to be inspected</param>
 		/// <exception cref="ContainsException">Thrown when the object is not present in the collection</exception>
-		public static void Contains<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void Contains<T>(
 			T expected,
 			IEnumerable<T> collection)
 		{
@@ -242,15 +319,13 @@ namespace Xunit
 
 			// We special case sets because they are constructed with their comparers, which we don't have access to.
 			// We want to let them do their normal logic when appropriate, and not try to use our default comparer.
-			var set = collection as ISet<T>;
-			if (set != null)
+			if (collection is ISet<T> set)
 			{
 				Contains(expected, set);
 				return;
 			}
-#if NET5_0_OR_GREATER
-			var readOnlySet = collection as IReadOnlySet<T>;
-			if (readOnlySet != null)
+#if NET8_0_OR_GREATER
+			if (collection is IReadOnlySet<T> readOnlySet)
 			{
 				Contains(expected, readOnlySet);
 				return;
@@ -269,7 +344,7 @@ namespace Xunit
 		/// <param name="collection">The collection to be inspected</param>
 		/// <param name="comparer">The comparer used to equate objects in the collection with the expected object</param>
 		/// <exception cref="ContainsException">Thrown when the object is not present in the collection</exception>
-		public static void Contains<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void Contains<T>(
 			T expected,
 			IEnumerable<T> collection,
 			IEqualityComparer<T> comparer)
@@ -289,7 +364,7 @@ namespace Xunit
 		/// <param name="collection">The collection to be inspected</param>
 		/// <param name="filter">The filter used to find the item you're ensuring the collection contains</param>
 		/// <exception cref="ContainsException">Thrown when the object is not present in the collection</exception>
-		public static void Contains<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void Contains<T>(
 			IEnumerable<T> collection,
 			Predicate<T> filter)
 		{
@@ -312,7 +387,7 @@ namespace Xunit
 		/// <typeparam name="T">The type of the object to be compared</typeparam>
 		/// <param name="collection">The collection to be inspected</param>
 		/// <exception cref="DistinctException">Thrown when an object is present inside the collection more than once</exception>
-		public static void Distinct<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>(IEnumerable<T> collection) =>
+		public static void Distinct<T>(IEnumerable<T> collection) =>
 			Distinct<T>(collection, EqualityComparer<T>.Default);
 
 		/// <summary>
@@ -322,7 +397,7 @@ namespace Xunit
 		/// <param name="collection">The collection to be inspected</param>
 		/// <param name="comparer">The comparer used to equate objects in the collection with the expected object</param>
 		/// <exception cref="DistinctException">Thrown when an object is present inside the collection more than once</exception>
-		public static void Distinct<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void Distinct<T>(
 			IEnumerable<T> collection,
 			IEqualityComparer<T> comparer)
 		{
@@ -345,8 +420,8 @@ namespace Xunit
 		/// <typeparam name="T">The type of the object to be compared</typeparam>
 		/// <param name="expected">The object that is expected not to be in the collection</param>
 		/// <param name="collection">The collection to be inspected</param>
-		/// <exception cref="DoesNotContainException">Thrown when the object is present inside the container</exception>
-		public static void DoesNotContain<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		/// <exception cref="DoesNotContainException">Thrown when the object is present inside the collection</exception>
+		public static void DoesNotContain<T>(
 			T expected,
 			IEnumerable<T> collection)
 		{
@@ -354,15 +429,13 @@ namespace Xunit
 
 			// We special case sets because they are constructed with their comparers, which we don't have access to.
 			// We want to let them do their normal logic when appropriate, and not try to use our default comparer.
-			var set = collection as ISet<T>;
-			if (set != null)
+			if (collection is ISet<T> set)
 			{
 				DoesNotContain(expected, set);
 				return;
 			}
-#if NET5_0_OR_GREATER
-			var readOnlySet = collection as IReadOnlySet<T>;
-			if (readOnlySet != null)
+#if NET8_0_OR_GREATER
+			if (collection is IReadOnlySet<T> readOnlySet)
 			{
 				DoesNotContain(expected, readOnlySet);
 				return;
@@ -381,7 +454,7 @@ namespace Xunit
 		/// <param name="collection">The collection to be inspected</param>
 		/// <param name="comparer">The comparer used to equate objects in the collection with the expected object</param>
 		/// <exception cref="DoesNotContainException">Thrown when the object is present inside the collection</exception>
-		public static void DoesNotContain<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void DoesNotContain<T>(
 			T expected,
 			IEnumerable<T> collection,
 			IEqualityComparer<T> comparer)
@@ -397,8 +470,7 @@ namespace Xunit
 				{
 					if (comparer.Equals(item, expected))
 					{
-						int? pointerIndent;
-						var formattedCollection = tracker.FormatIndexedMismatch(index, out pointerIndent);
+						var formattedCollection = tracker.FormatIndexedMismatch(index, out var pointerIndent);
 
 						throw DoesNotContainException.ForCollectionItemFound(
 							ArgumentFormatter.Format(expected),
@@ -420,7 +492,7 @@ namespace Xunit
 		/// <param name="collection">The collection to be inspected</param>
 		/// <param name="filter">The filter used to find the item you're ensuring the collection does not contain</param>
 		/// <exception cref="DoesNotContainException">Thrown when the object is present inside the collection</exception>
-		public static void DoesNotContain<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void DoesNotContain<T>(
 			IEnumerable<T> collection,
 			Predicate<T> filter)
 		{
@@ -435,8 +507,7 @@ namespace Xunit
 				{
 					if (filter(item))
 					{
-						int? pointerIndent;
-						var formattedCollection = tracker.FormatIndexedMismatch(index, out pointerIndent);
+						var formattedCollection = tracker.FormatIndexedMismatch(index, out var pointerIndent);
 
 						throw DoesNotContainException.ForCollectionFilterMatched(
 							index,
@@ -475,7 +546,7 @@ namespace Xunit
 		/// <param name="expected">The expected value</param>
 		/// <param name="actual">The value to be compared against</param>
 		/// <exception cref="EqualException">Thrown when the objects are not equal</exception>
-		public static void Equal<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void Equal<T>(
 #if XUNIT_NULLABLE
 			IEnumerable<T>? expected,
 			IEnumerable<T>? actual) =>
@@ -493,7 +564,7 @@ namespace Xunit
 		/// <param name="actual">The value to be compared against</param>
 		/// <param name="comparer">The comparer used to compare the two objects</param>
 		/// <exception cref="EqualException">Thrown when the objects are not equal</exception>
-		public static void Equal<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void Equal<T>(
 #if XUNIT_NULLABLE
 			IEnumerable<T>? expected,
 			IEnumerable<T>? actual,
@@ -512,12 +583,7 @@ namespace Xunit
 		/// <param name="expected">The expected value</param>
 		/// <param name="actual">The value to be compared against</param>
 		/// <param name="comparer">The function to compare two items for equality</param>
-		public static void Equal<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces |
-	DynamicallyAccessedMemberTypes.PublicFields |
-	DynamicallyAccessedMemberTypes.NonPublicFields |
-	DynamicallyAccessedMemberTypes.PublicProperties |
-	DynamicallyAccessedMemberTypes.NonPublicProperties |
-	DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void Equal<T>(
 #if XUNIT_NULLABLE
 			IEnumerable<T>? expected,
 			IEnumerable<T>? actual,
@@ -557,7 +623,7 @@ namespace Xunit
 		/// <param name="expected">The expected object</param>
 		/// <param name="actual">The actual object</param>
 		/// <exception cref="NotEqualException">Thrown when the objects are equal</exception>
-		public static void NotEqual<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void NotEqual<T>(
 #if XUNIT_NULLABLE
 			IEnumerable<T>? expected,
 			IEnumerable<T>? actual) =>
@@ -575,7 +641,7 @@ namespace Xunit
 		/// <param name="actual">The actual object</param>
 		/// <param name="comparer">The comparer used to compare the two objects</param>
 		/// <exception cref="NotEqualException">Thrown when the objects are equal</exception>
-		public static void NotEqual<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void NotEqual<T>(
 #if XUNIT_NULLABLE
 			IEnumerable<T>? expected,
 			IEnumerable<T>? actual,
@@ -594,12 +660,7 @@ namespace Xunit
 		/// <param name="expected">The expected value</param>
 		/// <param name="actual">The value to be compared against</param>
 		/// <param name="comparer">The function to compare two items for equality</param>
-		public static void NotEqual<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces |
-	DynamicallyAccessedMemberTypes.PublicFields |
-	DynamicallyAccessedMemberTypes.NonPublicFields |
-	DynamicallyAccessedMemberTypes.PublicProperties |
-	DynamicallyAccessedMemberTypes.NonPublicProperties |
-	DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static void NotEqual<T>(
 #if XUNIT_NULLABLE
 			IEnumerable<T>? expected,
 			IEnumerable<T>? actual,
@@ -661,7 +722,7 @@ namespace Xunit
 		/// <returns>The single item in the collection.</returns>
 		/// <exception cref="SingleException">Thrown when the collection does not contain
 		/// exactly one element.</exception>
-		public static T Single<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>(IEnumerable<T> collection)
+		public static T Single<T>(IEnumerable<T> collection)
 		{
 			GuardArgumentNotNull(nameof(collection), collection);
 
@@ -680,7 +741,7 @@ namespace Xunit
 		/// <returns>The single item in the filtered collection.</returns>
 		/// <exception cref="SingleException">Thrown when the filtered collection does
 		/// not contain exactly one element.</exception>
-		public static T Single<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		public static T Single<T>(
 			IEnumerable<T> collection,
 			Predicate<T> predicate)
 		{
@@ -690,7 +751,7 @@ namespace Xunit
 			return GetSingleResult(collection, predicate, "(predicate expression)");
 		}
 
-		static T GetSingleResult<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		static T GetSingleResult<T>(
 			IEnumerable<T> collection,
 #if XUNIT_NULLABLE
 			Predicate<T>? predicate,

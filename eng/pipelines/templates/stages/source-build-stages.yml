@@ -234,6 +234,7 @@ stages:
               withPreviousSDK: false             # 🚫
               disableSigning: true               # ✅
               createSourceArtifact: false        # 🚫
+              disableBinaryAnalysisCaching: true
 
             - buildNameFormat: 'SB_{0}Arm64_Offline_MsftSdk'
               distro: ubuntu

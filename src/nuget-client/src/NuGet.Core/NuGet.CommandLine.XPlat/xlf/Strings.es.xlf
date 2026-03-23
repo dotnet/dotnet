@@ -582,9 +582,9 @@ NuGet requiere orígenes HTTPS. Para usar orígenes HTTP, es necesario establece
         <note />
       </trans-unit>
       <trans-unit id="ListPkg_InvalidFramework">
-        <source>Failed to parse one of the given frameworks. Please make sure the given frameworks are valid.</source>
-        <target state="translated">No se pudo analizar uno de los marcos especificados. Asegúrese de que son válidos.</target>
-        <note />
+        <source>The specified TargetFramework '{0}' is not found in the project '{1}'.</source>
+        <target state="translated">El objeto TargetFramework ''{0}'' especificado no se encuentra en el proyecto ''{1}''.</target>
+        <note>0 - alias, 1 - project path, {Locked="TargetFramework"}</note>
       </trans-unit>
       <trans-unit id="ListPkg_InvalidOptions">
         <source>Options '--outdated', '--deprecated' and '--vulnerable' cannot be combined.</source>
@@ -1480,11 +1480,6 @@ La búsqueda es una comparación de cadenas que no diferencia mayúsculas de min
         <source>Unable to run 'dotnet nuget why'. {0}</source>
         <target state="translated">No se puede ejecutar "dotnet nuget why". {0}</target>
         <note>{0} - Exception mssage</note>
-      </trans-unit>
-      <trans-unit id="WhyCommand_Error_InconsistentAssetsFile">
-        <source>Internal error: Assets file is inconsistent</source>
-        <target state="translated">Error interno: el archivo de recursos es incoherente</target>
-        <note />
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. Please run restore for project '{1}' before running this command.</source>

@@ -14,6 +14,11 @@ on:
           Backport of #%source_pr_number% to %target_branch%
 
           /cc %cc_users%
+      pr_labels:
+        description: 'A comma-separated list of labels to add when the backport pull request is created.'
+        required: false
+        type: string
+        default: ''
       repository_owners:
         description: 'A comma-separated list of repository owners where the workflow will run. Defaults to "dotnet,microsoft".'
         required: false
@@ -95,6 +100,7 @@ jobs:
         GH_TOKEN: ${{ github.token }}
         BACKPORT_PR_TITLE_TEMPLATE: ${{ inputs.pr_title_template }}
         BACKPORT_PR_DESCRIPTION_TEMPLATE: ${{ inputs.pr_description_template }}
+        BACKPORT_PR_LABELS: ${{ inputs.pr_labels }}
         ADDITIONAL_GIT_AM_SWITCHES: ${{ inputs.additional_git_am_switches }}
         CONFLICT_RESOLUTION_COMMAND: ${{ inputs.conflict_resolution_command }}
       with:
@@ -262,8 +268,13 @@ jobs:
               .replace(/%source_pr_author%/g, context.payload.issue.user.login)
               .replace(/%cc_users%/g, cc_users);
 
+            const backport_pr_labels = (process.env.BACKPORT_PR_LABELS || '')
+              .split(',')
+              .map(label => label.trim())
+              .filter(label => label.length > 0);
+
             // open the GitHub PR
-            await github.rest.pulls.create({
+            const { data: backportPullRequest } = await github.rest.pulls.create({
               owner: repo_owner,
               repo: repo_name,
               title: backport_pr_title,
@@ -271,6 +282,15 @@ jobs:
               head: temp_branch,
               base: target_branch
             });
+
+            if (backport_pr_labels.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: repo_owner,
+                repo: repo_name,
+                issue_number: backportPullRequest.number,
+                labels: backport_pr_labels
+              });
+            }
 
             console.log("Successfully opened the GitHub PR.");
           } catch (error) {

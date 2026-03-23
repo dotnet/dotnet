@@ -15,6 +15,7 @@ namespace NuGet.CommandLine.XPlat
     internal class FrameworkPackages
     {
         public string Framework { get; }
+        public string TargetAlias { get; }
         public IEnumerable<InstalledPackageReference> TopLevelPackages { get; set; }
         public IEnumerable<InstalledPackageReference> TransitivePackages { get; set; }
 
@@ -24,7 +25,8 @@ namespace NuGet.CommandLine.XPlat
         /// lists
         /// </summary>
         /// <param name="framework">Framework name</param>
-        public FrameworkPackages(string framework) : this(framework, new List<InstalledPackageReference>(), new List<InstalledPackageReference>())
+        /// <param name="targetAlias">Target alias</param>
+        public FrameworkPackages(string framework, string targetAlias) : this(framework, targetAlias, new List<InstalledPackageReference>(), new List<InstalledPackageReference>())
         {
 
         }
@@ -35,13 +37,16 @@ namespace NuGet.CommandLine.XPlat
         /// packages
         /// </summary>
         /// <param name="framework">Framework name that we have packages for</param>
+        /// <param name="targetAlias">Target alias</param>
         /// <param name="topLevelPackages">Top-level packages. Shouldn't be null</param>
         /// <param name="transitivePackages">Transitive packages. Shouldn't be null</param>
         public FrameworkPackages(string framework,
+            string targetAlias,
             IEnumerable<InstalledPackageReference> topLevelPackages,
             IEnumerable<InstalledPackageReference> transitivePackages)
         {
             Framework = framework ?? throw new ArgumentNullException(nameof(framework));
+            TargetAlias = targetAlias ?? throw new ArgumentNullException(nameof(targetAlias));
             TopLevelPackages = topLevelPackages ?? throw new ArgumentNullException(nameof(topLevelPackages));
             TransitivePackages = transitivePackages ?? throw new ArgumentNullException(nameof(transitivePackages));
         }

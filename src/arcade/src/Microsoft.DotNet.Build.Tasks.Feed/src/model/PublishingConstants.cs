@@ -374,6 +374,12 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
             new Regex(@"productversion", RegexOptions.IgnoreCase)
         ];
 
+        public static readonly ImmutableList<Regex> AspireAkaMSCreateLinkPatterns =
+        [
+            ..DefaultAkaMSCreateLinkPatterns,
+            new Regex(@"(^|[\\/])get-aspire-cli\.(ps1|sh)(\.sha512)?$", RegexOptions.IgnoreCase)
+        ];
+
         public static readonly ImmutableList<Regex> DefaultAkaMSDoNotCreateLinkPatterns =
         [
             new Regex(@"wixpack", RegexOptions.IgnoreCase),
@@ -1563,7 +1569,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 isInternal: false,
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["9/aspire"],
-                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSCreateLinkPatterns: AspireAkaMSCreateLinkPatterns,
                 akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet9Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
@@ -1574,7 +1580,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 isInternal: false,
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["9/aspire/rc"],
-                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSCreateLinkPatterns: AspireAkaMSCreateLinkPatterns,
                 akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet9Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
@@ -1585,7 +1591,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 isInternal: false,
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["9/aspire/ga"],
-                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSCreateLinkPatterns: AspireAkaMSCreateLinkPatterns,
                 akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet9Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
@@ -1956,6 +1962,54 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
             // 18.6
             new TargetChannelConfig(
                 id: 8708,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: [],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNetToolsFeeds,
+                symbolTargetType: SymbolPublishVisibility.Public,
+                flatten: false),
+            
+            // 18.7
+            new TargetChannelConfig(
+                id: 10189,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: [],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNetToolsFeeds,
+                symbolTargetType: SymbolPublishVisibility.Public,
+                flatten: false),
+            
+            // 18.8
+            new TargetChannelConfig(
+                id: 10188,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: [],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNetToolsFeeds,
+                symbolTargetType: SymbolPublishVisibility.Public,
+                flatten: false),
+            
+            // 18.9
+            new TargetChannelConfig(
+                id: 10190,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: [],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNetToolsFeeds,
+                symbolTargetType: SymbolPublishVisibility.Public,
+                flatten: false),
+            
+            // 18.10
+            new TargetChannelConfig(
+                id: 10191,
                 isInternal: false,
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: [],

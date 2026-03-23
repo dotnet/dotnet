@@ -4,6 +4,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -24,6 +25,40 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public partial class CohostDocumentPullDiagnosticsTest
 {
+    [Fact]
+    public async Task CSharpUnusedUsings_WarningDiagnosticsInVS()
+    {
+        var document = CreateProjectAndRazorDocument("""
+            @using System
+            @using System.Text
+
+            <div></div>
+
+            @code
+            {
+                public void BuildsStrings(StringBuilder b)
+                {
+                }
+            }
+            """);
+
+        var requestInvoker = new TestHtmlRequestInvoker([(VSInternalMethods.DocumentPullDiagnosticName, (VSInternalDiagnosticReport[]?)null)]);
+        var result = await MakeDiagnosticsRequestAsync(document, taskListRequest: false, requestInvoker, IncompatibleProjectService, RemoteServiceInvoker, ClientSettingsManager, ClientCapabilitiesService, LoggerFactory, DisposalToken);
+
+        Assert.NotNull(result);
+        var diagnostic = Assert.Single(result);
+        Assert.Equal(0, diagnostic.Range.Start.Line);
+        Assert.Equal(0, diagnostic.Range.End.Line);
+        Assert.Equal("RZ0005", diagnostic.Code.AssumeNotNull().Second);
+        Assert.Equal(LspDiagnosticSeverity.Warning, diagnostic.Severity);
+
+        var tags = Assert.IsType<DiagnosticTag[]>(diagnostic.Tags);
+        Assert.Collection(
+            tags,
+            tag => Assert.Equal(VSDiagnosticTags.HiddenInEditor, tag),
+            tag => Assert.Equal(DiagnosticTag.Unnecessary, tag));
+    }
+
     [Fact]
     public Task OneOfEachDiagnostic()
     {

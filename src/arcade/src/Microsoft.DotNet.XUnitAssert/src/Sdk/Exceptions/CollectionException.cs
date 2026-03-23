@@ -1,8 +1,5 @@
 #pragma warning disable CA1032 // Implement standard exception constructors
-#pragma warning disable IDE0040 // Add accessibility modifiers
-#pragma warning disable IDE0058 // Expression value is never used
 #pragma warning disable IDE0090 // Use 'new(...)'
-#pragma warning disable IDE0161 // Convert to file-scoped namespace
 #pragma warning disable IDE0300 // Simplify collection initialization
 
 #if XUNIT_NULLABLE
@@ -41,7 +38,7 @@ namespace Xunit.Sdk
 
 		static string FormatInnerException(Exception innerException)
 		{
-			var text = innerException.Message;
+			var text = innerException.Message ?? string.Empty;
 			var filteredStack = ExceptionUtilityInternal.TransformStackTrace(ExceptionUtilityInternal.FilterStackTrace(innerException.StackTrace), "  ");
 			if (!string.IsNullOrWhiteSpace(filteredStack))
 			{

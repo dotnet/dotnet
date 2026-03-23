@@ -1,7 +1,5 @@
 #pragma warning disable CA1052 // Static holder types should be static
 #pragma warning disable CA1859 // Use concrete types when possible for improved performance
-#pragma warning disable IDE0040 // Add accessibility modifiers
-#pragma warning disable IDE0161 // Convert to file-scoped namespace
 
 #if XUNIT_NULLABLE
 #nullable enable
@@ -13,33 +11,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Xunit.Sdk;
 
 namespace Xunit
 {
-#if XUNIT_VISIBILITY_INTERNAL
-	internal
-#else
-	public
-#endif
 	partial class Assert
 	{
 #if XUNIT_NULLABLE
-		static IEqualityComparer<T?> GetEqualityComparer<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces |
-				DynamicallyAccessedMemberTypes.PublicFields |
-				DynamicallyAccessedMemberTypes.NonPublicFields |
-				DynamicallyAccessedMemberTypes.PublicProperties |
-				DynamicallyAccessedMemberTypes.NonPublicProperties |
-				DynamicallyAccessedMemberTypes.PublicMethods)] T>(IEqualityComparer? innerComparer = null) =>
+		static IEqualityComparer<T?> GetEqualityComparer<T>(IEqualityComparer? innerComparer = null) =>
 			new AssertEqualityComparer<T?>(innerComparer);
 #else
-		static IEqualityComparer<T> GetEqualityComparer<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces |
-				DynamicallyAccessedMemberTypes.PublicFields |
-				DynamicallyAccessedMemberTypes.NonPublicFields |
-				DynamicallyAccessedMemberTypes.PublicProperties |
-				DynamicallyAccessedMemberTypes.NonPublicProperties |
-				DynamicallyAccessedMemberTypes.PublicMethods)] T>(IEqualityComparer innerComparer = null) =>
+		static IEqualityComparer<T> GetEqualityComparer<T>(IEqualityComparer innerComparer = null) =>
 			new AssertEqualityComparer<T>(innerComparer);
 #endif
 

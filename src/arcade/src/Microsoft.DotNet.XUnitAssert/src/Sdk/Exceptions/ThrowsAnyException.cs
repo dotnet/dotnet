@@ -1,7 +1,5 @@
 #pragma warning disable CA1032 // Implement standard exception constructors
-#pragma warning disable IDE0040 // Add accessibility modifiers
 #pragma warning disable IDE0090 // Use 'new(...)'
-#pragma warning disable IDE0161 // Convert to file-scoped namespace
 
 #if XUNIT_NULLABLE
 #nullable enable
@@ -55,6 +53,21 @@ namespace Xunit.Sdk
 					),
 					actual
 				);
+
+		/// <summary>
+		/// Creates a new instance of the <see cref="ThrowsAnyException"/> class to be thrown when
+		/// an inspector rejected the exception.
+		/// </summary>
+		/// <param name="message">The custom message</param>
+		/// <param name="innerException">The optional exception thrown by the inspector</param>
+		public static Exception ForInspectorFailure(
+			string message,
+#if XUNIT_NULLABLE
+			Exception? innerException = null) =>
+#else
+			Exception innerException = null) =>
+#endif
+				new ThrowsAnyException(string.Format(CultureInfo.CurrentCulture, "Assert.ThrowsAny() Failure: {0}", message), innerException);
 
 		/// <summary>
 		/// Creates a new instance of the <see cref="ThrowsAnyException"/> class to be thrown when

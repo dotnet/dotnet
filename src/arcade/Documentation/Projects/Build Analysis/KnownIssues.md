@@ -149,6 +149,7 @@ The matching process and its limitations depend on the type of error:
 ## How to fill out a Known Issue error section
 
 For the error matching to work, you need to provide an error message or an error pattern.
+Both `ErrorMessage` and `ErrorPattern` accept either a single string or an [array of strings](#fill-out-known-issues-with-a-list-of-errors) for multi-line matching.
 
 ```json
 {
@@ -163,6 +164,7 @@ The `ErrorMessage` value needs to be updated with an error message that meets th
 
 1. Match at least one of the error messages of the reported build. For more details see: [How matching process works](#how-the-matching-process-works-between-an-issue-and-a-build-or-test-error)
 1. It shouldn't include any unique identifier of the message e.g., machine, path, file name, etc.
+1. For more specific matching, use an [array of strings](#fill-out-known-issues-with-a-list-of-errors) to match multiple lines in order.
 
     For example, for the following error:
 
@@ -192,10 +194,18 @@ In the following example, the regular expression `The command .+ failed` would m
 }
 ```
 
+Like `ErrorMessage`, `ErrorPattern` also accepts an [array of strings](#fill-out-known-issues-with-a-list-of-errors) for matching multiple lines in order. For example:
+
+```json
+{
+    "ErrorPattern": ["\\[FAIL\\] System\\.Reflection\\.Context\\.Tests\\..+", "Assert\\.NotNull\\(\\) Failure"]
+}
+```
+
 We recommend you test your regular expression, to do it you can use [regex101 tester](https://regex101.com/) (choose `.NET (C#)` flavor) with the following regex options:
 
 - Single line
-- Insentitive
+- Insensitive
 - No backtracking
 
 ## What happens after creating or updating a Known Issue

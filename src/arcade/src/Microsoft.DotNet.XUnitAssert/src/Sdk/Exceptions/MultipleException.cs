@@ -1,8 +1,6 @@
 #pragma warning disable CA1032 // Implement standard exception constructors
-#pragma warning disable IDE0040 // Add accessibility modifiers
-#pragma warning disable IDE0058 // Expression value is never used
 #pragma warning disable IDE0090 // Use 'new(...)'
-#pragma warning disable IDE0161 // Convert to file-scoped namespace
+#pragma warning disable IDE0305 // Simplify collection initialization
 
 #if XUNIT_NULLABLE
 #nullable enable
@@ -25,8 +23,10 @@ namespace Xunit.Sdk
 #endif
 	partial class MultipleException : XunitException
 	{
-		MultipleException(IEnumerable<Exception> innerExceptions) :
-			base("Assert.Multiple() Failure: Multiple failures were encountered")
+		MultipleException(
+			string assertionName,
+			IEnumerable<Exception> innerExceptions) :
+				base("Assert." + assertionName + "() Failure: Multiple failures were encountered")
 		{
 			Assert.GuardArgumentNotNull(nameof(innerExceptions), innerExceptions);
 
@@ -52,6 +52,14 @@ namespace Xunit.Sdk
 		/// </summary>
 		/// <param name="innerExceptions">The inner exceptions</param>
 		public static MultipleException ForFailures(IReadOnlyCollection<Exception> innerExceptions) =>
-			new MultipleException(innerExceptions);
+			new MultipleException("Multiple", innerExceptions);
+
+		/// <summary>
+		/// Creates a new instance of the <see cref="MultipleException"/> class to be thrown
+		/// when <see cref="Assert.MultipleAsync"/> caught 2 or more exceptions.
+		/// </summary>
+		/// <param name="innerExceptions">The inner exceptions</param>
+		public static MultipleException ForFailuresAsync(IReadOnlyCollection<Exception> innerExceptions) =>
+			new MultipleException("MultipleAsync", innerExceptions);
 	}
 }

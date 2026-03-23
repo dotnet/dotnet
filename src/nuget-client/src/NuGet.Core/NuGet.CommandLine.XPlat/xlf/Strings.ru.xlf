@@ -582,9 +582,9 @@ NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allo
         <note />
       </trans-unit>
       <trans-unit id="ListPkg_InvalidFramework">
-        <source>Failed to parse one of the given frameworks. Please make sure the given frameworks are valid.</source>
-        <target state="translated">Не удалось выполнить синтаксический анализ для одной из указанных платформ. Убедитесь, что платформы являются допустимыми.</target>
-        <note />
+        <source>The specified TargetFramework '{0}' is not found in the project '{1}'.</source>
+        <target state="translated">Указанный TargetFramework "{0}" не найден в проекте "{1}".</target>
+        <note>0 - alias, 1 - project path, {Locked="TargetFramework"}</note>
       </trans-unit>
       <trans-unit id="ListPkg_InvalidOptions">
         <source>Options '--outdated', '--deprecated' and '--vulnerable' cannot be combined.</source>
@@ -1480,11 +1480,6 @@ The search is a case-insensitive string comparison using the supplied value, whi
         <source>Unable to run 'dotnet nuget why'. {0}</source>
         <target state="translated">Не удалось выполнить команду "dotnet nuget why".{0}</target>
         <note>{0} - Exception mssage</note>
-      </trans-unit>
-      <trans-unit id="WhyCommand_Error_InconsistentAssetsFile">
-        <source>Internal error: Assets file is inconsistent</source>
-        <target state="translated">Внутренняя ошибка: файл ресурсов является несогласованным</target>
-        <note />
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. Please run restore for project '{1}' before running this command.</source>
