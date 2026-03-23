@@ -2,6 +2,7 @@
 # This pipeline runs Renovate to automatically create PRs for dependency updates.
 
 trigger: none
+pr: none
 
 schedules:
 - cron: '0 8 * * 1'  # Runs every Monday at 8:00 AM UTC
