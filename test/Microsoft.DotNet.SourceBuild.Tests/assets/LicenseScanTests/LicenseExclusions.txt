@@ -177,6 +177,9 @@ src/sdk/src/Microsoft.CodeAnalysis.NetAnalyzers/src/assets/EULA.txt|ms-net-libra
 # source-build-reference-packages
 #
 
+# Contributor agreement (DCO), not a software license
+src/source-build-reference-packages/src/externalPackages/src/antlr4/developer-cert-of-origin.txt|dco-1.1
+
 # False positive
 src/source-build-reference-packages/src/externalPackages/src/application-insights/NETCORE/ThirdPartyNotices.txt|unknown-license-reference
 src/source-build-reference-packages/src/externalPackages/src/application-insights/WEB/ThirdPartyNotices.txt|unknown-license-reference
