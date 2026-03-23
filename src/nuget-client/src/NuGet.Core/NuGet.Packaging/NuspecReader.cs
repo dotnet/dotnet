@@ -437,9 +437,9 @@ namespace NuGet.Packaging
 
             if (licenseNode != null)
             {
-                var type = licenseNode.Attribute(NuspecUtility.Type)?.Value.SafeTrim();
-                var license = licenseNode.Value.SafeTrim();
-                var versionValue = licenseNode.Attribute(NuspecUtility.Version)?.Value.SafeTrim();
+                var type = licenseNode.Attribute(NuspecUtility.Type)?.Value?.Trim();
+                var license = licenseNode.Value?.Trim();
+                var versionValue = licenseNode.Attribute(NuspecUtility.Version)?.Value?.Trim();
 
                 var isKnownType = Enum.TryParse(type, ignoreCase: true, result: out LicenseType licenseType);
 
@@ -482,7 +482,7 @@ namespace NuGet.Packaging
                             {
                                 try
                                 {
-                                    var expression = NuGetLicenseExpression.Parse(license);
+                                    var expression = NuGetLicenseExpression.Parse(license!);
 
                                     var invalidLicenseIdentifiers = GetNonStandardLicenseIdentifiers(expression);
                                     if (invalidLicenseIdentifiers != null)
@@ -502,7 +502,7 @@ namespace NuGet.Packaging
                                         errors.Add(string.Format(CultureInfo.CurrentCulture, Strings.NuGetLicenseExpression_UnlicensedPackageWarning));
                                     }
 
-                                    return new LicenseMetadata(type: licenseType, license: license, expression: expression, warningsAndErrors: errors, version: version);
+                                    return new LicenseMetadata(type: licenseType, license: license!, expression: expression, warningsAndErrors: errors, version: version);
                                 }
                                 catch (NuGetLicenseExpressionParsingException e)
                                 {
@@ -512,7 +512,7 @@ namespace NuGet.Packaging
                                     }
                                     errors.Add(e.Message);
                                 }
-                                return new LicenseMetadata(type: licenseType, license: license, expression: null, warningsAndErrors: errors, version: version);
+                                return new LicenseMetadata(type: licenseType, license: license!, expression: null, warningsAndErrors: errors, version: version);
                             }
                             else
                             {
@@ -528,11 +528,11 @@ namespace NuGet.Packaging
                                         version,
                                         LicenseMetadata.CurrentVersion));
 
-                                return new LicenseMetadata(type: licenseType, license: license, expression: null, warningsAndErrors: errors, version: version);
+                                return new LicenseMetadata(type: licenseType, license: license!, expression: null, warningsAndErrors: errors, version: version);
                             }
                         }
                     }
-                    return new LicenseMetadata(type: licenseType, license: license, expression: null, warningsAndErrors: errors, version: version);
+                    return new LicenseMetadata(type: licenseType, license: license!, expression: null, warningsAndErrors: errors, version: version);
                 }
             }
             return null;
@@ -642,11 +642,8 @@ namespace NuGet.Packaging
             // PERF: Avoid Linq on hot paths
             var splitFlags = flags!.Split(CommaArray, StringSplitOptions.RemoveEmptyEntries);
 
-#if NETSTANDARD2_0
-            var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-#elif NET472_OR_GREATER || NET5_0_OR_GREATER
             var set = new HashSet<string>(splitFlags.Length, StringComparer.OrdinalIgnoreCase);
-#endif
+
             foreach (string flag in splitFlags)
             {
                 set.Add(flag.Trim());
