@@ -382,6 +382,7 @@ jobs:
   steps:
   - checkout: self
     fetchDepth: 1
+    retryCountOnTaskFailure: 5
 
   - ${{ if not(parameters.isBuiltFromVmr) }}:
     # Synchronize new content in the VMR during PRs
@@ -679,6 +680,15 @@ jobs:
           done
 
           eval $customEnvVarsWithBashSyntax
+
+          # Raise the open file descriptor limit to prevent NuGet restore failures
+          # in cross-build containers with restrictive defaults (see dotnet/dotnet#5381)
+          if ! ulimit -n 65536 2>/dev/null; then
+            echo "Warning: Failed to raise open file descriptor limit to 65536." >&2
+            echo "Current soft limit (ulimit -Sn): $(ulimit -Sn 2>/dev/null || echo 'unknown')" >&2
+            echo "Current hard limit (ulimit -Hn): $(ulimit -Hn 2>/dev/null || echo 'unknown')" >&2
+          fi
+
           $customPreBuildArgs ./build.sh $buildArgs
         displayName: Build
         workingDirectory: $(sourcesPath)
@@ -730,6 +740,15 @@ jobs:
           buildArgs=$(echo $buildArgs | xargs) # Remove extra spaces
 
           cd $(sourcesPath)
+
+          # Raise the open file descriptor limit to prevent NuGet restore failures
+          # in cross-build containers with restrictive defaults (see dotnet/dotnet#5381)
+          if ! ulimit -n 65536 2>/dev/null; then
+            echo "Warning: failed to raise open file descriptor limit to 65536. Current limits:"
+            echo "  Soft nofile limit: $(ulimit -Sn 2>/dev/null || echo 'unknown')"
+            echo "  Hard nofile limit: $(ulimit -Hn 2>/dev/null || echo 'unknown')"
+          fi
+
           $customPreBuildArgs ./build.sh $buildArgs
 
         displayName: Run Tests
