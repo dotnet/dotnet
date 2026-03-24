@@ -31,7 +31,7 @@ namespace Microsoft.Build.Shared
         /// <summary>
         /// Name of the MSBuild process(es)
         /// </summary>
-        private static readonly string[] s_msBuildProcess = { "MSBUILD", "MSBUILDTASKHOST" };
+        private static readonly string[] s_msBuildExeNames = { "MSBuild.dll", "MSBuild.exe" };
 
         /// <summary>
         /// Get the currently executing assembly path.
