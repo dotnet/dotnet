@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
-using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Microsoft.DotNet.Watch.UnitTests;
@@ -51,7 +50,7 @@ public class BuildProjects(ITestOutputHelper output)
             FileWatcher = new FileWatcher(NullLogger.Instance, environmentOptions);
 
             Console = new TestConsole(output);
-            Watcher = new HotReloadDotNetWatcher(context, Console, runtimeProcessLauncherFactory: null);
+            Watcher = new HotReloadDotNetWatcher(context, Console, runtimeProcessLauncherFactory: null, targetFrameworkSelectionPrompt: null);
         }
 
         public void LogBuildInvocation(ProcessSpec processSpec)
