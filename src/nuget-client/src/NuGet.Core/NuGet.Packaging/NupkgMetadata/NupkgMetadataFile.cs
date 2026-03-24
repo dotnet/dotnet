@@ -10,7 +10,7 @@ namespace NuGet.Packaging
     {
         public int Version { get; set; } = NupkgMetadataFileFormat.Version;
 
-        public string? ContentHash { get; set; }
+        public required string? ContentHash { get; set; }
 
         public string? Source { get; set; }
 
