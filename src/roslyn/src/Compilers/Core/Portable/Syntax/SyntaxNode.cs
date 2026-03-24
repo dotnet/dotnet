@@ -1253,11 +1253,21 @@ recurse:
         }
 
         /// <summary>
+        /// Gets a list of descendant nodes and tokens (including this node) in prefix document order,
+        /// filtered at the green node level. Children whose green nodes do not pass <paramref name="descendIntoChildrenGreen"/>
+        /// are skipped entirely (not yielded and not descended into), avoiding red node creation for those subtrees.
+        /// </summary>
+        internal IEnumerable<SyntaxNodeOrToken> DescendantNodesAndTokensAndSelf(Func<GreenNode, bool> descendIntoChildrenGreen, bool descendIntoTrivia)
+        {
+            return DescendantNodesAndTokensImpl(this.FullSpan, descendIntoChildrenGreen, descendIntoChildrenRed: null, descendIntoTrivia, includeSelf: true);
+        }
+
+        /// <summary>
         /// Gets all nodes and tokens with an annotation of the specified annotation kind.
         /// </summary>
         public IEnumerable<SyntaxNodeOrToken> GetAnnotatedNodesAndTokens(string annotationKind)
         {
-            return this.DescendantNodesAndTokensAndSelf(n => n.ContainsAnnotations, descendIntoTrivia: true)
+            return this.DescendantNodesAndTokensAndSelf(descendIntoChildrenGreen: static g => g.ContainsAnnotations, descendIntoTrivia: true)
                 .Where(t => t.HasAnnotations(annotationKind));
         }
 
@@ -1266,7 +1276,7 @@ recurse:
         /// </summary>
         public IEnumerable<SyntaxNodeOrToken> GetAnnotatedNodesAndTokens(params string[] annotationKinds)
         {
-            return this.DescendantNodesAndTokensAndSelf(n => n.ContainsAnnotations, descendIntoTrivia: true)
+            return this.DescendantNodesAndTokensAndSelf(descendIntoChildrenGreen: static g => g.ContainsAnnotations, descendIntoTrivia: true)
                 .Where(t => t.HasAnnotations(annotationKinds));
         }
 
@@ -1275,7 +1285,7 @@ recurse:
         /// </summary>
         public IEnumerable<SyntaxNodeOrToken> GetAnnotatedNodesAndTokens(SyntaxAnnotation annotation)
         {
-            return this.DescendantNodesAndTokensAndSelf(n => n.ContainsAnnotations, descendIntoTrivia: true)
+            return this.DescendantNodesAndTokensAndSelf(descendIntoChildrenGreen: static g => g.ContainsAnnotations, descendIntoTrivia: true)
                 .Where(t => t.HasAnnotation(annotation));
         }
 
