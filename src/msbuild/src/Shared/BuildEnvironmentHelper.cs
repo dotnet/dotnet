@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
@@ -31,7 +31,7 @@ namespace Microsoft.Build.Shared
         /// <summary>
         /// Name of the MSBuild process(es)
         /// </summary>
-        private static readonly string[] s_msBuildExeNames = { "MSBuild.dll", "MSBuild.exe" };
+        private static readonly string[] s_msBuildProcess = { "MSBUILD", "MSBUILDTASKHOST" };
 
         /// <summary>
         /// Get the currently executing assembly path.
@@ -220,14 +220,16 @@ namespace Microsoft.Build.Shared
 
             // We're not in VS, check for MSBuild.exe / dll to consider this a standalone environment.
             string msBuildPath = null;
-            if (FileSystems.Default.FileExists(msBuildDll))
+            var msBuildDllCandidate = Path.Combine(Path.GetDirectoryName(buildAssembly), Constants.MSBuildAssemblyName);
+            if (FileSystems.Default.FileExists(msBuildDllCandidate))
             {
-                msBuildPath = msBuildDll;
+                msBuildPath = msBuildDllCandidate;
             }
-            else if (FileSystems.Default.FileExists(msBuildExe))
+            else if (FileSystems.Default.FileExists(msBuildExecutableCandidate))
             {
-                msBuildPath = msBuildExe;
+                msBuildPath = msBuildExecutableCandidate;
             }
+
 
             if (!string.IsNullOrEmpty(msBuildPath))
             {
@@ -340,10 +342,10 @@ namespace Microsoft.Build.Shared
                 return null;
             }
 
-            // Prioritize MSBuild[.exe] over MSBuild.dll
-            return TryFromStandaloneMSBuildExe(Path.Combine(appContextBaseDirectory, Constants.MSBuildExecutableName))
-                // Fall back to MSBuild.dll
-                ?? TryFromStandaloneMSBuildExe(Path.Combine(appContextBaseDirectory, Constants.MSBuildAssemblyName));
+            // Prioritize MSBuild.dll over MSBuild[.exe] to keep worker nodes in-proc via dotnet.exe
+             return TryFromStandaloneMSBuildExe(Path.Combine(appContextBaseDirectory, Constants.MSBuildAssemblyName))
+                 // Fall back to MSBuild.exe
+                 ?? TryFromStandaloneMSBuildExe(Path.Combine(appContextBaseDirectory, Constants.MSBuildExecutableName));
         }
 
         private static BuildEnvironment TryFromStandaloneMSBuildExe(string msBuildExePath)
