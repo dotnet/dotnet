@@ -44,7 +44,7 @@ public class FrameworkHandleTests
         var frameworkHandle = new FrameworkHandle(null, new TestRunCache(100, TimeSpan.MaxValue, (s, r, ip) => { }), tec, null!);
         frameworkHandle.Dispose();
 
-        Assert.ThrowsException<ObjectDisposedException>(() => frameworkHandle.LaunchProcessWithDebuggerAttached(null!, null!, null!, null!));
+        Assert.ThrowsExactly<ObjectDisposedException>(() => frameworkHandle.LaunchProcessWithDebuggerAttached(null!, null!, null!, null!));
     }
 
     [TestMethod]
@@ -54,18 +54,8 @@ public class FrameworkHandleTests
         var tec = GetTestExecutionContext();
         var frameworkHandle = new FrameworkHandle(null, new TestRunCache(100, TimeSpan.MaxValue, (s, r, ip) => { }), tec, null!);
 
-        var isExceptionThrown = false;
-        try
-        {
-            frameworkHandle.LaunchProcessWithDebuggerAttached(null!, null, null, null);
-        }
-        catch (InvalidOperationException exception)
-        {
-            isExceptionThrown = true;
-            Assert.AreEqual("This operation is not allowed in the context of a non-debug run.", exception.Message);
-        }
-
-        Assert.IsTrue(isExceptionThrown);
+        var exception = Assert.ThrowsExactly<InvalidOperationException>(() => frameworkHandle.LaunchProcessWithDebuggerAttached(null!, null, null, null));
+        Assert.AreEqual("This operation is not allowed in the context of a non-debug run.", exception.Message);
     }
 
     [TestMethod]

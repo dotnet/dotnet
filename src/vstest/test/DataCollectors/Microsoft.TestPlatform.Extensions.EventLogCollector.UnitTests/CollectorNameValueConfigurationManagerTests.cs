@@ -41,13 +41,13 @@ public class CollectorNameValueConfigurationManagerTests
         }
 
         var configManager = new CollectorNameValueConfigurationManager(xmlDocument.DocumentElement);
-        Assert.AreEqual(0, configManager.NameValuePairs.Count);
+        Assert.IsEmpty(configManager.NameValuePairs);
     }
 
     [TestMethod]
     public void ConstructorShouldNotInitializeNameValuePairNullIsPassed()
     {
         var configManager = new CollectorNameValueConfigurationManager(null);
-        Assert.AreEqual(0, configManager.NameValuePairs.Count);
+        Assert.IsEmpty(configManager.NameValuePairs);
     }
 }

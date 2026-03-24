@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 
 using Microsoft.Build.Utilities;
 
@@ -241,6 +240,7 @@ internal static class TestTaskUtils
     }
 
     /// <summary>
+<<<<<<< HEAD
     /// Resolves the full path to the dotnet executable by checking DOTNET_HOST_PATH,
     /// current directory, and PATH in that order.
     /// </summary>
@@ -284,5 +284,16 @@ internal static class TestTaskUtils
         var dotnetExe = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "dotnet.exe" : "dotnet";
 
         return ResolveDotnetPath(dotnetExe);
+=======
+    /// Resolves the full path to the dotnet host from the DOTNET_HOST_PATH environment variable.
+    /// </summary>
+    /// <returns>
+    /// The resolved full path to the dotnet host, or <see langword="null"/> if the variable is not set or empty.
+    /// </returns>
+    internal static string? ResolveDotnetPath()
+    {
+        var dotnetHostPath = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH");
+        return StringUtils.IsNullOrEmpty(dotnetHostPath) ? null : Path.GetFullPath(dotnetHostPath);
+>>>>>>> darc/forward/6ec8059-f1931f1
     }
 }

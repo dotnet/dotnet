@@ -18,7 +18,7 @@ public class TestRunnerConnectionInfoExtensionsTests
 
         var options = connectionInfo.ToCommandLineOptions();
 
-        StringAssert.StartsWith(options, "--port 123 --endpoint 127.0.0.0:123 --role client");
+        Assert.StartsWith("--port 123 --endpoint 127.0.0.0:123 --role client", options);
     }
 
     [TestMethod]
@@ -28,7 +28,7 @@ public class TestRunnerConnectionInfoExtensionsTests
 
         var options = connectionInfo.ToCommandLineOptions();
 
-        StringAssert.Contains(options, "--endpoint 127.0.0.0:123");
+        Assert.Contains("--endpoint 127.0.0.0:123", options);
     }
 
     [TestMethod]
@@ -38,7 +38,7 @@ public class TestRunnerConnectionInfoExtensionsTests
 
         var options = connectionInfo.ToCommandLineOptions();
 
-        StringAssert.Contains(options, "--role client");
+        Assert.Contains("--role client", options);
     }
 
     [TestMethod]
@@ -48,7 +48,7 @@ public class TestRunnerConnectionInfoExtensionsTests
 
         var options = connectionInfo.ToCommandLineOptions();
 
-        Assert.IsTrue(options.IndexOf("--parentprocessid 123", StringComparison.OrdinalIgnoreCase) >= 0);
+        Assert.IsGreaterThanOrEqualTo(0, options.IndexOf("--parentprocessid 123", StringComparison.OrdinalIgnoreCase));
     }
 
     [TestMethod]
@@ -58,7 +58,7 @@ public class TestRunnerConnectionInfoExtensionsTests
 
         var options = connectionInfo.ToCommandLineOptions();
 
-        Assert.IsFalse(options.IndexOf("--diag", StringComparison.OrdinalIgnoreCase) >= 0);
+        Assert.IsLessThan(0, options.IndexOf("--diag", StringComparison.OrdinalIgnoreCase));
     }
 
     [TestMethod]
@@ -68,6 +68,6 @@ public class TestRunnerConnectionInfoExtensionsTests
 
         var options = connectionInfo.ToCommandLineOptions();
 
-        StringAssert.EndsWith(options, "--diag log.txt --tracelevel 3");
+        Assert.EndsWith("--diag log.txt --tracelevel 3", options);
     }
 }

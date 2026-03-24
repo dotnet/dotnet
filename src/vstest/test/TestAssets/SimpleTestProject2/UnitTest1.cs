@@ -17,7 +17,6 @@ public class UnitTest1
     [TestMethod]
     public void PassingTest2()
     {
-        Assert.AreEqual(2, 2);
     }
 
     /// <summary>
@@ -26,7 +25,7 @@ public class UnitTest1
     [TestMethod]
     public void FailingTest2()
     {
-        Assert.AreEqual(2, 3);
+        Assert.Fail();
     }
 
     /// <summary>

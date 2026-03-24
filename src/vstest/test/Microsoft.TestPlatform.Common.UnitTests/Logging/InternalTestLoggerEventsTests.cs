@@ -102,13 +102,13 @@ public class InternalTestLoggerEventsBehaviors
     [TestMethod]
     public void RaiseTestResultShouldThrowExceptionIfNullTestResultEventArgsIsPassed()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _loggerEvents.RaiseTestResult(null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _loggerEvents.RaiseTestResult(null!));
     }
 
     [TestMethod]
     public void RaiseTestRunMessageShouldThrowExceptioIfNullTestRunMessageEventArgsIsPassed()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _loggerEvents.RaiseTestRunMessage(null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _loggerEvents.RaiseTestRunMessage(null!));
     }
 
     [TestMethod]
@@ -171,7 +171,7 @@ public class InternalTestLoggerEventsBehaviors
     {
         var loggerEvents = GetDisposedLoggerEvents();
 
-        Assert.ThrowsException<ObjectDisposedException>(() => loggerEvents.RaiseTestResult(new TestResultEventArgs(new TestResult(new TestCase("This is a string.", new Uri("some://uri"), "DummySourceFileName")))));
+        Assert.ThrowsExactly<ObjectDisposedException>(() => loggerEvents.RaiseTestResult(new TestResultEventArgs(new TestResult(new TestCase("This is a string.", new Uri("some://uri"), "DummySourceFileName")))));
     }
 
     [TestMethod]
@@ -179,7 +179,7 @@ public class InternalTestLoggerEventsBehaviors
     {
         var loggerEvents = GetDisposedLoggerEvents();
 
-        Assert.ThrowsException<ObjectDisposedException>(() => loggerEvents.RaiseTestRunMessage(new TestRunMessageEventArgs(TestMessageLevel.Error, "This is a string.")));
+        Assert.ThrowsExactly<ObjectDisposedException>(() => loggerEvents.RaiseTestRunMessage(new TestRunMessageEventArgs(TestMessageLevel.Error, "This is a string.")));
     }
 
     [TestMethod]
@@ -187,7 +187,7 @@ public class InternalTestLoggerEventsBehaviors
     {
         var loggerEvents = GetDisposedLoggerEvents();
 
-        Assert.ThrowsException<ObjectDisposedException>(() => loggerEvents.CompleteTestRun(null, true, false, null, null, null, new TimeSpan()));
+        Assert.ThrowsExactly<ObjectDisposedException>(() => loggerEvents.CompleteTestRun(null, true, false, null, null, null, new TimeSpan()));
     }
 
     [TestMethod]
@@ -195,7 +195,7 @@ public class InternalTestLoggerEventsBehaviors
     {
         var loggerEvents = GetDisposedLoggerEvents();
 
-        Assert.ThrowsException<ObjectDisposedException>(() => loggerEvents.EnableEvents());
+        Assert.ThrowsExactly<ObjectDisposedException>(() => loggerEvents.EnableEvents());
     }
 
     [TestMethod]
@@ -231,7 +231,7 @@ public class InternalTestLoggerEventsBehaviors
     [TestMethod]
     public void RaiseDiscoveryStartShouldThrowExceptionIfNullDiscoveryStartEventArgsIsPassed()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _loggerEvents.RaiseDiscoveryStart(null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _loggerEvents.RaiseDiscoveryStart(null!));
     }
 
     /// <summary>
@@ -240,7 +240,7 @@ public class InternalTestLoggerEventsBehaviors
     [TestMethod]
     public void RaiseDiscoveredTestsShouldThrowExceptionIfNullDiscoveredTestsEventArgsIsPassed()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _loggerEvents.RaiseDiscoveredTests(null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _loggerEvents.RaiseDiscoveredTests(null!));
     }
 
     /// <summary>
@@ -253,7 +253,7 @@ public class InternalTestLoggerEventsBehaviors
         List<TestCase> testCases = [new TestCase("This is a string.", new Uri("some://uri"), "DummySourceFileName")];
         DiscoveredTestsEventArgs discoveredTestsEventArgs = new(testCases);
 
-        Assert.ThrowsException<ObjectDisposedException>(() => loggerEvents.RaiseDiscoveredTests(discoveredTestsEventArgs));
+        Assert.ThrowsExactly<ObjectDisposedException>(() => loggerEvents.RaiseDiscoveredTests(discoveredTestsEventArgs));
     }
 
     /// <summary>
@@ -294,7 +294,7 @@ public class InternalTestLoggerEventsBehaviors
     [TestMethod]
     public void RaiseDiscoveryCompleteShouldThrowExceptionIfNullDiscoveryCompleteEventArgsIsPassed()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _loggerEvents.RaiseDiscoveryComplete(null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _loggerEvents.RaiseDiscoveryComplete(null!));
     }
 
     /// <summary>
@@ -307,7 +307,7 @@ public class InternalTestLoggerEventsBehaviors
         DiscoveryCriteria discoveryCriteria = new() { TestCaseFilter = "Name=Test1" };
         DiscoveryStartEventArgs discoveryStartEventArgs = new(discoveryCriteria);
 
-        Assert.ThrowsException<ObjectDisposedException>(() => loggerEvents.RaiseDiscoveryStart(discoveryStartEventArgs));
+        Assert.ThrowsExactly<ObjectDisposedException>(() => loggerEvents.RaiseDiscoveryStart(discoveryStartEventArgs));
     }
 
     /// <summary>
@@ -319,7 +319,7 @@ public class InternalTestLoggerEventsBehaviors
         var loggerEvents = GetDisposedLoggerEvents();
         DiscoveryCompleteEventArgs discoveryCompleteEventArgs = new(2, false);
 
-        Assert.ThrowsException<ObjectDisposedException>(() => loggerEvents.RaiseDiscoveryComplete(discoveryCompleteEventArgs));
+        Assert.ThrowsExactly<ObjectDisposedException>(() => loggerEvents.RaiseDiscoveryComplete(discoveryCompleteEventArgs));
     }
 
     /// <summary>
@@ -392,7 +392,7 @@ public class InternalTestLoggerEventsBehaviors
     [TestMethod]
     public void RaiseTestRunStartShouldThrowExceptionIfNullTestRunStartEventArgsIsPassed()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _loggerEvents.RaiseTestRunStart(null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _loggerEvents.RaiseTestRunStart(null!));
     }
 
     /// <summary>
@@ -401,7 +401,7 @@ public class InternalTestLoggerEventsBehaviors
     [TestMethod]
     public void RaiseDiscoveryMessageShouldThrowExceptionIfNullTestRunMessageEventArgsIsPassed()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _loggerEvents.RaiseDiscoveryMessage(null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _loggerEvents.RaiseDiscoveryMessage(null!));
     }
 
     /// <summary>
@@ -414,7 +414,7 @@ public class InternalTestLoggerEventsBehaviors
         TestRunCriteria testRunCriteria = new(new List<string> { @"x:dummy\foo.dll" }, 10, false, string.Empty, TimeSpan.MaxValue, null, "Name=Test1", null);
         TestRunStartEventArgs testRunStartEventArgs = new(testRunCriteria);
 
-        Assert.ThrowsException<ObjectDisposedException>(() => loggerEvents.RaiseTestRunStart(testRunStartEventArgs));
+        Assert.ThrowsExactly<ObjectDisposedException>(() => loggerEvents.RaiseTestRunStart(testRunStartEventArgs));
     }
 
     /// <summary>
@@ -427,7 +427,7 @@ public class InternalTestLoggerEventsBehaviors
         string message = "This is the test message";
         TestRunMessageEventArgs testRunMessageEventArgs = new(TestMessageLevel.Informational, message);
 
-        Assert.ThrowsException<ObjectDisposedException>(() => loggerEvents.RaiseDiscoveryMessage(testRunMessageEventArgs));
+        Assert.ThrowsExactly<ObjectDisposedException>(() => loggerEvents.RaiseDiscoveryMessage(testRunMessageEventArgs));
     }
 
     /// <summary>

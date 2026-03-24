@@ -2,6 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     $CommonMetadataElements$
+    <readme>README.md</readme>
 
     <dependencies>
       <group targetFramework="net462">
@@ -31,6 +32,7 @@
 
   <files>
     $CommonFileElements$
+    <file src="$ProjectDirectory$\README.md" target="" />
 
     <!-- net462 -->
     <file src="net462\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" target="lib\net462\" />

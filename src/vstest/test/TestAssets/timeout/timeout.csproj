@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>$(NetFrameworkMinimum);net472;net48;$(NetCoreAppMinimum);net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>$(TestProjectTargetFrameworks)</TargetFrameworks>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 

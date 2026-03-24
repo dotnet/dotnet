@@ -47,7 +47,7 @@ public class MetricsCollectionTests
         _metricsCollection.Add("DummyMessage", "DummyValue");
         _metricsCollection.Add("DummyMessage2", "DummyValue");
 
-        Assert.AreEqual(2, _metricsCollection.Metrics.Count);
+        Assert.HasCount(2, _metricsCollection.Metrics);
         Assert.IsTrue(_metricsCollection.Metrics.ContainsKey("DummyMessage"));
         Assert.IsTrue(_metricsCollection.Metrics.ContainsKey("DummyMessage2"));
     }
@@ -55,6 +55,6 @@ public class MetricsCollectionTests
     [TestMethod]
     public void MetricsShouldReturnEmptyDictionaryIfMetricsIsEmpty()
     {
-        Assert.AreEqual(0, _metricsCollection.Metrics.Count);
+        Assert.IsEmpty(_metricsCollection.Metrics);
     }
 }

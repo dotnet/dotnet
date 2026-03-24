@@ -1,0 +1,5 @@
+<RunSettings>
+  <MSTestV2>
+    <ConsiderEmptyDataSourceAsInconclusive>true</ConsiderEmptyDataSourceAsInconclusive>
+  </MSTestV2>
+</RunSettings>

@@ -26,13 +26,13 @@ public class ConsoleParametersTests
 
         string result = sut.LogFilePath;
 
-        Assert.IsTrue(result.StartsWith("\""));
+        Assert.StartsWith("\"", result); 
     }
 
     [TestMethod]
     public void TraceLevelShouldHaveVerboseAsDefaultValue()
     {
         var consoleParameters = new ConsoleParameters(new FileHelper());
-        Assert.AreEqual(consoleParameters.TraceLevel, TraceLevel.Verbose);
+        Assert.AreEqual(TraceLevel.Verbose, consoleParameters.TraceLevel);
     }
 }

@@ -9,12 +9,8 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net9.0;net48</TargetFrameworks>
+    <TargetFrameworks>net9.0</TargetFrameworks>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="TestAssets\**" />
-    <None Remove="TestAssets\**" />
-  </ItemGroup>
   <ItemGroup>
     <None Remove="BannedSymbols.txt" />
   </ItemGroup>
@@ -33,29 +29,7 @@
   <ItemGroup>
     <PackageReference Include="AwesomeAssertions" Version="$(AwesomeAssertionsVersion)" />
     <PackageReference Include="Microsoft.TestPlatform.TestAsset.NativeCPP" Version="2.0.0" />
-    <PackageReference Include="Microsoft.TestPlatform.QTools.Assets" Version="2.0.0" />
-    <PackageReference Include="Procdump" Version="0.0.1" />
-    <PackageReference Include="NuGet.Versioning" Version="6.1.0" />
     <PackageReference Include="Microsoft.CodeCoverage.Core" Version="$(MicrosoftInternalCodeCoverageVersion)" />
-  </ItemGroup>
-  <ItemGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)')) ">
-    <PackageReference Include="Microsoft.Internal.CodeCoverage" Version="$(MicrosoftInternalCodeCoverageVersion)" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0-preview2-26406-04" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Performance\" />
-  </ItemGroup>
-  <ItemGroup>
-    <!--
-      Always reference Dia package even if it contains only tools for net451, we then use a content
-      include with copy to output to ensure tests are working correctly for the different TFMs.
-      Also note that depending on your machine architecture, for net48, the package will add
-      'x86' and 'amd64' subfolders but the logic of the code is to look into 'x86', 'x64' or 'arm64'.
-    -->
-    <PackageReference Include="Microsoft.Internal.Dia" Version="$(TestPlatformMSDiaVersion)" PrivateAssets="all" />
-    <Content Include="..\..\.packages\microsoft.internal.dia\$(TestPlatformMSDiaVersion)\tools\net451\**\*">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
 </Project>

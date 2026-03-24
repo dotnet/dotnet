@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
@@ -39,6 +40,8 @@ public class BlameCollectorTests
     private readonly Mock<IFileHelper> _mockFileHelper;
     private readonly XmlElement? _configurationElement;
     private readonly string _filepath;
+
+    public TestContext TestContext { get; set; } = null!;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BlameCollectorTests"/> class.
@@ -78,7 +81,7 @@ public class BlameCollectorTests
     [TestMethod]
     public void InitializeShouldThrowExceptionIfDataCollectionLoggerIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _blameDataCollector.Initialize(
+        Assert.ThrowsExactly<ArgumentNullException>(() => _blameDataCollector.Initialize(
             _configurationElement,
             _mockDataColectionEvents.Object,
             _mockDataCollectionSink.Object,
@@ -185,7 +188,7 @@ public class BlameCollectorTests
             _mockLogger.Object,
             _context);
 
-        hangBasedDumpcollected.Wait(1000);
+        hangBasedDumpcollected.Wait(1000, TestContext.CancellationToken);
         _mockProcessDumpUtility.Verify(x => x.StartHangBasedProcessDump(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<Action<string>>()), Times.Once);
         _mockProcessDumpUtility.Verify(x => x.GetDumpFiles(true, It.IsAny<bool>()), Times.Once);
         _mockDataCollectionSink.Verify(x => x.SendFileAsync(It.Is<FileTransferInformation>(y => y.Path == dumpFile)), Times.Once);
@@ -219,7 +222,7 @@ public class BlameCollectorTests
             _mockLogger.Object,
             _context);
 
-        hangBasedDumpcollected.Wait(1000);
+        hangBasedDumpcollected.Wait(1000, TestContext.CancellationToken);
         _mockProcessDumpUtility.Verify(x => x.StartHangBasedProcessDump(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<Action<string>>()), Times.Once);
         _mockProcessDumpUtility.Verify(x => x.GetDumpFiles(true, It.IsAny<bool>()), Times.Once);
     }
@@ -254,7 +257,7 @@ public class BlameCollectorTests
             _mockLogger.Object,
             _context);
 
-        hangBasedDumpcollected.Wait(1000);
+        hangBasedDumpcollected.Wait(1000, TestContext.CancellationToken);
         _mockProcessDumpUtility.Verify(x => x.StartHangBasedProcessDump(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<Action<string>>()), Times.Once);
         _mockProcessDumpUtility.Verify(x => x.GetDumpFiles(true, It.IsAny<bool>()), Times.Once);
         _mockDataCollectionSink.Verify(x => x.SendFileAsync(It.Is<FileTransferInformation>(y => y.Path == dumpFile)), Times.Once);
@@ -352,8 +355,7 @@ public class BlameCollectorTests
                          y[blameTestObject1.Id].FullyQualifiedName == "TestProject.UnitTest.TestMethod1" && y[blameTestObject2.Id].FullyQualifiedName == "TestProject.UnitTest.TestMethod2" &&
                          y[blameTestObject1.Id].Source == "abc.dll" && y[blameTestObject2.Id].Source == "abc.dll" &&
                          y[blameTestObject1.Id].DisplayName == "TestMethod1" && y[blameTestObject2.Id].DisplayName == "TestMethod2"),
-                It.IsAny<string>()),
-            Times.Once);
+                It.IsAny<string>()), Times.Once);
     }
 
     /// <summary>
@@ -739,6 +741,56 @@ public class BlameCollectorTests
         }
 
         return outernode;
+    }
+
+    /// <summary>
+    /// Concurrent test case start and end events should not corrupt internal state
+    /// </summary>
+    [TestMethod]
+    public void ConcurrentTestCaseStartAndEndEventsShouldNotCorruptState()
+    {
+        // Initializing Blame Data Collector
+        _blameDataCollector.Initialize(
+            _configurationElement,
+            _mockDataColectionEvents.Object,
+            _mockDataCollectionSink.Object,
+            _mockLogger.Object,
+            _context);
+
+        const int threadCount = 10;
+        var barrier = new Barrier(threadCount);
+        var tasks = new List<Task>();
+        var allTestCases = new List<TestCase>();
+
+        for (int t = 0; t < threadCount; t++)
+        {
+            var task = Task.Run(() =>
+            {
+                barrier.SignalAndWait(TestContext.CancellationToken);
+                for (int i = 0; i < 50; i++)
+                {
+                    var testcase = new TestCase($"TestProject.UnitTest.TestMethod{Guid.NewGuid()}", new Uri("test:/abc"), "abc.dll");
+                    lock (allTestCases)
+                    {
+                        allTestCases.Add(testcase);
+                    }
+
+                    _mockDataColectionEvents.Raise(x => x.TestCaseStart += null, new TestCaseStartEventArgs(testcase));
+                    _mockDataColectionEvents.Raise(x => x.TestCaseEnd += null, new TestCaseEndEventArgs(testcase, TestOutcome.Passed));
+                }
+            }, TestContext.CancellationToken);
+            tasks.Add(task);
+        }
+
+        // This must not throw due to concurrent collection modifications
+        Task.WaitAll(tasks.ToArray(), TestContext.CancellationToken);
+
+        // Raise session end - all tests completed so no sequence file should be written
+        _mockDataColectionEvents.Raise(x => x.SessionEnd += null, new SessionEndEventArgs(_dataCollectionContext));
+        _mockBlameReaderWriter.Verify(
+            x => x.WriteTestSequence(It.IsAny<List<Guid>>(), It.IsAny<Dictionary<Guid, BlameTestObject>>(), It.IsAny<string>()),
+            Times.Never,
+            "No sequence file should be written when all tests complete");
     }
 
     /// <summary>

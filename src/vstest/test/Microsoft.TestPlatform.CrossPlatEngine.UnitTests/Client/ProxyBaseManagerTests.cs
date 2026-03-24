@@ -22,7 +22,6 @@ using Moq;
 
 namespace TestPlatform.CrossPlatEngine.UnitTests.Client;
 
-[TestClass]
 public class ProxyBaseManagerTests
 {
     private const int Clientprocessexitwait = 10 * 1000;
