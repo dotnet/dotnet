@@ -115,6 +115,8 @@ stages:
             image: ${{ variables.alpineContainerImage }}
           artifactsRid: ${{ variables.alpineX64Rid }}
           targetRid: ${{ variables.alpineX64Rid }}
+          # CG downloads linux-x64 binaries which won't work on musl-based distros like Alpine
+          disableComponentGovernance: true
           ${{ if ne(leg.reuseBuildArtifactsFrom, '') }}:
             reuseBuildArtifactsFrom:
             - ${{ format(leg.reuseBuildArtifactsFrom, variables.centOSStreamName) }}
@@ -214,6 +216,8 @@ stages:
               image: ${{ variables.alpineContainerImage }}
             artifactsRid: ${{ variables.alpineX64Rid }}
             targetRid: ${{ variables.alpineX64Rid }}
+            # CG downloads linux-x64 binaries which won't work on musl-based distros like Alpine
+            disableComponentGovernance: true
 
           targetArchitecture: ${{ leg.targetArchitecture }}
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
