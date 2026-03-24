@@ -643,11 +643,16 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
     {
         var session = await TestServices.Editor.WaitForCompletionSessionAsync(HangMitigatingCancellationToken);
 
-        Assert.NotNull(session);
+        if (session is null)
+        {
+            Assert.Fail(await TestServices.Editor.GetCompletionSessionDebugInfoAsync(expectedSelectedItemLabel: null, HangMitigatingCancellationToken));
+        }
+
+        var completionSession = session ?? throw new InvalidOperationException("Completion session should have been available.");
         if (commitChar.HasValue)
         {
             // Commit using the specified commit character
-            session.Commit(commitChar.Value, HangMitigatingCancellationToken);
+            completionSession.Commit(commitChar.Value, HangMitigatingCancellationToken);
 
             // session.Commit call above commits as if the commit character was typed,
             // but doesn't actually insert the character into the buffer.
@@ -656,7 +661,7 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
         }
         else
         {
-            Assert.True(session.CommitIfUnique(HangMitigatingCancellationToken));
+            Assert.True(completionSession.CommitIfUnique(HangMitigatingCancellationToken));
         }
 
         var textView = await TestServices.Editor.GetActiveTextViewAsync(HangMitigatingCancellationToken);
@@ -672,11 +677,16 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
         // Actually open completion UI and wait for it have selected item we are interested in
         var session = await TestServices.Editor.OpenCompletionSessionAndWaitForItemAsync(TimeSpan.FromSeconds(10), expectedSelectedItemLabel, HangMitigatingCancellationToken);
 
-        Assert.NotNull(session);
+        if (session is null)
+        {
+            Assert.Fail(await TestServices.Editor.GetCompletionSessionDebugInfoAsync(expectedSelectedItemLabel, HangMitigatingCancellationToken));
+        }
+
+        var completionSession = session ?? throw new InvalidOperationException("Completion session should have been available.");
         if (commitChar is char commitCharValue)
         {
             // Commit using the specified commit character
-            session.Commit(commitCharValue, HangMitigatingCancellationToken);
+            completionSession.Commit(commitCharValue, HangMitigatingCancellationToken);
 
             // session.Commit call above commits as if the commit character was typed,
             // but doesn't actually insert the character into the buffer.
@@ -685,12 +695,12 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
         }
         else
         {
-            Assert.True(session.CommitIfUnique(HangMitigatingCancellationToken));
+            Assert.True(completionSession.CommitIfUnique(HangMitigatingCancellationToken));
         }
 
         var textView = await TestServices.Editor.GetActiveTextViewAsync(HangMitigatingCancellationToken);
 
-        var stopwatch = new Stopwatch();
+        var stopwatch = Stopwatch.StartNew();
         string text;
         while ((text = textView.TextBuffer.CurrentSnapshot.GetText()) != expected && stopwatch.ElapsedMilliseconds < EditorInProcess.DefaultCompletionWaitTimeMilliseconds)
         {

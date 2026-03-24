@@ -40,7 +40,7 @@ namespace NuGet.Packaging.Core
         /// Package Version
         /// </summary>
         /// <remarks>can be null</remarks>
-        /// <remarks>This property is annotated as not nullable intentionally.
+        /// <remarks>NU_NULL_INC: This property is annotated as not nullable intentionally.
         /// The null is used in very few scenarios and practically illegal in cases dealing with an actual package identity. </remarks>
         public NuGetVersion Version
         {

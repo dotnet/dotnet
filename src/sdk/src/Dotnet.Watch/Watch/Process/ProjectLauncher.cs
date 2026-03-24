@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Globalization;
-using Microsoft.Build.Graph;
 using Microsoft.DotNet.HotReload;
 using Microsoft.Extensions.Logging;
 
@@ -27,6 +26,9 @@ internal sealed class ProjectLauncher(
     public EnvironmentOptions EnvironmentOptions
         => context.EnvironmentOptions;
 
+    public CompilationHandler CompilationHandler
+        => compilationHandler;
+
     public async ValueTask<RunningProject?> TryLaunchProcessAsync(
         ProjectOptions projectOptions,
         Action<OutputLine>? onOutput,
@@ -34,7 +36,7 @@ internal sealed class ProjectLauncher(
         RestartOperation restartOperation,
         CancellationToken cancellationToken)
     {
-        var projectNode = projectGraph.TryGetProjectNode(projectOptions.Representation.ProjectGraphPath, context.TargetFramework);
+        var projectNode = projectGraph.TryGetProjectNode(projectOptions.Representation.ProjectGraphPath, projectOptions.TargetFramework);
         if (projectNode == null)
         {
             // error already reported
@@ -51,20 +53,11 @@ internal sealed class ProjectLauncher(
 
         var processSpec = new ProcessSpec
         {
-            Executable = EnvironmentOptions.MuxerPath,
+            Executable = EnvironmentOptions.GetMuxerPath(),
             IsUserApplication = true,
             WorkingDirectory = projectOptions.WorkingDirectory,
             OnOutput = onOutput,
             OnExit = onExit,
-        };
-
-        // Stream output lines to the process output reporter.
-        // The reporter synchronizes the output of the process with the logger output,
-        // so that the printed lines don't interleave.
-        // Only send the output to the reporter if no custom output handler was provided (e.g. for Aspire child processes).
-        processSpec.OnOutput ??= line =>
-        {
-            context.ProcessOutputReporter.ReportOutput(context.ProcessOutputReporter.PrefixProcessOutput ? line with { Content = $"[{projectDisplayName}] {line.Content}" } : line);
         };
 
         var environmentBuilder = new Dictionary<string, string>();
@@ -82,16 +75,17 @@ internal sealed class ProjectLauncher(
         if (clients.IsManagedAgentSupported && Logger.IsEnabled(LogLevel.Trace))
         {
             environmentBuilder[EnvironmentVariables.Names.HotReloadDeltaClientLogMessages] =
-                (EnvironmentOptions.SuppressEmojis ? Emoji.Default : Emoji.Agent).GetLogMessagePrefix() + $"[{projectDisplayName}]";
+                (EnvironmentOptions.SuppressEmojis ? Emoji.Default : Emoji.Agent).GetLogMessagePrefix(EnvironmentOptions.LogMessagePrefix) + $"[{projectDisplayName}]";
         }
 
         clients.ConfigureLaunchEnvironment(environmentBuilder);
 
         processSpec.Arguments = GetProcessArguments(projectOptions, environmentBuilder);
 
-        // Attach trigger to the process that detects when the web server reports to the output that it's listening.
-        // Launches browser on the URL found in the process output for root projects.
-        context.BrowserLauncher.InstallBrowserLaunchTrigger(processSpec, projectNode, projectOptions, clients.BrowserRefreshServer, cancellationToken);
+        // Observes main project process output and launches browser when the URL is found in the output.
+        var outputObserver = context.BrowserLauncher.TryGetBrowserLaunchOutputObserver(projectNode, projectOptions, clients.BrowserRefreshServer, cancellationToken);
+
+        processSpec.RedirectOutput(outputObserver, context.ProcessOutputReporter, context.EnvironmentOptions, projectDisplayName);
 
         return await compilationHandler.TrackRunningProjectAsync(
             projectNode,
@@ -110,6 +104,12 @@ internal sealed class ProjectLauncher(
             projectOptions.Command,
             "--no-build"
         };
+
+        if (projectOptions.TargetFramework != null)
+        {
+            arguments.Add("--framework");
+            arguments.Add(projectOptions.TargetFramework);
+        }
 
         foreach (var (name, value) in environmentBuilder)
         {
