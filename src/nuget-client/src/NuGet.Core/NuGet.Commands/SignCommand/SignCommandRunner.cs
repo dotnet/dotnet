@@ -69,6 +69,7 @@ namespace NuGet.Commands
 
                 using (var signRequest = new AuthorSignPackageRequest(cert, signArgs.SignatureHashAlgorithm, signArgs.TimestampHashAlgorithm))
                 {
+                    signRequest.AllowUntrustedRoot = signArgs.AllowUntrustedRoot;
                     return await ExecuteCommandAsync(
                         packagesToSign,
                         signRequest,
@@ -189,7 +190,8 @@ namespace NuGet.Commands
                 SubjectName = signArgs.CertificateSubjectName,
                 NonInteractive = signArgs.NonInteractive,
                 PasswordProvider = signArgs.PasswordProvider,
-                Token = signArgs.Token
+                Token = signArgs.Token,
+                AllowUntrustedRoot = signArgs.AllowUntrustedRoot,
             };
 
             // get matching certificates

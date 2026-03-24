@@ -48,6 +48,12 @@ namespace NuGet.Packaging.Signing
         /// </summary>
         public System.Security.Cryptography.CngKey PrivateKey { get; set; }
 
+        /// <summary>
+        /// When true, allow signing with certificates whose root is not in a trusted root store.
+        /// UntrustedRoot chain status is treated as a warning instead of an error.
+        /// </summary>
+        public bool AllowUntrustedRoot { get; set; }
+
         protected SignPackageRequest(
             X509Certificate2 certificate,
             HashAlgorithmName signatureHashAlgorithm,
@@ -110,7 +116,8 @@ namespace NuGet.Packaging.Signing
                     Certificate,
                     AdditionalCertificates,
                     logger,
-                    CertificateType.Signature);
+                    CertificateType.Signature,
+                    AllowUntrustedRoot);
             }
         }
     }
