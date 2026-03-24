@@ -67,7 +67,12 @@
     <MicroBuildPluginsSwixBuildVersion Condition="'$(MicroBuildPluginsSwixBuildVersion)' == ''">1.0.422</MicroBuildPluginsSwixBuildVersion>
     <MicrosoftDotNetIBCMergeVersion Condition="'$(MicrosoftDotNetIBCMergeVersion)' == ''">5.1.0-beta.21356.1</MicrosoftDotNetIBCMergeVersion>
     <MicrosoftNETTestSdkVersion Condition="'$(MicrosoftNETTestSdkVersion)' == ''">18.0.1</MicrosoftNETTestSdkVersion>
-    <MicrosoftVSSDKBuildToolsVersion Condition="'$(MicrosoftVSSDKBuildToolsVersion)' == ''">16.9.1050</MicrosoftVSSDKBuildToolsVersion>
+    <!--
+      Note: The property name intentionally does NOT follow the convention of 'MicrosoftVSSDKBuildToolsVersion'
+      because the Microsoft.VSSDK.BuildTools package itself redefines that property to a different value,
+      which causes NuGet restores to go in a loop. See https://github.com/dotnet/arcade/issues/16228.
+    -->
+    <MicrosoftVSSDKBuildToolsDefaultVersion Condition="'$(MicrosoftVSSDKBuildToolsDefaultVersion)' == ''">17.14.2120</MicrosoftVSSDKBuildToolsDefaultVersion>
     <MicrosoftDotnetNuGetRepackTasksVersion Condition="'$(MicrosoftDotnetNuGetRepackTasksVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotnetNuGetRepackTasksVersion>
     <MicrosoftDotNetSignToolVersion Condition="'$(MicrosoftDotNetSignToolVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetSignToolVersion>
     <MicrosoftDotNetTarVersion Condition="'$(MicrosoftDotNetTarVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetTarVersion>
