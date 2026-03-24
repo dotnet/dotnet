@@ -1,7 +1,5 @@
 #pragma warning disable CA1052 // Static holder types should be static
 #pragma warning disable CA1720 // Identifier contains type name
-#pragma warning disable IDE0058 // Expression value is never used
-#pragma warning disable IDE0161 // Convert to file-scoped namespace
 
 #if XUNIT_NULLABLE
 #nullable enable
@@ -13,7 +11,6 @@
 
 using System;
 using System.Globalization;
-using System.Reflection;
 using Xunit.Sdk;
 
 #if XUNIT_NULLABLE
@@ -22,11 +19,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Xunit
 {
-#if XUNIT_VISIBILITY_INTERNAL
-	internal
-#else
-	public
-#endif
 	partial class Assert
 	{
 		/// <summary>
@@ -64,7 +56,7 @@ namespace Xunit
 		{
 			GuardArgumentNotNull(nameof(expectedType), expectedType);
 
-			if (@object == null || !expectedType.GetTypeInfo().IsAssignableFrom(@object.GetType().GetTypeInfo()))
+			if (@object == null || !expectedType.IsAssignableFrom(@object.GetType()))
 				throw IsAssignableFromException.ForIncompatibleType(expectedType, @object);
 		}
 
@@ -98,7 +90,7 @@ namespace Xunit
 		{
 			GuardArgumentNotNull(nameof(expectedType), expectedType);
 
-			if (@object != null && expectedType.GetTypeInfo().IsAssignableFrom(@object.GetType().GetTypeInfo()))
+			if (@object != null && expectedType.IsAssignableFrom(@object.GetType()))
 				throw IsNotAssignableFromException.ForCompatibleType(expectedType, @object);
 		}
 
@@ -122,8 +114,8 @@ namespace Xunit
 		/// </summary>
 		/// <typeparam name="T">The type the object should not be</typeparam>
 		/// <param name="object">The object to be evaluated</param>
-		/// <param name="exactMatch">Will only fail with an exact type match when <c>true</c> is
-		/// passed; will fail with a compatible type match when <c>false</c> is passed.</param>
+		/// <param name="exactMatch">Will only fail with an exact type match when <see langword="true"/> is
+		/// passed; will fail with a compatible type match when <see langword="false"/> is passed.</param>
 		/// <exception cref="IsNotTypeException">Thrown when the object is the given type</exception>
 #if XUNIT_NULLABLE
 		public static void IsNotType<T>(
@@ -157,8 +149,8 @@ namespace Xunit
 		/// </summary>
 		/// <param name="expectedType">The type the object should not be</param>
 		/// <param name="object">The object to be evaluated</param>
-		/// <param name="exactMatch">Will only fail with an exact type match when <c>true</c> is
-		/// passed; will fail with a compatible type match when <c>false</c> is passed.</param>
+		/// <param name="exactMatch">Will only fail with an exact type match when <see langword="true"/> is
+		/// passed; will fail with a compatible type match when <see langword="false"/> is passed.</param>
 		/// <exception cref="IsNotTypeException">Thrown when the object is the given type</exception>
 		public static void IsNotType(
 			Type expectedType,
@@ -180,7 +172,7 @@ namespace Xunit
 			{
 				var actualType = @object?.GetType();
 
-				if (actualType != null && expectedType.GetTypeInfo().IsAssignableFrom(actualType.GetTypeInfo()))
+				if (actualType != null && expectedType.IsAssignableFrom(actualType))
 					throw IsNotTypeException.ForCompatibleType(expectedType, actualType);
 			}
 		}
@@ -211,8 +203,8 @@ namespace Xunit
 		/// </summary>
 		/// <typeparam name="T">The type the object should be</typeparam>
 		/// <param name="object">The object to be evaluated</param>
-		/// <param name="exactMatch">Will only pass with an exact type match when <c>true</c> is
-		/// passed; will pass with a compatible type match when <c>false</c> is passed.</param>
+		/// <param name="exactMatch">Will only pass with an exact type match when <see langword="true"/> is
+		/// passed; will pass with a compatible type match when <see langword="false"/> is passed.</param>
 		/// <returns>The object, casted to type T when successful</returns>
 		/// <exception cref="IsTypeException">Thrown when the object is not the given type</exception>
 #if XUNIT_NULLABLE
@@ -250,8 +242,8 @@ namespace Xunit
 		/// </summary>
 		/// <param name="expectedType">The type the object should be</param>
 		/// <param name="object">The object to be evaluated</param>
-		/// <param name="exactMatch">Will only pass with an exact type match when <c>true</c> is
-		/// passed; will pass with a compatible type match when <c>false</c> is passed.</param>
+		/// <param name="exactMatch">Will only pass with an exact type match when <see langword="true"/> is
+		/// passed; will pass with a compatible type match when <see langword="false"/> is passed.</param>
 		/// <exception cref="IsTypeException">Thrown when the object is not the given type</exception>
 		public static void IsType(
 			Type expectedType,
@@ -276,7 +268,7 @@ namespace Xunit
 			var compatible =
 				exactMatch
 					? expectedType == actualType
-					: expectedType.GetTypeInfo().IsAssignableFrom(actualType.GetTypeInfo());
+					: expectedType.IsAssignableFrom(actualType);
 
 			if (!compatible)
 			{
@@ -285,8 +277,8 @@ namespace Xunit
 
 				if (expectedTypeName == actualTypeName)
 				{
-					expectedTypeName += string.Format(CultureInfo.CurrentCulture, " (from {0})", expectedType.GetTypeInfo().Assembly.GetName().FullName);
-					actualTypeName += string.Format(CultureInfo.CurrentCulture, " (from {0})", actualType.GetTypeInfo().Assembly.GetName().FullName);
+					expectedTypeName += string.Format(CultureInfo.CurrentCulture, " (from {0})", expectedType.Assembly.GetName().FullName);
+					actualTypeName += string.Format(CultureInfo.CurrentCulture, " (from {0})", actualType.Assembly.GetName().FullName);
 				}
 
 				if (exactMatch)

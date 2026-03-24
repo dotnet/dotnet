@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using NuGet.Packaging.Core;
@@ -12,26 +10,26 @@ namespace NuGet.Packaging
 {
     public interface IPackageMetadata
     {
-        string Id { get; }
-        NuGetVersion Version { get; }
+        string? Id { get; }
+        NuGetVersion? Version { get; }
 
-        string Title { get; }
+        string? Title { get; }
         IEnumerable<string> Authors { get; }
         IEnumerable<string> Owners { get; }
-        Uri IconUrl { get; }
-        Uri LicenseUrl { get; }
-        Uri ProjectUrl { get; }
+        Uri? IconUrl { get; }
+        Uri? LicenseUrl { get; }
+        Uri? ProjectUrl { get; }
         bool RequireLicenseAcceptance { get; }
         bool DevelopmentDependency { get; }
-        string Description { get; }
-        string Summary { get; }
-        string ReleaseNotes { get; }
-        string Language { get; }
-        string Tags { get; }
+        string? Description { get; }
+        string? Summary { get; }
+        string? ReleaseNotes { get; }
+        string? Language { get; }
+        string? Tags { get; }
         bool Serviceable { get; }
-        string Copyright { get; }
-        string Icon { get; }
-        string Readme { get; }
+        string? Copyright { get; }
+        string? Icon { get; }
+        string? Readme { get; }
 
         /// <summary>
         /// Specifies assemblies from GAC that the package depends on.
@@ -48,7 +46,7 @@ namespace NuGet.Packaging
         /// </summary>
         IEnumerable<PackageDependencyGroup> DependencyGroups { get; }
 
-        Version MinClientVersion { get; }
+        Version? MinClientVersion { get; }
 
         /// <summary>
         /// Returns sets of Content Files specified in the manifest.
@@ -57,9 +55,9 @@ namespace NuGet.Packaging
 
         IEnumerable<PackageType> PackageTypes { get; }
 
-        RepositoryMetadata Repository { get; }
+        RepositoryMetadata? Repository { get; }
 
-        LicenseMetadata LicenseMetadata { get; }
+        LicenseMetadata? LicenseMetadata { get; }
 
         IEnumerable<FrameworkReferenceGroup> FrameworkReferenceGroups { get; }
     }

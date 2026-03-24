@@ -1,9 +1,4 @@
 #pragma warning disable CA1052 // Static holder types should be static
-#pragma warning disable IDE0018 // Inline variable declaration
-#pragma warning disable IDE0046 // Convert to conditional expression
-#pragma warning disable IDE0058 // Expression value is never used
-#pragma warning disable IDE0059 // Unnecessary assignment of a value
-#pragma warning disable IDE0161 // Convert to file-scoped namespace
 
 #if XUNIT_NULLABLE
 #nullable enable
@@ -15,21 +10,12 @@
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
-using Xunit.Sdk;
-
-#if XUNIT_IMMUTABLE_COLLECTIONS
 using System.Collections.Immutable;
-#endif
+using System.Collections.ObjectModel;
+using Xunit.Sdk;
 
 namespace Xunit
 {
-#if XUNIT_VISIBILITY_INTERNAL
-	internal
-#else
-	public
-#endif
 	partial class Assert
 	{
 		/// <summary>
@@ -41,12 +27,7 @@ namespace Xunit
 		/// <param name="collection">The collection to be inspected.</param>
 		/// <returns>The value associated with <paramref name="expected"/>.</returns>
 		/// <exception cref="ContainsException">Thrown when the object is not present in the collection</exception>
-		public static TValue Contains<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] TKey, TValue>(
+		public static TValue Contains<TKey, TValue>(
 			TKey expected,
 			IDictionary<TKey, TValue> collection)
 #if XUNIT_NULLABLE
@@ -56,8 +37,7 @@ namespace Xunit
 			GuardArgumentNotNull(nameof(expected), expected);
 			GuardArgumentNotNull(nameof(collection), collection);
 
-			var value = default(TValue);
-			if (!collection.TryGetValue(expected, out value))
+			if (!collection.TryGetValue(expected, out var value))
 				throw ContainsException.ForKeyNotFound(
 					ArgumentFormatter.Format(expected),
 					CollectionTracker<TKey>.FormatStart(collection.Keys)
@@ -75,12 +55,7 @@ namespace Xunit
 		/// <param name="collection">The collection to be inspected.</param>
 		/// <returns>The value associated with <paramref name="expected"/>.</returns>
 		/// <exception cref="ContainsException">Thrown when the object is not present in the collection</exception>
-		public static TValue Contains<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] TKey, TValue>(
+		public static TValue Contains<TKey, TValue>(
 			TKey expected,
 			IReadOnlyDictionary<TKey, TValue> collection)
 #if XUNIT_NULLABLE
@@ -90,8 +65,7 @@ namespace Xunit
 			GuardArgumentNotNull(nameof(expected), expected);
 			GuardArgumentNotNull(nameof(collection), collection);
 
-			var value = default(TValue);
-			if (!collection.TryGetValue(expected, out value))
+			if (!collection.TryGetValue(expected, out var value))
 				throw ContainsException.ForKeyNotFound(
 					ArgumentFormatter.Format(expected),
 					CollectionTracker<TKey>.FormatStart(collection.Keys)
@@ -109,12 +83,7 @@ namespace Xunit
 		/// <param name="collection">The collection to be inspected.</param>
 		/// <returns>The value associated with <paramref name="expected"/>.</returns>
 		/// <exception cref="ContainsException">Thrown when the object is not present in the collection</exception>
-		public static TValue Contains<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] TKey, TValue>(
+		public static TValue Contains<TKey, TValue>(
 			TKey expected,
 			ConcurrentDictionary<TKey, TValue> collection)
 #if XUNIT_NULLABLE
@@ -131,12 +100,7 @@ namespace Xunit
 		/// <param name="collection">The collection to be inspected.</param>
 		/// <returns>The value associated with <paramref name="expected"/>.</returns>
 		/// <exception cref="ContainsException">Thrown when the object is not present in the collection</exception>
-		public static TValue Contains<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] TKey, TValue>(
+		public static TValue Contains<TKey, TValue>(
 			TKey expected,
 			Dictionary<TKey, TValue> collection)
 #if XUNIT_NULLABLE
@@ -153,12 +117,7 @@ namespace Xunit
 		/// <param name="collection">The collection to be inspected.</param>
 		/// <returns>The value associated with <paramref name="expected"/>.</returns>
 		/// <exception cref="ContainsException">Thrown when the object is not present in the collection</exception>
-		public static TValue Contains<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] TKey, TValue>(
+		public static TValue Contains<TKey, TValue>(
 			TKey expected,
 			ReadOnlyDictionary<TKey, TValue> collection)
 #if XUNIT_NULLABLE
@@ -166,7 +125,6 @@ namespace Xunit
 #endif
 					=> Contains(expected, (IReadOnlyDictionary<TKey, TValue>)collection);
 
-#if XUNIT_IMMUTABLE_COLLECTIONS
 		/// <summary>
 		/// Verifies that a dictionary contains a given key.
 		/// </summary>
@@ -176,19 +134,13 @@ namespace Xunit
 		/// <param name="collection">The collection to be inspected.</param>
 		/// <returns>The value associated with <paramref name="expected"/>.</returns>
 		/// <exception cref="ContainsException">Thrown when the object is not present in the collection</exception>
-		public static TValue Contains<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)]TKey, TValue>(
+		public static TValue Contains<TKey, TValue>(
 			TKey expected,
 			ImmutableDictionary<TKey, TValue> collection)
 #if XUNIT_NULLABLE
 				where TKey : notnull
 #endif
 					=> Contains(expected, (IReadOnlyDictionary<TKey, TValue>)collection);
-#endif
 
 		/// <summary>
 		/// Verifies that a dictionary does not contain a given key.
@@ -198,12 +150,7 @@ namespace Xunit
 		/// <param name="expected">The object expected to be in the collection.</param>
 		/// <param name="collection">The collection to be inspected.</param>
 		/// <exception cref="DoesNotContainException">Thrown when the object is present in the collection</exception>
-		public static void DoesNotContain<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] TKey, TValue>(
+		public static void DoesNotContain<TKey, TValue>(
 			TKey expected,
 			IDictionary<TKey, TValue> collection)
 #if XUNIT_NULLABLE
@@ -229,7 +176,7 @@ namespace Xunit
 		/// <param name="expected">The object expected to be in the collection.</param>
 		/// <param name="collection">The collection to be inspected.</param>
 		/// <exception cref="DoesNotContainException">Thrown when the object is present in the collection</exception>
-		public static void DoesNotContain<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] TKey, TValue>(
+		public static void DoesNotContain<TKey, TValue>(
 			TKey expected,
 			IReadOnlyDictionary<TKey, TValue> collection)
 #if XUNIT_NULLABLE
@@ -255,7 +202,7 @@ namespace Xunit
 		/// <param name="expected">The object expected to be in the collection.</param>
 		/// <param name="collection">The collection to be inspected.</param>
 		/// <exception cref="DoesNotContainException">Thrown when the object is present in the collection</exception>
-		public static void DoesNotContain<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] TKey, TValue>(
+		public static void DoesNotContain<TKey, TValue>(
 			TKey expected,
 			ConcurrentDictionary<TKey, TValue> collection)
 #if XUNIT_NULLABLE
@@ -271,7 +218,7 @@ namespace Xunit
 		/// <param name="expected">The object expected to be in the collection.</param>
 		/// <param name="collection">The collection to be inspected.</param>
 		/// <exception cref="DoesNotContainException">Thrown when the object is present in the collection</exception>
-		public static void DoesNotContain<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] TKey, TValue>(
+		public static void DoesNotContain<TKey, TValue>(
 			TKey expected,
 			Dictionary<TKey, TValue> collection)
 #if XUNIT_NULLABLE
@@ -287,7 +234,7 @@ namespace Xunit
 		/// <param name="expected">The object expected to be in the collection.</param>
 		/// <param name="collection">The collection to be inspected.</param>
 		/// <exception cref="DoesNotContainException">Thrown when the object is present in the collection</exception>
-		public static void DoesNotContain<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.NonPublicFields | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] TKey, TValue>(
+		public static void DoesNotContain<TKey, TValue>(
 			TKey expected,
 			ReadOnlyDictionary<TKey, TValue> collection)
 #if XUNIT_NULLABLE
@@ -295,7 +242,6 @@ namespace Xunit
 #endif
 					=> DoesNotContain(expected, (IReadOnlyDictionary<TKey, TValue>)collection);
 
-#if XUNIT_IMMUTABLE_COLLECTIONS
 		/// <summary>
 		/// Verifies that a dictionary does not contain a given key.
 		/// </summary>
@@ -304,18 +250,12 @@ namespace Xunit
 		/// <param name="expected">The object expected to be in the collection.</param>
 		/// <param name="collection">The collection to be inspected.</param>
 		/// <exception cref="DoesNotContainException">Thrown when the object is present in the collection</exception>
-		public static void DoesNotContain<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)]TKey, TValue>(
+		public static void DoesNotContain<TKey, TValue>(
 			TKey expected,
 			ImmutableDictionary<TKey, TValue> collection)
 #if XUNIT_NULLABLE
 				where TKey : notnull
 #endif
 					=> DoesNotContain(expected, (IReadOnlyDictionary<TKey, TValue>)collection);
-#endif
 	}
 }

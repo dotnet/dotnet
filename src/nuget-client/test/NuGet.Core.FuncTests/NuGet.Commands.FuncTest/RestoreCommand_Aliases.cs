@@ -844,6 +844,98 @@ namespace NuGet.Commands.FuncTest
             result.LockFile.LogMessages[0].TargetGraphs.Should().BeEquivalentTo([apple, banana]);
         }
 
+        // P (apple)  -> P2(net472) -> Net472 package
+        // P (banana) -> P2(net472) -> Net472 package
+        [Fact]
+        public async Task RestoreCommand_WithAliasesOfSameFramework_WithProjectReference_WithAssetTargetFallback_WarningsRaisedWhenApplicable()
+        {
+            using var pathContext = new SimpleTestPathContext();
+            var pkgA = new SimpleTestPackageContext("pkgA", "1.0.0");
+            pkgA.AddFile("lib/net472/pkgA.dll");
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, pkgA);
+
+            string apple = nameof(apple);
+            string banana = nameof(banana);
+
+            var project2Spec = @"
+            {
+              ""frameworks"": {
+                ""apple"": {
+                    ""framework"": ""net472"",
+                    ""targetAlias"": ""apple"",
+                    ""dependencies"": {
+                            ""pkgA"": {
+                                ""version"": ""[1.0.0,)"",
+                                ""target"": ""Package"",
+                            }
+                    }
+                },
+                ""banana"": {
+                    ""framework"": ""net472"",
+                    ""targetAlias"": ""banana"",
+                    ""dependencies"": {
+                            ""pkgA"": {
+                                ""version"": ""[1.0.0,)"",
+                                ""target"": ""Package"",
+                            }
+                    }
+                }
+              }
+            }";
+
+            var project1Spec = @"
+            {
+              ""frameworks"": {
+                ""apple"": {
+                    ""framework"": ""net10.0"",
+                    ""targetAlias"": ""apple"",
+                    ""assetTargetFallback"": true,
+                    ""imports"": [ ""net472"" ],
+                    ""warn"": true,
+                    ""dependencies"": {
+                    }
+                },
+                ""banana"": {
+                    ""framework"": ""net10.0"",
+                    ""targetAlias"": ""banana"",
+                    ""assetTargetFallback"": true,
+                    ""imports"": [ ""net472"" ],
+                    ""warn"": true,
+                    ""dependencies"": {
+                    }
+                }
+              }
+            }";
+
+            var project2 = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project2", pathContext.SolutionRoot, project2Spec);
+            var project1 = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, project1Spec);
+            project1 = project1.WithTestProjectReference(project2);
+
+            // Act
+            var result = await RunRestoreAsync(pathContext, project1, project2);
+
+            // Assert - restore should fail overall due to banana
+            result.Success.Should().BeTrue();
+            result.LockFile.Targets.Should().HaveCount(2);
+
+            // Apple alias should succeed with both the package and its transitive dependency
+            var appleTarget = result.LockFile.GetTarget(apple, null);
+            appleTarget.Should().NotBeNull();
+            appleTarget.Libraries.Should().HaveCount(2);
+            appleTarget.Libraries.Should().Contain(e => e.Name == pkgA.Id);
+            // Banana alias should have no compatible assets for either package
+            var bananaTarget = result.LockFile.GetTarget(banana, null);
+            bananaTarget.Should().NotBeNull();
+            bananaTarget.Libraries.Should().HaveCount(2);
+            bananaTarget.Libraries.Should().Contain(e => e.Name == pkgA.Id);
+
+            // Verify log messages
+            result.LockFile.LogMessages.Should().HaveCount(1);
+            result.LockFile.LogMessages[0].Level.Should().Be(LogLevel.Warning);
+            result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1701);
+            // result.LockFile.LogMessages[0].TargetGraphs.Should().HaveCount(2); https://github.com/NuGet/Home/issues/14815
+        }
+
         internal static Task<RestoreResult> RunRestoreAsync(SimpleTestPathContext pathContext, params PackageSpec[] projects)
         {
             return RunRestoreAsync(pathContext, forceEvaluate: false, new TestLogger(), projects);

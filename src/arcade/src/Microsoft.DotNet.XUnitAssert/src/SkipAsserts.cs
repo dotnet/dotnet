@@ -1,8 +1,4 @@
 #pragma warning disable CA1052 // Static holder types should be static
-#pragma warning disable IDE0058 // Expression value is never used
-#pragma warning disable IDE0161 // Convert to file-scoped namespace
-
-#if XUNIT_SKIP
 
 #if XUNIT_NULLABLE
 #nullable enable
@@ -16,11 +12,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Xunit
 {
-#if XUNIT_VISIBILITY_INTERNAL
-	internal
-#else
-	public
-#endif
 	partial class Assert
 	{
 		/// <summary>
@@ -39,9 +30,9 @@ namespace Xunit
 		}
 
 		/// <summary>
-		/// Will skip the current test unless <paramref name="condition"/> evaluates to <c>true</c>.
+		/// Will skip the current test unless <paramref name="condition"/> evaluates to <see langword="true"/>.
 		/// </summary>
-		/// <param name="condition">When <c>true</c>, the test will continue to run; when <c>false</c>,
+		/// <param name="condition">When <see langword="true"/>, the test will continue to run; when <see langword="false"/>,
 		/// the test will be skipped</param>
 		/// <param name="reason">The message to indicate why the test was skipped</param>
 		public static void SkipUnless(
@@ -59,9 +50,9 @@ namespace Xunit
 		}
 
 		/// <summary>
-		/// Will skip the current test when <paramref name="condition"/> evaluates to <c>true</c>.
+		/// Will skip the current test when <paramref name="condition"/> evaluates to <see langword="true"/>.
 		/// </summary>
-		/// <param name="condition">When <c>true</c>, the test will be skipped; when <c>false</c>,
+		/// <param name="condition">When <see langword="true"/>, the test will be skipped; when <see langword="false"/>,
 		/// the test will continue to run</param>
 		/// <param name="reason">The message to indicate why the test was skipped</param>
 		public static void SkipWhen(
@@ -79,5 +70,3 @@ namespace Xunit
 		}
 	}
 }
-
-#endif

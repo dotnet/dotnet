@@ -153,6 +153,16 @@ parameters:
   displayName: True when build is running from dotnet/dotnet directly
   type: boolean
 
+# Disable binary analysis caching by busting the cache key
+- name: disableBinaryAnalysisCaching
+  type: boolean
+  default: false
+
+# Disable Component Governance detection (e.g. on unsupported platforms)
+- name: disableComponentGovernance
+  type: boolean
+  default: false
+
 jobs:
 - job: ${{ parameters.buildName }}_${{ parameters.targetArchitecture }}${{ replace(format('_BuildPass{0}', coalesce(parameters.buildPass, '1')), '_BuildPass1', '') }}
   pool: ${{ parameters.pool }}
@@ -174,19 +184,8 @@ jobs:
         options: $(defaultContainerOptions)
 
   ${{ if gt(length(parameters.reuseBuildArtifactsFrom), 0) }}:
-    ${{ if eq(parameters.buildPass, '') }}:
-      # For PR builds, skip the stage 2 build if the stage 1 build fails.
-      # Otherwise, run the stage 2 build even if the stage 1 build fails so that we can get a complete assessment of the build status.
-      # The build shortcuts when stage 1 build fails and doesn't produce the SDK.
-      ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-        condition: succeeded()
-      ${{ else }}:
-        condition: succeededOrFailed()
-    ${{ else }}:
-      condition: succeeded()
     dependsOn:
-    - ${{ if gt(length(parameters.reuseBuildArtifactsFrom), 0) }}:
-      - ${{ parameters.reuseBuildArtifactsFrom }}
+    - ${{ parameters.reuseBuildArtifactsFrom }}
   variables:
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - group: AzureDevOps-Artifact-Feeds-Pats
@@ -244,6 +243,10 @@ jobs:
   - ${{ if eq(parameters.pool.os, 'macOS') }}:
     - name: ONEES_ENFORCED_CODEQL_ENABLED
       value: false
+
+  - ${{ if eq(parameters.disableComponentGovernance, true) }}:
+    - name: skipComponentGovernanceDetection
+      value: true
 
   # Build up the command line variables. We avoid doing this in the script sections below
   # because AzDO will not echo command lines if they are more than a single line.
@@ -369,6 +372,10 @@ jobs:
     timeoutInMinutes: 240
 
   templateContext:
+    ${{ if eq(parameters.disableBinaryAnalysisCaching, true) }}:
+      sdl:
+        binaryAnalysisCaching:
+          userState: 'no-cache-$(Build.BuildId)-$(System.JobAttempt)'
     outputParentDirectory: $(Build.ArtifactStagingDirectory)
     outputs:
     - output: pipelineArtifact
@@ -600,9 +607,8 @@ jobs:
       - script: |
           xcrun simctl runtime delete all
         displayName: Reclaim disk space from unused simulator runtimes
-    - ${{ if eq(parameters.targetOS, 'osx') }}:
       - script: |
-          $(sourcesPath)/eng/common/native/install-dependencies.sh osx
+          $(sourcesPath)/eng/common/native/install-dependencies.sh ${{ parameters.targetOS }}
         displayName: Install dependencies
     - ${{ if eq(parameters.buildSourceOnly, 'true') }}:
       - script: |
@@ -788,6 +794,15 @@ jobs:
           fi
 
           eval $customEnvVarsWithBashSyntax
+
+          # Raise the open file descriptor limit to prevent NuGet restore failures
+          # in cross-build containers with restrictive defaults (see dotnet/dotnet#5381)
+          if ! ulimit -n 65536 2>/dev/null; then
+            echo "Warning: Failed to raise open file descriptor limit to 65536." >&2
+            echo "Current soft limit (ulimit -Sn): $(ulimit -Sn 2>/dev/null || echo 'unknown')" >&2
+            echo "Current hard limit (ulimit -Hn): $(ulimit -Hn 2>/dev/null || echo 'unknown')" >&2
+          fi
+
           $customPreBuildArgs ./build.sh $buildArgs
         displayName: Build
         workingDirectory: $(sourcesPath)
@@ -839,6 +854,15 @@ jobs:
           buildArgs=$(echo $buildArgs | xargs) # Remove extra spaces
 
           cd $(sourcesPath)
+
+          # Raise the open file descriptor limit to prevent NuGet restore failures
+          # in cross-build containers with restrictive defaults (see dotnet/dotnet#5381)
+          if ! ulimit -n 65536 2>/dev/null; then
+            echo "Warning: failed to raise open file descriptor limit to 65536. Current limits:"
+            echo "  Soft nofile limit: $(ulimit -Sn 2>/dev/null || echo 'unknown')"
+            echo "  Hard nofile limit: $(ulimit -Hn 2>/dev/null || echo 'unknown')"
+          fi
+
           $customPreBuildArgs ./build.sh $buildArgs
 
         displayName: Run Tests

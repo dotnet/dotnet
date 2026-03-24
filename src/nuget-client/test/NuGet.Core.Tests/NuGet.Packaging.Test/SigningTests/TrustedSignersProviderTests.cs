@@ -21,7 +21,7 @@ namespace NuGet.Packaging.Test
         public void TrustedSignersProvider_Constructor_WithNullSettings_Throws()
         {
             // Act and Assert
-            var ex = Record.Exception(() => new TrustedSignersProvider(settings: null));
+            var ex = Record.Exception(() => new TrustedSignersProvider(settings: null!));
 
             ex.Should().NotBeNull();
             ex.Should().BeOfType<ArgumentNullException>();
@@ -187,7 +187,7 @@ namespace NuGet.Packaging.Test
             var trustedSignersProvider = new TrustedSignersProvider(settings: NullSettings.Instance);
 
             // Act and Assert
-            var ex = Record.Exception(() => trustedSignersProvider.Remove(trustedSigners: null));
+            var ex = Record.Exception(() => trustedSignersProvider.Remove(trustedSigners: null!));
 
             ex.Should().NotBeNull();
             ex.Should().BeOfType<ArgumentException>();
@@ -314,7 +314,7 @@ namespace NuGet.Packaging.Test
             var trustedSignersProvider = new TrustedSignersProvider(settings: NullSettings.Instance);
 
             // Act and Assert
-            var ex = Record.Exception(() => trustedSignersProvider.AddOrUpdateTrustedSigner(trustedSigner: null));
+            var ex = Record.Exception(() => trustedSignersProvider.AddOrUpdateTrustedSigner(trustedSigner: null!));
 
             ex.Should().NotBeNull();
             ex.Should().BeOfType<ArgumentNullException>();
@@ -429,7 +429,7 @@ namespace NuGet.Packaging.Test
         public void GetAllowListEntries_WithNullSettings_Throws()
         {
             // Act and Assert
-            var ex = Record.Exception(() => TrustedSignersProvider.GetAllowListEntries(settings: null, logger: NullLogger.Instance));
+            var ex = Record.Exception(() => TrustedSignersProvider.GetAllowListEntries(settings: null!, logger: NullLogger.Instance));
 
             ex.Should().NotBeNull();
             ex.Should().BeOfType<ArgumentNullException>();
@@ -439,7 +439,7 @@ namespace NuGet.Packaging.Test
         public void GetAllowListEntries_WithNullLogger_Throws()
         {
             // Act and Assert
-            var ex = Record.Exception(() => TrustedSignersProvider.GetAllowListEntries(settings: NullSettings.Instance, logger: null));
+            var ex = Record.Exception(() => TrustedSignersProvider.GetAllowListEntries(settings: NullSettings.Instance, logger: null!));
 
             ex.Should().NotBeNull();
             ex.Should().BeOfType<ArgumentNullException>();

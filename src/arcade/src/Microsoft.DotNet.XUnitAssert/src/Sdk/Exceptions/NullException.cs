@@ -1,7 +1,5 @@
 #pragma warning disable CA1032 // Implement standard exception constructors
-#pragma warning disable IDE0040 // Add accessibility modifiers
 #pragma warning disable IDE0090 // Use 'new(...)'
-#pragma warning disable IDE0161 // Convert to file-scoped namespace
 
 #if XUNIT_NULLABLE
 #nullable enable
@@ -11,7 +9,6 @@
 #endif
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace Xunit.Sdk
@@ -32,16 +29,25 @@ namespace Xunit.Sdk
 
 		/// <summary>
 		/// Creates a new instance of the <see cref="NullException"/> class to be thrown
+		/// when the given pointer value was unexpectedly not null.
+		/// </summary>
+		/// <param name="type">The inner type of the value</param>
+		public static NullException ForNonNullPointer(Type type) =>
+			new NullException(
+				string.Format(
+					CultureInfo.CurrentCulture,
+					"Assert.Null() Failure: Value of type '{0}*' is not null",
+					ArgumentFormatter.FormatTypeName(Assert.GuardArgumentNotNull(nameof(type), type))
+				)
+			);
+
+		/// <summary>
+		/// Creates a new instance of the <see cref="NullException"/> class to be thrown
 		/// when the given nullable struct was unexpectedly not null.
 		/// </summary>
 		/// <param name="type">The inner type of the value</param>
-		/// <param name="actual">The actual non-<c>null</c> value</param>
-		public static Exception ForNonNullStruct<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+		/// <param name="actual">The actual non-<see langword="null"/> value</param>
+		public static Exception ForNonNullStruct<T>(
 			Type type,
 			T? actual)
 				where T : struct =>
@@ -60,15 +66,8 @@ namespace Xunit.Sdk
 		/// Creates a new instance of the <see cref="NullException"/> class to be thrown
 		/// when the given value was unexpectedly not null.
 		/// </summary>
-		/// <param name="actual">The actual non-<c>null</c> value</param>
-		[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2019:Mismatched constraints",
-						Justification = "Assert.GuardArgumentNotNull returns the same type passed in, so the annotations on the T type parameter will work")]
-		public static NullException ForNonNullValue<[DynamicallyAccessedMembers(
-					DynamicallyAccessedMemberTypes.PublicFields
-					| DynamicallyAccessedMemberTypes.NonPublicFields
-					| DynamicallyAccessedMemberTypes.PublicProperties
-					| DynamicallyAccessedMemberTypes.NonPublicProperties
-					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(T actual) =>
+		/// <param name="actual">The actual non-<see langword="null"/> value</param>
+		public static NullException ForNonNullValue(object actual) =>
 			new NullException(
 				string.Format(
 					CultureInfo.CurrentCulture,

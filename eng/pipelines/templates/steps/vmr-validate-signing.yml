@@ -33,6 +33,10 @@ steps:
       xcrun simctl runtime delete all
     displayName: Reclaim disk space from unused simulator runtimes
 
+- ${{ if eq(parameters.OS, 'Linux') }}:
+  - script: df -h
+    displayName: Print free disk space
+
 - task: DownloadPipelineArtifact@2
   displayName: Download Shortstack Vertical Build Artifacts
   continueOnError: ${{ parameters.continueOnError }}

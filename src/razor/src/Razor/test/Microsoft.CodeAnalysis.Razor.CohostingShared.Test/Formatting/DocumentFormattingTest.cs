@@ -4759,6 +4759,475 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     }
 
     [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <button @onclick="()=>{
+                StateHasChanged();}">
+                </button>
+                """,
+            htmlFormatted: """
+                <button @onclick="()=>{
+                StateHasChanged();}">
+                </button>
+                """,
+            expected: """
+                <button @onclick="() =>
+                            {
+                                StateHasChanged();
+                            }">
+                </button>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: true),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda_NoNewLineBeforeOpenBraceInLambdaExpressionBody()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <button @onclick="()=>{
+                StateHasChanged();}">
+                </button>
+                """,
+            htmlFormatted: """
+                <button @onclick="()=>{
+                StateHasChanged();}">
+                </button>
+                """,
+            expected: """
+                <button @onclick="() => {
+                                StateHasChanged();
+                            }">
+                </button>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: false),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda2()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <button foo="bar"
+                @onclick="()=>{
+                StateHasChanged();}">
+                </button>
+                """,
+            htmlFormatted: """
+                <button foo="bar"
+                        @onclick="()=>{
+                StateHasChanged();}">
+                </button>
+                """,
+            expected: """
+                <button foo="bar"
+                        @onclick="() =>
+                            {
+                                StateHasChanged();
+                            }">
+                </button>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: true),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda2_NoNewLineBeforeOpenBraceInLambdaExpressionBody()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <button foo="bar"
+                @onclick="()=>{
+                StateHasChanged();}">
+                </button>
+                """,
+            htmlFormatted: """
+                <button foo="bar"
+                        @onclick="()=>{
+                StateHasChanged();}">
+                </button>
+                """,
+            expected: """
+                <button foo="bar"
+                        @onclick="() => {
+                                StateHasChanged();
+                            }">
+                </button>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: false),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda3()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <div>
+                <button foo="bar"
+                @onclick="()=>{
+                StateHasChanged();}">
+                </button>
+                </div>
+                """,
+            htmlFormatted: """
+                <div>
+                    <button foo="bar"
+                            @onclick="()=>{
+                StateHasChanged();}">
+                    </button>
+                </div>
+                """,
+            expected: """
+                <div>
+                    <button foo="bar"
+                            @onclick="() =>
+                                {
+                                    StateHasChanged();
+                                }">
+                    </button>
+                </div>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: true),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda3_NoNewLineBeforeOpenBraceInLambdaExpressionBody()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <div>
+                <button foo="bar"
+                @onclick="()=>{
+                StateHasChanged();}">
+                </button>
+                </div>
+                """,
+            htmlFormatted: """
+                <div>
+                    <button foo="bar"
+                            @onclick="()=>{
+                StateHasChanged();}">
+                    </button>
+                </div>
+                """,
+            expected: """
+                <div>
+                    <button foo="bar"
+                            @onclick="() => {
+                                    StateHasChanged();
+                                }">
+                    </button>
+                </div>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: false),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda4()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    <div>
+                            <button foo="bar"
+                                            @onclick="()=>{
+                                                             StateHasChanged();}">
+                            </button>
+                    </div>
+                """,
+            htmlFormatted: """
+                <div>
+                    <button foo="bar"
+                            @onclick="()=>{
+                                                             StateHasChanged();}">
+                    </button>
+                </div>
+                """,
+            expected: """
+                <div>
+                    <button foo="bar"
+                            @onclick="() =>
+                                {
+                                    StateHasChanged();
+                                }">
+                    </button>
+                </div>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: true),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda4_NoNewLineBeforeOpenBraceInLambdaExpressionBody()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    <div>
+                            <button foo="bar"
+                                            @onclick="()=>{
+                                                             StateHasChanged();}">
+                            </button>
+                    </div>
+                """,
+            htmlFormatted: """
+                <div>
+                    <button foo="bar"
+                            @onclick="()=>{
+                                                             StateHasChanged();}">
+                    </button>
+                </div>
+                """,
+            expected: """
+                <div>
+                    <button foo="bar"
+                            @onclick="() => {
+                                    StateHasChanged();
+                                }">
+                    </button>
+                </div>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: false),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda_BraceOnNextLine()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <button @onclick="() =>
+                {
+                StateHasChanged();}">
+                </button>
+                """,
+            htmlFormatted: """
+                <button @onclick="() =>
+                {
+                StateHasChanged();}">
+                </button>
+                """,
+            expected: """
+                <button @onclick="() =>
+                            {
+                                StateHasChanged();
+                            }">
+                </button>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: true),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda_BraceOnNextLine_NoNewLineBeforeOpenBraceInLambdaExpressionBody()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <button @onclick="() =>
+                {
+                StateHasChanged();}">
+                </button>
+                """,
+            htmlFormatted: """
+                <button @onclick="() =>
+                {
+                StateHasChanged();}">
+                </button>
+                """,
+            expected: """
+                <button @onclick="() => {
+                                StateHasChanged();
+                            }">
+                </button>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: false),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda_BraceOnNextLine_NestedAttribute()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <div>
+                <button foo="bar"
+                @onclick="() =>
+                {
+                StateHasChanged();}">
+                </button>
+                </div>
+                """,
+            htmlFormatted: """
+                <div>
+                    <button foo="bar"
+                            @onclick="() =>
+                {
+                StateHasChanged();}">
+                    </button>
+                </div>
+                """,
+            expected: """
+                <div>
+                    <button foo="bar"
+                            @onclick="() =>
+                                {
+                                    StateHasChanged();
+                                }">
+                    </button>
+                </div>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: true),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda_BraceOnNextLine_NestedAttribute_NoNewLineBeforeOpenBraceInLambdaExpressionBody()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <div>
+                <button foo="bar"
+                @onclick="() =>
+                {
+                StateHasChanged();}">
+                </button>
+                </div>
+                """,
+            htmlFormatted: """
+                <div>
+                    <button foo="bar"
+                            @onclick="() =>
+                {
+                StateHasChanged();}">
+                    </button>
+                </div>
+                """,
+            expected: """
+                <div>
+                    <button foo="bar"
+                            @onclick="() => {
+                                    StateHasChanged();
+                                }">
+                    </button>
+                </div>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: false),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda_ContentAfterOpenBrace()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <button @onclick="() => { foo();
+                bar(); }">
+                </button>
+                """,
+            htmlFormatted: """
+                <button @onclick="() => { foo();
+                bar(); }">
+                </button>
+                """,
+            expected: """
+                <button @onclick="() =>
+                            {
+                                foo();
+                                bar();
+                            }">
+                </button>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: true),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda_ContentAfterOpenBrace_NoNewLineBeforeOpenBraceInLambdaExpressionBody()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <button @onclick="() => { foo();
+                bar(); }">
+                </button>
+                """,
+            htmlFormatted: """
+                <button @onclick="() => { foo();
+                bar(); }">
+                </button>
+                """,
+            expected: """
+                <button @onclick="() => {
+                                foo();
+                                bar();
+                            }">
+                </button>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: false),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda_SingleLine()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <button @onclick="()=>{foo();}">
+                </button>
+                """,
+            htmlFormatted: """
+                <button @onclick="()=>{foo();}">
+                </button>
+                """,
+            expected: """
+                <button @onclick="() => { foo(); }">
+                </button>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: true),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda_SingleLine_NoNewLineBeforeOpenBraceInLambdaExpressionBody()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <button @onclick="()=>{foo();}">
+                </button>
+                """,
+            htmlFormatted: """
+                <button @onclick="()=>{foo();}">
+                </button>
+                """,
+            expected: """
+                <button @onclick="() => { foo(); }">
+                </button>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: false),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
     public async Task FormatEventCallbackAttributes()
     {
         await RunFormattingTestAsync(
@@ -10038,11 +10507,11 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 <div>
                     <partial name="~/Views/Shared/_TestimonialRow.cshtml"
                              model="new DefaultTitleContentAreaViewModel
-                        {
-                            Title = Model.CurrentPage.TestimonialsTitle,
-                            ContentArea = Model.CurrentPage.TestimonialsContentArea,
-                            ChildCssClass = string.Empty
-                        }" />
+                             {
+                                 Title = Model.CurrentPage.TestimonialsTitle,
+                                 ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                                 ChildCssClass = string.Empty
+                             }" />
                 </div>
                 """,
             fileKind: RazorFileKind.Legacy);
@@ -10113,11 +10582,11 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
 
                 <partial name="~/Views/Shared/_TestimonialRow.cshtml"
                          model="@(new DefaultTitleContentAreaViewModel
-                    {
-                        Title = Model.CurrentPage.TestimonialsTitle,
-                        ContentArea = Model.CurrentPage.TestimonialsContentArea,
-                        ChildCssClass = string.Empty
-                    })" />
+                         {
+                             Title = Model.CurrentPage.TestimonialsTitle,
+                             ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                             ChildCssClass = string.Empty
+                         })" />
 
                 <partial model="@(new DefaultTitleContentAreaViewModel
                          {
@@ -10129,11 +10598,11 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 <div>
                     <partial name="~/Views/Shared/_TestimonialRow.cshtml"
                              model="@(new DefaultTitleContentAreaViewModel
-                        {
-                            Title = Model.CurrentPage.TestimonialsTitle,
-                            ContentArea = Model.CurrentPage.TestimonialsContentArea,
-                            ChildCssClass = string.Empty
-                        })" />
+                             {
+                                 Title = Model.CurrentPage.TestimonialsTitle,
+                                 ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                                 ChildCssClass = string.Empty
+                             })" />
                 </div>
                 """);
     }
@@ -10163,11 +10632,11 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 <div>
                     <partial name="~/Views/Shared/_TestimonialRow.cshtml"
                              model="@(new DefaultTitleContentAreaViewModel
-                                 {
-                                     Title = Model.CurrentPage.TestimonialsTitle,
-                                     ContentArea = Model.CurrentPage.TestimonialsContentArea,
-                                     ChildCssClass = string.Empty
-                                 })" />
+                             {
+                                 Title = Model.CurrentPage.TestimonialsTitle,
+                                 ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                                 ChildCssClass = string.Empty
+                             })" />
                 </div>
                 """;
         await RunFormattingTestAsync(
@@ -10193,11 +10662,11 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 <div>
                     <partial name="~/Views/Shared/_TestimonialRow.cshtml"
                              model="@(new DefaultTitleContentAreaViewModel
-                                 {
-                                     Title = Model.CurrentPage.TestimonialsTitle,
-                                     ContentArea = Model.CurrentPage.TestimonialsContentArea,
-                                     ChildCssClass = string.Empty
-                                 })" />
+                             {
+                                 Title = Model.CurrentPage.TestimonialsTitle,
+                                 ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                                 ChildCssClass = string.Empty
+                             })" />
                 </div>
                 """,
             expected: code);
@@ -11772,4 +12241,12 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </style>
                 """,
             validateHtmlFormattedMatchesWebTools: false);
+
+    private static RazorCSharpSyntaxFormattingOptions GetNewLineBeforeBraceInLambdaExpressionOptions(bool newLineBeforeBraceInLambda)
+        => RazorCSharpSyntaxFormattingOptions.Default with
+        {
+            NewLines = newLineBeforeBraceInLambda
+                ? RazorCSharpSyntaxFormattingOptions.Default.NewLines | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody
+                : RazorCSharpSyntaxFormattingOptions.Default.NewLines & ~RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody
+        };
 }

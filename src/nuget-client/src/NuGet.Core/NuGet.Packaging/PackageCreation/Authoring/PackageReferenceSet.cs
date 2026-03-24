@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -19,7 +17,7 @@ namespace NuGet.Packaging
         /// </summary>
         /// <param name="references">IEnumerable set of string references</param>
         public PackageReferenceSet(IEnumerable<string> references)
-            : this((NuGetFramework)null, references)
+            : this((NuGetFramework?)null, references)
         {
         }
 
@@ -28,7 +26,7 @@ namespace NuGet.Packaging
         /// </summary>
         /// <param name="targetFramework">The target framework to use, pass Any for AnyFramework. Does not allow null.</param>
         /// <param name="references">IEnumerable set of string references</param>
-        public PackageReferenceSet(string targetFramework, IEnumerable<string> references)
+        public PackageReferenceSet(string? targetFramework, IEnumerable<string> references)
             : this(targetFramework != null ? NuGetFramework.Parse(targetFramework) : null, references)
         {
         }
@@ -38,7 +36,7 @@ namespace NuGet.Packaging
         /// </summary>
         /// <param name="targetFramework">The target framework to use.</param>
         /// <param name="references">IEnumerable set of string references</param>
-        public PackageReferenceSet(NuGetFramework targetFramework, IEnumerable<string> references)
+        public PackageReferenceSet(NuGetFramework? targetFramework, IEnumerable<string> references)
         {
             if (references == null)
             {
@@ -51,7 +49,7 @@ namespace NuGet.Packaging
 
         public IReadOnlyCollection<string> References { get; }
 
-        public NuGetFramework TargetFramework { get; }
+        public NuGetFramework? TargetFramework { get; }
 
         public IEnumerable<string> Validate()
         {

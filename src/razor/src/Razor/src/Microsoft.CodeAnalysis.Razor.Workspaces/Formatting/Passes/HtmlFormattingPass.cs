@@ -240,7 +240,7 @@ internal sealed partial class HtmlFormattingPass(
                 ProcessFormatting: processFormatting,
                 CheckForNewLines: true,
                 // Everything below here is default/unused for Html formatting
-                SkipPreviousLine: false,
+                SkippedPreviousLineOriginOffset: null,
                 SkipNextLine: false,
                 SkipNextLineIfBrace: false,
                 FixedIndentLevel: 0,
