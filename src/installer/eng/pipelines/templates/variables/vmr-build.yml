@@ -53,7 +53,7 @@ variables:
     - name: defaultPoolName
       value: $(DncEngInternalBuildPool)
   - name: poolImage_Linux
-    value: 1es-ubuntu-2204
+    value: build.ubuntu.2204.amd64
   - name: poolImage_LinuxArm64
     value: Azure-Linux-3-Arm64
   - name: poolName_LinuxArm64
