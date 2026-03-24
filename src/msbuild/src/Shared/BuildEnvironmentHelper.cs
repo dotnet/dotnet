@@ -220,9 +220,13 @@ namespace Microsoft.Build.Shared
 
             // We're not in VS, check for MSBuild.exe / dll to consider this a standalone environment.
             string msBuildPath = null;
-            if (FileSystems.Default.FileExists(msBuildExecutableCandidate))
+            if (FileSystems.Default.FileExists(msBuildDll))
             {
-                msBuildPath = msBuildExecutableCandidate;
+                msBuildPath = msBuildDll;
+            }
+            else if (FileSystems.Default.FileExists(msBuildExe))
+            {
+                msBuildPath = msBuildExe;
             }
 
             if (!string.IsNullOrEmpty(msBuildPath))
