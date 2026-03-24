@@ -1102,6 +1102,47 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
             fileKind: RazorFileKind.Legacy);
     }
 
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/10796")]
+    public async Task Section_BraceOnNextLine_AtColumnZero()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @section Controls
+                {
+                <label>
+                <span>Office</span>
+                </label>
+                <label>
+                <span>Department</span>
+                </label>
+                }
+                """,
+            htmlFormatted: """
+                @section Controls
+                {
+                <label>
+                    <span>Office</span>
+                </label>
+                <label>
+                    <span>Department</span>
+                </label>
+                }
+                """,
+            expected: """
+                @section Controls
+                {
+                    <label>
+                        <span>Office</span>
+                    </label>
+                    <label>
+                        <span>Department</span>
+                    </label>
+                }
+                """,
+            fileKind: RazorFileKind.Legacy);
+    }
+
     [Theory, CombinatorialData]
     public async Task CodeBlock_SpansMultipleLines(bool inGlobalNamespace)
     {
@@ -8142,6 +8183,54 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                         };
                     }
                 }
+                """);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/9826")]
+    public async Task CodeBlock_ArrayInitializers_InsideHtmlElement()
+    {
+        // The C# Formatter doesn't touch these types of initializers, so nor do we. This test
+        // just verifies we don't regress things and start moving code around.
+        await RunFormattingTestAsync(
+            input: """
+                <table>
+                    @{
+                        var minimum = "";
+                        var maximum = "";
+                        var dateOptions = new[,]
+                        {
+                            {$"Set to minimum ({minimum})", minimum},
+                            {$"Set to maximum ({maximum})", maximum},
+                        };
+                    }
+                </table>
+                """,
+            htmlFormatted: """
+                <table>
+                    @{
+                    var minimum = "";
+                    var maximum = "";
+                    var dateOptions = new[,]
+                    {
+                    {$"Set to minimum ({minimum})", minimum},
+                    {$"Set to maximum ({maximum})", maximum},
+                    };
+                    }
+                </table>
+                """,
+            expected: """
+                <table>
+                    @{
+                        var minimum = "";
+                        var maximum = "";
+                        var dateOptions = new[,]
+                        {
+                            {$"Set to minimum ({minimum})", minimum},
+                            {$"Set to maximum ({maximum})", maximum},
+                        };
+                    }
+                </table>
                 """);
     }
 
