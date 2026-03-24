@@ -158,6 +158,11 @@ parameters:
   type: boolean
   default: false
 
+# Disable Component Governance detection (e.g. on unsupported platforms)
+- name: disableComponentGovernance
+  type: boolean
+  default: false
+
 jobs:
 - job: ${{ parameters.buildName }}_${{ parameters.targetArchitecture }}${{ replace(format('_BuildPass{0}', coalesce(parameters.buildPass, '1')), '_BuildPass1', '') }}
   pool: ${{ parameters.pool }}
@@ -238,6 +243,10 @@ jobs:
   - ${{ if eq(parameters.pool.os, 'macOS') }}:
     - name: ONEES_ENFORCED_CODEQL_ENABLED
       value: false
+
+  - ${{ if eq(parameters.disableComponentGovernance, true) }}:
+    - name: skipComponentGovernanceDetection
+      value: true
 
   # Build up the command line variables. We avoid doing this in the script sections below
   # because AzDO will not echo command lines if they are more than a single line.
