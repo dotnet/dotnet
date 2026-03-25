@@ -240,51 +240,6 @@ internal static class TestTaskUtils
     }
 
     /// <summary>
-<<<<<<< HEAD
-    /// Resolves the full path to the dotnet executable by checking DOTNET_HOST_PATH,
-    /// current directory, and PATH in that order.
-    /// </summary>
-    /// <param name="dotnetExe">The platform-specific dotnet executable name (e.g. "dotnet.exe" or "dotnet").</param>
-    /// <returns>The resolved full path, or <see langword="null"/> if not found.</returns>
-    internal static string? ResolveDotnetPath(string dotnetExe)
-    {
-        //TODO: https://github.com/dotnet/sdk/issues/20 Need to get the dotnet path from MSBuild?
-
-        var dotnetHostPath = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH");
-        if (!dotnetHostPath.IsNullOrEmpty())
-        {
-            var path = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(dotnetHostPath))!, dotnetExe);
-            if (File.Exists(path))
-            {
-                return path;
-            }
-        }
-
-        if (File.Exists(dotnetExe))
-        {
-            return Path.GetFullPath(dotnetExe);
-        }
-
-        var values = Environment.GetEnvironmentVariable("PATH");
-        foreach (var p in values!.Split(Path.PathSeparator))
-        {
-            var fullPath = Path.Combine(p, dotnetExe);
-            if (File.Exists(fullPath))
-            {
-                return fullPath;
-            }
-        }
-
-        return null;
-    }
-
-    /// <inheritdoc cref="ResolveDotnetPath(string)"/>
-    internal static string? ResolveDotnetPath()
-    {
-        var dotnetExe = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "dotnet.exe" : "dotnet";
-
-        return ResolveDotnetPath(dotnetExe);
-=======
     /// Resolves the full path to the dotnet host from the DOTNET_HOST_PATH environment variable.
     /// </summary>
     /// <returns>
@@ -294,6 +249,5 @@ internal static class TestTaskUtils
     {
         var dotnetHostPath = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH");
         return StringUtils.IsNullOrEmpty(dotnetHostPath) ? null : Path.GetFullPath(dotnetHostPath);
->>>>>>> darc/forward/6ec8059-f1931f1
     }
 }
