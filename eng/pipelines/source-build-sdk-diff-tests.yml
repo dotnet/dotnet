@@ -22,6 +22,7 @@ resources:
         include:
         - refs/heads/release/*.0.1xx-preview*
         - refs/heads/internal/release/*.0.?xx*
+        - refs/heads/internal/release/*.0.???
       # Trigger on build stages vs successful pipeline completion for a higher run frequency when there are
       # publish/validation failures.
       stages:
