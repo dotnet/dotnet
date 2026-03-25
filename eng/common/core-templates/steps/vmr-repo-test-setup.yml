@@ -116,6 +116,7 @@ steps:
         & '${{ parameters.darcToolPath }}/darc.exe' vmr backflow '${{ parameters.repoPath }}' --vmr '$(Pipeline.Workspace)/vmr'
       displayName: Apply VMR source changes via backflow (Windows)
       condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+      continueOnError: true
 
     # Run backflow — Unix
     - script: |
@@ -124,6 +125,7 @@ steps:
         '${{ parameters.darcToolPath }}/darc' vmr backflow '${{ parameters.repoPath }}' --vmr '$(Pipeline.Workspace)/vmr'
       displayName: Apply VMR source changes via backflow (Unix)
       condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
+      continueOnError: true
 
   # Update dependencies — Windows
   - powershell: |

@@ -31,6 +31,8 @@ stages:
   displayName: 'Test: dotnet/runtime'
   dependsOn:
   - VMR_Vertical_Build
+  variables:
+  - template: /eng/pipelines/templates/variables/vmr-build.yml@self
   jobs:
   - job: RuntimeLibsTest
     displayName: 'runtime libs tests'
@@ -54,6 +56,7 @@ stages:
         artifactName: 'Windows_x64_Artifacts'
         repoPath: '$(Pipeline.Workspace)/runtime'
         darcToolPath: '$(Pipeline.Workspace)/runtime/artifacts/tools/darc'
+        vmrSha: '$(Build.SourceVersion)'
 
     - script: |
         set -e
