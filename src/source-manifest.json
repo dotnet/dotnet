@@ -49,10 +49,10 @@
       "commitSha": "cda54e3d969844675bb5b8edd45fe2bd39f849c0"
     },
     {
-      "barId": 307712,
+      "barId": 307764,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "c4e4fcdde7e6ae3278273524351452c26a93d757"
+      "commitSha": "0f974e400fdb890c205a32f85b369fb7bc5d9531"
     },
     {
       "barId": 296673,
