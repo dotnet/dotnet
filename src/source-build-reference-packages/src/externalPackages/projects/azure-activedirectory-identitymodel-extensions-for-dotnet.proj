@@ -4,6 +4,11 @@
     <PackagesOutput>$(ProjectDirectory)pack</PackagesOutput>
     <CustomRepoBuild>true</CustomRepoBuild>
     <SourceRevisionId>e67b25be77532af9ba405670b34b4d263d505fde</SourceRevisionId>
+    <!-- The FileVersion revision from the Microsoft-shipped package. This must be updated
+         when the submodule is updated. See https://github.com/dotnet/source-build/issues/5509 -->
+    <FileVersionRevision>50722</FileVersionRevision>
+    <!-- A NuGet package produced by this component, used by tests to validate FileVersionRevision. -->
+    <FileVersionValidationPackage>Microsoft.IdentityModel.Tokens</FileVersionValidationPackage>
   </PropertyGroup>
 
   <Target Name="CustomRepoBuild">
@@ -18,6 +23,7 @@
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:Version=$(AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:FileVersion=$(AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion).$(FileVersionRevision)</BuildCommandArgs>
 
       <PackCommandArgs>$(BuildCommandArgs) --output $(ProjectDirectory)pack</PackCommandArgs>
     </PropertyGroup>
