@@ -698,6 +698,9 @@ nuget sign MyPackage.nupkg -CertificateFingerprint certificate_fingerprint -Outp
   <data name="SignCommandOverwriteDescription" xml:space="preserve">
     <value>Switch to indicate if the current signature should be overwritten. By default the command will fail if the package already has a signature.</value>
   </data>
+  <data name="SignCommandAllowUntrustedRootDescription" xml:space="preserve">
+    <value>Allow signing with certificates whose root certificate is not in a trusted root store. The certificate chain is still built and validated for structure, but UntrustedRoot status is treated as a warning.</value>
+  </data>
   <data name="SignCommandHashAlgorithmDescription" xml:space="preserve">
     <value>Hash algorithm to be used to sign the package. Defaults to SHA256.</value>
   </data>
