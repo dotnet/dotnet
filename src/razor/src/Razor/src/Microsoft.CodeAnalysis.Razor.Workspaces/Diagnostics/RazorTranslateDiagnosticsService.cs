@@ -291,7 +291,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
                 return false;
             }
 
-            return owner.FirstAncestorOrSelf<MarkupElementSyntax>(static n => n.StartTag?.Name.Content == "style") is not null;
+            return owner.FirstAncestorOrSelf<BaseMarkupElementSyntax>(static n => n.StartTag?.Name.Content == "style") is not null;
         }
 
         // Ideally this would be solved instead by not emitting the "!" at the HTML backing file,

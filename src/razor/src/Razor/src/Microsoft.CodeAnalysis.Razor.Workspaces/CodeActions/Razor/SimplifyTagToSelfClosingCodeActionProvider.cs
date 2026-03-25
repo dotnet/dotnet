@@ -50,7 +50,9 @@ internal class SimplifyTagToSelfClosingCodeActionProvider : IRazorCodeActionProv
         }
 
         var owner = syntaxTree.Root.FindInnermostNode(context.StartAbsoluteIndex, includeWhitespace: false)?.FirstAncestorOrSelf<MarkupTagHelperElementSyntax>();
-        if (owner is not MarkupTagHelperElementSyntax markupElementSyntax)
+        if (owner is not MarkupTagHelperElementSyntax markupElementSyntax ||
+            markupElementSyntax.TagHelperStartTag is not { } startTag ||
+            markupElementSyntax.TagHelperEndTag is not { } endTag)
         {
             return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }
@@ -64,8 +66,8 @@ internal class SimplifyTagToSelfClosingCodeActionProvider : IRazorCodeActionProv
         // Provide code action to simplify
         var actionParams = new SimplifyTagToSelfClosingCodeActionParams
         {
-            StartTagCloseAngleIndex = markupElementSyntax.StartTag.CloseAngle.SpanStart,
-            EndTagCloseAngleIndex = markupElementSyntax.EndTag.CloseAngle.EndPosition,
+            StartTagCloseAngleIndex = startTag.CloseAngle.SpanStart,
+            EndTagCloseAngleIndex = endTag.CloseAngle.EndPosition,
         };
 
         var resolutionParams = new RazorCodeActionResolutionParams()

@@ -336,6 +336,7 @@ public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : Co
 
         var sourceText = SourceText.From(input);
 
+        Assumes.NotNull(result);
         var symbolsInformations = result.Value.Second;
         Assert.Equal(spansDict.Values.Count(), symbolsInformations.Length);
 
@@ -363,6 +364,7 @@ public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : Co
         // Roslyn's DocumentSymbol type has an annoying property that makes it hard to serialize
         Assert.NotNull(JsonSerializer.SerializeToDocument(result, JsonHelpers.JsonSerializerOptions));
 
+        Assumes.NotNull(result);
         Assert.True(result.Value.TryGetFirst(out var documentSymbols));
         return documentSymbols;
     }
