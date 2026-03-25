@@ -289,6 +289,11 @@ internal sealed class FormattingVisitor : SyntaxWalker
 
         static bool HasUnspecifiedCascadingTypeParameter(MarkupTagHelperElementSyntax node)
         {
+            if (node.TagHelperStartTag is not { } startTag)
+            {
+                return false;
+            }
+
             if (node.TagHelperInfo.BindingResult.TagHelpers is not { Count: > 0 } descriptors)
             {
                 return false;
@@ -308,7 +313,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
             // Get all type parameters for later use. Array is fine to use as the list should be tiny (I hope!!)
             var typeParameterNames = descriptors.SelectMany(d => d.GetTypeParameters().Select(p => p.Name)).ToArray();
 
-            var attributes = node.StartTag.Attributes.OfType<MarkupTagHelperAttributeSyntax>();
+            var attributes = startTag.Attributes.OfType<MarkupTagHelperAttributeSyntax>();
             foreach (var attribute in attributes)
             {
                 if (attribute.TagHelperAttributeInfo.Bound)

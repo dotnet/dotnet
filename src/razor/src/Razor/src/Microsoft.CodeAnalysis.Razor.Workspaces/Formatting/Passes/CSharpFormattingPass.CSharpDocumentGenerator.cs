@@ -561,34 +561,50 @@ internal partial class CSharpFormattingPass
 
             public override LineInfo VisitMarkupStartTag(MarkupStartTagSyntax node)
             {
-                var element = (MarkupElementSyntax)node.Parent;
+                return VisitStartTag(node);
+            }
 
+            public override LineInfo VisitMarkupTagHelperStartTag(MarkupTagHelperStartTagSyntax node)
+            {
+                return VisitStartTag(node);
+            }
+
+            private LineInfo VisitStartTag(BaseMarkupStartTagSyntax node)
+            {
+                var closeAngle = node.GetEndTag()?.CloseAngle ?? node.CloseAngle;
                 if (ElementHasSignificantWhitespace(node))
                 {
                     // The contents of some html tags is significant, so we never want any formatting to happen in their contents
                     if (GetLineNumber(node) == GetLineNumber(node.CloseAngle))
                     {
-                        _ignoreUntilLine = GetLineNumber(element.EndTag?.CloseAngle ?? element.StartTag.CloseAngle);
+                        _ignoreUntilLine = GetLineNumber(closeAngle);
                     }
 
                     return EmitCurrentLineAsComment();
                 }
 
-                var result = VisitStartTag(node);
+                var lineInfo = ElementCausesIndentation(node)
+                    ? EmitOpenBraceLine()          // When an element causes indentation, we emit an open brace to tell the C# formatter to indent.
+                    : EmitCurrentLineAsComment();  // This is a single line element, so it doesn't cause indentation
 
-                if (RazorSyntaxFacts.IsScriptOrStyleBlock(element) &&
+                if (RazorSyntaxFacts.IsScriptOrStyleBlock(node.ParentElement) &&
                     _honourHtmlFormattingUntilLine is null)
                 {
                     // If this is an element at the root level, we want to record where it ends. We can't rely on the Visit method
                     // for it, because it might not be at the start of a line. We only care about contents though, so thats why
                     // we are doing this after emitting this line, and subtracting one from the end element line number.
-                    _honourHtmlFormattingUntilLine = GetLineNumber(element.EndTag?.CloseAngle ?? element.StartTag.CloseAngle) - 1;
+                    _honourHtmlFormattingUntilLine = GetLineNumber(closeAngle) - 1;
                 }
 
-                return result;
+                return lineInfo;
             }
 
             public override LineInfo VisitMarkupEndTag(MarkupEndTagSyntax node)
+            {
+                return VisitEndTag(node);
+            }
+
+            public override LineInfo VisitMarkupTagHelperEndTag(MarkupTagHelperEndTagSyntax node)
             {
                 return VisitEndTag(node);
             }
@@ -614,23 +630,6 @@ internal partial class CSharpFormattingPass
 
                 _builder.AppendLine();
                 return CreateLineInfo();
-            }
-
-            public override LineInfo VisitMarkupTagHelperStartTag(MarkupTagHelperStartTagSyntax node)
-            {
-                return VisitStartTag(node);
-            }
-
-            private LineInfo VisitStartTag(BaseMarkupStartTagSyntax node)
-            {
-                if (ElementCausesIndentation(node))
-                {
-                    // When an element causes indentation, we emit an open brace to tell the C# formatter to indent.
-                    return EmitOpenBraceLine();
-                }
-
-                // This is a single line element, so it doesn't cause indentation
-                return EmitCurrentLineAsComment();
             }
 
             private bool ElementCausesIndentation(BaseMarkupStartTagSyntax node)
@@ -797,11 +796,6 @@ internal partial class CSharpFormattingPass
                 {
                     throw new InvalidOperationException($"Unknown attribute indentation style '{_attributeIndentStyle}'.");
                 }
-            }
-
-            public override LineInfo VisitMarkupTagHelperEndTag(MarkupTagHelperEndTagSyntax node)
-            {
-                return VisitEndTag(node);
             }
 
             public override LineInfo VisitMarkupTransition(MarkupTransitionSyntax node)

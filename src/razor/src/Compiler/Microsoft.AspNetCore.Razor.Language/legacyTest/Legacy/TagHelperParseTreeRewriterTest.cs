@@ -59,7 +59,7 @@ public class TagHelperParseTreeRewriterTest : TagHelperRewritingTestBase
         Assert.Empty(errorSink.GetErrorsAndClear());
 
         // Act
-        var pairs = TagHelperParseTreeRewriter.Rewriter.GetAttributeNameValuePairs(element.StartTag);
+        var pairs = TagHelperParseTreeRewriter.Rewriter.GetAttributeNameValuePairs(element.MarkupStartTag);
 
         // Assert
         Assert.Equal(expectedPairs, pairs);
