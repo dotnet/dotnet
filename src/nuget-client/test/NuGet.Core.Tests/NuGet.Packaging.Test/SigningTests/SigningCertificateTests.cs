@@ -40,7 +40,7 @@ namespace NuGet.Packaging.Test
             SigningCertificate signingCertificate = SigningCertificate.Read(bytes);
 
             Assert.Equal(1, signingCertificate.Certificates.Count);
-            Assert.Equal(1, signingCertificate.Policies.Count);
+            Assert.Equal(1, signingCertificate.Policies!.Count);
 
             PolicyInformation policyInfo = signingCertificate.Policies[0];
 

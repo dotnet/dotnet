@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Security.Cryptography;
 using NuGet.Packaging.Signing.DerEncoding;
 
@@ -27,9 +25,9 @@ namespace NuGet.Packaging.Signing
     public sealed class PolicyQualifierInfo
     {
         public Oid PolicyQualifierId { get; }
-        public byte[] Qualifier { get; }
+        public byte[]? Qualifier { get; }
 
-        private PolicyQualifierInfo(Oid policyQualifierId, byte[] qualifier)
+        private PolicyQualifierInfo(Oid policyQualifierId, byte[]? qualifier)
         {
             PolicyQualifierId = policyQualifierId;
             Qualifier = qualifier;
@@ -46,7 +44,7 @@ namespace NuGet.Packaging.Signing
         {
             var policyQualifierReader = reader.ReadSequence();
             var policyQualifierId = policyQualifierReader.ReadOid();
-            byte[] qualifier = null;
+            byte[]? qualifier = null;
 
             if (policyQualifierReader.HasData)
             {
