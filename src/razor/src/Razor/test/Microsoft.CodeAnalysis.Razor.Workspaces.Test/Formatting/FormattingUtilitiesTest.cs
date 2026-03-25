@@ -25,8 +25,7 @@ public class FormattingUtilitiesTest
         var actual = FormattingUtilities.GetIndentationLevel(text.Lines[0], text.Length, insertSpaces: true, tabSize, out var additionalIndentation);
 
         Assert.Equal(level, actual);
-        Assert.Equal(additional, additionalIndentation.Length);
-        Assert.All(additionalIndentation, c => Assert.Equal(' ', c));
+        Assert.Equal(additional, additionalIndentation);
     }
 
     [Theory]
@@ -45,8 +44,7 @@ public class FormattingUtilitiesTest
         var actual = FormattingUtilities.GetIndentationLevel(text.Lines[0], text.Length, insertSpaces: false, tabSize: 4, out var additionalIndentation);
 
         Assert.Equal(level, actual);
-        Assert.Equal(additional, additionalIndentation.Length);
-        Assert.All(additionalIndentation, c => Assert.Equal(' ', c));
+        Assert.Equal(additional, additionalIndentation);
     }
 
     [Theory]

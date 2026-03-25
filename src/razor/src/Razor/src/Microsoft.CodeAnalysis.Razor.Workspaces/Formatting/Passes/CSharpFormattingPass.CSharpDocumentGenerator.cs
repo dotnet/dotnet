@@ -422,7 +422,7 @@ internal partial class CSharpFormattingPass
                 // Html attributes are not valid.
                 // TODO: The traverse up the tree here is not ideal. See comments in https://github.com/dotnet/razor/issues/11371
                 var htmlIndentLevel = 0;
-                string? additionalIndentation = null;
+                int? additionalIndentation = null;
                 var attributeNode = node.Ancestors().FirstOrDefault(n => n.IsAnyAttributeSyntax())
                     ?? (previousLineStartedWithAttributeName ? previousTokenParent?.Parent : null);
                 if (attributeNode?.Parent is BaseMarkupStartTagSyntax attributeStartTag)
@@ -751,12 +751,6 @@ internal partial class CSharpFormattingPass
                         // If this is the last line of a tag that shouldn't be indented, honour that
                         _ignoreUntilLine = GetLineNumber(startTag.GetEndTag()?.CloseAngle ?? startTag.CloseAngle);
                     }
-                    else if (ElementCausesIndentation(startTag) && htmlIndentLevel > 0)
-                    {
-                        // If the element has caused indentation, then we'll want to take one level off our attribute indentation to
-                        // compensate. Need to be careful here because things like `<a` are likely less than a single indent level.
-                        htmlIndentLevel--;
-                    }
 
                     return EmitCurrentLineAsComment(htmlIndentLevel: htmlIndentLevel, additionalIndentation: additionalIndentation);
                 }
@@ -764,19 +758,20 @@ internal partial class CSharpFormattingPass
                 return null;
             }
 
-            private void GetAttributeIndentation(BaseMarkupStartTagSyntax startTag, out int htmlIndentLevel, out string additionalIndentation)
+            private void GetAttributeIndentation(BaseMarkupStartTagSyntax startTag, out int htmlIndentLevel, out int additionalIndentation)
             {
-                additionalIndentation = "";
+                additionalIndentation = 0;
+                var startTagAddsIndentation = ElementCausesIndentation(startTag) && !ElementHasSignificantWhitespace(startTag);
 
                 if (_attributeIndentStyle == AttributeIndentStyle.IndentByOne)
                 {
                     // Indent attributes by one level to match child elements.
-                    htmlIndentLevel = 1;
+                    htmlIndentLevel = startTagAddsIndentation ? 0 : 1;
                 }
                 else if (_attributeIndentStyle == AttributeIndentStyle.IndentByTwo)
                 {
                     // Indent attributes by two levels to differentiate them from child elements.
-                    htmlIndentLevel = 2;
+                    htmlIndentLevel = startTagAddsIndentation ? 1 : 2;
                 }
                 else if (_attributeIndentStyle == AttributeIndentStyle.AlignWithFirst)
                 {
@@ -786,9 +781,17 @@ internal partial class CSharpFormattingPass
 
                     // We need to line up with the first attribute, but the start tag might not be the first thing on the line,
                     // so it's really relative to the first non-whitespace character on the line. We use the line that the attribute
-                    // is on, just in case its not on the same line as the start tag.
+                    // is on, just in case it's not on the same line as the start tag.
                     var lineStart = _sourceText.Lines[GetLineNumber(nameSpan)].GetFirstNonWhitespacePosition().GetValueOrDefault();
                     htmlIndentLevel = FormattingUtilities.GetIndentationLevel(nameSpan.Start - lineStart, _tabSize, out additionalIndentation);
+
+                    if (startTagAddsIndentation &&
+                        GetLineNumber(nameSpan) == GetLineNumber(startTag.Name))
+                    {
+                        // If the element has caused indentation, then we'll want to take one level off our attribute indentation to
+                        // compensate.
+                        htmlIndentLevel--;
+                    }
                 }
                 else
                 {
@@ -1136,7 +1139,7 @@ internal partial class CSharpFormattingPass
                 return CreateLineInfo(processFormatting: true, checkForNewLines: true);
             }
 
-            private LineInfo EmitCurrentLineAsComment(int htmlIndentLevel = 0, string? additionalIndentation = null)
+            private LineInfo EmitCurrentLineAsComment(int htmlIndentLevel = 0, int? additionalIndentation = null)
             {
                 _builder.AppendLine($"//");
                 return CreateLineInfo(htmlIndentLevel: htmlIndentLevel, additionalIndentation: additionalIndentation);
@@ -1192,7 +1195,7 @@ internal partial class CSharpFormattingPass
                 int formattedLength = 0,
                 int formattedOffset = 0,
                 int formattedOffsetFromEndOfLine = 0,
-                string? additionalIndentation = null)
+                int? additionalIndentation = null)
             {
                 // We sometimes want to honour the indentation that the Html formatter supplied, when inside the right type of tag
                 // but we will also have added our own C# indentation on top of that, so we need to subtract one level to compensate.
@@ -1201,7 +1204,8 @@ internal partial class CSharpFormattingPass
                     _honourHtmlFormattingUntilLine is { } endLine &&
                     endLine >= _currentLine.LineNumber)
                 {
-                    htmlIndentLevel = FormattingUtilities.GetIndentationLevel(_currentLine, _currentFirstNonWhitespacePosition, _insertSpaces, _tabSize, out additionalIndentation) - 1;
+                    htmlIndentLevel = FormattingUtilities.GetIndentationLevel(_currentLine, _currentFirstNonWhitespacePosition, _insertSpaces, _tabSize, out var calculatedAdditionalIndentation) - 1;
+                    additionalIndentation = calculatedAdditionalIndentation;
                 }
 
                 return new(
