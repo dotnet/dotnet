@@ -2,8 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#nullable disable
-
 using System.Security.Cryptography;
 #if IS_DESKTOP
 using System;
@@ -24,7 +22,7 @@ namespace NuGet.Packaging.Signing
 #if IS_DESKTOP
         public const string TimestampTokenInfoId = "1.2.840.113549.1.9.16.1.4";
 
-        private TstInfo _decoded;
+        private TstInfo? _decoded;
 
         private TstInfo Decoded
         {
@@ -110,9 +108,9 @@ namespace NuGet.Packaging.Signing
 
         public bool IsOrdering => Decoded.Ordering;
 
-        public byte[] GetNonce()
+        public byte[]? GetNonce()
         {
-            var nonce = (byte[])Decoded.Nonce?.Clone();
+            var nonce = (byte[]?)Decoded.Nonce?.Clone();
 
             if (nonce != null)
             {
@@ -123,19 +121,19 @@ namespace NuGet.Packaging.Signing
             return nonce;
         }
 
-        public byte[] GetTimestampAuthorityName()
+        public byte[]? GetTimestampAuthorityName()
         {
-            return (byte[])Decoded.Tsa?.Clone();
+            return (byte[]?)Decoded.Tsa?.Clone();
         }
 
         public bool HasExtensions => Decoded.Extensions != null;
 
         public X509ExtensionCollection GetExtensions()
         {
-            return ShallowCopy(Decoded.Extensions, preserveNull: false);
+            return ShallowCopy(Decoded.Extensions, preserveNull: false)!;
         }
 
-        internal static X509ExtensionCollection ShallowCopy(X509ExtensionCollection existing, bool preserveNull)
+        internal static X509ExtensionCollection? ShallowCopy(X509ExtensionCollection? existing, bool preserveNull)
         {
             if (preserveNull && existing == null)
                 return null;
@@ -159,7 +157,7 @@ namespace NuGet.Packaging.Signing
             base.CopyFrom(asnEncodedData);
         }
 
-        internal static byte[] CopyFromNative(ref Rfc3161TimestampWin32.CRYPTOAPI_BLOB blob)
+        internal static byte[]? CopyFromNative(ref Rfc3161TimestampWin32.CRYPTOAPI_BLOB blob)
         {
             if (blob.cbData == 0)
                 return null;

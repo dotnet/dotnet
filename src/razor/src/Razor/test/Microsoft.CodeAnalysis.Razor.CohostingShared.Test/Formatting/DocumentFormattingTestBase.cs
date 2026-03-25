@@ -83,7 +83,7 @@ public abstract class DocumentFormattingTestBase(ITestOutputHelper testOutputHel
 
             var htmlEdited = source.WithChanges(htmlChanges);
             var htmlEditedLegacy = source.WithChanges(htmlChangesResult ?? []);
-            AssertEx.EqualOrDiff(htmlEdited.ToString(), htmlEditedLegacy.ToString());
+            AssertEx.EqualOrDiff(htmlEdited.ToString(), htmlEditedLegacy.ToString(), message: "htmlFormatted doesn't match WebTools");
             AssertEx.EqualOrDiff(htmlFormatted, htmlEditedLegacy.ToString());
             AssertEx.EqualOrDiff(htmlFormatted, htmlEdited.ToString());
 #endif

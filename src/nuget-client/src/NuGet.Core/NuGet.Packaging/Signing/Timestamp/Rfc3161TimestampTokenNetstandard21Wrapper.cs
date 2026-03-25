@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 #if IS_CORECLR
 using System;
 using System.Security.Cryptography;
@@ -22,16 +20,15 @@ namespace NuGet.Packaging.Signing
             X509Certificate2Collection additionalCerts,
             byte[] encoded)
         {
-            bool success = System.Security.Cryptography.Pkcs.Rfc3161TimestampToken.TryDecode(
+            if (!Rfc3161TimestampToken.TryDecode(
                 new ReadOnlyMemory<byte>(encoded),
-                out _rfc3161TimestampToken,
-                out var _);
-
-            if (!success)
+                out var rfc3161TimestampToken,
+                out var _))
             {
                 throw new CryptographicException(Strings.InvalidAsn1);
             }
 
+            _rfc3161TimestampToken = rfc3161TimestampToken;
             TokenInfo = new Rfc3161TimestampTokenInfoNetstandard21Wrapper(_rfc3161TimestampToken.TokenInfo);
         }
 

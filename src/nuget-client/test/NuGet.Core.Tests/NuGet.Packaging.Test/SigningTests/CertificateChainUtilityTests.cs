@@ -28,7 +28,7 @@ namespace NuGet.Packaging.Test
         {
             var exception = Assert.Throws<ArgumentNullException>(
                 () => CertificateChainUtility.GetCertificateChain(
-                    certificate: null,
+                    certificate: null!,
                     extraStore: new X509Certificate2Collection(),
                     logger: NullLogger.Instance,
                     certificateType: CertificateType.Signature));
@@ -42,7 +42,7 @@ namespace NuGet.Packaging.Test
             var exception = Assert.Throws<ArgumentNullException>(
                 () => CertificateChainUtility.GetCertificateChain(
                     new X509Certificate2(),
-                    extraStore: null,
+                    extraStore: null!,
                     logger: NullLogger.Instance,
                     certificateType: CertificateType.Signature));
 
@@ -56,7 +56,7 @@ namespace NuGet.Packaging.Test
                 () => CertificateChainUtility.GetCertificateChain(
                     new X509Certificate2(),
                     new X509Certificate2Collection(),
-                    logger: null,
+                    logger: null!,
                     certificateType: CertificateType.Signature));
 
             Assert.Equal("logger", exception.ParamName);
@@ -145,10 +145,37 @@ namespace NuGet.Packaging.Test
         }
 
         [Fact]
+        public void GetCertificateChain_WithUntrustedRoot_AllowUntrustedRoot_ReturnsChain()
+        {
+            using (X509ChainHolder chainHolder = X509ChainHolder.CreateForCodeSigning())
+            using (X509Certificate2 rootCertificate = SigningTestUtility.GetCertificate("root.crt"))
+            using (X509Certificate2 intermediateCertificate = SigningTestUtility.GetCertificate("intermediate.crt"))
+            using (X509Certificate2 leafCertificate = SigningTestUtility.GetCertificate("leaf.crt"))
+            {
+                IX509Chain chain = chainHolder.Chain2;
+                var extraStore = new X509Certificate2Collection() { rootCertificate, intermediateCertificate };
+                var logger = new TestLogger();
+
+                using (IX509CertificateChain certificateChain = CertificateChainUtility.GetCertificateChain(
+                    leafCertificate,
+                    extraStore,
+                    logger,
+                    CertificateType.Signature,
+                    allowUntrustedRoot: true))
+                {
+                    Assert.True(certificateChain.Count > 0);
+                }
+
+                Assert.Equal(0, logger.Errors);
+                SigningTestUtility.AssertUntrustedRoot(logger.LogMessages, LogLevel.Warning);
+            }
+        }
+
+        [Fact]
         public void GetCertificateChain_WhenCertChainNull_Throws()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => CertificateChainUtility.GetCertificateChain(x509Chain: null));
+                () => CertificateChainUtility.GetCertificateChain(x509Chain: null!));
 
             Assert.Equal("x509Chain", exception.ParamName);
         }
@@ -184,7 +211,7 @@ namespace NuGet.Packaging.Test
             using (X509Certificate2 certificate = _fixture.GetDefaultCertificate())
             {
                 ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
-                    () => CertificateChainUtility.BuildWithPolicy(chain: null, certificate));
+                    () => CertificateChainUtility.BuildWithPolicy(chain: null!, certificate));
 
                 Assert.Equal("chain", exception.ParamName);
             }
@@ -194,7 +221,7 @@ namespace NuGet.Packaging.Test
         public void BuildWithPolicy_WhenCertificateIsNull_Throws()
         {
             ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
-                () => CertificateChainUtility.BuildWithPolicy(Mock.Of<IX509Chain>(), certificate: null));
+                () => CertificateChainUtility.BuildWithPolicy(Mock.Of<IX509Chain>(), certificate: null!));
 
             Assert.Equal("certificate", exception.ParamName);
         }

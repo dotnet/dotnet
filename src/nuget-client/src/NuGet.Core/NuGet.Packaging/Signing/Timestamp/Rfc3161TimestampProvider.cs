@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -98,7 +96,7 @@ namespace NuGet.Packaging.Signing
 
             // quick check for response validity
             var normalizedNonce = rfc3161TimestampRequest.GetNonce();
-            ValidateTimestampResponse(normalizedNonce, request.HashedMessage, timestampToken);
+            ValidateTimestampResponse(normalizedNonce!, request.HashedMessage, timestampToken);
 
             var timestampCms = timestampToken.AsSignedCms();
             ValidateTimestampCms(request.SigningSpecifications, timestampCms, timestampToken);
@@ -112,7 +110,7 @@ namespace NuGet.Packaging.Signing
             var signerInfo = timestampCms.SignerInfos[0];
 
             using (var chain = CertificateChainUtility.GetCertificateChain(
-                signerInfo.Certificate,
+                signerInfo.Certificate!,
                 timestampCms.Certificates,
                 logger,
                 CertificateType.Timestamp))
@@ -219,7 +217,7 @@ namespace NuGet.Packaging.Signing
         /// </summary>
         private static string GetNameOrOidString(Oid oid)
         {
-            return oid.FriendlyName?.ToUpper(CultureInfo.InvariantCulture) ?? oid.Value;
+            return oid.FriendlyName?.ToUpper(CultureInfo.InvariantCulture) ?? oid.Value!;
         }
 
         private static byte[] GenerateNonce()

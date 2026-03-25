@@ -1,9 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 // ZIP specification: http://www.pkware.com/documents/casestudies/APPNOTE.TXT
@@ -23,7 +22,7 @@ namespace NuGet.Packaging.Signing
             Data = data;
         }
 
-        internal static bool TryRead(CentralDirectoryHeader header, out IReadOnlyList<ExtraField> extraFields)
+        internal static bool TryRead(CentralDirectoryHeader header, [NotNullWhen(returnValue: true)] out IReadOnlyList<ExtraField>? extraFields)
         {
             extraFields = null;
 
@@ -46,7 +45,7 @@ namespace NuGet.Packaging.Signing
                 out extraFields);
         }
 
-        internal static bool TryRead(LocalFileHeader header, out IReadOnlyList<ExtraField> extraFields)
+        internal static bool TryRead(LocalFileHeader header, [NotNullWhen(returnValue: true)] out IReadOnlyList<ExtraField>? extraFields)
         {
             extraFields = null;
 

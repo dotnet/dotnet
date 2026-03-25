@@ -9,7 +9,7 @@ namespace NuGet.Packaging.Signing
 {
     internal interface IX509Chain : IDisposable
     {
-        ILogMessage AdditionalContext { get; }
+        ILogMessage? AdditionalContext { get; }
 
         /// <summary>
         /// This exists purely to avoid breaking existing public API's which require an <see cref="X509Chain" /> instance.

@@ -1102,6 +1102,47 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
             fileKind: RazorFileKind.Legacy);
     }
 
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/10796")]
+    public async Task Section_BraceOnNextLine_AtColumnZero()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @section Controls
+                {
+                <label>
+                <span>Office</span>
+                </label>
+                <label>
+                <span>Department</span>
+                </label>
+                }
+                """,
+            htmlFormatted: """
+                @section Controls
+                {
+                <label>
+                    <span>Office</span>
+                </label>
+                <label>
+                    <span>Department</span>
+                </label>
+                }
+                """,
+            expected: """
+                @section Controls
+                {
+                    <label>
+                        <span>Office</span>
+                    </label>
+                    <label>
+                        <span>Department</span>
+                    </label>
+                }
+                """,
+            fileKind: RazorFileKind.Legacy);
+    }
+
     [Theory, CombinatorialData]
     public async Task CodeBlock_SpansMultipleLines(bool inGlobalNamespace)
     {
@@ -3382,6 +3423,266 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     }
 
     [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12938")]
+    public async Task FormatWrappedAttributesOnShortTag()
+    {
+        await RunFormattingTestAsync(
+            input: $$"""
+                <em href="#"
+                            disabled
+                        style="hello"
+                  @onclick="foo()">
+                </em>
+                """,
+            htmlFormatted: $$"""
+                <em href="#"
+                    disabled
+                    style="hello"
+                    @onclick="foo()">
+                </em>
+                """,
+            expected: $$"""
+                <em href="#"
+                    disabled
+                    style="hello"
+                    @onclick="foo()">
+                </em>
+                """);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12938")]
+    public async Task FormatWrappedAttributesOnShortTag_WithContent()
+    {
+        await RunFormattingTestAsync(
+            input: $$"""
+                <em href="#"
+                            disabled
+                        style="hello"
+                  @onclick="foo()">
+                    Hello World
+                </em>
+                """,
+            htmlFormatted: $$"""
+                <em href="#"
+                    disabled
+                    style="hello"
+                    @onclick="foo()">
+                    Hello World
+                </em>
+                """,
+            expected: $$"""
+                <em href="#"
+                    disabled
+                    style="hello"
+                    @onclick="foo()">
+                    Hello World
+                </em>
+                """);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12938")]
+    public async Task FormatWrappedAttributesOnShortTag_NestedInHtml()
+    {
+        await RunFormattingTestAsync(
+            input: $$"""
+                <div>
+                    <em href="#"
+                                disabled
+                            style="hello"
+                      @onclick="foo()">
+                    </em>
+                </div>
+                """,
+            htmlFormatted: $$"""
+                <div>
+                    <em href="#"
+                        disabled
+                        style="hello"
+                        @onclick="foo()">
+                    </em>
+                </div>
+                """,
+            expected: $$"""
+                <div>
+                    <em href="#"
+                        disabled
+                        style="hello"
+                        @onclick="foo()">
+                    </em>
+                </div>
+                """);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12938")]
+    public async Task FormatWrappedAttributesOnShortTag_InIfBlock()
+    {
+        await RunFormattingTestAsync(
+            input: $$"""
+                @if (true)
+                {
+                    <em href="#"
+                                disabled
+                            style="hello"
+                      @onclick="foo()">
+                    </em>
+                }
+                """,
+            htmlFormatted: $$"""
+                @if (true)
+                {
+                <em href="#"
+                    disabled
+                    style="hello"
+                    @onclick="foo()">
+                </em>
+                }
+                """,
+            expected: $$"""
+                @if (true)
+                {
+                    <em href="#"
+                        disabled
+                        style="hello"
+                        @onclick="foo()">
+                    </em>
+                }
+                """);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12938")]
+    public async Task FormatWrappedAttributesOnShortestTag()
+    {
+        await RunFormattingTestAsync(
+            input: $$"""
+                <a href="#"
+                            disabled
+                        style="hello"
+                  @onclick="foo()">
+                </a>
+                """,
+            htmlFormatted: $$"""
+                <a href="#"
+                   disabled
+                   style="hello"
+                   @onclick="foo()">
+                </a>
+                """,
+            expected: $$"""
+                <a href="#"
+                   disabled
+                   style="hello"
+                   @onclick="foo()">
+                </a>
+                """);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12938")]
+    public async Task FormatWrappedAttributesOnShortestTag_WithContent()
+    {
+        await RunFormattingTestAsync(
+            input: $$"""
+                <a href="#"
+                            disabled
+                        style="hello"
+                  @onclick="foo()">
+                    Hello World
+                </a>
+                """,
+            htmlFormatted: $$"""
+                <a href="#"
+                   disabled
+                   style="hello"
+                   @onclick="foo()">
+                    Hello World
+                </a>
+                """,
+            expected: $$"""
+                <a href="#"
+                   disabled
+                   style="hello"
+                   @onclick="foo()">
+                    Hello World
+                </a>
+                """);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12938")]
+    public async Task FormatWrappedAttributesOnShortestTag_NestedInHtml()
+    {
+        await RunFormattingTestAsync(
+            input: $$"""
+                <div>
+                    <a href="#"
+                                disabled
+                            style="hello"
+                      @onclick="foo()">
+                    </a>
+                </div>
+                """,
+            htmlFormatted: $$"""
+                <div>
+                    <a href="#"
+                       disabled
+                       style="hello"
+                       @onclick="foo()">
+                    </a>
+                </div>
+                """,
+            expected: $$"""
+                <div>
+                    <a href="#"
+                       disabled
+                       style="hello"
+                       @onclick="foo()">
+                    </a>
+                </div>
+                """);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12938")]
+    public async Task FormatWrappedAttributesOnShortestTag_InIfBlock()
+    {
+        await RunFormattingTestAsync(
+            input: $$"""
+                @if (true)
+                {
+                    <a href="#"
+                                disabled
+                            style="hello"
+                      @onclick="foo()">
+                    </a>
+                }
+                """,
+            htmlFormatted: $$"""
+                @if (true)
+                {
+                <a href="#"
+                   disabled
+                   style="hello"
+                   @onclick="foo()">
+                </a>
+                }
+                """,
+            expected: $$"""
+                @if (true)
+                {
+                    <a href="#"
+                       disabled
+                       style="hello"
+                       @onclick="foo()">
+                    </a>
+                }
+                """);
+    }
+
+    [Fact]
     [WorkItem("https://devdiv.visualstudio.com/DevDiv/_workitems/edit/2471065")]
     public Task MultipleHtmlElementsInCSharpCode()
         => RunFormattingTestAsync(
@@ -4775,9 +5076,9 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 """,
             expected: """
                 <button @onclick="() =>
-                            {
-                                StateHasChanged();
-                            }">
+                        {
+                            StateHasChanged();
+                        }">
                 </button>
                 """,
             csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: true),
@@ -4801,8 +5102,8 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 """,
             expected: """
                 <button @onclick="() => {
-                                StateHasChanged();
-                            }">
+                            StateHasChanged();
+                        }">
                 </button>
                 """,
             csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: false),
@@ -4829,9 +5130,9 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
             expected: """
                 <button foo="bar"
                         @onclick="() =>
-                            {
-                                StateHasChanged();
-                            }">
+                        {
+                            StateHasChanged();
+                        }">
                 </button>
                 """,
             csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: true),
@@ -4858,8 +5159,8 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
             expected: """
                 <button foo="bar"
                         @onclick="() => {
-                                StateHasChanged();
-                            }">
+                            StateHasChanged();
+                        }">
                 </button>
                 """,
             csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: false),
@@ -4891,9 +5192,9 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 <div>
                     <button foo="bar"
                             @onclick="() =>
-                                {
-                                    StateHasChanged();
-                                }">
+                            {
+                                StateHasChanged();
+                            }">
                     </button>
                 </div>
                 """,
@@ -4926,8 +5227,8 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 <div>
                     <button foo="bar"
                             @onclick="() => {
-                                    StateHasChanged();
-                                }">
+                                StateHasChanged();
+                            }">
                     </button>
                 </div>
                 """,
@@ -4960,9 +5261,9 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 <div>
                     <button foo="bar"
                             @onclick="() =>
-                                {
-                                    StateHasChanged();
-                                }">
+                            {
+                                StateHasChanged();
+                            }">
                     </button>
                 </div>
                 """,
@@ -4995,8 +5296,8 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 <div>
                     <button foo="bar"
                             @onclick="() => {
-                                    StateHasChanged();
-                                }">
+                                StateHasChanged();
+                            }">
                     </button>
                 </div>
                 """,
@@ -5023,9 +5324,9 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 """,
             expected: """
                 <button @onclick="() =>
-                            {
-                                StateHasChanged();
-                            }">
+                        {
+                            StateHasChanged();
+                        }">
                 </button>
                 """,
             csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: true),
@@ -5051,8 +5352,8 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 """,
             expected: """
                 <button @onclick="() => {
-                                StateHasChanged();
-                            }">
+                            StateHasChanged();
+                        }">
                 </button>
                 """,
             csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: false),
@@ -5086,9 +5387,9 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 <div>
                     <button foo="bar"
                             @onclick="() =>
-                                {
-                                    StateHasChanged();
-                                }">
+                            {
+                                StateHasChanged();
+                            }">
                     </button>
                 </div>
                 """,
@@ -5123,8 +5424,8 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 <div>
                     <button foo="bar"
                             @onclick="() => {
-                                    StateHasChanged();
-                                }">
+                                StateHasChanged();
+                            }">
                     </button>
                 </div>
                 """,
@@ -5149,10 +5450,10 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 """,
             expected: """
                 <button @onclick="() =>
-                            {
-                                foo();
-                                bar();
-                            }">
+                        {
+                            foo();
+                            bar();
+                        }">
                 </button>
                 """,
             csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: true),
@@ -5176,9 +5477,9 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 """,
             expected: """
                 <button @onclick="() => {
-                                foo();
-                                bar();
-                            }">
+                            foo();
+                            bar();
+                        }">
                 </button>
                 """,
             csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: false),
@@ -8142,6 +8443,54 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                         };
                     }
                 }
+                """);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/9826")]
+    public async Task CodeBlock_ArrayInitializers_InsideHtmlElement()
+    {
+        // The C# Formatter doesn't touch these types of initializers, so nor do we. This test
+        // just verifies we don't regress things and start moving code around.
+        await RunFormattingTestAsync(
+            input: """
+                <table>
+                    @{
+                        var minimum = "";
+                        var maximum = "";
+                        var dateOptions = new[,]
+                        {
+                            {$"Set to minimum ({minimum})", minimum},
+                            {$"Set to maximum ({maximum})", maximum},
+                        };
+                    }
+                </table>
+                """,
+            htmlFormatted: """
+                <table>
+                    @{
+                    var minimum = "";
+                    var maximum = "";
+                    var dateOptions = new[,]
+                    {
+                    {$"Set to minimum ({minimum})", minimum},
+                    {$"Set to maximum ({maximum})", maximum},
+                    };
+                    }
+                </table>
+                """,
+            expected: """
+                <table>
+                    @{
+                        var minimum = "";
+                        var maximum = "";
+                        var dateOptions = new[,]
+                        {
+                            {$"Set to minimum ({minimum})", minimum},
+                            {$"Set to maximum ({maximum})", maximum},
+                        };
+                    }
+                </table>
                 """);
     }
 
@@ -12241,6 +12590,151 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </style>
                 """,
             validateHtmlFormattedMatchesWebTools: false);
+
+    [Theory]
+    [CombinatorialData]
+    public Task ScriptTagTagHelper(bool scriptTagHelper)
+    {
+        var directive = scriptTagHelper
+            ? "@addTagHelper *, SomeProject"
+            : "";
+        return RunFormattingTestAsync(
+                input: $$"""
+                    {{directive}}
+
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            $('.dropdown-item').click(function (e) {
+                                e.preventDefault();
+                                var url = $(this).attr('href');
+                                $.ajax({
+                                    url: url,
+                                                method: 'POST',
+                                    success: function (response) {
+                                        alert('Content published successfully!');
+                                    },
+                                    error: function (xhr, status, error) {
+                                        alert('Error publishing content: ' + error);
+                                    }
+                                });
+                            });
+                        });
+                    </script>
+                    """,
+                htmlFormatted: $$"""
+                    {{directive}}
+
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            $('.dropdown-item').click(function (e) {
+                                e.preventDefault();
+                                var url = $(this).attr('href');
+                                $.ajax({
+                                    url: url,
+                                    method: 'POST',
+                                    success: function (response) {
+                                        alert('Content published successfully!');
+                                    },
+                                    error: function (xhr, status, error) {
+                                        alert('Error publishing content: ' + error);
+                                    }
+                                });
+                            });
+                        });
+                    </script>
+                    """,
+                expected: $$"""
+                    {{directive}}
+
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            $('.dropdown-item').click(function (e) {
+                                e.preventDefault();
+                                var url = $(this).attr('href');
+                                $.ajax({
+                                    url: url,
+                                    method: 'POST',
+                                    success: function (response) {
+                                        alert('Content published successfully!');
+                                    },
+                                    error: function (xhr, status, error) {
+                                        alert('Error publishing content: ' + error);
+                                    }
+                                });
+                            });
+                        });
+                    </script>
+                    """,
+                validateHtmlFormattedMatchesWebTools: false, // We don't have JS formatting in tests, so the method param wouldn't really move
+                fileKind: RazorFileKind.Legacy,
+                additionalFiles:
+                [
+                    (FilePath("ScriptTagHelper.cs"), """
+                        using Microsoft.AspNetCore.Razor.TagHelpers;
+
+                        [HtmlTargetElement("script")]
+                        public class ScriptTagHelper : TagHelper
+                        {
+                        }
+                        """)
+                ]);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public Task VoidTagTagHelper(bool useTagHelper)
+    {
+        var directive = useTagHelper
+            ? "@addTagHelper *, SomeProject"
+            : "";
+        return RunFormattingTestAsync(
+                input: $$"""
+                    {{directive}}
+
+                    <div>
+                        <input type="text">
+                        This shouldn't be indented.
+
+                        <input type="text" @bind="Value">
+                        Neither should this
+                    </div>
+                    """,
+                htmlFormatted: $$"""
+                    {{directive}}
+
+                    <div>
+                        <input type="text">
+                        This shouldn't be indented.
+                    
+                        <input type="text" @bind="Value">
+                        Neither should this
+                    </div>
+                    """,
+                expected: $$"""
+                    {{directive}}
+
+                    <div>
+                        <input type="text">
+                        This shouldn't be indented.
+                    
+                        <input type="text" @bind="Value">
+                        Neither should this
+                    </div>
+                    """,
+                validateHtmlFormattedMatchesWebTools: false,
+                fileKind: RazorFileKind.Legacy,
+                additionalFiles:
+                [
+                    (FilePath("InputTagHelper.cs"), """
+                        using Microsoft.AspNetCore.Razor.TagHelpers;
+
+                        [HtmlTargetElement("input")]
+                        public class InputTagHelper : TagHelper
+                        {
+                        }
+                        """)
+                ]);
+    }
 
     private static RazorCSharpSyntaxFormattingOptions GetNewLineBeforeBraceInLambdaExpressionOptions(bool newLineBeforeBraceInLambda)
         => RazorCSharpSyntaxFormattingOptions.Default with

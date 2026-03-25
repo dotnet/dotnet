@@ -920,6 +920,28 @@ namespace NuGet.ProjectModel.Test
             targetWithRid.TargetAlias.Should().Be("net5.0");
         }
 
+        [Fact]
+        public void LockFile_GetTarget_WithAlias_WhenTargetAliasIsNull_ReturnsNull()
+        {
+            // Arrange
+            LockFile lockFile = new LockFile()
+            {
+                Targets = new List<LockFileTarget>()
+                {
+                    new() {
+                        TargetFramework = FrameworkConstants.CommonFrameworks.Net50,
+                        TargetAlias = null
+                    },
+                }
+            };
+
+            // Act
+            LockFileTarget target = lockFile.GetTarget("net5.0", runtimeIdentifier: null);
+
+            // Assert
+            target.Should().BeNull();
+        }
+
         private LockFile Parse(string lockFileContent, string path)
         {
             var reader = new LockFileFormat();
