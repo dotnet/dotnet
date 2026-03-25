@@ -22,7 +22,7 @@ namespace NuGet.Packaging.Test
         public void GetSignedPackageVerifierSettings_NullFallbackSettingsThrows()
         {
             // Arrange & Act
-            Action action = () => RepositorySignatureInfoUtility.GetSignedPackageVerifierSettings(repoSignatureInfo: null, fallbackSettings: null);
+            Action action = () => RepositorySignatureInfoUtility.GetSignedPackageVerifierSettings(repoSignatureInfo: null, fallbackSettings: null!);
 
             // Assert
             action.Should().Throw<ArgumentNullException>();

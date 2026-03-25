@@ -67,7 +67,7 @@ namespace NuGet.Packaging.Test
             PolicyInformation policyInformation = PolicyInformation.Read(bytes);
 
             Assert.Equal(Oids.AnyPolicy, policyInformation.PolicyIdentifier.Value);
-            Assert.Equal(1, policyInformation.PolicyQualifiers.Count);
+            Assert.Equal(1, policyInformation.PolicyQualifiers!.Count);
             Assert.Equal(qualifier.Span.ToArray(), policyInformation.PolicyQualifiers[0].Qualifier);
         }
 

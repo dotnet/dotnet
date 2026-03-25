@@ -18,7 +18,7 @@ namespace NuGet.Packaging.Test
         {
             var exception = Assert.Throws<ArgumentNullException>(
                 () => new SigningOptions(
-                    inputPackageStream: null,
+                    inputPackageStream: null!,
                     outputPackageStream: new Lazy<Stream>(() => Stream.Null),
                     overwrite: true,
                     signatureProvider: Mock.Of<ISignatureProvider>(),
@@ -33,7 +33,7 @@ namespace NuGet.Packaging.Test
             var exception = Assert.Throws<ArgumentNullException>(
                 () => new SigningOptions(
                     inputPackageStream: new Lazy<Stream>(() => Stream.Null),
-                    outputPackageStream: null,
+                    outputPackageStream: null!,
                     overwrite: true,
                     signatureProvider: Mock.Of<ISignatureProvider>(),
                     logger: Mock.Of<ILogger>()));
@@ -49,7 +49,7 @@ namespace NuGet.Packaging.Test
                     inputPackageStream: new Lazy<Stream>(() => Stream.Null),
                     outputPackageStream: new Lazy<Stream>(() => Stream.Null),
                     overwrite: true,
-                    signatureProvider: null,
+                    signatureProvider: null!,
                     logger: Mock.Of<ILogger>()));
 
             Assert.Equal("signatureProvider", exception.ParamName);
@@ -64,7 +64,7 @@ namespace NuGet.Packaging.Test
                     outputPackageStream: new Lazy<Stream>(() => Stream.Null),
                     overwrite: true,
                     signatureProvider: Mock.Of<ISignatureProvider>(),
-                    logger: null));
+                    logger: null!));
 
             Assert.Equal("logger", exception.ParamName);
         }
@@ -163,7 +163,7 @@ namespace NuGet.Packaging.Test
                         inputPackageFilePath: Path.Combine(Path.GetTempPath(), "a"),
                         outputPackageFilePath: Path.Combine(Path.GetTempPath(), "b"),
                         overwrite: true,
-                        signatureProvider: null,
+                        signatureProvider: null!,
                         logger: Mock.Of<ILogger>()));
 
                 Assert.Equal("signatureProvider", exception.ParamName);
@@ -179,7 +179,7 @@ namespace NuGet.Packaging.Test
                     outputPackageFilePath: Path.Combine(Path.GetTempPath(), "b"),
                     overwrite: true,
                     signatureProvider: Mock.Of<ISignatureProvider>(),
-                    logger: null));
+                    logger: null!));
 
             Assert.Equal("logger", exception.ParamName);
         }

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
@@ -70,7 +68,7 @@ namespace NuGet.Packaging.Signing
                             dwFlags: 0,
                             dwMsgType: NativeMethods.CMSG_SIGNED,
                             pvMsgEncodeInfo: ref signedInfo,
-                            pszInnerContentObjID: null,
+                            pszInnerContentObjID: null!,
                             pStreamInfo: IntPtr.Zero);
 
                         ThrowIfFailed(!hMsg.IsInvalid);
@@ -87,7 +85,7 @@ namespace NuGet.Packaging.Signing
                             hMsg,
                             CMSG_GETPARAM_TYPE.CMSG_CONTENT_PARAM,
                             dwIndex: 0,
-                            pvData: null,
+                            pvData: null!,
                             pcbData: ref valueLength));
 
                         encodedData = new byte[(int)valueLength];
@@ -117,9 +115,9 @@ namespace NuGet.Packaging.Signing
             var signerInfo = new CMSG_SIGNER_ENCODE_INFO();
 
             signerInfo.cbSize = (uint)Marshal.SizeOf(signerInfo);
-            signerInfo.pCertInfo = Marshal.PtrToStructure<CERT_CONTEXT>(cmsSigner.Certificate.Handle).pCertInfo;
+            signerInfo.pCertInfo = Marshal.PtrToStructure<CERT_CONTEXT>(cmsSigner.Certificate!.Handle).pCertInfo;
             signerInfo.hCryptProvOrhNCryptKey = privateKey.Handle.DangerousGetHandle();
-            signerInfo.HashAlgorithm.pszObjId = cmsSigner.DigestAlgorithm.Value;
+            signerInfo.HashAlgorithm.pszObjId = cmsSigner.DigestAlgorithm.Value!;
 
             if (cmsSigner.SignerIdentifierType == SubjectIdentifierType.SubjectKeyIdentifier)
             {
@@ -175,7 +173,7 @@ namespace NuGet.Packaging.Signing
 
                     foreach (var attribute in cmsSigner.SignedAttributes)
                     {
-                        currentAttribute->pszObjId = hb.AllocAsciiString(attribute.Oid.Value);
+                        currentAttribute->pszObjId = hb.AllocAsciiString(attribute.Oid.Value!);
                         currentAttribute->cValue = (uint)attribute.Values.Count;
                         currentAttribute->rgValue = hb.Alloc(sizeOfCryptIntegerBlob);
 

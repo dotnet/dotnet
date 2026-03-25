@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using System.IO;
@@ -87,14 +85,14 @@ namespace NuGet.Packaging
             return Path.Combine(_rootDirectory, GetPackageDirectoryName(packageIdentity));
         }
 
-        public virtual string GetInstalledPath(PackageIdentity packageIdentity)
+        public virtual string? GetInstalledPath(PackageIdentity packageIdentity)
         {
             var installedPackageFilePath = GetInstalledPackageFilePath(packageIdentity);
 
             return string.IsNullOrEmpty(installedPackageFilePath) ? null : Path.GetDirectoryName(installedPackageFilePath);
         }
 
-        public virtual string GetInstalledPackageFilePath(PackageIdentity packageIdentity)
+        public virtual string? GetInstalledPackageFilePath(PackageIdentity packageIdentity)
         {
             return PackagePathHelper.GetInstalledPackageFilePath(packageIdentity, this);
         }

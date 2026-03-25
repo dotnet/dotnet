@@ -172,7 +172,7 @@ namespace NuGet.Packaging
             if (!string.IsNullOrEmpty(packageDirectory))
             {
                 var packageFiles = await packageReader.GetPackageFilesAsync(packageSaveMode, cancellationToken);
-                var entries = packageReader.EnumeratePackageEntries(packageFiles, packageDirectory);
+                var entries = packageReader.EnumeratePackageEntries(packageFiles, packageDirectory!);
                 installedPackageFiles = entries.Where(e => e.IsInstalled());
             }
 
