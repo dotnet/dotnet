@@ -1970,6 +1970,54 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
+            
+            // 18.7
+            new TargetChannelConfig(
+                id: 10189,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: [],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNetToolsFeeds,
+                symbolTargetType: SymbolPublishVisibility.Public,
+                flatten: false),
+            
+            // 18.8
+            new TargetChannelConfig(
+                id: 10188,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: [],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNetToolsFeeds,
+                symbolTargetType: SymbolPublishVisibility.Public,
+                flatten: false),
+            
+            // 18.9
+            new TargetChannelConfig(
+                id: 10190,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: [],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNetToolsFeeds,
+                symbolTargetType: SymbolPublishVisibility.Public,
+                flatten: false),
+            
+            // 18.10
+            new TargetChannelConfig(
+                id: 10191,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: [],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNetToolsFeeds,
+                symbolTargetType: SymbolPublishVisibility.Public,
+                flatten: false),
             #endregion
         ];
     }

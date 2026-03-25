@@ -1,10 +1,9 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NuGet.Packaging
 {
@@ -23,7 +22,7 @@ namespace NuGet.Packaging
         /// <param name="source">Package source URL.</param>
         /// <param name="repositorySignatureInfo">Contains the RepositorySignatureInfo when the method returns. It is null if repository signature information is unavailable.</param>
         /// <returns>True if the repository signature information was found. Otherwise, False.</returns>
-        public bool TryGetRepositorySignatureInfo(string source, out RepositorySignatureInfo repositorySignatureInfo)
+        public bool TryGetRepositorySignatureInfo(string source, [NotNullWhen(returnValue: true)] out RepositorySignatureInfo? repositorySignatureInfo)
         {
             repositorySignatureInfo = null;
 

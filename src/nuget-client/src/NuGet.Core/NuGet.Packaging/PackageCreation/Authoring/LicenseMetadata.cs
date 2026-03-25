@@ -91,7 +91,7 @@ namespace NuGet.Packaging
             return combiner.CombinedHash;
         }
 
-        public Uri? LicenseUrl
+        public Uri LicenseUrl
         {
             get
             {
@@ -104,7 +104,7 @@ namespace NuGet.Packaging
                         return new Uri(GenerateLicenseServiceLink(License));
 
                     default:
-                        return null;
+                        throw new NotSupportedException($"Unsupported license type: {Type}");
                 }
             }
         }
