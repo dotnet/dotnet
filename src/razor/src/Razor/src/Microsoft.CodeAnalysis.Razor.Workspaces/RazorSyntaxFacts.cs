@@ -198,7 +198,7 @@ internal static class RazorSyntaxFacts
         return node.AncestorsAndSelf().OfType<RazorUsingDirectiveSyntax>().Any();
     }
 
-    internal static bool IsScriptOrStyleBlock(MarkupElementSyntax? element)
+    internal static bool IsScriptOrStyleBlock(BaseMarkupElementSyntax? element)
     {
         // StartTag is annotated as not nullable, but on invalid documents it can be. The 'Format_DocumentWithDiagnostics' test
         // illustrates this.
