@@ -17,7 +17,7 @@ namespace Microsoft.CodeAnalysis.Razor.Formatting;
 /// <param name="FormattedLength">How many characters of the origin line the formatted line represents</param>
 /// <param name="FormattedOffset">How many characters after the first non-whitespace character of the formatted line should be skipped before applying formatting</param>
 /// <param name="FormattedOffsetFromEndOfLine">How many characters before the end of the formatted line should be skipped before applying formatting</param>
-/// <param name="AdditionalIndentation">An arbitrary string representing additional indentation to apply to this line</param>
+/// <param name="AdditionalIndentation">Additional indentation width to apply to this line, in columns. Can be negative.</param>
 internal readonly record struct LineInfo(
     bool ProcessIndentation,
     bool ProcessFormatting,
@@ -30,4 +30,4 @@ internal readonly record struct LineInfo(
     int FormattedLength,
     int FormattedOffset,
     int FormattedOffsetFromEndOfLine,
-    string? AdditionalIndentation);
+    int? AdditionalIndentation);
