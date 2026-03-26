@@ -127,7 +127,7 @@ namespace NuGet.CommandLine.XPlat
                         isDeprecated: deprecatedReport.HasValue(),
                         isVulnerable: vulnerableReport.HasValue());
 
-                    IReportRenderer reportRenderer = GetOutputType(outputFormat.Value(), outputVersionOption: outputVersion.Value());
+                    IReportRenderer reportRenderer = GetOutputType(app.Out, app.Error, outputFormat.Value(), outputVersionOption: outputVersion.Value());
                     var provider = new PackageSourceProvider(settings);
                     var packageRefArgs = new ListPackageArgs(
                         path.Value,
@@ -171,7 +171,7 @@ namespace NuGet.CommandLine.XPlat
             throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_InvalidOptions));
         }
 
-        private static IReportRenderer GetOutputType(string outputFormatOption, string outputVersionOption)
+        private static IReportRenderer GetOutputType(TextWriter consoleOut, TextWriter consoleError, string outputFormatOption, string outputVersionOption)
         {
             ReportOutputFormat outputFormat = ReportOutputFormat.Console;
             if (!string.IsNullOrEmpty(outputFormatOption) &&
@@ -187,7 +187,7 @@ namespace NuGet.CommandLine.XPlat
                 {
                     throw new ArgumentException(string.Format(Strings.ListPkg_OutputVersionNotApplicable));
                 }
-                return new ListPackageConsoleRenderer();
+                return new ListPackageConsoleRenderer(consoleOut, consoleError);
             }
 
             IReportRenderer jsonReportRenderer;
@@ -200,7 +200,7 @@ namespace NuGet.CommandLine.XPlat
             }
             else
             {
-                jsonReportRenderer = new ListPackageJsonRenderer();
+                jsonReportRenderer = new ListPackageJsonRenderer(consoleOut);
             }
 
             return jsonReportRenderer;
