@@ -661,6 +661,9 @@ The search is a case-insensitive string comparison using the supplied value, whi
   <data name="SignCommandOverwriteDescription" xml:space="preserve">
     <value>Switch to indicate if the current signature should be overwritten. By default the command will fail if the package already has a signature.</value>
   </data>
+  <data name="SignCommandAllowUntrustedRootDescription" xml:space="preserve">
+    <value>Allow signing with certificates whose root certificate is not in a trusted root store. The certificate chain is still built and validated for structure, but UntrustedRoot status is treated as a warning.</value>
+  </data>
   <data name="SignCommandPackagePathDescription" xml:space="preserve">
     <value>Signs NuGet packages at &lt;package-paths&gt; with the specified certificate.</value>
     <comment>Please don't localize '&lt;package-paths&gt;'</comment>

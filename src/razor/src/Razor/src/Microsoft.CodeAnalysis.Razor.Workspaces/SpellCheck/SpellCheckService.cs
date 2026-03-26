@@ -49,7 +49,7 @@ internal class SpellCheckService(
         // In an ideal world we wouldn't need this logic at all, as we would defer to the Html LSP server to provide spell checking
         // but it doesn't currently support it. When that support is added, we can remove all of this but the RazorCommentBlockSyntax
         // handling.
-        foreach (var node in syntaxTree.Root.DescendantNodes(static n => n is not MarkupElementSyntax { StartTag.Name.Content: "script" or "style" }))
+        foreach (var node in syntaxTree.Root.DescendantNodes(static n => n is not BaseMarkupElementSyntax element || !RazorSyntaxFacts.IsScriptOrStyleBlock(element)))
         {
             if (node is RazorCommentBlockSyntax commentBlockSyntax)
             {
