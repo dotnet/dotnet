@@ -41,7 +41,7 @@ namespace NuGet.ProjectModel
         public LockFileTarget GetTarget(string frameworkAlias, string runtimeIdentifier)
         {
             return Targets.FirstOrDefault(t =>
-                t.TargetAlias.Equals(frameworkAlias) &&
+                string.Equals(t.TargetAlias, frameworkAlias, StringComparison.Ordinal) &&
                 (string.IsNullOrEmpty(runtimeIdentifier) && string.IsNullOrEmpty(t.RuntimeIdentifier) ||
                  string.Equals(runtimeIdentifier, t.RuntimeIdentifier, StringComparison.OrdinalIgnoreCase)));
         }

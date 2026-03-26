@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 
@@ -28,7 +26,7 @@ namespace NuGet.Packaging.Signing
         /// <summary>
         /// Timestamp used to validate certificate.
         /// </summary>
-        public Timestamp Timestamp { get; }
+        public Timestamp? Timestamp { get; }
 
         /// <summary>
         /// Expiration Date and Time for signature
@@ -42,7 +40,7 @@ namespace NuGet.Packaging.Signing
             SignatureType signatureType,
             SignatureVerificationStatus status,
             SignatureVerificationStatusFlags flags,
-            Timestamp timestamp,
+            Timestamp? timestamp,
             DateTimeOffset? expirationTime,
             IEnumerable<SignatureLog> issues)
         {
@@ -58,7 +56,7 @@ namespace NuGet.Packaging.Signing
             SignatureType signatureType,
             SignatureVerificationStatus status,
             SignatureVerificationStatusFlags flags,
-            Timestamp timestamp,
+            Timestamp? timestamp,
             IEnumerable<SignatureLog> issues)
             : this(signatureType, status, flags, timestamp, expirationTime: null, issues: issues)
         {

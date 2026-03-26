@@ -31,7 +31,7 @@ namespace NuGet.Packaging.Test
         public void Load_WhenDataNull_Throws()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => PrimarySignature.Load(data: null));
+                () => PrimarySignature.Load(data: null!));
 
             Assert.Equal("data", exception.ParamName);
         }
