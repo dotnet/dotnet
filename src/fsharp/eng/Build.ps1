@@ -307,7 +307,7 @@ function BuildSolution([string] $solutionName, $packSolution) {
 
     $pack = if ($packSolution -eq $False) {""} else {$pack}
 
-    $msbuildWarnNotAsError = if ($warnNotAsError -ne "") { "/warnNotAsError:$warnNotAsError" } else { "" }
+    $msbuildWarnNotAsError = if ($warnAsError -and $warnNotAsError -ne "") { "/warnNotAsError:$warnNotAsError" } else { "" }
 
     MSBuild $toolsetBuildProj `
         $bl `

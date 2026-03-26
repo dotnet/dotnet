@@ -335,7 +335,7 @@ function BuildSolution {
     BuildMessage="Error building solution"
 
     local msbuild_warn_not_as_error=""
-    if [[ "$warn_not_as_error" != "" ]]; then
+    if [[ "$warn_not_as_error" != "" && "$warn_as_error" == true ]]; then
       msbuild_warn_not_as_error="/warnNotAsError:$warn_not_as_error"
     fi
 

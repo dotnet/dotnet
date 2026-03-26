@@ -264,7 +264,7 @@ function BuildSolution() {
   # The warnAsError flag for MSBuild will promote all warnings to errors. This is true for warnings
   # that MSBuild output as well as ones that custom tasks output.
   $msbuildWarnAsError = if ($warnAsError) { "/warnAsError" } else { "" }
-  $msbuildWarnNotAsError = if ($warnNotAsError -ne "") { "/warnNotAsError:$warnNotAsError" } else { "" }
+  $msbuildWarnNotAsError = if ($warnAsError -and $warnNotAsError -ne "") { "/warnNotAsError:$warnNotAsError" } else { "" }
 
   # Workaround for some machines in the AzDO pool not allowing long paths
   $ibcDir = $RepoRoot
