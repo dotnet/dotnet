@@ -2,8 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#nullable disable
-
 #if IS_DESKTOP
 using System;
 using System.Diagnostics;
@@ -22,16 +20,16 @@ namespace NuGet.Packaging.Signing
     {
         private class DataType
         {
-            internal int _version;
-            internal byte[] _hash;
-            internal Oid _hashAlgorithm;
-            internal Oid _requestedPolicyId;
-            internal byte[] _nonce;
-            internal bool _requestSignerCertificate;
-            internal X509ExtensionCollection _extensions;
+            internal required int _version;
+            internal required byte[] _hash;
+            internal required Oid _hashAlgorithm;
+            internal Oid? _requestedPolicyId;
+            internal required byte[]? _nonce;
+            internal required bool _requestSignerCertificate;
+            internal X509ExtensionCollection? _extensions;
         }
 
-        private DataType _data;
+        private DataType? _data;
 
         private DataType Data
         {
@@ -52,16 +50,16 @@ namespace NuGet.Packaging.Signing
         public Rfc3161TimestampRequest(
             byte[] messageHash,
             HashAlgorithmName hashAlgorithm,
-            Oid requestedPolicyId = null,
-            byte[] nonce = null,
+            Oid? requestedPolicyId = null,
+            byte[]? nonce = null,
             bool requestSignerCertificates = false,
-            X509ExtensionCollection extensions = null)
+            X509ExtensionCollection? extensions = null)
         {
             if (messageHash == null)
                 throw new ArgumentNullException(nameof(messageHash));
 
             int expectedSize;
-            string algorithmIdentifier;
+            string? algorithmIdentifier;
 
             if (!ResolveAlgorithm(hashAlgorithm, out expectedSize, out algorithmIdentifier))
             {
@@ -90,8 +88,8 @@ namespace NuGet.Packaging.Signing
             {
                 _version = 1,
                 _hash = (byte[])messageHash.Clone(),
-                _hashAlgorithm = OpportunisticOid(algorithmIdentifier),
-                _nonce = (byte[])nonce?.Clone(),
+                _hashAlgorithm = OpportunisticOid(algorithmIdentifier)!,
+                _nonce = (byte[]?)nonce?.Clone(),
                 _requestSignerCertificate = requestSignerCertificates,
                 _extensions = Rfc3161TimestampTokenInfo.ShallowCopy(extensions, preserveNull: true),
             };
@@ -104,7 +102,7 @@ namespace NuGet.Packaging.Signing
             RawData = Encode(data);
         }
 
-        private static Oid OpportunisticOid(string oidValue, OidGroup group = OidGroup.HashAlgorithm)
+        private static Oid? OpportunisticOid(string? oidValue, OidGroup group = OidGroup.HashAlgorithm)
         {
             if (oidValue == null)
                 return null;
@@ -122,10 +120,10 @@ namespace NuGet.Packaging.Signing
         public Rfc3161TimestampRequest(
             byte[] messageHash,
             Oid hashAlgorithmId,
-            Oid requestedPolicyId = null,
-            byte[] nonce = null,
+            Oid? requestedPolicyId = null,
+            byte[]? nonce = null,
             bool requestSignerCertificates = false,
-            X509ExtensionCollection extensions = null)
+            X509ExtensionCollection? extensions = null)
         {
             if (messageHash == null)
                 throw new ArgumentNullException(nameof(messageHash));
@@ -149,7 +147,7 @@ namespace NuGet.Packaging.Signing
                 _version = 1,
                 _hash = (byte[])messageHash.Clone(),
                 _hashAlgorithm = new Oid(hashAlgorithmId.Value, hashAlgorithmId.FriendlyName),
-                _nonce = (byte[])nonce?.Clone(),
+                _nonce = (byte[]?)nonce?.Clone(),
                 _requestSignerCertificate = requestSignerCertificates,
                 _extensions = Rfc3161TimestampTokenInfo.ShallowCopy(extensions, preserveNull: true),
             };
@@ -169,16 +167,16 @@ namespace NuGet.Packaging.Signing
 
         public Oid HashAlgorithmId => new Oid(Data._hashAlgorithm.Value, Data._hashAlgorithm.FriendlyName);
 
-        public Oid RequestedPolicyId => new Oid(Data._requestedPolicyId.Value, Data._requestedPolicyId.FriendlyName);
+        public Oid RequestedPolicyId => new Oid(Data._requestedPolicyId!.Value, Data._requestedPolicyId.FriendlyName);
 
-        public byte[] GetNonce() => (byte[])Data._nonce?.Clone();
+        public byte[]? GetNonce() => (byte[]?)Data._nonce?.Clone();
 
         public bool RequestSignerCertificate => Data._requestSignerCertificate;
 
         public bool HasExtensions => Data._extensions?.Count > 0;
 
         public X509ExtensionCollection GetExtensions() =>
-            Rfc3161TimestampTokenInfo.ShallowCopy(Data._extensions, preserveNull: false);
+            Rfc3161TimestampTokenInfo.ShallowCopy(Data._extensions, preserveNull: false)!;
 
         public unsafe IRfc3161TimestampToken SubmitRequest(Uri timestampUri, TimeSpan timeout)
         {
@@ -366,9 +364,9 @@ namespace NuGet.Packaging.Signing
                     DataType dataType = new DataType
                     {
                         _version = request.dwVersion,
-                        _hashAlgorithm = OpportunisticOid(Marshal.PtrToStringAnsi(request.HashAlgorithm.pszOid)),
+                        _hashAlgorithm = OpportunisticOid(Marshal.PtrToStringAnsi(request.HashAlgorithm.pszOid))!,
                         _requestedPolicyId = OpportunisticOid(Marshal.PtrToStringAnsi(request.pszTSAPolicyId), OidGroup.Policy),
-                        _hash = Rfc3161TimestampTokenInfo.CopyFromNative(ref request.HashedMessage),
+                        _hash = Rfc3161TimestampTokenInfo.CopyFromNative(ref request.HashedMessage)!,
                         _nonce = Rfc3161TimestampTokenInfo.CopyFromNative(ref request.Nonce),
                         _requestSignerCertificate = request.fCertReq
                     };
@@ -389,7 +387,7 @@ namespace NuGet.Packaging.Signing
         private static bool ResolveAlgorithm(
             HashAlgorithmName hashAlgorithm,
             out int expectedSizeInBytes,
-            out string algorithmIdentifier)
+            out string? algorithmIdentifier)
         {
             if (hashAlgorithm == HashAlgorithmName.SHA256)
             {

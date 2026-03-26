@@ -893,6 +893,11 @@ namespace NuGet.Common
         NU5050 = 5050,
 
         /// <summary>
+        /// Attempted to write files from multiple sources into the same location
+        /// </summary>
+        NU5051 = 5051,
+
+        /// <summary>
         /// AssemblyOutsideLibWarning
         /// </summary>
         NU5100 = 5100,

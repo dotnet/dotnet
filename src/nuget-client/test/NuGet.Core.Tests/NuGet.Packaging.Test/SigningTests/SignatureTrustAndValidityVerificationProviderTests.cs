@@ -28,7 +28,7 @@ namespace NuGet.Packaging.Test
         {
             var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                 () => _provider.GetTrustResultAsync(
-                    package: null,
+                    package: null!,
                     signature: _signature.Value,
                     settings: SignedPackageVerifierSettings.GetDefault(TestEnvironmentVariableReader.EmptyInstance),
                     token: CancellationToken.None));
@@ -42,7 +42,7 @@ namespace NuGet.Packaging.Test
             var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                 () => _provider.GetTrustResultAsync(
                     package: Mock.Of<ISignedPackageReader>(),
-                    signature: null,
+                    signature: null!,
                     settings: SignedPackageVerifierSettings.GetDefault(TestEnvironmentVariableReader.EmptyInstance),
                     token: CancellationToken.None));
 
@@ -56,7 +56,7 @@ namespace NuGet.Packaging.Test
                 () => _provider.GetTrustResultAsync(
                     package: Mock.Of<ISignedPackageReader>(),
                     signature: _signature.Value,
-                    settings: null,
+                    settings: null!,
                     token: CancellationToken.None));
 
             Assert.Equal("settings", exception.ParamName);
