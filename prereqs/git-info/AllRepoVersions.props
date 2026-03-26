@@ -17,8 +17,8 @@
     <diagnosticsOutputPackageVersion>8.0.0-preview.24416.1</diagnosticsOutputPackageVersion>
     <efcoreGitCommitHash>4e5a6d6a1336d1496eb4e19cdd30095484f54e7e</efcoreGitCommitHash>
     <efcoreOutputPackageVersion>9.0.15</efcoreOutputPackageVersion>
-    <emsdkGitCommitHash>dee978139950436eec13cadd76e9a438bdb26d4b</emsdkGitCommitHash>
-    <emsdkOutputPackageVersion>9.0.16-servicing.26160.4</emsdkOutputPackageVersion>
+    <emsdkGitCommitHash>918f4eac9e7d238562abcc364ec417be11b108f0</emsdkGitCommitHash>
+    <emsdkOutputPackageVersion>9.0.15-servicing.26175.1</emsdkOutputPackageVersion>
     <fsharpGitCommitHash>47d4e3f91e4e5414b6dafbf14288b9c5a798ef99</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>9.0.101-beta.25070.7</fsharpOutputPackageVersion>
     <msbuildGitCommitHash>07da1b9a89da6d00c5a5a6a385cdcebfdfed7110</msbuildGitCommitHash>
@@ -31,11 +31,11 @@
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.26075.3</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>fc52718eccdb37693a40a518b1178b1e23114e68</roslynGitCommitHash>
     <roslynOutputPackageVersion>4.12.0-3.25609.5</roslynOutputPackageVersion>
-    <runtimeGitCommitHash>672f4072279654291cc5a88de4b276d226dafeb3</runtimeGitCommitHash>
-    <runtimeOutputPackageVersion>9.0.15-servicing.26170.6</runtimeOutputPackageVersion>
+    <runtimeGitCommitHash>4250c8399aa851d2d6a95efbdcc5c4c12311e024</runtimeGitCommitHash>
+    <runtimeOutputPackageVersion>9.0.15-servicing.26175.22</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>acd9dc7ae0717d7f4fb6ac2b76ea364e94b4ceb3</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.26153.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>3ee0eb3cca2fdf903e939dad4e3ced52bdffef31</sdkGitCommitHash>
+    <sdkGitCommitHash>b592be97005a4e05dd575006203b3073011a05b4</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>16c380d1ce5fa0b24e232251c31cb013bbf3365f</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.26055.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>e6a837a05532cb8e89eda3ce8aa08d0f55ce7b04</sourcebuildreferencepackagesGitCommitHash>

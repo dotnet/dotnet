@@ -11,7 +11,7 @@ variables:
 - template: /eng/common-variables.yml@self
 - template: /eng/common/templates-official/variables/pool-providers.yml@self
 - name: LinuxImage
-  value: build.ubuntu.2204.amd64
+  value: build.azurelinux.3.amd64
 - name: WindowsImage
   value: windows.vs2022.amd64
 - name: MacImage
