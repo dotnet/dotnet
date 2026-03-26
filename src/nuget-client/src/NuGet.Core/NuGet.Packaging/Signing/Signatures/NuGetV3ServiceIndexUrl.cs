@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Linq;
 using NuGet.Packaging.Signing.DerEncoding;
@@ -53,7 +51,7 @@ namespace NuGet.Packaging.Signing
                 throw new SignatureException(Strings.NuGetV3ServiceIndexUrlInvalid);
             }
 
-            Uri url;
+            Uri? url;
 
             if (!Uri.TryCreate(urlString, UriKind.Absolute, out url))
             {

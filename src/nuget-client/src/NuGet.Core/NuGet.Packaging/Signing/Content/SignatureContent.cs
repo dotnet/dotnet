@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -102,7 +100,7 @@ namespace NuGet.Packaging.Signing
         private static SignatureContent Load(Stream stream, SigningSpecifications signingSpecifications)
         {
             var hashAlgorithm = HashAlgorithmName.Unknown;
-            string hash = null;
+            string? hash = null;
 
             using (var reader = new KeyPairFileReader(stream, signingSpecifications.Encoding))
             {
@@ -132,7 +130,7 @@ namespace NuGet.Packaging.Signing
                 }
             }
 
-            return new SignatureContent(signingSpecifications, hashAlgorithm, hash);
+            return new SignatureContent(signingSpecifications, hashAlgorithm, hash!);
         }
 
         private static void ThrowIfEmpty(Dictionary<string, string> properties)
@@ -170,7 +168,7 @@ namespace NuGet.Packaging.Signing
         {
             const string Version = "Version";
 
-            string signatureFormatVersion;
+            string? signatureFormatVersion;
             if (!properties.TryGetValue(Version, out signatureFormatVersion))
             {
                 throw new SignatureException(Strings.InvalidSignatureContent);

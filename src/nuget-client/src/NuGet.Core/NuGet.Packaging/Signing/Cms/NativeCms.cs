@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -42,7 +40,7 @@ namespace NuGet.Packaging.Signing
                 _handle,
                 param,
                 index,
-                null,
+                null!,
                 ref valueLength));
 
             var data = new byte[(int)valueLength];
@@ -57,7 +55,7 @@ namespace NuGet.Packaging.Signing
             return data;
         }
 
-        internal byte[] GetRepositoryCountersignatureSignatureValue()
+        internal byte[]? GetRepositoryCountersignatureSignatureValue()
         {
             using (var retainer = new HeapBlockRetainer())
             {
