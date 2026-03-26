@@ -83,15 +83,15 @@ gantt
 
   section RS-Feb (internal/release/10.0.103)
   RS-Feb Stabilization / Late Fixes                    :rs_feb_stab, 2026-01-20, 7d
-  RS-Feb Validation                            :rs_feb_build, 2026-01-27, 5d
-  RS-Feb Staging / Release                             :rs_feb_build, 2026-02-01, 9d
+  RS-Feb Validation                            :rs_feb_validation, 2026-01-27, 5d
+  RS-Feb Staging / Release                             :rs_feb_staging, 2026-02-01, 9d
   RS-Feb Release                                        :milestone, 2026-02-10, 0d
 
 
   section RS-Mar (internal/release/10.0.104)
   RS-Mar Stabilization Phase / Late Fixes               :rs_mar_stab, 2026-02-24, 3d
   RS-Mar Validation                                     :rs_mar_build2, 2026-02-27, 3d
-  RS-Mar Staging / Release                              :rs_feb_build, 2026-03-01, 9d
+  RS-Mar Staging / Release                              :rs_mar_staging, 2026-03-01, 9d
   RS-Mar Release                                       :milestone, 2026-03-10, 0d
 ```
 #### Notes on schedule
@@ -181,7 +181,7 @@ When a fix is made directly to a **Release Specific** branch, that fix will make
 - The **General Servicing** branch not having a fix required for release available in daily validation.
 - Current infrastructure issues in the **General Servicing** branch resolved by the fix.
 
-It is recommended, though not required, that fixes made directly to the **Release Specific** VMR branch be merged back into the appropriate **General Servicing** branch (internal release specific -> internal general servicing, and corresponding public general servicing branches).
+It is recommended, though not required, that fixes made directly to the **Release Specific** VMR branch be explicitly merged back into the corresponding internal **General Servicing** branch and, when applicable, into the corresponding public **General Servicing** branches.
 
 ### Special Considerations - OOB Releases
 
