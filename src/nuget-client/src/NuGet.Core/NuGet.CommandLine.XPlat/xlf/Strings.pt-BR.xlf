@@ -409,8 +409,8 @@ O NuGet requer fontes HTTPS. Para usar fontes HTTP, você deve definir explicita
         <note>{0} - package id</note>
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
-        <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, or directory.</source>
-        <target state="translated">Caminho "{0}" ausente ou inválido. Forneça um caminho para um projeto, arquivo de solução ou diretório.</target>
+        <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, file-based app, or project directory.</source>
+        <target state="needs-review-translation">Caminho "{0}" ausente ou inválido. Forneça um caminho para um projeto, arquivo de solução ou diretório.</target>
         <note>{0} - Input path argument</note>
       </trans-unit>
       <trans-unit id="Error_PathNotFound">
@@ -972,8 +972,8 @@ Para obter mais informações, acesse https://docs.nuget.org/docs/reference/comm
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_ProjectOptionDescription">
-        <source>Path to a project or solution file, or a directory.</source>
-        <target state="translated">Caminho para um projeto ou arquivo de solução ou um diretório.</target>
+        <source>Path to a project or solution file or file-based app, or a project directory.</source>
+        <target state="needs-review-translation">Caminho para um projeto ou arquivo de solução ou um diretório.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_VulnerableOptionDescription">
@@ -1527,8 +1527,8 @@ A pesquisa é uma comparação de cadeia de caracteres que não faz distinção 
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_PathArgument_Description">
-        <source>A path to a project, solution file, or directory.</source>
-        <target state="translated">Um caminho para um projeto, arquivo de solução ou diretório.</target>
+        <source>A path to a project, solution file, file-based app, or project directory.</source>
+        <target state="needs-review-translation">Um caminho para um projeto, arquivo de solução ou diretório.</target>
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_Warning_AssetsFileDoesNotContainSpecifiedTarget">
