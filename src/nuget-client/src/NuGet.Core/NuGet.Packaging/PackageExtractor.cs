@@ -946,7 +946,7 @@ namespace NuGet.Packaging
             var nupkgFilePath = packagePathResolver.GetInstalledPackageFilePath(packageIdentity);
             if (File.Exists(nupkgFilePath))
             {
-                using (var packageReader = new PackageArchiveReader(nupkgFilePath))
+                using (var packageReader = new PackageArchiveReader(nupkgFilePath!))
                 {
                     return await CopySatelliteFilesAsync(
                         packageReader,

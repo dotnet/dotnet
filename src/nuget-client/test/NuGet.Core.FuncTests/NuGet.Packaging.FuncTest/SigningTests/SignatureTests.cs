@@ -45,7 +45,7 @@ namespace NuGet.Packaging.FuncTest
             using (var test = await VerifyTest.CreateAsync(_untrustedTestCertificate.Cert))
             {
                 var result = test.PrimarySignature.Verify(
-                    timestamp: null,
+                    timestamp: null!,
                     settings: settings,
                     fingerprintAlgorithm: Common.HashAlgorithmName.SHA256,
                     certificateExtraStore: test.PrimarySignature.SignedCms.Certificates);
@@ -71,7 +71,7 @@ namespace NuGet.Packaging.FuncTest
             using (var test = await VerifyTest.CreateAsync(_untrustedTestCertificate.Cert))
             {
                 var result = test.PrimarySignature.Verify(
-                    timestamp: null,
+                    timestamp: null!,
                     settings: settings,
                     fingerprintAlgorithm: Common.HashAlgorithmName.SHA256,
                     certificateExtraStore: test.PrimarySignature.SignedCms.Certificates);
@@ -96,7 +96,7 @@ namespace NuGet.Packaging.FuncTest
             using (var test = await VerifyTest.CreateAsync(_untrustedTestCertificate.Cert))
             {
                 var result = test.PrimarySignature.Verify(
-                    timestamp: null,
+                    timestamp: null!,
                     settings: settings,
                     fingerprintAlgorithm: Common.HashAlgorithmName.SHA256,
                     certificateExtraStore: test.PrimarySignature.SignedCms.Certificates);

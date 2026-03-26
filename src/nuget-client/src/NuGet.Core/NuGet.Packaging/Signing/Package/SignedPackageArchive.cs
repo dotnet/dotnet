@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.IO;
 using System.IO.Compression;
@@ -76,6 +74,7 @@ namespace NuGet.Packaging.Signing
             {
                 throw new SignatureException(Strings.SignedPackageNotSignedOnRemove);
             }
+            ThrowIfZipReadStreamIsNull();
 
             using (var reader = new BinaryReader(ZipReadStream, SigningSpecifications.Encoding, leaveOpen: true))
             using (var writer = new BinaryWriter(_zipWriteStream, SigningSpecifications.Encoding, leaveOpen: true))

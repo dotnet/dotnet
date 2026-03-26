@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -24,7 +22,7 @@ namespace NuGet.Packaging.Signing
         internal uint SizeOfCentralDirectory { get; private set; }
         internal uint OffsetOfStartOfCentralDirectory { get; private set; }
         internal ushort FileCommentLength { get; private set; }
-        internal byte[] FileComment { get; private set; }
+        internal byte[] FileComment { get; private set; } = null!; // Set to non-null in the static Read method.
 
         // This property is not part of the ZIP specification.
         internal long OffsetFromStart { get; private set; }

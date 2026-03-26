@@ -1300,8 +1300,8 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
         public override void VisitMarkupElement(MarkupElementSyntax node)
         {
-            if ((node.StartTag != null && node.StartTag.IsMarkupTransition) ||
-                (node.EndTag != null && node.EndTag.IsMarkupTransition))
+            if ((node.MarkupStartTag != null && node.MarkupStartTag.IsMarkupTransition) ||
+                (node.MarkupEndTag != null && node.MarkupEndTag.IsMarkupTransition))
             {
                 // We don't want to create a node for Markup transitions (<text></text>). Treat their contents as regular markup.
                 // Technically there shouldn't be an end transition without a start transition but just being defensive.
@@ -1317,33 +1317,33 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 TagName = node.StartTag?.Name.Content ?? node.EndTag?.Name.Content ?? string.Empty,
             };
 
-            if (node.StartTag != null && node.EndTag != null && node.StartTag.IsVoidElement())
+            if (node.MarkupStartTag != null && node.MarkupEndTag != null && node.MarkupStartTag.IsVoidElement())
             {
                 element.AddDiagnostic(
                     ComponentDiagnosticFactory.Create_UnexpectedClosingTagForVoidElement(
-                        BuildSourceSpanFromNode(node.EndTag), node.EndTag.GetTagNameWithOptionalBang()));
+                        BuildSourceSpanFromNode(node.MarkupEndTag), node.MarkupEndTag.GetTagNameWithOptionalBang()));
             }
-            else if (node.StartTag != null && node.EndTag == null && !node.StartTag.IsVoidElement() && !node.StartTag.IsSelfClosing())
+            else if (node.MarkupStartTag != null && node.MarkupEndTag == null && !node.MarkupStartTag.IsVoidElement() && !node.MarkupStartTag.IsSelfClosing())
             {
                 element.AddDiagnostic(
                     ComponentDiagnosticFactory.Create_UnclosedTag(
-                        BuildSourceSpanFromNode(node.StartTag), node.StartTag.GetTagNameWithOptionalBang()));
+                        BuildSourceSpanFromNode(node.MarkupStartTag), node.MarkupStartTag.GetTagNameWithOptionalBang()));
             }
-            else if (node.StartTag == null && node.EndTag != null)
+            else if (node.MarkupStartTag == null && node.MarkupEndTag != null)
             {
                 element.AddDiagnostic(
                     ComponentDiagnosticFactory.Create_UnexpectedClosingTag(
-                        BuildSourceSpanFromNode(node.EndTag), node.EndTag.GetTagNameWithOptionalBang()));
+                        BuildSourceSpanFromNode(node.MarkupEndTag), node.MarkupEndTag.GetTagNameWithOptionalBang()));
             }
 
-            if (node.StartTag != null && !_document.Options.SuppressPrimaryMethodBody)
+            if (node.MarkupStartTag != null && !_document.Options.SuppressPrimaryMethodBody)
             {
                 // We only want this error during the second phase of the two phase compilation.
-                var startTagName = node.StartTag.GetTagNameWithOptionalBang();
+                var startTagName = node.MarkupStartTag.GetTagNameWithOptionalBang();
                 if (!string.IsNullOrEmpty(startTagName) && LooksLikeAComponentName(_document, startTagName))
                 {
                     element.AddDiagnostic(
-                        ComponentDiagnosticFactory.Create_UnexpectedMarkupElement(startTagName, BuildSourceSpanFromNode(node.StartTag)));
+                        ComponentDiagnosticFactory.Create_UnexpectedMarkupElement(startTagName, BuildSourceSpanFromNode(node.MarkupStartTag)));
                 }
             }
 

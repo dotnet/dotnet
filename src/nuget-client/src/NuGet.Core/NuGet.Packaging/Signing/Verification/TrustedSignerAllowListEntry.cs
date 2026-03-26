@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Collections.Generic;
 using System.Linq;
 using NuGet.Common;
@@ -15,7 +13,7 @@ namespace NuGet.Packaging.Signing
         /// <summary>
         /// List of allowed owners for a repository signature
         /// </summary>
-        public IReadOnlyList<string> Owners { get; }
+        public IReadOnlyList<string>? Owners { get; }
 
         /// <summary>
         /// Describe if the certificate should be allowed to chain to an untrusted certificate
@@ -28,14 +26,14 @@ namespace NuGet.Packaging.Signing
             string fingerprint,
             HashAlgorithmName algorithm,
             bool allowUntrustedRoot = false,
-            IReadOnlyList<string> owners = null)
+            IReadOnlyList<string>? owners = null)
             : base(target, placement, fingerprint, algorithm)
         {
             AllowUntrustedRoot = allowUntrustedRoot;
             Owners = owners;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (base.Equals(obj) && obj is TrustedSignerAllowListEntry trustedSigner)
             {

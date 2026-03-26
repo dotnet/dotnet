@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 #if IS_CORECLR
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -33,7 +31,7 @@ namespace NuGet.Packaging.Signing
             return _signedCms.SignerInfos[0].GetSignature();
         }
 
-        public byte[] GetRepositoryCountersignatureSignatureValue()
+        public byte[]? GetRepositoryCountersignatureSignatureValue()
         {
             if (_signedCms.SignerInfos.Count != 1)
             {

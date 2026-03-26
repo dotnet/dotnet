@@ -41,12 +41,13 @@ internal class SimplifyFullyQualifiedComponentCodeActionProvider : IRazorCodeAct
         // Find the tag at the cursor position, if it's on the start tag (name portion) or end tag only.
         var owner = syntaxRoot.FindInnermostNode(context.StartAbsoluteIndex, includeWhitespace: true) switch
         {
-            MarkupTagHelperStartTagSyntax startTag when startTag.Name.Span.Contains(context.StartAbsoluteIndex) => startTag.Parent,
+            MarkupTagHelperStartTagSyntax ownerStartTag when ownerStartTag.Name.Span.Contains(context.StartAbsoluteIndex) => ownerStartTag.Parent,
             MarkupTagHelperEndTagSyntax endTag => endTag.Parent,
             _ => null
         };
 
-        if (owner is not MarkupTagHelperElementSyntax markupElementSyntax)
+        if (owner is not MarkupTagHelperElementSyntax markupElementSyntax ||
+            markupElementSyntax.TagHelperStartTag is not { } startTag)
         {
             return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }
@@ -68,10 +69,10 @@ internal class SimplifyFullyQualifiedComponentCodeActionProvider : IRazorCodeAct
         {
             Namespace = @namespace,
             ComponentName = componentName,
-            StartTagSpanStart = markupElementSyntax.StartTag.Name.SpanStart,
-            StartTagSpanEnd = markupElementSyntax.StartTag.Name.Span.End,
-            EndTagSpanStart = markupElementSyntax.EndTag?.Name.SpanStart ?? -1,
-            EndTagSpanEnd = markupElementSyntax.EndTag?.Name.Span.End ?? -1,
+            StartTagSpanStart = startTag.Name.SpanStart,
+            StartTagSpanEnd = startTag.Name.Span.End,
+            EndTagSpanStart = markupElementSyntax.TagHelperEndTag?.Name.SpanStart ?? -1,
+            EndTagSpanEnd = markupElementSyntax.TagHelperEndTag?.Name.Span.End ?? -1,
         };
 
         var resolutionParams = new RazorCodeActionResolutionParams()
@@ -94,7 +95,12 @@ internal class SimplifyFullyQualifiedComponentCodeActionProvider : IRazorCodeAct
             return false;
         }
 
-        var startTagSpan = element.StartTag.Span;
+        if (element.TagHelperStartTag is not { } startTag)
+        {
+            return false;
+        }
+
+        var startTagSpan = startTag.Span;
         foreach (var diagnostic in context.Request.Context.Diagnostics)
         {
             if (diagnostic.Range is null)

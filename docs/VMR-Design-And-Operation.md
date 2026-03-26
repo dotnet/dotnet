@@ -53,22 +53,21 @@ There are two types of component sources:
 
 #### Special Note: SDK Band Layout
 
-SDK bands, e.g. 8.0.1xx and 8.0.2xx are laid out under the `src/sdk` directory, with a directory for each specific band that is active for the given branch. In all cases except post-RTM-Band preview SDKs, all active SDKs are laid out in parallel in the VMR. They are not kept in other branches in the VMR, or in a separate VMR. This is for the following reasons:
-- **Runtime:SDK is a one:many relationship** - For each .NET distro maintainer, a single runtime is shipped in at least one SDK. Ensuring that the identity of those runtime files is identical between the SDKs is less confusing for SDK consumers.
-- **Separate VMRs would require stable binary flow** -  Stable binary flow violates the Unified Build Rule "There may be no pre-release, non-final stable binary flow". This avoids complexity and ensures that our partners do not have to violate their build requirements.
-- **We already have multiple versions of the same source in the VMR** - There is precedent for this situation already, as there are occasionally multiple versions of the same repository (e.g. `Newtonsoft.Json`) shipped within the product.
-For post-RTM preview SDKs, they shall exist in their expected location in the VMR (e.g. `src/sdk/8.0.2xx`) in a separate branch of the VMR, with the non-SDK elements of the VMR removed. This VMR may only depend on released .NET runtimes. When this SDK goes to RTM, it shall be merged into the parent `MAJOR.MINOR` servicing branch.
+SDK bands (e.g. 9.0.1xx, 9.0.2xx) are managed using separate VMR branches rather than subdirectories. Each SDK band has its own branch (e.g. `release/9.0.1xx`, `release/9.0.2xx`):
+
+- The **1xx branch** contains the full set of sources for all repositories, including shared components like `runtime`.
+- **Non-1xx branches** contain only band-specific repository sources (e.g. `sdk`, `roslyn`). Shared components are not present as source in these branches; instead, they are consumed as build output packages from the 1xx branch.
+
+This branch-based approach ensures that shared components (e.g. the .NET runtime) are built once in the 1xx branch and reused across all bands, maintaining coherency. For detailed information, see [Managing SDK Bands](./VMR-Managing-SDK-Bands.md) and [Feature Band Support: Work Plan](./VMR-Feature-Band-Support-Work-Plan.md).
 
 ### Examples
 
-|  Scenario                                       |  VMR branch            |  SDK directories                      |  Notes                                              |
-|-------------------------------------------------|------------------------|---------------------------------------|-----------------------------------------------------|
-|  8.0   pre-RTM (development)                    |  main                  |  src/sdk/8.0.1xx                      |                                                     |
-|  8.0 Preview 2                                  |  release/8.0-preview2  |  src/sdk/8.0.1xx                      |                                                     |
-|  8.0 RTM                                        |  release/8.0           |  src/sdk/8.0.1xx                      |                                                     |
-|  8.0.2xx Preview SDK                            |  release/8.0.2xx       |  src/sdk/8.0.2xx                      |  VMR contains SDK-relevant directories only (e.g. runtime directories are removed as the preview SDK typically builds against shipped runtimes |
-|  8.0 at   8.0.2xx RTM                           |  release/8.0           |  src/sdk/8.0.1xx<br />src/sdk/8.0.2xx |  release/8.0.2xx VMR integrated into release/8.0    |
-|  8.0 at 8.0.3xx RTM (8.0.2xx out of servicing)  |  release/8.0           |  src/sdk/8.0.1xx<br />src/sdk/8.0.3xx |  release/sdk/8.0.2xx deleted                        |
+| Scenario                           | VMR branch          | Contents                                                                 |
+|------------------------------------|---------------------|--------------------------------------------------------------------------|
+| 9.0 pre-RTM (development)         | main                | All repository sources (single band)                                     |
+| 9.0 RTM (1xx band)                | release/9.0.1xx     | All repository sources including shared components                       |
+| 9.0.2xx Preview SDK                | release/9.0.2xx     | Band-specific sources only (e.g. sdk, roslyn); shared components consumed as packages from 1xx |
+| 9.0.3xx SDK                        | release/9.0.3xx     | Band-specific sources only; shared components consumed as packages from 1xx |
 
 ### Layout
 
@@ -78,7 +77,6 @@ For post-RTM preview SDKs, they shall exist in their expected location in the VM
 | `src/source-manifest.json`              | An always up-to-date list of all original sources, paths where and versions which are synchronized into the VMR (in that given commit). See [Source Manifest](#source-manifest) |
 | `src/<repo>/`                           | Product source for `<repo>` (e.g. `src/runtime`). See [Repository source inclusion](#repository-source-inclusion) for what does and does not get included |
 | `src/<repo>/<version>`                  | If multiple versions of a repository must be built in the VMR, then subdirectories for each required version are placed under `<repo>`.<br />- `src/Newtonsoft.Json/13.0/`<br />- `src/Newtonsoft.Json/12.0/` |
-| `src/sdk/<sdk band>/`                   | Active SDK bands that are not in preview are laid out in parallel, like the layout of development repo versions above. When a band goes out of active servicing, it is removed from the VMR. See SDK Band Layout for more details. |
 | <nobr>`src/source-build-reference-packages/`</nobr> | Reference packages required to bootstrap the product build. |
 | `eng/`                                  | Top level directory for engineering functionality:<br />- Build scripting (e.g. `Versions.props`) |
 | `eng/keys/`                             | Strong name keys |
