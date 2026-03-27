@@ -32,7 +32,7 @@ variables:
   value: DotNetCore
 
 - name: defaultContainerOptions
-  value: --privileged
+  value: --privileged --ulimit nofile=65536:65536
 
 - ${{ if eq(parameters.desiredIBC, 'Enabled') }}:
   - name: ibcEnabled
