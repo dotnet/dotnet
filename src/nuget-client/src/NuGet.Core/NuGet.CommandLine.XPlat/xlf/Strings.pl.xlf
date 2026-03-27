@@ -409,8 +409,8 @@ Menedżer NuGet wymaga źródeł HTTPS. Aby użyć źródeł HTTP, musisz wyraź
         <note>{0} - package id</note>
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
-        <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, or directory.</source>
-        <target state="translated">Brak ścieżki „{0}” lub jest ona nieprawidłowa. Podaj ścieżkę do projektu, pliku rozwiązania lub katalogu.</target>
+        <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, file-based app, or project directory.</source>
+        <target state="needs-review-translation">Brak ścieżki „{0}” lub jest ona nieprawidłowa. Podaj ścieżkę do projektu, pliku rozwiązania lub katalogu.</target>
         <note>{0} - Input path argument</note>
       </trans-unit>
       <trans-unit id="Error_PathNotFound">
@@ -972,8 +972,8 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_ProjectOptionDescription">
-        <source>Path to a project or solution file, or a directory.</source>
-        <target state="translated">Ścieżka do pliku projektu lub rozwiązania albo katalogu.</target>
+        <source>Path to a project or solution file or file-based app, or a project directory.</source>
+        <target state="needs-review-translation">Ścieżka do pliku projektu lub rozwiązania albo katalogu.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_VulnerableOptionDescription">
@@ -1527,8 +1527,8 @@ Wyszukiwanie polega na porównywaniu łańcuchów bez rozróżniania wielkości 
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_PathArgument_Description">
-        <source>A path to a project, solution file, or directory.</source>
-        <target state="translated">Ścieżka do projektu, pliku rozwiązania lub katalogu.</target>
+        <source>A path to a project, solution file, file-based app, or project directory.</source>
+        <target state="needs-review-translation">Ścieżka do projektu, pliku rozwiązania lub katalogu.</target>
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_Warning_AssetsFileDoesNotContainSpecifiedTarget">

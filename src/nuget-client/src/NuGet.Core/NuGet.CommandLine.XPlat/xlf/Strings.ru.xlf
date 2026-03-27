@@ -409,8 +409,8 @@ NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allo
         <note>{0} - package id</note>
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
-        <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, or directory.</source>
-        <target state="translated">Путь "{0}" отсутствует или является недопустимым. Укажите путь к проекту, файлу решения или каталогу.</target>
+        <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, file-based app, or project directory.</source>
+        <target state="needs-review-translation">Путь "{0}" отсутствует или является недопустимым. Укажите путь к проекту, файлу решения или каталогу.</target>
         <note>{0} - Input path argument</note>
       </trans-unit>
       <trans-unit id="Error_PathNotFound">
@@ -972,8 +972,8 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_ProjectOptionDescription">
-        <source>Path to a project or solution file, or a directory.</source>
-        <target state="translated">Путь к проекту, файлу решения или каталогу.</target>
+        <source>Path to a project or solution file or file-based app, or a project directory.</source>
+        <target state="needs-review-translation">Путь к проекту, файлу решения или каталогу.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_VulnerableOptionDescription">
@@ -1527,8 +1527,8 @@ The search is a case-insensitive string comparison using the supplied value, whi
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_PathArgument_Description">
-        <source>A path to a project, solution file, or directory.</source>
-        <target state="translated">Путь к проекту, файлу решения или каталогу.</target>
+        <source>A path to a project, solution file, file-based app, or project directory.</source>
+        <target state="needs-review-translation">Путь к проекту, файлу решения или каталогу.</target>
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_Warning_AssetsFileDoesNotContainSpecifiedTarget">
