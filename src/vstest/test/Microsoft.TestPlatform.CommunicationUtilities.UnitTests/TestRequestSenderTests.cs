@@ -43,6 +43,8 @@ public class TestRequestSenderTests
     private readonly ITestRequestSender _testRequestSender;
     private ConnectedEventArgs _connectedEventArgs;
 
+    public TestContext TestContext { get; set; } = null!;
+
     public TestRequestSenderTests()
     {
         _connectionInfo = new TestHostConnectionInfo
@@ -61,12 +63,6 @@ public class TestRequestSenderTests
         _mockDiscoveryEventsHandler = new Mock<ITestDiscoveryEventsHandler2>();
         _mockExecutionEventsHandler = new Mock<IInternalTestRunEventsHandler>();
         _testRunCriteriaWithSources = new TestRunCriteriaWithSources(new Dictionary<string, IEnumerable<string>>(), "runsettings", null, null!);
-    }
-
-    [TestCleanup]
-    public void Cleanup()
-    {
-        Environment.SetEnvironmentVariable(EnvironmentHelper.VstestConnectionTimeout, string.Empty);
     }
 
     [TestMethod]
@@ -110,7 +106,7 @@ public class TestRequestSenderTests
         watch.Stop();
 
         Assert.IsFalse(connected);
-        Assert.IsTrue(watch.ElapsedMilliseconds < connectionTimeout);
+        Assert.IsLessThan(connectionTimeout, watch.ElapsedMilliseconds);
     }
 
     [TestMethod]
@@ -125,7 +121,7 @@ public class TestRequestSenderTests
         watch.Stop();
 
         Assert.IsFalse(connected);
-        Assert.IsTrue(watch.ElapsedMilliseconds < connectionTimeout);
+        Assert.IsLessThan(connectionTimeout, watch.ElapsedMilliseconds);
     }
 
     [TestMethod]
@@ -203,7 +199,7 @@ public class TestRequestSenderTests
         _mockChannel.Verify(mockChannel => mockChannel.Send(MessageType.CancelTestRun), Times.Never);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("")]
     [DataRow(" ")]
     [DataRow(null)]
@@ -263,7 +259,7 @@ public class TestRequestSenderTests
         SetupRaiseMessageReceivedOnCheckVersion();
         SetupFakeCommunicationChannel();
 
-        Assert.ThrowsException<TestPlatformException>(() => _testRequestSender.CheckVersionWithTestHost());
+        Assert.ThrowsExactly<TestPlatformException>(() => _testRequestSender.CheckVersionWithTestHost());
     }
 
     [TestMethod]
@@ -273,17 +269,19 @@ public class TestRequestSenderTests
         SetupRaiseMessageReceivedOnCheckVersion();
         SetupFakeCommunicationChannel();
 
-        Assert.ThrowsException<TestPlatformException>(() => _testRequestSender.CheckVersionWithTestHost());
+        Assert.ThrowsExactly<TestPlatformException>(() => _testRequestSender.CheckVersionWithTestHost());
     }
 
     [TestMethod]
+    [DoNotParallelize]
     public void CheckVersionWithTestHostShouldThrowIfProtocolNegotiationTimeouts()
     {
+        // Make sure to use do-not parallelize because you set non-default value to the env variable.
         Environment.SetEnvironmentVariable(EnvironmentHelper.VstestConnectionTimeout, "0");
 
         SetupFakeCommunicationChannel();
 
-        var message = Assert.ThrowsException<TestPlatformException>(() => _testRequestSender.CheckVersionWithTestHost()).Message;
+        var message = Assert.ThrowsExactly<TestPlatformException>(() => _testRequestSender.CheckVersionWithTestHost()).Message;
 
         Assert.AreEqual(message, TimoutErrorMessage);
     }
@@ -797,8 +795,8 @@ public class TestRequestSenderTests
         SetupFakeCommunicationChannel();
 
         // Note: Even if the calls get invoked on separate threads, the request sender should send back the complete message just once.
-        var t1 = Task.Run(RaiseClientDisconnectedEvent);
-        var t2 = Task.Run(() => _testRequestSender.StartTestRun(runCriteria, _mockExecutionEventsHandler.Object));
+        var t1 = Task.Run(RaiseClientDisconnectedEvent, TestContext.CancellationToken);
+        var t2 = Task.Run(() => _testRequestSender.StartTestRun(runCriteria, _mockExecutionEventsHandler.Object), TestContext.CancellationToken);
 
         await Task.WhenAll(t1, t2);
 

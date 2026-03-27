@@ -68,22 +68,16 @@ public class DataCollectionRequestHandlerTests
         _mockDataCollectionManager.Setup(x => x.SessionStarted(It.IsAny<SessionStartEventArgs>())).Returns(true);
     }
 
-    [TestCleanup]
-    public void Cleanup()
-    {
-        Environment.SetEnvironmentVariable(EnvironmentHelper.VstestConnectionTimeout, string.Empty);
-    }
-
     [TestMethod]
     public void CreateInstanceShouldThrowExceptionIfInstanceCommunicationManagerIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => DataCollectionRequestHandler.Create(null!, _mockMessageSink.Object));
+        Assert.ThrowsExactly<ArgumentNullException>(() => DataCollectionRequestHandler.Create(null!, _mockMessageSink.Object));
     }
 
     [TestMethod]
     public void CreateInstanceShouldThrowExceptinIfInstanceMessageSinkIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => DataCollectionRequestHandler.Create(_mockCommunicationManager.Object, null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => DataCollectionRequestHandler.Create(_mockCommunicationManager.Object, null!));
     }
 
     [TestMethod]
@@ -107,7 +101,7 @@ public class DataCollectionRequestHandlerTests
     {
         _mockCommunicationManager.Setup(x => x.SetupClientAsync(It.IsAny<IPEndPoint>())).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _requestHandler.InitializeCommunication(123));
+        Assert.ThrowsExactly<Exception>(() => _requestHandler.InitializeCommunication(123));
     }
 
     [TestMethod]
@@ -123,7 +117,7 @@ public class DataCollectionRequestHandlerTests
     {
         _mockCommunicationManager.Setup(x => x.WaitForServerConnection(It.IsAny<int>())).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _requestHandler.WaitForRequestSenderConnection(0));
+        Assert.ThrowsExactly<Exception>(() => _requestHandler.WaitForRequestSenderConnection(0));
     }
 
     [TestMethod]
@@ -142,7 +136,7 @@ public class DataCollectionRequestHandlerTests
         _mockCommunicationManager.Setup(x => x.SendMessage(MessageType.DataCollectionMessage, It.IsAny<DataCollectionMessageEventArgs>())).Throws<Exception>();
         var message = new DataCollectionMessageEventArgs(TestMessageLevel.Error, "message");
 
-        Assert.ThrowsException<Exception>(() => _requestHandler.SendDataCollectionMessage(message));
+        Assert.ThrowsExactly<Exception>(() => _requestHandler.SendDataCollectionMessage(message));
     }
 
     [TestMethod]
@@ -158,7 +152,7 @@ public class DataCollectionRequestHandlerTests
     {
         _mockCommunicationManager.Setup(x => x.StopClient()).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _requestHandler.Close());
+        Assert.ThrowsExactly<Exception>(() => _requestHandler.Close());
     }
 
     [TestMethod]
@@ -250,7 +244,7 @@ public class DataCollectionRequestHandlerTests
         _requestHandler.ProcessRequests();
 
         _mockFileHelper.Verify(x => x.EnumerateFiles($@"{temp}dir1", SearchOption.AllDirectories, @"Collector.dll"), Times.Once);
-        Assert.IsTrue(TestPluginCache.Instance.GetExtensionPaths(@"Collector.dll").Contains(Path.Combine(temp, "dir1", "abc.DataCollector.dll")));
+        Assert.Contains(Path.Combine(temp, "dir1", "abc.DataCollector.dll"), TestPluginCache.Instance.GetExtensionPaths(@"Collector.dll"));
     }
 
     [TestMethod]
@@ -258,7 +252,7 @@ public class DataCollectionRequestHandlerTests
     {
         _mockCommunicationManager.Setup(x => x.ReceiveMessage()).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _requestHandler.ProcessRequests());
+        Assert.ThrowsExactly<Exception>(() => _requestHandler.ProcessRequests());
     }
 
     [TestMethod]
@@ -276,8 +270,12 @@ public class DataCollectionRequestHandlerTests
     }
 
     [TestMethod]
+    [DoNotParallelize]
     public void ProcessRequestsShouldSetDefaultTimeoutIfNoEnvVarialbeSet()
     {
+        // Make sure to use do-not parallelize because you set non-default value to the env variable.
+        using var _ = ResetableEnvironment.SetEnvironmentVariable(EnvironmentHelper.VstestConnectionTimeout, null);
+
         var beforeTestRunSTartPayload = new BeforeTestRunStartPayload { SettingsXml = "settingsxml", Sources = new List<string> { "test1.dll" } };
         _mockDataSerializer.Setup(x => x.DeserializePayload<BeforeTestRunStartPayload>(It.Is<Message>(y => y.MessageType == MessageType.BeforeTestRunStart)))
             .Returns(beforeTestRunSTartPayload);
@@ -288,10 +286,12 @@ public class DataCollectionRequestHandlerTests
     }
 
     [TestMethod]
+    [DoNotParallelize]
     public void ProcessRequestsShouldSetTimeoutBasedOnEnvVariable()
     {
         var timeout = 10;
-        Environment.SetEnvironmentVariable(EnvironmentHelper.VstestConnectionTimeout, timeout.ToString(CultureInfo.InvariantCulture));
+        // Make sure to use do-not parallelize because you set non-default value to the env variable.
+        using var _ = ResetableEnvironment.SetEnvironmentVariable(EnvironmentHelper.VstestConnectionTimeout, timeout.ToString(CultureInfo.InvariantCulture));
         var beforeTestRunSTartPayload = new BeforeTestRunStartPayload { SettingsXml = "settingsxml", Sources = new List<string> { "test1.dll" } };
         _mockDataSerializer.Setup(x => x.DeserializePayload<BeforeTestRunStartPayload>(It.Is<Message>(y => y.MessageType == MessageType.BeforeTestRunStart)))
             .Returns(beforeTestRunSTartPayload);

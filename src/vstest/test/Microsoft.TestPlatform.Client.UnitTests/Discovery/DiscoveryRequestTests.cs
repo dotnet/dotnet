@@ -58,7 +58,7 @@ public class DiscoveryRequestTests
     {
         _discoveryRequest.Dispose();
 
-        Assert.ThrowsException<ObjectDisposedException>(() => _discoveryRequest.DiscoverAsync());
+        Assert.ThrowsExactly<ObjectDisposedException>(() => _discoveryRequest.DiscoverAsync());
     }
 
     [TestMethod]
@@ -74,26 +74,19 @@ public class DiscoveryRequestTests
     public void DiscoveryAsyncIfDiscoverTestsThrowsExceptionSetsDiscoveryInProgressToFalseAndThrowsThatException()
     {
         _discoveryManager.Setup(dm => dm.DiscoverTests(_discoveryCriteria, _discoveryRequest as DiscoveryRequest)).Throws(new Exception("DummyException"));
-        try
-        {
-            _discoveryRequest.DiscoverAsync();
-        }
-        catch (Exception ex)
-        {
-            Assert.IsTrue(ex is Exception);
-            Assert.AreEqual("DummyException", ex.Message);
-            Assert.IsFalse((_discoveryRequest as DiscoveryRequest).DiscoveryInProgress);
-        }
+        var ex = Assert.ThrowsExactly<Exception>(() => _discoveryRequest.DiscoverAsync());
+        Assert.AreEqual("DummyException", ex.Message);
+        Assert.IsFalse((_discoveryRequest as DiscoveryRequest).DiscoveryInProgress);
     }
 
     [TestMethod]
     public void AbortIfDiscoveryRequestDisposedShouldThrowObjectDisposedException()
     {
         _discoveryRequest.Dispose();
-        Assert.ThrowsException<ObjectDisposedException>(() => _discoveryRequest.Abort());
+        Assert.ThrowsExactly<ObjectDisposedException>(() => _discoveryRequest.Abort());
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(ProtocolConfigVersionProvider))]
     public void AbortIfDiscoveryIsinProgressShouldCallDiscoveryManagerAbort(int version)
     {
@@ -128,7 +121,7 @@ public class DiscoveryRequestTests
     public void WaitForCompletionIfDiscoveryRequestDisposedShouldThrowObjectDisposedException()
     {
         _discoveryRequest.Dispose();
-        Assert.ThrowsException<ObjectDisposedException>(() => _discoveryRequest.WaitForCompletion());
+        Assert.ThrowsExactly<ObjectDisposedException>(() => _discoveryRequest.WaitForCompletion());
     }
 
     [TestMethod]
@@ -150,7 +143,7 @@ public class DiscoveryRequestTests
 
         eventsHandler.HandleDiscoveryComplete(new DiscoveryCompleteEventArgs(1, false), []);
 
-        Assert.AreEqual(2, events.Count);
+        Assert.HasCount(2, events);
         Assert.AreEqual("close", events[0]);
         Assert.AreEqual("complete", events[1]);
     }

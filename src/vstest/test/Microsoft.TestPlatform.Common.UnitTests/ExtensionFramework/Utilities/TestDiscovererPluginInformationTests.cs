@@ -37,7 +37,7 @@ public class TestDiscovererPluginInformationTests
     {
         _testPluginInformation = new TestDiscovererPluginInformation(typeof(DummyTestDiscovererWithNoFileExtensions));
         Assert.IsNotNull(_testPluginInformation.FileExtensions);
-        Assert.AreEqual(0, _testPluginInformation.FileExtensions.Count);
+        Assert.IsEmpty(_testPluginInformation.FileExtensions);
         Assert.IsFalse(_testPluginInformation.IsDirectoryBased);
     }
 
@@ -142,9 +142,9 @@ public class TestDiscovererPluginInformationTests
         var testPluginMetada = _testPluginInformation.Metadata.ToArray();
 
         Assert.IsNotNull(_testPluginInformation.FileExtensions);
-        Assert.AreEqual(0, _testPluginInformation.FileExtensions.Count);
+        Assert.IsEmpty(_testPluginInformation.FileExtensions);
         Assert.IsNotNull(testPluginMetada[0]);
-        Assert.AreEqual(0, ((List<string>)testPluginMetada[0]!).Count);
+        Assert.IsEmpty((List<string>)testPluginMetada[0]!);
 
         Assert.IsTrue(_testPluginInformation.IsDirectoryBased);
         Assert.IsTrue(bool.Parse(testPluginMetada[3]!.ToString()!));

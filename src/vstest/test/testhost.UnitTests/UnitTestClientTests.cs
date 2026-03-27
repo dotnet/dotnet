@@ -22,7 +22,7 @@ public class UnitTestClientTests
         var argument = "--port 8080 --endpoint 127.0.0.1:8020 --diag \"abc txt\"";
         string[] argsArr = UnitTestClient.SplitArguments(argument);
 
-        Assert.AreEqual(6, argsArr.Length);
+        Assert.HasCount(6, argsArr);
         CollectionAssert.AreEqual(argsArr, expected);
     }
 
@@ -33,7 +33,7 @@ public class UnitTestClientTests
         var argument = "--port 8080 --endpoint 127.0.0.1:8020 --diag \'abc txt\'";
         string[] argsArr = UnitTestClient.SplitArguments(argument);
 
-        Assert.AreEqual(6, argsArr.Length);
+        Assert.HasCount(6, argsArr);
         CollectionAssert.AreEqual(expected, argsArr);
     }
 
@@ -44,7 +44,7 @@ public class UnitTestClientTests
         var argument = "--port 8080 --endpoint 127.0.0.1:8020 --diag abc txt";
         string[] argsArr = UnitTestClient.SplitArguments(argument);
 
-        Assert.AreEqual(7, argsArr.Length);
+        Assert.HasCount(7, argsArr);
         CollectionAssert.AreEqual(expected, argsArr);
     }
 
@@ -59,7 +59,7 @@ public class UnitTestClientTests
         bool threadCultureWasSet = false;
 
         // Act - We have an exception because we are not passing the right args but that's ok for our test
-        Assert.ThrowsException<ArgumentException>(() => Program.Run(null, new(envVarMock.Object, lang => threadCultureWasSet = lang.Equals(culture))));
+        Assert.ThrowsExactly<ArgumentException>(() => Program.Run(null, new(envVarMock.Object, lang => threadCultureWasSet = lang.Equals(culture))));
 
         // Assert
         Assert.IsTrue(threadCultureWasSet, "DefaultThreadCurrentUICulture was not set");
@@ -81,7 +81,7 @@ public class UnitTestClientTests
         bool threadCultureWasSet = false;
 
         // Act - We have an exception because we are not passing the right args but that's ok for our test
-        Assert.ThrowsException<ArgumentException>(() => Program.Run(null, new(envVarMock.Object, lang => threadCultureWasSet = lang.Equals(culture))));
+        Assert.ThrowsExactly<ArgumentException>(() => Program.Run(null, new(envVarMock.Object, lang => threadCultureWasSet = lang.Equals(culture))));
 
         // Assert
         Assert.IsTrue(threadCultureWasSet, "DefaultThreadCurrentUICulture was not set");
@@ -102,7 +102,7 @@ public class UnitTestClientTests
         bool threadCultureWasSet = false;
 
         // Act - We have an exception because we are not passing the right args but that's ok for our test
-        Assert.ThrowsException<ArgumentException>(() => Program.Run(null, new(envVarMock.Object, lang => threadCultureWasSet = true)));
+        Assert.ThrowsExactly<ArgumentException>(() => Program.Run(null, new(envVarMock.Object, lang => threadCultureWasSet = true)));
 
         // Assert
         Assert.IsFalse(threadCultureWasSet, "DefaultThreadCurrentUICulture was set");

@@ -41,7 +41,7 @@ public class BlameLoggerTests
     [TestMethod]
     public void InitializeShouldThrowExceptionIfEventsIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _blameLogger.Initialize(null!, string.Empty));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _blameLogger.Initialize(null!, string.Empty));
     }
 
     /// <summary>

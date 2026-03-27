@@ -135,6 +135,22 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
 
         _vstestConsoleProcessManager.ProcessExited += (sender, args) => _requestSender.OnProcessExited();
         _sessionStarted = false;
+
+        // TODO: this is writing into the same file in integration tests (there is just 1 eqTrace for whole process)
+        // figure out how to make it useful. The logs helped a bit in debugging, but not by much.
+        //if (_consoleParameters.TraceLevel == TraceLevel.Verbose && !string.IsNullOrWhiteSpace(_consoleParameters.LogFilePath))
+        //{
+        //    var logFilePath = Path.ChangeExtension(
+        //        _consoleParameters.LogFilePath,
+        //        string.Format(
+        //            CultureInfo.InvariantCulture,
+        //            "translationLayer.{0}_{1}{2}",
+        //            DateTime.Now.ToString("yy-MM-dd_HH-mm-ss_fffff", CultureInfo.CurrentCulture),
+        //            new PlatformEnvironment().GetCurrentManagedThreadId(),
+        //            Path.GetExtension(_consoleParameters.LogFilePath))
+        //        );
+        //    EqtTrace.InitializeTrace(logFilePath, PlatformTraceLevel.Verbose);
+        //}
     }
 
 
@@ -635,10 +651,12 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
     /// <inheritdoc/>
     public void EndSession()
     {
-        EqtTrace.Info("VsTestConsoleWrapper.EndSession: Ending VsTestConsoleWrapper session");
+        EqtTrace.Info($"VsTestConsoleWrapper.EndSession: Ending VsTestConsoleWrapper session - process id:{_vstestConsoleProcessManager.ProcessId}");
 
         _requestSender.EndSession();
         _requestSender.Close();
+
+        EqtTrace.Info("VsTestConsoleWrapper.EndSession: Ended VsTestConsoleWrapper session");
 
         // If vstest.console is still hanging around, it should be explicitly killed.
         _vstestConsoleProcessManager.ShutdownProcess();

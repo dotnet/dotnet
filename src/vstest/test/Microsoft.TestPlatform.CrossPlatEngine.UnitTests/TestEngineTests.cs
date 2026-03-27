@@ -1075,7 +1075,7 @@ new Mock<IWarningLogger>().Object);
         var nonParallelExecutionManager = _testEngine.CreateNonParallelExecutionManager(_mockRequestData.Object, testRunCriteria, true, runtimeProviderInfo);
 
         Assert.IsInstanceOfType(nonParallelExecutionManager, typeof(ProxyExecutionManagerWithDataCollection));
-        Assert.IsTrue(((ProxyExecutionManagerWithDataCollection)nonParallelExecutionManager).ProxyDataCollectionManager.Sources.Contains("1.dll"));
-        Assert.IsTrue(((ProxyExecutionManagerWithDataCollection)nonParallelExecutionManager).ProxyDataCollectionManager.Sources.Contains("2.dll"));
+        Assert.Contains("1.dll", ((ProxyExecutionManagerWithDataCollection)nonParallelExecutionManager).ProxyDataCollectionManager.Sources);
+        Assert.Contains("2.dll", ((ProxyExecutionManagerWithDataCollection)nonParallelExecutionManager).ProxyDataCollectionManager.Sources);
     }
 }

@@ -311,7 +311,7 @@ public class DiscoveryManagerTests
         _discoveryManager.Abort(mockHandler.Object);
 
         // Assert
-        Assert.AreEqual(true, receivedDiscoveryCompleteEventArgs!.IsAborted);
+        Assert.IsTrue(receivedDiscoveryCompleteEventArgs!.IsAborted);
         Assert.AreEqual(-1, receivedDiscoveryCompleteEventArgs.TotalCount);
     }
     #endregion

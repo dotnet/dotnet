@@ -34,27 +34,27 @@ public class RunSettingsProviderExtensionsTests
 
         _runSettingsProvider.UpdateRunSettings(runSettingsXml);
 
-        StringAssert.Contains(_runSettingsProvider.ActiveRunSettings!.SettingsXml, runSettingsXml);
+        Assert.Contains(runSettingsXml, _runSettingsProvider.ActiveRunSettings!.SettingsXml!);
     }
 
     [TestMethod]
     public void UpdateRunSettingsShouldThrownExceptionIfRunSettingsProviderIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(
+        Assert.ThrowsExactly<ArgumentNullException>(
             () => RunSettingsProviderExtensions.UpdateRunSettings(null!, "<RunSettings></RunSettings>"));
     }
 
     [TestMethod]
     public void UpdateRunSettingsShouldThrownExceptionIfSettingsXmlIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(
+        Assert.ThrowsExactly<ArgumentNullException>(
             () => _runSettingsProvider.UpdateRunSettings(null!));
     }
 
     [TestMethod]
     public void UpdateRunSettingsShouldThrownExceptionIfSettingsXmlIsEmptyOrWhiteSpace()
     {
-        Assert.ThrowsException<ArgumentNullException>(
+        Assert.ThrowsExactly<ArgumentNullException>(
             () => _runSettingsProvider.UpdateRunSettings("  "));
     }
 
@@ -101,41 +101,41 @@ public class RunSettingsProviderExtensionsTests
 
         var runConfiguration =
             XmlRunSettingsUtilities.GetRunConfigurationNode(_runSettingsProvider.ActiveRunSettings!.SettingsXml);
-        Assert.AreEqual(runConfiguration.TargetPlatform, Architecture.X64);
+        Assert.AreEqual(Architecture.X64, runConfiguration.TargetPlatform);
     }
 
     [TestMethod]
     public void AddDefaultRunSettingsShouldThrowExceptionIfArgumentIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() =>
+        Assert.ThrowsExactly<ArgumentNullException>(() =>
             RunSettingsProviderExtensions.AddDefaultRunSettings(null!));
     }
 
     [TestMethod]
     public void UpdateRunSettingsNodeShouldThrowExceptionIfKeyIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() =>
+        Assert.ThrowsExactly<ArgumentNullException>(() =>
             _runSettingsProvider.UpdateRunSettingsNode(null!, "data"));
     }
 
     [TestMethod]
     public void UpdateRunSettingsNodeShouldThrowExceptionIfKeyIsEmptyOrWhiteSpace()
     {
-        Assert.ThrowsException<ArgumentNullException>(() =>
+        Assert.ThrowsExactly<ArgumentNullException>(() =>
             _runSettingsProvider.UpdateRunSettingsNode("  ", "data"));
     }
 
     [TestMethod]
     public void UpdateRunSettingsNodeShouldThrowExceptionIfDataIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() =>
+        Assert.ThrowsExactly<ArgumentNullException>(() =>
             _runSettingsProvider.UpdateRunSettingsNode("Key", null!));
     }
 
     [TestMethod]
     public void UpdateRunSettingsNodeShouldThrowExceptionIfRunSettingsProviderIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() =>
+        Assert.ThrowsExactly<ArgumentNullException>(() =>
             RunSettingsProviderExtensions.UpdateRunSettingsNode(null!, "Key", "data"));
     }
 
@@ -212,28 +212,28 @@ public class RunSettingsProviderExtensionsTests
     [TestMethod]
     public void UpdateRunSettingsNodeInnerXmlShouldThrowExceptionIfKeyIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() =>
+        Assert.ThrowsExactly<ArgumentNullException>(() =>
             _runSettingsProvider.UpdateRunSettingsNodeInnerXml(null!, "<myxml/>"));
     }
 
     [TestMethod]
     public void UpdateRunSettingsNodeInnerXmlShouldThrowExceptionIfKeyIsEmptyOrWhiteSpace()
     {
-        Assert.ThrowsException<ArgumentNullException>(() =>
+        Assert.ThrowsExactly<ArgumentNullException>(() =>
             _runSettingsProvider.UpdateRunSettingsNodeInnerXml("  ", "<myxml/>"));
     }
 
     [TestMethod]
     public void UpdateRunSettingsNodeInnerXmlShouldThrowExceptionIfXmlIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() =>
+        Assert.ThrowsExactly<ArgumentNullException>(() =>
             _runSettingsProvider.UpdateRunSettingsNodeInnerXml("Key", null!));
     }
 
     [TestMethod]
     public void UpdateRunSettingsNodeInnerXmlShouldThrowExceptionIfRunSettingsProviderIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() =>
+        Assert.ThrowsExactly<ArgumentNullException>(() =>
             RunSettingsProviderExtensions.UpdateRunSettingsNodeInnerXml(null!, "Key", "<myxml/>"));
     }
 
@@ -259,13 +259,13 @@ public class RunSettingsProviderExtensionsTests
     [TestMethod]
     public void QueryRunSettingsNodeShouldThrowIfKeyIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _runSettingsProvider.QueryRunSettingsNode(null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _runSettingsProvider.QueryRunSettingsNode(null!));
     }
 
     [TestMethod]
     public void QueryRunSettingsNodeShouldThrowIfKeyIsEmptyOrWhiteSpace()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _runSettingsProvider.QueryRunSettingsNode("  "));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _runSettingsProvider.QueryRunSettingsNode("  "));
     }
 
     [TestMethod]

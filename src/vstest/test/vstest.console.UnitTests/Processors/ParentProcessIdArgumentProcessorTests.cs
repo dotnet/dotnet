@@ -30,10 +30,9 @@ public class ParentProcessIdArgumentProcessorTests
     public void CapabilitiesShouldHaveHigherPriorityThanPortCapabilities()
     {
         var parentProcessIdCapabilities = new ParentProcessIdArgumentProcessorCapabilities();
-        var portCapabilities = new PortArgumentProcessorCapabilities();
 
         // Less the number, high the priority
-        Assert.IsTrue(parentProcessIdCapabilities.Priority == portCapabilities.Priority, "ParentProcessId must have higher priority than Port.");
+        Assert.AreEqual(ArgumentProcessorPriority.DesignMode, parentProcessIdCapabilities.Priority, "ParentProcessId must have higher priority than Port.");
     }
 
     [TestMethod]
@@ -57,30 +56,16 @@ public class ParentProcessIdArgumentProcessorTests
     public void ExecutorInitializeWithNullOrEmptyParentProcessIdShouldThrowCommandLineException()
     {
         var executor = new ParentProcessIdArgumentExecutor(CommandLineOptions.Instance);
-        try
-        {
-            executor.Initialize(null);
-        }
-        catch (Exception ex)
-        {
-            Assert.IsTrue(ex is CommandLineException);
-            Assert.AreEqual("The --ParentProcessId|/ParentProcessId argument requires the process id which is an integer. Specify the process id of the parent process that launched this process.", ex.Message);
-        }
+        var ex = Assert.ThrowsExactly<CommandLineException>(() => executor.Initialize(null));
+        Assert.AreEqual("The --ParentProcessId|/ParentProcessId argument requires the process id which is an integer. Specify the process id of the parent process that launched this process.", ex.Message);
     }
 
     [TestMethod]
     public void ExecutorInitializeWithInvalidParentProcessIdShouldThrowCommandLineException()
     {
         var executor = new ParentProcessIdArgumentExecutor(CommandLineOptions.Instance);
-        try
-        {
-            executor.Initialize("Foo");
-        }
-        catch (Exception ex)
-        {
-            Assert.IsTrue(ex is CommandLineException);
-            Assert.AreEqual("The --ParentProcessId|/ParentProcessId argument requires the process id which is an integer. Specify the process id of the parent process that launched this process.", ex.Message);
-        }
+        var ex = Assert.ThrowsExactly<CommandLineException>(() => executor.Initialize("Foo"));
+        Assert.AreEqual("The --ParentProcessId|/ParentProcessId argument requires the process id which is an integer. Specify the process id of the parent process that launched this process.", ex.Message);
     }
 
     [TestMethod]

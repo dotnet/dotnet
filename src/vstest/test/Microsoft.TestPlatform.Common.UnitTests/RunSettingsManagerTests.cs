@@ -48,7 +48,7 @@ public class RunSettingsManagerTests
     {
         var instance = RunSettingsManager.Instance;
 
-        Assert.ThrowsException<ArgumentNullException>(() => instance.SetActiveRunSettings(null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => instance.SetActiveRunSettings(null!));
     }
 
     [TestMethod]
