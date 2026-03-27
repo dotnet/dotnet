@@ -6,12 +6,6 @@ namespace Microsoft.VisualStudio.Razor;
 internal interface ILspEditorFeatureDetector
 {
     /// <summary>
-    /// Determines whether the LSP editor is enabled. This returns <see langword="true"/>
-    /// if the legacy editor has <i>not</i> been enabled via the feature flag or tools/options.
-    /// </summary>
-    bool IsLspEditorEnabled();
-
-    /// <summary>
     /// Determines whether the LSP editor is supported by the given document.
     /// </summary>
     bool IsLspEditorSupported(string documentFilePath);
