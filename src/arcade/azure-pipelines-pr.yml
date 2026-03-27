@@ -64,7 +64,8 @@ stages:
       - job: Windows_NT
         timeoutInMinutes: 90
         pool:
-          vmImage: windows-latest  
+          name: $(DncEngPublicBuildPool)
+          demands: ImageOverride -equals windows.vs2026.amd64.open
         strategy:
           matrix:
             Build_Release:
@@ -109,7 +110,8 @@ stages:
       - job: Linux
         container: LinuxContainer
         pool:
-          vmImage: ubuntu-latest
+          name: $(DncEngPublicBuildPool)
+          demands: ImageOverride -equals build.azurelinux.3.amd64.open
         strategy:
           matrix:
             Build_Debug:
@@ -140,7 +142,8 @@ stages:
       - job: Windows_NT
         timeoutInMinutes: 90
         pool:
-          vmimage: windows-latest
+          name: $(DncEngPublicBuildPool)
+          demands: ImageOverride -equals windows.vs2026.amd64.open
         strategy:
           matrix:
             Build_Release:
@@ -182,7 +185,8 @@ stages:
         timeoutInMinutes: 90
         container: LinuxContainer
         pool:
-          vmimage: ubuntu-latest
+          name: $(DncEngPublicBuildPool)
+          demands: ImageOverride -equals build.azurelinux.3.amd64.open
         strategy:
           matrix:
             Build_Debug:
@@ -227,7 +231,8 @@ stages:
         timeoutInMinutes: 90
         container: LinuxContainer
         pool:
-          vmimage: ubuntu-latest
+          name: $(DncEngPublicBuildPool)
+          demands: ImageOverride -equals build.azurelinux.3.amd64.open
         strategy:
           matrix:
             Build_Debug:
@@ -257,7 +262,8 @@ stages:
         timeoutInMinutes: 90
         container: LinuxContainer
         pool:
-          vmimage: ubuntu-latest
+          name: $(DncEngPublicBuildPool)
+          demands: ImageOverride -equals build.azurelinux.3.amd64.open
         strategy:
           matrix:
             Build_Debug:
@@ -287,7 +293,8 @@ stages:
         timeoutInMinutes: 90
         container: LinuxContainer
         pool:
-          vmimage: ubuntu-latest
+          name: $(DncEngPublicBuildPool)
+          demands: ImageOverride -equals build.azurelinux.3.amd64.open
         strategy:
           matrix:
             Build_Debug:
@@ -316,7 +323,8 @@ stages:
       - job: Android_Devices
         timeoutInMinutes: 90
         pool:
-          vmimage: windows-latest
+          name: $(DncEngPublicBuildPool)
+          demands: ImageOverride -equals windows.vs2026.amd64.open
         strategy:
           matrix:
             Build_Release:
