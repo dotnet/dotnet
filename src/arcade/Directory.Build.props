@@ -17,6 +17,8 @@
     <RepositoryUrl>https://github.com/dotnet/arcade</RepositoryUrl>
     <!-- Only upgrade NuGetAudit warnings to errors for official builds. -->
     <WarningsNotAsErrors Condition="'$(OfficialBuild)' != 'true'">$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
+    <!-- NU1507: Disable multi-feed check as .NET uses multiple internal feeds intentionally -->
+    <NoWarn>$(NoWarn);NU1507</NoWarn>
   </PropertyGroup>
 
 </Project>
