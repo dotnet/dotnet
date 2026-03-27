@@ -206,13 +206,9 @@ internal class ComponentAccessibilityCodeActionProvider(IFileSystem fileSystem) 
         // Get all data necessary for matching
         var tagName = startTag.Name.Content;
         string? parentTagName = null;
-        if (startTag.Parent?.Parent is MarkupElementSyntax parentElement)
+        if (startTag.Parent?.Parent is BaseMarkupElementSyntax parentElement)
         {
             parentTagName = parentElement.StartTag?.Name.Content ?? parentElement.EndTag?.Name.Content;
-        }
-        else if (startTag.Parent?.Parent is MarkupTagHelperElementSyntax parentTagHelperElement)
-        {
-            parentTagName = parentTagHelperElement.StartTag?.Name.Content ?? parentTagHelperElement.EndTag?.Name.Content;
         }
 
         var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
@@ -297,7 +293,7 @@ internal class ComponentAccessibilityCodeActionProvider(IFileSystem fileSystem) 
 
         textEdits.Add(startTagTextEdit);
 
-        var endTag = (startTag.Parent as MarkupElementSyntax)?.EndTag;
+        var endTag = startTag.GetEndTag();
         if (endTag != null)
         {
             var endTagTextEdit = LspFactory.CreateTextEdit(endTag.Name.GetRange(context.CodeDocument.Source), newTagName);

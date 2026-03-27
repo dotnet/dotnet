@@ -101,5 +101,6 @@ internal abstract partial class BaseMarkupEndTagSyntax
         }
     }
 
-    public abstract BaseMarkupStartTagSyntax? GetStartTag();
+    public BaseMarkupStartTagSyntax? GetStartTag()
+        => (Parent as BaseMarkupElementSyntax)?.StartTag;
 }

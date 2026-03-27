@@ -13,6 +13,7 @@
       <BuildCommandArgs>$(BuildCommandArgs) /p:DelaySign=$(DelaySign)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:PublicSign=$(PublicSign)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:VersionSuffix=$(CssParserReleaseVersionSuffix)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:IncludeSourceRevisionInInformationalVersion=false</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
     </PropertyGroup>

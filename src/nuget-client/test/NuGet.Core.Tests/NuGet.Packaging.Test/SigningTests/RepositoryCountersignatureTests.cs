@@ -290,7 +290,7 @@ namespace NuGet.Packaging.Test
                 // Validate countersignature
                 var countersignature = RepositoryCountersignature.GetRepositoryCountersignature(primarySignature);
 
-                Assert.Equal(SignatureType.Repository, countersignature.Type);
+                Assert.Equal(SignatureType.Repository, countersignature!.Type);
             }
         }
 
@@ -322,7 +322,7 @@ namespace NuGet.Packaging.Test
                 // Validate countersignature
                 var countersignature = RepositoryCountersignature.GetRepositoryCountersignature(primarySignature);
 
-                Assert.Equal(SignatureType.Repository, countersignature.Type);
+                Assert.Equal(SignatureType.Repository, countersignature!.Type);
             }
         }
 

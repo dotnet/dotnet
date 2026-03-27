@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -177,7 +175,7 @@ namespace NuGet.Packaging.Signing
             }
 
             return GetTimestampCertificates(
-                timestamp.SignedCms,
+                timestamp.SignedCms!,
                 SigningSpecifications.V1,
                 primarySignature.FriendlyName,
                 includeChain: true);
@@ -223,7 +221,7 @@ namespace NuGet.Packaging.Signing
             }
 
             return GetTimestampCertificates(
-                timestamp.SignedCms,
+                timestamp.SignedCms!,
                 SigningSpecifications.V1,
                 primarySignature.FriendlyName,
                 includeChain: true);
@@ -303,7 +301,7 @@ namespace NuGet.Packaging.Signing
                 throw new ArgumentNullException(nameof(issues));
             }
 
-            ILogMessage logMessage = chain.AdditionalContext;
+            ILogMessage? logMessage = chain.AdditionalContext;
 
             if (logMessage is not null)
             {
@@ -426,8 +424,8 @@ namespace NuGet.Packaging.Signing
             const string signingCertificateName = "signing-certificate";
             const string signingCertificateV2Name = "signing-certificate-v2";
 
-            CryptographicAttributeObject signingCertificateAttribute = null;
-            CryptographicAttributeObject signingCertificateV2Attribute = null;
+            CryptographicAttributeObject? signingCertificateAttribute = null;
+            CryptographicAttributeObject? signingCertificateV2Attribute = null;
 
             foreach (var attribute in signerInfo.SignedAttributes)
             {
@@ -553,7 +551,7 @@ namespace NuGet.Packaging.Signing
                 }
             }
 
-            IX509CertificateChain certificates = GetCertificateChain(
+            IX509CertificateChain? certificates = GetCertificateChain(
                 signerInfo.Certificate,
                 signedCms.Certificates,
                 certificateType,
@@ -596,7 +594,7 @@ namespace NuGet.Packaging.Signing
                 }
             }
 
-            var hashAlgorithmName = CryptoHashUtility.OidToHashAlgorithmName(essCertIdV2.HashAlgorithm.Algorithm.Value);
+            var hashAlgorithmName = CryptoHashUtility.OidToHashAlgorithmName(essCertIdV2.HashAlgorithm.Algorithm.Value!);
             var actualHash = CertificateUtility.GetHash(certificate, hashAlgorithmName);
 
             return essCertIdV2.CertificateHash.SequenceEqual(actualHash);
@@ -643,7 +641,7 @@ namespace NuGet.Packaging.Signing
             return issuerSerial.SerialNumber.SequenceEqual(certificateSerialNumber);
         }
 
-        private static IX509CertificateChain GetCertificateChain(
+        private static IX509CertificateChain? GetCertificateChain(
             X509Certificate2 certificate,
             X509Certificate2Collection extraStore,
             CertificateType certificateType,

@@ -17,7 +17,7 @@ namespace NuGet.Packaging.Test
         public void Constructor_IfStreamIsNull_Throws()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => new KeyPairFileWriter(stream: null, encoding: _encoding, leaveOpen: true));
+                () => new KeyPairFileWriter(stream: null!, encoding: _encoding, leaveOpen: true));
 
             Assert.Equal("stream", exception.ParamName);
         }
@@ -26,7 +26,7 @@ namespace NuGet.Packaging.Test
         public void Constructor_IfEncodingIsNull_Throws()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => new KeyPairFileWriter(Stream.Null, encoding: null, leaveOpen: true));
+                () => new KeyPairFileWriter(Stream.Null, encoding: null!, leaveOpen: true));
 
             Assert.Equal("encoding", exception.ParamName);
         }

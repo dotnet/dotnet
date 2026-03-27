@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>$(NetCoreAppCurrent);$(NetCoreAppPrevious);$(NetCoreAppMinimum);netstandard2.1;netstandard2.0;$(NetFrameworkMinimum)</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <!-- https://github.com/dotnet/dotnet/issues/49044 -->
+    <!-- https://github.com/dotnet/dotnet/issues/5640 -->
     <NoWarn>$(NoWarn);CS9368</NoWarn>
     <DefineConstants>$(DefineConstants);MICROSOFT_BCL_MEMORY</DefineConstants>
     <IsPackable>true</IsPackable>

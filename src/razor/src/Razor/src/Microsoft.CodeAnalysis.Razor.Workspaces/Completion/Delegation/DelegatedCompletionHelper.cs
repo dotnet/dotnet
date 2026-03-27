@@ -253,7 +253,7 @@ internal static class DelegatedCompletionHelper
         {
             for (var node = initialNode; node != null; node = node.Parent)
             {
-                if (node is MarkupElementSyntax elementNode)
+                if (node is BaseMarkupElementSyntax elementNode)
                 {
                     if (RazorSyntaxFacts.IsScriptOrStyleBlock(elementNode))
                     {

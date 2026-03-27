@@ -268,7 +268,9 @@ internal sealed partial class HtmlFormattingPass(
 
         foreach (var node in syntaxRoot.DescendantNodes())
         {
-            if (node is MarkupElementSyntax element &&
+            if (node is BaseMarkupElementSyntax element &&
+                element.StartTag is { } startTag &&
+                element.EndTag is { } endTag &&
                 RazorSyntaxFacts.IsScriptOrStyleBlock(element) &&
                 element.GetLinePositionSpan(codeDocument.Source).SpansMultipleLines())
             {
@@ -277,12 +279,12 @@ internal sealed partial class HtmlFormattingPass(
                 // eg, if the last line is just "    </script>", then the contents end at the start of the line, so
                 // we are free to modify the whitespace in front of the end tag. If the last line is "   foo();</script>"
                 // however, then we want the Html formatter to be in charge of the whitespace, so the contents end at the "f";
-                var endTagLine = sourceText.Lines.GetLineFromPosition(element.EndTag.SpanStart);
+                var endTagLine = sourceText.Lines.GetLineFromPosition(endTag.SpanStart);
                 var firstNonWhitespace = endTagLine.GetFirstNonWhitespacePosition();
-                var end = firstNonWhitespace == element.EndTag.SpanStart
+                var end = firstNonWhitespace == endTag.SpanStart
                     ? endTagLine.Start
                     : firstNonWhitespace.GetValueOrDefault() + 1;
-                scriptStyleBuilder.Add(TextSpan.FromBounds(element.StartTag.EndPosition, end));
+                scriptStyleBuilder.Add(TextSpan.FromBounds(startTag.EndPosition, end));
             }
             else if (node is RazorCommentBlockSyntax comment &&
                 comment.GetLinePositionSpan(codeDocument.Source).SpansMultipleLines())

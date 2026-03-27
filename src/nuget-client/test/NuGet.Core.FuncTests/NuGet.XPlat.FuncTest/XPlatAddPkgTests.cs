@@ -810,14 +810,16 @@ namespace NuGet.XPlat.FuncTest
             }
         }
 
-        [Fact]
-        public async Task AddPkg_V3LocalSourceFeed_WithAbsolutePath_NoVersionSpecified_Success()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task AddPkg_V3LocalSourceFeed_WithAbsolutePath_NoVersionSpecified_Success(bool fileBasedApp)
         {
             using (var pathContext = new SimpleTestPathContext())
             {
                 var projectFrameworks = "net472";
                 var packageFrameworks = "net472; netcoreapp2.0";
-                var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, projectFrameworks);
+                var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, projectFrameworks, fileBasedApp);
                 var packageX = "packageX";
                 var packageX_V1 = new PackageIdentity(packageX, new NuGetVersion("1.0.0"));
                 var packageX_V2 = new PackageIdentity(packageX, new NuGetVersion("2.0.0"));
@@ -840,8 +842,10 @@ namespace NuGet.XPlat.FuncTest
 
                 var commandRunner = new AddPackageReferenceCommandRunner();
 
+                using var virtualProjectBuilder = TestVirtualProjectBuilder.From(projectA);
+
                 // Act
-                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger));
+                var result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger, virtualProjectBuilder));
 
                 // Assert
                 Assert.Equal(0, result);
