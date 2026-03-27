@@ -192,26 +192,7 @@ internal static class FormattingUtilities
     /// <param name="tabSize">The size of a tab and indentation.</param>
     /// <returns>A whitespace string representation indentation.</returns>
     public static string GetIndentationString(int indentation, bool insertSpaces, int tabSize)
-    {
-        if (indentation == 0)
-        {
-            return "";
-        }
-
-        if (insertSpaces)
-        {
-            return new string(' ', indentation);
-        }
-
-        var tabs = indentation / tabSize;
-        var tabPrefix = new string('\t', tabs);
-
-        var spaces = indentation % tabSize;
-        var spaceSuffix = new string(' ', spaces);
-
-        var combined = string.Concat(tabPrefix, spaceSuffix);
-        return combined;
-    }
+        => IndentCache.GetIndentString(indentation, insertSpaces, tabSize);
 
     /// <summary>
     /// Unindents a span of text with a few caveats:
