@@ -110,7 +110,7 @@ namespace NuGet.XPlat.FuncTest
             var logger = new TestCommandOutputLogger(_testOutputHelper);
             var addPackageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX.Id, packageX.Version, project);
             var addPackageCommandRunner = new AddPackageReferenceCommandRunner();
-            var addPackageResult = await addPackageCommandRunner.ExecuteCommand(addPackageArgs, new MSBuildAPIUtility(logger));
+            var addPackageResult = await addPackageCommandRunner.ExecuteCommand(addPackageArgs, new MSBuildAPIUtility(logger, virtualProjectBuilder: null));
 
             var console = new TestConsole();
             console.Width(500);
@@ -123,7 +123,7 @@ namespace NuGet.XPlat.FuncTest
                     CancellationToken.None);
 
             // Act
-            var result = await new WhyCommandRunner(new MSBuildAPIUtility(logger)).ExecuteCommand(whyCommandArgs);
+            var result = await new WhyCommandRunner(new MSBuildAPIUtility(logger, virtualProjectBuilder: null)).ExecuteCommand(whyCommandArgs);
 
             // Assert
             var output = console.Output;
@@ -158,7 +158,7 @@ namespace NuGet.XPlat.FuncTest
                     CancellationToken.None);
 
             // Act
-            var result = await new WhyCommandRunner(new MSBuildAPIUtility(NullLogger.Instance)).ExecuteCommand(whyCommandArgs);
+            var result = await new WhyCommandRunner(new MSBuildAPIUtility(NullLogger.Instance, virtualProjectBuilder: null)).ExecuteCommand(whyCommandArgs);
 
             // Assert
             var output = logger.Lines;
@@ -182,7 +182,7 @@ namespace NuGet.XPlat.FuncTest
                     CancellationToken.None);
 
             // Act
-            var result = await new WhyCommandRunner(new MSBuildAPIUtility(NullLogger.Instance)).ExecuteCommand(whyCommandArgs);
+            var result = await new WhyCommandRunner(new MSBuildAPIUtility(NullLogger.Instance, virtualProjectBuilder: null)).ExecuteCommand(whyCommandArgs);
 
             // Assert
             var errorOutput = logger.Lines;
@@ -209,7 +209,7 @@ namespace NuGet.XPlat.FuncTest
                     CancellationToken.None);
 
             // Act
-            var result = await new WhyCommandRunner(new MSBuildAPIUtility(NullLogger.Instance)).ExecuteCommand(whyCommandArgs);
+            var result = await new WhyCommandRunner(new MSBuildAPIUtility(NullLogger.Instance, virtualProjectBuilder: null)).ExecuteCommand(whyCommandArgs);
 
             // Assert
             var errorOutput = logger.Lines;
@@ -235,7 +235,7 @@ namespace NuGet.XPlat.FuncTest
                     CancellationToken.None);
 
             // Act
-            var result = await new WhyCommandRunner(new MSBuildAPIUtility(NullLogger.Instance)).ExecuteCommand(whyCommandArgs);
+            var result = await new WhyCommandRunner(new MSBuildAPIUtility(NullLogger.Instance, virtualProjectBuilder: null)).ExecuteCommand(whyCommandArgs);
 
             // Assert
             var errorOutput = logger.Lines;
@@ -269,7 +269,7 @@ namespace NuGet.XPlat.FuncTest
             var logger = new TestCommandOutputLogger(_testOutputHelper);
             var addPackageCommandArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX.Id, packageX.Version, project);
             var addPackageCommandRunner = new AddPackageReferenceCommandRunner();
-            var addPackageResult = await addPackageCommandRunner.ExecuteCommand(addPackageCommandArgs, new MSBuildAPIUtility(logger));
+            var addPackageResult = await addPackageCommandRunner.ExecuteCommand(addPackageCommandArgs, new MSBuildAPIUtility(logger, virtualProjectBuilder: null));
 
             var console = new TestConsole();
             console.Width(500);
@@ -282,7 +282,7 @@ namespace NuGet.XPlat.FuncTest
                     CancellationToken.None);
 
             // Act
-            var result = await new WhyCommandRunner(new MSBuildAPIUtility(logger)).ExecuteCommand(whyCommandArgs);
+            var result = await new WhyCommandRunner(new MSBuildAPIUtility(logger, virtualProjectBuilder: null)).ExecuteCommand(whyCommandArgs);
 
             // Assert
             var output = console.Output;
