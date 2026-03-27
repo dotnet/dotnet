@@ -29,7 +29,7 @@ namespace NuGet.Packaging.FuncTest
         public void Constructor_WhenArgumentIsNull_Throws()
         {
             ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
-                () => new PackageSignatureVerifier(verificationProviders: null));
+                () => new PackageSignatureVerifier(verificationProviders: null!));
 
             Assert.Equal("verificationProviders", exception.ParamName);
         }

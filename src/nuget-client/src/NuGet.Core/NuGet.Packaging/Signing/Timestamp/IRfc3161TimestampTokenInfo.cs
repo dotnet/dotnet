@@ -18,6 +18,6 @@ namespace NuGet.Packaging.Signing
 
         bool HasMessageHash(byte[] hash);
 
-        byte[] GetNonce();
+        byte[]? GetNonce();
     }
 }

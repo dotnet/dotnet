@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -157,7 +155,7 @@ namespace NuGet.Packaging.Signing
         public static bool IsCertificatePublicKeyValid(X509Certificate2 certificate)
         {
             // Check if the public key is RSA with a valid keysize
-            using (System.Security.Cryptography.RSA publicKey = RSACertificateExtensions.GetRSAPublicKey(certificate))
+            using (System.Security.Cryptography.RSA? publicKey = RSACertificateExtensions.GetRSAPublicKey(certificate))
             {
                 if (publicKey != null)
                 {
@@ -188,7 +186,7 @@ namespace NuGet.Packaging.Signing
         {
             foreach (var extension in certificate.Extensions)
             {
-                if (string.Equals(extension.Oid.Value, Oids.EnhancedKeyUsage, StringComparison.Ordinal))
+                if (string.Equals(extension.Oid!.Value, Oids.EnhancedKeyUsage, StringComparison.Ordinal))
                 {
                     var ekuExtension = (X509EnhancedKeyUsageExtension)extension;
 
@@ -221,7 +219,7 @@ namespace NuGet.Packaging.Signing
         {
             foreach (var extension in certificate.Extensions)
             {
-                if (string.Equals(extension.Oid.Value, Oids.EnhancedKeyUsage, StringComparison.Ordinal))
+                if (string.Equals(extension.Oid!.Value, Oids.EnhancedKeyUsage, StringComparison.Ordinal))
                 {
                     var ekuExtension = (X509EnhancedKeyUsageExtension)extension;
 

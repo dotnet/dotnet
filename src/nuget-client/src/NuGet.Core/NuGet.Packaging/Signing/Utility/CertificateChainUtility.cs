@@ -1,10 +1,9 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -267,7 +266,7 @@ namespace NuGet.Packaging.Signing
             return chainStatus.Any();
         }
 
-        internal static bool TryGetStatusAndMessage(X509ChainStatus[] chainStatuses, X509ChainStatusFlags status, out IEnumerable<string> statusAndMessages)
+        internal static bool TryGetStatusAndMessage(X509ChainStatus[] chainStatuses, X509ChainStatusFlags status, [NotNullWhen(returnValue: true)] out IEnumerable<string>? statusAndMessages)
         {
             statusAndMessages = null;
 
@@ -292,7 +291,7 @@ namespace NuGet.Packaging.Signing
 
         private static void LogAdditionalContext(IX509Chain chain, ILogger logger)
         {
-            ILogMessage additionalContext = chain.AdditionalContext;
+            ILogMessage? additionalContext = chain.AdditionalContext;
 
             if (additionalContext is not null)
             {

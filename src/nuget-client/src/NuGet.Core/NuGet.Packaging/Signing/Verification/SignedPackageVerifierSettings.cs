@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using NuGet.Common;
@@ -164,7 +162,7 @@ namespace NuGet.Packaging.Signing
         /// </summary>
         /// <param name="environmentVariableReader">An <see cref="IEnvironmentVariableReader" /> instance or <see langword="null" /> for the default environment variable reader.</param>
         /// <returns>A <see cref="SignedPackageVerifierSettings" /> instance.</returns>
-        public static SignedPackageVerifierSettings GetDefault(IEnvironmentVariableReader environmentVariableReader = null)
+        public static SignedPackageVerifierSettings GetDefault(IEnvironmentVariableReader? environmentVariableReader = null)
         {
             return new SignedPackageVerifierSettings(
                 allowUnsigned: true,
@@ -186,7 +184,7 @@ namespace NuGet.Packaging.Signing
         /// </summary>
         /// <param name="environmentVariableReader">An <see cref="IEnvironmentVariableReader" /> instance or <see langword="null" /> for the default environment variable reader.</param>
         /// <returns>A <see cref="SignedPackageVerifierSettings" /> instance.</returns>
-        public static SignedPackageVerifierSettings GetAcceptModeDefaultPolicy(IEnvironmentVariableReader environmentVariableReader = null)
+        public static SignedPackageVerifierSettings GetAcceptModeDefaultPolicy(IEnvironmentVariableReader? environmentVariableReader = null)
         {
             return new SignedPackageVerifierSettings(
                 allowUnsigned: true,
@@ -208,7 +206,7 @@ namespace NuGet.Packaging.Signing
         /// </summary>
         /// <param name="environmentVariableReader">An <see cref="IEnvironmentVariableReader" /> instance or <see langword="null" /> for the default environment variable reader.</param>
         /// <returns>A <see cref="SignedPackageVerifierSettings" /> instance.</returns>
-        public static SignedPackageVerifierSettings GetRequireModeDefaultPolicy(IEnvironmentVariableReader environmentVariableReader = null)
+        public static SignedPackageVerifierSettings GetRequireModeDefaultPolicy(IEnvironmentVariableReader? environmentVariableReader = null)
         {
             return new SignedPackageVerifierSettings(
                 allowUnsigned: false,
@@ -230,7 +228,7 @@ namespace NuGet.Packaging.Signing
         /// </summary>
         /// <param name="environmentVariableReader">An <see cref="IEnvironmentVariableReader" /> instance or <see langword="null" /> for the default environment variable reader.</param>
         /// <returns>A <see cref="SignedPackageVerifierSettings" /> instance.</returns>
-        public static SignedPackageVerifierSettings GetVerifyCommandDefaultPolicy(IEnvironmentVariableReader environmentVariableReader = null)
+        public static SignedPackageVerifierSettings GetVerifyCommandDefaultPolicy(IEnvironmentVariableReader? environmentVariableReader = null)
         {
             return new SignedPackageVerifierSettings(
                 allowUnsigned: false,

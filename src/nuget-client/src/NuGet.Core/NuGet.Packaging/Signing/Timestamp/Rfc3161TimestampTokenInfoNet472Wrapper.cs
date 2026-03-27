@@ -34,7 +34,7 @@ namespace NuGet.Packaging.Signing
             return _rfc3161TimestampTokenInfo.HasMessageHash(hash);
         }
 
-        public byte[] GetNonce()
+        public byte[]? GetNonce()
         {
             return _rfc3161TimestampTokenInfo.GetNonce();
         }

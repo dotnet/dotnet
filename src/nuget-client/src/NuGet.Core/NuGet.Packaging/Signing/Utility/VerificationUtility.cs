@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -118,7 +116,7 @@ namespace NuGet.Packaging.Signing
             var validationFlags = SignatureVerificationStatusFlags.NoErrors;
             var signerInfo = timestamp.SignerInfo;
 
-            if (timestamp.SignerInfo.Certificate != null)
+            if (signerInfo.Certificate != null)
             {
                 try
                 {
@@ -151,11 +149,11 @@ namespace NuGet.Packaging.Signing
 
                 try
                 {
-                    var hashAlgorithm = CryptoHashUtility.OidToHashAlgorithmName(timestamp.TstInfo.HashAlgorithmId.Value);
+                    var hashAlgorithm = CryptoHashUtility.OidToHashAlgorithmName(timestamp.TstInfo!.HashAlgorithmId.Value!);
                     var signatureValue = signature.GetSignatureValue();
-                    var messageHash = hashAlgorithm.ComputeHash(signatureValue);
+                    var messageHash = hashAlgorithm.ComputeHash(signatureValue!);
 
-                    if (!timestamp.TstInfo.HasMessageHash(messageHash))
+                    if (!timestamp.TstInfo!.HasMessageHash(messageHash))
                     {
                         issues.Add(SignatureLog.Issue(treatIssuesAsErrors, NuGetLogCode.NU3019, string.Format(CultureInfo.CurrentCulture, Strings.VerifyError_TimestampIntegrityCheckFailed, signature.FriendlyName)));
                         validationFlags |= SignatureVerificationStatusFlags.IntegrityCheckFailed;

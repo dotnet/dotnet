@@ -18,7 +18,7 @@ namespace NuGet.Packaging.Test
         public void Create_WhenDistinguishedNameNull_Throws()
         {
             ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
-                () => GeneralName.Create(distinguishedName: null));
+                () => GeneralName.Create(distinguishedName: null!));
 
             Assert.Equal("distinguishedName", exception.ParamName);
         }

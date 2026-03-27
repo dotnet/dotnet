@@ -172,7 +172,6 @@ public class CohostEndpointTest(ITestOutputHelper testOutputHelper) : ToolingTes
     private class TestLspEditorFeatureDetector : ILspEditorFeatureDetector
     {
         public bool IsLiveShareHost() => throw new NotImplementedException();
-        public bool IsLspEditorEnabled() => throw new NotImplementedException();
         public bool IsLspEditorSupported(string documentFilePath) => throw new NotImplementedException();
         public CapabilityCheckResult IsDotNetCoreProject(string documentFilePath) => throw new NotImplementedException();
         public bool IsRemoteClient() => throw new NotImplementedException();
