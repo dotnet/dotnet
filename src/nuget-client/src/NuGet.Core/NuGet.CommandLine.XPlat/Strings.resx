@@ -925,7 +925,7 @@ NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allo
     <value>Shows the dependency graph for a particular package for a given project or solution.</value>
   </data>
   <data name="WhyCommand_PathArgument_Description" xml:space="preserve">
-    <value>A path to a project, solution file, or directory.</value>
+    <value>A path to a project, solution file, file-based app, or project directory.</value>
   </data>
   <data name="WhyCommand_PackageArgument_Description" xml:space="preserve">
     <value>The package name to lookup in the dependency graph.</value>
@@ -938,7 +938,7 @@ NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allo
     <comment>{0} - Argument that was not provided</comment>
   </data>
   <data name="Error_PathIsMissingOrInvalid" xml:space="preserve">
-    <value>Missing or invalid path '{0}'. Please provide a path to a project, solution file, or directory.</value>
+    <value>Missing or invalid path '{0}'. Please provide a path to a project, solution file, file-based app, or project directory.</value>
     <comment>{0} - Input path argument</comment>
   </data>
   <data name="WhyCommand_Error_ArgumentExceptionThrown" xml:space="preserve">
@@ -1006,7 +1006,7 @@ Do not translate "PackageVersion"</comment>
     <value>Update referenced packages in a project or solution.</value>
   </data>
   <data name="PackageUpdateCommand_ProjectOptionDescription" xml:space="preserve">
-    <value>Path to a project or solution file, or a directory.</value>
+    <value>Path to a project or solution file or file-based app, or a project directory.</value>
   </data>
   <data name="Warning_AlreadyHighestVersion" xml:space="preserve">
     <value>The package {0} is already referencing the highest version {1} in project {2}</value>

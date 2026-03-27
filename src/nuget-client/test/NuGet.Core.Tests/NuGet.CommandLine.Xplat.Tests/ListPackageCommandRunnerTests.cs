@@ -158,7 +158,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                 // Act
                 var isFilteredSetNonEmpty = ListPackageCommandRunner.FilterPackages(allPackages, listPackageArgs);
 
-                var a = new ListPackageCommandRunner();
+                var a = new ListPackageCommandRunner(new MSBuildAPIUtility(NullLogger.Instance));
                 var b = a.UpdatePackagesWithSourceMetadata(allPackages, null, listPackageArgs);
 
                 // Assert
@@ -171,7 +171,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             public async Task UpdatePackages_WithNullSourceMetadata_Succeeds()
             {
                 // Arrange
-                ListPackageCommandRunner listPackageRunner = new ListPackageCommandRunner();
+                ListPackageCommandRunner listPackageRunner = new ListPackageCommandRunner(new MSBuildAPIUtility(NullLogger.Instance));
                 FrameworkPackages packages = new FrameworkPackages("net40", "net40");
                 List<InstalledPackageReference> topLevelPackages =
                     new List<InstalledPackageReference>
@@ -402,7 +402,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                 logger: new Mock<ILogger>().Object,
                 cancellationToken: CancellationToken.None);
 
-            var listPackageRunner = new ListPackageCommandRunner();
+            var listPackageRunner = new ListPackageCommandRunner(new MSBuildAPIUtility(NullLogger.Instance));
 
             // Act & Assert - Call the method directly since it's now internal
             Exception exception = await Record.ExceptionAsync(async () =>

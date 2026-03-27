@@ -3,13 +3,20 @@
 
 #nullable disable
 
+using System;
+using System.CommandLine;
 using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using NuGet.CommandLine.XPlat;
+using NuGet.CommandLine.XPlat.Commands.Why;
+using NuGet.Common;
+using NuGet.Packaging;
 using NuGet.Test.Utility;
 using NuGet.XPlat.FuncTest;
+using Spectre.Console;
+using Spectre.Console.Testing;
 using Test.Utility;
 using Xunit;
 using Xunit.Abstractions;
@@ -60,6 +67,65 @@ namespace Dotnet.Integration.Test
             // Assert
             Assert.Equal(ExitCodes.Success, result.ExitCode);
             Assert.Contains($"Project '{ProjectName}' has the following dependency graph(s) for '{packageY.Id}'", result.AllOutput.Replace("\n", "").Replace("\r", ""));
+        }
+
+        // https://github.com/NuGet/Home/issues/14823: This should use `dotnet nuget why` when it supports file-based apps.
+        [Fact]
+        public async Task WhyCommand_FileBasedApp()
+        {
+            using var pathContext = _testFixture.CreateSimpleTestPathContext();
+
+            // Create packages.
+            var packageA = XPlatTestUtils.CreatePackage("packageA", "1.0.0");
+            var packageB = XPlatTestUtils.CreatePackage("packageB", "1.0.1");
+            packageA.Dependencies.Add(packageB);
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, PackageSaveMode.Defaultv3, packageA);
+
+            // Create the file-based app.
+            var fbaDir = Path.Join(pathContext.SolutionRoot, "fba");
+            Directory.CreateDirectory(fbaDir);
+
+            var appFile = Path.Join(fbaDir, "app.cs");
+            File.WriteAllText(appFile, """
+                #:property PublishAot=false
+                #:package PackageA@1.0.0
+                Console.WriteLine();
+                """);
+
+            // Restore.
+            _testFixture.RunDotnetExpectSuccess(fbaDir, "restore app.cs", testOutputHelper: _testOutputHelper);
+
+            // Get project content.
+            var virtualProject = _testFixture.GetFileBasedAppVirtualProject(appFile, _testOutputHelper);
+            using var builder = new TestVirtualProjectBuilder(virtualProject);
+
+            // Run "why" command.
+            var console = new TestConsole();
+            using var outWriter = new StringWriter();
+            using var errorWriter = new StringWriter();
+            var rootCommand = new RootCommand();
+            WhyCommand.Register(
+                rootCommand,
+                new Lazy<IAnsiConsole>(console),
+                () => new WhyCommandRunner(new MSBuildAPIUtility(NullLogger.Instance, builder)));
+            int result = rootCommand.Parse([
+                "why", appFile, "PackageB",
+            ]).Invoke(new() { Output = outWriter, Error = errorWriter });
+
+            var output = outWriter.ToString() + console.Output;
+            var error = errorWriter.ToString();
+
+            _testOutputHelper.WriteLine(output);
+            _testOutputHelper.WriteLine(error);
+
+            Assert.Equal(0, result);
+
+            Assert.Empty(error);
+
+            Assert.Contains("PackageA (v1.0.0)", output);
+            Assert.Contains("packageB (v1.0.1)", output);
+
+            Assert.Null(builder.ModifiedContent);
         }
 
         [Fact]

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NuGet.CommandLine.XPlat;
 using NuGet.CommandLine.XPlat.Commands.Why;
+using NuGet.Common;
 using NuGet.Packaging;
 using NuGet.Test.Utility;
 using Spectre.Console.Testing;
@@ -26,13 +27,15 @@ namespace NuGet.XPlat.FuncTest
             _testOutputHelper = testOutputHelper;
         }
 
-        [Fact]
-        public async Task WhyCommand_ProjectHasTransitiveDependency_DependencyPathExists()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task WhyCommand_ProjectHasTransitiveDependency_DependencyPathExists(bool fileBasedApp)
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
             var projectFramework = "net472";
-            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, projectFramework);
+            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, projectFramework, fileBasedApp);
 
             var packageX = XPlatTestUtils.CreatePackage("PackageX", "1.0.0");
             var packageY = XPlatTestUtils.CreatePackage("PackageY", "1.0.1");
@@ -48,9 +51,11 @@ namespace NuGet.XPlat.FuncTest
                 packageY);
 
             var logger = new TestCommandOutputLogger(_testOutputHelper);
+            using var builder = TestVirtualProjectBuilder.From(project);
+            var msbuild = new MSBuildAPIUtility(logger, builder);
             var addPackageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageX.Id, packageX.Version, project);
             var addPackageCommandRunner = new AddPackageReferenceCommandRunner();
-            var addPackageResult = await addPackageCommandRunner.ExecuteCommand(addPackageArgs, new MSBuildAPIUtility(logger));
+            var addPackageResult = await addPackageCommandRunner.ExecuteCommand(addPackageArgs, msbuild);
 
             var console = new TestConsole();
             console.Width(100);
@@ -63,7 +68,7 @@ namespace NuGet.XPlat.FuncTest
                     CancellationToken.None);
 
             // Act
-            var result = await WhyCommandRunner.ExecuteCommand(whyCommandArgs);
+            var result = await new WhyCommandRunner(msbuild).ExecuteCommand(whyCommandArgs);
 
             // Assert
             var output = console.Output;
@@ -118,7 +123,7 @@ namespace NuGet.XPlat.FuncTest
                     CancellationToken.None);
 
             // Act
-            var result = await WhyCommandRunner.ExecuteCommand(whyCommandArgs);
+            var result = await new WhyCommandRunner(new MSBuildAPIUtility(logger)).ExecuteCommand(whyCommandArgs);
 
             // Assert
             var output = console.Output;
@@ -153,7 +158,7 @@ namespace NuGet.XPlat.FuncTest
                     CancellationToken.None);
 
             // Act
-            var result = await WhyCommandRunner.ExecuteCommand(whyCommandArgs);
+            var result = await new WhyCommandRunner(new MSBuildAPIUtility(NullLogger.Instance)).ExecuteCommand(whyCommandArgs);
 
             // Assert
             var output = logger.Lines;
@@ -177,7 +182,7 @@ namespace NuGet.XPlat.FuncTest
                     CancellationToken.None);
 
             // Act
-            var result = await WhyCommandRunner.ExecuteCommand(whyCommandArgs);
+            var result = await new WhyCommandRunner(new MSBuildAPIUtility(NullLogger.Instance)).ExecuteCommand(whyCommandArgs);
 
             // Assert
             var errorOutput = logger.Lines;
@@ -204,7 +209,7 @@ namespace NuGet.XPlat.FuncTest
                     CancellationToken.None);
 
             // Act
-            var result = await WhyCommandRunner.ExecuteCommand(whyCommandArgs);
+            var result = await new WhyCommandRunner(new MSBuildAPIUtility(NullLogger.Instance)).ExecuteCommand(whyCommandArgs);
 
             // Assert
             var errorOutput = logger.Lines;
@@ -230,13 +235,13 @@ namespace NuGet.XPlat.FuncTest
                     CancellationToken.None);
 
             // Act
-            var result = await WhyCommandRunner.ExecuteCommand(whyCommandArgs);
+            var result = await new WhyCommandRunner(new MSBuildAPIUtility(NullLogger.Instance)).ExecuteCommand(whyCommandArgs);
 
             // Assert
             var errorOutput = logger.Lines;
 
             Assert.Equal(ExitCodes.InvalidArguments, result);
-            Assert.Contains($"Unable to run 'dotnet nuget why'. Missing or invalid path '{fakeProjectPath}'. Please provide a path to a project, solution file, or directory.", errorOutput);
+            Assert.Contains($"Unable to run 'dotnet nuget why'. Missing or invalid path '{fakeProjectPath}'. Please provide a path to a project, solution file, file-based app, or project directory.", errorOutput);
         }
 
         [Fact]
@@ -277,7 +282,7 @@ namespace NuGet.XPlat.FuncTest
                     CancellationToken.None);
 
             // Act
-            var result = await WhyCommandRunner.ExecuteCommand(whyCommandArgs);
+            var result = await new WhyCommandRunner(new MSBuildAPIUtility(logger)).ExecuteCommand(whyCommandArgs);
 
             // Assert
             var output = console.Output;

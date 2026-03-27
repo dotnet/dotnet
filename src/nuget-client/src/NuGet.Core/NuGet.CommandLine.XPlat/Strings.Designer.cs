@@ -773,7 +773,7 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Missing or invalid path &apos;{0}&apos;. Please provide a path to a project, solution file, or directory..
+        ///   Looks up a localized string similar to Missing or invalid path &apos;{0}&apos;. Please provide a path to a project, solution file, file-based app, or project directory..
         /// </summary>
         internal static string Error_PathIsMissingOrInvalid {
             get {
@@ -1860,7 +1860,7 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Path to a project or solution file, or a directory..
+        ///   Looks up a localized string similar to Path to a project or solution file or file-based app, or a project directory..
         /// </summary>
         internal static string PackageUpdateCommand_ProjectOptionDescription {
             get {
@@ -2791,7 +2791,7 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A path to a project, solution file, or directory..
+        ///   Looks up a localized string similar to A path to a project, solution file, file-based app, or project directory..
         /// </summary>
         internal static string WhyCommand_PathArgument_Description {
             get {

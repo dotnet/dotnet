@@ -15,7 +15,8 @@ namespace NuGet.CommandLine.XPlat
     internal static class AddPackageReferenceCommand
     {
         public static void Register(CommandLineApplication app, Func<ILogger> getLogger,
-            Func<IPackageReferenceCommandRunner> getCommandRunner)
+            Func<IPackageReferenceCommandRunner> getCommandRunner,
+            Func<IVirtualProjectBuilder?>? getVirtualProjectBuilder = null)
         {
             app.Command("add", addpkg =>
             {
@@ -79,9 +80,11 @@ namespace NuGet.CommandLine.XPlat
 
                 addpkg.OnExecute(() =>
                 {
+                    var virtualProjectBuilder = getVirtualProjectBuilder?.Invoke();
+
                     ValidateArgument(id, addpkg.Name);
                     ValidateArgument(projectPath, addpkg.Name);
-                    ValidateProjectPath(projectPath, addpkg.Name);
+                    ValidateProjectPath(projectPath, addpkg.Name, virtualProjectBuilder);
                     if (!noRestore.HasValue())
                     {
                         ValidateArgument(dgFilePath, addpkg.Name);
@@ -103,7 +106,7 @@ namespace NuGet.CommandLine.XPlat
                         PackageVersion = packageVersion,
                         PackageId = id.Values[0]
                     };
-                    var msBuild = new MSBuildAPIUtility(logger);
+                    var msBuild = new MSBuildAPIUtility(logger, virtualProjectBuilder);
 
                     X509TrustStore.InitializeForDotNetSdk(logger);
 
@@ -132,9 +135,11 @@ namespace NuGet.CommandLine.XPlat
             }
         }
 
-        private static void ValidateProjectPath(CommandOption projectPath, string commandName)
+        private static void ValidateProjectPath(CommandOption projectPath, string commandName, IVirtualProjectBuilder? virtualProjectBuilder)
         {
-            if (!File.Exists(projectPath.Value()) || !projectPath.Value().EndsWith("proj", StringComparison.OrdinalIgnoreCase))
+            if (!File.Exists(projectPath.Value())
+                || (!projectPath.Value().EndsWith("proj", StringComparison.OrdinalIgnoreCase)
+                    && virtualProjectBuilder?.IsValidEntryPointPath(projectPath.Value()) != true))
             {
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
                     Strings.Error_PkgMissingOrInvalidProjectFile,
