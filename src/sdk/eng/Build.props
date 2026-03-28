@@ -1,13 +1,15 @@
 <Project>
 
+  <!-- This file uses TargetOS (a unified build control) instead of TargetsWindows because it is
+       evaluated from Arcade's Build.proj where OSArch.props is not imported.
+       See https://github.com/dotnet/dotnet/blob/main/docs/VMR-Controls.md -->
+
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <ProjectToBuild Include="$(RepoRoot)source-build.slnf" />
   </ItemGroup>
 
   <!-- For product build, build MSBuildExtensions and VSTemplateLocator in the second build pass on win-x64 as
-       they depend on assets from other verticals that are built in the first build pass.
-       Note: Use TargetOS (unified build control, see docs/VMR-Controls.md) instead of TargetsWindows,
-       because this file is evaluated from Arcade's Build.proj where OSArch.props is not imported. -->
+       they depend on assets from other verticals that are built in the first build pass. -->
   <ItemGroup Condition="'$(DotNetBuildPass)' == '2' and
                         '$(TargetOS)' == 'windows' and
                         '$(TargetArchitecture)' == 'x64' and
