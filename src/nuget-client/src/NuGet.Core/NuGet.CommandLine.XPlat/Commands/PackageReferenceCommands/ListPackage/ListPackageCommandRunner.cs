@@ -31,10 +31,12 @@ namespace NuGet.CommandLine.XPlat
         private const string ProjectName = "MSBuildProjectName";
         private const int GenericSuccessExitCode = 0;
         private const int GenericFailureExitCode = 1;
-        private Dictionary<PackageSource, SourceRepository> _sourceRepositoryCache;
+        private readonly MSBuildAPIUtility _msbuildUtility;
+        private readonly Dictionary<PackageSource, SourceRepository> _sourceRepositoryCache;
 
-        public ListPackageCommandRunner()
+        public ListPackageCommandRunner(MSBuildAPIUtility msbuildUtility)
         {
+            _msbuildUtility = msbuildUtility;
             _sourceRepositoryCache = new Dictionary<PackageSource, SourceRepository>();
         }
 
@@ -71,11 +73,9 @@ namespace NuGet.CommandLine.XPlat
                     ? MSBuildAPIUtility.GetProjectsFromSolution(listPackageArgs.Path).Where(File.Exists)
                     : [listPackageArgs.Path];
 
-            MSBuildAPIUtility msBuild = listPackageReportModel.MSBuildAPIUtility;
-
             foreach (string projectPath in projectsPaths)
             {
-                await GetProjectMetadataAsync(projectPath, listPackageReportModel, msBuild, listPackageArgs);
+                await GetProjectMetadataAsync(projectPath, listPackageReportModel, listPackageArgs);
             }
 
             // if there is any error then return failure code.
@@ -90,12 +90,11 @@ namespace NuGet.CommandLine.XPlat
         private async Task GetProjectMetadataAsync(
             string projectPath,
             ListPackageReportModel listPackageReportModel,
-            MSBuildAPIUtility msBuild,
             ListPackageArgs listPackageArgs)
         {
             //Open project to evaluate properties for the assets
             //file and the name of the project
-            Project project = MSBuildAPIUtility.GetProject(projectPath);
+            Project project = _msbuildUtility.GetProject(projectPath).Project;
             var projectName = project.GetPropertyValue(ProjectName);
             ListPackageProjectModel projectModel = listPackageReportModel.CreateProjectReportData(projectPath: projectPath, projectName);
 
