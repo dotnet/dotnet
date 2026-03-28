@@ -92,7 +92,6 @@ public class DocumentFormattingBenchmark
             CSharpSyntaxFormattingOptions = RazorCSharpSyntaxFormattingOptions.Default,
         };
 
-        IndentCache.UseCache = true;
         var changeCount = FormatDocumentCore();
         if (changeCount == 0)
         {
@@ -103,29 +102,12 @@ public class DocumentFormattingBenchmark
     [GlobalCleanup]
     public void Cleanup()
     {
-        IndentCache.UseCache = true;
         _workspace?.Dispose();
     }
 
-    [Benchmark(Baseline = true, Description = "100x full document formatting of Razor file (indent cache on)")]
+    [Benchmark(Baseline = true, Description = "100x full document formatting of Razor file")]
     public int FormatDocument()
     {
-        IndentCache.UseCache = true;
-
-        var totalChangeCount = 0;
-        for (var i = 0; i < FormatOperationCount; i++)
-        {
-            totalChangeCount += FormatDocumentCore();
-        }
-
-        return totalChangeCount;
-    }
-
-    [Benchmark(Description = "100x full document formatting of Razor file (indent cache off)")]
-    public int FormatDocumentWithoutIndentCache()
-    {
-        IndentCache.UseCache = false;
-
         var totalChangeCount = 0;
         for (var i = 0; i < FormatOperationCount; i++)
         {
