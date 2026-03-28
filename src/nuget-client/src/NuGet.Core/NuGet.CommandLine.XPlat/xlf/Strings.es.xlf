@@ -409,8 +409,8 @@ NuGet requiere orígenes HTTPS. Para usar orígenes HTTP, es necesario establece
         <note>{0} - package id</note>
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
-        <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, or directory.</source>
-        <target state="translated">Falta la ruta de acceso "{0}" o no es válida. Proporcione una ruta de acceso a un proyecto, archivo de solución o directorio.</target>
+        <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, file-based app, or project directory.</source>
+        <target state="needs-review-translation">Falta la ruta de acceso "{0}" o no es válida. Proporcione una ruta de acceso a un proyecto, archivo de solución o directorio.</target>
         <note>{0} - Input path argument</note>
       </trans-unit>
       <trans-unit id="Error_PathNotFound">
@@ -972,8 +972,8 @@ Para obtener más información, visite https://docs.nuget.org/docs/reference/com
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_ProjectOptionDescription">
-        <source>Path to a project or solution file, or a directory.</source>
-        <target state="translated">Ruta de acceso a un archivo de proyecto o solución, o a un directorio.</target>
+        <source>Path to a project or solution file or file-based app, or a project directory.</source>
+        <target state="needs-review-translation">Ruta de acceso a un archivo de proyecto o solución, o a un directorio.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_VulnerableOptionDescription">
@@ -1527,8 +1527,8 @@ La búsqueda es una comparación de cadenas que no diferencia mayúsculas de min
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_PathArgument_Description">
-        <source>A path to a project, solution file, or directory.</source>
-        <target state="translated">Ruta de acceso a un proyecto, archivo de solución o directorio.</target>
+        <source>A path to a project, solution file, file-based app, or project directory.</source>
+        <target state="needs-review-translation">Ruta de acceso a un proyecto, archivo de solución o directorio.</target>
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_Warning_AssetsFileDoesNotContainSpecifiedTarget">

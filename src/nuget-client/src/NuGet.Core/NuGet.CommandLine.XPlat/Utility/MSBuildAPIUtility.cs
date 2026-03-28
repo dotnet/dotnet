@@ -5,12 +5,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
@@ -46,24 +46,26 @@ namespace NuGet.CommandLine.XPlat
 
         public ILogger Logger { get; }
 
-        public MSBuildAPIUtility(ILogger logger)
+        public IVirtualProjectBuilder VirtualProjectBuilder { get; }
+
+        public MSBuildAPIUtility(ILogger logger, IVirtualProjectBuilder virtualProjectBuilder = null)
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            VirtualProjectBuilder = virtualProjectBuilder;
         }
 
         /// <summary>
         /// Opens an MSBuild.Evaluation.Project type from a csproj file.
         /// </summary>
         /// <param name="projectCSProjPath">CSProj file which needs to be evaluated</param>
-        /// <returns>MSBuild.Evaluation.Project</returns>
-        internal static Project GetProject(string projectCSProjPath)
+        internal SaveableProject GetProject(string projectCSProjPath)
         {
-            var projectRootElement = TryOpenProjectRootElement(projectCSProjPath);
-            if (projectCSProjPath == null)
+            var (projectRootElement, isVirtual) = TryOpenProjectRootElement(projectCSProjPath);
+            if (projectRootElement is null)
             {
                 throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Strings.Error_MsBuildUnableToOpenProject, projectCSProjPath));
             }
-            return new Project(projectRootElement);
+            return new SaveableProject { Project = new Project(projectRootElement), VirtualProject = isVirtual ? (projectCSProjPath, VirtualProjectBuilder) : null };
         }
 
         /// <summary>
@@ -71,15 +73,14 @@ namespace NuGet.CommandLine.XPlat
         /// </summary>
         /// <param name="projectCSProjPath">CSProj file which needs to be evaluated</param>
         /// <param name="globalProperties">Global properties that should be used to evaluate the project while opening.</param>
-        /// <returns>MSBuild.Evaluation.Project</returns>
-        private static Project GetProject(string projectCSProjPath, IDictionary<string, string> globalProperties)
+        private SaveableProject GetProject(string projectCSProjPath, IDictionary<string, string> globalProperties)
         {
-            var projectRootElement = TryOpenProjectRootElement(projectCSProjPath);
-            if (projectCSProjPath == null)
+            var (projectRootElement, isVirtual) = TryOpenProjectRootElement(projectCSProjPath);
+            if (projectRootElement is null)
             {
                 throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Strings.Error_MsBuildUnableToOpenProject, projectCSProjPath));
             }
-            return new Project(projectRootElement, globalProperties, toolsVersion: null);
+            return new SaveableProject { Project = new Project(projectRootElement, globalProperties, toolsVersion: null), VirtualProject = isVirtual ? (projectCSProjPath, VirtualProjectBuilder) : null };
         }
 
         private static bool IsCentralPackageManagementEnabled(Project project)
@@ -118,9 +119,14 @@ namespace NuGet.CommandLine.XPlat
         /// </summary>
         /// <returns>List of project paths. Returns null if path was a directory with none or multiple project/solution files.</returns>
         /// <exception cref="ArgumentException">Throws an exception if the directory has none or multiple project/solution files.</exception>
-        internal static IEnumerable<string> GetListOfProjectsFromPathArgument(string path, CancellationToken cancellationToken = default)
+        internal IEnumerable<string> GetListOfProjectsFromPathArgument(string path)
         {
             string fullPath = Path.GetFullPath(path);
+
+            if (VirtualProjectBuilder?.IsValidEntryPointPath(fullPath) == true)
+            {
+                return [fullPath];
+            }
 
             string projectOrSolutionFile;
 
@@ -157,7 +163,7 @@ namespace NuGet.CommandLine.XPlat
         {
             var project = GetProject(projectPath);
 
-            var existingPackageReferences = project.ItemsIgnoringCondition
+            var existingPackageReferences = project.Project.ItemsIgnoringCondition
                 .Where(item => item.ItemType.Equals(PACKAGE_REFERENCE_TYPE_TAG, StringComparison.OrdinalIgnoreCase) &&
                                item.EvaluatedInclude.Equals(libraryDependency.Name, StringComparison.OrdinalIgnoreCase));
 
@@ -167,9 +173,9 @@ namespace NuGet.CommandLine.XPlat
                 // If it does then we throw a user friendly exception without making any changes
                 ValidateNoImportedItemsAreUpdated(existingPackageReferences, libraryDependency, REMOVE_OPERATION);
 
-                project.RemoveItems(existingPackageReferences);
+                project.Project.RemoveItems(existingPackageReferences);
                 project.Save();
-                ProjectCollection.GlobalProjectCollection.UnloadProject(project);
+                ProjectCollection.GlobalProjectCollection.UnloadProject(project.Project);
 
                 return 0;
             }
@@ -177,10 +183,10 @@ namespace NuGet.CommandLine.XPlat
             {
                 Logger.LogError(string.Format(CultureInfo.CurrentCulture,
                     Strings.Error_UpdatePkgNoSuchPackage,
-                    project.FullPath,
+                    project.Project.FullPath,
                     libraryDependency.Name,
                     REMOVE_OPERATION));
-                ProjectCollection.GlobalProjectCollection.UnloadProject(project);
+                ProjectCollection.GlobalProjectCollection.UnloadProject(project.Project);
 
                 return 1;
             }
@@ -192,9 +198,9 @@ namespace NuGet.CommandLine.XPlat
         /// <param name="packageReferenceArgs">Arguments used in the command</param>
         /// <param name="packageSpec"></param>
         /// <returns></returns>
-        public static bool AreCentralVersionRequirementsSatisfied(PackageReferenceArgs packageReferenceArgs, PackageSpec packageSpec)
+        public bool AreCentralVersionRequirementsSatisfied(PackageReferenceArgs packageReferenceArgs, PackageSpec packageSpec)
         {
-            var project = GetProject(packageReferenceArgs.ProjectPath);
+            var project = GetProject(packageReferenceArgs.ProjectPath).Project;
             string directoryPackagesPropsPath = project.GetPropertyValue(DirectoryPackagesPropsPathPropertyName);
 
             // Get VersionOverride if it exisits in the package reference.
@@ -286,7 +292,7 @@ namespace NuGet.CommandLine.XPlat
 
             var existingPackageReferences = GetPackageReferencesForAllFrameworks(project, libraryDependency);
             AddPackageReference(project, libraryDependency, existingPackageReferences, noVersion);
-            ProjectCollection.GlobalProjectCollection.UnloadProject(project);
+            ProjectCollection.GlobalProjectCollection.UnloadProject(project.Project);
         }
 
         /// <summary>
@@ -304,9 +310,9 @@ namespace NuGet.CommandLine.XPlat
                 var globalProperties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 { { "TargetFramework", framework } };
                 var project = GetProject(projectPath, globalProperties);
-                var existingPackageReferences = GetPackageReferences(project, libraryDependency);
+                var existingPackageReferences = GetPackageReferences(project.Project, libraryDependency);
                 AddPackageReference(project, libraryDependency, existingPackageReferences, noVersion, framework);
-                ProjectCollection.GlobalProjectCollection.UnloadProject(project);
+                ProjectCollection.GlobalProjectCollection.UnloadProject(project.Project);
             }
         }
 
@@ -318,14 +324,14 @@ namespace NuGet.CommandLine.XPlat
         /// <param name="existingPackageReferences">Package references that already exist in the project.</param>
         /// <param name="noVersion">If a version is passed in as a CLI argument.</param>
         /// <param name="framework">Target Framework for which the package reference should be added.</param>
-        private void AddPackageReference(Project project,
+        private void AddPackageReference(SaveableProject project,
             LibraryDependency libraryDependency,
             IEnumerable<ProjectItem> existingPackageReferences,
             bool noVersion,
             string framework = null)
         {
             // Determine CPM status from the loaded project so callers don't need to check separately.
-            bool isCentralPackageManagementEnabled = IsCentralPackageManagementEnabled(project);
+            bool isCentralPackageManagementEnabled = IsCentralPackageManagementEnabled(project.Project);
 
             // Add packageReference to the project file only if it does not exist.
             if (!isCentralPackageManagementEnabled)
@@ -333,7 +339,7 @@ namespace NuGet.CommandLine.XPlat
                 if (!existingPackageReferences.Any())
                 {
                     //Modify the project file.
-                    ProjectItemGroupElement itemGroup = GetOrCreateItemGroup(framework, project);
+                    ProjectItemGroupElement itemGroup = GetOrCreateItemGroup(framework, project.Project);
                     AddPackageReferenceIntoItemGroup(itemGroup, libraryDependency);
                 }
                 else
@@ -345,14 +351,14 @@ namespace NuGet.CommandLine.XPlat
             else
             {
                 // Get package version and VersionOverride if it already exists in the props file. Returns null if there is no matching package version.
-                ProjectItem packageReferenceInProps = project.Items.LastOrDefault(i => i.ItemType == PACKAGE_REFERENCE_TYPE_TAG && i.EvaluatedInclude.Equals(libraryDependency.Name));
+                ProjectItem packageReferenceInProps = project.Project.Items.LastOrDefault(i => i.ItemType == PACKAGE_REFERENCE_TYPE_TAG && i.EvaluatedInclude.Equals(libraryDependency.Name));
                 var versionOverrideExists = packageReferenceInProps?.Metadata.FirstOrDefault(i => i.Name.Equals("VersionOverride") && !string.IsNullOrWhiteSpace(i.EvaluatedValue));
 
                 if (!existingPackageReferences.Any())
                 {
                     //Add <PackageReference/> to the project file.
-                    ProjectItemGroupElement itemGroup = GetOrCreateItemGroup(framework, project);
-                    AddPackageReferenceIntoItemGroupCPM(project, itemGroup, libraryDependency);
+                    ProjectItemGroupElement itemGroup = GetOrCreateItemGroup(framework, project.Project);
+                    AddPackageReferenceIntoItemGroupCPM(project.Project, itemGroup, libraryDependency);
                 }
 
                 if (versionOverrideExists != null)
@@ -364,13 +370,13 @@ namespace NuGet.CommandLine.XPlat
                 else
                 {
                     // Get package version if it already exists in the props file. Returns null if there is no matching package version.
-                    ProjectItem packageVersionInProps = project.Items.LastOrDefault(i => i.ItemType == PACKAGE_VERSION_TYPE_TAG && i.EvaluatedInclude.Equals(libraryDependency.Name));
+                    ProjectItem packageVersionInProps = project.Project.Items.LastOrDefault(i => i.ItemType == PACKAGE_VERSION_TYPE_TAG && i.EvaluatedInclude.Equals(libraryDependency.Name));
 
                     // If no <PackageVersion /> exists in the Directory.Packages.props file.
                     if (packageVersionInProps == null)
                     {
                         // Modifying the props file if project is onboarded to CPM.
-                        AddPackageVersionIntoItemGroupCPM(project, libraryDependency);
+                        AddPackageVersionIntoItemGroupCPM(project.Project, libraryDependency);
                     }
                     else
                     {
@@ -412,6 +418,7 @@ namespace NuGet.CommandLine.XPlat
             AddPackageVersionIntoPropsItemGroup(propsItemGroup, libraryDependency);
 
             // Save the updated props file.
+            Debug.Assert(directoryBuildPropsRootElement.ContainingProject.FullPath != project.FullPath);
             directoryBuildPropsRootElement.Save();
         }
 
@@ -605,17 +612,17 @@ namespace NuGet.CommandLine.XPlat
         /// <param name="project"></param>
         /// <param name="packageReference"></param>
         /// <param name="versionCLIArgument"></param>
-        internal static void UpdateVersionOverride(Project project, ProjectItem packageReference, string versionCLIArgument)
+        internal static void UpdateVersionOverride(SaveableProject project, ProjectItem packageReference, string versionCLIArgument)
         {
             // Determine where the <PackageVersion /> item is decalred
-            ProjectItemElement packageReferenceItemElement = project.GetItemProvenance(packageReference).LastOrDefault()?.ItemElement;
+            ProjectItemElement packageReferenceItemElement = project.Project.GetItemProvenance(packageReference).LastOrDefault()?.ItemElement;
 
             // Get the Version attribute on the packageVersionItemElement.
             ProjectMetadataElement versionOverrideAttribute = packageReferenceItemElement.Metadata.FirstOrDefault(i => i.Name.Equals("VersionOverride"));
 
             // Update the version
             versionOverrideAttribute.Value = versionCLIArgument;
-            packageReferenceItemElement.ContainingProject.Save();
+            project.Save(packageReferenceItemElement.ContainingProject);
         }
 
         /// <summary>
@@ -624,16 +631,16 @@ namespace NuGet.CommandLine.XPlat
         /// <param name="project"></param>
         /// <param name="packageVersion"><PackageVersion /> item with a matching package ID.</param>
         /// <param name="versionCLIArgument">Version that is passed in as a CLI argument.</param>
-        internal static void UpdatePackageVersion(Project project, ProjectItem packageVersion, string versionCLIArgument)
+        internal static void UpdatePackageVersion(SaveableProject project, ProjectItem packageVersion, string versionCLIArgument)
         {
             // Determine where the <PackageVersion /> item is decalred
-            ProjectItemElement packageVersionItemElement = project.GetItemProvenance(packageVersion).LastOrDefault()?.ItemElement;
+            ProjectItemElement packageVersionItemElement = project.Project.GetItemProvenance(packageVersion).LastOrDefault()?.ItemElement;
 
             // Get the Version attribute on the packageVersionItemElement.
             ProjectMetadataElement versionAttribute = packageVersionItemElement.Metadata.FirstOrDefault(i => i.Name.Equals("Version", StringComparison.OrdinalIgnoreCase));
             // Update the version
             versionAttribute.Value = versionCLIArgument;
-            packageVersionItemElement.ContainingProject.Save();
+            project.Save(packageVersionItemElement.ContainingProject);
         }
 
         /// <summary>
@@ -734,7 +741,6 @@ namespace NuGet.CommandLine.XPlat
                 throw new ArgumentNullException(nameof(assetsFile));
             }
 
-            var projectPath = project.FullPath;
             var resultPackages = new List<FrameworkPackages>();
             var requestedTargetFrameworks = assetsFile.PackageSpec.TargetFrameworks;
             var requestedTargets = assetsFile.Targets;
@@ -794,7 +800,7 @@ namespace NuGet.CommandLine.XPlat
                 //The packages for the framework that were retrieved with GetRequestedVersions
                 var frameworkDependencies = tfmInformation.Dependencies;
                 var targetAlias = tfmInformation.TargetAlias;
-                var projectPackages = GetPackageReferencesFromTargets(projectPath, targetAlias);
+                var projectPackages = GetPackageReferencesFromTargets(project, targetAlias);
                 var topLevelPackages = new List<InstalledPackageReference>();
                 var transitivePackages = new List<InstalledPackageReference>();
 
@@ -821,7 +827,7 @@ namespace NuGet.CommandLine.XPlat
                             }
                             catch (Exception)
                             {
-                                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_ErrorReadingReferenceFromProject, projectPath));
+                                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_ErrorReadingReferenceFromProject, project.FullPath));
                             }
                         }
                         else
@@ -914,18 +920,18 @@ namespace NuGet.CommandLine.XPlat
         /// <summary>
         /// Returns all package references after invoking the target CollectPackageReferences.
         /// </summary>
-        /// <param name="projectPath"> Path to the project for which the package references have to be obtained.</param>
+        /// <param name="project">The project for which the package references have to be obtained.</param>
         /// <param name="framework">Framework to get reference(s) for</param>
         /// <returns>List of Items containing the package reference for the package.
         /// If the libraryDependency is null then it returns all package references</returns>
-        private static IEnumerable<InstalledPackageReference> GetPackageReferencesFromTargets(string projectPath, string framework)
+        private static IEnumerable<InstalledPackageReference> GetPackageReferencesFromTargets(Project project, string framework)
         {
             var globalProperties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
                     { "TargetFramework", framework },
                     { "ExcludeRestorePackageImports", bool.TrueString }
                 };
-            var newProject = new ProjectInstance(projectPath, globalProperties, null);
+            var newProject = new ProjectInstance(project.Xml, globalProperties, null, ProjectCollection.GlobalProjectCollection);
             newProject.Build(new[] { CollectPackageReferences, CollectCentralPackageVersions }, new List<Microsoft.Build.Framework.ILogger> { }, out var targetOutputs);
 
             // Find the first target output that matches `CollectPackageReferences`
@@ -982,12 +988,12 @@ namespace NuGet.CommandLine.XPlat
         /// <param name="framework">Framework to get reference(s) for</param>
         /// <returns>List of Items containing the package reference for the package.
         /// If the libraryDependency is null then it returns all package references</returns>
-        private static IEnumerable<ProjectItem> GetPackageReferencesPerFramework(Project project,
+        private static IEnumerable<ProjectItem> GetPackageReferencesPerFramework(SaveableProject project,
            string libraryName, string framework)
         {
             var globalProperties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 { { "TargetFramework", framework } };
-            var projectPerFramework = GetProject(project.FullPath, globalProperties);
+            var projectPerFramework = project.WithGlobalProperties(globalProperties).Project;
 
             var packages = GetPackageReferences(projectPerFramework, libraryName);
             ProjectCollection.GlobalProjectCollection.UnloadProject(projectPerFramework);
@@ -1004,7 +1010,7 @@ namespace NuGet.CommandLine.XPlat
         /// <param name="framework">Specific framework to look at</param>
         /// <returns>List of Items containing the package reference for the package.
         /// If the libraryDependency is null then it returns all package references</returns>
-        private static IEnumerable<ProjectItem> GetPackageReferencesPerFramework(Project project,
+        private static IEnumerable<ProjectItem> GetPackageReferencesPerFramework(SaveableProject project,
             LibraryDependency libraryDependency, string framework)
         {
             return GetPackageReferencesPerFramework(project, libraryDependency.Name, framework);
@@ -1019,10 +1025,10 @@ namespace NuGet.CommandLine.XPlat
         /// <param name="libraryDependency">Dependency of the package.</param>
         /// <returns>List of Items containing the package reference for the package.
         /// If the libraryDependency is null then it returns all package reference</returns>
-        private static IEnumerable<ProjectItem> GetPackageReferencesForAllFrameworks(Project project,
+        private static IEnumerable<ProjectItem> GetPackageReferencesForAllFrameworks(SaveableProject project,
             LibraryDependency libraryDependency)
         {
-            var frameworks = GetProjectFrameworks(project);
+            var frameworks = GetProjectFrameworks(project.Project);
             var mergedPackageReferences = new List<ProjectItem>();
 
             foreach (var framework in frameworks)
@@ -1052,23 +1058,70 @@ namespace NuGet.CommandLine.XPlat
             return frameworks;
         }
 
-        private static ProjectRootElement TryOpenProjectRootElement(string filename)
+        private (ProjectRootElement, bool isVirtual) TryOpenProjectRootElement(string filename)
         {
             try
             {
+                if (VirtualProjectBuilder?.IsValidEntryPointPath(filename) == true)
+                {
+                    var fullPath = Path.GetFullPath(filename);
+                    var element = VirtualProjectBuilder.CreateProjectRootElement(fullPath, ProjectCollection.GlobalProjectCollection);
+                    return (element, true);
+                }
+
                 // There is ProjectRootElement.TryOpen but it does not work as expected
                 // I.e. it returns null for some valid projects
-                return ProjectRootElement.Open(filename, ProjectCollection.GlobalProjectCollection, preserveFormatting: true);
+                return (ProjectRootElement.Open(filename, ProjectCollection.GlobalProjectCollection, preserveFormatting: true), false);
             }
             catch (Microsoft.Build.Exceptions.InvalidProjectFileException)
             {
-                return null;
+                return (null, false);
             }
         }
 
         private static string GetTargetFrameworkCondition(string targetFramework)
         {
             return string.Format(CultureInfo.CurrentCulture, "'$(TargetFramework)' == '{0}'", targetFramework);
+        }
+    }
+
+#nullable enable
+    internal readonly struct SaveableProject
+    {
+        public required Project Project { get; init; }
+
+        /// <summary>
+        /// Set when this project represents a virtual project (e.g., a file-based app).
+        /// </summary>
+        public (string EntryPointFilePath, IVirtualProjectBuilder Builder)? VirtualProject { get; init; }
+
+        public void Save()
+        {
+            if (VirtualProject is { } virtualProject)
+            {
+                virtualProject.Builder.SaveProject(virtualProject.EntryPointFilePath, Project.Xml);
+            }
+            else
+            {
+                Project.Save();
+            }
+        }
+
+        public void Save(ProjectRootElement projectRootElement)
+        {
+            if (projectRootElement == Project.Xml)
+            {
+                Save();
+            }
+            else
+            {
+                projectRootElement.Save();
+            }
+        }
+
+        public SaveableProject WithGlobalProperties(IDictionary<string, string> globalProperties)
+        {
+            return this with { Project = new Project(Project.Xml, globalProperties, toolsVersion: null) };
         }
     }
 }
