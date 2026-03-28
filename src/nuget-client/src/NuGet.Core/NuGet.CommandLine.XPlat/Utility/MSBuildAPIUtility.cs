@@ -48,7 +48,7 @@ namespace NuGet.CommandLine.XPlat
 
         public IVirtualProjectBuilder VirtualProjectBuilder { get; }
 
-        public MSBuildAPIUtility(ILogger logger, IVirtualProjectBuilder virtualProjectBuilder = null)
+        public MSBuildAPIUtility(ILogger logger, IVirtualProjectBuilder virtualProjectBuilder)
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             VirtualProjectBuilder = virtualProjectBuilder;
