@@ -1,18 +1,15 @@
 <Project>
 
-  <!-- Import OS/arch detection so TargetsWindows etc. are available even when this file
-       is evaluated outside the SDK's Directory.Build.props (e.g. from Arcade's Build.proj
-       during VMR builds). The import is idempotent — properties already set are preserved. -->
-  <Import Project="$(MSBuildThisFileDirectory)OSArch.props" />
-
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <ProjectToBuild Include="$(RepoRoot)source-build.slnf" />
   </ItemGroup>
 
   <!-- For product build, build MSBuildExtensions and VSTemplateLocator in the second build pass on win-x64 as
-       they depend on assets from other verticals that are built in the first build pass. -->
+       they depend on assets from other verticals that are built in the first build pass.
+       Note: Use TargetOS (unified build control, see docs/VMR-Controls.md) instead of TargetsWindows,
+       because this file is evaluated from Arcade's Build.proj where OSArch.props is not imported. -->
   <ItemGroup Condition="'$(DotNetBuildPass)' == '2' and
-                        '$(TargetsWindows)' == 'true' and
+                        '$(TargetOS)' == 'windows' and
                         '$(TargetArchitecture)' == 'x64' and
                         '$(BuildWorkloads)' != 'true'">
     <ProjectToBuild Include="$(RepoRoot)src\Layout\VS.Redist.Common.Net.Core.SDK.MSBuildExtensions\VS.Redist.Common.Net.Core.SDK.MSBuildExtensions.proj" DotNetBuildPass="2" />
@@ -22,7 +19,7 @@
   <!-- For product build, build the Workloads in the second build pass on windows as
        it depends on assets from other verticals that are built in the first build pass. -->
   <ItemGroup Condition="'$(DotNetBuildPass)' == '2' and
-                        '$(TargetsWindows)' == 'true' and
+                        '$(TargetOS)' == 'windows' and
                         '$(TargetArchitecture)' == 'x64' and
                         '$(BuildWorkloads)' == 'true'">
     <ProjectToBuild Include="$(RepoRoot)src\Workloads\VSInsertion\workloads.csproj" DotNetBuildPass="2" />
@@ -31,7 +28,7 @@
   <!-- For product build, build the sdk bundle in the third build pass on windows as
        it depends on assets from other verticals that are built in the second build pass. -->
   <ItemGroup Condition="'$(DotNetBuildPass)' == '3' and
-                        '$(TargetsWindows)' == 'true'">
+                        '$(TargetOS)' == 'windows'">
     <ProjectToBuild Include="$(RepoRoot)src\Layout\redist\redist.csproj" DotNetBuildPass="3" />
   </ItemGroup>
 
