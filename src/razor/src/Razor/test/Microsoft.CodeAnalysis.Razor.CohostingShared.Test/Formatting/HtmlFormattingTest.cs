@@ -682,7 +682,7 @@ public class HtmlFormattingTest(ITestOutputHelper testOutput) : DocumentFormatti
         // doesn't "fix" the first attribute placement, and put it on the same line as the start tag.
 
         var document = CreateProjectAndRazorDocument(input);
-        var options = new RazorFormattingOptions();
+        var options = ClientSettingsManager.GetClientSettings().ToRazorFormattingOptions();
 
         var formattingService = (RazorFormattingService)OOPExportProvider.GetExportedValue<IRazorFormattingService>();
         formattingService.GetTestAccessor().SetFormattingLoggerFactory(new TestFormattingLoggerFactory(TestOutputHelper));
