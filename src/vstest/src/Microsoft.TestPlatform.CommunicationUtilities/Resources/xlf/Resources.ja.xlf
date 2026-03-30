@@ -59,7 +59,7 @@
       </trans-unit>
       <trans-unit id="ConnectionTimeoutErrorMessage">
         <source>{0} process failed to connect to {1} process after {2} seconds. This may occur due to machine slowness, please set environment variable {3} to increase timeout.</source>
-        <target state="new">{0} process failed to connect to {1} process after {2} seconds. This may occur due to machine slowness, please set environment variable {3} to increase timeout.</target>
+        <target state="translated">{0} プロセスでは、{2} 秒後に {1} プロセスへ接続できませんでした。これは、マシンの遅さが原因で発生する可能性があるため、環境変数 {3} を設定してタイムアウト時間を増やしてください。</target>
         <note />
       </trans-unit>
       <trans-unit id="TestHostProcessCrashed">
