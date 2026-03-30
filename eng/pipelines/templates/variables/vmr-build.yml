@@ -269,9 +269,9 @@ variables:
 
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:
   - name: defaultPoolName
-    value: NetCore-Public-XL  # use hardcoded name since there is no servicing variant of the XL pool
+    value: NetCore-Public-XL
   - name: shortStackPoolName
-    value: $(DncEngPublicBuildPool)
+    value: NetCore-Public
   - name: poolImage_Linux
     value: build.azurelinux.3.amd64.open
   - name: poolImage_LinuxArm64
@@ -288,9 +288,9 @@ variables:
       value: windows.vs2026.amd64.open
 - ${{ else }}:
   - name: defaultPoolName
-    value: $(DncEngInternalBuildPool)
+    value: NetCore1ESPool-Internal
   - name: shortStackPoolName
-    value: $(DncEngInternalBuildPool)
+    value: NetCore1ESPool-Internal
   - name: poolImage_Linux
     value: build.azurelinux.3.amd64
   - name: poolImage_LinuxArm64
@@ -301,5 +301,4 @@ variables:
     value: macos-latest-internal
   - name: poolImage_Windows
     value: windows.vs2026.amd64
-
 
