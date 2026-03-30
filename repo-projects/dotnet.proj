@@ -5,6 +5,7 @@
        - If we have a repo that is not in sdk's dependency tree, we can still build it by including it here. -->
 
   <PropertyGroup>
+    <DisallowDotNetFinalVersionKindOverride>true</DisallowDotNetFinalVersionKindOverride>
     <!-- This is a wrapper project that doesn't build anything. -->
     <IsUtilityProject>true</IsUtilityProject>
   </PropertyGroup>
