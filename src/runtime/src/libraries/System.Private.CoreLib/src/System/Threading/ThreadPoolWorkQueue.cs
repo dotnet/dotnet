@@ -857,11 +857,8 @@ namespace System.Threading
                 // Missing a steal means there may be an item that we were unable to get.
                 // Effectively, we failed to fulfill our promise to check the queues for work.
                 // We need to make sure someone will do another pass.
-                // We do not need to do that right away though as that might result in a bunch
-                // of threads inviting each other while mostly seeing missed steals.
                 if (missedSteal)
                 {
-                    Thread.Sleep(1);
                     ThreadPool.EnsureWorkerRequested();
                 }
 
@@ -921,7 +918,6 @@ namespace System.Threading
                         //
                         if (missedSteal)
                         {
-                            Thread.Sleep(1);
                             ThreadPool.EnsureWorkerRequested();
                         }
 
