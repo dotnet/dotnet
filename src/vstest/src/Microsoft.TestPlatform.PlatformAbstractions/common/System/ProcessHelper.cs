@@ -266,6 +266,7 @@ public partial class ProcessHelper : IProcessHelper
         }
         catch (InvalidOperationException)
         {
+            // Process may have already exited — exit code unavailable.
         }
 
         exitCode = 0;
@@ -301,6 +302,7 @@ public partial class ProcessHelper : IProcessHelper
         }
         catch (InvalidOperationException)
         {
+            // Process may have already exited — exit code unavailable.
         }
     }
 

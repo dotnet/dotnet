@@ -22,6 +22,21 @@
         <target state="translated">アクティブなテスト探索が中止されました。理由: {0}</target>
         <note />
       </trans-unit>
+      <trans-unit id="ConnectionTimeoutProcessDidNotStartErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. The process failed to start, this might happen because of  antivirus preventing it from starting.</source>
+        <target state="new">{0} process failed to connect to {1} process after {2} seconds. The process failed to start, this might happen because of  antivirus preventing it from starting.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionTimeoutProcessExitedErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. The process {3} - {4}, exited with exitCode {5}, and error output: \n{6}</source>
+        <target state="new">{0} process failed to connect to {1} process after {2} seconds. The process {3} - {4}, exited with exitCode {5}, and error output: \n{6}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionTimeoutWithDetailsErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. When the timeout happened, the process {3} -{4} was still running. This most often happens because of machine slowness, please set environment variable {5} to increase timeout.</source>
+        <target state="new">{0} process failed to connect to {1} process after {2} seconds. When the timeout happened, the process {3} -{4} was still running. This most often happens because of machine slowness, please set environment variable {5} to increase timeout.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UnableToCommunicateToTestHost">
         <source>Unable to communicate with test host process.</source>
         <target state="translated">テスト ホスト プロセスと通信できません。</target>
@@ -44,7 +59,7 @@
       </trans-unit>
       <trans-unit id="ConnectionTimeoutErrorMessage">
         <source>{0} process failed to connect to {1} process after {2} seconds. This may occur due to machine slowness, please set environment variable {3} to increase timeout.</source>
-        <target state="translated">{0} プロセスでは、{2} 秒後に {1} プロセスへ接続できませんでした。これは、マシンの遅さが原因で発生する可能性があるため、環境変数 {3} を設定してタイムアウト時間を増やしてください。</target>
+        <target state="new">{0} process failed to connect to {1} process after {2} seconds. This may occur due to machine slowness, please set environment variable {3} to increase timeout.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestHostProcessCrashed">

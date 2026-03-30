@@ -318,6 +318,7 @@ public class BlameCollector : DataCollector, ITestExecutionEnvironmentSpecifier
             }
             catch (InvalidOperationException)
             {
+                // Process may have already exited — safe to ignore.
             }
         }
         catch (Exception ex)
