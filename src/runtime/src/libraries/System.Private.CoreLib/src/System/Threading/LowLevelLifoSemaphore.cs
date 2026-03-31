@@ -27,8 +27,8 @@ namespace System.Threading
         // spinning could be less, while danger of starving non-threadpool threads is higher.
         //
         // Based on the above we use the following heuristic (certainly open to improvements):
-        // * We will limit spinning to roughly 2048 spinwaits, each taking ~35-40ns. That should be under 100 usec total.
-        //    For reference the wakeup latency of a futex/event with threads queued up is in 5-50 usec range. (year 2026)
+        // * We will limit spinning to roughly 512 spinwaits, each taking ~35-40ns. That should be under 15 usec total.
+        //    For reference the wakeup latency of a futex/event with threads queued up is in 4-20 usec range. (year 2026)
         // * We will dial spin count according to the number of available cores. (i.e. proc_num - active_workers).
         //                                               |    _ |
         // * We will use a "hard sigmoid" function like: |   /  | that will map "available cores" to spin count.
@@ -38,7 +38,7 @@ namespace System.Threading
         //    - in between we have a linear gain.
         //    all should be smoothed somewhat by the randomness of individual spin iterations.
 
-        private const int DefaultSemaphoreSpinCountLimit = 2048;
+        private const int DefaultSemaphoreSpinCountLimit = 512;
 
         private CacheLineSeparatedCounts _separated;
 
@@ -88,7 +88,7 @@ namespace System.Threading
                 _maxSpinCount = DefaultSemaphoreSpinCountLimit;
         }
 
-        public bool Wait(int timeoutMs, short activeThreadCount)
+        public bool Wait(int timeoutMs, short tpThreadCount)
         {
             Debug.Assert(timeoutMs >= -1);
 
@@ -108,7 +108,7 @@ namespace System.Threading
 
             RuntimeFeature.ThrowIfMultithreadingIsNotSupported();
 
-            return WaitSlow(timeoutMs, activeThreadCount);
+            return WaitSlow(timeoutMs, tpThreadCount);
         }
 
         private bool WaitSlow(int timeoutMs, short tpThreadCount)
