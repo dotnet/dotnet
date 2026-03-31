@@ -11,7 +11,6 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -25,12 +24,10 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 internal sealed class CohostSemanticTokensRangeEndpoint(
     IIncompatibleProjectService incompatibleProjectService,
     IRemoteServiceInvoker remoteServiceInvoker,
-    IClientSettingsManager clientSettingsManager,
     ITelemetryReporter telemetryReporter)
     : AbstractCohostDocumentEndpoint<SemanticTokensRangeParams, SemanticTokens?>(incompatibleProjectService)
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
-    private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
 
     protected override bool MutatesSolutionState => false;
@@ -61,14 +58,12 @@ internal sealed class CohostSemanticTokensRangeEndpoint(
 
     private async Task<SemanticTokens?> HandleRequestAsync(TextDocument razorDocument, LinePositionSpan span, CancellationToken cancellationToken)
     {
-        var colorBackground = _clientSettingsManager.GetClientSettings().AdvancedSettings.ColorBackground;
-
         var correlationId = Guid.NewGuid();
         using var _ = _telemetryReporter.TrackLspRequest(Methods.TextDocumentSemanticTokensRangeName, RazorLSPConstants.CohostLanguageServerName, TelemetryThresholds.SemanticTokensRazorTelemetryThreshold, correlationId);
 
         var tokens = await _remoteServiceInvoker.TryInvokeAsync<IRemoteSemanticTokensService, int[]?>(
             razorDocument.Project.Solution,
-            (service, solutionInfo, cancellationToken) => service.GetSemanticTokensDataAsync(solutionInfo, razorDocument.Id, span, colorBackground, correlationId, cancellationToken),
+            (service, solutionInfo, cancellationToken) => service.GetSemanticTokensDataAsync(solutionInfo, razorDocument.Id, span, correlationId, cancellationToken),
             cancellationToken).ConfigureAwait(false);
 
         if (tokens is not null)

@@ -13,36 +13,13 @@ using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.Utilities;
-using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
-using RoslynSyntaxNode = Microsoft.CodeAnalysis.SyntaxNode;
 
 namespace Microsoft.CodeAnalysis.Razor.DocumentMapping;
 
-internal static partial class RazorEditHelper
+internal partial class RazorEditService
 {
-    private static void AddCSharpLanguageFeatureChanges(
-        ref PooledArrayBuilder<RazorTextChange> edits,
-        RazorCodeDocument codeDocument,
-        RoslynSyntaxNode originalCSharpSyntaxRoot,
-        SourceText originalCSharpSourceText,
-        RoslynSyntaxNode newCSharpSyntaxRoot,
-        SourceText newCSharpSourceText,
-        CancellationToken cancellationToken)
-    {
-        var oldUsings = UsingDirectiveHelper.FindUsingDirectiveStrings(originalCSharpSyntaxRoot, originalCSharpSourceText);
-        var newUsings = UsingDirectiveHelper.FindUsingDirectiveStrings(newCSharpSyntaxRoot, newCSharpSourceText);
-
-        var addedUsings = Delta.Compute(oldUsings, newUsings);
-        var removedUsings = Delta.Compute(newUsings, oldUsings);
-
-        AddUsingsChanges(ref edits, codeDocument, addedUsings, removedUsings, cancellationToken);
-
-        // In future, handle methods, fields, properties, etc.
-    }
-
     /// <summary>
     /// Given a set of new and removed usings, adds text changes to this builder using the following logic:
     ///
@@ -107,7 +84,7 @@ internal static partial class RazorEditHelper
             var newText = GetUsingsText(usingDirectives: [], addedUsings, removedUsings: []);
             edits.Add(new RazorTextChange()
             {
-                Span = span.ToRazorTextSpan(),
+                Span = span,
                 NewText = newText
             });
 
@@ -116,7 +93,7 @@ internal static partial class RazorEditHelper
 
         AddNewUsingsToBlock(ref edits, firstBlockOfUsings, addedUsings);
 
-        static TextSpan FindFirstTopLevelSpotForUsing(RazorCodeDocument codeDocument)
+        static RazorTextSpan FindFirstTopLevelSpotForUsing(RazorCodeDocument codeDocument)
         {
             var root = codeDocument.GetRequiredSyntaxRoot();
             var nodeToInsertAfter = root
@@ -128,11 +105,15 @@ internal static partial class RazorEditHelper
 
             if (nodeToInsertAfter is null)
             {
-                return new TextSpan();
+                return new RazorTextSpan();
             }
 
             var start = nodeToInsertAfter.Span.End;
-            return new TextSpan(start, 0);
+            return new RazorTextSpan
+            {
+                Start = start,
+                Length = 0
+            };
         }
 
         void AddNewUsingsToBlock(ref PooledArrayBuilder<RazorTextChange> edits, ImmutableArray<RazorUsingDirectiveSyntax> existingUsings, ImmutableArray<string> addedUsings)
@@ -186,10 +167,9 @@ internal static partial class RazorEditHelper
 
             endPosition = AdjustPositionToEndOfLine(endPosition, codeDocument.Source.Text);
 
-            var span = TextSpan.FromBounds(startPosition, endPosition);
             edits.Add(new RazorTextChange()
             {
-                Span = span.ToRazorTextSpan(),
+                Span = RazorTextSpan.FromBounds(startPosition, endPosition),
                 NewText = builder.ToString()
             });
         }
@@ -231,11 +211,10 @@ internal static partial class RazorEditHelper
 
         endPosition = AdjustPositionToEndOfLine(endPosition, codeDocument.Source.Text);
 
-        var span = TextSpan.FromBounds(startPosition, endPosition);
         var newText = GetUsingsText(firstBlockOfUsings, addedUsings, removedUsings);
         edits.Add(new RazorTextChange()
         {
-            Span = span.ToRazorTextSpan(),
+            Span = RazorTextSpan.FromBounds(startPosition, endPosition),
             NewText = newText
         });
 
@@ -250,10 +229,9 @@ internal static partial class RazorEditHelper
     {
         var start = node.Span.Start;
         var end = AdjustPositionToEndOfLine(node.Span.End, text);
-        var removeSpan = TextSpan.FromBounds(start, end);
         edits.Add(new RazorTextChange()
         {
-            Span = removeSpan.ToRazorTextSpan(),
+            Span = RazorTextSpan.FromBounds(start, end),
             NewText = ""
         });
     }
