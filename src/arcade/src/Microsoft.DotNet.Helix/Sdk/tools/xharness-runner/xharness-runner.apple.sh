@@ -184,8 +184,15 @@ start_time="$(date '+%Y-%m-%d %H:%M:%S')"
 
 # Act out the actual commands (and time constrain them to create buffer for the end of this script)
 # shellcheck disable=SC1091
-source command.sh & PID=$! ; (sleep "$command_timeout" && kill -s 0 $PID > /dev/null 2>&1 && echo "ERROR: WORKLOAD TIMED OUT - Killing user command.." && kill $PID 2> /dev/null & ) ; wait $PID
+source command.sh &
+COMMAND_PID=$!
+sleep "$command_timeout" && kill -s 0 $COMMAND_PID > /dev/null 2>&1 && echo "ERROR: WORKLOAD TIMED OUT - Killing user command.." && kill $COMMAND_PID 2> /dev/null &
+WATCHDOG_PID=$!
+wait $COMMAND_PID
 exit_code=$?
+# Kill the watchdog process (and its sleeping child) now that the command has finished
+kill $WATCHDOG_PID 2> /dev/null
+wait $WATCHDOG_PID 2> /dev/null
 
 # In case of issues, include the syslog (last 2 MB from the time this work item has been running)
 if [ $exit_code -ne 0 ]; then
