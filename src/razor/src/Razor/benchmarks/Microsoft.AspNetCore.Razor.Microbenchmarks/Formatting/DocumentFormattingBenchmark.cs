@@ -79,8 +79,13 @@ public class DocumentFormattingBenchmark
         var hostServicesProvider = new RemoteHostServicesProvider();
         hostServicesProvider.SetWorkspaceProvider(new WorkspaceProvider(_workspace));
 
+        var clientSettingsManager = new RemoteClientSettingsManager();
+        var documentMappingService = new RemoteDocumentMappingService(filePathService, snapshotManager, EmptyLoggerFactory.Instance);
+        var razorEditService = new RemoteRazorEditService(documentMappingService, clientSettingsManager, NoOpTelemetryReporter.Instance);
+
         _formattingService = new RemoteRazorFormattingService(
-            new RemoteDocumentMappingService(filePathService, snapshotManager, EmptyLoggerFactory.Instance),
+            documentMappingService,
+            razorEditService,
             hostServicesProvider,
             new FormattingLoggerFactory(),
             EmptyLoggerFactory.Instance);

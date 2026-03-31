@@ -9,8 +9,12 @@ namespace Microsoft.CodeAnalysis.Razor.Remote;
 
 internal static class RazorServices
 {
-    // Internal for testing
-    internal static readonly IEnumerable<(Type, Type?)> MessagePackServices =
+    // Generally speaking we prefer MessagePack services because the serialization is lower overhead, however
+    // given that we work with LSP types, which as Json serializable, sometimes converting is an unnecssary
+    // extra step. Judgement is needed to decide which way is better, paying particular extra attention to
+    // complex data types in LSP that are painful to represent in MessagePack.
+
+    private static readonly IEnumerable<(Type, Type?)> MessagePackServices =
         [
             (typeof(IRemoteLinkedEditingRangeService), null),
             (typeof(IRemoteSemanticTokensService), null),
@@ -29,10 +33,10 @@ internal static class RazorServices
             (typeof(IRemoteRemoveAndSortUsingsService), null),
         ];
 
-    // Internal for testing
-    internal static readonly IEnumerable<(Type, Type?)> JsonServices =
+    private static readonly IEnumerable<(Type, Type?)> JsonServices =
         [
             (typeof(IRemoteClientInitializationService), null),
+            (typeof(IRemoteClientSettingsService), null),
             (typeof(IRemoteGoToDefinitionService), null),
             (typeof(IRemoteHoverService), null),
             (typeof(IRemoteSignatureHelpService), null),
@@ -67,5 +71,12 @@ internal static class RazorServices
     private static string GetFeatureDisplayName(string feature)
     {
         return $"Razor {feature} Feature";
+    }
+
+    internal static class TestAccessor
+    {
+        internal static IEnumerable<(Type, Type?)> MessagePackServices => RazorServices.MessagePackServices;
+
+        internal static IEnumerable<(Type, Type?)> JsonServices => RazorServices.JsonServices;
     }
 }
