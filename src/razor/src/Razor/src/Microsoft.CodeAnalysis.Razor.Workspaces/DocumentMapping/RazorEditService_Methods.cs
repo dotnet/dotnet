@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
@@ -44,11 +45,12 @@ internal partial class RazorEditService
         var sourceText = source.Text;
         var openBraceLine = openBrace.GetSourceLocation(source).LineIndex;
         var closeBraceLocation = closeBrace.GetSourceLocation(source);
+        var closeBraceLine = closeBraceLocation.LineIndex;
 
         var insertAbsoluteIndex = closeBraceLocation.AbsoluteIndex;
-        var insertLineIndex = closeBraceLocation.LineIndex;
+        var insertLineIndex = closeBraceLine;
 
-        if (openBraceLine != closeBraceLocation.LineIndex && closeBraceLocation.AbsoluteIndex > 0)
+        if (openBraceLine != closeBraceLine && closeBraceLocation.AbsoluteIndex > 0)
         {
             var previousLineAbsoluteIndex = closeBraceLocation.AbsoluteIndex - closeBraceLocation.CharacterIndex - 1;
             var previousLinePosition = sourceText.GetLinePosition(previousLineAbsoluteIndex);
@@ -61,8 +63,8 @@ internal partial class RazorEditService
             }
         }
 
-        var methodsText = GetMethodsText(addedMethods, options);
-        var newText = FormatMethodsInExistingCodeBlock(sourceText, openBraceLine, closeBraceLocation.LineIndex, insertLineIndex, methodsText);
+        using var _ = StringBuilderPool.GetPooledObject(out var builder);
+        AddMethodsInExistingCodeBlock(builder, sourceText, addedMethods, options, openBraceLine, closeBraceLine, insertLineIndex);
 
         edits.Add(new RazorTextChange()
         {
@@ -71,7 +73,7 @@ internal partial class RazorEditService
                 Start = insertAbsoluteIndex,
                 Length = 0
             },
-            NewText = newText
+            NewText = builder.ToString()
         });
     }
 
@@ -102,7 +104,8 @@ internal partial class RazorEditService
 
         builder.Append('{');
         builder.AppendLine();
-        builder.AppendLine(GetMethodsText(methods, options));
+        AppendMethodsText(builder, methods, options);
+        builder.AppendLine();
         builder.Append('}');
 
         edits.Add(new RazorTextChange()
@@ -116,59 +119,51 @@ internal partial class RazorEditService
         });
     }
 
-    private static string FormatMethodsInExistingCodeBlock(SourceText sourceText, int openBraceLineIndex, int closeBraceLineIndex, int insertLineIndex, string methodsText)
+    private static void AddMethodsInExistingCodeBlock(StringBuilder builder, SourceText sourceText, ImmutableArray<CSharpMethod> addedMethods, RazorFormattingOptions options, int openBraceLineIndex, int closeBraceLineIndex, int insertLineIndex)
     {
-        if (openBraceLineIndex == closeBraceLineIndex)
+        var lineAboveInsertionIsNotEmpty = insertLineIndex - 1 != openBraceLineIndex &&
+            !IsLineEmpty(sourceText.Lines[insertLineIndex - 1]);
+        if (openBraceLineIndex == closeBraceLineIndex || lineAboveInsertionIsNotEmpty)
         {
-            return $"{Environment.NewLine}{methodsText}{Environment.NewLine}";
+            builder.AppendLine();
         }
 
-        if (insertLineIndex == closeBraceLineIndex)
-        {
-            methodsText += Environment.NewLine;
-        }
+        AppendMethodsText(builder, addedMethods, options);
 
-        if (insertLineIndex - 1 == openBraceLineIndex)
+        if (openBraceLineIndex == closeBraceLineIndex || insertLineIndex == closeBraceLineIndex)
         {
-            return methodsText;
+            builder.AppendLine();
         }
-
-        var previousLine = sourceText.Lines[insertLineIndex - 1];
-        if (!IsLineEmpty(previousLine))
-        {
-            methodsText = $"{Environment.NewLine}{methodsText}";
-        }
-
-        return methodsText;
     }
 
-    private static string GetMethodsText(ImmutableArray<CSharpMethod> methods, RazorFormattingOptions options)
+    private static void AppendMethodsText(StringBuilder builder, ImmutableArray<CSharpMethod> methods, RazorFormattingOptions options)
     {
-        using var _ = StringBuilderPool.GetPooledObject(out var builder);
-
+        var first = true;
         foreach (var method in methods)
         {
-            if (builder.Length > 0)
+            if (!first)
             {
                 builder.AppendLine();
                 builder.AppendLine();
             }
 
+            first = true;
+
             AppendIndentedMethod(builder, method, options);
         }
-
-        return builder.ToString();
     }
 
-    private static void AppendIndentedMethod(System.Text.StringBuilder builder, CSharpMethod method, RazorFormattingOptions options)
+    private static void AppendIndentedMethod(StringBuilder builder, CSharpMethod method, RazorFormattingOptions options)
     {
         // Roslyn will have indented the method by an appropriate amount for the generated file, but we need it to be placed nicely in the Razor
         // file, so we add each line of the method one at a time, adjusting the indentation as we go.
         int? initialIndentation = null;
         var sourceText = method.Text;
 
-        foreach (var line in method.EnumerateLines())
+        var endLine = method.GetEndLineNumber();
+        for (var i = method.GetStartLineNumber(); i <= endLine; i++)
         {
+            var line = sourceText.Lines[i];
             var currentIndentation = line.GetIndentationSize(options.TabSize);
 
             if (initialIndentation is null)
@@ -247,17 +242,12 @@ internal partial class RazorEditService
             return 0;
         }
 
-        public IEnumerable<TextLine> EnumerateLines()
-        {
-            // We don't want trivia, because it will include generated artifacts like #line directives, so using Span instead of FullSpan is deliberate
+        // We don't want trivia, because it will include generated artifacts like #line directives, so using Span instead of FullSpan in the two
+        // methods below is deliberate
+        public int GetStartLineNumber()
+            => Text.Lines.GetLineFromPosition(Method.SpanStart).LineNumber;
 
-            var firstLineNumber = Text.Lines.GetLineFromPosition(Method.SpanStart).LineNumber;
-            var lastLineNumber = Text.Lines.GetLineFromPosition(Math.Max(Method.SpanStart, Method.Span.End - 1)).LineNumber;
-
-            for (var i = firstLineNumber; i <= lastLineNumber; i++)
-            {
-                yield return Text.Lines[i];
-            }
-        }
+        public int GetEndLineNumber()
+            => Text.Lines.GetLineFromPosition(Math.Max(Method.SpanStart, Method.Span.End - 1)).LineNumber;
     }
 }
