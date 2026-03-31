@@ -13,6 +13,7 @@ using System.Net.Http;
 using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using TestUtilities;
@@ -567,7 +568,7 @@ public partial class LinuxInstallerTests : IDisposable
         _outputHelper.WriteLine($"Downloading {url} to {filePath}");
 
         using HttpClient client = new HttpClient();
-        HttpResponseMessage response = await DownloadWithRetriesAsync(client, url, "public URL");
+        HttpResponseMessage response = await DownloadWithRetriesAsync(client, url);
 
         if (!response.IsSuccessStatusCode && !string.IsNullOrEmpty(Config.DotNetRuntimeSourceFeedKey))
         {
@@ -576,7 +577,7 @@ public partial class LinuxInstallerTests : IDisposable
             // The feed key is a base64-encoded SAS token that must be decoded and appended to the URL as a query string
             string decodedSasToken = Encoding.UTF8.GetString(Convert.FromBase64String(Config.DotNetRuntimeSourceFeedKey));
             Uri internalUrl = new Uri($"{internalUrlStr}?{decodedSasToken}");
-            response = await DownloadWithRetriesAsync(client, internalUrl, "internal URL");
+            response = await DownloadWithRetriesAsync(client, internalUrl);
         }
 
         response.EnsureSuccessStatusCode();
@@ -585,8 +586,10 @@ public partial class LinuxInstallerTests : IDisposable
         await response.Content.CopyToAsync(fileStream);
     }
 
-    private async Task<HttpResponseMessage> DownloadWithRetriesAsync(HttpClient client, Uri url, string urlLabel)
+    private async Task<HttpResponseMessage> DownloadWithRetriesAsync(HttpClient client, Uri url)
     {
+        // Strip query string to avoid logging sensitive tokens
+        string safeUrl = url.GetLeftPart(UriPartial.Path);
         HttpResponseMessage response = null!;
 
         for (int attempt = 0; attempt < RetryTimeoutsInSeconds.Length; attempt++)
@@ -603,15 +606,15 @@ public partial class LinuxInstallerTests : IDisposable
                     return response;
                 }
 
-                _outputHelper.WriteLine($"Attempt {attempt + 1}/{RetryTimeoutsInSeconds.Length} for {urlLabel} failed with status {(int)response.StatusCode}.");
+                _outputHelper.WriteLine($"Attempt {attempt + 1}/{RetryTimeoutsInSeconds.Length} for {safeUrl} failed with status {(int)response.StatusCode}.");
             }
             catch (TaskCanceledException) when (cts.IsCancellationRequested)
             {
-                _outputHelper.WriteLine($"Attempt {attempt + 1}/{RetryTimeoutsInSeconds.Length} for {urlLabel} timed out after {timeoutSeconds}s.");
+                _outputHelper.WriteLine($"Attempt {attempt + 1}/{RetryTimeoutsInSeconds.Length} for {safeUrl} timed out after {timeoutSeconds}s.");
             }
             catch (HttpRequestException ex)
             {
-                _outputHelper.WriteLine($"Attempt {attempt + 1}/{RetryTimeoutsInSeconds.Length} for {urlLabel} failed: {ex.Message}");
+                _outputHelper.WriteLine($"Attempt {attempt + 1}/{RetryTimeoutsInSeconds.Length} for {safeUrl} failed: {ex.Message}");
             }
         }
 
