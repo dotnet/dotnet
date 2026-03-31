@@ -560,12 +560,15 @@ public partial class LinuxInstallerTests : IDisposable
     private static string GetSanitizedImageName(string image) =>
         image.Replace("/", "_").Replace(":", "_").Replace(".", "_");
 
+    private static readonly int[] RetryTimeoutsInSeconds = [120, 240, 360];
+
     private async Task DownloadFileAsync(Uri url, string filePath)
     {
         _outputHelper.WriteLine($"Downloading {url} to {filePath}");
 
         using HttpClient client = new HttpClient();
-        HttpResponseMessage response = await client.GetAsync(url);
+        HttpResponseMessage response = await DownloadWithRetriesAsync(client, url, "public URL");
+
         if (!response.IsSuccessStatusCode && !string.IsNullOrEmpty(Config.DotNetRuntimeSourceFeedKey))
         {
             string internalUrlStr = url.ToString().Replace("https://ci.dot.net/public", Config.DotNetRuntimeSourceFeed);
@@ -573,13 +576,47 @@ public partial class LinuxInstallerTests : IDisposable
             // The feed key is a base64-encoded SAS token that must be decoded and appended to the URL as a query string
             string decodedSasToken = Encoding.UTF8.GetString(Convert.FromBase64String(Config.DotNetRuntimeSourceFeedKey));
             Uri internalUrl = new Uri($"{internalUrlStr}?{decodedSasToken}");
-            response = await client.GetAsync(internalUrl);
+            response = await DownloadWithRetriesAsync(client, internalUrl, "internal URL");
         }
 
         response.EnsureSuccessStatusCode();
 
         using FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
         await response.Content.CopyToAsync(fileStream);
+    }
+
+    private async Task<HttpResponseMessage> DownloadWithRetriesAsync(HttpClient client, Uri url, string urlLabel)
+    {
+        HttpResponseMessage response = null!;
+
+        for (int attempt = 0; attempt < RetryTimeoutsInSeconds.Length; attempt++)
+        {
+            int timeoutSeconds = RetryTimeoutsInSeconds[attempt];
+            using CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutSeconds));
+
+            try
+            {
+                response = await client.GetAsync(url, cts.Token);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return response;
+                }
+
+                _outputHelper.WriteLine($"Attempt {attempt + 1}/{RetryTimeoutsInSeconds.Length} for {urlLabel} failed with status {(int)response.StatusCode}.");
+            }
+            catch (TaskCanceledException) when (cts.IsCancellationRequested)
+            {
+                _outputHelper.WriteLine($"Attempt {attempt + 1}/{RetryTimeoutsInSeconds.Length} for {urlLabel} timed out after {timeoutSeconds}s.");
+            }
+            catch (HttpRequestException ex)
+            {
+                _outputHelper.WriteLine($"Attempt {attempt + 1}/{RetryTimeoutsInSeconds.Length} for {urlLabel} failed: {ex.Message}");
+            }
+        }
+
+        // Return the last response (which may be a failure) so the caller can inspect the status code
+        return response;
     }
 
     private void ValidatePackageMetadata(string image, PackageType packageType)
