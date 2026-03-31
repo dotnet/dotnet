@@ -610,6 +610,18 @@ jobs:
       - script: |
           $(sourcesPath)/eng/common/native/install-dependencies.sh ${{ parameters.targetOS }}
         displayName: Install dependencies
+    - ${{ if contains(parameters.container.image, 'azurelinux') }}:
+      - script: |
+          set -ex
+          # tdnf requires root even for downloads, so we use repoquery to
+          # find the package version, then download the RPM directly with curl.
+          nevra=$(tdnf repoquery nodejs24 | grep '^nodejs24' | head -1)
+          curl -fsSL "https://packages.microsoft.com/azurelinux/3.0/prod/base/x86_64/Packages/n/${nevra}.rpm" -o /tmp/nodejs24.rpm
+          mkdir -p /tmp/nodejs24
+          cd /tmp/nodejs24
+          rpm2cpio /tmp/nodejs24.rpm | cpio -idmv
+          echo "##vso[task.prependpath]/tmp/nodejs24/usr/bin"
+        displayName: Switch to Node.js 24 (Azure Linux)
     - ${{ if eq(parameters.buildSourceOnly, 'true') }}:
       - script: |
           set -ex
