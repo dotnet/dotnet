@@ -134,6 +134,7 @@ stages:
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
         excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
+        brandingType: ${{ variables.brandingType }}
         
         # We only want to publish SB artifacts for each distinct distro/version/arch combination
         ${{ if and(endsWith(leg.buildNameFormat, 'Offline_MsftSdk'), not(contains(leg.buildNameFormat, '_Mono_'))) }}:
@@ -217,6 +218,7 @@ stages:
             /p:ExtraRestoreSourcePath=$(Pipeline.Workspace)/msft-pkgs
             /p:RestoreAdditionalProjectSources=$(Pipeline.Workspace)/msft-pkgs
           excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
+          brandingType: ${{ variables.brandingType }}
           
           testInitSteps:
           # Ensure the artifacts staging directory exists so that even if no files get placed there, it won't fail
