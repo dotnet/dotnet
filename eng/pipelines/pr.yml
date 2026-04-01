@@ -21,7 +21,7 @@ pr:
       - '*.md'
 
 schedules:
-  - cron: "0 14 * * *" # run at 14:00 (UTC)
+  - cron: "0 5 * * *" # run at 05:00 (UTC)
     branches:
       include:
       - main

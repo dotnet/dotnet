@@ -80,7 +80,6 @@ public class CohostSnippetCompletionTest(ITestOutputHelper testOutputHelper) : C
             IncompatibleProjectService,
             completionListCache,
             RemoteServiceInvoker,
-            ClientSettingsManager,
             requestInvoker,
             ClientCapabilitiesService,
             snippetCompletionItemProvider,

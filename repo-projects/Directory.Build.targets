@@ -36,9 +36,9 @@
     <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'unstable'">/p:DotNetFinalVersionKind=""</RepoDotNetFinalVersionKindArg>
     <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'preview'">/p:DotNetFinalVersionKind=prerelease</RepoDotNetFinalVersionKindArg>
     <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'release'">/p:DotNetFinalVersionKind=release</RepoDotNetFinalVersionKindArg>
-    <CommonArgs Condition="'$(AllowDotNetFinalVersionKindOverride)' == 'true'">$(CommonArgs) $(RepoDotNetFinalVersionKindArg)</CommonArgs>
+    <CommonArgs Condition="'$(DisallowDotNetFinalVersionKindOverride)' != 'true'">$(CommonArgs) $(RepoDotNetFinalVersionKindArg)</CommonArgs>
 
-    <!-- Only pass these properites through when necessary to reduce command line noise. -->
+    <!-- Only pass these properties through when necessary to reduce command line noise. -->
     <CommonArgs Condition="'$(DotNetBuildTests)' == 'true' and '$(DotNetBuildTestsOptOut)' != 'true'">$(CommonArgs) /p:DotNetBuildTests=true</CommonArgs>
 
     <BuildArgs Condition="'$(EnableDefaultRidSpecificArtifacts)' != ''">$(BuildArgs) /p:EnableDefaultRidSpecificArtifacts=$(EnableDefaultRidSpecificArtifacts)</BuildArgs>

@@ -10,7 +10,7 @@
     <VersionFeature>$([System.String]::Copy('$(VersionSDKMinorPatch)').PadLeft(2, '0'))</VersionFeature>
     <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionSDKMinor)$(VersionFeature)</VersionPrefix>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
-    <PreReleaseVersionIteration>3</PreReleaseVersionIteration>
+    <PreReleaseVersionIteration>4</PreReleaseVersionIteration>
 
     <!-- 
       Allowed values: 'repodefault', 'unstable', 'preview', 'release'
@@ -63,8 +63,6 @@
     <MicrosoftExtensionsHostingVersion>10.0.2</MicrosoftExtensionsHostingVersion>
     <!-- sdk dependencies -->
     <MicrosoftDotNetApiCompatTaskVersion>10.0.100</MicrosoftDotNetApiCompatTaskVersion>
-    <!-- external dependencies -->
-    <NewtonsoftJsonVersion>13.0.4</NewtonsoftJsonVersion>
   </PropertyGroup>
 
 </Project>
