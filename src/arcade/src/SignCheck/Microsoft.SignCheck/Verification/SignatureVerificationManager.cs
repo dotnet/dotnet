@@ -92,12 +92,13 @@ namespace Microsoft.SignCheck.Verification
                 AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".psm1"));
                 AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".ps1"));
                 AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".ps1xml"));
-                AddFileVerifier(new CabVerifier(log, exclusions, options, ".cab"));
                 AddFileVerifier(new JarVerifier(log, exclusions, options));
                 AddFileVerifier(new MsiVerifier(log, exclusions, options));
                 AddFileVerifier(new MspVerifier(log, exclusions, options));
                 AddFileVerifier(new MsuVerifier(log, exclusions, options));
             }
+
+            AddFileVerifier(new CabVerifier(log, exclusions, options, ".cab"));
 
             AddFileVerifier(new DebVerifier(log, exclusions, options));
             AddFileVerifier(new MachOVerifier(log, exclusions, options, ".dylib"));
