@@ -6,8 +6,8 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet-arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26177.6</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.26177.6</MicrosoftDotNetHelixSdkPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26180.3</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.26180.3</MicrosoftDotNetHelixSdkPackageVersion>
     <!-- dotnet-arcade-services dependencies -->
     <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.26176.1</MicrosoftDotNetDarcLibPackageVersion>
     <MicrosoftDotNetProductConstructionServiceClientPackageVersion>1.1.0-beta.26176.1</MicrosoftDotNetProductConstructionServiceClientPackageVersion>
@@ -48,7 +48,7 @@ This file should be imported by eng/Versions.props
     <!-- dotnet-templating dependencies -->
     <MicrosoftTemplateEngineAuthoringTasksPackageVersion>10.0.100-preview.4.25220.1</MicrosoftTemplateEngineAuthoringTasksPackageVersion>
     <!-- dotnet-xharness dependencies -->
-    <MicrosoftDotNetXHarnessCLIPackageVersion>11.0.0-prerelease.26117.1</MicrosoftDotNetXHarnessCLIPackageVersion>
+    <MicrosoftDotNetXHarnessCLIPackageVersion>11.0.0-prerelease.26181.1</MicrosoftDotNetXHarnessCLIPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
