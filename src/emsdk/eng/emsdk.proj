@@ -365,6 +365,24 @@
     <Delete Files="@(DeleteCacheFiles)" />
   </Target>
 
+  <!--
+    Generate a catalog (.cat) file covering all .js files in the SDK package.
+    The .js files are customer-modifiable Emscripten toolchain files that cannot be
+    directly Authenticode-signed. The .cat provides integrity verification without
+    preventing modification. Only runs on Windows (makecat.exe is a Windows SDK tool)
+    and only the Windows packs are inserted into VS.
+  -->
+  <Target Name="GenerateCatalogFiles" AfterTargets="ReallyBuild" Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <PropertyGroup>
+      <_CatOutputPath>$(ArtifactsObjDir)upstream\emscripten\emscripten-js.cat</_CatOutputPath>
+      <_ErrorIfMakecatNotFound Condition="'$(ContinuousIntegrationBuild)' == 'true' or '$(OfficialBuild)' == 'true'">-ErrorIfMakecatNotFound</_ErrorIfMakecatNotFound>
+    </PropertyGroup>
+
+    <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;&amp; '$(MSBuildThisFileDirectory)generate-catalog.ps1' -RootPath '$(ArtifactsObjDir)upstream' -CatOutputPath '$(_CatOutputPath)' -WindowsSdkDir '$(WindowsSdkDir)' $(_ErrorIfMakecatNotFound)&quot;" StandardOutputImportance="High" />
+
+    <Message Condition="Exists('$(_CatOutputPath)')" Importance="High" Text="Generated catalog file: $(_CatOutputPath)" />
+  </Target>
+
   <Target Name="ReallyPack" DependsOnTargets="Build" BeforeTargets="Pack">
     <Message Importance="High" Text="Creating nuget packages..." />
     <MSBuild Projects="$(MSBuildThisFileDirectory)nuget\Microsoft.NET.Runtime.Emscripten.Node\Microsoft.NET.Runtime.Emscripten.Node.pkgproj" Targets="Build" />
