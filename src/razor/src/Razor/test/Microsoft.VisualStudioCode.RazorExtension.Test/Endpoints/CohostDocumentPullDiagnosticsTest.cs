@@ -13,7 +13,6 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Test.Utilities;
 using Xunit;
@@ -40,7 +39,7 @@ public partial class CohostDocumentPullDiagnosticsTest
             """);
 
         var requestInvoker = new TestHtmlRequestInvoker([(VSInternalMethods.DocumentPullDiagnosticName, (VSInternalDiagnosticReport[]?)null)]);
-        var result = await MakeDiagnosticsRequestAsync(document, taskListRequest: false, requestInvoker, IncompatibleProjectService, RemoteServiceInvoker, ClientSettingsManager, ClientCapabilitiesService, LoggerFactory, DisposalToken);
+        var result = await MakeDiagnosticsRequestAsync(document, taskListRequest: false, requestInvoker, IncompatibleProjectService, RemoteServiceInvoker, ClientCapabilitiesService, LoggerFactory, DisposalToken);
 
         Assert.NotNull(result);
         var diagnostic = Assert.Single(result);
@@ -65,7 +64,7 @@ public partial class CohostDocumentPullDiagnosticsTest
 
         var requestInvoker = new TestHtmlRequestInvoker([(VSInternalMethods.DocumentPullDiagnosticName, htmlResponse)]);
 
-        var result = await MakeDiagnosticsRequestAsync(document, taskListRequest: false, requestInvoker, IncompatibleProjectService, RemoteServiceInvoker, ClientSettingsManager, ClientCapabilitiesService, LoggerFactory, DisposalToken);
+        var result = await MakeDiagnosticsRequestAsync(document, taskListRequest: false, requestInvoker, IncompatibleProjectService, RemoteServiceInvoker, ClientCapabilitiesService, LoggerFactory, DisposalToken);
 
         Assert.NotNull(result);
 
@@ -91,7 +90,6 @@ public partial class CohostDocumentPullDiagnosticsTest
         TestHtmlRequestInvoker requestInvoker,
         IIncompatibleProjectService incompatibleProjectService,
         IRemoteServiceInvoker remoteServiceInvoker,
-        IClientSettingsManager _,
         IClientCapabilitiesService clientCapabilitiesService,
         ILoggerFactory loggerFactory,
         CancellationToken cancellationToken)

@@ -172,18 +172,10 @@ internal class GenerateMethodCodeActionResolver(
 
             if (result is not null)
             {
-                var formattingOptions = new RazorFormattingOptions()
-                {
-                    TabSize = options.TabSize,
-                    InsertSpaces = options.InsertSpaces,
-                    CodeBlockBraceOnNextLine = options.CodeBlockBraceOnNextLine,
-                    AttributeIndentStyle = options.AttributeIndentStyle,
-                };
-
                 var formattedChange = await _razorFormattingService.TryGetCSharpCodeActionEditAsync(
                     documentContext,
                     result.SelectAsArray(code.GetCSharpSourceText().GetTextChange),
-                    formattingOptions,
+                    options,
                     cancellationToken).ConfigureAwait(false);
 
                 edits = formattedChange is { } change ? [code.Source.Text.GetTextEdit(change)] : [];

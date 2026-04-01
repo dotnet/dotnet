@@ -30,7 +30,6 @@ namespace Microsoft.VisualStudio.RazorExtension;
 [ProvideService(typeof(RazorLanguageService))]
 [ProvideLanguageService(typeof(RazorLanguageService), RazorConstants.RazorLSPContentTypeName, 110)]
 [ProvideMenuResource("Menus.ctmenu", 1)]
-[ProvideMenuResource("SyntaxVisualizerMenu.ctmenu", 1)]
 [ProvideToolWindow(typeof(SyntaxVisualizerToolWindow))]
 [ProvideSettingsManifest(PackageRelativeManifestFile = @"UnifiedSettings\razor.registration.json")]
 [Guid(PackageGuidString)]
