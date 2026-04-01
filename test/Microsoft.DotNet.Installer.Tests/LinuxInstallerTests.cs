@@ -616,6 +616,10 @@ public partial class LinuxInstallerTests : IDisposable
             {
                 _outputHelper.WriteLine($"Attempt {attempt + 1}/{RetryTimeoutsInSeconds.Length} for {safeUrl} failed: {ex.Message}");
             }
+            catch (IOException ex) when (ex is not DirectoryNotFoundException and not PathTooLongException)
+            {
+                _outputHelper.WriteLine($"Attempt {attempt + 1}/{RetryTimeoutsInSeconds.Length} for {safeUrl} failed with IO error: {ex.Message}");
+            }
         }
 
         // Return the last response (which may be a failure) so the caller can inspect the status code
