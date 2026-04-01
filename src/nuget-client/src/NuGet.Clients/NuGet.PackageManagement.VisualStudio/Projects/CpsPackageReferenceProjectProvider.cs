@@ -9,6 +9,7 @@ using Microsoft;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Threading;
 using Microsoft.VisualStudio.Utilities;
 using NuGet.ProjectManagement;
 using NuGet.ProjectModel;
@@ -80,16 +81,21 @@ namespace NuGet.PackageManagement.VisualStudio
             }
 
             var fullProjectPath = vsProject.FullProjectPath;
-            var unconfiguredProject = GetUnconfiguredProject(vsProject.Project);
 
             var projectServices = new CpsProjectSystemServices(vsProject, _scriptExecutor);
+
+            var lazyUnconfiguredProject = new AsyncLazy<UnconfiguredProject>(async () =>
+            {
+                await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                return GetUnconfiguredProject(vsProject.Project);
+            }, NuGetUIThreadHelper.JoinableTaskFactory);
 
             return new CpsPackageReferenceProject(
                 vsProject.ProjectName,
                 vsProject.CustomUniqueName,
                 fullProjectPath,
                 _projectSystemCache,
-                unconfiguredProject,
+                lazyUnconfiguredProject,
                 projectServices,
                 vsProject.ProjectId);
         }

@@ -107,7 +107,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             File.WriteAllText(Path.Combine(testDirectory, "projectA.csproj"), projectContent);
             var project = Project.FromFile(Path.Combine(testDirectory, "projectA.csproj"), projectOptions);
 
-            var msObject = new MSBuildAPIUtility(logger: new TestLogger());
+            var msObject = new MSBuildAPIUtility(logger: new TestLogger(), virtualProjectBuilder: null);
             // Creating an item group in the project
             var itemGroup = MSBuildAPIUtility.CreateItemGroup(project, null);
 
@@ -164,7 +164,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             File.WriteAllText(Path.Combine(testDirectory, "projectA.csproj"), projectContent);
             var project = Project.FromFile(Path.Combine(testDirectory, "projectA.csproj"), projectOptions);
             var logger = new TestLogger();
-            var msObject = new MSBuildAPIUtility(logger: logger);
+            var msObject = new MSBuildAPIUtility(logger: logger, virtualProjectBuilder: null);
             // Getting all the item groups in a given project
             var itemGroups = MSBuildAPIUtility.GetItemGroups(project);
             // Getting an existing item group that has package reference(s)
@@ -231,7 +231,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             var project = Project.FromFile(Path.Combine(testDirectory, "projectA.csproj"), projectOptions);
 
             // Add item group to Directory.Packages.props
-            var msObject = new MSBuildAPIUtility(logger: new TestLogger());
+            var msObject = new MSBuildAPIUtility(logger: new TestLogger(), virtualProjectBuilder: null);
             var directoryBuildPropsRootElement = MSBuildAPIUtility.GetDirectoryBuildPropsRootElement(project);
             var propsItemGroup = directoryBuildPropsRootElement.AddItemGroup();
 
@@ -302,7 +302,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             var project = Project.FromFile(Path.Combine(testDirectory, "projectA.csproj"), projectOptions);
 
             // Get existing item group from Directory.Packages.props
-            var msObject = new MSBuildAPIUtility(logger: new TestLogger());
+            var msObject = new MSBuildAPIUtility(logger: new TestLogger(), virtualProjectBuilder: null);
             var directoryBuildPropsRootElement = MSBuildAPIUtility.GetDirectoryBuildPropsRootElement(project);
             var propsItemGroup = MSBuildAPIUtility.GetItemGroup(directoryBuildPropsRootElement.ItemGroups, "PackageVersion", condition: null);
 
@@ -370,7 +370,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             File.WriteAllText(Path.Combine(testDirectory, "projectA.csproj"), projectContent);
             var project = Project.FromFile(Path.Combine(testDirectory, "projectA.csproj"), projectOptions);
 
-            var msObject = new MSBuildAPIUtility(logger: new TestLogger());
+            var msObject = new MSBuildAPIUtility(logger: new TestLogger(), virtualProjectBuilder: null);
             // Get package version if it already exists in the props file. Returns null if there is no matching package version.
             ProjectItem packageVersionInProps = project.Items.LastOrDefault(i => i.ItemType == "PackageVersion" && i.EvaluatedInclude.Equals("X"));
 
@@ -383,7 +383,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             };
 
             // Act
-            MSBuildAPIUtility.UpdatePackageVersion(project, packageVersionInProps, "2.0.0");
+            MSBuildAPIUtility.UpdatePackageVersion(new SaveableProject { Project = project }, packageVersionInProps, "2.0.0");
 
             // Assert
             Assert.Equal(projectContent, File.ReadAllText(Path.Combine(testDirectory, "projectA.csproj")));
@@ -439,7 +439,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             File.WriteAllText(Path.Combine(testDirectory, "projectA.csproj"), projectContent);
             var project = Project.FromFile(Path.Combine(testDirectory, "projectA.csproj"), projectOptions);
 
-            var msObject = new MSBuildAPIUtility(logger: new TestLogger());
+            var msObject = new MSBuildAPIUtility(logger: new TestLogger(), virtualProjectBuilder: null);
             // Get package version if it already exists in the props file. Returns null if there is no matching package version.
             ProjectItem packageVersionInProps = project.Items.LastOrDefault(i => i.ItemType == "PackageReference" && i.EvaluatedInclude.Equals("X"));
 
@@ -452,7 +452,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             };
 
             // Act
-            MSBuildAPIUtility.UpdateVersionOverride(project, packageVersionInProps, "3.0.0");
+            MSBuildAPIUtility.UpdateVersionOverride(new SaveableProject { Project = project }, packageVersionInProps, "3.0.0");
 
             // Assert
             Assert.Equal(projectContent, File.ReadAllText(Path.Combine(testDirectory, "projectA.csproj")));
@@ -492,7 +492,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                     typeConstraint: LibraryDependencyTarget.Package)
             };
 
-            var msObject = new MSBuildAPIUtility(logger: new TestLogger());
+            var msObject = new MSBuildAPIUtility(logger: new TestLogger(), virtualProjectBuilder: null);
 
             // Act
             msObject.AddPackageReference(projectPath, libraryDependency, noVersion: false);
@@ -532,7 +532,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                     typeConstraint: LibraryDependencyTarget.Package)
             };
 
-            var msObject = new MSBuildAPIUtility(logger: new TestLogger());
+            var msObject = new MSBuildAPIUtility(logger: new TestLogger(), virtualProjectBuilder: null);
 
             // Act
             msObject.AddPackageReference(projectPath, libraryDependency, noVersion: false);
@@ -555,8 +555,10 @@ namespace NuGet.CommandLine.Xplat.Tests
 
             projectA.Save();
 
+            var msObject = new MSBuildAPIUtility(logger: new TestLogger(), virtualProjectBuilder: null);
+
             // Act
-            var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(projectA.ProjectPath);
+            var projectList = msObject.GetListOfProjectsFromPathArgument(projectA.ProjectPath);
 
             // Assert
             Assert.Equal(projectList.Count(), 1);
@@ -574,8 +576,10 @@ namespace NuGet.CommandLine.Xplat.Tests
 
             projectA.Save();
 
+            var msObject = new MSBuildAPIUtility(logger: new TestLogger(), virtualProjectBuilder: null);
+
             // Act
-            var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(Path.GetDirectoryName(projectA.ProjectPath));
+            var projectList = msObject.GetListOfProjectsFromPathArgument(Path.GetDirectoryName(projectA.ProjectPath));
 
             // Assert
             Assert.Equal(projectList.Count(), 1);
@@ -597,8 +601,10 @@ namespace NuGet.CommandLine.Xplat.Tests
             solution.Projects.Add(projectB);
             solution.Create();
 
+            var msObject = new MSBuildAPIUtility(logger: new TestLogger(), virtualProjectBuilder: null);
+
             // Act
-            var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(Path.GetDirectoryName(solution.SolutionPath));
+            var projectList = msObject.GetListOfProjectsFromPathArgument(Path.GetDirectoryName(solution.SolutionPath));
 
             // Assert
             Assert.Equal(projectList.Count(), 2);
@@ -621,8 +627,10 @@ namespace NuGet.CommandLine.Xplat.Tests
             solution.Projects.Add(projectB);
             solution.Create();
 
+            var msObject = new MSBuildAPIUtility(logger: new TestLogger(), virtualProjectBuilder: null);
+
             // Act
-            var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(pathContext.SolutionRoot);
+            var projectList = msObject.GetListOfProjectsFromPathArgument(pathContext.SolutionRoot);
 
             // Assert
             Assert.Equal(projectList.Count(), 2);
@@ -711,8 +719,10 @@ namespace NuGet.CommandLine.Xplat.Tests
                 File.Create(filePath);
             }
 
+            var msObject = new MSBuildAPIUtility(logger: new TestLogger(), virtualProjectBuilder: null);
+
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => MSBuildAPIUtility.GetListOfProjectsFromPathArgument(pathContext.SolutionRoot));
+            Assert.Throws<ArgumentException>(() => msObject.GetListOfProjectsFromPathArgument(pathContext.SolutionRoot));
         }
 
         [Fact]

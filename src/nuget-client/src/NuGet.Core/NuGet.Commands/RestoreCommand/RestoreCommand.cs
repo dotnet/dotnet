@@ -40,6 +40,7 @@ namespace NuGet.Commands
         private readonly Dictionary<RestoreTargetGraph, Dictionary<string, LibraryIncludeFlags>> _includeFlagGraphs
             = new Dictionary<RestoreTargetGraph, Dictionary<string, LibraryIncludeFlags>>();
 
+        internal IEnvironmentVariableReader EnvironmentVariableReader { get; init; }
         public Guid ParentId { get; }
 
         private const string ProjectRestoreInformation = nameof(ProjectRestoreInformation);
@@ -67,6 +68,7 @@ namespace NuGet.Commands
         private const string UpdatedMSBuildFiles = nameof(UpdatedMSBuildFiles);
         private const string IsPackageInstallationTrigger = nameof(IsPackageInstallationTrigger);
         private const string UsesLegacyPackagesDirectory = nameof(UsesLegacyPackagesDirectory);
+        private const string UsesLegacyAssetTargetFallback = nameof(UsesLegacyAssetTargetFallback);
 
         // no-op data names
         private const string NoOpDuration = nameof(NoOpDuration);
@@ -173,6 +175,7 @@ namespace NuGet.Commands
 
             _isLockFileEnabled = PackagesLockFileUtilities.IsNuGetLockFileEnabled(_request.Project);
             _enableNewDependencyResolver = _request.Project.RuntimeGraph.Supports.Count == 0 && ShouldUseNewResolverWithLockFile(_isLockFileEnabled, _request.Project) && !_request.Project.RestoreMetadata.UseLegacyDependencyResolver;
+            EnvironmentVariableReader = EnvironmentVariableWrapper.Instance;
         }
 
         // Use the new resolver if lock files are not enabled, or if lock files are enabled and legacy projects or .NET 10 SDK is used.
@@ -384,6 +387,8 @@ namespace NuGet.Commands
             telemetry.TelemetryEvent[NETSdkVersion] = _request.Project.RestoreSettings.SdkVersion;
             telemetry.TelemetryEvent[IsPackageInstallationTrigger] = !_request.IsRestoreOriginalAction;
             telemetry.TelemetryEvent[UsesLegacyPackagesDirectory] = !_request.IsLowercasePackagesDirectory;
+            telemetry.TelemetryEvent[UsesLegacyAssetTargetFallback] = MSBuildStringUtility.IsTrue(EnvironmentVariableReader.GetEnvironmentVariable("NUGET_USE_LEGACY_ASSET_TARGET_FALLBACK_DEPENDENCY_RESOLUTION"));
+
             _operationId = telemetry.OperationId;
 
             var isCpvmEnabled = _request.Project.RestoreMetadata?.CentralPackageVersionsEnabled ?? false;
@@ -1546,13 +1551,32 @@ namespace NuGet.Commands
             {
                 foreach (var versionConflict in graph.AnalyzeResult.VersionConflicts)
                 {
-                    var message = string.Format(
-                           CultureInfo.CurrentCulture,
-                           Strings.Log_VersionConflict,
-                           versionConflict.Selected.Key.Name,
-                           versionConflict.Selected.GetIdAndVersionOrRange(),
-                           _request.Project.Name)
-                       + $" {Environment.NewLine} {versionConflict.Selected.GetPathWithLastRange()} {Environment.NewLine} {versionConflict.Conflicting.GetPathWithLastRange()}.";
+                    string message;
+
+                    bool isPinningEnabled = _request.Project.RestoreMetadata?.CentralPackageVersionsEnabled == true && _request.Project.RestoreMetadata?.CentralPackageTransitivePinningEnabled == true; // If pinning is enabled for this project, the error message can provide details about adding a PackageVersion.
+                    // If pinning is enabled, then this package is not centrally managed yet.
+                    // If the conflicting package was centrally managed, it'd be pinned and a pinned package cannot cause downgrades or version conflicts.
+                    // A pinned package would basically raise NU1109 if downgraded or no error otherwise.
+
+                    if (isPinningEnabled)
+                    {
+                        message = string.Format(
+                                CultureInfo.CurrentCulture,
+                                Strings.Log_VersionConflictForCentralTransitive,
+                                versionConflict.Selected.Key.Name,
+                                versionConflict.Selected.GetIdAndVersionOrRange())
+                           + $" {Environment.NewLine} {versionConflict.Selected.GetPathWithLastRange()} {Environment.NewLine} {versionConflict.Conflicting.GetPathWithLastRange()}.";
+                    }
+                    else
+                    {
+                        message = string.Format(
+                                CultureInfo.CurrentCulture,
+                                Strings.Log_VersionConflict,
+                                versionConflict.Selected.Key.Name,
+                                versionConflict.Selected.GetIdAndVersionOrRange(),
+                                _request.Project.Name)
+                           + $" {Environment.NewLine} {versionConflict.Selected.GetPathWithLastRange()} {Environment.NewLine} {versionConflict.Conflicting.GetPathWithLastRange()}.";
+                    }
 
                     await logger.LogAsync(RestoreLogMessage.CreateError(NuGetLogCode.NU1107, message, versionConflict.Selected.Key.Name, graph.TargetGraphName));
                     return false;

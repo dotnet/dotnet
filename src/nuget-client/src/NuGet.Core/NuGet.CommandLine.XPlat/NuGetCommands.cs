@@ -21,9 +21,10 @@ public static class NuGetCommands
     /// </summary>
     /// <param name="rootCommand">The CLI's RootCommand instance</param>
     /// <param name="interactiveOption">The .NET SDK has code to detect when output is redirected or </param>
+    /// <param name="virtualProjectBuilder">For handling file-based apps.</param>
     /// <remarks>Many of NuGet's commands are defined in the dotnet/sdk repo, and those run NuGet.CommandLine.XPlat.dll as a child process.
     /// Those commands are not added by this method.</remarks>
-    public static void Add(RootCommand rootCommand, Option<bool> interactiveOption)
+    public static void Add(RootCommand rootCommand, Option<bool> interactiveOption, IVirtualProjectBuilder? virtualProjectBuilder = null)
     {
         var packageCommand = rootCommand.Subcommands.FirstOrDefault(c => c.Name == "package");
         if (packageCommand is null)
@@ -32,11 +33,17 @@ public static class NuGetCommands
             rootCommand.Subcommands.Add(packageCommand);
         }
 
-        PackageUpdateCommand.Register(packageCommand, interactiveOption);
+        PackageUpdateCommand.Register(packageCommand, interactiveOption, virtualProjectBuilder);
         PackageDownloadCommand.Register(packageCommand, interactiveOption);
     }
 
-    // To delete once the SDK starts using the other overload. Joys of public APIs.
+    // For binary backcompat. To delete once the SDK starts using the first overload.
+    public static void Add(RootCommand rootCommand, Option<bool> interactiveOption)
+    {
+        Add(rootCommand, interactiveOption, virtualProjectBuilder: null);
+    }
+
+    // To delete once the SDK starts using the first overload. Joys of public APIs.
     public static void Add(RootCommand rootCommand)
     {
         var interactiveOption = new Option<bool>("--interactive")

@@ -31,7 +31,7 @@ namespace NuGet.Packaging.FuncTest
             _fixture = fixture;
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task RemoveSignatureAsync_RemovesPackageSignatureAsync()
         {
             using (var test = await Test.CreateAsync(_fixture))
@@ -44,7 +44,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task RemoveSignatureAsync_WithCancelledToken_ThrowsAsync()
         {
             using (var test = await Test.CreateAsync(_fixture))
@@ -54,7 +54,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task RemoveSignatureAsync_WithUnsignedPackage_ThrowsAsync()
         {
             using (var test = await Test.CreateUnsignedAsync())

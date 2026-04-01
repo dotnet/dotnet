@@ -2024,6 +2024,83 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             }
         }
 
+        // P -> X -> Z [1.0.0]
+        // P -> Y -> Z >= 2.0.0
+        // This creates a conflict.
+        [Fact]
+        public async Task RestoreCommand_VersionConflict_CentralTransitive_ShowsCorrectErrorMessage()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            var logger = new TestLogger();
+            var projectName = "TestProject";
+            var sources = new List<PackageSource> { new PackageSource(pathContext.PackageSource) };
+
+            var packageX = new SimpleTestPackageContext("x", "1.0.0");
+            packageX.Dependencies.Add(new SimpleTestPackageContext("z", "[1.0.0]"));
+
+            var packageY = new SimpleTestPackageContext("y", "1.0.0");
+            var packageZ2 = new SimpleTestPackageContext("z", "2.0.0");
+            packageY.Dependencies.Add(packageZ2);
+
+            await SimpleTestPackageUtility.CreatePackagesWithoutDependenciesAsync(
+                pathContext.PackageSource,
+                packageX,
+                packageY,
+                new SimpleTestPackageContext("z", "1.0.0"),
+                packageZ2,
+                new SimpleTestPackageContext("z", "3.0.0")
+                );
+
+            var packageSpec = @"
+            {
+              ""restore"": {
+                ""centralPackageVersionsManagementEnabled"": true,
+                ""CentralPackageTransitivePinningEnabled"": true
+              },
+              ""frameworks"": {
+                ""net472"": {
+                  ""dependencies"": {
+                    ""x"": {
+                      ""version"": ""[1.0.0,)"",
+                      ""target"": ""Package"",
+                      ""versionCentrallyManaged"": true
+                    },
+                    ""y"": {
+                      ""version"": ""[1.0.0,)"",
+                      ""target"": ""Package"",
+                      ""versionCentrallyManaged"": true
+                    }
+                  },
+                  ""centralPackageVersions"": {
+                    ""x"": ""[1.0.0,)"",
+                    ""y"": ""[1.0.0,)"",
+                  }
+                }
+              }
+            }";
+
+            var spec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec(projectName, pathContext.SolutionRoot, packageSpec);
+            spec.RestoreMetadata.UseLegacyDependencyResolver = true;
+            var request = new TestRestoreRequest(spec, sources, pathContext.UserPackagesFolder, logger);
+            var command = new RestoreCommand(request);
+
+            // Act
+            var result = await command.ExecuteAsync();
+
+            // Assert
+            result.Success.Should().BeFalse(logger.ShowMessages());
+
+            result.LockFile.LogMessages.Should().Contain(e => e.Code == NuGetLogCode.NU1107);
+
+            var errorMessage = result.LockFile.LogMessages[0].Message;
+
+            var expectedMessage = string.Format(
+                                Strings.Log_VersionConflictForCentralTransitive,
+                               "z", "z 2.0.0");
+            errorMessage.Should().StartWith(expectedMessage);
+        }
+
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
@@ -3022,6 +3099,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 ["Pruning.RemovablePackages.Count"] = value => value.Should().BeOfType<int>(),
                 ["Pruning.Pruned.Direct.Count"] = value => value.Should().BeOfType<int>(),
                 ["UsesLegacyPackagesDirectory"] = value => value.Should().Be(false),
+                ["UsesLegacyAssetTargetFallback"] = value => value.Should().Be(false),
             };
 
             HashSet<string> actualProperties = new();
@@ -3134,7 +3212,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
 
-            projectInformationEvent.Count.Should().Be(40);
+            projectInformationEvent.Count.Should().Be(41);
 
             projectInformationEvent["RestoreSuccess"].Should().Be(true);
             projectInformationEvent["NoOpResult"].Should().Be(true);
@@ -3176,6 +3254,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             projectInformationEvent["Pruning.FrameworksUnsupported.Count"].Should().Be(1);
             projectInformationEvent["Pruning.DefaultEnabled"].Should().Be(false);
             projectInformationEvent["UsesLegacyPackagesDirectory"].Should().Be(false);
+            projectInformationEvent["UsesLegacyAssetTargetFallback"].Should().Be(false);
         }
 
         [Fact]
@@ -3233,7 +3312,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
 
-            projectInformationEvent.Count.Should().Be(48);
+            projectInformationEvent.Count.Should().Be(49);
             projectInformationEvent["RestoreSuccess"].Should().Be(true);
             projectInformationEvent["NoOpResult"].Should().Be(false);
             projectInformationEvent["TotalUniquePackagesCount"].Should().Be(2);
@@ -3654,3 +3733,4 @@ namespace NuGet.Commands.Test.RestoreCommandTests
         }
     }
 }
+
