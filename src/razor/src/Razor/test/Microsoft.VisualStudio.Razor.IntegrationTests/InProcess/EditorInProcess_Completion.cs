@@ -133,11 +133,12 @@ internal partial class EditorInProcess
         IAsyncCompletionSession? TriggerCompletion()
         {
             lastSessionResetTime = stopWatch.ElapsedMilliseconds;
-            return asyncCompletion.TriggerCompletion(textView, new CompletionTrigger(CompletionTriggerReason.Insertion, textView.TextSnapshot), textView.Caret.Position.BufferPosition, cancellationToken);
+            return asyncCompletion.TriggerCompletion(textView, new CompletionTrigger(CompletionTriggerReason.Invoke, textView.TextSnapshot), textView.Caret.Position.BufferPosition, cancellationToken);
         }
-
         void OpenOrUpdate(IAsyncCompletionSession currentSession)
         {
+            // Preserve insertion semantics for active sessions so filtering and uniqueness still
+            // reflect the text the test typed before we poll for the target item.
             currentSession.OpenOrUpdate(new CompletionTrigger(CompletionTriggerReason.Insertion, textView.TextSnapshot), textView.Caret.Position.BufferPosition, cancellationToken);
             lastOpenOrUpdateTime = stopWatch.ElapsedMilliseconds;
         }

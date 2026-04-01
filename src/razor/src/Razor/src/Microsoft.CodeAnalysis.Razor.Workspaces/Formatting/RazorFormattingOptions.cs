@@ -38,14 +38,14 @@ internal readonly record struct RazorFormattingOptions
         };
 
     public static RazorFormattingOptions From(FormattingOptions options, bool codeBlockBraceOnNextLine, AttributeIndentStyle attributeIndentStyle, RazorCSharpSyntaxFormattingOptions csharpSyntaxFormattingOptions)
-    => new()
-    {
-        InsertSpaces = options.InsertSpaces,
-        TabSize = options.TabSize,
-        CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine,
-        AttributeIndentStyle = attributeIndentStyle,
-        CSharpSyntaxFormattingOptions = csharpSyntaxFormattingOptions,
-    };
+        => new()
+        {
+            InsertSpaces = options.InsertSpaces,
+            TabSize = options.TabSize,
+            CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine,
+            AttributeIndentStyle = attributeIndentStyle,
+            CSharpSyntaxFormattingOptions = csharpSyntaxFormattingOptions,
+        };
 
     public static RazorFormattingOptions From(FormattingOptions options, bool codeBlockBraceOnNextLine, AttributeIndentStyle attributeIndentStyle, RazorCSharpSyntaxFormattingOptions csharpSyntaxFormattingOptions, bool fromPaste)
         => new()

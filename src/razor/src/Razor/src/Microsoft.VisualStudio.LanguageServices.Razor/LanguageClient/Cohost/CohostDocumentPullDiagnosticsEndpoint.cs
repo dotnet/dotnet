@@ -15,7 +15,6 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using ExternalHandlers = Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -31,7 +30,6 @@ internal sealed class CohostDocumentPullDiagnosticsEndpoint(
     IIncompatibleProjectService incompatibleProjectService,
     IRemoteServiceInvoker remoteServiceInvoker,
     IHtmlRequestInvoker requestInvoker,
-    IClientSettingsManager clientSettingsManager,
     IClientCapabilitiesService clientCapabilitiesService,
     ITelemetryReporter telemetryReporter,
     ILoggerFactory loggerFactory)
@@ -44,7 +42,6 @@ internal sealed class CohostDocumentPullDiagnosticsEndpoint(
         loggerFactory.GetOrCreateLogger<CohostDocumentPullDiagnosticsEndpoint>()), IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
-    private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
     private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
 
     protected override string LspMethodName => VSInternalMethods.DocumentPullDiagnosticName;
@@ -76,7 +73,6 @@ internal sealed class CohostDocumentPullDiagnosticsEndpoint(
         {
             return await HandleTaskListItemRequestAsync(
                 razorDocument,
-                _clientSettingsManager.GetClientSettings().AdvancedSettings.TaskListDescriptors,
                 cancellationToken).ConfigureAwait(false);
         }
 
@@ -146,13 +142,13 @@ internal sealed class CohostDocumentPullDiagnosticsEndpoint(
         return allDiagnostics.ToArray();
     }
 
-    private async Task<VSInternalDiagnosticReport[]> HandleTaskListItemRequestAsync(TextDocument razorDocument, ImmutableArray<string> taskListDescriptors, CancellationToken cancellationToken)
+    private async Task<VSInternalDiagnosticReport[]> HandleTaskListItemRequestAsync(TextDocument razorDocument, CancellationToken cancellationToken)
     {
         var csharpTaskItems = await GetCSharpTaskListItemsAsync(razorDocument, cancellationToken).ConfigureAwait(false);
 
         var diagnostics = await _remoteServiceInvoker.TryInvokeAsync<IRemoteDiagnosticsService, ImmutableArray<LspDiagnostic>>(
             razorDocument.Project.Solution,
-            (service, solutionInfo, cancellationToken) => service.GetTaskListDiagnosticsAsync(solutionInfo, razorDocument.Id, taskListDescriptors, csharpTaskItems, cancellationToken),
+            (service, solutionInfo, cancellationToken) => service.GetTaskListDiagnosticsAsync(solutionInfo, razorDocument.Id, csharpTaskItems, cancellationToken),
             cancellationToken).ConfigureAwait(false);
 
         if (diagnostics.IsDefaultOrEmpty)
@@ -190,8 +186,8 @@ internal sealed class CohostDocumentPullDiagnosticsEndpoint(
         public Task<LspDiagnostic[]?> HandleRequestAsync(TextDocument razorDocument, CancellationToken cancellationToken)
             => instance.GetVSDiagnosticsAsync(razorDocument, cancellationToken);
 
-        public Task<VSInternalDiagnosticReport[]> HandleTaskListItemRequestAsync(TextDocument razorDocument, ImmutableArray<string> taskListDescriptors, CancellationToken cancellationToken)
-            => instance.HandleTaskListItemRequestAsync(razorDocument, taskListDescriptors, cancellationToken);
+        public Task<VSInternalDiagnosticReport[]> HandleTaskListItemRequestAsync(TextDocument razorDocument, CancellationToken cancellationToken)
+            => instance.HandleTaskListItemRequestAsync(razorDocument, cancellationToken);
     }
 }
 
