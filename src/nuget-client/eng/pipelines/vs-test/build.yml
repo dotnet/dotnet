@@ -225,6 +225,11 @@ steps:
           Write-Host "##vso[task.setvariable variable=RunSettingsDrop]$runSettingsDrop"
           Write-Host "##vso[task.setvariable variable=RunSettingsDrop;isOutput=true]$runSettingsDrop"
 
+          # Test gate drop — mirrors the product drop path with Tests/ prefix so the VS gate can find it by NuGet version
+          $testsDrop = "${env:MicroBuild_ManifestDropName}" -replace '^Products/', 'Tests/'
+          Write-Host "Tests Drop: $testsDrop"
+          Write-Host "##vso[task.setvariable variable=TestsDrop]$testsDrop"
+
           $vsBootstrapperBranch = dotnet msbuild -getProperty:VsTargetBranch build\config.props
           Write-Host "VS Bootstrapper Branch: $vsBootstrapperBranch"
           Write-Host "##vso[task.setvariable variable=VsBootstrapperBranch;isOutput=true]$vsBootstrapperBranch"
@@ -305,6 +310,16 @@ steps:
       toLowerCase: false
       usePat: true
       dropMetadataContainerName: "DropMetadata-RunSettings"
+
+  - task: artifactDropTask@0
+    displayName: "Publish test gate drop"
+    inputs:
+      dropServiceURI: "https://devdiv.artifacts.visualstudio.com"
+      buildNumber: "$(TestsDrop)"
+      sourcePath: '$(Build.StagingDirectory)\RunSettings'
+      toLowerCase: false
+      usePat: true
+      dropMetadataContainerName: "DropMetadata-TestGate"
 
   - task: PublishPipelineArtifact@1
     displayName: "Publish E2E tests"

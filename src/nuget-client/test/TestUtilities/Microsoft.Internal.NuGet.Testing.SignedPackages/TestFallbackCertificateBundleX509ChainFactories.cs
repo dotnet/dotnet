@@ -6,10 +6,6 @@
 using NuGet.Packaging.Signing;
 #pragma warning disable CS1591
 
-#if NET5_0_OR_GREATER
-using NuGet.Common;
-#endif
-
 namespace Microsoft.Internal.NuGet.Testing.SignedPackages
 {
     public sealed class TestFallbackCertificateBundleX509ChainFactories
@@ -25,7 +21,7 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages
             IX509ChainFactory timestampingFactory = null;
 
 #if NET5_0_OR_GREATER
-            if (tryUseAsDefault && !RuntimeEnvironmentHelper.IsWindows)
+            if (tryUseAsDefault)
             {
                 codeSigningFactory = Instance.CodeSigningX509ChainFactory;
                 timestampingFactory = Instance.TimestampingX509ChainFactory;

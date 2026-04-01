@@ -1208,7 +1208,7 @@ namespace NuGet.Packaging.Test
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task ExtractPackageAsync_PreservesZipEntryTimeAsync()
         {
             // Arrange
@@ -1824,7 +1824,7 @@ namespace NuGet.Packaging.Test
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task ExtractPackageAsync_UnsignedPackage_WhenRepositorySaysAllPackagesSigned_WithEnvVar_Error()
         {
             // Arrange
@@ -1999,7 +1999,7 @@ namespace NuGet.Packaging.Test
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task ExtractPackageAsync_UnsignedPackage_RequireMode_WithEnvVar_Error()
         {
             // Arrange
@@ -2198,7 +2198,7 @@ namespace NuGet.Packaging.Test
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task ExtractPackageAsync_RequireMode_NoMatchInClientAllowList_WithEnvVar_Error()
         {
             // Arrange
@@ -2261,7 +2261,7 @@ namespace NuGet.Packaging.Test
             }
         }
 
-        [CIOnlyTheory(Skip = "https://github.com/NuGet/Home/issues/11700")]
+        [Theory(Skip = "https://github.com/NuGet/Home/issues/11700")]
         [MemberData(nameof(KnownClientPolicyModesList))]
         public async Task ExtractPackageAsync_RepositoryPrimarySignedPackage_PackageSignedWithCertFromRepositoryAllowList_SuccessAsync(SignatureValidationMode clientPolicyMode)
         {
@@ -2404,7 +2404,7 @@ namespace NuGet.Packaging.Test
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task ExtractPackageAsync_WithAllowUntrusted_SucceedsWithoutSigningWarningsOrErrors_WithEnvVar()
         {
             // Arrange
@@ -2618,7 +2618,7 @@ namespace NuGet.Packaging.Test
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task ExtractPackageAsync_RequireMode_UnsignedPackage_PackageArchiveReader_WhenUnsignedPackagesDisallowed_WithEnvVar_Errors()
         {
             // Arrange
@@ -3726,7 +3726,7 @@ namespace NuGet.Packaging.Test
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task ExtractPackageAsyncByStream_InvalidSignPackageWithUnzip_WithOptInEnvVar_Throws()
         {
             // Arrange
@@ -3969,7 +3969,7 @@ namespace NuGet.Packaging.Test
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task ExtractPackageAsyncByPackageReader_InvalidSignPackageWithUnzip_WithEnvVar_Throws()
         {
             // Arrange
@@ -4165,7 +4165,7 @@ namespace NuGet.Packaging.Test
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task ExtractPackageAsyncByPackageReaderAndStream_InvalidSignPackageWithUnzip_WithEnvVar_Throws()
         {
             // Arrange
@@ -4314,7 +4314,7 @@ namespace NuGet.Packaging.Test
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task VerifyPackageSignatureAsync_PassesCommonSettingsWhenNoRepoSignatureInfo_WithEnvVar_DoVerify()
         {
             // Arrange

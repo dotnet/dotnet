@@ -31,7 +31,7 @@ namespace NuGet.Packaging.FuncTest
             _untrustedTestCertificate = _testFixture.UntrustedTestCertificate;
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task Verify_WithUntrustedSelfSignedCertificateAndNotAllowUntrusted_FailsAsync()
         {
             var settings = new SignatureVerifySettings(
@@ -57,7 +57,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task Verify_WithUntrustedSelfSignedCertificateAndAllowUntrusted_SucceedsAndWarnsAsync()
         {
             var settings = new SignatureVerifySettings(
@@ -82,7 +82,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task Verify_WithUntrustedSelfSignedCertificateAndAllowUntrustedAndNotReportUntrustedRoot_SucceedsAsync()
         {
             var settings = new SignatureVerifySettings(
@@ -107,7 +107,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task GetSigningCertificateFingerprint_WithUnsupportedHashAlgorithm_Throws()
         {
             using (var test = await VerifyTest.CreateAsync(_untrustedTestCertificate.Cert))
@@ -116,7 +116,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task GetSigningCertificateFingerprint_SuccessfullyHashesMultipleAlgorithms()
         {
             using (var test = await VerifyTest.CreateAsync(_untrustedTestCertificate.Cert))
