@@ -1764,6 +1764,15 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue..
+        /// </summary>
+        internal static string Log_VersionConflictForCentralTransitive {
+            get {
+                return ResourceManager.GetString("Log_VersionConflictForCentralTransitive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Writing assets file to disk. Path: {0}.
         /// </summary>
         internal static string Log_WritingAssetsFile {
