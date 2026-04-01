@@ -1,13 +1,99 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable"  xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <Extern href="stdidcmd.h"/>
   <Extern href="vsshlids.h"/>
 
-  <Commands package="RazorPackage">
-  </Commands>
-
   <Symbols>
     <GuidSymbol name="RazorPackage" value="{13b72f58-279e-49e0-a56d-296be02f0805}" />
+
+    <!-- This is the guid used to group the menu commands together -->
+    <GuidSymbol name="guidSyntaxVisualizerMenuCmdSet" value="{a3a603a2-2b17-4ce2-bd21-cbb8ccc084ec}">
+      <IDSymbol name="cmdidRazorSyntaxVisualizer" value="0x0101" />
+      <IDSymbol name="menuidToolWindowToolbar" value="0x0102" />
+
+      <IDSymbol name="grpidRazorSyntaxVisualizer" value="0x1000" />
+
+      <!-- Top level commands in the tool window -->
+      <IDSymbol name="cmdidShowGeneratedCode" value="0x0111" />
+      <IDSymbol name="cmdidShowGeneratedHtml" value="0x0112" />
+      <IDSymbol name="cmdIdShowAllTagHelpers" value="0x0113" />
+      <IDSymbol name="cmdIdShowInScopeTagHelpers" value="0x0114" />
+      <IDSymbol name="cmdIdShowReferencedTagHelpers" value="0x0115" />
+      <IDSymbol name="cmdidShowFormattingDocument" value="0x0116" />
+    </GuidSymbol>
   </Symbols>
+
+  <Commands package="RazorPackage">
+    <Groups>
+      <Group guid="guidSyntaxVisualizerMenuCmdSet" id="grpidRazorSyntaxVisualizer" priority="0x0100">
+        <Parent guid="guidSyntaxVisualizerMenuCmdSet" id="menuidToolWindowToolbar"/>
+      </Group>
+    </Groups>
+
+    <Menus>
+      <Menu guid="guidSyntaxVisualizerMenuCmdSet" id="menuidToolWindowToolbar" priority="0x0001" type="ToolWindowToolbar">
+        <Parent guid="guidSyntaxVisualizerMenuCmdSet" id="menuidToolWindowToolbar"/>
+        <CommandFlag>DefaultDocked</CommandFlag>
+        <Strings>
+          <ButtonText>Razor Syntax Visualizer</ButtonText>
+        </Strings>
+      </Menu>
+    </Menus>
+
+    <Buttons>
+      <Button guid="guidSyntaxVisualizerMenuCmdSet" id="cmdidRazorSyntaxVisualizer" priority="0x0100" type="Button">
+        <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
+        <CommandFlag>CommandWellOnly</CommandFlag>
+        <Strings>
+          <CommandName>RazorSyntaxVisualizer</CommandName>
+          <ButtonText>Razor Syntax Visualizer</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidSyntaxVisualizerMenuCmdSet" id="cmdidShowGeneratedCode" priority="0x202" type="Button">
+        <Parent guid="guidSyntaxVisualizerMenuCmdSet" id="grpidRazorSyntaxVisualizer" />
+        <Strings>
+          <ButtonText>Show Generated C#</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidSyntaxVisualizerMenuCmdSet" id="cmdidShowGeneratedHtml" priority="0x202" type="Button">
+        <Parent guid="guidSyntaxVisualizerMenuCmdSet" id="grpidRazorSyntaxVisualizer" />
+        <Strings>
+          <ButtonText>Show Generated HTML</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidSyntaxVisualizerMenuCmdSet" id="cmdidShowFormattingDocument" priority="0x202" type="Button">
+        <Parent guid="guidSyntaxVisualizerMenuCmdSet" id="grpidRazorSyntaxVisualizer" />
+        <Strings>
+          <ButtonText>Show Formatting Document</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidSyntaxVisualizerMenuCmdSet" id="cmdIdShowAllTagHelpers" priority="0x203" type="Button">
+        <Parent guid="guidSyntaxVisualizerMenuCmdSet" id="grpidRazorSyntaxVisualizer" />
+        <Strings>
+          <ButtonText>Show All Tag Helpers</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidSyntaxVisualizerMenuCmdSet" id="cmdIdShowInScopeTagHelpers" priority="0x204" type="Button">
+        <Parent guid="guidSyntaxVisualizerMenuCmdSet" id="grpidRazorSyntaxVisualizer" />
+        <Strings>
+          <ButtonText>Show In Scope Tag Helpers</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidSyntaxVisualizerMenuCmdSet" id="cmdIdShowReferencedTagHelpers" priority="0x205" type="Button">
+        <Parent guid="guidSyntaxVisualizerMenuCmdSet" id="grpidRazorSyntaxVisualizer" />
+        <Strings>
+          <ButtonText>Show Referenced Tag Helpers</ButtonText>
+        </Strings>
+      </Button>
+
+    </Buttons>
+  </Commands>
+
 </CommandTable>

@@ -1,6 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
@@ -45,6 +46,44 @@ public class FormattingUtilitiesTest
 
         Assert.Equal(level, actual);
         Assert.Equal(additional, additionalIndentation);
+    }
+
+    [Theory]
+    [InlineData(0, true, 4, "")]
+    [InlineData(4, true, 4, "    ")]
+    [InlineData(8, true, 4, "        ")]
+    [InlineData(0, false, 4, "")]
+    [InlineData(4, false, 4, "\t")]
+    [InlineData(8, false, 4, "\t\t")]
+    [InlineData(6, false, 4, "\t  ")]
+    [InlineData(5, false, 4, "\t ")]
+    [InlineData(3, false, 4, "   ")]
+    public void GetIndentationString_ReturnsExpectedString(int indentation, bool insertSpaces, int tabSize, string expected)
+    {
+        var actual = FormattingUtilities.GetIndentationString(indentation, insertSpaces, tabSize);
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData(4, true, 4)]
+    [InlineData(4, false, 4)]
+    [InlineData(6, false, 4)]
+    [InlineData(3, false, 10)]
+    public void GetIndentationString_CachedValuesReturnSameInstance(int indentation, bool insertSpaces, int tabSize)
+    {
+        var result1 = FormattingUtilities.GetIndentationString(indentation, insertSpaces, tabSize);
+        var result2 = FormattingUtilities.GetIndentationString(indentation, insertSpaces, tabSize);
+
+        Assert.Same(result1, result2);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void FormattingIndentCache_GetIndentString_InvalidTabSize_Throws(int tabSize)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => IndentCache.GetIndentString(size: 4, insertSpaces: false, tabSize));
     }
 
     [Theory]

@@ -146,7 +146,7 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
             // any to avoid false negatives/positives.
             Assert.Empty(input.NamedSpans.Where(kvp => kvp.Key.Length > 0));
 
-            var result = await CohostDocumentPullDiagnosticsTest.MakeDiagnosticsRequestAsync(document, taskListRequest: false, requestInvoker, IncompatibleProjectService, RemoteServiceInvoker, ClientSettingsManager, ClientCapabilitiesService, LoggerFactory, DisposalToken);
+            var result = await CohostDocumentPullDiagnosticsTest.MakeDiagnosticsRequestAsync(document, taskListRequest: false, requestInvoker, IncompatibleProjectService, RemoteServiceInvoker, ClientCapabilitiesService, LoggerFactory, DisposalToken);
 
             diagnostics.AddRange(result);
         }
@@ -193,7 +193,7 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
     private async Task<WorkspaceEdit> ResolveCodeActionAsync(CodeAnalysis.TextDocument document, CodeAction codeAction)
     {
         var requestInvoker = new TestHtmlRequestInvoker();
-        var endpoint = new CohostCodeActionsResolveEndpoint(IncompatibleProjectService, RemoteServiceInvoker, ClientCapabilitiesService, ClientSettingsManager, requestInvoker);
+        var endpoint = new CohostCodeActionsResolveEndpoint(IncompatibleProjectService, RemoteServiceInvoker, ClientCapabilitiesService, requestInvoker);
 
         var result = await endpoint.GetTestAccessor().HandleRequestAsync(document, codeAction, DisposalToken);
 

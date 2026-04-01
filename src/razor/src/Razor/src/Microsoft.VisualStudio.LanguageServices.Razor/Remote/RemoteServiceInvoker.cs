@@ -16,6 +16,7 @@ using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Settings;
@@ -27,6 +28,7 @@ namespace Microsoft.VisualStudio.Razor.Remote;
 internal sealed class RemoteServiceInvoker(
     IWorkspaceProvider workspaceProvider,
     LanguageServerFeatureOptions languageServerFeatureOptions,
+    IClientSettingsManager clientSettingsManager,
     IClientCapabilitiesService clientCapabilitiesService,
     ISemanticTokensLegendService semanticTokensLegendService,
     SVsServiceProvider serviceProvider,
@@ -34,6 +36,7 @@ internal sealed class RemoteServiceInvoker(
     ILoggerFactory loggerFactory) : IRemoteServiceInvoker, IDisposable
 {
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
+    private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
     private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
     private readonly ISemanticTokensLegendService _semanticTokensLegendService = semanticTokensLegendService;
     private readonly IServiceProvider _serviceProvider = serviceProvider;
@@ -55,6 +58,8 @@ internal sealed class RemoteServiceInvoker(
         {
             return;
         }
+
+        _clientSettingsManager.ClientSettingsChanged -= ClientSettingsManager_ClientSettingsChanged;
 
         _disposeTokenSource.Cancel();
         _disposeTokenSource.Dispose();
@@ -190,6 +195,10 @@ internal sealed class RemoteServiceInvoker(
                     .TryInvokeAsync<IRemoteClientInitializationService>(
                         (s, ct) => s.InitializeAsync(initParams, ct),
                         _disposeTokenSource.Token).ConfigureAwait(false);
+
+                // Now that we're initialized, send over the current client settings, and subscribe to changes
+                await UpdateClientSettingsAsync(remoteClient, _disposeTokenSource.Token).ConfigureAwait(false);
+                _clientSettingsManager.ClientSettingsChanged += ClientSettingsManager_ClientSettingsChanged;
             }
 
             Task InitializeLspAsync(RazorRemoteHostClient remoteClient)
@@ -210,5 +219,36 @@ internal sealed class RemoteServiceInvoker(
                     .AsTask();
             }
         }
+    }
+
+    private void ClientSettingsManager_ClientSettingsChanged(object? sender, EventArgs e)
+    {
+        if (_initializeOOPTask is null || _disposeTokenSource.IsCancellationRequested)
+        {
+            return;
+        }
+
+        _ = UpdateClientSettingsAsync(_disposeTokenSource.Token);
+    }
+
+    private async Task UpdateClientSettingsAsync(CancellationToken cancellationToken)
+    {
+        await InitializeAsync().ConfigureAwait(false);
+
+        var remoteClient = await _lazyJsonClient.GetValueAsync(cancellationToken).ConfigureAwait(false);
+        await UpdateClientSettingsAsync(remoteClient, cancellationToken).ConfigureAwait(false);
+    }
+
+    private Task UpdateClientSettingsAsync(RazorRemoteHostClient remoteClient, CancellationToken cancellationToken)
+    {
+        var clientSettings = _clientSettingsManager.GetClientSettings();
+
+        _logger.LogDebug("Syncing client settings to OOP.");
+
+        return remoteClient
+            .TryInvokeAsync<IRemoteClientSettingsService>(
+                (s, ct) => s.UpdateAsync(clientSettings, ct),
+                cancellationToken)
+            .AsTask();
     }
 }

@@ -67,16 +67,16 @@
       "commitSha": "d50247799ecea063a727a890564bb77d0e60db19"
     },
     {
-      "barId": 307611,
+      "barId": 308583,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "d9362b9b6d43e151d055d80ab9a28ec39dcc5910"
+      "commitSha": "e626c1b1332a71abb87f5b95a59eaa71cf34d86c"
     },
     {
-      "barId": 307791,
+      "barId": 308664,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "675bbbd7e3a88759191c093bb7cba4b9a5d4eed4"
+      "commitSha": "83c179c8f3bbff27061c8ee8bdf1614120910552"
     },
     {
       "barId": 307800,
