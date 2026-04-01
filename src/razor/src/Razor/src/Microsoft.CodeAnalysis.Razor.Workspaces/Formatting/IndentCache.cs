@@ -10,10 +10,6 @@ namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
 internal static class IndentCache
 {
-    // Exists only so benchmarks can compare cached and uncached formatting runs.
-    // Production code should leave this enabled.
-    public static bool UseCache { get; set; } = true;
-
     // Copied from the compilers IndentCache
     internal const int MaxTabCount = 64;
     internal const int MaxSpaceCount = 128;
@@ -59,7 +55,7 @@ internal static class IndentCache
 
     private static string GetSingleCharacterString(int length, char character, string?[] cache)
     {
-        if (length >= cache.Length || !UseCache)
+        if (length >= cache.Length)
         {
             return new string(character, length);
         }
@@ -77,7 +73,7 @@ internal static class IndentCache
 
     private static string GetMixedString(int tabCount, int spaceCount)
     {
-        if (tabCount > MaxTabCount || spaceCount > MaxSpaceCountInMixedString || !UseCache)
+        if (tabCount > MaxTabCount || spaceCount > MaxSpaceCountInMixedString)
         {
             return CreateMixedString(tabCount, spaceCount);
         }

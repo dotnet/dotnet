@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -12,8 +11,7 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
-using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.CodeAnalysis.Razor.Telemetry;
+using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -23,15 +21,15 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test.Mapping;
 
-public class RazorEditHelperTest(ITestOutputHelper testOutput) : CohostEndpointTestBase(testOutput)
+public class RazorEditServiceTest(ITestOutputHelper testOutput) : CohostEndpointTestBase(testOutput)
 {
-    private IDocumentMappingService? _documentMappingService;
+    private IRazorEditService? _razorEditService;
 
     protected async override Task InitializeAsync()
     {
         await base.InitializeAsync();
 
-        _documentMappingService = OOPExportProvider.GetExportedValue<IDocumentMappingService>();
+        _razorEditService = OOPExportProvider.GetExportedValue<IRazorEditService>();
     }
 
     [Fact]
@@ -91,6 +89,492 @@ public class RazorEditHelperTest(ITestOutputHelper testOutput) : CohostEndpointT
             expectedRazorSource: """
                 @code {
                     public int NewCounter { get; set; } 
+
+                    void Method()
+                    {
+                    }
+                }
+                """);
+
+    [Fact]
+    public Task GenerateMethod_ExistingCodeBlock_DoesNotDuplicate()
+        => TestAsync(
+            csharpSource: """
+                class MyComponent : ComponentBase
+                {
+                    {|map1:private void M()
+                    {
+                        NewMethod();
+                    }|}
+                }
+                """,
+            razorSource: """
+                @code {
+                    {|map1:private void M()
+                    {
+                        NewMethod();
+                    }|}
+                }
+                """,
+            newCSharpSource: """
+                using System;
+
+                class MyComponent : ComponentBase
+                {
+                    private void M()
+                    {
+                        NewMethod();
+                    }
+
+                    private void NewMethod()
+                    {
+                        throw new NotImplementedException();
+                    }
+                }
+                """,
+            expectedRazorSource: """
+                @using System
+                @code {
+                    private void M()
+                    {
+                        NewMethod();
+                    }
+
+                    private void NewMethod()
+                    {
+                        throw new NotImplementedException();
+                    }
+                }
+                """);
+
+    [Fact]
+    public Task GenerateMethod_WithBlankLineInBody()
+        => TestAsync(
+            csharpSource: """
+                class MyComponent : ComponentBase
+                {
+                    {|map1:private void M()
+                    {
+                        NewMethod();
+                    }|}
+                }
+                """,
+            razorSource: """
+                @code {
+                    {|map1:private void M()
+                    {
+                        NewMethod();
+                    }|}
+                }
+                """,
+            newCSharpSource: """
+                using System;
+
+                class MyComponent : ComponentBase
+                {
+                    private void M()
+                    {
+                        NewMethod();
+                    }
+
+                    private void NewMethod()
+                    {
+                        var x = 1;
+
+                        throw new NotImplementedException();
+                    }
+                }
+                """,
+            expectedRazorSource: """
+                @using System
+                @code {
+                    private void M()
+                    {
+                        NewMethod();
+                    }
+
+                    private void NewMethod()
+                    {
+                        var x = 1;
+
+                        throw new NotImplementedException();
+                    }
+                }
+                """);
+
+    [Fact]
+    public Task GenerateMethod_ExistingCodeBlock_UsesTabsWithMixedIndentation()
+    {
+        ClientSettingsManager.Update(new ClientSpaceSettings(IndentWithTabs: true, IndentSize: 3));
+
+        return TestAsync(
+            csharpSource: """
+                class MyComponent : ComponentBase
+                {
+                    {|map1:private void M()
+                    {
+                        NewMethod();
+                    }|}
+                }
+                """,
+            razorSource: """
+                @code {
+                    {|map1:private void M()
+                    {
+                        NewMethod();
+                    }|}
+                }
+                """,
+            newCSharpSource: """
+                using System;
+
+                class MyComponent : ComponentBase
+                {
+                    private void M()
+                    {
+                        NewMethod();
+                    }
+
+                    private void NewMethod()
+                    {
+                        if (true)
+                        {
+                            throw new NotImplementedException();
+                        }
+                    }
+                }
+                """,
+            expectedRazorSource: """
+                @using System
+                @code {
+                    private void M()
+                    {
+                        NewMethod();
+                    }
+
+                	private void NewMethod()
+                	{
+                		 if (true)
+                		 {
+                			  throw new NotImplementedException();
+                		 }
+                	}
+                }
+                """);
+    }
+
+    [Fact]
+    public Task GenerateMethod_ExistingCodeBlock_UsesConfiguredTabSizeForTabIndentedSource()
+    {
+        ClientSettingsManager.Update(new ClientSpaceSettings(IndentWithTabs: true, IndentSize: 3));
+
+        return TestAsync(
+            csharpSource: """
+                class MyComponent : ComponentBase
+                {
+                    {|map1:private void M()
+                    {
+                        NewMethod();
+                    }|}
+                }
+                """,
+            razorSource: """
+                @code {
+                    {|map1:private void M()
+                    {
+                        NewMethod();
+                    }|}
+                }
+                """,
+            newCSharpSource: """
+                using System;
+
+                class MyComponent : ComponentBase
+                {
+                    private void M()
+                    {
+                        NewMethod();
+                    }
+
+                	private void NewMethod()
+                	{
+                		if (true)
+                		{
+                			throw new NotImplementedException();
+                		}
+                	}
+                }
+                """,
+            expectedRazorSource: """
+                @using System
+                @code {
+                    private void M()
+                    {
+                        NewMethod();
+                    }
+
+                	private void NewMethod()
+                	{
+                		if (true)
+                		{
+                			throw new NotImplementedException();
+                		}
+                	}
+                }
+                """);
+    }
+
+    [Fact]
+    public Task GenerateMethod_ExistingCodeBlock_UsesConfiguredSpaceIndentation()
+    {
+        // This test is a test for our indentation handling code, but the end result could be better if we knew what Roslyn
+        // was using as the tabsize for C# files.
+
+        ClientSettingsManager.Update(new ClientSpaceSettings(IndentWithTabs: false, IndentSize: 2));
+
+        return TestAsync(
+            csharpSource: """
+                class MyComponent : ComponentBase
+                {
+                  {|map1:private void M()
+                  {
+                    NewMethod();
+                  }|}
+                }
+                """,
+            razorSource: """
+                @code {
+                  {|map1:private void M()
+                  {
+                    NewMethod();
+                  }|}
+                }
+                """,
+            newCSharpSource: """
+                using System;
+
+                class MyComponent : ComponentBase
+                {
+                  private void M()
+                  {
+                    NewMethod();
+                  }
+
+                    private void NewMethod()
+                    {
+                        if (true)
+                        {
+                            throw new NotImplementedException();
+                        }
+                    }
+                }
+                """,
+            expectedRazorSource: """
+                @using System
+                @code {
+                  private void M()
+                  {
+                    NewMethod();
+                  }
+
+                  private void NewMethod()
+                  {
+                      if (true)
+                      {
+                          throw new NotImplementedException();
+                      }
+                  }
+                }
+                """);
+    }
+
+    [Fact]
+    public Task EditInUnmappedMethod_NotAdded()
+       => TestAsync(
+           csharpSource: """
+                class MyComponent : ComponentBase
+                {
+                    {|map1:public int Counter { get; set; }|}
+
+                    void UnmappedMethod()
+                    {
+                    }
+                }
+                """,
+           razorSource: """
+                @code {
+                    {|map1:public int Counter { get; set; }|} 
+                }
+                """,
+           newCSharpSource: """
+                class MyComponent : ComponentBase
+                {
+                    public int NewCounter { get; set; }
+
+                    void UnmappedMethod()
+                    {
+                        // This is new, but the Razor doc shouldn't change.
+                    }
+                }
+                """,
+           expectedRazorSource: """
+                @code {
+                    public int NewCounter { get; set; } 
+                }
+                """);
+
+    [Fact]
+    public Task NewMethod_ExpressionBodied()
+      => TestAsync(
+          csharpSource: """
+                class MyComponent : ComponentBase
+                {
+                    {|map1:public int Counter { get; set; }|}
+                }
+                """,
+          razorSource: """
+                @code {
+                    {|map1:public int Counter { get; set; }|}
+                }
+                """,
+          newCSharpSource: """
+                class MyComponent : ComponentBase
+                {
+                    public int NewCounter { get; set; }
+
+                    int UnmappedMethod()
+                        => 5;
+                }
+                """,
+          expectedRazorSource: """
+                @code {
+                    public int NewCounter { get; set; }
+
+                    int UnmappedMethod()
+                        => 5;
+                }
+                """);
+
+    [Fact]
+    public async Task NewMethod_NoCodeBlock_CodeBlockBraceOnNextLine()
+    {
+        ClientSettingsManager.Update(ClientSettingsManager.GetClientSettings().AdvancedSettings with { CodeBlockBraceOnNextLine = true });
+
+        await TestAsync(
+             csharpSource: """
+                class MyComponent : ComponentBase
+                {
+                }
+                """,
+             razorSource: """
+                <div></div>
+                """,
+             newCSharpSource: """
+                class MyComponent : ComponentBase
+                {
+                    private int UnmappedMethod()
+                    {
+                        return 5;
+                    }
+                }
+                """,
+             expectedRazorSource: """
+                <div></div>
+                @code
+                {
+                    private int UnmappedMethod()
+                    {
+                        return 5;
+                    }
+                }
+                """);
+    }
+
+    [Fact]
+    public Task NewMethod_ExpressionBodied_NoCodeBlock()
+      => TestAsync(
+          csharpSource: """
+                class MyComponent : ComponentBase
+                {
+                }
+                """,
+          razorSource: """
+                <div></div>
+                """,
+          newCSharpSource: """
+                class MyComponent : ComponentBase
+                {
+                    int UnmappedMethod()
+                        => 5;
+                }
+                """,
+          expectedRazorSource: """
+                <div></div>
+                @code {
+                    int UnmappedMethod()
+                        => 5;
+                }
+                """);
+
+    [Fact]
+    public Task NewMethod_Incomplete()
+      => TestAsync(
+          csharpSource: """
+                class MyComponent : ComponentBase
+                {
+                }
+                """,
+          razorSource: """
+                <div></div>
+                """,
+          newCSharpSource: """
+                class MyComponent : ComponentBase
+                {
+                    int UnmappedMethod()
+                }
+                """,
+          expectedRazorSource: """
+                <div></div>
+                @code {
+                    int UnmappedMethod()
+                }
+                """);
+
+    [Fact]
+    public Task NewMethod_ExistingIncomplete()
+      => TestAsync(
+          csharpSource: """
+                class MyComponent : ComponentBase
+                {
+                    {|map1:int UnmappedMethod()|}
+                }
+                """,
+          razorSource: """
+                <div></div>
+                @code
+                {
+                    {|map1:int UnmappedMethod()|}
+                }
+                """,
+          newCSharpSource: """
+                class MyComponent : ComponentBase
+                {
+                    int UnmappedMethod()
+
+                    void M()
+                    {
+                    }
+                }
+                """,
+          expectedRazorSource: """
+                <div></div>
+                @code
+                {
+                    int UnmappedMethod()
+
+                    void M()
+                    {
+                    }
                 }
                 """);
 
@@ -731,6 +1215,7 @@ public class RazorEditHelperTest(ITestOutputHelper testOutput) : CohostEndpointT
 
         var newCSharpSourceText = SourceText.From(newCSharpSource);
         var changes = GetChanges(csharpSource.Text, newCSharpSource);
+        Assert.NotEmpty(changes);
 
         var document = CreateProjectAndRazorDocument(razorSource.Text, documentFilePath: razorPath);
 
@@ -745,77 +1230,22 @@ public class RazorEditHelperTest(ITestOutputHelper testOutput) : CohostEndpointT
         codeDocument = codeDocument.WithCSharpDocument(csharpDocument);
         var snapshot = TestDocumentSnapshot.Create(razorPath, codeDocument);
 
-        var mappedChanges = await RazorEditHelper.MapCSharpEditsAsync(
-            changes.SelectAsArray(c => c.ToRazorTextChange()),
+        var responseTextChanges = await _razorEditService.AssumeNotNull().MapCSharpEditsAsync(
+            changes,
             snapshot,
-            _documentMappingService.AssumeNotNull(),
-            FailingTelemetryReporter.Instance,
             CancellationToken.None);
 
-        Assert.NotEmpty(mappedChanges);
+        Assert.NotEmpty(responseTextChanges);
 
-        var responseTextChanges = mappedChanges.Select(e => e.ToTextChange()).ToArray();
         var newRazorSourceText = razorSourceText.WithChanges(responseTextChanges);
         AssertEx.EqualOrDiff(expectedRazorSource, newRazorSourceText.ToString());
     }
 
-    private ImmutableArray<TextChange> GetChanges(string csharpSource, string newCSharpSource)
+    private static ImmutableArray<TextChange> GetChanges(string csharpSource, string newCSharpSource)
     {
         var tree = CSharpSyntaxTree.ParseText(csharpSource);
         var newTree = CSharpSyntaxTree.ParseText(newCSharpSource);
 
         return newTree.GetChanges(tree).ToImmutableArray();
-    }
-
-    private class FailingTelemetryReporter : ITelemetryReporter
-    {
-        public static readonly FailingTelemetryReporter Instance = new FailingTelemetryReporter();
-
-        public TelemetryScope BeginBlock(string name, Severity severity, TimeSpan minTimeToReport)
-            => TelemetryScope.Null;
-
-        public TelemetryScope BeginBlock(string name, Severity severity, TimeSpan minTimeToReport, Property property)
-            => TelemetryScope.Null;
-
-        public TelemetryScope BeginBlock(string name, Severity severity, TimeSpan minTimeToReport, Property property1, Property property2)
-            => TelemetryScope.Null;
-
-        public TelemetryScope BeginBlock(string name, Severity severity, TimeSpan minTimeToReport, Property property1, Property property2, Property property3)
-            => TelemetryScope.Null;
-
-        public TelemetryScope BeginBlock(string name, Severity severity, TimeSpan minTimeToReport, params ReadOnlySpan<Property> properties)
-            => TelemetryScope.Null;
-
-        public void ReportEvent(string name, Severity severity)
-        {
-        }
-
-        public void ReportEvent(string name, Severity severity, Property property)
-        {
-        }
-
-        public void ReportEvent(string name, Severity severity, Property property1, Property property2)
-        {
-        }
-
-        public void ReportEvent(string name, Severity severity, Property property1, Property property2, Property property3)
-        {
-        }
-
-        public void ReportEvent(string name, Severity severity, params ReadOnlySpan<Property> properties)
-        {
-        }
-
-        public void ReportFault(Exception _, string? message, params object?[] @params)
-        {
-            Assert.Fail($"Did not expect to report a fault. :: {message} :: {string.Join(",", @params ?? [])}");
-        }
-
-        public TelemetryScope TrackLspRequest(string lspMethodName, string lspServerName, TimeSpan minTimeToReport, Guid correlationId)
-            => TelemetryScope.Null;
-
-        public void ReportRequestTiming(string name, string? language, TimeSpan queuedDuration, TimeSpan requestDuration, TelemetryResult result)
-        {
-        }
     }
 }

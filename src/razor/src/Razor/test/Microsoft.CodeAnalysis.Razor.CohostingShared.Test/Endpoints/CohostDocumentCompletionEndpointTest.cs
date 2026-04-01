@@ -1339,7 +1339,6 @@ public partial class CohostDocumentCompletionEndpointTest(ITestOutputHelper test
             IncompatibleProjectService,
             completionListCache,
             RemoteServiceInvoker,
-            ClientSettingsManager,
             new TestHtmlRequestInvoker(),
             ClientCapabilitiesService,
             new ThrowingSnippetCompletionItemResolveProvider(),

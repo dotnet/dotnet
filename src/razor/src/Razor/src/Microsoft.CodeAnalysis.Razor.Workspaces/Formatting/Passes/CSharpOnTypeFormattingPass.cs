@@ -34,10 +34,12 @@ namespace Microsoft.CodeAnalysis.Razor.Formatting;
 /// </summary>
 internal sealed class CSharpOnTypeFormattingPass(
     IDocumentMappingService documentMappingService,
+    IRazorEditService razorEditService,
     IHostServicesProvider hostServicesProvider,
     ILoggerFactory loggerFactory) : IFormattingPass
 {
     private readonly IDocumentMappingService _documentMappingSerivce = documentMappingService;
+    private readonly IRazorEditService _razorEditService = razorEditService;
     private readonly IHostServicesProvider _hostServicesProvider = hostServicesProvider;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CSharpOnTypeFormattingPass>();
 
@@ -103,17 +105,16 @@ internal sealed class CSharpOnTypeFormattingPass(
 
         context.Logger?.LogSourceText("FormattedCSharp", originalTextWithChanges);
 
-        var mappedChanges = _documentMappingSerivce.GetRazorDocumentEdits(codeDocument.GetRequiredCSharpDocument(), normalizedChanges);
-        var filteredChanges = FilterCSharpTextChanges(context, mappedChanges);
+        var mappedChanges = await _razorEditService.MapCSharpEditsAsync(
+            normalizedChanges.SelectAsArray(static c => c.ToRazorTextChange()),
+            context.CurrentSnapshot,
+            context.IncludeCSharpLanguageFeatureEdits,
+            cancellationToken).ConfigureAwait(false);
+
+        var filteredChanges = FilterCSharpTextChanges(context, mappedChanges.SelectAsArray(static e => e.ToTextChange()));
         if (filteredChanges.Length == 0)
         {
-            // There are no C# edits for us to apply that could be mapped, but we might still need to check for using statements
-            // because they are non mappable, but might be the only thing changed (eg from the Add Using code action)
-            //
-            // If there aren't any edits that are likely to contain using statement changes, this call will no-op.
-            filteredChanges = await AddUsingStatementEditsIfNecessaryAsync(context, changes, originalTextWithChanges, filteredChanges, cancellationToken).ConfigureAwait(false);
-
-            return filteredChanges;
+            return [];
         }
 
         // Find the lines that were affected by these edits.
@@ -199,27 +200,7 @@ internal sealed class CSharpOnTypeFormattingPass(
         }
 
         // Now that we have made all the necessary changes to the document. Let's diff the original vs final version and return the diff.
-        var finalChanges = SourceTextDiffer.GetMinimalTextChanges(originalText, cleanedText, DiffKind.Char);
-
-        finalChanges = await AddUsingStatementEditsIfNecessaryAsync(context, changes, originalTextWithChanges, finalChanges, cancellationToken).ConfigureAwait(false);
-
-        return finalChanges;
-    }
-
-    private static async Task<ImmutableArray<TextChange>> AddUsingStatementEditsIfNecessaryAsync(FormattingContext context, ImmutableArray<TextChange> changes, SourceText originalTextWithChanges, ImmutableArray<TextChange> finalChanges, CancellationToken cancellationToken)
-    {
-        if (context.AutomaticallyAddUsings)
-        {
-            // Because we need to parse the C# code twice for this operation, lets do a quick check to see if its even necessary
-            if (changes.Any(static e => e.NewText is not null && e.NewText.Contains("using")))
-            {
-                var usingEdits = await RazorEditHelper.GetEditsForCSharpLanguageFeaturesAsync(context.CurrentSnapshot, originalTextWithChanges, cancellationToken).ConfigureAwait(false);
-                var usingChanges = usingEdits.SelectAsArray(static e => e.ToTextChange());
-                finalChanges = [.. usingChanges, .. finalChanges];
-            }
-        }
-
-        return finalChanges;
+        return SourceTextDiffer.GetMinimalTextChanges(originalText, cleanedText, DiffKind.Char);
     }
 
     // Returns the minimal TextSpan that encompasses all the differences between the old and the new text.
