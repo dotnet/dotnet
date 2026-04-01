@@ -55,7 +55,6 @@ public class CohostDocumentCompletionResolveEndpointTest(ITestOutputHelper testO
             IncompatibleProjectService,
             completionListCache,
             RemoteServiceInvoker,
-            ClientSettingsManager,
             requestInvoker,
             ClientCapabilitiesService,
             new ThrowingSnippetCompletionItemResolveProvider(),

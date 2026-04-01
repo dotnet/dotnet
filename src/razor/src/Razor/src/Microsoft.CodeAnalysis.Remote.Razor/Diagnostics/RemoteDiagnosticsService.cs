@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Diagnostics;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using EAConstants = Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Constants;
@@ -30,6 +31,7 @@ internal sealed class RemoteDiagnosticsService(in ServiceArgs args) : RazorDocum
 
     private readonly IClientCapabilitiesService _clientCapabilitiesService = args.ExportProvider.GetExportedValue<IClientCapabilitiesService>();
     private readonly RazorTranslateDiagnosticsService _translateDiagnosticsService = args.ExportProvider.GetExportedValue<RazorTranslateDiagnosticsService>();
+    private readonly IClientSettingsManager _clientSettingsManager = args.ExportProvider.GetExportedValue<IClientSettingsManager>();
 
     public ValueTask<ImmutableArray<LspDiagnostic>> GetDiagnosticsAsync(
         JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo,
@@ -150,25 +152,23 @@ internal sealed class RemoteDiagnosticsService(in ServiceArgs args) : RazorDocum
     public ValueTask<ImmutableArray<LspDiagnostic>> GetTaskListDiagnosticsAsync(
         JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo,
         JsonSerializableDocumentId documentId,
-        ImmutableArray<string> taskListDescriptors,
         LspDiagnostic[] csharpTaskItems,
         CancellationToken cancellationToken)
         => RunServiceAsync(
             solutionInfo,
             documentId,
-            context => GetTaskListDiagnosticsAsync(context, taskListDescriptors, csharpTaskItems, cancellationToken),
+            context => GetTaskListDiagnosticsAsync(context, csharpTaskItems, cancellationToken),
             cancellationToken);
 
     private async ValueTask<ImmutableArray<LspDiagnostic>> GetTaskListDiagnosticsAsync(
         RemoteDocumentContext context,
-        ImmutableArray<string> taskListDescriptors,
         LspDiagnostic[] csharpTaskItems,
         CancellationToken cancellationToken)
     {
         var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
         using var diagnostics = new PooledArrayBuilder<LspDiagnostic>();
-        diagnostics.AddRange(TaskListDiagnosticProvider.GetTaskListDiagnostics(codeDocument, taskListDescriptors));
+        diagnostics.AddRange(TaskListDiagnosticProvider.GetTaskListDiagnostics(codeDocument, _clientSettingsManager.GetClientSettings().AdvancedSettings.TaskListDescriptors));
         diagnostics.AddRange(_translateDiagnosticsService.MapDiagnostics(RazorLanguageKind.CSharp, csharpTaskItems, context.Snapshot, codeDocument));
         return diagnostics.ToImmutableAndClear();
     }

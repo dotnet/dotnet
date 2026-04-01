@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.Build.NoTargets" TreatAsLocalProperty="CleanWhileBuilding">
 
   <PropertyGroup>
+    <DisallowDotNetFinalVersionKindOverride>true</DisallowDotNetFinalVersionKindOverride>
+
     <!-- The scenario-tests repo shouldn't be cleaned after building as we run tests from it. -->
     <CleanWhileBuilding>false</CleanWhileBuilding>
 

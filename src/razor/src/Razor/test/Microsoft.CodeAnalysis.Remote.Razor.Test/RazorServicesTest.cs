@@ -61,8 +61,8 @@ public class RazorServicesTest(ITestOutputHelper testOutputHelper) : ToolingTest
     [Fact]
     public void RazorServicesContainsAllServices()
     {
-        var services = new HashSet<string>(RazorServices.MessagePackServices.Select(s => s.Item1.Name));
-        services.UnionWith(RazorServices.JsonServices.Select(s => s.Item1.Name));
+        var services = new HashSet<string>(RazorServices.TestAccessor.MessagePackServices.Select(s => s.Item1.Name));
+        services.UnionWith(RazorServices.TestAccessor.JsonServices.Select(s => s.Item1.Name));
         var serviceNodes = s_servicesFile.SelectNodes("/Project/ItemGroup/ServiceHubService");
         Assert.NotNull(serviceNodes);
         foreach (XmlNode serviceNode in serviceNodes)
@@ -83,7 +83,7 @@ public class RazorServicesTest(ITestOutputHelper testOutputHelper) : ToolingTest
 
     public static IEnumerable<object?[]> MessagePackServices()
     {
-        foreach (var service in RazorServices.MessagePackServices)
+        foreach (var service in RazorServices.TestAccessor.MessagePackServices)
         {
             yield return [service.Item1, service.Item2];
         }
@@ -91,7 +91,7 @@ public class RazorServicesTest(ITestOutputHelper testOutputHelper) : ToolingTest
 
     public static IEnumerable<object?[]> JsonServices()
     {
-        foreach (var service in RazorServices.JsonServices)
+        foreach (var service in RazorServices.TestAccessor.JsonServices)
         {
             yield return [service.Item1, service.Item2];
         }
