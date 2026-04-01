@@ -10,7 +10,7 @@ namespace Microsoft.SignCheck.Verification
     public class MspVerifier : AuthentiCodeVerifier
     {
 
-        public MspVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".msp")
+        public MspVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".msp", new OleStorageSecurityInfoProvider())
         {
 
         }

@@ -88,12 +88,13 @@ namespace Microsoft.SignCheck.Verification
 
             if (OperatingSystem.IsWindows())
             {
-                AddFileVerifier(new CabVerifier(log, exclusions, options, ".cab"));
                 AddFileVerifier(new JarVerifier(log, exclusions, options));
                 AddFileVerifier(new MsiVerifier(log, exclusions, options));
                 AddFileVerifier(new MspVerifier(log, exclusions, options));
                 AddFileVerifier(new MsuVerifier(log, exclusions, options));
             }
+
+            AddFileVerifier(new CabVerifier(log, exclusions, options, ".cab"));
 
             AddFileVerifier(new PowerShellScriptVerifier(log, exclusions, options, ".psd1"));
             AddFileVerifier(new PowerShellScriptVerifier(log, exclusions, options, ".psm1"));

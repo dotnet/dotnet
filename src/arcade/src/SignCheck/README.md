@@ -84,7 +84,7 @@ Options:
 |----------------|----------------------------|
 | .a             | macOS                      |
 | .app           | macOS                      |
-| .cab           | Windows                    |
+| .cab           | Windows, macOS, Linux      |
 | .deb           | Linux                      |
 | .dll           | Windows, macOS, Linux      |
 | .dylib         | macOS                      |
@@ -114,7 +114,7 @@ Options:
 
 | File Type                  | Platforms                  |
 |----------------------------|----------------------------|
-| Cab Files                  | Windows                    |
+| Cab Files                  | Windows, macOS, Linux      |
 | EXE Files                  | Windows                    |
 | Jar Files                  | Windows                    |
 | Mach-O Files               | macOS                      |
