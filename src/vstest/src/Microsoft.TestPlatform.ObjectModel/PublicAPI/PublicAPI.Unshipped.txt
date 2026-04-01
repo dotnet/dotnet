@@ -9,3 +9,4 @@ Microsoft.VisualStudio.TestPlatform.ObjectModel.TelemetryEvent
 Microsoft.VisualStudio.TestPlatform.ObjectModel.TelemetryEvent.Name.get -> string!
 Microsoft.VisualStudio.TestPlatform.ObjectModel.TelemetryEvent.Properties.get -> System.Collections.Generic.IDictionary<string!, object!>!
 Microsoft.VisualStudio.TestPlatform.ObjectModel.TelemetryEvent.TelemetryEvent(string! name, System.Collections.Generic.IDictionary<string!, object!>! properties) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.RunConfiguration.CreateNoNewWindow.get -> bool

@@ -1064,9 +1064,10 @@ public class DotnetTestHostManagerTests
                         It.IsAny<IDictionary<string, string?>>(),
                         It.IsAny<Action<object?, string?>>(),
                         It.IsAny<Action<object?>>(),
-                        It.IsAny<Action<object?, string?>>()))
-            .Callback<string, string, string, IDictionary<string, string>, Action<object, string>, Action<object>, Action<object, string>>(
-                (var1, var2, var3, dictionary, errorCallback, exitCallback, outputCallback) =>
+                        It.IsAny<Action<object?, string?>>(),
+                        It.IsAny<bool>()))
+            .Callback<string, string, string, IDictionary<string, string>, Action<object, string>, Action<object>, Action<object, string>, bool>(
+                (var1, var2, var3, dictionary, errorCallback, exitCallback, outputCallback, createNoNewWindow) =>
                 {
                     var process = Process.GetCurrentProcess();
 
@@ -1088,9 +1089,10 @@ public class DotnetTestHostManagerTests
                         It.IsAny<IDictionary<string, string?>>(),
                         It.IsAny<Action<object?, string?>>(),
                         It.IsAny<Action<object?>>(),
-                        It.IsAny<Action<object?, string?>>()))
-            .Callback<string, string, string, IDictionary<string, string>, Action<object, string>, Action<object>, Action<object, string>>(
-                (var1, var2, var3, dictionary, errorCallback, exitCallback, outputCallback) =>
+                        It.IsAny<Action<object?, string?>>(),
+                        It.IsAny<bool>()))
+            .Callback<string, string, string, IDictionary<string, string>, Action<object, string>, Action<object>, Action<object, string>, bool>(
+                (var1, var2, var3, dictionary, errorCallback, exitCallback, outputCallback, createNoNewWindow) =>
                 {
                     var process = Process.GetCurrentProcess();
                     exitCallback(process);

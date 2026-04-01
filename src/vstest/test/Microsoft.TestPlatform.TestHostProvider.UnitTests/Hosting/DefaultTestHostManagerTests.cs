@@ -352,7 +352,8 @@ public class DefaultTestHostManagerTests
                     It.IsAny<IDictionary<string, string?>>(),
                     It.IsAny<Action<object?, string?>>(),
                     It.IsAny<Action<object?>>(),
-                    It.IsAny<Action<object?, string?>>())).Returns(Process.GetCurrentProcess());
+                    It.IsAny<Action<object?, string?>>(),
+                    It.IsAny<bool>())).Returns(Process.GetCurrentProcess());
 
         _testHostManager.Initialize(_mockMessageLogger.Object, $"<?xml version=\"1.0\" encoding=\"utf-8\"?><RunSettings> <RunConfiguration> <TargetPlatform>{Architecture.X64}</TargetPlatform> <TargetFrameworkVersion>{Framework.DefaultFramework}</TargetFrameworkVersion> <DisableAppDomain>{false}</DisableAppDomain> </RunConfiguration> </RunSettings>");
         var startInfo = _testHostManager.GetTestHostProcessStartInfo([], null, default);
@@ -593,12 +594,14 @@ public class DefaultTestHostManagerTests
                         It.IsAny<IDictionary<string, string?>>(),
                         It.IsAny<Action<object?, string?>>(),
                         It.IsAny<Action<object?>>(),
-                        It.IsAny<Action<object?, string?>>()))
-            .Callback<string, string, string, IDictionary<string, string>, Action<object, string>, Action<object>, Action<object, string>>(
-                (var1, var2, var3, dictionary, errorCallback, exitCallback, outputCallback) =>
+                        It.IsAny<Action<object?, string?>>(),
+                        It.IsAny<bool>()))
+            .Callback<string, string, string, IDictionary<string, string>, Action<object, string>, Action<object>, Action<object, string>, bool>(
+                (var1, var2, var3, dictionary, errorCallback, exitCallback, outputCallback, createNoNewWindow) =>
                 {
                     var process = Process.GetCurrentProcess();
 
+                    Assert.IsTrue(createNoNewWindow, "createNoNewWindow should default to true");
                     errorCallback(process, errorMessage);
                     exitCallback(process);
                 }).Returns(Process.GetCurrentProcess());
@@ -627,11 +630,13 @@ public class DefaultTestHostManagerTests
                         It.IsAny<IDictionary<string, string?>>(),
                         It.IsAny<Action<object?, string?>>(),
                         It.IsAny<Action<object?>>(),
-                        It.IsAny<Action<object?, string?>>()))
-            .Callback<string, string, string, IDictionary<string, string>, Action<object, string>, Action<object>, Action<object, string>>(
-                (var1, var2, var3, dictionary, errorCallback, exitCallback, outputCallback) =>
+                        It.IsAny<Action<object?, string?>>(),
+                        It.IsAny<bool>()))
+            .Callback<string, string, string, IDictionary<string, string>, Action<object, string>, Action<object>, Action<object, string>, bool>(
+                (var1, var2, var3, dictionary, errorCallback, exitCallback, outputCallback, createNoNewWindow) =>
                 {
                     var process = Process.GetCurrentProcess();
+                    Assert.IsTrue(createNoNewWindow, "createNoNewWindow should default to true");
                     exitCallback(process);
                 }).Returns(Process.GetCurrentProcess());
 

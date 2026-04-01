@@ -13,6 +13,7 @@ using Microsoft.VisualStudio.TestPlatform.Common;
 using Microsoft.VisualStudio.TestPlatform.Common.ExtensionFramework;
 using Microsoft.VisualStudio.TestPlatform.Common.ExtensionFramework.Utilities;
 using Microsoft.VisualStudio.TestPlatform.Common.Telemetry;
+using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
@@ -439,6 +440,42 @@ public class TestRunRequest : ITestRunRequest, IInternalTestRunEventsHandler
 
                 // Fill in the time taken to complete the run
                 _requestData.MetricsCollection.Add(TelemetryDataConstants.TimeTakenInSecForRun, executionTotalTimeTaken.TotalSeconds);
+
+                // Record assemblies that vstest provided from its search directories.
+                // Telemetry gets 2 properties: assemblies resolved for user code (count only,
+                // no user assembly names), and assemblies resolved for Microsoft/System code (names ok).
+                var (userAssemblies, userCount, msAssemblies, msCount) = AssemblyResolver.GetProvidedDependencySummary();
+                if (userCount > 0)
+                {
+                    _requestData.MetricsCollection.Add(TelemetryDataConstants.ProvidedDependenciesForUser, userAssemblies);
+                    _requestData.MetricsCollection.Add(TelemetryDataConstants.ProvidedDependenciesForUserCount, userCount);
+                }
+                if (msCount > 0)
+                {
+                    _requestData.MetricsCollection.Add(TelemetryDataConstants.ProvidedDependenciesForMicrosoft, msAssemblies);
+                    _requestData.MetricsCollection.Add(TelemetryDataConstants.ProvidedDependenciesForMicrosoftCount, msCount);
+                }
+
+                // Opt-in warning: show all provided assemblies in summary when feature flag is set.
+                // Disable flag takes precedence over opt-in.
+                if ((userCount > 0 || msCount > 0)
+                    && !FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_WARN_MISSING_EXTENSIONS_DEPENDENCIES)
+                    && FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_OPTIN_WARN_MISSING_EXTENSIONS_DEPENDENCIES))
+                {
+                    var allAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    foreach (var kvp in AssemblyResolver.GetProvidedDependencies())
+                    {
+                        allAssemblies.Add(kvp.Key);
+                    }
+
+                    var message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        ClientResources.ProvidedDependenciesWarning,
+                        string.Join(", ", allAssemblies));
+
+                    LoggerManager.HandleTestRunMessage(
+                        new TestRunMessageEventArgs(TestMessageLevel.Warning, message));
+                }
 
                 // Fill in the Metrics From Test Host Process
                 var metrics = runCompleteArgs.Metrics;

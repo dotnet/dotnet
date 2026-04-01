@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace TestPlatform.Common.UnitTests;
 
 [TestClass]
+[DoNotParallelize]
 public class RunSettingsManagerTests
 {
     [TestCleanup]

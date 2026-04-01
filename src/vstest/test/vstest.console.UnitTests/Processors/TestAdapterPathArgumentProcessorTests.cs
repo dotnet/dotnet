@@ -20,6 +20,8 @@ using Moq;
 namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.Processors;
 
 [TestClass]
+// Because runsettings tests use the instance of RunSettingsManager which is static.
+[DoNotParallelize]
 public class TestAdapterPathArgumentProcessorTests
 {
     private readonly RunSettings _currentActiveSetting;

@@ -137,8 +137,9 @@ public class AeDebuggerArgumentProcessorTest
             null,
             It.IsAny<Action<object?, string?>>(),
             It.IsAny<Action<object?>>(),
-            It.IsAny<Action<object?, string?>>()))
-         .Returns((string processPath, string? arguments, string? workingDirectory, IDictionary<string, string?>? envVariables, Action<object?, string?>? errorCallback, Action<object?>? exitCallBack, Action<object?, string?>? outputCallBack) =>
+            It.IsAny<Action<object?, string?>>(),
+            It.IsAny<bool>()))
+         .Returns((string processPath, string? arguments, string? workingDirectory, IDictionary<string, string?>? envVariables, Action<object?, string?>? errorCallback, Action<object?>? exitCallBack, Action<object?, string?>? outputCallBack, bool createNoNewWindow) =>
          {
              Assert.IsTrue(install ? arguments == "-ma -i" : arguments == "-u");
              return new object();

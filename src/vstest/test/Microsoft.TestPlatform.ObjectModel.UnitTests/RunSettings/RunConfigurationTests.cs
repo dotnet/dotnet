@@ -350,4 +350,54 @@ public class RunConfigurationTests
                 () => XmlRunSettingsUtilities.GetRunConfigurationNode(settingsXml));
         Assert.AreEqual("Invalid settings 'RunConfiguration'.  Invalid value '' specified for 'ResultsDirectory'.", exception.Message);
     }
+
+    [TestMethod]
+    public void RunConfigurationDefaultValueForCreateNoNewWindowShouldBeTrue()
+    {
+        var runConfiguration = new RunConfiguration();
+
+        Assert.IsTrue(runConfiguration.CreateNoNewWindow);
+    }
+
+    [DataRow(true)]
+    [DataRow(false)]
+    [TestMethod]
+    public void RunConfigurationShouldReadValueForCreateNoNewWindow(bool createNoNewWindowValue)
+    {
+        string settingsXml = string.Format(
+            CultureInfo.CurrentCulture,
+            @"<?xml version=""1.0"" encoding=""utf-8""?>
+                <RunSettings>
+                     <RunConfiguration>
+                       <CreateNoNewWindow>{0}</CreateNoNewWindow>
+                     </RunConfiguration>
+                </RunSettings>", createNoNewWindowValue);
+
+        var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(settingsXml);
+
+        Assert.AreEqual(createNoNewWindowValue, runConfiguration.CreateNoNewWindow);
+    }
+
+    [TestMethod]
+    public void RunConfigurationFromXmlThrowsSettingsExceptionIfCreateNoNewWindowIsInvalid()
+    {
+        string settingsXml =
+            @"<?xml version=""1.0"" encoding=""utf-8""?>
+                <RunSettings>
+                     <RunConfiguration>
+                       <CreateNoNewWindow>InvalidValue</CreateNoNewWindow>
+                     </RunConfiguration>
+                </RunSettings>";
+
+        Assert.ThrowsExactly<SettingsException>(
+                () => XmlRunSettingsUtilities.GetRunConfigurationNode(settingsXml));
+    }
+
+    [TestMethod]
+    public void RunConfigurationToXmlShouldProvideCreateNoNewWindow()
+    {
+        var runConfiguration = new RunConfiguration();
+
+        Assert.Contains("<CreateNoNewWindow>True</CreateNoNewWindow>", runConfiguration.ToXml().InnerXml);
+    }
 }

@@ -24,6 +24,8 @@ using CommandLineResources = Microsoft.VisualStudio.TestPlatform.CommandLine.Res
 namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests;
 
 [TestClass]
+// Because runsettings tests use the instance of RunSettingsManager which is static.
+[DoNotParallelize]
 public class ExecutorUnitTests
 {
     private readonly Mock<ITestPlatformEventSource> _mockTestPlatformEventSource;
