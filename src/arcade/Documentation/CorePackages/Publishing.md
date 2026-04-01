@@ -103,7 +103,6 @@ These steps are needed for Arcade versions before `10.0.0`. After that, V3 is th
       - template: eng\common\templates\post-build\post-build.yml
         parameters:
           publishingInfraVersion: 3
-          enableSourceLinkValidation: false
           ...
     ```
 
@@ -112,7 +111,6 @@ These steps are needed for Arcade versions before `10.0.0`. After that, V3 is th
     | Name                                    | Type     | Description                                                                                          |Default Value |
     | --------------------------------------- | -------- | -----------------------------------------------------------------------------------------------------|----- |
     | publishingInfraVersion                  | int      | Publishing infrastructure version - Use 3 for latest publishing infra. Accepted values are 3 (.NET 5.0+) and 2 (.NET 3.1).                               | 3    |
-    | enableSourceLinkValidation              | bool     | Run SourceLink validation during the post-build stage.                                               | false |
     | enableSigningValidation                 | bool     | Run signing validation during the post-build stage.                                                  | true |
     | enableNugetValidation                   | bool     | Run NuGet package validation tool during the post build stage.                                       | true |
     | symbolPublishingAdditionalParameters    | string   | Additional arguments for the PublishToSymbolServers sdk task.                                        | '' |

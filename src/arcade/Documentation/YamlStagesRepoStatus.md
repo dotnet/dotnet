@@ -22,7 +22,7 @@ Target completion date is 8/13/2019.
 | CLI                        | licavalc         | Complete | ✔️ | |
 | CLICommandLineParser       | licavalc         | N/A | |  This repo is not being developed anymore. We are taking a pinned version of it |
 | CoreClr                    | jeffschw/arobins | Complete | ✔️ | |
-| CoreFx                     | danmose/safern   | Complete | ✔️ | SourceLink validation disabled: https://github.com/dotnet/arcade/issues/3603 |
+| CoreFx                     | danmose/safern   | Complete | ✔️ | |
 | IoT                        | joperezr         | Complete | ✔️ | |
 | Core-SDK                   | licavalc         | In progress | ➖ |  Working in parallel.Will need https://github.com/dotnet/arcade/issues/3607 to be done before completing. |
 | Core-Setup                 | dleeapho         | Complete | ✔️ | Uses workarounds and skips most validation. Uses custom publish steps. |

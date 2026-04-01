@@ -174,7 +174,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 "net6.0",
                 "--arch",
                 "arm64",
-                "--add-source",
+                "--source",
                 "https://dev.azure.com/some/feed",
                 ToolName,
             };
