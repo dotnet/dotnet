@@ -222,13 +222,16 @@ internal sealed partial class HtmlFormattingPass(
             var processIndentation = false;
             var processFormatting = true;
 
-            if (IsPositionInSpans(lineStart, razorCommentSpans))
+            // A line can start inside a multiline Razor comment and still have real markup after the comment closes.
+            // Only suppress processing when the rest of the line is whitespace, so trailing Html can still be split out.
+            if (TryGetContainingSpan(lineStart, razorCommentSpans, out var razorCommentSpan) &&
+                HasOnlyWhitespaceAfterSpan(originalText, originalLine, razorCommentSpan))
             {
                 // Inside Razor comments: don't process anything
                 processIndentation = false;
                 processFormatting = false;
             }
-            else if (IsPositionInSpans(lineStart, scriptAndStyleSpans))
+            else if (TryGetContainingSpan(lineStart, scriptAndStyleSpans, out _))
             {
                 // Inside script/style tags: process both indentation and formatting
                 processIndentation = true;
@@ -297,10 +300,22 @@ internal sealed partial class HtmlFormattingPass(
         return (scriptStyleBuilder.ToImmutable(), commentBuilder.ToImmutable());
     }
 
-    private static bool IsPositionInSpans(int position, ImmutableArray<TextSpan> spans)
+    private static bool HasOnlyWhitespaceAfterSpan(SourceText originalText, TextLine line, TextSpan span)
+    {
+        var endLine = originalText.Lines.GetLineFromPosition(span.End);
+        if (endLine != line)
+        {
+            return false;
+        }
+
+        return line.GetFirstNonWhitespaceOffset(startOffset: span.End - line.Start) is null;
+    }
+
+    private static bool TryGetContainingSpan(int position, ImmutableArray<TextSpan> spans, out TextSpan span)
     {
         if (spans.Length == 0)
         {
+            span = default;
             return false;
         }
 
@@ -314,7 +329,14 @@ internal sealed partial class HtmlFormattingPass(
             return span.Start.CompareTo(pos);
         });
 
-        return index >= 0;
+        if (index < 0)
+        {
+            span = default;
+            return false;
+        }
+
+        span = spans[index];
+        return true;
     }
 
     internal TestAccessor GetTestAccessor() => new(this);

@@ -4,6 +4,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Text;
 
 using Response = Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<Microsoft.CodeAnalysis.Razor.Protocol.AutoInsert.RemoteAutoInsertTextEdit?>;
@@ -17,6 +18,6 @@ internal interface IRemoteAutoInsertService
         DocumentId documentId,
         LinePosition position,
         string character,
-        RemoteAutoInsertOptions options,
+        RazorFormattingOptions options,
         CancellationToken cancellationToken);
 }
