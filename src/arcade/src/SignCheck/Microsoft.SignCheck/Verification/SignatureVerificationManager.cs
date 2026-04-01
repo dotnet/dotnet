@@ -88,17 +88,28 @@ namespace Microsoft.SignCheck.Verification
 
             if (OperatingSystem.IsWindows())
             {
+<<<<<<< port-signcheck-msi-cab-verification
                 AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".psd1"));
                 AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".psm1"));
                 AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".ps1"));
                 AddFileVerifier(new AuthentiCodeVerifier(log, exclusions, options, ".ps1xml"));
+=======
+                AddFileVerifier(new CabVerifier(log, exclusions, options, ".cab"));
+>>>>>>> release/11.0.1xx-preview3
                 AddFileVerifier(new JarVerifier(log, exclusions, options));
                 AddFileVerifier(new MsiVerifier(log, exclusions, options));
                 AddFileVerifier(new MspVerifier(log, exclusions, options));
                 AddFileVerifier(new MsuVerifier(log, exclusions, options));
             }
 
+<<<<<<< port-signcheck-msi-cab-verification
             AddFileVerifier(new CabVerifier(log, exclusions, options, ".cab"));
+=======
+            AddFileVerifier(new PowerShellScriptVerifier(log, exclusions, options, ".psd1"));
+            AddFileVerifier(new PowerShellScriptVerifier(log, exclusions, options, ".psm1"));
+            AddFileVerifier(new PowerShellScriptVerifier(log, exclusions, options, ".ps1"));
+            AddFileVerifier(new PowerShellScriptVerifier(log, exclusions, options, ".ps1xml"));
+>>>>>>> release/11.0.1xx-preview3
 
             AddFileVerifier(new DebVerifier(log, exclusions, options));
             AddFileVerifier(new MachOVerifier(log, exclusions, options, ".dylib"));
@@ -258,11 +269,6 @@ namespace Microsoft.SignCheck.Verification
                             {
                                 // NUPKGs use .zip format, but should have a .nuspec files inside
                                 fileVerifier = GetFileVerifierByExtension(".nupkg");
-                            }
-                            else if (zipArchive.Entries.Any(z => String.Equals(Path.GetExtension(z.FullName), "vsixmanifest", StringComparison.OrdinalIgnoreCase)))
-                            {
-                                // If it's an SDK based VSIX there should be a vsixmanifest file
-                                fileVerifier = GetFileVerifierByExtension(".vsix");
                             }
                             else if (zipArchive.Entries.Any(z => String.Equals(z.FullName, "META-INF/MANIFEST.MF", StringComparison.OrdinalIgnoreCase)))
                             {
