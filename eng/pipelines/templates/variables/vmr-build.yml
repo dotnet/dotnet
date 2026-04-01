@@ -83,8 +83,8 @@ variables:
     value: true
   - name: signType
     value: real
-  # Only sign DACs if this is an official build of a release branch and is not a source-only build.
-  - ${{ if and(eq(parameters.isOfficialBuild, true), ne(parameters.buildSourceOnly, true), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+  # Only sign DACs if this is an official build of a 1xx-band release branch and is not a source-only build.
+  - ${{ if and(eq(parameters.isOfficialBuild, true), ne(parameters.buildSourceOnly, true), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')), contains(variables['Build.SourceBranch'], '.0.1')) }}:
     - name: signDacEnabled
       value: true
   - ${{ else }}:
@@ -124,8 +124,8 @@ variables:
       value: true
     - name: signType
       value: real
-    # Only sign DACs if this is not a source-only build.
-    - ${{ if ne(parameters.buildSourceOnly, true) }}:
+    # Only sign DACs if this is not a source-only build and is a 1xx-band release branch.
+    - ${{ if and(ne(parameters.buildSourceOnly, true), contains(variables['Build.SourceBranch'], '.0.1')) }}:
       - name: signDacEnabled
         value: true
     - ${{ else }}:
