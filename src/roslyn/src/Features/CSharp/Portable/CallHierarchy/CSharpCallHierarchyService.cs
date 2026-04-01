@@ -4,17 +4,12 @@
 
 using System;
 using System.Composition;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Host;
+using Microsoft.CodeAnalysis.CallHierarchy;
 using Microsoft.CodeAnalysis.Host.Mef;
 
-namespace Microsoft.VisualStudio.LanguageServices.Implementation;
+namespace Microsoft.CodeAnalysis.CSharp.CallHierarchy;
 
-[Shared]
-[Export(typeof(IHostWorkspaceProvider))]
+[ExportLanguageService(typeof(ICallHierarchyService), LanguageNames.CSharp), Shared]
 [method: ImportingConstructor]
 [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-internal sealed class VisualStudioIHostWorkspaceProvider(VisualStudioWorkspace workspace) : IHostWorkspaceProvider
-{
-    public Workspace Workspace { get; } = workspace;
-}
+internal sealed class CSharpCallHierarchyService() : AbstractCallHierarchyService;
