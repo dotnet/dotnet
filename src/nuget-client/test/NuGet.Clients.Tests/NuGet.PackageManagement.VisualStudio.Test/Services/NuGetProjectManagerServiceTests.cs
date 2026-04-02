@@ -157,13 +157,13 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
                 Initialize(packageSources);
 
-                var unconfiguredProject = new Mock<UnconfiguredProject>();
+                var mockUnconfiguredProject = new Mock<UnconfiguredProject>();
                 var configuredProject = new Mock<ConfiguredProject>();
                 var projectServices = new Mock<ConfiguredProjectServices>();
                 var packageReferencesService = new Mock<IPackageReferencesService>();
                 var result = new Mock<IUnresolvedPackageReference>();
 
-                unconfiguredProject.Setup(x => x.GetSuggestedConfiguredProjectAsync())
+                mockUnconfiguredProject.Setup(x => x.GetSuggestedConfiguredProjectAsync())
                     .ReturnsAsync(configuredProject.Object);
 
                 configuredProject.SetupGet(x => x.Services)
@@ -174,6 +174,9 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
                 packageReferencesService.Setup(x => x.AddAsync(It.IsNotNull<string>(), It.IsNotNull<string>()))
                     .ReturnsAsync(new AddReferenceResult<IUnresolvedPackageReference>(result.Object, added: true));
+
+                var unconfiguredProject = new Microsoft.VisualStudio.Threading.AsyncLazy<UnconfiguredProject>(
+                    () => Task.FromResult(mockUnconfiguredProject.Object));
 
                 var nuGetProjectServices = new Mock<INuGetProjectServices>();
 
@@ -188,7 +191,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     projectUniqueName: projectFullPath,
                     projectFullPath: projectFullPath,
                     projectSystemCache,
-                    unconfiguredProject.Object,
+                    unconfiguredProject,
                     nuGetProjectServices.Object,
                     projectId);
 
@@ -429,13 +432,13 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
                 Initialize(packageSources);
 
-                var unconfiguredProject = new Mock<UnconfiguredProject>();
+                var mockUnconfiguredProject = new Mock<UnconfiguredProject>();
                 var configuredProject = new Mock<ConfiguredProject>();
                 var projectServices = new Mock<ConfiguredProjectServices>();
                 var packageReferencesService = new Mock<IPackageReferencesService>();
                 var result = new Mock<IUnresolvedPackageReference>();
 
-                unconfiguredProject.Setup(x => x.GetSuggestedConfiguredProjectAsync())
+                mockUnconfiguredProject.Setup(x => x.GetSuggestedConfiguredProjectAsync())
                     .ReturnsAsync(configuredProject.Object);
 
                 configuredProject.SetupGet(x => x.Services)
@@ -446,6 +449,9 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
                 packageReferencesService.Setup(x => x.AddAsync(It.IsNotNull<string>(), It.IsNotNull<string>()))
                     .ReturnsAsync(new AddReferenceResult<IUnresolvedPackageReference>(result.Object, added: true));
+
+                var unconfiguredProject = new Microsoft.VisualStudio.Threading.AsyncLazy<UnconfiguredProject>(
+                    () => Task.FromResult(mockUnconfiguredProject.Object));
 
                 var nuGetProjectServices = new Mock<INuGetProjectServices>();
 
@@ -460,7 +466,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     projectUniqueName: projectFullPath,
                     projectFullPath: projectFullPath,
                     projectSystemCache,
-                    unconfiguredProject.Object,
+                    unconfiguredProject,
                     nuGetProjectServices.Object,
                     projectId);
 

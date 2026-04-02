@@ -17,8 +17,8 @@ internal static class RazorCodeActionFactory
     private readonly static Guid s_createExtractToCodeBehindTelemetryId = new("f63167f7-fdc6-450f-8b7b-b240892f4a27");
     private readonly static Guid s_createExtractToComponentTelemetryId = new("af67b0a3-f84b-4808-97a7-b53e85b22c64");
     private readonly static Guid s_simplifyComponentTelemetryId = new("2207f68c-419e-4baa-8493-2e7769e5c91d");
-    private readonly static Guid s_generateMethodTelemetryId = new("c14fa003-c752-45fc-bb29-3a123ae5ecef");
-    private readonly static Guid s_generateAsyncMethodTelemetryId = new("9058ca47-98e2-4f11-bf7c-a16a444dd939");
+    private readonly static Guid s_generateEventHandlerTelemetryId = new("c14fa003-c752-45fc-bb29-3a123ae5ecef");
+    private readonly static Guid s_generateAsyncEventHandlerTelemetryId = new("9058ca47-98e2-4f11-bf7c-a16a444dd939");
     private readonly static Guid s_promoteUsingDirectiveTelemetryId = new("751f9012-e37b-444a-9211-b4ebce91d96e");
     private readonly static Guid s_removeUnnecessaryDirectivesTelemetryId = new("92bbd4a4-6076-4742-b90b-9b480e6a23ec");
     private readonly static Guid s_wrapAttributesTelemetryId = new("1df50ba6-4ed1-40d8-8fe2-1c4c1b08e8b5");
@@ -153,9 +153,9 @@ internal static class RazorCodeActionFactory
         return codeAction;
     }
 
-    public static RazorVSInternalCodeAction CreateGenerateMethod(VSTextDocumentIdentifier textDocument, Uri? delegatedDocumentUri, string methodName, string? eventParameterType)
+    public static RazorVSInternalCodeAction CreateGenerateEventHandler(VSTextDocumentIdentifier textDocument, Uri? delegatedDocumentUri, string methodName, string? eventParameterType)
     {
-        var @params = new GenerateMethodCodeActionParams
+        var @params = new GenerateEventHandlerCodeActionParams
         {
             MethodName = methodName,
             EventParameterType = eventParameterType,
@@ -176,15 +176,15 @@ internal static class RazorCodeActionFactory
         {
             Title = title,
             Data = data,
-            TelemetryId = s_generateMethodTelemetryId,
+            TelemetryId = s_generateEventHandlerTelemetryId,
             Name = LanguageServerConstants.CodeActions.GenerateEventHandler,
         };
         return codeAction;
     }
 
-    public static RazorVSInternalCodeAction CreateAsyncGenerateMethod(VSTextDocumentIdentifier textDocument, Uri? delegatedDocumentUri, string methodName, string? eventParameterType)
+    public static RazorVSInternalCodeAction CreateAsyncGenerateEventHandler(VSTextDocumentIdentifier textDocument, Uri? delegatedDocumentUri, string methodName, string? eventParameterType)
     {
-        var @params = new GenerateMethodCodeActionParams
+        var @params = new GenerateEventHandlerCodeActionParams
         {
             MethodName = methodName,
             EventParameterType = eventParameterType,
@@ -205,7 +205,7 @@ internal static class RazorCodeActionFactory
         {
             Title = title,
             Data = data,
-            TelemetryId = s_generateAsyncMethodTelemetryId,
+            TelemetryId = s_generateAsyncEventHandlerTelemetryId,
             Name = LanguageServerConstants.CodeActions.GenerateAsyncEventHandler,
         };
         return codeAction;

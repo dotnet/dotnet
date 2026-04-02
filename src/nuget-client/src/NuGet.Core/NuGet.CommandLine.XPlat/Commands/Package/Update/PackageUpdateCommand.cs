@@ -15,9 +15,9 @@ namespace NuGet.CommandLine.XPlat.Commands.Package.Update;
 
 internal static class PackageUpdateCommand
 {
-    internal static void Register(Command packageCommand, Option<bool> interactiveOption)
+    internal static void Register(Command packageCommand, Option<bool> interactiveOption, IVirtualProjectBuilder? virtualProjectBuilder = null)
     {
-        Register(packageCommand, interactiveOption, PackageUpdateCommandRunner.Run);
+        Register(packageCommand, interactiveOption, (args, ct) => PackageUpdateCommandRunner.Run(args, virtualProjectBuilder, ct));
     }
 
     internal static void Register(Command packageCommand, Option<bool> interactiveOption, Func<PackageUpdateArgs, CancellationToken, Task<int>> action)
@@ -32,7 +32,7 @@ internal static class PackageUpdateCommand
         };
         command.Arguments.Add(packagesArguments);
 
-        var projectOption = new Option<FileSystemInfo>("--project").AcceptExistingOnly();
+        var projectOption = new Option<FileSystemInfo>("--project", "--file").AcceptExistingOnly();
         projectOption.Description = Strings.PackageUpdateCommand_ProjectOptionDescription;
         command.Options.Add(projectOption);
 

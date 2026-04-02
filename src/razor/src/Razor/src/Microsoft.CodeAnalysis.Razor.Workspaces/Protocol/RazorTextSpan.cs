@@ -6,8 +6,7 @@ using System.Text.Json.Serialization;
 namespace Microsoft.CodeAnalysis.Razor.Protocol;
 
 /// <summary>
-/// A representation of a Roslyn TextSpan that can be serialized with System.Text.Json. Also needs to match
-/// https://github.com/dotnet/vscode-csharp/blob/main/src/razor/src/rpc/serverTextSpan.ts for VS Code.
+/// A representation of a Roslyn TextSpan that can be serialized with System.Text.Json
 /// </summary>
 internal sealed record RazorTextSpan
 {
@@ -16,4 +15,13 @@ internal sealed record RazorTextSpan
 
     [JsonPropertyName("length")]
     public int Length { get; set; }
+
+    public static RazorTextSpan FromBounds(int start, int end)
+    {
+        return new RazorTextSpan
+        {
+            Start = start,
+            Length = end - start,
+        };
+    }
 }

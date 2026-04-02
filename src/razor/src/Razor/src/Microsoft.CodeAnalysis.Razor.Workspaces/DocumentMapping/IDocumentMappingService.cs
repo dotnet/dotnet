@@ -9,8 +9,6 @@ namespace Microsoft.CodeAnalysis.Razor.DocumentMapping;
 
 internal interface IDocumentMappingService
 {
-    ImmutableArray<TextChange> GetRazorDocumentEdits(RazorCSharpDocument csharpDocument, ImmutableArray<TextChange> csharpChanges);
-
     bool TryMapToRazorDocumentRange(RazorCSharpDocument csharpDocument, LinePositionSpan csharpRange, MappingBehavior mappingBehavior, out LinePositionSpan razorRange);
 
     bool TryMapToCSharpDocumentRange(RazorCSharpDocument csharpDocument, LinePositionSpan razorRange, out LinePositionSpan csharpRange);
