@@ -11,17 +11,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.CodeAnalysis.Razor.DocumentMapping;
 
-internal abstract class AbstractEditMappingService(
-    IFilePathService filePathService,
-    IRazorEditService razorEditService) : IEditMappingService
+internal partial class RazorEditService
 {
-    private readonly IFilePathService _filePathService = filePathService;
-    private readonly IRazorEditService _razorEditService = razorEditService;
-
     public async Task MapWorkspaceEditAsync(IDocumentSnapshot contextDocumentSnapshot, WorkspaceEdit workspaceEdit, CancellationToken cancellationToken)
     {
         if (workspaceEdit.DocumentChanges is not null)
@@ -152,8 +146,8 @@ internal abstract class AbstractEditMappingService(
 
         var razorSourceText = codeDocument.Source.Text;
         var csharpSourceText = codeDocument.GetCSharpSourceText();
-        var textChanges = edits.SelectAsArray(csharpSourceText.GetTextChange);
-        var mappedEdits = await _razorEditService.MapCSharpEditsAsync(textChanges, documentContext.Snapshot, cancellationToken).ConfigureAwait(false);
+        var textChanges = edits.SelectAsArray(csharpSourceText.GetRazorTextChange);
+        var mappedEdits = await MapCSharpEditsAsync(textChanges, documentContext.Snapshot, includeCSharpLanguageFeatureEdits: true, cancellationToken).ConfigureAwait(false);
 
         return mappedEdits.SelectAsArray(razorSourceText.GetTextEdit);
     }
