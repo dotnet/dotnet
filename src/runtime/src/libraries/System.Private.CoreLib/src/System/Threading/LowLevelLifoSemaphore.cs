@@ -76,6 +76,8 @@ namespace System.Threading
             _onWait = onWait;
             _procCount = Environment.ProcessorCount;
 
+            Create(maximumSignalCount);
+
             _maxSpinCount = AppContextConfigHelper.GetInt32ComPlusOrDotNetConfig(
                 "System.Threading.ThreadPool.UnfairSemaphoreSpinLimit",
                 "ThreadPool_UnfairSemaphoreSpinLimit",
@@ -187,9 +189,7 @@ namespace System.Threading
             SpinWait sw = default;
             while (true)
             {
-                long startWaitTicks = timeoutMs != -1 ? Environment.TickCount64 : 0;
-                WaitResult waitResult = WaitCore(timeoutMs);
-                if (waitResult == WaitResult.TimedOut)
+                if (timeoutMs == 0 || !WaitCore(timeoutMs))
                 {
                     // Unregister the waiter, but do not decrement wake count, the thread did not observe a wake.
                     _separated._counts.InterlockedDecrementWaiterCount();
