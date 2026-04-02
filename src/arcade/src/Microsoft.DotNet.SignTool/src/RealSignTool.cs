@@ -62,7 +62,7 @@ namespace Microsoft.DotNet.SignTool
 
             for (int attempt = 1; attempt <= maxAttempts; attempt++)
             {
-                bool logErrorsAsWarnings = attempt < maxAttempts;
+                bool suppressErrors = attempt < maxAttempts;
 
                 if (maxAttempts > 1)
                 {
@@ -74,7 +74,7 @@ namespace Microsoft.DotNet.SignTool
                 string attemptLogPath = maxAttempts > 1 ? logPath.Replace(".log", $"-Attempt{attempt}.log") : logPath;
                 string attemptErrorLogPath = maxAttempts > 1 ? errorLogPath.Replace(".error.log", $"-Attempt{attempt}.error.log") : errorLogPath;
 
-                bool succeeded = RunMSBuildProcess(projectFilePath, attemptBinLogPath, attemptLogPath, attemptErrorLogPath, logErrorsAsWarnings);
+                bool succeeded = RunMSBuildProcess(projectFilePath, attemptBinLogPath, attemptLogPath, attemptErrorLogPath, suppressErrors);
 
                 if (succeeded)
                 {
@@ -95,7 +95,7 @@ namespace Microsoft.DotNet.SignTool
             return false;
         }
 
-        private bool RunMSBuildProcess(string projectFilePath, string binLogPath, string logPath, string errorLogPath, bool logErrorsAsWarnings)
+        private bool RunMSBuildProcess(string projectFilePath, string binLogPath, string logPath, string errorLogPath, bool suppressErrors)
         {
             using (var process = new Process())
             {
@@ -122,8 +122,8 @@ namespace Microsoft.DotNet.SignTool
                 bool success = true;
                 if (!process.WaitForExit(_dotnetTimeout))
                 {
-                    if (logErrorsAsWarnings)
-                        _log.LogWarning($"MSBuild process did not exit within '{_dotnetTimeout}' ms.");
+                    if (suppressErrors)
+                        _log.LogMessage(MessageImportance.High, $"MSBuild process did not exit within '{_dotnetTimeout}' ms.");
                     else
                         _log.LogError($"MSBuild process did not exit within '{_dotnetTimeout}' ms.");
                     process.Kill();
@@ -133,8 +133,8 @@ namespace Microsoft.DotNet.SignTool
 
                 if (process.ExitCode != 0)
                 {
-                    if (logErrorsAsWarnings)
-                        _log.LogWarning($"Failed to execute MSBuild on the project file '{projectFilePath}'" +
+                    if (suppressErrors)
+                        _log.LogMessage(MessageImportance.High, $"Failed to execute MSBuild on the project file '{projectFilePath}'" +
                         $" with exit code '{process.ExitCode}'.");
                     else
                         _log.LogError($"Failed to execute MSBuild on the project file '{projectFilePath}'" +
