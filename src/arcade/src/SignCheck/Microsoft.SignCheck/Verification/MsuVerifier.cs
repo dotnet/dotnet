@@ -14,7 +14,7 @@ namespace Microsoft.SignCheck.Verification
 {
     public class MsuVerifier : AuthentiCodeVerifier
     {
-        public MsuVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".msu")
+        public MsuVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".msu", new CabSecurityInfoProvider())
         {
 
         }
