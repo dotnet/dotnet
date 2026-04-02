@@ -31,11 +31,6 @@ internal sealed class LspEditorFeatureDetector(
         _disposeTokenSource.Dispose();
     }
 
-    public bool IsLspEditorEnabled()
-    {
-        return true;
-    }
-
     public bool IsLspEditorSupported(string documentFilePath)
     {
         // .NET Framework projects don't support the LSP Razor editor.

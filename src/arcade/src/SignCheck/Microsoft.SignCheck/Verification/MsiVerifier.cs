@@ -13,7 +13,7 @@ namespace Microsoft.SignCheck.Verification
 {
     public class MsiVerifier : AuthentiCodeVerifier
     {
-        public MsiVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".msi")
+        public MsiVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".msi", new OleStorageSecurityInfoProvider())
         {
 
         }

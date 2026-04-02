@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 
@@ -17,10 +16,9 @@ namespace Microsoft.CodeAnalysis.Remote.Razor.DocumentMapping;
 [Export(typeof(IEditMappingService)), Shared]
 [method: ImportingConstructor]
 internal sealed class RemoteEditMappingService(
-    IDocumentMappingService documentMappingService,
-    ITelemetryReporter telemetryReporter,
     IFilePathService filePathService,
-    RemoteSnapshotManager snapshotManager) : AbstractEditMappingService(documentMappingService, telemetryReporter, filePathService)
+    IRazorEditService razorEditService,
+    RemoteSnapshotManager snapshotManager) : AbstractEditMappingService(filePathService, razorEditService)
 {
     private readonly RemoteSnapshotManager _snapshotManager = snapshotManager;
 

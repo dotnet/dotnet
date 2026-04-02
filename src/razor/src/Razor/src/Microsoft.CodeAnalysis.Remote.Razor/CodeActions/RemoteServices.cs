@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.CodeActions;
 
@@ -30,8 +31,9 @@ internal sealed class OOPCodeActionResolveService(
     [ImportMany] IEnumerable<IRazorCodeActionResolver> razorCodeActionResolvers,
     [ImportMany] IEnumerable<ICSharpCodeActionResolver> csharpCodeActionResolvers,
     [ImportMany] IEnumerable<IHtmlCodeActionResolver> htmlCodeActionResolvers,
+    IClientSettingsManager clientSettingsManager,
     ILoggerFactory loggerFactory)
-    : CodeActionResolveService(razorCodeActionResolvers, csharpCodeActionResolvers, htmlCodeActionResolvers, loggerFactory);
+    : CodeActionResolveService(razorCodeActionResolvers, csharpCodeActionResolvers, htmlCodeActionResolvers, clientSettingsManager, loggerFactory);
 
 // Code Action Providers
 
@@ -140,7 +142,7 @@ internal sealed class OOPSortAndConsolidateUsingsCodeActionResolver : SortAndCon
 
 [Export(typeof(ICSharpCodeActionResolver)), Shared]
 [method: ImportingConstructor]
-internal sealed class OOPCSharpCodeActionResolver(IRazorFormattingService razorFormattingService) : CSharpCodeActionResolver(razorFormattingService);
+internal sealed class OOPCSharpCodeActionResolver(IRazorFormattingService razorFormattingService, IClientSettingsManager clientSettingsManager) : CSharpCodeActionResolver(razorFormattingService, clientSettingsManager);
 
 [Export(typeof(ICSharpCodeActionResolver)), Shared]
 [method: ImportingConstructor]

@@ -412,10 +412,9 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
             };
         });
 
-        var clientSettingsManager = ClientSettingsManager;
-        clientSettingsManager.Update(ClientAdvancedSettings.Default with { ColorBackground = colorBackground });
+        ClientSettingsManager.Update(ClientAdvancedSettings.Default with { ColorBackground = colorBackground });
 
-        var endpoint = new CohostSemanticTokensRangeEndpoint(IncompatibleProjectService, RemoteServiceInvoker, clientSettingsManager, NoOpTelemetryReporter.Instance);
+        var endpoint = new CohostSemanticTokensRangeEndpoint(IncompatibleProjectService, RemoteServiceInvoker, NoOpTelemetryReporter.Instance);
 
         var span = new LinePositionSpan(new(0, 0), new(sourceText.Lines.Count, 0));
 
