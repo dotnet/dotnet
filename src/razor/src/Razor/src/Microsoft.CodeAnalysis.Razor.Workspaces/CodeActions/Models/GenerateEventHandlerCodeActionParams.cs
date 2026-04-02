@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 
-internal sealed class GenerateMethodCodeActionParams
+internal sealed class GenerateEventHandlerCodeActionParams
 {
     [JsonPropertyName("methodName")]
     public required string MethodName { get; set; }
