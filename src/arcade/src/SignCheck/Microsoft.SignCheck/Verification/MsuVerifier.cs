@@ -14,7 +14,7 @@ namespace Microsoft.SignCheck.Verification
 {
     public class MsuVerifier : AuthentiCodeVerifier
     {
-        public MsuVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".msu")
+        public MsuVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".msu", new CabSecurityInfoProvider())
         {
 
         }
@@ -23,9 +23,9 @@ namespace Microsoft.SignCheck.Verification
         {
             SignatureVerificationResult svr = base.VerifySignature(path, parent, virtualPath);
 
-            if (VerifyRecursive)
+            if (VerifyRecursive && OperatingSystem.IsWindows())
             {
-                // MSU is just a CAB file really
+                // MSU is just a CAB file really. Recursive extraction uses WiX CabInfo which is Windows-only.
                 Log.WriteMessage(LogVerbosity.Diagnostic, SignCheckResources.DiagExtractingFileContents, svr.TempPath);
                 CabInfo cabInfo = new CabInfo(path);
                 cabInfo.Unpack(svr.TempPath);
