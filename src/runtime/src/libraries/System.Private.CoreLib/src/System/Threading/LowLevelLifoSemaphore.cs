@@ -27,7 +27,7 @@ namespace System.Threading
         // spinning could be less, while danger of starving non-threadpool threads is higher.
         //
         // Based on the above we use the following heuristic (certainly open to improvements):
-        // * We will limit spinning to roughly 512 spinwaits, each taking ~35-40ns. That should be under 15 usec total.
+        // * We will limit spinning to roughly 256 spinwaits, each taking ~35-40ns. That should be under 10 usec total.
         //    For reference the wakeup latency of a futex/event with threads queued up is in 4-20 usec range. (year 2026)
         // * We will dial spin count according to the number of available cores. (i.e. proc_num - active_workers).
         //                                               |    _ |
@@ -38,7 +38,7 @@ namespace System.Threading
         //    - in between we have a linear gain.
         //    all should be smoothed somewhat by the randomness of individual spin iterations.
 
-        private const int DefaultSemaphoreSpinCountLimit = 512;
+        private const int DefaultSemaphoreSpinCountLimit = 256;
 
         private CacheLineSeparatedCounts _separated;
 
@@ -113,19 +113,23 @@ namespace System.Threading
 
         private bool WaitSlow(int timeoutMs, short tpThreadCount)
         {
-            // Now spin briefly with exponential backoff.
-            // We estimate availability of CPU resources and limit spin count accordingly.
-            // See comments on DefaultSemaphoreSpinCountLimit for more details.
-            // Count current thread as active for the duration of spinning.
-            int active = tpThreadCount - _separated._counts.WaiterCount;
-            int available = _procCount - active;
-            int spinStep = _maxSpinCount * 2 / _procCount;
-            // With activeThreadCount arbitrarily large and _procCount arbitrarily small
-            // we can, in theory, overflow int, so just use long here.
-            long spinsRemainingLong = (available - _procCount / 4) * (long)spinStep;
+            _ = tpThreadCount;
 
-            // clamp to [0, _maxSpinCount] range.
-            int spinsRemaining = (int)Math.Clamp(spinsRemainingLong, 0, _maxSpinCount);
+            //// Now spin briefly with exponential backoff.
+            //// We estimate availability of CPU resources and limit spin count accordingly.
+            //// See comments on DefaultSemaphoreSpinCountLimit for more details.
+            //// Count current thread as active for the duration of spinning.
+            //int active = tpThreadCount - _separated._counts.WaiterCount;
+            //int available = _procCount - active;
+            //int spinStep = _maxSpinCount * 2 / _procCount;
+            //// With activeThreadCount arbitrarily large and _procCount arbitrarily small
+            //// we can, in theory, overflow int, so just use long here.
+            //long spinsRemainingLong = (available - _procCount / 4) * (long)spinStep;
+
+            //// clamp to [0, _maxSpinCount] range.
+            //int spinsRemaining = (int)Math.Clamp(spinsRemainingLong, 0, _maxSpinCount);
+
+            int spinsRemaining = _maxSpinCount;
 
             uint iteration = 0;
             while (spinsRemaining > 0)
@@ -240,23 +244,6 @@ namespace System.Threading
 
                     // CAS collision, try again.
                     Backoff.Exponential(collisionCount++);
-                }
-
-                // There is no signal and we are trying to block, so far unsuccessfully.
-                // Spin a bit before retrying.
-                // Note! We could end up doing sched_yield here. Although it should be very rare.
-                sw.SpinOnce(sleep1Threshold: -1);
-
-                // We will wait again, reduce timeout by the current wait.
-                if (timeoutMs != -1)
-                {
-                    long endWaitTicks = Environment.TickCount64;
-                    long waitMs = endWaitTicks - startWaitTicks;
-                    Debug.Assert(waitMs >= 0);
-                    if (waitMs < (long)timeoutMs)
-                        timeoutMs -= (int)waitMs;
-                    else
-                        timeoutMs = 0;
                 }
             }
         }
