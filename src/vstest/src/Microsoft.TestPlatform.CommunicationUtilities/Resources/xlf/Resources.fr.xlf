@@ -24,17 +24,17 @@
       </trans-unit>
       <trans-unit id="ConnectionTimeoutProcessDidNotStartErrorMessage">
         <source>{0} process failed to connect to {1} process after {2} seconds. The process failed to start, this might happen because of  antivirus preventing it from starting.</source>
-        <target state="new">{0} process failed to connect to {1} process after {2} seconds. The process failed to start, this might happen because of  antivirus preventing it from starting.</target>
+        <target state="translated">Le processus {0} n’a pas pu se connecter au processus {1} après {2} secondes. Le processus n’a pas pu démarrer. Il est possible que cela se produise si un antivirus l’en empêche.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConnectionTimeoutProcessExitedErrorMessage">
         <source>{0} process failed to connect to {1} process after {2} seconds. The process {3} - {4}, exited with exitCode {5}, and error output: \n{6}</source>
-        <target state="new">{0} process failed to connect to {1} process after {2} seconds. The process {3} - {4}, exited with exitCode {5}, and error output: \n{6}</target>
+        <target state="translated">Le processus {0} n’a pas pu se connecter au processus {1} après {2} secondes. Le processus {3} – {4} s’est arrêté avec exitCode {5} et la sortie d’erreur : \n{6}</target>
         <note />
       </trans-unit>
       <trans-unit id="ConnectionTimeoutWithDetailsErrorMessage">
         <source>{0} process failed to connect to {1} process after {2} seconds. When the timeout happened, the process {3} -{4} was still running. This most often happens because of machine slowness, please set environment variable {5} to increase timeout.</source>
-        <target state="new">{0} process failed to connect to {1} process after {2} seconds. When the timeout happened, the process {3} -{4} was still running. This most often happens because of machine slowness, please set environment variable {5} to increase timeout.</target>
+        <target state="translated">Le processus {0} n’a pas pu se connecter au processus {1} après {2} secondes. Lorsque le délai d’expiration s’est produit, le processus {3} -{4} était toujours en cours d’exécution. Cela arrive le plus souvent à cause de la lenteur de la machine. Définissez la variable d’environnement {5} pour augmenter le délai d’expiration.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToCommunicateToTestHost">

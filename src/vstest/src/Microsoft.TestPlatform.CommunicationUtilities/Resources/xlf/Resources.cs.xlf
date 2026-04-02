@@ -24,17 +24,17 @@
       </trans-unit>
       <trans-unit id="ConnectionTimeoutProcessDidNotStartErrorMessage">
         <source>{0} process failed to connect to {1} process after {2} seconds. The process failed to start, this might happen because of  antivirus preventing it from starting.</source>
-        <target state="new">{0} process failed to connect to {1} process after {2} seconds. The process failed to start, this might happen because of  antivirus preventing it from starting.</target>
+        <target state="translated">{0} proces se nepodařilo připojit k procesu {1} po {2} sekundách. Proces se nepodařilo spustit. K tomu může dojít, pokud antivirový program brání jeho spuštění.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConnectionTimeoutProcessExitedErrorMessage">
         <source>{0} process failed to connect to {1} process after {2} seconds. The process {3} - {4}, exited with exitCode {5}, and error output: \n{6}</source>
-        <target state="new">{0} process failed to connect to {1} process after {2} seconds. The process {3} - {4}, exited with exitCode {5}, and error output: \n{6}</target>
+        <target state="translated">{0} proces se nepodařilo připojit k procesu {1} po {2} sekundách. Proces {3} – {4}, ukončen s ukončovacím kódem {5}a chybovým výstupem: \n{6}</target>
         <note />
       </trans-unit>
       <trans-unit id="ConnectionTimeoutWithDetailsErrorMessage">
         <source>{0} process failed to connect to {1} process after {2} seconds. When the timeout happened, the process {3} -{4} was still running. This most often happens because of machine slowness, please set environment variable {5} to increase timeout.</source>
-        <target state="new">{0} process failed to connect to {1} process after {2} seconds. When the timeout happened, the process {3} -{4} was still running. This most often happens because of machine slowness, please set environment variable {5} to increase timeout.</target>
+        <target state="translated">{0} proces se nepodařilo připojit k procesu {1} po {2} sekundách. Při vypršení časového limitu byl proces {3} –{4} stále spuštěný. K tomu nejčastěji dochází kvůli pomalosti zařízení. Nastavte proměnnou prostředí {5} pro prodloužení časového limitu.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToCommunicateToTestHost">

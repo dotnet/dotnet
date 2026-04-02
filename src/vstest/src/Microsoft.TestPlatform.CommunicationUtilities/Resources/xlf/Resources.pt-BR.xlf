@@ -24,17 +24,17 @@
       </trans-unit>
       <trans-unit id="ConnectionTimeoutProcessDidNotStartErrorMessage">
         <source>{0} process failed to connect to {1} process after {2} seconds. The process failed to start, this might happen because of  antivirus preventing it from starting.</source>
-        <target state="new">{0} process failed to connect to {1} process after {2} seconds. The process failed to start, this might happen because of  antivirus preventing it from starting.</target>
+        <target state="translated">O processo {0} falhou ao se conectar ao processo {1}após {2} segundos. Falha ao iniciar o processo. Isso pode acontecer devido ao antivírus impedindo a inicialização.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConnectionTimeoutProcessExitedErrorMessage">
         <source>{0} process failed to connect to {1} process after {2} seconds. The process {3} - {4}, exited with exitCode {5}, and error output: \n{6}</source>
-        <target state="new">{0} process failed to connect to {1} process after {2} seconds. The process {3} - {4}, exited with exitCode {5}, and error output: \n{6}</target>
+        <target state="translated">O processo {0} falhou ao se conectar ao processo {1}após {2} segundos. O processo {3} - {4} saiu com o código de saída  {5} e a saída de erro: \n{6}</target>
         <note />
       </trans-unit>
       <trans-unit id="ConnectionTimeoutWithDetailsErrorMessage">
         <source>{0} process failed to connect to {1} process after {2} seconds. When the timeout happened, the process {3} -{4} was still running. This most often happens because of machine slowness, please set environment variable {5} to increase timeout.</source>
-        <target state="new">{0} process failed to connect to {1} process after {2} seconds. When the timeout happened, the process {3} -{4} was still running. This most often happens because of machine slowness, please set environment variable {5} to increase timeout.</target>
+        <target state="translated">O processo {0} falhou ao se conectar ao processo {1}após {2} segundos. Quando o tempo limite aconteceu, o processo {3}-{4} ainda estava em execução. Isso geralmente acontece devido à lentidão do computador. Defina a variável de ambiente {5} para aumentar o tempo limite.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToCommunicateToTestHost">
