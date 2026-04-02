@@ -995,6 +995,11 @@ Upgradujte svou sadu .NET SDK nebo odeberte RestoreUseLegacyDependencyResolver, 
         <target state="translated">Pro {0} se zjistil konflikt. Pokud chcete tento problém vyřešit, nainstalujte nebo vytvořte odkaz na {1} přímo do projektu {2}.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Log_VersionConflictForCentralTransitive">
+        <source>Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue.</source>
+        <target state="new">Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Log_WritingAssetsFile">
         <source>Writing assets file to disk. Path: {0}</source>
         <target state="translated">Soubor prostředků se zapisuje na disk. Cesta: {0}</target>

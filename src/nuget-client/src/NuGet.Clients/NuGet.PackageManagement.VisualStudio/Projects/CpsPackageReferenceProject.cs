@@ -28,6 +28,7 @@ using NuGet.Versioning;
 using NuGet.VisualStudio;
 using PackageReference = NuGet.Packaging.PackageReference;
 using Task = System.Threading.Tasks.Task;
+using VSThreading = Microsoft.VisualStudio.Threading;
 
 namespace NuGet.PackageManagement.VisualStudio
 {
@@ -43,14 +44,14 @@ namespace NuGet.PackageManagement.VisualStudio
         private const string TargetFrameworkCondition = "TargetFramework";
 
         private readonly IProjectSystemCache _projectSystemCache;
-        private readonly UnconfiguredProject _unconfiguredProject;
+        private readonly VSThreading.AsyncLazy<UnconfiguredProject> _unconfiguredProject;
 
         public CpsPackageReferenceProject(
             string projectName,
             string projectUniqueName,
             string projectFullPath,
             IProjectSystemCache projectSystemCache,
-            UnconfiguredProject unconfiguredProject,
+            VSThreading.AsyncLazy<UnconfiguredProject> unconfiguredProject,
             INuGetProjectServices projectServices,
             string projectId)
             : base(projectName,
@@ -269,7 +270,8 @@ namespace NuGet.PackageManagement.VisualStudio
             {
                 // This is the "partial install" case. That is, install the package to only a subset of the frameworks
                 // supported by this project.
-                var conditionalService = _unconfiguredProject
+                var unconfiguredProject = await _unconfiguredProject.GetValueAsync(token);
+                var conditionalService = unconfiguredProject
                     .Services
                     .ExportProvider
                     .GetExportedValue<IConditionalPackageReferencesService>();
@@ -315,7 +317,8 @@ namespace NuGet.PackageManagement.VisualStudio
             else
             {
                 // Install the package to all frameworks.
-                var configuredProject = await _unconfiguredProject.GetSuggestedConfiguredProjectAsync();
+                var unconfiguredProject = await _unconfiguredProject.GetValueAsync(token);
+                var configuredProject = await unconfiguredProject.GetSuggestedConfiguredProjectAsync();
 
                 var result = await configuredProject
                     .Services
@@ -367,7 +370,8 @@ namespace NuGet.PackageManagement.VisualStudio
 
             if (installationContext.SuccessfulFrameworks.Any() && installationContext.UnsuccessfulFrameworks.Any())
             {
-                var conditionalService = _unconfiguredProject
+                var unconfiguredProject = await _unconfiguredProject.GetValueAsync(token);
+                var conditionalService = unconfiguredProject
                     .Services
                     .ExportProvider
                     .GetExportedValue<IConditionalPackageReferencesService>();
@@ -387,7 +391,8 @@ namespace NuGet.PackageManagement.VisualStudio
             }
             else
             {
-                var configuredProject = await _unconfiguredProject.GetSuggestedConfiguredProjectAsync();
+                var unconfiguredProject = await _unconfiguredProject.GetValueAsync(token);
+                var configuredProject = await unconfiguredProject.GetSuggestedConfiguredProjectAsync();
 
                 await configuredProject?.Services.PackageReferences.RemoveAsync(packageId);
             }

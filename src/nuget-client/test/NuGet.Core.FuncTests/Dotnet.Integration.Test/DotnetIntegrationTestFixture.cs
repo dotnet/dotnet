@@ -11,8 +11,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading;
 using FluentAssertions;
+using Microsoft.Build.Locator;
 using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using NuGet.Commands;
 using NuGet.Common;
@@ -53,6 +56,9 @@ namespace Dotnet.Integration.Test
 
             SdkDirectory = new DirectoryInfo(sdkPath);
             MsBuildSdksPath = Path.Combine(sdkPath, "Sdks");
+
+            // https://github.com/NuGet/Home/issues/14823: This can be removed when we migrate to `dotnet.exe`-only integration tests for file-based apps.
+            MSBuildLocator.RegisterMSBuildPath(sdkPath);
 
             _templateDirectory = new SimpleTestPathContext();
             TestDotnetCLiUtility.WriteGlobalJson(_templateDirectory.WorkingDirectory);
@@ -154,8 +160,8 @@ namespace Dotnet.Integration.Test
         /// <param name="workingDirectory">The working directory to use when executing the command.</param>
         /// <param name="args">The command-line arguments to pass to dotnet.</param>
         /// <param name="environmentVariables">An optional <see cref="IReadOnlyDictionary{TKey, TValue}" /> containing environment variables to use when executing the command.</param>
-        internal CommandRunnerResult RunDotnetExpectSuccess(string workingDirectory, string args = "", IReadOnlyDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null)
-            => RunDotnet(workingDirectory, args, expectSuccess: true, environmentVariables, testOutputHelper: testOutputHelper);
+        internal CommandRunnerResult RunDotnetExpectSuccess(string workingDirectory, string args = "", IReadOnlyDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null, Action<StreamWriter> inputAction = null)
+            => RunDotnet(workingDirectory, args, expectSuccess: true, environmentVariables, testOutputHelper, inputAction);
 
         /// <summary>
         /// Runs dotnet with the specified arguments and expects the command to fail. If dotnet returns an exit code of zero, an assertion is thrown with diagnostic information.
@@ -163,10 +169,10 @@ namespace Dotnet.Integration.Test
         /// <param name="workingDirectory">The working directory to use when executing the command.</param>
         /// <param name="args">The command-line arguments to pass to dotnet.</param>
         /// <param name="environmentVariables">An optional <see cref="IReadOnlyDictionary{TKey, TValue}" /> containing environment variables to use when executing the command.</param>
-        internal CommandRunnerResult RunDotnetExpectFailure(string workingDirectory, string args = "", IReadOnlyDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null)
-            => RunDotnet(workingDirectory, args, expectSuccess: false, environmentVariables, testOutputHelper);
+        internal CommandRunnerResult RunDotnetExpectFailure(string workingDirectory, string args = "", IReadOnlyDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null, Action<StreamWriter> inputAction = null)
+            => RunDotnet(workingDirectory, args, expectSuccess: false, environmentVariables, testOutputHelper, inputAction);
 
-        internal CommandRunnerResult RunDotnet(string workingDirectory, string args = "", bool expectSuccess = true, IReadOnlyDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null)
+        internal CommandRunnerResult RunDotnet(string workingDirectory, string args = "", bool expectSuccess = true, IReadOnlyDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null, Action<StreamWriter> inputAction = null)
         {
             bool enableDiagnostics = CIDebug && !string.IsNullOrWhiteSpace(BinLogDirectory);
 
@@ -217,7 +223,7 @@ namespace Dotnet.Integration.Test
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();
 
-                result = CommandRunner.Run(TestDotnetCli, workingDirectory, args, environmentVariables: finalEnvironmentVariables, testOutputHelper: testOutputHelper);
+                result = CommandRunner.Run(TestDotnetCli, workingDirectory, args, inputAction: inputAction, environmentVariables: finalEnvironmentVariables, testOutputHelper: testOutputHelper);
 
                 stopwatch.Stop();
 
@@ -352,6 +358,18 @@ namespace Dotnet.Integration.Test
             }
 
             return RunDotnet(workingDirectory, $"msbuild {file} {args}", expectSuccess, testOutputHelper: testOutputHelper);
+        }
+
+        internal (string Content, string ProjectPath, string FilePath) GetFileBasedAppVirtualProject(string entryPointFileFullPath, ITestOutputHelper testOutputHelper)
+        {
+            var runApi = RunDotnetExpectSuccess(Path.GetDirectoryName(entryPointFileFullPath), "run-api", testOutputHelper: testOutputHelper, inputAction: writer =>
+            {
+                writer.Write($$"""{ "$type": "GetProject", "EntryPointFileFullPath": {{JsonSerializer.Serialize(entryPointFileFullPath)}} }""");
+            });
+            var node = JsonNode.Parse(runApi.AllOutput);
+            return (Content: node["Content"].GetValue<string>(),
+                ProjectPath: node["ProjectPath"].GetValue<string>(),
+                FilePath: entryPointFileFullPath);
         }
 
         internal TestDirectory CreateTestDirectory()

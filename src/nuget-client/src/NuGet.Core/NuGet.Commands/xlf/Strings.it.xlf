@@ -995,6 +995,11 @@ Per usare questa funzionalità, aggiornare .NET SDK o rimuovere RestoreUseLegacy
         <target state="translated">È stato rilevato un conflitto di versioni per {0}. Per risolvere questo problema, installare {1} o farvi riferimento direttamente nel progetto {2}.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Log_VersionConflictForCentralTransitive">
+        <source>Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue.</source>
+        <target state="new">Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Log_WritingAssetsFile">
         <source>Writing assets file to disk. Path: {0}</source>
         <target state="translated">Scrittura del file di asset sul disco. Percorso: {0}</target>
