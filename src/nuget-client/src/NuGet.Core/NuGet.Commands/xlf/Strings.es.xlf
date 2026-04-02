@@ -995,6 +995,11 @@ Actualice el SDK de .NET o quite RestoreUseLegacyDependencyResolver para usar es
         <target state="translated">Se detectó un conflicto de versiones para {0}. Para resolver este problema, instale o haga referencia a {1} directamente en el proyecto {2}.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Log_VersionConflictForCentralTransitive">
+        <source>Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue.</source>
+        <target state="new">Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Log_WritingAssetsFile">
         <source>Writing assets file to disk. Path: {0}</source>
         <target state="translated">Escribiendo el archivo de recursos en el disco. Ruta de acceso: {0}</target>

@@ -995,6 +995,11 @@ Mettez à niveau votre Kit de développement logiciel (SDK) .NET ou supprimez Re
         <target state="translated">Conflit de version détecté pour {0}. Installez/référencez {1} directement au projet {2} pour résoudre ce problème.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Log_VersionConflictForCentralTransitive">
+        <source>Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue.</source>
+        <target state="new">Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Log_WritingAssetsFile">
         <source>Writing assets file to disk. Path: {0}</source>
         <target state="translated">Écriture du fichier des composants sur le disque. Chemin : {0}</target>

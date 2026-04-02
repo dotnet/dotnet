@@ -803,7 +803,7 @@ namespace NuGet.SolutionRestoreManager
                     var suppressions = new HashSet<string>(items.Count, StringComparer.Ordinal);
                     for (int i = 0; i < items.Count; i++)
                     {
-                        suppressions.Add(items[0].id);
+                        suppressions.Add(items[i].id);
                     }
                     return suppressions;
                 }

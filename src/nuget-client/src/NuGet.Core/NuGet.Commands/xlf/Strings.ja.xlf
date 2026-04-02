@@ -995,6 +995,11 @@ Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this f
         <target state="translated">{0} のバージョンの競合が検出されました。この問題を解決するには、{1} をプロジェクト {2} に直接インストールするか、参照します。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Log_VersionConflictForCentralTransitive">
+        <source>Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue.</source>
+        <target state="new">Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Log_WritingAssetsFile">
         <source>Writing assets file to disk. Path: {0}</source>
         <target state="translated">アセット ファイルをディスクに書き込んでいます。パス: {0}</target>
