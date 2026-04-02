@@ -121,7 +121,8 @@ internal partial class RazorEditService
 
     private static void AddMethodsInExistingCodeBlock(StringBuilder builder, SourceText sourceText, ImmutableArray<CSharpMethod> addedMethods, RazorFormattingOptions options, int openBraceLineIndex, int closeBraceLineIndex, int insertLineIndex)
     {
-        var lineAboveInsertionIsNotEmpty = insertLineIndex - 1 != openBraceLineIndex &&
+        var lineAboveInsertionIsNotEmpty = insertLineIndex > 0 &&
+            insertLineIndex - 1 != openBraceLineIndex &&
             !IsLineEmpty(sourceText.Lines[insertLineIndex - 1]);
         if (openBraceLineIndex == closeBraceLineIndex || lineAboveInsertionIsNotEmpty)
         {
@@ -147,7 +148,7 @@ internal partial class RazorEditService
                 builder.AppendLine();
             }
 
-            first = true;
+            first = false;
 
             AppendIndentedMethod(builder, method, options);
         }

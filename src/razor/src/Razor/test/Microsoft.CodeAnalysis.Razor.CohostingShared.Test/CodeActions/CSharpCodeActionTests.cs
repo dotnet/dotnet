@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Xunit;
 using Xunit.Abstractions;
@@ -371,6 +372,85 @@ public class CSharpCodeActionTests(ITestOutputHelper testOutputHelper) : CohostC
             """;
 
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.AddDebuggerDisplay);
+    }
+
+    [Fact]
+    public async Task AddDebuggerDisplay_Legacy()
+    {
+        var input = """
+            @functions {
+                class Goo[||]
+                {
+                    
+                }
+            }
+            """;
+
+        var expected = """
+            @using System.Diagnostics
+            @functions {
+                [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
+                class Goo
+                {
+                    private string GetDebuggerDisplay()
+                    {
+                        return ToString();
+                    }
+                }
+            }
+            """;
+
+        await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.AddDebuggerDisplay, fileKind: AspNetCore.Razor.Language.RazorFileKind.Legacy);
+    }
+
+    [Fact]
+    public async Task AddDebuggerDisplay_CodeBlockOnSingleLine()
+    {
+        var input = """
+            @code { class Goo[||] { } }
+            """;
+
+        var expected = """
+            @using System.Diagnostics
+            @code {
+                [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
+                class Goo {
+                    private string GetDebuggerDisplay()
+                    {
+                        return ToString();
+                    }
+                } 
+            }
+            """;
+
+        await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.AddDebuggerDisplay);
+    }
+
+    [Fact]
+    public async Task AddDebuggerDisplay_FunctionsBlockOnSingleLine_Legacy()
+    {
+        var input = """
+            @functions { class Goo[||] { } }
+            """;
+
+        var expected = """
+            @using System.Diagnostics
+            @functions {
+                [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
+                class Goo {
+                    private string GetDebuggerDisplay()
+                    {
+                        return ToString();
+                    }
+                } 
+            }
+            """;
+
+        await VerifyCodeActionAsync(
+            input,
+            expected,
+            RazorPredefinedCodeRefactoringProviderNames.AddDebuggerDisplay,
+            fileKind: RazorFileKind.Legacy);
     }
 
     [Fact]

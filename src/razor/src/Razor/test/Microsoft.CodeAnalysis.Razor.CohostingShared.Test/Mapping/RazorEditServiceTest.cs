@@ -203,6 +203,71 @@ public class RazorEditServiceTest(ITestOutputHelper testOutput) : CohostEndpoint
                 """);
 
     [Fact]
+    public Task GenerateMethod_ExistingCodeBlock_MultipleAddedMethods_HaveBlankLinesBetweenThem()
+        => TestAsync(
+            csharpSource: """
+                class MyComponent : ComponentBase
+                {
+                    {|map1:private void M()
+                    {
+                        FirstNewMethod();
+                        SecondNewMethod();
+                    }|}
+                }
+                """,
+            razorSource: """
+                @code {
+                    {|map1:private void M()
+                    {
+                        FirstNewMethod();
+                        SecondNewMethod();
+                    }|}
+                }
+                """,
+            newCSharpSource: """
+                using System;
+
+                class MyComponent : ComponentBase
+                {
+                    private void M()
+                    {
+                        FirstNewMethod();
+                        SecondNewMethod();
+                    }
+
+                    private void FirstNewMethod()
+                    {
+                        throw new NotImplementedException();
+                    }
+
+                    private void SecondNewMethod()
+                    {
+                        throw new NotImplementedException();
+                    }
+                }
+                """,
+            expectedRazorSource: """
+                @using System
+                @code {
+                    private void M()
+                    {
+                        FirstNewMethod();
+                        SecondNewMethod();
+                    }
+
+                    private void FirstNewMethod()
+                    {
+                        throw new NotImplementedException();
+                    }
+
+                    private void SecondNewMethod()
+                    {
+                        throw new NotImplementedException();
+                    }
+                }
+                """);
+
+    [Fact]
     public Task GenerateMethod_ExistingCodeBlock_UsesTabsWithMixedIndentation()
     {
         ClientSettingsManager.Update(new ClientSpaceSettings(IndentWithTabs: true, IndentSize: 3));
@@ -387,6 +452,33 @@ public class RazorEditServiceTest(ITestOutputHelper testOutput) : CohostEndpoint
                 }
                 """);
     }
+
+    [Fact]
+    public Task GenerateMethod_ExistingSingleLineCodeBlockAtTopOfFile_Applies()
+        => TestAsync(
+            csharpSource: """
+                class MyComponent : ComponentBase
+                {
+                }
+                """,
+            razorSource: """
+                @code {}
+                """,
+            newCSharpSource: """
+                class MyComponent : ComponentBase
+                {
+                    private void NewMethod()
+                    {
+                    }
+                }
+                """,
+            expectedRazorSource: """
+                @code {
+                    private void NewMethod()
+                    {
+                    }
+                }
+                """);
 
     [Fact]
     public Task EditInUnmappedMethod_NotAdded()
