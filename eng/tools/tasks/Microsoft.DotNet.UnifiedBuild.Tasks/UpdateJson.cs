@@ -6,8 +6,8 @@
 using System;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -37,23 +37,24 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
 
             string json = File.ReadAllText(JsonFilePath);
             string newLineChars = FileUtilities.DetectNewLineChars(json);
-            JObject jsonObj = JObject.Parse(json);
+            JsonNode jsonNode = JsonNode.Parse(json);
 
             string[] escapedPathToAttributeParts = PathToAttribute.Split(Delimiter);
             for (int i = 0; i < escapedPathToAttributeParts.Length; ++i)
             {
                 escapedPathToAttributeParts[i] = escapedPathToAttributeParts[i];
             }
-            UpdateAttribute(jsonObj, escapedPathToAttributeParts, NewAttributeValue);
+            UpdateAttribute(jsonNode, escapedPathToAttributeParts, NewAttributeValue);
 
-            File.WriteAllText(JsonFilePath, FileUtilities.NormalizeNewLineChars(jsonObj.ToString(), newLineChars));
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            File.WriteAllText(JsonFilePath, FileUtilities.NormalizeNewLineChars(jsonNode.ToJsonString(options), newLineChars));
             return true;
         }
 
-        private void UpdateAttribute(JToken jsonObj, string[] path, string newValue)
+        private void UpdateAttribute(JsonNode node, string[] path, string newValue)
         {
             string pathItem = path[0];
-            if (jsonObj[pathItem] == null)
+            if (node is not JsonObject jsonObj || !jsonObj.ContainsKey(pathItem))
             {
                 string message = $"Path item [{nameof(PathToAttribute)}] not found in json file.";
                 if (SkipUpdateIfMissingKey)
@@ -68,7 +69,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
             {
                 if (newValue == null)
                 {
-                    jsonObj[pathItem].Parent.Remove();
+                    jsonObj.Remove(pathItem);
                 }
                 else
                 {

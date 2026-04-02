@@ -211,7 +211,6 @@ public class SigningComparer : BuildComparer
                 _baseArguments =
                     $"{sdkTaskScript} " +
                     $"{_argumentsPrefix}task SigningValidation " +
-                    $"{_argumentsPrefix}msbuildEngine vs " +
                     $"{_argumentsPrefix}excludeCIBinaryLog";
             }
             else

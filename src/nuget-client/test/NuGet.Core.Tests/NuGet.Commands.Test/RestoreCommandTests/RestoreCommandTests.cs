@@ -3022,6 +3022,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 ["Pruning.RemovablePackages.Count"] = value => value.Should().BeOfType<int>(),
                 ["Pruning.Pruned.Direct.Count"] = value => value.Should().BeOfType<int>(),
                 ["UsesLegacyPackagesDirectory"] = value => value.Should().Be(false),
+                ["UsesLegacyAssetTargetFallback"] = value => value.Should().Be(false),
             };
 
             HashSet<string> actualProperties = new();
@@ -3134,7 +3135,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
 
-            projectInformationEvent.Count.Should().Be(40);
+            projectInformationEvent.Count.Should().Be(41);
 
             projectInformationEvent["RestoreSuccess"].Should().Be(true);
             projectInformationEvent["NoOpResult"].Should().Be(true);
@@ -3176,6 +3177,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             projectInformationEvent["Pruning.FrameworksUnsupported.Count"].Should().Be(1);
             projectInformationEvent["Pruning.DefaultEnabled"].Should().Be(false);
             projectInformationEvent["UsesLegacyPackagesDirectory"].Should().Be(false);
+            projectInformationEvent["UsesLegacyAssetTargetFallback"].Should().Be(false);
         }
 
         [Fact]
@@ -3233,7 +3235,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
 
-            projectInformationEvent.Count.Should().Be(48);
+            projectInformationEvent.Count.Should().Be(49);
             projectInformationEvent["RestoreSuccess"].Should().Be(true);
             projectInformationEvent["NoOpResult"].Should().Be(false);
             projectInformationEvent["TotalUniquePackagesCount"].Should().Be(2);
