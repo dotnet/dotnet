@@ -22,7 +22,7 @@ jobs:
   displayName: Build xcopy-msbuild package
   pool: 
     name: NetCore1ESPool-Internal
-    demands: ImageOverride -equals 1es-windows-2022
+    demands: ImageOverride -equals windows.vs2026.amd64
   steps:
     - task: PowerShell@2
       displayName: Download Visual Studio Build Tools
