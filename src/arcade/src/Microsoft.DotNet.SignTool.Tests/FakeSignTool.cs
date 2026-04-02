@@ -34,8 +34,7 @@ namespace Microsoft.DotNet.SignTool
 
         public override SigningStatus VerifyStrongNameSign(string fileFullPath) => SigningStatus.Signed;
 
-        // maxAttempts is only used by RealSignTool for flaky out-of-proc MSBuild calls
-        public override bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath, string logPath, string errorLogPath, int maxAttempts = 1)
+        public override bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath, string logPath, string errorLogPath, bool suppressErrors = false)
             => buildEngine.BuildProjectFile(projectFilePath, null, null, null);
 
         internal static void SignFile(string path)

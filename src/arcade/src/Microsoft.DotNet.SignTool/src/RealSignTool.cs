@@ -46,7 +46,7 @@ namespace Microsoft.DotNet.SignTool
             _dotnetTimeout = args.DotNetTimeout;
         }
 
-        public override bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath, string logPath, string errorLogPath, int maxAttempts = 1)
+        public override bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath, string logPath, string errorLogPath, bool suppressErrors = false)
         {
             if (_dotnetPath == null)
             {
@@ -55,48 +55,6 @@ namespace Microsoft.DotNet.SignTool
 
             Directory.CreateDirectory(_logDir);
 
-            if (maxAttempts > 1)
-            {
-                _log.LogMessage(MessageImportance.High, $"Starting MSBuild with up to {maxAttempts} attempts");
-            }
-
-            for (int attempt = 1; attempt <= maxAttempts; attempt++)
-            {
-                bool suppressErrors = attempt < maxAttempts;
-
-                if (maxAttempts > 1)
-                {
-                    _log.LogMessage(MessageImportance.High, $"Attempt {attempt} of {maxAttempts}");
-                }
-
-                // Use attempt-specific log file names when retrying to preserve logs from each attempt
-                string attemptBinLogPath = maxAttempts > 1 ? binLogPath.Replace(".binlog", $"-Attempt{attempt}.binlog") : binLogPath;
-                string attemptLogPath = maxAttempts > 1 ? logPath.Replace(".log", $"-Attempt{attempt}.log") : logPath;
-                string attemptErrorLogPath = maxAttempts > 1 ? errorLogPath.Replace(".error.log", $"-Attempt{attempt}.error.log") : errorLogPath;
-
-                bool succeeded = RunMSBuildProcess(projectFilePath, attemptBinLogPath, attemptLogPath, attemptErrorLogPath, suppressErrors);
-
-                if (succeeded)
-                {
-                    return true;
-                }
-
-                if (attempt < maxAttempts)
-                {
-                    _log.LogMessage(MessageImportance.High, $"MSBuild failed on attempt {attempt}. Retrying...");
-                }
-            }
-
-            if (maxAttempts > 1)
-            {
-                _log.LogError($"MSBuild failed after {maxAttempts} attempts on project '{projectFilePath}'");
-            }
-
-            return false;
-        }
-
-        private bool RunMSBuildProcess(string projectFilePath, string binLogPath, string logPath, string errorLogPath, bool suppressErrors)
-        {
             using (var process = new Process())
             {
                 process.StartInfo = new ProcessStartInfo()
