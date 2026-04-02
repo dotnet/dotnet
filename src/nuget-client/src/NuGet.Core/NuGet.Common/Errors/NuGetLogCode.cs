@@ -149,6 +149,11 @@ namespace NuGet.Common
         NU1018 = 1018,
 
         /// <summary>
+        /// TargetFramework alias contains a path separator character ('/' or '\'), which is not allowed.
+        /// </summary>
+        NU1019 = 1019,
+
+        /// <summary>
         /// Unable to resolve package, generic message for unknown type constraints.
         /// </summary>
         NU1100 = 1100,
