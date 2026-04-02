@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable"  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <Extern href="stdidcmd.h"/>
   <Extern href="vsshlids.h"/>
@@ -7,7 +7,7 @@
   <Symbols>
     <GuidSymbol name="RazorPackage" value="{13b72f58-279e-49e0-a56d-296be02f0805}" />
 
-    <!-- This is the guid used to group the menu commands together -->
+    <!-- Syntax Visualizer command set -->
     <GuidSymbol name="guidSyntaxVisualizerMenuCmdSet" value="{a3a603a2-2b17-4ce2-bd21-cbb8ccc084ec}">
       <IDSymbol name="cmdidRazorSyntaxVisualizer" value="0x0101" />
       <IDSymbol name="menuidToolWindowToolbar" value="0x0102" />
@@ -22,12 +22,29 @@
       <IDSymbol name="cmdIdShowReferencedTagHelpers" value="0x0115" />
       <IDSymbol name="cmdidShowFormattingDocument" value="0x0116" />
     </GuidSymbol>
+
+    <!-- Command set GUID for Razor nested file commands -->
+    <GuidSymbol name="guidRazorNestedFilesCmdSet" value="{8B2B3C5D-6E4A-4F9B-9C8D-1A2B3C4D5E6F}">
+      <IDSymbol name="grpidRazorNestedFiles" value="0x1001" />
+      <IDSymbol name="cmdidAddOrViewNestedCsFile" value="0x0100" />
+      <IDSymbol name="cmdidAddOrViewNestedCssFile" value="0x0101" />
+      <IDSymbol name="cmdidAddOrViewNestedJsFile" value="0x0102" />
+    </GuidSymbol>
+
+    <!-- UI Context GUID for Razor file selection -->
+    <GuidSymbol name="guidRazorFileContext" value="{7C3F2F9E-8D4A-4B6C-9E1F-5A8D7C6B3E2D}" />
   </Symbols>
 
   <Commands package="RazorPackage">
     <Groups>
+      <!-- Syntax Visualizer group and toolbar -->
       <Group guid="guidSyntaxVisualizerMenuCmdSet" id="grpidRazorSyntaxVisualizer" priority="0x0100">
         <Parent guid="guidSyntaxVisualizerMenuCmdSet" id="menuidToolWindowToolbar"/>
+      </Group>
+
+      <!-- Nested file group parented to Solution Explorer item context menu -->
+      <Group guid="guidRazorNestedFilesCmdSet" id="grpidRazorNestedFiles" priority="0x0310">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE"/>
       </Group>
     </Groups>
 
@@ -42,6 +59,7 @@
     </Menus>
 
     <Buttons>
+      <!-- Syntax Visualizer commands -->
       <Button guid="guidSyntaxVisualizerMenuCmdSet" id="cmdidRazorSyntaxVisualizer" priority="0x0100" type="Button">
         <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
         <CommandFlag>CommandWellOnly</CommandFlag>
@@ -93,7 +111,53 @@
         </Strings>
       </Button>
 
+      <!-- Razor nested file commands -->
+      <Button guid="guidRazorNestedFilesCmdSet" id="cmdidAddOrViewNestedCsFile" priority="0x0100" type="Button">
+        <Parent guid="guidRazorNestedFilesCmdSet" id="grpidRazorNestedFiles"/>
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <CommandFlag>TextChanges</CommandFlag>
+        <Strings>
+          <ButtonText>Add or View Nested .cs File</ButtonText>
+          <CanonicalName>AddOrViewNestedCsFile</CanonicalName>
+          <LocCanonicalName>AddOrViewNestedCsFile</LocCanonicalName>
+          <CommandName>AddOrViewNestedCsFile</CommandName>
+        </Strings>
+      </Button>
+
+      <Button guid="guidRazorNestedFilesCmdSet" id="cmdidAddOrViewNestedCssFile" priority="0x0101" type="Button">
+        <Parent guid="guidRazorNestedFilesCmdSet" id="grpidRazorNestedFiles"/>
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <CommandFlag>TextChanges</CommandFlag>
+        <Strings>
+          <ButtonText>Add or View Nested .css File</ButtonText>
+          <CanonicalName>AddOrViewNestedCssFile</CanonicalName>
+          <LocCanonicalName>AddOrViewNestedCssFile</LocCanonicalName>
+          <CommandName>AddOrViewNestedCssFile</CommandName>
+        </Strings>
+      </Button>
+
+      <Button guid="guidRazorNestedFilesCmdSet" id="cmdidAddOrViewNestedJsFile" priority="0x0102" type="Button">
+        <Parent guid="guidRazorNestedFilesCmdSet" id="grpidRazorNestedFiles"/>
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <CommandFlag>TextChanges</CommandFlag>
+        <Strings>
+          <ButtonText>Add or View Nested .js File</ButtonText>
+          <CanonicalName>AddOrViewNestedJsFile</CanonicalName>
+          <LocCanonicalName>AddOrViewNestedJsFile</LocCanonicalName>
+          <CommandName>AddOrViewNestedJsFile</CommandName>
+        </Strings>
+      </Button>
     </Buttons>
   </Commands>
+
+  <!-- Visibility constraints - nested file commands only appear when UI context is active -->
+  <VisibilityConstraints>
+    <VisibilityItem guid="guidRazorNestedFilesCmdSet" id="cmdidAddOrViewNestedCsFile" context="guidRazorFileContext" />
+    <VisibilityItem guid="guidRazorNestedFilesCmdSet" id="cmdidAddOrViewNestedCssFile" context="guidRazorFileContext" />
+    <VisibilityItem guid="guidRazorNestedFilesCmdSet" id="cmdidAddOrViewNestedJsFile" context="guidRazorFileContext" />
+  </VisibilityConstraints>
 
 </CommandTable>
