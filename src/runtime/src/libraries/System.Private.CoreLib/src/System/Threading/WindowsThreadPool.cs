@@ -175,7 +175,7 @@ namespace System.Threading
             // NOTE: the thread request must be cleared before doing Dispatch.
             //       the following Interlocked.Increment will guarantee the ordering.
             Interlocked.Increment(ref s_workingThreadCounter.Count);
-            ThreadPoolWorkQueue.Dispatch();
+            ThreadPoolWorkQueue.Dispatch(out _);
             Interlocked.Decrement(ref s_workingThreadCounter.Count);
 
             // We reset the thread after executing each callback

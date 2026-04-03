@@ -105,9 +105,12 @@ namespace System.Threading
 
                 while (true)
                 {
-                    while (semaphore.Wait(timeoutMs, threadPoolInstance._separated.counts.NumExistingThreads))
+                    bool noWork = false;
+                    while (noWork?
+                        semaphore.WaitNoSpin(timeoutMs) :
+                        semaphore.Wait(timeoutMs, threadPoolInstance._separated.counts.NumExistingThreads))
                     {
-                        WorkerDoWork(threadPoolInstance);
+                        WorkerDoWork(threadPoolInstance, out noWork);
                     }
 
                     // We've timed out waiting on the semaphore. Time to exit.
@@ -119,7 +122,7 @@ namespace System.Threading
                 }
             }
 
-            private static void WorkerDoWork(PortableThreadPool threadPoolInstance)
+            private static void WorkerDoWork(PortableThreadPool threadPoolInstance, out bool noWork)
             {
                 do
                 {
@@ -131,11 +134,15 @@ namespace System.Threading
                     {
                         // We took the request, now we must Dispatch some work items.
                         threadPoolInstance.NotifyDispatchProgress(Environment.TickCount);
-                        if (!ThreadPoolWorkQueue.Dispatch())
+                        if (!ThreadPoolWorkQueue.Dispatch(out noWork))
                         {
                             // We are above goal and would have already removed this working worker in the counts.
                             return;
                         }
+                    }
+                    else
+                    {
+                        noWork = true;
                     }
 
                     // We could not find more work in the queue and will try to stop being active.

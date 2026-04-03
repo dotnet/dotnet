@@ -846,7 +846,7 @@ namespace System.Threading
         /// <c>true</c> if this thread did as much work as was available or its quantum expired.
         /// <c>false</c> if this thread stopped working early.
         /// </returns>
-        internal static bool Dispatch()
+        internal static bool Dispatch(out bool noWork)
         {
             ThreadPoolWorkQueue workQueue = ThreadPool.s_workQueue;
             ThreadPoolWorkQueueThreadLocals tl = workQueue.GetOrCreateThreadLocals();
@@ -863,8 +863,11 @@ namespace System.Threading
                 }
 
                 // Tell the VM we're returning normally, not because Hill Climbing asked us to return.
+                noWork = true;
                 return true;
             }
+
+            noWork = false;
 
             // The workitems that are currently in the queues could have asked only for one worker.
             // We are going to process a workitem, which may take unknown time or even block.

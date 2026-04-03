@@ -152,6 +152,11 @@ namespace System.Threading
                 }
             }
 
+            return WaitNoSpin(timeoutMs);
+        }
+
+        public bool WaitNoSpin(int timeoutMs)
+        {
             // Now we will try registering as a waiter and wait.
             // If signaled before that, we have to acquire as this can be the last thread that could take that signal.
             // The difference with spinning above is that we are not waiting for a signal. We should immediately succeed
@@ -173,14 +178,14 @@ namespace System.Threading
                 Counts countsBeforeUpdate = _separated._counts.InterlockedCompareExchange(newCounts, counts);
                 if (countsBeforeUpdate == counts)
                 {
-                    return counts.SignalCount != 0 || WaitForSignal(timeoutMs);
+                    return counts.SignalCount != 0 || WaitAsWaiter(timeoutMs);
                 }
 
                 Backoff.Exponential(collisionCount++);
             }
         }
 
-        private bool WaitForSignal(int timeoutMs)
+        private bool WaitAsWaiter(int timeoutMs)
         {
             Debug.Assert(timeoutMs >= -1);
 
