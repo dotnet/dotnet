@@ -394,19 +394,6 @@
                                PropertySuffixes="@(PreviousPackageVersionPropertySuffixes)"
                                Condition="'$(_UsePackageVersionPropsAggregation)' == 'true'" />
 
-    <!-- Write a full package version props (unfiltered) that will be used to track which repo creates a package.
-         Because not all repos implement the repo API (e.g. some are external), it's difficult to consistently gather
-         a list of packages from the output of each repo. This may be an area for improvement later.
-
-         Instead, we rely on the package version props file that is built up
-         before each build. If the full list of packages grows by package A, B and C between repo Y and Z, then Y produced
-         A B and C.
-
-         A key element of this algorith is that we must write the full package version props and not the filtered version. -->
-    <WritePackageVersionsProps KnownPackages="@(_DependencyProducedPackage)"
-                               VersionPropsFlowType="AllPackages"
-                               PropertySuffixes="@(DefaultPackageVersionPropertySuffixes)"
-                               OutputPath="$(SnapshotPackageVersionPropsPath)" />
 
     <!-- Write a single file that contains imports for both the current and previously built packages -->
     <PropertyGroup>
@@ -620,6 +607,20 @@
     <Message Importance="High" Text="$([System.IO.File]::ReadAllText('$(RepoConsoleLogFile)'))" Condition="Exists('$(RepoConsoleLogFile)')" />
     <Message Importance="High" Text="'$(RepositoryName)' failed during build." />
     <Message Importance="High" Text="See '$(RepoConsoleLogFile)' for more information." Condition="Exists('$(RepoConsoleLogFile)')" />
+  </Target>
+
+  <!-- After a repository builds, write the list of packages it produced.
+       This is used by WriteAnnotatedUsageReport to directly attribute packages to the repo that
+       produced them, rather than inferring it from snapshot diffs (which is unreliable when repos
+       have independent dependency trees). -->
+  <Target Name="WriteProducedPackages"
+          AfterTargets="RepoBuild"
+          DependsOnTargets="GetProducedPackages"
+          Condition="'$(IsUtilityProject)' != 'true'">
+    <WritePackageVersionsProps KnownPackages="@(ProducedPackage);@(ProducedPackageFromDependentVertical)"
+                               VersionPropsFlowType="AllPackages"
+                               PropertySuffixes="@(DefaultPackageVersionPropertySuffixes)"
+                               OutputPath="$(ProducedPackageVersionPropsPath)" />
   </Target>
 
   <!-- Log the new repo artifacts -->
