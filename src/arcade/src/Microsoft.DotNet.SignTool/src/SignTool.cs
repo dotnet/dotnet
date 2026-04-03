@@ -48,7 +48,7 @@ namespace Microsoft.DotNet.SignTool
 
         public abstract SigningStatus VerifyStrongNameSign(string fileFullPath);
 
-        public abstract bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath, string logPath, string errorLogPath);
+        public abstract bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath, string logPath, string errorLogPath, bool suppressErrors = false);
 
         public bool Sign(IBuildEngine buildEngine, int round, IEnumerable<FileSignInfo> files)
         {
@@ -188,19 +188,20 @@ namespace Microsoft.DotNet.SignTool
                 const int maxRetries = 5;
                 int attempt = 0;
                 bool notarizationSucceeded = false;
-                
+
                 _log.LogMessage(MessageImportance.High, $"Starting notarization with up to {maxRetries} attempts");
-                
+
                 while (attempt < maxRetries && !notarizationSucceeded)
                 {
                     attempt++;
                     _log.LogMessage(MessageImportance.High, $"Notarization attempt {attempt} of {maxRetries}");
-                    
+
                     string notarizeLogName = $"NotarizationRound{round}-Attempt{attempt}";
                     notarizationSucceeded = RunMSBuild(buildEngine, notarizeProjectPath, 
                         Path.Combine(_args.LogDir, $"{notarizeLogName}.binlog"), 
                         Path.Combine(_args.LogDir, $"{notarizeLogName}.log"), 
-                        Path.Combine(_args.LogDir, $"{notarizeLogName}.error.log"));
+                        Path.Combine(_args.LogDir, $"{notarizeLogName}.error.log"),
+                        suppressErrors: attempt < maxRetries);
                     
                     if (!notarizationSucceeded && attempt < maxRetries)
                     {
