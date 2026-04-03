@@ -356,6 +356,44 @@ namespace System.CommandLine.Tests
         }
 
         [Fact]
+        public void GetValue_in_command_validator_does_not_suppress_argument_validation_errors()
+        {
+            var fileArg = new Argument<FileInfo>("file");
+            fileArg.AcceptExistingOnly();
+
+            var root = new RootCommand { fileArg };
+
+            root.Validators.Add(result =>
+            {
+                _ = result.GetValue(fileArg);
+            });
+
+            var parseResult = root.Parse("nonexistent.xyz");
+
+            parseResult.Errors.Should().ContainSingle()
+                .Which.Message.Should().Be(LocalizationResources.FileDoesNotExist("nonexistent.xyz"));
+        }
+
+        [Fact]
+        public void GetValue_in_command_validator_does_not_suppress_option_argument_validation_errors()
+        {
+            var fileOption = new Option<FileInfo>("--file");
+            fileOption.AcceptExistingOnly();
+
+            var root = new RootCommand { fileOption };
+
+            root.Validators.Add(result =>
+            {
+                _ = result.GetValue(fileOption);
+            });
+
+            var parseResult = root.Parse("--file nonexistent.xyz");
+
+            parseResult.Errors.Should().ContainSingle()
+                .Which.Message.Should().Be(LocalizationResources.FileDoesNotExist("nonexistent.xyz"));
+        }
+
+        [Fact]
         public void A_custom_validator_can_be_added_to_an_option()
         {
             var option = new Option<int>("-x");
