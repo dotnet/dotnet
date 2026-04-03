@@ -113,23 +113,19 @@ namespace System.Threading
 
         private bool WaitSlow(int timeoutMs, short tpThreadCount)
         {
-            _ = tpThreadCount;
+            // Now spin briefly with exponential backoff.
+            // We estimate availability of CPU resources and limit spin count accordingly.
+            // See comments on DefaultSemaphoreSpinCountLimit for more details.
+            // Count current thread as active for the duration of spinning.
+            int active = tpThreadCount - _separated._counts.WaiterCount;
+            int available = _procCount - active;
+            int spinStep = _maxSpinCount * 2 / _procCount;
+            // With activeThreadCount arbitrarily large and _procCount arbitrarily small
+            // we can, in theory, overflow int, so just use long here.
+            long spinsRemainingLong = (available - _procCount / 4) * (long)spinStep;
 
-            //// Now spin briefly with exponential backoff.
-            //// We estimate availability of CPU resources and limit spin count accordingly.
-            //// See comments on DefaultSemaphoreSpinCountLimit for more details.
-            //// Count current thread as active for the duration of spinning.
-            //int active = tpThreadCount - _separated._counts.WaiterCount;
-            //int available = _procCount - active;
-            //int spinStep = _maxSpinCount * 2 / _procCount;
-            //// With activeThreadCount arbitrarily large and _procCount arbitrarily small
-            //// we can, in theory, overflow int, so just use long here.
-            //long spinsRemainingLong = (available - _procCount / 4) * (long)spinStep;
-
-            //// clamp to [0, _maxSpinCount] range.
-            //int spinsRemaining = (int)Math.Clamp(spinsRemainingLong, 0, _maxSpinCount);
-
-            int spinsRemaining = _maxSpinCount;
+            // clamp to [0, _maxSpinCount] range.
+            int spinsRemaining = (int)Math.Clamp(spinsRemainingLong, 0, _maxSpinCount);
 
             uint iteration = 0;
             while (spinsRemaining > 0)
@@ -157,8 +153,8 @@ namespace System.Threading
         {
             // Now we will try registering as a waiter and wait.
             // If signaled before that, we have to acquire as this can be the last thread that could take that signal.
-            // The difference with spinning above is that we are not waiting for a signal. We should immediately succeed
-            // unless a lot of threads are trying to update the counts. Thus we use a different attempt counter.
+            // The difference with spinning above is that we are not waiting for a signal. We should typically
+            // immediately succeed unless a lot of threads are trying to update the counts.
             uint collisionCount = 0;
             while (true)
             {
