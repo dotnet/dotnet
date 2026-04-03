@@ -1215,6 +1215,15 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The project {0} contains a TargetFramework &apos;{1}&apos; with disallowed characters. TargetFramework names must contain only ASCII characters and must not contain path separators..
+        /// </summary>
+        internal static string Log_AliasContainsDisallowedCharacters {
+            get {
+                return ResourceManager.GetString("Log_AliasContainsDisallowedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All projects are up-to-date for restore..
         /// </summary>
         internal static string Log_AllProjectsUpToDate {
