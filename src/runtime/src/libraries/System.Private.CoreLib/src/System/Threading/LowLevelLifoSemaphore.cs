@@ -76,8 +76,6 @@ namespace System.Threading
             _onWait = onWait;
             _procCount = Environment.ProcessorCount;
 
-            Create(maximumSignalCount);
-
             _maxSpinCount = AppContextConfigHelper.GetInt32ComPlusOrDotNetConfig(
                 "System.Threading.ThreadPool.UnfairSemaphoreSpinLimit",
                 "ThreadPool_UnfairSemaphoreSpinLimit",
@@ -191,7 +189,6 @@ namespace System.Threading
 
             _onWait();
 
-            SpinWait sw = default;
             while (true)
             {
                 if (timeoutMs == 0 || !WaitCore(timeoutMs))
@@ -209,26 +206,15 @@ namespace System.Threading
 
                     Debug.Assert(counts.WaiterCount != 0);
 
-                    // if consumed a wake, decrement the count
-                    if (waitResult == WaitResult.Woken)
-                    {
-                        Debug.Assert(counts.CountOfWaitersSignaledToWake != 0);
-                        newCounts.DecrementCountOfWaitersSignaledToWake();
-                    }
+                    // we consumed a wake, decrement the count
+                    Debug.Assert(counts.CountOfWaitersSignaledToWake != 0);
+                    newCounts.DecrementCountOfWaitersSignaledToWake();
 
                     // If there is a signal, try claiming it and stop waiting.
                     if (newCounts.SignalCount != 0)
                     {
                         newCounts.DecrementSignalCount();
                         newCounts.DecrementWaiterCount();
-                    }
-
-                    if (newCounts == counts)
-                    {
-                        // No signals. And we could not enter blocking wait due to contention.
-                        // This is possible if many threads are out of work and try to block.
-                        // We will try again after a pause, and will check for signals again too.
-                        break;
                     }
 
                     Counts countsBeforeUpdate = _separated._counts.InterlockedCompareExchange(newCounts, counts);
@@ -243,7 +229,6 @@ namespace System.Threading
                         // We've consumed a wake, but there was no signal.
                         // The semaphore is unfair and spurious/stolen wakes can happen.
                         // We will have to wait again.
-                        sw = default;
                         break;
                     }
 
@@ -289,18 +274,7 @@ namespace System.Threading
             }
         }
 
-        private enum WaitResult
-        {
-            // We could not start waiting without blocking on _stackLock.
-            // Do something more useful like check for signals, and then try again.
-            Retry,
-            // We waited and were woken
-            Woken,
-            // We waited and timed out
-            TimedOut,
-        }
-
-        private WaitResult WaitCore(int timeoutMs)
+        private bool WaitCore(int timeoutMs)
         {
             Debug.Assert(timeoutMs >= -1);
 
@@ -310,27 +284,21 @@ namespace System.Threading
                 t_blocker = blocker = new LifoWaitNode();
             }
 
-            if (_stackLock.TryAcquire())
+            _stackLock.Acquire();
+            if (_pendingSignals != 0)
             {
-                if (_pendingSignals != 0)
-                {
-                    Debug.Assert(_blockerStack == null);
-                    Debug.Assert(_pendingSignals > 0);
-                    _pendingSignals--;
-                    blocker = null;
-                }
-                else
-                {
-                    blocker._next = _blockerStack;
-                    _blockerStack = blocker;
-                }
-
-                _stackLock.Release();
+                Debug.Assert(_blockerStack == null);
+                Debug.Assert(_pendingSignals > 0);
+                _pendingSignals--;
+                blocker = null;
             }
             else
             {
-                return WaitResult.Retry;
+                blocker._next = _blockerStack;
+                _blockerStack = blocker;
             }
+
+            _stackLock.Release();
 
             if (blocker != null)
             {
@@ -338,7 +306,7 @@ namespace System.Threading
                 {
                     if (TryRemove(blocker))
                     {
-                        return WaitResult.TimedOut;
+                        return false;
                     }
 
                     // We timed out, but our waiter is already popped. Someone is waking us.
@@ -348,7 +316,7 @@ namespace System.Threading
                 }
             }
 
-            return WaitResult.Woken;
+            return true;
         }
 
         private void ReleaseCore(int count)
