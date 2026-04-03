@@ -11,8 +11,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- arcade -->
-    <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>9.0.0-beta.24223.1</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
     <!-- corefx -->
     <SystemRuntimeInteropServicesRuntimeInformation>4.3.0</SystemRuntimeInteropServicesRuntimeInformation>
     <!-- nuget -->
@@ -37,7 +35,6 @@
     <MicrosoftNETWorkloadMonoToolChainManifest_60300Version_6022>6.0.22</MicrosoftNETWorkloadMonoToolChainManifest_60300Version_6022>
     <MicrosoftiOSTemplatesVersion>15.2.302-preview.14.122</MicrosoftiOSTemplatesVersion>
     <MicrosoftiOSTemplatesVersion160527>16.0.527</MicrosoftiOSTemplatesVersion160527>
-    <SystemCompositionVersion>9.0.0-preview.6.24327.7</SystemCompositionVersion>
   </PropertyGroup>
 
 </Project>

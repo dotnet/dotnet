@@ -15,17 +15,21 @@ namespace Microsoft.SignCheck.Verification
 {
     /// <summary>
     /// Reads digital signature information from OLE Compound Document files (MSI, MSP).
-    /// These files store their Authenticode signature in a stream named "\x05DigitalSignature".
+    /// These files store their Authenticode signature in a stream named "\u0005DigitalSignature".
     /// </summary>
     [SupportedOSPlatform("windows")]
     public class OleStorageSecurityInfoProvider : ISecurityInfoProvider
     {
-        private const string DigitalSignatureStreamName = "\x05DigitalSignature";
+        // Use \u0005 (not \x05) because \x greedily consumes hex digits,
+        // turning \x05D into U+005D (']') instead of U+0005 followed by 'D'.
+        private const string DigitalSignatureStreamName = "\u0005DigitalSignature";
 
         public SignedCms ReadSecurityInfo(string path)
         {
-            IStorage storage = null;
-            int hr = Ole32.StgOpenStorage(path, null, STGM.STGM_READ | STGM.STGM_SHARE_EXCLUSIVE, IntPtr.Zero, 0, out storage);
+            Guid iidStorage = typeof(IStorage).GUID;
+            int hr = Ole32.StgOpenStorageEx(path, STGM.STGM_READ | STGM.STGM_SHARE_EXCLUSIVE,
+                Ole32.STGFMT_STORAGE, 0, IntPtr.Zero, IntPtr.Zero, ref iidStorage, out object storageObj);
+            IStorage storage = storageObj as IStorage;
 
             if (hr != StructuredStorage.S_OK || storage == null)
             {

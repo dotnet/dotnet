@@ -62,6 +62,7 @@ namespace Microsoft.SignCheck.Verification
                     catch (Exception e)
                     {
                         Log.WriteError(e.Message);
+                        svr.AddDetail(DetailKeys.Error, SignCheckResources.DetailVerificationError, e.Message);
                     }
                 }
 
@@ -94,6 +95,7 @@ namespace Microsoft.SignCheck.Verification
                 catch (Exception e)
                 {
                     Log.WriteError(e.Message);
+                    svr.AddDetail(DetailKeys.Error, SignCheckResources.DetailVerificationError, e.Message);
                 }
 
                 DeleteDirectory(svr.TempPath);
