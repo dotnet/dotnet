@@ -20,6 +20,13 @@
             Properties="RunName=NuGet.Tests.Apex;
             FileName=NuGet.Tests.Apex.dll;" />
 
+        <!-- NuGet.Tests.Apex.Gate.runsettings (VS test gate - runs only [TestCategory("Gate")] tests) -->
+        <MSBuild
+            Projects="template.runsettingsproj"
+            Properties="RunName=NuGet.Tests.Apex.Gate;
+            FileName=NuGet.Tests.Apex.dll;
+            TestCaseFilter=TestCategory=Gate;" />
+
         <!-- NuGet.Tests.Apex.Daily.runsettings -->
         <MSBuild
             Projects="template.runsettingsproj"
