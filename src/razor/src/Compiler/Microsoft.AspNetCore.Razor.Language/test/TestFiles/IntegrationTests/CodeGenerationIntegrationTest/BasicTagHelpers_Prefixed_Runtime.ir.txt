@@ -37,7 +37,7 @@
                             LazyIntermediateToken - (168:6,14 [12] BasicTagHelpers_Prefixed.cshtml) - Html -  type="text"
                             LazyIntermediateToken - (180:6,26 [1] BasicTagHelpers_Prefixed.cshtml) - Html - >
                             LazyIntermediateToken - (181:6,27 [10] BasicTagHelpers_Prefixed.cshtml) - Html - \n        
-                        TagHelper - (191:7,8 [41] BasicTagHelpers_Prefixed.cshtml) - input - TagMode.StartTagOnly
+                        TagHelper - (191:7,8 [47] BasicTagHelpers_Prefixed.cshtml) - input - TagMode.StartTagOnly
                             DefaultTagHelperBody - 
                             DefaultTagHelperCreate -  - TestNamespace.InputTagHelper
                             DefaultTagHelperCreate -  - TestNamespace.InputTagHelper2

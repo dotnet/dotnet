@@ -10,15 +10,15 @@
                 Component - (0:0,0 [77] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentAttribute - (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - Value - Value - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
-                            LazyIntermediateToken - (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ParentValue
+                            IntermediateToken - (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ParentValue
                     ComponentAttribute - (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - ValueChanged - ValueChanged - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredBindSetter(callback: __value => { ParentValue = __value; return global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeAsynchronousDelegate(callback: 
-                            LazyIntermediateToken - (62:0,62 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - UpdateValue
+                            IntermediateToken - (62:0,62 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - UpdateValue
                             IntermediateToken -  - CSharp - ); }, value: ParentValue)
                             IntermediateToken -  - CSharp - , ParentValue)
                     ComponentAttribute - (62:0,62 [11] x:\dir\subdir\Test\TestComponent.cshtml) - bind-Value - Value - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (62:0,62 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - UpdateValue
+                        IntermediateToken - (62:0,62 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - UpdateValue
             CSharpCode - (86:1,7 [102] x:\dir\subdir\Test\TestComponent.cshtml)
                 LazyIntermediateToken - (86:1,7 [102] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    public int ParentValue { get; set; } = 42;\n    public EventCallback UpdateValue { get; set; }\n

@@ -48,7 +48,7 @@ internal sealed class RemoteAddNestedFileService(in ServiceArgs args)
         NestedFileKind fileKind,
         CancellationToken cancellationToken)
     {
-        var razorFilePath = context.FilePath;
+        var razorFilePath = context.Snapshot.FilePath;
         if (GetNestedFilePath(razorFilePath, fileKind) is not string nestedFilePath)
         {
             return null;

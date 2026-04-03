@@ -783,7 +783,7 @@ internal partial class ComponentBindLoweringPass : ComponentIntermediateNodePass
 
         static bool TryExtractEventNodeStaticText(TagHelperDirectiveAttributeParameterIntermediateNode node, [NotNullWhen(true)] out string? text)
         {
-            if (node.Children[0] is HtmlContentIntermediateNode html)
+            if (node.Children is [HtmlContentIntermediateNode html, ..])
             {
                 text = GetAttributeContent(html).Content;
                 return true;
@@ -795,7 +795,7 @@ internal partial class ComponentBindLoweringPass : ComponentIntermediateNodePass
 
         static CSharpExpressionIntermediateNode? ExtractEventNodeExpression(TagHelperDirectiveAttributeParameterIntermediateNode node)
         {
-            return node.Children[0] as CSharpExpressionIntermediateNode;
+            return node.Children is [CSharpExpressionIntermediateNode expr, ..] ? expr : null;
         }
     }
 

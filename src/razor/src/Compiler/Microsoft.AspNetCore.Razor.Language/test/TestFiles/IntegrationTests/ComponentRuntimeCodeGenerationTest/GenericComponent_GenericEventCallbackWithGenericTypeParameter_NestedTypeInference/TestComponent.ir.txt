@@ -10,9 +10,9 @@
             MethodDeclaration -  - protected override - void - BuildRenderTree
                 Component - (32:2,0 [55] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentAttribute - (51:2,19 [9] x:\dir\subdir\Test\TestComponent.cshtml) - Item - Item - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (51:2,19 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ChildItem
+                        IntermediateToken - (51:2,19 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ChildItem
                     ComponentAttribute - (71:2,39 [12] x:\dir\subdir\Test\TestComponent.cshtml) - MyEvent - MyEvent - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (71:2,39 [12] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - MyChildEvent
+                        IntermediateToken - (71:2,39 [12] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - MyChildEvent
             CSharpCode - (97:4,1 [138] x:\dir\subdir\Test\TestComponent.cshtml)
                 LazyIntermediateToken - (97:4,1 [138] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n        [Parameter] public TChild ChildItem { get; set; }\n        [Parameter] public EventCallback<TChild> MyChildEvent { get; set; }\n
     NamespaceDeclaration -  - __Blazor.Test.TestComponent

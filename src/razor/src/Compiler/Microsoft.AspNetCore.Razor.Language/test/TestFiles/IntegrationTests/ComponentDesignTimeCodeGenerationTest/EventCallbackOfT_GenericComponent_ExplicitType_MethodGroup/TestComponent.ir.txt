@@ -16,9 +16,9 @@
             MethodDeclaration -  - protected override - void - BuildRenderTree
                 Component - (0:0,0 [45] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentTypeArgument - (16:0,16 [6] x:\dir\subdir\Test\TestComponent.cshtml) - T
-                        LazyIntermediateToken - (16:0,16 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - MyType
+                        IntermediateToken - (16:0,16 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - MyType
                     ComponentAttribute - (33:0,33 [9] x:\dir\subdir\Test\TestComponent.cshtml) - OnClick - OnClick - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (33:0,33 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Increment
+                        IntermediateToken - (33:0,33 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Increment
                 HtmlContent - (45:0,45 [4] x:\dir\subdir\Test\TestComponent.cshtml)
                     LazyIntermediateToken - (45:0,45 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n\n
             CSharpCode - (56:2,7 [84] x:\dir\subdir\Test\TestComponent.cshtml)

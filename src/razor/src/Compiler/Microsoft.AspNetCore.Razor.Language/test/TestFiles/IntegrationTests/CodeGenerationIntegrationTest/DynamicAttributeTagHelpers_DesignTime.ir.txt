@@ -69,9 +69,9 @@
                     DefaultTagHelperBody - 
                     DefaultTagHelperCreate -  - TestNamespace.InputTagHelper
                     DefaultTagHelperProperty - (168:6,14 [27] DynamicAttributeTagHelpers.cshtml) - bound - string TestNamespace.InputTagHelper.Bound - HtmlAttributeValueStyle.DoubleQuotes
-                        HtmlContent - (168:6,14 [7] DynamicAttributeTagHelpers.cshtml)
+                        HtmlContent - (168:6,14 [6] DynamicAttributeTagHelpers.cshtml)
                             LazyIntermediateToken - (168:6,14 [6] DynamicAttributeTagHelpers.cshtml) - Html - prefix
-                            LazyIntermediateToken - (174:6,20 [1] DynamicAttributeTagHelpers.cshtml) - Html -  
+                            IntermediateToken -  - Html -  
                         CSharpExpression - (176:6,22 [12] DynamicAttributeTagHelpers.cshtml)
                             LazyIntermediateToken - (176:6,22 [12] DynamicAttributeTagHelpers.cshtml) - CSharp - DateTime.Now
                         HtmlContent - (188:6,34 [7] DynamicAttributeTagHelpers.cshtml)
@@ -92,8 +92,8 @@
                     DefaultTagHelperProperty - (255:8,14 [73] DynamicAttributeTagHelpers.cshtml) - bound - string TestNamespace.InputTagHelper.Bound - HtmlAttributeValueStyle.DoubleQuotes
                         CSharpExpression - (256:8,15 [13] DynamicAttributeTagHelpers.cshtml)
                             LazyIntermediateToken - (256:8,15 [13] DynamicAttributeTagHelpers.cshtml) - CSharp - long.MinValue
-                        HtmlContent - (269:8,28 [1] DynamicAttributeTagHelpers.cshtml)
-                            LazyIntermediateToken - (269:8,28 [1] DynamicAttributeTagHelpers.cshtml) - Html -  
+                        HtmlContent - 
+                            IntermediateToken -  - Html -  
                         CSharpCode - (271:8,30 [12] DynamicAttributeTagHelpers.cshtml)
                             LazyIntermediateToken - (271:8,30 [12] DynamicAttributeTagHelpers.cshtml) - CSharp - if (true) { 
                         CSharpExpression - (284:8,43 [12] DynamicAttributeTagHelpers.cshtml)
@@ -104,8 +104,8 @@
                             LazyIntermediateToken - (307:8,66 [5] DynamicAttributeTagHelpers.cshtml) - CSharp - false
                         CSharpCode - (312:8,71 [2] DynamicAttributeTagHelpers.cshtml)
                             LazyIntermediateToken - (312:8,71 [2] DynamicAttributeTagHelpers.cshtml) - CSharp -  }
-                        HtmlContent - (314:8,73 [1] DynamicAttributeTagHelpers.cshtml)
-                            LazyIntermediateToken - (314:8,73 [1] DynamicAttributeTagHelpers.cshtml) - Html -  
+                        HtmlContent - 
+                            IntermediateToken -  - Html -  
                         CSharpExpression - (316:8,75 [12] DynamicAttributeTagHelpers.cshtml)
                             LazyIntermediateToken - (316:8,75 [12] DynamicAttributeTagHelpers.cshtml) - CSharp - int.MaxValue
                     DefaultTagHelperHtmlAttribute -  - unbound - HtmlAttributeValueStyle.DoubleQuotes

@@ -11,7 +11,7 @@
                     ComponentChildContent -  - ChildContent - context
                         Component - (42:1,4 [18] x:\dir\subdir\Test\TestComponent.cshtml) - ChildComponent
                     ComponentAttribute - (28:0,28 [6] x:\dir\subdir\Test\TestComponent.cshtml) - Parameter - Parameter - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (28:0,28 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - (1, 2)
+                        IntermediateToken - (28:0,28 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - (1, 2)
     NamespaceDeclaration -  - __Blazor.Test.TestComponent
         ClassDeclaration -  - internal static - TypeInference -  - 
             ComponentTypeInferenceMethod -  - __Blazor.Test.TestComponent.TypeInference - CreateParentComponent_0
