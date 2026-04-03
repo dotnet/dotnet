@@ -363,6 +363,7 @@ namespace NuGet.Commands
             success &= EvaluateHttpSourceUsage();
             success &= HasValidPlatformVersions();
             success &= PackageReferencesHaveVersions();
+            success &= EnsureNoAliasesWithDisallowedCharacters();
 
             return success;
         }
@@ -842,6 +843,70 @@ namespace NuGet.Commands
             {
                 return true;
             }
+        }
+
+        private bool EnsureNoAliasesWithDisallowedCharacters()
+        {
+            return EnsureNoAliasesWithDisallowedCharacters(_request.Project, _logger);
+        }
+
+        internal static bool EnsureNoAliasesWithDisallowedCharacters(PackageSpec project, ILogger logger)
+        {
+            if (!SdkAnalysisLevelMinimums.IsEnabled(project.RestoreMetadata.SdkAnalysisLevel, project.RestoreMetadata.UsingMicrosoftNETSdk, SdkAnalysisLevelMinimums.V10_0_300))
+            {
+                return true;
+            }
+
+            bool nonAsciiIsError = SdkAnalysisLevelMinimums.IsEnabled(project.RestoreMetadata.SdkAnalysisLevel, project.RestoreMetadata.UsingMicrosoftNETSdk, SdkAnalysisLevelMinimums.V11_0_100);
+            var success = true;
+
+            foreach (TargetFrameworkInformation framework in project.TargetFrameworks)
+            {
+                string alias = framework.TargetAlias;
+                if (string.IsNullOrEmpty(alias))
+                {
+                    continue;
+                }
+
+                if (alias.Contains('/') || alias.Contains('\\'))
+                {
+                    logger.Log(RestoreLogMessage.CreateError(
+                        NuGetLogCode.NU1019,
+                        string.Format(CultureInfo.CurrentCulture, Strings.Log_AliasContainsDisallowedCharacters, project.Name, alias)));
+                    success = false;
+                }
+                else if (!IsAscii(alias))
+                {
+                    if (nonAsciiIsError)
+                    {
+                        logger.Log(RestoreLogMessage.CreateError(
+                            NuGetLogCode.NU1019,
+                            string.Format(CultureInfo.CurrentCulture, Strings.Log_AliasContainsDisallowedCharacters, project.Name, alias)));
+                        success = false;
+                    }
+                    else
+                    {
+                        logger.Log(RestoreLogMessage.CreateWarning(
+                            NuGetLogCode.NU1019,
+                            string.Format(CultureInfo.CurrentCulture, Strings.Log_AliasContainsDisallowedCharacters, project.Name, alias)));
+                    }
+                }
+            }
+
+            return success;
+        }
+
+        internal static bool IsAscii(string value)
+        {
+            foreach (char c in value.AsSpan())
+            {
+                if (c > 127)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         internal static void AnalyzePruningResults(PackageSpec project, TelemetryEvent telemetryEvent, ILogger logger)
