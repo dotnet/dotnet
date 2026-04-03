@@ -39,7 +39,7 @@
     </HelixWorkItem>
   </ItemGroup>  
   <ItemGroup>
-    <AzurePipelinesExpectedTestFailure Include="HelixReporter.TRXTests.HelixReporter.TRXTests.Fail1"/>
+    <AzurePipelinesExpectedTestFailure Include="HelixReporter.TRXTests.Fail1"/>
     <AzurePipelinesExpectedTestFailure Include="HelixReporter.TRXTests.HelixReporter.TRX.Fail2"/>
     <AzurePipelinesExpectedTestFailure Include="tests.UnitTest2.ExpectedFailureTheoryTest"/>
   </ItemGroup>

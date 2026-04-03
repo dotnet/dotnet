@@ -11,6 +11,8 @@
     <NoWarn>$(NoWarn);NU5128</NoWarn>
     <!-- Copy assemblies into lib folder so they can be used as a development dependency -->
     <BuildTaskTargetFolder>lib</BuildTaskTargetFolder>
+    <!-- Signing is not supported in source-only builds -->
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
   </PropertyGroup>
 
   <ItemGroup>

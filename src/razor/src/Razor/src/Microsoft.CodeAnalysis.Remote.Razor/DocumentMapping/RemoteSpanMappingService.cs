@@ -2,17 +2,17 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentExcerpt;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
-using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -30,8 +30,8 @@ internal sealed partial class RemoteSpanMappingService(in ServiceArgs args) : Ra
     }
 
     private readonly RemoteSnapshotManager _snapshotManager = args.ExportProvider.GetExportedValue<RemoteSnapshotManager>();
-    private readonly IDocumentMappingService _documentMappingService = args.ExportProvider.GetExportedValue<IDocumentMappingService>();
     private readonly ITelemetryReporter _telemetryReporter = args.ExportProvider.GetExportedValue<ITelemetryReporter>();
+    private readonly IRazorEditService _razorEditService = args.ExportProvider.GetExportedValue<IRazorEditService>();
 
     public ValueTask<RemoteExcerptResult?> TryExcerptAsync(RazorPinnedSolutionInfoWrapper solutionInfo, DocumentId generatedDocumentId, TextSpan span, RazorExcerptMode mode, RazorClassificationOptionsWrapper options, CancellationToken cancellationToken)
         => RunServiceAsync(
@@ -101,7 +101,7 @@ internal sealed partial class RemoteSpanMappingService(in ServiceArgs args) : Ra
         return await MapSpansAsync(documentSnapshot, codeDocument, spans, cancellationToken).ConfigureAwait(false);
     }
 
-    private static async Task<ImmutableArray<RazorMappedSpanResult>> MapSpansAsync(RemoteDocumentSnapshot documentSnapshot, RazorCodeDocument codeDocument, ImmutableArray<TextSpan> spans, CancellationToken cancellationToken)
+    private async Task<ImmutableArray<RazorMappedSpanResult>> MapSpansAsync(RemoteDocumentSnapshot documentSnapshot, RazorCodeDocument codeDocument, ImmutableArray<TextSpan> spans, CancellationToken cancellationToken)
     {
         var csharpSyntaxTree = await documentSnapshot.GetCSharpSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
         var csharpSyntaxNode = await csharpSyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
@@ -127,7 +127,7 @@ internal sealed partial class RemoteSpanMappingService(in ServiceArgs args) : Ra
             {
                 results.Add(new(filePath, new(LinePosition.Zero, LinePosition.Zero), new TextSpan()));
             }
-            else if (RazorEditHelper.TryGetMappedSpan(span, source, csharpDocument, out var linePositionSpan, out var mappedSpan))
+            else if (TryGetMappedSpan(span, source, csharpDocument, out var linePositionSpan, out var mappedSpan))
             {
                 results.Add(new(filePath, linePositionSpan, mappedSpan));
             }
@@ -138,6 +138,42 @@ internal sealed partial class RemoteSpanMappingService(in ServiceArgs args) : Ra
         }
 
         return results.ToImmutableAndClear();
+    }
+
+    private static bool TryGetMappedSpan(TextSpan span, SourceText source, RazorCSharpDocument csharpDocument, out LinePositionSpan linePositionSpan, out TextSpan mappedSpan)
+    {
+        foreach (var mapping in csharpDocument.SourceMappingsSortedByGenerated)
+        {
+            var generated = mapping.GeneratedSpan.AsTextSpan();
+
+            if (!generated.Contains(span))
+            {
+                if (generated.Start > span.End)
+                {
+                    // This span (and all following) are after the area we're interested in
+                    break;
+                }
+
+                // If the search span isn't contained within the generated span, it is not a match.
+                // A C# identifier won't cover multiple generated spans.
+                continue;
+            }
+
+            var leftOffset = span.Start - generated.Start;
+            var rightOffset = span.End - generated.End;
+            if (leftOffset >= 0 && rightOffset <= 0)
+            {
+                // This span mapping contains the span.
+                var original = mapping.OriginalSpan.AsTextSpan();
+                mappedSpan = new TextSpan(original.Start + leftOffset, (original.End + rightOffset) - (original.Start + leftOffset));
+                linePositionSpan = source.GetLinePositionSpan(mappedSpan);
+                return true;
+            }
+        }
+
+        mappedSpan = default;
+        linePositionSpan = default;
+        return false;
     }
 
     public ValueTask<ImmutableArray<RazorMappedEditResult>> MapTextChangesAsync(RazorPinnedSolutionInfoWrapper solutionInfo, DocumentId generatedDocumentId, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
@@ -157,20 +193,17 @@ internal sealed partial class RemoteSpanMappingService(in ServiceArgs args) : Ra
             }
 
             var documentSnapshot = _snapshotManager.GetSnapshot(razorDocument);
-            var results = await RazorEditHelper.MapCSharpEditsAsync(
-                changes.SelectAsArray(c => c.ToRazorTextChange()),
+            var textChanges = await _razorEditService.MapCSharpEditsAsync(
+                changes,
                 documentSnapshot,
-                _documentMappingService,
-                _telemetryReporter,
                 cancellationToken).ConfigureAwait(false);
 
-            if (results.IsDefaultOrEmpty)
+            if (textChanges.IsDefaultOrEmpty)
             {
                 return [];
             }
 
             var razorSource = await razorDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
-            var textChanges = results.SelectAsArray(te => te.ToTextChange());
 
             return [new RazorMappedEditResult() { FilePath = documentSnapshot.FilePath, TextChanges = [.. textChanges] }];
         }

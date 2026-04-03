@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
+    <DisallowDotNetFinalVersionKindOverride>true</DisallowDotNetFinalVersionKindOverride>
+
     <!-- Don't pass any build actions because the repo doesn't support them. -->
     <BuildActions></BuildActions>
     <!-- Call into a custom build script as nuget-client doesn't use Arcade infra. -->

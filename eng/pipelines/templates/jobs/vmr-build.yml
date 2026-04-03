@@ -718,8 +718,18 @@ jobs:
 
       - script: |
           set -ex
+          echo "=== System info: disk ==="
           df -h
 
+          echo ""
+          echo "=== System info: memory ==="
+          if [[ "$(uname)" == "Darwin" ]]; then
+            memory_pressure
+          else
+            cat /proc/meminfo
+          fi
+
+          echo "=== Build ==="
           customEnvVars=""
           customPreBuildArgs=""
           customBuildArgs="$(baseArguments)"

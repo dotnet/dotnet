@@ -409,8 +409,8 @@ NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario imposta
         <note>{0} - package id</note>
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
-        <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, or directory.</source>
-        <target state="translated">Percorso mancante o non valido: '{0}'. Specificare un percorso di un progetto, di un file di soluzione o una directory.</target>
+        <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, file-based app, or project directory.</source>
+        <target state="needs-review-translation">Percorso mancante o non valido: '{0}'. Specificare un percorso di un progetto, di un file di soluzione o una directory.</target>
         <note>{0} - Input path argument</note>
       </trans-unit>
       <trans-unit id="Error_PathNotFound">
@@ -972,8 +972,8 @@ Per altre informazioni, vedere https://docs.nuget.org/docs/reference/command-lin
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_ProjectOptionDescription">
-        <source>Path to a project or solution file, or a directory.</source>
-        <target state="translated">Percorso di un progetto, un file di soluzione o una directory.</target>
+        <source>Path to a project or solution file or file-based app, or a project directory.</source>
+        <target state="needs-review-translation">Percorso di un progetto, un file di soluzione o una directory.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_VulnerableOptionDescription">
@@ -1527,8 +1527,8 @@ La ricerca viene eseguita in un confronto di stringhe senza distinzione tra maiu
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_PathArgument_Description">
-        <source>A path to a project, solution file, or directory.</source>
-        <target state="translated">Percorso di un progetto, un file di soluzione o una directory.</target>
+        <source>A path to a project, solution file, file-based app, or project directory.</source>
+        <target state="needs-review-translation">Percorso di un progetto, un file di soluzione o una directory.</target>
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_Warning_AssetsFileDoesNotContainSpecifiedTarget">

@@ -13,6 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)AutoInsert\CloseTextTagOnAutoInsertProviderTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AutoInsert\PreferHtmlInAttributeValuesDocumentPositionInfoStrategyTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AutoInsert\RazorOnAutoInsertProviderTestBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeActions\GenerateMethodTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CodeActions\AddUsingTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CodeActions\CohostCodeActionsEndpointTestBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CodeActions\CreateComponentFromTagTests.cs" />
@@ -65,7 +66,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Formatting\HtmlFormattingTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Formatting\MoreHtmlFormattingTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Formatting\RazorFormattingServiceTest.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mapping\RazorEditHelperTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\RazorEditServiceTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProjectAvailabilityTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RazorDocumentMappingServiceTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ThrowingSnippetCompletionItemResolveProvider.cs" />

@@ -65,11 +65,11 @@ extends:
     pool:
       ${{ if eq(variables['System.TeamProject'], 'DevDiv') }}:
         name: AzurePipelines-EO
-        image: 1ESPT-Windows2019
+        image: 1ESPT-Windows2025
         os: windows
       ${{ else }}:
         name: NetCore1ESPool-Publishing-Internal
-        image: windows.vs2022.amd64
+        image: windows.vs2026.amd64
         os: windows
     sdl:
       policheck:

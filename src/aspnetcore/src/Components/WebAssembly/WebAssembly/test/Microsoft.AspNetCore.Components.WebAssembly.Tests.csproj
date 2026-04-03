@@ -11,4 +11,9 @@
     <Reference Include="Microsoft.CodeAnalysis.CSharp" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <!-- Keep metrics support enabled to test them -->
+    <MetricsSupport>true</MetricsSupport>
+  </PropertyGroup>
+
 </Project>

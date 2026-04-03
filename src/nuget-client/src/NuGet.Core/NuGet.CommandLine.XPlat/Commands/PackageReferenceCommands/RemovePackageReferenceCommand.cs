@@ -14,7 +14,8 @@ namespace NuGet.CommandLine.XPlat
     internal class RemovePackageReferenceCommand
     {
         public static void Register(CommandLineApplication app, Func<ILogger> getLogger,
-            Func<IPackageReferenceCommandRunner> getCommandRunner)
+            Func<IPackageReferenceCommandRunner> getCommandRunner,
+            Func<IVirtualProjectBuilder?>? getVirtualProjectBuilder = null)
         {
             app.Command("remove", removePkg =>
             {
@@ -43,16 +44,18 @@ namespace NuGet.CommandLine.XPlat
 
                 removePkg.OnExecute(() =>
                 {
+                    var virtualProjectBuilder = getVirtualProjectBuilder?.Invoke();
+
                     ValidateArgument(id, removePkg.Name);
                     ValidateArgument(projectPath, removePkg.Name);
-                    ValidateProjectPath(projectPath, removePkg.Name);
+                    ValidateProjectPath(projectPath, removePkg.Name, virtualProjectBuilder);
                     var logger = getLogger();
                     var packageRefArgs = new PackageReferenceArgs(projectPath.Value(), logger)
                     {
                         Interactive = interactive.HasValue(),
                         PackageId = id.Value()
                     };
-                    var msBuild = new MSBuildAPIUtility(logger);
+                    var msBuild = new MSBuildAPIUtility(logger, virtualProjectBuilder);
                     var removePackageRefCommandRunner = getCommandRunner();
                     return removePackageRefCommandRunner.ExecuteCommand(packageRefArgs, msBuild);
                 });
@@ -69,9 +72,11 @@ namespace NuGet.CommandLine.XPlat
             }
         }
 
-        private static void ValidateProjectPath(CommandOption projectPath, string commandName)
+        private static void ValidateProjectPath(CommandOption projectPath, string commandName, IVirtualProjectBuilder? virtualProjectBuilder)
         {
-            if (!File.Exists(projectPath.Value()) || !projectPath.Value().EndsWith("proj", StringComparison.OrdinalIgnoreCase))
+            if (!File.Exists(projectPath.Value())
+                || (!projectPath.Value().EndsWith("proj", StringComparison.OrdinalIgnoreCase)
+                    && virtualProjectBuilder?.IsValidEntryPointPath(projectPath.Value()) != true))
             {
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
                     Strings.Error_PkgMissingOrInvalidProjectFile,
