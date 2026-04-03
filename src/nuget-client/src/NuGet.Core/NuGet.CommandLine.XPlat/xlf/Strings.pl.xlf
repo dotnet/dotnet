@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="pl" original="../Strings.resx">
     <body>
@@ -410,7 +410,7 @@ Menedżer NuGet wymaga źródeł HTTPS. Aby użyć źródeł HTTP, musisz wyraź
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
         <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, file-based app, or project directory.</source>
-        <target state="needs-review-translation">Brak ścieżki „{0}” lub jest ona nieprawidłowa. Podaj ścieżkę do projektu, pliku rozwiązania lub katalogu.</target>
+        <target state="translated">Brak ścieżki „{0}” lub jest ona nieprawidłowa. Podaj ścieżkę do projektu, pliku rozwiązania, aplikacji opartej na plikach lub katalogu projektu.</target>
         <note>{0} - Input path argument</note>
       </trans-unit>
       <trans-unit id="Error_PathNotFound">
@@ -973,7 +973,7 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_ProjectOptionDescription">
         <source>Path to a project or solution file or file-based app, or a project directory.</source>
-        <target state="needs-review-translation">Ścieżka do pliku projektu lub rozwiązania albo katalogu.</target>
+        <target state="translated">Ścieżka do pliku projektu lub rozwiązania, aplikacji opartej na plikach lub katalogu projektu.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_VulnerableOptionDescription">
@@ -1136,7 +1136,7 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
       </trans-unit>
       <trans-unit id="SignCommandAllowUntrustedRootDescription">
         <source>Allow signing with certificates whose root certificate is not in a trusted root store. The certificate chain is still built and validated for structure, but UntrustedRoot status is treated as a warning.</source>
-        <target state="new">Allow signing with certificates whose root certificate is not in a trusted root store. The certificate chain is still built and validated for structure, but UntrustedRoot status is treated as a warning.</target>
+        <target state="translated">Zezwalaj na podpisywanie przy użyciu certyfikatów, których certyfikat główny nie znajduje się w zaufanym magazynie głównym. Łańcuch certyfikatów jest nadal kompilowany i weryfikowany pod kątem struktury, ale stan UntrustedRoot jest traktowany jako ostrzeżenie.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateFingerprintDescription">
@@ -1528,7 +1528,7 @@ Wyszukiwanie polega na porównywaniu łańcuchów bez rozróżniania wielkości 
       </trans-unit>
       <trans-unit id="WhyCommand_PathArgument_Description">
         <source>A path to a project, solution file, file-based app, or project directory.</source>
-        <target state="needs-review-translation">Ścieżka do projektu, pliku rozwiązania lub katalogu.</target>
+        <target state="translated">Ścieżka do projektu, pliku rozwiązania, aplikacji opartej na plikach lub katalogu projektu.</target>
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_Warning_AssetsFileDoesNotContainSpecifiedTarget">
