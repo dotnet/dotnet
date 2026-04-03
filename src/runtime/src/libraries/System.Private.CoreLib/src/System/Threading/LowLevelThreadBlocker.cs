@@ -5,11 +5,7 @@
 // use OS-provided compare-and-wait API.
 #define USE_FUTEX
 #elif TARGET_WINDOWS
-// fallback to autoreset event
-// On Windows both WaitOnAddress and Condition have nontrivial latency when blocking a thread and that causes regressions.
-// Autoreset event blocks faster.
-// Attempt to use WaitOnAddress resulted in regressions.
-#define USE_EVENT
+#define USE_FUTEX
 #else
 // fallback to monitor (condvar+mutex)
 #define USE_MONITOR

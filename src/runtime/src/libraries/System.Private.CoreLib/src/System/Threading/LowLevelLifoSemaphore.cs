@@ -150,10 +150,10 @@ namespace System.Threading
                 }
             }
 
-            return WaitNoSpin(timeoutMs);
+            return WaitNoSpin(timeoutMs, allowFastWake: true);
         }
 
-        public bool WaitNoSpin(int timeoutMs)
+        public bool WaitNoSpin(int timeoutMs, bool allowFastWake = false)
         {
             // Now we will try registering as a waiter and wait.
             // If signaled before that, we have to acquire as this can be the last thread that could take that signal.
@@ -176,26 +176,38 @@ namespace System.Threading
                 Counts countsBeforeUpdate = _separated._counts.InterlockedCompareExchange(newCounts, counts);
                 if (countsBeforeUpdate == counts)
                 {
-                    return counts.SignalCount != 0 || WaitAsWaiter(timeoutMs);
+                    return counts.SignalCount != 0 || WaitAsWaiter(timeoutMs, allowFastWake);
                 }
 
                 Backoff.Exponential(collisionCount++);
             }
         }
 
-        private bool WaitAsWaiter(int timeoutMs)
+        private bool WaitAsWaiter(int timeoutMs, bool allowFastWake)
         {
             Debug.Assert(timeoutMs >= -1);
 
+            // TODO: VS move inside the loop. (or Block?)
             _onWait();
 
+            // TODO: VS move allowFastWake into Blocker
+            long cooldown = Stopwatch.Frequency * 4 / 1000000;
             while (true)
             {
-                if (timeoutMs == 0 || !WaitCore(timeoutMs))
+                long blockingStart = allowFastWake ? 0 : Stopwatch.GetTimestamp();
+                if (timeoutMs == 0 || !Block(timeoutMs))
                 {
                     // Unregister the waiter, but do not decrement wake count, the thread did not observe a wake.
                     _separated._counts.InterlockedDecrementWaiterCount();
                     return false;
+                }
+
+                if (!allowFastWake)
+                {
+                    while (Stopwatch.GetTimestamp() - blockingStart < cooldown)
+                    {
+                        Thread.SpinWait(1);
+                    }
                 }
 
                 uint collisionCount = 0;
@@ -274,7 +286,7 @@ namespace System.Threading
             }
         }
 
-        private bool WaitCore(int timeoutMs)
+        private bool Block(int timeoutMs)
         {
             Debug.Assert(timeoutMs >= -1);
 

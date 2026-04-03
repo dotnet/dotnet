@@ -105,12 +105,13 @@ namespace System.Threading
 
                 while (true)
                 {
-                    bool noWork = false;
-                    while (noWork?
+                    bool isIdle = false;
+                    while (isIdle ?
                         semaphore.WaitNoSpin(timeoutMs) :
+                        //semaphore.Wait(timeoutMs, threadPoolInstance._separated.counts.NumExistingThreads) :
                         semaphore.Wait(timeoutMs, threadPoolInstance._separated.counts.NumExistingThreads))
                     {
-                        WorkerDoWork(threadPoolInstance, out noWork);
+                        WorkerDoWork(threadPoolInstance, out isIdle);
                     }
 
                     // We've timed out waiting on the semaphore. Time to exit.
@@ -122,7 +123,7 @@ namespace System.Threading
                 }
             }
 
-            private static void WorkerDoWork(PortableThreadPool threadPoolInstance, out bool noWork)
+            private static void WorkerDoWork(PortableThreadPool threadPoolInstance, out bool isIdle)
             {
                 do
                 {
@@ -134,15 +135,25 @@ namespace System.Threading
                     {
                         // We took the request, now we must Dispatch some work items.
                         threadPoolInstance.NotifyDispatchProgress(Environment.TickCount);
-                        if (!ThreadPoolWorkQueue.Dispatch(out noWork))
+                        switch (ThreadPoolWorkQueue.Dispatch())
                         {
-                            // We are above goal and would have already removed this working worker in the counts.
-                            return;
+                            case ThreadPoolWorkQueue.DispatchResult.Spurious:
+                                isIdle = true;
+                                break;
+
+                            case ThreadPoolWorkQueue.DispatchResult.ShouldStop:
+                                isIdle = false;
+                                // We are above goal and this  worker is already removed in the counts.
+                                return;
+
+                            default:
+                                isIdle = false;
+                                break;
                         }
                     }
                     else
                     {
-                        noWork = true;
+                        isIdle = true;
                     }
 
                     // We could not find more work in the queue and will try to stop being active.

@@ -16,7 +16,7 @@ namespace System.Threading
         // will do a lot less attempts than a simple retry. On multiprocessor machine fruitless attempts
         // will cause unnecessary sharing of the contended state which may make modifying the state more expensive.
         // To protect against degenerate cases we will cap the per-iteration wait to 1-2 thousand spinwaits.
-        private const uint MaxExponentialBackoffBits = 14;
+        private const uint MaxExponentialBackoffBits = 10;
 
         internal static unsafe int Exponential(uint attempt)
         {
