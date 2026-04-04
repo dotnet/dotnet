@@ -1,5 +1,5 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
-<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Sign">
+<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Execute">
 
   <!--
     Documentation for publishing is available here:
@@ -38,7 +38,7 @@
     <FileSignInfo Update="@(FileSignInfo->WithMetadataValue('CertificateName','Microsoft400'))" CertificateName="$(DotNetCertificateName)" />
   </ItemGroup>
 
-  <Target Name="Sign">
+  <Target Name="Execute">
     <Error Text="The value of DotNetSignType is invalid: '$(DotNetSignType)'"
            Condition="'$(DotNetSignType)' != 'real' and '$(DotNetSignType)' != 'test' and '$(DotNetSignType)' != ''" />
 
