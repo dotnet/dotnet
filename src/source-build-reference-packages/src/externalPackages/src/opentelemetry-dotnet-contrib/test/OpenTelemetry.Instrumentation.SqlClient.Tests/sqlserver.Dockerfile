@@ -1,1 +1,0 @@
-FROM mcr.microsoft.com/mssql/server:2025-latest@sha256:54b23ca766287dab5f6f55162923325f07cdec6ccb42108f37c55c87e7688ebd
