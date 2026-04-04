@@ -32,6 +32,7 @@ stages:
         clean: all
       jobs:
       - job: Windows_NT
+        enablePublishing: true
         timeoutInMinutes: 90
         strategy:
           matrix:
