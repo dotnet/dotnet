@@ -1,5 +1,5 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
-<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="_Publish">
+<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="PublishArtifacts">
 
   <!--
     Documentation for publishing is available here:
@@ -125,7 +125,7 @@
   <!-- Allow for repo specific Publish properties such as add additional files to be published -->
   <Import Project="$(RepositoryEngineeringDir)Publishing.props" Condition="Exists('$(RepositoryEngineeringDir)Publishing.props')" />
 
-  <Target Name="_Publish" DependsOnTargets="PublishToAzureDevOpsArtifacts" />
+  <Target Name="PublishArtifacts" DependsOnTargets="PublishToAzureDevOpsArtifacts" />
 
   <Target Name="BeforePublish" Condition="'@(Artifact)' != ''">
     <ItemGroup>
