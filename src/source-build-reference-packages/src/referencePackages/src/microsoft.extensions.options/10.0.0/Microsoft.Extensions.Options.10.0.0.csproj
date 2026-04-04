@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net10.0;net8.0;net9.0;netstandard2.0;netstandard2.1</TargetFrameworks>
+    <PackageVersion>10.0.0</PackageVersion>
+    <AssemblyName>Microsoft.Extensions.Options</AssemblyName>
+    <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <ProjectReference Include="../../microsoft.extensions.dependencyinjection.abstractions/10.0.0/Microsoft.Extensions.DependencyInjection.Abstractions.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.primitives/10.0.0/Microsoft.Extensions.Primitives.10.0.0.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <ProjectReference Include="../../microsoft.extensions.dependencyinjection.abstractions/10.0.0/Microsoft.Extensions.DependencyInjection.Abstractions.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.primitives/10.0.0/Microsoft.Extensions.Primitives.10.0.0.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <ProjectReference Include="../../microsoft.extensions.dependencyinjection.abstractions/10.0.0/Microsoft.Extensions.DependencyInjection.Abstractions.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.primitives/10.0.0/Microsoft.Extensions.Primitives.10.0.0.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <ProjectReference Include="../../microsoft.extensions.dependencyinjection.abstractions/10.0.0/Microsoft.Extensions.DependencyInjection.Abstractions.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.primitives/10.0.0/Microsoft.Extensions.Primitives.10.0.0.csproj" />
+    <ProjectReference Include="../../system.componentmodel.annotations/5.0.0/System.ComponentModel.Annotations.5.0.0.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
+    <ProjectReference Include="../../microsoft.extensions.dependencyinjection.abstractions/10.0.0/Microsoft.Extensions.DependencyInjection.Abstractions.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.primitives/10.0.0/Microsoft.Extensions.Primitives.10.0.0.csproj" />
+    <ProjectReference Include="../../system.componentmodel.annotations/5.0.0/System.ComponentModel.Annotations.5.0.0.csproj" />
+  </ItemGroup>
+
+</Project>

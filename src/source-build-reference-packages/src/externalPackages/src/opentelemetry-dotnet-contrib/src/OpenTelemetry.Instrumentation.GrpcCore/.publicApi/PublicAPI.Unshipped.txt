@@ -1,0 +1,29 @@
+OpenTelemetry.Instrumentation.GrpcCore.ClientTracingInterceptor
+OpenTelemetry.Instrumentation.GrpcCore.ClientTracingInterceptor.ClientTracingInterceptor(OpenTelemetry.Instrumentation.GrpcCore.ClientTracingInterceptorOptions! options) -> void
+OpenTelemetry.Instrumentation.GrpcCore.ClientTracingInterceptorOptions
+OpenTelemetry.Instrumentation.GrpcCore.ClientTracingInterceptorOptions.ClientTracingInterceptorOptions() -> void
+OpenTelemetry.Instrumentation.GrpcCore.ClientTracingInterceptorOptions.Propagator.get -> OpenTelemetry.Context.Propagation.TextMapPropagator!
+OpenTelemetry.Instrumentation.GrpcCore.ClientTracingInterceptorOptions.RecordException.get -> bool
+OpenTelemetry.Instrumentation.GrpcCore.ClientTracingInterceptorOptions.RecordException.set -> void
+OpenTelemetry.Instrumentation.GrpcCore.ClientTracingInterceptorOptions.RecordMessageEvents.get -> bool
+OpenTelemetry.Instrumentation.GrpcCore.ClientTracingInterceptorOptions.RecordMessageEvents.set -> void
+OpenTelemetry.Instrumentation.GrpcCore.ServerTracingInterceptor
+OpenTelemetry.Instrumentation.GrpcCore.ServerTracingInterceptor.ServerTracingInterceptor(OpenTelemetry.Instrumentation.GrpcCore.ServerTracingInterceptorOptions! options) -> void
+OpenTelemetry.Instrumentation.GrpcCore.ServerTracingInterceptorOptions
+OpenTelemetry.Instrumentation.GrpcCore.ServerTracingInterceptorOptions.Propagator.get -> OpenTelemetry.Context.Propagation.TextMapPropagator!
+OpenTelemetry.Instrumentation.GrpcCore.ServerTracingInterceptorOptions.RecordException.get -> bool
+OpenTelemetry.Instrumentation.GrpcCore.ServerTracingInterceptorOptions.RecordException.set -> void
+OpenTelemetry.Instrumentation.GrpcCore.ServerTracingInterceptorOptions.RecordMessageEvents.get -> bool
+OpenTelemetry.Instrumentation.GrpcCore.ServerTracingInterceptorOptions.RecordMessageEvents.set -> void
+OpenTelemetry.Instrumentation.GrpcCore.ServerTracingInterceptorOptions.ServerTracingInterceptorOptions() -> void
+OpenTelemetry.Trace.TracerProviderBuilderExtensions
+override OpenTelemetry.Instrumentation.GrpcCore.ClientTracingInterceptor.AsyncClientStreamingCall<TRequest, TResponse>(Grpc.Core.Interceptors.ClientInterceptorContext<TRequest!, TResponse!> context, Grpc.Core.Interceptors.Interceptor.AsyncClientStreamingCallContinuation<TRequest!, TResponse!>! continuation) -> Grpc.Core.AsyncClientStreamingCall<TRequest!, TResponse!>!
+override OpenTelemetry.Instrumentation.GrpcCore.ClientTracingInterceptor.AsyncDuplexStreamingCall<TRequest, TResponse>(Grpc.Core.Interceptors.ClientInterceptorContext<TRequest!, TResponse!> context, Grpc.Core.Interceptors.Interceptor.AsyncDuplexStreamingCallContinuation<TRequest!, TResponse!>! continuation) -> Grpc.Core.AsyncDuplexStreamingCall<TRequest!, TResponse!>!
+override OpenTelemetry.Instrumentation.GrpcCore.ClientTracingInterceptor.AsyncServerStreamingCall<TRequest, TResponse>(TRequest! request, Grpc.Core.Interceptors.ClientInterceptorContext<TRequest!, TResponse!> context, Grpc.Core.Interceptors.Interceptor.AsyncServerStreamingCallContinuation<TRequest!, TResponse!>! continuation) -> Grpc.Core.AsyncServerStreamingCall<TResponse!>!
+override OpenTelemetry.Instrumentation.GrpcCore.ClientTracingInterceptor.AsyncUnaryCall<TRequest, TResponse>(TRequest! request, Grpc.Core.Interceptors.ClientInterceptorContext<TRequest!, TResponse!> context, Grpc.Core.Interceptors.Interceptor.AsyncUnaryCallContinuation<TRequest!, TResponse!>! continuation) -> Grpc.Core.AsyncUnaryCall<TResponse!>!
+override OpenTelemetry.Instrumentation.GrpcCore.ClientTracingInterceptor.BlockingUnaryCall<TRequest, TResponse>(TRequest! request, Grpc.Core.Interceptors.ClientInterceptorContext<TRequest!, TResponse!> context, Grpc.Core.Interceptors.Interceptor.BlockingUnaryCallContinuation<TRequest!, TResponse!>! continuation) -> TResponse!
+override OpenTelemetry.Instrumentation.GrpcCore.ServerTracingInterceptor.ClientStreamingServerHandler<TRequest, TResponse>(Grpc.Core.IAsyncStreamReader<TRequest!>! requestStream, Grpc.Core.ServerCallContext! context, Grpc.Core.ClientStreamingServerMethod<TRequest!, TResponse!>! continuation) -> System.Threading.Tasks.Task<TResponse!>!
+override OpenTelemetry.Instrumentation.GrpcCore.ServerTracingInterceptor.DuplexStreamingServerHandler<TRequest, TResponse>(Grpc.Core.IAsyncStreamReader<TRequest!>! requestStream, Grpc.Core.IServerStreamWriter<TResponse!>! responseStream, Grpc.Core.ServerCallContext! context, Grpc.Core.DuplexStreamingServerMethod<TRequest!, TResponse!>! continuation) -> System.Threading.Tasks.Task!
+override OpenTelemetry.Instrumentation.GrpcCore.ServerTracingInterceptor.ServerStreamingServerHandler<TRequest, TResponse>(TRequest! request, Grpc.Core.IServerStreamWriter<TResponse!>! responseStream, Grpc.Core.ServerCallContext! context, Grpc.Core.ServerStreamingServerMethod<TRequest!, TResponse!>! continuation) -> System.Threading.Tasks.Task!
+override OpenTelemetry.Instrumentation.GrpcCore.ServerTracingInterceptor.UnaryServerHandler<TRequest, TResponse>(TRequest! request, Grpc.Core.ServerCallContext! context, Grpc.Core.UnaryServerMethod<TRequest!, TResponse!>! continuation) -> System.Threading.Tasks.Task<TResponse!>!
+static OpenTelemetry.Trace.TracerProviderBuilderExtensions.AddGrpcCoreInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! builder) -> OpenTelemetry.Trace.TracerProviderBuilder!

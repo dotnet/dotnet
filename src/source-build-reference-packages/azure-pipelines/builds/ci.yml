@@ -33,6 +33,9 @@ extends:
   template: azure-pipelines/MicroBuild.1ES.Official.yml@MicroBuildTemplate
   parameters:
     sdl:
+      git:
+        longpaths: true
+        submodules: recursive
       binskim:
         enabled: true
       componentgovernance:

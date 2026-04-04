@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- AWSSDK v4 does not support .NET Framework 4.6.2 -->
+  <PropertyGroup>
+    <NetFrameworkMinimumSupportedVersion>net472</NetFrameworkMinimumSupportedVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFrameworks>$(TargetFrameworksForLibraries)</TargetFrameworks>
+    <TargetFrameworks Condition="$(OS) == 'Windows_NT'">$(TargetFrameworks);$(NetFrameworkMinimumSupportedVersion)</TargetFrameworks>
+    <Description>AWS client instrumentation for OpenTelemetry .NET.</Description>
+    <MinVerTagPrefix>Instrumentation.AWS-</MinVerTagPrefix>
+    <DefineConstants>INSTRUMENTATION_AWS;$(DefineConstants)</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageValidationBaselineVersion>1.14.2</PackageValidationBaselineVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(RepoRoot)\src\OpenTelemetry.Extensions.AWS\OpenTelemetry.Extensions.AWS.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.Core" VersionOverride="[4.0.3.3, 5.0.0)" />
+    <PackageReference Include="AWSSDK.SimpleNotificationService" VersionOverride="[4.0.2.7, 5.0.0)" />
+    <PackageReference Include="AWSSDK.SQS" VersionOverride="[4.0.2.5, 5.0.0)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="$(RepoRoot)\src\Shared\AWS\*.cs" Link="Includes\AWS\%(Filename).cs" />
+    <Compile Include="$(RepoRoot)\src\Shared\AssemblyVersionExtensions.cs" Link="Includes\AssemblyVersionExtensions.cs" />
+    <Compile Include="$(RepoRoot)\src\Shared\Guard.cs" Link="Includes\Guard.cs" />
+  </ItemGroup>
+
+</Project>

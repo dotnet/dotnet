@@ -1,0 +1,89 @@
+[
+  {
+    "name": "simple_query",
+    "input": {
+      "connectionString": "Data Source=(localdb)\\MSSQLLocalDB;Database=master",
+      "commandType": "Text",
+      "commandText": "select * from sys.databases"
+    },
+    "expected": {
+      "db.collection.name": null,
+      "db.namespace": "MSSQLLocalDB.master",
+      "db.operation.batch.size": null,
+      "db.operation.name": null,
+      "db.query.summary": "select sys.databases",
+      "db.query.text": "select * from sys.databases",
+      "db.response.status_code": null,
+      "db.stored_procedure.name": null,
+      "error.type": null,
+      "server.address": "(localdb)",
+      "server.port": null,
+      "spanName": "select sys.databases"
+    },
+    "expectedNetFramework": {
+      "db.operation.name": null,
+      "db.query.summary": "select sys.databases",
+      "db.query.text": "select * from sys.databases",
+      "db.stored_procedure.name": null,
+      "spanName": "select sys.databases"
+    }
+  },
+  {
+    "name": "stored_procedure",
+    "input": {
+      "connectionString": "Data Source=(localdb)\\MSSQLLocalDB;Database=master",
+      "commandType": "StoredProcedure",
+      "commandText": "SP_GetOrders"
+    },
+    "expected": {
+      "db.collection.name": null,
+      "db.namespace": "MSSQLLocalDB.master",
+      "db.operation.batch.size": null,
+      "db.operation.name": "EXECUTE",
+      "db.query.summary": "EXECUTE SP_GetOrders",
+      "db.query.text": null,
+      "db.response.status_code": null,
+      "db.stored_procedure.name": "SP_GetOrders",
+      "error.type": null,
+      "server.address": "(localdb)",
+      "server.port": null,
+      "spanName": "EXECUTE SP_GetOrders"
+    },
+    "expectedNetFramework": {
+      "db.operation.name": null,
+      "db.query.summary": null,
+      "db.query.text": "SP_GetOrders",
+      "db.stored_procedure.name": null,
+      "spanName": "MSSQLLocalDB.master"
+    }
+  },
+  {
+    "name": "connection_string_with_port",
+    "input": {
+      "connectionString": "Data Source=(localdb)\\MSSQLLocalDB,1434;Database=master",
+      "commandType": "Text",
+      "commandText": "select * from sys.databases"
+    },
+    "expected": {
+      "db.collection.name": null,
+      "db.namespace": "MSSQLLocalDB.master",
+      "db.operation.batch.size": null,
+      "db.operation.name": null,
+      "db.query.summary": "select sys.databases",
+      "db.query.text": "select * from sys.databases",
+      "db.response.status_code": null,
+      "db.stored_procedure.name": null,
+      "error.type": null,
+      "server.address": "(localdb)",
+      "server.port": 1434,
+      "spanName": "select sys.databases"
+    },
+    "expectedNetFramework": {
+      "db.operation.name": null,
+      "db.query.summary": "select sys.databases",
+      "db.query.text": "select * from sys.databases",
+      "db.stored_procedure.name": null,
+      "spanName": "select sys.databases"
+    }
+  }
+]

@@ -96,9 +96,9 @@ internal static class ExecuteHelper
         return (process, output, error);
     }
 
-    public static string ExecuteProcessValidateExitCode(string fileName, string args, ITestOutputHelper outputHelper)
+    public static string ExecuteProcessValidateExitCode(string fileName, string args, ITestOutputHelper outputHelper, Action<Process>? configure = null)
     {
-        (Process Process, string StdOut, string StdErr) result = ExecuteHelper.ExecuteProcess(fileName, args, outputHelper);
+        (Process Process, string StdOut, string StdErr) result = ExecuteHelper.ExecuteProcess(fileName, args, outputHelper, configure: configure);
         ValidateExitCode(result);
 
         return result.StdOut;

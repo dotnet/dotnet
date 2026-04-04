@@ -1,0 +1,65 @@
+{
+  "NextToken": null,
+  "SamplingRuleRecords": [
+    {
+      "CreatedAt": 1.67799933E9,
+      "ModifiedAt": 1.67799933E9,
+      "SamplingRule": {
+        "Attributes": {
+          "foo": "bar",
+          "doo": "baz"
+        },
+        "FixedRate": 0.05,
+        "HTTPMethod": "*",
+        "Host": "*",
+        "Priority": 1000,
+        "ReservoirSize": 10,
+        "ResourceARN": "*",
+        "RuleARN": "arn:aws:xray:us-west-2:123456789000:sampling-rule/Rule1",
+        "RuleName": "Rule1",
+        "ServiceName": "*",
+        "ServiceType": "AWS::Foo::Bar",
+        "URLPath": "*",
+        "Version": 1
+      }
+    },
+    {
+      "CreatedAt": 0.0,
+      "ModifiedAt": 1.611564245E9,
+      "SamplingRule": {
+        "Attributes": {},
+        "FixedRate": 0.05,
+        "HTTPMethod": "*",
+        "Host": "*",
+        "Priority": 10000,
+        "ReservoirSize": 1,
+        "ResourceARN": "*",
+        "RuleARN": "arn:aws:xray:us-west-2:123456789000:sampling-rule/Default",
+        "RuleName": "Default",
+        "ServiceName": "*",
+        "ServiceType": "*",
+        "URLPath": "*",
+        "Version": 1
+      }
+    },
+    {
+      "CreatedAt": 1.676038494E9,
+      "ModifiedAt": 1.676038494E9,
+      "SamplingRule": {
+        "Attributes": {},
+        "FixedRate": 0.2,
+        "HTTPMethod": "GET",
+        "Host": "*",
+        "Priority": 1,
+        "ReservoirSize": 10,
+        "ResourceARN": "*",
+        "RuleARN": "arn:aws:xray:us-west-2:123456789000:sampling-rule/Rule2",
+        "RuleName": "Rule2",
+        "ServiceName": "FooBar",
+        "ServiceType": "*",
+        "URLPath": "/foo/bar",
+        "Version": 1
+      }
+    }
+  ]
+}

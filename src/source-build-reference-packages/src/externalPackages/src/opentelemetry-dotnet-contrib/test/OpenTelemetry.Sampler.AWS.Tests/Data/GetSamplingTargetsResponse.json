@@ -1,0 +1,23 @@
+{
+  "SamplingTargetDocuments": [
+    {
+      "RuleName": "rule1",
+      "FixedRate": 0.1,
+      "ReservoirQuota": 2,
+      "ReservoirQuotaTTL": 1530923107.0,
+      "Interval": 10
+    },
+    {
+      "RuleName": "rule3",
+      "FixedRate": 0.003
+    }
+  ],
+  "LastRuleModification": 1530920505.0,
+  "UnprocessedStatistics": [
+    {
+      "RuleName": "rule2",
+      "ErrorCode": "400",
+      "Message": "Unknown rule"
+    }
+  ]
+}

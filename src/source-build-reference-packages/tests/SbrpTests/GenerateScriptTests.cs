@@ -26,6 +26,7 @@ public class GenerateScriptTests
     };
 
     public string SandboxDirectory { get; set; }
+    public string PkgsSandboxDirectory { get; set; }
     public ITestOutputHelper Output { get; set; }
 
     public GenerateScriptTests(ITestOutputHelper output)
@@ -33,6 +34,8 @@ public class GenerateScriptTests
         Output = output;
         SandboxDirectory = Path.Combine(Environment.CurrentDirectory, $"GenerateTests-{DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()}");
         Directory.CreateDirectory(SandboxDirectory);
+        PkgsSandboxDirectory = Path.Combine(SandboxDirectory, ".packages");
+        Directory.CreateDirectory(PkgsSandboxDirectory);
     }
 
     [Theory]
@@ -55,7 +58,11 @@ public class GenerateScriptTests
 
         Assert.True(Directory.Exists(pkgSrcDirectory), $"Source directory '{pkgSrcDirectory}' does not exist.");
 
-        ExecuteHelper.ExecuteProcessValidateExitCode(command, arguments, Output);
+        ExecuteHelper.ExecuteProcessValidateExitCode(command, arguments, Output, p =>
+        {
+            p.StartInfo.Environment["NUGET_PACKAGES"] = PkgsSandboxDirectory;
+            p.StartInfo.Environment["NuGetPackageRoot"] = PkgsSandboxDirectory;
+        });
 
         // Copy any customization files from the source directory to the sandbox directory.
         // This is necessary because git diff doesn't support exclusions when comparing files outside of the repository.
@@ -82,6 +89,12 @@ public class GenerateScriptTests
         else if (result.Process.ExitCode != 0)
         {
             Assert.Fail($"Unexpected git diff failure on '{package}, {version}'.  {Environment.NewLine}{result.StdErr}{Environment.NewLine}");
+        }
+
+         // Clean up the sandbox directory when done testing to prevent hoovering up large artifacts directories in pipelines
+        if (Directory.Exists(pkgSandboxDirectory))
+        {
+            Directory.Delete(pkgSandboxDirectory, recursive: true);
         }
     }
 }

@@ -1,0 +1,12 @@
+name: "CodeQL config"
+
+queries:
+  - uses: security-extended
+
+# Disable specific queries
+query-filters:
+  - exclude:
+      id:
+        - actions/untrusted-checkout
+        - actions/untrusted-checkout/high
+        - actions/untrusted-checkout/medium

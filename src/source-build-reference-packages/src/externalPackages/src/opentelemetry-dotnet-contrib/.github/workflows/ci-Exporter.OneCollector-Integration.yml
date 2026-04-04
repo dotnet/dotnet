@@ -1,0 +1,44 @@
+name: Integration Build OpenTelemetry.Exporter.OneCollector
+
+permissions:
+  contents: read
+
+on:
+  pull_request_target: # Allows secret access from forks see: https://github.blog/2020-08-03-github-actions-improvements-for-fork-and-pull-request-workflows/#improvements-for-public-repository-forks
+    branches: [ 'main*', 'exporter*' ]
+    paths:
+    - '*/OpenTelemetry.Exporter.OneCollector*/**'
+    - 'src/Shared/**'
+    - 'build/**'
+    - '!**.md'
+
+jobs:
+  authorize:
+    environment: # Run external PRs from forks on the "external"" environment which requires approval
+      ${{ github.event_name == 'pull_request_target' &&
+      github.event.pull_request.head.repo.full_name != github.repository &&
+      'external' || 'internal' }}
+    runs-on: ubuntu-24.04
+    steps:
+    - run: echo ✓
+
+  build-integration-test:
+    needs: authorize
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ windows-latest, ubuntu-24.04 ]
+        version: [ net462, net8.0, net10.0 ]
+        exclude:
+        - os: ubuntu-24.04
+          version: net462
+    uses: ./.github/workflows/integration-test-reusable.yml
+    with:
+      component: OpenTelemetry.Exporter.OneCollector
+      os: ${{ matrix.os }}
+      version: ${{ matrix.version }}
+      test-filter: OneCollectorIntegrationTests
+      env-var-name: OTEL_ONECOLLECTOR_INSTRUMENTATION_KEY
+      checkout-ref: refs/pull/${{ github.event.pull_request.number }}/merge
+    secrets:
+      instrumentation-key: ${{ secrets.OTEL_ONECOLLECTOR_INSTRUMENTATION_KEY }}

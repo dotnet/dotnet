@@ -56,6 +56,7 @@ find src/referencePackages/src/package.name/version -name "Customizations.*"
 - Always create patches via `extract-patches.sh` - never suggest direct file edits
 - Patches live in `src/externalPackages/patches/<component>/`
 - Test patches with `git am` before suggesting
+- Follow guidelines from [README.md](../README.md#patches) for patch creation and maintenance
 
 ## Validation Checklist
 

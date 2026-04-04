@@ -97,10 +97,10 @@
       "commitSha": "1e5d8e39d3026edb222cdf4f8d8240f1eb99f24b"
     },
     {
-      "barId": 307561,
+      "barId": 309186,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "66ddf29805eb690e48f10bb31f2125520695208e"
+      "commitSha": "b1d5d439e10a46ec6d566ee1e3916b37ef9f090f"
     },
     {
       "barId": 302357,
@@ -211,6 +211,16 @@
       "path": "source-build-reference-packages/src/externalPackages/src/newtonsoft-json",
       "remoteUri": "https://github.com/JamesNK/Newtonsoft.Json.git",
       "commitSha": "0a2e291c0d9c0c7675d445703e51750363a549ef"
+    },
+    {
+      "path": "source-build-reference-packages/src/externalPackages/src/opentelemetry-dotnet",
+      "remoteUri": "https://github.com/open-telemetry/opentelemetry-dotnet",
+      "commitSha": "384911b7bbc9780c76197896dcd575a6be2cbf6d"
+    },
+    {
+      "path": "source-build-reference-packages/src/externalPackages/src/opentelemetry-dotnet-contrib",
+      "remoteUri": "https://github.com/open-telemetry/opentelemetry-dotnet-contrib",
+      "commitSha": "dd5f5b71c1d6c9bc4d654b2c343b10fb362add06"
     },
     {
       "path": "source-build-reference-packages/src/externalPackages/src/spectre-console",

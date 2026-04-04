@@ -1,0 +1,21 @@
+name: 'Assign Reviewers'
+on:
+  # pull_request_target is suggested for projects where pull requests will be
+  # made from forked repositories. If pull_request is used in these cases,
+  # the github token will not have sufficient permission to update the PR.
+  pull_request_target:
+
+permissions:
+  contents: read
+
+jobs:
+  assign:
+    permissions:
+      pull-requests: write # required for assigning reviewers to PRs
+    runs-on: ubuntu-24.04
+    name: Assign Reviewers
+    steps:
+      - uses: dyladan/component-owners@58bd86e9814d23f1525d0a970682cead459fa783 # v0.1.0
+        with:
+          assign-owners: ${{ github.event.pull_request.draft == false }}
+          request-owner-reviews: ${{ github.event.pull_request.draft == false }}

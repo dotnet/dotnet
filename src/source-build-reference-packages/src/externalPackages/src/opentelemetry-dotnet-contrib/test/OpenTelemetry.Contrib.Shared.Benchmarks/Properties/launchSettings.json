@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "OpenTelemetry.Contrib.Shared.Benchmarks": {
+      "commandName": "Project"
+    }
+  }
+}

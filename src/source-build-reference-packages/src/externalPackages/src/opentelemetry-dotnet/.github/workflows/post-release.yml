@@ -1,0 +1,167 @@
+name: Complete release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        required: true
+        description: 'Release tag'
+        type: string
+
+  release:
+    types:
+    - published
+
+  issue_comment:
+    types:
+    - created
+
+permissions:
+  contents: read
+
+jobs:
+  automation:
+    uses: ./.github/workflows/automation.yml
+    secrets:
+      OTELBOT_DOTNET_PRIVATE_KEY: ${{ secrets.OTELBOT_DOTNET_PRIVATE_KEY }}
+
+  push-packages-and-publish-release:
+    runs-on: ubuntu-24.04
+
+    needs: automation
+
+    permissions:
+      id-token: write
+
+    if: |
+      github.event_name == 'issue_comment' &&
+      github.event.issue.pull_request &&
+      github.event.issue.locked == true &&
+      github.event.comment.user.login != needs.automation.outputs.application-username &&
+      contains(github.event.comment.body, '/PushPackages') &&
+      startsWith(github.event.issue.title, '[release] Prepare release ') &&
+      github.event.issue.pull_request.merged_at &&
+      needs.automation.outputs.enabled
+
+    steps:
+    - uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
+      id: otelbot-token
+      with:
+        app-id: ${{ vars.OTELBOT_DOTNET_APP_ID }}
+        private-key: ${{ secrets.OTELBOT_DOTNET_PRIVATE_KEY }}
+
+    - name: Check out code
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        token: ${{ steps.otelbot-token.outputs.token }}
+        ref: ${{ github.event.repository.default_branch }}
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
+
+    - name: NuGet log in
+      uses: NuGet/login@d22cc5f58ff5b88bf9bd452535b4335137e24544 # v1.1.0
+      id: nuget-login
+      with:
+        user: ${{ secrets.NUGET_USER }}
+
+    - name: Push packages and publish release
+      shell: pwsh
+      env:
+        GH_TOKEN: ${{ steps.otelbot-token.outputs.token }}
+        EXPECTED_PR_AUTHOR_USER_NAME: ${{ needs.automation.outputs.application-name }}
+        EXPECTED_COMMENT_AUTHOR_USER_NAME: ${{ needs.automation.outputs.application-login }}
+        COMMENT_USER_NAME: ${{ github.event.comment.user.login }}
+        ISSUE_NUMBER: ${{ github.event.issue.number }}
+        NUGET_TOKEN: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+      run: |
+        Import-Module .\build\scripts\post-release.psm1
+
+        $HasToken = -Not [string]::IsNullOrEmpty($env:NUGET_TOKEN)
+        PushPackagesPublishReleaseUnlockAndPostNoticeOnPrepareReleasePullRequest `
+          -gitRepository ${env:GITHUB_REPOSITORY} `
+          -pullRequestNumber ${env:ISSUE_NUMBER} `
+          -expectedPrAuthorUserName ${env:EXPECTED_PR_AUTHOR_USER_NAME} `
+          -expectedCommentAuthorUserName ${env:EXPECTED_COMMENT_AUTHOR_USER_NAME} `
+          -commentUserName ${env:COMMENT_USER_NAME} `
+          -artifactDownloadPath "${env:GITHUB_WORKSPACE}/artifacts" `
+          -pushToNuget $HasToken
+
+  post-release-published:
+    runs-on: ubuntu-24.04
+
+    needs:
+    - automation
+
+    if: |
+      needs.automation.outputs.enabled &&
+      (github.event_name == 'release' || github.event_name == 'workflow_dispatch')
+
+    steps:
+    - uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
+      id: otelbot-token
+      with:
+        app-id: ${{ vars.OTELBOT_DOTNET_APP_ID }}
+        private-key: ${{ secrets.OTELBOT_DOTNET_PRIVATE_KEY }}
+
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        # Note: By default GitHub only fetches 1 commit. We need all the tags
+        # for this work.
+        fetch-depth: 0
+        ref: ${{ github.event.repository.default_branch }}
+        token: ${{ steps.otelbot-token.outputs.token }}
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
+
+    - name: Create GitHub Pull Request to update stable build version in props
+      if: |
+          (github.ref_type == 'tag' && startsWith(github.ref_name, 'core-') && !contains(github.ref_name, '-alpha') && !contains(github.ref_name, '-beta') && !contains(github.ref_name, '-rc'))
+          || (inputs.tag && startsWith(inputs.tag, 'core-') && !contains(inputs.tag, '-alpha') && !contains(inputs.tag, '-beta') && !contains(inputs.tag, '-rc'))
+      shell: pwsh
+      env:
+        GH_TOKEN: ${{ steps.otelbot-token.outputs.token }}
+        BOT_USER_EMAIL: ${{ needs.automation.outputs.email }}
+        BOT_USER_NAME: ${{ needs.automation.outputs.username }}
+        TAG: ${{ inputs.tag || github.ref_name }}
+        TARGET_BRANCH: ${{ github.event.repository.default_branch }}
+      run: |
+        Import-Module .\build\scripts\post-release.psm1
+
+        CreateStableVersionUpdatePullRequest `
+          -gitRepository ${env:GITHUB_REPOSITORY} `
+          -tag ${env:TAG} `
+          -targetBranch ${env:TARGET_BRANCH} `
+          -gitUserName ${env:BOT_USER_NAME} `
+          -gitUserEmail ${env:BOT_USER_EMAIL}
+
+    - name: Invoke core version update workflow in opentelemetry-dotnet-contrib repository
+      if: vars.CONTRIB_REPO
+      shell: pwsh
+      env:
+        GH_TOKEN: ${{ steps.otelbot-token.outputs.token }}
+        CONTRIB_REPO: ${{ vars.CONTRIB_REPO }}
+        TAG: ${{ inputs.tag || github.ref_name }}
+      run: |
+        Import-Module .\build\scripts\post-release.psm1
+
+        InvokeCoreVersionUpdateWorkflowInRemoteRepository `
+          -remoteGitRepository ${env:CONTRIB_REPO} `
+          -tag ${env:TAG}
+
+    - name: Post notice when release is published
+      shell: pwsh
+      env:
+        GH_TOKEN: ${{ steps.otelbot-token.outputs.token }}
+        EXPECTED_PR_AUTHOR_USER_NAME: ${{ needs.automation.outputs.application-name }}
+        EXPECTED_COMMENT_AUTHOR_USER_NAME: ${{ needs.automation.outputs.application-login }}
+        TAG: ${{ inputs.tag || github.ref_name }}
+      run: |
+        Import-Module .\build\scripts\post-release.psm1
+
+        TryPostReleasePublishedNoticeOnPrepareReleasePullRequest `
+          -gitRepository ${env:GITHUB_REPOSITORY} `
+          -expectedPrAuthorUserName ${env:EXPECTED_PR_AUTHOR_USER_NAME} `
+          -expectedCommentAuthorUserName ${env:EXPECTED_COMMENT_AUTHOR_USER_NAME} `
+          -tag ${env:TAG}

@@ -1,0 +1,62 @@
+name: 'Add labels to issues and pull requests'
+on:
+  issues:
+    types: [ opened ]
+
+  pull_request_target:
+    branches: [ 'main*', 'instrumentation*', 'exporter*', 'extensions*' ]
+
+permissions:
+  contents: read
+
+jobs:
+  add-labels-on-issues:
+    permissions:
+      issues: write
+    if: github.event_name == 'issues' && !github.event.issue.pull_request
+
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: check out code
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - name: Add labels for component found in bug issue descriptions
+        shell: pwsh
+        run: |
+          Import-Module .\build\scripts\add-labels.psm1
+
+          AddLabelsOnIssuesForComponentFoundInBody `
+            -issueNumber ${env:ISSUE_NUMBER} `
+            -issueLabels ${env:ISSUE_LABELS} `
+            -issueBody ${env:ISSUE_BODY}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_LABELS: ${{ join(github.event.issue.labels.*.name, ',') }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+
+  add-labels-on-pull-requests:
+    permissions:
+      pull-requests: write
+    if: github.event_name == 'pull_request_target'
+
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: check out code
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }} # Note: Do not run on the PR branch we want to execute add-labels.psm1 from main on the base repo only because pull_request_target can see secrets
+
+      - name: Add labels for files changed on pull requests
+        shell: pwsh
+        run: |
+          Import-Module .\build\scripts\add-labels.psm1
+
+          AddLabelsOnPullRequestsBasedOnFilesChanged `
+            -pullRequestNumber ${env:PR_NUMBER} `
+            -labelPackagePrefix 'comp:'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}

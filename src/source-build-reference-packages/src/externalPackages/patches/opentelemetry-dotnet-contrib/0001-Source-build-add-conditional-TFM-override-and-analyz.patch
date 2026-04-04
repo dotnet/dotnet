@@ -1,0 +1,47 @@
+From 85cfac2428698a1021f3b418625e1089a0a89592 Mon Sep 17 00:00:00 2001
+From: Chet Husk <chusk3@gmail.com>
+Date: Thu, 2 Apr 2026 13:50:03 -0500
+Subject: [PATCH] Source-build: add conditional TFM override and analyzer guard
+
+Add DotNetBuildSourceOnly conditions to:
+- Clear NetFrameworkMinimumSupportedVersion to skip net462 TFM
+- Restrict target frameworks to BundledNETCoreAppTargetFramework;netstandard2.0
+- Skip Microsoft.NETFramework.ReferenceAssemblies GlobalPackageReference
+---
+ Directory.Packages.props | 2 +-
+ build/Common.props       | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/Directory.Packages.props b/Directory.Packages.props
+index 8ab2b3a2..a72ee4ec 100644
+--- a/Directory.Packages.props
++++ b/Directory.Packages.props
+@@ -32,7 +32,7 @@
+   </ItemGroup>
+ 
+   <ItemGroup Label="Packages referenced in all projects">
+-    <GlobalPackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="All" />
++    <GlobalPackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="All" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
+     <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556" Condition="'$(SkipAnalysis)'!='true'" PrivateAssets="All" />
+   </ItemGroup>
+ 
+diff --git a/build/Common.props b/build/Common.props
+index f137680e..6690288a 100644
+--- a/build/Common.props
++++ b/build/Common.props
+@@ -6,10 +6,12 @@
+     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)debug.snk</AssemblyOriginatorKeyFile>
+     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+     <NetFrameworkMinimumSupportedVersion>net462</NetFrameworkMinimumSupportedVersion>
++    <NetFrameworkMinimumSupportedVersion Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+     <NetMinimumSupportedVersion>net8.0</NetMinimumSupportedVersion>
+     <NetStandardMinimumSupportedVersion>netstandard2.0</NetStandardMinimumSupportedVersion>
+     <!-- OmniSharp/VS Code requires TargetFrameworks to be in descending order for IntelliSense and analysis. -->
+     <TargetFrameworksForLibraries>net10.0;$(NetMinimumSupportedVersion);$(NetStandardMinimumSupportedVersion)</TargetFrameworksForLibraries>
++    <TargetFrameworksForLibraries Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(BundledNETCoreAppTargetFramework);netstandard2.0</TargetFrameworksForLibraries>
+     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+     <AnalysisLevel>latest-all</AnalysisLevel>
+     <Nullable>enable</Nullable>
+-- 
+2.52.0.windows.1
+

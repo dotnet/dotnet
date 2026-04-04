@@ -1,0 +1,21 @@
+#nullable enable
+abstract OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob.OnTryDelete() -> bool
+abstract OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob.OnTryLease(int leasePeriodMilliseconds) -> bool
+abstract OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob.OnTryRead(out byte[]? buffer) -> bool
+abstract OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob.OnTryWrite(byte[]! buffer, int leasePeriodMilliseconds = 0) -> bool
+abstract OpenTelemetry.PersistentStorage.Abstractions.PersistentBlobProvider.OnGetBlobs() -> System.Collections.Generic.IEnumerable<OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob!>!
+abstract OpenTelemetry.PersistentStorage.Abstractions.PersistentBlobProvider.OnTryCreateBlob(byte[]! buffer, int leasePeriodMilliseconds, out OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob? blob) -> bool
+abstract OpenTelemetry.PersistentStorage.Abstractions.PersistentBlobProvider.OnTryCreateBlob(byte[]! buffer, out OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob? blob) -> bool
+abstract OpenTelemetry.PersistentStorage.Abstractions.PersistentBlobProvider.OnTryGetBlob(out OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob? blob) -> bool
+OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob
+OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob.PersistentBlob() -> void
+OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob.TryDelete() -> bool
+OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob.TryLease(int leasePeriodMilliseconds) -> bool
+OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob.TryRead(out byte[]? buffer) -> bool
+OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob.TryWrite(byte[]! buffer, int leasePeriodMilliseconds = 0) -> bool
+OpenTelemetry.PersistentStorage.Abstractions.PersistentBlobProvider
+OpenTelemetry.PersistentStorage.Abstractions.PersistentBlobProvider.GetBlobs() -> System.Collections.Generic.IEnumerable<OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob!>!
+OpenTelemetry.PersistentStorage.Abstractions.PersistentBlobProvider.PersistentBlobProvider() -> void
+OpenTelemetry.PersistentStorage.Abstractions.PersistentBlobProvider.TryCreateBlob(byte[]! buffer, int leasePeriodMilliseconds, out OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob? blob) -> bool
+OpenTelemetry.PersistentStorage.Abstractions.PersistentBlobProvider.TryCreateBlob(byte[]! buffer, out OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob? blob) -> bool
+OpenTelemetry.PersistentStorage.Abstractions.PersistentBlobProvider.TryGetBlob(out OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob? blob) -> bool

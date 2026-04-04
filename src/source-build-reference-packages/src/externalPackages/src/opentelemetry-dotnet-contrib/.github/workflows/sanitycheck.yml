@@ -1,0 +1,33 @@
+name: Lint - Spelling & Encoding
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  run-misspell:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: check out code
+      uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+    - name: install misspell
+      run: |
+        curl -L -o ./install-misspell.sh https://git.io/misspell
+        sh ./install-misspell.sh
+
+    - name: run misspell
+      run: ./bin/misspell -error .
+
+  run-sanitycheck:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: check out code
+      uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+    - name: validate file encoding, line endings, indentation, and whitespace
+      run: python3 ./build/scripts/sanitycheck.py

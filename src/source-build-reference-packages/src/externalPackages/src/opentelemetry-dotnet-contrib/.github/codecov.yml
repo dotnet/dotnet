@@ -1,0 +1,243 @@
+codecov:
+  require_ci_to_pass: no
+
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+  status:
+    project: off
+    patch: off
+
+parsers:
+  gcov:
+    branch_detection:
+      conditional: yes
+      loop: yes
+      method: no
+      macro: no
+
+comment:
+  layout: "reach,diff,flags,tree"
+  behavior: default
+  require_changes: no
+
+ignore:
+  - "**.md"
+  - "test"
+  - "examples"
+  - "build"
+  - ".github"
+  - ".vscode"
+
+flags:
+  unittests-Exporter.Geneva:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Exporter.Geneva
+
+  unittests-Exporter.InfluxDB:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Exporter.InfluxDB
+
+  unittests-Exporter.Instana:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Exporter.Instana
+
+  unittests-Exporter.OneCollector:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Exporter.OneCollector
+
+  unittests-Extensions:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Extensions
+
+  unittests-Extensions.Enrichment:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Extensions.Enrichment
+
+  unittests-Extensions.Enrichment.AspNetCore:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Extensions.Enrichment.AspNetCore
+
+  unittests-Extensions.Enrichment.Http:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Extensions.Enrichment.Http
+
+  unittests-Instrumentation.AspNet:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Instrumentation.AspNet
+      - src/OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModule
+
+  unittests-Instrumentation.AspNetCore:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Instrumentation.AspNetCore
+
+  unittests-Instrumentation.AWS:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Extensions.AWS
+      - src/OpenTelemetry.Instrumentation.AWS
+      - src/OpenTelemetry.Instrumentation.AWSLambda
+
+  # Note: No unit tests currently for Cassandra being run in CI.
+  #unittests-Instrumentation.Cassandra:
+  #  carryforward: true
+  #  paths:
+  #    - src/OpenTelemetry.Instrumentation.Cassandra
+
+  unittests-Instrumentation.ConfluentKafka:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Instrumentation.ConfluentKafka
+
+  unittests-Instrumentation.ElasticsearchClient:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Instrumentation.ElasticsearchClient
+
+  unittests-Instrumentation.EntityFrameworkCore:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Instrumentation.EntityFrameworkCore
+
+  unittests-Instrumentation.EventCounters:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Instrumentation.EventCounters
+
+  unittests-Instrumentation.GrpcCore:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Instrumentation.GrpcCore
+
+  unittests-Instrumentation.GrpcNetClient:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Instrumentation.GrpcNetClient
+
+  unittests-Instrumentation.Hangfire:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Instrumentation.Hangfire
+
+  unittests-Instrumentation.Http:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Instrumentation.Http
+
+  unittests-Instrumentation.Owin:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Instrumentation.Owin
+
+  unittests-Instrumentation.Process:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Instrumentation.Process
+
+  unittests-Instrumentation.Quartz:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Instrumentation.Quartz
+
+  unittests-Instrumentation.Runtime:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Instrumentation.Runtime
+
+  unittests-Instrumentation.ServiceFabricRemoting:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Instrumentation.ServiceFabricRemoting
+
+  unittests-Instrumentation.SqlClient:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Instrumentation.SqlClient
+
+  unittests-Instrumentation.StackExchangeRedis:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Instrumentation.StackExchangeRedis
+
+  unittests-Instrumentation.Wcf:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Instrumentation.Wcf
+
+  unittests-OpAmp.Client:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.OpAmp.Client
+
+  unittests-PersistentStorage:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.PersistentStorage.Abstractions
+      - src/OpenTelemetry.PersistentStorage.FileSystem
+
+  unittests-Resources.AWS:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Resources.AWS
+
+  unittests-Resources.Azure:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Resources.Azure
+
+  unittests-Resources.Container:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Resources.Container
+
+  unittests-Resources.Gcp:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Resources.Gcp
+
+  unittests-Resources.Host:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Resources.Host
+
+  unittests-Resources.OperatingSystem:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Resources.OperatingSystem
+
+  unittests-Resources.Process:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Resources.Process
+
+  unittests-Resources.ProcessRuntime:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Resources.ProcessRuntime
+
+  unittests-Sampler.AWS:
+    carryforward: true
+    paths:
+      - src/OpenTelemetry.Sampler.AWS
+
+  # Note: No unit tests currently for SemanticConventions being run in CI.
+  #unittests-SemanticConventions:
+  #  carryforward: true
+  #  paths:
+  #    - src/OpenTelemetry.SemanticConventions
+
+  unittests-Contrib.Shared.Tests:
+    carryforward: true
+    paths:
+      - src/Shared

@@ -1,0 +1,46 @@
+# Called by ci.yml to perform dotnet format linting
+# See: https://docs.github.com/en/actions/using-workflows/reusing-workflows#creating-a-reusable-workflow
+name: Lint - dotnet format
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  run-dotnet-format-stable:
+    runs-on: windows-latest
+
+    steps:
+    - name: check out code
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
+
+    - name: dotnet restore
+      run: dotnet restore OpenTelemetry.slnx
+
+    - name: dotnet format
+      run: dotnet format OpenTelemetry.slnx --no-restore --verify-no-changes # Note: .proj files are currently not supported by dotnet format
+      env:
+        ExposeExperimentalFeatures: false
+
+  run-dotnet-format-experimental:
+    runs-on: windows-latest
+
+    steps:
+    - name: check out code
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
+
+    - name: dotnet restore
+      run: dotnet restore OpenTelemetry.slnx
+
+    - name: dotnet format
+      run: dotnet format OpenTelemetry.slnx --no-restore --verify-no-changes # Note: .proj files are currently not supported by dotnet format
+      env:
+        ExposeExperimentalFeatures: true

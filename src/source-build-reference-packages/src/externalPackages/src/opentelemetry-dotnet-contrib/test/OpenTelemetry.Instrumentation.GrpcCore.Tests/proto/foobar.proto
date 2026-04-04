@@ -1,0 +1,17 @@
+syntax = "proto3";
+package OpenTelemetry.Instrumentation.GrpcCore.Tests;
+
+service Foobar {
+  rpc Unary (FoobarRequest) returns (FoobarResponse) {}
+  rpc ClientStreaming (stream FoobarRequest) returns (FoobarResponse) {}
+  rpc ServerStreaming (FoobarRequest) returns (stream FoobarResponse) {}
+  rpc DuplexStreaming (stream FoobarRequest) returns (stream FoobarResponse) {}
+}
+
+message FoobarRequest {
+  string message = 1;
+}
+
+message FoobarResponse {
+  string message = 1;
+}

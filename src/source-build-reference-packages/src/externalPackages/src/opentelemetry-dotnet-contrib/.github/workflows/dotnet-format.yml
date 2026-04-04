@@ -1,0 +1,21 @@
+name: Lint - dotnet format
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  run-dotnet-format:
+    runs-on: windows-latest
+
+    steps:
+    - name: check out code
+      uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@baa11fbfe1d6520db94683bd5c7a3818018e4309 # v5.1.0
+
+    - name: dotnet format
+      run: dotnet format opentelemetry-dotnet-contrib.slnx --verify-no-changes

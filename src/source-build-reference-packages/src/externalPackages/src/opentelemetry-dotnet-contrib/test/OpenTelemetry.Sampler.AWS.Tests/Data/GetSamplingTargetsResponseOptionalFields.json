@@ -1,0 +1,16 @@
+{
+  "SamplingTargetDocuments": [
+    {
+      "RuleName": "Test",
+      "FixedRate": 1.0
+    }
+  ],
+  "LastRuleModification": 1530920505.0,
+  "UnprocessedStatistics": [
+    {
+      "RuleName": "Default",
+      "ErrorCode": "400",
+      "Message": "Unknown rule"
+    }
+  ]
+}

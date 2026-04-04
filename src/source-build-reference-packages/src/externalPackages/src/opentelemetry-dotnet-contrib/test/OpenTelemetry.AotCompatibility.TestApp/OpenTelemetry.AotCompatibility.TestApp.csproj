@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>$(SupportedNetTargets)</TargetFrameworks>
+    <PublishAot>true</PublishAot>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    <EventSourceSupport>true</EventSourceSupport>
+    <SelfContained>true</SelfContained>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(RepoRoot)\src\Shared\PropertyFetcher.cs" Link="Includes\PropertyFetcher.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      When adding projects here please also update the verify-aot-compat job in
+      .github\workflows\ci.yml so that it runs for the project(s) being added.
+    -->
+    <TrimmerRootAssembly Include="OpenTelemetry.Exporter.Geneva" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Exporter.OneCollector" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Extensions" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Extensions.Enrichment" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Extensions.Enrichment.AspNetCore" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Extensions.Enrichment.Http" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Instrumentation.AspNetCore" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Instrumentation.AWS" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Instrumentation.AWSLambda" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Instrumentation.EventCounters" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Instrumentation.GrpcNetClient" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Instrumentation.Http" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Instrumentation.Runtime" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Instrumentation.SqlClient" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Instrumentation.StackExchangeRedis" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Resources.AWS" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Resources.Azure" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Resources.Container" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Resources.Host" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Resources.OperatingSystem" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Resources.Process" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Resources.ProcessRuntime" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Sampler.AWS" />
+
+    <TrimmerRootAssembly Update="@(TrimmerRootAssembly)" Path="$(RepoRoot)\src\%(Identity)\%(Identity).csproj" />
+    <ProjectReference Include="@(TrimmerRootAssembly->'%(Path)')" />
+
+    <!-- Exclude projects that are transitively referenced by
+      OpenTelemetry.Extensions.Enrichment.AspNetCore and OpenTelemetry.Extensions.Enrichment.Http:
+    -->
+    <ProjectReference Remove="$(RepoRoot)\src\OpenTelemetry.Extensions.Enrichment\OpenTelemetry.Extensions.Enrichment.csproj"/>
+    <ProjectReference Remove="$(RepoRoot)\src\OpenTelemetry.Instrumentation.AspNetCore\OpenTelemetry.Instrumentation.AspNetCore.csproj"/>
+    <ProjectReference Remove="$(RepoRoot)\src\OpenTelemetry.Instrumentation.Http\OpenTelemetry.Instrumentation.Http.csproj"/>
+  </ItemGroup>
+
+</Project>
