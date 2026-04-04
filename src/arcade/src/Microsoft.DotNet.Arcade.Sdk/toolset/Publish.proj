@@ -65,7 +65,7 @@
 
     <!-- This tracks the dependent targets of PublishToAzureDevOpsArtifacts. We can't rename this
          property as it is used by other repositories already. -->
-    <PublishDependsOnTargets>BeforePublish;AutoGenerateSymbolPackages</PublishDependsOnTargets>
+    <PublishDependsOnTargets>GatherPublishItems;AutoGenerateSymbolPackages</PublishDependsOnTargets>
 
     <SymbolPackageBaseRelativeBlobPath>assets/symbols/</SymbolPackageBaseRelativeBlobPath>
     <SymbolPackageBaseRelativeBlobPath Condition="'$(BUILD_REPOSITORY_NAME)' != ''">$(SymbolPackageBaseRelativeBlobPath)$(BUILD_REPOSITORY_NAME)/</SymbolPackageBaseRelativeBlobPath>
@@ -127,7 +127,7 @@
 
   <Target Name="Execute" DependsOnTargets="PublishToAzureDevOpsArtifacts" />
 
-  <Target Name="BeforePublish" Condition="'@(Artifact)' != ''">
+  <Target Name="GatherPublishItems" Condition="'@(Artifact)' != ''">
     <ItemGroup>
       <_ExistingSymbolPackage Include="@(Artifact)" Condition="'%(Artifact.SkipPublish)' != 'true' and $([System.String]::Copy('%(Filename)%(Extension)').EndsWith('.symbols.nupkg'))">
         <!-- Update the kind of the symbol packages to blob -->
@@ -174,7 +174,7 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="AutoGenerateSymbolPackages" DependsOnTargets="BeforePublish" Condition="'$(AutoGenerateSymbolPackages)' == 'true'">
+  <Target Name="AutoGenerateSymbolPackages" DependsOnTargets="GatherPublishItems" Condition="'$(AutoGenerateSymbolPackages)' == 'true'">
     <PropertyGroup>
       <SymbolPackagesDir Condition="'$(SymbolPackagesDir)' == ''">$(ArtifactsTmpDir)SymbolPackages\</SymbolPackagesDir>
     </PropertyGroup>
@@ -339,7 +339,7 @@
         <SkipPublish Condition="'%(Artifact.SkipPublish)' == '' and $([System.String]::new('%(Filename)%(Extension)').EndsWith('.wixpack.zip'))">true</SkipPublish>
       </Artifact>
 
-      <!-- Add non-package Artifact items (repo extension point) as package already got added in the BeforePublish target. -->
+      <!-- Add non-package Artifact items (repo extension point) as package already got added in the GatherPublishItems target. -->
       <ItemsToPushToBlobFeed Include="@(Artifact)" Condition="'%(Artifact.SkipPublish)' != 'true' and '%(Extension)' != '.nupkg'" />
     </ItemGroup>
 
