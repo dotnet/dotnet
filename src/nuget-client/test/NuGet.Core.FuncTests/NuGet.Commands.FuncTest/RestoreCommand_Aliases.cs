@@ -936,6 +936,47 @@ namespace NuGet.Commands.FuncTest
             // result.LockFile.LogMessages[0].TargetGraphs.Should().HaveCount(2); https://github.com/NuGet/Home/issues/14815
         }
 
+        [Theory]
+        [InlineData("banana/3")]
+        [InlineData("foo\\bar")]
+        public async Task RestoreCommand_WithAliasContainingPathSeparator_FailsWithNU1019(string invalidAlias)
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Backslashes must be escaped for JSON embedding
+            string jsonAlias = invalidAlias.Replace("\\", "\\\\");
+
+            var rootProject = $@"
+            {{
+              ""frameworks"": {{
+                ""{jsonAlias}"": {{
+                    ""framework"": ""net10.0"",
+                    ""targetAlias"": ""{jsonAlias}"",
+                    ""dependencies"": {{
+                            ""x"": {{
+                                ""version"": ""[1.0.0,)"",
+                                ""target"": ""Package""
+                            }}
+                    }}
+                }}
+              }}
+            }}";
+
+            var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, rootProject);
+            projectSpec.RestoreMetadata.SdkAnalysisLevel = NuGetVersion.Parse("10.0.300");
+            projectSpec.RestoreMetadata.UsingMicrosoftNETSdk = true;
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource,
+                new SimpleTestPackageContext("x", "1.0.0"));
+
+            var result = await RunRestoreAsync(pathContext, projectSpec);
+
+            result.Success.Should().BeFalse();
+            result.LockFile.LogMessages.Should().Contain(m => m.Code == NuGetLogCode.NU1019);
+            result.LockFile.LogMessages.Should().Contain(m => m.Message.Contains(invalidAlias));
+        }
+
         internal static Task<RestoreResult> RunRestoreAsync(SimpleTestPathContext pathContext, params PackageSpec[] projects)
         {
             return RunRestoreAsync(pathContext, forceEvaluate: false, new TestLogger(), projects);

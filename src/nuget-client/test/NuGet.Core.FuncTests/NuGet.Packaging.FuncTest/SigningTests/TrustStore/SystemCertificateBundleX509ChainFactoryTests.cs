@@ -21,7 +21,7 @@ namespace NuGet.Packaging.FuncTest.SigningTests
         {
         }
 
-        [CIOnlyFact]
+        [Fact]
         public void AdditionalContext_WhenRootCertificateIsUntrusted_ReturnsLogMessage()
         {
             using (TestDirectory directory = TestDirectory.Create())

@@ -25,7 +25,7 @@ namespace NuGet.Packaging.FuncTest
     [Collection(SigningTestCollection.Name)]
     public class PackageSignatureVerifierTests
     {
-        [CIOnlyFact]
+        [Fact]
         public void Constructor_WhenArgumentIsNull_Throws()
         {
             ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
@@ -55,7 +55,7 @@ namespace NuGet.Packaging.FuncTest
                 };
             }
 
-            [CIOnlyFact]
+            [Fact]
             public async Task VerifySignaturesAsync_ValidCertificate_SuccessAsync()
             {
                 // Arrange
@@ -80,7 +80,7 @@ namespace NuGet.Packaging.FuncTest
                 }
             }
 
-            [CIOnlyFact]
+            [Fact]
             public async Task VerifySignaturesAsync_ValidCertificateAndTimestamp_SuccessAsync()
             {
                 // Arrange
@@ -110,7 +110,7 @@ namespace NuGet.Packaging.FuncTest
                 }
             }
 
-            [CIOnlyFact]
+            [Fact]
             public async Task VerifySignaturesAsync_ValidCertificateAndTimestampWithDifferentHashAlgorithms_SuccessAsync()
             {
                 var packageContext = new SimpleTestPackageContext();
@@ -241,7 +241,7 @@ namespace NuGet.Packaging.FuncTest
 
             // Verify a package meeting minimum signature requirements.
             // This signature is neither an author nor repository signature.
-            [CIOnlyFact]
+            [Fact]
             public async Task VerifySignaturesAsync_WithBasicSignedCms_SucceedsAsync()
             {
                 var settings = new SignedPackageVerifierSettings(
@@ -290,7 +290,7 @@ namespace NuGet.Packaging.FuncTest
                 }
             }
 
-            [CIOnlyFact]
+            [Fact]
             public async Task VerifySignaturesAsync_SettingsRequireTimestamp_NoTimestamp_FailsAsync()
             {
                 // Arrange
@@ -331,7 +331,7 @@ namespace NuGet.Packaging.FuncTest
                 }
             }
 
-            [CIOnlyFact]
+            [Fact]
             public async Task VerifySignaturesAsync_SettingsNotRequireCheckCountersignature_WithValidPrimarySignatureAndInvalidCountersignature_SucceedsAsync()
             {
                 // Arrange
@@ -381,7 +381,7 @@ namespace NuGet.Packaging.FuncTest
                 }
             }
 
-            [CIOnlyFact]
+            [Fact]
             public async Task VerifySignaturesAsync_SettingsRequireCheckCountersignature_WithValidPrimarySignatureAndInvalidCountersignature_FailsAsync()
             {
                 // Arrange
@@ -431,7 +431,7 @@ namespace NuGet.Packaging.FuncTest
                 }
             }
 
-            [CIOnlyFact]
+            [Fact]
             public async Task VerifySignaturesAsync_SettingsRequireCheckCountersignature_WithValidPrimarySignatureAndValidCountersignature_SucceedsAsync()
             {
                 // Arrange
@@ -481,7 +481,7 @@ namespace NuGet.Packaging.FuncTest
                 }
             }
 
-            [CIOnlyFact]
+            [Fact]
             public async Task VerifySignaturesAsync_WithExpiredPrimarySignature_ValidCountersignature_AndPrimarySignatureValidAtCountersignTime_SucceedsAsync()
             {
                 // Arrange
@@ -534,7 +534,7 @@ namespace NuGet.Packaging.FuncTest
                 }
             }
 
-            [CIOnlyFact]
+            [Fact]
             public async Task VerifySignaturesAsync_WithExpiredAndUntrustedPrimarySignature_ValidCountersignature_AndPrimarySignatureValidAtCountersignTime_SucceedsAsync()
             {
                 var nupkg = new SimpleTestPackageContext();
@@ -582,7 +582,7 @@ namespace NuGet.Packaging.FuncTest
                 }
             }
 
-            [CIOnlyFact]
+            [Fact]
             public async Task VerifySignaturesAsync_WithExpiredPrimarySignature_ValidCountersignature_AndPrimarySignatureExpiredAtCountersignTime_FailsAsync()
             {
                 // Arrange
@@ -637,7 +637,7 @@ namespace NuGet.Packaging.FuncTest
             }
 
 
-            [CIOnlyFact]
+            [Fact]
             public async Task VerifySignaturesAsync_WithSignedAndCountersignedPackage_SucceedsAsync()
             {
                 // Arrange
@@ -676,7 +676,7 @@ namespace NuGet.Packaging.FuncTest
                 }
             }
 
-            [CIOnlyFact]
+            [Fact]
             public async Task VerifySignaturesAsync_WithSignedTimestampedCountersignedAndCountersignatureTimestampedPackage_SucceedsAsync()
             {
                 // Arrange
@@ -718,7 +718,7 @@ namespace NuGet.Packaging.FuncTest
                 }
             }
 
-            [CIOnlyFact]
+            [Fact]
             public async Task VerifySignaturesAsync_WithExpiredTimestamp_NotAllowIgnoreTimestamp_ShouldNotBeAnErrorAsync()
             {
                 using (var nupkgStream = new MemoryStream(GetResource("UntrustedTimestampPackage.nupkg")))
@@ -739,7 +739,7 @@ namespace NuGet.Packaging.FuncTest
                 }
             }
 
-            [CIOnlyFact]
+            [Fact]
             public async Task VerifySignaturesAsync_WithTimestampChainingToUntrustedRoot_NotAllowIgnoreTimestamp_FailAsync()
             {
                 using (var nupkgStream = new MemoryStream(GetResource("UntrustedTimestampPackage.nupkg")))

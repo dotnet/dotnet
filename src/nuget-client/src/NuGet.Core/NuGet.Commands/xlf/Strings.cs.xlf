@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="cs" original="../Strings.resx">
     <body>
@@ -678,6 +678,11 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
         <target state="translated">Místní prostředky se částečně vymazaly.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Log_AliasContainsDisallowedCharacters">
+        <source>The project {0} contains a TargetFramework '{1}' with disallowed characters. TargetFramework names must contain only ASCII characters and must not contain path separators.</source>
+        <target state="new">The project {0} contains a TargetFramework '{1}' with disallowed characters. TargetFramework names must contain only ASCII characters and must not contain path separators.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Log_AliasingSupportedInNewDependencyResolver">
         <source>The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
 Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</source>
@@ -993,6 +998,11 @@ Upgradujte svou sadu .NET SDK nebo odeberte RestoreUseLegacyDependencyResolver, 
       <trans-unit id="Log_VersionConflict">
         <source>Version conflict detected for {0}. Install/reference {1} directly to project {2} to resolve this issue.</source>
         <target state="translated">Pro {0} se zjistil konflikt. Pokud chcete tento problém vyřešit, nainstalujte nebo vytvořte odkaz na {1} přímo do projektu {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_VersionConflictForCentralTransitive">
+        <source>Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue.</source>
+        <target state="new">Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_WritingAssetsFile">

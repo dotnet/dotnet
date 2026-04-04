@@ -24,7 +24,7 @@ namespace NuGet.Packaging.FuncTest
             _testFixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
         }
 
-        [CIOnlyFact]
+        [Fact]
         public void Verify_WithValidInput_DoesNotThrow()
         {
 #if NET9_0_OR_GREATER
@@ -38,7 +38,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task SignAsync_AddsPackageAuthorSignatureAsync()
         {
             using (var test = await Test.CreateAsync(_testFixture.TrustedTestCertificate.Source.Cert))
@@ -54,7 +54,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task SignAsync_AddsPackageRepositorySignatureAsync()
         {
             using (var test = await Test.CreateAsync(_testFixture.TrustedTestCertificate.Source.Cert))
@@ -70,7 +70,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task SignAsync_WhenRepositoryCountersigningPrimarySignature_SucceedsAsync()
         {
             using (var test = await Test.CreateAsync(_testFixture.TrustedTestCertificate.Source.Cert))
@@ -99,7 +99,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task SignAsync_WithExpiredCertificate_ThrowsAsync()
         {
             using (var test = await Test.CreateAsync(_testFixture.TrustedTestCertificateExpired.Source.Cert))
@@ -117,7 +117,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task SignAsync_WithNotYetValidCertificate_ThrowsAsync()
         {
             using (var test = await Test.CreateAsync(_testFixture.TrustedTestCertificateNotYetValid.Source.Cert))
@@ -135,7 +135,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task SignAsync_WhenRepositoryCountersigningRepositorySignedPackage_ThrowsAsync()
         {
             using (var test = await Test.CreateAsync(_testFixture.TrustedTestCertificate.Source.Cert))
@@ -165,7 +165,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task SignAsync_WhenRepositoryCountersigningRepositoryCountersignedPackage_ThrowsAsync()
         {
             using (var test = await Test.CreateAsync(_testFixture.TrustedTestCertificate.Source.Cert))
