@@ -119,11 +119,11 @@
   <Target Name="_GenerateVSManifest"
           DependsOnTargets="_GetVsixFileInfo"
           Condition="'$(GenerateSbom)' == 'false'">
+    <Message Text="Generating VS manifest '%(_VsixFileInfo.Identity)'" Importance="high"/>
 
-  <Message Text="Generating VS manifest '%(_VsixFileInfo.Identity)'" Importance="high"/>
-  <ItemGroup>
-    <MergeManifest Include="%(_VsixFileInfo.ManifestJsonPath)" />
-  </ItemGroup>
+    <ItemGroup>
+      <MergeManifest Include="%(_VsixFileInfo.ManifestJsonPath)" />
+    </ItemGroup>
   </Target>
 
 </Project>

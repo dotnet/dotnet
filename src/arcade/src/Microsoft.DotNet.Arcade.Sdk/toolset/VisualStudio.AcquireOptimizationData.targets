@@ -9,12 +9,10 @@
                                        Otherwise, the most recent drop of name that matches 'OptimizationData/$(VisualStudioIbcRepositoryName)/$(VisualStudioIbcSourceBranchName)/*' is used.
       VisualStudioIbcDrop              The explicit drop to use. Overrides VisualStudioIbcSourceBranchName and VisualStudioIbcDropId
   -->
-  
-  <PropertyGroup>
-    <_VisualStudioBuildTasksAssembly>$(NuGetPackageRoot)microsoft.dotnet.build.tasks.visualstudio\$(MicrosoftDotNetBuildTasksVisualStudioVersion)\tools\net\Microsoft.DotNet.Build.Tasks.VisualStudio.dll</_VisualStudioBuildTasksAssembly>
-  </PropertyGroup>
-  
-  <UsingTask AssemblyFile="$(_VisualStudioBuildTasksAssembly)" TaskName="Microsoft.DotNet.Build.Tasks.VisualStudio.FindLatestDrop" Runtime="NET" />
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.VisualStudio" />
+  </ItemGroup>
 
   <PropertyGroup>
     <EnableNgenOptimization Condition="'$(EnableNgenOptimization)' == '' and '$(Configuration)' == 'Release' and '$(OfficialBuild)' == 'true'">true</EnableNgenOptimization>

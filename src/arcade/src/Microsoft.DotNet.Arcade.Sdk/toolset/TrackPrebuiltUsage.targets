@@ -1,10 +1,9 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
 
-  <PropertyGroup>
-    <MicrosoftDotNetSourceBuildTasksBuildDir>$(NuGetPackageRoot)microsoft.dotnet.sourcebuild.tasks\$(MicrosoftDotNetSourceBuildTasksVersion)\build\</MicrosoftDotNetSourceBuildTasksBuildDir>
-  </PropertyGroup>
-  <Import Project="$(MicrosoftDotNetSourceBuildTasksBuildDir)Microsoft.DotNet.SourceBuild.Tasks.props" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.SourceBuild.Tasks" />
+  </ItemGroup>
 
   <Target Name="WritePrebuiltUsageData" AfterTargets="Build">
     <PropertyGroup>

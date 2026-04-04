@@ -1,5 +1,5 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
-<Project DefaultTargets="Sign">
+<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Sign">
 
   <!--
     Documentation for publishing is available here:
@@ -16,22 +16,17 @@
         - SkipPublish                     If true, skips publishing the artifact.
   -->
 
-  <PropertyGroup>
-    <!-- Disable target framework filtering for top level projects -->
-    <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
-  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.SignTool" />
+    <PackageReference Include="Microsoft.Signed.Wix" />
 
-  <Import Project="BuildStep.props" />
-  <Import Project="TargetFrameworkDefaults.props" />
+    <PackageDownload Include="Microsoft.DotNet.MacOsPkg.Cli" Version="[$(MicrosoftDotNetMacOsPkgVersion)]" Condition="$([MSBuild]::IsOSPlatform('OSX'))" />
+    <PackageDownload Include="Microsoft.VisualStudioEng.MicroBuild.Core" Version="[$(MicrosoftVisualStudioEngMicroBuildCoreVersion)]" />
+    <PackageDownload Include="sn" Version="[$(SNVersion)]" Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
+    <PackageDownload Include="Microsoft.WixToolset.Sdk" Version="[$(MicrosoftWixToolsetSdkVersion)]" />
+  </ItemGroup>
 
-  <Import Project="$(NuGetPackageRoot)microsoft.dotnet.signtool\$(MicrosoftDotNetSignToolVersion)\build\Microsoft.DotNet.SignTool.props" />
-
-  <!-- Required to determine whether full assembly strong name signing is supported, which may affect selection of some certificates. -->
-  <Import Project="StrongName.props" />
   <Import Project="Sign.props" />
-
-  <!-- Import the wix props to get the install path -->
-  <Import Project="$(NuGetPackageRoot)microsoft.signed.wix\$(MicrosoftSignedWixVersion)\build\Microsoft.Signed.Wix.props" />
 
   <!-- Update sign infos that were using Microsoft400 to use the .NET-specific cert if UseDotNetCertificate is present.
        This will update any use, even if explicitly specified.

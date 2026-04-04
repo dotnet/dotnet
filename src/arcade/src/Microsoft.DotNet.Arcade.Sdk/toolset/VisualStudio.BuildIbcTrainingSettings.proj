@@ -1,5 +1,5 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
-<Project DefaultTargets="Execute">
+<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Execute">
 
   <!--
     Required parameters:
@@ -17,13 +17,9 @@
     as it is only available as a DevOps Pipeline task.
   -->
 
-  <Import Project="Directory.Build.props" />
-
-  <PropertyGroup>
-    <_VisualStudioBuildTasksAssembly>$(NuGetPackageRoot)microsoft.dotnet.build.tasks.visualstudio\$(MicrosoftDotNetBuildTasksVisualStudioVersion)\tools\net\Microsoft.DotNet.Build.Tasks.VisualStudio.dll</_VisualStudioBuildTasksAssembly>
-  </PropertyGroup>
-
-  <UsingTask AssemblyFile="$(_VisualStudioBuildTasksAssembly)" TaskName="Microsoft.DotNet.Build.Tasks.VisualStudio.GetRunSettingsSessionConfiguration" Runtime="NET" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.VisualStudio" />
+  </ItemGroup>
 
   <PropertyGroup>
     <_OutputFilePath>$(VisualStudioSetupInsertionPath)OptProf\Training.runsettings</_OutputFilePath>

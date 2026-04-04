@@ -1,5 +1,5 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
-<Project DefaultTargets="Publish">
+<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Publish">
 
   <!--
     Documentation for publishing is available here:
@@ -27,14 +27,9 @@
         - IsShipping                      Set to false to mark the artifact as non-shipping. Defaults to true.
   -->
 
-  <PropertyGroup>
-    <!-- Disable target framework filtering for top level projects -->
-    <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
-  </PropertyGroup>
-
-  <Import Project="BuildStep.props" />
-
-  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.GenerateChecksums" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Feed" />
+  </ItemGroup>
 
   <!--
     Inside the VMR, we want to include "Vertical" artifacts as they should be available to other builds within the same
@@ -47,8 +42,6 @@
     <ArtifactVisibilityToPublish Include="Vertical;Internal;External" />
   </ItemGroup>
 
-  <!-- Required to determine whether full assembly strong name signing is supported, which may affect selection of some certificates. -->
-  <Import Project="StrongName.targets" />
   <Import Project="Sign.props" />
 
   <PropertyGroup>
@@ -131,8 +124,6 @@
 
   <!-- Allow for repo specific Publish properties such as add additional files to be published -->
   <Import Project="$(RepositoryEngineeringDir)Publishing.props" Condition="Exists('$(RepositoryEngineeringDir)Publishing.props')" />
-
-  <Import Project="$(NuGetPackageRoot)microsoft.dotnet.build.tasks.feed\$(MicrosoftDotNetBuildTasksFeedVersion)\build\Microsoft.DotNet.Build.Tasks.Feed.targets"/>
 
   <Target Name="Publish" DependsOnTargets="PublishToAzureDevOpsArtifacts" />
 

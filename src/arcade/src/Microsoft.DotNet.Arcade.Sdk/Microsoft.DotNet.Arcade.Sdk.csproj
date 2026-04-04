@@ -40,6 +40,9 @@
     <None Include="$(_GeneratedVersionFilePath)"
           Pack="true"
           PackagePath="tools\DefaultVersions.Generated.props" />
+    <None Include="toolset/**/*.*"
+          Pack="true"
+          PackagePath="toolset/%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

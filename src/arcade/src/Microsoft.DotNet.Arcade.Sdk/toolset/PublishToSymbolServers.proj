@@ -18,9 +18,12 @@
   -->
 
   <PropertyGroup>
-    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <NETCORE_ENGINEERING_TELEMETRY>Publish</NETCORE_ENGINEERING_TELEMETRY>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SymbolUploader.Build.Task" />
+  </ItemGroup>
 
   <Target Name="Execute">
     <ItemGroup>
@@ -39,7 +42,7 @@
     </ItemGroup>
 
     <!--
-    ConvertPortablePdbsToWindowsPdbs is set to true only in staging pipeline, because this is an expensive task and we don't want to do it for every build.
+      ConvertPortablePdbsToWindowsPdbs is set to true only in staging pipeline, because this is an expensive task and we don't want to do it for every build.
     -->
     <PropertyGroup>
       <DotNetSymbolExpirationInDays Condition="'$(DotNetSymbolExpirationInDays)' == ''">3650</DotNetSymbolExpirationInDays>
@@ -110,9 +113,5 @@
                     Condition="$(PublishToSymbolServer)"
                     TreatPdbConversionIssuesAsInfo="$(TreatPdbConversionIssuesAsInfo)"/>
   </Target>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SymbolUploader.Build.Task" Version="$(MicrosoftSymbolUploaderBuildTaskVersion)" />
-  </ItemGroup>
 
 </Project>

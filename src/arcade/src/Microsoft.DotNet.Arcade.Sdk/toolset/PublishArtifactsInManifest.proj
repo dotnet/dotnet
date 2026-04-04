@@ -75,14 +75,16 @@
   -->
 
   <PropertyGroup>
-    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <NETCORE_ENGINEERING_TELEMETRY>Publish</NETCORE_ENGINEERING_TELEMETRY>
     <!-- Do not treat warnings as errors, so that we can surface audit issues. -->
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
 
-  <Target Name="Execute">
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Feed" />
+  </ItemGroup>
 
+  <Target Name="Execute">
     <Error Condition="'$(ManifestsBasePath)' == ''" Text="ManifestsBasePath is empty. Please provide the full path to asset manifest(s) directory." />
     <Error Condition="'$(BlobBasePath)' == '' OR '$(PackageBasePath)' == ''" Text="A valid full path to BlobBasePath and PackageBasePath is required." />
 
@@ -158,12 +160,7 @@
       StreamingPublishingMaxClients="$(StreamingPublishingMaxClients)"
       NonStreamingPublishingMaxClients="$(NonStreamingPublishingMaxClients)"
       FeedKeys="@(FeedKey)"
-      FeedOverrides="@(FeedOverride)"
-      />
+      FeedOverrides="@(FeedOverride)" />
   </Target>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Feed" Version="$(MicrosoftDotNetBuildTasksFeedVersion)" />
-  </ItemGroup>
 
 </Project>

@@ -10,21 +10,10 @@
     <_BeforeCommonTargetsHookUsed Condition="'$(_ArcadeBeforeCommonTargetsImported)' != 'true'">false</_BeforeCommonTargetsHookUsed>
   </PropertyGroup>
 
-  <Import Project="..\tools\BeforeCommonTargets.targets" Condition="'$(_SuppressSdkImports)' != 'true' and '$(_ArcadeBeforeCommonTargetsImported)' != 'true' and '$(IsCrossTargetingBuild)' != 'true'"/>
-  <Import Project="..\tools\BeforeCommonTargets.CrossTargeting.targets" Condition="'$(_SuppressSdkImports)' != 'true' and '$(_ArcadeBeforeCommonTargetsImported)' != 'true' and '$(IsCrossTargetingBuild)' == 'true'"/>
+  <Import Project="..\tools\BeforeCommonTargets.targets" Condition="'$(_ArcadeBeforeCommonTargetsImported)' != 'true' and '$(IsCrossTargetingBuild)' != 'true'"/>
+  <Import Project="..\tools\BeforeCommonTargets.CrossTargeting.targets" Condition="'$(_ArcadeBeforeCommonTargetsImported)' != 'true' and '$(IsCrossTargetingBuild)' == 'true'"/>
 
-  <!-- 
-    Output the location of the Build.proj so that the build driver can find where it was restored.
-    Ideally we would have msbuild API to do that for an SDK: https://github.com/Microsoft/msbuild/issues/2992
-  -->
-  <Target Name="__WriteToolsetLocation" Outputs="$(__ToolsetLocationOutputFile)" Condition="'$(__ToolsetLocationOutputFile)' != ''">
-    <WriteLinesToFile File="$(__ToolsetLocationOutputFile)" Lines="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\tools\Build.proj'))" Overwrite="true"/>
-    <ItemGroup>
-      <FileWrites Include="$(__ToolsetLocationOutputFile)" />
-    </ItemGroup>
-  </Target>
-
-  <Import Project="..\tools\Imports.targets" Condition="'$(_SuppressSdkImports)' != 'true' and '$(_SuppressAllTargets)' != 'true'" />
-  <Import Project="..\tools\Empty.targets" Condition="'$(_SuppressSdkImports)' != 'true' and '$(_SuppressAllTargets)' == 'true'" />
+  <Import Project="..\tools\Imports.targets" Condition="'$(_SuppressAllTargets)' != 'true' or '$(_SuppressSdkImports)' == 'false'" />
+  <Import Project="..\tools\Empty.targets" Condition="'$(_SuppressAllTargets)' == 'true'" />
 
 </Project>

@@ -1,14 +1,15 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
 
+  <PropertyGroup>
+    <GenerateSbom Condition="'$(GenerateSbom)' == ''">false</GenerateSbom>
+  </PropertyGroup>
+
   <ItemGroup>
     <_StubFiles Include="$(VisualStudioSetupIntermediateOutputPath)**\*.stub"/>
     <_StubDirs Include="@(_StubFiles->'%(RecursiveDir)')"/>
   </ItemGroup>
 
-  <PropertyGroup>
-    <GenerateSbom Condition="'$(GenerateSbom)' == ''">false</GenerateSbom>
-  </PropertyGroup>
   <!---
     This target is invoked in a separate phase after all input VSIX files are signed.
     This is important since the manifest contain hashes of the VSIX files.

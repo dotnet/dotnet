@@ -13,18 +13,11 @@
     <!-- Block stable versioning so that the merged asset manifest is pushed
          to a unique location -->
     <SuppressFinalPackageVersion>true</SuppressFinalPackageVersion>
-  </PropertyGroup>
-  
-  <Import Project="$(RepositoryEngineeringDir)Versions.props" />
-  <Import Project="..\Version.BeforeCommonTargets.targets" />
-
-  <PropertyGroup>
-    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <NETCORE_ENGINEERING_TELEMETRY>Publish</NETCORE_ENGINEERING_TELEMETRY>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Feed" Version="$(MicrosoftDotNetBuildTasksFeedVersion)" />
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Feed" />
   </ItemGroup>
 
   <Target Name="Execute">

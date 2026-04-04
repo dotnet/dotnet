@@ -1,0 +1,16 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <PropertyGroup>
+    <MicrosoftDotNetBuildTasksVisualStudioTaskAssembly>$(MSBuildThisFileDirectory)..\tools\net\Microsoft.DotNet.Build.Tasks.VisualStudio.dll</MicrosoftDotNetBuildTasksVisualStudioTaskAssembly>
+  </PropertyGroup>
+
+  <UsingTask TaskName="Microsoft.DotNet.Build.Tasks.VisualStudio.FindLatestDrop" AssemblyFile="$(MicrosoftDotNetBuildTasksVisualStudioTaskAssembly)" Runtime="NET" />
+  <UsingTask TaskName="Microsoft.DotNet.Build.Tasks.VisualStudio.GenerateTrainingInputFiles" AssemblyFile="$(MicrosoftDotNetBuildTasksVisualStudioTaskAssembly)" Runtime="NET" />
+  <UsingTask TaskName="Microsoft.DotNet.Build.Tasks.VisualStudio.GenerateTrainingPropsFile" AssemblyFile="$(MicrosoftDotNetBuildTasksVisualStudioTaskAssembly)" Runtime="NET" />
+  <UsingTask TaskName="Microsoft.DotNet.Build.Tasks.VisualStudio.GetRunSettingsSessionConfiguration" AssemblyFile="$(MicrosoftDotNetBuildTasksVisualStudioTaskAssembly)" Runtime="NET" />
+
+  <UsingTask TaskName="Microsoft.DotNet.Build.Tasks.VisualStudio.FinalizeInsertionVsixFile" AssemblyFile="$(MicrosoftDotNetBuildTasksVisualStudioTaskAssembly)" Runtime="NET" />
+  <UsingTask TaskName="Microsoft.DotNet.Build.Tasks.VisualStudio.GetPkgDefAssemblyDependencyGuid" AssemblyFile="$(MicrosoftDotNetBuildTasksVisualStudioTaskAssembly)" Runtime="NET" />
+
+</Project>

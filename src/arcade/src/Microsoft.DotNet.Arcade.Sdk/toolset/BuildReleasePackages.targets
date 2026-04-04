@@ -1,15 +1,12 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
 
-  <PropertyGroup>
-    <_NuGetRepackAssembly>$(NuGetPackageRoot)microsoft.dotnet.nugetrepack.tasks\$(MicrosoftDotnetNuGetRepackTasksVersion)\tools\net\Microsoft.DotNet.NuGetRepack.Tasks.dll</_NuGetRepackAssembly>
-  </PropertyGroup>
-
-  <UsingTask TaskName="Microsoft.DotNet.Tools.UpdatePackageVersionTask" AssemblyFile="$(_NuGetRepackAssembly)" Runtime="NET" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.NuGetRepack.Tasks" />
+  </ItemGroup>
 
   <Target Name="PackageReleasePackages" AfterTargets="Pack" Condition="'$(DotNetFinalVersionKind)' == ''">
     <Message Text="Building release versions of NuGet packages" Importance="high" />
-
     <Error Text="PreReleaseVersionLabel must be non-empty when using NuGet Repack tool." Condition="'$(PreReleaseVersionLabel)' == ''" />
     
     <ItemGroup>

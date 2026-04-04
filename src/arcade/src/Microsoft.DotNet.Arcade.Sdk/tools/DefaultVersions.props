@@ -95,8 +95,6 @@
     <MicrosoftDotNetBuildTasksInstallersVersion Condition="'$(MicrosoftDotNetBuildTasksInstallersVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetBuildTasksInstallersVersion>
     <NUnitVersion Condition="'$(NUnitVersion)' == ''">3.12.0</NUnitVersion>
     <NUnit3TestAdapterVersion Condition="'$(NUnit3TestAdapterVersion)' == ''">3.15.1</NUnit3TestAdapterVersion>
-    <!-- keep this in sync with $vswhereVersion in eng/common/tools.ps1 -->
-    <VSWhereVersion Condition="'$(VSWhereVersion)' == ''">3.1.7</VSWhereVersion>
     <SNVersion Condition="'$(SNVersion)' == ''">1.0.0</SNVersion>
     <MicrosoftDotNetBuildTasksVisualStudioVersion Condition="'$(MicrosoftDotNetBuildTasksVisualStudioVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetBuildTasksVisualStudioVersion>
     <MicrosoftDotNetSourceBuildTasksVersion Condition="'$(MicrosoftDotNetSourceBuildTasksVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetSourceBuildTasksVersion>
@@ -105,6 +103,9 @@
     <MicrosoftVisualStudioEngMicroBuildPluginsSwixBuildVersion Condition="'$(MicrosoftVisualStudioEngMicroBuildPluginsSwixBuildVersion)' == ''">1.1.286</MicrosoftVisualStudioEngMicroBuildPluginsSwixBuildVersion>
     <MicrosoftSignedWixVersion Condition="'$(MicrosoftSignedWixVersion)' == ''">3.14.1-11027.2914512</MicrosoftSignedWixVersion>
     <MicrosoftWixToolsetSdkVersion Condition="'$(MicrosoftWixToolsetSdkVersion)' == ''">5.0.2-dotnet.2811440</MicrosoftWixToolsetSdkVersion>
+
+    <MicrosoftDotNetBaselinesTasksVersion Condition="'$(MicrosoftDotNetBaselinesTasksVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetBaselinesTasksVersion>
+    <MicrosoftDotNetSignCheckTaskVersion Condition="'$(MicrosoftDotNetSignCheckTaskVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetSignCheckTaskVersion>
   </PropertyGroup>
 
   <!-- RestoreSources overrides - defines DotNetRestoreSources variable if available -->

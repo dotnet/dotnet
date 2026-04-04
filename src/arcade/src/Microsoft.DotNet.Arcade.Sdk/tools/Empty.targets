@@ -1,5 +1,5 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
-<Project DefaultTargets="Build">
+<Project>
 
   <!--
     Import this file to suppress all targets while allowing the project to participate in the build.
@@ -9,19 +9,45 @@
   -->
 
   <PropertyGroup>
-    <!-- Skip importing NuGet Pack targets which are imported from the Microsoft.NET.Sdk targets -->
-    <ImportNuGetBuildTasksPackTargetsFromSdk>false</ImportNuGetBuildTasksPackTargetsFromSdk>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>
 
-  <!-- We don't want to create this target if the before common targets hook is in use.
-       If we are using the hook, then we avoid creation of the target altogether, which is more
-       compatible with static graph restores -->
-  <Import Project="..\tools\EmptyIsProjectRestoreSupportedTarget.targets" Condition="!$(_BeforeCommonTargetsHookUsed)"/>
-  <Target Name="Restore"/>
-  <Target Name="Build"/>
+  <PropertyGroup>
+    <BuildDependsOn>
+      BeforeBuild;
+      CoreBuild;
+      AfterBuild
+    </BuildDependsOn>
+  </PropertyGroup>
+  <Target Name="Build" DependsOnTargets="$(BuildDependsOn)" />
+
+  <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
+  <Target Name="Clean" />
+
+  <Target Name="BeforeBuild"/>
+  <Target Name="CoreBuild"/>
+  <Target Name="AfterBuild"/>
+
   <Target Name="Test"/>
-  <Target Name="Pack"/>
+  <Target Name="IntegrationTest" />
+  <Target Name="PerformanceTest" />
   <Target Name="Publish"/>
   <Target Name="ProcessFrameworkReferences" />
+
+  <PropertyGroup>
+    <PackDependsOn>
+      BeforePack;
+      CorePack;
+      AfterPack
+    </PackDependsOn>
+  </PropertyGroup>
+  <Target Name="Pack" DependsOnTargets="$(PackDependsOn)" />
+  <Target Name="BeforePack"/>
+  <Target Name="CorePack"/>
+  <Target Name="AfterPack"/>
+
+  <Target Name="CreateManifestResourceNames" />
+
+  <Import Project="EmptyDisableRestore.targets" Condition="'$(_NoSuppressRestoreTarget)' != 'false'" />
 
 </Project>
