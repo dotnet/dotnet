@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Cohost;
@@ -15,9 +14,7 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.Razor.Settings;
 using Roslyn.Test.Utilities;
 using Xunit;
 
@@ -43,7 +40,7 @@ public partial class CohostDocumentPullDiagnosticsTest
             """);
 
         var requestInvoker = new TestHtmlRequestInvoker([(VSInternalMethods.DocumentPullDiagnosticName, (VSInternalDiagnosticReport[]?)null)]);
-        var result = await MakeDiagnosticsRequestAsync(document, taskListRequest: false, requestInvoker, IncompatibleProjectService, RemoteServiceInvoker, ClientSettingsManager, ClientCapabilitiesService, LoggerFactory, DisposalToken);
+        var result = await MakeDiagnosticsRequestAsync(document, taskListRequest: false, requestInvoker, IncompatibleProjectService, RemoteServiceInvoker, ClientCapabilitiesService, LoggerFactory, DisposalToken);
 
         Assert.NotNull(result);
         var diagnostic = Assert.Single(result);
@@ -591,9 +588,8 @@ public partial class CohostDocumentPullDiagnosticsTest
 
         var requestInvoker = new TestHtmlRequestInvoker([(VSInternalMethods.DocumentPullDiagnosticName, htmlResponse)]);
 
-        var clientSettingsManager = new ClientSettingsManager([]);
-        var clientCapabilitiesService = new TestClientCapabilitiesService(new VSInternalClientCapabilities { SupportsVisualStudioExtensions = true });
-        var result = await MakeDiagnosticsRequestAsync(document, taskListRequest, requestInvoker, IncompatibleProjectService, RemoteServiceInvoker, clientSettingsManager, clientCapabilitiesService, LoggerFactory, DisposalToken);
+        ClientSettingsManager.Update(ClientSettingsManager.GetClientSettings().AdvancedSettings with { TaskListDescriptors = ["TODO"] });
+        var result = await MakeDiagnosticsRequestAsync(document, taskListRequest, requestInvoker, IncompatibleProjectService, RemoteServiceInvoker, ClientCapabilitiesService, LoggerFactory, DisposalToken);
 
         Assert.NotNull(result);
 
@@ -635,15 +631,14 @@ public partial class CohostDocumentPullDiagnosticsTest
         TestHtmlRequestInvoker requestInvoker,
         IIncompatibleProjectService incompatibleProjectService,
         IRemoteServiceInvoker remoteServiceInvoker,
-        IClientSettingsManager clientSettingsManager,
         IClientCapabilitiesService clientCapabilitiesService,
         ILoggerFactory loggerFactory,
         CancellationToken cancellationToken)
     {
-        var endpoint = new CohostDocumentPullDiagnosticsEndpoint(incompatibleProjectService, remoteServiceInvoker, requestInvoker, clientSettingsManager, clientCapabilitiesService, NoOpTelemetryReporter.Instance, loggerFactory);
+        var endpoint = new CohostDocumentPullDiagnosticsEndpoint(incompatibleProjectService, remoteServiceInvoker, requestInvoker, clientCapabilitiesService, NoOpTelemetryReporter.Instance, loggerFactory);
 
         var result = taskListRequest
-            ? await endpoint.GetTestAccessor().HandleTaskListItemRequestAsync(document, ["TODO"], cancellationToken)
+            ? await endpoint.GetTestAccessor().HandleTaskListItemRequestAsync(document, cancellationToken)
             : [new()
                 {
                     Diagnostics = await endpoint.GetTestAccessor().HandleRequestAsync(document, cancellationToken)

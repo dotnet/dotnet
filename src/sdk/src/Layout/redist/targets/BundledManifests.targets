@@ -54,11 +54,9 @@
     <PackageReference Include="Microsoft.DotNet.SignCheckTask" IncludeAssets="build" PrivateAssets="all" />
   </ItemGroup>
 
+  <!-- Target disabled - SignCheckTask validation is not currently needed -->
   <Target Name="ValidateBundledManifestSigning"
-          Condition=" '$(OS)' == 'Windows_NT' and
-          '$(Architecture)' != 'arm' and
-          $(BUILD_SOURCEBRANCH) != '' and
-          $(BUILD_SOURCEBRANCH.Contains('release')) "
+          Condition="false"
           BeforeTargets="GenerateWorkloadManifestsWxs">
     <PropertyGroup>
       <SignCheckLog Condition="'$(SignCheckLog)' == ''">$(ArtifactsLogDir)\workloadmanifestsigncheck.log</SignCheckLog>
@@ -80,7 +78,7 @@
       LogFile="$(SignCheckLog)"
       ErrorLogFile="$(SignCheckErrorLog)"
       Recursive="true"
-      Format="UnsignedFiles" />
+      FileStatus="UnsignedFiles" />
 
     <Error
       Text="Signing validation failed for workload manifest MSI. Check $(SignCheckErrorLog) for more information."

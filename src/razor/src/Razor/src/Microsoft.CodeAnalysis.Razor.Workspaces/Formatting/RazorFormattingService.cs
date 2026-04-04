@@ -38,12 +38,13 @@ internal class RazorFormattingService : IRazorFormattingService
 
     public RazorFormattingService(
         IDocumentMappingService documentMappingService,
+        IRazorEditService razorEditService,
         IHostServicesProvider hostServicesProvider,
         IFormattingLoggerFactory formattingLoggerFactory,
         ILoggerFactory loggerFactory)
     {
         _htmlOnTypeFormattingPass = new HtmlOnTypeFormattingPass();
-        _csharpOnTypeFormattingPass = new CSharpOnTypeFormattingPass(documentMappingService, hostServicesProvider, loggerFactory);
+        _csharpOnTypeFormattingPass = new CSharpOnTypeFormattingPass(documentMappingService, razorEditService, hostServicesProvider, loggerFactory);
         _validationPasses =
         [
             new FormattingDiagnosticValidationPass(loggerFactory),
@@ -146,7 +147,7 @@ internal class RazorFormattingService : IRazorFormattingService
                 triggerCharacter,
                 _csharpOnTypeFormattingPass,
                 collapseChanges: false,
-                automaticallyAddUsings: false,
+                includeCSharpLanguageFeatureEdits: false,
                 validate: true,
                 formattingType: "CSharpOnType",
                 cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -168,7 +169,7 @@ internal class RazorFormattingService : IRazorFormattingService
                 triggerCharacter,
                 _htmlOnTypeFormattingPass,
                 collapseChanges: false,
-                automaticallyAddUsings: false,
+                includeCSharpLanguageFeatureEdits: false,
                 validate: true,
                 formattingType: "HtmlOnType",
                 cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -189,7 +190,7 @@ internal class RazorFormattingService : IRazorFormattingService
             triggerCharacter: '\0',
             _csharpOnTypeFormattingPass,
             collapseChanges: false,
-            automaticallyAddUsings: false,
+            includeCSharpLanguageFeatureEdits: false,
             validate: true,
             formattingType: "SingleCSharpEdit",
             cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -214,7 +215,7 @@ internal class RazorFormattingService : IRazorFormattingService
             triggerCharacter: '\0',
             _csharpOnTypeFormattingPass,
             collapseChanges: true,
-            automaticallyAddUsings: true,
+            includeCSharpLanguageFeatureEdits: true,
             validate: false,
             formattingType: "CSharpCodeAction",
             cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -241,7 +242,7 @@ internal class RazorFormattingService : IRazorFormattingService
             triggerCharacter: '\0',
             _csharpOnTypeFormattingPass,
             collapseChanges: true,
-            automaticallyAddUsings: true,
+            includeCSharpLanguageFeatureEdits: true,
             validate: false,
             formattingType: "CSharpSnippet",
             cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -274,7 +275,7 @@ internal class RazorFormattingService : IRazorFormattingService
         char triggerCharacter,
         IFormattingPass formattingPass,
         bool collapseChanges,
-        bool automaticallyAddUsings,
+        bool includeCSharpLanguageFeatureEdits,
         bool validate,
         string formattingType,
         CancellationToken cancellationToken)
@@ -285,7 +286,7 @@ internal class RazorFormattingService : IRazorFormattingService
 
         var logger = _formattingLoggerFactory.CreateLogger(documentSnapshot.FilePath, formattingType);
         logger?.LogObject("Options", options);
-        logger?.LogObject("Parameters", new { hostDocumentIndex, triggerCharacter, collapseChanges, automaticallyAddUsings, validate });
+        logger?.LogObject("Parameters", new { hostDocumentIndex, triggerCharacter, collapseChanges, includeCSharpLanguageFeatureEdits, validate });
         logger?.LogObject("GeneratedDocumentChanges", generatedDocumentChanges);
         logger?.LogSourceText("InitialDocument", codeDocument.Source.Text);
 
@@ -294,7 +295,7 @@ internal class RazorFormattingService : IRazorFormattingService
             codeDocument,
             options,
             logger,
-            automaticallyAddUsings: automaticallyAddUsings,
+            includeCSharpLanguageFeatureEdits: includeCSharpLanguageFeatureEdits,
             hostDocumentIndex,
             triggerCharacter);
 

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
+using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Protocol.InlayHints;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
@@ -27,6 +28,7 @@ internal sealed class RemoteInlayHintService(in ServiceArgs args) : RazorDocumen
     }
 
     private readonly InlayHintCacheWrapperProvider _cacheWrapperProvider = args.ExportProvider.GetExportedValue<InlayHintCacheWrapperProvider>();
+    private readonly IRazorEditService _razorEditService = args.ExportProvider.GetExportedValue<IRazorEditService>();
 
     public ValueTask<InlayHint[]?> GetInlayHintsAsync(JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo, JsonSerializableDocumentId razorDocumentId, InlayHintParams inlayHintParams, bool displayAllOverride, CancellationToken cancellationToken)
         => RunServiceAsync(
@@ -97,9 +99,9 @@ internal sealed class RemoteInlayHintService(in ServiceArgs args) : RazorDocumen
                     if (hint.TextEdits is not null)
                     {
                         var changes = hint.TextEdits.SelectAsArray(csharpSourceText.GetTextChange);
-                        var mappedChanges = DocumentMappingService.GetRazorDocumentEdits(csharpDocument, changes);
+                        var textChanges = await _razorEditService.MapCSharpEditsAsync(changes, context.Snapshot, cancellationToken).ConfigureAwait(false);
 
-                        var textEdits = mappedChanges.SelectAsArray(razorSourceText.GetTextEdit);
+                        var textEdits = textChanges.SelectAsArray(razorSourceText.GetTextEdit);
 
                         hint.TextEdits = ImmutableCollectionsMarshal.AsArray(textEdits);
                     }

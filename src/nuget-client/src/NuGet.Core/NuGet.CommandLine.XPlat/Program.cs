@@ -20,7 +20,7 @@ using NuGet.CommandLine.XPlat.Commands.Package.PackageDownload;
 
 namespace NuGet.CommandLine.XPlat
 {
-    internal class Program
+    public static class Program
     {
 #if DEBUG
         private const string DebugOption = "--debug";
@@ -30,16 +30,28 @@ namespace NuGet.CommandLine.XPlat
 
         private const int DotnetPackageSearchTimeOut = 15;
 
-        public static int Main(string[] args)
+        internal static int Main(string[] args)
+        {
+            return MainInternal(args, virtualProjectBuilder: null);
+        }
+
+#nullable enable
+        public static int Run(string[] args, IVirtualProjectBuilder virtualProjectBuilder)
+        {
+            return MainInternal(args, virtualProjectBuilder);
+        }
+
+        private static int MainInternal(string[] args, IVirtualProjectBuilder? virtualProjectBuilder)
         {
             var log = new CommandOutputLogger(LogLevel.Information);
-            return MainInternal(args, log, EnvironmentVariableWrapper.Instance);
+            return MainInternal(args, log, EnvironmentVariableWrapper.Instance, virtualProjectBuilder);
         }
+#nullable disable
 
         /// <summary>
         /// Internal Main. This is used for testing.
         /// </summary>
-        public static int MainInternal(string[] args, CommandOutputLogger log, IEnvironmentVariableReader environmentVariableReader)
+        internal static int MainInternal(string[] args, CommandOutputLogger log, IEnvironmentVariableReader environmentVariableReader, IVirtualProjectBuilder virtualProjectBuilder = null)
         {
 #if USEMSBUILDLOCATOR
             try
@@ -106,7 +118,7 @@ namespace NuGet.CommandLine.XPlat
 
                     PackageSearchCommand.Register(packageCommand, getHidePrefixLogger);
 #if DEBUG
-                    PackageUpdateCommand.Register(packageCommand, interactiveOption);
+                    PackageUpdateCommand.Register(packageCommand, interactiveOption, virtualProjectBuilder);
                     PackageDownloadCommand.Register(packageCommand, interactiveOption);
 #endif
                 }
@@ -119,8 +131,8 @@ namespace NuGet.CommandLine.XPlat
 
                     ConfigCommand.Register(nugetCommand, getHidePrefixLogger);
                     ConfigCommand.Register(rootCommand, getHidePrefixLogger);
-                    Commands.Why.WhyCommand.Register(nugetCommand, lazyConsole);
-                    Commands.Why.WhyCommand.Register(rootCommand, lazyConsole);
+                    Commands.Why.WhyCommand.Register(nugetCommand, lazyConsole, virtualProjectBuilder);
+                    Commands.Why.WhyCommand.Register(rootCommand, lazyConsole, virtualProjectBuilder);
                 }
 
                 CancellationTokenSource tokenSource = new CancellationTokenSource();
@@ -141,7 +153,7 @@ namespace NuGet.CommandLine.XPlat
                 return exitCodeValue;
             }
 
-            var app = InitializeApp(args, log);
+            var app = InitializeApp(args, log, virtualProjectBuilder);
 
             // Remove the correct item in array for "package" commands. Only do this when "add package", "remove package", etc... are being run.
             if (app.Name == DotnetPackageAppName)
@@ -289,7 +301,7 @@ namespace NuGet.CommandLine.XPlat
             log.LogVerbose(e.ToString());
         }
 
-        private static CommandLineApplication InitializeApp(string[] args, CommandOutputLogger log)
+        private static CommandLineApplication InitializeApp(string[] args, CommandOutputLogger log, IVirtualProjectBuilder virtualProjectBuilder)
         {
             // Many commands don't want prefixes output. Use this func instead of () => log to set the HidePrefix property first.
             Func<ILoggerWithColor> getHidePrefixLogger = () =>
@@ -302,14 +314,15 @@ namespace NuGet.CommandLine.XPlat
             Action<LogLevel> setLogLevel = (logLevel) => log.VerbosityLevel = logLevel;
 
             var app = new CommandLineApplication();
+            var msbuild = new MSBuildAPIUtility(log, virtualProjectBuilder);
 
             if (args.Any() && args[0] == "package")
             {
                 // "dotnet * package" commands
                 app.Name = DotnetPackageAppName;
-                AddPackageReferenceCommand.Register(app, () => log, () => new AddPackageReferenceCommandRunner());
-                RemovePackageReferenceCommand.Register(app, () => log, () => new RemovePackageReferenceCommandRunner());
-                ListPackageCommand.Register(app, getHidePrefixLogger, setLogLevel, () => new ListPackageCommandRunner());
+                AddPackageReferenceCommand.Register(app, () => log, () => new AddPackageReferenceCommandRunner(), () => msbuild.VirtualProjectBuilder);
+                RemovePackageReferenceCommand.Register(app, () => log, () => new RemovePackageReferenceCommandRunner(), () => msbuild.VirtualProjectBuilder);
+                ListPackageCommand.Register(app, getHidePrefixLogger, setLogLevel, () => new ListPackageCommandRunner(msbuild));
             }
             else
             {

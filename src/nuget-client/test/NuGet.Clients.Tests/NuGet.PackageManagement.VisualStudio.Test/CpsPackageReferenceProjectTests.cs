@@ -4421,7 +4421,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         {
             // Arrange
             var projectSystemCache = new Mock<IProjectSystemCache>();
-            var unconfiguredProject = new Mock<UnconfiguredProject>();
             var nugetProjectServices = new Mock<INuGetProjectServices>();
             var projectGuid = Guid.NewGuid();
             var cacheContext = new DependencyGraphCacheContext();
@@ -4432,7 +4431,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 @"src\TestProject\TestProject.csproj",
                 @"c:\repo\src\TestProject\TestProject.csproj",
                 projectSystemCache.Object,
-                unconfiguredProject.Object,
+                unconfiguredProject: null,
                 nugetProjectServices.Object,
                 projectGuid.ToString());
 

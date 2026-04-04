@@ -304,8 +304,7 @@ public class SigningValidation : BuildTask
             $"/p:SignCheckErrorLog='{GetLogPath(_signCheckStderrLogFileName)}' " +
             $"/p:SignCheckResultsXmlFile='{GetLogPath(_signCheckResultsXmlFileName)}' " +
             $"/p:SignCheckExclusionsFile='{GetSignCheckExclusionsFile()}' " +
-            $"/bl:{GetLogPath(_signCheckBinLogFileName)} " +
-            $"$additionalArgs$";
+            $"/bl:{GetLogPath(_signCheckBinLogFileName)}";
 
         string command = string.Empty;
         string arguments = string.Empty;
@@ -314,8 +313,7 @@ public class SigningValidation : BuildTask
             command = "powershell.exe";
             string formattedArguments = argumentsTemplate
                 .Replace("$scriptExtension$", "ps1")
-                .Replace("$argumentPrefix$", "-")
-                .Replace("$additionalArgs$", "-msbuildEngine vs");
+                .Replace("$argumentPrefix$", "-");
             arguments = $"& \"{formattedArguments}\"";
         }
         else
@@ -323,8 +321,7 @@ public class SigningValidation : BuildTask
             command = "/bin/bash";
             string formattedArguments = argumentsTemplate
                 .Replace("$scriptExtension$", "sh")
-                .Replace("$argumentPrefix$", "--")
-                .Replace("$additionalArgs$", string.Empty);
+                .Replace("$argumentPrefix$", "--");
             arguments = $"-c \"{formattedArguments}\"";
         }
 

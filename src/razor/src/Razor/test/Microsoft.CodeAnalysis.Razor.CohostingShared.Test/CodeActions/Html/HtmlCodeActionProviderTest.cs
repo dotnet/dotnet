@@ -44,8 +44,8 @@ public class HtmlCodeActionProviderTest(ITestOutputHelper testOutput) : CohostEn
 
         var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents);
 
-        var documentMappingService = StrictMock.Of<IEditMappingService>();
-        var provider = new HtmlCodeActionProvider(documentMappingService);
+        var razorEditService = StrictMock.Of<IRazorEditService>();
+        var provider = new HtmlCodeActionProvider(razorEditService);
 
         ImmutableArray<RazorVSInternalCodeAction> codeActions = [new RazorVSInternalCodeAction() { Name = "Test" }];
 
@@ -75,8 +75,8 @@ public class HtmlCodeActionProviderTest(ITestOutputHelper testOutput) : CohostEn
 
         var context = CreateRazorCodeActionContext(request, cursorPosition, documentPath, contents);
 
-        var editMappingServiceMock = new StrictMock<IEditMappingService>();
-        editMappingServiceMock
+        var razorEditServiceMock = new StrictMock<IRazorEditService>();
+        razorEditServiceMock
             .Setup(x => x.MapWorkspaceEditAsync(It.IsAny<IDocumentSnapshot>(), It.IsAny<WorkspaceEdit>(), It.IsAny<CancellationToken>()))
             .Callback<IDocumentSnapshot, WorkspaceEdit, CancellationToken>((_, edit, _) =>
             {
@@ -86,7 +86,7 @@ public class HtmlCodeActionProviderTest(ITestOutputHelper testOutput) : CohostEn
             })
             .Returns(Task.CompletedTask);
 
-        var provider = new HtmlCodeActionProvider(editMappingServiceMock.Object);
+        var provider = new HtmlCodeActionProvider(razorEditServiceMock.Object);
 
         ImmutableArray<RazorVSInternalCodeAction> codeActions =
         [

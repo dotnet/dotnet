@@ -409,8 +409,8 @@ NuGet에는 HTTPS 원본이 필요합니다. HTTP 원본을 사용하려면 NuGe
         <note>{0} - package id</note>
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
-        <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, or directory.</source>
-        <target state="translated">'{0}' 경로가 없거나 잘못되었습니다. 프로젝트, 솔루션 파일 또는 디렉터리의 경로를 제공하세요.</target>
+        <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, file-based app, or project directory.</source>
+        <target state="needs-review-translation">'{0}' 경로가 없거나 잘못되었습니다. 프로젝트, 솔루션 파일 또는 디렉터리의 경로를 제공하세요.</target>
         <note>{0} - Input path argument</note>
       </trans-unit>
       <trans-unit id="Error_PathNotFound">
@@ -972,8 +972,8 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_ProjectOptionDescription">
-        <source>Path to a project or solution file, or a directory.</source>
-        <target state="translated">프로젝트, 솔루션 파일 또는 디렉터리의 경로입니다.</target>
+        <source>Path to a project or solution file or file-based app, or a project directory.</source>
+        <target state="needs-review-translation">프로젝트, 솔루션 파일 또는 디렉터리의 경로입니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_VulnerableOptionDescription">
@@ -1528,8 +1528,8 @@ The search is a case-insensitive string comparison using the supplied value, whi
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_PathArgument_Description">
-        <source>A path to a project, solution file, or directory.</source>
-        <target state="translated">프로젝트, 솔루션 파일 또는 디렉터리의 경로입니다.</target>
+        <source>A path to a project, solution file, file-based app, or project directory.</source>
+        <target state="needs-review-translation">프로젝트, 솔루션 파일 또는 디렉터리의 경로입니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_Warning_AssetsFileDoesNotContainSpecifiedTarget">
