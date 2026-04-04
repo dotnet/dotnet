@@ -16,7 +16,7 @@
             MethodDeclaration -  - protected override - void - BuildRenderTree
                 Component - (0:0,0 [137] x:\dir\subdir\Test\TestComponent.cshtml) - TestComponent
                     RenderMode - (28:0,28 [64] x:\dir\subdir\Test\TestComponent.cshtml)
-                        LazyIntermediateToken - (28:0,28 [64] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
+                        IntermediateToken - (28:0,28 [64] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
                     ComponentAttribute -  - @rendermode -  - AttributeStructure.DoubleQuotes
                         HtmlContent - (127:1,32 [6] x:\dir\subdir\Test\TestComponent.cshtml)
                             LazyIntermediateToken - (127:1,32 [6] x:\dir\subdir\Test\TestComponent.cshtml) - Html - Value2

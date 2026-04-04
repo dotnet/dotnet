@@ -21,7 +21,7 @@
                     HtmlAttribute - (61:1,17 [16] x:\dir\subdir\Test\TestComponent.cshtml) - onmouseover=" - "
                         CSharpExpressionAttributeValue -  - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::Microsoft.AspNetCore.Components.Web.MouseEventArgs>(this, 
-                            LazyIntermediateToken - (61:1,17 [16] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - OnComponentHover
+                            IntermediateToken - (61:1,17 [16] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - OnComponentHover
                             IntermediateToken -  - CSharp - )
                     HtmlAttribute -  - style=" - "
                         HtmlAttributeValue - (86:1,42 [11] x:\dir\subdir\Test\TestComponent.cshtml) - 

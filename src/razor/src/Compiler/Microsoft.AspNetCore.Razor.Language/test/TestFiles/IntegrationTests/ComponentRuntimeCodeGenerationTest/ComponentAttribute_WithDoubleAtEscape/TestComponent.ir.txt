@@ -9,5 +9,5 @@
             MethodDeclaration -  - protected override - void - BuildRenderTree
                 Component - (0:0,0 [38] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentAttribute - (20:0,20 [14] x:\dir\subdir\Test\TestComponent.cshtml) - Value - Value - AttributeStructure.DoubleQuotes
-                        HtmlContent - (22:0,22 [13] x:\dir\subdir\Test\TestComponent.cshtml)
-                            LazyIntermediateToken - (22:0,22 [13] x:\dir\subdir\Test\TestComponent.cshtml) - Html - @currentCount
+                        HtmlContent - (20:0,20 [14] x:\dir\subdir\Test\TestComponent.cshtml)
+                            IntermediateToken - (20:0,20 [14] x:\dir\subdir\Test\TestComponent.cshtml) - Html - @currentCount

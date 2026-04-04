@@ -27,7 +27,7 @@
                         CSharpExpressionAttributeValue -  - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.EventCallback.Factory.CreateBinder(this, 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredBindSetter(callback: 
-                            LazyIntermediateToken - (62:0,62 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - UpdateValue
+                            IntermediateToken - (62:0,62 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - UpdateValue
                             IntermediateToken -  - CSharp - , value: ParentValue)
                             IntermediateToken -  - CSharp - , 
                             IntermediateToken -  - CSharp - ParentValue

@@ -20,9 +20,9 @@
                     LazyIntermediateToken - (97:1,0 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
                 Component - (99:2,0 [130] x:\dir\subdir\Test\TestComponent.cshtml) - TestComponent
                     RenderMode - (127:2,28 [15] x:\dir\subdir\Test\TestComponent.cshtml)
-                        LazyIntermediateToken - (127:2,28 [15] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - RenderModeParam
+                        IntermediateToken - (127:2,28 [15] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - RenderModeParam
                     ComponentAttribute - (161:2,62 [64] x:\dir\subdir\Test\TestComponent.cshtml) - RenderModeParam - RenderModeParam - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (161:2,62 [64] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
+                        IntermediateToken - (161:2,62 [64] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
                 HtmlContent - (229:2,130 [4] x:\dir\subdir\Test\TestComponent.cshtml)
                     LazyIntermediateToken - (229:2,130 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n\n
             CSharpCode - (241:5,1 [67] x:\dir\subdir\Test\TestComponent.cshtml)
