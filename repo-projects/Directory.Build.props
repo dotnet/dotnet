@@ -198,7 +198,7 @@
 
     <EnvironmentVariables Include="_InitializeDotNetCli=$(DotNetRoot.TrimEnd('/\'))" />
     <EnvironmentVariables Include="_DotNetInstallDir=$(DotNetRoot)" />
-    <EnvironmentVariables Include="_InitializeToolset=$(SourceBuiltSdksDir)Microsoft.DotNet.Arcade.Sdk/tools/Build.proj"
+    <EnvironmentVariables Include="_InitializeToolset=$(SourceBuiltSdksDir)Microsoft.DotNet.Arcade.Sdk/toolset/Build.proj"
                           Condition="'$(UseBootstrapArcade)' != 'true'" />
 
     <EnvironmentVariables Include="DeterministicSourcePaths=true" />

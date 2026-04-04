@@ -45,6 +45,14 @@
   <!-- Repository extensibility point -->
   <Import Project="$(RepositoryEngineeringDir)Tools.props" Condition="Exists('$(RepositoryEngineeringDir)Tools.props')" />
 
+  <!-- Central package management extension point support -->
+  <ItemGroup>
+    <PackageReference Update="@(PackageReference->HasMetadata('Version'))"
+                      VersionOverride="%(Version)" />
+    <PackageReference Update="@(PackageReference->HasMetadata('VersionOverride'))"
+                      Version="" />
+  </ItemGroup>
+
   <Import Project="InstallDotNetCore.targets" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
 
   <Import Project="VisualStudio.AcquireOptimizationData.targets" Condition="'$(UsingToolVisualStudioIbcTraining)' == 'true'" />
