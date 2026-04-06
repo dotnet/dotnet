@@ -1,8 +1,6 @@
 <Project>
   <!-- Extracted WiX build targets for Windows Desktop Runtime bundle -->
 
-  <UsingTask TaskName="DownloadFile" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
-
   <Target Name="CollectRuntimePrereqDependencies">
     <PropertyGroup>
       <RuntimePrereqDownloadDirectory>$(BaseIntermediateOutputPath)runtime-prereqs\$(TargetArchitecture)\</RuntimePrereqDownloadDirectory>
@@ -48,7 +46,7 @@
       <UrisToDownload Include="@(RemoteAssetBaseURL->'%(Identity)Runtime/$(MicrosoftNETCorePlatformsVersion)/$(_CurrentRemoteAsset)')" />
     </ItemGroup>
 
-    <DownloadFile Uris="@(UrisToDownload)" DestinationPath="$(_CurrentDestination)" />
+    <Microsoft.DotNet.Arcade.Sdk.DownloadFile Uris="@(UrisToDownload)" DestinationPath="$(_CurrentDestination)" />
   </Target>
 
   <Target Name="SetInstallerInfo" BeforeTargets="BeforeBuild" DependsOnTargets="FetchRuntimePrereqDependencies">
