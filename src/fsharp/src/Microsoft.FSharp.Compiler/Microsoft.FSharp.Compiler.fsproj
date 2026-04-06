@@ -11,13 +11,6 @@
     <NoDefaultExcludes>true</NoDefaultExcludes>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <_ArcadeSdkMSBuildProjectDir>$([System.IO.Path]::GetDirectoryName('$(ArcadeSdkBuildTasksAssembly)'))\..\</_ArcadeSdkMSBuildProjectDir>
-    <_BuildReleasePackagesTargets>$(_ArcadeSdkMSBuildProjectDir)BuildReleasePackages.targets</_BuildReleasePackagesTargets>
-  </PropertyGroup>
-
-  <Import Project="$(_BuildReleasePackagesTargets)" />
-
   <ItemGroup>
     <NuspecProperty Include="fSharpCorePreviewPackageVersion=$(FSCorePackageVersionValue)-$(VersionSuffix)" />
     <NuspecProperty Include="fSharpCorePackageVersion=$(FSCorePackageVersionValue)" />

@@ -39,9 +39,10 @@
       <UrisToDownload Include="@(RemoteAssetBaseURL->'%(Identity)$(DotNetRuntimeDownloadPath)')" />
     </ItemGroup>
 
-    <DownloadFile Condition=" !Exists('$(DotNetRuntimeArchive)') "
-                  Uris="@(UrisToDownload)"
-                  DestinationPath="$(DotNetRuntimeArchive)" />
+    <Microsoft.DotNet.Arcade.Sdk.DownloadFile
+      Condition=" !Exists('$(DotNetRuntimeArchive)') "
+      Uris="@(UrisToDownload)"
+      DestinationPath="$(DotNetRuntimeArchive)" />
   </Target>
 
   <Target Name="PublishToDisk">

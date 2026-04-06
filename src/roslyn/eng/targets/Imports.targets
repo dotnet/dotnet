@@ -173,6 +173,7 @@
           DestinationFolder="$(OutDir)" />
   </Target>
 
+  <!-- TODO: Remove the Arcade SDk UsingTasks when upgrading to Arcade 11 -->
   <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.CompareVersions" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
   <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.SingleError" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
 

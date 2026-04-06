@@ -85,9 +85,10 @@
       <UrisToDownload Include="@(RemoteAssetBaseURL->'%(Identity)Runtime/$(_CurrentRemoteAsset)')" />
     </ItemGroup>
 
-    <DownloadFile Condition=" ! Exists('$(DepsPath)%(RemoteAsset.TargetFilename)') "
-                  Uris="@(UrisToDownload)"
-                  DestinationPath="$(DepsPath)%(RemoteAsset.TargetFilename)" />
+    <Microsoft.DotNet.Arcade.Sdk.DownloadFile
+      Condition="!Exists('$(DepsPath)%(RemoteAsset.TargetFilename)')"
+      Uris="@(UrisToDownload)"
+      DestinationPath="$(DepsPath)%(RemoteAsset.TargetFilename)" />
   </Target>
 
   <Target Name="ExtractPropertiesFromDotNetMsi" DependsOnTargets="CollectDependencies;FetchDependencies" BeforeTargets="BeforeBuild">
