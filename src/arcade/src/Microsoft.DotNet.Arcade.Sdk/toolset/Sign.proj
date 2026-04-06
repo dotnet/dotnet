@@ -21,7 +21,7 @@
     <PackageDownload Include="Microsoft.DotNet.MacOsPkg.Cli" Version="[$(MicrosoftDotNetMacOsPkgVersion)]" Condition="$([MSBuild]::IsOSPlatform('OSX'))" />
   </ItemGroup>
 
-  <!-- Provide an opt-out property (for nuget-client) which doesn't have feeds available for these packages. -->
+  <!-- Provide an opt-out property (for nuget-client) when required feeds aren't available. -->
   <ItemGroup Condition="'$(_ImportOrUseTooling)' != 'false'">
     <PackageReference Include="Microsoft.Signed.Wix" Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
     <PackageDownload Include="Microsoft.VisualStudioEng.MicroBuild.Core" Version="[$(MicrosoftVisualStudioEngMicroBuildCoreVersion)]" />
