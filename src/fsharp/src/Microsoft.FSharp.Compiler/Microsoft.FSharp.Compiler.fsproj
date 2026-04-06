@@ -12,6 +12,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.NuGetRepack.Tasks" Version="$(MicrosoftDotNetNuGetRepackTasksVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
     <NuspecProperty Include="fSharpCorePreviewPackageVersion=$(FSCorePackageVersionValue)-$(VersionSuffix)" />
     <NuspecProperty Include="fSharpCorePackageVersion=$(FSCorePackageVersionValue)" />
     <NuspecProperty Include="fSharpCompilerServicePackagePreviewPackageVersion=$(FSharpCompilerServicePackageVersion)-$(VersionSuffix)" />
@@ -78,11 +82,6 @@
     <!-- Rewrite the version ranges of per-build pre-release packages (see https://github.com/NuGet/Home/issues/7213) -->
     <Microsoft.DotNet.Tools.UpdatePackageVersionTask Packages="@(_BuiltPackages)" OutputDirectory="$(DependentPackagesDir)Shipping" ExactVersions="true"/>
   </Target>
-
-  <Target Name="PackageReleasePackages" AfterTargets="Pack" Condition="'$(DotNetFinalVersionKind)' == ''">
-    <!-- override sdk PackageReleasePackages to do nothing. -->
-  </Target>
-
 
   <Target Name="PackDependentProjectsCore">
     <PropertyGroup>
