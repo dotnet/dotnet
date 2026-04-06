@@ -87,10 +87,10 @@
   <ItemGroup>
     <None Include="$(ArtifactsBinDir)Microsoft.DotNet.ArcadeLogging\$(Configuration)\$(BundledNETCoreAppTargetFramework)\Microsoft.DotNet.ArcadeLogging.dll"
           Pack="true"
-          PackagePath="tools\net\Microsoft.DotNet.ArcadeLogging.dll" />
+          PackagePath="toolset\net\Microsoft.DotNet.ArcadeLogging.dll" />
     <None Include="$(ArtifactsBinDir)Microsoft.DotNet.ArcadeLogging\$(Configuration)\$(NetFrameworkToolCurrent)\Microsoft.DotNet.ArcadeLogging.dll"
           Pack="true"
-          PackagePath="tools\netframework\Microsoft.DotNet.ArcadeLogging.dll"
+          PackagePath="toolset\netframework\Microsoft.DotNet.ArcadeLogging.dll"
           Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
   </ItemGroup>
 
