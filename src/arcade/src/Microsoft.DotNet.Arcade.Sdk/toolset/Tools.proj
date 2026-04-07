@@ -14,7 +14,7 @@
     <ProjectReference Include="AfterSolutionBuild.proj" Condition="'$(_SolutionBuildTargets)' != ''" />
     <ProjectReference Include="Sign.proj" Condition="'$(Sign)' == 'true'" />
     <ProjectReference Include="AfterSigning.proj" Condition="'$(_SolutionBuildTargets)' != ''" />
-    <ProjectReference Include="Publish.proj" Condition="'$(Publish)' == 'true'" />
+    <ProjectReference Include="Publish.proj" Condition="'$(Publish)' == 'true' or '$(RestoreBuildTaskFeed)' == 'true'" />
   </ItemGroup>
 
   <Target Name="RestoreRepoTools"
