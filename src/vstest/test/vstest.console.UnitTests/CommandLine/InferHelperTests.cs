@@ -130,7 +130,7 @@ public class InferHelperTests
             .Returns(Architecture.AnyCPU).Returns(Architecture.X64).Returns(Architecture.X86);
 
         Assert.AreEqual(_defaultArchitecture, _inferHelper.AutoDetectArchitecture(new List<string>() { "AnyCPU1.dll", "x64.exe", "x86.dll" }, _defaultArchitecture, out var sourceArchitectures));
-        Assert.AreEqual(3, sourceArchitectures.Count);
+        Assert.HasCount(3, sourceArchitectures);
         Assert.AreEqual(_defaultArchitecture, sourceArchitectures["AnyCPU1.dll"]);
         Assert.AreEqual(Architecture.X64, sourceArchitectures["x64.exe"]);
         Assert.AreEqual(Architecture.X86, sourceArchitectures["x86.dll"]);
@@ -240,7 +240,7 @@ public class InferHelperTests
 
         Assert.AreEqual(_frameworkNet47.Name, _inferHelper.AutoDetectFramework(new List<string?>() { "net46.dll", "net47.exe", "net45.dll" }, out var sourceFrameworks).Name);
 
-        Assert.AreEqual(3, sourceFrameworks.Count);
+        Assert.HasCount(3, sourceFrameworks);
         Assert.AreEqual(_frameworkNet46.Name, sourceFrameworks["net46.dll"].Name);
         Assert.AreEqual(_frameworkNet47.Name, sourceFrameworks["net47.exe"].Name);
         Assert.AreEqual(_frameworkNet45.Name, sourceFrameworks["net45.dll"].Name);

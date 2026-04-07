@@ -134,10 +134,12 @@
   <!-- Test config -->
   <PropertyGroup>
     <TestRunnerName>MSTest</TestRunnerName>
+    <!-- Avoid making the TestRunnerAdditionalArguments a global property that we cannot change in the run, by passing TestRunnerExternalArguments externally instead. -->
+    <TestRunnerAdditionalArguments Condition=" '$(TestRunnerExternalArguments)' != ''">$(TestRunnerExternalArguments)</TestRunnerAdditionalArguments>
     <!-- Skip windows only tests on non-windows systems. -->
     <TestRunnerAdditionalArguments Condition=" '$(OS)' != 'Windows_NT' ">$(TestRunnerAdditionalArguments) --filter "TestCategory!=Windows&amp;TestCategory!=Windows-Review"</TestRunnerAdditionalArguments>
-    <!-- Do not capture test output on CI to help community see errors -->
-    <TestCaptureOutput Condition=" '$(ContinuousIntegrationBuild)' == 'true' ">false</TestCaptureOutput>
+    <!-- Allow us to see errors instead of capturing everything into files. -->
+    <TestCaptureOutput>false</TestCaptureOutput>
   </PropertyGroup>
 
 </Project>

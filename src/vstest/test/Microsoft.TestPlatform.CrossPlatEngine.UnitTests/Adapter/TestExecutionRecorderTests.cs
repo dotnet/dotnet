@@ -43,28 +43,28 @@ public class TestExecutionRecorderTests
         var attachments = _testRecorder.Attachments;
 
         Assert.IsNotNull(attachments);
-        Assert.AreEqual(0, attachments.Count);
+        Assert.IsEmpty(attachments);
     }
 
     [TestMethod]
     public void RecordStartShouldUpdateTestRunCache()
     {
         _testRecorder.RecordStart(_testCase);
-        Assert.IsTrue(_testableTestRunCache.TestStartedList.Contains(_testCase));
+        Assert.Contains(_testCase, _testableTestRunCache.TestStartedList);
     }
 
     [TestMethod]
     public void RecordResultShouldUpdateTestRunCache()
     {
         _testRecorder.RecordResult(_testResult);
-        Assert.IsTrue(_testableTestRunCache.TestResultList.Contains(_testResult));
+        Assert.Contains(_testResult, _testableTestRunCache.TestResultList);
     }
 
     [TestMethod]
     public void RecordEndShouldUpdateTestRunCache()
     {
         _testRecorder.RecordEnd(_testCase, TestOutcome.Passed);
-        Assert.IsTrue(_testableTestRunCache.TestCompletedList.Contains(_testCase));
+        Assert.Contains(_testCase, _testableTestRunCache.TestCompletedList);
     }
 
     [TestMethod]
@@ -193,7 +193,7 @@ public class TestExecutionRecorderTests
         _testRecorderWithTestEventsHandler.RecordResult(_testResult);
 
         _mockTestCaseEventsHandler.Verify(x => x.SendTestCaseEnd(_testCase, TestOutcome.Passed), Times.Once);
-        Assert.IsTrue(_testableTestRunCache.TestResultList.Contains(_testResult));
+        Assert.Contains(_testResult, _testableTestRunCache.TestResultList);
     }
 
     [TestMethod]
@@ -205,7 +205,7 @@ public class TestExecutionRecorderTests
         _testRecorderWithTestEventsHandler.RecordEnd(_testCase, _testResult.Outcome);
 
         _mockTestCaseEventsHandler.Verify(x => x.SendTestCaseEnd(_testCase, TestOutcome.Passed), Times.Once);
-        Assert.IsTrue(_testableTestRunCache.TestResultList.Contains(_testResult));
+        Assert.Contains(_testResult, _testableTestRunCache.TestResultList);
     }
 
     [TestMethod]
@@ -216,7 +216,7 @@ public class TestExecutionRecorderTests
         _testRecorderWithTestEventsHandler.RecordResult(_testResult);
 
         _mockTestCaseEventsHandler.Verify(x => x.SendTestCaseEnd(_testCase, TestOutcome.Passed), Times.Once);
-        Assert.IsTrue(_testableTestRunCache.TestResultList.Contains(_testResult));
+        Assert.Contains(_testResult, _testableTestRunCache.TestResultList);
     }
 
     #endregion

@@ -3,6 +3,7 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace DiscoveryTestProject3
@@ -25,7 +26,7 @@ namespace DiscoveryTestProject3
 
     internal class TestMethodWithDelayAttribute : TestMethodAttribute
     {
-        public TestMethodWithDelayAttribute()
+        public TestMethodWithDelayAttribute([CallerFilePath] string callerFilePath = "", [CallerLineNumber] int callerLineNumber = -1) : base(callerFilePath, callerLineNumber)
         {
             // This will be multiplied by 3 because the framework will internally create this
             // attribute 3 times.

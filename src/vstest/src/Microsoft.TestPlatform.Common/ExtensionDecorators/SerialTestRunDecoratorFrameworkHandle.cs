@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -21,6 +22,7 @@ internal class SerialTestRunDecoratorFrameworkHandle : IFrameworkHandle
         _testEnd = testEnd;
     }
 
+    [Obsolete("This property has no effect", error: false)]
     public bool EnableShutdownAfterTestRun { get => _frameworkHandle.EnableShutdownAfterTestRun; set => _frameworkHandle.EnableShutdownAfterTestRun = value; }
 
     public int LaunchProcessWithDebuggerAttached(string filePath, string? workingDirectory, string? arguments, IDictionary<string, string?>? environmentVariables)

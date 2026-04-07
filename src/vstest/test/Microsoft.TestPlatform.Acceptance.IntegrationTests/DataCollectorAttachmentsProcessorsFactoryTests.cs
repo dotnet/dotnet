@@ -52,18 +52,18 @@ public class DataCollectorAttachmentsProcessorsFactoryTests : AcceptanceTestBase
         var dataCollectorAttachmentsProcessors = _dataCollectorAttachmentsProcessorsFactory.Create(invokedDataCollectors.ToArray(), null);
 
         // assert
-        Assert.AreEqual(3, dataCollectorAttachmentsProcessors.Length);
+        Assert.HasCount(3, dataCollectorAttachmentsProcessors);
 
-        Assert.AreEqual(1, dataCollectorAttachmentsProcessors.Count(x => x.FriendlyName == "Sample"));
-        Assert.AreEqual(1, dataCollectorAttachmentsProcessors.Count(x => x.FriendlyName == "SampleData3"));
-        Assert.AreEqual(1, dataCollectorAttachmentsProcessors.Count(x => x.FriendlyName == "Code Coverage"));
+        Assert.ContainsSingle(dataCollectorAttachmentsProcessors.Where(x => x.FriendlyName == "Sample"));
+        Assert.ContainsSingle(dataCollectorAttachmentsProcessors.Where(x => x.FriendlyName == "SampleData3"));
+        Assert.ContainsSingle(dataCollectorAttachmentsProcessors.Where(x => x.FriendlyName == "Code Coverage"));
 
         Assert.AreEqual(typeof(DataCollectorAttachmentProcessor).AssemblyQualifiedName, dataCollectorAttachmentsProcessors[0].DataCollectorAttachmentProcessorInstance.GetType().AssemblyQualifiedName);
         Assert.AreEqual(typeof(DataCollectorAttachmentProcessor2).AssemblyQualifiedName, dataCollectorAttachmentsProcessors[1].DataCollectorAttachmentProcessorInstance.GetType().AssemblyQualifiedName);
         Assert.AreEqual(typeof(CodeCoverageDataAttachmentsHandler).AssemblyQualifiedName, dataCollectorAttachmentsProcessors[2].DataCollectorAttachmentProcessorInstance.GetType().AssemblyQualifiedName);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(true)]
     [DataRow(false)]
     public void Create_EmptyOrNullInvokedDataCollector_ShouldReturnCodeCoverageDataAttachmentsHandler(bool empty)
@@ -72,7 +72,7 @@ public class DataCollectorAttachmentsProcessorsFactoryTests : AcceptanceTestBase
         var dataCollectorAttachmentsProcessors = _dataCollectorAttachmentsProcessorsFactory.Create(empty ? [] : null, null);
 
         //assert
-        Assert.AreEqual(1, dataCollectorAttachmentsProcessors.Length);
+        Assert.ContainsSingle(dataCollectorAttachmentsProcessors);
         Assert.AreEqual(typeof(CodeCoverageDataAttachmentsHandler).AssemblyQualifiedName, dataCollectorAttachmentsProcessors[0].DataCollectorAttachmentProcessorInstance.GetType().AssemblyQualifiedName);
     }
 
@@ -91,7 +91,7 @@ public class DataCollectorAttachmentsProcessorsFactoryTests : AcceptanceTestBase
         var dataCollectorAttachmentsProcessors = _dataCollectorAttachmentsProcessorsFactory.Create(invokedDataCollectors.ToArray(), null);
 
         // assert
-        Assert.AreEqual(1, dataCollectorAttachmentsProcessors.Length);
+        Assert.ContainsSingle(dataCollectorAttachmentsProcessors);
         Assert.AreEqual(typeof(CodeCoverageDataAttachmentsHandler).AssemblyQualifiedName, dataCollectorAttachmentsProcessors[0].DataCollectorAttachmentProcessorInstance.GetType().AssemblyQualifiedName);
     }
 
@@ -108,7 +108,7 @@ public class DataCollectorAttachmentsProcessorsFactoryTests : AcceptanceTestBase
         var dataCollectorAttachmentsProcessors = _dataCollectorAttachmentsProcessorsFactory.Create(invokedDataCollectors.ToArray(), null);
 
         // assert
-        Assert.AreEqual(2, dataCollectorAttachmentsProcessors.Length);
+        Assert.HasCount(2, dataCollectorAttachmentsProcessors);
         Assert.AreEqual(typeof(DataCollectorAttachmentProcessor).AssemblyQualifiedName, dataCollectorAttachmentsProcessors[0].DataCollectorAttachmentProcessorInstance.GetType().AssemblyQualifiedName);
         Assert.AreEqual(typeof(CodeCoverageDataAttachmentsHandler).AssemblyQualifiedName, dataCollectorAttachmentsProcessors[1].DataCollectorAttachmentProcessorInstance.GetType().AssemblyQualifiedName);
     }
@@ -141,7 +141,7 @@ public class DataCollectorAttachmentsProcessorsFactoryTests : AcceptanceTestBase
         var dataCollectorAttachmentsProcessors = _dataCollectorAttachmentsProcessorsFactory.Create(invokedDataCollectors.ToArray(), null);
 
         // assert
-        Assert.AreEqual(2, dataCollectorAttachmentsProcessors.Length);
+        Assert.HasCount(2, dataCollectorAttachmentsProcessors);
         Assert.IsTrue(Regex.IsMatch(dataCollectorAttachmentsProcessors[0].DataCollectorAttachmentProcessorInstance.GetType().AssemblyQualifiedName!, @"AttachmentProcessorDataCollector\.SampleDataCollectorAttachmentProcessor, AttachmentProcessorDataCollector, Version=.*, Culture=neutral, PublicKeyToken=null"));
         Assert.AreEqual(Path.Combine(version2, Path.GetFileName(dataCollectorFilePath)), dataCollectorAttachmentsProcessors[0].DataCollectorAttachmentProcessorInstance.GetType().Assembly.Location);
         Assert.AreEqual(typeof(CodeCoverageDataAttachmentsHandler).AssemblyQualifiedName, dataCollectorAttachmentsProcessors[1].DataCollectorAttachmentProcessorInstance.GetType().AssemblyQualifiedName);
@@ -152,7 +152,7 @@ public class DataCollectorAttachmentsProcessorsFactoryTests : AcceptanceTestBase
         string current = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
         while (true)
         {
-            if (File.Exists(Path.Combine(current, "TestPlatform.sln")))
+            if (File.Exists(Path.Combine(current, "TestPlatform.slnx")))
             {
                 string testAssetsPath = Path.Combine(current, @"test/TestAssets");
                 Assert.IsTrue(Directory.Exists(testAssetsPath), $"Directory not found '{testAssetsPath}'");

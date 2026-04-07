@@ -20,8 +20,7 @@ public static class TestRunnerConnectionInfoExtensions
         var options = $"--port {connectionInfo.Port} --endpoint {connectionInfo.ConnectionInfo.Endpoint} --role {(connectionInfo.ConnectionInfo.Role == ConnectionRole.Client ? "client" : "host")} --parentprocessid {connectionInfo.RunnerProcessId}";
         if (!StringUtils.IsNullOrEmpty(connectionInfo.LogFile))
         {
-            options += " --diag " + connectionInfo.LogFile;
-            options += " --tracelevel " + connectionInfo.TraceLevel;
+            options = $"{options} --diag {connectionInfo.LogFile} --tracelevel {connectionInfo.TraceLevel}";
         }
 
         return options;

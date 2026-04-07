@@ -42,6 +42,11 @@
         <target state="new">{0} process failed to connect to {1} process after {2} seconds. This may occur due to machine slowness, please set environment variable {3} to increase timeout.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ConnectionTimeoutWithErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. The process with id {3}, exited with exitCode {4}, and error output: \n{5}</source>
+        <target state="new">{0} process failed to connect to {1} process after {2} seconds. The process with id {3}, exited with exitCode {4}, and error output: \n{5}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="TestHostProcessCrashed">
         <source>Test host process crashed</source>
         <target state="new">Test host process crashed</target>

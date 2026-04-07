@@ -32,7 +32,7 @@ public class TestPluginManagerTests
     [TestMethod]
     public void GetTestExtensionTypeShouldThrowIfTypeNotFound()
     {
-        Assert.ThrowsException<TypeLoadException>(() => TestPluginManager.GetTestExtensionType("randomassemblyname.random"));
+        Assert.ThrowsExactly<TypeLoadException>(() => TestPluginManager.GetTestExtensionType("randomassemblyname.random"));
     }
 
     [TestMethod]
@@ -46,7 +46,7 @@ public class TestPluginManagerTests
     [TestMethod]
     public void CreateTestExtensionShouldThrowIfInstanceCannotBeCreated()
     {
-        Assert.ThrowsException<MissingMethodException>(() => TestPluginManager.CreateTestExtension<ITestLogger>(typeof(AbstractDummyLogger)));
+        Assert.ThrowsExactly<MissingMethodException>(() => TestPluginManager.CreateTestExtension<ITestLogger>(typeof(AbstractDummyLogger)));
     }
 
     [TestMethod]

@@ -14,12 +14,14 @@ public class InactivityTimerTests
     private int _callBackCount;
     private readonly ManualResetEventSlim _timerEvent = new();
 
+    public TestContext TestContext { get; set; } = null!;
+
     [TestMethod]
     public void InactivityTimerShouldResetAndCallbackWhenResetIsCalled()
     {
         var timer = new InactivityTimer(TimerCallback);
         timer.ResetTimer(TimeSpan.FromMilliseconds(1));
-        _timerEvent.Wait(1000);
+        _timerEvent.Wait(1000, TestContext.CancellationToken);
         Assert.AreEqual(1, _callBackCount, "Should have fired once.");
     }
 

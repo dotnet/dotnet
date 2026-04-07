@@ -17,7 +17,6 @@ namespace SimpleTestProjectx86
         [TestMethod]
         public void PassingTestx86()
         {
-            Assert.AreEqual(2, 2);
         }
     }
 }
