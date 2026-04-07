@@ -23,8 +23,7 @@
   -->
   <ItemGroup Condition="'$(PreReleaseVersionLabel)' == 'pr-validation' or '$(DotNetBuildSourceOnly)' == 'true'">
     <!-- Determine all NuGet packages being published -->
-    <_NuGetPackagesToPush Include="@(Artifact)"
-                          Condition="'%(Extension)' == '.nupkg'" />
+    <_NuGetPackagesToPush Include="@(Artifact->WithMetadataValue('Extension', '.nupkg'))" />
 
     <!-- Determine all symbol packages being published -->
     <_SymbolPackagesToPush Include="@(_NuGetPackagesToPush)"
