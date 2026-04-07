@@ -28,15 +28,7 @@
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <BuildDependsOn>
-      BeforeBuild;
-      CoreBuild;
-      AfterBuild
-    </BuildDependsOn>
-  </PropertyGroup>
-  <Target Name="Build" DependsOnTargets="$(BuildDependsOn)" />
-
+  <Target Name="Build" />
   <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
   <Target Name="Clean" />
 
@@ -50,14 +42,7 @@
   <Target Name="Publish"/>
   <Target Name="ProcessFrameworkReferences" />
 
-  <PropertyGroup>
-    <PackDependsOn>
-      BeforePack;
-      CorePack;
-      AfterPack
-    </PackDependsOn>
-  </PropertyGroup>
-  <Target Name="Pack" DependsOnTargets="$(PackDependsOn)" />
+  <Target Name="Pack" />
   <Target Name="BeforePack"/>
   <Target Name="CorePack"/>
   <Target Name="AfterPack"/>
