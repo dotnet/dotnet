@@ -55,9 +55,11 @@
 
       <_DotNetCoreRequired>false</_DotNetCoreRequired>
       <_DotNetCoreRequired Condition="'$(_DryRun)' != 'true'">true</_DotNetCoreRequired>
+    </PropertyGroup>
 
-      <!-- SN is only available on Windows -->
-      <SNBinaryPath Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(NuGetPackageRoot)sn\$(SNVersion)\sn.exe</SNBinaryPath>
+    <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+      <SNBinaryPath >$(NuGetPackageRoot)sn\$(SNVersion)\sn.exe</SNBinaryPath>
+      <WixToolsPath>$(NuGetPackageRoot)microsoft.wixtoolset.sdk\$(MicrosoftWixToolsetSdkVersion)\tools\net472\x64</WixToolsPath>
     </PropertyGroup>
 
     <ItemGroup>
@@ -89,7 +91,7 @@
         SNBinaryPath="$(SNBinaryPath)"
         MicroBuildCorePath="$(NuGetPackageRoot)microsoft.visualstudioeng.microbuild.core\$(MicrosoftVisualStudioEngMicroBuildCoreVersion)"
         Wix3ToolsPath="$(WixInstallPath)"
-        WixToolsPath="$(NuGetPackageRoot)microsoft.wixtoolset.sdk\$(MicrosoftWixToolsetSdkVersion)\tools\net472\x64"
+        WixToolsPath="$(WixToolsPath)"
         PkgToolPath="@(MacOSPkgCliItem)"
         RepackParallelism="$(SignToolRepackParallelism)"
         MaximumParallelFileSize="$(SignToolRepackMaximumParallelFileSize)"
