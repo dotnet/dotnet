@@ -302,6 +302,12 @@
                 PathToAttribute="tools:runtimes"
                 SkipUpdateIfMissingKey="true" />
 
+    <!-- Update bootstrap Arcade SDK version -->
+    <UpdateJson JsonFilePath="$(GlobalJsonFile)"
+                PathToAttribute="msbuild-sdks:Microsoft.DotNet.Arcade.Sdk"
+                NewAttributeValue="$(ArcadeBootstrapVersion)"
+                Condition="'$(UseBootstrapArcade)' == 'true'" />
+
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
     <Touch Files="$(BaseIntermediateOutputPath)UpdateGlobalJsonVersions.complete" AlwaysCreate="true">
       <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
