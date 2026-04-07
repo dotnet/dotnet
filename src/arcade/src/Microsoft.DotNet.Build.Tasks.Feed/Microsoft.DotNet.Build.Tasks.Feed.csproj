@@ -20,7 +20,6 @@
     <PackageReference Include="Azure.Identity" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
     <PackageReference Include="Azure.Storage.Blobs" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
