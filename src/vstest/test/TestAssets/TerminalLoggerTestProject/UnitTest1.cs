@@ -21,7 +21,6 @@ namespace TerminalLoggerUnitTests
         [TestMethod]
         public void PassingTest()
         {
-            Assert.AreEqual(2, 2);
         }
 
         /// <summary>
@@ -31,7 +30,9 @@ namespace TerminalLoggerUnitTests
         public void FailingTest()
         {
             // test characters taken from https://pages.ucsd.edu/~dkjordan/chin/unitestuni.html
+#pragma warning disable MSTEST0025 // Use 'Assert.Fail' instead of an always-failing assert
             Assert.AreEqual("ğğğ𦮙我們剛才從𓋴𓅓𓏏𓇏𓇌𓀀", "not the same");
+#pragma warning restore MSTEST0025 // Use 'Assert.Fail' instead of an always-failing assert
         }
 
         /// <summary>

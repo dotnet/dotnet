@@ -42,7 +42,7 @@ public class TestExtensionManagerTests
     [TestMethod]
     public void TestExtensionManagerConstructorShouldThrowExceptionIfMessageLoggerIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _testExtensionManager = new DummyTestExtensionManager(_unfilteredTestExtensions, _filteredTestExtensions, null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _testExtensionManager = new DummyTestExtensionManager(_unfilteredTestExtensions, _filteredTestExtensions, null!));
     }
 
     [TestMethod]
@@ -60,7 +60,7 @@ public class TestExtensionManagerTests
     {
         _testExtensionManager = new DummyTestExtensionManager(_unfilteredTestExtensions, _filteredTestExtensions, _messageLogger);
         TestPluginCacheHelper.SetupMockAdditionalPathExtensions(typeof(TestExtensionManagerTests));
-        Assert.ThrowsException<ArgumentNullException>(() =>
+        Assert.ThrowsExactly<ArgumentNullException>(() =>
             {
                 var result = _testExtensionManager.TryGetTestExtension(default(Uri)!);
             }

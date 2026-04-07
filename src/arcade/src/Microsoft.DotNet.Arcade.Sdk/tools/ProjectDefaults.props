@@ -32,6 +32,10 @@
     <!-- By default do not build NuGet package for a non pkgproj project. Project may override. -->
     <IsPackable Condition="'$(MSBuildProjectExtension)' != '.pkgproj'">false</IsPackable>
 
+    <!-- Allow additional values for NoWarn and WarningsNotAsErrors without behaving as global properties -->
+    <NoWarn Condition="'$(AdditionalNoWarn)' != ''">$(NoWarn);$(AdditionalNoWarn)</NoWarn>
+    <WarningsNotAsErrors Condition="'$(AdditionalWarningsNotAsErrors)' != ''">$(WarningsNotAsErrors);$(AdditionalWarningsNotAsErrors)</WarningsNotAsErrors>
+
     <!--
       Official build:
        - Build standalone Portable PDBs to reduce the size of the binaries.

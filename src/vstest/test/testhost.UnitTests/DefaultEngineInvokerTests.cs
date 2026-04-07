@@ -81,7 +81,7 @@ public class DefaultEngineInvokerTests
     public void InvokeShouldThrowExceptionIfDataCollectorConnection()
     {
         _mockDataCollectionTestCaseEventSender.Setup(s => s.WaitForRequestSenderConnection(It.IsAny<int>())).Returns(false);
-        var message = Assert.ThrowsException<TestPlatformException>(() => _engineInvoker.Invoke(ArgsDictionary)).Message;
+        var message = Assert.ThrowsExactly<TestPlatformException>(() => _engineInvoker.Invoke(ArgsDictionary)).Message;
 
         Assert.AreEqual(message, TimeoutErrorMessage);
     }

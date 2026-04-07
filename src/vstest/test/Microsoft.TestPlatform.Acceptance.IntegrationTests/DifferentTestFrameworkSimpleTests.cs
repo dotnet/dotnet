@@ -68,93 +68,6 @@ public class DifferentTestFrameworkSimpleTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [TestCategory("Windows-Review")]
-    [NetFullTargetFrameworkDataSource]
-    [Ignore("After the bump of TestPlatformRemoteExternalsVersion to 17.6 it doesn't work anymore, it's a test for the legacy platform and fails for wrong Microsoft.VisualStudio.Telemetry version.")]
-    public void WebTestRunAllTestsWithRunSettings(RunnerInfo runnerInfo)
-    {
-        if (!IsCI)
-        {
-            Assert.Inconclusive("This works on server but not locally, because locally it grabs old dll from GAC, but has version 10.0.0 as the one in our package.");
-        }
-
-        SetTestEnvironment(_testEnvironment, runnerInfo);
-        var runSettingsFilePath = Path.Combine(TempDirectory.Path, Guid.NewGuid() + ".runsettings");
-
-        //test the iterationCount setting for WebTestRunConfiguration in run settings
-        var runSettingsXml = $@"<?xml version='1.0' encoding='utf-8'?>
-                                <RunSettings>
-                                    <WebTestRunConfiguration iterationCount='5' />
-                                    <RunConfiguration>
-                                        <TargetFrameworkVersion>{FrameworkArgValue}</TargetFrameworkVersion>
-                                    </RunConfiguration>
-                                </RunSettings>";
-
-        CreateRunSettingsFile(runSettingsFilePath, runSettingsXml);
-
-        //therefore, the test will run for 5 iterations resulting in web test result file size of at least 150 KB
-        var minWebTestResultFileSizeInKB = 150;
-        if (runnerInfo.IsNetRunner)
-        {
-            Assert.Inconclusive("WebTests tests not supported with .NET Core runner.");
-            return;
-        }
-
-        string assemblyRelativePath =
-            @"microsoft.testplatform.qtools.assets\2.0.0\contentFiles\any\any\WebTestAssets\WebTest1.webtest";
-
-        var assemblyAbsolutePath = Path.Combine(_testEnvironment.PackageDirectory, assemblyRelativePath);
-        using var resultsDirectory = TempDirectory;
-        var arguments = PrepareArguments(
-            assemblyAbsolutePath,
-            string.Empty,
-            runSettingsFilePath, FrameworkArgValue, string.Empty, resultsDirectory.Path);
-
-        InvokeVsTest(arguments);
-        ValidateSummaryStatus(1, 0, 0);
-
-        if (minWebTestResultFileSizeInKB > 0)
-        {
-            var dirInfo = new DirectoryInfo(resultsDirectory.Path);
-            var webtestResultFile = "WebTest1.webtestResult";
-            var files = dirInfo.GetFiles(webtestResultFile, SearchOption.AllDirectories);
-            Assert.IsTrue(files.Length > 0, $"File {webtestResultFile} not found under results directory {resultsDirectory}");
-
-            var fileSizeInKB = files[0].Length / 1024;
-            Assert.IsTrue(fileSizeInKB > minWebTestResultFileSizeInKB, $"Size of the file {webtestResultFile} is {fileSizeInKB} KB. It is not greater than {minWebTestResultFileSizeInKB} KB indicating iterationCount in run settings not honored.");
-        }
-    }
-
-    [TestMethod]
-    [TestCategory("Windows-Review")]
-    [NetFullTargetFrameworkDataSource]
-    [Ignore("Test expects .NETFramework,Version=v4.5.2 support but the minimum one is .NETFramework,Version=v4.6.2")]
-    public void CodedWebTestRunAllTests(RunnerInfo runnerInfo)
-    {
-        if (!IsCI)
-        {
-            Assert.Inconclusive("This works on server but not locally, because locally it grabs old dll from GAC, but has version 10.0.0 as the one in our package.");
-        }
-
-        SetTestEnvironment(_testEnvironment, runnerInfo);
-        if (runnerInfo.IsNetRunner)
-        {
-            Assert.Inconclusive("WebTests tests not supported with .NET Core runner.");
-            return;
-        }
-
-        string assemblyRelativePath = @"microsoft.testplatform.qtools.assets\2.0.0\contentFiles\any\any\WebTestAssets\BingWebTest.dll";
-        var assemblyAbsolutePath = Path.Combine(_testEnvironment.PackageDirectory, assemblyRelativePath);
-        var arguments = PrepareArguments(
-            assemblyAbsolutePath,
-            string.Empty,
-            string.Empty, FrameworkArgValue, resultsDirectory: TempDirectory.Path);
-
-        InvokeVsTest(arguments);
-        ValidateSummaryStatus(1, 0, 0);
-    }
-
-    [TestMethod]
     [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: true)]
     [NetCoreTargetFrameworkDataSource]
     public void NUnitRunAllTestExecution(RunnerInfo runnerInfo)
@@ -193,7 +106,7 @@ public class DifferentTestFrameworkSimpleTests : AcceptanceTestBase
         var assemblyRelativePath = platform.Equals("x64", StringComparison.OrdinalIgnoreCase)
             ? string.Format(CultureInfo.CurrentCulture, assemblyRelativePathFormat, platform)
             : string.Format(CultureInfo.CurrentCulture, assemblyRelativePathFormat, "");
-        var assemblyAbsolutePath = Path.Combine(_testEnvironment.PackageDirectory, assemblyRelativePath);
+        var assemblyAbsolutePath = Path.Combine(_testEnvironment.GlobalPackageDirectory, assemblyRelativePath);
         var arguments = PrepareArguments(assemblyAbsolutePath, string.Empty, string.Empty, FrameworkArgValue, _testEnvironment.InIsolationValue, resultsDirectory: TempDirectory.Path);
 
         InvokeVsTest(arguments);

@@ -257,8 +257,8 @@ public class ProxyTestSessionManager : IProxyTestSessionManager
         lock (_proxyOperationLockObject)
         {
             // No proxy available means the caller will have to create its own proxy.
-            if (!_proxyMap.ContainsKey(source)
-                || !_proxyContainerList[_proxyMap[source]].IsAvailable)
+            if (!_proxyMap.TryGetValue(source, out int proxyIndex)
+                || !_proxyContainerList[proxyIndex].IsAvailable)
             {
                 throw new InvalidOperationException(CrossPlatResources.NoAvailableProxyForDeque);
             }
@@ -273,7 +273,7 @@ public class ProxyTestSessionManager : IProxyTestSessionManager
             }
 
             // Get the actual proxy.
-            proxyContainer = _proxyContainerList[_proxyMap[source]];
+            proxyContainer = _proxyContainerList[proxyIndex];
 
             // Mark the proxy as unavailable.
             proxyContainer.IsAvailable = false;

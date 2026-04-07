@@ -60,7 +60,7 @@ public class EventLogContainerTests
         _eventLogContainer.OnEventLogEntryWritten(_eventLog, _entryWrittenEventArgs);
         var newCount = _eventLogContainer.EventLogEntries.Count;
 
-        Assert.IsTrue(newCount > 0);
+        Assert.IsGreaterThan(0, newCount);
     }
 
     [TestMethod]

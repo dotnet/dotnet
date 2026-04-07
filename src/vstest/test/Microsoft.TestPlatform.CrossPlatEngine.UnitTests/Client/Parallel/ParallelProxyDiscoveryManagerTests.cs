@@ -1,5 +1,7 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+#pragma warning disable MSTEST0049 // CancellationToken not applicable in test setup/Moq callbacks
 
 using System;
 using System.Collections.Generic;
@@ -113,7 +115,7 @@ public class ParallelProxyDiscoveryManagerTests
 
         parallelDiscoveryManager.Abort();
 
-        Assert.AreEqual(2, _usedMockManagers.Count, "Number of Concurrent Managers created should be equal to the number of sources that should run");
+        Assert.HasCount(2, _usedMockManagers, "Number of Concurrent Managers created should be equal to the number of sources that should run");
         _usedMockManagers.ForEach(dm => dm.Verify(m => m.Abort(), Times.Once));
     }
 
@@ -141,7 +143,7 @@ public class ParallelProxyDiscoveryManagerTests
         }
 
         Assert.IsTrue(discoveryCompleted, "Test discovery not completed.");
-        Assert.AreEqual(_sources.Count, _processedSources.Count, "All Sources must be processed.");
+        Assert.HasCount(_sources.Count, _processedSources, "All Sources must be processed.");
         AssertMissingAndDuplicateSources(_processedSources);
     }
 
@@ -214,7 +216,7 @@ public class ParallelProxyDiscoveryManagerTests
         });
 
         Assert.IsTrue(_discoveryCompleted.Wait(Timeout10Seconds), "Test discovery not completed.");
-        Assert.AreEqual(1, _processedSources.Count, "One source should be processed.");
+        Assert.ContainsSingle(_processedSources, "One source should be processed.");
     }
 
     [TestMethod]
@@ -232,7 +234,7 @@ public class ParallelProxyDiscoveryManagerTests
         });
 
         Assert.IsTrue(_discoveryCompleted.Wait(Timeout10Seconds), "Test discovery not completed.");
-        Assert.AreEqual(1, _processedSources.Count, "One source should be processed.");
+        Assert.ContainsSingle(_processedSources, "One source should be processed.");
     }
 
     [TestMethod]
@@ -252,7 +254,7 @@ public class ParallelProxyDiscoveryManagerTests
 
         // Processed sources should be 1 since the 2nd source is never discovered
         Assert.IsTrue(_discoveryCompleted.Wait(Timeout10Seconds), "Test discovery not completed.");
-        Assert.AreEqual(1, _processedSources.Count, "All Sources must be processed.");
+        Assert.ContainsSingle(_processedSources, "All Sources must be processed.");
     }
 
     [TestMethod]
@@ -324,10 +326,10 @@ public class ParallelProxyDiscoveryManagerTests
         Task.Run(() => parallelDiscoveryManager.DiscoverTests(_discoveryCriteriaWith2Sources, _mockEventHandler.Object));
 
         Assert.IsTrue(_discoveryCompleted.Wait(Timeout10Seconds), "Test discovery not completed.");
-        Assert.AreEqual(_sources.Count, _processedSources.Count, "All Sources must be processed.");
+        Assert.HasCount(_sources.Count, _processedSources, "All Sources must be processed.");
         CollectionAssert.AreEquivalent(_sources, _dataAggregator.GetSourcesWithStatus(DiscoveryStatus.FullyDiscovered));
-        Assert.AreEqual(0, _dataAggregator.GetSourcesWithStatus(DiscoveryStatus.PartiallyDiscovered).Count);
-        Assert.AreEqual(0, _dataAggregator.GetSourcesWithStatus(DiscoveryStatus.NotDiscovered).Count);
+        Assert.IsEmpty(_dataAggregator.GetSourcesWithStatus(DiscoveryStatus.PartiallyDiscovered));
+        Assert.IsEmpty(_dataAggregator.GetSourcesWithStatus(DiscoveryStatus.NotDiscovered));
     }
 
     private ParallelProxyDiscoveryManager SetupDiscoveryManager(Func<TestRuntimeProviderInfo, DiscoveryCriteria, IProxyDiscoveryManager> getProxyManager, int parallelLevel, bool abortDiscovery)
@@ -382,14 +384,14 @@ public class ParallelProxyDiscoveryManagerTests
                 {
                     if (matchFound)
                     {
-                        Assert.Fail("Concurrency issue detected: Source['{0}'] got processed twice", processedSrc);
+                        Assert.Fail($"Concurrency issue detected: Source['{processedSrc}'] got processed twice");
                     }
 
                     matchFound = true;
                 }
             }
 
-            Assert.IsTrue(matchFound, "Concurrency issue detected: Source['{0}'] did NOT get processed at all", source);
+            Assert.IsTrue(matchFound, $"Concurrency issue detected: Source['{source}'] did NOT get processed at all");
         }
     }
 
@@ -401,7 +403,7 @@ public class ParallelProxyDiscoveryManagerTests
         parallelDiscoveryManager.Initialize(skipDefaultAdapters);
 
         // Verify
-        Assert.AreEqual(0, _usedMockManagers.Count, $"No managers are pre-created until there is work for them.");
+        Assert.IsEmpty(_usedMockManagers, $"No managers are pre-created until there is work for them.");
         _usedMockManagers.ForEach(dm => dm.Verify(m => m.Initialize(skipDefaultAdapters), Times.Once));
     }
 }

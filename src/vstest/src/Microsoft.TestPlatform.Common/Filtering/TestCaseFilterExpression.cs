@@ -18,7 +18,7 @@ public class TestCaseFilterExpression : ITestCaseFilterExpression
 
     /// <summary>
     /// If filter Expression is valid for performing TestCase matching
-    /// (has only supported properties, syntax etc)
+    /// (has only supported properties, syntax etc).
     /// </summary>
     private readonly bool _validForMatch;
 
@@ -33,27 +33,21 @@ public class TestCaseFilterExpression : ITestCaseFilterExpression
     }
 
     /// <summary>
-    /// User specified filter criteria.
+    /// Gets the user specified filter criteria.
     /// </summary>
-    public string TestCaseFilterValue
-    {
-        get
-        {
-            return _filterWrapper.FilterString;
-        }
-    }
+    public string TestCaseFilterValue => _filterWrapper.FilterString;
 
     /// <summary>
     /// Validate if underlying filter expression is valid for given set of supported properties.
     /// </summary>
     public string[]? ValidForProperties(IEnumerable<string>? supportedProperties, Func<string, TestProperty?> propertyProvider)
     {
-        string[]? invalidProperties = null;
-        if (null != _filterWrapper && _validForMatch)
+        if (_validForMatch)
         {
-            invalidProperties = _filterWrapper.ValidForProperties(supportedProperties, propertyProvider);
+            return _filterWrapper.ValidForProperties(supportedProperties, propertyProvider);
         }
-        return invalidProperties;
+
+        return null;
     }
 
     /// <summary>
@@ -64,18 +58,12 @@ public class TestCaseFilterExpression : ITestCaseFilterExpression
         ValidateArg.NotNull(testCase, nameof(testCase));
         ValidateArg.NotNull(propertyValueProvider, nameof(propertyValueProvider));
 
-        if (!_validForMatch)
+        if (_validForMatch)
         {
-            return false;
+            return _filterWrapper.Evaluate(propertyValueProvider);
         }
 
-        if (null == _filterWrapper)
-        {
-            // can be null when parsing error occurs. Invalid filter results in no match.
-            return false;
-        }
-
-        return _filterWrapper.Evaluate(propertyValueProvider);
+        return false;
     }
 
 }

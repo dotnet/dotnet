@@ -62,9 +62,8 @@ public class InIsolationArgumentProcessorTests
     public void InIsolationArgumentProcessorExecutorShouldThrowIfArgumentIsProvided()
     {
         // InProcess should not have any values or arguments
-        ExceptionUtilities.ThrowsException<CommandLineException>(
-            () => _executor.Initialize("true"),
-            "Argument true is not expected in the 'InIsolation' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /InIsolation) and try again.");
+        var ex = Assert.ThrowsExactly<CommandLineException>(() => _executor.Initialize("true"));
+        Assert.Contains("Argument true is not expected in the 'InIsolation' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /InIsolation) and try again.", ex.Message);
     }
 
     [TestMethod]
