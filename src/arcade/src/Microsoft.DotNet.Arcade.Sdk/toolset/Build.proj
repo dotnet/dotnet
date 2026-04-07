@@ -149,10 +149,7 @@
     <ItemGroup Condition="'$(Restore)' == 'true'">
       <_RestoreToolsProps Include="@(_CommonProps)"/>
       <_RestoreToolsProps Include="ExcludeRestorePackageImports=true"/>
-      <_RestoreToolsProps Include="_NuGetRestoreTargets=$(_NuGetRestoreTargets)"/>
-
-      <!-- Used in the SDK (Tools.proj) to control whether Build.Tasks.Feed will be restored or not. -->
-      <_RestoreToolsProps Include="Publish=$(Publish)"/>
+      <_RestoreToolsProps Include="_SolutionBuildTargets=@(_SolutionBuildTargets)"/>
     </ItemGroup>
 
     <!--

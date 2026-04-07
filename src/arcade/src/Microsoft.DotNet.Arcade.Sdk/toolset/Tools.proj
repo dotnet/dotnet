@@ -9,11 +9,12 @@
     <RestoreInternalToolingAfterTargets Condition="'$(RestoreInternalTooling)' == 'true'">Restore</RestoreInternalToolingAfterTargets>
   </PropertyGroup>
 
+  <!-- Keep conditions in sync with Build.proj conditions -->
   <ItemGroup>
-    <ProjectReference Include="AfterSolutionBuild.proj" />
-    <ProjectReference Include="Sign.proj" />
-    <ProjectReference Include="AfterSigning.proj" />
-    <ProjectReference Include="Publish.proj" />
+    <ProjectReference Include="AfterSolutionBuild.proj" Condition="'$(_SolutionBuildTargets)' != ''" />
+    <ProjectReference Include="Sign.proj" Condition="'$(Sign)' == 'true'" />
+    <ProjectReference Include="AfterSigning.proj" Condition="'$(_SolutionBuildTargets)' != ''" />
+    <ProjectReference Include="Publish.proj" Condition="'$(Publish)' == 'true'" />
   </ItemGroup>
 
   <Target Name="RestoreRepoTools"
