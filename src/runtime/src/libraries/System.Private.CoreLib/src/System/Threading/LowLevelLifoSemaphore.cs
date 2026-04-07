@@ -17,7 +17,7 @@ namespace System.Threading
     {
         // Spinning in the threadpool semaphore is not always useful and benefits vary greatly by scenario.
         //
-        // Example1: An app periodically with rough time span T runs a task and waits for task`s completion.
+        // Example1: An app periodically with rough time span T runs a task and waits for task's completion.
         //           The app would benefit if a threadpool worker spins for longer than T as worker would not need to be woken up.
         //
         // Example2: The new workitems may be produced by non-pool threads and could only arrive if pool threads start blocking.
@@ -146,11 +146,6 @@ namespace System.Threading
                 }
             }
 
-            return WaitNoSpin(timeoutMs, allowFastWake: true);
-        }
-
-        public bool WaitNoSpin(int timeoutMs, bool allowFastWake = false)
-        {
             // Now we will try registering as a waiter and wait.
             // If signaled before that, we have to acquire as this can be the last thread that could take that signal.
             // The difference with spinning above is that we are not waiting for a signal. We should typically
@@ -172,10 +167,60 @@ namespace System.Threading
                 Counts countsBeforeUpdate = _separated._counts.InterlockedCompareExchange(newCounts, counts);
                 if (countsBeforeUpdate == counts)
                 {
-                    return counts.SignalCount != 0 || WaitAsWaiter(timeoutMs, allowFastWake);
+                    return counts.SignalCount != 0 || WaitAsWaiter(timeoutMs, allowFastWake: true);
                 }
 
                 Backoff.Exponential(collisionCount++);
+            }
+        }
+
+        public bool WaitNoSpin(int timeoutMs)
+        {
+            Counts counts = _separated._counts.InterlockedIncrementWaiterCount();
+
+            // If there were pending signals, we may end in a condition that requires
+            // waking a waiter.
+            // Perhaps the current thread will be such waiter, but we should still
+            // go through wait/wake routine (vs. just claiming the signal) as the caller
+            // wants to park the thread.
+            MaybeWakeWaiters(counts);
+
+            return WaitAsWaiter(timeoutMs, allowFastWake: false);
+        }
+
+        private void MaybeWakeWaiters(Counts counts)
+        {
+            // Check if waiters need to be woken
+            uint collisionCount = 0;
+            while (true)
+            {
+                // Determine how many waiters to wake.
+                // The number of wakes should not be more than the signal count, not more than waiter count and discount any pending wakes.
+                int countOfWaitersToWake = (int)Math.Min(counts.SignalCount, counts.WaiterCount) - counts.CountOfWaitersSignaledToWake;
+                if (countOfWaitersToWake <= 0)
+                {
+                    // No waiters to wake. This is the most common case.
+                    break;
+                }
+
+                Counts newCounts = counts;
+                newCounts.AddCountOfWaitersSignaledToWake((uint)countOfWaitersToWake);
+                Counts countsBeforeUpdate = _separated._counts.InterlockedCompareExchange(newCounts, counts);
+                if (countsBeforeUpdate == counts)
+                {
+                    Debug.Assert(_maximumSignalCount - counts.SignalCount >= 1);
+                    if (countOfWaitersToWake > 0)
+                    {
+                        ReleaseCore(countOfWaitersToWake);
+                    }
+
+                    break;
+                }
+
+                // collision, try again.
+                Backoff.Exponential(collisionCount++);
+
+                counts = _separated._counts;
             }
         }
 
@@ -183,11 +228,6 @@ namespace System.Threading
         {
             Debug.Assert(timeoutMs >= -1);
 
-            // TODO: VS move inside the loop. (or Block?)
-            _onWait();
-
-            // TODO: VS move allowFastWake into Blocker
-            long cooldown = Stopwatch.Frequency * 4 / 1000000;
             while (true)
             {
                 long blockingStart = allowFastWake ? 0 : Stopwatch.GetTimestamp();
@@ -200,6 +240,14 @@ namespace System.Threading
 
                 if (!allowFastWake)
                 {
+                    // The caller wants that the thread spends some time waiting as a matter of rate limiting
+                    // thus we will require a 4 usec cooldown before reintroducing the thread.
+                    // The sleep/wake transition typically takes care of the wait, but the blocker has fast
+                    // wake paths and the underlying OS API may have fast/trivial wake paths as well,
+                    // thus fast wakeups can happen and are hard to avoid completely.
+                    // So, if a fast wake happened when parking was desired, we hold up the thread a bit
+                    // before releasing.
+                    long cooldown = Stopwatch.Frequency * 4 / 1000000;
                     while (Stopwatch.GetTimestamp() - blockingStart < cooldown)
                     {
                         Thread.SpinWait(1);
@@ -250,41 +298,14 @@ namespace System.Threading
         {
             // Increment signal count. This enables one-shot acquire.
             Counts counts = _separated._counts.InterlockedIncrementSignalCount();
-
-            // Now check if waiters need to be woken
-            uint collisionCount = 0;
-            while (true)
-            {
-                // Determine how many waiters to wake.
-                // The number of wakes should not be more than the signal count, not more than waiter count and discount any pending wakes.
-                int countOfWaitersToWake = (int)Math.Min(counts.SignalCount, counts.WaiterCount) - counts.CountOfWaitersSignaledToWake;
-                if (countOfWaitersToWake <= 0)
-                {
-                    // No waiters to wake. This is the most common case.
-                    return;
-                }
-
-                Counts newCounts = counts;
-                newCounts.AddCountOfWaitersSignaledToWake((uint)countOfWaitersToWake);
-                Counts countsBeforeUpdate = _separated._counts.InterlockedCompareExchange(newCounts, counts);
-                if (countsBeforeUpdate == counts)
-                {
-                    Debug.Assert(_maximumSignalCount - counts.SignalCount >= 1);
-                    if (countOfWaitersToWake > 0)
-                        ReleaseCore(countOfWaitersToWake);
-                    return;
-                }
-
-                // collision, try again.
-                Backoff.Exponential(collisionCount++);
-
-                counts = _separated._counts;
-            }
+            MaybeWakeWaiters(counts);
         }
 
         private bool Block(int timeoutMs)
         {
             Debug.Assert(timeoutMs >= -1);
+
+            _onWait();
 
             LifoWaitNode? blocker = t_blocker;
             if (blocker == null)
@@ -444,6 +465,13 @@ namespace System.Threading
             {
                 var countsAfterUpdate = new Counts(Interlocked.Add(ref _data, unchecked((ulong)-1) << WaiterCountShift));
                 Debug.Assert(countsAfterUpdate.WaiterCount != ushort.MaxValue); // underflow check
+            }
+
+            public Counts InterlockedIncrementWaiterCount()
+            {
+                var countsAfterUpdate = new Counts(Interlocked.Add(ref _data, unchecked((ulong)1) << WaiterCountShift));
+                Debug.Assert(countsAfterUpdate.WaiterCount != ushort.MaxValue); // overflow check
+                return countsAfterUpdate;
             }
 
             public ushort CountOfWaitersSignaledToWake

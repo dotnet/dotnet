@@ -366,7 +366,10 @@ namespace System.Threading
                                 else
                                 {
                                     // Failed, restore head.
-                                    m_headIndex = head;
+                                    // This write must complete before we return with a missed steal and check if
+                                    // there is a pending thread request because the thread that responds
+                                    // to the request must see the write to not conclude that the queue is empty.
+                                    Interlocked.Exchange(ref m_headIndex, head);
                                 }
                             }
                         }
@@ -842,7 +845,7 @@ namespace System.Threading
         public enum DispatchResult
         {
             Spurious = 0,   // the thread was invited, but there was no work in the queue.
-            Regular = 1,    // this thread did as much work as was available or its quantum expired.
+            Regular = 1,   // this thread did as much work as was available or its quantum expired.
             ShouldStop = 2, // this thread stopped working early.
         }
 

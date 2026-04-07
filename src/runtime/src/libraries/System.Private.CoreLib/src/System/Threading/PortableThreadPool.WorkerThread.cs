@@ -108,7 +108,6 @@ namespace System.Threading
                     bool isIdle = false;
                     while (isIdle ?
                         semaphore.WaitNoSpin(timeoutMs) :
-                        //semaphore.Wait(timeoutMs, threadPoolInstance._separated.counts.NumExistingThreads) :
                         semaphore.Wait(timeoutMs, threadPoolInstance._separated.counts.NumExistingThreads))
                     {
                         WorkerDoWork(threadPoolInstance, out isIdle);
