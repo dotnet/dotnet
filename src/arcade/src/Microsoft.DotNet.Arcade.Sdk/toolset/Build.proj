@@ -149,7 +149,7 @@
     <ItemGroup Condition="'$(Restore)' == 'true'">
       <_RestoreToolsProps Include="@(_CommonProps)"/>
       <_RestoreToolsProps Include="ExcludeRestorePackageImports=true"/>
-      <_RestoreToolsProps Include="_SolutionBuildTargets=@(_SolutionBuildTargets)"/>
+      <_RestoreToolsProps Condition="'@(_SolutionBuildTargets)' != ''" Include="_SolutionBuildTargets=true"/>
     </ItemGroup>
 
     <!--
