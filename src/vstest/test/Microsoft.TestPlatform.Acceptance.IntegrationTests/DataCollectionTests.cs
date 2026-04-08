@@ -140,7 +140,7 @@ public class DataCollectionTests : AcceptanceTestBase
             while (!streamReader.EndOfStream)
             {
                 string? line = streamReader.ReadLine();
-                Assert.IsTrue(line!.StartsWith("SessionEnded_Handler_"));
+                Assert.StartsWith("SessionEnded_Handler_", line!);
                 fileContent.Add(line);
             }
         }
@@ -152,8 +152,8 @@ public class DataCollectionTests : AcceptanceTestBase
         foreach (var dataCollectorLogFile in dataCollectorsLogs)
         {
             string dataCollectorLog = File.ReadAllText(dataCollectorLogFile);
-            Assert.IsTrue(dataCollectorLog.Contains("MetadataReaderExtensionsHelper: Valid extension found: extension type 'DataCollector' identifier 'my://sample/datacollector' implementation 'AttachmentProcessorDataCollector.SampleDataCollectorV1' version '1'"));
-            Assert.IsTrue(dataCollectorLog.Contains("MetadataReaderExtensionsHelper: Valid extension found: extension type 'DataCollector' identifier 'my://sample/datacollector' implementation 'AttachmentProcessorDataCollector.SampleDataCollectorV2' version '2'"));
+            Assert.Contains("MetadataReaderExtensionsHelper: Valid extension found: extension type 'DataCollector' identifier 'my://sample/datacollector' implementation 'AttachmentProcessorDataCollector.SampleDataCollectorV1' version '1'", dataCollectorLog);
+            Assert.Contains("MetadataReaderExtensionsHelper: Valid extension found: extension type 'DataCollector' identifier 'my://sample/datacollector' implementation 'AttachmentProcessorDataCollector.SampleDataCollectorV2' version '2'", dataCollectorLog);
             Assert.IsTrue(Regex.IsMatch(dataCollectorLog, @"GetTestExtensionFromType: Discovered multiple test extensions with identifier data 'my://sample/datacollector' and type 'AttachmentProcessorDataCollector\.SampleDataCollectorV1, AttachmentProcessorDataCollector, Version=.*, Culture=neutral, PublicKeyToken=null' inside file '.*AttachmentProcessorDataCollector\.dll'; keeping the first one 'AttachmentProcessorDataCollector\.SampleDataCollectorV2, AttachmentProcessorDataCollector, Version=.*, Culture=neutral, PublicKeyToken=null'\."));
         }
     }

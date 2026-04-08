@@ -14,13 +14,13 @@ public class TestSessionCorrelationIdProcessorTests
 {
     [TestMethod]
     public void ProcessorExecutorInitialize_ShouldFailIfNullCommandOption() =>
-        Assert.ThrowsException<ArgumentNullException>(() => new TestSessionCorrelationIdProcessorModeProcessorExecutor(null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => new TestSessionCorrelationIdProcessorModeProcessorExecutor(null!));
 
     [TestMethod]
     public void ProcessorExecutorInitialize_ShouldFailIfNullSession()
     {
         TestSessionCorrelationIdProcessorModeProcessorExecutor testSessionCorrelationIdProcessor = new(new CommandLineOptions());
-        Assert.ThrowsException<CommandLineException>(() => testSessionCorrelationIdProcessor.Initialize(null));
+        Assert.ThrowsExactly<CommandLineException>(() => testSessionCorrelationIdProcessor.Initialize(null));
     }
 
     [TestMethod]

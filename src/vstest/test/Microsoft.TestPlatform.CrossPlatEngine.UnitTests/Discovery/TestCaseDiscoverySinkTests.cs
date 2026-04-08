@@ -35,7 +35,7 @@ public class TestCaseDiscoverySinkTests
 
         // Assert that the cache has the test case.
         Assert.IsNotNull(cache.Tests);
-        Assert.AreEqual(1, cache.Tests.Count);
+        Assert.ContainsSingle(cache.Tests);
         Assert.AreEqual(testCase, cache.Tests[0]);
     }
 }

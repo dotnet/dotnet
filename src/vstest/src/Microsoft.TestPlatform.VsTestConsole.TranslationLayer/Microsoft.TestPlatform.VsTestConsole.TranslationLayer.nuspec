@@ -2,6 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     $CommonMetadataElements$
+    <readme>README.md</readme>
 
     <dependencies>
       <group targetFramework="net462">
@@ -29,6 +30,7 @@
 
   <files>
     $CommonFileElements$
+    <file src="$ProjectDirectory$\README.md" target="" />
 
     <!-- Add a third party notice file -->
     <file src="$SrcPackageFolder$ThirdPartyNotices.txt" target="" />

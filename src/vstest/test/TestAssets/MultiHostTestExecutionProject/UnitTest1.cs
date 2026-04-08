@@ -10,7 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 // Parallelize the execution
 [assembly: Parallelize(Workers = 0, Scope = ExecutionScope.MethodLevel)]
 
-namespace SerializeTestRunTestProject
+namespace MultiHostTestExecutionProject
 {
     [TestClass]
     public class UnitTest1
@@ -22,6 +22,10 @@ namespace SerializeTestRunTestProject
             lock (Lock)
             {
                 string folderToLogTo = Environment.GetEnvironmentVariable("VSTEST_LOGFOLDER");
+                if (string.IsNullOrWhiteSpace( folderToLogTo))
+                {
+                    throw new InvalidOperationException($"Path provided through \"VSTEST_LOGFOLDER\" is null or empty.");
+                }
                 File.AppendAllText(Path.Combine(folderToLogTo, $"TestHost_{Process.GetCurrentProcess().Id}.txt"), testName + "\n");
             }
         }

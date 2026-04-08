@@ -53,6 +53,7 @@ Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IProcessHelp
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IProcessHelper.GetProcessName(int processId) -> string!
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IProcessHelper.GetTestEngineDirectory() -> string?
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IProcessHelper.LaunchProcess(string! processPath, string? arguments, string? workingDirectory, System.Collections.Generic.IDictionary<string!, string?>? envVariables, System.Action<object?, string?>? errorCallback, System.Action<object?>? exitCallBack, System.Action<object?, string?>? outputCallBack) -> object!
+Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IProcessHelper.LaunchProcess(string! processPath, string? arguments, string? workingDirectory, System.Collections.Generic.IDictionary<string!, string?>? envVariables, System.Action<object?, string?>? errorCallback, System.Action<object?>? exitCallBack, System.Action<object?, string?>? outputCallBack, bool createNoNewWindow) -> object!
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IProcessHelper.SetExitCallback(int processId, System.Action<object?>? callbackAction) -> void
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IProcessHelper.TerminateProcess(object? process) -> void
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IProcessHelper.TryGetExitCode(object? process, out int exitCode) -> bool

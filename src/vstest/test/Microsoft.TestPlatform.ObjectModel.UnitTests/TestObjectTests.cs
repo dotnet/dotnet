@@ -41,6 +41,6 @@ public class TestObjectTests
         TestCase.SetPropertyValue(kvp.Key, kvp.Value);
 
         var properties = TestCase.GetProperties().ToList();
-        Assert.IsTrue(properties.Contains(kvp));
+        Assert.Contains(kvp, properties);
     }
 }

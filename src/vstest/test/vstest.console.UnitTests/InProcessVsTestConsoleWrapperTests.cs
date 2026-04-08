@@ -87,7 +87,7 @@ public class InProcessVsTestConsoleWrapperTests
     {
         _mockRequestSender.Setup(rs => rs.InitializeCommunication()).Returns(-1);
 
-        Assert.ThrowsException<TransationLayerException>(() =>
+        Assert.ThrowsExactly<TransationLayerException>(() =>
             new InProcessVsTestConsoleWrapper(
                 new ConsoleParameters(),
                 _mockEnvironmentVariableHelper.Object,
@@ -116,9 +116,9 @@ public class InProcessVsTestConsoleWrapperTests
             new Mock<ITestPlatformEventSource>().Object,
             new());
 
-        Assert.IsTrue(ProcessHelper.ExternalEnvironmentVariables?.Count == 1);
+        Assert.AreEqual(1, ProcessHelper.ExternalEnvironmentVariables?.Count);
         Assert.IsTrue(ProcessHelper.ExternalEnvironmentVariables?.ContainsKey(environmentVariableName));
-        Assert.IsTrue(ProcessHelper.ExternalEnvironmentVariables?[environmentVariableName] == "1");
+        Assert.AreEqual("1", ProcessHelper.ExternalEnvironmentVariables?[environmentVariableName]);
     }
 
     [TestMethod]
@@ -147,13 +147,13 @@ public class InProcessVsTestConsoleWrapperTests
             new Mock<ITestPlatformEventSource>().Object,
             new());
 
-        Assert.IsTrue(ProcessHelper.ExternalEnvironmentVariables?.Count == 3);
+        Assert.AreEqual(3, ProcessHelper.ExternalEnvironmentVariables?.Count);
         Assert.IsTrue(ProcessHelper.ExternalEnvironmentVariables?.ContainsKey(environmentVariableName1));
-        Assert.IsTrue(ProcessHelper.ExternalEnvironmentVariables?[environmentVariableName1] == "1");
+        Assert.AreEqual("1", ProcessHelper.ExternalEnvironmentVariables?[environmentVariableName1]);
         Assert.IsTrue(ProcessHelper.ExternalEnvironmentVariables?.ContainsKey(environmentVariableName2));
-        Assert.IsTrue(ProcessHelper.ExternalEnvironmentVariables?[environmentVariableName2] == "1");
+        Assert.AreEqual("1", ProcessHelper.ExternalEnvironmentVariables?[environmentVariableName2]);
         Assert.IsTrue(ProcessHelper.ExternalEnvironmentVariables?.ContainsKey(environmentVariableName3));
-        Assert.IsTrue(ProcessHelper.ExternalEnvironmentVariables?[environmentVariableName3] == "1");
+        Assert.AreEqual("1", ProcessHelper.ExternalEnvironmentVariables?[environmentVariableName3]);
     }
 
     [TestMethod]

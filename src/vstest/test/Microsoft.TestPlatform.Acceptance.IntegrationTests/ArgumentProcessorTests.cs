@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Microsoft.TestPlatform.TestUtilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.TestPlatform.AcceptanceTests;
@@ -17,7 +18,8 @@ public class ArgumentProcessorTests : AcceptanceTestBase
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
-        InvokeVsTest(null);
+        // Don't add --diag, it changes the output and prevents help from showing.
+        InvokeVsTest(null, collectDiagnostics: false);
 
         //Check for help usage, description and arguments text.
         StdOutputContains("Usage: vstest.console.exe");

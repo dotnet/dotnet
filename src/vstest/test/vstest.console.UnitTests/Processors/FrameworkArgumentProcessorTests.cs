@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Globalization;
+
 using Microsoft.VisualStudio.TestPlatform.CommandLine.Processors;
 using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
@@ -48,7 +50,7 @@ public class FrameworkArgumentProcessorTests
     {
         var capabilities = new FrameworkArgumentProcessorCapabilities();
         Assert.AreEqual("/Framework", capabilities.CommandName);
-        StringAssert.Contains(capabilities.HelpContentResourceName, "Valid values are \".NETFramework,Version=v4.5.1\", \".NETCoreApp,Version=v1.0\"");
+        Assert.Contains("Valid values are \".NETFramework,Version=v4.5.1\", \".NETCoreApp,Version=v1.0\"", capabilities.HelpContentResourceName);
 
         Assert.AreEqual(HelpContentPriority.FrameworkArgumentProcessorHelpPriority, capabilities.HelpPriority);
         Assert.IsFalse(capabilities.IsAction);
@@ -67,26 +69,22 @@ public class FrameworkArgumentProcessorTests
     public void InitializeShouldThrowIfArgumentIsNull()
     {
 
-        ExceptionUtilities.ThrowsException<CommandLineException>(
-            () => _executor.Initialize(null),
-            "The /Framework argument requires the target .Net Framework version for the test run.   Example:  /Framework:\".NETFramework,Version=v4.5.1\"");
+        var ex = Assert.ThrowsExactly<CommandLineException>(() => _executor.Initialize(null));
+        Assert.Contains("The /Framework argument requires the target .Net Framework version for the test run.   Example:  /Framework:\".NETFramework,Version=v4.5.1\"", ex.Message);
     }
 
     [TestMethod]
     public void InitializeShouldThrowIfArgumentIsEmpty()
     {
-        ExceptionUtilities.ThrowsException<CommandLineException>(
-            () => _executor.Initialize("  "),
-            "The /Framework argument requires the target .Net Framework version for the test run.   Example:  /Framework:\".NETFramework,Version=v4.5.1\"");
+        var ex = Assert.ThrowsExactly<CommandLineException>(() => _executor.Initialize("  "));
+        Assert.Contains("The /Framework argument requires the target .Net Framework version for the test run.   Example:  /Framework:\".NETFramework,Version=v4.5.1\"", ex.Message);
     }
 
     [TestMethod]
     public void InitializeShouldThrowIfArgumentIsInvalid()
     {
-        ExceptionUtilities.ThrowsException<CommandLineException>(
-            () => _executor.Initialize("foo"),
-            "Invalid .Net Framework version:{0}. Please give the fullname of the TargetFramework(Example: .NETCoreApp,Version=v2.0). Other supported .Net Framework versions are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.",
-            "foo");
+        var ex = Assert.ThrowsExactly<CommandLineException>(() => _executor.Initialize("foo"));
+        Assert.Contains(string.Format(CultureInfo.CurrentCulture, "Invalid .Net Framework version:{0}. Please give the fullname of the TargetFramework(Example: .NETCoreApp,Version=v2.0). Other supported .Net Framework versions are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.", "foo"), ex.Message);
     }
 
     [TestMethod]

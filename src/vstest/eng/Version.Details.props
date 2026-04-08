@@ -5,34 +5,36 @@ This file should be imported by eng/Versions.props
 -->
 <Project>
   <PropertyGroup>
-    <!-- _git/vs-code-coverage dependencies -->
-    <MicrosoftInternalCodeCoveragePackageVersion>18.5.0-preview.26120.1</MicrosoftInternalCodeCoveragePackageVersion>
-    <!-- dotnet/dotnet dependencies -->
-    <MicrosoftDiagnosticsNETCoreClientPackageVersion>0.2.0-preview.26123.115</MicrosoftDiagnosticsNETCoreClientPackageVersion>
-    <!-- dotnet/runtime dependencies -->
-    <MicrosoftExtensionsDependencyModelPackageVersion>6.0.2</MicrosoftExtensionsDependencyModelPackageVersion>
-    <!-- dotnet/core-setup dependencies -->
+    <!-- dotnet-arcade dependencies -->
+    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26177.6</MicrosoftDotNetArcadeSdkPackageVersion>
+    <!-- dotnet-core-setup dependencies -->
     <MicrosoftExtensionsFileSystemGlobbingPackageVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
-    <!-- dotnet/arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26122.1</MicrosoftDotNetArcadeSdkPackageVersion>
-    <!-- dotnet/symreader-converter dependencies -->
+    <!-- dotnet-dotnet dependencies -->
+    <MicrosoftDiagnosticsNETCoreClientPackageVersion>0.2.0-preview.26179.102</MicrosoftDiagnosticsNETCoreClientPackageVersion>
+    <!-- dotnet-runtime dependencies -->
+    <MicrosoftExtensionsDependencyModelPackageVersion>6.0.2</MicrosoftExtensionsDependencyModelPackageVersion>
+    <SystemCollectionsImmutablePackageVersion>9.0.11</SystemCollectionsImmutablePackageVersion>
+    <!-- dotnet-symreader-converter dependencies -->
     <MicrosoftDiaSymReaderConverterPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderConverterPackageVersion>
     <MicrosoftDiaSymReaderPdb2PdbPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderPdb2PdbPackageVersion>
+    <!-- vs-code-coverage dependencies -->
+    <MicrosoftInternalCodeCoveragePackageVersion>18.6.0-preview.26175.1</MicrosoftInternalCodeCoveragePackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
-    <!-- _git/vs-code-coverage dependencies -->
-    <MicrosoftInternalCodeCoverageVersion>$(MicrosoftInternalCodeCoveragePackageVersion)</MicrosoftInternalCodeCoverageVersion>
-    <!-- dotnet/dotnet dependencies -->
-    <MicrosoftDiagnosticsNETCoreClientVersion>$(MicrosoftDiagnosticsNETCoreClientPackageVersion)</MicrosoftDiagnosticsNETCoreClientVersion>
-    <!-- dotnet/runtime dependencies -->
-    <MicrosoftExtensionsDependencyModelVersion>$(MicrosoftExtensionsDependencyModelPackageVersion)</MicrosoftExtensionsDependencyModelVersion>
-    <!-- dotnet/core-setup dependencies -->
-    <MicrosoftExtensionsFileSystemGlobbingVersion>$(MicrosoftExtensionsFileSystemGlobbingPackageVersion)</MicrosoftExtensionsFileSystemGlobbingVersion>
-    <!-- dotnet/arcade dependencies -->
+    <!-- dotnet-arcade dependencies -->
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
-    <!-- dotnet/symreader-converter dependencies -->
+    <!-- dotnet-core-setup dependencies -->
+    <MicrosoftExtensionsFileSystemGlobbingVersion>$(MicrosoftExtensionsFileSystemGlobbingPackageVersion)</MicrosoftExtensionsFileSystemGlobbingVersion>
+    <!-- dotnet-dotnet dependencies -->
+    <MicrosoftDiagnosticsNETCoreClientVersion>$(MicrosoftDiagnosticsNETCoreClientPackageVersion)</MicrosoftDiagnosticsNETCoreClientVersion>
+    <!-- dotnet-runtime dependencies -->
+    <MicrosoftExtensionsDependencyModelVersion>$(MicrosoftExtensionsDependencyModelPackageVersion)</MicrosoftExtensionsDependencyModelVersion>
+    <SystemCollectionsImmutableVersion>$(SystemCollectionsImmutablePackageVersion)</SystemCollectionsImmutableVersion>
+    <!-- dotnet-symreader-converter dependencies -->
     <MicrosoftDiaSymReaderConverterVersion>$(MicrosoftDiaSymReaderConverterPackageVersion)</MicrosoftDiaSymReaderConverterVersion>
     <MicrosoftDiaSymReaderPdb2PdbVersion>$(MicrosoftDiaSymReaderPdb2PdbPackageVersion)</MicrosoftDiaSymReaderPdb2PdbVersion>
+    <!-- vs-code-coverage dependencies -->
+    <MicrosoftInternalCodeCoverageVersion>$(MicrosoftInternalCodeCoveragePackageVersion)</MicrosoftInternalCodeCoverageVersion>
   </PropertyGroup>
 </Project>
