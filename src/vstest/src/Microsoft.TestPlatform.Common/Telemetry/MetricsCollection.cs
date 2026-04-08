@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
@@ -13,14 +14,14 @@ namespace Microsoft.VisualStudio.TestPlatform.Common.Telemetry;
 /// </summary>
 public class MetricsCollection : IMetricsCollection
 {
-    private readonly Dictionary<string, object> _metricDictionary;
+    private readonly ConcurrentDictionary<string, object> _metricDictionary;
 
     /// <summary>
     /// The Metrics Collection
     /// </summary>
     public MetricsCollection()
     {
-        _metricDictionary = new Dictionary<string, object>();
+        _metricDictionary = new ConcurrentDictionary<string, object>();
     }
 
     /// <summary>

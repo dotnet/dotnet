@@ -250,7 +250,7 @@ public class CodeCoverageRunSettingsProcessorTests
     {
         var nodes = ExtractNodes(currentSettingsRoot, defaultSettingsRoot, path);
 
-        Assert.AreEqual(nodes.Item1.ChildNodes.Count, nodes.Item2.ChildNodes.Count);
+        Assert.HasCount(nodes.Item1.ChildNodes.Count, nodes.Item2.ChildNodes);
 
         var set = new HashSet<string>();
         foreach (XmlNode child in nodes.Item1.ChildNodes)
@@ -272,7 +272,7 @@ public class CodeCoverageRunSettingsProcessorTests
             set.Remove(child.OuterXml);
         }
 
-        Assert.AreEqual(0, set.Count);
+        Assert.IsEmpty(set);
     }
     #endregion
 }

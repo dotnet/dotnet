@@ -81,6 +81,9 @@ internal class FakeProcessHelper : IProcessHelper
     }
 
     public object LaunchProcess(string processPath, string? arguments, string? workingDirectory, IDictionary<string, string?>? environmentVariables, Action<object?, string>? errorCallback, Action<object>? exitCallBack, Action<object?, string>? outputCallback)
+        => LaunchProcess(processPath, arguments, workingDirectory, environmentVariables, errorCallback, exitCallBack, outputCallback, createNoNewWindow: true);
+
+    public object LaunchProcess(string processPath, string? arguments, string? workingDirectory, IDictionary<string, string?>? environmentVariables, Action<object?, string>? errorCallback, Action<object>? exitCallBack, Action<object?, string>? outputCallback, bool createNoNewWindow)
     {
         // TODO: Throw if setting says we can't start new processes;
         var process = new FakeProcess(FakeErrorAggregator, processPath, arguments, workingDirectory, environmentVariables, errorCallback, exitCallBack, outputCallback);

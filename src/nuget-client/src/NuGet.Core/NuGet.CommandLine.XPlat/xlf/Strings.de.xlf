@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="de" original="../Strings.resx">
     <body>
@@ -410,7 +410,7 @@ NuGet erfordert HTTPS-Quellen. Um HTTP-Quellen zu verwenden, müssen Sie „allo
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
         <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, file-based app, or project directory.</source>
-        <target state="needs-review-translation">Fehlende oder ungültige Eingabe "{0}". Geben Sie einen Pfad zu einem Projekt, einer Projektmappendatei oder einem Verzeichnis an.</target>
+        <target state="translated">Fehlende oder ungültige Eingabe „{0}“. Geben Sie einen Pfad zu einem Projekt, einer Projektmappendatei, einer dateibasierten App oder einem Projektverzeichnis an.</target>
         <note>{0} - Input path argument</note>
       </trans-unit>
       <trans-unit id="Error_PathNotFound">
@@ -973,7 +973,7 @@ Weitere Informationen finden Sie unter: https://docs.nuget.org/docs/reference/co
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_ProjectOptionDescription">
         <source>Path to a project or solution file or file-based app, or a project directory.</source>
-        <target state="needs-review-translation">Pfad zu einer Projekt- oder Projektmappendatei oder einem Verzeichnis</target>
+        <target state="translated">Pfad zu einem Projekt, einer Projektmappendatei, einer dateibasierten App oder einem Projektverzeichnis.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_VulnerableOptionDescription">
@@ -1136,7 +1136,7 @@ Weitere Informationen finden Sie unter: https://docs.nuget.org/docs/reference/co
       </trans-unit>
       <trans-unit id="SignCommandAllowUntrustedRootDescription">
         <source>Allow signing with certificates whose root certificate is not in a trusted root store. The certificate chain is still built and validated for structure, but UntrustedRoot status is treated as a warning.</source>
-        <target state="new">Allow signing with certificates whose root certificate is not in a trusted root store. The certificate chain is still built and validated for structure, but UntrustedRoot status is treated as a warning.</target>
+        <target state="translated">Signieren mit Zertifikaten, deren Stammzertifikat nicht in einem vertrauenswürdigen Stammspeicher enthalten ist, erlauben. Die Zertifikatkette wird weiterhin aufgebaut und auf ihre Struktur geprüft, aber der Status „UntrustedRoot“ wird als Warnung behandelt.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateFingerprintDescription">
@@ -1528,7 +1528,7 @@ Bei der Suche handelt es sich um einen ungültigen Zeichenfolgenvergleich mit de
       </trans-unit>
       <trans-unit id="WhyCommand_PathArgument_Description">
         <source>A path to a project, solution file, file-based app, or project directory.</source>
-        <target state="needs-review-translation">Ein Pfad zu einem Projekt, einer Projektmappendatei oder einem Verzeichnis.</target>
+        <target state="translated">Pfad zu einem Projekt, einer Projektmappendatei, einer dateibasierten App oder einem Projektverzeichnis.</target>
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_Warning_AssetsFileDoesNotContainSpecifiedTarget">

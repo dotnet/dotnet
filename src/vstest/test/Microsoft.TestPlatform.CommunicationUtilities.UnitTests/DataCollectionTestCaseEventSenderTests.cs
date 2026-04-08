@@ -45,7 +45,7 @@ public class DataCollectionTestCaseEventSenderTests
     {
         _mockCommunicationManager.Setup(x => x.SetupClientAsync(It.IsAny<IPEndPoint>())).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _dataCollectionTestCaseEventSender.InitializeCommunication(123));
+        Assert.ThrowsExactly<Exception>(() => _dataCollectionTestCaseEventSender.InitializeCommunication(123));
     }
 
     [TestMethod]
@@ -61,7 +61,7 @@ public class DataCollectionTestCaseEventSenderTests
     {
         _mockCommunicationManager.Setup(x => x.WaitForServerConnection(It.IsAny<int>())).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _dataCollectionTestCaseEventSender.WaitForRequestSenderConnection(123));
+        Assert.ThrowsExactly<Exception>(() => _dataCollectionTestCaseEventSender.WaitForRequestSenderConnection(123));
     }
 
     [TestMethod]
@@ -77,7 +77,7 @@ public class DataCollectionTestCaseEventSenderTests
     {
         _mockCommunicationManager.Setup(x => x.StopClient()).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _dataCollectionTestCaseEventSender.Close());
+        Assert.ThrowsExactly<Exception>(() => _dataCollectionTestCaseEventSender.Close());
     }
 
     [TestMethod]
@@ -97,7 +97,7 @@ public class DataCollectionTestCaseEventSenderTests
         var testcaseStartEventArgs = new TestCaseStartEventArgs(_testCase);
         _mockCommunicationManager.Setup(x => x.SendMessage(MessageType.DataCollectionTestStart, testcaseStartEventArgs)).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _dataCollectionTestCaseEventSender.SendTestCaseStart(testcaseStartEventArgs));
+        Assert.ThrowsExactly<Exception>(() => _dataCollectionTestCaseEventSender.SendTestCaseStart(testcaseStartEventArgs));
     }
 
     [TestMethod]
@@ -120,6 +120,6 @@ public class DataCollectionTestCaseEventSenderTests
 
         _mockCommunicationManager.Setup(x => x.SendMessage(MessageType.DataCollectionTestEnd, It.IsAny<TestCaseEndEventArgs>())).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _dataCollectionTestCaseEventSender.SendTestCaseEnd(testCaseEndEventArgs));
+        Assert.ThrowsExactly<Exception>(() => _dataCollectionTestCaseEventSender.SendTestCaseEnd(testCaseEndEventArgs));
     }
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #if !NETFRAMEWORK
@@ -40,13 +40,9 @@ public class DotnetArchitectureSwitchTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [OSCondition(OperatingSystems.Windows | OperatingSystems.OSX)]
     public void GlobalInstallation()
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            return;
-        }
-
         var projectName = "ArchitectureSwitch.csproj";
         var projectPath = GetProjectFullPath(projectName);
         var projectDirectory = Path.GetDirectoryName(projectPath);
@@ -60,14 +56,14 @@ public class DotnetArchitectureSwitchTests : AcceptanceTestBase
         ExecuteApplication(GetDefaultDotnetMuxerLocation, $"test {projectPath} --framework net8.0", out string stdOut, out _, out _, env, projectDirectory);
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
-            Assert.IsTrue(stdOut.Contains("Runtime location: /usr/local/share/dotnet/shared/Microsoft.NETCore.App"));
+            Assert.Contains("Runtime location: /usr/local/share/dotnet/shared/Microsoft.NETCore.App", stdOut);
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            Assert.IsTrue(stdOut.Contains($@"Runtime location: {Environment.ExpandEnvironmentVariables("%ProgramFiles%")}\dotnet\shared\Microsoft.NETCore.App"));
+            Assert.Contains($@"Runtime location: {Environment.ExpandEnvironmentVariables("%ProgramFiles%")}\dotnet\shared\Microsoft.NETCore.App", stdOut);
         }
-        Assert.IsTrue(stdOut.Contains("OSArchitecture: ARM64"));
-        Assert.IsTrue(stdOut.Contains("ProcessArchitecture: ARM64"));
+        Assert.Contains("OSArchitecture: ARM64", stdOut);
+        Assert.Contains("ProcessArchitecture: ARM64", stdOut);
 
 
         // Verify switch using csproj
@@ -83,27 +79,23 @@ public class DotnetArchitectureSwitchTests : AcceptanceTestBase
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                Assert.IsTrue(output.Contains("Runtime location: /usr/local/share/dotnet/x64/shared/Microsoft.NETCore.App"));
+                Assert.Contains("Runtime location: /usr/local/share/dotnet/x64/shared/Microsoft.NETCore.App", output);
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                Assert.IsTrue(output.Contains($@"Runtime location: {Environment.ExpandEnvironmentVariables("%ProgramFiles%")}\dotnet\x64\shared\Microsoft.NETCore.App"));
+                Assert.Contains($@"Runtime location: {Environment.ExpandEnvironmentVariables("%ProgramFiles%")}\dotnet\x64\shared\Microsoft.NETCore.App", output);
             }
-            Assert.IsTrue(output.Contains("OSArchitecture: X64"));
-            Assert.IsTrue(output.Contains("ProcessArchitecture: X64"));
+            Assert.Contains("OSArchitecture: X64", output);
+            Assert.Contains("ProcessArchitecture: X64", output);
         }
     }
 
     [TestMethod]
     [DataRow(true, false)]
     [DataRow(false, true)]
+    [OSCondition(OperatingSystems.Windows | OperatingSystems.OSX)]
     public void DOTNET_ROOTS_EnvironmentVariables(bool dotnetRoot, bool dotnetRootX64)
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            return;
-        }
-
         var env = new Dictionary<string, string?>
         {
             ["DOTNET_ROOT"] = null
@@ -117,14 +109,14 @@ public class DotnetArchitectureSwitchTests : AcceptanceTestBase
         ExecuteApplication(GetDefaultDotnetMuxerLocation, $"test {projectPath} --framework net8.0", out string stdOut, out _, out _, env, projectDirectory);
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
-            Assert.IsTrue(stdOut.Contains("Runtime location: /usr/local/share/dotnet/shared/Microsoft.NETCore.App"), "Unexpected runtime location");
+            Assert.Contains("Runtime location: /usr/local/share/dotnet/shared/Microsoft.NETCore.App", stdOut, "Unexpected runtime location");
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            Assert.IsTrue(stdOut.Contains($@"Runtime location: {Environment.ExpandEnvironmentVariables("%ProgramFiles%")}\dotnet\shared\Microsoft.NETCore.App"));
+            Assert.Contains($@"Runtime location: {Environment.ExpandEnvironmentVariables("%ProgramFiles%")}\dotnet\shared\Microsoft.NETCore.App", stdOut);
         }
-        Assert.IsTrue(stdOut.Contains("OSArchitecture: ARM64"), "Unexpected OSArchitecture");
-        Assert.IsTrue(stdOut.Contains("ProcessArchitecture: ARM64"), "Unexpected ProcessArchitecture");
+        Assert.Contains("OSArchitecture: ARM64", stdOut, "Unexpected OSArchitecture");
+        Assert.Contains("ProcessArchitecture: ARM64", stdOut, "Unexpected ProcessArchitecture");
 
         env.Clear();
         env["DOTNET_ROOT"] = null;
@@ -150,21 +142,17 @@ public class DotnetArchitectureSwitchTests : AcceptanceTestBase
         void AssertSwitch(string output)
         {
             Assert.IsTrue(Regex.IsMatch(output.Replace(@"\", "/"), $"Runtime location: .*{s_privateX64Installation.Replace(@"\", "/")}.*shared.*Microsoft.NETCore.App"), "Unexpected runtime location");
-            Assert.IsTrue(output.Contains("OSArchitecture: X64"), "Unexpected OSArchitecture");
-            Assert.IsTrue(output.Contains("ProcessArchitecture: X64"), "Unexpected ProcessArchitecture");
+            Assert.Contains("OSArchitecture: X64", output, "Unexpected OSArchitecture");
+            Assert.Contains("ProcessArchitecture: X64", output, "Unexpected ProcessArchitecture");
             Assert.IsTrue(!dotnetRoot || output.Contains($"DOTNET_ROOT: {s_privateX64Installation}"), "Unexpected DOTNET_ROOT var");
             Assert.IsTrue(!dotnetRootX64 || output.Contains($"DOTNET_ROOT_X64: {s_privateX64Installation}"), "Unexpected DOTNET_ROOT_X64 var");
         }
     }
 
     [TestMethod]
+    [OSCondition(OperatingSystems.Windows | OperatingSystems.OSX)]
     public void PrivateX64BuildToGlobalArmInstallation()
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            return;
-        }
-
         var env = new Dictionary<string, string?>
         {
             ["DOTNET_ROOT"] = null
@@ -178,8 +166,8 @@ public class DotnetArchitectureSwitchTests : AcceptanceTestBase
         // Verify native architecture
         ExecuteApplication(privateInstallationMuxer, $"test {projectPath} --framework net8.0", out string stdOut, out _, out _, env, projectDirectory);
         Assert.IsTrue(Regex.IsMatch(stdOut.Replace(@"\", "/"), $"Runtime location: .*{s_privateX64Installation.Replace(@"\", "/")}.*shared.*Microsoft.NETCore.App"), "Unexpected runtime location");
-        Assert.IsTrue(stdOut.Contains("OSArchitecture: X64"), "Unexpected OSArchitecture");
-        Assert.IsTrue(stdOut.Contains("ProcessArchitecture: X64"), "Unexpected ProcessArchitecture");
+        Assert.Contains("OSArchitecture: X64", stdOut, "Unexpected OSArchitecture");
+        Assert.Contains("ProcessArchitecture: X64", stdOut, "Unexpected ProcessArchitecture");
 
         // Verify switch using csproj
         ExecuteApplication($"{s_privateX64Installation}/{GetMuxerName}", $"test {projectPath} --framework net8.0 --arch arm64", out stdOut, out _, out _, env, projectDirectory);
@@ -193,21 +181,17 @@ public class DotnetArchitectureSwitchTests : AcceptanceTestBase
         static void AssertSwitch(string output)
         {
             Assert.IsTrue(Regex.IsMatch(output.Replace(@"\", "/"), $"Runtime location: .*{GetDefaultLocation.Replace(@"\", "/")}.*shared.*Microsoft.NETCore.App"), "Unexpected runtime location");
-            Assert.IsTrue(output.Contains("OSArchitecture: ARM64"), "Unexpected OSArchitecture");
-            Assert.IsTrue(output.Contains("ProcessArchitecture: ARM64"), "Unexpected ProcessArchitecture");
+            Assert.Contains("OSArchitecture: ARM64", output, "Unexpected OSArchitecture");
+            Assert.Contains("ProcessArchitecture: ARM64", output, "Unexpected ProcessArchitecture");
         }
     }
 
     [TestMethod]
     [DataRow(true, false)]
     [DataRow(false, true)]
+    [OSCondition(OperatingSystems.Windows | OperatingSystems.OSX)]
     public void PrivateX64BuildToDOTNET_ROOTS_EnvironmentVariables(bool dotnetRoot, bool dotnetRootArm64)
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            return;
-        }
-
         var env = new Dictionary<string, string?>
         {
             ["DOTNET_ROOT"] = null
@@ -221,8 +205,8 @@ public class DotnetArchitectureSwitchTests : AcceptanceTestBase
         // Verify native architecture
         ExecuteApplication(privateInstallationMuxer, $"test {projectPath} --framework net8.0", out string stdOut, out _, out _, env, projectDirectory);
         Assert.IsTrue(Regex.IsMatch(stdOut.Replace(@"\", "/"), $"Runtime location: .*{s_privateX64Installation.Replace(@"\", "/")}.*shared.*Microsoft.NETCore.App"), "Unexpected runtime location");
-        Assert.IsTrue(stdOut.Contains("OSArchitecture: X64"), "Unexpected OSArchitecture");
-        Assert.IsTrue(stdOut.Contains("ProcessArchitecture: X64"), "Unexpected ProcessArchitecture");
+        Assert.Contains("OSArchitecture: X64", stdOut, "Unexpected OSArchitecture");
+        Assert.Contains("ProcessArchitecture: X64", stdOut, "Unexpected ProcessArchitecture");
 
         env.Clear();
         env["DOTNET_ROOT"] = null;
@@ -248,21 +232,17 @@ public class DotnetArchitectureSwitchTests : AcceptanceTestBase
         void AssertSwitch(string output)
         {
             Assert.IsTrue(Regex.IsMatch(output.Replace(@"\", "/"), $"Runtime location: .*{GetDefaultLocation.Replace(@"\", "/")}.*shared.*Microsoft.NETCore.App"), "Unexpected runtime location");
-            Assert.IsTrue(output.Contains("OSArchitecture: ARM64"), "Unexpected OSArchitecture");
-            Assert.IsTrue(output.Contains("ProcessArchitecture: ARM64"), "Unexpected ProcessArchitecture");
+            Assert.Contains("OSArchitecture: ARM64", output, "Unexpected OSArchitecture");
+            Assert.Contains("ProcessArchitecture: ARM64", output, "Unexpected ProcessArchitecture");
             Assert.IsTrue(!dotnetRoot || output.Contains($"DOTNET_ROOT: {GetDefaultLocation}"), "Unexpected DOTNET_ROOT var");
             Assert.IsTrue(!dotnetRootArm64 || output.Contains($"DOTNET_ROOT_ARM64: {GetDefaultLocation}"), "Unexpected DOTNET_ROOT_ARM64 var");
         }
     }
 
     [TestMethod]
+    [OSCondition(OperatingSystems.Windows | OperatingSystems.OSX)]
     public void SilentlyForceX64()
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            return;
-        }
-
         var projectName = "ArchitectureSwitch.csproj";
         var projectPath = GetProjectFullPath(projectName);
         var projectDirectory = Path.GetDirectoryName(projectPath);
@@ -274,14 +254,14 @@ public class DotnetArchitectureSwitchTests : AcceptanceTestBase
         ExecuteApplication(GetDefaultDotnetMuxerLocation, $"test {projectPath} --framework {GetFrameworkVersionToForceToX64}", out string stdOut, out _, out _, env, projectDirectory);
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
-            Assert.IsTrue(stdOut.Contains("Runtime location: /usr/local/share/dotnet/x64/shared/Microsoft.NETCore.App"));
+            Assert.Contains("Runtime location: /usr/local/share/dotnet/x64/shared/Microsoft.NETCore.App", stdOut);
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            Assert.IsTrue(stdOut.Contains($@"Runtime location: {Environment.ExpandEnvironmentVariables("%ProgramFiles%")}\dotnet\x64\shared\Microsoft.NETCore.App"));
+            Assert.Contains($@"Runtime location: {Environment.ExpandEnvironmentVariables("%ProgramFiles%")}\dotnet\x64\shared\Microsoft.NETCore.App", stdOut);
         }
-        Assert.IsTrue(stdOut.Contains("OSArchitecture: X64"));
-        Assert.IsTrue(stdOut.Contains("ProcessArchitecture: X64"));
+        Assert.Contains("OSArchitecture: X64", stdOut);
+        Assert.Contains("ProcessArchitecture: X64", stdOut);
     }
 
     private static string GetMuxerName => RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "dotnet" : "dotnet.exe";

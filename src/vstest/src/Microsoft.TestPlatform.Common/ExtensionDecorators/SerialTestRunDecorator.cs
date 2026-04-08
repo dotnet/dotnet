@@ -112,7 +112,8 @@ internal class SerializeTestRunDecoratorFrameworkHandle : IFrameworkHandle
         _testEnd = testEnd;
     }
 
-    public bool EnableShutdownAfterTestRun { get => _frameworkHandle.EnableShutdownAfterTestRun; set => _frameworkHandle.EnableShutdownAfterTestRun = value; }
+    [Obsolete("This property has no effect", error: false)]
+public bool EnableShutdownAfterTestRun { get => _frameworkHandle.EnableShutdownAfterTestRun; set => _frameworkHandle.EnableShutdownAfterTestRun = value; }
 
     public int LaunchProcessWithDebuggerAttached(string filePath, string? workingDirectory, string? arguments, IDictionary<string, string?>? environmentVariables)
         => _frameworkHandle.LaunchProcessWithDebuggerAttached(filePath, workingDirectory, arguments, environmentVariables);

@@ -59,7 +59,7 @@ public class EventLogDataCollectorTests
     [TestMethod]
     public void InitializeShouldThrowExceptionIfEventsIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(
+        Assert.ThrowsExactly<ArgumentNullException>(
             () => _eventLogDataCollector.Initialize(
                 null,
                 null!,
@@ -71,7 +71,7 @@ public class EventLogDataCollectorTests
     [TestMethod]
     public void InitializeShouldThrowExceptionIfCollectionSinkIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(
+        Assert.ThrowsExactly<ArgumentNullException>(
             () => _eventLogDataCollector.Initialize(
                 null,
                 _mockDataCollectionEvents.Object,
@@ -83,7 +83,7 @@ public class EventLogDataCollectorTests
     [TestMethod]
     public void InitializeShouldThrowExceptionIfLoggerIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(
+        Assert.ThrowsExactly<ArgumentNullException>(
             () => _eventLogDataCollector.Initialize(
                 null,
                 _mockDataCollectionEvents.Object,
@@ -220,21 +220,21 @@ public class EventLogDataCollectorTests
     public void TestSessionStartEventShouldCreateEventLogContainer()
     {
         var eventLogDataCollector = new EventLogDataCollector();
-        Assert.AreEqual(0, eventLogDataCollector.ContextMap.Count);
+        Assert.IsEmpty(eventLogDataCollector.ContextMap);
         eventLogDataCollector.Initialize(null, _mockDataCollectionEvents.Object, _mockDataCollectionSink, _mockDataCollectionLogger.Object, _dataCollectionEnvironmentContext);
         _mockDataCollectionEvents.Raise(x => x.SessionStart += null, new SessionStartEventArgs());
-        Assert.AreEqual(1, eventLogDataCollector.ContextMap.Count);
+        Assert.HasCount(1, eventLogDataCollector.ContextMap);
     }
 
     [TestMethod]
     public void TestCaseStartEventShouldCreateEventLogContainer()
     {
         var eventLogDataCollector = new EventLogDataCollector();
-        Assert.AreEqual(0, eventLogDataCollector.ContextMap.Count);
+        Assert.IsEmpty(eventLogDataCollector.ContextMap);
 
         eventLogDataCollector.Initialize(null, _mockDataCollectionEvents.Object, _mockDataCollectionSink, _mockDataCollectionLogger.Object, _dataCollectionEnvironmentContext);
         _mockDataCollectionEvents.Raise(x => x.TestCaseStart += null, new TestCaseStartEventArgs(new DataCollectionContext(new SessionId(Guid.NewGuid()), new TestExecId(Guid.NewGuid())), new TestCase()));
-        Assert.AreEqual(1, eventLogDataCollector.ContextMap.Count);
+        Assert.HasCount(1, eventLogDataCollector.ContextMap);
     }
 
     [TestMethod]
@@ -269,7 +269,7 @@ public class EventLogDataCollectorTests
         var tc = new TestCase();
         var context = new DataCollectionContext(new SessionId(Guid.NewGuid()), new TestExecId(Guid.NewGuid()));
 
-        Assert.ThrowsException<EventLogCollectorException>(() => _mockDataCollectionEvents.Raise(x => x.TestCaseEnd += null, new TestCaseEndEventArgs(context, tc, TestOutcome.Passed)));
+        Assert.ThrowsExactly<EventLogCollectorException>(() => _mockDataCollectionEvents.Raise(x => x.TestCaseEnd += null, new TestCaseEndEventArgs(context, tc, TestOutcome.Passed)));
     }
 
     public void SessionEndEventShouldThrowIfSessionStartEventtIsNotInvoked()
@@ -278,7 +278,7 @@ public class EventLogDataCollectorTests
         eventLogDataCollector.Initialize(null, _mockDataCollectionEvents.Object, _mockDataCollectionSink, _mockDataCollectionLogger.Object, _dataCollectionEnvironmentContext);
         var tc = new TestCase();
 
-        Assert.ThrowsException<EventLogCollectorException>(() => _mockDataCollectionEvents.Raise(x => x.SessionEnd += null, new SessionEndEventArgs(_dataCollectionEnvironmentContext.SessionDataCollectionContext)));
+        Assert.ThrowsExactly<EventLogCollectorException>(() => _mockDataCollectionEvents.Raise(x => x.SessionEnd += null, new SessionEndEventArgs(_dataCollectionEnvironmentContext.SessionDataCollectionContext)));
     }
 
     [TestMethod]
@@ -322,7 +322,7 @@ public class EventLogDataCollectorTests
         XmlDocument expectedXmlDoc = new();
         expectedXmlDoc.LoadXml(configurationString);
         _mockFileHelper.Setup(x => x.Exists(It.IsAny<string>())).Throws<Exception>();
-        Assert.ThrowsException<Exception>(
+        Assert.ThrowsExactly<Exception>(
             () => _eventLogDataCollector.WriteEventLogs(
                 new List<EventLogEntry>(),
                 20,

@@ -14,6 +14,8 @@ namespace Microsoft.VisualStudio.TestPlatform.Client.UnitTests.DesignMode;
 [TestClass]
 public class DesignModeTestHostLauncherTests
 {
+    public TestContext TestContext { get; set; }
+
     [TestMethod]
     public void DesignModeTestHostLauncherLaunchTestHostShouldCallDesignModeClientToLaunchCustomHost()
     {
@@ -23,7 +25,7 @@ public class DesignModeTestHostLauncherTests
 
         var testProcessStartInfo = new TestProcessStartInfo();
 
-        launcher.LaunchTestHost(testProcessStartInfo);
+        launcher.LaunchTestHost(testProcessStartInfo, TestContext.CancellationToken);
 
         mockDesignModeClient.Verify(md => md.LaunchCustomHost(testProcessStartInfo, It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -37,7 +39,7 @@ public class DesignModeTestHostLauncherTests
 
         var testProcessStartInfo = new TestProcessStartInfo();
 
-        launcher.LaunchTestHost(testProcessStartInfo);
+        launcher.LaunchTestHost(testProcessStartInfo, TestContext.CancellationToken);
 
         mockDesignModeClient.Verify(md => md.LaunchCustomHost(testProcessStartInfo, It.IsAny<CancellationToken>()), Times.Once);
     }

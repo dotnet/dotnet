@@ -1,0 +1,79 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/basic/">
+    <Project Path="MSTestProject1/MSTestProject1.csproj" />
+    <Project Path="MSTestProject2/MSTestProject2.csproj" />
+  </Folder>
+  <Folder Name="/performance/">
+    <Project Path="performance/MSTest1000Passing/MSTest1000Passing.csproj" />
+    <Project Path="performance/MSTest100Passing/MSTest100Passing.csproj" />
+    <Project Path="performance/MSTest10kPassing/MSTest10kPassing.csproj" />
+    <Project Path="performance/MSTest1Passing/MSTest1Passing.csproj" />
+    <Project Path="performance/NUnit1000Passing/NUnit1000Passing.csproj" />
+    <Project Path="performance/NUnit100Passing/NUnit100Passing.csproj" />
+    <Project Path="performance/NUnit10kPassing/NUnit10kPassing.csproj" />
+    <Project Path="performance/NUnit1Passing/NUnit1Passing.csproj" />
+    <Project Path="performance/Perfy.TestAdapter/Perfy.TestAdapter.csproj" />
+    <Project Path="performance/XUnit1000Passing/XUnit1000Passing.csproj" />
+    <Project Path="performance/XUnit100Passing/XUnit100Passing.csproj" />
+    <Project Path="performance/XUnit10kPassing/XUnit10kPassing.csproj" />
+    <Project Path="performance/XUnit1Passing/XUnit1Passing.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="NuGet.config" />
+    <File Path="test.js" />
+  </Folder>
+  <Project Path="AppDomainGetAssembliesTestProject/AppDomainGetAssembliesTestProject.csproj" />
+  <Project Path="ArchitectureSwitch/ArchitectureSwitch.csproj" />
+  <Project Path="AttachmentProcessorDataCollector/AttachmentProcessorDataCollector.csproj" />
+  <Project Path="BlameUnitTestProject/BlameUnitTestProject.csproj" />
+  <Project Path="child-crash/child-crash.csproj" />
+  <Project Path="child-hang/child-hang.csproj" />
+  <Project Path="CodeCoverageTest/CodeCoverageTest.csproj" />
+  <Project Path="ConsoleManagedApp/ConsoleManagedApp.csproj" />
+  <Project Path="ConsoleRunners/ConsoleRunners.csproj" />
+  <Project Path="CoverletCoverageTestProject/CoverletCoverageTestProject.csproj" />
+  <Project Path="crash/crash.csproj" />
+  <Project Path="CrashingOnDebugAssertTestProject/CrashingOnDebugAssertTestProject.csproj" />
+  <Project Path="DisableAppdomainTest1/DisableAppdomainTest1.csproj" />
+  <Project Path="DisableAppdomainTest2/DisableAppdomainTest2.csproj" />
+  <Project Path="DiscoveryTestProject/DiscoveryTestProject.csproj" />
+  <Project Path="EnvironmentVariablesTestProject/EnvironmentVariablesTestProject.csproj" />
+  <Project Path="EventLogUnitTestProject/EventLogUnitTestProject.csproj" />
+  <Project Path="hanging-child/hanging-child.csproj" />
+  <Project Path="MstestV1UnitTestProject/MstestV1UnitTestProject.csproj" />
+  <Project Path="MultiHostTestExecutionProject/MultiHostTestExecutionProject.csproj" />
+  <Project Path="MultitargetedNetFrameworkProject/MultitargetedNetFrameworkProject.csproj" />
+  <Project Path="NetStandard2Library/NetStandard2Library.csproj" />
+  <Project Path="NewtonSoftDependency/NewtonSoftDependency.csproj" />
+  <Project Path="NonDll.TestAdapter/NonDll.TestAdapter.csproj" />
+  <Project Path="NUTestProject/NUTestProject.csproj" />
+  <Project Path="OutOfProcDataCollector/OutOfProcDataCollector.csproj" />
+  <Project Path="OutputtingTestProject/OutputtingTestProject.csproj" />
+  <Project Path="ParametrizedTestProject/ParametrizedTestProject.csproj" />
+  <Project Path="problematic-child/problematic-child.csproj" />
+  <Project Path="ProjectFileRunSettingsTestProject/ProjectFileRunSettingsTestProject.csproj" />
+  <Project Path="RecursiveResourceLookupCrash/RecursiveResourceLookupCrash.csproj" />
+  <Project Path="SelfContainedAppTestProject/SelfContainedAppTestProject.csproj" />
+  <Project Path="SerializeTestRunTestProject/SerializeTestRunTestProject.csproj" />
+  <Project Path="SimpleClassLibrary/SimpleClassLibrary.csproj" />
+  <Project Path="SimpleDataCollector/SimpleDataCollector.csproj" />
+  <Project Path="SimpleTestAdapter/SimpleTestAdapter.csproj" />
+  <Project Path="SimpleTestProject/SimpleTestProject.csproj" />
+  <Project Path="SimpleTestProject2/SimpleTestProject2.csproj" />
+  <Project Path="SimpleTestProject3/SimpleTestProject3.csproj" />
+  <Project Path="SimpleTestProject4/SimpleTestProject4.csproj" />
+  <Project Path="SimpleTestProjectARM64/SimpleTestProjectARM64.csproj" />
+  <Project Path="SimpleTestProjectMessedUpTargetFramework/SimpleTestProjectMessedUpTargetFramework.csproj" />
+  <Project Path="SimpleTestProjectx86/SimpleTestProjectx86.csproj" />
+  <Project Path="TerminalLoggerTestProject/TerminalLoggerTestProject.csproj" />
+  <Project Path="timeout/timeout.csproj" />
+  <Project Path="Tools/Tools.csproj" />
+  <Project Path="XUTestProject/XUTestProject.csproj" />
+</Solution>

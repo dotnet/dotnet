@@ -11,6 +11,7 @@ using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
 using NuGet.RuntimeModel;
+using NuGet.Shared;
 using NuGet.Versioning;
 
 namespace NuGet.ProjectModel
@@ -589,19 +590,9 @@ namespace NuGet.ProjectModel
 
             writer.WriteObjectStart("centralPackageVersions");
 
-            if (hashing)
+            foreach (var dependency in centralPackageVersions.OrderBy(dep => dep.Name, StringComparer.OrdinalIgnoreCase))
             {
-                foreach (var dependency in centralPackageVersions)
-                {
-                    writer.WriteNameValue(name: dependency.Name, value: dependency.VersionRange.OriginalString ?? dependency.VersionRange.ToNormalizedString());
-                }
-            }
-            else
-            {
-                foreach (var dependency in centralPackageVersions.OrderBy(dep => dep.Name, StringComparer.OrdinalIgnoreCase))
-                {
-                    writer.WriteNameValue(name: dependency.Name, value: dependency.VersionRange.OriginalString ?? dependency.VersionRange.ToNormalizedString());
-                }
+                writer.WriteNameValue(name: dependency.Name, value: dependency.VersionRange.OriginalString ?? dependency.VersionRange.ToNormalizedString());
             }
 
             writer.WriteObjectEnd();
@@ -616,19 +607,9 @@ namespace NuGet.ProjectModel
 
             writer.WriteObjectStart("packagesToPrune");
 
-            if (hashing)
+            foreach (var dependency in packagesToPrune.OrderBy(dep => dep.Key, StringComparer.OrdinalIgnoreCase))
             {
-                foreach (var dependency in packagesToPrune)
-                {
-                    writer.WriteNameValue(name: dependency.Key, value: dependency.Value.VersionRange.OriginalString ?? dependency.Value.VersionRange.ToNormalizedString());
-                }
-            }
-            else
-            {
-                foreach (var dependency in packagesToPrune.OrderBy(dep => dep.Key, StringComparer.OrdinalIgnoreCase))
-                {
-                    writer.WriteNameValue(name: dependency.Key, value: dependency.Value.VersionRange.OriginalString ?? dependency.Value.VersionRange.ToNormalizedString());
-                }
+                writer.WriteNameValue(name: dependency.Key, value: dependency.Value.VersionRange.OriginalString ?? dependency.Value.VersionRange.ToNormalizedString());
             }
 
             writer.WriteObjectEnd();

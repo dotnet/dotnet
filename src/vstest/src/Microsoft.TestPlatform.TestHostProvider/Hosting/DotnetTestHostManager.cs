@@ -75,6 +75,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
     private bool _isVersionCheckRequired = true;
     private string? _dotnetHostPath;
     private bool _captureOutput;
+    private bool _createNoNewWindow;
     private protected TestHostManagerCallbacks? _testHostManagerCallbacks;
 
     /// <summary>
@@ -192,6 +193,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
         _hostExitedEventRaised = false;
         var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(runsettingsXml);
         _captureOutput = runConfiguration.CaptureStandardOutput;
+        _createNoNewWindow = runConfiguration.CreateNoNewWindow;
         var forwardOutput = runConfiguration.ForwardStandardOutput;
         _testHostManagerCallbacks = new TestHostManagerCallbacks(forwardOutput, logger);
 
@@ -847,6 +849,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
             }
 
             cancellationToken.ThrowIfCancellationRequested();
+            EqtTrace.Verbose("DotnetTestHostManager: Launching testhost with CreateNoWindow={0}", _createNoNewWindow);
 
             var outputCallback = _captureOutput ? OutputReceivedCallback : null;
             _testHostProcess = _processHelper.LaunchProcess(
@@ -856,7 +859,8 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                 testHostStartInfo.EnvironmentVariables,
                 ErrorReceivedCallback,
                 ExitCallBack,
-                outputCallback) as Process;
+                outputCallback,
+                _createNoNewWindow) as Process;
         }
         else
         {

@@ -36,7 +36,6 @@
     <VSQualityToolsFolder>$(TestPlatformBinFolder)Microsoft.VisualStudio.QualityTools\</VSQualityToolsFolder>
     <DependencyModelFolder>$(TestPlatformBinFolder)Microsoft.Extensions.DependencyModel\</DependencyModelFolder>
     <FileSystemGlobbingFolder>$(TestPlatformBinFolder)Microsoft.Extensions.FileSystemGlobbing\</FileSystemGlobbingFolder>
-    <VSSDKBuildToolsFolder>$(TestPlatformBinFolder)Microsoft.VSSDK.BuildTools\</VSSDKBuildToolsFolder>
     <InternalTestPlatformExtensionsFolder>$(TestPlatformBinFolder)Microsoft.Internal.TestPlatform.Extensions\</InternalTestPlatformExtensionsFolder>
   </PropertyGroup>
 
@@ -81,6 +80,10 @@
     <VsixSourceItem Include="Resources\zh-Hant\extension.vsixlangpack">
       <VSIXSubPath>zh-Hant</VSIXSubPath>
     </VsixSourceItem>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="$(SystemDiagnosticsDiagnosticSourceVersion)" PrivateAssets="All" GeneratePathProperty="true" ExcludeAssets="all" />
   </ItemGroup>
 
   <!--
@@ -252,13 +255,16 @@
     <ItemGroup>
       <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Microsoft.DiaSymReader.dll" />
       <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Microsoft.IntelliTrace.Core.dll" />
-      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestTools.DataCollection.*.dll" Exclude="$(InternalTestPlatformExtensionsFolder)\**\*Media*.dll;$(InternalTestPlatformExtensionsFolder)\**\*Video*.dll;">
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\VideoRecorder\*">
+        <VSIXSubPath>Extensions\VideoRecorder</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestTools.DataCollection.*.dll">
         <VSIXSubPath>Extensions</VSIXSubPath>
       </VsixSourceItem>
       <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.*.dll">
         <VSIXSubPath>Extensions</VSIXSubPath>
       </VsixSourceItem>
-      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestPlatform.Extensions.*.dll" Exclude="$(InternalTestPlatformExtensionsFolder)\**\*Web*.dll;$(InternalTestPlatformExtensionsFolder)\**\*Tmi*.dll;$(InternalTestPlatformExtensionsFolder)\**\*Video*.dll;">
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestPlatform.Extensions.*.dll" Exclude="$(InternalTestPlatformExtensionsFolder)\**\*Web*.dll;$(InternalTestPlatformExtensionsFolder)\**\*Tmi*.dll">
         <VSIXSubPath>Extensions</VSIXSubPath>
       </VsixSourceItem>
     </ItemGroup>
@@ -266,8 +272,7 @@
     <ItemGroup>
       <VsixSourceItem Include="$(DependencyModelFolder)Microsoft.Extensions.DependencyModel.dll" />
       <VsixSourceItem Include="$(FileSystemGlobbingFolder)Microsoft.Extensions.FileSystemGlobbing.dll" />
-      <VsixSourceItem Include="$(VSSDKBuildToolsFolder)System.Diagnostics.DiagnosticSource.dll" />
-      <VsixSourceItem Include="$(VSSDKBuildToolsFolder)System.Runtime.CompilerServices.Unsafe.dll" />
+      <VsixSourceItem Include="$(PkgSystem_Diagnostics_DiagnosticSource)\lib\netstandard2.0\System.Diagnostics.DiagnosticSource.dll" />
       <VsixSourceItem Include="$(VSQualityToolsFolder)Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll" />
     </ItemGroup>
 

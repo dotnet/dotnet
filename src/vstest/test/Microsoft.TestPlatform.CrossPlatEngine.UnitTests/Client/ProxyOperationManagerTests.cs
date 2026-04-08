@@ -123,8 +123,8 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
             TesthostFriendlyName = testhostFriendlyName
         };
 
-        Assert.IsTrue(testOperationManager.IsTesthostCompatibleWithTestSessions() == expectedCompatibilityCheckResult);
-        Assert.IsTrue(testOperationManager.SetupChannel([], DefaultRunSettings) == expectedSetupResult);
+        Assert.AreEqual(expectedCompatibilityCheckResult, testOperationManager.IsTesthostCompatibleWithTestSessions());
+        Assert.AreEqual(expectedSetupResult, testOperationManager.SetupChannel([], DefaultRunSettings));
     }
 
     [TestMethod]
@@ -278,7 +278,7 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
 
         var operationManager = new TestableProxyOperationManager(_mockRequestData.Object, _mockRequestSender.Object, _mockTestHostManager.Object);
 
-        var message = Assert.ThrowsException<TestPlatformException>(() => operationManager.SetupChannel([], DefaultRunSettings)).Message;
+        var message = Assert.ThrowsExactly<TestPlatformException>(() => operationManager.SetupChannel([], DefaultRunSettings)).Message;
         Assert.AreEqual(message, TimoutErrorMessage);
     }
 
@@ -292,7 +292,7 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
         var operationManager = new TestableProxyOperationManager(_mockRequestData.Object, _mockRequestSender.Object, _mockTestHostManager.Object, cancellationTokenSource);
 
         cancellationTokenSource.Cancel();
-        var message = Assert.ThrowsException<TestPlatformException>(() => operationManager.SetupChannel([], DefaultRunSettings)).Message;
+        var message = Assert.ThrowsExactly<TestPlatformException>(() => operationManager.SetupChannel([], DefaultRunSettings)).Message;
         Equals("Canceling the operation as requested.", message);
     }
 
@@ -302,12 +302,14 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
         SetupTestHostLaunched(true);
         _mockRequestSender.Setup(rs => rs.WaitForRequestHandlerConnection(ConnectionTimeout, It.IsAny<CancellationToken>())).Returns(false);
 
+#pragma warning disable MSTEST0049 // CancellationToken not applicable in Moq callback
         _mockTestHostManager.Setup(rs => rs.LaunchTestHostAsync(It.IsAny<TestProcessStartInfo>(), It.IsAny<CancellationToken>())).Callback(() => Task.Run(() => throw new OperationCanceledException()));
+#pragma warning restore MSTEST0049
 
         var cancellationTokenSource = new CancellationTokenSource();
         var operationManager = new TestableProxyOperationManager(_mockRequestData.Object, _mockRequestSender.Object, _mockTestHostManager.Object, cancellationTokenSource);
 
-        var message = Assert.ThrowsException<TestPlatformException>(() => operationManager.SetupChannel([], DefaultRunSettings)).Message;
+        var message = Assert.ThrowsExactly<TestPlatformException>(() => operationManager.SetupChannel([], DefaultRunSettings)).Message;
         Equals("Canceling the operation as requested.", message);
     }
 
@@ -321,7 +323,7 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
         _mockTestHostManager.Setup(rs => rs.LaunchTestHostAsync(It.IsAny<TestProcessStartInfo>(), It.IsAny<CancellationToken>())).Callback(() => cancellationTokenSource.Cancel());
         var operationManager = new TestableProxyOperationManager(_mockRequestData.Object, _mockRequestSender.Object, _mockTestHostManager.Object, cancellationTokenSource);
 
-        var message = Assert.ThrowsException<TestPlatformException>(() => operationManager.SetupChannel([], DefaultRunSettings)).Message;
+        var message = Assert.ThrowsExactly<TestPlatformException>(() => operationManager.SetupChannel([], DefaultRunSettings)).Message;
         Equals("Canceling the operation as requested.", message);
     }
 
@@ -333,7 +335,7 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
 
         var operationManager = new TestableProxyOperationManager(_mockRequestData.Object, _mockRequestSender.Object, _mockTestHostManager.Object);
 
-        var message = Assert.ThrowsException<TestPlatformException>(() => operationManager.SetupChannel([], DefaultRunSettings)).Message;
+        var message = Assert.ThrowsExactly<TestPlatformException>(() => operationManager.SetupChannel([], DefaultRunSettings)).Message;
         Assert.AreEqual(message, Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources.Resources.InitializationFailed);
     }
 
@@ -349,7 +351,7 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
     {
         // Make the version check fail
         _mockRequestSender.Setup(rs => rs.CheckVersionWithTestHost()).Throws(new TestPlatformException("Version check failed"));
-        Assert.ThrowsException<TestPlatformException>(() => _testOperationManager.SetupChannel([], DefaultRunSettings));
+        Assert.ThrowsExactly<TestPlatformException>(() => _testOperationManager.SetupChannel([], DefaultRunSettings));
     }
 
     [TestMethod]
@@ -474,7 +476,7 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
         testOperationManager.SetupChannel([], DefaultRunSettings);
 
         // Verify.
-        Assert.IsTrue(receivedTestProcessInfo.Arguments!.Contains("--telemetryoptedin true"));
+        Assert.Contains("--telemetryoptedin true", receivedTestProcessInfo.Arguments!);
     }
 
     [TestMethod]
@@ -497,7 +499,7 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
         testOperationManager.SetupChannel([], DefaultRunSettings);
 
         // Verify.
-        Assert.IsTrue(receivedTestProcessInfo.Arguments!.Contains("--telemetryoptedin false"));
+        Assert.Contains("--telemetryoptedin false", receivedTestProcessInfo.Arguments!);
     }
 
     [MemberNotNull(nameof(_mockProcessHelper), nameof(_mockFileHelper), nameof(_mockEnvironment), nameof(_mockRunsettingHelper), nameof(_mockWindowsRegistry), nameof(_mockEnvironmentVariableHelper))]
@@ -520,9 +522,10 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
                         It.IsAny<IDictionary<string, string?>>(),
                         It.IsAny<Action<object?, string?>>(),
                         It.IsAny<Action<object?>>(),
-                        It.IsAny<Action<object?, string?>>()))
-            .Callback<string, string, string, IDictionary<string, string>, Action<object, string>, Action<object>, Action<object, string>>(
-                (var1, var2, var3, dictionary, errorCallback, exitCallback, outputCallback) =>
+                        It.IsAny<Action<object?, string?>>(),
+                        It.IsAny<bool>()))
+            .Callback<string, string, string, IDictionary<string, string>, Action<object, string>, Action<object>, Action<object, string>, bool>(
+                (var1, var2, var3, dictionary, errorCallback, exitCallback, outputCallback, createNoNewWindow) =>
                 {
                     var process = Process.GetCurrentProcess();
 

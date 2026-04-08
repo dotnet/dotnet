@@ -64,7 +64,7 @@ public class OutputExtensionsTests
         }
 
         _mockOutput.Object.Error(false, "HelloError", null);
-        Assert.IsTrue(_color == ConsoleColor.Red, "Console color not set.");
+        Assert.AreEqual(ConsoleColor.Red, _color, "Console color not set.");
     }
 
     [TestMethod]
@@ -90,7 +90,7 @@ public class OutputExtensionsTests
         }
 
         _mockOutput.Object.Warning(false, "HelloWarning", null);
-        Assert.IsTrue(_color == ConsoleColor.Yellow);
+        Assert.AreEqual(ConsoleColor.Yellow, _color);
     }
 
     [TestMethod]
@@ -116,7 +116,7 @@ public class OutputExtensionsTests
         }
 
         _mockOutput.Object.Information(false, ConsoleColor.Green, "HelloInformation", null);
-        Assert.IsTrue(_color == ConsoleColor.Green);
+        Assert.AreEqual(ConsoleColor.Green, _color);
     }
 
     [TestMethod]
@@ -139,7 +139,7 @@ public class OutputExtensionsTests
 
         _mockOutput.Object.Information(false, "HelloInformation {0} {1}", "Foo", "Bar");
         _mockOutput.Verify(o => o.WriteLine("HelloInformation Foo Bar", OutputLevel.Information), Times.Once());
-        Assert.IsTrue(color1 == color2);
+        Assert.AreEqual(color2, color1);
     }
 
     private bool CanNotSetConsoleForegroundColor()

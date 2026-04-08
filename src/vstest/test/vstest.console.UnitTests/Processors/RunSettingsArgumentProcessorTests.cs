@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -76,21 +77,15 @@ public class RunSettingsArgumentProcessorTests
     [TestMethod]
     public void InitializeShouldThrowExceptionIfArgumentIsNull()
     {
-        Action action = () => new RunSettingsArgumentExecutor(CommandLineOptions.Instance, null!).Initialize(null);
-
-        ExceptionUtilities.ThrowsException<CommandLineException>(
-            action,
-            "The /Settings parameter requires a settings file to be provided.");
+        var ex = Assert.ThrowsExactly<CommandLineException>(() => new RunSettingsArgumentExecutor(CommandLineOptions.Instance, null!).Initialize(null));
+        Assert.Contains("The /Settings parameter requires a settings file to be provided.", ex.Message);
     }
 
     [TestMethod]
     public void InitializeShouldThrowExceptionIfArgumentIsWhiteSpace()
     {
-        Action action = () => new RunSettingsArgumentExecutor(CommandLineOptions.Instance, null!).Initialize("  ");
-
-        ExceptionUtilities.ThrowsException<CommandLineException>(
-            action,
-            "The /Settings parameter requires a settings file to be provided.");
+        var ex = Assert.ThrowsExactly<CommandLineException>(() => new RunSettingsArgumentExecutor(CommandLineOptions.Instance, null!).Initialize("  "));
+        Assert.Contains("The /Settings parameter requires a settings file to be provided.", ex.Message);
     }
 
     [TestMethod]
@@ -104,10 +99,8 @@ public class RunSettingsArgumentProcessorTests
 
         executor.FileHelper = mockFileHelper.Object;
 
-        ExceptionUtilities.ThrowsException<CommandLineException>(
-            () => executor.Initialize(fileName),
-            "The Settings file '{0}' could not be found.",
-            fileName);
+        var ex = Assert.ThrowsExactly<CommandLineException>(() => executor.Initialize(fileName));
+        Assert.Contains(string.Format(CultureInfo.CurrentCulture, "The Settings file '{0}' could not be found.", fileName), ex.Message);
     }
 
     [TestMethod]
@@ -129,9 +122,8 @@ public class RunSettingsArgumentProcessorTests
         executor.FileHelper = mockFileHelper.Object;
 
         // Act and Assert.
-        ExceptionUtilities.ThrowsException<SettingsException>(
-            () => executor.Initialize(fileName),
-            "Settings file provided does not conform to required format.");
+        var ex = Assert.ThrowsExactly<SettingsException>(() => executor.Initialize(fileName));
+        Assert.Contains("Settings file provided does not conform to required format.", ex.Message);
     }
 
     [TestMethod]
@@ -253,7 +245,7 @@ public class RunSettingsArgumentProcessorTests
             $"    <DataCollectors />",
             $"  </DataCollectionRunSettings>",
             $"</RunSettings>");
-        StringAssert.Contains(_settingsProvider.ActiveRunSettings.SettingsXml, expected);
+        Assert.Contains(expected, _settingsProvider.ActiveRunSettings.SettingsXml!);
     }
 
 
@@ -323,7 +315,7 @@ public class RunSettingsArgumentProcessorTests
             null);
 
         executor.Initialize(runsettingsFile);
-        Assert.IsTrue(_settingsProvider.ActiveRunSettings!.SettingsXml!.Contains(@"C:\新しいフォルダー"));
+        Assert.Contains(@"C:\新しいフォルダー", _settingsProvider.ActiveRunSettings!.SettingsXml!);
         File.Delete(runsettingsFile);
     }
 
