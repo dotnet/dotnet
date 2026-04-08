@@ -29,7 +29,7 @@ internal partial class RazorEditService
             return;
         }
 
-        var tree = codeDocument.GetRequiredSyntaxTree();
+        var tree = codeDocument.GetRequiredTagHelperRewrittenSyntaxTree();
         var firstDirective = tree.EnumerateDirectives<RazorDirectiveSyntax>(static dir => dir.IsCodeDirective() || dir.IsFunctionsDirective()).FirstOrDefault();
 
         var csharpCodeBlock = firstDirective?.DirectiveBody.CSharpCode;

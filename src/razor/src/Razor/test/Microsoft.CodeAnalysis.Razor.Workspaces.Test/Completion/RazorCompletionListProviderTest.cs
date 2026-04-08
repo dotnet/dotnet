@@ -537,7 +537,7 @@ public class RazorCompletionListProviderTest
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
         var sourceDocument = TestRazorSourceDocument.Create(text, filePath: documentFilePath);
         var syntaxTree = RazorSyntaxTree.Parse(sourceDocument);
-        codeDocument = codeDocument.WithSyntaxTree(syntaxTree);
+        codeDocument = codeDocument.WithTagHelperRewrittenSyntaxTree(syntaxTree);
         var tagHelperDocumentContext = TagHelperDocumentContext.GetOrCreate(tagHelpers ?? []);
         codeDocument = codeDocument.WithTagHelperContext(tagHelperDocumentContext);
         return codeDocument;

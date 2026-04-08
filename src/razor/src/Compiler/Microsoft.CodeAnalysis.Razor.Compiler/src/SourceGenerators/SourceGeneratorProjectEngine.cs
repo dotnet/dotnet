@@ -58,8 +58,8 @@ internal sealed class SourceGeneratorProjectEngine
 
         codeDocument = ExecutePhases(Phases[.._discoveryPhaseIndex], codeDocument, cancellationToken);
 
-        // record the syntax tree, before the tag helper re-writing occurs
-        codeDocument = codeDocument.WithPreTagHelperSyntaxTree(codeDocument.GetSyntaxTree());
+        // By this point, DefaultRazorParsingPhase has set the canonical syntax tree (_syntaxTree)
+        // so that discovery and subsequent phases can read it via GetSyntaxTree().
         return new SourceGeneratorRazorCodeDocument(codeDocument);
     }
 
@@ -69,7 +69,7 @@ internal sealed class SourceGeneratorProjectEngine
         bool checkForIdempotency, 
         CancellationToken cancellationToken)
     {
-        Debug.Assert(sgDocument.CodeDocument.GetPreTagHelperSyntaxTree() is not null);
+        Debug.Assert(sgDocument.CodeDocument.GetSyntaxTree() is not null);
 
         int startIndex = _discoveryPhaseIndex;
         var codeDocument = sgDocument.CodeDocument;

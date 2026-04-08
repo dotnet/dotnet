@@ -39,7 +39,7 @@ internal class ExtractToComponentCodeActionProvider() : IRazorCodeActionProvider
             return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }
 
-        if (!context.CodeDocument.TryGetSyntaxTree(out var syntaxTree))
+        if (!context.CodeDocument.TryGetTagHelperRewrittenSyntaxTree(out var syntaxTree))
         {
             return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }
