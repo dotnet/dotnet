@@ -6,10 +6,10 @@
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />
+    <RepositoryReference Include="aspnetcore" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <RepositoryReference Include="aspnetcore" />
     <RepositoryReference Include="source-build-reference-packages" />
   </ItemGroup>
 
