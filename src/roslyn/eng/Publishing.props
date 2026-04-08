@@ -22,23 +22,21 @@
     Also, do not publish any symbols packages in source-only builds.
   -->
   <ItemGroup Condition="'$(PreReleaseVersionLabel)' == 'pr-validation' or '$(DotNetBuildSourceOnly)' == 'true'">
-    <!-- Determine all NuGet packages being published -->
-    <_NuGetPackagesToPush Include="@(Artifact->WithMetadataValue('Extension', '.nupkg'))" />
-
     <!-- Determine all symbol packages being published -->
-    <_SymbolPackagesToPush Include="@(_NuGetPackagesToPush)"
-                           Condition="$([System.String]::Copy(%(FullPath)).EndsWith('.symbols.nupkg'))" />
-    <_SymbolPackagesToPush Include="@(_NuGetPackagesToPush)"
-                           Condition="$([System.String]::Copy(%(FullPath)).Contains('.Symbols.'))" />
+    <Artifact Update="@(Artifact)">
+      <IsSymbol Condition="$([System.String]::Copy(%(FullPath)).EndsWith('.symbols.nupkg')) == 'true'">true</IsSymbol>
+      <IsSymbol Condition="$([System.String]::Copy(%(FullPath)).Contains('.Symbols.')) == 'true'">true</IsSymbol>
+    </Artifact>
+    <_SymbolPackageToPush Include="@(Artifact->WithMetadataValue('IsSymbol', 'true'))" />
 
     <!-- Remove all NuGet packages from being published -->
-    <Artifact Remove="@(_NuGetPackagesToPush)" Condition="'$(PreReleaseVersionLabel)' == 'pr-validation'" />
+    <Artifact Remove="@(Artifact)" Condition="'$(PreReleaseVersionLabel)' == 'pr-validation'" />
   
     <!-- Remove all symbols packages from being published in source-only builds. -->
-    <Artifact Remove="@(_SymbolPackagesToPush)" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+    <Artifact Remove="@(_SymbolPackageToPush)" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
 
     <!-- Include symbol packages for publishing-->
-    <Artifact Include="@(_SymbolPackagesToPush)" Condition="'$(PreReleaseVersionLabel)' == 'pr-validation' and '$(DotNetBuildSourceOnly)' != 'true'" />
+    <Artifact Include="@(_SymbolPackageToPush)" Condition="'$(PreReleaseVersionLabel)' == 'pr-validation' and '$(DotNetBuildSourceOnly)' != 'true'" />
   </ItemGroup>
 
 </Project>
