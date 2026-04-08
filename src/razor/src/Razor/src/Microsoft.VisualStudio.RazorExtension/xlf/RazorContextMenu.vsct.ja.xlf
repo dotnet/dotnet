@@ -19,47 +19,47 @@
       </trans-unit>
       <trans-unit id="cmdidAddOrViewNestedCsFile|ButtonText">
         <source>Add or View Nested .cs File</source>
-        <target state="new">Add or View Nested .cs File</target>
+        <target state="translated">入れ子になった .cs ファイルの追加または表示</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidAddOrViewNestedCsFile|CommandName">
         <source>AddOrViewNestedCsFile</source>
-        <target state="new">AddOrViewNestedCsFile</target>
+        <target state="translated">AddOrViewNestedCsFile</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidAddOrViewNestedCsFile|LocCanonicalName">
         <source>AddOrViewNestedCsFile</source>
-        <target state="new">AddOrViewNestedCsFile</target>
+        <target state="translated">AddOrViewNestedCsFile</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidAddOrViewNestedCssFile|ButtonText">
         <source>Add or View Nested .css File</source>
-        <target state="new">Add or View Nested .css File</target>
+        <target state="translated">入れ子になった .css ファイルの追加または表示</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidAddOrViewNestedCssFile|CommandName">
         <source>AddOrViewNestedCssFile</source>
-        <target state="new">AddOrViewNestedCssFile</target>
+        <target state="translated">AddOrViewNestedCssFile</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidAddOrViewNestedCssFile|LocCanonicalName">
         <source>AddOrViewNestedCssFile</source>
-        <target state="new">AddOrViewNestedCssFile</target>
+        <target state="translated">AddOrViewNestedCssFile</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidAddOrViewNestedJsFile|ButtonText">
         <source>Add or View Nested .js File</source>
-        <target state="new">Add or View Nested .js File</target>
+        <target state="translated">入れ子になった .js ファイルの追加または表示</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidAddOrViewNestedJsFile|CommandName">
         <source>AddOrViewNestedJsFile</source>
-        <target state="new">AddOrViewNestedJsFile</target>
+        <target state="translated">AddOrViewNestedJsFile</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidAddOrViewNestedJsFile|LocCanonicalName">
         <source>AddOrViewNestedJsFile</source>
-        <target state="new">AddOrViewNestedJsFile</target>
+        <target state="translated">AddOrViewNestedJsFile</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidRazorSyntaxVisualizer|ButtonText">
