@@ -182,7 +182,7 @@
   <Target Name="IncludeSharedComponentsAsArtifacts"
           AfterTargets="DiscoverArtifacts"
           DependsOnTargets="GetFilteredSharedComponentPackages"
-          Condition="'$(IsPublishPass2)' != 'true'">
+          Condition="'$(IsPublishPass2)' != 'true' and '$(ExcludeRestorePackageImports)' != 'true'">
 
     <ItemGroup>
       <Artifact Include="@(SharedComponentFilteredPackages->'%(PackagePath)')">
@@ -193,6 +193,7 @@
 
   <Target Name="DiscoverSourceBuiltArtifacts"
           AfterTargets="DiscoverArtifacts"
+          Condition="'$(ExcludeRestorePackageImports)' != 'true'"
           DependsOnTargets="DetermineSourceBuiltSdkNonStableVersion">
 
     <PropertyGroup>
