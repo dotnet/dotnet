@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="AmbigiousFrameworkReferences">
         <source>Ambiguous framework references. The following target frameworks are both declaring framework references for packing: {0}</source>
-        <target state="new">Ambiguous framework references. The following target frameworks are both declaring framework references for packing: {0}</target>
+        <target state="translated">Niejednoznaczne odwołania do platformy. Poniższe platformy docelowe deklarują odwołania do platformy na potrzeby pakowania: {0}</target>
         <note>0 - List of TargetFramework with framework refs</note>
       </trans-unit>
       <trans-unit id="AmbigiousPackageAssemblies">
         <source>Ambiguous packaging content. The above frameworks have the same target path for {0}.</source>
-        <target state="new">Ambiguous packaging content. The above frameworks have the same target path for {0}.</target>
+        <target state="translated">Niejednoznaczna zawartość pakowania. Powyższe platformy mają tę samą ścieżkę docelową dla {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="AmbigiousPackageDependencies">
         <source>Ambiguous package dependencies. The following target frameworks are both declaring package dependencies for packing: {0}</source>
-        <target state="new">Ambiguous package dependencies. The following target frameworks are both declaring package dependencies for packing: {0}</target>
+        <target state="translated">Niejednoznaczne zależności pakietów. Następujące platformy docelowe deklarują zależności pakietów na potrzeby pakowania: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="AssetsFileDoesNotHaveValidPackageSpec">
@@ -29,7 +29,7 @@
       </trans-unit>
       <trans-unit id="DuplicateFrameworks">
         <source>This project is using aliased frameworks, the following TargetFramework properties map to the same effective frameworks '{0}' and pack is unable to disambiguate and create a single package. {1}</source>
-        <target state="new">This project is using aliased frameworks, the following TargetFramework properties map to the same effective frameworks '{0}' and pack is unable to disambiguate and create a single package. {1}</target>
+        <target state="translated">W tym projekcie są używane platformy z aliasami, a następujące właściwości TargetFramework są mapowane z tymi samymi faktycznymi platformami „{0}” i pakiet nie może rozróżnić i utworzyć pojedynczego pakietu. {1}</target>
         <note>0 - details about which framework 
 1 - Additional details</note>
       </trans-unit>

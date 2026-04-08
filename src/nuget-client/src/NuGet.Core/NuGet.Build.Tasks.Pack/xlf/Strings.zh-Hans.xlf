@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="AmbigiousFrameworkReferences">
         <source>Ambiguous framework references. The following target frameworks are both declaring framework references for packing: {0}</source>
-        <target state="new">Ambiguous framework references. The following target frameworks are both declaring framework references for packing: {0}</target>
+        <target state="translated">框架引用不明确。以下目标框架都声明了用于打包的框架引用: {0}</target>
         <note>0 - List of TargetFramework with framework refs</note>
       </trans-unit>
       <trans-unit id="AmbigiousPackageAssemblies">
         <source>Ambiguous packaging content. The above frameworks have the same target path for {0}.</source>
-        <target state="new">Ambiguous packaging content. The above frameworks have the same target path for {0}.</target>
+        <target state="translated">打包内容不明确。上述框架对 {0} 具有相同的目标路径。</target>
         <note />
       </trans-unit>
       <trans-unit id="AmbigiousPackageDependencies">
         <source>Ambiguous package dependencies. The following target frameworks are both declaring package dependencies for packing: {0}</source>
-        <target state="new">Ambiguous package dependencies. The following target frameworks are both declaring package dependencies for packing: {0}</target>
+        <target state="translated">包依赖项不明确。以下目标框架均声明了用于打包的包依赖项: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="AssetsFileDoesNotHaveValidPackageSpec">
@@ -29,7 +29,7 @@
       </trans-unit>
       <trans-unit id="DuplicateFrameworks">
         <source>This project is using aliased frameworks, the following TargetFramework properties map to the same effective frameworks '{0}' and pack is unable to disambiguate and create a single package. {1}</source>
-        <target state="new">This project is using aliased frameworks, the following TargetFramework properties map to the same effective frameworks '{0}' and pack is unable to disambiguate and create a single package. {1}</target>
+        <target state="translated">此项目使用别名框架，以下 TargetFramework 属性映射到同一有效框架 '{0}'，并且包无法消除歧义和创建单个包。{1}</target>
         <note>0 - details about which framework 
 1 - Additional details</note>
       </trans-unit>
