@@ -16,6 +16,10 @@
     <_SuppressAllTargets>true</_SuppressAllTargets>
     <_SuppressSdkImports>false</_SuppressSdkImports>
     <_NoSuppressRestoreTarget>false</_NoSuppressRestoreTarget>
+
+    <!-- Opt-out features -->
+    <UsingToolXliff>false</UsingToolXliff>
+    <UsingToolPdbConverter>false</UsingToolPdbConverter>
   </PropertyGroup>
 
   <!-- Additional NuGet sources for restoring toolset dependencies -->
