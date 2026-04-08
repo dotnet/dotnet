@@ -22,7 +22,7 @@ public class TestHostExtensionManagerTests
     [TestMethod]
     public void CreateShouldThrowExceptionIfMessageLoggerIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() =>
+        Assert.ThrowsExactly<ArgumentNullException>(() =>
         {
             var testLoggerExtensionManager = TestRuntimeExtensionManager.Create(null!);
         });

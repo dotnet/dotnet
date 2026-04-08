@@ -14,14 +14,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Common.Filtering;
 
 internal sealed class FastFilter
 {
-    internal ImmutableDictionary<string, ISet<string>> FilterProperties { get; }
-
-    internal bool IsFilteredOutWhenMatched { get; }
-
-    internal Regex? PropertyValueRegex { get; set; }
-
-    internal string? PropertyValueRegexReplacement { get; set; }
-
     internal FastFilter(ImmutableDictionary<string, ISet<string>> filterProperties, Operation filterOperation, Operator filterOperator)
     {
         ValidateArg.NotNullOrEmpty(filterProperties, nameof(filterProperties));
@@ -34,6 +26,14 @@ internal sealed class FastFilter
                 ? true
                 : throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.Resources.FastFilterException)));
     }
+
+    internal ImmutableDictionary<string, ISet<string>> FilterProperties { get; }
+
+    internal bool IsFilteredOutWhenMatched { get; }
+
+    internal Regex? PropertyValueRegex { get; set; }
+
+    internal string? PropertyValueRegexReplacement { get; set; }
 
     internal string[]? ValidForProperties(IEnumerable<string>? properties)
     {

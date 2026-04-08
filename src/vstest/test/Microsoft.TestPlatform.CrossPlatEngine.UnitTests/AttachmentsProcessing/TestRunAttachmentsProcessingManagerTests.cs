@@ -1,5 +1,7 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+#pragma warning disable MSTEST0049 // CancellationToken not applicable in test setup/Moq callbacks
 
 using System;
 using System.Collections.Generic;
@@ -100,7 +102,7 @@ public class TestRunAttachmentsProcessingManagerTests
         var result = await _manager.ProcessTestRunAttachmentsAsync(Constants.EmptyRunSettings, _mockRequestData.Object, inputAttachments, Array.Empty<InvokedDataCollector>(), _cancellationTokenSource.Token);
 
         // assert
-        Assert.AreEqual(0, result.Count);
+        Assert.IsEmpty(result);
         _mockAttachmentHandler1.Verify(h => h.GetExtensionUris(), Times.Never);
         _mockAttachmentHandler2.Verify(h => h.GetExtensionUris(), Times.Never);
         _mockAttachmentHandler1.Verify(h => h.ProcessAttachmentSetsAsync(It.IsAny<XmlElement>(), It.IsAny<ICollection<AttachmentSet>>(), It.IsAny<IProgress<int>>(), It.IsAny<IMessageLogger>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -140,8 +142,8 @@ public class TestRunAttachmentsProcessingManagerTests
         var result = await _manager.ProcessTestRunAttachmentsAsync(Constants.EmptyRunSettings, _mockRequestData.Object, inputAttachments, Array.Empty<InvokedDataCollector>(), _cancellationTokenSource.Token);
 
         // assert
-        Assert.AreEqual(1, result.Count);
-        Assert.IsTrue(result.Contains(inputAttachments[0]));
+        Assert.ContainsSingle(result);
+        Assert.Contains(inputAttachments[0], result);
         _mockAttachmentHandler1.Verify(h => h.GetExtensionUris());
         _mockAttachmentHandler2.Verify(h => h.GetExtensionUris());
         _mockAttachmentHandler1.Verify(h => h.ProcessAttachmentSetsAsync(It.IsAny<XmlElement>(), It.IsAny<ICollection<AttachmentSet>>(), It.IsAny<IProgress<int>>(), It.IsAny<IMessageLogger>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -189,8 +191,8 @@ public class TestRunAttachmentsProcessingManagerTests
         var result = await _manager.ProcessTestRunAttachmentsAsync(Constants.EmptyRunSettings, _mockRequestData.Object, inputAttachments, Array.Empty<InvokedDataCollector>(), _cancellationTokenSource.Token);
 
         // assert
-        Assert.AreEqual(1, result.Count);
-        Assert.IsTrue(result.Contains(outputAttachments[0]));
+        Assert.ContainsSingle(result);
+        Assert.Contains(outputAttachments[0], result);
         _mockEventSource.Verify(s => s.TestRunAttachmentsProcessingStart(1));
         _mockEventSource.Verify(s => s.TestRunAttachmentsProcessingStop(1));
         _mockAttachmentHandler1.Verify(h => h.GetExtensionUris());
@@ -237,8 +239,8 @@ public class TestRunAttachmentsProcessingManagerTests
         var result = await _manager.ProcessTestRunAttachmentsAsync(Constants.EmptyRunSettings, _mockRequestData.Object, inputAttachments, Array.Empty<InvokedDataCollector>(), _cancellationTokenSource.Token);
 
         // assert
-        Assert.AreEqual(1, result.Count);
-        Assert.IsTrue(result.Contains(inputAttachments[0]));
+        Assert.ContainsSingle(result);
+        Assert.Contains(inputAttachments[0], result);
         _mockAttachmentHandler1.Verify(h => h.GetExtensionUris());
         _mockAttachmentHandler2.Verify(h => h.GetExtensionUris(), Times.Once);
         _mockAttachmentHandler1.Verify(h => h.ProcessAttachmentSetsAsync(It.IsAny<XmlElement>(), It.Is<ICollection<AttachmentSet>>(c => c.Count == 1 && c.Contains(inputAttachments[0])), It.IsAny<IProgress<int>>(), It.IsAny<IMessageLogger>(), _cancellationTokenSource.Token));
@@ -279,8 +281,8 @@ public class TestRunAttachmentsProcessingManagerTests
         var result = await _manager.ProcessTestRunAttachmentsAsync(Constants.EmptyRunSettings, _mockRequestData.Object, inputAttachments, Array.Empty<InvokedDataCollector>(), _cancellationTokenSource.Token);
 
         // assert
-        Assert.AreEqual(1, result.Count);
-        Assert.IsTrue(result.Contains(inputAttachments[0]));
+        Assert.ContainsSingle(result);
+        Assert.Contains(inputAttachments[0], result);
         _mockAttachmentHandler1.Verify(h => h.GetExtensionUris(), Times.Never);
         _mockAttachmentHandler2.Verify(h => h.GetExtensionUris(), Times.Never);
         _mockAttachmentHandler1.Verify(h => h.ProcessAttachmentSetsAsync(It.IsAny<XmlElement>(), It.IsAny<ICollection<AttachmentSet>>(), It.IsAny<IProgress<int>>(), It.IsAny<IMessageLogger>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -348,10 +350,10 @@ public class TestRunAttachmentsProcessingManagerTests
         var result = await _manager.ProcessTestRunAttachmentsAsync(Constants.EmptyRunSettings, _mockRequestData.Object, inputAttachments, Array.Empty<InvokedDataCollector>(), _cancellationTokenSource.Token);
 
         // assert
-        Assert.AreEqual(3, result.Count);
-        Assert.IsTrue(result.Contains(inputAttachments[4]));
-        Assert.IsTrue(result.Contains(outputAttachmentsForHandler1[0]));
-        Assert.IsTrue(result.Contains(outputAttachmentsForHandler2[0]));
+        Assert.HasCount(3, result);
+        Assert.Contains(inputAttachments[4], result);
+        Assert.Contains(outputAttachmentsForHandler1[0], result);
+        Assert.Contains(outputAttachmentsForHandler2[0], result);
         _mockAttachmentHandler1.Verify(h => h.GetExtensionUris());
         _mockAttachmentHandler2.Verify(h => h.GetExtensionUris());
         _mockAttachmentHandler1.Verify(h => h.ProcessAttachmentSetsAsync(It.IsAny<XmlElement>(), It.Is<ICollection<AttachmentSet>>(c => c.Count == 2 && c.Contains(inputAttachments[0]) && c.Contains(inputAttachments[1])), It.IsAny<IProgress<int>>(), It.IsAny<IMessageLogger>(), _cancellationTokenSource.Token));
@@ -489,8 +491,8 @@ public class TestRunAttachmentsProcessingManagerTests
 
         // assert
         Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.Count);
-        Assert.IsTrue(result.Contains(inputAttachments[0]));
+        Assert.ContainsSingle(result);
+        Assert.Contains(inputAttachments[0], result);
         _mockAttachmentHandler1.Verify(h => h.GetExtensionUris());
         _mockAttachmentHandler2.Verify(h => h.GetExtensionUris(), Times.Never);
         _mockAttachmentHandler1.Verify(h => h.ProcessAttachmentSetsAsync(It.IsAny<XmlElement>(), It.Is<ICollection<AttachmentSet>>(c => c.Count == 1 && c.Contains(inputAttachments[0])), It.IsAny<IProgress<int>>(), It.IsAny<IMessageLogger>(), _cancellationTokenSource.Token));
@@ -603,7 +605,7 @@ public class TestRunAttachmentsProcessingManagerTests
         _mockAttachmentHandler2.Verify(h => h.ProcessAttachmentSetsAsync(It.IsAny<XmlElement>(), It.IsAny<ICollection<AttachmentSet>>(), It.IsAny<IProgress<int>>(), It.IsAny<IMessageLogger>(), It.IsAny<CancellationToken>()));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(true)]
     [DataRow(false)]
     public async Task ProcessTestRunAttachmentsAsync_ShouldFlowCorrectDataCollectorConfiguration(bool withConfig)
@@ -703,8 +705,8 @@ public class TestRunAttachmentsProcessingManagerTests
             {
                 // assert
                 Assert.IsTrue(firstProcessorFailed);
-                Assert.AreEqual(1, i1.Count);
-                Assert.AreEqual(3, i1.Single().Attachments.Count);
+                Assert.ContainsSingle(i1);
+                Assert.HasCount(3, i1.Single().Attachments);
                 for (int i = 0; i < i1.Single().Attachments.Count; i++)
                 {
                     Assert.AreEqual(inputAttachments.Single().Attachments[i], i1.Single().Attachments[i]);
@@ -761,8 +763,8 @@ public class TestRunAttachmentsProcessingManagerTests
                 {
                     // assert
                     Assert.IsTrue(firstProcessorFailed);
-                    Assert.AreEqual(1, i1.Count);
-                    Assert.AreEqual(3, i1.Single().Attachments.Count);
+                    Assert.ContainsSingle(i1);
+                    Assert.HasCount(3, i1.Single().Attachments);
                     for (int i = 0; i < i1.Single().Attachments.Count; i++)
                     {
                         Assert.AreEqual(inputAttachments.Single().Attachments[i], i1.Single().Attachments[i]);
@@ -834,7 +836,7 @@ public class TestRunAttachmentsProcessingManagerTests
     {
         Assert.AreEqual(1, args.CurrentAttachmentProcessorIndex);
         Assert.AreEqual(2, args.AttachmentProcessorsCount);
-        Assert.AreEqual(1, args.CurrentAttachmentProcessorUris.Count);
+        Assert.ContainsSingle(args.CurrentAttachmentProcessorUris);
         Assert.AreEqual(Uri1, args.CurrentAttachmentProcessorUris.First().AbsoluteUri);
         return progress == args.CurrentAttachmentProcessorProgress;
     }

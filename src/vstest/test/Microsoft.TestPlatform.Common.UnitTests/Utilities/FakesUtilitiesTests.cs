@@ -19,13 +19,13 @@ public class FakesUtilitiesTests
     public void FakesSettingsShouldThrowExceptionIfSourcesArePassedAsNull()
     {
         string runSettingsXml = @"<RunSettings><RunConfiguration><TargetFrameworkVersion>.netstandard,Version=5.0</TargetFrameworkVersion></RunConfiguration ></RunSettings>";
-        Assert.ThrowsException<ArgumentNullException>(() => FakesUtilities.GenerateFakesSettingsForRunConfiguration(null!, runSettingsXml));
+        Assert.ThrowsExactly<ArgumentNullException>(() => FakesUtilities.GenerateFakesSettingsForRunConfiguration(null!, runSettingsXml));
     }
 
     [TestMethod]
     public void FakesSettingsShouldThrowExceptionIfRunSettingsIsPassedAsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => FakesUtilities.GenerateFakesSettingsForRunConfiguration([], null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => FakesUtilities.GenerateFakesSettingsForRunConfiguration([], null!));
     }
 
     [TestMethod]

@@ -3,6 +3,9 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+// Class level just because we want the tests to run in predictable order.
+[assembly: Parallelize(Scope = ExecutionScope.ClassLevel, Workers = 0)]
+
 namespace MSTestProject1;
 
 [TestClass]
@@ -11,13 +14,12 @@ public class UnitTest1
     [TestMethod]
     public void PassingTest()
     {
-        Assert.AreEqual(2, 2);
     }
 
     [TestMethod]
     public void FailingTest()
     {
-        Assert.AreEqual(2, 3);
+        Assert.Fail();
     }
 
     [Ignore]

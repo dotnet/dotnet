@@ -398,12 +398,12 @@ public class ProxyTestSessionManagerTests
             Times.Once);
 
         // First call to DequeueProxy fails because of source mismatch.
-        Assert.ThrowsException<InvalidOperationException>(() => proxyManager.DequeueProxy(
+        Assert.ThrowsExactly<InvalidOperationException>(() => proxyManager.DequeueProxy(
             @"C:\temp\FakeTestAsset2.dll",
             testSessionCriteria.RunSettings));
 
         // Second call to DequeueProxy fails because of runsettings mismatch.
-        Assert.ThrowsException<InvalidOperationException>(() => proxyManager.DequeueProxy(
+        Assert.ThrowsExactly<InvalidOperationException>(() => proxyManager.DequeueProxy(
             testSessionCriteria.Sources[0],
             _runSettingsOneEnvVar));
 
@@ -414,7 +414,7 @@ public class ProxyTestSessionManagerTests
             mockProxyOperationManager.Object);
 
         // Fourth call to DequeueProxy fails because proxy became unavailable following successful deque.
-        Assert.ThrowsException<InvalidOperationException>(() => proxyManager.DequeueProxy(
+        Assert.ThrowsExactly<InvalidOperationException>(() => proxyManager.DequeueProxy(
             testSessionCriteria.Sources[0],
             testSessionCriteria.RunSettings));
     }
@@ -445,7 +445,7 @@ public class ProxyTestSessionManagerTests
                 testSessionCriteria.RunSettings),
             mockProxyOperationManager.Object);
 
-        Assert.AreEqual(proxyManager.EnqueueProxy(mockProxyOperationManager.Object.Id), true);
+        Assert.IsTrue(proxyManager.EnqueueProxy(mockProxyOperationManager.Object.Id));
 
         // Call to DequeueProxy succeeds when called with the same runsettings as before.
         Assert.AreEqual(proxyManager.DequeueProxy(
@@ -475,7 +475,7 @@ public class ProxyTestSessionManagerTests
             Times.Once);
 
         // This call to DequeueProxy fails because of runsettings mismatch.
-        Assert.ThrowsException<InvalidOperationException>(() => proxyManager.DequeueProxy(
+        Assert.ThrowsExactly<InvalidOperationException>(() => proxyManager.DequeueProxy(
             testSessionCriteria.Sources[0],
             _runSettingsTwoEnvVars));
     }
@@ -501,7 +501,7 @@ public class ProxyTestSessionManagerTests
             Times.Once);
 
         // This call to DequeueProxy fails because of runsettings mismatch.
-        Assert.ThrowsException<InvalidOperationException>(() => proxyManager.DequeueProxy(
+        Assert.ThrowsExactly<InvalidOperationException>(() => proxyManager.DequeueProxy(
             testSessionCriteria.Sources[0],
             _runSettingsOneEnvVar));
     }
@@ -527,7 +527,7 @@ public class ProxyTestSessionManagerTests
             Times.Once);
 
         // This call to DequeueProxy fails because of runsettings mismatch.
-        Assert.ThrowsException<InvalidOperationException>(() => proxyManager.DequeueProxy(
+        Assert.ThrowsExactly<InvalidOperationException>(() => proxyManager.DequeueProxy(
             testSessionCriteria.Sources[0],
             _runSettingsTwoEnvVarsAndDataCollectors));
     }
@@ -543,8 +543,8 @@ public class ProxyTestSessionManagerTests
         var proxyManager = CreateProxy(testSessionCriteria, mockProxyOperationManager.Object);
 
         // Validate sanity checks.
-        Assert.ThrowsException<ArgumentException>(() => proxyManager.EnqueueProxy(-1));
-        Assert.ThrowsException<ArgumentException>(() => proxyManager.EnqueueProxy(1));
+        Assert.ThrowsExactly<ArgumentException>(() => proxyManager.EnqueueProxy(-1));
+        Assert.ThrowsExactly<ArgumentException>(() => proxyManager.EnqueueProxy(1));
 
         // StartSession should succeed.
         Assert.IsTrue(proxyManager.StartSession(_mockEventsHandler.Object, _mockRequestData.Object));
@@ -557,7 +557,7 @@ public class ProxyTestSessionManagerTests
             Times.Once);
 
         // Call throws exception because proxy is already available.
-        Assert.ThrowsException<InvalidOperationException>(() => proxyManager.EnqueueProxy(0));
+        Assert.ThrowsExactly<InvalidOperationException>(() => proxyManager.EnqueueProxy(0));
 
         // Call succeeds.
         Assert.AreEqual(proxyManager.DequeueProxy(

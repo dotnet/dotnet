@@ -32,7 +32,7 @@ public class TestCaseFilterArgumentProcessorTests
     {
         TestCaseFilterArgumentProcessorCapabilities capabilities = new();
         Assert.AreEqual("/TestCaseFilter", capabilities.CommandName);
-        StringAssert.Contains(capabilities.HelpContentResourceName, "/TestCaseFilter:<Expression>" + Environment.NewLine + "      Run tests that match the given expression." + Environment.NewLine + "      <Expression> is of the format <property>Operator<value>[|&<Expression>]");
+        Assert.Contains("/TestCaseFilter:<Expression>" + Environment.NewLine + "      Run tests that match the given expression." + Environment.NewLine + "      <Expression> is of the format <property>Operator<value>[|&<Expression>]", capabilities.HelpContentResourceName);
 
         Assert.AreEqual(HelpContentPriority.TestCaseFilterArgumentProcessorHelpPriority, capabilities.HelpPriority);
         Assert.IsFalse(capabilities.IsAction);
@@ -51,15 +51,8 @@ public class TestCaseFilterArgumentProcessorTests
         var options = CommandLineOptions.Instance;
         TestCaseFilterArgumentExecutor executor = new(options);
 
-        try
-        {
-            executor.Initialize(null);
-        }
-        catch (Exception ex)
-        {
-            Assert.IsTrue(ex is CommandLineException);
-            StringAssert.Contains(ex.Message, @"The /TestCaseFilter argument requires the filter value.");
-        }
+        var ex = Assert.ThrowsExactly<CommandLineException>(() => executor.Initialize(null));
+        Assert.Contains(@"The /TestCaseFilter argument requires the filter value.", ex.Message);
     }
 
     [TestMethod]

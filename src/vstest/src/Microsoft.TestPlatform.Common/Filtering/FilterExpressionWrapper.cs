@@ -26,9 +26,6 @@ public class FilterExpressionWrapper
     /// </remarks>
     internal readonly FastFilter? FastFilter;
 
-    [MemberNotNullWhen(true, nameof(FastFilter))]
-    private bool UseFastFilter => FastFilter != null;
-
     /// <summary>
     /// Initializes FilterExpressionWrapper with given filterString and options.
     /// </summary>
@@ -51,7 +48,7 @@ public class FilterExpressionWrapper
                 // Property value regex is only supported for fast filter,
                 // so we ignore it if no fast filter is constructed.
 
-                // TODO: surface an error message to suer.
+                // TODO: surface an error message to user.
                 var regexString = options?.FilterRegEx;
                 if (!regexString.IsNullOrEmpty())
                 {
@@ -81,32 +78,23 @@ public class FilterExpressionWrapper
     {
     }
 
+    [MemberNotNullWhen(true, nameof(FastFilter))]
+    private bool UseFastFilter => FastFilter != null;
+
     /// <summary>
     /// User specified filter criteria.
     /// </summary>
-    public string FilterString
-    {
-        get;
-        private set;
-    }
+    public string FilterString { get; }
 
     /// <summary>
     /// User specified additional filter options.
     /// </summary>
-    public FilterOptions? FilterOptions
-    {
-        get;
-        private set;
-    }
+    public FilterOptions? FilterOptions { get; }
 
     /// <summary>
     /// Parsing error (if any), when parsing 'FilterString' with built-in parser.
     /// </summary>
-    public string? ParseError
-    {
-        get;
-        private set;
-    }
+    public string? ParseError { get; }
 
     /// <summary>
     /// Validate if underlying filter expression is valid for given set of supported properties.

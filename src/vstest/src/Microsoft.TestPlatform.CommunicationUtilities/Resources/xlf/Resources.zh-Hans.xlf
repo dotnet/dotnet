@@ -22,6 +22,21 @@
         <target state="translated">活动的测试发现已中止。原因: {0}</target>
         <note />
       </trans-unit>
+      <trans-unit id="ConnectionTimeoutProcessDidNotStartErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. The process failed to start, this might happen because of  antivirus preventing it from starting.</source>
+        <target state="translated">{0} 进程在等待 {2} 秒后仍未能连接到 {1} 进程。进程启动失败，这可能是由于防病毒软件阻止了其启动。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionTimeoutProcessExitedErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. The process {3} - {4}, exited with exitCode {5}, and error output: \n{6}</source>
+        <target state="translated">{0} 进程在等待 {2} 秒后仍未能连接到 {1} 进程。进程 {3} - {4}，已退出，退出代码为 {5}，错误输出: \n{6}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionTimeoutWithDetailsErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. When the timeout happened, the process {3} -{4} was still running. This most often happens because of machine slowness, please set environment variable {5} to increase timeout.</source>
+        <target state="translated">{0} 进程在等待 {2} 秒后仍未能连接到 {1} 进程。发生超时时，进程 {3} -{4} 仍在运行。这通常是由于计算机运行缓慢，请设置环境变量 {5} 以提高超时时间。</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UnableToCommunicateToTestHost">
         <source>Unable to communicate with test host process.</source>
         <target state="translated">无法与测试宿主进程通信。</target>

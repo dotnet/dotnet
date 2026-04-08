@@ -38,6 +38,8 @@ public class TestRequestHandlerTests
     private readonly TestHostConnectionInfo _testHostConnectionInfo;
     private readonly JobQueue<Action> _jobQueue;
 
+    public TestContext TestContext { get; set; }
+
     public TestRequestHandlerTests()
     {
         _mockCommunicationClient = new Mock<ICommunicationEndPoint>();
@@ -132,7 +134,7 @@ public class TestRequestHandlerTests
         var task = ProcessRequestsAsync(_mockTestHostManagerFactory.Object);
 
         SendSessionEnd();
-        Assert.IsTrue(task.Wait(2000));
+        Assert.IsTrue(task.Wait(2000, TestContext.CancellationToken));
     }
 
     #region Version Check Protocol
@@ -489,6 +491,7 @@ public class TestRequestHandlerTests
         SendMessageOnChannel(new Message { MessageType = MessageType.SessionEnd, Payload = string.Empty });
     }
 
+#pragma warning disable MSTEST0049 // Use 'TestContext.CancellationToken' - helper methods not in test context
     private Task ProcessRequestsAsync()
     {
         return Task.Run(() => _requestHandler.ProcessRequests(new Mock<ITestHostManagerFactory>().Object));
@@ -498,6 +501,7 @@ public class TestRequestHandlerTests
     {
         return Task.Run(() => _requestHandler.ProcessRequests(testHostManagerFactory));
     }
+#pragma warning restore MSTEST0049
 
     private string Serialize(Message message)
     {
@@ -534,11 +538,11 @@ public class TestableTestRequestHandler : TestRequestHandler
 
     private static void OnLaunchAdapterProcessWithDebuggerAttachedAckReceived(Message message)
     {
-        Assert.AreEqual(message.MessageType, MessageType.LaunchAdapterProcessWithDebuggerAttachedCallback);
+        Assert.AreEqual(MessageType.LaunchAdapterProcessWithDebuggerAttachedCallback, message.MessageType);
     }
 
     private static void OnAttachDebuggerAckRecieved(Message message)
     {
-        Assert.AreEqual(message.MessageType, MessageType.AttachDebuggerCallback);
+        Assert.AreEqual(MessageType.AttachDebuggerCallback, message.MessageType);
     }
 }

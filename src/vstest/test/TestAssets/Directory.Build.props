@@ -32,5 +32,10 @@
     <LangVersion>Latest</LangVersion>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <_LocalVSTestPackagesDirectory>$(RepoRoot)artifacts/packages/$(Configuration)/Shipping</_LocalVSTestPackagesDirectory>
+    <RestoreAdditionalProjectSources Condition="Exists('$(_LocalVSTestPackagesDirectory)')">$(RestoreAdditionalProjectSources);$(_LocalVSTestPackagesDirectory)</RestoreAdditionalProjectSources>
+  </PropertyGroup>
+
   <Import Project="$(RepoRoot)eng/Versions.props" />
 </Project>

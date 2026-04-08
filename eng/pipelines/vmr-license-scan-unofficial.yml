@@ -1,3 +1,7 @@
+# This yml is used by these pipelines:
+# - source-build-license-scan-unofficial (internal)
+#   https://dev.azure.com/dnceng/internal/_build?definitionId=1490
+#
 # Pipeline documentation at https://github.com/dotnet/dotnet/blob/main/docs/license-scanning.md
 
 pr: none

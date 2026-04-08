@@ -6,6 +6,12 @@
   </PropertyGroup>
   
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+  <!-- Override the version of imported package to avoid infinite restore loop in VisualStudio, https://github.com/dotnet/arcade/issues/16228 -->
+  <ItemGroup>
+    <PackageReference Update="Microsoft.VSSDK.BuildTools"
+                      Version="$(_MicrosoftVSSDKBuildToolsVersion_)"
+                      PrivateAssets="all" />
+  </ItemGroup>
 
   <!--
     Source build the product: this is the all up build of the product which needs only NetCurrent

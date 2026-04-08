@@ -68,9 +68,8 @@ public class ParallelArgumentProcessorTests
     {
 
         // Parallel should not have any values or arguments
-        ExceptionUtilities.ThrowsException<CommandLineException>(
-            () => _executor.Initialize("123"),
-            "Argument " + 123 + " is not expected in the 'Parallel' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /Parallel) and try again.");
+        var ex = Assert.ThrowsExactly<CommandLineException>(() => _executor.Initialize("123"));
+        Assert.Contains("Argument " + 123 + " is not expected in the 'Parallel' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /Parallel) and try again.", ex.Message);
     }
 
     [TestMethod]

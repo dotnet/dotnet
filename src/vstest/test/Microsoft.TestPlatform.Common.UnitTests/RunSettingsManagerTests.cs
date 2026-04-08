@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace TestPlatform.Common.UnitTests;
 
 [TestClass]
+[DoNotParallelize]
 public class RunSettingsManagerTests
 {
     [TestCleanup]
@@ -48,7 +49,7 @@ public class RunSettingsManagerTests
     {
         var instance = RunSettingsManager.Instance;
 
-        Assert.ThrowsException<ArgumentNullException>(() => instance.SetActiveRunSettings(null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => instance.SetActiveRunSettings(null!));
     }
 
     [TestMethod]
