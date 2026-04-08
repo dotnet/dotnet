@@ -1,4 +1,5 @@
 <Project InitialTargets="DiscoverArtifacts">
+
   <Import Project="$(RepositoryEngineeringDir)RuntimeIdentifier.props" />
   <Import Project="$(RepositoryEngineeringDir)VmrLayout.props" />
 
@@ -40,7 +41,8 @@
 
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.GetKnownArtifactsFromAssetManifests" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
 
-  <Target Name="DiscoverArtifacts">
+  <!-- Conditioned on ExcludeRestorePackageImports to not run as part of restore -->
+  <Target Name="DiscoverArtifacts" Condition="'$(ExcludeRestorePackageImports)' != 'true'">
     <ItemGroup>
       <!-- Repo manifests from individual repos -->
       <RepoManifests Include="$(AssetManifestsIntermediateDir)/**/*.xml" />
@@ -96,4 +98,5 @@
   </Target>
 
   <Import Project="$(RepositoryEngineeringDir)PublishSourceBuild.props" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+
 </Project>
