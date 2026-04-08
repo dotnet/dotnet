@@ -745,7 +745,12 @@ function InitializeToolset() {
     ExitWithExitCode 1
   }
 
-  DotNet package download "Microsoft.DotNet.Arcade.Sdk@$toolsetVersion" --prerelease --output "$nugetCache"
+  $downloadArgs = @("package", "download", "Microsoft.DotNet.Arcade.Sdk@$toolsetVersion", "--prerelease", "--output", "$nugetCache")
+  if ($env:NUGET_CONFIG) {
+    $downloadArgs += "--configfile"
+    $downloadArgs += $env:NUGET_CONFIG
+  }
+  DotNet @downloadArgs
 
   $packageDir = Join-Path $nugetCache (Join-Path 'microsoft.dotnet.arcade.sdk' $toolsetVersion)
   $packageToolsetDir = Join-Path $packageDir 'toolset'

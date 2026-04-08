@@ -426,7 +426,11 @@ function InitializeToolset {
     ExitWithExitCode 2
   fi
 
-  DotNet package download "Microsoft.DotNet.Arcade.Sdk@$toolset_version" --prerelease --output "$_GetNuGetPackageCachePath"
+  local download_args=("package" "download" "Microsoft.DotNet.Arcade.Sdk@$toolset_version" "--prerelease" "--output" "$_GetNuGetPackageCachePath")
+  if [[ -n "${NUGET_CONFIG:-}" ]]; then
+    download_args+=("--configfile" "$NUGET_CONFIG")
+  fi
+  DotNet "${download_args[@]}"
 
   local package_dir="$_GetNuGetPackageCachePath/microsoft.dotnet.arcade.sdk/$toolset_version"
 
