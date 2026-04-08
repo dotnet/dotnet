@@ -45,7 +45,7 @@
                     HtmlAttribute - (589:13,30 [10] x:\dir\subdir\Test\TestComponent.cshtml) - value=" - "
                         CSharpExpressionAttributeValue -  - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.BindConverter.FormatValue(
-                            LazyIntermediateToken - (589:13,30 [10] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - myVariable
+                            IntermediateToken - (589:13,30 [10] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - myVariable
                             IntermediateToken -  - CSharp - )
                     HtmlAttribute - (589:13,30 [10] x:\dir\subdir\Test\TestComponent.cshtml) - onchange=" - "
                         CSharpExpressionAttributeValue -  - 

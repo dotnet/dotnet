@@ -73,7 +73,7 @@ public class DocumentFormattingBenchmark
         var filePathService = new RemoteFilePathService();
         var snapshotManager = new RemoteSnapshotManager(filePathService, NoOpTelemetryReporter.Instance);
         var documentSnapshot = snapshotManager.GetSnapshot(document);
-        _documentContext = new DocumentContext(s_documentUri, documentSnapshot, projectContext: null);
+        _documentContext = new DocumentContext(s_documentUri, documentSnapshot);
 
         var hostServicesProvider = new RemoteHostServicesProvider();
         hostServicesProvider.SetWorkspaceProvider(new WorkspaceProvider(_workspace));

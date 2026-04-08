@@ -21,7 +21,7 @@
                         HtmlAttributeValue - (23:0,23 [6] x:\dir\subdir\Test\TestComponent.cshtml) - 
                             LazyIntermediateToken - (23:0,23 [6] x:\dir\subdir\Test\TestComponent.cshtml) - Html - before
                     Splat - (44:0,44 [14] x:\dir\subdir\Test\TestComponent.cshtml)
-                        LazyIntermediateToken - (44:0,44 [14] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - someAttributes
+                        IntermediateToken - (44:0,44 [14] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - someAttributes
                     HtmlAttribute -  - attributeafter=" - "
                         HtmlAttributeValue - (76:0,76 [5] x:\dir\subdir\Test\TestComponent.cshtml) - 
                             LazyIntermediateToken - (76:0,76 [5] x:\dir\subdir\Test\TestComponent.cshtml) - Html - after

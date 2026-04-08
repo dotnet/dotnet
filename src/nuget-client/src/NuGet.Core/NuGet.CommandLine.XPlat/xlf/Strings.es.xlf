@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="es" original="../Strings.resx">
     <body>
@@ -410,7 +410,7 @@ NuGet requiere orígenes HTTPS. Para usar orígenes HTTP, es necesario establece
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
         <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, file-based app, or project directory.</source>
-        <target state="needs-review-translation">Falta la ruta de acceso "{0}" o no es válida. Proporcione una ruta de acceso a un proyecto, archivo de solución o directorio.</target>
+        <target state="translated">Falta la ruta de acceso "{0}" o no es válida. Proporcione una ruta de acceso a un proyecto, un archivo de solución, una aplicación basada en archivos o un directorio de proyecto.</target>
         <note>{0} - Input path argument</note>
       </trans-unit>
       <trans-unit id="Error_PathNotFound">
@@ -973,7 +973,7 @@ Para obtener más información, visite https://docs.nuget.org/docs/reference/com
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_ProjectOptionDescription">
         <source>Path to a project or solution file or file-based app, or a project directory.</source>
-        <target state="needs-review-translation">Ruta de acceso a un archivo de proyecto o solución, o a un directorio.</target>
+        <target state="translated">Ruta de acceso a un archivo de proyecto o solución, una aplicación basada en archivos o un directorio de proyecto.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_VulnerableOptionDescription">
@@ -1136,7 +1136,7 @@ Para obtener más información, visite https://docs.nuget.org/docs/reference/com
       </trans-unit>
       <trans-unit id="SignCommandAllowUntrustedRootDescription">
         <source>Allow signing with certificates whose root certificate is not in a trusted root store. The certificate chain is still built and validated for structure, but UntrustedRoot status is treated as a warning.</source>
-        <target state="new">Allow signing with certificates whose root certificate is not in a trusted root store. The certificate chain is still built and validated for structure, but UntrustedRoot status is treated as a warning.</target>
+        <target state="translated">Permite la firma con certificados cuyo certificado raíz no está en un almacén raíz de confianza. La cadena de certificados se sigue compilando y validando para la estructura, pero el estado UntrustedRoot se trata como una advertencia.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateFingerprintDescription">
@@ -1528,7 +1528,7 @@ La búsqueda es una comparación de cadenas que no diferencia mayúsculas de min
       </trans-unit>
       <trans-unit id="WhyCommand_PathArgument_Description">
         <source>A path to a project, solution file, file-based app, or project directory.</source>
-        <target state="needs-review-translation">Ruta de acceso a un proyecto, archivo de solución o directorio.</target>
+        <target state="translated">Ruta de acceso a un proyecto, archivo de solución, aplicación basada en archivos o directorio de proyecto.</target>
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_Warning_AssetsFileDoesNotContainSpecifiedTarget">

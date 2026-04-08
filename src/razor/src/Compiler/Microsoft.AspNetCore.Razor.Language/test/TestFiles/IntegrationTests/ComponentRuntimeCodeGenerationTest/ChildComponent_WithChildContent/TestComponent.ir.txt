@@ -14,4 +14,4 @@
                         MarkupBlock -  - <some-child a='1'>Nested text</some-child>
                     ComponentAttribute - (21:0,21 [3] x:\dir\subdir\Test\TestComponent.cshtml) - MyAttr - MyAttr - AttributeStructure.DoubleQuotes
                         HtmlContent - (21:0,21 [3] x:\dir\subdir\Test\TestComponent.cshtml)
-                            LazyIntermediateToken - (21:0,21 [3] x:\dir\subdir\Test\TestComponent.cshtml) - Html - abc
+                            IntermediateToken - (21:0,21 [3] x:\dir\subdir\Test\TestComponent.cshtml) - Html - abc

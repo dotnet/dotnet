@@ -16,4 +16,4 @@
             MethodDeclaration -  - protected override - void - BuildRenderTree
                 Component - (0:0,0 [36] x:\dir\subdir\Test\TestComponent.cshtml) - TestComponent
                     RenderMode - (28:0,28 [4] x:\dir\subdir\Test\TestComponent.cshtml)
-                        LazyIntermediateToken - (28:0,28 [4] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - null
+                        IntermediateToken - (28:0,28 [4] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - null

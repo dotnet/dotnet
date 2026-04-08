@@ -26,4 +26,4 @@
                                 LazyIntermediateToken - (53:0,53 [11] x:\dir\subdir\Test\TestComponent.cshtml) - Html - Nested text
                     ComponentAttribute - (21:0,21 [3] x:\dir\subdir\Test\TestComponent.cshtml) - MyAttr - MyAttr - AttributeStructure.DoubleQuotes
                         HtmlContent - (21:0,21 [3] x:\dir\subdir\Test\TestComponent.cshtml)
-                            LazyIntermediateToken - (21:0,21 [3] x:\dir\subdir\Test\TestComponent.cshtml) - Html - abc
+                            IntermediateToken - (21:0,21 [3] x:\dir\subdir\Test\TestComponent.cshtml) - Html - abc
