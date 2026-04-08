@@ -201,7 +201,6 @@ internal abstract class BaseRunTests
             TimeSpan? elapsedTime = null;
             Exception? exception = null;
             bool isAborted = false;
-            bool shutdownAfterRun = false;
 
             try
             {
@@ -213,11 +212,6 @@ internal abstract class BaseRunTests
                 {
                     EqtTrace.Error("BaseRunTests.RunTests: Failed to run the tests. Reason: GetExecutorUriExtensionMap returned null.");
                     isAborted = true;
-                }
-                else
-                {
-                    // Check the adapter setting for shutting down this process after run
-                    shutdownAfterRun = FrameworkHandle.EnableShutdownAfterTestRun;
                 }
             }
             catch (Exception ex)

@@ -27,6 +27,8 @@ public class DataCollectionAttachmentManagerTests
     private readonly SessionId _sessionId;
     private static readonly string TempDirectoryPath = Path.GetTempPath();
 
+    public TestContext TestContext { get; set; }
+
     public DataCollectionAttachmentManagerTests()
     {
         _attachmentManager = new DataCollectionAttachmentManager();
@@ -69,10 +71,10 @@ public class DataCollectionAttachmentManagerTests
                         }
                         _ = TestCaseEvent($"test_{Guid.NewGuid()}");
                     }
-                }));
+                }, TestContext.CancellationToken));
             }
 
-            Task.WaitAll(parallelTasks.ToArray());
+            Task.WaitAll(parallelTasks.ToArray(), TestContext.CancellationToken);
         }
         finally
         {
@@ -95,13 +97,13 @@ public class DataCollectionAttachmentManagerTests
     [TestMethod]
     public void InitializeShouldThrowExceptionIfSessionIdIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _attachmentManager.Initialize(null!, string.Empty, _messageSink.Object));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _attachmentManager.Initialize(null!, string.Empty, _messageSink.Object));
     }
 
     [TestMethod]
     public void InitializeShouldThrowExceptionIfMessageSinkIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _attachmentManager.Initialize(_sessionId, string.Empty, null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _attachmentManager.Initialize(_sessionId, string.Empty, null!));
     }
 
     [TestMethod]
@@ -134,7 +136,7 @@ public class DataCollectionAttachmentManagerTests
 
         _attachmentManager.AddAttachment(dataCollectorDataMessage, null, uri, friendlyName);
 
-        Assert.AreEqual(0, _attachmentManager.AttachmentSets.Count);
+        Assert.IsEmpty(_attachmentManager.AttachmentSets);
     }
 
     [TestMethod]
@@ -162,7 +164,7 @@ public class DataCollectionAttachmentManagerTests
 
         Assert.IsTrue(File.Exists(Path.Combine(TempDirectoryPath, filename)));
         Assert.IsTrue(File.Exists(Path.Combine(TempDirectoryPath, _sessionId.Id.ToString(), filename)));
-        Assert.AreEqual(1, _attachmentManager.AttachmentSets[datacollectioncontext][uri].Attachments.Count);
+        Assert.HasCount(1, _attachmentManager.AttachmentSets[datacollectioncontext][uri].Attachments);
     }
 
     [TestMethod]
@@ -196,8 +198,8 @@ public class DataCollectionAttachmentManagerTests
         // Wait for file operations to complete
         waitHandle.WaitOne(Timeout);
 
-        Assert.AreEqual(1, _attachmentManager.AttachmentSets[datacollectioncontext][uri].Attachments.Count);
-        Assert.AreEqual(1, _attachmentManager.AttachmentSets[datacollectioncontext][uri1].Attachments.Count);
+        Assert.HasCount(1, _attachmentManager.AttachmentSets[datacollectioncontext][uri].Attachments);
+        Assert.HasCount(1, _attachmentManager.AttachmentSets[datacollectioncontext][uri1].Attachments);
     }
 
     [TestMethod]
@@ -222,7 +224,7 @@ public class DataCollectionAttachmentManagerTests
         // Wait for file operations to complete
         waitHandle.WaitOne(Timeout);
 
-        Assert.AreEqual(1, _attachmentManager.AttachmentSets[datacollectioncontext][uri].Attachments.Count);
+        Assert.HasCount(1, _attachmentManager.AttachmentSets[datacollectioncontext][uri].Attachments);
         Assert.IsTrue(File.Exists(Path.Combine(TempDirectoryPath, _sessionId.Id.ToString(), filename)));
         Assert.IsFalse(File.Exists(Path.Combine(TempDirectoryPath, filename)));
     }
@@ -257,13 +259,13 @@ public class DataCollectionAttachmentManagerTests
         // Wait for file operations to complete
         waitHandle.WaitOne(Timeout);
 
-        Assert.AreEqual(2, _attachmentManager.AttachmentSets[datacollectioncontext][uri].Attachments.Count);
+        Assert.HasCount(2, _attachmentManager.AttachmentSets[datacollectioncontext][uri].Attachments);
     }
 
     [TestMethod]
     public void AddAttachmentShouldNotAddNewFileTransferIfNullIsPassed()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _attachmentManager.AddAttachment(null!, null, null!, null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _attachmentManager.AddAttachment(null!, null, null!, null!));
     }
 
     [TestMethod]
@@ -282,14 +284,14 @@ public class DataCollectionAttachmentManagerTests
 
         _attachmentManager.AddAttachment(dataCollectorDataMessage, null, uri, friendlyName);
 
-        Assert.AreEqual(1, _attachmentManager.AttachmentSets.Count);
+        Assert.HasCount(1, _attachmentManager.AttachmentSets);
         var result = _attachmentManager.GetAttachments(datacollectioncontext);
 
-        Assert.AreEqual(0, _attachmentManager.AttachmentSets.Count);
-        Assert.AreEqual(1, result.Count);
+        Assert.IsEmpty(_attachmentManager.AttachmentSets);
+        Assert.HasCount(1, result);
         Assert.AreEqual(friendlyName, result[0].DisplayName);
         Assert.AreEqual(uri, result[0].Uri);
-        Assert.AreEqual(1, result[0].Attachments.Count);
+        Assert.HasCount(1, result[0].Attachments);
     }
 
     [TestMethod]
@@ -300,7 +302,7 @@ public class DataCollectionAttachmentManagerTests
         var datacollectioncontext = new DataCollectionContext(_sessionId);
 
         var result = _attachmentManager.GetAttachments(datacollectioncontext);
-        Assert.AreEqual(0, result.Count);
+        Assert.IsEmpty(result);
     }
 
     [TestMethod]
@@ -326,7 +328,7 @@ public class DataCollectionAttachmentManagerTests
 
         // Wait for the attachment transfer tasks to complete
         var result = testableAttachmentManager.GetAttachments(datacollectioncontext);
-        Assert.AreEqual(0, result[0].Attachments.Count);
+        Assert.IsEmpty(result[0].Attachments);
     }
 
     private class TestableDataCollectionAttachmentManager : DataCollectionAttachmentManager

@@ -528,7 +528,7 @@ public class DiscovererEnumeratorTests
         InvokeLoadTestWithMockSetup();
 
         Assert.IsTrue(ManagedDllTestDiscoverer.IsManagedDiscoverTestCalled);
-        Assert.AreEqual(2, _discoveryResultCache.Tests.Count);
+        Assert.HasCount(2, _discoveryResultCache.Tests);
     }
 
     [TestMethod]
@@ -536,7 +536,7 @@ public class DiscovererEnumeratorTests
     {
         InvokeLoadTestWithMockSetup();
 
-        Assert.AreEqual(2, _discoveryResultCache.Tests.Count);
+        Assert.HasCount(2, _discoveryResultCache.Tests);
 
         _messageLoggerMock.Verify(m => m.SendMessage(TestMessageLevel.Warning, It.IsAny<string>()), Times.Never);
     }

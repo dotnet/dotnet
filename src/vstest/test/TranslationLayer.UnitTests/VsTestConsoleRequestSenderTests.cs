@@ -23,6 +23,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Moq;
 
+#pragma warning disable MSTEST0049 // Use 'TestContext.CancellationToken' - suppressed for Moq setup patterns
+
 using Newtonsoft.Json.Linq;
 
 using Payloads = Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
@@ -39,6 +41,8 @@ public class VsTestConsoleRequestSenderTests
     private readonly int _protocolVersion = 7;
     private readonly IDataSerializer _serializer = JsonDataSerializer.Instance;
     private readonly Mock<ITelemetryEventsHandler> _telemetryHandler;
+
+    public TestContext TestContext { get; set; } = null!;
 
     public VsTestConsoleRequestSenderTests()
     {
@@ -82,7 +86,7 @@ public class VsTestConsoleRequestSenderTests
         _mockCommunicationManager.Setup(cm => cm.AcceptClientAsync()).Returns(Task.FromResult(false));
 
         var portOutput = _requestSender.InitializeCommunication();
-        Assert.IsTrue(portOutput < 0, "Negative port number must be returned if Hosting Server fails.");
+        Assert.IsLessThan(0, portOutput, "Negative port number must be returned if Hosting Server fails.");
 
         var connectionSuccess = _requestSender.WaitForRequestHandlerConnection(_waitTimeout);
         Assert.IsFalse(connectionSuccess, "Connection must fail as server failed to host.");
@@ -100,7 +104,7 @@ public class VsTestConsoleRequestSenderTests
         _mockCommunicationManager.Setup(cm => cm.AcceptClientAsync()).Returns(Task.FromResult(false));
 
         var portOutput = await _requestSender.InitializeCommunicationAsync(_waitTimeout);
-        Assert.IsTrue(portOutput < 0, "Negative port number must be returned if Hosting Server fails.");
+        Assert.IsLessThan(0, portOutput, "Negative port number must be returned if Hosting Server fails.");
 
         _mockCommunicationManager.Verify(cm => cm.HostServer(new IPEndPoint(IPAddress.Loopback, 0)), Times.Once);
         _mockCommunicationManager.Verify(cm => cm.AcceptClientAsync(), Times.Never);
@@ -114,7 +118,7 @@ public class VsTestConsoleRequestSenderTests
         _mockCommunicationManager.Setup(cm => cm.HostServer(new IPEndPoint(IPAddress.Loopback, 0))).Returns(new IPEndPoint(IPAddress.Loopback, dummyPortInput));
         _mockCommunicationManager.Setup(cm => cm.AcceptClientAsync()).Returns(Task.FromResult(false)).Callback(() => { });
         _mockCommunicationManager.Setup(cm => cm.WaitForClientConnection(Timeout.Infinite))
-            .Callback((int timeout) => Task.Delay(200).Wait());
+            .Callback((int timeout) => Task.Delay(200, TestContext.CancellationToken).Wait());
         _mockCommunicationManager.Setup(cm => cm.ReceiveMessage()).Throws(new Exception("Fail"));
 
         var portOutput = _requestSender.InitializeCommunication();
@@ -153,7 +157,7 @@ public class VsTestConsoleRequestSenderTests
         _mockCommunicationManager.Setup(cm => cm.HostServer(new IPEndPoint(IPAddress.Loopback, 0))).Returns(new IPEndPoint(IPAddress.Loopback, dummyPortInput));
         _mockCommunicationManager.Setup(cm => cm.AcceptClientAsync()).Returns(Task.FromResult(false)).Callback(() => { });
         _mockCommunicationManager.Setup(cm => cm.WaitForClientConnection(Timeout.Infinite))
-            .Callback((int timeout) => Task.Delay(200).Wait());
+            .Callback((int timeout) => Task.Delay(200, TestContext.CancellationToken).Wait());
 
         var discoveryMessage = new Message() { MessageType = MessageType.StartDiscovery };
 
@@ -201,7 +205,7 @@ public class VsTestConsoleRequestSenderTests
         _mockCommunicationManager.Setup(cm => cm.HostServer(new IPEndPoint(IPAddress.Loopback, 0))).Returns(new IPEndPoint(IPAddress.Loopback, dummyPortInput));
         _mockCommunicationManager.Setup(cm => cm.AcceptClientAsync()).Returns(Task.FromResult(false)).Callback(() => { });
         _mockCommunicationManager.Setup(cm => cm.WaitForClientConnection(Timeout.Infinite))
-            .Callback((int timeout) => Task.Delay(200).Wait());
+            .Callback((int timeout) => Task.Delay(200, TestContext.CancellationToken).Wait());
 
         var sessionConnected = new Message() { MessageType = MessageType.SessionConnected };
 
@@ -252,7 +256,7 @@ public class VsTestConsoleRequestSenderTests
         _mockCommunicationManager.Setup(cm => cm.AcceptClientAsync()).Returns(Task.FromResult(false)).Callback(() => { });
 
         _mockCommunicationManager.Setup(cm => cm.WaitForClientConnection(Timeout.Infinite))
-            .Callback((int timeout) => Task.Delay(200).Wait());
+            .Callback((int timeout) => Task.Delay(200, TestContext.CancellationToken).Wait());
 
         var sessionConnected = new Message() { MessageType = MessageType.SessionConnected };
 
@@ -465,7 +469,7 @@ public class VsTestConsoleRequestSenderTests
 
         mockHandler.Verify(mh => mh.HandleDiscoveryComplete(It.IsAny<DiscoveryCompleteEventArgs>(), null), Times.Once, "Discovery Complete must be called");
         Assert.IsNotNull(receivedDiscoveryCompleteEventArgs!.FullyDiscoveredSources);
-        Assert.AreEqual(1, receivedDiscoveryCompleteEventArgs.FullyDiscoveredSources.Count);
+        Assert.HasCount(1, receivedDiscoveryCompleteEventArgs.FullyDiscoveredSources);
     }
 
     [TestMethod]
@@ -508,9 +512,9 @@ public class VsTestConsoleRequestSenderTests
         // Assert
         mockHandler.Verify(mh => mh.HandleDiscoveryComplete(It.IsAny<DiscoveryCompleteEventArgs>(), null), Times.Once, "Discovery Complete must be called");
         Assert.IsNotNull(receivedDiscoveryCompleteEventArgs!.FullyDiscoveredSources);
-        Assert.AreEqual(1, receivedDiscoveryCompleteEventArgs.FullyDiscoveredSources.Count);
+        Assert.HasCount(1, receivedDiscoveryCompleteEventArgs.FullyDiscoveredSources);
         Assert.AreEqual(-1, receivedDiscoveryCompleteEventArgs.TotalCount);
-        Assert.AreEqual(true, receivedDiscoveryCompleteEventArgs.IsAborted);
+        Assert.IsTrue(receivedDiscoveryCompleteEventArgs.IsAborted);
     }
 
     [TestMethod]
@@ -542,7 +546,7 @@ public class VsTestConsoleRequestSenderTests
         _requestSender.DiscoverTests(new List<string>() { "1.dll" }, null, new TestPlatformOptions(), null, mockHandler.Object);
 
         Assert.IsNotNull(receivedTestCases);
-        Assert.AreEqual(1, receivedTestCases.Count);
+        Assert.HasCount(1, receivedTestCases);
 
         // Verify that the traits are passed through properly.
         var traits = receivedTestCases.ToArray()[0].Traits;
@@ -580,7 +584,7 @@ public class VsTestConsoleRequestSenderTests
         await _requestSender.DiscoverTestsAsync(new List<string>() { "1.dll" }, null, new TestPlatformOptions(), null, mockHandler.Object);
 
         Assert.IsNotNull(receivedTestCases);
-        Assert.AreEqual(1, receivedTestCases.Count);
+        Assert.HasCount(1, receivedTestCases);
 
         // Verify that the traits are passed through properly.
         var traits = receivedTestCases.ToArray()[0].Traits;
@@ -613,7 +617,7 @@ public class VsTestConsoleRequestSenderTests
         _requestSender.DiscoverTests(new List<string>() { "1.dll" }, null, new TestPlatformOptions(), null, mockHandler.Object);
 
         Assert.IsNotNull(receivedTestCases);
-        Assert.AreEqual(1, receivedTestCases.Count);
+        Assert.HasCount(1, receivedTestCases);
 
         // Verify that the traits are passed through properly.
         var traits = receivedTestCases.ToArray()[0].Traits;
@@ -646,7 +650,7 @@ public class VsTestConsoleRequestSenderTests
         await _requestSender.DiscoverTestsAsync(new List<string>() { "1.dll" }, null, new TestPlatformOptions(), null, mockHandler.Object);
 
         Assert.IsNotNull(receivedTestCases);
-        Assert.AreEqual(1, receivedTestCases.Count);
+        Assert.HasCount(1, receivedTestCases);
 
         // Verify that the traits are passed through properly.
         var traits = receivedTestCases.ToArray()[0].Traits;
@@ -2552,7 +2556,7 @@ public class VsTestConsoleRequestSenderTests
                 MessageType.CustomTestHostLaunchCallback,
                 It.IsAny<CustomHostLaunchAckPayload>(),
                 _protocolVersion))
-            .Callback((string messageType, object payload, int version) => Assert.AreEqual(((CustomHostLaunchAckPayload)payload).HostProcessId, TesthostPid));
+            .Callback((string messageType, object payload, int version) => Assert.AreEqual(TesthostPid, ((CustomHostLaunchAckPayload)payload).HostProcessId));
         _mockCommunicationManager.Setup(cm => cm.ReceiveMessageAsync(It.IsAny<CancellationToken>()))
             .Returns(Task.FromResult<Message?>(launchMessage))
             .Callback(reconfigureAction);
@@ -2627,7 +2631,7 @@ public class VsTestConsoleRequestSenderTests
                 MessageType.CustomTestHostLaunchCallback,
                 It.IsAny<CustomHostLaunchAckPayload>(),
                 _protocolVersion))
-            .Callback((string messageType, object payload, int version) => Assert.AreEqual(((CustomHostLaunchAckPayload)payload).HostProcessId, TesthostPid));
+            .Callback((string messageType, object payload, int version) => Assert.AreEqual(TesthostPid, ((CustomHostLaunchAckPayload)payload).HostProcessId));
         _mockCommunicationManager.Setup(cm => cm.ReceiveMessageAsync(It.IsAny<CancellationToken>()))
             .Returns(Task.FromResult<Message?>(launchMessage))
             .Callback(reconfigureAction);
@@ -2822,7 +2826,7 @@ public class VsTestConsoleRequestSenderTests
         _mockCommunicationManager.Setup(cm => cm.AcceptClientAsync()).Returns(Task.FromResult(false)).Callback(() => { });
 
         _mockCommunicationManager.Setup(cm => cm.WaitForClientConnection(Timeout.Infinite))
-            .Callback((int timeout) => Task.Delay(200).Wait());
+            .Callback((int timeout) => Task.Delay(200, TestContext.CancellationToken).Wait());
 
         var sessionConnected = new Message() { MessageType = MessageType.SessionConnected };
         var versionCheck = new Message() { MessageType = MessageType.VersionCheck, Payload = protocolVersion };
@@ -2887,3 +2891,4 @@ public class VsTestConsoleRequestSenderTests
 
     #endregion
 }
+#pragma warning restore MSTEST0049

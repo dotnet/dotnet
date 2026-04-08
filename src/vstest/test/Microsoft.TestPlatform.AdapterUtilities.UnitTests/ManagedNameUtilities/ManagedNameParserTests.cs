@@ -70,12 +70,12 @@ public class ManagedNameParserTests
             return (method, arity, parameterTypes);
         }
 
-        Assert.ThrowsException<InvalidManagedNameException>(() => Parse(" Method"), "Whitespace is not valid in a ManagedName (pos: 0)");
-        Assert.ThrowsException<InvalidManagedNameException>(() => Parse("Method( List)"), "Whitespace is not valid in a ManagedName (pos: 7)");
+        Assert.ThrowsExactly<InvalidManagedNameException>(() => Parse(" Method"), "Whitespace is not valid in a ManagedName (pos: 0)");
+        Assert.ThrowsExactly<InvalidManagedNameException>(() => Parse("Method( List)"), "Whitespace is not valid in a ManagedName (pos: 7)");
 
-        Assert.ThrowsException<InvalidManagedNameException>(() => Parse("Method(List)xa"), "Unexpected characters after the end of the ManagedName (pos: 7)");
+        Assert.ThrowsExactly<InvalidManagedNameException>(() => Parse("Method(List)xa"), "Unexpected characters after the end of the ManagedName (pos: 7)");
 
-        Assert.ThrowsException<InvalidManagedNameException>(() => Parse("Method("), "ManagedName is incomplete");
-        Assert.ThrowsException<InvalidManagedNameException>(() => Parse("Method`4a"), "Method arity must be numeric");
+        Assert.ThrowsExactly<InvalidManagedNameException>(() => Parse("Method("), "ManagedName is incomplete");
+        Assert.ThrowsExactly<InvalidManagedNameException>(() => Parse("Method`4a"), "Method arity must be numeric");
     }
 }

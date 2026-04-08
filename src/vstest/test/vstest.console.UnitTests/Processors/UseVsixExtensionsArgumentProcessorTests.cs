@@ -70,7 +70,7 @@ public class UseVsixExtensionsArgumentProcessorTests
     [TestMethod]
     public void InitializeShouldThrowExceptionIfArgumentIsNull()
     {
-        var message = Assert.ThrowsException<CommandLineException>(() => _executor.Initialize(null)).Message;
+        var message = Assert.ThrowsExactly<CommandLineException>(() => _executor.Initialize(null)).Message;
         Assert.AreEqual(@"The /UseVsixExtensions parameter requires a value. If 'true', the installed VSIX extensions (if any) will be used in the test run. If false, they will be ignored.   Example:  /UseVsixExtensions:true", message);
     }
 
@@ -79,7 +79,7 @@ public class UseVsixExtensionsArgumentProcessorTests
     {
         var invalidArg = "Foo";
 
-        var message = Assert.ThrowsException<CommandLineException>(() => _executor.Initialize(invalidArg)).Message;
+        var message = Assert.ThrowsExactly<CommandLineException>(() => _executor.Initialize(invalidArg)).Message;
         Assert.AreEqual(@"Argument Foo is not expected in the 'UseVsixExtensions' command. Specify the command indicating whether the vsix extensions should be used or skipped (Example: vstest.console.exe myTests.dll /UseVsixExtensions:true) and try again.", message);
     }
 

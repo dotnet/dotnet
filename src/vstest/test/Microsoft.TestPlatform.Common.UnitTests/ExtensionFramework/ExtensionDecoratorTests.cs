@@ -66,12 +66,14 @@ public class ExtensionDecoratorTests
             Assert.AreEqual(0, Interlocked.Read(ref currentCount));
             currentCount = Interlocked.Increment(ref currentCount);
             TestCase tc = tests!.First();
+#pragma warning disable MSTEST0049 // CancellationToken not relevant in Moq callback
             Task.Run(() =>
             {
                 Thread.Sleep(100);
                 currentCount = Interlocked.Decrement(ref currentCount);
                 frameworkHandle!.RecordEnd(tc, TestOutcome.Passed);
             });
+#pragma warning restore MSTEST0049
             testCasesRan.Add(tc);
         });
 

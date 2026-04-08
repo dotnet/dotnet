@@ -40,7 +40,7 @@ internal enum Operator
 /// <summary>
 /// Represents a condition in filter expression.
 /// </summary>
-internal class Condition
+internal sealed class Condition
 {
     /// <summary>
     ///  Default property name which will be used when filter has only property value.
@@ -52,38 +52,27 @@ internal class Condition
     /// </summary>
     public const Operation DefaultOperation = Operation.Contains;
 
-    /// <summary>
-    /// Name of the property used in condition.
-    /// </summary>
-    internal string Name
-    {
-        get;
-        private set;
-    }
-
-    /// <summary>
-    /// Value for the property.
-    /// </summary>
-    internal string Value
-    {
-        get;
-        private set;
-    }
-
-    /// <summary>
-    /// Operation to be performed.
-    /// </summary>
-    internal Operation Operation
-    {
-        get;
-        private set;
-    }
     internal Condition(string name, Operation operation, string value)
     {
         Name = name;
         Operation = operation;
         Value = value;
     }
+
+    /// <summary>
+    /// Name of the property used in condition.
+    /// </summary>
+    internal string Name { get; }
+
+    /// <summary>
+    /// Value for the property.
+    /// </summary>
+    internal string Value { get; }
+
+    /// <summary>
+    /// Operation to be performed.
+    /// </summary>
+    internal Operation Operation { get; }
 
     private bool EvaluateEqualOperation(string[]? multiValue)
     {

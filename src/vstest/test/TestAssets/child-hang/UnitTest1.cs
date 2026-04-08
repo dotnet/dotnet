@@ -24,16 +24,16 @@ namespace child_hang
 #else
             var directory = "Release";
 #endif
-            // wait for two children to crash
+            // wait for child to hang
             var childProcess = Path.GetFullPath($@"../../../hanging-child/{directory}/net9.0/hanging-child{(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ".exe" : ".dll")}");
-            // 2 chidren, that is 3 hanging processes
-            var process = (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Process.Start(childProcess, "2") : Process.Start(GetFullPath("dotnet"), $"{childProcess} 2"));
+            // 1 child, that is 2 hanging processes
+            var process = (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Process.Start(childProcess, "1") : Process.Start(GetFullPath("dotnet"), $"{childProcess} 1"));
             process.WaitForExit();
 
             // then hang self (+1 hang)
             Thread.Sleep(30_000);
 
-            // we should get 4 hang dumps in total from this test
+            // we should get 3 hang dumps in total from this test
         }
 
         public static string GetFullPath(string fileName)

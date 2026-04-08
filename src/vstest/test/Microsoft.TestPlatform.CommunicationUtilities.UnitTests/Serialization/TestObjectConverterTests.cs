@@ -91,7 +91,7 @@ public class TestObjectConverterTests
         var test = Deserialize<TestableTestObject>(json);
 
         var properties = test.Properties.ToArray();
-        Assert.AreEqual(2, properties.Length);
+        Assert.HasCount(2, properties);
         Assert.AreEqual(Guid.Parse("02048dfd-3da7-475d-a011-8dd1121855ec"), test.GetPropertyValue(properties.First(x => x.Label == "label1")));
         Assert.AreEqual(29, test.GetPropertyValue(properties.First(x => x.Label == "label2")));
     }
@@ -104,7 +104,7 @@ public class TestObjectConverterTests
         var test = Deserialize<TestableTestObject>(json);
 
         var properties = test.Properties.ToArray();
-        Assert.AreEqual(1, properties.Length);
+        Assert.HasCount(1, properties);
         Assert.IsTrue(string.IsNullOrEmpty(test.GetPropertyValue(properties[0])!.ToString()));
     }
 
@@ -116,7 +116,7 @@ public class TestObjectConverterTests
         var test = Deserialize<TestableTestObject>(json);
 
         var properties = test.Properties.ToArray();
-        Assert.AreEqual(1, properties.Length);
+        Assert.HasCount(1, properties);
         CollectionAssert.AreEqual(new[] { "val1", "val2" }, (string[])test.GetPropertyValue(properties[0])!);
     }
 
@@ -128,7 +128,7 @@ public class TestObjectConverterTests
         var test = Deserialize<TestableTestObject>(json);
 
         var properties = test.Properties.ToArray();
-        Assert.AreEqual(1, properties.Length);
+        Assert.HasCount(1, properties);
         Assert.AreEqual(DateTimeOffset.MaxValue, test.GetPropertyValue(properties[0]));
     }
 
@@ -160,7 +160,7 @@ public class TestObjectConverterTests
         // type is object
         testobj.SetPropertyValue<object>(property, false);
 
-        Assert.AreEqual(false, testobj.GetPropertyValue(property));
+        Assert.IsFalse((bool)testobj.GetPropertyValue(property)!);
     }
 
     private static string Serialize<T>(T data)

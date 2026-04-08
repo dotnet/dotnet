@@ -52,7 +52,7 @@ public class DataCollectionTestCaseEventHandlerTests
     public void InitializeShouldThrowExceptionIfExceptionIsThrownByCommunicationManager()
     {
         _mockCommunicationManager.Setup(x => x.HostServer(new IPEndPoint(IPAddress.Loopback, 0))).Throws<Exception>();
-        Assert.ThrowsException<Exception>(() => _requestHandler.InitializeCommunication());
+        Assert.ThrowsExactly<Exception>(() => _requestHandler.InitializeCommunication());
     }
 
     [TestMethod]
@@ -70,7 +70,7 @@ public class DataCollectionTestCaseEventHandlerTests
     {
         _mockCommunicationManager.Setup(x => x.WaitForClientConnection(It.IsAny<int>())).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _requestHandler.WaitForRequestHandlerConnection(10));
+        Assert.ThrowsExactly<Exception>(() => _requestHandler.WaitForRequestHandlerConnection(10));
     }
 
     [TestMethod]
@@ -86,7 +86,7 @@ public class DataCollectionTestCaseEventHandlerTests
     {
         _mockCommunicationManager.Setup(x => x.StopServer()).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(
+        Assert.ThrowsExactly<Exception>(
             () => _requestHandler.Close());
     }
 
@@ -141,6 +141,6 @@ public class DataCollectionTestCaseEventHandlerTests
     {
         _mockCommunicationManager.Setup(x => x.ReceiveMessage()).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _requestHandler.ProcessRequests());
+        Assert.ThrowsExactly<Exception>(() => _requestHandler.ProcessRequests());
     }
 }

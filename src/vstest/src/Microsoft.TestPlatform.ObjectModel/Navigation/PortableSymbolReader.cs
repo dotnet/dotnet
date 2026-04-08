@@ -65,17 +65,13 @@ internal class PortableSymbolReader : ISymbolReader
     /// </returns>
     public INavigationData? GetNavigationData(string declaringTypeName, string methodName)
     {
-        INavigationData? navigationData = null;
-        if (_methodsNavigationDataForType.ContainsKey(declaringTypeName))
+        if (_methodsNavigationDataForType.TryGetValue(declaringTypeName, out var methodDict)
+            && methodDict.TryGetValue(methodName, out var navigationData))
         {
-            var methodDict = _methodsNavigationDataForType[declaringTypeName];
-            if (methodDict.ContainsKey(methodName))
-            {
-                navigationData = methodDict[methodName];
-            }
+            return navigationData;
         }
 
-        return navigationData;
+        return null;
     }
 
     /// <summary>
