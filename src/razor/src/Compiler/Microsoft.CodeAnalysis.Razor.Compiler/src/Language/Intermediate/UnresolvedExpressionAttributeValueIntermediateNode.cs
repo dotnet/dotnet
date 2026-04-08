@@ -7,7 +7,7 @@ namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 /// An unresolved intermediate node representing a dynamic/expression attribute value (e.g. the
 /// <c>@someExpr</c> in <c>Value="@someExpr"</c>) whose final IR form depends on whether
 /// the containing attribute is a bound tag helper property. Produced by initial lowering when
-/// inside an <see cref="ElementOrTagHelperIntermediateNode"/>.
+/// inside an <see cref="UnresolvedElementIntermediateNode"/>.
 ///
 /// <para>The resolution phase converts this to:</para>
 /// <list type="bullet">
@@ -16,7 +16,7 @@ namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 ///         <see cref="CSharpCodeAttributeValueIntermediateNode"/> (for unbound/plain HTML attributes)</item>
 /// </list>
 /// </summary>
-internal sealed class CSharpOrTagHelperExpressionAttributeValueIntermediateNode : IntermediateNode
+internal sealed class UnresolvedExpressionAttributeValueIntermediateNode : IntermediateNode
 {
     /// <summary>The whitespace/text prefix before the expression.</summary>
     public string Prefix { get; set; } = string.Empty;

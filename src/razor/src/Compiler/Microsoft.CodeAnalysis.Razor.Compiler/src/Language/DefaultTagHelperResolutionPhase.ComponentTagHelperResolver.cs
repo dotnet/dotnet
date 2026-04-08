@@ -20,7 +20,7 @@ internal partial class DefaultTagHelperResolutionPhase
     {
         public override void AddMatchedElementDiagnostics(
             TagHelperIntermediateNode tagHelperNode,
-            ElementOrTagHelperIntermediateNode elementNode,
+            UnresolvedElementIntermediateNode elementNode,
             TagHelperBinding binding,
             in ResolutionContext context)
         {
@@ -51,7 +51,7 @@ internal partial class DefaultTagHelperResolutionPhase
 
         public override void AddUnmatchedElementDiagnostic(
             IntermediateNode convertedNode,
-            ElementOrTagHelperIntermediateNode originalNode,
+            UnresolvedElementIntermediateNode originalNode,
             DocumentIntermediateNode documentNode)
         {
             if (LooksLikeUnexpectedComponent(documentNode, originalNode.TagName))
@@ -86,7 +86,7 @@ internal partial class DefaultTagHelperResolutionPhase
         public override void BuildTagHelper(
             TagHelperIntermediateNode tagHelperNode,
             TagHelperBodyIntermediateNode bodyNode,
-            ElementOrTagHelperIntermediateNode elementNode,
+            UnresolvedElementIntermediateNode elementNode,
             TagHelperBinding binding,
             RazorSourceDocument sourceDocument,
             in ResolutionContext context)
@@ -98,7 +98,7 @@ internal partial class DefaultTagHelperResolutionPhase
 
                 foreach (var child in elementNode.Children)
                 {
-                    if (child is MarkupOrTagHelperAttributeIntermediateNode unresolvedAttr)
+                    if (child is UnresolvedAttributeIntermediateNode unresolvedAttr)
                     {
                         ConvertUnresolvedAttributeToTagHelper(tagHelperNode, bodyNode, unresolvedAttr, binding, ref renderedBoundAttributeNames, sourceDocument, in context);
                     }
@@ -135,7 +135,7 @@ internal partial class DefaultTagHelperResolutionPhase
         private void ConvertUnresolvedAttributeToTagHelper(
             TagHelperIntermediateNode tagHelperNode,
             TagHelperBodyIntermediateNode bodyNode,
-            MarkupOrTagHelperAttributeIntermediateNode unresolvedAttr,
+            UnresolvedAttributeIntermediateNode unresolvedAttr,
             TagHelperBinding binding,
             ref PooledHashSet<string> renderedBoundAttributeNames,
             RazorSourceDocument sourceDocument,
@@ -184,7 +184,7 @@ internal partial class DefaultTagHelperResolutionPhase
         /// </summary>
         private void ConvertToUnresolvedDirectiveAttribute(
             TagHelperIntermediateNode tagHelperNode,
-            MarkupOrTagHelperAttributeIntermediateNode unresolvedAttr,
+            UnresolvedAttributeIntermediateNode unresolvedAttr,
             TagHelperAttributeMatch match,
             string attributeName,
             RazorSourceDocument sourceDocument)
@@ -235,12 +235,12 @@ internal partial class DefaultTagHelperResolutionPhase
                     var hasExpression = false;
                     foreach (var vc in htmlAttrChild.Children)
                     {
-                        if (vc is MarkupOrTagHelperAttributeValueIntermediateNode)
+                        if (vc is UnresolvedAttributeValueIntermediateNode)
                         {
                             hasLiteral = true;
                         }
 
-                        if (vc is CSharpOrTagHelperExpressionAttributeValueIntermediateNode)
+                        if (vc is UnresolvedExpressionAttributeValueIntermediateNode)
                         {
                             hasExpression = true;
                         }
@@ -314,7 +314,7 @@ internal partial class DefaultTagHelperResolutionPhase
         /// </summary>
         private void ConvertToUnresolvedBoundProperty(
             TagHelperIntermediateNode tagHelperNode,
-            MarkupOrTagHelperAttributeIntermediateNode unresolvedAttr,
+            UnresolvedAttributeIntermediateNode unresolvedAttr,
             TagHelperAttributeMatch match,
             string attributeName,
             RazorSourceDocument sourceDocument)
@@ -362,12 +362,12 @@ internal partial class DefaultTagHelperResolutionPhase
         /// <summary>
         /// Handles attributes with no tag helper binding matches. Creates a
         /// <see cref="TagHelperHtmlAttributeIntermediateNode"/> using the pre-lowered
-        /// <see cref="MarkupOrTagHelperAttributeIntermediateNode.AsTagHelperAttribute"/>. For duplicate
+        /// <see cref="UnresolvedAttributeIntermediateNode.AsTagHelperAttribute"/>. For duplicate
         /// bound directive attributes, wraps expression values in <see cref="CSharpExpressionIntermediateNode"/>.
         /// </summary>
         private static void ConvertToUnresolvedUnboundAttribute(
             TagHelperIntermediateNode tagHelperNode,
-            MarkupOrTagHelperAttributeIntermediateNode unresolvedAttr,
+            UnresolvedAttributeIntermediateNode unresolvedAttr,
             string attributeName,
             bool isDuplicateBound)
         {
@@ -604,7 +604,7 @@ internal partial class DefaultTagHelperResolutionPhase
             // Component path: flatten each child individually (no merging).
             foreach (var child in htmlAttr.Children)
             {
-                if (child is MarkupOrTagHelperAttributeValueIntermediateNode unresolvedLiteral)
+                if (child is UnresolvedAttributeValueIntermediateNode unresolvedLiteral)
                 {
                     foreach (var valueChild in unresolvedLiteral.Children)
                     {
@@ -614,7 +614,7 @@ internal partial class DefaultTagHelperResolutionPhase
                         }
                     }
                 }
-                else if (child is CSharpOrTagHelperExpressionAttributeValueIntermediateNode unresolvedExpr)
+                else if (child is UnresolvedExpressionAttributeValueIntermediateNode unresolvedExpr)
                 {
                     FlattenToDirectCSharpTokens(unresolvedExpr, target);
                 }
@@ -633,7 +633,7 @@ internal partial class DefaultTagHelperResolutionPhase
             // Component path: process each child individually (no merging).
             foreach (var child in htmlAttr.Children)
             {
-                if (child is MarkupOrTagHelperAttributeValueIntermediateNode unresolvedLiteral)
+                if (child is UnresolvedAttributeValueIntermediateNode unresolvedLiteral)
                 {
                     var htmlContent = new HtmlContentIntermediateNode();
                     var prefix = unresolvedLiteral.Prefix;
@@ -667,7 +667,7 @@ internal partial class DefaultTagHelperResolutionPhase
 
                     target.Children.Add(htmlContent);
                 }
-                else if (child is CSharpOrTagHelperExpressionAttributeValueIntermediateNode unresolvedExpr)
+                else if (child is UnresolvedExpressionAttributeValueIntermediateNode unresolvedExpr)
                 {
                     // Add prefix (space before @expr) as HtmlContent.
                     if (!string.IsNullOrEmpty(unresolvedExpr.Prefix))
@@ -709,7 +709,7 @@ internal partial class DefaultTagHelperResolutionPhase
             using var newChildren = new PooledArrayBuilder<IntermediateNode>();
             foreach (var child in directiveNode.Children)
             {
-                if (child is HtmlContentIntermediateNode or MarkupOrTagHelperAttributeValueIntermediateNode)
+                if (child is HtmlContentIntermediateNode or UnresolvedAttributeValueIntermediateNode)
                 {
                     foreach (var token in child.Children)
                     {
@@ -725,7 +725,7 @@ internal partial class DefaultTagHelperResolutionPhase
                 }
                 else if (child is CSharpExpressionIntermediateNode or
                          CSharpExpressionAttributeValueIntermediateNode or
-                         CSharpOrTagHelperExpressionAttributeValueIntermediateNode)
+                         UnresolvedExpressionAttributeValueIntermediateNode)
                 {
                     // Flatten expression children to direct tokens.
                     foreach (var token in child.Children)
@@ -762,7 +762,7 @@ internal partial class DefaultTagHelperResolutionPhase
                         i++; // skip past inserted prefix to the expression we just placed
                     }
                 }
-                else if (child is CSharpOrTagHelperExpressionAttributeValueIntermediateNode unresolvedExprAttrValue)
+                else if (child is UnresolvedExpressionAttributeValueIntermediateNode unresolvedExprAttrValue)
                 {
                     ConvertExpressionChildToCSharpExpression(node, i, unresolvedExprAttrValue.Prefix, unresolvedExprAttrValue.Children, unresolvedExprAttrValue.Source);
                     if (node.Children[i] is HtmlContentIntermediateNode)
@@ -821,7 +821,7 @@ internal partial class DefaultTagHelperResolutionPhase
 
         /// <summary>
         /// Converts an expression attribute value child (either <see cref="CSharpExpressionAttributeValueIntermediateNode"/>
-        /// or <see cref="CSharpOrTagHelperExpressionAttributeValueIntermediateNode"/>) to a
+        /// or <see cref="UnresolvedExpressionAttributeValueIntermediateNode"/>) to a
         /// <see cref="CSharpExpressionIntermediateNode"/>, optionally inserting a prefix HtmlContent node.
         /// </summary>
         private static void ConvertExpressionChildToCSharpExpression(
@@ -1155,9 +1155,9 @@ internal partial class DefaultTagHelperResolutionPhase
         /// <summary>
         /// Converts a non-tag-helper element to <see cref="MarkupElementIntermediateNode"/> (component files).
         /// Preserves element structure (tag name, source span). Unresolved attributes are replaced with their
-        /// <see cref="MarkupOrTagHelperAttributeIntermediateNode.AsMarkupAttribute"/> (full attribute form).
+        /// <see cref="UnresolvedAttributeIntermediateNode.AsMarkupAttribute"/> (full attribute form).
         /// </summary>
-        public override void ConvertToPlainElement(IntermediateNode parent, int index, ElementOrTagHelperIntermediateNode elementNode)
+        public override void ConvertToPlainElement(IntermediateNode parent, int index, UnresolvedElementIntermediateNode elementNode)
         {
             var markupElement = new MarkupElementIntermediateNode()
             {
@@ -1171,7 +1171,7 @@ internal partial class DefaultTagHelperResolutionPhase
             // Transfer all children, lowering unresolved attributes to their fallback form.
             foreach (var child in elementNode.Children)
             {
-                if (child is MarkupOrTagHelperAttributeIntermediateNode unresolvedAttr)
+                if (child is UnresolvedAttributeIntermediateNode unresolvedAttr)
                 {
                     // Use the pre-lowered AsMarkupAttribute fallback form.
                     if (unresolvedAttr.AsMarkupAttribute != null)
