@@ -23,8 +23,8 @@ namespace Microsoft.AspNetCore.Razor.Language;
 /// <summary>
 /// Converts the Razor syntax tree into intermediate representation (IR) nodes. Runs before
 /// <see cref="TagHelperResolutionPhase"/>, so elements that might be tag helpers are represented
-/// as unresolved nodes (<see cref="ElementOrTagHelperIntermediateNode"/>,
-/// <see cref="MarkupOrTagHelperAttributeIntermediateNode"/>).
+/// as unresolved nodes (<see cref="UnresolvedElementIntermediateNode"/>,
+/// <see cref="UnresolvedAttributeIntermediateNode"/>).
 /// </summary>
 /// <remarks>
 /// Pre-computes fallback forms on unresolved nodes so the resolution phase can resolve them
@@ -694,7 +694,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
             if (_insideUnresolvedAttribute)
             {
-                var unresolvedNode = new CSharpOrTagHelperExpressionAttributeValueIntermediateNode()
+                var unresolvedNode = new UnresolvedExpressionAttributeValueIntermediateNode()
                 {
                     Prefix = node.Prefix?.GetContent() ?? string.Empty,
                     ContainsExpression = containsExpression,
@@ -733,7 +733,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
         {
             if (_insideUnresolvedAttribute)
             {
-                var unresolvedNode = new MarkupOrTagHelperAttributeValueIntermediateNode()
+                var unresolvedNode = new UnresolvedAttributeValueIntermediateNode()
                 {
                     Prefix = node.Prefix?.GetContent() ?? string.Empty,
                     Source = BuildSourceSpanFromNode(node),
@@ -1032,20 +1032,20 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
     /// Handles .cshtml files (MVC views, Razor Pages). Treats HTML markup as text content
     /// (<see cref="HtmlContentIntermediateNode"/> with merged tokens) and supports Tag Helpers.
     /// Elements inside potential tag helpers are unresolved via
-    /// <see cref="ElementOrTagHelperIntermediateNode"/>.
+    /// <see cref="UnresolvedElementIntermediateNode"/>.
     /// </summary>
     private class LegacyFileKindVisitor : LoweringVisitor
     {
-        private bool _insideElementOrTagHelper;
+        private bool _insideUnresolvedElement;
         public LegacyFileKindVisitor(DocumentIntermediateNode document, IntermediateNodeBuilder builder, RazorParserOptions options)
             : base(document, builder, options)
         {
         }
 
         /// <summary>
-        /// Lowers a markup element. Creates an <see cref="ElementOrTagHelperIntermediateNode"/> (unresolved)
+        /// Lowers a markup element. Creates an <see cref="UnresolvedElementIntermediateNode"/> (unresolved)
         /// because any element could match a tag helper. Extracts attribute data for tag helper binding
-        /// and sets <see cref="ElementOrTagHelperIntermediateNode.StartTagEndIndex"/>/<see cref="ElementOrTagHelperIntermediateNode.BodyEndIndex"/>
+        /// and sets <see cref="UnresolvedElementIntermediateNode.StartTagEndIndex"/>/<see cref="UnresolvedElementIntermediateNode.BodyEndIndex"/>
         /// for boundary tracking. Markup transitions (<c>@:</c> and <c>&lt;text&gt;</c>) are not tag
         /// helpers and fall through to the base visitor.
         /// </summary>
@@ -1072,7 +1072,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 isSelfClosing = lastToken.Parent?.GetContent().EndsWith("/>", StringComparison.Ordinal) ?? false;
             }
 
-            var element = new ElementOrTagHelperIntermediateNode()
+            var element = new UnresolvedElementIntermediateNode()
             {
                 TagName = tagName,
                 Source = BuildSourceSpanFromNode(node),
@@ -1092,8 +1092,8 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
             _builder.Push(element);
 
-            var previousInsideFlag = _insideElementOrTagHelper;
-            _insideElementOrTagHelper = true;
+            var previousInsideFlag = _insideUnresolvedElement;
+            _insideUnresolvedElement = true;
 
             if (node.MarkupStartTag != null)
             {
@@ -1112,7 +1112,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 }
             }
 
-            _insideElementOrTagHelper = false;
+            _insideUnresolvedElement = false;
             element.StartTagEndIndex = element.Children.Count;
 
             foreach (var item in node.Body)
@@ -1127,13 +1127,13 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 VisitMarkupEndTag(node.MarkupEndTag);
             }
 
-            _insideElementOrTagHelper = previousInsideFlag;
+            _insideUnresolvedElement = previousInsideFlag;
             _builder.Pop();
         }
 
         /// <summary>
-        /// Lowers a non-minimized attribute. If inside a unresolved element (<c>_insideElementOrTagHelper</c>),
-        /// creates a <see cref="MarkupOrTagHelperAttributeIntermediateNode"/> with two pre-lowered fallback
+        /// Lowers a non-minimized attribute. If inside a unresolved element (<c>_insideUnresolvedElement</c>),
+        /// creates a <see cref="UnresolvedAttributeIntermediateNode"/> with two pre-lowered fallback
         /// forms: <c>AsTagHelperAttribute</c> (structured <see cref="HtmlAttributeIntermediateNode"/> with merged
         /// value tokens - used for unbound attributes when the element IS a tag helper) and
         /// <c>AsMarkupAttribute</c> (full attribute with individual tokens - used when the element is NOT
@@ -1161,7 +1161,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
             var name = node.Name.GetContent();
 
-            if (!_insideElementOrTagHelper)
+            if (!_insideUnresolvedElement)
             {
                 LowerAttributeAsHtml(node, name, prefix);
                 return;
@@ -1170,7 +1170,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             // Unresolved path: create deferred attribute node with fallback forms.
             var valueSourceSpan = ComputeAttributeValueSourceSpan(node);
 
-            _builder.Push(new MarkupOrTagHelperAttributeIntermediateNode()
+            _builder.Push(new UnresolvedAttributeIntermediateNode()
             {
                 AttributeName = name,
                 IsMinimized = false,
@@ -1184,11 +1184,11 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             // Capture the pre-lowered fallback form (the non-tag-helper HTML form) by
             // temporarily resetting state and lowering into the unresolved node's children.
             // We then extract those children as the fallback before adding the unresolved form.
-            _insideElementOrTagHelper = false;
+            _insideUnresolvedElement = false;
             LowerAttributeAsHtml(node, name, prefix);
-            _insideElementOrTagHelper = true;
+            _insideUnresolvedElement = true;
 
-            var unresolvedAttrNode = (MarkupOrTagHelperAttributeIntermediateNode)_builder.Current;
+            var unresolvedAttrNode = (UnresolvedAttributeIntermediateNode)_builder.Current;
             IntermediateNode legacyFallback = null;
             if (unresolvedAttrNode.Children.Count == 1)
             {
@@ -1222,7 +1222,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             _builder.Pop();
 
             // Store the HtmlAttribute child directly on the unresolved node for O(1) access.
-            if (_builder.Current is MarkupOrTagHelperAttributeIntermediateNode currentUnresolved)
+            if (_builder.Current is UnresolvedAttributeIntermediateNode currentUnresolved)
             {
                 currentUnresolved.HtmlAttributeNode = (HtmlAttributeIntermediateNode)currentUnresolved.Children[^1];
             }
@@ -1351,7 +1351,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 }
 
                 var rewrittenSource = BuildSourceSpanFromNode(rewritten);
-                var unresolvedNode = new MarkupOrTagHelperAttributeValueIntermediateNode()
+                var unresolvedNode = new UnresolvedAttributeValueIntermediateNode()
                 {
                     Prefix = string.Empty,
                     Source = rewrittenSource,
@@ -1379,13 +1379,13 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
         /// <summary>
         /// Lowers a minimized attribute (no value, e.g. <c>checked</c>, <c>disabled</c>). If inside a
-        /// unresolved element, creates a <see cref="MarkupOrTagHelperAttributeIntermediateNode"/> with
+        /// unresolved element, creates a <see cref="UnresolvedAttributeIntermediateNode"/> with
         /// <c>IsMinimized = true</c> and a fallback <see cref="HtmlContentIntermediateNode"/> containing
         /// the attribute name as text.
         /// </summary>
         public override void VisitMarkupMinimizedAttributeBlock(MarkupMinimizedAttributeBlockSyntax node)
         {
-            if (_insideElementOrTagHelper)
+            if (_insideUnresolvedElement)
             {
                 // Produce the fallback: what this minimized attribute looks like as plain HTML.
                 // Minimized attributes are just html content (e.g. "checked" -> HtmlContent " checked").
@@ -1400,7 +1400,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     contentFactory: static node => node.GetContent(),
                     fallbackSource));
 
-                _builder.Add(new MarkupOrTagHelperAttributeIntermediateNode()
+                _builder.Add(new UnresolvedAttributeIntermediateNode()
                 {
                     AttributeName = node.Name.GetContent(),
                     IsMinimized = true,
@@ -1562,7 +1562,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             // Don't merge HtmlContent across element region boundaries (start-tag -> body -> end-tag).
             // The pre-computed indices mark where each region begins, so when we're about to add
             // the first child of a new region, we must start a fresh HtmlContentIntermediateNode.
-            var atBoundary = _builder.Current is ElementOrTagHelperIntermediateNode element
+            var atBoundary = _builder.Current is UnresolvedElementIntermediateNode element
                 && (currentChildren.Count == element.StartTagEndIndex
                  || currentChildren.Count == element.BodyEndIndex);
 
@@ -1605,7 +1605,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
     /// <summary>
     /// Handles .razor files (Blazor components). Treats HTML markup as structured nodes
     /// (<see cref="MarkupElementIntermediateNode"/> with tag name and attributes) and supports
-    /// Components. Every element is wrapped in <see cref="ElementOrTagHelperIntermediateNode"/>
+    /// Components. Every element is wrapped in <see cref="UnresolvedElementIntermediateNode"/>
     /// because any element could match a component.
     /// </summary>
     private class ComponentFileKindVisitor : LoweringVisitor
@@ -1619,7 +1619,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
         }
 
         /// <summary>
-        /// Always creates an <see cref="ElementOrTagHelperIntermediateNode"/> because every element
+        /// Always creates an <see cref="UnresolvedElementIntermediateNode"/> because every element
         /// could be a component. Markup transitions (<c>@:</c> and <c>&lt;text&gt;</c>) are excluded
         /// and fall through to the base visitor. Extracts attribute data for tag helper binding and
         /// sets boundary indices for content region tracking.
@@ -1637,7 +1637,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
             var attributeData = ExtractAttributeData(node);
 
-            var element = new ElementOrTagHelperIntermediateNode()
+            var element = new UnresolvedElementIntermediateNode()
             {
                 Source = BuildSourceSpanFromNode(node),
                 TagName = tagName,
@@ -1717,14 +1717,14 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
         public override void VisitMarkupAttributeBlock(MarkupAttributeBlockSyntax node)
         {
             var name = node.Name.GetContent();
-            var isUnresolved = _builder.Current is ElementOrTagHelperIntermediateNode;
+            var isUnresolved = _builder.Current is UnresolvedElementIntermediateNode;
 
             if (isUnresolved)
             {
                 var valueSourceSpan = ComputeAttributeValueSourceSpan(node);
                 var source = BuildSourceSpanFromNode(node);
 
-                _builder.Push(new MarkupOrTagHelperAttributeIntermediateNode()
+                _builder.Push(new UnresolvedAttributeIntermediateNode()
                 {
                     AttributeName = name,
                     IsMinimized = false,
@@ -1756,14 +1756,14 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     VisitAttributeValue(node.Value);
                     _builder.Pop();
                 }
-                var unresolvedAttrNode = (MarkupOrTagHelperAttributeIntermediateNode)_builder.Current;
+                var unresolvedAttrNode = (UnresolvedAttributeIntermediateNode)_builder.Current;
                 // Remove fallbackContainer from children -- it was temporarily added by Push.
                 unresolvedAttrNode.Children.Remove(fallbackContainer);
                 unresolvedAttrNode.AsTagHelperAttribute = fallbackContainer;
 
                 // Capture AsMarkupAttribute fallback by lowering the whole attribute in non-unresolved
                 // context. Push a temporary container so _builder.Current is not an
-                // ElementOrTagHelperIntermediateNode, which causes VisitMarkupAttributeBlock to
+                // UnresolvedElementIntermediateNode, which causes VisitMarkupAttributeBlock to
                 // take the non-unresolved path.
                 var fullFallbackContainer = new MarkupElementIntermediateNode();
                 _builder.Push(fullFallbackContainer);
@@ -1819,7 +1819,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 var atPosition = atLiteral.Position;
                 var rewritten = SyntaxFactory.MarkupTextLiteral(mergedTokens.ToList()).Green.CreateRed(node.Value.Parent, atPosition);
                 var rewrittenSource = BuildSourceSpanFromNode(rewritten);
-                var unresolvedNode = new MarkupOrTagHelperAttributeValueIntermediateNode()
+                var unresolvedNode = new UnresolvedAttributeValueIntermediateNode()
                 {
                     Prefix = string.Empty,
                     Source = rewrittenSource,
@@ -1839,7 +1839,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             _builder.Pop();
 
             // Store the HtmlAttribute child directly on the unresolved node for O(1) access.
-            if (isUnresolved && _builder.Current is MarkupOrTagHelperAttributeIntermediateNode currentUnresolved)
+            if (isUnresolved && _builder.Current is UnresolvedAttributeIntermediateNode currentUnresolved)
             {
                 currentUnresolved.HtmlAttributeNode = (HtmlAttributeIntermediateNode)currentUnresolved.Children[currentUnresolved.Children.Count - 1];
             }
@@ -1868,9 +1868,9 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 Source = source,
             };
 
-            if (_builder.Current is ElementOrTagHelperIntermediateNode)
+            if (_builder.Current is UnresolvedElementIntermediateNode)
             {
-                _builder.Add(new MarkupOrTagHelperAttributeIntermediateNode()
+                _builder.Add(new UnresolvedAttributeIntermediateNode()
                 {
                     AttributeName = name,
                     IsMinimized = true,
@@ -1897,7 +1897,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 var attrValueSource = BuildSourceSpanFromNode(node);
 
                 IntermediateNode childNode = _insideUnresolvedAttribute
-                    ? new MarkupOrTagHelperAttributeValueIntermediateNode()
+                    ? new UnresolvedAttributeValueIntermediateNode()
                     {
                         Prefix = string.Empty,
                         Source = attrValueSource,

@@ -8,7 +8,7 @@ namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 /// vs tag helper bound attribute) is not yet determined. Pre-lowered fallback forms are
 /// stored so the resolution phase does not need syntax tree access.
 /// </summary>
-internal sealed class MarkupOrTagHelperAttributeIntermediateNode : IntermediateNode
+internal sealed class UnresolvedAttributeIntermediateNode : IntermediateNode
 {
     /// <summary>The attribute name (e.g., "Value", "@bind-Value", "@onclick").</summary>
     public string AttributeName { get; set; } = string.Empty;

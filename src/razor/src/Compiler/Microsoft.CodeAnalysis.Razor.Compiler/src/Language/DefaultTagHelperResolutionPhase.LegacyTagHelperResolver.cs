@@ -35,7 +35,7 @@ internal partial class DefaultTagHelperResolutionPhase
         public override void BuildTagHelper(
             TagHelperIntermediateNode tagHelperNode,
             TagHelperBodyIntermediateNode bodyNode,
-            ElementOrTagHelperIntermediateNode elementNode,
+            UnresolvedElementIntermediateNode elementNode,
             TagHelperBinding binding,
             RazorSourceDocument sourceDocument,
             in ResolutionContext context)
@@ -74,7 +74,7 @@ internal partial class DefaultTagHelperResolutionPhase
                 for (var i = 0; i < attrEnd; i++)
                 {
                     var child = elementNode.Children[i];
-                    if (child is MarkupOrTagHelperAttributeIntermediateNode unresolvedAttr)
+                    if (child is UnresolvedAttributeIntermediateNode unresolvedAttr)
                     {
                         if (hasDynamicExpressionChild)
                         {
@@ -110,7 +110,7 @@ internal partial class DefaultTagHelperResolutionPhase
         /// </summary>
         private void ConvertUnresolvedLegacyAttribute(
             TagHelperIntermediateNode tagHelperNode,
-            MarkupOrTagHelperAttributeIntermediateNode unresolvedAttr,
+            UnresolvedAttributeIntermediateNode unresolvedAttr,
             TagHelperBinding binding,
             ref PooledHashSet<string> renderedBoundAttributeNames,
             RazorSourceDocument sourceDocument,
@@ -171,7 +171,7 @@ internal partial class DefaultTagHelperResolutionPhase
         /// </summary>
         private static void ConvertMinimizedBoundAttribute(
             TagHelperIntermediateNode tagHelperNode,
-            MarkupOrTagHelperAttributeIntermediateNode unresolvedAttr,
+            UnresolvedAttributeIntermediateNode unresolvedAttr,
             string attributeName,
             TagHelperAttributeMatch match)
         {
@@ -201,7 +201,7 @@ internal partial class DefaultTagHelperResolutionPhase
         /// </summary>
         private void LowerBoundLegacyAttributeValue(
             TagHelperPropertyIntermediateNode prop,
-            MarkupOrTagHelperAttributeIntermediateNode unresolvedAttr,
+            UnresolvedAttributeIntermediateNode unresolvedAttr,
             TagHelperAttributeMatch match,
             RazorSourceDocument sourceDocument)
         {
@@ -231,7 +231,7 @@ internal partial class DefaultTagHelperResolutionPhase
 
         private static void ConvertUnresolvedToUnboundLegacyAttribute(
             TagHelperIntermediateNode tagHelperNode,
-            MarkupOrTagHelperAttributeIntermediateNode unresolvedAttr)
+            UnresolvedAttributeIntermediateNode unresolvedAttr)
         {
             var htmlAttrNode = new TagHelperHtmlAttributeIntermediateNode()
             {
@@ -949,7 +949,7 @@ internal partial class DefaultTagHelperResolutionPhase
             targetNode.Children.Add(htmlContent);
         }
 
-        public override void ConvertToPlainElement(IntermediateNode parent, int index, ElementOrTagHelperIntermediateNode elementNode)
+        public override void ConvertToPlainElement(IntermediateNode parent, int index, UnresolvedElementIntermediateNode elementNode)
         {
             // Remove the wrapper and promote its children to the parent,
             // handling unresolved attributes and HtmlAttributeIntermediateNode appropriately.
@@ -958,7 +958,7 @@ internal partial class DefaultTagHelperResolutionPhase
             var insertIndex = index;
             foreach (var child in elementNode.Children)
             {
-                if (child is MarkupOrTagHelperAttributeIntermediateNode unresolvedAttr)
+                if (child is UnresolvedAttributeIntermediateNode unresolvedAttr)
                 {
                     // Use the pre-lowered AsMarkupAttribute fallback.
                     if (unresolvedAttr.AsMarkupAttribute is MarkupElementIntermediateNode container)
@@ -1256,7 +1256,7 @@ internal partial class DefaultTagHelperResolutionPhase
 
             // Case 1: Implicit/explicit expression (e.g. @int, @new string(...), @(@object)).
             if (htmlAttr.Children.Count >= 1 &&
-                htmlAttr.Children[0] is CSharpOrTagHelperExpressionAttributeValueIntermediateNode firstExpr &&
+                htmlAttr.Children[0] is UnresolvedExpressionAttributeValueIntermediateNode firstExpr &&
                 string.IsNullOrEmpty(firstExpr.Prefix) &&
                 firstExpr.ContainsExpression)
             {
@@ -1266,7 +1266,7 @@ internal partial class DefaultTagHelperResolutionPhase
 
             // Case 2: Code block as sole content (e.g. @{1 + 2}).
             if (htmlAttr.Children.Count == 1 &&
-                htmlAttr.Children[0] is CSharpOrTagHelperExpressionAttributeValueIntermediateNode soleCodeBlock &&
+                htmlAttr.Children[0] is UnresolvedExpressionAttributeValueIntermediateNode soleCodeBlock &&
                 !soleCodeBlock.ContainsExpression &&
                 string.IsNullOrEmpty(soleCodeBlock.Prefix))
             {
@@ -1280,7 +1280,7 @@ internal partial class DefaultTagHelperResolutionPhase
             var hasEscapedAt = false;
             foreach (var child in htmlAttr.Children)
             {
-                if (child is MarkupOrTagHelperAttributeValueIntermediateNode { Children: [HtmlIntermediateToken { Content: "@" }] })
+                if (child is UnresolvedAttributeValueIntermediateNode { Children: [HtmlIntermediateToken { Content: "@" }] })
                 {
                     hasEscapedAt = true;
                     break;
@@ -1306,7 +1306,7 @@ internal partial class DefaultTagHelperResolutionPhase
         private static void LowerImplicitExpressionAttribute_Legacy(
             HtmlAttributeIntermediateNode htmlAttr,
             IntermediateNode target,
-            CSharpOrTagHelperExpressionAttributeValueIntermediateNode firstExpr,
+            UnresolvedExpressionAttributeValueIntermediateNode firstExpr,
             RazorSourceDocument sourceDocument)
         {
             var expr = new CSharpExpressionIntermediateNode();
@@ -1323,7 +1323,7 @@ internal partial class DefaultTagHelperResolutionPhase
                 // Also include any following literal children's content.
                 for (var i = 1; i < htmlAttr.Children.Count; i++)
                 {
-                    if (htmlAttr.Children[i] is MarkupOrTagHelperAttributeValueIntermediateNode lit && lit.Source is { } litSrc)
+                    if (htmlAttr.Children[i] is UnresolvedAttributeValueIntermediateNode lit && lit.Source is { } litSrc)
                     {
                         var litEnd = litSrc.AbsoluteIndex + litSrc.Length;
                         contentLength = litEnd - contentStart;
@@ -1367,12 +1367,12 @@ internal partial class DefaultTagHelperResolutionPhase
                 SourceSpan? lastSpan = null;
                 foreach (var child in htmlAttr.Children)
                 {
-                    if (child is CSharpOrTagHelperExpressionAttributeValueIntermediateNode unresolvedExpr
+                    if (child is UnresolvedExpressionAttributeValueIntermediateNode unresolvedExpr
                         && !string.IsNullOrEmpty(unresolvedExpr.Prefix))
                     {
                         sb.Append(unresolvedExpr.Prefix);
                     }
-                    else if (child is MarkupOrTagHelperAttributeValueIntermediateNode unresolvedLiteral
+                    else if (child is UnresolvedAttributeValueIntermediateNode unresolvedLiteral
                         && !string.IsNullOrEmpty(unresolvedLiteral.Prefix))
                     {
                         sb.Append(unresolvedLiteral.Prefix);
@@ -1400,7 +1400,7 @@ internal partial class DefaultTagHelperResolutionPhase
         /// legacy pipeline behavior where code blocks are distinct from expressions.
         /// </summary>
         private static void LowerCodeBlockAttribute_Legacy(
-            CSharpOrTagHelperExpressionAttributeValueIntermediateNode soleCodeBlock,
+            UnresolvedExpressionAttributeValueIntermediateNode soleCodeBlock,
             IntermediateNode target)
         {
             target.Children.AddRange(soleCodeBlock.Children);
@@ -1437,7 +1437,7 @@ internal partial class DefaultTagHelperResolutionPhase
             for (var i = 0; i < htmlAttr.Children.Count; i++)
             {
                 var child = htmlAttr.Children[i];
-                if (child is MarkupOrTagHelperAttributeValueIntermediateNode unresolvedLiteral)
+                if (child is UnresolvedAttributeValueIntermediateNode unresolvedLiteral)
                 {
                     // Literal children (including the @ from @@): produce flat CSharp token.
                     foreach (var valueChild in unresolvedLiteral.Children)
@@ -1464,7 +1464,7 @@ internal partial class DefaultTagHelperResolutionPhase
                         target.Children.Add(CreateEmptyCSharpToken(emptySpan));
                     }
                 }
-                else if (child is CSharpOrTagHelperExpressionAttributeValueIntermediateNode unresolvedExpr)
+                else if (child is UnresolvedExpressionAttributeValueIntermediateNode unresolvedExpr)
                 {
                     if (unresolvedExpr.ContainsExpression && unresolvedExpr.Source is { Length: > 1 } exprSrc)
                     {
@@ -1500,7 +1500,7 @@ internal partial class DefaultTagHelperResolutionPhase
 
             foreach (var child in htmlAttr.Children)
             {
-                if (child is MarkupOrTagHelperAttributeValueIntermediateNode unresolvedLiteral)
+                if (child is UnresolvedAttributeValueIntermediateNode unresolvedLiteral)
                 {
                     var prefix = unresolvedLiteral.Prefix;
                     var mergedPrefixWithFirst = false;
@@ -1545,7 +1545,7 @@ internal partial class DefaultTagHelperResolutionPhase
                 else
                 {
                     // Include the expression's prefix (e.g. space before @expr) in pending literals.
-                    if (child is CSharpOrTagHelperExpressionAttributeValueIntermediateNode unresolvedExpr2
+                    if (child is UnresolvedExpressionAttributeValueIntermediateNode unresolvedExpr2
                         && !string.IsNullOrEmpty(unresolvedExpr2.Prefix))
                     {
                         pendingLiteralParts.Add((unresolvedExpr2.Prefix, (SourceSpan?)null, false));
@@ -1554,7 +1554,7 @@ internal partial class DefaultTagHelperResolutionPhase
                     // Flush pending literals as HtmlContent with individual tokens.
                     FlushPendingLiterals(target, ref pendingLiteralParts.AsRef(), ref pendingFirstSpan, ref pendingLastSpan);
 
-                    if (child is CSharpOrTagHelperExpressionAttributeValueIntermediateNode unresolvedExpr)
+                    if (child is UnresolvedExpressionAttributeValueIntermediateNode unresolvedExpr)
                     {
                         if (unresolvedExpr.ContainsExpression)
                         {
@@ -1618,7 +1618,7 @@ internal partial class DefaultTagHelperResolutionPhase
 
         private static void TryAddCSharpInDeclarationDiagnostic(
             TagHelperIntermediateNode tagHelperNode,
-            ElementOrTagHelperIntermediateNode elementNode,
+            UnresolvedElementIntermediateNode elementNode,
             int attrEnd)
         {
             for (var i = 0; i < attrEnd; i++)

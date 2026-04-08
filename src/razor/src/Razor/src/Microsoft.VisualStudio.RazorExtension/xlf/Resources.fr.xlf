@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="Add_Nested_File">
         <source>Add {0}</source>
-        <target state="new">Add {0}</target>
+        <target state="translated">Ajouter {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="IDS_EDITORNAME">
@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="View_Nested_File">
         <source>View {0}</source>
-        <target state="new">View {0}</target>
+        <target state="translated">Afficher {0}</target>
         <note />
       </trans-unit>
     </body>

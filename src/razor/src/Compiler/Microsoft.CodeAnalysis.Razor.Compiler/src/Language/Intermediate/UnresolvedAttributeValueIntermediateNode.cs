@@ -7,7 +7,7 @@ namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 /// A unresolved intermediate node representing a literal attribute value (e.g. the <c>123</c> in
 /// <c>IntProperty="123"</c>) whose final IR form depends on whether the containing attribute
 /// is a bound tag helper property. Produced by initial lowering when inside an
-/// <see cref="ElementOrTagHelperIntermediateNode"/>.
+/// <see cref="UnresolvedElementIntermediateNode"/>.
 ///
 /// <para>The resolution phase converts this to:</para>
 /// <list type="bullet">
@@ -16,7 +16,7 @@ namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 ///   <item>An <see cref="HtmlAttributeValueIntermediateNode"/> (for unbound/plain HTML attributes)</item>
 /// </list>
 /// </summary>
-internal sealed class MarkupOrTagHelperAttributeValueIntermediateNode : IntermediateNode
+internal sealed class UnresolvedAttributeValueIntermediateNode : IntermediateNode
 {
     /// <summary>The whitespace/text prefix before the value (from parser splitting on spaces).</summary>
     public string Prefix { get; set; } = string.Empty;

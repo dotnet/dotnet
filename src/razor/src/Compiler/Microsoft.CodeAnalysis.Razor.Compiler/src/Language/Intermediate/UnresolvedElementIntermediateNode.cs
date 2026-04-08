@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 /// All syntax-tree-derived information is stored directly on this node during lowering,
 /// so the resolution phase does not need access to the syntax tree.
 /// </summary>
-internal sealed class ElementOrTagHelperIntermediateNode : IntermediateNode
+internal sealed class UnresolvedElementIntermediateNode : IntermediateNode
 {
     public string TagName { get; set; } = string.Empty;
     public bool IsComponent { get; set; }
