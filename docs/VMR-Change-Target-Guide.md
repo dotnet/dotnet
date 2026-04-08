@@ -143,47 +143,33 @@ flowchart TD
     start([Start])
     approved{Is the change<br/>approved for the next<br/>calendar release?}
     security{Is the change<br/>security-related?}
-    releaseCutNonSec{Have release-specific<br/>branches been created?}
-    releaseCutSec{Have release-specific<br/>branches been created?}
-    componentTypeNonSecNoCut{Runtime or shared<br/>component fix? 10.0+}
-    componentTypeNonSecCut{Runtime or shared<br/>component fix? 10.0+}
-    componentTypeSecNoCut{Runtime or shared<br/>component fix? 10.0+}
-    componentTypeSecCut{Runtime or shared<br/>component fix? 10.0+}
+    releaseCut{Have release-specific<br/>branches been created?}
+    componentTypeNoCut{Runtime or shared<br/>component fix? 10.0+}
+    componentTypeCut{Runtime or shared<br/>component fix? 10.0+}
 
-    generalServicing1xx["1xx General servicing<br/>branch only<br/>e.g. release/10.0.1xx<br/><br/>Port to main as<br/>necessary on disclosure day"]
-    generalServicingAllBands["Each affected band's<br/>General servicing branch<br/>e.g. release/10.0.1xx<br/>AND release/10.0.2xx<br/><br/>Port to main as<br/>necessary on disclosure day"]
-    internalSpecific1xx["Internal 1xx release-specific<br/>branch only<br/>e.g. internal/release/10.0.105<br/>Merges to general<br/>servicing on release day<br/><br/>Port to main as<br/>necessary on disclosure day"]
-    internalSpecificAllBands["Each affected band's internal<br/>release-specific branch<br/>e.g. internal/release/10.0.105<br/>AND internal/release/10.0.200<br/>Merges to general<br/>servicing on release day<br/><br/>Port to main as<br/>necessary on disclosure day"]
-    internalGeneral1xx["Internal 1xx band branch<br/>e.g. internal/release/10.0.1xx<br/>Merges to general<br/>servicing on release day<br/><br/>Port to main as<br/>necessary on disclosure day"]
-    internalGeneralAllBands["Each affected band's<br/>internal band branch<br/>e.g. internal/release/10.0.1xx<br/>AND internal/release/10.0.2xx<br/>Merges to general<br/>servicing on release day<br/><br/>Port to main as<br/>necessary on disclosure day"]
+    endNoCutRuntime["1xx band branch only<br/>Non-security: release/10.0.1xx<br/>Security: internal/release/10.0.1xx<br/><br/>Port to main as<br/>necessary on disclosure day"]
+    endNoCutSDK["Each affected band branch<br/>Non-security: release/10.0.1xx, release/10.0.2xx<br/>Security: internal/release/10.0.1xx, internal/release/10.0.2xx<br/><br/>Port to main as<br/>necessary on disclosure day"]
+    endCutRuntime["Internal 1xx release-specific<br/>branch only<br/>e.g. internal/release/10.0.105<br/>Merges to general<br/>servicing on release day<br/><br/>Port to main as<br/>necessary on disclosure day"]
+    endCutSDK["Each affected band's internal<br/>release-specific branch<br/>e.g. internal/release/10.0.105,<br/>internal/release/10.0.200<br/>Merges to general<br/>servicing on release day<br/><br/>Port to main as<br/>necessary on disclosure day"]
     holdChange["Hold change until<br/>branch opens"]
 
     start --> approved
     approved -- "No" --> holdChange
     approved -- "Yes" --> security
 
-    security -- "No" --> releaseCutNonSec
-    security -- "Yes" --> releaseCutSec
+    security -- "No" --> releaseCut
+    security -- "Yes" --> releaseCut
 
-    releaseCutNonSec -- "No" --> componentTypeNonSecNoCut
-    releaseCutNonSec -- "Yes" --> componentTypeNonSecCut
+    releaseCut -- "No" --> componentTypeNoCut
+    releaseCut -- "Yes" --> componentTypeCut
 
-    componentTypeNonSecNoCut -- "Yes" --> generalServicing1xx
-    componentTypeNonSecNoCut -- "No" --> generalServicingAllBands
+    componentTypeNoCut -- "Yes" --> endNoCutRuntime
+    componentTypeNoCut -- "No" --> endNoCutSDK
 
-    componentTypeNonSecCut -- "Yes" --> internalSpecific1xx
-    componentTypeNonSecCut -- "No" --> internalSpecificAllBands
+    componentTypeCut -- "Yes" --> endCutRuntime
+    componentTypeCut -- "No" --> endCutSDK
 
-    releaseCutSec -- "No" --> componentTypeSecNoCut
-    releaseCutSec -- "Yes" --> componentTypeSecCut
-
-    componentTypeSecNoCut -- "Yes" --> internalGeneral1xx
-    componentTypeSecNoCut -- "No" --> internalGeneralAllBands
-
-    componentTypeSecCut -- "Yes" --> internalSpecific1xx
-    componentTypeSecCut -- "No" --> internalSpecificAllBands
-
-    class approved,security,releaseCutNonSec,releaseCutSec,componentTypeNonSecNoCut,componentTypeNonSecCut,componentTypeSecNoCut,componentTypeSecCut decision;
-    class generalServicing1xx,generalServicingAllBands,internalSpecific1xx,internalSpecificAllBands,internalGeneral1xx,internalGeneralAllBands action;
+    class approved,security,releaseCut,componentTypeNoCut,componentTypeCut decision;
+    class endNoCutRuntime,endNoCutSDK,endCutRuntime,endCutSDK action;
     class holdChange wait;
 ```
