@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>$(NetCoreAppMinTargetFramework)</TargetFramework>
     <SupportedRids>win-x64;win-x86;win-arm64;linux-x64;linux-musl-x64;linux-musl-arm64;linux-arm64;linux-arm;linux-musl-arm</SupportedRids>
-    <!-- TODO: Change to ..\..\toolset\ when upgrading to Arcade 11 -->
     <ArcadeSdkMSBuildProjectDir>$([System.IO.Path]::GetDirectoryName('$(ArcadeSdkBuildTasksAssembly)'))\..\</ArcadeSdkMSBuildProjectDir>
     <ArcadeSdkSignProject>$(ArcadeSdkMSBuildProjectDir)Sign.proj</ArcadeSdkSignProject>
     <BundledToolsZipDirectory>$(BundledToolsPath)$(Configuration)/zips/</BundledToolsZipDirectory>
