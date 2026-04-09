@@ -34,6 +34,7 @@
     <DotNetRuntimeArchive>$(BaseIntermediateOutputPath)$(DotNetRuntimeArchiveFileName)</DotNetRuntimeArchive>
   </PropertyGroup>
 
+  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.DownloadFile" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
   <Target Name="_DownloadAndExtractDotNetRuntime" Returns="$(DotNetRuntimeArchive)">
     <ItemGroup>
       <UrisToDownload Include="@(RemoteAssetBaseURL->'%(Identity)$(DotNetRuntimeDownloadPath)')" />

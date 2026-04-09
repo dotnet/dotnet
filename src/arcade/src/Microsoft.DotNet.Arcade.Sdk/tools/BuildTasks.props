@@ -18,7 +18,7 @@
   <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.CalculateAssemblyAndFileVersions" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
   <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.CheckRequiredDotNetVersion" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
   <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.CompareVersions" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
-  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.DownloadFile" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
+  <!-- DownloadFile is intentionally not exposed here as it causes a conflict with msbuild's DownloadFile task -->
   <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.ExtractNgenMethodList" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
   <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.GenerateChecksums" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
   <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.GenerateResxSource" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />

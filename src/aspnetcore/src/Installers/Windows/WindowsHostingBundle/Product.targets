@@ -75,6 +75,7 @@
     <MakeDir Directories="$(DepsPath)" />
   </Target>
 
+  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.DownloadFile" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
   <Target Name="FetchDependencies" BeforeTargets="Restore;CollectPackageReferences"
       Outputs="$(DepsPath)%(RemoteAsset.TargetFilename)">
     <PropertyGroup>

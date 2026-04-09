@@ -33,6 +33,7 @@
     <MakeDir Directories="$(RuntimePrereqDownloadDirectory)" />
   </Target>
 
+  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.DownloadFile" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
   <Target Name="FetchRuntimePrereqDependencies"
           DependsOnTargets="CollectRuntimePrereqDependencies"
           Outputs="%(RemoteAsset.DownloadDestination)">

@@ -19,6 +19,8 @@
     <WixDestinationPath>$(WixToolsDir)$(WixDownloadFilename)</WixDestinationPath>
     <WixDownloadSentinel>$(WixToolsDir)$(WixDownloadFilename).sentinel</WixDownloadSentinel>
   </PropertyGroup>
+
+  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.DownloadFile" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
   <Target Name="AcquireWixCore"
           Inputs="$(WixDownloadSentinel)"
           Outputs="$(WixDestinationPath)"
