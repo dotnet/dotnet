@@ -43,8 +43,7 @@ jobs:
         TargetFolder: '$(Build.ArtifactStagingDirectory)\publish'
         OverWrite: true
 
-    - task: PublishBuildArtifacts@1
+    - task: PublishPipelineArtifact@1
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)\publish'
-        ArtifactName: 'package'
-        publishLocation: 'Container'
+        targetPath: '$(Build.ArtifactStagingDirectory)\publish'
+        artifactName: 'package'
