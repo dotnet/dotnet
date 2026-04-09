@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <PackageVersion>7.0.1</PackageVersion>
+    <AssemblyName>NuGet.Configuration</AssemblyName>
+    <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <ProjectReference Include="../../nuget.common/7.0.1/NuGet.Common.7.0.1.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.protecteddata/9.0.6/System.Security.Cryptography.ProtectedData.9.0.6.csproj" />
+  </ItemGroup>
+
+</Project>
