@@ -92,17 +92,17 @@
                     PreallocatedTagHelperProperty - (724:19,65 [14] PrefixedAttributeTagHelpers.cshtml) - __tagHelperAttribute_5 - string-prefix-paprika - StringDictionaryProperty
                     PreallocatedTagHelperProperty - (724:19,65 [14] PrefixedAttributeTagHelpers.cshtml) - __tagHelperAttribute_5 - string-prefix-paprika - StringDictionaryProperty
                     DefaultTagHelperProperty - (773:20,32 [19] PrefixedAttributeTagHelpers.cshtml) - string-prefix-cumin - Namespace.DictionaryWithoutParameterlessConstructor<string, string> TestNamespace.InputTagHelper1.StringDictionaryProperty - HtmlAttributeValueStyle.DoubleQuotes
-                        HtmlContent - (773:20,32 [9] PrefixedAttributeTagHelpers.cshtml)
+                        HtmlContent - (773:20,32 [8] PrefixedAttributeTagHelpers.cshtml)
                             LazyIntermediateToken - (773:20,32 [8] PrefixedAttributeTagHelpers.cshtml) - Html - literate
-                            LazyIntermediateToken - (781:20,40 [1] PrefixedAttributeTagHelpers.cshtml) - Html -  
+                            IntermediateToken -  - Html -  
                         CSharpExpression - (783:20,42 [8] PrefixedAttributeTagHelpers.cshtml)
                             LazyIntermediateToken - (783:20,42 [8] PrefixedAttributeTagHelpers.cshtml) - CSharp - literate
                         HtmlContent - (791:20,50 [1] PrefixedAttributeTagHelpers.cshtml)
                             LazyIntermediateToken - (791:20,50 [1] PrefixedAttributeTagHelpers.cshtml) - Html - ?
                     DefaultTagHelperProperty - (773:20,32 [19] PrefixedAttributeTagHelpers.cshtml) - string-prefix-cumin - Namespace.DictionaryWithoutParameterlessConstructor<string, string> TestNamespace.InputTagHelper2.StringDictionaryProperty - HtmlAttributeValueStyle.DoubleQuotes
-                        HtmlContent - (773:20,32 [9] PrefixedAttributeTagHelpers.cshtml)
+                        HtmlContent - (773:20,32 [8] PrefixedAttributeTagHelpers.cshtml)
                             LazyIntermediateToken - (773:20,32 [8] PrefixedAttributeTagHelpers.cshtml) - Html - literate
-                            LazyIntermediateToken - (781:20,40 [1] PrefixedAttributeTagHelpers.cshtml) - Html -  
+                            IntermediateToken -  - Html -  
                         CSharpExpression - (783:20,42 [8] PrefixedAttributeTagHelpers.cshtml)
                             LazyIntermediateToken - (783:20,42 [8] PrefixedAttributeTagHelpers.cshtml) - CSharp - literate
                         HtmlContent - (791:20,50 [1] PrefixedAttributeTagHelpers.cshtml)

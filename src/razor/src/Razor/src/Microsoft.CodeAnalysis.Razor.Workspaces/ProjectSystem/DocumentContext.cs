@@ -7,31 +7,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-internal class DocumentContext(Uri uri, IDocumentSnapshot snapshot, VSProjectContext? projectContext)
+internal class DocumentContext(Uri uri, IDocumentSnapshot snapshot)
 {
-    private readonly VSProjectContext? _projectContext = projectContext;
     private RazorCodeDocument? _codeDocument;
     private SourceText? _sourceText;
 
     public Uri Uri { get; } = uri;
     public IDocumentSnapshot Snapshot { get; } = snapshot;
-    public string FilePath => Snapshot.FilePath;
-    public RazorFileKind FileKind => Snapshot.FileKind;
-
-    public TextDocumentIdentifier GetTextDocumentIdentifier()
-        => new VSTextDocumentIdentifier()
-        {
-            DocumentUri = new(Uri),
-            ProjectContext = _projectContext,
-        };
-
-    public TextDocumentIdentifierAndVersion GetTextDocumentIdentifierAndVersion()
-       => new(GetTextDocumentIdentifier(), Snapshot.Version);
 
     private bool TryGetCodeDocument([NotNullWhen(true)] out RazorCodeDocument? codeDocument)
     {

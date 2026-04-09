@@ -17,4 +17,4 @@
                 Component - (0:0,0 [25] x:\dir\subdir\Test\TestComponent.cshtml) - dynamic
                     ComponentAttribute - (16:0,16 [5] x:\dir\subdir\Test\TestComponent.cshtml) - Value - Value - AttributeStructure.DoubleQuotes
                         HtmlContent - (16:0,16 [5] x:\dir\subdir\Test\TestComponent.cshtml)
-                            LazyIntermediateToken - (16:0,16 [5] x:\dir\subdir\Test\TestComponent.cshtml) - Html - Hello
+                            IntermediateToken - (16:0,16 [5] x:\dir\subdir\Test\TestComponent.cshtml) - Html - Hello

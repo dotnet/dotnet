@@ -336,7 +336,10 @@ internal static class DelegatedCompletionHelper
                 }
                 else
                 {
-                    args[0] = documentContext.GetTextDocumentIdentifier();
+                    args[0] = new TextDocumentIdentifier()
+                    {
+                        DocumentUri = new(documentContext.Uri),
+                    };
                     args[1] = formattedTextEdit;
                     if (nextCursorPosition >= 0)
                     {

@@ -29,7 +29,7 @@
                         HtmlAttribute - (83:2,32 [8] x:\dir\subdir\Test\TestComponent.cshtml) - onclick=" - "
                             CSharpExpressionAttributeValue -  - 
                                 IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::Microsoft.AspNetCore.Components.Web.MouseEventArgs>(this, 
-                                LazyIntermediateToken - (83:2,32 [8] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => {}
+                                IntermediateToken - (83:2,32 [8] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => {}
                                 IntermediateToken -  - CSharp - )
                     HtmlContent - (154:2,103 [2] x:\dir\subdir\Test\TestComponent.cshtml)
                         LazyIntermediateToken - (154:2,103 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n

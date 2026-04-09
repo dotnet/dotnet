@@ -155,7 +155,7 @@ internal sealed class RemoteRenameService(in ServiceArgs args) : RazorDocumentSe
 
     private async Task<WorkspaceEdit?> GetEditsAsync(RemoteDocumentContext context, string newFileName, CancellationToken cancellationToken)
     {
-        if (!context.FileKind.IsComponent())
+        if (!context.Snapshot.FileKind.IsComponent())
         {
             return null;
         }

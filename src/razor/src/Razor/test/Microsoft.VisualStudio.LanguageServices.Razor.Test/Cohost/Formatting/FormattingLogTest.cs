@@ -58,6 +58,11 @@ public class FormattingLogTest(ITestOutputHelper testOutput) : DocumentFormattin
     public async Task MultiLineLambda()
         => Assert.NotNull(await GetFormattingEditsAsync());
 
+    [Fact]
+    [WorkItem("https://developercommunity.visualstudio.com/t/Razor-Formatting-Feature---Internal-Erro/11068847")]
+    public async Task GameTracAdmin()
+        => Assert.NotNull(await GetFormattingEditsAsync());
+
     private async Task<TextEdit[]?> GetFormattingEditsAsync([CallerMemberName] string? testName = null)
     {
         var contents = GetResource(testName.AssumeNotNull(), "InitialDocument.txt").AssumeNotNull();
@@ -81,7 +86,7 @@ public class FormattingLogTest(ITestOutputHelper testOutput) : DocumentFormattin
         }
 
         TextSpan span = default;
-        if (GetResource(testName, "Range.json") is { } rangeFile)
+        if (GetResource(testName, "Range.json") is { } rangeFile && rangeFile != "null")
         {
             var linePositionSpan = (LinePositionSpan)JsonSerializer.Deserialize(rangeFile, typeof(LinePositionSpan), JsonHelpers.JsonSerializerOptions).AssumeNotNull();
             span = sourceText.GetTextSpan(linePositionSpan);
@@ -90,7 +95,7 @@ public class FormattingLogTest(ITestOutputHelper testOutput) : DocumentFormattin
         var formattingService = (RazorFormattingService)OOPExportProvider.GetExportedValue<IRazorFormattingService>();
         formattingService.GetTestAccessor().SetFormattingLoggerFactory(new TestFormattingLoggerFactory(TestOutputHelper));
 
-        return await GetFormattingEditsAsync(document, htmlEdits, span: default, options.CodeBlockBraceOnNextLine, options.AttributeIndentStyle, options.InsertSpaces, options.TabSize, options.CSharpSyntaxFormattingOptions.AssumeNotNull());
+        return await GetFormattingEditsAsync(document, htmlEdits, span, options.CodeBlockBraceOnNextLine, options.AttributeIndentStyle, options.InsertSpaces, options.TabSize, options.CSharpSyntaxFormattingOptions.AssumeNotNull());
     }
 
     private string? GetResource(string testName, string name)
@@ -103,6 +108,7 @@ public class FormattingLogTest(ITestOutputHelper testOutput) : DocumentFormattin
             return null;
         }
 
-        return testFile.ReadAllText();
+        // Formatting logs capture absolute spans against the original file contents, so we must not normalize line endings.
+        return testFile.ReadAllText(normalizeLineEndings: false);
     }
 }
