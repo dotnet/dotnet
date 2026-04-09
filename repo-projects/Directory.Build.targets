@@ -284,7 +284,7 @@
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UpdateJson" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="UpdateGlobalJsonVersions"
           Condition="'$(GlobalJsonFile)' != ''"
-          DependsOnTargets="ResolveProjectReferences"
+          DependsOnTargets="ResolveProjectReferences;DiscoverBuiltSdkOverrides"
           Inputs="$(MSBuildProjectFullPath);$(MSBuildThisFileFullPath)"
           Outputs="$(BaseIntermediateOutputPath)UpdateGlobalJsonVersions.complete">
     <ItemGroup>
@@ -307,6 +307,16 @@
                 PathToAttribute="msbuild-sdks:Microsoft.DotNet.Arcade.Sdk"
                 NewAttributeValue="$(ArcadeBootstrapVersion)"
                 Condition="'$(UseBootstrapArcade)' == 'true'" />
+
+    <ItemGroup Condition="'@(SourceBuiltSdkOverride)' != ''">
+      <_SourceBuiltSdkOverrideWithValue Include="@(SourceBuiltSdkOverride)" Value="%(Version)" />
+    </ItemGroup>
+
+    <!-- Update msbuild-sdks entries -->
+    <UpdateJson JsonFilePath="$(GlobalJsonFile)"
+                PathToAttribute="msbuild-sdks"
+                ValuesToUpdate="@(_SourceBuiltSdkOverrideWithValue)"
+                Condition="'@(_SourceBuiltSdkOverrideWithValue)' != ''" />
 
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
     <Touch Files="$(BaseIntermediateOutputPath)UpdateGlobalJsonVersions.complete" AlwaysCreate="true">
@@ -575,10 +585,10 @@
           Condition="'$(BuildCommand)' != ''"
           DependsOnTargets="ExtractToolPackagesForSkippedRepos;
                             UpdateNuGetConfig;
+                            DiscoverBuiltSdkOverrides;
                             UpdateGlobalJsonVersions;
                             UpdateEngCommonFiles;
                             CreateBuildInputProps;
-                            DiscoverBuiltSdkOverrides;
                             SetSourceBuiltSdkOverrides;
                             SetBuildProperties">
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building $(RepositoryName)" />
