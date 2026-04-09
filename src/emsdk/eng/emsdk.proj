@@ -200,7 +200,7 @@
     <Exec WorkingDirectory="$(EmscriptenDir)"
       Command="$(HostNodeDir)\bin\$(NpmFileName) ci"
       IgnoreStandardErrorWarningFormat="true"
-      EnvironmentVariables="PATH=$(NpmPath);npm_config_userconfig=$(RepoRoot)\.npmrc" />
+      EnvironmentVariables="PATH=$(NpmPath);npm_config_userconfig=$(RepoRoot)\.npmrc;npm_config_fetch_retries=10" />
 
     <!-- clang-wrapper.sh hardcodes clang-19 at the moment so make sure it still exists -->
     <Error Text="Update clang-wrapper.sh to point at the correct clang-* version"
