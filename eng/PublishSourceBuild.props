@@ -165,8 +165,14 @@
           DestinationFolder="$(ArtifactsAssetsDir)"
           SkipUnchangedFiles="true" />
 
+    <!-- TODO: Remove the Publish target hook after a re-bootstrap. -->
+    <PropertyGroup>
+      <_PublishPass2Target>Execute</_PublishPass2Target>
+      <_PublishPass2Target Condition="'@(PackageReference)' == ''">Publish</_PublishPass2Target>
+    </PropertyGroup>
+
     <MSBuild Projects="$(MSBuildProjectFullPath)"
-             Targets="Execute"
+             Targets="$(_PublishPass2Target)"
              Condition="'$(DotNetSourceOnlyPublishArtifacts)' == 'true'"
              Properties="@(_PublishProps);IsPublishPass2=true;AssetManifestFileName=$(SYSTEM_PHASENAME).xml" />
   </Target>
