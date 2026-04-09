@@ -3,8 +3,10 @@
 
   <!-- Add targets here that run logic that depends on the merged asset manifest and published packages. -->
   <UsingTask TaskName="Microsoft.DotNet.SourceBuild.Tasks.LeakDetection.CheckForPoison" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksLeakDetectionAssembly)" TaskFactory="TaskHostFactory" Condition="'$(EnablePoison)' == 'true'" />
+  
+  <!-- TODO: Remove Publish target hook after a re-bootstrap -->
   <Target Name="ReportPoisonUsage"
-          AfterTargets="Execute"
+          AfterTargets="Publish;Execute"
           DependsOnTargets="CreatePrivateSourceBuiltArtifactsArchive"
           Condition="'$(EnablePoison)' == 'true'"
           Inputs="$(MSBuildProjectFullPath)"
@@ -100,8 +102,9 @@
 
   <!-- Create the SourceBuilt.Private.Artifacts archive when building source-only. -->
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.WritePackageVersionsProps" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <!-- TODO: Remove Publish target hook after a re-bootstrap -->
   <Target Name="CreatePrivateSourceBuiltArtifactsArchive"
-          AfterTargets="Execute"
+          AfterTargets="Publish;Execute"
           DependsOnTargets="$(CreatePrivateSourceBuiltArtifactsArchiveDependsOn)"
           Inputs="@(PackageToPublish);$(SourceBuiltVersionInputName);$(AssetManifestFilePath)"
           Outputs="$(SourceBuiltTarballName);$(SourceBuiltVersionName);$(AllPackageVersionsPropsName);$(SourceBuiltMergedAssetManifestName)">
@@ -162,8 +165,9 @@
           DestinationFolder="$(ArtifactsAssetsDir)"
           SkipUnchangedFiles="true" />
 
+    <!-- TODO: Remove Publish target hook after a re-bootstrap -->
     <MSBuild Projects="$(MSBuildProjectFullPath)"
-             Targets="Execute"
+             Targets="Publish;Execute"
              Condition="'$(DotNetSourceOnlyPublishArtifacts)' == 'true'"
              Properties="@(_PublishProps);IsPublishPass2=true;AssetManifestFileName=$(SYSTEM_PHASENAME).xml" />
   </Target>
