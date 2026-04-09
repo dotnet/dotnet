@@ -22,6 +22,7 @@ using NuGet.ProjectManagement;
 using NuGet.ProjectModel;
 using NuGet.Versioning;
 using NuGet.VisualStudio;
+using VSThreading = Microsoft.VisualStudio.Threading;
 
 namespace Test.Utility
 {
@@ -51,7 +52,7 @@ namespace Test.Utility
             string projectUniqueName,
             string projectFullPath,
             IProjectSystemCache projectSystemCache,
-            UnconfiguredProject unconfiguredProject,
+            VSThreading.AsyncLazy<UnconfiguredProject> unconfiguredProject,
             INuGetProjectServices projectServices,
             string projectId,
             string assetsFilePath,

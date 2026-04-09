@@ -25,34 +25,34 @@
       "commitSha": "ce6d7a5bb2bd69ac88b7b1683e47eccb72855795"
     },
     {
-      "barId": 307986,
+      "barId": 309081,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "6ca6f21b246509beb6f514c0c496c9ce78026547"
+      "commitSha": "779eff1e73420573dd39dbbe54896ff8f08955e1"
     },
     {
-      "barId": 308583,
+      "barId": 308872,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "e626c1b1332a71abb87f5b95a59eaa71cf34d86c"
+      "commitSha": "1042112d9c9898cc0f30a54e00c5de16e39613cd"
     },
     {
-      "barId": 308574,
+      "barId": 308884,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "750f95c6443014d17bb6ee769d72e2236e9d032c"
+      "commitSha": "20f1fd1f83825329718e911da6b70b1b1b5400cc"
     },
     {
-      "barId": 306217,
+      "barId": 309003,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "cda54e3d969844675bb5b8edd45fe2bd39f849c0"
+      "commitSha": "52decd1eeea01ce6e2da5790adc6dbe57a76c92c"
     },
     {
-      "barId": 308391,
+      "barId": 309168,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "f809d9d349c2a0b6e8ddf881f74d30149ae6976f"
+      "commitSha": "f5a03785bfeb2a0c1bb44f34a80c07a5585f7f11"
     },
     {
       "barId": 296673,
