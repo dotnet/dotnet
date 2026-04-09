@@ -9,9 +9,11 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using Microsoft.Internal.NuGet.Testing.SignedPackages;
+using NuGet.Commands.Test;
 using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
+using NuGet.Packaging;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
 using Xunit;
@@ -447,6 +449,164 @@ namespace NuGet.ProjectModel.Test
             Assert.Equal(expectedJson, actualJson);
         }
 
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void GetHash_WithCentralPackageVersionsAndPackagesToPrune_IgnoresDictionaryCreationOrder(bool useLegacyHashFunction)
+        {
+            // Arrange
+            DependencyGraphSpec first = CreateDependencyGraphSpecWithCentralDependenciesAndPruning(
+                centralPackageVersionNames: ["PackageB", "PackageA"],
+                packagesToPruneNames: ["TransitiveB", "TransitiveA"]);
+
+            DependencyGraphSpec second = CreateDependencyGraphSpecWithCentralDependenciesAndPruning(
+                centralPackageVersionNames: ["PackageA", "PackageB"],
+                packagesToPruneNames: ["TransitiveA", "TransitiveB"]);
+
+            // Act
+            string firstHash = GetHash(first, useLegacyHashFunction);
+            string secondHash = GetHash(second, useLegacyHashFunction);
+
+            // Assert
+            Assert.Equal(firstHash, secondHash);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void GetHash_WithPackagesToPruneInDifferentJsonOrder_IgnoresInputOrder(bool useLegacyHashFunction)
+        {
+            // Arrange
+            DependencyGraphSpec first = CreateDependencyGraphSpecFromJson(@"
+            {
+              ""restore"": {
+                ""projectUniqueName"": ""Project1"",
+                ""centralPackageVersionsManagementEnabled"": true
+              },
+              ""frameworks"": {
+                ""net8.0"": {
+                  ""dependencies"": {
+                    ""PackageA"": {
+                      ""target"": ""Package"",
+                      ""version"": ""[1.0.0,)"",
+                      ""versionCentrallyManaged"": true
+                    }
+                  },
+                  ""centralPackageVersions"": {
+                    ""PackageA"": ""[1.0.0]"",
+                    ""PackageB"": ""[2.0.0]""
+                  },
+                  ""packagesToPrune"": {
+                    ""TransitiveB"": ""(,2.0.0]"",
+                    ""TransitiveA"": ""(,1.0.0]""
+                  }
+                }
+              }
+            }");
+
+            DependencyGraphSpec second = CreateDependencyGraphSpecFromJson(@"
+            {
+              ""restore"": {
+                ""projectUniqueName"": ""Project1"",
+                ""centralPackageVersionsManagementEnabled"": true
+              },
+              ""frameworks"": {
+                ""net8.0"": {
+                  ""dependencies"": {
+                    ""PackageA"": {
+                      ""target"": ""Package"",
+                      ""version"": ""[1.0.0,)"",
+                      ""versionCentrallyManaged"": true
+                    }
+                  },
+                  ""centralPackageVersions"": {
+                    ""PackageA"": ""[1.0.0]"",
+                    ""PackageB"": ""[2.0.0]""
+                  },
+                  ""packagesToPrune"": {
+                    ""TransitiveA"": ""(,1.0.0]"",
+                    ""TransitiveB"": ""(,2.0.0]""
+                  }
+                }
+              }
+            }");
+
+            // Act
+            string firstHash = GetHash(first, useLegacyHashFunction);
+            string secondHash = GetHash(second, useLegacyHashFunction);
+
+            // Assert
+            Assert.Equal(firstHash, secondHash);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void GetHash_WithCentralPackageVersionsInDifferentJsonOrder_IgnoresInputOrder(bool useLegacyHashFunction)
+        {
+            // Arrange
+            DependencyGraphSpec first = CreateDependencyGraphSpecFromJson(@"
+            {
+              ""restore"": {
+                ""projectUniqueName"": ""Project1"",
+                ""centralPackageVersionsManagementEnabled"": true
+              },
+              ""frameworks"": {
+                ""net8.0"": {
+                  ""dependencies"": {
+                    ""PackageA"": {
+                      ""target"": ""Package"",
+                      ""version"": ""[1.0.0,)"",
+                      ""versionCentrallyManaged"": true
+                    }
+                  },
+                  ""centralPackageVersions"": {
+                    ""PackageB"": ""[2.0.0]"",
+                    ""PackageA"": ""[1.0.0]""
+                  },
+                  ""packagesToPrune"": {
+                    ""TransitiveA"": ""(,1.0.0]"",
+                    ""TransitiveB"": ""(,2.0.0]""
+                  }
+                }
+              }
+            }");
+
+            DependencyGraphSpec second = CreateDependencyGraphSpecFromJson(@"
+            {
+              ""restore"": {
+                ""projectUniqueName"": ""Project1"",
+                ""centralPackageVersionsManagementEnabled"": true
+              },
+              ""frameworks"": {
+                ""net8.0"": {
+                  ""dependencies"": {
+                    ""PackageA"": {
+                      ""target"": ""Package"",
+                      ""version"": ""[1.0.0,)"",
+                      ""versionCentrallyManaged"": true
+                    }
+                  },
+                  ""centralPackageVersions"": {
+                    ""PackageA"": ""[1.0.0]"",
+                    ""PackageB"": ""[2.0.0]""
+                  },
+                  ""packagesToPrune"": {
+                    ""TransitiveA"": ""(,1.0.0]"",
+                    ""TransitiveB"": ""(,2.0.0]""
+                  }
+                }
+              }
+            }");
+
+            // Act
+            string firstHash = GetHash(first, useLegacyHashFunction);
+            string secondHash = GetHash(second, useLegacyHashFunction);
+
+            // Assert
+            Assert.Equal(firstHash, secondHash);
+        }
+
         [Fact]
         public void AddProject_WhenRestoreMetadataIsNull_AddsProject()
         {
@@ -595,6 +755,45 @@ namespace NuGet.ProjectModel.Test
             return dgSpec;
         }
 
+        private static DependencyGraphSpec CreateDependencyGraphSpecWithCentralDependenciesAndPruning(
+            IReadOnlyList<string> centralPackageVersionNames,
+            IReadOnlyList<string> packagesToPruneNames)
+        {
+            string centralPackageVersions = string.Join(
+                $",{Environment.NewLine}",
+                centralPackageVersionNames.Select(packageId => $@"                    ""{packageId}"": ""[1.0.0]"""));
+            string packagesToPrune = string.Join(
+                $",{Environment.NewLine}",
+                packagesToPruneNames.Select(packageId => $@"                    ""{packageId}"": ""(,1.0.0]"""));
+
+            string rootProject = $@"
+            {{
+              ""restore"": {{
+                ""projectUniqueName"": ""Project1"",
+                ""centralPackageVersionsManagementEnabled"": true
+              }},
+              ""frameworks"": {{
+                ""net8.0"": {{
+                  ""dependencies"": {{
+                    ""PackageA"": {{
+                      ""version"": ""[1.0.0,)"",
+                      ""target"": ""Package"",
+                      ""versionCentrallyManaged"": true
+                    }}
+                  }},
+                  ""centralPackageVersions"": {{
+{centralPackageVersions}
+                  }},
+                  ""packagesToPrune"": {{
+{packagesToPrune}
+                  }}
+                }}
+              }}
+            }}";
+
+            return CreateDependencyGraphSpecFromJson(rootProject);
+        }
+
         private static TargetFrameworkInformation CreateTargetFrameworkInformation()
         {
             var nugetFramework = new NuGetFramework("net40");
@@ -652,6 +851,19 @@ namespace NuGet.ProjectModel.Test
             };
 
             return tfi;
+        }
+
+        private static DependencyGraphSpec CreateDependencyGraphSpecFromJson(string json)
+        {
+            PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", @"c:\", json);
+            return ProjectTestHelpers.GetDGSpecForFirstProject(packageSpec);
+        }
+
+        private static string GetHash(DependencyGraphSpec dgSpec, bool useLegacyHashFunction)
+        {
+            return useLegacyHashFunction
+                ? dgSpec.GetHash(() => new Sha512HashFunction())
+                : dgSpec.GetHash(() => new FnvHash64Function());
         }
 
         private static string GetJson(DependencyGraphSpec dgSpec)

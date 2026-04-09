@@ -1,3 +1,7 @@
+# This yml is used by these pipelines:
+# - dotnet-unified-build-compare (internal)
+#   https://dev.azure.com/dnceng/internal/_build?definitionId=1447
+
 # Relies on dotnet-unified-build being in the same repo as this pipeline
 # https://learn.microsoft.com/en-us/azure/devops/pipelines/process/pipeline-triggers?view=azure-devops#branch-considerations
 

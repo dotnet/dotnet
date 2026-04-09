@@ -4,6 +4,13 @@
 # - dotnet-unified-build-full (public)
 #   https://dev.azure.com/dnceng-public/public/_build?definitionId=303
 #   Comment trigger only
+#   YML schedule trigger disabled by override in AzDO UI
+# - unified-build-pr (internal)
+#   https://dev.azure.com/dnceng/internal/_build?definitionId=1531
+#   YML schedule trigger disabled by override in AzDO UI
+# - unified-build-pr-full (internal)
+#   https://dev.azure.com/dnceng/internal/_build?definitionId=1532
+#   YML schedule trigger disabled by override in AzDO UI
 
 # Only run daily on schedule to save resources
 trigger: none
