@@ -267,16 +267,16 @@
       PreviousBuildPassSourceNamePrefix="$(PreviousBuildPassSourceNamePrefix)"
       Condition="'$(DotNetSourceOnlyTestOnly)' != 'true'" />
 
-    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
-    <Touch Files="$(BaseIntermediateOutputPath)UpdateNuGetConfig.complete" AlwaysCreate="true">
-      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
-    </Touch>
-
     <ItemGroup>
       <!-- This is defined in this target to ensure the NuGet.config file is updated before it gets embedded. If this item
            was define globally, it would immediately get embedded with the original, unmodified version of the file. -->
       <EmbedInBinlog Include="$(NuGetConfigFile)" />
     </ItemGroup>
+
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <Touch Files="$(BaseIntermediateOutputPath)UpdateNuGetConfig.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
   </Target>
 
   <!-- Update the SDK version in the repo's global.json file.
@@ -317,6 +317,12 @@
                 PathToAttribute="msbuild-sdks"
                 ValuesToUpdate="@(_SourceBuiltSdkOverrideWithValue)"
                 Condition="'@(_SourceBuiltSdkOverrideWithValue)' != ''" />
+
+    <ItemGroup>
+      <!-- This is defined in this target to ensure the NuGet.config file is updated before it gets embedded. If this item
+           was define globally, it would immediately get embedded with the original, unmodified version of the file. -->
+      <EmbedInBinlog Include="$(GlobalJsonFile)" />
+    </ItemGroup>
 
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
     <Touch Files="$(BaseIntermediateOutputPath)UpdateGlobalJsonVersions.complete" AlwaysCreate="true">
