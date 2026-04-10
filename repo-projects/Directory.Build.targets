@@ -377,7 +377,7 @@
        for reference packages. -->
     <ItemGroup Condition="'$(_UsePackageVersionPropsAggregation)' == 'true' and '@(_PreviouslyBuiltSourceBuiltSharedComponentPackages)' != '' and '@(_DependencyProducedPackage)' != ''">
       <_CurrentNonSbrpPackages Include="@(_DependencyProducedPackage)" />
-      <_CurrentNonSbrpPackages Remove="@(_DependencyProducedPackage->WithMetadataValue('RepoOrigin', 'source-build-reference-packages'))" />
+      <_CurrentNonSbrpPackages Remove="@(_DependencyProducedPackage->WithMetadataValue('RepoOrigin', 'source-build-assets'))" />
       <_ConflictingSharedComponentPackages Include="@(_CurrentNonSbrpPackages)" Condition="$(_PreviouslyBuiltSourceBuiltSharedComponentPackagesString.Contains(';%(Identity);'))" />
     </ItemGroup>
 
@@ -724,8 +724,8 @@
       <IntermediateSymbolsRepoDir>$([MSBuild]::NormalizeDirectory('$(IntermediateSymbolsRootDir)', '$(RepositoryName)'))</IntermediateSymbolsRepoDir>
 
       <SymbolsRoot>$(RepoArtifactsDir)</SymbolsRoot>
-      <!-- Fall back to repo root for source-build-reference-packages. -->
-      <SymbolsRoot Condition="'$(RepositoryName)' == 'source-build-reference-packages'">$(ProjectDirectory)</SymbolsRoot>
+      <!-- Fall back to repo root for source-build-assets. -->
+      <SymbolsRoot Condition="'$(RepositoryName)' == 'source-build-assets'">$(ProjectDirectory)</SymbolsRoot>
     </PropertyGroup>
 
     <ItemGroup>
