@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 308097,
+      "barId": 309511,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "62dc2defffeadabf6761a9ed7e142692107330c0"
+      "commitSha": "ecdd5c6a7986cafabbf6a322ea09a07736a01a0d"
     },
     {
       "barId": 288647,
@@ -37,10 +37,10 @@
       "commitSha": "1042112d9c9898cc0f30a54e00c5de16e39613cd"
     },
     {
-      "barId": 308884,
+      "barId": 309614,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "20f1fd1f83825329718e911da6b70b1b1b5400cc"
+      "commitSha": "3d89f1762e399e003ce885314c4087d30b26442f"
     },
     {
       "barId": 309003,
