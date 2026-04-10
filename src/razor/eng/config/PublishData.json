@@ -13,7 +13,7 @@
         "Shipping",
         "NonShipping"
       ],
-      "vsBranch": "main",
+      "vsBranch": "rel/insiders",
       "insertionCreateDraftPR": false,
       "insertionTitlePrefix": "[Insiders]"
     }
