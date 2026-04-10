@@ -98,7 +98,7 @@
     },
     {
       "barId": 310097,
-      "path": "source-build-reference-packages",
+      "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
       "commitSha": "c31ae0841e4f3b70775f0e66494015fd34c911d3"
     },
@@ -168,52 +168,52 @@
       "commitSha": "f15db7b7c6f5affbea268632ef8333d2687c8031"
     },
     {
-      "path": "source-build-reference-packages/src/externalPackages/src/abstractions-xunit",
+      "path": "source-build-assets/src/externalPackages/src/abstractions-xunit",
       "remoteUri": "https://github.com/xunit/abstractions.xunit",
       "commitSha": "b75d54d73b141709f805c2001b16f3dd4d71539d"
     },
     {
-      "path": "source-build-reference-packages/src/externalPackages/src/application-insights",
+      "path": "source-build-assets/src/externalPackages/src/application-insights",
       "remoteUri": "https://github.com/microsoft/ApplicationInsights-dotnet",
       "commitSha": "2faa7e8b157a431daa2e71785d68abd5fa817b53"
     },
     {
-      "path": "source-build-reference-packages/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet",
+      "path": "source-build-assets/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet",
       "remoteUri": "https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet.git",
       "commitSha": "e67b25be77532af9ba405670b34b4d263d505fde"
     },
     {
-      "path": "source-build-reference-packages/src/externalPackages/src/cssparser",
+      "path": "source-build-assets/src/externalPackages/src/cssparser",
       "remoteUri": "https://github.com/dotnet/cssparser",
       "commitSha": "0d59611784841735a7778a67aa6e9d8d000c861f"
     },
     {
-      "path": "source-build-reference-packages/src/externalPackages/src/docker-creds-provider",
+      "path": "source-build-assets/src/externalPackages/src/docker-creds-provider",
       "remoteUri": "https://github.com/mthalman/docker-creds-provider",
       "commitSha": "6e1ecd0a80755f9f0e88dc23b98b52f51a77c65e"
     },
     {
-      "path": "source-build-reference-packages/src/externalPackages/src/humanizer",
+      "path": "source-build-assets/src/externalPackages/src/humanizer",
       "remoteUri": "https://github.com/Humanizr/Humanizer",
       "commitSha": "3ebc38de585fc641a04b0e78ed69468453b0f8a1"
     },
     {
-      "path": "source-build-reference-packages/src/externalPackages/src/MSBuildLocator",
+      "path": "source-build-assets/src/externalPackages/src/MSBuildLocator",
       "remoteUri": "https://github.com/microsoft/MSBuildLocator",
       "commitSha": "694ff392b2dcf6ac58fe865afd1c982eb9449014"
     },
     {
-      "path": "source-build-reference-packages/src/externalPackages/src/newtonsoft-json",
+      "path": "source-build-assets/src/externalPackages/src/newtonsoft-json",
       "remoteUri": "https://github.com/JamesNK/Newtonsoft.Json.git",
       "commitSha": "0a2e291c0d9c0c7675d445703e51750363a549ef"
     },
     {
-      "path": "source-build-reference-packages/src/externalPackages/src/spectre-console",
+      "path": "source-build-assets/src/externalPackages/src/spectre-console",
       "remoteUri": "https://github.com/spectreconsole/spectre.console",
       "commitSha": "e097281ca8a50268b1022453fe6efd9112123a28"
     },
     {
-      "path": "source-build-reference-packages/src/externalPackages/src/vs-solutionpersistence",
+      "path": "source-build-assets/src/externalPackages/src/vs-solutionpersistence",
       "remoteUri": "https://github.com/microsoft/vs-solutionpersistence.git",
       "commitSha": "0b6f82a4073ce0ff0419991ea0cd6dd6898a51ac"
     }
