@@ -394,12 +394,13 @@ namespace NuGet.Common
 
         public static partial class Keywords
         {
-            public const System.Diagnostics.Tracing.EventKeywords Common = 1L;
-            public const System.Diagnostics.Tracing.EventKeywords Configuration = 2L;
-            public const System.Diagnostics.Tracing.EventKeywords Logging = 4L;
-            public const System.Diagnostics.Tracing.EventKeywords Performance = 8L;
-            public const System.Diagnostics.Tracing.EventKeywords Restore = 32L;
-            public const System.Diagnostics.Tracing.EventKeywords SdkResolver = 16L;
+            // Manual fix: Added explicit casts to resolve CS0266 compilation errors
+            public const System.Diagnostics.Tracing.EventKeywords Common = (System.Diagnostics.Tracing.EventKeywords)1L;
+            public const System.Diagnostics.Tracing.EventKeywords Configuration = (System.Diagnostics.Tracing.EventKeywords)2L;
+            public const System.Diagnostics.Tracing.EventKeywords Logging = (System.Diagnostics.Tracing.EventKeywords)4L;
+            public const System.Diagnostics.Tracing.EventKeywords Performance = (System.Diagnostics.Tracing.EventKeywords)8L;
+            public const System.Diagnostics.Tracing.EventKeywords Restore = (System.Diagnostics.Tracing.EventKeywords)32L;
+            public const System.Diagnostics.Tracing.EventKeywords SdkResolver = (System.Diagnostics.Tracing.EventKeywords)16L;
         }
     }
     public enum NuGetFolderPath
