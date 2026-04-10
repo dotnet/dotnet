@@ -25,20 +25,20 @@ public class TestResultTests
     [TestMethod]
     public void TestResultShouldInitializeEmptyAttachments()
     {
-        Assert.AreEqual(0, _result.Attachments.Count);
+        Assert.IsEmpty(_result.Attachments);
     }
 
     [TestMethod]
     public void TestResultShouldInitializeEmptyMessages()
     {
-        Assert.AreEqual(0, _result.Messages.Count);
+        Assert.IsEmpty(_result.Messages);
     }
 
     [TestMethod]
     public void TestResultShouldInitializeStartAndEndTimeToCurrent()
     {
-        Assert.IsTrue(_result.StartTime.Subtract(DateTimeOffset.UtcNow) < new TimeSpan(0, 0, 0, 10));
-        Assert.IsTrue(_result.EndTime.Subtract(DateTimeOffset.UtcNow) < new TimeSpan(0, 0, 0, 10));
+        Assert.IsLessThan(new TimeSpan(0, 0, 0, 10), _result.StartTime.Subtract(DateTimeOffset.UtcNow));
+        Assert.IsLessThan(new TimeSpan(0, 0, 0, 10), _result.EndTime.Subtract(DateTimeOffset.UtcNow));
     }
 
     #region GetSetPropertyValue Tests

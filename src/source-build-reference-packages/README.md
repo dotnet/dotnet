@@ -143,6 +143,23 @@ to .NET. The following sections describe how to add/upgrade the various types of
 1. When creating/updating patches, it is desirable to backport the changes whenever feasible as this reduces
 the maintenance burden when [updating a component to a newer version](#updating-an-external-component-to-a-newer-version).
 
+1. **Minimize patch surface.** Patches are diffs from upstream and may conflict when updating to a newer version.
+   Keep the number of changed files and lines as small as possible.
+   Prefer pushing behavioral changes (e.g. disabling analyzers, NuGet audit, code-style enforcement, version overrides)
+   into the [project file](src/externalPackages/projects) via `/p:` command-line arguments rather than patching the source.
+   Many upstream projects already define MSBuild properties for these behaviors—pass the right values from the `.proj` instead of editing the upstream files.
+
+1. **Use MSBuild conditions instead of removing XML.**
+   When a change *must* be made in the upstream source, prefer adding an MSBuild `Condition` to logically disable or override behavior rather than deleting XML elements.
+   For example, add `Condition="'$(DotNetBuildSourceOnly)' != 'true'"` to an analyzer `PackageReference` instead of removing the element entirely.
+   Conditional changes are smaller diffs, less likely to conflict with upstream updates, and can potentially be contributed upstream so the project builds in isolation for other interested parties.
+
+1. **Keep Central Package Management (CPM) enabled.**
+   If an upstream project uses CPM (`ManagePackageVersionsCentrally`), do not disable it—doing so requires adding explicit `Version` attributes to every `PackageReference` across many files, inflating the patch.
+   Instead, update the version pins in `Directory.Packages.props` to align with the versions available in this SBRP repo.
+   Use a `Condition="'$(DotNetBuildSourceOnly)' == 'true'"` block to override versions only during source-build,
+   keeping the upstream defaults intact for normal development.
+
 1. Steps to create new patches:
 
     1. Make changes in the submodule.

@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>$(TargetFrameworksForLibraries)</TargetFrameworks>
+    <TargetFrameworks Condition="$(OS) == 'Windows_NT'">$(TargetFrameworks);$(NetFrameworkMinimumSupportedVersion)</TargetFrameworks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Description>An OpenTelemetry .NET exporter that exports to local ETW or UDS.</Description>
+    <PackageThirdPartyNoticesFile>THIRD-PARTY-NOTICES.TXT</PackageThirdPartyNoticesFile>
+    <!-- Tweak style rules for Geneva: Allow underscores in constant names and allow regions inside code blocks -->
+    <NoWarn>$(NoWarn);SA1123;SA1310</NoWarn>
+    <MinVerTagPrefix>Exporter.Geneva-</MinVerTagPrefix>
+    <PackageValidationBaselineVersion>1.14.0</PackageValidationBaselineVersion>
+    <AssemblyIsCLSCompliant>false</AssemblyIsCLSCompliant>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OpenTelemetry" />
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Condition="'$([MSBuild]::GetTargetFrameworkIdentifier(`$(TargetFramework)`))' == '.NETFramework'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Note: Only include LinuxTracepoints-Net files for netfx targets -->
+    <Compile Remove="External\LinuxTracepoints-Net\**" Condition="'$([MSBuild]::GetTargetFrameworkIdentifier(`$(TargetFramework)`))' != '.NETCoreApp'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="$(RepoRoot)\src\Shared\ExceptionExtensions.cs" Link="Includes\ExceptionExtensions.cs" />
+    <Compile Include="$(RepoRoot)\src\Shared\Guard.cs" Link="Includes\Guard.cs" />
+    <Compile Include="$(RepoRoot)\src\Shared\Lock.cs" Link="Includes\Lock.cs" />
+    <Compile Include="$(RepoRoot)\src\Shared\NullableAttributes.cs" Link="Includes\NullableAttributes.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="OpenTelemetry.Exporter.Geneva.Benchmarks" PublicKey="$(StrongNamePublicKey)" />
+    <InternalsVisibleTo Include="OpenTelemetry.Exporter.Geneva.Stress" PublicKey="$(StrongNamePublicKey)" />
+  </ItemGroup>
+
+</Project>

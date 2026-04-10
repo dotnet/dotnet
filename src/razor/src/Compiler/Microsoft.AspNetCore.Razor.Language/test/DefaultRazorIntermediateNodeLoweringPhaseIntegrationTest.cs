@@ -21,7 +21,7 @@ public class DefaultRazorIntermediateNodeLoweringPhaseIntegrationTest : RazorPro
 
     protected override void ConfigureCodeDocumentProcessor(RazorCodeDocumentProcessor processor)
     {
-        processor.ExecutePhasesThrough<IRazorIntermediateNodeLoweringPhase>();
+        processor.ExecutePhasesThrough<DefaultTagHelperResolutionPhase>();
     }
 
     [Fact]

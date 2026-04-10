@@ -345,7 +345,7 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest(ITestOutputH
     {
         var absoluteIndex = text.Position;
         var codeDocument = GetCodeDocument(text.Text, fileKind);
-        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredTagHelperRewrittenSyntaxTree();
         var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex, includeWhitespace: true, walkMarkersBack: true);
         owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, absoluteIndex);
 

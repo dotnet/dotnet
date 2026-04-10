@@ -17,7 +17,7 @@
                 Component - (0:0,0 [67] x:\dir\subdir\Test\TestComponent.cshtml) - ComponentWithEditorRequiredParameters
                     ComponentAttribute - (56:0,56 [7] x:\dir\subdir\Test\TestComponent.cshtml) - Property1 - Property1 - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
-                            LazyIntermediateToken - (56:0,56 [7] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - myField
+                            IntermediateToken - (56:0,56 [7] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - myField
                     ComponentAttribute - (56:0,56 [7] x:\dir\subdir\Test\TestComponent.cshtml) - Property1Changed -  - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, 

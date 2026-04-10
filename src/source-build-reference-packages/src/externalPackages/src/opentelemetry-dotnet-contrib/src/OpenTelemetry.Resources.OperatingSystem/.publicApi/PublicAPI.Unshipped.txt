@@ -1,0 +1,2 @@
+OpenTelemetry.Resources.OperatingSystemResourceBuilderExtensions
+static OpenTelemetry.Resources.OperatingSystemResourceBuilderExtensions.AddOperatingSystemDetector(this OpenTelemetry.Resources.ResourceBuilder! builder) -> OpenTelemetry.Resources.ResourceBuilder!

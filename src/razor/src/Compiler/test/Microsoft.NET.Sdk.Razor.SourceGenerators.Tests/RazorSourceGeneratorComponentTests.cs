@@ -1089,4 +1089,768 @@ public sealed class RazorSourceGeneratorComponentTests : RazorSourceGeneratorTes
         result.Diagnostics.Verify();
         await VerifyRazorPageMatchesBaselineAsync(compilation, "Views_Home_Index");
     }
+
+    [Fact]
+    public async Task Component_WithRouter_MatchesBlazorTemplate()
+    {
+        // Regression test: Router inside CascadingAuthenticationState.
+        // Found Context="routeData" doesn't generate routeData variable.
+        // Key: wrapping Router in ANOTHER component breaks child content resolution.
+
+        var project = CreateTestProject(new()
+        {
+            ["_Imports.razor"] = """
+                @using Microsoft.AspNetCore.Components.Authorization
+                @using Microsoft.AspNetCore.Components.Routing
+                @using Microsoft.AspNetCore.Components.Web
+                """,
+            ["App.razor"] = """
+                <CascadingAuthenticationState>
+                    <Router AppAssembly="@typeof(Program).Assembly">
+                        <Found Context="routeData">
+                            <p>@routeData.PageType.Name</p>
+                        </Found>
+                        <NotFound>
+                            <p>Not found</p>
+                        </NotFound>
+                    </Router>
+                </CascadingAuthenticationState>
+                """,
+        }, new()
+        {
+            ["Program.cs"] = """
+                public class Program { }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver);
+
+        // Assert — should compile without CS0103 or RZ10012
+        result.Diagnostics.Verify();
+    }
+
+    [Fact]
+    public async Task Component_WithRouter_NoWrapper_Works()
+    {
+        // Control test: Router NOT wrapped in another component — this should work.
+
+        var project = CreateTestProject(new()
+        {
+            ["_Imports.razor"] = """
+                @using Microsoft.AspNetCore.Components.Authorization
+                @using Microsoft.AspNetCore.Components.Routing
+                @using Microsoft.AspNetCore.Components.Web
+                """,
+            ["App.razor"] = """
+                <Router AppAssembly="@typeof(Program).Assembly">
+                    <Found Context="routeData">
+                        <p>@routeData.PageType.Name</p>
+                    </Found>
+                    <NotFound>
+                        <p>Not found</p>
+                    </NotFound>
+                </Router>
+                """,
+        }, new()
+        {
+            ["Program.cs"] = """
+                public class Program { }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver);
+
+        // Assert — should compile fine (no wrapper component)
+        result.Diagnostics.Verify();
+    }
+
+    [Fact]
+    public async Task Component_WithBindValue()
+    {
+        // Regression test: @bind-Value pattern that triggered CS7036 (TypeCheck<T>() missing argument)
+        // in third-party projects (TelerikBlazor ThemeChooser, CultureChooser, Profile)
+
+        // Arrange
+        var project = CreateTestProject(new()
+        {
+            ["Views/Home/Index.razor"] = """
+                @using Test
+
+                @{ string myValue = "hello"; }
+                <MyInput @bind-Value="myValue" />
+                """,
+        }, new()
+        {
+            ["MyInput.cs"] = """
+                #nullable disable
+                using Microsoft.AspNetCore.Components;
+
+                namespace Test;
+
+                public class MyInput<T> : ComponentBase
+                {
+                    [Parameter]
+                    public T Value { get; set; }
+
+                    [Parameter]
+                    public EventCallback<T> ValueChanged { get; set; }
+                }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act - should compile without errors
+        var result = RunGenerator(compilation!, ref driver);
+
+        // Assert
+        result.Diagnostics.Verify();
+        Assert.Single(result.GeneratedSources);
+    }
+
+    [Fact]
+    public async Task Component_WithImplicitContextVariable()
+    {
+        // Regression test: implicit 'context' variable in RenderFragment<T> not generated
+        // Seen in TelerikBlazor (MainLayout.razor) and MudBlazor (MudDataGrid.razor) with:
+        // - CS0103: The name 'context' does not exist
+
+        // Arrange
+        var project = CreateTestProject(new()
+        {
+            ["Views/Home/Index.razor"] = """
+                @using Test
+
+                <MyGrid Items="@(new[] { "hello", "world" })">
+                    <ChildContent>@context.ToUpper()</ChildContent>
+                </MyGrid>
+                """,
+        }, new()
+        {
+            ["MyGrid.cs"] = """
+                #nullable disable
+                using Microsoft.AspNetCore.Components;
+
+                namespace Test;
+
+                public class MyGrid<T> : ComponentBase
+                {
+                    [Parameter]
+                    public T[] Items { get; set; }
+
+                    [Parameter]
+                    public RenderFragment<T> ChildContent { get; set; }
+                }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act - should compile without errors
+        var result = RunGenerator(compilation!, ref driver);
+
+        // Assert
+        result.Diagnostics.Verify();
+        Assert.Single(result.GeneratedSources);
+    }
+
+    [Fact]
+    public async Task Component_WithImplicitContext_NestedInWrapper()
+    {
+        // Regression test: implicit 'context' variable fails when the component using
+        // RenderFragment<T> is nested inside another component (e.g., MudDataGrid inside a layout).
+        // Same root cause as the Router/CascadingAuthenticationState bug.
+
+        var project = CreateTestProject(new()
+        {
+            ["Views/Home/Index.razor"] = """
+                @using Test
+
+                <MyWrapper>
+                    <MyGrid Items="@(new[] { "hello", "world" })">
+                        <ChildContent>@context.ToUpper()</ChildContent>
+                    </MyGrid>
+                </MyWrapper>
+                """,
+        }, new()
+        {
+            ["MyGrid.cs"] = """
+                #nullable disable
+                using Microsoft.AspNetCore.Components;
+
+                namespace Test;
+
+                public class MyGrid<T> : ComponentBase
+                {
+                    [Parameter]
+                    public T[] Items { get; set; }
+
+                    [Parameter]
+                    public RenderFragment<T> ChildContent { get; set; }
+                }
+                """,
+            ["MyWrapper.cs"] = """
+                using Microsoft.AspNetCore.Components;
+
+                namespace Test;
+
+                public class MyWrapper : ComponentBase
+                {
+                    [Parameter]
+                    public RenderFragment? ChildContent { get; set; }
+                }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver);
+
+        // Assert — should compile without CS0103 for 'context'
+        result.Diagnostics.Verify();
+        Assert.Single(result.GeneratedSources);
+    }
+
+    [Fact]
+    public async Task Component_WithBindValue_NestedInWrapper()
+    {
+        // Regression test: @bind-Value on a generic component nested inside another component
+        // triggered CS7036 (TypeCheck<T>() missing argument) in third-party projects.
+
+        var project = CreateTestProject(new()
+        {
+            ["Views/Home/Index.razor"] = """
+                @using Test
+
+                <MyWrapper>
+                    @{ string myValue = "hello"; }
+                    <MyInput @bind-Value="myValue" />
+                </MyWrapper>
+                """,
+        }, new()
+        {
+            ["MyInput.cs"] = """
+                #nullable disable
+                using Microsoft.AspNetCore.Components;
+
+                namespace Test;
+
+                public class MyInput<T> : ComponentBase
+                {
+                    [Parameter]
+                    public T Value { get; set; }
+
+                    [Parameter]
+                    public EventCallback<T> ValueChanged { get; set; }
+                }
+                """,
+            ["MyWrapper.cs"] = """
+                using Microsoft.AspNetCore.Components;
+
+                namespace Test;
+
+                public class MyWrapper : ComponentBase
+                {
+                    [Parameter]
+                    public RenderFragment? ChildContent { get; set; }
+                }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver);
+
+        // Assert — should compile without CS7036
+        result.Diagnostics.Verify();
+        Assert.Single(result.GeneratedSources);
+    }
+
+    [Fact]
+    public async Task Component_WithAuthorizeView_NestedChildContent()
+    {
+        // Regression test: AuthorizeView (with Authorized/NotAuthorized child content)
+        // nested inside another component, matching the AspNetCoreBlazor failure pattern.
+
+        var project = CreateTestProject(new()
+        {
+            ["_Imports.razor"] = """
+                @using Microsoft.AspNetCore.Components.Authorization
+                @using Microsoft.AspNetCore.Components.Routing
+                @using Microsoft.AspNetCore.Components.Web
+                """,
+            ["App.razor"] = """
+                <CascadingAuthenticationState>
+                    <Router AppAssembly="@typeof(Program).Assembly">
+                        <Found Context="routeData">
+                            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                                <NotAuthorized>
+                                    <p>Not authorized</p>
+                                </NotAuthorized>
+                            </AuthorizeRouteView>
+                        </Found>
+                        <NotFound>
+                            <p>Not found</p>
+                        </NotFound>
+                    </Router>
+                </CascadingAuthenticationState>
+                """,
+            ["MainLayout.razor"] = """
+                @inherits Microsoft.AspNetCore.Components.LayoutComponentBase
+
+                @Body
+                """,
+        }, new()
+        {
+            ["Program.cs"] = """
+                public class Program { }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver);
+
+        // Assert — should compile without RZ10012 or CS0103
+        result.Diagnostics.Verify();
+    }
+
+    [Fact]
+    public async Task Component_GenericWithTypedChildContent_ImplicitContext()
+    {
+        // Regression test: Generic component (like TelerikDropDownList<TItem, TValue>) with typed
+        // child content (RenderFragment<TItem>) using implicit 'context'. Matches ThemeChooser pattern
+        // which had CS7036: TypeCheck<T>() missing argument.
+
+        var project = CreateTestProject(new()
+        {
+            ["Views/Home/Index.razor"] = """
+                @using Test
+
+                <MyDropDown TItem="Person" TValue="string"
+                            Data="@people"
+                            Value="@selectedName"
+                            ValueChanged="@((string v) => selectedName = v)">
+                    <ItemTemplate>
+                        <span>@context.Name - @context.Age</span>
+                    </ItemTemplate>
+                </MyDropDown>
+
+                @code {
+                    string selectedName = "";
+                    Person[] people = new[] { new Person { Name = "Alice", Age = 30 } };
+                }
+                """,
+        }, new()
+        {
+            ["Types.cs"] = """
+                #nullable disable
+                using Microsoft.AspNetCore.Components;
+
+                namespace Test;
+
+                public class Person
+                {
+                    public string Name { get; set; }
+                    public int Age { get; set; }
+                }
+
+                public class MyDropDown<TItem, TValue> : ComponentBase
+                {
+                    [Parameter] public TItem[] Data { get; set; }
+                    [Parameter] public TValue Value { get; set; }
+                    [Parameter] public EventCallback<TValue> ValueChanged { get; set; }
+                    [Parameter] public RenderFragment<TItem> ItemTemplate { get; set; }
+                }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        var result = RunGenerator(compilation!, ref driver);
+
+        result.Diagnostics.Verify();
+        Assert.Single(result.GeneratedSources);
+    }
+
+    [Fact]
+    public async Task Component_WithNamedContext_NestedInComponent()
+    {
+        // Regression test: Component with explicit Context="item" on child content,
+        // nested inside another component (EditForm). Matches HxRadioButtonListTest pattern
+        // which had CS0103: 'item' does not exist.
+
+        var project = CreateTestProject(new()
+        {
+            ["Views/Home/Index.razor"] = """
+                @using Test
+
+                <MyForm>
+                    <MyList TItem="Person" TValue="int?" Items="@people" @bind-Value="selectedId">
+                        <ItemTemplate Context="item">
+                            @item.Name <sup>@item.Age</sup>
+                        </ItemTemplate>
+                    </MyList>
+                </MyForm>
+
+                @code {
+                    int? selectedId;
+                    Person[] people = new[] { new Person { Name = "Alice", Age = 30 } };
+                }
+                """,
+        }, new()
+        {
+            ["Types.cs"] = """
+                #nullable disable
+                using Microsoft.AspNetCore.Components;
+
+                namespace Test;
+
+                public class Person
+                {
+                    public string Name { get; set; }
+                    public int Age { get; set; }
+                }
+
+                public class MyForm : ComponentBase
+                {
+                    [Parameter] public RenderFragment ChildContent { get; set; }
+                }
+
+                public class MyList<TItem, TValue> : ComponentBase
+                {
+                    [Parameter] public TItem[] Items { get; set; }
+                    [Parameter] public TValue Value { get; set; }
+                    [Parameter] public EventCallback<TValue> ValueChanged { get; set; }
+                    [Parameter] public RenderFragment<TItem> ItemTemplate { get; set; }
+                }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        var result = RunGenerator(compilation!, ref driver);
+
+        result.Diagnostics.Verify();
+        Assert.Single(result.GeneratedSources);
+    }
+
+    [Fact]
+    public async Task Component_WithBindValue_InsideTypedChildContent()
+    {
+        // Regression test: @bind-Value on components nested inside a generic component's
+        // typed child content (implicit context). Matches InputsWithFloatingLabelsTest pattern
+        // which had CS0839: Argument missing.
+
+        var project = CreateTestProject(new()
+        {
+            ["Views/Home/Index.razor"] = """
+                @using Test
+
+                <MyFilterForm TModel="FormModel" @bind-Model="model">
+                    <MyInputText Label="Name" @bind-Value="@context.Name" />
+                    <MyInputNumber Label="Age" @bind-Value="@context.Age" />
+                </MyFilterForm>
+
+                @code {
+                    FormModel model = new();
+                }
+                """,
+        }, new()
+        {
+            ["Types.cs"] = """
+                #nullable disable
+                using Microsoft.AspNetCore.Components;
+
+                namespace Test;
+
+                public class FormModel
+                {
+                    public string Name { get; set; }
+                    public int Age { get; set; }
+                }
+
+                public class MyFilterForm<TModel> : ComponentBase
+                {
+                    [Parameter] public TModel Model { get; set; }
+                    [Parameter] public EventCallback<TModel> ModelChanged { get; set; }
+                    [Parameter] public RenderFragment<TModel> ChildContent { get; set; }
+                }
+
+                public class MyInputText : ComponentBase
+                {
+                    [Parameter] public string Label { get; set; }
+                    [Parameter] public string Value { get; set; }
+                    [Parameter] public EventCallback<string> ValueChanged { get; set; }
+                }
+
+                public class MyInputNumber : ComponentBase
+                {
+                    [Parameter] public string Label { get; set; }
+                    [Parameter] public int Value { get; set; }
+                    [Parameter] public EventCallback<int> ValueChanged { get; set; }
+                }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        var result = RunGenerator(compilation!, ref driver);
+
+        result.Diagnostics.Verify();
+        Assert.Single(result.GeneratedSources);
+    }
+
+    [Fact]
+    public async Task LegacyTagHelper_WithoutEndTagStructure_MatchedPair_NoError()
+    {
+        // Regression test: Tag helpers with TagStructure.WithoutEndTag used as matched
+        // start/end pairs (e.g. <component ...></component>) should NOT produce RZ1033.
+        // The old pipeline only emitted RZ1033 for orphan end tags, not matched pairs.
+        // Matches ASP.NET Core's SaveState.cshtml pattern.
+
+        var project = CreateTestProject(new()
+        {
+            ["Views/Home/Index.cshtml"] = """
+                @addTagHelper *, TestAssembly
+                <component type="typeof(string)" render-mode="Static"></component>
+                """,
+        }, new()
+        {
+            ["TagHelper.cs"] = """
+                #nullable disable
+                using Microsoft.AspNetCore.Razor.TagHelpers;
+
+                [HtmlTargetElement("component", TagStructure = TagStructure.WithoutEndTag)]
+                public class ComponentTagHelper : TagHelper
+                {
+                    public string Type { get; set; }
+                    [HtmlAttributeName("render-mode")]
+                    public string RenderMode { get; set; }
+                }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Should compile without RZ1033 errors
+        var result = RunGenerator(compilation!, ref driver);
+
+        result.Diagnostics.Verify();
+        Assert.Single(result.GeneratedSources);
+    }
+
+    [Fact]
+    public async Task Component_DeepNesting_ComponentInsideChildContentTemplate()
+    {
+        // Regression test: Components nested inside named child content templates of other
+        // components. Matches HxCard_Demo_NavigationTabs pattern where HxNavLink is inside
+        // HeaderTemplate of HxCard, which had CS7036: TypeCheck<T>() missing argument.
+
+        var project = CreateTestProject(new()
+        {
+            ["Views/Home/Index.razor"] = """
+                @using Test
+
+                <MyCard>
+                    <HeaderTemplate>
+                        <MyNav Variant="MyNavVariant.Tabs">
+                            <MyNavLink Href="">Active</MyNavLink>
+                            <MyNavLink Href="#">Link</MyNavLink>
+                        </MyNav>
+                    </HeaderTemplate>
+                    <BodyTemplate>
+                        <MyCardTitle>Special title</MyCardTitle>
+                        <MyButton Color="primary">Go somewhere</MyButton>
+                    </BodyTemplate>
+                </MyCard>
+                """,
+        }, new()
+        {
+            ["Types.cs"] = """
+                #nullable disable
+                using Microsoft.AspNetCore.Components;
+
+                namespace Test;
+
+                public enum MyNavVariant { Tabs, Pills }
+
+                public class MyCard : ComponentBase
+                {
+                    [Parameter] public RenderFragment HeaderTemplate { get; set; }
+                    [Parameter] public RenderFragment BodyTemplate { get; set; }
+                }
+
+                public class MyNav : ComponentBase
+                {
+                    [Parameter] public MyNavVariant Variant { get; set; }
+                    [Parameter] public RenderFragment ChildContent { get; set; }
+                }
+
+                public class MyNavLink : ComponentBase
+                {
+                    [Parameter] public string Href { get; set; }
+                    [Parameter] public RenderFragment ChildContent { get; set; }
+                }
+
+                public class MyCardTitle : ComponentBase
+                {
+                    [Parameter] public RenderFragment ChildContent { get; set; }
+                }
+
+                public class MyButton : ComponentBase
+                {
+                    [Parameter] public string Color { get; set; }
+                    [Parameter] public RenderFragment ChildContent { get; set; }
+                }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        var result = RunGenerator(compilation!, ref driver);
+
+        result.Diagnostics.Verify();
+        Assert.Single(result.GeneratedSources);
+    }
+
+    [Fact]
+    public async Task Component_CascadingValue_WithNestedDialogAndForm()
+    {
+        // Regression test: MudDataGrid pattern — CascadingValue wrapping a dialog with
+        // nested form and @bind-Value on deeply nested input components.
+        // CS0103: 'context' does not exist in the current context.
+
+        var project = CreateTestProject(new()
+        {
+            ["Views/Home/Index.razor"] = """
+                @using Test
+
+                <MyCascading Value="true" Name="IsNested">
+                    <MyDialog @bind-IsVisible="isOpen">
+                        <DialogContent>
+                            <MyForm>
+                                @{ string val = "test"; }
+                                <MyInput @bind-Value="val" />
+                            </MyForm>
+                        </DialogContent>
+                    </MyDialog>
+                </MyCascading>
+
+                @code {
+                    bool isOpen;
+                }
+                """,
+        }, new()
+        {
+            ["Types.cs"] = """
+                #nullable disable
+                using Microsoft.AspNetCore.Components;
+
+                namespace Test;
+
+                public class MyCascading : ComponentBase
+                {
+                    [Parameter] public object Value { get; set; }
+                    [Parameter] public string Name { get; set; }
+                    [Parameter] public RenderFragment ChildContent { get; set; }
+                }
+
+                public class MyDialog : ComponentBase
+                {
+                    [Parameter] public bool IsVisible { get; set; }
+                    [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
+                    [Parameter] public RenderFragment DialogContent { get; set; }
+                }
+
+                public class MyForm : ComponentBase
+                {
+                    [Parameter] public RenderFragment ChildContent { get; set; }
+                }
+
+                public class MyInput<T> : ComponentBase
+                {
+                    [Parameter] public T Value { get; set; }
+                    [Parameter] public EventCallback<T> ValueChanged { get; set; }
+                }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        var result = RunGenerator(compilation!, ref driver);
+
+        result.Diagnostics.Verify();
+        Assert.Single(result.GeneratedSources);
+    }
+
+    [Fact]
+    public async Task Component_ImplicitContext_InDrawerTemplate_NestedInRoot()
+    {
+        // Regression test: Telerik MainLayout pattern — Drawer with Template child content
+        // using implicit 'context' inside TelerikRootComponent. CS0103: 'context' does not exist.
+
+        var project = CreateTestProject(new()
+        {
+            ["Views/Home/Index.razor"] = """
+                @using Test
+
+                <MyRootComponent>
+                    <MyDrawer Data="@items">
+                        <Template>
+                            <span>@context.Name</span>
+                        </Template>
+                        <DrawerContent>
+                            <p>Main content</p>
+                        </DrawerContent>
+                    </MyDrawer>
+                </MyRootComponent>
+
+                @code {
+                    DrawerItem[] items = new[] { new DrawerItem { Name = "Home" } };
+                }
+                """,
+        }, new()
+        {
+            ["Types.cs"] = """
+                #nullable disable
+                using Microsoft.AspNetCore.Components;
+
+                namespace Test;
+
+                public class DrawerItem
+                {
+                    public string Name { get; set; }
+                }
+
+                public class MyRootComponent : ComponentBase
+                {
+                    [Parameter] public RenderFragment ChildContent { get; set; }
+                }
+
+                public class MyDrawer<T> : ComponentBase
+                {
+                    [Parameter] public T[] Data { get; set; }
+                    [Parameter] public RenderFragment<T> Template { get; set; }
+                    [Parameter] public RenderFragment DrawerContent { get; set; }
+                }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        var result = RunGenerator(compilation!, ref driver);
+
+        result.Diagnostics.Verify();
+        Assert.Single(result.GeneratedSources);
+    }
 }

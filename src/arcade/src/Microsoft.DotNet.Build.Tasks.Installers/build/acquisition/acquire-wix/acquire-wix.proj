@@ -1,8 +1,6 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <UsingTask TaskName="DownloadFile" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
-
   <!--
     Acquire WiX tools, if not present.
 
@@ -21,6 +19,8 @@
     <WixDestinationPath>$(WixToolsDir)$(WixDownloadFilename)</WixDestinationPath>
     <WixDownloadSentinel>$(WixToolsDir)$(WixDownloadFilename).sentinel</WixDownloadSentinel>
   </PropertyGroup>
+
+  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.DownloadFile" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
   <Target Name="AcquireWixCore"
           Inputs="$(WixDownloadSentinel)"
           Outputs="$(WixDestinationPath)"
@@ -33,7 +33,7 @@
       Overwrite="true"
       Encoding="Unicode" />
 
-    <DownloadFile
+    <Microsoft.DotNet.Arcade.Sdk.DownloadFile
       Uri="$(WixDownloadUrl)"
       DestinationPath="$(WixDestinationPath)"
       Overwrite="true"

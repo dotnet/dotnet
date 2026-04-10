@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>$(TargetFrameworksForLibraries)</TargetFrameworks>
+    <Description>AWS Lambda tracing wrapper for OpenTelemetry .NET.</Description>
+    <PackageTags>$(PackageTags);AWS Lambda</PackageTags>
+    <MinVerTagPrefix>Instrumentation.AWS-</MinVerTagPrefix>
+    <DefineConstants>INSTRUMENTATION_AWSLAMBDA;$(DefineConstants)</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageValidationBaselineVersion>1.14.2</PackageValidationBaselineVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(RepoRoot)\src\OpenTelemetry.Extensions.AWS\OpenTelemetry.Extensions.AWS.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Amazon.Lambda.APIGatewayEvents" />
+    <PackageReference Include="Amazon.Lambda.ApplicationLoadBalancerEvents" />
+    <PackageReference Include="Amazon.Lambda.Core" />
+    <PackageReference Include="Amazon.Lambda.SNSEvents" />
+    <PackageReference Include="Amazon.Lambda.SQSEvents" />
+    <PackageReference Include="System.Text.Json" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+    <PackageReference Update="System.Text.Json" VersionOverride="[6.0.10,)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="$(RepoRoot)\src\Shared\AWS\*.cs" Link="Includes\AWS\%(Filename).cs" />
+    <Compile Include="$(RepoRoot)\src\Shared\AssemblyVersionExtensions.cs" Link="Includes\AssemblyVersionExtensions.cs" />
+    <Compile Include="$(RepoRoot)\src\Shared\Guard.cs" Link="Includes\Guard.cs" />
+  </ItemGroup>
+
+</Project>

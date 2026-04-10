@@ -5,6 +5,8 @@
 using System;
 using System.Collections.Generic;
 
+using Microsoft.TestPlatform.TestUtilities;
+
 namespace Microsoft.TestPlatform.AcceptanceTests.Performance.PerfInstrumentation;
 
 /// <summary>

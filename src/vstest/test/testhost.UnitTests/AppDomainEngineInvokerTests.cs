@@ -102,7 +102,7 @@ public class AppDomainEngineInvokerTests
         Assert.AreEqual(legacyUnhandledEleExpectedXml, runtimeEle.Descendants("legacyUnhandledExceptionPolicy").First()?.ToString(),
             "legacyUnhandledExceptionPolicy element must be of the TestHost one.");
 
-        Assert.IsFalse(runtimeEle.ToString().Contains("probing"), "Probing element of TestHost must not be present.");
+        Assert.DoesNotContain("probing", runtimeEle.ToString(), "Probing element of TestHost must not be present.");
 
         var assemblyBindingXName = XName.Get("assemblyBinding", XmlNamespace);
         var mergedDocAssemblyBindingNodes = runtimeEle.Descendants(assemblyBindingXName);
@@ -111,7 +111,7 @@ public class AppDomainEngineInvokerTests
         var dependentAssemblyXName = XName.Get("dependentAssembly", XmlNamespace);
         var dependentAssemblyNodes = mergedDocAssemblyBindingNodes.First().Descendants(dependentAssemblyXName);
         Assert.AreEqual(1, dependentAssemblyNodes.Count(), "AssemblyRedirect of TestHost must be present.");
-        Assert.IsTrue(dependentAssemblyNodes.First().ToString().Contains("Microsoft.VisualStudio.TestPlatform.ObjectModel"), "Correct AssemblyRedirect must be present.");
+        Assert.Contains("Microsoft.VisualStudio.TestPlatform.ObjectModel", dependentAssemblyNodes.First().ToString(), "Correct AssemblyRedirect must be present.");
 
         var diagEle = doc.Descendants("system.diagnostics").FirstOrDefault();
         var appSettingsEle = doc.Descendants("appSettings").FirstOrDefault();
@@ -155,8 +155,8 @@ public class AppDomainEngineInvokerTests
         var dependentAssemblyNodes = mergedDocAssemblyBindingNodes.First().Descendants(dependentAssemblyXName);
         Assert.AreEqual(2, dependentAssemblyNodes.Count(), "AssemblyBinding of TestHost must be present.");
 
-        Assert.IsTrue(dependentAssemblyNodes.ElementAt(0).ToString().Contains("Microsoft.VisualStudio.UnitTests"), "First AssemblyRedirect must be of UserConfig.");
-        Assert.IsTrue(dependentAssemblyNodes.ElementAt(1).ToString().Contains("Microsoft.VisualStudio.TestPlatform.ObjectModel"), "Second AssemblyRedirect must be from TestHost Node.");
+        Assert.Contains("Microsoft.VisualStudio.UnitTests", dependentAssemblyNodes.ElementAt(0).ToString(), "First AssemblyRedirect must be of UserConfig.");
+        Assert.Contains("Microsoft.VisualStudio.TestPlatform.ObjectModel", dependentAssemblyNodes.ElementAt(1).ToString(), "Second AssemblyRedirect must be from TestHost Node.");
 
         var diagEle = doc.Descendants("system.diagnostics").FirstOrDefault();
         var appSettingsEle = doc.Descendants("appSettings").FirstOrDefault();

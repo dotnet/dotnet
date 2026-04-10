@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -50,8 +50,8 @@ public class ProxyOutOfProcDataCollectionManagerTests
     {
         _mockTestEventsPublisher.Raise(x => x.TestResult += null, new TestResultEventArgs(_testResult));
 
-        Assert.AreEqual(1, _testResult.Attachments.Count);
-        Assert.IsTrue(_testResult.Attachments[0].Attachments[0].Uri.OriginalString.Contains("attachment.txt"));
+        Assert.ContainsSingle(_testResult.Attachments);
+        Assert.Contains("attachment.txt", _testResult.Attachments[0].Attachments[0].Uri.OriginalString);
     }
 
     [TestMethod]
@@ -62,6 +62,6 @@ public class ProxyOutOfProcDataCollectionManagerTests
         _testResult = new VisualStudio.TestPlatform.ObjectModel.TestResult(_testcase);
         _mockTestEventsPublisher.Raise(x => x.TestResult += null, new TestResultEventArgs(_testResult));
 
-        Assert.AreEqual(0, _testResult.Attachments.Count);
+        Assert.IsEmpty(_testResult.Attachments);
     }
 }

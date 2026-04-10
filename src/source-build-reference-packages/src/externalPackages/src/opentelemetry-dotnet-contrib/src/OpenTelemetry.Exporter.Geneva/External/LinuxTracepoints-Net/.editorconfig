@@ -1,0 +1,6 @@
+[*.cs]
+# Use DefaultDllImportSearchPaths attribute for P/Invokes
+dotnet_diagnostic.CA5392.severity = none
+
+# The ref modifier for argument corresponding to in parameter is equivalent to in. Consider using in instead.
+dotnet_diagnostic.CS9191.severity = none

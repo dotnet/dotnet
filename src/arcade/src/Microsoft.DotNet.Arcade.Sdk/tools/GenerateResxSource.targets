@@ -6,8 +6,6 @@
     The source file is generated to intermediate output dir to avoid polluting the source tree.
     See https://github.com/dotnet/sdk/issues/94 that tracks productization of this code.
   -->
-
-  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.GenerateResxSource" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
   
   <!-- Set the Generator metadata so that VS triggers design-time build whenever the .resx file is saved -->
   <ItemGroup>

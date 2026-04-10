@@ -1,0 +1,41 @@
+<Project>
+
+  <PropertyGroup>
+    <RepoRoot>$([System.IO.Directory]::GetParent($(MSBuildThisFileDirectory)).Parent.Parent.FullName)</RepoRoot>
+    <MinVerTagPrefix>Instrumentation.AWS-</MinVerTagPrefix>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SolutionProjects Include="$(RepoRoot)\src\OpenTelemetry.Extensions.AWS\OpenTelemetry.Extensions.AWS.csproj" />
+    <SolutionProjects Include="$(RepoRoot)\src\OpenTelemetry.Instrumentation.AWS\OpenTelemetry.Instrumentation.AWS.csproj" />
+    <SolutionProjects Include="$(RepoRoot)\src\OpenTelemetry.Instrumentation.AWSLambda\OpenTelemetry.Instrumentation.AWSLambda.csproj" />
+    <SolutionProjects Include="$(RepoRoot)\test\OpenTelemetry.Extensions.AWS.Tests\OpenTelemetry.Extensions.AWS.Tests.csproj" />
+    <SolutionProjects Include="$(RepoRoot)\test\OpenTelemetry.Instrumentation.AWS.Tests\OpenTelemetry.Instrumentation.AWS.Tests.csproj" />
+    <SolutionProjects Include="$(RepoRoot)\test\OpenTelemetry.Instrumentation.AWSLambda.Tests\OpenTelemetry.Instrumentation.AWSLambda.Tests.csproj" />
+
+    <PackProjects Include="$(RepoRoot)\src\OpenTelemetry.Extensions.AWS\OpenTelemetry.Extensions.AWS.csproj" />
+    <PackProjects Include="$(RepoRoot)\src\OpenTelemetry.Instrumentation.AWS\OpenTelemetry.Instrumentation.AWS.csproj" />
+    <PackProjects Include="$(RepoRoot)\src\OpenTelemetry.Instrumentation.AWSLambda\OpenTelemetry.Instrumentation.AWSLambda.csproj" />
+
+    <TestProjects Include="$(RepoRoot)\test\OpenTelemetry.Extensions.AWS.Tests\OpenTelemetry.Extensions.AWS.Tests.csproj" />
+    <TestProjects Include="$(RepoRoot)\test\OpenTelemetry.Instrumentation.AWS.Tests\OpenTelemetry.Instrumentation.AWS.Tests.csproj" />
+    <TestProjects Include="$(RepoRoot)\test\OpenTelemetry.Instrumentation.AWSLambda.Tests\OpenTelemetry.Instrumentation.AWSLambda.Tests.csproj" />
+  </ItemGroup>
+
+  <Target Name="Build">
+    <MSBuild Projects="@(SolutionProjects)" Targets="Build" ContinueOnError="ErrorAndStop" />
+  </Target>
+
+  <Target Name="Restore">
+    <MSBuild Projects="@(SolutionProjects)" Targets="Restore" ContinueOnError="ErrorAndStop" />
+  </Target>
+
+  <Target Name="Pack">
+    <MSBuild Projects="@(PackProjects)" Targets="Pack" ContinueOnError="ErrorAndStop" />
+  </Target>
+
+  <Target Name="VSTest">
+    <MSBuild Projects="@(TestProjects)" Targets="VSTest" ContinueOnError="ErrorAndStop" />
+  </Target>
+
+</Project>

@@ -1,0 +1,62 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <PackagesOutput>$(ProjectDirectory)pack</PackagesOutput>
+    <CustomRepoBuild>true</CustomRepoBuild>
+    <SourceRevisionId>dd5f5b71c1d6c9bc4d654b2c343b10fb362add06</SourceRevisionId>
+    <GlobalJsonFile>$(ProjectDirectory)global.json</GlobalJsonFile>
+  </PropertyGroup>
+
+  <!-- This repo depends on packages built by opentelemetry-dotnet -->
+  <ItemGroup>
+    <RepositoryReference Include="opentelemetry-dotnet" />
+  </ItemGroup>
+
+  <Target Name="CustomRepoBuild">
+    <PropertyGroup>
+      <HttpProject>$(ProjectDirectory)src/OpenTelemetry.Instrumentation.Http/OpenTelemetry.Instrumentation.Http.csproj</HttpProject>
+      <RuntimeProject>$(ProjectDirectory)src/OpenTelemetry.Instrumentation.Runtime/OpenTelemetry.Instrumentation.Runtime.csproj</RuntimeProject>
+
+      <CommonBuildArgs>/p:Configuration=$(Configuration)</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:DelaySign=$(DelaySign)</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:PublicSign=$(PublicSign)</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /v:$(LogVerbosity)</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) $(RedirectRepoOutputToLog)</CommonBuildArgs>
+      <!-- Source-build behavioral overrides (keeps patches minimal) -->
+      <CommonBuildArgs>$(CommonBuildArgs) /p:DotNetBuildSourceOnly=true</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:UseArtifactsOutput=false</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:IntegrationBuild=true</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:EnablePublicApi=false</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:SkipAnalysis=true</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:EnforceCodeStyleInBuild=false</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:NuGetAudit=false</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:TreatWarningsAsErrors=false</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:MSBuildTreatWarningsAsErrors=false</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:DisablePackageBaselineValidation=true</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:IsAotCompatible=false</CommonBuildArgs>
+
+      <PackArgs>$(CommonBuildArgs) --output $(ProjectDirectory)pack</PackArgs>
+    </PropertyGroup>
+
+    <!-- OpenTelemetry.Instrumentation.Http -->
+    <Exec Command="&quot;$(DotNetTool)&quot; restore /bl:$(ArtifactsLogRepoDir)restore_Http.binlog $(HttpProject) $(CommonBuildArgs) /p:Version=$(OpenTelemetryDotNetContribHttpReleaseVersion)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_Http.binlog $(HttpProject) $(PackArgs) /p:Version=$(OpenTelemetryDotNetContribHttpReleaseVersion)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <!-- OpenTelemetry.Instrumentation.Runtime -->
+    <Exec Command="&quot;$(DotNetTool)&quot; restore /bl:$(ArtifactsLogRepoDir)restore_Runtime.binlog $(RuntimeProject) $(CommonBuildArgs) /p:Version=$(OpenTelemetryDotNetContribRuntimeReleaseVersion)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_Runtime.binlog $(RuntimeProject) $(PackArgs) /p:Version=$(OpenTelemetryDotNetContribRuntimeReleaseVersion)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+  </Target>
+
+</Project>

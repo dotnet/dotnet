@@ -22,6 +22,21 @@
         <target state="translated">활성 테스트 검색이 중단되었습니다. 이유: {0}</target>
         <note />
       </trans-unit>
+      <trans-unit id="ConnectionTimeoutProcessDidNotStartErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. The process failed to start, this might happen because of  antivirus preventing it from starting.</source>
+        <target state="translated">{0} 프로세스가 {2}초 후에 {1} 프로세스에 연결하지 못했습니다. 프로세스를 시작하지 못했습니다. 바이러스 백신으로 인해 이 문제가 발생할 수 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionTimeoutProcessExitedErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. The process {3} - {4}, exited with exitCode {5}, and error output: \n{6}</source>
+        <target state="translated">{0} 프로세스가 {2}초 후에 {1} 프로세스에 연결하지 못했습니다. 프로세스 {3} - {4}이(가) exitCode {5} 및 오류 출력으로 인해 종료되었습니다.\n{6}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionTimeoutWithDetailsErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. When the timeout happened, the process {3} -{4} was still running. This most often happens because of machine slowness, please set environment variable {5} to increase timeout.</source>
+        <target state="translated">{0} 프로세스가 {2}초 후에 {1} 프로세스에 연결하지 못했습니다. 시간 초과가 발생했을 때 프로세스 {3} - {4}은(는) 여전히 실행 중이었습니다. 이는 컴퓨터 속도가 느리기 때문에 가장 자주 발생합니다. 시간 제한을 늘리려면 환경 변수 {5}을(를) 설정하세요.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UnableToCommunicateToTestHost">
         <source>Unable to communicate with test host process.</source>
         <target state="translated">테스트 호스트 프로세스와 통신할 수 없습니다.</target>

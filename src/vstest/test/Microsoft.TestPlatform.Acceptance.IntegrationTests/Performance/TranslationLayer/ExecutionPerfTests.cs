@@ -45,8 +45,14 @@ public class ExecutionPerfTests : TelemetryPerfTestBase
             // This tells to PerfyTestAdapter how many tests it should return, this is our overhead baseline.
             var perfyTestAdapterEnv = new Dictionary<string, string?> { ["TEST_COUNT"] = expectedNumberOfTests.ToString(CultureInfo.InvariantCulture) };
             var vstestConsoleWrapper = GetVsTestConsoleWrapper(perfyTestAdapterEnv, traceLevel: System.Diagnostics.TraceLevel.Off);
-            vstestConsoleWrapper.RunTests(GetPerfAssetFullPath(projectName), GetDefaultRunSettings(), options, runEventHandler);
-            vstestConsoleWrapper.EndSession();
+            try
+            {
+                vstestConsoleWrapper.RunTests(GetPerfAssetFullPath(projectName), GetDefaultRunSettings(), options, runEventHandler);
+            }
+            finally
+            {
+                vstestConsoleWrapper.EndSession();
+            }
         }
 
         Assert.AreEqual(expectedNumberOfTests, runEventHandler.Metrics![TelemetryDataConstants.TotalTestsRun]);
@@ -86,8 +92,14 @@ public class ExecutionPerfTests : TelemetryPerfTestBase
             // This tells to PerfyTestAdapter how many tests it should return, this is our overhead baseline.
             var perfyTestAdapterEnv = new Dictionary<string, string?> { ["TEST_COUNT"] = expectedNumberOfTests.ToString(CultureInfo.InvariantCulture) };
             var vstestConsoleWrapper = GetVsTestConsoleWrapper(perfyTestAdapterEnv, traceLevel: System.Diagnostics.TraceLevel.Off);
-            vstestConsoleWrapper.RunTests(GetPerfAssetFullPath(projectName), GetDefaultRunSettings(), options, runEventHandler);
-            vstestConsoleWrapper.EndSession();
+            try
+            {
+                vstestConsoleWrapper.RunTests(GetPerfAssetFullPath(projectName), GetDefaultRunSettings(), options, runEventHandler);
+            }
+            finally
+            {
+                vstestConsoleWrapper.EndSession();
+            }
         }
 
         Assert.AreEqual(expectedNumberOfTests, runEventHandler.Metrics![TelemetryDataConstants.TotalTestsRun]);

@@ -9,9 +9,9 @@
             MethodDeclaration -  - protected override - void - BuildRenderTree
                 Component - (0:0,0 [31] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentAttribute - (26:0,26 [1] x:\dir\subdir\Test\TestComponent.cshtml) - IntProperty - IntProperty - AttributeStructure.SingleQuotes
-                        LazyIntermediateToken - (26:0,26 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - 1
+                        IntermediateToken - (26:0,26 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - 1
                 HtmlContent - (31:0,31 [2] x:\dir\subdir\Test\TestComponent.cshtml)
                     LazyIntermediateToken - (31:0,31 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
                 Component - (33:1,0 [31] x:\dir\subdir\Test\TestComponent.cshtml) - Mycomponent
                     ComponentAttribute - (59:1,26 [1] x:\dir\subdir\Test\TestComponent.cshtml) - IntProperty - IntProperty - AttributeStructure.SingleQuotes
-                        LazyIntermediateToken - (59:1,26 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - 2
+                        IntermediateToken - (59:1,26 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - 2

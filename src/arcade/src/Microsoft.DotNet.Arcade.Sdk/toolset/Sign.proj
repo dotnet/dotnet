@@ -1,0 +1,99 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Execute">
+
+  <!--
+    Documentation for publishing is available here:
+      - https://github.com/dotnet/arcade/blob/master/Documentation/CorePackages/Signing.md
+  
+    Optional variables:
+      EnableDefaultArtifacts            Includes *.nupkg, *.vsix and *.wixpack.zip under "/artifacts/packages/**" for signing.
+                                        Defaults to true.
+      EnableDefaultRidSpecificArtifacts Do not sign *.nupkg packages under "/artifacts/packages/**" that do not contain the current TargetRid.
+      DefaultArtifactVisibility         The default visibility for Artifact items. Defaults to External.
+
+    Optional items:
+      Artifact (with Metadata)          Path to the artifact to publish. Declare the item in Signing.props to sign and publish the artifact.
+        - SkipPublish                     If true, skips publishing the artifact.
+  -->
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Signed.Wix" Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
+    <PackageReference Include="Microsoft.DotNet.SignTool" />
+
+    <PackageDownload Include="Microsoft.DotNet.MacOsPkg.Cli" Version="[$(MicrosoftDotNetMacOsPkgVersion)]" Condition="$([MSBuild]::IsOSPlatform('OSX'))" />
+    <PackageDownload Include="Microsoft.VisualStudioEng.MicroBuild.Core" Version="[$(MicrosoftVisualStudioEngMicroBuildCoreVersion)]" />
+    <PackageDownload Include="sn" Version="[$(SNVersion)]" Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
+    <PackageDownload Include="Microsoft.WixToolset.Sdk" Version="[$(MicrosoftWixToolsetSdkVersion)]" Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
+  </ItemGroup>
+
+  <Import Project="Sign.props" />
+
+  <!-- Update sign infos that were using Microsoft400 to use the .NET-specific cert if UseDotNetCertificate is present.
+       This will update any use, even if explicitly specified.
+       NOTE: This is outside the target on purpose, as Update will not correctly evaluate in the target. See
+       https://github.com/dotnet/msbuild/issues/1618. -->
+  <ItemGroup Condition="$(UseDotNetCertificate)">
+    <FileExtensionSignInfo Update="@(FileExtensionSignInfo->WithMetadataValue('CertificateName','Microsoft400'))" CertificateName="$(DotNetCertificateName)" />
+    <StrongNameSignInfo Update="@(StrongNameSignInfo->WithMetadataValue('CertificateName','Microsoft400'))" CertificateName="$(DotNetCertificateName)" />
+    <FileSignInfo Update="@(FileSignInfo->WithMetadataValue('CertificateName','Microsoft400'))" CertificateName="$(DotNetCertificateName)" />
+  </ItemGroup>
+
+  <Target Name="Execute">
+    <Error Text="The value of DotNetSignType is invalid: '$(DotNetSignType)'"
+           Condition="'$(DotNetSignType)' != 'real' and '$(DotNetSignType)' != 'test' and '$(DotNetSignType)' != ''" />
+
+    <PropertyGroup>
+      <_DryRun>true</_DryRun>
+      <!-- Allow an official build to force dry run signing. This allows the VMR's build to test signing in CI without changing versions. -->
+      <_DryRun Condition="'$(OfficialBuild)' == 'true' and '$(ForceDryRunSigning)' != 'true'">false</_DryRun>
+
+      <_TestSign>false</_TestSign>
+      <_TestSign Condition="'$(DotNetSignType)' == 'test'">true</_TestSign>
+
+      <_DotNetCoreRequired>false</_DotNetCoreRequired>
+      <_DotNetCoreRequired Condition="'$(_DryRun)' != 'true'">true</_DotNetCoreRequired>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+      <SNBinaryPath >$(NuGetPackageRoot)sn\$(SNVersion)\sn.exe</SNBinaryPath>
+      <WixToolsPath>$(NuGetPackageRoot)microsoft.wixtoolset.sdk\$(MicrosoftWixToolsetSdkVersion)\tools\net472\x64</WixToolsPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <!-- .pkgs and .app bundle tooling is only available on MacOS -->
+      <MacOSPkgCliItem Condition="$([MSBuild]::IsOSPlatform('OSX'))" Include="$(NuGetPackageRoot)microsoft.dotnet.macospkg.cli\$(MicrosoftDotNetMacOsPkgVersion)\tools\net*\any\Microsoft.Dotnet.MacOsPkg.Cli.dll" />
+    </ItemGroup>
+
+    <Error Condition="'$(AllowEmptySignList)' != 'true' AND '@(ItemsToSign)' == ''" 
+           Text="List of files to sign is empty. Make sure that ItemsToSign is configured correctly." />
+
+    <PropertyGroup Condition="$(_DotNetCoreRequired)">
+      <_DotNetCorePath>$(DotNetTool)</_DotNetCorePath>
+    </PropertyGroup>
+
+    <Microsoft.DotNet.SignTool.SignToolTask
+        DryRun="$(_DryRun)"
+        TestSign="$(_TestSign)"
+        DoStrongNameCheck="$(DoStrongNameCheck)"
+        AllowEmptySignList="$(AllowEmptySignList)"
+        CertificatesSignInfo="@(CertificatesSignInfo)"
+        ItemsToSign="@(ItemsToSign)"
+        StrongNameSignInfo="@(StrongNameSignInfo)"
+        FileSignInfo="@(FileSignInfo)"
+        ItemsToSkip3rdPartyCheck="@(ItemsToSkip3rdPartyCheck)"
+        FileExtensionSignInfo="@(FileExtensionSignInfo)"
+        TempDir="$(ArtifactsTmpDir)"
+        LogDir="$(ArtifactsLogDir)"
+        DotNetPath="$(_DotNetCorePath)"
+        SNBinaryPath="$(SNBinaryPath)"
+        MicroBuildCorePath="$(NuGetPackageRoot)microsoft.visualstudioeng.microbuild.core\$(MicrosoftVisualStudioEngMicroBuildCoreVersion)"
+        Wix3ToolsPath="$(WixInstallPath)"
+        WixToolsPath="$(WixToolsPath)"
+        PkgToolPath="@(MacOSPkgCliItem)"
+        RepackParallelism="$(SignToolRepackParallelism)"
+        MaximumParallelFileSize="$(SignToolRepackMaximumParallelFileSize)"
+        DotNetTimeout="$(SignToolDotNetTimeout)"
+        MSBuildVerbosity="$(SignToolMSBuildVerbosity)" />
+  </Target>
+
+</Project>

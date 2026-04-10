@@ -36,8 +36,8 @@ public class HtmlCodeActionResolverTest(ITestOutputHelper testOutput) : CohostEn
         var document = CreateProjectAndRazorDocument(contents);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
-        var editMappingServiceMock = new StrictMock<IEditMappingService>();
-        editMappingServiceMock
+        var razorEditServiceMock = new StrictMock<IRazorEditService>();
+        razorEditServiceMock
             .Setup(x => x.MapWorkspaceEditAsync(It.IsAny<IDocumentSnapshot>(), It.IsAny<WorkspaceEdit>(), It.IsAny<CancellationToken>()))
                         .Callback<IDocumentSnapshot, WorkspaceEdit, CancellationToken>((_, edit, _) =>
                         {
@@ -47,7 +47,7 @@ public class HtmlCodeActionResolverTest(ITestOutputHelper testOutput) : CohostEn
                         })
             .Returns(Task.CompletedTask);
 
-        var resolver = new HtmlCodeActionResolver(editMappingServiceMock.Object);
+        var resolver = new HtmlCodeActionResolver(razorEditServiceMock.Object);
 
         var codeAction = new RazorVSInternalCodeAction()
         {

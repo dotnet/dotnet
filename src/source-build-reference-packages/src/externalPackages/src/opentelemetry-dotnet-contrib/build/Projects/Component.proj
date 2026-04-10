@@ -1,0 +1,53 @@
+<!-- Note: This project is used to build/test/pack components which have a
+simple project structure. One csproj for source and tests is required. Optional
+benchmark[s] and stress test csprojs are also supported. -->
+<Project>
+
+  <PropertyGroup>
+    <RepoRoot>$([System.IO.Directory]::GetParent($(MSBuildThisFileDirectory)).Parent.Parent.FullName)</RepoRoot>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SolutionProjects Include="$(RepoRoot)\src\$(BUILD_COMPONENT)\$(BUILD_COMPONENT).csproj" />
+    <SolutionProjects Include="$(RepoRoot)\test\$(BUILD_COMPONENT).Tests\$(BUILD_COMPONENT).Tests.csproj" />
+
+    <SolutionProjects
+      Condition="Exists('$(RepoRoot)\test\$(BUILD_COMPONENT).Benchmarks\$(BUILD_COMPONENT).Benchmarks.csproj')"
+      Include="$(RepoRoot)\test\$(BUILD_COMPONENT).Benchmarks\$(BUILD_COMPONENT).Benchmarks.csproj" />
+    <SolutionProjects
+      Condition="Exists('$(RepoRoot)\test\$(BUILD_COMPONENT).FuzzTests\$(BUILD_COMPONENT).FuzzTests.csproj')"
+      Include="$(RepoRoot)\test\$(BUILD_COMPONENT).FuzzTests\$(BUILD_COMPONENT).FuzzTests.csproj" />
+    <SolutionProjects
+      Condition="Exists('$(RepoRoot)\test\$(BUILD_COMPONENT).Stress\$(BUILD_COMPONENT).Stress.csproj')"
+      Include="$(RepoRoot)\test\$(BUILD_COMPONENT).Stress\$(BUILD_COMPONENT).Stress.csproj" />
+
+    <PackProjects Include="$(RepoRoot)\src\$(BUILD_COMPONENT)\$(BUILD_COMPONENT).csproj" />
+
+    <TestProjects Include="$(RepoRoot)\test\$(BUILD_COMPONENT).Tests\$(BUILD_COMPONENT).Tests.csproj" />
+
+    <TestProjects
+      Condition="Exists('$(RepoRoot)\test\$(BUILD_COMPONENT).FuzzTests\$(BUILD_COMPONENT).FuzzTests.csproj')"
+      Include="$(RepoRoot)\test\$(BUILD_COMPONENT).FuzzTests\$(BUILD_COMPONENT).FuzzTests.csproj" />
+  </ItemGroup>
+
+  <Target Name="Build">
+    <MSBuild Projects="@(SolutionProjects)" Targets="Build" ContinueOnError="ErrorAndStop" />
+  </Target>
+
+  <Target Name="Restore">
+    <MSBuild Projects="@(SolutionProjects)" Targets="Restore" ContinueOnError="ErrorAndStop" />
+  </Target>
+
+  <Target Name="Pack">
+    <MSBuild Projects="@(PackProjects)" Targets="Pack" ContinueOnError="ErrorAndStop" />
+  </Target>
+
+  <Target Name="VSTest">
+    <MSBuild Projects="@(TestProjects)" Targets="VSTest" ContinueOnError="ErrorAndStop" />
+  </Target>
+
+  <Target Name="Validate" BeforeTargets="Build;Restore;Pack;VSTest">
+    <Error Condition="'$(BUILD_COMPONENT)' == ''" Text="BUILD_COMPONENT must be set for component builds" />
+  </Target>
+
+</Project>

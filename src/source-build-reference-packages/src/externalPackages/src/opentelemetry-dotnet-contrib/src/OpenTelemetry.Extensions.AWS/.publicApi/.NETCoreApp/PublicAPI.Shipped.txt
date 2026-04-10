@@ -1,0 +1,2 @@
+static OpenTelemetry.Extensions.AWS.AWSXRayIdGenerator.ReplaceTraceId() -> void
+static OpenTelemetry.Extensions.AWS.AWSXRayIdGenerator.ReplaceTraceId(OpenTelemetry.Trace.Sampler! sampler) -> void

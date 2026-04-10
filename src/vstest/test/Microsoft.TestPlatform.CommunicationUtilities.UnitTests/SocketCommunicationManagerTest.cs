@@ -5,7 +5,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.TestPlatform.CommunicationUtilities.UnitTests;
 
-[TestClass]
-public class SocketCommunicationManagerTest
+public static class SocketCommunicationManagerTest
 {
 }

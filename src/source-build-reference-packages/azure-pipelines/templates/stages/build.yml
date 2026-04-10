@@ -34,7 +34,7 @@ stages:
         - checkout: self
           clean: true
           submodules: recursive
-        - script: ./build.sh --ci --test
+        - script: ./build.sh --ci --test -bl -c Release
           displayName: Build and Test
 
       - job: windows
@@ -50,8 +50,10 @@ stages:
         variables:
         - _BuildConfig: Release
         steps:
+        - script: git config --global core.longpaths true
+          displayName: Enable long paths
         - checkout: self
           clean: true
           submodules: recursive
-        - script: .\build.cmd -ci -test
+        - script: .\build.cmd -ci -test -bl -configuration Release
           displayName: Build and Test

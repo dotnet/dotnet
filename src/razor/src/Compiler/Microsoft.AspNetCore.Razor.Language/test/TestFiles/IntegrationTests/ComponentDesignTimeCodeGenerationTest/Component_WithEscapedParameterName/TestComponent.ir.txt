@@ -16,6 +16,6 @@
             MethodDeclaration -  - protected override - void - BuildRenderTree
                 Component - (0:0,0 [49] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentAttribute - (20:0,20 [1] x:\dir\subdir\Test\TestComponent.cshtml) - class - class - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (20:0,20 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - 1
+                        IntermediateToken - (20:0,20 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - 1
                     ComponentAttribute - (30:0,30 [1] x:\dir\subdir\Test\TestComponent.cshtml) - Prop2 - Prop2 - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (30:0,30 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - 2
+                        IntermediateToken - (30:0,30 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - 2

@@ -1,0 +1,18 @@
+OpenTelemetry.Instrumentation.Owin.OwinEnrichEventType
+OpenTelemetry.Instrumentation.Owin.OwinEnrichEventType.BeginRequest = 0 -> OpenTelemetry.Instrumentation.Owin.OwinEnrichEventType
+OpenTelemetry.Instrumentation.Owin.OwinEnrichEventType.EndRequest = 1 -> OpenTelemetry.Instrumentation.Owin.OwinEnrichEventType
+OpenTelemetry.Instrumentation.Owin.OwinInstrumentationOptions
+OpenTelemetry.Instrumentation.Owin.OwinInstrumentationOptions.Enrich.get -> System.Action<System.Diagnostics.Activity!, OpenTelemetry.Instrumentation.Owin.OwinEnrichEventType, Microsoft.Owin.IOwinContext!, System.Exception?>?
+OpenTelemetry.Instrumentation.Owin.OwinInstrumentationOptions.Enrich.set -> void
+OpenTelemetry.Instrumentation.Owin.OwinInstrumentationOptions.Filter.get -> System.Func<Microsoft.Owin.IOwinContext!, bool>?
+OpenTelemetry.Instrumentation.Owin.OwinInstrumentationOptions.Filter.set -> void
+OpenTelemetry.Instrumentation.Owin.OwinInstrumentationOptions.OwinInstrumentationOptions() -> void
+OpenTelemetry.Instrumentation.Owin.OwinInstrumentationOptions.RecordException.get -> bool
+OpenTelemetry.Instrumentation.Owin.OwinInstrumentationOptions.RecordException.set -> void
+OpenTelemetry.Metrics.OwinInstrumentationMeterProviderBuilderExtensions
+OpenTelemetry.Trace.TracerProviderBuilderExtensions
+Owin.AppBuilderExtensions
+static OpenTelemetry.Metrics.OwinInstrumentationMeterProviderBuilderExtensions.AddOwinInstrumentation(this OpenTelemetry.Metrics.MeterProviderBuilder! builder) -> OpenTelemetry.Metrics.MeterProviderBuilder!
+static OpenTelemetry.Trace.TracerProviderBuilderExtensions.AddOwinInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! builder) -> OpenTelemetry.Trace.TracerProviderBuilder!
+static OpenTelemetry.Trace.TracerProviderBuilderExtensions.AddOwinInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! builder, System.Action<OpenTelemetry.Instrumentation.Owin.OwinInstrumentationOptions!>? configure) -> OpenTelemetry.Trace.TracerProviderBuilder!
+static Owin.AppBuilderExtensions.UseOpenTelemetry(this Owin.IAppBuilder! appBuilder) -> Owin.IAppBuilder!

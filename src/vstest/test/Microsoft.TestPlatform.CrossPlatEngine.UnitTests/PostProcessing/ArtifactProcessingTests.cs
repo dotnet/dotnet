@@ -291,7 +291,7 @@ public class ArtifactProcessingTests
         _dataSerializer.Setup(x => x.DeserializeMessage(It.IsAny<string>())).Returns((string rawMessage) => throw new Exception("Malformed json"));
 
         // act
-        await Assert.ThrowsExceptionAsync<Exception>(() => _artifactProcessingManager.PostProcessArtifactsAsync());
+        await Assert.ThrowsExactlyAsync<Exception>(() => _artifactProcessingManager.PostProcessArtifactsAsync());
 
         // assert
         _fileHelperMock.Verify(x => x.DeleteDirectory(It.IsAny<string>(), It.IsAny<bool>()), Times.Once);

@@ -6,8 +6,6 @@ using System.Globalization;
 
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 
-using Timer = System.Timers.Timer;
-
 namespace Microsoft.VisualStudio.TestPlatform.CommandLine.Internal;
 
 /// <summary>
@@ -16,9 +14,10 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.Internal;
 internal sealed class ProgressIndicator : IProgressIndicator, IDisposable
 {
     private readonly object _syncObject = new();
-    private int _dotCounter;
-    private Timer? _timer;
+    private readonly ISystemTimersTimer _timer;
     private readonly string _testRunProgressString;
+
+    private int _dotCounter;
 
     /// <summary>
     /// Used to output to the console
@@ -35,8 +34,9 @@ internal sealed class ProgressIndicator : IProgressIndicator, IDisposable
     /// </summary>
     public bool IsRunning { get; private set; }
 
-    public ProgressIndicator(IOutput output, IConsoleHelper consoleHelper)
+    public ProgressIndicator(IOutput output, IConsoleHelper consoleHelper, ISystemTimersTimer? timer = null)
     {
+        _timer = timer ?? new SystemTimersTimer(1000);
         ConsoleOutput = output;
         ConsoleHelper = consoleHelper;
         _testRunProgressString = string.Format(CultureInfo.CurrentCulture, "{0}...", Resources.Resources.ProgressIndicatorString);
@@ -47,12 +47,8 @@ internal sealed class ProgressIndicator : IProgressIndicator, IDisposable
     {
         lock (_syncObject)
         {
-            if (_timer == null)
-            {
-                _timer = new Timer(1000);
-                _timer.Elapsed += Timer_Elapsed;
-                _timer.Start();
-            }
+            _timer.Elapsed += Timer_Elapsed;
+            _timer.Start();
 
             // Print the string based on the previous state, that is dotCounter
             // This is required for smooth transition

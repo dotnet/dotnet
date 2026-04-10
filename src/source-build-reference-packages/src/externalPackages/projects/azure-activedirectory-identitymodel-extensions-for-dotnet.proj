@@ -7,7 +7,7 @@
     <!-- The FileVersion revision from the Microsoft-shipped package. This must be updated
          when the submodule is updated. See https://github.com/dotnet/source-build/issues/5509 -->
     <FileVersionRevision>50722</FileVersionRevision>
-    <!-- A NuGet package produced by this component, used by tests to validate FileVersionRevision. -->
+    <!-- Used by the update-external-metadata script to determine the package to download. -->
     <FileVersionValidationPackage>Microsoft.IdentityModel.Tokens</FileVersionValidationPackage>
   </PropertyGroup>
 

@@ -14,7 +14,7 @@
       from appending +<commitId>, which breaks DTAAgent.
     -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-    <VersionPrefix>18.5.0</VersionPrefix>
+    <VersionPrefix>18.7.0</VersionPrefix>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
     <PreReleaseVersionIteration></PreReleaseVersionIteration>
     <!-- Allowed values: '', 'prerelease', 'release'. Set to 'release' when stabilizing. -->
@@ -62,15 +62,20 @@
     <MicrosoftVisualStudioInteropVersion>17.13.39960</MicrosoftVisualStudioInteropVersion>
     <MicrosoftVSTelemetryVersion>17.13.24</MicrosoftVSTelemetryVersion>
     <MicrosoftVSUtilitiesInternalVersion>16.3.90</MicrosoftVSUtilitiesInternalVersion>
-    <MicrosoftVSSDKBuildToolsVersion>17.14.2119</MicrosoftVSSDKBuildToolsVersion>
+    <!--
+      Do NOT rename this to the name without underscores, this is property name used by both
+      arcade and the package, which will re-assign the variable from its props file, and this leads
+      to infinite loop of failed restores. See: https://github.com/dotnet/arcade/issues/16228
+    -->
+    <_MicrosoftVSSDKBuildToolsVersion_>17.14.2119</_MicrosoftVSSDKBuildToolsVersion_>
     <MicrosoftWin32RegistryVersion>5.0.0</MicrosoftWin32RegistryVersion>
     <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
-    <SystemCollectionsImmutableVersion>9.0.0</SystemCollectionsImmutableVersion>
     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
     <SystemReflectionMetadataVersion>8.0.0</SystemReflectionMetadataVersion>
     <TestPlatformExternalsVersion>18.0.0-preview-1-10911-061</TestPlatformExternalsVersion>
     <MicrosoftInternalTestPlatformExtensions>18.0.0-preview-1-10911-061</MicrosoftInternalTestPlatformExtensions>
     <TestPlatformMSDiaVersion>18.0.11024.295</TestPlatformMSDiaVersion>
+    <SystemDiagnosticsDiagnosticSourceVersion>8.0.1</SystemDiagnosticsDiagnosticSourceVersion>
     <SystemSecurityPrincipalWindowsVersion>5.0.0</SystemSecurityPrincipalWindowsVersion>
     <SystemRuntimeCompilerServicesUnsafeVersion>6.1.0</SystemRuntimeCompilerServicesUnsafeVersion>
   </PropertyGroup>
@@ -78,41 +83,41 @@
   <PropertyGroup Label="VSTest test settings">
     <!-- Name of the elements must be in sync with test\Microsoft.TestPlatform.TestUtilities\IntegrationTestBase.cs -->
     <AwesomeAssertionsVersion>8.1.0</AwesomeAssertionsVersion>
-    <MicrosoftTestingPlatformVersion>1.7.2</MicrosoftTestingPlatformVersion>
+    <MicrosoftTestingPlatformVersion>2.1.0</MicrosoftTestingPlatformVersion>
     <MoqVersion>4.16.1</MoqVersion>
     <!-- For coverage use our own package on latest stable -->
-    <MicrosoftCodeCoverageVersion>17.9.0</MicrosoftCodeCoverageVersion>
+    <MicrosoftCodeCoverageVersion>18.3.0</MicrosoftCodeCoverageVersion>
     <!-- These versions are used for running unit tests, and running acceptance tests. They are also used as the default version for projects
-    in TestAssets.sln to allow running and debugging tests in that solution directly in VS without having to run them via AcceptanceTests. -->
-    <MSTestTestFrameworkVersion>3.9.3</MSTestTestFrameworkVersion>
-    <MSTestTestAdapterVersion>3.9.3</MSTestTestAdapterVersion>
+    in TestAssets.slnx to allow running and debugging tests in that solution directly in VS without having to run them via AcceptanceTests. -->
+    <MSTestTestFrameworkVersion>4.1.0</MSTestTestFrameworkVersion>
+    <MSTestTestAdapterVersion>4.1.0</MSTestTestAdapterVersion>
     <XUnitFrameworkVersion>2.4.2</XUnitFrameworkVersion>
     <XUnitAdapterVersion>2.4.5</XUnitAdapterVersion>
     <XUnitConsoleRunnerVersion>2.4.2</XUnitConsoleRunnerVersion>
-    <NUnit3FrameworkVersion>3.14.0</NUnit3FrameworkVersion>
-    <NUnit3AdapterVersion>3.17.0</NUnit3AdapterVersion>
-    <NUnitConsoleRunnerVersion>3.16.3</NUnitConsoleRunnerVersion>
+    <NUnit3FrameworkVersion>4.5.1</NUnit3FrameworkVersion>
+    <NUnit3AdapterVersion>6.1.0</NUnit3AdapterVersion>
+    <NUnitConsoleRunnerVersion>3.22.0</NUnitConsoleRunnerVersion>
     <!--
-      Versions that are used when building projects from TestAssets.sln for compatibility tests. See Invoke-TestAssetsBuild in scripts/build.ps1.
+      Versions that are used when building projects from TestAssets.slnx for compatibility tests. See Invoke-TestAssetsBuild in scripts/build.ps1.
       Exact versions are used to avoid Nuget substituting them by closest match, if we make a typo.
       These versions need to be "statically" readable because we read this file as xml in our build and tests.
     -->
     <!-- <MSTestFrameworkLatestVersion></MSTestFrameworkLatestVersion> is not here, because we don't build MSTest locally, so we don't have access to the latest version. -->
-    <MSTestFrameworkLatestPreviewVersion>[3.9.3]</MSTestFrameworkLatestPreviewVersion>
-    <MSTestFrameworkLatestStableVersion>[3.9.3]</MSTestFrameworkLatestStableVersion>
-    <MSTestFrameworkRecentStableVersion>[3.3.1]</MSTestFrameworkRecentStableVersion>
+    <MSTestFrameworkLatestPreviewVersion>[4.1.0]</MSTestFrameworkLatestPreviewVersion>
+    <MSTestFrameworkLatestStableVersion>[4.1.0]</MSTestFrameworkLatestStableVersion>
+    <MSTestFrameworkRecentStableVersion>[4.0.2]</MSTestFrameworkRecentStableVersion>
     <MSTestFrameworkMostDownloadedVersion>[2.2.10]</MSTestFrameworkMostDownloadedVersion>
-    <MSTestFrameworkPreviousStableVersion>[2.2.10]</MSTestFrameworkPreviousStableVersion>
+    <MSTestFrameworkPreviousStableVersion>[3.11.1]</MSTestFrameworkPreviousStableVersion>
     <MSTestFrameworkLegacyStableVersion>[1.4.0]</MSTestFrameworkLegacyStableVersion>
     <!-- Versions that are used to restore previous versions of console, translation layer, and test.sdk for compatibility tests.
     See Invoke-TestAssetsBuild in scripts/build.ps1. Exact versions are used to avoid Nuget substituting them by closest match, if we make a typo.
     These versions need to be "statically" readable because we read this file as xml in our build and tests. -->
     <!-- <VSTestConsoleLatestVersion></VSTestConsoleLatestVersion> is not here, NETTestSdkVersion is used instead, because that is the version of the locally built latest package.  -->
-    <VSTestConsoleLatestPreviewVersion>[17.10.0]</VSTestConsoleLatestPreviewVersion>
-    <VSTestConsoleLatestStableVersion>[17.10.0]</VSTestConsoleLatestStableVersion>
-    <VSTestConsoleRecentStableVersion>[17.9.0]</VSTestConsoleRecentStableVersion>
-    <VSTestConsoleMostDownloadedVersion>[17.6.2]</VSTestConsoleMostDownloadedVersion>
-    <VSTestConsolePreviousStableVersion>[16.11.0]</VSTestConsolePreviousStableVersion>
+    <VSTestConsoleLatestPreviewVersion>[18.3.0]</VSTestConsoleLatestPreviewVersion>
+    <VSTestConsoleLatestStableVersion>[18.3.0]</VSTestConsoleLatestStableVersion>
+    <VSTestConsoleRecentStableVersion>[18.0.1]</VSTestConsoleRecentStableVersion>
+    <VSTestConsoleMostDownloadedVersion>[17.12.0]</VSTestConsoleMostDownloadedVersion>
+    <VSTestConsolePreviousStableVersion>[17.14.1]</VSTestConsolePreviousStableVersion>
     <VSTestConsoleLegacyStableVersion>[15.9.2]</VSTestConsoleLegacyStableVersion>
     <ILAsmPackageVersion>5.0.0</ILAsmPackageVersion>
   </PropertyGroup>

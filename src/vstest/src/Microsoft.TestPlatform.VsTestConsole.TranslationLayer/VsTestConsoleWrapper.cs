@@ -135,6 +135,22 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
 
         _vstestConsoleProcessManager.ProcessExited += (sender, args) => _requestSender.OnProcessExited();
         _sessionStarted = false;
+
+        // TODO: this is writing into the same file in integration tests (there is just 1 eqTrace for whole process)
+        // figure out how to make it useful. The logs helped a bit in debugging, but not by much.
+        //if (_consoleParameters.TraceLevel == TraceLevel.Verbose && !string.IsNullOrWhiteSpace(_consoleParameters.LogFilePath))
+        //{
+        //    var logFilePath = Path.ChangeExtension(
+        //        _consoleParameters.LogFilePath,
+        //        string.Format(
+        //            CultureInfo.InvariantCulture,
+        //            "translationLayer.{0}_{1}{2}",
+        //            DateTime.Now.ToString("yy-MM-dd_HH-mm-ss_fffff", CultureInfo.CurrentCulture),
+        //            new PlatformEnvironment().GetCurrentManagedThreadId(),
+        //            Path.GetExtension(_consoleParameters.LogFilePath))
+        //        );
+        //    EqtTrace.InitializeTrace(logFilePath, PlatformTraceLevel.Verbose);
+        //}
     }
 
 
@@ -635,10 +651,12 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
     /// <inheritdoc/>
     public void EndSession()
     {
-        EqtTrace.Info("VsTestConsoleWrapper.EndSession: Ending VsTestConsoleWrapper session");
+        EqtTrace.Info($"VsTestConsoleWrapper.EndSession: Ending VsTestConsoleWrapper session - process id:{_vstestConsoleProcessManager.ProcessId}");
 
         _requestSender.EndSession();
         _requestSender.Close();
+
+        EqtTrace.Info("VsTestConsoleWrapper.EndSession: Ended VsTestConsoleWrapper session");
 
         // If vstest.console is still hanging around, it should be explicitly killed.
         _vstestConsoleProcessManager.ShutdownProcess();
@@ -1200,16 +1218,53 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
         var timeout = EnvironmentHelper.GetConnectionTimeout();
         if (!_requestSender.WaitForRequestHandlerConnection(timeout * 1000))
         {
-            var processName = _processHelper.GetCurrentProcessFileName();
-            throw new TransationLayerException(
-                string.Format(
-                    CultureInfo.CurrentCulture,
-                    CommunicationUtilitiesResources.ConnectionTimeoutErrorMessage,
-                    processName,
-                    CoreUtilitiesConstants.VstestConsoleProcessName,
-                    timeout,
-                    EnvironmentHelper.VstestConnectionTimeout)
-            );
+            var currentProcessName = _processHelper.GetCurrentProcessFileName();
+            var childProcessName = _vstestConsoleProcessManager.ProcessName;
+            var childProcessId = _vstestConsoleProcessManager.ProcessId;
+            var childProcessExitCode = _vstestConsoleProcessManager.ExitCode;
+            var childProcessErrorOutput = _vstestConsoleProcessManager.ErrorOutput;
+
+            if (childProcessId == null)
+            {
+                // Process failed to start, likely due to antivirus or other startup issues. Recommend checking machine for issues that may prevent process from starting.
+                throw new TransationLayerException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        CommunicationUtilitiesResources.ConnectionTimeoutProcessDidNotStartErrorMessage,
+                        currentProcessName,
+                        CoreUtilitiesConstants.VstestConsoleProcessName,
+                        timeout));
+            }
+            else if (childProcessExitCode == null)
+            {
+                // Process is still alive but failed to connect within the timeout, likely due to machine slowness. Recommend increasing timeout.
+                throw new TransationLayerException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        CommunicationUtilitiesResources.ConnectionTimeoutWithDetailsErrorMessage,
+                        currentProcessName,
+                        CoreUtilitiesConstants.VstestConsoleProcessName,
+                        timeout,
+                        childProcessId,
+                        childProcessName,
+                        EnvironmentHelper.VstestConnectionTimeout));
+            }
+            else
+            {
+                // Process started and exited within the timeout, likely due to startup issues or incompatible environment. Recommend checking the error output for more details.
+                throw new TransationLayerException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        CommunicationUtilitiesResources.ConnectionTimeoutProcessExitedErrorMessage,
+                        currentProcessName,
+                        CoreUtilitiesConstants.VstestConsoleProcessName,
+                        timeout,
+                        childProcessId,
+                        childProcessName,
+                        childProcessExitCode,
+                        childProcessErrorOutput)
+                );
+            }
         }
 
         _testPlatformEventSource.TranslationLayerInitializeStop();

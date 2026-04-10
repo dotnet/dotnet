@@ -9,7 +9,7 @@ internal class EnvironmentVariables
 {
     public static readonly Dictionary<string, string?> Variables = new()
     {
-        ["VSTEST_CONNECTION_TIMEOUT"] = "999",
+        ["VSTEST_CONNECTION_TIMEOUT"] = "0.1",
         ["VSTEST_DEBUG_NOBP"] = "1",
         ["VSTEST_RUNNER_DEBUG_ATTACHVS"] = "0",
         ["VSTEST_HOST_DEBUG_ATTACHVS"] = "0",

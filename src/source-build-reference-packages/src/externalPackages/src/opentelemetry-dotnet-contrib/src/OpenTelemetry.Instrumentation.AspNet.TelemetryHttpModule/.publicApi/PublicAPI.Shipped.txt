@@ -1,0 +1,15 @@
+#nullable enable
+OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModule
+OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModule.Dispose() -> void
+OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModule.Init(System.Web.HttpApplication! context) -> void
+OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModule.TelemetryHttpModule() -> void
+OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModuleOptions
+OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModuleOptions.OnExceptionCallback.get -> System.Action<System.Diagnostics.Activity?, System.Web.HttpContextBase!, System.Exception!>?
+OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModuleOptions.OnExceptionCallback.set -> void
+OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModuleOptions.OnRequestStartedCallback.get -> System.Func<System.Web.HttpContextBase!, System.Diagnostics.ActivityContext, System.Diagnostics.Activity?>?
+OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModuleOptions.OnRequestStartedCallback.set -> void
+OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModuleOptions.OnRequestStoppedCallback.get -> System.Action<System.Diagnostics.Activity?, System.Web.HttpContextBase!>?
+OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModuleOptions.OnRequestStoppedCallback.set -> void
+OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModuleOptions.TextMapPropagator.get -> OpenTelemetry.Context.Propagation.TextMapPropagator!
+OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModuleOptions.TextMapPropagator.set -> void
+static OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModule.Options.get -> OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModuleOptions!

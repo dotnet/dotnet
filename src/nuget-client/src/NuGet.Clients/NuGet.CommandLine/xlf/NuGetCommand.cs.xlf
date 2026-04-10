@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="cs" original="../NuGetCommand.resx">
     <body>
@@ -911,7 +911,7 @@ nuget setapikey 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -Source http://example.com/
       </trans-unit>
       <trans-unit id="SignCommandAllowUntrustedRootDescription">
         <source>Allow signing with certificates whose root certificate is not in a trusted root store. The certificate chain is still built and validated for structure, but UntrustedRoot status is treated as a warning.</source>
-        <target state="new">Allow signing with certificates whose root certificate is not in a trusted root store. The certificate chain is still built and validated for structure, but UntrustedRoot status is treated as a warning.</target>
+        <target state="translated">Umožňuje podepisování pomocí certifikátů, jejichž kořenový certifikát není v důvěryhodném kořenovém úložišti. Řetězec certifikátů se i nadále sestavuje a ověřuje z hlediska struktury, ale stav UntrustedRoot je považován za upozornění.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateFingerprintDescription">

@@ -59,6 +59,7 @@ internal class FrameworkHandle : TestExecutionRecorder, IFrameworkHandle2, IDisp
     /// and should be used only when absolutely required as using it degrades the performance of the subsequent run.
     /// It throws InvalidOperationException when it is attempted to be enabled when keepAlive is false.
     /// </summary>
+    [Obsolete("This property has no effect", error: false)]
     public bool EnableShutdownAfterTestRun { get; set; }
 
     /// <summary>
