@@ -17,6 +17,21 @@
         <target state="translated">Afficher les application d’assistance de balise référencée</target>
         <note />
       </trans-unit>
+      <trans-unit id="cmdidAddNestedCsFileEditor|ButtonText">
+        <source>Add Nested .cs File</source>
+        <target state="new">Add Nested .cs File</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidAddNestedCsFileEditor|CommandName">
+        <source>AddNestedCsFileEditor</source>
+        <target state="new">AddNestedCsFileEditor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidAddNestedCsFileEditor|LocCanonicalName">
+        <source>AddNestedCsFileEditor</source>
+        <target state="new">AddNestedCsFileEditor</target>
+        <note />
+      </trans-unit>
       <trans-unit id="cmdidAddOrViewNestedCsFile|ButtonText">
         <source>Add or View Nested .cs File</source>
         <target state="translated">Ajouter ou afficher un fichier .cs imbriqué</target>
@@ -85,6 +100,21 @@
       <trans-unit id="cmdidShowGeneratedHtml|ButtonText">
         <source>Show Generated HTML</source>
         <target state="translated">Afficher le code HTML généré</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidViewPageEditor|ButtonText">
+        <source>View Page</source>
+        <target state="new">View Page</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidViewPageEditor|CommandName">
+        <source>ViewPageEditor</source>
+        <target state="new">ViewPageEditor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidViewPageEditor|LocCanonicalName">
+        <source>ViewPageEditor</source>
+        <target state="new">ViewPageEditor</target>
         <note />
       </trans-unit>
       <trans-unit id="menuidToolWindowToolbar|ButtonText">

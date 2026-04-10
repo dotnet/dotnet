@@ -44,14 +44,14 @@ namespace Microsoft.VisualStudio.RazorExtension;
         expression: "RazorContentType",
         termNames: ["RazorContentType"],
         termValues: [$"ActiveEditorContentType:{RazorConstants.RazorLSPContentTypeName}"])]
-// Activate context menu commands when a .razor or .cshtml file is selected in Solution Explorer
+// Activate context menu commands when a .razor or .cshtml file (or their nested files) is selected or opened
 [ProvideAutoLoad(GuidRazorFileContextString, PackageAutoLoadFlags.BackgroundLoad)]
 [ProvideUIContextRule(
         contextGuid: GuidRazorFileContextString,
         name: "Razor File Selected",
-        expression: "DotNetCoreRazorProject & (RazorFile | CshtmlFile)",
-        termNames: ["DotNetCoreRazorProject", "RazorFile", "CshtmlFile"],
-        termValues: ["ActiveProjectCapability:DotNetCoreRazor", "HierSingleSelectionName:.razor$", "HierSingleSelectionName:.cshtml$"])]
+        expression: "DotNetCoreRazorProject & (RazorFile | CshtmlFile | RazorNestedFile | CshtmlNestedFile)",
+        termNames: ["DotNetCoreRazorProject", "RazorFile", "CshtmlFile", "RazorNestedFile", "CshtmlNestedFile"],
+        termValues: ["ActiveProjectCapability:DotNetCoreRazor", @"HierSingleSelectionName:\.razor$", @"HierSingleSelectionName:\.cshtml$", @"HierSingleSelectionName:\.razor\.", @"HierSingleSelectionName:\.cshtml\."])]
 internal sealed class RazorPackage : AsyncPackage
 {
     public const string PackageGuidString = "13b72f58-279e-49e0-a56d-296be02f0805";
@@ -63,9 +63,12 @@ internal sealed class RazorPackage : AsyncPackage
     // Razor nested files command set
     internal const string GuidRazorNestedFilesCmdSetString = "8B2B3C5D-6E4A-4F9B-9C8D-1A2B3C4D5E6F";
     internal static readonly Guid GuidRazorNestedFilesCmdSet = new Guid(GuidRazorNestedFilesCmdSetString);
+
     internal const uint CmdIdAddOrViewNestedCsFile = 0x0100;
     internal const uint CmdIdAddOrViewNestedCssFile = 0x0101;
     internal const uint CmdIdAddOrViewNestedJsFile = 0x0102;
+    internal const uint CmdIdViewPageEditor = 0x0203;
+    internal const uint CmdIdAddNestedCsFileEditor = 0x0204;
 
     // UI Context for when a .razor or .cshtml file is selected
     internal const string GuidRazorFileContextString = "7C3F2F9E-8D4A-4B6C-9E1F-5A8D7C6B3E2D";
@@ -162,7 +165,8 @@ internal sealed class RazorPackage : AsyncPackage
     }
 
     /// <summary>
-    /// Registers the nested file commands (CSS, C#, Javascript) in the menu command service.
+    /// Registers the nested file commands (CSS, C#, Javascript) in the menu command service
+    /// for both Solution Explorer and editor context menus.
     /// </summary>
     private void RegisterNestedFileCommands(OleMenuCommandService mcs)
     {
@@ -171,27 +175,39 @@ internal sealed class RazorPackage : AsyncPackage
         var componentModel = (IComponentModel)GetGlobalService(typeof(SComponentModel));
         var requestInvoker = new Lazy<LSPRequestInvokerWrapper>(() => componentModel.GetService<LSPRequestInvokerWrapper>());
 
-        // Create command handlers
-        var csharpHandler = new NestedFileCommandHandler(this, ".cs", NestedFileKind.CSharp, requestInvoker);
-        var cssHandler = new NestedFileCommandHandler(this, ".css", NestedFileKind.Css, requestInvoker);
-        var javascriptHandler = new NestedFileCommandHandler(this, ".js", NestedFileKind.JavaScript, requestInvoker);
+        // Add nested file commands
+        AddMenuNestedFileCommand(".cs", NestedFileKind.CSharp, (int)CmdIdAddOrViewNestedCsFile, GuidRazorNestedFilesCmdSet, allowExternalHandlers: false, hideWhenFileExists: false);
+        AddMenuNestedFileCommand(".css", NestedFileKind.Css, (int)CmdIdAddOrViewNestedCssFile, GuidRazorNestedFilesCmdSet, allowExternalHandlers: false, hideWhenFileExists: false);
+        AddMenuNestedFileCommand(".js", NestedFileKind.JavaScript, (int)CmdIdAddOrViewNestedJsFile, GuidRazorNestedFilesCmdSet, allowExternalHandlers: false, hideWhenFileExists: false);
 
-        // .cs Nested File Command
-        var csharpCommandId = new CommandID(GuidRazorNestedFilesCmdSet, (int)CmdIdAddOrViewNestedCsFile);
-        var csharpCommand = new OleMenuCommand(csharpHandler.Execute, csharpCommandId);
-        csharpCommand.BeforeQueryStatus += csharpHandler.OnBeforeQueryStatus;
-        mcs.AddCommand(csharpCommand);
+        // .cs View Code (Editor) — override standard ViewCode (F7) command so VS displays the F7
+        // keybinding annotation. Only shows when .cs file exists; yields when missing so the
+        // cmdidAddNestedCsFileEditor command (without F7) handles the "Add" case instead.
+        // When not in a Razor file, sets Supported = false to fall through to default ViewCode.
+        AddMenuNestedFileCommand(".cs", NestedFileKind.CSharp, (int)VSConstants.VSStd97CmdID.ViewCode, VSConstants.GUID_VSStandardCommandSet97, allowExternalHandlers: true, hideWhenFileExists: false);
 
-        // .css Nested File Command
-        var cssCommandId = new CommandID(GuidRazorNestedFilesCmdSet, (int)CmdIdAddOrViewNestedCssFile);
-        var cssCommand = new OleMenuCommand(cssHandler.Execute, cssCommandId);
-        cssCommand.BeforeQueryStatus += cssHandler.OnBeforeQueryStatus;
-        mcs.AddCommand(cssCommand);
+        // .cs Add Code (Editor) — shows "Add .cs file" only when the .cs doesn't exist yet.
+        // Uses a separate command ID from ViewCode so it doesn't display the F7 keybinding.
+        AddMenuNestedFileCommand(".cs", NestedFileKind.CSharp, (int)CmdIdAddNestedCsFileEditor, GuidRazorNestedFilesCmdSet, allowExternalHandlers: false, hideWhenFileExists: true);
 
-        // .js Nested File Command
-        var javascriptCommandId = new CommandID(GuidRazorNestedFilesCmdSet, (int)CmdIdAddOrViewNestedJsFile);
-        var javascriptCommand = new OleMenuCommand(javascriptHandler.Execute, javascriptCommandId);
-        javascriptCommand.BeforeQueryStatus += javascriptHandler.OnBeforeQueryStatus;
-        mcs.AddCommand(javascriptCommand);
+        // View Page Command (Editor) — appears in nested file editors (.cshtml.cs, etc.)
+        var viewPageHandler = new ViewPageCommandHandler(this);
+        AddMenuCommand((int)CmdIdViewPageEditor, GuidRazorNestedFilesCmdSet, viewPageHandler.Execute, viewPageHandler.OnBeforeQueryStatus);
+
+        return;
+
+        void AddMenuCommand(int cmdId, Guid cmdSet, EventHandler executeHandler, EventHandler queryStatusHandler)
+        {
+            var cmdID = new CommandID(cmdSet, cmdId);
+            var command = new OleMenuCommand(executeHandler, cmdID);
+            command.BeforeQueryStatus += queryStatusHandler;
+            mcs.AddCommand(command);
+        }
+
+        void AddMenuNestedFileCommand(string fileExtension, NestedFileKind fileKind, int cmdId, Guid cmdSet, bool allowExternalHandlers, bool hideWhenFileExists)
+        {
+            var handler = new NestedFileCommandHandler(this, fileExtension, fileKind, requestInvoker, allowExternalHandlers, hideWhenFileExists);
+            AddMenuCommand(cmdId, cmdSet, handler.Execute, handler.OnBeforeQueryStatus);
+        }
     }
 }

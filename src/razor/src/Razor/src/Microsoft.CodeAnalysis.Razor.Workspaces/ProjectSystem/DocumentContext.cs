@@ -69,7 +69,7 @@ internal class DocumentContext(Uri uri, IDocumentSnapshot snapshot)
 
         static RazorSyntaxTree GetSyntaxTreeCore(RazorCodeDocument codeDocument)
         {
-            return codeDocument.GetRequiredSyntaxTree();
+            return codeDocument.GetRequiredTagHelperRewrittenSyntaxTree();
         }
 
         async ValueTask<RazorSyntaxTree> GetSyntaxTreeCoreAsync(CancellationToken cancellationToken)
