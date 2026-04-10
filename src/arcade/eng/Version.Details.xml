@@ -135,9 +135,7 @@
       <Uri>https://github.com/dotnet/msbuild</Uri>
       <Sha>d1cce8d7cc03c23a4f1bad8e9240714fd9d199a3</Sha>
     </Dependency>
-    <!-- Important: Don't version higher than what's available in the toolset SDK as NuGet assemblies
-         aren't redistributed with .NETCoreApp msbuild tasks.
-         NuGet dependencies required for source build to lift to the previously-source-built version.
+    <!-- NuGet dependencies required for source build to lift to the previously-source-built version.
          Arcade redistributes these in its MSBuild task packages and needs real executable assemblies,
          not SBRP reference stubs. -->
     <Dependency Name="NuGet.Commands" Version="7.0.1">
