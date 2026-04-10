@@ -40,14 +40,17 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
         }
 
         var tagHelperContext = codeDocument.GetTagHelperContext();
-        var syntaxTree = codeDocument.GetPreTagHelperSyntaxTree() ?? codeDocument.GetSyntaxTree();
-        var parserOptions = syntaxTree?.Options;
+
+        // This phase works with IR nodes only -- no syntax tree access needed.
+        // RazorCodeDocument.ParserOptions is a non-nullable property initialized by Create(),
+        // so it is always available here.
+        var parserOptions = codeDocument.ParserOptions;
 
         // Choose resolver based on file kind and language version. Component features
         // (MarkupElementIntermediateNode, RZ10012 diagnostics) require Version_3_0+ because
         // the ComponentDocumentClassifierPass is only registered at that version.
         _resolver = (codeDocument.FileKind.IsComponent() || codeDocument.FileKind.IsComponentImport())
-            && parserOptions?.LanguageVersion >= RazorLanguageVersion.Version_3_0
+            && parserOptions.LanguageVersion >= RazorLanguageVersion.Version_3_0
             ? new ComponentTagHelperResolver()
             : new LegacyTagHelperResolver();
 
@@ -65,7 +68,7 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
 
         using var usedHelpers = new TagHelperCollection.Builder();
         var sourceDocument = codeDocument.Source;
-        var context = new ResolutionContext(sourceDocument, parserOptions, documentNode);
+        var context = new ResolutionContext(sourceDocument, documentNode);
         ResolveElements(documentNode, binder, prefix, usedHelpers, in context);
 
         // Add tag helper descriptor validation diagnostics (e.g. RZ3003).
@@ -90,13 +93,11 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
     private readonly struct ResolutionContext
     {
         public readonly RazorSourceDocument SourceDocument;
-        public readonly RazorParserOptions ParserOptions;
         public readonly DocumentIntermediateNode DocumentNode;
 
-        public ResolutionContext(RazorSourceDocument sourceDocument, RazorParserOptions parserOptions, DocumentIntermediateNode documentNode)
+        public ResolutionContext(RazorSourceDocument sourceDocument, DocumentIntermediateNode documentNode)
         {
             SourceDocument = sourceDocument;
-            ParserOptions = parserOptions;
             DocumentNode = documentNode;
         }
     }

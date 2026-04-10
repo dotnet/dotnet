@@ -461,7 +461,7 @@ public abstract class IntegrationTestBase
 
         Assert.Equal(baseline, actualBaseline);
 
-        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+        var syntaxTree = codeDocument.GetTagHelperRewrittenSyntaxTree() ?? codeDocument.GetRequiredSyntaxTree();
         var visitor = new CodeSpanVisitor();
         visitor.Visit(syntaxTree.Root);
 
@@ -561,7 +561,7 @@ public abstract class IntegrationTestBase
         Assert.NotNull(csharpDocument);
         var linePragmas = csharpDocument.LinePragmas;
 
-        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+        var syntaxTree = codeDocument.GetTagHelperRewrittenSyntaxTree() ?? codeDocument.GetRequiredSyntaxTree();
         var sourceContent = syntaxTree.Source.Text.ToString();
         var classifiedSpans = syntaxTree.GetClassifiedSpans();
         foreach (var classifiedSpan in classifiedSpans)

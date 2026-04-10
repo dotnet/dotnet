@@ -44,7 +44,7 @@ internal sealed class RazorHtmlWriter : SyntaxWalker
         using var codeWriter = new CodeWriter(options);
 
         var htmlWriter = new RazorHtmlWriter(source, codeWriter);
-        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredTagHelperRewrittenSyntaxTree();
 
         htmlWriter.Visit(syntaxTree);
 

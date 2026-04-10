@@ -36,7 +36,9 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 {
     protected override RazorCodeDocument ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
-        var syntaxTree = codeDocument.GetPreTagHelperSyntaxTree() ?? codeDocument.GetSyntaxTree();
+        // The canonical syntax tree is established by DefaultRazorTagHelperContextDiscoveryPhase,
+        // which always runs before this phase in the pipeline.
+        var syntaxTree = codeDocument.GetSyntaxTree();
         ThrowForMissingDocumentDependency(syntaxTree);
 
         var documentNode = new DocumentIntermediateNode();

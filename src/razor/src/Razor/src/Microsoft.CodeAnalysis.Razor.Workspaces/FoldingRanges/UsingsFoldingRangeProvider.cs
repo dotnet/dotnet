@@ -16,7 +16,7 @@ internal class UsingsFoldingRangeProvider : IRazorFoldingRangeProvider
         using var ranges = new PooledArrayBuilder<FoldingRange>();
 
         var sourceDocument = codeDocument.Source;
-        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredTagHelperRewrittenSyntaxTree();
 
         foreach (var directive in syntaxTree.EnumerateUsingDirectives())
         {

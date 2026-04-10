@@ -26,7 +26,7 @@ internal class RemoveUnnecessaryDirectivesCodeActionProvider : IRazorCodeActionP
             return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }
 
-        if (!context.CodeDocument.TryGetSyntaxTree(out var tree))
+        if (!context.CodeDocument.TryGetTagHelperRewrittenSyntaxTree(out var tree))
         {
             return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }

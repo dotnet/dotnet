@@ -4,36 +4,53 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.NestedFiles;
 using Microsoft.CodeAnalysis.Razor.Protocol.NestedFiles;
 using Microsoft.VisualStudio.Razor.LanguageClient;
 using Microsoft.VisualStudio.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 
 namespace Microsoft.VisualStudio.RazorExtension.NestedFiles;
 
 /// <summary>
-/// Base class for handling Add/View nested file commands for Razor documents.
+/// Handles Add/View nested file commands for Razor documents from both Solution Explorer
+/// and editor context menus.
 /// When the file doesn't exist, sends an LSP request to the Razor language server
 /// to create it via workspace/applyEdit. When the file exists, just opens it.
 /// </summary>
+/// <param name="serviceProvider">VS service provider for accessing shell services.</param>
+/// <param name="fileExtension">The nested file extension to add/view (e.g., ".cs", ".css", ".js").</param>
+/// <param name="fileKind">The kind of nested file, used when creating new files via LSP.</param>
+/// <param name="requestInvoker">Lazy wrapper for sending LSP requests to the Razor language server.</param>
+/// <param name="allowExternalHandlers">
+/// When true, sets Supported = false instead of Visible = false when the command doesn't apply. 
+/// This tells VS that this handler does not own the command, allowing external handlers (e.g., the default 
+/// ViewCode/F7 handler) to take over.
+/// </param>
+/// <param name="hideWhenFileExists">
+/// When true, hides the command when the nested file already exists. Used for the editor-only
+/// "Add .cs" command (cmdidAddNestedCsFileEditor), which is hidden when the .cs file exists
+/// because cmdidViewCode with F7 handles the "View" case instead.
+/// </param>
 internal sealed class NestedFileCommandHandler(
     IServiceProvider serviceProvider,
     string fileExtension,
     NestedFileKind fileKind,
-    Lazy<LSPRequestInvokerWrapper> requestInvoker)
+    Lazy<LSPRequestInvokerWrapper> requestInvoker,
+    bool allowExternalHandlers,
+    bool hideWhenFileExists)
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
     private readonly string _fileExtension = fileExtension;
     private readonly NestedFileKind _fileKind = fileKind;
     private readonly Lazy<LSPRequestInvokerWrapper> _requestInvoker = requestInvoker;
+    private readonly bool _allowExternalHandlers = allowExternalHandlers;
+    private readonly bool _hideWhenFileExists = hideWhenFileExists;
 
     /// <summary>
     /// Configures the command status and text based on whether the nested file exists.
@@ -46,32 +63,44 @@ internal sealed class NestedFileCommandHandler(
         }
 
         // Check if the Razor file context is active before doing expensive hierarchy queries
-        if (!IsRazorFileUIContextActive()
+        if (!SelectionHelper.IsRazorFileUIContextActive(_serviceProvider)
             || GetSelectedRazorFilePath() is not string razorFilePath)
         {
-            command.Visible = false;
+            if (_allowExternalHandlers)
+            {
+                command.Supported = false;
+            }
+            else
+            {
+                command.Visible = false;
+            }
+
             return;
         }
 
         var nestedFilePath = GetNestedFilePath(razorFilePath);
         var nestedFileExists = File.Exists(nestedFilePath);
+
+        if (_allowExternalHandlers && !nestedFileExists)
+        {
+            // yield so another handler can show "Add" (without F7 keybinding)
+            command.Supported = false;
+            return;
+        }
+
+        if (_hideWhenFileExists && nestedFileExists)
+        {
+            // The nested file exists and we've been told this command should be hidden in that case
+            command.Visible = false;
+            return;
+        }
+
         var nestedFileName = Path.GetFileName(nestedFilePath);
 
+        command.Supported = true;
         command.Visible = true;
         command.Enabled = true;
         command.Text = nestedFileExists ? Resources.FormatView_Nested_File(nestedFileName) : Resources.FormatAdd_Nested_File(nestedFileName);
-    }
-
-    private bool IsRazorFileUIContextActive()
-    {
-        ThreadHelper.ThrowIfNotOnUIThread();
-
-        var contextGuid = RazorPackage.GuidRazorFileContext;
-
-        return _serviceProvider.GetService(typeof(SVsShellMonitorSelection)) is IVsMonitorSelection monitorSelection
-            && monitorSelection.GetCmdUIContextCookie(ref contextGuid, out var cookie) == VSConstants.S_OK
-            && monitorSelection.IsCmdUIContextActive(cookie, out var isActive) == VSConstants.S_OK
-            && isActive != 0;
     }
 
     /// <summary>
@@ -139,70 +168,23 @@ internal sealed class NestedFileCommandHandler(
     }
 
     /// <summary>
-    /// Gets the file path of the currently selected Razor file in Solution Explorer.
+    /// Gets the file path of the currently selected/active Razor file.
+    /// This works for both Solution Explorer selection and the active editor document,
+    /// because IVsMonitorSelection tracks the active window frame's hierarchy item.
     /// </summary>
     private string? GetSelectedRazorFilePath()
     {
-        ThreadHelper.ThrowIfNotOnUIThread();
+        var filePath = SelectionHelper.GetCurrentSelectionPath(_serviceProvider);
 
-        if (_serviceProvider.GetService(typeof(SVsShellMonitorSelection)) is not IVsMonitorSelection monitorSelection)
+        if (filePath is not null
+            && FileUtilities.IsAnyRazorFilePath(filePath, StringComparison.OrdinalIgnoreCase)
+            && Path.GetFileName(filePath) is string fileName
+            && !string.Equals(fileName, ComponentHelpers.ImportsFileName, StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(fileName, MvcImportProjectFeature.ImportsFileName, StringComparison.OrdinalIgnoreCase))
         {
-            return null;
+            return filePath;
         }
 
-        monitorSelection.GetCurrentSelection(out var hierarchyPtr, out var itemId, out _, out var selectionContainerPtr);
-
-        try
-        {
-            if (itemId is VSConstants.VSITEMID_NIL or VSConstants.VSITEMID_ROOT or VSConstants.VSITEMID_SELECTION)
-            {
-                return null;
-            }
-
-            if (hierarchyPtr != IntPtr.Zero)
-            {
-                var hierarchy = Marshal.GetObjectForIUnknown(hierarchyPtr) as IVsHierarchy;
-                if (hierarchy is IVsProject project)
-                {
-                    project.GetMkDocument(itemId, out var filePath);
-
-                    if (filePath is not null)
-                    {
-                        if (filePath.EndsWith(FileKinds.ComponentFileExtension, StringComparison.OrdinalIgnoreCase))
-                        {
-                            // return all paths with extension .razor except for the special imports file
-                            var fileName = Path.GetFileNameWithoutExtension(filePath);
-                            if (!string.Equals(fileName, ComponentHelpers.ImportsFileName, StringComparison.OrdinalIgnoreCase))
-                            {
-                                return filePath;
-                            }
-                        }
-                        else if (filePath.EndsWith(FileKinds.LegacyFileExtension, StringComparison.OrdinalIgnoreCase))
-                        {
-                            // return all paths with extension .cshtml except for the special imports file
-                            var fileName = Path.GetFileNameWithoutExtension(filePath);
-                            if (!string.Equals(fileName, MvcImportProjectFeature.ImportsFileName, StringComparison.OrdinalIgnoreCase))
-                            {
-                                return filePath;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return null;
-        }
-        finally
-        {
-            if (hierarchyPtr != IntPtr.Zero)
-            {
-                Marshal.Release(hierarchyPtr);
-            }
-
-            if (selectionContainerPtr != IntPtr.Zero)
-            {
-                Marshal.Release(selectionContainerPtr);
-            }
-        }
+        return null;
     }
 }
