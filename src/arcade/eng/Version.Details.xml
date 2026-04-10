@@ -135,6 +135,39 @@
       <Uri>https://github.com/dotnet/msbuild</Uri>
       <Sha>d1cce8d7cc03c23a4f1bad8e9240714fd9d199a3</Sha>
     </Dependency>
+    <!-- Important: Don't version higher than what's available in the toolset SDK as NuGet assemblies
+         aren't redistributed with .NETCoreApp msbuild tasks.
+         NuGet dependencies required for source build to lift to the previously-source-built version.
+         Arcade redistributes these in its MSBuild task packages and needs real executable assemblies,
+         not SBRP reference stubs. -->
+    <Dependency Name="NuGet.Commands" Version="7.0.1">
+      <Uri>https://github.com/nuget/nuget.client</Uri>
+      <Sha>779eff1e73420573dd39dbbe54896ff8f08955e1</Sha>
+    </Dependency>
+    <Dependency Name="NuGet.Common" Version="7.0.1">
+      <Uri>https://github.com/nuget/nuget.client</Uri>
+      <Sha>779eff1e73420573dd39dbbe54896ff8f08955e1</Sha>
+    </Dependency>
+    <Dependency Name="NuGet.Configuration" Version="7.0.1">
+      <Uri>https://github.com/nuget/nuget.client</Uri>
+      <Sha>779eff1e73420573dd39dbbe54896ff8f08955e1</Sha>
+    </Dependency>
+    <Dependency Name="NuGet.Frameworks" Version="7.0.1">
+      <Uri>https://github.com/nuget/nuget.client</Uri>
+      <Sha>779eff1e73420573dd39dbbe54896ff8f08955e1</Sha>
+    </Dependency>
+    <Dependency Name="NuGet.Packaging" Version="7.0.1">
+      <Uri>https://github.com/nuget/nuget.client</Uri>
+      <Sha>779eff1e73420573dd39dbbe54896ff8f08955e1</Sha>
+    </Dependency>
+    <Dependency Name="NuGet.ProjectModel" Version="7.0.1">
+      <Uri>https://github.com/nuget/nuget.client</Uri>
+      <Sha>779eff1e73420573dd39dbbe54896ff8f08955e1</Sha>
+    </Dependency>
+    <Dependency Name="NuGet.Versioning" Version="7.0.1">
+      <Uri>https://github.com/nuget/nuget.client</Uri>
+      <Sha>779eff1e73420573dd39dbbe54896ff8f08955e1</Sha>
+    </Dependency>
     <Dependency Name="System.Composition" Version="10.0.3">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>dc5fd7a8dce8309e4add8fd4bd5d8718f221b15a</Sha>

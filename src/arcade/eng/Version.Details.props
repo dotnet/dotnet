@@ -50,6 +50,14 @@ This file should be imported by eng/Versions.props
     <MicrosoftTemplateEngineAuthoringTasksPackageVersion>10.0.100-preview.4.25220.1</MicrosoftTemplateEngineAuthoringTasksPackageVersion>
     <!-- dotnet-xharness dependencies -->
     <MicrosoftDotNetXHarnessCLIPackageVersion>11.0.0-prerelease.26181.1</MicrosoftDotNetXHarnessCLIPackageVersion>
+    <!-- nuget-nuget.client dependencies -->
+    <NuGetCommandsPackageVersion>7.0.1</NuGetCommandsPackageVersion>
+    <NuGetCommonPackageVersion>7.0.1</NuGetCommonPackageVersion>
+    <NuGetConfigurationPackageVersion>7.0.1</NuGetConfigurationPackageVersion>
+    <NuGetFrameworksPackageVersion>7.0.1</NuGetFrameworksPackageVersion>
+    <NuGetPackagingPackageVersion>7.0.1</NuGetPackagingPackageVersion>
+    <NuGetProjectModelPackageVersion>7.0.1</NuGetProjectModelPackageVersion>
+    <NuGetVersioningPackageVersion>7.0.1</NuGetVersioningPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
@@ -98,5 +106,13 @@ This file should be imported by eng/Versions.props
     <MicrosoftTemplateEngineAuthoringTasksVersion>$(MicrosoftTemplateEngineAuthoringTasksPackageVersion)</MicrosoftTemplateEngineAuthoringTasksVersion>
     <!-- dotnet-xharness dependencies -->
     <MicrosoftDotNetXHarnessCLIVersion>$(MicrosoftDotNetXHarnessCLIPackageVersion)</MicrosoftDotNetXHarnessCLIVersion>
+    <!-- nuget-nuget.client dependencies -->
+    <NuGetCommandsVersion>$(NuGetCommandsPackageVersion)</NuGetCommandsVersion>
+    <NuGetCommonVersion>$(NuGetCommonPackageVersion)</NuGetCommonVersion>
+    <NuGetConfigurationVersion>$(NuGetConfigurationPackageVersion)</NuGetConfigurationVersion>
+    <NuGetFrameworksVersion>$(NuGetFrameworksPackageVersion)</NuGetFrameworksVersion>
+    <NuGetPackagingVersion>$(NuGetPackagingPackageVersion)</NuGetPackagingVersion>
+    <NuGetProjectModelVersion>$(NuGetProjectModelPackageVersion)</NuGetProjectModelVersion>
+    <NuGetVersioningVersion>$(NuGetVersioningPackageVersion)</NuGetVersioningVersion>
   </PropertyGroup>
 </Project>
