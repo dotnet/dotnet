@@ -21,7 +21,7 @@
     "rollForward": "latestPatch"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "10.0.0-beta.26201.4",
+    "Microsoft.DotNet.Arcade.Sdk": "10.0.0-beta.26208.2",
     "Microsoft.Build.NoTargets": "3.7.0"
   }
 }
