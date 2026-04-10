@@ -9,7 +9,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal;
 ///     any release. You should only use it directly in your code with extreme caution and knowing that
 ///     doing so can result in application failures when updating to a new Entity Framework Core release.
 /// </summary>
-public class View : TableBase, IView
+public class RelationalJsonArray : RelationalJsonElement, IRelationalJsonArray
 {
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -17,22 +17,12 @@ public class View : TableBase, IView
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public View(string name, string? schema, RelationalModel model)
-        : base(name, schema, model)
+    public RelationalJsonArray(
+        IColumnBase containingColumn,
+        bool isNullable)
+        : base(containingColumn, isNullable)
     {
     }
-
-    /// <inheritdoc />
-    public virtual string? ViewDefinitionSql
-        => (string?)EntityTypeMappings.Select(m => m.TypeBase[RelationalAnnotationNames.ViewDefinitionSql])
-            .FirstOrDefault(d => d != null);
-
-    /// <inheritdoc />
-    protected override IColumnBase? FindColumn(IProperty property)
-        => property.GetViewColumnMappings()
-                .FirstOrDefault(cm => cm.TableMapping.Table == this)?.Column
-            ?? property.GetJsonElementMappings()
-                .FirstOrDefault(m => m.TableMapping.Table == this)?.Element.ContainingColumn;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -40,8 +30,13 @@ public class View : TableBase, IView
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public new virtual ViewColumn? FindColumn(string name)
-        => (ViewColumn?)base.FindColumn(name);
+    public RelationalJsonArray(
+        string name,
+        RelationalJsonObject parentElement,
+        bool isNullable)
+        : base(name, parentElement, isNullable)
+    {
+    }
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -49,30 +44,23 @@ public class View : TableBase, IView
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public override string ToString()
-        => ((IView)this).ToDebugString(MetadataDebugStringOptions.SingleLineDefault);
-
-    /// <inheritdoc />
-    IEnumerable<IViewMapping> IView.EntityTypeMappings
+    public RelationalJsonArray(
+        RelationalJsonArray parentElement,
+        bool isNullable)
+        : base(parentElement, isNullable)
     {
-        [DebuggerStepThrough]
-        get => EntityTypeMappings.Cast<IViewMapping>();
     }
 
     /// <inheritdoc />
-    IEnumerable<IViewColumn> IView.Columns
+    public virtual IRelationalJsonElement ElementType
     {
-        [DebuggerStepThrough]
-        get => Columns.Values.Cast<IViewColumn>();
-    }
+        get => field;
+        set
+        {
+            Check.DebugAssert(field == null, $"ElementType has already been set to {field}.");
+            Check.DebugAssert(value == null || value.ParentElement == this, $"ElementType's parent must be this JSON array, not {value!.ParentElement}.");
 
-    /// <inheritdoc />
-    [DebuggerStepThrough]
-    IViewColumn? IView.FindColumn(string name)
-        => (IViewColumn?)base.FindColumn(name);
-
-    /// <inheritdoc />
-    [DebuggerStepThrough]
-    IViewColumn? IView.FindColumn(IPropertyBase propertyBase)
-        => (IViewColumn?)FindColumn(propertyBase);
+            field = value!;
+        }
+    } = null!;
 }

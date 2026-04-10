@@ -115,24 +115,24 @@
       ]
     },
     {
-      "Type": "readonly struct Microsoft.EntityFrameworkCore.FullTextSearchResult<TKey>",
+      "Type": "readonly struct Microsoft.EntityFrameworkCore.Query.FullTextSearchResult<TKey>",
       "Methods": [
         {
-          "Member": "Microsoft.EntityFrameworkCore.FullTextSearchResult<TKey>.FullTextSearchResult(TKey key, int rank);"
+          "Member": "Microsoft.EntityFrameworkCore.Query.FullTextSearchResult<TKey>.FullTextSearchResult(TKey key, int rank);"
         },
         {
-          "Member": "Microsoft.EntityFrameworkCore.FullTextSearchResult<TKey>.FullTextSearchResult();"
+          "Member": "Microsoft.EntityFrameworkCore.Query.FullTextSearchResult<TKey>.FullTextSearchResult();"
         },
         {
-          "Member": "void Microsoft.EntityFrameworkCore.FullTextSearchResult<TKey>.Deconstruct(out TKey key, out int rank);"
+          "Member": "void Microsoft.EntityFrameworkCore.Query.FullTextSearchResult<TKey>.Deconstruct(out TKey key, out int rank);"
         }
       ],
       "Properties": [
         {
-          "Member": "TKey Microsoft.EntityFrameworkCore.FullTextSearchResult<TKey>.Key { get; }"
+          "Member": "TKey Microsoft.EntityFrameworkCore.Query.FullTextSearchResult<TKey>.Key { get; }"
         },
         {
-          "Member": "int Microsoft.EntityFrameworkCore.FullTextSearchResult<TKey>.Rank { get; }"
+          "Member": "int Microsoft.EntityFrameworkCore.Query.FullTextSearchResult<TKey>.Rank { get; }"
         }
       ]
     },
@@ -1299,19 +1299,19 @@
           "Member": "Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder.SqlServerFullTextIndexBuilder(Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder indexBuilder);"
         },
         {
+          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder.HasChangeTracking(Microsoft.EntityFrameworkCore.FullTextChangeTracking changeTracking);"
+        },
+        {
           "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder.HasDatabaseName(string? name);"
         },
         {
-          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder.HasKeyIndex(string keyIndexName);"
+          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder.UseCatalog(string catalog);"
         },
         {
-          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder.HasLanguage(string propertyName, string language);"
+          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder.UseKeyIndex(string keyIndex);"
         },
         {
-          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder.OnCatalog(string catalogName);"
-        },
-        {
-          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder.WithChangeTracking(Microsoft.EntityFrameworkCore.FullTextChangeTracking changeTracking);"
+          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder.UseLanguage(string propertyName, string language);"
         }
       ],
       "Properties": [
@@ -1327,19 +1327,19 @@
           "Member": "Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder<TEntity>.SqlServerFullTextIndexBuilder(Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder<TEntity> indexBuilder);"
         },
         {
+          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder<TEntity> Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder<TEntity>.HasChangeTracking(Microsoft.EntityFrameworkCore.FullTextChangeTracking changeTracking);"
+        },
+        {
           "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder<TEntity> Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder<TEntity>.HasDatabaseName(string? name);"
         },
         {
-          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder<TEntity> Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder<TEntity>.HasKeyIndex(string keyIndexName);"
+          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder<TEntity> Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder<TEntity>.UseCatalog(string catalog);"
         },
         {
-          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder<TEntity> Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder<TEntity>.HasLanguage(string propertyName, string language);"
+          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder<TEntity> Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder<TEntity>.UseKeyIndex(string keyIndex);"
         },
         {
-          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder<TEntity> Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder<TEntity>.OnCatalog(string catalogName);"
-        },
-        {
-          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder<TEntity> Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder<TEntity>.WithChangeTracking(Microsoft.EntityFrameworkCore.FullTextChangeTracking changeTracking);"
+          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder<TEntity> Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerFullTextIndexBuilder<TEntity>.UseLanguage(string propertyName, string language);"
         }
       ],
       "Properties": [
@@ -1358,13 +1358,13 @@
           "Member": "static bool Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.CanSetFillFactor(this Microsoft.EntityFrameworkCore.Metadata.Builders.IConventionIndexBuilder indexBuilder, int? fillFactor, bool fromDataAnnotation = false);"
         },
         {
-          "Member": "static bool Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.CanSetFullTextCatalog(this Microsoft.EntityFrameworkCore.Metadata.Builders.IConventionIndexBuilder indexBuilder, string? catalogName, bool fromDataAnnotation = false);"
+          "Member": "static bool Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.CanSetFullTextCatalog(this Microsoft.EntityFrameworkCore.Metadata.Builders.IConventionIndexBuilder indexBuilder, string? catalog, bool fromDataAnnotation = false);"
         },
         {
           "Member": "static bool Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.CanSetFullTextChangeTracking(this Microsoft.EntityFrameworkCore.Metadata.Builders.IConventionIndexBuilder indexBuilder, Microsoft.EntityFrameworkCore.FullTextChangeTracking? changeTracking, bool fromDataAnnotation = false);"
         },
         {
-          "Member": "static bool Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.CanSetFullTextKeyIndex(this Microsoft.EntityFrameworkCore.Metadata.Builders.IConventionIndexBuilder indexBuilder, string? keyIndexName, bool fromDataAnnotation = false);"
+          "Member": "static bool Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.CanSetFullTextKeyIndex(this Microsoft.EntityFrameworkCore.Metadata.Builders.IConventionIndexBuilder indexBuilder, string? keyIndex, bool fromDataAnnotation = false);"
         },
         {
           "Member": "static bool Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.CanSetFullTextLanguages(this Microsoft.EntityFrameworkCore.Metadata.Builders.IConventionIndexBuilder indexBuilder, System.Collections.Generic.IReadOnlyDictionary<string, string>? languages, bool fromDataAnnotation = false);"
@@ -1391,37 +1391,13 @@
           "Member": "static Microsoft.EntityFrameworkCore.Metadata.Builders.IConventionIndexBuilder? Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.HasFillFactor(this Microsoft.EntityFrameworkCore.Metadata.Builders.IConventionIndexBuilder indexBuilder, int? fillFactor, bool fromDataAnnotation = false);"
         },
         {
-          "Member": "static Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.HasFullTextCatalog(this Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder indexBuilder, string catalogName);"
-        },
-        {
-          "Member": "static Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder<TEntity> Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.HasFullTextCatalog<TEntity>(this Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder<TEntity> indexBuilder, string catalogName);"
-        },
-        {
-          "Member": "static Microsoft.EntityFrameworkCore.Metadata.Builders.IConventionIndexBuilder? Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.HasFullTextCatalog(this Microsoft.EntityFrameworkCore.Metadata.Builders.IConventionIndexBuilder indexBuilder, string? catalogName, bool fromDataAnnotation = false);"
-        },
-        {
-          "Member": "static Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.HasFullTextChangeTracking(this Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder indexBuilder, Microsoft.EntityFrameworkCore.FullTextChangeTracking changeTracking);"
-        },
-        {
-          "Member": "static Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder<TEntity> Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.HasFullTextChangeTracking<TEntity>(this Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder<TEntity> indexBuilder, Microsoft.EntityFrameworkCore.FullTextChangeTracking changeTracking);"
+          "Member": "static Microsoft.EntityFrameworkCore.Metadata.Builders.IConventionIndexBuilder? Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.HasFullTextCatalog(this Microsoft.EntityFrameworkCore.Metadata.Builders.IConventionIndexBuilder indexBuilder, string? catalog, bool fromDataAnnotation = false);"
         },
         {
           "Member": "static Microsoft.EntityFrameworkCore.Metadata.Builders.IConventionIndexBuilder? Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.HasFullTextChangeTracking(this Microsoft.EntityFrameworkCore.Metadata.Builders.IConventionIndexBuilder indexBuilder, Microsoft.EntityFrameworkCore.FullTextChangeTracking? changeTracking, bool fromDataAnnotation = false);"
         },
         {
-          "Member": "static Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.HasFullTextKeyIndex(this Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder indexBuilder, string keyIndexName);"
-        },
-        {
-          "Member": "static Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder<TEntity> Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.HasFullTextKeyIndex<TEntity>(this Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder<TEntity> indexBuilder, string keyIndexName);"
-        },
-        {
-          "Member": "static Microsoft.EntityFrameworkCore.Metadata.Builders.IConventionIndexBuilder? Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.HasFullTextKeyIndex(this Microsoft.EntityFrameworkCore.Metadata.Builders.IConventionIndexBuilder indexBuilder, string? keyIndexName, bool fromDataAnnotation = false);"
-        },
-        {
-          "Member": "static Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.HasFullTextLanguage(this Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder indexBuilder, string propertyName, string language);"
-        },
-        {
-          "Member": "static Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder<TEntity> Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.HasFullTextLanguage<TEntity>(this Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder<TEntity> indexBuilder, string propertyName, string language);"
+          "Member": "static Microsoft.EntityFrameworkCore.Metadata.Builders.IConventionIndexBuilder? Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.HasFullTextKeyIndex(this Microsoft.EntityFrameworkCore.Metadata.Builders.IConventionIndexBuilder indexBuilder, string? keyIndex, bool fromDataAnnotation = false);"
         },
         {
           "Member": "static Microsoft.EntityFrameworkCore.Metadata.Builders.IConventionIndexBuilder? Microsoft.EntityFrameworkCore.SqlServerIndexBuilderExtensions.HasFullTextLanguages(this Microsoft.EntityFrameworkCore.Metadata.Builders.IConventionIndexBuilder indexBuilder, System.Collections.Generic.IReadOnlyDictionary<string, string>? languages, bool fromDataAnnotation = false);"
@@ -2648,16 +2624,10 @@
       "Type": "static class Microsoft.EntityFrameworkCore.SqlServerQueryableExtensions",
       "Methods": [
         {
-          "Member": "static System.Linq.IQueryable<Microsoft.EntityFrameworkCore.FullTextSearchResult<TKey>> Microsoft.EntityFrameworkCore.SqlServerQueryableExtensions.ContainsTable<T, TKey>(this Microsoft.EntityFrameworkCore.DbSet<T> source, System.Linq.Expressions.Expression<System.Func<T, object>> columnSelector, string searchCondition, string? languageTerm = null, int? topN = null);"
+          "Member": "static System.Linq.IQueryable<Microsoft.EntityFrameworkCore.Query.FullTextSearchResult<TKey>> Microsoft.EntityFrameworkCore.SqlServerQueryableExtensions.ContainsTable<T, TKey>(this Microsoft.EntityFrameworkCore.DbSet<T> source, string searchCondition, System.Linq.Expressions.Expression<System.Func<T, object>>? columnSelector = null, string? languageTerm = null, int? topN = null);"
         },
         {
-          "Member": "static System.Linq.IQueryable<Microsoft.EntityFrameworkCore.FullTextSearchResult<TKey>> Microsoft.EntityFrameworkCore.SqlServerQueryableExtensions.ContainsTable<T, TKey>(this Microsoft.EntityFrameworkCore.DbSet<T> source, string searchCondition, string? languageTerm = null, int? topN = null);"
-        },
-        {
-          "Member": "static System.Linq.IQueryable<Microsoft.EntityFrameworkCore.FullTextSearchResult<TKey>> Microsoft.EntityFrameworkCore.SqlServerQueryableExtensions.FreeTextTable<T, TKey>(this Microsoft.EntityFrameworkCore.DbSet<T> source, System.Linq.Expressions.Expression<System.Func<T, object>> columnSelector, string freeText, string? languageTerm = null, int? topN = null);"
-        },
-        {
-          "Member": "static System.Linq.IQueryable<Microsoft.EntityFrameworkCore.FullTextSearchResult<TKey>> Microsoft.EntityFrameworkCore.SqlServerQueryableExtensions.FreeTextTable<T, TKey>(this Microsoft.EntityFrameworkCore.DbSet<T> source, string freeText, string? languageTerm = null, int? topN = null);"
+          "Member": "static System.Linq.IQueryable<Microsoft.EntityFrameworkCore.Query.FullTextSearchResult<TKey>> Microsoft.EntityFrameworkCore.SqlServerQueryableExtensions.FreeTextTable<T, TKey>(this Microsoft.EntityFrameworkCore.DbSet<T> source, string freeText, System.Linq.Expressions.Expression<System.Func<T, object>>? columnSelector = null, string? languageTerm = null, int? topN = null);"
         },
         {
           "Member": "static System.Linq.IQueryable<Microsoft.EntityFrameworkCore.VectorSearchResult<T>> Microsoft.EntityFrameworkCore.SqlServerQueryableExtensions.VectorSearch<T, TVector>(this Microsoft.EntityFrameworkCore.DbSet<T> source, System.Linq.Expressions.Expression<System.Func<T, TVector>> vectorPropertySelector, TVector similarTo, string metric, int topN);",
@@ -2968,11 +2938,11 @@
           "Stage": "Experimental"
         },
         {
-          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerVectorIndexBuilder Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerVectorIndexBuilder.UseMetric(string metric);",
+          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerVectorIndexBuilder Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerVectorIndexBuilder.HasMetric(string metric);",
           "Stage": "Experimental"
         },
         {
-          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerVectorIndexBuilder Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerVectorIndexBuilder.UseType(string? type);",
+          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerVectorIndexBuilder Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerVectorIndexBuilder.HasType(string? type);",
           "Stage": "Experimental"
         }
       ],
@@ -2996,11 +2966,11 @@
           "Stage": "Experimental"
         },
         {
-          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerVectorIndexBuilder<TEntity> Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerVectorIndexBuilder<TEntity>.UseMetric(string metric);",
+          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerVectorIndexBuilder<TEntity> Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerVectorIndexBuilder<TEntity>.HasMetric(string metric);",
           "Stage": "Experimental"
         },
         {
-          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerVectorIndexBuilder<TEntity> Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerVectorIndexBuilder<TEntity>.UseType(string? type);",
+          "Member": "virtual Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerVectorIndexBuilder<TEntity> Microsoft.EntityFrameworkCore.Metadata.Builders.SqlServerVectorIndexBuilder<TEntity>.HasType(string? type);",
           "Stage": "Experimental"
         }
       ],
