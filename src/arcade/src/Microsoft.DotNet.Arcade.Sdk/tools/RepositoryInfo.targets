@@ -56,7 +56,6 @@
           Condition="'$(DisableSourceLinkUrlTranslation)' == 'false'"
           DependsOnTargets="$(SourceControlManagerUrlTranslationTargets)"
           BeforeTargets="SourceControlManagerPublishTranslatedUrls">
-
     <PropertyGroup>
       <!-- Repositories mirrored on devdiv.visualstudio will have '-Trusted' added to their name and this needs to be stripped off before translation
            Eventually, all repos should move to dnceng/internal when possible. -->
@@ -78,7 +77,6 @@
     Generates and adds {PackageId}.SourceLink.targets file to the build directory of the source package.
   -->
 
-  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.GenerateSourcePackageSourceLinkTargetsFile" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
 
   <PropertyGroup Condition="'$(IsPackable)' == 'true' and '$(IsSourcePackage)' == 'true' and '$(EnableSourceLink)' == 'true'">
     <BeforePack>$(BeforePack);_AddSourcePackageSourceLinkFile</BeforePack>
@@ -119,14 +117,31 @@
 
   <!--
     Validates repository-wide requirements.
-    MSBuild only evaluates the target project once per each set of values of global properties and caches the results.
   -->
-  <Target Name="_RepositoryValidation" BeforeTargets="Build" Condition="'$(ContinuousIntegrationBuild)' == 'true'">
-    <MSBuild Projects="$(MSBuildThisFileDirectory)RepositoryValidation.proj"
-             Targets="Validate"
-             RemoveProperties="TargetFramework;Platform"
-             Properties="RepoRoot=$(RepoRoot);PackageLicenseExpression=$(PackageLicenseExpression);PackageLicenseExpressionInternal=$(PackageLicenseExpressionInternal);SuppressLicenseValidation=$(SuppressLicenseValidation)"
-             UseResultsCache="true" />
+  <Target Name="_RepositoryValidation" BeforeTargets="Build" Condition="'$(ContinuousIntegrationBuild)' == 'true'" DependsOnTargets="_ValidateLicenseFile">
+    <Message Text="Repository validated." Importance="low" />
+  </Target>
+
+  <Target Name="_ValidateLicenseFile" Condition="('$(PackageLicenseExpression)' != '' or '$(PackageLicenseExpressionInternal)' != '') and '$(SuppressLicenseValidation)' != 'true'">
+    <Error Text="Can't specify value for both PackageLicenseExpression ('$(PackageLicenseExpression)') and PackageLicenseExpressionInternal ('$(PackageLicenseExpressionInternal)')"
+           Condition="'$(PackageLicenseExpression)' != '' and '$(PackageLicenseExpressionInternal)' != ''"/>
+
+    <PropertyGroup>
+      <_LicenseExpression>$(PackageLicenseExpression)</_LicenseExpression>
+      <_LicenseExpression Condition="'$(_LicenseExpression)' == ''">$(PackageLicenseExpressionInternal)</_LicenseExpression>
+
+      <_ExpectedLicensePath>$(MSBuildThisFileDirectory)Licenses\$(_LicenseExpression).txt</_ExpectedLicensePath>
+    </PropertyGroup>
+
+    <Error Text="Unknown license expression: '$(_LicenseExpression)'."
+           Condition="!Exists('$(_ExpectedLicensePath)')"/>
+
+    <Microsoft.DotNet.Arcade.Sdk.GetLicenseFilePath Directory="$(RepoRoot)">
+      <Output TaskParameter="Path" PropertyName="_RepositoryLicensePath"/>
+    </Microsoft.DotNet.Arcade.Sdk.GetLicenseFilePath>
+
+    <Microsoft.DotNet.Arcade.Sdk.ValidateLicense LicensePath="$(_RepositoryLicensePath)" 
+                                                 ExpectedLicensePath="$(_ExpectedLicensePath)" />
   </Target>
 
 </Project>

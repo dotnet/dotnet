@@ -16,8 +16,7 @@
             MethodDeclaration -  - protected override - void - BuildRenderTree
                 Component - (0:0,0 [64] x:\dir\subdir\Test\TestComponent.cshtml) - ComponentWithNullableAction
                     ComponentAttribute - (45:0,45 [15] x:\dir\subdir\Test\TestComponent.cshtml) - NullableAction - NullableAction - AttributeStructure.DoubleQuotes
-                        CSharpExpression - (46:0,46 [14] x:\dir\subdir\Test\TestComponent.cshtml)
-                            LazyIntermediateToken - (46:0,46 [14] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - NullableAction
+                        LazyIntermediateToken - (46:0,46 [14] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - NullableAction
                 HtmlContent - (64:0,64 [2] x:\dir\subdir\Test\TestComponent.cshtml)
                     LazyIntermediateToken - (64:0,64 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
                 HtmlContent - (135:4,1 [2] x:\dir\subdir\Test\TestComponent.cshtml)

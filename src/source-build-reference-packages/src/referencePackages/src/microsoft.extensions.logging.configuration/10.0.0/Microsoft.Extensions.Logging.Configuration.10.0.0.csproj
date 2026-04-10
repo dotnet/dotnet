@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net10.0;net8.0;net9.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>10.0.0</PackageVersion>
+    <AssemblyName>Microsoft.Extensions.Logging.Configuration</AssemblyName>
+    <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <ProjectReference Include="../../microsoft.extensions.configuration.abstractions/10.0.0/Microsoft.Extensions.Configuration.Abstractions.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.configuration.binder/10.0.0/Microsoft.Extensions.Configuration.Binder.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.configuration/10.0.0/Microsoft.Extensions.Configuration.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.dependencyinjection.abstractions/10.0.0/Microsoft.Extensions.DependencyInjection.Abstractions.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.logging.abstractions/10.0.0/Microsoft.Extensions.Logging.Abstractions.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.logging/10.0.0/Microsoft.Extensions.Logging.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.options.configurationextensions/10.0.0/Microsoft.Extensions.Options.ConfigurationExtensions.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.options/10.0.0/Microsoft.Extensions.Options.10.0.0.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <ProjectReference Include="../../microsoft.extensions.configuration.abstractions/10.0.0/Microsoft.Extensions.Configuration.Abstractions.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.configuration.binder/10.0.0/Microsoft.Extensions.Configuration.Binder.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.configuration/10.0.0/Microsoft.Extensions.Configuration.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.dependencyinjection.abstractions/10.0.0/Microsoft.Extensions.DependencyInjection.Abstractions.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.logging.abstractions/10.0.0/Microsoft.Extensions.Logging.Abstractions.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.logging/10.0.0/Microsoft.Extensions.Logging.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.options.configurationextensions/10.0.0/Microsoft.Extensions.Options.ConfigurationExtensions.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.options/10.0.0/Microsoft.Extensions.Options.10.0.0.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <ProjectReference Include="../../microsoft.extensions.configuration.abstractions/10.0.0/Microsoft.Extensions.Configuration.Abstractions.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.configuration.binder/10.0.0/Microsoft.Extensions.Configuration.Binder.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.configuration/10.0.0/Microsoft.Extensions.Configuration.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.dependencyinjection.abstractions/10.0.0/Microsoft.Extensions.DependencyInjection.Abstractions.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.logging.abstractions/10.0.0/Microsoft.Extensions.Logging.Abstractions.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.logging/10.0.0/Microsoft.Extensions.Logging.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.options.configurationextensions/10.0.0/Microsoft.Extensions.Options.ConfigurationExtensions.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.options/10.0.0/Microsoft.Extensions.Options.10.0.0.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <ProjectReference Include="../../microsoft.extensions.configuration.abstractions/10.0.0/Microsoft.Extensions.Configuration.Abstractions.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.configuration.binder/10.0.0/Microsoft.Extensions.Configuration.Binder.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.configuration/10.0.0/Microsoft.Extensions.Configuration.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.dependencyinjection.abstractions/10.0.0/Microsoft.Extensions.DependencyInjection.Abstractions.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.logging.abstractions/10.0.0/Microsoft.Extensions.Logging.Abstractions.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.logging/10.0.0/Microsoft.Extensions.Logging.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.options.configurationextensions/10.0.0/Microsoft.Extensions.Options.ConfigurationExtensions.10.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.options/10.0.0/Microsoft.Extensions.Options.10.0.0.csproj" />
+  </ItemGroup>
+
+</Project>

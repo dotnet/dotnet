@@ -24,7 +24,7 @@
                     HtmlAttribute - (75:1,31 [9] x:\dir\subdir\Test\TestComponent.cshtml) - onsubmit=" - "
                         CSharpExpressionAttributeValue -  - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
-                            LazyIntermediateToken - (75:1,31 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
+                            IntermediateToken - (75:1,31 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
                             IntermediateToken -  - CSharp - )
                     FormName - (97:1,53 [1] x:\dir\subdir\Test\TestComponent.cshtml)
                         HtmlContent - (97:1,53 [1] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -42,7 +42,7 @@
                             HtmlAttribute - (161:3,35 [9] x:\dir\subdir\Test\TestComponent.cshtml) - onsubmit=" - "
                                 CSharpExpressionAttributeValue -  - 
                                     IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
-                                    LazyIntermediateToken - (161:3,35 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
+                                    IntermediateToken - (161:3,35 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
                                     IntermediateToken -  - CSharp - )
                             FormName - (183:3,57 [1] x:\dir\subdir\Test\TestComponent.cshtml)
                                 HtmlContent - (183:3,57 [1] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -60,7 +60,7 @@
                                     HtmlAttribute - (255:5,39 [9] x:\dir\subdir\Test\TestComponent.cshtml) - onsubmit=" - "
                                         CSharpExpressionAttributeValue -  - 
                                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
-                                            LazyIntermediateToken - (255:5,39 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
+                                            IntermediateToken - (255:5,39 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
                                             IntermediateToken -  - CSharp - )
                                     FormName - (277:5,61 [1] x:\dir\subdir\Test\TestComponent.cshtml)
                                         HtmlContent - (277:5,61 [1] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -76,7 +76,7 @@
                             HtmlAttribute - (346:7,35 [9] x:\dir\subdir\Test\TestComponent.cshtml) - onsubmit=" - "
                                 CSharpExpressionAttributeValue -  - 
                                     IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
-                                    LazyIntermediateToken - (346:7,35 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
+                                    IntermediateToken - (346:7,35 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
                                     IntermediateToken -  - CSharp - )
                             FormName - (368:7,57 [1] x:\dir\subdir\Test\TestComponent.cshtml)
                                 HtmlContent - (368:7,57 [1] x:\dir\subdir\Test\TestComponent.cshtml)

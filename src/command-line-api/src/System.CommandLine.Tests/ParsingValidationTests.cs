@@ -215,6 +215,38 @@ namespace System.CommandLine.Tests
         }
 
         [Fact]
+        public void When_an_IEnumerable_argument_has_zero_minimum_arity_and_no_tokens_GetRequiredValue_returns_empty()
+        {
+            var argument = new Argument<IEnumerable<string>>("items");
+            var command = new RootCommand { argument };
+
+            var result = command.Parse("");
+
+            result.Errors.Should().BeEmpty();
+            result.GetRequiredValue(argument).Should().BeEmpty();
+        }
+
+        [Fact]
+        public void When_an_IEnumerable_argument_has_OneOrMore_arity_and_no_tokens_then_an_error_is_returned()
+        {
+            var argument = new Argument<IEnumerable<string>>("items")
+            {
+                Arity = ArgumentArity.OneOrMore
+            };
+            var command = new RootCommand { argument };
+
+            var result = command.Parse("");
+
+            result.Errors
+                  .Should()
+                  .ContainSingle()
+                  .Which
+                  .Message
+                  .Should()
+                  .Contain("items");
+        }
+
+        [Fact]
         public void When_a_required_option_is_not_supplied_then_an_error_is_returned()
         {
             var command = new Command("command")

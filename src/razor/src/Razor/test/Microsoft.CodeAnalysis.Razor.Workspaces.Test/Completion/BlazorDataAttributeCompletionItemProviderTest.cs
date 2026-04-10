@@ -127,7 +127,7 @@ public class BlazorDataAttributeCompletionItemProviderTest : RazorToolingIntegra
         // Arrange - need to test with non-component file, which requires different setup
         TestCode testCode = "<form $$></form>";
         var codeDocument = GetCodeDocument(testCode.Text, RazorFileKind.Legacy);
-        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredTagHelperRewrittenSyntaxTree();
         var tagHelperContext = codeDocument.GetRequiredTagHelperContext();
         var owner = syntaxTree.Root.FindInnermostNode(testCode.Position, includeWhitespace: true, walkMarkersBack: true);
         owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, testCode.Position);
@@ -191,7 +191,7 @@ public class BlazorDataAttributeCompletionItemProviderTest : RazorToolingIntegra
             UseVsCodeCompletionCommitCharacters: false);
         TestCode testCode = "<form d$$></form>";
         var codeDocument = GetCodeDocument(testCode.Text);
-        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredTagHelperRewrittenSyntaxTree();
         var tagHelperContext = codeDocument.GetRequiredTagHelperContext();
         var owner = syntaxTree.Root.FindInnermostNode(testCode.Position, includeWhitespace: true, walkMarkersBack: true);
         owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, testCode.Position);
@@ -224,7 +224,7 @@ public class BlazorDataAttributeCompletionItemProviderTest : RazorToolingIntegra
     private RazorCompletionContext CreateRazorCompletionContext(TestCode testCode)
     {
         var codeDocument = GetCodeDocument(testCode.Text);
-        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredTagHelperRewrittenSyntaxTree();
         var tagHelperContext = codeDocument.GetRequiredTagHelperContext();
 
         var owner = syntaxTree.Root.FindInnermostNode(testCode.Position, includeWhitespace: true, walkMarkersBack: true);

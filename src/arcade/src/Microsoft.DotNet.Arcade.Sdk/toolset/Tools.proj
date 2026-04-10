@@ -1,0 +1,61 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <_RepoToolManifest>$([MSBuild]::NormalizePath('$(RepoRoot)', '.config', 'dotnet-tools.json'))</_RepoToolManifest>
+
+    <!-- VisualStudio.InsertionManifests.targets: Keep condition in sync with import in AfterSigning.proj. -->
+    <RestoreInternalTooling Condition="'$(UsingToolVSSDK)' == 'true' and '$(GenerateSbom)' == 'true' and '$(MSBuildRuntimeType)' != 'Core'">true</RestoreInternalTooling>
+    <RestoreInternalToolingAfterTargets Condition="'$(RestoreInternalTooling)' == 'true'">Restore</RestoreInternalToolingAfterTargets>
+  </PropertyGroup>
+
+  <!-- Keep conditions in sync with Build.proj conditions -->
+  <ItemGroup>
+    <ProjectReference Include="AfterSolutionBuild.proj" Condition="'$(_SolutionBuildTargets)' != ''" />
+    <ProjectReference Include="Sign.proj" Condition="'$(Sign)' == 'true'" />
+    <ProjectReference Include="AfterSigning.proj" Condition="'$(_SolutionBuildTargets)' != ''" />
+    <ProjectReference Include="Publish.proj" Condition="'$(Publish)' == 'true' or '$(RestoreBuildTaskFeed)' == 'true'" />
+  </ItemGroup>
+
+  <Target Name="RestoreRepoTools"
+          Condition="'$(DotNetBuildSourceOnly)' != 'true' and Exists('$(_RepoToolManifest)')"
+          BeforeTargets="Restore">
+    <!-- Respect a restore config file passed in via /p:RestoreConfigFile, common in VMR builds -->
+    <PropertyGroup>
+      <RestoreConfigFileOption></RestoreConfigFileOption>
+      <RestoreConfigFileOption Condition="'$(RestoreConfigFile)' != ''">--configfile "$(RestoreConfigFile)"</RestoreConfigFileOption>
+    </PropertyGroup>
+
+    <Exec Command='"$(DotNetTool)" tool restore $(RestoreConfigFileOption)' WorkingDirectory="$(RepoRoot)" />
+  </Target>
+
+  <!-- Set as DependsOnTargets when internal tools (e.g. IBC data, optprof) is required -->
+  <Target Name="RestoreInternalTooling"
+          AfterTargets="$(RestoreInternalToolingAfterTargets)">
+    <PropertyGroup>
+      <InternalToolsRestoreProject>$(RepoRoot)eng/common/internal/Tools.csproj</InternalToolsRestoreProject>
+      <InternalToolsRestoreConfig>$(RepoRoot)eng/common/internal/NuGet.config</InternalToolsRestoreConfig>
+    </PropertyGroup>
+
+    <MSBuild Projects="$(InternalToolsRestoreProject)"
+      Targets="Restore"
+      Properties="@(_RestoreToolsProps);RestoreConfigFile=$(InternalToolsRestoreConfig);_NETCORE_ENGINEERING_TELEMETRY=Restore"
+      Condition="'$(Restore)' == 'true'" />
+  </Target>
+
+  <!-- Repository extensibility point -->
+  <Import Project="$(RepositoryEngineeringDir)Tools.props" Condition="Exists('$(RepositoryEngineeringDir)Tools.props')" />
+
+  <!-- Central package management extension point support -->
+  <ItemGroup>
+    <PackageReference Update="@(PackageReference->HasMetadata('Version'))"
+                      VersionOverride="%(Version)" />
+    <PackageReference Update="@(PackageReference->HasMetadata('VersionOverride'))"
+                      Version="" />
+  </ItemGroup>
+
+  <Import Project="InstallDotNetCore.targets" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
+
+  <Import Project="VisualStudio.AcquireOptimizationData.targets" Condition="'$(UsingToolVisualStudioIbcTraining)' == 'true'" />
+
+</Project>

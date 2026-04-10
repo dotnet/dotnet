@@ -130,7 +130,20 @@
               "src/externalPackages/src/antlr4/runtime/Java/**",
               "src/externalPackages/src/antlr4/runtime/JavaScript/**",
               "src/externalPackages/src/antlr4/runtime/Python3/**",
-              "src/externalPackages/src/antlr4/runtime/Swift/**"
+              "src/externalPackages/src/antlr4/runtime/Swift/**",
+
+              // Don't include any parts of opentelemetry-dotnet that we don't use.
+              "src/externalPackages/src/opentelemetry-dotnet/.github/**",
+              "src/externalPackages/src/opentelemetry-dotnet/.vscode/**",
+              "src/externalPackages/src/opentelemetry-dotnet/docs/**",
+              "src/externalPackages/src/opentelemetry-dotnet/examples/**",
+              "src/externalPackages/src/opentelemetry-dotnet/test/**",
+
+              // Don't include any parts of opentelemetry-dotnet-contrib that we don't use.
+              "src/externalPackages/src/opentelemetry-dotnet-contrib/.github/**",
+              "src/externalPackages/src/opentelemetry-dotnet-contrib/.vscode/**",
+              "src/externalPackages/src/opentelemetry-dotnet-contrib/examples/**",
+              "src/externalPackages/src/opentelemetry-dotnet-contrib/test/**"
             ]
         },
         {

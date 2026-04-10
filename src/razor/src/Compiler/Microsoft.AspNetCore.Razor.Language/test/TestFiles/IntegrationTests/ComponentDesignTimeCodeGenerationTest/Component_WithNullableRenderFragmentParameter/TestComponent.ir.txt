@@ -16,8 +16,7 @@
             MethodDeclaration -  - protected override - void - BuildRenderTree
                 Component - (0:0,0 [56] x:\dir\subdir\Test\TestComponent.cshtml) - ComponentWithNullableRenderFragment
                     ComponentAttribute - (45:0,45 [7] x:\dir\subdir\Test\TestComponent.cshtml) - Header - Header - AttributeStructure.DoubleQuotes
-                        CSharpExpression - (46:0,46 [6] x:\dir\subdir\Test\TestComponent.cshtml)
-                            LazyIntermediateToken - (46:0,46 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Header
+                        LazyIntermediateToken - (46:0,46 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Header
                 HtmlContent - (56:0,56 [2] x:\dir\subdir\Test\TestComponent.cshtml)
                     LazyIntermediateToken - (56:0,56 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
                 HtmlContent - (125:3,1 [2] x:\dir\subdir\Test\TestComponent.cshtml)

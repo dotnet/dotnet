@@ -46,7 +46,6 @@
     avoid building tests in certain product build scenarios.
   -->
   <PropertyGroup>
-    <_SuppressAllTargets>false</_SuppressAllTargets>
     <!-- New .NET build switches -->
     <_SuppressAllTargets Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(ExcludeFromSourceOnlyBuild)' == 'true'">true</_SuppressAllTargets>
     <_SuppressAllTargets Condition="'$(DotNetBuild)' == 'true' and '$(ExcludeFromDotNetBuild)' == 'true'">true</_SuppressAllTargets>
@@ -57,7 +56,7 @@
          which will avoid importing the restore targets inside the .NET SDK. If the restore targets exist, then static graph restore will attempt tpo
          execute. -->
     <DisableWarnForInvalidRestoreProjects Condition="'$(_SuppressAllTargets)' == 'true'">true</DisableWarnForInvalidRestoreProjects>
-    <NuGetRestoreTargets Condition="'$(_SuppressAllTargets)' == 'true'">$(MSBuildThisFileDirectory)NoRestore.targets</NuGetRestoreTargets>
+    <NuGetRestoreTargets Condition="'$(_SuppressAllTargets)' == 'true' and '$(_NoSuppressRestoreTarget)' != 'false'">$(MSBuildThisFileDirectory)NoRestore.targets</NuGetRestoreTargets>
     <!-- When a project is using the .NET SDK, but with the "UseWpf" property, there will be an attempt to import the windows desktop SDK targets.
          These are not available in certain circumstances, like linux source build. -->
     <ImportWindowsDesktopTargets Condition="'$(_SuppressAllTargets)' == 'true'">false</ImportWindowsDesktopTargets>

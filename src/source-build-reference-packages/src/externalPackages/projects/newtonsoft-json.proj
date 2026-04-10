@@ -14,6 +14,12 @@
     <DotNetToolArgs>$(DotNetToolArgs) /p:PublicSign=true</DotNetToolArgs>
     <DotNetToolArgs>$(DotNetToolArgs) /p:TreatWarningsAsErrors=false</DotNetToolArgs>
     <DotNetToolArgs>$(DotNetToolArgs) /p:AdditionalConstants=SIGNED</DotNetToolArgs>
+    <!-- The upstream build computes a date-based FileVersion revision via PowerShell (GetVersion in build.ps1).
+         Set it here to match the official NuGet package. See https://github.com/dotnet/source-build/issues/5511 -->
+    <FileVersionRevision>27908</FileVersionRevision>
+    <!-- Used by the update-external-metadata script to determine the package to download. -->
+    <FileVersionValidationPackage>Newtonsoft.Json</FileVersionValidationPackage>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:FileVersion=$(NewtonsoftJsonReleaseVersion).$(FileVersionRevision)</DotNetToolArgs>
 
     <BuildCommand>$(DotNetTool) pack $(NewtonsoftJsonProjectPath) /bl:$(ArtifactsLogRepoDir)build.binlog $(DotNetToolArgs)</BuildCommand>
 

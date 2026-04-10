@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>$(TargetFrameworksForLibraries);$(NetFrameworkMinimumSupportedVersion);net9.0</TargetFrameworks>
+    <Description>OpAMP Client for OpenTelemetry .NET.</Description>
+    <PackageTags>$(PackageTags);distributed-tracing;opamp;opamp-client</PackageTags>
+    <MinVerTagPrefix>OpAmp.Client-</MinVerTagPrefix>
+  </PropertyGroup>
+
+  <!-- Do not run Package Baseline Validation as this package has never released a stable version.
+  Remove this property once we have released a stable version and add PackageValidationBaselineVersion property. -->
+  <PropertyGroup>
+    <DisablePackageBaselineValidation>true</DisablePackageBaselineValidation>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" VersionOverride="[3.31.1,)" />
+    <PackageReference Include="Grpc.Tools" VersionOverride="[2.72.0,)" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- .NET Framework supporting packages -->
+  <ItemGroup Condition="'$([MSBuild]::GetTargetFrameworkIdentifier(`$(TargetFramework)`))' == '.NETFramework'">
+    <PackageReference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Protos\anyvalue.proto" ProtoRoot="Protos" Access="Internal" />
+    <Protobuf Include="Protos\opamp.proto" ProtoRoot="Protos" Access="Internal" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="$(RepoRoot)\src\Shared\ExceptionExtensions.cs" Link="Includes\ExceptionExtensions.cs" />
+    <Compile Include="$(RepoRoot)\src\Shared\Guard.cs" Link="Includes\Guard.cs" />
+    <Compile Include="$(RepoRoot)\src\Shared\Lock.cs" Link="Includes\Lock.cs" />
+    <Compile Include="$(RepoRoot)\src\Shared\NullableAttributes.cs" Link="Includes\NullableAttributes.cs" />
+  </ItemGroup>
+
+</Project>

@@ -17,7 +17,7 @@
                 Component - (0:0,0 [50] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ReferenceCapture - (19:0,19 [11] x:\dir\subdir\Test\TestComponent.cshtml) - myComponent
                     ComponentAttribute - (45:0,45 [1] x:\dir\subdir\Test\TestComponent.cshtml) - MyParameter - MyParameter - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (45:0,45 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - 1
+                        IntermediateToken - (45:0,45 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - 1
                 HtmlContent - (50:0,50 [4] x:\dir\subdir\Test\TestComponent.cshtml)
                     LazyIntermediateToken - (50:0,50 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n\n
             CSharpCode - (61:2,7 [114] x:\dir\subdir\Test\TestComponent.cshtml)

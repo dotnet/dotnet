@@ -1,0 +1,140 @@
+<Project>
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <OTelLatestStableVer>1.15.0</OTelLatestStableVer>
+  </PropertyGroup>
+
+  <!--
+      For modern .NET runtimes, match the major version of packages to the major version of the runtime.
+      This is to ensure that the NuGet packages that users deploy match the support lifetimes of the .NET version they are using (i.e. LTS vs STS).
+      See https://github.com/open-telemetry/opentelemetry-dotnet/issues/5973 for more details.
+  -->
+  <ItemGroup>
+    <!-- Default to latest versions for all TFMs -->
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="[10.0.0,)" />
+    <PackageVersion Include="Microsoft.Extensions.Diagnostics.Abstractions" Version="[10.0.0,)" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="[10.0.0,)" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Configuration" Version="[10.0.0,)" />
+  </ItemGroup>
+  <!-- Version overrides for specific netX.0 TFMs -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <PackageVersion Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="[8.0.0,)" />
+    <PackageVersion Update="Microsoft.Extensions.Diagnostics.Abstractions" Version="[8.0.0,)" />
+    <PackageVersion Update="Microsoft.Extensions.Hosting.Abstractions" Version="[8.0.0,)" />
+    <PackageVersion Update="Microsoft.Extensions.Logging.Configuration" Version="[8.0.0,)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <PackageVersion Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="[9.0.0,)" />
+    <PackageVersion Update="Microsoft.Extensions.Diagnostics.Abstractions" Version="[9.0.0,)" />
+    <PackageVersion Update="Microsoft.Extensions.Hosting.Abstractions" Version="[9.0.0,)" />
+    <PackageVersion Update="Microsoft.Extensions.Logging.Configuration" Version="[9.0.0,)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <PackageVersion Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="[10.0.0,)" />
+    <PackageVersion Update="Microsoft.Extensions.Diagnostics.Abstractions" Version="[10.0.0,)" />
+    <PackageVersion Update="Microsoft.Extensions.Hosting.Abstractions" Version="[10.0.0,)" />
+    <PackageVersion Update="Microsoft.Extensions.Logging.Configuration" Version="[10.0.0,)" />
+  </ItemGroup>
+
+  <!--
+      System.Diagnostics.DiagnosticSource is exempted from the requirement to match the major version of
+      the runtime so that new APIs and/or semantic conventions are available to all versions of .NET.
+      See https://github.com/open-telemetry/opentelemetry-dotnet/issues/5973 for more details.
+  -->
+  <ItemGroup>
+    <PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="[10.0.0,)" />
+  </ItemGroup>
+
+  <!--
+      This section covers packages that are directly referenced by the NuGet packages published from this repository.
+      Any security vulnerability in these packages or their downstream dependencies will be considered as a security
+      vulnerability in the NuGet packages that are published from this repository.
+  -->
+  <ItemGroup>
+    <!--
+        OTel packages always point to latest stable release.
+    -->
+    <PackageVersion Include="OpenTelemetry" Version="[$(OTelLatestStableVer),2.0)" />
+    <PackageVersion Include="OpenTelemetry.Api" Version="[$(OTelLatestStableVer),2.0)" />
+    <PackageVersion Include="OpenTelemetry.Api.ProviderBuilderExtensions" Version="[$(OTelLatestStableVer),2.0)" />
+    <PackageVersion Include="OpenTelemetry.Exporter.InMemory" Version="[$(OTelLatestStableVer),2.0)" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="[$(OTelLatestStableVer),2.0)" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Propagators" Version="[$(OTelLatestStableVer),2.0)" />
+    <PackageVersion Include="OpenTracing" Version="[0.12.1,0.13)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+        Note: See TargetFrameworksRequiringSystemTextJsonDirectReference for the
+        list of targets where System.Text.Json direct reference is applied.
+    -->
+
+    <!--
+        We use conservative versions of these packages for older runtimes where
+        an upgrade might introduce breaking changes. For example see:
+        https://devblogs.microsoft.com/dotnet/system-text-json-in-dotnet-7/#breaking-changes.
+    -->
+    <PackageVersion Include="System.Text.Encodings.Web" Version="4.7.2" />
+    <PackageVersion Include="System.Text.Json" Version="4.7.2" />
+
+    <!-- Mitigate https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-43485. -->
+    <!-- Newer NETCoreApp runtimes need to be redirected to safe versions. -->
+    <PackageVersion Update="System.Text.Encodings.Web" Version="[8.0.0,)" Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'" />
+    <PackageVersion Update="System.Text.Json" Version="[8.0.5,)" Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'" />
+  </ItemGroup>
+
+  <!--
+      This section covers packages that are **not** directly referenced by the NuGet packages published from this repository.
+      These packages are referenced as "PrivateAssets" or used in tests/examples.
+  -->
+  <ItemGroup>
+    <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
+    <PackageVersion Include="CommandLineParser" Version="2.9.1" />
+    <PackageVersion Include="FSharp.Core" Version="10.1.201" />
+    <PackageVersion Include="FsCheck.Xunit" Version="3.3.2" />
+    <PackageVersion Include="GitHubActionsTestLogger" Version="3.0.2" />
+    <PackageVersion Include="Grpc.AspNetCore" Version="2.67.0" />
+    <PackageVersion Include="Grpc.AspNetCore.Server" Version="2.67.0" />
+    <PackageVersion Include="Grpc.Tools" Version="2.68.1" />
+    <PackageVersion Include="Google.Protobuf" Version="3.34.1" />
+    <PackageVersion Include="Grpc" Version="2.46.6" />
+    <PackageVersion Include="Grpc.Net.Client" Version="2.67.0" />
+    <PackageVersion Include="JunitXml.TestLogger" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="4.14.0" />
+    <PackageVersion Include="Microsoft.Coyote" Version="1.7.11" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.5" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.5" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.5" />
+    <PackageVersion Include="Microsoft.Extensions.Telemetry.Abstractions" Version="9.10.0" />
+    <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+    <PackageVersion Include="MinVer" Version="7.0.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.GrpcNetClient" Version="1.15.0-beta.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.15.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.0" />
+    <PackageVersion Include="RabbitMQ.Client" Version="7.2.1" />
+    <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.1.6" />
+    <PackageVersion Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
+    <PackageVersion Include="Verify.Xunit" Version="31.12.5" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="[2.8.2,)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="8.0.25" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="9.0.14" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="10.0.5" />
+  </ItemGroup>
+
+</Project>

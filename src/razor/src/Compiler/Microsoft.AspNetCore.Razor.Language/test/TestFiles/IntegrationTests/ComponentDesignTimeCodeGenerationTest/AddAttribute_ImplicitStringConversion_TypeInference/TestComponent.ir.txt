@@ -16,16 +16,16 @@
             MethodDeclaration -  - protected override - void - BuildRenderTree
                 Component - (0:0,0 [144] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentAttribute - (26:0,26 [1] x:\dir\subdir\Test\TestComponent.cshtml) - MyParameter - MyParameter - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (26:0,26 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - c
+                        IntermediateToken - (26:0,26 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - c
                     ComponentAttribute - (49:1,19 [4] x:\dir\subdir\Test\TestComponent.cshtml) - BoolParameter - BoolParameter - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (49:1,19 [4] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - true
+                        IntermediateToken - (49:1,19 [4] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - true
                     ComponentAttribute - (77:2,21 [3] x:\dir\subdir\Test\TestComponent.cshtml) - StringParameter - StringParameter - AttributeStructure.DoubleQuotes
                         HtmlContent - (77:2,21 [3] x:\dir\subdir\Test\TestComponent.cshtml)
-                            LazyIntermediateToken - (77:2,21 [3] x:\dir\subdir\Test\TestComponent.cshtml) - Html - str
+                            IntermediateToken - (77:2,21 [3] x:\dir\subdir\Test\TestComponent.cshtml) - Html - str
                     ComponentAttribute - (106:3,23 [9] x:\dir\subdir\Test\TestComponent.cshtml) - DelegateParameter - DelegateParameter - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (106:3,23 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
+                        IntermediateToken - (106:3,23 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
                     ComponentAttribute - (139:4,21 [1] x:\dir\subdir\Test\TestComponent.cshtml) - ObjectParameter - ObjectParameter - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (139:4,21 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - c
+                        IntermediateToken - (139:4,21 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - c
                 HtmlContent - (144:4,26 [4] x:\dir\subdir\Test\TestComponent.cshtml)
                     LazyIntermediateToken - (144:4,26 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n\n
             CSharpCode - (155:6,7 [51] x:\dir\subdir\Test\TestComponent.cshtml)

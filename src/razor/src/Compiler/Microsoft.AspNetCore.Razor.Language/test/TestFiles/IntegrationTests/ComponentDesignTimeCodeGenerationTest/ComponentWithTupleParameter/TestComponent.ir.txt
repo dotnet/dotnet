@@ -18,7 +18,7 @@
                     LazyIntermediateToken - (86:2,1 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n\n
                 Component - (90:4,0 [51] x:\dir\subdir\Test\TestComponent.cshtml) - TestComponent
                     ComponentAttribute - (113:4,23 [8] x:\dir\subdir\Test\TestComponent.cshtml) - Gutter - Gutter - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (113:4,23 [8] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - (32, 16)
+                        IntermediateToken - (113:4,23 [8] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - (32, 16)
                 HtmlContent - (141:5,16 [2] x:\dir\subdir\Test\TestComponent.cshtml)
                     LazyIntermediateToken - (141:5,16 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
             CSharpCode - (7:0,7 [78] x:\dir\subdir\Test\TestComponent.cshtml)

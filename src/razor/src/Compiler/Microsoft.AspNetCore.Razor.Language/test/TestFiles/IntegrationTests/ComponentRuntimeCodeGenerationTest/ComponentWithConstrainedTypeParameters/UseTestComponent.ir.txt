@@ -14,14 +14,11 @@
                             CSharpExpression - (78:2,8 [7] x:\dir\subdir\Test\UseTestComponent.cshtml)
                                 LazyIntermediateToken - (78:2,8 [7] x:\dir\subdir\Test\UseTestComponent.cshtml) - CSharp - context
                     ComponentAttribute - (34:1,21 [6] x:\dir\subdir\Test\UseTestComponent.cshtml) - Item1 - Item1 - AttributeStructure.DoubleQuotes
-                        CSharpExpression - (35:1,22 [5] x:\dir\subdir\Test\UseTestComponent.cshtml)
-                            LazyIntermediateToken - (35:1,22 [5] x:\dir\subdir\Test\UseTestComponent.cshtml) - CSharp - item1
+                        LazyIntermediateToken - (35:1,22 [5] x:\dir\subdir\Test\UseTestComponent.cshtml) - CSharp - item1
                     ComponentAttribute - (48:1,35 [6] x:\dir\subdir\Test\UseTestComponent.cshtml) - Items2 - Items2 - AttributeStructure.DoubleQuotes
-                        CSharpExpression - (49:1,36 [5] x:\dir\subdir\Test\UseTestComponent.cshtml)
-                            LazyIntermediateToken - (49:1,36 [5] x:\dir\subdir\Test\UseTestComponent.cshtml) - CSharp - items
+                        LazyIntermediateToken - (49:1,36 [5] x:\dir\subdir\Test\UseTestComponent.cshtml) - CSharp - items
                     ComponentAttribute - (61:1,48 [6] x:\dir\subdir\Test\UseTestComponent.cshtml) - Item3 - Item3 - AttributeStructure.DoubleQuotes
-                        CSharpExpression - (62:1,49 [5] x:\dir\subdir\Test\UseTestComponent.cshtml)
-                            LazyIntermediateToken - (62:1,49 [5] x:\dir\subdir\Test\UseTestComponent.cshtml) - CSharp - item1
+                        LazyIntermediateToken - (62:1,49 [5] x:\dir\subdir\Test\UseTestComponent.cshtml) - CSharp - item1
             CSharpCode - (118:5,7 [268] x:\dir\subdir\Test\UseTestComponent.cshtml)
                 LazyIntermediateToken - (118:5,7 [268] x:\dir\subdir\Test\UseTestComponent.cshtml) - CSharp - \n    Image item1 = new Image() { id = 1, url="https://example.com"};\n    static Tag tag1 = new Tag() { description = "A description."};\n    static Tag tag2 = new Tag() { description = "Another description."};\n    List<Tag> items = new List<Tag>() { tag1, tag2 };\n
     NamespaceDeclaration -  - __Blazor.Test.UseTestComponent

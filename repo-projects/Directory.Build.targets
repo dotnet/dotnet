@@ -267,16 +267,16 @@
       PreviousBuildPassSourceNamePrefix="$(PreviousBuildPassSourceNamePrefix)"
       Condition="'$(DotNetSourceOnlyTestOnly)' != 'true'" />
 
-    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
-    <Touch Files="$(BaseIntermediateOutputPath)UpdateNuGetConfig.complete" AlwaysCreate="true">
-      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
-    </Touch>
-
     <ItemGroup>
       <!-- This is defined in this target to ensure the NuGet.config file is updated before it gets embedded. If this item
            was define globally, it would immediately get embedded with the original, unmodified version of the file. -->
       <EmbedInBinlog Include="$(NuGetConfigFile)" />
     </ItemGroup>
+
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <Touch Files="$(BaseIntermediateOutputPath)UpdateNuGetConfig.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
   </Target>
 
   <!-- Update the SDK version in the repo's global.json file.
@@ -284,7 +284,7 @@
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UpdateJson" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="UpdateGlobalJsonVersions"
           Condition="'$(GlobalJsonFile)' != ''"
-          DependsOnTargets="ResolveProjectReferences"
+          DependsOnTargets="ResolveProjectReferences;DiscoverBuiltSdkOverrides"
           Inputs="$(MSBuildProjectFullPath);$(MSBuildThisFileFullPath)"
           Outputs="$(BaseIntermediateOutputPath)UpdateGlobalJsonVersions.complete">
     <ItemGroup>
@@ -301,6 +301,28 @@
     <UpdateJson JsonFilePath="$(GlobalJsonFile)"
                 PathToAttribute="tools:runtimes"
                 SkipUpdateIfMissingKey="true" />
+
+    <!-- Update bootstrap Arcade SDK version -->
+    <UpdateJson JsonFilePath="$(GlobalJsonFile)"
+                PathToAttribute="msbuild-sdks:Microsoft.DotNet.Arcade.Sdk"
+                NewAttributeValue="$(ArcadeBootstrapVersion)"
+                Condition="'$(UseBootstrapArcade)' == 'true'" />
+
+    <ItemGroup Condition="'@(SourceBuiltSdkOverride)' != ''">
+      <_SourceBuiltSdkOverrideWithValue Include="@(SourceBuiltSdkOverride)" Value="%(Version)" />
+    </ItemGroup>
+
+    <!-- Update msbuild-sdks entries -->
+    <UpdateJson JsonFilePath="$(GlobalJsonFile)"
+                PathToAttribute="msbuild-sdks"
+                ValuesToUpdate="@(_SourceBuiltSdkOverrideWithValue)"
+                Condition="'@(_SourceBuiltSdkOverrideWithValue)' != ''" />
+
+    <ItemGroup>
+      <!-- This is defined in this target to ensure the NuGet.config file is updated before it gets embedded. If this item
+           was define globally, it would immediately get embedded with the original, unmodified version of the file. -->
+      <EmbedInBinlog Include="$(GlobalJsonFile)" />
+    </ItemGroup>
 
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
     <Touch Files="$(BaseIntermediateOutputPath)UpdateGlobalJsonVersions.complete" AlwaysCreate="true">
@@ -569,10 +591,10 @@
           Condition="'$(BuildCommand)' != ''"
           DependsOnTargets="ExtractToolPackagesForSkippedRepos;
                             UpdateNuGetConfig;
+                            DiscoverBuiltSdkOverrides;
                             UpdateGlobalJsonVersions;
                             UpdateEngCommonFiles;
                             CreateBuildInputProps;
-                            DiscoverBuiltSdkOverrides;
                             SetSourceBuiltSdkOverrides;
                             SetBuildProperties">
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building $(RepositoryName)" />

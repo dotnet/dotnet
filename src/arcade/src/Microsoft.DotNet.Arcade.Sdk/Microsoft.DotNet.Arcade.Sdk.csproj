@@ -17,7 +17,7 @@
 
     <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
     <_GeneratedVersionFilePath>$(IntermediateOutputPath)DefaultVersions.Generated.props</_GeneratedVersionFilePath>
-    <NoWarn>$(NoWarn);3021;NU5105;NU5111;SYSLIB0013</NoWarn>
+    <NoWarn>$(NoWarn);3021;NU5100;NU5105;NU5111;SYSLIB0013</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,6 +40,9 @@
     <None Include="$(_GeneratedVersionFilePath)"
           Pack="true"
           PackagePath="tools\DefaultVersions.Generated.props" />
+    <None Include="toolset/**/*.*"
+          Pack="true"
+          PackagePath="toolset/%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -84,10 +87,10 @@
   <ItemGroup>
     <None Include="$(ArtifactsBinDir)Microsoft.DotNet.ArcadeLogging\$(Configuration)\$(BundledNETCoreAppTargetFramework)\Microsoft.DotNet.ArcadeLogging.dll"
           Pack="true"
-          PackagePath="tools\net\Microsoft.DotNet.ArcadeLogging.dll" />
+          PackagePath="toolset\net\Microsoft.DotNet.ArcadeLogging.dll" />
     <None Include="$(ArtifactsBinDir)Microsoft.DotNet.ArcadeLogging\$(Configuration)\$(NetFrameworkToolCurrent)\Microsoft.DotNet.ArcadeLogging.dll"
           Pack="true"
-          PackagePath="tools\netframework\Microsoft.DotNet.ArcadeLogging.dll"
+          PackagePath="toolset\netframework\Microsoft.DotNet.ArcadeLogging.dll"
           Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
   </ItemGroup>
 

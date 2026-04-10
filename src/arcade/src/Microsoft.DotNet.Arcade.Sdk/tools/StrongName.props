@@ -19,8 +19,12 @@
                                       throwing an exception. For more details and an example, see
                                       https://github.com/dotnet/runtime/issues/65874.
   -->
-  
   <PropertyGroup>
     <FullAssemblySigningSupported Condition="'$(FullAssemblySigningSupported)' == '' and '$(OS)' != 'Windows_NT' and '$(OfficialBuilder)' != 'Microsoft'">false</FullAssemblySigningSupported>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <ArcadeSdkSnkDir>$(MSBuildThisFileDirectory)snk\</ArcadeSdkSnkDir>
+  </PropertyGroup>
+
 </Project>

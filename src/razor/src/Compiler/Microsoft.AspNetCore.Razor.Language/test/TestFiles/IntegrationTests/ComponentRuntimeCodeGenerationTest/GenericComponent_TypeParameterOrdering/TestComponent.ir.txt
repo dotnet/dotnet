@@ -9,12 +9,12 @@
             MethodDeclaration -  - protected override - void - BuildRenderTree
                 Component - (0:0,0 [89] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentTypeArgument - (19:0,19 [6] x:\dir\subdir\Test\TestComponent.cshtml) - TKey
-                        LazyIntermediateToken - (19:0,19 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - string
+                        IntermediateToken - (19:0,19 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - string
                     ComponentTypeArgument - (37:0,37 [18] x:\dir\subdir\Test\TestComponent.cshtml) - TService
-                        LazyIntermediateToken - (37:0,37 [18] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - IComposedInterface
+                        IntermediateToken - (37:0,37 [18] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - IComposedInterface
                     ComponentAttribute - (70:0,70 [15] x:\dir\subdir\Test\TestComponent.cshtml) - Value - Value - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
-                            LazyIntermediateToken - (70:0,70 [15] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - _componentValue
+                            IntermediateToken - (70:0,70 [15] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - _componentValue
                     ComponentAttribute - (70:0,70 [15] x:\dir\subdir\Test\TestComponent.cshtml) - ValueChanged - ValueChanged - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, 
@@ -24,12 +24,12 @@
                     LazyIntermediateToken - (89:0,89 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
                 Component - (91:1,0 [89] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentTypeArgument - (114:1,23 [18] x:\dir\subdir\Test\TestComponent.cshtml) - TService
-                        LazyIntermediateToken - (114:1,23 [18] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - IComposedInterface
+                        IntermediateToken - (114:1,23 [18] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - IComposedInterface
                     ComponentTypeArgument - (140:1,49 [6] x:\dir\subdir\Test\TestComponent.cshtml) - TKey
-                        LazyIntermediateToken - (140:1,49 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - string
+                        IntermediateToken - (140:1,49 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - string
                     ComponentAttribute - (161:1,70 [15] x:\dir\subdir\Test\TestComponent.cshtml) - Value - Value - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
-                            LazyIntermediateToken - (161:1,70 [15] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - _componentValue
+                            IntermediateToken - (161:1,70 [15] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - _componentValue
                     ComponentAttribute - (161:1,70 [15] x:\dir\subdir\Test\TestComponent.cshtml) - ValueChanged - ValueChanged - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, 

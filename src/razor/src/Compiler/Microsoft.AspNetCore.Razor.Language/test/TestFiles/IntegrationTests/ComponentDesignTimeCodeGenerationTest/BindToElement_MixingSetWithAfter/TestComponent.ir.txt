@@ -24,9 +24,9 @@
                         CSharpExpressionAttributeValue -  - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.EventCallback.Factory.CreateBinder(this, 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, callback: async __value => { await global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredBindSetter(callback: 
-                            LazyIntermediateToken - (41:0,41 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - UpdateValue
+                            IntermediateToken - (41:0,41 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - UpdateValue
                             IntermediateToken -  - CSharp - , value: ParentValue)(); await global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeAsynchronousDelegate(callback: 
-                            LazyIntermediateToken - (67:0,67 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - AfterUpdate
+                            IntermediateToken - (67:0,67 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - AfterUpdate
                             IntermediateToken -  - CSharp - ); }, value: ParentValue)
                             IntermediateToken -  - CSharp - , 
                             IntermediateToken -  - CSharp - ParentValue

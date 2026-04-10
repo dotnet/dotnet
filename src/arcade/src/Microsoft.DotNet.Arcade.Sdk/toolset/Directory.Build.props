@@ -1,0 +1,25 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <PropertyGroup>
+    <OutDirName>toolset\$(MSBuildProjectName)</OutDirName>
+  </PropertyGroup>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <PropertyGroup>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+
+    <!-- Disable target framework filtering for top level projects -->
+    <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
+
+    <_SuppressAllTargets>true</_SuppressAllTargets>
+    <_SuppressSdkImports>false</_SuppressSdkImports>
+    <_NoSuppressRestoreTarget>false</_NoSuppressRestoreTarget>
+
+    <!-- Opt-out features -->
+    <UsingToolXliff>false</UsingToolXliff>
+    <UsingToolPdbConverter>false</UsingToolPdbConverter>
+  </PropertyGroup>
+
+</Project>

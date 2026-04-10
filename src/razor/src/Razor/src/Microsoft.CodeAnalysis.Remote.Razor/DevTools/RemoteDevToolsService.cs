@@ -177,7 +177,7 @@ internal sealed class RemoteDevToolsService(in ServiceArgs args) : RazorDocument
     private static async ValueTask<SyntaxVisualizerTree?> GetRazorSyntaxTreeAsync(RemoteDocumentContext documentContext, CancellationToken cancellationToken)
     {
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        var razorSyntaxTree = codeDocument.GetSyntaxTree();
+        var razorSyntaxTree = codeDocument.GetTagHelperRewrittenSyntaxTree();
 
         if (razorSyntaxTree?.Root == null)
             return null;
