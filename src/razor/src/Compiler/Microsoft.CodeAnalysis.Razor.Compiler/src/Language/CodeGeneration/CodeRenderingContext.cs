@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 
@@ -92,7 +93,15 @@ public sealed class CodeRenderingContext : IDisposable
     }
 
     public ImmutableArray<RazorDiagnostic> GetDiagnostics()
-        => _diagnostics.ToImmutableOrderedBy(static d => d.Span.AbsoluteIndex);
+    {
+        var warningLevel = Options.RazorWarningLevel;
+
+        // Filter out diagnostics whose warning level exceeds the configured level.
+        // Diagnostics with level 0 are always reported regardless of the configured level.
+        return _diagnostics
+            .Where(d => d.WarningLevel <= warningLevel)
+            .OrderByAsArray(static d => d.Span.AbsoluteIndex);
+    }
 
     public void AddSourceMappingFor(IntermediateNode node)
     {
