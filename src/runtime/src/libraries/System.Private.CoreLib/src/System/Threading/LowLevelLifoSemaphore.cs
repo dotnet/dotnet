@@ -38,7 +38,7 @@ namespace System.Threading
         //    - in between we have a linear gain.
         //    all should be smoothed somewhat by the randomness of individual spin iterations.
 
-        private const int DefaultSemaphoreSpinCountLimit = 512;
+        private const int DefaultSemaphoreSpinCountLimit = 256;
 
         private CacheLineSeparatedCounts _separated;
 
