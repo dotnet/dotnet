@@ -19,7 +19,7 @@
       </trans-unit>
       <trans-unit id="View_Page">
         <source>View Page</source>
-        <target state="new">View Page</target>
+        <target state="translated">Görünüm Sayfası</target>
         <note />
       </trans-unit>
     </body>
