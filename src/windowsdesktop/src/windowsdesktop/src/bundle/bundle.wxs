@@ -11,7 +11,7 @@
   <!-- This enables preview -> RC -> GA -> servicing upgrade path -->
 
   <!-- Primary upgrade relationship using current deterministic upgrade code (for GA and all servicing) -->
-  <RelatedBundle Id="$(UpgradeCode)" Action="Upgrade" />
+  <RelatedBundle Code="$(UpgradeCode)" Action="Upgrade" />
 
 
 
