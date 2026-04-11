@@ -944,7 +944,7 @@
           "Member": "virtual bool Microsoft.EntityFrameworkCore.Update.ColumnModification.IsWrite { get; set; }"
         },
         {
-          "Member": "virtual string? Microsoft.EntityFrameworkCore.Update.ColumnModification.JsonPath { get; }"
+          "Member": "virtual Microsoft.EntityFrameworkCore.Infrastructure.JsonPath? Microsoft.EntityFrameworkCore.Update.ColumnModification.JsonPath { get; }"
         },
         {
           "Member": "virtual string? Microsoft.EntityFrameworkCore.Update.ColumnModification.OriginalParameterName { get; }"
@@ -994,7 +994,7 @@
           "Member": "Microsoft.EntityFrameworkCore.Update.ColumnModificationParameters.ColumnModificationParameters(Microsoft.EntityFrameworkCore.Update.IUpdateEntry? entry, Microsoft.EntityFrameworkCore.Metadata.IProperty? property, Microsoft.EntityFrameworkCore.Metadata.IColumnBase column, System.Func<string> generateParameterName, Microsoft.EntityFrameworkCore.Storage.RelationalTypeMapping typeMapping, bool valueIsRead, bool valueIsWrite, bool columnIsKey, bool columnIsCondition, bool sensitiveLoggingEnabled);"
         },
         {
-          "Member": "Microsoft.EntityFrameworkCore.Update.ColumnModificationParameters.ColumnModificationParameters(string columnName, object? value, Microsoft.EntityFrameworkCore.Metadata.IProperty? property, string? columnType, Microsoft.EntityFrameworkCore.Storage.RelationalTypeMapping? typeMapping, string jsonPath, bool read, bool write, bool key, bool condition, bool sensitiveLoggingEnabled, bool? isNullable = null);"
+          "Member": "Microsoft.EntityFrameworkCore.Update.ColumnModificationParameters.ColumnModificationParameters(string columnName, object? value, Microsoft.EntityFrameworkCore.Metadata.IProperty? property, string? columnType, Microsoft.EntityFrameworkCore.Storage.RelationalTypeMapping? typeMapping, Microsoft.EntityFrameworkCore.Infrastructure.JsonPath jsonPath, bool read, bool write, bool key, bool condition, bool sensitiveLoggingEnabled, bool? isNullable = null);"
         },
         {
           "Member": "Microsoft.EntityFrameworkCore.Update.ColumnModificationParameters.ColumnModificationParameters();"
@@ -1050,7 +1050,7 @@
           "Member": "bool Microsoft.EntityFrameworkCore.Update.ColumnModificationParameters.IsWrite { get; init; }"
         },
         {
-          "Member": "string? Microsoft.EntityFrameworkCore.Update.ColumnModificationParameters.JsonPath { get; init; }"
+          "Member": "Microsoft.EntityFrameworkCore.Infrastructure.JsonPath? Microsoft.EntityFrameworkCore.Update.ColumnModificationParameters.JsonPath { get; init; }"
         },
         {
           "Member": "object? Microsoft.EntityFrameworkCore.Update.ColumnModificationParameters.OriginalValue { get; init; }"
@@ -3497,6 +3497,9 @@
           "Member": "bool Microsoft.EntityFrameworkCore.Metadata.IColumnBase.IsNullable { get; }"
         },
         {
+          "Member": "Microsoft.EntityFrameworkCore.Metadata.IRelationalJsonElement? Microsoft.EntityFrameworkCore.Metadata.IColumnBase.JsonElement { get; }"
+        },
+        {
           "Member": "string Microsoft.EntityFrameworkCore.Metadata.IColumnBase.Name { get; }"
         },
         {
@@ -3591,7 +3594,7 @@
           "Member": "bool Microsoft.EntityFrameworkCore.Update.IColumnModification.IsWrite { get; set; }"
         },
         {
-          "Member": "string? Microsoft.EntityFrameworkCore.Update.IColumnModification.JsonPath { get; }"
+          "Member": "Microsoft.EntityFrameworkCore.Infrastructure.JsonPath? Microsoft.EntityFrameworkCore.Update.IColumnModification.JsonPath { get; }"
         },
         {
           "Member": "string? Microsoft.EntityFrameworkCore.Update.IColumnModification.OriginalParameterName { get; }"
@@ -4681,6 +4684,20 @@
       "Properties": [
         {
           "Member": "Microsoft.EntityFrameworkCore.Migrations.LockReleaseBehavior Microsoft.EntityFrameworkCore.Migrations.IHistoryRepository.LockReleaseBehavior { get; }"
+        }
+      ]
+    },
+    {
+      "Type": "interface Microsoft.EntityFrameworkCore.Metadata.IJsonElementMapping",
+      "Properties": [
+        {
+          "Member": "Microsoft.EntityFrameworkCore.Metadata.IRelationalJsonElement Microsoft.EntityFrameworkCore.Metadata.IJsonElementMapping.Element { get; }"
+        },
+        {
+          "Member": "Microsoft.EntityFrameworkCore.Metadata.IPropertyBase Microsoft.EntityFrameworkCore.Metadata.IJsonElementMapping.Property { get; }"
+        },
+        {
+          "Member": "Microsoft.EntityFrameworkCore.Metadata.ITableMappingBase Microsoft.EntityFrameworkCore.Metadata.IJsonElementMapping.TableMapping { get; }"
         }
       ]
     },
@@ -6172,6 +6189,53 @@
       ]
     },
     {
+      "Type": "interface Microsoft.EntityFrameworkCore.Metadata.IRelationalJsonArray : Microsoft.EntityFrameworkCore.Metadata.IRelationalJsonElement",
+      "Properties": [
+        {
+          "Member": "Microsoft.EntityFrameworkCore.Metadata.IRelationalJsonElement Microsoft.EntityFrameworkCore.Metadata.IRelationalJsonArray.ElementType { get; }"
+        }
+      ]
+    },
+    {
+      "Type": "interface Microsoft.EntityFrameworkCore.Metadata.IRelationalJsonElement",
+      "Properties": [
+        {
+          "Member": "Microsoft.EntityFrameworkCore.Metadata.IColumnBase Microsoft.EntityFrameworkCore.Metadata.IRelationalJsonElement.ContainingColumn { get; }"
+        },
+        {
+          "Member": "bool Microsoft.EntityFrameworkCore.Metadata.IRelationalJsonElement.IsNullable { get; }"
+        },
+        {
+          "Member": "Microsoft.EntityFrameworkCore.Metadata.IRelationalJsonElement? Microsoft.EntityFrameworkCore.Metadata.IRelationalJsonElement.ParentElement { get; }"
+        },
+        {
+          "Member": "System.Collections.Generic.IReadOnlyList<Microsoft.EntityFrameworkCore.Infrastructure.JsonPathSegment> Microsoft.EntityFrameworkCore.Metadata.IRelationalJsonElement.Path { get; }"
+        },
+        {
+          "Member": "System.Collections.Generic.IReadOnlyList<Microsoft.EntityFrameworkCore.Metadata.IJsonElementMapping> Microsoft.EntityFrameworkCore.Metadata.IRelationalJsonElement.PropertyMappings { get; }"
+        },
+        {
+          "Member": "string? Microsoft.EntityFrameworkCore.Metadata.IRelationalJsonElement.PropertyName { get; }"
+        },
+        {
+          "Member": "Microsoft.EntityFrameworkCore.Storage.RelationalTypeMapping? Microsoft.EntityFrameworkCore.Metadata.IRelationalJsonElement.StoreTypeMapping { get; }"
+        }
+      ]
+    },
+    {
+      "Type": "interface Microsoft.EntityFrameworkCore.Metadata.IRelationalJsonObject : Microsoft.EntityFrameworkCore.Metadata.IRelationalJsonElement",
+      "Methods": [
+        {
+          "Member": "Microsoft.EntityFrameworkCore.Metadata.IRelationalJsonElement? Microsoft.EntityFrameworkCore.Metadata.IRelationalJsonObject.FindProperty(string name);"
+        }
+      ],
+      "Properties": [
+        {
+          "Member": "System.Collections.Generic.IReadOnlyList<Microsoft.EntityFrameworkCore.Metadata.IRelationalJsonElement> Microsoft.EntityFrameworkCore.Metadata.IRelationalJsonObject.Properties { get; }"
+        }
+      ]
+    },
+    {
       "Type": "interface Microsoft.EntityFrameworkCore.Query.IRelationalLiftableConstantFactory : Microsoft.EntityFrameworkCore.Query.ILiftableConstantFactory",
       "Stage": "Experimental",
       "Methods": [
@@ -6576,7 +6640,7 @@
           "Member": "Microsoft.EntityFrameworkCore.Metadata.ISqlQueryColumn? Microsoft.EntityFrameworkCore.Metadata.ISqlQuery.FindColumn(string name);"
         },
         {
-          "Member": "Microsoft.EntityFrameworkCore.Metadata.ISqlQueryColumn? Microsoft.EntityFrameworkCore.Metadata.ISqlQuery.FindColumn(Microsoft.EntityFrameworkCore.Metadata.IProperty property);"
+          "Member": "Microsoft.EntityFrameworkCore.Metadata.ISqlQueryColumn? Microsoft.EntityFrameworkCore.Metadata.ISqlQuery.FindColumn(Microsoft.EntityFrameworkCore.Metadata.IPropertyBase propertyBase);"
         }
       ],
       "Properties": [
@@ -6767,7 +6831,7 @@
           "Member": "Microsoft.EntityFrameworkCore.Metadata.IFunctionColumn? Microsoft.EntityFrameworkCore.Metadata.IStoreFunction.FindColumn(string name);"
         },
         {
-          "Member": "Microsoft.EntityFrameworkCore.Metadata.IFunctionColumn? Microsoft.EntityFrameworkCore.Metadata.IStoreFunction.FindColumn(Microsoft.EntityFrameworkCore.Metadata.IProperty property);"
+          "Member": "Microsoft.EntityFrameworkCore.Metadata.IFunctionColumn? Microsoft.EntityFrameworkCore.Metadata.IStoreFunction.FindColumn(Microsoft.EntityFrameworkCore.Metadata.IPropertyBase propertyBase);"
         }
       ],
       "Properties": [
@@ -6907,7 +6971,7 @@
           "Member": "Microsoft.EntityFrameworkCore.Metadata.IColumn? Microsoft.EntityFrameworkCore.Metadata.ITable.FindColumn(string name);"
         },
         {
-          "Member": "Microsoft.EntityFrameworkCore.Metadata.IColumn? Microsoft.EntityFrameworkCore.Metadata.ITable.FindColumn(Microsoft.EntityFrameworkCore.Metadata.IProperty property);"
+          "Member": "Microsoft.EntityFrameworkCore.Metadata.IColumn? Microsoft.EntityFrameworkCore.Metadata.ITable.FindColumn(Microsoft.EntityFrameworkCore.Metadata.IPropertyBase propertyBase);"
         }
       ],
       "Properties": [
@@ -6953,7 +7017,7 @@
           "Member": "Microsoft.EntityFrameworkCore.Metadata.IColumnBase? Microsoft.EntityFrameworkCore.Metadata.ITableBase.FindColumn(string name);"
         },
         {
-          "Member": "Microsoft.EntityFrameworkCore.Metadata.IColumnBase? Microsoft.EntityFrameworkCore.Metadata.ITableBase.FindColumn(Microsoft.EntityFrameworkCore.Metadata.IProperty property);"
+          "Member": "Microsoft.EntityFrameworkCore.Metadata.IColumnBase? Microsoft.EntityFrameworkCore.Metadata.ITableBase.FindColumn(Microsoft.EntityFrameworkCore.Metadata.IPropertyBase propertyBase);"
         },
         {
           "Member": "System.Collections.Generic.IEnumerable<Microsoft.EntityFrameworkCore.Metadata.IForeignKey> Microsoft.EntityFrameworkCore.Metadata.ITableBase.GetReferencingRowInternalForeignKeys(Microsoft.EntityFrameworkCore.Metadata.IEntityType entityType);"
@@ -7169,7 +7233,7 @@
           "Member": "Microsoft.EntityFrameworkCore.Metadata.IViewColumn? Microsoft.EntityFrameworkCore.Metadata.IView.FindColumn(string name);"
         },
         {
-          "Member": "Microsoft.EntityFrameworkCore.Metadata.IViewColumn? Microsoft.EntityFrameworkCore.Metadata.IView.FindColumn(Microsoft.EntityFrameworkCore.Metadata.IProperty property);"
+          "Member": "Microsoft.EntityFrameworkCore.Metadata.IViewColumn? Microsoft.EntityFrameworkCore.Metadata.IView.FindColumn(Microsoft.EntityFrameworkCore.Metadata.IPropertyBase propertyBase);"
         }
       ],
       "Properties": [
@@ -7258,6 +7322,56 @@
         },
         {
           "Member": "virtual Microsoft.EntityFrameworkCore.Query.SqlExpressions.TableExpressionBase Microsoft.EntityFrameworkCore.Query.SqlExpressions.JoinExpressionBase.Table { get; }"
+        }
+      ]
+    },
+    {
+      "Type": "class Microsoft.EntityFrameworkCore.Infrastructure.JsonPath",
+      "Methods": [
+        {
+          "Member": "Microsoft.EntityFrameworkCore.Infrastructure.JsonPath.JsonPath(System.Collections.Generic.IReadOnlyList<Microsoft.EntityFrameworkCore.Infrastructure.JsonPathSegment> segments, int[] ordinals);"
+        },
+        {
+          "Member": "virtual System.Text.StringBuilder Microsoft.EntityFrameworkCore.Infrastructure.JsonPath.AppendTo(System.Text.StringBuilder builder);"
+        },
+        {
+          "Member": "override string Microsoft.EntityFrameworkCore.Infrastructure.JsonPath.ToString();"
+        }
+      ],
+      "Properties": [
+        {
+          "Member": "virtual bool Microsoft.EntityFrameworkCore.Infrastructure.JsonPath.IsRoot { get; }"
+        },
+        {
+          "Member": "virtual int[] Microsoft.EntityFrameworkCore.Infrastructure.JsonPath.Ordinals { get; }"
+        },
+        {
+          "Member": "static Microsoft.EntityFrameworkCore.Infrastructure.JsonPath Microsoft.EntityFrameworkCore.Infrastructure.JsonPath.Root { get; }"
+        },
+        {
+          "Member": "virtual System.Collections.Generic.IReadOnlyList<Microsoft.EntityFrameworkCore.Infrastructure.JsonPathSegment> Microsoft.EntityFrameworkCore.Infrastructure.JsonPath.Segments { get; }"
+        }
+      ]
+    },
+    {
+      "Type": "sealed class Microsoft.EntityFrameworkCore.Infrastructure.JsonPathSegment",
+      "Methods": [
+        {
+          "Member": "Microsoft.EntityFrameworkCore.Infrastructure.JsonPathSegment.JsonPathSegment(string propertyName);"
+        },
+        {
+          "Member": "override string Microsoft.EntityFrameworkCore.Infrastructure.JsonPathSegment.ToString();"
+        }
+      ],
+      "Properties": [
+        {
+          "Member": "static Microsoft.EntityFrameworkCore.Infrastructure.JsonPathSegment Microsoft.EntityFrameworkCore.Infrastructure.JsonPathSegment.Array { get; }"
+        },
+        {
+          "Member": "bool Microsoft.EntityFrameworkCore.Infrastructure.JsonPathSegment.IsArray { get; }"
+        },
+        {
+          "Member": "string? Microsoft.EntityFrameworkCore.Infrastructure.JsonPathSegment.PropertyName { get; }"
         }
       ]
     },
@@ -9926,6 +10040,10 @@
         {
           "Member": "const string Microsoft.EntityFrameworkCore.Metadata.RelationalAnnotationNames.IsTableExcludedFromMigrations",
           "Value": "Relational:IsTableExcludedFromMigrations"
+        },
+        {
+          "Member": "const string Microsoft.EntityFrameworkCore.Metadata.RelationalAnnotationNames.JsonElementMappings",
+          "Value": "Relational:JsonElementMappings"
         },
         {
           "Member": "const string Microsoft.EntityFrameworkCore.Metadata.RelationalAnnotationNames.JsonPropertyName",
@@ -14916,7 +15034,7 @@
           "Stage": "Obsolete"
         },
         {
-          "Member": "static System.Collections.Generic.IEnumerable<Microsoft.EntityFrameworkCore.Metadata.IColumnMappingBase> Microsoft.EntityFrameworkCore.RelationalPropertyExtensions.GetDefaultColumnMappings(this Microsoft.EntityFrameworkCore.Metadata.IProperty property);"
+          "Member": "static System.Collections.Generic.IEnumerable<Microsoft.EntityFrameworkCore.Metadata.IColumnMappingBase> Microsoft.EntityFrameworkCore.RelationalPropertyExtensions.GetDefaultColumnMappings(this Microsoft.EntityFrameworkCore.Metadata.IPropertyBase propertyBase);"
         },
         {
           "Member": "static string Microsoft.EntityFrameworkCore.RelationalPropertyExtensions.GetDefaultColumnName(this Microsoft.EntityFrameworkCore.Metadata.IReadOnlyProperty property);"
@@ -14979,6 +15097,9 @@
           "Member": "static Microsoft.EntityFrameworkCore.Metadata.ConfigurationSource? Microsoft.EntityFrameworkCore.RelationalPropertyExtensions.GetIsStoredConfigurationSource(this Microsoft.EntityFrameworkCore.Metadata.IConventionProperty property);"
         },
         {
+          "Member": "static System.Collections.Generic.IEnumerable<Microsoft.EntityFrameworkCore.Metadata.IJsonElementMapping> Microsoft.EntityFrameworkCore.RelationalPropertyExtensions.GetJsonElementMappings(this Microsoft.EntityFrameworkCore.Metadata.IPropertyBase propertyBase);"
+        },
+        {
           "Member": "static string? Microsoft.EntityFrameworkCore.RelationalPropertyExtensions.GetJsonPropertyName(this Microsoft.EntityFrameworkCore.Metadata.IReadOnlyProperty property);"
         },
         {
@@ -15024,7 +15145,7 @@
           "Member": "static System.Collections.Generic.IEnumerable<Microsoft.EntityFrameworkCore.Metadata.ISqlQueryColumnMapping> Microsoft.EntityFrameworkCore.RelationalPropertyExtensions.GetSqlQueryColumnMappings(this Microsoft.EntityFrameworkCore.Metadata.IProperty property);"
         },
         {
-          "Member": "static System.Collections.Generic.IEnumerable<Microsoft.EntityFrameworkCore.Metadata.IColumnMapping> Microsoft.EntityFrameworkCore.RelationalPropertyExtensions.GetTableColumnMappings(this Microsoft.EntityFrameworkCore.Metadata.IProperty property);"
+          "Member": "static System.Collections.Generic.IEnumerable<Microsoft.EntityFrameworkCore.Metadata.IColumnMapping> Microsoft.EntityFrameworkCore.RelationalPropertyExtensions.GetTableColumnMappings(this Microsoft.EntityFrameworkCore.Metadata.IPropertyBase propertyBase);"
         },
         {
           "Member": "static System.Collections.Generic.IEnumerable<Microsoft.EntityFrameworkCore.Metadata.IStoredProcedureParameterMapping> Microsoft.EntityFrameworkCore.RelationalPropertyExtensions.GetUpdateStoredProcedureParameterMappings(this Microsoft.EntityFrameworkCore.Metadata.IProperty property);"
@@ -15033,7 +15154,7 @@
           "Member": "static System.Collections.Generic.IEnumerable<Microsoft.EntityFrameworkCore.Metadata.IStoredProcedureResultColumnMapping> Microsoft.EntityFrameworkCore.RelationalPropertyExtensions.GetUpdateStoredProcedureResultColumnMappings(this Microsoft.EntityFrameworkCore.Metadata.IProperty property);"
         },
         {
-          "Member": "static System.Collections.Generic.IEnumerable<Microsoft.EntityFrameworkCore.Metadata.IViewColumnMapping> Microsoft.EntityFrameworkCore.RelationalPropertyExtensions.GetViewColumnMappings(this Microsoft.EntityFrameworkCore.Metadata.IProperty property);"
+          "Member": "static System.Collections.Generic.IEnumerable<Microsoft.EntityFrameworkCore.Metadata.IViewColumnMapping> Microsoft.EntityFrameworkCore.RelationalPropertyExtensions.GetViewColumnMappings(this Microsoft.EntityFrameworkCore.Metadata.IPropertyBase propertyBase);"
         },
         {
           "Member": "static bool Microsoft.EntityFrameworkCore.RelationalPropertyExtensions.IsColumnNullable(this Microsoft.EntityFrameworkCore.Metadata.IReadOnlyProperty property);"
@@ -15708,6 +15829,9 @@
           "Member": "Microsoft.EntityFrameworkCore.Metadata.Conventions.RelationalRuntimeModelConvention.RelationalRuntimeModelConvention(Microsoft.EntityFrameworkCore.Metadata.Conventions.Infrastructure.ProviderConventionSetBuilderDependencies dependencies, Microsoft.EntityFrameworkCore.Metadata.Conventions.Infrastructure.RelationalConventionSetBuilderDependencies relationalDependencies);"
         },
         {
+          "Member": "override void Microsoft.EntityFrameworkCore.Metadata.Conventions.RelationalRuntimeModelConvention.ProcessComplexPropertyAnnotations(System.Collections.Generic.Dictionary<string, object?> annotations, Microsoft.EntityFrameworkCore.Metadata.IComplexProperty complexProperty, Microsoft.EntityFrameworkCore.Metadata.RuntimeComplexProperty runtimeComplexProperty, bool runtime);"
+        },
+        {
           "Member": "override void Microsoft.EntityFrameworkCore.Metadata.Conventions.RelationalRuntimeModelConvention.ProcessComplexTypeAnnotations(System.Collections.Generic.Dictionary<string, object?> annotations, Microsoft.EntityFrameworkCore.Metadata.IComplexType complexType, Microsoft.EntityFrameworkCore.Metadata.RuntimeComplexType runtimeComplexType, bool runtime);"
         },
         {
@@ -15733,6 +15857,9 @@
         },
         {
           "Member": "override void Microsoft.EntityFrameworkCore.Metadata.Conventions.RelationalRuntimeModelConvention.ProcessModelAnnotations(System.Collections.Generic.Dictionary<string, object?> annotations, Microsoft.EntityFrameworkCore.Metadata.IModel model, Microsoft.EntityFrameworkCore.Metadata.RuntimeModel runtimeModel, bool runtime);"
+        },
+        {
+          "Member": "override void Microsoft.EntityFrameworkCore.Metadata.Conventions.RelationalRuntimeModelConvention.ProcessNavigationAnnotations(System.Collections.Generic.Dictionary<string, object?> annotations, Microsoft.EntityFrameworkCore.Metadata.INavigation navigation, Microsoft.EntityFrameworkCore.Metadata.RuntimeNavigation runtimeNavigation, bool runtime);"
         },
         {
           "Member": "override void Microsoft.EntityFrameworkCore.Metadata.Conventions.RelationalRuntimeModelConvention.ProcessPropertyAnnotations(System.Collections.Generic.Dictionary<string, object?> annotations, Microsoft.EntityFrameworkCore.Metadata.IProperty property, Microsoft.EntityFrameworkCore.Metadata.RuntimeProperty runtimeProperty, bool runtime);"
