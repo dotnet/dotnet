@@ -2726,6 +2726,67 @@ namespace MyApp
             Assert.Single(result.GeneratedSources);
         }
 
+        [Theory, CombinatorialData]
+        public async Task RazorWarningLevel_Incorrect(
+            [CombinatorialValues("incorrect", "1.2", "0x1", "-1")] string warningLevel)
+        {
+            var project = CreateTestProject(new()
+            {
+                ["Pages/Index.razor"] = "<h1>Hello world</h1>",
+            });
+            var compilation = await project.GetCompilationAsync();
+            var driver = await GetDriverAsync(project, options =>
+            {
+                options.TestGlobalOptions["build_property.RazorWarningLevel"] = warningLevel;
+            });
+
+            var result = RunGenerator(compilation!, ref driver);
+
+            result.Diagnostics.Verify(
+                // error RZ3601: Invalid value '{0}' for RazorWarningLevel. Must be empty or a non-negative integer.
+                Diagnostic("RZ3601").WithArguments(warningLevel).WithLocation(1, 1));
+            Assert.Single(result.GeneratedSources);
+        }
+
+        [Theory, CombinatorialData]
+        public async Task RazorWarningLevel_ValidValues(
+            [CombinatorialValues("0", "10", "11", "9999")] string warningLevel)
+        {
+            var project = CreateTestProject(new()
+            {
+                ["Pages/Index.razor"] = "<h1>Hello world</h1>",
+            });
+            var compilation = await project.GetCompilationAsync();
+            var driver = await GetDriverAsync(project, options =>
+            {
+                options.TestGlobalOptions["build_property.RazorWarningLevel"] = warningLevel;
+            });
+
+            var result = RunGenerator(compilation!, ref driver);
+
+            result.Diagnostics.Verify();
+            Assert.Single(result.GeneratedSources);
+        }
+
+        [Fact]
+        public async Task RazorWarningLevel_Empty_IsValid()
+        {
+            var project = CreateTestProject(new()
+            {
+                ["Pages/Index.razor"] = "<h1>Hello world</h1>",
+            });
+            var compilation = await project.GetCompilationAsync();
+            var driver = await GetDriverAsync(project, options =>
+            {
+                options.TestGlobalOptions["build_property.RazorWarningLevel"] = "";
+            });
+
+            var result = RunGenerator(compilation!, ref driver);
+
+            result.Diagnostics.Verify();
+            Assert.Single(result.GeneratedSources);
+        }
+
 #pragma warning disable RS1041 // This compiler extension should not be implemented in an assembly with target framework '.NET 8.0'. References to other target frameworks will cause the compiler to behave unpredictably.
 #pragma warning disable RS1038 // This compiler extension should not be implemented in an assembly containing a reference to Microsoft.CodeAnalysis.Workspaces.
         [Generator]

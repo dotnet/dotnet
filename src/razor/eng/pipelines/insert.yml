@@ -12,14 +12,11 @@
     type: string
     default: 'true'
 
-  - name: buildUserName
+  - name: devDivAzdoToken
     type: string
-  - name: buildPassword
+  - name: dncEngAzureSubscription
     type: string
-  - name: componentUserName
-    type: string
-  - name: componentPassword
-    type: string
+    default: 'DncEng Insertion: Roslyn and Razor'
 
   - name: publishDataURI
     type: string
@@ -47,11 +44,8 @@
 steps:
   - checkout: none
 
-  - task: NuGetCommand@2
-    displayName: 'Install RIT from Azure Artifacts'
-    inputs:
-      command: custom
-      arguments: 'install RoslynTools.VisualStudioInsertionTool -PreRelease -Source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json'
+  - script: dotnet tool install Microsoft.RoslynTools --tool-path .tools --prerelease --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
+    displayName: 'Install roslyn-tools'
 
   - powershell: |
       $authorization = if ("" -ne $Env:PublishDataAccessToken) { "Bearer $Env:PublishDataAccessToken" } else { "" }
@@ -73,7 +67,7 @@ steps:
       Write-Host "##vso[task.setvariable variable=Template.TitleSuffix]$('')"
       Write-Host "##vso[task.setvariable variable=Template.ComponentAzdoUri]$('')"
       Write-Host "##vso[task.setvariable variable=Template.ComponentProjectName]$('')"
-      Write-Host "##vso[task.setvariable variable=Template.DropPath]$('(default)')"
+      Write-Host "##vso[task.setvariable variable=Template.DropPath]$('')"
 
       Write-Host "##vso[task.setvariable variable=Template.ComponentBranchName]$branchName"
       Write-Host "##vso[task.setvariable variable=Template.VSBranchName]$($branchData.vsBranch)"
@@ -99,15 +93,6 @@ steps:
       PublishDataAccessToken: ${{ parameters.publishDataAccessToken }}
 
   - powershell: |
-      # Set AzDO authorization template variables
-      Write-Host "Setting BuildUserName to $Env:BuildUserName"
-      Write-Host "##vso[task.setvariable variable=Template.BuildUserName]$Env:BuildUserName"
-      Write-Host "##vso[task.setvariable variable=Template.BuildPassword]$Env:BuildPassword"
-
-      Write-Host "Setting ComponentUserName to $Env:ComponentUserName"
-      Write-Host "##vso[task.setvariable variable=Template.ComponentUserName]$Env:ComponentUserName"
-      Write-Host "##vso[task.setvariable variable=Template.ComponentPassword]$Env:ComponentPassword"
-
       # Overwrite template variables with values passed into this template as parameters
       if ("" -ne $Env:CreateDraftPR)
       {
@@ -149,10 +134,6 @@ steps:
 
     displayName: Set Variables from Input Parameters
     env:
-      BuildUserName: ${{ parameters.buildUserName }}
-      BuildPassword: ${{ parameters.buildPassword }}
-      ComponentUserName: ${{ parameters.componentUserName }}
-      ComponentPassword: ${{ parameters.componentPassword }}
       CreateDraftPR: ${{ parameters.createDraftPR }}
       AutoComplete: ${{ parameters.autoComplete }}
       TitlePrefix: ${{ parameters.titlePrefix }}
@@ -161,40 +142,73 @@ steps:
       DropPath: ${{ parameters.dropPath }}
 
   # Now that everything is set, actually perform the insertion.
-  - powershell: |
-      mv RoslynTools.VisualStudioInsertionTool.* RIT
-      .\RIT\tools\net472\OneOffInsertion.ps1 `
-        -autoComplete "$(Template.AutoComplete)" `
-        -buildQueueName "$(Build.DefinitionName)" `
-        -cherryPick "(default)" `
-        -userName "$(Template.BuildUserName)" `
-        -password "$(Template.BuildPassword)" `
-        -componentUserName "$(Template.ComponentUserName)" `
-        -componentPassword "$(Template.ComponentPassword)" `
-        -componentAzdoUri "$(Template.ComponentAzdoUri)" `
-        -componentProjectName "$(Template.ComponentProjectName)" `
-        -componentName "Razor" `
-        -componentGitHubRepoName "dotnet/razor" `
-        -componentBranchName "$(Template.ComponentBranchName)" `
-        -createDraftPR "$(Template.CreateDraftPR)" `
-        -defaultValueSentinel "(default)" `
-        -dropPath "$(Template.DropPath)" `
-        -insertCore "false" `
-        -insertDevDiv "(default)" `
-        -insertionCount "1" `
-        -insertToolset "false" `
-        -titlePrefix "$(Template.TitlePrefix)" `
-        -titleSuffix "$(Template.TitleSuffix)" `
-        -queueValidation "true" `
-        -requiredValueSentinel "REQUIRED" `
-        -reviewerGUID "6c25b447-1d90-4840-8fde-d8b22cb8733e" `
-        -specificBuild "$(Build.BuildNumber)" `
-        -updateAssemblyVersions "true" `
-        -updateCoreXTLibraries "false" `
-        -visualStudioBranchName "$(Template.VSBranchName)" `
-        -writePullRequest "prid.txt" `
-        -queueSpeedometerValidation "${{ parameters.queueSpeedometerValidation }}"
-    displayName: 'Run OneOffInsertion.ps1'
+  # Uses AzureCLI@2 so that the WIF service connection's SP is logged in,
+  # then explicitly acquires an AzDO token via az CLI for dnceng auth.
+  - task: AzureCLI@2
+    displayName: 'Create VS Insertion PR'
+    inputs:
+      azureSubscription: ${{ parameters.dncEngAzureSubscription }}
+      scriptType: ps
+      scriptLocation: inlineScript
+      inlineScript: |
+        # Explicitly acquire an AzDO token from the logged-in WIF service principal.
+        # Do NOT rely on DefaultAzureCredential — it may pick up the agent's
+        # managed identity instead of the WIF SP.
+        $dncengToken = az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 --query accessToken -o tsv
+        if ($LASTEXITCODE -ne 0) {
+          Write-Error "Failed to acquire AzDO token for dnceng via az CLI"
+          exit 1
+        }
 
-  - script: 'echo. && echo. && type "prid.txt" && echo. && echo.'
-    displayName: 'Report PR URL'
+        $arguments = @(
+          "create-insertion"
+          "--insertion-name", "Razor"
+          "--vs-branch", "$(Template.VSBranchName)"
+          "--component-branch", "$(Template.ComponentBranchName)"
+          "--component-build-queue", "$(Build.DefinitionName)"
+          "--specific-build", "$(Build.BuildNumber)"
+          "--create-draft-pr", "$(Template.CreateDraftPR)"
+          "--set-auto-complete", "$(Template.AutoComplete)"
+          "--insert-corext-packages", "false"
+          "--update-assembly-versions"
+          "--run-speedometer-in-validation", "${{ parameters.queueSpeedometerValidation }}"
+          "--reviewer-guid", "6c25b447-1d90-4840-8fde-d8b22cb8733e"
+          "--devdiv-azdo-token", $Env:DevDivToken
+          "--dnceng-azdo-token", $dncengToken
+          "--ci"
+        )
+
+        $componentAzdoUri = "$(Template.ComponentAzdoUri)"
+        if ($componentAzdoUri -ne "")
+        {
+          $arguments += "--component-azdo-uri", $componentAzdoUri
+        }
+
+        $componentProjectName = "$(Template.ComponentProjectName)"
+        if ($componentProjectName -ne "")
+        {
+          $arguments += "--component-project", $componentProjectName
+        }
+
+        $dropPath = "$(Template.DropPath)"
+        if ($dropPath -ne "")
+        {
+          $arguments += "--build-drop-path", $dropPath
+        }
+
+        $titlePrefix = "$(Template.TitlePrefix)"
+        if ($titlePrefix -ne "")
+        {
+          $arguments += "--title-prefix", $titlePrefix
+        }
+
+        $titleSuffix = "$(Template.TitleSuffix)"
+        if ($titleSuffix -ne "")
+        {
+          $arguments += "--title-suffix", $titleSuffix
+        }
+
+        & ./.tools/roslyn-tools @arguments
+    env:
+      DevDivToken: ${{ parameters.devDivAzdoToken }}
+      DOTNET_ROLL_FORWARD: Major
