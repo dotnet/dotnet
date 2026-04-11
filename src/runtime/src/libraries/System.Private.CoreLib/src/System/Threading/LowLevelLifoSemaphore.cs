@@ -176,16 +176,32 @@ namespace System.Threading
 
         public bool WaitNoSpin(int timeoutMs)
         {
-            Counts counts = _separated._counts.InterlockedIncrementWaiterCount();
+            // Now we will try registering as a waiter and wait.
+            // If signaled before that, we have to acquire as this can be the last thread that could take that signal.
+            // The difference with spinning above is that we are not waiting for a signal. We should typically
+            // immediately succeed unless a lot of threads are trying to update the counts.
+            uint collisionCount = 0;
+            while (true)
+            {
+                Counts counts = _separated._counts;
+                Counts newCounts = counts;
+                if (counts.SignalCount != 0)
+                {
+                    newCounts.DecrementSignalCount();
+                }
+                else
+                {
+                    newCounts.IncrementWaiterCount();
+                }
 
-            // If there were pending signals, we may end in a condition that requires
-            // waking a waiter.
-            // Perhaps the current thread will be such waiter, but we should still
-            // go through wait/wake routine (vs. just claiming the signal) as the caller
-            // wants to park the thread.
-            MaybeWakeWaiters(counts);
+                Counts countsBeforeUpdate = _separated._counts.InterlockedCompareExchange(newCounts, counts);
+                if (countsBeforeUpdate == counts)
+                {
+                    return counts.SignalCount != 0 || WaitAsWaiter(timeoutMs, allowFastWake: false);
+                }
 
-            return WaitAsWaiter(timeoutMs, allowFastWake: false);
+                Backoff.Exponential(collisionCount++);
+            }
         }
 
         private void MaybeWakeWaiters(Counts counts)
