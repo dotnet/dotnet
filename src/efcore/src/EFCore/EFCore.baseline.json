@@ -4149,6 +4149,9 @@
           "Member": "static string Microsoft.EntityFrameworkCore.Diagnostics.CoreStrings.InvalidIncludeExpression(object? expression);"
         },
         {
+          "Member": "static string Microsoft.EntityFrameworkCore.Diagnostics.CoreStrings.InvalidJsonPathOrdinalCount(object? ordinalsCount, object? arraySegmentCount);"
+        },
+        {
           "Member": "static string Microsoft.EntityFrameworkCore.Diagnostics.CoreStrings.InvalidKeyValue(object? entityType, object? keyProperty);"
         },
         {
