@@ -9,7 +9,7 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Storage.Internal;
 ///     any release. You should only use it directly in your code with extreme caution and knowing that
 ///     doing so can result in application failures when updating to a new Entity Framework Core release.
 /// </summary>
-public class CosmosTransactionalBatchEntry
+public class CosmosTimeOnlyTypeMapping : CosmosTypeMapping
 {
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -17,11 +17,16 @@ public class CosmosTransactionalBatchEntry
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public CosmosTransactionalBatchEntry(IUpdateEntry entry, CosmosCudOperation operation, string id)
+    public static new CosmosTimeOnlyTypeMapping Default { get; } = new();
+
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
+    public CosmosTimeOnlyTypeMapping() : base(typeof(TimeOnly), null, null, null, CosmosJsonTimeOnlyReaderWriter.Instance)
     {
-        Entry = entry;
-        Operation = operation;
-        Id = id;
     }
 
     /// <summary>
@@ -30,21 +35,11 @@ public class CosmosTransactionalBatchEntry
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual IUpdateEntry Entry { get; }
+    protected CosmosTimeOnlyTypeMapping(CoreTypeMappingParameters parameters) : base(parameters)
+    {
+    }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
-    public virtual CosmosCudOperation Operation { get; }
-
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
-    public virtual string Id { get; }
+    /// <inheritdoc/>
+    protected override CoreTypeMapping Clone(CoreTypeMappingParameters parameters)
+        => new CosmosTimeOnlyTypeMapping(parameters);
 }
