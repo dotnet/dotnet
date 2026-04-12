@@ -41,8 +41,8 @@
     <SharedComponentAssetManifests>$(SharedComponentsArtifactsPath)VerticalManifest.xml</SharedComponentAssetManifests>
     <ExtraTestDependenciesRestoreSourcePath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'extra-test-dependencies'))</ExtraTestDependenciesRestoreSourcePath>
 
-    <SbrpRepoSrcDir>$([MSBuild]::NormalizeDirectory('$(SrcDir)', 'source-build-reference-packages', 'src'))</SbrpRepoSrcDir>
-    <ReferencePackagesDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'reference'))</ReferencePackagesDir>
+    <SourceBuildAssetsRepoSrcDir>$([MSBuild]::NormalizeDirectory('$(SrcDir)', 'source-build-assets', 'src'))</SourceBuildAssetsRepoSrcDir>
+    <AssetsDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'assets'))</AssetsDir>
     <ExternalTarballsDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'archive'))</ExternalTarballsDir>
     <SourceBuiltArtifactsTarballName>Private.SourceBuilt.Artifacts</SourceBuiltArtifactsTarballName>
     <SourceBuiltSharedComponentsTarballName>Private.SourceBuilt.SharedComponents</SourceBuiltSharedComponentsTarballName>

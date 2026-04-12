@@ -45,7 +45,7 @@ stages:
   - name: RepoRoot
     value: $(Build.SourcesDirectory)
   - name: TargetRepo
-    value: dotnet/source-build-reference-packages
+    value: dotnet/source-build-assets
 
   # GH access token for SB bot - BotAccount-dotnet-sb-bot-pat
   - group: Dotnet-SourceBuild-Secrets
@@ -105,7 +105,7 @@ stages:
         skip_packages_array=(${{ lower(parameters.skipPackages) }} ${{ lower(parameters.knownFalsePositives) }})
 
         for path in $unreferenced_paths; do
-          package_path="$(RepoRoot)${path#/__w/1/s/src/source-build-reference-packages}"
+          package_path="$(RepoRoot)${path#/__w/1/s/src/source-build-assets}"
 
           skip=false
           for skip_package in "${skip_packages_array[@]}"; do

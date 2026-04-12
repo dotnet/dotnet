@@ -79,10 +79,10 @@
     </PropertyGroup>
     <WriteLinesToFile Lines="$(NewNuGetConfigContent)" File="$(NuGetConfigFile)" Overwrite="true" />
 
-    <!-- Add the SBRP artifact packages as a nuget feed.
-         This is how other SBRP references are picked up (e.g. targeting pack). -->
+    <!-- Add the SBA artifact packages as a nuget feed.
+         This is how other SBA references are picked up (e.g. targeting pack). -->
     <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
-                            SourceName="SBRP"
+                            SourceName="SBA"
                             SourcePath="$(ArtifactsPackagesDir)" />
 
     <ItemGroup>
