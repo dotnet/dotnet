@@ -254,7 +254,7 @@
       NuGetConfigFile="$(NuGetConfigFile)"
       BuildWithOnlineFeeds="$(DotNetBuildWithOnlineFeeds)"
       SourceBuildSources="@(_BuildSources)"
-      SourceBuildAssetsRepoSrcPath="$(SourceBuildAssetsRepoSrcDir)"
+      SbaRepoSrcPath="$(SourceBuildAssetsRepoSrcDir)"
       SbaCacheSourceName="$(SbaCacheNuGetSourceName)"
       ReferencePackagesSourceName="$(ReferencePackagesNuGetSourceName)"
       PreviouslySourceBuiltSourceName="$(PreviouslySourceBuiltNuGetSourceName)"

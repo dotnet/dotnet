@@ -42,7 +42,7 @@
     <ExtraTestDependenciesRestoreSourcePath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'extra-test-dependencies'))</ExtraTestDependenciesRestoreSourcePath>
 
     <SourceBuildAssetsRepoSrcDir>$([MSBuild]::NormalizeDirectory('$(SrcDir)', 'source-build-assets', 'src'))</SourceBuildAssetsRepoSrcDir>
-    <AssetsDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'assets'))</AssetsDir>
+    <ReferencePackagesDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'reference'))</ReferencePackagesDir>
     <ExternalTarballsDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'archive'))</ExternalTarballsDir>
     <SourceBuiltArtifactsTarballName>Private.SourceBuilt.Artifacts</SourceBuiltArtifactsTarballName>
     <SourceBuiltSharedComponentsTarballName>Private.SourceBuilt.SharedComponents</SourceBuiltSharedComponentsTarballName>
