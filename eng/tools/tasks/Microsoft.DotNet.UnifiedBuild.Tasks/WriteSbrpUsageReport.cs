@@ -155,7 +155,7 @@ public partial class WriteSbrpUsageReport : Task
 
     private void ReadSbaPackages(string packageSrcRelativePath, bool trackTfms)
     {
-        string packageSrcPath = Path.Combine(SourceBuildAssetsRepoSrcPath, packageSrcRelativePath);
+        string packageSrcPath = Path.Combine(SbaRepoSrcPath, packageSrcRelativePath);
         foreach (string projectPath in Directory.GetFiles(packageSrcPath, "*.csproj", SearchOption.AllDirectories))
         {
             DirectoryInfo? directory = Directory.GetParent(projectPath);
