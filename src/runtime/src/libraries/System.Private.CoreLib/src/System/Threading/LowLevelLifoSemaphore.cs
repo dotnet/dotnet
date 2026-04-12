@@ -232,6 +232,7 @@ namespace System.Threading
                     while (Stopwatch.GetTimestamp() - blockingStart < cooldown)
                     {
                         Thread.SpinWait(1);
+                        Thread.UninterruptibleSleep0();
                     }
                 }
 
