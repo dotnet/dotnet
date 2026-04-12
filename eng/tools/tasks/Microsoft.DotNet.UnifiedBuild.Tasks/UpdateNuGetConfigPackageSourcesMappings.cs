@@ -45,7 +45,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
         public string[] SourceBuildSources { get; set; }
 
         [Required]
-        public string SbrpRepoSrcPath { get; set; }
+        public string SourceBuildAssetsRepoSrcPath { get; set; }
 
         [Required]
         public string SourceBuiltSourceNamePrefix { get; set; }
@@ -53,7 +53,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
         [Required]
         public string PreviousBuildPassSourceNamePrefix { get; set; }
 
-        public string SbrpCacheSourceName { get; set; }
+        public string SbaCacheSourceName { get; set; }
 
         public string ReferencePackagesSourceName { get; set; }
 
@@ -101,8 +101,8 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
 
             DiscoverPackagesFromAllSourceBuildSources(pkgSourcesElement);
 
-            // Discover all SBRP packages if source-build-reference-package-cache source is present in NuGet.config
-            XElement sbrpCacheSourceElement = GetElement(pkgSourcesElement, "add", SbrpCacheSourceName);
+            // Discover all SBRP packages if source-build-assets-cache source is present in NuGet.config
+            XElement sbrpCacheSourceElement = GetElement(pkgSourcesElement, "add", SbaCacheSourceName);
             if (sbrpCacheSourceElement != null)
             {
                 DiscoverPackagesFromSbrpCacheSource();
@@ -387,15 +387,15 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
 
         private void DiscoverPackagesFromSbrpCacheSource()
         {
-            // 'source-build-reference-package-cache' is a dynamic source, populated by SBRP build.
+            // 'source-build-assets-cache' is a dynamic source, populated by SBRP build.
             // Discover all SBRP packages from checked in nuspec files.
 
-            if (!Directory.Exists(SbrpRepoSrcPath))
+            if (!Directory.Exists(SourceBuildAssetsRepoSrcPath))
             {
-                throw new InvalidDataException(string.Format(CultureInfo.CurrentCulture, "SBRP repo root does not exist in expected path: {0}", SbrpRepoSrcPath));
+                throw new InvalidDataException(string.Format(CultureInfo.CurrentCulture, "SBRP repo root does not exist in expected path: {0}", SourceBuildAssetsRepoSrcPath));
             }
 
-            string[] nuspecFiles = Directory.GetFiles(SbrpRepoSrcPath, "*.nuspec", SearchOption.AllDirectories);
+            string[] nuspecFiles = Directory.GetFiles(SourceBuildAssetsRepoSrcPath, "*.nuspec", SearchOption.AllDirectories);
             Array.Sort(nuspecFiles);
             foreach (string nuspecFile in nuspecFiles)
             {
