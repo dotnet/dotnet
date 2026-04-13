@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.0;netstandard1.0;netstandard2.0</TargetFrameworks>
+    <AssemblyName>System.Text.Encodings.Web</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
+    <StrongNameKeyId>Open</StrongNameKeyId>
+    <!-- Don't warn on CS3011 - Some types have abstract members that are not CLS-compliant -->
+    <NoWarn>$(NoWarn);CS3011</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Memory" Version="4.5.3" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,133 @@
+<Project>
+
+  <Import Project="..\..\Directory.Build.targets" />
+
+  <Target Name="PatchIl"
+          Condition="'@(TargetingPackSrcRequiringConstraintPatch)' != ''">
+    <ItemGroup>
+      <TargetingPackSrcRequiringConstraintPatch
+        DestinationFile="$(IntermediateOutputPath)%(RecursiveDir)%(Filename).patched%(Extension)"
+        RelativeOutputAssemblyFile="%(RecursiveDir)%(Filename).dll" />
+    </ItemGroup>
+
+    <!--
+      Wrap constraint in single quotes in certain circumstances to avoid using reserved token.
+      Function param:
+        " constraint," => " 'constraint',"
+        " constraint)" => " 'constraint')"
+        " constraint"(eol) => " 'constraint'"(eol) (%24 is $ escaped in hex)
+    -->
+    <Exec Command="
+      set -e
+      destination=&quot;%(TargetingPackSrcRequiringConstraintPatch.DestinationFile)&quot;
+      mkdir -p &quot;${destination%/*}&quot;
+      sed -E &quot;s/ constraint(([,)])|%24)/ 'constraint'\2/g&quot; &quot;%(TargetingPackSrcRequiringConstraintPatch.FullPath)&quot; > &quot;$destination&quot;" />
+
+    <ItemGroup>
+      <TargetingPackSrc
+        Include="@(TargetingPackSrcRequiringConstraintPatch->'%(DestinationFile)')" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="BuildTargetingPackIlSrc"
+          DependsOnTargets="PatchIl"
+          Condition="'@(TargetingPackSrc)' != ''">
+    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Begin $(MSBuildProjectName) -> $(TFMPackTempOutputDir)..." />
+    <MakeDir Directories="@(TargetingPackSrc->'$(TFMPackTempOutputDir)%(RecursiveDir)')" />
+
+    <ItemGroup>
+      <IndividualFileProject
+        Include="$(MSBuildProjectFullPath)"
+        Properties="
+          IlFile=%(TargetingPackSrc.Identity);
+          OutputFile=$(TFMPackTempOutputDir)%(TargetingPackSrc.RelativeOutputAssemblyFile)" />
+    </ItemGroup>
+
+    <MSBuild
+      Projects="@(IndividualFileProject)"
+      Targets="BuildIlFile"
+      BuildInParallel="true"
+      StopOnFirstFailure="true" />
+
+    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] $(MSBuildProjectName) -> $(TFMPackTempOutputDir) DONE" />
+  </Target>
+
+  <Target Name="BuildIlFile"
+          DependsOnTargets="ResolveIlToolPaths">
+    <Exec
+      Command="$(MSBuildThisFileDirectory)build-il.sh $(IlasmDir) $(IlFile) $(OutputFile)"
+      IgnoreStandardErrorWarningFormat="true"
+      CustomErrorRegularExpression=": error : " />
+  </Target>
+
+  <Target Name="GetILToolPackageReferences">
+    <Exec IgnoreExitCode="true" Command="ldd --version 2&gt;&amp;1 | grep -q musl">
+      <Output TaskParameter="ExitCode" PropertyName="OSPlatformIsMuslCheck" />
+    </Exec>
+
+    <PropertyGroup>
+      <OSPlatformIsMusl Condition="$(OSPlatformIsMuslCheck) == '0'">true</OSPlatformIsMusl>
+      <OSPlatformIsMusl Condition="$(OSPlatformIsMusl) == ''">false</OSPlatformIsMusl>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <_OSPlatform Condition="$([MSBuild]::IsOSPlatform('windows'))">win</_OSPlatform>
+      <_OSPlatform Condition="$([MSBuild]::IsOSPlatform('linux'))">linux</_OSPlatform>
+      <_OSPlatform Condition="$([MSBuild]::IsOSPlatform('linux')) and '$(OSPlatformIsMusl)' == 'true'">linux-musl</_OSPlatform>
+      <_OSPlatform Condition="$([MSBuild]::IsOSPlatform('osx'))">osx</_OSPlatform>
+      <_OSPlatform Condition="$([MSBuild]::IsOSPlatform('freebsd'))">freebsd</_OSPlatform>
+      <_OSPlatform Condition="$([MSBuild]::IsOSPlatform('netbsd'))">netbsd</_OSPlatform>
+      <_OSPlatform Condition="$([MSBuild]::IsOSPlatform('sunos'))">sunos</_OSPlatform>
+      <_OSArchitecture>$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)</_OSArchitecture>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <MicrosoftNetCoreIlasmPackageRuntimeId Condition="'$(MicrosoftNetCoreIlasmPackageRuntimeId)' == ''">$(_OSPlatform)-$(_OSArchitecture.ToLower())</MicrosoftNetCoreIlasmPackageRuntimeId>
+      <MicrosoftNetCoreIlasmPackageName>runtime.$(MicrosoftNetCoreIlasmPackageRuntimeId).microsoft.netcore.ilasm</MicrosoftNetCoreIlasmPackageName>
+      <MicrosoftNetCoreIldasmPackageName>runtime.$(MicrosoftNetCoreIlasmPackageRuntimeId).microsoft.netcore.ildasm</MicrosoftNetCoreIldasmPackageName>
+
+      <IlasmDir Condition="'$(ILAsmToolPath)' != ''">$([MSBuild]::NormalizeDirectory($(ILAsmToolPath)))</IlasmDir>
+      <IldasmDir Condition="'$(ILDAsmToolPath)' != ''">$([MSBuild]::NormalizeDirectory($(ILDAsmToolPath)))</IldasmDir>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(ILAsmToolPath)' == ''">
+      <_IlToolPackageReference Include="$(MicrosoftNetCoreIlasmPackageName)" Version="$(MicrosoftNETCoreILAsmVersion)" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(ILDAsmToolPath)' == ''">
+      <_IlToolPackageReference Include="$(MicrosoftNetCoreIldasmPackageName)" Version="$(MicrosoftNETCoreILDAsmVersion)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="ResolveIlToolPaths"
+          DependsOnTargets="GetILToolPackageReferences">
+    <Error Condition="'@(_IlToolPackageReference)' == ''" Text="Package items '_IlToolPackageReference' were not created" />
+
+    <ItemGroup>
+      <_IlToolPackageReference NativePath="$(NuGetPackageRoot)\%(Identity)\%(Version)\runtimes\$(MicrosoftNetCoreIlasmPackageRuntimeId)\native" />
+      <_IlasmSourceFiles Include="%(_IlToolPackageReference.NativePath)\**\*" />
+    </ItemGroup>
+
+    <Error Condition="!Exists('%(_IlToolPackageReference.NativePath)')" Text="Package %(_IlToolPackageReference.Identity)\%(_IlToolPackageReference.Version) was not restored" />
+
+    <PropertyGroup>
+      <IlasmDir Condition="'$(IlasmDir)' == '' and '%(_IlToolPackageReference.Identity)' == '$(MicrosoftNetCoreIlasmPackageName)'">%(_IlToolPackageReference.NativePath)/</IlasmDir>
+      <IldasmDir Condition="'$(IldasmDir)' == '' and '%(_IlToolPackageReference.Identity)' == '$(MicrosoftNetCoreIldasmPackageName)'">%(_IlToolPackageReference.NativePath)/</IldasmDir>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="AttachIlToolPackageReferences"
+          Condition="'$(RestoreIlTooling)' == 'true'"
+          BeforeTargets="CollectPackageReferences"
+          DependsOnTargets="GetILToolPackageReferences">
+    <ItemGroup>
+      <PackageReference Include="@(_IlToolPackageReference)" ExcludeAssets="native" PrivateAssets="all" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="Build"
+          Condition="'$(SkipTargetingPacks)' != 'true'"
+          DependsOnTargets="
+            GetProjectSrc;
+            BuildTargetingPackIlSrc" />
+
+</Project>

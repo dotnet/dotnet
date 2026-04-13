@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Extensions.Logging.Debug</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Extensions.Logging.Debug.DebugLoggerProvider">
+      <summary>The provider for the <see cref="T:Microsoft.Extensions.Logging.Debug.DebugLogger" />.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Logging.Debug.DebugLoggerProvider.#ctor" />
+    <member name="M:Microsoft.Extensions.Logging.Debug.DebugLoggerProvider.CreateLogger(System.String)">
+      <summary>Creates a new <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.Logging.ILogger"></xref> instance.</summary>
+      <param name="name" />
+      <returns>The instance of <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.Logging.ILogger"></xref> that was created.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Logging.Debug.DebugLoggerProvider.Dispose">
+      <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Logging.DebugLoggerFactoryExtensions">
+      <summary>Extension methods for the <see cref="T:Microsoft.Extensions.Logging.ILoggerFactory" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Logging.DebugLoggerFactoryExtensions.AddDebug(Microsoft.Extensions.Logging.ILoggerFactory)">
+      <summary>Adds a debug logger that is enabled for <see cref="T:Microsoft.Extensions.Logging.LogLevel" />.Information or higher.</summary>
+      <param name="factory">The extension method argument.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Logging.DebugLoggerFactoryExtensions.AddDebug(Microsoft.Extensions.Logging.ILoggerFactory,Microsoft.Extensions.Logging.LogLevel)">
+      <summary>Adds a debug logger that is enabled for <see cref="T:Microsoft.Extensions.Logging.LogLevel" />s of minLevel or higher.</summary>
+      <param name="factory">The extension method argument.</param>
+      <param name="minLevel">The minimum <see cref="T:Microsoft.Extensions.Logging.LogLevel" /> to be logged.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Logging.DebugLoggerFactoryExtensions.AddDebug(Microsoft.Extensions.Logging.ILoggerFactory,System.Func{System.String,Microsoft.Extensions.Logging.LogLevel,System.Boolean})">
+      <summary>Adds a debug logger that is enabled as defined by the filter function.</summary>
+      <param name="factory">The extension method argument.</param>
+      <param name="filter">The function used to filter events based on the log level.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Logging.DebugLoggerFactoryExtensions.AddDebug(Microsoft.Extensions.Logging.ILoggingBuilder)">
+      <summary>Adds a debug logger named 'Debug' to the factory.</summary>
+      <param name="builder">The extension method argument.</param>
+    </member>
+  </members>
+</doc>

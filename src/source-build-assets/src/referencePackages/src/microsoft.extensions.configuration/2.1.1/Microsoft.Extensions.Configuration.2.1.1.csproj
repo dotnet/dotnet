@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <AssemblyName>Microsoft.Extensions.Configuration</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
+    <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.1.1" />
+  </ItemGroup>
+
+</Project>

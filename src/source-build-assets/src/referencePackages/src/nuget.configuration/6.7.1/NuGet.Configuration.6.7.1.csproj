@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <AssemblyName>NuGet.Configuration</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
+    <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="NuGet.Common" Version="6.7.1" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="4.4.0" />
+  </ItemGroup>
+
+</Project>

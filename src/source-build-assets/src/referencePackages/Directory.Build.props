@@ -1,0 +1,98 @@
+<Project>
+
+  <Import Project="..\..\Directory.Build.props" />
+  
+  <ItemGroup>
+    <!-- Attributes for all Reference Packages -->
+    <Compile Include="$(RepoRoot)src\SourceBuildAssemblyMetdata.cs" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- Common properties for all Reference Packages -->
+    <DebugType>None</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <SignAssembly>true</SignAssembly>
+    <PublicSign>true</PublicSign>
+    <FullAssemblySigningSupported Condition="('$(FullAssemblySigningSupported)' == '') and ('$(OS)' != 'Windows_NT')">false</FullAssemblySigningSupported>
+
+    <StrongNameKeyId>Microsoft</StrongNameKeyId>
+
+    <SourceControlInformationFeatureSupported>false</SourceControlInformationFeatureSupported>
+    <Configuration>Release</Configuration>
+    <EnableSourceLink>false</EnableSourceLink>
+
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <RuntimeMetadataVersion>v4.0.30319</RuntimeMetadataVersion>
+
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <WarningsAsErrors></WarningsAsErrors>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    
+    <Nullable>Disable</Nullable>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Don't warn on NU1603 - A package dependency specified a version that could not be found -->
+    <!-- Don't warn on NU1605 - Detected package downgrade. -->
+    <!-- Don't warn on NU5125 - The 'licenseUrl' element will be deprecated. -->
+    <!-- Don't warn on CS0109 - The member does not hide an accessible member. -->
+    <!-- Don't warn on CS0169 - The field is never used. -->
+    <!-- Don't warn on CS0618 - Type is obsolete. -->
+    <!-- Don't warn on CS0649 - The field is never assigned to. -->
+    <!-- Don't warn on CS3001, CS3002, CS3003, CS3008, CS3009 - Type is not CLS-compliant. -->
+    <!-- Don't warn on CS0659 - Type overrides Object.Equals(object o) but does not override Object.GetHashCode(). -->
+    <NoWarn>$(NoWarn);NU1603,NU1605,NU5125,CS0109,CS0169,CS0618,CS0649,CS3001,CS3002,CS3003,CS3008,CS3009;CS0659</NoWarn>
+
+    <!--
+      Disable CS0108: generated source code is missing "new" when hiding inherited member.
+      src/microsoft.build.tasks.core/15.1.1012/lib/net46/Microsoft.Build.Tasks.Core.cs(80,60): error CS0108: 'AppDomainIsolatedTaskExtension.Log' hides inherited member 'AppDomainIsolatedTask.Log'. Use the new keyword if hiding was intended.
+    -->
+    <NoWarn>$(NoWarn);CS0108</NoWarn>
+    <!--
+      Disable CS0684: generated source code missing ComImportAttribute.
+      src/microsoft.build.tasks.core/15.1.1012/lib/net46/Microsoft.Build.Tasks.Core.cs(2233,6): error CS0684: 'SetupConfiguration' interface marked with 'CoClassAttribute' not marked with 'ComImportAttribute'
+    -->
+    <NoWarn>$(NoWarn);CS0684</NoWarn>
+    <!--
+      Disable CS0809: generated code includes obsolete members that override non-obsolete members
+      intentionally, e.g. to throw new NotSupportedException from ReadOnlySpan`1.Equals(object).
+    -->
+    <NoWarn>$(NoWarn);CS0809</NoWarn>
+
+    <!--
+      Disable NU5130: some packages have intentional target framework mismatches between nuspec and
+      ref. One particular case is the 'net463' TFM. It's present in the packages on the nuget
+      gallery, but no targeting pack exists for 4.6.3, so we have trouble building it. We instead
+      build net462 and leave 'net463' in the nuspec, triggering this warning.
+
+      Discussion and more info: https://github.com/dotnet/source-build/issues/1615
+    -->
+    <NoWarn>$(NoWarn);NU5130</NoWarn>
+
+    <!-- Disable NU5128 -->
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <!-- Disable NU5131: unclear warning caused by ref-only (https://github.com/NuGet/Home/issues/8684) -->
+    <NoWarn>$(NoWarn);NU5131</NoWarn>
+    <!-- Disable NU5048: continue to use deprecated 'PackageIconUrl'/'iconUrl' for now. -->
+    <NoWarn>$(NoWarn);NU5048</NoWarn>
+    
+    <!--
+      Don't warn on CS8632 - The annotation for nullable reference types should only be used in code within a ‘#nullable’ annotations context.
+      The generated APIs may contain null annotated code, but we disable nullable project wide 
+    -->
+    <NoWarn>$(NoWarn);CS8632</NoWarn>
+
+    <!-- Don't warn on RS1025 - Configure generated code analysis -->
+    <NoWarn>$(NoWarn);RS1025</NoWarn>
+    <!-- Don't warn on RS1026 - Enable concurrent execution -->
+    <NoWarn>$(NoWarn);RS1026</NoWarn>
+  </PropertyGroup>
+
+</Project>
