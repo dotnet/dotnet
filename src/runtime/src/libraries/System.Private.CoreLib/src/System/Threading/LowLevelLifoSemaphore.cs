@@ -342,7 +342,9 @@ namespace System.Threading
         private void WakeOne()
         {
             LifoWaitNode? top;
-            _stackLock.Enter();
+            int id = Environment.CurrentManagedThreadId;
+            while (!_stackLock.TryEnterOneShot(id))
+                Thread.SpinWait(1);
 
             top = _blockerStack;
             if (top != null)
