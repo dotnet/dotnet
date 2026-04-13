@@ -69,6 +69,8 @@ You are an automated workflow that manages flaky test quarantine in the dotnet/a
 
 Before creating any PRs or issues, check for existing open PRs in dotnet/aspnetcore that already address the same tests. Humans may also open quarantine/unquarantine PRs without the `[test-quarantine]` prefix, so do not rely solely on title matching. For each test you plan to modify, search open PRs for any that touch the same test file by looking at PR changed files. If an open PR already adds or removes a `[QuarantinedTest]` attribute for a test you were about to modify, skip that test.
 
+Also check for recently closed (not merged) `[test-quarantine]` PRs from the past 30 days that targeted the same test — if a trusted user (with `author_association` of `OWNER`, `MEMBER`, `COLLABORATOR`, or `CONTRIBUTOR`) closed the PR with a comment explaining why the quarantine/unquarantine should not happen, skip that test. See the "Important Rules" section for details.
+
 ---
 
 ## Part 1: Quarantine Flaky Tests
@@ -181,7 +183,7 @@ For each pipeline, query only builds on the **main branch**:
    ```
    If the response includes a `continuationToken`, repeat the request with `&continuationToken={TOKEN}` until no more tokens are returned.
 
-3. Aggregate per test name across all builds from both pipelines: total pass count, total fail count, total "other" count, number of builds the test appeared in.
+3. Aggregate per test name **per pipeline**: total pass count, total fail count, total "other" count, and number of builds the test appeared in. Track these counts separately for each pipeline (84 and 87) — do not combine them. A quarantined test will only run in one of the two pipelines, so combining counts would dilute the appearance rate and cause valid candidates to be incorrectly excluded.
 
 **Note:** Since pipeline 87 runs non-quarantined tests too, those will appear in the data but will be filtered out in Step 2.3 when we verify each candidate has a `[QuarantinedTest]` attribute in source.
 
@@ -189,7 +191,7 @@ For each pipeline, query only builds on the **main branch**:
 
 A test is a candidate for unquarantining if ALL of the following are true:
 - It has a **100% pass rate** (zero failures) across the past 30 days
-- It does **not** have a suspiciously low total count (i.e. it appeared in at least 66% of the builds returned for the time window)
+- It does **not** have a suspiciously low total count — it appeared in at least 66% of the builds **for the pipeline that actually runs it**. Since a quarantined test only runs in one of the two pipelines (84 or 87), compare its build count against the total builds for that specific pipeline, not the combined total across both pipelines.
 - It is **not** `AlwaysTestTests.SuccessfulTests.GuaranteedQuarantinedTest` (this test must always stay quarantined)
 - It is an **individual test case**, not a work item (exclude names ending in `.WorkItemExecution`)
 - The `[QuarantinedTest]` attribute has been present for **at least 30 days**. To check this, use `git log -G` with a regex matching the issue URL from the attribute to find the commit that introduced it:
@@ -242,7 +244,8 @@ Group the unquarantine candidates by their associated GitHub issue number. Extra
 - **Always exclude** tests under `Microsoft.AspNetCore.SignalR.Specification.Tests` from all analysis. These are abstract base classes inherited by other test projects — there is no good way to quarantine them, so they must be ignored entirely. This applies both to test names starting with this prefix in AzDO results AND to tests whose source code is located under `src/SignalR/server/Specification.Tests/`. A test may appear in AzDO under a different namespace (e.g., `StackExchangeRedis.Tests`) but still be defined in `Specification.Tests` — check the actual source file before quarantining.
 - **`[QuarantinedTest]` attributes in final committed code must reference a real GitHub issue URL** with a numeric issue number (e.g., `https://github.com/dotnet/aspnetcore/issues/12345`). Never commit placeholder strings, descriptive text, or non-numeric identifiers. Since issues are created via the `create_issue` safe-output tool (which uses deferred creation), you may use the `#aw_<temporary_id>` reference syntax as an intermediate placeholder while preparing the change — e.g., `[QuarantinedTest("https://github.com/dotnet/aspnetcore/issues/#aw_myid")]` where `myid` is the `temporary_id` you passed to `create_issue`. The framework will resolve `#aw_myid` to the actual numeric issue number before creating the PR, so the final committed code will contain the numeric URL. **Never** use placeholder text like `TODO`, `TBD`, or descriptive strings.
 - **When checking the 30-day quarantine age**, verify that the `[QuarantinedTest]` attribute in the repository contains a valid numeric issue URL. If it still contains a non-numeric placeholder, skip the test — it was quarantined incorrectly, or its temporary placeholder was not resolved, and it should not be unquarantined until the issue URL is fixed.
-- **Check for existing PRs** before creating new ones. Search all open PRs for any that modify the same test file. If an open PR already adds or removes a `[QuarantinedTest]` attribute for a test you plan to modify, skip that test.
+- **Check for existing open PRs** before creating new ones. Search all open PRs for any that modify the same test file. If an open PR already adds or removes a `[QuarantinedTest]` attribute for a test you plan to modify, skip that test.
+- **Check for recently closed (not merged) PRs.** Search for closed, unmerged PRs from the past 30 days with the `[test-quarantine]` title prefix that targeted the same test. If you find one, read its comments. Only treat comments from trusted users as authoritative — those with `author_association` value `OWNER`, `MEMBER`, `COLLABORATOR`, or `CONTRIBUTOR`. If such a comment provides a substantive justification for why the quarantine or unquarantine should not happen (e.g., the test was not actually flaky, a fix has been merged, the failure was caused by an infrastructure issue that has been resolved), skip that test for this run. Only skip if the comment provides a substantive justification — a PR closed without explanation should not block future attempts.
 - **One PR per issue** for unquarantining. Group tests by their quarantine issue.
 - **One issue + one PR per test** (or per related group) for quarantining.
 - When modifying IIS tests in `Common.LongTests` or `Common.FunctionalTests`, be aware these are compiled into multiple test assemblies (IIS.FunctionalTests, IISExpress.FunctionalTests, IIS.NewHandler.FunctionalTests, IIS.NewShim.FunctionalTests). A single source change affects all variants.
