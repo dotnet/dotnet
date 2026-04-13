@@ -54,7 +54,7 @@ namespace System.Threading
             internal LifoWaitNode? _next;
         }
 
-        private readonly LowLevelLock _stackLock = new LowLevelLock();
+        private readonly Lock _stackLock = new Lock(useTrivialWaits: true);
         private LifoWaitNode? _blockerStack;
 
         // Sometimes due to races we may see nonzero waiter count, but no blockers to wake.
@@ -228,11 +228,10 @@ namespace System.Threading
                     // thus fast wakeups can happen and are hard to avoid completely.
                     // So, if a fast wake happened when parking was desired, we hold up the thread a bit
                     // before releasing.
-                    long cooldown = Stopwatch.Frequency * 8 / 1000000;
+                    long cooldown = Stopwatch.Frequency * 4 / 1000000;
                     while (Stopwatch.GetTimestamp() - blockingStart < cooldown)
                     {
                         Thread.SpinWait(1);
-                        Thread.UninterruptibleSleep0();
                     }
                 }
 
@@ -295,7 +294,7 @@ namespace System.Threading
                 t_blocker = blocker = new LifoWaitNode();
             }
 
-            _stackLock.Acquire();
+            _stackLock.Enter();
             if (_pendingSignals != 0)
             {
                 Debug.Assert(_blockerStack == null);
@@ -309,7 +308,7 @@ namespace System.Threading
                 _blockerStack = blocker;
             }
 
-            _stackLock.Release();
+            _stackLock.Exit();
 
             if (blocker != null)
             {
@@ -343,7 +342,7 @@ namespace System.Threading
         private void WakeOne()
         {
             LifoWaitNode? top;
-            _stackLock.Acquire();
+            _stackLock.Enter();
 
             top = _blockerStack;
             if (top != null)
@@ -359,7 +358,7 @@ namespace System.Threading
                 Debug.Assert(_pendingSignals != ushort.MaxValue);
             }
 
-            _stackLock.Release();
+            _stackLock.Exit();
             top?.WakeOne();
         }
 
@@ -367,7 +366,7 @@ namespace System.Threading
         private bool TryRemove(LifoWaitNode node)
         {
             bool removed = false;
-            _stackLock.Acquire();
+            _stackLock.Enter();
 
             LifoWaitNode? current = _blockerStack;
             if (current == node)
@@ -392,7 +391,7 @@ namespace System.Threading
                 }
             }
 
-            _stackLock.Release();
+            _stackLock.Exit();
             return removed;
         }
 
