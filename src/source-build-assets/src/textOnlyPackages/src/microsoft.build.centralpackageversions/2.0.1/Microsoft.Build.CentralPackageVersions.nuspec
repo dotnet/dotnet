@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.Build.CentralPackageVersions</id>
+    <version>2.0.1</version>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/Microsoft/MSBuildSdks/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/Microsoft/MSBuildSdks</projectUrl>
+    <iconUrl>https://github.com/Microsoft/msbuild/raw/master/branding/MSBuild-NuGet-Icon.png</iconUrl>
+    <description>Provides the ability to centrally manage your NuGet package versions when using PackageReference.</description>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <tags>MSBuild MSBuildSdk</tags>
+    <packageTypes>
+      <packageType name="MSBuildSdk" />
+    </packageTypes>
+  </metadata>
+  <files>
+    <file src="*/**" target="/" exclude="obj/**/*.*" />
+    <file src="*" target="/" />
+  </files>
+</package>

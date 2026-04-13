@@ -1,0 +1,10 @@
+<Project>
+
+  <PropertyGroup Condition="'$(GeneratePackageSource)' == 'true'">
+    <RestoreSources Condition="'$(AdditionalRestoreSources)' != ''">
+      $(RestoreSources);
+      $(AdditionalRestoreSources)
+    </RestoreSources>
+  </PropertyGroup>
+
+</Project>

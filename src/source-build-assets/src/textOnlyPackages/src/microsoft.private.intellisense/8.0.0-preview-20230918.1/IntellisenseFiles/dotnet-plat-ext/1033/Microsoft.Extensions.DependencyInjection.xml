@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Extensions.DependencyInjection</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Extensions.DependencyInjection.DefaultServiceProviderFactory">
+      <summary>Default implementation of <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceProviderFactory`1" />.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.DefaultServiceProviderFactory.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.Extensions.DependencyInjection.DefaultServiceProviderFactory" /> class
+            with default options.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.DefaultServiceProviderFactory.#ctor(Microsoft.Extensions.DependencyInjection.ServiceProviderOptions)">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.Extensions.DependencyInjection.DefaultServiceProviderFactory" /> class
+            with the specified <paramref name="options" />.</summary>
+      <param name="options">The options to use for this instance.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.DefaultServiceProviderFactory.CreateBuilder(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+      <summary>Creates a container builder from an <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.DependencyInjection.IServiceCollection"></xref>.</summary>
+      <param name="services">The collection of services.</param>
+      <returns>A container builder that can be used to create an <xref data-throw-if-not-resolved="true" uid="System.IServiceProvider"></xref>.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.DefaultServiceProviderFactory.CreateServiceProvider(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+      <summary>Creates an <xref data-throw-if-not-resolved="true" uid="System.IServiceProvider"></xref> from the container builder.</summary>
+      <param name="containerBuilder">The container builder.</param>
+      <returns>The newly created service provider.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.DependencyInjection.ServiceCollectionContainerBuilderExtensions">
+      <summary>Extension methods for building a <see cref="T:Microsoft.Extensions.DependencyInjection.ServiceProvider" /> from an <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.ServiceCollectionContainerBuilderExtensions.BuildServiceProvider(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+      <summary>Creates a <see cref="T:Microsoft.Extensions.DependencyInjection.ServiceProvider" /> containing services from the provided <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.</summary>
+      <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> containing service descriptors.</param>
+      <returns>The <see cref="T:Microsoft.Extensions.DependencyInjection.ServiceProvider" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.ServiceCollectionContainerBuilderExtensions.BuildServiceProvider(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.DependencyInjection.ServiceProviderOptions)">
+      <summary>Creates a <see cref="T:Microsoft.Extensions.DependencyInjection.ServiceProvider" /> containing services from the provided <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> optionally enabling service-creation and scope validation.</summary>
+      <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> containing service descriptors.</param>
+      <param name="options">Configures various service provider behaviors including service-creation and scope validation.</param>
+      <returns>The <see cref="T:Microsoft.Extensions.DependencyInjection.ServiceProvider" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.ServiceCollectionContainerBuilderExtensions.BuildServiceProvider(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Boolean)">
+      <summary>Creates a <see cref="T:Microsoft.Extensions.DependencyInjection.ServiceProvider" /> containing services from the provided <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />
+            optionally enabling scope validation.</summary>
+      <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> containing service descriptors.</param>
+      <param name="validateScopes">
+        <see langword="true" /> to perform check verifying that scoped services never gets resolved from root provider; otherwise, <see langword="false" />.</param>
+      <returns>The <see cref="T:Microsoft.Extensions.DependencyInjection.ServiceProvider" />.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.DependencyInjection.ServiceProvider">
+      <summary>The default IServiceProvider.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.ServiceProvider.Dispose">
+      <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.ServiceProvider.DisposeAsync">
+      <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources asynchronously.</summary>
+      <returns>A task that represents the asynchronous dispose operation.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.ServiceProvider.GetKeyedService(System.Type,System.Object)">
+      <summary>Gets the service object of the specified type with the specified key.</summary>
+      <param name="serviceType">The type of the service to get.</param>
+      <param name="serviceKey">The key of the service to get.</param>
+      <returns>The keyed service.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.ServiceProvider.GetRequiredKeyedService(System.Type,System.Object)">
+      <summary>Gets the service object of the specified type.</summary>
+      <param name="serviceType">The type of the service to get.</param>
+      <param name="serviceKey">The key of the service to get.</param>
+      <exception cref="T:System.InvalidOperationException">The service wasn't found.</exception>
+      <returns>The keyed service.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(System.Type)">
+      <summary>Gets the service object of the specified type.</summary>
+      <param name="serviceType">The type of the service to get.</param>
+      <returns>The service that was produced.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.DependencyInjection.ServiceProviderOptions">
+      <summary>Options for configuring various behaviors of the default <see cref="T:System.IServiceProvider" /> implementation.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.ServiceProviderOptions.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.Extensions.DependencyInjection.ServiceProviderOptions" /> class.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.DependencyInjection.ServiceProviderOptions.ValidateOnBuild">
+      <summary>Gets or sets a value that indicates whether validation is performed to ensure all services can be created when <see cref="M:Microsoft.Extensions.DependencyInjection.ServiceCollectionContainerBuilderExtensions.BuildServiceProvider(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.DependencyInjection.ServiceProviderOptions)" /> is called.</summary>
+      <returns>
+        <see langword="true" /> if validation is performed to ensure all services can be created during a <see cref="M:Microsoft.Extensions.DependencyInjection.ServiceCollectionContainerBuilderExtensions.BuildServiceProvider(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.DependencyInjection.ServiceProviderOptions)" /> call; otherwise, <see langword="false" />. The default is the value of <see cref="M:Microsoft.Extensions.Hosting.HostingEnvironmentExtensions.IsDevelopment(Microsoft.Extensions.Hosting.IHostingEnvironment)" />.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.DependencyInjection.ServiceProviderOptions.ValidateScopes">
+      <summary>Gets or sets a value that indicates whether validation is performed to ensure that scoped services are never resolved from the root provider.</summary>
+      <returns>
+        <see langword="true" /> if validation is performed to ensure that scoped services aren't resolved from the root provider; otherwise, <see langword="false" />. The default is the value of <see cref="M:Microsoft.Extensions.Hosting.HostingEnvironmentExtensions.IsDevelopment(Microsoft.Extensions.Hosting.IHostingEnvironment)" />.</returns>
+    </member>
+  </members>
+</doc>

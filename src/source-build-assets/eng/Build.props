@@ -1,0 +1,76 @@
+<Project>
+
+  <ItemGroup Condition="'$(GeneratePackageSource)' == 'true'">
+    <ProjectToBuild Include="$(RepoRoot)src\packageSourceGenerator\PackageSourceGenerator.proj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Test)' == 'true'">
+    <ProjectToBuild Include="$(RepoRoot)tests\GenerateScriptTests\GenerateScript.Tests.csproj" Test="$(Test)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(GeneratePackageSource)' != 'true' and '$(Test)' != 'true'">
+    <!--
+      The following DependencyPackageProjects are ones on which other packages depend on that do
+      not exist in the source-build package cache. Adding them to this ItemGroup will ensure that
+      they get built first and in order of inclusion. Also, packages included here will be added
+      to the source-build package cache when building with source-build to allow them to be
+      considered in prebuilt reporting.
+
+      All newly added packages should be grouped together at the end of the list. The reason this is
+      important is that when previous source-built artifacts are updated, the entries for the new projects
+      it includes can be removed. New PRs may miss that cut and if they are not grouped at the bottom,
+      this management becomes more difficult.
+
+      Format:
+      <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.Options.5.0.0.csproj" />
+    -->
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(BuildDependencyPackageProjects)' == 'true'">
+    <!-- Building an empty project triggers building the Arcade Tools.proj which is needed before BuildDependencyPackageProjects -->
+    <ProjectToBuild Include="$(RepoRoot)\eng\NoOp.csproj" />
+  </ItemGroup>
+
+  <Target Name="BuildDependencyPackageProjects"
+          AfterTargets="Execute"
+          Condition="'$(BuildDependencyPackageProjects)' == 'true'"
+          Outputs="%(DependencyPackageProjects.Identity)">
+    <MSBuild Condition="'@(DependencyPackageProjects)' != ''"
+             Projects="@(DependencyPackageProjects)"
+             Targets="Restore;Build;Pack" />
+
+    <Copy Condition="'$(LocalNuGetPackageCacheDirectory)' != ''"
+          SourceFiles="@(DependencyPackageProjects->'$(ArtifactsShippingPackagesDir)%(FileName).nupkg')"
+          DestinationFolder="$(LocalNuGetPackageCacheDirectory)" />
+  </Target>
+
+  <ItemGroup Condition="'$(GeneratePackageSource)' != 'true' and '$(BuildDependencyPackageProjects)' != 'true' and '$(Test)' != 'true'">
+    <TargetingPackageProject Include="$(RepoRoot)src\targetPacks\ILsrc\**\*.csproj" />
+    <ProjectToBuild Include="@(TargetingPackageProject)" />
+
+    <TextOnlyPackageProject Include="$(RepoRoot)src\textOnlyPackages\src\*\*\*.csproj" />
+    <ProjectToBuild Include="@(TextOnlyPackageProject)" />
+
+    <ReferencePackageProject Include="$(RepoRoot)src\referencePackages\src\**\*.csproj" />
+    <ProjectToBuild Include="@(ReferencePackageProject)" />
+
+    <ProjectToBuild Remove="@(DependencyPackageProjects)" />
+  </ItemGroup>
+
+  <!--
+    Adding new projects is somewhat copy-paste heavy and may result in project name overlaps. Catch
+    that early, as it may cause binclash otherwise.
+  -->
+  <Target Name="EnsureUniqueProjectNames"
+          BeforeTargets="Execute">
+    <ItemGroup>
+      <ProjectToBuildName Include="@(ProjectToBuild -> '%(Filename)%(Extension)')" />
+      <DistinctProjectToBuildName Include="@(ProjectToBuildName->Distinct())" />
+    </ItemGroup>
+
+    <Error
+      Condition="@(ProjectToBuildName->Count()) != @(DistinctProjectToBuildName->Count())"
+      Text="A project name is duplicated. Every project name must be distinct to have separate output directories." />
+  </Target>
+
+</Project>

@@ -1,0 +1,18 @@
+<!-- Whenever altering this or other Source Build files, please include @dotnet/source-build-internal as a reviewer. -->
+<!-- See aka.ms/dotnet/prebuilts for guidance on what pre-builts are and how to eliminate them. -->
+
+<UsageData>
+  <IgnorePatterns>
+    <!-- runtime prebuilts.  Update when runtime produces intermediate packages correctly. -->
+    <UsagePattern IdentityGlob="runtime.linux-x64.Microsoft.NETCore.ILAsm/*" />
+    <UsagePattern IdentityGlob="runtime.linux-x64.Microsoft.NETCore.ILDAsm/*" />
+
+    <!-- Necessary to work around NuGet non-determinism with online builds/feeds. Can be removed once 
+    dependencies on it are removed from the previous-source-built packages. -->
+    <UsagePattern IdentityGlob="Newtonsoft.Json/13.0.1" />
+
+    <UsagePattern IdentityGlob="Microsoft.SourceBuild.Intermediate.*/*" />
+
+  </IgnorePatterns>
+  <Usages/>
+</UsageData>

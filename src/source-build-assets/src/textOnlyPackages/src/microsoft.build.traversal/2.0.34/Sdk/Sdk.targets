@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (c) Microsoft Corporation. All rights reserved.
+
+  Licensed under the MIT license.
+-->
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="$(CustomBeforeTraversalTargets)" Condition=" '$(CustomBeforeTraversalTargets)' != '' And Exists('$(CustomBeforeTraversalTargets)') " />
+
+  <PropertyGroup Condition=" '$(OutputPath)' == '' ">
+    <!--
+      OutputPath is required to be set because targets like Clean will read it.  Traversal projects shouldn't really emit any
+      output but it could be hard to track down all of the places where $(OutputPath) and $(OutDir) are expected to be set.
+    -->
+    <OutputPath Condition=" '$(Configuration)' == '' And '$(Platform)' == '' ">bin\Debug\</OutputPath>
+    <OutputPath Condition=" '$(Configuration)' != '' And '$(Platform)' == '' ">bin\$(Configuration)\</OutputPath>
+    <OutputPath Condition=" '$(Configuration)' != '' And '$(Platform)' != '' ">bin\$(Configuration)\$(Platform)\</OutputPath>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition=" Exists('$(MSBuildToolsPath)\Microsoft.Common.targets') " />
+
+  <ItemGroup>
+    <ProjectReferenceTargets Remove="@(ProjectReferenceTargets)" />
+
+    <ProjectReferenceTargets Include="Build" Targets=".default" />
+    <ProjectReferenceTargets Include="Clean" Targets="Clean" />
+    <ProjectReferenceTargets Include="Test" Targets="Test" />
+    <ProjectReferenceTargets Include="VSTest" Targets="VSTest" />
+    <ProjectReferenceTargets Include="Publish" Targets="Publish" />
+    <ProjectReferenceTargets Include="Pack" Targets="Pack" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildToolsVersion)' != 'Current'">$(MSBuildAllProjects);$(MsBuildThisFileFullPath)</MSBuildAllProjects>
+    <!--
+      Set by Microsoft.Common.targets, some targets must be removed while others are left as standard extension mechanisms.
+    -->
+    <CoreBuildDependsOn>
+      BuildOnlySettings;
+      PrepareForBuild;
+      PreBuildEvent;
+      ResolveReferences;
+      PostBuildEvent
+    </CoreBuildDependsOn>
+
+    <PrepareForBuildDependsOn></PrepareForBuildDependsOn>
+
+    <ResolveReferencesDependsOn>
+      BeforeResolveReferences;
+      AfterResolveReferences
+    </ResolveReferencesDependsOn>
+
+    <TestDependsOn>
+      Build
+    </TestDependsOn>
+
+    <VSTestDependsOn Condition="'$(VSTestNoBuild)' != 'true'">
+      Build
+    </VSTestDependsOn>
+
+    <CleanDependsOn>
+      BeforeClean;
+      UnmanagedUnregistration;
+      CoreClean;
+      PrepareProjectReferences;
+      CleanPublishFolder;
+      AfterClean
+    </CleanDependsOn>
+
+    <PackDependsOn>
+      ResolveReferences;
+    </PackDependsOn>
+
+    <PublishDependsOn Condition="'$(NoBuild)' != 'true'">
+      Build;
+    </PublishDependsOn>
+
+    <PublishDependsOn Condition="'$(NoBuild)' == 'true'">
+    </PublishDependsOn>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TraversalTranslateProjectFileItems)' != 'false' ">
+    <!--
+      Translate the ProjectFile items by moving them to ProjectReference items instead.
+    -->
+    <ProjectReference Include="@(ProjectFile)" />
+
+    <ProjectFile Remove="@(ProjectFile)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TraversalGlobalProperties)' != ''">
+    <ProjectReference Update="@(ProjectReference)"
+                      AdditionalProperties="%(AdditionalProperties);$(TraversalGlobalProperties)" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TraversalRemoveCurrentProject)' != 'false' ">
+    <!--
+      Remove the dirs.proj in case the user accidentally included it through a glob like **\*.*proj.  Otherwise
+      every user has to have an Exclude="$(MSBuildProjectFullPath)".
+    -->
+    <ProjectReference Remove="$(MSBuildProjectFullPath)" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <BuildInParallel Condition="'$(BuildInParallel)' == ''">true</BuildInParallel>
+    <ContinueOnError Condition="'$(ContinueOnError)' == ''">false</ContinueOnError>
+  </PropertyGroup>
+
+  <Target Name="PrepareForBuild"
+          DependsOnTargets="$(PrepareForBuildDependsOn)" />
+
+  <Target Name="Build"
+          DependsOnTargets="$(BuildDependsOn)"
+          Condition=" '$(IsGraphBuild)' != 'true' " >
+    <MSBuild Projects="@(ProjectReference)"
+             Condition="'%(ProjectReference.Build)' != 'false'"
+             BuildInParallel="$([MSBuild]::ValueOrDefault('%(ProjectReference.BuildInParallel)', '$(BuildInParallel)'))"
+             SkipNonexistentProjects="$(SkipNonexistentProjects)"
+             SkipNonexistentTargets="$(SkipNonexistentTargets)"
+             ContinueOnError="$(ContinueOnError)" />
+  </Target>
+
+  <Target Name="Clean"
+          DependsOnTargets="$(CleanDependsOn)"
+          Condition=" '$(IsGraphBuild)' != 'true' ">
+    <MSBuild Projects="@(ProjectReference)"
+             Targets="Clean"
+             Condition="'%(ProjectReference.Clean)' != 'false'"
+             BuildInParallel="$([MSBuild]::ValueOrDefault('%(ProjectReference.CleanInParallel)',
+                               $([MSBuild]::ValueOrDefault('%(ProjectReference.BuildInParallel)',
+                                $([MSBuild]::ValueOrDefault('$(CleanInParallel)', '$(BuildInParallel)'))
+                                ))
+                               ))"
+             SkipNonexistentProjects="$(SkipNonexistentProjects)"
+             SkipNonexistentTargets="$(SkipNonexistentTargets)"
+             ContinueOnError="$([MSBuild]::ValueOrDefault('$(CleanContinueOnError)', '$(ContinueOnError)'))" />
+  </Target>
+
+  <Target Name="Test"
+          DependsOnTargets="$(TestDependsOn)"
+          Condition=" '$(IsGraphBuild)' != 'true' ">
+    <MSBuild Projects="@(ProjectReference)"
+             Targets="Test"
+             Condition="'%(ProjectReference.Test)' != 'false'"
+             BuildInParallel="$([MSBuild]::ValueOrDefault('%(ProjectReference.TestInParallel)',
+                               $([MSBuild]::ValueOrDefault('%(ProjectReference.BuildInParallel)',
+                                $([MSBuild]::ValueOrDefault('$(TestInParallel)', '$(BuildInParallel)'))
+                                ))
+                               ))"
+             SkipNonexistentProjects="$(SkipNonexistentProjects)"
+             SkipNonexistentTargets="$(SkipNonexistentTargets)"
+             ContinueOnError="$([MSBuild]::ValueOrDefault('$(TestContinueOnError)', '$(ContinueOnError)'))" />
+  </Target>
+
+  <Target Name="VSTest"
+          DependsOnTargets="$(VSTestDependsOn)"
+          Condition=" '$(IsGraphBuild)' != 'true' ">
+    <MSBuild Projects="@(ProjectReference)"
+             Targets="VSTest"
+             Condition="'%(ProjectReference.Test)' != 'false'"
+             BuildInParallel="$([MSBuild]::ValueOrDefault('%(ProjectReference.TestInParallel)',
+                               $([MSBuild]::ValueOrDefault('%(ProjectReference.BuildInParallel)',
+                                $([MSBuild]::ValueOrDefault('$(TestInParallel)', '$(BuildInParallel)'))
+                                ))
+                               ))"
+             SkipNonexistentProjects="$(SkipNonexistentProjects)"
+             SkipNonexistentTargets="$(SkipNonexistentTargets)"
+             ContinueOnError="$([MSBuild]::ValueOrDefault('$(TestContinueOnError)', '$(ContinueOnError)'))" />
+  </Target>
+
+  <Target Name="Pack"
+          DependsOnTargets="$(PackDependsOn)"
+          Condition=" '$(IsGraphBuild)' != 'true' ">
+    <MSBuild Projects="@(ProjectReference)"
+             Targets="Pack"
+             Condition="'%(ProjectReference.Pack)' != 'false'"
+             BuildInParallel="$([MSBuild]::ValueOrDefault('%(ProjectReference.PackInParallel)',
+                               $([MSBuild]::ValueOrDefault('%(ProjectReference.BuildInParallel)',
+                                $([MSBuild]::ValueOrDefault('$(PackInParallel)', '$(BuildInParallel)'))
+                                ))
+                               ))"
+             SkipNonexistentProjects="$(SkipNonexistentProjects)"
+             SkipNonexistentTargets="$(SkipNonexistentTargets)"
+             ContinueOnError="$([MSBuild]::ValueOrDefault('$(PackContinueOnError)', '$(ContinueOnError)'))" />
+  </Target>
+
+  <Target Name="Publish"
+          DependsOnTargets="$(PublishDependsOn)"
+          Condition=" '$(IsGraphBuild)' != 'true' ">
+    <MSBuild Projects="@(ProjectReference)"
+             Properties="$(TraversalPublishGlobalProperties)"
+             Targets="Publish"
+             Condition="'%(ProjectReference.Publish)' != 'false'"
+             BuildInParallel="$([MSBuild]::ValueOrDefault('%(ProjectReference.PublishInParallel)',
+                               $([MSBuild]::ValueOrDefault('%(ProjectReference.BuildInParallel)',
+                                $([MSBuild]::ValueOrDefault('$(PublishInParallel)', '$(BuildInParallel)'))
+                                ))
+                               ))"
+             SkipNonexistentProjects="$(SkipNonexistentProjects)"
+             SkipNonexistentTargets="$(SkipNonexistentTargets)"
+             ContinueOnError="$([MSBuild]::ValueOrDefault('$(PublishContinueOnError)', '$(ContinueOnError)'))" />
+  </Target>
+
+  <!--
+    Traversal projects do not build anything and should not check for invalid configuration/platform.
+  -->
+  <Target Name="_CheckForInvalidConfigurationAndPlatform" />
+
+  <Import Project="$(CustomAfterTraversalTargets)" Condition=" '$(CustomAfterTraversalTargets)' != '' And Exists('$(CustomAfterTraversalTargets)') " />
+</Project>
