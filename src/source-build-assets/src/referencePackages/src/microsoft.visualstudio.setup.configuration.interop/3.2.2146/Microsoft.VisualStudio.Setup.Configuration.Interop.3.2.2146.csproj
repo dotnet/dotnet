@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.1</TargetFrameworks>
+    <AssemblyName>Microsoft.VisualStudio.Setup.Configuration.Interop</AssemblyName>
+  </PropertyGroup>
+
+</Project>

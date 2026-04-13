@@ -1,0 +1,281 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Extensions.Caching.Hybrid</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Extensions.Caching.Distributed.IBufferDistributedCache">
+      <summary>
+            Represents a distributed cache of serialized values, with support for low allocation data transfer.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Caching.Distributed.IBufferDistributedCache.Set(System.String,System.Buffers.ReadOnlySequence{System.Byte},Microsoft.Extensions.Caching.Distributed.DistributedCacheEntryOptions)">
+      <summary>
+            Sets or overwrites a cache item.</summary>
+      <param name="key">The key of the entry to create.</param>
+      <param name="value">The value for this cache entry.</param>
+      <param name="options">The cache options for the entry.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Caching.Distributed.IBufferDistributedCache.SetAsync(System.String,System.Buffers.ReadOnlySequence{System.Byte},Microsoft.Extensions.Caching.Distributed.DistributedCacheEntryOptions,System.Threading.CancellationToken)">
+      <summary>
+            Asynchronously sets or overwrites a cache entry.</summary>
+      <param name="key">The key of the entry to create.</param>
+      <param name="value">The value for this cache entry.</param>
+      <param name="options">The cache options for the value.</param>
+      <param name="token">The <see cref="T:System.Threading.CancellationToken" /> used to propagate notifications that the operation should be canceled.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Caching.Distributed.IBufferDistributedCache.TryGet(System.String,System.Buffers.IBufferWriter{System.Byte})">
+      <summary>
+            Attempts to retrieve an existing cache item.</summary>
+      <param name="key">The unique key for the cache item.</param>
+      <param name="destination">The target to write the cache contents on success.</param>
+      <returns>
+        <c>true</c> if the cache item is found, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Caching.Distributed.IBufferDistributedCache.TryGetAsync(System.String,System.Buffers.IBufferWriter{System.Byte},System.Threading.CancellationToken)">
+      <summary>
+            Asynchronously attempts to retrieve an existing cache entry.</summary>
+      <param name="key">The unique key for the cache entry.</param>
+      <param name="destination">The target to write the cache contents on success.</param>
+      <param name="token">The <see cref="T:System.Threading.CancellationToken" /> used to propagate notifications that the operation should be canceled.</param>
+      <returns>
+        <c>true</c> if the cache entry is found, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Caching.Hybrid.HybridCache">
+      <summary>
+            Provides multi-tier caching services building on <see cref="T:Microsoft.Extensions.Caching.Distributed.IDistributedCache" /> backends.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Caching.Hybrid.HybridCache.#ctor" />
+    <member name="M:Microsoft.Extensions.Caching.Hybrid.HybridCache.GetOrCreateAsync``1(System.String,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.ValueTask{``0}},Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryOptions,System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)">
+      <summary>
+            Asynchronously gets the value associated with the key if it exists, or generates a new entry using the provided key and a value from the given factory if the key is not found.</summary>
+      <param name="key">The key of the entry to look for or create.</param>
+      <param name="factory">Provides the underlying data service if the data is not available in the cache.</param>
+      <param name="options">Additional options for this cache entry.</param>
+      <param name="tags">The tags to associate with this cache item.</param>
+      <param name="cancellationToken">The <see cref="T:System.Threading.CancellationToken" /> used to propagate notifications that the operation should be canceled.</param>
+      <typeparam name="T">The type of the data being considered.</typeparam>
+      <returns>The data, either from cache or the underlying data service.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Caching.Hybrid.HybridCache.GetOrCreateAsync``2(System.String,``0,System.Func{``0,System.Threading.CancellationToken,System.Threading.Tasks.ValueTask{``1}},Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryOptions,System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)">
+      <summary>
+            Asynchronously gets the value associated with the key if it exists, or generates a new entry using the provided key and a value from the given factory if the key is not found.</summary>
+      <param name="key">The key of the entry to look for or create.</param>
+      <param name="factory">Provides the underlying data service if the data is not available in the cache.</param>
+      <param name="state">The state required for <paramref name="factory" />.</param>
+      <param name="options">Additional options for this cache entry.</param>
+      <param name="tags">The tags to associate with this cache item.</param>
+      <param name="cancellationToken">The <see cref="T:System.Threading.CancellationToken" /> used to propagate notifications that the operation should be canceled.</param>
+      <typeparam name="TState">The type of additional state required by <paramref name="factory" />.</typeparam>
+      <typeparam name="T">The type of the data being considered.</typeparam>
+      <returns>The data, either from cache or the underlying data service.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Caching.Hybrid.HybridCache.RemoveAsync(System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)">
+      <summary>
+            Asynchronously removes the value associated with the key if it exists.</summary>
+      <param name="keys" />
+      <param name="cancellationToken" />
+    </member>
+    <member name="M:Microsoft.Extensions.Caching.Hybrid.HybridCache.RemoveAsync(System.String,System.Threading.CancellationToken)">
+      <summary>
+            Asynchronously removes the value associated with the key if it exists.</summary>
+      <param name="key" />
+      <param name="cancellationToken" />
+    </member>
+    <member name="M:Microsoft.Extensions.Caching.Hybrid.HybridCache.RemoveByTagAsync(System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)">
+      <summary>
+            Asynchronously removes all values associated with the specified tags.</summary>
+      <param name="tags" />
+      <param name="cancellationToken" />
+    </member>
+    <member name="M:Microsoft.Extensions.Caching.Hybrid.HybridCache.RemoveByTagAsync(System.String,System.Threading.CancellationToken)">
+      <summary>
+            Asynchronously removes all values associated with the specified tag.</summary>
+      <param name="tag" />
+      <param name="cancellationToken" />
+    </member>
+    <member name="M:Microsoft.Extensions.Caching.Hybrid.HybridCache.SetAsync``1(System.String,``0,Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryOptions,System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)">
+      <summary>
+            Asynchronously sets or overwrites the value associated with the key.</summary>
+      <param name="key">The key of the entry to create.</param>
+      <param name="value">The value to assign for this cache entry.</param>
+      <param name="options">Additional options for this cache entry.</param>
+      <param name="tags">The tags to associate with this cache entry.</param>
+      <param name="cancellationToken">The <see cref="T:System.Threading.CancellationToken" /> used to propagate notifications that the operation should be canceled.</param>
+      <typeparam name="T">The type of the data being considered.</typeparam>
+    </member>
+    <member name="T:Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryFlags">
+      <summary>
+            Additional flags that apply to a <see cref="T:Microsoft.Extensions.Caching.Hybrid.HybridCache" /> operation.</summary>
+    </member>
+    <member name="F:Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryFlags.DisableCompression">
+      <summary>
+            Disables compression for this payload.</summary>
+    </member>
+    <member name="F:Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryFlags.DisableDistributedCache">
+      <summary>
+            Disables both reading from and writing to the secondary distributed cache.</summary>
+    </member>
+    <member name="F:Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryFlags.DisableDistributedCacheRead">
+      <summary>
+            Disables reading from the secondary distributed cache.</summary>
+    </member>
+    <member name="F:Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryFlags.DisableDistributedCacheWrite">
+      <summary>
+            Disables writing to the secondary distributed cache.</summary>
+    </member>
+    <member name="F:Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryFlags.DisableLocalCache">
+      <summary>
+            Disables both reading from and writing to the local in-process cache.</summary>
+    </member>
+    <member name="F:Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryFlags.DisableLocalCacheRead">
+      <summary>
+            Disables reading from the local in-process cache.</summary>
+    </member>
+    <member name="F:Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryFlags.DisableLocalCacheWrite">
+      <summary>
+            Disables writing to the local in-process cache.</summary>
+    </member>
+    <member name="F:Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryFlags.DisableUnderlyingData">
+      <summary>
+            Only fetches the value from cache; does not attempt to access the underlying data store.</summary>
+    </member>
+    <member name="F:Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryFlags.None">
+      <summary>
+            No additional flags.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryOptions">
+      <summary>
+            Specifies additional options (for example, expiration) that apply to a <see cref="T:Microsoft.Extensions.Caching.Hybrid.HybridCache" /> operation. When options
+            can be specified at multiple levels (for example, globally and per-call), the values are composed; the
+            most granular non-null value is used, with null values being inherited. If no value is specified at
+            any level, the implementation can choose a reasonable default.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryOptions.#ctor" />
+    <member name="P:Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryOptions.Expiration">
+      <summary>
+            Gets or set the overall cache duration of this entry, passed to the backend distributed cache.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryOptions.Flags">
+      <summary>
+            Gets or sets additional flags that apply to the requested operation.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryOptions.LocalCacheExpiration" />
+    <member name="T:Microsoft.Extensions.Caching.Hybrid.HybridCacheOptions">
+      <summary>
+            Options for configuring the default <see cref="T:Microsoft.Extensions.Caching.Hybrid.HybridCache" /> implementation.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Caching.Hybrid.HybridCacheOptions.#ctor" />
+    <member name="P:Microsoft.Extensions.Caching.Hybrid.HybridCacheOptions.DefaultEntryOptions">
+      <summary>
+            Gets or sets the default global options to be applied to <see cref="T:Microsoft.Extensions.Caching.Hybrid.HybridCache" /> operations; if options are
+            specified at the individual call level, the non-null values are merged (with the per-call
+            options being used in preference to the global options). If no value is specified for a given
+            option (globally or per-call), the implementation may choose a reasonable default.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Caching.Hybrid.HybridCacheOptions.DisableCompression">
+      <summary>
+            Gets or sets a value indicating whether compression for this <see cref="T:Microsoft.Extensions.Caching.Hybrid.HybridCache" /> instance is disabled.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Caching.Hybrid.HybridCacheOptions.MaximumKeyLength">
+      <summary>
+            Gets or sets the maximum permitted length (in characters) of keys; attempts to use keys over this size will be logged.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Caching.Hybrid.HybridCacheOptions.MaximumPayloadBytes">
+      <summary>
+            Gets or sets the maximum size of cache items; attempts to store values over this size will be logged
+            and the value will not be stored in cache.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Caching.Hybrid.HybridCacheOptions.ReportTagMetrics">
+      <summary>
+            Gets or sets a value indicating whether to use "tags" data as dimensions on metric reporting; if enabled, care should be used to ensure that
+            tags do not contain data that should not be visible in metrics systems.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Caching.Hybrid.IHybridCacheBuilder">
+      <summary>
+            Helper API for configuring <see cref="T:Microsoft.Extensions.Caching.Hybrid.HybridCache" />.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Caching.Hybrid.IHybridCacheBuilder.Services">
+      <summary>
+            Gets the services collection associated with this instance.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Caching.Hybrid.IHybridCacheSerializer`1">
+      <summary>
+            Provides per-type serialization and deserialization support for <see cref="T:Microsoft.Extensions.Caching.Hybrid.HybridCache" />.</summary>
+      <typeparam name="T">The type being serialized/deserialized.</typeparam>
+    </member>
+    <member name="M:Microsoft.Extensions.Caching.Hybrid.IHybridCacheSerializer`1.Deserialize(System.Buffers.ReadOnlySequence{System.Byte})">
+      <summary>
+            Deserializes a <typeparamref name="T" /> value from the provided <paramref name="source" />.</summary>
+      <param name="source" />
+    </member>
+    <member name="M:Microsoft.Extensions.Caching.Hybrid.IHybridCacheSerializer`1.Serialize(`0,System.Buffers.IBufferWriter{System.Byte})">
+      <summary>
+            Serializes <paramref name="value" /> to the provided <paramref name="target" />.</summary>
+      <param name="value" />
+      <param name="target" />
+    </member>
+    <member name="T:Microsoft.Extensions.Caching.Hybrid.IHybridCacheSerializerFactory">
+      <summary>
+            Factory provider for per-type <see cref="T:Microsoft.Extensions.Caching.Hybrid.IHybridCacheSerializer`1" /> instances.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Caching.Hybrid.IHybridCacheSerializerFactory.TryCreateSerializer``1(Microsoft.Extensions.Caching.Hybrid.IHybridCacheSerializer{``0}@)">
+      <summary>
+            Requests a serializer for the provided type, if possible.</summary>
+      <param name="serializer">The serializer.</param>
+      <typeparam name="T">The type being serialized or deserialized.</typeparam>
+      <returns>
+        <c>true</c> if the factory supports this type, <c>false</c> otherwise.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.DependencyInjection.HybridCacheBuilderExtensions">
+      <summary>
+            Configuration extension methods for <see cref="T:Microsoft.Extensions.Caching.Hybrid.IHybridCacheBuilder" /> / <see cref="T:Microsoft.Extensions.Caching.Hybrid.HybridCache" />.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.HybridCacheBuilderExtensions.AddSerializer``1(Microsoft.Extensions.Caching.Hybrid.IHybridCacheBuilder,Microsoft.Extensions.Caching.Hybrid.IHybridCacheSerializer{``0})">
+      <summary>
+            Serialize values of type <typeparamref name="T" /> with the specified serializer from <paramref name="serializer" />.</summary>
+      <param name="builder" />
+      <param name="serializer" />
+      <typeparam name="T">The type to be serialized.</typeparam>
+      <returns>The <see cref="T:Microsoft.Extensions.Caching.Hybrid.IHybridCacheBuilder" /> instance.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.HybridCacheBuilderExtensions.AddSerializer``2(Microsoft.Extensions.Caching.Hybrid.IHybridCacheBuilder)">
+      <summary>
+            Serialize values of type <typeparamref name="T" /> with the serializer of type <typeparamref name="TImplementation" />.</summary>
+      <param name="builder" />
+      <typeparam name="T">The type to be serialized.</typeparam>
+      <typeparam name="TImplementation">The serializer to use for this type.</typeparam>
+      <returns>The <see cref="T:Microsoft.Extensions.Caching.Hybrid.IHybridCacheBuilder" /> instance.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.HybridCacheBuilderExtensions.AddSerializerFactory(Microsoft.Extensions.Caching.Hybrid.IHybridCacheBuilder,Microsoft.Extensions.Caching.Hybrid.IHybridCacheSerializerFactory)">
+      <summary>
+            Add <paramref name="factory" /> as an additional serializer factory, which can provide serializers for multiple types.</summary>
+      <param name="builder" />
+      <param name="factory" />
+      <returns>The <see cref="T:Microsoft.Extensions.Caching.Hybrid.IHybridCacheBuilder" /> instance.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.HybridCacheBuilderExtensions.AddSerializerFactory``1(Microsoft.Extensions.Caching.Hybrid.IHybridCacheBuilder)">
+      <summary>
+            Add a factory of type <typeparamref name="TImplementation" /> as an additional serializer factory, which can provide serializers for multiple types.</summary>
+      <param name="builder" />
+      <typeparam name="TImplementation">The type of the serializer factory.</typeparam>
+      <returns>The <see cref="T:Microsoft.Extensions.Caching.Hybrid.IHybridCacheBuilder" /> instance.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.DependencyInjection.HybridCacheServiceExtensions">
+      <summary>
+            Configuration extension methods for <see cref="T:Microsoft.Extensions.Caching.Hybrid.HybridCache" />.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.HybridCacheServiceExtensions.AddHybridCache(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Microsoft.Extensions.Caching.Hybrid.HybridCacheOptions})">
+      <summary>
+            Adds support for multi-tier caching services.</summary>
+      <param name="services" />
+      <param name="setupAction" />
+      <returns>A builder instance that allows further configuration of the <see cref="T:Microsoft.Extensions.Caching.Hybrid.HybridCache" /> system.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.HybridCacheServiceExtensions.AddHybridCache(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+      <summary>
+            Adds support for multi-tier caching services.</summary>
+      <param name="services" />
+      <returns>A builder instance that allows further configuration of the <see cref="T:Microsoft.Extensions.Caching.Hybrid.HybridCache" /> system.</returns>
+    </member>
+  </members>
+</doc>

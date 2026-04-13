@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Extensions.ObjectPool.DependencyInjection</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Extensions.ObjectPool.DependencyInjectionPoolOptions">
+      <summary>
+            Contains configuration for pools.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.ObjectPool.DependencyInjectionPoolOptions.#ctor" />
+    <member name="P:Microsoft.Extensions.ObjectPool.DependencyInjectionPoolOptions.Capacity">
+      <summary>
+            Gets or sets the maximal capacity of the pool.</summary>
+      <returns>
+            The default is 1024.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.ObjectPool.ObjectPoolServiceCollectionExtensions">
+      <summary>
+            Extension methods for adding <see cref="T:Microsoft.Extensions.ObjectPool.ObjectPool`1" /> to DI container.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.ObjectPool.ObjectPoolServiceCollectionExtensions.AddPooled``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Microsoft.Extensions.ObjectPool.DependencyInjectionPoolOptions})">
+      <summary>
+            Adds an <see cref="T:Microsoft.Extensions.ObjectPool.ObjectPool`1" /> and lets DI return scoped instances of TService.</summary>
+      <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add to.</param>
+      <param name="configure">The action used to configure the options of the pool.</param>
+      <typeparam name="TService">The type of objects to pool.</typeparam>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="services" /> is <see langword="null" />.</exception>
+      <returns>Provided service collection.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.ObjectPool.ObjectPoolServiceCollectionExtensions.AddPooled``2(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Microsoft.Extensions.ObjectPool.DependencyInjectionPoolOptions})">
+      <summary>
+            Adds an <see cref="T:Microsoft.Extensions.ObjectPool.ObjectPool`1" /> and let DI return scoped instances of TService.</summary>
+      <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add to.</param>
+      <param name="configure">Configuration of the pool.</param>
+      <typeparam name="TService">The type of objects to pool.</typeparam>
+      <typeparam name="TImplementation">The type of the implementation to use.</typeparam>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="services" /> is <see langword="null" />.</exception>
+      <returns>Provided service collection.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.ObjectPool.ObjectPoolServiceCollectionExtensions.ConfigurePool``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Microsoft.Extensions.ObjectPool.DependencyInjectionPoolOptions})">
+      <summary>
+            Registers an action used to configure the <see cref="T:Microsoft.Extensions.ObjectPool.DependencyInjectionPoolOptions" /> of a typed pool.</summary>
+      <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the services to.</param>
+      <param name="configure">The action used to configure the options.</param>
+      <typeparam name="TService">The type of objects to pool.</typeparam>
+      <returns>The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> so that additional calls can be chained.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.ObjectPool.ObjectPoolServiceCollectionExtensions.ConfigurePools(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfigurationSection)">
+      <summary>
+            Configures DI pools.</summary>
+      <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add to.</param>
+      <param name="section">The configuration section to bind.</param>
+      <returns>The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> so that additional calls can be chained.</returns>
+    </member>
+  </members>
+</doc>

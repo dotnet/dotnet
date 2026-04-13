@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.Docker.Sdk</id>
+    <version>1.1.0</version>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectUrl>https://github.com/Microsoft/DockerTools</projectUrl>
+    <description>The MSBuild targets and properties for building Docker compose projects.</description>
+    <summary>The MSBuild targets and properties for building Docker compose projects.</summary>
+    <language>en-US</language>
+  </metadata>
+</package>

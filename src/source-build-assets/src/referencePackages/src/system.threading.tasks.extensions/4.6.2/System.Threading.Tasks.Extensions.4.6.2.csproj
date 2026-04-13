@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <AssemblyName>System.Threading.Tasks.Extensions</AssemblyName>
+    <StrongNameKeyId>Open</StrongNameKeyId>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.1" />
+  </ItemGroup>
+
+</Project>

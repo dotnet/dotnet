@@ -1,0 +1,11 @@
+variables:
+- name: EngCommonTemplatesDir
+  ${{ if eq(variables['System.TeamProject'], 'public') }}:
+    value: /eng/common/templates
+  ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+    value: /eng/common/templates-official
+- template: ${{ variables.EngCommonTemplatesDir }}/variables/pool-providers.yml@self
+- name: Codeql.Enabled
+  value: true
+- name: TeamName
+  value: DotNetSourceBuild
