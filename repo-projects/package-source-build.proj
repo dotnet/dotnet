@@ -25,10 +25,10 @@
     <!-- Copy PVP to packages dir in order to package them together -->
     <Copy SourceFiles="$(IncludedPackageVersionPropsFile)" DestinationFiles="$(SourceBuiltPackagesPath)PackageVersions.props" />
 
-    <!-- Expand SBRP intermediate package into separate folder and remove intermediate package -->
+    <!-- Expand source-build-assets intermediate package into separate folder and remove intermediate package -->
     <PropertyGroup>
       <SourceBuildReferencePackagesDestination>$(SourceBuiltPackagesPath)SourceBuildReferencePackages/</SourceBuildReferencePackagesDestination>
-      <SBRPIntermediateWildcard>Microsoft.SourceBuild.Intermediate.source-build-reference-packages*.nupkg</SBRPIntermediateWildcard>
+      <SBRPIntermediateWildcard>Microsoft.SourceBuild.Intermediate.source-build-assets*.nupkg</SBRPIntermediateWildcard>
     </PropertyGroup>
     <ItemGroup>
       <SourceBuildReferencePackagesIntermediatePackage Include="$(SourceBuiltPackagesPath)$(SBRPIntermediateWildcard)"/>

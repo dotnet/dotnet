@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <!-- Toolsets -->
-    <RepositoryReference Include="source-build-reference-packages" />
+    <RepositoryReference Include="source-build-assets" />
     <RepositoryReference Include="arcade" />
 
     <!-- Product Repos -->
