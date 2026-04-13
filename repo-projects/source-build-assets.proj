@@ -2,7 +2,7 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-    <LocalNuGetPackageCacheDirectory>$(BaseIntermediatePath)source-build-reference-package-cache</LocalNuGetPackageCacheDirectory>
+    <LocalNuGetPackageCacheDirectory>$(BaseIntermediatePath)source-build-assets-cache</LocalNuGetPackageCacheDirectory>
 
     <BuildCommandArgs>$(StandardSourceBuildArgs)</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) /p:MicrosoftNetCoreIlasmPackageRuntimeId=$(NETCoreSdkRuntimeIdentifier)</BuildCommandArgs>
@@ -20,7 +20,7 @@
 
     <AddSourceToNuGetConfig
       NuGetConfigFile="$(NuGetConfigFile)"
-      SourceName="source-build-reference-package-cache"
+      SourceName="source-build-assets-cache"
       SourcePath="$(LocalNuGetPackageCacheDirectory)" />
   </Target>
 

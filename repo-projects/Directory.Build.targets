@@ -313,7 +313,7 @@
     <PropertyGroup Condition="'@(_BuiltIntermediatePackages)' != ''">
         <_NupkgDestinationPath>$(SourceBuiltPackagesPath)</_NupkgDestinationPath>
         <!-- SBRP packages unpack into the Reference packages directory instead of into blob-feed packages -->
-        <_NupkgDestinationPath Condition="$([System.String]::Copy(%(_BuiltIntermediatePackages.Identity)).Contains('source-build-reference-packages'))">$(ReferencePackagesDir)</_NupkgDestinationPath>
+        <_NupkgDestinationPath Condition="$([System.String]::Copy(%(_BuiltIntermediatePackages.Identity)).Contains('source-build-assets'))">$(ReferencePackagesDir)</_NupkgDestinationPath>
     </PropertyGroup>
 
     <ZipFileExtractToDirectory Condition="'@(_BuiltIntermediatePackages)' != ''"
