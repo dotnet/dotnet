@@ -54,7 +54,7 @@ namespace System.Threading
             internal LifoWaitNode? _next;
         }
 
-        private readonly Lock _stackLock = new Lock(useTrivialWaits: true);
+        private readonly LowLevelLock _stackLock = new LowLevelLock();
         private LifoWaitNode? _blockerStack;
 
         // Sometimes due to races we may see nonzero waiter count, but no blockers to wake.
@@ -294,7 +294,7 @@ namespace System.Threading
                 t_blocker = blocker = new LifoWaitNode();
             }
 
-            _stackLock.Enter();
+            _stackLock.Acquire();
             if (_pendingSignals != 0)
             {
                 Debug.Assert(_blockerStack == null);
@@ -308,7 +308,11 @@ namespace System.Threading
                 _blockerStack = blocker;
             }
 
-            _stackLock.Exit();
+            _stackLock.Release();
+
+            // lock release has a full fence thus ordinary read of _pendingWakes is ok
+            if (_pendingWakes > 0)
+                WakeOneCore();
 
             if (blocker != null)
             {
@@ -339,36 +343,57 @@ namespace System.Threading
             }
         }
 
+        private int _pendingWakes;
+
         private void WakeOne()
         {
-            LifoWaitNode? top;
-            int id = Environment.CurrentManagedThreadId;
-            while (!_stackLock.TryEnterOneShot(id))
-                Thread.SpinWait(1);
+            Interlocked.Increment(ref _pendingWakes);
+            WakeOneCore();
+        }
 
-            top = _blockerStack;
-            if (top != null)
+        private void WakeOneCore()
+        {
+            while (true)
             {
-                _blockerStack = top._next;
-                top._next = null;
-            }
-            else
-            {
-                _pendingSignals++;
-                // the upper bound is the same as for overall signal/waiter/wake counts,
-                // although this should be typically much smaller.
-                Debug.Assert(_pendingSignals != ushort.MaxValue);
-            }
+                if (!_stackLock.TryAcquire())
+                    return; // lock holder will pick up _pendingWakes on their exit
 
-            _stackLock.Exit();
-            top?.WakeOne();
+                if (Interlocked.Decrement(ref _pendingWakes) < 0)
+                {
+                    // No work claimed - restore and bail
+                    Interlocked.Increment(ref _pendingWakes);
+                    _stackLock.Release();
+                    return;
+                }
+
+                LifoWaitNode? top = _blockerStack;
+                if (top != null)
+                {
+                    _blockerStack = top._next;
+                    top._next = null;
+                }
+                else
+                {
+                    _pendingSignals++;
+                    Debug.Assert(_pendingSignals != ushort.MaxValue);
+                }
+
+                _stackLock.Release();
+                top?.WakeOne(); // LowLevelThreadBlocker.WakeOne()
+
+                // lock release has a full fence thus ordinary read of _pendingWakes is ok
+                if (_pendingWakes <= 0)
+                    return;
+
+                // Loop: handle any wakes that arrived while we were working
+            }
         }
 
         // Used when waiter times out
         private bool TryRemove(LifoWaitNode node)
         {
             bool removed = false;
-            _stackLock.Enter();
+            _stackLock.Acquire();
 
             LifoWaitNode? current = _blockerStack;
             if (current == node)
@@ -393,7 +418,12 @@ namespace System.Threading
                 }
             }
 
-            _stackLock.Exit();
+            _stackLock.Release();
+
+            // lock release has a full fence thus ordinary read of _pendingWakes is ok
+            if (_pendingWakes > 0)
+                WakeOneCore();
+
             return removed;
         }
 
