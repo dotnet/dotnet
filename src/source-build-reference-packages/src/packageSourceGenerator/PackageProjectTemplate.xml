@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFrameworks>$$TargetFrameworks$$</TargetFrameworks>
-    <AssemblyName>$$AssemblyName$$</AssemblyName>
-    <ProjectTemplateVersion>2</ProjectTemplateVersion>$$KeyFileTag$$
-  </PropertyGroup>
-
-$$References$$</Project>
