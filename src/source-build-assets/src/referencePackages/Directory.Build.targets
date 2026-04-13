@@ -1,0 +1,146 @@
+<Project>
+
+  <Import Project="..\..\Directory.Build.targets" />
+
+  <PropertyGroup>
+    <NetStandard1xPackage>
+      Microsoft.NETCore.Platforms;
+      Microsoft.Win32.Primitives;
+      System.AppContext;
+      System.Collections;
+      System.Collections.Concurrent;
+      System.Console;
+      System.Diagnostics.Debug;
+      System.Diagnostics.DiagnosticSource;
+      System.Diagnostics.Tools;
+      System.Diagnostics.Tracing;
+      System.Globalization;
+      System.Globalization.Calendars;
+      System.IO;
+      System.IO.Compression;
+      System.IO.Compression.ZipFile;
+      System.IO.FileSystem;
+      System.IO.FileSystem.Primitives;
+      System.Linq;
+      System.Linq.Expressions;
+      System.Net.Http;
+      System.Net.Primitives;
+      System.Net.Sockets;
+      System.ObjectModel;
+      System.Reflection;
+      System.Reflection.Extensions;
+      System.Reflection.Primitives;
+      System.Resources.ResourceManager;
+      System.Runtime;
+      System.Runtime.Extensions;
+      System.Runtime.Handles;
+      System.Runtime.InteropServices;
+      System.Runtime.InteropServices.RuntimeInformation;
+      System.Runtime.Numerics;
+      System.Security.Cryptography.Algorithms;
+      System.Security.Cryptography.Cng;
+      System.Security.Cryptography.Encoding;
+      System.Security.Cryptography.Primitives;
+      System.Security.Cryptography.OpenSsl;
+      System.Security.Cryptography.X509Certificates;
+      System.Text.Encoding;
+      System.Text.Encoding.Extensions;
+      System.Text.RegularExpressions;
+      System.Threading;
+      System.Threading.Tasks;
+      System.Threading.Timer;
+      System.Xml.ReaderWriter;
+      System.Xml.XDocument;
+    </NetStandard1xPackage>
+  </PropertyGroup>
+
+  <!-- Setting that are dependent on the project template version. -->
+  <Choose>
+    <When Condition="'$(ProjectTemplateVersion)' == '2'">
+      <PropertyGroup>
+        <!-- When the library targets netstandard1.x and is part of the .NET Standard 1.x dependency graph, disable the implicit framework references to avoid cyclic dependencies. -->
+        <DisableImplicitFrameworkReferences Condition="'$(DisableImplicitFrameworkReferences)' == '' and ($(TargetFramework.StartsWith('netstandard1')) or '$(TargetFramework)' == 'netcoreapp1.1') and $(NetStandard1xPackage.Contains('$(AssemblyName);'))">true</DisableImplicitFrameworkReferences>
+      </PropertyGroup>
+
+      <ItemGroup>
+        <Compile Include="ref/$(TargetFramework)/*$(DefaultLanguageSourceExtension)" />
+        <Compile Include="lib/$(TargetFramework)/*$(DefaultLanguageSourceExtension)" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <DisableImplicitFrameworkReferences Condition="'$(DisableImplicitFrameworkReferences)' == ''">true</DisableImplicitFrameworkReferences>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <!--
+    ### Targeting Packs section ###
+    Keep in sync with available targeting packs under src/targetPacks/ILsrc.
+  -->
+
+  <PropertyGroup>
+    <DisableTransitiveFrameworkReferenceDownloads>true</DisableTransitiveFrameworkReferenceDownloads>
+    <!-- The SDK already sets the NETStandardImplicitPackageVersion and we don't expect it to change anymore. Hence, we don't encode it here. -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.NETCore.App'))">
+      <TargetingPackVersion Condition="'%(TargetFramework)' == 'netcoreapp3.0'">3.0.0</TargetingPackVersion>
+      <TargetingPackVersion Condition="'%(TargetFramework)' == 'netcoreapp3.1'">3.1.0</TargetingPackVersion>
+      <TargetingPackVersion Condition="'%(TargetFramework)' == 'net5.0'">5.0.0</TargetingPackVersion>
+      <TargetingPackVersion Condition="'%(TargetFramework)' == 'net6.0'">6.0.0</TargetingPackVersion>
+      <TargetingPackVersion Condition="'%(TargetFramework)' == 'net7.0'">7.0.0</TargetingPackVersion>
+    </KnownFrameworkReference>
+
+    <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'NETStandard.Library'))">
+      <TargetingPackVersion Condition="'%(TargetFramework)' == 'netstandard2.1'">2.1.0</TargetingPackVersion>
+    </KnownFrameworkReference>
+  </ItemGroup>
+
+  <!-- Filter out conflicting implicit assembly references. -->
+  <Target Name="FilterImplicitAssemblyReferences"
+          Condition="'$(DisableImplicitFrameworkReferences)' != 'true'"
+          DependsOnTargets="ResolveProjectReferences"
+          AfterTargets="ResolveTargetingPackAssets">
+    <ItemGroup>
+      <_targetingPackReferenceExclusion Include="$(TargetName)" />
+      <_targetingPackReferenceExclusion Include="@(_ResolvedProjectReferencePaths->Metadata('Filename'))" />
+    </ItemGroup>
+    <ItemGroup>
+      <_targetingPackReferenceWithProjectName Include="@(Reference->WithMetadataValue('ExternallyResolved', 'true')->Metadata('Filename'))"
+                                              OriginalIdentity="%(Identity)" />
+      <_targetingPackIncludedReferenceWithProjectName Include="@(_targetingPackReferenceWithProjectName)"
+                                                      Exclude="@(_targetingPackReferenceExclusion)" />
+      <_targetingPackExcludedReferenceWithProjectName Include="@(_targetingPackReferenceWithProjectName)"
+                                                      Exclude="@(_targetingPackIncludedReferenceWithProjectName)" />
+      <Reference Remove="@(_targetingPackExcludedReferenceWithProjectName->Metadata('OriginalIdentity'))" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CopyBuildOutputToTempOutput"
+          AfterTargets="CopyFilesToOutputDirectory">
+
+    <ItemGroup>
+      <CompileForRelativePath Include="@(Compile)" />
+      <CompileForRelativePath Remove="$(RepoRoot)src\SourceBuildAssemblyMetdata.cs" />
+    </ItemGroup>
+
+    <Error
+      Condition="@(CompileForRelativePath->Count()) != 1"
+      Text="Number of Compile items != 1. We need just one, to determine the path of the resulting DLL in the package including ref/lib and TFM." />
+
+    <ItemGroup>
+      <FullCompileDir Include="$([System.IO.Directory]::GetParent('%(CompileForRelativePath.Identity)'))" />
+      <RelativeCompileDir Include="$([MSBuild]::MakeRelative('$(MSBuildProjectDirectory)\', '%(FullCompileDir.Identity)'))" />
+    </ItemGroup>
+
+    <Copy
+      SourceFiles="$(TargetPath)"
+      DestinationFiles="$([MSBuild]::NormalizePath(
+        '$(TFMPackTempOutputDir)',
+        '%(RelativeCompileDir.Identity)',
+        '$(TargetFileName)'))" />
+  </Target>
+
+</Project>

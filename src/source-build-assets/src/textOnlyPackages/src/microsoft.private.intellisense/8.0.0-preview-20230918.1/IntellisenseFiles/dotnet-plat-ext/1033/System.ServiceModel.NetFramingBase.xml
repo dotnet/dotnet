@@ -1,0 +1,320 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.ServiceModel.NetFramingBase</name>
+  </assembly>
+  <members>
+    <member name="T:System.ServiceModel.Channels.ConnectionOrientedTransportBindingElement">
+      <summary>An abstract class that supplements the base <see cref="T:System.ServiceModel.Channels.TransportBindingElement" /> with additional properties that are common to connection-oriented transports such as TCP and named pipes.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Channels.ConnectionOrientedTransportBindingElement.#ctor" />
+    <member name="M:System.ServiceModel.Channels.ConnectionOrientedTransportBindingElement.#ctor(System.ServiceModel.Channels.ConnectionOrientedTransportBindingElement)">
+      <param name="elementToBeCloned" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.ConnectionOrientedTransportBindingElement.CanBuildChannelFactory``1(System.ServiceModel.Channels.BindingContext)">
+      <summary>Determines whether a channel factory of the specified type can be built.</summary>
+      <param name="context">The <see cref="T:System.ServiceModel.Channels.BindingContext" /> for the channel.</param>
+      <typeparam name="TChannel">The type of channel to check.</typeparam>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="context" /> is <see langword="null" />.</exception>
+      <returns>
+        <see langword="true" /> if a channel factory can be built; otherwise <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Channels.ConnectionOrientedTransportBindingElement.GetProperty``1(System.ServiceModel.Channels.BindingContext)">
+      <summary>Gets properties from the binding stack, if present.</summary>
+      <param name="context">The binding context.</param>
+      <typeparam name="T">Type of the property.</typeparam>
+      <returns>A <paramref name="T" /> object from the binding stack, if present.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.ConnectionOrientedTransportBindingElement.ConnectionBufferSize">
+      <summary>Gets or sets the size of the buffer used to transmit a chunk of the serialized message on the wire from the client or service.</summary>
+      <exception cref="T:System.ArgumentOutOfRangeException">The value is less than zero.</exception>
+      <returns>The size of the connection buffer. The default value is 8192 bytes.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.ConnectionOrientedTransportBindingElement.MaxBufferSize">
+      <summary>Gets or sets the maximum size of the buffer to use. For streamed messages, this value should be at least the maximum possible size of the message headers, which are read in buffered mode.</summary>
+      <exception cref="T:System.ArgumentOutOfRangeException">The value is less than or equal to zero.</exception>
+      <returns>The maximum number of bytes that are used to buffer incoming messages in memory. The default value is 65,536 bytes.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.ConnectionOrientedTransportBindingElement.TransferMode">
+      <summary>Gets or sets a value that indicates whether the messages are buffered or streamed with the connection-oriented transport.</summary>
+      <exception cref="T:System.ArgumentOutOfRangeException">The value is not a valid <see cref="T:System.ServiceModel.TransferMode" />.</exception>
+      <returns>A <see cref="T:System.ServiceModel.TransferMode" /> value which indicates whether a channel uses streamed or buffered modes of message transfer. The default is <see cref="F:System.ServiceModel.TransferMode.Buffered" />.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Channels.IConnection" />
+    <member name="M:System.ServiceModel.Channels.IConnection.Abort" />
+    <member name="M:System.ServiceModel.Channels.IConnection.CloseAsync(System.TimeSpan)">
+      <param name="timeout" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.IConnection.ReadAsync(System.Memory{System.Byte},System.TimeSpan)">
+      <param name="buffer" />
+      <param name="timeout" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.IConnection.WriteAsync(System.ReadOnlyMemory{System.Byte},System.Boolean,System.TimeSpan)">
+      <param name="buffer" />
+      <param name="immediate" />
+      <param name="timeout" />
+    </member>
+    <member name="P:System.ServiceModel.Channels.IConnection.ConnectionBufferSize" />
+    <member name="T:System.ServiceModel.Channels.IConnectionInitiator" />
+    <member name="M:System.ServiceModel.Channels.IConnectionInitiator.ConnectAsync(System.Uri,System.TimeSpan)">
+      <param name="uri" />
+      <param name="timeout" />
+    </member>
+    <member name="T:System.ServiceModel.Channels.IConnectionPoolSettings" />
+    <member name="M:System.ServiceModel.Channels.IConnectionPoolSettings.GetConnectionPoolSetting``1(System.String)">
+      <param name="settingName" />
+      <typeparam name="T" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.IConnectionPoolSettings.IsCompatible(System.ServiceModel.Channels.IConnectionPoolSettings)">
+      <param name="other" />
+    </member>
+    <member name="T:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1">
+      <typeparam name="TChannel" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.#ctor(System.ServiceModel.Channels.ConnectionOrientedTransportBindingElement,System.ServiceModel.Channels.BindingContext,System.String,System.TimeSpan,System.Int32)">
+      <param name="bindingElement" />
+      <param name="context" />
+      <param name="connectionPoolGroupName" />
+      <param name="idleTimeout" />
+      <param name="maxOutboundConnectionsPerEndpoint" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.GetConnectionInitiator" />
+    <member name="M:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.GetConnectionPoolKey(System.ServiceModel.EndpointAddress,System.Uri)">
+      <param name="address" />
+      <param name="via" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.GetProperty``1">
+      <typeparam name="T" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.OnAbort" />
+    <member name="M:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.OnBeginClose(System.TimeSpan,System.AsyncCallback,System.Object)">
+      <param name="timeout" />
+      <param name="callback" />
+      <param name="state" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.OnBeginOpen(System.TimeSpan,System.AsyncCallback,System.Object)">
+      <param name="timeout" />
+      <param name="callback" />
+      <param name="state" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.OnClose(System.TimeSpan)">
+      <param name="timeout" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.OnCloseAsync(System.TimeSpan)">
+      <param name="timeout" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.OnCreateChannel(System.ServiceModel.EndpointAddress,System.Uri)">
+      <param name="address" />
+      <param name="via" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.OnEndClose(System.IAsyncResult)">
+      <param name="result" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.OnEndOpen(System.IAsyncResult)">
+      <param name="result" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.OnOpen(System.TimeSpan)">
+      <param name="timeout" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.OnOpenAsync(System.TimeSpan)">
+      <param name="timeout" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.OnOpening" />
+    <member name="M:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.SupportsUpgrade(System.ServiceModel.Channels.StreamUpgradeBindingElement)">
+      <param name="upgradeBindingElement" />
+    </member>
+    <member name="P:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.ConnectionBufferSize" />
+    <member name="P:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.ConnectionPoolGroupName" />
+    <member name="P:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.IdleTimeout" />
+    <member name="P:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.MaxBufferSize" />
+    <member name="P:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.MaxOutboundConnectionsPerEndpoint" />
+    <member name="P:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.MaxOutputDelay" />
+    <member name="P:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.Scheme" />
+    <member name="P:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.System#ServiceModel#Channels#ITransportFactorySettings#BufferManager" />
+    <member name="P:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.System#ServiceModel#Channels#ITransportFactorySettings#ManualAddressing" />
+    <member name="P:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.System#ServiceModel#Channels#ITransportFactorySettings#MaxReceivedMessageSize" />
+    <member name="P:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.System#ServiceModel#Channels#ITransportFactorySettings#MessageEncoderFactory" />
+    <member name="P:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.System#ServiceModel#Channels#ITransportFactorySettings#MessageVersion" />
+    <member name="P:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.TransferMode" />
+    <member name="P:System.ServiceModel.Channels.NetFramingTransportChannelFactory`1.Upgrade" />
+    <member name="T:System.ServiceModel.Channels.SslStreamSecurityBindingElement">
+      <summary>Represents a custom binding element that supports channel security using an SSL stream.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Channels.SslStreamSecurityBindingElement.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.SslStreamSecurityBindingElement" /> class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Channels.SslStreamSecurityBindingElement.#ctor(System.ServiceModel.Channels.SslStreamSecurityBindingElement)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.SslStreamSecurityBindingElement" /> class using the values from another <see cref="T:System.ServiceModel.Channels.SslStreamSecurityBindingElement" />.</summary>
+      <param name="elementToBeCloned">The <see cref="T:System.ServiceModel.Channels.SslStreamSecurityBindingElement" /> to clone.</param>
+    </member>
+    <member name="M:System.ServiceModel.Channels.SslStreamSecurityBindingElement.BuildChannelFactory``1(System.ServiceModel.Channels.BindingContext)">
+      <summary>Creates a channel factory of a specified type.</summary>
+      <param name="context">The <see cref="T:System.ServiceModel.Channels.BindingContext" />.</param>
+      <typeparam name="TChannel">Type of channel factory.</typeparam>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="context" /> is <see langword="null" />.</exception>
+      <returns>An <see cref="T:System.ServiceModel.Channels.IChannelFactory" /> object that represents the channel factory of type <paramref name="TChannel" />.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Channels.SslStreamSecurityBindingElement.BuildClientStreamUpgradeProvider(System.ServiceModel.Channels.BindingContext)">
+      <summary>Creates an instance on the client of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" /> based on the channel context provided.</summary>
+      <param name="context">The <see cref="T:System.ServiceModel.Channels.BindingContext" /> for the entire channel stack.</param>
+      <returns>An instance of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" />.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Channels.SslStreamSecurityBindingElement.CanBuildChannelFactory``1(System.ServiceModel.Channels.BindingContext)">
+      <summary>Gets a value that indicates whether a channel factory of the specified type can be built.</summary>
+      <param name="context">The <see cref="T:System.ServiceModel.Channels.BindingContext" />.</param>
+      <typeparam name="TChannel">Type of channel factory.</typeparam>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="context" /> is <see langword="null" />.</exception>
+      <returns>
+        <see langword="true" /> if a channel factory of the specified type can be built; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Channels.SslStreamSecurityBindingElement.Clone">
+      <summary>Creates a new instance that is a copy of the current instance.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Channels.SslStreamSecurityBindingElement" /> instance that is a copy of the current instance.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Channels.SslStreamSecurityBindingElement.GetProperty``1(System.ServiceModel.Channels.BindingContext)">
+      <summary>Gets a specified object from the <see cref="T:System.ServiceModel.Channels.BindingContext" />.</summary>
+      <param name="context">A <see cref="T:System.ServiceModel.Channels.BindingContext" />.</param>
+      <typeparam name="T">The type of the object to get.</typeparam>
+      <returns>The object of type <paramref name="T" /> from the <see cref="T:System.ServiceModel.Channels.BindingContext" />, or <see langword="null" /> if the object is not found.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.SslStreamSecurityBindingElement.IdentityVerifier">
+      <summary>Gets or sets the identity verifier for this binding.</summary>
+      <exception cref="T:System.ArgumentNullException">The value to set is null.</exception>
+      <returns>An <see cref="T:System.ServiceModel.Security.IdentityVerifier" /> object.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.SslStreamSecurityBindingElement.RequireClientCertificate">
+      <summary>Gets or sets a value that specifies whether a client certificate is required for this binding.</summary>
+      <returns>
+        <see langword="true" /> if a client certificate is required for this binding; otherwise, <see langword="false" />. The default is <see langword="false" />.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.SslStreamSecurityBindingElement.SslProtocols">
+      <summary>Specifies the list of SSL/TLS protocols to negotiate when using a client credential type of TcpClientCredentialType.Certificate. The value can be a combination of one of more of the following enumeration members: Ssl3, Tls, Tls11, Tls12.</summary>
+      <returns>Returns <see cref="T:System.Security.Authentication.SslProtocols" />.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Channels.StreamSecurityUpgradeInitiator">
+      <summary>To implement a security upgrade initiator, inherit from this <see langword="abstract" /> base class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Channels.StreamSecurityUpgradeInitiator.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.StreamSecurityUpgradeInitiator" /> class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Channels.StreamSecurityUpgradeInitiator.GetRemoteSecurity">
+      <summary>Gets the security message property provided on the stream for performing custom security negotiation based on the information provided in the security context.</summary>
+      <returns>Returns the <see cref="T:System.ServiceModel.Security.SecurityMessageProperty" />.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Channels.StreamSecurityUpgradeProvider">
+      <summary>Implements a custom security upgrade provider, inherited from this <see langword="abstract" /> base class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Channels.StreamSecurityUpgradeProvider.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.StreamSecurityUpgradeProvider" /> class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Channels.StreamSecurityUpgradeProvider.#ctor(System.ServiceModel.IDefaultCommunicationTimeouts)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.StreamSecurityUpgradeProvider" /> class.</summary>
+      <param name="timeouts">The default communication time-outs.</param>
+    </member>
+    <member name="T:System.ServiceModel.Channels.StreamUpgradeBindingElement">
+      <summary>Adds a custom stream upgrade provider to a custom binding.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Channels.StreamUpgradeBindingElement.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeBindingElement" /> class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Channels.StreamUpgradeBindingElement.#ctor(System.ServiceModel.Channels.StreamUpgradeBindingElement)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeBindingElement" /> class from an existing instance.</summary>
+      <param name="elementToBeCloned">The instance of this class to be cloned.</param>
+    </member>
+    <member name="M:System.ServiceModel.Channels.StreamUpgradeBindingElement.BuildClientStreamUpgradeProvider(System.ServiceModel.Channels.BindingContext)">
+      <summary>Creates an instance on the client of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" /> based on the channel context provided.</summary>
+      <param name="context">The <see cref="T:System.ServiceModel.Channels.BindingContext" /> for the entire channel stack.</param>
+      <returns>An instance of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" />.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Channels.StreamUpgradeInitiator">
+      <summary>To implement a custom upgrade initiator, inherit from this <see langword="abstract" /> base class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Channels.StreamUpgradeInitiator.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeInitiator" /> class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Channels.StreamUpgradeInitiator.GetNextUpgrade">
+      <summary>Returns the content type of the next upgrade to be performed.</summary>
+      <returns>Returns the content type of the next upgrade.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Channels.StreamUpgradeProvider">
+      <summary>Implements a custom upgrade provider, inherited from this <see langword="abstract" /> base class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Channels.StreamUpgradeProvider.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" /> class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Channels.StreamUpgradeProvider.#ctor(System.ServiceModel.IDefaultCommunicationTimeouts)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" /> class.</summary>
+      <param name="timeouts">The default communication time-outs.</param>
+    </member>
+    <member name="M:System.ServiceModel.Channels.StreamUpgradeProvider.CreateUpgradeInitiator(System.ServiceModel.EndpointAddress,System.Uri)">
+      <summary>Creates an instance of <see cref="T:System.ServiceModel.Channels.StreamUpgradeInitiator" />.</summary>
+      <param name="remoteAddress">Endpoint address for the channel.</param>
+      <param name="via">The address of the Via URI (an intermediate URI through which communication may be routed).</param>
+      <returns>Returns an instance of <see cref="T:System.ServiceModel.Channels.StreamUpgradeInitiator" />.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Channels.StreamUpgradeProvider.GetProperty``1">
+      <summary>When implemented in a derived class, gets a property of the current stream that represents an initiator of a stream upgrade.</summary>
+      <typeparam name="T">The type of the current stream.</typeparam>
+      <returns>An initiator of a stream upgrade.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.StreamUpgradeProvider.DefaultCloseTimeout">
+      <summary>Gets the DefaultCloseTimeout.</summary>
+      <returns>Returns a <see cref="T:System.TimeSpan" /> for the DefaultCloseTimeout.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.StreamUpgradeProvider.DefaultOpenTimeout">
+      <summary>Gets the DefaultOpenTimeout.</summary>
+      <returns>Returns a <see cref="T:System.TimeSpan" /> for the DefaultOpenTimeout.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Channels.WindowsStreamSecurityBindingElement">
+      <summary>Represents the binding element used to specify Windows stream security settings.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Channels.WindowsStreamSecurityBindingElement.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.WindowsStreamSecurityBindingElement" /> class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Channels.WindowsStreamSecurityBindingElement.#ctor(System.ServiceModel.Channels.WindowsStreamSecurityBindingElement)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.WindowsStreamSecurityBindingElement" /> class from an existing instance.</summary>
+      <param name="elementToBeCloned">Instance of this class to clone.</param>
+    </member>
+    <member name="M:System.ServiceModel.Channels.WindowsStreamSecurityBindingElement.BuildChannelFactory``1(System.ServiceModel.Channels.BindingContext)">
+      <summary>Creates a channel factory that can be used to create a channel.</summary>
+      <param name="context">
+        <see cref="T:System.ServiceModel.Channels.BindingContext" /> members that describe bindings, behaviors, contracts, and other information required to create the channel factory.</param>
+      <typeparam name="TChannel">Type of channel factory.</typeparam>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="context" /> cannot be <see langword="null" />.</exception>
+      <returns>Returns a channel factory of the specified type. This method adds this class instance to the <see cref="P:System.ServiceModel.Channels.BindingContext.BindingParameters" /> and delegates to the build method <see cref="M:System.ServiceModel.Channels.BindingContext.BuildInnerChannelFactory``1" />.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Channels.WindowsStreamSecurityBindingElement.BuildClientStreamUpgradeProvider(System.ServiceModel.Channels.BindingContext)">
+      <summary>Creates an instance on the client of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" /> based on the channel context provided.</summary>
+      <param name="context">The <see cref="T:System.ServiceModel.Channels.BindingContext" /> for the entire channel stack.</param>
+      <returns>An instance of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" />.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Channels.WindowsStreamSecurityBindingElement.CanBuildChannelFactory``1(System.ServiceModel.Channels.BindingContext)">
+      <summary>Determines whether a channel factory of the specified type can be built.</summary>
+      <param name="context">The binding context.</param>
+      <typeparam name="TChannel">The type of channel to check.</typeparam>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="context" /> is <see langword="null" />.</exception>
+      <returns>
+        <see langword="true" /> if a channel factory can be built; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Channels.WindowsStreamSecurityBindingElement.Clone">
+      <summary>Creates a new binding element from this instance of the class.</summary>
+      <returns>
+        <see cref="T:System.ServiceModel.Channels.BindingElement" />.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Channels.WindowsStreamSecurityBindingElement.GetProperty``1(System.ServiceModel.Channels.BindingContext)">
+      <summary>Gets a specified object from the <see cref="T:System.ServiceModel.Channels.BindingContext" />.</summary>
+      <param name="context">A <see cref="T:System.ServiceModel.Channels.BindingContext" />.</param>
+      <typeparam name="T">The object to get.</typeparam>
+      <returns>The specified object from the <see cref="T:System.ServiceModel.Channels.BindingContext" /> or <see langword="null" /> if the object is not found.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.WindowsStreamSecurityBindingElement.ProtectionLevel">
+      <summary>Gets or sets the protection level.</summary>
+      <returns>The <see cref="T:System.Net.Security.ProtectionLevel" />. The default value is <see cref="F:System.Net.Security.ProtectionLevel.EncryptAndSign" />.</returns>
+    </member>
+  </members>
+</doc>

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.Extensions.CommandLineUtils.Sources</id>
+    <version>3.0.0-preview6.19253.5</version>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <license type="expression">Apache-2.0</license>
+    <licenseUrl>https://licenses.nuget.org/Apache-2.0</licenseUrl>
+    <projectUrl>https://asp.net/</projectUrl>
+    <description>Microsoft.Extensions.CommandLineUtils.Sources</description>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <serviceable>true</serviceable>
+    <repository type="git" url="https://github.com/aspnet/Extensions" commit="5063390044eac362c001f9958ed7c4a6bf02f0a5" />
+    <dependencies>
+      <group targetFramework=".NETStandard1.0" />
+    </dependencies>
+    <contentFiles>
+      <files include="cs/netstandard1.0/shared/CommandLine/AnsiConsole.cs" buildAction="Compile" />
+      <files include="cs/netstandard1.0/shared/CommandLine/CommandArgument.cs" buildAction="Compile" />
+      <files include="cs/netstandard1.0/shared/CommandLine/CommandLineApplication.cs" buildAction="Compile" />
+      <files include="cs/netstandard1.0/shared/CommandLine/CommandOption.cs" buildAction="Compile" />
+      <files include="cs/netstandard1.0/shared/CommandLine/CommandOptionType.cs" buildAction="Compile" />
+      <files include="cs/netstandard1.0/shared/CommandLine/CommandParsingException.cs" buildAction="Compile" />
+      <files include="cs/netstandard1.0/shared/Utilities/ArgumentEscaper.cs" buildAction="Compile" />
+      <files include="cs/netstandard1.0/shared/Utilities/DotNetMuxer.cs" buildAction="Compile" />
+    </contentFiles>
+  </metadata>
+</package>

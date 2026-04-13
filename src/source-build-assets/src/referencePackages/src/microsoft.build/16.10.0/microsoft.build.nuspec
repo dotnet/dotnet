@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.Build</id>
+    <version>16.10.0</version>
+    <authors>Microsoft</authors>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <projectUrl>http://go.microsoft.com/fwlink/?LinkId=624683</projectUrl>
+    <iconUrl>https://go.microsoft.com/fwlink/?linkid=825694</iconUrl>
+    <description>This package contains the Microsoft.Build assembly which is used to create, edit, and evaluate MSBuild projects.</description>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <tags>MSBuild</tags>
+    <serviceable>true</serviceable>
+    <repository type="git" url="https://github.com/dotnet/msbuild" commit="4242f381a90f77f483b123819759db1ff8eddf67" />
+    <dependencies>
+      <group targetFramework="net5.0">
+        <dependency id="Microsoft.Build.Framework" version="16.10.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.NET.StringTools" version="1.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Win32.Registry" version="4.3.0" exclude="Build,Analyzers" />
+        <dependency id="System.Collections.Immutable" version="5.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Configuration.ConfigurationManager" version="4.7.0" exclude="Build,Analyzers" />
+        <dependency id="System.Reflection.Metadata" version="1.6.0" exclude="Build,Analyzers" />
+        <dependency id="System.Security.Principal.Windows" version="4.7.0" exclude="Build,Analyzers" />
+        <dependency id="System.Text.Encoding.CodePages" version="4.0.1" exclude="Build,Analyzers" />
+        <dependency id="System.Text.Json" version="4.7.0" exclude="Build,Analyzers" />
+        <dependency id="System.Threading.Tasks.Dataflow" version="4.9.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+    <frameworkAssemblies>
+    </frameworkAssemblies>
+  </metadata>
+</package>

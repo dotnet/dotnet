@@ -1,0 +1,4 @@
+{
+	"name": "Source-Build",
+	"image": "mcr.microsoft.com/dotnet-buildtools/prereqs:fedora-33-20210222183538-031e7d2"
+}
