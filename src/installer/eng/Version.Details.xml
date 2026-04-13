@@ -248,10 +248,10 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
       <Sha>81cabf2857a01351e5ab578947c7403a5b128ad1</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.26203.3">
-      <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>9d83c59ff890ff2020aa38ebcf3bb514e38e9ffe</Sha>
-      <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-assets" Version="8.0.0-alpha.1.26208.3">
+      <Uri>https://github.com/dotnet/source-build-assets</Uri>
+      <Sha>e911a8db53ca72e45e66bb84376e68fe5c5999b9</Sha>
+      <SourceBuild RepoName="source-build-assets" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23475.1" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
       <Uri>https://github.com/dotnet/xliff-tasks</Uri>

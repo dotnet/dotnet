@@ -1,0 +1,45 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - release/*
+
+pr:
+  branches:
+    include:
+    - main
+    - release/*
+
+variables:
+- template: /azure-pipelines/templates/variables/common.yml
+
+resources:
+  repositories:
+  - repository: MicroBuildTemplate
+    type: git
+    name: 1ESPipelineTemplates/MicroBuildTemplate
+    ref: refs/tags/release
+
+extends:
+  template: azure-pipelines/MicroBuild.1ES.Official.yml@MicroBuildTemplate
+  parameters:
+    sdl:
+      componentgovernance:
+        # These directories need to be kept in-sync with the 'cgIgnoreDirectories'
+        # specified in ../templates/stages/build.yml
+        ignoreDirectories: "src/referencePackages,artifacts/sb"
+      sourceAnalysisPool:
+        name: $(DncEngInternalBuildPool)
+        image: 1es-windows-2022
+        os: windows
+    pool:
+      name: $(DncEngInternalBuildPool)
+      image: 1es-ubuntu-2204
+      os: linux
+    customBuildTags:
+    - ES365AIMigrationTooling
+    stages:
+    - template: /azure-pipelines/templates/stages/build.yml
+      parameters:
+        engCommonTemplatesDir: ${{ variables.EngCommonTemplatesDir }}

@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata minClientVersion="2.12">
+    <id>NETStandard.Library.NETFramework</id>
+    <version>2.0.1-servicing-26011-01</version>
+    <title>NETStandard.Library.NETFramework</title>
+    <authors>Microsoft</authors>
+    <owners>microsoft,dotnetframework</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/dotnet/corefx/blob/master/LICENSE.TXT</licenseUrl>
+    <projectUrl>https://dot.net/</projectUrl>
+    <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288859</iconUrl>
+    <description>Adds NETStandard2.0 support to .NET Framework. 
+bd6a58d04fe8bd60452819571fd720513378ae0f 
+When using NuGet 3.x this package requires at least version 3.4.</description>
+    <releaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</releaseNotes>
+    <copyright>© Microsoft Corporation.  All rights reserved.</copyright>
+    <serviceable>true</serviceable>
+    <dependencies>
+      <group targetFramework=".NETFramework4.6.1">
+        <dependency id="NETStandard.Library" version="2.0.1" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="*/**" target="/" exclude="obj/**/*.*;**/Debug/**/*.*" />
+    <file src="*" target="/" exclude="*.csproj" />
+  </files>
+</package>

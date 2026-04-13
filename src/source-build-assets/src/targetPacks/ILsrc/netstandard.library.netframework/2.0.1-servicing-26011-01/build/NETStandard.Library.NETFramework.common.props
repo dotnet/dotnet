@@ -1,0 +1,7 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <NETStandardLibraryNETFrameworkPackageVersion>2.0.1-servicing-26011-01</NETStandardLibraryNETFrameworkPackageVersion>
+    <PackageConflictPreferredPackages>NETStandard.Library.NETFramework;$(PackageConflictPreferredPackages)</PackageConflictPreferredPackages>
+    <ImplicitlyExpandNETStandardFacades Condition="'$(ImplicitlyExpandNETStandardFacades)' == ''">true</ImplicitlyExpandNETStandardFacades>
+  </PropertyGroup>
+</Project>
