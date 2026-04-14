@@ -145,15 +145,8 @@ function source_only_toolset_init() {
 
   local bootstrapArcadeDir=$(cat "$repo_root/artifacts/toolset/bootstrap-sdks.txt" | grep "microsoft.dotnet.arcade.sdk")
 
-  # Prefer the toolset folder (new layout), fall back to tools
-  local arcadeBuildStepsDir="$bootstrapArcadeDir/toolset/"
-  if [ ! -d "$arcadeBuildStepsDir" ]; then
-    # TODO: Remove this fallback once all supported versions have the toolset folder.
-    arcadeBuildStepsDir="$bootstrapArcadeDir/tools/"
-  fi
-
   # Set _InitializeToolset so that eng/common/tools.sh doesn't attempt to restore the arcade toolset again.
-  _InitializeToolset="${arcadeBuildStepsDir}Build.proj"
+  _InitializeToolset="${bootstrapArcadeDir}/toolset/Build.proj"
 
   echo "Source-only toolset initialization complete"
 }

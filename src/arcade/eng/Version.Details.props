@@ -27,7 +27,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftSymbolManifestGeneratorPackageVersion>8.0.0-preview.24461.2</MicrosoftSymbolManifestGeneratorPackageVersion>
     <!-- dotnet/runtime dependencies -->
     <MicrosoftExtensionsDependencyInjectionPackageVersion>9.0.0</MicrosoftExtensionsDependencyInjectionPackageVersion>
-    <MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>9.0.0</MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>
     <MicrosoftExtensionsDependencyModelPackageVersion>9.0.0</MicrosoftExtensionsDependencyModelPackageVersion>
     <MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>9.0.0</MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>
     <MicrosoftExtensionsFileSystemGlobbingPackageVersion>9.0.0</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
@@ -74,7 +73,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftSymbolManifestGeneratorVersion>$(MicrosoftSymbolManifestGeneratorPackageVersion)</MicrosoftSymbolManifestGeneratorVersion>
     <!-- dotnet/runtime dependencies -->
     <MicrosoftExtensionsDependencyInjectionVersion>$(MicrosoftExtensionsDependencyInjectionPackageVersion)</MicrosoftExtensionsDependencyInjectionVersion>
-    <MicrosoftExtensionsDependencyInjectionAbstractionsVersion>$(MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion)</MicrosoftExtensionsDependencyInjectionAbstractionsVersion>
     <MicrosoftExtensionsDependencyModelVersion>$(MicrosoftExtensionsDependencyModelPackageVersion)</MicrosoftExtensionsDependencyModelVersion>
     <MicrosoftExtensionsFileProvidersAbstractionsVersion>$(MicrosoftExtensionsFileProvidersAbstractionsPackageVersion)</MicrosoftExtensionsFileProvidersAbstractionsVersion>
     <MicrosoftExtensionsFileSystemGlobbingVersion>$(MicrosoftExtensionsFileSystemGlobbingPackageVersion)</MicrosoftExtensionsFileSystemGlobbingVersion>

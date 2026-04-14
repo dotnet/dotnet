@@ -31,9 +31,6 @@
     <CommonArgs>$(CommonArgs) /p:PortableTargetRid=$(PortableTargetRid)</CommonArgs>
     <CommonArgs Condition="'$(DefaultArtifactVisibility)' != ''">$(CommonArgs) /p:DefaultArtifactVisibility=$(DefaultArtifactVisibility)</CommonArgs>
 
-    <!-- Suppress NU1510 warning-as-error during offline build, these will be fixed on rebootstrap -->
-    <CommonArgs Condition="'$(DotNetBuildWithOnlineFeeds)' != 'true'">$(CommonArgs) $(FlagParameterPrefix)warnNotAsError NU1510</CommonArgs>
-
     <!-- Branding -->
     <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'repodefault' or '$(RepoDotNetFinalVersionKind)' == ''"></RepoDotNetFinalVersionKindArg>
     <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'unstable'">/p:DotNetFinalVersionKind=""</RepoDotNetFinalVersionKindArg>

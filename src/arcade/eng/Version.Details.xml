@@ -60,12 +60,6 @@
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the dependency
          to flow in and eliminates related prebuilts. -->
-    <Dependency Name="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0">
-      <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>d3981726bc8b0e179db50301daf9f22d42393096</Sha>
-    </Dependency>
-    <!-- Necessary for source-build. This allows the live version of the dependency
-         to flow in and eliminates related prebuilts. -->
     <Dependency Name="Microsoft.Extensions.DependencyInjection" Version="9.0.0">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>d3981726bc8b0e179db50301daf9f22d42393096</Sha>
