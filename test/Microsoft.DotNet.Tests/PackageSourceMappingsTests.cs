@@ -62,11 +62,11 @@ namespace Microsoft.DotNet.Tests
             RunTest(nugetConfigFilename, useOnlineFeeds, sources, sourceBuild: true);
         }
 
-        // Source build - SBRP repo - online and offline
+        // Source build - SBA repo - online and offline
         [Theory]
-        [InlineData("sb-sbrp-online.config", true)]
-        [InlineData("sb-sbrp-offline.config", false)]
-        public void SourceBuildSbrpRepoTests(string nugetConfigFilename, bool useOnlineFeeds)
+        [InlineData("sb-sba-online.config", true)]
+        [InlineData("sb-sba-offline.config", false)]
+        public void SourceBuildSbaRepoTests(string nugetConfigFilename, bool useOnlineFeeds)
         {
             string[] sources = [PrebuiltSourceName, PreviouslySourceBuiltSourceName, SharedComponentsSourceName, ReferencePackagesSourceName];
             RunTest(nugetConfigFilename, useOnlineFeeds, sources, sourceBuild: true);
@@ -96,8 +96,8 @@ namespace Microsoft.DotNet.Tests
 
             var task = new UpdateNuGetConfigPackageSourcesMappings()
             {
-                SbrpCacheSourceName = "source-build-reference-package-cache",
-                SbrpRepoSrcPath = TestSetup.SourceBuildReferencePackagesRepo,
+                SbaCacheSourceName = "source-build-assets-cache",
+                SbaRepoSrcPath = TestSetup.SourceBuildAssetsRepo,
                 SourceBuiltSourceNamePrefix = "source-built-",
                 PreviousBuildPassSourceNamePrefix = "previous-build-pass-",
                 NuGetConfigFile = modifiedNugetConfig,
@@ -164,9 +164,9 @@ namespace Microsoft.DotNet.Tests
             private readonly string ReferencePackagesSource = Path.Combine(PackageSourceMappingsRoot, "reference-packages");
             private readonly string PrebuiltSource = Path.Combine(PackageSourceMappingsRoot, "prebuilt");
             private readonly string SharedComponentsSource = Path.Combine(PackageSourceMappingsRoot, "shared-components");
-            private readonly string SourceBuildReferencePackagesSource = Path.Combine(PackageSourceMappingsRoot, "source-build-reference-package-cache");
+            private readonly string SourceBuildAssetsSource = Path.Combine(PackageSourceMappingsRoot, "source-build-assets-cache");
 
-            public readonly string SourceBuildReferencePackagesRepo = Path.Combine(PackageSourceMappingsRoot, "sbrp");
+            public readonly string SourceBuildAssetsRepo = Path.Combine(PackageSourceMappingsRoot, "sba");
 
             public Dictionary<string, string> LocalTokenSourceMappings
             {
@@ -180,7 +180,7 @@ namespace Microsoft.DotNet.Tests
                             ["%reference-packages%"] = ReferencePackagesSource,
                             ["%prebuilt%"] = PrebuiltSource,
                             ["%shared-components%"] = SharedComponentsSource,
-                            ["%source-build-reference-package-cache%"] = SourceBuildReferencePackagesSource
+                            ["%source-build-assets-cache%"] = SourceBuildAssetsSource
                         };
 
                     return localTokenSourceMappings;
@@ -213,9 +213,9 @@ namespace Microsoft.DotNet.Tests
                 GenerateNuGetPackage(RuntimeSource, "Runtime.Package1", "1.0.0");
                 GenerateNuGetPackage(RuntimeSource, "Runtime.Package2", "1.0.0");
 
-                // Generate SBRP nuget packages
-                GenerateNuGetPackage(SourceBuildReferencePackagesSource, "SBRP.Package1", "1.0.0");
-                GenerateNuGetPackage(SourceBuildReferencePackagesSource, "SBRP.Package2", "1.0.0");
+                // Generate SBA nuget packages
+                GenerateNuGetPackage(SourceBuildAssetsSource, "SBA.Package1", "1.0.0");
+                GenerateNuGetPackage(SourceBuildAssetsSource, "SBA.Package2", "1.0.0");
 
                 // Generate previously-source-built packages
                 GenerateNuGetPackage(PreviouslySourceBuiltSource, "PSB.Package1", "1.0.0");
@@ -239,11 +239,11 @@ namespace Microsoft.DotNet.Tests
                 // Create a package that exists in previously source-built to test precedence
                 GenerateNuGetPackage(SharedComponentsSource, "PSB.Package1", "1.0.0");
 
-                // Generate SBRP repo files - nuspecs
-                GenerateNuspecFile(SourceBuildReferencePackagesRepo, "SBRP.Repo.Package1", "1.0.0");
-                GenerateNuspecFile(SourceBuildReferencePackagesRepo, "SBRP.Repo.Package2", "1.0.0");
-                GenerateNuspecFile(SourceBuildReferencePackagesRepo, "SBRP.Repo.Package3", "1.0.0");
-                GenerateNuspecFile(SourceBuildReferencePackagesRepo, "SBRP.Repo.Package4", "1.0.0");
+                // Generate SBA repo files - nuspecs
+                GenerateNuspecFile(SourceBuildAssetsRepo, "SBA.Repo.Package1", "1.0.0");
+                GenerateNuspecFile(SourceBuildAssetsRepo, "SBA.Repo.Package2", "1.0.0");
+                GenerateNuspecFile(SourceBuildAssetsRepo, "SBA.Repo.Package3", "1.0.0");
+                GenerateNuspecFile(SourceBuildAssetsRepo, "SBA.Repo.Package4", "1.0.0");
             }
 
             private static void GenerateNuGetPackage(string folder, string name, string version)
