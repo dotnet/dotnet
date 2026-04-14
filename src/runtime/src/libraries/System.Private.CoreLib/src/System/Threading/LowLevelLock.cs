@@ -14,14 +14,11 @@ namespace System.Threading
     /// </summary>
     internal sealed class LowLevelLock : IDisposable
     {
-        private const int SpinCount = 8;
-        private const int SpinSleep0Threshold = 4;
+        private const uint SpinCount = 8;
 
         private const uint LockedMask = 1;
         private const uint WaiterCountIncrement = 2;
         private const uint WaiterWoken = 1u << 31;
-
-        private static readonly Func<object, bool> s_spinWaitTryAcquireCallback = SpinWaitTryAcquireCallback;
 
         // Layout:
         //   - Bit 0: 1 if the lock is locked, 0 otherwise
@@ -33,12 +30,10 @@ namespace System.Threading
         private Thread? _ownerThread;
 #endif
 
-        private LowLevelSpinWaiter _spinWaiter;
         private LowLevelThreadBlocker _blocker;
 
         public LowLevelLock()
         {
-            _spinWaiter = default(LowLevelSpinWaiter);
             _blocker = new LowLevelThreadBlocker();
         }
 
@@ -124,32 +119,38 @@ namespace System.Threading
             return acquired;
         }
 
-        private static bool SpinWaitTryAcquireCallback(object state)
-        {
-            var thisRef = (LowLevelLock)state;
-            return thisRef.TryAcquire();
-        }
-
         public void Acquire()
         {
-            if (!TryAcquire())
-            {
-                WaitAndAcquire();
-            }
+            if (TryAcquire())
+                return;
+
+            SpinAndAcquire();
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public void SpinAndAcquire()
+        {
+            VerifyIsNotLocked();
+
+            uint spinCount = Environment.IsSingleProcessor ? 0 : SpinCount;
+            for (uint i = 0; i < spinCount; i++)
+            {
+                Backoff.Exponential(i);
+                if (TryAcquire())
+                {
+                    return;
+                }
+            }
+
+            WaitAndAcquire();
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private void WaitAndAcquire()
         {
             VerifyIsNotLocked();
 
             RuntimeFeature.ThrowIfMultithreadingIsNotSupported();
-
-            // Spin a bit to see if the lock becomes available, before forcing the thread into a wait state
-            if (_spinWaiter.SpinWaitForCondition(s_spinWaitTryAcquireCallback, this, SpinCount, SpinSleep0Threshold))
-            {
-                Debug.Assert((_state & LockedMask) != 0);
-                return;
-            }
 
             // Atomically either register this thread as a waiter or acquire the lock.
             uint collisions = 0;
@@ -226,6 +227,7 @@ namespace System.Threading
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private void SignalWaiter()
         {
             if ((Interlocked.Or(ref _state, WaiterWoken) & WaiterWoken) == 0)
