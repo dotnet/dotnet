@@ -11,6 +11,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
+using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
+using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
+
 using Microsoft.VisualStudio.TestPlatform.CommandLine.Internal;
 using Microsoft.VisualStudio.TestPlatform.CommandLine.Processors;
 using Microsoft.VisualStudio.TestPlatform.CommandLine.TestPlatformHelpers;
@@ -20,10 +23,6 @@ using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.Execution;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-
-using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
-using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
-
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 
 using CommandLineResources = Microsoft.VisualStudio.TestPlatform.CommandLine.Resources.Resources;
