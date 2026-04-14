@@ -52,6 +52,10 @@ public partial class ProcessHelper : IProcessHelper
 
     /// <inheritdoc/>
     public object LaunchProcess(string processPath, string? arguments, string? workingDirectory, IDictionary<string, string?>? envVariables, Action<object?, string?>? errorCallback, Action<object?>? exitCallBack, Action<object?, string?>? outputCallBack)
+        => LaunchProcess(processPath, arguments, workingDirectory, envVariables, errorCallback, exitCallBack, outputCallBack, createNoNewWindow: true);
+
+    /// <inheritdoc/>
+    public object LaunchProcess(string processPath, string? arguments, string? workingDirectory, IDictionary<string, string?>? envVariables, Action<object?, string?>? errorCallback, Action<object?>? exitCallBack, Action<object?, string?>? outputCallBack, bool createNoNewWindow)
     {
         if (!File.Exists(processPath))
         {
@@ -77,7 +81,7 @@ public partial class ProcessHelper : IProcessHelper
         void InitializeAndStart()
         {
             process.StartInfo.UseShellExecute = false;
-            process.StartInfo.CreateNoWindow = true;
+            process.StartInfo.CreateNoWindow = createNoNewWindow;
             process.StartInfo.WorkingDirectory = workingDirectory;
 
             process.StartInfo.FileName = processPath;
@@ -266,6 +270,7 @@ public partial class ProcessHelper : IProcessHelper
         }
         catch (InvalidOperationException)
         {
+            // Process may have already exited — exit code unavailable.
         }
 
         exitCode = 0;
@@ -301,6 +306,7 @@ public partial class ProcessHelper : IProcessHelper
         }
         catch (InvalidOperationException)
         {
+            // Process may have already exited — exit code unavailable.
         }
     }
 

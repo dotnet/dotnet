@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.IO;
 using System.Xml;
 
 using Microsoft.TestPlatform.Extensions.TrxLogger.Utility;
@@ -87,21 +86,18 @@ internal class UriDataAttachment : IDataAttachment, IXmlTestStore
     #region Internal Methods
 
     /// <summary>
-    /// Clones the instance and makes the URI in the clone absolute using the specified base directory
+    /// Clones the instance and makes the URI in the clone relative using the specified base directory
     /// </summary>
-    /// <param name="baseDirectory">The base directory to use to make the URI absolute</param>
-    /// <param name="useAbsoluteUri">True to use an absolute URI in the clone, false to use a relative URI</param>
-    /// <returns>A clone of the instance, with the URI made absolute</returns>
-    internal UriDataAttachment Clone(string baseDirectory, bool useAbsoluteUri)
+    /// <param name="baseDirectory">The base directory to use to make the URI relative</param>
+    /// <returns>A clone of the instance, with the URI made relative</returns>
+    internal UriDataAttachment CloneWithRelativePath(string baseDirectory)
     {
         TPDebug.Assert(!baseDirectory.IsNullOrEmpty(), "'baseDirectory' is null or empty");
         TPDebug.Assert(baseDirectory == baseDirectory.Trim(), "'baseDirectory' contains whitespace at the ends");
 
-        if (useAbsoluteUri != Uri.IsAbsoluteUri)
+        if (Uri.IsAbsoluteUri)
         {
-            Uri uriToUse = useAbsoluteUri
-                ? new Uri(Path.Combine(baseDirectory, Uri.OriginalString), UriKind.Absolute)
-                : new Uri(TrxFileHelper.MakePathRelative(Uri.OriginalString, baseDirectory), UriKind.Relative);
+            var uriToUse = new Uri(TrxFileHelper.MakePathRelative(Uri.OriginalString, baseDirectory), UriKind.Relative);
             return new UriDataAttachment(Description, uriToUse, _trxFileHelper);
         }
 

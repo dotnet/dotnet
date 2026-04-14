@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -17,21 +17,21 @@ public class ConditionTests
     public void ParseShouldThrownFormatExceptionOnNullConditionString()
     {
         string? conditionString = null;
-        Assert.ThrowsException<FormatException>(() => Condition.Parse(conditionString));
+        Assert.ThrowsExactly<FormatException>(() => Condition.Parse(conditionString));
     }
 
     [TestMethod]
     public void ParseShouldThrownFormatExceptionOnEmptyConditionString()
     {
         var conditionString = "";
-        Assert.ThrowsException<FormatException>(() => Condition.Parse(conditionString));
+        Assert.ThrowsExactly<FormatException>(() => Condition.Parse(conditionString));
     }
 
     [TestMethod]
     public void ParseShouldThrownFormatExceptionOnIncompleteConditionString()
     {
         var conditionString = "PropertyName=";
-        Assert.ThrowsException<FormatException>(() => Condition.Parse(conditionString));
+        Assert.ThrowsExactly<FormatException>(() => Condition.Parse(conditionString));
     }
 
     [TestMethod]
@@ -114,7 +114,7 @@ public class ConditionTests
     {
         var conditionString = @"FullyQualifiedName=Test1(""!"")";
 
-        Assert.ThrowsException<FormatException>(() => Condition.Parse(conditionString));
+        Assert.ThrowsExactly<FormatException>(() => Condition.Parse(conditionString));
     }
 
     [TestMethod]
@@ -122,13 +122,13 @@ public class ConditionTests
     {
         var conditionString = @"FullyQualifiedName!Test1()";
 
-        Assert.ThrowsException<FormatException>(() => Condition.Parse(conditionString));
+        Assert.ThrowsExactly<FormatException>(() => Condition.Parse(conditionString));
     }
 
     [TestMethod]
     public void TokenizeNullThrowsArgumentNullException()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => Condition.TokenizeFilterConditionString(null!), "str");
+        Assert.ThrowsExactly<ArgumentNullException>(() => Condition.TokenizeFilterConditionString(null!), "str");
     }
 
     [TestMethod]
@@ -138,7 +138,7 @@ public class ConditionTests
 
         var tokens = Condition.TokenizeFilterConditionString(conditionString).ToArray();
 
-        Assert.AreEqual(3, tokens.Length);
+        Assert.HasCount(3, tokens);
         Assert.AreEqual("FullyQualifiedName", tokens[0]);
         Assert.AreEqual("=", tokens[1]);
         Assert.AreEqual(@"TestMethod\(""\!""\)", tokens[2]);
@@ -151,7 +151,7 @@ public class ConditionTests
 
         var tokens = Condition.TokenizeFilterConditionString(conditionString).ToArray();
 
-        Assert.AreEqual(3, tokens.Length);
+        Assert.HasCount(3, tokens);
         Assert.AreEqual("FullyQualifiedName", tokens[0]);
         Assert.AreEqual("=", tokens[1]);
         Assert.AreEqual(@"TestMethod\(""\!\=""\)", tokens[2]);
@@ -164,7 +164,7 @@ public class ConditionTests
 
         var tokens = Condition.TokenizeFilterConditionString(conditionString).ToArray();
 
-        Assert.AreEqual(3, tokens.Length);
+        Assert.HasCount(3, tokens);
         Assert.AreEqual("FullyQualifiedName", tokens[0]);
         Assert.AreEqual("!=", tokens[1]);
         Assert.AreEqual(@"TestMethod\(""\!\=""\)", tokens[2]);
@@ -177,7 +177,7 @@ public class ConditionTests
 
         var tokens = Condition.TokenizeFilterConditionString(conditionString).ToArray();
 
-        Assert.AreEqual(3, tokens.Length);
+        Assert.HasCount(3, tokens);
         Assert.AreEqual("FullyQualifiedName", tokens[0]);
         Assert.AreEqual("=", tokens[1]);
         Assert.AreEqual(@"TestMethod\(""\\""\)", tokens[2]);
@@ -190,7 +190,7 @@ public class ConditionTests
 
         var tokens = Condition.TokenizeFilterConditionString(conditionString).ToArray();
 
-        Assert.AreEqual(3, tokens.Length);
+        Assert.HasCount(3, tokens);
         Assert.AreEqual("FullyQualifiedName", tokens[0]);
         Assert.AreEqual("~", tokens[1]);
         Assert.AreEqual(@"TestMethod\(""\~""\)", tokens[2]);
@@ -203,7 +203,7 @@ public class ConditionTests
 
         var tokens = Condition.TokenizeFilterConditionString(conditionString).ToArray();
 
-        Assert.AreEqual(3, tokens.Length);
+        Assert.HasCount(3, tokens);
         Assert.AreEqual("FullyQualifiedName", tokens[0]);
         Assert.AreEqual("!~", tokens[1]);
         Assert.AreEqual(@"TestMethod\(""\!\~""\)", tokens[2]);
@@ -216,7 +216,7 @@ public class ConditionTests
 
         var tokens = Condition.TokenizeFilterConditionString(conditionString).ToArray();
 
-        Assert.AreEqual(5, tokens.Length);
+        Assert.HasCount(5, tokens);
         Assert.AreEqual("FullyQualifiedName", tokens[0]);
         Assert.AreEqual("!=", tokens[1]);
         Assert.AreEqual(@"TestMethod\(""", tokens[2]);
@@ -231,7 +231,7 @@ public class ConditionTests
 
         var tokens = Condition.TokenizeFilterConditionString(conditionString).ToArray();
 
-        Assert.AreEqual(2, tokens.Length);
+        Assert.HasCount(2, tokens);
         Assert.AreEqual("FullyQualifiedName", tokens[0]);
         Assert.AreEqual("!", tokens[1]);
     }

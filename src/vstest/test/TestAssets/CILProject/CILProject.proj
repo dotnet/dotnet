@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <PackagesPath Condition="'$(TP_PACKAGES_DIR)' != ''">$(TP_PACKAGES_DIR)\</PackagesPath>
-        <PackagesPath Condition="'$(PackagesPath)' == ''">$(RepoRoot).packages\</PackagesPath>
+        <PackagesPath Condition="'$(PackagesPath)' == ''">$(RepoRoot)artifacts\.packages\</PackagesPath>
     </PropertyGroup>
 
     <!-- Required by Microsoft.Common.targets -->

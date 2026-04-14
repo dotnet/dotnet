@@ -1,10 +1,10 @@
-# Test Platform messaging
+# Test Platform
 
-- [Test Platform messaging](#test-platform-messaging)
+- [Test Platform](#test-platform)
   - [What is TestPlatform?](#what-is-testplatform)
   - [How it works?](#how-it-works)
   - [Workflows](#workflows)
-  - [Specification](#specification)
+  - [Communication Protocol](#communication-protocol)
     - [Base Protocol](#base-protocol)
       - [Header Part](#header-part)
       - [Content Part](#content-part)
@@ -49,9 +49,16 @@
       - [TestExecution.StatsChange notification (Runner)](#testexecutionstatschange-notification-runner)
       - [TestExecution.StatsChange notification (Client)](#testexecutionstatschange-notification-client)
     - [Datacollection](#datacollection)
+  - [Extensibility](#extensibility)
+    - [DLL Extension points](#dll-extension-points)
+      - [ObjectModel](#objectmodel)
+      - [Test Adapter](#test-adapter)
+      - [Test Logger](#test-logger)
+      - [Runtime Provider](#runtime-provider)
+    - [TranslationLayer extension points](#translationlayer-extension-points)
     - [.NET Implementation](#net-implementation)
       - [Architecture](#architecture)
-      - [Extension points](#extension-points)
+      
 
 ## What is TestPlatform?
 
@@ -128,7 +135,7 @@ The Run workflow described above is very common in command line tools, and proba
 - *TestSession* - starts a set of testhosts for given test sources, to make the ready to run.
 - *AttachmentProcessing* - processes a given set of attachments that were produced during a previous test run, e.g. merges code coverage files.
 
-## Specification
+## Communication Protocol
 
 ### Base Protocol
 
@@ -243,7 +250,7 @@ The version is negotiated between the components at the beginning of every workf
 
 The server supports processing only a single request at a time. Unless the request is [Cancel](#cancel) or [Abort](#abort) request.
 
-All notifications are sent before as response is sent.
+All notifications are sent before a response is sent.
 
 #### Message documentation
 
@@ -286,7 +293,7 @@ The version is determined by choosing the highest common supported version. When
 
 The receiving side should remember the agreed value, and use it as the highest supported version for any downstream component. In the case above runner should send 6 to testhost, even though the runner supports versions up to 7.
 
-The request was introduced in TestPlatform version `16.0.0`. Runners before this version are not allowed. Testhosts before this version are allowed, the version of testhost if figured out by scanning the assembly, and the request is not sent to them. Version 0 is used for communication.
+The request was introduced in TestPlatform version `16.0.0`. Runners before this version are not allowed. Testhosts before this version are allowed, the version of testhost is figured out by scanning the assembly, and the request is not sent to them. Version 0 is used for communication.
 
 Versions:
 
@@ -382,7 +389,7 @@ sequenceDiagram
 participant c as Client<br>(Visual Studio)
 participant r as Runner<br>(vstest.console.exe)
 c->>r:   Run vstest.console -port X
-r->>r:   Connect to port Y
+r->>r:   Connect to port X
 r->>c:   TestSession.Connected
 ```
 
@@ -590,7 +597,7 @@ public class DiscoveryCompletePayload
     // If true TotalCount is also set to -1.
     public bool IsAborted { get; set; }
 
-    // Metrics.
+    // Telemetry.
     public IDictionary<string, object>? Metrics { get; set; }
 
     // Sources which were fully discovered.
@@ -710,11 +717,12 @@ public class DiscoveryCriteria
 
     
     // Discovered test event will be raised after discovering at minimum this number of tests, 
-    // or when DiscoveredTestEventTimeout is passed.
+    // or when DiscoveredTestEventTimeout is passed. This helps batching the results, making communication between processes faster.
     public long FrequencyOfDiscoveredTestsEvent { get; private set; }
 
     // Discovered test event will be raised after this much time since last test
-    // when FrequencyOfDiscoveredTestsEvent is passed.
+    // when FrequencyOfDiscoveredTestsEvent is passed. This helps sending the batches more frequently, 
+    // when the batch is large, but there is small amount of tests, or the discovery is slow. Giving more frequent feedback to user.
     public TimeSpan DiscoveredTestEventTimeout { get; private set; }
 
     // Run settings for the discovery.
@@ -764,7 +772,7 @@ public class DiscoveryCompletePayload
     // If true TotalCount is also set to -1.
     public bool IsAborted { get; set; }
 
-    // Metrics.
+    // Telemetry.
     public IDictionary<string, object>? Metrics { get; set; }
 
     // Sources which were fully discovered.
@@ -1108,7 +1116,7 @@ public class TestRunCompleteEventArgs
     // Value is set to TimeSpan.Zero in case of any error.
     public TimeSpan ElapsedTimeInRunningTests { get; private set; }
 
-    // Metrics.
+    // Telemetry.
     public IDictionary<string, object>? Metrics { get; set; }
 
     // Extensions that were discovered in this run.
@@ -1229,10 +1237,10 @@ public class TestRunCriteriaWithTests
 
 public class TestExecutionContext
 {
-    // Gets or sets the frequency of run stats event.
+    // Gets or sets the batch size for sending test results.
     public long FrequencyOfRunStatsChangeEvent { get; set; }
 
-    // Gets or sets the timeout that triggers sending results regardless of cache size.
+    // Gets or sets the timeout that triggers sending results regardless of batch size.
     public TimeSpan RunStatsChangeEventTimeout { get; set; }
 
     // Gets or sets a value indicating whether execution is out of process.
@@ -1241,7 +1249,7 @@ public class TestExecutionContext
     // Gets or sets a value indicating whether testhost process should be kept running after test run completion.
     public bool KeepAlive { get; set; }
 
-    // Gets or sets a value indicating whether test case level events need to be sent or not.
+    // Gets or sets a value indicating whether test case level events need to be sent or not. TODO: what is it? Is there since first commit, no usages on grep.app.
     public bool AreTestCaseLevelEventsRequired { get; set; }
 
     // Gets or sets a value indicating whether execution is in debug mode.
@@ -1358,7 +1366,7 @@ public class TestRunCompleteEventArgs
     // Value is set to TimeSpan.Zero in case of any error.
     public TimeSpan ElapsedTimeInRunningTests { get; private set; }
 
-    // Metrics.
+    // Telemetry.
     public IDictionary<string, object>? Metrics { get; set; }
 
     // Extensions that were discovered in this run.
@@ -1717,10 +1725,141 @@ Same as above [TestExecution.StatsChange notification (Runner)](#testexecutionst
 
 ### Datacollection
 
+## Extensibility
+
+Test Platform offers multiple points for extensibility. These extensibility points allow test framework authors to integrate their test frameworks with VSTest by providing a test adapter. Similarly a dataCollector extension can be provided that observes the run, or a logger extension can be provided that can observe the run and logs (reports) on the tests that were executed.
+
+IDEs (and other clients) can integrate with VSTest using the TranslationLayer package, which manages communication between the client and the runner.
+
+
+### DLL Extension points
+
+Extensions are looked up by Reflection from the dlls provided to the run, based on a naming convention. Dlls named `*TestAdapter.dll`, `*TestLogger.dll`, `*Collector.dll`, `*RuntimeProvider.dll` are considered by the plugin loader.
+
+The extensions should target netstandard2.0, and not have any dll dependencies. The no-dependency rule is more lose for the TestAdapter extension point, because the tests target the framework that they will eventually run as. While the other extensions (data collector, and logger)  get loaded into a process that might not align with the project target framework, e.g. in case where .NET Core project is ran from Visual Studio, where vstest.console.exe is using .NET Framework, and datacollector.exe is also using .NET Framework.
+
+#### ObjectModel
+
+ObjectModel is Test platform dll that holds all types and abstractions needed for extensibility. It is often used as reference dll and it is not typically shipped together with the extension. The runner / testhost / datacollector provides its own version of ObjectModel.
+
+```xml
+<PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="18.0.0" PrivateAssets="All" />
+```
+
+This reference uses `PrivateAssets="All"` to avoid copying the dll into the output folder.
+
+#### Test Adapter
+
+Test adapter is the most used extension point that allows you to write your own test framework integration. This extension point is used by MSTest, NUnit, XUnit.net and other, to implement a `test adapter`, an adaptation layer that communicates with the particular test framework.
+
+The test adapter implements two interfaces: `ITestExecutor` or `ITestExecutor2` and `ITestDiscoverer`, both need to be implemented.
+
+The class implementing the discoverer has to  be decorated with `DefaultExecutorUri`, that links it to the executor for which this discoverer discovers tests.
+
+Optionally the discoverer can be decorated with additional attributes:
+- `FileExtensionAttribute` to filter the sources which it is able to inspect typically .exe and .dll are specified, but test frameworks don't have to limit themselves to just that.
+- `CategoryAttribute` to specify `managed` or `native` assembly type. This only applies to adapters that specify .exe or .dll file extensions. https://github.com/microsoft/vstest/blob/main/docs/RFCs/0020-Improving-Logic-To-Pass-Sources-To-Adapters.md
+- `DirectoryBasedTestDiscovererAttribute` - specifies a discoverer that is able to handle directories, rather than files. Currently used by PythonPyTestAdapter. Does not work in commandline - providing directory fails validation, but works via TranslationLayer.
+
+The class implementing the executor has to be decorated with `ExtensionUriAttribute`, specifying the name of the executor in Uri form. Such as `executor://mstestadapter/v2`. There is no specified schema or validation, but using `executor://<test adapter name>/<version>` is the norm. This is used for identification in telemetry, for logging and reporting, and for linking to the discoverer.
+
+An example of a test adapter:
+
+```cs
+[ExtensionUri(Id)]
+[DefaultExecutorUri(Id)]
+public class Perfy : ITestDiscoverer, ITestExecutor
+{
+    public const string Id = "executor://ExampleTestAdapter/v1";
+    public static readonly Uri Uri = new Uri(Id);
+
+    public void DiscoverTests(IEnumerable<string> sources, IDiscoveryContext context,
+        IMessageLogger logger, ITestCaseDiscoverySink discoverySink)
+    {
+        // Sources are the files (one ore more) to be discovered, typically those are dlls that we need to inspect for tests. But can be any file.
+        // The test framework somehow finds the tests, and will report them back by creating a TestCase object and reporting it to the sink.
+        var tests = ...
+
+        foreach (var test in tests)
+        {
+            // TestCase sends back at least: 
+            // - test case name, this should be unique, but stable across multiple discoveries and runs
+            // - uri of the executor.
+            // - the source (dll) in which the test case was found.
+            // It can also populate the additional information on the object, such as in which code file and on which line the test case is defined.
+            var tc = new TestCase(test.Name, Uri, source);
+
+            // Send test case sends it to local cache, which batches the updates and sends them to the runner.
+            discoverySink.SendTestCase(tc);
+        }
+    }
+
+    public void Cancel()
+    {
+        // Cancel the work that is happening. This is called "asynchronously", during running or discovering tests.
+    }
+
+    public void RunTests(IEnumerable<TestCase> tests, IRunContext runContext, IFrameworkHandle frameworkHandle)
+    {
+        // Runs all tests specified in the collection of tests, those tests are typically discovered by discovery, sent to IDE. 
+        // And then the IDE sends them back to a new instance of the the test runner.
+        // The test framework will do internal discovery of the tests (for MSTest that means scanning all methods in classes to find the ones decorated with [TestMethod]),
+        // finding the names of those tests, and filtering them down to the provided list.
+        // This method is used primarily by IDEs such as Visual Studio.
+
+        // Ultimately is does not differ much from RunTests below. See that for details.
+    }
+
+    public void RunTests(IEnumerable<string> sources, IRunContext runContext, IFrameworkHandle frameworkHandle)
+    {
+        // The test framework inspects all the sources (files / dlls) that are provided, and finds all tests in them.
+        // It runs all tests, and when they finish it reports each testcase, and test result. These results are batched and sent to the runner.
+        // Typically this callback would be injected into the framework, so results can be sent as soon as the test finishes. For simplicity we
+        // show pseudo-code with synchronous loop.
+
+        foreach (var source in sources)
+        {
+            // In MSTest this means finding all methods decorated with [TestMethod], and returning an object with test information, and the related method.
+            var tests = testFramework.FindTests(source);
+
+            foreach (var test in tests) 
+            {
+                var tc = new TestCase(test.Name, Uri, source);
+                // Notify datacollectors that test started
+                frameworkHandle.RecordStart(test);
+                TestOutcome result = testFramework.RunTest(test);
+                // Notify datacollectors that test ended
+                frameworkHandle.RecordEnd(test, result);
+
+                frameworkHandle.RecordResult(new TestResult(tc)
+                {
+                    Outcome = result; // e.g. Passed
+                });
+            }
+        }
+    }
+}
+```
+
+Additional information can be sourced from the context parameters that contain the run configuration. Additional information can be reported to the platform by using the `IMessageLogger` which is provided to discovery, and from which `IFrameworkHandle` also derives.
+
+`ITestExecutor2` provides additional methods `ShouldAttachToTestHost` that return true or false. When false is returned, the debugger does not attache to the testhost process. This is used when execution is delegated to a sub-process, e.g. a .py file is provided, the run is routed via .NET Framework testhost, but eventually delegated to python executable. In that case the adapter returns false from the callback to avoid attaching Visual Studio to testhost.exe.
+
+The instance of `IFrameworkHandle` provided to the extension point, can be upcast to `IFrameworkHandle2` to use additional capabilities that allow attaching debugger to child processes. The attaching assumes that the child process uses the same TFM as the current process.
+
+Additional example of a toy test framework and adapter can be found in <https://github.com/nohwnd/Intent/tree/master/Intent.TestAdapter>. Or in the respective implementations of MSTest, NUnit, XUnit and similar.
+
+#### Test Logger
+
+#### Runtime Provider
+
+
+### TranslationLayer extension points
+
 TODO
 
 ### .NET Implementation
 
 #### Architecture
 
-#### Extension points
+

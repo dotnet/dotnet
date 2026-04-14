@@ -90,7 +90,7 @@ public class TestPluginCacheTests
         var updatedExtensions = TestPluginCache.Instance.GetExtensionPaths(string.Empty);
 
         Assert.IsNotNull(updatedExtensions);
-        Assert.AreEqual(1, updatedExtensions.Count);
+        Assert.ContainsSingle(updatedExtensions);
         CollectionAssert.AreEqual(new List<string> { additionalExtensions.First() }, updatedExtensions);
     }
 
@@ -102,7 +102,7 @@ public class TestPluginCacheTests
         var updatedExtensions = TestPluginCache.Instance.GetExtensionPaths(string.Empty);
 
         Assert.IsNotNull(updatedExtensions);
-        Assert.AreEqual(1, updatedExtensions.Count);
+        Assert.ContainsSingle(updatedExtensions);
     }
 
     [TestMethod]
@@ -114,7 +114,7 @@ public class TestPluginCacheTests
 
         // Since the extension is unfiltered, above filter criteria doesn't filter it
         Assert.IsNotNull(updatedExtensions);
-        Assert.AreEqual(1, updatedExtensions.Count);
+        Assert.ContainsSingle(updatedExtensions);
     }
 
     [Ignore]
@@ -134,7 +134,7 @@ public class TestPluginCacheTests
 
         TestPluginCache.Instance.ClearExtensions();
 
-        Assert.AreEqual(0, TestPluginCache.Instance.GetExtensionPaths(string.Empty).Count);
+        Assert.IsEmpty(TestPluginCache.Instance.GetExtensionPaths(string.Empty));
     }
 
     #endregion
@@ -249,7 +249,7 @@ public class TestPluginCacheTests
         var resolutionPaths = TestPluginCache.Instance.GetDefaultResolutionPaths();
 
         Assert.IsNotNull(resolutionPaths);
-        Assert.IsTrue(resolutionPaths.Contains(Path.GetDirectoryName(defaultExtensionsFile)!));
+        Assert.Contains(Path.GetDirectoryName(defaultExtensionsFile)!, resolutionPaths);
     }
 
     #endregion
@@ -259,7 +259,7 @@ public class TestPluginCacheTests
     [TestMethod]
     public void GetResolutionPathsShouldThrowIfExtensionAssemblyIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => TestPluginCache.GetResolutionPaths(null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => TestPluginCache.GetResolutionPaths(null!));
     }
 
     [TestMethod]
@@ -298,7 +298,7 @@ public class TestPluginCacheTests
         TestPluginCache.Instance.GetTestExtensions<TestDiscovererPluginInformation, ITestDiscoverer>(typeof(TestPluginCacheTests).Assembly.Location);
 
         Assert.IsNotNull(TestPluginCache.Instance.TestExtensions);
-        Assert.IsTrue(TestPluginCache.Instance.TestExtensions.TestDiscoverers!.Count > 0);
+        Assert.IsNotEmpty(TestPluginCache.Instance.TestExtensions.TestDiscoverers!);
     }
 
     [TestMethod]
@@ -335,7 +335,7 @@ public class TestPluginCacheTests
         //TODO : make ITestDiscoverer interface and then mock it in order to make this test case pass.
 
         var extensionAssembly = typeof(TestPluginCacheTests).Assembly.Location;
-        Assert.ThrowsException<Exception>(() => _testablePluginCache.GetTestExtensions<TestDiscovererPluginInformation, ITestDiscoverer>(extensionAssembly));
+        Assert.ThrowsExactly<Exception>(() => _testablePluginCache.GetTestExtensions<TestDiscovererPluginInformation, ITestDiscoverer>(extensionAssembly));
     }
 
     #endregion
@@ -352,7 +352,7 @@ public class TestPluginCacheTests
         Assert.IsNotNull(TestPluginCache.Instance.TestExtensions);
 
         // Validate the discoverers to be absolutely certain.
-        Assert.IsTrue(TestPluginCache.Instance.TestExtensions.TestDiscoverers!.Count > 0);
+        Assert.IsNotEmpty(TestPluginCache.Instance.TestExtensions.TestDiscoverers!);
     }
 
     [TestMethod]

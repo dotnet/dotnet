@@ -28,7 +28,7 @@ public class CustomKeyValueConverterTests
         var data = _customKeyValueConverter.ConvertFrom(null, CultureInfo.InvariantCulture, json) as KeyValuePair<string, string>[];
 
         Assert.IsNotNull(data);
-        Assert.AreEqual(1, data.Length);
+        Assert.HasCount(1, data);
         Assert.AreEqual("key1", data[0].Key);
         Assert.AreEqual("val1", data[0].Value);
     }
@@ -41,7 +41,7 @@ public class CustomKeyValueConverterTests
         var data = _customKeyValueConverter.ConvertFrom(null, CultureInfo.InvariantCulture, json) as KeyValuePair<string, string>[];
 
         Assert.IsNotNull(data);
-        Assert.AreEqual(2, data.Length);
+        Assert.HasCount(2, data);
         Assert.AreEqual("key1", data[0].Key);
         Assert.AreEqual("val1", data[0].Value);
         Assert.AreEqual("key2", data[1].Key);
@@ -56,7 +56,7 @@ public class CustomKeyValueConverterTests
         var data = _customKeyValueConverter.ConvertFrom(null, CultureInfo.InvariantCulture, json) as KeyValuePair<string, string>[];
 
         Assert.IsNotNull(data);
-        Assert.AreEqual(0, data.Length);
+        Assert.IsEmpty(data);
     }
 
     [TestMethod]
@@ -67,7 +67,7 @@ public class CustomKeyValueConverterTests
         var data = _customKeyValueConverter.ConvertFrom(null, CultureInfo.InvariantCulture, json) as KeyValuePair<string, string>[];
 
         Assert.IsNotNull(data);
-        Assert.AreEqual(1, data.Length);
+        Assert.HasCount(1, data);
         Assert.AreEqual(string.Empty, data[0].Key);
         Assert.AreEqual(string.Empty, data[0].Value);
     }
@@ -80,7 +80,7 @@ public class CustomKeyValueConverterTests
         var data = _customKeyValueConverter.ConvertFrom(null, CultureInfo.InvariantCulture, json) as KeyValuePair<string, string>[];
 
         Assert.IsNotNull(data);
-        Assert.AreEqual(2, data.Length);
+        Assert.HasCount(2, data);
         Assert.AreEqual("key1", data[0].Key);
         Assert.AreEqual("val1", data[0].Value);
         Assert.AreEqual("key1", data[1].Key);

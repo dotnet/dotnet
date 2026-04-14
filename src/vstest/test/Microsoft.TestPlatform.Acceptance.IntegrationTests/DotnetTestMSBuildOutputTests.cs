@@ -23,7 +23,7 @@ public class DotnetTestMSBuildOutputTests : AcceptanceTestBase
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
-        var projectPath = GetIsolatedTestAsset("TerminalLoggerTestProject.csproj");
+        var projectPath = GetIsolatedTestAsset("TerminalLoggerTestProject.csproj", runnerInfo.TargetFramework);
         // Forcing terminal logger so we can see the output when it is redirected
         InvokeDotnetTest($@"{projectPath} -tl:on -nodereuse:false /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}", workingDirectory: Path.GetDirectoryName(projectPath));
 
@@ -37,7 +37,7 @@ public class DotnetTestMSBuildOutputTests : AcceptanceTestBase
 
         StdOutputContains("TESTERROR");
         StdOutputContains("FailingTest (");
-        StdOutputContains("): Error Message: Assert.AreEqual failed. Expected:<ğğğ𦮙我們剛才從𓋴𓅓𓏏𓇏𓇌𓀀>. Actual:<not the same>.");
+        StdOutputContains("Expected: \"ğğğ𦮙我們剛才從𓋴𓅓𓏏𓇏𓇌𓀀\"");
         StdOutputContains("at TerminalLoggerUnitTests.UnitTest1.FailingTest() in");
         // We are sending those as low prio messages, they won't show up on screen but will be in binlog.
         //StdOutputContains("passed PassingTest");
@@ -53,7 +53,7 @@ public class DotnetTestMSBuildOutputTests : AcceptanceTestBase
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
-        var projectPath = GetIsolatedTestAsset("TerminalLoggerTestProject.csproj");
+        var projectPath = GetIsolatedTestAsset("TerminalLoggerTestProject.csproj", runnerInfo.TargetFramework);
         InvokeDotnetTest($@"{projectPath} -nodereuse:false /p:VsTestUseMSBuildOutput=false /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}", workingDirectory: Path.GetDirectoryName(projectPath));
 
         // Check that we see the summary that is printed from the console logger, meaning the new output is disabled.
@@ -73,7 +73,7 @@ public class DotnetTestMSBuildOutputTests : AcceptanceTestBase
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
-        var projectPath = GetIsolatedTestAsset("TerminalLoggerTestProject.csproj");
+        var projectPath = GetIsolatedTestAsset("TerminalLoggerTestProject.csproj", runnerInfo.TargetFramework);
         InvokeDotnetTest($@"{projectPath} -nodereuse:false /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}", environmentVariables: new Dictionary<string, string?> { ["MSBUILDENSURESTDOUTFORTASKPROCESSES"] = "1" }, workingDirectory: Path.GetDirectoryName(projectPath));
 
         // Check that we see the summary that is printed from the console logger, meaning the new output is disabled.

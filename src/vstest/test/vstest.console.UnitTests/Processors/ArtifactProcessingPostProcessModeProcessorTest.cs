@@ -21,8 +21,8 @@ public class ArtifactProcessingPostProcessModeProcessorTest
     [TestMethod]
     public void ProcessorExecutorInitialize_ShouldFailIfNullCtor()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => new ArtifactProcessingPostProcessModeProcessorExecutor(null!, _artifactProcessingManagerMock.Object));
-        Assert.ThrowsException<ArgumentNullException>(() => new ArtifactProcessingPostProcessModeProcessorExecutor(new CommandLineOptions(), null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => new ArtifactProcessingPostProcessModeProcessorExecutor(null!, _artifactProcessingManagerMock.Object));
+        Assert.ThrowsExactly<ArgumentNullException>(() => new ArtifactProcessingPostProcessModeProcessorExecutor(new CommandLineOptions(), null!));
     }
 
     [TestMethod]

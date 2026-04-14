@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="vstest" Sha="feff871cec763e9a9f8e9ace212f0fd6041d479f" BarId="291132" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="vstest" Sha="d70206844a95b337601237466bfc6cbb7d52d6d4" BarId="308297" />
   <ProductDependencies>
-    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="18.3.1">
+    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="18.6.2">
       <Uri>https://dev.azure.com/devdiv/DevDiv/_git/vs-code-coverage</Uri>
-      <Sha>68361668ad95504ba083b7490a5f9adccd126133</Sha>
+      <Sha>413a357aba09b9199f81be9336422ea30bd8082c</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.0-preview.25567.106">
+    <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.0-preview.26179.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>feff871cec763e9a9f8e9ace212f0fd6041d479f</Sha>
+      <Sha>d70206844a95b337601237466bfc6cbb7d52d6d4</Sha>
     </Dependency>
-    <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
     <Dependency Name="Microsoft.Extensions.DependencyModel" Version="6.0.2">
       <Uri>https://github.com/dotnet/runtime</Uri>
@@ -23,9 +22,9 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.26110.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26177.6">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>4bf37ce670528cf2aef4d9b1cd892554b1b02d9d</Sha>
+      <Sha>30f8bf581e0e0d7e1de30898de8fa9c4008d2f5e</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DiaSymReader.Pdb2Pdb" Version="1.1.0-beta2-19575-01">
       <Uri>https://github.com/dotnet/symreader-converter</Uri>

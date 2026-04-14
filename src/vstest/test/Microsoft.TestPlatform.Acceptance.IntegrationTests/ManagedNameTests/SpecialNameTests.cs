@@ -5,9 +5,8 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-using Microsoft.TestPlatform.AcceptanceTests;
 using Microsoft.TestPlatform.AdapterUtilities.ManagedNameUtilities;
-
+using Microsoft.TestPlatform.TestUtilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.TestPlatform.Acceptance.IntegrationTests.ManagedNameTests;
@@ -47,7 +46,7 @@ public class SpecialNameTests : AcceptanceTestBase
                 var methodInfo = ManagedNameHelper.GetMethod(assembly, typeName, methodName);
                 ManagedNameHelper.GetManagedName(methodInfo, out var typeName2, out var methodName2);
 
-                Assert.IsTrue(method == methodInfo);
+                Assert.AreEqual(method, methodInfo);
                 Assert.AreEqual(typeName, typeName2, $"Type parse roundtrip test failed: {method} ({typeName} != {typeName2})");
                 Assert.AreEqual(methodName, methodName2, $"Method parse roundtrip test failed: {method} ({methodName} != {methodName2})");
             }

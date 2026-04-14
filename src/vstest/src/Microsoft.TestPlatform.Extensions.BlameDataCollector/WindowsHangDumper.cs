@@ -38,7 +38,7 @@ internal class WindowsHangDumper : IHangDumper
     public void Dump(int processId, string outputDirectory, DumpTypeOption type)
     {
         var process = Process.GetProcessById(processId);
-        var processTree = process.GetProcessTree().Where(p => p.Process?.ProcessName is not null and not "conhost" and not "WerFault").ToList();
+        var processTree = process.GetProcessTree().Where(p => p.Process?.ProcessName is not null and not "conhost" and not "WerFault" and not "createdump").ToList();
 
         if (processTree.Count > 1)
         {

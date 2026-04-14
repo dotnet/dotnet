@@ -18,6 +18,7 @@ using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Moq;
+
 using FluentAssertions;
 
 using CrossPlatEngineResources = Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources.Resources;
@@ -310,7 +311,7 @@ public class DiscoveryManagerTests
         _discoveryManager.Abort(mockHandler.Object);
 
         // Assert
-        Assert.AreEqual(true, receivedDiscoveryCompleteEventArgs!.IsAborted);
+        Assert.IsTrue(receivedDiscoveryCompleteEventArgs!.IsAborted);
         Assert.AreEqual(-1, receivedDiscoveryCompleteEventArgs.TotalCount);
     }
     #endregion
