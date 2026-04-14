@@ -7,10 +7,10 @@
       "commitSha": "ecdd5c6a7986cafabbf6a322ea09a07736a01a0d"
     },
     {
-      "barId": 309718,
+      "barId": 309922,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "903a5b6a25beddc88d58432d1eee4e300047ab9f"
+      "commitSha": "31515a42d423dcfe2c646801f8b4a35350705c25"
     },
     {
       "barId": 279211,
@@ -127,16 +127,16 @@
       "commitSha": "14bc0e7af7646a13a32eadf5c0684eded8832008"
     },
     {
-      "barId": 305003,
+      "barId": 309950,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "53c1c2317f5c89e4bf76dfdb65215fb378819615"
+      "commitSha": "63d2a8d82d03e50bd88a1235f08ecdd35de7bf40"
     },
     {
-      "barId": 309592,
+      "barId": 309891,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "e4adf6aeb7b924dc41a524ca371c554f86ad391f"
+      "commitSha": "21ac3a2773578ef16216428a64bcb984c9da58f4"
     },
     {
       "barId": 305423,
