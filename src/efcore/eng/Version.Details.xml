@@ -10,10 +10,6 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>d70206844a95b337601237466bfc6cbb7d52d6d4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Extensions.Configuration.Abstractions" Version="11.0.0-preview.3.26179.102">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d70206844a95b337601237466bfc6cbb7d52d6d4</Sha>
-    </Dependency>
     <Dependency Name="Microsoft.Extensions.Configuration.Json" Version="11.0.0-preview.3.26179.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>d70206844a95b337601237466bfc6cbb7d52d6d4</Sha>
