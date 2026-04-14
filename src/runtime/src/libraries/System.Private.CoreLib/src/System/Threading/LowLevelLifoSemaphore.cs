@@ -249,6 +249,7 @@ namespace System.Threading
                     long cooldown = Stopwatch.Frequency * 4 / 1000000;
                     while (Stopwatch.GetTimestamp() - blockingStart < cooldown)
                     {
+                        Thread.UninterruptibleSleep0();
                         Thread.SpinWait(1);
                     }
                 }
