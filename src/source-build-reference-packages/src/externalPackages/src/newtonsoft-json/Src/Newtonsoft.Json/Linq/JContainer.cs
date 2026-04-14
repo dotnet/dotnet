@@ -952,16 +952,24 @@ namespace Newtonsoft.Json.Linq
         }
 
 #if HAVE_COMPONENT_MODEL
-        string ITypedList.GetListName(PropertyDescriptor[] listAccessors)
+        string ITypedList.GetListName(PropertyDescriptor[]? listAccessors)
         {
             return string.Empty;
         }
 
-        PropertyDescriptorCollection ITypedList.GetItemProperties(PropertyDescriptor[] listAccessors)
+        PropertyDescriptorCollection ITypedList.GetItemProperties(PropertyDescriptor[]? listAccessors)
         {
+#if HAVE_APPCONTEXT
+            if (!ComponentModelIsSupported)
+            {
+                throw new NotSupportedException(ComponentModelNotSupportedMessage);
+            }
+#endif
             ICustomTypeDescriptor? d = First as ICustomTypeDescriptor;
 
+#pragma warning disable IL2026
             return d?.GetProperties() ?? new PropertyDescriptorCollection(CollectionUtils.ArrayEmpty<PropertyDescriptor>());
+#pragma warning restore IL2026
         }
 #endif
 

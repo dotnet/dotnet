@@ -16,7 +16,7 @@
     <DotNetToolArgs>$(DotNetToolArgs) /p:AdditionalConstants=SIGNED</DotNetToolArgs>
     <!-- The upstream build computes a date-based FileVersion revision via PowerShell (GetVersion in build.ps1).
          Set it here to match the official NuGet package. See https://github.com/dotnet/source-build/issues/5511 -->
-    <FileVersionRevision>27908</FileVersionRevision>
+    <FileVersionRevision>30916</FileVersionRevision>
     <!-- Used by the update-external-metadata script to determine the package to download. -->
     <FileVersionValidationPackage>Newtonsoft.Json</FileVersionValidationPackage>
     <DotNetToolArgs>$(DotNetToolArgs) /p:FileVersion=$(NewtonsoftJsonReleaseVersion).$(FileVersionRevision)</DotNetToolArgs>
@@ -24,7 +24,7 @@
     <BuildCommand>$(DotNetTool) pack $(NewtonsoftJsonProjectPath) /bl:$(ArtifactsLogRepoDir)build.binlog $(DotNetToolArgs)</BuildCommand>
 
     <PackagesOutput>$(NewtonsoftJsonDirectory)bin/$(Configuration)/</PackagesOutput>
-    <SourceRevisionId>0a2e291c0d9c0c7675d445703e51750363a549ef</SourceRevisionId>
+    <SourceRevisionId>4e13299d4b0ec96bd4df9954ef646bd2d1b5bf2a</SourceRevisionId>
   </PropertyGroup>
 
   <!-- The Library Frameworks was added to environment variables so as to override the frameworks in newtonsoft csproj -->
