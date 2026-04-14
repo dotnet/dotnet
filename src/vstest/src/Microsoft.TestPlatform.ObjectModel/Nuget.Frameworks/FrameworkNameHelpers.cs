@@ -11,12 +11,12 @@ namespace NuGetClone.Frameworks
     {
         public static string GetPortableProfileNumberString(int profileNumber)
         {
-            return String.Format(CultureInfo.InvariantCulture, "Profile{0}", profileNumber);
+            return string.Format(CultureInfo.InvariantCulture, "Profile{0}", profileNumber);
         }
 
         public static string GetFolderName(string identifierShortName, string versionString, string? profileShortName)
         {
-            return String.Format(CultureInfo.InvariantCulture, "{0}{1}{2}{3}", identifierShortName, versionString, String.IsNullOrEmpty(profileShortName) ? string.Empty : "-", profileShortName);
+            return string.Format(CultureInfo.InvariantCulture, "{0}{1}{2}{3}", identifierShortName, versionString, string.IsNullOrEmpty(profileShortName) ? string.Empty : "-", profileShortName);
         }
 
         public static string GetVersionString(Version version)
