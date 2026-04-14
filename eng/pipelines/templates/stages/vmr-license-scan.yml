@@ -39,15 +39,19 @@ stages:
           dir="$vmrSrcDir/$specificRepoName"
 
           if echo "$splitRepos" | grep -qw "$repoName"; then
-            addMatrixEntry "$repoName" "$dir" "src"
-
+            ignorePatterns=""
             for subdir in "$dir"/src/*/
             do
               if [ -d "$subdir" ]; then
                 subdirName=$(basename "$subdir")
+                if [ ! -z "$ignorePatterns" ]; then
+                  ignorePatterns="$ignorePatterns;"
+                fi
+                ignorePatterns="$ignorePatterns$subdirName"
                 addMatrixEntry "${repoName}_${subdirName}" "$subdir"
               fi
             done
+            addMatrixEntry "$repoName" "$dir" "$ignorePatterns"
           else
             addMatrixEntry "$repoName" "$dir"
           fi
@@ -58,16 +62,21 @@ stages:
 
             if echo "$splitRepos" | grep -qw "$repoName"; then
               # Root scan: skip subdirectories that are covered by sub-scans
-              addMatrixEntry "$repoName" "$dir" "src"
-
-              # Sub-scans: one job per subdirectory under src/
+              # Build ignore patterns from subdirectory names so that files
+              # directly under src/ are still scanned by the root job.
+              ignorePatterns=""
               for subdir in "$dir"src/*/
               do
                 if [ -d "$subdir" ]; then
                   subdirName=$(basename "$subdir")
+                  if [ ! -z "$ignorePatterns" ]; then
+                    ignorePatterns="$ignorePatterns;"
+                  fi
+                  ignorePatterns="$ignorePatterns$subdirName"
                   addMatrixEntry "${repoName}_${subdirName}" "$subdir"
                 fi
               done
+              addMatrixEntry "$repoName" "$dir" "$ignorePatterns"
             else
               addMatrixEntry "$repoName" "$dir"
             fi
