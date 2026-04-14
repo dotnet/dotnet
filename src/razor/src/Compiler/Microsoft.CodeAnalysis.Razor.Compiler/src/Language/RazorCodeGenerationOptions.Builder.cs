@@ -27,6 +27,11 @@ public sealed partial class RazorCodeGenerationOptions
         /// </summary>
         public string? SuppressUniqueIds { get; set; }
 
+        /// <summary>
+        /// Gets or sets the warning level for diagnostic filtering.
+        /// </summary>
+        public int RazorWarningLevel { get; set; }
+
         internal Builder()
         {
             IndentSize = DefaultIndentSize;
@@ -159,6 +164,6 @@ public sealed partial class RazorCodeGenerationOptions
         }
 
         public RazorCodeGenerationOptions ToOptions()
-            => new(IndentSize, NewLine, RootNamespace, CssScope, SuppressUniqueIds, _flags);
+            => new(IndentSize, NewLine, RootNamespace, CssScope, SuppressUniqueIds, RazorWarningLevel, _flags);
     }
 }

@@ -5,7 +5,7 @@
   <!-- Arcade features -->
   <PropertyGroup>
     <UsingToolVSSDK>true</UsingToolVSSDK>
-    <MicrosoftVSSDKBuildToolsVersion>17.3.2094</MicrosoftVSSDKBuildToolsVersion>
+    <MicrosoftVSSDKBuildToolsVersion>17.14.1043-preview2</MicrosoftVSSDKBuildToolsVersion>
     <MicroBuildPluginsSwixBuildVersion>1.1.33</MicroBuildPluginsSwixBuildVersion>
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
     <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
@@ -43,7 +43,7 @@
       PackageReference versions directly in arcade.
     -->
     <XUnitVersion>2.9.2</XUnitVersion>
-    <XUnitAnalyzersVersion>1.7.0</XUnitAnalyzersVersion>
+    <XUnitAnalyzersVersion>1.17.0</XUnitAnalyzersVersion>
   </PropertyGroup>
 
   <!-- The maintenance-packages dependency versions need to be conditionally selected: https://github.com/dotnet/sdk/issues/45155 -->

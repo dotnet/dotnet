@@ -16,6 +16,7 @@ public sealed partial class RazorCodeGenerationOptions
         rootNamespace: null,
         cssScope: null,
         suppressUniqueIds: null,
+        razorWarningLevel: 0,
         flags: Flags.DefaultFlags);
 
     public static RazorCodeGenerationOptions DesignTimeDefault { get; } = new(
@@ -24,6 +25,7 @@ public sealed partial class RazorCodeGenerationOptions
         rootNamespace: null,
         cssScope: null,
         suppressUniqueIds: null,
+        razorWarningLevel: 0,
         flags: Flags.DefaultDesignTimeFlags);
 
     public int IndentSize { get; }
@@ -44,6 +46,13 @@ public sealed partial class RazorCodeGenerationOptions
     /// </summary>
     public string? SuppressUniqueIds { get; }
 
+    /// <summary>
+    /// Gets the warning level for diagnostic filtering. Diagnostics with a
+    /// <see cref="RazorDiagnosticDescriptor.WarningLevel"/> greater than this value are suppressed.
+    /// A value of <c>0</c> means only always-on diagnostics (level 0) are reported.
+    /// </summary>
+    public int RazorWarningLevel { get; }
+
     private readonly Flags _flags;
 
     private RazorCodeGenerationOptions(
@@ -52,6 +61,7 @@ public sealed partial class RazorCodeGenerationOptions
         string? rootNamespace,
         string? cssScope,
         string? suppressUniqueIds,
+        int razorWarningLevel,
         Flags flags)
     {
         IndentSize = indentSize;
@@ -59,6 +69,7 @@ public sealed partial class RazorCodeGenerationOptions
         RootNamespace = rootNamespace;
         CssScope = cssScope;
         SuppressUniqueIds = suppressUniqueIds;
+        RazorWarningLevel = razorWarningLevel;
         _flags = flags;
     }
 
@@ -162,27 +173,32 @@ public sealed partial class RazorCodeGenerationOptions
     public RazorCodeGenerationOptions WithIndentSize(int value)
         => IndentSize == value
             ? this
-            : new(value, NewLine, RootNamespace, CssScope, SuppressUniqueIds, _flags);
+            : new(value, NewLine, RootNamespace, CssScope, SuppressUniqueIds, RazorWarningLevel, _flags);
 
     public RazorCodeGenerationOptions WithNewLine(string value)
         => NewLine == value
             ? this
-            : new(IndentSize, value, RootNamespace, CssScope, SuppressUniqueIds, _flags);
+            : new(IndentSize, value, RootNamespace, CssScope, SuppressUniqueIds, RazorWarningLevel, _flags);
 
     public RazorCodeGenerationOptions WithRootNamespace(string? value)
         => RootNamespace == value
             ? this
-            : new(IndentSize, NewLine, value, CssScope, SuppressUniqueIds, _flags);
+            : new(IndentSize, NewLine, value, CssScope, SuppressUniqueIds, RazorWarningLevel, _flags);
 
     public RazorCodeGenerationOptions WithCssScope(string? value)
         => CssScope == value
             ? this
-            : new(IndentSize, NewLine, RootNamespace, value, SuppressUniqueIds, _flags);
+            : new(IndentSize, NewLine, RootNamespace, value, SuppressUniqueIds, RazorWarningLevel, _flags);
 
     public RazorCodeGenerationOptions WithSuppressUniqueIds(string? value)
-        => RootNamespace == value
+        => SuppressUniqueIds == value
             ? this
-            : new(IndentSize, NewLine, RootNamespace, CssScope, value, _flags);
+            : new(IndentSize, NewLine, RootNamespace, CssScope, value, RazorWarningLevel, _flags);
+
+    public RazorCodeGenerationOptions WithRazorWarningLevel(int value)
+        => RazorWarningLevel == value
+            ? this
+            : new(IndentSize, NewLine, RootNamespace, CssScope, SuppressUniqueIds, value, _flags);
 
     public RazorCodeGenerationOptions WithFlags(
         Optional<bool> designTime = default,
@@ -262,6 +278,6 @@ public sealed partial class RazorCodeGenerationOptions
 
         return flags == _flags
             ? this
-            : new(IndentSize, NewLine, RootNamespace, CssScope, SuppressUniqueIds, flags);
+            : new(IndentSize, NewLine, RootNamespace, CssScope, SuppressUniqueIds, RazorWarningLevel, flags);
     }
 }

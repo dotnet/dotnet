@@ -46,7 +46,14 @@ internal class GuestProjectPathProvider(
         }
 
         // Host always responds with a host-based path, convert back to a guest one.
-        filePath = ResolveGuestPath(hostProjectPath);
+        var guestProjectPath = ResolveGuestPath(hostProjectPath);
+        if (guestProjectPath is null)
+        {
+            filePath = null;
+            return false;
+        }
+
+        filePath = guestProjectPath;
         return true;
     }
 
@@ -56,6 +63,10 @@ internal class GuestProjectPathProvider(
 
         // The path we're given is from the guest so following other patterns we always ask the host information in its own form (aka convert on guest instead of on host).
         var ownerPath = _liveShareSessionAccessor.Session.ConvertLocalPathToSharedUri(textDocument.FilePath);
+        if (ownerPath is null)
+        {
+            return null;
+        }
 
         var hostProjectPath = _joinableTaskFactory.Run(() =>
         {
@@ -71,7 +82,7 @@ internal class GuestProjectPathProvider(
     // We do not want this inlined because the work done in this method requires the VisualStudio.LiveShare assembly.
     // We do not want to load that assembly outside of a LiveShare session.
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private string ResolveGuestPath(Uri hostProjectPath)
+    private string? ResolveGuestPath(Uri hostProjectPath)
     {
         Assumes.NotNull(_liveShareSessionAccessor.Session);
 

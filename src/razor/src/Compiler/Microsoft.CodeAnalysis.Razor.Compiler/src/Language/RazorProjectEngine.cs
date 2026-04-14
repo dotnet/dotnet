@@ -253,7 +253,8 @@ public sealed class RazorProjectEngine
         var builder = new RazorCodeGenerationOptions.Builder()
         {
             CssScope = cssScope,
-            SuppressAddComponentParameter = configuration.SuppressAddComponentParameter
+            SuppressAddComponentParameter = configuration.SuppressAddComponentParameter,
+            RazorWarningLevel = configuration.RazorWarningLevel
         };
 
         configure?.Invoke(builder);

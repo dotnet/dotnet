@@ -17,6 +17,11 @@
         <target state="translated">{0} の表示</target>
         <note />
       </trans-unit>
+      <trans-unit id="View_Page">
+        <source>View Page</source>
+        <target state="translated">ページの表示</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

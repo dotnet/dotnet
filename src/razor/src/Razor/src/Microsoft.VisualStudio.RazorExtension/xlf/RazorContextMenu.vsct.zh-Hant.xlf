@@ -17,6 +17,21 @@
         <target state="translated">顯示參照的標籤協助程式</target>
         <note />
       </trans-unit>
+      <trans-unit id="cmdidAddNestedCsFileEditor|ButtonText">
+        <source>Add Nested .cs File</source>
+        <target state="translated">新增巢狀 .cs 檔案</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidAddNestedCsFileEditor|CommandName">
+        <source>AddNestedCsFileEditor</source>
+        <target state="translated">AddNestedCsFileEditor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidAddNestedCsFileEditor|LocCanonicalName">
+        <source>AddNestedCsFileEditor</source>
+        <target state="translated">AddNestedCsFileEditor</target>
+        <note />
+      </trans-unit>
       <trans-unit id="cmdidAddOrViewNestedCsFile|ButtonText">
         <source>Add or View Nested .cs File</source>
         <target state="translated">新增或檢視巢狀 .cs 檔案</target>
@@ -85,6 +100,21 @@
       <trans-unit id="cmdidShowGeneratedHtml|ButtonText">
         <source>Show Generated HTML</source>
         <target state="translated">顯示已產生的 HTML</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidViewPageEditor|ButtonText">
+        <source>View Page</source>
+        <target state="translated">檢視頁面</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidViewPageEditor|CommandName">
+        <source>ViewPageEditor</source>
+        <target state="translated">ViewPageEditor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidViewPageEditor|LocCanonicalName">
+        <source>ViewPageEditor</source>
+        <target state="translated">ViewPageEditor</target>
         <note />
       </trans-unit>
       <trans-unit id="menuidToolWindowToolbar|ButtonText">

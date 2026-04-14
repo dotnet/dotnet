@@ -13,7 +13,19 @@ public sealed record RazorDiagnosticDescriptor
     public string MessageFormat { get; }
     public RazorDiagnosticSeverity Severity { get; }
 
+    /// <summary>
+    /// The warning level at which this diagnostic is reported. Diagnostics with a warning level
+    /// greater than the configured <c>RazorWarningLevel</c> are suppressed.
+    /// A value of <c>0</c> means the diagnostic is always reported regardless of the configured level.
+    /// </summary>
+    public int WarningLevel { get; }
+
     public RazorDiagnosticDescriptor(string id, string messageFormat, RazorDiagnosticSeverity severity)
+        : this(id, messageFormat, severity, warningLevel: 0)
+    {
+    }
+
+    public RazorDiagnosticDescriptor(string id, string messageFormat, RazorDiagnosticSeverity severity, int warningLevel)
     {
         if (string.IsNullOrEmpty(id))
         {
@@ -28,9 +40,9 @@ public sealed record RazorDiagnosticDescriptor
         Id = id;
         MessageFormat = messageFormat;
         Severity = severity;
+        WarningLevel = warningLevel;
     }
 
-    private string DebuggerToString() => $"""
-        Error "{Id}": "{MessageFormat}"
-        """;
+    private string DebuggerToString()
+        => $"""Error "{Id}" (level {WarningLevel}): "{MessageFormat}""";
 }

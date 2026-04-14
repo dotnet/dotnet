@@ -25,7 +25,10 @@ internal class ProxyAccessor(
     {
         Assumes.NotNull(_liveShareSessionAccessor.Session);
 
-        return _jtf.Run(
+        var proxy = _jtf.Run(
             () => _liveShareSessionAccessor.Session.GetRemoteServiceAsync<TProxy>(typeof(TProxy).Name, CancellationToken.None));
+        Assumes.NotNull(proxy);
+
+        return proxy;
     }
 }

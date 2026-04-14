@@ -17,6 +17,11 @@
         <target state="translated">{0} anzeigen</target>
         <note />
       </trans-unit>
+      <trans-unit id="View_Page">
+        <source>View Page</source>
+        <target state="translated">Seite anzeigen</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

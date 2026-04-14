@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
@@ -55,7 +54,7 @@ internal sealed class CohostSignatureHelpEndpoint(
     }
 
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(SignatureHelpParams request)
-        => new RazorTextDocumentIdentifier(request.TextDocument.DocumentUri.GetRequiredParsedUri(), (request.TextDocument as VSTextDocumentIdentifier)?.ProjectContext?.Id);
+        => request.TextDocument.ToRazorTextDocumentIdentifier();
 
     protected async override Task<SignatureHelp?> HandleRequestAsync(SignatureHelpParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {

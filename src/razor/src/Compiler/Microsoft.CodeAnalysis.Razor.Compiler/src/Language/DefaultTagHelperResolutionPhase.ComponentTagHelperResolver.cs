@@ -580,15 +580,7 @@ internal partial class DefaultTagHelperResolutionPhase
             SourceSpan? mergedSpan = null;
             if (firstSpan is { } first && lastSpan is { } last)
             {
-                var endAbsolute = last.AbsoluteIndex + last.Length;
-                mergedSpan = new SourceSpan(
-                    first.FilePath,
-                    first.AbsoluteIndex,
-                    first.LineIndex,
-                    first.CharacterIndex,
-                    endAbsolute - first.AbsoluteIndex,
-                    last.LineIndex - first.LineIndex + 1,
-                    last.EndCharacterIndex);
+                mergedSpan = MergeSourceSpans(first, last);
             }
 
             var content = sb.ToString();

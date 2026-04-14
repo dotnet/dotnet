@@ -11,7 +11,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.26179.102</MicrosoftDotNetHelixSdkPackageVersion>
     <MicrosoftExtensionsCachingMemoryPackageVersion>11.0.0-preview.3.26179.102</MicrosoftExtensionsCachingMemoryPackageVersion>
     <MicrosoftExtensionsConfigurationPackageVersion>11.0.0-preview.3.26179.102</MicrosoftExtensionsConfigurationPackageVersion>
-    <MicrosoftExtensionsConfigurationAbstractionsPackageVersion>11.0.0-preview.3.26179.102</MicrosoftExtensionsConfigurationAbstractionsPackageVersion>
     <MicrosoftExtensionsConfigurationEnvironmentVariablesPackageVersion>11.0.0-preview.3.26179.102</MicrosoftExtensionsConfigurationEnvironmentVariablesPackageVersion>
     <MicrosoftExtensionsConfigurationJsonPackageVersion>11.0.0-preview.3.26179.102</MicrosoftExtensionsConfigurationJsonPackageVersion>
     <MicrosoftExtensionsDependencyInjectionPackageVersion>11.0.0-preview.3.26179.102</MicrosoftExtensionsDependencyInjectionPackageVersion>
@@ -33,7 +32,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetHelixSdkVersion>$(MicrosoftDotNetHelixSdkPackageVersion)</MicrosoftDotNetHelixSdkVersion>
     <MicrosoftExtensionsCachingMemoryVersion>$(MicrosoftExtensionsCachingMemoryPackageVersion)</MicrosoftExtensionsCachingMemoryVersion>
     <MicrosoftExtensionsConfigurationVersion>$(MicrosoftExtensionsConfigurationPackageVersion)</MicrosoftExtensionsConfigurationVersion>
-    <MicrosoftExtensionsConfigurationAbstractionsVersion>$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion)</MicrosoftExtensionsConfigurationAbstractionsVersion>
     <MicrosoftExtensionsConfigurationEnvironmentVariablesVersion>$(MicrosoftExtensionsConfigurationEnvironmentVariablesPackageVersion)</MicrosoftExtensionsConfigurationEnvironmentVariablesVersion>
     <MicrosoftExtensionsConfigurationJsonVersion>$(MicrosoftExtensionsConfigurationJsonPackageVersion)</MicrosoftExtensionsConfigurationJsonVersion>
     <MicrosoftExtensionsDependencyInjectionVersion>$(MicrosoftExtensionsDependencyInjectionPackageVersion)</MicrosoftExtensionsDependencyInjectionVersion>

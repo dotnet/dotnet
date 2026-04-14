@@ -9,7 +9,6 @@
     <PackageReference Include="AwesomeAssertions" />
     <PackageReference Include="Microsoft.DotNet.ProductConstructionService.Client" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="Moq" />
   </ItemGroup>
 

@@ -126,4 +126,7 @@
   <data name="View_Nested_File" xml:space="preserve">
     <value>View {0}</value>
   </data>
+  <data name="View_Page" xml:space="preserve">
+    <value>View Page</value>
+  </data>
 </root>

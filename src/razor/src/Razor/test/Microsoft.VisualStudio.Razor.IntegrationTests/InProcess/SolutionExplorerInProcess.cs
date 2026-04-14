@@ -10,12 +10,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.VisualStudio.Razor.IntegrationTests;
-using Microsoft.VisualStudio.Razor.IntegrationTests.InProcess;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Threading;
-using NuGet.SolutionRestoreManager;
 using Xunit;
 using Task = System.Threading.Tasks.Task;
 
@@ -41,44 +39,6 @@ internal partial class SolutionExplorerInProcess
             args.Add($"$templateid$={templateId}");
 
         ErrorHandler.ThrowOnFailure(solution.AddNewProjectFromTemplate(projectTemplatePath, args.Any() ? args.ToArray() : null, null, projectPath, projectName, null, out _));
-    }
-
-    public async Task RestoreNuGetPackagesAsync(CancellationToken cancellationToken)
-    {
-        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-
-        var dte = await GetRequiredGlobalServiceAsync<SDTE, EnvDTE.DTE>(cancellationToken);
-        var solution = (EnvDTE80.Solution2)dte.Solution;
-        foreach (var project in solution.Projects.OfType<EnvDTE.Project>())
-        {
-            await RestoreNuGetPackagesAsync(project.FullName, cancellationToken);
-        }
-    }
-
-    public async Task RestoreNuGetPackagesAsync(string projectName, CancellationToken cancellationToken)
-    {
-        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-
-        await TestServices.Workspace.WaitForProjectSystemAsync(cancellationToken);
-
-        var solutionRestoreService = await GetComponentModelServiceAsync<IVsSolutionRestoreService>(cancellationToken);
-        await solutionRestoreService.CurrentRestoreOperation;
-
-        var projectFullPath = (await GetProjectAsync(projectName, cancellationToken)).FullName;
-        var solutionRestoreStatusProvider = await GetComponentModelServiceAsync<IVsSolutionRestoreStatusProvider>(cancellationToken);
-        if (await solutionRestoreStatusProvider.IsRestoreCompleteAsync(cancellationToken))
-        {
-            return;
-        }
-
-        var solutionRestoreService2 = (IVsSolutionRestoreService2)solutionRestoreService;
-        await solutionRestoreService2.NominateProjectAsync(projectFullPath, cancellationToken);
-
-        // Check IsRestoreCompleteAsync until it returns true (this stops the retry because true != default(bool))
-        await Helper.RetryAsync(
-            cancellationToken => solutionRestoreStatusProvider.IsRestoreCompleteAsync(cancellationToken),
-            TimeSpan.FromMilliseconds(50),
-            cancellationToken);
     }
 
     public async Task CloseSolutionAndWaitAsync(CancellationToken cancellationToken)
