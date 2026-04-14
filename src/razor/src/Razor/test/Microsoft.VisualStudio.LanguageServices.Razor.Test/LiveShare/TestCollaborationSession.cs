@@ -42,9 +42,6 @@ public class TestCollaborationSession : CollaborationSession
     }
 
     public override string SessionId => throw new NotImplementedException();
-    public override string ConversationId => string.Empty;
-    public override bool IsSessionConnected => true;
-    public override Task SessionDisconnection => Task.CompletedTask;
     public override IReadOnlyCollection<Peer> Peers => throw new NotImplementedException();
     public override IReadOnlyCollection<string> RemoteServiceNames => throw new NotImplementedException();
     public override int PeerNumber => throw new NotImplementedException();

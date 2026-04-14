@@ -35,11 +35,6 @@ internal class ProjectHierarchyProxy(
         Assumes.Present(_openDocumentShell);
 
         var hostDocumentFilePath = _session.ConvertSharedUriToLocalPath(documentFilePath);
-        if (hostDocumentFilePath is null)
-        {
-            return null;
-        }
-
         var hr = _openDocumentShell.IsDocumentInAProject(hostDocumentFilePath, out var hierarchy, out _, out _, out _);
         if (ErrorHandler.Succeeded(hr) && hierarchy != null)
         {
