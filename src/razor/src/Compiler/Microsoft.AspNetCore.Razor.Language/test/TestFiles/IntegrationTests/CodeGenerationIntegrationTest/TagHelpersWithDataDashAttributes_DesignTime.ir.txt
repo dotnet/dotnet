@@ -67,7 +67,7 @@
                             LazyIntermediateToken - (126:3,30 [3] TagHelpersWithDataDashAttributes.cshtml) - CSharp - bar
                     DefaultTagHelperHtmlAttribute -  - data-three - HtmlAttributeValueStyle.DoubleQuotes
                         HtmlContent - (142:3,46 [0] TagHelpersWithDataDashAttributes.cshtml)
-                            LazyIntermediateToken - (142:3,46 [0] TagHelpersWithDataDashAttributes.cshtml) - Html - 
+                            IntermediateToken - (142:3,46 [0] TagHelpersWithDataDashAttributes.cshtml) - Html - 
                     DefaultTagHelperHtmlAttribute -  - data-four - HtmlAttributeValueStyle.DoubleQuotes
                         HtmlContent - (154:3,58 [0] TagHelpersWithDataDashAttributes.cshtml)
                             LazyIntermediateToken - (154:3,58 [0] TagHelpersWithDataDashAttributes.cshtml) - Html - 
