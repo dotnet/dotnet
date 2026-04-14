@@ -45,7 +45,7 @@ stages:
               if [ -d "$subdir" ]; then
                 subdirName=$(basename "$subdir")
                 if [ ! -z "$ignorePatterns" ]; then
-                  ignorePatterns="$ignorePatterns;"
+                  ignorePatterns="$ignorePatterns,"
                 fi
                 ignorePatterns="$ignorePatterns$subdirName"
                 addMatrixEntry "${repoName}_${subdirName}" "$subdir"
@@ -70,7 +70,7 @@ stages:
                 if [ -d "$subdir" ]; then
                   subdirName=$(basename "$subdir")
                   if [ ! -z "$ignorePatterns" ]; then
-                    ignorePatterns="$ignorePatterns;"
+                    ignorePatterns="$ignorePatterns,"
                   fi
                   ignorePatterns="$ignorePatterns$subdirName"
                   addMatrixEntry "${repoName}_${subdirName}" "$subdir"
