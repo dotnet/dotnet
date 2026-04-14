@@ -3,11 +3,11 @@
 
 using System.Collections.Generic;
 
+using FluentAssertions;
+
 using Microsoft.VisualStudio.TestPlatform.Common.ExtensionFramework.Utilities;
 using Microsoft.VisualStudio.TestPlatform.Common.Telemetry;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using FluentAssertions;
 
 namespace TestPlatform.Common.UnitTests.ExtensionFramework.Utilities;
 
