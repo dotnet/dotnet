@@ -286,8 +286,6 @@ namespace System.Threading
         {
             Debug.Assert(timeoutMs >= -1);
 
-            _onWait();
-
             LifoWaitNode? blocker = t_blocker;
             if (blocker == null)
             {
@@ -316,6 +314,7 @@ namespace System.Threading
 
             if (blocker != null)
             {
+                _onWait();
                 while (!blocker.TimedWait(timeoutMs))
                 {
                     if (TryRemove(blocker))
