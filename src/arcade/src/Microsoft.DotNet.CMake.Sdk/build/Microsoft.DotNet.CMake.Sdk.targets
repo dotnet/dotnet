@@ -3,6 +3,7 @@
 
   <PropertyGroup>
     <MicrosoftDotNetCMakeSdkTaskAssembly>$(MSBuildThisFileDirectory)..\tools\net\Microsoft.DotNet.CMake.Sdk.dll</MicrosoftDotNetCMakeSdkTaskAssembly>
+    <VSWhereVersion Condition="'$(VSWhereVersion)' == ''">3.1.7</VSWhereVersion>
   </PropertyGroup>
 
   <UsingTask TaskName="Microsoft.DotNet.CMake.Sdk.CreateCMakeFileApiQuery" AssemblyFile="$(MicrosoftDotNetCMakeSdkTaskAssembly)" Runtime="NET" />
