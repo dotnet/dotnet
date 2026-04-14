@@ -71,7 +71,7 @@ public partial class WriteSbrpUsageReport : Task
         }
         catch (Exception ex)
         {
-            LogError($"Failed to generate SBRP usage report: {ex}");
+            LogError($"Failed to generate SBA usage report: {ex}");
         }
 
         return !Log.HasLoggedErrors;
@@ -292,7 +292,7 @@ public partial class WriteSbrpUsageReport : Task
             }
         }
 
-        if (lockFile.PackageSpec.RestoreMetadata.ProjectPath.Contains(SbrpRepoName))
+        if (lockFile.PackageSpec.RestoreMetadata.ProjectPath.Contains(SbaRepoName))
         {
             // For SBA projects, we need to track the project references as well. While project references are included in the targets
             // which were processed above, only the resolved version is included in the cases when the dependency graph contains multiple
@@ -301,7 +301,7 @@ public partial class WriteSbrpUsageReport : Task
             {
                 foreach (ProjectRestoreReference projectRef in targetFx.ProjectReferences)
                 {
-                    if (projectRef.ProjectPath.Contains(SbrpRepoName))
+                    if (projectRef.ProjectPath.Contains(SbaRepoName))
                     {
                         string[] pathSegments = projectRef.ProjectPath.Split('/');
                         string projName = pathSegments[pathSegments.Length - 3];
