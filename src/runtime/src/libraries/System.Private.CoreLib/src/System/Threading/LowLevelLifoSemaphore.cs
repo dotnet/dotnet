@@ -113,9 +113,18 @@ namespace System.Threading
 
         private bool WaitSlow(int timeoutMs, short tpThreadCount)
         {
-            _ = tpThreadCount;
+            // Now spin briefly with exponential backoff.
+            // We estimate availability of CPU resources and limit spin count accordingly.
+            // See comments on DefaultSemaphoreSpinCountLimit for more details.
+            int active = tpThreadCount - _separated._counts.WaiterCount;
+            int available = _procCount - active;
+            int spinStep = _maxSpinCount * 2 / _procCount;
+            // With activeThreadCount arbitrarily large and _procCount arbitrarily small
+            // we can, in theory, overflow int, so just use long here.
+            long spinsRemainingLong = (available - _procCount / 4) * (long)spinStep;
 
-            int spinsRemaining = _maxSpinCount;
+            // clamp to [0, _maxSpinCount] range.
+            int spinsRemaining = (int)Math.Clamp(spinsRemainingLong, 0, _maxSpinCount);
 
             uint iteration = 0;
             while (spinsRemaining > 0)
@@ -157,7 +166,7 @@ namespace System.Threading
                 Counts countsBeforeUpdate = _separated._counts.InterlockedCompareExchange(newCounts, counts);
                 if (countsBeforeUpdate == counts)
                 {
-                    return counts.SignalCount != 0 || WaitAsWaiter(timeoutMs, allowFastWake: false);
+                    return counts.SignalCount != 0 || WaitAsWaiter(timeoutMs, allowFastWake: true);
                 }
 
                 Backoff.Exponential(collisionCount++);
@@ -166,7 +175,16 @@ namespace System.Threading
 
         public bool WaitNoSpin(int timeoutMs)
         {
-            return WaitSlow(timeoutMs, 0);
+            Counts counts = _separated._counts.InterlockedIncrementWaiterCount();
+
+            // If there are pending signals, we may end in a condition that requires
+            // waking a waiter.
+            // Perhaps the current thread will be such waiter, but we should still
+            // go through wait/wake routine (vs. just claiming the signal) as the
+            // caller wants to park the thread.
+            MaybeWakeWaiters(counts);
+
+            return WaitAsWaiter(timeoutMs, allowFastWake: false);
         }
 
         private void MaybeWakeWaiters(Counts counts)
