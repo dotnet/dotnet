@@ -509,19 +509,14 @@ internal partial class DefaultTagHelperResolutionPhase
                     targetNode.Children.Add(new CSharpIntermediateToken(content, source));
                 }
             }
-            else if (isBoundStringProperty && hasDynamicContent)
-            {
-                // Bound string property with dynamic content (expressions/code blocks):
-                // Unwrap attribute value nodes to content nodes for BeginWriteTagHelperAttribute pattern.
-                UnwrapValueChildrenToTokens(targetNode, htmlAttr);
-            }
             else if (!isBoundStringProperty && hasDynamicContent)
             {
                 ConvertDynamicNonStringValueChildren(targetNode, htmlAttr, sourceDocument);
             }
             else
             {
-                // Complex/dynamic value - unwrap attribute value nodes to content nodes.
+                // Bound string property with dynamic content, or complex/non-dynamic fallback:
+                // unwrap attribute value nodes to content nodes for BeginWriteTagHelperAttribute pattern.
                 UnwrapValueChildrenToTokens(targetNode, htmlAttr);
             }
 
@@ -772,21 +767,12 @@ internal partial class DefaultTagHelperResolutionPhase
                             attrSource.FilePath, closeParenAbsIndex, attrSource.LineIndex, closeParenCharIndex,
                             1, 0, closeParenCharIndex + 1);
                         targetNode.Children.Add(new CSharpIntermediateToken(")", closeParenSource));
-                    }
-                    else
-                    {
-                        UnwrapValueChildrenToTokens(targetNode, htmlAttr);
+                        return;
                     }
                 }
-                else
-                {
-                    UnwrapValueChildrenToTokens(targetNode, htmlAttr);
-                }
             }
-            else
-            {
-                UnwrapValueChildrenToTokens(targetNode, htmlAttr);
-            }
+
+            UnwrapValueChildrenToTokens(targetNode, htmlAttr);
         }
 
         private static void UnwrapValueChildrenToTokens(IntermediateNode targetNode, HtmlAttributeIntermediateNode htmlAttr)
@@ -1148,14 +1134,7 @@ internal partial class DefaultTagHelperResolutionPhase
                     current.Children.AddRange(next.Children);
                     if (current.Source is SourceSpan currentSource && next.Source is SourceSpan nextSource)
                     {
-                        current.Source = new SourceSpan(
-                            currentSource.FilePath,
-                            currentSource.AbsoluteIndex,
-                            currentSource.LineIndex,
-                            currentSource.CharacterIndex,
-                            (nextSource.AbsoluteIndex + nextSource.Length) - currentSource.AbsoluteIndex,
-                            nextSource.LineCount,
-                            nextSource.EndCharacterIndex);
+                        current.Source = MergeSourceSpans(currentSource, nextSource);
                     }
                     else if (current.Source == null)
                     {
@@ -1383,8 +1362,7 @@ internal partial class DefaultTagHelperResolutionPhase
 
                 var mergedContent = sb.ToString();
                 var tokenSpan = firstSpan is { } f && lastSpan is { } l
-                    ? new SourceSpan(f.FilePath, f.AbsoluteIndex, f.LineIndex, f.CharacterIndex,
-                        (l.AbsoluteIndex + l.Length) - f.AbsoluteIndex, l.LineIndex - f.LineIndex, l.EndCharacterIndex)
+                    ? MergeSourceSpans(f, l)
                     : firstSpan;
                 expr.Children.Add(new CSharpIntermediateToken(
                     LazyContent.Create(mergedContent, static s => s), tokenSpan));
@@ -1606,8 +1584,7 @@ internal partial class DefaultTagHelperResolutionPhase
 
             if (pendingFirstSpan is { } f && pendingLastSpan is { } l)
             {
-                htmlContent.Source = new SourceSpan(f.FilePath, f.AbsoluteIndex, f.LineIndex, f.CharacterIndex,
-                    (l.AbsoluteIndex + l.Length) - f.AbsoluteIndex, l.LineIndex - f.LineIndex + 1, l.EndCharacterIndex);
+                htmlContent.Source = MergeSourceSpans(f, l);
             }
 
             target.Children.Add(htmlContent);

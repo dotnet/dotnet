@@ -3,7 +3,6 @@
 
 using System;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
-using Microsoft.CodeAnalysis.Razor;
 
 namespace Roslyn.LanguageServer.Protocol;
 
@@ -35,6 +34,10 @@ internal static partial class LspExtensions
         };
     }
 
-    public static RazorTextDocumentIdentifier ToRazorTextDocumentIdentifier(this TextDocumentIdentifier textDocumentIdentifier)
-        => new RazorTextDocumentIdentifier(textDocumentIdentifier.DocumentUri.GetRequiredParsedUri(), (textDocumentIdentifier as VSTextDocumentIdentifier)?.ProjectContext?.Id);
+    public static RazorTextDocumentIdentifier? ToRazorTextDocumentIdentifier(this TextDocumentIdentifier textDocumentIdentifier)
+    {
+        return textDocumentIdentifier.DocumentUri.ParsedUri is Uri parsedUri
+            ? new RazorTextDocumentIdentifier(parsedUri, (textDocumentIdentifier as VSTextDocumentIdentifier)?.ProjectContext?.Id)
+            : null;
+    }
 }
