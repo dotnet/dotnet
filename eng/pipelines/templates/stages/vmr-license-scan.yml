@@ -115,7 +115,7 @@ stages:
         -flp:LogFile=$(Build.SourcesDirectory)/artifacts/logs/BuildTests_$(date +"%m%d%H%M%S").log
         -clp:v=m
         /p:SourceBuildTestsLicenseScanPath=$(repoPath)
-        /p:SourceBuildTestsLicenseScanIgnorePatterns=$(scanIgnorePatterns)
+        "/p:SourceBuildTestsLicenseScanIgnorePatterns=$(scanIgnorePatterns)"
         /p:TargetRid=linux-x64
         /p:PortableTargetRid=linux-x64
         /p:SkipPrepareSdkArchive=true
