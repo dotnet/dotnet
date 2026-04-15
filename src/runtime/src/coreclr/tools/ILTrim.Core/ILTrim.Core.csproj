@@ -10,8 +10,6 @@
     <TypeSystemPath>$(ToolsCommonPath)TypeSystem\</TypeSystemPath>
     <DefineConstants>$(DefineConstants);ILTRIM</DefineConstants>
   </PropertyGroup>
-  <ItemGroup>
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="../aot/ILCompiler.DependencyAnalysisFramework/ILCompiler.DependencyAnalysisFramework.csproj" />
