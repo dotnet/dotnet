@@ -82,7 +82,7 @@
     <Features>strict</Features>
     <!-- Same as SDK default, but without CandidateAssemblyFiles in front, which would search in Content items -->
     <AssemblySearchPaths>{HintPathFromItem};{TargetFrameworkDirectory};{RawFileName}</AssemblySearchPaths>
-    <LangVersion>11</LangVersion>
+    <LangVersion>12</LangVersion>
     <LangVersion Condition="'$(DotNetBuildFromSource)' == 'true'">latest</LangVersion>
   </PropertyGroup>
 

@@ -6,9 +6,12 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Xml;
+using FluentAssertions;
 using Newtonsoft.Json;
 using NuGet.Packaging.Core;
+using NuGet.Protocol.Core.Types;
 using NuGet.Test.Utility;
+using NuGet.Versioning;
 using Xunit;
 
 namespace NuGet.Protocol.Tests
@@ -91,9 +94,10 @@ namespace NuGet.Protocol.Tests
                 // Act & Assert
                 var actual = Assert.Throws<InvalidDataException>(() =>
                 {
-                    HttpStreamValidation.ValidateNupkg(
+                    HttpStreamValidation.ValidatePackageIdentity(
                         Uri,
-                        stream);
+                        stream,
+                        new PackageIdentity("PackageA", NuGetVersion.Parse("1.2.3")));
                 });
 
                 Assert.IsType<InvalidDataException>(actual.InnerException);
@@ -122,9 +126,10 @@ namespace NuGet.Protocol.Tests
                 // Act & Assert
                 var actual = Assert.Throws<InvalidDataException>(() =>
                 {
-                    HttpStreamValidation.ValidateNupkg(
+                    HttpStreamValidation.ValidatePackageIdentity(
                         Uri,
-                        stream);
+                        stream,
+                        new PackageIdentity("PackageA", NuGetVersion.Parse("1.2.3")));
                 });
 
                 Assert.IsType<InvalidDataException>(actual.InnerException);
@@ -151,9 +156,10 @@ namespace NuGet.Protocol.Tests
                 // Act & Assert
                 var actual = Assert.Throws<InvalidDataException>(() =>
                 {
-                    HttpStreamValidation.ValidateNupkg(
+                    HttpStreamValidation.ValidatePackageIdentity(
                         Uri,
-                        stream);
+                        stream,
+                        new PackageIdentity("PackageA", NuGetVersion.Parse("1.2.3")));
                 });
 
                 Assert.IsType<InvalidDataException>(actual.InnerException);
@@ -176,9 +182,10 @@ namespace NuGet.Protocol.Tests
                 // Act & Assert
                 var actual = Assert.Throws<InvalidDataException>(() =>
                 {
-                    HttpStreamValidation.ValidateNupkg(
+                    HttpStreamValidation.ValidatePackageIdentity(
                         Uri,
-                        zipStream);
+                        zipStream,
+                        new PackageIdentity("PackageA", NuGetVersion.Parse("1.2.3")));
                 });
 
                 Assert.IsType<PackagingException>(actual.InnerException);
@@ -201,9 +208,10 @@ namespace NuGet.Protocol.Tests
                 // Act & Assert
                 var actual = Assert.Throws<InvalidDataException>(() =>
                 {
-                    HttpStreamValidation.ValidateNupkg(
+                    HttpStreamValidation.ValidatePackageIdentity(
                         Uri,
-                        stream);
+                        stream,
+                        new PackageIdentity("PackageA", NuGetVersion.Parse("1.2.3")));
                 });
 
                 Assert.IsType<XmlException>(actual.InnerException);
@@ -218,17 +226,63 @@ namespace NuGet.Protocol.Tests
             {
                 using (var zip = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true))
                 {
-                    zip.AddEntry("package.nuspec", @"<?xml version=""1.0"" encoding=""utf-8""?>
-<package>
-</package>");
+                    zip.AddEntry("package.nuspec",
+                        """
+                        <?xml version="1.0" encoding="utf-8"?>
+                        <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+                            <metadata>
+                                <id>PackageA</id>
+                                <version>1.2.3</version>
+                            </metadata>
+                        </package>
+                        """);
                 }
 
                 stream.Seek(0, SeekOrigin.Begin);
 
                 // Act & Assert
-                HttpStreamValidation.ValidateNupkg(
+                HttpStreamValidation.ValidatePackageIdentity(
                     Uri,
-                    stream);
+                    stream,
+                    new PackageIdentity("PackageA", NuGetVersion.Parse("1.2.3")));
+            }
+        }
+
+        [Fact]
+        public void HttpStreamValidation_ValidateNupkg_RejectWrongPackageIdentity()
+        {
+            // Arrange
+            using (var stream = new MemoryStream())
+            {
+                using (var zip = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true))
+                {
+                    zip.AddEntry("package.nuspec",
+                        """
+                        <?xml version="1.0" encoding="utf-8"?>
+                        <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+                            <metadata>
+                                <id>PackageB</id>
+                                <version>3.2.1</version>
+                            </metadata>
+                        </package>
+                        """);
+                }
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                // Act & Assert
+                var actual = Assert.Throws<InvalidDataException>(() =>
+                {
+                    HttpStreamValidation.ValidatePackageIdentity(
+                        Uri,
+                        stream,
+                        new PackageIdentity("PackageA", NuGetVersion.Parse("1.2.3")));
+                });
+
+                Assert.IsType<FatalProtocolException>(actual.InnerException);
+                actual.InnerException.Message.Should()
+                    .Contain("PackageA")
+                    .And.Contain("PackageB");
             }
         }
 

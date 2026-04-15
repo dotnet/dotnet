@@ -1,9 +1,9 @@
 {
   "tools": {
-    "dotnet": "8.0.122"
+    "dotnet": "8.0.124"
   },
   "msbuild-sdks": {
     "Microsoft.Build.NoTargets": "3.5.0",
-    "Microsoft.DotNet.Arcade.Sdk": "8.0.0-beta.25611.2"
+    "Microsoft.DotNet.Arcade.Sdk": "8.0.0-beta.26152.2"
   }
 }
