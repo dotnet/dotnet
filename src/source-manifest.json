@@ -73,10 +73,10 @@
       "commitSha": "7806cbf7b0fd91ea6ab55c2e42d8ed973114e197"
     },
     {
-      "packageVersion": "6.8.1-rc.2",
+      "packageVersion": "6.8.2-rc.3",
       "path": "nuget-client",
-      "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "550277e0616e549446f03fda35d3e23dff75dc01"
+      "remoteUri": "https://dev.azure.com/devdiv/DevDiv/_git/NuGet-NuGet.Client-Trusted",
+      "commitSha": "60584b9c2451c0e324655f3968bc4ed1a1a8c85c"
     },
     {
       "packageVersion": "7.0.0-preview.26064.3",
