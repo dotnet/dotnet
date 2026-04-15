@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "9.0.0-beta.26152.3",
+      "packageVersion": "9.0.0-beta.26201.6",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "01c94b66e75697e9298eb79a49db74489f8d343e"
+      "commitSha": "e1240639569fad610705b52713d6d6b19f8fe433"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -97,16 +97,22 @@
       "commitSha": "4250c8399aa851d2d6a95efbdcc5c4c12311e024"
     },
     {
-      "packageVersion": "9.0.0-preview.26153.1",
+      "packageVersion": "9.0.0-preview.26202.3",
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "acd9dc7ae0717d7f4fb6ac2b76ea364e94b4ceb3"
+      "commitSha": "0f750c53b3052a593c6daacc0d60eb8c0d2d9cf1"
     },
     {
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "1d8164f4cc80f19dfb7f0325bbcc26bc9542d693"
+      "commitSha": "34a6df4479be9cd2ff03404fccbbf6fa08c28b00"
+    },
+    {
+      "packageVersion": "9.0.0-alpha.1.26208.6",
+      "path": "source-build-assets",
+      "remoteUri": "https://github.com/dotnet/source-build-assets",
+      "commitSha": "8e19a1b4f607fcbecc4edbd322d77a60d4e25c3c"
     },
     {
       "packageVersion": "9.0.0-alpha.1.26055.1",
@@ -115,10 +121,10 @@
       "commitSha": "16c380d1ce5fa0b24e232251c31cb013bbf3365f"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.26152.3",
+      "packageVersion": "9.0.0-alpha.1.25204.3",
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "e6a837a05532cb8e89eda3ce8aa08d0f55ce7b04"
+      "commitSha": "643689c88b1d5a0f1561383972c4189a0c673abe"
     },
     {
       "packageVersion": "9.0.0-beta.25564.5",
@@ -133,10 +139,10 @@
       "commitSha": "0710a7892d89999956e8808c28e9dd0512bd53f3"
     },
     {
-      "packageVersion": "9.0.116-servicing.26153.11",
+      "packageVersion": "9.0.117-servicing.26208.7",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "8b91289b8faad229ac297839b6717ad34b5d7cba"
+      "commitSha": "80d8da118b1df01ea6baa0f05a404fe3d445960e"
     },
     {
       "packageVersion": "1.1.0-rtm.25262.1",

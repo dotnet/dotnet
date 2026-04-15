@@ -1,0 +1,1825 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.Web.Services.Description</name>
+  </assembly>
+  <members>
+    <member name="T:System.Web.Services.Configuration.XmlFormatExtensionAttribute">
+      <summary>Specifies that a service description format extension runs at one or more extension points. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Configuration.XmlFormatExtensionAttribute.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Configuration.XmlFormatExtensionAttribute" /> class.</summary>
+    </member>
+    <member name="M:System.Web.Services.Configuration.XmlFormatExtensionAttribute.#ctor(System.String,System.String,System.Type)">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Configuration.XmlFormatExtensionAttribute" /> class that specifies the XML element and namespace to add when running at the specified extension point.</summary>
+      <param name="elementName">The XML element added to the service description by the service description format extension.</param>
+      <param name="ns">The XML namespace for the XML element added to the service description by the service description format extension.</param>
+      <param name="extensionPoint1">The extension point at which to run the service description format extension.</param>
+    </member>
+    <member name="M:System.Web.Services.Configuration.XmlFormatExtensionAttribute.#ctor(System.String,System.String,System.Type,System.Type)">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Configuration.XmlFormatExtensionAttribute" /> class that specifies the XML element and namespace to add when running at the specified extension points.</summary>
+      <param name="elementName">The XML element added to the service description by the service description format extension.</param>
+      <param name="ns">The XML namespace for the XML element added to the service description by the service description format extension.</param>
+      <param name="extensionPoint1">An extension point at which to run the service description format extension.</param>
+      <param name="extensionPoint2">An extension point at which to run the service description format extension.</param>
+    </member>
+    <member name="M:System.Web.Services.Configuration.XmlFormatExtensionAttribute.#ctor(System.String,System.String,System.Type,System.Type,System.Type)">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Configuration.XmlFormatExtensionAttribute" /> class that specifies the XML element and namespace to add when running at the specified extension points.</summary>
+      <param name="elementName">The XML element added to the service description by the service description format extension.</param>
+      <param name="ns">The XML namespace for the XML element added to the service description by the service description format extension.</param>
+      <param name="extensionPoint1">An extension point at which to run the service description format extension.</param>
+      <param name="extensionPoint2">An extension point at which to run the service description format extension.</param>
+      <param name="extensionPoint3">An extension point at which to run the service description format extension.</param>
+    </member>
+    <member name="M:System.Web.Services.Configuration.XmlFormatExtensionAttribute.#ctor(System.String,System.String,System.Type,System.Type,System.Type,System.Type)">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Configuration.XmlFormatExtensionAttribute" /> class that specifies the XML element and namespace to add when running at the specified extension points.</summary>
+      <param name="elementName">The XML element added to the service description by the service description format extension.</param>
+      <param name="ns">The XML namespace for the XML element added to the service description by the service description format extension.</param>
+      <param name="extensionPoint1">An extension point at which to run the service description format extension.</param>
+      <param name="extensionPoint2">An extension point at which to run the service description format extension.</param>
+      <param name="extensionPoint3">An extension point at which to run the service description format extension.</param>
+      <param name="extensionPoint4">An extension point at which to run the service description format extension.</param>
+    </member>
+    <member name="M:System.Web.Services.Configuration.XmlFormatExtensionAttribute.#ctor(System.String,System.String,System.Type[])">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Configuration.XmlFormatExtensionAttribute" /> class that specifies the XML element and namespace to add when running at the specified extension points.</summary>
+      <param name="elementName">The XML element added to the service description by the service description format extension.</param>
+      <param name="ns">The XML namespace for the XML element added to the service description by the service description format extension.</param>
+      <param name="extensionPoints">An array of extension points at which to run the service description format extension.</param>
+    </member>
+    <member name="P:System.Web.Services.Configuration.XmlFormatExtensionAttribute.ElementName">
+      <summary>Gets or sets the XML element added to the service description by the service description format extension.</summary>
+      <returns>The XML element added to the service description by the service description format extension.</returns>
+    </member>
+    <member name="P:System.Web.Services.Configuration.XmlFormatExtensionAttribute.ExtensionPoints">
+      <summary>The stages at which the service description format extension is to run.</summary>
+      <returns>An array of <see cref="T:System.Type" /> that specifies the stage at which the service description format extension is to run.</returns>
+    </member>
+    <member name="P:System.Web.Services.Configuration.XmlFormatExtensionAttribute.Namespace">
+      <summary>Gets or sets the XML namespace for the XML element added to the service description by the service description format extension.</summary>
+      <returns>The XML namespace for the XML element added to the service description by the service description format extension.</returns>
+    </member>
+    <member name="T:System.Web.Services.Configuration.XmlFormatExtensionPointAttribute">
+      <summary>Specifies the XML namespace and XML namespace prefix to use for a service description format extension within a service description. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Configuration.XmlFormatExtensionPointAttribute.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Configuration.XmlFormatExtensionPointAttribute" /> class.</summary>
+      <param name="memberName">The member of the class that implements the service description format extension that can have a service description format extension associated with it.</param>
+    </member>
+    <member name="P:System.Web.Services.Configuration.XmlFormatExtensionPointAttribute.AllowElements">
+      <summary>Gets or sets a value that indicates whether the member of the class that implements the service description format extension specified in the <see cref="P:System.Web.Services.Configuration.XmlFormatExtensionPointAttribute.MemberName" /> property can accept raw XML elements.</summary>
+      <returns>
+        <see langword="true" /> if the member of the class that implements the service description format extension specified in the <see cref="P:System.Web.Services.Configuration.XmlFormatExtensionPointAttribute.MemberName" /> property can accept raw XML elements; otherwise, <see langword="false" />. The default is <see langword="true" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Configuration.XmlFormatExtensionPointAttribute.MemberName">
+      <summary>Specifies that the member of the class that implements the service description format extension can have a service description format extension associated with it.</summary>
+      <returns>The member of the class that implements the service description format extension that can have a service description format extension associated with it.</returns>
+    </member>
+    <member name="T:System.Web.Services.Configuration.XmlFormatExtensionPrefixAttribute">
+      <summary>Specifies the XML namespace and XML namespace prefix to use for a service description format extension within a service description. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Configuration.XmlFormatExtensionPrefixAttribute.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Configuration.XmlFormatExtensionPrefixAttribute" /> class.</summary>
+    </member>
+    <member name="M:System.Web.Services.Configuration.XmlFormatExtensionPrefixAttribute.#ctor(System.String,System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Configuration.XmlFormatExtensionPrefixAttribute" /> class, setting the XML namespace and XML namespace prefix for a service description format extension.</summary>
+      <param name="prefix">The XML namespace prefix associated with a service description format extension.</param>
+      <param name="ns">The XML namespace associated with a service description format extension.</param>
+    </member>
+    <member name="P:System.Web.Services.Configuration.XmlFormatExtensionPrefixAttribute.Namespace">
+      <summary>Gets or sets the XML namespace associated with a service description format extension.</summary>
+      <returns>The XML namespace associated with a service description format extension.</returns>
+    </member>
+    <member name="P:System.Web.Services.Configuration.XmlFormatExtensionPrefixAttribute.Prefix">
+      <summary>Gets or sets the XML namespace prefix associated with a service description format extension.</summary>
+      <returns>The XML namespace prefix associated with a service description format extension.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.Binding">
+      <summary>Specifies the concrete data format and protocols used in the XML Web service. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.Binding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.Binding" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.Binding.Extensions">
+      <summary>Gets the collection of extensibility elements used in the XML Web service.</summary>
+      <returns>A <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> object that contains the collection of extensibility elements used in the XML Web service.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.Binding.Operations">
+      <summary>Gets the collection of specifications for data formats and message protocols used in the action supported by the XML Web service.</summary>
+      <returns>An <see cref="T:System.Web.Services.Description.OperationBindingCollection" /> object that contains the collection of specifications for data formats and message protocols used in the action supported by the XML Web service.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.Binding.ServiceDescription">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.ServiceDescription" /> of which the <see cref="T:System.Web.Services.Description.Binding" /> is a member.</summary>
+      <returns>A <see cref="T:System.Web.Services.Description.ServiceDescription" /> of which the <see cref="T:System.Web.Services.Description.Binding" /> is a member.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.Binding.Type">
+      <summary>Gets or sets a value representing the namespace-qualified name of the <see cref="T:System.Web.Services.Description.PortType" /> with which the <see langword="Binding" /> is associated.</summary>
+      <returns>An <see cref="T:System.Xml.XmlQualifiedName" /> of the <see cref="T:System.Web.Services.Description.PortType" /> with which the <see langword="Binding" /> is associated.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.BindingCollection">
+      <summary>Represents a collection of instances of the <see cref="T:System.Web.Services.Description.Binding" /> class supported by the XML Web service. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.BindingCollection.Add(System.Web.Services.Description.Binding)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.Binding" /> to the end of the <see cref="T:System.Web.Services.Description.BindingCollection" />.</summary>
+      <param name="binding">The <see cref="T:System.Web.Services.Description.Binding" /> to add to the collection.</param>
+      <returns>The zero-based index where the <paramref name="binding" /> parameter has been added.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.BindingCollection.Contains(System.Web.Services.Description.Binding)">
+      <summary>Returns a value indicating whether the specified <see cref="T:System.Web.Services.Description.Binding" /> is a member of the <see cref="T:System.Web.Services.Description.BindingCollection" />.</summary>
+      <param name="binding">A <see cref="T:System.Web.Services.Description.Binding" /> for which to check collection membership.</param>
+      <returns>
+        <see langword="true" /> if the <paramref name="binding" /> parameter is a member of the <see cref="T:System.Web.Services.Description.BindingCollection" />; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.BindingCollection.CopyTo(System.Web.Services.Description.Binding[],System.Int32)">
+      <summary>Copies the entire <see cref="T:System.Web.Services.Description.BindingCollection" /> to a compatible one-dimensional array of type <see cref="T:System.Web.Services.Description.Binding" />, starting at the specified zero-based index of the target array.</summary>
+      <param name="array">An array of type <see cref="T:System.Web.Services.Description.Binding" /> serving as the destination for the copy action.</param>
+      <param name="index">The zero-based index at which to start placing the copied collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.BindingCollection.IndexOf(System.Web.Services.Description.Binding)">
+      <summary>Searches for the specified <see cref="T:System.Web.Services.Description.Binding" /> and returns the zero-based index of the first occurrence within the collection.</summary>
+      <param name="binding">The <see cref="T:System.Web.Services.Description.Binding" /> for which to search in the collection.</param>
+      <returns>A 32-bit signed integer.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.BindingCollection.Insert(System.Int32,System.Web.Services.Description.Binding)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.Binding" /> to the <see cref="T:System.Web.Services.Description.BindingCollection" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index at which to insert the <paramref name="binding" /> parameter.</param>
+      <param name="binding">The <see cref="T:System.Web.Services.Description.Binding" /> to be added to the collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.BindingCollection.Remove(System.Web.Services.Description.Binding)">
+      <summary>Removes the first occurrence of the specified <see cref="T:System.Web.Services.Description.Binding" /> from the <see cref="T:System.Web.Services.Description.BindingCollection" />.</summary>
+      <param name="binding">The <see cref="T:System.Web.Services.Description.Binding" /> to remove from the collection.</param>
+    </member>
+    <member name="P:System.Web.Services.Description.BindingCollection.Item(System.Int32)">
+      <summary>Gets or sets the value of a <see cref="T:System.Web.Services.Description.Binding" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index of the <see cref="T:System.Web.Services.Description.Binding" /> whose value is modified or returned.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">The <paramref name="index" /> parameter is less than zero.  
+  
+-or-
+  
+ The <paramref name="index" /> parameter is greater than <see cref="P:System.Collections.CollectionBase.Count" />.</exception>
+      <returns>A <see langword="Binding" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.BindingCollection.Item(System.String)">
+      <summary>Gets a <see cref="T:System.Web.Services.Description.Binding" /> specified by its name.</summary>
+      <param name="name">The name of the <see cref="T:System.Web.Services.Description.Binding" /> returned.</param>
+      <returns>A <see langword="Binding" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.DocumentableItem">
+      <summary>Represents the abstract base class from which several classes in the <see cref="N:System.Web.Services.Description" /> namespace are derived.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.DocumentableItem.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.Web.Services.Description.DocumentableItem" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.DocumentableItem.Documentation">
+      <summary>Gets or sets the text documentation for the instance of the <see cref="T:System.Web.Services.Description.DocumentableItem" />.</summary>
+      <returns>A string that represents the documentation for the <see cref="T:System.Web.Services.Description.DocumentableItem" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.DocumentableItem.DocumentationElement">
+      <summary>Gets or sets the documentation element for the <see cref="T:System.Web.Services.Description.DocumentableItem" />.</summary>
+      <returns>A <see cref="T:System.Xml.XmlElement" /> that represents the documentation for the <see cref="T:System.Web.Services.Description.DocumentableItem" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.DocumentableItem.ExtensibleAttributes">
+      <summary>Gets or sets an array of type <see cref="T:System.Xml.XmlAttribute" /> that represents attribute extensions of WSDL to comply with Web Services Interoperability (WS-I) Basic Profile 1.1.</summary>
+      <returns>An array of type <see cref="T:System.Xml.XmlAttribute" /> that represents attribute extensions of WSDL to comply with Web Services Interoperability (WS-I) Basic Profile 1.1.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.DocumentableItem.Extensions">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> associated with this <see cref="T:System.Web.Services.Description.DocumentableItem" />.</summary>
+      <returns>The <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> associated with this <see cref="T:System.Web.Services.Description.DocumentableItem" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.DocumentableItem.Namespaces">
+      <summary>Gets or sets the dictionary of namespace prefixes and namespaces used to preserve namespace prefixes and namespaces when a <see cref="T:System.Web.Services.Description.ServiceDescription" /> object is constructed.</summary>
+      <returns>A <see cref="T:System.Xml.Serialization.XmlSerializerNamespaces" /> dictionary containing prefix/namespace pairs.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.FaultBinding">
+      <summary>Specifies the format for any error messages that might be output as a result of the operation. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.FaultBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.FaultBinding" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.FaultBinding.Extensions">
+      <summary>Gets the collection of extensibility elements associated with the current <see cref="T:System.Web.Services.Description.FaultBinding" />.</summary>
+      <returns>A <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" />. The default value is a collection with a <see cref="P:System.Collections.CollectionBase.Count" /> of zero.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.FaultBindingCollection">
+      <summary>Represents a collection of instances of the <see cref="T:System.Web.Services.Description.FaultBinding" /> class. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.FaultBindingCollection.Add(System.Web.Services.Description.FaultBinding)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.FaultBinding" /> to the end of the <see cref="T:System.Web.Services.Description.FaultBindingCollection" />.</summary>
+      <param name="bindingOperationFault">The <see cref="T:System.Web.Services.Description.FaultBinding" /> to add to the collection.</param>
+      <returns>The zero-based index where the <paramref name="bindingOperationFault" /> parameter has been added.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.FaultBindingCollection.Contains(System.Web.Services.Description.FaultBinding)">
+      <summary>Returns a value indicating whether the specified <see cref="T:System.Web.Services.Description.FaultBinding" /> is a member of the <see cref="T:System.Web.Services.Description.FaultBindingCollection" />.</summary>
+      <param name="bindingOperationFault">The <see cref="T:System.Web.Services.Description.FaultBinding" /> for which to check collection membership.</param>
+      <returns>
+        <see langword="true" /> if the <paramref name="bindingOperationFault" /> parameter is a member of the <see langword="FaultBindingCollection" />; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.FaultBindingCollection.CopyTo(System.Web.Services.Description.FaultBinding[],System.Int32)">
+      <summary>Copies the entire <see cref="T:System.Web.Services.Description.FaultBindingCollection" /> to a compatible one-dimensional array of type <see cref="T:System.Web.Services.Description.FaultBinding" />, starting at the specified zero-based index of the target array.</summary>
+      <param name="array">An array of type <see cref="T:System.Web.Services.Description.FaultBinding" /> serving as the destination for the copy action.</param>
+      <param name="index">The zero-based index at which to start placing the copied collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.FaultBindingCollection.IndexOf(System.Web.Services.Description.FaultBinding)">
+      <summary>Searches for the specified <see cref="T:System.Web.Services.Description.FaultBinding" /> and returns the zero-based index of the first occurrence within the collection.</summary>
+      <param name="bindingOperationFault">The <see cref="T:System.Web.Services.Description.FaultBinding" /> for which to search in the collection.</param>
+      <returns>A 32-bit signed integer.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.FaultBindingCollection.Insert(System.Int32,System.Web.Services.Description.FaultBinding)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.FaultBinding" /> to the <see langword="FaultBindingCollection" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index at which to insert the <paramref name="bindingOperationFault" /> parameter.</param>
+      <param name="bindingOperationFault">The <see cref="T:System.Web.Services.Description.FaultBinding" /> to add to the collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.FaultBindingCollection.Remove(System.Web.Services.Description.FaultBinding)">
+      <summary>Removes the first occurrence the specified <see cref="T:System.Web.Services.Description.FaultBinding" /> from the <see cref="T:System.Web.Services.Description.FaultBindingCollection" />.</summary>
+      <param name="bindingOperationFault">The <see cref="T:System.Web.Services.Description.FaultBinding" /> to remove from the collection.</param>
+    </member>
+    <member name="P:System.Web.Services.Description.FaultBindingCollection.Item(System.Int32)">
+      <summary>Gets or sets the value of a <see cref="T:System.Web.Services.Description.FaultBinding" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index of the <see cref="T:System.Web.Services.Description.FaultBinding" /> whose value is modified or returned.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">The <paramref name="index" /> parameter is less than zero.  
+  
+-or-
+  
+ The <paramref name="index" /> parameter is greater than <see cref="P:System.Collections.CollectionBase.Count" />.</exception>
+      <returns>A <see langword="FaultBinding" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.FaultBindingCollection.Item(System.String)">
+      <summary>Gets a <see cref="T:System.Web.Services.Description.FaultBinding" /> specified by its name.</summary>
+      <param name="name">The name of the <see cref="T:System.Web.Services.Description.FaultBinding" /> returned.</param>
+      <returns>A <see langword="FaultBinding" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.HttpAddressBinding">
+      <summary>Represents an extensibility element added to a <see cref="T:System.Web.Services.Description.Port" /> within an XML Web service. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.HttpAddressBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.HttpAddressBinding" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.HttpAddressBinding.Location">
+      <summary>Gets or sets a value representing the URL of the XML Web service.</summary>
+      <returns>A string specifying the URI for the <see cref="T:System.Web.Services.Description.Port" />. The default value is an empty string ("").</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.HttpBinding">
+      <summary>Represents an extensibility element added to a <see cref="T:System.Web.Services.Description.Binding" /> within an XML Web service. This class cannot be inherited.</summary>
+    </member>
+    <member name="F:System.Web.Services.Description.HttpBinding.Namespace">
+      <summary>Specifies the URI for the XML namespace representing the HTTP transport for use with SOAP. This field is constant.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.HttpBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.HttpBinding" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.HttpBinding.Verb">
+      <summary>Gets or sets a value indicating whether the HTTP request will be made using the "GET" or "POST" method.</summary>
+      <returns>A string containing one of two possible values, "GET" or "POST". The default value is an empty string ("").</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.HttpOperationBinding">
+      <summary>Represents an extensibility element added to an <see cref="T:System.Web.Services.Description.OperationBinding" /> within an XML Web service. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.HttpOperationBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.HttpOperationBinding" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.HttpOperationBinding.Location">
+      <summary>Gets or sets the URL relative to the location specified by the <see cref="T:System.Web.Services.Description.HttpAddressBinding" />, within the Web Services Description Language (WSDL) document, of the operation supported by the <see cref="T:System.Web.Services.Description.HttpOperationBinding" />.</summary>
+      <returns>An unencoded string representing the relative path. The default value is an empty string ("").</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.HttpUrlEncodedBinding">
+      <summary>Represents an extensibility element added to an <see cref="T:System.Web.Services.Description.InputBinding" /> within an XML Web service. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.HttpUrlEncodedBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.HttpUrlEncodedBinding" /> class.</summary>
+    </member>
+    <member name="T:System.Web.Services.Description.HttpUrlReplacementBinding">
+      <summary>Represents an extensibility element added to an <see cref="T:System.Web.Services.Description.InputBinding" /> within an XML Web service. It specifies the format for data transmission through HTTP. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.HttpUrlReplacementBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.HttpUrlReplacementBinding" /> class.</summary>
+    </member>
+    <member name="T:System.Web.Services.Description.Import">
+      <summary>Associates an XML namespace with a document location. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.Import.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.Import" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.Import.Extensions">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> associated with this <see cref="T:System.Web.Services.Description.Import" /> class.</summary>
+      <returns>The <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> associated with this <see cref="T:System.Web.Services.Description.Import" /> class.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.Import.Location">
+      <summary>Gets or sets the value of the XML <see langword="location" /> attribute of the <see langword="import" /> element.</summary>
+      <returns>The value of the XML <see langword="location" /> attribute of the <see langword="import" /> element. This value also specifies the URL of the imported document.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.Import.Namespace">
+      <summary>Gets or sets the value of the XML <see langword="namespace" /> attribute of the <see langword="import" /> element.</summary>
+      <returns>The value of the XML <see langword="namespace" /> attribute of the <see langword="import" /> element.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.Import.ServiceDescription">
+      <summary>Gets a reference to the <see cref="T:System.Web.Services.Description.ServiceDescription" /> of which the <see cref="T:System.Web.Services.Description.Import" /> is a member.</summary>
+      <returns>The <see cref="T:System.Web.Services.Description.ServiceDescription" /> of which the <see cref="T:System.Web.Services.Description.Import" /> is a member.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.ImportCollection">
+      <summary>Provides a collection of instances of the <see cref="T:System.Web.Services.Description.Import" /> class representing documents to be imported into the XML Web service. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.ImportCollection.Add(System.Web.Services.Description.Import)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.Import" /> to the end of the <see cref="T:System.Web.Services.Description.ImportCollection" />.</summary>
+      <param name="import">The <see cref="T:System.Web.Services.Description.Import" /> to add to the collection.</param>
+      <returns>The zero-based index where the <paramref name="import" /> parameter has been added.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ImportCollection.Contains(System.Web.Services.Description.Import)">
+      <summary>Returns a value indicating whether the specified <see cref="T:System.Web.Services.Description.Import" /> is a member of the <see cref="T:System.Web.Services.Description.ImportCollection" />.</summary>
+      <param name="import">The <see cref="T:System.Web.Services.Description.Import" /> for which to check collection membership.</param>
+      <returns>
+        <see langword="true" /> if the <paramref name="import" /> parameter is a member of the <see cref="T:System.Web.Services.Description.ImportCollection" />; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ImportCollection.CopyTo(System.Web.Services.Description.Import[],System.Int32)">
+      <summary>Copies the entire <see cref="T:System.Web.Services.Description.ImportCollection" /> to a compatible one-dimensional array of type <see cref="T:System.Web.Services.Description.Import" />, starting at the specified zero-based index of the target array.</summary>
+      <param name="array">An array of type <see cref="T:System.Web.Services.Description.Import" /> serving as the destination of the copy action.</param>
+      <param name="index">The zero-based index at which to start placing the copied collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.ImportCollection.IndexOf(System.Web.Services.Description.Import)">
+      <summary>Searches for the specified <see cref="T:System.Web.Services.Description.Import" /> and returns the zero-based index of the first occurrence within the collection.</summary>
+      <param name="import">The <see cref="T:System.Web.Services.Description.Import" /> for which to search in the collection.</param>
+      <returns>A 32-bit signed integer.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ImportCollection.Insert(System.Int32,System.Web.Services.Description.Import)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.Import" /> instance to the <see cref="T:System.Web.Services.Description.ImportCollection" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index at which to insert the <paramref name="import" /> parameter.</param>
+      <param name="import">The <see cref="T:System.Web.Services.Description.Import" /> to add to the collection.</param>
+      <exception cref="T:System.IndexOutOfRangeException">The <paramref name="index" /> parameter is less than zero.  
+  
+-or-
+  
+ The <paramref name="index" /> parameter is greater than <see cref="P:System.Collections.CollectionBase.Count" />.</exception>
+    </member>
+    <member name="M:System.Web.Services.Description.ImportCollection.Remove(System.Web.Services.Description.Import)">
+      <summary>Removes the first occurrence of the specified <see cref="T:System.Web.Services.Description.Import" /> from the <see cref="T:System.Web.Services.Description.ImportCollection" />.</summary>
+      <param name="import">The <see cref="T:System.Web.Services.Description.Import" /> to remove from the collection.</param>
+    </member>
+    <member name="P:System.Web.Services.Description.ImportCollection.Item(System.Int32)">
+      <summary>Gets or sets the value of an <see cref="T:System.Web.Services.Description.Import" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index of the <see cref="T:System.Web.Services.Description.Import" /> whose value is modified or returned.</param>
+      <returns>An <see langword="Import" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.InputBinding">
+      <summary>Provides a set of specifications for data formats and protocols used by the XML Web service for input messages. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.InputBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.InputBinding" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.InputBinding.Extensions">
+      <summary>Gets the collection of extensibility elements associated with the current <see cref="T:System.Web.Services.Description.InputBinding" />.</summary>
+      <returns>A <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.Message">
+      <summary>Provides an abstract definition of data passed by an XML Web service. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.Message.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.Message" /> class.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.Message.FindPartByName(System.String)">
+      <summary>Searches the <see cref="T:System.Web.Services.Description.MessagePartCollection" /> returned by the <see cref="P:System.Web.Services.Description.Message.Parts" /> property, and returns the named <see cref="T:System.Web.Services.Description.MessagePart" />.</summary>
+      <param name="partName">A string that names the <see cref="T:System.Web.Services.Description.MessagePart" /> to be returned.</param>
+      <exception cref="T:System.ArgumentException">No <see cref="T:System.Web.Services.Description.MessagePart" /> with the specified name exists within the collection.</exception>
+      <returns>A <see cref="T:System.Web.Services.Description.MessagePart" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.Message.FindPartsByName(System.String[])">
+      <summary>Searches the <see cref="T:System.Web.Services.Description.MessagePartCollection" /> returned by the <see cref="P:System.Web.Services.Description.Message.Parts" /> property and returns an array of type <see cref="T:System.Web.Services.Description.MessagePart" /> that contains the named instances.</summary>
+      <param name="partNames">An array of names of the <see cref="T:System.Web.Services.Description.MessagePart" /> instances to be returned.</param>
+      <exception cref="T:System.ArgumentException">No <see cref="T:System.Web.Services.Description.MessagePart" /> instances with the specified names exist within the collection.</exception>
+      <returns>An array of type <see cref="T:System.Web.Services.Description.MessagePart" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.Message.Extensions">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> associated with this <see cref="T:System.Web.Services.Description.Message" />.</summary>
+      <returns>The <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> associated with this <see cref="T:System.Web.Services.Description.Message" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.Message.Parts">
+      <summary>Gets the collection of the <see cref="T:System.Web.Services.Description.MessagePart" /> objects contained in the <see cref="T:System.Web.Services.Description.Message" />.</summary>
+      <returns>A <see cref="T:System.Web.Services.Description.MessagePartCollection" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.Message.ServiceDescription">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.ServiceDescription" /> of which the current <see cref="T:System.Web.Services.Description.Message" /> is a member.</summary>
+      <returns>A <see cref="T:System.Web.Services.Description.ServiceDescription" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.MessageBinding">
+      <summary>Describes how abstract content is mapped into a concrete format.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.MessageBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.MessageBinding" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.MessageBinding.OperationBinding">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.OperationBinding" /> of which the current <see cref="T:System.Web.Services.Description.MessageBinding" /> is a member.</summary>
+      <returns>An <see cref="T:System.Web.Services.Description.OperationBinding" /> of which the current <see cref="T:System.Web.Services.Description.MessageBinding" /> is a member.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.MessageCollection">
+      <summary>Represents a collection of instances of the <see cref="T:System.Web.Services.Description.Message" /> class. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.MessageCollection.Add(System.Web.Services.Description.Message)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.Message" /> to the end of the <see cref="T:System.Web.Services.Description.MessageCollection" />.</summary>
+      <param name="message">The <see cref="T:System.Web.Services.Description.Message" /> to add to the collection.</param>
+      <returns>The zero-based index where the <paramref name="message" /> parameter has been added.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.MessageCollection.Contains(System.Web.Services.Description.Message)">
+      <summary>Returns a value indicating whether the specified <see cref="T:System.Web.Services.Description.Message" /> is a member of the <see cref="T:System.Web.Services.Description.MessageCollection" />.</summary>
+      <param name="message">The <see cref="T:System.Web.Services.Description.Message" /> for which to check collection membership.</param>
+      <returns>
+        <see langword="true" /> if the <paramref name="message" /> parameter is a member of the <see cref="T:System.Web.Services.Description.MessageCollection" />; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.MessageCollection.CopyTo(System.Web.Services.Description.Message[],System.Int32)">
+      <summary>Copies the entire <see cref="T:System.Web.Services.Description.MessageCollection" /> to a compatible one-dimensional array of type <see cref="T:System.Web.Services.Description.Message" />, starting at the specified zero-based index of the target array.</summary>
+      <param name="array">An array of type <see cref="T:System.Web.Services.Description.Message" /> serving as the destination for the copy action.</param>
+      <param name="index">The zero-based index at which to start placing the copied collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.MessageCollection.IndexOf(System.Web.Services.Description.Message)">
+      <summary>Searches for the specified <see cref="T:System.Web.Services.Description.Message" /> and returns the zero-based index of the first occurrence within the collection.</summary>
+      <param name="message">The <see cref="T:System.Web.Services.Description.Message" /> for which to search in the collection.</param>
+      <returns>A 32-bit signed integer.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.MessageCollection.Insert(System.Int32,System.Web.Services.Description.Message)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.Message" /> to the <see cref="T:System.Web.Services.Description.MessageCollection" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index at which to insert the <paramref name="message" /> parameter.</param>
+      <param name="message">The <see cref="T:System.Web.Services.Description.Message" /> to add to the collection.</param>
+      <exception cref="T:System.IndexOutOfRangeException">The <paramref name="index" /> parameter is less than zero.  
+  
+-or-
+  
+ The <paramref name="index" /> parameter is greater than <see cref="P:System.Collections.CollectionBase.Count" />.</exception>
+    </member>
+    <member name="M:System.Web.Services.Description.MessageCollection.Remove(System.Web.Services.Description.Message)">
+      <summary>Removes the first occurrence of the specified <see cref="T:System.Web.Services.Description.Message" /> from the <see cref="T:System.Web.Services.Description.MessageCollection" />.</summary>
+      <param name="message">The <see cref="T:System.Web.Services.Description.Message" /> to remove from the collection.</param>
+    </member>
+    <member name="P:System.Web.Services.Description.MessageCollection.Item(System.Int32)">
+      <summary>Gets or sets the value of a <see cref="T:System.Web.Services.Description.Message" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index of the <see cref="T:System.Web.Services.Description.Message" /> whose value is modified or returned.</param>
+      <returns>A <see langword="Message" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.MessageCollection.Item(System.String)">
+      <summary>Gets a <see cref="T:System.Web.Services.Description.Message" /> specified by its name.</summary>
+      <param name="name">The name of the <see cref="T:System.Web.Services.Description.Message" /> returned.</param>
+      <returns>A <see langword="Message" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.MessagePart">
+      <summary>Represents the messages to be broken up into their logical units with specific abstract information for each part. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.MessagePart.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.MessagePart" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.MessagePart.Element">
+      <summary>Gets or sets the name of the XML element that corresponds to the current <see cref="T:System.Web.Services.Description.MessagePart" />.</summary>
+      <returns>The name of the XML element that corresponds to the current <see cref="T:System.Web.Services.Description.MessagePart" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.MessagePart.Extensions">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> associated with this <see cref="T:System.Web.Services.Description.MessagePart" />.</summary>
+      <returns>The <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> associated with this <see cref="T:System.Web.Services.Description.MessagePart" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.MessagePart.Message">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.Message" /> of which the <see cref="T:System.Web.Services.Description.MessagePart" /> is a member.</summary>
+      <returns>The message of which the <see cref="T:System.Web.Services.Description.MessagePart" /> is a member.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.MessagePart.Type">
+      <summary>Gets or sets the XML data type of the <see cref="T:System.Web.Services.Description.MessagePart" />.</summary>
+      <returns>An <see cref="T:System.Xml.XmlQualifiedName" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.MessagePartCollection">
+      <summary>Represents a collection of instances of the <see cref="T:System.Web.Services.Description.MessagePart" /> class. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.MessagePartCollection.Add(System.Web.Services.Description.MessagePart)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.MessagePart" /> to the end of the <see cref="T:System.Web.Services.Description.MessagePartCollection" />.</summary>
+      <param name="messagePart">The <see cref="T:System.Web.Services.Description.MessagePart" /> to add to the collection.</param>
+      <returns>The zero-based index where the <paramref name="messagePart" /> parameter has been added.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.MessagePartCollection.Contains(System.Web.Services.Description.MessagePart)">
+      <summary>Returns a value indicating whether the specified <see cref="T:System.Web.Services.Description.MessagePart" /> is a member of the <see langword="MessagePartCollection" />.</summary>
+      <param name="messagePart">The <see cref="T:System.Web.Services.Description.MessagePart" /> for which to check collection membership.</param>
+      <returns>
+        <see langword="true" /> if the <paramref name="messagePart" /> parameter is a member of the <see cref="T:System.Web.Services.Description.MessagePartCollection" />; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.MessagePartCollection.CopyTo(System.Web.Services.Description.MessagePart[],System.Int32)">
+      <summary>Copies the entire <see cref="T:System.Web.Services.Description.MessagePartCollection" /> to a compatible one-dimensional array of type <see cref="T:System.Web.Services.Description.MessagePart" />, starting at the specified zero-based index of the target array.</summary>
+      <param name="array">An array of type <see cref="T:System.Web.Services.Description.MessagePart" /> serving as the destination of the copy action.</param>
+      <param name="index">The zero-based index at which to start placing the copied collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.MessagePartCollection.IndexOf(System.Web.Services.Description.MessagePart)">
+      <summary>Searches for the specified <see cref="T:System.Web.Services.Description.MessagePart" /> and returns the zero-based index of the first occurrence within the collection.</summary>
+      <param name="messagePart">The <see cref="T:System.Web.Services.Description.MessagePart" /> for which to search in the collection.</param>
+      <returns>A 32-bit signed integer.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.MessagePartCollection.Insert(System.Int32,System.Web.Services.Description.MessagePart)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.MessagePart" /> to the <see cref="T:System.Web.Services.Description.MessagePartCollection" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index at which to insert the <paramref name="messagePart" /> parameter.</param>
+      <param name="messagePart">The <see cref="T:System.Web.Services.Description.MessagePart" /> to add to the collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.MessagePartCollection.Remove(System.Web.Services.Description.MessagePart)">
+      <summary>Removes the first occurrence of the specified <see cref="T:System.Web.Services.Description.MessagePart" /> from the <see cref="T:System.Web.Services.Description.MessagePartCollection" />.</summary>
+      <param name="messagePart">The <see cref="T:System.Web.Services.Description.MessagePart" /> to remove from the collection.</param>
+    </member>
+    <member name="P:System.Web.Services.Description.MessagePartCollection.Item(System.Int32)">
+      <summary>Gets or sets the value of a <see cref="T:System.Web.Services.Description.MessagePart" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index of the <see cref="T:System.Web.Services.Description.MessagePart" /> whose value is modified or returned.</param>
+      <returns>A <see langword="MessagePart" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.MessagePartCollection.Item(System.String)">
+      <summary>Gets a <see cref="T:System.Web.Services.Description.MessagePart" /> specified by its name.</summary>
+      <param name="name">The name of the <see cref="T:System.Web.Services.Description.MessagePart" /> returned.</param>
+      <returns>A <see langword="MessagePart" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.MimeContentBinding">
+      <summary>Represents an extensibility element added to an <see cref="T:System.Web.Services.Description.InputBinding" /> or an <see cref="T:System.Web.Services.Description.OutputBinding" /> within an XML Web service, specifying the MIME format for the body of the HTTP transmission. This class cannot be inherited.</summary>
+    </member>
+    <member name="F:System.Web.Services.Description.MimeContentBinding.Namespace">
+      <summary>Specifies the URI for the XML namespace of the <see cref="T:System.Web.Services.Description.MimeContentBinding" /> class. This field is constant.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.MimeContentBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.MimeContentBinding" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.MimeContentBinding.Part">
+      <summary>Gets or sets the name of the <see cref="T:System.Web.Services.Description.MessagePart" /> to which the <see cref="T:System.Web.Services.Description.MimeContentBinding" /> applies.</summary>
+      <returns>A string representing the name of the <see cref="T:System.Web.Services.Description.MessagePart" /> with which the current <see cref="T:System.Web.Services.Description.MimeContentBinding" /> is associated. The default value is an empty string ("").</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.MimeContentBinding.Type">
+      <summary>Gets or sets a value indicating the format of the body of the HTTP transmission.</summary>
+      <returns>A string indicating the format of the body of the HTTP transmission. The default value is an empty string ("").</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.MimeMultipartRelatedBinding">
+      <summary>Represents an extensibility element added to an <see cref="T:System.Web.Services.Description.InputBinding" /> or an <see cref="T:System.Web.Services.Description.OutputBinding" />, specifying the individual MIME formats for the parts of the HTTP transmission. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.MimeMultipartRelatedBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.MimeMultipartRelatedBinding" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.MimeMultipartRelatedBinding.Parts">
+      <summary>Gets the collection of extensibility elements added to the <see cref="T:System.Web.Services.Description.MimeMultipartRelatedBinding" /> to specify the MIME format for the parts of the MIME message.</summary>
+      <returns>A <see cref="T:System.Web.Services.Description.MimePartCollection" /> representing extensibility elements added to the <see cref="T:System.Web.Services.Description.MimeMultipartRelatedBinding" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.MimePart">
+      <summary>Represents an extensibility element added to a <see cref="T:System.Web.Services.Description.MimeMultipartRelatedBinding" />, specifying the concrete MIME type for the <see cref="T:System.Web.Services.Description.MessagePart" /> to which the <see langword="MimePart" /> applies. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.MimePart.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.MimePart" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.MimePart.Extensions">
+      <summary>Gets the collection of MIME extensibility elements for the part of the <see cref="T:System.Web.Services.Description.MimeMultipartRelatedBinding" /> of which the <see cref="T:System.Web.Services.Description.MimePart" /> is a member.</summary>
+      <returns>A collection of service description format extension.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.MimePartCollection">
+      <summary>Represents a collection of instances of the <see cref="T:System.Web.Services.Description.MimePart" /> class. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.MimePartCollection.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.MimePartCollection" /> class.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.MimePartCollection.Add(System.Web.Services.Description.MimePart)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.MimePart" /> to the end of the <see cref="T:System.Web.Services.Description.MimePartCollection" />.</summary>
+      <param name="mimePart">The <see cref="T:System.Web.Services.Description.MimePart" /> to add to the collection.</param>
+      <returns>The zero-based index where the <paramref name="mimePart" /> parameter has been added.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.MimePartCollection.Contains(System.Web.Services.Description.MimePart)">
+      <summary>Returns a value indicating whether the specified <see cref="T:System.Web.Services.Description.MimePart" /> is a member of the <see cref="T:System.Web.Services.Description.MimePartCollection" />.</summary>
+      <param name="mimePart">The <see cref="T:System.Web.Services.Description.MimePart" /> to check for collection membership.</param>
+      <returns>
+        <see langword="true" /> if the <paramref name="mimePart" /> parameter is a member of the <see langword="MimePartCollection" />; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.MimePartCollection.CopyTo(System.Web.Services.Description.MimePart[],System.Int32)">
+      <summary>Copies the entire <see cref="T:System.Web.Services.Description.MimePartCollection" /> to a compatible one-dimensional array of type <see cref="T:System.Web.Services.Description.MimePart" />, starting at the specified zero-based index of the target array.</summary>
+      <param name="array">An array of type <see cref="T:System.Web.Services.Description.MimePart" /> serving as the destination for the copy action.</param>
+      <param name="index">The zero-based index at which to start placing the copied collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.MimePartCollection.IndexOf(System.Web.Services.Description.MimePart)">
+      <summary>Searches for the specified <see cref="T:System.Web.Services.Description.MimePart" /> and returns the zero-based index of the first occurrence within the collection.</summary>
+      <param name="mimePart">The <see cref="T:System.Web.Services.Description.MimePart" /> for which to search the <see cref="T:System.Web.Services.Description.MimePartCollection" />.</param>
+      <returns>A 32-bit signed integer.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.MimePartCollection.Insert(System.Int32,System.Web.Services.Description.MimePart)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.MimePart" /> to the <see cref="T:System.Web.Services.Description.MimePartCollection" /> at the specified index.</summary>
+      <param name="index">The zero-based index at which to insert the <paramref name="mimePart" /> parameter.</param>
+      <param name="mimePart">The <see cref="T:System.Web.Services.Description.MimePart" /> to add to the collection.</param>
+      <exception cref="T:System.IndexOutOfRangeException">The <paramref name="index" /> parameter is less than zero.  
+  
+-or-
+  
+ The <paramref name="index" /> parameter is greater than <see cref="P:System.Collections.CollectionBase.Count" />.</exception>
+    </member>
+    <member name="M:System.Web.Services.Description.MimePartCollection.Remove(System.Web.Services.Description.MimePart)">
+      <summary>Removes the first occurrence of the specified <see cref="T:System.Web.Services.Description.MimePart" /> from the <see cref="T:System.Web.Services.Description.MimePartCollection" />.</summary>
+      <param name="mimePart">The <see cref="T:System.Web.Services.Description.MimePart" /> to remove from the collection.</param>
+    </member>
+    <member name="P:System.Web.Services.Description.MimePartCollection.Item(System.Int32)">
+      <summary>Gets or sets the value of a <see cref="T:System.Web.Services.Description.MimePart" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index of the <see cref="T:System.Web.Services.Description.MimePart" /> whose value is modified or returned.</param>
+      <returns>A <see langword="MimePart" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.MimeTextBinding">
+      <summary>Represents an extensibility element added to an <see cref="T:System.Web.Services.Description.InputBinding" />, an <see cref="T:System.Web.Services.Description.OutputBinding" />, or a <see cref="T:System.Web.Services.Description.MimePart" />, specifying the text patterns for which to search the HTTP transmission. This class cannot be inherited.</summary>
+    </member>
+    <member name="F:System.Web.Services.Description.MimeTextBinding.Namespace">
+      <summary>Specifies the URI for the XML namespace of the <see cref="T:System.Web.Services.Description.MimeTextBinding" /> class. This field is constant.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.MimeTextBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.MimeTextBinding" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.MimeTextBinding.Matches">
+      <summary>Gets the collection of MIME text patterns for which the HTTP transmission is searched.</summary>
+      <returns>A <see cref="T:System.Web.Services.Description.MimeTextMatchCollection" /> representing the MIME text patterns to search for.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.MimeTextMatch">
+      <summary>Represents a text pattern for which the HTTP transmission is searched. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.MimeTextMatch.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.MimeTextMatch" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.MimeTextMatch.Capture">
+      <summary>Gets or sets a value indicating the zero-based index of a <see cref="T:System.Web.Services.Description.MimeTextMatch" /> within a group.</summary>
+      <exception cref="T:System.ArgumentException">The property value is negative.</exception>
+      <returns>A 32-bit signed integer. The default value is 0, indicating that the <see cref="T:System.Web.Services.Description.MimeTextMatch" /> is the first instance within a group.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.MimeTextMatch.Group">
+      <summary>Gets or sets a value indicating the number of groups in which to place the results of the text search.</summary>
+      <exception cref="T:System.ArgumentException">The property value is negative.</exception>
+      <returns>A 32-bit signed integer. The default value is 1.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.MimeTextMatch.IgnoreCase">
+      <summary>Gets or sets a value indicating whether the search should disregard the case of the text to be searched.</summary>
+      <returns>
+        <see langword="true" /> if the search should disregard case; otherwise, <see langword="false" />. The default is <see langword="false" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.MimeTextMatch.Matches">
+      <summary>Gets the collection of text pattern matches that have been found by the search.</summary>
+      <returns>A <see cref="T:System.Web.Services.Description.MimeTextMatchCollection" /> representing the members of the <see cref="P:System.Web.Services.Description.MimeTextMatch.Group" /> property.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.MimeTextMatch.Name">
+      <summary>Gets or sets the name of the <see cref="T:System.Web.Services.Description.MimeTextMatch" />.</summary>
+      <returns>The name of the <see cref="T:System.Web.Services.Description.MimeTextMatch" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.MimeTextMatch.Pattern">
+      <summary>Gets or sets the text pattern for the search.</summary>
+      <returns>A string representing the text for which to search the HTTP transmission. The default value is an empty string ("").</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.MimeTextMatch.Repeats">
+      <summary>Gets or sets a value indicating the number of times the search is to be performed.</summary>
+      <exception cref="T:System.ArgumentException">The property value is negative.</exception>
+      <returns>A 32-bit signed integer. The default value is 1.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.MimeTextMatch.RepeatsString">
+      <summary>Gets or sets a value indicating the number of times the search is to be performed.</summary>
+      <returns>A string indicating the number of times the search is to be performed. The default value is "1".</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.MimeTextMatch.Type">
+      <summary>Gets or sets a value indicating the MIME format of the text to be searched.</summary>
+      <returns>A string indicating the MIME format of the text to be searched.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.MimeTextMatchCollection">
+      <summary>Provides a collection of instances of the <see cref="T:System.Web.Services.Description.MimeTextMatch" /> class. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.MimeTextMatchCollection.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.MimeTextMatchCollection" /> class.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.MimeTextMatchCollection.Add(System.Web.Services.Description.MimeTextMatch)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.MimeTextMatch" /> to the end of the <see cref="T:System.Web.Services.Description.MimeTextMatchCollection" />.</summary>
+      <param name="match">The <see cref="T:System.Web.Services.Description.MimeTextMatch" /> to add to the collection.</param>
+      <returns>The zero-based index where the <paramref name="match" /> parameter has been added.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.MimeTextMatchCollection.Contains(System.Web.Services.Description.MimeTextMatch)">
+      <summary>Returns a value indicating whether the specified <see cref="T:System.Web.Services.Description.MimeTextMatch" /> is a member of the <see cref="T:System.Web.Services.Description.MimeTextMatchCollection" />.</summary>
+      <param name="match">The <see cref="T:System.Web.Services.Description.MimeTextMatch" /> for which to check collection membership.</param>
+      <returns>
+        <see langword="true" /> if the <paramref name="match" /> parameter is a member of the <see langword="MimeTextMatchCollection" />; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.MimeTextMatchCollection.CopyTo(System.Web.Services.Description.MimeTextMatch[],System.Int32)">
+      <summary>Copies the entire <see cref="T:System.Web.Services.Description.MimeTextMatchCollection" /> to a compatible one-dimensional array of type <see cref="T:System.Web.Services.Description.MimeTextMatch" />, starting at the specified zero-based index of the target array.</summary>
+      <param name="array">The array of type <see cref="T:System.Web.Services.Description.MimeTextMatch" /> serving as the destination for the copy action.</param>
+      <param name="index">The zero-based index at which to start placing the copied collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.MimeTextMatchCollection.IndexOf(System.Web.Services.Description.MimeTextMatch)">
+      <summary>Searches for the specified <see cref="T:System.Web.Services.Description.MimeTextMatch" /> and returns the zero-based index of the first occurrence within the collection.</summary>
+      <param name="match">The <see cref="T:System.Web.Services.Description.MimeTextMatch" /> for which to search in the collection.</param>
+      <returns>A 32-bit signed integer.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.MimeTextMatchCollection.Insert(System.Int32,System.Web.Services.Description.MimeTextMatch)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.MimeTextMatch" /> to the <see cref="T:System.Web.Services.Description.MimeTextMatchCollection" /> at the specified index.</summary>
+      <param name="index">The zero-based index at which to insert the <paramref name="match" /> parameter.</param>
+      <param name="match">The <see cref="T:System.Web.Services.Description.MimeTextMatch" /> to add to the collection.</param>
+      <exception cref="T:System.IndexOutOfRangeException">The <paramref name="index" /> parameter is less than zero.  
+  
+-or-
+  
+ The <paramref name="index" /> parameter is greater than <see cref="P:System.Collections.CollectionBase.Count" />.</exception>
+    </member>
+    <member name="M:System.Web.Services.Description.MimeTextMatchCollection.Remove(System.Web.Services.Description.MimeTextMatch)">
+      <summary>Removes the first occurrence of the specified <see cref="T:System.Web.Services.Description.MimeTextMatch" /> from the <see cref="T:System.Web.Services.Description.MimeTextMatchCollection" />.</summary>
+      <param name="match">The <see cref="T:System.Web.Services.Description.MimeTextMatch" /> to remove from the collection.</param>
+    </member>
+    <member name="P:System.Web.Services.Description.MimeTextMatchCollection.Item(System.Int32)">
+      <summary>Gets or sets the value of the member of the <see cref="T:System.Web.Services.Description.MimeTextMatchCollection" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index of the <see cref="T:System.Web.Services.Description.MimeTextMatch" /> whose value is returned or modified.</param>
+      <returns>A <see langword="MimeTextMatch" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.MimeXmlBinding">
+      <summary>Represents an extensibility element added to a <see cref="T:System.Web.Services.Description.MimePart" />, an <see cref="T:System.Web.Services.Description.InputBinding" /> or an <see cref="T:System.Web.Services.Description.OutputBinding" />. It specifies the schema for XML messages that are not SOAP compliant. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.MimeXmlBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.MimeXmlBinding" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.MimeXmlBinding.Part">
+      <summary>Gets or sets the name of the <see cref="T:System.Web.Services.Description.MessagePart" /> to which the <see cref="T:System.Web.Services.Description.MimeXmlBinding" /> applies.</summary>
+      <returns>The name of the corresponding <see cref="T:System.Web.Services.Description.MessagePart" />. The default value is an empty string ("").</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.NamedItem">
+      <summary>Represents a named, item that can be documented.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.NamedItem.#ctor">
+      <summary>When called in a derived class, initializes a new instance of the <see cref="T:System.Web.Services.Description.NamedItem" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.NamedItem.Name">
+      <summary>Gets or sets the name of the item.</summary>
+      <returns>A <see cref="T:System.String" /> containing the name of the item.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.Operation">
+      <summary>Provides an abstract definition of an action supported by the XML Web service. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.Operation.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.Operation" /> class.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.Operation.IsBoundBy(System.Web.Services.Description.OperationBinding)">
+      <summary>Returns a value that indicates whether the specified <see cref="T:System.Web.Services.Description.OperationBinding" /> matches with the <see cref="T:System.Web.Services.Description.Operation" />.</summary>
+      <param name="operationBinding">An <see cref="T:System.Web.Services.Description.OperationBinding" /> to be checked to determine whether it matches with the <see cref="T:System.Web.Services.Description.Operation" />.</param>
+      <returns>
+        <see langword="true" /> if the <see cref="T:System.Web.Services.Description.Operation" /> instance matches the <paramref name="operationBinding" /> parameter; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.Operation.Extensions">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> associated with this <see cref="T:System.Web.Services.Description.Operation" />.</summary>
+      <returns>The <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> associated with this <see cref="T:System.Web.Services.Description.Operation" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.Operation.Faults">
+      <summary>Gets the collection of faults, or error messages, defined by the current <see cref="T:System.Web.Services.Description.Operation" />.</summary>
+      <returns>A collection of faults, or error messages, defined by the current operation.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.Operation.Messages">
+      <summary>Gets the collection of instances of the <see cref="T:System.Web.Services.Description.Message" /> class defined by the current <see cref="T:System.Web.Services.Description.Operation" />.</summary>
+      <returns>The collection of instances of the <see cref="T:System.Web.Services.Description.Message" /> class defined by the current <see cref="T:System.Web.Services.Description.Operation" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.Operation.ParameterOrder">
+      <summary>Gets or sets an array of the elements contained in the <see cref="P:System.Web.Services.Description.Operation.ParameterOrderString" />.</summary>
+      <returns>An array of names of <see cref="T:System.Web.Services.Description.MessagePart" /> instances.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.Operation.ParameterOrderString">
+      <summary>Gets or sets an optional Remote Procedure Call (RPC) signature that orders specification for request-response or solicit-response operations.</summary>
+      <returns>A list of names of the <see cref="T:System.Web.Services.Description.MessagePart" /> instances separated by a single space.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.Operation.PortType">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.PortType" /> of which the <see cref="T:System.Web.Services.Description.Operation" /> is a member.</summary>
+      <returns>A <see cref="T:System.Web.Services.Description.PortType" /> object.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.OperationBinding">
+      <summary>Provides specifications for protocols and data formats for the messages used in the action supported by the XML Web service. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.OperationBinding" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.OperationBinding.Binding">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.Binding" /> of which the current <see cref="T:System.Web.Services.Description.OperationBinding" /> is a member.</summary>
+      <returns>A binding of which the current <see cref="T:System.Web.Services.Description.OperationBinding" /> is a member.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.OperationBinding.Extensions">
+      <summary>Gets the collection of extensibility elements specific to the current <see cref="T:System.Web.Services.Description.OperationBinding" />.</summary>
+      <returns>A collection of extensibility elements.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.OperationBinding.Faults">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.FaultBindingCollection" /> associated with the <see cref="T:System.Web.Services.Description.OperationBinding" /> instance.</summary>
+      <returns>A fault binding collection.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.OperationBinding.Input">
+      <summary>Gets or sets the <see cref="T:System.Web.Services.Description.InputBinding" /> associated with the <see cref="T:System.Web.Services.Description.OperationBinding" />.</summary>
+      <returns>An <see cref="T:System.Web.Services.Description.InputBinding" /> associated with the <see cref="T:System.Web.Services.Description.OperationBinding" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.OperationBinding.Output">
+      <summary>Gets or sets the <see cref="T:System.Web.Services.Description.OutputBinding" /> associated with the <see cref="T:System.Web.Services.Description.OperationBinding" />.</summary>
+      <returns>An <see cref="T:System.Web.Services.Description.OutputBinding" /> associated with the <see cref="T:System.Web.Services.Description.OperationBinding" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.OperationBindingCollection">
+      <summary>Represents a collection of instances of the <see cref="T:System.Web.Services.Description.OperationBinding" /> class. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationBindingCollection.Add(System.Web.Services.Description.OperationBinding)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.OperationBinding" /> to the end of the <see cref="T:System.Web.Services.Description.OperationBindingCollection" />.</summary>
+      <param name="bindingOperation">The <see cref="T:System.Web.Services.Description.OperationBinding" /> to add to the collection.</param>
+      <returns>The zero-based index where the <paramref name="bindingOperation" /> parameter has been added.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationBindingCollection.Contains(System.Web.Services.Description.OperationBinding)">
+      <summary>Returns a value indicating whether the specified <see cref="T:System.Web.Services.Description.OperationBinding" /> is a member of the <see cref="T:System.Web.Services.Description.OperationBindingCollection" />.</summary>
+      <param name="bindingOperation">The <see cref="T:System.Web.Services.Description.OperationBinding" /> for which to check collection membership.</param>
+      <returns>
+        <see langword="true" /> if the <paramref name="bindingOperation" /> parameter is a member of the <see cref="T:System.Web.Services.Description.OperationBindingCollection" />; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationBindingCollection.CopyTo(System.Web.Services.Description.OperationBinding[],System.Int32)">
+      <summary>Copies the entire <see langword="OperationBindingCollection" /> to a compatible one-dimensional array of type <see cref="T:System.Web.Services.Description.OperationBinding" />, starting at the specified zero-based index of the target array.</summary>
+      <param name="array">An array of type <see cref="T:System.Web.Services.Description.OperationBinding" /> serving as the destination for the copy action.</param>
+      <param name="index">The zero-based index at which to start placing the copied collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationBindingCollection.IndexOf(System.Web.Services.Description.OperationBinding)">
+      <summary>Searches for the specified <see cref="T:System.Web.Services.Description.OperationBinding" /> and returns the zero-based index of the first occurrence within the collection.</summary>
+      <param name="bindingOperation">The <see cref="T:System.Web.Services.Description.OperationBinding" /> for which to search in the collection.</param>
+      <returns>A 32-bit signed integer.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationBindingCollection.Insert(System.Int32,System.Web.Services.Description.OperationBinding)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.OperationBinding" /> instance to the <see cref="T:System.Web.Services.Description.OperationBindingCollection" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index at which to insert the <paramref name="bindingOperation" /> parameter.</param>
+      <param name="bindingOperation">The <see cref="T:System.Web.Services.Description.OperationBinding" /> to add to the collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationBindingCollection.Remove(System.Web.Services.Description.OperationBinding)">
+      <summary>Removes the first occurrence of the specified <see cref="T:System.Web.Services.Description.OperationBinding" /> from the <see cref="T:System.Web.Services.Description.OperationBindingCollection" />.</summary>
+      <param name="bindingOperation">The <see cref="T:System.Web.Services.Description.OperationBinding" /> to remove from the collection.</param>
+    </member>
+    <member name="P:System.Web.Services.Description.OperationBindingCollection.Item(System.Int32)">
+      <summary>Gets or sets the value of an <see cref="T:System.Web.Services.Description.OperationBinding" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index of the <see cref="T:System.Web.Services.Description.OperationBinding" /> whose value is modified or returned.</param>
+      <returns>An <see langword="OperationBinding" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.OperationCollection">
+      <summary>Represents a collection of instances of the <see cref="T:System.Web.Services.Description.Operation" /> class. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationCollection.Add(System.Web.Services.Description.Operation)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.Operation" /> to the end of the <see cref="T:System.Web.Services.Description.OperationCollection" />.</summary>
+      <param name="operation">The <see cref="T:System.Web.Services.Description.Operation" /> to add to the collection.</param>
+      <returns>The zero-based index where the <paramref name="operation" /> parameter has been added.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationCollection.Contains(System.Web.Services.Description.Operation)">
+      <summary>Returns a value indicating whether the specified <see cref="T:System.Web.Services.Description.Operation" /> is a member of the <see cref="T:System.Web.Services.Description.OperationCollection" />.</summary>
+      <param name="operation">The <see cref="T:System.Web.Services.Description.Operation" /> for which to check collection membership.</param>
+      <returns>
+        <see langword="true" /> if <paramref name="operation" /> is a member of the <see cref="T:System.Web.Services.Description.OperationCollection" />; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationCollection.CopyTo(System.Web.Services.Description.Operation[],System.Int32)">
+      <summary>Copies the entire <see cref="T:System.Web.Services.Description.OperationCollection" /> to a compatible one-dimensional array of type <see cref="T:System.Web.Services.Description.Operation" />, starting at the specified zero-based index of the target array.</summary>
+      <param name="array">An array of type <see cref="T:System.Web.Services.Description.Operation" /> serving as the destination for the copy action.</param>
+      <param name="index">The zero-based index at which to start placing the copied collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationCollection.IndexOf(System.Web.Services.Description.Operation)">
+      <summary>Searches for the specified <see cref="T:System.Web.Services.Description.Operation" /> and returns the zero-based index of the first occurrence within the collection.</summary>
+      <param name="operation">The <see cref="T:System.Web.Services.Description.Operation" /> for which to search in the collection.</param>
+      <returns>A 32-bit signed integer.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationCollection.Insert(System.Int32,System.Web.Services.Description.Operation)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.Operation" /> to the <see cref="T:System.Web.Services.Description.OperationCollection" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index at which to insert the <paramref name="operation" /> parameter.</param>
+      <param name="operation">The <see cref="T:System.Web.Services.Description.Operation" /> to add to the collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationCollection.Remove(System.Web.Services.Description.Operation)">
+      <summary>Removes the first occurrence of the specified <see cref="T:System.Web.Services.Description.Operation" /> from the <see cref="T:System.Web.Services.Description.OperationCollection" />.</summary>
+      <param name="operation">The <see cref="T:System.Web.Services.Description.Operation" /> to remove from the collection.</param>
+    </member>
+    <member name="P:System.Web.Services.Description.OperationCollection.Item(System.Int32)">
+      <summary>Gets or sets the value of an <see cref="T:System.Web.Services.Description.Operation" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index of the <see cref="T:System.Web.Services.Description.Operation" /> whose value is modified or returned.</param>
+      <returns>An <see langword="Operation" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.OperationFault">
+      <summary>Defines the specifications for error messages returned by the XML Web service. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationFault.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.OperationFault" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.OperationFault.Extensions">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> associated with this <see cref="T:System.Web.Services.Description.OperationFault" />.</summary>
+      <returns>The <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> associated with this <see cref="T:System.Web.Services.Description.OperationFault" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.OperationFaultCollection">
+      <summary>Represents a collection of instances of the <see cref="T:System.Web.Services.Description.OperationFault" /> class. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationFaultCollection.Add(System.Web.Services.Description.OperationFault)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.OperationFault" /> to the end of the <see cref="T:System.Web.Services.Description.OperationFaultCollection" />.</summary>
+      <param name="operationFaultMessage">The <see cref="T:System.Web.Services.Description.OperationFault" /> to add to the collection.</param>
+      <returns>The zero-based index where the <paramref name="operationFaultMessage" /> parameter has been added.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationFaultCollection.Contains(System.Web.Services.Description.OperationFault)">
+      <summary>Returns a value indicating whether the specified <see cref="T:System.Web.Services.Description.OperationFault" /> is a member of the <see cref="T:System.Web.Services.Description.OperationFaultCollection" />.</summary>
+      <param name="operationFaultMessage">The <see cref="T:System.Web.Services.Description.OperationFault" /> for which to check collection membership.</param>
+      <returns>
+        <see langword="true" /> if the <paramref name="operationFaultMessage" /> parameter is a member of the <see cref="T:System.Web.Services.Description.OperationFaultCollection" />; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationFaultCollection.CopyTo(System.Web.Services.Description.OperationFault[],System.Int32)">
+      <summary>Copies the entire <see cref="T:System.Web.Services.Description.OperationFaultCollection" /> to a compatible one-dimensional array of type <see cref="T:System.Web.Services.Description.OperationFault" />, starting at the specified zero-based index of the target array.</summary>
+      <param name="array">An array of type <see cref="T:System.Web.Services.Description.OperationFault" /> serving as the destination of the copy action.</param>
+      <param name="index">The zero-based index at which to start placing the copied collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationFaultCollection.IndexOf(System.Web.Services.Description.OperationFault)">
+      <summary>Searches for the specified <see cref="T:System.Web.Services.Description.OperationFault" /> and returns the zero-based index of the first occurrence within the collection.</summary>
+      <param name="operationFaultMessage">The <see cref="T:System.Web.Services.Description.OperationFault" /> for which to search in the collection.</param>
+      <returns>A 32-bit signed integer.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationFaultCollection.Insert(System.Int32,System.Web.Services.Description.OperationFault)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.OperationFault" /> to the <see cref="T:System.Web.Services.Description.OperationFaultCollection" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index at which to insert the <paramref name="operationFaultMessage" /> parameter.</param>
+      <param name="operationFaultMessage">The <see cref="T:System.Web.Services.Description.OperationFault" /> to add to the collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationFaultCollection.Remove(System.Web.Services.Description.OperationFault)">
+      <summary>Removes the first occurrence of the specified <see cref="T:System.Web.Services.Description.OperationFault" /> from the <see cref="T:System.Web.Services.Description.OperationFaultCollection" />.</summary>
+      <param name="operationFaultMessage">The <see cref="T:System.Web.Services.Description.OperationFault" /> to remove from the collection.</param>
+    </member>
+    <member name="P:System.Web.Services.Description.OperationFaultCollection.Item(System.Int32)">
+      <summary>Gets or sets the value of an <see cref="T:System.Web.Services.Description.OperationFault" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index of the <see cref="T:System.Web.Services.Description.OperationFault" /> whose value is modified or returned.</param>
+      <returns>An <see langword="OperationFault" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.OperationFaultCollection.Item(System.String)">
+      <summary>Gets an <see cref="T:System.Web.Services.Description.OperationFault" /> by its name.</summary>
+      <param name="name">The name of the <see cref="T:System.Web.Services.Description.OperationFault" /> returned.</param>
+      <returns>An <see langword="OperationFault" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.OperationFlow">
+      <summary>Specifies the type of transmission an endpoint of the XML Web service can support.</summary>
+    </member>
+    <member name="F:System.Web.Services.Description.OperationFlow.None">
+      <summary>Indicates that the endpoint of the XML Web service receives no transmissions.</summary>
+    </member>
+    <member name="F:System.Web.Services.Description.OperationFlow.Notification">
+      <summary>Indicates that the endpoint of the XML Web service sends a message.</summary>
+    </member>
+    <member name="F:System.Web.Services.Description.OperationFlow.OneWay">
+      <summary>Indicates that the endpoint of the XML Web service receives a message.</summary>
+    </member>
+    <member name="F:System.Web.Services.Description.OperationFlow.RequestResponse">
+      <summary>Indicates that the endpoint of the XML Web service receives a message, then sends a correlated message.</summary>
+    </member>
+    <member name="F:System.Web.Services.Description.OperationFlow.SolicitResponse">
+      <summary>Indicates that the endpoint of the XML Web service sends a message, then receives a correlated message.</summary>
+    </member>
+    <member name="T:System.Web.Services.Description.OperationInput">
+      <summary>Defines the specifications for input messages received by the XML Web service. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationInput.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.OperationInput" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.OperationInput.Extensions">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> associated with this <see cref="T:System.Web.Services.Description.OperationInput" />.</summary>
+      <returns>The <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> associated with this <see cref="T:System.Web.Services.Description.OperationInput" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.OperationMessage">
+      <summary>Represents a message type passed by the action of an XML Web service.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationMessage.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.OperationMessage" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.OperationMessage.Message">
+      <summary>Gets or sets an abstract, typed definition of the data being communicated.</summary>
+      <returns>An XML qualified name.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.OperationMessage.Operation">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.Operation" /> of which the <see cref="T:System.Web.Services.Description.OperationMessage" /> is a member.</summary>
+      <returns>The operation of which the <see cref="T:System.Web.Services.Description.OperationMessage" /> is a member.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.OperationMessageCollection">
+      <summary>Represents a collection of <see cref="T:System.Web.Services.Description.OperationInput" /> and <see cref="T:System.Web.Services.Description.OperationOutput" /> messages related to an XML Web service. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationMessageCollection.Add(System.Web.Services.Description.OperationMessage)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.OperationMessage" /> to the end of the <see cref="T:System.Web.Services.Description.OperationMessageCollection" />.</summary>
+      <param name="operationMessage">The <see cref="T:System.Web.Services.Description.OperationMessage" /> to add to the collection.</param>
+      <returns>The zero-based index where the <paramref name="operationMessage" /> parameter has been added.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationMessageCollection.Contains(System.Web.Services.Description.OperationMessage)">
+      <summary>Determines whether the specified <see cref="T:System.Web.Services.Description.OperationMessage" /> is a member of the <see cref="T:System.Web.Services.Description.OperationMessageCollection" />.</summary>
+      <param name="operationMessage">The <see cref="T:System.Web.Services.Description.OperationMessage" /> for which to check collection membership.</param>
+      <returns>
+        <see langword="true" /> if the <paramref name="operationMessage" /> parameter is a member of the <see cref="T:System.Web.Services.Description.OperationMessageCollection" />; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationMessageCollection.CopyTo(System.Web.Services.Description.OperationMessage[],System.Int32)">
+      <summary>Copies the entire <see cref="T:System.Web.Services.Description.OperationMessageCollection" /> to a compatible one-dimensional array of type <see cref="T:System.Web.Services.Description.OperationMessage" />, starting at the specified zero-based index of the target array.</summary>
+      <param name="array">An array of type <see cref="T:System.Web.Services.Description.OperationMessage" /> serving as the destination for the copy action.</param>
+      <param name="index">The zero-based index at which to start placing the copied collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationMessageCollection.IndexOf(System.Web.Services.Description.OperationMessage)">
+      <summary>Searches for the specified <see cref="T:System.Web.Services.Description.OperationMessage" /> and returns the zero-based index of the first occurrence within the collection.</summary>
+      <param name="operationMessage">The <see cref="T:System.Web.Services.Description.OperationMessage" /> for which to search in the collection.</param>
+      <returns>The zero-based index of the specified operation message, or -1 if the element was not found in the collection.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationMessageCollection.Insert(System.Int32,System.Web.Services.Description.OperationMessage)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.OperationMessage" /> to the <see cref="T:System.Web.Services.Description.OperationMessageCollection" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index at which to insert the <paramref name="operationMessage" /> parameter.</param>
+      <param name="operationMessage">The <see cref="T:System.Web.Services.Description.OperationMessage" /> to add to the collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationMessageCollection.Remove(System.Web.Services.Description.OperationMessage)">
+      <summary>Removes the first occurrence of the specified <see cref="T:System.Web.Services.Description.OperationMessage" /> from the <see cref="T:System.Web.Services.Description.OperationMessageCollection" />.</summary>
+      <param name="operationMessage">The <see cref="T:System.Web.Services.Description.OperationMessage" /> to remove from the collection.</param>
+    </member>
+    <member name="P:System.Web.Services.Description.OperationMessageCollection.Flow">
+      <summary>Gets the type of transmission supported by the <see cref="T:System.Web.Services.Description.OperationMessageCollection" />.</summary>
+      <returns>One of the <see cref="T:System.Web.Services.Description.OperationFlow" /> values. The default is <see langword="SolicitResponse" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.OperationMessageCollection.Input">
+      <summary>Gets the first occurrence of an <see cref="T:System.Web.Services.Description.OperationInput" /> within the collection.</summary>
+      <returns>An <see cref="T:System.Web.Services.Description.OperationInput" /> within the collection.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.OperationMessageCollection.Item(System.Int32)">
+      <summary>Gets or sets the value of an <see cref="T:System.Web.Services.Description.OperationMessage" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index of the <see cref="T:System.Web.Services.Description.OperationMessage" /> whose value is modified or returned.</param>
+      <returns>An <see langword="OperationMessage" /> at the specified zero-based index.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.OperationMessageCollection.Output">
+      <summary>Gets the first occurrence of an <see cref="T:System.Web.Services.Description.OperationOutput" /> within the collection.</summary>
+      <returns>An <see cref="T:System.Web.Services.Description.OperationOutput" /> within the collection.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.OperationOutput">
+      <summary>Defines the specifications for output messages returned by the XML Web service. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.OperationOutput.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.OperationOutput" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.OperationOutput.Extensions">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> associated with this <see cref="T:System.Web.Services.Description.OperationOutput" />.</summary>
+      <returns>The <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> associated with this <see cref="T:System.Web.Services.Description.OperationOutput" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.OutputBinding">
+      <summary>Provides a set of specifications for data formats and protocols used by the XML Web service for output messages. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.OutputBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.OutputBinding" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.OutputBinding.Extensions">
+      <summary>Gets the collection of extensibility elements associated with the current <see cref="T:System.Web.Services.Description.OutputBinding" />.</summary>
+      <returns>A collection of service description format extension.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.Port">
+      <summary>Defines an individual endpoint contained in the XML Web service. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.Port.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.Port" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.Port.Binding">
+      <summary>Gets or sets the value of the XML <see langword="&lt;binding&gt;" /> attribute of the <see cref="T:System.Web.Services.Description.Port" />.</summary>
+      <returns>The value of the XML binding.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.Port.Extensions">
+      <summary>Gets the collection of extensibility elements associated with the <see cref="T:System.Web.Services.Description.Port" />.</summary>
+      <returns>The collection of extensibility elements associated with the port.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.Port.Service">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.Service" /> of which the <see cref="T:System.Web.Services.Description.Port" /> is a member.</summary>
+      <returns>The <see cref="T:System.Web.Services.Description.Service" /> of which the <see cref="T:System.Web.Services.Description.Port" /> is a member.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.PortCollection">
+      <summary>Represents a collection of instances of the <see cref="T:System.Web.Services.Description.Port" /> class. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.PortCollection.Add(System.Web.Services.Description.Port)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.Port" /> to the end of the <see cref="T:System.Web.Services.Description.PortCollection" />.</summary>
+      <param name="port">The <see cref="T:System.Web.Services.Description.Port" /> to add to the collection.</param>
+      <returns>The zero-based index where the <paramref name="port" /> parameter has been added.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.PortCollection.Contains(System.Web.Services.Description.Port)">
+      <summary>Returns a value indicating whether the specified <see cref="T:System.Web.Services.Description.Port" /> is a member of the <see cref="T:System.Web.Services.Description.PortCollection" />.</summary>
+      <param name="port">The <see cref="T:System.Web.Services.Description.Port" /> for which to check collection membership.</param>
+      <returns>
+        <see langword="true" /> if the specified <see cref="T:System.Web.Services.Description.Port" /> is a member of the <see cref="T:System.Web.Services.Description.PortCollection" />; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.PortCollection.CopyTo(System.Web.Services.Description.Port[],System.Int32)">
+      <summary>Copies the entire <see cref="T:System.Web.Services.Description.PortCollection" /> to a one-dimensional array of type <see cref="T:System.Web.Services.Description.Port" />, starting at the specified zero-based index of the target array.</summary>
+      <param name="array">An array of type <see cref="T:System.Web.Services.Description.Port" /> serving as the destination for the copy action.</param>
+      <param name="index">The zero-based index at which to start placing the copied collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.PortCollection.IndexOf(System.Web.Services.Description.Port)">
+      <summary>Searches for the specified <see cref="T:System.Web.Services.Description.Port" /> and returns the zero-based index of the first occurrence within the collection.</summary>
+      <param name="port">The <see cref="T:System.Web.Services.Description.Port" /> for which to search in the collection.</param>
+      <returns>A 32-bit signed integer.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.PortCollection.Insert(System.Int32,System.Web.Services.Description.Port)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.Port" /> instance to the <see cref="T:System.Web.Services.Description.PortCollection" /> at the specified index.</summary>
+      <param name="index">The zero-based index at which to insert the <paramref name="port" /> parameter.</param>
+      <param name="port">The <see cref="T:System.Web.Services.Description.Port" /> to add to the collection.</param>
+      <exception cref="T:System.IndexOutOfRangeException">The <paramref name="index" /> parameter is less than zero.  
+  
+-or-
+  
+ The <paramref name="index" /> parameter is greater than <see cref="P:System.Collections.CollectionBase.Count" />.</exception>
+    </member>
+    <member name="M:System.Web.Services.Description.PortCollection.Remove(System.Web.Services.Description.Port)">
+      <summary>Removes the first occurrence of the specified <see cref="T:System.Web.Services.Description.Port" /> from the <see cref="T:System.Web.Services.Description.PortCollection" />.</summary>
+      <param name="port">The <see cref="T:System.Web.Services.Description.Port" /> to remove from the collection.</param>
+    </member>
+    <member name="P:System.Web.Services.Description.PortCollection.Item(System.Int32)">
+      <summary>Gets or sets the value of a <see cref="T:System.Web.Services.Description.Port" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index of the <see cref="T:System.Web.Services.Description.Port" /> whose value is modified or returned.</param>
+      <returns>The value of a port at the specified index.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.PortCollection.Item(System.String)">
+      <summary>Gets a <see cref="T:System.Web.Services.Description.Port" /> specified by its name.</summary>
+      <param name="name">The name of the <see cref="T:System.Web.Services.Description.Port" /> returned.</param>
+      <returns>A port specified by its name.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.PortType">
+      <summary>Represents a named set of abstract operations and the corresponding abstract messages. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.PortType.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.PortType" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.PortType.Extensions">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> associated with this <see cref="T:System.Web.Services.Description.PortType" />.</summary>
+      <returns>The <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> associated with this <see cref="T:System.Web.Services.Description.PortType" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.PortType.Operations">
+      <summary>Gets the collection of <see cref="T:System.Web.Services.Description.Operation" /> instances defined by the <see cref="T:System.Web.Services.Description.PortType" />.</summary>
+      <returns>A collection of operation instances defined by the <see cref="T:System.Web.Services.Description.PortType" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.PortType.ServiceDescription">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.ServiceDescription" /> of which the <see cref="T:System.Web.Services.Description.PortType" /> is a member.</summary>
+      <returns>A service description of which the <see cref="T:System.Web.Services.Description.PortType" /> is a member.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.PortTypeCollection">
+      <summary>Represents a collection of instances of the <see cref="T:System.Web.Services.Description.PortType" /> class; that is, a collection of sets of operations supported by the XML Web service. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.PortTypeCollection.Add(System.Web.Services.Description.PortType)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.PortType" /> to the end of the <see cref="T:System.Web.Services.Description.PortTypeCollection" />.</summary>
+      <param name="portType">The <see cref="T:System.Web.Services.Description.PortType" /> to add to the collection.</param>
+      <returns>The zero-based index where the <paramref name="portType" /> parameter has been added.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.PortTypeCollection.Contains(System.Web.Services.Description.PortType)">
+      <summary>Returns a value indicating whether the specified <see cref="T:System.Web.Services.Description.PortType" /> is a member of the <see cref="T:System.Web.Services.Description.PortTypeCollection" />.</summary>
+      <param name="portType">The <see cref="T:System.Web.Services.Description.PortType" /> for which to check for collection membership.</param>
+      <returns>
+        <see langword="true" /> if the <paramref name="portType" /> parameter is a member of the <see cref="T:System.Web.Services.Description.PortTypeCollection" />; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.PortTypeCollection.CopyTo(System.Web.Services.Description.PortType[],System.Int32)">
+      <summary>Copies the entire <see cref="T:System.Web.Services.Description.PortTypeCollection" /> to a one-dimensional array of type <see cref="T:System.Web.Services.Description.PortType" />, starting at the specified zero-based index of the target array.</summary>
+      <param name="array">An array of type <see cref="T:System.Web.Services.Description.PortType" /> serving as the destination for the copy action.</param>
+      <param name="index">The zero-based index at which to start placing the copied collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.PortTypeCollection.IndexOf(System.Web.Services.Description.PortType)">
+      <summary>Searches for the specified <see cref="T:System.Web.Services.Description.PortType" /> and returns the zero-based index of the first occurrence within the collection.</summary>
+      <param name="portType">The <see cref="T:System.Web.Services.Description.PortType" /> for which to search in the collection.</param>
+      <returns>A 32-bit signed integer.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.PortTypeCollection.Insert(System.Int32,System.Web.Services.Description.PortType)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.PortType" /> to the <see cref="T:System.Web.Services.Description.PortTypeCollection" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index at which to insert the <paramref name="portType" /> parameter.</param>
+      <param name="portType">The <see cref="T:System.Web.Services.Description.PortType" /> to add to the collection.</param>
+      <exception cref="T:System.IndexOutOfRangeException">The <paramref name="index" /> parameter is less than zero.  
+  
+-or-
+  
+ The <paramref name="index" /> parameter is greater than <see cref="P:System.Collections.CollectionBase.Count" />.</exception>
+    </member>
+    <member name="M:System.Web.Services.Description.PortTypeCollection.Remove(System.Web.Services.Description.PortType)">
+      <summary>Removes the first occurrence of the specified <see cref="T:System.Web.Services.Description.PortType" /> from the <see cref="T:System.Web.Services.Description.PortTypeCollection" />.</summary>
+      <param name="portType">The <see cref="T:System.Web.Services.Description.PortType" /> to remove from the collection.</param>
+    </member>
+    <member name="P:System.Web.Services.Description.PortTypeCollection.Item(System.Int32)">
+      <summary>Gets or sets the value of a <see cref="T:System.Web.Services.Description.PortType" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index of the <see cref="T:System.Web.Services.Description.PortType" /> whose value is modified or returned.</param>
+      <returns>A <see langword="PortType" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.PortTypeCollection.Item(System.String)">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.PortType" /> specified by its name.</summary>
+      <param name="name">The name of the <see cref="T:System.Web.Services.Description.PortType" /> returned.</param>
+      <exception cref="T:System.InvalidCastException">The <paramref name="value" /> parameter cannot be explicitly cast to type <see cref="T:System.Web.Services.Description.PortType" />.</exception>
+      <returns>The name of the <paramref name="value" /> parameter.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.Service">
+      <summary>Groups together a set of related instances of the <see cref="T:System.Web.Services.Description.Port" /> class that are associated with an XML Web service. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.Service.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.Service" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.Service.Extensions">
+      <summary>Gets the collection of extensibility elements associated with the <see cref="T:System.Web.Services.Description.Service" />.</summary>
+      <returns>The collection of extensibility elements associated with the <see cref="T:System.Web.Services.Description.Service" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.Service.Ports">
+      <summary>Gets the collection of <see cref="T:System.Web.Services.Description.Port" /> instances contained in the <see cref="T:System.Web.Services.Description.Service" />.</summary>
+      <returns>A collection of port instances contained in the <see cref="T:System.Web.Services.Description.Service" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.Service.ServiceDescription">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.ServiceDescription" /> of which the <see cref="T:System.Web.Services.Description.Service" /> is a member.</summary>
+      <returns>A <see cref="T:System.Web.Services.Description.ServiceDescription" /> of which the <see cref="T:System.Web.Services.Description.Service" /> is a member.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.ServiceCollection">
+      <summary>Represents a collection of instances of the <see cref="T:System.Web.Services.Description.Service" /> class. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceCollection.Add(System.Web.Services.Description.Service)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.Service" /> to the end of the <see cref="T:System.Web.Services.Description.ServiceCollection" />.</summary>
+      <param name="service">The <see cref="T:System.Web.Services.Description.Service" /> instance to add to the collection.</param>
+      <returns>The zero-based index where the <paramref name="service" /> parameter has been added.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceCollection.Contains(System.Web.Services.Description.Service)">
+      <summary>Returns a value indicating whether the specified <see cref="T:System.Web.Services.Description.Service" /> instance is a member of the <see cref="T:System.Web.Services.Description.ServiceCollection" />.</summary>
+      <param name="service">The <see cref="T:System.Web.Services.Description.Service" /> for which to check collection membership.</param>
+      <returns>
+        <see langword="true" /> if the <paramref name="service" /> parameter is a member of the <see cref="T:System.Web.Services.Description.ServiceCollection" />; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceCollection.CopyTo(System.Web.Services.Description.Service[],System.Int32)">
+      <summary>Copies the entire <see cref="T:System.Web.Services.Description.ServiceCollection" /> to a one-dimensional array of type <see cref="T:System.Web.Services.Description.Service" />, starting at the specified zero-based index of the target array.</summary>
+      <param name="array">An array of type <see cref="T:System.Web.Services.Description.Service" /> serving as the destination for the copy action.</param>
+      <param name="index">The zero-based index at which to start placing the copied collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceCollection.IndexOf(System.Web.Services.Description.Service)">
+      <summary>Searches for the specified <see cref="T:System.Web.Services.Description.Service" /> and returns the zero-based index of the first occurrence within the <see langword="ServiceCollection" />.</summary>
+      <param name="service">The <see cref="T:System.Web.Services.Description.Service" /> for which to search in the collection.</param>
+      <returns>A 32-bit signed integer.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceCollection.Insert(System.Int32,System.Web.Services.Description.Service)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.Service" /> instance to the <see cref="T:System.Web.Services.Description.ServiceCollection" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index at which to insert the <paramref name="service" /> parameter.</param>
+      <param name="service">The <see cref="T:System.Web.Services.Description.Service" /> to add to the collection.</param>
+      <exception cref="T:System.IndexOutOfRangeException">The <paramref name="index" /> parameter is less than zero.  
+  
+-or-
+  
+ The <paramref name="index" /> parameter is greater than <see cref="P:System.Collections.CollectionBase.Count" />.</exception>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceCollection.Remove(System.Web.Services.Description.Service)">
+      <summary>Removes the first occurrence of the specified <see cref="T:System.Web.Services.Description.Service" /> from the <see cref="T:System.Web.Services.Description.ServiceCollection" />.</summary>
+      <param name="service">The <see cref="T:System.Web.Services.Description.Service" /> to remove from the collection.</param>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceCollection.Item(System.Int32)">
+      <summary>Gets or sets the value of a <see cref="T:System.Web.Services.Description.Service" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index of the <see cref="T:System.Web.Services.Description.Service" /> to be modified or returned.</param>
+      <returns>A <see langword="Service" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceCollection.Item(System.String)">
+      <summary>Gets a <see cref="T:System.Web.Services.Description.Service" /> specified by its name.</summary>
+      <param name="name">The name of the <see cref="T:System.Web.Services.Description.Service" /> returned.</param>
+      <returns>A <see langword="Service" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.ServiceDescription">
+      <summary>Provides a means of creating and formatting a valid Web Services Description Language (WSDL) document file, complete with appropriate namespaces, elements, and attributes, for describing an XML Web service. This class cannot be inherited.</summary>
+    </member>
+    <member name="F:System.Web.Services.Description.ServiceDescription.Namespace">
+      <summary>The XML namespace in which the <see cref="T:System.Web.Services.Description.ServiceDescription" /> class is defined ("http://schemas.xmlsoap.org/wsdl/"). This field is constant.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescription.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> class.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescription.CanRead(System.Xml.XmlReader)">
+      <summary>Gets a value that indicates whether an <see cref="T:System.Xml.XmlReader" /> represents a valid Web Services Description Language (WSDL) file that can be parsed.</summary>
+      <param name="reader">An <see cref="T:System.Xml.XmlReader" />.</param>
+      <returns>
+        <see langword="true" /> if the <see cref="T:System.Xml.Serialization.XmlSerializer" /> can recognize the node on which the <see cref="T:System.Xml.XmlReader" /> is positioned; otherwise <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescription.Read(System.IO.Stream)">
+      <summary>Initializes an instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> class by directly loading the XML from a <see cref="T:System.IO.Stream" /> instance.</summary>
+      <param name="stream">A <see cref="T:System.IO.Stream" />, passed by reference, which contains the bytes to be read.</param>
+      <returns>An instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescription.Read(System.IO.Stream,System.Boolean)">
+      <summary>Initializes an instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> class by directly loading the XML from a <see cref="T:System.IO.Stream" /> instance.</summary>
+      <param name="stream">A <see cref="T:System.IO.Stream" />, passed by reference, which contains the bytes to be read.</param>
+      <param name="validate">A <see cref="T:System.Boolean" /> that indicates whether the XML should be validated against the schema specified by <see cref="P:System.Web.Services.Description.ServiceDescription.Schema" />.</param>
+      <returns>An instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescription.Read(System.IO.TextReader)">
+      <summary>Initializes an instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> class by directly loading the XML from a <see cref="T:System.IO.TextReader" />.</summary>
+      <param name="textReader">A <see cref="T:System.IO.TextReader" /> instance, passed by reference, which contains the text to be read.</param>
+      <returns>An instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescription.Read(System.IO.TextReader,System.Boolean)">
+      <summary>Initializes an instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> class by directly loading the XML from a <see cref="T:System.IO.TextReader" />.</summary>
+      <param name="textReader">A <see cref="T:System.IO.TextReader" /> instance, passed by reference, which contains the text to be read.</param>
+      <param name="validate">A <see cref="T:System.Boolean" /> that indicates whether the XML should be validated against the schema specified by <see cref="P:System.Web.Services.Description.ServiceDescription.Schema" />.</param>
+      <returns>An instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescription.Read(System.String)">
+      <summary>Initializes an instance of a <see cref="T:System.Web.Services.Description.ServiceDescription" /> object by directly loading the XML from the specified file.</summary>
+      <param name="fileName">The path to the file to be read.</param>
+      <returns>An instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescription.Read(System.String,System.Boolean)">
+      <summary>Initializes an instance of a <see cref="T:System.Web.Services.Description.ServiceDescription" /> object by directly loading the XML from the specified file.</summary>
+      <param name="fileName">The path to the file to be read.</param>
+      <param name="validate">A <see cref="T:System.Boolean" /> that indicates whether the XML should be validated against the schema specified by <see cref="P:System.Web.Services.Description.ServiceDescription.Schema" />.</param>
+      <returns>An instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescription.Read(System.Xml.XmlReader)">
+      <summary>Initializes an instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> class by directly loading the XML from an <see cref="T:System.Xml.XmlReader" />.</summary>
+      <param name="reader">An <see cref="T:System.Xml.XmlReader" />, passed by reference, which contains the XML data to be read.</param>
+      <returns>An instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescription.Read(System.Xml.XmlReader,System.Boolean)">
+      <summary>Initializes an instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> class by directly loading the XML from an <see cref="T:System.Xml.XmlReader" />.</summary>
+      <param name="reader">An <see cref="T:System.Xml.XmlReader" />, passed by reference, which contains the XML data to be read.</param>
+      <param name="validate">A <see cref="T:System.Boolean" /> that indicates whether the XML should be validated against the schema specified by <see cref="P:System.Web.Services.Description.ServiceDescription.Schema" />.</param>
+      <returns>An instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescription.Write(System.IO.Stream)">
+      <summary>Writes out the <see cref="T:System.Web.Services.Description.ServiceDescription" /> to the specified <see cref="T:System.IO.Stream" />.</summary>
+      <param name="stream">A <see cref="T:System.IO.Stream" />, passed by reference, which contains the Web Services Description Language (WSDL) file produced.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescription.Write(System.IO.TextWriter)">
+      <summary>Writes out the <see cref="T:System.Web.Services.Description.ServiceDescription" /> as a Web Services Description Language (WSDL) file to the <see cref="T:System.IO.TextWriter" />.</summary>
+      <param name="writer">A <see cref="T:System.IO.TextWriter" /> that contains the WSDL file produced.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescription.Write(System.String)">
+      <summary>Writes out the <see cref="T:System.Web.Services.Description.ServiceDescription" /> as a Web Services Description Language (WSDL) file to the specified path.</summary>
+      <param name="fileName">The path to which the WSDL file is written.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescription.Write(System.Xml.XmlWriter)">
+      <summary>Writes out the <see cref="T:System.Web.Services.Description.ServiceDescription" /> to the <see cref="T:System.Xml.XmlWriter" /> as a Web Services Description Language (WSDL) file.</summary>
+      <param name="writer">An <see cref="T:System.Xml.XmlWriter" />, passed by reference, which contains the WSDL file produced.</param>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceDescription.Bindings">
+      <summary>Gets the collection of <see cref="T:System.Web.Services.Description.Binding" /> elements contained in the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</summary>
+      <returns>A collection of binding elements contained in the service description.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceDescription.Extensions">
+      <summary>Gets the collection of extensibility elements contained in the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</summary>
+      <returns>The collection of extensibility elements contained in the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceDescription.Imports">
+      <summary>Gets the collection of <see cref="T:System.Web.Services.Description.Import" /> elements contained in the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</summary>
+      <returns>A collection of import elements contained in the service description.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceDescription.Messages">
+      <summary>Gets the collection of <see cref="T:System.Web.Services.Description.Message" /> elements contained in the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</summary>
+      <returns>A collection of message elements contained in the service description.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceDescription.PortTypes">
+      <summary>Gets the collection of <see cref="T:System.Web.Services.Description.PortType" /> elements contained in the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</summary>
+      <returns>A collection of <see cref="T:System.Web.Services.Description.PortType" /> elements contained in the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceDescription.RetrievalUrl">
+      <summary>Gets or sets the URL of the XML Web service to which the <see cref="T:System.Web.Services.Description.ServiceDescription" /> instance applies.</summary>
+      <returns>The URL of the XML Web service. The default value is an empty string ("").</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceDescription.Schema">
+      <summary>Gets the schema associated with this <see cref="T:System.Web.Services.Description.ServiceDescription" />.</summary>
+      <returns>The schema associated with this <see cref="T:System.Web.Services.Description.ServiceDescription" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceDescription.Serializer">
+      <summary>Gets the XML serializer used to serialize and deserialize between a <see cref="T:System.Web.Services.Description.ServiceDescription" /> object and a Web Services Description Language (WSDL) document.</summary>
+      <returns>The XML serializer used to serialize and deserialize between a <see cref="T:System.Web.Services.Description.ServiceDescription" /> object and a Web Services Description Language (WSDL) document.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceDescription.ServiceDescriptions">
+      <summary>Gets the <see cref="T:System.Web.Services.Description.ServiceDescriptionCollection" /> instance of which the <see cref="T:System.Web.Services.Description.ServiceDescription" /> is a member.</summary>
+      <exception cref="T:System.NullReferenceException">The <see cref="T:System.Web.Services.Description.ServiceDescription" /> has not been assigned to a parent collection.</exception>
+      <returns>A collection of service description.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceDescription.Services">
+      <summary>Gets the collection of <see cref="T:System.Web.Services.Description.Service" /> instances contained in the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</summary>
+      <returns>A collection of service instances contained in the service description.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceDescription.TargetNamespace">
+      <summary>Gets or sets the XML <see langword="targetNamespace" /> attribute of the <see langword="descriptions" /> tag enclosing a Web Services Description Language (WSDL) file.</summary>
+      <returns>The URL of the XML Web service described by the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceDescription.Types">
+      <summary>Gets or sets the <see cref="T:System.Web.Services.Description.Types" /> contained by the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</summary>
+      <returns>A <see cref="T:System.Web.Services.Description.Types" /> instance that represents the data types of both the parameters and return values of the methods exposed by the XML Web service.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceDescription.ValidationWarnings">
+      <summary>Gets a <see cref="T:System.Collections.Specialized.StringCollection" /> that contains any validation warnings that were generated during a call to <see cref="M:System.Web.Services.Description.ServiceDescription.Read(System.IO.Stream,System.Boolean)" />, <see cref="M:System.Web.Services.Description.ServiceDescription.Read(System.IO.TextReader,System.Boolean)" />, <see cref="M:System.Web.Services.Description.ServiceDescription.Read(System.String,System.Boolean)" />, or <see cref="M:System.Web.Services.Description.ServiceDescription.Read(System.Xml.XmlReader,System.Boolean)" /> with the <paramref name="validate" /> parameter set to <see langword="true" />.</summary>
+      <returns>A <see cref="T:System.Collections.Specialized.StringCollection" /> that contains any validation warnings that were generated during a call to <see cref="M:System.Web.Services.Description.ServiceDescription.Read(System.IO.Stream,System.Boolean)" />, <see cref="M:System.Web.Services.Description.ServiceDescription.Read(System.IO.TextReader,System.Boolean)" />, <see cref="M:System.Web.Services.Description.ServiceDescription.Read(System.String,System.Boolean)" />, or <see cref="M:System.Web.Services.Description.ServiceDescription.Read(System.Xml.XmlReader,System.Boolean)" /> with the <paramref name="validate" /> parameter set to <see langword="true" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.ServiceDescriptionBaseCollection">
+      <summary>Forms the basis for the strongly typed collections that are members of the <see cref="N:System.Web.Services.Description" /> namespace.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionBaseCollection.GetKey(System.Object)">
+      <summary>Returns the name of the key associated with the value passed by reference.</summary>
+      <param name="value">An object for which to return the name of the key.</param>
+      <returns>A null reference.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionBaseCollection.OnClear">
+      <summary>Clears the contents of the <see cref="T:System.Web.Services.Description.ServiceDescriptionBaseCollection" /> instance.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionBaseCollection.OnInsertComplete(System.Int32,System.Object)">
+      <summary>Performs additional custom processes after inserting a new element into the <see cref="T:System.Web.Services.Description.ServiceDescriptionBaseCollection" />.</summary>
+      <param name="index">The zero-based index at which to insert the <paramref name="value" /> parameter.</param>
+      <param name="value">The element to insert into the collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionBaseCollection.OnRemove(System.Int32,System.Object)">
+      <summary>Removes an element from the <see cref="T:System.Web.Services.Description.ServiceDescriptionBaseCollection" />.</summary>
+      <param name="index">The zero-based index of the <paramref name="value" /> parameter to be removed.</param>
+      <param name="value">The element to remove from the collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionBaseCollection.OnSet(System.Int32,System.Object,System.Object)">
+      <summary>Replaces one value with another within the <see cref="T:System.Web.Services.Description.ServiceDescriptionBaseCollection" />.</summary>
+      <param name="index">The zero-based index where the <paramref name="oldValue" /> parameter can be found.</param>
+      <param name="oldValue">The object to replace with the <paramref name="newValue" /> parameter.</param>
+      <param name="newValue">The object that replaces the <paramref name="oldValue" /> parameter.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionBaseCollection.SetParent(System.Object,System.Object)">
+      <summary>Sets the parent object of the <see cref="T:System.Web.Services.Description.ServiceDescriptionBaseCollection" /> instance.</summary>
+      <param name="value">The object for which to set the parent object.</param>
+      <param name="parent">The object to set as the parent.</param>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceDescriptionBaseCollection.Table">
+      <summary>Gets an interface that implements the association of the keys and values in the <see cref="T:System.Web.Services.Description.ServiceDescriptionBaseCollection" />.</summary>
+      <returns>An interface that implements the association of the keys and values in the <see cref="T:System.Web.Services.Description.ServiceDescriptionBaseCollection" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.ServiceDescriptionCollection">
+      <summary>Represents a collection of instances of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> class. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionCollection.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.ServiceDescriptionCollection" /> class.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionCollection.Add(System.Web.Services.Description.ServiceDescription)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.ServiceDescription" /> to the end of the <see cref="T:System.Web.Services.Description.ServiceDescriptionCollection" />.</summary>
+      <param name="serviceDescription">The <see cref="T:System.Web.Services.Description.ServiceDescription" /> to add to the collection.</param>
+      <returns>The zero-based index where the <see cref="T:System.Web.Services.Description.ServiceDescription" /> parameter has been added.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionCollection.Contains(System.Web.Services.Description.ServiceDescription)">
+      <summary>Returns a value indicating whether the specified <see cref="T:System.Web.Services.Description.ServiceDescription" /> is a member of the collection.</summary>
+      <param name="serviceDescription">The <see cref="T:System.Web.Services.Description.ServiceDescription" /> for which to check collection membership.</param>
+      <returns>
+        <see langword="true" /> if the <paramref name="serviceDescription" /> parameter is a member of the <see cref="T:System.Web.Services.Description.ServiceDescriptionCollection" />; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionCollection.CopyTo(System.Web.Services.Description.ServiceDescription[],System.Int32)">
+      <summary>Copies the entire <see cref="T:System.Web.Services.Description.ServiceDescriptionCollection" /> to a one-dimensional array of type <see cref="T:System.Web.Services.Description.ServiceDescription" />, starting at the specified zero-based index of the target array.</summary>
+      <param name="array">An array of type <see cref="T:System.Web.Services.Description.ServiceDescription" /> serving as the destination of the copy action.</param>
+      <param name="index">The zero-based index at which to start placing the copied collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionCollection.GetBinding(System.Xml.XmlQualifiedName)">
+      <summary>Searches the <see cref="T:System.Web.Services.Description.ServiceDescriptionCollection" /> and returns the <see cref="T:System.Web.Services.Description.Binding" /> with the specified name that is a member of one of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> instances contained in the collection.</summary>
+      <param name="name">An <see cref="T:System.Xml.XmlQualifiedName" /> whose <see cref="P:System.Xml.XmlQualifiedName.Name" /> property is used to retrieve a <see cref="T:System.Web.Services.Description.Binding" /> instance.</param>
+      <exception cref="T:System.Exception">The specified <see langword="Binding" /> is not a member of any <see cref="T:System.Web.Services.Description.ServiceDescription" /> instances within the collection.</exception>
+      <returns>The binding with the specified name.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionCollection.GetMessage(System.Xml.XmlQualifiedName)">
+      <summary>Searches the <see cref="T:System.Web.Services.Description.ServiceDescriptionCollection" /> and returns the <see cref="T:System.Web.Services.Description.Message" /> with the specified name that is a member of one of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> instances contained in the collection.</summary>
+      <param name="name">The <see cref="T:System.Xml.XmlQualifiedName" />, passed by reference, whose <see cref="P:System.Xml.XmlQualifiedName.Name" /> property is shared by the <see cref="T:System.Web.Services.Description.Message" /> returned.</param>
+      <exception cref="T:System.Exception">The specified <see langword="Message" /> is not a member of any <see cref="T:System.Web.Services.Description.ServiceDescription" /> instances within the collection.</exception>
+      <returns>The message with the specified name.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionCollection.GetPortType(System.Xml.XmlQualifiedName)">
+      <summary>Searches the <see cref="T:System.Web.Services.Description.ServiceDescriptionCollection" /> and returns the <see cref="T:System.Web.Services.Description.PortType" /> with the specified name that is a member of one of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> instances contained in the collection.</summary>
+      <param name="name">The <see cref="T:System.Xml.XmlQualifiedName" />, passed by reference, whose <see cref="P:System.Xml.XmlQualifiedName.Name" /> property is shared by the <see cref="T:System.Web.Services.Description.PortType" /> returned.</param>
+      <exception cref="T:System.Exception">The specified <see langword="PortType" /> is not a member of any <see cref="T:System.Web.Services.Description.ServiceDescription" /> instances within the collection.</exception>
+      <returns>The <see langword="PortType" /> with the specified name.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionCollection.GetService(System.Xml.XmlQualifiedName)">
+      <summary>Searches the <see cref="T:System.Web.Services.Description.ServiceDescriptionCollection" /> and returns the <see cref="T:System.Web.Services.Description.Service" /> with the specified name that is a member of one of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> instances contained in the collection.</summary>
+      <param name="name">The <see cref="T:System.Xml.XmlQualifiedName" />, passed by reference, whose <see cref="P:System.Xml.XmlQualifiedName.Name" /> property is shared by the <see cref="T:System.Web.Services.Description.Service" /> returned.</param>
+      <exception cref="T:System.Exception">The specified <see langword="Service" /> is not a member of any <see cref="T:System.Web.Services.Description.ServiceDescription" /> instances within the collection.</exception>
+      <returns>The service with the specified name.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionCollection.IndexOf(System.Web.Services.Description.ServiceDescription)">
+      <summary>Searches for the specified <see cref="T:System.Web.Services.Description.ServiceDescription" /> and returns the zero-based index of the first occurrence within the collection.</summary>
+      <param name="serviceDescription">The <see cref="T:System.Web.Services.Description.ServiceDescription" /> for which to search in the collection.</param>
+      <returns>The zero-based index of the specified service description, or -1 if the element was not found in the collection.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionCollection.Insert(System.Int32,System.Web.Services.Description.ServiceDescription)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.ServiceDescription" /> instance to the <see cref="T:System.Web.Services.Description.ServiceDescriptionCollection" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index at which to insert the <paramref name="serviceDescription" /> parameter.</param>
+      <param name="serviceDescription">The <see cref="T:System.Web.Services.Description.ServiceDescription" /> to add to the collection.</param>
+      <exception cref="T:System.IndexOutOfRangeException">The <paramref name="index" /> parameter is less than zero.  
+  
+-or-
+  
+ The <paramref name="index" /> parameter is greater than <see cref="P:System.Collections.CollectionBase.Count" />.</exception>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionCollection.Remove(System.Web.Services.Description.ServiceDescription)">
+      <summary>Removes the first occurrence of the specified <see cref="T:System.Web.Services.Description.ServiceDescription" /> from the collection.</summary>
+      <param name="serviceDescription">The <see cref="T:System.Web.Services.Description.ServiceDescription" /> to remove from the collection.</param>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceDescriptionCollection.Item(System.Int32)">
+      <summary>Gets or sets the value of a <see cref="T:System.Web.Services.Description.ServiceDescription" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> whose value is modified or returned.</param>
+      <returns>The value of a <see cref="T:System.Web.Services.Description.ServiceDescription" /> at the specified index.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceDescriptionCollection.Item(System.String)">
+      <summary>Gets a <see cref="T:System.Web.Services.Description.ServiceDescription" /> specified by its <see cref="P:System.Web.Services.Description.ServiceDescription.TargetNamespace" /> property.</summary>
+      <param name="ns">The namespace of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> returned.</param>
+      <returns>A <see cref="T:System.Web.Services.Description.ServiceDescription" /> specified by its namespace property.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.ServiceDescriptionFormatExtension">
+      <summary>Represents an extensibility element added to an XML Web service.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionFormatExtension.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceDescriptionFormatExtension.Handled">
+      <summary>Gets or sets a value indicating whether the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> is used by the import process when the extensibility element is imported.</summary>
+      <returns>
+        <see langword="true" /> if the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> is used by the import process; otherwise, <see langword="false" />. The default is <see langword="false" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceDescriptionFormatExtension.Parent">
+      <summary>Gets the parent of the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" />.</summary>
+      <returns>The parent of the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceDescriptionFormatExtension.Required">
+      <summary>Gets or sets a value indicating whether the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> is necessary for the action to which it refers.</summary>
+      <returns>
+        <see langword="true" /> if the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> is required; otherwise, <see langword="false" />. The default is <see langword="false" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection">
+      <summary>Represents the collection of extensibility elements used by the XML Web service. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection.#ctor(System.Object)">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> class.</summary>
+      <param name="parent">The object of which this collection is a member.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection.Add(System.Object)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> to the end of the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" />.</summary>
+      <param name="extension">The <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" />, passed by reference, to add to the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" />.</param>
+      <returns>The zero-based index where the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> has been added.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection.Contains(System.Object)">
+      <summary>Returns a value indicating whether the specified <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> is a member of the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" />.</summary>
+      <param name="extension">The <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> for which to check collection membership.</param>
+      <returns>
+        <see langword="true" /> if the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> is a member of the collection; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection.CopyTo(System.Object[],System.Int32)">
+      <summary>Copies the entire <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> into a one-dimensional array of type <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" />, starting at the specified zero-based index of the target array.</summary>
+      <param name="array">An array of type <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> serving as the destination of the copy action.</param>
+      <param name="index">The zero-based index at which to start placing the copied collection.</param>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection.Find(System.String,System.String)">
+      <summary>Searches the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> for a member with the specified name and namespace URI.</summary>
+      <param name="name">The name of the <see cref="T:System.Xml.XmlElement" /> to be found.</param>
+      <param name="ns">The XML namespace URI of the <see cref="T:System.Xml.XmlElement" /> to be found.</param>
+      <returns>If the search is successful, an <see cref="T:System.Xml.XmlElement" />; otherwise, <see langword="null" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection.Find(System.Type)">
+      <summary>Searches the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> and returns the first element of the specified derived <see cref="T:System.Type" />.</summary>
+      <param name="type">A <see cref="T:System.Type" /> for which to search the collection.</param>
+      <returns>If the search is successful, an object of the specified <see cref="T:System.Type" />; otherwise, <see langword="null" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection.FindAll(System.String,System.String)">
+      <summary>Searches the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> and returns an array of all members with the specified name and namespace URI.</summary>
+      <param name="name">The XML name attribute of the <see cref="T:System.Xml.XmlElement" /> objects to be found.</param>
+      <param name="ns">The XML namespace URI attribute of the <see cref="T:System.Xml.XmlElement" /> objects to be found.</param>
+      <returns>An array of <see cref="T:System.Xml.XmlElement" /> instances.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection.FindAll(System.Type)">
+      <summary>Searches the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> and returns an array of all elements of the specified <see cref="T:System.Type" />.</summary>
+      <param name="type">A <see cref="T:System.Type" /> for which to search the collection.</param>
+      <returns>An array of <see cref="T:System.Object" /> instances representing all collection members of the specified type.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection.IndexOf(System.Object)">
+      <summary>Searches for the specified <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> and returns the zero-based index of the first instance with the collection.</summary>
+      <param name="extension">The <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> for which to search in the collection.</param>
+      <returns>The zero-based index of the specified <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" />, or -1 if the element was not found in the collection.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection.Insert(System.Int32,System.Object)">
+      <summary>Adds the specified <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> to the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> at the specified zero-based index.</summary>
+      <param name="index">The zero-based index at which to insert the <paramref name="extension" /> parameter.</param>
+      <param name="extension">The <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> to add to the collection.</param>
+      <exception cref="T:System.IndexOutOfRangeException">The <paramref name="index" /> parameter is less than zero.  
+  
+-or-
+  
+ The <paramref name="index" /> parameter is greater than <see cref="P:System.Collections.CollectionBase.Count" />.</exception>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection.IsHandled(System.Object)">
+      <summary>Returns a value indicating whether the specified object is used by the import process when the extensibility element is imported into the XML Web service.</summary>
+      <param name="item">An object, either of type <see cref="T:System.Xml.XmlElement" /> or <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> to check for use by the import process.</param>
+      <returns>
+        <see langword="true" /> if the <paramref name="item" /> parameter is used; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection.IsRequired(System.Object)">
+      <summary>Returns a value indicating whether the specified object is necessary for the operation of the XML Web service.</summary>
+      <param name="item">An object, either of type <see cref="T:System.Xml.XmlElement" /> or <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" />, to check whether it is necessary.</param>
+      <returns>
+        <see langword="true" /> if the <paramref name="item" /> parameter is required; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection.Remove(System.Object)">
+      <summary>Removes the first occurrence of the specified <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> from the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" />.</summary>
+      <param name="extension">The <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> to remove from the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" />.</param>
+    </member>
+    <member name="P:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection.Item(System.Int32)">
+      <summary>Gets or sets the value of a member of the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" />.</summary>
+      <param name="index">The zero-based index of the member whose value is modified or returned.</param>
+      <returns>The value of the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.Soap12AddressBinding">
+      <summary>Represents a service description format extension applied to a <see cref="T:System.Web.Services.Description.Port" /> when an XML Web service supports the SOAP protocol version 1.2. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.Soap12AddressBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.Soap12AddressBinding" /> class.</summary>
+    </member>
+    <member name="T:System.Web.Services.Description.Soap12Binding">
+      <summary>Represents a binding in a Web Services Description Language (WSDL) document to the SOAP version 1.2 protocol. This class cannot be inherited.</summary>
+    </member>
+    <member name="F:System.Web.Services.Description.Soap12Binding.HttpTransport">
+      <summary>Represents the transport protocol for the SOAP message is HTTP. This field is constant.</summary>
+    </member>
+    <member name="F:System.Web.Services.Description.Soap12Binding.Namespace">
+      <summary>Represents the XML namespace of a binding to the SOAP protocol version 1.2. This field is constant.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.Soap12Binding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.Soap12Binding" /> class.</summary>
+    </member>
+    <member name="T:System.Web.Services.Description.Soap12BodyBinding">
+      <summary>Represents a service description format extension applied to an <see cref="T:System.Web.Services.Description.InputBinding" /> or an <see cref="T:System.Web.Services.Description.OutputBinding" /> when an XML Web service supports the SOAP protocol version 1.2. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.Soap12BodyBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.Soap12BodyBinding" /> class.</summary>
+    </member>
+    <member name="T:System.Web.Services.Description.Soap12FaultBinding">
+      <summary>Represents a service description format extension applied to an <see cref="T:System.Web.Services.Description.FaultBinding" /> when an XML Web service supports the SOAP protocol version 1.2. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.Soap12FaultBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.Soap12FaultBinding" /> class.</summary>
+    </member>
+    <member name="T:System.Web.Services.Description.Soap12HeaderBinding">
+      <summary>Represents a service description format extension applied to an <see cref="T:System.Web.Services.Description.InputBinding" /> or an <see cref="T:System.Web.Services.Description.OutputBinding" /> when an XML Web service supports the SOAP protocol version 1.2. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.Soap12HeaderBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.Soap12HeaderBinding" /> class.</summary>
+    </member>
+    <member name="T:System.Web.Services.Description.Soap12OperationBinding">
+      <summary>Represents a service description format extension applied to an <see cref="T:System.Web.Services.Description.OperationBinding" /> when an XML Web service supports the SOAP protocol version 1.2. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.Soap12OperationBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.Soap12OperationBinding" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.Soap12OperationBinding.SoapActionRequired">
+      <summary>Gets or sets a value indicating whether an XML Web service anticipates requiring the <see langword="SOAPAction" /> HTTP header.</summary>
+      <returns>
+        <see langword="true" /> if an XML Web service anticipates requiring the <see langword="SOAPAction" /> HTTP header; otherwise, <see langword="false" />. The default is <see langword="false" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.SoapAddressBinding">
+      <summary>Represents an extensibility element added to a <see cref="T:System.Web.Services.Description.Port" /> within an XML Web service.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.SoapAddressBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.SoapAddressBinding" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapAddressBinding.Location">
+      <summary>Gets or sets a value representing the URI for the <see cref="T:System.Web.Services.Description.Port" /> to which the <see cref="T:System.Web.Services.Description.SoapAddressBinding" /> applies.</summary>
+      <returns>A string containing a URI. The default value is an empty string ("").</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.SoapBinding">
+      <summary>Represents an extension added to a <see cref="T:System.Web.Services.Description.Binding" /> within an XML Web service. This class cannot be inherited.</summary>
+    </member>
+    <member name="F:System.Web.Services.Description.SoapBinding.HttpTransport">
+      <summary>Gets the URI for the standard protocol specifying HTTP transmission of SOAP data. This field is constant.</summary>
+    </member>
+    <member name="F:System.Web.Services.Description.SoapBinding.Namespace">
+      <summary>Gets the URI for the XML namespace of the <see cref="T:System.Web.Services.Description.SoapBinding" /> class. This field is constant.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.SoapBinding.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.Web.Services.Description.SoapBinding" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapBinding.Schema">
+      <summary>Gets the binding schema that is to be used to transmit data by using the SOAP protocol version 1.1.</summary>
+      <returns>An <see cref="T:System.Xml.Schema.XmlSchema" /> object that represents the binding schema that is to be used to transmit data by using the SOAP protocol version 1.1.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapBinding.Style">
+      <summary>Specifies the type of SOAP binding used by the current <see cref="T:System.Web.Services.Description.SoapBinding" />.</summary>
+      <returns>One of the <see cref="T:System.Web.Services.Description.SoapBindingStyle" /> values. The default is <see langword="Document" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapBinding.Transport">
+      <summary>Gets or sets the URI with the specification for HTTP transmission of SOAP data.</summary>
+      <returns>A string value representing the URI for the specification for data transmission by means of SOAP. The default is an empty string ("").</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.SoapBindingStyle">
+      <summary>Specifies the type of action that occurs in the XML Web service at the level of the class hierarchy to which this enumeration is applied.</summary>
+    </member>
+    <member name="F:System.Web.Services.Description.SoapBindingStyle.Default">
+      <summary>The default type of action for the current hierarchical level of the Web Services Description Language (WSDL) file.</summary>
+    </member>
+    <member name="F:System.Web.Services.Description.SoapBindingStyle.Document">
+      <summary>The message being transmitted is document-oriented.</summary>
+    </member>
+    <member name="F:System.Web.Services.Description.SoapBindingStyle.Rpc">
+      <summary>The message being transmitted contains the parameters to call a procedure or the return values from that procedure. RPC is an acronym for "remote procedure call."</summary>
+    </member>
+    <member name="T:System.Web.Services.Description.SoapBindingUse">
+      <summary>Specifies whether the message parts are encoded as abstract type definitions or concrete schema definitions.</summary>
+    </member>
+    <member name="F:System.Web.Services.Description.SoapBindingUse.Default">
+      <summary>Specifies an empty string ("") value for the corresponding XML <see langword="use" /> attribute.</summary>
+    </member>
+    <member name="F:System.Web.Services.Description.SoapBindingUse.Encoded">
+      <summary>The message parts are encoded using given encoding rules.</summary>
+    </member>
+    <member name="F:System.Web.Services.Description.SoapBindingUse.Literal">
+      <summary>The message parts represent a concrete schema.</summary>
+    </member>
+    <member name="T:System.Web.Services.Description.SoapBodyBinding">
+      <summary>Represents an extensibility element added to an <see cref="T:System.Web.Services.Description.InputBinding" /> or an <see cref="T:System.Web.Services.Description.OutputBinding" />.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.SoapBodyBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.SoapBodyBinding" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapBodyBinding.Encoding">
+      <summary>Gets or sets a string containing a list of space-delimited URIs. The URIs represent the encoding style (or styles) to be used to encode messages within the SOAP body.</summary>
+      <returns>A string containing a list of URIs. The default value is an empty string ("").</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapBodyBinding.Namespace">
+      <summary>Get or sets the URI representing the location of the specifications for encoding of content not specifically defined by the <see cref="P:System.Web.Services.Description.SoapBodyBinding.Encoding" /> property.</summary>
+      <returns>A string containing a URI.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapBodyBinding.Parts">
+      <summary>Gets or sets a value indicating which parts of the transmitted message appear within the SOAP body portion of the transmission.</summary>
+      <returns>A string array containing the names of the appropriate message parts.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapBodyBinding.PartsString">
+      <summary>Gets or sets a value indicating which parts of the transmitted message appear within the SOAP body portion of the transmission.</summary>
+      <returns>A space-delimited string containing the appropriate message parts.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapBodyBinding.Use">
+      <summary>Indicates whether the message parts are encoded using specified encoding rules, or define the concrete schema of the message.</summary>
+      <returns>One of the <see cref="T:System.Web.Services.Description.SoapBindingUse" /> values. The default is <see langword="Default" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.SoapFaultBinding">
+      <summary>Represents an extensibility element added to a <see cref="T:System.Web.Services.Description.FaultBinding" /> within an XML Web service.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.SoapFaultBinding.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.Web.Services.Description.SoapFaultBinding" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapFaultBinding.Encoding">
+      <summary>Gets or sets a URI representing the encoding style used to encode the SOAP fault message.</summary>
+      <returns>A string containing a URI. The default value is an empty string ("").</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapFaultBinding.Name">
+      <summary>Gets or sets the value of the name attribute that relates the soap fault to the wsdl fault defined for the specified operation.</summary>
+      <returns>A <see cref="T:System.String" /> object that contains the name attribute that relates the soap fault to the wsdl fault defined for the operation.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapFaultBinding.Namespace">
+      <summary>Get or sets the URI representing the location of the specification for encoding of content not specifically defined by the <see cref="P:System.Web.Services.Description.SoapFaultBinding.Encoding" /> property.</summary>
+      <returns>A string representing a URI.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapFaultBinding.Use">
+      <summary>Specifies whether the fault message is encoded using rules specified by the <see cref="P:System.Web.Services.Description.SoapFaultBinding.Encoding" /> property, or is encapsulated within a concrete XML schema.</summary>
+      <returns>One of the <see cref="T:System.Web.Services.Description.SoapBindingUse" /> values. The default is <see langword="Default" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.SoapHeaderBinding">
+      <summary>Represents an extensibility element added to an <see cref="T:System.Web.Services.Description.InputBinding" /> or an <see cref="T:System.Web.Services.Description.OutputBinding" /> within an XML Web service.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.SoapHeaderBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.SoapHeaderBinding" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapHeaderBinding.Encoding">
+      <summary>Gets or sets a URI representing the encoding style used to encode the SOAP header.</summary>
+      <returns>A string containing a URI. The default value is an empty string ("").</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapHeaderBinding.Fault">
+      <summary>Gets or sets the extension type controlling the output in a WSDL document for the <see langword="headerfault" /> XML element of a SOAP header.</summary>
+      <returns>A <see cref="T:System.Web.Services.Description.SoapHeaderFaultBinding" /> representing the SOAP header types used to transmit error information.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapHeaderBinding.MapToProperty">
+      <summary>Gets or sets a value indicating whether the <see cref="T:System.Web.Services.Description.SoapHeaderBinding" /> instance is mapped to a specific property in generated proxy classes.</summary>
+      <returns>
+        <see langword="true" /> if the <see cref="T:System.Web.Services.Description.SoapHeaderBinding" /> maps to a specific property; otherwise <see langword="false" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapHeaderBinding.Message">
+      <summary>Gets or sets a value specifying the name of the <see cref="T:System.Web.Services.Description.Message" /> within the XML Web service to which the <see cref="T:System.Web.Services.Description.SoapHeaderBinding" /> applies.</summary>
+      <returns>An <see cref="T:System.Xml.XmlQualifiedName" /> representing the name of the <see cref="T:System.Web.Services.Description.Message" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapHeaderBinding.Namespace">
+      <summary>Get or sets the URI representing the location of the specification for encoding of content not specifically defined by the <see cref="P:System.Web.Services.Description.SoapHeaderBinding.Encoding" /> property.</summary>
+      <returns>A string representing a URI.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapHeaderBinding.Part">
+      <summary>Gets or sets a value indicating to which <see cref="T:System.Web.Services.Description.MessagePart" /> within the XML Web service the <see cref="T:System.Web.Services.Description.SoapHeaderBinding" /> applies.</summary>
+      <returns>A string representing the name of the <see cref="T:System.Web.Services.Description.MessagePart" /> to which the <see cref="T:System.Web.Services.Description.SoapHeaderBinding" /> applies.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapHeaderBinding.Use">
+      <summary>Specifies whether the header is encoded using rules specified by the <see cref="P:System.Web.Services.Description.SoapHeaderBinding.Encoding" /> property, or is encapsulated within a concrete XML schema.</summary>
+      <returns>One of the <see cref="T:System.Web.Services.Description.SoapBindingUse" /> values. The default is <see langword="Default" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.SoapHeaderFaultBinding">
+      <summary>Represents an extensibility element added to an <see cref="T:System.Web.Services.Description.InputBinding" /> or an <see cref="T:System.Web.Services.Description.OutputBinding" /> within an XML Web service. It specifies the SOAP header types used to transmit error information within the SOAP header.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.SoapHeaderFaultBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.SoapHeaderFaultBinding" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapHeaderFaultBinding.Encoding">
+      <summary>Gets or sets a URI representing the encoding style used to encode the error message for the SOAP header.</summary>
+      <returns>A string containing a URI. The default value is an empty string ("").</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapHeaderFaultBinding.Message">
+      <summary>Gets or sets a value specifying the name of the <see cref="T:System.Web.Services.Description.Message" /> within the XML Web service to which the <see cref="T:System.Web.Services.Description.SoapHeaderFaultBinding" /> applies.</summary>
+      <returns>An <see cref="T:System.Xml.XmlQualifiedName" /> representing the name of the <see cref="T:System.Web.Services.Description.Message" />. The default value is <see cref="F:System.String.Empty" />.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapHeaderFaultBinding.Namespace">
+      <summary>Get or sets a URI representing the location of the specifications for encoding content not specifically defined by the <see cref="P:System.Web.Services.Description.SoapHeaderFaultBinding.Encoding" /> property.</summary>
+      <returns>Returns a string representing a URI.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapHeaderFaultBinding.Part">
+      <summary>Gets or sets a value indicating which <see cref="T:System.Web.Services.Description.MessagePart" /> within the XML Web service the <see cref="T:System.Web.Services.Description.SoapHeaderFaultBinding" /> applies to.</summary>
+      <returns>The name of the <see cref="T:System.Web.Services.Description.MessagePart" /> to which the <see cref="T:System.Web.Services.Description.SoapHeaderFaultBinding" /> applies.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapHeaderFaultBinding.Use">
+      <summary>Specifies whether the header is encoded using rules specified by the <see cref="P:System.Web.Services.Description.SoapHeaderBinding.Encoding" /> property, or is encapsulated within a concrete schema.</summary>
+      <returns>One of the <see cref="T:System.Web.Services.Description.SoapBindingUse" /> values. The default is <see langword="Default" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.SoapOperationBinding">
+      <summary>Represents an extension added to an <see cref="T:System.Web.Services.Description.OperationBinding" /> within an XML Web service.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.SoapOperationBinding.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.SoapOperationBinding" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapOperationBinding.SoapAction">
+      <summary>Gets or sets the URI for the SOAP header.</summary>
+      <returns>A string containing the URI for the SOAP header.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.SoapOperationBinding.Style">
+      <summary>Gets or sets the type of SOAP binding used by the <see cref="T:System.Web.Services.Description.SoapOperationBinding" />.</summary>
+      <returns>One of the <see cref="T:System.Web.Services.Description.SoapBindingStyle" /> values. The default is <see langword="Document" />.</returns>
+    </member>
+    <member name="T:System.Web.Services.Description.Types">
+      <summary>Describes data type definitions relevant to exchanged messages. This class cannot be inherited.</summary>
+    </member>
+    <member name="M:System.Web.Services.Description.Types.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Services.Description.Types" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Services.Description.Types.Extensions">
+      <summary>Gets the collection of <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> elements included in the XML Web service. This property is read-only.</summary>
+      <returns>A collection of extension elements included in the XML Web service.</returns>
+    </member>
+    <member name="P:System.Web.Services.Description.Types.Schemas">
+      <summary>Gets the collection of XML schemas included as data type definitions for the XML Web service. This property is read-only.</summary>
+      <returns>An <see cref="T:System.Xml.Serialization.XmlSchemas" /> collection.</returns>
+    </member>
+    <member name="T:System.Web.Services.WsiProfiles">
+      <summary>Describes the Web services interoperability (WSI) specification to which a Web service claims to conform.</summary>
+    </member>
+    <member name="F:System.Web.Services.WsiProfiles.BasicProfile1_1">
+      <summary>The web service claims to conform to the WSI Basic Profile version 1.1.</summary>
+    </member>
+    <member name="F:System.Web.Services.WsiProfiles.None">
+      <summary>The web service makes no conformance claims.</summary>
+    </member>
+  </members>
+</doc>
