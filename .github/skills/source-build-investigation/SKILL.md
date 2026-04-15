@@ -42,6 +42,8 @@ Find pipeline artifacts, then download individual files from the `downloadUrl` u
 
 The source-build builds repos sequentially in dependency order. Each repo produces intermediate nupkgs that feed into downstream repos. The build order is defined by the repo dependency graph — earlier repos' outputs become available as **source-built** packages for later repos.
 
+For builds targeting different SDK feature bands (e.g., 10.0.2xx, 10.0.3xx), see [Feature Band Source Building](https://github.com/dotnet/source-build/blob/main/Documentation/feature-band-source-building.md). To understand how source build stage 2 builds work, see [How to Build Stage2](https://github.com/dotnet/source-build/blob/main/Documentation/how-to-stage2-build.md).
+
 The high-level flow:
 1. **Prep the Build** — downloads previously-source-built (PSB) artifacts and sets up package feeds
 2. **Build repos in order** — each repo restores from SBRP, PSB, and source-built packages from earlier repos, then builds and publishes its own intermediates
@@ -99,6 +101,8 @@ Common prebuilt causes:
 - New dependency introduced with no source-build equivalent
 - Transitive dependency pulled in by a top-level version change
 
+For a detailed guide on eliminating prebuilts, see [Eliminating Pre-Builts](https://github.com/dotnet/source-build/blob/main/Documentation/eliminating-pre-builts.md).
+
 ## Inspecting built packages
 
 Nupkgs are zip archives. Compare between working and failing builds to find differences.
@@ -109,7 +113,7 @@ The `deps.json` inside a task nupkg shows runtime dependency resolution — what
 
 Source-build uses **package poisoning** (leak detection) to detect when Microsoft-built (non-source-built) binaries leak into the final output. PSB assemblies are marked with a poison payload; if any appear in the final build output, the `eng/finish-source-only.proj` step fails.
 
-For full details on how poisoning and leak detection work, see: https://github.com/dotnet/source-build/blob/main/Documentation/leak-detection.md
+For full details on how poisoning and leak detection work, see [Leak Detection](https://github.com/dotnet/source-build/blob/main/Documentation/leak-detection.md). For understanding the format of poison reports, see [Poison Report Format](https://github.com/dotnet/source-build/blob/main/Documentation/poison-report-format.md).
 
 ## Binary detection
 
