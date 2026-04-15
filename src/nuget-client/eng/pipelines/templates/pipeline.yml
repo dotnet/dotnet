@@ -178,6 +178,7 @@ stages:
       parameters:
         BuildRTM: false
         SigningType: ${{ parameters.SigningType }}
+        isOfficialBuild: ${{ parameters.isOfficialBuild }}
 
 - stage: Build_For_Publishing
   displayName: Build NuGet published to nuget.org
@@ -240,6 +241,7 @@ stages:
       parameters:
         BuildRTM: true
         SigningType: ${{ parameters.SigningType }}
+        isOfficialBuild: ${{ parameters.isOfficialBuild }}
 
   - job: Validate_Publishing_Artifacts
     condition: "and(succeeded(), ne(variables['RunBuildForPublishing'], 'false'))"
