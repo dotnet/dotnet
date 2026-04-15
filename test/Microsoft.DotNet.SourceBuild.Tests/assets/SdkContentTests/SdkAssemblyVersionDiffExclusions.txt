@@ -24,8 +24,6 @@
 ./sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.*
 ./sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/System.IdentityModel.Tokens.Jwt.dll
 
-# File version diff: https://github.com/dotnet/source-build/issues/5510
-
 # File version missing revision: https://github.com/dotnet/source-build/issues/5511
 ./sdk/**/Newtonsoft.Json.dll
 
