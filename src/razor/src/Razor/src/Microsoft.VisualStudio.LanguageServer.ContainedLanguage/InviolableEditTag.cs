@@ -10,5 +10,5 @@ internal class InviolableEditTag : IInviolableEditTag
 {
     private InviolableEditTag() { }
 
-    public readonly static IInviolableEditTag Instance = new InviolableEditTag();
+    public static readonly IInviolableEditTag Instance = new InviolableEditTag();
 }

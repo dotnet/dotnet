@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
-public class TestTagHelperDescriptors
+public static class TestTagHelperDescriptors
 {
     public static TagHelperCollection SimpleTagHelperDescriptors
     {

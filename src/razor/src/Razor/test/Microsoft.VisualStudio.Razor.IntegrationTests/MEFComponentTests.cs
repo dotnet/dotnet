@@ -4,7 +4,6 @@
 using System;
 using System.IO;
 using System.Text;
-using System.Windows.Documents;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -57,8 +56,11 @@ public class MEFComponentTests(ITestOutputHelper testOutputHelper) : AbstractRaz
 
     private static bool IsAllowedFailure(string error)
     {
-        return
-            // No allowed failures. Yay!
-            false;
+        return error switch
+        {
+            // This isn't real, obviously, but stops build warnings about unused parameters
+            "Example allowed error" => true,
+            _ => false
+        };
     }
 }
