@@ -234,7 +234,7 @@ public class LicenseScanTests : TestBase
             exclusionRegex += lookaheads;
         }
 
-        ExclusionsHelper exclusionsHelper = new("LicenseExclusions.txt", Config.LogsDirectory, BaselineSubDir, exclusionRegex);
+        ExclusionsHelper exclusionsHelper = new("LicenseExclusions.txt", BaselineSubDir, exclusionRegex);
 
         for (int i = scancodeResults.Files.Count - 1; i >= 0; i--)
         {
