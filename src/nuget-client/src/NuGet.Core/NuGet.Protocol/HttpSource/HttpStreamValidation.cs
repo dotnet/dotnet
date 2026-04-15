@@ -10,6 +10,8 @@ using System.Text;
 using System.Xml;
 using Newtonsoft.Json;
 using NuGet.Packaging;
+using NuGet.Packaging.Core;
+using NuGet.Protocol.Core.Types;
 
 namespace NuGet.Protocol
 {
@@ -64,6 +66,43 @@ namespace NuGet.Protocol
                 using (var nuspec = reader.GetNuspec()) // This method throws if no .nuspec exists.
                 {
                     _ = new NuspecReader(nuspec); // This method throws if reading the .nuspec fails
+                }
+            }
+            catch (Exception e)
+            {
+                string message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Strings.Log_InvalidNupkgFromUrl,
+                    uri);
+
+                throw new InvalidDataException(message, e);
+            }
+        }
+
+        internal static void ValidatePackageIdentity(string uri, Stream stream, PackageIdentity expectedIdentity)
+        {
+            try
+            {
+                using (var reader = new PackageArchiveReader(
+                    stream: stream,
+                    leaveStreamOpen: true))
+                {
+                    using (var nuspecStream = reader.GetNuspec())
+                    {
+                        var nuspec = new NuspecReader(nuspecStream);
+                        var actualIdentity = nuspec.GetIdentity();
+                        if (!PackageIdentityComparer.Default.Equals(expectedIdentity, actualIdentity))
+                        {
+                            string message = string.Format(
+                                CultureInfo.InvariantCulture,
+                                Strings.Error_PackageIdentityDoesNotMatch,
+                                expectedIdentity.Id,
+                                expectedIdentity.Version,
+                                actualIdentity.Id,
+                                actualIdentity.Version);
+                            throw new FatalProtocolException(message);
+                        }
+                    }
                 }
             }
             catch (Exception e)

@@ -887,4 +887,8 @@ Valid from:</comment>
 {2}</value>
     <comment>0 is a certificate subject, 1 is a certificate fingerprint, and 2 is a PEM-encoded certificate.</comment>
   </data>
+  <data name="ErrorPackageIdentityDoesNotMatch" xml:space="preserve">
+    <value>Expected package {0} {1}, but got package {2} {3}</value>
+    <comment>0 and 2 are package names, and 1 and 3 are versions numbers.</comment>
+  </data>
 </root>

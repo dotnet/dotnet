@@ -4,6 +4,8 @@ parameters:
   - name: SigningType
     displayName: Type of signing to use
     type: string
+  - name: isOfficialBuild
+    type: boolean
 
 steps:
   - task: PowerShell@1
@@ -300,27 +302,28 @@ steps:
     # Using MSBuild CLI results in an assembly binding failure for NuGet.Common.dll 4.4.0.3 because Microsoft.DotNet.Build.Tasks.Feed.dll references SleetLib.dll which references NuGet.Common 4.4.0.3.
     # The Microsoft.DotNet.Build.Tasks.Feed package includes NuGet.Common 4.9.0.6 and a binding redirection in Microsoft.DotNet.Build.Tasks.Feed.dll.config but the binding redirection is not processed.
     # This would probably solve it:  https://github.com/Microsoft/msbuild/issues/1309
-  - task: UseDotNet@2
-    displayName: "Install .NET 10.0.0 for BAR publishing"
-    inputs:
-      packageType: sdk
-      version: 10.0.x
-      includePreviewVersions: true
-      installationPath: $(Agent.TempDirectory)/dotnet
-      workingDirectory: $(Agent.TempDirectory)
-    condition: "and(succeeded(),eq(variables['PublishArtifactsToDotNetBuildAssetRegistry'], 'true'), eq(variables['BuildRTM'], 'false'))"
+  - ${{ if parameters.isOfficialBuild }}:
+    - task: UseDotNet@2
+      displayName: "Install .NET 10.0.0 for BAR publishing"
+      inputs:
+        packageType: sdk
+        version: 10.0.x
+        includePreviewVersions: true
+        installationPath: $(Agent.TempDirectory)/dotnet
+        workingDirectory: $(Agent.TempDirectory)
+      condition: "and(succeeded(),eq(variables['PublishArtifactsToDotNetBuildAssetRegistry'], 'true'), eq(variables['BuildRTM'], 'false'))"
 
-  - task: AzureCLI@2
-    displayName: "Publish to the .NET Core build asset registry (BAR)"
-    inputs:
-      azureSubscription: "Darc: Maestro Production"
-      scriptType: ps
-      scriptLocation: inlineScript
-      inlineScript: |
-        $(Agent.TempDirectory)/dotnet/dotnet msbuild $(Build.Repository.LocalPath)\build\publish.proj /t:PublishToBuildAssetRegistry /property:NuGetClientNupkgsDirectoryPath=$(Build.Repository.LocalPath)\artifacts\$(NupkgOutputDir) /property:BUILD_BUILDNUMBER=$(Build.BuildNumber) /property:BUILD_SOURCEBRANCH=$(SourceBranch) /property:BUILD_SOURCEVERSION=$(Build.SourceVersion) /property:BUILD_REPOSITORY_URI=$(Build.Repository.Uri) /property:BUILD_REPOSITORY_NAME=$(Build.Repository.Name) /property:ArtifactsLogDir=$(Build.Repository.LocalPath)\artifacts\manifests\ /binarylogger:$(Build.StagingDirectory)\binlog\21.PublishToBuildAssetRegistry.binlog /property:MaestroApiEndpoint=$(MaestroApiEndpoint)
-      workingDirectory: cli
-      failOnStderr: true
-    env:
-      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-      DOTNET_MULTILEVEL_LOOKUP: true
-    condition: "and(succeeded(),eq(variables['PublishArtifactsToDotNetBuildAssetRegistry'], 'true'), eq(variables['BuildRTM'], 'false'))"
+    - task: AzureCLI@2
+      displayName: "Publish to the .NET Core build asset registry (BAR)"
+      inputs:
+        azureSubscription: "Darc: Maestro Production"
+        scriptType: ps
+        scriptLocation: inlineScript
+        inlineScript: |
+          $(Agent.TempDirectory)/dotnet/dotnet msbuild $(Build.Repository.LocalPath)\build\publish.proj /t:PublishToBuildAssetRegistry /property:NuGetClientNupkgsDirectoryPath=$(Build.Repository.LocalPath)\artifacts\$(NupkgOutputDir) /property:BUILD_BUILDNUMBER=$(Build.BuildNumber) /property:BUILD_SOURCEBRANCH=$(SourceBranch) /property:BUILD_SOURCEVERSION=$(Build.SourceVersion) /property:BUILD_REPOSITORY_URI=$(Build.Repository.Uri) /property:BUILD_REPOSITORY_NAME=$(Build.Repository.Name) /property:ArtifactsLogDir=$(Build.Repository.LocalPath)\artifacts\manifests\ /binarylogger:$(Build.StagingDirectory)\binlog\21.PublishToBuildAssetRegistry.binlog /property:MaestroApiEndpoint=$(MaestroApiEndpoint)
+        workingDirectory: cli
+        failOnStderr: true
+      env:
+        DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+        DOTNET_MULTILEVEL_LOOKUP: true
+      condition: "and(succeeded(),eq(variables['PublishArtifactsToDotNetBuildAssetRegistry'], 'true'), eq(variables['BuildRTM'], 'false'))"
