@@ -38,7 +38,7 @@ namespace System.Threading
         //    - in between we have a linear gain.
         //    all should be smoothed somewhat by the randomness of individual spin iterations.
 
-        private const int DefaultSemaphoreSpinCountLimit = 200;
+        private const int DefaultSemaphoreSpinCountLimit = 256;
 
         private CacheLineSeparatedCounts _separated;
 
@@ -166,7 +166,7 @@ namespace System.Threading
                 Counts countsBeforeUpdate = _separated._counts.InterlockedCompareExchange(newCounts, counts);
                 if (countsBeforeUpdate == counts)
                 {
-                    return counts.SignalCount != 0 || WaitAsWaiter(timeoutMs, allowFastWake: true);
+                    return counts.SignalCount != 0 || WaitAsWaiter(timeoutMs, allowFastWake: false);
                 }
 
                 Backoff.Exponential(collisionCount++);
@@ -240,13 +240,13 @@ namespace System.Threading
                 if (!allowFastWake)
                 {
                     // The caller wants that the thread spends some time waiting as a matter of rate limiting
-                    // thus we will require a 4 usec cooldown before reintroducing the thread.
+                    // thus we will require a 16 usec cooldown before reintroducing the thread.
                     // The sleep/wake transition typically takes care of the wait, but the blocker has fast
                     // wake paths and the underlying OS API may have fast/trivial wake paths as well,
                     // thus fast wakeups can happen and are hard to avoid completely.
                     // So, if a fast wake happened when parking was desired, we hold up the thread a bit
                     // before releasing.
-                    long cooldown = Stopwatch.Frequency * 4 / 1000000;
+                    long cooldown = Stopwatch.Frequency * 16 / 1000000;
                     while (Stopwatch.GetTimestamp() - blockingStart < cooldown)
                     {
                         Thread.UninterruptibleSleep0();
