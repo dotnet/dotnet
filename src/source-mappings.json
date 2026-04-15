@@ -17,7 +17,6 @@
     "defaults": {
         "defaultRef": "main",
         "exclude": [
-            // Obfuscated files are blocking the source tarball signing
             ".github/workflows/**"
         ]
     },
