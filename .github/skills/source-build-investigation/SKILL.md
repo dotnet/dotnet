@@ -55,11 +55,11 @@ To see the actual build order, look at the `repo-projects/` directory in the VMR
 
 Source-build resolves packages from several sources. Each repo gets its own NuGet cache at `src/<repo>/artifacts/.packages/`.
 
-### SBRP (source-build-reference-packages)
+### SBRP (source-build-assets)
 
-API-only stubs at `src/source-build-reference-packages/src/referencePackages/src/`. These contain `[assembly: ReferenceAssembly]` and `throw null` implementations — they satisfy compile-time references but **cannot be loaded for execution**.
+API-only stubs at `src/source-build-assets/src/referencePackages/src/`. These contain `[assembly: ReferenceAssembly]` and `throw null` implementations — they satisfy compile-time references but **cannot be loaded for execution**.
 
-SBRP also has **external packages** built from real source (e.g., Newtonsoft.Json) at `src/source-build-reference-packages/src/externalPackages/`.
+SBRP also has **external packages** built from real source (e.g., Newtonsoft.Json) at `src/source-build-assets/src/externalPackages/`.
 
 ### PSB (previously-source-built)
 
@@ -140,8 +140,8 @@ The source-build outer-loop pipeline (`eng/pipelines/source-build-outer-loop.yml
 | File | Purpose |
 |---|---|
 | `eng/finish-source-only.proj` | Prebuilt detection at end of SB build |
-| `src/source-build-reference-packages/src/referencePackages/src/` | SBRP reference package stubs |
-| `src/source-build-reference-packages/src/externalPackages/` | External packages built from source |
+| `src/source-build-assets/src/referencePackages/src/` | SBRP reference package stubs |
+| `src/source-build-assets/src/externalPackages/` | External packages built from source |
 | `src/source-manifest.json` | Submodule commit SHAs for external packages |
 | `src/<repo>/eng/Versions.props` | Per-repo version properties |
 | `src/<repo>/Directory.Packages.props` | Central package management versions |
