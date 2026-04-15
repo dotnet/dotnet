@@ -1,9 +1,0 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup Condition="'$(ImplicitlyExpandNETStandardFacades)' == 'true'">
-    <_NETStandardLibraryNETFrameworkLib Include="$(MSBuildThisFileDirectory)\lib\*.dll"
-                                        Exclude="@(_NETStandardLibraryNETFrameworkLib->'$(MSBuildThisFileDirectory)\ref\%(FileName).dll')" />
-  </ItemGroup>
-
-  <Import Project="..\net461\$(MSBuildThisFile)" />
-  <Import Project="..\$(MSBuildThisFileName).common.targets" Condition="'$(ImportedNETStandardLibraryNETFrameworkCommonTargets)' != 'true'" />
-</Project>
