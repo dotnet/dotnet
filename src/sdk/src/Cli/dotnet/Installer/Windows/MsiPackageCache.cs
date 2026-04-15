@@ -3,6 +3,7 @@
 
 #nullable disable
 
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Versioning;
 using Microsoft.DotNet.Cli.Commands.Workload;
 
@@ -39,6 +40,8 @@ internal class MsiPackageCache(InstallElevationContextBase elevationContext, ISe
     /// <param name="packageId">The ID of the workload pack package containing an MSI.</param>
     /// <param name="packageVersion">The package version.</param>
     /// <param name="manifestPath">The JSON manifest associated with the workload pack MSI.</param>
+    [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Newtonsoft.Json is not used in AOT scenarios.")]
+    [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "Newtonsoft.Json is not used in trimmed scenarios.")]
     public void CachePayload(string packageId, string packageVersion, string manifestPath)
     {
         if (!File.Exists(manifestPath))
@@ -114,6 +117,8 @@ internal class MsiPackageCache(InstallElevationContextBase elevationContext, ISe
         return true;
     }
 
+    [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Newtonsoft.Json is not used in AOT scenarios.")]
+    [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "Newtonsoft.Json is not used in trimmed scenarios.")]
     public bool TryGetMsiPathFromPackageData(string packageDataPath, out string msiPath, out string manifestPath)
     {
         msiPath = default;
