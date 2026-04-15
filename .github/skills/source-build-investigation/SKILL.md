@@ -1,6 +1,6 @@
 ---
 name: source-build-investigation
-description: Investigate source-build failures in dotnet/dotnet VMR CI builds. USE FOR any mention of "prebuilt", "source-build/source-only failure", "source-build-reference-packages (SBRP)", "poison", source-build repo build ordering problems, or any build leg failures that only occur in `SB_*` job names. DO NOT USE FOR regular CI test failures, codeflow staleness, dependency flow tracing, crash dumps, or general NuGet package management unrelated to source-build.
+description: Investigate source-build failures in dotnet/dotnet VMR CI builds. USE FOR any mention of "prebuilt", "source-build/source-only failure", "source-build-assets (SBRP)", "poison", source-build repo build ordering problems, binary detection/removal,  or any build leg failures that only occur in `SB_*` job names. DO NOT USE FOR regular CI test failures, codeflow staleness, dependency flow tracing, crash dumps, or general NuGet package management unrelated to source-build.
 ---
 
 # Source-Build Investigation
@@ -110,6 +110,30 @@ The `deps.json` inside a task nupkg shows runtime dependency resolution — what
 Source-build uses **package poisoning** (leak detection) to detect when Microsoft-built (non-source-built) binaries leak into the final output. PSB assemblies are marked with a poison payload; if any appear in the final build output, the `eng/finish-source-only.proj` step fails.
 
 For full details on how poisoning and leak detection work, see: https://github.com/dotnet/source-build/blob/main/Documentation/leak-detection.md
+
+## Binary detection
+
+Source-build tracks new binaries introduced by changes. During the validation stage, a `NewBinaries.txt` report is produced and downloaded as part of the build artifacts under `log/NewBinaries.txt`. This report lists binaries that were not present in the baseline.
+
+Binary detection failures indicate that a change introduced a checked-in binary or a binary that wasn't expected. To resolve, either remove the binary and build it from source, or if the binary is intentionally included, add it to the allowed binaries baseline at `eng/allowed-sb-binaries.txt`.
+
+## Post-build signing
+
+In source-only builds, signing does **not** happen during the build itself. Instead, source-built artifacts are signed after the build completes via `eng/sign-source-built-artifacts.proj`. This is controlled by the `/p:DotNetSourceOnlyPostBuildSign=true` property.
+
+The post-build signing step runs MicroBuild/ESRP signing on the source-built packages. If signing fails, check the `outer-sign-source-built-artifacts.binlog` in the build logs. Common issues include missing signing certificates, ESRP connectivity problems, or packages containing unsigned assemblies that require signing.
+
+Legs with `disableSigning: true` in the pipeline definition skip signing entirely — most SB legs use this. Only legs with `disableSigning: false` produce signed output.
+
+### Signing verification
+
+The `VMR_Validation` stage includes `ValidateSigning` jobs that run on Windows, Mac, and Linux. These jobs (defined in `eng/pipelines/templates/steps/vmr-validate-signing.yml`) verify that all assemblies in the build output are properly signed. They only run when the sign type is `real` (i.e., production builds).
+
+Signing verification failures indicate unsigned or incorrectly signed binaries in the output.
+
+## Outer-loop builds
+
+The source-build outer-loop pipeline (`eng/pipelines/source-build-outer-loop.yml`) runs additional SB legs that are too expensive or specialized for the main PR/CI pipeline. These include Mono runtime builds.
 
 ## Key VMR files
 
