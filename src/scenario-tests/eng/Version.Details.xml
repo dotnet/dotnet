@@ -5,8 +5,8 @@
   </ProductDependencies>
   <ToolsetDependencies>
     <Dependency Name="System.CommandLine" Version="2.0.6">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>69cfba5bc407a3c00a950a0d3759fdd622c22594</Sha>
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>47fb725acf5d7094af51aebbb5b7e5c44a3b2a77</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.26163.111">
       <Uri>https://github.com/dotnet/dotnet</Uri>
