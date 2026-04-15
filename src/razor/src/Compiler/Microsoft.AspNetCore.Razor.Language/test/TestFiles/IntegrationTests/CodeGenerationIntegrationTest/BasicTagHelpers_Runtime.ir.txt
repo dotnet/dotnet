@@ -65,7 +65,7 @@
                             PreallocatedTagHelperProperty - (284:6,21 [8] BasicTagHelpers.cshtml) - __tagHelperAttribute_2 - type - Type
                             PreallocatedTagHelperProperty - (284:6,21 [8] BasicTagHelpers.cshtml) - __tagHelperAttribute_2 - type - Type
                             DefaultTagHelperProperty - (303:6,40 [4] BasicTagHelpers.cshtml) - checked - bool TestNamespace.InputTagHelper2.Checked - HtmlAttributeValueStyle.DoubleQuotes
-                                LazyIntermediateToken - (303:6,40 [4] BasicTagHelpers.cshtml) - CSharp - true
+                                IntermediateToken - (303:6,40 [4] BasicTagHelpers.cshtml) - CSharp - true
                             DefaultTagHelperExecute - 
                         HtmlContent - (310:6,47 [6] BasicTagHelpers.cshtml)
                             LazyIntermediateToken - (310:6,47 [6] BasicTagHelpers.cshtml) - Html - \n    

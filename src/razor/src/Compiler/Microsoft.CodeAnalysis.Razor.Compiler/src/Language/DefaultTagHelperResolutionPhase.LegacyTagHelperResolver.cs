@@ -1333,8 +1333,7 @@ internal partial class DefaultTagHelperResolutionPhase
                         contentLength,
                         0,
                         contentLocation.Character + contentLength);
-                    expr.Children.Add(new CSharpIntermediateToken(
-                        LazyContent.Create(text, static s => s), contentSpan));
+                    expr.Children.Add(new CSharpIntermediateToken(text, contentSpan));
                     expr.Source = contentSpan;
                 }
             }
@@ -1364,8 +1363,7 @@ internal partial class DefaultTagHelperResolutionPhase
                 var tokenSpan = firstSpan is { } f && lastSpan is { } l
                     ? MergeSourceSpans(f, l)
                     : firstSpan;
-                expr.Children.Add(new CSharpIntermediateToken(
-                    LazyContent.Create(mergedContent, static s => s), tokenSpan));
+                expr.Children.Add(new CSharpIntermediateToken(mergedContent, tokenSpan));
                 expr.Source = tokenSpan;
             }
 
@@ -1395,8 +1393,7 @@ internal partial class DefaultTagHelperResolutionPhase
             RazorSourceDocument sourceDocument)
         {
             var text = sourceDocument.Text.ToString(new Microsoft.CodeAnalysis.Text.TextSpan(vss.AbsoluteIndex, vss.Length));
-            target.Children.Add(new CSharpIntermediateToken(
-                LazyContent.Create(text, static s => s), vss));
+            target.Children.Add(new CSharpIntermediateToken(text, vss));
         }
 
         /// <summary>
@@ -1472,7 +1469,7 @@ internal partial class DefaultTagHelperResolutionPhase
         {
             // Legacy path: preserve individual literal tokens (including prefixes/spaces) and wrap expressions
             // in CSharpExpression. Adjacent literals are batched into single HtmlContent nodes.
-            using var pendingLiteralParts = new PooledArrayBuilder<(string text, SourceSpan? source, bool isLazy)>();
+            using var pendingLiteralParts = new PooledArrayBuilder<(string text, SourceSpan? source)>();
             SourceSpan? pendingFirstSpan = null;
             SourceSpan? pendingLastSpan = null;
 
@@ -1493,7 +1490,7 @@ internal partial class DefaultTagHelperResolutionPhase
                                 var mergedContent = prefix + htmlToken.Content;
                                 var mergedSource = ExtendSpanBackward(htmlToken.Source, prefix.Length);
 
-                                pendingLiteralParts.Add((mergedContent, mergedSource, htmlToken.IsLazy));
+                                pendingLiteralParts.Add((mergedContent, mergedSource));
                                 if (mergedSource is { } ms)
                                 {
                                     pendingFirstSpan ??= ms;
@@ -1504,7 +1501,7 @@ internal partial class DefaultTagHelperResolutionPhase
                             }
                             else
                             {
-                                pendingLiteralParts.Add((htmlToken.Content, htmlToken.Source, htmlToken.IsLazy));
+                                pendingLiteralParts.Add((htmlToken.Content, htmlToken.Source));
                                 if (htmlToken.Source is { } s)
                                 {
                                     pendingFirstSpan ??= s;
@@ -1517,7 +1514,7 @@ internal partial class DefaultTagHelperResolutionPhase
                     // If prefix wasn't merged (no children), add it standalone.
                     if (!mergedPrefixWithFirst && !string.IsNullOrEmpty(prefix))
                     {
-                        pendingLiteralParts.Add((prefix, null, false));
+                        pendingLiteralParts.Add((prefix, null));
                     }
                 }
                 else
@@ -1526,7 +1523,7 @@ internal partial class DefaultTagHelperResolutionPhase
                     if (child is UnresolvedExpressionAttributeValueIntermediateNode unresolvedExpr2
                         && !string.IsNullOrEmpty(unresolvedExpr2.Prefix))
                     {
-                        pendingLiteralParts.Add((unresolvedExpr2.Prefix, (SourceSpan?)null, false));
+                        pendingLiteralParts.Add((unresolvedExpr2.Prefix, null));
                     }
 
                     // Flush pending literals as HtmlContent with individual tokens.
@@ -1565,7 +1562,7 @@ internal partial class DefaultTagHelperResolutionPhase
         /// </summary>
         private static void FlushPendingLiterals(
             IntermediateNode target,
-            ref PooledArrayBuilder<(string text, SourceSpan? source, bool isLazy)> pendingParts,
+            ref PooledArrayBuilder<(string text, SourceSpan? source)> pendingParts,
             ref SourceSpan? pendingFirstSpan,
             ref SourceSpan? pendingLastSpan)
         {
@@ -1575,11 +1572,9 @@ internal partial class DefaultTagHelperResolutionPhase
             }
 
             var htmlContent = new HtmlContentIntermediateNode() { Source = pendingFirstSpan };
-            foreach (var (text, tokenSource, isLazy) in pendingParts)
+            foreach (var (text, tokenSource) in pendingParts)
             {
-                htmlContent.Children.Add(isLazy
-                    ? new HtmlIntermediateToken(LazyContent.Create(text, static s => s), tokenSource)
-                    : new HtmlIntermediateToken(text, tokenSource));
+                htmlContent.Children.Add(new HtmlIntermediateToken(text, tokenSource));
             }
 
             if (pendingFirstSpan is { } f && pendingLastSpan is { } l)

@@ -62,7 +62,7 @@
                             PreallocatedTagHelperProperty - (374:7,85 [4] NestedScriptTagTagHelpers.cshtml) - __tagHelperAttribute_0 - type - Type
                             PreallocatedTagHelperProperty - (374:7,85 [4] NestedScriptTagTagHelpers.cshtml) - __tagHelperAttribute_0 - type - Type
                             DefaultTagHelperProperty - (389:7,100 [4] NestedScriptTagTagHelpers.cshtml) - checked - bool TestNamespace.InputTagHelper2.Checked - HtmlAttributeValueStyle.DoubleQuotes
-                                LazyIntermediateToken - (389:7,100 [4] NestedScriptTagTagHelpers.cshtml) - CSharp - true
+                                IntermediateToken - (389:7,100 [4] NestedScriptTagTagHelpers.cshtml) - CSharp - true
                             DefaultTagHelperExecute - 
                         HtmlContent - (395:7,106 [29] NestedScriptTagTagHelpers.cshtml)
                             LazyIntermediateToken - (395:7,106 [18] NestedScriptTagTagHelpers.cshtml) - Html - \n                

@@ -19,7 +19,7 @@
       </trans-unit>
       <trans-unit id="View_Page">
         <source>View Page</source>
-        <target state="new">View Page</target>
+        <target state="translated">Afficher la page</target>
         <note />
       </trans-unit>
     </body>

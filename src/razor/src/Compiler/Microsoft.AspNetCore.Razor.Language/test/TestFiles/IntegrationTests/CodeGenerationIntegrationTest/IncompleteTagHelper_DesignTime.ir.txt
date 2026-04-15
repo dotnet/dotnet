@@ -42,7 +42,7 @@
                     DefaultTagHelperCreate -  - TestNamespace.PTagHelper
                     DefaultTagHelperHtmlAttribute -  - class - HtmlAttributeValueStyle.DoubleQuotes
                         HtmlContent - (45:2,10 [0] IncompleteTagHelper.cshtml)
-                            LazyIntermediateToken - (45:2,10 [0] IncompleteTagHelper.cshtml) - Html - 
+                            IntermediateToken - (45:2,10 [0] IncompleteTagHelper.cshtml) - Html - 
                     DefaultTagHelperExecute - 
             Inject - 
             Inject - 

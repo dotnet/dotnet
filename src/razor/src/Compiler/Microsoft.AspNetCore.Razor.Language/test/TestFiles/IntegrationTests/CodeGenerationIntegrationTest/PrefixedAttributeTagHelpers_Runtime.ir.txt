@@ -39,13 +39,13 @@
                     DefaultTagHelperCreate -  - TestNamespace.InputTagHelper2
                     PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_0
                     DefaultTagHelperProperty - (370:15,43 [13] PrefixedAttributeTagHelpers.cshtml) - int-dictionary - System.Collections.Generic.IDictionary<string, int> TestNamespace.InputTagHelper1.IntDictionaryProperty - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (370:15,43 [13] PrefixedAttributeTagHelpers.cshtml) - CSharp - intDictionary
+                        IntermediateToken - (370:15,43 [13] PrefixedAttributeTagHelpers.cshtml) - CSharp - intDictionary
                     DefaultTagHelperProperty - (370:15,43 [13] PrefixedAttributeTagHelpers.cshtml) - int-dictionary - int TestNamespace.InputTagHelper2.IntDictionaryProperty - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (370:15,43 [13] PrefixedAttributeTagHelpers.cshtml) - CSharp - intDictionary
+                        IntermediateToken - (370:15,43 [13] PrefixedAttributeTagHelpers.cshtml) - CSharp - intDictionary
                     DefaultTagHelperProperty - (404:15,77 [16] PrefixedAttributeTagHelpers.cshtml) - string-dictionary - Namespace.DictionaryWithoutParameterlessConstructor<string, string> TestNamespace.InputTagHelper1.StringDictionaryProperty - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (404:15,77 [16] PrefixedAttributeTagHelpers.cshtml) - CSharp - stringDictionary
+                        IntermediateToken - (404:15,77 [16] PrefixedAttributeTagHelpers.cshtml) - CSharp - stringDictionary
                     DefaultTagHelperProperty - (404:15,77 [16] PrefixedAttributeTagHelpers.cshtml) - string-dictionary - Namespace.DictionaryWithoutParameterlessConstructor<string, string> TestNamespace.InputTagHelper2.StringDictionaryProperty - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (404:15,77 [16] PrefixedAttributeTagHelpers.cshtml) - CSharp - stringDictionary
+                        IntermediateToken - (404:15,77 [16] PrefixedAttributeTagHelpers.cshtml) - CSharp - stringDictionary
                     DefaultTagHelperExecute - 
                 HtmlContent - (423:15,96 [6] PrefixedAttributeTagHelpers.cshtml)
                     LazyIntermediateToken - (423:15,96 [6] PrefixedAttributeTagHelpers.cshtml) - Html - \n    
@@ -55,17 +55,17 @@
                     DefaultTagHelperCreate -  - TestNamespace.InputTagHelper2
                     PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_1
                     DefaultTagHelperProperty - (468:16,43 [13] PrefixedAttributeTagHelpers.cshtml) - int-dictionary - System.Collections.Generic.IDictionary<string, int> TestNamespace.InputTagHelper1.IntDictionaryProperty - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (468:16,43 [13] PrefixedAttributeTagHelpers.cshtml) - CSharp - intDictionary
+                        IntermediateToken - (468:16,43 [13] PrefixedAttributeTagHelpers.cshtml) - CSharp - intDictionary
                     DefaultTagHelperProperty - (468:16,43 [13] PrefixedAttributeTagHelpers.cshtml) - int-dictionary - int TestNamespace.InputTagHelper2.IntDictionaryProperty - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (468:16,43 [13] PrefixedAttributeTagHelpers.cshtml) - CSharp - intDictionary
+                        IntermediateToken - (468:16,43 [13] PrefixedAttributeTagHelpers.cshtml) - CSharp - intDictionary
                     DefaultTagHelperProperty - (502:16,77 [2] PrefixedAttributeTagHelpers.cshtml) - int-prefix-garlic - System.Collections.Generic.IDictionary<string, int> TestNamespace.InputTagHelper1.IntDictionaryProperty - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (502:16,77 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 37
+                        IntermediateToken - (502:16,77 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 37
                     DefaultTagHelperProperty - (502:16,77 [2] PrefixedAttributeTagHelpers.cshtml) - int-prefix-garlic - int TestNamespace.InputTagHelper2.IntDictionaryProperty - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (502:16,77 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 37
+                        IntermediateToken - (502:16,77 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 37
                     DefaultTagHelperProperty - (526:16,101 [2] PrefixedAttributeTagHelpers.cshtml) - int-prefix-grabber - int TestNamespace.InputTagHelper1.IntProperty - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (526:16,101 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 42
+                        IntermediateToken - (526:16,101 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 42
                     DefaultTagHelperProperty - (526:16,101 [2] PrefixedAttributeTagHelpers.cshtml) - int-prefix-grabber - int TestNamespace.InputTagHelper2.IntDictionaryProperty - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (526:16,101 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 42
+                        IntermediateToken - (526:16,101 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 42
                     DefaultTagHelperExecute - 
                 HtmlContent - (532:16,107 [6] PrefixedAttributeTagHelpers.cshtml)
                     LazyIntermediateToken - (532:16,107 [6] PrefixedAttributeTagHelpers.cshtml) - Html - \n    
@@ -75,17 +75,17 @@
                     DefaultTagHelperCreate -  - TestNamespace.InputTagHelper2
                     PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_2
                     DefaultTagHelperProperty - (590:18,31 [2] PrefixedAttributeTagHelpers.cshtml) - int-prefix-grabber - int TestNamespace.InputTagHelper1.IntProperty - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (590:18,31 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 42
+                        IntermediateToken - (590:18,31 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 42
                     DefaultTagHelperProperty - (590:18,31 [2] PrefixedAttributeTagHelpers.cshtml) - int-prefix-grabber - int TestNamespace.InputTagHelper2.IntDictionaryProperty - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (590:18,31 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 42
+                        IntermediateToken - (590:18,31 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 42
                     DefaultTagHelperProperty - (611:18,52 [2] PrefixedAttributeTagHelpers.cshtml) - int-prefix-salt - System.Collections.Generic.IDictionary<string, int> TestNamespace.InputTagHelper1.IntDictionaryProperty - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (611:18,52 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 37
+                        IntermediateToken - (611:18,52 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 37
                     DefaultTagHelperProperty - (611:18,52 [2] PrefixedAttributeTagHelpers.cshtml) - int-prefix-salt - int TestNamespace.InputTagHelper2.IntDictionaryProperty - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (611:18,52 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 37
+                        IntermediateToken - (611:18,52 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 37
                     DefaultTagHelperProperty - (634:18,75 [2] PrefixedAttributeTagHelpers.cshtml) - int-prefix-pepper - System.Collections.Generic.IDictionary<string, int> TestNamespace.InputTagHelper1.IntDictionaryProperty - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (634:18,75 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 98
+                        IntermediateToken - (634:18,75 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 98
                     DefaultTagHelperProperty - (634:18,75 [2] PrefixedAttributeTagHelpers.cshtml) - int-prefix-pepper - int TestNamespace.InputTagHelper2.IntDictionaryProperty - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (634:18,75 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 98
+                        IntermediateToken - (634:18,75 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 98
                     PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_3
                     PreallocatedTagHelperProperty - (693:19,34 [6] PrefixedAttributeTagHelpers.cshtml) - __tagHelperAttribute_4 - string-prefix-grabber - StringProperty
                     PreallocatedTagHelperProperty - (693:19,34 [6] PrefixedAttributeTagHelpers.cshtml) - __tagHelperAttribute_4 - string-prefix-grabber - StringDictionaryProperty
@@ -93,20 +93,20 @@
                     PreallocatedTagHelperProperty - (724:19,65 [14] PrefixedAttributeTagHelpers.cshtml) - __tagHelperAttribute_5 - string-prefix-paprika - StringDictionaryProperty
                     DefaultTagHelperProperty - (773:20,32 [19] PrefixedAttributeTagHelpers.cshtml) - string-prefix-cumin - Namespace.DictionaryWithoutParameterlessConstructor<string, string> TestNamespace.InputTagHelper1.StringDictionaryProperty - HtmlAttributeValueStyle.DoubleQuotes
                         HtmlContent - (773:20,32 [8] PrefixedAttributeTagHelpers.cshtml)
-                            LazyIntermediateToken - (773:20,32 [8] PrefixedAttributeTagHelpers.cshtml) - Html - literate
+                            IntermediateToken - (773:20,32 [8] PrefixedAttributeTagHelpers.cshtml) - Html - literate
                             IntermediateToken -  - Html -  
                         CSharpExpression - (783:20,42 [8] PrefixedAttributeTagHelpers.cshtml)
                             LazyIntermediateToken - (783:20,42 [8] PrefixedAttributeTagHelpers.cshtml) - CSharp - literate
                         HtmlContent - (791:20,50 [1] PrefixedAttributeTagHelpers.cshtml)
-                            LazyIntermediateToken - (791:20,50 [1] PrefixedAttributeTagHelpers.cshtml) - Html - ?
+                            IntermediateToken - (791:20,50 [1] PrefixedAttributeTagHelpers.cshtml) - Html - ?
                     DefaultTagHelperProperty - (773:20,32 [19] PrefixedAttributeTagHelpers.cshtml) - string-prefix-cumin - Namespace.DictionaryWithoutParameterlessConstructor<string, string> TestNamespace.InputTagHelper2.StringDictionaryProperty - HtmlAttributeValueStyle.DoubleQuotes
                         HtmlContent - (773:20,32 [8] PrefixedAttributeTagHelpers.cshtml)
-                            LazyIntermediateToken - (773:20,32 [8] PrefixedAttributeTagHelpers.cshtml) - Html - literate
+                            IntermediateToken - (773:20,32 [8] PrefixedAttributeTagHelpers.cshtml) - Html - literate
                             IntermediateToken -  - Html -  
                         CSharpExpression - (783:20,42 [8] PrefixedAttributeTagHelpers.cshtml)
                             LazyIntermediateToken - (783:20,42 [8] PrefixedAttributeTagHelpers.cshtml) - CSharp - literate
                         HtmlContent - (791:20,50 [1] PrefixedAttributeTagHelpers.cshtml)
-                            LazyIntermediateToken - (791:20,50 [1] PrefixedAttributeTagHelpers.cshtml) - Html - ?
+                            IntermediateToken - (791:20,50 [1] PrefixedAttributeTagHelpers.cshtml) - Html - ?
                     DefaultTagHelperExecute - 
                 HtmlContent - (795:20,54 [6] PrefixedAttributeTagHelpers.cshtml)
                     LazyIntermediateToken - (795:20,54 [6] PrefixedAttributeTagHelpers.cshtml) - Html - \n    
@@ -115,9 +115,9 @@
                     DefaultTagHelperCreate -  - TestNamespace.InputTagHelper1
                     DefaultTagHelperCreate -  - TestNamespace.InputTagHelper2
                     DefaultTagHelperProperty - (826:21,29 [2] PrefixedAttributeTagHelpers.cshtml) - int-prefix-value - System.Collections.Generic.IDictionary<string, int> TestNamespace.InputTagHelper1.IntDictionaryProperty - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (826:21,29 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 37
+                        IntermediateToken - (826:21,29 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 37
                     DefaultTagHelperProperty - (826:21,29 [2] PrefixedAttributeTagHelpers.cshtml) - int-prefix-value - int TestNamespace.InputTagHelper2.IntDictionaryProperty - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (826:21,29 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 37
+                        IntermediateToken - (826:21,29 [2] PrefixedAttributeTagHelpers.cshtml) - CSharp - 37
                     PreallocatedTagHelperProperty - (851:21,54 [6] PrefixedAttributeTagHelpers.cshtml) - __tagHelperAttribute_6 - string-prefix-thyme - StringDictionaryProperty
                     PreallocatedTagHelperProperty - (851:21,54 [6] PrefixedAttributeTagHelpers.cshtml) - __tagHelperAttribute_6 - string-prefix-thyme - StringDictionaryProperty
                     DefaultTagHelperExecute - 
