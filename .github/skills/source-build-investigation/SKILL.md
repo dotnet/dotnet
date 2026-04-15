@@ -11,7 +11,7 @@ Reference for investigating source-build failures in the dotnet/dotnet VMR (Virt
 
 SB legs produce two artifacts:
 - **`<leg>_BuildLogs_Attempt<N>`** — logs, binlogs, prebuilt reports
-- **`<leg>_Artifacts`** on success, or **`<leg>_Artifacts_Attempt<N>`** on failure — built packages (nupkgs)
+- **`<leg>_Artifacts`** on success, or **`<leg>_Artifacts_Attempt<N>`** on failure — built assets/packages
 
 ### Downloading specific files
 
