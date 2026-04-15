@@ -97,7 +97,10 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1
                     Accuracy.Encode(writer);
                 }
 
-                writer.WriteBoolean(Ordering);
+                if (Ordering)
+                {
+                    writer.WriteBoolean(Ordering);
+                }
 
                 if (Nonce is not null)
                 {

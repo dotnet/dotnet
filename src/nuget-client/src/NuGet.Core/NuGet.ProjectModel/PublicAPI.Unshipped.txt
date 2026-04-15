@@ -7,3 +7,5 @@ const NuGet.ProjectModel.LockFileFormat.LegacyVersion = 3 -> int
 ~static NuGet.ProjectModel.PackageSpecOperations.AddOrUpdateDependency(NuGet.ProjectModel.PackageSpec spec, NuGet.Packaging.Core.PackageIdentity identity, System.Collections.Generic.IEnumerable<string> frameworksToAdd) -> void
 ~NuGet.ProjectModel.PackagesLockFileTarget.TargetAlias.get -> string
 ~NuGet.ProjectModel.PackagesLockFileTarget.TargetAlias.set -> void
+NuGet.ProjectModel.ProjectRestoreMetadata.RestoreDoNotWriteDependencyGraphSpec.get -> bool
+NuGet.ProjectModel.ProjectRestoreMetadata.RestoreDoNotWriteDependencyGraphSpec.set -> void
