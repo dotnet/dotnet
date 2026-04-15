@@ -15,7 +15,11 @@
     // The default filters do not apply to submodules
     // Only filters which start with submodule's path are applied when syncing submodules
     "defaults": {
-        "defaultRef": "main"
+        "defaultRef": "main",
+        "exclude": [
+            // Obfuscated files are blocking the source tarball signing
+            ".github/workflows/**"
+        ]
     },
 
     // Each of these mappings has a corresponding folder in the src/ directory
