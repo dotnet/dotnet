@@ -173,5 +173,5 @@ The source-build outer-loop pipeline (`eng/pipelines/source-build-outer-loop.yml
 | Tool | Use for |
 |---|---|
 | `github-mcp-server` | PR details, file contents, commits, code search |
-| `helix-mcp` | Get build logs/artifacts |
+| Azure DevOps MCP server | Get build logs/artifacts |
 | `binlog-mcp` | Load and query MSBuild binlogs |
