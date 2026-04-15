@@ -18,30 +18,6 @@ parameters:
   displayName: Build bits for publishing
   type: boolean
   default: false
-- name: RunCrossFrameworkTestsOnWindows
-  displayName: Run cross framework tests on Windows
-  type: boolean
-  default: false
-- name: RunFunctionalTestsOnWindows
-  displayName: Run functional tests on Windows
-  type: boolean
-  default: false
-- name: RunSourceBuild
-  displayName: Run source build
-  type: boolean
-  default: false
-- name: RunTestsOnLinux
-  displayName: Run tests on Linux
-  type: boolean
-  default: false
-- name: RunTestsOnMac
-  displayName: Run tests on Mac
-  type: boolean
-  default: false
-- name: RunMonoTestsOnMac
-  displayName: Run Mono tests on Mac
-  type: boolean
-  default: true
 
 resources:
   pipelines:
@@ -61,13 +37,6 @@ variables:
   Codeql.Enabled: false
   Codeql.TSAEnabled: false
   RunBuildForPublishing: ${{ parameters.RunBuildForPublishing }}
-  RunCrossFrameworkTestsOnWindows: ${{ parameters.RunCrossFrameworkTestsOnWindows }}
-  RunEndToEndTests: ${{ parameters.RunEndToEndTests }}
-  RunFunctionalTestsOnWindows: ${{ parameters.RunFunctionalTestsOnWindows }}
-  RunSourceBuild: ${{ parameters.RunSourceBuild }}
-  RunTestsOnLinux: ${{ parameters.RunTestsOnLinux }}
-  RunTestsOnMac: ${{ parameters.RunTestsOnMac }}
-  RunMonoTestsOnMac: ${{ parameters.RunMonoTestsOnMac }}
 
 stages:
 - template: templates/pipeline.yml
@@ -76,9 +45,3 @@ stages:
     DartLabEnvironment: ${{parameters.DartLabEnvironment}}
     NuGetLocalizationType: ${{parameters.NuGetLocalizationType}}
     RunBuildForPublishing: ${{parameters.RunBuildForPublishing}}
-    RunCrossFrameworkTestsOnWindows: ${{parameters.RunCrossFrameworkTestsOnWindows}}
-    RunFunctionalTestsOnWindows: ${{parameters.RunFunctionalTestsOnWindows}}
-    RunSourceBuild: ${{parameters.RunSourceBuild}}
-    RunTestsOnLinux: ${{parameters.RunTestsOnLinux}}
-    RunTestsOnMac: ${{parameters.RunTestsOnMac}}
-    RunMonoTestsOnMac: ${{parameters.RunMonoTestsOnMac}}

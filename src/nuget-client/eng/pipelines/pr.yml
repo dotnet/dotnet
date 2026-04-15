@@ -30,7 +30,7 @@ parameters:
 - name: RunStaticAnalysis
   displayName: Run a static analysis
   type: boolean
-  default: true
+  default: false
 variables:
   DOTNET_NOLOGO: 1
   NUGET_EXPERIMENTAL_CHAIN_BUILD_RETRY_POLICY: 3,1000
@@ -83,23 +83,6 @@ stages:
         testType: Unit
         testTargetFramework: net8.0
 
-- ${{ if eq(parameters.RunUnitTestsOnWindows, true) }}:
-  - stage:
-    displayName: Unit Tests on Windows (.NET Core 3.1)
-    dependsOn: []
-    jobs:
-    - template: pr.job.yml
-      parameters:
-        displayName: Unit Tests on Windows (.NET Core 3.1)
-        osName: Windows
-        ${{ if eq(variables['System.TeamProject'], 'public') }}:
-          agentPool: NetCore-Public
-          agentDemands: ImageOverride -equals Windows.VS2022Preview.Amd64.Open
-        ${{ else }}:
-          agentPool: VSEngSS-MicroBuild2022-1ES
-        testType: Unit
-        testTargetFramework: netcoreapp3.1
-
 - ${{ if eq(parameters.RunFunctionalTestsOnWindows, true) }}:
   - stage:
     displayName: Functional Tests on Windows (.NET Framework 4.7.2)
@@ -136,24 +119,6 @@ stages:
         testTargetFramework: net8.0
         timeoutInMinutes: 60
 
-- ${{ if eq(parameters.RunFunctionalTestsOnWindows, true) }}:
-  - stage:
-    displayName: Functional Tests on Windows (.NET Core 3.1)
-    dependsOn: []
-    jobs:
-    - template: pr.job.yml
-      parameters:
-        displayName: Functional Tests on Windows (.NET Core 3.1)
-        osName: Windows
-        ${{ if eq(variables['System.TeamProject'], 'public') }}:
-          agentPool: NetCore-Public
-          agentDemands: ImageOverride -equals Windows.VS2022Preview.Amd64.Open
-        ${{ else }}:
-          agentPool: VSEngSS-MicroBuild2022-1ES
-        testType: Functional
-        testTargetFramework: netcoreapp3.1
-        timeoutInMinutes: 60
-
 - ${{ if eq(parameters.RunUnitTestsOnLinux, true) }}:
   - stage:
     displayName: Unit Tests on Linux (.NET 8.0)
@@ -166,19 +131,6 @@ stages:
         vmImage: ubuntu-latest
         testType: Unit
         testTargetFramework: net8.0
-
-- ${{ if eq(parameters.RunUnitTestsOnLinux, true) }}:
-  - stage:
-    displayName: Unit Tests on Linux (.NET Core 3.1)
-    dependsOn: []
-    jobs:
-    - template: pr.job.yml
-      parameters:
-        displayName: Unit Tests on Linux (.NET Core 3.1)
-        osName: Linux
-        vmImage: ubuntu-22.04
-        testType: Unit
-        testTargetFramework: netcoreapp3.1
 
 - ${{ if eq(parameters.RunFunctionalTestsOnLinux, true) }}:
   - stage:
@@ -194,18 +146,6 @@ stages:
         testTargetFramework: net8.0
         timeoutInMinutes: 60
 
-- ${{ if eq(parameters.RunFunctionalTestsOnLinux, true) }}:
-  - stage:
-    displayName: Functional Tests on Linux (.NET Core 3.1)
-    dependsOn: []
-    jobs:
-    - template: pr.job.yml
-      parameters:
-        displayName: Functional Tests on Linux (.NET Core 3.1)
-        osName: Linux
-        vmImage: ubuntu-22.04
-        testType: Functional
-        testTargetFramework: netcoreapp3.1
 
 - ${{ if eq(parameters.RunUnitTestsOnMacOS, true) }}:
   - stage:
@@ -220,19 +160,6 @@ stages:
         testType: Unit
         testTargetFramework: net8.0
 
-- ${{ if eq(parameters.RunUnitTestsOnMacOS, true) }}:
-  - stage:
-    displayName: Unit Tests on MacOS (.NET Core 3.1)
-    dependsOn: []
-    jobs:
-    - template: pr.job.yml
-      parameters:
-        displayName: Unit Tests on MacOS (.NET Core 3.1)
-        osName: MacOS
-        vmImage: macos-latest
-        testType: Unit
-        testTargetFramework: netcoreapp3.1
-
 - ${{ if eq(parameters.RunFunctionalTestsOnMacOS, true) }}:
   - stage:
     displayName: Functional Tests on MacOS (.NET 8.0)
@@ -246,19 +173,6 @@ stages:
         testType: Functional
         testTargetFramework: net8.0
         timeoutInMinutes: 60
-
-- ${{ if eq(parameters.RunFunctionalTestsOnMacOS, true) }}:
-  - stage:
-    displayName: Functional Tests on MacOS (.NET Core 3.1)
-    dependsOn: []
-    jobs:
-    - template: pr.job.yml
-      parameters:
-        displayName: Functional Tests on MacOS (.NET Core 3.1)
-        osName: MacOS
-        vmImage: macos-latest
-        testType: Functional
-        testTargetFramework: netcoreapp3.1
 
 - ${{ if or(eq(parameters.RunSourceBuild, true), eq(parameters.RunStaticAnalysis, true)) }}:
   - stage:
