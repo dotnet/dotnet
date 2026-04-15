@@ -5,24 +5,15 @@ This file should be imported by eng/Versions.props
 -->
 <Project>
   <PropertyGroup>
-    <!-- dotnet-arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26164.1</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetHelixSdkPackageVersion>10.0.0-beta.26164.1</MicrosoftDotNetHelixSdkPackageVersion>
-    <MicrosoftDotNetXliffTasksPackageVersion>10.0.0-beta.26164.1</MicrosoftDotNetXliffTasksPackageVersion>
-    <!-- dotnet-arcade-services dependencies -->
-    <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.25161.2</MicrosoftDotNetDarcLibPackageVersion>
-    <!-- dotnet-dotnet dependencies -->
-    <MicrosoftDotNetFileBasedProgramsPackageVersion>10.0.200-preview.0.25556.104</MicrosoftDotNetFileBasedProgramsPackageVersion>
-    <SystemCommandLinePackageVersion>2.0.6</SystemCommandLinePackageVersion>
-    <!-- dotnet-roslyn dependencies -->
+    <!-- dotnet/roslyn dependencies -->
     <MicrosoftCodeAnalysisPackageVersion>5.3.0-2.25625.1</MicrosoftCodeAnalysisPackageVersion>
     <MicrosoftCodeAnalysisAnalyzersPackageVersion>5.3.0-2.25625.1</MicrosoftCodeAnalysisAnalyzersPackageVersion>
     <MicrosoftCodeAnalysisAnalyzerUtilitiesPackageVersion>5.3.0-2.25625.1</MicrosoftCodeAnalysisAnalyzerUtilitiesPackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>5.3.0-2.25625.1</MicrosoftNetCompilersToolsetPackageVersion>
     <RoslynDiagnosticsAnalyzersPackageVersion>5.3.0-2.25625.1</RoslynDiagnosticsAnalyzersPackageVersion>
-    <!-- dotnet-roslyn-analyzers dependencies -->
-    <MicrosoftCodeAnalysisNetAnalyzersPackageVersion>10.0.0-preview.25375.1</MicrosoftCodeAnalysisNetAnalyzersPackageVersion>
-    <!-- dotnet-runtime dependencies -->
+    <!-- _git/dotnet-dotnet dependencies -->
+    <SystemCommandLinePackageVersion>2.0.6</SystemCommandLinePackageVersion>
+    <!-- dotnet/runtime dependencies -->
     <MicrosoftBclAsyncInterfacesPackageVersion>9.0.0</MicrosoftBclAsyncInterfacesPackageVersion>
     <MicrosoftExtensionsConfigurationPackageVersion>9.0.0</MicrosoftExtensionsConfigurationPackageVersion>
     <MicrosoftExtensionsDependencyInjectionPackageVersion>9.0.0</MicrosoftExtensionsDependencyInjectionPackageVersion>
@@ -49,29 +40,30 @@ This file should be imported by eng/Versions.props
     <SystemTextJsonPackageVersion>9.0.0</SystemTextJsonPackageVersion>
     <SystemThreadingTasksDataflowPackageVersion>9.0.0</SystemThreadingTasksDataflowPackageVersion>
     <SystemWindowsExtensionsPackageVersion>9.0.0</SystemWindowsExtensionsPackageVersion>
-    <!-- dotnet-symreader dependencies -->
+    <!-- dotnet/arcade dependencies -->
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26164.1</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetHelixSdkPackageVersion>10.0.0-beta.26164.1</MicrosoftDotNetHelixSdkPackageVersion>
+    <MicrosoftDotNetXliffTasksPackageVersion>10.0.0-beta.26164.1</MicrosoftDotNetXliffTasksPackageVersion>
+    <!-- dotnet/symreader dependencies -->
     <MicrosoftDiaSymReaderPackageVersion>2.0.0</MicrosoftDiaSymReaderPackageVersion>
+    <!-- dotnet/roslyn-analyzers dependencies -->
+    <MicrosoftCodeAnalysisNetAnalyzersPackageVersion>10.0.0-preview.25375.1</MicrosoftCodeAnalysisNetAnalyzersPackageVersion>
+    <!-- dotnet/arcade-services dependencies -->
+    <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.25161.2</MicrosoftDotNetDarcLibPackageVersion>
+    <!-- dotnet/dotnet dependencies -->
+    <MicrosoftDotNetFileBasedProgramsPackageVersion>10.0.200-preview.0.25556.104</MicrosoftDotNetFileBasedProgramsPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
-    <!-- dotnet-arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
-    <MicrosoftDotNetHelixSdkVersion>$(MicrosoftDotNetHelixSdkPackageVersion)</MicrosoftDotNetHelixSdkVersion>
-    <MicrosoftDotNetXliffTasksVersion>$(MicrosoftDotNetXliffTasksPackageVersion)</MicrosoftDotNetXliffTasksVersion>
-    <!-- dotnet-arcade-services dependencies -->
-    <MicrosoftDotNetDarcLibVersion>$(MicrosoftDotNetDarcLibPackageVersion)</MicrosoftDotNetDarcLibVersion>
-    <!-- dotnet-dotnet dependencies -->
-    <MicrosoftDotNetFileBasedProgramsVersion>$(MicrosoftDotNetFileBasedProgramsPackageVersion)</MicrosoftDotNetFileBasedProgramsVersion>
-    <SystemCommandLineVersion>$(SystemCommandLinePackageVersion)</SystemCommandLineVersion>
-    <!-- dotnet-roslyn dependencies -->
+    <!-- dotnet/roslyn dependencies -->
     <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisPackageVersion)</MicrosoftCodeAnalysisVersion>
     <MicrosoftCodeAnalysisAnalyzersVersion>$(MicrosoftCodeAnalysisAnalyzersPackageVersion)</MicrosoftCodeAnalysisAnalyzersVersion>
     <MicrosoftCodeAnalysisAnalyzerUtilitiesVersion>$(MicrosoftCodeAnalysisAnalyzerUtilitiesPackageVersion)</MicrosoftCodeAnalysisAnalyzerUtilitiesVersion>
     <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNetCompilersToolsetPackageVersion)</MicrosoftNetCompilersToolsetVersion>
     <RoslynDiagnosticsAnalyzersVersion>$(RoslynDiagnosticsAnalyzersPackageVersion)</RoslynDiagnosticsAnalyzersVersion>
-    <!-- dotnet-roslyn-analyzers dependencies -->
-    <MicrosoftCodeAnalysisNetAnalyzersVersion>$(MicrosoftCodeAnalysisNetAnalyzersPackageVersion)</MicrosoftCodeAnalysisNetAnalyzersVersion>
-    <!-- dotnet-runtime dependencies -->
+    <!-- _git/dotnet-dotnet dependencies -->
+    <SystemCommandLineVersion>$(SystemCommandLinePackageVersion)</SystemCommandLineVersion>
+    <!-- dotnet/runtime dependencies -->
     <MicrosoftBclAsyncInterfacesVersion>$(MicrosoftBclAsyncInterfacesPackageVersion)</MicrosoftBclAsyncInterfacesVersion>
     <MicrosoftExtensionsConfigurationVersion>$(MicrosoftExtensionsConfigurationPackageVersion)</MicrosoftExtensionsConfigurationVersion>
     <MicrosoftExtensionsDependencyInjectionVersion>$(MicrosoftExtensionsDependencyInjectionPackageVersion)</MicrosoftExtensionsDependencyInjectionVersion>
@@ -98,7 +90,17 @@ This file should be imported by eng/Versions.props
     <SystemTextJsonVersion>$(SystemTextJsonPackageVersion)</SystemTextJsonVersion>
     <SystemThreadingTasksDataflowVersion>$(SystemThreadingTasksDataflowPackageVersion)</SystemThreadingTasksDataflowVersion>
     <SystemWindowsExtensionsVersion>$(SystemWindowsExtensionsPackageVersion)</SystemWindowsExtensionsVersion>
-    <!-- dotnet-symreader dependencies -->
+    <!-- dotnet/arcade dependencies -->
+    <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
+    <MicrosoftDotNetHelixSdkVersion>$(MicrosoftDotNetHelixSdkPackageVersion)</MicrosoftDotNetHelixSdkVersion>
+    <MicrosoftDotNetXliffTasksVersion>$(MicrosoftDotNetXliffTasksPackageVersion)</MicrosoftDotNetXliffTasksVersion>
+    <!-- dotnet/symreader dependencies -->
     <MicrosoftDiaSymReaderVersion>$(MicrosoftDiaSymReaderPackageVersion)</MicrosoftDiaSymReaderVersion>
+    <!-- dotnet/roslyn-analyzers dependencies -->
+    <MicrosoftCodeAnalysisNetAnalyzersVersion>$(MicrosoftCodeAnalysisNetAnalyzersPackageVersion)</MicrosoftCodeAnalysisNetAnalyzersVersion>
+    <!-- dotnet/arcade-services dependencies -->
+    <MicrosoftDotNetDarcLibVersion>$(MicrosoftDotNetDarcLibPackageVersion)</MicrosoftDotNetDarcLibVersion>
+    <!-- dotnet/dotnet dependencies -->
+    <MicrosoftDotNetFileBasedProgramsVersion>$(MicrosoftDotNetFileBasedProgramsPackageVersion)</MicrosoftDotNetFileBasedProgramsVersion>
   </PropertyGroup>
 </Project>

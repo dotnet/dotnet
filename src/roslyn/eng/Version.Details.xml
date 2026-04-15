@@ -9,7 +9,7 @@
     </Dependency>
     <Dependency Name="System.CommandLine" Version="2.0.6">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>0b940fb25d8594db0d46d60312f3058f8e1efac3</Sha>
+      <Sha>47fb725acf5d7094af51aebbb5b7e5c44a3b2a77</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
     <Dependency Name="Microsoft.Bcl.AsyncInterfaces" Version="9.0.0">
@@ -115,13 +115,13 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.26164.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.26177.7">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>e365cfcb58176841c2fb80d1a40926f394776970</Sha>
+      <Sha>62dc2defffeadabf6761a9ed7e142692107330c0</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="10.0.0-beta.26164.1">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="10.0.0-beta.26177.7">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>e365cfcb58176841c2fb80d1a40926f394776970</Sha>
+      <Sha>62dc2defffeadabf6761a9ed7e142692107330c0</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DiaSymReader" Version="2.0.0">
       <Uri>https://github.com/dotnet/symreader</Uri>
@@ -131,9 +131,9 @@
       <Uri>https://github.com/dotnet/roslyn</Uri>
       <Sha>5dd606bb21208dfc6fd3d9b07ae963a93248483b</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="10.0.0-beta.26164.1">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="10.0.0-beta.26177.7">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>e365cfcb58176841c2fb80d1a40926f394776970</Sha>
+      <Sha>62dc2defffeadabf6761a9ed7e142692107330c0</Sha>
     </Dependency>
     <Dependency Name="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.0-preview.25375.1">
       <Uri>https://github.com/dotnet/roslyn-analyzers</Uri>
