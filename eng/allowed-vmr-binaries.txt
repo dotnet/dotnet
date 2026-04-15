@@ -108,6 +108,7 @@ src/sdk/test/TestAssets/TestProjects/**/*.dat
 src/sdk/test/TestAssets/TestProjects/**/*.cache
 src/sdk/test/TestAssets/TestProjects/**/*.tlb
 src/sdk/test/TestAssets/TestPackages/dotnet-new/nupkg_templates/*
+src/sdk/test/TestAssets/TestPackages/TemplateEngine/nupkg_templates/*.nupkg
 src/sdk/test/dotnet.Tests/ShellShimTests/WpfBinaryTestAssets/*.dll
 src/sdk/test/Microsoft.NET.Sdk.Publish.Tasks.Tests/Resources/*.zip
 src/sdk/test/TemplateEngine/Microsoft.TemplateEngine.TestTemplates/nupkg_templates/*.nupkg

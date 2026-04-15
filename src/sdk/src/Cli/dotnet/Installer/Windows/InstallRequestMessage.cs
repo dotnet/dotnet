@@ -154,8 +154,6 @@ internal class InstallRequestMessage : InstallMessageBase
     /// <returns>An <see cref="InstallRequestMessage"/>.</returns>
     [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Newtonsoft.Json is not used in AOT scenarios.")]
     [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "Newtonsoft.Json is not used in trimmed scenarios.")]
-    [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Newtonsoft.Json is not used in AOT scenarios.")]
-    [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "Newtonsoft.Json is not used in trimmed scenarios.")]
     public static InstallRequestMessage Create(byte[] bytes)
     {
         string json = Encoding.UTF8.GetString(bytes);
