@@ -42,7 +42,7 @@ Find pipeline artifacts, then download individual files from the `downloadUrl` u
 
 The source-build builds repos sequentially in dependency order. Each repo produces intermediate nupkgs that feed into downstream repos. The build order is defined by the repo dependency graph — earlier repos' outputs become available as **source-built** packages for later repos.
 
-For builds targeting different SDK feature bands (e.g., 10.0.2xx, 10.0.3xx), see [Feature Band Source Building](https://github.com/dotnet/source-build/blob/main/Documentation/feature-band-source-building.md). To understand how source build stage 2 builds work, see [How to Build Stage2](https://github.com/dotnet/source-build/blob/main/Documentation/how-to-stage2-build.md).
+For builds targeting different SDK feature bands (e.g., 10.0.2xx, 10.0.3xx), see [Feature Band Source Building](https://github.com/dotnet/source-build/blob/main/Documentation/feature-band-source-building.md).
 
 The high-level flow:
 1. **Prep the Build** — downloads previously-source-built (PSB) artifacts and sets up package feeds
@@ -52,6 +52,23 @@ The high-level flow:
 Repo build order is determined by `<RepositoryReference>` items in each repo's `.proj` file under `repo-projects/`. These declare dependencies between repos — MSBuild uses them to compute the build graph. If a repo needs a package produced by another repo, the producing repo must build first. When a package isn't available from any source-build feed, it becomes a **prebuilt**.
 
 To see the actual build order, look at the `repo-projects/` directory in the VMR — each `.proj` file corresponds to a repo and its `<RepositoryReference>` items declare which repos must build before it.
+
+### Stage 2 builds
+
+A **stage 2 build** (also called bootstrapping) is when you take the SDK and packages produced by a source-build (stage 1) and use them to rebuild the entire product again. This validates that the source-built product is fully self-hosting — it can build itself without any Microsoft-built inputs.
+
+**CI leg naming:**
+- Stage 1 legs: `SB_<distro>_Online_MsftSdk_x64` — builds using the Microsoft SDK
+- Stage 2 legs: `SB_<distro>_Offline_CurrentSourceBuiltSdk` — rebuilds using the SDK from stage 1
+
+Stage 2 legs have `reuseBuildArtifactsFrom` set to their corresponding stage 1 leg (e.g., `SB_CentOSStream10_Offline_CurrentSourceBuiltSdk` depends on `SB_CentOSStream10_Online_MsftSdk_x64`).
+
+When a failure occurs only in stage 2 but not stage 1, the issue is likely:
+- A dependency that works when Microsoft-built but not when source-built
+- An analyzer or tool that behaves differently with source-built inputs
+- A version mismatch between what the SDK expects and what source-build produces
+
+For more info about stage 2 builds, see [How to Build Stage2](https://github.com/dotnet/source-build/blob/main/Documentation/how-to-stage2-build.md).
 
 ## Package sources
 
