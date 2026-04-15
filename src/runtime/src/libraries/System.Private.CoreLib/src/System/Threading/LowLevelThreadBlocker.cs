@@ -29,6 +29,7 @@ namespace System.Threading
     /// </summary>
     internal unsafe class LowLevelThreadBlocker : IDisposable
     {
+// We keep Event based implementation for comparison/reference/fallback purposes.
 #if USE_EVENT
         private AutoResetEvent _event;
 #else

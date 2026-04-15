@@ -25,12 +25,11 @@ namespace System.Threading
         //   - Sign bit: Indicates whether a thread has been signaled, but has not yet been released from the wait. See SignalWaiter.
         //   - Remaining bits: Number of threads waiting to acquire a lock
         private uint _state;
+        private readonly LowLevelThreadBlocker _blocker;
 
 #if DEBUG
         private Thread? _ownerThread;
 #endif
-
-        private LowLevelThreadBlocker _blocker;
 
         public LowLevelLock()
         {
