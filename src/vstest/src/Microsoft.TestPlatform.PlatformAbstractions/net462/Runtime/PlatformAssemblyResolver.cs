@@ -69,7 +69,7 @@ public class PlatformAssemblyResolver : IAssemblyResolver
     /// </returns>
     private Assembly? AssemblyResolverEvent(object sender, object eventArgs)
     {
-        return eventArgs is not ResolveEventArgs args ? null : AssemblyResolve?.Invoke(this, new AssemblyResolveEventArgs(args.Name) { RequestingAssembly = args.RequestingAssembly });
+        return eventArgs is not ResolveEventArgs args ? null : AssemblyResolve?.Invoke(this, new AssemblyResolveEventArgs(args.Name));
     }
 }
 
