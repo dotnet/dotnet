@@ -56,7 +56,7 @@ internal sealed class CohostSignatureHelpEndpoint(
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(SignatureHelpParams request)
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
-    protected async override Task<SignatureHelp?> HandleRequestAsync(SignatureHelpParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+    protected override async Task<SignatureHelp?> HandleRequestAsync(SignatureHelpParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
         // Return nothing if "Parameter Information" option is disabled unless signature help is invoked explicitly via command as opposed to typing or content change
         if (request.Context is { TriggerKind: not SignatureHelpTriggerKind.Invoked } &&

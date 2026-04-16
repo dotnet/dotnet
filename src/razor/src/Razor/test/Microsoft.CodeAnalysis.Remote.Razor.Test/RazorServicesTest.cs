@@ -22,7 +22,7 @@ public class RazorServicesTest(ITestOutputHelper testOutputHelper) : ToolingTest
     private const string Prefix = "IRemote";
     private const string Suffix = "Service";
 
-    private readonly static XmlDocument s_servicesFile = LoadServicesFile();
+    private static readonly XmlDocument s_servicesFile = LoadServicesFile();
 
     [Theory]
     [MemberData(nameof(MessagePackServices))]

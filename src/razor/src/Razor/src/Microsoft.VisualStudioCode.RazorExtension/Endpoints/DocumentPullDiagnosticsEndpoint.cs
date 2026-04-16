@@ -62,7 +62,7 @@ internal sealed class DocumentPullDiagnosticsEndpoint(
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(DocumentDiagnosticParams request)
         => request.TextDocument?.ToRazorTextDocumentIdentifier();
 
-    protected async override Task<FullDocumentDiagnosticReport?> HandleRequestAsync(DocumentDiagnosticParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+    protected override async Task<FullDocumentDiagnosticReport?> HandleRequestAsync(DocumentDiagnosticParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
         var results = await GetDiagnosticsAsync(razorDocument, cancellationToken).ConfigureAwait(false);
 
