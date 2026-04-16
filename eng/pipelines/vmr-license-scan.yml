@@ -15,6 +15,7 @@ schedules:
     - release/*.0.3xx*
     - release/*.0.4xx*
     - internal/release/*.0.1xx*
+    - internal/release/*.0.???
 
 pr: none
 
@@ -30,6 +31,7 @@ trigger:
     - release/*.0.3xx*
     - release/*.0.4xx*
     - internal/release/*.0.?xx*
+    - internal/release/*.0.???
   paths:
     include:
     - test/Microsoft.DotNet.SourceBuild.Tests/LicenseScanTests.cs
