@@ -16,26 +16,26 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks;
 
 /// <summary>
 /// Reports the usage of the source-build-reference-packages:
-/// 1. SBRP references
+/// 1. SBA references
 /// 2. Unreferenced packages
 /// </summary>
 public partial class WriteSbrpUsageReport : Task
 {
-    private const string SbrpRepoName = "source-build-reference-packages";
+    private const string SbaRepoName = "source-build-assets";
 
-    private readonly Dictionary<string, PackageInfo> _sbrpPackages = [];
-
-    /// <summary>
-    /// Path to the SBRP src directory.
-    /// </summary>
-    [Required]
-    public required string SbrpRepoSrcPath { get; set; }
+    private readonly Dictionary<string, PackageInfo> _sbaPackages = [];
 
     /// <summary>
-    /// Directory path containing the built SBRP packages.
+    /// Path to the SBA src directory.
     /// </summary>
     [Required]
-    public required string SbrpPackagesPath { get; set; }
+    public required string SbaRepoSrcPath { get; set; }
+
+    /// <summary>
+    /// Directory path containing the built SBA packages.
+    /// </summary>
+    [Required]
+    public required string SbaPackagesPath { get; set; }
 
     /// <summary>
     /// Paths to the project.assets.json files produced by the build.
@@ -53,11 +53,11 @@ public partial class WriteSbrpUsageReport : Task
 
     public override bool Execute()
     {
-        Log.LogMessage($"Scanning for SBRP Package Usage...");
+        Log.LogMessage($"Scanning for SBA Package Usage...");
 
-        ReadSbrpPackages(Path.Combine("referencePackages", "src"), trackTfms: true);
-        ReadSbrpPackages(Path.Combine("targetPacks", "ILsrc"), trackTfms: false);
-        ReadSbrpPackages(Path.Combine("textOnlyPackages", "src"), trackTfms: false);
+        ReadSbaPackages(Path.Combine("referencePackages", "src"), trackTfms: true);
+        ReadSbaPackages(Path.Combine("targetPacks", "ILsrc"), trackTfms: false);
+        ReadSbaPackages(Path.Combine("textOnlyPackages", "src"), trackTfms: false);
         ReadExternalPackages(Path.Combine("externalPackages", "src"));
 
         ScanProjectReferences();
@@ -69,18 +69,18 @@ public partial class WriteSbrpUsageReport : Task
 
     private void GenerateUsageReport()
     {
-        PackageInfo[] existingSbrps = [.. _sbrpPackages.Values.OrderBy(pkg => pkg.Id)];
+        PackageInfo[] existingSbaPackages = [.. _sbaPackages.Values.OrderBy(pkg => pkg.Id)];
         PurgeNonReferencedReferences();
-        IEnumerable<string> unreferencedSbrps = GetUnreferencedSbrps().Select(pkg => pkg.Path).OrderBy(id => id);
+        IEnumerable<string> unreferencedSbaPackages = GetUnreferencedSbaPackages().Select(pkg => pkg.Path).OrderBy(id => id);
 
-        if (unreferencedSbrps.Count() == existingSbrps.Length)
+        if (unreferencedSbaPackages.Count() == existingSbaPackages.Length)
         {
-            Log.LogError("No SBRP packages are detected as being referenced.");
+            Log.LogError("No SBA packages are detected as being referenced.");
         }
 
-        Report report = new(existingSbrps, unreferencedSbrps);
+        Report report = new(existingSbaPackages, unreferencedSbaPackages);
 
-        string reportFilePath = Path.Combine(OutputPath, "sbrpPackageUsage.json");
+        string reportFilePath = Path.Combine(OutputPath, "sbaPackageUsage.json");
 #pragma warning disable CA1869 // Cache and reuse 'JsonSerializerOptions' instances
         string jsonContent = JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true });
 #pragma warning restore CA1869 // Cache and reuse 'JsonSerializerOptions' instances
@@ -88,8 +88,8 @@ public partial class WriteSbrpUsageReport : Task
     }
 
     /// <summary>
-    /// Removes all references from unreferenced SBRP packages. This is necessary to determine the
-    /// complete set of unreferenced SBRP packages.
+    /// Removes all references from unreferenced SBA packages. This is necessary to determine the
+    /// complete set of unreferenced SBA packages.
     /// </summary>
     private void PurgeNonReferencedReferences()
     {
@@ -97,18 +97,18 @@ public partial class WriteSbrpUsageReport : Task
         do
         {
             hasPurged = false;
-            PackageInfo[] unrefPkgs = GetUnreferencedSbrps().ToArray();
+            PackageInfo[] unrefPkgs = GetUnreferencedSbaPackages().ToArray();
 
-            foreach (PackageInfo sbrpPkg in _sbrpPackages.Values)
+            foreach (PackageInfo sbaPkg in _sbaPackages.Values)
             {
                 foreach (PackageInfo unrefPkg in unrefPkgs)
                 {
-                    var unref = sbrpPkg.References.Keys
-                        .SingleOrDefault(path => path.Contains(SbrpRepoName) && path.Contains($"{unrefPkg.Name}.{unrefPkg.Version}"));
+                    var unref = sbaPkg.References.Keys
+                        .SingleOrDefault(path => path.Contains(SbaRepoName) && path.Contains($"{unrefPkg.Name}.{unrefPkg.Version}"));
                     if (unref != null)
                     {
-                        Log.LogMessage($"Removing {unrefPkg.Id} from {sbrpPkg.Id}'s references.");
-                        sbrpPkg.References.Remove(unref);
+                        Log.LogMessage($"Removing {unrefPkg.Id} from {sbaPkg.Id}'s references.");
+                        sbaPkg.References.Remove(unref);
                         hasPurged = true;
                     }
                 }
@@ -116,8 +116,8 @@ public partial class WriteSbrpUsageReport : Task
         } while (hasPurged);
     }
 
-    private IEnumerable<PackageInfo> GetUnreferencedSbrps() =>
-        _sbrpPackages.Values.Where(pkg => pkg.References.Count == 0);
+    private IEnumerable<PackageInfo> GetUnreferencedSbaPackages() =>
+        _sbaPackages.Values.Where(pkg => pkg.References.Count == 0);
 
     [GeneratedRegex(@"^(?<name>.*?)\.(?<version>(?:\.?[0-9]+){3,}(?:[-A-Za-z0-9][A-Za-z0-9\.-]*)?)\.nupkg$")]
     private static partial Regex GetPackageNameVersionRegex();
@@ -130,9 +130,9 @@ public partial class WriteSbrpUsageReport : Task
     /// </summary>
     private void ReadExternalPackages(string packageSrcRelativePath)
     {
-        string packageSrcPath = Path.Combine(SbrpRepoSrcPath, packageSrcRelativePath);
+        string packageSrcPath = Path.Combine(SbaRepoSrcPath, packageSrcRelativePath);
 
-        foreach (string nupkgFile in Directory.GetFiles(SbrpPackagesPath, "*.nupkg", SearchOption.TopDirectoryOnly))
+        foreach (string nupkgFile in Directory.GetFiles(SbaPackagesPath, "*.nupkg", SearchOption.TopDirectoryOnly))
         {
             var match = GetPackageNameVersionRegex().Match(Path.GetFileName(nupkgFile));
             if (!match.Success)
@@ -144,18 +144,18 @@ public partial class WriteSbrpUsageReport : Task
             string packageName = match.Groups["name"].Value;
             string version = match.Groups["version"].Value;
 
-            if (!_sbrpPackages.TryGetValue(PackageInfo.GetId(packageName, version), out PackageInfo? info))
+            if (!_sbaPackages.TryGetValue(PackageInfo.GetId(packageName, version), out PackageInfo? info))
             {
                 // The exact source file path is not readily available so '**' is used to convey the approximate location.
                 info = new(packageName, version, Path.Combine(packageSrcPath, "**", packageName, version));
-                TrackSbrpPackage(info);
+                TrackSbaPackage(info);
             }
         }
     }
 
-    private void ReadSbrpPackages(string packageSrcRelativePath, bool trackTfms)
+    private void ReadSbaPackages(string packageSrcRelativePath, bool trackTfms)
     {
-        string packageSrcPath = Path.Combine(SbrpRepoSrcPath, packageSrcRelativePath);
+        string packageSrcPath = Path.Combine(SbaRepoSrcPath, packageSrcRelativePath);
         foreach (string projectPath in Directory.GetFiles(packageSrcPath, "*.csproj", SearchOption.AllDirectories))
         {
             DirectoryInfo? directory = Directory.GetParent(projectPath);
@@ -186,7 +186,7 @@ public partial class WriteSbrpUsageReport : Task
                 version,
                 directory.FullName,
                 tfms);
-            TrackSbrpPackage(info);
+            TrackSbaPackage(info);
         }
     }
 
@@ -215,16 +215,16 @@ public partial class WriteSbrpUsageReport : Task
                 TrackPackageReference(lockFile.Path, downloadDep.Name, downloadDep.VersionRange.MinVersion?.ToString(), Enumerable.Empty<string>());
             }
 
-            if (lockFile.PackageSpec.RestoreMetadata.ProjectPath.Contains(SbrpRepoName))
+            if (lockFile.PackageSpec.RestoreMetadata.ProjectPath.Contains(SbaRepoName))
             {
-                // For SBRP projects, we need to track the project references as well. While project references are included in the targets
+                // For SBA projects, we need to track the project references as well. While project references are included in the targets
                 // which were processed above, only the resolved version is included in the cases when the dependency graph contains multiple
-                // versions. All project references must be tracked as dependencies because they are required to build SBRP.
+                // versions. All project references must be tracked as dependencies because they are required to build SBA.
                 foreach (ProjectRestoreMetadataFrameworkInfo targetFx in lockFile.PackageSpec.RestoreMetadata.TargetFrameworks)
                 {
                     foreach (ProjectRestoreReference projectRef in targetFx.ProjectReferences)
                     {
-                        if (projectRef.ProjectPath.Contains(SbrpRepoName))
+                        if (projectRef.ProjectPath.Contains(SbaRepoName))
                         {
                             string[] pathSegments = projectRef.ProjectPath.Split('/');
                             string projName = pathSegments[pathSegments.Length - 3];
@@ -233,7 +233,7 @@ public partial class WriteSbrpUsageReport : Task
                         }
                         else
                         {
-                            Log.LogMessage($"Unexpected non-SBRP project reference detected: {projectRef.ProjectPath}");
+                            Log.LogMessage($"Unexpected non-SBA project reference detected: {projectRef.ProjectPath}");
                         }
                     }
                 }
@@ -244,7 +244,7 @@ public partial class WriteSbrpUsageReport : Task
     private void TrackPackageReference(string lockFilePath, string? name, string? version, IEnumerable<string> tfms)
     {
         string id = PackageInfo.GetId(name, version);
-        if (!_sbrpPackages.TryGetValue(id, out PackageInfo? info))
+        if (!_sbaPackages.TryGetValue(id, out PackageInfo? info))
         {
             return;
         }
@@ -261,9 +261,9 @@ public partial class WriteSbrpUsageReport : Task
         }
     }
 
-    private void TrackSbrpPackage(PackageInfo info)
+    private void TrackSbaPackage(PackageInfo info)
     {
-        _sbrpPackages.Add(info.Id, info);
+        _sbaPackages.Add(info.Id, info);
         Log.LogMessage($"Detected package: {info.Id}");
     }
 
@@ -271,11 +271,11 @@ public partial class WriteSbrpUsageReport : Task
     {
         public string Id => GetId(Name, Version);
 
-        // Dictionary of projects referencing the SBRP and the TFMs referenced by each project
+        // Dictionary of projects referencing the SBA and the TFMs referenced by each project
         public Dictionary<string, HashSet<string>> References { get; } = [];
 
         public static string GetId(string? Name, string? Version) => $"{Name?.ToLowerInvariant()}/{Version}";
     }
 
-    private record Report(IEnumerable<PackageInfo> Sbrps, IEnumerable<string> UnreferencedSbrps);
+    private record Report(IEnumerable<PackageInfo> SbaPackages, IEnumerable<string> UnreferencedSbaPackages);
 }

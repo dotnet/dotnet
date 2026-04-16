@@ -79,7 +79,7 @@ For post-RTM preview SDKs, they shall exist in their expected location in the VM
 | `src/<repo>/`                           | Product source for `<repo>` (e.g. `src/runtime`). See [Repository source inclusion](#repository-source-inclusion) for what does and does not get included |
 | `src/<repo>/<version>`                  | If multiple versions of a repository must be built in the VMR, then subdirectories for each required version are placed under `<repo>`.<br />- `src/Newtonsoft.Json/13.0/`<br />- `src/Newtonsoft.Json/12.0/` |
 | `src/sdk/<sdk band>/`                   | Active SDK bands that are not in preview are laid out in parallel, like the layout of development repo versions above. When a band goes out of active servicing, it is removed from the VMR. See SDK Band Layout for more details. |
-| <nobr>`src/source-build-reference-packages/`</nobr> | Reference packages required to bootstrap the product build. |
+| <nobr>`src/source-build-assets/`</nobr> | Reference packages required to bootstrap the product build. |
 | `eng/`                                  | Top level directory for engineering functionality:<br />- Build scripting (e.g. `Versions.props`) |
 | `eng/keys/`                             | Strong name keys |
 | `eng/tools`                             | Organization agnostic tooling. E.g.<br />- Tooling for VMR management<br />- Tooling for change tracing |

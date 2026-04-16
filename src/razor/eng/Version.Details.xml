@@ -106,7 +106,7 @@
     </Dependency>
     <!-- Necessary for source-build. This allows Microsoft.Extensions.ObjectPool and System.Collections.Immutable packages
          to be retrieved from live source-build and their content consumed by packages produced by razor.
-         Without these entries, due to PVP flow work, SBRP packages would be consumed causing runtime issue. -->
+         Without these entries, due to PVP flow work, SBA packages would be consumed causing runtime issue. -->
     <Dependency Name="Microsoft.Extensions.ObjectPool" Version="10.0.1">
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
       <Sha>373d4826c58ac2f1c8d49fdaf31bc9eddf9e7437</Sha>
