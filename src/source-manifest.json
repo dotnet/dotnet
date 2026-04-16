@@ -13,10 +13,10 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 310340,
+      "barId": 310477,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "872352f261b22e130d03c5506cd06fbaa71a8234"
+      "commitSha": "c3c01c991d17643700d343cee5c5a1e20c06ce03"
     },
     {
       "barId": 308939,
@@ -31,10 +31,10 @@
       "commitSha": "779eff1e73420573dd39dbbe54896ff8f08955e1"
     },
     {
-      "barId": 308872,
+      "barId": 309789,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "1042112d9c9898cc0f30a54e00c5de16e39613cd"
+      "commitSha": "4fb38398b3058d2040cfdb033a1aae3945ddb78a"
     },
     {
       "barId": 309801,
