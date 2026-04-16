@@ -1,6 +1,6 @@
 ---
 name: source-build-investigation
-description: Investigate source-build failures in dotnet/dotnet VMR CI builds. USE FOR any mention of "prebuilt", "source-build/source-only failure", "source-build-assets (SBRP)", "poison", source-build repo build ordering problems, binary detection/removal,  or any build leg failures that only occur in `SB_*` job names. DO NOT USE FOR regular CI test failures, codeflow staleness, dependency flow tracing, crash dumps, or general NuGet package management unrelated to source-build.
+description: Investigate source-build failures in dotnet/dotnet VMR CI builds. USE FOR any mention of "prebuilt", "source-build/source-only failure", "source-build-assets (SBRP)", "poison", source-build repo build ordering problems, binary detection/removal, or any build leg failures that only occur in `SB_*` job names. DO NOT USE FOR regular CI test failures, codeflow staleness, dependency flow tracing, crash dumps, or general NuGet package management unrelated to source-build.
 ---
 
 # Source-Build Investigation
