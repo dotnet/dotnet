@@ -54,7 +54,7 @@ stages:
           clean: true
           submodules: recursive
 
-        ## The source-build-reference-packages repository does not support building on Windows, but it is capable of running the generate tooling tests on Windows.
+        ## The source-build-assets repository does not support building on Windows, but it is capable of running the generate tooling tests on Windows.
         ## The creation of an empty file in artifacts\packages is to workaround an arcade limitation with enabling artifact publishing.
         - script: test.cmd && mkdir artifacts\packages\ && echo . > artifacts\packages\_
           displayName: Run Tests
