@@ -23,6 +23,7 @@ internal static class Config
     public const string WarnLicenseScanDiffsEnv = "SMOKE_TESTS_WARN_LICENSE_SCAN_DIFFS";
     public const string RunningInCIEnv = "SMOKE_TESTS_RUNNING_IN_CI";
     public const string LicenseScanPathEnv = "SMOKE_TESTS_LICENSE_SCAN_PATH";
+    public const string LicenseScanIgnorePatternsEnv = "SMOKE_TESTS_LICENSE_SCAN_IGNORE_PATTERNS";
 
     public static string DotNetDirectory { get; } =
         Environment.GetEnvironmentVariable(DotNetDirectoryEnv) ?? Path.Combine(Directory.GetCurrentDirectory(), ".dotnet");
@@ -47,4 +48,5 @@ internal static class Config
         bool.TryParse(Environment.GetEnvironmentVariable(RunningInCIEnv), out bool runningInCI) && runningInCI;
     
     public static string? LicenseScanPath { get; } = Environment.GetEnvironmentVariable(LicenseScanPathEnv);
+    public static string? LicenseScanIgnorePatterns { get; } = Environment.GetEnvironmentVariable(LicenseScanIgnorePatternsEnv);
 }
