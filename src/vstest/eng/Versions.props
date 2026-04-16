@@ -70,7 +70,6 @@
     <_MicrosoftVSSDKBuildToolsVersion_>17.14.2119</_MicrosoftVSSDKBuildToolsVersion_>
     <MicrosoftWin32RegistryVersion>5.0.0</MicrosoftWin32RegistryVersion>
     <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
-    <SystemCollectionsImmutableVersion>9.0.11</SystemCollectionsImmutableVersion>
     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
     <SystemReflectionMetadataVersion>8.0.0</SystemReflectionMetadataVersion>
     <TestPlatformExternalsVersion>18.0.0-preview-1-10911-061</TestPlatformExternalsVersion>
