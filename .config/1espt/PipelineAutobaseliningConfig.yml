@@ -1,7 +1,7 @@
 ## DO NOT MODIFY THIS FILE MANUALLY. This is part of auto-baselining from 1ES Pipeline Templates. Go to [https://aka.ms/1espt-autobaselining] for more details.
 
 pipelines:
-  1330:
+  '*':
     retail:
       source:
         credscan:
@@ -22,6 +22,7 @@ pipelines:
         spotbugs:
           lastModifiedDate: 2024-03-25
     usedBinskimScanAllExtensions: true
+    mainPipelineId: 1330
   1299:
     retail:
       source:

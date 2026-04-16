@@ -678,6 +678,11 @@ Pour plus d'informations, visitez https://docs.nuget.org/docs/reference/command-
         <target state="translated">Ressources locales partiellement effacées.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Log_AliasContainsDisallowedCharacters">
+        <source>The project {0} contains a TargetFramework '{1}' with disallowed characters. TargetFramework names must contain only ASCII characters and must not contain path separators.</source>
+        <target state="translated">Le projet {0} contient un TargetFramework « {1} » avec des caractères non autorisés. Les noms de TargetFramework doivent contenir uniquement des caractères ASCII et ne pas comporter de séparateurs de chemin d’accès.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Log_AliasingSupportedInNewDependencyResolver">
         <source>The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
 Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</source>
@@ -993,6 +998,11 @@ Mettez à niveau votre Kit de développement logiciel (SDK) .NET ou supprimez Re
       <trans-unit id="Log_VersionConflict">
         <source>Version conflict detected for {0}. Install/reference {1} directly to project {2} to resolve this issue.</source>
         <target state="translated">Conflit de version détecté pour {0}. Installez/référencez {1} directement au projet {2} pour résoudre ce problème.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_VersionConflictForCentralTransitive">
+        <source>Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue.</source>
+        <target state="translated">Conflit de version détecté pour {0}. L’épinglage transitif de Package Management central est activé. Ajoutez une PackageVersion pour {1} afin de résoudre ce problème.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_WritingAssetsFile">

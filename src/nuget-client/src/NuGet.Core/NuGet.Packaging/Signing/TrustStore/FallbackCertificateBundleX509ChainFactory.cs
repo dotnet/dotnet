@@ -1,11 +1,10 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 #if NET5_0_OR_GREATER
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
@@ -28,8 +27,8 @@ namespace NuGet.Packaging.Signing
 
         internal static bool TryCreate(
             X509StorePurpose storePurpose,
-            string fileName,
-            out FallbackCertificateBundleX509ChainFactory factory)
+            string? fileName,
+            [NotNullWhen(returnValue: true)] out FallbackCertificateBundleX509ChainFactory? factory)
         {
             factory = null;
 
@@ -60,10 +59,7 @@ namespace NuGet.Packaging.Signing
 
         private static string GetThisAssemblyDirectoryPath()
         {
-            string location = typeof(FallbackCertificateBundleX509ChainFactory).Assembly.Location;
-            FileInfo thisAssembly = new(location);
-
-            return thisAssembly.DirectoryName;
+            return AppContext.BaseDirectory;
         }
     }
 }

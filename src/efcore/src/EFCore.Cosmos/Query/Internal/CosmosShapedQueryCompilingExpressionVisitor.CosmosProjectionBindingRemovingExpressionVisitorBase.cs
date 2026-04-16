@@ -37,10 +37,6 @@ public partial class CosmosShapedQueryCompilingExpressionVisitor
             = typeof(IClrCollectionAccessor).GetTypeInfo()
                 .GetDeclaredMethod(nameof(IClrCollectionAccessor.Add));
 
-        private static readonly MethodInfo CollectionAccessorGetOrCreateMethodInfo
-            = typeof(IClrCollectionAccessor).GetTypeInfo()
-                .GetDeclaredMethod(nameof(IClrCollectionAccessor.GetOrCreate));
-
         private readonly IDictionary<ParameterExpression, Expression> _materializationContextBindings
             = new Dictionary<ParameterExpression, Expression>();
 
@@ -94,7 +90,7 @@ public partial class CosmosShapedQueryCompilingExpressionVisitor
                                 storeName = e.PropertyName;
                                 break;
 
-                            case EntityProjectionExpression e:
+                            case StructuralTypeProjectionExpression e:
                                 storeName = e.PropertyName;
                                 break;
                         }
@@ -108,8 +104,8 @@ public partial class CosmosShapedQueryCompilingExpressionVisitor
                                     objectArrayProjectionExpression.Object, storeName, parameterExpression.Type);
                                 break;
 
-                            case EntityProjectionExpression entityProjectionExpression:
-                                var accessExpression = entityProjectionExpression.Object;
+                            case StructuralTypeProjectionExpression structuralTypeProjectionExpression:
+                                var accessExpression = structuralTypeProjectionExpression.Object;
                                 _projectionBindings[accessExpression] = parameterExpression;
 
                                 switch (accessExpression)
@@ -126,8 +122,11 @@ public partial class CosmosShapedQueryCompilingExpressionVisitor
                                         {
                                             accessExpression = objectAccessExpression.Object;
                                             storeNames.Add(objectAccessExpression.PropertyName);
+                                            // The ShapedQueryCompilingExpressionVisitor will not generate StructuralTypeProjections for complex properties, so
+                                            // an ObjectAccessExpression in a StructuralTypeProjectionExpression can only be generated for owned navigations
+                                            // Complex properties are handled by CosmosShapedQueryCompilingExpressionVisitor.AddStructuralTypeInitialization
                                             _ownerMappings[objectAccessExpression]
-                                                = (objectAccessExpression.Navigation.DeclaringEntityType, accessExpression);
+                                                = ((IEntityType)objectAccessExpression.StructuralProperty.DeclaringType, accessExpression);
                                         }
 
                                         valueExpression = CreateGetValueExpression(accessExpression, (string)null, typeof(JObject));
@@ -165,19 +164,19 @@ public partial class CosmosShapedQueryCompilingExpressionVisitor
                         }
                         else
                         {
-                            EntityProjectionExpression entityProjectionExpression;
+                            StructuralTypeProjectionExpression structuralTypeProjectionExpression;
                             if (newExpression.Arguments[0] is ProjectionBindingExpression projectionBindingExpression)
                             {
                                 var projection = GetProjection(projectionBindingExpression);
-                                entityProjectionExpression = (EntityProjectionExpression)projection.Expression;
+                                structuralTypeProjectionExpression = (StructuralTypeProjectionExpression)projection.Expression;
                             }
                             else
                             {
                                 var projection = ((UnaryExpression)((UnaryExpression)newExpression.Arguments[0]).Operand).Operand;
-                                entityProjectionExpression = (EntityProjectionExpression)projection;
+                                structuralTypeProjectionExpression = (StructuralTypeProjectionExpression)projection;
                             }
 
-                            _materializationContextBindings[parameterExpression] = entityProjectionExpression.Object;
+                            _materializationContextBindings[parameterExpression] = structuralTypeProjectionExpression.Object;
                         }
 
                         var updatedExpression = New(
@@ -287,8 +286,11 @@ public partial class CosmosShapedQueryCompilingExpressionVisitor
 
                     var accessExpression = objectArrayAccess.InnerProjection.Object;
                     _projectionBindings[accessExpression] = jObjectParameter;
+                    // The ShapedQueryCompilingExpressionVisitor will not generate CollectionShaperExpression for complex collection properties, so
+                    // an ObjectArrayAccessExpression in a CollectionShaperExpression can only be generated for owned collections
+                    // Complex properties are handled by CosmosShapedQueryCompilingExpressionVisitor.AddStructuralTypeInitialization
                     _ownerMappings[accessExpression] =
-                        (objectArrayAccess.Navigation.DeclaringEntityType, objectArrayAccess.Object);
+                        ((IEntityType)objectArrayAccess.StructuralProperty.DeclaringType, objectArrayAccess.Object);
                     _ordinalParameterBindings[accessExpression] = Add(
                         ordinalParameter, Constant(1, typeof(int)));
 
@@ -396,7 +398,6 @@ public partial class CosmosShapedQueryCompilingExpressionVisitor
             var inverseNavigation = navigation.Inverse;
             var fixup = GenerateFixup(
                 includingClrType, relatedEntityClrType, navigation, inverseNavigation);
-            var initialize = GenerateInitialize(includingClrType, navigation);
 
             var navigationExpression = Visit(includeExpression.NavigationExpression);
 
@@ -415,7 +416,6 @@ public partial class CosmosShapedQueryCompilingExpressionVisitor
                         Constant(navigation),
                         Constant(inverseNavigation, typeof(INavigation)),
                         Constant(fixup),
-                        Constant(initialize, typeof(Action<>).MakeGenericType(includingClrType)),
 #pragma warning disable EF1001 // Internal EF Core API usage.
                         Constant(includeExpression.SetLoaded))));
 #pragma warning restore EF1001 // Internal EF Core API usage.
@@ -435,8 +435,7 @@ public partial class CosmosShapedQueryCompilingExpressionVisitor
             INavigation navigation,
             INavigation inverseNavigation,
             Action<TIncludingEntity, TIncludedEntity> fixup,
-            Action<TIncludingEntity> _,
-            bool __)
+            bool _)
         {
             if (entity == null
                 || !navigation.DeclaringEntityType.IsAssignableFrom(entityType))
@@ -480,7 +479,6 @@ public partial class CosmosShapedQueryCompilingExpressionVisitor
             INavigation navigation,
             INavigation inverseNavigation,
             Action<TIncludingEntity, TIncludedEntity> fixup,
-            Action<TIncludingEntity> initialize,
             bool setLoaded)
         {
             if (entity == null
@@ -488,6 +486,8 @@ public partial class CosmosShapedQueryCompilingExpressionVisitor
             {
                 return;
             }
+
+            navigation.GetCollectionAccessor()!.GetOrCreate(entity, forMaterialization: true);
 
             if (entry == null)
             {
@@ -502,10 +502,6 @@ public partial class CosmosShapedQueryCompilingExpressionVisitor
                         inverseNavigation?.SetIsLoadedWhenNoTracking(relatedEntity);
                     }
                 }
-                else
-                {
-                    initialize(includingEntity);
-                }
             }
             else
             {
@@ -518,14 +514,11 @@ public partial class CosmosShapedQueryCompilingExpressionVisitor
 
                 if (relatedEntities != null)
                 {
+                    // Enumerator contains logic for tracking the entities, so we need to make sure to enumerate it
                     using var enumerator = relatedEntities.GetEnumerator();
                     while (enumerator.MoveNext())
                     {
                     }
-                }
-                else
-                {
-                    initialize((TIncludingEntity)entity);
                 }
             }
         }
@@ -554,27 +547,6 @@ public partial class CosmosShapedQueryCompilingExpressionVisitor
             }
 
             return Lambda(Block(typeof(void), expressions), entityParameter, relatedEntityParameter)
-                .Compile();
-        }
-
-        private static Delegate GenerateInitialize(
-            Type entityType,
-            INavigation navigation)
-        {
-            if (!navigation.IsCollection)
-            {
-                return null;
-            }
-
-            var entityParameter = Parameter(entityType);
-
-            var getOrCreateExpression = Call(
-                Constant(navigation.GetCollectionAccessor()),
-                CollectionAccessorGetOrCreateMethodInfo,
-                entityParameter,
-                Constant(true));
-
-            return Lambda(Block(typeof(void), getOrCreateExpression), entityParameter)
                 .Compile();
         }
 

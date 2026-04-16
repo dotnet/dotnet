@@ -188,6 +188,7 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
 
         var textView = await TestServices.Editor.GetActiveTextViewAsync(HangMitigatingCancellationToken);
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+        await TestServices.Editor.DismissCompletionSessionsAsync(ControlledHangMitigatingCancellationToken);
 
         await TestServices.Editor.PlaceCaretAsync("/// ", charsOffset: 1, ControlledHangMitigatingCancellationToken);
         TestServices.Input.Send("add a function");
@@ -197,7 +198,7 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
         Assert.Contains("/// add a function", currentLineText);
 
         // Make sure completion doesn't come up for 15 seconds
-        var completionSession = await TestServices.Editor.WaitForCompletionSessionAsync(s_snippetTimeout, HangMitigatingCancellationToken);
+        var completionSession = await TestServices.Editor.WaitForExistingCompletionSessionAsync(s_snippetTimeout, HangMitigatingCancellationToken);
         var items = completionSession?.GetComputedItems(HangMitigatingCancellationToken);
 
         if (items is null)
@@ -426,12 +427,13 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
             ControlledHangMitigatingCancellationToken);
 
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+        await TestServices.Editor.DismissCompletionSessionsAsync(ControlledHangMitigatingCancellationToken);
 
         await TestServices.Editor.PlaceCaretAsync("Hel", charsOffset: 1, ControlledHangMitigatingCancellationToken);
         TestServices.Input.Send("{DELETE}");
 
         // Make sure completion doesn't come up for 15 seconds
-        var completionSession = await TestServices.Editor.WaitForCompletionSessionAsync(s_snippetTimeout, HangMitigatingCancellationToken);
+        var completionSession = await TestServices.Editor.WaitForExistingCompletionSessionAsync(s_snippetTimeout, HangMitigatingCancellationToken);
         Assert.Null(completionSession);
     }
 
@@ -472,13 +474,14 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
 
         var textView = await TestServices.Editor.GetActiveTextViewAsync(HangMitigatingCancellationToken);
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+        await TestServices.Editor.DismissCompletionSessionsAsync(ControlledHangMitigatingCancellationToken);
 
         await TestServices.Editor.PlaceCaretAsync(tag, charsOffset: 1, ControlledHangMitigatingCancellationToken);
         TestServices.Input.Send(" ");
         TestServices.Input.Send("dd");
 
         // Make sure completion doesn't come up for 15 seconds
-        var completionSession = await TestServices.Editor.WaitForCompletionSessionAsync(s_snippetTimeout, HangMitigatingCancellationToken);
+        var completionSession = await TestServices.Editor.WaitForExistingCompletionSessionAsync(s_snippetTimeout, HangMitigatingCancellationToken);
         var items = completionSession?.GetComputedItems(HangMitigatingCancellationToken);
 
         if (items is null)
@@ -643,11 +646,16 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
     {
         var session = await TestServices.Editor.WaitForCompletionSessionAsync(HangMitigatingCancellationToken);
 
-        Assert.NotNull(session);
+        if (session is null)
+        {
+            Assert.Fail(await TestServices.Editor.GetCompletionSessionDebugInfoAsync(expectedSelectedItemLabel: null, HangMitigatingCancellationToken));
+        }
+
+        var completionSession = session ?? throw new InvalidOperationException("Completion session should have been available.");
         if (commitChar.HasValue)
         {
             // Commit using the specified commit character
-            session.Commit(commitChar.Value, HangMitigatingCancellationToken);
+            completionSession.Commit(commitChar.Value, HangMitigatingCancellationToken);
 
             // session.Commit call above commits as if the commit character was typed,
             // but doesn't actually insert the character into the buffer.
@@ -656,7 +664,7 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
         }
         else
         {
-            Assert.True(session.CommitIfUnique(HangMitigatingCancellationToken));
+            Assert.True(completionSession.CommitIfUnique(HangMitigatingCancellationToken));
         }
 
         var textView = await TestServices.Editor.GetActiveTextViewAsync(HangMitigatingCancellationToken);
@@ -669,14 +677,22 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
 
     private async Task CommitCompletionAndVerifyAsync(string expected, string expectedSelectedItemLabel, char? commitChar = null)
     {
+        // Let outstanding async Intellisense work settle before we interrogate the active completion session.
+        await TestServices.Shell.WaitForOperationProgressAsync(HangMitigatingCancellationToken);
+
         // Actually open completion UI and wait for it have selected item we are interested in
         var session = await TestServices.Editor.OpenCompletionSessionAndWaitForItemAsync(TimeSpan.FromSeconds(10), expectedSelectedItemLabel, HangMitigatingCancellationToken);
 
-        Assert.NotNull(session);
+        if (session is null)
+        {
+            Assert.Fail(await TestServices.Editor.GetCompletionSessionDebugInfoAsync(expectedSelectedItemLabel, HangMitigatingCancellationToken));
+        }
+
+        var completionSession = session ?? throw new InvalidOperationException("Completion session should have been available.");
         if (commitChar is char commitCharValue)
         {
             // Commit using the specified commit character
-            session.Commit(commitCharValue, HangMitigatingCancellationToken);
+            completionSession.Commit(commitCharValue, HangMitigatingCancellationToken);
 
             // session.Commit call above commits as if the commit character was typed,
             // but doesn't actually insert the character into the buffer.
@@ -685,12 +701,12 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
         }
         else
         {
-            Assert.True(session.CommitIfUnique(HangMitigatingCancellationToken));
+            Assert.True(completionSession.CommitIfUnique(HangMitigatingCancellationToken));
         }
 
         var textView = await TestServices.Editor.GetActiveTextViewAsync(HangMitigatingCancellationToken);
 
-        var stopwatch = new Stopwatch();
+        var stopwatch = Stopwatch.StartNew();
         string text;
         while ((text = textView.TextBuffer.CurrentSnapshot.GetText()) != expected && stopwatch.ElapsedMilliseconds < EditorInProcess.DefaultCompletionWaitTimeMilliseconds)
         {

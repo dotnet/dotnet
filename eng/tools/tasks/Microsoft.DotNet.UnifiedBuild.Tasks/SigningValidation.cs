@@ -291,9 +291,7 @@ public class SigningValidation : BuildTask
     /// </summary>
     private (string command, string arguments) GetSignCheckCommandAndArguments()
     {
-        // Target sdk-task scripts from Arcade to catch and fix issues with the scripts between releases
-        // This reduces our exposure to known issues in the local VMR copy and improves build reliability during the VMR bootstrap window.
-        string sdkTaskScript = Path.Combine(DotNetRootDirectory, "src", "arcade", "eng", "common", "sdk-task");
+        string sdkTaskScript = Path.Combine(DotNetRootDirectory, "eng", "common", "sdk-task");
 
         string argumentsTemplate =
             $"'{sdkTaskScript}.$scriptExtension$' " +
@@ -306,8 +304,7 @@ public class SigningValidation : BuildTask
             $"/p:SignCheckErrorLog='{GetLogPath(_signCheckStderrLogFileName)}' " +
             $"/p:SignCheckResultsXmlFile='{GetLogPath(_signCheckResultsXmlFileName)}' " +
             $"/p:SignCheckExclusionsFile='{GetSignCheckExclusionsFile()}' " +
-            $"/bl:{GetLogPath(_signCheckBinLogFileName)} " +
-            $"$additionalArgs$";
+            $"/bl:{GetLogPath(_signCheckBinLogFileName)}";
 
         string command = string.Empty;
         string arguments = string.Empty;
@@ -316,8 +313,7 @@ public class SigningValidation : BuildTask
             command = "powershell.exe";
             string formattedArguments = argumentsTemplate
                 .Replace("$scriptExtension$", "ps1")
-                .Replace("$argumentPrefix$", "-")
-                .Replace("$additionalArgs$", "-msbuildEngine vs");
+                .Replace("$argumentPrefix$", "-");
             arguments = $"& \"{formattedArguments}\"";
         }
         else
@@ -325,8 +321,7 @@ public class SigningValidation : BuildTask
             command = "/bin/bash";
             string formattedArguments = argumentsTemplate
                 .Replace("$scriptExtension$", "sh")
-                .Replace("$argumentPrefix$", "--")
-                .Replace("$additionalArgs$", string.Empty);
+                .Replace("$argumentPrefix$", "--");
             arguments = $"-c \"{formattedArguments}\"";
         }
 
@@ -353,17 +348,17 @@ public class SigningValidation : BuildTask
     {
         string exclusionsFile = Path.Combine(DotNetRootDirectory, "eng", _signCheckExclusionsFileName);
         
-        var releaseBranchRegex = new Regex(@"^refs/heads/(internal/)?release/.*$");
-        if (!releaseBranchRegex.IsMatch(SourceBranch))
+        var dacSigningBranchRegex = new Regex(@"^refs/heads/(internal/)?release/\d+\.0\.1\d*$");
+        if (!dacSigningBranchRegex.IsMatch(SourceBranch))
         {
-            // We need to exclude DAC signed files from SignCheck on non-release branches
-            // because DAC signing is done only on release branches.
+            // We need to exclude DAC signed files from SignCheck on non-1xx-band release branches
+            // because DAC signing is done only on 1xx feature band release branches.
 
             // Write the updated exclusions file to the log directory for debugging purposes.
             string updatedExclusionsFile = GetLogPath(_signCheckExclusionsFileName);
             File.Copy(exclusionsFile, updatedExclusionsFile, true);
 
-            string dacExclusionTemplate = "{0};;DAC_SIGNED_FILE, DAC signing is done only on release branches";
+            string dacExclusionTemplate = "{0};;DAC_SIGNED_FILE, DAC signing is done only on 1xx-band release branches";
             foreach (string file in _dacSignedFiles)
             {
                 string exclusion = string.Format(dacExclusionTemplate, file);

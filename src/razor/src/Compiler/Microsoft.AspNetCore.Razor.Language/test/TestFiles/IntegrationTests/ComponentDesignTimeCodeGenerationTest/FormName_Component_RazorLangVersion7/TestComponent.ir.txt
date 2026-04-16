@@ -24,7 +24,7 @@
                     ComponentAttribute - (84:1,40 [9] x:\dir\subdir\Test\TestComponent.cshtml) - onsubmit - onsubmit - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
-                            LazyIntermediateToken - (84:1,40 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
+                            IntermediateToken - (84:1,40 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
                             IntermediateToken -  - CSharp - )
                     ComponentAttribute -  - @formname -  - AttributeStructure.DoubleQuotes
                         HtmlContent - (106:1,62 [18] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -38,7 +38,7 @@
                     ComponentAttribute - (170:2,40 [9] x:\dir\subdir\Test\TestComponent.cshtml) - onsubmit - onsubmit - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
-                            LazyIntermediateToken - (170:2,40 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
+                            IntermediateToken - (170:2,40 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
                             IntermediateToken -  - CSharp - )
                     ComponentAttribute -  - @formname -  - AttributeStructure.DoubleQuotes
                         CSharpExpression - (192:2,62 [23] x:\dir\subdir\Test\TestComponent.cshtml)

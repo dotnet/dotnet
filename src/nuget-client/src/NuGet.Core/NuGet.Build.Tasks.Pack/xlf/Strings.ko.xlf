@@ -2,6 +2,21 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="ko" original="../Strings.resx">
     <body>
+      <trans-unit id="AmbigiousFrameworkReferences">
+        <source>Ambiguous framework references. The following target frameworks are both declaring framework references for packing: {0}</source>
+        <target state="translated">모호한 프레임워크 참조입니다. 다음 대상 프레임워크들이 모두 패키징을 위한 프레임워크 참조를 선언하고 있습니다. {0}</target>
+        <note>0 - List of TargetFramework with framework refs</note>
+      </trans-unit>
+      <trans-unit id="AmbigiousPackageAssemblies">
+        <source>Ambiguous packaging content. The above frameworks have the same target path for {0}.</source>
+        <target state="translated">모호한 패키징 콘텐츠입니다. 위 프레임워크들이 {0}에 대해 동일한 대상 경로를 가지고 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AmbigiousPackageDependencies">
+        <source>Ambiguous package dependencies. The following target frameworks are both declaring package dependencies for packing: {0}</source>
+        <target state="translated">패키지 종속성이 모호합니다. 다음 대상 프레임워크들이 모두 패키징을 위한 패키지 종속성을 선언하고 있습니다: {0}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AssetsFileDoesNotHaveValidPackageSpec">
         <source>The assets file found does not contain a valid package spec. Try restoring the project again. The location of the assets file is {0}.</source>
         <target state="translated">찾은 자산 파일에 올바른 패키지 spec이 포함되어 있지 않습니다. 프로젝트를 다시 복원해 보세요. 자산 파일의 위치는 {0}입니다.</target>
@@ -11,6 +26,12 @@
         <source>The assets file produced by restore does not exist. Try restoring the project again. The expected location of the assets file is {0}.</source>
         <target state="translated">복원에 의해 생성된 자산 파일이 없습니다. 프로젝트를 다시 복원해 보세요. 자산 파일의 예상 위치는 {0}입니다.</target>
         <note>{0} is the path to the assets file.</note>
+      </trans-unit>
+      <trans-unit id="DuplicateFrameworks">
+        <source>This project is using aliased frameworks, the following TargetFramework properties map to the same effective frameworks '{0}' and pack is unable to disambiguate and create a single package. {1}</source>
+        <target state="translated">이 프로젝트는 별칭이 지정된 프레임워크를 사용 중입니다. 다음 TargetFramework 속성들이 동일한 실제 프레임워크 '{0}'에 매핑되어 있어, 패키징 시 단일 패키지로 구분하거나 생성할 수 없습니다. {1}</target>
+        <note>0 - details about which framework 
+1 - Additional details</note>
       </trans-unit>
       <trans-unit id="Error_FileNotFound">
         <source>The file '{0}' to be packed was not found on disk.</source>

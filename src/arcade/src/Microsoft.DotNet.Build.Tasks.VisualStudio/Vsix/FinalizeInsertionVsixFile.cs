@@ -127,7 +127,7 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio
 
                 using (var writer = new StreamWriter(stream, Encoding.UTF8, bufferSize: 2048, leaveOpen: false))
                 {
-                    writer.Write(json.ToString(Formatting.None));
+                    writer.Write(json.ToString(Formatting.None, Array.Empty<JsonConverter>()));
                 }
             }
         }

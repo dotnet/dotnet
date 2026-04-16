@@ -1,0 +1,49 @@
+params:
+
+  # excluded attributes will not be generated
+  # this behavior is fully controlled by jinja templates
+  excluded_attributes: ["messaging.client_id", "otel.library.name", "otel.library.version"]
+
+whitespace_control:
+  trim_blocks: true
+  lstrip_blocks: true
+  keep_trailing_newline: true
+
+comment_formats:
+  csharp:
+    format: html
+    header: "/// <summary>"
+    prefix: "/// "
+    footer: "/// </summary>"
+    old_style_paragraph: true
+    omit_closing_li: false
+    inline_code_snippet: "<c>{{code}}</c>"
+    block_code_snippet: "<code>{{code}}</<code>"
+    trim: true
+    remove_trailing_dots: false
+    enforce_trailing_dots: true
+default_comment_format: csharp
+
+templates:
+  - pattern: SemanticConventionsAttributes.cs.j2
+    filter: >
+      semconv_grouped_attributes({
+        "exclude_deprecated": false,
+        "exclude_stability": [],
+      }) | map({
+          root_namespace: .root_namespace,
+          attributes: .attributes,
+          excluded_attributes: $excluded_attributes
+      })
+    application_mode: each
+
+text_maps:
+  csharp_type:
+    int: int
+    double: double
+    boolean: bool
+    string: string
+    string[]: List<string>
+    int[]: List<int>
+    double[]: List<double>
+    boolean[]: List<bool>

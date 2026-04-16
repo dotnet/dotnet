@@ -1,8 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 // ZIP specification: http://www.pkware.com/documents/casestudies/APPNOTE.TXT
@@ -25,10 +24,10 @@ namespace NuGet.Packaging.Signing
         internal uint UncompressedSize { get; private set; }
         internal ushort FileNameLength { get; private set; }
         internal ushort ExtraFieldLength { get; private set; }
-        internal byte[] FileName { get; private set; }
-        internal byte[] ExtraField { get; private set; }
+        internal byte[] FileName { get; private set; } = null!; // Set to non-null in the static Read method.
+        internal byte[] ExtraField { get; private set; } = null!; // Set to non-null in the static Read method.
 
-        internal static bool TryRead(BinaryReader reader, out LocalFileHeader header)
+        internal static bool TryRead(BinaryReader reader, [NotNullWhen(returnValue: true)] out LocalFileHeader? header)
         {
             header = null;
 

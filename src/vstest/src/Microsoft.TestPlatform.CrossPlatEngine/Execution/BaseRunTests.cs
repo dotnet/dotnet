@@ -201,7 +201,6 @@ internal abstract class BaseRunTests
             TimeSpan? elapsedTime = null;
             Exception? exception = null;
             bool isAborted = false;
-            bool shutdownAfterRun = false;
 
             try
             {
@@ -213,11 +212,6 @@ internal abstract class BaseRunTests
                 {
                     EqtTrace.Error("BaseRunTests.RunTests: Failed to run the tests. Reason: GetExecutorUriExtensionMap returned null.");
                     isAborted = true;
-                }
-                else
-                {
-                    // Check the adapter setting for shutting down this process after run
-                    shutdownAfterRun = FrameworkHandle.EnableShutdownAfterTestRun;
                 }
             }
             catch (Exception ex)
@@ -413,7 +407,7 @@ internal abstract class BaseRunTests
                 EqtTrace.Verbose("Attaching to default test host.");
 
                 attachedToTestHost = true;
-#if NET5_0_OR_GREATER
+#if NET
                 var pid = Environment.ProcessId;
 #else
                 var pid = Process.GetCurrentProcess().Id;

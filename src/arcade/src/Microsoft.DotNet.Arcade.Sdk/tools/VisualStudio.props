@@ -1,10 +1,6 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
 
-  <PropertyGroup>
-    <ArcadeVisualStudioBuildTasksAssembly>$(NuGetPackageRoot)microsoft.dotnet.build.tasks.visualstudio\$(MicrosoftDotNetBuildTasksVisualStudioVersion)\tools\netframework\Microsoft.DotNet.Build.Tasks.VisualStudio.dll</ArcadeVisualStudioBuildTasksAssembly>
-  </PropertyGroup>
-
   <!-- Default settings for VSIX projects -->
 
   <PropertyGroup>

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +39,7 @@ namespace NuGet.Packaging.Core
         /// </summary>
         public static PackageDependencyInfoComparer Default { get; } = new PackageDependencyInfoComparer();
 
-        public bool Equals(PackageDependencyInfo x, PackageDependencyInfo y)
+        public bool Equals(PackageDependencyInfo? x, PackageDependencyInfo? y)
         {
             if (ReferenceEquals(x, y))
             {
@@ -79,7 +77,7 @@ namespace NuGet.Packaging.Core
             return areEqual;
         }
 
-        public int GetHashCode(PackageDependencyInfo obj)
+        public int GetHashCode(PackageDependencyInfo? obj)
         {
             if (ReferenceEquals(obj, null))
             {

@@ -61,7 +61,7 @@
                         CSharpExpression - (204:5,51 [12] EscapedTagHelpers.cshtml)
                             LazyIntermediateToken - (204:5,51 [12] EscapedTagHelpers.cshtml) - CSharp - DateTime.Now
                     DefaultTagHelperProperty - (227:5,74 [4] EscapedTagHelpers.cshtml) - checked - bool TestNamespace.InputTagHelper2.Checked - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (227:5,74 [4] EscapedTagHelpers.cshtml) - CSharp - true
+                        IntermediateToken - (227:5,74 [4] EscapedTagHelpers.cshtml) - CSharp - true
                     DefaultTagHelperExecute - 
                 HtmlContent - (235:5,82 [8] EscapedTagHelpers.cshtml)
                     LazyIntermediateToken - (235:5,82 [6] EscapedTagHelpers.cshtml) - Html - \n    

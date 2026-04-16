@@ -1,0 +1,9 @@
+#nullable enable
+OpenTelemetry.Sampler.AWS.AWSXRayRemoteSampler
+OpenTelemetry.Sampler.AWS.AWSXRayRemoteSampler.Dispose() -> void
+OpenTelemetry.Sampler.AWS.AWSXRayRemoteSamplerBuilder
+OpenTelemetry.Sampler.AWS.AWSXRayRemoteSamplerBuilder.Build() -> OpenTelemetry.Trace.Sampler!
+OpenTelemetry.Sampler.AWS.AWSXRayRemoteSamplerBuilder.SetEndpoint(string! endpoint) -> OpenTelemetry.Sampler.AWS.AWSXRayRemoteSamplerBuilder!
+OpenTelemetry.Sampler.AWS.AWSXRayRemoteSamplerBuilder.SetPollingInterval(System.TimeSpan pollingInterval) -> OpenTelemetry.Sampler.AWS.AWSXRayRemoteSamplerBuilder!
+override OpenTelemetry.Sampler.AWS.AWSXRayRemoteSampler.ShouldSample(in OpenTelemetry.Trace.SamplingParameters samplingParameters) -> OpenTelemetry.Trace.SamplingResult
+static OpenTelemetry.Sampler.AWS.AWSXRayRemoteSampler.Builder(OpenTelemetry.Resources.Resource! resource) -> OpenTelemetry.Sampler.AWS.AWSXRayRemoteSamplerBuilder!

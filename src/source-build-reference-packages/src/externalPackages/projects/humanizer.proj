@@ -3,6 +3,7 @@
   <PropertyGroup>
     <PackagesOutput>$(ProjectDirectory)src/Humanizer/bin/Release</PackagesOutput>
     <CustomRepoBuild>true</CustomRepoBuild>
+    <SourceRevisionId>3ebc38de585fc641a04b0e78ed69468453b0f8a1</SourceRevisionId>
   </PropertyGroup>
 
   <Target Name="CustomRepoBuild">

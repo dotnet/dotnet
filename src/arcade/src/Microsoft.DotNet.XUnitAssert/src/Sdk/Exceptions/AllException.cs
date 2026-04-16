@@ -1,6 +1,4 @@
 #pragma warning disable CA1032 // Implement standard exception constructors
-#pragma warning disable IDE0040 // Add accessibility modifiers
-#pragma warning disable IDE0161 // Convert to file-scoped namespace
 
 #if XUNIT_NULLABLE
 #nullable enable
@@ -62,17 +60,17 @@ namespace Xunit.Sdk
 								CultureInfo.CurrentCulture,
 								"{0}Item:  {1}{2}{3}Error: {4}",
 								string.Format(CultureInfo.CurrentCulture, "[{0}]:", error.Item1).PadRight(maxItemIndexLength),
-#if NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+#if NET8_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
 								error.Item2.Replace(Environment.NewLine, wrapSpaces, StringComparison.Ordinal),
 #else
 								error.Item2.Replace(Environment.NewLine, wrapSpaces),
 #endif
 								Environment.NewLine,
 								indexSpaces,
-#if NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-								error.Item3.Message.Replace(Environment.NewLine, wrapSpaces, StringComparison.Ordinal)
+#if NET8_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+								error.Item3.Message?.Replace(Environment.NewLine, wrapSpaces, StringComparison.Ordinal)
 #else
-								error.Item3.Message.Replace(Environment.NewLine, wrapSpaces)
+								error.Item3.Message?.Replace(Environment.NewLine, wrapSpaces)
 #endif
 							)
 						)
@@ -81,5 +79,20 @@ namespace Xunit.Sdk
 
 			return new AllException(message);
 		}
+
+		/// <summary>
+		/// Creates a new instance of the <see cref="AllException"/> class to be thrown when
+		/// collection is not supposed to be empty
+		/// during <see cref="Assert.All{T}(IEnumerable{T}, Action{T}, bool)"/>
+		/// or <see cref="Assert.AllAsync{T}(IEnumerable{T}, Func{T, Task}, bool)"/>.
+		/// </summary>
+		public static AllException ForEmptyCollection() =>
+			new AllException(
+				string.Format(
+					CultureInfo.CurrentCulture,
+					"Assert.All() Failure: The collection was empty.{0}At least one item was expected.",
+					Environment.NewLine
+				)
+			);
 	}
 }

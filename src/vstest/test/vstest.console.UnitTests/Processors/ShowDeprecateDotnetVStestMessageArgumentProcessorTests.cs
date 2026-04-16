@@ -13,7 +13,9 @@ public class ShowDeprecateDotnetVStestMessageArgumentProcessorTests
     [TestMethod]
     public void ShowDeprecateDotnetVStestMessageProcessorCommandName()
     {
+#pragma warning disable MSTEST0032 // Assertion condition is always true
         Assert.AreEqual("/ShowDeprecateDotnetVSTestMessage", ShowDeprecateDotnetVStestMessageArgumentProcessor.CommandName);
+#pragma warning restore MSTEST0032 // Assertion condition is always true
     }
 
     [TestMethod]

@@ -114,7 +114,7 @@ public class DataCollectorMainTests
     public void RunShouldThrowIfTimeoutOccured()
     {
         _mockDataCollectionRequestHandler.Setup(rh => rh.WaitForRequestSenderConnection(It.IsAny<int>())).Returns(false);
-        var message = Assert.ThrowsException<TestPlatformException>(() => _dataCollectorMain.Run(_args)).Message;
+        var message = Assert.ThrowsExactly<TestPlatformException>(() => _dataCollectorMain.Run(_args)).Message;
         Assert.AreEqual(TimeoutErrorMessage, message);
     }
 

@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -38,7 +37,7 @@ internal class RenameService(
         CancellationToken cancellationToken)
     {
         // We only support renaming of .razor components, not .cshtml tag helpers
-        if (!documentContext.FileKind.IsComponent())
+        if (!documentContext.Snapshot.FileKind.IsComponent())
         {
             return new(Edit: null);
         }
@@ -72,31 +71,7 @@ internal class RenameService(
         var fileRename = GetRenameFileEdit(originComponentDocumentFilePath, newPath);
         documentChanges.Add(fileRename);
 
-        if (!_languageServerFeatureOptions.UseRazorCohostServer)
-        {
-            AddEditsForCodeDocument(ref documentChanges.AsRef(), originTagHelpers, newName, new(documentContext.Uri), codeDocument);
-        }
-
         AddAdditionalFileRenames(ref documentChanges.AsRef(), originComponentDocumentFilePath, newPath);
-
-        if (!_languageServerFeatureOptions.UseRazorCohostServer)
-        {
-            var documentSnapshots = GetAllDocumentSnapshots(documentContext.FilePath, solutionQueryOperations);
-
-            foreach (var documentSnapshot in documentSnapshots)
-            {
-                if (!documentSnapshot.FileKind.IsComponent())
-                {
-                    continue;
-                }
-
-                // VS Code in Windows expects path to start with '/'
-                var uri = new DocumentUri(LspFactory.CreateFilePathUri(documentSnapshot.FilePath, _languageServerFeatureOptions));
-                var generatedOutput = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-
-                AddEditsForCodeDocument(ref documentChanges.AsRef(), originTagHelpers, newName, uri, generatedOutput);
-            }
-        }
 
         foreach (var documentChange in documentChanges)
         {
@@ -118,7 +93,7 @@ internal class RenameService(
         string newName,
         [NotNullWhen(true)] out WorkspaceEdit? workspaceEdit)
     {
-        var oldPath = documentContext.FilePath;
+        var oldPath = documentContext.Snapshot.FilePath;
         var newPath = MakeNewPath(oldPath, newName);
 
         using var documentChanges = new PooledArrayBuilder<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>>();
@@ -136,40 +111,6 @@ internal class RenameService(
             DocumentChanges = documentChanges.ToArrayAndClear()
         };
         return true;
-    }
-
-    private static ImmutableArray<IDocumentSnapshot> GetAllDocumentSnapshots(string filePath, ISolutionQueryOperations solutionQueryOperations)
-    {
-        using var documentSnapshots = new PooledArrayBuilder<IDocumentSnapshot>();
-        using var _ = SpecializedPools.GetPooledStringHashSet(out var documentPaths);
-
-        foreach (var project in solutionQueryOperations.GetProjects())
-        {
-            foreach (var documentPath in project.DocumentFilePaths)
-            {
-                // We've already added refactoring edits for our document snapshot
-                if (PathUtilities.OSSpecificPathComparer.Equals(documentPath, filePath))
-                {
-                    continue;
-                }
-
-                // Don't add duplicates between projects
-                if (!documentPaths.Add(documentPath))
-                {
-                    continue;
-                }
-
-                // Add to the list and add the path to the set
-                if (!project.TryGetDocument(documentPath, out var snapshot))
-                {
-                    throw new InvalidOperationException($"{documentPath} in project {project.FilePath} but not retrievable");
-                }
-
-                documentSnapshots.Add(snapshot);
-            }
-        }
-
-        return documentSnapshots.ToImmutableAndClear();
     }
 
     private void AddAdditionalFileRenames(
@@ -206,129 +147,9 @@ internal class RenameService(
         return Path.Combine(directoryName, newFileName);
     }
 
-    private void AddEditsForCodeDocument(
-        ref PooledArrayBuilder<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>> documentChanges,
-        OriginTagHelpers originTagHelpers,
-        string newName,
-        DocumentUri uri,
-        RazorCodeDocument codeDocument)
-    {
-        var documentIdentifier = new OptionalVersionedTextDocumentIdentifier { DocumentUri = uri };
-
-        using var elements = new PooledArrayBuilder<MarkupTagHelperElementSyntax>();
-
-        foreach (var node in codeDocument.GetRequiredSyntaxRoot().DescendantNodes())
-        {
-            if (node is MarkupTagHelperElementSyntax element)
-            {
-                elements.Add(element);
-            }
-        }
-
-        // Collect all edits first, then de-duplicate them by range.
-        using var allEdits = new PooledArrayBuilder<SumType<TextEdit, AnnotatedTextEdit>>();
-
-        if (TryCollectEdits(originTagHelpers.Primary, newName, codeDocument.Source, in elements, ref allEdits.AsRef()) &&
-            (originTagHelpers.Associated is null || TryCollectEdits(originTagHelpers.Associated, newName, codeDocument.Source, in elements, ref allEdits.AsRef())))
-        {
-            var uniqueEdits = GetUniqueEdits(ref allEdits.AsRef());
-
-            if (uniqueEdits.Length > 0)
-            {
-                documentChanges.Add(new TextDocumentEdit
-                {
-                    TextDocument = documentIdentifier,
-                    Edits = uniqueEdits,
-                });
-            }
-        }
-
-        return;
-
-        static bool TryCollectEdits(
-            TagHelperDescriptor tagHelper,
-            string newName,
-            RazorSourceDocument sourceDocument,
-            ref readonly PooledArrayBuilder<MarkupTagHelperElementSyntax> elements,
-            ref PooledArrayBuilder<SumType<TextEdit, AnnotatedTextEdit>> edits)
-        {
-            var editedName = newName;
-
-            if (tagHelper.IsFullyQualifiedNameMatch)
-            {
-                // Fully qualified binding, our "new name" needs to be fully qualified.
-                var @namespace = tagHelper.TypeNamespace;
-                if (@namespace == null)
-                {
-                    return false;
-                }
-
-                // The origin TagHelper was fully qualified so any fully qualified rename locations
-                // we find will need a fully qualified renamed edit.
-                editedName = $"{@namespace}.{newName}";
-            }
-
-            foreach (var element in elements)
-            {
-                if (element.TagHelperInfo.BindingResult.TagHelpers.Contains(tagHelper))
-                {
-                    var startTagEdit = LspFactory.CreateTextEdit(element.StartTag.Name.GetRange(sourceDocument), editedName);
-
-                    edits.Add(startTagEdit);
-
-                    if (element.EndTag is MarkupTagHelperEndTagSyntax endTag)
-                    {
-                        var endTagEdit = LspFactory.CreateTextEdit(endTag.Name.GetRange(sourceDocument), editedName);
-
-                        edits.Add(endTagEdit);
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        static SumType<TextEdit, AnnotatedTextEdit>[] GetUniqueEdits(
-            ref PooledArrayBuilder<SumType<TextEdit, AnnotatedTextEdit>> edits)
-        {
-            if (edits.Count == 0)
-            {
-                return [];
-            }
-
-            // De-duplicate edits by range.
-            using var uniqueEdits = new PooledArrayBuilder<SumType<TextEdit, AnnotatedTextEdit>>(edits.Count);
-            using var _ = HashSetPool<LspRange>.GetPooledObject(out var seenRanges);
-
-#if NET
-            seenRanges.EnsureCapacity(edits.Count);
-#endif
-
-            foreach (var edit in edits)
-            {
-                if (edit.TryGetFirst(out var textEdit))
-                {
-                    if (seenRanges.Add(textEdit.Range))
-                    {
-                        uniqueEdits.Add(edit);
-                    }
-                }
-                else if (edit.TryGetSecond(out var annotatedEdit))
-                {
-                    if (seenRanges.Add(annotatedEdit.Range))
-                    {
-                        uniqueEdits.Add(edit);
-                    }
-                }
-            }
-
-            return uniqueEdits.ToArrayAndClear();
-        }
-    }
-
     private readonly record struct OriginTagHelpers(TagHelperDescriptor Primary, TagHelperDescriptor? Associated);
 
-    private bool TryGetOriginTagHelpers(RazorCodeDocument codeDocument, int absoluteIndex, out OriginTagHelpers originTagHelpers)
+    private static bool TryGetOriginTagHelpers(RazorCodeDocument codeDocument, int absoluteIndex, out OriginTagHelpers originTagHelpers)
     {
         var owner = codeDocument.GetRequiredSyntaxRoot().FindInnermostNode(absoluteIndex);
         if (owner is null)
@@ -359,7 +180,7 @@ internal class RenameService(
         return true;
     }
 
-    private bool TryGetTagHelperBinding(RazorSyntaxNode owner, int absoluteIndex, [NotNullWhen(true)] out TagHelperBinding? binding)
+    private static bool TryGetTagHelperBinding(RazorSyntaxNode owner, int absoluteIndex, [NotNullWhen(true)] out TagHelperBinding? binding)
     {
         // End tags are easy, because there is only one possible binding result
         if (owner is MarkupTagHelperEndTagSyntax { Parent: MarkupTagHelperElementSyntax { TagHelperInfo.BindingResult: var endTagBindingResult } })
@@ -390,10 +211,8 @@ internal class RenameService(
             binding = startTagBindingResult;
 
             // If the component is fully qualified, we need to make sure that the caret is in the actual component name part
-            // not a namespace part. This only applies in cohosting, where we also get Roslyn edits for renames, and hence
-            // renaming a namespace part will actually rename the namespace.
-            if (_languageServerFeatureOptions.UseRazorCohostServer &&
-                binding.TagHelpers is [{ IsFullyQualifiedNameMatch: true }, ..])
+            // not a namespace part.
+            if (binding.TagHelpers is [{ IsFullyQualifiedNameMatch: true }, ..])
             {
                 var lastDotIndex = tagHelperStartTag.Name.Content.LastIndexOf('.');
                 Debug.Assert(lastDotIndex != -1, "Fully qualified component names should contain a dot.");

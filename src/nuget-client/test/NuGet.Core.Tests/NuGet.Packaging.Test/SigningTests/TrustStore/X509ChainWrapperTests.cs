@@ -26,7 +26,7 @@ namespace NuGet.Packaging.Test
         public void ConstructorWithOneParameter_WhenChainIsNull_Throws()
         {
             ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
-                () => new X509ChainWrapper(chain: null));
+                () => new X509ChainWrapper(chain: null!));
 
             Assert.Equal("chain", exception.ParamName);
         }
@@ -35,7 +35,7 @@ namespace NuGet.Packaging.Test
         public void ConstructorWithTwoParameters_WhenChainIsNull_Throws()
         {
             ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
-                () => new X509ChainWrapper(chain: null, getAdditionalContext: null!));
+                () => new X509ChainWrapper(chain: null!, getAdditionalContext: null));
 
             Assert.Equal("chain", exception.ParamName);
         }
@@ -86,7 +86,7 @@ namespace NuGet.Packaging.Test
         public void AdditionalContext_WhenGetAdditionalContextReturnsNull_ReturnsNull(bool buildResponse)
         {
             using (X509Certificate2 certificate = _fixture.GetDefaultCertificate())
-            using (X509ChainWrapper wrapper = new(CreateX509Chain(certificate, buildResponse), chain => null))
+            using (X509ChainWrapper wrapper = new(CreateX509Chain(certificate, buildResponse), chain => null!))
             {
                 Assert.Equal(buildResponse, wrapper.Build(certificate));
                 Assert.Null(wrapper.AdditionalContext);

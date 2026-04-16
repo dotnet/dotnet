@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsFilterSourcePackage>true</IsFilterSourcePackage>
+    <TargetFrameworks>$(NetCurrent);net48</TargetFrameworks>
+    <OutputType>Exe</OutputType>
+    <ExcludeRepoTestProjectSettings>true</ExcludeRepoTestProjectSettings>
+    <ExcludeMicrosoftNetTestSdk>true</ExcludeMicrosoftNetTestSdk>
+  </PropertyGroup>
+
+  <!-- Include source files from the source-only package directly, simulating how end-users consume the package. -->
+  <ItemGroup>
+    <Compile Include="$(RepoRoot)src/Microsoft.TestPlatform.Filter.Source/Condition.cs" Link="Sources/Condition.cs" />
+    <Compile Include="$(RepoRoot)src/Microsoft.TestPlatform.Filter.Source/EmbeddedAttribute.cs" Link="Sources/EmbeddedAttribute.cs" />
+    <Compile Include="$(RepoRoot)src/Microsoft.TestPlatform.Filter.Source/FastFilter.cs" Link="Sources/FastFilter.cs" />
+    <Compile Include="$(RepoRoot)src/Microsoft.TestPlatform.Filter.Source/FilterExpression.cs" Link="Sources/FilterExpression.cs" />
+    <Compile Include="$(RepoRoot)src/Microsoft.TestPlatform.Filter.Source/FilterExpressionWrapper.cs" Link="Sources/FilterExpressionWrapper.cs" />
+    <Compile Include="$(RepoRoot)src/Microsoft.TestPlatform.Filter.Source/FilterHelper.cs" Link="Sources/FilterHelper.cs" />
+    <Compile Include="$(RepoRoot)src/Microsoft.TestPlatform.Filter.Source/TestCaseFilterExpression.cs" Link="Sources/TestCaseFilterExpression.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- ObjectModel dependency is brought by MSTest.TestAdapter (specifically by the VSTestBridge). We don't want to include its compile assets -->
+    <!-- Otherwise, FilterHelper (public API) conflicts with the one added to Compile item above. -->
+    <PackageReference Include="Microsoft.TestPlatform.ObjectModel" ExcludeAssets="compile" Version="18.0.1" />
+  </ItemGroup>
+
+</Project>

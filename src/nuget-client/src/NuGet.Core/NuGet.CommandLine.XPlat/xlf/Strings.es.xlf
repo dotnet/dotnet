@@ -409,8 +409,8 @@ NuGet requiere orígenes HTTPS. Para usar orígenes HTTP, es necesario establece
         <note>{0} - package id</note>
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
-        <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, or directory.</source>
-        <target state="translated">Falta la ruta de acceso "{0}" o no es válida. Proporcione una ruta de acceso a un proyecto, archivo de solución o directorio.</target>
+        <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, file-based app, or project directory.</source>
+        <target state="translated">Falta la ruta de acceso "{0}" o no es válida. Proporcione una ruta de acceso a un proyecto, un archivo de solución, una aplicación basada en archivos o un directorio de proyecto.</target>
         <note>{0} - Input path argument</note>
       </trans-unit>
       <trans-unit id="Error_PathNotFound">
@@ -582,9 +582,9 @@ NuGet requiere orígenes HTTPS. Para usar orígenes HTTP, es necesario establece
         <note />
       </trans-unit>
       <trans-unit id="ListPkg_InvalidFramework">
-        <source>Failed to parse one of the given frameworks. Please make sure the given frameworks are valid.</source>
-        <target state="translated">No se pudo analizar uno de los marcos especificados. Asegúrese de que son válidos.</target>
-        <note />
+        <source>The specified TargetFramework '{0}' is not found in the project '{1}'.</source>
+        <target state="translated">El objeto TargetFramework ''{0}'' especificado no se encuentra en el proyecto ''{1}''.</target>
+        <note>0 - alias, 1 - project path, {Locked="TargetFramework"}</note>
       </trans-unit>
       <trans-unit id="ListPkg_InvalidOptions">
         <source>Options '--outdated', '--deprecated' and '--vulnerable' cannot be combined.</source>
@@ -972,8 +972,8 @@ Para obtener más información, visite https://docs.nuget.org/docs/reference/com
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_ProjectOptionDescription">
-        <source>Path to a project or solution file, or a directory.</source>
-        <target state="translated">Ruta de acceso a un archivo de proyecto o solución, o a un directorio.</target>
+        <source>Path to a project or solution file or file-based app, or a project directory.</source>
+        <target state="translated">Ruta de acceso a un archivo de proyecto o solución, una aplicación basada en archivos o un directorio de proyecto.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_VulnerableOptionDescription">
@@ -1132,6 +1132,11 @@ Para obtener más información, visite https://docs.nuget.org/docs/reference/com
       <trans-unit id="Remove_Description">
         <source>Remove a NuGet source.</source>
         <target state="translated">Quite un origen de NuGet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandAllowUntrustedRootDescription">
+        <source>Allow signing with certificates whose root certificate is not in a trusted root store. The certificate chain is still built and validated for structure, but UntrustedRoot status is treated as a warning.</source>
+        <target state="translated">Permite la firma con certificados cuyo certificado raíz no está en un almacén raíz de confianza. La cadena de certificados se sigue compilando y validando para la estructura, pero el estado UntrustedRoot se trata como una advertencia.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateFingerprintDescription">
@@ -1481,11 +1486,6 @@ La búsqueda es una comparación de cadenas que no diferencia mayúsculas de min
         <target state="translated">No se puede ejecutar "dotnet nuget why". {0}</target>
         <note>{0} - Exception mssage</note>
       </trans-unit>
-      <trans-unit id="WhyCommand_Error_InconsistentAssetsFile">
-        <source>Internal error: Assets file is inconsistent</source>
-        <target state="translated">Error interno: el archivo de recursos es incoherente</target>
-        <note />
-      </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. Please run restore for project '{1}' before running this command.</source>
         <target state="translated">El archivo "{0}" no parece ser un archivo de recursos de NuGet. Ejecute la restauración del proyecto "{1}" antes de ejecutar este comando.</target>
@@ -1527,8 +1527,8 @@ La búsqueda es una comparación de cadenas que no diferencia mayúsculas de min
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_PathArgument_Description">
-        <source>A path to a project, solution file, or directory.</source>
-        <target state="translated">Ruta de acceso a un proyecto, archivo de solución o directorio.</target>
+        <source>A path to a project, solution file, file-based app, or project directory.</source>
+        <target state="translated">Ruta de acceso a un proyecto, archivo de solución, aplicación basada en archivos o directorio de proyecto.</target>
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_Warning_AssetsFileDoesNotContainSpecifiedTarget">

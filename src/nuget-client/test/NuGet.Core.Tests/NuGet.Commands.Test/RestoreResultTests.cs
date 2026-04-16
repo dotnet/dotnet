@@ -382,6 +382,57 @@ namespace NuGet.Commands.Test
         }
 
         [Fact]
+        public async Task CommitAsync_WhenDoNotWriteDependencyGraphSpecIsTrue_DoesNotWriteDgSpec()
+        {
+            // Arrange
+            using var td = TestDirectory.Create();
+            var path = Path.Combine(td, "project.assets.json");
+            var cachePath = Path.Combine(td, "project.csproj.nuget.cache");
+            var dgSpecPath = Path.Combine(td, "project1.nuget.g.dgspec.json");
+            var dgSpec = new DependencyGraphSpec();
+            var configJson = @"
+                {
+                     ""frameworks"": {
+                        ""net45"": { }
+                    }
+                }";
+
+            var spec = JsonPackageSpecReader.GetPackageSpec(configJson, "TestProject", Path.Combine(td, "project.csproj")).WithTestRestoreMetadata();
+            dgSpec.AddProject(spec);
+            dgSpec.AddRestore(spec.Name);
+
+            var logger = new TestLogger();
+            var result = new RestoreResult(
+                success: true,
+                restoreGraphs: null,
+                compatibilityCheckResults: null,
+                lockFile: new LockFile(),
+                previousLockFile: null,
+                lockFilePath: path,
+                msbuildFiles: Enumerable.Empty<MSBuildOutputFile>(),
+                cacheFile: new CacheFile("NotSoRandomString"),
+                cacheFilePath: cachePath,
+                packagesLockFilePath: null,
+                packagesLockFile: null,
+                dependencyGraphSpecFilePath: dgSpecPath,
+                dependencyGraphSpec: dgSpec,
+                projectStyle: ProjectStyle.Unknown,
+                elapsedTime: TimeSpan.MinValue)
+            {
+                DoNotWriteDependencyGraphSpec = true
+            };
+
+            // Act
+            await result.CommitAsync(logger, CancellationToken.None);
+
+            // Assert
+            Assert.DoesNotContain(
+                logger.VerboseMessages,
+                m => m.Contains("Persisting dg"));
+            Assert.False(File.Exists(dgSpecPath));
+        }
+
+        [Fact]
         public void WhenRestoreResult_LogMessagesAreSourcedFromTheAssetsFile()
         {
             // Arrange

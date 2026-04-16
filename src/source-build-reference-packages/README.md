@@ -56,6 +56,24 @@ to .NET. The following sections describe how to add/upgrade the various types of
 1. Define a [project](src/externalPackages/projects) for the new component.
    The project is responsible for building the submodule with the appropriate configuration for source build.
    See the [existing projects](src/externalPackages/projects) for examples.
+   Include a `SourceRevisionId` property set to the submodule's commit hash.
+   This ensures the correct commit hash is embedded in the built binaries rather than the VMR's.
+   If the component computes `FileVersion` from non-deterministic values (e.g., `DateTime.Now`),
+   include a `FileVersionRevision` property set to the revision from the Microsoft-shipped package
+   and pass it via `/p:FileVersion` in the build command args.
+   Also include a `FileVersionValidationPackage` property naming a NuGet package produced by the
+   component so that tests can validate the revision.
+
+   After defining the project, run the metadata update script to automatically populate
+   `SourceRevisionId` and `FileVersionRevision` from the submodule and published package:
+
+   ```bash
+   # Linux/macOS
+   ./eng/update-external-metadata.sh <component-name>
+
+   # Windows
+   ./eng/update-external-metadata.ps1 <component-name>
+   ```
 
 1. [Build](#building) locally and resolve any build errors.
    Source changes must be applied via [patches](src/externalPackages/patches).
@@ -93,6 +111,16 @@ to .NET. The following sections describe how to add/upgrade the various types of
        There are a number of projects that utilize MSBuild properties to specify the version.
        These need to be manually updated with each upgrade.
 
+    1. Run the metadata update script to refresh `SourceRevisionId` and `FileVersionRevision`:
+
+       ```bash
+       # Linux/macOS
+       ./eng/update-external-metadata.sh <component-name>
+
+       # Windows
+       ./eng/update-external-metadata.ps1 <component-name>
+       ```
+
     1. Resolve build errors.
        Source changes must be applied via [patches](src/externalPackages/patches).
        See [below](#patches) for more info on patches.
@@ -114,6 +142,23 @@ to .NET. The following sections describe how to add/upgrade the various types of
 
 1. When creating/updating patches, it is desirable to backport the changes whenever feasible as this reduces
 the maintenance burden when [updating a component to a newer version](#updating-an-external-component-to-a-newer-version).
+
+1. **Minimize patch surface.** Patches are diffs from upstream and may conflict when updating to a newer version.
+   Keep the number of changed files and lines as small as possible.
+   Prefer pushing behavioral changes (e.g. disabling analyzers, NuGet audit, code-style enforcement, version overrides)
+   into the [project file](src/externalPackages/projects) via `/p:` command-line arguments rather than patching the source.
+   Many upstream projects already define MSBuild properties for these behaviors—pass the right values from the `.proj` instead of editing the upstream files.
+
+1. **Use MSBuild conditions instead of removing XML.**
+   When a change *must* be made in the upstream source, prefer adding an MSBuild `Condition` to logically disable or override behavior rather than deleting XML elements.
+   For example, add `Condition="'$(DotNetBuildSourceOnly)' != 'true'"` to an analyzer `PackageReference` instead of removing the element entirely.
+   Conditional changes are smaller diffs, less likely to conflict with upstream updates, and can potentially be contributed upstream so the project builds in isolation for other interested parties.
+
+1. **Keep Central Package Management (CPM) enabled.**
+   If an upstream project uses CPM (`ManagePackageVersionsCentrally`), do not disable it—doing so requires adding explicit `Version` attributes to every `PackageReference` across many files, inflating the patch.
+   Instead, update the version pins in `Directory.Packages.props` to align with the versions available in this SBRP repo.
+   Use a `Condition="'$(DotNetBuildSourceOnly)' == 'true'"` block to override versions only during source-build,
+   keeping the upstream defaults intact for normal development.
 
 1. Steps to create new patches:
 

@@ -1,8 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 // ZIP specification: http://www.pkware.com/documents/casestudies/APPNOTE.TXT
@@ -31,9 +30,9 @@ namespace NuGet.Packaging.Signing
         internal ushort InternalFileAttributes { get; private set; }
         internal uint ExternalFileAttributes { get; private set; }
         internal uint RelativeOffsetOfLocalHeader { get; private set; }
-        internal byte[] FileName { get; private set; }
-        internal byte[] ExtraField { get; private set; }
-        internal byte[] FileComment { get; private set; }
+        internal byte[] FileName { get; private set; } = null!;
+        internal byte[] ExtraField { get; private set; } = null!;
+        internal byte[] FileComment { get; private set; } = null!;
 
         // This property is not part of the ZIP specification.
         internal long OffsetFromStart { get; private set; }
@@ -46,7 +45,7 @@ namespace NuGet.Packaging.Signing
                 FileCommentLength;
         }
 
-        internal static bool TryRead(BinaryReader reader, out CentralDirectoryHeader header)
+        internal static bool TryRead(BinaryReader reader, [NotNullWhen(returnValue: true)] out CentralDirectoryHeader? header)
         {
             header = null;
 

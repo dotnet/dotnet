@@ -678,6 +678,11 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <target state="translated">ローカル リソースが一部クリアされました。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Log_AliasContainsDisallowedCharacters">
+        <source>The project {0} contains a TargetFramework '{1}' with disallowed characters. TargetFramework names must contain only ASCII characters and must not contain path separators.</source>
+        <target state="translated">プロジェクト {0} に、許可されていない文字が含まれる TargetFramework '{1}' があります。TargetFramework 名は ASCII 文字のみで構成されている必要があり、パス区切り記号を含めることはできません。</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Log_AliasingSupportedInNewDependencyResolver">
         <source>The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
 Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</source>
@@ -993,6 +998,11 @@ Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this f
       <trans-unit id="Log_VersionConflict">
         <source>Version conflict detected for {0}. Install/reference {1} directly to project {2} to resolve this issue.</source>
         <target state="translated">{0} のバージョンの競合が検出されました。この問題を解決するには、{1} をプロジェクト {2} に直接インストールするか、参照します。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_VersionConflictForCentralTransitive">
+        <source>Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue.</source>
+        <target state="translated">{0} でバージョンの競合が検出されました。中央 Package Management の推移的ピン留めが有効です。この問題を解決するには、{1} の PackageVersion を追加してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_WritingAssetsFile">

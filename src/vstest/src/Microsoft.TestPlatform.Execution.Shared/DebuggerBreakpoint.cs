@@ -51,7 +51,7 @@ internal static class DebuggerBreakpoint
             else
             {
                 var processId =
-#if NET6_0_OR_GREATER
+#if NET
                     Environment.ProcessId;
 #else
                     Process.GetCurrentProcess().Id;

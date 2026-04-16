@@ -105,7 +105,7 @@ public class TestPlatformTests
     {
         TestPlatform tp = new();
 
-        Assert.ThrowsException<ArgumentNullException>(() => tp.CreateDiscoveryRequest(_mockRequestData.Object, null!, new TestPlatformOptions(), It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>()));
+        Assert.ThrowsExactly<ArgumentNullException>(() => tp.CreateDiscoveryRequest(_mockRequestData.Object, null!, new TestPlatformOptions(), It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>()));
     }
 
     [TestMethod]
@@ -283,7 +283,7 @@ public class TestPlatformTests
     {
         var tp = new TestPlatform();
 
-        Assert.ThrowsException<ArgumentNullException>(() => tp.CreateTestRunRequest(_mockRequestData.Object, null!, new TestPlatformOptions(), It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>()));
+        Assert.ThrowsExactly<ArgumentNullException>(() => tp.CreateTestRunRequest(_mockRequestData.Object, null!, new TestPlatformOptions(), It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>()));
     }
 
     /// <summary>
@@ -424,7 +424,7 @@ public class TestPlatformTests
     {
         var tp = new TestableTestPlatform(_testEngine.Object, _hostManager.Object);
 
-        Assert.ThrowsException<ArgumentNullException>(() =>
+        Assert.ThrowsExactly<ArgumentNullException>(() =>
             tp.StartTestSession(
                 new Mock<IRequestData>().Object,
                 null!,

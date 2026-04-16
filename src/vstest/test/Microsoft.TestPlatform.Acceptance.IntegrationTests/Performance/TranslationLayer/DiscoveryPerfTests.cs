@@ -45,8 +45,14 @@ public class DiscoveryPerfTests : TelemetryPerfTestBase
             var perfyTestAdapterEnv = new Dictionary<string, string?> { ["TEST_COUNT"] = expectedNumberOfTests.ToString(CultureInfo.InvariantCulture) };
             var vstestConsoleWrapper = GetVsTestConsoleWrapper(perfyTestAdapterEnv, traceLevel: System.Diagnostics.TraceLevel.Off);
             var assetPath = GetPerfAssetFullPath(projectName);
-            vstestConsoleWrapper.DiscoverTests(assetPath, GetDefaultRunSettings(), options, discoveryEventHandler2);
-            vstestConsoleWrapper.EndSession();
+            try
+            {
+                vstestConsoleWrapper.DiscoverTests(assetPath, GetDefaultRunSettings(), options, discoveryEventHandler2);
+            }
+            finally
+            {
+                vstestConsoleWrapper.EndSession();
+            }
         }
         Assert.AreEqual(expectedNumberOfTests, discoveryEventHandler2.Metrics![TelemetryDataConstants.TotalTestsDiscovered]);
         PostTelemetry(discoveryEventHandler2.Metrics, perfAnalyzer, projectName);
@@ -87,8 +93,14 @@ public class DiscoveryPerfTests : TelemetryPerfTestBase
             // This tells to PerfyTestAdapter how many tests it should return, this is our overhead baseline.
             var perfyTestAdapterEnv = new Dictionary<string, string?> { ["TEST_COUNT"] = expectedNumberOfTests.ToString(CultureInfo.InvariantCulture) };
             var vstestConsoleWrapper = GetVsTestConsoleWrapper(perfyTestAdapterEnv, traceLevel: System.Diagnostics.TraceLevel.Off);
-            vstestConsoleWrapper.DiscoverTests(GetPerfAssetFullPath(projectName), GetDefaultRunSettings(), options, discoveryEventHandler2);
-            vstestConsoleWrapper.EndSession();
+            try
+            {
+                vstestConsoleWrapper.DiscoverTests(GetPerfAssetFullPath(projectName), GetDefaultRunSettings(), options, discoveryEventHandler2);
+            }
+            finally
+            {
+                vstestConsoleWrapper.EndSession();
+            }
         }
 
         Assert.AreEqual(expectedNumberOfTests, discoveryEventHandler2.Metrics![TelemetryDataConstants.TotalTestsDiscovered]);

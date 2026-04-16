@@ -41,7 +41,7 @@ public class InProcDataCollectionSinkTests
     {
         _testCase.SetPropertyValue(TestCaseProperties.Id, Guid.NewGuid());
 
-        Assert.ThrowsException<ArgumentNullException>(
+        Assert.ThrowsExactly<ArgumentNullException>(
             () => _dataCollectionSink.SendData(_dataCollectionContext, null!, "DummyValue"));
     }
 
@@ -50,7 +50,7 @@ public class InProcDataCollectionSinkTests
     {
         _testCase.SetPropertyValue(TestCaseProperties.Id, Guid.NewGuid());
 
-        Assert.ThrowsException<ArgumentNullException>(
+        Assert.ThrowsExactly<ArgumentNullException>(
             () => _dataCollectionSink.SendData(_dataCollectionContext, "DummyKey", null!));
     }
 
@@ -58,7 +58,7 @@ public class InProcDataCollectionSinkTests
     // TODO : Currently this code hits when test case id is null for core projects. For that we don't have algorithm to generate the guid. It's not implemented exception now (Source Code : EqtHash.cs).
     public void SendDataShouldThrowArgumentExceptionIfTestCaseIdIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(
+        Assert.ThrowsExactly<ArgumentNullException>(
             () => _dataCollectionSink.SendData(_dataCollectionContext, "DummyKey", "DummyValue"));
     }
 }

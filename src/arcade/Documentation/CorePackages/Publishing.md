@@ -103,7 +103,6 @@ These steps are needed for Arcade versions before `10.0.0`. After that, V3 is th
       - template: eng\common\templates\post-build\post-build.yml
         parameters:
           publishingInfraVersion: 3
-          enableSourceLinkValidation: false
           ...
     ```
 
@@ -112,14 +111,12 @@ These steps are needed for Arcade versions before `10.0.0`. After that, V3 is th
     | Name                                    | Type     | Description                                                                                          |Default Value |
     | --------------------------------------- | -------- | -----------------------------------------------------------------------------------------------------|----- |
     | publishingInfraVersion                  | int      | Publishing infrastructure version - Use 3 for latest publishing infra. Accepted values are 3 (.NET 5.0+) and 2 (.NET 3.1).                               | 3    |
-    | enableSourceLinkValidation              | bool     | Run SourceLink validation during the post-build stage.                                               | false |
     | enableSigningValidation                 | bool     | Run signing validation during the post-build stage.                                                  | true |
     | enableNugetValidation                   | bool     | Run NuGet package validation tool during the post build stage.                                       | true |
     | symbolPublishingAdditionalParameters    | string   | Additional arguments for the PublishToSymbolServers sdk task.                                        | '' |
     | artifactsPublishingAdditionalParameters | string   | Additional arguments for the PublishArtifactsInManifest sdk task.                                    | '' |
     | signingValidationAdditionalParameters   | string  | Additional arguments for the SigningValidation sdk task.     | '' |
     | publishInstallersAndChecksums           | bool     | Publish installers packages and checksums from the build artifacts to the dotnetcli storage account. Documentation for opting in to automatic checksum generation can be found in the [Checksum section](https://github.com/dotnet/arcade/blob/main/Documentation/CorePackages/Publishing.md#checksum-generation) of this document. | true |
-    | SDLValidationParameters                 | object   | Parameters for the SDL job template, as documented in the [SDL template documentation](https://github.com/dotnet/arcade/blob/66175ebd3756697a3ca515e16cd5ffddc30582cd/Documentation/HowToAddSDLRunToPipeline.md) | -- |
     | validateDependsOn | [array] | Which stage(s) should the validation stage depend on. | build |
     | publishDependsOn | [array] | Which stage(s) should the publishing stage(s) depend on. | Validate |
 
@@ -290,7 +287,7 @@ Each stable build (i.e., [Release Official Builds](https://github.com/dotnet/arc
 
 ### What benefits do I get from the new infrastructure?
 
-There are a few benefits, but the bottom line is: you can rely on Arcade SDK and Maestro++ to determine the correct place to publish the build assets. This is specially important for servicing and/or private builds where assets must not go to public locations before further validations. The new infrastructure also performs Signing validation, SDL validation and NuGet packages metadata validation.
+There are a few benefits, but the bottom line is: you can rely on Arcade SDK and Maestro++ to determine the correct place to publish the build assets. This is specially important for servicing and/or private builds where assets must not go to public locations before further validations. The new infrastructure also performs Signing validation, SDL validation (via 1ES Pipeline Templates) and NuGet packages metadata validation.
 
 ### What's this "Setup Maestro Vars" job?
 

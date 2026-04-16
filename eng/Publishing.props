@@ -1,6 +1,14 @@
 <Project InitialTargets="DiscoverArtifacts">
+
   <Import Project="$(RepositoryEngineeringDir)RuntimeIdentifier.props" />
   <Import Project="$(RepositoryEngineeringDir)VmrLayout.props" />
+
+  <!-- Override RestoreSources in Source-Build builds so the Arcade SDK restores its packages from offline sources. -->
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <!-- Needed to restore packages referenced by Tools.proj from PSB. -->
+    <RestoreSources Condition="'$(IsTestRun)' != 'true'">$(PrebuiltPackagesPath);$(PreviouslySourceBuiltPackagesPath)</RestoreSources>
+    <RestoreSources Condition="'$(IsTestRun)' != 'true' and Exists('$(SharedComponentsArtifactsPath)')">$(RestoreSources);$(SharedComponentsArtifactsPath)</RestoreSources>
+  </PropertyGroup>
 
   <PropertyGroup>
     <PublishingVersion>4</PublishingVersion>
@@ -40,7 +48,8 @@
 
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.GetKnownArtifactsFromAssetManifests" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
 
-  <Target Name="DiscoverArtifacts">
+  <!-- Conditioned on ExcludeRestorePackageImports to not run as part of restore -->
+  <Target Name="DiscoverArtifacts" Condition="'$(ExcludeRestorePackageImports)' != 'true'">
     <ItemGroup>
       <!-- Repo manifests from individual repos -->
       <RepoManifests Include="$(AssetManifestsIntermediateDir)/**/*.xml" />
@@ -96,4 +105,5 @@
   </Target>
 
   <Import Project="$(RepositoryEngineeringDir)PublishSourceBuild.props" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+
 </Project>

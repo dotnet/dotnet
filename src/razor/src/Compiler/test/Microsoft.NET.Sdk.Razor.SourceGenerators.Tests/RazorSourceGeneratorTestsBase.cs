@@ -296,15 +296,46 @@ public abstract class RazorSourceGeneratorTestsBase
         }
     }
 
-    private static Project CreateBaseProject(CSharpParseOptions? cSharpParseOptions)
+    // Cache the entire base project (workspace, compilation options, parse options, and all
+    // metadata references) so it is built once and shared across all tests. Project is
+    // immutable, so every AddDocument/AddAdditionalDocument call returns a new fork.
+    private static readonly Lazy<Project> s_cachedBaseProject = new(static () =>
     {
+        var references = new Dictionary<string, MetadataReference>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var defaultCompileLibrary in DependencyContext.Load(typeof(RazorSourceGeneratorTestsBase).Assembly)!.CompileLibraries)
+        {
+            foreach (var resolveReferencePath in defaultCompileLibrary.ResolveReferencePaths(new AppLocalResolver(AppContext.BaseDirectory)))
+            {
+                if (resolveReferencePath.Contains("Shim."))
+                {
+                    continue;
+                }
+
+                var name = Path.GetFileNameWithoutExtension(resolveReferencePath);
+                references.TryAdd(name, MetadataReference.CreateFromFile(resolveReferencePath));
+            }
+        }
+
+        // The deps file in the project is incorrect and does not contain "compile" nodes for some references.
+        // However these binaries are always present in the bin output. As a "temporary" workaround, we'll add
+        // every dll file that's present in the test's build output as a metadatareference.
+        foreach (var assembly in Directory.EnumerateFiles(AppContext.BaseDirectory, "*.dll"))
+        {
+            if (!assembly.Contains("Shim."))
+            {
+                var name = Path.GetFileNameWithoutExtension(assembly);
+                references.TryAdd(name, MetadataReference.CreateFromFile(assembly));
+            }
+        }
+
         var projectId = ProjectId.CreateNewId(debugName: "TestProject");
 
         var solution = new AdhocWorkspace()
            .CurrentSolution
            .AddProject(projectId, "TestProject", "TestProject", LanguageNames.CSharp);
 
-        var project = solution.Projects.Single()
+        return solution.Projects.Single()
             .WithCompilationOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
                 nullableContextOptions: NullableContextOptions.Enable,
                 specificDiagnosticOptions: new KeyValuePair<string, ReportDiagnostic>[]
@@ -314,42 +345,21 @@ public abstract class RazorSourceGeneratorTestsBase
                     new("CS1701", ReportDiagnostic.Suppress),
                     // Ignore warnings about unused usings, we don't attempt to trim them
                     new("CS8019", ReportDiagnostic.Suppress),
-                }));
+                }))
+            .WithParseOptions(CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Preview))
+            .AddMetadataReferences(references.Values);
+    });
 
-        project = project.WithParseOptions(cSharpParseOptions ?? ((CSharpParseOptions)project.ParseOptions!).WithLanguageVersion(LanguageVersion.Preview));
+    private static Project CreateBaseProject(CSharpParseOptions? cSharpParseOptions)
+    {
+        var project = s_cachedBaseProject.Value;
 
-        foreach (var defaultCompileLibrary in DependencyContext.Load(typeof(RazorSourceGeneratorTests).Assembly)!.CompileLibraries)
+        if (cSharpParseOptions is not null)
         {
-            foreach (var resolveReferencePath in defaultCompileLibrary.ResolveReferencePaths(new AppLocalResolver(AppContext.BaseDirectory)))
-            {
-                if (excludeReference(resolveReferencePath))
-                {
-                    continue;
-                }
-
-                project = project.AddMetadataReference(MetadataReference.CreateFromFile(resolveReferencePath));
-            }
-        }
-
-        // The deps file in the project is incorrect and does not contain "compile" nodes for some references.
-        // However these binaries are always present in the bin output. As a "temporary" workaround, we'll add
-        // every dll file that's present in the test's build output as a metadatareference.
-        foreach (var assembly in Directory.EnumerateFiles(AppContext.BaseDirectory, "*.dll"))
-        {
-            if (!excludeReference(assembly) &&
-                !project.MetadataReferences.Any(c => string.Equals(Path.GetFileNameWithoutExtension(c.Display), Path.GetFileNameWithoutExtension(assembly), StringComparison.OrdinalIgnoreCase)))
-            {
-                project = project.AddMetadataReference(MetadataReference.CreateFromFile(assembly));
-            }
+            project = project.WithParseOptions(cSharpParseOptions);
         }
 
         return project;
-
-        // In this project, we don't need shims, we reference the full ASP.NET Core DLLs.
-        static bool excludeReference(string path)
-        {
-            return path.Contains("Shim.");
-        }
     }
 
     protected sealed class TestAnalyzerConfigOptionsProvider : AnalyzerConfigOptionsProvider

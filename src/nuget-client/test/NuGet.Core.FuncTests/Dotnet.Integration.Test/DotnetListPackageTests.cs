@@ -12,8 +12,10 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using FluentAssertions;
+using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using Newtonsoft.Json.Linq;
+using NuGet.CommandLine.XPlat;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
@@ -75,6 +77,70 @@ namespace Dotnet.Integration.Test
 
                 Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, "packageX1.0.01.0.0"));
             }
+        }
+
+        // https://github.com/NuGet/Home/issues/14823: This should use `dotnet package list` when it supports file-based apps.
+        [Fact]
+        public async Task DotnetListPackage_FileBasedApp()
+        {
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+
+            // Create the file-based app.
+            var fbaDir = Path.Join(pathContext.SolutionRoot, "fba");
+            Directory.CreateDirectory(fbaDir);
+
+            var appFile = Path.Join(fbaDir, "app.cs");
+            File.WriteAllText(appFile, """
+                #:property PublishAot=false
+                #:package packageX@1.0.0
+                Console.WriteLine();
+                """);
+
+            var packageX = XPlatTestUtils.CreatePackage();
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, PackageSaveMode.Defaultv3, packageX);
+
+            // Restore.
+            _fixture.RunDotnetExpectSuccess(fbaDir, "restore app.cs", testOutputHelper: _testOutputHelper);
+
+            // Get project content.
+            var virtualProject = _fixture.GetFileBasedAppVirtualProject(appFile, _testOutputHelper);
+            using var builder = new TestVirtualProjectBuilder(virtualProject);
+
+            // List packages.
+            using var outWriter = new StringWriter();
+            using var errorWriter = new StringWriter();
+            var testApp = new CommandLineApplication
+            {
+                Out = outWriter,
+                Error = errorWriter,
+            };
+            var logger = new TestLogger(_testOutputHelper);
+            var msbuild = new MSBuildAPIUtility(logger, builder);
+            ListPackageCommand.Register(
+                testApp,
+                () => logger,
+                (_) => { },
+                () => new ListPackageCommandRunner(msbuild));
+            int result = testApp.Execute([
+                "list", appFile,
+                "--source", pathContext.PackageSource,
+                "--format", "json",
+            ]);
+
+            var output = outWriter.ToString();
+            var error = errorWriter.ToString();
+
+            _testOutputHelper.WriteLine(output);
+            _testOutputHelper.WriteLine(error);
+
+            Assert.Equal(0, result);
+
+            Assert.Empty(error);
+
+            Assert.Contains("packageX", output);
+            Assert.Contains("1.0.0", output);
+
+            Assert.Null(builder.ModifiedContent);
         }
 
         [PlatformFact(Platform.Windows)]
@@ -1370,6 +1436,358 @@ namespace Dotnet.Integration.Test
             ((JArray)package["vulnerabilities"]).Count.Should().BeGreaterThan(0);
         }
 
+        [Fact]
+        public async Task DotnetListPackage_SingleTargetWithAlias_Succeeds()
+        {
+            // Arrange
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+            var (projectDirectory, projectPath) = await CreateSingleTargetAliasProjectAsync(pathContext);
+
+            // Act
+            CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(projectDirectory,
+                $"list {projectPath} package",
+                testOutputHelper: _testOutputHelper);
+
+            // Assert
+            ShouldContainIgnoringSpaces(listResult.AllOutput, "PackageX1.0.01.0.0");
+            ShouldContainIgnoringSpaces(listResult.AllOutput, "banana");
+
+        }
+
+        [Fact]
+        public async Task DotnetListPackage_MultiTargetWithAliases_DifferentFrameworks_Succeeds()
+        {
+            // Arrange
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+            var (projectDirectory, projectPath) = await CreateMultiTargetDifferentAliasProjectAsync(pathContext, TestConstants.DefaultTargetFramework.Version.Major);
+
+            // Act
+            CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(projectDirectory,
+                $"list {projectPath} package",
+                testOutputHelper: _testOutputHelper);
+
+            // Assert
+            ShouldContainIgnoringSpaces(listResult.AllOutput, "PackageX1.0.01.0.0");
+            // In 11.0.1xx, this will be apple & banana.
+            ShouldContainIgnoringSpaces(listResult.AllOutput, "apple");
+            ShouldContainIgnoringSpaces(listResult.AllOutput, "banana");
+        }
+
+        [Fact]
+        public async Task DotnetListPackage_MultiTargetWithAliases_SameFramework_Succeeds()
+        {
+            // Arrange
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+            var (projectDirectory, projectPath) = await CreateMultiTargetSameAliasProjectAsync(pathContext);
+
+            // Act
+
+            CommandRunnerResult restore = _fixture.RunDotnetExpectSuccess(projectDirectory,
+               $"restore {projectPath}",
+               testOutputHelper: _testOutputHelper);
+
+            CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(projectDirectory,
+                $"list {projectPath} package",
+                testOutputHelper: _testOutputHelper);
+
+            // Assert
+            ShouldContainIgnoringSpaces(listResult.AllOutput, "PackageX1.0.01.0.0");
+            ShouldContainIgnoringSpaces(listResult.AllOutput, "apple");
+            ShouldContainIgnoringSpaces(listResult.AllOutput, "banana");
+        }
+
+        [Fact]
+        public async Task DotnetListPackage_SingleTargetWithAlias_FormatJson_Succeeds()
+        {
+            // Arrange
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+            var (projectDirectory, projectPath) = await CreateSingleTargetAliasProjectAsync(pathContext);
+
+            // Act
+            CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(projectDirectory,
+                $"list {projectPath} package --format json",
+                testOutputHelper: _testOutputHelper);
+
+            // Assert
+            var json = JObject.Parse(listResult.AllOutput);
+            var frameworks = (JArray)json.SelectToken("$.projects[0].frameworks");
+            frameworks.Should().NotBeNull();
+            frameworks.Count.Should().Be(1);
+            frameworks[0]["framework"].ToString().Should().Be("banana");
+            var topLevelPackages = (JArray)frameworks[0]["topLevelPackages"];
+            topLevelPackages.Should().NotBeNull();
+            topLevelPackages.Count.Should().Be(1);
+            topLevelPackages[0]["id"].ToString().Should().Be("PackageX");
+            topLevelPackages[0]["resolvedVersion"].ToString().Should().Be("1.0.0");
+        }
+
+        [Fact]
+        public async Task DotnetListPackage_MultiTargetWithAliases_DifferentFrameworks_FormatJson_Succeeds()
+        {
+            // Arrange
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+            int frameworkVersion = TestConstants.DefaultTargetFramework.Version.Major;
+            var (projectDirectory, projectPath) = await CreateMultiTargetDifferentAliasProjectAsync(pathContext, frameworkVersion);
+
+            // Act
+            CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(projectDirectory,
+                $"list {projectPath} package --format json",
+                testOutputHelper: _testOutputHelper);
+
+            // Assert
+            var json = JObject.Parse(listResult.AllOutput);
+            var frameworks = (JArray)json.SelectToken("$.projects[0].frameworks");
+            frameworks.Should().NotBeNull();
+            frameworks.Count.Should().Be(2);
+            frameworks.Select(f => f["framework"].ToString()).Should().BeEquivalentTo(["apple", "banana"]);
+
+            foreach (var fw in frameworks)
+            {
+                var topLevelPackages = (JArray)fw["topLevelPackages"];
+                topLevelPackages.Should().NotBeNull();
+                topLevelPackages.Count.Should().Be(1);
+                topLevelPackages[0]["id"].ToString().Should().Be("PackageX");
+                topLevelPackages[0]["resolvedVersion"].ToString().Should().Be("1.0.0");
+            }
+        }
+
+        [Fact]
+        public async Task DotnetListPackage_MultiTargetWithAliases_SameFramework_FormatJson_Succeeds()
+        {
+            // Arrange
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+            var (projectDirectory, projectPath) = await CreateMultiTargetSameAliasProjectAsync(pathContext);
+
+            // Act
+            CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(projectDirectory,
+                $"list {projectPath} package --format json",
+                testOutputHelper: _testOutputHelper);
+
+            // Assert
+            var json = JObject.Parse(listResult.AllOutput);
+            var frameworks = (JArray)json.SelectToken("$.projects[0].frameworks");
+            frameworks.Should().NotBeNull();
+            frameworks.Count.Should().Be(2);
+            frameworks.Select(f => f["framework"].ToString()).Should().BeEquivalentTo(["apple", "banana"]);
+
+            foreach (var fw in frameworks)
+            {
+                var topLevelPackages = (JArray)fw["topLevelPackages"];
+                topLevelPackages.Should().NotBeNull();
+                topLevelPackages.Count.Should().Be(1);
+                topLevelPackages[0]["id"].ToString().Should().Be("PackageX");
+                topLevelPackages[0]["resolvedVersion"].ToString().Should().Be("1.0.0");
+            }
+        }
+
+        [Theory]
+        [InlineData("apple")]
+        [InlineData("banana")]
+        public async Task DotnetListPackage_MultiTargetWithAliases_DifferentFrameworks_FrameworkFilter_Succeeds(string alias)
+        {
+            // Arrange
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+            int frameworkVersion = TestConstants.DefaultTargetFramework.Version.Major;
+            var (projectDirectory, projectPath) = await CreateMultiTargetDifferentAliasProjectAsync(pathContext, frameworkVersion);
+
+            // Act
+            CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(projectDirectory,
+                $"list {projectPath} package --framework {alias}",
+                testOutputHelper: _testOutputHelper);
+
+            // Assert
+            ShouldContainIgnoringSpaces(listResult.AllOutput, "PackageX1.0.01.0.0");
+            ShouldContainIgnoringSpaces(listResult.AllOutput, alias); // In 11.0.1xx, this will be alias
+
+            // The other alias should not appear
+            string otherAlias = alias == "apple" ? "banana" : "apple";
+            listResult.AllOutput.Should().NotContain($"[{otherAlias}]");
+        }
+
+        [Theory]
+        [InlineData("apple")]
+        [InlineData("banana")]
+        public async Task DotnetListPackage_MultiTargetWithAliases_SameFramework_FrameworkFilter_Succeeds(string alias)
+        {
+            // Arrange
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+            var (projectDirectory, projectPath) = await CreateMultiTargetSameAliasProjectAsync(pathContext);
+
+            // Act
+            CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(projectDirectory,
+                $"list {projectPath} package --framework {alias}",
+                testOutputHelper: _testOutputHelper);
+
+            // Assert
+            ShouldContainIgnoringSpaces(listResult.AllOutput, "PackageX1.0.01.0.0");
+            ShouldContainIgnoringSpaces(listResult.AllOutput, alias);
+
+            // The other alias should not appear
+            string otherAlias = alias == "apple" ? "banana" : "apple";
+            listResult.AllOutput.Should().NotContain($"[{otherAlias}]");
+        }
+
+        [Theory]
+        [InlineData("apple")]
+        [InlineData("banana")]
+        public async Task DotnetListPackage_MultiTargetWithAliases_DifferentFrameworks_FrameworkFilter_FormatJson_Succeeds(string alias)
+        {
+            // Arrange
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+            int frameworkVersion = TestConstants.DefaultTargetFramework.Version.Major;
+            var (projectDirectory, projectPath) = await CreateMultiTargetDifferentAliasProjectAsync(pathContext, frameworkVersion);
+
+            string expectedFramework = alias == "apple" ? $"net{frameworkVersion}.0" : $"net{frameworkVersion - 1}.0";
+
+            // Act
+            CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(projectDirectory,
+                $"list {projectPath} package --framework {alias} --format json",
+                testOutputHelper: _testOutputHelper);
+
+            // Assert
+            var json = JObject.Parse(listResult.AllOutput);
+            var frameworks = (JArray)json.SelectToken("$.projects[0].frameworks");
+            frameworks.Should().NotBeNull();
+            frameworks.Count.Should().Be(1);
+            frameworks[0]["framework"].ToString().Should().Be(alias);
+
+            var topLevelPackages = (JArray)frameworks[0]["topLevelPackages"];
+            topLevelPackages.Should().NotBeNull();
+            topLevelPackages.Count.Should().Be(1);
+            topLevelPackages[0]["id"].ToString().Should().Be("PackageX");
+            topLevelPackages[0]["resolvedVersion"].ToString().Should().Be("1.0.0");
+        }
+
+        [Theory]
+        [InlineData("apple")]
+        [InlineData("banana")]
+        public async Task DotnetListPackage_MultiTargetWithAliases_SameFramework_FrameworkFilter_FormatJson_Succeeds(string alias)
+        {
+            // Arrange
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+            var (projectDirectory, projectPath) = await CreateMultiTargetSameAliasProjectAsync(pathContext);
+
+            // Act
+            CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(projectDirectory,
+                $"list {projectPath} package --framework {alias} --format json",
+                testOutputHelper: _testOutputHelper);
+
+            // Assert
+            var json = JObject.Parse(listResult.AllOutput);
+            var frameworks = (JArray)json.SelectToken("$.projects[0].frameworks");
+            frameworks.Should().NotBeNull();
+            frameworks.Count.Should().Be(1);
+            frameworks[0]["framework"].ToString().Should().Be(alias);
+
+            var topLevelPackages = (JArray)frameworks[0]["topLevelPackages"];
+            topLevelPackages.Should().NotBeNull();
+            topLevelPackages.Count.Should().Be(1);
+            topLevelPackages[0]["id"].ToString().Should().Be("PackageX");
+            topLevelPackages[0]["resolvedVersion"].ToString().Should().Be("1.0.0");
+        }
+
+        private async Task<(string projectDirectory, string projectPath)> CreateSingleTargetAliasProjectAsync(SimpleTestPathContext pathContext)
+        {
+            var packageX = new SimpleTestPackageContext("PackageX", "1.0.0");
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageX);
+
+            var projectDirectory = Path.Combine(pathContext.SolutionRoot, ProjectName);
+            var projectPath = Path.Combine(projectDirectory, $"{ProjectName}.csproj");
+            _fixture.CreateDotnetNewProject(pathContext.SolutionRoot, ProjectName, args: "classlib", _testOutputHelper);
+
+            var targetFrameworkVersion = $"v{TestConstants.DefaultTargetFramework.Version.Major}.{TestConstants.DefaultTargetFramework.Version.Minor}";
+            using (var stream = File.Open(projectPath, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFramework", "banana");
+                ProjectFileUtils.AddProperties(xml, new Dictionary<string, string>
+                {
+                    { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                    { "TargetFrameworkVersion", targetFrameworkVersion }
+                });
+                ProjectFileUtils.AddItem(xml, "PackageReference", "PackageX", string.Empty, new Dictionary<string, string>(), new Dictionary<string, string>() { { "Version", "1.0.0" } });
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            return (projectDirectory, projectPath);
+        }
+
+        private async Task<(string projectDirectory, string projectPath)> CreateMultiTargetDifferentAliasProjectAsync(SimpleTestPathContext pathContext, int defaultMajorFrameworkVersion)
+        {
+            pathContext.Settings.AddNetStandardFeeds();
+            var packageX = new SimpleTestPackageContext("PackageX", "1.0.0");
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageX);
+
+            var projectDirectory = Path.Combine(pathContext.SolutionRoot, ProjectName);
+            var projectPath = Path.Combine(projectDirectory, $"{ProjectName}.csproj");
+            _fixture.CreateDotnetNewProject(pathContext.SolutionRoot, ProjectName, args: "classlib", _testOutputHelper);
+
+            var targetFrameworkVersion = $"v{defaultMajorFrameworkVersion}.0";
+            var previewTargetFrameworkVersion = $"v{defaultMajorFrameworkVersion - 1}.0";
+            using (var stream = File.Open(projectPath, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", "apple;banana");
+                ProjectFileUtils.AddProperties(xml, new Dictionary<string, string>
+                {
+                    { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                    { "TargetFrameworkVersion", targetFrameworkVersion }
+                }, $" '$(TargetFramework)' == 'apple' ");
+
+                ProjectFileUtils.AddProperties(xml, new Dictionary<string, string>
+                {
+                    { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                    { "TargetFrameworkVersion", previewTargetFrameworkVersion }
+                }, $" '$(TargetFramework)' == 'banana' ");
+                ProjectFileUtils.AddItem(xml, "PackageReference", "PackageX", string.Empty, new Dictionary<string, string>(), new Dictionary<string, string>() { { "Version", "1.0.0" } });
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            return (projectDirectory, projectPath);
+        }
+
+        private async Task<(string projectDirectory, string projectPath)> CreateMultiTargetSameAliasProjectAsync(SimpleTestPathContext pathContext)
+        {
+            var packageX = new SimpleTestPackageContext("PackageX", "1.0.0");
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageX);
+
+            var projectDirectory = Path.Combine(pathContext.SolutionRoot, ProjectName);
+            var projectPath = Path.Combine(projectDirectory, $"{ProjectName}.csproj");
+            _fixture.CreateDotnetNewProject(pathContext.SolutionRoot, ProjectName, args: "classlib", _testOutputHelper);
+
+            var targetFrameworkVersion = $"v{TestConstants.DefaultTargetFramework.Version.Major}.{TestConstants.DefaultTargetFramework.Version.Minor}";
+            using (var stream = File.Open(projectPath, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", "apple;banana");
+
+                ProjectFileUtils.AddProperties(xml, new Dictionary<string, string>
+                {
+                    { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                    { "TargetFrameworkVersion", targetFrameworkVersion }
+                }, $" '$(TargetFramework)' == 'apple' ");
+
+                ProjectFileUtils.AddProperties(xml, new Dictionary<string, string>
+                {
+                    { "TargetFrameworkIdentifier", ".NETCoreApp" },
+                    { "TargetFrameworkVersion", targetFrameworkVersion }
+                }, $" '$(TargetFramework)' == 'banana' ");
+                ProjectFileUtils.AddItem(xml, "PackageReference", "PackageX", string.Empty, new Dictionary<string, string>(), new Dictionary<string, string>() { { "Version", "1.0.0" } });
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            return (projectDirectory, projectPath);
+        }
+
         private static string CollapseSpaces(string input)
         {
             return Regex.Replace(input, " +", " ");
@@ -1380,6 +1798,12 @@ namespace Dotnet.Integration.Test
             var commandResultNoSpaces = output.Replace(" ", "");
 
             return commandResultNoSpaces.ToLowerInvariant().Contains(pattern.ToLowerInvariant());
+        }
+
+        private void ShouldContainIgnoringSpaces(string output, string pattern)
+        {
+            var commandResultNoSpaces = output.Replace(" ", "");
+            commandResultNoSpaces.Should().Contain(pattern);
         }
 
         private static bool NoDuplicateSection(string output)

@@ -1,3 +1,7 @@
+# This yml is used by these pipelines:
+# - source-build-sdk-diff-tests (internal)
+#   https://dev.azure.com/dnceng/internal/_build?definitionId=1231
+
 schedules:
 - cron: "0 12 * * 1-5"
   displayName: Run on weekdays at 12pm UTC
@@ -22,6 +26,7 @@ resources:
         include:
         - refs/heads/release/*.0.1xx-preview*
         - refs/heads/internal/release/*.0.?xx*
+        - refs/heads/internal/release/*.0.???
       # Trigger on build stages vs successful pipeline completion for a higher run frequency when there are
       # publish/validation failures.
       stages:
@@ -54,6 +59,8 @@ parameters:
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
+    settings:
+      networkIsolationPolicy: Permissive, CFSClean, CFSClean2
     pool:
       name: NetCore1ESPool-Svc-Internal
       image: 1es-ubuntu-2204

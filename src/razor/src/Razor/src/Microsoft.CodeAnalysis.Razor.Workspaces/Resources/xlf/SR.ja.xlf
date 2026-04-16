@@ -79,6 +79,11 @@
         <target state="translated">書式設定操作は、空白以外のコンテンツを追加または削除するため、破棄されています。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Formatting_Error">
+        <source>Formatting error. Abandoning further work to not corrupt the file, please report this issue. See: https://aka.ms/razor-formatting-issue</source>
+        <target state="translated">書式設定エラーです。ファイルを破損しないようにこれ以上の作業を中止してください。この問題を報告してください。参照: https://aka.ms/razor-formatting-issue</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Generate_Async_Event_Handler_Title">
         <source>Generate Async Event Handler '{0}'</source>
         <target state="translated">非同期イベント ハンドラー '{0}' の生成</target>

@@ -8,12 +8,14 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
-internal class CSharpCodeActionResolver(IRazorFormattingService razorFormattingService) : ICSharpCodeActionResolver
+internal class CSharpCodeActionResolver(IRazorFormattingService razorFormattingService, IClientSettingsManager clientSettingsManager) : ICSharpCodeActionResolver
 {
     private readonly IRazorFormattingService _razorFormattingService = razorFormattingService;
+    private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
 
     public string Action => LanguageServerConstants.CodeActions.Default;
 
@@ -53,7 +55,7 @@ internal class CSharpCodeActionResolver(IRazorFormattingService razorFormattingS
         var formattedChange = await _razorFormattingService.TryGetCSharpCodeActionEditAsync(
             documentContext,
             csharpTextChanges,
-            new RazorFormattingOptions(),
+            _clientSettingsManager.GetClientSettings().ToRazorFormattingOptions(),
             cancellationToken).ConfigureAwait(false);
 
         cancellationToken.ThrowIfCancellationRequested();

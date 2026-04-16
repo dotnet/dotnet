@@ -6,6 +6,11 @@ namespace Microsoft.EntityFrameworkCore.Types.Temporal;
 public class CosmosDateTimeTypeTest(CosmosDateTimeTypeTest.DateTimeTypeFixture fixture)
     : TypeTestBase<DateTime, CosmosDateTimeTypeTest.DateTimeTypeFixture>(fixture)
 {
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    public override Task Primitive_collection_in_query()
+        => base.Primitive_collection_in_query();
+
     public class DateTimeTypeFixture : CosmosTypeFixtureBase<DateTime>
     {
         public override DateTime Value { get; } = new DateTime(2020, 1, 5, 12, 30, 45, DateTimeKind.Unspecified);
@@ -18,6 +23,11 @@ public class CosmosDateTimeTypeTest(CosmosDateTimeTypeTest.DateTimeTypeFixture f
 public class CosmosDateTimeOffsetTypeTest(CosmosDateTimeOffsetTypeTest.DateTimeOffsetTypeFixture fixture)
     : TypeTestBase<DateTimeOffset, CosmosDateTimeOffsetTypeTest.DateTimeOffsetTypeFixture>(fixture)
 {
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    public override Task Primitive_collection_in_query()
+        => base.Primitive_collection_in_query();
+
     public class DateTimeOffsetTypeFixture : CosmosTypeFixtureBase<DateTimeOffset>
     {
         public override DateTimeOffset Value { get; } = new DateTimeOffset(2020, 1, 5, 12, 30, 45, TimeSpan.FromHours(2));
@@ -29,6 +39,11 @@ public class CosmosDateTimeOffsetTypeTest(CosmosDateTimeOffsetTypeTest.DateTimeO
 
 public class CosmosDateOnlyTypeTest(CosmosDateOnlyTypeTest.DateOnlyTypeFixture fixture) : TypeTestBase<DateOnly, CosmosDateOnlyTypeTest.DateOnlyTypeFixture>(fixture)
 {
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    public override Task Primitive_collection_in_query()
+        => base.Primitive_collection_in_query();
+
     public class DateOnlyTypeFixture : CosmosTypeFixtureBase<DateOnly>
     {
         public override DateOnly Value { get; } = new DateOnly(2020, 1, 5);
@@ -41,6 +56,11 @@ public class CosmosDateOnlyTypeTest(CosmosDateOnlyTypeTest.DateOnlyTypeFixture f
 public class CosmosTimeOnlyTypeTest(CosmosTimeOnlyTypeTest.TimeOnlyTypeFixture fixture)
     : TypeTestBase<TimeOnly, CosmosTimeOnlyTypeTest.TimeOnlyTypeFixture>(fixture)
 {
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    public override Task Primitive_collection_in_query()
+        => base.Primitive_collection_in_query();
+
     public class TimeOnlyTypeFixture : CosmosTypeFixtureBase<TimeOnly>
     {
         public override TimeOnly Value { get; } = new TimeOnly(12, 30, 45);
@@ -52,6 +72,11 @@ public class CosmosTimeOnlyTypeTest(CosmosTimeOnlyTypeTest.TimeOnlyTypeFixture f
 
 public class CosmosTimeSpanTypeTest(CosmosTimeSpanTypeTest.TimeSpanTypeFixture fixture) : TypeTestBase<TimeSpan, CosmosTimeSpanTypeTest.TimeSpanTypeFixture>(fixture)
 {
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    public override Task Primitive_collection_in_query()
+        => base.Primitive_collection_in_query();
+
     public class TimeSpanTypeFixture : CosmosTypeFixtureBase<TimeSpan>
     {
         public override TimeSpan Value { get; } = new TimeSpan(12, 30, 45);

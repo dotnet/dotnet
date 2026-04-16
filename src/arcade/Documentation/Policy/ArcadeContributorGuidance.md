@@ -21,7 +21,6 @@ For the most part, contributions to Arcade are straightforward and relatively sm
 ### Ownership
 The current owner for dotnet/arcade is Mark Wilkie <mawilkie@microsoft.com>.  The current point persons are:
 - Michael Stuckey @garath / <Michael.Stuckey@microsoft.com>
-- Ricardo Arenas @riarenas / <riarenas@microsoft.com>
 
 ## Getting Things Fixed
 ### Submit a PR

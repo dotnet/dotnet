@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="vstest" Sha="b5d394ea4e7c0d617067aef06f0e8bb19ca09027" BarId="303072" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="vstest" Sha="5bed4499b04cbbaec57ac4209ae993acca3648cc" BarId="309919" />
   <ProductDependencies>
-    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="18.5.0-preview.26120.1">
+    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="18.7.0-preview.26201.1">
       <Uri>https://dev.azure.com/devdiv/DevDiv/_git/vs-code-coverage</Uri>
-      <Sha>4fa57a0f75c559331a9132c63495d3c30d155c1d</Sha>
+      <Sha>def88fd1ac083374cf38193aca1426eaad13bdda</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.0-preview.26123.115">
+    <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.0-preview.26210.111">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>b5d394ea4e7c0d617067aef06f0e8bb19ca09027</Sha>
+      <Sha>5bed4499b04cbbaec57ac4209ae993acca3648cc</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
     <Dependency Name="Microsoft.Extensions.DependencyModel" Version="6.0.2">
@@ -20,11 +20,15 @@
       <Uri>https://github.com/dotnet/core-setup</Uri>
       <Sha>7d57652f33493fa022125b7f63aad0d70c52d810</Sha>
     </Dependency>
+    <Dependency Name="System.Collections.Immutable" Version="9.0.11">
+      <Uri>https://github.com/dotnet/runtime</Uri>
+      <Sha>7d57652f33493fa022125b7f63aad0d70c52d810</Sha>
+    </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26122.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26211.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>88c88084abfa1e379f54933af89e43fa774e323c</Sha>
+      <Sha>a08169b890573cfd7f949ea9062c86a4db1aab1b</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DiaSymReader.Pdb2Pdb" Version="1.1.0-beta2-19575-01">
       <Uri>https://github.com/dotnet/symreader-converter</Uri>

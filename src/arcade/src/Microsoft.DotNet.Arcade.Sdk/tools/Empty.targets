@@ -1,5 +1,5 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
-<Project DefaultTargets="Build">
+<Project>
 
   <!--
     Import this file to suppress all targets while allowing the project to participate in the build.
@@ -9,19 +9,46 @@
   -->
 
   <PropertyGroup>
-    <!-- Skip importing NuGet Pack targets which are imported from the Microsoft.NET.Sdk targets -->
-    <ImportNuGetBuildTasksPackTargetsFromSdk>false</ImportNuGetBuildTasksPackTargetsFromSdk>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <CopyBuildOutputToPublishDirectory>false</CopyBuildOutputToPublishDirectory>
+    <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateMSBuildEditorConfigFile>false</GenerateMSBuildEditorConfigFile>
+    <SkipCopyBuildProduct>true</SkipCopyBuildProduct>
+    <AutomaticallyUseReferenceAssemblyPackages>false</AutomaticallyUseReferenceAssemblyPackages>
+    <NoCompilerStandardLib>false</NoCompilerStandardLib>
+    <NoStdLib>true</NoStdLib>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <DebugType>None</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
   </PropertyGroup>
 
-  <!-- We don't want to create this target if the before common targets hook is in use.
-       If we are using the hook, then we avoid creation of the target altogether, which is more
-       compatible with static graph restores -->
-  <Import Project="..\tools\EmptyIsProjectRestoreSupportedTarget.targets" Condition="!$(_BeforeCommonTargetsHookUsed)"/>
-  <Target Name="Restore"/>
-  <Target Name="Build"/>
+  <Target Name="Build" />
+  <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
+  <Target Name="Clean" />
+
+  <Target Name="BeforeBuild"/>
+  <Target Name="CoreBuild"/>
+  <Target Name="AfterBuild"/>
+
   <Target Name="Test"/>
-  <Target Name="Pack"/>
+  <Target Name="IntegrationTest" />
+  <Target Name="PerformanceTest" />
   <Target Name="Publish"/>
   <Target Name="ProcessFrameworkReferences" />
+
+  <Target Name="Pack" />
+  <Target Name="BeforePack"/>
+  <Target Name="CorePack"/>
+  <Target Name="AfterPack"/>
+
+  <Target Name="CreateManifestResourceNames" />
+
+  <Import Project="EmptyDisableRestore.targets" Condition="'$(_NoSuppressRestoreTarget)' != 'false'" />
 
 </Project>

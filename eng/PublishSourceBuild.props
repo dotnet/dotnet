@@ -3,8 +3,9 @@
 
   <!-- Add targets here that run logic that depends on the merged asset manifest and published packages. -->
   <UsingTask TaskName="Microsoft.DotNet.SourceBuild.Tasks.LeakDetection.CheckForPoison" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksLeakDetectionAssembly)" TaskFactory="TaskHostFactory" Condition="'$(EnablePoison)' == 'true'" />
+  
   <Target Name="ReportPoisonUsage"
-          AfterTargets="DiscoverArtifacts"
+          AfterTargets="Execute"
           DependsOnTargets="CreatePrivateSourceBuiltArtifactsArchive"
           Condition="'$(EnablePoison)' == 'true'"
           Inputs="$(MSBuildProjectFullPath)"
@@ -101,7 +102,7 @@
   <!-- Create the SourceBuilt.Private.Artifacts archive when building source-only. -->
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.WritePackageVersionsProps" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="CreatePrivateSourceBuiltArtifactsArchive"
-          AfterTargets="Publish"
+          AfterTargets="Execute"
           DependsOnTargets="$(CreatePrivateSourceBuiltArtifactsArchiveDependsOn)"
           Inputs="@(PackageToPublish);$(SourceBuiltVersionInputName);$(AssetManifestFilePath)"
           Outputs="$(SourceBuiltTarballName);$(SourceBuiltVersionName);$(AllPackageVersionsPropsName);$(SourceBuiltMergedAssetManifestName)">
@@ -163,7 +164,7 @@
           SkipUnchangedFiles="true" />
 
     <MSBuild Projects="$(MSBuildProjectFullPath)"
-             Targets="Publish"
+             Targets="Execute"
              Condition="'$(DotNetSourceOnlyPublishArtifacts)' == 'true'"
              Properties="@(_PublishProps);IsPublishPass2=true;AssetManifestFileName=$(SYSTEM_PHASENAME).xml" />
   </Target>
@@ -182,7 +183,7 @@
   <Target Name="IncludeSharedComponentsAsArtifacts"
           AfterTargets="DiscoverArtifacts"
           DependsOnTargets="GetFilteredSharedComponentPackages"
-          Condition="'$(IsPublishPass2)' != 'true'">
+          Condition="'$(IsPublishPass2)' != 'true' and '$(ExcludeRestorePackageImports)' != 'true'">
 
     <ItemGroup>
       <Artifact Include="@(SharedComponentFilteredPackages->'%(PackagePath)')">
@@ -193,6 +194,7 @@
 
   <Target Name="DiscoverSourceBuiltArtifacts"
           AfterTargets="DiscoverArtifacts"
+          Condition="'$(ExcludeRestorePackageImports)' != 'true'"
           DependsOnTargets="DetermineSourceBuiltSdkNonStableVersion">
 
     <PropertyGroup>
@@ -222,8 +224,8 @@
         <Kind>Blob</Kind>
         <IsShipping>true</IsShipping>
       </SourceBuildArtifact>
-      <!-- Add the source artifacts to the publishing output. -->
-      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)$(SourceBuiltSourceArtifactName)-*">
+      <!-- Add the source artifact and signature to the publishing output. -->
+      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)$(SourceBuiltSourceArtifactName)-*$(ArchiveExtension)*">
         <Kind>Blob</Kind>
         <IsShipping>true</IsShipping>
       </SourceBuildArtifact>
@@ -256,7 +258,7 @@
     <ItemGroup Condition="'$(IsPublishPass2)' == 'true'">
       <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
       <SourceBuildArtifact Include="$(SdkNonStableVersionedTarballPath)" />
-      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/$(SourceBuiltSourceArtifactName)-*" />
+      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/$(SourceBuiltSourceArtifactName)-*$(ArchiveExtension)*" />
       <Artifact Include="@(SourceBuildArtifact)">
         <IsShipping>true</IsShipping>
         <DotNetReleaseShipping Condition="'$(DotNetSourceOnlyPostBuildSign)' == 'true'">true</DotNetReleaseShipping>

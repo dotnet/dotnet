@@ -237,7 +237,7 @@ stages:
 
       - job: Linux
         container:
-          image: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0
+          image: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-build-amd64
           options: --init # This ensures all the stray defunct processes are reaped.
         pool:
           name: NetCore-Public

@@ -140,14 +140,13 @@ function source_only_toolset_init() {
   # kill off the MSBuild server so that on future invocations we pick up our custom SDK Resolver
   "$_InitializeBuildTool" build-server shutdown --msbuild
 
-  local bootstrapArcadeDir=$(cat "$repo_root/artifacts/toolset/bootstrap-sdks.txt" | grep "microsoft.dotnet.arcade.sdk")
-  local arcadeBuildStepsDir="$bootstrapArcadeDir/tools/"
-
   # Point MSBuild to the custom SDK resolvers folder, so it will pick up our custom SDK Resolver
   export MSBUILDADDITIONALSDKRESOLVERSFOLDER="$repo_root/artifacts/toolset/VSSdkResolvers/"
 
+  local bootstrapArcadeDir=$(cat "$repo_root/artifacts/toolset/bootstrap-sdks.txt" | grep "microsoft.dotnet.arcade.sdk")
+
   # Set _InitializeToolset so that eng/common/tools.sh doesn't attempt to restore the arcade toolset again.
-  _InitializeToolset="${arcadeBuildStepsDir}/Build.proj"
+  _InitializeToolset="${bootstrapArcadeDir}/toolset/Build.proj"
 
   echo "Source-only toolset initialization complete"
 }

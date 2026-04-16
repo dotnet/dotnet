@@ -1,0 +1,2 @@
+OpenTelemetry.Resources.HostResourceBuilderExtensions
+static OpenTelemetry.Resources.HostResourceBuilderExtensions.AddHostDetector(this OpenTelemetry.Resources.ResourceBuilder! builder) -> OpenTelemetry.Resources.ResourceBuilder!

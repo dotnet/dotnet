@@ -60,6 +60,12 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Internal
                 compatibilityLevel);
 
         /// <summary>
+        ///     'DateTimeOffset.Offset' cannot be translated on its own; use 'DateTimeOffset.Offset.TotalMinutes' to get the offset in minutes.
+        /// </summary>
+        public static string DateTimeOffsetOffsetRequiresTotalMinutes
+            => GetString("DateTimeOffsetOffsetRequiresTotalMinutes");
+
+        /// <summary>
         ///     '{entityType1}.{property1}' and '{entityType2}.{property2}' are both mapped to column '{columnName}' in '{table}', but are configured with different identity increment values.
         /// </summary>
         public static string DuplicateColumnIdentityIncrementMismatch(object? entityType1, object? property1, object? entityType2, object? property2, object? columnName, object? table)
@@ -162,22 +168,6 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Internal
             => GetString("ExecuteUpdateCannotSetJsonPropertyOnOldSqlServer");
 
         /// <summary>
-        ///     Full-text index '{index}' on entity type '{entityType}' includes property '{property}' which is not mapped to a text or varbinary column type supported by full-text search.
-        /// </summary>
-        public static string FullTextIndexOnInvalidColumn(object? index, object? entityType, object? property)
-            => string.Format(
-                GetString("FullTextIndexOnInvalidColumn", nameof(index), nameof(entityType), nameof(property)),
-                index, entityType, property);
-
-        /// <summary>
-        ///     Full-text index '{index}' on entity type '{entityType}' does not have a KEY INDEX configured. SQL Server requires a KEY INDEX for every full-text index. Use 'HasKeyIndex' to configure the KEY INDEX.
-        /// </summary>
-        public static string FullTextIndexMissingKeyIndex(object? index, object? entityType)
-            => string.Format(
-                GetString("FullTextIndexMissingKeyIndex", nameof(index), nameof(entityType)),
-                index, entityType);
-
-        /// <summary>
         ///     Entity type '{entityType}' has multiple full-text indexes configured. SQL Server supports only one full-text index per table.
         /// </summary>
         public static string FullTextIndexDuplicateOnTable(object? entityType)
@@ -191,6 +181,22 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Internal
         public static string FullTextIndexLanguagePropertyNotInIndex(object? index, object? entityType, object? property)
             => string.Format(
                 GetString("FullTextIndexLanguagePropertyNotInIndex", nameof(index), nameof(entityType), nameof(property)),
+                index, entityType, property);
+
+        /// <summary>
+        ///     Full-text index '{index}' on entity type '{entityType}' does not have a KEY INDEX configured. SQL Server requires a KEY INDEX for every full-text index. Use 'UseKeyIndex' to configure the KEY INDEX.
+        /// </summary>
+        public static string FullTextIndexMissingKeyIndex(object? index, object? entityType)
+            => string.Format(
+                GetString("FullTextIndexMissingKeyIndex", nameof(index), nameof(entityType)),
+                index, entityType);
+
+        /// <summary>
+        ///     Full-text index '{index}' on entity type '{entityType}' includes property '{property}' which is not mapped to a text or varbinary column type supported by full-text search.
+        /// </summary>
+        public static string FullTextIndexOnInvalidColumn(object? index, object? entityType, object? property)
+            => string.Format(
+                GetString("FullTextIndexOnInvalidColumn", nameof(index), nameof(entityType), nameof(property)),
                 index, entityType, property);
 
         /// <summary>
@@ -262,6 +268,14 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Internal
                 collation);
 
         /// <summary>
+        ///     The datepart '{datepart}' is invalid for the {function} function; datepart values may only contain letters and underscores.
+        /// </summary>
+        public static string InvalidDatePart(object? datepart, object? function)
+            => string.Format(
+                GetString("InvalidDatePart", nameof(datepart), nameof(function)),
+                datepart, function);
+
+        /// <summary>
         ///     The expression passed to the 'propertyReference' parameter of the 'FreeText' method is not a valid reference to a property. The expression must represent a reference to a full-text indexed property on the object referenced in the from clause: 'from e in context.Entities where EF.Functions.FreeText(e.SomeProperty, textToSearchFor) select e'
         /// </summary>
         public static string InvalidColumnNameForFreeText
@@ -312,18 +326,18 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Internal
             => GetString("NoInitialCatalog");
 
         /// <summary>
+        ///     SQL Server does not support releasing a savepoint.
+        /// </summary>
+        public static string NoSavepointRelease
+            => GetString("NoSavepointRelease");
+
+        /// <summary>
         ///     The '{propertyType}' property '{entityType}.{property}' could not be mapped because the required HierarchyId services have not been configured. Install the 'Microsoft.EntityFrameworkCore.SqlServer.HierarchyId' NuGet package and call 'UseHierarchyId' in your SQL Server provider configuration. See https://learn.microsoft.com/ef/core/providers/sql-server/hierarchyid for more information.
         /// </summary>
         public static string PropertyNotMappedHierarchyId(object? propertyType, object? entityType, object? property)
             => string.Format(
                 GetString("PropertyNotMappedHierarchyId", nameof(propertyType), nameof(entityType), nameof(property)),
                 propertyType, entityType, property);
-
-        /// <summary>
-        ///     SQL Server does not support releasing a savepoint.
-        /// </summary>
-        public static string NoSavepointRelease
-            => GetString("NoSavepointRelease");
 
         /// <summary>
         ///     The query is attempting to query a JSON collection of binary data in a context that requires preserving the ordering of the collection; this isn't supported by SQL Server.
@@ -432,14 +446,6 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Internal
                 entityType, propertyName);
 
         /// <summary>
-        ///     Period property '{entityType}.{propertyName}' must be a shadow property.
-        /// </summary>
-        public static string TemporalPeriodPropertyMustBeInShadowState(object? entityType, object? propertyName)
-            => string.Format(
-                GetString("TemporalPeriodPropertyMustBeInShadowState", nameof(entityType), nameof(propertyName)),
-                entityType, propertyName);
-
-        /// <summary>
         ///     Period property '{entityType}.{propertyName}' must be mapped to a column of type '{columnType}'.
         /// </summary>
         public static string TemporalPeriodPropertyMustBeMappedToDatetime2(object? entityType, object? propertyName, object? columnType)
@@ -472,6 +478,20 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Internal
                 entityType);
 
         /// <summary>
+        ///     SQL Server time zone offsets must be specified in whole minutes. The provided TimeSpan value contains sub-minute precision (seconds, milliseconds, or smaller), which is not supported.
+        /// </summary>
+        public static string TimeSpanOffsetPrecisionNotSupported
+            => GetString("TimeSpanOffsetPrecisionNotSupported");
+
+        /// <summary>
+        ///     The provided time zone offset '{offset}' is outside the valid range for SQL Server. Time zone offsets must be between -14:00 and +14:00.
+        /// </summary>
+        public static string TimeSpanOffsetOutOfRange(object? offset)
+            => string.Format(
+                GetString("TimeSpanOffsetOutOfRange", nameof(offset)),
+                offset);
+
+        /// <summary>
         ///     An exception has been raised that is likely due to a transient failure. Consider enabling transient error resiliency by adding 'EnableRetryOnFailure' to the 'UseSqlServer' call.
         /// </summary>
         public static string TransientExceptionDetected
@@ -500,7 +520,7 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Internal
                 index, entityType, property);
 
         /// <summary>
-        ///     Vector index '{index}' on entity type '{entityType}' must specify a similarity metric. Call 'UseMetric' on the vector index builder.
+        ///     Vector index '{index}' on entity type '{entityType}' must specify a similarity metric. Call 'HasMetric' on the vector index builder.
         /// </summary>
         public static string VectorIndexRequiresMetric(object? index, object? entityType)
             => string.Format(
@@ -636,6 +656,31 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Internal
             }
 
             return (EventDefinition<string, string, string, string>)definition;
+        }
+
+        /// <summary>
+        ///     Skipping foreign key '{foreignKeyName}' on table '{tableName}' since it is not supported by the Dataverse TDS Endpoint.
+        /// </summary>
+        public static EventDefinition<string, string> LogDataverseForeignKeyInvalid(IDiagnosticsLogger logger)
+        {
+            var definition = ((Diagnostics.Internal.SqlServerLoggingDefinitions)logger.Definitions).LogDataverseForeignKeyInvalid;
+            if (definition == null)
+            {
+                definition = NonCapturingLazyInitializer.EnsureInitialized(
+                    ref ((Diagnostics.Internal.SqlServerLoggingDefinitions)logger.Definitions).LogDataverseForeignKeyInvalid,
+                    logger,
+                    static logger => new EventDefinition<string, string>(
+                        logger.Options,
+                        SqlServerEventId.DataverseForeignKeyInvalidWarning,
+                        LogLevel.Warning,
+                        "SqlServerEventId.DataverseForeignKeyInvalidWarning",
+                        level => LoggerMessage.Define<string, string>(
+                            level,
+                            SqlServerEventId.DataverseForeignKeyInvalidWarning,
+                            _resourceManager.GetString("LogDataverseForeignKeyInvalid")!)));
+            }
+
+            return (EventDefinition<string, string>)definition;
         }
 
         /// <summary>

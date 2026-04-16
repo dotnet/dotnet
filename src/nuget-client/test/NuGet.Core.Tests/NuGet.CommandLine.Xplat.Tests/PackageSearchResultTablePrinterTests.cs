@@ -25,7 +25,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             // Arrange
             var searchTerm = "nuget";
             Mock<ILoggerWithColor> mockLoggerWithColor = new Mock<ILoggerWithColor>();
-            PackageSearchResultTableRenderer renderer = new PackageSearchResultTableRenderer(searchTerm, mockLoggerWithColor.Object, PackageSearchVerbosity.Normal, false);
+            PackageSearchResultTableRenderer renderer = new PackageSearchResultTableRenderer(searchTerm, mockLoggerWithColor.Object, PackageSearchVerbosity.Normal, false, Table.DefaultWindowWidth);
             Mock<PackageSource> mockSource = new Mock<PackageSource>("http://mysource", "TestSource");
             var packageIdentity = new PackageIdentity("NuGet.Versioning", new NuGetVersion("4.3.0"));
             var completedSearch = new List<IPackageSearchMetadata>();
@@ -153,7 +153,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             // Arrange
             var searchTerm = "ErrorPackage";
             Mock<ILoggerWithColor> mockLoggerWithColor = new Mock<ILoggerWithColor>();
-            PackageSearchResultTableRenderer renderer = new PackageSearchResultTableRenderer(searchTerm, mockLoggerWithColor.Object, PackageSearchVerbosity.Normal, false);
+            PackageSearchResultTableRenderer renderer = new PackageSearchResultTableRenderer(searchTerm, mockLoggerWithColor.Object, PackageSearchVerbosity.Normal, false, Table.DefaultWindowWidth);
             Mock<PackageSource> mockSource = new Mock<PackageSource>("http://errorsource", "ErrorTestSource");
             string errorMessage = "Error retrieving data";
 

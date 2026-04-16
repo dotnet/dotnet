@@ -678,6 +678,11 @@ Daha fazla bilgi için bkz. https://docs.nuget.org/docs/reference/command-line-r
         <target state="translated">Yerel kaynaklar kısmen temizlendi.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Log_AliasContainsDisallowedCharacters">
+        <source>The project {0} contains a TargetFramework '{1}' with disallowed characters. TargetFramework names must contain only ASCII characters and must not contain path separators.</source>
+        <target state="translated">{0} projesi izin verilmeyen karakterlerin bulunduğu '{1}' TargetFramework öğesini içeriyor. TargetFramework adları yalnızca ASCII karakterlerini içermeli ve yol ayırıcıları içermemelidir.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Log_AliasingSupportedInNewDependencyResolver">
         <source>The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
 Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</source>
@@ -993,6 +998,11 @@ Bu özelliği kullanmak için .NET SDK'nizi yükseltin veya RestoreUseLegacyDepe
       <trans-unit id="Log_VersionConflict">
         <source>Version conflict detected for {0}. Install/reference {1} directly to project {2} to resolve this issue.</source>
         <target state="translated">{0} için sürüm çakışması algılandı. Bu sorunu çözmek için {1} öğesini doğrudan {2} projesine ekleyin veya burada başvurun.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_VersionConflictForCentralTransitive">
+        <source>Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue.</source>
+        <target state="translated">{0} için sürüm çakışması algılandı. Merkezi Paket Yönetimi geçişli sabitlemesi etkinleştirildi. {1} için bir PackageVersion ekleyerek bu sorunu çözün.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_WritingAssetsFile">

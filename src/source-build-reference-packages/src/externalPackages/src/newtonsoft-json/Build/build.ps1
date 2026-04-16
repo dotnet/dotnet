@@ -1,7 +1,7 @@
 ﻿properties {
-  $zipFileName = "Json130r3.zip"
+  $zipFileName = "Json130r4.zip"
   $majorVersion = "13.0"
-  $majorWithReleaseVersion = "13.0.3"
+  $majorWithReleaseVersion = "13.0.4"
   $nugetPrerelease = $null
   $version = GetVersion $majorWithReleaseVersion
   $packageId = "Newtonsoft.Json"
@@ -13,8 +13,8 @@
   $treatWarningsAsErrors = $false
   $workingName = if ($workingName) {$workingName} else {"Working"}
   $assemblyVersion = if ($assemblyVersion) {$assemblyVersion} else {$majorVersion + '.0.0'}
-  $netCliChannel = "Current"
-  $netCliVersion = "6.0.400"
+  $netCliChannel = "STS"
+  $netCliVersion = "9.0.300"
   $nugetUrl = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
   $ensureNetCliSdk = $true
 
@@ -26,7 +26,7 @@
   $workingDir = "$baseDir\$workingName"
 
   $nugetPath = "$buildDir\Temp\nuget.exe"
-  $vswhereVersion = "2.3.2"
+  $vswhereVersion = "3.1.7"
   $vswherePath = "$buildDir\Temp\vswhere.$vswhereVersion"
   $nunitConsoleVersion = "3.8.0"
   $nunitConsolePath = "$buildDir\Temp\NUnit.ConsoleRunner.$nunitConsoleVersion"
@@ -133,6 +133,10 @@ task Package -depends Build {
   robocopy $sourceDir $workingDir\Package\Source\Src /MIR /NFL /NDL /NJS /NC /NS /NP /XD bin obj TestResults AppPackages .vs artifacts /XF *.suo *.user *.lock.json | Out-Default
   robocopy $buildDir $workingDir\Package\Source\Build /MIR /NFL /NDL /NJS /NC /NS /NP /XD Temp /XF runbuild.txt | Out-Default
   robocopy $docDir $workingDir\Package\Source\Doc /MIR /NFL /NDL /NJS /NC /NS /NP | Out-Default
+  
+  # include fuzz tests in ADO pipeline artifacts
+  mkdir $workingDir\FuzzTests
+  Copy-Item -Path $sourceDir\Newtonsoft.Json.FuzzTests\bin\Release\net6.0\* -Destination $workingDir\FuzzTests
 
   Compress-Archive -Path $workingDir\Package\* -DestinationPath $workingDir\$zipFileName
 }
@@ -147,7 +151,7 @@ task Test -depends Build {
 
 function NetCliBuild()
 {
-  $projectPath = "$sourceDir\Newtonsoft.Json.sln"
+  $projectPath = "$sourceDir\Newtonsoft.Json.slnx"
   $libraryFrameworks = ($script:enabledBuilds | Select-Object @{Name="Framework";Expression={$_.Framework}} | select -expand Framework) -join ";"
   $testFrameworks = ($script:enabledBuilds | Select-Object @{Name="Resolved";Expression={if ($_.TestFramework -ne $null) { $_.TestFramework } else { $_.Framework }}} | select -expand Resolved) -join ";"
 
@@ -175,8 +179,9 @@ function EnsureDotnetCli()
     -OutFile "$buildDir\Temp\dotnet-install.ps1"
 
   exec { & $buildDir\Temp\dotnet-install.ps1 -Channel $netCliChannel -Version $netCliVersion | Out-Default }
+  exec { & $buildDir\Temp\dotnet-install.ps1 -Channel $netCliChannel -Version '6.0.400' | Out-Default }
   exec { & $buildDir\Temp\dotnet-install.ps1 -Channel $netCliChannel -Version '3.1.402' | Out-Default }
-  exec { & $buildDir\Temp\dotnet-install.ps1 -Channel $netCliChannel -Version '2.1.811' | Out-Default }
+  exec { & $buildDir\Temp\dotnet-install.ps1 -Channel $netCliChannel -Version '2.1.818' | Out-Default }
 }
 
 function EnsureNuGetExists()
@@ -199,7 +204,7 @@ function EnsureNuGetPackage($packageName, $packagePath, $packageVersion)
 
 function GetMsBuildPath()
 {
-  $path = & $vswherePath\tools\vswhere.exe -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
+  $path = & $vswherePath\tools\vswhere.exe -latest -prerelease -products * -requires Microsoft.Component.MSBuild -property installationPath
   if (!($path))
   {
     throw "Could not find Visual Studio install path"
@@ -237,7 +242,7 @@ function NetCliTests($build)
     Write-Host "Project path: $projectPath"
     Write-Host
 
-    exec { dotnet test $projectPath -f $testDir -c Release -l trx -r $workingDir --no-restore --no-build | Out-Default }
+    exec { dotnet test $projectPath -f $testDir -c Release -l trx --results-directory $workingDir --no-restore --no-build | Out-Default }
   }
   finally
   {

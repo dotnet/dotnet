@@ -1,0 +1,53 @@
+From 0f2b734553e3570d7c9be8b27a1dca0047fdb040 Mon Sep 17 00:00:00 2001
+From: Chet Husk <chusk3@gmail.com>
+Date: Thu, 2 Apr 2026 12:21:06 -0500
+Subject: [PATCH] Source-build: add conditional TFM overrides and analyzer
+ guards
+
+Add DotNetBuildSourceOnly conditions to:
+- Restrict target frameworks to BundledNETCoreAppTargetFramework;netstandard2.0
+- Skip Microsoft.NETFramework.ReferenceAssemblies and PublicApiAnalyzers
+---
+ build/Common.prod.props | 2 +-
+ build/Common.props      | 4 +++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/build/Common.prod.props b/build/Common.prod.props
+index 8df4738d..08053885 100644
+--- a/build/Common.prod.props
++++ b/build/Common.prod.props
+@@ -37,7 +37,7 @@
+ 
+   <ItemGroup>
+     <PackageReference Include="MinVer" PrivateAssets="All" Condition="'$(IntegrationBuild)' != 'true'" />
+-    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="All" />
++    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="All" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
+   </ItemGroup>
+ 
+   <ItemGroup>
+diff --git a/build/Common.props b/build/Common.props
+index 44c697e3..e734b610 100644
+--- a/build/Common.props
++++ b/build/Common.props
+@@ -31,7 +31,9 @@
+ 
+     <!-- production TFMs -->
+     <TargetFrameworksForLibraries>net10.0;net9.0;net8.0;netstandard2.0;$(NetFrameworkMinimumSupportedVersion)</TargetFrameworksForLibraries>
++    <TargetFrameworksForLibraries Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(BundledNETCoreAppTargetFramework);netstandard2.0</TargetFrameworksForLibraries>
+     <TargetFrameworksForLibrariesExtended>net10.0;net9.0;net8.0;netstandard2.1;netstandard2.0;$(NetFrameworkMinimumSupportedVersion)</TargetFrameworksForLibrariesExtended>
++    <TargetFrameworksForLibrariesExtended Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(BundledNETCoreAppTargetFramework);netstandard2.1;netstandard2.0</TargetFrameworksForLibrariesExtended>
+     <TargetFrameworksForPrometheusAspNetCore>net10.0;net9.0;net8.0</TargetFrameworksForPrometheusAspNetCore>
+     <TargetFrameworksRequiringSystemTextJsonDirectReference>netstandard2.1;netstandard2.0;$(NetFrameworkMinimumSupportedVersion)</TargetFrameworksRequiringSystemTextJsonDirectReference>
+ 
+@@ -63,7 +65,7 @@
+   </ItemGroup>
+ 
+   <ItemGroup>
+-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="All" />
++    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="All" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
+     <PackageReference Include="StyleCop.Analyzers" PrivateAssets="All" Condition="'$(SkipAnalysis)'!='true'" />
+   </ItemGroup>
+ 
+-- 
+2.52.0.windows.1
+

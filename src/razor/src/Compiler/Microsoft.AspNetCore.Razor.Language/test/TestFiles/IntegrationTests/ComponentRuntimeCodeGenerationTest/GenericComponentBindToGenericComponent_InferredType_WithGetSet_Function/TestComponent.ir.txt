@@ -10,14 +10,15 @@
                 Component - (19:1,0 [75] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentAttribute - (49:1,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - Value - Value - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
-                            LazyIntermediateToken - (49:1,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ParentValue
+                            IntermediateToken - (49:1,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ParentValue
                     ComponentAttribute - (49:1,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - ValueChanged - ValueChanged - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, 
-                            LazyIntermediateToken - (79:1,60 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - UpdateValue
+                            IntermediateToken - (79:1,60 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - UpdateValue
                             IntermediateToken -  - CSharp - , ParentValue)
                     ComponentAttribute - (79:1,60 [11] x:\dir\subdir\Test\TestComponent.cshtml) - bind-Value - Value - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (79:1,60 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - UpdateValue
+                        CSharpExpression - (79:1,60 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+                            IntermediateToken - (79:1,60 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - UpdateValue
             CSharpCode - (103:2,7 [155] x:\dir\subdir\Test\TestComponent.cshtml)
                 LazyIntermediateToken - (103:2,7 [155] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    public TParam ParentValue { get; set; } = default;\n\n    public Task UpdateValue(TParam value) { ParentValue = value; return Task.CompletedTask; }\n
     NamespaceDeclaration -  - __Blazor.Test.TestComponent

@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-#if NETCOREAPP2_0_OR_GREATER || NETFRAMEWORK
+#if NET || NETFRAMEWORK
 using System.IO;
 #endif
 using System.Net;
@@ -109,7 +109,7 @@ internal class DefaultEngineInvoker :
                 .Assembly
                 .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
             EqtTrace.Verbose($"Version: {version} Current process architecture: {_processHelper.GetCurrentProcessArchitecture()}");
-#if NETCOREAPP2_0_OR_GREATER || NETFRAMEWORK
+#if NET || NETFRAMEWORK
             // https://docs.microsoft.com/en-us/dotnet/api/system.reflection.assembly.location?view=net-6.0#remarks
             // In .NET 5 and later versions, for bundled assemblies, the value returned is an empty string.
             string objectTypeLocation = typeof(object).Assembly.Location;
@@ -131,7 +131,7 @@ internal class DefaultEngineInvoker :
 #endif
         }
 
-#if NETCOREAPP
+#if NET
         TestHostTraceListener.Setup();
 #endif
 

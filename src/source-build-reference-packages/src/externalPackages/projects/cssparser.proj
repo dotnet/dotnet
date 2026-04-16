@@ -3,6 +3,7 @@
   <PropertyGroup>
     <PackagesOutput>$(ProjectDirectory)src/Microsoft.Css.Parser/bin/$(Configuration)/</PackagesOutput>
     <CustomRepoBuild>true</CustomRepoBuild>
+    <SourceRevisionId>0d59611784841735a7778a67aa6e9d8d000c861f</SourceRevisionId>
   </PropertyGroup>
 
   <Target Name="CustomRepoBuild">
@@ -12,6 +13,7 @@
       <BuildCommandArgs>$(BuildCommandArgs) /p:DelaySign=$(DelaySign)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:PublicSign=$(PublicSign)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:VersionSuffix=$(CssParserReleaseVersionSuffix)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:IncludeSourceRevisionInInformationalVersion=false</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
     </PropertyGroup>

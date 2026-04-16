@@ -90,7 +90,7 @@ public class XmlRunSettingsUtilitiesTests
     {
         Dictionary<string, object> trp = XmlRunSettingsUtilities.GetTestRunParameters(null);
         Assert.IsNotNull(trp);
-        Assert.AreEqual(0, trp.Count);
+        Assert.IsEmpty(trp);
     }
 
     [TestMethod]
@@ -108,7 +108,7 @@ public class XmlRunSettingsUtilitiesTests
 
         Dictionary<string, object> trp = XmlRunSettingsUtilities.GetTestRunParameters(settingsXml);
         Assert.IsNotNull(trp);
-        Assert.AreEqual(0, trp.Count);
+        Assert.IsEmpty(trp);
     }
 
     [TestMethod]
@@ -128,7 +128,7 @@ public class XmlRunSettingsUtilitiesTests
 
         Dictionary<string, object> trp = XmlRunSettingsUtilities.GetTestRunParameters(settingsXml);
         Assert.IsNotNull(trp);
-        Assert.AreEqual(0, trp.Count);
+        Assert.IsEmpty(trp);
     }
 
     [TestMethod]
@@ -149,7 +149,7 @@ public class XmlRunSettingsUtilitiesTests
 
         Dictionary<string, object> trp = XmlRunSettingsUtilities.GetTestRunParameters(settingsXml);
         Assert.IsNotNull(trp);
-        Assert.AreEqual(1, trp.Count);
+        Assert.HasCount(1, trp);
 
         // Verify Parameter Values.
         Assert.IsTrue(trp.ContainsKey("webAppUrl"));
@@ -176,7 +176,7 @@ public class XmlRunSettingsUtilitiesTests
 
         Dictionary<string, object> trp = XmlRunSettingsUtilities.GetTestRunParameters(settingsXml);
         Assert.IsNotNull(trp);
-        Assert.AreEqual(3, trp.Count);
+        Assert.HasCount(3, trp);
 
         // Verify Parameter Values.
         Assert.IsTrue(trp.ContainsKey("webAppUrl"));
@@ -203,7 +203,7 @@ public class XmlRunSettingsUtilitiesTests
                      </TestRunParameters>
                 </RunSettings>";
 
-        Assert.ThrowsException<SettingsException>(() => XmlRunSettingsUtilities.GetTestRunParameters(settingsXml));
+        Assert.ThrowsExactly<SettingsException>(() => XmlRunSettingsUtilities.GetTestRunParameters(settingsXml));
     }
 
     [TestMethod]
@@ -223,7 +223,7 @@ public class XmlRunSettingsUtilitiesTests
                      </TestRunParameters>
                 </RunSettings>";
 
-        Assert.ThrowsException<SettingsException>(() => XmlRunSettingsUtilities.GetTestRunParameters(settingsXml));
+        Assert.ThrowsExactly<SettingsException>(() => XmlRunSettingsUtilities.GetTestRunParameters(settingsXml));
     }
 
     [TestMethod]
@@ -244,7 +244,7 @@ public class XmlRunSettingsUtilitiesTests
 
         Dictionary<string, object> trp = XmlRunSettingsUtilities.GetTestRunParameters(settingsXml);
         Assert.IsNotNull(trp);
-        Assert.AreEqual(0, trp.Count);
+        Assert.IsEmpty(trp);
     }
 
     [TestMethod]
@@ -263,7 +263,7 @@ public class XmlRunSettingsUtilitiesTests
                                 </RunSettings>";
         var inProcDcRunSettings = XmlRunSettingsUtilities.GetInProcDataCollectionRunSettings(settingsXml);
         Assert.IsNotNull(inProcDcRunSettings);
-        Assert.AreEqual(1, inProcDcRunSettings.DataCollectorSettingsList.Count);
+        Assert.HasCount(1, inProcDcRunSettings.DataCollectorSettingsList);
     }
 
     [TestMethod]
@@ -281,7 +281,7 @@ public class XmlRunSettingsUtilitiesTests
                                     </InProcDataCollectionRunSettings>
                                 </RunSettings>";
 
-        Assert.ThrowsException<SettingsException>(
+        Assert.ThrowsExactly<SettingsException>(
             () => XmlRunSettingsUtilities.GetInProcDataCollectionRunSettings(settingsXml));
     }
     #endregion
@@ -480,12 +480,13 @@ public class XmlRunSettingsUtilitiesTests
             exceptionMessage = ex.Message;
         }
 
-        Assert.IsTrue(exceptionMessage.Contains(
+        Assert.Contains(
             string.Format(
                 CultureInfo.CurrentCulture,
                 Resources.InvalidUriInSettings,
                 "invalidUri",
-                "Logger")));
+                "Logger"),
+            exceptionMessage);
     }
 
     [TestMethod]
@@ -609,7 +610,7 @@ public class XmlRunSettingsUtilitiesTests
             exceptionMessage = ex.Message;
         }
 
-        Assert.IsTrue(exceptionMessage.Contains(CommonResources.MalformedRunSettingsFile));
+        Assert.Contains(CommonResources.MalformedRunSettingsFile, exceptionMessage);
     }
 
     [TestMethod]
@@ -684,7 +685,7 @@ public class XmlRunSettingsUtilitiesTests
             exceptionMessage = ex.Message;
         }
 
-        Assert.IsTrue(exceptionMessage.Contains(CommonResources.MalformedRunSettingsFile));
+        Assert.Contains(CommonResources.MalformedRunSettingsFile, exceptionMessage);
     }
 
     [TestMethod]
@@ -713,11 +714,11 @@ public class XmlRunSettingsUtilitiesTests
             exceptionMessage = ex.Message;
         }
 
-        Assert.IsTrue(exceptionMessage.Contains(string.Format(
+        Assert.Contains(string.Format(
             CultureInfo.CurrentCulture,
             Resources.InvalidSettingsXmlAttribute,
             "LoggerRunSettings",
-            "name")));
+            "name"), exceptionMessage);
     }
 
     [TestMethod]
@@ -733,7 +734,7 @@ public class XmlRunSettingsUtilitiesTests
                 </RunSettings>";
 
         var loggerRunSettings = XmlRunSettingsUtilities.GetLoggerRunSettings(runSettingsWithEmptyLoggerRunSettingsNode)!;
-        Assert.AreEqual(0, loggerRunSettings.LoggerSettingsList.Count);
+        Assert.IsEmpty(loggerRunSettings.LoggerSettingsList);
     }
 
     [TestMethod]
@@ -748,7 +749,7 @@ public class XmlRunSettingsUtilitiesTests
                 </RunSettings>";
 
         var loggerRunSettings = XmlRunSettingsUtilities.GetLoggerRunSettings(runSettingsWithEmptyLoggerRunSettingsNode)!;
-        Assert.AreEqual(0, loggerRunSettings.LoggerSettingsList.Count);
+        Assert.IsEmpty(loggerRunSettings.LoggerSettingsList);
     }
 
     [TestMethod]
@@ -777,11 +778,11 @@ public class XmlRunSettingsUtilitiesTests
             exceptionMessage = ex.Message;
         }
 
-        Assert.IsTrue(exceptionMessage.Contains(string.Format(
+        Assert.Contains(string.Format(
             CultureInfo.CurrentCulture,
             Resources.InvalidSettingsXmlElement,
             "LoggerRUNSettings",
-            "LoggersInvalid")));
+            "LoggersInvalid"), exceptionMessage);
     }
 
     [TestMethod]
@@ -810,11 +811,11 @@ public class XmlRunSettingsUtilitiesTests
             exceptionMessage = ex.Message;
         }
 
-        Assert.IsTrue(exceptionMessage.Contains(string.Format(
+        Assert.Contains(string.Format(
             CultureInfo.CurrentCulture,
             Resources.InvalidSettingsXmlAttribute,
             "Loggers",
-            "nameAttr")));
+            "nameAttr"), exceptionMessage);
     }
 
     [TestMethod]
@@ -832,7 +833,7 @@ public class XmlRunSettingsUtilitiesTests
                 </RunSettings>";
 
         var loggerRunSettings = XmlRunSettingsUtilities.GetLoggerRunSettings(runSettingsWithEmptyLoggersNode)!;
-        Assert.AreEqual(0, loggerRunSettings.LoggerSettingsList.Count);
+        Assert.IsEmpty(loggerRunSettings.LoggerSettingsList);
     }
 
     [TestMethod]
@@ -849,7 +850,7 @@ public class XmlRunSettingsUtilitiesTests
                 </RunSettings>";
 
         var loggerRunSettings = XmlRunSettingsUtilities.GetLoggerRunSettings(runSettingsWithEmptyLoggersNode)!;
-        Assert.AreEqual(0, loggerRunSettings.LoggerSettingsList.Count);
+        Assert.IsEmpty(loggerRunSettings.LoggerSettingsList);
     }
 
     [TestMethod]
@@ -878,11 +879,11 @@ public class XmlRunSettingsUtilitiesTests
             exceptionMessage = ex.Message;
         }
 
-        Assert.IsTrue(exceptionMessage.Contains(string.Format(
+        Assert.Contains(string.Format(
             CultureInfo.CurrentCulture,
             Resources.InvalidSettingsXmlElement,
             "Loggers",
-            "LoggerInvalid")));
+            "LoggerInvalid"), exceptionMessage);
     }
 
     [TestMethod]
@@ -912,7 +913,7 @@ public class XmlRunSettingsUtilitiesTests
             exceptionMessage = ex.Message;
         }
 
-        Assert.IsTrue(exceptionMessage.Contains(string.Format(CultureInfo.CurrentCulture, Resources.MissingLoggerAttributes, "LogGer")));
+        Assert.Contains(string.Format(CultureInfo.CurrentCulture, Resources.MissingLoggerAttributes, "LogGer"), exceptionMessage);
     }
 
     [TestMethod]
@@ -1051,7 +1052,7 @@ public class XmlRunSettingsUtilitiesTests
         var loggerRunSettings =
             XmlRunSettingsUtilities.GetLoggerRunSettings(runSettingsWithMultipleLoggers)!;
 
-        Assert.AreEqual(3, loggerRunSettings.LoggerSettingsList.Count);
+        Assert.HasCount(3, loggerRunSettings.LoggerSettingsList);
 
         // 1st logger
         var loggerFirst = loggerRunSettings.LoggerSettingsList[0];
@@ -1102,7 +1103,7 @@ public class XmlRunSettingsUtilitiesTests
         var loggerRunSettings =
             XmlRunSettingsUtilities.GetLoggerRunSettings(runSettingsWithSelfEndingLoggers)!;
 
-        Assert.AreEqual(3, loggerRunSettings.LoggerSettingsList.Count);
+        Assert.HasCount(3, loggerRunSettings.LoggerSettingsList);
         Assert.AreEqual("TestLoggerWithParameterExtension", loggerRunSettings.LoggerSettingsList[0].FriendlyName);
         Assert.AreEqual("TestLogger", loggerRunSettings.LoggerSettingsList[1].FriendlyName);
         Assert.AreEqual("TestLogger", loggerRunSettings.LoggerSettingsList[1].FriendlyName);
@@ -1174,7 +1175,7 @@ public class XmlRunSettingsUtilitiesTests
     [TestMethod]
     public void GetDataCollectionRunSettingsShouldThrowOnMalformedDataCollectorSettings()
     {
-        Assert.ThrowsException<SettingsException>(() => XmlRunSettingsUtilities.GetDataCollectionRunSettings(_runSettingsXmlWithIncorrectDataCollectorSettings));
+        Assert.ThrowsExactly<SettingsException>(() => XmlRunSettingsUtilities.GetDataCollectionRunSettings(_runSettingsXmlWithIncorrectDataCollectorSettings));
     }
 
     #endregion
@@ -1195,7 +1196,7 @@ public class XmlRunSettingsUtilitiesTests
 
         var friendlyNameList = XmlRunSettingsUtilities.GetDataCollectorsFriendlyName(settingsXml).ToList();
 
-        Assert.AreEqual(2, friendlyNameList.Count, "There should be two friendly name");
+        Assert.HasCount(2, friendlyNameList);
         CollectionAssert.AreEqual(friendlyNameList, new List<string> { "DummyDataCollector1", "DummyDataCollector2" });
     }
 

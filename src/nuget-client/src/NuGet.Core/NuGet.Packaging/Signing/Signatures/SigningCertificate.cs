@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Collections.Generic;
 using NuGet.Packaging.Signing.DerEncoding;
 
@@ -20,11 +18,11 @@ namespace NuGet.Packaging.Signing
     public sealed class SigningCertificate
     {
         public IReadOnlyList<EssCertId> Certificates { get; }
-        public IReadOnlyList<PolicyInformation> Policies { get; }
+        public IReadOnlyList<PolicyInformation>? Policies { get; }
 
         private SigningCertificate(
             IReadOnlyList<EssCertId> certificates,
-            IReadOnlyList<PolicyInformation> policies)
+            IReadOnlyList<PolicyInformation>? policies)
         {
             Certificates = certificates;
             Policies = policies;
@@ -41,7 +39,7 @@ namespace NuGet.Packaging.Signing
         {
             var essCertIdReader = reader.ReadSequence();
             var certificates = ReadCertificates(essCertIdReader);
-            IReadOnlyList<PolicyInformation> policies = null;
+            IReadOnlyList<PolicyInformation>? policies = null;
 
             if (reader.HasData)
             {

@@ -61,7 +61,7 @@ namespace NuGet.Packaging.FuncTest
             return SignedPackageVerifierSettings.GetDefault(TestEnvironmentVariableReader.EmptyInstance);
         }
 
-        [CIOnlyTheory]
+        [Theory]
         [InlineData("command")]
         [InlineData("vs")]
         public async Task Signer_VerifyOnSignedPackageAsync(string policyString)
@@ -87,7 +87,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyTheory]
+        [Theory]
         [InlineData("command")]
         [InlineData("vs")]
         public async Task Signer_VerifyOnTamperedPackage_FileDeletedAsync(string policyString)
@@ -121,7 +121,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyTheory]
+        [Theory]
         [InlineData("command")]
         [InlineData("vs")]
         public async Task Signer_VerifyOnTamperedPackage_FileAddedAsync(string policyString)
@@ -166,7 +166,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyTheory]
+        [Theory]
         [InlineData("command")]
         [InlineData("vs")]
         public async Task Signer_VerifyOnTamperedPackage_FileAppendedAsync(string policyString)
@@ -210,7 +210,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyTheory]
+        [Theory]
         [InlineData("command")]
         [InlineData("vs")]
         public async Task Signer_VerifyOnTamperedPackage_FileTruncatedAsync(string policyString)
@@ -251,7 +251,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyTheory]
+        [Theory]
         [InlineData("command")]
         [InlineData("vs")]
         public async Task Signer_VerifyOnTamperedPackage_FileMetadataModifiedAsync(string policyString)
@@ -295,7 +295,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyTheory]
+        [Theory]
         [InlineData("command", false)]
         [InlineData("vs", true)]
         public async Task Signer_VerifyOnTamperedPackage_SignatureRemovedAsync(string policyString, bool expectedValidity)
@@ -339,7 +339,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyTheory]
+        [Theory]
         [InlineData("command", false)]
         [InlineData("vs", true)]
         public async Task Signer_VerifyOnTamperedPackage_SignatureTamperedAsync(string policyString, bool expectedValidity)

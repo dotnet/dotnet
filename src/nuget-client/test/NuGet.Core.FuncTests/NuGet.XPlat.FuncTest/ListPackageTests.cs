@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using Moq;
@@ -223,7 +224,7 @@ namespace NuGet.XPlat.FuncTest
             using TextWriter consoleOut = new StringWriter(output);
             using TextWriter consoleError = new StringWriter(error);
             var logger = new TestLogger(_testOutputHelper);
-            ListPackageCommandRunner listPackageCommandRunner = new();
+            ListPackageCommandRunner listPackageCommandRunner = new(new MSBuildAPIUtility(logger, virtualProjectBuilder: null));
             var packageRefArgs = new ListPackageArgs(
                                         path: Path.Combine(pathContext.SolutionRoot, "solution.sln"),
                                         packageSources: [new(mockServer.ServiceIndexUri)],
@@ -332,7 +333,7 @@ namespace NuGet.XPlat.FuncTest
             using TextWriter consoleOut = new StringWriter(output);
             using TextWriter consoleError = new StringWriter(error);
             var logger = new TestLogger(_testOutputHelper);
-            ListPackageCommandRunner listPackageCommandRunner = new();
+            ListPackageCommandRunner listPackageCommandRunner = new(new MSBuildAPIUtility(logger, virtualProjectBuilder: null));
             var packageRefArgs = new ListPackageArgs(
                                         path: solution.SolutionPath,
                                         packageSources: [new PackageSource(pathContext.PackageSource)],
@@ -349,6 +350,53 @@ namespace NuGet.XPlat.FuncTest
 
             int result = await listPackageCommandRunner.ExecuteCommandAsync(packageRefArgs);
             Assert.True(result == 0, userMessage: logger.ShowMessages());
+        }
+
+        [Fact]
+        public async Task CanListPackagesForFileBasedApp()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+
+            var packageA100 = new SimpleTestPackageContext("A", "1.0.0");
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource,
+                packageA100);
+
+            var projectA = XPlatTestUtils.CreateProject("ProjectA", pathContext, "net6.0", fileBasedApp: true);
+            projectA.AddPackageToAllFrameworks(packageA100);
+            var projectB = SimpleTestProjectContext.CreateNETCore("ProjectB", pathContext.SolutionRoot, "net6.0");
+
+            projectA.Save();
+            projectB.Save();
+
+            // List package command requires restore to be run before it can list packages.
+            await RestoreProjectsAsync(pathContext, projectA, projectB, _testOutputHelper);
+
+            var output = new StringBuilder();
+            var error = new StringBuilder();
+            using TextWriter consoleOut = new StringWriter(output);
+            using TextWriter consoleError = new StringWriter(error);
+            var logger = new TestLogger(_testOutputHelper);
+            using var builder = TestVirtualProjectBuilder.From(projectA);
+            ListPackageCommandRunner listPackageCommandRunner = new(new MSBuildAPIUtility(logger, builder));
+            var packageRefArgs = new ListPackageArgs(
+                                        path: builder.FilePath,
+                                        packageSources: [new PackageSource(pathContext.PackageSource)],
+                                        frameworks: ["net6.0"],
+                                        reportType: ReportType.Outdated,
+                                        renderer: new ListPackageConsoleRenderer(consoleOut, consoleError),
+                                        includeTransitive: false,
+                                        prerelease: false,
+                                        highestPatch: false,
+                                        highestMinor: false,
+                                        auditSources: null,
+                                        logger: logger,
+                                        cancellationToken: CancellationToken.None);
+
+            int result = await listPackageCommandRunner.ExecuteCommandAsync(packageRefArgs);
+            Assert.True(result == 0, userMessage: $"{output}\n{error}\n{logger.ShowMessages()}");
         }
 
         [Fact]
@@ -380,7 +428,7 @@ namespace NuGet.XPlat.FuncTest
                 CancellationToken.None
             );
 
-            var listPackageCommandRunner = new ListPackageCommandRunner();
+            var listPackageCommandRunner = new ListPackageCommandRunner(new MSBuildAPIUtility(mockLogger.Object, virtualProjectBuilder: null));
 
 
             // Act
@@ -426,7 +474,7 @@ namespace NuGet.XPlat.FuncTest
                 CancellationToken.None
             );
 
-            var listPackageCommandRunner = new ListPackageCommandRunner();
+            var listPackageCommandRunner = new ListPackageCommandRunner(new MSBuildAPIUtility(mockLogger.Object, virtualProjectBuilder: null));
 
             // Act
             var result = await listPackageCommandRunner.GetReportDataAsync(listPackageArgs);
@@ -481,7 +529,7 @@ namespace NuGet.XPlat.FuncTest
                 CancellationToken.None
             );
 
-            var listPackageCommandRunner = new ListPackageCommandRunner();
+            var listPackageCommandRunner = new ListPackageCommandRunner(new MSBuildAPIUtility(mockLogger.Object, virtualProjectBuilder: null));
 
             // Act
             var result = await listPackageCommandRunner.GetReportDataAsync(listPackageArgs);
@@ -540,7 +588,7 @@ namespace NuGet.XPlat.FuncTest
         {
             Type listPackageArgsType = typeof(ListPackageArgs);
             FieldInfo[] fields = listPackageArgsType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            Assert.True(13 == fields.Length, "Number of fields are changed in ListPackageArgs.cs. Please make sure this change is accounted for GetReportParameters method in that file.");
+            fields.Length.Should().Be(13, because: "Number of fields are changed in ListPackageArgs.cs. Please make sure this change is accounted for GetReportParameters method in that file.");
         }
 
         private static SimpleTestSolutionContext SetupTestSolution(SimpleTestPathContext pathContext)

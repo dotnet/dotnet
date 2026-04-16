@@ -1,0 +1,79 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <PackagesOutput>$(ProjectDirectory)pack</PackagesOutput>
+    <CustomRepoBuild>true</CustomRepoBuild>
+    <SourceRevisionId>384911b7bbc9780c76197896dcd575a6be2cbf6d</SourceRevisionId>
+    <GlobalJsonFile>$(ProjectDirectory)global.json</GlobalJsonFile>
+  </PropertyGroup>
+
+  <Target Name="CustomRepoBuild">
+    <PropertyGroup>
+      <OTelApiProject>$(ProjectDirectory)src/OpenTelemetry.Api/OpenTelemetry.Api.csproj</OTelApiProject>
+      <OTelProviderExtProject>$(ProjectDirectory)src/OpenTelemetry.Api.ProviderBuilderExtensions/OpenTelemetry.Api.ProviderBuilderExtensions.csproj</OTelProviderExtProject>
+      <OTelSdkProject>$(ProjectDirectory)src/OpenTelemetry/OpenTelemetry.csproj</OTelSdkProject>
+      <OTelOtlpProject>$(ProjectDirectory)src/OpenTelemetry.Exporter.OpenTelemetryProtocol/OpenTelemetry.Exporter.OpenTelemetryProtocol.csproj</OTelOtlpProject>
+
+      <CommonBuildArgs>/p:Configuration=$(Configuration)</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:DelaySign=$(DelaySign)</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:PublicSign=$(PublicSign)</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /v:$(LogVerbosity)</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) $(RedirectRepoOutputToLog)</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:Version=$(OpenTelemetryDotNetReleaseVersion)</CommonBuildArgs>
+      <!-- Source-build behavioral overrides (keeps patches minimal) -->
+      <CommonBuildArgs>$(CommonBuildArgs) /p:DotNetBuildSourceOnly=true</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:UseArtifactsOutput=false</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:IntegrationBuild=true</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:SkipAnalysis=true</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:EnforceCodeStyleInBuild=false</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:NuGetAudit=false</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:TreatWarningsAsErrors=false</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:MSBuildTreatWarningsAsErrors=false</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:DisablePackageBaselineValidation=true</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:EnableConfigurationBindingGenerator=false</CommonBuildArgs>
+
+      <PackArgs>$(CommonBuildArgs) --output $(ProjectDirectory)pack</PackArgs>
+    </PropertyGroup>
+
+    <!-- 1. OpenTelemetry.Api -->
+    <Exec Command="&quot;$(DotNetTool)&quot; restore /bl:$(ArtifactsLogRepoDir)restore_Api.binlog $(OTelApiProject) $(CommonBuildArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_Api.binlog $(OTelApiProject) $(PackArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <!-- 2. OpenTelemetry.Api.ProviderBuilderExtensions -->
+    <Exec Command="&quot;$(DotNetTool)&quot; restore /bl:$(ArtifactsLogRepoDir)restore_ProviderExt.binlog $(OTelProviderExtProject) $(CommonBuildArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_ProviderExt.binlog $(OTelProviderExtProject) $(PackArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <!-- 3. OpenTelemetry (SDK) -->
+    <Exec Command="&quot;$(DotNetTool)&quot; restore /bl:$(ArtifactsLogRepoDir)restore_Sdk.binlog $(OTelSdkProject) $(CommonBuildArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_Sdk.binlog $(OTelSdkProject) $(PackArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <!-- 4. OpenTelemetry.Exporter.OpenTelemetryProtocol -->
+    <Exec Command="&quot;$(DotNetTool)&quot; restore /bl:$(ArtifactsLogRepoDir)restore_Otlp.binlog $(OTelOtlpProject) $(CommonBuildArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_Otlp.binlog $(OTelOtlpProject) $(PackArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+  </Target>
+
+</Project>

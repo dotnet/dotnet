@@ -5,6 +5,7 @@ using System.Net;
 using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore.Cosmos.Internal;
 using Microsoft.EntityFrameworkCore.TestModels.Northwind;
+using Microsoft.EntityFrameworkCore.TestUtilities.Xunit;
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
@@ -1449,7 +1450,7 @@ FROM root c
 """);
             });
 
-    [ConditionalTheory(Skip = "Fails on CI #27688")]
+    [SkipOnCiCondition(SkipReason = "Fails on CI #27688")]
     public override Task Distinct_Scalar(bool async)
         => Fixture.NoSyncTest(
             async, async a =>
@@ -1458,9 +1459,8 @@ FROM root c
 
                 AssertSql(
                     """
-SELECT DISTINCT c[""City""]
+SELECT DISTINCT VALUE c["City"]
 FROM root c
-WHERE (c[""$type""] = ""Customer"")
 """);
             });
 
@@ -2622,6 +2622,8 @@ WHERE ARRAY_CONTAINS(@ids, c["id"])
 """);
             });
 
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/289 (EXISTS/ANY/ALL subqueries cause internal server error)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public override Task Where_subquery_where_any(bool async)
         => Fixture.NoSyncTest(
             async, async a =>
@@ -2692,6 +2694,8 @@ WHERE NOT(ARRAY_CONTAINS(@ids, c["id"]))
 """);
             });
 
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/289 (EXISTS/ANY/ALL subqueries cause internal server error)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public override Task Where_subquery_where_all(bool async)
         => Fixture.NoSyncTest(
             async, async a =>

@@ -90,7 +90,7 @@ internal abstract class CohostDocumentPullDiagnosticsEndpointBase<TRequest, TRes
             (service, solutionInfo, cancellationToken) => service.GetDiagnosticsAsync(solutionInfo, razorDocument.Id, csharpDiagnostics, htmlDiagnostics, cancellationToken),
             cancellationToken).ConfigureAwait(false);
 
-        if (cancellationToken.IsCancellationRequested)
+        if (cancellationToken.IsCancellationRequested || diagnostics.IsDefault)
         {
             return null;
         }

@@ -86,6 +86,11 @@ namespace NuGet.CommandLine.XPlat
                     Strings.SignCommandOverwriteDescription,
                     CommandOptionType.NoValue);
 
+                CommandOption allowUntrustedRoot = signCmd.Option(
+                    "--allow-untrusted-root",
+                    Strings.SignCommandAllowUntrustedRootDescription,
+                    CommandOptionType.NoValue);
+
                 CommandOption verbosity = signCmd.Option(
                     "-v|--verbosity",
                     Strings.Verbosity_Description,
@@ -123,6 +128,7 @@ namespace NuGet.CommandLine.XPlat
                         SignatureHashAlgorithm = hashAlgorithm,
                         Logger = logger,
                         Overwrite = overwrite.HasValue(),
+                        AllowUntrustedRoot = allowUntrustedRoot.HasValue(),
                         //The interactive option is not enabled at first, so the NonInteractive is always set to true. This is tracked by https://github.com/NuGet/Home/issues/10620
                         NonInteractive = true,
                         Timestamper = timestamper.Value(),
@@ -184,7 +190,7 @@ namespace NuGet.CommandLine.XPlat
                     throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
                         Strings.Err_InvalidValue,
                         location.LongName,
-                        string.Join(",", Enum.GetValues(typeof(StoreLocation)).Cast<StoreLocation>().ToList())));
+                        string.Join(",", Enum.GetValues<StoreLocation>().ToList())));
                 }
             }
 
@@ -203,7 +209,7 @@ namespace NuGet.CommandLine.XPlat
                     throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
                         Strings.Err_InvalidValue,
                         store.LongName,
-                        string.Join(",", Enum.GetValues(typeof(StoreName)).Cast<StoreName>().ToList())));
+                        string.Join(",", Enum.GetValues<StoreName>().ToList())));
                 }
             }
 

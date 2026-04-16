@@ -25,6 +25,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="$(RepoRoot)src/Microsoft.TestPlatform.Filter.Source/Condition.cs" />
+    <Compile Include="$(RepoRoot)src/Microsoft.TestPlatform.Filter.Source/FastFilter.cs" />
+    <Compile Include="$(RepoRoot)src/Microsoft.TestPlatform.Filter.Source/FilterExpression.cs" />
+    <Compile Include="$(RepoRoot)src/Microsoft.TestPlatform.Filter.Source/FilterExpressionWrapper.cs" />
+    <Compile Include="$(RepoRoot)src/Microsoft.TestPlatform.Filter.Source/TestCaseFilterExpression.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Update="NullableHelpers.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

@@ -24,7 +24,7 @@ internal static class LinkedEditingRangeHelper
             return null;
         }
 
-        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredTagHelperRewrittenSyntaxTree();
 
         // We only care if the user is within a TagHelper or HTML tag with a valid start and end tag.
         if (TryGetNearestMarkupNameTokens(syntaxTree, validLocation, out var startTagNameToken, out var endTagNameToken) &&
@@ -57,24 +57,14 @@ internal static class LinkedEditingRangeHelper
             return false;
         }
 
-        switch (element)
+        if (element is BaseMarkupElementSyntax { StartTag: var startTag, EndTag: var endTag })
         {
-            // Tag helper
-            case MarkupTagHelperElementSyntax { StartTag: var startTag, EndTag: var endTag }:
-                startTagNameToken = startTag?.Name ?? default;
-                endTagNameToken = endTag?.Name ?? default;
+            startTagNameToken = startTag?.Name ?? default;
+            endTagNameToken = endTag?.Name ?? default;
 
-                return startTagNameToken.IsValid() && endTagNameToken.IsValid();
-
-            // HTML
-            case MarkupElementSyntax { StartTag: var startTag, EndTag: var endTag }:
-                startTagNameToken = startTag?.Name ?? default;
-                endTagNameToken = endTag?.Name ?? default;
-
-                return startTagNameToken.IsValid() && endTagNameToken.IsValid();
-
-            default:
-                throw new InvalidOperationException("Element is expected to be a MarkupTagHelperElement or MarkupElement.");
+            return startTagNameToken.IsValid() && endTagNameToken.IsValid();
         }
+
+        throw new InvalidOperationException("Element is expected to be a MarkupTagHelperElement or MarkupElement.");
     }
 }

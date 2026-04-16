@@ -26,7 +26,6 @@ namespace Microsoft.DotNet.SignTool
 
         internal string Wix3ToolsPath => _args.Wix3ToolsPath;
         internal string WixToolsPath => _args.WixToolsPath;
-        internal string TarToolPath => _args.TarToolPath;
         internal string PkgToolPath => _args.PkgToolPath;
 
         internal SignTool(SignToolArgs args, TaskLoggingHelper log)
@@ -49,7 +48,7 @@ namespace Microsoft.DotNet.SignTool
 
         public abstract SigningStatus VerifyStrongNameSign(string fileFullPath);
 
-        public abstract bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath, string logPath, string errorLogPath);
+        public abstract bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath, string logPath, string errorLogPath, bool suppressErrors = false);
 
         public bool Sign(IBuildEngine buildEngine, int round, IEnumerable<FileSignInfo> files)
         {
@@ -126,14 +125,7 @@ namespace Microsoft.DotNet.SignTool
                 }
                 else
                 {
-                    // Delete the file first so that we can overwrite it. ExtractToDirectory's overwrite is not
-                    // available on framework.
-#if NETFRAMEWORK
-                    File.Delete(item.Key);
-                    ZipFile.ExtractToDirectory(item.Value, Path.GetDirectoryName(item.Key));
-#else
                     ZipFile.ExtractToDirectory(item.Value, Path.GetDirectoryName(item.Key), true);
-#endif
                 }
 
                 File.Delete(item.Value);
@@ -191,7 +183,7 @@ namespace Microsoft.DotNet.SignTool
             {
                 var notarizeProjectPath = Path.Combine(dir, $"Round{round}-Notarize.proj");
                 File.WriteAllText(notarizeProjectPath, GenerateBuildFileContent(filesToNotarize, null, true));
-                
+
                 // Notarization can be flaky, so retry up to 5 times with no wait between retries
                 const int maxRetries = 5;
                 int attempt = 0;
@@ -208,7 +200,8 @@ namespace Microsoft.DotNet.SignTool
                     notarizationSucceeded = RunMSBuild(buildEngine, notarizeProjectPath, 
                         Path.Combine(_args.LogDir, $"{notarizeLogName}.binlog"), 
                         Path.Combine(_args.LogDir, $"{notarizeLogName}.log"), 
-                        Path.Combine(_args.LogDir, $"{notarizeLogName}.error.log"));
+                        Path.Combine(_args.LogDir, $"{notarizeLogName}.error.log"),
+                        suppressErrors: attempt < maxRetries);
                     
                     if (!notarizationSucceeded && attempt < maxRetries)
                     {

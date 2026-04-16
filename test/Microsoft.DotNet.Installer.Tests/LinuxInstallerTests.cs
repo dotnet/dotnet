@@ -13,6 +13,7 @@ using System.Net.Http;
 using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using TestUtilities;
@@ -74,7 +75,7 @@ public partial class LinuxInstallerTests : IDisposable
     private static partial Regex RemoveVersionConstraintRegex { get; }
 
     // Remove version numbers from package names: "dotnet-runtime-10.0.0-rc.1.25480.112-x64.rpm" -> "dotnet-runtime-*-x64.rpm"
-    [GeneratedRegex(@"\d+\.\d+\.\d+(?:-(?:alpha|rc|rtm|preview)(?:\.\d+)*)?", RegexOptions.CultureInvariant)]
+    [GeneratedRegex(@"\d+\.\d+\.\d+(?:-(?:alpha|rc|rtm|preview|servicing)(?:\.\d+)*)?", RegexOptions.CultureInvariant)]
     private static partial Regex RemoveVersionFromPackageNameRegex { get; }
 
     private const string RuntimeDepsRepo = "mcr.microsoft.com/dotnet/runtime-deps";
@@ -560,12 +561,15 @@ public partial class LinuxInstallerTests : IDisposable
     private static string GetSanitizedImageName(string image) =>
         image.Replace("/", "_").Replace(":", "_").Replace(".", "_");
 
+    private static readonly int[] RetryTimeoutsInSeconds = [120, 240, 360];
+
     private async Task DownloadFileAsync(Uri url, string filePath)
     {
         _outputHelper.WriteLine($"Downloading {url} to {filePath}");
 
         using HttpClient client = new HttpClient();
-        HttpResponseMessage response = await client.GetAsync(url);
+        HttpResponseMessage response = await DownloadWithRetriesAsync(client, url);
+
         if (!response.IsSuccessStatusCode && !string.IsNullOrEmpty(Config.DotNetRuntimeSourceFeedKey))
         {
             string internalUrlStr = url.ToString().Replace("https://ci.dot.net/public", Config.DotNetRuntimeSourceFeed);
@@ -573,13 +577,53 @@ public partial class LinuxInstallerTests : IDisposable
             // The feed key is a base64-encoded SAS token that must be decoded and appended to the URL as a query string
             string decodedSasToken = Encoding.UTF8.GetString(Convert.FromBase64String(Config.DotNetRuntimeSourceFeedKey));
             Uri internalUrl = new Uri($"{internalUrlStr}?{decodedSasToken}");
-            response = await client.GetAsync(internalUrl);
+            response = await DownloadWithRetriesAsync(client, internalUrl);
         }
 
         response.EnsureSuccessStatusCode();
 
         using FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
         await response.Content.CopyToAsync(fileStream);
+    }
+
+    private async Task<HttpResponseMessage> DownloadWithRetriesAsync(HttpClient client, Uri url)
+    {
+        // Strip query string to avoid logging sensitive tokens
+        string safeUrl = url.GetLeftPart(UriPartial.Path);
+        HttpResponseMessage response = null!;
+
+        for (int attempt = 0; attempt < RetryTimeoutsInSeconds.Length; attempt++)
+        {
+            int timeoutSeconds = RetryTimeoutsInSeconds[attempt];
+            using CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutSeconds));
+
+            try
+            {
+                response = await client.GetAsync(url, cts.Token);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return response;
+                }
+
+                _outputHelper.WriteLine($"Attempt {attempt + 1}/{RetryTimeoutsInSeconds.Length} for {safeUrl} failed with status {(int)response.StatusCode}.");
+            }
+            catch (TaskCanceledException) when (cts.IsCancellationRequested)
+            {
+                _outputHelper.WriteLine($"Attempt {attempt + 1}/{RetryTimeoutsInSeconds.Length} for {safeUrl} timed out after {timeoutSeconds}s.");
+            }
+            catch (HttpRequestException ex)
+            {
+                _outputHelper.WriteLine($"Attempt {attempt + 1}/{RetryTimeoutsInSeconds.Length} for {safeUrl} failed: {ex.Message}");
+            }
+            catch (IOException ex) when (ex is not DirectoryNotFoundException and not PathTooLongException)
+            {
+                _outputHelper.WriteLine($"Attempt {attempt + 1}/{RetryTimeoutsInSeconds.Length} for {safeUrl} failed with IO error: {ex.Message}");
+            }
+        }
+
+        // Return the last response (which may be a failure) so the caller can inspect the status code
+        return response;
     }
 
     private void ValidatePackageMetadata(string image, PackageType packageType)

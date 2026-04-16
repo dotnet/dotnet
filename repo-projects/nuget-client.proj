@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
+    <DisallowDotNetFinalVersionKindOverride>true</DisallowDotNetFinalVersionKindOverride>
+
     <!-- Don't pass any build actions because the repo doesn't support them. -->
     <BuildActions></BuildActions>
     <!-- Call into a custom build script as nuget-client doesn't use Arcade infra. -->
@@ -12,6 +14,9 @@
     <BuildArgs>$(BuildArgs) /p:NetCurrent=$(NetCurrent)</BuildArgs>
     <BuildArgs Condition="'$(NetPrevious)' != ''">$(BuildArgs) /p:NetPrevious=$(NetPrevious)</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:NetMinimum=$(NetMinimum)</BuildArgs>
+
+    <!-- Remove nuget.org from auditSources to avoid reaching the internet during CI builds. -->
+    <RemoveBlockedAuditSources>true</RemoveBlockedAuditSources>
   </PropertyGroup>
 
   <ItemGroup>

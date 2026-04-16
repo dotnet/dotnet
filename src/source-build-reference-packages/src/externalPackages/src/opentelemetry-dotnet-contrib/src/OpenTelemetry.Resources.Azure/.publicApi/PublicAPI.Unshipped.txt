@@ -1,0 +1,4 @@
+OpenTelemetry.Resources.AzureResourceBuilderExtensions
+static OpenTelemetry.Resources.AzureResourceBuilderExtensions.AddAzureAppServiceDetector(this OpenTelemetry.Resources.ResourceBuilder! builder) -> OpenTelemetry.Resources.ResourceBuilder!
+static OpenTelemetry.Resources.AzureResourceBuilderExtensions.AddAzureVMDetector(this OpenTelemetry.Resources.ResourceBuilder! builder) -> OpenTelemetry.Resources.ResourceBuilder!
+static OpenTelemetry.Resources.AzureResourceBuilderExtensions.AddAzureContainerAppsDetector(this OpenTelemetry.Resources.ResourceBuilder! builder) -> OpenTelemetry.Resources.ResourceBuilder!

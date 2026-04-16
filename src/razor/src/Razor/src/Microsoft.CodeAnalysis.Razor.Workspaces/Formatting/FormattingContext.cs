@@ -28,7 +28,7 @@ internal sealed class FormattingContext
         IDocumentSnapshot currentSnapshot,
         RazorFormattingOptions options,
         IFormattingLogger? logger,
-        bool automaticallyAddUsings,
+        bool includeCSharpLanguageFeatureEdits,
         int hostDocumentIndex,
         char triggerCharacter)
     {
@@ -37,7 +37,7 @@ internal sealed class FormattingContext
         CurrentSnapshot = currentSnapshot;
         Options = options;
         Logger = logger;
-        AutomaticallyAddUsings = automaticallyAddUsings;
+        IncludeCSharpLanguageFeatureEdits = includeCSharpLanguageFeatureEdits;
         HostDocumentIndex = hostDocumentIndex;
         TriggerCharacter = triggerCharacter;
     }
@@ -49,7 +49,7 @@ internal sealed class FormattingContext
     public IDocumentSnapshot CurrentSnapshot { get; }
     public RazorFormattingOptions Options { get; }
     public IFormattingLogger? Logger { get; }
-    public bool AutomaticallyAddUsings { get; }
+    public bool IncludeCSharpLanguageFeatureEdits { get; }
     public int HostDocumentIndex { get; }
     public char TriggerCharacter { get; }
 
@@ -148,7 +148,7 @@ internal sealed class FormattingContext
 
         static ImmutableArray<FormattingSpan> ComputeFormattingSpans(RazorCodeDocument codeDocument)
         {
-            var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+            var syntaxTree = codeDocument.GetRequiredTagHelperRewrittenSyntaxTree();
             var inGlobalNamespace = codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace) &&
                 string.IsNullOrEmpty(@namespace);
 
@@ -243,7 +243,7 @@ internal sealed class FormattingContext
             currentSnapshot: changedSnapshot,
             Options,
             Logger,
-            AutomaticallyAddUsings,
+            IncludeCSharpLanguageFeatureEdits,
             HostDocumentIndex,
             TriggerCharacter);
 
@@ -273,7 +273,7 @@ internal sealed class FormattingContext
         RazorCodeDocument codeDocument,
         RazorFormattingOptions options,
         IFormattingLogger? logger,
-        bool automaticallyAddUsings,
+        bool includeCSharpLanguageFeatureEdits,
         int hostDocumentIndex,
         char triggerCharacter)
     {
@@ -283,7 +283,7 @@ internal sealed class FormattingContext
             currentSnapshot: originalSnapshot,
             options,
             logger,
-            automaticallyAddUsings,
+            includeCSharpLanguageFeatureEdits,
             hostDocumentIndex,
             triggerCharacter);
     }
@@ -300,7 +300,7 @@ internal sealed class FormattingContext
             currentSnapshot: originalSnapshot,
             options,
             logger,
-            automaticallyAddUsings: false,
+            includeCSharpLanguageFeatureEdits: false,
             hostDocumentIndex: 0,
             triggerCharacter: '\0');
     }

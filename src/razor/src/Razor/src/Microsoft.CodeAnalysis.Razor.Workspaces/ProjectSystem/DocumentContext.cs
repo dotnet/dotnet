@@ -7,34 +7,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Syntax;
-using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
-using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-internal class DocumentContext(Uri uri, IDocumentSnapshot snapshot, VSProjectContext? projectContext)
+internal class DocumentContext(Uri uri, IDocumentSnapshot snapshot)
 {
-    private readonly VSProjectContext? _projectContext = projectContext;
     private RazorCodeDocument? _codeDocument;
     private SourceText? _sourceText;
 
     public Uri Uri { get; } = uri;
     public IDocumentSnapshot Snapshot { get; } = snapshot;
-    public string FilePath => Snapshot.FilePath;
-    public RazorFileKind FileKind => Snapshot.FileKind;
-    public IProjectSnapshot Project => Snapshot.Project;
-
-    public TextDocumentIdentifier GetTextDocumentIdentifier()
-        => new VSTextDocumentIdentifier()
-        {
-            DocumentUri = new(Uri),
-            ProjectContext = _projectContext,
-        };
-
-    public TextDocumentIdentifierAndVersion GetTextDocumentIdentifierAndVersion()
-       => new(GetTextDocumentIdentifier(), Snapshot.Version);
 
     private bool TryGetCodeDocument([NotNullWhen(true)] out RazorCodeDocument? codeDocument)
     {
@@ -86,31 +69,13 @@ internal class DocumentContext(Uri uri, IDocumentSnapshot snapshot, VSProjectCon
 
         static RazorSyntaxTree GetSyntaxTreeCore(RazorCodeDocument codeDocument)
         {
-            return codeDocument.GetRequiredSyntaxTree();
+            return codeDocument.GetRequiredTagHelperRewrittenSyntaxTree();
         }
 
         async ValueTask<RazorSyntaxTree> GetSyntaxTreeCoreAsync(CancellationToken cancellationToken)
         {
             var codeDocument = await GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
             return GetSyntaxTreeCore(codeDocument);
-        }
-    }
-
-    public ValueTask<TagHelperDocumentContext> GetTagHelperContextAsync(CancellationToken cancellationToken)
-    {
-        return TryGetCodeDocument(out var codeDocument)
-            ? new(GetTagHelperContextCore(codeDocument))
-            : GetTagHelperContextCoreAsync(cancellationToken);
-
-        static TagHelperDocumentContext GetTagHelperContextCore(RazorCodeDocument codeDocument)
-        {
-            return codeDocument.GetRequiredTagHelperContext();
-        }
-
-        async ValueTask<TagHelperDocumentContext> GetTagHelperContextCoreAsync(CancellationToken cancellationToken)
-        {
-            var codeDocument = await GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-            return GetTagHelperContextCore(codeDocument);
         }
     }
 
@@ -129,42 +94,6 @@ internal class DocumentContext(Uri uri, IDocumentSnapshot snapshot, VSProjectCon
         {
             var codeDocument = await GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
             return GetCSharpSourceTextCore(codeDocument);
-        }
-    }
-
-    public ValueTask<SourceText> GetHtmlSourceTextAsync(CancellationToken cancellationToken)
-    {
-        return TryGetCodeDocument(out var codeDocument)
-            ? new(GetHtmlSourceTextCore(codeDocument, cancellationToken))
-            : GetHtmlSourceTextCoreAsync(cancellationToken);
-
-        static SourceText GetHtmlSourceTextCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
-        {
-            return codeDocument.GetHtmlSourceText(cancellationToken);
-        }
-
-        async ValueTask<SourceText> GetHtmlSourceTextCoreAsync(CancellationToken cancellationToken)
-        {
-            var codeDocument = await GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-            return GetHtmlSourceTextCore(codeDocument, cancellationToken);
-        }
-    }
-
-    public ValueTask<RazorSyntaxNode?> GetSyntaxNodeAsync(int absoluteIndex, CancellationToken cancellationToken)
-    {
-        return TryGetCodeDocument(out var codeDocument)
-            ? new(GetSyntaxNodeCore(codeDocument, absoluteIndex))
-            : GetSyntaxNodeCoreAsync(absoluteIndex, cancellationToken);
-
-        static RazorSyntaxNode? GetSyntaxNodeCore(RazorCodeDocument codeDocument, int absoluteIndex)
-        {
-            return codeDocument.GetRequiredSyntaxRoot().FindInnermostNode(absoluteIndex);
-        }
-
-        async ValueTask<RazorSyntaxNode?> GetSyntaxNodeCoreAsync(int absoluteIndex, CancellationToken cancellationToken)
-        {
-            var codeDocument = await GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-            return GetSyntaxNodeCore(codeDocument, absoluteIndex);
         }
     }
 }

@@ -20,13 +20,15 @@ namespace NuGet.CommandLine.XPlat
         private static readonly string SourceSeparator = new('*', LineSeparatorLength);
         private PackageSearchVerbosity _verbosity;
         private bool _exactMatch;
+        private int _consoleWidth;
 
-        public PackageSearchResultTableRenderer(string searchTerm, ILoggerWithColor loggerWithColor, PackageSearchVerbosity verbosity, bool exactMatch)
+        public PackageSearchResultTableRenderer(string searchTerm, ILoggerWithColor loggerWithColor, PackageSearchVerbosity verbosity, bool exactMatch, int consoleWidth)
         {
             _searchTerm = searchTerm;
             _loggerWithColor = loggerWithColor;
             _verbosity = verbosity;
             _exactMatch = exactMatch;
+            _consoleWidth = consoleWidth;
         }
 
         public void Add(PackageSource source, IEnumerable<IPackageSearchMetadata> completedSearch)
@@ -35,7 +37,7 @@ namespace NuGet.CommandLine.XPlat
             _loggerWithColor.LogMinimal($"Source: {source.Name} ({source.SourceUri})");
 
             ITableFormatStrategy strategy = TableFormatStrategyFactory.GetStrategy(_verbosity, _exactMatch);
-            Table table = strategy.CreateTable();
+            Table table = strategy.CreateTable(_consoleWidth);
             PopulateTableWithResultsAsync(completedSearch, table, _verbosity);
             table.PrintResult(_searchTerm, _loggerWithColor);
         }

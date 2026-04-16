@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -35,19 +33,19 @@ namespace NuGet.Packaging
         /// <summary>
         /// The license expression, could be null if the version is higher than the current supported or if the expression is not parseable.
         /// </summary>
-        public NuGetLicenseExpression LicenseExpression { get; }
+        public NuGetLicenseExpression? LicenseExpression { get; }
 
         /// <summary>
         /// Non-null when the expression parsing yielded some issues. This will be used to display the errors/warnings in the UI. Only populated when the metadata element is returned by the nuspec reader;
         /// </summary>
-        public IReadOnlyList<string> WarningsAndErrors { get; }
+        public IReadOnlyList<string>? WarningsAndErrors { get; }
 
         /// <summary>
         /// LicenseMetadata (expression) version. Never null.
         /// </summary>
         public Version Version { get; }
 
-        public LicenseMetadata(LicenseType type, string license, NuGetLicenseExpression expression, IReadOnlyList<string> warningsAndErrors, Version version)
+        public LicenseMetadata(LicenseType type, string license, NuGetLicenseExpression? expression, IReadOnlyList<string>? warningsAndErrors, Version version)
         {
             Type = type;
             License = license ?? throw new ArgumentNullException(nameof(license));
@@ -56,7 +54,7 @@ namespace NuGet.Packaging
             Version = version ?? throw new ArgumentNullException(nameof(version));
         }
 
-        public bool Equals(LicenseMetadata other)
+        public bool Equals(LicenseMetadata? other)
         {
             if (ReferenceEquals(this, other))
             {
@@ -75,7 +73,7 @@ namespace NuGet.Packaging
                    Version == other.Version;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as LicenseMetadata);
         }
@@ -106,7 +104,7 @@ namespace NuGet.Packaging
                         return new Uri(GenerateLicenseServiceLink(License));
 
                     default:
-                        return null;
+                        throw new NotSupportedException($"Unsupported license type: {Type}");
                 }
             }
         }

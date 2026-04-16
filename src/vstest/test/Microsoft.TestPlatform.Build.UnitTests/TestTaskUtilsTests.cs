@@ -36,9 +36,9 @@ public class TestTaskUtilsTests
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.Contains(commandline, " -- ");
-        StringAssert.Contains(commandline, $"\"{arg1}\"");
-        StringAssert.Contains(commandline, $"{arg2}");
+        Assert.Contains(" -- ", commandline);
+        Assert.Contains($"\"{arg1}\"", commandline);
+        Assert.Contains($"{arg2}", commandline);
     }
 
     [TestMethod]
@@ -58,9 +58,9 @@ public class TestTaskUtilsTests
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.Contains(commandline, " -- ");
-        StringAssert.Contains(commandline, $"\"{arg1}\"");
-        StringAssert.Contains(commandline, $"{arg2}");
+        Assert.Contains(" -- ", commandline);
+        Assert.Contains($"\"{arg1}\"", commandline);
+        Assert.Contains($"{arg2}", commandline);
     }
 
     [TestMethod]
@@ -71,7 +71,7 @@ public class TestTaskUtilsTests
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.Contains(commandline, $"--resultsDirectory:\"{_vsTestTask.VSTestResultsDirectory?.ItemSpec}\"");
+        Assert.Contains($"--resultsDirectory:\"{_vsTestTask.VSTestResultsDirectory?.ItemSpec}\"", commandline);
     }
 
     [TestMethod]
@@ -82,8 +82,8 @@ public class TestTaskUtilsTests
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.DoesNotMatch(commandline, new Regex("(--logger:\"Console;Verbosity=normal\")"));
-        StringAssert.Contains(commandline, "--logger:\"Console;Verbosity=quiet\"");
+        Assert.DoesNotMatchRegex(new Regex("(--logger:\"Console;Verbosity=normal\")"), commandline);
+        Assert.Contains("--logger:\"Console;Verbosity=quiet\"", commandline);
     }
 
     [TestMethod]
@@ -93,7 +93,7 @@ public class TestTaskUtilsTests
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.Contains(commandline, "--logger:Console;Verbosity=normal");
+        Assert.Contains("--logger:Console;Verbosity=normal", commandline);
     }
 
     [TestMethod]
@@ -103,7 +103,7 @@ public class TestTaskUtilsTests
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.Contains(commandline, "--logger:Console;Verbosity=normal");
+        Assert.Contains("--logger:Console;Verbosity=normal", commandline);
     }
 
     [TestMethod]
@@ -113,7 +113,7 @@ public class TestTaskUtilsTests
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.Contains(commandline, "--logger:Console;Verbosity=normal");
+        Assert.Contains("--logger:Console;Verbosity=normal", commandline);
     }
 
     [TestMethod]
@@ -123,7 +123,7 @@ public class TestTaskUtilsTests
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.Contains(commandline, "--logger:Console;Verbosity=normal");
+        Assert.Contains("--logger:Console;Verbosity=normal", commandline);
     }
 
     [TestMethod]
@@ -133,7 +133,7 @@ public class TestTaskUtilsTests
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.Contains(commandline, "--logger:Console;Verbosity=normal");
+        Assert.Contains("--logger:Console;Verbosity=normal", commandline);
     }
 
     [TestMethod]
@@ -143,7 +143,7 @@ public class TestTaskUtilsTests
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.Contains(commandline, "--logger:Console;Verbosity=normal");
+        Assert.Contains("--logger:Console;Verbosity=normal", commandline);
     }
 
     [TestMethod]
@@ -153,7 +153,7 @@ public class TestTaskUtilsTests
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.Contains(commandline, "--logger:Console;Verbosity=quiet");
+        Assert.Contains("--logger:Console;Verbosity=quiet", commandline);
     }
 
     [TestMethod]
@@ -163,7 +163,7 @@ public class TestTaskUtilsTests
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.Contains(commandline, "--logger:Console;Verbosity=quiet");
+        Assert.Contains("--logger:Console;Verbosity=quiet", commandline);
     }
 
     [TestMethod]
@@ -173,7 +173,7 @@ public class TestTaskUtilsTests
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.Contains(commandline, "--logger:Console;Verbosity=minimal");
+        Assert.Contains("--logger:Console;Verbosity=minimal", commandline);
     }
 
     [TestMethod]
@@ -183,7 +183,7 @@ public class TestTaskUtilsTests
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.Contains(commandline, "--logger:Console;Verbosity=minimal");
+        Assert.Contains("--logger:Console;Verbosity=minimal", commandline);
     }
 
     [TestMethod]
@@ -193,7 +193,7 @@ public class TestTaskUtilsTests
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.Contains(commandline, "--logger:Console;Verbosity=normal");
+        Assert.Contains("--logger:Console;Verbosity=normal", commandline);
     }
 
     [TestMethod]
@@ -203,7 +203,7 @@ public class TestTaskUtilsTests
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.Contains(commandline, "--logger:Console;Verbosity=quiet");
+        Assert.Contains("--logger:Console;Verbosity=quiet", commandline);
     }
 
     [TestMethod]
@@ -213,7 +213,7 @@ public class TestTaskUtilsTests
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.Contains(commandline, "--logger:\"trx;LogFileName=foo bar.trx\"");
+        Assert.Contains("--logger:\"trx;LogFileName=foo bar.trx\"", commandline);
     }
 
     [TestMethod]
@@ -226,8 +226,8 @@ public class TestTaskUtilsTests
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.Contains(commandline, "--collect:name1");
-        StringAssert.Contains(commandline, "--collect:\"name 2\"");
+        Assert.Contains("--collect:name1", commandline);
+        Assert.Contains("--collect:\"name 2\"", commandline);
     }
 
     [TestMethod]
@@ -237,8 +237,8 @@ public class TestTaskUtilsTests
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.Contains(commandline, "--testAdapterPath:path1");
-        StringAssert.Contains(commandline, "--testAdapterPath:path2");
+        Assert.Contains("--testAdapterPath:path1", commandline);
+        Assert.Contains("--testAdapterPath:path2", commandline);
     }
 
     [TestMethod]
@@ -247,8 +247,8 @@ public class TestTaskUtilsTests
         _vsTestTask.VSTestLogger = ["trx;LogFileName=foo bar.trx", "console"];
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.Contains(commandline, "--logger:\"trx;LogFileName=foo bar.trx\"");
-        StringAssert.Contains(commandline, "--logger:console");
+        Assert.Contains("--logger:\"trx;LogFileName=foo bar.trx\"", commandline);
+        Assert.Contains("--logger:console", commandline);
     }
 
     [TestMethod]
@@ -261,7 +261,7 @@ public class TestTaskUtilsTests
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
         string expectedArg = $"--testAdapterPath:\"{_vsTestTask.VSTestTraceDataCollectorDirectoryPath?.ItemSpec}\"";
-        StringAssert.Contains(commandline, expectedArg);
+        Assert.Contains(expectedArg, commandline);
     }
 
     [TestMethod]
@@ -274,7 +274,7 @@ public class TestTaskUtilsTests
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
         string notExpectedArg = $"--testAdapterPath:\"{_vsTestTask.VSTestTraceDataCollectorDirectoryPath?.ItemSpec}\"";
-        StringAssert.DoesNotMatch(commandline, new Regex(Regex.Escape(notExpectedArg)));
+        Assert.DoesNotMatchRegex(new Regex(Regex.Escape(notExpectedArg)), commandline);
     }
 
     [TestMethod]
@@ -287,7 +287,7 @@ public class TestTaskUtilsTests
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
         string expectedArg = $"--testAdapterPath:{_vsTestTask.VSTestTraceDataCollectorDirectoryPath?.ItemSpec}";
-        StringAssert.Contains(commandline, expectedArg);
+        Assert.Contains(expectedArg, commandline);
     }
 
     [TestMethod]
@@ -299,7 +299,7 @@ public class TestTaskUtilsTests
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.DoesNotMatch(commandline, new Regex(@"(--testAdapterPath:)"));
+        Assert.DoesNotMatchRegex(new Regex(@"(--testAdapterPath:)"), commandline);
     }
 
     [TestMethod]
@@ -309,6 +309,6 @@ public class TestTaskUtilsTests
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
-        StringAssert.Contains(commandline, "--nologo");
+        Assert.Contains("--nologo", commandline);
     }
 }

@@ -4,6 +4,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
@@ -12,7 +13,6 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Test.Utilities;
 using Xunit;
@@ -21,6 +21,37 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public partial class CohostDocumentPullDiagnosticsTest
 {
+    [Fact]
+    public async Task CSharpUnusedUsings_HintDiagnosticsInVSCode()
+    {
+        var document = CreateProjectAndRazorDocument("""
+            @using System
+            @using System.Text
+
+            <div></div>
+
+            @code
+            {
+                public void BuildsStrings(StringBuilder b)
+                {
+                }
+            }
+            """);
+
+        var requestInvoker = new TestHtmlRequestInvoker([(VSInternalMethods.DocumentPullDiagnosticName, (VSInternalDiagnosticReport[]?)null)]);
+        var result = await MakeDiagnosticsRequestAsync(document, taskListRequest: false, requestInvoker, IncompatibleProjectService, RemoteServiceInvoker, ClientCapabilitiesService, LoggerFactory, DisposalToken);
+
+        Assert.NotNull(result);
+        var diagnostic = Assert.Single(result);
+        Assert.Equal(0, diagnostic.Range.Start.Line);
+        Assert.Equal(0, diagnostic.Range.End.Line);
+        Assert.Equal("RZ0005", diagnostic.Code.AssumeNotNull().Second);
+        Assert.Equal(LspDiagnosticSeverity.Hint, diagnostic.Severity);
+
+        var tags = Assert.IsType<DiagnosticTag[]>(diagnostic.Tags);
+        Assert.Contains(tags, tag => tag == DiagnosticTag.Unnecessary);
+    }
+
     private async Task VerifyDiagnosticsAsync(
         TestCode input,
         VSInternalDiagnosticReport[]? htmlResponse = null,
@@ -33,7 +64,7 @@ public partial class CohostDocumentPullDiagnosticsTest
 
         var requestInvoker = new TestHtmlRequestInvoker([(VSInternalMethods.DocumentPullDiagnosticName, htmlResponse)]);
 
-        var result = await MakeDiagnosticsRequestAsync(document, taskListRequest: false, requestInvoker, IncompatibleProjectService, RemoteServiceInvoker, ClientSettingsManager, ClientCapabilitiesService, LoggerFactory, DisposalToken);
+        var result = await MakeDiagnosticsRequestAsync(document, taskListRequest: false, requestInvoker, IncompatibleProjectService, RemoteServiceInvoker, ClientCapabilitiesService, LoggerFactory, DisposalToken);
 
         Assert.NotNull(result);
 
@@ -59,7 +90,6 @@ public partial class CohostDocumentPullDiagnosticsTest
         TestHtmlRequestInvoker requestInvoker,
         IIncompatibleProjectService incompatibleProjectService,
         IRemoteServiceInvoker remoteServiceInvoker,
-        IClientSettingsManager _,
         IClientCapabilitiesService clientCapabilitiesService,
         ILoggerFactory loggerFactory,
         CancellationToken cancellationToken)

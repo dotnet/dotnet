@@ -77,6 +77,12 @@ namespace NuGet.Commands
         public bool Overwrite { get; set; }
 
         /// <summary>
+        /// Allow signing with certificates whose root is not in a trusted root store.
+        /// When true, UntrustedRoot chain status is treated as a warning instead of an error.
+        /// </summary>
+        public bool AllowUntrustedRoot { get; set; }
+
+        /// <summary>
         /// Switch used to indicate that we should not prompt for user input or confirmations.
         /// </summary>
         public bool NonInteractive { get; set; }

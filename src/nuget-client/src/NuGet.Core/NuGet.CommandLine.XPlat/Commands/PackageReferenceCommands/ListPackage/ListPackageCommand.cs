@@ -15,7 +15,6 @@ using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Credentials;
-using NuGet.Frameworks;
 
 namespace NuGet.CommandLine.XPlat
 {
@@ -123,14 +122,12 @@ namespace NuGet.CommandLine.XPlat
 
                     var packageSources = GetPackageSources(settings, sources, config);
 
-                    VerifyValidFrameworks(framework);
-
                     var reportType = GetReportType(
                         isOutdated: outdatedReport.HasValue(),
                         isDeprecated: deprecatedReport.HasValue(),
                         isVulnerable: vulnerableReport.HasValue());
 
-                    IReportRenderer reportRenderer = GetOutputType(outputFormat.Value(), outputVersionOption: outputVersion.Value());
+                    IReportRenderer reportRenderer = GetOutputType(app.Out, app.Error, outputFormat.Value(), outputVersionOption: outputVersion.Value());
                     var provider = new PackageSourceProvider(settings);
                     var packageRefArgs = new ListPackageArgs(
                         path.Value,
@@ -174,7 +171,7 @@ namespace NuGet.CommandLine.XPlat
             throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_InvalidOptions));
         }
 
-        private static IReportRenderer GetOutputType(string outputFormatOption, string outputVersionOption)
+        private static IReportRenderer GetOutputType(TextWriter consoleOut, TextWriter consoleError, string outputFormatOption, string outputVersionOption)
         {
             ReportOutputFormat outputFormat = ReportOutputFormat.Console;
             if (!string.IsNullOrEmpty(outputFormatOption) &&
@@ -190,7 +187,7 @@ namespace NuGet.CommandLine.XPlat
                 {
                     throw new ArgumentException(string.Format(Strings.ListPkg_OutputVersionNotApplicable));
                 }
-                return new ListPackageConsoleRenderer();
+                return new ListPackageConsoleRenderer(consoleOut, consoleError);
             }
 
             IReportRenderer jsonReportRenderer;
@@ -203,7 +200,7 @@ namespace NuGet.CommandLine.XPlat
             }
             else
             {
-                jsonReportRenderer = new ListPackageJsonRenderer();
+                jsonReportRenderer = new ListPackageJsonRenderer(consoleOut);
             }
 
             return jsonReportRenderer;
@@ -215,16 +212,6 @@ namespace NuGet.CommandLine.XPlat
                 (packageRefArgs.Prerelease || packageRefArgs.HighestMinor || packageRefArgs.HighestPatch))
             {
                 reportRenderer.AddProblem(ProblemType.Warning, Strings.ListPkg_VulnerableIgnoredOptions);
-            }
-        }
-
-        private static void VerifyValidFrameworks(CommandOption framework)
-        {
-            var frameworks = framework.Values.Select(f =>
-                                NuGetFramework.Parse(f.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToArray()[0]));
-            if (frameworks.Any(f => f.Framework.Equals("Unsupported", StringComparison.OrdinalIgnoreCase)))
-            {
-                throw new ArgumentException(Strings.ListPkg_InvalidFramework, nameof(framework));
             }
         }
 
@@ -268,9 +255,9 @@ namespace NuGet.CommandLine.XPlat
             return packageSources;
         }
 
-        private static string GetEnumValues<T>() where T : Enum
+        private static string GetEnumValues<T>() where T : struct, Enum
         {
-            var enumValues = ((T[])Enum.GetValues(typeof(T)))
+            var enumValues = Enum.GetValues<T>()
                .Select(x => x.ToString());
 
             return string.Join(", ", enumValues).ToLower(CultureInfo.CurrentCulture);

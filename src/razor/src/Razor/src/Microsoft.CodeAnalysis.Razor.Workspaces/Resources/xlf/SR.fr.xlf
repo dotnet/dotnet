@@ -79,6 +79,11 @@
         <target state="translated">Une opération de formatage est en cours d’abandon, car elle ajouterait ou supprimerait du contenu qui n’est pas un espace blanc.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Formatting_Error">
+        <source>Formatting error. Abandoning further work to not corrupt the file, please report this issue. See: https://aka.ms/razor-formatting-issue</source>
+        <target state="translated">Erreur de mise en forme. Abandon du travail pour éviter de corrompre le fichier, veuillez signaler ce problème. Voir : https://aka.ms/razor-formatting-issue</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Generate_Async_Event_Handler_Title">
         <source>Generate Async Event Handler '{0}'</source>
         <target state="translated">Générer le gestionnaire d’événements asynchrone « {0} »</target>

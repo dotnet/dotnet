@@ -4,10 +4,11 @@ on:
     types: [opened, ready_for_review]
 permissions:
   contents: write
+  pull-requests: write
 jobs:
   add_milestone:
     runs-on: ubuntu-latest
-    if: ${{ github.repository == 'microsoft/vstest' && github.event.pull_request.user.login == 'dotnet-maestro' && (startsWith(github.event.pull_request.title, '[main] Source code updates from dotnet/') || startsWith(github.event.pull_request.title, '[main] Update dependencies from dotnet/') || startsWith(github.event.pull_request.title, '[main] Update dependencies from devdiv/')) }}
+    if: ${{ github.repository == 'microsoft/vstest' && github.event.pull_request.user.login == 'dotnet-maestro[bot]' && (startsWith(github.event.pull_request.title, '[main] Source code updates from dotnet/') || startsWith(github.event.pull_request.title, '[main] Update dependencies from dotnet/') || startsWith(github.event.pull_request.title, '[main] Update dependencies from devdiv/')) }}
     steps:
     - name: Enable pull request auto-merge
       env:
@@ -16,13 +17,10 @@ jobs:
       run: |
         gh api graphql -f query='
           mutation($pull: ID!) {
-            enablePullRequestAutoMerge(input: {pullRequestId: $pull}) {
+            enablePullRequestAutoMerge(input: {pullRequestId: $pull, mergeMethod: SQUASH}) {
               pullRequest {
                 id
                 number
-                autoMergeRequest {
-                  mergeMethod
-                }
               }
             }
           }' -f pull=$PULL_REQUEST_ID

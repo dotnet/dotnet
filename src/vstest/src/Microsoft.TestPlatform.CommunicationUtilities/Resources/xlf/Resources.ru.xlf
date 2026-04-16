@@ -22,6 +22,21 @@
         <target state="translated">Активное обнаружение тестов прервано. Причина: {0}</target>
         <note />
       </trans-unit>
+      <trans-unit id="ConnectionTimeoutProcessDidNotStartErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. The process failed to start, this might happen because of  antivirus preventing it from starting.</source>
+        <target state="translated">Процессу {0} не удалось подключиться к процессу {1} за {2} сек. Процесс не удалось запустить; возможно, это произошло из-за блокировки антивирусом.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionTimeoutProcessExitedErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. The process {3} - {4}, exited with exitCode {5}, and error output: \n{6}</source>
+        <target state="translated">Процессу {0} не удалось подключиться к процессу {1} за {2} сек. Процесс {3} – {4} завершился с кодом выхода{5} и выданным сообщением ошибки: \n{6}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionTimeoutWithDetailsErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. When the timeout happened, the process {3} -{4} was still running. This most often happens because of machine slowness, please set environment variable {5} to increase timeout.</source>
+        <target state="translated">Процессу {0} не удалось подключиться к процессу {1} за {2} сек. На момент, когда истекло время ожидания, процесс {3} – {4} все еще выполнялся. Чаще всего это связано с замедлением работы компьютера; задайте значение переменной среды {5}, чтобы увеличить время ожидания.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UnableToCommunicateToTestHost">
         <source>Unable to communicate with test host process.</source>
         <target state="translated">Не удалось связаться с хост-процессом теста.</target>

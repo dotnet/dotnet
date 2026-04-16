@@ -205,7 +205,7 @@ public class DirectiveAttributeEventParameterCompletionItemProviderTest : RazorT
     private RazorCompletionContext CreateRazorCompletionContext(TestCode documentContent)
     {
         var codeDocument = GetCodeDocument(documentContent.Text);
-        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredTagHelperRewrittenSyntaxTree();
         var tagHelperDocumentContext = codeDocument.GetRequiredTagHelperContext();
         var absoluteIndex = documentContent.Position;
 

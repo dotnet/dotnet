@@ -470,10 +470,20 @@ public static class RelationalEntityTypeExtensions
     public static string? GetFunctionName(this IReadOnlyEntityType entityType)
     {
         var nameAnnotation = entityType.FindAnnotation(RelationalAnnotationNames.FunctionName);
-        return nameAnnotation != null
-            ? (string?)nameAnnotation.Value
-            : entityType.BaseType != null
-                ? entityType.GetRootType().GetFunctionName()
+        if (nameAnnotation != null)
+        {
+            return (string?)nameAnnotation.Value;
+        }
+
+        if (entityType.BaseType != null)
+        {
+            return entityType.GetRootType().GetFunctionName();
+        }
+
+        var ownership = entityType.FindOwnership();
+        return ownership != null
+            && (ownership.IsUnique || entityType.IsMappedToJson())
+                ? ownership.PrincipalEntityType.GetFunctionName()
                 : null;
     }
 
@@ -1508,7 +1518,13 @@ public static class RelationalEntityTypeExtensions
     ///     Gets the mapping strategy for the derived types.
     /// </summary>
     /// <param name="entityType">The entity type.</param>
-    /// <returns>The mapping strategy for the derived types.</returns>
+    /// <returns>
+    ///     The mapping strategy for the derived types, or <see langword="null" /> if no strategy is configured
+    ///     and the entity type has no derived types. Well-known values include
+    ///     <see cref="RelationalAnnotationNames.TphMappingStrategy" />,
+    ///     <see cref="RelationalAnnotationNames.TptMappingStrategy" />, and
+    ///     <see cref="RelationalAnnotationNames.TpcMappingStrategy" />, but other values may be returned if configured.
+    /// </returns>
     public static string? GetMappingStrategy(this IReadOnlyEntityType entityType)
         => (string?)entityType[RelationalAnnotationNames.MappingStrategy]
             ?? (entityType.BaseType != null

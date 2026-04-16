@@ -3,6 +3,7 @@
 
 #nullable disable
 
+using System;
 using System.Collections.Generic;
 
 namespace NuGet.CommandLine.XPlat.ListPackage
@@ -12,12 +13,14 @@ namespace NuGet.CommandLine.XPlat.ListPackage
     /// </summary>
     internal class ListPackageReportFrameworkPackage
     {
-        internal string Framework { get; set; }
+        internal string Framework { get; }
+        internal string TargetAlias { get; }
         internal List<ListReportPackage> TopLevelPackages { get; set; }
         internal List<ListReportPackage> TransitivePackages { get; set; }
-        public ListPackageReportFrameworkPackage(string frameWork)
+        public ListPackageReportFrameworkPackage(string framework, string targetAlias)
         {
-            Framework = frameWork;
+            Framework = framework ?? throw new ArgumentNullException(nameof(framework));
+            TargetAlias = targetAlias ?? throw new ArgumentNullException(nameof(targetAlias));
         }
     }
 }

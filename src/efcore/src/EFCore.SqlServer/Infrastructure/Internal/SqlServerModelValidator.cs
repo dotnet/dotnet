@@ -50,10 +50,11 @@ public class SqlServerModelValidator(
         ITypeBase structuralType,
         IDiagnosticsLogger<DbLoggerCategory.Model.Validation> logger)
     {
+        ValidateVectorProperty(property, logger);
+
         base.ValidateProperty(property, structuralType, logger);
 
         ValidateDecimalColumn(property, logger);
-        ValidateVectorProperty(property, logger);
     }
 
     /// <summary>
@@ -446,13 +447,6 @@ public class SqlServerModelValidator(
             throw new InvalidOperationException(
                 SqlServerStrings.TemporalExpectedPeriodPropertyNotFound(
                     temporalEntityType.DisplayName(), annotationPropertyName));
-        }
-
-        if (!periodProperty.IsShadowProperty() && !temporalEntityType.IsPropertyBag)
-        {
-            throw new InvalidOperationException(
-                SqlServerStrings.TemporalPeriodPropertyMustBeInShadowState(
-                    temporalEntityType.DisplayName(), periodProperty.Name));
         }
 
         if (periodProperty.IsNullable

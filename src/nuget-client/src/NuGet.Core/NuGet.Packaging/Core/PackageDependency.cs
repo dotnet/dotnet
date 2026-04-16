@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -49,16 +47,16 @@ namespace NuGet.Packaging.Core
         }
 
         [JsonConstructor]
-        public PackageDependency(string id, VersionRange versionRange)
+        public PackageDependency(string id, VersionRange? versionRange)
             : this(id, versionRange, include: null, exclude: null)
         {
         }
 
         public PackageDependency(
             string id,
-            VersionRange versionRange,
-            IReadOnlyList<string> include,
-            IReadOnlyList<string> exclude)
+            VersionRange? versionRange,
+            IReadOnlyList<string>? include,
+            IReadOnlyList<string>? exclude)
         {
             if (string.IsNullOrEmpty(id))
             {
@@ -71,12 +69,12 @@ namespace NuGet.Packaging.Core
             Exclude = exclude ?? EmptyList;
         }
 
-        public bool Equals(PackageDependency other)
+        public bool Equals(PackageDependency? other)
         {
             return PackageDependencyComparer.Default.Equals(this, other);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             var dependency = obj as PackageDependency;
 

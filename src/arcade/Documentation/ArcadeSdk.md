@@ -382,35 +382,6 @@ Optionally, a list of Visual Studio [workload component ids](https://docs.micros
 }
 ```
 
-If the build runs on a Windows machine that does not have the required Visual Studio version installed the `build.ps1` script attempts to use xcopy-deployable MSBuild package [`RoslynTools.MSBuild`](https://dotnet.myget.org/feed/roslyn-tools/package/nuget/RoslynTools.MSBuild). This package will allow the build to run on desktop msbuild but it may not provide all tools that the repository needs to build all projects and/or run all tests.
-
-The version of `RoslynTools.MSBuild` package can be specified in `global.json` file under `tools` like so:
-
-```json
-{
-  "tools": {
-    "vs": {
-      "version": "16.0"
-    },
-    "xcopy-msbuild": "16.0.0-rc1-alpha"
-  }
-}
-```
-
-If it is not specified the build script attempts to find `RoslynTools.MSBuild` version `{VSMajor}.{VSMinor}.0-alpha` where `VSMajor.VSMinor` is the value of `tools.vs.version`.
-
-If the fallback behavior to use xcopy-deployable MSBuild package is not desirable, then a version of `none` should be indicated in `global.json`, like this: 
-
-```json
-{
-  "tools": {
-    "vs": {
-      "version": "16.4"
-    },
-    "xcopy-msbuild": "none"
-  }
-}
-```
 
 #### Example: Restoring multiple .NET Core Runtimes for running tests
 
@@ -596,6 +567,7 @@ Set `VSSDKTargetPlatformRegRootSuffix` property to specify the root suffix of th
 
 If `source.extension.vsixmanifest` is present next to a project file the project is by default considered to be a VSIX producing project (`IsVsixProject` property is set to true). 
 A package reference to `Microsoft.VSSDK.BuildTools` is automatically added to such project. 
+Set `IncludeMicrosoftVSSDKBuildToolsPackageReference` to `false` to opt out of the automatic package reference (e.g. if you need to manage the version yourself).
 
 Arcade SDK include build target for generating VS Template VSIXes. Adding `VSTemplate` items to project will trigger the target.
 

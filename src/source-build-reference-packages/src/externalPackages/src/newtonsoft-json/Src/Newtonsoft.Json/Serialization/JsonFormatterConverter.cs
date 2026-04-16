@@ -25,6 +25,7 @@
 
 #if HAVE_BINARY_SERIALIZATION
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.Serialization;
 using Newtonsoft.Json.Utilities;
@@ -32,6 +33,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Newtonsoft.Json.Serialization
 {
+#pragma warning disable SYSLIB0050
+    [RequiresUnreferencedCode(MiscellaneousUtils.TrimWarning)]
+    [RequiresDynamicCode(MiscellaneousUtils.AotWarning)]
     internal class JsonFormatterConverter : IFormatterConverter
     {
         private readonly JsonSerializerInternalReader _reader;
@@ -152,6 +156,7 @@ namespace Newtonsoft.Json.Serialization
             return GetTokenValue<ulong>(value);
         }
     }
+#pragma warning restore SYSLIB0050
 }
 
 #endif

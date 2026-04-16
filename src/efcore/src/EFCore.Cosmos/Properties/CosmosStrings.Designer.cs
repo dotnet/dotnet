@@ -32,6 +32,14 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Internal
                 ttl1, entityType1, entityType2, ttl2, container);
 
         /// <summary>
+        ///     The property '{property}' on type '{type}' cannot be configured as not auto-loaded. The Cosmos provider stores entire documents as JSON, so partial property loading is not supported.
+        /// </summary>
+        public static string AutoLoadedCosmosProperty(object? property, object? type)
+            => string.Format(
+                GetString("AutoLoadedCosmosProperty", nameof(property), nameof(type)),
+                property, type);
+
+        /// <summary>
         ///     The type '{givenType}' cannot be mapped as a dictionary because it does not implement '{dictionaryType}'.
         /// </summary>
         public static string BadDictionaryType(object? givenType, object? dictionaryType)
@@ -584,6 +592,14 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Internal
             => string.Format(
                 GetString("UnableToBindMemberToEntityProjection", nameof(memberType), nameof(member), nameof(entityType)),
                 memberType, member, entityType);
+
+        /// <summary>
+        ///     Unhandled expression '{expression}' of type '{expressionType}' encountered in '{visitor}'.
+        /// </summary>
+        public static string UnhandledExpressionInVisitor(object? expression, object? expressionType, object? visitor)
+            => string.Format(
+                GetString("UnhandledExpressionInVisitor", nameof(expression), nameof(expressionType), nameof(visitor)),
+                expression, expressionType, visitor);
 
         /// <summary>
         ///     Unsupported operator '{nodeType}' specified for expression of type '{expressionType}'.

@@ -12,7 +12,7 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void FrameworkReference_ThrowsForNullTargetFramework()
         {
-            Assert.Throws<ArgumentNullException>(() => new FrameworkReference(null));
+            Assert.Throws<ArgumentNullException>(() => new FrameworkReference(null!));
         }
 
         [Fact]

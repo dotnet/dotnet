@@ -25,3 +25,12 @@
 [submodule "spectre-console"]
 	path = src/externalPackages/src/spectre-console
 	url = https://github.com/spectreconsole/spectre.console
+[submodule "src/externalPackages/src/antlr4"]
+	path = src/externalPackages/src/antlr4
+	url = https://github.com/antlr/antlr4
+[submodule "opentelemetry-dotnet"]
+	path = src/externalPackages/src/opentelemetry-dotnet
+	url = https://github.com/open-telemetry/opentelemetry-dotnet
+[submodule "opentelemetry-dotnet-contrib"]
+	path = src/externalPackages/src/opentelemetry-dotnet-contrib
+	url = https://github.com/open-telemetry/opentelemetry-dotnet-contrib

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <PackageVersion>7.0.1</PackageVersion>
+    <AssemblyName>NuGet.Packaging</AssemblyName>
+    <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <ProjectReference Include="../../nuget.configuration/7.0.1/NuGet.Configuration.7.0.1.csproj" />
+    <ProjectReference Include="../../nuget.versioning/7.0.1/NuGet.Versioning.7.0.1.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.pkcs/9.0.6/System.Security.Cryptography.Pkcs.9.0.6.csproj" />
+  </ItemGroup>
+
+</Project>

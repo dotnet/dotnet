@@ -1,10 +1,9 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -99,15 +98,15 @@ namespace NuGet.Packaging
             var nuspecReader = new NuspecReader(nuspec);
             var packageId = nuspecReader.GetId();
             var packageLanguage = nuspecReader.GetLanguage();
-            string localRuntimePackageId = null;
-            PackageIdentity runtimePackageIdentity = null;
+            string? localRuntimePackageId = null;
+            PackageIdentity? runtimePackageIdentity = null;
 
             if (!string.IsNullOrEmpty(packageLanguage)
                 && packageId.EndsWith('.' + packageLanguage, StringComparison.OrdinalIgnoreCase))
             {
                 // The satellite pack's Id is of the format <Core-Package-Id>.<Language>. Extract the core package id using this.
                 // Additionally satellite packages have a strict dependency on the core package
-                localRuntimePackageId = packageId.Substring(0, packageId.Length - packageLanguage.Length - 1);
+                localRuntimePackageId = packageId.Substring(0, packageId.Length - packageLanguage!.Length - 1);
 
                 foreach (var group in nuspecReader.GetDependencyGroups())
                 {
@@ -129,13 +128,13 @@ namespace NuGet.Packaging
             return new SatellitePackageInfo(runtimePackageIdentity != null, packageLanguage, runtimePackageIdentity);
         }
 
-        public static async Task<Tuple<string, IEnumerable<string>>> GetSatelliteFilesAsync(
+        public static async Task<Tuple<string?, IEnumerable<string>>> GetSatelliteFilesAsync(
             PackageReaderBase packageReader,
             PackagePathResolver packagePathResolver,
             CancellationToken cancellationToken)
         {
             var satelliteFileEntries = new List<string>();
-            string runtimePackageDirectory = null;
+            string? runtimePackageDirectory = null;
 
             var result = await GetSatellitePackageInfoAsync(packageReader, cancellationToken);
 
@@ -145,6 +144,7 @@ namespace NuGet.Packaging
                 // Check, if the runtimePackage is installed and get the folder to copy over files
 
                 var runtimePackageFilePath = packagePathResolver.GetInstalledPackageFilePath(result.RuntimePackageIdentity);
+
                 if (File.Exists(runtimePackageFilePath))
                 {
                     // Existence of the package file is the validation that the package exists
@@ -153,7 +153,7 @@ namespace NuGet.Packaging
                 }
             }
 
-            return new Tuple<string, IEnumerable<string>>(runtimePackageDirectory, satelliteFileEntries);
+            return new Tuple<string?, IEnumerable<string>>(runtimePackageDirectory, satelliteFileEntries);
         }
 
         /// <summary>
@@ -172,14 +172,14 @@ namespace NuGet.Packaging
             if (!string.IsNullOrEmpty(packageDirectory))
             {
                 var packageFiles = await packageReader.GetPackageFilesAsync(packageSaveMode, cancellationToken);
-                var entries = packageReader.EnumeratePackageEntries(packageFiles, packageDirectory);
+                var entries = packageReader.EnumeratePackageEntries(packageFiles, packageDirectory!);
                 installedPackageFiles = entries.Where(e => e.IsInstalled());
             }
 
             return installedPackageFiles.ToList();
         }
 
-        public static async Task<Tuple<string, IEnumerable<ZipFilePair>>> GetInstalledSatelliteFilesAsync(
+        public static async Task<Tuple<string?, IEnumerable<ZipFilePair>>> GetInstalledSatelliteFilesAsync(
             PackageArchiveReader packageReader,
             PackagePathResolver packagePathResolver,
             PackageSaveMode packageSaveMode,
@@ -195,23 +195,25 @@ namespace NuGet.Packaging
             {
                 var satelliteFileEntries = packageReader.EnumeratePackageEntries(
                     satelliteFiles.Where(f => IsPackageFile(f, packageSaveMode)),
-                    runtimePackageDirectory);
+                    runtimePackageDirectory!);
                 installedSatelliteFiles = satelliteFileEntries.Where(e => e.IsInstalled());
             }
 
-            return new Tuple<string, IEnumerable<ZipFilePair>>(runtimePackageDirectory, installedSatelliteFiles.ToList());
+            return new Tuple<string?, IEnumerable<ZipFilePair>>(runtimePackageDirectory, installedSatelliteFiles.ToList());
         }
 
         private sealed class SatellitePackageInfo
         {
+            [MemberNotNullWhen(true, nameof(PackageLanguage))]
+            [MemberNotNullWhen(true, nameof(RuntimePackageIdentity))]
             public bool IsSatellitePackage { get; }
-            public string PackageLanguage { get; }
-            public PackageIdentity RuntimePackageIdentity { get; }
+            public string? PackageLanguage { get; }
+            public PackageIdentity? RuntimePackageIdentity { get; }
 
             internal SatellitePackageInfo(
                 bool isSatellitePackage,
-                string packageLanguage,
-                PackageIdentity runtimePackageIdentity)
+                string? packageLanguage,
+                PackageIdentity? runtimePackageIdentity)
             {
                 IsSatellitePackage = isSatellitePackage;
                 PackageLanguage = packageLanguage;

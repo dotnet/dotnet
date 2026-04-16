@@ -16,6 +16,8 @@ public class CosmosTriggersTest(NonSharedFixture fixture) : NonSharedModelTestBa
         => CosmosTestStoreFactory.Instance;
 
     [ConditionalFact]
+    // Linux emulator: server-side scripts are not supported
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public async Task Triggers_are_executed_on_SaveChanges()
     {
         var contextFactory = await InitializeNonSharedTest<TriggersContext>(shouldLogCategory: _ => true);

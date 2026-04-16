@@ -1,8 +1,17 @@
 # About This Project
 
-This project contains the xUnit.net assertion library source code, intended to be used as a Git submodule.
+This project contains the xUnit.net assertion library source code, intended to be used as a Git submodule (or via the `xunit.v3.assert.source` NuGet package).
 
-Code here is built with several target frameworks: `netstandard1.1` and `net6.0` for xUnit.net v2; and `netstandard2.0` and `net6.0` for xUnit.net v3. At a minimum the code needs to be able to support `net452` and later for .NET Framework, `netcoreapp1.0` and later for .NET Core, and `net5.0` and later for .NET. The minimum (and default) C# version is 6.0, unless specific features require targeting later compilers. Additionally, we compile with the full Roslyn analyzer set enabled when building for v3, so you will frequently see conditional code and/or rules being disabled as appropriate. These constraints are supported by the [suggested contribution workflow](#suggested-contribution-workflow), which aims to make it easy to know when you've used unavailable features.
+Code here is built with `netstandard2.0` and `net8.0` within xUnit.net v3. At a minimum the code needs to be able to support `net472` and later for .NET Framework, and `net8.0` and later for .NET. The minimum (and default) C# version is 7.3, unless specific features require targeting later compilers. Additionally, we compile with the full Roslyn analyzer set enabled when building for v3, so you will frequently see conditional code and/or rules being disabled as appropriate. These constraints are supported by the [suggested contribution workflow](#suggested-contribution-workflow), which aims to make it easy to know when you've used unavailable features.
+
+This code includes assertions for immutable collections as well as the `Span` and `Memory` family of types. If you experience compiler errors related to these types, you may need to add references to the following NuGet packages:
+
+```xml
+<ItemGroup>
+    <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
+    <PackageReference Include="System.Memory" Version="4.5.5" />
+</ItemGroup>
+```
 
 > _**Note:** If your PR requires a newer target framework or a newer C# language to build, please start a discussion in the related issue(s) before starting any work. PRs that arbitrarily use newer target frameworks and/or newer C# language features will need to be fixed; you may be asked to fix them, or we may fix them for you, or we may decline the PR (at our discretion)._
 
@@ -12,23 +21,27 @@ To open an issue for this project, please visit the [core xUnit.net project issu
 
 Whether you are using this repository via Git submodule or via the [source-based NuGet package](https://www.nuget.org/packages/xunit.assert.source), the following pre-processor directives can be used to influence the code contained in this repository:
 
-### `XUNIT_IMMUTABLE_COLLECTIONS` (min: C# 6.0, xUnit.net v2)
+### `XUNIT_AOT` (min: C# 13, .NET 9)
 
-There are assertions that target immutable collections. If you are using a target framework that is compatible with [`System.Collections.Immutable`](https://www.nuget.org/packages/System.Collections.Immutable), you should define `XUNIT_IMMUTABLE_COLLECTIONS` to enable the additional versions of those assertions that will consume immutable collections.
+Define this compilation symbol to use assertions that are compatible with Native AOT.
 
-### `XUNIT_NULLABLE` (min: C# 9.0, xUnit.net v2)
+_Note: you must add_ `<PublishAot>true</PublishAot>` _to the property group of your project file._
 
-Projects that consume this repository as source, which wish to use nullable reference type annotations should define the `XUNIT_NULLABLE` compilation symbol to opt-in to the relevant nullability analysis annotations on method signatures.
+### `XUNIT_NULLABLE` (min: C# 9.0)
 
-### `XUNIT_SKIP` (min: C# 10.0, xUnit.net v3)
+Define this compilation symbol to opt-in to support for nullable reference types and to enable the relevant nullability analysis annotations on method signatures.
 
-The Skip family of assertions (like `Assert.Skip`) require xUnit.net v3. Define this to enable the Skip assertions.
+_Note: you must add_ `<Nullable>enable</Nullable>` _to the property group of your project file._
 
-> _**Note**: If you enable try to use it from xUnit.net v2, the test will show up as failed rather than skipped. Runtime support in the core library is required to make this feature work properly, which is why it's not supported for v2._
+### `XUNIT_OVERLOAD_RESOLUTION_PRIORITY` (min: C# 13.0)
 
-### `XUNIT_SPAN` (min: C# 6.0, xUnit.net v2)
+Define this compilation symbol to opt-in to decorating assertion functions with [`[OverloadResolutionPriority]`](https://learn.microsoft.com/dotnet/api/system.runtime.compilerservices.overloadresolutionpriorityattribute) to help the compiler resolve competing ambiguous overloads.
 
-There are optimized versions of `Assert.Equal` for arrays which use `Span<T>`- and/or `Memory<T>`-based comparison options. If you are using a target framework that supports `Span<T>` and `Memory<T>`, you should define `XUNIT_SPAN` to enable these new assertions. You may need to add a reference to [`System.Memory`](https://www.nuget.org/packages/System.Memory) for older target frameworks.
+### `XUNIT_POINTERS`
+
+Define this compilation symbol to enable support for assertions related to unsafe pointers.
+
+_Note: you must add_ `<AllowUnsafeBlocks>true</AllowUnsafeBlocks>` _to the property group of your project file._
 
 ### `XUNIT_VISIBILITY_INTERNAL`
 
@@ -95,8 +108,32 @@ _Please remember that all PRs require associated unit tests. You may be asked to
 
 # About xUnit.net
 
-[<img align="right" width="100px" src="https://raw.githubusercontent.com/xunit/media/main/dotnet-foundation.svg" />](https://dotnetfoundation.org/projects/project-detail/xunit)
+xUnit.net is a free, open source, community-focused unit testing tool for C#, F#, and Visual Basic.
 
-xUnit.net is a free, open source, community-focused unit testing tool for the .NET Framework. Written by the original inventor of NUnit v2, xUnit.net is the latest technology for unit testing C#, F#, VB.NET and other .NET languages. xUnit.net works with ReSharper, CodeRush, TestDriven.NET and Xamarin. It is part of the [.NET Foundation](https://www.dotnetfoundation.org/), and operates under their [code of conduct](http://www.dotnetfoundation.org/code-of-conduct). It is licensed under [Apache 2](https://opensource.org/licenses/Apache-2.0) (an OSI approved license).
+xUnit.net works with the [.NET SDK](https://dotnet.microsoft.com/download) command line tools, [Visual Studio](https://visualstudio.microsoft.com/), [Visual Studio Code](https://code.visualstudio.com/), [JetBrains Rider](https://www.jetbrains.com/rider/), [NCrunch](https://www.ncrunch.net/), and any development environment compatible with [Microsoft Testing Platform](https://learn.microsoft.com/dotnet/core/testing/microsoft-testing-platform-intro) (xUnit.net v3) or [VSTest](https://github.com/microsoft/vstest) (all versions of xUnit.net).
+
+xUnit.net is part of the [.NET Foundation](https://www.dotnetfoundation.org/) and operates under their [code of conduct](https://www.dotnetfoundation.org/code-of-conduct). It is licensed under [Apache 2](https://opensource.org/licenses/Apache-2.0) (an OSI approved license). The project is [governed](https://xunit.net/governance) by a Project Lead.
 
 For project documentation, please visit the [xUnit.net project home](https://xunit.net/).
+
+* _New to xUnit.net? Get started with the [.NET SDK](https://xunit.net/docs/getting-started/v3/getting-started)._
+* _Need some help building the source? See [BUILDING.md](https://github.com/xunit/xunit/tree/main/BUILDING.md)._
+* _Want to contribute to the project? See [CONTRIBUTING.md](https://github.com/xunit/.github/tree/main/CONTRIBUTING.md)._
+* _Want to contribute to the assertion library? See the [suggested contribution workflow](https://github.com/xunit/assert.xunit/tree/main/README.md#suggested-contribution-workflow) in the assertion library project, as it is slightly more complex due to code being spread across two GitHub repositories._
+
+[![Powered by NDepend](https://raw.github.com/xunit/media/main/powered-by-ndepend-transparent.png)](http://www.ndepend.com/)
+
+## Latest Builds
+
+|                             | Latest stable                                                                                                                            | Latest CI ([how to use](https://xunit.net/docs/using-ci-builds))                                                                                                                                                              | Build status
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------
+| `xunit.v3`                  | [![](https://img.shields.io/nuget/v/xunit.v3.svg?logo=nuget)](https://www.nuget.org/packages/xunit.v3)                                   | [![](https://img.shields.io/endpoint.svg?url=https://f.feedz.io/xunit/xunit/shield/xunit.v3/latest&logo=nuget&color=f58142)](https://feedz.io/org/xunit/repository/xunit/packages/xunit.v3)                                   | [![](https://img.shields.io/endpoint.svg?url=https://actions-badge.atrox.dev/xunit/xunit/badge%3Fref%3Dmain&amp;label=build)](https://actions-badge.atrox.dev/xunit/xunit/goto?ref=main)
+| `xunit`                     | [![](https://img.shields.io/nuget/v/xunit.svg?logo=nuget)](https://www.nuget.org/packages/xunit)                                         | [![](https://img.shields.io/endpoint.svg?url=https://f.feedz.io/xunit/xunit/shield/xunit/latest&logo=nuget&color=f58142)](https://feedz.io/org/xunit/repository/xunit/packages/xunit)                                         | [![](https://img.shields.io/endpoint.svg?url=https://actions-badge.atrox.dev/xunit/xunit/badge%3Fref%3Dv2&amp;label=build)](https://actions-badge.atrox.dev/xunit/xunit/goto?ref=v2)
+| `xunit.analyzers`           | [![](https://img.shields.io/nuget/v/xunit.analyzers.svg?logo=nuget)](https://www.nuget.org/packages/xunit.analyzers)                     | [![](https://img.shields.io/endpoint.svg?url=https://f.feedz.io/xunit/xunit/shield/xunit.analyzers/latest&logo=nuget&color=f58142)](https://feedz.io/org/xunit/repository/xunit/packages/xunit.analyzers)                     | [![](https://img.shields.io/endpoint.svg?url=https://actions-badge.atrox.dev/xunit/xunit.analyzers/badge%3Fref%3Dmain&amp;label=build)](https://actions-badge.atrox.dev/xunit/xunit.analyzers/goto?ref=main)
+| `xunit.runner.visualstudio` | [![](https://img.shields.io/nuget/v/xunit.runner.visualstudio.svg?logo=nuget)](https://www.nuget.org/packages/xunit.runner.visualstudio) | [![](https://img.shields.io/endpoint.svg?url=https://f.feedz.io/xunit/xunit/shield/xunit.runner.visualstudio/latest&logo=nuget&color=f58142)](https://feedz.io/org/xunit/repository/xunit/packages/xunit.runner.visualstudio) | [![](https://img.shields.io/endpoint.svg?url=https://actions-badge.atrox.dev/xunit/visualstudio.xunit/badge%3Fref%3Dmain&amp;label=build)](https://actions-badge.atrox.dev/xunit/visualstudio.xunit/goto?ref=main)
+
+*For complete CI package lists, please visit the [feedz.io package search](https://feedz.io/org/xunit/repository/xunit/search). A free login is required.*
+
+## Sponsors
+
+Help support this project by becoming a sponsor through [GitHub Sponsors](https://github.com/sponsors/xunit).

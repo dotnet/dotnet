@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using NuGet.Versioning;
@@ -14,8 +12,7 @@ namespace NuGet.Packaging.Core
     /// </summary>
     public class PackageIdentity : IEquatable<PackageIdentity>, IComparable<PackageIdentity>
     {
-        private readonly string _id;
-        private readonly NuGetVersion _version;
+        private readonly NuGetVersion? _version;
         private const string ToStringFormat = "{0}.{1}";
 
         /// <summary>
@@ -23,32 +20,31 @@ namespace NuGet.Packaging.Core
         /// </summary>
         /// <param name="id">name</param>
         /// <param name="version">version</param>
-        public PackageIdentity(string id, NuGetVersion version)
+        public PackageIdentity(string id, NuGetVersion? version)
         {
             if (id == null)
             {
                 throw new ArgumentNullException(nameof(id));
             }
 
-            _id = id;
+            Id = id;
             _version = version;
         }
 
         /// <summary>
         /// Package name
         /// </summary>
-        public string Id
-        {
-            get { return _id; }
-        }
+        public string Id { get; }
 
         /// <summary>
         /// Package Version
         /// </summary>
         /// <remarks>can be null</remarks>
+        /// <remarks>NU_NULL_INC: This property is annotated as not nullable intentionally.
+        /// The null is used in very few scenarios and practically illegal in cases dealing with an actual package identity. </remarks>
         public NuGetVersion Version
         {
-            get { return _version; }
+            get { return _version!; }
         }
 
         /// <summary>
@@ -64,7 +60,7 @@ namespace NuGet.Packaging.Core
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(PackageIdentity other)
+        public bool Equals(PackageIdentity? other)
         {
             return Comparer.Equals(this, other);
         }
@@ -72,7 +68,7 @@ namespace NuGet.Packaging.Core
         /// <summary>
         /// True if the identity objects are equal based on the given comparison mode.
         /// </summary>
-        public virtual bool Equals(PackageIdentity other, VersionComparison versionComparison)
+        public virtual bool Equals(PackageIdentity? other, VersionComparison versionComparison)
         {
             var comparer = PackageIdentityComparer.Get(versionComparison);
 
@@ -82,7 +78,7 @@ namespace NuGet.Packaging.Core
         /// <summary>
         /// Sorts based on the id, then version
         /// </summary>
-        public int CompareTo(PackageIdentity other)
+        public int CompareTo(PackageIdentity? other)
         {
             return Comparer.Compare(this, other);
         }
@@ -90,7 +86,7 @@ namespace NuGet.Packaging.Core
         /// <summary>
         /// Compare using the default comparer.
         /// </summary>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             var identity = obj as PackageIdentity;
 
@@ -124,7 +120,7 @@ namespace NuGet.Packaging.Core
         public override string ToString()
         {
             return HasVersion
-                ? String.Format(CultureInfo.InvariantCulture, ToStringFormat, Id, Version.ToNormalizedString())
+                ? String.Format(CultureInfo.InvariantCulture, ToStringFormat, Id, Version!.ToNormalizedString())
                 : Id;
         }
     }

@@ -89,6 +89,8 @@ public class ConfigPatternsCosmosTest(ConfigPatternsCosmosTest.CosmosFixture fix
     }
 
     [ConditionalFact]
+    // Linux emulator: ConnectionMode.Direct may not be supported
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     [PlatformSkipCondition(
         TestUtilities.Xunit.TestPlatform.Mac,
         SkipReason = "Test is very environment-dependent; when running the Cosmos emulator in a VM on Mac, ConnectionMode.Direct causes severe issues")]
@@ -186,7 +188,8 @@ public class ConfigPatternsCosmosTest(ConfigPatternsCosmosTest.CosmosFixture fix
     public class CosmosFixture : ServiceProviderFixtureBase
     {
         public override DbContextOptionsBuilder AddOptions(DbContextOptionsBuilder builder)
-            => base.AddOptions(builder).ConfigureWarnings(w => w.Ignore(CosmosEventId.NoPartitionKeyDefined));
+            => base.AddOptions(builder).ConfigureWarnings(w =>
+                w.Ignore(CosmosEventId.NoPartitionKeyDefined));
 
         protected override ITestStoreFactory TestStoreFactory
             => CosmosTestStoreFactory.Instance;

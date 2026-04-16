@@ -253,7 +253,7 @@ internal static class DelegatedCompletionHelper
         {
             for (var node = initialNode; node != null; node = node.Parent)
             {
-                if (node is MarkupElementSyntax elementNode)
+                if (node is BaseMarkupElementSyntax elementNode)
                 {
                     if (RazorSyntaxFacts.IsScriptOrStyleBlock(elementNode))
                     {
@@ -336,7 +336,10 @@ internal static class DelegatedCompletionHelper
                 }
                 else
                 {
-                    args[0] = documentContext.GetTextDocumentIdentifier();
+                    args[0] = new TextDocumentIdentifier()
+                    {
+                        DocumentUri = new(documentContext.Uri),
+                    };
                     args[1] = formattedTextEdit;
                     if (nextCursorPosition >= 0)
                     {

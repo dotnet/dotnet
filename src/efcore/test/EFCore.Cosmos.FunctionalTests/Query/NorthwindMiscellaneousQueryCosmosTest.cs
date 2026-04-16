@@ -1468,6 +1468,8 @@ ORDER BY c["id"]
         AssertSql();
     }
 
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/238 (ORDER BY with expressions/functions not supported)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public override async Task OrderBy_shadow(bool async)
     {
         // Always throws for sync.
@@ -1484,6 +1486,8 @@ ORDER BY c["Title"], c["EmployeeID"]
         }
     }
 
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/238 (ORDER BY with expressions/functions not supported)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public override async Task OrderBy_multiple(bool async)
     {
         // Always throws for sync.
@@ -2307,6 +2311,8 @@ WHERE (((c["$type"] = "Order") AND (c["OrderDate"] != null)) AND (DateTimePart("
         );
     }
 
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/238 (ORDER BY with expressions/functions not supported)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public override async Task OrderBy_skip_take(bool async)
     {
         // Always throws for sync.
@@ -3202,6 +3208,8 @@ WHERE (c["City"] != null)
 """);
             });
 
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/238 (ORDER BY with expressions/functions not supported)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public override async Task Entity_equality_orderby_descending_composite_key(bool async)
     {
         // Always throws for sync.
@@ -3287,6 +3295,8 @@ ORDER BY c["id"]
         AssertSql();
     }
 
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/238 (ORDER BY with expressions/functions not supported)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public override async Task OrderByDescending_ThenBy(bool async)
     {
         // Always throws for sync.
@@ -3304,6 +3314,8 @@ ORDER BY c["id"] DESC, c["Country"]
         }
     }
 
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/238 (ORDER BY with expressions/functions not supported)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public override async Task OrderByDescending_ThenByDescending(bool async)
     {
         // Always throws for sync.
@@ -3329,6 +3341,8 @@ ORDER BY c["id"] DESC, c["Country"] DESC
         );
     }
 
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/238 (ORDER BY with expressions/functions not supported)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public override async Task OrderBy_ThenBy(bool async)
     {
         // Always throws for sync.
@@ -3346,6 +3360,8 @@ ORDER BY c["id"], c["Country"]
         }
     }
 
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/238 (ORDER BY with expressions/functions not supported)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public override async Task OrderBy_ThenBy_predicate(bool async)
     {
         // Always throws for sync.
@@ -4826,6 +4842,8 @@ WHERE ((c["$type"] = "Order") AND (((DateTimePart("ns", c["OrderDate"]) % 1000) 
     #region ToPageAsync
 
     [ConditionalFact]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/285 (MaxItemCount not respected)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public virtual async Task ToPageAsync()
     {
         await using var context = CreateContext();
@@ -4881,6 +4899,8 @@ ORDER BY c["id"]
     }
 
     [ConditionalFact]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/285 (MaxItemCount not respected)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public virtual async Task ToPageAsync_with_scalar()
     {
         await using var context = CreateContext();

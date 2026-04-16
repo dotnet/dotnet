@@ -69,7 +69,7 @@ public class TestSessionStartArgs : InProcDataCollectionArgs
     {
         ValidateArg.NotNullOrEmpty(property, nameof(property));
         TPDebug.Assert(_properties is not null, "_properties is null");
-        return _properties.ContainsKey(property) ? (T?)_properties[property] : default;
+        return _properties.TryGetValue(property, out var propertyValue) ? (T?)propertyValue : default;
     }
 
     /// <summary>
