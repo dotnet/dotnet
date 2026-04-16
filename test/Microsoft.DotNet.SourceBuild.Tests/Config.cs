@@ -20,6 +20,7 @@ internal static class Config
 
     public static string? CustomPackagesPath => (string)AppContext.GetData(ConfigSwitchPrefix + nameof(CustomPackagesPath))!;
     public static string? LicenseScanPath => (string)AppContext.GetData(ConfigSwitchPrefix + nameof(LicenseScanPath))!;
+    public static string? LicenseScanIgnorePatterns => (string)AppContext.GetData(ConfigSwitchPrefix + nameof(LicenseScanIgnorePatterns))!;
     public static string? MsftSdkTarballPath => (string)AppContext.GetData(ConfigSwitchPrefix + nameof(MsftSdkTarballPath))!;
     public static string? PoisonReportPath => (string)AppContext.GetData(ConfigSwitchPrefix + nameof(PoisonReportPath))!;
     public static string? SdkTarballPath => (string)AppContext.GetData(ConfigSwitchPrefix + nameof(SdkTarballPath))!;
