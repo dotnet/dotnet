@@ -124,9 +124,10 @@ gantt
     - If the approved milestone corresponds to the **Release Specific** branch, then the PR is targeted to the internal VMR **Release Specific** branch and merged.
     - If the approved milestone corresponds to the current state of the **General Servicing** branch (the branch is branded for that milestone), then the PR is targeted to the internal VMR **General Servicing** branch and merged.
     - If the approved milestone does not correspond to any currently open branch, the fix is parked until a **General Servicing** internal VMR branch matches the milestone, and then the fix is merged.
-5. Confirm that the fix made it into the VMR servicing branch matching the approved milestone.
-6. Wait for a validation build.
-7. Validate the fix in the shipping product.
+5. If a staging pull request was created against the component repository for repo-specific validation, be sure to Abandon the PR with a comment that the PR was used for validation, linking to the internal VMR pull request that was used to merge the fix.
+6. Confirm that the fix made it into the VMR servicing branch matching the approved milestone.
+7. Wait for a validation build.
+8. Validate the fix in the shipping product.
 
 #### Repository Owner - Preparing for Upcoming Release
 
