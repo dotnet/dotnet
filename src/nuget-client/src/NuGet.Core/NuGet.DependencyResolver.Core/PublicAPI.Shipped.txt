@@ -51,6 +51,7 @@ NuGet.DependencyResolver.GraphNode<TItem>.Disposition.set -> void
 NuGet.DependencyResolver.GraphOperations
 NuGet.DependencyResolver.IDependencyProvider
 NuGet.DependencyResolver.IDependencyProvider.GetLibrary(NuGet.LibraryModel.LibraryRange! libraryRange, NuGet.Frameworks.NuGetFramework! targetFramework) -> NuGet.LibraryModel.Library?
+NuGet.DependencyResolver.IDependencyProvider.GetLibrary(NuGet.LibraryModel.LibraryRange! libraryRange, NuGet.Frameworks.NuGetFramework! targetFramework, string? alias) -> NuGet.LibraryModel.Library?
 NuGet.DependencyResolver.IDependencyProvider.SupportsType(NuGet.LibraryModel.LibraryDependencyTarget libraryTypeFlag) -> bool
 NuGet.DependencyResolver.IRemoteDependencyProvider
 ~NuGet.DependencyResolver.IRemoteDependencyProvider.FindLibraryAsync(NuGet.LibraryModel.LibraryRange libraryRange, NuGet.Frameworks.NuGetFramework targetFramework, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.LibraryModel.LibraryIdentity>
@@ -61,10 +62,12 @@ NuGet.DependencyResolver.IRemoteDependencyProvider.IsHttp.get -> bool
 ~NuGet.DependencyResolver.IRemoteDependencyProvider.Source.get -> NuGet.Configuration.PackageSource
 ~NuGet.DependencyResolver.IRemoteDependencyProvider.SourceRepository.get -> NuGet.Protocol.Core.Types.SourceRepository
 NuGet.DependencyResolver.LibraryRangeCacheKey
+NuGet.DependencyResolver.LibraryRangeCacheKey.Alias.get -> string?
 NuGet.DependencyResolver.LibraryRangeCacheKey.Equals(NuGet.DependencyResolver.LibraryRangeCacheKey other) -> bool
 NuGet.DependencyResolver.LibraryRangeCacheKey.Framework.get -> NuGet.Frameworks.NuGetFramework!
 NuGet.DependencyResolver.LibraryRangeCacheKey.LibraryRange.get -> NuGet.LibraryModel.LibraryRange!
 NuGet.DependencyResolver.LibraryRangeCacheKey.LibraryRangeCacheKey() -> void
+NuGet.DependencyResolver.LibraryRangeCacheKey.LibraryRangeCacheKey(NuGet.LibraryModel.LibraryRange! range, NuGet.Frameworks.NuGetFramework! framework, string? alias) -> void
 NuGet.DependencyResolver.LocalDependencyProvider
 ~NuGet.DependencyResolver.LocalDependencyProvider.FindLibraryAsync(NuGet.LibraryModel.LibraryRange libraryRange, NuGet.Frameworks.NuGetFramework targetFramework, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.LibraryModel.LibraryIdentity>
 ~NuGet.DependencyResolver.LocalDependencyProvider.GetAllVersionsAsync(string id, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion>>
@@ -82,8 +85,10 @@ NuGet.DependencyResolver.LocalMatch.LocalMatch() -> void
 ~NuGet.DependencyResolver.LocalMatch.LocalProvider.set -> void
 NuGet.DependencyResolver.LockFileCacheKey
 NuGet.DependencyResolver.LockFileCacheKey.Equals(NuGet.DependencyResolver.LockFileCacheKey? other) -> bool
+NuGet.DependencyResolver.LockFileCacheKey.LockFileCacheKey(NuGet.Frameworks.NuGetFramework! framework, string? runtimeIdentifier, string? targetAlias) -> void
 NuGet.DependencyResolver.LockFileCacheKey.Name.get -> string!
 NuGet.DependencyResolver.LockFileCacheKey.RuntimeIdentifier.get -> string?
+NuGet.DependencyResolver.LockFileCacheKey.TargetAlias.get -> string!
 NuGet.DependencyResolver.LockFileCacheKey.TargetFramework.get -> NuGet.Frameworks.NuGetFramework!
 NuGet.DependencyResolver.PackagingUtility
 NuGet.DependencyResolver.RemoteDependencyWalker
@@ -167,5 +172,7 @@ static NuGet.DependencyResolver.LibraryRangeCacheKey.operator ==(NuGet.Dependenc
 ~static NuGet.DependencyResolver.RemoteDependencyWalker.IsGreaterThanOrEqualTo(NuGet.Versioning.VersionRange nearVersion, NuGet.Versioning.VersionRange farVersion) -> bool
 ~static NuGet.DependencyResolver.RemoteDependencyWalker.MergeRuntimeDependencies(System.Collections.Generic.HashSet<NuGet.LibraryModel.LibraryDependency> runtimeDependencies, NuGet.DependencyResolver.GraphNode<NuGet.DependencyResolver.RemoteResolveResult> node) -> void
 static NuGet.DependencyResolver.ResolverUtility.FindLibraryByVersionAsync(NuGet.LibraryModel.LibraryRange! libraryRange, NuGet.Frameworks.NuGetFramework! framework, System.Collections.Generic.IEnumerable<NuGet.DependencyResolver.IRemoteDependencyProvider!>! providers, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.DependencyResolver.RemoteMatch?>!
+static NuGet.DependencyResolver.ResolverUtility.FindLibraryCachedAsync(NuGet.LibraryModel.LibraryRange! libraryRange, NuGet.Frameworks.NuGetFramework! framework, string? runtimeIdentifier, string? targetAlias, NuGet.DependencyResolver.RemoteWalkContext! context, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.DependencyResolver.GraphItem<NuGet.DependencyResolver.RemoteResolveResult!>!>!
+static NuGet.DependencyResolver.ResolverUtility.FindLibraryEntryAsync(NuGet.LibraryModel.LibraryRange! libraryRange, NuGet.Frameworks.NuGetFramework! framework, string? runtimeIdentifier, string? targetAlias, NuGet.DependencyResolver.RemoteWalkContext! context, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.DependencyResolver.GraphItem<NuGet.DependencyResolver.RemoteResolveResult!>!>!
 static NuGet.DependencyResolver.ResolverUtility.FindPackageLibraryMatchCachedAsync(NuGet.LibraryModel.LibraryRange! libraryRange, NuGet.DependencyResolver.RemoteWalkContext! remoteWalkContext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Tuple<NuGet.LibraryModel.LibraryRange!, NuGet.DependencyResolver.RemoteMatch!>!>!
 static NuGet.DependencyResolver.ResolverUtility.FindProjectMatchAsync(NuGet.LibraryModel.LibraryRange! libraryRange, NuGet.Frameworks.NuGetFramework! framework, System.Collections.Generic.IEnumerable<NuGet.DependencyResolver.IDependencyProvider!>! projectProviders, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.DependencyResolver.RemoteMatch?>!

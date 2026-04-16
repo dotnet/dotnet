@@ -317,6 +317,7 @@ NuGet.ProjectModel.PackageSpecExtensions
 NuGet.ProjectModel.PackageSpecOperations
 NuGet.ProjectModel.PackageSpecReferenceDependencyProvider
 ~NuGet.ProjectModel.PackageSpecReferenceDependencyProvider.GetLibrary(NuGet.LibraryModel.LibraryRange libraryRange, NuGet.Frameworks.NuGetFramework targetFramework) -> NuGet.LibraryModel.Library
+~NuGet.ProjectModel.PackageSpecReferenceDependencyProvider.GetLibrary(NuGet.LibraryModel.LibraryRange libraryRange, NuGet.Frameworks.NuGetFramework targetFramework, string alias) -> NuGet.LibraryModel.Library
 ~NuGet.ProjectModel.PackageSpecReferenceDependencyProvider.PackageSpecReferenceDependencyProvider(System.Collections.Generic.IEnumerable<NuGet.ProjectModel.ExternalProjectReference> externalProjects, NuGet.Common.ILogger logger) -> void
 ~NuGet.ProjectModel.PackageSpecReferenceDependencyProvider.PackageSpecReferenceDependencyProvider(System.Collections.Generic.IEnumerable<NuGet.ProjectModel.ExternalProjectReference> externalProjects, NuGet.Common.ILogger logger, bool useLegacyDependencyGraphResolution) -> void
 NuGet.ProjectModel.PackageSpecReferenceDependencyProvider.SupportsType(NuGet.LibraryModel.LibraryDependencyTarget libraryType) -> bool
@@ -349,6 +350,8 @@ NuGet.ProjectModel.PackagesLockFileTarget
 NuGet.ProjectModel.PackagesLockFileTarget.PackagesLockFileTarget() -> void
 ~NuGet.ProjectModel.PackagesLockFileTarget.RuntimeIdentifier.get -> string
 ~NuGet.ProjectModel.PackagesLockFileTarget.RuntimeIdentifier.set -> void
+~NuGet.ProjectModel.PackagesLockFileTarget.TargetAlias.get -> string
+~NuGet.ProjectModel.PackagesLockFileTarget.TargetAlias.set -> void
 ~NuGet.ProjectModel.PackagesLockFileTarget.TargetFramework.get -> NuGet.Frameworks.NuGetFramework
 ~NuGet.ProjectModel.PackagesLockFileTarget.TargetFramework.set -> void
 NuGet.ProjectModel.PackagesLockFileUtilities
@@ -537,6 +540,8 @@ NuGet.ProjectModel.WarningProperties.WarningProperties() -> void
 NuGet.ProjectModel.WarningProperties.WarningProperties(System.Collections.Generic.ISet<NuGet.Common.NuGetLogCode>! warningsAsErrors, System.Collections.Generic.ISet<NuGet.Common.NuGetLogCode>! noWarn, bool allWarningsAsErrors, System.Collections.Generic.ISet<NuGet.Common.NuGetLogCode>! warningsNotAsErrors) -> void
 NuGet.ProjectModel.WarningProperties.WarningsAsErrors.get -> System.Collections.Generic.ISet<NuGet.Common.NuGetLogCode>!
 NuGet.ProjectModel.WarningProperties.WarningsNotAsErrors.get -> System.Collections.Generic.ISet<NuGet.Common.NuGetLogCode>!
+const NuGet.ProjectModel.LockFileFormat.AliasedVersion = 4 -> int
+const NuGet.ProjectModel.LockFileFormat.LegacyVersion = 3 -> int
 ~override NuGet.ProjectModel.AssetsLogMessage.Equals(object other) -> bool
 override NuGet.ProjectModel.AssetsLogMessage.GetHashCode() -> int
 ~override NuGet.ProjectModel.BuildAction.Equals(object obj) -> bool
@@ -620,14 +625,17 @@ static NuGet.ProjectModel.JTokenExtensions.ValueAsArray<T>(this Newtonsoft.Json.
 ~static NuGet.ProjectModel.LockFileItem.implicit operator NuGet.ProjectModel.LockFileItem(string path) -> NuGet.ProjectModel.LockFileItem
 ~static NuGet.ProjectModel.LockFileUtilities.GetLockFile(string lockFilePath, NuGet.Common.ILogger logger) -> NuGet.ProjectModel.LockFile
 ~static NuGet.ProjectModel.LockFileUtilities.GetLockFile(string lockFilePath, NuGet.Common.ILogger logger, NuGet.ProjectModel.LockFileReadFlags flags) -> NuGet.ProjectModel.LockFile
+static NuGet.ProjectModel.PackageSpecExtensions.GetNearestTargetFramework(this NuGet.ProjectModel.PackageSpec! project, NuGet.Frameworks.NuGetFramework! targetFramework, string? targetAlias) -> NuGet.ProjectModel.TargetFrameworkInformation!
 static NuGet.ProjectModel.PackageSpecExtensions.GetRestoreMetadataFramework(this NuGet.ProjectModel.PackageSpec! project, NuGet.Frameworks.NuGetFramework! targetFramework) -> NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo!
 static NuGet.ProjectModel.PackageSpecExtensions.GetRestoreMetadataFramework(this NuGet.ProjectModel.PackageSpec! project, string? targetAlias) -> NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo?
 static NuGet.ProjectModel.PackageSpecExtensions.GetTargetFramework(this NuGet.ProjectModel.PackageSpec! project, NuGet.Frameworks.NuGetFramework! targetFramework) -> NuGet.ProjectModel.TargetFrameworkInformation!
 static NuGet.ProjectModel.PackageSpecExtensions.GetTargetFramework(this NuGet.ProjectModel.PackageSpec! project, string? targetAlias) -> NuGet.ProjectModel.TargetFrameworkInformation?
 ~static NuGet.ProjectModel.PackageSpecOperations.AddOrUpdateDependency(NuGet.ProjectModel.PackageSpec spec, NuGet.Packaging.Core.PackageDependency dependency) -> void
 ~static NuGet.ProjectModel.PackageSpecOperations.AddOrUpdateDependency(NuGet.ProjectModel.PackageSpec spec, NuGet.Packaging.Core.PackageDependency dependency, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> frameworksToAdd) -> void
+~static NuGet.ProjectModel.PackageSpecOperations.AddOrUpdateDependency(NuGet.ProjectModel.PackageSpec spec, NuGet.Packaging.Core.PackageDependency dependency, System.Collections.Generic.IEnumerable<string> frameworksToAdd) -> void
 ~static NuGet.ProjectModel.PackageSpecOperations.AddOrUpdateDependency(NuGet.ProjectModel.PackageSpec spec, NuGet.Packaging.Core.PackageIdentity identity) -> void
 ~static NuGet.ProjectModel.PackageSpecOperations.AddOrUpdateDependency(NuGet.ProjectModel.PackageSpec spec, NuGet.Packaging.Core.PackageIdentity identity, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> frameworksToAdd) -> void
+~static NuGet.ProjectModel.PackageSpecOperations.AddOrUpdateDependency(NuGet.ProjectModel.PackageSpec spec, NuGet.Packaging.Core.PackageIdentity identity, System.Collections.Generic.IEnumerable<string> frameworksToAdd) -> void
 ~static NuGet.ProjectModel.PackageSpecOperations.HasPackage(NuGet.ProjectModel.PackageSpec spec, string packageId) -> bool
 ~static NuGet.ProjectModel.PackageSpecOperations.RemoveDependency(NuGet.ProjectModel.PackageSpec spec, string packageId) -> void
 static NuGet.ProjectModel.PackageSpecUtility.IsSnapshotVersion(string? version) -> bool

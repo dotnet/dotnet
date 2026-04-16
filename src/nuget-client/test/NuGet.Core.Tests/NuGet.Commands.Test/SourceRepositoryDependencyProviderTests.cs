@@ -662,6 +662,56 @@ namespace NuGet.Commands.Test
         }
 
         [Fact]
+        public async Task GetAllVersionsAsync_EnsuresResourceIsInitialized_ReturnsVersions()
+        {
+            // Arrange
+            // This test verifies that GetAllVersionsAsync properly calls EnsureResource
+            // to initialize _findPackagesByIdResource. Previously, EnsureResource was not called
+            // and GetAllVersionsInternalAsync would see _findPackagesByIdResource as null,
+            // silently returning null instead of the actual versions.
+            var testLogger = new TestLogger();
+            var cacheContext = new SourceCacheContext();
+            var expectedVersions = new[] { NuGetVersion.Parse("1.0.0"), NuGetVersion.Parse("2.0.0") };
+
+            var findResource = new Mock<FindPackageByIdResource>();
+            findResource.Setup(s => s.GetAllVersionsAsync(
+                    It.IsAny<string>(),
+                    It.IsAny<SourceCacheContext>(),
+                    It.IsAny<ILogger>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedVersions);
+
+            var source = new Mock<SourceRepository>();
+            source.Setup(s => s.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None))
+                .ReturnsAsync(findResource.Object);
+            source.SetupGet(s => s.PackageSource)
+                .Returns(new PackageSource("http://test/index.json"));
+
+            var provider = new SourceRepositoryDependencyProvider(
+                source.Object,
+                testLogger,
+                cacheContext,
+                ignoreFailedSources: true,
+                ignoreWarning: true);
+
+            // Act
+            var versions = await provider.GetAllVersionsAsync(
+                "x",
+                cacheContext,
+                testLogger,
+                CancellationToken.None);
+
+            // Assert
+            versions.Should().BeEquivalentTo(expectedVersions);
+            source.Verify(s => s.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None), Times.Once);
+            findResource.Verify(s => s.GetAllVersionsAsync(
+                "x",
+                It.IsAny<SourceCacheContext>(),
+                It.IsAny<ILogger>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
         public async Task FindLibraryAsync_WhenASourceIsInaccessible_AndFailuresAreNotIgnored_EveryCallLogsAnErrorMessage()
         {
             // Arrange

@@ -5,6 +5,7 @@
 - When creating pull requests, always follow the [PR template](PULL_REQUEST_TEMPLATE.md).
 - Always format before submitting a pull request.
 - Before implementing any code changes, read all files in the `docs/` folder. It contains the NuGet development guidelines, including rules for SDKAnalysisLevel gating, public API policies, error handling patterns, and feature design requirements.
+- Do not edit xlf files directly. These are generated from resx files and any manual changes will be overwritten. Instead, edit the resx files and build to update the xlf files.
 
 ## Coding Standards
 
