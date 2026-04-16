@@ -41,11 +41,11 @@
     <SharedComponentAssetManifests>$(SharedComponentsArtifactsPath)VerticalManifest.xml</SharedComponentAssetManifests>
     <ExtraTestDependenciesRestoreSourcePath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'extra-test-dependencies'))</ExtraTestDependenciesRestoreSourcePath>
 
-    <SbrpRepoSrcDir>$([MSBuild]::NormalizeDirectory('$(SrcDir)', 'source-build-reference-packages', 'src'))</SbrpRepoSrcDir>
+    <SourceBuildAssetsRepoSrcDir>$([MSBuild]::NormalizeDirectory('$(SrcDir)', 'source-build-assets', 'src'))</SourceBuildAssetsRepoSrcDir>
     <ReferencePackagesDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'reference'))</ReferencePackagesDir>
     <ExternalTarballsDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'archive'))</ExternalTarballsDir>
-    <PreviouslySourceBuiltReferencePackagesDirName>SourceBuildReferencePackages</PreviouslySourceBuiltReferencePackagesDirName>
-    <PreviouslySourceBuiltReferencePackagesDir>$([MSBuild]::NormalizeDirectory('$(PreviouslySourceBuiltPackagesPath)', '$(PreviouslySourceBuiltReferencePackagesDirName)'))</PreviouslySourceBuiltReferencePackagesDir>
+    <PreviouslySourceBuiltAssetsDirName>SourceBuildAssets</PreviouslySourceBuiltAssetsDirName>
+    <PreviouslySourceBuiltAssetsDir>$([MSBuild]::NormalizeDirectory('$(PreviouslySourceBuiltPackagesPath)', '$(PreviouslySourceBuiltAssetsDirName)'))</PreviouslySourceBuiltAssetsDir>
     <SourceBuiltArtifactsTarballName>Private.SourceBuilt.Artifacts</SourceBuiltArtifactsTarballName>
     <SourceBuiltSharedComponentsTarballName>Private.SourceBuilt.SharedComponents</SourceBuiltSharedComponentsTarballName>
     <SourceBuiltPrebuiltsTarballName>Private.SourceBuilt.Prebuilts</SourceBuiltPrebuiltsTarballName>
