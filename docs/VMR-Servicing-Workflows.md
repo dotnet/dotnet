@@ -116,7 +116,7 @@ gantt
 #### Developer – Internal Fix
 
 1. Developer prepares source for their fix. This can be done in two ways:
-  - In the internal validation branch of their component repository (to enable repo-specific PR validation), followed by cherry-picking to the internal VMR servicing branch.
+  - In the internal validation branch of their component repository (to enable repo-specific PR validation), followed by cherry-picking to the internal VMR servicing branch. If a repo-specific PR is opened for validation, crosslink them for traceability.
   - Directly in the internal VMR servicing branch.
 2. Developer prepares an approval template and brings the fix to .NET Tactics.
 3. Tactics approves the bug for a specific release (e.g. 10.0.3 or 10.0.4)
