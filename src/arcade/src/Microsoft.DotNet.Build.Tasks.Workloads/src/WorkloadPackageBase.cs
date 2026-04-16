@@ -78,12 +78,12 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
             private set;
         }
 
-        public LicenseMetadata LicenseData
+        public LicenseMetadata? LicenseData
         {
             get;
         }
 
-        public string LicenseUrl
+        public string? LicenseUrl
         {
             get;
         }

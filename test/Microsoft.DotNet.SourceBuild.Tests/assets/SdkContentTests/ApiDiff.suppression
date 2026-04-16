@@ -206,18 +206,6 @@
     <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Microsoft.Build.Locator.dll</Right>
   </Suppression>
   <Suppression>
-    <DiagnosticId>CP0003</DiagnosticId>
-    <Target>Microsoft.ApplicationInsights, Version=x.y.z, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Target>
-    <Left>/msft/sdk/x.y.z/Microsoft.ApplicationInsights.dll</Left>
-    <Right>/sb/sdk/x.y.z/Microsoft.ApplicationInsights.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0003</DiagnosticId>
-    <Target>Microsoft.ApplicationInsights, Version=x.y.z, Culture=neutral, PublicKeyToken=f23a46de0be5d6f3</Target>
-    <Left>/msft/sdk/x.y.z/Microsoft.ApplicationInsights.dll</Left>
-    <Right>/sb/sdk/x.y.z/Microsoft.ApplicationInsights.dll</Right>
-  </Suppression>
-  <Suppression>
     <DiagnosticId>CP0008</DiagnosticId>
     <Target>T:Newtonsoft.Json.Bson.BsonReader</Target>
     <Left>/msft/sdk/x.y.z/Newtonsoft.Json.dll</Left>

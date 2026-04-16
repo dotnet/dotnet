@@ -48,7 +48,7 @@ namespace Microsoft.DotNet.SignTool
 
         public abstract SigningStatus VerifyStrongNameSign(string fileFullPath);
 
-        public abstract bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath, string logPath, string errorLogPath);
+        public abstract bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath, string logPath, string errorLogPath, bool suppressErrors = false);
 
         public bool Sign(IBuildEngine buildEngine, int round, IEnumerable<FileSignInfo> files)
         {
@@ -183,7 +183,7 @@ namespace Microsoft.DotNet.SignTool
             {
                 var notarizeProjectPath = Path.Combine(dir, $"Round{round}-Notarize.proj");
                 File.WriteAllText(notarizeProjectPath, GenerateBuildFileContent(filesToNotarize, null, true));
-                
+
                 // Notarization can be flaky, so retry up to 5 times with no wait between retries
                 const int maxRetries = 5;
                 int attempt = 0;
@@ -200,7 +200,8 @@ namespace Microsoft.DotNet.SignTool
                     notarizationSucceeded = RunMSBuild(buildEngine, notarizeProjectPath, 
                         Path.Combine(_args.LogDir, $"{notarizeLogName}.binlog"), 
                         Path.Combine(_args.LogDir, $"{notarizeLogName}.log"), 
-                        Path.Combine(_args.LogDir, $"{notarizeLogName}.error.log"));
+                        Path.Combine(_args.LogDir, $"{notarizeLogName}.error.log"),
+                        suppressErrors: attempt < maxRetries);
                     
                     if (!notarizationSucceeded && attempt < maxRetries)
                     {

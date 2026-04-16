@@ -51,7 +51,7 @@ public partial class ProcessHelper : IProcessHelper
 
     public PlatformArchitecture GetProcessArchitecture(int processId)
     {
-#if NETCOREAPP || NETSTANDARD2_0_OR_GREATER
+#if !NETFRAMEWORK
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             // No implementation for this for cross platform, and we cannot move this to platform specific file.

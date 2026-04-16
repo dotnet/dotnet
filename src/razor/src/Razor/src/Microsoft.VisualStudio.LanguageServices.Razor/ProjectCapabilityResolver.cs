@@ -87,18 +87,8 @@ internal sealed class ProjectCapabilityResolver : IProjectCapabilityResolver, ID
             var remoteHierarchyService = await session
                 .GetRemoteServiceAsync<IRemoteHierarchyService>(nameof(IRemoteHierarchyService), cancellationToken)
                 .ConfigureAwait(false);
-            if (remoteHierarchyService is null)
-            {
-                _logger.LogWarning($"Project does not support LSP Editor because {nameof(IRemoteHierarchyService)} is unavailable.");
-                return new(IsInProject: true, HasCapability: false);
-            }
 
             var documentFilePathUri = session.ConvertLocalPathToSharedUri(documentFilePath);
-            if (documentFilePathUri is null)
-            {
-                _logger.LogWarning($"Project does not support LSP Editor because file path could not be converted for Live Share: {documentFilePath}");
-                return new(IsInProject: true, HasCapability: false);
-            }
 
             var isMatch = await remoteHierarchyService
                 .HasCapabilityAsync(documentFilePathUri, capability, cancellationToken)

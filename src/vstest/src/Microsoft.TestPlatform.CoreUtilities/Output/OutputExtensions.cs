@@ -116,7 +116,7 @@ public static class OutputExtensions
             return;
         }
 
-#if NET5_0_OR_GREATER
+#if NET
         if (OperatingSystem.IsAndroid() || OperatingSystem.IsIOS() || OperatingSystem.IsBrowser() || OperatingSystem.IsTvOS())
         {
             // Console color not supported on these platforms.

@@ -1,15 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-#if NETFRAMEWORK || NETCOREAPP || NETSTANDARD2_0
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading;
-#if !NET5_0_OR_GREATER
+#if !NET
 using System.Threading.Tasks;
 #endif
 
@@ -25,7 +23,7 @@ public partial class ProcessHelper : IProcessHelper
     private static readonly string Arm = "arm";
     private readonly Process _currentProcess = Process.GetCurrentProcess();
 
-#if !NET5_0_OR_GREATER
+#if !NET
     private readonly IEnvironment _environment;
 #endif
 
@@ -38,7 +36,7 @@ public partial class ProcessHelper : IProcessHelper
 
     internal ProcessHelper(IEnvironment environment)
     {
-#if !NET5_0_OR_GREATER
+#if !NET
         _environment = environment;
 #endif
     }
@@ -157,7 +155,7 @@ public partial class ProcessHelper : IProcessHelper
                             // For older frameworks, the solution is more tricky but it seems we can get the expected
                             // behavior using the parameterless 'WaitForExit()' combined with an awaited Task.Run call.
                             var cts = new CancellationTokenSource(timeout);
-#if NET5_0_OR_GREATER
+#if NET
                             await p.WaitForExitAsync(cts.Token);
 #else
                             // NOTE: In case we run on Windows we must call 'WaitForExit(timeout)' instead of calling
@@ -329,9 +327,7 @@ public partial class ProcessHelper : IProcessHelper
     private string GetFormattedCurrentProcessArchitecture()
         => GetCurrentProcessArchitecture().ToString()
             .ToLower(
-#if !NETCOREAPP1_0
         CultureInfo.InvariantCulture
-#endif
             );
 
     /// <inheritdoc/>
@@ -343,5 +339,3 @@ public partial class ProcessHelper : IProcessHelper
         }
     }
 }
-
-#endif

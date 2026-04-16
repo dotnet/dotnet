@@ -22,15 +22,17 @@ stages:
         publish:
           artifacts: true
           logs: true
-          manifests: true
       enableMicrobuild: true
       microbuildUseESRP: ${{ parameters.microbuildUseESRP }}
+      enablePublishBuildAssets: true
       enableSourceIndex: true
       enableSourceBuild: true
+      publishingVersion: 4
       workspace:
         clean: all
       jobs:
       - job: Windows_NT
+        enablePublishing: true
         timeoutInMinutes: 90
         strategy:
           matrix:
@@ -62,12 +64,9 @@ stages:
 
 - template: /eng/common/templates-official/post-build/post-build.yml@self
   parameters:
-    publishingInfraVersion: 3
+    publishingInfraVersion: 4
     # signing validation will not run, even if the below value is 'true', if the 'PostBuildSign' variable is set to 'true'
     enableSigningValidation: false
-    # Sourcelink validation isn't passing for Arcade due to some regressions. This should be
-    # enabled back once this issue is resolved: https://github.com/dotnet/arcade/issues/2912
-    enableSourceLinkValidation: false
     publishDependsOn:
     - Validate
     - ValidateSdk

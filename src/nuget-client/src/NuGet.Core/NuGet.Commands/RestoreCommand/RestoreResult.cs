@@ -92,6 +92,10 @@ namespace NuGet.Commands
         /// </summary>
         internal bool DidDGHashChange { get; init; }
 
+        /// <summary>
+        /// If true, the dg spec file should not be written to disk.
+        /// </summary>
+        internal bool DoNotWriteDependencyGraphSpec { get; init; }
 
         private readonly string _dependencyGraphSpecFilePath;
 
@@ -317,7 +321,7 @@ namespace NuGet.Commands
 
         private async Task CommitDgSpecFileAsync(ILogger log, bool toolCommit)
         {
-            if (!toolCommit && _dependencyGraphSpecFilePath != null && _dependencyGraphSpec != null && (DidDGHashChange || !File.Exists(_dependencyGraphSpecFilePath)))
+            if (!toolCommit && !DoNotWriteDependencyGraphSpec && _dependencyGraphSpecFilePath != null && _dependencyGraphSpec != null && (DidDGHashChange || !File.Exists(_dependencyGraphSpecFilePath)))
             {
                 log.LogVerbose($"Persisting dg to {_dependencyGraphSpecFilePath}");
 

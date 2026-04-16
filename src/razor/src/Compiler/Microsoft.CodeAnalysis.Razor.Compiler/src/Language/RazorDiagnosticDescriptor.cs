@@ -43,6 +43,7 @@ public sealed record RazorDiagnosticDescriptor
         WarningLevel = warningLevel;
     }
 
-    private string DebuggerToString()
-        => $"""Error "{Id}" (level {WarningLevel}): "{MessageFormat}""";
+    private string DebuggerToString() => $"""
+        Error "{Id}" (level {WarningLevel}): "{MessageFormat}"
+        """;
 }

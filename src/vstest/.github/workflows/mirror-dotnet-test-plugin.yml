@@ -1,0 +1,58 @@
+name: Mirror dotnet-test plugin
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout this repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+
+      - name: Checkout dotnet/skills repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          repository: dotnet/skills
+          path: dotnet-skills-clone
+          sparse-checkout: plugins/dotnet-test
+
+      - name: Sync dotnet-test skills to .github
+        run: |
+          mkdir -p .github/skills
+          cp -r dotnet-skills-clone/plugins/dotnet-test/skills/. .github/skills
+
+      - name: Sync dotnet-test agents to .github
+        run: |
+          mkdir -p .github/agents
+          cp -r dotnet-skills-clone/plugins/dotnet-test/agents/. .github/agents
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git add .github
+          if git diff --cached --quiet; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create pull request
+        if: steps.changes.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@67ccf781d68cd99b580ae25a5c18a1cc84ffff1f # v7
+        with:
+          token: ${{ secrets.BACKPORT_MACHINE_USER_PAT }}
+          push-to-fork: nohwnd-bot/vstest
+          commit-message: "Mirror dotnet-test plugin from dotnet/skills"
+          title: "Mirror dotnet-test plugin from dotnet/skills"
+          body: |
+            Automated sync of the `dotnet-test` plugin from [dotnet/skills](https://github.com/dotnet/skills/tree/main/plugins/dotnet-test).
+          branch: mirror/dotnet-test-plugin
+          delete-branch: true
+          add-paths: .github

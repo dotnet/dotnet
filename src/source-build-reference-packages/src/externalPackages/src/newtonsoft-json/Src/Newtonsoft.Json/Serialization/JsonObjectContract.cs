@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -172,6 +173,8 @@ namespace Newtonsoft.Json.Serialization
         /// Initializes a new instance of the <see cref="JsonObjectContract"/> class.
         /// </summary>
         /// <param name="underlyingType">The underlying type for the contract.</param>
+        [RequiresUnreferencedCode(MiscellaneousUtils.TrimWarning)]
+        [RequiresDynamicCode(MiscellaneousUtils.AotWarning)]
         public JsonObjectContract(Type underlyingType)
             : base(underlyingType)
         {
@@ -186,6 +189,7 @@ namespace Newtonsoft.Json.Serialization
 #endif
         internal object GetUninitializedObject()
         {
+#pragma warning disable SYSLIB0050
             // we should never get here if the environment is not fully trusted, check just in case
             if (!JsonTypeReflector.FullyTrusted)
             {
@@ -193,6 +197,7 @@ namespace Newtonsoft.Json.Serialization
             }
 
             return FormatterServices.GetUninitializedObject(NonNullableUnderlyingType);
+#pragma warning restore SYSLIB0050
         }
 #endif
     }

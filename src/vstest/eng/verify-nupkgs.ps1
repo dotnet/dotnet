@@ -30,6 +30,7 @@ function Verify-Nuget-Packages {
         "Microsoft.TestPlatform.TestHost"             = 64
         "Microsoft.TestPlatform.TranslationLayer"     = 175
         "Microsoft.TestPlatform.Internal.Uwp"         = 39
+        "Microsoft.TestPlatform.Filter.Source"        = 13
     }
 
     $packageDirectory = Resolve-Path "$PSScriptRoot/../artifacts/packages/$configuration"

@@ -80,7 +80,7 @@
                                 HtmlContent - (215:7,21 [8] BasicTagHelpers_RemoveTagHelper.cshtml)
                                     LazyIntermediateToken - (215:7,21 [8] BasicTagHelpers_RemoveTagHelper.cshtml) - Html - checkbox
                             DefaultTagHelperProperty - (234:7,40 [4] BasicTagHelpers_RemoveTagHelper.cshtml) - checked - bool TestNamespace.InputTagHelper2.Checked - HtmlAttributeValueStyle.DoubleQuotes
-                                LazyIntermediateToken - (234:7,40 [4] BasicTagHelpers_RemoveTagHelper.cshtml) - CSharp - true
+                                IntermediateToken - (234:7,40 [4] BasicTagHelpers_RemoveTagHelper.cshtml) - CSharp - true
                             DefaultTagHelperExecute - 
                         HtmlContent - (241:7,47 [6] BasicTagHelpers_RemoveTagHelper.cshtml)
                             LazyIntermediateToken - (241:7,47 [6] BasicTagHelpers_RemoveTagHelper.cshtml) - Html - \n    

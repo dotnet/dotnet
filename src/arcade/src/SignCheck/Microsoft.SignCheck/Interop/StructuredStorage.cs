@@ -42,14 +42,16 @@ namespace Microsoft.SignCheck.Interop
 
         public static void OpenAndExtractStorages(string filename, string dir)
         {
-            IStorage rootStorage = null;
-            int hresult = Ole32.StgOpenStorage(filename, null, STGM.STGM_READ | STGM.STGM_SHARE_EXCLUSIVE, IntPtr.Zero, 0, out rootStorage);
+            Guid iidStorage = typeof(IStorage).GUID;
+            int hresult = Ole32.StgOpenStorageEx(filename, STGM.STGM_READ | STGM.STGM_SHARE_EXCLUSIVE,
+                Ole32.STGFMT_STORAGE, 0, IntPtr.Zero, IntPtr.Zero, ref iidStorage, out object rootStorageObj);
+            IStorage rootStorage = rootStorageObj as IStorage;
 
             if ((hresult == S_OK) && (rootStorage != null))
             {
-                if (IsPatch(rootStorage))
+                try
                 {
-                    try
+                    if (IsPatch(rootStorage))
                     {
                         IEnumSTATSTG rootStorageEnum = null;
                         rootStorage.EnumElements(0, IntPtr.Zero, 0, out rootStorageEnum);
@@ -69,15 +71,16 @@ namespace Microsoft.SignCheck.Interop
                             rootStorageEnum.Next(1, enumStg, out numFetched);
                         }
 
-                        if (enumStg != null)
+                        if (rootStorageEnum != null)
                         {
                             Marshal.ReleaseComObject(rootStorageEnum);
                         }
 
-                        if (rootStorage != null)
-                        {
-                            Marshal.ReleaseComObject(rootStorage);
-                        }
+                        // Release the exclusive lock before opening the Database,
+                        // which internally uses OLE structured storage and would
+                        // fail with a sharing violation otherwise.
+                        Marshal.ReleaseComObject(rootStorage);
+                        rootStorage = null;
 
                         using (Database installDatabase = new Database(filename, DatabaseOpenMode.ReadOnly))
                         using (View view = installDatabase.OpenView("SELECT `Name`, `Data` FROM `_Streams`"))
@@ -91,12 +94,12 @@ namespace Microsoft.SignCheck.Interop
                             }
                         }
                     }
-                    finally
+                }
+                finally
+                {
+                    if (rootStorage != null)
                     {
-                        if (rootStorage != null)
-                        {
-                            Marshal.ReleaseComObject(rootStorage);
-                        }
+                        Marshal.ReleaseComObject(rootStorage);
                     }
                 }
             }

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <PackageVersion>7.0.1</PackageVersion>
+    <AssemblyName>NuGet.Commands</AssemblyName>
+    <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <ProjectReference Include="../../nuget.credentials/7.0.1/NuGet.Credentials.7.0.1.csproj" />
+    <ProjectReference Include="../../nuget.projectmodel/7.0.1/NuGet.ProjectModel.7.0.1.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.fileproviders.abstractions/6.0.0/Microsoft.Extensions.FileProviders.Abstractions.6.0.0.csproj" />
+    <ProjectReference Include="../../microsoft.extensions.filesystemglobbing/6.0.0/Microsoft.Extensions.FileSystemGlobbing.6.0.0.csproj" />
+  </ItemGroup>
+
+</Project>

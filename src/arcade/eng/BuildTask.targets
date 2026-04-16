@@ -5,7 +5,7 @@
     <IsPackable>true</IsPackable>
     <!-- Build Tasks should not include any dependencies -->
     <SuppressDependenciesWhenPacking Condition="'$(SuppressDependenciesWhenPacking)' == ''">true</SuppressDependenciesWhenPacking>
-    <!-- Build Tasks should have this set per https://github.com/dotnet/arcade/blob/master/Documentation/CorePackages/Versioning.md#recommended-settings -->
+    <!-- Build Tasks should have this set per https://github.com/dotnet/arcade/blob/main/Documentation/CorePackages/Versioning.md#recommended-settings -->
     <AutoGenerateAssemblyVersion>true</AutoGenerateAssemblyVersion>
     <BuildTaskTargetFolder Condition="'$(BuildTaskTargetFolder)' == ''">tools</BuildTaskTargetFolder>
     <BuildTaskTargetTfmSpecificFolder Condition="'$(BuildTaskTargetTfmSpecificFolder)' == ''">net</BuildTaskTargetTfmSpecificFolder>
@@ -30,40 +30,12 @@
     <None Include="$(RepoRoot)THIRD-PARTY-NOTICES.txt" PackagePath="THIRD-PARTY-NOTICES.txt" Pack="true"/>
   </ItemGroup>
 
-  <!-- Don't include assemblies that MSBuild ships with. -->
+  <!-- Don't redistribute MSBuild assemblies. -->
   <ItemGroup>
-    <PackageReference Update="Microsoft.Build" Publish="false" />
-    <PackageReference Update="Microsoft.Build.Framework" Publish="false" />
-    <PackageReference Update="Microsoft.Build.Tasks.Core" Publish="false" />
-    <PackageReference Update="Microsoft.Build.Utilities.Core" Publish="false" />
-    <PackageReference Update="Microsoft.NET.StringTools" Publish="false" />
-    <PackageReference Update="System.Resources.Extensions" Publish="false" />
-  </ItemGroup>
-
-  <!-- Don't include assemblies that are provided by the SDK, next to MSBuild. -->
-  <ItemGroup>
-    <PackageReference Update="Newtonsoft.Json" Publish="false" />
-    <PackageReference Update="NuGet.Commands" Publish="false" />
-    <PackageReference Update="NuGet.Common" Publish="false" />
-    <PackageReference Update="NuGet.Configuration" Publish="false" />
-    <PackageReference Update="NuGet.Frameworks" Publish="false" />
-    <PackageReference Update="NuGet.Packaging" Publish="false" />
-    <PackageReference Update="NuGet.ProjectModel" Publish="false" />
-    <PackageReference Update="NuGet.Versioning" Publish="false" />
-    <PackageReference Update="System.CodeDom" Publish="false" />
-    <PackageReference Update="System.Security.Cryptography.ProtectedData" Publish="false" />
-    <PackageReference Update="System.Text.Encoding.CodePages" Publish="false" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <!--
-      Update all PackageReference items to default Publish to true.
-      This forces the publish output to contain the dlls.
-     -->
-    <PackageReference Update="@(PackageReference)">
-      <Publish Condition="'%(PackageReference.Publish)' == ''">true</Publish>
-      <ExcludeAssets Condition="'%(PackageReference.Publish)' == 'false'">runtime</ExcludeAssets>
-    </PackageReference>
+    <PackageReference Update="Microsoft.Build" ExcludeAsses="runtime" NoWarn="NU1901;NU1902;NU1903;NU1904" />
+    <PackageReference Update="Microsoft.Build.Framework" ExcludeAsses="runtime" NoWarn="NU1901;NU1902;NU1903;NU1904" />
+    <PackageReference Update="Microsoft.Build.Tasks.Core" ExcludeAsses="runtime" NoWarn="NU1901;NU1902;NU1903;NU1904" />
+    <PackageReference Update="Microsoft.Build.Utilities.Core" ExcludeAsses="runtime" NoWarn="NU1901;NU1902;NU1903;NU1904" />
   </ItemGroup>
 
   <!-- Publish assets and include them in the package under $(BuildTaskTargetFolder) directory. -->

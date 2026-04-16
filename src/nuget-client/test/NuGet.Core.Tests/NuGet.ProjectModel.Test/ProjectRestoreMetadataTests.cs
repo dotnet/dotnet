@@ -833,5 +833,40 @@ namespace NuGet.ProjectModel.Test
                 leftSide.GetHashCode().Should().NotBe(rightSide.GetHashCode());
             }
         }
+
+        [Theory]
+        [InlineData(true, true, true)]
+        [InlineData(false, false, true)]
+        [InlineData(true, false, false)]
+        [InlineData(false, true, false)]
+        public void Equals_WithRestoreDoNotWriteDependencyGraphSpec(bool left, bool right, bool expected)
+        {
+            var leftSide = new ProjectRestoreMetadata
+            {
+                RestoreDoNotWriteDependencyGraphSpec = left
+            };
+
+            var rightSide = new ProjectRestoreMetadata
+            {
+                RestoreDoNotWriteDependencyGraphSpec = right
+            };
+
+            AssertEquality(expected, leftSide, rightSide);
+            AssertHashCode(expected, leftSide, rightSide);
+        }
+
+        [Fact]
+        public void Clone_WithRestoreDoNotWriteDependencyGraphSpec()
+        {
+            var original = new ProjectRestoreMetadata
+            {
+                RestoreDoNotWriteDependencyGraphSpec = true
+            };
+
+            var clone = original.Clone();
+
+            clone.RestoreDoNotWriteDependencyGraphSpec.Should().Be(true);
+            AssertEquality(true, original, clone);
+        }
     }
 }

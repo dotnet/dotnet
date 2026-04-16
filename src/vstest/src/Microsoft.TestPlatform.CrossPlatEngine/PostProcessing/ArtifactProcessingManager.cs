@@ -65,7 +65,7 @@ internal class ArtifactProcessingManager : IArtifactProcessingManager
         {
             _testSessionCorrelationId = testSessionCorrelationId;
             _processArtifactFolder = Path.Combine(_fileHelper.GetTempPath(), _testSessionCorrelationId);
-#if NET5_0_OR_GREATER
+#if NET
             var pid = Environment.ProcessId;
 #else
             int pid;

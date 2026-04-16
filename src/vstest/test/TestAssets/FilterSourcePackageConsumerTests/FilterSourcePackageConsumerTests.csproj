@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>$(TestProjectTargetFrameworks)</TargetFrameworks>
+    <NoWarn>$(NoWarn);CS0436</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      Reference the source-only package. The filter source files are embedded into this project
+      as contentFiles, which means FilterExpressionWrapper and TestCaseFilterExpression are
+      compiled as internal sealed types inside this assembly.
+    -->
+    <PackageReference Include="Microsoft.TestPlatform.Filter.Source" Version="$(PackageVersion)" />
+    <PackageReference Include="MSTest.TestFramework" Version="$(MSTestTestFrameworkVersion)" />
+    <PackageReference Include="MSTest.TestAdapter" Version="$(MSTestTestAdapterVersion)" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(PackageVersion)" />
+  </ItemGroup>
+</Project>

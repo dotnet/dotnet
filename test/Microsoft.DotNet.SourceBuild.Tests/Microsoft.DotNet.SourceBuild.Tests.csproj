@@ -72,6 +72,10 @@
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).LicenseScanPath">
         <Value>$(SourceBuildTestsLicenseScanPath)</Value>
       </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).LicenseScanIgnorePatterns"
+                                      Condition="'$(SourceBuildTestsLicenseScanIgnorePatterns)' != ''">
+        <Value>$(SourceBuildTestsLicenseScanIgnorePatterns)</Value>
+      </RuntimeHostConfigurationOption>
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).MsftSdkTarballPath">
         <Value>$(MsftSdkTarballPath)</Value>
       </RuntimeHostConfigurationOption>

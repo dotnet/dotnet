@@ -182,6 +182,7 @@ namespace NuGet.Commands.Restore.Utility
             restoreMetadata.UsingMicrosoftNETSdk = MSBuildRestoreUtility.GetUsingMicrosoftNETSdk(outerBuild.GetProperty("UsingMicrosoftNETSdk"));
             restoreMetadata.SdkAnalysisLevel = MSBuildRestoreUtility.GetSdkAnalysisLevel(outerBuild.GetProperty("SdkAnalysisLevel"));
             restoreMetadata.UseLegacyDependencyResolver = outerBuild.IsPropertyTrue("RestoreUseLegacyDependencyResolver");
+            restoreMetadata.RestoreDoNotWriteDependencyGraphSpec = outerBuild.IsPropertyTrue("RestoreDoNotWriteDependencyGraphSpec");
 
             return (restoreMetadata, targetFrameworkInfos);
 

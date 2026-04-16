@@ -171,6 +171,7 @@ namespace NuGet.ProjectModel
             SetValueIfTrue(writer, "CentralPackageTransitivePinningEnabled", msbuildMetadata.CentralPackageTransitivePinningEnabled);
             SetValueIfFalse(writer, "UsingMicrosoftNETSdk", msbuildMetadata.UsingMicrosoftNETSdk);
             SetValueIfTrue(writer, "restoreUseLegacyDependencyResolver", msbuildMetadata.UseLegacyDependencyResolver);
+            SetValueIfTrue(writer, "restoreDoNotWriteDependencyGraphSpec", msbuildMetadata.RestoreDoNotWriteDependencyGraphSpec);
         }
 
 

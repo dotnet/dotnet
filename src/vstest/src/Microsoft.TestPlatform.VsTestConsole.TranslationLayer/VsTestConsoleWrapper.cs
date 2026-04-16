@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-#if !NET5_0_OR_GREATER
+#if !NET
 using System.Diagnostics;
 #endif
 using System.Globalization;
@@ -169,7 +169,7 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
         if (port > 0)
         {
             // Fill the parameters
-#if NET5_0_OR_GREATER
+#if NET
             _consoleParameters.ParentProcessId = Environment.ProcessId;
 #else
             using (var process = Process.GetCurrentProcess())
@@ -682,7 +682,7 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
         if (port > 0)
         {
             // Fill the parameters
-#if NET5_0_OR_GREATER
+#if NET
             _consoleParameters.ParentProcessId = Environment.ProcessId;
 #else
             using (var process = Process.GetCurrentProcess())

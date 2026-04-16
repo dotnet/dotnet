@@ -52,7 +52,7 @@ public static class EqtTrace
 
 #endif
 
-#if NETSTANDARD || NET || NETCOREAPP3_1
+#if !NETFRAMEWORK
     public static PlatformTraceLevel TraceLevel
     {
         get
