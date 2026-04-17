@@ -70,7 +70,7 @@
                                 HtmlContent - (129:4,17 [6] DuplicateAttributeTagHelpers.cshtml)
                                     LazyIntermediateToken - (129:4,17 [6] DuplicateAttributeTagHelpers.cshtml) - Html - button
                             DefaultTagHelperProperty - (146:4,34 [4] DuplicateAttributeTagHelpers.cshtml) - checked - bool TestNamespace.InputTagHelper2.Checked - HtmlAttributeValueStyle.DoubleQuotes
-                                LazyIntermediateToken - (146:4,34 [4] DuplicateAttributeTagHelpers.cshtml) - CSharp - true
+                                IntermediateToken - (146:4,34 [4] DuplicateAttributeTagHelpers.cshtml) - CSharp - true
                             DefaultTagHelperHtmlAttribute -  - type - HtmlAttributeValueStyle.DoubleQuotes
                                 HtmlContent - (158:4,46 [8] DuplicateAttributeTagHelpers.cshtml)
                                     LazyIntermediateToken - (158:4,46 [8] DuplicateAttributeTagHelpers.cshtml) - Html - checkbox
@@ -91,7 +91,7 @@
                                 HtmlContent - (205:5,17 [6] DuplicateAttributeTagHelpers.cshtml)
                                     LazyIntermediateToken - (205:5,17 [6] DuplicateAttributeTagHelpers.cshtml) - Html - button
                             DefaultTagHelperProperty - (222:5,34 [4] DuplicateAttributeTagHelpers.cshtml) - checked - bool TestNamespace.InputTagHelper2.Checked - HtmlAttributeValueStyle.DoubleQuotes
-                                LazyIntermediateToken - (222:5,34 [4] DuplicateAttributeTagHelpers.cshtml) - CSharp - true
+                                IntermediateToken - (222:5,34 [4] DuplicateAttributeTagHelpers.cshtml) - CSharp - true
                             DefaultTagHelperHtmlAttribute -  - type - HtmlAttributeValueStyle.DoubleQuotes
                                 HtmlContent - (233:5,45 [8] DuplicateAttributeTagHelpers.cshtml)
                                     LazyIntermediateToken - (233:5,45 [8] DuplicateAttributeTagHelpers.cshtml) - Html - checkbox
@@ -109,7 +109,7 @@
                             LazyIntermediateToken - (288:5,100 [2] DuplicateAttributeTagHelpers.cshtml) - Html - \n
                     DefaultTagHelperCreate -  - TestNamespace.PTagHelper
                     DefaultTagHelperProperty - (43:2,8 [1] DuplicateAttributeTagHelpers.cshtml) - age - int TestNamespace.PTagHelper.Age - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (43:2,8 [1] DuplicateAttributeTagHelpers.cshtml) - CSharp - 3
+                        IntermediateToken - (43:2,8 [1] DuplicateAttributeTagHelpers.cshtml) - CSharp - 3
                     DefaultTagHelperHtmlAttribute -  - AGE - HtmlAttributeValueStyle.DoubleQuotes
                         HtmlContent - (51:2,16 [2] DuplicateAttributeTagHelpers.cshtml)
                             LazyIntermediateToken - (51:2,16 [2] DuplicateAttributeTagHelpers.cshtml) - Html - 40

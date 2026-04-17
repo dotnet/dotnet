@@ -20,6 +20,20 @@ public class RazorDiagnosticDescriptorTest
         Assert.Equal("RZ0001", descriptor.Id);
         Assert.Equal(RazorDiagnosticSeverity.Error, descriptor.Severity);
         Assert.Equal("Hello, World!", descriptor.MessageFormat);
+        Assert.Equal(0, descriptor.WarningLevel);
+    }
+
+    [Fact]
+    public void RazorDiagnosticDescriptor_Ctor_WithWarningLevel()
+    {
+        // Arrange & Act
+        var descriptor = new RazorDiagnosticDescriptor("RZ0001", "Hello, World!", RazorDiagnosticSeverity.Warning, warningLevel: 11);
+
+        // Assert
+        Assert.Equal("RZ0001", descriptor.Id);
+        Assert.Equal(RazorDiagnosticSeverity.Warning, descriptor.Severity);
+        Assert.Equal("Hello, World!", descriptor.MessageFormat);
+        Assert.Equal(11, descriptor.WarningLevel);
     }
 
     [Fact]

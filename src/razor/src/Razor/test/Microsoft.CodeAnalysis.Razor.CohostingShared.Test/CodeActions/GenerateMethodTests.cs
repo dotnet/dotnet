@@ -45,6 +45,40 @@ public class GenerateMethodTests(ITestOutputHelper testOutputHelper) : CohostCod
     }
 
     [Fact(Skip = "Waiting for Roslyn insertion")]
+    public async Task GenerateMethod_FromCodeBlock_ExistingCodeBlock_WithParameter()
+    {
+        var input = """
+            @code
+            {
+                private void M()
+                {
+                    var value = 1;
+                    [||]NewMethod(value);
+                }
+            }
+            """;
+
+        var expected = """
+            @using System
+            @code
+            {
+                private void M()
+                {
+                    var value = 1;
+                    NewMethod(value);
+                }
+
+                private void NewMethod(int value)
+                {
+                    throw new NotImplementedException();
+                }
+            }
+            """;
+
+        await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.GenerateMethod);
+    }
+
+    [Fact(Skip = "Waiting for Roslyn insertion")]
     public async Task GenerateMethod_FromCodeBlock_ExistingCodeBlock_ExpressionBodiedMethod1()
     {
         var input = """
@@ -91,6 +125,36 @@ public class GenerateMethodTests(ITestOutputHelper testOutputHelper) : CohostCod
                     => NewMethod();
 
                 private void NewMethod()
+                {
+                    throw new NotImplementedException();
+                }
+            }
+            """;
+
+        await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.GenerateMethod);
+    }
+
+    [Fact(Skip = "Waiting for Roslyn insertion")]
+    public async Task GenerateMethod_FromImplicitExpression_ExistingCodeBlock_WithParameter()
+    {
+        var input = """
+            @New[||]Method(Value)
+
+            @code
+            {
+                private string Value { get; } = "Hello";
+            }
+            """;
+
+        var expected = """
+            @using System
+            @NewMethod(Value)
+
+            @code
+            {
+                private string Value { get; } = "Hello";
+
+                private string NewMethod(string value)
                 {
                     throw new NotImplementedException();
                 }

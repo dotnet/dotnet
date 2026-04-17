@@ -30,7 +30,7 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
 
             @code
             {
-                int [|GetX|]()
+                int [||]GetX()
                 {
                     return 4;
                 }
@@ -52,7 +52,7 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
 
             @code
             {
-                private string [|_name|];
+                private string [||]_name;
 
                 string GetX()
                 {
@@ -73,8 +73,8 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
             @code
             {
                 class Base { }
-                class [|Derived1|] : Base { }
-                class [|Derived2|] : Base { }
+                class [||]Derived1 : Base { }
+                class [||]Derived2 : Base { }
 
                 void M(Ba$$se b)
                 {

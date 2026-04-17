@@ -8,7 +8,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Common.Editor;
 
 public class TestEdit
 {
-    public TestEdit(SourceChange  change, ITextSnapshot oldSnapshot, ITextSnapshot newSnapshot)
+    public TestEdit(SourceChange change, ITextSnapshot oldSnapshot, ITextSnapshot newSnapshot)
     {
         Change = change;
         OldSnapshot = oldSnapshot;

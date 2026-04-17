@@ -1,10 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Immutable;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.VisualStudio.Razor.LanguageClient.Cohost.Formatting;
 using Xunit;
@@ -75,7 +72,6 @@ public class MoreHtmlFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     [Fact]
     public async Task FormatsComponentTag_WithImplicitExpression()
     {
-        var tagHelpers = GetComponents();
         await RunFormattingTestAsync(
             input: """
                         <GridTable>
@@ -107,7 +103,6 @@ public class MoreHtmlFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     [Fact]
     public async Task FormatsComponentTag_WithExplicitExpression()
     {
-        var tagHelpers = GetComponents();
         await RunFormattingTestAsync(
             input: """
                         <GridTable>
@@ -136,7 +131,6 @@ public class MoreHtmlFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     [Fact]
     public async Task FormatsComponentTag_WithExplicitExpression_FormatsInside()
     {
-        var tagHelpers = GetComponents();
         await RunFormattingTestAsync(
             input: """
                         <GridTable>
@@ -165,7 +159,6 @@ public class MoreHtmlFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     [Fact]
     public async Task FormatsComponentTag_WithExplicitExpression_MovesStart()
     {
-        var tagHelpers = GetComponents();
         await RunFormattingTestAsync(
             input: """
                         <GridTable>

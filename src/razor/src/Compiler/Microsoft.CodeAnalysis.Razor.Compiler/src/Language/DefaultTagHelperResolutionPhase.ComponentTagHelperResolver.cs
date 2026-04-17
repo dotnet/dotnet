@@ -195,7 +195,9 @@ internal partial class DefaultTagHelperResolutionPhase
             var directiveNameSpan = nameSpan;
             if (directiveNameSpan is SourceSpan ns && attributeName.StartsWith('@'))
             {
-                directiveNameSpan = new SourceSpan(ns.FilePath, ns.AbsoluteIndex + 1, ns.LineIndex, ns.CharacterIndex + 1, ns.Length - 1, ns.LineCount, ns.EndCharacterIndex);
+                directiveNameSpan = ns.WithAbsoluteIndex(ns.AbsoluteIndex + 1)
+                    .WithCharacterIndex(ns.CharacterIndex + 1)
+                    .WithLength(ns.Length - 1);
             }
 
             // Strip parameter suffix from OriginalAttributeSpan for parameter matches
@@ -203,7 +205,8 @@ internal partial class DefaultTagHelperResolutionPhase
             if (match.IsParameterMatch && directiveAttributeName.HasParameter && parameterOriginalSpan is SourceSpan ps)
             {
                 var nameWithoutParamLen = directiveAttributeName.TextWithoutParameter.Length;
-                parameterOriginalSpan = new SourceSpan(ps.FilePath, ps.AbsoluteIndex, ps.LineIndex, ps.CharacterIndex, nameWithoutParamLen, ps.LineCount, ps.CharacterIndex + nameWithoutParamLen);
+                parameterOriginalSpan = ps.WithLength(nameWithoutParamLen)
+                    .WithEndCharacterIndex(ps.CharacterIndex + nameWithoutParamLen);
             }
 
             IntermediateNode directiveNode = match.IsParameterMatch && directiveAttributeName.HasParameter
@@ -580,15 +583,7 @@ internal partial class DefaultTagHelperResolutionPhase
             SourceSpan? mergedSpan = null;
             if (firstSpan is { } first && lastSpan is { } last)
             {
-                var endAbsolute = last.AbsoluteIndex + last.Length;
-                mergedSpan = new SourceSpan(
-                    first.FilePath,
-                    first.AbsoluteIndex,
-                    first.LineIndex,
-                    first.CharacterIndex,
-                    endAbsolute - first.AbsoluteIndex,
-                    last.LineIndex - first.LineIndex + 1,
-                    last.EndCharacterIndex);
+                mergedSpan = MergeSourceSpans(first, last);
             }
 
             var content = sb.ToString();
@@ -647,9 +642,7 @@ internal partial class DefaultTagHelperResolutionPhase
                             var mergedContent = prefix + htmlToken.Content;
                             var mergedSource = ExtendSpanBackward(htmlToken.Source, prefix.Length);
 
-                            htmlContent.Children.Add(htmlToken.IsLazy
-                                ? new HtmlIntermediateToken(LazyContent.Create(mergedContent, static s => s), mergedSource)
-                                : new HtmlIntermediateToken(mergedContent, mergedSource));
+                            htmlContent.Children.Add(new HtmlIntermediateToken(mergedContent, mergedSource));
                             htmlContent.Source ??= mergedSource;
                             mergedFirst = true;
                         }
@@ -781,9 +774,7 @@ internal partial class DefaultTagHelperResolutionPhase
                         var mergedContent = prefix + firstToken.Content;
                         var mergedSource = ExtendSpanBackward(firstToken.Source, prefix.Length);
 
-                        htmlContent.Children.Add(firstToken.IsLazy
-                            ? new HtmlIntermediateToken(LazyContent.Create(mergedContent, static s => s), mergedSource)
-                            : new HtmlIntermediateToken(mergedContent, mergedSource));
+                        htmlContent.Children.Add(new HtmlIntermediateToken(mergedContent, mergedSource));
                         htmlContent.Source = mergedSource ?? htmlAttrValue.Source;
 
                         for (var j = 1; j < htmlAttrValue.Children.Count; j++)
@@ -877,14 +868,9 @@ internal partial class DefaultTagHelperResolutionPhase
                         var directiveNameSpan = attributeNameSpan;
                         if (directiveNameSpan is SourceSpan nameSpan && attributeName.StartsWith('@'))
                         {
-                            directiveNameSpan = new SourceSpan(
-                                nameSpan.FilePath,
-                                nameSpan.AbsoluteIndex + 1,
-                                nameSpan.LineIndex,
-                                nameSpan.CharacterIndex + 1,
-                                nameSpan.Length - 1,
-                                nameSpan.LineCount,
-                                nameSpan.EndCharacterIndex);
+                            directiveNameSpan = nameSpan.WithAbsoluteIndex(nameSpan.AbsoluteIndex + 1)
+                                .WithCharacterIndex(nameSpan.CharacterIndex + 1)
+                                .WithLength(nameSpan.Length - 1);
                         }
 
                         IntermediateNode directiveNode = match.IsParameterMatch && directiveAttributeName.HasParameter
@@ -991,7 +977,7 @@ internal partial class DefaultTagHelperResolutionPhase
                     var totalLength = source.Children[^1] is HtmlAttributeValueIntermediateNode lastValue && lastValue.Source is { } ls
                         ? (ls.AbsoluteIndex + ls.Length) - fs.AbsoluteIndex
                         : mergedText.Length;
-                    spanSource = new SourceSpan(fs.FilePath, fs.AbsoluteIndex, fs.LineIndex, fs.CharacterIndex, totalLength, fs.LineCount, fs.EndCharacterIndex);
+                    spanSource = fs.WithLength(totalLength);
                 }
 
                 mergedContent.Source = spanSource;
@@ -1052,14 +1038,11 @@ internal partial class DefaultTagHelperResolutionPhase
 
             var nameCharIndex = attrSource.CharacterIndex + nameIndex;
 
-            return new SourceSpan(
-                attrSource.FilePath,
-                attrSource.AbsoluteIndex + nameIndex,
-                attrSource.LineIndex,
-                nameCharIndex,
-                nameLength,
-                0,
-                nameCharIndex + nameLength);
+            return attrSource.WithAbsoluteIndex(attrSource.AbsoluteIndex + nameIndex)
+                .WithCharacterIndex(nameCharIndex)
+                .WithLength(nameLength)
+                .WithLineCount(0)
+                .WithEndCharacterIndex(nameCharIndex + nameLength);
         }
 
         private static SourceSpan? ComputeAttributeValueSpan(HtmlAttributeIntermediateNode htmlAttr)
@@ -1080,16 +1063,11 @@ internal partial class DefaultTagHelperResolutionPhase
                     var endIndex = lastSource.AbsoluteIndex + lastSource.Length;
                     var length = endIndex - childSource.AbsoluteIndex;
                     var endCharIndex = lastSource.CharacterIndex + lastSource.Length;
-                    return new SourceSpan(
-                        childSource.FilePath,
-                        childSource.AbsoluteIndex,
-                        childSource.LineIndex,
-                        childSource.CharacterIndex,
-                        length,
+                    return childSource.WithLength(length)
                         // Note: does not incorporate lastSource.LineCount; attribute values
                         // spanning multiple lines are uncommon and the old pipeline had the same limitation.
-                        lastSource.LineIndex - childSource.LineIndex,
-                        endCharIndex);
+                        .WithLineCount(lastSource.LineIndex - childSource.LineIndex)
+                        .WithEndCharacterIndex(endCharIndex);
                 }
 
                 return childSource;
@@ -1113,14 +1091,11 @@ internal partial class DefaultTagHelperResolutionPhase
 
             var valueCharIndex = attrSource.CharacterIndex + valueStart;
 
-            return new SourceSpan(
-                attrSource.FilePath,
-                attrSource.AbsoluteIndex + valueStart,
-                attrSource.LineIndex,
-                valueCharIndex,
-                valueLength,
-                0,
-                valueCharIndex + valueLength);
+            return attrSource.WithAbsoluteIndex(attrSource.AbsoluteIndex + valueStart)
+                .WithCharacterIndex(valueCharIndex)
+                .WithLength(valueLength)
+                .WithLineCount(0)
+                .WithEndCharacterIndex(valueCharIndex + valueLength);
         }
 
         /// <summary>

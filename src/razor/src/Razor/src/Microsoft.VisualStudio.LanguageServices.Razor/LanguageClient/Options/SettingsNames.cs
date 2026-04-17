@@ -7,16 +7,16 @@ internal static class SettingsNames
 {
     public const string UnifiedCollection = "languages.razor.advanced";
 
-    public static readonly string FormatOnType = UnifiedCollection + ".formatOnType";
-    public static readonly string AutoClosingTags = UnifiedCollection + ".autoClosingTags";
-    public static readonly string AutoInsertAttributeQuotes = UnifiedCollection + ".autoInsertAttributeQuotes";
-    public static readonly string ColorBackground = UnifiedCollection + ".colorBackground";
-    public static readonly string CodeBlockBraceOnNextLine = UnifiedCollection + ".codeBlockBraceOnNextLine";
-    public static readonly string AttributeIndentStyle = UnifiedCollection + ".attributeIndentStyle";
-    public static readonly string CommitElementsWithSpace = UnifiedCollection + ".commitElementsWithSpace";
-    public static readonly string Snippets = UnifiedCollection + ".snippets";
-    public static readonly string LogLevel = UnifiedCollection + ".logLevel";
-    public static readonly string FormatOnPaste = UnifiedCollection + ".formatOnPaste";
+    public const string FormatOnType = UnifiedCollection + ".formatOnType";
+    public const string AutoClosingTags = UnifiedCollection + ".autoClosingTags";
+    public const string AutoInsertAttributeQuotes = UnifiedCollection + ".autoInsertAttributeQuotes";
+    public const string ColorBackground = UnifiedCollection + ".colorBackground";
+    public const string CodeBlockBraceOnNextLine = UnifiedCollection + ".codeBlockBraceOnNextLine";
+    public const string AttributeIndentStyle = UnifiedCollection + ".attributeIndentStyle";
+    public const string CommitElementsWithSpace = UnifiedCollection + ".commitElementsWithSpace";
+    public const string Snippets = UnifiedCollection + ".snippets";
+    public const string LogLevel = UnifiedCollection + ".logLevel";
+    public const string FormatOnPaste = UnifiedCollection + ".formatOnPaste";
 
     public static readonly string[] AllSettings =
     [

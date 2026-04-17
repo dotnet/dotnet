@@ -112,4 +112,11 @@ public sealed record RazorLanguageVersion : IComparable<RazorLanguageVersion>
     public static bool operator <=(RazorLanguageVersion x, RazorLanguageVersion y) => x.CompareTo(y) <= 0;
     public static bool operator >(RazorLanguageVersion x, RazorLanguageVersion y) => x.CompareTo(y) > 0;
     public static bool operator >=(RazorLanguageVersion x, RazorLanguageVersion y) => x.CompareTo(y) >= 0;
+
+    /// <summary>
+    /// Gets the default warning level for this language version.
+    /// The warning level corresponds to the major version number
+    /// (e.g., <see cref="Version_11_0"/> → <c>11</c>).
+    /// </summary>
+    public int GetDefaultWarningLevel() => Major;
 }

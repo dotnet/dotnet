@@ -80,7 +80,7 @@
                             PreallocatedTagHelperProperty - (110:4,17 [5] BasicTest.cshtml) - __tagHelperAttribute_0 - value - FooProp
                             DefaultTagHelperProperty - (121:4,28 [13] BasicTest.cshtml) - date - System.DateTime InputTagHelper.BarProp - HtmlAttributeValueStyle.DoubleQuotes
                                 CSharpExpression - (122:4,29 [12] BasicTest.cshtml)
-                                    LazyIntermediateToken - (122:4,29 [12] BasicTest.cshtml) - CSharp - DateTime.Now
+                                    IntermediateToken - (122:4,29 [12] BasicTest.cshtml) - CSharp - DateTime.Now
                             PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_1
                             DefaultTagHelperExecute - 
                         CSharpCode - 

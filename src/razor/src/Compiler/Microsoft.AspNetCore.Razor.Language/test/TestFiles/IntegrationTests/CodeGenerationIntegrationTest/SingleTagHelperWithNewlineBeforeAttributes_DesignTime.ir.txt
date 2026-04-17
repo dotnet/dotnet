@@ -46,7 +46,7 @@
                         HtmlContent - (49:3,10 [11] SingleTagHelperWithNewlineBeforeAttributes.cshtml)
                             LazyIntermediateToken - (49:3,10 [11] SingleTagHelperWithNewlineBeforeAttributes.cshtml) - Html - Hello World
                     DefaultTagHelperProperty - (67:3,28 [4] SingleTagHelperWithNewlineBeforeAttributes.cshtml) - age - int TestNamespace.PTagHelper.Age - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (67:3,28 [4] SingleTagHelperWithNewlineBeforeAttributes.cshtml) - CSharp - 1337
+                        IntermediateToken - (67:3,28 [4] SingleTagHelperWithNewlineBeforeAttributes.cshtml) - CSharp - 1337
                     DefaultTagHelperExecute - 
             Inject - 
             Inject - 

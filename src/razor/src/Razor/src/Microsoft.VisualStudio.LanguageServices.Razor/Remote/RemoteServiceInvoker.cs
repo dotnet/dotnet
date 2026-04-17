@@ -103,7 +103,7 @@ internal sealed class RemoteServiceInvoker(
             ? _lazyJsonClient.GetValueAsync(cancellationToken)
             : _lazyMessagePackClient.GetValueAsync(cancellationToken);
 
-    private async static Task<RazorRemoteHostClient> GetMessagePackClientAsync(IWorkspaceProvider workspaceProvider, CancellationToken cancellationToken)
+    private static async Task<RazorRemoteHostClient> GetMessagePackClientAsync(IWorkspaceProvider workspaceProvider, CancellationToken cancellationToken)
     {
         var workspace = workspaceProvider.GetWorkspace();
 
@@ -119,7 +119,7 @@ internal sealed class RemoteServiceInvoker(
             ?? throw new InvalidOperationException($"Couldn't retrieve {nameof(RazorRemoteHostClient)} for MessagePack serialization.");
     }
 
-    private async static Task<RazorRemoteHostClient> GetJsonClientAsync(IWorkspaceProvider workspaceProvider, CancellationToken cancellationToken)
+    private static async Task<RazorRemoteHostClient> GetJsonClientAsync(IWorkspaceProvider workspaceProvider, CancellationToken cancellationToken)
     {
         var workspace = workspaceProvider.GetWorkspace();
 

@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Components;
@@ -56,7 +57,7 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
 
         if (tagHelperContext == null || tagHelperContext.TagHelpers is [])
         {
-            // No tag helpers discovered - unwrap all ElementOrTagHelper nodes to their fallback.
+            // No tag helpers discovered - unwrap all UnresolvedElement nodes to their fallback.
             UnwrapAllElements(documentNode, documentNode);
 
             // Still need to set referenced tag helpers for downstream phases.
@@ -175,6 +176,49 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
             return;
         }
 
+        // Build the tag helper node (binding validation + node creation + diagnostics + body).
+        var (tagHelperNode, bodyNode) = BuildTagHelperNode(elementNode, binding, tagName, prefix, usedHelpers, in context);
+
+        // Resolve any body children that are still UnresolvedElementIntermediateNode.
+        ResolveBodyChildren(bodyNode, binder, prefix, usedHelpers, in context, tagHelperNode);
+
+        // Check AllowedChildren constraints (RZ2009, RZ2010).
+        ValidateAllowedChildren(tagHelperNode, bodyNode, binding, prefix);
+
+        // Replace the UnresolvedElement with the TagHelperIntermediateNode.
+        parent.Children[index] = tagHelperNode;
+
+        // For StartTagOnly elements, body content from the original element
+        // belongs to the parent, not the tag helper. Promote it.
+        if (tagHelperNode.TagMode == TagMode.StartTagOnly)
+        {
+            var startTagEndIdx = elementNode.StartTagEndIndex;
+            var bodyEndIdx = elementNode.BodyEndIndex;
+
+            if (startTagEndIdx >= 0 && bodyEndIdx >= 0)
+            {
+                var insertIdx = index + 1;
+                for (var i = startTagEndIdx; i < bodyEndIdx; i++)
+                {
+                    parent.Children.Insert(insertIdx++, elementNode.Children[i]);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Creates a <see cref="TagHelperIntermediateNode"/> from a confirmed tag helper binding,
+    /// adds all binding-level diagnostics, and builds the body node by delegating to the resolver.
+    /// Covers the "tag helper binding and validation" and "element construction" split points.
+    /// </summary>
+    private (TagHelperIntermediateNode TagHelperNode, TagHelperBodyIntermediateNode BodyNode) BuildTagHelperNode(
+        UnresolvedElementIntermediateNode elementNode,
+        TagHelperBinding binding,
+        string tagName,
+        string prefix,
+        TagHelperCollection.Builder usedHelpers,
+        in ResolutionContext context)
+    {
         // It IS a tag helper. Track the used helpers.
         usedHelpers.AddRange(binding.TagHelpers);
 
@@ -217,15 +261,33 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
 
         // Build body and attributes.
         var bodyNode = new TagHelperBodyIntermediateNode();
-
         _resolver.BuildTagHelper(tagHelperNode, bodyNode, elementNode, binding, context.SourceDocument, in context);
 
-        // After building the tag helper, resolve any body children that are still
-        // UnresolvedElementIntermediateNode. Pass the tagHelperNode as parent so the
-        // binder can see the parent tag name. This is needed for:
-        // - Components: child content matching (e.g., Found/NotFound inside Router)
-        // - Legacy tag helpers: RequireParentTag matching (e.g., <td> inside <tr>)
-        var tagHelperParentForBody = tagHelperNode;
+        return (tagHelperNode, bodyNode);
+    }
+
+    /// <summary>
+    /// Resolves body children of a newly built tag helper node.
+    /// Iterates over <paramref name="bodyNode"/> children in reverse order, recursively
+    /// resolving any <see cref="UnresolvedElementIntermediateNode"/> entries with the
+    /// tag helper as the parent context. Covers the "child attribute processing" split point.
+    /// </summary>
+    /// <remarks>
+    /// Passing <paramref name="tagHelperParent"/> is critical so the binder can see the parent tag
+    /// name. This is needed for:
+    /// <list type="bullet">
+    ///   <item><description>Components: child content matching (e.g., Found/NotFound inside Router)</description></item>
+    ///   <item><description>Legacy tag helpers: RequireParentTag matching (e.g., &lt;td&gt; inside &lt;tr&gt;)</description></item>
+    /// </list>
+    /// </remarks>
+    private void ResolveBodyChildren(
+        TagHelperBodyIntermediateNode bodyNode,
+        TagHelperBinder binder,
+        string prefix,
+        TagHelperCollection.Builder usedHelpers,
+        in ResolutionContext context,
+        TagHelperIntermediateNode tagHelperParent)
+    {
         for (var i = bodyNode.Children.Count - 1; i >= 0; i--)
         {
             var bodyChild = bodyNode.Children[i];
@@ -239,7 +301,7 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
                 // would descend into the element's children and prematurely resolve them
                 // without knowing the parent tag helper (e.g., Found/NotFound inside Router
                 // need to know Router is their parent to be matched as child content).
-                ResolveElement(bodyNode, i, bodyElementNode, binder, prefix, usedHelpers, in context, tagHelperParentForBody);
+                ResolveElement(bodyNode, i, bodyElementNode, binder, prefix, usedHelpers, in context, tagHelperParent);
             }
             else
             {
@@ -253,29 +315,6 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
         // start tag on the tracker stack). For matched pairs like <component ...></component>,
         // the rewriter handles them normally. The rewriter (which still runs after this phase)
         // will emit RZ1033 for orphan end tags.
-
-        // Check AllowedChildren constraints (RZ2009, RZ2010).
-        ValidateAllowedChildren(tagHelperNode, bodyNode, binding, prefix);
-
-        // Replace the ElementOrTagHelper with the TagHelperIntermediateNode.
-        parent.Children[index] = tagHelperNode;
-
-        // For StartTagOnly elements, body content from the original element
-        // belongs to the parent, not the tag helper. Promote it.
-        if (tagHelperNode.TagMode == TagMode.StartTagOnly)
-        {
-            var startTagEndIdx = elementNode.StartTagEndIndex;
-            var bodyEndIdx = elementNode.BodyEndIndex;
-
-            if (startTagEndIdx >= 0 && bodyEndIdx >= 0)
-            {
-                var insertIdx = index + 1;
-                for (var i = startTagEndIdx; i < bodyEndIdx; i++)
-                {
-                    parent.Children.Insert(insertIdx++, elementNode.Children[i]);
-                }
-            }
-        }
     }
 
     /// <summary>
@@ -393,10 +432,7 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
                 if (current.Source is SourceSpan cs && next.Source is SourceSpan ns)
                 {
                     // Adjacent nodes are sequential, so next always ends after current.
-                    var end = ns.AbsoluteIndex + ns.Length;
-                    var lineCount = (ns.LineIndex + ns.LineCount) - cs.LineIndex;
-                    current.Source = new SourceSpan(cs.FilePath, cs.AbsoluteIndex, cs.LineIndex, cs.CharacterIndex,
-                        end - cs.AbsoluteIndex, lineCount, ns.EndCharacterIndex);
+                    current.Source = MergeSourceSpans(cs, ns);
                 }
                 else if (current.Source == null)
                 {
@@ -546,8 +582,7 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
                 var lastSrc = htmlContent.Children[^1].Source;
                 if (firstSrc is { } fs && lastSrc is { } ls)
                 {
-                    htmlContent.Source = new SourceSpan(fs.FilePath, fs.AbsoluteIndex, fs.LineIndex, fs.CharacterIndex,
-                        (ls.AbsoluteIndex + ls.Length) - fs.AbsoluteIndex, ls.LineIndex - fs.LineIndex, ls.EndCharacterIndex);
+                    htmlContent.Source = MergeSourceSpans(fs, ls);
                 }
             }
 
@@ -744,20 +779,11 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
         SourceSpan? result = null;
         foreach (var child in htmlAttr.Children)
         {
-            // For HtmlAttributeValueIntermediateNode, use the inner token sources (not the wrapper).
-            if (child is HtmlAttributeValueIntermediateNode attrValue)
+            // For HtmlAttributeValueIntermediateNode and CSharpExpressionAttributeValueIntermediateNode,
+            // use the inner token sources (not the wrapper).
+            if (child is HtmlAttributeValueIntermediateNode or CSharpExpressionAttributeValueIntermediateNode)
             {
-                foreach (var token in attrValue.Children)
-                {
-                    if (token.Source is SourceSpan tokenSource)
-                    {
-                        result = result == null ? tokenSource : MergeSpans(result.Value, tokenSource);
-                    }
-                }
-            }
-            else if (child is CSharpExpressionAttributeValueIntermediateNode csharpAttrValue)
-            {
-                foreach (var token in csharpAttrValue.Children)
+                foreach (var token in child.Children)
                 {
                     if (token.Source is SourceSpan tokenSource)
                     {
@@ -780,8 +806,28 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
         var first = a.AbsoluteIndex <= b.AbsoluteIndex ? a : b;
         var last = a.AbsoluteIndex + a.Length >= b.AbsoluteIndex + b.Length ? a : b;
         var lineCount = (last.LineIndex + last.LineCount) - first.LineIndex;
-        return new SourceSpan(first.FilePath, start, first.LineIndex, first.CharacterIndex,
-            end - start, lineCount, last.EndCharacterIndex);
+        return first.WithAbsoluteIndex(start)
+            .WithLength(end - start)
+            .WithLineCount(lineCount)
+            .WithEndCharacterIndex(last.EndCharacterIndex);
+    }
+
+    /// <summary>
+    /// Merges two already-ordered source spans into a single span covering both.
+    /// <paramref name="first"/> must start at or before <paramref name="last"/>.
+    /// </summary>
+    internal static SourceSpan MergeSourceSpans(SourceSpan first, SourceSpan last)
+    {
+        Debug.Assert(first.AbsoluteIndex <= last.AbsoluteIndex,
+            "first span must start at or before the last span");
+        return new SourceSpan(
+            first.FilePath,
+            first.AbsoluteIndex,
+            first.LineIndex,
+            first.CharacterIndex,
+            last.AbsoluteIndex + last.Length - first.AbsoluteIndex,
+            last.LineIndex + last.LineCount - first.LineIndex,
+            last.EndCharacterIndex);
     }
 
     /// <summary>
@@ -803,8 +849,8 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
         {
             // @
             var atLoc = sourceDocument.Text.Lines.GetLinePosition(exprStart);
-            target.Children.Add(new CSharpIntermediateToken(
-                LazyContent.Create("@", static s => s),
+            target.Children.Add(IntermediateNodeFactory.CSharpToken(
+                "@",
                 new SourceSpan(filePath, exprStart, atLoc.Line, atLoc.Character, 1, 0, atLoc.Character + 1)));
 
             // (, inner content, )
@@ -814,8 +860,8 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
         {
             // Not @() -- emit as single token.
             var loc = sourceDocument.Text.Lines.GetLinePosition(exprStart);
-            target.Children.Add(new CSharpIntermediateToken(
-                LazyContent.Create(exprText, static s => s),
+            target.Children.Add(IntermediateNodeFactory.CSharpToken(
+                exprText,
                 new SourceSpan(filePath, exprStart, loc.Line, loc.Character, exprLength, 0, loc.Character + exprLength)));
         }
     }
@@ -835,8 +881,8 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
 
         // (
         var openLoc = sourceDocument.Text.Lines.GetLinePosition(parenStart);
-        target.Children.Add(new CSharpIntermediateToken(
-            LazyContent.Create("(", static s => s),
+        target.Children.Add(IntermediateNodeFactory.CSharpToken(
+            "(",
             new SourceSpan(filePath, parenStart, openLoc.Line, openLoc.Character, 1, 0, openLoc.Character + 1)));
 
         // inner content
@@ -847,16 +893,16 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
             var innerText = sourceDocument.Text.ToString(
                 new Microsoft.CodeAnalysis.Text.TextSpan(innerStart, innerLen));
             var innerLoc = sourceDocument.Text.Lines.GetLinePosition(innerStart);
-            target.Children.Add(new CSharpIntermediateToken(
-                LazyContent.Create(innerText, static s => s),
+            target.Children.Add(IntermediateNodeFactory.CSharpToken(
+                innerText,
                 new SourceSpan(filePath, innerStart, innerLoc.Line, innerLoc.Character, innerLen, 0, innerLoc.Character + innerLen)));
         }
 
         // )
         var closePos = parenStart + parenLength - 1;
         var closeLoc = sourceDocument.Text.Lines.GetLinePosition(closePos);
-        target.Children.Add(new CSharpIntermediateToken(
-            LazyContent.Create(")", static s => s),
+        target.Children.Add(IntermediateNodeFactory.CSharpToken(
+            ")",
             new SourceSpan(filePath, closePos, closeLoc.Line, closeLoc.Character, 1, 0, closeLoc.Character + 1)));
     }
 
@@ -874,9 +920,10 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
         EmitExplicitExpressionTokens(expr, expressionSource.AbsoluteIndex, expressionSource.Length, sourceDocument);
 
         var exprLoc = sourceDocument.Text.Lines.GetLinePosition(expressionSource.AbsoluteIndex);
-        expr.Source = new SourceSpan(
-            expressionSource.FilePath, expressionSource.AbsoluteIndex,
-            exprLoc.Line, exprLoc.Character, expressionSource.Length, 0, exprLoc.Character + expressionSource.Length);
+        expr.Source = expressionSource.WithLineIndex(exprLoc.Line)
+            .WithCharacterIndex(exprLoc.Character)
+            .WithLineCount(0)
+            .WithEndCharacterIndex(exprLoc.Character + expressionSource.Length);
         target.Children.Add(expr);
     }
 
@@ -906,7 +953,7 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
     private static CSharpIntermediateToken ToCSharpToken(HtmlIntermediateToken htmlToken)
     {
         return htmlToken.IsLazy
-            ? new CSharpIntermediateToken(LazyContent.Create(htmlToken, static t => t.Content), htmlToken.Source)
+            ? IntermediateNodeFactory.CSharpToken(htmlToken, static t => t.Content, htmlToken.Source)
             : new CSharpIntermediateToken(htmlToken.Content, htmlToken.Source);
     }
 
@@ -918,16 +965,16 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
         return new HtmlContentIntermediateNode()
         {
             Source = source,
-            Children = { new HtmlIntermediateToken(LazyContent.Create("", static s => s), source) }
+            Children = { IntermediateNodeFactory.HtmlToken("", source) }
         };
     }
 
     /// <summary>
-    /// Creates an empty <see cref="CSharpIntermediateToken"/> with a lazy empty string.
+    /// Creates an empty <see cref="CSharpIntermediateToken"/> with an empty string.
     /// </summary>
     private static CSharpIntermediateToken CreateEmptyCSharpToken(SourceSpan? source)
     {
-        return new CSharpIntermediateToken(LazyContent.Create("", static s => s), source);
+        return IntermediateNodeFactory.CSharpToken("", source);
     }
 
     /// <summary>
@@ -958,14 +1005,9 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
             return null;
         }
 
-        return new SourceSpan(
-            s.FilePath,
-            s.AbsoluteIndex - prefixLength,
-            s.LineIndex,
-            s.CharacterIndex - prefixLength,
-            s.Length + prefixLength,
-            s.LineCount,
-            s.EndCharacterIndex);
+        return s.WithAbsoluteIndex(s.AbsoluteIndex - prefixLength)
+            .WithCharacterIndex(s.CharacterIndex - prefixLength)
+            .WithLength(s.Length + prefixLength);
     }
 
     /// <summary>
@@ -1058,9 +1100,11 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
         var diagSource = elementNode.Source;
         if (elementNode.EndTagSpan is SourceSpan ets)
         {
-            diagSource = new SourceSpan(
-                ets.FilePath, ets.AbsoluteIndex + 2, ets.LineIndex, ets.CharacterIndex + 2,
-                tagName.Length, 0, ets.CharacterIndex + 2 + tagName.Length);
+            diagSource = ets.WithAbsoluteIndex(ets.AbsoluteIndex + 2)
+                .WithCharacterIndex(ets.CharacterIndex + 2)
+                .WithLength(tagName.Length)
+                .WithLineCount(0)
+                .WithEndCharacterIndex(ets.CharacterIndex + 2 + tagName.Length);
         }
 
         if (diagSource is SourceSpan ds)

@@ -51,7 +51,7 @@ internal sealed class CohostLinkedEditingRangeEndpoint(
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(LinkedEditingRangeParams request)
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
-    protected async override Task<LinkedEditingRanges?> HandleRequestAsync(LinkedEditingRangeParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+    protected override async Task<LinkedEditingRanges?> HandleRequestAsync(LinkedEditingRangeParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
         var linkedRanges = await _remoteServiceInvoker.TryInvokeAsync<IRemoteLinkedEditingRangeService, LinePositionSpan[]?>(
             razorDocument.Project.Solution,

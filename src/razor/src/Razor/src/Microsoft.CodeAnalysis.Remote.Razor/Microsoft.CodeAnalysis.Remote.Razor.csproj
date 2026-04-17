@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>$(NetVS);netstandard2.0</TargetFrameworks>
@@ -25,7 +25,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="$(RepoRoot)eng\BannedSymbols.MEFv1.txt" />
+    <AdditionalFiles Include="$(RepositoryEngineeringDir)BannedSymbols.MEFv1.txt" />
   </ItemGroup>
 
   <ItemGroup>
