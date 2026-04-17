@@ -40,7 +40,7 @@ extends:
         options: '--memory=12g'
     pool:
       name: NetCore1ESPool-Svc-Internal
-      image: 1es-ubuntu-2204
+      image: build.azurelinux.3.amd64
       os: linux
     sdl:
       sourceAnalysisPool:
@@ -53,7 +53,7 @@ extends:
       - job: Setup
         pool:
           name: NetCore1ESPool-Svc-Internal
-          demands: ImageOverride -equals 1es-ubuntu-2204
+          demands: ImageOverride -equals build.azurelinux.3.amd64
         steps:
         - script: |
             vmrSrcDir="$(Build.SourcesDirectory)/src"
@@ -140,7 +140,7 @@ extends:
         container: licenseScanContainer
         pool:
           name: NetCore1ESPool-Svc-Internal
-          demands: ImageOverride -equals 1es-ubuntu-2204
+          demands: ImageOverride -equals build.azurelinux.3.amd64
         timeoutInMinutes: 420
         strategy:
           matrix: $[ dependencies.Setup.outputs['GetMatrix.matrix'] ]
@@ -211,7 +211,7 @@ extends:
         condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release'))
         pool:
           name: NetCore1ESPool-Svc-Internal
-          demands: ImageOverride -equals 1es-ubuntu-2204
+          demands: ImageOverride -equals build.azurelinux.3.amd64
         variables:
         - template: /eng/pipelines/templates/variables/pipelines.yml@self
         steps:
