@@ -95,6 +95,7 @@ namespace NuGet.ProjectModel
         private static readonly byte[] SdkAnalysisLevel = Encoding.UTF8.GetBytes("SdkAnalysisLevel");
         private static readonly byte[] UsingMicrosoftNETSdk = Encoding.UTF8.GetBytes("UsingMicrosoftNETSdk");
         private static readonly byte[] UseLegacyDependencyResolverPropertyName = Encoding.UTF8.GetBytes("restoreUseLegacyDependencyResolver");
+        private static readonly byte[] RestoreDoNotWriteDependencyGraphSpecPropertyName = Encoding.UTF8.GetBytes("restoreDoNotWriteDependencyGraphSpec");
         private static readonly byte[] PackagesToPrunePropertyName = Encoding.UTF8.GetBytes("packagesToPrune");
 
         internal static PackageSpec GetPackageSpecUtf8JsonStreamReader(Stream stream, string name, string packageSpecPath, IEnvironmentVariableReader environmentVariableReader, string snapshotValue = null)
@@ -775,6 +776,7 @@ namespace NuGet.ProjectModel
             bool usingMicrosoftNetSdk = true;
             NuGetVersion sdkAnalysisLevel = null;
             bool useLegacyDependencyResolver = false;
+            bool restoreDoNotWriteDependencyGraphSpec = false;
 
             if (jsonReader.Read() && jsonReader.TokenType == JsonTokenType.StartObject)
             {
@@ -1033,6 +1035,10 @@ namespace NuGet.ProjectModel
                     {
                         useLegacyDependencyResolver = jsonReader.ReadNextTokenAsBoolOrThrowAnException(UseLegacyDependencyResolverPropertyName, Strings.Invalid_AttributeValue);
                     }
+                    else if (jsonReader.ValueTextEquals(RestoreDoNotWriteDependencyGraphSpecPropertyName))
+                    {
+                        restoreDoNotWriteDependencyGraphSpec = jsonReader.ReadNextTokenAsBoolOrThrowAnException(RestoreDoNotWriteDependencyGraphSpecPropertyName, Strings.Invalid_AttributeValue);
+                    }
                     else
                     {
                         jsonReader.Skip();
@@ -1061,6 +1067,7 @@ namespace NuGet.ProjectModel
             msbuildMetadata.SdkAnalysisLevel = sdkAnalysisLevel;
             msbuildMetadata.UsingMicrosoftNETSdk = usingMicrosoftNetSdk;
             msbuildMetadata.UseLegacyDependencyResolver = useLegacyDependencyResolver;
+            msbuildMetadata.RestoreDoNotWriteDependencyGraphSpec = restoreDoNotWriteDependencyGraphSpec;
 
             if (configFilePaths != null)
             {

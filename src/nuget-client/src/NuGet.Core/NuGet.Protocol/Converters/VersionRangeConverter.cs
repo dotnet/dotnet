@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using Newtonsoft.Json;
 using NuGet.Versioning;
@@ -29,10 +27,10 @@ namespace NuGet.Protocol
         /// <param name="existingValue">The existing value of the object.</param>
         /// <param name="serializer">A serializer.</param>
         /// <returns>A <see cref="VersionRange" /> object.</returns>
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
-            string value = serializer.Deserialize<string>(reader);
-            return !string.IsNullOrEmpty(value) ? VersionRange.Parse(value) : null;
+            string? value = serializer.Deserialize<string>(reader);
+            return !string.IsNullOrEmpty(value) ? VersionRange.Parse(value!) : null;
         }
 
         /// <summary>
@@ -41,9 +39,14 @@ namespace NuGet.Protocol
         /// <param name="writer">A JSON writer.</param>
         /// <param name="value">A value to serialize.</param>
         /// <param name="serializer">A serializer.</param>
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            var versionRange = VersionRange.Parse(value.ToString());
+            if (value is null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
+            var versionRange = VersionRange.Parse(value.ToString()!);
             serializer.Serialize(writer, versionRange.ToString());
         }
     }

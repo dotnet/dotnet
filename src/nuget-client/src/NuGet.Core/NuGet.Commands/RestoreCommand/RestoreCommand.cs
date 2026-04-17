@@ -344,7 +344,8 @@ namespace NuGet.Commands
                     restoreTime.Elapsed)
                 {
                     AuditRan = auditRan,
-                    DidDGHashChange = !noOpCacheFileEvaluation
+                    DidDGHashChange = !noOpCacheFileEvaluation,
+                    DoNotWriteDependencyGraphSpec = _request.Project.RestoreMetadata.RestoreDoNotWriteDependencyGraphSpec
                 };
 
                 telemetry.TelemetryEvent[UpdatedAssetsFile] = restoreResult._isAssetsFileDirty.Value;

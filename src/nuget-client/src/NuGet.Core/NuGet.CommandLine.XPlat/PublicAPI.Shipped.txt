@@ -3,7 +3,16 @@ NuGet.CommandLine.XPlat.Commands.DocumentedCommand
 NuGet.CommandLine.XPlat.Commands.DocumentedCommand.DocumentedCommand(string! name, string! description, string! helpUrl) -> void
 NuGet.CommandLine.XPlat.Commands.DocumentedCommand.HelpUrl.get -> string!
 NuGet.CommandLine.XPlat.Commands.Why.WhyCommand
+NuGet.CommandLine.XPlat.IVirtualProjectBuilder
+NuGet.CommandLine.XPlat.IVirtualProjectBuilder.CreateProjectRootElement(string! entryPointFilePath, Microsoft.Build.Evaluation.ProjectCollection! projectCollection) -> Microsoft.Build.Construction.ProjectRootElement!
+NuGet.CommandLine.XPlat.IVirtualProjectBuilder.GetVirtualProjectPath(string! entryPointFilePath) -> string!
+NuGet.CommandLine.XPlat.IVirtualProjectBuilder.IsValidEntryPointPath(string! entryPointFilePath) -> bool
+NuGet.CommandLine.XPlat.IVirtualProjectBuilder.SaveProject(string! entryPointFilePath, Microsoft.Build.Construction.ProjectRootElement! projectRootElement) -> void
 NuGet.CommandLine.XPlat.NuGetCommands
+NuGet.CommandLine.XPlat.Program
 static NuGet.CommandLine.XPlat.Commands.Why.WhyCommand.GetWhyCommand(System.CommandLine.Command! rootCommand) -> void
+static NuGet.CommandLine.XPlat.Commands.Why.WhyCommand.GetWhyCommand(System.CommandLine.Command! rootCommand, NuGet.CommandLine.XPlat.IVirtualProjectBuilder? virtualProjectBuilder = null) -> void
 static NuGet.CommandLine.XPlat.NuGetCommands.Add(System.CommandLine.RootCommand! rootCommand) -> void
 static NuGet.CommandLine.XPlat.NuGetCommands.Add(System.CommandLine.RootCommand! rootCommand, System.CommandLine.Option<bool>! interactiveOption) -> void
+static NuGet.CommandLine.XPlat.NuGetCommands.Add(System.CommandLine.RootCommand! rootCommand, System.CommandLine.Option<bool>! interactiveOption, NuGet.CommandLine.XPlat.IVirtualProjectBuilder? virtualProjectBuilder = null) -> void
+static NuGet.CommandLine.XPlat.Program.Run(string![]! args, NuGet.CommandLine.XPlat.IVirtualProjectBuilder! virtualProjectBuilder) -> int

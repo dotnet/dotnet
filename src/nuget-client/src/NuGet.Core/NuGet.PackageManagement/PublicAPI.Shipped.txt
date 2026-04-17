@@ -368,10 +368,16 @@ NuGet.PackageManagement.VersionConstraints.ExactRelease = 8 -> NuGet.PackageMana
 NuGet.PackageManagement.VersionConstraints.None = 0 -> NuGet.PackageManagement.VersionConstraints
 NuGet.ProjectManagement.BuildIntegratedInstallationContext
 NuGet.ProjectManagement.BuildIntegratedInstallationContext.AreAllPackagesConditional.get -> bool
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.AreAllPackagesConditional.init -> void
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.BuildIntegratedInstallationContext() -> void
 NuGet.ProjectManagement.BuildIntegratedInstallationContext.IncludeType.get -> NuGet.LibraryModel.LibraryIncludeFlags
 NuGet.ProjectManagement.BuildIntegratedInstallationContext.IncludeType.set -> void
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.SuccessfulFrameworks.get -> System.Collections.Generic.List<string!>!
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.SuccessfulFrameworks.init -> void
 NuGet.ProjectManagement.BuildIntegratedInstallationContext.SuppressParent.get -> NuGet.LibraryModel.LibraryIncludeFlags
 NuGet.ProjectManagement.BuildIntegratedInstallationContext.SuppressParent.set -> void
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.UnsuccessfulFrameworks.get -> System.Collections.Generic.List<string!>!
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.UnsuccessfulFrameworks.init -> void
 NuGet.ProjectManagement.BuildIntegratedPackageReference
 ~NuGet.ProjectManagement.BuildIntegratedPackageReference.BuildIntegratedPackageReference(NuGet.LibraryModel.LibraryDependency dependency, NuGet.Frameworks.NuGetFramework projectFramework) -> void
 ~NuGet.ProjectManagement.BuildIntegratedPackageReference.BuildIntegratedPackageReference(NuGet.LibraryModel.LibraryDependency dependency, NuGet.Frameworks.NuGetFramework projectFramework, NuGet.Packaging.Core.PackageIdentity installedVersion) -> void

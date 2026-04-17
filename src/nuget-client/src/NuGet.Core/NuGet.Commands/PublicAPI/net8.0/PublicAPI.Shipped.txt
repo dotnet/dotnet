@@ -645,6 +645,8 @@ NuGet.Commands.RestoreTargetGraph.InConflict.get -> bool
 ~NuGet.Commands.RestoreTargetGraph.TargetGraphName.get -> string
 ~NuGet.Commands.RestoreTargetGraph.Unresolved.get -> System.Collections.Generic.ISet<NuGet.LibraryModel.LibraryRange>
 NuGet.Commands.SignArgs
+NuGet.Commands.SignArgs.AllowUntrustedRoot.get -> bool
+NuGet.Commands.SignArgs.AllowUntrustedRoot.set -> void
 ~NuGet.Commands.SignArgs.CertificateFingerprint.get -> string
 ~NuGet.Commands.SignArgs.CertificateFingerprint.set -> void
 ~NuGet.Commands.SignArgs.CertificatePassword.get -> string

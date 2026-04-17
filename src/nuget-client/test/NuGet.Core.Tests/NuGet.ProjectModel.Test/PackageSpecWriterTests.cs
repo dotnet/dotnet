@@ -171,6 +171,62 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Fact]
+        public void Write_ReadWrite_RestoreDoNotWriteDependencyGraphSpec_True()
+        {
+            // Arrange
+            var json = @"{
+                            ""restore"": {
+    ""projectUniqueName"": ""projectUniqueName"",
+    ""projectName"": ""projectName"",
+    ""projectPath"": ""projectPath"",
+    ""packagesPath"": ""packagesPath"",
+    ""outputPath"": ""outputPath"",
+    ""projectStyle"": ""PackageReference"",
+    ""restoreDoNotWriteDependencyGraphSpec"": true,
+    ""frameworks"": {
+      ""net45"": {
+        ""framework"": ""net45"",
+        ""projectReferences"": {}
+      }
+    }
+  }
+}";
+            // Act & Assert
+            VerifyJsonPackageSpecRoundTrip(json);
+        }
+
+        [Fact]
+        public void Write_ReadWrite_RestoreDoNotWriteDependencyGraphSpec_DefaultFalse_NotWritten()
+        {
+            // Arrange - when RestoreDoNotWriteDependencyGraphSpec is false (default), it should not appear in output
+            var json = @"{
+                            ""restore"": {
+    ""projectUniqueName"": ""projectUniqueName"",
+    ""projectName"": ""projectName"",
+    ""projectPath"": ""projectPath"",
+    ""packagesPath"": ""packagesPath"",
+    ""outputPath"": ""outputPath"",
+    ""projectStyle"": ""PackageReference"",
+    ""frameworks"": {
+      ""net45"": {
+        ""framework"": ""net45"",
+        ""projectReferences"": {}
+      }
+    }
+  }
+}";
+            // Act
+            var spec = JsonPackageSpecReader.GetPackageSpec(json, "TestProject", "project.csproj");
+
+            // Assert - default value should be false
+            spec.RestoreMetadata.RestoreDoNotWriteDependencyGraphSpec.Should().BeFalse();
+
+            // And it should not appear in the serialized output
+            var output = GetJsonString(spec);
+            output.Should().NotContain("restoreDoNotWriteDependencyGraphSpec");
+        }
+
+        [Fact]
         public void Write_SerializesMembersAsJson()
         {
             // Arrange && Act
