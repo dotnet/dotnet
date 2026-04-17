@@ -93,11 +93,11 @@ jobs:
       pool:
         ${{ if eq(variables['System.TeamProject'], 'public') }}:
           name: $(DncEngPublicBuildPool)
-          image: 1es-ubuntu-2204-open
+          image: build.azurelinux.3.amd64.open
           os: linux
         ${{ if eq(variables['System.TeamProject'], 'internal') }}:
           name: $(DncEngInternalBuildPool)
-          image: 1es-ubuntu-2204
+          image: build.azurelinux.3.amd64
           os: linux
       container: ${{ parameters.container }}
     ${{ if eq(parameters.agentOs, 'Darwin') }}:
