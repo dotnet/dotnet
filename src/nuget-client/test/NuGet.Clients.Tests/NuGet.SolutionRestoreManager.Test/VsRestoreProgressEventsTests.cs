@@ -246,5 +246,87 @@ namespace NuGet.SolutionRestoreManager.Test
 
             Assert.Equal(0, invocations);
         }
+
+        [Fact]
+        public void EndProjectUpdate_WhenSubscriberThrows_OtherSubscribersStillReceiveEvent()
+        {
+            var restoreProgressEvents = new VsRestoreProgressEvents(_packageProjectProvider.Object, new Mock<INuGetTelemetryProvider>().Object);
+
+            var expectedProjectName = "projectName.csproj";
+            var expectedFileList = new List<string>() { "project.assets.json" };
+            bool secondHandlerCalled = false;
+
+            restoreProgressEvents.ProjectUpdateFinished += (projectUniqueName, updatedFiles) =>
+            {
+                throw new InvalidOperationException("Simulated handler failure");
+            };
+
+            restoreProgressEvents.ProjectUpdateFinished += (projectUniqueName, updatedFiles) =>
+            {
+                secondHandlerCalled = true;
+            };
+
+            restoreProgressEvents.EndProjectUpdate(expectedProjectName, expectedFileList);
+
+            Assert.True(secondHandlerCalled);
+        }
+
+        [Fact]
+        public void EndSolutionRestore_WhenSubscriberThrows_OtherSubscribersStillReceiveEvent()
+        {
+            var restoreProgressEvents = new VsRestoreProgressEvents(_packageProjectProvider.Object, new Mock<INuGetTelemetryProvider>().Object);
+
+            var expectedProjectList = new List<string>() { "projectName.csproj" };
+            bool secondHandlerCalled = false;
+
+            restoreProgressEvents.SolutionRestoreFinished += (projects) =>
+            {
+                throw new InvalidOperationException("Simulated handler failure");
+            };
+
+            restoreProgressEvents.SolutionRestoreFinished += (projects) =>
+            {
+                secondHandlerCalled = true;
+            };
+
+            restoreProgressEvents.EndSolutionRestore(expectedProjectList);
+
+            Assert.True(secondHandlerCalled);
+        }
+
+        [Fact]
+        public void EndProjectUpdate_WithMultipleSubscribers_AllReceiveEvent()
+        {
+            var restoreProgressEvents = new VsRestoreProgressEvents(_packageProjectProvider.Object, new Mock<INuGetTelemetryProvider>().Object);
+
+            var expectedProjectName = "projectName.csproj";
+            var expectedFileList = new List<string>() { "project.assets.json" };
+            int handlerCallCount = 0;
+
+            restoreProgressEvents.ProjectUpdateFinished += (projectUniqueName, updatedFiles) => handlerCallCount++;
+            restoreProgressEvents.ProjectUpdateFinished += (projectUniqueName, updatedFiles) => handlerCallCount++;
+            restoreProgressEvents.ProjectUpdateFinished += (projectUniqueName, updatedFiles) => handlerCallCount++;
+
+            restoreProgressEvents.EndProjectUpdate(expectedProjectName, expectedFileList);
+
+            Assert.Equal(3, handlerCallCount);
+        }
+
+        [Fact]
+        public void EndSolutionRestore_WithMultipleSubscribers_AllReceiveEvent()
+        {
+            var restoreProgressEvents = new VsRestoreProgressEvents(_packageProjectProvider.Object, new Mock<INuGetTelemetryProvider>().Object);
+
+            var expectedProjectList = new List<string>() { "projectA.csproj", "projectB.csproj" };
+            int handlerCallCount = 0;
+
+            restoreProgressEvents.SolutionRestoreFinished += (projects) => handlerCallCount++;
+            restoreProgressEvents.SolutionRestoreFinished += (projects) => handlerCallCount++;
+            restoreProgressEvents.SolutionRestoreFinished += (projects) => handlerCallCount++;
+
+            restoreProgressEvents.EndSolutionRestore(expectedProjectList);
+
+            Assert.Equal(3, handlerCallCount);
+        }
     }
 }

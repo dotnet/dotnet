@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="zh-Hans" original="../Strings.resx">
     <body>
@@ -680,7 +680,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="Log_AliasContainsDisallowedCharacters">
         <source>The project {0} contains a TargetFramework '{1}' with disallowed characters. TargetFramework names must contain only ASCII characters and must not contain path separators.</source>
-        <target state="new">The project {0} contains a TargetFramework '{1}' with disallowed characters. TargetFramework names must contain only ASCII characters and must not contain path separators.</target>
+        <target state="translated">项目 {0} 包含一个含有不允许字符的 TargetFramework "{1}"。TargetFramework 名称只能包含 ASCII 字符，且不得包含路径分隔符。</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_AliasingSupportedInNewDependencyResolver">
@@ -1002,7 +1002,7 @@ Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this f
       </trans-unit>
       <trans-unit id="Log_VersionConflictForCentralTransitive">
         <source>Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue.</source>
-        <target state="new">Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue.</target>
+        <target state="translated">检测到 {0} 的版本冲突。已启用中心包管理可传递固定。请为 {1} 添加 PackageVersion 以解决此问题。</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_WritingAssetsFile">

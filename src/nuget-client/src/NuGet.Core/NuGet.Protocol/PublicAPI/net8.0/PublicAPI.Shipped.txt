@@ -1,8 +1,8 @@
 #nullable enable
 NuGet.Protocol.AlternatePackageMetadata
 NuGet.Protocol.AlternatePackageMetadata.AlternatePackageMetadata() -> void
-~NuGet.Protocol.AlternatePackageMetadata.PackageId.get -> string
-~NuGet.Protocol.AlternatePackageMetadata.Range.get -> NuGet.Versioning.VersionRange
+NuGet.Protocol.AlternatePackageMetadata.PackageId.get -> string?
+NuGet.Protocol.AlternatePackageMetadata.Range.get -> NuGet.Versioning.VersionRange?
 NuGet.Protocol.AmbientAuthenticationState
 NuGet.Protocol.AmbientAuthenticationState.AmbientAuthenticationState() -> void
 NuGet.Protocol.AmbientAuthenticationState.AuthenticationRetriesCount.get -> int
@@ -50,14 +50,14 @@ NuGet.Protocol.Core.Types.DownloadResourceResultStatus.AvailableWithoutStream = 
 NuGet.Protocol.Core.Types.DownloadResourceResultStatus.Cancelled = 3 -> NuGet.Protocol.Core.Types.DownloadResourceResultStatus
 NuGet.Protocol.Core.Types.DownloadResourceResultStatus.NotFound = 2 -> NuGet.Protocol.Core.Types.DownloadResourceResultStatus
 NuGet.Protocol.Core.Types.FatalProtocolException
-~NuGet.Protocol.Core.Types.FatalProtocolException.FatalProtocolException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
-~NuGet.Protocol.Core.Types.FatalProtocolException.FatalProtocolException(string message) -> void
-~NuGet.Protocol.Core.Types.FatalProtocolException.FatalProtocolException(string message, System.Exception innerException) -> void
+NuGet.Protocol.Core.Types.FatalProtocolException.FatalProtocolException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
+NuGet.Protocol.Core.Types.FatalProtocolException.FatalProtocolException(string! message) -> void
+NuGet.Protocol.Core.Types.FatalProtocolException.FatalProtocolException(string! message, System.Exception! innerException) -> void
 NuGet.Protocol.Core.Types.FindPackageByIdDependencyInfo
-~NuGet.Protocol.Core.Types.FindPackageByIdDependencyInfo.DependencyGroups.get -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.PackageDependencyGroup>
-~NuGet.Protocol.Core.Types.FindPackageByIdDependencyInfo.FindPackageByIdDependencyInfo(NuGet.Packaging.Core.PackageIdentity packageIdentity, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup> dependencyGroups, System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup> frameworkReferenceGroups) -> void
-~NuGet.Protocol.Core.Types.FindPackageByIdDependencyInfo.FrameworkReferenceGroups.get -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.FrameworkSpecificGroup>
-~NuGet.Protocol.Core.Types.FindPackageByIdDependencyInfo.PackageIdentity.get -> NuGet.Packaging.Core.PackageIdentity
+NuGet.Protocol.Core.Types.FindPackageByIdDependencyInfo.DependencyGroups.get -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.PackageDependencyGroup!>!
+NuGet.Protocol.Core.Types.FindPackageByIdDependencyInfo.FindPackageByIdDependencyInfo(NuGet.Packaging.Core.PackageIdentity! packageIdentity, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup!>! dependencyGroups, System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup!>! frameworkReferenceGroups) -> void
+NuGet.Protocol.Core.Types.FindPackageByIdDependencyInfo.FrameworkReferenceGroups.get -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.FrameworkSpecificGroup!>!
+NuGet.Protocol.Core.Types.FindPackageByIdDependencyInfo.PackageIdentity.get -> NuGet.Packaging.Core.PackageIdentity!
 NuGet.Protocol.Core.Types.FindPackageByIdResource
 NuGet.Protocol.Core.Types.FindPackageByIdResource.FindPackageByIdResource() -> void
 NuGet.Protocol.Core.Types.HttpHandlerResource
@@ -68,8 +68,8 @@ NuGet.Protocol.Core.Types.HttpSourceCacheContext.MaxAge.get -> System.TimeSpan
 ~NuGet.Protocol.Core.Types.HttpSourceCacheContext.RootTempFolder.get -> string
 ~NuGet.Protocol.Core.Types.HttpSourceCacheContext.SourceCacheContext.get -> NuGet.Protocol.Core.Types.SourceCacheContext
 NuGet.Protocol.Core.Types.ILegacyFeedCapabilityResource
-~NuGet.Protocol.Core.Types.ILegacyFeedCapabilityResource.SupportsIsAbsoluteLatestVersionAsync(NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
-~NuGet.Protocol.Core.Types.ILegacyFeedCapabilityResource.SupportsSearchAsync(NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+NuGet.Protocol.Core.Types.ILegacyFeedCapabilityResource.SupportsIsAbsoluteLatestVersionAsync(NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>!
+NuGet.Protocol.Core.Types.ILegacyFeedCapabilityResource.SupportsSearchAsync(NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>!
 NuGet.Protocol.Core.Types.INuGetResource
 NuGet.Protocol.Core.Types.INuGetResourceProvider
 NuGet.Protocol.Core.Types.INuGetResourceProvider.After.get -> System.Collections.Generic.IEnumerable<string!>!
@@ -119,9 +119,9 @@ NuGet.Protocol.Core.Types.MetadataResource
 ~NuGet.Protocol.Core.Types.MetadataResource.GetVersions(string packageId, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion>>
 NuGet.Protocol.Core.Types.MetadataResource.MetadataResource() -> void
 NuGet.Protocol.Core.Types.NuGetProtocolException
-~NuGet.Protocol.Core.Types.NuGetProtocolException.NuGetProtocolException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
-~NuGet.Protocol.Core.Types.NuGetProtocolException.NuGetProtocolException(string message) -> void
-~NuGet.Protocol.Core.Types.NuGetProtocolException.NuGetProtocolException(string message, System.Exception innerException) -> void
+NuGet.Protocol.Core.Types.NuGetProtocolException.NuGetProtocolException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
+NuGet.Protocol.Core.Types.NuGetProtocolException.NuGetProtocolException(string! message) -> void
+NuGet.Protocol.Core.Types.NuGetProtocolException.NuGetProtocolException(string! message, System.Exception! innerException) -> void
 NuGet.Protocol.Core.Types.NuGetResourceProviderPositions
 NuGet.Protocol.Core.Types.NuGetResourceProviderPositions.NuGetResourceProviderPositions() -> void
 NuGet.Protocol.Core.Types.NuGetTestMode
@@ -155,9 +155,9 @@ NuGet.Protocol.Core.Types.PackageProgressEventArgs
 NuGet.Protocol.Core.Types.PackageProgressEventArgs.Complete.get -> double
 NuGet.Protocol.Core.Types.PackageProgressEventArgs.HasPackageSource.get -> bool
 NuGet.Protocol.Core.Types.PackageProgressEventArgs.IsComplete.get -> bool
-~NuGet.Protocol.Core.Types.PackageProgressEventArgs.PackageIdentity.get -> NuGet.Packaging.Core.PackageIdentity
-~NuGet.Protocol.Core.Types.PackageProgressEventArgs.PackageProgressEventArgs(NuGet.Packaging.Core.PackageIdentity identity, NuGet.Configuration.PackageSource source, double complete) -> void
-~NuGet.Protocol.Core.Types.PackageProgressEventArgs.PackageSource.get -> NuGet.Configuration.PackageSource
+NuGet.Protocol.Core.Types.PackageProgressEventArgs.PackageIdentity.get -> NuGet.Packaging.Core.PackageIdentity!
+NuGet.Protocol.Core.Types.PackageProgressEventArgs.PackageProgressEventArgs(NuGet.Packaging.Core.PackageIdentity! identity, NuGet.Configuration.PackageSource? source, double complete) -> void
+NuGet.Protocol.Core.Types.PackageProgressEventArgs.PackageSource.get -> NuGet.Configuration.PackageSource?
 NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder
 ~NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.Build() -> NuGet.Protocol.Core.Types.IPackageSearchMetadata
 NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata
@@ -259,9 +259,9 @@ NuGet.Protocol.Core.Types.ResourceProvider.ResourceProvider(System.Type! resourc
 NuGet.Protocol.Core.Types.ResourceProvider.ResourceProvider(System.Type! resourceType, string! name, System.Collections.Generic.IEnumerable<string!>! before, System.Collections.Generic.IEnumerable<string!>! after) -> void
 NuGet.Protocol.Core.Types.ResourceProvider.ResourceProvider(System.Type! resourceType, string! name, string? before) -> void
 NuGet.Protocol.Core.Types.RetriableProtocolException
-~NuGet.Protocol.Core.Types.RetriableProtocolException.RetriableProtocolException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
-~NuGet.Protocol.Core.Types.RetriableProtocolException.RetriableProtocolException(string message) -> void
-~NuGet.Protocol.Core.Types.RetriableProtocolException.RetriableProtocolException(string message, System.Exception innerException) -> void
+NuGet.Protocol.Core.Types.RetriableProtocolException.RetriableProtocolException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
+NuGet.Protocol.Core.Types.RetriableProtocolException.RetriableProtocolException(string! message) -> void
+NuGet.Protocol.Core.Types.RetriableProtocolException.RetriableProtocolException(string! message, System.Exception! innerException) -> void
 NuGet.Protocol.Core.Types.SearchFilter
 NuGet.Protocol.Core.Types.SearchFilter.Filter.get -> NuGet.Protocol.Core.Types.SearchFilterType?
 NuGet.Protocol.Core.Types.SearchFilter.IncludeDelisted.get -> bool
@@ -269,12 +269,12 @@ NuGet.Protocol.Core.Types.SearchFilter.IncludeDelisted.set -> void
 NuGet.Protocol.Core.Types.SearchFilter.IncludePrerelease.get -> bool
 NuGet.Protocol.Core.Types.SearchFilter.OrderBy.get -> NuGet.Protocol.Core.Types.SearchOrderBy?
 NuGet.Protocol.Core.Types.SearchFilter.OrderBy.set -> void
-~NuGet.Protocol.Core.Types.SearchFilter.PackageTypes.get -> System.Collections.Generic.IEnumerable<string>
-~NuGet.Protocol.Core.Types.SearchFilter.PackageTypes.set -> void
+NuGet.Protocol.Core.Types.SearchFilter.PackageTypes.get -> System.Collections.Generic.IEnumerable<string!>!
+NuGet.Protocol.Core.Types.SearchFilter.PackageTypes.set -> void
 NuGet.Protocol.Core.Types.SearchFilter.SearchFilter(bool includePrerelease) -> void
 NuGet.Protocol.Core.Types.SearchFilter.SearchFilter(bool includePrerelease, NuGet.Protocol.Core.Types.SearchFilterType? filter) -> void
-~NuGet.Protocol.Core.Types.SearchFilter.SupportedFrameworks.get -> System.Collections.Generic.IEnumerable<string>
-~NuGet.Protocol.Core.Types.SearchFilter.SupportedFrameworks.set -> void
+NuGet.Protocol.Core.Types.SearchFilter.SupportedFrameworks.get -> System.Collections.Generic.IEnumerable<string!>!
+NuGet.Protocol.Core.Types.SearchFilter.SupportedFrameworks.set -> void
 NuGet.Protocol.Core.Types.SearchFilterType
 NuGet.Protocol.Core.Types.SearchFilterType.IsAbsoluteLatestVersion = 1 -> NuGet.Protocol.Core.Types.SearchFilterType
 NuGet.Protocol.Core.Types.SearchFilterType.IsLatestVersion = 0 -> NuGet.Protocol.Core.Types.SearchFilterType
@@ -329,12 +329,12 @@ NuGet.Protocol.Core.Types.UserAgentStringBuilder.UserAgentStringBuilder() -> voi
 ~NuGet.Protocol.Core.Types.UserAgentStringBuilder.WithVisualStudioSKU(string vsInfo) -> NuGet.Protocol.Core.Types.UserAgentStringBuilder
 NuGet.Protocol.Core.Types.VersionInfo
 NuGet.Protocol.Core.Types.VersionInfo.DownloadCount.get -> long?
-~NuGet.Protocol.Core.Types.VersionInfo.PackageSearchMetadata.get -> NuGet.Protocol.Core.Types.IPackageSearchMetadata
-~NuGet.Protocol.Core.Types.VersionInfo.PackageSearchMetadata.set -> void
-~NuGet.Protocol.Core.Types.VersionInfo.Version.get -> NuGet.Versioning.NuGetVersion
-~NuGet.Protocol.Core.Types.VersionInfo.VersionInfo(NuGet.Versioning.NuGetVersion version) -> void
-~NuGet.Protocol.Core.Types.VersionInfo.VersionInfo(NuGet.Versioning.NuGetVersion version, long? downloadCount) -> void
-~NuGet.Protocol.Core.Types.VersionInfo.VersionInfo(NuGet.Versioning.NuGetVersion version, string downloadCount) -> void
+NuGet.Protocol.Core.Types.VersionInfo.PackageSearchMetadata.get -> NuGet.Protocol.Core.Types.IPackageSearchMetadata?
+NuGet.Protocol.Core.Types.VersionInfo.PackageSearchMetadata.set -> void
+NuGet.Protocol.Core.Types.VersionInfo.Version.get -> NuGet.Versioning.NuGetVersion!
+NuGet.Protocol.Core.Types.VersionInfo.VersionInfo(NuGet.Versioning.NuGetVersion! version) -> void
+NuGet.Protocol.Core.Types.VersionInfo.VersionInfo(NuGet.Versioning.NuGetVersion! version, long? downloadCount) -> void
+NuGet.Protocol.Core.Types.VersionInfo.VersionInfo(NuGet.Versioning.NuGetVersion! version, string? downloadCount) -> void
 NuGet.Protocol.DependencyInfoResourceV2Feed
 ~NuGet.Protocol.DependencyInfoResourceV2Feed.DependencyInfoResourceV2Feed(NuGet.Protocol.V2FeedParser feedParser, NuGet.Protocol.Core.Types.SourceRepository source) -> void
 NuGet.Protocol.DependencyInfoResourceV2FeedProvider
@@ -378,19 +378,19 @@ NuGet.Protocol.Events.ProtocolDiagnosticHttpEventBase.IsRetry.get -> bool
 ~NuGet.Protocol.Events.ProtocolDiagnosticHttpEventBase.Url.get -> System.Uri
 NuGet.Protocol.Events.ProtocolDiagnosticNupkgCopiedEvent
 NuGet.Protocol.Events.ProtocolDiagnosticNupkgCopiedEvent.FileSize.get -> long
-~NuGet.Protocol.Events.ProtocolDiagnosticNupkgCopiedEvent.ProtocolDiagnosticNupkgCopiedEvent(string source, long fileSize) -> void
-~NuGet.Protocol.Events.ProtocolDiagnosticNupkgCopiedEvent.Source.get -> string
+NuGet.Protocol.Events.ProtocolDiagnosticNupkgCopiedEvent.ProtocolDiagnosticNupkgCopiedEvent(string! source, long fileSize) -> void
+NuGet.Protocol.Events.ProtocolDiagnosticNupkgCopiedEvent.Source.get -> string!
 NuGet.Protocol.Events.ProtocolDiagnosticResourceEvent
 NuGet.Protocol.Events.ProtocolDiagnosticResourceEvent.Duration.get -> System.TimeSpan
-~NuGet.Protocol.Events.ProtocolDiagnosticResourceEvent.Method.get -> string
-~NuGet.Protocol.Events.ProtocolDiagnosticResourceEvent.ProtocolDiagnosticResourceEvent(string source, string resourceType, string type, string method, System.TimeSpan duration) -> void
-~NuGet.Protocol.Events.ProtocolDiagnosticResourceEvent.ResourceType.get -> string
-~NuGet.Protocol.Events.ProtocolDiagnosticResourceEvent.Source.get -> string
-~NuGet.Protocol.Events.ProtocolDiagnosticResourceEvent.Type.get -> string
+NuGet.Protocol.Events.ProtocolDiagnosticResourceEvent.Method.get -> string!
+NuGet.Protocol.Events.ProtocolDiagnosticResourceEvent.ProtocolDiagnosticResourceEvent(string! source, string! resourceType, string! type, string! method, System.TimeSpan duration) -> void
+NuGet.Protocol.Events.ProtocolDiagnosticResourceEvent.ResourceType.get -> string!
+NuGet.Protocol.Events.ProtocolDiagnosticResourceEvent.Source.get -> string!
+NuGet.Protocol.Events.ProtocolDiagnosticResourceEvent.Type.get -> string!
 NuGet.Protocol.Events.ProtocolDiagnosticServiceIndexEntryEvent
 NuGet.Protocol.Events.ProtocolDiagnosticServiceIndexEntryEvent.HttpsSourceHasHttpResource.get -> bool
-~NuGet.Protocol.Events.ProtocolDiagnosticServiceIndexEntryEvent.ProtocolDiagnosticServiceIndexEntryEvent(string source, bool httpsSourceHasHttpResource) -> void
-~NuGet.Protocol.Events.ProtocolDiagnosticServiceIndexEntryEvent.Source.get -> string
+NuGet.Protocol.Events.ProtocolDiagnosticServiceIndexEntryEvent.ProtocolDiagnosticServiceIndexEntryEvent(string! source, bool httpsSourceHasHttpResource) -> void
+NuGet.Protocol.Events.ProtocolDiagnosticServiceIndexEntryEvent.Source.get -> string!
 NuGet.Protocol.Events.ProtocolDiagnostics
 NuGet.Protocol.Events.ProtocolDiagnostics.ProtocolDiagnosticHttpEventHandler
 NuGet.Protocol.Events.ProtocolDiagnostics.ProtocolDiagnosticResourceEventHandler
@@ -581,9 +581,9 @@ NuGet.Protocol.IV2FeedParser
 NuGet.Protocol.IVulnerabilityInfoResource
 NuGet.Protocol.IVulnerabilityInfoResource.GetVulnerabilityInfoAsync(NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Model.GetVulnerabilityInfoResult!>!
 NuGet.Protocol.InvalidCacheProtocolException
-~NuGet.Protocol.InvalidCacheProtocolException.InvalidCacheProtocolException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
-~NuGet.Protocol.InvalidCacheProtocolException.InvalidCacheProtocolException(string message) -> void
-~NuGet.Protocol.InvalidCacheProtocolException.InvalidCacheProtocolException(string message, System.Exception innerException) -> void
+NuGet.Protocol.InvalidCacheProtocolException.InvalidCacheProtocolException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
+NuGet.Protocol.InvalidCacheProtocolException.InvalidCacheProtocolException(string! message) -> void
+NuGet.Protocol.InvalidCacheProtocolException.InvalidCacheProtocolException(string! message, System.Exception! innerException) -> void
 NuGet.Protocol.JsonExtensions
 NuGet.Protocol.JsonProperties
 NuGet.Protocol.LegacyFeedCapabilityResourceV2Feed
@@ -728,10 +728,10 @@ NuGet.Protocol.ODataServiceDocumentResourceV2Provider.ODataServiceDocumentCacheI
 ~NuGet.Protocol.ODataServiceDocumentResourceV2Provider.ODataServiceDocumentCacheInfo.ServiceDocument.set -> void
 NuGet.Protocol.ODataServiceDocumentResourceV2Provider.ODataServiceDocumentResourceV2Provider() -> void
 NuGet.Protocol.PackageDeprecationMetadata
-~NuGet.Protocol.PackageDeprecationMetadata.AlternatePackage.get -> NuGet.Protocol.AlternatePackageMetadata
-~NuGet.Protocol.PackageDeprecationMetadata.Message.get -> string
+NuGet.Protocol.PackageDeprecationMetadata.AlternatePackage.get -> NuGet.Protocol.AlternatePackageMetadata?
+NuGet.Protocol.PackageDeprecationMetadata.Message.get -> string?
 NuGet.Protocol.PackageDeprecationMetadata.PackageDeprecationMetadata() -> void
-~NuGet.Protocol.PackageDeprecationMetadata.Reasons.get -> System.Collections.Generic.IEnumerable<string>
+NuGet.Protocol.PackageDeprecationMetadata.Reasons.get -> System.Collections.Generic.IEnumerable<string!>!
 NuGet.Protocol.PackageDetailsUriResourceV3
 ~NuGet.Protocol.PackageDetailsUriResourceV3.GetUri(string id, NuGet.Versioning.NuGetVersion version) -> System.Uri
 NuGet.Protocol.PackageDetailsUriResourceV3Provider
@@ -745,9 +745,9 @@ NuGet.Protocol.PackageMetadataResourceV3
 NuGet.Protocol.PackageMetadataResourceV3Provider
 NuGet.Protocol.PackageMetadataResourceV3Provider.PackageMetadataResourceV3Provider() -> void
 NuGet.Protocol.PackageNotFoundProtocolException
-~NuGet.Protocol.PackageNotFoundProtocolException.PackageIdentity.get -> NuGet.Packaging.Core.PackageIdentity
-~NuGet.Protocol.PackageNotFoundProtocolException.PackageNotFoundProtocolException(NuGet.Packaging.Core.PackageIdentity package) -> void
-~NuGet.Protocol.PackageNotFoundProtocolException.PackageNotFoundProtocolException(NuGet.Packaging.Core.PackageIdentity package, System.Exception innerException) -> void
+NuGet.Protocol.PackageNotFoundProtocolException.PackageIdentity.get -> NuGet.Packaging.Core.PackageIdentity!
+NuGet.Protocol.PackageNotFoundProtocolException.PackageNotFoundProtocolException(NuGet.Packaging.Core.PackageIdentity! package) -> void
+NuGet.Protocol.PackageNotFoundProtocolException.PackageNotFoundProtocolException(NuGet.Packaging.Core.PackageIdentity! package, System.Exception! innerException) -> void
 NuGet.Protocol.PackageSearchMetadata
 ~NuGet.Protocol.PackageSearchMetadata.Authors.get -> string
 ~NuGet.Protocol.PackageSearchMetadata.DependencySets.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup>
@@ -1383,13 +1383,13 @@ NuGet.Protocol.ReportAbuseResourceV3
 NuGet.Protocol.ReportAbuseResourceV3Provider
 NuGet.Protocol.ReportAbuseResourceV3Provider.ReportAbuseResourceV3Provider() -> void
 NuGet.Protocol.RepositoryCertificateInfo
-~NuGet.Protocol.RepositoryCertificateInfo.ContentUrl.get -> string
-~NuGet.Protocol.RepositoryCertificateInfo.Fingerprints.get -> NuGet.Packaging.Core.Fingerprints
-~NuGet.Protocol.RepositoryCertificateInfo.Issuer.get -> string
+NuGet.Protocol.RepositoryCertificateInfo.ContentUrl.get -> string!
+NuGet.Protocol.RepositoryCertificateInfo.Fingerprints.get -> NuGet.Packaging.Core.Fingerprints!
+NuGet.Protocol.RepositoryCertificateInfo.Issuer.get -> string!
 NuGet.Protocol.RepositoryCertificateInfo.NotAfter.get -> System.DateTimeOffset
 NuGet.Protocol.RepositoryCertificateInfo.NotBefore.get -> System.DateTimeOffset
 NuGet.Protocol.RepositoryCertificateInfo.RepositoryCertificateInfo() -> void
-~NuGet.Protocol.RepositoryCertificateInfo.Subject.get -> string
+NuGet.Protocol.RepositoryCertificateInfo.Subject.get -> string!
 NuGet.Protocol.RepositorySignatureResource
 NuGet.Protocol.RepositorySignatureResource.AllRepositorySigned.get -> bool
 ~NuGet.Protocol.RepositorySignatureResource.RepositoryCertificateInfos.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.IRepositoryCertificateInfo>
@@ -1419,10 +1419,10 @@ NuGet.Protocol.SemaphoreSlimThrottle.Release() -> void
 NuGet.Protocol.ServerWarningLogHandler
 ~NuGet.Protocol.ServerWarningLogHandler.ServerWarningLogHandler(System.Net.Http.HttpClientHandler clientHandler) -> void
 NuGet.Protocol.ServiceIndexEntry
-~NuGet.Protocol.ServiceIndexEntry.ClientVersion.get -> NuGet.Versioning.SemanticVersion
-~NuGet.Protocol.ServiceIndexEntry.ServiceIndexEntry(System.Uri serviceUri, string serviceType, NuGet.Versioning.SemanticVersion clientVersion) -> void
-~NuGet.Protocol.ServiceIndexEntry.Type.get -> string
-~NuGet.Protocol.ServiceIndexEntry.Uri.get -> System.Uri
+NuGet.Protocol.ServiceIndexEntry.ClientVersion.get -> NuGet.Versioning.SemanticVersion!
+NuGet.Protocol.ServiceIndexEntry.ServiceIndexEntry(System.Uri! serviceUri, string! serviceType, NuGet.Versioning.SemanticVersion! clientVersion) -> void
+NuGet.Protocol.ServiceIndexEntry.Type.get -> string!
+NuGet.Protocol.ServiceIndexEntry.Uri.get -> System.Uri!
 NuGet.Protocol.ServiceIndexResourceV3
 ~NuGet.Protocol.ServiceIndexResourceV3.ServiceIndexResourceV3(Newtonsoft.Json.Linq.JObject index, System.DateTime requestTime) -> void
 NuGet.Protocol.ServiceIndexResourceV3Provider
@@ -1570,9 +1570,9 @@ abstract NuGet.Protocol.Plugins.OutboundRequestContext.HandleCancelResponse() ->
 abstract NuGet.Protocol.Plugins.Receiver.Connect() -> void
 abstract NuGet.Protocol.Plugins.Receiver.Dispose(bool disposing) -> void
 const NuGet.Protocol.CachingUtility.BufferSize = 8192 -> int
-~const NuGet.Protocol.Core.Types.NuGetResourceProviderPositions.First = "First" -> string
-~const NuGet.Protocol.Core.Types.NuGetResourceProviderPositions.Last = "Last" -> string
-~const NuGet.Protocol.Core.Types.NuGetTestMode.NuGetTestClientName = "NuGet Test Client" -> string
+const NuGet.Protocol.Core.Types.NuGetResourceProviderPositions.First = "First" -> string!
+const NuGet.Protocol.Core.Types.NuGetResourceProviderPositions.Last = "Last" -> string!
+const NuGet.Protocol.Core.Types.NuGetTestMode.NuGetTestClientName = "NuGet Test Client" -> string!
 const NuGet.Protocol.JsonExtensions.JsonSerializationMaxDepth = 512 -> int
 ~const NuGet.Protocol.JsonProperties.AdvisoryUrl = "advisoryUrl" -> string
 ~const NuGet.Protocol.JsonProperties.AllRepositorySigned = "allRepositorySigned" -> string
@@ -1852,16 +1852,16 @@ override NuGet.Protocol.Providers.VulnerabilityInfoResourceV3Provider.TryCreate(
 ~override NuGet.Protocol.RemoteV3FindPackageByIdResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository sourceRepository, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
 ~override NuGet.Protocol.ReportAbuseResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
 ~override NuGet.Protocol.RepositorySignatureResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
-~override NuGet.Protocol.SafeBoolConverter.CanConvert(System.Type objectType) -> bool
+override NuGet.Protocol.SafeBoolConverter.CanConvert(System.Type! objectType) -> bool
 override NuGet.Protocol.SafeBoolConverter.CanRead.get -> bool
 override NuGet.Protocol.SafeBoolConverter.CanWrite.get -> bool
-~override NuGet.Protocol.SafeBoolConverter.ReadJson(Newtonsoft.Json.JsonReader reader, System.Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer) -> object
-~override NuGet.Protocol.SafeBoolConverter.WriteJson(Newtonsoft.Json.JsonWriter writer, object value, Newtonsoft.Json.JsonSerializer serializer) -> void
-~override NuGet.Protocol.SafeUriConverter.CanConvert(System.Type objectType) -> bool
+override NuGet.Protocol.SafeBoolConverter.ReadJson(Newtonsoft.Json.JsonReader! reader, System.Type! objectType, object? existingValue, Newtonsoft.Json.JsonSerializer! serializer) -> object!
+override NuGet.Protocol.SafeBoolConverter.WriteJson(Newtonsoft.Json.JsonWriter! writer, object? value, Newtonsoft.Json.JsonSerializer! serializer) -> void
+override NuGet.Protocol.SafeUriConverter.CanConvert(System.Type! objectType) -> bool
 override NuGet.Protocol.SafeUriConverter.CanRead.get -> bool
 override NuGet.Protocol.SafeUriConverter.CanWrite.get -> bool
-~override NuGet.Protocol.SafeUriConverter.ReadJson(Newtonsoft.Json.JsonReader reader, System.Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer) -> object
-~override NuGet.Protocol.SafeUriConverter.WriteJson(Newtonsoft.Json.JsonWriter writer, object value, Newtonsoft.Json.JsonSerializer serializer) -> void
+override NuGet.Protocol.SafeUriConverter.ReadJson(Newtonsoft.Json.JsonReader! reader, System.Type! objectType, object? existingValue, Newtonsoft.Json.JsonSerializer! serializer) -> object?
+override NuGet.Protocol.SafeUriConverter.WriteJson(Newtonsoft.Json.JsonWriter! writer, object? value, Newtonsoft.Json.JsonSerializer! serializer) -> void
 ~override NuGet.Protocol.SemanticVersionConverter.CanConvert(System.Type objectType) -> bool
 ~override NuGet.Protocol.SemanticVersionConverter.ReadJson(Newtonsoft.Json.JsonReader reader, System.Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer) -> object
 ~override NuGet.Protocol.SemanticVersionConverter.WriteJson(Newtonsoft.Json.JsonWriter writer, object value, Newtonsoft.Json.JsonSerializer serializer) -> void
@@ -1876,9 +1876,9 @@ override NuGet.Protocol.SafeUriConverter.CanWrite.get -> bool
 override NuGet.Protocol.VersionInfoConverter.CanWrite.get -> bool
 ~override NuGet.Protocol.VersionInfoConverter.ReadJson(Newtonsoft.Json.JsonReader reader, System.Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer) -> object
 ~override NuGet.Protocol.VersionInfoConverter.WriteJson(Newtonsoft.Json.JsonWriter writer, object value, Newtonsoft.Json.JsonSerializer serializer) -> void
-~override NuGet.Protocol.VersionRangeConverter.CanConvert(System.Type objectType) -> bool
-~override NuGet.Protocol.VersionRangeConverter.ReadJson(Newtonsoft.Json.JsonReader reader, System.Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer) -> object
-~override NuGet.Protocol.VersionRangeConverter.WriteJson(Newtonsoft.Json.JsonWriter writer, object value, Newtonsoft.Json.JsonSerializer serializer) -> void
+override NuGet.Protocol.VersionRangeConverter.CanConvert(System.Type! objectType) -> bool
+override NuGet.Protocol.VersionRangeConverter.ReadJson(Newtonsoft.Json.JsonReader! reader, System.Type! objectType, object? existingValue, Newtonsoft.Json.JsonSerializer! serializer) -> object?
+override NuGet.Protocol.VersionRangeConverter.WriteJson(Newtonsoft.Json.JsonWriter! writer, object? value, Newtonsoft.Json.JsonSerializer! serializer) -> void
 ~override NuGet.Repositories.LocalPackageInfo.ToString() -> string
 ~static NuGet.Protocol.CachingUtility.ComputeHash(string value, bool addIdentifiableCharacters = true) -> string
 ~static NuGet.Protocol.CachingUtility.IsFileAlreadyOpen(string filePath) -> bool
@@ -1888,7 +1888,7 @@ override NuGet.Protocol.VersionInfoConverter.CanWrite.get -> bool
 ~static NuGet.Protocol.Core.Types.HttpSourceCacheContext.Create(NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, bool isFirstAttempt) -> NuGet.Protocol.Core.Types.HttpSourceCacheContext
 ~static NuGet.Protocol.Core.Types.HttpSourceCacheContext.Create(NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, int retryCount) -> NuGet.Protocol.Core.Types.HttpSourceCacheContext
 static NuGet.Protocol.Core.Types.NuGetTestMode.Enabled.get -> bool
-~static NuGet.Protocol.Core.Types.NuGetTestMode.InvokeTestFunctionAgainstTestMode<T>(System.Func<T> function, bool testModeEnabled) -> T
+static NuGet.Protocol.Core.Types.NuGetTestMode.InvokeTestFunctionAgainstTestMode<T>(System.Func<T>! function, bool testModeEnabled) -> T
 ~static NuGet.Protocol.Core.Types.NullSourceCacheContext.Instance.get -> NuGet.Protocol.Core.Types.SourceCacheContext
 ~static NuGet.Protocol.Core.Types.OfflineFeedUtility.AddPackageToSource(NuGet.Protocol.Core.Types.OfflineFeedAddContext offlineFeedAddContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
 ~static NuGet.Protocol.Core.Types.OfflineFeedUtility.GetPackageDirectory(NuGet.Packaging.Core.PackageIdentity packageIdentity, string offlineFeed) -> string
@@ -2044,31 +2044,31 @@ static readonly NuGet.Protocol.Plugins.ProtocolConstants.MaxTimeout -> System.Ti
 static readonly NuGet.Protocol.Plugins.ProtocolConstants.MinTimeout -> System.TimeSpan
 static readonly NuGet.Protocol.Plugins.ProtocolConstants.RequestTimeout -> System.TimeSpan
 ~static readonly NuGet.Protocol.Plugins.ProtocolConstants.Version100 -> NuGet.Versioning.SemanticVersion
-~static readonly NuGet.Protocol.ProtocolConstants.ApiKeyHeader -> string
-~static readonly NuGet.Protocol.ProtocolConstants.ServerWarningHeader -> string
-~static readonly NuGet.Protocol.ProtocolConstants.SessionId -> string
+static readonly NuGet.Protocol.ProtocolConstants.ApiKeyHeader -> string!
+static readonly NuGet.Protocol.ProtocolConstants.ServerWarningHeader -> string!
+static readonly NuGet.Protocol.ProtocolConstants.SessionId -> string!
 static readonly NuGet.Protocol.ProxyAuthenticationHandler.MaxAuthRetries -> int
-~static readonly NuGet.Protocol.ServiceTypes.LegacyGallery -> string[]
-~static readonly NuGet.Protocol.ServiceTypes.PackageBaseAddress -> string[]
-~static readonly NuGet.Protocol.ServiceTypes.PackageDetailsUriTemplate -> string[]
-~static readonly NuGet.Protocol.ServiceTypes.PackagePublish -> string[]
-~static readonly NuGet.Protocol.ServiceTypes.RegistrationsBaseUrl -> string[]
-~static readonly NuGet.Protocol.ServiceTypes.ReportAbuse -> string[]
-~static readonly NuGet.Protocol.ServiceTypes.RepositorySignatures -> string[]
-~static readonly NuGet.Protocol.ServiceTypes.SearchAutocompleteService -> string[]
-~static readonly NuGet.Protocol.ServiceTypes.SearchQueryService -> string[]
-~static readonly NuGet.Protocol.ServiceTypes.SymbolPackagePublish -> string[]
-~static readonly NuGet.Protocol.ServiceTypes.Version200 -> string
-~static readonly NuGet.Protocol.ServiceTypes.Version300 -> string
-~static readonly NuGet.Protocol.ServiceTypes.Version300beta -> string
-~static readonly NuGet.Protocol.ServiceTypes.Version300rc -> string
-~static readonly NuGet.Protocol.ServiceTypes.Version340 -> string
-~static readonly NuGet.Protocol.ServiceTypes.Version360 -> string
-~static readonly NuGet.Protocol.ServiceTypes.Version470 -> string
-~static readonly NuGet.Protocol.ServiceTypes.Version490 -> string
-~static readonly NuGet.Protocol.ServiceTypes.Version500 -> string
-~static readonly NuGet.Protocol.ServiceTypes.Version510 -> string
-~static readonly NuGet.Protocol.ServiceTypes.Versioned -> string
+static readonly NuGet.Protocol.ServiceTypes.LegacyGallery -> string![]!
+static readonly NuGet.Protocol.ServiceTypes.PackageBaseAddress -> string![]!
+static readonly NuGet.Protocol.ServiceTypes.PackageDetailsUriTemplate -> string![]!
+static readonly NuGet.Protocol.ServiceTypes.PackagePublish -> string![]!
+static readonly NuGet.Protocol.ServiceTypes.RegistrationsBaseUrl -> string![]!
+static readonly NuGet.Protocol.ServiceTypes.ReportAbuse -> string![]!
+static readonly NuGet.Protocol.ServiceTypes.RepositorySignatures -> string![]!
+static readonly NuGet.Protocol.ServiceTypes.SearchAutocompleteService -> string![]!
+static readonly NuGet.Protocol.ServiceTypes.SearchQueryService -> string![]!
+static readonly NuGet.Protocol.ServiceTypes.SymbolPackagePublish -> string![]!
+static readonly NuGet.Protocol.ServiceTypes.Version200 -> string!
+static readonly NuGet.Protocol.ServiceTypes.Version300 -> string!
+static readonly NuGet.Protocol.ServiceTypes.Version300beta -> string!
+static readonly NuGet.Protocol.ServiceTypes.Version300rc -> string!
+static readonly NuGet.Protocol.ServiceTypes.Version340 -> string!
+static readonly NuGet.Protocol.ServiceTypes.Version360 -> string!
+static readonly NuGet.Protocol.ServiceTypes.Version470 -> string!
+static readonly NuGet.Protocol.ServiceTypes.Version490 -> string!
+static readonly NuGet.Protocol.ServiceTypes.Version500 -> string!
+static readonly NuGet.Protocol.ServiceTypes.Version510 -> string!
+static readonly NuGet.Protocol.ServiceTypes.Versioned -> string!
 static readonly NuGet.Protocol.StreamExtensions.BufferSize -> int
 ~virtual NuGet.Protocol.Core.Types.DependencyInfoResource.ResolvePackages(string packageId, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.RemoteSourceDependencyInfo>>
 ~virtual NuGet.Protocol.Core.Types.Repository.ProviderFactory.GetCoreV3() -> System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider>>

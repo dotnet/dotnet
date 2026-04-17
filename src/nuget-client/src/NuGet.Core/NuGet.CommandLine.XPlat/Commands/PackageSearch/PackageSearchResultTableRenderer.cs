@@ -114,7 +114,7 @@ namespace NuGet.CommandLine.XPlat
 
                     if (packageDeprecationMetadata is not null)
                     {
-                        deprecation = packageDeprecationMetadata.Message;
+                        deprecation = packageDeprecationMetadata.Message ?? "N/A";
                     }
 
                     table.AddRow(

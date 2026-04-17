@@ -149,6 +149,12 @@ namespace NuGet.ProjectModel
 
         public bool UseLegacyDependencyResolver { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether or not the dependency graph spec file should not be written during restore.
+        /// The default value is <see langword="false" />.
+        /// </summary>
+        public bool RestoreDoNotWriteDependencyGraphSpec { get; set; }
+
         public override int GetHashCode()
         {
             StringComparer osStringComparer = PathUtility.GetStringComparerBasedOnOS();
@@ -182,6 +188,7 @@ namespace NuGet.ProjectModel
             hashCode.AddObject(UsingMicrosoftNETSdk);
             hashCode.AddObject(SdkAnalysisLevel);
             hashCode.AddObject(UseLegacyDependencyResolver);
+            hashCode.AddObject(RestoreDoNotWriteDependencyGraphSpec);
 
             return hashCode.CombinedHash;
         }
@@ -230,7 +237,8 @@ namespace NuGet.ProjectModel
                    RestoreAuditProperties == other.RestoreAuditProperties &&
                    UsingMicrosoftNETSdk == other.UsingMicrosoftNETSdk &&
                    EqualityUtility.EqualsWithNullCheck(SdkAnalysisLevel, other.SdkAnalysisLevel) &&
-                   UseLegacyDependencyResolver == other.UseLegacyDependencyResolver;
+                   UseLegacyDependencyResolver == other.UseLegacyDependencyResolver &&
+                   RestoreDoNotWriteDependencyGraphSpec == other.RestoreDoNotWriteDependencyGraphSpec;
         }
 
         private HashSet<string> GetSources(IList<PackageSource> sources)
@@ -284,6 +292,7 @@ namespace NuGet.ProjectModel
             clone.SdkAnalysisLevel = SdkAnalysisLevel;
             clone.UsingMicrosoftNETSdk = UsingMicrosoftNETSdk;
             clone.UseLegacyDependencyResolver = UseLegacyDependencyResolver;
+            clone.RestoreDoNotWriteDependencyGraphSpec = RestoreDoNotWriteDependencyGraphSpec;
         }
     }
 }

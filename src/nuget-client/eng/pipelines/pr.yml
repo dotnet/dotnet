@@ -96,7 +96,7 @@ stages:
           agentPool: NetCore-Public
           agentDemands: ImageOverride -equals Windows.VS2022.Amd64.Open
         ${{ else }}:
-          agentPool: VSVSEng-MicroBuildVSStable
+          agentPool: VSEng-MicroBuildVSStable
         testType: Functional
         testTargetFramework: net472
         testProjectName: Msbuild.Integration.Test

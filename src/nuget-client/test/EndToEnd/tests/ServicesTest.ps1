@@ -13,49 +13,6 @@ function Test-PackageManagerServicesAreAvailableThroughMEF {
     Assert-NotNull $installerEvents
 }
 
-# If this test fails with the cryptic error:
-#
-#    Exception calling "NewProject" with "5" argument(s): "The method or operation is not implemented." 
-#
-# ...it is because the specific Windows 10 SDK build indicated by the <TargetPlatformVersion /> element in the test's
-# project file (test\EndToEnd\ProjectTemplates\UwpClassLibraryProjectJson.zip\ClassLibrary6.csproj) is not installed.
-function Test-MigrateVanillaUwpProjectJsonToPackageReference {
-    param(
-        $context
-    )
-
-    # Arrange
-    $p = New-UwpClassLibraryProjectJson UwpClassLibrary1
-    $cm = Get-VsComponentModel
-    $projectDir = Get-ProjectDir $p
-    $result = [API.Test.InternalAPITestHook]::MigrateJsonProject($p.FullName)
-    Start-Sleep -Seconds 3
-    # Assert
-
-    # Check if runtimes were migrated correctly
-    $expectRuntimeIds = 'win10-arm;win10-arm-aot;win10-x86;win10-x86-aot;win10-x64;win10-x64-aot'
-    Assert-True($result.IsSuccess)
-    $actualRuntimes = Get-MsBuildPropertyValue $p 'RuntimeIdentifiers'
-    Assert-AreEqual $expectRuntimeIds $actualRuntimes
-
-    # Check if project.json file was deleted
-    Assert-True !(Test-Path (Join-Path $projectDir project.json))
-
-    # Check if backup was created
-    $backupProjectJsonPath = [System.IO.Path]::Combine($projectDir, "Backup", "project.json")
-    $backupCsprojPath = [System.IO.Path]::Combine($projectDir, "Backup", "UwpClassLibrary1.csproj")
-    Write-Host "Project json backup path: $backupProjectJsonPath"
-    Write-Host "Csproj backup path: $backupCsprojPath"
-    Assert-True (Test-Path $backupProjectJsonPath)
-    Assert-True (Test-Path $backupCsprojPath)
-
-    # Check if package reference was added correctly
-    $packageRefs = @(Get-MsBuildItems $p 'PackageReference')
-    Assert-AreEqual 1 $packageRefs.Count
-    Assert-AreEqual $packageRefs[0].GetMetadataValue("Identity") 'Microsoft.NETCore.UniversalWindowsPlatform'
-    Assert-AreEqual $packageRefs[0].GetMetadataValue("Version") '5.2.2'
-}
-
 function Test-VsPackageInstallerServices {
     param(
         $context

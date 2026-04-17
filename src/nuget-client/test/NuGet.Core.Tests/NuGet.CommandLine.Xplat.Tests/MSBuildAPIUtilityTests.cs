@@ -885,5 +885,71 @@ namespace NuGet.CommandLine.Xplat.Tests
             var version = result.First().TopLevelPackages.First().OriginalRequestedVersion;
             Assert.Equal("1.1.1", version);
         }
+
+        [PlatformFact(Platform.Windows)]
+        public void AddPackageVersionIntoPropsFile_WithDevelopmentDependency_DoesNotAddPrivateAssets()
+        {
+            // Arrange
+            using var testDirectory = TestDirectory.Create();
+            var projectCollection = new ProjectCollection(
+                            globalProperties: null,
+                            remoteLoggers: null,
+                            loggers: null,
+                            toolsetDefinitionLocations: ToolsetDefinitionLocations.Default,
+                            maxNodeCount: 1,
+                            onlyLogCriticalEvents: false,
+                            loadProjectsReadOnly: false);
+
+            var projectOptions = new ProjectOptions
+            {
+                LoadSettings = ProjectLoadSettings.DoNotEvaluateElementsWithFalseCondition,
+                ProjectCollection = projectCollection
+            };
+
+            // Arrange Directory.Packages.props file
+            var propsFile =
+@$"<Project>
+    <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(testDirectory, "Directory.Packages.props"), propsFile);
+
+            // Arrange project file
+            string projectContent =
+@$"<Project Sdk=""Microsoft.NET.Sdk"">
+	<PropertyGroup>
+	<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(testDirectory, "projectA.csproj"), projectContent);
+            var project = Project.FromFile(Path.Combine(testDirectory, "projectA.csproj"), projectOptions);
+
+            // Add item group to Directory.Packages.props
+            var msObject = new MSBuildAPIUtility(logger: new TestLogger(), virtualProjectBuilder: null);
+            var directoryBuildPropsRootElement = MSBuildAPIUtility.GetDirectoryBuildPropsRootElement(project);
+            var propsItemGroup = directoryBuildPropsRootElement.AddItemGroup();
+
+            // Create a library dependency that simulates a development dependency (PrivateAssets=all)
+            var libraryDependency = new LibraryDependency
+            {
+                LibraryRange = new LibraryRange(
+                        name: "X",
+                        versionRange: VersionRange.Parse("1.0.0"),
+                        typeConstraint: LibraryDependencyTarget.Package),
+                SuppressParent = LibraryIncludeFlags.All,
+                IncludeType = LibraryIncludeFlags.All & ~(LibraryIncludeFlags.Compile | LibraryIncludeFlags.Runtime | LibraryIncludeFlags.BuildTransitive)
+            };
+
+            // Act
+            msObject.AddPackageVersionIntoPropsItemGroup(propsItemGroup, libraryDependency);
+            directoryBuildPropsRootElement.Save();
+
+            // Assert - PackageVersion should only have Version, not PrivateAssets or IncludeAssets
+            string propsContent = File.ReadAllText(Path.Combine(testDirectory, "Directory.Packages.props"));
+            Assert.Contains(@$"<PackageVersion Include=""X"" Version=""1.0.0"" />", propsContent);
+            Assert.DoesNotContain("PrivateAssets", propsContent);
+            Assert.DoesNotContain("IncludeAssets", propsContent);
+        }
     }
 }

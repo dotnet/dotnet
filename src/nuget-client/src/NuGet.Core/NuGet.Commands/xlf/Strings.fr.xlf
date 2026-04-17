@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="fr" original="../Strings.resx">
     <body>
@@ -680,7 +680,7 @@ Pour plus d'informations, visitez https://docs.nuget.org/docs/reference/command-
       </trans-unit>
       <trans-unit id="Log_AliasContainsDisallowedCharacters">
         <source>The project {0} contains a TargetFramework '{1}' with disallowed characters. TargetFramework names must contain only ASCII characters and must not contain path separators.</source>
-        <target state="new">The project {0} contains a TargetFramework '{1}' with disallowed characters. TargetFramework names must contain only ASCII characters and must not contain path separators.</target>
+        <target state="translated">Le projet {0} contient un TargetFramework « {1} » avec des caractères non autorisés. Les noms de TargetFramework doivent contenir uniquement des caractères ASCII et ne pas comporter de séparateurs de chemin d’accès.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_AliasingSupportedInNewDependencyResolver">
@@ -1002,7 +1002,7 @@ Mettez à niveau votre Kit de développement logiciel (SDK) .NET ou supprimez Re
       </trans-unit>
       <trans-unit id="Log_VersionConflictForCentralTransitive">
         <source>Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue.</source>
-        <target state="new">Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue.</target>
+        <target state="translated">Conflit de version détecté pour {0}. L’épinglage transitif de Package Management central est activé. Ajoutez une PackageVersion pour {1} afin de résoudre ce problème.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_WritingAssetsFile">

@@ -865,6 +865,22 @@ namespace NuGet.Tests.Apex
             CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, testContext.Project, packageName, Logger);
         }
 
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public void GetProject_CanAccessProjectName()
+        {
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.NetCoreConsoleApp, Logger);
+
+            var nugetConsole = GetConsole(testContext.Project);
+            nugetConsole.Clear();
+
+            nugetConsole.Execute("$proj = Get-Project; $proj.Name");
+
+            string pmcText = nugetConsole.GetText();
+            pmcText.Should().Contain(testContext.Project.Name, because: pmcText);
+            pmcText.Should().NotContain("FullyQualifiedErrorId", because: pmcText);
+        }
+
         public static IEnumerable<object[]> GetNetCoreTemplates()
         {
             yield return new object[] { ProjectTemplate.NetCoreConsoleApp };
